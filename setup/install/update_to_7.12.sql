@@ -19,4 +19,7 @@ ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `id_orderman` INT(9) NULL COMMENT 'Per av
 ALTER TABLE `gaz_XXXrigbro`	ADD INDEX `id_orderman` (`id_orderman`);
 ALTER TABLE `gaz_XXXrigbro`	CHANGE COLUMN `status` `status` VARCHAR(100) NOT NULL DEFAULT '' AFTER `id_orderman`;
 ALTER TABLE `gaz_XXXtesbro`	ADD COLUMN `email` VARCHAR(50) NULL DEFAULT '' COMMENT 'Utilizzato per inviare i documenti ad un indirizzo diverso da quello in anagrafica' AFTER `template`;
+ALTER TABLE `gaz_XXXrigdoc`	CHANGE COLUMN `provvigione` `provvigione` DECIMAL(4,2) NOT NULL COMMENT 'Provvigione in caso di agente oppure percentuale cassa previdenziale in caso di tipo rigo = 4' AFTER `codric`;
+ALTER TABLE `gaz_XXXartico`	ADD COLUMN `larghezza` DECIMAL(10,3) NULL DEFAULT NULL AFTER `unimis`, ADD COLUMN `lunghezza` DECIMAL(10,3) NULL DEFAULT NULL AFTER `larghezza`, ADD COLUMN `spessore` DECIMAL(10,3) NULL DEFAULT NULL AFTER `lunghezza`;
+ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `larghezza` DECIMAL(10,3) NULL DEFAULT NULL AFTER `unimis`, ADD COLUMN `lunghezza` DECIMAL(10,3) NULL DEFAULT NULL AFTER `larghezza`, ADD COLUMN `spessore` DECIMAL(10,3) NULL DEFAULT NULL AFTER `lunghezza`, ADD COLUMN `peso_specifico` DECIMAL(10,3) NULL DEFAULT NULL AFTER `spessore`,	ADD COLUMN `pezzi` INT(9) NULL DEFAULT NULL AFTER `peso_specifico`, ADD COLUMN `quality` VARCHAR(50) NOT NULL AFTER `descri`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

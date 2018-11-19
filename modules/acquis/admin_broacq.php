@@ -137,7 +137,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codric'] = $_POST['in_codric'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
     $form['in_annota'] = $_POST['in_annota'];
-    $form['in_pesosp'] = $_POST['in_pesosp'];
+    $form['in_larghezza'] = $_POST['in_larghezza'];
+    $form['in_lunghezza'] = $_POST['in_lunghezza'];
+    $form['in_spessore'] = $_POST['in_spessore'];
+    $form['in_peso_specifico'] = $_POST['in_peso_specifico'];
+    $form['in_pezzi'] = $_POST['in_pezzi'];
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
     $form['righi'] = array();
@@ -157,7 +161,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['codric'] = intval($value['codric']);
             $form['righi'][$next_row]['id_mag'] = intval($value['id_mag']);
             $form['righi'][$next_row]['annota'] = substr($value['annota'], 0, 50);
-            $form['righi'][$next_row]['pesosp'] = floatval($value['pesosp']);
+            $form['righi'][$next_row]['larghezza'] = floatval($value['larghezza']);
+            $form['righi'][$next_row]['lunghezza'] = floatval($value['lunghezza']);
+            $form['righi'][$next_row]['spessore'] = floatval($value['spessore']);
+            $form['righi'][$next_row]['peso_specifico'] = floatval($value['peso_specifico']);
+            $form['righi'][$next_row]['pezzi'] = floatval($value['pezzi']);
             $form['righi'][$next_row]['extdoc'] = filter_var($_POST['righi'][$next_row]['extdoc'], FILTER_SANITIZE_STRING);
             if (!empty($_FILES['docfile_' . $next_row]['name'])) {
                 $move = false;
@@ -190,7 +198,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_codric'] = $form['righi'][$key_row]['codric'];
                     $form['in_id_mag'] = $form['righi'][$key_row]['id_mag'];
                     $form['in_annota'] = $form['righi'][$key_row]['annota'];
-                    $form['in_pesosp'] = $form['righi'][$key_row]['pesosp'];
+                    $form['in_larghezza'] = $form['righi'][$key_row]['larghezza'];
+                    $form['in_lunghezza'] = $form['righi'][$key_row]['lunghezza'];
+                    $form['in_spessore'] = $form['righi'][$key_row]['spessore'];
+                    $form['in_peso_specifico'] = $form['righi'][$key_row]['peso_specifico'];
+                    $form['in_pezzi'] = $form['righi'][$key_row]['pezzi'];
                     $form['in_status'] = "UPDROW" . $key_row;
                     /* if ($form['in_artsea'] == 'D'){
                       $artico_u = gaz_dbi_get_row($gTables['artico'],'codice',$form['righi'][$key_row]['codart']);
@@ -249,14 +261,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $msg .= "48+";
         //controllo che i righi non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
         foreach ($form['righi'] as $i => $value) {
-            if ($value['descri'] == '' &&
-                    $value['quanti']) {
+            if ($value['descri'] == '' &&  $value['quanti']!=0) {
                 $msgrigo = $i + 1;
                 $msg .= "49+";
             }
-            if ($value['unimis'] == '' &&
-                    $value['quanti'] &&
-                    $value['tiprig']) {
+            if ($value['unimis'] == '' && $value['tiprig']==0 ) { // con un rigo normale 
                 $msgrigo = $i + 1;
                 $msg .= "50+";
             }
@@ -431,17 +440,24 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
             $form['righi'][$old_key]['pervat'] = $iva_row['aliquo'];
             $form['righi'][$old_key]['annota'] = '';
-            $form['righi'][$old_key]['pesosp'] = '';
+            $form['righi'][$old_key]['larghezza'] = $form['in_larghezza'];
+            $form['righi'][$old_key]['lunghezza'] = $form['in_lunghezza'];
+            $form['righi'][$old_key]['spessore'] = $form['in_spessore'];
+            $form['righi'][$old_key]['peso_specifico'] = $form['in_peso_specifico'];
+            $form['righi'][$old_key]['pezzi'] = $form['in_pezzi'];
             if ($form['in_tiprig'] == 0 and ! empty($form['in_codart'])) {  //rigo normale
                 $form['righi'][$old_key]['annota'] = $artico['annota'];
-                $form['righi'][$old_key]['pesosp'] = $artico['peso_specifico'];
+                $form['righi'][$old_key]['larghezza'] = $artico['larghezza'];
+                $form['righi'][$old_key]['lunghezza'] = $artico['lunghezza'];
+                $form['righi'][$old_key]['spessore'] = $artico['spessore'];
+                $form['righi'][$old_key]['peso_specifico'] = $artico['peso_specifico'];
+                $form['righi'][$old_key]['pezzi'] = $artico['pezzi'];
                 $form['righi'][$old_key]['unimis'] = $artico['uniacq'];
                 $form['righi'][$old_key]['descri'] = $artico['descri'];
                 $form['righi'][$old_key]['prelis'] = $artico['preacq'];
             } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
                 $form['righi'][$old_key]['codart'] = "";
                 $form['righi'][$old_key]['annota'] = "";
-                $form['righi'][$old_key]['pesosp'] = "";
                 $form['righi'][$old_key]['unimis'] = "";
                 $form['righi'][$old_key]['quanti'] = 0;
                 $form['righi'][$old_key]['prelis'] = 0;
@@ -465,11 +481,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['tiprig'] = $form['in_tiprig'];
             $form['righi'][$next_row]['descri'] = $form['in_descri'];
             $form['righi'][$next_row]['id_mag'] = $form['in_id_mag'];
+            $form['righi'][$next_row]['larghezza'] = 0;
+            $form['righi'][$next_row]['lunghezza'] = 0;
+            $form['righi'][$next_row]['spessore'] = 0;
+            $form['righi'][$next_row]['peso_specifico'] = 0;
+            $form['righi'][$next_row]['pezzi'] = 0;
             $form['righi'][$next_row]['status'] = "INSERT";
             if ($form['in_tiprig'] == 0) {  //rigo normale
                 $form['righi'][$next_row]['codart'] = $form['in_codart'];
                 $form['righi'][$next_row]['annota'] = $artico['annota'];
-                $form['righi'][$next_row]['pesosp'] = $artico['peso_specifico'];
+                $form['righi'][$next_row]['larghezza'] = $artico['larghezza'];
+                $form['righi'][$next_row]['lunghezza'] = $artico['lunghezza'];
+                $form['righi'][$next_row]['spessore'] = $artico['spessore'];
+                $form['righi'][$next_row]['peso_specifico'] = $artico['peso_specifico'];
+                $form['righi'][$next_row]['pezzi'] = 1;
                 $form['righi'][$next_row]['descri'] = $artico['descri'];
 				$form['righi'][$next_row]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
                 $form['righi'][$next_row]['unimis'] = $artico['uniacq'];
@@ -501,7 +526,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } elseif ($form['in_tiprig'] == 2 || $form['in_tiprig'] == 51) { //descrittivo o descrittivo con allegato
                 $form['righi'][$next_row]['codart'] = "";
                 $form['righi'][$next_row]['annota'] = "";
-                $form['righi'][$next_row]['pesosp'] = "";
                 $form['righi'][$next_row]['unimis'] = "";
                 $form['righi'][$next_row]['quanti'] = 0;
                 $form['righi'][$next_row]['prelis'] = 0;
@@ -512,7 +536,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } elseif ($form['in_tiprig'] == 3) { // FORFAIT
                 $form['righi'][$next_row]['codart'] = "";
                 $form['righi'][$next_row]['annota'] = "";
-                $form['righi'][$next_row]['pesosp'] = "";
                 $form['righi'][$next_row]['unimis'] = "";
                 $form['righi'][$next_row]['quanti'] = 0;
                 $form['righi'][$next_row]['prelis'] = $form['in_prelis'];
@@ -531,7 +554,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } elseif ($form['in_tiprig'] == 50) {  // rigo normale ma con documento allegato e senza codice articolo
                 $form['righi'][$next_row]['codart'] = '';
                 $form['righi'][$next_row]['annota'] = '';
-                $form['righi'][$next_row]['pesosp'] = '';
                 $form['righi'][$next_row]['descri'] = '';
 				$form['righi'][$next_row]['codice_fornitore'] = ''; //M1 aggiunto a mano
                 $form['righi'][$next_row]['unimis'] = '';
@@ -563,7 +585,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
         $form['in_id_mag'] = 0;
         $form['in_annota'] = "";
-        $form['in_pesosp'] = 0;
+        $form['in_larghezza'] = 0;
+        $form['in_lunghezza'] = 0;
+        $form['in_spessore'] = 0;
+        $form['in_peso_specifico'] = 0;
+        $form['in_pezzi'] = 0;
         $form['in_status'] = "INSERT";
         // fine reinizializzo rigo input
         $form['cosear'] = "";
@@ -610,7 +636,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
-    $form['in_pesosp'] = 0;
+    $form['in_larghezza'] = 0;
+    $form['in_lunghezza'] = 0;
+    $form['in_spessore'] = 0;
+    $form['in_peso_specifico'] = 0;
+    $form['in_pezzi'] = 0;
     $form['in_status'] = "INSERT";
     // fine rigo input
     $form['righi'] = array();
@@ -683,7 +713,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['righi'][$next_row]['codric'] = $rigo['codric'];
         $form['righi'][$next_row]['id_mag'] = $rigo['id_mag'];
         $form['righi'][$next_row]['annota'] = $articolo['annota'];
-        $form['righi'][$next_row]['pesosp'] = $articolo['peso_specifico'];
+        $form['righi'][$next_row]['larghezza'] = $rigo['larghezza'];
+        $form['righi'][$next_row]['lunghezza'] = $rigo['lunghezza'];
+        $form['righi'][$next_row]['spessore'] = $rigo['spessore'];
+        $form['righi'][$next_row]['peso_specifico'] = $rigo['peso_specifico'];
+        $form['righi'][$next_row]['pezzi'] = $rigo['pezzi'];
         $form['righi'][$next_row]['extdoc'] = '';
         $form['righi'][$next_row]['status'] = "UPDATE";
 		// recupero il filename dal filesystem e lo sposto sul tmp 
@@ -723,7 +757,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
-    $form['in_pesosp'] = 0;
+    $form['in_larghezza'] = 0;
+    $form['in_lunghezza'] = 0;
+    $form['in_spessore'] = 0;
+    $form['in_peso_specifico'] = 0;
+    $form['in_pezzi'] = 0;
     $form['in_status'] = "INSERT";
     // fine rigo input
     $form['search']['clfoco'] = '';
@@ -796,6 +834,7 @@ echo "<input type=\"hidden\" value=\"{$form['protoc']}\" name=\"protoc\">\n";
 echo "<input type=\"hidden\" value=\"{$form['numdoc']}\" name=\"numdoc\">\n";
 echo "<input type=\"hidden\" value=\"{$form['numfat']}\" name=\"numfat\">\n";
 echo "<input type=\"hidden\" value=\"{$form['datfat']}\" name=\"datfat\">\n";
+echo '<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />';
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 $select_fornitore = new selectPartner("clfoco");
@@ -917,7 +956,11 @@ echo "<input type=\"hidden\" value=\"{$form['in_unimis']}\" name=\"in_unimis\" /
 echo "<input type=\"hidden\" value=\"{$form['in_prelis']}\" name=\"in_prelis\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_id_mag']}\" name=\"in_id_mag\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_annota']}\" name=\"in_annota\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_pesosp']}\" name=\"in_pesosp\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_larghezza']}\" name=\"in_larghezza\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_lunghezza']}\" name=\"in_lunghezza\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_spessore']}\" name=\"in_spessore\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_peso_specifico']}\" name=\"in_peso_specifico\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_pezzi']}\" name=\"in_pezzi\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_status']}\" name=\"in_status\" />\n";
 echo '<tr><td class="FacetColumnTD">'.$script_transl[17].": ";
 $gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
@@ -1017,24 +1060,16 @@ foreach ($form['righi'] as $key => $value) {
     echo "<input type=\"hidden\" value=\"{$value['codric']}\" name=\"righi[{$key}][codric]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['id_mag']}\" name=\"righi[{$key}][id_mag]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['annota']}\" name=\"righi[{$key}][annota]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['pesosp']}\" name=\"righi[{$key}][pesosp]\">\n";
+    echo "<input type=\"hidden\" value=\"{$value['larghezza']}\" name=\"righi[{$key}][larghezza]\">\n";
+    echo "<input type=\"hidden\" value=\"{$value['lunghezza']}\" name=\"righi[{$key}][lunghezza]\">\n";
+    echo "<input type=\"hidden\" value=\"{$value['spessore']}\" name=\"righi[{$key}][spessore]\">\n";
+    echo "<input type=\"hidden\" value=\"{$value['peso_specifico']}\" name=\"righi[{$key}][peso_specifico]\">\n";
+    echo "<input type=\"hidden\" value=\"{$value['pezzi']}\" name=\"righi[{$key}][pezzi]\">\n";
 	echo '<input type="hidden" value="' . $value['extdoc'] . '" name="righi[' . $key . '][extdoc]" />';
     //stampo i righi in modo diverso a secondo del tipo
     switch ($value['tiprig']) {
         case "0":
             echo '<tr>';
-            /* if ( file_exists ( "../../data/files/fotoart/".$value["codart"].".gif" ) ) {
-              $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$value['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$value["codart"].".gif'>] fade=[on] fadespeed=[0.03] \"";
-              } else {
-              $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$value['annota']}] body=[<center><img src='../root/view.php?table=artico&value=".$value['codart']."'>] fade=[on] fadespeed=[0.03] \"";
-              } */
-            /* if ($value['pesosp'] != 0){
-              $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[quantit&agrave; &divide; peso specifico = ".gaz_format_number($value['quanti'] /  $value['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
-              } else {
-              $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso specifico = 0]  fade=[on] fadespeed=[0.03] \"";
-              }
-              <input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$value['codart'].'" /> */
-            /** ENRICO FEDELE */
             echo '<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
 						<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
 							<i class="glyphicon glyphicon-arrow-up"></i>
@@ -1051,18 +1086,19 @@ foreach ($form['righi'] as $key => $value) {
 					  </td>';
             /* Peso */
             $peso = 0;
-            if ($value['pesosp'] <> 0) {
-                $peso = gaz_format_number($value['quanti'] / $value['pesosp']);
+            if ($value['peso_specifico'] <> 0) {
+                $peso = gaz_format_number($value['quanti'] / $value['peso_specifico']);
             }
             /* <input class="myTooltip" data-type="product" data-id="firefox" data-title=""  /> */
             echo '<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="righi[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" size="1" />
-					  </td>
-					  <td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="righi[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.submit();" />
-					  </td>';
+				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="righi[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" size="1" />
+				</td>
+				<td>
+				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="righi[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" size="4" onchange="document.docacq.last_focus.value=this.id; this.form.submit();" />';
+            echo ' <button class="btn btn-default btn-sm" type="image" data-toggle="collapse" onclick="weightfromdim(\''.$key.'\');"><i class="glyphicon glyphicon-tag"> peso </i></button> ';
+		    echo '</td>';
             /** ENRICO FEDELE */
-            echo "<td><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"document.docacq.last_focus.value=this.id; this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"righi[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
             echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
             echo "<td>{$value['pervat']}%</td>\n";
@@ -1184,10 +1220,6 @@ foreach ($form['righi'] as $key => $value) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
             break;
     }
-    /*
-      echo "<td align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n"; */
-    /** ENRICO FEDELE */
-    /* glyph icon */
     echo '  <td class="FacetColumnTD" align="right">
 			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $key . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
@@ -1364,8 +1396,76 @@ echo '	</table>';
             });
         });
     });
+	// calcolo peso da dimensioni
+	function weightfromdim(row) {
+		var larghezza = $("[name='righi["+row+"][larghezza]']").val();
+		var lunghezza = $("[name='righi["+row+"][lunghezza]']").val();
+		var spessore = $("[name='righi["+row+"][spessore]']").val();
+		var peso_specifico = $("[name='righi["+row+"][peso_specifico]']").val();
+		var pezzi = $("[name='righi["+row+"][pezzi]']").val();
+		$("#dialog_larghezza").val(larghezza);
+		$("#dialog_lunghezza").val(lunghezza);
+		$("#dialog_spessore").val(spessore);
+		$("#dialog_peso_specifico").val(peso_specifico);
+		$("#dialog_pezzi").val(pezzi);
+		$("#weight-from-dim").dialog({
+			width: 500,
+			modal: true,
+			buttons: {
+				Ok: function() {
+					$("[name='righi["+row+"][larghezza]']").val($("#dialog_larghezza").val());
+					$("[name='righi["+row+"][lunghezza]']").val($("#dialog_lunghezza").val());
+					$("[name='righi["+row+"][spessore]']").val($("#dialog_spessore").val());
+					$("[name='righi["+row+"][peso_specifico]']").val($("#dialog_peso_specifico").val());
+					$("[name='righi["+row+"][pezzi]']").val($("#dialog_pezzi").val());
+					$(this).dialog("close");
+				}
+			}
+		});
+	};
+	function weightfromdimCalc() {
+		var larghezza = $("#dialog_larghezza").val();
+		var lunghezza = $("#dialog_lunghezza").val();
+		var spessore = $("#dialog_spessore").val();
+		var peso_specifico = $("#dialog_peso_specifico").val();
+		var pezzi = $("#dialog_pezzi").val();
+	}
+	
+	var last_focus_value;
+	var last_focus;
+	last_focus_value = document.docacq.last_focus.value;
+	if (last_focus_value != "") {
+		last_focus = document.getElementById(last_focus_value);
+		if (last_focus != undefined) {
+			last_focus.focus();
+		}
+	}
+	last_focus_value = "";	
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
+<div class="modal" id="weight-from-dim" title="	CALCOLO PESO ">
+<div class="col-lg-12">
+	<div class="col-lg-6">Larghezza:</div>
+	<div class="col-lg-6"><input type="text" id="dialog_larghezza" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+</div>
+<div class="col-lg-12">
+	<div class="col-lg-6">Lunghezza:</div>
+	<div class="col-lg-6"><input type="text" id="dialog_lunghezza" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+</div>
+<div class="col-lg-12">
+	<div class="col-lg-6">Spessore:</div>
+	<div class="col-lg-6"><input type="text" id="dialog_spessore" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+</div>
+<div class="col-lg-12">
+	<div class="col-lg-6">Peso specifico:</div>	
+	<div class="col-lg-6"><input type="text" id="dialog_pezzi" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+</div>
+<div class="col-lg-12">
+	<div class="col-lg-6">Pezzi: </div>
+	<div class="col-lg-6"><input type="text" id="dialog_peso_specifico" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+</div>
+</div>
+
 <?php
 require("../../library/include/footer.php");
 ?>

@@ -529,26 +529,6 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['fae_tipo_cassa']; ?></label>
-                        <?php
-						$gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'fae_tipo_cassa', 'fae_tipo_cassa', $form["fae_tipo_cassa"], true, '', 'col-sm-6');
-                        ?>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['ra_cassa']; ?></label>
-                        <?php
-						$gForm->selectNumber('ra_cassa', $form["ra_cassa"],true, 0, 1, "col-sm-8", '', 'style="max-width: 100px;"');
-                        ?>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
                         <label for="decimal_quantity" class="col-sm-4 control-label"><?php echo $script_transl['decimal_quantity']; ?></label>
                         <?php
                         $gForm->variousSelect('decimal_quantity', $script_transl['decimal_quantity_value'], $form['decimal_quantity'], "col-sm-8", false, '', 20, 'style="max-width: 100px;"');
@@ -957,6 +937,26 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?></label>
                         <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['payroll_tax']; ?>" name="payroll_tax" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['fae_tipo_cassa']; ?></label>
+                        <?php
+						$gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'fae_tipo_cassa', 'fae_tipo_cassa', $form["fae_tipo_cassa"], true, '', 'col-sm-6');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['ra_cassa']; ?></label>
+                        <?php
+						$gForm->selectNumber('ra_cassa', $form["ra_cassa"],true, 0, 1, "col-sm-8", '', 'style="max-width: 100px;"');
+                        ?>
                     </div>
                 </div>
             </div><!-- chiude row  -->

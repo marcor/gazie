@@ -406,6 +406,16 @@ if ($modal_ok_insert === true) {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
+                            <label for="catmer" class="col-sm-4 control-label"><?php echo $script_transl['catmer']; ?></label>
+    <?php
+    $gForm->selectFromDB('catmer', 'catmer', 'codice', $form['catmer'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
+    ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
                             <label for="good_or_service" class="col-sm-4 control-label"><?php echo $script_transl['good_or_service']; ?>*</label>
     <?php
     $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
@@ -461,10 +471,32 @@ if ($modal_ok_insert === true) {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="catmer" class="col-sm-4 control-label"><?php echo $script_transl['catmer']; ?></label>
-    <?php
-    $gForm->selectFromDB('catmer', 'catmer', 'codice', $form['catmer'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
-    ?>
+                            <label for="lunghezza" class="col-sm-4 control-label"><?php echo $script_transl['lunghezza']; ?></label>
+                            <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['lunghezza']; ?>" name="lunghezza" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="larghezza" class="col-sm-4 control-label"><?php echo $script_transl['larghezza']; ?></label>
+                            <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['larghezza']; ?>" name="larghezza" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="spessore" class="col-sm-4 control-label"><?php echo $script_transl['spessore']; ?></label>
+                            <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['spessore']; ?>" name="spessore" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -619,14 +651,6 @@ if ($modal_ok_insert === true) {
     <?php
     $gForm->variousSelect('classif_amb', $script_transl['classif_amb_value'], $form['classif_amb'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
     ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
