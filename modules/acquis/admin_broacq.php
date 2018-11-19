@@ -451,7 +451,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$old_key]['lunghezza'] = $artico['lunghezza'];
                 $form['righi'][$old_key]['spessore'] = $artico['spessore'];
                 $form['righi'][$old_key]['peso_specifico'] = $artico['peso_specifico'];
-                $form['righi'][$old_key]['pezzi'] = $artico['pezzi'];
+                $form['righi'][$old_key]['pezzi'] = 0;
                 $form['righi'][$old_key]['unimis'] = $artico['uniacq'];
                 $form['righi'][$old_key]['descri'] = $artico['descri'];
                 $form['righi'][$old_key]['prelis'] = $artico['preacq'];
@@ -494,7 +494,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$next_row]['lunghezza'] = $artico['lunghezza'];
                 $form['righi'][$next_row]['spessore'] = $artico['spessore'];
                 $form['righi'][$next_row]['peso_specifico'] = $artico['peso_specifico'];
-                $form['righi'][$next_row]['pezzi'] = 1;
+                $form['righi'][$next_row]['pezzi'] = 0;
                 $form['righi'][$next_row]['descri'] = $artico['descri'];
 				$form['righi'][$next_row]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
                 $form['righi'][$next_row]['unimis'] = $artico['uniacq'];
@@ -835,6 +835,7 @@ echo "<input type=\"hidden\" value=\"{$form['numdoc']}\" name=\"numdoc\">\n";
 echo "<input type=\"hidden\" value=\"{$form['numfat']}\" name=\"numfat\">\n";
 echo "<input type=\"hidden\" value=\"{$form['datfat']}\" name=\"datfat\">\n";
 echo '<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />';
+echo "<input type=\"hidden\" value=\"\" id=\"dialog_row_focus\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 $select_fornitore = new selectPartner("clfoco");
@@ -997,12 +998,6 @@ $quatot = 0;
 $totimpmer = 0.00;
 $totivafat = 0.00;
 $totimpfat = 0.00;
-/*
-  echo "</table>\n";
-  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
-  echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td><td colspan=\"2\" class=\"FacetFieldCaptionTD\">$script_transl[21]</td><td class=\"FacetFieldCaptionTD\">$script_transl[22]</td><td class=\"FacetFieldCaptionTD\">$script_transl[16]</td><td class=\"FacetFieldCaptionTD\">$script_transl[23]</td><td class=\"FacetFieldCaptionTD\">%".substr($script_transl[24],0,2)."</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[25]</td><td class=\"FacetFieldCaptionTD\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\">$script_transl[18]</td><td class=\"FacetFieldCaptionTD\"></td></tr>\n";
- */
-
 /** ENRICO FEDELE */
 /* Cominciamo la transizione verso le tabelle bootstrap */
 echo '</table>
@@ -1095,7 +1090,7 @@ foreach ($form['righi'] as $key => $value) {
 				</td>
 				<td>
 				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="righi[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" size="4" onchange="document.docacq.last_focus.value=this.id; this.form.submit();" />';
-            echo ' <button class="btn btn-default btn-sm" type="image" data-toggle="collapse" onclick="weightfromdim(\''.$key.'\');"><i class="glyphicon glyphicon-tag"> peso </i></button> ';
+            echo ' <button class="btn btn-default btn-sm" type="image" data-toggle="collapse" onclick="weightfromdim(\''.$key.'\');"><i class="glyphicon glyphicon-scale"></i></button> ';
 		    echo '</td>';
             /** ENRICO FEDELE */
             echo "<td><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"document.docacq.last_focus.value=this.id; this.form.submit()\" /></td>\n";
@@ -1403,33 +1398,92 @@ echo '	</table>';
 		var spessore = $("[name='righi["+row+"][spessore]']").val();
 		var peso_specifico = $("[name='righi["+row+"][peso_specifico]']").val();
 		var pezzi = $("[name='righi["+row+"][pezzi]']").val();
+		$("#dialog_row_focus").val(row);
 		$("#dialog_larghezza").val(larghezza);
 		$("#dialog_lunghezza").val(lunghezza);
 		$("#dialog_spessore").val(spessore);
 		$("#dialog_peso_specifico").val(peso_specifico);
 		$("#dialog_pezzi").val(pezzi);
+		weightfromdimCalc();
 		$("#weight-from-dim").dialog({
 			width: 500,
-			modal: true,
-			buttons: {
-				Ok: function() {
-					$("[name='righi["+row+"][larghezza]']").val($("#dialog_larghezza").val());
-					$("[name='righi["+row+"][lunghezza]']").val($("#dialog_lunghezza").val());
-					$("[name='righi["+row+"][spessore]']").val($("#dialog_spessore").val());
-					$("[name='righi["+row+"][peso_specifico]']").val($("#dialog_peso_specifico").val());
-					$("[name='righi["+row+"][pezzi]']").val($("#dialog_pezzi").val());
-					$(this).dialog("close");
-				}
-			}
+			position: {
+				my: "bottom-30",
+				at: "center"
+				},
+			modal: true
 		});
 	};
+	
 	function weightfromdimCalc() {
+		var larghezza = ($("#dialog_larghezza").val()).replace(',', '.');
+		var lunghezza = ($("#dialog_lunghezza").val()).replace(',', '.');
+		var spessore = ($("#dialog_spessore").val()).replace(',', '.');
+		var peso_specifico = ($("#dialog_peso_specifico").val()).replace(',', '.');
+		var pezzi = ($("#dialog_pezzi").val()).replace(',', '.');
+		if (lunghezza!="") {
+			var result_a = (parseFloat(lunghezza)/1000*parseFloat(pezzi)).toFixed(3).toString();
+			var res_kg = (parseFloat(lunghezza)/1000*parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+			$("#btn_ml").text('ML '+ result_a);
+			if (larghezza !="") {
+				var result_a = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)/1000000).toFixed(3).toString();
+				var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+				$("#btn_mq").text('MQ '+ result_a);
+				if (spessore !="") {
+					var result_a = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)/1000000).toFixed(3).toString();
+					var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+					$("#btn_lt").text('LT '+ result_a);
+				}
+			}
+			if (!isNaN(res_kg)){
+				$("#btn_kg").text('KG '+ res_kg);
+			}
+		}
+	}
+
+	function weightfromdimSet(mu) {
+		var row=$("#dialog_row_focus").val();
 		var larghezza = $("#dialog_larghezza").val();
 		var lunghezza = $("#dialog_lunghezza").val();
 		var spessore = $("#dialog_spessore").val();
 		var peso_specifico = $("#dialog_peso_specifico").val();
 		var pezzi = $("#dialog_pezzi").val();
-	}
+		$("[name='righi["+row+"][larghezza]']").val(larghezza);
+		$("[name='righi["+row+"][lunghezza]']").val(lunghezza);
+		$("[name='righi["+row+"][spessore]']").val(spessore);
+		$("[name='righi["+row+"][peso_specifico]']").val(peso_specifico);
+		$("[name='righi["+row+"][pezzi]']").val(pezzi);
+		if (lunghezza!="") {
+			var result_a = (parseFloat(lunghezza)/1000*parseFloat(pezzi)).toFixed(3).toString();
+			var res_kg = (parseFloat(lunghezza)/1000*parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+			if (larghezza !="") {
+				var result_b = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)/1000000).toFixed(3).toString();
+				var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+				if (spessore !="") {
+					var result_c = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)/1000000).toFixed(3).toString();
+					var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+				}
+			}
+			if (isNaN(res_kg)){
+				res_kg='';
+			}
+		}
+		if (mu=='kg'){
+			$("[name='righi["+row+"][unimis]']").val('KG');
+			$("[name='righi["+row+"][quanti]']").val(res_kg);
+		} else if (mu=='ml') {
+			$("[name='righi["+row+"][unimis]']").val('ML');
+			$("[name='righi["+row+"][quanti]']").val(result_a);
+		} else if (mu=='mq') {
+			$("[name='righi["+row+"][unimis]']").val('MQ');
+			$("[name='righi["+row+"][quanti]']").val(result_b);
+		} else if (mu=='lt') {
+			$("[name='righi["+row+"][unimis]']").val('LT');
+			$("[name='righi["+row+"][quanti]']").val(result_c);
+		}
+		$("#dialog_row_focus").val('');
+		$("#weight-from-dim").dialog('close');
+	}	
 	
 	var last_focus_value;
 	var last_focus;
@@ -1445,24 +1499,29 @@ echo '	</table>';
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 <div class="modal" id="weight-from-dim" title="	CALCOLO PESO ">
 <div class="col-lg-12">
-	<div class="col-lg-6">Larghezza:</div>
-	<div class="col-lg-6"><input type="text" id="dialog_larghezza" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-4">Pezzi: </div>	
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_pezzi" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right">Valorizza<br /> U.M. e quantità</div>
 </div>
 <div class="col-lg-12">
-	<div class="col-lg-6">Lunghezza:</div>
-	<div class="col-lg-6"><input type="text" id="dialog_lunghezza" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-4">Lunghezza mm:</div>
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_lunghezza" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right"><button id="btn_kg" onclick="weightfromdimSet('kg');" /> KG </button></div>
 </div>
 <div class="col-lg-12">
-	<div class="col-lg-6">Spessore:</div>
-	<div class="col-lg-6"><input type="text" id="dialog_spessore" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-4">Larghezza mm:</div>
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_larghezza" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right"><button id="btn_ml" onclick="weightfromdimSet('ml');" /> ML </button></div>
 </div>
 <div class="col-lg-12">
-	<div class="col-lg-6">Peso specifico:</div>	
-	<div class="col-lg-6"><input type="text" id="dialog_pezzi" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-4">Spessore mm:</div>
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_spessore" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right"><button id="btn_mq" onclick="weightfromdimSet('mq');" /> MQ </button></div>
 </div>
 <div class="col-lg-12">
-	<div class="col-lg-6">Pezzi: </div>
-	<div class="col-lg-6"><input type="text" id="dialog_peso_specifico" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-4">Peso specifico: </div>
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_peso_specifico" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right"><button id="btn_lt" onclick="weightfromdimSet('lt');" /> LT </button></div>
 </div>
 </div>
 

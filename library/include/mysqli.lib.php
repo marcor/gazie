@@ -829,14 +829,14 @@ function paymovUpdate($id, $newValue) {
 
 function rigbroInsert($newValue) {
    $table = 'rigbro';
-   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'id_orderman', 'status');
+   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'quality','id_body_text', 'unimis', 'lunghezza', 'larghezza', 'spessore', 'peso_specifico', 'pezzi', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'id_orderman', 'status');
    $last_id=tableInsert($table, $columns, $newValue);
    return $last_id;
 }
 
 function rigbroUpdate($codice, $newValue) {
    $table = 'rigbro';
-   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti','prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'id_orderman', 'status');
+   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'quality', 'id_body_text', 'unimis', 'lunghezza', 'larghezza', 'spessore', 'peso_specifico', 'pezzi', 'quanti','prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'id_orderman', 'status');
    tableUpdate($table, $columns, $codice, $newValue);
 }
 
