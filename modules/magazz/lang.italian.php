@@ -61,6 +61,7 @@ $strScript = array("browse_document.php" =>
         'clone' => 'Duplica',
 		'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona',
         'clfoco'=>'Fornitore',
+		'lot'=>'Lotto',
     ),
     "report_movmag.php" =>
     array("movimenti di magazzino ",

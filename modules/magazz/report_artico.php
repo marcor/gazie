@@ -180,6 +180,9 @@ $gForm = new magazzForm();
                         <th class="text-center">
                             <?php echo $script_transl["barcode"]; ?>
                         </th>
+						 <th class="text-center">
+                            <?php echo $script_transl["lot"]; ?>
+                        </th>
                         <th class="text-center">
                             <?php echo $script_transl["clone"]; ?>
                         </th>
