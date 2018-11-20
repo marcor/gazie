@@ -78,7 +78,20 @@ class PreventivoFornitore extends Template
                 switch($rigo['tiprig']) {
                 case "0":
                     $this->Cell(25, 6, $rigo['codart'],1,0,'L',0,'',1);
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
+                    if ($rigo['pezzi'] > 0) {
+						$this->Cell(80, 6, $rigo['descri'],'LTR',1,'L',0,'',1);
+					} else {
+						$this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
+					}
+                    if ($rigo['pezzi'] > 0) {
+						$dim='Dim.: ';
+						if ($rigo['lunghezza'] >= 0.001) { $dim .= floatval($rigo['lunghezza']); }
+						if ($rigo['larghezza'] >= 0.001) { $dim .= 'x'.floatval($rigo['larghezza']); }
+						if ($rigo['spessore'] >= 0.001) { $dim .= 'x'.floatval($rigo['spessore']); }
+						$dim.=' mm  -  Pezzi: '.$rigo['pezzi'];
+						if ($rigo['peso_specifico'] >= 0.001) { $dim .= ' - Peso specifico='.floatval($rigo['peso_specifico']); }
+						$this->Cell(105, 6, $dim,'LB',0,'L');
+                    }
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     if ($rigo['prelis'] > 0) {
