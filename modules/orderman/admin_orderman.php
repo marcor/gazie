@@ -197,7 +197,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
         if (strlen($form['order_type']) < 3) { //tipo produzione vuota
             $msg.= "12+";
         }
-        if ($form['order_type'] == "IND") { // in produzione industriale e artigianale
+        if ($form['order_type'] == "IND") { // in produzione industriale
             if (strlen($form['codart']) == 0) { // articolo vuoto
                 $msg.= "16+";
             }
