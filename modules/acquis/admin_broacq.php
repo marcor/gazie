@@ -1421,28 +1421,31 @@ echo '	</table>';
 		var spessore = ($("#dialog_spessore").val()).replace(',', '.');
 		var peso_specifico = ($("#dialog_peso_specifico").val()).replace(',', '.');
 		var pezzi = ($("#dialog_pezzi").val()).replace(',', '.');
-		if (lunghezza!="") {
-			var result_a = (parseFloat(lunghezza)/1000*parseFloat(pezzi)).toFixed(3).toString();
-			var res_kg = (parseFloat(lunghezza)/1000*parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
-			$("#btn_ml").text('ML '+ result_a);
-			if (larghezza !="") {
-				var result_a = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)/1000000).toFixed(3).toString();
-				var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
-				$("#btn_mq").text('MQ '+ result_a);
-				if (spessore !="") {
-					var result_a = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)/1000000).toFixed(3).toString();
-					var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
-					$("#btn_lt").text('LT '+ result_a);
+		if (parseFloat(pezzi)>=0.001) {
+			var result_a = parseFloat(pezzi).toFixed(3).toString();
+			var res_kg = (parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+			if (parseFloat(lunghezza)>=0.001) {
+				var result_b = (parseFloat(lunghezza)/1000*parseFloat(pezzi)).toFixed(3).toString();
+				var res_kg = (parseFloat(lunghezza)/1000*parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+				$("#btn_ml").text('ML '+ result_b);
+				if (parseFloat(larghezza)>=0.001) {
+					var result_c = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)/1000000).toFixed(3).toString();
+					var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+					$("#btn_mq").text('MQ '+ result_c);
+					if (parseFloat(spessore)>=0.001) {
+						var result_d = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)/1000000).toFixed(3).toString();
+						var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+						$("#btn_lt").text('LT '+ result_d);
+					}
 				}
 			}
-			if (!isNaN(res_kg)){
 				$("#btn_kg").text('KG '+ res_kg);
-			}
 		}
 	}
 
 	function weightfromdimSet(mu) {
 		var row=$("#dialog_row_focus").val();
+		var res_kg='';
 		var larghezza = $("#dialog_larghezza").val();
 		var lunghezza = $("#dialog_lunghezza").val();
 		var spessore = $("#dialog_spessore").val();
@@ -1453,19 +1456,20 @@ echo '	</table>';
 		$("[name='righi["+row+"][spessore]']").val(spessore);
 		$("[name='righi["+row+"][peso_specifico]']").val(peso_specifico);
 		$("[name='righi["+row+"][pezzi]']").val(pezzi);
-		if (lunghezza!="") {
-			var result_a = (parseFloat(lunghezza)/1000*parseFloat(pezzi)).toFixed(3).toString();
-			var res_kg = (parseFloat(lunghezza)/1000*parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
-			if (larghezza !="") {
-				var result_b = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)/1000000).toFixed(3).toString();
-				var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
-				if (spessore !="") {
-					var result_c = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)/1000000).toFixed(3).toString();
-					var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+		if (parseFloat(pezzi)>=0.001) {
+			var result_a = parseFloat(pezzi).toFixed(3).toString();
+			var res_kg = (parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+			if (parseFloat(lunghezza)>=0.001) {
+				var result_a = (parseFloat(lunghezza)/1000*parseFloat(pezzi)).toFixed(3).toString();
+				var res_kg = (parseFloat(lunghezza)/1000*parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+				if (parseFloat(larghezza)>=0.001) {
+					var result_b = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)/1000000).toFixed(3).toString();
+					var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+					if (parseFloat(spessore)>=0.001) {
+						var result_c = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)/1000000).toFixed(3).toString();
+						var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+					}
 				}
-			}
-			if (isNaN(res_kg)){
-				res_kg='';
 			}
 		}
 		if (mu=='kg'){
