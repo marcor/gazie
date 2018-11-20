@@ -59,15 +59,15 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['day_of_validity'] = $_POST['day_of_validity'];
     $form["campo_impianto"] = $_POST["campo_impianto"];    
     $form['quantip'] = $_POST['quantip'];
-	
-    $form['cosear'] = $_POST['cosear'];	    
-	$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
-	$form['lot_or_serial'] = $resartico['lot_or_serial'];
+    $form['cosear'] = $_POST['cosear'];
 	if (isset ($_POST['codart'])){
 		$form['codart'] = $_POST['codart'];
+		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
 	} else {
+		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
 		$form['codart'] = $resartico['codice'];
-	}
+	} 
+	$form['lot_or_serial'] = $resartico['lot_or_serial'];
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
 			 // prendo i movimenti di magazzino dei componenti 
@@ -679,7 +679,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['datemi'] = $result2['datemi'];
     $form['campo_impianto'] = $result['campo_impianto'];
     $form['id_lotmag'] = $result['id_lotmag'];
-    $form['order'] = $result2['numdoc'];
+    $form['order'] = $result2['numdoc'];	
 	$res3 = gaz_dbi_get_row($gTables['clfoco'], "codice", $result2['clfoco']);// importo il nome del cliente dell'ordine
 	$form['coseor'] = $result2['id_tes'];
 	$form['id_tes'] = $result2['id_tes'];
@@ -691,6 +691,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['expiry'] = $result5['expiry'];
 	$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
 	$form['lot_or_serial'] = $resartico['lot_or_serial'];
+	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
+		// prendo i movimenti di magazzino dei componenti 
+        $query = "SELECT " . '*' . " FROM " . $gTables['movmag'] . " WHERE operat = '-1' AND id_orderman ='" . $_GET['codice'] . "'";
+        $result7 = gaz_dbi_query($query);		   
+	}
     // Antonio Germani - se è presente, recupero il file documento lotto
     $form['filename'] = "";
     if (file_exists('../../data/files/' . $admin_aziend['company_id']) > 0) {
@@ -918,7 +923,8 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				$select_artico->output(substr($form['cosear'], 0, 20));
 			}
 		}	
-	echo '<input type="hidden" name="lot_or_serial" value="' . $resartico['lot_or_serial'] . '"/>';   
+	echo '<input type="hidden" name="lot_or_serial" value="' . $resartico['lot_or_serial'] . '"/>';
+	
     if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 ?>
 		<div class="container-fluid">
