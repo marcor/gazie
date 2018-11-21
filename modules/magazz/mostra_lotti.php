@@ -26,6 +26,7 @@
  */
 
 require("../../library/include/datlib.inc.php");
+require("../../modules/vendit/lib.function.php");
 $lm = new lotmag;
 $admin_aziend=checkAdmin();
 $codice = filter_input(INPUT_GET, 'codice');
