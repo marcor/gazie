@@ -1341,9 +1341,13 @@ if (substr($form['tipdoc'], 0, 2) == 'AF') { // ricevuta fattura o nota credito 
     echo '<input type="hidden" value="' . $form['mestra'] . '" name="mestra">';
     echo '<input type="hidden" value="' . $form['anntra'] . '" name="anntra">';
 } else { // è un ddt a fornitore (c/lavorazione oppure reso a fornitore)
+	echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl[0][$form['tipdoc']] . " " . $script_transl[52] . " </td>\n";
     echo '<input type="hidden" value="' . $form['datreg'] . '" name="datreg">';
     echo '<input type="hidden" value="' . $form['datfat'] . '" name="datfat">';
     echo '<input type="hidden" value="' . $form['numfat'] . '" name="numfat">';
+	echo '<td><input type="text" name="numfat" value="' . $form['numfat'] . '" maxlength="20" size="20"></td>';
+	echo '<td class="FacetFieldCaptionTD">'.$script_transl['of_the'].'<input type="text" id="datfat" name="datfat" value="'.$form['datfat'].'">';
+	echo '</td><td colspan="2" class="FacetFieldCaptionTD" > '.$script_transl['datreg'].' <input type="text" id="datreg" name="datreg" value="'.$form['datreg'].'">';
 }
 
 echo "</td></tr>\n";
