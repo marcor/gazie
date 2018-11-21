@@ -33,7 +33,7 @@ if (!isset($_GET['field'])) {
 ?>
 <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?></div>
 <?php
-$where = "tipdoc = 'ADT'";
+$where = "tipdoc = 'ADT' OR tipdoc = 'RDL'";
 $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav -> output();
 ?>

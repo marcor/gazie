@@ -29,7 +29,7 @@ if (isset($_GET["auxil"]))
     $sezione = $_GET["auxil"];
 else
     $sezione = 1;
-$where = "(tipdoc = 'DDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' ) AND seziva = $sezione";
+$where = "(tipdoc = 'DDL' OR tipdoc = 'RDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' ) AND seziva = $sezione";
 $all = $where;
 $anno = date("Y");
 
