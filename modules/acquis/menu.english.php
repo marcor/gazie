@@ -53,7 +53,8 @@ $transl['acquis'] = array('name' => "Purchases",
         16 => array("Purchase depreciable asset", "Purchase depreciable asset"),
         17 => array("Pagamento RiBa fornitori", "Paga RiBa a fornitori"),
 		18 => array("Automatic vendor order", "Automatic vendor order"),
-		19 => array("Acquisisci fattura elettronica", "Acquisisci fattura elettronica")
+		19 => array("Acquisisci fattura elettronica", "Acquisisci fattura elettronica"),
+        20 => array("Ricevuto DdT ritorno da lavorazione", "Ricevuto DdT ritorno da lavorazione")
     )
 );
 ?>

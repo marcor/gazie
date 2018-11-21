@@ -133,7 +133,7 @@ class magazzForm extends GAzieForm {
     function getOperators() {  // Creo l'array associativo degli operatori dei documenti
         return array("VCO" => -1, "VRI" => -1, "DDT" => -1, "FAD" => -1, "FAI" => -1, "FAP" => -1, "FNC" => 1, "FND" => -1,
             "DDR" => -1, "DDL" => -1, "DDV" => -1, "RDV" => 1, "DDY" => -1, "AFA" => 1, "ADT" => 1, "AFC" => -1, "VPR" => -1, 
-            "VOR" => -1, "VOW" => -1, "VOG" => -1, "CMR" => -1);
+            "VOR" => -1, "VOW" => -1, "VOG" => -1, "CMR" => -1, "RDL" => 1);
     }
 
     function getStockEvalMethod() {  // Prendo il metodo di valorizzazione del magazzino impostato in configurazione azienda

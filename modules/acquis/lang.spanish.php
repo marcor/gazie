@@ -142,7 +142,7 @@ $strScript = array("admin_fornit.php" =>
     ),
     "admin_docacq.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',
-        array("DDR" => "D.d.T. volver al Proveedor", "DDL" => "D.d.T. c / procesamiento", "AFA" => "Las facturas de compra", "ADT" => "D.d.T. de Compra", "AFC" => "Nota Credito Proveedor", "AOR" => "Pedidos a proveedores", "APR" => "Solicite un Presupuesto de Proveedores"),
+        array("DDR" => "D.d.T. volver al Proveedor", "RDL" => "D.d.T. ricevuto per ritorno da lavorazione", "DDL" => "D.d.T. c / procesamiento", "AFA" => "Las facturas de compra", "ADT" => "D.d.T. de Compra", "AFC" => "Nota Credito Proveedor", "AOR" => "Pedidos a proveedores", "APR" => "Solicite un Presupuesto de Proveedores"),
         'mesg' => array('La busqueda no dio resultados!',
             'Inserte al menos 2 caracteres!',
             'Cambiando cliente / proveedor'
