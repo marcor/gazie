@@ -69,8 +69,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
 	if (!isset($_POST['datreg'])){
 		$form['datreg'] = date("d/m/Y");
+		$form['seziva'] = 1;
 	} else {
 		$form['datreg'] = substr($_POST['datreg'],0,10);
+		$form['seziva'] = intval($_POST['seziva']);
 	}
 	if (isset($_POST['Submit_file'])) { // conferma invio upload file
         if (!empty($_FILES['userfile']['name'])) {
@@ -108,6 +110,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	if ($tesdoc && 	!empty($form['fattura_elettronica_original_name'])) { // c'è anche sul database, è una modifica
 		$toDo = 'update';
 		$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
+		$form['seziva'] = $tesdoc['seziva'];
 		$msg['err'][] = 'file_exists';
 	} elseif (!empty($form['fattura_elettronica_original_name'])) { // non c'è sul database è un inserimento
 		$toDo = 'insert';
@@ -329,7 +332,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_pi, $admin_aziend['masfor'], $form['pagame']);
 			}
 			$form['tipdoc'] = 'AFA'; 
-			$form['seziva'] = 1; 
 			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
 			$form['numfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
 			$form['datfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
@@ -389,18 +391,18 @@ if ($toDo=='insert' || $toDo=='update' ) {
         </div> <!-- chiude row  -->
     </div>                    
     <div class="panel-body">
-            <div class="row">
-                <div class="col-md-12">
+        <div class="row">
+            <div class="col-sm-12 col-md-4 col-lg-4">
+                <div class="form-group">
                     <div class="form-group">
-                        <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
+                        <label for="seziva" class="col-sm-8 control-label"><?php echo $script_transl['seziva']; ?></label>
                         <?php
-                        $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-sm-8", '', 'style="max-width: 100px;"');
+                        $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-sm-4", '', 'style="max-width: 100px;"');
                         ?>
                     </div>
                 </div>
-            </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-sm-12 col-md-6 col-lg-6">
+            </div>                    
+            <div class="col-sm-12 col-md-4 col-lg-4">
                 <div class="form-group">
                     <label for="datreg" class="col-sm-6 control-label"><?php echo $script_transl['datreg']; ?></label>
                     <div class="col-sm-6">
@@ -408,7 +410,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
                     </div>
                 </div>
             </div>                    
-            <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="col-sm-12 col-md-4 col-lg-4">
                 <div class="form-group">
                     <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?></label>
                     <div>

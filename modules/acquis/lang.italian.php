@@ -585,6 +585,7 @@ $strScript = array("admin_fornit.php" =>
         ),
         'head_text1' => "La fatture elettronica: ",
 		'head_text2' => " che stai per acquisire è visibile in fondo.<br/> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificarla sia prima che dopo averla contabilizzata agendo attraverso le apposite interfacce. Dopo l'acquisizione verrai portato sulla lista delle fatture di acquisto già inserite",
+        'seziva' => 'Sezione IVA',
         'datreg' => 'Data Registrazione',
 		'pagame'=>'Modalità di pagamento',
         'nrow' => 'Rigo',
