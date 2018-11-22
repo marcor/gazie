@@ -389,6 +389,16 @@ if ($toDo=='insert' || $toDo=='update' ) {
         </div> <!-- chiude row  -->
     </div>                    
     <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
+                        <?php
+                        $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-sm-8", '', 'style="max-width: 100px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
         <div class="row">
             <div class="col-sm-12 col-md-6 col-lg-6">
                 <div class="form-group">

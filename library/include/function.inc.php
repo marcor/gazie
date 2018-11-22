@@ -922,7 +922,7 @@ class selectPartner extends SelectBox {
                     }
                     preg_match("/^id_([0-9]+)$/", $val, $match);
                     foreach ($partner as $r) {
-                        if ($r['codpart'] > 0) {
+                        if (isset($r['codpart']) && $r['codpart'] > 0) {
                             $r['codice'] = $r['codpart'];
                         }
                         $style = '';

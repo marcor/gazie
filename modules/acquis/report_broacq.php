@@ -123,6 +123,51 @@ $(function() {
       autoOpen: false
    });
 });
+
+function confirmemail(cod_partner,id_tes) {
+	$.get("search_email_address.php",
+		  {clfoco: cod_partner},
+		  function (data) {
+			var j=0;
+			$.each(data, function (i, value) {
+				if (j==0){
+					$("#mailbutt").append("<div>Indirizzi archiviati:</div>");
+				}
+				$("#mailbutt").append("<div align='center'><button id='fillmail_" + j+"'>" + value.email + "</button></div>");
+                $("#fillmail_" + j).click(function () {
+					$("#mailaddress").val(value.email);
+				});
+				j++;
+			});
+		  }, "json"
+         );
+		 
+	$( function() {
+    var dialog
+	,	 
+    emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+	dialog = $("#confirm_email").dialog({
+		modal: true,
+		show: "blind",
+		hide: "explode",
+		buttons: {
+			Invia: function() {
+				if ( !( emailRegex.test( $("#mailaddress").val() ) ) ) {
+					alert('Mail formalmente errata');
+				} else {
+					$("#mailbutt div").remove();
+				}
+
+				}
+		},
+		close: function(){
+				$("#mailbutt div").remove();
+		}
+
+	});
+	});
+}
+
 function confirMail(link){
    tes_id = link.id.replace("doc", "");
    $.fx.speeds._default = 500;
@@ -131,11 +176,11 @@ function confirMail(link){
    $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
    $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
    $( "#dialog" ).dialog({
-         modal: "true",
-      show: "blind",
-      hide: "explode",
-         buttons: {
-                      " <?php echo $script_transl['submit']; ?> ": function() {
+   modal: "true",
+   show: "blind",
+   hide: "explode",
+   buttons: {
+            " <?php echo $script_transl['submit']; ?> ": function() {
                          window.location.href = targetUrl;
                       },
                       " <?php echo $script_transl['cancel']; ?>": function() {
@@ -330,8 +375,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			</td>
 			<td align=\"center\">";
     if (!empty($fornitore["e_mail"])) {
-        echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$fornitore["e_mail"].'"
-        mail="'.$fornitore["e_mail"].'" namedoc="'.$tipodoc.' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
+        echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\');" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-pencil"></i></a>';
     } else {
 		echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="admin_fornit.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	 }		  
@@ -348,6 +392,16 @@ while ($r = gaz_dbi_fetch_array($result)) {
 </table>
     </div>
 </form>
+<div class="modal" id="confirm_email" title="Invia mail...">
+    <fieldset>
+        <div>
+            <label for="mailaddress">all'indirizzo:</label>
+            <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="50" />
+        </div>
+        <div id="mailbutt">
+		</div>
+    </fieldset>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

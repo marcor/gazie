@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -30,20 +29,27 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
+
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$tesdoc_ref =  filter_var(substr($_GET['id_tesdoc_ref'],0,15),FILTER_SANITIZE_MAGIC_QUOTES);
-$id_exc =  filter_var(intval($_GET['id_exc']),FILTER_SANITIZE_MAGIC_QUOTES);
-$return_arr = array();
-$sqlquery= "SELECT * FROM ".$gTables['paymov']."
-            LEFT JOIN ".$gTables['rigmoc']." ON ( ".$gTables['rigmoc'].".id_rig = ".$gTables['paymov'].".id_rigmoc_doc OR ".$gTables['rigmoc'].".id_rig = ".$gTables['paymov'].".id_rigmoc_pay ) 
-            LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['tesmov'].".id_tes = ".$gTables['rigmoc'].".id_tes
-            WHERE id_tesdoc_ref='".$tesdoc_ref."' AND ".$gTables['rigmoc'].".id_rig <> $id_exc ORDER BY ".$gTables['tesmov'].".datreg DESC, id_tesdoc_ref DESC, id_rig";
-$result = gaz_dbi_query($sqlquery);
+$clfoco_ref=intval($_GET['clfoco']);
+$ret=array();
 
+// aggiungo le email che trovo sulle testate
+$sqlquery= "SELECT email FROM ".$gTables['tesbro']." WHERE email <> '' AND clfoco=".$clfoco_ref." UNION SELECT email FROM ".$gTables['letter']." WHERE email <> '' AND clfoco=".$clfoco_ref." GROUP BY email";
+$result = gaz_dbi_query($sqlquery);
 while($row = gaz_dbi_fetch_array($result)) {
-            array_push($return_arr,$row);
+	array_push($ret,$row);
 }
-echo json_encode($return_arr);
+// riprendo anche la mail del fornitore dalla anagrafica
+$from = $gTables['clfoco'] . ' AS cli LEFT JOIN ' . $gTables['anagra'] . ' AS ana ON cli.id_anagra=ana.id ';
+$rs = gaz_dbi_dyn_query('e_mail', $from, 'cli.codice ='.$clfoco_ref);
+while ($row = gaz_dbi_fetch_array($rs)) {
+	if (!empty($row['e_mail']) && !in_array($row['e_mail'], $ret)) {
+		$ret[]['email']=$row['e_mail'];
+	}
+}
+
+echo json_encode($ret);
 ?>
 
