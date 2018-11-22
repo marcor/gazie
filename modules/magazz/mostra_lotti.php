@@ -62,9 +62,19 @@ if (isset($_POST['close'])){
 	foreach (glob("../../modules/camp/tmp/*") as $fn) {// prima cancello eventuali precedenti file temporanei
              unlink($fn);
     } 
-	
+	$tot=0;
 	if (count($lm->available) > 0) { 
+		$count=array();
         foreach ($lm->available as $v_lm) {
+			$key=$v_lm['identifier']." - ".gaz_format_date($v_lm['expiry']); // chiave per il conteggio dei totali raggruppati per lotto e scadenza
+			if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
+				// Aggiungo la chiave con il rispettivo valore iniziale
+				$count[$key] = $v_lm['rest'];
+			} else {
+				// Altrimenti, aggiorno il valore della chiave
+				$count[$key] += $v_lm['rest'];
+			}
+			$tot+=$v_lm['rest'];
                $img="";
                echo '<tr class="FacetDataTD"><td class="FacetFieldCaptionTD">'
                . $v_lm['id']
@@ -94,13 +104,61 @@ if (isset($_POST['close'])){
 									echo '<i class="glyphicon glyphicon-eye-close"></i>';
 								} 
 				}
-            } 
-        } else {
-				echo '<div><button class="btn btn-xs btn-danger" type="image" >Non ci sono lotti disponibili.</button></div>';
-            }
+            }        
 ?>
-	</table>
-	</body>	
-	<form method="post" name="closewindow">  
+		</table>
+		</body>	
+		<div class="panel panel-default gaz-table-form">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="form-group">
+						<div class="col-md-12">						
+							<div class="text-center"><b>Totale disponibilità per lotti raggruppati</b>
+							</div>
+						</div>
+					</div>															
+				</div><!-- chiude row  -->	
+				<?php
+				foreach($count as $key => $val){
+					?>
+					<div class="row">
+						<div class="form-group">
+							<div class="col-sm-6">									
+							<?php
+							echo "<b>Lotto:</b> ",$key;
+							?>										
+							</div>
+							<div class="col-sm-6">									
+							<?php
+							echo "<b>Disponibile:</b> ",$val;
+							?>
+							</div>
+						</div>
+					</div><!-- chiude row  -->	
+					<?php
+				}		
+				?>
+				<div class="row">
+						<div class="form-group">
+							<div class="col-sm-6">
+							<?php
+							echo "<b>Totale prodotto disponibile:</b> ";
+							?>
+							</div>
+							<div class="col-sm-6">
+							<?php
+							echo $tot;
+							?>
+							</div>
+						</div>
+					</div>
+			</div>                
+		</div>
+		<?php
+	} else {
+		echo '<div><button class="btn btn-xs btn-danger" type="image" >Non ci sono lotti disponibili.</button></div>';
+    }
+	?>
+	<form method="post" name="closewindow">
 	<input type="submit" title="elimina file temporanei e chiudi finestra" name="close" value="X"  style="float:right">
 	</form>	
