@@ -29,6 +29,7 @@ $modal_ok_insert = false;
 $today=	strtotime(date("Y-m-d H:i:s",time())); 
 $presente=""; 
 $largeimg=0;
+$gForm = new magazzForm();
 
 /** ENRICO FEDELE */
 /* Inizializzo per aprire in finestra modale */
@@ -97,20 +98,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali 
 	
     $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
-	/*Antonio Germani non serve per quaderno di campagna
-    $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
-    $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
-	 */
+	
     $form['rows'] = array();
-    /** inizio modifica FP 03/12/2015
-     * fornitore
-    */
-		
-    /** fine modifica FP */
-    // inizio documenti/certificati
+   
     $ndoc = 0;
     if (isset($_POST['rows'])) {
         foreach ($_POST['rows'] as $ndoc => $value) {
@@ -379,9 +369,10 @@ if (isset($_POST['codice']) && strlen($form['codice'])>3){
 
 /** ENRICO FEDELE */
 /* Solo se non sono in finestra modale carico il file di lingua del modulo */
+
 if ($modal === false) {
     require("../../library/include/header.php");
-    $script_transl = HeadMain();
+    $script_transl = HeadMain(0,array('custom/autocomplete',));
 } else {
     $script = basename($_SERVER['PHP_SELF']);
     require("../../language/" . $admin_aziend['lang'] . "/menu.inc.php");
@@ -433,7 +424,7 @@ if ($modal_ok_insert === true) {
     echo '<div class="alert alert-success" role="alert">' . $script_transl['modal_ok_insert'] . '</div>';
     echo '<div class=" text-center"><button class="btn btn-lg btn-default" type="submit" name="none">' . $script_transl['iterate_invitation'] . '</button></div>';
 } else {
-    $gForm = new magazzForm();
+    
 	if ($form['good_or_service']==0) {
 		$mv = $gForm->getStockValue(false, $form['codice']);
 		$magval = array_pop($mv);
@@ -472,7 +463,7 @@ if ($modal_ok_insert === true) {
 	$stringa=substr($stringa,0,-2);
 	echo $stringa;
 	?>],
-		minLength:3,
+		minLength:2,
 	select: function(event, ui) {
         //assign value back to the form element
         if(ui.item){
@@ -490,18 +481,12 @@ if ($modal_ok_insert === true) {
                 <div class="row">
                     <div class="col-md-12">
 					<div class="col-sm-12 control-label">
-					<p> Per usufruire del database del Ministero della salute usare come codice il nome del prodotto, scelto nell'elenco che appare, senza modificarlo! </P>
+					<p> Per usufruire del database del Ministero della salute usare come codice il nome commerciale del prodotto, scelto nell'elenco che appare dopo aver digitato almeno 2 caratteri, senza modificarlo! </P>
 					</div>
                         <div class="form-group">
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
                             <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['codice']; ?>" name="codice" maxlength="15" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete -->
-                        </div>
-						<!-- Antonio Germani ho inserito il submit nello script autocompletamento
-						<div class="col-sm-4 control-label">
-						<button type="submit" class="btn btn-default btn-sm" name="dbministero" title="Conferma!"><i class="glyphicon glyphicon-ok"></i></button>
-						<span> dopo la scelta cliccare su conferma! </span>
-						</div>
-						-->
+                        </div>					
                     </div>
                 </div><!-- chiude row  -->
                 <div class="row">
@@ -517,7 +502,7 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for = "good_or_service" class = "col-sm-4 control-label"><?php echo $script_transl['good_or_service']; ?>*</label>
     <?php
-    $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'onchange = "this.form.submit()"; style = "max-width: 200px;"');
+    $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'onchange = "this.form.submit();" style = "max-width: 200px;"');
     ?>
                         </div>
                     </div>
@@ -658,7 +643,7 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
 
- <!-- Antonio Germani  il TEMPO DI SOSPENSIONE -->
+	<!-- Antonio Germani  il TEMPO DI SOSPENSIONE -->
                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -667,7 +652,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
- <!-- Antonio Germani  la DOSE AD ETTARO  -->
+	<!-- Antonio Germani  la DOSE AD ETTARO  -->
 				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -684,9 +669,7 @@ if ($modal_ok_insert === true) {
                             <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['rame_metallico']; ?>" name="rame_metallico" maxlength="13" />
                         </div>
                     </div>
-                </div><!-- chiude row  -->			
- 
- 
+                </div><!-- chiude row  --> 
     <?php if ($toDo == 'update') { ?>
                     <div class="row">
                         <div class="col-md-12">
@@ -704,7 +687,7 @@ if ($modal_ok_insert === true) {
                                             </a><?php echo $val['title']; ?>
                                             <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
 
-            <?php } ?>
+									<?php } ?>
                                         <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
                                     </div>
                                     <?php } else { // non ho documenti  ?>
@@ -713,7 +696,7 @@ if ($modal_ok_insert === true) {
                             </div>
                         </div>
                     </div>
-    <?php } ?>
+  <?php } ?>
 	
 				<div class="row">
                     <div class="col-md-12">
