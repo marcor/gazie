@@ -154,10 +154,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     /*    $form['in_artsea'] = $_POST['in_artsea']; Non serve più */
     $form['in_codart'] = $_POST['in_codart'];
     $form['in_pervat'] = $_POST['in_pervat'];
+    $form['in_ritenuta'] = $_POST['in_ritenuta'];
     $form['in_unimis'] = $_POST['in_unimis'];
     $form['in_prelis'] = $_POST['in_prelis'];
     $form['in_sconto'] = $_POST['in_sconto'];
-    $form['in_quanti'] = gaz_format_quantity($_POST['in_quanti'], 0, $admin_aziend['decimal_quantity']);
+    $form['in_quanti'] = floatval($_POST['in_quanti']);
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
@@ -178,8 +179,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['tiprig'] = intval($value['tiprig']);
             $form['rows'][$i]['codart'] = substr($value['codart'], 0, 15);
             $form['rows'][$i]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);
+            $form['rows'][$i]['ritenuta'] = preg_replace("/\,/", '.', $value['ritenuta']);
             $form['rows'][$i]['unimis'] = substr($value['unimis'], 0, 3);
-            $form['rows'][$i]['prelis'] = number_format(floatval(preg_replace("/\,/", '.', $value['prelis'])), $admin_aziend['decimal_price'], '.', '');
+            $form['rows'][$i]['prelis'] = floatval(preg_replace("/\,/", '.', $value['prelis']));
             $form['rows'][$i]['sconto'] = floatval(preg_replace("/\,/", '.', $value['sconto']));
             $form['rows'][$i]['quanti'] = gaz_format_quantity($value['quanti'], 0, $admin_aziend['decimal_quantity']);
             $form['rows'][$i]['codvat'] = intval($value['codvat']);
@@ -223,6 +225,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_tiprig'] = $form['rows'][$key_row]['tiprig'];
                     $form['in_codart'] = $form['rows'][$key_row]['codart'];
                     $form['in_pervat'] = $form['rows'][$key_row]['pervat'];
+                    $form['in_ritenuta'] = $form['rows'][$key_row]['ritenuta'];
                     $form['in_unimis'] = $form['rows'][$key_row]['unimis'];
                     $form['in_prelis'] = $form['rows'][$key_row]['prelis'];
                     $form['in_sconto'] = $form['rows'][$key_row]['sconto'];
@@ -653,6 +656,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if ($fornitore['cosric'] > 0) {
             $form['in_codric'] = $fornitore['cosric'];
         }
+        if ($fornitore['ritenuta'] > 0 ) { // carico la ritenuta se previsto
+            $form['in_ritenuta'] = $fornitore['ritenuta'];
+        }
         $form['hidden_req'] = '';
     }
 
@@ -693,7 +699,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
             $form['rows'][$old_key]['codart'] = $form['in_codart'];
             $form['rows'][$old_key]['codric'] = $form['in_codric'];
-            $form['rows'][$old_key]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
+            $form['rows'][$old_key]['ritenuta'] = $form['in_ritenuta'];
+            $form['rows'][$old_key]['prelis'] = floatval(preg_replace("/\,/", '.', $form['in_prelis']));
             $form['rows'][$old_key]['sconto'] = $form['in_sconto'];
             $form['rows'][$old_key]['codvat'] = $form['in_codvat'];
             $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
@@ -720,7 +727,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$old_key]['quanti'] = 1;
                     $msg .='57+';
                 }
-                $form['rows'][$old_key]['prelis'] = number_format($artico['preacq'], $admin_aziend['decimal_price'], '.', '');
+                $form['rows'][$old_key]['prelis'] = floatval(preg_replace("/\,/", '.', $artico['preacq']));
             } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['annota'] = "";
@@ -750,6 +757,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['descri'] = $form['in_descri'];
             $form['rows'][$i]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$i]['status'] = "INSERT";
+            $form['rows'][$i]['ritenuta'] = $form['in_ritenuta'];
             $form['rows'][$i]['identifier'] = '';
             $form['rows'][$i]['expiry'] = '';
             $form['rows'][$i]['filename'] = '';
@@ -785,7 +793,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 /* fine modifica FP */
 
-                $form['rows'][$i]['prelis'] = number_format($artico['preacq'], $admin_aziend['decimal_price'], '.', '');
+                $form['rows'][$i]['prelis'] = floatval(preg_replace("/\,/", '.', $artico['preacq']));
                 $form['rows'][$i]['codvat'] = $admin_aziend['preeminent_vat'];
                 $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
                 $form['rows'][$i]['pervat'] = $iva_azi['aliquo'];
@@ -851,9 +859,38 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['prelis'] = $form['in_prelis'];
                 $form['rows'][$i]['codric'] = $form['in_codric'];
                 $form['rows'][$i]['sconto'] = 0;
+                $form['rows'][$i]['ritenuta'] = 0;
                 $form['rows'][$i]['codvat'] = $form['in_codvat'];
                 $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
                 $form['rows'][$i]['pervat'] = $iva_row['aliquo'];
+            } elseif ($form['in_tiprig'] == 4) { // cassa previdenziale
+                $form['rows'][$i]['codart'] = $admin_aziend['fae_tipo_cassa'];// propongo quella aziendale uso il codice articolo
+                $form['rows'][$i]['annota'] = "";
+                $form['rows'][$i]['pesosp'] = "";
+                $form['rows'][$i]['gooser'] = 0;
+                $form['rows'][$i]['unimis'] = "";
+                $form['rows'][$i]['quanti'] = 0;
+                $form['rows'][$i]['prelis'] = 0;
+                $form['rows'][$i]['codric'] = $admin_aziend['c_payroll_tax'];
+                $form['rows'][$i]['sconto'] = 0;
+                $form['rows'][$i]['codvat'] = $admin_aziend['preeminent_vat'];
+                $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
+                $form['rows'][$i]['pervat'] = $iva_azi['aliquo'];
+                if ($form['in_codvat'] > 0) {
+                    $form['rows'][$i]['codvat'] = $form['in_codvat'];
+                    $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
+                    $form['rows'][$i]['pervat'] = $iva_row['aliquo'];
+                    $form['rows'][$i]['tipiva'] = $iva_row['tipiva'];
+                }
+				$form['rows'][$i]['ritenuta'] = $form['in_ritenuta'];
+				// carico anche la descrizione corrispondente dal file xml
+	            $xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
+				foreach ($xml->record as $v) {
+					$selected = '';
+					if ($v->field[0] == $form['rows'][$i]['codart']) {
+						$form['rows'][$i]['descri']= 'Contributo '.strtolower($v->field[1]);
+					}
+				}
             } elseif ($form['in_tiprig'] > 5 && $form['in_tiprig'] < 9) { //testo
                 $form["row_$i"] = "";
                 $form['rows'][$i]['codart'] = "";
@@ -986,6 +1023,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     /*    $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
+    $form['in_ritenuta'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0.000;
     $form['in_sconto'] = 0;
@@ -1094,6 +1132,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['tiprig'] = $row['tiprig'];
         $form['rows'][$i]['codart'] = $row['codart'];
         $form['rows'][$i]['pervat'] = $row['pervat'];
+        $form['rows'][$i]['ritenuta'] = $row['ritenuta'];
         $form['rows'][$i]['unimis'] = $row['unimis'];
         $form['rows'][$i]['prelis'] = $row['prelis'];
         $form['rows'][$i]['sconto'] = $row['sconto'];
@@ -1176,6 +1215,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     /*    $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
     $form['in_pervat'] = "";
+    $form['in_ritenuta'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0.000;
     $form['in_sconto'] = 0;
@@ -1458,6 +1498,7 @@ echo "<table class=\"Tlarge table table-striped table-bordered table-condensed t
 echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_pervat']}\" name=\"in_pervat\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_unimis']}\" name=\"in_unimis\" />\n";
+echo '<input type="hidden" value="' . $form['in_ritenuta'] . '" name="in_ritenuta" />';
 echo "<input type=\"hidden\" value=\"{$form['in_prelis']}\" name=\"in_prelis\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_id_mag']}\" name=\"in_id_mag\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_annota']}\" name=\"in_annota\" />\n";
@@ -1505,6 +1546,7 @@ $gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
 echo $script_transl[18] . ": ";
 $gForm->selectAccount('in_codric', $form['in_codric'], intval(substr($form['in_codric'], 0, 1)));
 echo " %$script_transl[24]: <input type=\"text\" value=\"{$form['in_sconto']}\" maxlength=\"4\" size=\"1\" name=\"in_sconto\">";
+echo ' % Ritenuta: <input type="text" value="' . $form['in_ritenuta'] . "\" maxlength=\"6\" size=\"1\" name=\"in_ritenuta\">";
 echo "</td><td class=\"FacetColumnTD\"> $script_transl[19]: ";
 $select_in_codvat = new selectaliiva("in_codvat");
 $select_in_codvat->addSelected($form["in_codvat"]);
@@ -1536,7 +1578,7 @@ echo '</table>
 		   <tbody>';
 /** ENRICO FEDELE */
 $castel = array();
-
+$rit = 0;
 $last_row = array();
 foreach ($form['rows'] as $key => $value) {
     //calcolo il totale del peso in kg
@@ -1552,18 +1594,19 @@ foreach ($form['rows'] as $key => $value) {
     //calcolo importo rigo
     if ($tiporigo == 0) {//se del tipo normale
         $imprig = CalcolaImportoRigo($form['rows'][$key]['quanti'], $form['rows'][$key]['prelis'], $form['rows'][$key]['sconto']);
-    } elseif ($tiporigo == 1) {//ma se del tipo forfait
+    } elseif ($tiporigo == 1 || $tiporigo == 4) {//ma se del tipo forfait o cassa previdenziale
         $imprig = CalcolaImportoRigo(1, $form['rows'][$key]['prelis'], 0);
     }
-    if ($tiporigo <= 1) {//ma solo se del tipo normale o forfait
+    if ($tiporigo <= 1|| $tiporigo == 4 ) {//ma solo se del tipo normale, forfait o cassa previdenziale 
         if (!isset($castel[$codice_vat])) {
             $castel[$codice_vat] = "0.00";
         }
         $castel[$codice_vat] = number_format(($castel[$codice_vat] + $imprig), 2, '.', '');
     }
-    if ($form['rows'][$key]['tiprig'] == 1) {
-        $imprig = number_format($form['rows'][$key]['prelis'], 2, '.', '');
+    if ($tiporigo == 1 || $tiporigo == 4 ) {
+        $imprig = number_format($value['prelis'], 2, '.', '');
     }
+    $rit += round($imprig * $value['ritenuta'] / 100, 2);
 
     //stampo i righi in modo diverso a secondo del tipo
     echo '<tr>
@@ -1572,6 +1615,7 @@ foreach ($form['rows'] as $key => $value) {
 			<input type="hidden" value="' . $value['tiprig'] . '" name="rows[' . $key . '][tiprig]" />
 			<input type="hidden" value="' . $value['codvat'] . '" name="rows[' . $key . '][codvat]" />
 			<input type="hidden" value="' . $value['pervat'] . '" name="rows[' . $key . '][pervat]" />
+			<input type="hidden" value="' . $value['ritenuta'] . '" name="rows[' . $key . '][ritenuta]" />
 			<input type="hidden" value="' . $value['codric'] . '" name="rows[' . $key . '][codric]" />
 			<input type="hidden" value="' . $value['id_mag'] . '" name="rows[' . $key . '][id_mag]" />
 			<input type="hidden" value="' . $value['annota'] . '" name="rows[' . $key . '][annota]" />
@@ -1657,8 +1701,8 @@ foreach ($form['rows'] as $key => $value) {
 					<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[{$key}][identifier]\" value=\"\" /><input type=\"hidden\" name=\"rows[{$key}][expiry]\" value=\"\" /></td>
-					<td align=\"right\">
-						<input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" id=\"rows_".$key."_prelis\" onchange=\"document.docacq.last_focus.value=this.id; this.form.submit()\" />
+					<td>
+						<input class=\"text-right\" type=\"text\" name=\"rows[{$key}][prelis]\" value=\"".number_format($value['prelis'],2,'.','')."\" maxlength=\"11\" size=\"7\" id=\"rows_".$key."_prelis\" onchange=\"document.docacq.last_focus.value=this.id; this.form.submit()\" />
 					</td>
 					<td>{$value['pervat']}%</td>
 					<td class=\"codricTooltip\" title=\"Contropartita\">" . $value['codric'] . "</td>\n";
@@ -1705,6 +1749,27 @@ foreach ($form['rows'] as $key => $value) {
 					<td></td>
 					<td></td>\n";
             $last_row[] = array_unshift($last_row, 'var.tot.fattura');
+            break;
+        case "4": // rigo cassa previsenziale
+            echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"*Tipo Cassa ".$value['codart']." *\" />
+				  	</td>
+				  	<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /></td>
+					<td>
+						<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>
+					<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[{$key}][identifier]\" value=\"\" /><input type=\"hidden\" name=\"rows[{$key}][expiry]\" value=\"\" /></td>
+					<td>
+						<input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"".number_format($value['prelis'],2,'.','')."\"class=\"text-right\" maxlength=\"11\" size=\"7\" id=\"rows_".$key."_prelis\" onchange=\"document.docacq.last_focus.value=this.id; this.form.submit()\" />
+					</td>
+					<td>{$value['pervat']}%</td>
+					<td class=\"codricTooltip\" title=\"Contropartita\">" . $value['codric'] . "</td>\n";
+            $last_row[] = array_unshift($last_row, 'forfait');
             break;
         case "6":
         case "7":
@@ -1952,7 +2017,18 @@ if ($i > 0) {
 			<td align=\"right\">" . number_format($totivafat, 2, '.', '') . "</td>
 			<td align=\"right\">" . $quatot . "</td>
 			<td align=\"right\">" . number_format(($totimpfat + $totivafat), 2, '.', '') . "</td>
+			
 		   </tr>\n";
+    if ($rit > 0) {
+        echo '	<tr>
+					<td class="text-right" colspan="7">Ritenuta</td>
+					<td class="text-right">' . gaz_format_number($rit) . '</td>
+				</tr>
+				<tr>
+					<td class="text-right" colspan="7">Netto a pagare</td>
+					<td class="text-right">' . gaz_format_number($totimpfat + $totivafat - $rit) . '</td>
+				</tr>';
+    }
 
     if ($toDo == 'update') {
         echo '<tr>

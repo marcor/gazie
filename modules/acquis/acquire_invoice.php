@@ -182,7 +182,27 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	}
 
 	if ($f_ex) { // non ho errori  vincolanti sul file posso proporre la visualizzazione
-		// INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
+		/*	Prendo i valori delle ritenute d'acconto che purtroppo sul tracciato ufficiale non viene distinto a livello di linee pertanto devo ricavarmele */
+		$tot_ritenute = ($doc->getElementsByTagName("ImportoRitenuta")->length >= 1 ? $doc->getElementsByTagName('ImportoRitenuta')->item(0)->nodeValue : 0 );	
+		$ali_ritenute = ($doc->getElementsByTagName("AliquotaRitenuta")->length >= 1 ? $doc->getElementsByTagName('AliquotaRitenuta')->item(0)->nodeValue : 0 );	
+		// mi calcolo le eventuali ritenute relative alle casse previdenziali da annotare sotto quando aggiungerò i righi tipo 4 
+		$ritenute_su_casse = 0;
+		$DatiCassaPrevidenziale = $doc->getElementsByTagName('DatiCassaPrevidenziale');
+		foreach ($DatiCassaPrevidenziale as $item) { // attraverso per trovare gli elementi cassa previdenziale 
+			if ($item->getElementsByTagName("Ritenuta")->length >= 1 && $item->getElementsByTagName('Ritenuta')->item(0)->nodeValue=='SI'){
+				// su questo contributo cassa ho la ritenuta
+				$ritenute_su_casse += round($item->getElementsByTagName('ImportoContributoCassa')->item(0)->nodeValue*$ali_ritenute/100,2); 
+			} 
+		}
+		// calcolo il residuo ritenute che sono costretto a mettere sulla prima linea questa è sicuramente una carenza strutturale del tracciato che non fa alcun riferimento alle linee 
+		$res_ritenute=round($tot_ritenute-$ritenute_su_casse,2); 
+
+		/* 
+		INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
+		a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva 
+		al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei
+		righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato 
+		*/
 		$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
 		foreach ($DettaglioLinee as $item) {
 			$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
@@ -196,7 +216,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
 				$form['rows'][$nl]['tiprig'] = 0;
 			} else {
-				$form['rows'][$nl]['quanti'] = '';
+				$form['rows'][$nl]['quanti'] = 0;
 				$form['rows'][$nl]['tiprig'] = 1; // rigo forfait
 			}
 			$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
@@ -213,6 +233,18 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 			}
 			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
+			// se ho un residuo di ritenuta d'acconto valorizzo con l'aliquota di cui sopra
+			$form['rows'][$nl]['ritenuta'] = 0;
+			 if (round($res_ritenute,2)>=0.01){
+				if ($form['rows'][$nl]['tiprig']==0){
+					$res_ritenute -= CalcolaImportoRigo($form['rows'][$nl]['quanti'],$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']))*$ali_ritenute/100;
+				} else {
+					$res_ritenute -= CalcolaImportoRigo(1,$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']))*$ali_ritenute/100;
+				}
+				if (round($res_ritenute,2) >= 0) { // setto l'aliquota ritenuta ma solo se c'è stata capienza
+					$form['rows'][$nl]['ritenuta'] = $ali_ritenute;
+				}
+			 } 
 			$post_nl = $nl-1;
 			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
@@ -246,6 +278,53 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 			}
 		}
+
+		/*
+			QUI TRATTERO' gli elementi <DatiCassaPrevidenziale> come righi accodandoli ad essi su rigdoc (tipdoc=4) 
+		*/
+		foreach ($DatiCassaPrevidenziale as $item) { // attraverso per trovare gli elementi cassa previdenziale
+			$nl++;
+			$form['rows'][$nl]['codart'] = $item->getElementsByTagName('TipoCassa')->item(0)->nodeValue;
+			$form['rows'][$nl]['tiprig'] = 4;
+			// carico anche la descrizione corrispondente dal file xml
+            $xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
+			foreach ($xml->record as $v) {
+				$selected = '';
+				if ($v->field[0] == $form['rows'][$nl]['codart']) {
+					$form['rows'][$nl]['descri']= 'Contributo '.strtolower($v->field[1]);
+				}
+			}
+			$form['rows'][$nl]['unimis'] = '';
+			$form['rows'][$nl]['quanti'] = '';
+			$form['rows'][$nl]['sconto'] = 0;
+			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('ImportoContributoCassa')->item(0)->nodeValue;
+			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
+			$form['rows'][$nl]['ritenuta']=0;
+			if ($item->getElementsByTagName("Ritenuta")->length >= 1 && $item->getElementsByTagName('Ritenuta')->item(0)->nodeValue=='SI'){
+				// su questo contributo cassa ho la ritenuta
+				$form['rows'][$nl]['ritenuta']= $ali_ritenute; 
+			} 
+			$post_nl = $nl-1;
+			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
+				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
+			} else { 
+				/* al primo accesso dopo l'upload del file propongo:
+			   - i costi sulle linee (righe) in base al fornitore
+			   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato 
+				*/
+				$form['codric_'.$post_nl] = $form['partner_cost'];
+				$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']);
+				// analizzo le possibilità 
+				if ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
+					$form['codvat_'.$post_nl] = $expect_vat['codice'];
+				} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
+					$form['codvat_'.$post_nl] = 'non trovata';
+				}
+			}				
+		}	
+
+		
 
 		// ricavo l'allegato, e se presente metterò un bottone per permettere il download
 		$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
@@ -450,6 +529,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					'value' => '', 'type' => ''),
                 array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
 					'value' => $codvat_dropdown, 'type' => ''),
+                array('head' => 'Ritenuta', 'class' => 'text-center numeric', 
+					'value' => $v['ritenuta'], 'type' => ''),
                 array('head' => '%', 'class' => 'text-center numeric', 
 					'value' => $v['pervat'], 'type' => ''),
                 array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
