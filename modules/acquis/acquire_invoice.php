@@ -196,7 +196,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 		// calcolo il residuo ritenute che sono costretto a mettere sulla prima linea questa è sicuramente una carenza strutturale del tracciato che non fa alcun riferimento alle linee 
 		$res_ritenute=round($tot_ritenute-$ritenute_su_casse,2); 
-
+		
+		/* mi serve per tenere traccia della linea con l'importo più grosso in modo da poterci sommare gli eventuali errori di arrotondamento sul totale imponibile
+		 dovuto alla diversità del metodo di calcolo usato in gazie*/
+		$max_val_linea=1;
+		$tot_imponi=0.00;
 		/* 
 		INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
 		a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva 
@@ -216,7 +220,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
 				$form['rows'][$nl]['tiprig'] = 0;
 			} else {
-				$form['rows'][$nl]['quanti'] = 0;
+				$form['rows'][$nl]['quanti'] = '';
 				$form['rows'][$nl]['tiprig'] = 1; // rigo forfait
 			}
 			$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
@@ -235,12 +239,18 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
 			// se ho un residuo di ritenuta d'acconto valorizzo con l'aliquota di cui sopra
 			$form['rows'][$nl]['ritenuta'] = 0;
-			 if (round($res_ritenute,2)>=0.01){
-				if ($form['rows'][$nl]['tiprig']==0){
-					$res_ritenute -= CalcolaImportoRigo($form['rows'][$nl]['quanti'],$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']))*$ali_ritenute/100;
-				} else {
-					$res_ritenute -= CalcolaImportoRigo(1,$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']))*$ali_ritenute/100;
-				}
+			// calcolo l'importo del rigo 
+			if ($form['rows'][$nl]['tiprig']==0){
+				$form['rows'][$nl]['amount']=CalcolaImportoRigo($form['rows'][$nl]['quanti'],$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']));
+			} else {
+				$form['rows'][$nl]['amount']=CalcolaImportoRigo(1,$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']));
+			}
+			$tot_imponi += $form['rows'][$nl]['amount'];
+			if ($form['rows'][$nl]['amount']>$form['rows'][$max_val_linea]['amount']){ // è una linea con valore più alto delle precedenti
+				$max_val_linea=$nl;
+			}
+			if (round($res_ritenute,2)>=0.01){
+				$res_ritenute -= $form['rows'][$nl]['amount']*$ali_ritenute/100;
 				if (round($res_ritenute,2) >= 0) { // setto l'aliquota ritenuta ma solo se c'è stata capienza
 					$form['rows'][$nl]['ritenuta'] = $ali_ritenute;
 				}
@@ -298,8 +308,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['rows'][$nl]['quanti'] = '';
 			$form['rows'][$nl]['sconto'] = 0;
 			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('ImportoContributoCassa')->item(0)->nodeValue;
+			$form['rows'][$nl]['amount'] = $form['rows'][$nl]['prelis'];
+			$tot_imponi += $form['rows'][$nl]['amount'];
 			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
-			$form['rows'][$nl]['ritenuta']=0;
+			$form['rows'][$nl]['ritenuta']='';
 			if ($item->getElementsByTagName("Ritenuta")->length >= 1 && $item->getElementsByTagName('Ritenuta')->item(0)->nodeValue=='SI'){
 				// su questo contributo cassa ho la ritenuta
 				$form['rows'][$nl]['ritenuta']= $ali_ritenute; 
@@ -322,10 +334,18 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['codvat_'.$post_nl] = 'non trovata';
 				}
 			}				
-		}	
+		}
 
-		
-
+		/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
+		$ImponibileImporto = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/ImponibileImporto")->item(0)->nodeValue;
+		if ($ImponibileImporto>$tot_imponi){ // qualora ci sia una differenza (in genere 1 cent) la aggiunto al rigo di maggior valore
+			if ($form['rows'][$max_val_linea]['tiprig']==0){ //rigo normale con quantità variabile
+				$form['rows'][$max_val_linea]['prelis']+= ($ImponibileImporto-$tot_imponi)/$form['rows'][$max_val_linea]['quanti'];
+			} else {
+				$form['rows'][$max_val_linea]['prelis']+= $ImponibileImporto-$tot_imponi;
+			}
+			$form['rows'][$max_val_linea]['amount'] += $ImponibileImporto-$tot_imponi;	
+		}
 		// ricavo l'allegato, e se presente metterò un bottone per permettere il download
 		$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
 		if ($nf){
@@ -522,17 +542,17 @@ if ($toDo=='insert' || $toDo=='update' ) {
                 array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
                     'value' => $v['quanti']),
                 array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => $v['prelis']),
+                    'value' => gaz_format_number($v['prelis'])),
                 array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
                     'value' => $v['sconto']),
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 
-					'value' => '', 'type' => ''),
+					'value' => gaz_format_number($v['amount']), 'type' => ''),
                 array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
 					'value' => $codvat_dropdown, 'type' => ''),
                 array('head' => 'Ritenuta', 'class' => 'text-center numeric', 
-					'value' => $v['ritenuta'], 'type' => ''),
+					'value' => floatval($v['ritenuta']), 'type' => ''),
                 array('head' => '%', 'class' => 'text-center numeric', 
-					'value' => $v['pervat'], 'type' => ''),
+					'value' => floatval($v['pervat']), 'type' => ''),
                 array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
 					'value' => $codric_dropdown, 'type' => '')
             );
