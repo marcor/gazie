@@ -1636,9 +1636,9 @@ foreach ($form['rows'] as $key => $value) {
 					</button>
 				  </td>';
 			echo '<td>
-					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codice_fornitore'] . '" data-title="' . $value['codice_fornitore'] . '" type="text" name="rows[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" /></td>';
+					<input type="text" name="rows[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" /></td>';
             echo '<td>
-					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codart'] . '" data-title="' . $value['annota'] . '" type="text" name="rows[' . $key . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
+					<input type="text" name="rows[' . $key . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 ';
             if ($value['lot_or_serial'] > 0) {
                 if (empty($form['rows'][$key]['filename'])) {
@@ -1676,10 +1676,10 @@ foreach ($form['rows'] as $key => $value) {
             }
             /* <input class="myTooltip" data-type="product" data-id="firefox" data-title=""  /> */
             echo '	<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" size="1" />
+						<input type="text" name="rows[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" size="1" />
 				  	</td>
 				  	<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" size="4" id="rows_' . $key . '_quanti" onchange="document.docacq.last_focus.value=\'rows_' . $key . '_prelis\'; this.form.submit();" />
+						<input type="text" name="rows[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" size="4" id="rows_' . $key . '_quanti" onchange="document.docacq.last_focus.value=\'rows_' . $key . '_prelis\'; this.form.submit();" />
 				  	</td>';
             echo '	<td>
 						<input type="text" name="rows[' . $key . '][prelis]" value="' . $value['prelis'] . '" align="right" maxlength="11" size="7" id="rows_' . $key . '_prelis" onchange="document.docacq.last_focus.value=\'rows_' . $key . '_sconto\'; this.form.submit();" />

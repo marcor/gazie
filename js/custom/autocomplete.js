@@ -55,6 +55,20 @@ $(function() {
 			$(this).closest("form").submit();
 		}
 	});
+	$( "#search_production" ).autocomplete({
+		source: "../../modules/root/search.php?opt=production",
+		minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+ 
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#search_production").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
 	$( "#search_location" ).autocomplete({
 		source: "../../modules/root/search.php?opt=location",
 		minLength: 2,

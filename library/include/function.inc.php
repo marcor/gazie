@@ -1100,6 +1100,59 @@ class selectorder extends SelectBox {
 
 }
 
+class selectproduction extends SelectBox {
+
+     function output($cerca, $field = 'C', $class = 'FacetSelect',$sele=1) {
+        global $gTables, $script_transl, $script_transl;
+        $msg = "";
+        $tabula = ' tabindex="4" ';
+        $opera = "%'";
+        if (strlen($cerca) >= 1) {
+            $opera = "'"; ////
+            $field_sql = 'id';
+            if (substr($cerca, 0, 1) == "@") {
+                $cerca = substr($cerca, 1);
+            }
+            // uso la variabile $field per aggiungere al $where un filtro sui articoli composti
+            if ( $field!='C' ) {
+                $opera .= $field;
+            }
+            
+            $result = gaz_dbi_dyn_query("id,description,add_info", $gTables['orderman'], $field_sql . " LIKE '" . addslashes($cerca) . $opera, "id DESC");
+            // nella tabella tesbro seleziona id_tes, numdoc e datemi dove numdoc è come $cerca. Ordina per numdoc
+            $numclfoco = gaz_dbi_num_rows($result);
+            if ($numclfoco > 0) {
+				if ($sele) {
+					$tabula = "";
+					echo ' <select tabindex="4" name="' . $this->name . '" class="' . $class . '">';
+					while ($z_row = gaz_dbi_fetch_array($result)) {
+						$selected = "";
+						if ($z_row["id"] == $this->selected) {
+							$selected = ' selected=""';
+						}
+						echo ' <option value="' . $z_row["id"] . '"' . $selected . '>' . $z_row["id"] .' - '.$z_row["description"] . '</option>';
+					}
+					echo ' </select>';
+				}
+			} else {
+                $msg = $script_transl['notfound'] . '!';
+                echo '<input type="hidden" name="' . $this->name . '" value="" />';
+            }
+        } else {
+//            $msg = $script_transl['minins'] . ' 1 ' . $script_transl['charat'] . '!';
+            $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
+            echo '<input type="hidden" name="' . $this->name . '" value="" />';
+        }
+       
+        echo '&nbsp;<input type="text" class="' . $class . '" name="coseprod" id="search_production" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
+        //echo "<font style=\"color:#ff0000;\">$msg </font>";
+        if ($msg != "") {
+            echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' . $msg . '</span>';
+        }
+    }
+
+}
+
 // classe per la generazione di select box degli articoli
 class selectartico extends SelectBox {
 

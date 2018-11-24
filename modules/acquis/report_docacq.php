@@ -125,8 +125,8 @@ $script_transl = HeadMain();
         </select></font>
     </div>
     <?php
-    if (!isset($_GET['field']) || ($_GET['field'] == 2) || (empty($_GET['field'])))
-        $orderby = "datfat DESC, protoc DESC";
+    if (!isset($_GET['field']) || (empty($_GET['field'])))
+        $orderby = "protoc DESC";
     $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
     $recordnav->output();
 	
@@ -227,33 +227,35 @@ $script_transl = HeadMain();
             }
 
             if ($row["protoc"] <> $ctrlprotoc) {
-                print "<tr class=\"FacetDataTD\">";
+                $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $row['clfoco']);
+                $anagra = gaz_dbi_get_row($gTables['anagra'], 'id', $clfoco['id_anagra']);
+                echo "<tr class=\"FacetDataTD\">";
                 if (!empty($modifi)) {
-                    print "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
+                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
                 } else {
-                    print "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $row["protoc"] . " &nbsp;</button></td>";
+                    echo "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $row["protoc"] . " &nbsp;</button></td>";
                 }
-                print "<td>" . gaz_format_date($row["datreg"]) . " &nbsp;</td>";
+                echo "<td>" . gaz_format_date($row["datreg"]) . " &nbsp;</td>";
                 if (empty($row["fattura_elettronica_original_name"])) {
 					print '<td>'.$tipodoc."</td>\n";
                 } else {
 					print '<td><a class="btn btn-xs btn-default btn-xml" target="_blank" href="view_fae.php?id_tes=' . $row["id_tes"] . '">'.$tipodoc.' '.$row["fattura_elettronica_original_name"]."</a></td>";
 				}
-				print "<td>" . $row["numfat"] . " &nbsp;</td>";
-                print "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
-                print "<td>" . $row["ragso1"] . "&nbsp;</td>";
+				echo "<td>" . $row["numfat"] . " &nbsp;</td>";
+                echo "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
+                echo "<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?auxil=" . htmlspecialchars($anagra["ragso1"]) . "&search=Cerca\">" . $anagra["ragso1"] . ((empty($anagra["ragso2"]))?"":" ".$anagra["ragso2"]) . "</a>&nbsp;</td>";
                 if ($row["id_con"] > 0) {
                     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont. n." . $row["id_con"] . "</a></td>";
                 } else {
                     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a></td>";
                 }
-                print "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+                echo "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
                 //if ($lt_doc[$y] == $row['protoc']) {
-                    print "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+                    echo "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
                 //} else {
-//                    print "<td><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
+//                    echo "<td><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
   //              }
-                print "</tr>\n";
+                echo "</tr>\n";
             }
             $ctrlprotoc = $row["protoc"];
         }

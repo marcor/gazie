@@ -250,6 +250,7 @@ class PreventivoFornitore extends Template
 		
 		if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
 			$this->print_header = false;
+			$this->print_footer = false;
 			$this->extdoc_acc=$this->docVars->ExternalDoc;
             reset($this->extdoc_acc);
 			foreach ($this->extdoc_acc AS $key => $rigo) {

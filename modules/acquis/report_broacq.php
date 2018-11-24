@@ -375,7 +375,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			</td>
 			<td align=\"center\">";
     if (!empty($fornitore["e_mail"])) {
-        echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\');" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-pencil"></i></a>';
+        echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\');" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-envelope"></i></a>';
     } else {
 		echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="admin_fornit.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	 }		  
