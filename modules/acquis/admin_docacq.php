@@ -178,6 +178,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['descri'] = substr($value['descri'], 0, 100);
             $form['rows'][$i]['tiprig'] = intval($value['tiprig']);
             $form['rows'][$i]['codart'] = substr($value['codart'], 0, 15);
+            $form['rows'][$i]['codice_fornitore'] = substr($value['codice_fornitore'], 0, 50);	// Aggiunto a Mano 
             $form['rows'][$i]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);
             $form['rows'][$i]['ritenuta'] = preg_replace("/\,/", '.', $value['ritenuta']);
             $form['rows'][$i]['unimis'] = substr($value['unimis'], 0, 3);
@@ -763,6 +764,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['filename'] = '';
             if ($form['in_tiprig'] == 0) {  //rigo normale
                 $form['rows'][$i]['codart'] = $form['in_codart'];
+				$form['rows'][$i]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
                 $form['rows'][$i]['annota'] = $artico['annota'];
                 $form['rows'][$i]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$i]['gooser'] = $artico['good_or_service'];
@@ -1131,6 +1133,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['descri'] = $row['descri'];
         $form['rows'][$i]['tiprig'] = $row['tiprig'];
         $form['rows'][$i]['codart'] = $row['codart'];
+		$form['rows'][$i]['codice_fornitore'] = $row['codice_fornitore'];//M1 aggiunto a mano
         $form['rows'][$i]['pervat'] = $row['pervat'];
         $form['rows'][$i]['ritenuta'] = $row['ritenuta'];
         $form['rows'][$i]['unimis'] = $row['unimis'];
@@ -1564,6 +1567,7 @@ echo '</table>
 		  <thead>
 			<tr>
 				<th class="FacetFieldCaptionTD">' . $script_transl[20] . '</th>
+				<th class="FacetFieldCaptionTD">Cod.Fornitore</th>
 				<th class="FacetFieldCaptionTD" colspan="2">' . $script_transl[21] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>
@@ -1611,6 +1615,7 @@ foreach ($form['rows'] as $key => $value) {
     //stampo i righi in modo diverso a secondo del tipo
     echo '<tr>
 			<input type="hidden" value="' . $value['codart'] . '" name="rows[' . $key . '][codart]" />
+			<input type="hidden" value="' . $value['codice_fornitore'] . '" name="rows[' . $key . '][codice_fornitore]" />
 			<input type="hidden" value="' . $value['status'] . '" name="rows[' . $key . '][status]" />
 			<input type="hidden" value="' . $value['tiprig'] . '" name="rows[' . $key . '][tiprig]" />
 			<input type="hidden" value="' . $value['codvat'] . '" name="rows[' . $key . '][codvat]" />
@@ -1630,7 +1635,8 @@ foreach ($form['rows'] as $key => $value) {
 						<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $value['codart'] . '
 					</button>
 				  </td>';
-
+			echo '<td>
+					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codice_fornitore'] . '" data-title="' . $value['codice_fornitore'] . '" type="text" name="rows[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" /></td>';
             echo '<td>
 					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codart'] . '" data-title="' . $value['annota'] . '" type="text" name="rows[' . $key . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 ';
@@ -1690,7 +1696,7 @@ foreach ($form['rows'] as $key => $value) {
         case "1":
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" />
-				  	</td>
+				  	</td><td></td>
 				  	<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /></td>
 					<td>
 						<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
@@ -1711,7 +1717,7 @@ foreach ($form['rows'] as $key => $value) {
         case "2":
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" />
-					</td>
+					</td><td></td>
 					<td>
 						<input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" />
 					</td>
@@ -1732,7 +1738,7 @@ foreach ($form['rows'] as $key => $value) {
         case "3":
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" />
-					</td>
+					</td><td></td>
 					<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\"></td>
 					<td>
 						<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
@@ -1753,7 +1759,7 @@ foreach ($form['rows'] as $key => $value) {
         case "4": // rigo cassa previsenziale
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"*Tipo Cassa ".$value['codart']." *\" />
-				  	</td>
+				  	</td><td></td>
 				  	<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /></td>
 					<td>
 						<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
@@ -1776,7 +1782,7 @@ foreach ($form['rows'] as $key => $value) {
         case "8":
             echo '<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
               		<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $key . ']" value="' . $script_transl['typerow'][$value['tiprig']] . '" />
-				  </td>
+				  </td><td></td>
 				  <td colspan="9">
 				  	<textarea id="row_' . $key . '" name="row_' . $key . '" class="mceClass" style="width:100%;height:100px;">' . $form['row_' . $key] . '</textarea>
 				  </td>

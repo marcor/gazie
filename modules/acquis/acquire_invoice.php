@@ -211,9 +211,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		foreach ($DettaglioLinee as $item) {
 			$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
 			if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
-				$form['rows'][$nl]['codart'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
+				$form['rows'][$nl]['codice_fornitore'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
 			} else {
-				$form['rows'][$nl]['codart'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
+				$form['rows'][$nl]['codice_fornitore'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
 			}
 			$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
 			if ($item->getElementsByTagName("Quantita")->length >= 1) {
@@ -294,13 +294,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		*/
 		foreach ($DatiCassaPrevidenziale as $item) { // attraverso per trovare gli elementi cassa previdenziale
 			$nl++;
-			$form['rows'][$nl]['codart'] = $item->getElementsByTagName('TipoCassa')->item(0)->nodeValue;
+			$form['rows'][$nl]['codice_fornitore'] = $item->getElementsByTagName('TipoCassa')->item(0)->nodeValue;
 			$form['rows'][$nl]['tiprig'] = 4;
 			// carico anche la descrizione corrispondente dal file xml
             $xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
 			foreach ($xml->record as $v) {
 				$selected = '';
-				if ($v->field[0] == $form['rows'][$nl]['codart']) {
+				if ($v->field[0] == $form['rows'][$nl]['codice_fornitore']) {
 					$form['rows'][$nl]['descri']= 'Contributo '.strtolower($v->field[1]);
 				}
 			}
@@ -397,12 +397,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$new_partner['ragso1'] = $new_partner['descri'];							
 					}
 				}
-				$new_partner['indspe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0)->nodeValue;
+				$new_partner['indspe'] = ucwords(strtolower($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0)->nodeValue));
 				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/NumeroCivico")->item(0)){
 					$new_partner['indspe'] .= ', '.$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/NumeroCivico")->item(0)->nodeValue;
 				}
 				$new_partner['capspe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/CAP")->item(0)->nodeValue;
-				$new_partner['citspe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0)->nodeValue;
+				$new_partner['citspe'] = strtoupper($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0)->nodeValue);
 				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0)){
 					$new_partner['prospe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0)->nodeValue;
 				}
@@ -534,7 +534,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
                 array('head' => $script_transl["nrow"], 'class' => '',
                     'value' => $k+1),
                 array('head' => $script_transl["codart"], 'class' => '',
-                    'value' => $v['codart']),
+                    'value' => $v['codice_fornitore']),
                 array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
                     'value' => $v['descri']),
                 array('head' => $script_transl["unimis"], 'class' => '',
