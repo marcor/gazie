@@ -1125,8 +1125,9 @@ class selectproduction extends SelectBox {
 						if ($z_row["id"] == $this->selected) {
 							$selected = ' selected ';
 						}
-						echo ' <option value="' . $z_row["id"] . '"' . $selected .'">' . $z_row["id"] .' - '.$z_row["description"] . '</option>';
+						echo ' <option value="' . $z_row["id"] . '"' . $selected .'>' . $z_row["id"] .' - '.$z_row["description"] . '</option>';
 					}
+                    echo "<option value=\"\"> ---------- </option>\n";
 					echo ' </select>';
 				}
 			} else {

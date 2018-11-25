@@ -142,6 +142,7 @@ $strScript = array(
         'taxstamp_limit' => 'Limite esenzione imposta di bollo',
         'taxstamp' => 'Importo bollo operazioni senza IVA',
         'taxstamp_vat' => 'Aliquota IVA dei bolli',
+        'taxstamp_account' => 'Conto costo bolli',
         'perbol' => 'Aliquota imposta di bollo su tratte (%)',
         'round_bol' => 'Arrotondamento bolli',
         'round_bol_value' => array(1 => 'centesimo', 5 => 'centesimi', 10 => 'centesimi',

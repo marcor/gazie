@@ -137,6 +137,7 @@ $strScript = array("admin_aziend.php" =>
         'taxstamp_limit' => 'Tax stamp exemption limit',
         'taxstamp' => 'Amount stamp operations without VAT',
         'taxstamp_vat' => 'Taxstamp VAT rate',
+        'taxstamp_account' => 'Conto costo bolli',
         'perbol' => 'Rate of stamps on draft (%)',
         'round_bol' => 'Round of stamps',
         'round_bol_value' => array(1 => 'cent', 5 => 'cents', 10 => 'cents',

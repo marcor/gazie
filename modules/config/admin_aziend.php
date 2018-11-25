@@ -1007,6 +1007,16 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
+                        <label for="taxstamp_account" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp_account']; ?></label>
+                        <?php
+                        $gForm->selectAccount('taxstamp_account', $form['taxstamp_account'], 3, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
                         <label for="perbol" class="col-sm-4 control-label"><?php echo $script_transl['perbol']; ?></label>
                         <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['perbol']; ?>" name="perbol" size="4"  />
                     </div>

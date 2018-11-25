@@ -142,6 +142,7 @@ $strScript = array("admin_aziend.php" =>
         'taxstamp' => 'Importe de impuesto de timbre sobre ingresos',
         'taxstamp_vat' => 'Taxstamp VAT rate',
         'perbol' => 'Porcentaje de Estampillas sobre draft (%)',
+        'taxstamp_account' => 'Conto costo bolli',
         'round_bol' => 'Redondeo de Estampillas',
         'round_bol_value' => array(1 => 'cent', 5 => 'cents', 10 => 'cents',
             50 => 'cents', 100 => 'cents (unidad)'),
