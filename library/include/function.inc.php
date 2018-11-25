@@ -1109,17 +1109,12 @@ class selectproduction extends SelectBox {
         $opera = "%'";
         if (strlen($cerca) >= 1) {
             $opera = "'"; ////
-            $field_sql = 'id';
+            $field_sql = 'description';
             if (substr($cerca, 0, 1) == "@") {
                 $cerca = substr($cerca, 1);
             }
-            // uso la variabile $field per aggiungere al $where un filtro sui articoli composti
-            if ( $field!='C' ) {
-                $opera .= $field;
-            }
-            
+
             $result = gaz_dbi_dyn_query("id,description,add_info", $gTables['orderman'], $field_sql . " LIKE '" . addslashes($cerca) . $opera, "id DESC");
-            // nella tabella tesbro seleziona id_tes, numdoc e datemi dove numdoc è come $cerca. Ordina per numdoc
             $numclfoco = gaz_dbi_num_rows($result);
             if ($numclfoco > 0) {
 				if ($sele) {
@@ -1128,9 +1123,9 @@ class selectproduction extends SelectBox {
 					while ($z_row = gaz_dbi_fetch_array($result)) {
 						$selected = "";
 						if ($z_row["id"] == $this->selected) {
-							$selected = ' selected=""';
+							$selected = ' selected ';
 						}
-						echo ' <option value="' . $z_row["id"] . '"' . $selected . '>' . $z_row["id"] .' - '.$z_row["description"] . '</option>';
+						echo ' <option value="' . $z_row["id"] . '"' . $selected .'">' . $z_row["id"] .' - '.$z_row["description"] . '</option>';
 					}
 					echo ' </select>';
 				}

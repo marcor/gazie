@@ -65,7 +65,8 @@ $(function() {
             $(".ui-autocomplete").css("z-index", 1000);
         },
 		select: function(event, ui) {
-			$("#search_production").val(ui.item.value);
+			$("#search_production").val(ui.item.description);
+			$("#in_id_orderman").val(ui.item.id);
 			$(this).closest("form").submit();
 		}
 	});

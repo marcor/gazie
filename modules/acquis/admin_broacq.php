@@ -128,6 +128,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_tiprig'] = $_POST['in_tiprig'];
     /*    $form['in_artsea'] = $_POST['in_artsea']; Non serve più */
     $form['in_codart'] = $_POST['in_codart'];
+    $form['in_codice_fornitore'] = $_POST['in_codice_fornitore'];
     $form['in_pervat'] = $_POST['in_pervat'];
     $form['in_unimis'] = $_POST['in_unimis'];
     $form['in_prelis'] = $_POST['in_prelis'];
@@ -192,6 +193,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_descri'] = $form['righi'][$key_row]['descri'];
                     $form['in_tiprig'] = $form['righi'][$key_row]['tiprig'];
                     $form['in_codart'] = $form['righi'][$key_row]['codart'];
+                    $form['in_codice_fornitore'] = $form['righi'][$key_row]['codice_fornitore'];
                     $form['in_pervat'] = $form['righi'][$key_row]['pervat'];
                     $form['in_unimis'] = $form['righi'][$key_row]['unimis'];
                     $form['in_prelis'] = $form['righi'][$key_row]['prelis'];
@@ -427,6 +429,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $old_key = intval(substr($form['in_status'], 6));
             $form['righi'][$old_key]['tiprig'] = $form['in_tiprig'];
             $form['righi'][$old_key]['descri'] = $form['in_descri'];
+            $form['righi'][$old_key]['codice_fornitore'] = $form['in_codice_fornitore'];
             $form['righi'][$old_key]['id_mag'] = $form['in_id_mag'];
             $form['righi'][$old_key]['extdoc'] = $form['in_extdoc'];
             $form['righi'][$old_key]['id_orderman'] = $form['in_id_orderman'];
@@ -483,6 +486,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['descri'] = $form['in_descri'];
             $form['righi'][$next_row]['id_mag'] = $form['in_id_mag'];
             $form['righi'][$next_row]['extdoc'] = 0;
+			$form['righi'][$next_row]['codice_fornitore'] = 0;
             $form['righi'][$next_row]['id_orderman'] = $form['in_id_orderman'];
             $form['righi'][$next_row]['larghezza'] = 0;
             $form['righi'][$next_row]['lunghezza'] = 0;
@@ -581,6 +585,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         // reinizializzo rigo di input tranne che per il tipo rigo e aliquota iva
         $form['in_descri'] = "";
         $form['in_codart'] = "";
+        $form['in_codice_fornitore'] = "";
         $form['in_unimis'] = "";
         $form['in_prelis'] = 0.000;
         $form['in_sconto'] = 0;
@@ -632,6 +637,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_tiprig'] = 0;
     /*    $form['in_artsea'] = $admin_aziend['artsea']; Non serve più */
     $form['in_codart'] = "";
+    $form['in_codice_fornitore'] = "";
     $form['in_pervat'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0.000;
@@ -755,8 +761,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    /*    $form['in_artsea'] = $admin_aziend['artsea']; Non serve più */
+    $form['in_codice_fornitore'] = '';
     $form['in_codart'] = "";
+    $form['in_extdoc'] = 0;
     $form['in_pervat'] = "";
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0.000;
@@ -966,6 +973,7 @@ echo '</td></tr>';
 echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo "<input type=\"hidden\" value=\"{$form['in_codice_fornitore']}\" name=\"in_codice_fornitore\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_pervat']}\" name=\"in_pervat\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_unimis']}\" name=\"in_unimis\" />\n";
@@ -1004,7 +1012,7 @@ echo $script_transl[18].": ";
 $select_codric = new selectconven("in_codric");
 $select_codric->addSelected($form['in_codric']);
 $select_codric->output(substr($form['in_codric'], 0, 1));
-echo " %$script_transl[24]: <input type=\"text\" value=\"{$form['in_sconto']}\" maxlength=\"4\" size=\"1\" name=\"in_sconto\">";
+echo " %$script_transl[24]: <input type=\"text\" value=\"{$form['in_sconto']}\" maxlength=\"4\" size=\"1\" name=\"in_sconto\"> Produzione:";
 $select_prod = new selectproduction("in_id_orderman");
 $select_prod->addSelected($form['in_id_orderman']);
 $select_prod->output($form['coseprod']);
@@ -1222,7 +1230,7 @@ foreach ($form['righi'] as $key => $value) {
                           <div>';
 
                 echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $key . '"> 
-                            <label>' . $script_transl['extdoc'] . '</label><input type="text" name="righi[' . $key . '][extdoc]" value="' . $form['righi'][$key]['extdoc'] . '" >
+                            <label>File: </label><input type="text" name="righi[' . $key . '][extdoc]" value="' . $form['righi'][$key]['extdoc'] . '" >
 			</div>
 		     </div>
               </div>' . "</td>\n";
