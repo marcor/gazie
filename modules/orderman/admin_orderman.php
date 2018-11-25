@@ -138,19 +138,25 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     }
     $form['id_movmag'] = $_POST['id_movmag'];
     $form['id_lotmag'] = $_POST['id_lotmag'];
+	
     if (isset($_POST['numcomp'])) {
+		
         $form['numcomp'] = $_POST['numcomp'];
         if ($form['numcomp'] > 0) {
+			
             for ($m = 0;$m < $form['numcomp'];++$m) {
                 $form['artcomp'][$m] = $_POST['artcomp' . $m];
                 $form['quanti_comp'][$m] = $_POST['quanti_comp' . $m];
                 $form['q_lot_comp'][$m] = $_POST['q_lot_comp' . $m];
+				
                 for ($n = 0;$n < $form['q_lot_comp'][$m];++$n) { // se q lot comp è zero vuol dire che non ci sono lotti
-                    $form['id_lot_comp'][$m][$n] = $_POST['id_lotmag' . $m . $n];
+				
+                    $form['id_lot_comp'][$m][$n] = $_POST['id_lot_comp' . $m . $n];
                     $form['lot_quanti'][$m][$n] = $_POST['lot_quanti' . $m . $n];
+					
                 }
-            }
-        }
+            } 
+        } 
     }
     // Antonio Germani > questo serve per aggiungere o togliere un operaio
     if (isset($_POST['add_staff'])) {
@@ -167,18 +173,31 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
             $form['nmov'] = $form['nmov'] - 1;
         }
     }
-    // Se viene inviata la richiesta di conferma totale ...CONTROLLO ERRORI ***
+    // Se viene inviata la richiesta di conferma totale ... ******   CONTROLLO ERRORI   ******
     $form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
     if (isset($_POST['ins'])) {
         $itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
         if ($form['codart'] <> "" && !isset($itemart)) { // controllo se codice articolo non esiste o se è nullo
             $msg.= "20+";
         }
-        if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto controllo se quantità sufficienti dei componenti
+        if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto controllo se quantità totali sufficienti dei componenti
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
                 if ($form['quanti_comp'][$nc] == "ERRORE") { // se c'è errore segnalo
                     $msg.= "21+";
                 }
+            }
+        }
+		if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto, controllo se le quantità inserite per ogni singolo lotto, di ogni componente, sono sufficienti 
+            for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
+				if (intval($form['q_lot_comp'][$nc])>0) {
+					$tot=0;
+					for ($l=0; $l<$form['q_lot_comp'][$nc]; ++$l) {
+						$tot=$tot + $form['lot_quanti'][$nc][$l];
+					}
+					If ($tot != $form['quanti_comp'][$nc]){
+						$msg.="25+";
+					}
+				}
             }
         }
         if ($form['order'] > 0) { // se c'è un numero ordine controllo che esista veramente l'ordine
@@ -201,7 +220,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
             if (strlen($form['codart']) == 0) { // articolo vuoto
                 $msg.= "16+";
             }
-            if ($form['quantip'] == 0) { // quantità vuota
+            if ($form['quantip'] == 0) { // quantità produzione vuota
                 $msg.= "17+";
             }
             if ($form['staff'][0] > 0 && $form['day_of_validity'] > 13) { // D. Lgs. 66/2003 > massimo ore giornaliere lavorabili = 13
@@ -293,10 +312,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                             if ($form['q_lot_comp'][$nc] > 0) { // se il componente ha lotti
                                 for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
                                     $query = "INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '-1', '" . $form['datreg'] . "', 'MAG', 'Scarico per Produzione', '" . $form['datemi'] . "', '" . $form['artcomp'][$nc] . "', '" . $form['campo_impianto'] . "', '" . $form['lot_quanti'][$nc][$n] . "', '" . $id_orderman . "', '" . $form['id_lot_comp'][$nc][$n] . "', '" . $admin_aziend['adminid'] . "')";
-                                    gaz_dbi_query($query); // Scarico il magazzino con l'articolo usato e i suoi lotti
+                                    gaz_dbi_query($query); // Scarico dal magazzino il componente usato e i suoi lotti
                                     
                                 }
-                            } else { // se non ci sono lotti scarico semplicemente il magazzino
+                            } else { // se non ci sono lotti scarico semplicemente il componente dal magazzino
                                 $query = "INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '-1', '" . $form['datreg'] . "', 'MAG', 'Scarico per Produzione', '" . $form['datemi'] . "', '" . $form['artcomp'][$nc] . "', '" . $form['campo_impianto'] . "', '" . $form['quanti_comp'][$nc] . "', '" . $id_orderman . "', '', '" . $admin_aziend['adminid'] . "')";
                                 gaz_dbi_query($query); // Scarico il magazzino con l'articolo usato
                                 
@@ -585,7 +604,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                 }
             }
             // FINE registrazione database operai
-            // Antonio Germani - Inizio Scrittura produzione ORDERMAN e, se non già creati da un ordine, scrittura di TESBRO E RIGBRO
+            // Antonio Germani - Inizio Scrittura produzione ORDERMAN e, se non già creati da un ordine, creazione di ordine fittizio con scrittura di TESBRO E RIGBRO
             if ($toDo == 'update') { //  se e' una modifica, aggiorno orderman e tesbro
                 $query = "UPDATE " . $gTables['orderman'] . " SET order_type = '" . $form['order_type'] . "', description = '" . $form['description'] . "', campo_impianto = '" . $form["campo_impianto"] . "', id_lotmag = '" . $form['id_lotmag'] . "', add_info = '" . $form['add_info'] . "', duration = '" . $form['day_of_validity'] . "' WHERE id = '" . $form['id'] . "'";
                 gaz_dbi_query($query);
@@ -900,7 +919,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 ?>
 	</td>
 </tr>
-<?php
+<?php 
     if ($form['order'] > 0 && $toDo != "update") { // se c'è un ordine e non siamo in update seleziono l'articolo fra quelli ordinati 
 		echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\">\n";
 		// SELECT articolo da rigbro
@@ -928,126 +947,170 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
     if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 ?>
 		<div class="container-fluid">
-		<div class="row" style="margin-left: 0px;">
-		<div class="col-sm-12" align="center" style="border:1px solid red">Articolo composto
-		</div>
-		</div>
-		<?php
-        if ($toDo == "update") { //se UPDATE
-            // se ci sono, visualizzo i componenti; NON sarà, però,  possibile modificarli        
-            if (isset($result7)) {
-                while ($row = $result7->fetch_assoc()) {
+			<div class="row" style="margin-left: 0px;">
+				<div class="col-sm-12" align="center" style="border:1px solid red">Articolo composto
+				</div>
+			</div>
+			<?php
+			if ($toDo == "update") { //se UPDATE
+				// se ci sono, visualizzo i componenti; NON sarà, però,  possibile modificarli in update        
+				if (isset($result7)) {
+					while ($row = $result7->fetch_assoc()) {
 ?>
-					<div class="row" style="margin-left: 0px;">
-						<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['artico']; ?>
-						</div>
-						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Q.tà usata: ", gaz_format_quantity($row['quanti'], 0, $admin_aziend['decimal_quantity']); ?>
-						</div>
+						<div class="row" style="margin-left: 0px;">
+							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['artico']; ?>
+							</div>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Q.tà usata: ", gaz_format_quantity($row['quanti'], 0, $admin_aziend['decimal_quantity']); ?>
+							</div>
+							<?php
+							if (intval($row['id_lotmag']) > 0) {
+?>
+								<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "id lotto: ", $row['id_lotmag']; ?>
+								</div>
+								<?php
+							} else {
+?>
+								<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "articolo senza lotto "; ?>
+								</div>
+								<?php
+							}
+?>
+						</div> <!-- chiude row  -->
 						<?php
-                    if (intval($row['id_lotmag']) > 0) {
+					}
+				}
+			} else { // se INSERT
+				$nc = 0; // numero componente
+				$l = 0; // numero lotto componente
+				
+				while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
+					if ($form['quantip'] > 0) {
+						$row['quantita_artico_base'] = $row['quantita_artico_base'] * $form['quantip'];
+						$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
+						$magval = array_pop($mv); // controllo disponibilità in magazzino
+						if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
+							$magval['q_g'] = $magval['q_g'] + $row['quantita_artico_base'];
+						}
 ?>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "id lotto: ", $row['id_lotmag']; ?>
-							<?php
-                    } else {
-?>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "articolo senza lotto "; ?>
-							<?php
-                    }
-?>
-						</div>
-					</div> <!-- chiude row  -->
-					<?php
-                }
-            }
-        } else { // se INSERT
-            $nc = 0; // numero componente
-            $l = 0; // numero lotto componente
-            while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
-                if ($form['quantip'] > 0) {
-                    $row['quantita_artico_base'] = $row['quantita_artico_base'] * $form['quantip'];
-                    $mv = $gForm->getStockValue(false, $row['codice_artico_base']);
-                    $magval = array_pop($mv); // controllo disponibilità in magazzino
-                    if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
-                        $magval['q_g'] = $magval['q_g'] + $row['quantita_artico_base'];
-                    }
-?>
-					<input type="hidden" name="artcomp<?php echo $nc; ?>" value="<?php echo $row['codice_artico_base']; ?>">
+						<input type="hidden" name="artcomp<?php echo $nc; ?>" value="<?php echo $row['codice_artico_base']; ?>">
 								
-					<div class="row" style="margin-left: 0px;">
-					<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
-					</div>
-					<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Necessari: ", gaz_format_quantity($row['quantita_artico_base'], 0, $admin_aziend['decimal_quantity']); ?>
-					</div>
-					<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", gaz_format_quantity($magval['q_g'], 0, $admin_aziend['decimal_quantity']); ?>
-					</div>
-					<?php
-                    if ($magval['q_g'] - $row['quantita_artico_base'] >= 0) { // giacenza sufficiente
-                        ?>
-						<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo $row['quantita_artico_base']; ?>"> <!-- quantità utilizzata di ogni componente   -->
-						<div class="col-sm-1" style="background-color:lightgreen;"> OK</div>
-						<?php
-                    } else { // giacenza insufficiente
-                        ?>
-						<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="ERRORE"> <!-- quantità insufficiente componente, ERRORE -->
-						<div class="col-sm-1" style="background-color:red;"> KO</div>
-						<?php
-                    }
-                    // Antonio Germani - inserimento lotti in uscita
-                    $artico = gaz_dbi_get_row($gTables['artico'], "codice", $row['codice_artico_base']);
-                    if ($artico['lot_or_serial'] == 1) { // se il componente prevede lotti
-                        // PROBLEMA IN UPDATE non esclude il lotti, per questo motivo non sono modificabili
-                        $lm->getAvailableLots($row['codice_artico_base']); // Antonio Germani - non è stato inserito il movimento di magazzino da escludere perché questa funzione ne accetta uno solo e, invece, potrebbero essere di più. E' questo il motivo per cui, in update, sono stati bloccati articolo, componenti, lotti e quantità.
-                        $ld = $lm->divideLots($row['quantita_artico_base']);
-                        $l = 0;
-                        $form['lot_quanti'][$nc][$l] = 0;
-                        if ($ld > 0) { // segnalo preventivamente l'errore
-                            echo "ERRORE ne mancano: ", $ld, "<br>"; // >>>>> quantità insufficiente - metto come valore ERRORE così potrò ritrovarlo facilmente e annullo quanti lotti sono interessati per questo componente
-                            ?>
-							<input type="hidden" name="quanti<?php echo $nc, $l; ?>" value="ERRORE">
-							<input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="">
+						<div class="row" style="margin-left: 0px;">
+							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
+							</div>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Necessari: ", gaz_format_quantity($row['quantita_artico_base'], 0, $admin_aziend['decimal_quantity']); ?>
+							</div>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", gaz_format_quantity($magval['q_g'], 0, $admin_aziend['decimal_quantity']); ?>
+							</div>
 							<?php
-                        } else {
-                            // ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
-                            foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da getAvailableLots
-                                if ($v['qua'] >= 0.00001) {
-                                    $form['id_lotmag'][$l] = $v['id']; // setto il lotto
-                                    $form['quanti'][$l] = $v['qua']; // e la quantità in base al riparto
-                                    $selected_lot = $lm->getLot($form['id_lotmag'][$l]);
-                                    echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" >' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'] . ' Scadenza: ' . gaz_format_date($selected_lot['expiry']);
-                                    echo ' - <i class="glyphicon glyphicon-tag"></i></button>';
-                                    echo " Se ne utilizzerà: ", $form['quanti'][$l];
-?>
-									<input type="hidden" name="id_lotmag<?php echo $nc, $l; ?>" value="<?php echo $form['id_lotmag'][$l]; ?>">
-									<input type="hidden" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['quanti'][$l]; ?>">
+							if ($magval['q_g'] - $row['quantita_artico_base'] >= 0) { // giacenza sufficiente
+								?>
+								<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo $row['quantita_artico_base']; ?>"> <!-- quantità utilizzata di ogni componente   -->
+								<div class="col-sm-1" style="background-color:lightgreen;"> OK</div>
+								<?php
+							} else { // giacenza insufficiente
+								?>
+								<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="ERRORE"> <!-- quantità 	insufficiente componente, ERRORE -->
+								<div class="col-sm-1" style="background-color:red;"> KO</div>
+								<?php
+							}
+							// Antonio Germani - inserimento lotti in uscita
+							$artico = gaz_dbi_get_row($gTables['artico'], "codice", $row['codice_artico_base']);
+							if ($artico['lot_or_serial'] == 1) { // se il componente prevede lotti
+								// PROBLEMA IN UPDATE non esclude il lotti, per questo motivo non sono modificabili
+								$lm->getAvailableLots($row['codice_artico_base']); // Antonio Germani - non è stato inserito il movimento di magazzino da escludere perché questa funzione ne accetta uno solo e, invece, potrebbero essere di più. E' questo il motivo per cui, in update, sono stati bloccati articolo, componenti, lotti e quantità.
+								$ld = $lm->divideLots($row['quantita_artico_base']);
+								$l = 0;
+								
+								if ($ld > 0) { // segnalo preventivamente l'errore
+									echo "ERRORE ne mancano: ", $ld, "<br>"; // >>>>> quantità insufficiente - metto come valore ERRORE così potrò ritrovarlo facilmente e annullo quanti lotti sono interessati per questo componente
+									?>
+									<input type="hidden" name="lot_quanti<?php echo $nc, $l; ?>" value="ERRORE">
+									<input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="">
 									<?php
-                                    $l++;
-?>
+								} else {
+									
+									// ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
+									foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da getAvailableLots
+									
+										if ($v['qua'] >= 0.00001) {
+											if (!isset($form['id_lot_comp'][$nc][$l]) or (intval($form['id_lot_comp'][$nc][$l])==0)) {
+												$form['id_lot_comp'][$nc][$l] = $v['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
+												$form['lot_quanti'][$nc][$l] = $v['qua']; // e la quantità in base al riparto
+											}
+											$selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
+											echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'] . ' Scadenza: ' . gaz_format_date($selected_lot['expiry']). ' disponibili:' . gaz_format_quantity($selected_lot['quanti']);
+											echo '  <i class="glyphicon glyphicon-tag"></i></button>';
+											
+											
+											
+											
+											
+											
+											
+											?>
+											<input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
+											
+											Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.submit();">
+											<?php
+											$l++; 
+                                 
+										}										
+									}
+									?>
 									<input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="<?php echo $l; ?>">
-									<?php // q lot comp ha volutamente una unità in più per distinguerlo da quando è zero cioè nullo                                   
-                                }
-                            }
-                        }
+									<?php // q lot comp ha volutamente una unità in più per distinguerlo da quando è zero cioè nullo  
+									
+							
+							
+									
+									for ($cl = 0; $cl < $l; $cl++) { 
+										?>
+										<!-- Antonio Germani - Cambio lotto solo  -->
+										<div id="lm_dialog<?php echo $nc,$cl;?>" class="collapse" >
+											
+											<?php
+											if ((count($lm->available) > 1)) { 
+												foreach ($lm->available as $v_lm) {
+													if ($v_lm['id'] <> $form['id_lot_comp'][$nc][$cl]) { 
+														echo '<div>Cambia con:<button class="btn btn-xs btn-warning" type="text" onclick="this.form.submit();" name="id_lot_comp'.$nc.$cl.'" value="'.$v_lm['id'].'">'
+														. $v_lm['id']
+														. ' lotto n.:' . $v_lm['identifier']
+														. ' scadenza:' . gaz_format_date($v_lm['expiry'])
+														. ' disponibili:' . gaz_format_quantity($v_lm['quanti'])
+														. '</button></div>';
+													}
+												}
+											} else {
+												echo '<div><button class="btn btn-xs btn-danger" type="image" >Non ci sono disponibili altri lotti.</button></div>';
+											}
+											?>
+											
+										</div>
+										<?php
+									}
+									
+								}
 ?>		
 								</div>	
 								<?php
-                    } else { // se non prevede lotto azzero id_lotmag e q_lot_mag di $nc
-                        echo '<input type="hidden" name="id_lotmag' . $nc . '" value="">';
-                        echo '<input type="hidden" name="q_lot_comp' . $nc . '" value="">'; // non ci sono lotti per questo componente
-                        echo " Componente senza lotto";
-                    }
+							} else { // se non prevede lotto azzero id_lotmag e q_lot_mag di $nc
+								echo '<input type="hidden" name="id_lot_comp' . $nc . '0" value="">';
+								echo '<input type="hidden" name="q_lot_comp' . $nc . '" value="">'; // non ci sono lotti per questo componente
+								echo " Componente senza lotto";
+							}
 ?>
-					</div> <!-- chiude row  -->
-				</div>								
+						</div> <!-- chiude row  -->
+								
 				<?php
                     $nc = $nc + 1;
-                }
-            }
-            echo '<input type="hidden" name="numcomp" value="' . $nc . '">'; // Antonio Germani - Nota bene: numcomp ha sempre una unità in più! Non l'ho tolta per distinguere se c'è un solo componente o nessuno.            
-        }
+					}
+				}
+				echo '<input type="hidden" name="numcomp" value="' . $nc . '">'; // Antonio Germani - Nota bene: numcomp ha sempre una unità in più! Non l'ho tolta per distinguere se c'è un solo componente o nessuno.            
+			}
 		?>
-		</div>
+		</div>	<!-- chiude container  -->
 		<?php
-    }
+	}
 ?>	
 	</td>
 </tr>
@@ -1237,9 +1300,9 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 if ($popup <> 1) {
     //ANNULLA/RESET NON FUNZIONA DA RIVEDERE > print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
     print "<tr><td class=\"FacetDataTD\" align=\"right\">\n";
-    print "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
+    print "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n</td><td>";
 } else {
-    print "<tr><td>";
+    print "<tr><td></td><td>";
 }
 if ($toDo == 'update') {
     print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . strtoupper($script_transl['update']) . '!">';

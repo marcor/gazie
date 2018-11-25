@@ -55,7 +55,8 @@ $strScript = array("admin_orderman.php" =>
 		"Non c'è sufficiente disponibilità di un componente",
 		"Manca la data di registrazione",
 		"Il numero d'ordine inserito è inesistente",
-		"L'articolo è già stato prodotto per questo ordine"
+		"L'articolo è già stato prodotto per questo ordine",
+		"La quantità inserita di un lotto, di un componente, è errata"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',
