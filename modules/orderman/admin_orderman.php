@@ -60,14 +60,17 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form["campo_impianto"] = $_POST["campo_impianto"];    
     $form['quantip'] = $_POST['quantip'];
     $form['cosear'] = $_POST['cosear'];
-	if (isset ($_POST['codart'])){
+	/*if (isset ($_POST['codart'])){
 		$form['codart'] = $_POST['codart'];
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
-	} else {
+	}*/
+	if (isset ($_POST['cosear'])) {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
 		$form['codart'] = $resartico['codice'];
+		$_POST['codart']=$_POST['cosear'];
 	} 
-	$form['lot_or_serial'] = $resartico['lot_or_serial'];
+	$form['lot_or_serial'] = $resartico['lot_or_serial']; 
+	
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
 			 // prendo i movimenti di magazzino dei componenti 
@@ -130,7 +133,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['filename'] = $_POST['filename'];
     $form['identifier'] = $_POST['identifier'];
     $form['expiry'] = $_POST['expiry'];
-    $form['lot_or_serial'] = $_POST['lot_or_serial'];
+
     if (strlen($_POST['datreg']) > 0) {
         $form['datreg'] = $_POST['datreg'];
     } else {
@@ -1040,29 +1043,18 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 											$selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
 											echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'] . ' Scadenza: ' . gaz_format_date($selected_lot['expiry']). ' disponibili:' . gaz_format_quantity($selected_lot['quanti']);
 											echo '  <i class="glyphicon glyphicon-tag"></i></button>';
-											
-											
-											
-											
-											
-											
-											
 											?>
 											<input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
 											
 											Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.submit();">
 											<?php
-											$l++; 
-                                 
+											$l++;                                  
 										}										
 									}
 									?>
 									<input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="<?php echo $l; ?>">
 									<?php // q lot comp ha volutamente una unità in più per distinguerlo da quando è zero cioè nullo  
-									
-							
-							
-									
+										
 									for ($cl = 0; $cl < $l; $cl++) { 
 										?>
 										<!-- Antonio Germani - Cambio lotto solo  -->
@@ -1087,8 +1079,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 											
 										</div>
 										<?php
-									}
-									
+									}									
 								}
 ?>		
 								</div>	
@@ -1242,7 +1233,9 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
     $form['mov'] = $form['nmov'];
     echo "<input type=\"hidden\" name=\"nmovdb\" value=\"" . $form['nmovdb'] . "\">\n";
     echo "<input type=\"hidden\" name=\"nmov\" value=\"" . $form['nmov'] . "\">\n</td></tr>";
+	
     // Antonio Germani > Inizio LOTTO in entrata o creazione nuovo
+	
     if (intval($form['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form       
 ?>	  
 		<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?></td>
