@@ -1357,6 +1357,7 @@ class selectvettor extends SelectBox {
 class GAzieMail {
 
     function sendMail($admin_data, $user, $content, $partner) {
+		// su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica  
         global $gTables;
 
         require_once "../../library/phpmailer/class.phpmailer.php";
@@ -1378,7 +1379,11 @@ class GAzieMail {
         $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $user["user_name"]);
         $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
         $admin_data['web_url'] = trim($admin_data['web_url']);
-        $mailto = $partner['e_mail']; //recipient
+		if (strlen($admin_data['other_email'])>=10){
+			$mailto = $admin_data['other_email']; //recipient	
+		} else {
+			$mailto = $partner['e_mail']; //recipient
+		}
         $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione documenti"; //subject
         // aggiungo al corpo  dell'email
         $body_text = "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">" . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
@@ -1423,9 +1428,8 @@ class GAzieMail {
         /* Imposto email a cui rispondere (se � stata impostata nella tabella gaz_xxxcompany_config`)
          * deve stare prima di $mail->SetFrom perch� altrimenti aggiunge il from al reply
          */
-        if (isset($config_replyTo) && !empty($config_replyTo['val'])) {
+        if (isset($config_replyTo) && !empty($config_replyTo['val'])) { 
             $mittente = $config_replyTo['val'];
-//            $mail->AddReplyTo($config_replyTo['val']);
         } else {
             $mittente = $admin_data['e_mail'];
         }
@@ -1439,7 +1443,10 @@ class GAzieMail {
         // Imposto email del destinatario
         $mail->Hostname = $config_host;
         $mail->AddAddress($mailto);
-        // Aggiungo l'email del mittente tra i destinatari in cc
+        // Se ho una mail utente lo utilizzo come mittente tra i destinatari in cc
+		if (strlen($user['user_email'])>=10) { // quando l'utente che ha inviato la mail ha un suo indirizzo il reply avviene su di lui
+            $mittente = $user['user_email'];
+        }
         $mail->AddCC($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);
         // Imposto l'oggetto dell'email
         $mail->Subject = $subject;

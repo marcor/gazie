@@ -1945,6 +1945,8 @@ echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
 $ric = intval(substr($form['in_codric'], 0, 1));
 if ($form['tipdoc'] == 'FAP') {
     $ric = array('sub', 1, 2, 4, 5);
+} else if (substr($form['tipdoc'],0,2) == 'FA' || $form['tipdoc']== 'DDT'){
+    $ric = array('sub', 1, 4);
 }
 $gForm->selectAccount('in_codric', $form['in_codric'], $ric);
 echo " %$script_transl[24]: <input type=\"text\" value=\"" . $form['in_sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"in_sconto\" title=\"# = sconto standard dell'articolo\">";

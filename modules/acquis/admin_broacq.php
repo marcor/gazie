@@ -136,6 +136,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_quanti'] = gaz_format_quantity($_POST['in_quanti'], 0, $admin_aziend['decimal_quantity']);
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
+    $form['in_quality'] = $_POST['in_quality'];
     $form['in_extdoc'] = $_POST['in_extdoc'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
     $form['in_id_orderman'] = $_POST['in_id_orderman'];
@@ -162,6 +163,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['quanti'] = gaz_format_quantity($value['quanti'], 0, $admin_aziend['decimal_quantity']);
             $form['righi'][$next_row]['codvat'] = intval($value['codvat']);
             $form['righi'][$next_row]['codric'] = intval($value['codric']);
+            $form['righi'][$next_row]['quality'] = substr($value['quality'],0,50);
             $form['righi'][$next_row]['id_mag'] = intval($value['id_mag']);
             $form['righi'][$next_row]['id_orderman'] = intval($value['id_orderman']);
             $form['righi'][$next_row]['annota'] = substr($value['annota'], 0, 50);
@@ -201,6 +203,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_quanti'] = $form['righi'][$key_row]['quanti'];
                     $form['in_codvat'] = $form['righi'][$key_row]['codvat'];
                     $form['in_codric'] = $form['righi'][$key_row]['codric'];
+                    $form['in_quality'] = $form['righi'][$key_row]['quality'];
                     $form['in_id_mag'] = $form['righi'][$key_row]['id_mag'];
                     $form['in_extdoc'] = $form['righi'][$key_row]['extdoc'];
 					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['righi'][$key_row]['id_orderman']);
@@ -438,6 +441,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$old_key]['quanti'] = $form['in_quanti'];
             $form['righi'][$old_key]['codart'] = $form['in_codart'];
             $form['righi'][$old_key]['codric'] = $form['in_codric'];
+            $form['righi'][$old_key]['quality'] = $form['in_quality'];
             $form['righi'][$old_key]['prelis'] = $form['in_prelis'];
             $form['righi'][$old_key]['sconto'] = $form['in_sconto'];
             $form['righi'][$old_key]['codvat'] = $form['in_codvat'];
@@ -506,6 +510,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['righi'][$next_row]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
                 $form['righi'][$next_row]['unimis'] = $artico['uniacq'];
                 $form['righi'][$next_row]['codric'] = $form['in_codric'];
+                $form['righi'][$next_row]['quality'] = $artico['quality'];
                 $form['righi'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['righi'][$next_row]['sconto'] = $form['in_sconto'];
                 $form['righi'][$next_row]['prelis'] = $artico['preacq'];
@@ -591,8 +596,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_sconto'] = 0;
         $form['in_quanti'] = 0;
         $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
+        $form['in_quality'] = 0;
         $form['in_id_mag'] = 0;
-        $form['in_id_orderman'] = 0;
         $form['in_annota'] = "";
         $form['in_larghezza'] = 0;
         $form['in_lunghezza'] = 0;
@@ -602,7 +607,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_status'] = "INSERT";
         // fine reinizializzo rigo input
         $form['cosear'] = "";
-        $form['coseprod'] = "";
         $next_row++;
     }
     // Se viene inviata la richiesta di spostamento verso l'alto del rigo
@@ -646,6 +650,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_extdoc'] = 0;
     $form['in_codvat'] = $admin_aziend['preeminent_vat'];
     $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
+    $form['in_quality'] = "";
     $form['in_id_mag'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
@@ -725,6 +730,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['righi'][$next_row]['quanti'] = gaz_format_quantity($rigo['quanti'], 0, $admin_aziend['decimal_quantity']);
         $form['righi'][$next_row]['codvat'] = $rigo['codvat'];
         $form['righi'][$next_row]['codric'] = $rigo['codric'];
+        $form['righi'][$next_row]['quality'] = $rigo['quality'];
         $form['righi'][$next_row]['id_mag'] = $rigo['id_mag'];
         $form['righi'][$next_row]['id_orderman'] = $rigo['id_orderman'];
         $form['righi'][$next_row]['annota'] = $articolo['annota'];
@@ -771,6 +777,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_quanti'] = 0;
     $form['in_codvat'] = $admin_aziend['preeminent_vat'];
     $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
+    $form['in_quality'] = '';
     $form['in_id_mag'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
@@ -832,13 +839,33 @@ if ($form['id_tes'] > 0) {
 }
 ?>
 <script language="JavaScript">
-    function pulldown_menu(selectName, destField)
-    {
-        // Create a variable url to contain the value of the
-        // selected option from the the form named broven and variable selectName
-        var url = document.docacq[selectName].options[document.docacq[selectName].selectedIndex].value;
-        document.docacq[destField].value = url;
-    }
+function pulldown_menu(selectName, destField)
+{
+    // Create a variable url to contain the value of the
+    // selected option from the the form named broven and variable selectName
+    var url = document.docacq[selectName].options[document.docacq[selectName].selectedIndex].value;
+    document.docacq[destField].value = url;
+}
+
+function choicequality(row)
+{
+	var rigo = row;
+	alert(row);
+	$( "#search_quality"+row ).autocomplete({
+		source: "../../modules/root/search.php?opt=quality",
+		minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+ 
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$(this).val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
+}
 </script>
 <?php
 echo "<form method=\"POST\" name=\"docacq\" enctype=\"multipart/form-data\">\n";
@@ -967,13 +994,17 @@ for ($counter = $form['anncon'] - 10; $counter <= $form['anncon'] + 10; $counter
         $selected = "selected";
     echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
-echo '</td><td colspan="3">';
+echo '</td><td class="FacetFieldCaptionTD">Produzione:</td><td colspan="3">  ';
+$select_prod = new selectproduction("in_id_orderman");
+$select_prod->addSelected($form['in_id_orderman']);
+$select_prod->output($form['coseprod']);
 // fine modifiche
 echo '</td></tr>';
 echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<input type=\"hidden\" value=\"{$form['in_codice_fornitore']}\" name=\"in_codice_fornitore\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_quality']}\" name=\"in_quality\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_pervat']}\" name=\"in_pervat\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_unimis']}\" name=\"in_unimis\" />\n";
@@ -1012,10 +1043,7 @@ echo $script_transl[18].": ";
 $select_codric = new selectconven("in_codric");
 $select_codric->addSelected($form['in_codric']);
 $select_codric->output(substr($form['in_codric'], 0, 1));
-echo " %$script_transl[24]: <input type=\"text\" value=\"{$form['in_sconto']}\" maxlength=\"4\" size=\"1\" name=\"in_sconto\"> Produzione:";
-$select_prod = new selectproduction("in_id_orderman");
-$select_prod->addSelected($form['in_id_orderman']);
-$select_prod->output($form['coseprod']);
+echo " %$script_transl[24]: <input type=\"text\" value=\"{$form['in_sconto']}\" maxlength=\"4\" size=\"1\" name=\"in_sconto\">";
 
 echo "</td><td class=\"FacetColumnTD\"> $script_transl[19]: ";
 $select_in_codvat = new selectaliiva("in_codvat");
@@ -1082,6 +1110,7 @@ foreach ($form['righi'] as $key => $value) {
     echo "<input type=\"hidden\" value=\"{$value['codvat']}\" name=\"righi[{$key}][codvat]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['pervat']}\" name=\"righi[{$key}][pervat]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['codric']}\" name=\"righi[{$key}][codric]\">\n";
+    echo "<input type=\"hidden\" value=\"{$value['quality']}\" name=\"righi[{$key}][quality]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['id_mag']}\" name=\"righi[{$key}][id_mag]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['id_orderman']}\" name=\"righi[{$key}][id_orderman]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['annota']}\" name=\"righi[{$key}][annota]\">\n";
@@ -1109,7 +1138,9 @@ foreach ($form['righi'] as $key => $value) {
 						</button>
 					  </td>';
 			echo '<td>
-					<input type="text" name="righi[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" /></td>';
+					<input type="text" name="righi[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" />
+					<button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#quality_'.$key.'" aria-expanded="false" aria-controls="quality_'.$key.'" title="Descrizione qualità" title="Scegli la qualità del prodotto"><i class="glyphicon glyphicon-tags"></i> Qualità</button><div class="collapse" id="quality_'.$key.'">Qualità:<input id="search_quality'.$key.'" onClick="choicequality(\''.$key.'\');"  name="righi[' . $key . '][quality]" value="'. $value['quality'] .'" rigo="'. $key .'" type="text" /></div>
+					</td>';
             echo '<td>
 						<input type="text" name="righi[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
 					  </td>';

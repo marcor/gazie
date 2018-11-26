@@ -30,7 +30,6 @@ class DocContabVars {
         $this->ecr = $ecr;
         $this->gTables = $gTables;
         $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
-        $this->azienda = $admin_aziend;
         $this->user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
         $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
 
@@ -194,6 +193,9 @@ class DocContabVars {
         } else {
             $this->pers_title = 'Spett.le';
         }
+		// aggiungo la mail in testata documento sui dati aziendali per poterla eventualmente passare alla funzione sendMail
+		$admin_aziend['other_email']=$tesdoc["email"];
+        $this->azienda = $admin_aziend;
     }
 
     function initializeTotals() {
@@ -262,6 +264,8 @@ class DocContabVars {
         $this->ritenuta = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+            $orderman = gaz_dbi_get_row($this->gTables['orderman'], 'id', $rigo['id_orderman']);
+			$rigo['orderman_descri']=$orderman['description'];
             if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
                 $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);

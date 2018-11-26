@@ -65,6 +65,7 @@ class PreventivoFornitore extends Template
     function body()
     {
         $lines = $this->docVars->getRigo();
+		$ctrl_orderman=0;
 		foreach ($lines AS $key => $rigo) {
             if ($this->GetY() >= 185) {
                 $this->Cell(186,6,'','T',1);
@@ -75,7 +76,14 @@ class PreventivoFornitore extends Template
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
             }
-                switch($rigo['tiprig']) {
+			if ($ctrl_orderman!=$rigo['id_orderman'] && $rigo['id_orderman']>0) {
+				/* stampo il rigo riferito ad una produzione   */
+				$this->SetFont('helvetica', 'B', 9);
+				$this->Ln(1);
+				$this->Cell(186, 6, 'Materiale per commessa n. ' . $rigo['id_orderman'] . ' - ' .  $rigo['orderman_descri'], 1, 1, 'L');
+				$this->SetFont('helvetica', '', 9);
+			}
+			switch($rigo['tiprig']) {
                 case "0":
                     $this->Cell(25, 6, $rigo['codart'],1,0,'L',0,'',1);
                     if ($rigo['pezzi'] > 0) {
@@ -164,7 +172,8 @@ class PreventivoFornitore extends Template
                     $this->Cell(81,6,'','R',1);
                     break;
                 }
-       }
+				$ctrl_orderman=$rigo['id_orderman'];
+		}
     }
 
 

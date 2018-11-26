@@ -23,7 +23,6 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend=checkAdmin();
 require("../../library/include/document.php");
 $testat = intval($_GET['id_tes']);
@@ -33,9 +32,13 @@ if ($tesbro['tipdoc'] <> 'APR') {
     header("Location: report_broacq.php");
     exit;
 }
-if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
-    createDocument($tesbro, 'PreventivoFornitore',$gTables,'rigbro','E');
+if (isset($_GET['dest'])){
+  if ($_GET['dest']=='E'){ //  invio  mail all'indirizzo in testata o in alternativa se sta sul fornitore
+  } else { // in dest ho l'indirizzo email quindi lo setto in testata e poi procedo all'invio
+	$r=gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $testat, 'email',filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL));
+  }	
+  createDocument($tesbro, 'PreventivoFornitore',$gTables,'rigbro','E');
 } else {
-    createDocument($tesbro, 'PreventivoFornitore',$gTables,'rigbro');
+  createDocument($tesbro, 'PreventivoFornitore',$gTables,'rigbro');
 }
 ?>

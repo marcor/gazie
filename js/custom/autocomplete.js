@@ -146,6 +146,6 @@ $(function() {
 			$(this).closest("form").submit();
 		}
 	});
-	
+
 });
 

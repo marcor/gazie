@@ -100,15 +100,7 @@ function mostra_documenti_associati($ordine) {
             echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docacq.php?id_tes=" . $tesdoc_r["id_tes"] . "\">";
             echo "fatt. " . $tesdoc_r["numfat"];
             echo "</a> ";
-        }/* elseif ($tesdoc_r["tipdoc"] == "DDT" || $tesdoc_r["tipdoc"] == "FAD") {
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=DDT\">";
-            echo "ddt " . $tesdoc_r["numdoc"];
-            echo "</a> ";
-        } elseif ($tesdoc_r["tipdoc"] == "VCO") {
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=FatturaAllegata\">";
-            echo "scontr. " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
-            echo "</a> ";
-        }*/ else {
+        } else {
             echo $tesdoc_r["tipdoc"] . $rigbro_r["id_doc"] . " ";
         }
     }
@@ -156,6 +148,8 @@ function confirmemail(cod_partner,id_tes) {
 					alert('Mail formalmente errata');
 				} else {
 					$("#mailbutt div").remove();
+					var dest=$("#mailaddress").val();
+                    window.location.href = 'stampa_prefor.php?id_tes='+id_tes+'&dest='+dest;
 				}
 
 				}
@@ -168,28 +162,6 @@ function confirmemail(cod_partner,id_tes) {
 	});
 }
 
-function confirMail(link){
-   tes_id = link.id.replace("doc", "");
-   $.fx.speeds._default = 500;
-   targetUrl = $("#doc"+tes_id).attr("url");
-   //alert (targetUrl);
-   $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
-   $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
-   $( "#dialog" ).dialog({
-   modal: "true",
-   show: "blind",
-   hide: "explode",
-   buttons: {
-            " <?php echo $script_transl['submit']; ?> ": function() {
-                         window.location.href = targetUrl;
-                      },
-                      " <?php echo $script_transl['cancel']; ?>": function() {
-                        $(this).dialog("close");
-                      }
-                  }
-         });
-   $("#dialog" ).dialog( "open" );
-}
 </script>
 
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl["title2"]; ?></div>
