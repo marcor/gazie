@@ -163,6 +163,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['quanti'] = gaz_format_quantity($value['quanti'], 0, $admin_aziend['decimal_quantity']);
             $form['righi'][$next_row]['codvat'] = intval($value['codvat']);
             $form['righi'][$next_row]['codric'] = intval($value['codric']);
+            $form['in_quality'] = substr($value['quality'],0,50); // ripropongo sul rigo di inserimento sempre l'ultimo tipo di qualità
             $form['righi'][$next_row]['quality'] = substr($value['quality'],0,50);
             $form['righi'][$next_row]['id_mag'] = intval($value['id_mag']);
             $form['righi'][$next_row]['id_orderman'] = intval($value['id_orderman']);
@@ -427,7 +428,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     /* con button non funziona _x */
     if (isset($_POST['in_submit'])) {
         /** ENRICO FEDELE */
-        $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
+        $artico = gaz_dbi_get_row($gTables['artico'], $gTables['artico'].".codice", $form['in_codart']);
         if (substr($form['in_status'], 0, 6) == "UPDROW") { //se è un rigo da modificare
             $old_key = intval(substr($form['in_status'], 6));
             $form['righi'][$old_key]['tiprig'] = $form['in_tiprig'];
@@ -511,6 +512,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$next_row]['unimis'] = $artico['uniacq'];
                 $form['righi'][$next_row]['codric'] = $form['in_codric'];
                 $form['righi'][$next_row]['quality'] = $artico['quality'];
+				if ($artico['quality']==''){
+					$form['righi'][$next_row]['quality'] = $form['in_quality'];
+				}
                 $form['righi'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['righi'][$next_row]['sconto'] = $form['in_sconto'];
                 $form['righi'][$next_row]['prelis'] = $artico['preacq'];
@@ -596,7 +600,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_sconto'] = 0;
         $form['in_quanti'] = 0;
         $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
-        $form['in_quality'] = 0;
         $form['in_id_mag'] = 0;
         $form['in_annota'] = "";
         $form['in_larghezza'] = 0;
@@ -731,6 +734,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['righi'][$next_row]['codvat'] = $rigo['codvat'];
         $form['righi'][$next_row]['codric'] = $rigo['codric'];
         $form['righi'][$next_row]['quality'] = $rigo['quality'];
+        $form['in_quality'] = $rigo['quality']; // ripropongo l'ultima qualità
         $form['righi'][$next_row]['id_mag'] = $rigo['id_mag'];
         $form['righi'][$next_row]['id_orderman'] = $rigo['id_orderman'];
         $form['righi'][$next_row]['annota'] = $articolo['annota'];
@@ -849,8 +853,6 @@ function pulldown_menu(selectName, destField)
 
 function choicequality(row)
 {
-	var rigo = row;
-	alert(row);
 	$( "#search_quality"+row ).autocomplete({
 		source: "../../modules/root/search.php?opt=quality",
 		minLength: 2,
@@ -1004,7 +1006,7 @@ echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<input type=\"hidden\" value=\"{$form['in_codice_fornitore']}\" name=\"in_codice_fornitore\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_quality']}\" name=\"in_quality\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_quality']}\" name=\"in_quality\" id=\"in_quality\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_pervat']}\" name=\"in_pervat\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_unimis']}\" name=\"in_unimis\" />\n";
@@ -1139,7 +1141,7 @@ foreach ($form['righi'] as $key => $value) {
 					  </td>';
 			echo '<td>
 					<input type="text" name="righi[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" />
-					<button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#quality_'.$key.'" aria-expanded="false" aria-controls="quality_'.$key.'" title="Descrizione qualità" title="Scegli la qualità del prodotto"><i class="glyphicon glyphicon-tags"></i> Qualità</button><div class="collapse" id="quality_'.$key.'">Qualità:<input id="search_quality'.$key.'" onClick="choicequality(\''.$key.'\');"  name="righi[' . $key . '][quality]" value="'. $value['quality'] .'" rigo="'. $key .'" type="text" /></div>
+					<button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#quality_'.$key.'" aria-expanded="false" aria-controls="quality_'.$key.'" title="Descrizione qualità" title="Scegli la qualità del prodotto"><i class="glyphicon glyphicon-tags"></i> '.substr($value['quality'],0,10).'</button><div class="collapse" id="quality_'.$key.'">Qualità: <input id="search_quality'.$key.'" onClick="choicequality(\''.$key.'\');"  name="righi[' . $key . '][quality]" value="'. $value['quality'] .'" rigo="'. $key .'" type="text" /></div>
 					</td>';
             echo '<td>
 						<input type="text" name="righi[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />

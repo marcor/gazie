@@ -378,6 +378,7 @@ $strScript = array("browse_document.php" =>
         'barcode' => "Barcode EAN13",
         'image' => "Image (jpg,png,gif) max 64kb",
         'unimis' => "Measurement Unit for sales",
+        'quality' => "Quality",
         'larghezza' => "Height (mm)",
         'lunghezza' => "Widht (mm)",
         'spessore' => "Thickness (mm)",

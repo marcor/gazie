@@ -373,6 +373,7 @@ $strScript = array("browse_document.php" =>
         'barcode' => "Codice a Barre EAN13",
         'image' => "Immagine (jpg,png,gif) max 64Kb",
         'unimis' => "Unit&agrave; di misura vendite",
+        'quality' => "Qualità",
         'larghezza' => "Larghezza (mm)",
         'lunghezza' => "Lunghezza (mm)",
         'spessore' => "Spessore (mm)",

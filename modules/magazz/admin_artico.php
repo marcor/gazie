@@ -471,6 +471,14 @@ if ($modal_ok_insert === true) {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
+                            <label for="quality" class="col-sm-4 control-label"><?php echo $script_transl['quality']; ?></label>
+                            <input class="col-sm-2" type="text" value="<?php echo $form['quality']; ?>" name="quality"maxlength="50"/>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
                             <label for="lunghezza" class="col-sm-4 control-label"><?php echo $script_transl['lunghezza']; ?></label>
                             <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['lunghezza']; ?>" name="lunghezza" />
                         </div>
