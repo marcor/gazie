@@ -60,10 +60,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form["campo_impianto"] = $_POST["campo_impianto"];    
     $form['quantip'] = $_POST['quantip'];
     $form['cosear'] = $_POST['cosear'];
-	/*if (isset ($_POST['codart'])){
-		$form['codart'] = $_POST['codart'];
-		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
-	}*/
+
 	if (isset ($_POST['cosear'])) {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
 		$form['codart'] = $resartico['codice'];
@@ -155,8 +152,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                 for ($n = 0;$n < $form['q_lot_comp'][$m];++$n) { // se q lot comp è zero vuol dire che non ci sono lotti
 				
                     $form['id_lot_comp'][$m][$n] = $_POST['id_lot_comp' . $m . $n];
-                    $form['lot_quanti'][$m][$n] = $_POST['lot_quanti' . $m . $n];
-					
+                    $form['lot_quanti'][$m][$n] = $_POST['lot_quanti' . $m . $n];					
                 }
             } 
         } 
