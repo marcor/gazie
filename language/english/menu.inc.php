@@ -76,6 +76,7 @@ $strCommon = array('cancel' => " Cancel ",
     'duplicate' => 'Duplica',
     'browse_for_file' => 'Browse',
 	'refresh' => ' REFRESH ',
-	'add' => 'Add movement'
+	'add' => 'Add movement',
+    'order_type' => array(""=>' --------- ',"AGR"=>'Agriculture', "IND"=>'Industrial', "RIC"=>'Research & develop', "PRF"=>'Professional', "ART"=>'Handicraft')
 );
 ?>

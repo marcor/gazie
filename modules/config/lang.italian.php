@@ -60,6 +60,7 @@ $strScript = array(
         'sexper' => "Sesso/pers.giuridica ",
         'sexper_value' => array('' => '-', 'M' => 'Maschio', 'F' => 'Femmina', 'G' => 'Giuridica'),
         'datnas' => 'Data di nascita',
+		'order_type_label'=>'Tipo di produzione',
         'luonas' => 'Luogo di nascita - Provincia',
         'indspe' => 'Indirizzo',
         'latitude' => 'Latitudine',

@@ -318,6 +318,16 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
+                        <label for="order_type" class="col-sm-4 control-label"><?php echo $script_transl['order_type_label']; ?></label>
+                        <?php
+						$gForm->variousSelect("order_type", $script_transl['order_type'], $form['order_type'], '', true, 'order_type');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
                         <label for="country" class="col-sm-4 control-label"><?php echo $script_transl['country']; ?>*</label>
                         <?php
                         $gForm->selectFromDB('country', 'country', 'iso', $form['country'], 'iso', 0, ' - ', 'name', '', 'col-sm-8', null, 'style="max-width: 250px;"');

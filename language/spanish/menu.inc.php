@@ -80,6 +80,8 @@ $strCommon = array('cancel' => " Cancelar ",
     'duplicate' => 'Duplica',
     'browse_for_file' => 'Browse',
 	'refresh' => ' ACTUALIZACIONES ',
-	'add' => 'Añadir movimiento'
+	'add' => 'Añadir movimiento',
+    'order_type' => array(""=>' --------- ',"AGR"=>'Agriculture', "IND"=>'Industrial', "RIC"=>'Research & develop', "PRF"=>'Professional', "ART"=>'Handicraft')
+
 );
 ?>

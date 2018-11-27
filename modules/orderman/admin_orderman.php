@@ -752,8 +752,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
 	$form['numdoc']="";
     if (isset($_GET['type'])) { // controllo se proviene anche da una richiesta del modulo camp
         $form['order_type'] = $_GET['type'];
-    } else {
-        $form['order_type'] = "";
+    } else { // altrimenti prendo quello in configurazione azienda
+        $form['order_type'] = $admin_aziend['order_type'];
     }
     $form['description'] = "";
     $form['id_tesbro'] = "";
@@ -863,16 +863,9 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 </script>
 
 <?php if ($toDo == "insert") {
-?>
-	<select name="order_type" onchange="this.form.submit()" >
-	<option <?php if ($form['order_type'] == "") echo 'selected'; ?> value="">--</option>
-	<option <?php if ($form['order_type'] == "AGR") echo 'selected'; ?> value="AGR">Agricola</option>
-	<option <?php if ($form['order_type'] == "IND") echo 'selected'; ?> value="IND">Industriale</option>
-	<option <?php if ($form['order_type'] == "RIC") echo 'selected'; ?> value="RIC">Ricerca e sviluppo</option>
-	<option <?php if ($form['order_type'] == "PRF") echo 'selected'; ?> value="PRF">Professionale</option>
-	<option <?php if ($form['order_type'] == "ART") echo 'selected'; ?> value="ART">Artigianale</option>
-	</select>
-<?php
+
+$gForm->variousSelect("order_type", $script_transl['order_type'], $form['order_type'], '', true, 'order_type');
+
 } else {
     echo $form['order_type'], "&nbsp &nbsp";
     echo '<input type="hidden" name="order_type" value="' . $form['order_type'] . '">';

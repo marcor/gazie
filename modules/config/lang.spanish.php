@@ -63,6 +63,7 @@ $strScript = array("admin_aziend.php" =>
         'sexper' => "Genero de la persona jur&iacute;dica ",
         'sexper_value' => array('' => '-', 'M' => 'Masculino', 'F' => 'Femenino', 'G' => 'Legal'),
         'datnas' => 'Fecha de Nacimiento',
+		'order_type_label'=>'Production type',
         'luonas' => 'Lugar de Nacimiento - Pais',
         'indspe' => 'Dirrecci&oacute;n',
         'latitude' => 'Latitudine',

@@ -162,6 +162,34 @@ function confirmemail(cod_partner,id_tes) {
 	});
 }
 
+function choicePartner(row)
+{
+	$( "#search_partner"+row ).autocomplete({
+		source: "../../modules/root/search.php?opt=supplier",
+		minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+ 
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$(".supplier_name").replaceWith(ui.item.value);
+			$("#confirm_duplicate").dialog({
+				modal: true,
+				show: "blind",
+				hide: "explode",
+				buttons: {
+					Duplica: function() {
+						window.location.href = 'duplicate_broacq.php?id_tes='+row+'&duplicate='+ui.item.codice;
+						}
+					},
+				close: function(){}
+				});
+			}		
+	});
+}
+
 </script>
 
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl["title2"]; ?></div>
@@ -240,12 +268,13 @@ $recordnav -> output();
 <?php
 $headers_tesdoc = array  (
               "ID" => "id_tes",
-              "Tipo" => "tipdoc",
+              "Produzione" => "id_orderman",
               "Numero" => "numdoc",
               "Data" => "datemi",
               "Fornitore" => "clfoco",
               "Status" => "",
               "Stampa" => "",
+              "Duplica" => "",
               "Mail" => "",
               "Cancella" => ""
               );
@@ -254,9 +283,8 @@ $linkHeaders -> output();
 ?>
 </tr>
 <?php
-if (!isset($_GET['flag_order']))
-       $orderby = "id_tes desc";
-$result = gaz_dbi_dyn_query ($gTables['tesbro'].".*, ".$gTables['clfoco'].".codice", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice", $where, $orderby, $limit, $passo);
+if (!isset($_GET['flag_order']))  $orderby = "id_tes desc";
+$result = gaz_dbi_dyn_query ($gTables['tesbro'].".*, ".$gTables['clfoco'].".codice", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice ", $where, $orderby, $limit, $passo);
 $ctrlprotoc = "";
 $anagrafica = new Anagrafica();
 while ($r = gaz_dbi_fetch_array($result)) {
@@ -275,26 +303,24 @@ while ($r = gaz_dbi_fetch_array($result)) {
     if (! empty ($modifi)) {
        echo "<td>
 	   			<a class=\"btn btn-xs btn-default\" href=\"".$modifi."\">
-					<i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["id_tes"]."
+					<i class=\"glyphicon glyphicon-edit\">".$tipodoc."</i>&nbsp;".$r["id_tes"]."
 				</a>
 			 </td>";
     } else {
        echo "<td>
-	   			<button class=\"btn btn-xs btn-default disabled\">".$r["id_tes"]." &nbsp;</button>
+	   			<button class=\"btn btn-xs btn-default disabled\">".$r["id_tes"]." ".$tipodoc." &nbsp;</button>
 			</td>";
     }
-    echo "	<td>".$tipodoc." &nbsp;</td>
-			<td>".$r["numdoc"]." &nbsp;</td>
-			<td>".gaz_format_date($r["datemi"])." &nbsp;</td>
-			<td>".$fornitore["ragso1"]."&nbsp;</td>";
-			//<td>".$r["status"]." &nbsp;</td>
-            
-            // colonna stato ordine
+            // per colonna stato ordine e produzione
+			$orderman_descr='';
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
-            $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
+            $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
             while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
-                $totale_da_evadere = $rigbro_r['quanti'];
+				if ($rigbro_r['id_orderman']>0){
+					$orderman_descr=$rigbro_r['id_orderman'].'-'.$rigbro_r['description'];
+				}
+				$totale_da_evadere = $rigbro_r['quanti'];
                 $totale_evaso = 0;
                 $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND codart='".$rigbro_r['codart']."' AND tiprig <=1 ", 'id_tes DESC');
                 while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
@@ -305,6 +331,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
                     $remains_atleastone = true;
                 }
             }
+    echo '			<td>'.$orderman_descr." &nbsp;</td>
+			<td>".$r["numdoc"]." &nbsp;</td>
+			<td>".gaz_format_date($r["datemi"])." &nbsp;</td>
+			<td>".$fornitore["ragso1"]."&nbsp;</td>";
+			//<td>".$r["status"]." &nbsp;</td>
+            
             //
             // Se l'ordine e' da evadere completamente, verifica lo status ed
             // eventualmente lo aggiorna.
@@ -344,8 +376,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" target=\"_blank\">
 					<i class=\"glyphicon glyphicon-print\"></i>
 				</a>
-			</td>
-			<td align=\"center\">";
+			</td>";
+			echo '<td align="center" title="Stesso preventivo per altro fornitore"><button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"></i></button>';
+            echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div></td><td align="center">';
     if (!empty($fornitore["e_mail"])) {
         echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\');" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-envelope"></i></a>';
     } else {
@@ -372,6 +405,14 @@ while ($r = gaz_dbi_fetch_array($result)) {
         </div>
         <div id="mailbutt">
 		</div>
+    </fieldset>
+</div>
+<div class="modal" id="confirm_duplicate" title="Duplica preventivo">
+    <fieldset>
+        <div>
+            <label for="duplicate">a:</label>
+            <div class="supplier_name"><div/>
+        </div>
     </fieldset>
 </div>
 <?php

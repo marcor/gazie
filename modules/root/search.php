@@ -141,7 +141,17 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
 							LEFT JOIN " . $gTables['country'] . " ON 
 							" . $gTables['regions'] . ".iso_country = " . $gTables['country'] . ".iso", $like, $gTables['municipalities'] . ".name ASC");
             break;
-        default:
+        case 'supplier':
+            $fields = array("ragso1", "ragso2");    //	Sono i campi sui quali effettuare la ricerca
+            foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
+                foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
+                    $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
+                }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
+            $result = gaz_dbi_dyn_query("codice, CONCAT(ragso1,' ',ragso2) AS label, ragso1 AS value, 'S' AS movimentabile ", $gTables['clfoco']. " LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", '('.$like.') AND codice BETWEEN '.$admin_aziend['masfor'].'000001 AND '.$admin_aziend['masfor'].'999999', 'ragso1');
+			break;
+		default:
             $fields = array("ragso1", "ragso2");    //	Sono i campi sui quali effettuare la ricerca
             foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly

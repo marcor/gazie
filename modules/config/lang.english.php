@@ -59,6 +59,7 @@ $strScript = array("admin_aziend.php" =>
         'sexper' => "Sex or legal person ",
         'sexper_value' => array('' => '-', 'M' => 'Male', 'F' => 'Female', 'G' => 'Legal'),
         'datnas' => 'Birthdate',
+		'order_type_label'=>'Production type',
         'luonas' => 'Place of Birth - County',
         'indspe' => 'Address',
         'latitude' => 'Latitudine',
