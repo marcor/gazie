@@ -127,6 +127,7 @@ $strScript = array("admin_aziend.php" =>
         'cotrat' => 'Portfolio cuenta draft',
         'cocamb' => 'Portfolio cuenta bills',
         'c_ritenute' => 'Cuenta de retenci&oacute;n',
+        'c_ritenute_autonomi' => 'Ritenute autonomi da versare',
         'payroll_tax' => 'Payroll tax percent',
         'c_payroll_tax' => 'Payroll tax account',
         'ritenuta' => '% Retencion',

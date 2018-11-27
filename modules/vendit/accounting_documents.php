@@ -82,18 +82,26 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
     $somma_spese = 0;
     $totimpdoc = 0;
     $rit = 0;
-
     while ($tes = gaz_dbi_fetch_array($result)) {
         if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
+            switch ($tes['tipdoc']) {
+				case "AFA":case "AFC":case "AFD":
+				$bol=$admin_aziend['taxstamp_account'];
+				break;
+                default:
+				$bol=$admin_aziend['boleff'];
+				break;
+
+			}
             if ($ctrlp > 0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
                 $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
                 $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
                 $doc[$ctrlp]['vat'] = $calc->castle;
                 // aggiungo il castelleto conti
-                if (!isset($doc[$ctrlp]['acc'][$admin_aziend['boleff']])) {
-                    $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] = 0;
+                if (!isset($doc[$ctrlp]['acc'][$bol])) {
+                    $doc[$ctrlp]['acc'][$bol]['import'] = 0;
                 }
-                $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $taxstamp + $calc->pay_taxstamp;
+                $doc[$ctrlp]['acc'][$bol]['import'] += $taxstamp + $calc->pay_taxstamp;
             }
             $carry = 0;
             $ivasplitpay = 0;
@@ -192,10 +200,10 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
         $doc[$ctrlp]['vat'] = $calc->castle;
         // aggiungo il castelleto conti
-        if (!isset($doc[$ctrlp]['acc'][$admin_aziend['boleff']])) {
-            $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] = 0;
+        if (!isset($doc[$ctrlp]['acc'][$bol])) {
+            $doc[$ctrlp]['acc'][$bol]['import'] = 0;
         }
-        $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $taxstamp + $calc->pay_taxstamp;
+        $doc[$ctrlp]['acc'][$bol]['import'] += $taxstamp + $calc->pay_taxstamp;
     }
     return $doc;
 }
@@ -284,42 +292,49 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         $da_c = 'A';
                         $da_p = 'D';
                         $kac = $admin_aziend['ivaven'];
+						$krit = $admin_aziend['c_ritenute'];
                         break;
                     case "FNC":$reg = 2;
                         $op = 2;
                         $da_c = 'D';
                         $da_p = 'A';
                         $kac = $admin_aziend['ivaven'];
+						$krit = $admin_aziend['c_ritenute'];
                         break;
                     case "VCO":$reg = 4;
                         $op = 1;
                         $da_c = 'A';
                         $da_p = 'D';
                         $kac = $admin_aziend['ivacor'];
+						$krit = $admin_aziend['c_ritenute'];
                         break;
                     case "VRI":$reg = 4;
                         $op = 1;
                         $da_c = 'A';
                         $da_p = 'D';
                         $kac = $admin_aziend['ivacor'];
+						$krit = $admin_aziend['c_ritenute'];
                         break;
                     case "AFA":$reg = 6;
                         $op = 1;
                         $da_c = 'D';
                         $da_p = 'A';
                         $kac = $admin_aziend['ivaacq'];
+						$krit = $admin_aziend['c_ritenute_autonomi'];
                         break;
                     case 'AFC':$reg = 6;
                         $op = 2;
                         $da_c = 'A';
                         $da_p = 'D';
                         $kac = $admin_aziend['ivaacq'];
+						$krit = $admin_aziend['c_ritenute_autonomi'];
                         break;
                     case 'AFD':$reg = 6;
                         $op = 1;
                         $da_c = 'D';
                         $da_p = 'A';
                         $kac = $admin_aziend['ivaacq'];
+						$krit = $admin_aziend['c_ritenute_autonomi'];
                         break;
                     default:$reg = 0;
                         $op = 0;
@@ -328,7 +343,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 $tot = computeTot($v['vat']);
                 // fine calcolo totali
                 // calcolo le rate al fine di inserire le partite aperte  
-                $rate = CalcolaScadenze($tot['tot'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
+                $rate = CalcolaScadenze($tot['tot'] - $v['rit'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
                 // rateizzo anche l'iva split payment  
                 $rateisp = CalcolaScadenze($v['isp'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
                 // inserisco la testata
@@ -411,7 +426,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $kac, 'import' => $tot['vat']));
                 }
                 if ($v['rit'] > 0) {  // se ho una ritenuta d'acconto
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['c_ritenute'], 'import' => $v['rit']));
+                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $krit, 'import' => $v['rit']));
                 }
                 if ($v['tes']['incaut'] > 100000000) {  // se il pagamento prevede l'incasso automatico 
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
@@ -468,7 +483,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     }
                 }
             }
-            header("Location: report_docven.php");
+		    if ($form['type'] == 'A') {
+				header("Location: ../../modules/acquis/report_docacq.php");
+ 			} else {
+				header("Location: ../../modules/vendit/report_docven.php");
+ 			}
             exit;
         } else {
             $msg .= "1+";

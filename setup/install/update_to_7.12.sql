@@ -15,6 +15,8 @@ ALTER TABLE `gaz_aziend` ADD COLUMN `fae_tipo_cassa` VARCHAR(4) NOT NULL COMMENT
 ALTER TABLE `gaz_aziend` ADD COLUMN `ra_cassa` TINYINT(1) NULL COMMENT 'scelta se applicare o meno la ritenuta d\'acconto sulla cassa previdenziale' AFTER `fae_tipo_cassa`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_ddtacq.php'), 'admin_docacq.php?seziva=1&tipdoc=RDL&Insert', '', '', 20, '', 5  FROM `gaz_menu_script`;
 ALTER TABLE `gaz_aziend` CHANGE COLUMN `boleff` `boleff` INT(9) NOT NULL DEFAULT '0' COMMENT 'Conto dei ricavi per bolli su vendite (il conto di costo su acquisti è la colonna taxstamp_account)' AFTER `impvar`,	ADD COLUMN `taxstamp_account` INT(9) NOT NULL DEFAULT '0' COMMENT 'Conto di costo su acquisti per bolli ( quello di ricavo su vendite è sulla colonna boleff)' AFTER `taxstamp_vat`;
+ALTER TABLE `gaz_aziend` CHANGE COLUMN `c_ritenute` `c_ritenute` INT(9) NOT NULL COMMENT 'conto ritenute subite' AFTER `cocamb`, ADD COLUMN `c_ritenute_autonomi` INT(9) NOT NULL COMMENT 'conto ritenute autonomi da versare ' AFTER `c_ritenute`;
+
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesmov`	ADD COLUMN `notess` TEXT NULL DEFAULT '' COMMENT 'Note che NON vengono stampate sui registri contabili' AFTER `descri`;
 ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `id_orderman` INT(9) NULL COMMENT 'Per avere riferimenti uno a molti, e viceversa, con le produzioni (orderman)' AFTER `id_mag`;

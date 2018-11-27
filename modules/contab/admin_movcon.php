@@ -553,7 +553,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $ctrl_mov_con = number_format($_POST['importorc'][$i], 2, '.', '');
                 }
             }
-			if ($_POST['conto_rc' . $i]== $admin_aziend['c_ritenute']) {
+			if ($_POST['conto_rc' . $i] == $admin_aziend['c_ritenute'] || $_POST['conto_rc' . $i] == $admin_aziend['c_ritenute_autonomi']) {
 				$ctrl_ritenute +=$_POST['importorc'][$i];
 				
 			}
@@ -562,7 +562,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             } else {
                 $ctrl_tot_A += $_POST['importorc'][$i];
             }
-            $ctrl_bal = number_format($ctrl_tot_D - $ctrl_tot_A, 2, '.', '');
+            $ctrl_bal = round($ctrl_tot_D - $ctrl_tot_A, 2);
         }
         //calcolo i totali iva per poter eseguire il controllo
         if (!isset($_POST['rigiva'])) {
@@ -573,7 +573,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             $_POST['impost_ri'][$i] = preg_replace("/\,/", '.', $_POST['impost_ri'][$i]);
             $ctrl_mov_iva += $_POST['imponi_ri'][$i] + $_POST['impost_ri'][$i];
         }
-        $ctrl_mov_iva = number_format($ctrl_mov_iva, 2, '.', '');
+        $ctrl_mov_iva = round($ctrl_mov_iva, 2);
         if ($ctrl_bal != 0) {
             $msg .= "2+";
         }

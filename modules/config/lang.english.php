@@ -123,6 +123,7 @@ $strScript = array("admin_aziend.php" =>
         'cotrat' => 'Portfolio draft account',
         'cocamb' => 'Portfolio bills account',
         'c_ritenute' => 'Withholding account',
+        'c_ritenute_autonomi' => 'Ritenute autonomi da versare',
         'payroll_tax' => 'Payroll tax percent',
         'c_payroll_tax' => 'Payroll tax account',
         'ritenuta' => '% Withholding',

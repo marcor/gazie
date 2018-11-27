@@ -128,6 +128,7 @@ $strScript = array(
         'cotrat' => 'Conto portafoglio Tratte',
         'cocamb' => 'Conto portafoglio Cambiali',
         'c_ritenute' => 'Conto ritenute subite',
+        'c_ritenute_autonomi' => 'Ritenute autonomi da versare',
         'payroll_tax' => 'Percentuale Cassa Previdenziale',
         'c_payroll_tax' => 'Conto rivalsa Cassa Previdenziale',
         'ritenuta' => '% Ritenuta',

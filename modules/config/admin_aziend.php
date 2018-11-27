@@ -917,6 +917,16 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
+                        <label for="c_ritenute" class="col-sm-4 control-label"><?php echo $script_transl['c_ritenute_autonomi']; ?></label>
+                        <?php
+                        $gForm->selectAccount('c_ritenute_autonomi', $form['c_ritenute_autonomi'], 2, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
                         <label for="ritenuta" class="col-sm-4 control-label"><?php echo $script_transl['ritenuta']; ?></label>
                         <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['ritenuta']; ?>" name="ritenuta"  size="4" />
                     </div>
