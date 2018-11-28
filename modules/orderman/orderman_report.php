@@ -111,7 +111,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td>
 				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['id']; ?>" data-title="<?php echo $a_row['add_info']; ?>"><?php echo $a_row['description']; ?></span>
 			</td>
-			<td align="center"><?php echo $a_row['order_type'];?></td>
+			<td align="center"><?php echo $script_transl['order_type'][$a_row['order_type']];?></td>
 			<td align="center"><?php echo $a_row['add_info'];?></td>
 			<?php $d_row = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $a_row['id_rigbro']);?>
 			<td align="center"><?php echo $d_row['codart'];?></td>

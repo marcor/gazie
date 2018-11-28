@@ -80,7 +80,7 @@ class PreventivoFornitore extends Template
 				/* stampo il rigo riferito ad una produzione   */
 				$this->SetFont('helvetica', 'B', 9);
 				$this->Ln(1);
-				$this->Cell(186, 6, 'Materiale per commessa n. ' . $rigo['id_orderman'] . ' - ' .  $rigo['orderman_descri'], 1, 1, 'L');
+				$this->Cell(186, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  $rigo['orderman_descri'], 1, 1, 'L');
 				$this->SetFont('helvetica', '', 9);
 			}
 			switch($rigo['tiprig']) {

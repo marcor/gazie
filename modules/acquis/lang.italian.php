@@ -121,10 +121,19 @@ $strScript = array("admin_fornit.php" =>
     "report_broacq.php" =>
     array('Nuovo Preventivo', 'Nuovo Ordine',
         'title' => 'Preventivi e ordini',
-        'mail_alert0' => 'Invio documento con email',
-        'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
-        'mail_alert2' => 'con allegato il seguente documento:',
-        'title2' => 'Preventivi e ordini a fornitori',
+        'header' => array(
+            "ID" => 'id_tes',
+            "Produzione" => "id_orderman",
+            "Numero" => 'numdoc',
+            "Data" => "datemi",
+            "Fornitore" => "",
+            "Status" => "",
+            "Stampa" => "",
+            "Duplica" => "",
+            "Mail" => "",
+            "Duplica" => "",
+            "Cancella" => ""
+        ),
         'tuttitipi' => 'Tutti i tipi',
         'tuttianni' => 'Tutti gli anni',
         'tuttiforni' => 'Tutti i fornitori'

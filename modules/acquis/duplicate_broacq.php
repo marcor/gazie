@@ -43,15 +43,15 @@ if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato dir
    $fornitore = intval($_GET['duplicate']);
    $numdoc = trovaNuovoNumero($gTables);  // numero nuovo documento
    $today = gaz_today();
-   $sql = "INSERT INTO $tabella (`id_tes`, `seziva`, `tipdoc`, `template`, `print_total`, `delivery_time`, `day_of_validity`, `datemi`, `protoc`, `numdoc`, `numfat`, `datfat`, `clfoco`, `pagame`, `banapp`, `vettor`, `listin`, `destin`, `id_des`, `id_des_same_company`, `spediz`, `portos`, `imball`, `traspo`, `speban`, `spevar`, `round_stamp`, `cauven`, `caucon`, `caumag`, `id_agente`, `id_pro`, `sconto`, `expense_vat`, `stamp`, `taxstamp`, `virtual_taxstamp`, `net_weight`, `gross_weight`, `units`, `volume`, `initra`, `geneff`, `id_contract`, `id_con`, `status`, `adminid`, `last_modified`) "
-           . "SELECT null, `seziva`, `tipdoc`, `template`, `print_total`, `delivery_time`, `day_of_validity`, '$today', `protoc`, $numdoc, '', '', $fornitore, `pagame`, `banapp`, `vettor`, `listin`, `destin`, `id_des`, `id_des_same_company`, `spediz`, `portos`, `imball`, `traspo`, `speban`, `spevar`, `round_stamp`, `cauven`, `caucon`, `caumag`, `id_agente`, `id_pro`, `sconto`, `expense_vat`, `stamp`, `taxstamp`, `virtual_taxstamp`, `net_weight`, `gross_weight`, `units`, `volume`,  '$today', `geneff`, `id_contract`, `id_con`, `status`, `adminid`, CURRENT_TIMESTAMP FROM $tabella WHERE id_tes = $id_testata;";
+   $sql = "INSERT INTO $tabella (`id_tes`, `seziva`, `tipdoc`, `template`, `print_total`, `delivery_time`, `day_of_validity`, `datemi`, `protoc`, `numdoc`, `numfat`, `datfat`, `clfoco`, `pagame`, `banapp`, `vettor`, `listin`, `destin`, `id_des`, `id_des_same_company`, `spediz`, `portos`, `imball`, `traspo`, `speban`, `spevar`, `round_stamp`, `cauven`, `caucon`, `caumag`, `id_agente`, `id_pro`, `sconto`, `expense_vat`, `stamp`, `taxstamp`, `virtual_taxstamp`, `net_weight`, `gross_weight`, `units`, `volume`, `initra`, `geneff`, `id_contract`, `id_con`, `id_orderman`, `status`, `adminid`, `last_modified`) "
+           . "SELECT null, `seziva`, `tipdoc`, `template`, `print_total`, `delivery_time`, `day_of_validity`, '$today', `protoc`, $numdoc, '', '', $fornitore, `pagame`, `banapp`, `vettor`, `listin`, `destin`, `id_des`, `id_des_same_company`, `spediz`, `portos`, `imball`, `traspo`, `speban`, `spevar`, `round_stamp`, `cauven`, `caucon`, `caumag`, `id_agente`, `id_pro`, `sconto`, `expense_vat`, `stamp`, `taxstamp`, `virtual_taxstamp`, `net_weight`, `gross_weight`, `units`, `volume`,  '$today', `geneff`, `id_contract`, `id_con`, `id_orderman`, `status`, `adminid`, CURRENT_TIMESTAMP FROM $tabella WHERE id_tes = $id_testata;";
    mysqli_query($link, $sql);
    $nuovaChiave = gaz_dbi_last_id();
 //    gaz_dbi_del_row($gTables['tesbro'], "id_tes", intval($_POST['id_tes']));
    //... e i righi
    $tabella = $gTables['rigbro'];
-   $sql = "INSERT INTO $tabella (`id_rig`, `id_tes`, `tiprig`, `codart`, `descri`, `id_body_text`, `unimis`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, `id_doc`, `id_mag`, `status`) "
-           . "SELECT null, $nuovaChiave, `tiprig`, `codart`, `descri`, `id_body_text`, `unimis`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, 0, 0, 'INSERT' FROM $tabella WHERE id_tes = $id_testata;";
+   $sql = "INSERT INTO $tabella (`id_rig`, `id_tes`, `tiprig`, `codart`, `descri`, `id_body_text`, `unimis`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, `id_doc`, `id_mag`, `id_orderman`, `status`) "
+           . "SELECT null, $nuovaChiave, `tiprig`, `codart`, `descri`, `id_body_text`, `unimis`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, 0, 0, `id_orderman`, 'INSERT' FROM $tabella WHERE id_tes = $id_testata;";
    mysqli_query($link, $sql);
    header("Location: report_broacq.php");
    exit;
@@ -63,7 +63,7 @@ function trovaNuovoNumero($gTables) {
 	//
 	$orderBy = "datemi desc, numdoc desc";
 	parse_str(parse_url($_POST['ritorno'],PHP_URL_QUERY),$output);
-	$rs_ultimo_documento = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], $gTables['tesbro'].".tipdoc="."'".$output['auxil']."'", $orderBy, 0, 1);
+	$rs_ultimo_documento = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], $gTables['tesbro'].".tipdoc="."'APR'", $orderBy, 0, 1);
 	$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 	// se e' il primo documento dell'anno, resetto il contatore
 	if ($ultimo_documento) {

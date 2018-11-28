@@ -23,10 +23,11 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
+
 $admin_aziend=checkAdmin();
 if(!isset($_GET["annfin"])) {
-    $giornfin = 31;
-    $mesfin = 12;
+    $giornfin = intval(date("d"));
+    $mesfin = intval(date("m"));
     $annfin = intval(date("Y"));
 } else {
     $giornfin = intval($_GET["giornfin"]);
@@ -38,21 +39,21 @@ if(!isset($_GET["annini"])) {
     $rs_ultima_apertura = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'APE'", "datreg DESC", 0, 1);
     $ultima_apertura = gaz_dbi_fetch_array($rs_ultima_apertura);
     if ($ultima_apertura){
-		$giornini = substr($ultima_apertura['datreg'],6,2);
-		$mesini = substr($ultima_apertura['datreg'],4,2);
+		$giornini = substr($ultima_apertura['datreg'],8,2);
+		$mesini = substr($ultima_apertura['datreg'],5,2);
 		$annini = substr($ultima_apertura['datreg'],0,4);
 	} else {
 		// non avendo aperture trovo la prima registrazione
 		$rs_prima_registrazione = gaz_dbi_dyn_query("*", $gTables['tesmov'], 1 , "datreg ASC", 0, 1);
 		$prima_registrazione = gaz_dbi_fetch_array($rs_prima_registrazione);
 		if ($prima_registrazione) {
-			$giornini = substr($prima_registrazione['datreg'],6,2);
-			$mesini = substr($prima_registrazione['datreg'],4,2);
+			$giornini = substr($prima_registrazione['datreg'],8,2);
+			$mesini = substr($prima_registrazione['datreg'],5,2);
 			$annini = substr($prima_registrazione['datreg'],0,4);
 		} else {
 			$giornini = 1;
 			$mesini = 1;
-			$annini = intval((date("Y"));
+			$annini = date("Y");
 		}
 	}
 } else {
@@ -90,10 +91,8 @@ $script_transl=HeadMain();
 <form method="GET">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
 <table class="FacetFormTABLE" align="center">
-<tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['start_date']; ?></td>
-<td class="FacetDataTD">
-<td class="FacetDataTD">
+<td class="FacetFieldCaptionTD">Data inizio &nbsp;</td>
+<td align="center" nowrap class="FacetFooterTD">
 	<!--// select del giorno-->
 	<select name="giornini" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
 <?php
@@ -130,8 +129,8 @@ for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
 </td>
 </tr>
 <tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['end_date']; ?></td>
-<td class="FacetDataTD">
+<td class="FacetFieldCaptionTD">Data fine &nbsp;</td>
+<td align="center" nowrap class="FacetFooterTD">
 	<!--// select del giorno-->
 	<select name="giornfin" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
 <?php

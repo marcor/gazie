@@ -646,6 +646,12 @@ $strScript = array("admin_client.php" =>
         'send' => 'Invia nuovamente all\'ECR',
         'amount' => 'Importo'
     ),
+    "report_credit.php" =>
+    array('title' => 'Lista dei crediti da clienti',
+        'mail_alert0' => 'Invio documento con email',
+        'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
+        'mail_alert2' => 'con allegato il seguente documento:',
+	),
     "report_broven.php" =>
     array('title' => 'Preventivi e ordini',
         'mail_alert0' => 'Invio documento con email',

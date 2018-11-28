@@ -332,6 +332,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['id_con'] = $old_head['id_con'];
                 $form['datemi'] = $datemi;
                 $form['initra'] = $initra;
+                $form['id_orderman'] = $form['in_id_orderman'];
+				print_r($form);
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
                 header("Location: " . $form['ritorno']);
@@ -368,6 +370,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['status'] = 'GENERATO';
                 $form['datemi'] = $datemi;
                 $form['initra'] = $initra;
+                $form['id_orderman'] = $form['in_id_orderman'];
                 tesbroInsert($form);
                 //recupero l'id assegnato dall'inserimento
                 $ultimo_id = gaz_dbi_last_id();
@@ -736,6 +739,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['righi'][$next_row]['quality'] = $rigo['quality'];
         $form['in_quality'] = $rigo['quality']; // ripropongo l'ultima qualità
         $form['righi'][$next_row]['id_mag'] = $rigo['id_mag'];
+        $form['in_id_orderman'] = $rigo['id_orderman'];
         $form['righi'][$next_row]['id_orderman'] = $rigo['id_orderman'];
         $form['righi'][$next_row]['annota'] = $articolo['annota'];
         $form['righi'][$next_row]['larghezza'] = $rigo['larghezza'];

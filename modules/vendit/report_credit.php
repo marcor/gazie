@@ -122,7 +122,7 @@ function confirMail(link){
    $("#dialog" ).dialog( "open" );
 }
 </script>
-<div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+<div  style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
       <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
       <p class="ui-state-highlight" id="mail_adrs"></p>
       <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>

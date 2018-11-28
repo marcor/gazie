@@ -283,25 +283,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                 if ($toDo == "update") { // se è update, aggiorno in ogni caso
                     $query = "UPDATE " . $gTables['movmag'] . " SET quanti = '" . $form['quantip'] . "', datreg = '" . $form['datreg'] . "', datdoc = '" . $form['datemi'] . "', artico = '" . $form['codart'] . "' , campo_coltivazione = '" . $form['campo_impianto'] . "', id_orderman = '" . $_GET['codice'] . "' , id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'";
                     gaz_dbi_query($query);
-                    /* Nell' update è stata bloccata la possibilità di variare l'articolo e la sua composizione, pertanto quanto segue è stato commentato
-                    
-                    if ($itemart['good_or_service']==2){ // se è un articolo composto
-                    $query="DELETE FROM ".$gTables['movmag']." WHERE id_orderman = '".$_GET['codice']."' AND operat = '-1'";
-                    gaz_dbi_query($query); //cancello tutti movimenti di magazzino corrispondenti alle uscite dei componenti
-                    //Riscrivo nuovamente le uscite per i componenti
-                    for ($nc = 0; $nc <= $form['numcomp']-1; ++$nc){ // faccio un ciclo con tutti i componenti
-                    if ($form['q_lot_comp'][$nc]>0){ // se il componente ha lotti
-                    for ($n = 0; $n < $form['q_lot_comp'][$nc]; ++$n){ //faccio un ciclo con i lotti di ogni singolo componente
-                    $query="INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '-1', '".$form['datreg']."', 'MAG', 'Scarico per Produzione', '".$form['datemi']."', '".$form['artcomp'][$nc]."', '".$form['campo_impianto']."', '".$form['lot_quanti'][$nc][$n]."', '".$id_orderman."', '".$form['id_lot_comp'][$nc][$n]."', '".$admin_aziend['adminid']."')";
-                    gaz_dbi_query ($query); // Scarico il magazzino con l'articolo usato e i suoi lotti
-                    }
-                    } else { // se non ci sono lotti scarico semplicemente il magazzino
-                    $query="INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '-1', '".$form['datreg']."', 'MAG', 'Scarico per Produzione', '".$form['datemi']."', '".$form['artcomp'][$nc]."', '".$form['campo_impianto']."', '".$form['quanti_comp'][$nc]."', '".$id_orderman."', '', '".$admin_aziend['adminid']."')";
-                    gaz_dbi_query ($query); // Scarico il magazzino con l'articolo usato
-                    }
-                    }
-                    }
-                    */
+
                 }
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
                     $query = "INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '1', '" . $form['datreg'] . "', 'MAG', 'Produzione', '" . $form['datemi'] . "', '" . $form['codart'] . "', '" . $form['campo_impianto'] . "', '" . $form['quantip'] . "', '" . $id_orderman . "', '" . $id_lotmag . "', '" . $admin_aziend['adminid'] . "')";
