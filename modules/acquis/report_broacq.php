@@ -289,7 +289,7 @@ function choicePartner(row)
                 echo '			<td>'.$orderman_descr." &nbsp;</td>
 						<td>".$r["numdoc"]." &nbsp;</td>
 						<td>".gaz_format_date($r["datemi"])." &nbsp;</td>
-						<td>".$fornitore["ragso1"]."&nbsp;</td>";
+						<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?auxil=" . htmlspecialchars($fornitore["ragso1"]) . "&search=Cerca\">".$fornitore["ragso1"]."&nbsp;</a></td>";
 						//<td>".$r["status"]." &nbsp;</td>
                         
                         //

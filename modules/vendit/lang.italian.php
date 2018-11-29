@@ -245,6 +245,7 @@ $strScript = array("admin_client.php" =>
         "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie",
         'Non è stato selezionato il cespite da alienare sul relativo rigo',
 		'Non è possibile emettere un documento ad un cliente che non ha la PEC o il codice SdI',
+		'Selezionare la causale di pagamento della ritenuta d\'acconto in configurazione azienda',
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',

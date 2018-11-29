@@ -32,7 +32,6 @@ $calc = new Compute;
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 $lm = new lotmag;
-
 function getFAIseziva($tipdoc) {
     global $admin_aziend, $gTables, $auxil;
     if ($tipdoc == 'FAI') { // se è una fattura immediata
@@ -236,7 +235,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_quanti'] = gaz_format_quantity($_POST['in_quanti'], 0, $admin_aziend['decimal_quantity']);
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
-    $form['in_provvigione'] = $_POST['in_provvigione'];
+    $form['in_provvigione'] = $_POST['in_provvigione']; // in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
     $form['in_id_mag'] = $_POST['in_id_mag'];
     $form['in_annota'] = $_POST['in_annota'];
     $form['in_scorta'] = $_POST['in_scorta'];
@@ -255,8 +254,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form["row_$next_row"] = $_POST["row_$next_row"];
             }
             $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 100);
-            $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
+            $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']); 
             $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
+            if ($_POST['hidden_req']=="fae_tipo_cassa".$next_row && $v['tiprig']==4) { 
+				// se provengo da un cambiamento di un rigo cassa previdenziale aggiorno la descrizione 
+	            $xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
+				foreach ($xml->record as $vx) {
+					$selected = '';
+					if ($vx->field[0] == $v['codart']) {
+						$form['rows'][$next_row]['descri']= 'Contributo '.strtolower($vx->field[1]);
+					}
+				}
+            }
             $form['rows'][$next_row]['pervat'] = preg_replace("/\,/", '.', $v['pervat']);
             $form['rows'][$next_row]['tipiva'] = strtoupper(substr($v['tipiva'], 0, 1));
             $form['rows'][$next_row]['ritenuta'] = preg_replace("/\,/", '.', $v['ritenuta']);
@@ -266,7 +275,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['quanti'] = gaz_format_quantity($v['quanti'], 0, $admin_aziend['decimal_quantity']);
             $form['rows'][$next_row]['codvat'] = intval($v['codvat']);
             $form['rows'][$next_row]['codric'] = intval($v['codric']);
-            if (isset($v['provvigione'])) {
+            if (isset($v['provvigione'])) {// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
                 $form['rows'][$next_row]['provvigione'] = floatval($v['provvigione']);
             }
             $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
@@ -309,7 +318,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_quanti'] = $form['rows'][$k_row]['quanti'];
                     $form['in_codvat'] = $form['rows'][$k_row]['codvat'];
                     $form['in_codric'] = $form['rows'][$k_row]['codric'];
-                    $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];
+                    $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
                     $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
                     $form['in_annota'] = $form['rows'][$k_row]['annota'];
                     $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
@@ -319,13 +328,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_lot_or_serial'] = $form['rows'][$k_row]['lot_or_serial'];
                     $form['in_id_lotmag'] = $form['rows'][$k_row]['id_lotmag'];
                     $form['in_status'] = "UPDROW" . $k_row;
-                    /* if ($form['in_artsea'] == 'D') {
-                      $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
-                      $form['cosear'] = $artico_u['descri'];
-                      } elseif ($form['in_artsea'] == 'B') {
-                      $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
-                      $form['cosear'] = $artico_u['barcode'];
-                      } else { */
                     $form['cosear'] = $form['rows'][$k_row]['codart'];
                     //}
                     array_splice($form['rows'], $k_row, 1);
@@ -485,6 +487,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (empty($form["pagame"]))
             $msg .= "48+";
         //controllo che i rows non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
+		$rit_ctrl=false;
         foreach ($form['rows'] as $i => $v) {
             if ($v['descri'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
                 $msgrigo = $i + 1;
@@ -504,10 +507,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $msg .= "61+";
                 }
             }
+			if ($v['ritenuta']>=0.01){
+				$rit_ctrl=true;
+			}
         }
 		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
 		if ($form['annemi']>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 ){
 				$msg.="62+";
+		}
+		if ($rit_ctrl && $admin_aziend['causale_pagam_770']==''){
+				$msg.='63+';
 		}
         if ($msg == "") {// nessun errore
             $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
@@ -825,7 +834,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['codart'] = $form['in_codart'];
             $form['rows'][$old_key]['codric'] = $form['in_codric'];
             $form['rows'][$old_key]['ritenuta'] = $form['in_ritenuta'];
-            $form['rows'][$old_key]['provvigione'] = $form['in_provvigione'];
+            $form['rows'][$old_key]['provvigione'] = $form['in_provvigione']; // in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
             $form['rows'][$old_key]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
             $form['rows'][$old_key]['sconto'] = $form['in_sconto'];
             if ($artico['aliiva'] > 0) {
@@ -1069,36 +1078,44 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 if ($artico['payroll_tax'] > 0) {
                     /* se l'articolo impone anche un ulteriore rigo per la cassa previdenziale
-                     * procedo con l'aggiunta di un ulteriore rigo di tipo forfait in base
+                     * procedo con l'aggiunta di un ulteriore rigo di tipo 4 in base
                      * alla configurazione aziendale
                      */
                     $ptd = gaz_dbi_get_row($gTables['company_config'], 'var', 'payroll_tax_descri');
                     $nr = $next_row + 1;
-                    // calcolo l'importo del contributo
-                    // il totale viene calcolato sulla prima quantità
-                    $imp_contrib = round(CalcolaImportoRigo($form['rows'][$next_row]['quanti'], $form['rows'][$next_row]['prelis'], $form['rows'][$next_row]['sconto']) / 100 * $admin_aziend['payroll_tax'], 2);
-                    $form['rows'][$nr]['tiprig'] = 1;
-                    $form['rows'][$nr]['descri'] = $ptd['val'] . ' ( ' . $admin_aziend['payroll_tax'] . '% )';
+                    $form['rows'][$nr]['tiprig'] = 4;
+					$xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
+					foreach ($xml->record as $vx) {
+						if ($vx->field[0] == $admin_aziend['fae_tipo_cassa']) {
+							$form['rows'][$nr]['descri']= 'Contributo '.strtolower($vx->field[1]);
+						}
+					}
+                    $form['rows'][$nr]['codart'] =$admin_aziend['fae_tipo_cassa'];
+					// su prelis ho l'imponibile cassa come se fosse un rigo forfait
+					$form['rows'][$nr]['prelis'] = CalcolaImportoRigo($form['rows'][$next_row]['quanti'], $form['rows'][$next_row]['prelis'], $form['rows'][$next_row]['sconto']);
                     $form['rows'][$nr]['id_mag'] = 0;
                     $form['rows'][$nr]['id_lotmag'] = 0;
                     $form['rows'][$nr]['lot_or_serial'] = 0;
                     $form['rows'][$nr]['status'] = "INSERT";
                     $form['rows'][$nr]['scorta'] = 0;
                     $form['rows'][$nr]['quamag'] = 0;
-                    $form['rows'][$nr]['codart'] = "";
                     $form['rows'][$nr]['annota'] = "";
                     $form['rows'][$nr]['pesosp'] = 0;
                     $form['rows'][$nr]['gooser'] = 0;
                     $form['rows'][$nr]['unimis'] = "";
                     $form['rows'][$nr]['quanti'] = 0;
-                    $form['rows'][$nr]['prelis'] = $imp_contrib;
+					// sul rigo provvigione ho l'aliquota della cassa pertanto il valore del contributo alla cassa la calcolerò in base a questa 
+					$form['rows'][$nr]['provvigione'] = $admin_aziend['payroll_tax'];
                     $form['rows'][$nr]['codric'] = $admin_aziend['c_payroll_tax'];
                     $form['rows'][$nr]['sconto'] = 0;
                     $form['rows'][$nr]['codvat'] = $admin_aziend['preeminent_vat'];
                     $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
                     $form['rows'][$nr]['pervat'] = $iva_azi['aliquo'];
                     $form['rows'][$nr]['tipiva'] = $iva_azi['tipiva'];
-                    $form['rows'][$nr]['ritenuta'] = 0;
+					$form['rows'][$nr]['ritenuta'] = 0;
+					if ($admin_aziend['ra_cassa']==1) {
+						$form['rows'][$nr]['ritenuta'] = $admin_aziend['ritenuta'];
+					}
                 }
                 if ($artico['good_or_service']==2 ) {
                     $whe_dis = "codice_composizione = '".$form['in_codart']."'";
@@ -1188,6 +1205,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['unimis'] = "";
                 $form['rows'][$next_row]['quanti'] = 0;
                 $form['rows'][$next_row]['prelis'] = 0;
+				$form['rows'][$next_row]['provvigione'] = $form['in_provvigione'];
                 $form['rows'][$next_row]['codric'] = $admin_aziend['c_payroll_tax'];
                 $form['rows'][$next_row]['sconto'] = 0;
                 $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
@@ -1475,7 +1493,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['quanti'] = gaz_format_quantity($rigo['quanti'], 0, $admin_aziend['decimal_quantity']);
         $form['rows'][$next_row]['codvat'] = $rigo['codvat'];
         $form['rows'][$next_row]['codric'] = $rigo['codric'];
-        $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];
+        $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
         $form['rows'][$next_row]['id_mag'] = (isset($_GET['Duplicate']) ? 0 : $rigo['id_mag']);
         $form['rows'][$next_row]['annota'] = $articolo['annota'];
         $mv = $upd_mm->getStockValue(false, $rigo['codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
@@ -1549,7 +1567,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['in_codric'] = '4';
         }
     }
-    $form['in_provvigione'] = 0;
+    $form['in_provvigione'] = 0;// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
     $form['in_scorta'] = 0;
@@ -1942,12 +1960,16 @@ echo '  </td>
 		</td>
 	  </tr>';
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
-$ric = intval(substr($form['in_codric'], 0, 1));
+$ric = array('sub',intval(substr($form['in_codric'], 0, 1)));
 if ($form['tipdoc'] == 'FAP') {
     $ric = array('sub', 1, 2, 4, 5);
 } else if (substr($form['tipdoc'],0,2) == 'FA' || $form['tipdoc']== 'DDT'){
     $ric = array('sub', 1, 4);
 }
+if (!in_array(substr($form['in_codric'],0,1),$ric)){
+	$ric[]=substr($form['in_codric'],0,1);
+}
+ 
 $gForm->selectAccount('in_codric', $form['in_codric'], $ric);
 echo " %$script_transl[24]: <input type=\"text\" value=\"" . $form['in_sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"in_sconto\" title=\"# = sconto standard dell'articolo\">";
 echo " %$script_transl[56]: <input type=\"text\" value=\"" . $form['in_provvigione'] . "\" maxlength=\"6\" size=\"1\" name=\"in_provvigione\">";
@@ -1994,9 +2016,13 @@ foreach ($form['rows'] as $k => $v) {
     if ($v['tiprig'] <= 1 || $v['tiprig'] == 4) { // calcolo per tipi righi normale, forfait e cassa previdenziale
         $imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
         $v_for_castle = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));      
-        if ($v['tiprig'] == 1 || $v['tiprig'] == 4) {//ma se del tipo forfait o cassa previdenziale
+        if ($v['tiprig'] == 1) {// se del tipo forfait 
             $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
             $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
+        }
+        if ($v['tiprig'] == 4) {// e se del tipo cassa previdenziale
+            $imprig = round($v['provvigione']* $v['prelis']/100,2);
+            $v_for_castle =  $imprig;
         }
         if (!isset($castle[$v['codvat']])) {
             $castle[$v['codvat']]['impcast'] = 0.00;
@@ -2220,30 +2246,29 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
        case "4": // rigo cassa previdenziale
-            $vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
             echo '	<td>
 						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
 							<i class="glyphicon glyphicon-arrow-up"></i>
 						</button>
 					</td>
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! ">';
-					// al posto 
-                     $gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'rows[' . $k . '][codart]', 'rows[' . $k . '][codart]', $v["codart"], true, 'fae_tipo_cassa', 'col-sm-12');
+                     $gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'rows[' . $k . '][codart]', 'rows[' . $k . '][codart]', $v["codart"], true, 'fae_tipo_cassa'.$k, 'col-sm-12');
 
 			echo '					  <td>
 						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 					</td>
-                    <td><input type="hidden" name="rows[' . $k . '][unimis]" value="" /></td>
-                    <td><input type="hidden" name="rows[' . $k . '][quanti]" value="" /></td>
-					<td><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
-					<td><input type="hidden" name="rows[' . $k . '][provvigione]" value="" /></td>
-					<td></td>
-					<td class="text-right">
-						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7" onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" />
+                    <td colspan="2" class="text-right">Imponibile:<input type="hidden" name="rows[' . $k . '][unimis]" value="" /><input type="hidden" name="rows[' . $k . '][quanti]" value="" /><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
+                    <td><input type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7"';
+						if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
+							echo 'onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
+						}
+						echo ' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" /></td>
+					<td>==></td>';
+					// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
+			echo '	<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" size="1" />%</td>	<td class="text-right">	<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta']/100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">'.gaz_format_number($imprig).'</span>			
 					</td>
 					<td class="text-right">
-						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">' . $v['pervat'] . '%
-						</span>
+						' . $v['pervat'] . '%
 					</td>
 					<td class="text-right codricTooltip" title="Contropartita">
 						' . $v['codric'] . '

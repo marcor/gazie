@@ -1541,21 +1541,32 @@ echo '	</table>';
 				}
 			}
 		}
-		if (mu=='kg'){
+		var close_dial=false;
+		if (mu=='kg' && res_kg>=0.00001){
 			$("[name='righi["+row+"][unimis]']").val('KG');
 			$("[name='righi["+row+"][quanti]']").val(res_kg);
-		} else if (mu=='ml') {
+			close_dial=true;
+		} else if (mu=='ml' && result_a>=1) {
 			$("[name='righi["+row+"][unimis]']").val('ML');
 			$("[name='righi["+row+"][quanti]']").val(result_a);
-		} else if (mu=='mq') {
+			close_dial=true;
+		} else if (mu=='mq' && result_b>=1) {
 			$("[name='righi["+row+"][unimis]']").val('MQ');
 			$("[name='righi["+row+"][quanti]']").val(result_b);
-		} else if (mu=='lt') {
+			close_dial=true;
+		} else if (mu=='lt' && result_c>=1) {
 			$("[name='righi["+row+"][unimis]']").val('LT');
 			$("[name='righi["+row+"][quanti]']").val(result_c);
+			close_dial=true;
+		} else if (mu=='pz' && pezzi>=1) {
+			$("[name='righi["+row+"][unimis]']").val('PZ');
+			$("[name='righi["+row+"][quanti]']").val(pezzi);
+			close_dial=true;
 		}
-		$("#dialog_row_focus").val('');
-		$("#weight-from-dim").dialog('close');
+		if (close_dial){
+			$("#dialog_row_focus").val('');
+			$("#weight-from-dim").dialog('close');
+		}
 	}	
 	
 	var last_focus_value;
@@ -1571,29 +1582,34 @@ echo '	</table>';
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 <div class="modal" id="weight-from-dim" title="	CALCOLO PESO ">
+<div class="col-lg-12"  style="margin-bottom: 10px; background-color: #92a8d1;">
+	<div class="col-lg-4">GRANDEZZA</div>	
+	<div class="col-lg-3">VALORE</div>
+	<div class="col-lg-5 text-right">INSERISCI</div>
+</div>
 <div class="col-lg-12">
 	<div class="col-lg-4">Pezzi: </div>	
-	<div class="col-lg-3"><input type="number" min="0" id="dialog_pezzi" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
-	<div class="col-lg-5 text-right">Valorizza<br /> U.M. e quantità</div>
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_pezzi" tabindex="100" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px;"  id="btn_pz" onclick="weightfromdimSet('pz');" /> PZ </button></div>
 </div>
 <div class="col-lg-12">
 	<div class="col-lg-4">Lunghezza mm:</div>
-	<div class="col-lg-3"><input type="number" min="0" id="dialog_lunghezza" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
-	<div class="col-lg-5 text-right"><button id="btn_kg" onclick="weightfromdimSet('kg');" /> KG </button></div>
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_lunghezza" tabindex="102" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px;"  id="btn_kg" onclick="weightfromdimSet('kg');" /> KG </button></div>
 </div>
 <div class="col-lg-12">
 	<div class="col-lg-4">Larghezza mm:</div>
-	<div class="col-lg-3"><input type="number" min="0" id="dialog_larghezza" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
-	<div class="col-lg-5 text-right"><button id="btn_ml" onclick="weightfromdimSet('ml');" /> ML </button></div>
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_larghezza" tabindex="103" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px"  id="btn_ml" onclick="weightfromdimSet('ml');" /> ML </button></div>
 </div>
 <div class="col-lg-12">
 	<div class="col-lg-4">Spessore mm:</div>
-	<div class="col-lg-3"><input type="number" min="0" id="dialog_spessore" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
-	<div class="col-lg-5 text-right"><button id="btn_mq" onclick="weightfromdimSet('mq');" /> MQ </button></div>
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_spessore" tabindex="104" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px" id="btn_mq" onclick="weightfromdimSet('mq');" /> MQ </button></div>
 </div>
 <div class="col-lg-12">
 	<div class="col-lg-4">Peso specifico: </div>
-	<div class="col-lg-3"><input type="number" min="0" id="dialog_peso_specifico" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-3"><input type="number" min="0" id="dialog_peso_specifico" tabindex="105" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
 	<div class="col-lg-5 text-right"><button id="btn_lt" onclick="weightfromdimSet('lt');" /> LT </button></div>
 </div>
 </div>

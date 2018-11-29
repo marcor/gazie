@@ -270,9 +270,13 @@ class DocContabVars {
                 $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
                 $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
-                if ($rigo['tiprig'] == 1 || $rigo['tiprig'] == 4) {
+                if ($rigo['tiprig'] == 1) {
                     $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
                     $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
+                }
+                if ($rigo['tiprig'] == 4) {
+                    $rigo['importo'] = round($rigo['provvigione']*$rigo['prelis']/100,2);
+                    $v_for_castle = $rigo['importo'] ;
                 }
                 if ($rigo['tiprig'] == 90) {
                     $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);

@@ -140,6 +140,10 @@ class invoiceXMLvars {
                 $this->destinazione = '';
             }
         }
+        $this->vettore = false;
+		if ($tesdoc['vettor']>0){
+			$this->vettore = gaz_dbi_get_row($gTables['vettor'], "codice", $tesdoc['vettor']);
+		}
         $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $this->tesdoc = $tesdoc;
@@ -220,6 +224,7 @@ class invoiceXMLvars {
         $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva, vat.fae_natura AS natura', $from, "rows.id_tes = " . $this->testat, "id_tes DESC, id_rig");
         $this->riporto = 0.00;
         $this->ritenuta = 0.00;
+        $this->cassa_prev = array();
         $righiDescrittivi = array();
         $last_normal_row = 0;
         $nr = 1;
@@ -239,7 +244,7 @@ class invoiceXMLvars {
                 }
                 unset($righiDescrittivi[0]); // svuoto l'array per prepararlo ad eventuali nuovi righi descrittivi
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
-                $rigo['imp_sconto'] = number_format(CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], 0) - $rigo['importo'], 2, '.', '');
+				$rigo['imp_sconto'] = number_format((CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], 0) - $rigo['importo'])/$rigo['quanti'], 2, '.', ''); // l'elemento <Importo> in <ScontoMaggiorazione>  è relativo ad una unità e non all'intero rigo
                 $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
                 if ($rigo['tiprig'] == 1) {
                     $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
@@ -263,6 +268,31 @@ class invoiceXMLvars {
             } elseif ($rigo['tiprig'] == 2) { // descrittivo
                 // faccio prima il parsing XML e poi il push su un array ancora da indicizzare (0)
                 $righiDescrittivi[0][] = htmlspecialchars($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8', true);
+            } elseif ($rigo['tiprig'] == 4) { // cassa previdenziale
+                if (!isset($this->castel[$rigo['codvat']])) {
+                    $this->castel[$rigo['codvat']] = 0;
+                }
+                if (!isset($this->body_castle[$rigo['codvat']])) {
+                    $this->body_castle[$rigo['codvat']]['impcast'] = 0;
+                }
+                $rigo['importo'] = round($rigo['provvigione']*$rigo['prelis']/100,2);
+                $v_for_castle = $rigo['importo'] ;
+                $this->body_castle[$rigo['codvat']]['impcast'] += $v_for_castle;
+                $this->castel[$rigo['codvat']] += $v_for_castle;
+                $this->totimp_body += $rigo['importo'];
+                $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
+                $this->totimp_doc += $v_for_castle;
+                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)   
+                if ($rigo['tipiva'] == 'T') {
+                    $this->ivasplitpay += round(($v_for_castle * $rigo['pervat']) / 100, 2);
+                }
+				/* con codart valorizzo l'elemento <TipoCassa> e creo l'array che mi servirà per generare gli elementi <DatiCassaPrevidenziale> */
+                if (!isset($this->cassa_prev[$rigo['codart']])) { // se il tipo cassa non ce l'ho 
+                    $this->cassa_prev[$rigo['codart']] = array('AlCassa'=>$rigo['provvigione'],'ImportoContributoCassa'=>$rigo['importo'],'ImponibileCassa'=>$rigo['prelis'],'AliquotaIVA'=>$rigo['pervat'],'Ritenuta'=>$rigo['ritenuta'],'Natura'=>$rigo['natura']);
+                } else { // ho già l'elemento <TipoCassa>
+					$this->cassa_prev[$rigo['codart']]['ImponibileCassa'] +=$rigo['prelis'];
+					$this->cassa_prev[$rigo['codart']]['ImportoContributoCassa'] +=$rigo['importo'];
+				}
             } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 8) {
                 $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
                 $dom->loadHTML($body_text['body_text']);
@@ -744,7 +774,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     break;
             }
             if ($rigo['ritenuta'] > 0) {
-                /* 		 */
+                /*
+				*/
             }
 				// se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
             if ($XMLvars->ddt_data && $nl) {
@@ -812,7 +843,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
 
 
-    //Attenzione qui 
     $XMLvars->setXMLtot();
     if ($XMLvars->tot_ritenute > 0) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
@@ -826,6 +856,32 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el1 = $domDoc->createElement("CausalePagamento", $XMLvars->azienda['causale_pagam_770']);
         $el->appendChild($el1);
         $results->appendChild($el);
+    }
+
+    if (count($XMLvars->cassa_prev) >= 1) {
+        $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
+	    foreach ($XMLvars->cassa_prev as $key => $value) {
+			$el = $domDoc->createElement("DatiCassaPrevidenziale", "");
+			$el1 = $domDoc->createElement("TipoCassa", $key);
+			$el->appendChild($el1);
+			$el1 = $domDoc->createElement("AlCassa", number_format($value['AlCassa'], 2, '.', ''));
+			$el->appendChild($el1);
+			$el1 = $domDoc->createElement("ImportoContributoCassa", number_format($value['ImportoContributoCassa'], 2, '.', ''));
+			$el->appendChild($el1);
+			$el1 = $domDoc->createElement("ImponibileCassa", number_format($value['ImponibileCassa'], 2, '.', ''));
+			$el->appendChild($el1);
+			$el1 = $domDoc->createElement("AliquotaIVA", number_format($value['AliquotaIVA'], 2, '.', ''));
+			$el->appendChild($el1);
+			if ($value['Ritenuta']>=0.01){
+				$el1 = $domDoc->createElement("Ritenuta", 'SI');
+				$el->appendChild($el1);
+			}
+			if (substr($value['Natura'],0,1)=='N'){
+				$el1 = $domDoc->createElement("Natura", $value['Natura']);
+				$el->appendChild($el1);
+			}
+			$results->appendChild($el);
+        }
     }
 
     if ($XMLvars->impbol >= 0.01) {
@@ -875,18 +931,42 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         // se è una fattura accompagnatoria qui inserisco anche i dati relativi al trasporto
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
         $el = $domDoc->createElement("DatiTrasporto", "");
-        $el1 = $domDoc->createElement("MezzoTrasporto", $XMLvars->tesdoc['spediz']);
+		if ($XMLvars->vettore) { // ho un vettore
+			$el1 = $domDoc->createElement("DatiAnagraficiVettore", '');
+				$el2 = $domDoc->createElement("IdFiscaleIVA", '');
+					$el3 = $domDoc->createElement("IdPaese", 'IT');
+					$el2->appendChild($el3);
+					$el3 = $domDoc->createElement("IdCodice", $XMLvars->vettore['partita_iva']);
+					$el2->appendChild($el3);
+				$el1->appendChild($el2);
+				$el2 = $domDoc->createElement("Anagrafica", '');
+					$el3 = $domDoc->createElement("Denominazione",$XMLvars->vettore['ragione_sociale']);
+					$el2->appendChild($el3);
+				$el1->appendChild($el2);
+			$el->appendChild($el1);
+		}
+		$el1 = $domDoc->createElement("MezzoTrasporto", $XMLvars->tesdoc['spediz']);
         $el->appendChild($el1);
-        $el1 = $domDoc->createElement("NumeroColli", $XMLvars->tesdoc['units']);
+        $el1 = $domDoc->createElement("CausaleTrasporto", 'VENDITA');
         $el->appendChild($el1);
+		if ($XMLvars->tesdoc['units']>=1){
+			$el1 = $domDoc->createElement("NumeroColli", $XMLvars->tesdoc['units']);
+			$el->appendChild($el1);
+		}
         $el1 = $domDoc->createElement("Descrizione", $XMLvars->tesdoc['imball']);
         $el->appendChild($el1);
-        $el1 = $domDoc->createElement("UnitaMisuraPeso", 'kg');
-        $el->appendChild($el1);
-        $el1 = $domDoc->createElement("PesoLordo", $XMLvars->tesdoc['gross_weight']);
-        $el->appendChild($el1);
-        $el1 = $domDoc->createElement("PesoNetto", $XMLvars->tesdoc['net_weight']);
-        $el->appendChild($el1);
+		if (($XMLvars->tesdoc['net_weight']+$XMLvars->tesdoc['gross_weight'])>=0.001){
+			$el1 = $domDoc->createElement("UnitaMisuraPeso", 'kg');
+			$el->appendChild($el1);
+			if ($XMLvars->tesdoc['gross_weight']>=0.001){
+				$el1 = $domDoc->createElement("PesoLordo", $XMLvars->tesdoc['gross_weight']);
+				$el->appendChild($el1);
+			}
+			if ($XMLvars->tesdoc['net_weight']>=0.001){
+				$el1 = $domDoc->createElement("PesoNetto", $XMLvars->tesdoc['net_weight']);
+				$el->appendChild($el1);
+			}
+        }
         $el1 = $domDoc->createElement("DataInizioTrasporto", substr($XMLvars->tesdoc['initra'], 0, 10));
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("DataOraConsegna", substr($XMLvars->tesdoc['initra'], 0, 10) . 'T' . substr($XMLvars->tesdoc['initra'], 11, 8));
