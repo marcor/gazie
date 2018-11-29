@@ -44,6 +44,7 @@ function getLastDoc($item_code) {
 
 if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato direttamente
     require("../../library/include/datlib.inc.php");
+	require ("../../modules/magazz/lib.function.php");
     $admin_aziend = checkAdmin();
     require("./lang." . $admin_aziend['lang'] . ".php");
     $script_transl = $strScript['report_artico.php'];
