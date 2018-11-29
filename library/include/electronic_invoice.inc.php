@@ -244,12 +244,13 @@ class invoiceXMLvars {
                 }
                 unset($righiDescrittivi[0]); // svuoto l'array per prepararlo ad eventuali nuovi righi descrittivi
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
-				$rigo['imp_sconto'] = number_format((CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], 0) - $rigo['importo'])/$rigo['quanti'], 2, '.', ''); // l'elemento <Importo> in <ScontoMaggiorazione>  è relativo ad una unità e non all'intero rigo
                 $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
                 if ($rigo['tiprig'] == 1) {
                     $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
                     $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
+					$rigo['quanti']=1;
                 }
+				$rigo['imp_sconto'] = number_format((CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], 0) - $rigo['importo'])/$rigo['quanti'], 2, '.', ''); // l'elemento <Importo> in <ScontoMaggiorazione>  è relativo ad una unità e non all'intero rigo
                 if (!isset($this->castel[$rigo['codvat']])) {
                     $this->castel[$rigo['codvat']] = 0;
                 }
