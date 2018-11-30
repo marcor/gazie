@@ -118,6 +118,15 @@ if (isset($_POST['print']) && $msg=='') {
     header("Location: sent_print.php");
     exit;
 }
+if (isset($_POST['print_cop']) && $msg=='') {
+    $_SESSION['print_request']=array('script_name'=>'stampa_cop_giomag',
+                                     'ri'=>date("dmY",$utsini),
+                                     'rf'=>date("dmY",$utsfin),
+                                     'ds'=>date("dmY",$utsexe)
+                                     );
+    header("Location: sent_print.php");
+    exit;
+}
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
@@ -232,6 +241,10 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
          echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
          echo $script_transl['print'];
+         echo '">';
+         echo "\t </td>\n";
+		 echo '<td colspan="7" align="right"><input type="submit" name="print_cop" value="';
+         echo $script_transl['print']." copertina";
          echo '">';
          echo "\t </td>\n";
          echo "\t </tr>\n";
