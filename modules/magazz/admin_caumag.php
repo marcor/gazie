@@ -38,7 +38,9 @@ if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
 
-if ((isset($_GET['Update']) and ! isset($_GET['codice'])) or isset($_POST['Return'])) {
+if ((isset($_GET['Update']) and ! isset($_GET['codice'])) 
+	|| ($_GET['codice'] > 80)
+	|| isset($_POST['Return'])) {
     header("Location: " . $_POST['ritorno']);
     exit;
 }

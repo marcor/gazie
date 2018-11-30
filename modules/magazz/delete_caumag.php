@@ -26,6 +26,11 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 
 
+if (!isset($_GET['codice']) || $_GET['codice'] > 80) {
+    header("Location: " . $_SERVER['HTTP_REFERER']);
+    exit;
+}
+
 if (isset($_POST['Delete'])) {
     gaz_dbi_del_row($gTables['caumag'], "codice", $_GET['codice']);
     header("Location: report_caumag.php");
@@ -50,7 +55,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_caumag.php"][1]
 print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_movmag.php"][2]."</td><td class=\"FacetDataTD\">".$form["descri"]."</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_caumag.php"][4]."</td><td class=\"FacetDataTD\">".$strScript["admin_caumag.php"][$form["operat"]+9]."</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_caumag.php"][11]."</td><td class=\"FacetDataTD\">".$strScript["admin_caumag.php"][$form["clifor"]+14]."</td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_caumag.php"][5]."</td><td class=\"FacetDataTD\">".$strScript["admin_caumag.php"][$form["upesis"]+6]."</td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_caumag.php"][5]."</td><td class=\"FacetDataTD\"></td></tr>\n";
 print "<td align=\"right\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\"></td><td align=\"right\"><input type=\"submit\" name=\"Delete\" value=\"".strtoupper($script_transl['delete'])."!\"></td></tr>";
 ?>
 </table>
