@@ -27,12 +27,18 @@ $admin_aziend = checkAdmin();
 $partner_select_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode');
 $message = "";
 $anno = date("Y");
+if (isset($_GET['flt_tipo'])) {
+    $flt_tipo = filter_input(INPUT_GET,'flt_tipo');
+} else {
+	$flt_tipo='APR';
+}
+
 if (isset($_GET['auxil'])) {
     $auxil = filter_input(INPUT_GET, 'auxil');
 } else {
     $auxil = 1;
 }
-$where = "( tipdoc = 'APR' or tipdoc = 'AOR' ) and seziva = '$auxil'";
+$where = "tipdoc = '".$flt_tipo."' AND seziva = '$auxil'";
 $all = $where;
 
 $documento = '';
@@ -46,16 +52,16 @@ gaz_flt_var_assign('clfoco', 'v');
 
 
 if (isset($_GET['datemi'])) {
-    $datemi = $_GET['datemi'];
+    $datemi = filter_input(INPUT_GET,'datemi');
 }
+
 
 if (isset($_GET['fornitore'])) {
     if ($_GET['fornitore'] <> '') {
-        $fornitore = $_GET['fornitore'];
-        $where = "( tipdoc = 'APR' or tipdoc = 'AOR' ) and seziva = '$auxil'";
+        $fornitore = filter_input(INPUT_GET,'fornitore');
+        $where = "tipdoc = '".$flt_tipo."' AND ragso1 LIKE \"%" . $fornitore.'%"';
         $limit = 0;
         $passo = 2000000;
-        $auxil = $_GET['auxil'] . "&fornitore=" . $fornitore;
         unset($documento);
     }
 }
@@ -69,11 +75,13 @@ if (isset($_GET['all'])) {
     gaz_set_time_limit(0);
     $auxil = filter_input(INPUT_GET, 'auxil') . "&all=yes";
     $passo = 100000;
-    $where = "(tipdoc = 'APR' or tipdoc = 'AOR') and seziva = '$auxil' ";
+    $where = "tipdoc = '".$flt_tipo."' AND seziva = '$auxil' ";
     unset($documento);
     $fornitore = '';
 }
 
+// prendo i dati facendo il join con le anagrafiche
+$what=$gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id";
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
 ?>
@@ -160,7 +168,7 @@ function choicePartner(row)
 </script>
 
 <form method="GET">
-
+    <input type="hidden" name="flt_tipo" value="<?php echo $flt_tipo;?>">
     <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
         <p class="ui-state-highlight" id="mail_adrs"></p>
@@ -182,7 +190,7 @@ function choicePartner(row)
     <?php
     if (!isset($_GET['field']) or ( $_GET['field'] == 2) or ( empty($_GET['field'])))
         $orderby = "datemi desc, numdoc desc";
-    $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
+    $recordnav = new recordnav($what, $where, $limit, $passo);
     $recordnav->output();
     ?>
     <div class="box-primary table-responsive">
@@ -196,16 +204,15 @@ function choicePartner(row)
                     <?php gaz_flt_disp_int("id_orderman", "Produzione"); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_select("numdoc", "numdoc", $gTables["tesbro"], $all, $orderby); ?>
+                    <?php gaz_flt_disp_int("numdoc", "numdoc", $what, $all, $orderby); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
                     <?php gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, $orderby); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-
                     <?php
                     if ($partner_select_mode['val'] == null or $partner_select_mode['val'] == "0") {
-                        gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesbro"] . ".clfoco", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1");
+                        gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesbro"] . ".clfoco", $what, $all, "ragso1", "ragso1");
                     } else {
                         gaz_flt_disp_int("fornitore", "fornitore");
                     }
@@ -233,7 +240,7 @@ function choicePartner(row)
                 ?>
             </tr>
             <?php
-            $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $where, "datemi desc, numdoc desc", 0, 1);
+            $rs_ultimo_documento = gaz_dbi_dyn_query("*",  $what, $where, "datemi desc, numdoc desc", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             if ($ultimo_documento)
                 $ultimoddt = $ultimo_documento['numdoc'];
@@ -241,7 +248,7 @@ function choicePartner(row)
                 $ultimoddt = 1;
 			$anagrafica = new Anagrafica();
 			//recupero le testate in base alle scelte impostate
-            $result = gaz_dbi_dyn_query("*", $gTables['tesbro'], $where, $orderby, $limit, $passo);
+            $result = gaz_dbi_dyn_query("*", $what, $where, $orderby, $limit, $passo);
             while ($r = gaz_dbi_fetch_array($result)) {
                 if ($r["tipdoc"] == 'APR') {
                     $tipodoc="Preventivo";

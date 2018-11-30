@@ -51,9 +51,9 @@ class OrdineFornitore extends Template
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->Ln(4);
         $this->SetFont('helvetica','',9);
-	    $this->Cell(35,6,'Codice fornitore',1,0,'L',1); //M1 modifocato a mano
+	    $this->Cell(25,6,'Codice fornitore',1,0,'L',1); //M1 modifocato a mano
         $this->Cell(22,6,'Codice',1,0,'L',1); //M1 modifocato a mano
-        $this->Cell(68,6,'Descrizione',1,0,'L',1); //M1 Modificato a mano
+        $this->Cell(80,6,'Descrizione',1,0,'L',1); //M1 Modificato a mano
         $this->Cell(7, 6,'U.m.',1,0,'C',1);
         $this->Cell(14,6,'Quantità',1,0,'R',1); // M1 Modificato a mano
         $this->Cell(17,6,'Prezzo',1,0,'R',1);// M1 Modificato a mano
@@ -82,21 +82,44 @@ class OrdineFornitore extends Template
             }
                 switch($rigo['tiprig']) {
                 case "0":
-				    $this->Cell(35, 6, $rigo['codice_fornitore'],1,0,'L'); //M1 modificato a mano
-                    $this->Cell(22, 6, $rigo['codart'],1,0,'L'); //Modificato a mano
-                    if ($rigo['pezzi'] > 0) {
-						$this->Cell(68, 6, $rigo['descri'],'LTR',1,'L',0,'',1);
-					} else {
-						$this->Cell(68, 6, $rigo['descri'],1,0,'L',0,'',1);
+				    $this->Cell(25, 6, $rigo['codice_fornitore'],1,0,'L',0,'',1); //M1 modificato a mano
+                    $this->Cell(22, 6, $rigo['codart'],1,0,'L',0,'',1); //Modificato a mano
+                    if ($rigo['pezzi'] > 0 && trim($rigo['quality']) != '') { // ho sia la qualità che i pesi-> scrivo la qualità
+						$this->Cell(141, 6, $rigo['descri'].' - Qualità: '.$rigo['quality'],'R',1,'L',0,'',1);
+					} elseif ($rigo['pezzi'] <= 0 && trim($rigo['quality']) !='') { // non ho i pesi ma solo la qualità
+						$this->Cell(141, 6, $rigo['descri'],'LTR',1,'L',0,'',1);
+						$this->Cell(47, 6, '','LB');
+						$this->Cell(80, 6, 'Qualità: '.$rigo['quality'],'BR',0,'L',0,'',1);
+					} elseif ($rigo['pezzi'] > 0 ) { //  ho solo i pesi
+						$this->Cell(80, 6, $rigo['descri'],'LT',1,'L',0,'',1);
+					} else { // non ho ne pesi ne qualità
+						$this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
 					}
-                    if ($rigo['pezzi'] > 0) {
-						$dim='Dim.: ';
-						if ($rigo['lunghezza'] >= 0.001) { $dim .= floatval($rigo['lunghezza']); }
-						if ($rigo['larghezza'] >= 0.001) { $dim .= 'x'.floatval($rigo['larghezza']); }
-						if ($rigo['spessore'] >= 0.001) { $dim .= 'x'.floatval($rigo['spessore']); }
+                    if ($rigo['pezzi'] > 0 ) {
+						$rp=0.000;	
+						$res_ps='kg/pz';
+						$dim='';
+						if ($rigo['lunghezza'] >= 0.001) { 
+							$rp=$rigo['lunghezza']*$rigo['pezzi']/10**3;
+							$res_ps='kg/m';	
+							$dim .= floatval($rigo['lunghezza']); 
+							if ($rigo['larghezza'] >= 0.001) { 
+								$rp=$rigo['larghezza']*$rp/10**3;
+								$res_ps='kg/m²';	
+								$dim .= 'x'.floatval($rigo['larghezza']); 
+								if ($rigo['spessore'] >= 0.001) { 
+									$rp=$rigo['spessore']*$rp;
+									$res_ps='kg/l';	
+									$dim .= 'x'.floatval($rigo['spessore']); 
+								}
+							}
+						}
 						$dim.=' mm  -  Pezzi: '.$rigo['pezzi'];
-						if ($rigo['peso_specifico'] >= 0.001) { $dim .= ' - Peso specifico='.floatval($rigo['peso_specifico']); }
-						$this->Cell(125, 6, $dim,'LB',0,'L');
+						if ($rigo['peso_specifico'] >= 0.001) { 
+							$res_ps = floatval($rigo['peso_specifico']).' '.$res_ps.' peso teor. '.floatval($rp*$rigo['peso_specifico']).' kg'; 
+						}
+						$this->Cell(82, 6, $dim,'LB');
+						$this->Cell(45, 6, $res_ps,'B',0,'R');
                     }
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R'); // Modificato a mano
@@ -181,20 +204,20 @@ class OrdineFornitore extends Template
     function pageFooter()
     {
         $y = $this->GetY();
-        $this->Rect(10,$y,186,208-$y); //questa marca le linee dx e sx del documento
+        $this->Rect(10,$y,188,208-$y); //questa marca le linee dx e sx del documento
 		if ($this->consegna <> '') {
 			$this->SetFont('helvetica','',12);
-			$this->Cell(186,8,$this->consegna,'BT',1,'C',1);
+			$this->Cell(188,8,$this->consegna,'BT',1,'C',1);
 		}
         $this->SetFont('helvetica','I',11);
         $this->Cell(186,8,'Ogni modifica ai dati soprariportati dev\'essere preventivamente autorizzata.','T',1);
         //stampo il castelletto
         $this->SetFont('helvetica', '', 9);
         $this->SetY(218);
-        $this->Cell(62,6, 'Pagamento','LTR',0,'C',1);
+        $this->Cell(63,6, 'Pagamento','LTR',0,'C',1);
         $this->Cell(68,6, 'Castelletto    I.V.A.','LTR',0,'C',1);
-        $this->Cell(56,6, 'T O T A L E','LTR',1,'C',1);
-        $this->Cell(62,6, $this->pagame['descri'],'LR',0,'C');
+        $this->Cell(57,6, 'T O T A L E','LTR',1,'C',1);
+        $this->Cell(63,6, $this->pagame['descri'],'LR',0,'C');
         $this->SetFont('helvetica', '', 8);
         $this->Cell(18,4, 'Imponibile','LR',0,'C',1);
         $this->Cell(32,4, 'Aliquota','LR',0,'C',1);
@@ -202,12 +225,12 @@ class OrdineFornitore extends Template
         $this->docVars->setTotal($this->tesdoc['traspo']);
         foreach ($this->docVars->cast as $key => $value) {
                 if ($this->tesdoc['id_tes'] > 0) {
-                   $this->Cell(62);
+                   $this->Cell(63);
                    $this->Cell(18, 4, gaz_format_number($value['impcast']).' ', 'R', 0, 'R');
                    $this->Cell(32, 4, $value['descriz'],0,0,'C');
                    $this->Cell(18, 4, gaz_format_number($value['ivacast']).' ','L',1,'R');
                 } else {
-                   $this->Cell(62);
+                   $this->Cell(63);
                    $this->Cell(68, 4,'','LR',1);
                  }
         }
@@ -228,68 +251,39 @@ class OrdineFornitore extends Template
         //stampo i totali
         $this->SetY(208);
         $this->SetFont('helvetica','',9);
-        $this->Cell(36, 5,'Tot. Corpo','LTR',0,'C',1);
+        $this->Cell(37, 5,'Tot. Corpo','LTR',0,'C',1);
         $this->Cell(16, 5,'% Sconto','LTR',0,'C',1);
         $this->Cell(24, 5,'Spese Incasso','LTR',0,'C',1);
         $this->Cell(26, 5,'Trasporto','LTR',0,'C',1);
-        $this->Cell(36, 5,'Tot.Imponibile','LTR',0,'C',1);
+        $this->Cell(37, 5,'Tot.Imponibile','LTR',0,'C',1);
         $this->Cell(26, 5,'Tot. I.V.A.','LTR',0,'C',1);
         $this->Cell(22, 5,'Bolli','LTR',1,'C',1);
-        if ($totimpmer > 0) {
-           $this->Cell(36, 5, gaz_format_number($totimpmer),'LBR',0,'C');
-        } else {
-           $this->Cell(36, 5,'','LBR');
-        }
-        if ($this->tesdoc['sconto'] > 0) {
-           $this->Cell(16, 5, gaz_format_number($this->tesdoc['sconto']),'LBR',0,'C');
-        } else {
+           $this->Cell(37, 5,'','LBR');
            $this->Cell(16, 5,'','LBR');
-        }
-        if ($speseincasso > 0) {
-           $this->Cell(24, 5, gaz_format_number($speseincasso),'LBR',0,'C');
-        } else {
            $this->Cell(24, 5,'','LBR');
-        }
-        if ($this->tesdoc['traspo'] > 0) {
-           $this->Cell(26, 5, gaz_format_number($this->tesdoc['traspo']),'LBR',0,'C');
-        } else {
            $this->Cell(26, 5,'','LBR');
-        }
-        if ($totimpfat > 0) {
-           $this->Cell(36, 5, gaz_format_number($totimpfat),'LBR',0,'C');
-        } else {
-           $this->Cell(36, 5,'','LBR');
-        }
-        if ($totivafat > 0) {
-           $this->Cell(26, 5, gaz_format_number($totivafat),'LBR',0,'C');
-        } else {
+           $this->Cell(37, 5,'','LBR');
            $this->Cell(26, 5,'','LBR');
-        }
-        if ($impbol > 0) {
-            $this->Cell(22, 5, gaz_format_number($impbol),'LBR', 0,'C');
-        } else {
            $this->Cell(22, 5,'','LBR');
-        }
-
         $this->SetY(224);
-        $this->Cell(130);
+        $this->Cell(131);
         $totale = $totimpfat + $totivafat + $impbol;
         $this->SetFont('helvetica','B',16);
         if ($totale > 0) {
-           $this->Cell(56, 18, '€ '.gaz_format_number($totale), 'LR', 1, 'C');
+           $this->Cell(57, 18, '€ '.gaz_format_number($totale), 'LR', 1, 'C');
         } else {
-           $this->Cell(56, 18,'','LR',1);
+           $this->Cell(57, 18,'','LR',1);
         }
         $this->SetY(230);
         $this->SetFont('helvetica','',9);
-        $this->Cell(62, 6,'Spedizione','LTR',1,'C',1);
-        $this->Cell(62, 6,$this->tesdoc['spediz'],'LBR',1,'C');
-        $this->Cell(72, 6,'Porto','LTR',0,'C',1);
+        $this->Cell(63, 6,'Spedizione','LTR',1,'C',1);
+        $this->Cell(63, 6,$this->tesdoc['spediz'],'LBR',1,'C');
+        $this->Cell(74, 6,'Porto','LTR',0,'C',1);
         $this->Cell(29, 6,'Peso netto','LTR',0,'C',1);
         $this->Cell(29, 6,'Peso lordo','LTR',0,'C',1);
         $this->Cell(28, 6,'N.colli','LTR',0,'C',1);
         $this->Cell(28, 6,'Volume','LTR',1,'C',1);
-        $this->Cell(72, 6,$this->tesdoc['portos'],'LBR',0,'C');
+        $this->Cell(74, 6,$this->tesdoc['portos'],'LBR',0,'C');
         if ($this->tesdoc['net_weight'] > 0) {
             $this->Cell(29, 6,gaz_format_number($this->tesdoc['net_weight']),'LRB',0,'C');
         } else {

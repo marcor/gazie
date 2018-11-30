@@ -301,7 +301,6 @@ switch ($admin_aziend['fatimm']) {
                     <?php gaz_flt_disp_select("datfat", "YEAR(datfat) as datfat", $gTables["tesdoc"], $all, $orderby); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-
                     <?php
                     if ($partner_select_mode['val'] == null or $partner_select_mode['val'] == "0") {
                         gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesdoc"] . ".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1");
