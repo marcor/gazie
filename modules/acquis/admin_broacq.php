@@ -333,7 +333,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['datemi'] = $datemi;
                 $form['initra'] = $initra;
                 $form['id_orderman'] = $form['in_id_orderman'];
-				print_r($form);
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
                 header("Location: " . $form['ritorno']);
@@ -1460,6 +1459,7 @@ echo '	</table>';
     });
 	// calcolo peso da dimensioni
 	function weightfromdim(row) {
+		var descri = $("[name='righi["+row+"][descri]']").val();
 		var larghezza = $("[name='righi["+row+"][larghezza]']").val();
 		var lunghezza = $("[name='righi["+row+"][lunghezza]']").val();
 		var spessore = $("[name='righi["+row+"][spessore]']").val();
@@ -1471,6 +1471,7 @@ echo '	</table>';
 		$("#dialog_spessore").val(spessore);
 		$("#dialog_peso_specifico").val(peso_specifico);
 		$("#dialog_pezzi").val(pezzi);
+		$("#weight-from-dim").prop('title', descri+' - CALCOLO DEL PESO');
 		weightfromdimCalc();
 		$("#weight-from-dim").dialog({
 			width: 500,
@@ -1483,33 +1484,45 @@ echo '	</table>';
 	};
 	
 	function weightfromdimCalc() {
+		/* 
+		ANTONIO DE VICENTIIS
+		Non ho guardato in giro sulla rete per vedere se qualcuno lo ha fatto prima di me, ma questo 
+		metodo - interfaccia per il calcolo delle dimensioni e del peso sarebbe meritevole di brevetto :)))))
+		*/
 		var larghezza = ($("#dialog_larghezza").val()).replace(',', '.');
 		var lunghezza = ($("#dialog_lunghezza").val()).replace(',', '.');
 		var spessore = ($("#dialog_spessore").val()).replace(',', '.');
 		var peso_specifico = ($("#dialog_peso_specifico").val()).replace(',', '.');
 		var pezzi = ($("#dialog_pezzi").val()).replace(',', '.');
+		var res_ps='';
 		if (parseFloat(pezzi)>=0.001) {
+			res_ps='kg/pz';
 			var result_a = parseFloat(pezzi).toFixed(3).toString();
 			var res_kg = (parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
 			if (parseFloat(lunghezza)>=0.001) {
-				var result_b = (parseFloat(lunghezza)/1000*parseFloat(pezzi)).toFixed(3).toString();
-				var res_kg = (parseFloat(lunghezza)/1000*parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
-				$("#btn_ml").text('ML '+ result_b);
+				res_ps='kg/m';
+				var result_b = (parseFloat(lunghezza)/10**3*parseFloat(pezzi)).toFixed(3).toString();
+				var res_kg = (result_b*parseFloat(peso_specifico)).toFixed(3).toString();
+				$("#btn_ml").text('m '+ result_b);
 				if (parseFloat(larghezza)>=0.001) {
-					var result_c = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)/1000000).toFixed(3).toString();
-					var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
-					$("#btn_mq").text('MQ '+ result_c);
+					res_ps='kg/m²';
+					var result_c = (parseFloat(larghezza)*result_b/10**3).toFixed(3).toString();
+					var res_kg = (result_c*parseFloat(peso_specifico)).toFixed(3).toString();
+					$("#btn_mq").text('m² '+ result_c);
 					if (parseFloat(spessore)>=0.001) {
-						var result_d = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)/1000000).toFixed(3).toString();
-						var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
-						$("#btn_lt").text('LT '+ result_d);
+						res_ps='kg/l';
+						var result_d = result_c*parseFloat(spessore).toFixed(3).toString();
+						var res_kg = (result_d*parseFloat(peso_specifico)).toFixed(3).toString();
+						$("#btn_lt").text('l '+ result_d);
 					}
 				}
 			}
 			if (parseFloat(res_kg)>=0.001){
-				$("#btn_kg").text('KG '+ res_kg);
+				$("#btn_kg").text('kg '+ res_kg);
 			}
 		}
+		$("#res_ps").text('Peso specifico '+res_ps);
+
 	}
 
 	function weightfromdimSet(mu) {
@@ -1581,7 +1594,7 @@ echo '	</table>';
 	last_focus_value = "";	
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
-<div class="modal" id="weight-from-dim" title="	CALCOLO PESO ">
+<div class="modal" id="weight-from-dim" TITLE='CALC'>
 <div class="col-lg-12"  style="margin-bottom: 10px; background-color: #92a8d1;">
 	<div class="col-lg-4">GRANDEZZA</div>	
 	<div class="col-lg-3">VALORE</div>
@@ -1590,27 +1603,27 @@ echo '	</table>';
 <div class="col-lg-12">
 	<div class="col-lg-4">Pezzi: </div>	
 	<div class="col-lg-3"><input type="number" min="0" id="dialog_pezzi" tabindex="100" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
-	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px;"  id="btn_pz" onclick="weightfromdimSet('pz');" /> PZ </button></div>
+	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px;"  id="btn_pz" onclick="weightfromdimSet('pz');" /> pz </button></div>
 </div>
 <div class="col-lg-12">
 	<div class="col-lg-4">Lunghezza mm:</div>
 	<div class="col-lg-3"><input type="number" min="0" id="dialog_lunghezza" tabindex="102" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
-	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px;"  id="btn_kg" onclick="weightfromdimSet('kg');" /> KG </button></div>
+	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px;"  id="btn_kg" onclick="weightfromdimSet('kg');" /> kg </button></div>
 </div>
 <div class="col-lg-12">
 	<div class="col-lg-4">Larghezza mm:</div>
 	<div class="col-lg-3"><input type="number" min="0" id="dialog_larghezza" tabindex="103" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
-	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px"  id="btn_ml" onclick="weightfromdimSet('ml');" /> ML </button></div>
+	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px"  id="btn_ml" onclick="weightfromdimSet('ml');" /> m </button></div>
 </div>
 <div class="col-lg-12">
 	<div class="col-lg-4">Spessore mm:</div>
-	<div class="col-lg-3"><input type="number" min="0" id="dialog_spessore" tabindex="104" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
-	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px" id="btn_mq" onclick="weightfromdimSet('mq');" /> MQ </button></div>
+	<div class="col-lg-3"><input type="number" step="0.01" min="0" id="dialog_spessore" tabindex="104" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
+	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px" id="btn_mq" onclick="weightfromdimSet('mq');" /> m² </button></div>
 </div>
 <div class="col-lg-12">
-	<div class="col-lg-4">Peso specifico: </div>
-	<div class="col-lg-3"><input type="number" min="0" id="dialog_peso_specifico" tabindex="105" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
-	<div class="col-lg-5 text-right"><button id="btn_lt" onclick="weightfromdimSet('lt');" /> LT </button></div>
+	<div class="col-lg-4" id="res_ps"></div>
+	<div class="col-lg-3"><input type="number"  step="0.01" min="0" id="dialog_peso_specifico" tabindex="105" maxlength="11" onkeyup="weightfromdimCalc();" />	</div>
+	<div class="col-lg-5 text-right"><button id="btn_lt" onclick="weightfromdimSet('lt');" /> l </button></div>
 </div>
 </div>
 

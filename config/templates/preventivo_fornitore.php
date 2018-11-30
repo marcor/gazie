@@ -86,19 +86,42 @@ class PreventivoFornitore extends Template
 			switch($rigo['tiprig']) {
                 case "0":
                     $this->Cell(25, 6, $rigo['codart'],1,0,'L',0,'',1);
-                    if ($rigo['pezzi'] > 0) {
-						$this->Cell(80, 6, $rigo['descri'],'LTR',1,'L',0,'',1);
-					} else {
+                    if ($rigo['pezzi'] > 0 && trim($rigo['quality']) != '') { // ho sia la qualità che i pesi-> scrivo la qualità
+						$this->Cell(161, 6, $rigo['descri'].' - Qualità: '.$rigo['quality'],'R',1,'L',0,'',1);
+					} elseif ($rigo['pezzi'] <= 0 && trim($rigo['quality']) !='') { // non ho i pesi ma solo la qualità
+						$this->Cell(161, 6, $rigo['descri'],'LTR',1,'L',0,'',1);
+						$this->Cell(25, 6, '','LB');
+						$this->Cell(80, 6, 'Qualità: '.$rigo['quality'],'BR',0,'L',0,'',1);
+					} elseif ($rigo['pezzi'] > 0 ) { //  ho solo i pesi
+						$this->Cell(80, 6, $rigo['descri'],'LT',1,'L',0,'',1);
+					} else { // non ho ne pesi ne qualità
 						$this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
 					}
-                    if ($rigo['pezzi'] > 0) {
-						$dim='Dim.: ';
-						if ($rigo['lunghezza'] >= 0.001) { $dim .= floatval($rigo['lunghezza']); }
-						if ($rigo['larghezza'] >= 0.001) { $dim .= 'x'.floatval($rigo['larghezza']); }
-						if ($rigo['spessore'] >= 0.001) { $dim .= 'x'.floatval($rigo['spessore']); }
+                    if ($rigo['pezzi'] > 0 ) {
+						$rp=0.000;	
+						$res_ps='kg/pz';
+						$dim='';
+						if ($rigo['lunghezza'] >= 0.001) { 
+							$rp=$rigo['lunghezza']*$rigo['pezzi']/10**3;
+							$res_ps='kg/m';	
+							$dim .= floatval($rigo['lunghezza']); 
+							if ($rigo['larghezza'] >= 0.001) { 
+								$rp=$rigo['larghezza']*$rp/10**3;
+								$res_ps='kg/m²';	
+								$dim .= 'x'.floatval($rigo['larghezza']); 
+								if ($rigo['spessore'] >= 0.001) { 
+									$rp=$rigo['spessore']*$rp;
+									$res_ps='kg/l';	
+									$dim .= 'x'.floatval($rigo['spessore']); 
+								}
+							}
+						}
 						$dim.=' mm  -  Pezzi: '.$rigo['pezzi'];
-						if ($rigo['peso_specifico'] >= 0.001) { $dim .= ' - Peso specifico='.floatval($rigo['peso_specifico']); }
-						$this->Cell(105, 6, $dim,'LB',0,'L');
+						if ($rigo['peso_specifico'] >= 0.001) { 
+							$res_ps = floatval($rigo['peso_specifico']).' '.$res_ps.' peso teor. '.floatval($rp*$rigo['peso_specifico']).' kg'; 
+						}
+						$this->Cell(60, 6, $dim,'LB');
+						$this->Cell(45, 6, $res_ps,'B',0,'R');
                     }
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
