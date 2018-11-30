@@ -163,7 +163,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['quanti'] = gaz_format_quantity($value['quanti'], 0, $admin_aziend['decimal_quantity']);
             $form['righi'][$next_row]['codvat'] = intval($value['codvat']);
             $form['righi'][$next_row]['codric'] = intval($value['codric']);
-            $form['in_quality'] = substr($value['quality'],0,50); // ripropongo sul rigo di inserimento sempre l'ultimo tipo di qualità
             $form['righi'][$next_row]['quality'] = substr($value['quality'],0,50);
             $form['righi'][$next_row]['id_mag'] = intval($value['id_mag']);
             $form['righi'][$next_row]['id_orderman'] = intval($value['id_orderman']);
@@ -216,7 +215,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_spessore'] = $form['righi'][$key_row]['spessore'];
                     $form['in_peso_specifico'] = $form['righi'][$key_row]['peso_specifico'];
                     $form['in_pezzi'] = $form['righi'][$key_row]['pezzi'];
-                    $form['in_status'] = "UPDROW" . $key_row;
+                    $form['in_status'] = "UPDROW_" . $key_row.'_'.$form['in_codart']; // ricordo il vecchio codice articolo 
                     $form['cosear'] = $form['righi'][$key_row]['codart'];
                     array_splice($form['righi'], $key_row, 1);
                     $next_row--;
@@ -431,8 +430,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     if (isset($_POST['in_submit'])) {
         /** ENRICO FEDELE */
         $artico = gaz_dbi_get_row($gTables['artico'], $gTables['artico'].".codice", $form['in_codart']);
-        if (substr($form['in_status'], 0, 6) == "UPDROW") { //se è un rigo da modificare
-            $old_key = intval(substr($form['in_status'], 6));
+		$ru = explode("_", $form['in_status']);
+        if ($ru[0] == "UPDROW") { //se è un rigo da modificare
+            $old_key = intval($ru[1]);
+			$old_codart =$ru[2];
             $form['righi'][$old_key]['tiprig'] = $form['in_tiprig'];
             $form['righi'][$old_key]['descri'] = $form['in_descri'];
             $form['righi'][$old_key]['codice_fornitore'] = $form['in_codice_fornitore'];
@@ -456,16 +457,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$old_key]['spessore'] = $form['in_spessore'];
             $form['righi'][$old_key]['peso_specifico'] = $form['in_peso_specifico'];
             $form['righi'][$old_key]['pezzi'] = $form['in_pezzi'];
-            if ($form['in_tiprig'] == 0 and ! empty($form['in_codart'])) {  //rigo normale
+            if ($form['in_tiprig'] == 0 && $form['in_codart'] != $old_codart) {  //rigo normale in cui è cambiato il codice articolo
                 $form['righi'][$old_key]['annota'] = $artico['annota'];
-                $form['righi'][$old_key]['larghezza'] = $artico['larghezza'];
-                $form['righi'][$old_key]['lunghezza'] = $artico['lunghezza'];
-                $form['righi'][$old_key]['spessore'] = $artico['spessore'];
-                $form['righi'][$old_key]['peso_specifico'] = $artico['peso_specifico'];
-                $form['righi'][$old_key]['pezzi'] = 0;
                 $form['righi'][$old_key]['unimis'] = $artico['uniacq'];
                 $form['righi'][$old_key]['descri'] = $artico['descri'];
                 $form['righi'][$old_key]['prelis'] = $artico['preacq'];
+				$form['righi'][$old_key]['larghezza'] = $artico['larghezza'];
+				$form['righi'][$old_key]['lunghezza'] = $artico['lunghezza'];
+				$form['righi'][$old_key]['spessore'] = $artico['spessore'];
+				$form['righi'][$old_key]['peso_specifico'] = $artico['peso_specifico'];
+				$form['righi'][$old_key]['pezzi'] = 0;
+				$form['righi'][$old_key]['quality'] = $artico['quality'];
             } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
                 $form['righi'][$old_key]['codart'] = "";
                 $form['righi'][$old_key]['annota'] = "";
