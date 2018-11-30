@@ -116,9 +116,13 @@ function submenu($menu_data) {
         }
         ?>
         <li id="user-position">
+			<div>
             <a href="../root/logout.php">
                 <img src="../root/view.php?table=admin&field=user_name&value=<?php echo $admin_aziend["user_name"] ?>" height="30" title="Logout - <?php echo $admin_aziend['user_lastname'] . ' ' . $admin_aziend['user_firstname']; ?>" >Exit
+			</a>				
+			<a href="../custom_synchronize.php" class='glyphicon glyphicon-transfer'></span>			
             </a>
+			</div>
         </li>
         </ul>
     </div>
