@@ -50,8 +50,8 @@ if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato dir
 //    gaz_dbi_del_row($gTables['tesbro'], "id_tes", intval($_POST['id_tes']));
    //... e i righi
    $tabella = $gTables['rigbro'];
-   $sql = "INSERT INTO $tabella (`id_rig`, `id_tes`, `tiprig`, `codart`, `descri`, `id_body_text`, `unimis`, `larghezza`, `lunghezza`, `spessore`, `peso_specifico`, `pezzi`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, `id_doc`, `id_mag`, `id_orderman`, `status`) "
-           . "SELECT null, $nuovaChiave, `tiprig`, `codart`, `descri`, `id_body_text`, `unimis`, `larghezza`, `lunghezza`, `spessore`, `peso_specifico`, `pezzi`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, 0, 0, `id_orderman`, 'INSERT' FROM $tabella WHERE id_tes = $id_testata;";
+   $sql = "INSERT INTO $tabella (`id_rig`, `id_tes`, `tiprig`, `codart`, `descri`, `quality`, `id_body_text`, `unimis`, `larghezza`, `lunghezza`, `spessore`, `peso_specifico`, `pezzi`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, `id_doc`, `id_mag`, `id_orderman`, `status`) "
+           . "SELECT null, $nuovaChiave, `tiprig`, `codart`, `descri`, `quality`, `id_body_text`, `unimis`, `larghezza`, `lunghezza`, `spessore`, `peso_specifico`, `pezzi`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, 0, 0, `id_orderman`, 'INSERT' FROM $tabella WHERE id_tes = $id_testata;";
    mysqli_query($link, $sql);
    header("Location: report_broacq.php");
    exit;

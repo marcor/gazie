@@ -169,13 +169,7 @@ function choicePartner(row)
 
 <form method="GET">
     <input type="hidden" name="flt_tipo" value="<?php echo $flt_tipo;?>">
-    <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
-        <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
-        <p class="ui-state-highlight" id="mail_adrs"></p>
-        <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
-        <p class="ui-state-highlight" id="mail_attc"></p>
-    </div>
-    <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
+    <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title_dist'][$flt_tipo]; ?>
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
             for ($sez = 1; $sez <= 9; $sez++) {
@@ -235,7 +229,7 @@ function choicePartner(row)
             <tr>
                 <?php
                 $linkHeaders = new linkHeaders($script_transl['header']);
-                $linkHeaders->setAlign(array('left', 'left', 'center', 'center', 'left', 'left', 'center', 'center', 'center', 'center', 'center', 'center'));
+                $linkHeaders->setAlign(array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'));
                 $linkHeaders->output();
                 ?>
             </tr>
@@ -261,11 +255,11 @@ function choicePartner(row)
                     $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
                 }
                 $fornitore = $anagrafica->getPartner($r['clfoco']);
-                echo "<tr class=\"FacetDataTD\">";
+                echo '<tr class="FacetDataTD text-center">';
                 if (! empty ($modifi)) {
                    echo "<td>
 				   			<a class=\"btn btn-xs btn-default\" href=\"".$modifi."\">
-								<i class=\"glyphicon glyphicon-edit\">".$tipodoc."</i>&nbsp;".$r["id_tes"]."
+								<i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["id_tes"]."
 							</a>
 						 </td>";
                 } else {
@@ -294,7 +288,7 @@ function choicePartner(row)
                             }
                         }
                 echo '			<td>'.$orderman_descr." &nbsp;</td>
-						<td>".$r["numdoc"]." &nbsp;</td>
+						<td><a class=\"btn btn-xs btn-success\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"> ".$tipodoc." n.".$r["numdoc"]."</i> &nbsp;</a></td>
 						<td>".gaz_format_date($r["datemi"])." &nbsp;</td>
 						<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?auxil=" . htmlspecialchars($fornitore["ragso1"]) . "&search=Cerca\">".$fornitore["ragso1"]."&nbsp;</a></td>";
 						//<td>".$r["status"]." &nbsp;</td>

@@ -119,8 +119,8 @@ $strScript = array("admin_fornit.php" =>
         'operation_type' => 'Tipo di operazione'
     ),
     "report_broacq.php" =>
-    array('Nuovo Preventivo', 'Nuovo Ordine',
-        'title' => 'Preventivi e ordini',
+    array('title'=>'Preventivi e ordini a fornitori',
+        'title_dist' => array('APR'=>'Richieste di preventivi a fornitori','AOR'=>'Ordini a fornitori'),
         'header' => array(
             "ID" => 'id_tes',
             "Produzione" => "id_orderman",
