@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = "";
 
-
+echo "pippo:",$_POST['id_lotmag'];
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
@@ -89,14 +89,53 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['giodoc'] = substr($result['datdoc'], 8, 2);
     $form['mesdoc'] = substr($result['datdoc'], 5, 2);
     $form['anndoc'] = substr($result['datdoc'], 0, 4);
+	$form['id_lotmag'] = $result['id_lotmag'];
     $form['artico'] = $result['artico'];
+	$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+	if ($item_artico['lot_or_serial']==1){ 
+		$result_lotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
+		$form['identifier'] = $result_lotmag['identifier'];
+		$form['expiry'] = $result_lotmag['expiry'];
+		
+	}
+	$form['lot_or_serial']=$item_artico['lot_or_serial'];
+	 // Antonio Germani - se è presente, recupero il file documento lotto
+    $form['filename'] = "";
+    if (file_exists('../../data/files/' . $admin_aziend['company_id']) > 0) {
+        // recupero il filename dal filesystem
+        $dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+        while (false !== ($filename = readdir($dh))) {
+            $fd = pathinfo($filename);
+            $r = explode('_', $fd['filename']);
+            if ($r[0] == 'lotmag' && $r[1] == $result['id_lotmag']) {
+                // riassegno il nome file
+                $form['filename'] = $fd['basename'];
+            }
+        }
+    }
     $form['quanti'] = gaz_format_quantity($result['quanti'], 0, $admin_aziend['decimal_quantity']);
     $form['prezzo'] = number_format($result['prezzo'], $admin_aziend['decimal_price'], '.', '');
     $form['scorig'] = $result['scorig'];
     $form['status'] = $result['status'];
     $form['search_partner'] = "";
     $form['search_item'] = "";
-} elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {   //se non e' il primo accesso
+	 // Antonio Germani - se è presente, recupero il file documento lotto
+    $form['filename'] = "";
+    if (file_exists('../../data/files/' . $admin_aziend['company_id']) > 0) {
+        // recupero il filename dal filesystem
+        $dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+        while (false !== ($filename = readdir($dh))) {
+            $fd = pathinfo($filename);
+            $r = explode('_', $fd['filename']);
+            if ($r[0] == 'lotmag' && $r[1] == $result['id_lotmag']) {
+                // riassegno il nome file
+                $form['filename'] = $fd['basename'];
+            }
+        }
+    }
+	
+	
+} elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {   //      se non e' il primo accesso
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     //ricarico i registri per il form facendo gli eventuali parsing
     $form['id_mov'] = intval($_POST['id_mov']);
@@ -115,7 +154,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['mesdoc'] = intval($_POST['mesdoc']);
     $form['anndoc'] = intval($_POST['anndoc']);
     $form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
+	$form['id_lotmag'] = $_POST['id_lotmag'];
     $form['artico'] = $_POST['artico'];
+	$form['lot_or_serial']=$_POST['lot_or_serial'];
 	if (strlen($form['artico'])>0) {
 		$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 		$print_unimis =  $item_artico['unimis'];
@@ -159,8 +200,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         $form['clfoco'] = 0;
     }
     if (isset($_POST['newitem'])) {
-        $result = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['artico']);
-        $form['search_item'] = substr($result['codice'], 0, 4);
+        $result_newart = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['artico']);
+        $form['search_item'] = substr($result_newart['codice'], 0, 4);
         $form['artico'] = "";
     }
     if (isset($_POST['Return'])) {
@@ -171,7 +212,22 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         $form['prezzo'] = getItemPrice($form['artico'], $form['clfoco']);
         $form['hidden_req'] = '';
     }
-    if (!empty($_POST['Insert'])) {   // Se viene inviata la richiesta di conferma totale ...
+	
+	if (!empty($_FILES['docfile_']['name'])) { // Antonio Germani - se c'è un nome in $_FILES
+		$prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
+		foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) { // prima cancello eventuali precedenti file temporanei
+			unlink($fn);
+		}
+		$mt = substr($_FILES['docfile_']['name'], -3);
+		if (($mt == "png" || $mt == "odt" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_']['size'] > 1000) { // se rispetta limiti e parametri lo salvo nella cartella tmp
+			move_uploaded_file($_FILES['docfile_']['tmp_name'], '../../data/files/tmp/' . $prefix . '_' . $_FILES['docfile_']['name']);
+			$form['filename'] = $_FILES['docfile_']['name'];
+		} else {
+			$msg.= "14+";
+		}
+	}
+	
+    if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
         $utsreg = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
         $utsdoc = mktime(0, 0, 0, $form['mesdoc'], $form['giodoc'], $form['anndoc']);
         if (!checkdate($form['mesreg'], $form['gioreg'], $form['annreg']))
@@ -187,14 +243,45 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if ($form['quanti'] == 0) {  //la quantit� � zero
             $msg .= "19+";
         }
-		if (intval($_GET['id_mov'])>0){
+		if (isset($_GET['id_mov']) && intval($_GET['id_mov'])>0){
 		$result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 		if ($result['type_mov']<>0){ //Antonio Germani è un movimento che va gestito esclusivamente con il modulo Camp
 			$msg .="20+";
 		}
 		}
 	
-        if (empty($msg)) { // nessun errore
+        if (empty($msg)) {     //        nessun errore        SALVATAGGIO database
+			// Antonio Germani - inizio salvataggio lotto
+			if ($form['lot_or_serial']==1){ //se c'è un lotto, ne ripulisco il numero da caratteri dannosi
+				$form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING);
+				
+				
+					$check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE identifier = '" . $form['identifier'] . "' AND codart = '".$form['artico']."'");// vedo se il lotto inserito nel form è nuovo o esiste già
+					if ($check_lot->num_rows > 0){ // se esiste già
+						$form['id_lotmag']=$check_lot['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
+					} else { // se non esiste creo il lotto memorizzandolo nella tabella lotmag
+						$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
+						unset($check_lot);
+						$check_lot = gaz_dbi_query($query);
+						$row = $check_lot->fetch_assoc();
+						$form['id_lotmag'] = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
+						gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,identifier,expiry) VALUES ('" . $form['artico'] . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
+					}
+				 
+	///>>>>>>>>???????????????????????????????? manca di inserire id_movmag nel rigo di lotmag ?!!!!!!!!!!!!!			 
+				 
+				// Antonio Germani - salvo documento/CERTIFICATO del lotto
+				if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
+                    if (!empty($form['filename'])) { // e se ha un nome impostato nel form
+                        $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['filename'];
+                        // sposto il file nella cartella definitiva, rinominandolo e cancellandolo dalla temporanea
+                        $fd = pathinfo($form['filename']);
+                        rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $form['id_lotmag'] . '.' . $fd['extension']);
+                    }
+                } // altrimenti se il file non è cambiato, anche se è update, non faccio nulla
+			}
+		
+		
             $upd_mm = new magazzForm;
             //formatto le date
             $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
@@ -203,7 +290,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             if (!empty($form['artico'])) {
                 $upd_mm->uploadMag($form['id_rif'], $form['tipdoc'], 0, // numdoc � in desdoc
                         0, // seziva � in desdoc
-                        $form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
+                        $form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'], $form['id_lotmag'])
                 );
             }
             header("Location:report_movmag.php");
@@ -230,6 +317,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['artico'] = "";
 	$form['filename'] ="";
 	$form['id_lotmag'] ="";
+	$form['identifier'] ="";
+	$form['expiry'] ="";
     $form['quanti'] = 0;
     $form['prezzo'] = 0;
     $form['scorig'] = 0;
@@ -271,9 +360,16 @@ if ($form['id_mov'] > 0) {
         var sommatotale = sommarigo - sommarigo * c / 100;
         return((Math.round(sommatotale * 100) / 100).toFixed(2));
     }
+	
+  $(function() {
+    $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+	
+});
+
 </SCRIPT>
+
 <?php
-echo "<form method=\"POST\" name=\"myform\">";
+echo "<form method=\"POST\" name=\"myform\" enctype=\"multipart/form-data\" >";
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $_POST['ritorno'] . "\">\n";
@@ -458,7 +554,7 @@ if ($form['artico'] == '') {
     // echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
     /** ENRICO FEDELE */
     /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-    echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
+    echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button>';
     /** ENRICO FEDELE */
 } else {
     
@@ -469,12 +565,13 @@ if ($form['artico'] == '') {
 
     // Antonio Germani > Inizio LOTTO in entrata o creazione nuovo
 if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form 
-	echo "lotto";
+	
 	?>	  
 		<div class="FacetFieldCaptionTD"><?php echo $script_transl[21]; ?></div>
 		<div class="FacetDataTD" >
 		<input type="hidden" name="filename" value="<?php echo $form['filename']; ?>">
 		<input type="hidden" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
+		
 		</div>
 <?php
 	if (strlen($form['filename']) == 0) {
@@ -506,14 +603,15 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
     echo "<br>";
     echo '<label>' . 'Scadenza: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="expiry"  value="' . $form['expiry'] . '"></div></div></div>';
 } else {
-        echo '<tr><td><input type="hidden" name="filename" value="' . $form['filename'] . '">';
-        echo '<input type="hidden" name="identifier" value="' . $form['identifier'] . '">';
-        echo '<input type="hidden" name="id_lotmag" value="' . $form['id_lotmag'] . '">';
-        echo '<input type="hidden" name="expiry" value="' . $form['expiry'] . '"></td></tr>';
+        echo '<input type="hidden" name="filename" value="">';
+        echo '<input type="hidden" name="identifier" value="">';
+        echo '<input type="hidden" name="id_lotmag" value="">';
+        echo '<input type="hidden" name="expiry" value="">';
     }
-
-
-	
+?>
+<input type="hidden" name="lot_or_serial" value="<?php echo $form['lot_or_serial']; ?>">
+</td>
+<?php	
 	// fine LOTTO
 	
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis</td></tr>\n";
