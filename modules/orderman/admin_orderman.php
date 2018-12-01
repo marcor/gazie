@@ -1137,11 +1137,15 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['2']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<textarea type="text" name="description" align="right" maxlength="255" cols="67" rows="3"><?php echo $form['description']; ?></textarea>
+	<input type="text" name="description" value="<?php echo $form['description']; ?>" maxlength="80" size="80" />
 	</td>
 </tr>
 <?php
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"add_info\" value=\"" . $form['add_info'] . "\" maxlength=\"80\" size=\"80\" /></td></tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\">";
+?>
+		<textarea type="text" name="add_info" align="right" maxlength="255" cols="67" rows="3"><?php echo $form['add_info']; ?></textarea>
+<?php
+echo "</td></tr>\n";
 // DATA inizio produzione
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[5] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"gioinp\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
