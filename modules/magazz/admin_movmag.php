@@ -116,6 +116,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['anndoc'] = intval($_POST['anndoc']);
     $form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
     $form['artico'] = $_POST['artico'];
+	if (strlen($form['artico'])>0) {
+		$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+		$print_unimis =  $item_artico['unimis'];
+		$form['filename'] = $_POST['filename'];
+		$form['identifier'] = $_POST['identifier'];
+		$form['expiry'] = $_POST['expiry'];
+	}
     $form['quanti'] = gaz_format_quantity($_POST['quanti'], 0, $admin_aziend['decimal_quantity']);
     $form['prezzo'] = number_format(preg_replace("/\,/", '.', $_POST['prezzo']), $admin_aziend['decimal_price'], '.', '');
     $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
@@ -221,6 +228,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['anndoc'] = date("Y");
     $form['scochi'] = 0;
     $form['artico'] = "";
+	$form['filename'] ="";
+	$form['id_lotmag'] ="";
     $form['quanti'] = 0;
     $form['prezzo'] = 0;
     $form['scorig'] = 0;
@@ -452,12 +461,61 @@ if ($form['artico'] == '') {
     echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
     /** ENRICO FEDELE */
 } else {
-    $item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
-    $print_unimis = $item[$unimis];
-    echo "<input type=\"submit\" value=\"" . substr($item['descri'], 0, 30) . "\" name=\"newitem\" title=\"" . ucfirst($script_transl['update']) . "!\">\n ";
+    
+    echo "<input type=\"submit\" value=\"" . substr($item_artico['descri'], 0, 30) . "\" name=\"newitem\" title=\"" . ucfirst($script_transl['update']) . "!\">\n ";
     echo "\t<input type=\"hidden\" name=\"artico\" value=\"" . $form['artico'] . "\">\n";
     echo "\t<input type=\"hidden\" name=\"search_item\" value=\"" . $form['search_item'] . "\">\n";
 }
+
+    // Antonio Germani > Inizio LOTTO in entrata o creazione nuovo
+if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form 
+	echo "lotto";
+	?>	  
+		<div class="FacetFieldCaptionTD"><?php echo $script_transl[21]; ?></div>
+		<div class="FacetDataTD" >
+		<input type="hidden" name="filename" value="<?php echo $form['filename']; ?>">
+		<input type="hidden" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
+		</div>
+<?php
+	if (strlen($form['filename']) == 0) {
+        echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog">' . 'Inserire nuovo certificato' . ' ' . '<i class="glyphicon glyphicon-tag"></i>' . '</button></div>';
+	} else {
+        echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog">' . $form['filename'] . ' ' . '<i class="glyphicon glyphicon-tag"></i>' . '</button>';
+        echo '</div>';
+    }
+	if (strlen($form['identifier']) == 0) {
+        echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog_lot">' . 'Inserire nuovo Lotto' . ' ' . '<i class="glyphicon glyphicon-tag"></i></button></div>';
+    } else {
+		if (intval($form['expiry']) > 0) {
+			echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog_lot">' . $form['identifier'] . ' ' . gaz_format_date($form['expiry']) . '<i class="glyphicon glyphicon-tag"></i></button></div>';
+		} else {
+			echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog_lot" >' . $form['identifier'] . '<i class="glyphicon glyphicon-tag" ></i></button></div>';
+		}
+    }
+	echo '<div id="lm_dialog" class="collapse" ><div class="form-group"><div>';
+?>
+    <input type="file" onchange="this.form.submit();" name="docfile_">
+	</div>
+	</div>
+    </div>
+	<?php
+    echo '<div id="lm_dialog_lot" class="collapse" >
+                        <div class="form-group">
+                          <div>';
+    echo '<label>' . "Numero: " . '</label><input type="text" name="identifier" value="' . $form['identifier'] . '" >';
+    echo "<br>";
+    echo '<label>' . 'Scadenza: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="expiry"  value="' . $form['expiry'] . '"></div></div></div>';
+} else {
+        echo '<tr><td><input type="hidden" name="filename" value="' . $form['filename'] . '">';
+        echo '<input type="hidden" name="identifier" value="' . $form['identifier'] . '">';
+        echo '<input type="hidden" name="id_lotmag" value="' . $form['id_lotmag'] . '">';
+        echo '<input type="hidden" name="expiry" value="' . $form['expiry'] . '"></td></tr>';
+    }
+
+
+	
+	// fine LOTTO
+	
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis</td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[14] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['scorig'] . "\" maxlength=\"4\" size=\"4\" name=\"scorig\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>\n";
