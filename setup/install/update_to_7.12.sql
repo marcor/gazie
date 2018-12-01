@@ -33,5 +33,5 @@ ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `codice_fornitore` VARCHAR(50) NOT NULL D
 INSERT INTO `gaz_XXXcaumag` (`codice`, `descri`, `clifor`, `insdoc`, `operat`) VALUES (82, 'CARICO DA PRODUZIONE', 0, 0, 1),(81, 'SCARICO PER PRODUZIONE', 0, 0, -1);
 ALTER TABLE `gaz_XXXtesbro`	CHANGE COLUMN `id_pro` `id_parent_doc` INT(9) NOT NULL COMMENT 'riferimento ad id_tes del documento genitore  (es. ordine riferito a preventivo genitore)' AFTER `id_agente`;
 ALTER TABLE `gaz_XXXtesdoc`	CHANGE COLUMN `id_pro` `id_parent_doc` INT(9) NOT NULL COMMENT 'riferimento ad id_tes del documento genitore  (es. ordine riferito a preventivo genitore)' AFTER `id_agente`;
-ALTER TABLE `gaz_002orderman` CHANGE COLUMN `description` `description` VARCHAR(80) NOT NULL AFTER `order_type`, CHANGE COLUMN `add_info` `add_info` TEXT NULL DEFAULT NULL AFTER `description`;
+ALTER TABLE `gaz_XXXorderman` CHANGE COLUMN `description` `description` VARCHAR(80) NOT NULL AFTER `order_type`, CHANGE COLUMN `add_info` `add_info` TEXT NULL DEFAULT NULL AFTER `description`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
