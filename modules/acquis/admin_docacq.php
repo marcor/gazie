@@ -146,7 +146,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caumag'] = $_POST['caumag'];
     $form['caucon'] = $_POST['caucon'];
     $form['id_agente'] = $_POST['id_agente'];
-    $form['id_pro'] = $_POST['id_pro'];
+    $form['id_parent_doc'] = $_POST['id_parent_doc'];
     $form['sconto'] = $_POST['sconto'];
 // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
@@ -1120,7 +1120,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caumag'] = $tesdoc['caumag'];
     $form['caucon'] = $tesdoc['caucon'];
     $form['id_agente'] = $tesdoc['id_agente'];
-    $form['id_pro'] = $tesdoc['id_pro'];
+    $form['id_parent_doc'] = $tesdoc['id_parent_doc'];
     $form['sconto'] = $tesdoc['sconto'];
     $form['lotmag'] = array();
     $i = 0;
@@ -1289,7 +1289,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['caumag'] = 5; //causale: 5 	CARICO PER ACQUISTO
     }
     $form['id_agente'] = 0;
-    $form['id_pro'] = 0;
+    $form['id_parent_doc'] = 0;
     $form['sconto'] = 0;
     $fornitore['indspe'] = "";
     $fornitore['citspe'] = "";
@@ -1838,7 +1838,7 @@ echo '	</tbody>
 		<input type="hidden" value="' . $form['caucon'] . '" name="caucon" />
 		<input type="hidden" value="' . $form['caumag'] . '" name="caumag" />
 		<input type="hidden" value="' . $form['id_agente'] . '" name="id_agente" />
-		<input type="hidden" value="' . $form['id_pro'] . '" name="id_pro" />';
+		<input type="hidden" value="' . $form['id_parent_doc'] . '" name="id_parent_doc" />';
 //inizio piede
 if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acquisto ricevuto (non fiscale)
     echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[27]</td>\n";

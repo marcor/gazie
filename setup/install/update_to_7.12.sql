@@ -31,4 +31,7 @@ ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `larghezza` DECIMAL(10,3) NULL DEFAULT NU
 ALTER TABLE `gaz_XXXletter`	ADD COLUMN `email` VARCHAR(50) NULL DEFAULT '' COMMENT 'Utilizzato per inviare i documenti ad un indirizzo diverso da quello in anagrafica' AFTER `clfoco`;
 ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `codice_fornitore` VARCHAR(50) NOT NULL DEFAULT '' AFTER `codart`;
 INSERT INTO `gaz_XXXcaumag` (`codice`, `descri`, `clifor`, `insdoc`, `operat`) VALUES (82, 'CARICO DA PRODUZIONE', 0, 0, 1),(81, 'SCARICO PER PRODUZIONE', 0, 0, -1);
+ALTER TABLE `gaz_XXXtesbro`	CHANGE COLUMN `id_pro` `id_parent_doc` INT(9) NOT NULL COMMENT 'riferimento ad id_tes del documento genitore  (es. ordine riferito a preventivo genitore)' AFTER `id_agente`;
+ALTER TABLE `gaz_XXXtesdoc`	CHANGE COLUMN `id_pro` `id_parent_doc` INT(9) NOT NULL COMMENT 'riferimento ad id_tes del documento genitore  (es. ordine riferito a preventivo genitore)' AFTER `id_agente`;
+
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
