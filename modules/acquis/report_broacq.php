@@ -269,65 +269,17 @@ function choicePartner(row)
                 }
                         // per colonna stato ordine e produzione
 						$orderman_descr='';
-                        $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
-                        $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
                         $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
                         while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
 							if ($rigbro_r['id_orderman']>0){
 								$orderman_descr=$rigbro_r['id_orderman'].'-'.$rigbro_r['description'];
 							}
-							$totale_da_evadere = $rigbro_r['quanti'];
-                            $totale_evaso = 0;
-                            $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND codart='".$rigbro_r['codart']."' AND tiprig <=1 ", 'id_tes DESC');
-                            while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
-                                $totale_evaso += $rigdoc_r['quanti'];
-                                $processed_atleastone = true;
-                            }               
-                            if ( $totale_evaso != $totale_da_evadere ) {
-                                $remains_atleastone = true;
-                            }
                         }
                 echo '			<td>'.$orderman_descr." &nbsp;</td>
 						<td><a class=\"btn btn-xs btn-success\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"> ".$tipodoc." n.".$r["numdoc"]."</i> &nbsp;</a></td>
 						<td>".gaz_format_date($r["datemi"])." &nbsp;</td>
 						<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?auxil=" . htmlspecialchars($fornitore["ragso1"]) . "&search=Cerca\">".$fornitore["ragso1"]."&nbsp;</a></td>";
-						//<td>".$r["status"]." &nbsp;</td>
-                        
-                        //
-                        // Se l'ordine e' da evadere completamente, verifica lo status ed
-                        // eventualmente lo aggiorna.
-                        //
-                        if ($remains_atleastone && !$processed_atleastone) {
-                            //
-                            // L'ordine e' completamente da evadere.
-                            //
-                            if ($r["status"] != "GENERATO") {
-                                gaz_dbi_put_row($gTables['tesbro'], "id_tes", $r["id_tes"], "status", "RIGENERATO");
-                            }
-                            echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a></td>";
-    
-                        } elseif ($remains_atleastone) {
-                            echo "<td> ";
-    
-                            $ultimo_documento = 0;
-                            //
-                            // Interroga la tabella gaz_XXXrigbro per le righe corrispondenti
-                            // a questa testata.
-                            //
-                            mostra_documenti_associati ( $r["id_tes"]);
-                            echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a></td>";
-                        } else {
-                            echo "<td>";
-                            //
-                            $ultimo_documento = 0;
-                            //
-                            // Interroga la tabella gaz_XXXrigbro per le righe corrispondenti
-                            // a questa testata.
-                            //
-                            mostra_documenti_associati ( $r["id_tes"]);
-                            echo "</td>";
-                        }
-    
+                        echo '<td><a class="btn btn-xs btn-warning" onclick="confirmorder(\''.$r['id_tes'].'\');">Ordina</a></td>';
                         echo "<td align=\"center\">
 							<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" target=\"_blank\">
 								<i class=\"glyphicon glyphicon-print\"></i>
