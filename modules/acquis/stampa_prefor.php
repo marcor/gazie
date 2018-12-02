@@ -29,7 +29,7 @@ $testat = intval($_GET['id_tes']);
 $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", $testat);
 //se non e' il tipo di documento stampabile da questo modulo ... va a casa
 if ($tesbro['tipdoc'] <> 'APR') {
-    header("Location: report_broacq.php");
+    header("Location: report_broacq.php?flt_tipo='APR'");
     exit;
 }
 if (isset($_GET['dest'])){

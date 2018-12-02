@@ -120,7 +120,7 @@ $strScript = array("admin_fornit.php" =>
     ),
     "report_broacq.php" =>
     array('title'=>'Preventivi e ordini a fornitori',
-        'title_dist' => array('APR'=>'Richieste di preventivi a fornitori','AOR'=>'Ordini a fornitori'),
+        'title_dist' => array('APR'=>'Richieste di preventivo a fornitori','AOR'=>'Ordini a fornitori'),
         'header' => array(
             "ID" => 'id_tes',
             "Produzione" => "id_orderman",

@@ -86,13 +86,17 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
 ?>
 <script>
-$(function() {
-   $( "#dialog" ).dialog({
-      autoOpen: false
-   });
-});
 
-function confirmemail(cod_partner,id_tes) {
+function confirmemail(cod_partner,id_tes,genorder=false) {
+	var fornitore=$("#fornitore_"+id_tes).attr('value');
+	var tipdoc=$("#tipdoc_"+id_tes).attr('value');
+	if (tipdoc=='AOR') {
+			$("#confirm_email").attr('title', 'Invia ORDINE a '+fornitore);
+	} else if (tipdoc=='APR' && genorder ) {
+			$("#confirm_email").attr('title', 'Genera ed Invia ORDINE a '+fornitore);
+	} else {
+			$("#confirm_email").attr('title', 'Invia Preventivo a '+fornitore);
+	}
 	$.get("search_email_address.php",
 		  {clfoco: cod_partner},
 		  function (data) {
@@ -125,15 +129,20 @@ function confirmemail(cod_partner,id_tes) {
 				} else {
 					$("#mailbutt div").remove();
 					var dest=$("#mailaddress").val();
-                    window.location.href = 'stampa_prefor.php?id_tes='+id_tes+'&dest='+dest;
+					if (tipdoc=='AOR') { // è già un ordine lo reinvio
+						window.location.href = 'stampa_ordfor.php?id_tes='+id_tes+'&dest='+dest;
+					} else if (tipdoc=='APR' && genorder ) { // in caso di generazione ordine vado sull'apposito script php 
+						window.location.href = 'duplicate_broacq.php?id_tes='+id_tes+'&dest='+dest;
+					} else { // il preventivo lo invio solamente
+						window.location.href = 'stampa_prefor.php?id_tes='+id_tes+'&dest='+dest;
+					}
 				}
-
-				}
+			}
 		},
 		close: function(){
 				$("#mailbutt div").remove();
+				$(this).dialog('destroy');
 		}
-
 	});
 	});
 }
@@ -144,7 +153,6 @@ function choicePartner(row)
 		source: "../../modules/root/search.php?opt=supplier",
 		minLength: 2,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
- 
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
@@ -165,6 +173,7 @@ function choicePartner(row)
 			}		
 	});
 }
+
 </script>
 
 <form method="GET">
@@ -244,18 +253,37 @@ function choicePartner(row)
 			//recupero le testate in base alle scelte impostate
             $result = gaz_dbi_dyn_query("*", $what, $where, $orderby, $limit, $passo);
             while ($r = gaz_dbi_fetch_array($result)) {
-                if ($r["tipdoc"] == 'APR') {
+				$linkstatus=false;	
+				if ($r["tipdoc"] == 'APR') { // preventivo
+					$rs_parent = gaz_dbi_get_row($gTables["tesbro"],'id_parent_doc',$r['id_tes']);
+					$clastatus='info';	
+					$status='Ordina';	
+					if ($rs_parent && $rs_parent["tipdoc"] == 'APR') { // il genitore è pure un preventivo
+					} elseif ($rs_parent && $rs_parent["tipdoc"] == 'AOR') { // è stato generato un ordine  
+						$clastatus='warning';	
+						$status='Ordinato con n.'.$rs_parent["numdoc"];
+						$linkstatus='report_broacq?flt_tipo=AOR&id_tes='.$rs_parent["id_tes"];	
+					}				
                     $tipodoc="Preventivo";
                     $modulo="stampa_prefor.php?id_tes=".$r['id_tes'];
                     $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
-                }
-                if ($r["tipdoc"] == 'AOR') {
+                } elseif ($r["tipdoc"] == 'AOR') {
+					$rs_parent = gaz_dbi_get_row($gTables["tesbro"],'id_tes',$r['id_parent_doc']);
+					$clastatus='success';	
+					$status='Ordinato';	
+					if ($rs_parent && $rs_parent["tipdoc"] == 'APR') { // il genitore è un preventivo
+						$status .= '(prev.n.'.$rs_parent["numdoc"].')';
+					}				
                     $tipodoc="Ordine";
                     $modulo="stampa_ordfor.php?id_tes=".$r['id_tes'];
                     $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
                 }
+				
+				
                 $fornitore = $anagrafica->getPartner($r['clfoco']);
                 echo '<tr class="FacetDataTD text-center">';
+
+				// colonna id
                 if (! empty ($modifi)) {
                    echo "<td>
 				   			<a class=\"btn btn-xs btn-default\" href=\"".$modifi."\">
@@ -267,33 +295,64 @@ function choicePartner(row)
 				   			<button class=\"btn btn-xs btn-default disabled\">".$r["id_tes"]." ".$tipodoc." &nbsp;</button>
 						</td>";
                 }
-                        // per colonna stato ordine e produzione
-						$orderman_descr='';
-                        $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
-                        while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
-							if ($rigbro_r['id_orderman']>0){
-								$orderman_descr=$rigbro_r['id_orderman'].'-'.$rigbro_r['description'];
-							}
-                        }
-                echo '			<td>'.$orderman_descr." &nbsp;</td>
-						<td><a class=\"btn btn-xs btn-success\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"> ".$tipodoc." n.".$r["numdoc"]."</i> &nbsp;</a></td>
-						<td>".gaz_format_date($r["datemi"])." &nbsp;</td>
-						<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?auxil=" . htmlspecialchars($fornitore["ragso1"]) . "&search=Cerca\">".$fornitore["ragso1"]."&nbsp;</a></td>";
-                        echo '<td><a class="btn btn-xs btn-warning" onclick="confirmorder(\''.$r['id_tes'].'\');">Ordina</a></td>';
-                        echo "<td align=\"center\">
+
+				// colonna produzione
+				$orderman_descr='';
+                $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
+
+				// INIZIO crezione tabella per la visualizzazione sul tootip di tutto il documento 
+				$tt = '<table><th colspan=4 >' . $tipodoc." n.".$r["numdoc"].' del '. gaz_format_date($r["datemi"]).'</th>';
+                while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
+					if ($rigbro_r['id_orderman']>0){
+						$orderman_descr=$rigbro_r['id_orderman'].'-'.$rigbro_r['description'];
+					}
+					$tt .= '<tr><td>' . $rigbro_r['codart'] . '</td><td>' . htmlspecialchars( $rigbro_r['descri'] ) . '</td><td>' . $rigbro_r['unimis'] . '</td><td align=right>' . $rigbro_r['quanti'] . '</td></tr>';
+				}
+				$tt .= '</table>';
+				// FINE creazione tabella per il tooltip dei righi
+
+                echo '<td>'.$orderman_descr." &nbsp;</td>\n";
+
+				// colonna numero documento
+				echo "<td><a class=\"btn btn-xs btn-success\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"> ".$tipodoc." n.".$r["numdoc"]."</i> &nbsp;</a></td>\n";
+				
+				// colonna data documento
+				echo "<td>".gaz_format_date($r["datemi"])." &nbsp;</td>\n";
+
+				// colonna fornitore
+				echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $r["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >'."<a title=\"Dettagli fornitore\" id=\"fornitore_".$r['id_tes']."\"  value=\"".$fornitore["ragso1"]."\" href=\"report_fornit.php?auxil=" . htmlspecialchars($fornitore["ragso1"]) . "&search=Cerca\">".$fornitore["ragso1"]."&nbsp;</a></div></td>";
+
+				// colonna bottone cambia stato	
+				echo '<td><a class="btn btn-xs btn-'.$clastatus.'"';
+				if ($linkstatus){
+					echo ' href="'.$linkstatus.'"'; 
+				} else {
+					echo ' onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);"';
+				}
+				echo '>'.$status.'</a></td>';
+
+                // colonna stampa
+				echo "<td align=\"center\">
 							<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" target=\"_blank\">
 								<i class=\"glyphicon glyphicon-print\"></i>
 							</a>
 						</td>";
-						echo '<td align="center" title="Stesso preventivo per altro fornitore"><button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"></i></button>';
-                        echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div></td><td align="center">';
+
+				// colonna operazioni
+				echo '<td align="center" title="Stesso preventivo per altro fornitore"><button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"></i></button>';
+                echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div></td>';
+
+				// colonna mail
+				echo '<td align="center">';
                 if (!empty($fornitore["e_mail"])) {
-                    echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\');" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-envelope"></i></a>';
+                    echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',false);" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-envelope"></i></a>';
                 } else {
 					echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="admin_fornit.php?codice='.substr($r["clfoco"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 				 }		  
-                echo "	</td>
-						<td align=\"center\">
+                echo "	</td>\n";
+				
+				// colonna elimina
+				echo "<td align=\"center\">
 							<a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_broacq.php?id_tes=".$r['id_tes']."\">
 								<i class=\"glyphicon glyphicon-remove\"></i>
 							</a>

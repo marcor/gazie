@@ -121,7 +121,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caumag'] = $_POST['caumag'];
     $form['caucon'] = $_POST['caucon'];
     $form['id_agente'] = $_POST['id_agente'];
-    $form['id_pro'] = $_POST['id_pro'];
+    $form['id_parent_doc'] = $_POST['id_parent_doc'];
     $form['sconto'] = $_POST['sconto'];
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
@@ -721,7 +721,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caumag'] = $tesbro['caumag'];
     $form['caucon'] = $tesbro['caucon'];
     $form['id_agente'] = $tesbro['id_agente'];
-    $form['id_pro'] = $tesbro['id_pro'];
+    $form['id_parent_doc'] = $tesbro['id_parent_doc'];
     $form['sconto'] = $tesbro['sconto'];
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
@@ -741,6 +741,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_quality'] = $rigo['quality']; // ripropongo l'ultima qualità
         $form['righi'][$next_row]['id_mag'] = $rigo['id_mag'];
         $form['in_id_orderman'] = $rigo['id_orderman'];
+		$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $rigo['id_orderman']);
+        $form['coseprod'] = $orderman['description'];
         $form['righi'][$next_row]['id_orderman'] = $rigo['id_orderman'];
         $form['righi'][$next_row]['annota'] = $articolo['annota'];
         $form['righi'][$next_row]['larghezza'] = $rigo['larghezza'];
@@ -829,7 +831,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caucon'] = '';
     $form['caumag'] = 5;
     $form['id_agente'] = 0;
-    $form['id_pro'] = 0;
+    $form['id_parent_doc'] = 0;
     $form['sconto'] = 0;
     $form['print_total'] = 1;
     $form['delivery_time'] = 10;
@@ -1320,7 +1322,7 @@ echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
 			<input type=\"hidden\" value=\"{$form['caucon']}\" name=\"caucon\" />
 			<input type=\"hidden\" value=\"{$form['caumag']}\" name=\"caumag\" />
 			<input type=\"hidden\" value=\"{$form['id_agente']}\" name=\"id_agente\" />
-			<input type=\"hidden\" value=\"{$form['id_pro']}\" name=\"id_pro\" />
+			<input type=\"hidden\" value=\"{$form['id_parent_doc']}\" name=\"id_parent_doc\" />
 			<tr>
 				<td class=\"FacetFieldCaptionTD\">$script_transl[27]</td>
 				<td class=\"FacetDataTD\">

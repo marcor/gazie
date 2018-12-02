@@ -23,19 +23,22 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend=checkAdmin();
 require("../../library/include/document.php");
 $testat = intval($_GET['id_tes']);
 $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", $testat);
 //se non e' il tipo di documento stampabile da questo modulo ... va a casa
 if ($tesbro['tipdoc'] <> 'AOR') {
-    header("Location: report_broacq.php");
+    header("Location: report_broacq.php?flt_tipo='AOR'");
     exit;
 }
-if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
-    createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro','E');
+if (isset($_GET['dest'])){
+  if ($_GET['dest']=='E'){ //  invio  mail all'indirizzo in testata o in alternativa se sta sul fornitore
+  } else { // in dest ho l'indirizzo email quindi lo setto in testata e poi procedo all'invio
+  	$r=gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $testat, 'email',filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL));
+  }	
+  createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro','E');
 } else {
-    createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro');
+  createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro');
 }
-    ?>
+ ?>
