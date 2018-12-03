@@ -394,6 +394,11 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['end_date'] . "</td><
 echo "\t</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['last_hourly_cost'] . "</td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"number\" name=\"last_hourly_cost\" value=\"" . $form['last_hourly_cost'] . "\" min=\"0\" max=\"1000\" step=\"0.01\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sqn'] . "</td>";
 echo "\t </td>\n";
 echo "\t<td  class=\"FacetDataTD\">\n";

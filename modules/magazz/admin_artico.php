@@ -27,7 +27,7 @@ require("../../library/include/datlib.inc.php");
 // m1 Modificato a mano
  function serchCOD()
    {
-    $max_codice = gaz_dbi_query("select max(codice) from gaz_001artico;");
+    $max_codice = gaz_dbi_query("select max(codice) from ".$gTables['artico']);
     $max_cod = gaz_dbi_fetch_array($max_codice);
     return ++$max_cod[0];
    }
@@ -43,7 +43,7 @@ require("../../library/include/datlib.inc.php");
   
   function serchEAN()
    {
-    $max_barcode = gaz_dbi_query("select max(barcode) from gaz_001artico where barcode like '3333333%';");
+    $max_barcode = gaz_dbi_query("select max(barcode) from ".$gTables['artico']." where barcode like '3333333%';");
     $max_barcode = gaz_dbi_fetch_array($max_barcode);
 	if ($max_barcode[0] == null) $max_barcode[0] ='3333333000000';
     return Barcode($max_barcode[0]+10);
@@ -505,6 +505,14 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
                             <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="bending_moment" class="col-sm-4 control-label"><?php echo $script_transl['bending_moment']; ?></label>
+                            <input class="col-sm-2" name="bending_moment" id="bending_moment" type="number" step="0.01" min="0" max="100000" value="<?php echo $form['bending_moment']; ?>" maxlength="8" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->

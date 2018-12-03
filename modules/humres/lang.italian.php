@@ -85,6 +85,7 @@ $strScript = array("admin_staff.php" =>
         'job_title' => 'Mansione',
         'start_date'=>"Data assunzione",
 		'end_date'=>"Data Fine Rapporto",
+		'last_hourly_cost'=>'Ultimo costo orario'
     ),
     "staff_report.php" =>
     array('title' => 'Lista dei lavoratori',

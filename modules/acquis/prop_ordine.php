@@ -102,16 +102,16 @@ function azzera(righe)
    $righe = $totale = 0;
    while ($a_row_img = gaz_dbi_fetch_array($result_img)) 
     {
-     $query_riga = "Select codice,codice_fornitore,gaz_001artico.descri,uniacq,".
+     $query_riga = "Select codice,codice_fornitore,".$gTables['artico'].".descri,uniacq,".
            "scorta,sum(quanti) as venduti,tipdoc,preacq,last_cost,pack_units ".
            "from ".$gTables['artico']." left join ".
-           "(gaz_001rigdoc join gaz_001tesdoc on ((gaz_001rigdoc.id_tes = gaz_001tesdoc.id_tes) ".
+           "(".$gTables['rigdoc']." join ".$gTables['tesdoc']." on ((".$gTables['rigdoc'].".id_tes = ".$gTables['tesdoc'].".id_tes) ".
            " and (datemi > DATE_SUB(CURDATE(),INTERVAL ".$_POST['gio_ven'].
            " DAY)) and (tipdoc in('VCO','DDT','FAI','FAD') or tipdoc is NULL)))".
            "on (codice = codart) ".
            "where (((".$gTables['artico'].".clfoco = ".$form['id_anagra'].") and (image = '".addslashes($a_row_img['image'])."') ".
            ((isset($_POST['tutti']) && ($_POST['tutti']=='on'))?"))":" and (ordinabile <> 'N'))) ").          
-           "group by gaz_001artico.codice order by codice_fornitore;";
+           "group by ".$gTables['artico'].".codice order by codice_fornitore;";
 
     // echo $query_riga."<br><hr width='50'><br>";
 	 
@@ -208,7 +208,7 @@ for ($k=1;$k<=$_POST['righe'];$k++)
 {
 if ($_POST['acquista'][$k] > 0)
 {
-$result = gaz_dbi_query("Select codice_fornitore,gaz_001artico.descri,uniacq,aliquo from gaz_001artico join gaz_001aliiva on (gaz_001aliiva.codice = gaz_001artico.aliiva ) where (gaz_001artico.codice = '".$_POST['codice'][$k]."') limit 1;");
+$result = gaz_dbi_query("Select codice_fornitore,".$gTables['artico'].".descri,uniacq,aliquo from ".$gTables['artico']." join ".$gTables['aliiva']." on (".$gTables['aliiva'].".codice = ".$gTables['artico'].".aliiva ) where (".$gTables['artico'].".codice = '".$_POST['codice'][$k]."') limit 1;");
 $a_row = gaz_dbi_fetch_array($result);
 
 echo'.<input type="hidden" value="'.$_POST['codice'][$k].'" name="righi['.$i.'][codart]">';

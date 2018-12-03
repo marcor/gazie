@@ -378,6 +378,7 @@ $strScript = array("browse_document.php" =>
         'larghezza' => "Larghezza (mm)",
         'lunghezza' => "Lunghezza (mm)",
         'spessore' => "Spessore (mm)",
+		'bending_moment'=>"Resistenza es.Wx cm³",
         'catmer' => "Categoria merceologica",
         'ragstat' => "Raggruppamento statistico",
         'preacq' => 'Prezzo d\'acquisto',
