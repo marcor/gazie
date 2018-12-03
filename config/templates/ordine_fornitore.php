@@ -69,6 +69,7 @@ class OrdineFornitore extends Template
     }
     function body()
     {
+		$this->tot_rp=0;
         $lines = $this->docVars->getRigo();
 		foreach ($lines AS $key => $rigo) {
             if ($this->GetY() >= 205) {
@@ -95,8 +96,8 @@ class OrdineFornitore extends Template
 					} else { // non ho ne pesi ne qualità
 						$this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
 					}
+					$rp=0.000;	
                     if ($rigo['pezzi'] > 0 ) {
-						$rp=0.000;	
 						$res_ps='kg/pz';
 						$dim='';
 						if ($rigo['lunghezza'] >= 0.001) { 
@@ -117,10 +118,16 @@ class OrdineFornitore extends Template
 						$dim.=' mm  -  Pezzi: '.$rigo['pezzi'];
 						if ($rigo['peso_specifico'] >= 0.001) { 
 							$res_ps = floatval($rigo['peso_specifico']).' '.$res_ps.' peso teor. '.floatval($rp*$rigo['peso_specifico']).' kg'; 
+							$this->tot_rp +=$rp*$rigo['peso_specifico'];
 						}
 						$this->Cell(82, 6, $dim,'LB');
 						$this->Cell(45, 6, $res_ps,'B',0,'R');
-                    }
+                    } else {
+						// non ho i pezzi e/o il peso specifico per calcolare il peso ma ho l'unità di misura in KG  allora aggiungo al peso totale
+						if (strtoupper(substr(trim($rigo['unimis']),0,2))=='KG' ){
+							$this->tot_rp +=$rigo['quanti'];
+						}
+					}
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R'); // Modificato a mano
                     if ($rigo['prelis'] > 0) {
@@ -284,8 +291,8 @@ class OrdineFornitore extends Template
         $this->Cell(28, 6,'N.colli','LTR',0,'C',1);
         $this->Cell(28, 6,'Volume','LTR',1,'C',1);
         $this->Cell(74, 6,$this->tesdoc['portos'],'LBR',0,'C');
-        if ($this->tesdoc['net_weight'] > 0) {
-            $this->Cell(29, 6,gaz_format_number($this->tesdoc['net_weight']),'LRB',0,'C');
+        if ($this->tot_rp > 0) {
+            $this->Cell(29, 6,gaz_format_number($this->tot_rp),'LRB',0,'C');
         } else {
             $this->Cell(29, 6,'','LRB');
         }

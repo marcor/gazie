@@ -53,6 +53,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
 	
     $form['order_type'] = $_POST['order_type'];
     $form['description'] = $_POST['description'];
+    $form['add_info'] = $_POST['add_info'];
     $form['gioinp'] = $_POST['gioinp'];
     $form['mesinp'] = $_POST['mesinp'];
     $form['anninp'] = $_POST['anninp'];

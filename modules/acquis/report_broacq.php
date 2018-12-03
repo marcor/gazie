@@ -262,7 +262,7 @@ function choicePartner(row)
 					} elseif ($rs_parent && $rs_parent["tipdoc"] == 'AOR') { // è stato generato un ordine  
 						$clastatus='warning';	
 						$status='Ordinato con n.'.$rs_parent["numdoc"];
-						$linkstatus='report_broacq?flt_tipo=AOR&id_tes='.$rs_parent["id_tes"];	
+						$linkstatus='stampa_ordfor?id_tes='.$rs_parent["id_tes"];	
 					}				
                     $tipodoc="Preventivo";
                     $modulo="stampa_prefor.php?id_tes=".$r['id_tes'];
