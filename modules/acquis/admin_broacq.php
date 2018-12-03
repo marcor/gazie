@@ -1087,6 +1087,7 @@ echo '</table>
 /** ENRICO FEDELE */
 $castel = array();
 $last_row = array();
+$ctrl_orderman=0;
 foreach ($form['righi'] as $key => $value) {
     //calcolo il totale del peso in kg
     switch (strtolower($value['unimis'])) {
@@ -1129,6 +1130,17 @@ foreach ($form['righi'] as $key => $value) {
     echo "<input type=\"hidden\" value=\"{$value['peso_specifico']}\" name=\"righi[{$key}][peso_specifico]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['pezzi']}\" name=\"righi[{$key}][pezzi]\">\n";
 	echo '<input type="hidden" value="' . $value['extdoc'] . '" name="righi[' . $key . '][extdoc]" />';
+
+	// stampo l'intestazione della produzione di provenienza
+    if ($ctrl_orderman<>$value['id_orderman']) { // ricordo con un rigo la produzione di riferimento
+		if ($value['id_orderman']==0){
+			$descri_orderman='<div class="btn btn-xs btn-warning"> Non riferiti ad una produzione <i class="glyphicon glyphicon-arrow-down"> </i></div>';
+		} else {
+			$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $value['id_orderman']);
+			$descri_orderman='<div class="btn btn-xs btn-info">Materiale per Produzione n. ' .$orderman['id'].' - '.$orderman['description'].' <i class="glyphicon glyphicon-arrow-down"> </i></div>';
+		}
+		echo '<tr><td colspan=12>'.$descri_orderman."</td></tr>\n";
+	}
     //stampo i righi in modo diverso a secondo del tipo
     $peso = 0;
     if ($value['peso_specifico'] <> 0) {
@@ -1289,7 +1301,7 @@ foreach ($form['righi'] as $key => $value) {
 			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $key . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
 		  </tr>';
-    /** ENRICO FEDELE */
+	$ctrl_orderman=$value['id_orderman'];
 }
 
 /** ENRICO FEDELE */

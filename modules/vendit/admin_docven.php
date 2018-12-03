@@ -753,6 +753,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if ($cliente['cosric'] >= 100000000) {
             $form['in_codric'] = $cliente['cosric'];
         }
+		if ($cliente['sconto_rigo']>=0.01){
+			$form['in_sconto'] = $cliente['sconto_rigo'];
+		}
         $form['expense_vat'] = $admin_aziend['preeminent_vat'];
         if ($cliente['aliiva'] > 0) {
             $form['expense_vat'] = $cliente['aliiva'];
@@ -1289,12 +1292,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_codart'] = "";
         $form['in_unimis'] = "";
         $form['in_prelis'] = 0;
-        /** inizio modifica FP 09/10/2015
-         * inizializzo il campo con '#' per indicare che voglio lo sconto standard dell'articolo
-         */
-//rimossa    $form['in_sconto'] = 0;
-        $form['in_sconto'] = '#';
-        /* fine modifica FP */
         $form['in_quanti'] = 0;
         $form['in_id_mag'] = 0;
         $form['in_annota'] = "";

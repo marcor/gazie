@@ -447,6 +447,11 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"sconto\" value=\"" . $form['sconto'] . "\" align=\"right\" maxlength=\"5\" size=\"5\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sconto_rigo'] . "</td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"sconto_rigo\" value=\"" . $form['sconto_rigo'] . "\" align=\"right\" maxlength=\"5\" size=\"5\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['banapp'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
 $select_banapp = new selectbanapp("banapp");
 $select_banapp->addSelected($form["banapp"]);
