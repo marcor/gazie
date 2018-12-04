@@ -205,7 +205,7 @@ ALTER TABLE `gaz_XXXartico`	ADD COLUMN `rame_metallico` DECIMAL(8,3) NOT NULL DE
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `tempo_sospensione` INT(2) NOT NULL DEFAULT '0' COMMENT 'Utilizzato in quaderno di campagna' AFTER `rame_metallico`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `ordinabile` VARCHAR(1) NOT NULL AFTER `codice_fornitore`, ADD COLUMN `movimentabile`  VARCHAR(1) NOT NULL AFTER `ordinabile`;
 ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `codice_fornitore` VARCHAR(50) NOT NULL AFTER `codart`;
-ALTER TABLE `gaz_XXXcampi`	ADD COLUMN `giorno_decadimento` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `ricarico`, ADD COLUMN `codice_prodotto_usato` VARCHAR(15) NOT NULL AFTER `giorno_decadimento`, ADD COLUMN `id_mov` INT(9) NULL DEFAULT '0' AFTER `codice_prodotto_usato`, ADD COLUMN `id_colture` INT(3) NULL DEFAULT '0' AFTER `id_mov`;
+ALTER TABLE `gaz_XXXcampi`	ADD COLUMN `giorno_decadimento` TIMESTAMP NULL AFTER `ricarico`, ADD COLUMN `codice_prodotto_usato` VARCHAR(15) NOT NULL AFTER `giorno_decadimento`, ADD COLUMN `id_mov` INT(9) NULL DEFAULT '0' AFTER `codice_prodotto_usato`, ADD COLUMN `id_colture` INT(3) NULL DEFAULT '0' AFTER `id_mov`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `classif_amb` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Classificazione ambientale come da art.16  comma 2 del D.Lgs 150/2012 (Utilizzato in quaderno di campagna)' AFTER `uniacq`;
 ALTER TABLE `gaz_XXXartico` ADD COLUMN `mostra_qdc` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Mostra nei movimenti del quaderno di campagna: 1=si , 0=no' AFTER `classif_amb`;
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Permetti caratteri speciali su codici articoli (0=No, 1=Si)', 'codart_special_char', '0');

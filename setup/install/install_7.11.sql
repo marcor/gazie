@@ -291,7 +291,7 @@ CREATE TABLE IF NOT EXISTS `gaz_001campi` (
   `image` mediumblob,
   `web_url` varchar(255) NOT NULL,
   `ricarico` decimal(7,3) NOT NULL,
-  `giorno_decadimento` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `giorno_decadimento` timestamp NULL,
   `codice_prodotto_usato` varchar(15) NOT NULL,
   `id_mov` int(9) DEFAULT '0',
   `id_colture` int(3) DEFAULT '0',
