@@ -979,6 +979,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                     case "0":
                         $imprig = CalcolaImportoRigo($form['righi'][$k]['evadibile'], $form['righi'][$k]['prelis'], $form['righi'][$k]['sconto']);
                         if ($v['id_doc'] == 0) {
+//                            $checkin = ' checked';
                             $checkin = ($form['righi'][$k]['evadibile']) > 0 ? ' checked' : '';    // seleziono solo se la qt evadibile è positiva
                             $total_order += $imprig;
                         }
@@ -986,7 +987,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                     case "1":
                         $imprig = CalcolaImportoRigo(1, $form['righi'][$k]['prelis'], 0);
                         if ($v['id_doc'] == 0) {
-                            $checkin = ' checked';
+//                            $checkin = ' checked';
+                            $checkin = ($form['righi'][$k]['evadibile']) > 0 ? ' checked' : '';    // seleziono solo se la qt evadibile è positiva
                             $total_order += $imprig;
                         }
                         break;
@@ -1032,8 +1034,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                     echo "<td align=\"right\">" . $v['quanti'] . "</td>\n";
                     echo "<td align=\"right\" width=\"10%\"><input type=\"text\" value=\"" . $v['evadibile'] . "\" name=\"righi[$k][evadibile]\"></td>\n";
                     echo "<td align=\"right\">" . $v['prelis'] . "</td>\n";
-                    echo "<td align=\"right\">" . $v['provvigione'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['sconto'] . "</td>\n";
+                    echo "<td align=\"right\">" . $v['provvigione'] . "</td>\n";
                     echo "<td align=\"right\">$imprig</td>\n";
                     echo "<td align=\"center\"><input type=\"checkbox\" name=\"righi[$k][checkval]\"  title=\"" . $script_transl['checkbox'] . "\" $checkin value=\"$imprig\" onclick=\"this.form.total.value=calcheck(this);\"></td>\n";
                 } else {

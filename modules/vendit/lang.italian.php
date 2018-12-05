@@ -760,7 +760,7 @@ $strScript = array("admin_client.php" =>
         'sconto' => 'Sconto',
         'pagame' => 'Pagamento',
         'preview_title' => 'DA EVADERE:',
-        'from' => 'dal ',
+        'from' => 'da ',
         'del' => ' del ',
         'upd_ord' => ' Modifica il preventivo/ordine',
         'id_agente' => 'Agente ',
