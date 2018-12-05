@@ -1510,32 +1510,43 @@ echo '	</table>';
 		var spessore = ($("#dialog_spessore").val()).replace(',', '.');
 		var peso_specifico = ($("#dialog_peso_specifico").val()).replace(',', '.');
 		var pezzi = ($("#dialog_pezzi").val()).replace(',', '.');
-		var res_ps='';
+		var res_ps=''; var res_a=''; var res_b=''; var res_c=''; var res_d=''; var res_kg='';
 		if (parseFloat(pezzi)>=0.001) {
 			res_ps='kg/pz';
-			var result_a = parseFloat(pezzi).toFixed(3).toString();
-			var res_kg = (parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+			res_a = parseFloat(pezzi).toFixed(3).toString();
+			res_kg = (parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
 			if (parseFloat(lunghezza)>=0.001) {
 				res_ps='kg/m';
-				var result_b = (parseFloat(lunghezza)/10**3*parseFloat(pezzi)).toFixed(3).toString();
-				var res_kg = (result_b*parseFloat(peso_specifico)).toFixed(3).toString();
-				$("#btn_ml").text('m '+ result_b);
+				res_b = (parseFloat(lunghezza)/10**3*parseFloat(pezzi)).toFixed(3).toString();
+				res_kg = (res_b*parseFloat(peso_specifico)).toFixed(3).toString();
+				res_c = ''; res_d = '';
+				$("#btn_ml").text('m '+ res_b);
 				if (parseFloat(larghezza)>=0.001) {
 					res_ps='kg/m²';
-					var result_c = (parseFloat(larghezza)*result_b/10**3).toFixed(3).toString();
-					var res_kg = (result_c*parseFloat(peso_specifico)).toFixed(3).toString();
-					$("#btn_mq").text('m² '+ result_c);
+					res_c = (parseFloat(larghezza)*res_b/10**3).toFixed(3).toString();
+					res_kg = (res_c*parseFloat(peso_specifico)).toFixed(3).toString();
+					res_d = '';
+					$("#btn_mq").text('m² '+ res_c);
 					if (parseFloat(spessore)>=0.001) {
 						res_ps='kg/l';
-						var result_d = result_c*parseFloat(spessore).toFixed(3).toString();
-						var res_kg = (result_d*parseFloat(peso_specifico)).toFixed(3).toString();
-						$("#btn_lt").text('l '+ result_d);
+						res_d = res_c*parseFloat(spessore).toFixed(3).toString();
+						res_kg = (res_d*parseFloat(peso_specifico)).toFixed(3).toString();
+						$("#btn_lt").text('l '+ res_d);
+					} else {
+						$("#btn_lt").text('l ');
 					}
+				} else {
+					$("#btn_mq").text('m² ');
 				}
+			} else {
+				$("#btn_ml").text('m ');
 			}
 			if (parseFloat(res_kg)>=0.001){
 				$("#btn_kg").text('kg '+ res_kg);
 			}
+		} else {
+			res_a=''; res_b=''; res_c=''; res_d=''; res_kg='';
+			$("#btn_kg").text('kg ');
 		}
 		$("#res_ps").text('Peso specifico '+res_ps);
 
@@ -1543,7 +1554,7 @@ echo '	</table>';
 
 	function weightfromdimSet(mu) {
 		var row=$("#dialog_row_focus").val();
-		var res_kg='';
+		var res_ps=''; var res_a=''; var res_b=''; var res_c=''; var res_d=''; var res_kg='';
 		var larghezza = $("#dialog_larghezza").val();
 		var lunghezza = $("#dialog_lunghezza").val();
 		var spessore = $("#dialog_spessore").val();
@@ -1555,37 +1566,42 @@ echo '	</table>';
 		$("[name='righi["+row+"][peso_specifico]']").val(peso_specifico);
 		$("[name='righi["+row+"][pezzi]']").val(pezzi);
 		if (parseFloat(pezzi)>=0.001) {
-			var result_a = parseFloat(pezzi).toFixed(3).toString();
-			var res_kg = (parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+			res_a = parseFloat(pezzi).toFixed(3).toString();
+			res_kg = (parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+			res_b = ''; res_c = ''; res_d = '';
 			if (parseFloat(lunghezza)>=0.001) {
-				var result_a = (parseFloat(lunghezza)/1000*parseFloat(pezzi)).toFixed(3).toString();
-				var res_kg = (parseFloat(lunghezza)/1000*parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
+				res_b = (parseFloat(lunghezza)/10**3*parseFloat(pezzi)).toFixed(3).toString();
+				res_kg = (res_b*parseFloat(peso_specifico)).toFixed(3).toString();
+				res_c = ''; res_d = '';
 				if (parseFloat(larghezza)>=0.001) {
-					var result_b = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)/1000000).toFixed(3).toString();
-					var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+					res_c = (parseFloat(larghezza)*res_b/10**3).toFixed(3).toString();
+					res_kg = (res_c*parseFloat(peso_specifico)).toFixed(3).toString();
+					res_d = '';
 					if (parseFloat(spessore)>=0.001) {
-						var result_c = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)/1000000).toFixed(3).toString();
-						var res_kg = (parseFloat(larghezza)*parseFloat(lunghezza)*parseFloat(spessore)*parseFloat(pezzi)*parseFloat(peso_specifico)/1000000).toFixed(3).toString();
+						res_d = res_c*parseFloat(spessore).toFixed(3).toString();
+						res_kg = (res_d*parseFloat(peso_specifico)).toFixed(3).toString();
 					}
 				}
 			}
+		} else {
+			res_a=''; res_b=''; res_c=''; res_d=''; res_kg='';
 		}
 		var close_dial=false;
 		if (mu=='kg' && res_kg>=0.00001){
 			$("[name='righi["+row+"][unimis]']").val('KG');
 			$("[name='righi["+row+"][quanti]']").val(res_kg);
 			close_dial=true;
-		} else if (mu=='ml' && result_a>=1) {
+		} else if (mu=='ml' && res_a>=1) {
 			$("[name='righi["+row+"][unimis]']").val('ML');
-			$("[name='righi["+row+"][quanti]']").val(result_a);
+			$("[name='righi["+row+"][quanti]']").val(res_b);
 			close_dial=true;
-		} else if (mu=='mq' && result_b>=1) {
+		} else if (mu=='mq' && res_b>=1) {
 			$("[name='righi["+row+"][unimis]']").val('MQ');
-			$("[name='righi["+row+"][quanti]']").val(result_b);
+			$("[name='righi["+row+"][quanti]']").val(res_c);
 			close_dial=true;
-		} else if (mu=='lt' && result_c>=1) {
+		} else if (mu=='lt' && res_c>=1) {
 			$("[name='righi["+row+"][unimis]']").val('LT');
-			$("[name='righi["+row+"][quanti]']").val(result_c);
+			$("[name='righi["+row+"][quanti]']").val(res_d);
 			close_dial=true;
 		} else if (mu=='pz' && pezzi>=1) {
 			$("[name='righi["+row+"][unimis]']").val('PZ');
