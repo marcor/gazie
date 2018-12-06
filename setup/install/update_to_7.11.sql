@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `gaz_camp_fitofarmaci` (
 CREATE TABLE IF NOT EXISTS `gaz_camp_avversita` (
   `id_avv` int(3) NOT NULL DEFAULT '0',
   `nome_avv` varchar(30) CHARACTER SET utf8 NOT NULL,
-  `adminid` varchar(30) CHARACTER SET utf8 NOT NULL,
+  `adminid` varchar(30) CHARACTER SET utf8 NOT NULL DEFAULT "",
   `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_avv`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -32,7 +32,7 @@ INSERT INTO `gaz_camp_avversita` (`id_avv`, `nome_avv`) VALUES (4, 'Minatori fog
 CREATE TABLE IF NOT EXISTS `gaz_camp_colture` (
   `id_colt` int(3) NOT NULL DEFAULT '0',
   `nome_colt` varchar(30) NOT NULL,
-  `adminid` varchar(30) NOT NULL,
+  `adminid` varchar(30) NOT NULL DEFAULT "",
   `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_colt`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
