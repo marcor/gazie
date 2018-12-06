@@ -108,13 +108,13 @@ class magazzForm extends GAzieForm {
         }
     }
 
-    function selectCaumag($val, $operat = -1, $empty = false, $val_hiddenReq = '', $class = 'FacetSelect') {
+    function selectCaumag($val,$operat=-1,$empty=false,$val_hiddenReq='',$class='FacetSelect',$clifor=-1) {
         global $gTables;
         $refresh = '';
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='caumag'; this.form.submit();\"";
         }
-        $query = "SELECT * FROM " . $gTables['caumag'] . " WHERE clifor = -1 AND operat = $operat";
+        $query = "SELECT * FROM " . $gTables['caumag'] . " WHERE clifor = ".$clifor." AND operat = $operat";
         echo "\t <select name=\"caumag\" class=\"$class\" $refresh >\n";
         if ($empty) {
             echo "\t\t <option value=\"\">---------</option>\n";

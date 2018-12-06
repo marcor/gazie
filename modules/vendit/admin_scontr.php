@@ -416,8 +416,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $pervat=gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
               $form['rows'][$old_key]['pervat'] = $pervat['aliquo']; */
             $form['rows'][$old_key]['annota'] = '';
-            $form['rows'][$old_key]['scorta'] = 0;
-            $form['rows'][$old_key]['quamag'] = 0;
+            $mv = $magazz->getStockValue(false, $form['in_codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
+            $magval = array_pop($mv);
+            $form['rows'][$old_key]['scorta'] = $artico['scorta'];
+            $form['rows'][$old_key]['quamag'] = $magval['q_g'];
             $form['rows'][$old_key]['pesosp'] = '';
             if ($form['in_tiprig'] == 0 and ! empty($form['in_codart'])) {  //rigo normale
                 $form['rows'][$old_key]['annota'] = $artico['annota'];
