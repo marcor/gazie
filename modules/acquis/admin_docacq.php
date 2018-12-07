@@ -1366,6 +1366,7 @@ $script_transl = HeadMain(0, array(
 <script language="JavaScript">
     $(function () {
         $(".datepicker").datepicker({dateFormat: 'dd-mm-yy'});
+        $('#banapp').selectmenu();
     });
     $(function () {
         $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
@@ -1413,11 +1414,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     <input type="hidden" value="<?php echo $form['speban']; ?>" name="speban">
     <input type="hidden" value="<?php echo $form['numrat']; ?>" name="numrat">
     <input type="hidden" value="<?php echo $form['change_pag']; ?>" name="change_pag">
-    <input type="hidden" value="<?php echo $form['vettor']; ?>" name="vettor">
     <input type="hidden" value="<?php echo $form['listin']; ?>" name="listin">
-    <input type="hidden" value="<?php echo $form['spediz']; ?>" name="spediz">
-    <input type="hidden" value="<?php echo $form['portos']; ?>" name="portos">
-    <input type="hidden" value="<?php echo $form['imball']; ?>" name="imball">
     <input type="hidden" value="<?php echo $form['destin']; ?>" name="destin">
     <input type="hidden" value="<?php echo $form['id_des']; ?>" name="id_des">
     <input type="hidden" value="<?php echo $form['id_des_same_company']; ?>" name="id_des_same_company">
@@ -1441,7 +1438,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
     <input type="hidden" value="<?php echo $form['caucon']; ?>" name="caucon">
     <input type="hidden" value="<?php echo $form['banapp']; ?>" name="banapp">
     <div class="text-center">
-        <p>
+        <div>
             <b>
 <?php
 if (count($msg['err']) > 0) { // ho un errore
@@ -1459,13 +1456,13 @@ if ($form['id_tes'] > 0 && substr($form['tipdoc'], 0, 2) == 'AF') {
 if ($form['id_tes'] > 0) { // è una modifica
 	echo $script_transl['upd_this'].$title;
 } else {
-    echo '<div>'.$script_transl['ins_this'].$title.'</div>';
+    echo $script_transl['ins_this'].$title;
 }
 $select_fornitore = new selectPartner('clfoco');
 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['search_partner'], $admin_aziend['masfor']);
 ?>
             </b> 
-        </p>
+        </div>
     </div>
     <div class="panel panel-default">
         <div class="container-fluid">
@@ -1854,17 +1851,16 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
         <div class="tab-content form-horizontal">
             <div id="insrow1" class="tab-pane fade in active bg-info">
                 <div class="row">
-                    <div class="col-sm-6 col-md-1 col-lg-1">
+                    <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label for="tiprig" class="col-sm-4 control-label"><?php echo $script_transl['tiprig']; ?></label>
                             <div class="col-sm-8">
-                                <?php $gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
-								//$gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig'], false, true); 
+                                <?php $gForm->selTypeRow('in_tiprig', $form['in_tiprig'],'');
 								?>
                             </div>                
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-5 col-lg-5">
+                    <div class="col-sm-6 col-md-4 col-lg-4">
                         <div class="form-group">
                             <label for="item" class="col-sm-4 control-label"><?php echo $script_transl['item']; ?></label>
                             <?php
@@ -1874,13 +1870,13 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                             ?>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-4 col-lg-4">
+                    <div class="col-sm-6 col-md-2 col-lg-2">
                         <div class="form-group">
                             <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
                             <input class="col-sm-6" type="number" step="any" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-2 col-lg-2">
+                    <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group text-center">
                             <button type="submit"  tabindex=7 class="btn btn-default btn-sm col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
                                 <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
@@ -1963,18 +1959,18 @@ $last_castle_row=count($calc->castle);
 foreach ($calc->castle as $k => $v) {
     $last_castle_row--;
     if ($last_castle_row == 0) {
-        echo '<tr><td>' . gaz_format_number($v['impcast']) . '</td>'
+        echo '<tr class="text-center"><td>' . gaz_format_number($v['impcast']) . '</td>'
         . '<td>' . $v['descriz'] . '</td>'
         . '<td>' . gaz_format_number($v['ivacast']) . '</td>'
         . '<td class="bg-warning text-center">'
         . '<div class="col-sm-8"><b>' . $admin_aziend['html_symbol'] . ' ' .gaz_format_number($calc->total_imp + $calc->total_vat) . '</b></div>'
         . '<div class="col-sm-2"></div>'
         . '</td>'
-        . '<td class="text-center">' . gaz_format_number($form['net_weight']) . '</td>'
+        . '<td>' . gaz_format_number($form['net_weight']) . '</td>'
         . '<td>' . $form['units'] . '</td>'
         . '<td>' . gaz_format_number($form['volume']) . '</td>';
     } else {
-        echo '<tr><td>' . gaz_format_number($v['impcast']) . '</td>'
+        echo '<tr class="text-center"><td>' . gaz_format_number($v['impcast']) . '</td>'
         . '<td>' . $v['descriz'] . '</td>'
         . '<td>' . gaz_format_number($v['ivacast']) . '</td>';
     }
@@ -1988,30 +1984,34 @@ if ($rit > 0) {
 			'</b></td></tr>';
 }
 if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL' ) { // per i documenti emessi stampo il form per i dati relativi al trasporto
-    echo '		<tr>
-					<td class="FacetFieldCaptionTD text-right">'.$script_transl['imball'].'
-						<input type="text" name="imball" value="" . $form["imball"] . "" maxlength="50" size="25" class="FacetInput" />';
-    $select_spediz = new SelectValue("imball");
+    echo '<tr><td class="FacetFieldCaptionTD text-right">'.$script_transl['imball'].'
+						<input type="text" name="imball" value="' . $form["imball"] . '" maxlength="50" size="25" class="FacetInput" />';
+    $select_spediz = new SelectValue("imballo");
     $select_spediz->output('imball', 'imball');
-    echo '			</td>
-					<td class="FacetFieldCaptionTD text-right">'.$script_transl['spediz'].'
-						<input type="text" name="spediz" value="" . $form["spediz"] . "" maxlength="50" size="25" class="FacetInput" />';
-    $select_spediz = new SelectValue("spediz");
+    echo '</td><td class="FacetFieldCaptionTD text-right">'.$script_transl['portos'].'
+					<input type="text" name="portos" value="' . $form["portos"] . '" maxlength="50" size="25" class="FacetInput" />';
+    $select_spediz = new SelectValue("porto");
+    $select_spediz->output('portos', 'portos');
+    echo '</td><td class="FacetFieldCaptionTD text-right" colspan="2">'.$script_transl['spediz'].'
+						<input type="text" name="spediz" value="' . $form["spediz"] . '" maxlength="50" size="25" class="FacetInput" />';
+    $select_spediz = new SelectValue("spedizione");
     $select_spediz->output('spediz', 'spediz');
     /** ENRICO FEDELE */
     /* td chiuso male */
-    echo '			</td>
-					<td class="FacetFieldCaptionTD">'.$script_transl['vettor'];
+    echo '</td><td class="FacetFieldCaptionTD" colspan="3">'.$script_transl['vettor'];
     $select_vettor = new selectvettor("vettor");
     $select_vettor->addSelected($form["vettor"]);
     $select_vettor->output();
-    echo '			</td>
-					<td class="FacetFieldCaptionTD text-right">'.$script_transl['portos'].'
-					<input type="text" name="portos" value="" . $form["portos"] . "" maxlength="50" size="25" class="FacetInput" />';
-    $select_spediz = new SelectValue("portos");
-    $select_spediz->output('portos', 'portos');
-    echo "</td></tr>";
-}						
+    echo '			</td>';
+	echo "</tr>\n";
+} else {
+?>
+    <input type="hidden" value="<?php echo $form['spediz']; ?>" name="spediz">
+    <input type="hidden" value="<?php echo $form['portos']; ?>" name="portos">
+    <input type="hidden" value="<?php echo $form['imball']; ?>" name="imball">
+    <input type="hidden" value="<?php echo $form['vettor']; ?>" name="vettor">
+<?php
+}					
 ?>
                         <tr> 
                             <td colspan="7">

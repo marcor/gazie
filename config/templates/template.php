@@ -123,8 +123,8 @@ class Template extends FPDI {
             }
 			if ($this->codice_partner > 0){
 				$this->SetXY(35, $interlinea - 5);
-				$this->Cell(15, 4, $this->descri_partner, 'LT', 0, 'R', 1);
-				$this->Cell(70, 4, ': ' . $this->cliente5, 'TR', 1);
+				$this->Cell(13, 4, $this->descri_partner, 'LT', 0, 'R', 1, '', 1);
+				$this->Cell(72, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);
 				$this->Cell(25);
 				$this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
 				$to=' cod.dest.: ' . $this->cod_univoco;
