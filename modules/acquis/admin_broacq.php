@@ -839,8 +839,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $fornitore['indspe'] = "";
 }
 require("../../library/include/header.php");
-require("./lang." . $admin_aziend['lang'] . ".php");
-$script_transl = $strScript["admin_docacq.php"] + HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete'));
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete'));
 $gForm = new acquisForm();
 
 if ($form['id_tes'] > 0) {

@@ -80,6 +80,7 @@ class DocContabVars {
         }
         $this->codice_partner = intval(substr($tesdoc['clfoco'], 3, 6));
         $this->cod_univoco = $this->client['fe_cod_univoco'];
+        $this->pec_cliente = $this->client['pec_email'];
         $this->cliente1 = $this->client['ragso1'];
         $this->cliente2 = $this->client['ragso2'];
         $this->cliente3 = $this->client['indspe'];
@@ -312,7 +313,7 @@ class DocContabVars {
 						$descrizione_nuova .= ' '.$v;
 					} else { 
 						// i righi iniziali sono aggiunti e definiti descrittivi
-						$nuovi_righi[]=array('tiprig'=>2,'codart'=>'','descri'=>$descrizione_nuova,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0);
+						$nuovi_righi[]=array('tiprig'=>2,'codart'=>'','descri'=>$descrizione_nuova,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
 						// riparto con un nuovo valore di descrizione
 						$descrizione_nuova = $v;
 					}

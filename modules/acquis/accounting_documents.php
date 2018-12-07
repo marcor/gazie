@@ -29,7 +29,7 @@ $msg = '';
 
 function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
     global $gTables;
-    $type = substr($type, 0, 1);
+    $type = substr($type, 0, 2);
     $docs = array();
     if ($date) {
         $date = ' AND datfat <= ' . $date;
@@ -37,7 +37,7 @@ function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
         $date = '';
     }
     $from = $gTables['tesdoc'];
-    $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type" . "__' $date";
+    $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type" . "_' $date";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
@@ -52,7 +52,7 @@ function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
 function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $protoc = 999999999) {
     global $gTables, $admin_aziend;
     $calc = new Compute;
-    $type = substr($type, 0, 1);
+    $type = substr($type, 0, 2);
     if ($date) {
         $p = ' AND (YEAR(datfat)*1000000+protoc) <= ' . (substr($date, 0, 4) * 1000000 + $protoc);
         $d = ' AND datfat <= ' . $date;
@@ -67,7 +67,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
              ON customer.id_anagra=anagraf.id';
-    $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type" . "__' $d $p";
+    $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type" . "_' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
@@ -76,7 +76,6 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
-
     $carry = 0;
     $ivasplitpay = 0;
     $somma_spese = 0;
@@ -221,7 +220,7 @@ function computeTot($data) {
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     if (isset($_GET['type'])) {
-        $form['type'] = substr($_GET['type'], 0, 1);
+        $form['type'] = substr($_GET['type'], 0, 2);
     } else {
         $form['type'] = 'F';
     }
@@ -249,7 +248,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
     $form['hidden_req'] = '';
 } else {    // accessi successivi
-    $form['type'] = substr($_POST['type'], 0, 1);
+    $form['type'] = substr($_POST['type'], 0, 2);
     $form['vat_section'] = intval($_POST['vat_section']);
     $form['this_date_Y'] = intval($_POST['this_date_Y']);
     $form['this_date_M'] = intval($_POST['this_date_M']);
@@ -483,7 +482,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     }
                 }
             }
-		    if ($form['type'] == 'A') {
+		    if ($form['type'] == 'AF') {
 				header("Location: ../../modules/acquis/report_docacq.php");
  			} else {
 				header("Location: ../../modules/vendit/report_docven.php");

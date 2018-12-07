@@ -316,7 +316,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['rows'][$nl]['unimis'] = '';
 			$form['rows'][$nl]['quanti'] = '';
 			$form['rows'][$nl]['sconto'] = 0;
-			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('ImportoContributoCassa')->item(0)->nodeValue;
+			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('ImponibileCassa')->item(0)->nodeValue;
+			$form['rows'][$nl]['provvigione'] = $item->getElementsByTagName('AlCassa')->item(0)->nodeValue; // così come per le vendite uso il campo provvigioni per mettere l'aliquota della cassa previdenziale (evidenziato anche sui commenti del database)
 			$form['rows'][$nl]['amount'] = $form['rows'][$nl]['prelis'];
 			$tot_imponi += $form['rows'][$nl]['amount'];
 			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;

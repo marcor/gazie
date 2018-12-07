@@ -53,6 +53,7 @@ class Template extends FPDI {
         $this->codice_partner = $docVars->codice_partner;
         $this->descri_partner = $docVars->descri_partner;
         $this->cod_univoco = $docVars->cod_univoco;
+        $this->pec_cliente = $docVars->pec_cliente;
         $this->cliente1 = $docVars->cliente1;
         $this->cliente2 = $docVars->cliente2;
         $this->cliente3 = $docVars->cliente3;
@@ -125,8 +126,12 @@ class Template extends FPDI {
 				$this->Cell(15, 4, $this->descri_partner, 'LT', 0, 'R', 1);
 				$this->Cell(70, 4, ': ' . $this->cliente5, 'TR', 1);
 				$this->Cell(25);
-				$this->Cell(25, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
-				$this->Cell(35, 4, ' cod.univoco: ' . $this->cod_univoco, 'RB', 0, 'L');
+				$this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
+				$to=' cod.dest.: ' . $this->cod_univoco;
+				if (trim($this->cod_univoco)==''){
+					$to='pec:'.$this->pec_cliente;
+				}
+				$this->Cell(40, 4,$to , 'RB', 0, 'L', 0, '', 1);
 				$this->Cell(25, 4, '', 'T');
             }
 			$this->SetXY(110, $interlinea + 3);

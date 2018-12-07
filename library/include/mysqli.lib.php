@@ -774,9 +774,11 @@ function tableUpdate($table, $columns, $codice, $newValue) {
    $first = True;
    $query = "UPDATE " . $gTables[$table] . ' SET';
    foreach ($columns AS $key => $field) {
-      $query .= ($first ? " $field = '" : ", $field = '");
+	 if (isset($newValue[$field])){ // la colonna la aggiorno solo se passo un nuovo valore 
+	  $query .= ($first ? " $field = '" : ", $field = '");
       $first = False;
-      $query .= (isset($newValue[$field]) ? addslashes($newValue[$field]) : '') . "'";
+      $query .= addslashes($newValue[$field])."'";
+	 } 
    }
    //   se in $codice c'è un array uso il nome del campo presente all'index [0],
    //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato

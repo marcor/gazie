@@ -28,6 +28,7 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
 $gForm = new acquisForm();
+$calc = new Compute;
 $magazz = new magazzForm;
 $docOperat = $magazz->getOperators();
 
@@ -159,9 +160,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codice_fornitore'] = $_POST['in_codice_fornitore'];
     $form['in_pervat'] = $_POST['in_pervat'];
     $form['in_ritenuta'] = $_POST['in_ritenuta'];
-    $form['in_unimis'] = $_POST['in_unimis'];
+    $form['in_provvigione'] = $_POST['in_provvigione']; // in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa     $form['in_unimis'] = $_POST['in_unimis'];
     $form['in_prelis'] = $_POST['in_prelis'];
     $form['in_sconto'] = $_POST['in_sconto'];
+    $form['in_unimis'] = $_POST['in_unimis'];
     $form['in_quanti'] = floatval($_POST['in_quanti']);
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
@@ -194,6 +196,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['quanti'] = gaz_format_quantity($value['quanti'], 0, $admin_aziend['decimal_quantity']);
             $form['rows'][$i]['codvat'] = intval($value['codvat']);
             $form['rows'][$i]['codric'] = intval($value['codric']);
+            $form['rows'][$i]['provvigione'] = floatval($value['provvigione']);
             $form['rows'][$i]['id_mag'] = intval($value['id_mag']);
             $form['rows'][$i]['id_orderman'] = intval($value['id_orderman']);
             $form['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
@@ -243,6 +246,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_quanti'] = $form['rows'][$key_row]['quanti'];
                     $form['in_codvat'] = $form['rows'][$key_row]['codvat'];
                     $form['in_codric'] = $form['rows'][$key_row]['codric'];
+                    $form['in_provvigione'] = $form['rows'][$key_row]['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
                     $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
 					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$key_row]['id_orderman']);
                     $form['coseprod'] = $orderman['description'];
@@ -332,15 +336,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
             } elseif ($form['tipdoc'] == 'ADT') { //se è un DDT acquisto non faccio controlli
             } else { //se sono altri documenti - AFA AFC
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND datreg < '".gaz_format_date($form['datreg'],true)."' AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 1) . "__' and seziva = ".$sezione, "protoc desc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND datreg < '".gaz_format_date($form['datreg'],true)."' AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 2) . "_' AND seziva = ".$sezione, "protoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
                 if ($result && ($form['protoc'] < $result['protoc'])) {
                     $msg['err'][] = "dtante";
                 }
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND datreg > '".gaz_format_date($form['datreg'],true)."' AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 1) . "__' AND seziva = ".$sezione, "protoc asc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND datreg > '".gaz_format_date($form['datreg'],true)."' AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 2) . "_' AND seziva = ".$sezione, "protoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
                 if ($result && ($form['protoc'] > $result['protoc'])) {
-                    $msg['err'][] = "dtsucc";
+                    $msg['err'][] = "dtsucc"; 
                 }
             }
         } else {    //controlli in caso di inserimento
@@ -712,6 +716,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['codart'] = $form['in_codart'];
             $form['rows'][$old_key]['codric'] = $form['in_codric'];
             $form['rows'][$old_key]['ritenuta'] = $form['in_ritenuta'];
+            $form['rows'][$old_key]['provvigione'] = $form['in_provvigione']; // in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
             $form['rows'][$old_key]['prelis'] = floatval(preg_replace("/\,/", '.', $form['in_prelis']));
             $form['rows'][$old_key]['sconto'] = $form['in_sconto'];
             $form['rows'][$old_key]['codvat'] = $form['in_codvat'];
@@ -776,6 +781,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['descri'] = $form['in_descri'];
             $form['rows'][$i]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$i]['id_orderman'] = $form['in_id_orderman'];
+            $form['rows'][$i]['provvigione'] = $form['in_provvigione'];
+            $form['rows'][$i]['codice_fornitore'] = '';
+            $form['rows'][$i]['scorta'] = '';
+            $form['rows'][$i]['quamag'] = '';
             $form['rows'][$i]['status'] = "INSERT";
             $form['rows'][$i]['ritenuta'] = $form['in_ritenuta'];
             $form['rows'][$i]['identifier'] = '';
@@ -912,6 +921,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['unimis'] = "";
                 $form['rows'][$i]['quanti'] = 0;
                 $form['rows'][$i]['prelis'] = 0;
+				$form['rows'][$i]['provvigione'] = $form['in_provvigione'];
                 $form['rows'][$i]['codric'] = $admin_aziend['c_payroll_tax'];
                 $form['rows'][$i]['sconto'] = 0;
                 $form['rows'][$i]['codvat'] = $admin_aziend['preeminent_vat'];
@@ -1068,6 +1078,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codice_fornitore'] = '';
     $form['in_pervat'] = 0;
     $form['in_ritenuta'] = 0;
+    $form['in_provvigione'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0.000;
     $form['in_sconto'] = 0;
@@ -1178,6 +1189,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['codvat'] = $row['codvat'];
         $form['rows'][$i]['codric'] = $row['codric'];
         $form['rows'][$i]['id_mag'] = $row['id_mag'];
+        $form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa         $form['rows'][$i]['id_mag'] = $row['id_mag'];
         $form['in_id_orderman'] = $row['id_orderman'];
 		$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $row['id_orderman']);
         $form['coseprod'] = $orderman['description'];
@@ -1266,6 +1278,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_quanti'] = 0;
     $form['in_codvat'] = $admin_aziend['preeminent_vat'];
     $form['in_codric'] = $admin_aziend['impacq'];
+    $form['in_provvigione'] = 0;// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
     if ($form['tipdoc'] == 'AFC') { // nel caso che si tratti di nota di credito
         $form['in_codric'] = $admin_aziend['purchases_return'];
     }
@@ -1351,13 +1364,6 @@ $script_transl = HeadMain(0, array(
         ));
 ?>
 <script language="JavaScript">
-    function pulldown_menu(selectName, destField)
-    {
-        // Create a variable url to contain the value of the
-        // selected option from the the form named broven and variable selectName
-        var url = document.docacq[selectName].options[document.docacq[selectName].selectedIndex].value;
-        document.docacq[destField].value = url;
-    }
     $(function () {
         $(".datepicker").datepicker({dateFormat: 'dd-mm-yy'});
     });
@@ -1383,6 +1389,13 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 ?>
 
 	});
+    function pulldown_menu(selectName, destField)
+    {
+        // Create a variable url to contain the value of the
+        // selected option from the the form named broven and variable selectName
+        var url = document.tesdoc[selectName].options[document.tesdoc[selectName].selectedIndex].value;
+        document.tesdoc[destField].value = url;
+    }
 </script>
 <form class="form-horizontal" role="form" method="post" name="tesdoc" enctype="multipart/form-data" >
     <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
@@ -1603,6 +1616,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
     <input type="hidden" value="<?php echo $form['in_quamag']; ?>" name="in_quamag" />
     <input type="hidden" value="<?php echo $form['in_scorta']; ?>" name="in_scorta" />
     <input type="hidden" value="<?php echo $form['in_ritenuta']; ?>" name="in_ritenuta" />
+    <input type="hidden" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
     <input type="hidden" value="<?php echo $form['in_id_orderman']; ?>" name="in_id_orderman" />
     <input type="hidden" value="<?php echo $form['in_gooser']; ?>" name="in_gooser" />
     <input type="hidden" value="<?php echo $form['in_lot_or_serial']; ?>" name="in_lot_or_serial" />
@@ -1611,11 +1625,16 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
     <?php
     if (count($form['rows']) > 0) {
         $tot = 0;
-		$imprig=0;
-		$tot_row=0;
         $form['net_weight'] = 0;
         $form['units'] = 0;
         $form['volume'] = 0;
+		$totimp_body = 0.00;
+		$totivafat = 0.00;
+		$totimpfat = 0.00;
+		$castle = array();
+		$rit = 0;
+		$carry = 0;
+
         foreach ($form['rows'] as $k => $v) {
             // addizione ai totali peso,pezzi,volume
             $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
@@ -1646,21 +1665,35 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
                 }
             }
-
-            // calcolo importo totale (iva inclusa) del rigo e creazione castelletto IVA
-            if ($v['tiprig'] <= 1) {    //ma solo se del tipo normale o forfait
-                if ($v['tiprig'] == 0) { // tipo normale
-                    $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
-                } else {                 // tipo forfait
-                    $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
+			$imprig = 0;
+             //creo il castelletto IVA
+            if ($v['tiprig'] <= 1 || $v['tiprig'] == 4) { // calcolo per tipi righi normale, forfait e cassa previdenziale
+                $imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
+                $v_for_castle = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));      
+                if ($v['tiprig'] == 1) {// se del tipo forfait 
+                    $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
+                    $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
                 }
-                if (!isset($castel[$v['codvat']])) {
-                    $castel[$v['codvat']] = 0.00;
+                if ($v['tiprig'] == 4) {// e se del tipo cassa previdenziale
+                    $imprig = round($v['provvigione']* $v['prelis']/100,2);
+                    $v_for_castle =  $imprig;
                 }
-                $castel[$v['codvat']]+=$tot_row;
-                // calcolo il totale del rigo stornato dell'iva
-                $imprig = round($tot_row / (1 + $v['pervat'] / 100), 2);
-                $tot+=$tot_row;
+                if (!isset($castle[$v['codvat']])) {
+                    $castle[$v['codvat']]['impcast'] = 0.00;
+                }
+                $totimp_body += $imprig;
+                $castle[$v['codvat']]['impcast'] += $v_for_castle;
+                $rit += round($imprig * $v['ritenuta'] / 100, 2);
+            } elseif ($v['tiprig'] == 3) {
+                $carry += $v['prelis'];
+            } elseif ($v['tiprig'] == 90) { // rigo vendita cespite ammortizzabile
+                $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
+                $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
+                if (!isset($castle[$v['codvat']])) {
+                    $castle[$v['codvat']]['impcast'] = 0.00;
+                }
+                $totimp_body += $imprig;
+                $castle[$v['codvat']]['impcast'] += $v_for_castle;
             }
             // fine calcolo importo rigo, totale e castelletto IVA
             // colonne non editabili
@@ -1685,6 +1718,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 
             echo "<input type=\"hidden\" value=\"" . $v['codice_fornitore'] . "\" name=\"rows[$k][codice_fornitore]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['ritenuta'] . "\" name=\"rows[$k][ritenuta]\">\n";
+            echo "<input type=\"hidden\" value=\"" . $v['provvigione'] . "\" name=\"rows[$k][provvigione]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['id_orderman'] . "\" name=\"rows[$k][id_orderman]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['gooser'] . "\" name=\"rows[$k][gooser]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['filename'] . "\" name=\"rows[$k][filename]\">\n";
@@ -1721,7 +1755,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     'value' => '<input type="number" step="0.01" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" style="width:3.5em;" maxlength="4" size="1" onchange="this.form.submit()" />'),
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 'value' => gaz_format_number($imprig), 'type' => ''),
                 array('head' => $script_transl["codvat"], 'class' => 'text-center numeric', 'value' => $v['pervat'], 'type' => ''),
-                array('head' => $script_transl["total"], 'class' => 'text-right numeric bg-warning', 'value' => gaz_format_number($tot_row), 'type' => ''),
+                array('head' => $script_transl["total"], 'class' => 'text-right numeric bg-warning', 'value' => gaz_format_number($imprig), 'type' => ''),
                 array('head' => $script_transl["codric"], 'class' => 'text-center', 'value' => $v['codric']),
                 array('head' => $script_transl["delete"], 'class' => 'text-center',
                     'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
@@ -1763,15 +1797,24 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     $resprow[$k][3]['value'] .= $lm_acc;
                     break;
                 case "1":
+                    // in caso di rigo cassa previdenziale 
+                    $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info "
+					title="' . $script_transl['update'] . $script_transl['thisrow'] . '!"
+					type="submit"><i class="glyphicon glyphicon-refresh"></i> forfait </button>';
+                    $resprow[$k][2]['value'] = ''; //codice_fornitore
                     // in caso di rigo forfait non stampo alcune colonne
                     $resprow[$k][4]['value'] = ''; //unimis
-                    $resprow[$k][5]['value'] = ''; //quanti
                     // scambio l'input con la colonna dell'importo... 
+                    $resprow[$k][8]['value'] = $resprow[$k][6]['value'];
+                    $resprow[$k][5]['value'] = ''; //quanti
                     $resprow[$k][6]['value'] = ''; //prelis
                     $resprow[$k][7]['value'] = ''; //sconto
-                    $resprow[$k][8]['value'] = $resprow[$k][5]['value'];
                     break;
                 case "2":
+                    $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info "
+					title="' . $script_transl['update'] . $script_transl['thisrow'] . '!"
+					type="submit"><i class="glyphicon glyphicon-refresh"></i> descrittivo </button>';
+                    $resprow[$k][2]['value'] = ''; //codice_fornitore
                     $resprow[$k][4]['value'] = ''; //unimis
                     $resprow[$k][5]['value'] = ''; //quanti
                     $resprow[$k][6]['value'] = ''; //prelis
@@ -1781,6 +1824,19 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     $resprow[$k][10]['value'] = '';
                     $resprow[$k][11]['value'] = '';
                     $resprow[$k][12]['value'] = '';
+                    break;
+                case "4":
+                    // in caso di rigo cassa previdenziale 
+                    $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info "
+					title="' . $script_transl['update'] . $script_transl['thisrow'] . '!"
+					type="submit"><i class="glyphicon glyphicon-refresh"></i> cassa </button>';
+                    $resprow[$k][2]['value'] = ''; //codice_fornitore
+                    $resprow[$k][4]['value'] = ''; //unimis
+                    // scambio l'input con la colonna dell'importo... 
+                    $resprow[$k][8]['value'] = $resprow[$k][6]['value'];
+                    $resprow[$k][5]['value'] = ''; //quanti
+                    $resprow[$k][6]['value'] = 'Imponibile'; //prelis
+                    $resprow[$k][7]['value'] = '=>'; //sconto
                     break;
             }
         }
@@ -1859,8 +1915,8 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     </div>
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
-                            <label for="provvigione" class="col-sm-6 control-label"><?php echo $script_transl['provvigione']; ?></label>
-                            <input class="col-sm-6" type="number" step="any" value="" name="in_provvigione" />
+                            <label for="in_ritenuta" class="col-sm-6 control-label"><?php echo $script_transl['ritenuta']; ?></label>
+                            <input class="col-sm-6" type="number" step="any" value="<?php echo $form['in_ritenuta']; ?>" name="in_ritenuta" />
                         </div>
                     </div>
                 </div>
@@ -1868,7 +1924,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
         </div><!-- chiude tab-content  -->
     </div><!-- chiude panel  -->
     <?php
-    if (count($form['rows']) > 0) {
+if (count($form['rows']) > 0) {
         ?>
         <div class="panel panel-success">
             <div class="table-responsive">
@@ -1901,33 +1957,62 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                         </tr>      
                     </thead>    
                     <tbody>
-                        <?php
-                        $last_castle_row = count($castel);
-                        foreach ($castel as $k => $v) {
-                            $last_castle_row--;
-                            $r = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
-                            $impcast = round($v / (1 + $r['aliquo'] / 100), 2);
-                            $ivacast = $v - $impcast;
-                            if ($last_castle_row == 0) {
-                                echo '<tr><td>' . gaz_format_number($impcast) . '</td>'
-                                . '<td>' . $r['descri'] . '</td>'
-                                . '<td>' . gaz_format_number($ivacast) . '</td>'
-                                . '<td class="bg-warning text-center">'
-                                . ''
-                                . '<div class="col-sm-8"><b>' . $admin_aziend['html_symbol'] . ' ' . gaz_format_number($tot) . '</b></div>'
-                                . '<div class="col-sm-2"></div>'
-                                . '</td>'
-                                . '<td class="text-center">' . gaz_format_number($form['net_weight']) . '</td>'
-                                . '<td>' . $form['units'] . '</td>'
-                                . '<td>' . gaz_format_number($form['volume']) . '</td>';
-                            } else {
-                                echo '<tr><td>' . gaz_format_number($impcast) . '</td>'
-                                . '<td>' . $r['descri'] . '</td>'
-                                . '<td>' . gaz_format_number($ivacast) . '</td>';
-                            }
-                            echo "</tr>\n";
-                        }
-                        ?>
+<?php
+$calc->add_value_to_VAT_castle($castle);
+$last_castle_row=count($calc->castle);
+foreach ($calc->castle as $k => $v) {
+    $last_castle_row--;
+    if ($last_castle_row == 0) {
+        echo '<tr><td>' . gaz_format_number($v['impcast']) . '</td>'
+        . '<td>' . $v['descriz'] . '</td>'
+        . '<td>' . gaz_format_number($v['ivacast']) . '</td>'
+        . '<td class="bg-warning text-center">'
+        . '<div class="col-sm-8"><b>' . $admin_aziend['html_symbol'] . ' ' .gaz_format_number($calc->total_imp + $calc->total_vat) . '</b></div>'
+        . '<div class="col-sm-2"></div>'
+        . '</td>'
+        . '<td class="text-center">' . gaz_format_number($form['net_weight']) . '</td>'
+        . '<td>' . $form['units'] . '</td>'
+        . '<td>' . gaz_format_number($form['volume']) . '</td>';
+    } else {
+        echo '<tr><td>' . gaz_format_number($v['impcast']) . '</td>'
+        . '<td>' . $v['descriz'] . '</td>'
+        . '<td>' . gaz_format_number($v['ivacast']) . '</td>';
+    }
+    echo "</tr>\n";
+}
+if ($rit > 0) {
+	echo '	<tr><td class="text-right" colspan="3">' . $script_transl['ritenuta'] . '</td>
+			<td class="text-right">' . gaz_format_number($rit) . '</td></tr>
+			<tr><td class="text-right" colspan="3">' . $script_transl['netpay'] . '</td>
+			<td class="text-right"><b>' . gaz_format_number($calc->total_imp + $calc->total_vat - $rit) . 
+			'</b></td></tr>';
+}
+if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL' ) { // per i documenti emessi stampo il form per i dati relativi al trasporto
+    echo '		<tr>
+					<td class="FacetFieldCaptionTD text-right">'.$script_transl['imball'].'
+						<input type="text" name="imball" value="" . $form["imball"] . "" maxlength="50" size="25" class="FacetInput" />';
+    $select_spediz = new SelectValue("imball");
+    $select_spediz->output('imball', 'imball');
+    echo '			</td>
+					<td class="FacetFieldCaptionTD text-right">'.$script_transl['spediz'].'
+						<input type="text" name="spediz" value="" . $form["spediz"] . "" maxlength="50" size="25" class="FacetInput" />';
+    $select_spediz = new SelectValue("spediz");
+    $select_spediz->output('spediz', 'spediz');
+    /** ENRICO FEDELE */
+    /* td chiuso male */
+    echo '			</td>
+					<td class="FacetFieldCaptionTD">'.$script_transl['vettor'];
+    $select_vettor = new selectvettor("vettor");
+    $select_vettor->addSelected($form["vettor"]);
+    $select_vettor->output();
+    echo '			</td>
+					<td class="FacetFieldCaptionTD text-right">'.$script_transl['portos'].'
+					<input type="text" name="portos" value="" . $form["portos"] . "" maxlength="50" size="25" class="FacetInput" />';
+    $select_spediz = new SelectValue("portos");
+    $select_spediz->output('portos', 'portos');
+    echo "</td></tr>";
+}						
+?>
                         <tr> 
                             <td colspan="7">
                                 <input class="bg-danger center-block" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
@@ -1943,8 +2028,8 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
             </div>
         </div>
         <?php
-    }
-    ?>
+}
+?>
 </form>
 <!-- ENRICO FEDELE - INIZIO FINESTRA MODALE -->
 <div id="edit-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
