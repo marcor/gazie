@@ -93,6 +93,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['anndoc'] = substr($result['datdoc'], 0, 4);
 	$form['id_lotmag'] = $result['id_lotmag'];
     $form['artico'] = $result['artico'];
+	$form['cosear'] = $result['artico'];
 	$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 	if ($item_artico['lot_or_serial']==1){ 
 		$result_lotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
@@ -120,7 +121,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['scorig'] = $result['scorig'];
     $form['status'] = $result['status'];
     $form['search_partner'] = "";
-    $form['search_item'] = "";
+    
 	 // Antonio Germani - se è presente, recupero il file documento lotto
     $form['filename'] = "";
     if (file_exists('../../data/files/' . $admin_aziend['company_id']) > 0) {
@@ -157,6 +158,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['anndoc'] = intval($_POST['anndoc']);
     $form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
 	$form['id_lotmag'] = $_POST['id_lotmag'];
+	$form['cosear'] = $_POST['cosear'];
     $form['artico'] = $_POST['artico'];
 	$form['lot_or_serial']=$_POST['lot_or_serial'];
 	if (strlen($form['artico'])>0) {
@@ -173,7 +175,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
     $form['status'] = substr($_POST['status'], 0, 10);
     $form['search_partner'] = $_POST['search_partner'];
-    $form['search_item'] = $_POST['search_item'];
+    
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
     /** ENRICO FEDELE */
     /* Con button non funziona _x */
@@ -205,7 +207,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     }
     if (isset($_POST['newitem'])) {
         $result_newart = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['artico']);
-        $form['search_item'] = substr($result_newart['codice'], 0, 4);
+        $form['cosear'] = substr($result_newart['codice'], 0, 4);
         $form['artico'] = "";
     }
     if (isset($_POST['Return'])) {
@@ -374,12 +376,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['scorig'] = 0;
     $form['status'] = "";
     $form['search_partner'] = "";
-    $form['search_item'] = "";
+    $form['cosear'] = "";
     $form['id_rif'] = 0;
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain();
+$script_transl = HeadMain(0,array('custom/autocomplete',));
 require("./lang." . $admin_aziend['lang'] . ".php");
 if ($form['id_mov'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0]) . " n." . $form['id_mov'];
@@ -579,40 +581,12 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td cl
 $messaggio = "";
 $print_unimis = "";
 $ric_mastro = substr($form['artico'], 0, 3);
-echo "\t<input type=\"hidden\" name=\"artico\" value=\"" . $form['artico'] . "\">\n";
-if ($form['artico'] == '') {
-    if (strlen($form['search_item']) >= 1) {
-        $result = gaz_dbi_dyn_query("*", $gTables['artico'], "codice like '" . $form['search_item'] . "%' ", "descri asc");
-        if (gaz_dbi_num_rows($result) > 0) {
-            echo "\t<select name=\"artico\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='new_price'; this.form.submit();\">\n";
-            echo "<option value=\"\"> -------- </option>";
-            while ($row = gaz_dbi_fetch_array($result)) {
-                $selected = "";
-                if ($row["codice"] == $form['artico']) {
-                    $selected = "selected";
-                }
-                echo "\t\t <option value=\"" . $row["codice"] . "\" $selected >" . $row["descri"] . "&nbsp;</option>\n";
-            }
-            echo "\t </select>\n";
-        } else {
-            $messaggio = ucfirst($script_transl['notfound']) . " !";
-        }
-    } else {
-        $messaggio = ucfirst($script_transl['minins']) . " 1 " . $script_transl['charat'] . "!";
-    }
-    echo "\t<input type=\"text\" name=\"search_item\" accesskey=\"e\" value=\"" . $form['search_item'] . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
-    echo $messaggio;
-    // echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
-    /** ENRICO FEDELE */
-    /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-    echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button>';
-    /** ENRICO FEDELE */
-} else {
-    
-    echo "<input type=\"submit\" value=\"" . substr($item_artico['descri'], 0, 30) . "\" name=\"newitem\" title=\"" . ucfirst($script_transl['update']) . "!\">\n ";
-    echo "\t<input type=\"hidden\" name=\"artico\" value=\"" . $form['artico'] . "\">\n";
-    echo "\t<input type=\"hidden\" name=\"search_item\" value=\"" . $form['search_item'] . "\">\n";
-}
+
+$select_artico = new selectartico("artico");
+				$select_artico->addSelected($form['artico']);			
+				$select_artico->output(substr($form['cosear'], 0, 20));
+
+
 
     // Antonio Germani > Inizio LOTTO in uscita o in entrata o creazione nuovo
 if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form 
