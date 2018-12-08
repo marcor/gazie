@@ -281,7 +281,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $uts_this_date = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
     if (isset($_POST['submit']) && empty($msg)) {   //confermo la contabilizzazione
         $rs = getFAEunpacked($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
-        if (count($rs > 0)) {
+        if (count($rs) > 0) {
 			$zip = new ZipArchive;
 			$res = $zip->open('../../data/files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
 			if ($res === TRUE) { 
