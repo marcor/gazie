@@ -1228,10 +1228,10 @@ class selectbanacc extends SelectBox {
 // classe per la generazione di select box banche d'appoggio
 class selectbanapp extends SelectBox {
 
-    function output() {
+    function output($refresh = '', $class = false, $empty = true) {
         global $gTables;
         $query = 'SELECT * FROM `' . $gTables['banapp'] . '` ORDER BY `descri`';
-        SelectBox::_output($query, 'descri', True, ' ', 'locali');
+        SelectBox::_output($query, 'descri', $empty, '', 'locali','codice', $refresh, $class);
     }
 
 }

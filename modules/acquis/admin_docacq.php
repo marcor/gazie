@@ -1366,9 +1366,6 @@ $script_transl = HeadMain(0, array(
 <script language="JavaScript">
     $(function () {
         $(".datepicker").datepicker({dateFormat: 'dd-mm-yy'});
-        $('#banapp').selectmenu();
-    });
-    $(function () {
         $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#datreg").change(function () {
             this.form.submit();
@@ -1466,139 +1463,108 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
     </div>
     <div class="panel panel-default">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="datreg" class="col-sm-4 control-label"><?php echo $script_transl['datreg']; ?></label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
-                        </div>
-                    </div>
+            <div class="form-row">
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                    <label for="address" class="col-form-label"><?php echo $script_transl['address']; ?></label>
+                    <div><?php echo $form['address']; ?></div>                
+                </div>
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                    <label for="datreg" class="col-form-label"><?php echo $script_transl['datreg']; ?></label>
+                    <input type="text" class="form-control col-lg-2" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
                 </div>                    
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
-                        <div class="col-sm-8">
-                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, 'col-sm-8'); ?>
-                        </div>
-                    </div>
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                    <label for="seziva" class="col-form-label"><?php echo $script_transl['seziva']; ?></label>
+                    <div><?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, 'col-sm-4'); ?></div>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="address" class="col-sm-4 control-label"><?php echo $script_transl['address']; ?></label>
-                        <div class="col-sm-8"><?php echo $form['address']; ?></div>                
-                    </div>
-                </div>
-            </div>
-            <div class="row">
+				<div class="form-group col-md-6 col-lg-3 nopadding">
+                    <label for="caumag" class="col-form-label" ><?php echo $script_transl['caumag']; ?></label>
+                    <div><?php $magazz->selectCaumag($form['caumag'], $docOperat[$form['tipdoc']], false, '', "col-sm-12",1);?></div>
+				</div>
+			</div>
+            <div class="form-row">
 <?php	switch($form['tipdoc']){ // sui DDT non ho numero e data fattura  
 				case 'DDR': case 'DDL': ?>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="numdoc" class="col-sm-4 control-label"><?php echo $script_transl['numdoc']; ?></label>
-                        <div class="col-sm-8">
-							<?php echo ' :'.$form['numdoc']; ?>
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                        <label for="numdoc" class="col-form-label"><?php echo $script_transl['numdoc']; ?></label>
+                        <div><?php echo ' :'.$form['numdoc']; ?>
                             <input type="hidden" id="numdoc" name="numdoc" value="<?php echo $form['numdoc']; ?>">
                             <input type="hidden" id="numfat" name="numfat" value="<?php echo $form['numfat']; ?>">
                         </div>
                     </div>
-                </div>                    
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="datemi" class="col-sm-4 control-label"><?php echo $script_transl['datemi']; ?></label>
-                        <div class="col-sm-8">
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                        <label for="datemi"  class="col-form-label"><?php echo $script_transl['datemi']; ?></label>
+                        <div>
                             <input type="text" class="form-control" id="datemi" name="datemi" value="<?php echo $form['datemi']; ?>">
                             <input type="hidden" id="datfat" name="datfat" value="<?php echo $form['datfat']; ?>">
                         </div>
                     </div>
-                </div>                    
 <?php		break;
 			case 'ADT': case 'RDL':?>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="numdoc" class="col-sm-4 control-label"><?php echo $script_transl['numdoc']; ?></label>
-                        <div class="col-sm-8">
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                        <label for="numdoc" class="col-form-label"><?php echo $script_transl['numdoc']; ?></label>
+                        <div>
                             <input type="text" class="form-control"  id="numdoc" name="numdoc" value="<?php echo $form['numdoc']; ?>">
                             <input type="hidden" id="numfat" name="numfat" value="<?php echo $form['numfat']; ?>">
                         </div>
                     </div>
-                </div>                    
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="datemi" class="col-sm-4 control-label"><?php echo $script_transl['datemi']; ?></label>
-                        <div class="col-sm-8">
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                        <label for="datemi" class="col-form-label"><?php echo $script_transl['datemi']; ?></label>
+                        <div>
                             <input type="text" class="form-control" id="datemi" name="datemi" value="<?php echo $form['datemi']; ?>">
                             <input type="hidden" id="datfat" name="datfat" value="<?php echo $form['datfat']; ?>">
                         </div>
                     </div>
-                </div>                    
 <?php		break;
 			case 'AFA': case 'AFC': case 'AFT': ?>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="numdoc" class="col-sm-4 control-label"><?php echo $script_transl['numfat']; ?></label>
-                        <div class="col-sm-8">
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                        <label for="numdoc" class="col-form-label"><?php echo $script_transl['numfat']; ?></label>
+                        <div>
                             <input type="text" class="form-control" id="numfat" name="numfat" value="<?php echo $form['numfat']; ?>">
                             <input type="hidden" id="numdoc" name="numdoc" value="<?php echo $form['numdoc']; ?>">
                         </div>
                     </div>
-                </div>                    
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="datfat" class="col-sm-4 control-label"><?php echo $script_transl['datfat']; ?></label>
-                        <div class="col-sm-8">
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                        <label for="datfat" class="col-form-label"><?php echo $script_transl['datfat']; ?></label>
+                        <div>
                             <input type="text" class="form-control" id="datfat" name="datfat" value="<?php echo $form['datfat']; ?>">
                             <input type="hidden" id="datemi" name="datemi" value="<?php echo $form['datemi']; ?>">
                         </div>
                     </div>
-                </div>                    
 <?php	} ?>
-                <div class="col-sm-6 col-md-3 col-lg-3">
-                    <div class="form-group">
-                        <label for="caumag" class="col-sm-4 control-label" ><?php echo $script_transl['caumag']; ?></label>
-                        <div>
-                            <?php
-                            $magazz->selectCaumag($form['caumag'], $docOperat[$form['tipdoc']], false, '', "col-sm-8",1);
-                            ?>                
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?></label>
-                        <div>
-                            <?php 
-							$select_pagame = new selectpagame("pagame");
-							$select_pagame->addSelected($form["pagame"]);
-							$select_pagame->output();
-							?>                
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="banapp" class="col-sm-4 control-label" ><?php echo $script_transl['banapp']; ?></label>
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                        <label for="banapp" class="col-form-label" ><?php echo $script_transl['banapp']; ?></label>
                         <div>
                             <?php 
 							$select_banapp = new selectbanapp("banapp");
 							$select_banapp->addSelected($form["banapp"]);
-							$select_banapp->output();
+							$select_banapp->output('','col-lg-12');
 							?>                
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-4">
-                    <div class="form-group">
-                        <label for="sconto" class="col-sm-8 control-label"><?php echo $script_transl['sconto']; ?></label>
-                        <div class="col-sm-4">
-                            <input type="number" step="0.01" max="100" class="form-control" id="sconto" name="sconto" placeholder="<?php echo $script_transl['sconto']; ?>" value="<?php echo $form['sconto']; ?>" onchange="this.form.submit();">
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                        <label for="pagame" class="col-form-label" ><?php echo $script_transl['pagame']; ?></label>
+                        <div>
+                            <?php 
+							$select_pagame = new selectpagame("pagame");
+							$select_pagame->addSelected($form["pagame"]);
+							$select_pagame->output('','col-lg-12');
+							?>                
                         </div>
                     </div>
-                </div>
             </div> <!-- chiude row  -->
             <div class="row">
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                    </div>
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                    </div>
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                    </div>
+                    <div class="form-group col-md-6 col-lg-3 nopadding">
+                        <label for="sconto" class="col-form-label"><?php echo $script_transl['sconto']; ?></label>
+                        <div>
+                            <input type="number" step="0.01" max="100" id="sconto" name="sconto" placeholder="<?php echo $script_transl['sconto']; ?>" value="<?php echo $form['sconto']; ?>" onchange="this.form.submit();">
+                        </div>
+                    </div>
             </div> <!-- chiude row  -->
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
@@ -2028,6 +1994,13 @@ if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL' ) { // per i documenti 
             </div>
         </div>
         <?php
+} else {
+?>
+    <input type="hidden" value="<?php echo $form['spediz']; ?>" name="spediz">
+    <input type="hidden" value="<?php echo $form['portos']; ?>" name="portos">
+    <input type="hidden" value="<?php echo $form['imball']; ?>" name="imball">
+    <input type="hidden" value="<?php echo $form['vettor']; ?>" name="vettor">
+<?php
 }
 ?>
 </form>
