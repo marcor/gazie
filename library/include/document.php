@@ -253,10 +253,10 @@ class DocContabVars {
     }
 
     function getRigo() {
-        $from = $this->gTables[$this->tableName] . ' AS rows
+        $from = $this->gTables[$this->tableName] . ' AS rs
                  LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat
-                 ON rows.codvat=vat.codice';
-        $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva', $from, "rows.id_tes = " . $this->testat, "id_tes DESC, id_rig");
+                 ON rs.codvat=vat.codice';
+        $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $this->testat, "id_tes DESC, id_rig");
         $this->tottraspo += $this->trasporto;
         if ($this->taxstamp < 0.01 && $this->tesdoc['taxstamp'] >= 0.01) {
             $this->taxstamp = $this->tesdoc['taxstamp'];

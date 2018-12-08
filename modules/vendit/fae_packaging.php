@@ -143,10 +143,10 @@ function getFAEunpacked($type = '___', $vat_section = 1, $date = false, $protoc 
             }
         }
         //recupero i dati righi per creare il castelletto
-        $from = $gTables['rigdoc'] . ' AS rows
+        $from = $gTables['rigdoc'] . ' AS rs
                     LEFT JOIN ' . $gTables['aliiva'] . ' AS vat
-                    ON rows.codvat=vat.codice';
-        $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva', $from, "rows.id_tes = " . $tes['id_tes'], "id_tes DESC");
+                    ON rs.codvat=vat.codice';
+        $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $tes['id_tes'], "id_tes DESC");
         while ($r = gaz_dbi_fetch_array($rs_rig)) {
             if ($r['tiprig'] <= 1 || $r['tiprig'] == 90) { //ma solo se del tipo normale, forfait, vendita cespite
                 //calcolo importo rigo

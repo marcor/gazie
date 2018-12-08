@@ -218,10 +218,10 @@ class invoiceXMLvars {
         if ($this->taxstamp < 0.01 && $this->tesdoc['taxstamp'] >= 0.01) {
             $this->taxstamp = $this->tesdoc['taxstamp'];
         }
-        $from = $this->gTables[$this->tableName] . ' AS rows
+        $from = $this->gTables[$this->tableName] . ' AS rs
                  LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat
-                 ON rows.codvat=vat.codice';
-        $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva, vat.fae_natura AS natura', $from, "rows.id_tes = " . $this->testat, "id_tes DESC, id_rig");
+                 ON rs.codvat=vat.codice';
+        $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva, vat.fae_natura AS natura', $from, "rs.id_tes = " . $this->testat, "id_tes DESC, id_rig");
         $this->riporto = 0.00;
         $this->ritenuta = 0.00;
         $this->cassa_prev = array();
