@@ -1139,12 +1139,7 @@ class selectproduction extends SelectBox {
             $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
             echo '<input type="hidden" name="' . $this->name . '" value="" />';
         }
-       
-        echo '&nbsp;<input type="text" class="' . $class . '" name="coseprod" id="search_production" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
-        //echo "<font style=\"color:#ff0000;\">$msg </font>";
-        if ($msg != "") {
-            echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' . $msg . '</span>';
-        }
+        echo '&nbsp;<input type="text" class="' . $class . '" name="coseprod" placeholder="'.$msg.'" id="search_production" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
     }
 
 }
@@ -1763,9 +1758,14 @@ class GAzieForm {
 		}
     }
 
-    function selTypeRow($name, $val, $class = 'FacetDataTDsmall') {
+    function selTypeRow($name, $val, $class = 'FacetDataTDsmall',$pers_type=false) {
         global $script_transl;
-        $this->variousSelect($name, $script_transl['typerow'], $val, $class, true);
+		if ($pers_type){
+			$tr=$pers_type;
+		} else {
+			$tr=$script_transl['typerow'];
+		}
+        $this->variousSelect($name, $tr, $val, $class, true);
     }
 
     function selSearchItem($name, $val, $class = 'FacetDataTDsmall') {
