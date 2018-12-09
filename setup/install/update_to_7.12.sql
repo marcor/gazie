@@ -37,4 +37,6 @@ ALTER TABLE `gaz_XXXorderman` CHANGE COLUMN `description` `description` VARCHAR(
 ALTER TABLE `gaz_XXXclfoco`	CHANGE COLUMN `sconto` `sconto` DECIMAL(5,2) NULL DEFAULT '0.00' COMMENT 'Sconto di chiusura, viene applicato alla fine e riferito a tutti i righi del corpo dei documenti' AFTER `codpag`,	ADD COLUMN `sconto_rigo` DECIMAL(5,2) NULL DEFAULT '0.00' COMMENT 'Sconto rigo, viene applicato ad ogni singolo rigo dei documenti' AFTER `sconto`;
 ALTER TABLE `gaz_XXXstaff`	ADD COLUMN `last_hourly_cost` DECIMAL(6,2) NULL DEFAULT NULL COMMENT 'Costo orario del lavoro' AFTER `employment_status`;
 UPDATE `gaz_menu_script` SET `link`='accounting_documents.php?type=AF' WHERE   `link`='accounting_documents.php?type=A';
+ALTER TABLE `gaz_XXXtesbro` CHANGE COLUMN `weekday_repeat` `weekday_repeat` INT(2) NOT NULL DEFAULT '0';
+ALTER TABLE `gaz_XXXtesdoc` CHANGE COLUMN `weekday_repeat` `weekday_repeat` INT(11) NOT NULL DEFAULT '0';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
