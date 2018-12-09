@@ -1467,10 +1467,10 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
     </div>
     <div class="panel panel-default">
         <div class="container-fluid">
-            <div class="form-row">
+            <div class="form-group">
                 <div class="form-group col-md-6 col-lg-3 nopadding">
                     <label for="address" class="col-form-label"><?php echo $script_transl['address']; ?></label>
-                    <div><?php echo $form['address']; ?></div>                
+                    <div><?php echo substr($form['address'],0,40); ?></div>                
                 </div>
                 <div class="form-group col-md-6 col-lg-3 nopadding">
                     <label for="datreg" class="col-form-label"><?php echo $script_transl['datreg']; ?></label>
@@ -1485,7 +1485,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     <div><?php $magazz->selectCaumag($form['caumag'], $docOperat[$form['tipdoc']], false, '', "col-sm-12",1);?></div>
 				</div>
 			</div>
-            <div class="form-row">
+            <div class="form-group">
 <?php	switch($form['tipdoc']){ // sui DDT non ho numero e data fattura  
 				case 'DDR': case 'DDL': ?>
                     <div class="form-group col-md-6 col-lg-3 nopadding">
@@ -1555,8 +1555,8 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 							?>                
                         </div>
                     </div>
-            </div> <!-- chiude row  -->
-            <div class="form-row">
+            </div> <!-- chiude group  -->
+            <div class="form-group">
                     <div class="form-group col-md-6 col-lg-3 nopadding">
                         <label for="id_orderman" class="col-form-label"><?php echo $script_transl['orderman']; ?></label>
 						<div>	
@@ -1577,7 +1577,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                             <input type="number" step="0.01" max="100" id="sconto" name="sconto" placeholder="<?php echo $script_transl['sconto']; ?>" value="<?php echo $form['sconto']; ?>" onchange="this.form.submit();">
                         </div>
                     </div>
-            </div> <!-- chiude row  -->
+            </div> <!-- chiude group  -->
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
     <input type="hidden" value="<?php echo $form['in_codice_fornitore']; ?>" name="in_codice_fornitore" />
@@ -1812,83 +1812,79 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
     }
     ?>
     <div class="panel panel-info">
-        <div class="container-fluid">
+      <div class="container-fluid bg-info">
             <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="pill" href="#insrow1"> <?php echo $script_transl['conf_row']; ?> </a></li>
-                <li><a data-toggle="pill" href="#insrow2"><i class="glyphicon glyphicon-eye-open"></i> <?php echo $script_transl['other_row']; ?> </a></li>
+                <li><a href="#insrow1"> <?php echo $script_transl['conf_row']; ?> </a></li>
                 <li><a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i><?php echo $script_transl['add_article']; ?></a></li>
             </ul>
-        </div><!-- chiude container  -->
-        <div class="tab-content form-horizontal">
-            <div id="insrow1" class="tab-pane fade in active bg-info">
-                <div class="row">
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="tiprig" class="col-sm-4 control-label"><?php echo $script_transl['tiprig']; ?></label>
-                            <div class="col-sm-8">
+        <div class="panel-body">
+			<div class="form-group">
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                            <label for="tiprig" class="col-form-label"><?php echo $script_transl['tiprig']; ?></label>
+                            <div>
                                 <?php $gForm->selTypeRow('in_tiprig', $form['in_tiprig'],'',$script_transl['tiprig_value']);
 								?>
                             </div>                
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label for="item" class="col-sm-4 control-label"><?php echo $script_transl['item']; ?></label>
-                            <?php
+                </div>
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+					<div>
+							<label for="item" class="col-form-label"><?php echo $script_transl['item']; ?></label>
+                            <div>
+							<?php
                             $select_artico = new selectartico("in_codart");
                             $select_artico->addSelected($form['in_codart']);
-                            $select_artico->output(substr($form['cosear'], 0, 20), 'C', "col-sm-8");
+                            $select_artico->output(substr($form['cosear'], 0, 20), 'C', "");
                             ?>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-2 col-lg-2">
-                        <div class="form-group">
-                            <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
-                            <input class="col-sm-6" type="number" step="any" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group text-center">
-                            <button type="submit"  tabindex=7 class="btn btn-default btn-sm col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
-                                <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
-                            </button>
-                        </div> 
-                    </div>
+							</div>
+					</div>
                 </div>
-            </div><!-- chiude tab-pane  -->
-            <div id="insrow2" class="tab-pane fade bg-info">
-                <div class="row">
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="sconto" class="col-sm-6 control-label"><?php echo $script_transl['sconto']; ?></label>
-                            <input class="col-sm-6" type="number" step="0.01" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="vat_constrain" class="col-sm-6 control-label"><?php echo $script_transl['vat_constrain']; ?></label>
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                            <label for="quanti" class="col-form-label"><?php echo $script_transl['quanti']; ?></label>
+							<div>
+                            <input type="number" step="any" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
+							</div>
+                </div>
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                            <label for="sconto" class="col-form-label"><?php echo $script_transl['sconto']; ?></label>
+							<div>
+                            <input type="number" step="0.01" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
+							</div>
+                </div>
+            </div><!-- chiude form-row  -->
+			<div class="form-group">
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                            <label for="vat_constrain" class="col-form-label"><?php echo $script_transl['vat_constrain']; ?></label>
+							<div>
                             <?php $gForm->selectFromDB('aliiva', 'in_codvat', 'codice', $form['in_codvat'], 'codice', true, '-', 'descri', '', 'col-sm-6'); ?>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="codric" class="col-sm-4 control-label"><?php echo $script_transl['codric']; ?></label>
+							</div>
+                </div>
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                            <label for="codric" class="col-form-label"><?php echo $script_transl['codric']; ?></label>
+							<div>
                             <?php
                             $select_codric = new selectconven("in_codric");
                             $select_codric->addSelected($form['in_codric']);
-                            $select_codric->output(substr($form['in_codric'], 0, 1), 'col-sm-8');
+                            $select_codric->output(substr($form['in_codric'], 0, 1), 'col-lg-12');
                             ?>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="in_ritenuta" class="col-sm-6 control-label"><?php echo $script_transl['ritenuta']; ?></label>
-                            <input class="col-sm-6" type="number" step="any" value="<?php echo $form['in_ritenuta']; ?>" name="in_ritenuta" />
-                        </div>
-                    </div>
+							</div>
                 </div>
-            </div><!-- chiude tab-pane  -->
-        </div><!-- chiude tab-content  -->
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                            <label for="in_ritenuta" class="col-form-label"><?php echo $script_transl['ritenuta']; ?></label>
+                            <div>
+							<input type="number" step="any" value="<?php echo $form['in_ritenuta']; ?>" name="in_ritenuta" />
+							</div>
+                </div>
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                            <label for="submit" class="col-form-label"><?php echo $script_transl['insert']; ?></label>
+							<div>
+                            <button type="submit"  tabindex=7 class="btn btn-success btn-sm" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
+                                <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
+                            </button>
+							</div>
+                </div> 
+            </div><!-- chiude form-row  -->
+        </div><!-- chiude panel-body  -->
+      </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
     <?php
 if (count($form['rows']) > 0) {
@@ -2036,11 +2032,11 @@ if (count($form['rows']) > 0) {
 	}
 	if ($toDo == 'insert'){ // inserimento
 	?>
-		<div><input class="btn btn-block btn-success" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php  echo $script_transl['insert'];?>"/></div>
+		<div class="form-group"><input class="btn btn-block btn-success" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php  echo $script_transl['insert'];?>"/></div>
 <?php
    } else { // update
 ?>
-		<div><input class="btn btn-block btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php  echo $script_transl['update'];?>" /></div>
+		<div class="form-group"><input class="btn btn-block btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php  echo $script_transl['update'];?>" /></div>
   <?php
   }
 } else { // non ho righi  sul corpo
