@@ -1592,7 +1592,6 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
     <input type="hidden" value="<?php echo $form['in_scorta']; ?>" name="in_scorta" />
     <input type="hidden" value="<?php echo $form['in_ritenuta']; ?>" name="in_ritenuta" />
     <input type="hidden" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
-    <input type="hidden" value="<?php echo $form['in_id_orderman']; ?>" name="in_id_orderman" />
     <input type="hidden" value="<?php echo $form['in_gooser']; ?>" name="in_gooser" />
     <input type="hidden" value="<?php echo $form['in_lot_or_serial']; ?>" name="in_lot_or_serial" />
     <input type="hidden" value="<?php echo $form['in_status']; ?>" name="in_status" />
@@ -1610,6 +1609,8 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 		$castle = array();
 		$rit = 0;
 		$carry = 0;
+		$ctrl_orderman=0;
+		$rowshead=array();
         foreach ($form['rows'] as $k => $v) {
 			$nr++;
             // addizione ai totali peso,pezzi,volume
@@ -1699,6 +1700,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
             echo "<input type=\"hidden\" value=\"" . $v['gooser'] . "\" name=\"rows[$k][gooser]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['filename'] . "\" name=\"rows[$k][filename]\">\n";
 
+
             // creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
@@ -1736,6 +1738,16 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                 array('head' => $script_transl["delete"], 'class' => 'text-center',
                     'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
             );
+			// creo una intestazione della produzione di provenienza
+            if ($ctrl_orderman<>$v['id_orderman']) { // ricordo con un rigo la produzione di riferimento
+				if ($v['id_orderman']==0){
+					$descri_orderman='<div class="btn btn-xs btn-warning"> Non riferiti ad una produzione <i class="glyphicon glyphicon-arrow-down"> </i></div>';
+				} else {
+					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $v['id_orderman']);
+					$descri_orderman='<div class="btn btn-xs btn-info">Materiale per Produzione n. ' .$orderman['id'].' - '.$orderman['description'].' <i class="glyphicon glyphicon-arrow-down"> </i></div>';
+				}
+				$rowshead[$k]='<td colspan=13>'.$descri_orderman.'</td>';
+			}
 
             switch ($v['tiprig']) {
                 case "0":
@@ -1808,8 +1820,9 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     $resprow[$k][7]['value'] = '=>'; //sconto
                     break;
             }
-        }
-        $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
+		$ctrl_orderman=$v['id_orderman'];
+		}
+        $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table',$rowshead);
     }
 	$class_conf_row='btn-success';
 	if (substr($form['in_status'],0,6)=='UPDROW'){

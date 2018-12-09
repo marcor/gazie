@@ -1787,10 +1787,10 @@ class GAzieForm {
         return '';
     }
 
-    function gazResponsiveTable($rows, $id = 'gaz-responsive-table') {
+    function gazResponsiveTable($rows, $id = 'gaz-responsive-table',$rowshead=array()) {
         /* in $row ci devono essere i righi con un array cos� formattato:
          * $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'gaz-resposive_table')
-         * */
+         * eventualmente si può valorizzare $rows[row][head] per scrivere un rigo prima di quello di riferimento */
         ?>
         <div class="panel panel-default" >
             <div id="<?php echo $id; ?>"  class="container-fluid">
@@ -1807,7 +1807,10 @@ class GAzieForm {
                     </thead>
                     <tbody>
                         <?php
-                        foreach ($rows as $col) {
+                        foreach ($rows as $k=>$col) {
+							if (isset($rowshead[$k])){ // ho una intestazione per il rigo
+								echo '<tr>'.$rowshead[$k].'</tr>';
+							}
                             echo '<tr>';
                             foreach ($col as $v) {
                                 echo '<td data-title="' . $v['head'] . '" class="' . $v['class'] . '"';

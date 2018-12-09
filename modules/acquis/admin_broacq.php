@@ -1133,7 +1133,7 @@ foreach ($form['righi'] as $key => $value) {
 	// stampo l'intestazione della produzione di provenienza
     if ($ctrl_orderman<>$value['id_orderman']) { // ricordo con un rigo la produzione di riferimento
 		if ($value['id_orderman']==0){
-			$descri_orderman='<div class="btn btn-xs btn-warning"> Non riferiti ad una produzione <i class="glyphicon glyphicon-arrow-down"> </i></div>';
+			$descri_orderman='<div class="btn btn-xs btn-warning"> Non ho riferimenti ad una produzione <i class="glyphicon glyphicon-arrow-down"> </i></div>';
 		} else {
 			$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $value['id_orderman']);
 			$descri_orderman='<div class="btn btn-xs btn-info">Materiale per Produzione n. ' .$orderman['id'].' - '.$orderman['description'].' <i class="glyphicon glyphicon-arrow-down"> </i></div>';
