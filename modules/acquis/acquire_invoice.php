@@ -95,6 +95,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
         if ($form['pagame'] <= 0 ) {  // ma non ho selezionato il pagamento
 			$msg['err'][] = 'no_pagame';
 		}
+		// faccio i controlli sui righi
+		foreach($_POST as $kr=>$vr){
+			if (substr($kr,0,7)=='codvat_' && $vr<=0) {
+				$msg['err'][] = 'no_codvat';
+			}	
+			if (substr($kr,0,7)=='codric_' && $vr<=0) {
+				$msg['err'][] = 'no_codric';
+			}	
+		}
+		
 	} else if (isset($_POST['Download'])) { // faccio il download dell'allegato
 		$name = filter_var($_POST['Download'], FILTER_SANITIZE_STRING);
 		header('Content-Description: File Transfer');
@@ -606,6 +616,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 ?>
 	   </div>		   
 	   <div class="col-sm-6 text-right">
+		<input name="taxstamp" type="hidden" value="<?php echo $form['taxstamp']; ?>" />
 		<input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
 	   </div>		   
 </form>

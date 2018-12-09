@@ -434,7 +434,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $i = 0;
                 $count = count($form['rows']) - 1;
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
-                    if (substr($form['tipdoc'], 0, 2) <> 'DD') {
+                    if ($form['tipdoc'] == 'AFA' || $form['tipdoc'] == 'AFC') { // su fatture immediate e note credito metto il numero documento ugale al numero fatture
                         $form['numdoc'] = $form['numfat'];
                     }
                     if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
@@ -1598,6 +1598,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
     <input type="hidden" value="<?php echo $form['in_status']; ?>" name="in_status" />
     <input type="hidden" value="<?php echo $form['hidden_req']; ?>" name="hidden_req" />
     <?php
+	$nr=1;
     if (count($form['rows']) > 0) {
         $tot = 0;
         $form['net_weight'] = 0;
@@ -1609,8 +1610,8 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 		$castle = array();
 		$rit = 0;
 		$carry = 0;
-
         foreach ($form['rows'] as $k => $v) {
+			$nr++;
             // addizione ai totali peso,pezzi,volume
             $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
             $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
@@ -1810,6 +1811,14 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
         }
         $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
     }
+	$class_conf_row='btn-success';
+	if (substr($form['in_status'],0,6)=='UPDROW'){
+		$nr=substr($form['in_status'],6)+1;
+		$script_transl['conf_row'] = $script_transl['update'].$script_transl['conf_row'].$nr;
+		$class_conf_row='btn-warning';
+	} else {
+		$script_transl['conf_row'] = $script_transl['insert'].$script_transl['conf_row'].$nr;
+	}
     ?>
     <div class="panel panel-info">
       <div class="container-fluid bg-info">
@@ -1877,7 +1886,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                 <div class="form-group col-md-6 col-lg-3 nopadding">
                             <label for="submit" class="col-form-label"><?php echo $script_transl['insert']; ?></label>
 							<div>
-                            <button type="submit"  tabindex=7 class="btn btn-success btn-sm" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
+                            <button type="submit"  tabindex="7" class="btn <?php echo $class_conf_row; ?> btn-sm" name="in_submit">
                                 <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
                             </button>
 							</div>
@@ -2027,18 +2036,17 @@ if (count($form['rows']) > 0) {
     <input type="hidden" value="<?php echo $form['portos']; ?>" name="portos">
     <input type="hidden" value="<?php echo $form['imball']; ?>" name="imball">
     <input type="hidden" value="<?php echo $form['vettor']; ?>" name="vettor">
-	
-<?php 
+<?php	
 	}
-	if ($toDo == 'insert'){ // inserimento
-	?>
-		<div class="form-group"><input class="btn btn-block btn-success" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php  echo $script_transl['insert'];?>"/></div>
-<?php
-   } else { // update
 ?>
-		<div class="form-group"><input class="btn btn-block btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php  echo $script_transl['update'];?>" /></div>
-  <?php
-  }
+	<div class="form-group"><div class="col-lg-6"></div><div class="col-lg-3"><input class="btn btn-block btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php 
+	if ($toDo == 'insert'){ // inserimento
+		echo $script_transl['insert'].' '.$title;
+	} else { // update
+		echo $script_transl['update'].' '.$title;
+	}
+	?>" /></div></div>
+<?php
 } else { // non ho righi  sul corpo
 ?>
     <input type="hidden" value="<?php echo $form['spediz']; ?>" name="spediz">
