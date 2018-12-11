@@ -29,10 +29,10 @@ $message = "";
 
 if (isset($_GET['auxil']) && !isset($_GET['flt_tipdoc'])) {
     $seziva = $_GET['auxil'];
-    $where = "tipdoc LIKE 'AFA' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'";
+    $where = "tipdoc LIKE 'AF_' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'";
 } else {
     $seziva = 1;
-    $where = "tipdoc LIKE 'AFA' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'";
+    $where = "tipdoc LIKE 'AF_' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'";
 }
 //assegno a $all la stringa per la query che comporrà i filtri 
 $all = $where;
@@ -41,7 +41,7 @@ if (isset($_GET['protoc'])) {
     if ($_GET['protoc'] > 0) {
         $protocollo = $_GET['protoc'];
         $auxil = $_GET['auxil'] . "&protoc=" . $protocollo;
-        $where = "tipdoc LIKE 'AFA' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'  AND protoc = $protocollo GROUP BY protoc, datfat";
+        $where = "tipdoc LIKE 'AF_' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'  AND protoc = $protocollo GROUP BY protoc, datfat";
         $passo = 10;
     }
 } else {
