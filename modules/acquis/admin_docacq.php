@@ -2039,6 +2039,39 @@ if (count($form['rows']) > 0) {
 					?>
 					</div>                
                 </div>
+                <div class="form-group col-md-6 col-lg-3 nopadding">
+                    <label for="vettor" class="col-form-label"><?php echo $script_transl['initra']; ?></label>
+                    <div>
+				<?php 
+				echo "		<input class=\"FacetText\" type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">
+						<input class=\"FacetText\" type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">
+						<input class=\"FacetText\" type=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">
+						<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
+    //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
+    echo '					<i class="glyphicon glyphicon-calendar"></i>
+						</a> '.$script_transl['iniore'];
+    // select dell'ora
+    echo "\t <select name=\"oratra\" class=\"FacetText\" >\n";
+    for ($counter = 0; $counter <= 23; $counter++) {
+        $selected = "";
+        if ($counter == $form['oratra'])
+            $selected = ' selected=""';
+        echo "\t\t <option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
+    }
+    echo "\t </select>\n ";
+    // select dell'ora
+    echo "\t <select name=\"mintra\" class=\"FacetText\" >\n";
+    for ($counter = 0; $counter <= 59; $counter++) {
+        $selected = "";
+        if ($counter == $form['mintra'])
+            $selected = ' selected=""';
+        echo "\t\t <option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
+    }
+    echo "				\t</select>";
+	
+				?>
+					</div>                
+                </div>
 		</div><!-- chiude form-row  -->
   </div><!-- chiude container-fluid  -->
 </div><!-- chiude panel  -->
