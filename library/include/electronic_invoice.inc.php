@@ -219,9 +219,11 @@ class invoiceXMLvars {
             $this->taxstamp = $this->tesdoc['taxstamp'];
         }
         $from = $this->gTables[$this->tableName] . ' AS rs
-                 LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat
-                 ON rs.codvat=vat.codice';
-        $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva, vat.fae_natura AS natura', $from, "rs.id_tes = " . $this->testat, "id_tes DESC, id_rig");
+                 LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat ON rs.codvat=vat.codice
+                 LEFT JOIN ' . $this->gTables['movmag'] . ' AS mom ON rs.id_mag=mom.id_mov
+                 LEFT JOIN ' . $this->gTables['lotmag'] . ' AS ltm ON mom.id_lotmag=ltm.id
+				 ';
+        $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva, vat.fae_natura AS natura, ltm.identifier AS idlotto, ltm.expiry AS scadenzalotto', $from, "rs.id_tes = " . $this->testat, "id_tes DESC, id_rig");
         $this->riporto = 0.00;
         $this->ritenuta = 0.00;
         $this->cassa_prev = array();
@@ -654,6 +656,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                                 unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
                             }
                         }
+                    }
+                    if ($rigo['idlotto']!='') {
+                        // se ho un lotto di magazzino lo accodo alla ddescrizione
+                        $rigo['descri'] .= ' LOTTO: '.$rigo['idlotto'].' SCAD.'.$rigo['scadenzalotto']; // ogni $v è lungo al massimo 60 caratteri
                     }
                     $el1 = $domDoc->createElement("Descrizione",  substr($rigo['descri'], -1000));
                     $el->appendChild($el1);
