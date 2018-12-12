@@ -36,16 +36,15 @@
 ------------------------------------------------------------------------------------------
 */
 
-// IMPOSTAZIONE NECESSARIA: Impostare qui i nomi dei file interfaccia da utilizzare presenti nella cartella "shop_synchronize" di GAzie 
 
-$file_download = "ordini_joomla_hikashop.php";
-$file_upload = "prodotti_joomla_hikashop.php";
-
-// fine impostazione
+$file_download = "dowload_ordini_joomla.php";
+$file_upload = "upload_prodotti_joomla.php";
 
 
 require("../../library/include/datlib.inc.php");
 require("../../library/include/header.php");
+
+	
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
