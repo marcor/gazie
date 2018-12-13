@@ -303,7 +303,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				if ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
 					$form['codvat_'.$post_nl] = $expect_vat['codice'];
 				} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
-					$form['codvat_'.$post_nl] = 'non trovata';
+					$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], 'aliquo = ' . $form['rows'][$nl]['pervat'], "codice ASC", 0, 1);
+					$last_codvat = gaz_dbi_fetch_array($rs_last_codvat);
+					if ($last_codvat){
+						$form['codvat_'.$post_nl] = $last_codvat['codice'];
+					} else {
+						$form['codvat_'.$post_nl] = 'non trovata';
+					}
 				}
 			}
 		}
