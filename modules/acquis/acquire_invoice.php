@@ -626,6 +626,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		<input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
 	   </div>		   
 </form>
+<br>
 <?php			
 	}
 	if (substr($_SESSION['theme'],-2)!='te'){ 
