@@ -71,7 +71,8 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
         <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-gazie.css"> <!-- _all-skins.min.css">-->
         <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-        <script src="../../js/jquery/jquery.js"></script>
+		<script src="../../js/jquery/jquery.js"></script>
+		
 
         <?php
         if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/scheletons/" . $admin_aziend['style'])) {
