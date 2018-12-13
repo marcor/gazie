@@ -1,5 +1,5 @@
 ﻿  -----------------------------------------------------------------------
-  INTERFACCIA Download ordini da Joomla a GAzie
+  INTERFACCIA Download ordini e Aggiornamento quantità articoli da Joomla a GAzie
   ------------------------------------------------------------------------
   @Author    Antonio Germani
   @Website   http://www.lacasettabio.it
@@ -7,17 +7,25 @@
   versione 1.0
   ------------------------------------------------------------------------ 
   
- Il sistema di connessione fra GAzie e un negozio online di Joomla, quale ad esempio Hikashop o Virtuemart, si basa su due file di 
+ Questo sistema di connessione fra GAzie e un negozio online di Joomla, quale ad esempio Hikashop o Virtuemart, si basa su due file di 
 interfaccia, uno presente in GAzie e l'altro presente nella root di Joomla.
-  Queste doppie interfaccie sono necessaria per poter accedere al database di Joomla dal Gestionale di Gazie che spesso è in locale
+  Queste doppie interfaccie sono necessarie per poter accedere al database di Joomla dal Gestionale di Gazie che spesso è in locale
 o su un altro host.
   L'interfaccia residente su GAzie può rimanere sempre la stessa mentre quella residente su Joomla dovrà essere creata specificatamente
 in base al tipo di componente utilizzato per gestire il negozio online.
-  
+ 
+
+
+ *DOWNLOAD ORDINI*
+
+PRIMA DELL'USO, nelle righe iniziali della configurazione avanzata azienda di GAzie, si dovranno inserire i dati di accesso FTP all'host del sito Joomla.
+ Poi, nelle prime righe del file di interfaccia residente su GAzie, denominato "download_ordini_joomla.php", si dovranno fare delle impostazioni 
+seguendo le istruzioni/commenti presenti. In particolare si dovrà scrivere l'url per raggiungere il file residente su Joomla e quale tipo
+di stato dovranno avere gli ordini per poter essere scaricati.
   Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con quella di Joomla, passa, tramite l'url,
-una password ftp. Tale password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda.
+una password. Tale password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda.
   
-  L'interfaccia di Joomla dovrà, quindi, fare un controllo sulla password che ha ricevuto da GAzie e, se confermata,dovrà creare un file xml.
+  L'interfaccia di Joomla dovrà, quindi, fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, dovrà creare un file xml.
   
   Il file creato dovrà essere formattato come segue:
   
@@ -95,9 +103,34 @@ Ogni <Document> è la testata dell'ordine mentre le <Row> in esso contenute sono
 	
 Al momento non tutti i campi xml sono utilizzati ma è bene lasciarli per eventuali sviluppi futuri.
 
-PRIMA DELL'USO, nelle prime righe della configurazione avanzata azienda di GAzie, si dovranno inserire i dati di accesso FTP all'host del sito Joomla.
 
-Poi, nelle prime righe del file di interfaccia residente su GAzie, denominato "download_ordini_joomla.php", si dovranno fare delle impostazioni 
-seguendo le istruzioni/commenti presenti. In particolare si dovrà scrivere l'url per raggiungere il file residente su Joomla e quale tipo
-di stato dovranno avere gli ordini per poter essere scaricati.
+
+
+*UPLOAD QUANTITà ARTICOLI*
+
+  Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con quella di Joomla, passa, tramite l'url,
+una password. Tale password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda.
+  
+  L'interfaccia di Joomla dovrà, quindi, fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, aggiornerà il database del negozio online.
+PRIMA DELL'USO, se ancora non è stato fatto, nelle righe iniziali della configurazione avanzata azienda di GAzie, si dovranno inserire i dati di accesso FTP all'host del sito Joomla.
+Poi, nelle prime righe del file di interfaccia residente su GAzie, denominato "upload_prodotti_joomla.php", si dovrà impostare l'url per raggiungere il file residente su Joomla.
+
+Al contrario dell'download ordini, in questo caso sarà l'interfaccia presente su GAzie a creare il file xml. Questo file sarà poi trasferito via FTP sul sito joomla dove, attraverso
+la seconda interfaccia ivi residente, i dati saranno processati e verrà aggiornato il database del negozio online.
+
+La formattazione del file xml è la seguente:
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">
+<Products>
+	<Product>
+	<Code></Code>
+	<BarCode></BarCode>
+	<AvailableQty></AvailableQty>
+	</Product>
+</Products>
+</GAzieDocuments>
+
+L'aggiornamento delle quantità avverrà solo se verrà trovata corrispondenza con il codice e/o barcode dell'articolo. Articoli con codici non corrispondenti verranno ignorati.
+Altresì, verranno ignorati gli articoli "servizio" di GAzie e quelli dove non sarà stato abilitato il campo "pubblica su sito web".
 
