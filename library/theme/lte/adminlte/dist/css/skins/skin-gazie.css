@@ -140,3 +140,7 @@
 .skin-blue.layout-top-nav .main-header > .logo:hover {
   background-color: #3b8ab8;
 }
+.form-horizontal .form-group {
+    margin-right: 0px;
+    margin-left: 0px;
+}
