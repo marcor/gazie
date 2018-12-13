@@ -7,11 +7,15 @@
   versione 1.0
   ------------------------------------------------------------------------ 
   
- Il sistema di connessione fra GAzie e un negozio online di Joomla, quale ad esempio Hikashop o Virtuemart, si basa su due file di interfaccia, uno presente in GAzie e l'altro presente nella root di Joomla.
-  Queste doppie interfaccie sono necessaria per poter accedere al database di Joomla dal Gestionale di Gazie che spesso è in locale o su un altro host.
-  L'interfaccia residente su GAzie può rimanere sempre la stessa mentre quella residente su Joomla dovrà essere creata specificatamente in base al tipo di componente utilizzato per gestire il negozio online.
+ Il sistema di connessione fra GAzie e un negozio online di Joomla, quale ad esempio Hikashop o Virtuemart, si basa su due file di 
+interfaccia, uno presente in GAzie e l'altro presente nella root di Joomla.
+  Queste doppie interfaccie sono necessaria per poter accedere al database di Joomla dal Gestionale di Gazie che spesso è in locale
+o su un altro host.
+  L'interfaccia residente su GAzie può rimanere sempre la stessa mentre quella residente su Joomla dovrà essere creata specificatamente
+in base al tipo di componente utilizzato per gestire il negozio online.
   
-  Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con quella di Joomla, passa, tramite l'url, una password ftp. Tale password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda.
+  Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con quella di Joomla, passa, tramite l'url,
+una password ftp. Tale password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda.
   
   L'interfaccia di Joomla dovrà, quindi, fare un controllo sulla password che ha ricevuto da GAzie e, se confermata,dovrà creare un file xml.
   
@@ -90,3 +94,10 @@
 Ogni <Document> è la testata dell'ordine mentre le <Row> in esso contenute sono gli articoli ordinati.
 	
 Al momento non tutti i campi xml sono utilizzati ma è bene lasciarli per eventuali sviluppi futuri.
+
+PRIMA DELL'USO, nelle prime righe della configurazione avanzata azienda di GAzie, si dovranno inserire i dati di accesso FTP all'host del sito Joomla.
+
+Poi, nelle prime righe del file di interfaccia residente su GAzie, denominato "download_ordini_joomla.php", si dovranno fare delle impostazioni 
+seguendo le istruzioni/commenti presenti. In particolare si dovrà scrivere l'url per raggiungere il file residente su Joomla e quale tipo
+di stato dovranno avere gli ordini per poter essere scaricati.
+

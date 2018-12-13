@@ -11,7 +11,7 @@
 /* impostazioni da fare prima di avviare il file
 inserire i dati dentro alle virgolette non toccare il resto */
 
-$urlinterf="https://www.lacasettabio.it/********/???????gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+$urlinterf="https://www.lacasettabio.it/********/ordini-gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 $orderstatus="Pronto in attesa del corriere"; /* nome o tipo di stato che deve avere l'ordine di Hikashop per essere caricato su Gazie, di solito confirmed */
 $orderstatus2="Created"; /* eventuale secondo stato ordine  */
 $includevat="true"; /* LASCIARE A TRUE perché al momento la funzione false non è sviluppata. > true= il prezzo è iva compresa - false= il prezzo è iva esclusa */
