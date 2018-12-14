@@ -11,7 +11,7 @@
 /* impostazioni da fare prima di avviare il file
 inserire i dati dentro alle virgolette non toccare il resto */
 
-$urlinterf="https://www.lacasettabio.it/********/ordini-gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+$urlinterf="https://www.lacasettabio.it/******/ordini-gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 $orderstatus="Pronto in attesa del corriere"; /* nome o tipo di stato che deve avere l'ordine di Hikashop per essere caricato su Gazie, di solito confirmed */
 $orderstatus2="Created"; /* eventuale secondo stato ordine  */
 $includevat="true"; /* LASCIARE A TRUE perché al momento la funzione false non è sviluppata. > true= il prezzo è iva compresa - false= il prezzo è iva esclusa */
@@ -116,7 +116,12 @@ $mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 // controllo se la connessione è OK...
 if ((!$conn_id) or (!$mylogin))
 { 
-	echo "Connessione fallita a " . $ftp_host . "!";
+	?>
+	<script>
+	alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
+	location.replace("<?php echo $_POST['ritorno']; ?>");
+    </script>
+	<?php
 }
 
 // avvio il file di interfaccia presente nel sito web remoto
@@ -226,14 +231,17 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il esiste o mi dà
 					</td>
 					</tr>
 				</tbody>	
-			</table>
-		 
-	
+			</table>	
 	</form>
 	<?php
 } else { // IL FILE INTERFACCIA NON ESISTE > ESCO
-	header("Location: " . "../../modules/vendit/report_broven.php?auxil=VOW");
-    ftp_quit($conn_id);
+	ftp_quit($conn_id);
+	?>
+	<script>
+	alert("<?php echo "Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)); ?>");
+	location.replace("<?php echo $_POST['ritorno']; ?>");
+    </script>
+	<?php
 	exit;
 }
 // chiudo la connessione FTP 

@@ -33,6 +33,10 @@ if ($exists) {
     $c_e = 'company_id';
 }
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
+
+ob_flush();
+flush();
+ob_start();
  
 // imposto la connessione al server
 $conn_id = ftp_connect($ftp_host);
@@ -42,7 +46,19 @@ $mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 
 // controllo se la connessione è OK...
 if ((!$conn_id) or (!$mylogin)){ 
-	echo "Connessione fallita a " . $ftp_host . "!";
+	
+	?>
+	<script>
+	alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
+	location.replace("<?php echo $_POST['ritorno']; ?>");
+    </script>
+	<?php
+} else {
+	?>
+	<div class="alert alert-success text-center" >
+	<strong>ok</strong> Connessione FTP riuscita.
+	</div>
+	<?php
 }
 
 // creo il file xml
@@ -74,9 +90,20 @@ fclose($xmlHandle);
 
 // upload file xml
 if (ftp_put($conn_id, "public_html/easyfatt/prodotti.xml", $xmlFile, FTP_ASCII)){
-	echo "Successfully uploaded $xmlFile.";
+	?>
+	<div class="alert alert-success text-center" >
+	<strong>ok</strong> il file xml è stato trasferito al sito web.
+	</div>
+	<?php
 } else{
-  echo "Error uploading $xmlFile.";
+	// chiudo la connessione FTP 
+	ftp_quit($conn_id);
+  	?>
+	<script>
+	alert("<?php echo "Errore di upload del file xml"; ?>");
+	location.replace("<?php echo $_POST['ritorno']; ?>");
+    </script>
+	<?php
 }
 
 // avvio il file di interfaccia presente nel sito web remoto
@@ -84,16 +111,38 @@ $headers = @get_headers($urlinterf.'?password='.$ftp_pass);
 if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 	$file = fopen ($urlinterf.'?password='.$ftp_pass, "r");
 	if (!$file) {
-		echo "<p>Unable to open remote file.\n";
+		// chiudo la connessione FTP 
+		ftp_quit($conn_id);
+		?>
+		<script>
+		alert("<?php echo "Errore: il file di interfaccia web non si apre!"; ?>");
+		location.replace("<?php echo $_POST['ritorno']; ?>");
+		</script>
+		<?php
+		
 	} else {
-		echo"Connessione interfaccia OK";
-		header("Location: " . $_POST['ritorno']);
+		// chiudo la connessione FTP 
+		ftp_quit($conn_id);
+		?>
+		<div class="alert alert-success text-center" >
+		<strong>ok</strong> Aggiornamento prodotti riuscito.
+		</div>
+		<script>
+		location.replace("<?php echo $_POST['ritorno']; ?>");
+		</script>
+		<?php
 		exit;
 	}
 } else { // IL FILE INTERFACCIA NON ESISTE > ESCO
-	echo "errore connessione interfaccia web",intval(substr($headers[0], 9, 3));
-	header("Location: " . "../../modules/magazz/report_artico.php");
+	// chiudo la connessione FTP 
 	ftp_quit($conn_id);
+	?>
+	<script>
+		alert("<?php echo "Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)); ?>");
+		 location.replace("<?php echo $_POST['ritorno']; ?>");
+    </script>
+	<?php
+		
 	exit;
 }
 

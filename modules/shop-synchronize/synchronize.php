@@ -36,15 +36,15 @@
 ------------------------------------------------------------------------------------------
 */
 
+?>
+<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<?php
+require("../../library/include/datlib.inc.php");
+
+
 
 $file_download = "dowload_ordini_joomla.php";
 $file_upload = "upload_prodotti_joomla.php";
-
-
-require("../../library/include/datlib.inc.php");
-require("../../library/include/header.php");
-
-	
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
