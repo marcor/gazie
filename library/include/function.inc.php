@@ -642,7 +642,7 @@ class Anagrafica {
             $partner[$row['last_modified']] = $row;
         }
         ksort($partner);
-        $r_a = gaz_dbi_get_anagra($this->partnerTables, 'id', $idAnagra);
+        $r_a = gaz_dbi_get_anagra($this->gTables['anagra'], 'id', $idAnagra);
         $data = array_merge(array_pop($partner), $r_a);
         unset($data['codice']);
         return $data;
