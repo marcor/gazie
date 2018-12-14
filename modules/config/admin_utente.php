@@ -290,6 +290,11 @@ if (isset($_POST['Submit'])) {
 				gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form["user_name"], 'student_firstname', $form['user_firstname']);
 				gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form["user_name"], 'student_lastname', $form['user_lastname']);
 			}
+			if ($admin_config_theme['var_value']<>$form['theme']) {
+				session_destroy();
+				header("Location: ../root/login_user.php?tp=".$table_prefix);
+				exit;			
+			}
 		}
 		header("Location: " . $_POST['ritorno']);
 		exit;

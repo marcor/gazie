@@ -1,0 +1,17 @@
+Titolo:
+Debellare superbos.
+
+Presentazione:
+Voi che quotidianamente mi interpellate per disquisire intorno a questo programma e per dire la vostra sulle varie funzioni che esso assolve: in questi giorni siete stati molto generosi, mi avete materialmente sommerso di segnalazioni, di domande, di richieste, ma la cosa che più ho gradito sono stati i file XML di fatture elettroniche generati con altri e diversi gestionali e da ditte della più svariate tipologie. Con essi ho potuto constatare che "in giro" vengono commessi ancora errori ed alcuni addirittura bypassano il controllo del Sistema di Interscambio. Anche GAzie nella versione 7.11 ne faceva alcuni, il più fastidioso era sicuramente quello dello sconto sul rigo delle fatture di vendita che invece non passava il suddetto controllo; poi ce ne stavano altri sulla importazione delle fatture passive, ed in particolare su quelle che contenevano le ritenute d'acconto e le casse previdenziali, con questa spero di aver sistemato tutto. Alla descrizione degli articoli venduti ho accodato gli eventuali lotti a scadenza, utili (ed obbligatori) nel settore alimentare.
+
+Sull'inserimento/modifica dei preventivi o ordini a fornitori ho aggiunto un form modale per il calcolo del peso e delle dimensioni.
+
+Già da adesso, per avere i riferimenti alla futura completa implementazione dei centri di costo-ricavi sui documenti di acquisto si possono selezionare le produzioni a livello di righi. Tecnicamente la contabilità industriale si otterrà riferendo ogni rigo di documento di acquisto (e in futuro di vendita) al relativo rigo della tabella gaz_001orderman che è quella delle "Produzioni" o commesse che dir si voglia; la struttura del database è già pronta per accogliere ed assolvere a queste funzioni.
+ 
+Andrea Biasi ha completato i CMR e Antonio Germani i lotti di produzione oltre ai DdT per ritorno da lavorazioni, Angelo Romano una textarea di promemoria sui movimenti contabili, Daniele Frulla, Benedetto Santarella, Luca Boldori, Francesco Pagano hanno fissato alcuni bug, i proff.Salvatore Crapanzano e Paolo Del Romano hanno contribuito con le loro competenze.
+
+Infine approfitto del momento per rivolgere un appello all'Agenzia delle Entrate che sottende anche ad una pubblica critica: l'elemento 2.2.1.11 <PrezzoTotale> contenuto nel <DettaglioLinee> va assolutamente controllato imponendo un numero massimo di cifre decimali uguale a 2, se rimanesse passabile con 3 o più cifre decimali come adesso ed in presenza di una moltitudine di linee gli arrotondamenti alle due cifre imposti ad esempio dai conti di costo/ricavi non si concilierebbe con il totale imponibile (elemento 2.2.2.5). GAzie proprio per evitare questo problema lo fa di suo ma ho visto che alcuni software non lo fanno costringendo chi acquisisce il documento ad "arrangiare" con arrotondamenti "campati in aria".    
+
+Ringrazio ed auguro buone feste a tutti!
+
+Antonio de Vincentiis, Montesilvano, 14 Dicembre 2018

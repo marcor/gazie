@@ -1383,7 +1383,7 @@ $script_transl = HeadMain(0, array(
             this.form.submit();
         });
 <?php
-if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non scrollo
+if (count($msg['err']) < 1 && count($msg['war']) < 1 && $form['clfoco']>100000000) { // non ho selezionato il fornitore  oppure ho un errore allora non scrollo
     ?>
     $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top}, 1000);
     <?php
