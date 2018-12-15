@@ -54,7 +54,17 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si deve fare un parsing di quanto arriva dal browser...
-    $form['id_tes'] = intval($_POST['id_tes']);
+	if (isset ($_POST['in_barcode'])){
+		$form['in_barcode']=$_POST['in_barcode'];
+		$serbar = gaz_dbi_get_row($gTables['artico'], "barcode", $form['in_barcode']);
+		$_POST['cosear']=$serbar['codice'];
+		$form['in_codart']=$serbar['codice'];
+		$_POST['in_codart']=$serbar['codice'];
+		$_POST['in_submit']="submit";
+	} else {
+		$form['in_barcode']="";
+	}
+    $form['id_tes'] = intval($_POST['id_tes']);echo "pippo insubmit",$_POST['in_submit'];
     $form['hidden_req'] = $_POST['hidden_req'];
     $form['roundup_y'] = $_POST['roundup_y'];
     $form['clfoco'] = substr($_POST['clfoco'], 0, 13);
@@ -108,7 +118,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
     $form['in_id_lotmag'] = intval($_POST['in_id_lotmag']);
     $form['in_status'] = $_POST['in_status'];
-    $form['cosear'] = $_POST['cosear'];
+    $form['cosear'] = $_POST['cosear'];echo "Pippo cosear",$_POST['cosear'];
     // fine rigo input
 
     $form['rows'] = array();
@@ -379,7 +389,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_codvat'] = $cliente['aliiva'];
         $form['hidden_req'] = '';
     }
-
+echo "pippo incodart:",$form['in_codart'];
     // Se viene inviata la richiesta di conferma rigo
     /** ENRICO FEDELE */
     /* Con button non funziona _x */
@@ -687,6 +697,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         header("Location: error_msg.php?ref=admin_scontr");
         exit;
     };
+	$form['in_barcode']="";
     $form['id_tes'] = 0;
     $form['tipdoc'] = 'VCO';
     $form['numdoc'] = 0;
@@ -760,6 +771,14 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 ?>
     });
 </script>
+<!-- Antonio Germani - funzione per barcode che rileva il tasto 13 enter che viene inviato dalla pistola scanner -->
+	<script type="text/javascript">
+    function submitOnEnter(inputElement, event) {
+        if (event.keyCode == 13) { // No need to do browser specific checks. It is always 13.
+            inputElement.form.submit();
+        }
+    }
+	</script>
 
 <!-- Aggiunto a mano -->
 <script language="Javascript">
@@ -1110,25 +1129,33 @@ maniglia.form.submit();
         <div class="tab-content form-horizontal">
             <div id="insrow1" class="tab-pane fade in active bg-info">
                 <div class="row">
-                    <div class="col-sm-6 col-md-1 col-lg-1">
+                    <div class="col-sm-4 col-md-2 col-lg-2">
                         <div class="form-group">
                             <label for="tiprig" class="col-sm-4 control-label"><?php echo $script_transl['tiprig']; ?></label>
-                            <div class="col-sm-8">
+                            <div class="col-sm-3">
                                 <?php $gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig'], false, true); ?>
                             </div>                
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-5 col-lg-5">
+                    <div class="col-sm-6 col-md-4 col-lg-4">
                         <div class="form-group">
-                            <label for="item" class="col-sm-4 control-label"><?php echo $script_transl['item']; ?></label>
+                            <label for="item" class="col-sm-2 control-label"><?php echo $script_transl['item']; ?></label>
                             <?php
                             $select_artico = new selectartico("in_codart");
                             $select_artico->addSelected($form['in_codart']);
-                            $select_artico->output(substr($form['cosear'], 0, 20), 'C', "col-sm-8");
+                            $select_artico->output(substr($form['cosear'], 0, 20), 'C', "col-sm-4");
                             ?>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-4 col-lg-4">
+					<!-- Antonio Germani - input ricerca con pistola lettore codice a barre -->
+					<div class="col-sm-4 col-md-2 col-lg-2">
+                        <div class="form-group">
+                            <label for="item" class="col-sm-2 control-label"><?php echo $script_transl['item']; ?></label>
+                            <input class="col-sm-10" type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
+                        </div>
+                    </div>
+					<!-- Antonio Germani - fine ricerca con pistola lettore codice a barre -->
+                    <div class="col-sm-4 col-md-2 col-lg-2">
                         <div class="form-group">
                             <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
                             <input class="col-sm-6" type="number" step="any" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
