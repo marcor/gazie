@@ -54,17 +54,32 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si deve fare un parsing di quanto arriva dal browser...
-	if (isset ($_POST['in_barcode'])){
+	if (isset($_POST['button_ok_barcode']) or $_POST['ok_barcode']=="ok"){
+		$form['ok_barcode']="ok";
+	} else {
+		$form['ok_barcode']="";
+	}
+	if (isset ($_POST['no_barcode'])){
+		$form['ok_barcode']="no";
+		unset ($_POST['in_barcode']);
+		$form['ok_barcode']="";
+	}
+	if (isset ($_POST['in_barcode']) && strlen($_POST['in_barcode'])>0){
 		$form['in_barcode']=$_POST['in_barcode'];
 		$serbar = gaz_dbi_get_row($gTables['artico'], "barcode", $form['in_barcode']);
-		$_POST['cosear']=$serbar['codice'];
-		$form['in_codart']=$serbar['codice'];
-		$_POST['in_codart']=$serbar['codice'];
-		$_POST['in_submit']="submit";
+		if (!isset($serbar)){
+			$form['in_barcode']="NOT FOUND";
+		} else {
+			$_POST['cosear']=$serbar['codice'];
+			$form['in_codart']=$serbar['codice'];
+			$_POST['in_codart']=$serbar['codice'];
+			$_POST['in_submit']="submit";
+			$form['in_barcode']="";
+		}
 	} else {
 		$form['in_barcode']="";
 	}
-    $form['id_tes'] = intval($_POST['id_tes']);echo "pippo insubmit",$_POST['in_submit'];
+    $form['id_tes'] = intval($_POST['id_tes']);
     $form['hidden_req'] = $_POST['hidden_req'];
     $form['roundup_y'] = $_POST['roundup_y'];
     $form['clfoco'] = substr($_POST['clfoco'], 0, 13);
@@ -118,7 +133,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
     $form['in_id_lotmag'] = intval($_POST['in_id_lotmag']);
     $form['in_status'] = $_POST['in_status'];
-    $form['cosear'] = $_POST['cosear'];echo "Pippo cosear",$_POST['cosear'];
+    $form['cosear'] = $_POST['cosear'];
     // fine rigo input
 
     $form['rows'] = array();
@@ -389,7 +404,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_codvat'] = $cliente['aliiva'];
         $form['hidden_req'] = '';
     }
-echo "pippo incodart:",$form['in_codart'];
+
     // Se viene inviata la richiesta di conferma rigo
     /** ENRICO FEDELE */
     /* Con button non funziona _x */
@@ -698,6 +713,7 @@ echo "pippo incodart:",$form['in_codart'];
         exit;
     };
 	$form['in_barcode']="";
+	$form['ok_barcode']="";
     $form['id_tes'] = 0;
     $form['tipdoc'] = 'VCO';
     $form['numdoc'] = 0;
@@ -771,7 +787,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 ?>
     });
 </script>
-<!-- Antonio Germani - funzione per barcode che rileva il tasto 13 enter che viene inviato dalla pistola scanner -->
+<!-- Antonio Germani - funzione per barcode che rileva il tasto CR 13 o enter che viene inviato dalla pistola scanner -->
 	<script type="text/javascript">
     function submitOnEnter(inputElement, event) {
         if (event.keyCode == 13) { // No need to do browser specific checks. It is always 13.
@@ -1136,7 +1152,7 @@ maniglia.form.submit();
                                 <?php $gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig'], false, true); ?>
                             </div>                
                         </div>
-                    </div>
+                    </div>					
                     <div class="col-sm-6 col-md-4 col-lg-4">
                         <div class="form-group">
                             <label for="item" class="col-sm-2 control-label"><?php echo $script_transl['item']; ?></label>
@@ -1147,14 +1163,52 @@ maniglia.form.submit();
                             ?>
                         </div>
                     </div>
+					
 					<!-- Antonio Germani - input ricerca con pistola lettore codice a barre -->
-					<div class="col-sm-4 col-md-2 col-lg-2">
-                        <div class="form-group">
-                            <label for="item" class="col-sm-2 control-label"><?php echo $script_transl['item']; ?></label>
-                            <input class="col-sm-10" type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
-                        </div>
-                    </div>
+					<?php
+					if ($form['ok_barcode']!="ok"){
+						?>
+						<div class="col-sm-6 col-md-1 col-lg-1">
+							<div class="form-group text-center">
+								<button type="submit"  class="btn btn-default btn-sm col-sm-6" name="button_ok_barcode" title="inserisci con pistola Barcode"> 
+                                <span class="glyphicon glyphicon-barcode"></span>
+								</button>
+							</div>
+						</div>
+						<?php
+					} 
+					?>
+					<input type="hidden" value="<?php echo $form['ok_barcode']; ?>" name="ok_barcode" />
+					<?php
+					if ($form['ok_barcode']=="ok"){
+						if ($form['in_barcode']==""){
+						?>
+						<div class="col-sm-4 col-md-2 col-lg-2">
+							<div class="form-group">
+								<label for="item" class="col-sm-3 control-label"><?php echo "Barcode"; ?></label>
+								<input  class="col-sm-8" type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
+								<button type="submit"  class="btn btn-default btn-sm col-sm-1" name="no_barcode" title="Togli con pistola Barcode"> 
+                                <span class="glyphicon glyphicon-remove"></span>
+							</div>
+						</div>
+						<?php
+						} elseif ($form['in_barcode']=="NOT FOUND") {
+							$form['in_barcode']="";
+							?>
+							<div class="col-sm-4 col-md-2 col-lg-2">
+								<div class="form-group">
+									<label for="item" class="col-sm-3 control-label"><?php echo "Barcode"; ?></label>
+									<input style="border: 1px solid red;" class="col-sm-8" type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
+									<button type="submit"  class="btn btn-default btn-sm col-sm-1" name="no_barcode" title="Togli con pistola Barcode"> 
+									<span class="glyphicon glyphicon-remove"></span>
+								</div>
+							</div>
+							<?php
+						}
+					}
+					?>
 					<!-- Antonio Germani - fine ricerca con pistola lettore codice a barre -->
+					
                     <div class="col-sm-4 col-md-2 col-lg-2">
                         <div class="form-group">
                             <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
@@ -1321,10 +1375,23 @@ maniglia.form.submit();
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 
+<?php
+if ($form['ok_barcode']=="ok"){
+	?>
+	<script type="text/javascript">
+	if (this.document.tesdoc.in_barcode.value == '') this.document.tesdoc.in_barcode.focus();
+	</script>
+	<?php
+} else {
+	?>
+	<script type="text/javascript">
+	if (this.document.tesdoc.cosear.value == '') this.document.tesdoc.cosear.focus();
+	</script>
+	<?php	
+}
+?>
 <!-- //M1 Modificato a mano fine --> 
 <script type="text/javascript">
-if (this.document.tesdoc.cosear.value == '') this.document.tesdoc.cosear.focus();
-
 //this.document.body.onkeypress = function (e = event,myfiled = this)
 
 
