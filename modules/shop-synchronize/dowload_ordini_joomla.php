@@ -11,7 +11,7 @@
 /* impostazioni da fare prima di avviare il file
 inserire i dati dentro alle virgolette non toccare il resto */
 
-$urlinterf="https://www.lacasettabio.it/******/ordini-gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+$urlinterf="https://www.????????.it/*******/ordini-gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 $orderstatus="Pronto in attesa del corriere"; /* nome o tipo di stato che deve avere l'ordine di Hikashop per essere caricato su Gazie, di solito confirmed */
 $orderstatus2="Created"; /* eventuale secondo stato ordine  */
 $includevat="true"; /* LASCIARE A TRUE perché al momento la funzione false non è sviluppata. > true= il prezzo è iva compresa - false= il prezzo è iva esclusa */
@@ -124,11 +124,23 @@ if ((!$conn_id) or (!$mylogin))
 	<?php
 }
 
+
+$access=base64_encode($ftp_pass);
+
+
 // avvio il file di interfaccia presente nel sito web remoto
-$headers = @get_headers($urlinterf.'?password='.$ftp_pass);
+$headers = @get_headers($urlinterf.'?access='.$access);
 if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il esiste o mi dà accesso
 
-	$xml=simplexml_load_file($urlinterf.'?password='.$ftp_pass) or die("Error: Cannot create object or access denied");
+	$xml=simplexml_load_file($urlinterf.'?access='.$access) ;
+	if (!$xml){
+		?>
+		<script>
+		alert("<?php echo "Errore nella creazione del file xml"; ?>");
+		location.replace("<?php echo $_POST['ritorno']; ?>");
+		</script>
+		<?php
+	}
 	?>
 	<form method="POST" name="dowload" enctype="multipart/form-data">
 	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >

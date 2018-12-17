@@ -11,7 +11,7 @@
 /* impostazioni da fare prima di avviare il file
 inserire i dati dentro alle virgolette non toccare il resto */
 
-$urlinterf="https://www.lacasettabio.it/*******/articoli-gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+$urlinterf="https://www.???????.it/*******/articoli-gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 
 
  // ---------------------------da qui in poi non modificare nulla---------------------------------
@@ -106,10 +106,12 @@ if (ftp_put($conn_id, "public_html/easyfatt/prodotti.xml", $xmlFile, FTP_ASCII))
 	<?php
 }
 
+$access=base64_encode($ftp_pass);
+
 // avvio il file di interfaccia presente nel sito web remoto
-$headers = @get_headers($urlinterf.'?password='.$ftp_pass);
+$headers = @get_headers($urlinterf.'?access='.$access);
 if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
-	$file = fopen ($urlinterf.'?password='.$ftp_pass, "r");
+	$file = fopen ($urlinterf.'?access='.$access, "r");
 	if (!$file) {
 		// chiudo la connessione FTP 
 		ftp_quit($conn_id);
