@@ -268,7 +268,7 @@ class DocContabVars {
 			$from = $this->gTables['orderman'] . ' AS om
                  LEFT JOIN ' . $this->gTables['tesbro'] . ' AS tb
                  ON om.id_tesbro=tb.id_tes';
-			$rs_orderman = gaz_dbi_dyn_query('om.*,tb.datemi', $from, "om.id = " .  $rigo['id_orderman']);
+			$rs_orderman = gaz_dbi_dyn_query('om.*,tb.datemi', $from, "om.id = " .  intval($rigo['id_orderman']));
             $rigo['orderman_data'] = gaz_dbi_fetch_array($rs_orderman);
 			$rigo['orderman_descri']=$rigo['orderman_data']['description'];
             if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
