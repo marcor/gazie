@@ -93,7 +93,10 @@ function confirmemail(cod_partner,id_tes,genorder=false) {
 	if (tipdoc=='AOR') {
 			$("#confirm_email").attr('title', 'Invia ORDINE a '+fornitore);
 	} else if (tipdoc=='APR' && genorder ) {
-			$("#confirm_email").attr('title', 'Genera ed Invia ORDINE a '+fornitore);
+			$("#confirm_email").attr('title', 'Genera ORDINE a '+fornitore);
+			$("#mailaddress").remove();
+			$("#mailbutt").remove();
+			$("#maillabel").remove();
 	} else {
 			$("#confirm_email").attr('title', 'Invia Preventivo a '+fornitore);
 	}
@@ -124,14 +127,14 @@ function confirmemail(cod_partner,id_tes,genorder=false) {
 		hide: "explode",
 		buttons: {
 			Invia: function() {
-				if ( !( emailRegex.test( $("#mailaddress").val() ) ) ) {
+				if ( !( emailRegex.test( $("#mailaddress").val() ) ) && !genorder ) {
 					alert('Mail formalmente errata');
 				} else {
 					$("#mailbutt div").remove();
 					var dest=$("#mailaddress").val();
 					if (tipdoc=='AOR') { // è già un ordine lo reinvio
 						window.location.href = 'stampa_ordfor.php?id_tes='+id_tes+'&dest='+dest;
-					} else if (tipdoc=='APR' && genorder ) { // in caso di generazione ordine vado sull'apposito script php 
+					} else if (tipdoc=='APR' && genorder ) { // in caso di generazione ordine vado sull'apposito script php per la generazione ma non lo invio tramite email 
 						window.location.href = 'duplicate_broacq.php?id_tes='+id_tes+'&dest='+dest;
 					} else { // il preventivo lo invio solamente
 						window.location.href = 'stampa_prefor.php?id_tes='+id_tes+'&dest='+dest;
@@ -332,11 +335,17 @@ function choicePartner(row)
 				echo '>'.$status.'</a></td>';
 
                 // colonna stampa
-				echo "<td align=\"center\">
-							<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" target=\"_blank\">
+				echo "<td align=\"center\">";
+				echo "<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" title=\"Stampa per fornitore\" target=\"_blank\">
 								<i class=\"glyphicon glyphicon-print\"></i>
-							</a>
-						</td>";
+							</a>\n";
+				if($r["tipdoc"] == 'AOR') {
+					echo " - <a class=\"btn btn-xs btn-default\" href=\"stampa_ordfor.php?id_tes=".$r['id_tes']."&production\" title=\"Stampa per reparto produzioni\" target=\"_blank\">
+								<i class=\"glyphicon glyphicon-fire\"></i>
+							</a>\n";
+					
+				}			
+				echo "</td>";
 
 				// colonna operazioni
 				echo '<td align="center" title="Stesso preventivo per altro fornitore"><button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"></i></button>';
@@ -367,7 +376,7 @@ function choicePartner(row)
 <div class="modal" id="confirm_email" title="Invia mail...">
     <fieldset>
         <div>
-            <label for="mailaddress">all'indirizzo:</label>
+            <label id="maillabel" for="mailaddress">all'indirizzo:</label>
             <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="50" />
         </div>
         <div id="mailbutt">

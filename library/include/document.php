@@ -265,8 +265,12 @@ class DocContabVars {
         $this->ritenuta = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
-            $orderman = gaz_dbi_get_row($this->gTables['orderman'], 'id', $rigo['id_orderman']);
-			$rigo['orderman_descri']=$orderman['description'];
+			$from = $this->gTables['orderman'] . ' AS om
+                 LEFT JOIN ' . $this->gTables['tesbro'] . ' AS tb
+                 ON om.id_tesbro=tb.id_tes';
+			$rs_orderman = gaz_dbi_dyn_query('om.*,tb.datemi', $from, "om.id = " .  $rigo['id_orderman']);
+            $rigo['orderman_data'] = gaz_dbi_fetch_array($rs_orderman);
+			$rigo['orderman_descri']=$rigo['orderman_data']['description'];
             if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
                 $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
@@ -412,6 +416,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'FatturaSemplice' => 'fattura_semplice',
         'FatturaAllegata' => 'fattura_allegata',
         'OrdineFornitore' => 'ordine_fornitore',
+        'OrdineAcquistoProduzioni' => 'ordine_acquisto_produzioni',
         'PreventivoFornitore' => 'preventivo_fornitore',
         'InformativaPrivacy' => 'informativa_privacy',
         'RichiestaPecSdi' => 'richiesta_pecsdi',

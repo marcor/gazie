@@ -334,7 +334,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['id_orderman'] = $form['in_id_orderman'];
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
-                header("Location: " . $form['ritorno']);
+                header("Location: report_broacq.php?flt_tipo=".$form['tipdoc']);
                 exit;
             } else { // e' un'inserimento
                 // ricavo i progressivi in base al tipo di documento

@@ -24,7 +24,6 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$titolo = 'Elenco produzioni';
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
@@ -46,19 +45,12 @@ if (!isset($_GET['auxil'])) {
    $where = "description like '".addslashes($auxil)."%'";
 }
 
-
-if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
-    $toDo = 'update';
-} else {
-    $toDo = 'insert';
-}
-
-if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
-} elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
-}
 ?>
 <div align="center" class="FacetFormHeaderFont">Elenco produzioni</div>
 <?php
+if (!isset($_GET['field']) || ( empty($_GET['field'])))
+   $orderby = " id ";
+
 $recordnav = new recordnav($gTables['orderman'], $where, $limit, $passo);
 $recordnav -> output();
 ?>

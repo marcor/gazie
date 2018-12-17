@@ -59,7 +59,7 @@ class FatturaImmediata extends Template_con_scheda
         $this->Cell(7, 6,'U.m.',1,0,'C',1);
         $this->Cell(16,6,'Quantità',1,0,'R',1);
         $this->Cell(20,6,'Prezzo',1,0,'R',1);
-        $this->Cell(6, 6,'%Sc.',1,0,'C',1);
+        $this->Cell(6, 6,'%Sc',1,0,'C',1);
         $this->Cell(20,6,'Importo',1,0,'R',1);
         $this->Cell(12,6,'%IVA',1,1,'R',1);
     }
@@ -92,7 +92,7 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(20, 6, number_format($rigo['prelis'],$this->decimal_price,',','.'),1,0,'R');
                     if ($rigo['sconto']>0) {
-                       $this->Cell(6, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
+                       $this->Cell(6, 6, floatval($rigo['sconto']),1,0,'C');
                     } else {
                        $this->Cell(6, 6, '',1,0,'C');
                     }
@@ -413,13 +413,14 @@ class FatturaImmediata extends Template_con_scheda
                           $this->docVars->vettor['citta'].' '.
                           $this->docVars->vettor['provincia'],'LBR',0,'L',0,'',1);
         $this->Cell(56, 5,'','LBR',1);
+		/* la scheda di trasporto non si usa più
         if (!empty($this->docVars->vettor['ragione_sociale'])){
           $this->StartPageGroup();
           $this->appendix=true;
           $this->addPage();
           $this->SchedaTrasporto();
           $this->appendix=false;
-        }
+        }*/
     }
 
     function Footer()

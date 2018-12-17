@@ -68,7 +68,7 @@ class DDT extends Template_con_scheda
         //$tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
         $this->Cell(30,6,'Quantità',1,0,'R',1);
         $this->Cell(25,6,'Prezzo',1,0,'R',1);
-        $this->Cell(10,6,'%Sc.',1,1,'R',1);
+        $this->Cell(10,6,'%Sc',1,1,'R',1);
     }
 
     function pageHeader()
@@ -101,7 +101,7 @@ class DDT extends Template_con_scheda
                     $this->Cell(30,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     if ($this->docVars->client['stapre'] == 'S' && floatval($rigo['prelis']) >= 0.00001 ) {
                         $this->Cell(25,6,number_format($rigo['prelis'],$this->decimal_price,',',''),'TB',0,'R');
-                        $this->Cell(10,6,$rigo['sconto'],1,1,'R');
+                        $this->Cell(10,6,floatval($rigo['sconto']),1,1,'R');
                     } else {
                         $this->Cell(25,6);
                         $this->Cell(10,6,'','R',1);
@@ -211,13 +211,14 @@ class DDT extends Template_con_scheda
         $this->Cell(51,5,'ora '.$this->ora.':'.$this->min,'LRB',0,'C');
         $this->Cell(68,5,'','RB',0);
         $this->Cell(68,5,'','RB',1);
+		/* la scheda di trasporto non si usa più
         if (!empty($this->docVars->vettor['ragione_sociale'])){
           $this->StartPageGroup();
           $this->appendix=true;
           $this->addPage();
           $this->SchedaTrasporto();
           $this->appendix=false;
-        }
+        }*/
     }
 
     function Footer()

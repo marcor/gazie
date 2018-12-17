@@ -26,7 +26,7 @@
 
 require('template.php');
 
-class PreventivoFornitore extends Template
+class OrdineAcquistoProduzioni extends Template
 {
     function setTesDoc()
     {
@@ -37,14 +37,14 @@ class PreventivoFornitore extends Template
         $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Richiesta di preventivo n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+        $this->tipdoc = 'Ordine a fornitore n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
     }
     function newPage() {
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->Ln(4);
         $this->SetFont('helvetica','',12);
-        $this->Cell(186,8,'Vogliate cortesemente inviarci la Vostra migliore offerta per l\'acquisto dei sottoelencati prodotti:',0,1);
+        $this->Cell(186,8,'Promemoria ordine d\'acquisto per reparto produzioni:',0,1);
         $this->SetFont('helvetica','',9);
         $this->Cell(25,6,'Codice',1,0,'L',1);
         $this->Cell(80,6,'Descrizione',1,0,'L',1);
@@ -81,7 +81,7 @@ class PreventivoFornitore extends Template
 				/* stampo il rigo riferito ad una produzione   */
 				$this->SetFont('helvetica', 'B', 9);
 				$this->Ln(1);
-				$this->Cell(186, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  substr($rigo['orderman_data']['datemi'],0,4), 1, 1, 'L');
+				$this->Cell(186, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  $rigo['orderman_descri'], 1, 1, 'L');
 				$this->SetFont('helvetica', '', 9);
 			}
 			switch($rigo['tiprig']) {
@@ -133,8 +133,7 @@ class PreventivoFornitore extends Template
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     if ($rigo['prelis'] > 0) {
-                       //$this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
-                       $this->Cell(18, 6, '',1);// non stampo mai il prezzo
+                       $this->Cell(18, 6, '',1);
                     } else {
                        $this->Cell(18, 6, '',1);
                     }

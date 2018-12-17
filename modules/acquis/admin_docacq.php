@@ -1717,8 +1717,8 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                 array('head' => $script_transl["codice_fornitore"], 'class' => '',
                     'value' => '<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][codice_fornitore]" value="' . $v['codice_fornitore'] . '" maxlength="50" />'
                 ),
-                array('head' => $script_transl["descri"], 'class' => '',
-                    'value' => '<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $v['descri'] . '" maxlength="100" />'
+                array('head' => $script_transl["descri"], 'class' => 'col-lg-4',
+                    'value' => '<input class="gazie-tooltip col-lg-12" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $v['descri'] . '" maxlength="100" />'
                 ),
                 array('head' => $script_transl["unimis"], 'class' => '',
                     'value' => '<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="2" />'

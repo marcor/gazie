@@ -38,6 +38,8 @@ if (isset($_GET['dest'])){
   	$r=gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $testat, 'email',filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL));
   }	
   createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro','E');
+} elseif (isset($_GET['production'])){
+  createDocument($tesbro, 'OrdineAcquistoProduzioni',$gTables,'rigbro');
 } else {
   createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro');
 }
