@@ -13,7 +13,12 @@ interfaccia, uno presente in GAzie e l'altro presente nella root di Joomla.
 o su un altro host.
   L'interfaccia residente su GAzie può rimanere sempre la stessa mentre quella residente su Joomla dovrà essere creata specificatamente
 in base al tipo di componente utilizzato per gestire il negozio online.
- 
+
+
+ *ATTIVAZIONE* 
+Questo sistema è avviabile da GAZie solo con il tema G7 e stile default. Con queste impostazioni si attiverà l'icona di sincronizzazione, a destra della
+ barra del menù superiore, proprio a fianco al pulsante "Exit".
+Per attivare il tema G7 bisogna andare nella modifica impostazioni personali, su "Motore interfaccia (sarà attivo dal prossimo login)".
 
 
  *DOWNLOAD ORDINI*
