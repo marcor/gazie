@@ -240,6 +240,7 @@ $strScript = array("admin_client.php" =>
         "Per questo documento è obbligatorio selezionare il DdT di cessione in c/visione di riferimento",
         "La quantità è stata forzata ad 1 perché l'articolo prevere in numero di serie",
         'Non è stato selezionato il cespite da alienare sul relativo rigo',
+		'Un rigo di tipo normale è senza quantità',
         'speban' => "Bank cost",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
