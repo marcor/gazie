@@ -1052,7 +1052,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         'anno' => $XMLvars->docRelDate,
         'sezione' => $XMLvars->seziva,
         'protocollo' => $XMLvars->protoc,
-        'intermediary' => $XMLvars->Intermediary);
+        'intermediary' => false);
     $progressivo_unico_invio = $XMLvars->encodeSendingNumber($data, 36);
 
     //print $XMLvars->decodeFromSendingNumber($progressivo_unico_invio);
