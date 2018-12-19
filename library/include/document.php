@@ -265,6 +265,18 @@ class DocContabVars {
         $this->ritenuta = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+			// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione
+			$checklot=gaz_dbi_get_row($this->gTables['movmag'],'id_mov',$rigo['id_mag']);
+			if (strlen ($checklot['id_lotmag'])>0){
+				$getlot=gaz_dbi_get_row($this->gTables['lotmag'],'id',$checklot['id_lotmag']);
+				if (intval ($getlot['expiry'])<=0){
+					$getlot['expiry']="";
+				}
+				if (isset ($getlot['identifier']) && strlen ($getlot['identifier'])>0){
+					$rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier']." ".$getlot['expiry'];
+				}
+			}
+			// fine se c'è lotto
 			$from = $this->gTables['orderman'] . ' AS om
                  LEFT JOIN ' . $this->gTables['tesbro'] . ' AS tb
                  ON om.id_tesbro=tb.id_tes';
