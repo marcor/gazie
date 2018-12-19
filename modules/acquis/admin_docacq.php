@@ -367,17 +367,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						$msg['err'][] = "docpre";
 					}
                 }
-            }
-			if (!empty($form["clfoco"])) {
-				if (!preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
-					//controllo se ci sono altri documenti con lo stesso numero fornitore
-					$rs_stesso_numero = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " .substr($datemi,0,4) . " and tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' and clfoco = " . $form['clfoco'] . " and numfat = '" . $form['numfat'] . "'", "protoc desc, datfat desc, datemi desc", 0, 1);
-					$stesso_numero = gaz_dbi_fetch_array($rs_stesso_numero);
-					if ($stesso_numero) {
-						$msg['err'][] = "samedoc";
+				if (!empty($form["clfoco"])) {
+					if (!preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
+						//controllo se ci sono altri documenti con lo stesso numero fornitore
+						$rs_stesso_numero = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " .substr($datemi,0,4) . " and tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' and clfoco = " . $form['clfoco'] . " and numfat = '" . $form['numfat'] . "'", "protoc desc, datfat desc, datemi desc", 0, 1);
+						$stesso_numero = gaz_dbi_fetch_array($rs_stesso_numero);
+						if ($stesso_numero) {
+							$msg['err'][] = "samedoc";
+						}
 					}
 				}
-			}
+            }
         }
 // --- fine controllo coerenza date-numeri
         if (empty($form["clfoco"]))
