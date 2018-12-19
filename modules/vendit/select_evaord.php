@@ -31,6 +31,108 @@ $msg = "";
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 
+/**
+ * carica i dati del cliente dentro $form
+ */
+function caricaCliente(&$form) {
+    global $gTables;
+    $_POST['num_rigo'] = 0;
+    $form['traspo'] = 0;
+    $anagrafica = new Anagrafica();
+    $cliente = $anagrafica->getPartner($form['clfoco']);
+    $form['indspe'] = $cliente['indspe'] . " - " . $cliente['capspe'] . " " . $cliente['citspe'] . " " . $cliente['prospe'];
+    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc = 'VOR' AND status NOT LIKE 'EV%' ", "datemi ASC");
+    while ($testate = gaz_dbi_fetch_array($rs_testate)) {
+        $id_des = $anagrafica->getPartner($testate['id_des']);
+        $form['traspo'] += $testate['traspo'];
+        $form['speban'] = $testate['speban'];
+        $form['stamp'] = $testate['stamp'];
+        $form['vettor'] = $testate['vettor'];
+        $form['imball'] = $testate['imball'];
+        $form['portos'] = $testate['portos'];
+        $form['spediz'] = $testate['spediz'];
+        $form['pagame'] = $testate['pagame'];
+        $form['caumag'] = $testate['caumag'];
+        $form['destin'] = $testate['destin'];
+        $form['id_des'] = $testate['id_des'];
+        $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+        $form['id_des_same_company'] = $testate['id_des_same_company'];
+        $form['id_agente'] = $testate['id_agente'];
+        $form['banapp'] = $testate['banapp'];
+        $form['sconto'] = $testate['sconto'];
+        $form['tipdoc'] = $testate['tipdoc'];
+        $ctrl_testate = $testate['id_tes'];
+        $rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $testate['id_tes'], "id_rig asc");
+        while ($rigo = gaz_dbi_fetch_array($rs_righi)) {
+            $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
+            $form['righi'][$_POST['num_rigo']]['id_rig'] = $rigo['id_rig'];
+            $form['righi'][$_POST['num_rigo']]['tiprig'] = $rigo['tiprig'];
+            $form['righi'][$_POST['num_rigo']]['id_tes'] = $rigo['id_tes'];
+            $form['righi'][$_POST['num_rigo']]['tipdoc'] = $testate['tipdoc'];
+            $form['righi'][$_POST['num_rigo']]['datemi'] = $testate['datemi'];
+            $form['righi'][$_POST['num_rigo']]['numdoc'] = $testate['numdoc'];
+            $form['righi'][$_POST['num_rigo']]['descri'] = $rigo['descri'];
+            $form['righi'][$_POST['num_rigo']]['id_body_text'] = $rigo['id_body_text'];
+            $form['righi'][$_POST['num_rigo']]['codart'] = $rigo['codart'];
+            $form['righi'][$_POST['num_rigo']]['unimis'] = $rigo['unimis'];
+            $form['righi'][$_POST['num_rigo']]['prelis'] = $rigo['prelis'];
+            $form['righi'][$_POST['num_rigo']]['provvigione'] = $rigo['provvigione'];
+            $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
+            $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
+            $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
+
+            if (!isset($form['righi'][$_POST['num_rigo']]['evadibile'])) {
+                $totale_evadibile = $rigo['quanti'];
+                $rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order=" . $rigo['id_tes'] . " and codart='" . $rigo['codart'] . "'", "id_rig asc");
+                while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
+                    $totale_evadibile -= $rg_evasi['quanti'];
+                }
+                if ($totale_evadibile == 0) {
+                    $form['righi'][$_POST['num_rigo']]['checkval'] = false;
+                }
+                $form['righi'][$_POST['num_rigo']]['evaso_in_precedenza'] = $rigo['quanti'] - $totale_evadibile;
+                $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
+            }
+            $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
+            $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
+            $form['righi'][$_POST['num_rigo']]['pervat'] = $rigo['pervat'];
+            $form['righi'][$_POST['num_rigo']]['codric'] = $rigo['codric'];
+            $_POST['num_rigo'] ++;
+        }
+    }
+}
+
+/*
+ * codice per porre lo "status" a "EVASO" perchè altrimenti vengono inseriti nel ddt tutti gli ordini, anche quelli evasi
+ * 
+ */
+
+function setOrdineEvaso($righi) {
+    global $gTables;
+//                controllo se ci sono ancora righi inevasi
+    $id_tesArray = array_unique(array_column($righi, 'id_tes'));
+    foreach ($id_tesArray as $id_tes) {
+        $inevasi = false;
+        foreach ($righi as $rigo) {
+            $qtEvasa = (float) $rigo["evaso_in_precedenza"];
+            if($rigo["checkval"]){  // solo se il rigo è selezionato per essere evaso
+                $qtEvasa += (float) $rigo["evadibile"];
+            }
+            $qtOrdinata = (float) $rigo["quanti"];
+            $isQuestoOrdine = ($rigo["id_tes"] == $id_tes);
+            $isInevaso = ($qtOrdinata > $qtEvasa);
+            if ($isQuestoOrdine && $isInevaso) {
+                $inevasi = true;
+                break;
+            }
+        }
+        if (!$inevasi) {  //se non ci sono + righi da evadere
+//                    modifico lo status della testata dell'ordine solo se completamente evaso
+            gaz_dbi_put_row($gTables['tesbro'], "id_tes", $id_tes, "status", "EVASO");
+        }
+    }
+}
+
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
@@ -132,6 +234,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
                 $form['righi'][$_POST['num_rigo']]['checkval'] = false;
             }
 
+            $form['righi'][$_POST['num_rigo']]['evaso_in_precedenza'] = $rigo['quanti'] - $totale_evadibile;
             $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
             $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
             $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
@@ -139,6 +242,10 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             $form['righi'][$_POST['num_rigo']]['codric'] = $rigo['codric'];
             $_POST['num_rigo'] ++;
         }
+    }
+    if (isset($_GET['clfoco'])) { //quando viene caricato un cliente
+        $form['clfoco'] = $_GET['clfoco'];
+        caricaCliente($form);
     }
 } else { //negli accessi successivi riporto solo il form
     $form['id_tes'] = $_POST['id_tes'];
@@ -186,72 +293,16 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
         } else {
             $form['clfoco'] = 0;
         }
-        $_POST['num_rigo'] = 0;
-        $form['traspo'] = 0;
-        $anagrafica = new Anagrafica();
-        $cliente = $anagrafica->getPartner($form['clfoco']);
-        $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc = 'VOR' AND status NOT LIKE 'EV%' ", "datemi ASC");
-        while ($testate = gaz_dbi_fetch_array($rs_testate)) {
-            $id_des = $anagrafica->getPartner($testate['id_des']);
-            $form['traspo'] += $testate['traspo'];
-            $form['speban'] = $testate['speban'];
-            $form['stamp'] = $testate['stamp'];
-            $form['vettor'] = $testate['vettor'];
-            $form['imball'] = $testate['imball'];
-            $form['portos'] = $testate['portos'];
-            $form['spediz'] = $testate['spediz'];
-            $form['pagame'] = $testate['pagame'];
-            $form['caumag'] = $testate['caumag'];
-            $form['destin'] = $testate['destin'];
-            $form['id_des'] = $testate['id_des'];
-            $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
-            $form['id_des_same_company'] = $testate['id_des_same_company'];
-            $form['id_agente'] = $testate['id_agente'];
-            $form['banapp'] = $testate['banapp'];
-            $form['sconto'] = $testate['sconto'];
-            $form['tipdoc'] = $testate['tipdoc'];
-            $ctrl_testate = $testate['id_tes'];
-            $rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $testate['id_tes'], "id_rig asc");
-            while ($rigo = gaz_dbi_fetch_array($rs_righi)) {
-                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
-                $form['righi'][$_POST['num_rigo']]['id_rig'] = $rigo['id_rig'];
-                $form['righi'][$_POST['num_rigo']]['tiprig'] = $rigo['tiprig'];
-                $form['righi'][$_POST['num_rigo']]['id_tes'] = $rigo['id_tes'];
-                $form['righi'][$_POST['num_rigo']]['tipdoc'] = $testate['tipdoc'];
-                $form['righi'][$_POST['num_rigo']]['datemi'] = $testate['datemi'];
-                $form['righi'][$_POST['num_rigo']]['numdoc'] = $testate['numdoc'];
-                $form['righi'][$_POST['num_rigo']]['descri'] = $rigo['descri'];
-                $form['righi'][$_POST['num_rigo']]['id_body_text'] = $rigo['id_body_text'];
-                $form['righi'][$_POST['num_rigo']]['codart'] = $rigo['codart'];
-                $form['righi'][$_POST['num_rigo']]['unimis'] = $rigo['unimis'];
-                $form['righi'][$_POST['num_rigo']]['prelis'] = $rigo['prelis'];
-                $form['righi'][$_POST['num_rigo']]['provvigione'] = $rigo['provvigione'];
-                $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
-                $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
-                $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
-
-                if (!isset($form['righi'][$_POST['num_rigo']]['evadibile'])) {
-                    $totale_evadibile = $rigo['quanti'];
-                    $rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order=" . $rigo['id_tes'] . " and codart='" . $rigo['codart'] . "'", "id_rig asc");
-                    while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
-                        $totale_evadibile -= $rg_evasi['quanti'];
-                    }
-                    if ($totale_evadibile == 0) {
-                        $form['righi'][$_POST['num_rigo']]['checkval'] = false;
-                    }
-                    $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
-                }
-                $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
-                $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
-                $form['righi'][$_POST['num_rigo']]['pervat'] = $rigo['pervat'];
-                $form['righi'][$_POST['num_rigo']]['codric'] = $rigo['codric'];
-                $_POST['num_rigo'] ++;
-            }
-        }
+        caricaCliente($form);
     }
 }
-if (isset($_POST['clfoco'])) {
-    $form['clfoco'] = $_POST['clfoco'];
+if (isset($_POST['clfoco']) || isset($_GET['clfoco'])) {
+    if (isset($_POST['clfoco'])) {
+        $form['clfoco'] = $_POST['clfoco'];
+    } else {
+        $form['clfoco'] = $_GET['clfoco'];
+        $_POST['clfoco'] = $_GET['clfoco'];
+    }
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($form['clfoco']);
 } elseif (!isset($form['clfoco'])) {
@@ -324,7 +375,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
             $form['tipdoc'] = 'CMR';
         } else {
             $form['ddt_type'] = 'T';
-            $form['tipdoc'] = 'DDT';
+//            $form['tipdoc'] = 'DDT';  // tolto perchè lo prende dall'elenco a discesa
         }
         $form['template'] = "FatturaSemplice";
         $form['id_con'] = '';
@@ -381,15 +432,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                 //modifico il rigo dell'ordine indicandoci l'id della testata del DdT
                 //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
-            if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
-                //controllo se ci sono ancora righi inevasi
-                //$rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-                //$inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-                //if (!$inevasi) {  //se non ci sono + righi da evadere
-                //modifico lo status della testata dell'ordine solo se completamente evaso
-                //gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-                //}
-            }
             if ($v['tiprig'] >= 11 && $v['tiprig'] <= 13) {
                 $row = $v;
                 unset($row['id_rig']);
@@ -398,6 +440,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
             }
             $ctrl_tes = $v['id_tes'];
         }
+        setOrdineEvaso($form['righi']);
         $_SESSION['print_request'] = $last_id;
         header("Location: invsta_docven.php");
         exit;
@@ -526,24 +569,30 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                 //gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
                 //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
-            if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non � il primo rigo processato
-                //controllo se ci sono ancora righi inevasi
-                $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-                $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-                if (!$inevasi) {  //se non ci sono + righi da evadere
-                    //modifico lo status della testata dell'ordine solo se completamente evaso
-                    gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-                }
-            }
+            /* non serve più
+              if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non � il primo rigo processato
+              //controllo se ci sono ancora righi inevasi
+              $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
+              $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
+              if (!$inevasi) {  //se non ci sono + righi da evadere
+              //modifico lo status della testata dell'ordine solo se completamente evaso
+              gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
+              }
+              }
+             */
             $ctrl_tes = $v['id_tes'];
         }
-        //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
-        $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-        $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-        if (!$inevasi) {  //se non ci sono + righi da evadere
-            //modifico lo status della testata dell'ordine solo se completamente evaso
-            gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-        }
+        /* non serve più
+          //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
+          $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
+          $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
+          if (!$inevasi) {  //se non ci sono + righi da evadere
+          //modifico lo status della testata dell'ordine solo se completamente evaso
+          gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
+          }
+         */
+        setOrdineEvaso($form['righi']);
+
         // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
         require("../../library/cash_register/" . $ecr['driver'] . ".php");
         $ticket_printer = new $ecr['driver'];
@@ -836,9 +885,11 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
     <input type="hidden" name="speban" value="<?php echo $form['speban']; ?>">
     <input type="hidden" name="stamp" value="<?php echo $form['stamp']; ?>">
     <input type="hidden" name="listin" value="<?php echo $form['listin']; ?>">
-    <input type="hidden" name="net_weight" value="<?php echo $form['net_weight']; ?>">
-    <input type="hidden" name="gross_weight" value="<?php echo $form['gross_weight']; ?>">
-    <input type="hidden" name="units" value="<?php echo $form['units']; ?>">
+    <!--   adesso sono modificabili
+        <input type="hidden" name="net_weight" value="<?php echo $form['net_weight']; ?>">
+        <input type="hidden" name="gross_weight" value="<?php echo $form['gross_weight']; ?>">
+        <input type="hidden" name="units" value="<?php echo $form['units']; ?>">
+    -->
     <input type="hidden" name="volume" value="<?php echo $form['volume']; ?>">
     <input type="hidden" name="id_agente" value="<?php echo $form['id_agente']; ?>">
     <input type="hidden" name="caumag" value="<?php echo $form['caumag']; ?>">
@@ -951,7 +1002,23 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         $select_vettor->addSelected($form["vettor"]);
         $select_vettor->output();
         echo "</td>\n";
-        echo "</tr></table>\n";
+        echo "</tr><tr>
+			<td class=\"FacetFieldCaptionTD\">$script_transl[0]</td>
+			<td class=\"FacetDataTD\">
+				<input type=\"text\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\" maxlength=\"9\" size=\"5\" />
+			</td>
+			<td class=\"FacetFieldCaptionTD\">$script_transl[1]</td>
+			<td class=\"FacetDataTD\">
+				<input type=\"text\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\" maxlength=\"9\" size=\"5\" />
+			</td>
+			<td class=\"FacetFieldCaptionTD\">$script_transl[2]</td>
+			<td class=\"FacetDataTD\">
+				<input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\" size=\"4\" />
+			</td></tr>\n";
+        $tidoc_selectable = array("DDT" => "D.d.T. di Vendita", "DDY" => "D.d.T. da non fatturare automaticamente");
+        echo "<tr><td class=\"FacetFieldCaptionTD\">" . "Tipo documento" . "</td><td class=\"FacetDataTD\">";
+        $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
+        echo"</td></tr></table>";
         if (!empty($form['righi'])) {
             echo '<div align="center"><b>' . $script_transl['preview_title'] . '</b></div>';
             echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
@@ -1015,7 +1082,12 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                 if ($ctrl_tes != $v['id_tes']) {
                     echo "<tr><td class=\"FacetDataTD\" colspan=\"9\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td></tr>";
                 }
-                echo "<tr>";
+
+                if (empty($checkin) || $checkin == ' disabled ') {
+                    echo '<tr style="color: LightGray">';
+                } else {
+                    echo "<tr>";
+                }
                 // form hidden fields holding actual row values
                 $fields = array('id_tes', 'datemi', 'tipdoc', 'numdoc',
                     'id_rig', 'tiprig', 'id_doc', 'id_body_text',
@@ -1032,6 +1104,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                     );
                     echo "<td align=\"center\">" . $v['unimis'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['quanti'] . "</td>\n";
+                    echo "<input type=\"hidden\" value=\"" . $v['evaso_in_precedenza'] . "\" name=\"righi[$k][evaso_in_precedenza]\">\n";
                     echo "<td align=\"right\" width=\"10%\"><input type=\"text\" value=\"" . $v['evadibile'] . "\" name=\"righi[$k][evadibile]\"></td>\n";
                     echo "<td align=\"right\">" . $v['prelis'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['sconto'] . "</td>\n";

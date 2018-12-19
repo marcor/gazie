@@ -1291,7 +1291,10 @@ $strScript = array("admin_client.php" =>
         'issue_cor' => 'Evadi con Corrispettivo',
         'checkbox' => 'Questa checkbox dev\'essere selezionata per evadere il rigo',
         'alert1' => '&sup1; La sezione IVA scelta non &egrave; quella<br/>normalente usata per<br/>l\'emissione delle Fatture immediate.',
-        'alert2' => '&sup1; La sezione IVA selezionata potrebbe non<br/>coincidere con quella che verr&agrave; usata per<br/>l\'emissione della Fattura immediata che per<br/>Vostra scelta sar&agrave; uguale all\'ultima emessa.'
+        'alert2' => '&sup1; La sezione IVA selezionata potrebbe non<br/>coincidere con quella che verr&agrave; usata per<br/>l\'emissione della Fattura immediata che per<br/>Vostra scelta sar&agrave; uguale all\'ultima emessa.',
+        "Peso netto",
+        "Peso lordo",
+        "N.Colli",
     ),
     "select_partner_status.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa dello scadenzario dei clienti',

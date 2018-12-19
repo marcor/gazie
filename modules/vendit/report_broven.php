@@ -318,7 +318,8 @@ $recordnav->output();
                 if ( $what=="VOG" ) {
                     echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?weekday=".$r['weekday_repeat']."\">evadi</a></td>";
                 } else {
-                    echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a></td>";
+                    echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a>&nbsp;";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a></td>";
                 }
             } elseif ($remains_atleastone) {
                 // l'ordine è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
@@ -328,7 +329,8 @@ $recordnav->output();
                 if ( $what=="VOG" ) {
                     echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord_gio.php\">evadi il rimanente</a>";
                 } else {
-                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>&nbsp;";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
                 }
                 echo "</td>";
             } else {
