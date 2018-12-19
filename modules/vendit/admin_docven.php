@@ -1989,6 +1989,7 @@ $select_artico->output(substr($form['cosear'], 0, 20));
 echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
 
 // Antonio Germani - input ricerca con pistola lettore codice a barre 
+				if ($toDo == "insert"){
 					?>
 					</td><td class="FacetColumnTD" style="width:10%;">
 					<?php
@@ -2029,9 +2030,7 @@ echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-t
 							<?php
 						}
 					}
-					?>
-					
-					<?php
+				}
 					// Antonio Germani - fine ricerca con pistola lettore codice a barre -->
 
 echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\11\" size=\"7\" name=\"in_quanti\" tabindex=\"1\" accesskey=\"q\">\n";
