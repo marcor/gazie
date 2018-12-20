@@ -27,7 +27,7 @@ require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $anno = date("Y");
 $msg = "";
-
+$lm = new lotmag;
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 
@@ -80,6 +80,8 @@ function caricaCliente(&$form) {
             $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
             $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
+			$form['righi'][$_POST['num_rigo']]['lot_or_serial'] = $articolo['lot_or_serial'];
+			$form['righi'][$_POST['num_rigo']]['id_lotmag'] = $rigo['id_lotmag'];
 
             if (!isset($form['righi'][$_POST['num_rigo']]['evadibile'])) {
                 $totale_evadibile = $rigo['quanti'];
@@ -223,6 +225,9 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
             $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
+			$form['righi'][$_POST['num_rigo']]['lot_or_serial'] = $articolo['lot_or_serial'];
+			$form['righi'][$_POST['num_rigo']]['id_lotmag'] = "";
+			
 
             // controllo la quantità già evasa sfogliando le tabelle tesdoc e rigdoc
             $totale_evadibile = $rigo['quanti'];
@@ -1096,7 +1101,44 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                 );
 
                 echo "<td>" . $v['codart'] . "</td>\n";
-                echo "<td>" . $v['descri'] . "</td>\n";
+                echo "<td>" . $v['descri'];
+				
+				// Antonio Germani - selezione lotto
+				echo "<input type=\"hidden\" value=\"" . $v['lot_or_serial'] . "\" name=\"righi[$k][lot_or_serial]\">\n";
+				echo "<input type=\"hidden\" value=\"" . $v['id_lotmag'] . "\" name=\"righi[$k][id_lotmag]\">\n";
+				
+				
+				if ($v['lot_or_serial'] > 0) {
+					$lm->getAvailableLots($v['codart']);
+					$selected_lot = $lm->getLot($v['id_lotmag']);
+					echo '<div><button class="btn btn-xs btn-success" title="clicca per cambiare lotto" type="image"  data-toggle="collapse" href="#lm_dialog' . $k . '">'
+					. 'lot:' . $selected_lot['id']
+					. ' id:' . $selected_lot['identifier']
+					. ' doc:' . $selected_lot['desdoc']
+					. ' - ' . gaz_format_date($selected_lot['datdoc']) . ' <i class="glyphicon glyphicon-tag"></i></button>';
+					
+					echo "</div>\n";
+					echo '<div id="lm_dialog' . $k . '" class="collapse" >
+                        <div class="form-group">';
+					if (count($lm->available) > 1) {
+						foreach ($lm->available as $v_lm) {
+							if ($v_lm['id'] <> $v['id_lotmag']) {
+								echo '<div>change to:<button class="btn btn-xs btn-warning" type="image" onclick="this.form.submit();" name="new_lotmag[' . $k . '][' . $v_lm['id_lotmag'] . ']">'
+								. 'lot:' . $v_lm['id']
+								. ' id:' . $v_lm['identifier']
+								. ' doc:' . $v_lm['desdoc']
+								. ' - ' . gaz_format_date($v_lm['datdoc']) . '</button></div>';
+							}
+						}
+					} else {
+						echo '<div><button class="btn btn-xs btn-danger" type="image" >Non sono disponibili altri lotti</button></div>';
+					}
+					echo '</div>'
+					. "</div>\n";
+				}
+				// fine selezione lotto
+				
+				echo "</td>\n";
                 if ($v['tiprig'] <= 10 || $v['tiprig'] >= 14) {
                     $fields = array_merge($fields, array('unimis', 'quanti',
                         'prelis', 'provvigione', 'sconto'
