@@ -2806,7 +2806,7 @@ echo '</table>';
 	}
 </script>
 <?php
-if ($form['ok_barcode']=="ok"){
+if (isset($form['ok_barcode']) && $form['ok_barcode']=="ok"){
 	?>
 	<script type="text/javascript">
 	if (this.document.docven.in_barcode.value == '') this.document.docven.in_barcode.focus();
