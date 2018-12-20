@@ -56,8 +56,8 @@ class DocContabVars {
         if ($admin_aziend['pariva']) {
             $this->codici .= 'P.I. ' . $admin_aziend['pariva'] . ' ';
         }
-        if ($admin_aziend['rea']) {
-            $this->codici .= 'R.E.A. ' . $admin_aziend['rea'];
+        if (strlen($admin_aziend['REA_ufficio'])>1 && strlen($admin_aziend['REA_numero'])>3 ) {
+            $this->codici .= 'R.E.A. ' . $admin_aziend['REA_ufficio'].' '.$admin_aziend['REA_numero'];
         }
         $this->intesta4 = $admin_aziend['e_mail'];
         $this->intesta5 = $admin_aziend['sexper'];

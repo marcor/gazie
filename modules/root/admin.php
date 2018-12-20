@@ -172,6 +172,15 @@ if ($t > 4 && $t <= 13) {
             </div>
             <?php
         }
+        if ($admin_aziend['sexper']=='G' && ( empty($admin_aziend['REA_ufficio']) || empty($admin_aziend['REA_socio']) || strlen($admin_aziend['REA_numero']) < 4)) {
+            ?>
+            <div class="alert alert-danger text-center" role="alert">
+                <?php
+                    echo $script_transl['errors']['rea'] ;
+                ?>
+            </div>
+            <?php
+        }
         ?>
         <div class="row text-center">
             <div class="col-sm-6">

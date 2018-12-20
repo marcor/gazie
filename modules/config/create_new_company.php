@@ -177,7 +177,6 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             $new_company['e_mail'] = $upd;
             $new_company['codfis'] = '00000000000';
             $new_company['pariva'] = 0;
-            $new_company['rea'] = 'INSERIRE REA';
             gaz_dbi_table_insert('aziend', $new_company);
             // procedo all'abilitazione degli utenti in base alla scelta fatta dal'operatore
             $user_abilit = gaz_dbi_dyn_query('*', $gTables['admin_module'], $where_user, 'moduleid');

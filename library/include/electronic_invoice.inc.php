@@ -44,15 +44,18 @@ class invoiceXMLvars {
         $this->intesta3 = 'Tel.' . $admin_aziend['telefo'] . ' ';
         $this->aziendTel = $admin_aziend['telefo'];
         $this->aziendFax = $admin_aziend['fax'];
+		// REA
+        $this->REA_ufficio = $admin_aziend['REA_ufficio'];
+        $this->REA_numero = $admin_aziend['REA_numero'];
+        $this->REA_capitale = $admin_aziend['REA_capitale'];
+        $this->REA_socio = $admin_aziend['REA_socio'];
+        $this->REA_stato = $admin_aziend['REA_stato'];
         $this->codici = '';
         if ($admin_aziend['codfis'] != '') {
             $this->codici .= 'C.F. ' . $admin_aziend['codfis'] . ' ';
         }
         if ($admin_aziend['pariva']) {
             $this->codici .= 'P.I. ' . $admin_aziend['pariva'] . ' ';
-        }
-        if ($admin_aziend['rea']) {
-            $this->codici .= 'R.E.A. ' . $admin_aziend['rea'];
         }
         if ($tesdoc['template'] == 'FatturaImmediata') {
             $this->sempl_accom = true;
@@ -630,6 +633,26 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['country']));
             $results->appendChild($attrVal);
+			//IscrizioneREA
+            if ($XMLvars->REA_ufficio != "" && $XMLvars->REA_numero != "") { // ho i dati minimi indispensabili per valorizzare il REA
+                $results = $xpath->query("//CedentePrestatore")->item(0);
+                $el = $domDoc->createElement("IscrizioneREA","");
+                $el1 = $domDoc->createElement("Ufficio", $XMLvars->REA_ufficio);
+                $el->appendChild($el1);
+                $el1 = $domDoc->createElement("NumeroREA", $XMLvars->REA_numero);
+                $el->appendChild($el1);
+                if ($XMLvars->REA_capitale != "") {
+                    $el1 = $domDoc->createElement("CapitaleSociale", $XMLvars->REA_capitale);
+                    $el->appendChild($el1);
+                }
+                if ($XMLvars->REA_socio != "") {
+                    $el1 = $domDoc->createElement("SocioUnico", $XMLvars->REA_socio);
+                    $el->appendChild($el1);
+                }
+                $el1 = $domDoc->createElement("StatoLiquidazione", $XMLvars->REA_stato);
+                $el->appendChild($el1);
+                $results->appendChild($el);
+            }			
         } elseif ($ctrl_doc <> $XMLvars->docRelNum) { // quando cambia il DdT
             /*
               in caso di necessità qui potrò aggiungere linee di codice

@@ -437,8 +437,46 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="rea" class="col-sm-4 control-label"><?php echo $script_transl['rea']; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['rea']; ?>" name="rea" maxlength="32" />
+                        <label for="REA_ufficio" class="col-sm-4 control-label"><?php echo $script_transl['REA_ufficio']; ?></label>
+                        <?php
+                        $gForm->selectFromDB('provinces', 'REA_ufficio', 'abbreviation', $form['REA_ufficio'], 'abbreviation', 1, ' - ', 'name', '', 'col-sm-8', null, 'style="max-width: 350px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="REA_numero" class="col-sm-4 control-label"><?php echo $script_transl['REA_numero']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['REA_numero']; ?>" name="REA_numero" maxlength="20" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="REA_capitale" class="col-sm-4 control-label"><?php echo $script_transl['REA_capitale']; ?></label>
+                        <input class="col-sm-2" step="0.01" type="number" min="0" value="<?php echo $form['REA_capitale']; ?>" name="REA_capitale"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="REA_socio" class="col-sm-4 control-label"><?php echo $script_transl['REA_socio']; ?></label>
+                        <?php
+                        $gForm->variousSelect('REA_socio', $script_transl['REA_socio_value'], $form['REA_socio'], "col-sm-8", false, '', 50, 'style="max-width: 200px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="REA_stato" class="col-sm-4 control-label"><?php echo $script_transl['REA_stato']; ?></label>
+                        <?php
+                        $gForm->variousSelect('REA_stato', $script_transl['REA_stato_value'], $form['REA_stato'], "col-sm-8", false, '', 50, 'style="max-width: 200px;"');
+                        ?>
                     </div>
                 </div>
             </div><!-- chiude row  -->
