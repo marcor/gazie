@@ -198,16 +198,16 @@ class invoiceXMLvars {
         $this->protoc = $this->tesdoc["protoc"];
         $this->seziva = $this->tesdoc["seziva"];
         $this->docYear = substr($this->tesdoc["datemi"], 0, 4);    // Anno del documento
-        // aggiungo l'eventuale intermediario in caso di installazione "da commercialista"
+        /* rimossa modalità intermediario
         $intermediary_code = gaz_dbi_get_row($gTables['config'], 'variable', 'intermediary');
         if ($intermediary_code['cvalue'] > 0) {
             $intermediary = gaz_dbi_get_row($gTables['aziend'], 'codice', $intermediary_code['cvalue']);
             $this->IdCodice = $intermediary['codfis'];
             $this->Intermediary = $intermediary['codice'];
-        } else {
+        } else {*/
             $this->IdCodice = $admin_aziend['codfis'];
             $this->Intermediary = false;
-        }
+        //}
         $this->totimp_body = 0;
         $this->totimp_decalc = 0;
         $this->totimp_doc = 0;
