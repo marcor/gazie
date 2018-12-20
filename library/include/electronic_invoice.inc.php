@@ -684,7 +684,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                         // se ho un lotto di magazzino lo accodo alla ddescrizione
                         $rigo['descri'] .= ' LOTTO: '.$rigo['idlotto'].' SCAD.'.$rigo['scadenzalotto']; // ogni $v è lungo al massimo 60 caratteri
                     }
-                    $el1 = $domDoc->createElement("Descrizione",  substr($rigo['descri'], -1000));
+                    $el1 = $domDoc->createElement("Descrizione", htmlspecialchars(substr($rigo['descri'], -1000), ENT_XML1 | ENT_QUOTES, 'UTF-8', true)) ;
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("Quantita", number_format($rigo['quanti'], 2, '.', ''));
                     $el->appendChild($el1);
@@ -1028,7 +1028,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     foreach ($ratpag as $k => $v) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiPagamento")->item(0);
         $el = $domDoc->createElement("DettaglioPagamento", ''); // 2.4.2
-        $el1 = $domDoc->createElement("Beneficiario", htmlspecialchars(trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis),ENT_XML1)); // 2.4.2.1
+        $el1 = $domDoc->createElement("Beneficiario", htmlspecialchars(trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis), ENT_XML1 | ENT_QUOTES, 'UTF-8', true)); // 2.4.2.1
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("ModalitaPagamento", $XMLvars->pagame['fae_mode']); // 2.4.2.2
         $el->appendChild($el1);
