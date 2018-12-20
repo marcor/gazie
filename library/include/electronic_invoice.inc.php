@@ -641,11 +641,11 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                 $el->appendChild($el1);
                 $el1 = $domDoc->createElement("NumeroREA", $XMLvars->REA_numero);
                 $el->appendChild($el1);
-                if ($XMLvars->REA_capitale != "") {
+                if (floatval($XMLvars->REA_capitale) > 1) {
                     $el1 = $domDoc->createElement("CapitaleSociale", $XMLvars->REA_capitale);
                     $el->appendChild($el1);
                 }
-                if ($XMLvars->REA_socio != "") {
+                if (strlen($XMLvars->REA_socio) >= 2) {
                     $el1 = $domDoc->createElement("SocioUnico", $XMLvars->REA_socio);
                     $el->appendChild($el1);
                 }
