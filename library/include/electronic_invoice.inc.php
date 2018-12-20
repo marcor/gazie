@@ -1028,7 +1028,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     foreach ($ratpag as $k => $v) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiPagamento")->item(0);
         $el = $domDoc->createElement("DettaglioPagamento", ''); // 2.4.2
-        $el1 = $domDoc->createElement("Beneficiario", trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis)); // 2.4.2.1
+        $el1 = $domDoc->createElement("Beneficiario", htmlspecialchars(trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis),ENT_XML1)); // 2.4.2.1
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("ModalitaPagamento", $XMLvars->pagame['fae_mode']); // 2.4.2.2
         $el->appendChild($el1);
