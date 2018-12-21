@@ -7,5 +7,7 @@ ALTER TABLE `gaz_aziend`
 	ADD COLUMN `REA_stato` VARCHAR(2) NOT NULL DEFAULT '' COMMENT 'Fattura elettronica 1.2.4.5: Indica se la Società si trova in stato di liquidazione oppure no, valori ammessi [LS] in liquidazione [LN] non in liquidazione' AFTER `REA_socio`,
 	DROP COLUMN `rea`;
 UPDATE `gaz_aziend` SET `REA_stato`='LN' WHERE 1;
+UPDATE `gaz_config` SET `cvalue` = '113' WHERE `id` =2;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`) VALUES ('Eventuale ultimo rigo descrittivo su fatture es. Contributo CONAI', 'descriptive_last_row');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
