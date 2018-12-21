@@ -73,7 +73,6 @@ class FatturaAllegata extends Template
     function compose()
     {
         $this->setTesDoc();
-        $this->AliasNbPages();
         $this->body();
     }
 
