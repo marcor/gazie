@@ -118,33 +118,6 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
-	if (isset($_POST['button_ok_barcode']) or $_POST['ok_barcode']=="ok"){
-		$form['ok_barcode']="ok";
-	} else {
-		$form['ok_barcode']="";
-	}
-	if (isset ($_POST['no_barcode'])){
-		$form['ok_barcode']="no";
-		unset ($_POST['in_barcode']);
-		$form['ok_barcode']="";
-	}
-	if (isset ($_POST['in_barcode']) && strlen($_POST['in_barcode'])>0){
-		$form['in_barcode']=$_POST['in_barcode'];
-		$serbar = gaz_dbi_get_row($gTables['artico'], "barcode", $form['in_barcode']);
-		if (!isset($serbar)){
-			$form['in_barcode']="NOT FOUND";
-		} else {
-			$_POST['cosear']=$serbar['codice'];
-			$form['in_codart']=$serbar['codice'];
-			$_POST['in_codart']=$serbar['codice'];
-			$_POST['in_submit']="submit";
-			$form['in_barcode']="";
-			$form['in_quanti']="1";
-			$_POST['in_quanti']="1";
-		}
-	} else {
-		$form['in_barcode']="";
-	}
     $form['id_tes'] = $_POST['id_tes'];
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($_POST['clfoco']);
@@ -1553,8 +1526,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['mintra'] = date("i");
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
-	$form['in_barcode']="";
-	$form['ok_barcode']="";
     $form['tipdoc'] = '';
     $form['id_doc_ritorno'] = 0;
     if (isset($_GET['tipdoc'])) {
@@ -1987,53 +1958,7 @@ $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 $select_artico->output(substr($form['cosear'], 0, 20));
 echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
-
-// Antonio Germani - input ricerca con pistola lettore codice a barre 
-				if ($toDo == "insert"){
-					?>
-					</td><td class="FacetColumnTD" style="width:10%;">
-					<?php
-					if ($form['ok_barcode']!="ok"){
-						?>
-						<div class="col-sm-12 col-md-1 col-lg-1">
-							<div class="form-group text-center">
-								<button type="submit"  name="button_ok_barcode" title="inserisci con pistola Barcode"> 
-                                <span class="glyphicon glyphicon-barcode"></span>
-								</button>
-							</div>
-						</div>
-						<?php
-					} 
-					?>
-					<input type="hidden" value="<?php echo $form['ok_barcode']; ?>" name="ok_barcode" />
-					<?php
-					if ($form['ok_barcode']=="ok"){
-						if ($form['in_barcode']==""){
-						?>
-						
-								<label for="item" ><?php echo "Barcode"; ?></label>
-								<input  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
-								<button type="submit"  name="no_barcode" title="Togli con pistola Barcode"> 
-                                <span class="glyphicon glyphicon-remove"></span>
-							
-						
-						<?php
-						} elseif ($form['in_barcode']=="NOT FOUND") {
-							$form['in_barcode']="";
-							?>
-							
-									<label for="item" ><?php echo "Barcode"; ?></label>
-									<input style="border: 1px solid red;"  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
-									<button type="submit"  name="no_barcode" title="Togli con pistola Barcode"> 
-									<span class="glyphicon glyphicon-remove"></span>
-								
-							<?php
-						}
-					}
-				}
-					// Antonio Germani - fine ricerca con pistola lettore codice a barre -->
-
-echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\11\" size=\"7\" name=\"in_quanti\" tabindex=\"1\" accesskey=\"q\">\n";
+echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 echo '  </td>
 		<td class="FacetColumnTD" align="right">
 			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
@@ -2805,15 +2730,6 @@ echo '</table>';
 		}
 	}
 </script>
-<?php
-if (isset($form['ok_barcode']) && $form['ok_barcode']=="ok"){
-	?>
-	<script type="text/javascript">
-	if (this.document.docven.in_barcode.value == '') this.document.docven.in_barcode.focus();
-	</script>
-	<?php
-}
-?>
 <script language="JavaScript">
 var last_focus_value;
 var last_focus;
