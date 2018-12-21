@@ -442,8 +442,10 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
 				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
-				$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $v['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
-                gaz_dbi_query($query);
+				if (intval($v['id_lotmag']) >0){
+					$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $v['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
+					gaz_dbi_query($query);
+				}
 				// fine inserisco id_lotmag
 				
                 //modifico il rigo dell'ordine indicandoci l'id della testata del DdT
@@ -751,6 +753,16 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                 if ($v['quanti'] == $v['evadibile']) {
                     unset($row['id_rig']);
                 }
+				
+				// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione articolo
+				if (intval ($form['righi'][$k]['id_lotmag'])>0){
+					if (intval ($form['righi'][$k]['expiry'])<=0){
+						$form['righi'][$k]['expiry']="";
+					}
+					$form['righi'][$k]['descri'] = $form['righi'][$k]['descri'] . " - Lot: " . $form['righi'][$k]['identifier'] . " " . $form['righi'][$k]['expiry'];
+				}
+				// fine accodo lotto
+				
                 $row['id_tes'] = $last_id;
                 $row['id_order'] = $v['id_tes'];
                 $row['quanti'] = $v['evadibile'];
@@ -762,6 +774,13 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
                 }
                 $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $form['righi'][$k]['codart']);
+				// Antonio Germani - vedo in quale id_mov verrà registrato il prossimo movimento di magazzino
+					$query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
+                    unset($row);
+                    $result = gaz_dbi_query($query);
+                    $row = $result->fetch_assoc();
+                    $id_movmag = $row['Auto_increment'];
+					
                 if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] == 0 and
                         $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
@@ -770,6 +789,13 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                         $form['righi'][$k]['tiprig'] == 14 and ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
+				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
+				if (intval($v['id_lotmag']) >0){
+					$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $v['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
+					gaz_dbi_query($query);
+				}
+				// fine inserisco id_lotmag
+				
                 //modifico il rigo dell'ordine indicandoci l'id della testata della fattura immediata
                 //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
