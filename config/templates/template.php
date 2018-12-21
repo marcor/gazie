@@ -76,6 +76,7 @@ class Template extends FPDI {
         $this->month = $docVars->month;
         $this->year = $docVars->year;
         $this->withoutPageGroup = $docVars->withoutPageGroup;
+		$this->efattura = $docVars->efattura;
     }
 
     function Header() {
@@ -101,6 +102,12 @@ class Template extends FPDI {
             $this->Line(0, 93, 3, 93); //questa marca la linea d'aiuto per la piegatura del documento
             $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
             $this->Ln($interlinea);
+			if (!empty($this->efattura)){
+				$this->SetFont('helvetica','B',14);
+				$this->SetTextColor(255,150,150);
+				$this->Cell(186,0,'Copia cartacea del documento elettronico '.$this->efattura,0,1,'C');
+				$this->SetTextColor(0,0,0);
+			}
             $this->SetFont('helvetica', '', 11);
             $this->Cell(110, 5, $this->tipdoc, 1, 1, 'L', 1, '', 1);
             if ($this->tesdoc['tipdoc'] == 'NOP' || $this->withoutPageGroup) {

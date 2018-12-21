@@ -173,11 +173,29 @@ class DocContabVars {
         $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
 
+		$this->efattura='';
+
         switch ($tesdoc["tipdoc"]) {
             case "FAD":
             case "FAI":
                 $this->docRelNum = $this->tesdoc["numfat"];
                 $this->docRelDate = $this->tesdoc["datfat"];
+				// in caso di fattura elettronica ricavo il nome del file
+				if (substr($tesdoc['datfat'], 0, 4)>=2019 ) { // dal 2019 valorizzo il nome della e-fattura
+					$num = $tesdoc['seziva'] . substr($tesdoc['datfat'], 3, 1).substr(str_pad($tesdoc['protoc'], 6, '0', STR_PAD_LEFT), -6);;
+					$num = intval($num);
+					$b=36; // in base 36
+					$base = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+					$r = $num % $b;
+					$res = $base[$r];
+					$q = floor($num / $b);
+					while ($q) {
+						$r = $q % $b;
+						$q = floor($q / $b);
+						$res = $base[$r] . $res;
+					}
+					$this->efattura = "IT" . $admin_aziend['codfis'] . "_".$res.'.xml';
+				}
                 break;
             case "DDT":
             case "DDL":
@@ -197,6 +215,7 @@ class DocContabVars {
 		// aggiungo la mail in testata documento sui dati aziendali per poterla eventualmente passare alla funzione sendMail
 		$admin_aziend['other_email']=$tesdoc["email"];
         $this->azienda = $admin_aziend;
+		
     }
 
     function initializeTotals() {
