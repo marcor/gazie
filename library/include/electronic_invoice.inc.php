@@ -161,32 +161,32 @@ class invoiceXMLvars {
         $this->ddt_data = false;
 
         $this->TipoDocumento = 'TD01';    // <TipoDocumento> 2.1.1.1
-        $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
+        $this->docRelNum = $this->tesdoc["numdoc"].'/'.$this->tesdoc["seziva"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
 
         switch ($tesdoc["tipdoc"]) {
             case "FAD":
                 $this->ddt_data = true;
-                $this->docRelNum = $this->tesdoc["numfat"];
+                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
             case "FAI":
-                $this->docRelNum = $this->tesdoc["numfat"];
+                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
             case "FNC":
                 $this->TipoDocumento = 'TD04';    // <TipoDocumento> 2.1.1.1
-                $this->docRelNum = $this->tesdoc["numfat"];
+                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
             case "FND":
                 $this->TipoDocumento = 'TD05';    // <TipoDocumento> 2.1.1.1
-                $this->docRelNum = $this->tesdoc["numfat"];
+                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
             case "FAP":
                 $this->TipoDocumento = 'TD06';    // <TipoDocumento> 2.1.1.1
-                $this->docRelNum = $this->tesdoc["numfat"];
+                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
             case "DDT":
@@ -194,7 +194,7 @@ class invoiceXMLvars {
             case "DDR":
             default:
                 $this->ddt_data = true;
-                $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
+                $this->docRelNum = $this->tesdoc["numdoc"].'/'.$this->tesdoc["seziva"];    // Numero del documento relativo
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
 
