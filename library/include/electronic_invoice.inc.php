@@ -200,17 +200,9 @@ class invoiceXMLvars {
 
         $this->protoc = $this->tesdoc["protoc"];
         $this->seziva = $this->tesdoc["seziva"];
+        $this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
         $this->docYear = substr($this->tesdoc["datemi"], 0, 4);    // Anno del documento
-        /* rimossa modalità intermediario
-        $intermediary_code = gaz_dbi_get_row($gTables['config'], 'variable', 'intermediary');
-        if ($intermediary_code['cvalue'] > 0) {
-            $intermediary = gaz_dbi_get_row($gTables['aziend'], 'codice', $intermediary_code['cvalue']);
-            $this->IdCodice = $intermediary['codfis'];
-            $this->Intermediary = $intermediary['codice'];
-        } else {*/
-            $this->IdCodice = $admin_aziend['codfis'];
-            $this->Intermediary = false;
-        //}
+        $this->IdCodice = $admin_aziend['codfis'];
         $this->totimp_body = 0;
         $this->totimp_decalc = 0;
         $this->totimp_doc = 0;
@@ -401,25 +393,14 @@ class invoiceXMLvars {
 
     function encodeSendingNumber($data, $b = 62) {
         /* questa funzione mi serve per convertire un numero decimale in uno a base 36
-          -- SCHEMA DEI DATI PER INVIO TRAMITE INTERMEDIARIO $data[intemediary] =true --
-          |   SEZIONE IVA   |  ANNO DOCUMENTO  |  CODICE AZIENDA  | NUMERO PROTOCOLLO |
-          |     INT (1)     |      INT(1)      |       INT(2)     |      INT(4)       |
-          |        3        |        9         |         99       |      9999         |
-          | $data[sezione]  |   $data[anno]    |  $data[azienda]  | $data[protocollo] |
-          ------------------------------------------------------------------------------
-          --- SCHEMA DEI DATI PER INVIO SENZA INTERMEDIARIO $data[intemediary]=false ---
-          |   SEZIONE IVA   |  ANNO DOCUMENTO  |         NUMERO PROTOCOLLO            |
-          |     INT (1)     |      INT(1)      |                INT(6)                |
-          |        3        |        9         |                999999                |
-          | $data[sezione]  |   $data[anno]    |           $data[protocollo]          |
+          ------------------------- SCHEMA DEI DATI PER INVIO  ------------------------
+          |   SEZIONE IVA   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
+          |     INT (1)     |      INT(1)      |   INT(1)  |        INT(5)            |
+          |        3        |        9         |     9     |        99999             |
+          | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
           ------------------------------------------------------------------------------
          */
-        $num = $data['sezione'] . substr($data['anno'], 3, 1);
-        if ($data['intermediary']) {
-            $num .= substr(str_pad($data['azienda'], 2, '0', STR_PAD_LEFT), 0, 2) . substr(str_pad($data['protocollo'], 4, '0', STR_PAD_LEFT), -4);
-        } else {
-            $num .= substr(str_pad($data['protocollo'], 6, '0', STR_PAD_LEFT), -6);
-        }
+        $num = $data['sezione'] . substr($data['anno'], 3, 1).$data['fae_reinvii']. substr(str_pad($data['protocollo'], 5, '0', STR_PAD_LEFT), -5);
         $num = intval($num);
         $base = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $r = $num % $b;
@@ -1074,8 +1055,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $data = array('azienda' => $XMLvars->azienda['codice'],
         'anno' => $XMLvars->docRelDate,
         'sezione' => $XMLvars->seziva,
-        'protocollo' => $XMLvars->protoc,
-        'intermediary' => false);
+		'fae_reinvii'=> $XMLvars->fae_reinvii,
+        'protocollo' => $XMLvars->protoc);
     $progressivo_unico_invio = $XMLvars->encodeSendingNumber($data, 36);
 
     //print $XMLvars->decodeFromSendingNumber($progressivo_unico_invio);
