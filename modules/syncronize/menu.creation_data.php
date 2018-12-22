@@ -23,12 +23,10 @@
  --------------------------------------------------------------------------
 */
 $menu_data = array( 
-	'm1'=>array(
-		'link'=>"admin_occustomer.php"
-	),
+	'm1'=>array('link'=>"admin_occustomer.php"),
 	'm2'=>array(
-		1=>array('link'=>"admin_occustomer.php",'weight'=>2)
-		2=>array('link'=>"admin_occustomer.php",'weight'=>3),
-        ),
-);
+			1=>array('link'=>"admin_occustomer.php",'weight'=>2),
+			2=>array('link'=>"admin_oc_config.php",'weight'=>3),
+		),
+	);
 ?>

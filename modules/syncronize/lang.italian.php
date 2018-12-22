@@ -23,7 +23,6 @@
   --------------------------------------------------------------------------
  */
 
-//*+- Nuove stringhe per modulo select_analisi_avanzamento_per_fornitore.php - DC - 19 apr 2018
 
 $strScript = array("admin_occustomer.php" =>
     array('title' => 'Sincronizzazione Client da Opencart',

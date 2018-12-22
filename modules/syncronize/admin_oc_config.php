@@ -25,82 +25,54 @@
 
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
-require("include/functions.php");
 require("include/config.php");
-require("include/opencart/customer.php");
 
 $admin_aziend = checkAdmin();
 
 require("../../library/syncronize/opencart.php");
 
-// set up params
-$config = new Syncronize\Config;
-$url = $config->getUrl();
- 
-$fields = array(
-  'username' => $config->getUser(),
-  'password' => $config->getPassword(),
-);
-
-$api = new Opencart\Api( $url, $fields['username'], $fields['password']);
-
-$cs = $api->getCustomers();
-$customers = Opencart\Customer::list_from_array( $cs );
-?>
-<?php
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
-// Ottengo la lista dei clienti Opencart
-$anagrs = Syncro\Anagr::getAll();
+# Ottengo configurazione
+
+
+$config = new Syncronize\Config;
+if ( $_POST ) {
+	$data = array(
+		'user' => $_POST['user'],		
+		'pass' => $_POST['password'],		
+		'url' => $_POST['url'],		
+	);
+	$config->putData($data);
+	$config = new Syncronize\Config;
+}
 ?>
 <div class="container">
   <div class="row">
-   <div class="col-sm-6">
+   <div class="col-sm-12">
     <div class="row center">
-    Lista Anagrafiche ( Totali = <?= count($anagrs) ?> )
+    Configurazione Accesso Opencart
     </div>
+    <form method="POST">
     <table class="table table-striped Tmiddle">
       <tr>
-        <th>ID</th>
-        <th>Ragione Sociale</th>
-        <th>Indirizzo</th>
-        <th>Codice Fiscale</th>
-        <th>Partita IVA</th>
+        <th>User</th>
+        <th>Password</th>
+        <th>Shop Opencart</th>
       </tr>	
-<?php foreach( $anagrs as $a ) { ?>
       <tr>
-        <td><?= $a->getId(); ?></td>
-        <td><?= $a->getRagso1(); ?></td>
-        <td><?= $a->getAddress(); ?></td>
-        <td><?= $a->getCodfis(); ?></td>
-        <td><?= $a->getParIva(); ?></td>
+	<td><input type="text" name="user" id="user" value="<?= $config->getUser(); ?>" /></td>
+	<td><input type="text" name="password" id="password" value="<?= $config->getPassword(); ?>" /></td>
+	<td><input type="text" name="url" id="url" value="<?= $config->getUrl(); ?>" /></td>
+      </tr>
+      <tr>
+	<td><input type="submit" name="sbt" value="Conferma" /></td>
+	<td></td>
+	<tr></td>
       </tr>	
-<?php } ?>
     </table>
-   </div>
-   <div class="col-sm-6">
-    <div class="row center">
-      Lista Clienti Opencart
-    </div>
-    <table class="table table-striped Tmiddle">
-      <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Cognome</th>
-        <th>Email</th>
-        <th>Telefono</th>
-      </tr>	
-<?php foreach( $customers as $a ) { ?>
-      <tr>
-        <td><?= $a->getCustomerId(); ?></td>
-        <td><?= $a->getFirstname(); ?></td>
-        <td><?= $a->getLastname(); ?></td>
-        <td><?= $a->getEmail(); ?></td>
-        <td><?= $a->getTelephone(); ?></td>
-      </tr>	
-<?php } ?>
-    </table>
+    </form>
    </div>
   </div>
 </div>
