@@ -391,39 +391,6 @@ class invoiceXMLvars {
         $this->ritenute = 0;
     }
 
-    function encodeSendingNumber($data, $b = 62) {
-        /* questa funzione mi serve per convertire un numero decimale in uno a base 36
-          ------------------------- SCHEMA DEI DATI PER INVIO  ------------------------
-          |   SEZIONE IVA   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
-          |     INT (1)     |      INT(1)      |   INT(1)  |        INT(5)            |
-          |        3        |        9         |     9     |        99999             |
-          | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
-          ------------------------------------------------------------------------------
-         */
-        $num = $data['sezione'] . substr($data['anno'], 3, 1).$data['fae_reinvii']. substr(str_pad($data['protocollo'], 5, '0', STR_PAD_LEFT), -5);
-        $num = intval($num);
-        $base = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        $r = $num % $b;
-        $res = $base[$r];
-        $q = floor($num / $b);
-        while ($q) {
-            $r = $q % $b;
-            $q = floor($q / $b);
-            $res = $base[$r] . $res;
-        }
-        return $res;
-    }
-
-    function decodeFromSendingNumber($num, $b = 62) {
-        $base = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        $limit = strlen($num);
-        $res = strpos($base, $num[0]);
-        for ($i = 1; $i < $limit; $i++) {
-            $res = $b * $res + strpos($base, $num[$i]);
-        }
-        return $res;
-    }
-
 }
 
 function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false, $name_ziparchive = false) {
@@ -1051,13 +1018,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $el = $domDoc->createElement("ImportoTotaleDocumento", number_format($totpar, 2, '.', ''));  // totale fatura al lordo di RDA
     $results->appendChild($el);
 
-    // faccio l'encode per ricavare il progressivo unico di invio
+    // faccio l'encode in base 36 per ricavare il progressivo unico di invio
     $data = array('azienda' => $XMLvars->azienda['codice'],
         'anno' => $XMLvars->docRelDate,
         'sezione' => $XMLvars->seziva,
 		'fae_reinvii'=> $XMLvars->fae_reinvii,
         'protocollo' => $XMLvars->protoc);
-    $progressivo_unico_invio = $XMLvars->encodeSendingNumber($data, 36);
+    $progressivo_unico_invio = encodeSendingNumber($data, 36);
 
     //print $XMLvars->decodeFromSendingNumber($progressivo_unico_invio);
     $nome_file = "IT" . $codice_trasmittente . "_" . $progressivo_unico_invio;

@@ -167,6 +167,10 @@ function confirFae(link){
                          window.location.href = link.href;
                           $(this).dialog("close");
                       },
+                      " ' . $script_transl['submit'] . ' ": function() {
+                         window.location.href = link.href;
+                          $(this).dialog("close");
+                      },
                       " ' . $script_transl['cancel'] . ' ": function() {
                         $(this).dialog("close");
                       }
@@ -478,8 +482,13 @@ switch ($admin_aziend['fatimm']) {
                             echo '<td align=\"center\"><button onclick="confirPecSdi(this);return false;" id="doc3' . $r["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $anagra["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
                             echo "</td>";
                         } else {
-                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" n_fatt=\"" . $r["numfat"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\">xml</a>";
-                            //identifica le fatture inviate all'sdi           
+                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" n_fatt=\"" . $r["numfat"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\" title=\""."genera il file IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
+								  'anno' => $r["datfat"],
+        						  'sezione' => $r["seziva"],
+								  'fae_reinvii'=> $r["fattura_elettronica_reinvii"],
+								  'protocollo' => $r["protoc"]), 36).".xml o reinviia \">xml</a>";
+                            //identifica le fatture inviate all'sdi  
+							/*
                             $where2 = " id_tes_ref = " . $r['id_tes'] . " AND (flux_status LIKE '@' OR flux_status LIKE '#' OR flux_status LIKE '@@')";
                             $result2 = gaz_dbi_dyn_query("*", $gTables['fae_flux'], $where2);
                             $r2 = gaz_dbi_fetch_array($result2);
@@ -493,7 +502,7 @@ switch ($admin_aziend['fatimm']) {
                                 echo " <a title=\"Fattura elettronica generata: VEDI REPORT\" class=\"FacetDataTDred btn btn-xs btn-default\" target=\"_blank\" href=\"" . $modulo_fae_report . "\"> 
 				 			#<i class=\"glyphicon glyphicon-list-alt\"></i>
 						</a>";
-                            }
+                            }*/
                             echo "</td>";
                         }
                     } else {

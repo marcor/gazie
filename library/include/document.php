@@ -172,6 +172,7 @@ class DocContabVars {
 
         $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
+        $this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
 
 		$this->efattura='';
 
@@ -182,19 +183,13 @@ class DocContabVars {
                 $this->docRelDate = $this->tesdoc["datfat"];
 				// in caso di fattura elettronica ricavo il nome del file
 				if (substr($tesdoc['datfat'], 0, 4)>=2019 ) { // dal 2019 valorizzo il nome della e-fattura
-					$num = $tesdoc['seziva'] . substr($tesdoc['datfat'], 3, 1).substr(str_pad($tesdoc['protoc'], 6, '0', STR_PAD_LEFT), -6);;
-					$num = intval($num);
-					$b=36; // in base 36
-					$base = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-					$r = $num % $b;
-					$res = $base[$r];
-					$q = floor($num / $b);
-					while ($q) {
-						$r = $q % $b;
-						$q = floor($q / $b);
-						$res = $base[$r] . $res;
-					}
-					$this->efattura = "IT" . $admin_aziend['codfis'] . "_".$res.'.xml';
+					// faccio l'encode in base 36 per ricavare il progressivo unico di invio
+					$data = array('azienda' => $admin_aziend['codice'],
+								  'anno' => $this->docRelDate,
+        						  'sezione' => $this->tesdoc["seziva"],
+								  'fae_reinvii'=> $this->fae_reinvii,
+								  'protocollo' => $this->tesdoc["protoc"]);
+					$this->efattura = "IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber($data, 36).'.xml';
 				}
                 break;
             case "DDT":

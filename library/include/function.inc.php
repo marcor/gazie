@@ -2034,6 +2034,39 @@ function changeEnterprise($new_co = 1) {
     $_SESSION['company_id'] = $new_co;
 }
 
+function encodeSendingNumber($data, $b = 62) {
+    /* questa funzione mi serve per convertire un numero decimale in uno a base 36
+      ------------------------- SCHEMA DEI DATI PER INVIO  ------------------------
+      |   SEZIONE IVA   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
+      |     INT (1)     |      INT(1)      |   INT(1)  |        INT(5)            |
+      |        3        |        9         |     9     |        99999             |
+      | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
+      ------------------------------------------------------------------------------
+     */
+    $num = $data['sezione'] . substr($data['anno'], 3, 1).$data['fae_reinvii']. substr(str_pad($data['protocollo'], 5, '0', STR_PAD_LEFT), -5);
+    $num = intval($num);
+    $base = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    $r = $num % $b;
+    $res = $base[$r];
+    $q = floor($num / $b);
+    while ($q) {
+        $r = $q % $b;
+        $q = floor($q / $b);
+        $res = $base[$r] . $res;
+    }
+    return $res;
+}
+
+function decodeFromSendingNumber($num, $b = 62) {
+    $base = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    $limit = strlen($num);
+    $res = strpos($base, $num[0]);
+    for ($i = 1; $i < $limit; $i++) {
+        $res = $b * $res + strpos($base, $num[$i]);
+    }
+    return $res;
+}
+
 class Compute {
 
     function payment_taxstamp($value, $percent, $cents_ceil_round = 5) {
