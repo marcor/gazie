@@ -10,4 +10,11 @@ UPDATE `gaz_aziend` SET `REA_stato`='LN' WHERE 1;
 UPDATE `gaz_config` SET `cvalue` = '113' WHERE `id` =2;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`) VALUES ('Eventuale ultimo rigo descrittivo su fatture es. Contributo CONAI', 'descriptive_last_row');
+CREATE TABLE `gazie`.`gaz_XXXsyncronize_oc` ( 
+    `id` INT(11) NOT NULL AUTO_INCREMENT , 
+    `table_oc` VARCHAR(40) NOT NULL , 
+    `table_gz` VARCHAR(40) NOT NULL , 
+    `id_oc` INT NOT NULL , 
+    `id_gz` INT NOT NULL , 
+PRIMARY KEY (`id`)) ENGINE = MyISAM;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
