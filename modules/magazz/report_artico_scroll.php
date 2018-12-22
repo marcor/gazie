@@ -149,7 +149,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
                 <?php echo number_format($row["preacq"], $admin_aziend['decimal_price'], ',', '.'); ?>
             </td>
             <td data-title="<?php echo $script_transl["stock"]; ?>" title="<?php echo $admin_aziend['symbol'] . ' ' . $magval['v_g']; ?>" class="text-center <?php echo $class; ?>">
-               <?php echo $com.floatval($magval['q_g']); ?>
+               <?php echo $com.gaz_format_quantity(floatval($magval['q_g']),1,$admin_aziend['decimal_quantity']); ?>
             </td>
             <td data-title="<?php echo $script_transl["aliiva"]; ?>">
                 <?php echo floatval($iva['aliquo']) . '%'; ?>
