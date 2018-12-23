@@ -38,6 +38,7 @@ class FatturaAllegata extends Template
         $this->data = strftime("%d-%m-%Y", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),substr($this->tesdoc['datemi'],8,2),substr($this->tesdoc['datemi'],0,4)));
         $this->sconto = $this->tesdoc['sconto'];
         $this->tipdoc = 'Fattura n.'.$this->tesdoc['numfat'].' Allegata allo scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
+        $this->descriptive_last_row = $this->docVars->descriptive_last_row;
     }
 
     function newPage() {
@@ -141,6 +142,9 @@ class FatturaAllegata extends Template
            }
         }
         //FINE calcolo scadenze
+        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
+                $this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
+		}
         //stampo i totali
         $y = $this->GetY();
         $this->Rect(10,$y,186,212-$y); //questa marca le linee dx e sx del documento

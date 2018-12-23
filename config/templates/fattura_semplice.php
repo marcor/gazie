@@ -58,6 +58,7 @@ class FatturaSemplice extends Template {
 			$numfat = ' _ _ _ _ _ _ _';
 		}
         $this->tipdoc = $descri . $numfat . ' del ' . $this->giorno . ' ' . $nomemese . ' ' . $this->anno;
+        $this->descriptive_last_row = $this->docVars->descriptive_last_row;
     }
 
     function newPage() {
@@ -196,6 +197,9 @@ class FatturaSemplice extends Template {
     }
 
     function pageFooter() {
+        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
+                $this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
+		}
         if ($this->docVars->taxstamp >= 0.01) {
             if ($this->virtual_taxstamp == 2 || $this->virtual_taxstamp == 3) {
                 $this->Cell(186, 5, '', 'LR', 1);

@@ -166,6 +166,19 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(12, 5,'',1,1,'R');
                 }
         }
+    }
+
+
+    function compose()
+    {
+        $this->body();
+    }
+
+    function pageFooter()
+    {
+        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
+                $this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
+		}
         if ($this->taxstamp >= 0.01 ) {
             if ($this->virtual_taxstamp == 2 || $this->virtual_taxstamp == 3) {
                 $this->Cell(186,5,'','LR',1);
@@ -185,17 +198,6 @@ class FatturaImmediata extends Template_con_scheda
                 $this->Cell(36,8,"€ ".gaz_format_number($this->taxstamp),'LR',1,'C');
             }
         }
-       
-    }
-
-
-    function compose()
-    {
-        $this->body();
-    }
-
-    function pageFooter()
-    {
         $y = $this->GetY();
         $this->Rect(10,$y,186,188-$y); //questa marca le linee dx e sx del documento
         //stampo il castelletto

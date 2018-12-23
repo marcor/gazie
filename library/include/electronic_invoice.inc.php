@@ -31,6 +31,7 @@ class invoiceXMLvars {
     function setXMLvars($gTables, $tesdoc, $testat, $tableName, $ecr = false) {
         $this->gTables = $gTables;
         $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
+        $this->descriptive_last_row = trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_row')['val']);
         $this->azienda = $admin_aziend;
         $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
         $this->banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
@@ -623,7 +624,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                         // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
                         foreach ($rigo['descrittivi'] as $k => $v) {
                             if ($k < 16) {
-                                $rigo['descri'] .= $v; // ogni $v è lungo al massimo 60 caratteri
+                                $rigo['descri'] .= ' '.$v; // ogni $v è lungo al massimo 60 caratteri
                                 unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
                             }
                         }
@@ -775,6 +776,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $ctrl_doc = $XMLvars->tesdoc['numdoc'];
         $ctrl_fat = $XMLvars->tesdoc['numfat'];
     }
+	
     // alla fine del ciclo aggiungo le eventuali spese di incasso ma queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
     if ($XMLvars->tesdoc['speban'] >= 0.01) {
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
@@ -792,6 +794,24 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $results->appendChild($el);
         $n_linea++;
     }
+
+    if (!empty($XMLvars->descriptive_last_row) ) { // ... ed un eventuale rigo descrittivo derivante dalla configurazione avanzata azienda 
+		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
+        $el = $domDoc->createElement("DettaglioLinee", "");
+        $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("Descrizione", $XMLvars->descriptive_last_row);
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("PrezzoUnitario", '0.00');
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("PrezzoTotale", '0.00');
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("AliquotaIVA", number_format($XMLvars->expense_pervat['aliquo'], 2, '.', ''));
+        $el->appendChild($el1);
+        $results->appendChild($el);
+        $n_linea++;
+	}
+
 
     //dati ordine di acquisto
     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
