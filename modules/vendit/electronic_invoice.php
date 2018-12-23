@@ -47,6 +47,9 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     $pr=intval($_GET['protoc']);
    }
 }
+if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome faccio avanzare il relativo contatore sulle testate delle fatture
+   gaz_dbi_query ("UPDATE ".$gTables['tesdoc']." SET `fattura_elettronica_reinvii`=`fattura_elettronica_reinvii`+1 WHERE tipdoc LIKE 'F__' AND seziva = $si AND YEAR(datfat) = $yr AND protoc = ".$pr);
+}
 //recupero i dati
 $testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],"tipdoc LIKE 'F__' AND seziva = $si AND YEAR(datfat) = $yr AND protoc = ".$pr,'datemi ASC, numdoc ASC, id_tes ASC');
 create_XML_invoice($testate,$gTables);

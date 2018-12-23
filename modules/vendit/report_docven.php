@@ -159,8 +159,8 @@ function confirFae(link){
 	$.fx.speeds._default = 500;
 	var new_title = "Genera file XML per fattura n." + $("#doc1"+tes_id).attr("n_fatt");
 	var n_reinvii = parseInt($("#doc1"+tes_id).attr("fae_n_reinvii"))+1;
-	$("p#fae1").html("nome: " + $("#doc1"+tes_id).attr("fae_attuale"));
-	$("span#fae2").html("<a href=\'"+link.href+"&reinvia\'> " + $("#doc1"+tes_id).attr("fae_reinvio")+ " " + n_reinvii.toString() + "° reinvio </a>");
+	$("p#fae1").html("nome file: " + $("#doc1"+tes_id).attr("fae_attuale"));
+	$("span#fae2").html("<a href=\'"+link.href+"&reinvia\'> " + $("#doc1"+tes_id).attr("fae_reinvio")+ " (" + n_reinvii.toString() + "° reinvio) </a>");
 	$("#dialog1").dialog({
 	  title: new_title,
       modal: "true",
@@ -479,7 +479,7 @@ switch ($admin_aziend['fatimm']) {
                     // Colonna "Fattura elettronica"
                     if (substr($r["tipdoc"], 0, 1) == 'F') {
                         if(strlen($r["fattura_elettronica_zip_package"])>10){ // se è contenuto in un pacchetto di file permetterò sia il download del singolo XML che del pacchetto in cui è contenuto
-                            echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>'."<a class=\"btn btn-xs btn-default\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" n_fatt=\"" . $r["numfat"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\"> xml </a>";
+                            echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>'."<a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" fae_reinvio=\"" . $r["fae_reinvio"] . "\" fae_attuale=\"" . $r["fae_attuale"] . "\" fae_n_reinvii=\"".$r["fattura_elettronica_reinvii"]."\" n_fatt=\"" . $r["numfat"]."/". $r["seziva"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\" title=\""."genera il file ".$r["fae_attuale"]." o fai il ".intval($r["fattura_elettronica_reinvii"]+1)."° reinvio \">xml</a>";
                             echo "</td>";
 							
 						} elseif (strlen($anagra['pec_email'])<5 && strlen(trim($anagra['fe_cod_univoco']))<6) { 	  	
