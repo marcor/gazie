@@ -155,18 +155,18 @@ function confirPecSdi(link){
 
 
 function confirFae(link){
-   tes_id = link.id.replace("doc1", "");
-   $.fx.speeds._default = 500;
-   $("p#fae1").html("numero: " + $("#doc1"+tes_id).attr("n_fatt"));
-   $( "#dialog1" ).dialog({
+	tes_id = link.id.replace("doc1", "");
+	$.fx.speeds._default = 500;
+	var new_title = "Genera file XML per fattura n." + $("#doc1"+tes_id).attr("n_fatt");
+	var n_reinvii = parseInt($("#doc1"+tes_id).attr("fae_n_reinvii"))+1;
+	$("p#fae1").html("nome: " + $("#doc1"+tes_id).attr("fae_attuale"));
+	$("span#fae2").html("<a href=\'"+link.href+"&reinvia\'> " + $("#doc1"+tes_id).attr("fae_reinvio")+ " " + n_reinvii.toString() + "° reinvio </a>");
+	$("#dialog1").dialog({
+	  title: new_title,
       modal: "true",
       show: "blind",
       hide: "explode",
       buttons: {
-                      " ' . $script_transl['submit'] . ' ": function() {
-                         window.location.href = link.href;
-                          $(this).dialog("close");
-                      },
                       " ' . $script_transl['submit'] . ' ": function() {
                          window.location.href = link.href;
                           $(this).dialog("close");
@@ -176,7 +176,7 @@ function confirFae(link){
                       }
                }
          });
-   $("#dialog1" ).dialog( "open" );
+	$("#dialog1").dialog( "open" );
 }
 
 function confirTutti(link){
@@ -252,8 +252,7 @@ switch ($admin_aziend['fatimm']) {
     <div style="display:none" id="dialog1" title="<?php echo $script_transl['fae_alert0']; ?>">
         <p id="fae_alert1"><?php echo $script_transl['fae_alert1']; ?></p>
         <p class="ui-state-highlight" id="fae1"></p>
-        <p id="fae_alert2"><?php echo $script_transl['fae_alert2']; ?></p>
-        <p class="ui-state-highlight" id="fae2"></p>
+        <p id="fae_alert2"><?php echo $script_transl['fae_alert2']; ?><span id="fae2" class="bg-warning"></span></p>
     </div>
 
     <div style="display:none" id="dialog2" title="<?php echo $script_transl['report_alert0']; ?>">
@@ -413,6 +412,18 @@ switch ($admin_aziend['fatimm']) {
                 }
                 if ($match_cust && sprintf('%09d', $r['protoc']) . $r['datfat'] <> $ctrl_doc) {
                     $n_e = 0;
+					/* trovo il nome dei file xml delle fatture elettroniche, sia quello attuale sia quello frutto di un eventuale reinviio 
+					*/
+					$r['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
+									'anno' => $r["datfat"],
+									'sezione' => $r["seziva"],
+									'fae_reinvii'=> $r["fattura_elettronica_reinvii"],
+									'protocollo' => $r["protoc"]), 36).".xml";
+ 					$r['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
+									'anno' => $r["datfat"],
+									'sezione' => $r["seziva"],
+									'fae_reinvii'=> intval($r["fattura_elettronica_reinvii"]+1),
+									'protocollo' => $r["protoc"]), 36).".xml";
                     echo "<tr class=\"FacetDataTD\">";
                     // Colonna protocollo
                     if (!empty($modifi)) {
@@ -482,27 +493,7 @@ switch ($admin_aziend['fatimm']) {
                             echo '<td align=\"center\"><button onclick="confirPecSdi(this);return false;" id="doc3' . $r["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $anagra["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
                             echo "</td>";
                         } else {
-                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" n_fatt=\"" . $r["numfat"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\" title=\""."genera il file IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-								  'anno' => $r["datfat"],
-        						  'sezione' => $r["seziva"],
-								  'fae_reinvii'=> $r["fattura_elettronica_reinvii"],
-								  'protocollo' => $r["protoc"]), 36).".xml o reinviia \">xml</a>";
-                            //identifica le fatture inviate all'sdi  
-							/*
-                            $where2 = " id_tes_ref = " . $r['id_tes'] . " AND (flux_status LIKE '@' OR flux_status LIKE '#' OR flux_status LIKE '@@')";
-                            $result2 = gaz_dbi_dyn_query("*", $gTables['fae_flux'], $where2);
-                            $r2 = gaz_dbi_fetch_array($result2);
-                            if ($r2 == false) {
-                                
-                            } elseif ($r2['flux_status'] == "@" or $r2['flux_status'] == "@@") {
-                                echo " <a title=\"Fattura elettronica inviata: VEDI REPORT\" class=\"FacetDataTDred btn btn-xs btn-default\" target=\"_blank\" href=\"" . $modulo_fae_report . "\">
-				 			<i class=\"glyphicon glyphicon-list-alt\"></i>
-						</a>";
-                            } elseif ($r2['flux_status'] == "#") {
-                                echo " <a title=\"Fattura elettronica generata: VEDI REPORT\" class=\"FacetDataTDred btn btn-xs btn-default\" target=\"_blank\" href=\"" . $modulo_fae_report . "\"> 
-				 			#<i class=\"glyphicon glyphicon-list-alt\"></i>
-						</a>";
-                            }*/
+                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" fae_reinvio=\"" . $r["fae_reinvio"] . "\" fae_attuale=\"" . $r["fae_attuale"] . "\" fae_n_reinvii=\"".$r["fattura_elettronica_reinvii"]."\" n_fatt=\"" . $r["numfat"]."/". $r["seziva"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\" title=\""."genera il file ".$r["fae_attuale"]." o fai il ".intval($r["fattura_elettronica_reinvii"]+1)."° reinvio \">xml</a>";
                             echo "</td>";
                         }
                     } else {

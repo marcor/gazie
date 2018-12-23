@@ -121,7 +121,7 @@ $strScript = array("admin_client.php" =>
         'mail_alert2' => 'con allegato il seguente documento di vendita:',
         'fae_alert0' => 'Generazione documento FAE',
         'fae_alert1' => 'Hai scelto di generare la fattura elettronica ',
-        'fae_alert2' => '',
+        'fae_alert2' => 'Solo qualora si voglia procedere ad un reinvio a causa di uno scarto, dopo aver corretto gli errori che lo hanno causato, clicca su questo link per generare un file con nuovo nome:',
         'report_alert0' => 'Mostra tutti i documenti',
         'report_alert1' => 'Sicuro di voler mostrare tutti i documenti?',
         'faesdi_alert0' => 'Invio mail per richiesta codice SdI o PEC',
