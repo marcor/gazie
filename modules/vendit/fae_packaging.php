@@ -294,9 +294,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 					$enc_data['sezione']=$v['tes']['seziva'];
 					$enc_data['anno']=substr($v['tes']['datfat'],0,4);
 					$enc_data['protocollo']=$v['tes']['protoc'];
-					$enc_data['intermediary']=false;
+					$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
 					$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,$form['filename']);
-					$zip->addFromString('IT'.$admin_aziend['codfis'].'_'.$XMLdata->encodeSendingNumber($enc_data,36).'.xml', $file_content);
+					$zip->addFromString('IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml', $file_content);
 				}
 				$zip->close();
 				header("Location: report_fae_sdi.php");
@@ -447,7 +447,7 @@ if (isset($_POST['preview'])) {
 		$enc_data['sezione']=$v['tes']['seziva'];
 		$enc_data['anno']=substr($v['tes']['datfat'],0,4);
  		$enc_data['protocollo']=$v['tes']['protoc'];
- 		$enc_data['intermediary']=false;
+ 		$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
         echo '<tr class="FacetDataTD">
                <td>' . $v['tes']['protoc'] .'</td>
                <td>' . $script_transl['doc_type_value'][$v['tes']['tipdoc']] . '</td>
@@ -459,7 +459,7 @@ if (isset($_POST['preview'])) {
                <td align="right">' . gaz_format_number($tot['tot']) . "</td>
                </tr>\n";
         echo '<tr class="FacetDataTD">
-               <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.$XMLdata->encodeSendingNumber($enc_data,36).'.xml che dovrà essere firmato ed inviato tramite SdI </td>
+               <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml che dovrà essere firmato ed inviato tramite SdI </td>
                <td colspan="3" class="'.$cl_sdi.'">'.$v['tes']['pec_email'] . '</td>
                </tr>';
     }
