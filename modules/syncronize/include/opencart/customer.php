@@ -48,9 +48,24 @@ class Customer {
   private $safe;
   private $token;
   private $date_added;
-
+  private $api;
 
   public function __construct( ) {
+  }
+
+  public function setApi( Api $api ) {
+	  $this->api = $api;
+  }
+
+  /**
+   * Return a customer of opencart
+   */
+  public function getById ( int $id ) {
+	$customer = $this->api->getCustomer($id);
+	$this->setCustomerId( $customer['customer_id']);
+	$this->setStoreId($customer['store_id']);
+	$this->setDataAnagr($customer['firstname'], $customer['lastname'], $customer['email'], $customer['telephone'], $customer['fax']);
+
   }
 
   /**

@@ -29,7 +29,7 @@ require("include/config.php");
 
 $admin_aziend = checkAdmin();
 
-require("../../library/syncronize/opencart.php");
+require("include/gazie/opencart.php");
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();

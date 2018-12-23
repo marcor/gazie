@@ -31,7 +31,13 @@ require("include/opencart/customer.php");
 
 $admin_aziend = checkAdmin();
 
-require("../../library/syncronize/opencart.php");
+require("include/gazie/opencart.php");
+
+$errors = [];
+
+// Syncronizza client da id opencart
+$sync = boolval($_GET['sync']);
+$id_oc = intval($_GET['id_oc']);
 
 // set up params
 $config = new Syncronize\Config;
@@ -43,10 +49,24 @@ $fields = array(
 );
 
 $api = new Opencart\Api( $url, $fields['username'], $fields['password']);
+if ( $sync ) {
+	if ( $id_oc > 0 ) {
+		$customer = new Opencart\Customer;
+		$customer->setApi ( $api );		
+		$customer->getById( $id_oc );
+		$result_syncronize = Syncro\Anagr::syncCustomer($customer);
+	        if ( !$result_syncronize ) 
+			$errors[] = "Errore nella sincronizzazione di IdOpencart $id_oc";
+	} else {
+		$errors[] = "Id cliente non selezionato";
+	}
+}
+
 
 $cs = $api->getCustomers();
 $customers = Opencart\Customer::list_from_array( $cs );
 ?>
+
 <?php
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -56,6 +76,9 @@ $anagrs = Syncro\Anagr::getAll();
 ?>
 <div class="container">
   <div class="row">
+   <?php foreach ($errors as $e ) { ?>
+	<div class="col-sm-12"><i><?= $e; ?></i></div>
+   <?php } ?>
    <div class="col-sm-6">
     <div class="row center">
     Lista Anagrafiche ( Totali = <?= count($anagrs) ?> )
@@ -85,6 +108,7 @@ $anagrs = Syncro\Anagr::getAll();
     </div>
     <table class="table table-striped Tmiddle">
       <tr>
+        <th>Syncronize</th>
         <th>ID</th>
         <th>Nome</th>
         <th>Cognome</th>
@@ -93,6 +117,7 @@ $anagrs = Syncro\Anagr::getAll();
       </tr>	
 <?php foreach( $customers as $a ) { ?>
       <tr>
+      <td><a href="?sync=true&id_oc=<?= $a->getCustomerId(); ?>">Sincronizza</a></td>
         <td><?= $a->getCustomerId(); ?></td>
         <td><?= $a->getFirstname(); ?></td>
         <td><?= $a->getLastname(); ?></td>

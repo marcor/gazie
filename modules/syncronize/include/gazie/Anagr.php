@@ -68,6 +68,48 @@ class Anagr {
 		$this->setCodfis( $codfis);
 		$this->setPariva( $pariva );	
 	}
+	
+	/**
+	 * Update or add 
+	 */
+	public function add() {
+		// Control exist
+		
+		// Insert or Update
+	}
+
+	/**
+	 * Return anagr by id
+	 *
+	 */
+	public static function getById( $id ) {
+	  global $gTables;
+	  $where = "`id` = $id "; 
+	  $orderby = '';
+	  $rs = gaz_dbi_dyn_query('*', $gTables['anagra'] , $where, $orderby);
+	  if ( $r = gaz_dbi_fetch_array($rs) ) {
+		$anagr = new Anagr($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
+		$anagr->setId($r['id']);
+	  	$anagr->setSedleg($r['sedleg']);
+		$anagr->setLegrap($r['legrap_pf_nome']);
+		$anagr->setNascita($r['datnas'],$r['luonas'],$r['luonas'],$r['pronas'],$r['counas']);
+		$anagr->setAddress($r['indspe'],$r['capspe'],$r['citspe'],$r['prospe']);
+		$anagr->setCountry($r['country']);
+		$anagr->setIdCurrency($r['id_currency']);
+		$anagr->setIdLanguage($r['id_language']);
+		$anagr->setCoordinate($r['latitude'],$r['longitude']);
+		$anagr->setTelefono($r['telef']);
+		$anagr->setFax($r['fax']);
+		$anagr->setCell($r['cell']);
+		$anagr->setFeCodUnivoco($r['fe_cod_univoco']);
+		$anagr->setEmail($r['email']);
+		$anagr->setEmailPec($r['pec_email']);
+		$anagr->setFattureByEmail($r['fatt_email']);
+	  	return $anagr;
+	  } else {
+		return false;
+	  }
+	}
 
 	/**
 	 * Getting all
@@ -300,6 +342,10 @@ class Anagr {
 
 	public function getFattureByEmail( ) {
 		return $this->fatt_email;
+	}
+
+	public static function  syncCustomer( \Opencart\Customer $customer ) {
+		
 	}
 }
 

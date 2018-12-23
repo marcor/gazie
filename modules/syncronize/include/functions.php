@@ -74,8 +74,19 @@ class Api {
 	  $params = array(
 		'api_token'	=>	$this->getToken(),
 	  );
-	  $json = $this->do_curl_request( $url, $fs ); 
+	  $json = $this->do_curl_request( $url, $params ); 
 	  return  $this->json_to_array();  
+  }
+
+  public function getCustomer($id) {
+	  $url = $this->url . '/index.php?route=sync/customer';
+	  $params = array(
+		'api_token'	=>	$this->getToken(),
+		'customer_id'	=>	$id,
+	  );
+	  $json = $this->do_curl_request( $url, $params ); 
+	  return  $this->json_to_array();  
+
   }
 }
 ?>
