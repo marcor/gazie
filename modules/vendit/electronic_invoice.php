@@ -52,5 +52,19 @@ if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome 
 }
 //recupero i dati
 $testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],"tipdoc LIKE 'F__' AND seziva = $si AND YEAR(datfat) = $yr AND protoc = ".$pr,'datemi ASC, numdoc ASC, id_tes ASC');
-create_XML_invoice($testate,$gTables);
+if (isset($_GET['viewxml'])) {   //se viene richiesta una visualizzazione all'interno del browser
+	$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,'from_string.xml');
+	$doc = new DOMDocument;
+	$doc->preserveWhiteSpace = false;
+	$doc->formatOutput = true;
+ 	$doc->loadXML($file_content);
+	$xpath = new DOMXpath($doc);
+	$xslDoc = new DOMDocument();
+	$xslDoc->load("../../library/include/fatturaordinaria_v1.2.1.xsl");
+	$xslt = new XSLTProcessor();
+	$xslt->importStylesheet($xslDoc);
+	echo $xslt->transformToXML($doc);
+} else { // .... altrimenti faccio il download diretto 
+	create_XML_invoice($testate,$gTables);	
+}
 ?>

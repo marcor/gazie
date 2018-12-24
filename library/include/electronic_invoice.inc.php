@@ -475,14 +475,16 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 				$attrVal = $domDoc->createTextNode(trim($XMLvars->client['fe_cod_univoco']));
 				$results->appendChild($attrVal);
 			} else {
-				if (strlen($cod_destinatario) == "0") {
+				if (strlen($cod_destinatario) < 6 ) {
 					$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
 					$attrVal = $domDoc->createTextNode("0000000");
 					$results->appendChild($attrVal);
-					//nodo 1.1.6
-					$el = $domDoc->createElement("PECDestinatario", trim($XMLvars->client['pec_email']));
-					$results1 = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione")->item(0);
-					$results1->appendChild($el);
+					if (strlen(trim($XMLvars->client['pec_email'])) > 6 ) { // l'elemento per la pec la creo solo se c'è
+						//nodo 1.1.6
+						$el = $domDoc->createElement("PECDestinatario", trim($XMLvars->client['pec_email']));
+						$results1 = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione")->item(0);
+						$results1->appendChild($el);
+					}
 				} else {
 					$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
 					$attrVal = $domDoc->createTextNode(trim($XMLvars->client['fe_cod_univoco']));
