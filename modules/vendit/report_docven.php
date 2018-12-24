@@ -479,9 +479,8 @@ switch ($admin_aziend['fatimm']) {
                     // Colonna "Fattura elettronica"
                     if (substr($r["tipdoc"], 0, 1) == 'F') {
                         if(strlen($r["fattura_elettronica_zip_package"])>10){ // se è contenuto in un pacchetto di file permetterò sia il download del singolo XML che del pacchetto in cui è contenuto
-                            echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>'."<a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" fae_reinvio=\"" . $r["fae_reinvio"] . "\" fae_attuale=\"" . $r["fae_attuale"] . "\" fae_n_reinvii=\"".$r["fattura_elettronica_reinvii"]."\" n_fatt=\"" . $r["numfat"]."/". $r["seziva"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\" title=\""."genera il file ".$r["fae_attuale"]." o fai il ".intval($r["fattura_elettronica_reinvii"]+1)."° reinvio \">xml</a>";							
-						} elseif (strlen($anagra['pec_email'])<5 && strlen(trim($anagra['fe_cod_univoco']))<6) { 	  	
-							//se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
+                            echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';							
+						} elseif (strlen($anagra['pec_email'])<5 && strlen(trim($anagra['fe_cod_univoco']))<6) { //se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
                             $d_title = 'Invia richiesta PEC e/o codice SdI all\'indirizzo: '.$anagra["e_mail"];
 							$dest='&dest=E';
 							if (strlen($anagra['e_mail'])<5){
@@ -489,10 +488,10 @@ switch ($admin_aziend['fatimm']) {
 								$d_title = 'Stampa richiesta cartacea (cliente senza mail)';
 							}
                             echo '<td align=\"center\"><button onclick="confirPecSdi(this);return false;" id="doc3' . $r["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $anagra["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
-                        } else {
-                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" fae_reinvio=\"" . $r["fae_reinvio"] . "\" fae_attuale=\"" . $r["fae_attuale"] . "\" fae_n_reinvii=\"".$r["fattura_elettronica_reinvii"]."\" n_fatt=\"" . $r["numfat"]."/". $r["seziva"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\" title=\""."genera il file ".$r["fae_attuale"]." o fai il ".intval($r["fattura_elettronica_reinvii"]+1)."° reinvio \">xml</a>";
+                        } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
+                            echo "<td align=\"center\">";
                         }
-                        echo '<a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml"><i class="glyphicon glyphicon-eye-open"></i> </a></td>';
+                        echo '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1" '.$r["id_tes"].'" fae_reinvio="'.$r["fae_reinvio"].'" fae_attuale="'.$r["fae_attuale"].'" fae_n_reinvii="'.$r["fattura_elettronica_reinvii"].'" n_fatt="'. $r["numfat"]."/". $r["seziva"].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r["fae_attuale"].' o fai il '.intval($r["fattura_elettronica_reinvii"]+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml"><i class="glyphicon glyphicon-eye-open"></i> </a></td>';
                     } else {
                         echo "<td></td>";
                     }

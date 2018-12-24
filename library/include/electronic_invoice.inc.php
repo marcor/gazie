@@ -797,7 +797,26 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $n_linea++;
     }
 
-    if (!empty($XMLvars->descriptive_last_row) ) { // ... ed un eventuale rigo descrittivo derivante dalla configurazione avanzata azienda 
+    $XMLvars->setXMLtot();
+    // eventualemente aggiungo i rimborsi per i bolli 
+    if ($XMLvars->impbol >= 0.01) {
+		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
+        $el = $domDoc->createElement("DettaglioLinee", "");
+        $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("Descrizione", 'RIMBORSO SPESE PER BOLLI ');
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("PrezzoUnitario", number_format($XMLvars->impbol, 2, '.', ''));
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("PrezzoTotale", number_format($XMLvars->impbol, 2, '.', ''));
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("AliquotaIVA", number_format($XMLvars->iva_bollo['aliquo'], 2, '.', ''));
+        $el->appendChild($el1);
+        $results->appendChild($el);
+        $n_linea++;
+    }
+
+    if (!empty($XMLvars->descriptive_last_row) ) { // ... ed se voluto anche il rigo descrittivo derivante dalla configurazione avanzata azienda 
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
         $el = $domDoc->createElement("DettaglioLinee", "");
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
@@ -843,7 +862,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
 
 
-    $XMLvars->setXMLtot();
     if ($XMLvars->tot_ritenute > 0) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
         $el = $domDoc->createElement("DatiRitenuta", "");
