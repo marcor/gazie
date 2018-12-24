@@ -349,7 +349,7 @@ class invoiceXMLvars {
         $this->tot_ritenute = $this->ritenuta;
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->impbol = 0.00;
-        $this->BolloVirtuale = ''; // ovviamente il bollo potrà essere solo virtuale ma comunque lo setto per evidenziare l'errore
+        $this->BolloVirtuale = false; // ovviamente il bollo potrà essere solo virtuale ma comunque lo setto per evidenziare l'errore
         if ($this->tesdoc['virtual_taxstamp'] == 2 || $this->tesdoc['virtual_taxstamp'] == 3) { // bollo virtualmente assolto
             $this->BolloVirtuale = 'SI';
         }
@@ -902,7 +902,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         }
     }
 
-    if ($XMLvars->impbol >= 0.01) {
+    if ($XMLvars->BolloVirtuale) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
         $el = $domDoc->createElement("DatiBollo", "");
         $el1 = $domDoc->createElement("BolloVirtuale", $XMLvars->BolloVirtuale);
