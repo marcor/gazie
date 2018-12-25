@@ -102,7 +102,7 @@ function azzera(righe)
    $righe = $totale = 0;
    while ($a_row_img = gaz_dbi_fetch_array($result_img)) 
     {
-     $query_riga = "Select codice,codice_fornitore,".$gTables['artico'].".descri,uniacq,".
+     $query_riga = "Select codice,".$gTables['artico'].".codice_fornitore,".$gTables['artico'].".descri,uniacq,".
            "scorta,sum(quanti) as venduti,tipdoc,preacq,last_cost,pack_units ".
            "from ".$gTables['artico']." left join ".
            "(".$gTables['rigdoc']." join ".$gTables['tesdoc']." on ((".$gTables['rigdoc'].".id_tes = ".$gTables['tesdoc'].".id_tes) ".
@@ -200,7 +200,50 @@ else {
 <input type="hidden" name="in_tiprig" value="0">
 <input type="hidden" name="in_codric" value="330000004">
 <input type="hidden" value="0"  name="in_sconto">
-<input type="hidden" name="in_codvat" value=""><br>
+<input type="hidden" name="in_codvat" value="">
+
+<input type="hidden" value="10" name="delivery_time">
+<input type="hidden" value="15" name="day_of_validity">
+<input type="hidden" value="0" name="speban" />
+<input type="hidden" value="1" name="numrat" />
+<input type="hidden" value="0" name="spevar" />
+<input type="hidden" value="0" name="cauven" />
+<input type="hidden" value="" name="caucon" />
+<input type="hidden" value="5" name="caumag" />
+<input type="hidden" value="0" name="id_agente" />
+<input type="hidden" value="0" name="id_parent_doc" /> 
+<input type="hidden" value="" name="pagame" />
+<input type="hidden" value="" name="coseprod" />
+<input type="hidden" value="1" name="print_total" />
+<input type="hidden" value="" name="banapp" />
+<input type="hidden" value="<?php echo date('d');?>" name="giocon" />
+<input type="hidden" value="<?php echo date('m');?>" name="mescon" />
+<input type="hidden" value="<?php echo date('Y');?>" name="anncon" />
+<input type="hidden" value="" name="spediz" />
+<input type="hidden" value="" name="portos" />
+<input type="hidden" value="0" name="sconto" />
+
+<input type="hidden" value="" name="in_codice_fornitore" />
+<input type="hidden" value="" name="in_quality" id="in_quality" />
+<input type="hidden" value="" name="in_descri" />
+<input type="hidden" value="" name="in_pervat" />
+<input type="hidden" value="" name="in_unimis" />
+<input type="hidden" value="0" name="in_prelis" />
+<input type="hidden" value="0" name="in_extdoc" />
+<input type="hidden" value="0" name="in_id_mag" />
+<input type="hidden" value="" name="in_annota" />
+<input type="hidden" value="0" name="in_larghezza" />
+<input type="hidden" value="0" name="in_lunghezza" />
+<input type="hidden" value="0" name="in_spessore" />
+<input type="hidden" value="0" name="in_peso_specifico" />
+<input type="hidden" value="0" name="in_pezzi" />
+<input type="hidden" value="INSERT" name="in_status" />
+<input type="hidden" name="in_id_orderman" value="" />
+<input type="hidden" name="sconto" value="0" />
+
+
+
+<br>
 <h1>Generazione ordine in corso
 <?php 
 $i = 1;
@@ -222,6 +265,17 @@ echo'<input type="hidden" name="righi['.$i.'][descri]" value="'.$a_row['descri']
 echo'<input type="hidden" name="righi['.$i.'][unimis]" value="'.$a_row['uniacq'].'" />';
 echo'<input type="hidden" name="righi['.$i.'][quanti]" value="'.$_POST['acquista'][$k].'" />';
 echo'<input type="hidden" name="righi['.$i.'][prelis]" value="'.$_POST['prezzo'][$k].'"  />';
+echo'<input type="hidden" name="righi['.$i.'][sconto]" value="0"  />';
+echo'<input type="hidden" name="righi['.$i.'][quality]" value=""  />';
+echo'<input type="hidden" name="righi['.$i.'][id_orderman]" value=""  />';
+echo'<input type="hidden" name="righi['.$i.'][id_mag]" value=""  />';
+echo'<input type="hidden" name="righi['.$i.'][annota]" value=""  />';
+echo'<input type="hidden" name="righi['.$i.'][larghezza]" value=""  />';
+echo'<input type="hidden" name="righi['.$i.'][lunghezza]" value=""  />';
+echo'<input type="hidden" name="righi['.$i.'][spessore]" value=""  />';
+echo'<input type="hidden" name="righi['.$i.'][peso_specifico]" value=""  />';
+echo'<input type="hidden" name="righi['.$i.'][pezzi]" value=""  />';
+echo'<input type="hidden" name="righi['.$i.'][extdoc]" value=""  />';
 $i++;
 }
 }
