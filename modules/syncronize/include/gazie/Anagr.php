@@ -25,6 +25,8 @@
 
 namespace Syncro;
 
+include_once("SyncronizeOc.php");
+
 if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');
 }
@@ -345,7 +347,24 @@ class Anagr {
 	}
 
 	public static function  syncCustomer( \Opencart\Customer $customer ) {
+		// Verifica esistenza customer
+		$sync = new SyncronizeOc;
+		if ( $sync->getFromOc('customer', $customer->getCustomerId() ) ) {
+			// Gia sincronizzato
+			// Ritonra id Gazie
+			echo "Sincronizzo "; var_dump($sync);
+
+		} else {
+			// Non sincronizzato
+			// Aggiungi il customer
+			// Verifica esistenza nome o telefono o cf
+			echo "provo ad aggiungere"; var_dump($customer);
+
+		}
+
+
 		
+
 	}
 }
 

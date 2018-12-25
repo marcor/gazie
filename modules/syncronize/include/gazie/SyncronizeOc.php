@@ -23,7 +23,7 @@
   --------------------------------------------------------------------------
  */
 
-namespace syncro;
+namespace Syncro;
 
 if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');
@@ -39,7 +39,7 @@ class SyncronizeOc {
 	private $id_oc;
 	private $id_gz;
 	private $date_created;
-	private $data_update;
+	private $date_updated;
 
 	public function __construct( ) {
 		global $gTables;
@@ -71,7 +71,7 @@ class SyncronizeOc {
 	}
 
 	public function getDateUpdate( ) {
-		return $this->date_update;
+		return $this->date_updated;
 	}
 
 	public function setData( $table_oc, $table_gz, $id_oc, $id_gz ) {
@@ -95,6 +95,22 @@ class SyncronizeOc {
 
 	}
 
-
+	public function getFromOc( $table_oc, $id_oc ) {
+		$where = "`table_oc` = '$table_oc' AND `id_oc` = $id_oc";
+		$order_by = '`id_oc` DESC';
+		$rs = gaz_dbi_dyn_query('*', $this->_table, $where, $order_by);
+		if ( gaz_dbi_num_rows($rs) !== 1 )
+			return false;
+		while( $r = gaz_dbi_fetch_array($rs)) {
+			$this->id = $r['id']; 
+			$this->table_oc = $r['table_oc']; 
+			$this->table_gz = $r['table_gz']; 
+			$this->id_oc = $r['id_oc']; 
+			$this->id_gz = $r['id_gz']; 
+			$this->date_created = $r['date_created']; 
+			$this->date_updated = $r['date_update'];
+		}
+		return true;
+	}
 }
 
