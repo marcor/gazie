@@ -434,7 +434,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $XMLvars->client['fe_cod_univoco']=$cod_destinatario;
         }
         if ($ctrl_doc == 0) {
-            $id_progressivo = substr($XMLvars->docRelDate, 2, 2) . $XMLvars->seziva . str_pad($XMLvars->protoc, 7, '0', STR_PAD_LEFT);
+            $id_progressivo = substr($XMLvars->docRelDate, 2, 2) . $XMLvars->seziva .$XMLvars->fae_reinvii . str_pad($XMLvars->protoc, 6, '0', STR_PAD_LEFT);
             //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
             $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese")->item(0);
             $attrVal = $domDoc->createTextNode('IT');
