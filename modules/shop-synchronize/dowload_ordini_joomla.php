@@ -89,7 +89,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 						
 			If ($esiste==0) { //registro cliente se non esiste			
-				gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,indspe,capspe,citspe,prospe,country,telefo,codfis,pariva,e_mail,pec_email) VALUES ('" . $_POST['ragso1'.$ord] . "', '" . $_POST['ragso2'.$ord] . "', '". $_POST['indspe'.$ord] ."', '".$_POST['capspe'.$ord]."', '". $_POST['citspe'.$ord] ."', '". $_POST['prospe'.$ord] ."', '" . $_POST['country'.$ord]. "', '". $_POST['telefo'.$ord] ."', '". $_POST['codfis'.$ord] ."', '" . $_POST['pariva'.$ord] . "', '". $_POST['email'.$ord] . "', '". $_POST['pec_email'.$ord] . "')");
+				gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,indspe,capspe,citspe,prospe,country,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . $_POST['ragso1'.$ord] . "', '" . $_POST['ragso2'.$ord] . "', '". $_POST['indspe'.$ord] ."', '".$_POST['capspe'.$ord]."', '". $_POST['citspe'.$ord] ."', '". $_POST['prospe'.$ord] ."', '" . $_POST['country'.$ord]. "', '". $_POST['telefo'.$ord] ."', '". $_POST['codfis'.$ord] ."', '" . $_POST['pariva'.$ord] . "', '" . $_POST['fe_cod_univoco'.$ord] . "', '". $_POST['email'.$ord] . "', '". $_POST['pec_email'.$ord] . "')");
 				gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .$_POST['ragso1'.$ord]." ".$_POST['ragso2'.$ord] . "')");
 			}
 		
@@ -197,6 +197,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il esiste o mi dà
 						echo '<input type="hidden" name="traspo'. $n .'" value="'. $order->CostShippingAmount .'">';
 						echo '<input type="hidden" name="email'. $n .'" value="'. $order->CustomerEmail .'">';
 						echo '<input type="hidden" name="pec_email'. $n .'" value="'. $order->CustomerPecEmail .'">';
+						echo '<input type="hidden" name="fe_cod_univoco'. $n .'" value="'. $order->CustomerCodeFattEl .'">';
 						foreach($xml->Documents->Document[$n]->Rows->children() as $orderrow) { // carico le righe degli ordini
 							echo '<input type="hidden" name="codice'. $n . $nr.'" value="'. $orderrow->Code . '">';
 							echo '<input type="hidden" name="descri'. $n . $nr.'" value="'. $orderrow->Description . '">';
