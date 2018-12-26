@@ -1616,6 +1616,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 			$nr++;
             // addizione ai totali peso,pezzi,volume
             $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
+            $v['descri_codric'] = gaz_dbi_get_row($gTables['clfoco'], 'codice', $v['codric'])['descri'];
             $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
             if ($artico['pack_units'] > 0) {
                 $form['units'] += intval(round($v['quanti'] / $artico['pack_units']));
@@ -1735,7 +1736,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 'value' => gaz_format_number($imprig), 'type' => ''),
                 array('head' => $script_transl["codvat"], 'class' => 'text-center numeric', 'value' => $v['pervat'], 'type' => ''),
                 array('head' => $script_transl["total"], 'class' => 'text-right numeric bg-warning', 'value' => gaz_format_number($imprig), 'type' => ''),
-                array('head' => $script_transl["codric"], 'class' => 'text-center', 'value' => $v['codric']),
+                array('head' => $script_transl["codric"], 'class' => 'text-center', 'value' =>'<span title="'.$v['descri_codric'].'">'. $v['codric'].'</span>'),
                 array('head' => $script_transl["delete"], 'class' => 'text-center',
                     'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
             );
