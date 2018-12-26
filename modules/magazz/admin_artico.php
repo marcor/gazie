@@ -145,7 +145,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             if ($_FILES['userfile']['size'] > 65530){
 				 //$msg['err'][] = 'filsiz';
 				 //Antonio Germani anziche segnalare errore ridimensiono l'immagine
-				$maxDim = 400;
+				$maxDim = 200;
 				$file_name = $_FILES['userfile']['tmp_name'];
 				list($width, $height, $type, $attr) = getimagesize( $file_name );
 				if ( $width > $maxDim || $height > $maxDim ) {
