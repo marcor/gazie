@@ -1450,7 +1450,8 @@ if (count($msg['war']) > 0) { // ho un alert
 }
 
 if ($form['id_tes'] > 0 && substr($form['tipdoc'], 0, 2) == 'AF') {
-    $title = $script_transl[0][$form['tipdoc']] . ' prot.<input type="text" class="text-right" style="width:5em;" id="protoc" name="protoc" value="'.$form['protoc'].'">';
+   //$title = $script_transl[0][$form['tipdoc']] . ' prot.<input type="text" class="text-right" style="width:5em;" id="protoc" name="protoc" value="'.$form['protoc'].'">';
+    $title = $script_transl[0][$form['tipdoc']] . ' prot.'.$form['protoc'];
 } else {
     $title = $script_transl[0][$form['tipdoc']];
 }
