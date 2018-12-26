@@ -1560,7 +1560,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['tipdoc'] = '';
     $form['id_doc_ritorno'] = 0;
     if (isset($_GET['tipdoc'])) {
-        $form['tipdoc'] = $_GET['tipdoc'];
+        $form['tipdoc'] = preg_replace("/[^A-Z?! ]/","",$_GET['tipdoc']);
     }
     $form['id_tes'] = "";
     $form['gioemi'] = date("d");
@@ -1621,7 +1621,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     } elseif (!isset($_GET['seziva'])) {
         $form['seziva'] = 1;
     } else {
-        $form['seziva'] = $_GET['seziva'];
+        $form['seziva'] = intval($_GET['seziva']);
     }
     //cerco l'ultimo template
     $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' and ddt_type!='R' and seziva = " .
@@ -1978,6 +1978,7 @@ echo '<table class="Tlarge table table-bordered table-condensed">
 		<input type="hidden" value="' . $form['in_id_lotmag'] . '" name="in_id_lotmag" />
 		<input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
+		<input type="hidden" value="' . $form['ok_barcode'] . '" name="ok_barcode" />
 		<tr>
 			<td class="FacetColumnTD">';
 echo "\n$script_transl[17]:";
@@ -1999,7 +2000,6 @@ echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-t
 						<?php
 					} 
 					?>
-					<input type="hidden" value="<?php echo $form['ok_barcode']; ?>" name="ok_barcode" />
 					<?php
 					if ($form['ok_barcode']=="ok"){
 						if ($form['in_barcode']==""){
@@ -2800,7 +2800,7 @@ echo '</table>';
 	}
 </script>
 <?php
-if (isset($form['ok_barcode']) && $form['ok_barcode']=="ok"){
+if ($form['ok_barcode']=="ok"){
 	?>
 	<script type="text/javascript">
 	if (this.document.docven.in_barcode.value == '') this.document.docven.in_barcode.focus();
