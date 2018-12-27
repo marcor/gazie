@@ -17,7 +17,7 @@ CREATE TABLE `gaz_XXXsyncronize_oc` (
   `id_oc` int(11) NOT NULL,
   `id_gz` int(11) NOT NULL,
   `date_created` datetime NOT NULL,
-  `date_update` datetime NOT NULL DEFAULT current_timestamp(),
+  `date_update` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM;
 ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `fattura_elettronica_reinvii` INT(1) NULL DEFAULT '0' COMMENT 'Numero di reinvii allo SdI della fattura elettronica, assieme alla sezione, alla data fattura e al numero di protocollo e dopo un encode in base 36 determinerà gli ultimi cinque caratteri del nome file' AFTER `fattura_elettronica_original_content`;
