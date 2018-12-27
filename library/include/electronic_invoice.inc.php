@@ -812,6 +812,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("AliquotaIVA", number_format($XMLvars->iva_bollo['aliquo'], 2, '.', ''));
         $el->appendChild($el1);
+        $el1 = $domDoc->createElement("Natura", $XMLvars->iva_bollo['fae_natura']);
+        $el->appendChild($el1);
         $results->appendChild($el);
         $n_linea++;
     }
