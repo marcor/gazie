@@ -1,0 +1,13 @@
+Titolo:
+Dum spiro, spero.
+
+Presentazione:
+Con l'appressarsi della fatidica data del primo gennaio 2019 i fremiti generati dall'obbligo della fatturazione elettronica li abbiamo positivamente trasformati in fervido lavoro di programmazione ed il risultato è questo nuovo rilascio che precisa alcuni aspetti della fatturazione elettronica e corregge piccoli bug di diversa natura scoperti e corretti da Alessandro Barducci, Benedetto Santarella, Fabrizio Quercia, Giovanni Vallesi e lellosoft , alcuni si palesavano in circostanze particolari: es. sui caratteri speciali "&" oppure quando erano presenti delle modalità di pagamento che prevedevano il rimborso dei bolli sulle cambiali-tratte.
+Ho creato un sistema per l'organizzazione dei reinvii dei file eventualmente scartati: è senza dubbio una utilità che eliminerà il rischio di errori legati alla rinomina manuale dei file xml; l'ho basato sul sistema di encode che consente di cambiare il "progressivo unico file" di soli 5 caratteri [0-9][A-Z] (in base 36) pur mantenendo corrispondenza biunivoca con la numerazione fatture di GAzie; così si riuscirà a risalire dal progressivo alfanumerico di cinque caratteri (base36) ad un numero decimale (base10) di otto cifre consentendo biezione fino ad un massimo di 5 sezioni IVA, 99999 fatture/anno, 10 anni e 9 reinvii/anno della stessa fattura. 
+Ho aggiunto anche la possibilità di scrivere sull'ultimo rigo di ogni fattura una riga di testo fissa, chi è obbligato ad indicare l'assoluzione del contributo Conai è certamente interessato a questa opportunità.
+Sempre nello spirito di equiparare  le elettroniche alla normativa delle fatture cartacee, le aziende persone giuridiche adesso valorizzano i dati relativi all'iscrizione al REA, vi verrà richiesto di introdurli in configurazione azienda.
+Altre e svariate migliorie sono state apportate da Antonio Germani sui lotti di produzione, nella sincronizzazione con Joomla e nella possibilità di inserimento veloce tramite lettore di codice a barre, dal prof.Francesco Pagano sull'evasione degli ordini di vendita, e da Daniele Frulla che si sta occupando della sincronizzazione con l'e-commerce libero OpenCart. 
+
+Buon e-2019 a tutti i partecipanti!
+
+Antonio de Vincentiis, Montesilvano, 27 Dicembre 2018
