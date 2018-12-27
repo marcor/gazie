@@ -1,5 +1,5 @@
 <?php
-function SendFatturaElettronica_CATsrl($fatturaxml)
+function SendFatturaElettronica_CATsrl($fatturaxml, $codiceAzienda)
 {
 	$CA_FILE = 'CA_Agenzia_delle_Entrate.pem';
 	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviXml.php';
@@ -14,7 +14,7 @@ function SendFatturaElettronica_CATsrl($fatturaxml)
 		$request,
 		CURLOPT_POSTFIELDS,
 		array(
-		  'file_contents' => curl_file_create(realpath('./'.$fatturaxml))
+		  'file_contents' => curl_file_create(realpath('../../data/files/'.$codiceAzienda.'/'.$fatturaxml))
 		)
 	);
 	/**/curl_setopt($request, CURLOPT_SSL_VERIFYHOST, false); // DISATTIVARE AL PROSSIMO RILASCIO CERTIFICATO
@@ -28,9 +28,5 @@ function SendFatturaElettronica_CATsrl($fatturaxml)
 
 	// close the session
 	curl_close($request);
-}
-
-if (!empty($_REQUEST['fatturaxml'])) {
-	SendFatturaElettronica_CATsrl($_REQUEST['fatturaxml']);
 }
 ?>
