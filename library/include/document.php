@@ -173,8 +173,10 @@ class DocContabVars {
 
         $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
-        $this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
-
+		$this->fae_reinvii = '';
+        if (isset($tesdoc['fattura_elettronica_reinvii'])) {
+			$this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
+		}
 		$this->efattura='';
 
         switch ($tesdoc["tipdoc"]) {
