@@ -23,10 +23,18 @@ function SendFatturaElettronica_CATsrl($fatturaxml, $codiceAzienda)
 	// output the response
 	curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
 	$result = curl_exec($request);
-	echo($result);
-	echo(curl_error($request));
+	//echo($result);
+	//echo(curl_error($request));
 
 	// close the session
 	curl_close($request);
+
+	return substr($result, strpos($result, $open_tag), strpos($result, $close_tag));
+}
+
+if (!empty($_REQUEST['fatturaxml'])) {
+	require('../../library/include/datlib.inc.php');
+	$admin_aziend = checkAdmin();
+	SendFatturaElettronica_CATsrl($_REQUEST['fatturaxml'], $admin_aziend['codice']); //return IdentificativoSdI
 }
 ?>
