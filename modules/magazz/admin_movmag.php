@@ -144,9 +144,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['id_mov'] = intval($_POST['id_mov']);
 	//$form['type_mov'] = intval ($_POST['type_mov']);
     $form['id_rif'] = intval($_POST['id_rif']);
-    $form['caumag'] = intval($_POST['caumag']);
-    $form['operat'] = intval($_POST['operat']);
-    $form['gioreg'] = intval($_POST['gioreg']);
+	$form['caumag'] = intval($_POST['caumag']);
+	$form['gioreg'] = intval($_POST['gioreg']);
     $form['mesreg'] = intval($_POST['mesreg']);
     $form['annreg'] = intval($_POST['annreg']);
     $form['clfoco'] = intval($_POST['clfoco']);
@@ -161,6 +160,25 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$form['cosear'] = $_POST['cosear'];
     $form['artico'] = $_POST['artico'];
 	$form['lot_or_serial']=$_POST['lot_or_serial'];
+	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0) {
+		$causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
+        $_POST['operat']= $causa['operat'];
+        $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
+        if (($causa['clifor'] < 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 and 	substr($form['clfoco'], 0, 3) == $admin_aziend['mascli'])) {
+            $form['clfoco'] = 0;
+            $form['search_partner'] = "";
+        }
+        if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
+            $form['tipdoc'] = "";
+            $form['desdoc'] = "";
+            $form['giodoc'] = date("d");
+            $form['mesdoc'] = date("m");
+            $form['anndoc'] = date("Y");
+            $form['scochi'] = 0;
+            $form['id_rif'] = 0;
+        }		
+	}
+	 $form['operat'] = intval($_POST['operat']);
 	if (strlen($form['artico'])>0) {
 		$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 		$print_unimis =  $item_artico['unimis'];
@@ -180,7 +198,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     /** ENRICO FEDELE */
     /* Con button non funziona _x */
     //if (isset($_POST['inscau_x'])) {
-    /** ENRICO FEDELE */
+    /** ENRICO FEDELE 
     if (isset($_POST['inscau'])) {
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $form['operat'] = $causa['operat'];
@@ -198,7 +216,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             $form['scochi'] = "";
             $form['id_rif'] = 0;
         }
-    }
+    }*/
     if (isset($_POST['newpartner'])) {
         $anagrafica = new Anagrafica();
         $partner = $anagrafica->getPartner($_POST['clfoco']);
@@ -420,7 +438,7 @@ if ($form['id_mov'] > 0) {
 
 </SCRIPT>
 
-<?php
+<?php 
 echo "<form method=\"POST\" name=\"myform\" enctype=\"multipart/form-data\" >";
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
@@ -474,7 +492,7 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 }
 echo "\t </select></td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">\n";
-echo "<select name=\"caumag\" class=\"FacetSelect\">\n";
+echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.submit()\" >\n";
 echo "<option value=\"\">-------------</option>\n";
 $result = gaz_dbi_dyn_query("*", $gTables['caumag'], " 1 ", "codice desc, descri asc");
 while ($row = gaz_dbi_fetch_array($result)) {
@@ -487,10 +505,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
 /* echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit']." !\"></td></tr>\n"; */
 
 /** ENRICO FEDELE */
-/* glyph-icon */
+/* glyph-icon 
 echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['submit'] . '!"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
-	   </tr>';
+	   </tr>';*/
 /** ENRICO FEDELE */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "&hArr;" . $script_transl[4] . "</td><td class=\"FacetDataTD\">\n";
 $messaggio = "";
