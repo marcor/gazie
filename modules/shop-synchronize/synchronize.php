@@ -26,13 +26,13 @@
 /*    >>> LEGGIMI <<<
 ------------------------------------------------------------------------------------------
 	** Antonio Germani - www.lacasettabio.it **
-	Questo codice serve per avviare l'interfaccia specifica per la sincronizzazione di GAzie con un negozio online.
+	Questo codice serve per avviare l'interfaccia per la sincronizzazione di GAzie con un negozio online.
 	Per ogni caso specifico, sono necessari due file intefaccia, uno da mettere nella cartella "shop-synchronize" di GAzie e l'altro da mettere nella root del negozio online.
 	I file interfaccia sono specifici per ciascun CMS e/o componente utilizzato dal negozio online.
 	La cartella synchronize di GAzie potrà contenere tutti i file interfaccia che a mano a mano verranno crati dagli sviluppatori.
 	L'utente deve scegliere quali interfacce utilizzare (sulla base delle caratteristiche del suo negozio online) e scrivere i relativi nomi dei file nella sottostante "Impostazione".
 	-Caso download: L'interfaccia presente nella root del negozio online elabora i dati del database del negozio e crea un file xml. In GAzie, la seconda interfaccia elabora il file xml scrivendone i dati sul database di GAzie.
-	-Caso Upload: .... da realizzare!
+	-Caso Upload: L'interfaccia di GAzie crea un file xml che viene letto dall'interfaccia presente nella root del negozio online. Con i dati presenti nel file xml viene scritto il data base di Joomla.
 ------------------------------------------------------------------------------------------
 */
 
@@ -40,11 +40,23 @@
 <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 <?php
 require("../../library/include/datlib.inc.php");
-
-
-
-$file_download = "dowload_ordini_joomla.php";
-$file_upload = "upload_prodotti_joomla.php";
+// Prendo l'id_currency 
+$test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
+$exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
+if ($exists) {
+    $c_e = 'enterprise_id';
+} else {
+    $c_e = 'company_id';
+}
+$admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
+    
+if ($admin_aziend['id_currency']==1){ // se è la prima azienda amministrata lascio i nomi file interfaccia predefiniti
+	$file_download = "dowload_ordini_joomla.php";
+	$file_upload = "upload_prodotti_joomla.php";
+} else { //altrimenti aggiungo ai nomi file l'id azienda
+	$file_download = "dowload_ordini_joomla".$admin_aziend['id_currency'].".php";
+	$file_upload = "upload_prodotti_joomla".$admin_aziend['id_currency'].".php";
+}
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];

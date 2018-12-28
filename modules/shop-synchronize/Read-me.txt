@@ -13,6 +13,11 @@ interfaccia, uno presente in GAzie e l'altro presente nella root di Joomla.
 o su un altro host.
   L'interfaccia residente su GAzie può rimanere sempre la stessa mentre quella residente su Joomla dovrà essere creata specificatamente
 in base al tipo di componente utilizzato per gestire il negozio online.
+ Per poter gestire più aziende, GAzie assegna un id progressivo ad ogni successiva azienda. Qualora più aziende fossero gestite con GAzie e ciascuna di esse
+utilizzasse un componente differente, questo sistema di connessione è in grado di gestire file di interfaccia differenti. Semplicemente basta aggiungere al
+nome del file interfaccia il numero id azienda. Cioè, l'azienda n.1 userà i file dowload_ordini_joomla.php e upload_prodotti_joomla.php, l'azienda n.2 userà 
+i file dowload_ordini_joomla2.php e upload_prodotti_joomla2.php e via di seguito. Ad ogni cambio azienda di GAzie questo sistema cambierà automaticamente il
+nome del file da utilizzare.
 
 
  *ATTIVAZIONE* 
@@ -53,6 +58,7 @@ una password. Tale password è, per comodità, la stessa che GAzie ha per l' FTP
 	<CustomerCellPhone></CustomerCellPhone>
 	<CustomerEmail></CustomerEmail>
 	<CustomerPecEmail></CustomerPecEmail>
+	<CustomerCodeFattEl></CustomerCodeFattEl>
 	<Warehouse></Warehouse>
 	<DateOrder></DateOrder>
 	<Number></Number>
