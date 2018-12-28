@@ -193,6 +193,20 @@ class DocContabVars {
 					$this->efattura = "IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber($data, 36).'.xml';
 				}
                 break;
+            case "VCO":
+                $this->docRelNum = $this->tesdoc["numfat"];
+                $this->docRelDate = $this->tesdoc["datfat"];
+				// in caso di fattura elettronica ricavo il nome del file
+				if (substr($tesdoc['datfat'], 0, 4)>=2019 ) { // dal 2019 valorizzo il nome della e-fattura
+					// faccio l'encode in base 36 per ricavare il progressivo unico di invio
+					$data = array('azienda' => $admin_aziend['codice'],
+								  'anno' => $this->docRelDate,
+        						  'sezione' => $this->tesdoc["seziva"],
+								  'fae_reinvii'=> $this->fae_reinvii+4, // sulle fatture allegate allo scontrino per non far coincidere il progressivo unico invio
+								  'protocollo' => $this->tesdoc["numfat"]);
+					$this->efattura = "IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber($data, 36).'.xml';
+				}
+                break;
             case "DDT":
             case "DDL":
             case "DDR":

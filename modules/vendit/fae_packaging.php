@@ -31,35 +31,48 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
 $msg = '';
 require("../../library/include/electronic_invoice.inc.php");
 $XMLdata = new invoiceXMLvars();
-function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
+function getExtremeDocs($vat_register = '_', $vat_section = 1) {
     global $gTables;
-    $type = substr($type, 0, 1);
+    $vat_register = substr($vat_register, 0, 1);
     $docs = array();
-    if ($date) {
-        $date = ' AND datfat <= ' . $date;
-    } else {
-        $date = '';
-    }
-    $from = $gTables['tesdoc'];
-    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND tipdoc LIKE '$type" . "__' $date";
+    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND ";
     $orderby = "datfat ASC, protoc ASC";
+    if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
+        $where .= "tipdoc = 'VCO' AND numfat > 0 AND clfoco > 100000000 AND datfat > '2018-01-01'";
+		$orderby = "datfat ASC, numfat ASC";
+    } else {
+        $where .= "tipdoc LIKE '$vat_register" . "__'";
+	}
+    $from = $gTables['tesdoc'];
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
-    $docs['ini'] = array('proini' => $row['protoc'], 'date' => $row['datfat']);
-    $orderby = "datfat DESC, protoc DESC";
+    if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
+		$docs['ini'] = array('proini' => $row['numfat'], 'date' => $row['datfat']);
+		$orderby = "datfat DESC, numfat DESC";
+    } else {
+		$docs['ini'] = array('proini' => $row['protoc'], 'date' => $row['datfat']);
+		$orderby = "datfat DESC, protoc DESC";
+	}
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
     $docs['fin'] = array('profin' => $row['protoc'], 'date' => $row['datfat']);
+    if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
+		$docs['fin'] = array('profin' => $row['numfat'], 'date' => $row['datfat']);
+		
+    }
     return $docs;
 }
 
-function getFAEunpacked($type = '___', $vat_section = 1, $date = false, $protoc = 999999999) {
+function getFAEunpacked($vat_register = '___', $vat_section = 1, $date = false, $protoc = 999999999) {
     global $gTables, $admin_aziend;
     $calc = new Compute;
-    $type = substr($type, 0, 1);
+    $vat_register = substr($vat_register, 0, 1);
     if ($date) {
         $p = ' AND (YEAR(datfat)*1000000+protoc) <= ' . (substr($date, 0, 4) * 1000000 + $protoc);
-        $d = ' AND datfat <= ' . $date;
+		if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
+			$p = 'AND numfat > 0 AND (YEAR(datfat)*1000000+numfat) <= ' . (substr($date, 0, 4) * 1000000 + $protoc);
+		}
+		$d = ' AND datfat <= ' . $date;
     } else {
         $d = '';
         $p = '';
@@ -71,7 +84,7 @@ function getFAEunpacked($type = '___', $vat_section = 1, $date = false, $protoc 
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
              ON customer.id_anagra=anagraf.id';
-    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND tipdoc LIKE '$type" . "__' $d $p";
+    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND tipdoc LIKE '$vat_register" . "__' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
@@ -89,6 +102,9 @@ function getFAEunpacked($type = '___', $vat_section = 1, $date = false, $protoc 
     $rit = 0;
 
     while ($tes = gaz_dbi_fetch_array($result)) {
+		if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero fattura e non sul protocollo
+			$tes['protoc']=$tes['numfat'];
+		}
         if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
             if ($ctrlp > 0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
                 $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
@@ -217,17 +233,17 @@ function computeTot($data) {
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
-    if (isset($_GET['type'])) {
-        $form['type'] = substr($_GET['type'], 0, 1);
+    if (isset($_GET['vat_register'])) {
+        $form['vat_register'] = substr($_GET['vat_register'], 0, 1);
     } else {
-        $form['type'] = 'F';
+        $form['vat_register'] = 'F';
     }
     if (isset($_GET['vat_section'])) {
         $form['vat_section'] = intval($_GET['vat_section']);
     } else {
         $form['vat_section'] = 1;
     }
-    $extreme = getExtremeDocs($form['type'], $form['vat_section']);
+    $extreme = getExtremeDocs($form['vat_register'], $form['vat_section']);
     if ($extreme['ini']['proini'] > 0) {
         $form['this_date_Y'] = substr($extreme['fin']['date'], 0, 4);
         $form['this_date_M'] = substr($extreme['fin']['date'], 5, 2);
@@ -248,7 +264,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 	$form['filename']='IT'.$admin_aziend['codfis'].'_'.date("YmdHis").'.zip';	
     $form['hidden_req'] = '';
 } else {    // accessi successivi
-    $form['type'] = substr($_POST['type'], 0, 1);
+    $form['vat_register'] = substr($_POST['vat_register'], 0, 1);
     $form['vat_section'] = intval($_POST['vat_section']);
     $form['this_date_Y'] = intval($_POST['this_date_Y']);
     $form['this_date_M'] = intval($_POST['this_date_M']);
@@ -261,8 +277,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     if (!checkdate($form['this_date_M'], $form['this_date_D'], $form['this_date_Y']))
         $msg .= "0+";
-    if ($form['hidden_req'] == 'type' || $form['hidden_req'] == 'vat_section') {   //se cambio il registro
-        $extreme = getExtremeDocs($form['type'], $form['vat_section']);
+    if ($form['hidden_req'] == 'vat_register' || $form['hidden_req'] == 'vat_section') {   //se cambio il registro
+        $extreme = getExtremeDocs($form['vat_register'], $form['vat_section']);
         if ($extreme['ini']['proini'] > 0) {
             $form['this_date_Y'] = substr($extreme['fin']['date'], 0, 4);
             $form['this_date_M'] = substr($extreme['fin']['date'], 5, 2);
@@ -280,21 +296,32 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $uts_this_date = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
     if (isset($_POST['submit']) && empty($msg)) {   //confermo la contabilizzazione
-        $rs = getFAEunpacked($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
+        $rs = getFAEunpacked($form['vat_register'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
         if (count($rs) > 0) {
 			$zip = new ZipArchive;
 			$res = $zip->open('../../data/files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
 			if ($res === TRUE) { 
 				// ho creato l'archivio e adesso lo riempio con i file xml delle singole fatture 
 				foreach ($rs as $k => $v) {
-					//vado a modificare le testate valorizzando con il nome del file zip (pacchetto) in cui desidero siano contenuti i file xml delle fatture selezionate
-					gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$form['filename']."' WHERE seziva = " .$v['tes']['seziva']. " AND protoc = " .$v['tes']['protoc']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND tipdoc = '" .$v['tes']['tipdoc']. "';");
-					//recupero i dati
-					$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc']," tipdoc LIKE '" .$v['tes']['tipdoc']. "' AND seziva = " .$v['tes']['seziva']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND protoc = " .$v['tes']['protoc'],'datemi ASC, numdoc ASC, id_tes ASC');
-					$enc_data['sezione']=$v['tes']['seziva'];
-					$enc_data['anno']=substr($v['tes']['datfat'],0,4);
-					$enc_data['protocollo']=$v['tes']['protoc'];
-					$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
+					if ($v['tes']['tipdoc']=='VCO'){ // in caso di fattura allegata allo scontrino
+						//vado a modificare le testate valorizzando con il nome del file zip (pacchetto) in cui desidero siano contenuti i file xml delle fatture selezionate
+						gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$form['filename']."' WHERE seziva = " .$v['tes']['seziva']. " AND numfat = " .$v['tes']['numfat']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND tipdoc = 'VCO'");
+						//recupero i dati
+						$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc']," tipdoc = 'VCO' AND seziva = " .$v['tes']['seziva']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND numfat = " .$v['tes']['numfat'],'datemi ASC, numdoc ASC, id_tes ASC');
+						$enc_data['sezione']=$v['tes']['seziva'];
+						$enc_data['anno']=substr($v['tes']['datfat'],0,4);
+						$enc_data['protocollo']=$v['tes']['numfat'];
+						$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii']+4;
+					} else {
+						//vado a modificare le testate valorizzando con il nome del file zip (pacchetto) in cui desidero siano contenuti i file xml delle fatture selezionate
+						gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$form['filename']."' WHERE seziva = " .$v['tes']['seziva']. " AND protoc = " .$v['tes']['protoc']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND tipdoc = '" .$v['tes']['tipdoc']. "';");
+						//recupero i dati
+						$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc']," tipdoc LIKE '" .$v['tes']['tipdoc']. "' AND seziva = " .$v['tes']['seziva']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND protoc = " .$v['tes']['protoc'],'datemi ASC, numdoc ASC, id_tes ASC');
+						$enc_data['sezione']=$v['tes']['seziva'];
+						$enc_data['anno']=substr($v['tes']['datfat'],0,4);
+						$enc_data['protocollo']=$v['tes']['protoc'];
+						$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
+					}
 					$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,$form['filename']);
 					$zip->addFromString('IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml', $file_content);
 				}
@@ -388,8 +415,8 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date'] . "</td><td  
 $gForm->CalendarPopup('this_date', $form['this_date_D'], $form['this_date_M'], $form['this_date_Y'], 'FacetSelect', 1);
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl['type'] . " </td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('type', $script_transl['type_value'], $form['type'], 'FacetSelect', 0, 'type');
+echo "\t<td class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl['vat_register'] . " </td><td  class=\"FacetDataTD\">\n";
+$gForm->variousSelect('vat_register', $script_transl['vat_register_value'], $form['vat_register'], 'FacetSelect', 0, 'vat_register');
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
@@ -412,7 +439,7 @@ echo "</table>\n";
 
 //mostro l'anteprima
 if (isset($_POST['preview'])) {
-    $rs = getFAEunpacked($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
+    $rs = getFAEunpacked($form['vat_register'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
     echo "<div align=\"center\"><b>" . $script_transl['preview'] . $form['filename']. "</b></div>";
     echo "<div class=\"box-primary table-responsive\">";
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
@@ -437,7 +464,7 @@ if (isset($_POST['preview'])) {
 				}
 				$cl_sdi='bg-danger';
 				$v['tes']['pec_email']= '<a onclick="confirMail(this);return false;" id="doc' . $v['tes']["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$v['tes']['clfoco'].$dest.'" href="#" title="Mailto: ' . $v['tes']["e_mail"] . '"
-            mail="' . $v['tes']["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina">Questa '.$script_transl['doc_type_value'][$v['tes']['tipdoc']] .' non potrà essere recapitata al cliente, richiedi la PEC o il codice SDI </a>';
+            mail="' . $v['tes']["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina">Questa '.$script_transl['doc_type_value'][$v['tes']['tipdoc']] .' finirà sul cassetto fiscale del cliente, richiedi la PEC o il codice SDI per recapitarla</a>';
 			} else{
 				$v['tes']['pec_email']=$script_transl['pec'].$v['tes']['pec_email'];
 			}
@@ -447,6 +474,12 @@ if (isset($_POST['preview'])) {
 		$enc_data['sezione']=$v['tes']['seziva'];
 		$enc_data['anno']=substr($v['tes']['datfat'],0,4);
  		$enc_data['protocollo']=$v['tes']['protoc'];
+		if ($form['vat_register']=='V'){
+			/* ATTENZIONE QUI!!!!
+				se scelgo di generare l'xml di una fattura allegata allo scontrino per evitare di far coincidere il progressivo unico di invio file aggiungerò il valore 4 al numero di reinvio
+			*/
+			$v['tes']['fattura_elettronica_reinvii']=$v['tes']['fattura_elettronica_reinvii']+4;
+		}
  		$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
         echo '<tr class="FacetDataTD">
                <td>' . $v['tes']['protoc'] .'</td>

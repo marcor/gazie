@@ -54,8 +54,50 @@ if (isset($_GET['all'])) {
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
+echo '<script>
+$(function() {
+   $( "#dialog1" ).dialog({
+      autoOpen: false
+   });
+
+});
+
+function confirFae(link){
+	tes_id = link.id.replace("doc1", "");
+	$.fx.speeds._default = 500;
+	var new_title = "Genera file XML per fattura n." + $("#doc1"+tes_id).attr("n_fatt");
+	var n_reinvii = parseInt($("#doc1"+tes_id).attr("fae_n_reinvii"))+1;
+	$("p#fae1").html("nome file: " + $("#doc1"+tes_id).attr("fae_attuale"));
+	$("span#fae2").html("<a href=\'"+link.href+"&reinvia\'> " + $("#doc1"+tes_id).attr("fae_reinvio")+ " (" + n_reinvii.toString() + "° reinvio) </a>");
+	$("#dialog1").dialog({
+	  title: new_title,
+      modal: "true",
+      show: "blind",
+      hide: "explode",
+      buttons: {
+                      " ' . $script_transl['submit'] . ' ": function() {
+                         window.location.href = link.href;
+                          $(this).dialog("close");
+                      },
+                      " ' . $script_transl['cancel'] . ' ": function() {
+                        $(this).dialog("close");
+                      }
+               }
+         });
+	$("#dialog1").dialog( "open" );
+}
+
+</script>';
+
 $gForm = new GAzieForm();
 echo "<form method=\"GET\" name=\"report\">\n";
+?>
+    <div style="display:none" id="dialog1" title="<?php echo $script_transl['fae_alert0']; ?>">
+        <p id="fae_alert1"><?php echo $script_transl['fae_alert1']; ?></p>
+        <p class="ui-state-highlight" id="fae1"></p>
+        <p id="fae_alert2"><?php echo $script_transl['fae_alert2']; ?><span id="fae2" class="bg-warning"></span></p>
+    </div>
+<?php
 echo "<input type=\"hidden\" name=\"hidden_req\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'] . $script_transl['seziva'];
 echo $ecr['seziva'];
@@ -206,7 +248,22 @@ $linkHeaders->output();
             }
             if ($row['numfat'] > 0) {
                 $cliente = $anagrafica->getPartner($row['clfoco']);
+                $modulo_fae = "electronic_invoice.php?id_tes=" . $row['id_tes'];
+				$row['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
+								'anno' => $row["datfat"],
+								'sezione' => $row["seziva"],
+								'fae_reinvii'=> $row["fattura_elettronica_reinvii"]+4,
+								'protocollo' => $row["numfat"]), 36).".xml";
+				$row['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
+								'anno' => $row["datfat"],
+								'sezione' => $row["seziva"],
+								'fae_reinvii'=> intval($row["fattura_elettronica_reinvii"]+5),
+								'protocollo' => $row["numfat"]), 36).".xml";
                 $invoice = "<a href=\"stampa_docven.php?id_tes=" . $row['id_tes'] . "&template=FatturaAllegata\" class=\"btn btn-xs btn-default\" title=\"Stampa\" target=\"_blank\">n." . $row['numfat'] . " del " . gaz_format_date($row['datfat']) . ' a ' . $cliente['ragso1'] . "&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>\n";
+				$invoice .= '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1" '.$row["id_tes"].'" fae_reinvio="'.$row["fae_reinvio"].'" fae_attuale="'.$row["fae_attuale"].'" fae_n_reinvii="'.$row["fattura_elettronica_reinvii"].'" n_fatt="'. $row["numfat"]."/". $row["seziva"].'/SCONTR" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$row["fae_attuale"].' o fai il '.intval($row["fattura_elettronica_reinvii"]+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$row['id_tes'].'&viewxml"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+				if(strlen($row["fattura_elettronica_zip_package"])>10){
+					$invoice.='<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$row['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';
+				}
             } else {
                 $invoice = '';
             }

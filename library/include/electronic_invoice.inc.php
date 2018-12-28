@@ -164,7 +164,8 @@ class invoiceXMLvars {
         $this->TipoDocumento = 'TD01';    // <TipoDocumento> 2.1.1.1
         $this->docRelNum = $this->tesdoc["numdoc"].'/'.$this->tesdoc["seziva"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
-
+		$this->protoc = $this->tesdoc["protoc"];
+        $this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
         switch ($tesdoc["tipdoc"]) {
             case "FAD":
                 $this->ddt_data = true;
@@ -190,6 +191,12 @@ class invoiceXMLvars {
                 $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
+            case "VCO":
+                $this->protoc = $this->tesdoc["numfat"]; //forzo il protocollo al numero fattura in caso di registro corrispettivi
+				$this->fae_reinvii = $this->fae_reinvii+4; // e aggiungo 4 per non far collidere con un eventuale fattura normale della stessa sezione
+                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"].'/SCONTR';
+                $this->docRelDate = $this->tesdoc["datfat"];
+                break;
             case "DDT":
             case "DDL":
             case "DDR":
@@ -198,10 +205,7 @@ class invoiceXMLvars {
                 $this->docRelNum = $this->tesdoc["numdoc"].'/'.$this->tesdoc["seziva"];    // Numero del documento relativo
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
-
-        $this->protoc = $this->tesdoc["protoc"];
         $this->seziva = $this->tesdoc["seziva"];
-        $this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
         $this->docYear = substr($this->tesdoc["datemi"], 0, 4);    // Anno del documento
         $this->IdCodice = $admin_aziend['codfis'];
         $this->totimp_body = 0;
@@ -477,7 +481,11 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			} else {
 				if (strlen($cod_destinatario) < 6 ) {
 					$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
-					$attrVal = $domDoc->createTextNode("0000000");
+					if ($XMLvars->client['country']=='IT'){
+						$attrVal = $domDoc->createTextNode("0000000");
+					} else {
+						$attrVal = $domDoc->createTextNode("XXXXXXX");
+					}
 					$results->appendChild($attrVal);
 					if (strlen(trim($XMLvars->client['pec_email'])) > 6 ) { // l'elemento per la pec la creo solo se c'è
 						//nodo 1.1.6
@@ -681,6 +689,19 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                             $el2 = $domDoc->createElement("RiferimentoTesto", $v);
                             $el1->appendChild($el2);
                         }
+                    }
+					// se è una fattura allegata allo scontrino fiscale
+                    if ($XMLvars->tesdoc['tipdoc']=='VCO') {
+       					$el1 = $domDoc->createElement("AltriDatiGestionali", '');
+                        $el->appendChild($el1);
+                        $el2 = $domDoc->createElement("TipoDato", 'SCONTRINO FISCALE');
+                        $el1->appendChild($el2);
+                        $el2 = $domDoc->createElement("RiferimentoTesto", 'NUMERO');
+                        $el1->appendChild($el2);
+                        $el2 = $domDoc->createElement("RiferimentoNumero", $XMLvars->tesdoc['numdoc']);
+                        $el1->appendChild($el2);
+                        $el2 = $domDoc->createElement("RiferimentoData",  $XMLvars->tesdoc['datemi']);
+                        $el1->appendChild($el2);
                     }
                     $benserv->appendChild($el);
                     $nl = true;

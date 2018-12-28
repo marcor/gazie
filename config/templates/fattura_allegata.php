@@ -37,7 +37,7 @@ class FatturaAllegata extends Template
         $this->anno = substr($this->tesdoc['datfat'],0,4);
         $this->data = strftime("%d-%m-%Y", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),substr($this->tesdoc['datemi'],8,2),substr($this->tesdoc['datemi'],0,4)));
         $this->sconto = $this->tesdoc['sconto'];
-        $this->tipdoc = 'Fattura n.'.$this->tesdoc['numfat'].' Allegata allo scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
+        $this->tipdoc = 'Fattura n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' Allegata allo scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
         $this->descriptive_last_row = $this->docVars->descriptive_last_row;
     }
 

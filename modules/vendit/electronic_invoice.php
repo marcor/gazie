@@ -27,31 +27,28 @@ $admin_aziend=checkAdmin();
 
 require("../../library/include/electronic_invoice.inc.php");
 
-
 // recupero i dati
 if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo documento attraverso il suo id_tes
     $id_testata = intval($_GET['id_tes']);
     $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $id_testata);
-    $si=$testata['seziva'];
-    $yr=substr($testata['datfat'],0,4);
-    $pr=$testata['protoc'];
-//    create_XML_invoice($testata, $gTables);
-//    exit;
+	$where="tipdoc LIKE 'F__' AND seziva = ".$testata['seziva']." AND YEAR(datfat) = ".substr($testata['datfat'],0,4)." AND protoc = ".$testata['protoc'];
+	if ($testata['tipdoc']=='VCO'){ // in caso di fattura allegata a scontrino mi baso solo sull'id_tes
+		$where="id_tes = ".$id_testata;
+	}
+
 } else { // in tutti gli altri casi devo passare i valori su $_GET
    if (!isset($_GET['protoc']) || !isset($_GET['year']) || !isset($_GET['seziva'])) {
       header("Location: report_docven.php");
       exit;
    } else {
-    $si=intval($_GET['seziva']);
-    $yr=intval($_GET['year']);
-    $pr=intval($_GET['protoc']);
+	  $where="tipdoc LIKE 'F__' AND seziva = ".intval($_GET['seziva'])." AND YEAR(datfat) = ".intval($_GET['year'])." AND protoc = ".intval($_GET['protoc']);
    }
 }
 if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome faccio avanzare il relativo contatore sulle testate delle fatture
-   gaz_dbi_query ("UPDATE ".$gTables['tesdoc']." SET `fattura_elettronica_reinvii`=`fattura_elettronica_reinvii`+1 WHERE tipdoc LIKE 'F__' AND seziva = $si AND YEAR(datfat) = $yr AND protoc = ".$pr);
+   gaz_dbi_query ("UPDATE ".$gTables['tesdoc']." SET `fattura_elettronica_reinvii`=`fattura_elettronica_reinvii`+1 WHERE ".$where);
 }
 //recupero i dati
-$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],"tipdoc LIKE 'F__' AND seziva = $si AND YEAR(datfat) = $yr AND protoc = ".$pr,'datemi ASC, numdoc ASC, id_tes ASC');
+$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],$where,'datemi ASC, numdoc ASC, id_tes ASC');
 if (isset($_GET['viewxml'])) {   //se viene richiesta una visualizzazione all'interno del browser
 	$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,'from_string.xml');
 	$doc = new DOMDocument;
