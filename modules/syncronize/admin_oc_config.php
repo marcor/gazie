@@ -31,7 +31,18 @@ $admin_aziend = checkAdmin();
 
 require("include/gazie/opencart.php");
 
+if ( $_GET['download'] == true ) {
+	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+	header('Content-type: application/zip');
+	header('Content-Disposition: attachment; filename="sync-gazie.ocmod.zip"');
+	header("Content-Transfer-Encoding: binary");
+	header('Pragma: public');
+	readfile('download/sync-gazie.1.0.ocmod.zip');
+	exit;
+}
+
 require("../../library/include/header.php");
+
 $script_transl = HeadMain();
 
 # Ottengo configurazione
@@ -50,7 +61,7 @@ if ( $_POST ) {
 ?>
 <div class="container">
   <div class="row">
-   <div class="col-sm-12">
+   <div class="col-sm-8">
     <div class="row center">
     Configurazione Accesso Opencart
     </div>
@@ -73,6 +84,10 @@ if ( $_POST ) {
       </tr>	
     </table>
     </form>
+   </div>
+   <div class="col-sm-4">
+	<h2>Opencart Extentions</h2>
+	<a class="button" href="?download=true"><span>Download Extension Api Opencart</span></a>
    </div>
   </div>
 </div>
