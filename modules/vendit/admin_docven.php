@@ -952,7 +952,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['quanti'] = 0;
                 $form['rows'][$old_key]['sconto'] = 0;
-            } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //rigo fattura elettronica
+            } elseif ($form['in_tiprig'] == 11 || $form['in_tiprig'] == 12 
+					|| $form['in_tiprig'] == 13 || $form['in_tiprig'] == 14 
+					|| $form['in_tiprig'] == 15 || $form['in_tiprig'] == 16 
+					|| $form['in_tiprig'] == 21 || $form['in_tiprig'] == 31) { //per  fattura elettronica riferibili ad altri righi o a tutto il documento
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['annota'] = "";
                 $form['rows'][$old_key]['pesosp'] = "";
@@ -960,7 +963,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['quanti'] = 0;
                 $form['rows'][$old_key]['prelis'] = 0;
-                $form['rows'][$old_key]['codric'] = 0;
                 $form['rows'][$old_key]['sconto'] = 0;
                 $form['rows'][$old_key]['pervat'] = 0;
                 $form['rows'][$old_key]['tipiva'] = 0;
@@ -1285,7 +1287,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['tipiva'] = 0;
                 $form['rows'][$next_row]['ritenuta'] = 0;
                 $form['rows'][$next_row]['codvat'] = 0;
-            } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //dati fattura elettronica
+            } elseif ($form['in_tiprig'] == 11 || $form['in_tiprig'] == 12 
+					|| $form['in_tiprig'] == 13 || $form['in_tiprig'] == 14 
+					|| $form['in_tiprig'] == 15 || $form['in_tiprig'] == 16 
+					|| $form['in_tiprig'] == 21 || $form['in_tiprig'] == 31) { //per  fattura elettronica riferibili ad altri righi o a tutto il documento
                 $form['rows'][$next_row]['codart'] = "";
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
@@ -2361,85 +2366,131 @@ foreach ($form['rows'] as $k => $v) {
 					<input type="hidden" value="" name="rows[' . $k . '][provvigione]" />';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
-        case "11": // CIG fattura PA
-        case "12": // CUP fattura PA
+        case "11": // CIG fattura elettronica
+        case "12": // CUP fattura elettronica
             echo "	<td>
 						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
 							<i class=\"glyphicon glyphicon-arrow-up\"></i>
 						</button>
 					</td>
 					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+						<input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
-					<td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" size=\"50\" />
-					</td>
-					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-                    <td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
-					<td></td>
-					<td></td>
-					<td></td>\n";
+					<td colspan=\"8\">
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" size=\"50\" /> riferito a ";
+			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], count($form['rows'])); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
+			echo "</td>
+			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
+			</td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
-
-        case "13": // ID documento fattura PA
+        case "13": // ID documento fattura elettronica
+        case "15": // NumItem fattura elettronica
             echo "	<td>
                             <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
                                 <i class=\"glyphicon glyphicon-arrow-up\"></i>
                             </button>
 			</td>
-                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-                            <input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
+                            <input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td>
-                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
-			</td>
-			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-            <td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
-			<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
-			<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
-			<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
-			<td></td>
-			<td></td>
-			<td></td>\n";
+			<td colspan=\"8\">
+                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" /> riferito a ";
+			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], count($form['rows'])); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
+			echo "</td>
+			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
+			</td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
-        case "14":       
-            if ( $show_artico_composit['val']=="1" ) {    
-                echo "	<td>&nbsp;</td>
-                <td title=\"".$script_transl['update'] . $script_transl['thisrow'] . '! ' .  $btn_title . "\">
-                    <button name=\"upd_row[' . $k . ']\" class=\"btn btn-xs btn-default btn-block\" type=\"submit\">
-                        <i class=\"glyphicon glyphicon-refresh\"></i>&nbsp;" . $v['codart'] . "
-                    </button>
-                </td>
-                    <td>
-                        <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
-                    </td>
-                    <td><input class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\" size=\"1\" />
-                </td>
-                <td>
-                    <input class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl['weight'] . "\" type=\"text\" name=\"rows[" . $k . "][quanti]\" value=\"" . $v["quanti"] . "\" align=\"right\" maxlength=\"11\" size=\"4\" id=\"righi_" . $k . "_quanti\" onchange=\"document.docven.last_focus.value=\"righi_" . $k . "_prelis\"; this.form.hidden_req.value=\"ROW\"; this.form.submit();\" />
-                </td>
-                <td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
-                <td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
-                <td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
-                <td></td>
-                <td></td>
-                <td></td>\n";
-            } else {
-                echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
-                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\" size=\"1\" />
-                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl['weight'] . "\" type=\"text\" name=\"rows[" . $k . "][quanti]\" value=\"" . $v["quanti"] . "\" align=\"right\" maxlength=\"11\" size=\"4\" id=\"righi_" . $k . "_quanti\" onchange=\"document.docven.last_focus.value=\"righi_" . $k . "_prelis\"; this.form.hidden_req.value=\"ROW\"; this.form.submit();\" />
-                    <input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
-                    <input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
-                    <input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />";
-            }
-            //$last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+        case "14": // Data ordine d'acquisto fattura elettronica      
+            echo "	<td>
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>
+					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+						<input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+					</td>
+					<td colspan=\"8\">
+						<input type=\"date\"   name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"15\" size=\"50\" /> riferito a ";
+			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], count($form['rows'])); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
+			echo "</td>
+			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
+			</td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
-			case "90": //ventita cespite - alienazione bene ammortizzabile
+        case "16": // CodiceCommessaConvenzione fattura elettronica
+            echo "	<td>
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                                <i class=\"glyphicon glyphicon-arrow-up\"></i>
+                            </button>
+			</td>
+                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
+                            <input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                        </td>
+			<td colspan=\"8\">
+                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferito a ";
+			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], count($form['rows'])); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
+			echo "</td>
+			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
+			</td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            break;
+        case "21": // Causale 2.1.1.11 fattura elettronica
+            echo "	<td>
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                                <i class=\"glyphicon glyphicon-arrow-up\"></i>
+                            </button>
+			</td>
+                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
+                            <input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                        </td>
+			<td colspan=\"8\">
+                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferita a tutto il documento</td>
+			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
+			</td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            break;
+        case "31": // Dati veicolo 2.3 fattura elettronica
+            echo "	<td>
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                                <i class=\"glyphicon glyphicon-arrow-up\"></i>
+                            </button>
+			</td>
+                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
+                            <input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                        </td>
+			<td colspan=\"8\">
+                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferiti a tutto il documento</td>
+			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
+			</td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            break;
+		case "90": //ventita cespite - alienazione bene ammortizzabile
             /*
              */
             echo '	<td>

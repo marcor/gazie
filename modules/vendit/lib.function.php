@@ -106,6 +106,18 @@ class venditForm extends GAzieForm {
         }
         echo "</select>\n";
    }
+
+   function selRifDettaglioLinea($name, $val, $ultimalinea, $class = '') {
+        global $gTables, $admin_aziend;
+        echo '<select id="'.$name.'" name="'.$name.'" class="'.$class.'">';
+        echo '<option value="">Tutto il documento</option>';
+		for ($i = 1; $i <= $ultimalinea; $i++) {
+			$selected = '';
+			if ($i == $val) $selected = ' selected';
+			echo '<option value="'.$i.'" '.$selected.' >Linea n.'.$i.'</option>';
+		}
+        echo "</select>\n";
+   }
 }
 
 class Agenti {
