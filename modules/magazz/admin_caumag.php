@@ -38,20 +38,18 @@ if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
 
-if ((isset($_GET['Update']) and ! isset($_GET['codice'])) 
-	|| ($_GET['codice'] > 80)
-	|| isset($_POST['Return'])) {
-    header("Location: " . $_POST['ritorno']);
-    exit;
-}
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
+	if (! isset($_POST['codice'])|| $_POST['codice'] >= 80 || isset($_POST['Return'])) {
+		header("Location: " . $_POST['ritorno']);
+		exit;
+	}
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
     $form['codice'] = intval($_POST['codice']);
-    $form['descri'] = $_POST['descri'];
-    $form['insdoc'] = $_POST['insdoc'];
-    $form['operat'] = $_POST['operat'];
-    $form['clifor'] = $_POST['clifor'];
+    $form['descri'] = preg_replace("/[^a-zA-Z0-9 ]+/", "", $_POST['descri']);
+    $form['insdoc'] = intval($_POST['insdoc']);
+    $form['operat'] = intval($_POST['operat']);
+    $form['clifor'] = intval($_POST['clifor']);
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         if ($toDo == 'insert') { // e' un inserimento, controllo se il codice esiste
@@ -72,7 +70,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else { // e' un'inserimento
                 gaz_dbi_table_insert('caumag', $form);
             }
-            header("Location: " . $_POST['ritorno']);
+            header("Location: report_caumag.php");
             exit;
         }
     }
@@ -84,9 +82,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['insdoc'] = $caumag['insdoc'];
     $form['clifor'] = $caumag['clifor'];
     $form['operat'] = $caumag['operat'];
-} elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
+} elseif (!isset($_POST['Insert']) && isset($_GET['Insert'])) { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['caumag'], 'codice <= 89', "codice desc", 0, 1); // i codici da 90 a 99 sono riservati
+    $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['caumag'], 'codice <= 79', "codice desc", 0, 1); // i codici da 90 a 99 sono riservati
     $ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
     $form['codice'] = $ultimo_codice['codice'] + 1;
     $form['descri'] = "";

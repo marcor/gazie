@@ -27,7 +27,7 @@ require("../../modules/magazz/lib.function.php");
 
 $admin_aziend = checkAdmin();
 $msgtoast = "";
-$msg = '';
+$msg = array('err' => array(), 'war' => array());
 $calc = new Compute;
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
@@ -314,12 +314,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['lot_or_serial'] = intval($v['lot_or_serial']);
             $form['rows'][$next_row]['id_lotmag'] = intval($v['id_lotmag']);
             if ($v['tiprig'] == 0 && $v['quanti'] < 0.00001 && $v['quanti'] > -0.00001) {
-				$msg.='64+';
+				$msg['err'][] = "64";
 			}
             if ($v['lot_or_serial'] == 2 && $v['id_lotmag'] > 0) {
             // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1
                 if ($form['rows'][$next_row]['quanti'] <> 1) {
-                    $msg .= "60+";
+                    $msg['err'][] = "60";
                 }
                 $form['rows'][$next_row]['quanti'] = 1;
             }
@@ -423,16 +423,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $utstra = mktime(0, 0, 0, $form['mestra'], $form['giotra'], $form['anntra']);
         }
         if (!checkdate($form['mestra'], $form['giotra'], $form['anntra'])) {
-            $msg .= "37+";
+            $msg['err'][] = "37";
         }
         if ($utstra < $utsemi) {
-            $msg .= "38+";
+            $msg['err'][] = "38";
         }
         if (!isset($_POST['rows'])) {
-            $msg .= "39+";
+            $msg['err'][] = "39";
         }
         if ($form['tipdoc'] == 'RDV' && $form['id_doc_ritorno'] <= 0) {  //se è un RDV vs Fattura differita
-            $msg .= "59+";
+            $msg['err'][] = "59";
         }
         // --- inizio controllo coerenza date-numerazione
         if ($toDo == 'update') {  // controlli in caso di modifica
@@ -440,34 +440,34 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datemi < '$datemi' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
                 if ($result and ( $form['numdoc'] < $result['numdoc'])) {
-                    $msg .= "40+";
+                    $msg['err'][] = "40";
                 }
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datemi > '$datemi' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
                 if ($result and ( $form['numdoc'] > $result['numdoc'])) {
-                    $msg .= "41+";
+                    $msg['err'][] = "41";
                 }
             } else if ( $form['tipdoc'] == 'CMR' || $form['tipdoc'] == 'FAC' ) {
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datemi < '$datemi' and ( tipdoc like 'CMR' or tipdoc = 'FAC') and seziva = $sezione", "numdoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
                 if ($result and ( $form['numdoc'] < $result['numdoc'])) {
-                    $msg .= "40+";
+                    $msg['err'][] = "40";
                 }
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datemi > '$datemi' and ( tipdoc like 'CMR' or tipdoc = 'FAC') and seziva = $sezione", "numdoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
                 if ($result and ( $form['numdoc'] > $result['numdoc'])) {
-                    $msg .= "41+";
+                    $msg['err'][] = "41";
                 }
             } else { //se sono altri documenti
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datfat < '$datemi' and tipdoc like '" . $form['tipdoc'] . "' and seziva = $sezione", "protoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
                 if ($result and ( $form['numfat'] < $result['numfat'])) {
-                    $msg .= "42+";
+                    $msg['err'][] = "42";
                 }
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datfat > '$datemi' and tipdoc like '" . $form['tipdoc'] . "' and seziva = $sezione", "protoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
                 if ($result and ( $form['numfat'] > $result['numfat'])) {
-                    $msg .= "43+";
+                    $msg['err'][] = "43";
                 }
             }
         } else {    //controlli in caso di inserimento
@@ -476,14 +476,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
                 $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
                 if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
-                    $msg .= "44+";
+                    $msg['err'][] = "44";
                 }
             } else if ($form['tipdoc'] == 'VRI') {
                 /* $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " AND (tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND seziva = " . $sezione, "datemi DESC ,numdoc DESC ", 0, 1);
                   $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
                   $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
                   if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
-                  $msg .= "44+";
+                  $msg['err'][] = "44";
                   } */
                 $rs_last_n = gaz_dbi_dyn_query("numdoc", $gTables['tesdoc'], "tipdoc = 'VRI' AND id_con = 0", 'datemi DESC, numdoc DESC', 0, 1);
                 $last_n = gaz_dbi_fetch_array($rs_last_n);
@@ -505,36 +505,36 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
                 $utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datfat'], 5, 2), substr($ultimo_tipo['datfat'], 8, 2), substr($ultimo_tipo['datfat'], 0, 4));
                 if ($ultimo_tipo and ( $utsUltimoProtocollo > $utsemi)) {
-                    $msg .= "45+";
+                    $msg['err'][] = "45";
                 }
             }
         }
         // --- fine controllo coerenza date-numeri
         if (!checkdate($form['mesemi'], $form['gioemi'], $form['annemi']))
-            $msg .= "46+";
+            $msg['err'][] = "46";
         if (empty($form["clfoco"]))
-            $msg .= "47+";
+            $msg['err'][] = "47";
         if (empty($form["pagame"]))
-            $msg .= "48+";
+            $msg['err'][] = "48";
         //controllo che i rows non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
 		$rit_ctrl=false;
         foreach ($form['rows'] as $i => $v) {
             if ($v['descri'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
                 $msgrigo = $i + 1;
-                $msg .= "49+";
+                $msg['err'][] = "49";
             }
             if ($v['unimis'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
                 $msgrigo = $i + 1;
-                $msg .= "50+";
+                $msg['err'][] = "50";
             }
             if ($v['tiprig'] == 90) {
                 if (empty($v['descri'])) {
                     $msgrigo = $i + 1;
-                    $msg .= "49+";
+                    $msg['err'][] = "49";
                 }
                 if ($v['codric'] < 100000000) {
                     $msgrigo = $i + 1;
-                    $msg .= "61+";
+                    $msg['err'][] = "61";
                 }
             }
 			if ($v['ritenuta']>=0.01){
@@ -543,12 +543,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
 		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
 		if ($form['annemi']>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 ){
-				$msg.="62+";
+				$msg['err'][] = "62";
 		}
 		if ($rit_ctrl && $admin_aziend['causale_pagam_770']==''){
-				$msg.='63+';
+				$msg['err'][] = "63";
 		}
-        if ($msg == "") {// nessun errore
+        if (count($msg['err']) < 1) {// nessun errore
             $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
@@ -1438,10 +1438,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['tipdoc'] = $tesdoc['tipdoc'];
     $form['id_doc_ritorno'] = $tesdoc['id_doc_ritorno'];
     if ($tesdoc['tipdoc'] == 'FAD') {
-        $msg .= '57+';
+        $msg['err'][] = "57";
     }
     if ($tesdoc['id_con'] > 0) {
-        $msg .= '58+';
+        $msg['err'][] = "58";
     }
     if ($form['tipdoc'] == 'FNC') { // nel caso che si tratti di nota di credito
         $form['in_codric'] = $admin_aziend['sales_return'];
@@ -1721,8 +1721,13 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
     }
 </script>
 <?php
-echo '<form method="POST" name="docven">';
 $gForm = new venditForm();
+if (count($msg['err']) > 0) { // ho un errore
+    echo '<div class="text-center"><div><b>';
+    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+    echo "</b></div></div>\n";
+}
+echo '<form method="POST" name="docven">';
 echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
 	<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
 	<input type="hidden" value="' . $form['seziva'] . '" name="seziva" />
@@ -1781,21 +1786,6 @@ for ($counter = 1; $counter <= 9; $counter++) {
     echo "<option value=\"" . $counter . "\"" . $selected . ">" . $counter . "</option>\n";
 }
 echo "</select></td>\n";
-if (!empty($msg)) {
-    $gForm = new venditForm();
-    //$message = $gForm->outputErrors($msg, $script_transl['errors']);
-    $message = "";
-    $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
-    foreach ($rsmsg as $v) {
-        $message .= $script_transl['error'] . "! -> ";
-        $rsval = explode('-', chop($v));
-        foreach ($rsval as $valmsg) {
-            $message .= ' &raquo;' . $script_transl[$valmsg] . " ";
-        }
-        $message .= "<br />";
-    }
-    echo '<td colspan="4" class="FacetDataTDred">' . $message . "</td>\n";
-} else {
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\" colspan=\"1\">" . $cliente['indspe'] . "<br />";
     echo "</td>\n";
 
@@ -1806,7 +1796,6 @@ if (!empty($msg)) {
         echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td class=\"FacetDataTD\" colspan=\"1\">" . $cliente['codfis'] . "<br />";
         echo "</td>\n";
     }
-}
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td><td class=\"FacetDataTD\">\n";
 // select del giorno
 /** ENRICO FEDELE */
