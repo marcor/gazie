@@ -113,10 +113,10 @@ if (sizeof($result) > 0) {
       $datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
       $movQuanti = $row['quanti']*$row['operat'];
       $pdf->Cell(20,3,$datareg,1,0,'C');
-      $pdf->Cell(36,3,$row['caumag'].'-'.substr($row['descri'],0,22),1);
-      $pdf->Cell(78,3,$row['artico'].' - '.substr($row['desart'],0,54),1);
-	  $pdf->Cell(22,3,substr($row['id_lotmag'],-15),1); // L'identificatore lotto, se troppo lungo, viene accorciato agli ultimi 15 caratteri
-      $pdf->Cell(56,3,$row['desdoc'].' del '.$datadoc,1);
+      $pdf->Cell(36,3,$row['caumag'].'-'.substr($row['descri'],0,25),1, 0, 'l', 0, '', 1);
+      $pdf->Cell(78,3,$row['artico'].' - '.substr($row['desart'],0,58),1, 0, 'l', 0, '', 1);
+	  $pdf->Cell(22,3,substr($row['id_lotmag'],-20),1, 0, 'l', 0, '', 1); // L'identificatore lotto, se troppo lungo, viene accorciato agli ultimi 15 caratteri
+      $pdf->Cell(56,3,$row['desdoc'].' del '.$datadoc,1, 0, 'l', 0, '', 1);
       $pdf->Cell(17,3,number_format($row['prezzo'],$admin_aziend['decimal_price'],',','.'),1,0,'R');
       $pdf->Cell(18,3,gaz_format_number(CalcolaImportoRigo($row['quanti'],$row['prezzo'],array($row['scochi'],$row['scorig']))),1,0,'R');
       $pdf->Cell(10,3,$row['unimis'],1,0,'C');
