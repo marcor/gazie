@@ -56,6 +56,7 @@ class DDT extends Template_con_scheda
 			$numdoc = ' _ _ _ _ _ _ _';
 		}
         $this->tipdoc = $descri.$numdoc.' del '.$this->giorno.' '.$nomemese.' '.$this->anno;
+        $this->descriptive_last_ddt = $this->docVars->descriptive_last_ddt;
     }
 
     function newPage() {
@@ -148,8 +149,17 @@ class DDT extends Template_con_scheda
 
     function pageFooter() {
         $y = $this->GetY();
-        $this->Rect(10,$y,187,220-$y); //questa marca le linee dx e sx del documento
-        $this->SetY(220);
+        if ( $this->descriptive_last_ddt!="" ) {
+            //$mess_ddt = explode("|",$this->descriptive_last_ddt);
+            $this->Rect(10,$y,187,217-$y); //questa marca le linee dx e sx del documento
+            $this->SetY(217);
+            // visualizzo un messaggio sul fondo dei righi del ddt
+            $this->SetFont('helvetica','',8);
+            $this->MultiCell(187, 4, $this->descriptive_last_ddt, 'LR', 'L', 0, 1, '', '', true);
+        } else {
+            $this->Rect(10,$y,187,220-$y); //questa marca le linee dx e sx del documento
+            $this->SetY(220);
+        }
         $this->SetFont('helvetica','',9);
         $this->Cell(83, 5,'Agente','LTR',0,'C',1);
         $this->Cell(26, 5,'Peso netto','LTR',0,'C',1);
@@ -177,8 +187,34 @@ class DDT extends Template_con_scheda
         } else {
             $this->Cell(26, 5,'','LR',1);
         }
-        $this->Cell(187,5,'Pagamento - Banca','LTR',1,'C',1);
-        $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C',0,'',1);
+        if ($this->docVars->client['stapre'] == 'S') {
+            $this->Cell(109,5,'Pagamento - Banca','LTR',0,'C',1);          
+            $this->Cell(78,5,'TOTALE A PAGARE (segue fattura)','LTR',1,'C',1);
+            $this->Cell(109,6,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',0,'C',0,'',1);
+            
+            // calcolo il totale che il cliente dovrà pagare per questo documento
+            // utile per esempio su consegna merce con pagamento alla consegna o comunque per ricevere il pagamento anticipatamente
+            $this->docVars->setTotal();
+            $this->tottraspo = $this->docVars->tottraspo;
+            $totimpmer = $this->docVars->totimpmer;
+            $speseincasso = $this->docVars->speseincasso;
+            $totimpfat = $this->docVars->totimpfat;
+            $totivafat = $this->docVars->totivafat;
+            $totivasplitpay = $this->docVars->totivasplitpay;
+            $vettor = $this->docVars->vettor;
+            $impbol = $this->docVars->impbol;
+            $totriport = $this->docVars->totriport;
+            $ritenuta = $this->docVars->tot_ritenute;
+            $taxstamp = $this->docVars->taxstamp;
+            $totale = $totimpfat + $totivafat + $impbol + $taxstamp;  
+            
+            $this->SetFont('helvetica', 'B', 12);        
+            $this->Cell(78,6, "€ ". gaz_format_number($totale),'LBR',1,'C',0,'',1);
+            $this->SetFont('helvetica','',9);
+        } else {
+            $this->Cell(187,5,'Pagamento - Banca','LTR',1,'C',1);
+            $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C',0,'',1);
+        }
         $this->Cell(51,5,'Spedizione','LTR',0,'C',1);
         $this->Cell(114,5,'Vettore','LTR',0,'C',1);
         $this->Cell(22,5,'Trasporto','LTR',1,'C',1);

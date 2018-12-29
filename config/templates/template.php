@@ -78,6 +78,8 @@ class Template extends FPDI {
         $this->withoutPageGroup = $docVars->withoutPageGroup;
 		$this->efattura = $docVars->efattura;
         $this->descriptive_last_row = $this->docVars->descriptive_last_row;
+        $this->descriptive_last_ddt = $this->docVars->descriptive_last_ddt;
+
     }
 
     function Header() {

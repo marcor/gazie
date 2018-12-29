@@ -590,7 +590,7 @@ class configTemplate {
         $this->template = $row['template'];
     }
     function setTemplateLang($lang) {
-        $this->template .= $lang;
+        $this->template .= ".".$lang;
     }
 
 }
