@@ -31,11 +31,11 @@ function PostCallCATsrl($CATSRL_ENDPOINT, $file_to_send)
 	return $result;
 }
 
-function SendFattureElettroniche($zip_fatture, $codiceAzienda)
+function SendFattureElettroniche($zip_fatture)
 {
 	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviZip.php';
 
-	$result = PostCallCATsrl($CATSRL_ENDPOINT, realpath('../../data/files/'.$codiceAzienda.'/'.$zip_fatture));
+	$result = PostCallCATsrl($CATSRL_ENDPOINT, realpath('../'.$zip_fatture));
 
 	$open_tag = '<PROTS>';
 	$close_tag = '</PROTS>';
@@ -43,11 +43,11 @@ function SendFattureElettroniche($zip_fatture, $codiceAzienda)
 	return substr($result, strpos($result, $open_tag), strpos($result, $close_tag));
 }
 
-function SendFatturaElettronica($xml_fattura, $codiceAzienda)
+function SendFatturaElettronica($xml_fattura)
 {
 	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviXml.php';
 
-	$result = PostCallCATsrl($CATSRL_ENDPOINT, realpath('../../data/files/'.$codiceAzienda.'/'.$xml_fattura));
+	$result = PostCallCATsrl($CATSRL_ENDPOINT, realpath('../'.$xml_fattura));
 
 	$open_tag = '<PROT>';
 	$close_tag = '</PROT>';
@@ -58,6 +58,7 @@ function SendFatturaElettronica($xml_fattura, $codiceAzienda)
 if (!empty($_REQUEST['xml_fattura'])) {
 	require('../../library/include/datlib.inc.php');
 	$admin_aziend = checkAdmin();
-	$IdentificativoSdI = SendFatturaElettronica($_REQUEST['xml_fattura'], $admin_aziend['codice']); //return IdentificativoSdI
+	$file_url = '../../data/files/'.$admin_aziend['codice'].'/'.$_REQUEST['xml_fattura'];
+	$IdentificativoSdI = SendFatturaElettronica($file_url); //return IdentificativoSdI
 }
 ?>

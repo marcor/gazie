@@ -1387,6 +1387,9 @@ $strScript = array("admin_client.php" =>
         'mail_alert0' => 'Invio mail pacchetto fatture elettroniche',
         'mail_alert1' => 'all\'indirizzo: ',
         'mail_alert2' => 'con allegato il seguente file zip:',
+        'send_alert0' => 'Inoltro pacchetto fatture elettroniche',
+        'send_alert1' => 'tramite la libreria: ',
+        'send_alert2' => 'con il seguente file zip:',
 
     ),
     "admin_destinazioni.php" =>
