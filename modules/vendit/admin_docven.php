@@ -274,9 +274,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
     $form['rows'] = array();
+    // creo un array dove andò a mettere tutti i righi normali e/o forfait ai quali potranno eventualmente essere riferiti gli elementi dal 2.1.2 a 2.1.7
+	$form['RiferimentoNumeroLinea'] = array();
     $next_row = 0;
     if (isset($_POST['rows'])) {
         foreach ($_POST['rows'] as $next_row => $v) {
+			if ($v['tiprig']<=1 || $v['tiprig']==90){
+				$form['RiferimentoNumeroLinea'][$next_row+1] = substr($v['descri'],0,20);
+			}
             if (isset($_POST["row_$next_row"])) { //se ho un rigo testo
                 $form["row_$next_row"] = $_POST["row_$next_row"];
             }
@@ -862,6 +867,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (substr($form['in_status'], 0, 6) == "UPDROW") { //se è un rigo da modificare
             $old_key = intval(substr($form['in_status'], 6));
             $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
+			if ($form['in_tiprig']<=1 || $form['in_tiprig']==90){
+				$form['RiferimentoNumeroLinea'][$old_key+1] = substr($form['in_descri'],0,20);
+			}
             $form['rows'][$old_key]['descri'] = $form['in_descri'];
             $form['rows'][$old_key]['lot_or_serial'] = $form['in_lot_or_serial'];
             $form['rows'][$old_key]['id_lotmag'] = $form['in_id_lotmag'];
@@ -1007,6 +1015,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['lot_or_serial'] = 0;
             $form['rows'][$next_row]['id_lotmag'] = 0;
             $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
+			if ($form['in_tiprig']<=1 || $form['in_tiprig']==90){
+				$form['RiferimentoNumeroLinea'][$next_row+1] = substr($form['in_descri'],0,20);
+			}
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
             $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$next_row]['status'] = "INSERT";
@@ -1369,6 +1380,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // Se viene inviata la richiesta elimina il rigo corrispondente
     if (isset($_POST['del'])) {
         $delri = key($_POST['del']);
+        unset($form["RiferimentoNumeroLinea"][$delri+1]);
         // sottrazione ai totali peso,pezzi,volume
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$delri]['codart']);
         $form['net_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
@@ -1513,7 +1525,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['annord'] = substr($tesdoc['data_ordine'], 0, 4);
     /** fine modifica FP */
     $next_row = 0;
+	$form['RiferimentoNumeroLinea'] = array();
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+		if ($rigo['tiprig']<=1 || $rigo['tiprig']==90){
+			$form['RiferimentoNumeroLinea'][$next_row+1] = substr($rigo['descri'],0,20);
+		}
         $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
         if ($rigo['id_body_text'] > 0) { //se ho un rigo testo
             $text = gaz_dbi_get_row($gTables['body_text'], "id_body", $rigo['id_body_text']);
@@ -2158,7 +2174,7 @@ foreach ($form['rows'] as $k => $v) {
 
             echo '	<td>
 						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
-							<i class="glyphicon glyphicon-arrow-up"></i>
+							<i class="glyphicon glyphicon-arrow-up">' . ($k+1) . '</i>
 						</button>
 					</td>
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! ' . $btn_title . '">
@@ -2237,7 +2253,7 @@ foreach ($form['rows'] as $k => $v) {
              */
             echo '	<td>
 						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
-							<i class="glyphicon glyphicon-arrow-up"></i>
+							<i class="glyphicon glyphicon-arrow-up">' . ($k+1) . '</i>
 						</button>
 					</td>
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!\">
@@ -2270,7 +2286,7 @@ foreach ($form['rows'] as $k => $v) {
         case "2": //descrittivo
             echo "	<td>
 						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+							<i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
 						</button>
 					</td>
 					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
@@ -2292,7 +2308,7 @@ foreach ($form['rows'] as $k => $v) {
         case "3": // variazione totale fattura
             echo "	<td>
 						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+							<i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
 						</button>
 					</td>
 					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
@@ -2316,7 +2332,7 @@ foreach ($form['rows'] as $k => $v) {
        case "4": // rigo cassa previdenziale
             echo '	<td>
 						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
-							<i class="glyphicon glyphicon-arrow-up"></i>
+							<i class="glyphicon glyphicon-arrow-up">' . ($k+1) . '</i>
 						</button>
 					</td>
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! ">';
@@ -2370,7 +2386,7 @@ foreach ($form['rows'] as $k => $v) {
         case "12": // CUP fattura elettronica
             echo "	<td>
 						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+							<i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
 						</button>
 					</td>
 					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
@@ -2378,7 +2394,7 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td colspan=\"8\">
 						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" size=\"50\" /> riferito a ";
-			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], count($form['rows'])); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
+			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
@@ -2392,7 +2408,7 @@ foreach ($form['rows'] as $k => $v) {
         case "15": // NumItem fattura elettronica
             echo "	<td>
                             <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-                                <i class=\"glyphicon glyphicon-arrow-up\"></i>
+                                <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
                             </button>
 			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
@@ -2400,7 +2416,7 @@ foreach ($form['rows'] as $k => $v) {
                         </td>
 			<td colspan=\"8\">
                             <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" /> riferito a ";
-			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], count($form['rows'])); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
+			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
@@ -2413,7 +2429,7 @@ foreach ($form['rows'] as $k => $v) {
         case "14": // Data ordine d'acquisto fattura elettronica      
             echo "	<td>
 						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+							<i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
 						</button>
 					</td>
 					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
@@ -2421,7 +2437,7 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td colspan=\"8\">
 						<input type=\"date\"   name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"15\" size=\"50\" /> riferito a ";
-			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], count($form['rows'])); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
+			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
@@ -2434,7 +2450,7 @@ foreach ($form['rows'] as $k => $v) {
         case "16": // CodiceCommessaConvenzione fattura elettronica
             echo "	<td>
                             <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-                                <i class=\"glyphicon glyphicon-arrow-up\"></i>
+                                <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
                             </button>
 			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
@@ -2442,7 +2458,7 @@ foreach ($form['rows'] as $k => $v) {
                         </td>
 			<td colspan=\"8\">
                             <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferito a ";
-			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], count($form['rows'])); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
+			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
@@ -2455,7 +2471,7 @@ foreach ($form['rows'] as $k => $v) {
         case "21": // Causale 2.1.1.11 fattura elettronica
             echo "	<td>
                             <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-                                <i class=\"glyphicon glyphicon-arrow-up\"></i>
+                                <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
                             </button>
 			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
@@ -2474,7 +2490,7 @@ foreach ($form['rows'] as $k => $v) {
         case "31": // Dati veicolo 2.3 fattura elettronica
             echo "	<td>
                             <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-                                <i class=\"glyphicon glyphicon-arrow-up\"></i>
+                                <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
                             </button>
 			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
@@ -2495,7 +2511,7 @@ foreach ($form['rows'] as $k => $v) {
              */
             echo '	<td>
 						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
-							<i class="glyphicon glyphicon-arrow-up"></i>
+							<i class="glyphicon glyphicon-arrow-up">' . ($k+1) . '</i>
 						</button>
 					</td>
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!\">

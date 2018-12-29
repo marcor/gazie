@@ -107,14 +107,14 @@ class venditForm extends GAzieForm {
         echo "</select>\n";
    }
 
-   function selRifDettaglioLinea($name, $val, $ultimalinea, $class = '') {
+   function selRifDettaglioLinea($name, $val, $RiferimentoNumeroLinea, $class = '') {
         global $gTables, $admin_aziend;
         echo '<select id="'.$name.'" name="'.$name.'" class="'.$class.'">';
         echo '<option value="">Tutto il documento</option>';
-		for ($i = 1; $i <= $ultimalinea; $i++) {
+		foreach ($RiferimentoNumeroLinea as $k=>$v) {
 			$selected = '';
-			if ($i == $val) $selected = ' selected';
-			echo '<option value="'.$i.'" '.$selected.' >Linea n.'.$i.'</option>';
+			if ($k == $val) $selected = ' selected';
+			echo '<option value="'.$k.'" '.$selected.' >Linea n.'.$k.' '.$v.'</option>';
 		}
         echo "</select>\n";
    }
