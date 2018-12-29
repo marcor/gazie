@@ -297,6 +297,13 @@ class DocContabVars {
         $this->ritenuta = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+			// Antonio Germani - se c'è un codice a barre valorizzo barcode
+			$barcode = gaz_dbi_get_row( $this->gTables['artico'], 'codice', $rigo['codart']);
+			if (intval($barcode['barcode']>0)){
+				$rigo['barcode']=$barcode['barcode']; 
+			} else {
+				$rigo['barcode']="";
+			}
 			// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione
 			$checklot=gaz_dbi_get_row($this->gTables['movmag'],'id_mov',$rigo['id_mag']);
 			if (strlen ($checklot['id_lotmag'])>0){
