@@ -1,8 +1,8 @@
 <?php
-function SendFatturaElettronica_CATsrl($fatturaxml, $codiceAzienda)
+function PostCallCATsrl($file_to_send)
 {
 	$CA_FILE = 'CA_Agenzia_delle_Entrate.pem';
-	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviXml.php';
+	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviZip.php';
 
 	// initialise the curl request
 	$request = curl_init();
@@ -14,7 +14,7 @@ function SendFatturaElettronica_CATsrl($fatturaxml, $codiceAzienda)
 		$request,
 		CURLOPT_POSTFIELDS,
 		array(
-		  'file_contents' => curl_file_create(realpath('../../data/files/'.$codiceAzienda.'/'.$fatturaxml))
+		  'file_contents' => curl_file_create($file_to_send)
 		)
 	);
 	/**/curl_setopt($request, CURLOPT_SSL_VERIFYHOST, false); // DISATTIVARE AL PROSSIMO RILASCIO CERTIFICATO
@@ -29,12 +29,32 @@ function SendFatturaElettronica_CATsrl($fatturaxml, $codiceAzienda)
 	// close the session
 	curl_close($request);
 
+	return $result;
+}
+
+function SendFattureElettroniche($zip_fatture, $codiceAzienda)
+{
+	$result = PostCallCATsrl(realpath('../../data/files/'.$codiceAzienda.'/'.$zip_fatture));
+
+	$open_tag = '<PROTS>';
+	$close_tag = '</PROTS>';
+
 	return substr($result, strpos($result, $open_tag), strpos($result, $close_tag));
 }
 
-if (!empty($_REQUEST['fatturaxml'])) {
+function SendFatturaElettronica($xml_fattura, $codiceAzienda)
+{
+	$result = PostCallCATsrl(realpath('../../data/files/'.$codiceAzienda.'/'.$xml_fattura));
+
+	$open_tag = '<PROT>';
+	$close_tag = '</PROT>';
+
+	return substr($result, strpos($result, $open_tag), strpos($result, $close_tag));
+}
+
+if (!empty($_REQUEST['xml_fattura'])) {
 	require('../../library/include/datlib.inc.php');
 	$admin_aziend = checkAdmin();
-	SendFatturaElettronica_CATsrl($_REQUEST['fatturaxml'], $admin_aziend['codice']); //return IdentificativoSdI
+	$IdentificativoSdI = SendFatturaElettronica($_REQUEST['xml_fattura'], $admin_aziend['codice']); //return IdentificativoSdI
 }
 ?>

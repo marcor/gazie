@@ -33,12 +33,18 @@ if (isset($_GET['fn'])) {
     $content->name = $admin_aziend['ragso1'].' '.$admin_aziend['ragso2'].'_FattureElettroniche_'.$fn;
     $content->urlfile = $file_url; // se passo l'url GAzieMail allega un file del file system e non da stringa
 	$dest_fae_zip_package['e_mail'] = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val'];
-    $gMail = new GAzieMail();
-	if ($gMail->sendMail($admin_aziend, $user, $content, $dest_fae_zip_package)){
-		// se la mail è stata trasmessa con successo aggiorno lo stato sulla tabella dei flussi
-		gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $fn."'", "flux_status", "@@");
-		echo "<p>INVIO FATTURE ELETTRONICHE RIUSCITO!!!";
+	if (!empty($dest_fae_zip_package['e_mail'])) {
+		$gMail = new GAzieMail();
+		if ($gMail->sendMail($admin_aziend, $user, $content, $dest_fae_zip_package)){
+			// se la mail è stata trasmessa con successo aggiorno lo stato sulla tabella dei flussi
+			gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $fn."'", "flux_status", "@@");
+			echo "<p>INVIO FATTURE ELETTRONICHE RIUSCITO ALL'INDIRIZZO " . $dest_fae_zip_package['e_mail'] . "!!!";
+		}
 	}
-	
+	$send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
+	if (!empty($send_fae_zip_package)) {
+		require('../../library/sendfae/' . $send_fae_zip_package . '/SendFaE.php');
+		$IdentificativiSdI = SendFattureElettroniche($zip_fatture, $codiceAzienda); //return <FATT>NomeXml</FATT><PROT>IdentificativoSdI</PROT>[...]
+	}
 }
 ?>
