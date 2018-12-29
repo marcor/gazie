@@ -173,6 +173,8 @@ if (strlen($send_fae_zip_package['val'])>5){
 	$yes_send = ' enabled ';
 }
 if (empty($yes_mail) && empty($yes_send)) {
+	$yes_mail = ' disabled ';
+	$yes_send = ' disabled ';
 	echo "<p class=\"bg-danger text-center\">La configurazione avanzata azienda non ha alcun indirizzo email per il servizio di invio fatture elettroniche</p>";
 	echo "<p class=\"bg-danger text-center\">La configurazione avanzata azienda non ha alcuna libreria di terze parti per il servizio di inoltro fatture elettroniche</p>";
 } else {
