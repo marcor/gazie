@@ -30,7 +30,7 @@ function getMovements($date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
         $m=array();
-        $where="datreg BETWEEN $date_ini AND $date_fin";
+        $where="good_or_service != '1' AND datreg BETWEEN $date_ini AND $date_fin";
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
               $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
@@ -179,20 +179,21 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "</tr>";
         $sum=0.00;
 		foreach ($m AS $key => $mv) {
-            $datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
-            $datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
-            $movQuanti = $mv['quanti']*$mv['operat'];
-            $sum += $movQuanti;
-            echo "<tr><td class=\"FacetDataTD\">".$datereg." &nbsp;</td>";
-            echo "<td  align=\"center\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
-            echo "<td class=\"FacetDataTD\">".substr($mv['desdoc'].' del '.$datedoc.' - '.$mv['ragsoc'],0,85)." &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mv['prezzo'],$admin_aziend['decimal_price'],',','.')." &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number(CalcolaImportoRigo($mv['quanti'],$mv['prezzo'],array($mv['scochi'],$mv['scorig'])))." &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity'])." &nbsp;</td>\n";
-            echo "</tr>\n";
-            $ctr_mv = $mv['artico'];
-         }
+			$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
+			$datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
+			$movQuanti = $mv['quanti']*$mv['operat'];
+			$sum += $movQuanti;
+			echo "<tr><td class=\"FacetDataTD\">".$datereg." &nbsp;</td>";
+			echo "<td  align=\"center\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
+			echo "<td class=\"FacetDataTD\">".substr($mv['desdoc'].' del '.$datedoc.' - '.$mv['ragsoc'],0,85)." &nbsp;</td>";
+			echo "<td class=\"FacetDataTD\">".substr($mv['desart'],0,20)." &nbsp;</td>";
+			echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mv['prezzo'],$admin_aziend['decimal_price'],',','.')." &nbsp;</td>";
+			echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number(CalcolaImportoRigo($mv['quanti'],$mv['prezzo'],array($mv['scochi'],$mv['scorig'])))." &nbsp;</td>";
+			echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
+			echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity'])." &nbsp;</td>\n";
+			echo "</tr>\n";
+			$ctr_mv = $mv['artico'];
+		}
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
          echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
          echo $script_transl['print'];

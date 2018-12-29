@@ -172,8 +172,8 @@ $strScript = array("browse_document.php" =>
         'date' => 'Data di stampa ',
         'date_ini' => 'Data registrazione inizio  ',
         'date_fin' => 'Data registrazione fine ',
-        'header' => array('Data' => '', 'Causale' => '', 'Descrizione documento' => '',
-            'Prezzo' => '', 'Importo' => '', 'UM' => '', 'Quantit&agrave;' => ''
+        'header' => array('Data' => '', 'Causale' => '', 'Descrizione documento' => '' ,
+            'Articolo' => '', 'Prezzo' => '', 'Importo' => '', 'UM' => '', 'Quantit&agrave;' => ''
         )
     ),
     "recalc_exist_value.php" =>
