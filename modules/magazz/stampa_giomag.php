@@ -50,8 +50,14 @@ function getMovements($date_ini,$date_fin)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
         $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, clfoco ASC');
         while ($r = gaz_dbi_fetch_array($rs)) {
+			if ($r['id_lotmag']>0){
+				$identifier = gaz_dbi_get_row($gTables['lotmag'], "id", $r['id_lotmag']);
+				$r['id_lotmag'] = $identifier['identifier'];
+			} else {
+				$r['id_lotmag']="";
+			}
             $m[] = $r;
-        }
+        } 
         return $m;
     }
 
@@ -83,9 +89,10 @@ require("../../config/templates/report_template.php");
 $title = array('luogo_data'=>$luogo_data,
                'title'=>"GIORNALE DI MAGAZZINO dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf),
                'hile'=>array(array('lun' => 20,'nam'=>'Data Reg.'),
-                             array('lun' => 40,'nam'=>'Causale'),
-                             array('lun' => 70,'nam'=>'Articolo'),
-                             array('lun' => 70,'nam'=>'Rif.Documento'),
+                             array('lun' => 36,'nam'=>'Causale'),
+                             array('lun' => 78,'nam'=>'Articolo'),
+							 array('lun' => 22,'nam'=>'Lotto'),
+                             array('lun' => 56,'nam'=>'Rif.Documento'),
                              array('lun' => 17,'nam'=>'Prezzo'),
                              array('lun' => 18,'nam'=>'Importo'),
                              array('lun' => 10,'nam'=>'U.M.'),
@@ -106,9 +113,10 @@ if (sizeof($result) > 0) {
       $datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
       $movQuanti = $row['quanti']*$row['operat'];
       $pdf->Cell(20,3,$datareg,1,0,'C');
-      $pdf->Cell(40,3,$row['caumag'].'-'.substr($row['descri'],0,22),1);
-      $pdf->Cell(70,3,$row['artico'].' - '.$row['desart'],1);
-      $pdf->Cell(70,3,$row['desdoc'].' del '.$datadoc,1);
+      $pdf->Cell(36,3,$row['caumag'].'-'.substr($row['descri'],0,22),1);
+      $pdf->Cell(78,3,$row['artico'].' - '.substr($row['desart'],0,54),1);
+	  $pdf->Cell(22,3,substr($row['id_lotmag'],-15),1); // L'identificatore lotto, se troppo lungo, viene accorciato agli ultimi 15 caratteri
+      $pdf->Cell(56,3,$row['desdoc'].' del '.$datadoc,1);
       $pdf->Cell(17,3,number_format($row['prezzo'],$admin_aziend['decimal_price'],',','.'),1,0,'R');
       $pdf->Cell(18,3,gaz_format_number(CalcolaImportoRigo($row['quanti'],$row['prezzo'],array($row['scochi'],$row['scorig']))),1,0,'R');
       $pdf->Cell(10,3,$row['unimis'],1,0,'C');
