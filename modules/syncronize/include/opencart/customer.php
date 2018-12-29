@@ -71,7 +71,9 @@ class Customer {
   /**
    * Return a list of customer from api
    */
-  public static function list_from_array( array $l ) {
+  public static function list_from_array( array $l = NULL ) {
+	  if ( ! $l )
+		return [];
 	  $r = [];
 	  foreach ($l as $c ) {
 		  $customer = new Customer;

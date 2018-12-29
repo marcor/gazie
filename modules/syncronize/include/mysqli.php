@@ -34,18 +34,66 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $
 abstract class TableMysqli  {
 	
 	private $_table;
+	private $_columns;
+	private $_values;
 	
+
 	public function __construct( $table ) {
 	  	global $gTables;
 		$this->_table = $gTables[$table];
+		$rs = gaz_dbi_query( "SHOW COLUMNS FROM " . $this->_table );
+		while ( $row=gaz_dbi_fetch_array($rs)) {
+			$this->_columns[$row[0]] = [
+				'name'=>$row[0],
+				'type'=>$row['Type']
+			];
+//			$this->_values[$row[0]] = NULL;
+		}
 	}
 	
 	/**
 	 * Update or add a single row of data
 	 */
-	abstract public function save() {
+	public function save() {
+		// Control id exists
+		$values = $this->getValues();
+		if ( !isset($values['id']) ) {
+			// inserimento
+			$query = $this->createQueryInsert();
+		} else {
+			// update
+
+		}
+		return $this->execute($query);
 	}
 
+	public function setValues(array $values) {
+		// Le colonne non corrispondono
+		if ( count($values) > count($this->getColumns() ) )
+			return FALSE;
+		$cols = $this->getColumns();
+		foreach( $values as $k=>$v ) {
+			if ( isset($cols[$k]) ) {
+				$this->_values[$k] = $v;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Insert values to records
+	 */
+	public function createQueryInsert( ) {
+		if ( ! $this->getValues() )
+			return FALSE;
+		foreach( $this->getValues() as $k=>$v ) {
+				$fields[] = "`$k`";
+				$vs[$k] = "'$v'";
+			}
+		$table = $this->getTableName();
+		$query = "INSERT INTO `".$table."` ( " . implode(',',$fields) . " ) VALUES ( " . implode(',',$vs) . " );";
+		return $query;
+	}
 
 	/**
 	 * Getting all
@@ -53,32 +101,15 @@ abstract class TableMysqli  {
 	 * @return array of Syncro\Anagr
 	 */
 	public static function getAll() {
-	  global $gTables;
-	  $orderby="ragso1 DESC";
-	  $where = NULL;
-	  $rs = gaz_dbi_dyn_query('*', $gTables['anagra'] , $where, $orderby);
-	  $rs_all = array();
-	  while ( $r = gaz_dbi_fetch_array($rs) ) { 
-			$anagr = new Anagr($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
-			$anagr->setId($r['id']);
-			$anagr->setSedleg($r['sedleg']);
-			$anagr->setLegrap($r['legrap_pf_nome']);
-			$anagr->setNascita($r['datnas'],$r['luonas'],$r['luonas'],$r['pronas'],$r['counas']);
-			$anagr->setAddress($r['indspe'],$r['capspe'],$r['citspe'],$r['prospe']);
-			$anagr->setCountry($r['country']);
-			$anagr->setIdCurrency($r['id_currency']);
-			$anagr->setIdLanguage($r['id_language']);
-			$anagr->setCoordinate($r['latitude'],$r['longitude']);
-			$anagr->setTelefono($r['telef']);
-			$anagr->setFax($r['fax']);
-			$anagr->setCell($r['cell']);
-			$anagr->setFeCodUnivoco($r['fe_cod_univoco']);
-			$anagr->setEmail($r['email']);
-			$anagr->setEmailPec($r['pec_email']);
-			$anagr->setFattureByEmail($r['fatt_email']);
-			$rs_all[]=$anagr;
-		}
 	  return $rs_all;	
+	}
+
+	public function getColumns() {
+	  return $this->_columns;
+	}
+
+	public function getValues() {
+	  return $this->_values;
 	}
 
 	/**
@@ -87,6 +118,14 @@ abstract class TableMysqli  {
 	public function getTableName() {
 	  return $this->_table;
 	}
+
+	public function execute( $query ) {
+          global $link;
+ 	  $result = mysqli_query($link, $query);
+  	  if (!$result)
+		  die("Error sql query:<b> $query </b> " . mysqli_error($link));
+	  return $result;
+	}		
 
 	/**
 	 * Return a resource of data

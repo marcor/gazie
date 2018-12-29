@@ -25,7 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
-require("include/functions.php");
+require("include/opencart/Api.php");
 require("include/config.php");
 require("include/opencart/customer.php");
 

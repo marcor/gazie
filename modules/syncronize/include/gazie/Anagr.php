@@ -26,6 +26,7 @@
 namespace Syncro;
 
 include_once("SyncronizeOc.php");
+include_once("include/mysqli.php");
 
 if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');
@@ -33,7 +34,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $
 
 
 // Classe anagrafiche sincronizzazione
-class Anagr {
+class Anagr extends \Database\TableMysqli {
 	private $id;
 	private $ragso1;
 	private $ragso2;
@@ -65,6 +66,7 @@ class Anagr {
 
 	
 	public function __construct($ragso1, $sex, $codfis, $pariva) {
+		parent::__construct('anagra');
 		$this->setRagso( $ragso1);
 		$this->setSexper( $sex );
 		$this->setCodfis( $codfis);
@@ -78,6 +80,22 @@ class Anagr {
 		// Control exist
 		
 		// Insert or Update
+	}
+	
+	/**
+	 * Save anagr or update
+	 */
+	public function save() {
+		$fields = get_object_vars($this);
+		$vals=[];
+		foreach( $fields as $k =>$v) {
+			if ( !is_null($v) ) {
+				$vals[$k] = $v;
+			}
+		}	
+		if ( !$this->setValues($vals) ) 
+			return false;
+		return parent::save();
 	}
 
 	/**
@@ -351,14 +369,17 @@ class Anagr {
 		$sync = new SyncronizeOc;
 		if ( $sync->getFromOc('customer', $customer->getCustomerId() ) ) {
 			// Gia sincronizzato
-			// Ritonra id Gazie
+			// Ritorna id Gazie
 			echo "Sincronizzo "; var_dump($sync);
 
 		} else {
 			// Non sincronizzato
 			// Aggiungi il customer
+			$anagr = new Anagr( strtoupper($customer->getLastname() . " " . $customer->getFirstname()), "G","00000000000","00000000000");
+			$anagr->setEmail($customer->getEmail());
+			$anagr->setTelefono($customer->getTelephone());
+			$anagr->save();
 			// Verifica esistenza nome o telefono o cf
-			echo "provo ad aggiungere"; var_dump($customer);
 
 		}
 
