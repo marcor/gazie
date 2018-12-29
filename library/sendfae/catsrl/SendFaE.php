@@ -1,8 +1,7 @@
 <?php
-function PostCallCATsrl($file_to_send)
+function PostCallCATsrl($CATSRL_ENDPOINT, $file_to_send)
 {
 	$CA_FILE = 'CA_Agenzia_delle_Entrate.pem';
-	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviZip.php';
 
 	// initialise the curl request
 	$request = curl_init();
@@ -34,7 +33,9 @@ function PostCallCATsrl($file_to_send)
 
 function SendFattureElettroniche($zip_fatture, $codiceAzienda)
 {
-	$result = PostCallCATsrl(realpath('../../data/files/'.$codiceAzienda.'/'.$zip_fatture));
+	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviZip.php';
+
+	$result = PostCallCATsrl($CATSRL_ENDPOINT, realpath('../../data/files/'.$codiceAzienda.'/'.$zip_fatture));
 
 	$open_tag = '<PROTS>';
 	$close_tag = '</PROTS>';
@@ -44,7 +45,9 @@ function SendFattureElettroniche($zip_fatture, $codiceAzienda)
 
 function SendFatturaElettronica($xml_fattura, $codiceAzienda)
 {
-	$result = PostCallCATsrl(realpath('../../data/files/'.$codiceAzienda.'/'.$xml_fattura));
+	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviXml.php';
+
+	$result = PostCallCATsrl($CATSRL_ENDPOINT, realpath('../../data/files/'.$codiceAzienda.'/'.$xml_fattura));
 
 	$open_tag = '<PROT>';
 	$close_tag = '</PROT>';
