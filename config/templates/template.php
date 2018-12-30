@@ -141,10 +141,10 @@ class Template extends FPDI {
 				if (trim($this->cod_univoco)==''){
 					$to='pec:'.$this->pec_cliente;
 				}
-				$this->Cell(40, 4,$to , 'RB', 0, 'L', 0, '', 1);
-				$this->Cell(25, 4, '', 'T');
+				$this->Cell(40, 4,$to , 'B', 0, 'L', 0, '', 1);
+				$this->Cell(25, 4, '', 'RB');
             }
-			$this->SetXY(110, $interlinea + 3);
+			$this->SetXY(110, $interlinea + 6);
             $this->SetFont('helvetica', '', 10);
             $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
             $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
