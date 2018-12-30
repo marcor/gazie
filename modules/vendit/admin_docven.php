@@ -963,7 +963,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } elseif ($form['in_tiprig'] == 11 || $form['in_tiprig'] == 12 
 					|| $form['in_tiprig'] == 13 || $form['in_tiprig'] == 14 
 					|| $form['in_tiprig'] == 15 || $form['in_tiprig'] == 16 
-					|| $form['in_tiprig'] == 21 || $form['in_tiprig'] == 31) { //per  fattura elettronica riferibili ad altri righi o a tutto il documento
+					|| $form['in_tiprig'] == 21 || $form['in_tiprig'] == 25 
+					|| $form['in_tiprig'] == 31) { //per  fattura elettronica riferibili ad altri righi o a tutto il documento
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['annota'] = "";
                 $form['rows'][$old_key]['pesosp'] = "";
@@ -1301,7 +1302,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } elseif ($form['in_tiprig'] == 11 || $form['in_tiprig'] == 12 
 					|| $form['in_tiprig'] == 13 || $form['in_tiprig'] == 14 
 					|| $form['in_tiprig'] == 15 || $form['in_tiprig'] == 16 
-					|| $form['in_tiprig'] == 21 || $form['in_tiprig'] == 31) { //per  fattura elettronica riferibili ad altri righi o a tutto il documento
+					|| $form['in_tiprig'] == 21 || $form['in_tiprig'] == 25 
+					|| $form['in_tiprig'] == 31) { //per  fattura elettronica riferibili ad altri righi o a tutto il documento
                 $form['rows'][$next_row]['codart'] = "";
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
@@ -2390,9 +2392,11 @@ foreach ($form['rows'] as $k => $v) {
 						</button>
 					</td>
 					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-						<input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
-					</td>
-					<td colspan=\"8\">
+						<input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" /></td>
+					<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
+						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
+						
+					echo "
 						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" size=\"50\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
@@ -2412,10 +2416,11 @@ foreach ($form['rows'] as $k => $v) {
                             </button>
 			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
-                            <input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                            <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"8\">
-                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" /> riferito a ";
+			<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
+						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
+					echo "<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2433,10 +2438,11 @@ foreach ($form['rows'] as $k => $v) {
 						</button>
 					</td>
 					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-						<input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+						<input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
-					<td colspan=\"8\">
-						<input type=\"date\"   name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"15\" size=\"50\" /> riferito a ";
+					<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
+						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
+					echo "<input type=\"date\"   name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"15\" size=\"50\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2454,10 +2460,11 @@ foreach ($form['rows'] as $k => $v) {
                             </button>
 			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
-                            <input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                            <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"8\">
-                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferito a ";
+			<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
+						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
+					echo "<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2475,10 +2482,29 @@ foreach ($form['rows'] as $k => $v) {
                             </button>
 			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
-                            <input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                            <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
 			<td colspan=\"8\">
                             <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferita a tutto il documento</td>
+			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
+			</td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            break;
+        case "25": // SAL Riferimento Fase 2.1.7 fattura elettronica
+            echo "	<td>
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                                <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
+                            </button>
+			</td>
+                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
+                            <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                        </td>
+			<td colspan=\"8\">Fase dello stato di avanzamento
+                            <input type=\"number\" step=1 min=1 max=999 name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> </td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
@@ -2494,7 +2520,7 @@ foreach ($form['rows'] as $k => $v) {
                             </button>
 			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
-                            <input class=\"btn btn-xs btn-info btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                            <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
 			<td colspan=\"8\">
                             <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferiti a tutto il documento</td>
