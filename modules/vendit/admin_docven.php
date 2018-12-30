@@ -528,7 +528,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msgrigo = $i + 1;
                 $msg['err'][] = "49";
             }
-            if ($v['unimis'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
+            if ($v['tiprig']== 0 && $v['unimis'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
                 $msgrigo = $i + 1;
                 $msg['err'][] = "50";
             }
@@ -2522,10 +2522,10 @@ foreach ($form['rows'] as $k => $v) {
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
-			<td colspan=\"8\">
-                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferiti a tutto il documento</td>
+			<td colspan=\"8\">Data prima immatricolazione
+                            <input type=\"date\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> KM percorsi:<input type=\"number\" step=1 min=0 max=1000000  name=\"rows[$k][quanti]\" value=\"".$v['quanti']."\" /></td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
-			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+			
 			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
