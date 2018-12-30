@@ -129,26 +129,49 @@ class FatturaImmediata extends Template_con_scheda
                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
                     break;
                 case "11":
-                    $this->Cell(25,5,'','L');
-                    $this->Cell(80,5,"CIG: " . $rigo['descri'],'LR',0,'L');
-                    $this->Cell(81,5,'','R',1);
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Codice Identificativo Gara (CIG): " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
                     break;
                 case "12":
-                    $this->Cell(25,5,'','L');
-                    $this->Cell(80,5,"CUP: " . $rigo['descri'],'LR',0,'L');
-                    $this->Cell(81,5,'','R',1);
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Codice Unitario Progetto (CUP): " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
                     break;
                 case "13":
-                    $this->Cell(25,5,'','L');
-                    $this->Cell(80,5,"IdDocumento: " . $rigo['descri'],'LR',0,'L');
-                    $this->Cell(81,5,'','R',1);
-                    break;                                                           
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Identificativo documento: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
+                    break;
                 case "14":
-                    $this->Cell(25, 6, "",1,0,'L'); //$rigo['codart']
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
-                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    $this->Cell(58, 6, "",1,1,'R');
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Data documento: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
+                    break;
+                case "15":
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Num.Linea documento: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
+                    break;
+                case "16":
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Codice Commessa/Convenzione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
+                    break;
+                case "21":
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Causale: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
+                    break;
+                case "25":
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Stato avanzamento lavori, fase: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
+                    break;
+                case "31":
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
                     break;
                 case "90":
                     $this->Cell(154, 6, 'VENDITA CESPITE: ' . $rigo['codart'], 1, 0, 'L');

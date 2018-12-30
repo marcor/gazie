@@ -141,23 +141,41 @@ class DDT extends Template_con_scheda
                 } elseif ($rigo['tiprig']==6 || $rigo['tiprig']==7) {
                     $this->writeHtmlCell(187,6,10,$this->GetY(),$rigo['descri'],1,1);
                 } elseif ($rigo['tiprig'] == 11) {
-                    $this->Cell(30,6,'','L');
-                    $this->Cell(122,6,"CIG: " . $rigo['descri'],'LR',0,'L');
+                    $this->Cell(35,6,'','L');
+                    $this->Cell(117, 6, "Codice Identificativo Gara (CIG): " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(35,6,'','R',1);
                 } elseif ($rigo['tiprig'] == 12) {
-                    $this->Cell(30,6,'','L');
-                    $this->Cell(122,6,"CUP: " . $rigo['descri'],'LR',0,'L');
+                    $this->Cell(35,6,'','L');
+                    $this->Cell(117, 6, "Codice Unitario Progetto (CUP): " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(35,6,'','R',1);
                 } elseif ($rigo['tiprig'] == 13) {
-                    $this->Cell(30,6,'','L');
-                    $this->Cell(122,6,"IdDocumento: " . $rigo['descri'],'LR',0,'L');
+                    $this->Cell(35,6,'','L');
+                    $this->Cell(117, 6, "Identificativo documento: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(35,6,'','R',1);
                 } elseif ( $rigo['tiprig'] == 14 ) {
-                    $this->Cell(30, 6, "",1,0,'L');
-                    $this->Cell(82, 6, $rigo['descri'],1,0,'L',0,'',1);
-                    $this->Cell(10,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(30, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    $this->Cell(35, 6, "",1,1,'R');
+                    $this->Cell(35, 6, "",'L');
+                    $this->Cell(117, 6, "Data documento: " . gaz_format_date($rigo['descri']), 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(35,6,'','R',1);
+                } elseif ($rigo['tiprig'] == 15) {
+                    $this->Cell(35,6,'','L');
+                    $this->Cell(117, 6, "Num.Linea documento: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(35,6,'','R',1);
+                } elseif ($rigo['tiprig'] == 16) {
+                    $this->Cell(35,6,'','L');
+                    $this->Cell(117, 6, "Codice Commessa/Convenzione: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(35,6,'','R',1);
+                } elseif ($rigo['tiprig'] == 21) {
+                    $this->Cell(35,6,'','L');
+                    $this->Cell(117, 6, "Causale: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(35,6,'','R',1);
+                } elseif ( $rigo['tiprig'] == 25 ) {
+                    $this->Cell(35,6,'','L');
+                    $this->Cell(117, 6, "Stato avanzamento lavori, fase: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(35,6,'','R',1);
+                } elseif ( $rigo['tiprig'] == 31 ) {
+                    $this->Cell(35, 6, "",'L');
+                    $this->Cell(117, 6, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(35,6,'','R',1);
                 }  elseif ($rigo['tiprig'] == 90) {
                     $this->Cell(152, 6, 'VENDITA CESPITE: ' . $rigo['codart'], 1, 0, 'L');
                     $this->Cell(25, 6, '', 1);
