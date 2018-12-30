@@ -373,7 +373,7 @@ if (isset($form['a'])) {
 						</td>
 						<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 						<td  align="right">
-							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">
+							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . round($v['g_r'],6) . '">
 						</td>
 						<td  align="right" align="right">' . gaz_format_number($v['v_g']) . '</td>
 					</tr>';
