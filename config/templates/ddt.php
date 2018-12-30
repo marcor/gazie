@@ -63,11 +63,11 @@ class DDT extends Template_con_scheda
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->SetFont('helvetica','',9);
-        $this->Cell(30,6,'Codice',1,0,'L',1);
+        $this->Cell(35,6,'Codice',1,0,'L',1);
         $this->Cell(82,6,'Descrizione',1,0,'L',1);
         $this->Cell(10,6,'U.m.',1,0,'L',1);
         //$tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
-        $this->Cell(30,6,'Quantità',1,0,'R',1);
+        $this->Cell(25,6,'Quantità',1,0,'R',1);
         $this->Cell(25,6,'Prezzo',1,0,'R',1);
         $this->Cell(10,6,'%Sc',1,1,'R',1);
     }
@@ -80,6 +80,23 @@ class DDT extends Template_con_scheda
 
     function compose()
     {
+		// define barcode style
+		$style = array(
+		'position' => '',
+		'align' => 'C',
+		'stretch' => false,
+		'fitwidth' => true,
+		'cellfitalign' => '',
+		'border' => false,
+		'hpadding' => '2',
+		'vpadding' => '',
+		'fgcolor' => array(0,0,0),
+		'bgcolor' => false, //array(255,255,255),
+		'text' => true,
+		'font' => 'helvetica',
+		'fontsize' => 6,
+		'stretchtext' => 4
+		);
         $lines = $this->docVars->getRigo();
 		foreach ($lines AS $key => $rigo) {
             if ($rigo['sconto'] < 0.001) {
@@ -95,17 +112,27 @@ class DDT extends Template_con_scheda
                 $this->Cell(185,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
             }
                 if ($rigo['tiprig'] < 2) {
-                    $this->Cell(30,6,$rigo['codart'],1,0,'L');
-                    $this->Cell(82,6,$rigo['descri'],1,0,'L',0,'',1);
+					$h=6;
+					if (intval($rigo['barcode'])>0){
+						$h=15;
+						$x = $this->GetX();
+						$y = $this->GetY();
+						$this->Cell(35,$h,$rigo['codart'],1,1,'L', 0, '', 0,false, '', 'T');					
+						$this->write1DBarcode($rigo['barcode'], 'EAN13', '', $y+4, '', 11, 0.33, $style, 'M');
+						$this->SetXY($x+35,$y);
+					} else {
+						$this->Cell(35,$h,$rigo['codart'],1,0,'L');
+					}                   
+                    $this->Cell(82,$h,$rigo['descri'],1,0,'L',0,'',1);
                     $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
-                    $this->Cell(10,6,$rigo['unimis'],1,0,'L');
-                    $this->Cell(30,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(10,$h,$rigo['unimis'],1,0,'L');
+                    $this->Cell(25,$h,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     if ($this->docVars->client['stapre'] == 'S' && floatval($rigo['prelis']) >= 0.00001 ) {
-                        $this->Cell(25,6,number_format($rigo['prelis'],$this->decimal_price,',',''),'TB',0,'R');
-                        $this->Cell(10,6,floatval($rigo['sconto']),1,1,'R');
+                        $this->Cell(25,$h,number_format($rigo['prelis'],$this->decimal_price,',',''),'TB',0,'R');
+                        $this->Cell(10,$h,floatval($rigo['sconto']),1,1,'R');
                     } else {
-                        $this->Cell(25,6);
-                        $this->Cell(10,6,'','R',1);
+                        $this->Cell(25,$h);
+                        $this->Cell(10,$h,'','R',1);
                     }
                 } elseif ($rigo['tiprig'] == 2) {
                    //$this->Cell(30,6,'','L');
