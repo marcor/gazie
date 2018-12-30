@@ -31,11 +31,11 @@ if (isset($_GET['zn'])) {
 	$file_url = "../../data/files/".$admin_aziend['codice']."/".$zn;
 	$send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
 	if (!empty($send_fae_zip_package)) {
-		require('../../library/sendfae/' . $send_fae_zip_package . '/SendFaE.php');
+		require('../../library/' . $send_fae_zip_package . '/SendFaE.php');
 		$IdentificativiSdI = SendFattureElettroniche($file_url); //return <FATT>NomeXml</FATT><PROT>IdentificativoSdI</PROT>[...]
 		if (!empty($IdentificativiSdI)) {
 			gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $zn."'", "flux_status", "@@");
-			echo "<p>" . $IdentificativiSdI . "</p>";
+			echo "<p>" . print_r($IdentificativiSdI, true) . "</p>";
 		}
 	}
 }
