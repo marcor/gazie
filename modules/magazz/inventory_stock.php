@@ -108,6 +108,9 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                 }
                 $mv = $gForm->getStockValue(false, $r['codice'], $date, null, $admin_aziend['decimal_price']);
                 $magval = array_pop($mv);
+				if (round($magval['q_g'],6) == "-0"){ // Antonio Germani forzo a zero quando in alcuni casi si crea un numero esponenziale negativo
+					$magval['q_g']=0;
+					}
                 $form['a'][$r['codice']]['i_d'] = $r['descri'];
                 $form['a'][$r['codice']]['i_u'] = $r['unimis'];
                 $form['a'][$r['codice']]['v_a'] = $magval['v'];
@@ -373,7 +376,7 @@ if (isset($form['a'])) {
 						</td>
 						<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 						<td  align="right">
-							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . round($v['g_r'],6) . '">
+							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">
 						</td>
 						<td  align="right" align="right">' . gaz_format_number($v['v_g']) . '</td>
 					</tr>';
