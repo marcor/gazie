@@ -84,6 +84,9 @@ $recordnav->output();
                 $ordinatic = $gForm->get_magazz_ordinati($r['codice'], "VOR");
                 $mv = $gForm->getStockValue(false, $r['codice']);
                 $magval = array_pop($mv);
+				if (round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
+					$magval['q_g']=0;
+				}
                 $totale = $magval['q_g']-$ordinatic+$ordinatif;
                 echo '<tr class="FacetDataTD">
 	   			    <td width="5%"><a class="btn btn-xs btn-success btn-block" href="admin_artico.php?codice=' . $r["codice"] . '&amp;Update">
