@@ -481,6 +481,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 	$XMLvars->Causale=false;
 	// inizializzo la variabile per DatiVeicoli 2.3 
 	$XMLvars->DatiVeicoli=false;
+	// inizializzo l'accumulatore per DatiDDT 
+	$XMLvars->DatiDDT=array();
 
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
         $XMLvars->setXMLvars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
@@ -505,6 +507,12 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $cod_destinatario=trim($dest['fe_cod_ufficio']); // elemento 1.1.4
             $XMLvars->client['fe_cod_univoco']=$cod_destinatario;
         }
+		
+		// se c'è un ddt di origine ogni testata creerà un riferimento in <DatiDDT>
+        if ($XMLvars->ddt_data) {// se c'è un ddt di origine ogni testata faccio il push sull'accumulatore per creare il blocco <DatiDDT>
+			$XMLvars->DatiDDT[$XMLvars->tesdoc['numdoc']]=array("DataDDT"=>$XMLvars->tesdoc['datemi'],"RiferimentoNumeroLinea"=>array());
+        }
+		
         if ($ctrl_doc == 0) {
             $id_progressivo = substr($XMLvars->docRelDate, 2, 2) . $XMLvars->seziva .$XMLvars->fae_reinvii . str_pad($XMLvars->protoc, 6, '0', STR_PAD_LEFT);
             //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
@@ -719,25 +727,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['prelis'], $XMLvars->decimal_price, '.', ''));
                     $el->appendChild($el1);
-					/*
-                    // sconto/maggiorazione rigo 2.2.1.10
-                    if (abs($rigo['imp_sconto']) >= 0.01) {
-                        $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
-                        $el->appendChild($el1);
-                        if ($rigo['imp_sconto'] < 0) { // è una maggiorazione
-                            $t = 'MG';
-                        } else {
-                            $t = 'SC';
-                        }
-                        $el2 = $domDoc->createElement("Tipo", $t);
-                        $el1->appendChild($el2);
-                        $el2 = $domDoc->createElement("Percentuale", number_format(abs($rigo['sconto']), 2, '.', ''));
-                        $el1->appendChild($el2);
-						//promemoria Importo non dovrebbe riferirsi al totale dello sconto ma allo sconto per singolo PrezzoUnitario
-                        $el2 = $domDoc->createElement("Importo", number_format(abs($rigo['imp_sconto']), 2, '.', ''));
-                        $el1->appendChild($el2);
-                    }*/
-					
                     $el1 = $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'], 2, '.', ''));
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'], 2, '.', ''));
@@ -822,20 +811,12 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $nl = true;
                     break;
             } // fine switch
-			// se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
-            if ($XMLvars->ddt_data && $nl) {
 
-                $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
-                $el_ddt = $domDoc->createElement("DatiDDT", "");
-                $el1 = $domDoc->createElement("NumeroDDT", $XMLvars->tesdoc['numdoc']);
-                $el_ddt->appendChild($el1);
-                $el1 = $domDoc->createElement("DataDDT", $XMLvars->tesdoc['datemi']);
-                $el_ddt->appendChild($el1);
-                $el1 = $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
-                $el_ddt->appendChild($el1);
-                $results->appendChild($el_ddt);
-            }
-			// qualora questo rigo preveda uno sconto genero l'assurdo blocco 
+			if ($XMLvars->ddt_data && $nl){
+				/* è un rigo di ddt devo aggiungere il riferimento alla linea nell'apposito array che ho creato in precedenza */
+				$XMLvars->DatiDDT[$XMLvars->tesdoc['numdoc']]['RiferimentoNumeroLinea'][]=$n_linea;
+			}
+			// qualora questo rigo preveda uno sconto genero l'assurdo blocco che ci costringe a questo work-around in quanto le specifiche tecniche non prevedono sconti che influiscono anche sull'imposta
             if (isset($rigo['sconto_su_imponibile'][$rigo['id_rig']])) {
 					$sc_su_imp=$rigo['sconto_su_imponibile'][$rigo['id_rig']];
 					$doppio_sconto='';
@@ -862,6 +843,11 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                         $el->appendChild($el1);
                     }
                     $benserv->appendChild($el);
+					if ($XMLvars->ddt_data){
+						/* se questo rigo di storno sconto è contenuto dentro un ddt aggiungo il riferimento nell'apposito array */
+						$XMLvars->DatiDDT[$XMLvars->tesdoc['numdoc']]['RiferimentoNumeroLinea'][]=$n_linea;
+					}
+
 			}
             if ($nl) {
                 $n_linea++;
@@ -873,6 +859,22 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 	
 	
     // alla fine del ciclo sui righi faccio diverse aggiunte es. causale, bolli, descrizione aggiuntive, e spese di incasso, queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
+
+    if ($XMLvars->ddt_data) {
+		$results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
+		foreach ($XMLvars->DatiDDT as $k0=>$v0) {
+			$el_ddt = $domDoc->createElement("DatiDDT", "");
+            $el1 = $domDoc->createElement("NumeroDDT", $k0);
+            $el_ddt->appendChild($el1);
+            $el1 = $domDoc->createElement("DataDDT", $v0['DataDDT']);
+            $el_ddt->appendChild($el1);
+			foreach ($v0['RiferimentoNumeroLinea'] as $k1=>$v1) {
+				$el1 = $domDoc->createElement("RiferimentoNumeroLinea", $v1);
+				$el_ddt->appendChild($el1);
+			}
+			$results->appendChild($el_ddt);
+		}
+    }
 
     if ($XMLvars->Causale) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
