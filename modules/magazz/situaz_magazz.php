@@ -76,7 +76,7 @@ $recordnav->output();
 
             $linkHeaders = new linkHeaders($headers_artico);
             $gForm = new magazzForm();
-            $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0 and ". $where, $orderby, $limit, $passo);
+            $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1 and ". $where, $orderby, $limit, $passo);
             echo '<tr>'. $linkHeaders->output() .'</tr>';
             while ($r = gaz_dbi_fetch_array($result)) {
                 $totale = 0;

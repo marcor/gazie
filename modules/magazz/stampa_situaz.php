@@ -36,7 +36,7 @@ require("../../config/templates/report_template.php");
 require("lang.".$admin_aziend['lang'].".php");
 $passo=1000;
 $limit=0;
-$result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0", $orderby, $limit, $passo);
+$result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1", $orderby, $limit, $passo);
 
 $pdf = new Report_template();
 $filename = $title.'_'.date("Ymd").'.pdf';
