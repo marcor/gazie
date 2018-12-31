@@ -72,6 +72,9 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 			$mv = $gForm->getStockValue(false, $row['codice']);
 			
 			$magval = array_pop($mv);
+			if (round($magval['q_g'],6) == "-0"){
+				$magval['q_g'] = 0;
+			}
 		} 	else {
 			$magval['q_g'] = 0;
 		}
@@ -96,15 +99,9 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		  <i class="glyphicon glyphicon-check"></i><i class="glyphicon glyphicon-print"></i>
 		  </a>&nbsp;';
         }
-		/*Antonio Germani creo array per le categorie merceologiche */
-		$rescatmer = gaz_dbi_dyn_query('*', $gTables['catmer']);
-		 while ($row2 = gaz_dbi_fetch_array($rescatmer)){
-			 if ($row['catmer']==$row2['codice']){
-				 $descatmer=$row2['descri'];
-			} else {
-				$descatmer="Nessuna";
-			}
-		}	 
+		/*Antonio Germani prendo descrizione categoria merceologica */
+		$catmer = gaz_dbi_get_row($gTables['catmer'], 'codice',$row['catmer']);
+		$descatmer=$catmer['descri'];	 
         ?>	
         <tr>      
             <td data-title="<?php echo $script_transl["codice"]; ?>">
