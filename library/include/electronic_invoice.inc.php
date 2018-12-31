@@ -245,7 +245,7 @@ class invoiceXMLvars {
 				$nr_idtes=1;
 				$id_rig_ref=array();
 			}
-            $rigo['imp_sconto'] = 0.00;
+            $rigo['sconto_su_imponibile'] = array();
             if ($rigo['tiprig'] <= 1) {
 				$id_rig_ref[$nr_idtes]=$rigo['id_rig']; // associo l'id_rig al numero rigo mi servirà per valorizzare l'accumulatore per 2.1.X
 				$nr_idtes++; // è un tipo rigo a cui possono essere riferiti i dati degli elementi 2.1.X, lo aumento 
@@ -257,14 +257,23 @@ class invoiceXMLvars {
                     }
                 }
                 unset($righiDescrittivi[0]); // svuoto l'array per prepararlo ad eventuali nuovi righi descrittivi
-                $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
+                $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'],0);
                 $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
                 if ($rigo['tiprig'] == 1) {
                     $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
                     $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
 					$rigo['quanti']=1;
                 }
-				$rigo['imp_sconto'] = number_format((CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], 0) - $rigo['importo'])/$rigo['quanti'], 2, '.', ''); // l'elemento <Importo> in <ScontoMaggiorazione>  è relativo ad una unità e non all'intero rigo
+				$sconto_su_imponibile = round($v_for_castle - $rigo['importo'], 2); // qui metto l'eventuale totale imponibile da scontare e sul quale dovrò creare un rigo aggiuntivo di storno 
+				if (abs($sconto_su_imponibile)>=0.01){
+					if ($sconto_su_imponibile < 0) { 
+                       $t = 'SC';
+					} else {
+                       $t = 'AC'; // è una maggiorazione
+					}
+					$perc_sconto=100*(1-(1-$rigo['sconto']/100)*(1-$this->tesdoc['sconto']/100));
+					$rigo['sconto_su_imponibile'][$rigo['id_rig']]=array('tipo'=>$t,'importo_sconto'=>$sconto_su_imponibile,'scorig'=>floatval($rigo['sconto']),'scotes'=>floatval($this->tesdoc['sconto']),'perc_sconto'=>$perc_sconto,'rigo'=>$rigo);
+				}
                 if (!isset($this->castel[$rigo['codvat']])) {
                     $this->castel[$rigo['codvat']] = 0;
                 }
@@ -710,6 +719,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['prelis'], $XMLvars->decimal_price, '.', ''));
                     $el->appendChild($el1);
+					/*
                     // sconto/maggiorazione rigo 2.2.1.10
                     if (abs($rigo['imp_sconto']) >= 0.01) {
                         $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
@@ -726,7 +736,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 						//promemoria Importo non dovrebbe riferirsi al totale dello sconto ma allo sconto per singolo PrezzoUnitario
                         $el2 = $domDoc->createElement("Importo", number_format(abs($rigo['imp_sconto']), 2, '.', ''));
                         $el1->appendChild($el2);
-                    }
+                    }*/
+					
                     $el1 = $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'], 2, '.', ''));
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'], 2, '.', ''));
@@ -810,36 +821,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $benserv->appendChild($el);
                     $nl = true;
                     break;
-                case "2":       // descrittivo
-                    /* ! ATTENZIONE: tipo rigo spostato in appendice <2.2.1.16> ai righi "normale" !!!
-                     */
-
-                    break;
-                case "3":       // variazione totale fatture 
-                    /* ! ATTENZIONE: questa tipologia di rigo non si deve utilizzare in caso di PA !!!
-                     */
-                    break;
-                case "6":
-                case "8":
-                    /* ! ATTENZIONE: tipo rigo spostato in appendice <2.2.1.16>  ai righi "normale" !!!
-                     */
-                    break;
-                case "11":
-					// spingo sull'accumulatore
-                    $cig = $rigo['descri'];
-                    break;
-                case "12":
-                    $cup = $rigo['descri'];
-                    break;
-                case "13":
-                    $id_documento = $rigo['descri'];
-                    break;
-            }
-            if ($rigo['ritenuta'] > 0) {
-                /*
-				*/
-            }
-				// se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
+            } // fine switch
+			// se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
             if ($XMLvars->ddt_data && $nl) {
 
                 $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
@@ -852,6 +835,34 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                 $el_ddt->appendChild($el1);
                 $results->appendChild($el_ddt);
             }
+			// qualora questo rigo preveda uno sconto genero l'assurdo blocco 
+            if (isset($rigo['sconto_su_imponibile'][$rigo['id_rig']])) {
+					$sc_su_imp=$rigo['sconto_su_imponibile'][$rigo['id_rig']];
+					$doppio_sconto='';
+					if ($sc_su_imp['scorig']>=0.01 && $sc_su_imp['scotes']>=0.01){
+						$doppio_sconto= ' ('.$sc_su_imp['scorig'].'% su rigo +'.$sc_su_imp['scotes'].'% chiusura)';
+					}
+					$n_linea++;
+ 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
+                    $el = $domDoc->createElement("DettaglioLinee", "");
+                    $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
+                    $el->appendChild($el1);
+                    $el1 = $domDoc->createElement("TipoCessionePrestazione", $sc_su_imp['tipo']);
+                    $el->appendChild($el1);
+                    $el1 = $domDoc->createElement("Descrizione", 'Sconto totale su rigo precedente '.$sc_su_imp['perc_sconto'].'%'.$doppio_sconto);
+                    $el->appendChild($el1);
+                    $el1 = $domDoc->createElement("PrezzoUnitario", number_format($sc_su_imp['importo_sconto'], 2, '.', ''));
+                    $el->appendChild($el1);
+                    $el1 = $domDoc->createElement("PrezzoTotale", number_format($sc_su_imp['importo_sconto'], 2, '.', ''));
+                    $el->appendChild($el1);
+                    $el1 = $domDoc->createElement("AliquotaIVA", number_format($sc_su_imp['rigo']['pervat'], 2, '.', ''));
+                    $el->appendChild($el1);
+                    if ($sc_su_imp['rigo']['pervat'] <= 0) {
+                        $el1 = $domDoc->createElement("Natura", $sc_su_imp['rigo']['natura']);
+                        $el->appendChild($el1);
+                    }
+                    $benserv->appendChild($el);
+			}
             if ($nl) {
                 $n_linea++;
             }
@@ -1090,8 +1101,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$el1 = $domDoc->createElement("NumeroColli", $XMLvars->tesdoc['units']);
 			$el->appendChild($el1);
 		}
-        $el1 = $domDoc->createElement("Descrizione", $XMLvars->tesdoc['imball']);
-        $el->appendChild($el1);
+		if (strlen(trim($XMLvars->tesdoc['imball']))>=4){
+			$el1 = $domDoc->createElement("Descrizione", $XMLvars->tesdoc['imball']);
+			$el->appendChild($el1);
+		}
 		if (($XMLvars->tesdoc['net_weight']+$XMLvars->tesdoc['gross_weight'])>=0.001){
 			$el1 = $domDoc->createElement("UnitaMisuraPeso", 'kg');
 			$el->appendChild($el1);
@@ -1157,23 +1170,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
     //Modifica per il sicoge che richiede obbligatoriamente popolato il punto 2.1.1.9
     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
-    // sconto/maggiorazione totale documento 2.1.1.8
-    $sc = round($XMLvars->totimpmer * $XMLvars->tesdoc['sconto'] / 100, 2);
-    if (abs($sc) >= 0.01) {
-        $el = $domDoc->createElement("ScontoMaggiorazione", "");
-        if ($sc < 0) { // è una maggiorazione
-            $t = 'MG';
-        } else {
-            $t = 'SC';
-        }
-        $el1 = $domDoc->createElement("Tipo", $t);
-        $el->appendChild($el1);
-        $el1 = $domDoc->createElement("Percentuale", $XMLvars->tesdoc['sconto']);
-        $el->appendChild($el1);
-        $el1 = $domDoc->createElement("Importo", number_format(abs($sc), 2, '.', ''));
-        $el->appendChild($el1);
-        $results->appendChild($el);
-    }
     $el = $domDoc->createElement("ImportoTotaleDocumento", number_format($totpar, 2, '.', ''));  // totale fatura al lordo di RDA
     $results->appendChild($el);
 
