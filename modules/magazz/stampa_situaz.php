@@ -74,10 +74,13 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $ordinatic = $gForm->get_magazz_ordinati($r['codice'], "VOR");
     $mv = $gForm->getStockValue(false, $r['codice']);
     $magval = array_pop($mv);
+	if (round($magval['q_g'],6) == "-0") { // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
+		$magval['q_g']="";
+	}
     $totale = ($magval['q_g']-$ordinatic)+$ordinatif;
 
     $pdf->Cell(35,5,$r['codice'],$light,0,'L');
-    $pdf->Cell(100,5,$r['descri'],$light,0,'L');
+    $pdf->Cell(100,5,$r['descri'],$light,0,'L', 0, '', 1);
     $pdf->Cell(15,5,$r['unimis'],$light,0,'C');
     $pdf->Cell(30,5,floatval($magval['q_g']),$light,0,'R');
     $pdf->Cell(30,5,$ordinatic,$light,0,'R');
