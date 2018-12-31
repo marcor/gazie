@@ -1,0 +1,11 @@
+Titolo:
+Obtorto collo.
+
+Presentazione:
+Con una rincorsa folle sono riuscito ad ampliare le tipologie di righi che vi permetteranno di valorizzare gli elementi 'DatiOrdineAcquisto', 'DatiContratto', 'DatiConvenzione', 'DatiRicezione', 'DatiFattureCollegate', 'DatiSAL', 'Causale', 'DatiVeicoli' e di utilizzare GAzie anche nelle casistiche particolari di vendita. 
+
+Grazie alla segnalazione ed alla proposta di modifica di Marco Rimoldi sono stati definitivamente colmati i problemi che si sono presentati con la modalità di trattamento degli sconti che non erano conformi alle specifiche tecniche e che causavano lo scarto. A dirla tutta il tracciato creato dall'AdE è molto carente sotto questo punto di vista ed occorrerebbe anche qui una rivisitazione, se non altro per non costringere a dei work-around assurdi. Come stanno le cose adesso per mettere in evidenza al cliente che si è operato uno sconto sul rigo se ne deve aggiungere un altro di storno con la descrizione appropriata... ditemi voi se non è assurdo!
+       
+Sarò pronto ad intervenire qualora ce ne fosse bisogno, intanto facciamo un brindisi per questo 2019 elettronico!!!
+	   
+Antonio de Vincentiis, Montesilvano, 31 Dicembre 2018
