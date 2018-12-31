@@ -172,7 +172,7 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
          gaz_set_time_limit(30);
          $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
          /* Riga della categoria merceologica impostata a tutta larghezza */
-         $pdf->Cell(270, 4, 'Categoria Merceologica n.' . $row['codcat'] . ' = ' . $row['descat'], 1, 1, 'L', 1);
+         $pdf->Cell(190, 4, 'Categoria Merceologica n.' . $row['codcat'] . ' = ' . $row['descat'], 1, 1, 'L', 1);
       }
       /* Alterno il colore delle righe per maggiore leggibilità */
       $color == $color1 ? $color = $color2 : $color = $color1;
@@ -190,8 +190,10 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
       $pdf->Cell(20, 4, 'Descrizione', 1, 0, 'L', true);
       $pdf->Cell(250, 4, $row['desart'], 1, 1, 'L', true); /* A capo dopo questa cella */
       /* Annotazioni a capo per evitare testo sovrapposto con descrizioni lunghe */
-      $pdf->Cell(20, 4, 'Annotazioni', 1, 0, 'L', true);
-      $pdf->Cell(250, 4, $row['annota'], 1, 1, 'L', true); /* A capo dopo questa cella */
+	  if (strlen($row['annota'])>0){ // Antonio Germani se le annotazioni non ci sono evito di stampare inutilmente la riga
+		$pdf->Cell(20, 4, 'Annotazioni', 1, 0, 'L', true);
+		$pdf->Cell(250, 4, $row['annota'], 1, 1, 'L', true); /* A capo dopo questa cella */
+	  }
       /** ENRICO FEDELE */
       $ctrlcatmer = $row["catmer"];
    }
