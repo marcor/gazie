@@ -76,7 +76,12 @@ $recordnav->output();
 
             $linkHeaders = new linkHeaders($headers_artico);
             $gForm = new magazzForm();
-            $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1 and ". $where, $orderby, $limit, $passo);
+            //composite_mag non permette di visualizzare i composti
+            if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'composite_mag')['val']==0) {
+                $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1 and ". $where, $orderby, $limit, $passo);
+            } else {
+                $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0 and ". $where, $orderby, $limit, $passo);
+            }
             echo '<tr>'. $linkHeaders->output() .'</tr>';
             while ($r = gaz_dbi_fetch_array($result)) {
                 $totale = 0;
