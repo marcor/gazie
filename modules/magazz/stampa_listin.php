@@ -172,7 +172,12 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
          gaz_set_time_limit(30);
          $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
          /* Riga della categoria merceologica impostata a tutta larghezza */
-         $pdf->Cell(190, 4, 'Categoria Merceologica n.' . $row['codcat'] . ' = ' . $row['descat'], 1, 1, 'L', 1);
+         $pdf->Cell(190, 4, 'Categoria Merceologica n.' . $row['codcat'] . ' = ' . $row['descat'], 1, 0, 'L', 1);
+		 $pdf->Cell(15, 4, 'U.M.', 1, 0, 'C', true);
+		 $pdf->Cell(25, 4, 'Prezzo', 1, 0, 'C', true);
+		 $pdf->Cell(25, 4, 'Esistenza', 1, 0, 'C', true);
+		 $pdf->Cell(15, 4, '% I.V.A.', 1, 1, 'C', true);
+		 
       }
       /* Alterno il colore delle righe per maggiore leggibilità */
       $color == $color1 ? $color = $color2 : $color = $color1;
