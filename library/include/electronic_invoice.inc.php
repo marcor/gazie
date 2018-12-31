@@ -337,23 +337,24 @@ class invoiceXMLvars {
 				} else {
 					$id_rig_ref[$rigo['codric']]=0;					
 				}
+				$weight_tiprig=array(11=>7,12=>6,13=>2,14=>3,15=>4,16=>5);
 				// qui valorizzo l'accumulatore 2.1.X e dipende dal tipo che ho scritto su codvat
 				switch ($rigo['codvat']) {
 					case "6":
-						$this->DatiVari['DatiFattureCollegate'][$id_rig_ref[$rigo['codric']]][$rigo['tiprig']]=$rigo['descri'];
+						$this->DatiVari[5][$id_rig_ref[$rigo['codric']]][$weight_tiprig[$rigo['tiprig']]]=$rigo['descri'];
 					break;
 					case "5":
-						$this->DatiVari['DatiRicezione'][$id_rig_ref[$rigo['codric']]][$rigo['tiprig']]=$rigo['descri'];
+						$this->DatiVari[4][$id_rig_ref[$rigo['codric']]][$weight_tiprig[$rigo['tiprig']]]=$rigo['descri'];
 					break;
 					case "4":
-						$this->DatiVari['DatiConvenzione'][$id_rig_ref[$rigo['codric']]][$rigo['tiprig']]=$rigo['descri'];
+						$this->DatiVari[3][$id_rig_ref[$rigo['codric']]][$weight_tiprig[$rigo['tiprig']]]=$rigo['descri'];
 					break;
 					case "3":
-						$this->DatiVari['DatiContratto'][$id_rig_ref[$rigo['codric']]][$rigo['tiprig']]=$rigo['descri'];
+						$this->DatiVari[2][$id_rig_ref[$rigo['codric']]][$weight_tiprig[$rigo['tiprig']]]=$rigo['descri'];
 					break;
 					case "2":
                     default:
-						$this->DatiVari['DatiOrdineAcquisto'][$id_rig_ref[$rigo['codric']]][$rigo['tiprig']]=$rigo['descri'];
+						$this->DatiVari[1][$id_rig_ref[$rigo['codric']]][$weight_tiprig[$rigo['tiprig']]]=$rigo['descri'];
 					break;
 				}
             } elseif ($rigo['tiprig'] == 21) {  // Causale 
@@ -469,10 +470,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $XMLvars->tot_trasporto = 0;
     $XMLvars->body_castle = array();
     $XMLvars->ivasplitpay = 0.00;
-	/* inizializzo l'accumulatore per 2.1.X 
-	es.$this->DatiVari=array('DatiOrdineAcquisto'=array('IdDocumento'=>'Dato', 'Data'=>'Dato', 'NumItem'=>'Dato', 'CodiceCommessaConvenzione'=>'Dato', 'CodiceCUP'=>'Dato', 'CodiceCIG'=>'Dato'); 
-	dove in $key c'è l'id_rig del rigo "normale" a cui si fa riferimento, stando alle specifiche tecniche sembrerebbe essere obbligatorio settare IdDocumento 
-	*/
+	/* inizializzo l'accumulatore per 2.1.X DatiVari*/
 	$XMLvars->DatiVari=array();
 	$XMLvars->IdRig_NumeroLinea=array();
 	// inizializzo l'accumulatore per DatiSAL 2.1.7 
@@ -857,24 +855,32 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $ctrl_fat = $XMLvars->tesdoc['numfat'];
     }
 	
-	
+
+// ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
+    $XMLvars->setXMLtot();
+    $totpag = $XMLvars->totimpfat + $XMLvars->totriport + $XMLvars->totivafat - $XMLvars->tot_ritenute - $XMLvars->ivasplitpay;
+	// ----- INSERITA variabile che calcola il totale della fattura al lordo della RDA e dell'IVA
+    $totpar = $XMLvars->totimpfat + $XMLvars->totriport + $XMLvars->totivafat;
+    if ($XMLvars->virtual_taxstamp == 1 || $XMLvars->virtual_taxstamp == 2) {
+        $totpag = $totpag + $XMLvars->impbol;
+        $totpar = $totpar + $XMLvars->impbol;
+    }
+    $ex = new Expiry;
+    $ratpag = $ex->CalcExpiry($totpag, $XMLvars->tesdoc["datfat"], $XMLvars->pagame['tipdec'], $XMLvars->pagame['giodec'], $XMLvars->pagame['numrat'], $XMLvars->pagame['tiprat'], $XMLvars->pagame['mesesc'], $XMLvars->pagame['giosuc']);
+    if ($XMLvars->pagame['numrat'] > 1) {
+        $cond_pag = 'TP01';
+    } else {
+        $cond_pag = 'TP02';
+    }
+// --- FINE CALCOLO TOTALI	
+
+    //Modifica per il sicoge che richiede obbligatoriamente popolato il punto 2.1.1.9
+    $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
+    $el = $domDoc->createElement("ImportoTotaleDocumento", number_format($totpar, 2, '.', ''));  // totale fatura al lordo di RDA
+    $results->appendChild($el);
+
     // alla fine del ciclo sui righi faccio diverse aggiunte es. causale, bolli, descrizione aggiuntive, e spese di incasso, queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
 
-    if ($XMLvars->ddt_data) {
-		$results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
-		foreach ($XMLvars->DatiDDT as $k0=>$v0) {
-			$el_ddt = $domDoc->createElement("DatiDDT", "");
-            $el1 = $domDoc->createElement("NumeroDDT", $k0);
-            $el_ddt->appendChild($el1);
-            $el1 = $domDoc->createElement("DataDDT", $v0['DataDDT']);
-            $el_ddt->appendChild($el1);
-			foreach ($v0['RiferimentoNumeroLinea'] as $k1=>$v1) {
-				$el1 = $domDoc->createElement("RiferimentoNumeroLinea", $v1);
-				$el_ddt->appendChild($el1);
-			}
-			$results->appendChild($el_ddt);
-		}
-    }
 
     if ($XMLvars->Causale) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
@@ -890,16 +896,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 		$el1 = $domDoc->createElement("TotalePercorso", $XMLvars->DatiVeicoli['TotalePercorso']);
 		$el->appendChild($el1);
         $results->appendChild($el);
-    }
-
-    if (count($XMLvars->DatiSAL)>0) {
-		$results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
-		foreach ($XMLvars->DatiSAL as $k=>$v) {
-			$el = $domDoc->createElement("DatiSAL",'');
-			$el1 = $domDoc->createElement("RiferimentoFase", intval($v));
-			$el->appendChild($el1);
-			$results->appendChild($el);
-		}
     }
 
     if ($XMLvars->tesdoc['speban'] >= 0.01) {
@@ -918,8 +914,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $results->appendChild($el);
         $n_linea++;
     }
-
-    $XMLvars->setXMLtot();
     // eventualemente aggiungo i rimborsi per i bolli 
     if ($XMLvars->impbol >= 0.01) {
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
@@ -957,34 +951,39 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $n_linea++;
 	}
 
-
+	
+	
+	
     //DatiVari
     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
+	$dati_vari_nomi=array('','DatiOrdineAcquisto','DatiContratto','DatiConvenzione','DatiRicezione','DatiFattureCollegate');
+	ksort($XMLvars->DatiVari); // l'ordine degli elementi è importante altrimenti non passa il controllo
 	foreach($XMLvars->DatiVari as $k0 => $v0){
-		$el0 = $domDoc->createElement($k0, "");
+		$el0 = $domDoc->createElement($dati_vari_nomi[$k0], "");
 		foreach($v0 as $k1 => $v1){
 			if ($k1>0){
 				$el1 = $domDoc->createElement('RiferimentoNumeroLinea', $idrig_n_linea[$k1]);
 				$el0->appendChild($el1);
 			}
+			ksort($v1); // l'ordine degli elementi è importante altrimenti non passa il controllo
 			foreach($v1 as $k2 => $v2){
 				switch ($k2) {
-					case "11":       // CodiceCIG
+					case "7":       // CodiceCIG
 					$el1 = $domDoc->createElement('CodiceCIG', $v2);
 					break;
-					case "12":       // CodiceCUP
+					case "6":       // CodiceCUP
 					$el1 = $domDoc->createElement('CodiceCUP', $v2);
 					break;
-					case "13":       // IdDocumento
+					case "2":       // IdDocumento
 					$el1 = $domDoc->createElement('IdDocumento', $v2);
 					break;
-					case "14":       // Data
+					case "3":       // Data
 					$el1 = $domDoc->createElement('Data', $v2);
 					break;
-					case "15":       // NumItem
+					case "4":       // NumItem
 					$el1 = $domDoc->createElement('NumItem', $v2);
 					break;
-					case "16":       // CodiceCommessaConvenzione
+					case "5":       // CodiceCommessaConvenzione
 					$el1 = $domDoc->createElement('CodiceCommessaConvenzione', $v2);
 					break;
 				}
@@ -993,6 +992,33 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$results->appendChild($el0);
 		}
 	}
+
+	// DatiSAL
+    if (count($XMLvars->DatiSAL)>0) {
+		$results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
+		foreach ($XMLvars->DatiSAL as $k=>$v) {
+			$el = $domDoc->createElement("DatiSAL",'');
+			$el1 = $domDoc->createElement("RiferimentoFase", intval($v));
+			$el->appendChild($el1);
+			$results->appendChild($el);
+		}
+    }
+
+    if ($XMLvars->ddt_data) {
+		$results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
+		foreach ($XMLvars->DatiDDT as $k0=>$v0) {
+			$el_ddt = $domDoc->createElement("DatiDDT", "");
+            $el1 = $domDoc->createElement("NumeroDDT", $k0);
+            $el_ddt->appendChild($el1);
+            $el1 = $domDoc->createElement("DataDDT", $v0['DataDDT']);
+            $el_ddt->appendChild($el1);
+			foreach ($v0['RiferimentoNumeroLinea'] as $k1=>$v1) {
+				$el1 = $domDoc->createElement("RiferimentoNumeroLinea", $v1);
+				$el_ddt->appendChild($el1);
+			}
+			$results->appendChild($el_ddt);
+		}
+    }
 
     if ($XMLvars->tot_ritenute > 0) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
@@ -1126,21 +1152,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $results->appendChild($el);
     }
 
-// ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
-    $totpag = $XMLvars->totimpfat + $XMLvars->totriport + $XMLvars->totivafat - $XMLvars->tot_ritenute - $XMLvars->ivasplitpay;
-// ----- INSERITA variabile che calcola il totale della fattura al lordo della RDA e dell'IVA
-    $totpar = $XMLvars->totimpfat + $XMLvars->totriport + $XMLvars->totivafat;
-    if ($XMLvars->virtual_taxstamp == 1 || $XMLvars->virtual_taxstamp == 2) {
-        $totpag = $totpag + $XMLvars->impbol;
-        $totpar = $totpar + $XMLvars->impbol;
-    }
-    $ex = new Expiry;
-    $ratpag = $ex->CalcExpiry($totpag, $XMLvars->tesdoc["datfat"], $XMLvars->pagame['tipdec'], $XMLvars->pagame['giodec'], $XMLvars->pagame['numrat'], $XMLvars->pagame['tiprat'], $XMLvars->pagame['mesesc'], $XMLvars->pagame['giosuc']);
-    if ($XMLvars->pagame['numrat'] > 1) {
-        $cond_pag = 'TP01';
-    } else {
-        $cond_pag = 'TP02';
-    }
     // elementi dei <DatiPagamento> (2.4)
     $results = $xpath->query("//FatturaElettronicaBody")->item(0);
     $el = $domDoc->createElement("DatiPagamento", "");
@@ -1170,10 +1181,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $results->appendChild($el);
     }
 
-    //Modifica per il sicoge che richiede obbligatoriamente popolato il punto 2.1.1.9
-    $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
-    $el = $domDoc->createElement("ImportoTotaleDocumento", number_format($totpar, 2, '.', ''));  // totale fatura al lordo di RDA
-    $results->appendChild($el);
 
     // faccio l'encode in base 36 per ricavare il progressivo unico di invio
     $data = array('azienda' => $XMLvars->azienda['codice'],
