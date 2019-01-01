@@ -384,11 +384,7 @@ class invoiceXMLvars {
         unset($righiDescrittivi[0]);
         // se ho dei trasporti lo aggiungo ai righi del relativo DdT
         if ($this->trasporto >= 0.1) {
-            $rigo_T = array('tiprig' => 'T', 'descri' => 'TRASPORTO',
-                'importo' => $this->trasporto,
-                'pervat' => $this->expense_pervat['aliquo'],
-                'ritenuta' => 0,
-                'natura' => $this->expense_pervat['fae_natura']);
+            $rigo_T = array('id_rig'=>0,'tiprig'=>'T','descri'=>'TRASPORTO','importo'=>$this->trasporto,'pervat'=>$this->expense_pervat['aliquo'],'ritenuta'=>0,'natura'=>$this->expense_pervat['fae_natura']);
             $results[$nr] = $rigo_T;
             $nr++;
         }
@@ -718,7 +714,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                         // se ho un lotto di magazzino lo accodo alla ddescrizione
                         $rigo['descri'] .= ' LOTTO: '.$rigo['idlotto'].' SCAD.'.$rigo['scadenzalotto']; // ogni $v è lungo al massimo 60 caratteri
                     }
-                    $el1 = $domDoc->createElement("Descrizione", htmlspecialchars(substr($rigo['descri'], -1000), ENT_XML1 | ENT_QUOTES, 'UTF-8', true)) ;
+                    $el1 = $domDoc->createElement("Descrizione", htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",substr($rigo['descri'], -1000)), ENT_XML1 | ENT_QUOTES, 'UTF-8', true)) ;
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("Quantita", number_format($rigo['quanti'], 2, '.', ''));
                     $el->appendChild($el1);
@@ -787,8 +783,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     break;
 
                 case "1":
-                case "90":
-                case "T":       // forfait, cespite o trasporto
+                case "90": // forfait, vendita cespite
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
@@ -827,6 +822,49 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 							$el->appendChild($el1);
 						}
 					}
+                    $el1 = $domDoc->createElement("PrezzoTotale", number_format(round($rigo['importo']+$sc_su_imp['importo_sconto'],2), 2, '.', ''));
+                    $el->appendChild($el1);
+                    $el1 = $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'], 2, '.', ''));
+                    $el->appendChild($el1);
+                    if ($rigo['ritenuta'] > 0) {
+                        $el1 = $domDoc->createElement("Ritenuta", 'SI');
+                        $el->appendChild($el1);
+                    }
+                    if ($rigo['pervat'] <= 0) {
+                        $el1 = $domDoc->createElement("Natura", $rigo['natura']);
+                        $el->appendChild($el1);
+                    }
+                    if (isset($rigo['descrittivi']) && count($rigo['descrittivi']) > 0) {
+                        foreach ($rigo['descrittivi'] as $k => $v) {
+                            $el1 = $domDoc->createElement("AltriDatiGestionali", '');
+                            $el->appendChild($el1);
+                            $el2 = $domDoc->createElement("TipoDato", 'txt' . $k);
+                            $el1->appendChild($el2);
+                            $el2 = $domDoc->createElement("RiferimentoTesto", $v);
+                            $el1->appendChild($el2);
+                        }
+                    }
+                    $benserv->appendChild($el);
+                    $nl = true;
+                    break;
+                case "T":       // trasporto
+					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
+                    $el = $domDoc->createElement("DettaglioLinee", "");
+                    $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
+                    $el->appendChild($el1);
+                    if (isset($rigo['descrittivi'])) {
+                        // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
+                        foreach ($rigo['descrittivi'] as $k => $v) {
+                            if ($k < 16) {
+                                $rigo['descri'] .= $v; // ogni $v è lungo al massimo 60 caratteri
+                                unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
+                            }
+                        }
+                    }
+                    $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], -1000));
+                    $el->appendChild($el1);
+                    $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['importo'], 2, '.', ''));
+                    $el->appendChild($el1);
                     $el1 = $domDoc->createElement("PrezzoTotale", number_format(round($rigo['importo']+$sc_su_imp['importo_sconto'],2), 2, '.', ''));
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'], 2, '.', ''));
