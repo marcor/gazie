@@ -264,12 +264,12 @@ class invoiceXMLvars {
                     $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
 					$rigo['quanti']=1;
                 }
-				$sconto_su_imponibile = round($v_for_castle - $rigo['importo'], 2); // qui metto l'eventuale totale imponibile da scontare e sul quale dovrò creare un rigo aggiuntivo di storno 
+				$sconto_su_imponibile = round($v_for_castle - $rigo['importo'], 2); // qui metto l'eventuale totale imponibile scontato
 				if (abs($sconto_su_imponibile)>=0.01){
 					if ($sconto_su_imponibile < 0) { 
                        $t = 'SC';
 					} else {
-                       $t = 'AC'; // è una maggiorazione
+                       $t = 'MG'; // è una maggiorazione
 					}
 					$perc_sconto=100*(1-(1-$rigo['sconto']/100)*(1-$this->tesdoc['sconto']/100));
 					$rigo['sconto_su_imponibile'][$rigo['id_rig']]=array('tipo'=>$t,'importo_sconto'=>$sconto_su_imponibile,'scorig'=>floatval($rigo['sconto']),'scotes'=>floatval($this->tesdoc['sconto']),'perc_sconto'=>$perc_sconto,'rigo'=>$rigo);
@@ -725,7 +725,28 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['prelis'], $XMLvars->decimal_price, '.', ''));
                     $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'], 2, '.', ''));
+					// qualora questo rigo preveda uno sconto 
+                    if (isset($rigo['sconto_su_imponibile'][$rigo['id_rig']])) {
+						$sc_su_imp=$rigo['sconto_su_imponibile'][$rigo['id_rig']];
+						/* AGGIUNGO GLI EVENTUALI SCONTI, LO SCONTO CHIUSURA VERRA' MESSO IN CASCATA SUI SINGOLI RIGHI */
+						if ($sc_su_imp['scorig']>=0.01 || $sc_su_imp['scorig']<=-0.01){
+                            $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
+                            $sc1 = $domDoc->createElement("Tipo", $sc_su_imp['tipo']);
+                            $el1->appendChild($sc1);
+                            $sc1 = $domDoc->createElement("Percentuale", number_format($sc_su_imp['scorig'], 3, '.', ''));
+                            $el1->appendChild($sc1);
+							$el->appendChild($el1);
+						}
+						if ($sc_su_imp['scotes']>=0.01 || $sc_su_imp['scotes']<=-0.01){
+                            $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
+                            $sc1 = $domDoc->createElement("Tipo", $sc_su_imp['tipo']);
+                            $el1->appendChild($sc1);
+                            $sc1 = $domDoc->createElement("Percentuale", number_format($sc_su_imp['scotes'], 3, '.', ''));
+                            $el1->appendChild($sc1);
+							$el->appendChild($el1);
+						}
+					}
+                    $el1 = $domDoc->createElement("PrezzoTotale", number_format(round($rigo['importo']+$sc_su_imp['importo_sconto'],2), 2, '.', ''));
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'], 2, '.', ''));
                     $el->appendChild($el1);
@@ -813,39 +834,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			if ($XMLvars->ddt_data && $nl){
 				/* è un rigo di ddt devo aggiungere il riferimento alla linea nell'apposito array che ho creato in precedenza */
 				$XMLvars->DatiDDT[$XMLvars->tesdoc['numdoc']]['RiferimentoNumeroLinea'][]=$n_linea;
-			}
-			// qualora questo rigo preveda uno sconto genero l'assurdo blocco che ci costringe a questo work-around in quanto le specifiche tecniche non prevedono sconti che influiscono anche sull'imposta
-            if (isset($rigo['sconto_su_imponibile'][$rigo['id_rig']])) {
-					$sc_su_imp=$rigo['sconto_su_imponibile'][$rigo['id_rig']];
-					$doppio_sconto='';
-					if ($sc_su_imp['scorig']>=0.01 && $sc_su_imp['scotes']>=0.01){
-						$doppio_sconto= ' ('.$sc_su_imp['scorig'].'% su rigo +'.$sc_su_imp['scotes'].'% chiusura)';
-					}
-					$n_linea++;
- 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-                    $el = $domDoc->createElement("DettaglioLinee", "");
-                    $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
-                    $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("TipoCessionePrestazione", $sc_su_imp['tipo']);
-                    $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("Descrizione", 'Sconto totale su rigo precedente '.$sc_su_imp['perc_sconto'].'%'.$doppio_sconto);
-                    $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("PrezzoUnitario", number_format($sc_su_imp['importo_sconto'], 2, '.', ''));
-                    $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("PrezzoTotale", number_format($sc_su_imp['importo_sconto'], 2, '.', ''));
-                    $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("AliquotaIVA", number_format($sc_su_imp['rigo']['pervat'], 2, '.', ''));
-                    $el->appendChild($el1);
-                    if ($sc_su_imp['rigo']['pervat'] <= 0) {
-                        $el1 = $domDoc->createElement("Natura", $sc_su_imp['rigo']['natura']);
-                        $el->appendChild($el1);
-                    }
-                    $benserv->appendChild($el);
-					if ($XMLvars->ddt_data){
-						/* se questo rigo di storno sconto è contenuto dentro un ddt aggiungo il riferimento nell'apposito array */
-						$XMLvars->DatiDDT[$XMLvars->tesdoc['numdoc']]['RiferimentoNumeroLinea'][]=$n_linea;
-					}
-
 			}
             if ($nl) {
                 $n_linea++;
