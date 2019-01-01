@@ -39,7 +39,7 @@ function SendFattureElettroniche($zip_fatture)
 	$result = PostCallCATsrl($CATSRL_ENDPOINT, realpath($zip_fatture));
 	//echo('0-'.$result."<br />\n");
 
-	$IdentificativiSdI = explode(';', $result);
+	$IdentificativiSdI = json_decode($result, true);
 
 	return $IdentificativiSdI;
 }

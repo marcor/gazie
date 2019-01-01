@@ -32,9 +32,12 @@ if (isset($_GET['zn'])) {
 	$send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
 	if (!empty($send_fae_zip_package)) {
 		require('../../library/' . $send_fae_zip_package . '/SendFaE.php');
-		$IdentificativiSdI = SendFattureElettroniche($file_url); //return <FATT>NomeXml</FATT><PROT>IdentificativoSdI</PROT>[...]
+		$IdentificativiSdI = SendFattureElettroniche($file_url);
 		if (!empty($IdentificativiSdI)) {
 			gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $zn."'", "flux_status", "@@");
+			foreach ($IdentificativiSdI as $filename_ori=>$IdentificativoSdI) {
+				gaz_dbi_put_query($gTables['fae_flux'], "filename_ori = '" . $filename_ori."'", "id_SDI", $IdentificativoSdI);
+			}
 			echo "<p>" . print_r($IdentificativiSdI, true) . "</p>";
 		}
 	}

@@ -1365,7 +1365,7 @@ class GAzieMail {
         $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $user["user_name"]);
         $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
         $admin_data['web_url'] = trim($admin_data['web_url']);
-		if (strlen($admin_data['other_email'])>=10){
+		if (!empty($admin_data['other_email']) && strlen($admin_data['other_email'])>=10){
 			$mailto = $admin_data['other_email']; //recipient	
 		} else {
 			$mailto = $partner['e_mail']; //recipient
