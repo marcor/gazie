@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -25,13 +25,10 @@
 
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
-require("include/opencart/Api.php");
-require("include/config.php");
-require("include/opencart/customer.php");
+require("include/Autoloader.php");
+
 
 $admin_aziend = checkAdmin();
-
-require("include/gazie/opencart.php");
 
 $errors = [];
 
@@ -40,7 +37,7 @@ $sync = boolval($_GET['sync']);
 $id_oc = intval($_GET['id_oc']);
 
 // set up params
-$config = new Syncronize\Config;
+$config = new Gazie\Config;
 $url = $config->getUrl();
  
 $fields = array(
@@ -54,7 +51,7 @@ if ( $sync ) {
 		$customer = new Opencart\Customer;
 		$customer->setApi ( $api );		
 		$customer->getById( $id_oc );
-		$result_syncronize = Syncro\Anagr::syncCustomer($customer);
+		$result_syncronize = Gazie\Anagra::syncCustomer($customer);
 	        if ( !$result_syncronize ) 
 			$errors[] = "Errore nella sincronizzazione di IdOpencart $id_oc";
 	} else {
@@ -72,7 +69,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 
 // Ottengo la lista dei clienti Opencart
-$anagrs = Syncro\Anagr::getAll();
+$anagrs = Gazie\Anagra::getAll();
 ?>
 <div class="container">
   <div class="row">

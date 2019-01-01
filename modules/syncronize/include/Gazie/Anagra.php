@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -23,10 +23,7 @@
   --------------------------------------------------------------------------
  */
 
-namespace Syncro;
-
-include_once("SyncronizeOc.php");
-include_once("include/mysqli.php");
+namespace Gazie;
 
 if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');
@@ -34,7 +31,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $
 
 
 // Classe anagrafiche sincronizzazione
-class Anagr extends \Database\TableMysqli {
+class Anagra extends \Database\TableMysqli {
 	private $id;
 	private $ragso1;
 	private $ragso2;
@@ -108,7 +105,7 @@ class Anagr extends \Database\TableMysqli {
 	  $orderby = '';
 	  $rs = gaz_dbi_dyn_query('*', $gTables['anagra'] , $where, $orderby);
 	  if ( $r = gaz_dbi_fetch_array($rs) ) {
-		$anagr = new Anagr($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
+		$anagr = new Anagra($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
 		$anagr->setId($r['id']);
 	  	$anagr->setSedleg($r['sedleg']);
 		$anagr->setLegrap($r['legrap_pf_nome']);
@@ -143,7 +140,7 @@ class Anagr extends \Database\TableMysqli {
 	  $rs = gaz_dbi_dyn_query('*', $gTables['anagra'] , $where, $orderby);
 	  $rs_all = array();
 	  while ( $r = gaz_dbi_fetch_array($rs) ) { 
-			$anagr = new Anagr($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
+			$anagr = new Anagra($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
 			$anagr->setId($r['id']);
 			$anagr->setSedleg($r['sedleg']);
 			$anagr->setLegrap($r['legrap_pf_nome']);
@@ -366,7 +363,7 @@ class Anagr extends \Database\TableMysqli {
 
 	public static function  syncCustomer( \Opencart\Customer $customer ) {
 		// Verifica esistenza customer
-		$sync = new SyncronizeOc;
+		$sync = new \Syncro\SyncronizeOc;
 		if ( $sync->getFromOc('customer', $customer->getCustomerId() ) ) {
 			// Gia sincronizzato
 			// Ritorna id Gazie
@@ -375,7 +372,7 @@ class Anagr extends \Database\TableMysqli {
 		} else {
 			// Non sincronizzato
 			// Aggiungi il customer
-			$anagr = new Anagr( strtoupper($customer->getLastname() . " " . $customer->getFirstname()), "G","00000000000","00000000000");
+			$anagr = new Anagra( strtoupper($customer->getLastname() . " " . $customer->getFirstname()), "G","00000000000","00000000000");
 			$anagr->setEmail($customer->getEmail());
 			$anagr->setTelefono($customer->getTelephone());
 			$anagr->save();

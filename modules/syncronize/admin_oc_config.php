@@ -25,11 +25,9 @@
 
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
-require("include/config.php");
+require("include/Autoloader.php");
 
 $admin_aziend = checkAdmin();
-
-require("include/gazie/opencart.php");
 
 if ( $_GET['download'] == true ) {
 	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -48,7 +46,7 @@ $script_transl = HeadMain();
 # Ottengo configurazione
 
 
-$config = new Syncronize\Config;
+$config = new Gazie\Config;
 if ( $_POST ) {
 	$data = array(
 		'user' => $_POST['user'],		
@@ -56,7 +54,7 @@ if ( $_POST ) {
 		'url' => $_POST['url'],		
 	);
 	$config->putData($data);
-	$config = new Syncronize\Config;
+	$config = new Gazie\Config;
 }
 ?>
 <div class="container">
