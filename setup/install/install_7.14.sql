@@ -1083,9 +1083,7 @@ INSERT INTO `gaz_001company_config` (`id`, `description`, `var`, `val`) VALUES
 (29, 'Apre dialog per impostazione prezzo IVA compresa(0=No,1=Si)', 'vat_price', '1'),
 (30, 'Eventuale ultimo rigo descrittivo su fatture es. Contributo CONAI', 'descriptive_last_row', NULL),
 (31, 'Eventuale ultimo rigo descrittivo su ddt (multiriga)', 'descriptive_last_ddt', ''),
-(32, 'Nome della libreria di terze parti da usare per la eventuale trasmissione delle fatture elettroniche', 'send_fae_zip_package', ''),
-(33, 'Eventuale ultimo rigo descrittivo su ddt (multiriga)', 'descriptive_last_ddt', ''),
-(34, 'Nome della libreria di terze parti da usare per la eventuale trasmissione delle fatture elettroniche', 'send_fae_zip_package', '');
+(32, 'Nome della libreria di terze parti da usare per la eventuale trasmissione delle fatture elettroniche', 'send_fae_zip_package', '');
 
 -- --------------------------------------------------------
 

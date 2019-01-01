@@ -3,7 +3,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -27,7 +27,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $
     exit('Accesso diretto non consentito');
 }
 //versione software
-define('GAZIE_VERSION', '7.14');
+define('GAZIE_VERSION', '7.15');
 
 //nome DBMS usato per la libreria specifica (MySQL=mysql.lib, SQLite=sqlite.lib, ecc)
 //per il momento disponibile solo la libreria mysql.lib
