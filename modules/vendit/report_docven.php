@@ -473,7 +473,7 @@ switch ($admin_aziend['fatimm']) {
                     }
                     echo "</td>";
                     // Colonna "Stampa"
-                    echo "<td align=\"center\"><a accesskey=\"p\" class=\"btn btn-xs btn-50 btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+                    echo "<td align=\"center\"><a accesskey=\"p\" class=\"btn btn-xs btn-50 btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\">pdf</i></a>";
                     echo "</td>";
 
                     // Colonna "Fattura elettronica"

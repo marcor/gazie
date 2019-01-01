@@ -698,6 +698,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			// creo un array per associare l'id_rig al NumeroLinea mi servirà per riferire sui DatiVari
 			$idrig_n_linea[$rigo['id_rig']]=$n_linea;
             $nl = false;
+			$sc_su_imp['importo_sconto']=0.00;			
             switch ($rigo['tiprig']) {
                 case "0":       // normale
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
@@ -733,7 +734,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                             $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
                             $sc1 = $domDoc->createElement("Tipo", $sc_su_imp['tipo']);
                             $el1->appendChild($sc1);
-                            $sc1 = $domDoc->createElement("Percentuale", number_format($sc_su_imp['scorig'], 3, '.', ''));
+                            $sc1 = $domDoc->createElement("Percentuale", number_format(round($sc_su_imp['scorig'],2), 2, '.', ''));
                             $el1->appendChild($sc1);
 							$el->appendChild($el1);
 						}
@@ -741,7 +742,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                             $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
                             $sc1 = $domDoc->createElement("Tipo", $sc_su_imp['tipo']);
                             $el1->appendChild($sc1);
-                            $sc1 = $domDoc->createElement("Percentuale", number_format($sc_su_imp['scotes'], 3, '.', ''));
+                            $sc1 = $domDoc->createElement("Percentuale", number_format(round($sc_su_imp['scotes'],2), 2, '.', ''));
                             $el1->appendChild($sc1);
 							$el->appendChild($el1);
 						}
@@ -786,7 +787,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     break;
 
                 case "1":
-                case "T":       // forfait o trasporto
+                case "90":
+                case "T":       // forfait, cespite o trasporto
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
@@ -804,7 +806,28 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['importo'], 2, '.', ''));
                     $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'], 2, '.', ''));
+					// qualora questo rigo preveda uno sconto 
+                    if (isset($rigo['sconto_su_imponibile'][$rigo['id_rig']])) {
+						$sc_su_imp=$rigo['sconto_su_imponibile'][$rigo['id_rig']];
+						/* AGGIUNGO GLI EVENTUALI SCONTI, LO SCONTO CHIUSURA VERRA' MESSO IN CASCATA SUI SINGOLI RIGHI */
+						if ($sc_su_imp['scorig']>=0.01 || $sc_su_imp['scorig']<=-0.01){
+                            $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
+                            $sc1 = $domDoc->createElement("Tipo", $sc_su_imp['tipo']);
+                            $el1->appendChild($sc1);
+                            $sc1 = $domDoc->createElement("Percentuale", number_format(round($sc_su_imp['scorig'],2), 2, '.', ''));
+                            $el1->appendChild($sc1);
+							$el->appendChild($el1);
+						}
+						if ($sc_su_imp['scotes']>=0.01 || $sc_su_imp['scotes']<=-0.01){
+                            $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
+                            $sc1 = $domDoc->createElement("Tipo", $sc_su_imp['tipo']);
+                            $el1->appendChild($sc1);
+                            $sc1 = $domDoc->createElement("Percentuale", number_format(round($sc_su_imp['scotes'],2), 2, '.', ''));
+                            $el1->appendChild($sc1);
+							$el->appendChild($el1);
+						}
+					}
+                    $el1 = $domDoc->createElement("PrezzoTotale", number_format(round($rigo['importo']+$sc_su_imp['importo_sconto'],2), 2, '.', ''));
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'], 2, '.', ''));
                     $el->appendChild($el1);
