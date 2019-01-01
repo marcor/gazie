@@ -185,7 +185,7 @@ function apply_evidenze($evidenza)
 	$rows = count($evidenza);
 
     for ($row = 0; $row < $rows; $row++) {
-					if ($evidenza[$row]["movimentabile"] == 'E') $evidenza[$row]["label"] = '<mark style="background-color:red">' . $evidenza[$row]["label"] . '</mark>';
+					if ($evidenza[$row]["movimentabile"] == 'E') $evidenza[$row]["label"] = '<mark style="background-color:#FFA500;">' . $evidenza[$row]["label"] . '</mark>';
 				//	if ($evidenza[$row]["movimentabile"] == 'N')  - da completare - bisogna disabilitare gli articoli non movimentabili
 	}
 
