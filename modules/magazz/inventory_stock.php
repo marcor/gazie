@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -97,8 +97,13 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         if ($form['catmer'] == 100) {
             $where = 1;
         }
-        // visualizzo solo gli articoli escludendo servizi e composizioni
-        $where .= " and good_or_service = 0"; 
+        // visualizzo solo gli articoli escludendo i servizi
+		if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit')['val']==0) { 
+			$where .= " and good_or_service != 1"; 
+		} else{
+			$where .= " and good_or_service = 0"; // ... e articoli composti se previsto in configurazione avanzata azienda
+		}
+        
         $ctrl_cm = 0;
         $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', $where, 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
         if ($result) {
