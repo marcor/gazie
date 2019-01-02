@@ -31,8 +31,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $
 
 
 // Classe indirizzo sincronizzazione
-class SyncronizeOc {
-	private $_table;
+class SyncronizeOc extends \Database\TableMysqli {
 	private $id;
 	private $table_oc;
 	private $table_gz;
@@ -42,8 +41,7 @@ class SyncronizeOc {
 	private $date_updated;
 
 	public function __construct( ) {
-		global $gTables;
-		$this->_table = $gTables['syncronize_oc'];
+		parent::__construct('syncronize_oc');
 	}
 
 	public function getId( ) {
@@ -95,13 +93,22 @@ class SyncronizeOc {
 
 	}
 
+	public function save() {
+		
+	}
+
 	public function getFromOc( $table_oc, $id_oc ) {
+		$query = new \Database\Query( $this->getTableName() );
 		$where = "`table_oc` = '$table_oc' AND `id_oc` = $id_oc";
 		$order_by = '`id_oc` DESC';
-		$rs = gaz_dbi_dyn_query('*', $this->_table, $where, $order_by);
-		if ( gaz_dbi_num_rows($rs) !== 1 )
+		$query->createSelect( NULL, $where, $order_by );
+		$rs = $query->execute();
+		if ( count($rs) !== 1 ) {
+		//	$q= new \Database\Query( $this->getTableName() );
+		//	$q->create
 			return false;
-		while( $r = gaz_dbi_fetch_array($rs)) {
+		}
+		foreach ($rs as $r) {
 			$this->id = $r['id']; 
 			$this->table_oc = $r['table_oc']; 
 			$this->table_gz = $r['table_gz']; 

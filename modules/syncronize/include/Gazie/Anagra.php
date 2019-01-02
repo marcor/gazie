@@ -361,28 +361,38 @@ class Anagra extends \Database\TableMysqli {
 		return $this->fatt_email;
 	}
 
-	public static function  syncCustomer( \Opencart\Customer $customer ) {
+	public function exist() {
+		// Controllo ragso1
+		$query = new \Database\Query($this->getTableName());
+		$where = "`ragso1` = '" . strtoupper(trim($this->getRagso1())) . "' " . 
+			 "OR `cell` = '" . trim($this->getCell()) . "' " . 
+			 "OR `e_mail` = '" . strtolower(trim($this->getEmail())) . "' ";
+		$query->createSelect(NULL, $where );
+		$result = $query->execute(); 
+		return count($result) > 0;
+	}
+
+	public static function  syncCustomer( \Syncro\Interfaces\ICustomer $customer ) {
 		// Verifica esistenza customer
 		$sync = new \Syncro\SyncronizeOc;
 		if ( $sync->getFromOc('customer', $customer->getCustomerId() ) ) {
 			// Gia sincronizzato
 			// Ritorna id Gazie
-			echo "Sincronizzo "; var_dump($sync);
+			echo "Non posso sincronizzare perchè già inserito";
 
 		} else {
 			// Non sincronizzato
 			// Aggiungi il customer
-			$anagr = new Anagra( strtoupper($customer->getLastname() . " " . $customer->getFirstname()), "G","00000000000","00000000000");
+			$anagr = new Anagra($customer->getRagso1(), "G","00000000000","00000000000");
 			$anagr->setEmail($customer->getEmail());
-			$anagr->setTelefono($customer->getTelephone());
-			$anagr->save();
-			// Verifica esistenza nome o telefono o cf
-
+			$anagr->setCell($customer->getTelephone());
+			$exist = $anagr->exist();
+			if ( ! $exist ) {
+				return $anagr->save();
+			} else {
+				return FALSE;
+			}
 		}
-
-
-		
-
 	}
 }
 

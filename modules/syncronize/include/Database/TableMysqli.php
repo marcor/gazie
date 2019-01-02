@@ -36,9 +36,12 @@ abstract class TableMysqli  {
 	private $_table;
 	private $_columns;
 	private $_values;
-	
+	private $_loaded;	
+	private $_result;
 
 	public function __construct( $table ) {
+		$this->_loaded = FALSE;
+		$this->_result = NULL;
 	  	global $gTables;
 		$this->_table = $gTables[$table];
 		$rs = gaz_dbi_query( "SHOW COLUMNS FROM " . $this->_table );
@@ -50,7 +53,18 @@ abstract class TableMysqli  {
 //			$this->_values[$row[0]] = NULL;
 		}
 	}
-	
+
+	/**
+	 * Return a single record
+	 *
+	 */
+ 	public function load( $key ) {
+		$query = new Query($this->getTableName());
+		$query->createSelect(['id'=>$key]);
+		$this->_loaded = TRUE;
+		$this->_result = $query->execute( $select );
+	}
+
 	/**
 	 * Update or add a single row of data
 	 */
@@ -59,12 +73,15 @@ abstract class TableMysqli  {
 		$values = $this->getValues();
 		if ( !isset($values['id']) ) {
 			// inserimento
-			$query = $this->createQueryInsert();
+			$query = new Query($this->getTableName());
+			$query->createInsert($values);
+			$result = $query->execute(); 
+			return $result;
 		} else {
 			// update
 
 		}
-		return $this->execute($query);
+		return $result;
 	}
 
 	public function setValues(array $values) {
@@ -78,21 +95,6 @@ abstract class TableMysqli  {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * Insert values to records
-	 */
-	public function createQueryInsert( ) {
-		if ( ! $this->getValues() )
-			return FALSE;
-		foreach( $this->getValues() as $k=>$v ) {
-				$fields[] = "`$k`";
-				$vs[$k] = "'$v'";
-			}
-		$table = $this->getTableName();
-		$query = "INSERT INTO `".$table."` ( " . implode(',',$fields) . " ) VALUES ( " . implode(',',$vs) . " );";
-		return $query;
 	}
 
 	/**
@@ -118,14 +120,6 @@ abstract class TableMysqli  {
 	public function getTableName() {
 	  return $this->_table;
 	}
-
-	public function execute( $query ) {
-          global $link;
- 	  $result = mysqli_query($link, $query);
-  	  if (!$result)
-		  die("Error sql query:<b> $query </b> " . mysqli_error($link));
-	  return $result;
-	}		
 
 	/**
 	 * Return a resource of data

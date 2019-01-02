@@ -25,7 +25,9 @@
 
 namespace Opencart;
 
-class Customer {
+use \Syncro\Interfaces\ICustomer;
+
+class Customer implements ICustomer {
 	
   private $customer_id;
   private $customer_group_id;
@@ -103,6 +105,10 @@ class Customer {
 
   public function getCustomerId() {
 	return $this->customer_id;
+  }
+
+  public function getRagso1() {
+	return strtoupper($this->getLastname() . " " . $this->getFirstname());
   }
 
   public function getStoreId() {

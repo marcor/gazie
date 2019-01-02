@@ -23,11 +23,19 @@
   --------------------------------------------------------------------------
  */
 
+namespace Syncro\Interfaces;
+
 if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');
 }
 
-include ("Address.php");
-include ("Anagr.php");
 
+// Classe indirizzo sincronizzazione
+interface ICustomer {
+
+	public function getCustomerId( );
+	public function getRagso1( );
+	public function getEmail();
+	public function getTelephone();
+}
 
