@@ -46,6 +46,7 @@ function caricaCliente(&$form) {
         $id_des = $anagrafica->getPartner($testate['id_des']);
         $form['traspo'] += $testate['traspo'];
         $form['speban'] = $testate['speban'];
+        $form['expense_vat'] = $testate['expense_vat'];
         $form['stamp'] = $testate['stamp'];
         $form['vettor'] = $testate['vettor'];
         $form['imball'] = $testate['imball'];
@@ -156,6 +157,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['initra_H'] = date("H");
     $form['traspo'] = 0.00;
     $form['speban'] = 0.00;
+    $form['expense_vat'] = 0.00;
     $form['stamp'] = 0.00;
     $form['vettor'] = "";
     $form['portos'] = "";
@@ -189,6 +191,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
         $form['traspo'] = $testate['traspo'];
         $form['speban'] = $testate['speban'];
         $form['stamp'] = $testate['stamp'];
+        $form['expense_vat'] = $testate['expense_vat'];
         $form['vettor'] = $testate['vettor'];
         $form['portos'] = $testate['portos'];
         $form['imball'] = $testate['imball'];
@@ -267,6 +270,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['traspo'] = number_format($_POST['traspo'], 2, '.', '');
     $form['indspe'] = $_POST['indspe'];
     $form['speban'] = $_POST['speban'];
+    $form['expense_vat'] = $_POST['expense_vat'];
     $form['stamp'] = $_POST['stamp'];
     $form['vettor'] = $_POST['vettor'];
     $form['portos'] = $_POST['portos'];
@@ -387,15 +391,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
         $form['status'] = 'GENERATO';
         $form['initra'] = $iniziotrasporto;
         $form['datemi'] = $dataemiss;
-        /** questa porzione di codice, mutuata da admin_docven.php
-         *  è necessaria per mettere il metodo di calcolo dell'iva
-         * che di default va a "ventilazione"
-         */
-        $form['expense_vat'] = $admin_aziend['preeminent_vat'];
-        if ($cliente['aliiva'] > 0) {
-            $form['expense_vat'] = $cliente['aliiva'];
-        }
-        /**/
         tesdocInsert($form);
         //recupero l'id assegnato dall'inserimento
         $last_id = gaz_dbi_last_id();
@@ -940,6 +935,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
     <input type="hidden" name="id_tes" value="<?php echo $form['id_tes']; ?>">
     <input type="hidden" name="tipdoc" value="<?php echo $form['tipdoc']; ?>">
     <input type="hidden" name="speban" value="<?php echo $form['speban']; ?>">
+    <input type="hidden" name="expense_vat" value="<?php echo $form['expense_vat']; ?>">
     <input type="hidden" name="stamp" value="<?php echo $form['stamp']; ?>">
     <input type="hidden" name="listin" value="<?php echo $form['listin']; ?>">
     <!--   adesso sono modificabili
