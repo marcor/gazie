@@ -856,7 +856,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     /** ENRICO FEDELE */
     if (isset($_POST['in_submit'])) {
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
-        // addizione ai totali peso,pezzi,volume
+        // addizione ai totali peso,pezzi,volume, ma se l'unità di misura è uguale a KG forzo il peso specifico ad 1, ed in futuro qui dovrei utilizzare il nuovo metodo di calcolo utilizzato anche in acquis/admin_broven.php
+		if (strtoupper(substr($artico['unimis'],0,2))=='KG'){
+			$artico['peso_specifico']=1;	
+		}
         $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
         $form['gross_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
         if ($artico['pack_units'] > 0) {
