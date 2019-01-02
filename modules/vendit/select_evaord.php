@@ -48,6 +48,8 @@ function caricaCliente(&$form) {
         $form['speban'] = $testate['speban'];
         $form['expense_vat'] = $testate['expense_vat'];
         $form['stamp'] = $testate['stamp'];
+        $form['round_stamp'] = $testate['round_stamp'];
+        $form['virtual_taxstamp'] = $testate['virtual_taxstamp'];
         $form['vettor'] = $testate['vettor'];
         $form['imball'] = $testate['imball'];
         $form['portos'] = $testate['portos'];
@@ -159,6 +161,8 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['speban'] = 0.00;
     $form['expense_vat'] = 0.00;
     $form['stamp'] = 0.00;
+    $form['round_stamp'] = 0.00;
+    $form['virtual_taxstamp'] = 0.00;
     $form['vettor'] = "";
     $form['portos'] = "";
     $form['imball'] = "";
@@ -192,6 +196,8 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
         $form['speban'] = $testate['speban'];
         $form['stamp'] = $testate['stamp'];
         $form['expense_vat'] = $testate['expense_vat'];
+        $form['round_stamp'] = $testate['round_stamp'];
+        $form['virtual_taxstamp'] = $testate['virtual_taxstamp'];
         $form['vettor'] = $testate['vettor'];
         $form['portos'] = $testate['portos'];
         $form['imball'] = $testate['imball'];
@@ -271,7 +277,9 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['indspe'] = $_POST['indspe'];
     $form['speban'] = $_POST['speban'];
     $form['expense_vat'] = $_POST['expense_vat'];
-    $form['stamp'] = $_POST['stamp'];
+    $form['stamp'] = floatval($_POST['stamp']);
+    $form['round_stamp'] = intval($_POST['round_stamp']);
+    $form['virtual_taxstamp'] = intval($_POST['virtual_taxstamp']);
     $form['vettor'] = $_POST['vettor'];
     $form['portos'] = $_POST['portos'];
     $form['imball'] = $_POST['imball'];
@@ -937,6 +945,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
     <input type="hidden" name="speban" value="<?php echo $form['speban']; ?>">
     <input type="hidden" name="expense_vat" value="<?php echo $form['expense_vat']; ?>">
     <input type="hidden" name="stamp" value="<?php echo $form['stamp']; ?>">
+    <input type="hidden" name="round_stamp" value="<?php echo $form['round_stamp']; ?>">
+    <input type="hidden" name="virtual_taxstamp" value="<?php echo $form['virtual_taxstamp']; ?>">
     <input type="hidden" name="listin" value="<?php echo $form['listin']; ?>">
     <!--   adesso sono modificabili
         <input type="hidden" name="net_weight" value="<?php echo $form['net_weight']; ?>">

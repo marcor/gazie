@@ -907,10 +907,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
 // ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
     $XMLvars->setXMLtot();
-    $totpag = $XMLvars->totimpfat + $XMLvars->totriport + $XMLvars->totivafat - $XMLvars->tot_ritenute - $XMLvars->ivasplitpay;
-	// ----- INSERITA variabile che calcola il totale della fattura al lordo della RDA e dell'IVA
-    $totpar = $XMLvars->totimpfat + $XMLvars->totriport + $XMLvars->totivafat;
-    if ($XMLvars->virtual_taxstamp == 1 || $XMLvars->virtual_taxstamp == 2) {
+    $totpar = $XMLvars->totimpfat + $XMLvars->totriport + $XMLvars->totivafat; //totale della fattura al lordo della RDA e dell'IVA
+    $totpag = $totpar - $XMLvars->tot_ritenute - $XMLvars->ivasplitpay; // totale a pagare
+    if ($XMLvars->virtual_taxstamp == 1 || $XMLvars->virtual_taxstamp == 2) { // se si è scelto di assolvere il bollo sia in modo fisico che virtuale
         $totpag = $totpag + $XMLvars->impbol;
         $totpar = $totpar + $XMLvars->impbol;
     }
