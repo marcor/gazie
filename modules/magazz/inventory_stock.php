@@ -137,6 +137,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     $form['chk_on' . $r['codice']] = ' checked ';
 					if ($magval['q_g']<=$r['scorta']){
 						$form['a'][$r['codice']]['class'] = 'warning';
+					} else {
+						$form['a'][$r['codice']]['class'] = 'default';
 					}
                 } else { // giacenza = 0
                     $form['chk_on' . $r['codice']] = '';
