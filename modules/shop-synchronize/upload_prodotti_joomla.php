@@ -67,20 +67,22 @@ $xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
 $xml_output .= "\n<Products>\n";
 $artico = gaz_dbi_query ('SELECT codice, barcode FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
  while ($item = gaz_dbi_fetch_array($artico)){
-		 $mv = $gForm->getStockValue(false, $item['codice']);
-         $magval = array_pop($mv);
-		 $avqty=$magval['q_g'];
-		 if ($avqty<0 or $avqty==""){
-			 $avqty="0";
-		 }
-		 if (intval($item['barcode'])==0) {
-			 $item['barcode']="NULL";
-		 }
-		 $xml_output .= "\t<Product>\n";
-		 $xml_output .= "\t<Code>".$item['codice']."</Code>\n";
-		 $xml_output .= "\t<BarCode>".$item['barcode']."</BarCode>\n";
-		 $xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
-		 $xml_output .= "\t</Product>\n";	 
+		$avqty = 0;
+		$ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
+		$mv = $gForm->getStockValue(false, $item['codice']);
+        $magval = array_pop($mv);
+		$avqty=$magval['q_g']-$ordinatic;
+		if ($avqty<0 or $avqty==""){
+			$avqty="0";
+		}
+		if (intval($item['barcode'])==0) {
+			$item['barcode']="NULL";
+		}
+		$xml_output .= "\t<Product>\n";
+		$xml_output .= "\t<Code>".$item['codice']."</Code>\n";
+		$xml_output .= "\t<BarCode>".$item['barcode']."</BarCode>\n";
+		$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
+		$xml_output .= "\t</Product>\n";	 
  }
 $xml_output .="\n</Products>\n</GAzieDocuments>";
 $xmlFile = "prodotti.xml";
