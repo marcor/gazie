@@ -49,7 +49,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         while ($r = gaz_dbi_fetch_array($result)) {
             $mv = $gForm->getStockValue(false, $r['codice'], $date, null, $admin_aziend['decimal_price']);
             $magval = array_pop($mv);
-			if (round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
+			if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
 					$magval['q_g']=0;
 					}
             $form['a'][$r['codice']]['i_d'] = $r['descri'];
@@ -111,7 +111,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                 }
                 $mv = $gForm->getStockValue(false, $r['codice'], $date, null, $admin_aziend['decimal_price']);
                 $magval = array_pop($mv);
-				if (round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
+				if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
 					$magval['q_g']=0;
 					}
                 $form['a'][$r['codice']]['i_d'] = $r['descri'];
