@@ -1702,6 +1702,44 @@ $strScript = array("admin_client.php" =>
             'VRI' => 'RICEVUTA',
         ),
 		'danger_confirm'=>'Sono consapevole. Eliminalo comunque!'
-    )
+    ),
+    "acquire_external_invoice.php" =>
+    array('title' => 'Acquisizione file XML fattura elettronica di vendita',
+		'btn_acquire'=>'ACQUISISCI!',
+        'war' => array(
+            'ok_suppl' => 'Il cliente è già in archivio',
+            'no_suppl' => 'Ho già questa anagrafica ma è un nuovo cliente',
+            'no_anagr' => "Di questo nuovo cliente non ho l'anagrafica, utilizzerò questi dati per crearla",
+            'no_db' => "Di questo file è stato fatto solo l'upload ma non è stata confermata la registrazione"
+        ),
+        'err' => array(
+            'filmim' => 'Il file deve essere nel formato XML o P7M',
+            'invalid_xml' => 'Il contenuto del file non è un XML valido',
+            'invalid_fae' => 'Il contenuto del file XML non sembra essere una fattura elettronica',
+            'file_exists' => 'Un file con questo nome è stato già stato acquisito',
+            'not_mine' => 'La fattura non è stata rilasciata nei confronti di questa azienda',
+            'no_upload' => 'File non inviato',
+            'no_pagame' => 'Non hai selezionato la modalità di pagamento',
+            'no_codric' => 'Non hai selezionato il codice conto di costo',
+            'no_codvat' => 'Non hai selezionato l\'aliquota IVA',
+        ),
+        'head_text1' => "La fatture elettronica: ",
+		'head_text2' => " che stai per acquisire è visibile in fondo.<br/> In questo form ti proponiamo di imputare i ricavi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificarla sia prima che dopo averla contabilizzata agendo attraverso le apposite interfacce. Dopo l'acquisizione verrai portato sulla lista delle fatture di vendita già inserite",
+        'seziva' => 'Sezione IVA',
+        'datreg' => 'Data Registrazione',
+		'pagame'=>'Modalità di pagamento',
+        'nrow' => 'Rigo',
+        'codart' => 'Codice',
+        'descri' => 'Descrizione',
+        'unimis' => 'U.M.',
+        'quanti' => 'Quantità ',
+        'prezzo' => 'Prezzo',
+        'amount' => 'Importo',
+        'sconto' => 'Sconto',
+        'taxable' => 'Imponibile',
+        'tax' => 'I.V.A.',
+        'operation_type' => 'Tipo oper.',
+        'conto' => 'Conto',
+	),
 	);
 ?>
