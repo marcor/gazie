@@ -100,14 +100,14 @@ if (sizeof($scdl->Entries) > 0) {
         $paymov = '';
         $status_del = false;
         $status_descr = '';
-        if ($mv["clfoco"] <> $ctrl_partner) {
+        if ($mv["codice"] <> $ctrl_partner) {
             $class_partner = 'FacetDataTD';
             $partner = $mv["ragsoc"];
         }
         if ($mv["id_tes"] <> $ctrl_id_tes) {
             $class_id_tes = 'FacetFieldCaptionTD';
             $id_tes = $mv["id_tes"];
-            $mv["datdoc"] = gaz_format_date($mv["datdoc"]);
+            $mv["datdoc"] = $mv["id_doc"] ? gaz_format_date($mv["datdoc"]) : '';
         } else {
             $mv['descri'] = '';
             $mv['numdoc'] = '';
@@ -121,19 +121,28 @@ if (sizeof($scdl->Entries) > 0) {
             $scdl->getStatus($paymov);
             $r = $scdl->Status;
             $status_descr .= $script_transl['status_value'][$r['sta']];
-            if ($r['sta'] == 1) { // CHIUSA   
-                $class_paymov = '';
-                $status_del = true;
-            } elseif ($r['sta'] == 2) { // ESPOSTA  
-                $class_paymov = 'FacetDataTDevidenziaOK';
-            } elseif ($r['sta'] == 3) { // SCADUTA  
-                $class_paymov = 'FacetDataTDevidenziaKO';
-                $status_descr .= " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
-            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO 
-                $class_paymov = 'FacetDataTDevidenziaBL';
-            } else { // APERTA  
-                $class_paymov = 'FacetDataTDevidenziaCL';
-                $status_descr .= " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+            // link 
+            $riscuoti_btn = sprintf('&nbsp; <a title="Riscuoti" class="btn btn-xs btn-default btn-pagamento" href="customer_payment.php?partner=' . $mv["codice"] . '%s"><i class="glyphicon glyphicon-euro"></i></a>',
+                $mv['id_doc'] ? '&amp;numdoc=' . $mv['numdoc'] . '&amp;datdoc=' . gaz_format_date($mv['datdoc'], true) : '');
+
+            switch($r['sta']) {
+                case 1: // CHIUSA
+                    $class_paymov = '';
+                    $status_del = true;
+                    break;
+                case 2: // ESPOSTA
+                    $class_paymov = 'FacetDataTDevidenziaOK';
+                    break;
+                case 3: // SCADUTA
+                    $class_paymov = 'FacetDataTDevidenziaKO';
+                    $status_descr .= $riscuoti_btn;
+                    break;
+                case 9: // ANTICIPO
+                    $class_paymov = 'FacetDataTDevidenziaBL';
+                    break;
+                default: //APERTA
+                    $class_paymov = 'FacetDataTDevidenziaCL';
+                    $status_descr .= $riscuoti_btn;
             }
         }
         echo "<tr>";
@@ -171,7 +180,7 @@ if (sizeof($scdl->Entries) > 0) {
         echo "</td></tr>\n";
         $ctrl_id_tes = $mv["id_tes"];
         $ctrl_paymov = $mv["id_tesdoc_ref"];
-        $ctrl_partner = $mv["clfoco"];
+        $ctrl_partner = $mv["codice"];
     }
     /** ENRICO FEDELE */
     /* Stampo il totale del dare, dell'avere, e la percentuale dell'avere rispetto al totale dare+avere */
@@ -193,7 +202,7 @@ if (sizeof($scdl->Entries) > 0) {
 	 			<td class="FacetDataTDred" align="center">' . $script_transl['errors'][1] . '</td>
 			</tr>';
 }
-echo '		</div><!-- chiude div container role main --></body>
+echo '
   			</table>
 	  	</form>';
 /** ENRICO FEDELE */
