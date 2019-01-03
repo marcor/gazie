@@ -69,7 +69,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form['company_id'] = intval($_POST['company_id']);
 	$form['search']['company_id'] = $_POST['search']['company_id'];
 	$form["Access"] = intval($_POST['Access']);
-	$form["user_name"] = substr($_POST["user_name"], 0, 15);
+	$form["user_name"] = preg_replace("/[^A-Za-z0-9]i/", '',substr($_POST["user_name"], 0, 15));
 	$form["user_password_old"] = substr($_POST['user_password_old'], 0, 40);
 	$form["user_password_new"] = substr($_POST['user_password_new'], 0, 40);
 	$form["user_password_ver"] = substr($_POST['user_password_ver'], 0, 40);
@@ -86,7 +86,11 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	/*
 	* La prima entrata per update
 	*/
-	$form = gaz_dbi_get_row($gTables['admin'], "user_name", substr($_GET["user_name"], 0, 15));
+	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 15)));
+	if (!$form){
+		header("Location: " . $_POST['ritorno']);
+		exit;
+	}
 	// attingo il valore del motore di template dalla tabella configurazione utente
 	$admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form["user_name"]);
 	$form['user_password_old'] = '';
