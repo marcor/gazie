@@ -26,6 +26,19 @@ $msg = '';
 $paymov = new Schedule;
 $anagrafica = new Anagrafica();
 
+// funzione di utilità generale per catturare lo stdout di altre funzioni 
+function capture($fun, ...$args) {
+    ob_start();
+    $fun(...$args);
+    $echoed_output = ob_get_contents();
+    ob_end_clean();
+    return $echoed_output;
+}
+
+// rendiamo alcune funzioni chiamabili dall'interno di stringhe heredoc
+$gaz_format_number = 'gaz_format_number';
+$gaz_format_date = 'gaz_format_date';
+
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -213,75 +226,116 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
 
 </script>
 <?php
-echo "<form method=\"POST\" name=\"select\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['numdoc'] . "\" name=\"numdoc\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['datdoc'] . "\" name=\"datdoc\" />\n";
+
 $gForm = new venditForm();
-echo "<br /><div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'];
-echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
+
+echo <<<END
+<form method="POST" name="select">
+    <input type="hidden" value="{$form['hidden_req']}" name="hidden_req" />
+    <input type="hidden" value="{$form['ritorno']}" name="ritorno" />
+    <input type="hidden" value="{$form['numdoc']}" name="numdoc" />
+    <input type="hidden" value="{$form['datdoc']}" name="datdoc" />
+    <br />
+    <div align="center" class="FacetFormHeaderFont"> {$script_transl['title']} </div>
+    <table class="Tmiddle">
+END;
+
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['mesg']) . "</td></tr>\n";
 }
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_ini'] . "</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
-$gForm->CalendarPopup('date_ini', $form['date_ini_D'], $form['date_ini_M'], $form['date_ini_Y'], 'FacetSelect', 1);
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['partner'] . "</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
-$gForm->selectCustomer('partner', $form['partner'], $form['search']['partner'], $form['hidden_req'], $script_transl['mesg']);
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['target_account'] . "</td>\n ";
-echo "<td class=\"FacetFieldCaptionTD\">";
-echo "\t <select name=\"target_account\" tabindex=\"4\"   class=\"FacetSelect\" onchange=\"this.form.submit()\">\n"; //impropriamente usato per il numero di conto d'accredito
+
+$selectDate = capture(array($gForm, 'CalendarPopup'), 
+    'date_ini', 
+    $form['date_ini_D'], 
+    $form['date_ini_M'], 
+    $form['date_ini_Y'], 
+    'FacetSelect', 1);
+
+$selectCustomer = capture(array($gForm, 'selectCustomer'), 
+    'partner', 
+    $form['partner'], 
+    $form['search']['partner'], 
+    $form['hidden_req'], 
+    $script_transl['mesg']);
+
+echo <<<END
+
+        <tr>
+            <td class="FacetFieldCaptionTD">{$script_transl['date_ini']}</td>
+            <td colspan="3" class="FacetDataTD"> $selectDate </td>
+        </tr>
+        <tr>
+            <td class="FacetFieldCaptionTD">{$script_transl['partner']}</td>
+            <td colspan="3" class="FacetDataTD"> $selectCustomer </td>
+        </tr>
+        <tr>
+            <td class="FacetFieldCaptionTD">{$script_transl['target_account']}</td>
+            <td class="FacetFieldCaptionTD">
+                <!-- impropriamente usato per il numero di conto d'accredito -->
+                <select name="target_account" tabindex="4" class="FacetSelect" onchange="this.form.submit()">;
+END;
+
 $masban = $admin_aziend['masban'] * 1000000;
 $casse = substr($admin_aziend['cassa_'], 0, 3);
 $mascas = $casse * 1000000;
-$res = gaz_dbi_dyn_query('*', $gTables['clfoco'], "(codice LIKE '$casse%' AND codice > '$mascas') or (codice LIKE '" . $admin_aziend['masban'] . "%' AND codice > '$masban')", "codice ASC"); //recupero i c/c
-echo "\t\t <option value=\"0\">--------------------------</option>\n";
-while ($a = gaz_dbi_fetch_array($res)) {
+//recupero i conti correnti
+$res = gaz_dbi_dyn_query('*', $gTables['clfoco'], "(codice LIKE '$casse%' AND codice > '$mascas') or (codice LIKE '{$admin_aziend['masban']}%' AND codice > '$masban')", "codice ASC"); 
+echo '                <option value="0">--------------------------</option>' . "\n";
+while ($conto = gaz_dbi_fetch_array($res)) {
     $sel = "";
-    if ($a["codice"] == $form['target_account']) {
+    if ($conto["codice"] == $form['target_account']) {
         $sel = "selected";
-        if (substr($a["codice"], 0, 3) == $casse) { // è un pagamento in contanti/assegno
+        if (substr($conto["codice"], 0, 3) == $casse) { // è un pagamento in contanti/assegno
             $_POST['print_ticket'] = " checked";
         } else {
             $_POST['print_ticket'] = "";
         }
     }
-    echo "\t\t <option value=\"" . $a["codice"] . "\" $sel >" . $a["codice"] . " - " . $a["descri"] . "</option>\n";
+    echo "                <option value=\"{$conto['codice']}\" $sel> {$conto['codice']}-{$conto['descri']} </option>\n";
 }
-echo "\t </select></td>\n";
-echo "<td class=\"FacetDataTD\">" . $script_transl['print_ticket'] . "<input type=\"checkbox\" title=\"Per stampare la ricevuta seleziona questa checkbox\" name=\"print_ticket\" " . $_POST['print_ticket'] . " ></td>\n";
-echo "</tr>";
-/** inizio modifica FP 09/01/2016
- * descrizione modificabile
- */
-echo "<tr>";
-echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['descr_mov'] . "</td>\n ";
-echo "<td class=\"FacetDataTD\"> <input type=\"text\" name=\"descr_mov\" value=\"" . $form['descr_mov'] . "\" maxlength=\"85\" size=\"85\"></td>";
-echo "</tr>";
-/** fine modifica FP */
-echo "</table>\n";
+echo <<<END
+                </select>
+            </td>
+            <td class="FacetDataTD">{$script_transl['print_ticket']}
+                <input type="checkbox" title="Per stampare la ricevuta seleziona questa checkbox" name="print_ticket" {$_POST['print_ticket']} >
+            </td>
+        </tr>
+
+<!-- inizio modifica FP 09/01/2016 descrizione modificabile -->
+        <tr>
+            <td class="FacetFieldCaptionTD" colspan="2">{$script_transl['descr_mov']}</td>
+            <td class="FacetDataTD"> 
+                <input type="text" name="descr_mov" value="{$form['descr_mov']}" maxlength="85" size="85">
+            </td>
+        </tr>
+<!-- fine modifica FP -->
+    </table>
+END;
+
 if ($form['partner'] > 100000000) { // partner selezionato
-    // ottengo il valore del saldo contabile per confrontarlo con quello dello scedenziario
+    // ottengo il valore del saldo contabile per confrontarlo con quello dello scadenziario
     $acc_bal = $paymov->getPartnerAccountingBalance($form['partner'], $date);
     $paymov->getPartnerStatus($form['partner'], $date);
     $kd_paymov = 0;
     $date_ctrl = new DateTime($date);
     $saldo = 0.00;
-//   echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n"; rimosso perchè falsa i colori con lo stripe
-    echo '<table id="tablebody" border="1" width="100%">';
-    echo "<tr>";
-    echo "<td colspan='8'>" . $script_transl['accbal'] . gaz_format_number($acc_bal) . "</td>";
-    echo "<tr>";
+
     $linkHeaders = new linkHeaders($script_transl['header']);
-    $linkHeaders->output();
-    echo "</tr>\n";
+    $linkHeadersOutput = capture(array($linkHeaders, 'output'));
+    /* rimosso perché falsa i colori con lo stripe
+        <table class="Tlarge table table-striped table-bordered table-condensed table-responsive"> */
+    echo <<<END
+
+    <table id="tablebody" border="1" width="100%">
+        <tr>
+            <td colspan="8">
+                {$script_transl['accbal']}{$gaz_format_number($acc_bal)}
+            </td>
+        <tr>
+            $linkHeadersOutput 
+        </tr>
+END;
+
     $paymov_bal = 0.00;
     foreach ($paymov->PartnerStatus as $k => $v) {
         /** inizio modifica FP 28/11/2015
@@ -294,32 +348,42 @@ if ($form['partner'] > 100000000) { // partner selezionato
         }
         /** fine modifica FP */
         $amount = 0.00;
-        echo "<tr>";
-        echo "<td class=\"FacetDataTD\" colspan='8'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=" . $paymov->docData[$k]['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" .
-        $paymov->docData[$k]['descri'];
+        echo <<<END
+
+        <tr>
+            <td class="FacetDataTD" colspan="8">
+                <a class="btn btn-xs btn-default btn-edit" href="../contab/admin_movcon.php?Update&amp;id_tes={$paymov->docData[$k]['id_tes']}">
+                    <i class="glyphicon glyphicon-edit"></i>
+                    {$paymov->docData[$k]['descri']}
+END;
         if ($paymov->docData[$k]['numdoc'] >= 1) {
-            echo ' n.'.$paymov->docData[$k]['numdoc'] . '/' . $paymov->docData[$k]['seziva'] . ' ' . $paymov->docData[$k]['datdoc'];
+            echo ' n.' . $paymov->docData[$k]['numdoc'] . '/' . $paymov->docData[$k]['seziva'] . ' ' . $paymov->docData[$k]['datdoc'];
         }
-        echo "</a> REF: $k</td>";
-        echo "</tr>\n";
+echo <<<END
+            
+                </a> 
+                REF: $k
+            </td>
+        </tr>
+END;
         foreach ($v as $ki => $vi) {
             $class_paymov = 'FacetDataTDevidenziaCL';
-            $v_op = '';
-            $cl_exp = '';
+            $v_apertura = '';
+            $d_chiusura = '';
             if ($vi['op_val'] >= 0.01) {
-                $v_op = gaz_format_number($vi['op_val']);
+                $v_apertura = gaz_format_number($vi['op_val']);
                 $paymov_bal += $vi['op_val'];
             }
-            $v_cl = '';
+            $v_chiusura = '';
             if ($vi['cl_val'] >= 0.01) {
-                $v_cl = gaz_format_number($vi['cl_val']);
-                $cl_exp = gaz_format_date($vi['cl_exp']);
+                $v_chiusura = gaz_format_number($vi['cl_val']);
+                $d_chiusura = gaz_format_date($vi['cl_exp']);
                 $paymov_bal -= $vi['cl_val'];
             }
-            $expo = '';
+            $gg_esposti = '';
             $diffValClOp = abs($vi['cl_val'] - (float) $vi['op_val']);
             if ($vi['expo_day'] >= 1) {
-                $expo = $vi['expo_day'];
+                $gg_esposti = $vi['expo_day'];
 //            if ($vi['cl_val'] == (float) $vi['op_val']) {
                 if ($diffValClOp < 0.01) {
                     $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza 
@@ -328,33 +392,48 @@ if ($form['partner'] > 100000000) { // partner selezionato
             } else {
 //            if ($vi['cl_val'] == (float) $vi['op_val']) {
                 if ($diffValClOp < 0.01) {
-                    $cl_exp = '';
+                    $d_chiusura = '';
                     $class_paymov = 'FacetDataTD';
                 } elseif ($vi['status'] == 3) { // SCADUTA
-                    $cl_exp = '';
+                    $d_chiusura = '';
                     $class_paymov = 'FacetDataTDevidenziaKO';
                 } elseif ($vi['status'] == 9) { // PAGAMENTO ANTICIPATO
                     $class_paymov = 'FacetDataTDevidenziaBL';
                     $vi['expiry'] = $vi['cl_exp'];
                 }
             }
-            echo "<tr class='" . $class_paymov . "'>";
-            echo "<td align=\"right\">" . $vi['id'] . "</td>";
-            echo "<td align=\"right\">" . $v_op . "</td>";
-            echo "<td align=\"center\">" . gaz_format_date($vi['expiry']) . "</td>";
-            echo "<td align=\"right\">\n";
+            echo <<<END
+
+        <tr class="$class_paymov">
+            <td align="right"> {$vi['id']} </td>
+            <td align="right"> {$v_apertura} </td>
+            <td align="center"> {$gaz_format_date($vi['expiry'])} </td>
+            <td align="right">
+END;
             foreach ($vi['cl_rig_data'] as $vj) {
-                echo "<a class=\"btn btn-xs btn-default btn-edit\"  href=\"../contab/admin_movcon.php?id_tes=" . $vj['id_tes'] . "&Update\" title=\"" . $script_transl['update'] . ': ' . $vj['descri'] . " € " . gaz_format_number($vj['import']) . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $vj['id_tes'] . "</a>\n ";
+                echo <<<END
+
+                <a class="btn btn-xs btn-default btn-edit"  
+                    href="../contab/admin_movcon.php?id_tes={$vj['id_tes']}&amp;Update" 
+                    title="{$script_transl['update']}:{$vj['descri']} € {$gaz_format_number($vj['import'])}">
+                    <i class="glyphicon glyphicon-edit"></i>
+                    {$vj['id_tes']}
+                </a>
+END;
             }
-            echo $v_cl . "</td>";
-            echo "<td align=\"center\">" . $cl_exp . "</td>";
-            echo "<td align=\"center\">" . $expo . "</td>";
-            echo "<td align=\"center\">" . $script_transl['status_value'][$vi['status']] . " &nbsp;</td>";
             if ($vi['status'] <> 1 || $vi['status'] < 9) { // accumulo solo se non è chiusa
                 $amount += round($vi['op_val'] - $vi['cl_val'], 2);
             }
-            echo "</tr>\n";
+            echo <<<END
+
+                $v_chiusura 
+            </td>
+            <td align="center"> $d_chiusura </td>
+            <td align="center"> $gg_esposti </td>
+            <td align="center"> {$script_transl['status_value'][$vi['status']]} &nbsp;</td>
+END;
         }
+        
         if (!isset($_POST['paymov'])) {
             $form['paymov'][$k][$ki]['amount'] = $amount;
             $form['paymov'][$k][$ki]['id_tesdoc_ref'] = $k;
@@ -364,24 +443,62 @@ if ($form['partner'] > 100000000) { // partner selezionato
             // attributo opcl per js come aperto
             $open = 'op';
         }
-        echo '<input type="hidden" id="post_' . $k . '_' . $ki . '_id_tesdoc_ref" name="paymov[' . $k . '][' . $ki . '][id_tesdoc_ref]" value="' . $k . "\" />";
-        echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" orival=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\" opcl=\"" . $open . "\" value=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\"></td></tr>\n";
+        $orival = number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '');
+        echo <<<END
+
+            <td class="hidden">
+                <input type="hidden" id="post_{$k}_{$ki}_id_tesdoc_ref" name="paymov[$k][$ki][id_tesdoc_ref]" value="$k" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7"></td>
+            <td align="right">
+                <input style="text-align: right" type="text" 
+                    name="paymov[$k][$ki][amount]" 
+                    orival="$orival" 
+                    opcl="$open" 
+                    value="$orival">
+            </td>
+        </tr>
+END;
     }
-	$paymov_bal = round($paymov_bal, 2);
-    echo "<tr>";
-    echo "<td colspan='3'>" . $script_transl['paymovbal'] . '<input type="text" value="' . number_format($paymov_bal, 2, '.', '') . '" id="total" /></td>';
-    /** inizio modifica FP 28/11/2015
-     * aggiunti campi per selezione documento da proporre per il pagamento
-     */
-//rimosso  if ($paymov_bal < $acc_bal) {
-    if ($paymov_bal < $acc_bal && !$isDocumentoSelezionato) {   // se sto guardando solo un documento specifico non controllo lo sbilancio
-        /** fine modifica FP */
-        echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
+    $paymov_bal = round($paymov_bal, 2);
+    $value = number_format($paymov_bal, 2, '.', '');
+    echo <<<END
+
+        <tr>
+            <td colspan="3">
+                {$script_transl['paymovbal']}
+                <input type="text" value="$value" id="total" />
+            </td>
+END;
+
+    // se sto guardando solo un documento specifico non controllo lo sbilancio
+    if ($paymov_bal < $acc_bal && !$isDocumentoSelezionato) {   
+        echo <<<END
+
+            <td class="FacetDataTDred" colspan="4">
+                {$script_transl['mesg'][3]}
+                <a class="btn btn-xs btn-default btn-edit" href="../contab/admin_movcon.php?Insert">
+                    <i class="glyphicon glyphicon-edit"> </i>
+                </a>
+            </td>
+END;
     }
-    echo '<td class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . strtoupper($script_transl['insert']) . '!"></td>';
-    echo "</tr>";
-    echo '';
-    echo "</table></form>";
+
+    $insert = strtoupper($script_transl['insert']);
+    echo <<<END
+
+            <td class="FacetFieldCaptionTD" align="center">
+                <input name="ins" id="preventDuplicate" 
+                    onClick="chkSubmit();" 
+                    type="submit" 
+                    value="$insert!">
+            </td>
+        </tr>
+    </table>
+</form>
+END;
 }
 ?>
 <?php
