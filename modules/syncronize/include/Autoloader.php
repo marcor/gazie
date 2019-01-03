@@ -74,4 +74,3 @@ class Autoloader {
 //call
 Autoloader::init();
 ?>
-
