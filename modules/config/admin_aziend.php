@@ -100,7 +100,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         /** ENRICO FEDELE */
         $lumix = hexdec(substr($form["colore"], 0, 2)) + hexdec(substr($form["colore"], 0, 2)) + hexdec(substr($form["colore"], 0, 2));
         if ($lumix < 408) {
-            $msg['err'][] = 'sexper';
+            $msg['err'][] = 'colore';
         }
         if (empty($form['ragso1'])) {
             $msg['err'][] = 'ragso1';
