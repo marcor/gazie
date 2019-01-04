@@ -338,9 +338,8 @@ $(document).ready(function () {
 </script>
 <form method="POST" enctype="multipart/form-data"  autocomplete="off">
 <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
-<?php if (isset($_POST['hidden_req'])){ ?>
-<input type="hidden" name="hidden_req" value="<?php print $_POST['hidden_req']; ?>">
-<?php }
+<input type="hidden" name="hidden_req" value="<?php if (isset($_POST['hidden_req'])){ print $_POST['hidden_req']; } ?>">
+<?php
 if ($toDo == 'insert') {
 	echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
 } else {
