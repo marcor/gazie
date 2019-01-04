@@ -277,10 +277,32 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // creo un array dove andò a mettere tutti i righi normali e/o forfait ai quali potranno eventualmente essere riferiti gli elementi dal 2.1.2 a 2.1.7
 	$form['RiferimentoNumeroLinea'] = array();
     $next_row = 0;
+	$fae_id_documento_exist=array();
+	$fae_other_el_exist=array();
     if (isset($_POST['rows'])) {
         foreach ($_POST['rows'] as $next_row => $v) {
-			if ($v['tiprig']<=1 || $v['tiprig']==90){
+			switch($v['tiprig']){
+				case'0':
+				case'1':
+				case'90':
 				$form['RiferimentoNumeroLinea'][$next_row+1] = substr($v['descri'],0,20);
+				break;
+				case'13':
+				$fae_id_documento_exist[$v['codric']]=true; // servirà per controllare se c'è questo elemento in presenza di almeno un altro, altrimenti darò errore
+				if (empty($v['descri'])){
+					$msg['err'][] = "49";
+				}
+				break;
+				case'11':
+				case'12':
+				case'14':
+				case'15':
+				case'16':
+				$fae_other_el_exist[$v['codric']]=true;
+				if (empty($v['descri'])){
+					$msg['err'][] = "49";
+				}
+				break;
 			}
             if (isset($_POST["row_$next_row"])) { //se ho un rigo testo
                 $form["row_$next_row"] = $_POST["row_$next_row"];
@@ -401,7 +423,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['volume'] += $form['rows'][$next_row]['quanti'] * $artico['volume_specifico'];
             }
             $next_row++;
-        }
+        } // fine ciclo dei righi 
+		
+		/* inizio controlli errori sugli elementi di fattura elettronica dal 2.1.2 al 2.1.6 
+		*/
+		foreach ($fae_other_el_exist as $k=>$V){
+			if (!isset($fae_id_documento_exist[$k])){
+				$msg['err'][] = "id_documento";
+			}
+			
+		}
+		
         $comp = new venditCalc();
         if (isset($_POST['roundup'])) { // richiesta di arrotondamento verso l'alto
             $form['rows'] = $comp->computeRounTo($form['rows'], $form['sconto'], false, $admin_aziend['decimal_price']);
@@ -508,11 +540,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else { //se sono altri documenti
                 $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' and seziva = $sezione", "protoc desc, datfat desc, datemi desc", 0, 1);
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
-                $utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datfat'], 5, 2), substr($ultimo_tipo['datfat'], 8, 2), substr($ultimo_tipo['datfat'], 0, 4));
-                if ($ultimo_tipo and ( $utsUltimoProtocollo > $utsemi)) {
-                    $msg['err'][] = "45";
-                }
-            }
+				if ($ultimo_tipo){
+					$utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datfat'], 5, 2), substr($ultimo_tipo['datfat'], 8, 2), substr($ultimo_tipo['datfat'], 0, 4));
+					if ($ultimo_tipo and ( $utsUltimoProtocollo > $utsemi)) {
+						$msg['err'][] = "45";
+					}
+				}
+			}
         }
         // --- fine controllo coerenza date-numeri
         if (!checkdate($form['mesemi'], $form['gioemi'], $form['annemi']))

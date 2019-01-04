@@ -295,6 +295,7 @@ $strScript = array("admin_client.php" =>
             '62' =>'Non è possibile emettere un documento ad un cliente che non ha la PEC o il codice SdI',
             '63' =>'Selezionare la causale di pagamento della ritenuta d\'acconto in configurazione azienda',
             '64' =>'Un rigo di tipo normale è senza quantità',
+			'id_documento'=>'Non è stato inserito il tipo rigo 13 - Id.Documento (FaE 2.1.X.2) obbligatorio in presenza di almeno uno dei tipi da 11 a 16'
 		)		
     ),
     "select_docforprint.php" =>

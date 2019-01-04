@@ -106,9 +106,9 @@ class Template extends FPDI {
             $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
             $this->Ln($interlinea);
 			if (!empty($this->efattura)){
-				$this->SetFont('helvetica','B',14);
-				$this->SetTextColor(255,150,150);
-				$this->Cell(186,0,'Copia cartacea del documento elettronico '.$this->efattura,0,1,'C');
+				$this->SetFont('helvetica','B',9);
+				$this->SetTextColor(255,0,0);
+				$this->Cell(186,0,'Copia cartacea del documento elettronico '.$this->efattura,0,1);
 				$this->SetTextColor(0,0,0);
 			}
             $this->SetFont('helvetica', '', 11);
