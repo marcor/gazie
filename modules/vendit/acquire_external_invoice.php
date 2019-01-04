@@ -44,9 +44,9 @@ function getLastProtocol($type, $year, $sezione) {
 	*	controllando sia l'archivio documenti che il registro IVA vendite 
 	*/
 	global $gTables;                      
-    $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = ".$year." AND tipdoc LIKE '" . substr($type, 0, 1) . "__' AND seziva = ".$sezione, "protoc DESC", 0, 1);
+    $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = ".$year." AND tipdoc LIKE '" . substr($type, 0, 1) . "__' AND seziva = ".$sezione, "protoc DESC", 0, 1);
     $ultimo_tesdoc = gaz_dbi_fetch_array($rs_ultimo_tesdoc);
-    $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = ".$year." AND regiva = 2 AND seziva = ".$sezione, "protoc DESC", 0, 1);
+    $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datdoc) = ".$year." AND regiva = 2 AND seziva = ".$sezione, "protoc DESC", 0, 1);
     $ultimo_tesmov = gaz_dbi_fetch_array($rs_ultimo_tesmov);
     $lastProtocol = 0;
     $lastDatreg = date("Y-m-d");
@@ -146,6 +146,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 	$anagra_with_same_pi = false; // sarà true se è una anagrafica esistente ma non è un cliente sul piano dei conti 
 	$anagra_with_same_cf = false; // sarà true se è una anagrafica esistente ma non è un cliente sul piano dei conti 
+	$partner_with_same_pi = false; // sarà true se c'è un cliente con la stessa partita iva sul piano dei conti 
+	$partner_with_same_cf = false; // sarà true se c'è un cliente col lo stesso codice fiscale sul piano dei conti 
 		
  	
 	if ($f_ex) { // non ho errori di file, ne faccio altri controlli sul contenuto del file
@@ -250,7 +252,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$nfa=explode('/',$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue);
 		if (isset($nfa[1]) && is_numeric($nfa[1])){
 			$form['seziva']=$nfa[1];
-		}	
+		}
 		/* 
 		INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
 		a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva 
@@ -317,7 +319,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				*/
 				$df = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 				// trovo l'ultima data di registrazione
-				$lr=getLastProtocol('AF_',substr($df,0,4),1)['last_datreg'];
+				$lr=getLastProtocol('F__',substr($df,0,4),1)['last_datreg'];
 				$lrt = strtotime($lr);
 				$dft = strtotime($df);
 				if ($lrt<=$dft) { // se l'ultima registrazione è precedente alla fattura propongo la data della fattura
@@ -491,13 +493,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_cf, $admin_aziend['mascli'], $form['pagame']);
 			}
 			$form['tipdoc'] = 'FAI'; 
-			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
 			$nfa=explode('/',$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue);
 			$form['numfat']=$nfa[0];
 			$form['numdoc']=$form['numfat'];
 			$form['datfat']=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 			$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
-			$form['datreg']=gaz_format_date($form['datreg'],true);
+			$form['datreg']=$form['datfat'];
+			$form['datemi']=$form['datfat'];
+			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],0,4),$form['seziva'])['last_protoc'];
+			print_r($form);
             tesdocInsert($form);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
@@ -509,7 +513,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
                 rigdocInsert($form['rows'][$i]);
 			}
-            header("Location: report_docven.php");
+            //header("Location: report_docven.php");
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 			if (!isset($form['pagame'])){

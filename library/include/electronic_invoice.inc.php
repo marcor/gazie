@@ -246,7 +246,12 @@ class invoiceXMLvars {
 				$id_rig_ref=array();
 			}
             $rigo['sconto_su_imponibile'] = array();
+			$rigo['codice_tipo']='';
             if ($rigo['tiprig'] <= 1) {
+				if (!empty($rigo['codart'])){ // ho un codice articolo lo riprendo per settare il codice tipo ( ci metterò se bene o servizio e categoria merceologica)
+					$artico = gaz_dbi_get_row($this->gTables['artico'], "codice", $rigo['codart']);
+					$rigo['codice_tipo']=($artico['good_or_service'] == 0) ? 'BENE_CAT_'.$artico['catmer'] : 'SERVIZIO';
+				}
 				$id_rig_ref[$nr_idtes]=$rigo['id_rig']; // associo l'id_rig al numero rigo mi servirà per valorizzare l'accumulatore per 2.1.X
 				$nr_idtes++; // è un tipo rigo a cui possono essere riferiti i dati degli elementi 2.1.X, lo aumento 
                 $last_normal_row = $nr; // mi potrebbe servire se alla fine dei righi mi ritrovo con dei descrittivi non ancora indicizzati perché seguono l'ultimo rigo normale
@@ -701,6 +706,17 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
                     $el->appendChild($el1);
+					$codart=preg_replace("/[^A-Za-z0-9]i/",'',$rigo['codart']);
+                    if (!empty($codart)) { // ho un codice articolo creo l'elemento 
+						$el1 = $domDoc->createElement("CodiceArticolo", '');
+						$el2 = $domDoc->createElement("CodiceTipo",$rigo['codice_tipo']); // il codice tipo è obbligatorio è stato formattato in precedenza per indicarci se è un bene o un servizio e la categoria merceologica
+						$el1->appendChild($el2);
+						$el2 = $domDoc->createElement("CodiceValore",$codart); // qui metto il valore del codice vero e proprio e che avevo parsato in precedenza
+						$el1->appendChild($el2);
+						$el2 = $domDoc->createElement("Quantita", number_format($rigo['quanti'], 2, '.', ''));
+						$el1->appendChild($el2);
+						$el->appendChild($el1);
+					}
                     if (isset($rigo['descrittivi'])) {
                         // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
                         foreach ($rigo['descrittivi'] as $k => $v) {
