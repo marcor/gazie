@@ -121,7 +121,6 @@ $gazie_locale = (defined('gazie_locale')) ? gazie_locale : '';
 //
 // Numero di righe per pagina sui report, determina anche quante ne saranno caricate dallo scroll-onload
 //
-define('PER_PAGE', 30);
 define('PER_PAGE', (defined('MY_PER_PAGE')) ? MY_PER_PAGE : 30);
 
 //
