@@ -225,10 +225,12 @@ class DocContabVars {
         } else {
             $this->pers_title = 'Spett.le';
         }
-		// aggiungo la mail in testata documento sui dati aziendali per poterla eventualmente passare alla funzione sendMail
-		$admin_aziend['other_email']=$tesdoc["email"];
+		$admin_aziend['other_email']='';
+		// se ho la mail in testata documento la inserisco sui dati aziendali per poterla passare alla funzione sendMail
+		if (isset($tesdoc["email"])&&strlen($tesdoc["email"])>10){
+			$admin_aziend['other_email']=$tesdoc["email"];
+		}
         $this->azienda = $admin_aziend;
-		
     }
 
     function initializeTotals() {
