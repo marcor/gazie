@@ -35,6 +35,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
     $form['datnas_D'] = intval($_POST['datnas_D']);
+    $form['fe_cod_univoco'] = strtoupper($form['fe_cod_univoco']);// porto il codice univoco tutto con caratteri maiuscoli 
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }

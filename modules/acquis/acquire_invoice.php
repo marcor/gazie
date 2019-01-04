@@ -495,6 +495,7 @@ $gForm = new acquisForm();
         });
     });
 </script>
+<div align="center" ><b><?php echo $script_transl['title'];?></b></div>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
     <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>">
 <?php
