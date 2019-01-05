@@ -2044,7 +2044,7 @@ echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-t
 				if ($toDo == "insert"){
 					if ($form['ok_barcode']!="ok"){
 						?>
-								<button type="submit"  name="button_ok_barcode" class="btn btn-edit" title="inserisci con pistola Barcode"> 
+								<button type="submit"  name="button_ok_barcode" class="btn btn-edit btn-default btn-xs" title="inserisci con pistola Barcode"> 
                                 <span class="glyphicon glyphicon-barcode"> Barcode</span>
 						<?php
 					} 

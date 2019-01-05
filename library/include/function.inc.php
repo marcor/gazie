@@ -1137,7 +1137,7 @@ class selectproduction extends SelectBox {
             $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
             echo '<input type="hidden" name="' . $this->name . '" value="" />';
         }
-        echo '&nbsp;<input type="text" class="' . $class . '" name="coseprod" placeholder="'.$msg.'" id="search_production" value="' . $cerca . '" maxlength="16" />';
+        echo '<input type="text" class="' . $class . '" name="coseprod" placeholder="'.$msg.'" id="search_production" value="' . $cerca . '" maxlength="16" />';
     }
 
 }
