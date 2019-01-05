@@ -94,7 +94,7 @@
 }
 .FacetDataTD input,select,textarea {
 	padding-left: 10px;
-	margin-left: 5px;
+	margin-left: 0px;
 }
 
 .form-group input {

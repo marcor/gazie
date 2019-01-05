@@ -140,6 +140,7 @@
 .skin-blue.layout-top-nav .main-header > .logo:hover {
   background-color: #3b8ab8;
 }
+
 .form-horizontal .form-group {
     margin-right: 0px;
     margin-left: 0px;
@@ -188,8 +189,93 @@ input {
 	height: 28px;
 }
 
-.nav > li > a {
+div.panel.panel-info div.container-fluid.bg-info ul.nav.nav-tabs li a {
     position: relative;
     display: block;
     padding: 4px 2px;
 }
+
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header > p {
+	color: #666;
+}
+
+input.btn-default {
+	height: 28px;
+}
+
+div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6.col-lg-3.nopadding div.bg-success.text-center {
+	border: 1px;
+	border-color: #666;
+}
+
+div.panel.panel-default div#gaz-responsive-table.container-fluid table.col-xs-12.table-responsive.table-striped.table-condensed.cf tbody tr td.col-lg-4 input.col-lg-12 {
+	width: 99%;
+}
+
+html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper div.content-wrapper section.content form.form-horizontal div.panel.panel-default div#gaz-responsive-table.container-fluid table.col-xs-12.table-responsive.table-striped.table-condensed.cf tbody tr td button.btn {
+		padding: 2px 4px;
+		width: 90%;
+}
+div.form-group div.form-group.col-md-6.col-lg-3.nopadding div.bg-success
+{
+	color: #000;
+	border-radius: 3px;
+	border: 1px solid #374850;
+	padding-left:10px;
+	padding-top: 2px;
+	height: 28px;
+}
+
+div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6.col-lg-3.nopadding div.bg-success.text-center
+{
+	color: #000;
+	border-radius: 3px;
+	border: 1px solid #374850;
+	padding-left:10px;
+	padding-top: 2px;
+	height: 28px;	
+}
+div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6.col-lg-3.nopadding div.text-center
+{
+	color: #000;
+	border-radius: 3px;
+	border: 1px solid #374850;
+	padding-left:10px;
+	padding-top: 2px;
+	height: 28px;	
+}
+
+.panel-default {
+    border-color: #ddd;
+    background-color: honeydew;
+}
+
+.form-group select {
+    padding-left: 10px;
+}
+
+.bg-red, .callout.callout-danger, .alert-danger, .alert-error, .label-danger, .modal-danger .modal-body {
+    background-color: #eeccbc !important;
+}
+
+.bg-red, .bg-yellow, .bg-aqua, .bg-blue, .bg-light-blue, .bg-green, .bg-navy, .bg-teal, .bg-olive, .bg-lime, .bg-orange, .bg-fuchsia, .bg-purple, .bg-maroon, .bg-black, .bg-red-active, .bg-yellow-active, .bg-aqua-active, .bg-blue-active, .bg-light-blue-active, .bg-green-active, .bg-navy-active, .bg-teal-active, .bg-olive-active, .bg-lime-active, .bg-orange-active, .bg-fuchsia-active, .bg-purple-active, .bg-maroon-active, .bg-black-active, .callout.callout-danger, .callout.callout-warning, .callout.callout-info, .callout.callout-success, .alert-success, .alert-danger, .alert-error, .alert-warning, .alert-info, .label-danger, .label-info, .label-warning, .label-primary, .label-success, .modal-primary .modal-body, .modal-primary .modal-header, .modal-primary .modal-footer, .modal-warning .modal-body, .modal-warning .modal-header, .modal-warning .modal-footer, .modal-info .modal-body, .modal-info .modal-header, .modal-info .modal-footer, .modal-success .modal-body, .modal-success .modal-header, .modal-success .modal-footer, .modal-danger .modal-body, .modal-danger .modal-header, .modal-danger .modal-footer {
+    color: #000 !important;
+}
+
+.alert a {
+    color: #000;
+    text-decoration: none;
+}
+
+.panel.panel-default {
+	background-color: #aae2a8;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #e9e9e9;
+}
+
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: #f9f9f9;
+}
+

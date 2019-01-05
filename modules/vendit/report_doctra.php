@@ -298,7 +298,7 @@ function confirMail(link){
                         case "DDL":
                             echo "<tr class=\"FacetDataTD\">";
                             // Colonna id
-                            echo "<td class=\"alert alert-danger\" align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["id_tes"] . "</a></td>";
+                            echo "<td class=\"alert alert-danger\" align=\"left\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["id_tes"] . "</a></td>";
                             echo "<td class=\"alert alert-danger\"  align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
                             // Colonna type
                             echo "<td class=\"alert alert-danger\"  align=\"center\"><a class=\"btn btn-xs btn-warning \" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["tipdoc"]] . "</a> &nbsp;</td>";
@@ -336,13 +336,13 @@ function confirMail(link){
 								echo "<td align=\"center\" class=\"alert alert-danger\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"../acquis/admin_docacq.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
 								echo "</td>";
 							} else {
-								echo "<td></td>";
+								echo "<td class=\"alert alert-danger\"></td>";
 							}
                             if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
                             // Colonna Elimina
                                 echo "<td class=\"alert alert-danger\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
                             else
-                                echo "<td></td>";
+                                echo "<td class=\"alert alert-danger\"></td>";
                             echo "</tr>\n";
                             break;
                         case "FAD":
