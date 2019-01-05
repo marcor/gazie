@@ -554,8 +554,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
 <?php		
 		foreach ($form['rows'] as $k => $v) {
 			$k--;
-            $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-8 small",'style="max-width: 350px;"', false, true);
-			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-8 small', null, 'style="max-width: 350px;"', false, true);            
+            $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
+			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);            
 			// creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',

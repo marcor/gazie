@@ -23,15 +23,34 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
+
+
+ /*
+--------=======oooooooooooo!!!!!  ATTENZIONE !!!!!ooooooooooo========-------------
+QUESTO FILE DI CONFIGURAZIONE CONTIENE UNA SERIE DI SETTAGGI ADATTI AD UN AMBIENTE DI 
+SVILUPPO E POTENZIALMENTE INSICURO IN QUANTO AD ES. USA IL NOME UTENTE root SENZA 
+PASWORD PER ACCEDERE AL DATABASE.
+PER POTER USARE GAZIE IN PRODUZIONE OCCORRE PERSONALIZZARE QUESTI PARAMENTRI CAMBIANDO 
+IL NOME DEL FILE "gconfig.myconfig.php.default" IN "gconfig.myconfig.php".
+SUCCESSIVAMENTE "gconfig.myconfig.php" LO SI DOVRA' MODIFICARE IN ACCORO CON LE 
+IMPOSTAZIONI DEL VOSTRO SERVER. FACENDO COSI' EVITERETE DI USARE I SETTAGGI CONTENUTI 
+IN QUESTO FILE CHE SONO APPUNTO INADATTI E CHE VERREBBE SOVRASCRITTO AD OGNI AGGIORNAMETO
+DI GAZIE, AGGIORNAMENTO CHE CONSISTE, APPUNTO, NELLA SOVRASCRITTURA DI TUTTI I FILES 
+DELLA CARTELLA "gazie" COMPRESO IL PRESENTE "gconfig.php"
+*/
+ 
+
+ 
+ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');
 }
 //versione software
-define('GAZIE_VERSION', '7.15');
+define('GAZIE_VERSION', '7.16');
 
 if (file_exists(dirname(__FILE__) . '/gconfig.myconf.php')) {
 	include_once(dirname(__FILE__) . '/gconfig.myconf.php');
 }
+
 
 //nome DBMS usato per la libreria specifica (MySQL=mysql.lib, SQLite=sqlite.lib, ecc)
 //per il momento disponibile solo la libreria mysql.lib

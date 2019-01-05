@@ -824,6 +824,9 @@ label {
         background-color: rgba(0, 0, 0, 0.04);
     }
 }
+    #gaz-responsive-table table{
+        padding: 2px;
+    }
 
 .gaz-table-form {
     max-width: 990px;
