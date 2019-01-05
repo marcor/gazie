@@ -501,7 +501,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['datreg']=$form['datfat'];
 			$form['datemi']=$form['datfat'];
 			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],0,4),$form['seziva'])['last_protoc'];
-			print_r($form);
             tesdocInsert($form);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
@@ -513,7 +512,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
                 rigdocInsert($form['rows'][$i]);
 			}
-            //header("Location: report_docven.php");
+            header("Location: report_docven.php");
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 			if (!isset($form['pagame'])){
