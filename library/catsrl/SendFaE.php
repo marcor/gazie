@@ -39,7 +39,10 @@ function SendFattureElettroniche($zip_fatture)
 	$result = PostCallCATsrl($CATSRL_ENDPOINT, realpath($zip_fatture));
 	//echo('0-'.$result."<br />\n");
 
-	$IdentificativiSdI = json_decode($result, true);
+	$open_tag = '<PROTS>';
+	$close_tag = '</PROTS>';
+
+	$IdentificativiSdI = json_decode(base64_decode(substr($result, strpos($result, $open_tag)+7, strpos($result, $close_tag)-strpos($result, $open_tag)-7)), true);
 
 	return $IdentificativiSdI;
 }
@@ -48,8 +51,13 @@ function SendFatturaElettronica($xml_fattura)
 {
 	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviXml.php';
 
-	$IdentificativoSdI = PostCallCATsrl($CATSRL_ENDPOINT, realpath($xml_fattura));
-	//echo('0-'.$IdentificativoSdI."<br />\n");
+	$result = PostCallCATsrl($CATSRL_ENDPOINT, realpath($xml_fattura));
+	//echo('0-'.$result."<br />\n");
+
+	$open_tag = '<PROT>';
+	$close_tag = '</PROT>';
+
+	$IdentificativoSdI = substr($result, strpos($result, $open_tag)+6, strpos($result, $close_tag)-strpos($result, $open_tag)-6);
 
 	return $IdentificativoSdI;
 }
