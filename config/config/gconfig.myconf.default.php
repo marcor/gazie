@@ -23,6 +23,19 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+ 
+/*
+--------=======oooooooooooo!!!!!  ATTENZIONE !!!!!ooooooooooo========-------------
+QUESTO FILE DI CONFIGURAZIONE IN ORIGINE DI NOME "gconfig.myconfig.default.php" 
+LO SI DEVE RINOMINARE in "gconfig.myconfig.php" SULLE INSTALLAZIONE PRODUTTIVE E 
+SUCCESSIVAMENTE MODIFICARE IN ACCORO CON LE IMPOSTAZIONI DEL VOSTRO SERVER MARIADB , 
+DEL SERVER WEB APACHE, E COMUNQUE IN BASE ALLE SCELTE CHE VEDETE SOTTO.
+COSI' EVITERETE DI USARE I SETTAGGI CONTENUTI IN "gconfig.php" ADATTI AD UN AMBIENTE
+DI SVILUPPO (root senza password) E CONTEMPORANEAMENTE NON VERRA' SOVRASCRITTO 
+AD OGNI AGGIORNAMETO DI GAZIE CHE CONSISTE, APPUNTO, NELLA SOVRASCRITTURA DI TUTTI I
+FILES, COMPRESO IL CITATO "gconfig.php"
+*/
+ 
 if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');
 }
