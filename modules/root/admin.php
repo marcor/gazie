@@ -126,7 +126,7 @@ if ($backupMode == "automatic") {
                 $i++;
             }
         }
-        if (checkAccessRights($_SESSION["user_name"], 'inform', $_SESSION['company_id']) != 0) {
+        if ($admin_aziend['Abilit'] >= 8 && checkAccessRights($_SESSION["user_name"], 'inform', $_SESSION['company_id']) != 0) {
             header("Location: ../../modules/inform/backup.php?internal");
         }
     }
