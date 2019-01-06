@@ -147,7 +147,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$anagra_with_same_pi = false; // sarà true se è una anagrafica esistente ma non è un fornitore sul piano dei conti 
 		
  	
-	if ($f_ex) { // non ho errori di file, ne faccio altri controlli sul contenuto del file
+	if ($f_ex) { // non ho errori di file,  faccio altri controlli sul contenuto del file
 		
 		// INIZIO CONTROLLI CORRETTEZZA FILE
 		$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
@@ -234,6 +234,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			} else {
 				$form['rows'][$nl]['codice_fornitore'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
 			}
+			// vedo se ho un codice_fornitore in gaz_artico
+			$artico = gaz_dbi_get_row($gTables['artico'], 'codice_fornitore', $form['rows'][$nl]['codice_fornitore']);
+			$form['rows'][$nl]['codart'] = ($artico)?$artico['codice']:'';
 			$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
 			if ($item->getElementsByTagName("Quantita")->length >= 1) {
 				$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
@@ -276,6 +279,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			 } 
 			$post_nl = $nl-1;
 			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
+				$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
 				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
 			} else { 
@@ -344,9 +349,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			} 
 			$post_nl = $nl-1;
 			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
 				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
 			} else { 
+				$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
 				/* al primo accesso dopo l'upload del file propongo:
 			   - i costi sulle linee (righe) in base al fornitore
 			   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato 
@@ -380,6 +387,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$base64 = $att->textContent;
 			$bin = base64_decode($base64);
 			file_put_contents('../../data/files/tmp/'.$name_file, $bin);
+		}
+		if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+			$form['datreg'] = substr($_POST['datreg'],0,10);
+			$form['taxstamp'] = floatval($_POST['taxstamp']);
+			$form['pagame'] = intval($_POST['pagame']);
+			$form['seziva'] = intval($_POST['seziva']);
 		}
 
 		if (isset($_POST['Submit_form']) && count($msg['err'])==0) { // confermo le scelte sul form, inserisco i dati sul db ma solo se non ho errori
@@ -469,11 +482,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
 				// i righi postati hanno un indice diverso
 				$post_nl=$i-1;
+				$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
 				$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
                 rigdocInsert($form['rows'][$i]);
 			}
-            header("Location: report_docacq.php");
+            header("Location: report_docacq.php?auxil=".$form['seziva']);
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 			if (!isset($form['pagame'])){
@@ -556,12 +570,15 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			$k--;
             $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);            
+			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$v['codart']);            
 			// creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
                     'value' => $k+1),
                 array('head' => $script_transl["codart"], 'class' => '',
                     'value' => $v['codice_fornitore']),
+                array('head' => $script_transl["codart"], 'class' => '',
+                    'value' => $codart_dropdown),
                 array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
                     'value' => $v['descri']),
                 array('head' => $script_transl["unimis"], 'class' => '',

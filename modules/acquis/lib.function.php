@@ -94,10 +94,27 @@ class acquisForm extends GAzieForm {
         }
         echo "\t </select>\n";
     }
-	
-    function selectArtico($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $class = 'FacetSelect') {
-		// funzione per la selezione di un articolo di magazzino avvalendosi dell'autocomplete
-	}	
+
+   function concileArtico($name,$key,$val,$class='small') {
+      global $gTables;
+	  $acc='';
+	  $query = 'SELECT * FROM `' . $gTables['artico'] . '`  ORDER BY `catmer`,`codice`';
+      $acc .= '<select id="'.$name.'" name="'.$name.'" class="'.$class.'">';
+      $acc .= '<option value="" style="background-color:#5bc0de;">NON IN MAGAZZINO</option>';
+      $acc .= '<option value="Insert_New" style="background-color:#f0ad4e;">INSERISCI COME NUOVO</option>';
+      $result = gaz_dbi_query($query);
+      while ($r = gaz_dbi_fetch_array($result)) {
+          $selected = '';
+          $setstyle = '';
+          if ($r[$key] == $val) {
+              $selected = " selected ";
+              $setstyle = ' style="background-color:#5cb85c;" ';
+          }
+          $acc .= '<option class="small" value="'.$r[$key].'"'.$selected.''.$setstyle.'>'.$r['codice'].'-'.substr($r['descri'],0,30).'</option>';
+      }
+      $acc .= '</select>';
+		return $acc;
+   }
 }
 
 class lotmag {
@@ -178,8 +195,5 @@ class lotmag {
          return NULL;
       }
    }
-
 }
-
-
 ?>
