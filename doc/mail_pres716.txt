@@ -1,0 +1,17 @@
+Titolo:
+Post Nebula Phœbus
+
+Presentazione:
+Approfitto di questo fine settimana epifanico per pubblicare la versione 7.16.
+Le innumerevoli conferme sulla bontà delle fatture elettroniche generate ha entusiasmato, il duro lavoro degli ultimi giorni sta dando i suoi frutti, le conoscenze acquisite, spesso grazie al vostro contributo, e l'aver avuto la possibilità di scambiare con tutti voi le opinioni, le perplessità, i giudizi, ha sempre portato alla soluzione di qualsivoglia problema tecnico incontrato.
+Essere riuscito ad aggregare intorno al progetto persone con competenze in diverse materie è già un successo, poter parlare e scrivere, far parlare e scrivere di argomenti diversi con un approccio multidisciplinare è importante almeno tanto quanto il software stesso.
+Il numero di download negli ultimi giorni è salito vertiginosamente, ma come molti di voi sanno non ho mai ritenuto importante l'interesse che ci viene rivolto dagli utilizzatori finali, non me ne vogliano, ma ritengo che GAzie per sua stessa natura non si presti ad essere utilizzato da chi non ha alcuna competenza senza un minimo di aiuto, anche saltuario e all'occorrenza, di un esperto del settore.
+Parimenti ai download anche l'attività sul repository si è incrementata notevolmente, i commit si susseguono con una intensità che mi lascia sbalordito.
+Tutte le attività citate hanno evidentemente portato novità, nel senso di nuove funzionalità che caratterizzano questo rilascio. 
+Lo script per l'importazione di file XML di fatture elettroniche di vendita generate con sistemi diversi dal nostro è una eventualità che potrebbe essere interessante per gli studi commerciali e/o per le scuole, un po' meno le aziende dove evidentemente le fatture vengono generate direttamente dal nostro GAzie.
+Però siamo fortemente interessati alla importazione degli XML delle fatture d'acquisto che da adesso consente la riconciliazione anche con il magazzino, è utilità di non poco conto, con un impatto molto positivo sulla produttività.
+Dalla configurazione avanzata azienda potrete scegliere un servizio per l'invio e la ricezione delle fatture allo SdI, evidentemente le aziende interessate dovrebbero appoggiarsi ad una libreria già implementata in GAzie o creare degli script organizzati per comunicare con i loro services, come quelli fatti da Angelo Romano per Cat srl di Palermo che troverete sul direttorio library/catsrl.
+Daniele Frulla ha lavorato sul suo modulo "syncronize" per far comunicare GAzie con il famoso l'e-commerce libero OpenCart.
+Andrea Biasi, Antonio Germani, Benedetto Santarella e lellosoft hanno corretto alcuni bug riscontrati in questa settimana.
+	   
+Antonio de Vincentiis, Montesilvano, 6 gennaio 2019
