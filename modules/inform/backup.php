@@ -224,7 +224,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
                     if ($field_meta['data'][$j]->blob && !empty($val[$j])) { // blob
                         $query_insert .= '0x' . bin2hex($val[$j]);
                     } elseif ($field_meta['data'][$j]->numeric) { // numerico
-                        $query_insert .= $val[$j];
+                        $query_insert .= empty($val[$j])?'0':$val[$j];
                     } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
                         if (empty($val[$j])) {
                             $query_insert .= "NULL";
