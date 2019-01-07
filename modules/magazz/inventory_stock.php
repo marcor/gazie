@@ -51,8 +51,9 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             $magval = array_pop($mv);
 			if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
 					$magval['q_g']=0;
-					}
+					} 
             $form['a'][$r['codice']]['i_d'] = $r['descri'];
+			$form['a'][$r['codice']]['i_l'] = $r['lot_or_serial'];
             $form['a'][$r['codice']]['i_u'] = $r['unimis'];
             $form['a'][$r['codice']]['v_a'] = $magval['v'];
             $form['a'][$r['codice']]['v_r'] = $magval['v'];
@@ -120,6 +121,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 					$magval['q_g']=0;
 					}
                 $form['a'][$r['codice']]['i_d'] = $r['descri'];
+				$form['a'][$r['codice']]['i_l'] = $r['lot_or_serial'];	
                 $form['a'][$r['codice']]['i_u'] = $r['unimis'];
                 $form['a'][$r['codice']]['v_a'] = $magval['v'];
                 $form['a'][$r['codice']]['v_r'] = $magval['v'];
@@ -174,6 +176,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     if (isset($_POST['vac' . $ka]))
                         $form['vac_on' . $ka] = ' checked ';
                     $form['a'][$ka]['i_d'] = substr($va['i_d'], 0, 30);
+					$form['a'][$ka]['i_l'] = $va['i_l'];
                     $form['a'][$ka]['i_u'] = substr($va['i_u'], 0, 3);
                     $form['a'][$ka]['v_a'] = gaz_format_quantity($va['v_a'], 0, $admin_aziend['decimal_price']);
                     $form['a'][$ka]['v_r'] = gaz_format_quantity($va['v_r'], 0, $admin_aziend['decimal_price']);
@@ -189,6 +192,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         }
         if (isset($_POST['insert']) && empty($msg)) { // se devo inserire e non ho errori rifaccio il ciclo dei righi per inserire i movimenti
             foreach ($form['a'] as $k => $v) { // ciclo delle singole righe (a)
+				
                 if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
                     if ($v['g_a'] > $v['g_r']) { // in caso di giacenza reale minore
                         // devo fare prima uno storno per scaricare
@@ -217,6 +221,9 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                             'prezzo' => $v['v_r'],
                         ));
                     }
+					// se articolo con lotti ...
+					
+					
                     // inserisco il rigo con causale 99
                     movmagInsert(array('caumag' => 99,
                         'operat' => 1,
@@ -367,6 +374,7 @@ if (isset($form['a'])) {
 					<input type="hidden" value="' . $v['i_g'] . '" name="a[' . $k . '][i_g]" />
 					<input type="hidden" value="' . $v['g_d'] . '" name="a[' . $k . '][g_d]" />
 					<input type="hidden" value="' . $v['i_d'] . '" name="a[' . $k . '][i_d]" />
+					<input type="hidden" value="' . $v['i_l'] . '" name="a[' . $k . '][i_l]" />
 					<input type="hidden" value="' . $v['i_u'] . '" name="a[' . $k . '][i_u]" />
 					<input type="hidden" value="' . $v['v_a'] . '" name="a[' . $k . '][v_a]" />
 					<input type="hidden" value="' . $v['v_r'] . '" name="a[' . $k . '][v_r]" />
