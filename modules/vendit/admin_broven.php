@@ -752,7 +752,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $row2 = gaz_dbi_fetch_array($result2);
                         $form['rows'][$next_row]['lot_or_serial'] = 0;
                         $form['rows'][$next_row]['id_lotmag'] = 0;
-                        $form['rows'][$next_row]['tiprig'] = 14;
+                        $form['rows'][$next_row]['tiprig'] = 210;
                         $form['rows'][$next_row]['id_mag'] = "";
                         $form['rows'][$next_row]['status'] = "INSERT";
                         $form['rows'][$next_row]['scorta'] = 0;
@@ -1479,7 +1479,7 @@ $rit = 0;
 $carry = 0;
 
 $last_row = array();
-$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+//$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 foreach ($form['rows'] as $k => $v) {
     //creo il castelletto IVA
     $imprig = 0;
@@ -1712,7 +1712,7 @@ foreach ($form['rows'] as $k => $v) {
 					<td></td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
-        case "14":
+        case "210":  // serve per gli articoli composti contattare andrea
             if ( $show_artico_composit['val']=="1" ) {
                 if ($v['scorta'] < 0) {
                     //$scorta_col = 'FacetDataTDsmallRed';
@@ -1753,7 +1753,7 @@ foreach ($form['rows'] as $k => $v) {
             }
             break;
     }
-    if ( $v['tiprig']!="14" ) {
+    if ( $v['tiprig']!="210" ) {
         echo '<td class="text-right">
 		    <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
 		    </td>';

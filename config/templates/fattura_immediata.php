@@ -173,6 +173,14 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(80, 5, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(81, 5, '', 'R', 1);
                     break;
+                case "210":
+                    $oldy = $this->GetY();
+                    $this->SetFont('helvetica', '', 8);
+                    $this->SetY($this->GetY()-6);
+                    $this->Cell(105, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
+                    $this->SetY( $oldy );
+                    $this->SetFont('helvetica', '', 9);
+                    break;
                 case "90":
                     $this->Cell(154, 6, 'VENDITA CESPITE: ' . $rigo['codart'], 1, 0, 'L');
                     $this->Cell(20, 6, '', 1);

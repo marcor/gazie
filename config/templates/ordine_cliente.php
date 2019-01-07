@@ -106,12 +106,13 @@ class OrdineCliente extends Template
                 case "6":
                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
                     break;
-                case "14":
-                    $this->Cell(25, 6, "",1,0,'L'); //$rigo['codart']
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
-                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    $this->Cell(58, 6, "",1,1,'R');
+                case "210": // se è un'articolo composto visualizzo la quantità 
+                    $oldy = $this->GetY();
+                    $this->SetFont('helvetica', '', 8);
+                    $this->SetY($this->GetY()-6);
+                    $this->Cell(104, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
+                    $this->SetY( $oldy );
+                    $this->SetFont('helvetica', '', 9);
                     break;
                 }
        }

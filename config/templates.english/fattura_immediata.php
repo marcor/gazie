@@ -137,7 +137,7 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(80,5,"IdDocumento: " . $rigo['descri'],'LR',0,'L');
                     $this->Cell(81,5,'','R',1);
                     break;                                                           
-                case "14":
+                case "210":
                     $this->Cell(25, 6, "",1,0,'L'); //$rigo['codart']
                     $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');

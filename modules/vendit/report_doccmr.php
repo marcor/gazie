@@ -308,7 +308,7 @@ function confirMail(link){
                             echo "<td align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                             // Colonna Cliente
                             ?>
-                            <td class="FacetDataTD">
+                            <td class="">
                                 <a href="report_client.php?auxil=<?php echo htmlspecialchars($anagra["ragso1"]); ?>&search=Cerca">
                                     <?php echo $anagra["ragso1"]; ?>
                                 </a>

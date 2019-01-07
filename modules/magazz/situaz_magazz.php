@@ -45,6 +45,7 @@ if (isset($_GET['all'])) {
 $recordnav = new recordnav($gTables['artico'], $where, $limit, $passo);
 $recordnav->output();
 
+$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
@@ -78,7 +79,11 @@ $recordnav->output();
             $gForm = new magazzForm();
             //composite_mag non permette di visualizzare i composti
             if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'composite_mag')['val']==0) {
-                $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1 and ". $where, $orderby, $limit, $passo);
+                if ( $show_artico_composit["val"]==1 ) {
+                    $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 2 and ". $where, $orderby, $limit, $passo);
+                } else {
+                    $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1 and ". $where, $orderby, $limit, $passo);
+                }
             } else {
                 $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0 and ". $where, $orderby, $limit, $passo);
             }

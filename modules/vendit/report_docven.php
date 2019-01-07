@@ -388,7 +388,12 @@ switch ($admin_aziend['fatimm']) {
                     $classe_btn = "btn-inverse";
                     $modulo = "stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'];
                     $modulo_fae = "electronic_invoice.php?seziva=" . $r["seziva"] . "&protoc=" . $r['protoc'] . "&year=" . substr($r['datfat'], 0, 4);
-                    $modifi = "";
+                    if ( !$modifica_fatture_ddt ) {
+                        $modifi = "";
+                    } else {
+                        $classe_btn = "btn-default";
+                        $modifi = "admin_docven.php?Update&id_tes=" . $r["id_tes"];
+                    }
                 } elseif ($r["tipdoc"] == 'FAP') {
                     $tipodoc = "Parcella";
                     $classe_btn = "btn-primary";

@@ -441,7 +441,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                         $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 } else if ($admin_aziend['conmag'] == 2 and
-                        $form['righi'][$k]['tiprig'] == 14 and ! empty($form['righi'][$k]['codart'])) {
+                        $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
 				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
@@ -591,7 +591,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
                 } else if ($admin_aziend['conmag'] == 2 and
-                        $form['righi'][$k]['tiprig'] == 14 and ! empty($form['righi'][$k]['codart'])) {
+                        $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
 				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
@@ -803,7 +803,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
                 } else if ($admin_aziend['conmag'] == 2 and
-                        $form['righi'][$k]['tiprig'] == 14 and ! empty($form['righi'][$k]['codart'])) {
+                        $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
 				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
@@ -1138,7 +1138,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                     case "13":
                         $checkin = ' ';
                         break;
-                    case "14":
+                    case "210":
                         $checkin = ' checked';
                         break;
                 }
@@ -1262,7 +1262,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 				// fine gestione lotti
 				
 				echo "</td>\n";
-                if ($v['tiprig'] <= 10 || $v['tiprig'] >= 14) {
+                if ($v['tiprig'] <= 10 || $v['tiprig'] >= 210) {
                     $fields = array_merge($fields, array('unimis', 'quanti',
                         'prelis', 'provvigione', 'sconto'
                             )

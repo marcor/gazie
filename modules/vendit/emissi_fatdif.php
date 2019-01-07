@@ -473,7 +473,7 @@ if (isset($invoices['data'])) {
                     } else {
 						if ($row['tiprig']<=0 && $row['prelis'] <= 0.00000 ) { $c = 'danger';	} // allerto di un possibile errore di importo a zero
                         echo "<td class=\"$c\" align=\"right\"> ";
-						if ($row['tiprig']==0 || $row['tiprig']==14 ) {echo gaz_format_quantity($row['quanti'], true);	}
+						if ($row['tiprig']==0 || $row['tiprig']==210 ) {echo gaz_format_quantity($row['quanti'], true);	}
                         echo "</td>\n<td class=\"$c\" align=\"right\"> " . gaz_format_quantity($row['prelis'], true, $admin_aziend['decimal_price']) . " </td>";
                         echo "<td class=\"$c\" align=\"right\"> ";
 						if ($row['sconto']>=0.00001) { echo floatval($row['sconto']);}
