@@ -1257,7 +1257,7 @@ if (!empty($msg)) {
     echo '			<td colspan="2" class="FacetDataTDred">' . $message . '</td>';
 } else {
     echo '			<td class="FacetFieldCaptionTD">' . $script_transl[5] . '</td>
-   					<td>' . $cliente['indspe'] . '<br /></td>';
+   					<td class="FacetDataTD">' . $cliente['indspe'] . '<br /></td>';
 }
 echo '			<td class="FacetFieldCaptionTD">' . $script_transl[6] . '</td>
 				<td class="FacetDataTD">';
