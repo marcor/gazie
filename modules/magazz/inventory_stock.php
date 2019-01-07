@@ -23,6 +23,8 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+require("../../modules/vendit/lib.function.php");
+$lm = new lotmag;
 $admin_aziend = checkAdmin();
 $gForm = new magazzForm;
 $msg = '';
@@ -192,8 +194,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         }
         if (isset($_POST['insert']) && empty($msg)) { // se devo inserire e non ho errori rifaccio il ciclo dei righi per inserire i movimenti
             foreach ($form['a'] as $k => $v) { // ciclo delle singole righe (a)
-				
-                if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
+				if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
                     if ($v['g_a'] > $v['g_r']) { // in caso di giacenza reale minore
                         // devo fare prima uno storno per scaricare
                         $mq = $v['g_a'] - $v['g_r'];
@@ -221,20 +222,47 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                             'prezzo' => $v['v_r'],
                         ));
                     }
-					// se articolo con lotti ...
-					
-					
-                    // inserisco il rigo con causale 99
-                    movmagInsert(array('caumag' => 99,
-                        'operat' => 1,
-                        'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
-                        'tipdoc' => 'INV',
-                        'desdoc' => $cau99['descri'],
-                        'datdoc' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
-                        'artico' => $k,
-                        'quanti' => $v['g_r'],
-                        'prezzo' => $v['v_r'],
-                    ));
+									
+					if ($v['i_l']==1){ // se articolo con lotti ...
+						$lm -> getAvailableLots($k,0);					
+						if (count($lm->available) > 0) { 
+							$count=array();
+							foreach ($lm->available as $v_lm) { // raggruppo i lotti uguali
+								$key=$v_lm['id_lotmag']; // chiave per il conteggio dei totali raggruppati per lotto e scadenza; la chiave è l'ID lotto
+								if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
+									// Aggiungo la chiave con il rispettivo valore iniziale
+									$count[$key] = $v_lm['rest'];
+								} else {
+									// Altrimenti, aggiorno il valore della chiave
+									$count[$key] += $v_lm['rest'];
+								}							
+							}
+						}
+						foreach($count as $key => $val){ // per ogni lotto inserisco un rigo con causale 99 
+							movmagInsert(array('caumag' => 99,
+								'operat' => 1,
+								'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+								'tipdoc' => 'INV',
+								'desdoc' => $cau99['descri'],
+								'datdoc' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+								'artico' => $k,
+								'quanti' => $val,
+								'prezzo' => $v['v_r'],
+								'id_lotmag' => $key,
+							));
+						}
+					} else {  // se articolo non prevede lotti inserisco un solo rigo con causale 99
+						movmagInsert(array('caumag' => 99,
+							'operat' => 1,
+							'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+							'tipdoc' => 'INV',
+							'desdoc' => $cau99['descri'],
+							'datdoc' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+							'artico' => $k,
+							'quanti' => $v['g_r'],
+							'prezzo' => $v['v_r'],
+						));
+					}
                 }
             }
             header("Location: report_movmag.php");
