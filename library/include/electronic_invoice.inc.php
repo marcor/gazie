@@ -211,8 +211,8 @@ class invoiceXMLvars {
         $this->totimp_body = 0;
         $this->totimp_decalc = 0;
         $this->totimp_doc = 0;
-		
-		
+
+
     }
 
     function getXMLrows() {
@@ -236,10 +236,10 @@ class invoiceXMLvars {
         $dom = new DOMDocument;
 		$dom->preserveWhiteSpace = false;
 		$dom->formatOutput = true;
-		// questi mi servono per associare i numeri righi ad id_rig  per riferire i valori sull'accumulatore per 2.1.X  
+		// questi mi servono per associare i numeri righi ad id_rig  per riferire i valori sull'accumulatore per 2.1.X
 		$id_rig_ref=array();
 		$ctrl_idtes=0;
-		$nr_idtes=1; // 
+		$nr_idtes=1; //
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
 			if ($ctrl_idtes<>$rigo['id_tes']){ // è cambiata la testata riparto da NumeroLinea 1 e azzero l'array ref
 				$nr_idtes=1;
@@ -253,7 +253,7 @@ class invoiceXMLvars {
 					$rigo['codice_tipo']=($artico['good_or_service'] == 0) ? 'BENE_CAT_'.$artico['catmer'] : 'SERVIZIO';
 				}
 				$id_rig_ref[$nr_idtes]=$rigo['id_rig']; // associo l'id_rig al numero rigo mi servirà per valorizzare l'accumulatore per 2.1.X
-				$nr_idtes++; // è un tipo rigo a cui possono essere riferiti i dati degli elementi 2.1.X, lo aumento 
+				$nr_idtes++; // è un tipo rigo a cui possono essere riferiti i dati degli elementi 2.1.X, lo aumento
                 $last_normal_row = $nr; // mi potrebbe servire se alla fine dei righi mi ritrovo con dei descrittivi non ancora indicizzati perché seguono l'ultimo rigo normale
                 // se ho avuto dei righi descrittivi che hanno preceduto  questo allora li inputo a questo rigo
                 if (isset($righiDescrittivi[0])) {
@@ -271,7 +271,7 @@ class invoiceXMLvars {
                 }
 				$sconto_su_imponibile = round($v_for_castle - $rigo['importo'], 2); // qui metto l'eventuale totale imponibile scontato
 				if (abs($sconto_su_imponibile)>=0.01){
-					if ($sconto_su_imponibile < 0) { 
+					if ($sconto_su_imponibile < 0) {
                        $t = 'SC';
 					} else {
                        $t = 'MG'; // è una maggiorazione
@@ -290,7 +290,7 @@ class invoiceXMLvars {
                 $this->totimp_body += $rigo['importo'];
                 $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
                 $this->totimp_doc += $v_for_castle;
-                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)   
+                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)
                 if ($rigo['tipiva'] == 'T') {
                     $this->ivasplitpay += round(($v_for_castle * $rigo['pervat']) / 100, 2);
                 }
@@ -311,12 +311,12 @@ class invoiceXMLvars {
                 $this->totimp_body += $rigo['importo'];
                 $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
                 $this->totimp_doc += $v_for_castle;
-                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)   
+                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)
                 if ($rigo['tipiva'] == 'T') {
                     $this->ivasplitpay += round(($v_for_castle * $rigo['pervat']) / 100, 2);
                 }
 				/* con codart valorizzo l'elemento <TipoCassa> e creo l'array che mi servirà per generare gli elementi <DatiCassaPrevidenziale> */
-                if (!isset($this->cassa_prev[$rigo['codart']])) { // se il tipo cassa non ce l'ho 
+                if (!isset($this->cassa_prev[$rigo['codart']])) { // se il tipo cassa non ce l'ho
                     $this->cassa_prev[$rigo['codart']] = array('AlCassa'=>$rigo['provvigione'],'ImportoContributoCassa'=>$rigo['importo'],'ImponibileCassa'=>$rigo['prelis'],'AliquotaIVA'=>$rigo['pervat'],'Ritenuta'=>$rigo['ritenuta'],'Natura'=>$rigo['natura']);
                 } else { // ho già l'elemento <TipoCassa>
 					$this->cassa_prev[$rigo['codart']]['ImponibileCassa'] +=$rigo['prelis'];
@@ -338,9 +338,9 @@ class invoiceXMLvars {
                 $this->riporto += $rigo['prelis'];
             } elseif ($rigo['tiprig']>10 && $rigo['tiprig']<17) {
 				if ($rigo['codric']>0){
-					$this->IdRig_NumeroLinea[$id_rig_ref[$rigo['codric']]]=$rigo['id_rig']; // qui riferirò l'id_rig del rigo da riportare sull'accumulatore per 2.1.X con l'id_rig del normale 
+					$this->IdRig_NumeroLinea[$id_rig_ref[$rigo['codric']]]=$rigo['id_rig']; // qui riferirò l'id_rig del rigo da riportare sull'accumulatore per 2.1.X con l'id_rig del normale
 				} else {
-					$id_rig_ref[$rigo['codric']]=0;					
+					$id_rig_ref[$rigo['codric']]=0;
 				}
 				$weight_tiprig=array(11=>7,12=>6,13=>2,14=>3,15=>4,16=>5);
 				// qui valorizzo l'accumulatore 2.1.X e dipende dal tipo che ho scritto su codvat
@@ -362,15 +362,15 @@ class invoiceXMLvars {
 						$this->DatiVari[1][$id_rig_ref[$rigo['codric']]][$weight_tiprig[$rigo['tiprig']]]=$rigo['descri'];
 					break;
 				}
-            } elseif ($rigo['tiprig'] == 21) {  // Causale 
-               	$this->Causale=$rigo['descri']; 
-            } elseif ($rigo['tiprig'] == 25) {  // DatiSAL 
+            } elseif ($rigo['tiprig'] == 21) {  // Causale
+               	$this->Causale=$rigo['descri'];
+            } elseif ($rigo['tiprig'] == 25) {  // DatiSAL
                	$this->DatiSAL[]=$rigo['descri']; //faccio il push sull'array
-            } elseif ($rigo['tiprig'] == 31) {  // DatiVeicoli 2.3 
-               	$this->DatiVeicoli=array('Data'=>$rigo['descri'],'TotalePercorso'=>intval($rigo['quanti'])); 
+            } elseif ($rigo['tiprig'] == 31) {  // DatiVeicoli 2.3
+               	$this->DatiVeicoli=array('Data'=>$rigo['descri'],'TotalePercorso'=>intval($rigo['quanti']));
             } elseif ($rigo['tiprig'] == 90) {
 				$this->id_rig_ref[$nr_idtes]=$rigo['id_rig'];
-				$nr_idtes++; // è un tipo rigo a cui possono essere riferiti i DatiOrdiniAcquisto,ecc lo aumento 
+				$nr_idtes++; // è un tipo rigo a cui possono essere riferiti i DatiOrdiniAcquisto,ecc lo aumento
 			}
 			$ctrl_idtes=$rigo['id_tes'];
             $results[$nr] = $rigo;
@@ -464,7 +464,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $ctrl_doc = 0;
     $ctrl_fat = 0;
     $n_linea = 1;
-    // definisco le variabili dei totali 
+    // definisco le variabili dei totali
     $XMLvars->totimp_body = 0;
     $XMLvars->taxstamp = 0;
     $XMLvars->virtual_taxstamp = 0;
@@ -474,13 +474,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 	/* inizializzo l'accumulatore per 2.1.X DatiVari*/
 	$XMLvars->DatiVari=array();
 	$XMLvars->IdRig_NumeroLinea=array();
-	// inizializzo l'accumulatore per DatiSAL 2.1.7 
+	// inizializzo l'accumulatore per DatiSAL 2.1.7
 	$XMLvars->DatiSAL=array();
-	// inizializzo la variabile per Causale 2.1.1.11 
+	// inizializzo la variabile per Causale 2.1.1.11
 	$XMLvars->Causale=false;
-	// inizializzo la variabile per DatiVeicoli 2.3 
+	// inizializzo la variabile per DatiVeicoli 2.3
 	$XMLvars->DatiVeicoli=false;
-	// inizializzo l'accumulatore per DatiDDT 
+	// inizializzo l'accumulatore per DatiDDT
 	$XMLvars->DatiDDT=array();
 
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
@@ -506,12 +506,12 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $cod_destinatario=trim($dest['fe_cod_ufficio']); // elemento 1.1.4
             $XMLvars->client['fe_cod_univoco']=$cod_destinatario;
         }
-		
+
 		// se c'è un ddt di origine ogni testata creerà un riferimento in <DatiDDT>
         if ($XMLvars->ddt_data) {// se c'è un ddt di origine ogni testata faccio il push sull'accumulatore per creare il blocco <DatiDDT>
 			$XMLvars->DatiDDT[$XMLvars->tesdoc['numdoc']]=array("DataDDT"=>$XMLvars->tesdoc['datemi'],"RiferimentoNumeroLinea"=>array());
         }
-		
+
         if ($ctrl_doc == 0) {
             $id_progressivo = substr($XMLvars->docRelDate, 2, 2) . $XMLvars->seziva .$XMLvars->fae_reinvii . str_pad($XMLvars->protoc, 6, '0', STR_PAD_LEFT);
             //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
@@ -524,7 +524,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $attrVal = $domDoc->createTextNode($id_progressivo);
             $results->appendChild($attrVal);
 
-		   //Il formato della trasmissione è encodato nei file 	
+		   //Il formato della trasmissione è encodato nei file
            // $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione")->item(0);
            // $attrVal = $domDoc->createTextNode("SDI11");
            // $results->appendChild($attrVal);
@@ -543,7 +543,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['pariva']));
             $results->appendChild($attrVal);
 
-            //nodo 1.2.1.2 Codice Fiscale richiesto da alcune amministrazioni come obbligatorio 
+            //nodo 1.2.1.2 Codice Fiscale richiesto da alcune amministrazioni come obbligatorio
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['codfis']));
             $results->appendChild($attrVal);
@@ -572,8 +572,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 					$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
 					$attrVal = $domDoc->createTextNode(trim($XMLvars->client['fe_cod_univoco']));
 					$results->appendChild($attrVal);
-                }							
-			}	
+                }
+			}
 
 
             $el = $domDoc->createElement("CodiceFiscale", trim($XMLvars->client['codfis']));
@@ -686,20 +686,20 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                 $el1 = $domDoc->createElement("StatoLiquidazione", $XMLvars->REA_stato);
                 $el->appendChild($el1);
                 $results->appendChild($el);
-            }			
+            }
         } elseif ($ctrl_doc <> $XMLvars->docRelNum) { // quando cambia il DdT
             /*
               in caso di necessità qui potrò aggiungere linee di codice
              */
         }
-        //elenco beni in fattura  
+        //elenco beni in fattura
         $lines = $XMLvars->getXMLrows();
 		$idrig_n_linea[0]=0;
 		foreach ($lines AS $key => $rigo) {
 			// creo un array per associare l'id_rig al NumeroLinea mi servirà per riferire sui DatiVari
 			$idrig_n_linea[$rigo['id_rig']]=$n_linea;
             $nl = false;
-			$sc_su_imp['importo_sconto']=0.00;			
+			$sc_su_imp['importo_sconto']=0.00;
             switch ($rigo['tiprig']) {
                 case "0":       // normale
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
@@ -707,14 +707,14 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
                     $el->appendChild($el1);
 					$codart=preg_replace("/[^A-Za-z0-9]i/",'',$rigo['codart']);
-                    if (!empty($codart)) { // ho un codice articolo creo l'elemento 
+                    if (!empty($codart)) { // ho un codice articolo creo l'elemento
 						$el1 = $domDoc->createElement("CodiceArticolo", '');
 						$el2 = $domDoc->createElement("CodiceTipo",$rigo['codice_tipo']); // il codice tipo è obbligatorio è stato formattato in precedenza per indicarci se è un bene o un servizio e la categoria merceologica
 						$el1->appendChild($el2);
 						$el2 = $domDoc->createElement("CodiceValore",$codart); // qui metto il valore del codice vero e proprio e che avevo parsato in precedenza
 						$el1->appendChild($el2);
-						$el2 = $domDoc->createElement("Quantita", number_format($rigo['quanti'], 2, '.', ''));
-						$el1->appendChild($el2);
+						//$el2 = $domDoc->createElement("Quantita", number_format($rigo['quanti'], 2, '.', ''));
+						//$el1->appendChild($el2);
 						$el->appendChild($el1);
 					}
                     if (isset($rigo['descrittivi'])) {
@@ -738,7 +738,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['prelis'], $XMLvars->decimal_price, '.', ''));
                     $el->appendChild($el1);
-					// qualora questo rigo preveda uno sconto 
+					// qualora questo rigo preveda uno sconto
                     if (isset($rigo['sconto_su_imponibile'][$rigo['id_rig']])) {
 						$sc_su_imp=$rigo['sconto_su_imponibile'][$rigo['id_rig']];
 						/* AGGIUNGO GLI EVENTUALI SCONTI, LO SCONTO CHIUSURA VERRA' MESSO IN CASCATA SUI SINGOLI RIGHI */
@@ -817,7 +817,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['importo'], 2, '.', ''));
                     $el->appendChild($el1);
-					// qualora questo rigo preveda uno sconto 
+					// qualora questo rigo preveda uno sconto
                     if (isset($rigo['sconto_su_imponibile'][$rigo['id_rig']])) {
 						$sc_su_imp=$rigo['sconto_su_imponibile'][$rigo['id_rig']];
 						/* AGGIUNGO GLI EVENTUALI SCONTI, LO SCONTO CHIUSURA VERRA' MESSO IN CASCATA SUI SINGOLI RIGHI */
@@ -919,7 +919,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $ctrl_doc = $XMLvars->tesdoc['numdoc'];
         $ctrl_fat = $XMLvars->tesdoc['numfat'];
     }
-	
+
 
 // ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
     $XMLvars->setXMLtot();
@@ -936,14 +936,14 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     } else {
         $cond_pag = 'TP02';
     }
-// --- FINE CALCOLO TOTALI	
+// --- FINE CALCOLO TOTALI
 
     //Modifica per il sicoge che richiede obbligatoriamente popolato il punto 2.1.1.9
     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
     $el = $domDoc->createElement("ImportoTotaleDocumento", number_format($totpar, 2, '.', ''));  // totale fatura al lordo di RDA
     $results->appendChild($el);
 
-    // alla fine del ciclo sui righi faccio diverse aggiunte es. causale, bolli, descrizione aggiuntive, e spese di incasso, queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
+    // alla fine del ciclo sui righi faccio diverse aggiunte es. causale, bolli, descrizione aggiuntive, e spese di incasso, queste essendo cumulative per diversi eventuali DdT non hanno un riferimento
 
 
     if ($XMLvars->Causale) {
@@ -978,7 +978,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $results->appendChild($el);
         $n_linea++;
     }
-    // eventualemente aggiungo i rimborsi per i bolli 
+    // eventualemente aggiungo i rimborsi per i bolli
     if ($XMLvars->impbol >= 0.01) {
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
         $el = $domDoc->createElement("DettaglioLinee", "");
@@ -998,7 +998,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $n_linea++;
     }
 
-    if (!empty($XMLvars->descriptive_last_row) ) { // ... ed se voluto anche il rigo descrittivo derivante dalla configurazione avanzata azienda 
+    if (!empty($XMLvars->descriptive_last_row) ) { // ... ed se voluto anche il rigo descrittivo derivante dalla configurazione avanzata azienda
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
         $el = $domDoc->createElement("DettaglioLinee", "");
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
@@ -1015,9 +1015,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $n_linea++;
 	}
 
-	
-	
-	
+
+
+
     //DatiVari
     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
 	$dati_vari_nomi=array('','DatiOrdineAcquisto','DatiContratto','DatiConvenzione','DatiRicezione','DatiFattureCollegate');
@@ -1145,6 +1145,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         }
         // necessario per l'elemento 2.2.2.7
         $value['esigibilita'] = 'I'; // I=esigibiltà immediata
+        if ($XMLvars->azienda['fiscal_reg'] == 'RF16' || $XMLvars->azienda['fiscal_reg'] == 'RF17') {
+          $value['esigibilita'] = 'D';
+        }
         if ($value['tipiva'] == 'T') { // è un'IVA non esigibile per split payment PA
             $value['esigibilita'] = 'S'; // S=scissione dei pagamenti
         }
