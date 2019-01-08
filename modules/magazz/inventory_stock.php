@@ -159,6 +159,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         $form['date_M'] = $_POST['date_M'];
         $form['date_D'] = $_POST['date_D'];
         $form['catmer'] = $_POST['catmer'];
+		$utsdate = mktime(0, 0, 0, $form['date_M'], $form['date_D'], $form['date_Y']);
+		$date = date("Y-m-d", $utsdate);
         foreach ($_POST as $k => $v) { //controllo sui dati inseriti e flaggati
             if ($k == 'a') {
                 foreach ($v as $ka => $va) { // ciclo delle singole righe (a)
@@ -191,7 +193,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     $form['a'][$ka]['class'] = $va['class'];
                 }
             }
-        }
+        } 
         if (isset($_POST['insert']) && empty($msg)) { // se devo inserire e non ho errori rifaccio il ciclo dei righi per inserire i movimenti
             foreach ($form['a'] as $k => $v) { // ciclo delle singole righe (a)
 				if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
@@ -222,8 +224,14 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                             'prezzo' => $v['v_r'],
                         ));
                     }
-									
+								
 					if ($v['i_l']==1){ // se articolo con lotti ...
+						// Antonio Germani - vedo se ci sono stati degli inventari fino alla data
+						$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$k' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
+						while ($r = gaz_dbi_fetch_array($rs_last_inventory)){
+							echo "<br>idlotmag",$r['id_lotmag'];
+						} 
+						
 						$lm -> getAvailableLots($k,0);					
 						if (count($lm->available) > 0) { 
 							$count=array();
@@ -239,6 +247,11 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 							}
 						}
 						foreach($count as $key => $val){ // per ogni lotto inserisco un rigo con causale 99 
+							foreach ($rs_last_inventory as $idlot){ // se ci sono stati degli inventari che si riferiscono a questo specifico lotto, tolgo la quantità di ciascuno
+								if ($idlot['id_lotmag']==$key){
+									$val=$val-$idlot['quanti'];
+								}
+							}
 							movmagInsert(array('caumag' => 99,
 								'operat' => 1,
 								'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],

@@ -196,17 +196,42 @@ class magazzForm extends GAzieForm {
         if (!$stock_eval_method) {
             $stock_eval_method = $this->getStockEvalMethod();
         }
-        $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$item_code' AND caumag = 99 AND (datreg < '" . $date . "' OR (datreg = '" . $date . "' AND id_mov <= $id_mov ))", "datreg DESC, id_mov DESC", 0, 1);
-        $last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
-        if ($last_inventory) {
-            $last_invDate = $last_inventory['datreg'];
-            $last_invPrice = $last_inventory['prezzo'];
-            $last_invQuanti = $last_inventory['quanti'];
-        } else {
-            $last_invDate = '2000-01-01';
-            $last_invPrice = 0;
-            $last_invQuanti = 0;
-        }
+		
+		// Antonio Germani - ricerca esistenza movimento inventario  anche con articoli con lotti
+		$checklot=gaz_dbi_get_row($gTables['artico'],"codice",$item_code);
+		if ($checklot['lot_or_serial']==0){ // se l'articolo non prevede lotti
+			$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$item_code' AND caumag = 99 AND (datreg < '" . $date . "' OR (datreg = '" . $date . "' AND id_mov <= $id_mov ))", "datreg DESC, id_mov DESC", 0, 1);
+			 $last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
+			if ($last_inventory) {
+				$last_invDate = $last_inventory['datreg'];
+				$last_invPrice = $last_inventory['prezzo'];
+				$last_invQuanti = $last_inventory['quanti'];
+			} else {
+				$last_invDate = '2000-01-01';
+				$last_invPrice = 0;
+				$last_invQuanti = 0;
+			}
+		} else { // se l'articolo prevede lotti
+			$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$item_code' AND caumag = 99 AND (datreg < '" . $date . "' OR (datreg = '" . $date . "' AND id_mov <= $id_mov ))", "datreg DESC, id_mov DESC");
+			$n=0;$key=array(); $latest=array(); $last_invQuanti=0;
+			if ($rs_last_inventory->num_rows > 0) {
+				while ($latest = gaz_dbi_fetch_array($rs_last_inventory)){ // scorro l'array per prendere solo gli ultimi inventari
+					$key[$n]=$latest['datreg']; 
+					if ($key['0'] == $latest['datreg']) {//  uso la prima data come chiave perché l'ordine è discendente e prendo solo gli inventari che hanno datreg uguale all'ultima data
+						$last_invDate=$latest['datreg']; 
+						$last_invPrice=$latest['prezzo'];
+						$last_invQuanti=$last_invQuanti+$latest['quanti'];
+					}
+					$n++;
+				}
+			} else {
+				$last_invDate = '2000-01-01';
+				$last_invPrice = 0;
+				$last_invQuanti = 0;
+			}
+		}
+		// fine ricerca inventario
+		 
         $utsdatePrev = mktime(0, 0, 0, intval(substr($date, 5, 2)), intval(substr($date, 8, 2)) - 1, intval(substr($date, 0, 4)));
         $datePrev = date("Y-m-d", $utsdatePrev);
         $where = "artico = '$item_code' AND (datreg BETWEEN '$last_invDate' AND '$datePrev' OR (datreg = '$date' AND id_mov <= $id_mov))";

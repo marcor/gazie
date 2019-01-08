@@ -31,6 +31,12 @@ $lm = new lotmag;
 $admin_aziend=checkAdmin();
 $codice = filter_input(INPUT_GET, 'codice');
 $lm -> getAvailableLots($codice,0);
+$date = date("Y-m-d");
+
+// Antonio Germani - vedo se ci sono stati degli inventari fino alla data
+$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
+
+
 require("../../library/include/header.php"); 
 
 if (isset($_POST['close'])){
@@ -66,6 +72,7 @@ if (isset($_POST['close'])){
 	if (count($lm->available) > 0) { 
 		$count=array();
         foreach ($lm->available as $v_lm) {
+			
 			$key=$v_lm['identifier']." - ".gaz_format_date($v_lm['expiry']); // chiave per il conteggio dei totali raggruppati per lotto e scadenza
 			if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
 				// Aggiungo la chiave con il rispettivo valore iniziale
@@ -75,8 +82,15 @@ if (isset($_POST['close'])){
 				$count[$key] += $v_lm['rest'];
 			}
 			$tot+=$v_lm['rest'];
-               $img="";
-               echo '<tr class="FacetDataTD"><td class="FacetFieldCaptionTD">'
+			foreach ($rs_last_inventory as $idlot){ // se ci sono stati degli inventari che si riferiscono a quello specifico lotto, tolgo la quantità di ciascuno
+				if ($idlot['id_lotmag']==$v_lm['id']){
+					$v_lm['rest']=$v_lm['rest']-$idlot['quanti'];
+					$count[$key]=$count[$key]-$idlot['quanti'];
+					$tot=$tot-$idlot['quanti'];
+				}
+			}
+            $img="";
+            echo '<tr class="FacetDataTD"><td class="FacetFieldCaptionTD">'
                . $v_lm['id']
                . '</td><td>' . $v_lm['identifier']
                . '</td><td>' . gaz_format_date($v_lm['expiry'])
