@@ -49,6 +49,10 @@ class FatturaSemplice extends Template {
             $descri = 'Nota di credito n.';
         } elseif ($this->tesdoc['tipdoc'] == 'FND') {
             $descri = 'Nota di debito n.';
+        } elseif ($this->tesdoc['tipdoc'] == 'FAA') {
+            $descri = 'Fattura d\'acconto n.';
+        } elseif ($this->tesdoc['tipdoc'] == 'FAQ') {
+            $descri = 'Parcella d\'acconto n.';
         } else {
             $descri = 'Fattura immediata n.';
         }

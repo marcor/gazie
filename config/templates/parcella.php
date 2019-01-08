@@ -40,7 +40,11 @@ class Parcella extends Template
         $this->taxstamp=$this->tesdoc['taxstamp'];
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Parcella n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+		$descri = 'Parcella n.';
+		if ($this->tesdoc['tipdoc'] == 'FAQ') {
+            $descri = 'Parcella d\'acconto n.';
+        }
+        $this->tipdoc = $descri.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
     }
 
     function newPage() {

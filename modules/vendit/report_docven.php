@@ -379,7 +379,7 @@ switch ($admin_aziend['fatimm']) {
                 $modulo_fae = "electronic_invoice.php?id_tes=" . $r['id_tes'];
                 $modulo_fae_report = "report_fae_sdi.php?id_tes=" . $r['id_tes'];
                 $classe_btn = "btn-default";
-                if ($r["tipdoc"] == 'FAI') {
+                if ($r["tipdoc"] == 'FAI'||$r["tipdoc"] == 'FAA') {
                     $tipodoc = "Fattura Immediata";
                     $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];
                     $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
@@ -394,7 +394,7 @@ switch ($admin_aziend['fatimm']) {
                         $classe_btn = "btn-default";
                         $modifi = "admin_docven.php?Update&id_tes=" . $r["id_tes"];
                     }
-                } elseif ($r["tipdoc"] == 'FAP') {
+                } elseif ($r["tipdoc"] == 'FAP'||$r["tipdoc"] == 'FAQ') {
                     $tipodoc = "Parcella";
                     $classe_btn = "btn-primary";
                     $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];

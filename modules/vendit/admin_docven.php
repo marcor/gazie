@@ -34,7 +34,7 @@ $docOperat = $upd_mm->getOperators();
 $lm = new lotmag;
 function getFAIseziva($tipdoc) {
     global $admin_aziend, $gTables, $auxil;
-    if ($tipdoc == 'FAI') { // se è una fattura immediata
+    if ($tipdoc == 'FAI'||$tipdoc == 'FAA') { // se è una fattura immediata
         switch ($admin_aziend['fatimm']) {
             case "1":
                 $si = 1;
@@ -161,9 +161,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['tipdoc'] = $_POST['tipdoc'];
     $form['id_doc_ritorno'] = intval($_POST['id_doc_ritorno']);
     $form['template'] = $_POST['template'];
-	if (substr($_POST['tipdoc'],0,2) == 'FN') { // forzo i template delle note credito e debito su fattura semplice
+	if (substr($_POST['tipdoc'],0,2) == 'FN' || $_POST['tipdoc']=='FAA') { // forzo i template delle fatture d'acconto, note credito e debito su fattura semplice
         $form['template'] = "FatturaSemplice";
-    }
+    } elseif($_POST['tipdoc']=='FAP'||$_POST['tipdoc']=='FAQ') { // forzo i template delle parcelle
+        $form['template'] = "Parcella";
+	}
     $form['gioemi'] = $_POST['gioemi'];
     $form['mesemi'] = $_POST['mesemi'];
     $form['annemi'] = $_POST['annemi'];
@@ -596,7 +598,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
 		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
 		if ($form['annemi']>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 && $form['tipdoc']!='VRI' ){
-				$msg['err'][] = "62";
+				//$msg['err'][] = "62";
 		}
 		if ($rit_ctrl && $admin_aziend['causale_pagam_770']==''){
 				$msg['err'][] = "63";
@@ -706,6 +708,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         break;
                     case "FAI":
                     case "FAP":
+                    case "FAA":
+                    case "FAQ":
                         $sql_documento = "YEAR(datfat) = " . $form['annemi'] . " AND tipdoc LIKE 'FA_' AND seziva = $sezione ";
                         $sql_protocollo = "YEAR(datfat) = " . $form['annemi'] . " AND tipdoc LIKE 'F__' AND seziva = $sezione ";
                         break;
@@ -1699,7 +1703,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // fine rigo input
     $form['search']['clfoco'] = '';
     $form['cosear'] = "";
-    if (!isset($_GET['seziva']) && $form['tipdoc'] == 'FAI') {
+    if (!isset($_GET['seziva']) && ($form['tipdoc'] == 'FAI'||$form['tipdoc'] == 'FAA')) {
         $form['seziva'] = getFAIseziva($form['tipdoc']);
     } elseif (!isset($_GET['seziva'])) {
         $form['seziva'] = 1;
@@ -1707,14 +1711,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['seziva'] = intval($_GET['seziva']);
     }
     //cerco l'ultimo template
-    $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' and ddt_type!='R' and seziva = " .
-            $form['seziva'], 'datfat desc, protoc desc', 0, 1);
+    $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' and ddt_type!='R' and seziva = " .$form['seziva'], 'datfat desc, protoc desc', 0, 1);
     $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);
     if ($ultimo_template['template'] == 'FatturaImmediata') {
         $form['template'] = "FatturaImmediata";
     } elseif ($ultimo_template['template'] != '') {
         $form['template'] = $ultimo_template['template'];
-    } elseif ($form['tipdoc'] == 'FAP') {  //se e' una parcella
+    } elseif ($form['tipdoc'] == 'FAA') {
+        $form['template'] = "FatturaSemplice";
+    } elseif ($form['tipdoc'] == 'FAP' || $form['tipdoc'] == 'FAQ') {  //se e' una parcella
         $form['template'] = 'Parcella';
     } elseif ($form['tipdoc'] == 'VRI') {  //se e' una ricevuta
         $form['template'] = 'Received';
@@ -1828,7 +1833,7 @@ if ($form['id_tes'] > 0) { // è una modifica
     echo "<input type=\"hidden\" value=\"" . $form['tipdoc'] . "\" name=\"tipdoc\">\n";
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 } else { // è un inserimento
-    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT' => '', 'FAI' => '', 'FAP' => '', 'FNC' => '', 'FND' => '', 'DDV' => '', 'RDV' => '', 'DDY' => '', 'VRI' => '', 'CMR'=>''));
+    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT'=>'','FAI'=>'','FAP'=>'','FAQ'=>'','FAA'=>'','FNC'=>'','FND'=>'','DDV'=>'','RDV'=>'','DDY'=>'','VRI'=>'','CMR'=>''));
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . ucfirst($script_transl[$toDo]) . $script_transl['tipdoc'];
     $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
 }
@@ -2107,7 +2112,7 @@ echo '  </td>
 	  </tr>';
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
 $ric = array('sub',intval(substr($form['in_codric'], 0, 1)));
-if ($form['tipdoc'] == 'FAP') {
+if ($form['tipdoc'] == 'FAP' || $form['tipdoc'] == 'FAQ') {
     $ric = array('sub', 1, 2, 4, 5);
 } else if (substr($form['tipdoc'],0,2) == 'FA' || $form['tipdoc']== 'DDT'){
     $ric = array('sub', 1, 4);
