@@ -59,7 +59,10 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             $form['a'][$r['codice']]['i_a'] = $r['annota'];
             $form['a'][$r['codice']]['i_g'] = $r['catmer'];
             $form['a'][$r['codice']]['g_d'] = $r['descat'];
-            $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
+			if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
+				$magval['q_g']=0;
+			}
+            $form['a'][$r['codice']]['g_a'] = $magval['q_g'];			
             $form['a'][$r['codice']]['g_r'] = number_format($magval['q_g'],3);
             $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
             $form['vac_on' . $r['codice']] = '';
@@ -119,8 +122,11 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                 $form['a'][$r['codice']]['i_a'] = $r['annota'];
                 $form['a'][$r['codice']]['i_g'] = $r['catmer'];
                 $form['a'][$r['codice']]['g_d'] = $r['descat'];
+				if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
+					$magval['q_g']=0;
+				}
                 $form['a'][$r['codice']]['g_r'] = number_format($magval['q_g'],3);
-                $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
+                $form['a'][$r['codice']]['g_a'] = $magval['q_g'];				
                 $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
                 $form['vac_on' . $r['codice']] = '';
                 if ($magval['q_g'] < 0) {
