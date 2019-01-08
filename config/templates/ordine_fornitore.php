@@ -71,6 +71,7 @@ class OrdineFornitore extends Template
     {
 		$this->tot_rp=0;
         $lines = $this->docVars->getRigo();
+		$ctrl_orderman=0;
 		foreach ($lines AS $key => $rigo) {
             if ($this->GetY() >= 205) {
                 $this->Cell(186,6,'','T',1);
@@ -81,6 +82,13 @@ class OrdineFornitore extends Template
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
             }
+			if ($ctrl_orderman!=$rigo['id_orderman'] && $rigo['id_orderman']>0) {
+				/* stampo il rigo riferito ad una produzione   */
+				$this->SetFont('helvetica', 'B', 9);
+				$this->Ln(1);
+				$this->Cell(186, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  substr($rigo['orderman_data']['datemi'],0,4), 1, 1, 'L');
+				$this->SetFont('helvetica', '', 9);
+			}
                 switch($rigo['tiprig']) {
                 case "0":
 				    $this->Cell(25, 6, $rigo['codice_fornitore'],1,0,'L',0,'',1); //M1 modificato a mano
@@ -200,6 +208,7 @@ class OrdineFornitore extends Template
                     $this->Cell(81,6,'','R',1);
                     break;
                 }
+				$ctrl_orderman=$rigo['id_orderman'];
         }
     }
 
@@ -213,8 +222,8 @@ class OrdineFornitore extends Template
         $y = $this->GetY();
         $this->Rect(10,$y,188,208-$y); //questa marca le linee dx e sx del documento
 		if ($this->consegna <> '') {
-			$this->SetFont('helvetica','',12);
-			$this->Cell(188,8,$this->consegna,'BT',1,'C',1);
+			$this->SetFont('helvetica','B',10);
+			$this->Cell(188,6,$this->consegna,'BT',1,'C',1);
 		}
         $this->SetFont('helvetica','I',11);
         $this->Cell(186,8,'Ogni modifica ai dati soprariportati dev\'essere preventivamente autorizzata.','T',1);
