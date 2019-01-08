@@ -60,7 +60,11 @@ class Template extends FPDI {
         $this->cliente4b = $docVars->cliente4b; // Nazione
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
         $this->agente = $docVars->name_agente;
-        $this->destinazione = $docVars->destinazione;
+        if ( $docVars->destinazione == "" ) {
+            $this->destinazione = $docVars->client['destin'];
+        } else {
+            $this->destinazione = $docVars->destinazione;
+        }       
         $this->clientSedeLegale = '';
 		$this->pers_title = $docVars->pers_title;
         if (!empty($docVars->clientSedeLegale)) {
