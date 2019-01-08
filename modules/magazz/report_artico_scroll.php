@@ -64,7 +64,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         $lastdoc = getLastDoc($row["codice"]);
         $mv = $gForm->getStockValue(false, $row['codice']);
         $magval = array_pop($mv);
-		 if (round($magval['q_g'],6) == "-0"){
+		 if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
 			 $magval['q_g']=0;
 		 }
 		$class = 'default';
