@@ -126,7 +126,7 @@ $script_transl = HeadMain();
     </div>
     <?php
     if (!isset($_GET['field']) || (empty($_GET['field'])))
-        $orderby = "protoc DESC";
+        $orderby = "datfat DESC, protoc DESC";
     $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
     $recordnav->output();
 	
