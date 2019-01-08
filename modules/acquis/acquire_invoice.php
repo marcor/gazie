@@ -36,7 +36,9 @@ function removeSignature($string, $filename) {
     $string = substr($string, 0, $f_end);
 	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
 	$string = preg_replace ('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $string);
-	return preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
+	$string = preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
+	$string = preg_replace ('/[\x{0004}]{1}[A-Z]{1}[\s\S]{1}/i', '', $string); // per eliminare tag firma fattura enel, non dovrebbe impattare negativamente sulle altre  
+	return $string;
 }
 
 function getLastProtocol($type, $year, $sezione) {  
@@ -236,7 +238,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			// vedo se ho un codice_fornitore in gaz_artico
 			$artico = gaz_dbi_get_row($gTables['artico'], 'codice_fornitore', $form['rows'][$nl]['codice_fornitore']);
-			$form['rows'][$nl]['codart'] = ($artico)?$artico['codice']:'';
+			$form['rows'][$nl]['codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['codice']:'';
 			$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
 			if ($item->getElementsByTagName("Quantita")->length >= 1) {
 				$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
