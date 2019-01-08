@@ -88,12 +88,7 @@ class invoiceXMLvars {
         } else {
             $this->cliente4 = '';
         }
-        $country = gaz_dbi_get_row($gTables['country'], "iso", $this->client['country']);
-        if ($this->client['country'] != 'IT') {
-            $this->cliente4b = strtoupper($country['istat_name']);
-        } else {
-            $this->cliente4b = '';
-        }
+
         if (!empty($this->client['pariva'])) {
             $this->cliente5 = 'P.I. ' . $this->client['pariva'] . ' ';
         } else {
@@ -585,7 +580,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             // nodo 1.4.1.1 partita IVA del committente, se disponibile
             if (!empty($XMLvars->client['pariva'])) {
                 $el = $domDoc->createElement("IdFiscaleIVA", '');
-                $results = $el->appendChild($domDoc->createElement('IdPaese', 'IT'));
+                $results = $el->appendChild($domDoc->createElement('IdPaese', $XMLvars->client['country']));
                 $results = $el->appendChild($domDoc->createElement('IdCodice', $XMLvars->client['pariva']));
                 $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
                 $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0);
