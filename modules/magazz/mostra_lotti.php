@@ -92,9 +92,13 @@ if (isset($_POST['close'])){
             $img="";
             echo '<tr class="FacetDataTD"><td class="FacetFieldCaptionTD">'
                . $v_lm['id']
-               . '</td><td>' . $v_lm['identifier']
-               . '</td><td>' . gaz_format_date($v_lm['expiry'])
-				. '</td><td>' . gaz_format_quantity($v_lm['rest'], 0, $admin_aziend['decimal_quantity'])
+               . '</td><td>' . $v_lm['identifier']. '</td>';
+			   if (intval($v_lm['expiry']>0)){
+				   echo '<td>' . gaz_format_date($v_lm['expiry']). '</td>';
+			   } else {
+				   echo '</td><td>';
+			   }
+               echo '<td>' . gaz_format_quantity($v_lm['rest'], 0, $admin_aziend['decimal_quantity'])
                 .'</td><td>';
 							
 				If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {		
