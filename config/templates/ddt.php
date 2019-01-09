@@ -136,8 +136,8 @@ class DDT extends Template_con_scheda
                     }
                 } elseif ($rigo['tiprig'] == 2) {
                    //$this->Cell(30,6,'','L');
-                   $this->Cell(122,6,$rigo['descri'],'LR',0,'L', 0, '', 1);
-                   $this->Cell(65,6,'','R',1);
+                   $this->Cell(127,6,$rigo['descri'],'LR',0,'L', 0, '', 1);
+                   $this->Cell(60,6,'','R',1);
                 } elseif ($rigo['tiprig']==6 || $rigo['tiprig']==7) {
                     $this->writeHtmlCell(187,6,10,$this->GetY(),$rigo['descri'],1,1);
                 } elseif ($rigo['tiprig'] == 11) {
@@ -239,6 +239,7 @@ class DDT extends Template_con_scheda
         } else {
             $this->Cell(26, 5,'','LR',1);
         }
+		/* COMMENTO QUESTO PEZZO DI CODICE IN QUANTO SUL DDT NORMALMENTE NON SI CALCOLA IL TOTALE ANCHE QUANDO VIENE INDICATO IL PREZZO
         if ($this->docVars->client['stapre'] == 'S') {
             $this->Cell(109,5,'Pagamento - Banca','LTR',0,'C',1);          
             $this->Cell(78,5,'TOTALE A PAGARE (segue fattura)','LTR',1,'C',1);
@@ -264,9 +265,10 @@ class DDT extends Template_con_scheda
             $this->Cell(78,6, "€ ". gaz_format_number($totale),'LBR',1,'C',0,'',1);
             $this->SetFont('helvetica','',9);
         } else {
+		*/
             $this->Cell(187,5,'Pagamento - Banca','LTR',1,'C',1);
             $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C',0,'',1);
-        }
+        //}
         $this->Cell(51,5,'Spedizione','LTR',0,'C',1);
         $this->Cell(114,5,'Vettore','LTR',0,'C',1);
         $this->Cell(22,5,'Trasporto','LTR',1,'C',1);
