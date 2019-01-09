@@ -234,14 +234,12 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
                                      left join " . $gTables['anagra'] . " C on B.id_anagra=C.id  ";
     //recupero i documenti da stampare
     $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
-    
-    $lang = get_template_lang( $testata['clfoco'] );
-
     if ($testate->num_rows > 0) {
 //   createMultiDocument($testate, $template, $gTables, ($invioPerEmail ? "E" : false)); non funziona, invia tutte le fatture allo stesso destinatario
         if ($invioPerEmail) {
             foreach ($testate as $doc) {
                 $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $doc['id_tes']);
+				$lang = get_template_lang( $testata['clfoco'] );
                 createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
             }
         } else {
