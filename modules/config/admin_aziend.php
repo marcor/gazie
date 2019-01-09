@@ -1130,6 +1130,7 @@ if (count($msg['err']) > 0) { // ho un errore
                         <div class="form-group">
                             <label for="desez" class="col-sm-4 control-label"><?php echo $script_transl['desez'] . $script_transl['sezione'] . $i; ?></label>
                             <input class="col-sm-8" type="text" value="<?php echo $form['desez' . $i]; ?>" name="desez<?php echo $i; ?>"  />
+							<?php if ($rf=getRegimeFiscale($i)){ echo 'REGIME FISCALE: '.$rf;} ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->

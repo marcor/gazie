@@ -465,6 +465,23 @@ function msgDebug($txt, $titolo = "debug message") {
             . "\n" . $txt . "\n&&&&&&&&", 3, $nomeFile);
 }
 
+
+function getRegimeFiscale($si){
+	global $gTables;
+	$res=false;
+    $rrff=trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'sezione_regime_fiscale')['val']);
+	$rf=explode(';',$rrff);
+	if (isset($rf[0])&&!empty($rf[0])){// ho almeno un altro regime
+		foreach($rf as $v){
+			$exrf=explode('=',$v);
+			if (preg_match("/^([1-8]{1})$/", $exrf[0], $rgsez)&&preg_match("/^(RF[0-9]{2})$/", $exrf[1], $rgrf)){
+				if ($rgsez[1]==$si) $res=$rgrf[1];
+			}
+		}
+	}
+	return $res;
+}
+
 class selectAgente extends SelectBox {
 
     private $tipo;

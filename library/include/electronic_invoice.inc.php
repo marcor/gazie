@@ -216,8 +216,9 @@ class invoiceXMLvars {
         $this->totimp_body = 0;
         $this->totimp_decalc = 0;
         $this->totimp_doc = 0;
-
-
+		// ATTRIBUISCO UN EVENTUALE REGIME FISCALE DIVERSO DALLA CONFIGURAZIONE AZIENDA SE LA SEZIONE IVA E' LEGATO AD ESSO TRAMITE IL RIGO var='sezione_regime_fiscale' IN gaz_XXXcompany_config
+		$this->regime_fiscale=$this->azienda['fiscal_reg'];
+		if ($fr=getRegimeFiscale($this->seziva)) $this->regime_fiscale=$fr;
     }
 
     function getXMLrows() {
@@ -649,7 +650,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
             //regime fiscale RF01 valido per il regime fiscale ordinario
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/RegimeFiscale")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['fiscal_reg']));
+            $attrVal = $domDoc->createTextNode(trim($XMLvars->regime_fiscale));
             $results->appendChild($attrVal);
 
 
