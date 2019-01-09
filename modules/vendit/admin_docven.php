@@ -697,12 +697,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     case "DDT":
                     case "DDV": // conto visione
                     case "DDY": // triangolazione
-                        $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " AND( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione";
+                        $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " AND ( tipdoc like 'DD_' or (tipdoc = 'FAD' && ddt_type = 'T')) and seziva = $sezione";
                         $where = "numdoc DESC";
                         $sql_protocollo = " 0";
                         break;
                     case "CMR":
-                        $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " AND( tipdoc like 'CMR' or tipdoc = 'FAC') and seziva = $sezione";
+                        $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " AND ( tipdoc like 'CMR' or (tipdoc = 'FAD' && ddt_type = 'R')) and seziva = $sezione";
                         $where = "numdoc DESC";
                         $sql_protocollo = " 0";
                         break;
