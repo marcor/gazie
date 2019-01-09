@@ -183,6 +183,11 @@ class DocContabVars {
         switch ($tesdoc["tipdoc"]) {
             case "FAD":
             case "FAI":
+            case "FAA":
+            case "FAP":
+            case "FAQ":
+            case "FNC":
+            case "FND":
                 $this->docRelNum = $this->tesdoc["numfat"];
                 $this->docRelDate = $this->tesdoc["datfat"];
 				// in caso di fattura elettronica ricavo il nome del file
@@ -193,7 +198,7 @@ class DocContabVars {
         						  'sezione' => $this->tesdoc["seziva"],
 								  'fae_reinvii'=> $this->fae_reinvii,
 								  'protocollo' => $this->tesdoc["protoc"]);
-					$this->efattura = "IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber($data, 36).'.xml';
+					$this->efattura = encodeSendingNumber($data, 36);
 				}
                 break;
             case "VCO":

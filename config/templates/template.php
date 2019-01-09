@@ -112,7 +112,7 @@ class Template extends FPDI {
 			if (!empty($this->efattura)){
 				$this->SetFont('helvetica','B',9);
 				$this->SetTextColor(255,0,0);
-				$this->Cell(186,0,'Copia cartacea del documento elettronico '.$this->efattura,0,1);
+				$this->Cell(110,0,'Copia cartacea del documento elettronico inviato al Sistema di Interscambio ('.$this->efattura.')',0,1,'L',0,'',1);
 				$this->SetTextColor(0,0,0);
 			}
             $this->SetFont('helvetica', '', 11);
