@@ -24,10 +24,10 @@
   --------------------------------------------------------------------------
  */
 $menu_data = array('m1' => array('link' => "docume_wiki.php"), 
-                        'm2' => array(  1 => array('link' => "01.. Sommario.md", 'weight' => 1)
+                        'm2' => array(  1 => array('link' => "001.. Sommario.md", 'weight' => 1)
                          ),
                         'm3' => array('m2' => array(1 => array(
-                                                                array('translate_key' => 1, 'link' => "01.. Come scrivere una WIKI/01.. Utilizzare la Wiki.md", 'weight' => 1)
+                                                                array('translate_key' => 1, 'link' => "001.. Come scrivere una WIKI/01.. Utilizzare la Wiki.md", 'weight' => 1)
                                                               )
                                                     )
                                      )
