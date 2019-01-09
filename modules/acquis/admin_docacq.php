@@ -239,6 +239,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($key_row == $i) {
                     $form['in_descri'] = $form['rows'][$key_row]['descri'];
                     $form['in_tiprig'] = $form['rows'][$key_row]['tiprig'];
+                    $form['in_codice_fornitore'] = $form['rows'][$key_row]['codice_fornitore'];
                     $form['in_codart'] = $form['rows'][$key_row]['codart'];
                     $form['in_pervat'] = $form['rows'][$key_row]['pervat'];
                     $form['in_ritenuta'] = $form['rows'][$key_row]['ritenuta'];

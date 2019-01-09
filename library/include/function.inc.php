@@ -1800,8 +1800,9 @@ class GAzieForm {
                     <thead class="cf">
                         <tr class="bg-success">
                             <?php
-                            // attraverso per la prima volta l'array del primo rigo allo scopo di scrivere il thead 
-                            foreach ($rows[0] as $v) {
+                            // attraverso il primo elemento dell'array allo scopo di scrivere il thead
+							$fk=key($rows);
+                            foreach ($rows[$fk] as $v) {
                                 echo '<th class="' . $v['class'] . '">' . $v['head'] . "</th>";
                             }
                             ?>
