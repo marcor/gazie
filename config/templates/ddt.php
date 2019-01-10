@@ -203,8 +203,8 @@ class DDT extends Template_con_scheda
         $y = $this->GetY();
         if ( $this->descriptive_last_ddt!="" ) {
             //$mess_ddt = explode("|",$this->descriptive_last_ddt);
-            $this->Rect(10,$y,187,217-$y); //questa marca le linee dx e sx del documento
-            $this->SetY(217);
+            $this->Rect(10,$y,187,215-$y); //questa marca le linee dx e sx del documento
+            $this->SetY(215);
             // visualizzo un messaggio sul fondo dei righi del ddt
             $this->SetFont('helvetica','',8);
             $this->MultiCell(187, 4, $this->descriptive_last_ddt, 'LR', 'L', 0, 1, '', '', true);
