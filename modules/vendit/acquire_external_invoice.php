@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
+$tipdoc_conv=array('TD01'=>'FAI','TD02'=>'FAA','TD03'=>'FAQ','TD04'=>'FNC','TD05'=>'FND','TD06'=>'FAP');
 $toDo = 'upload';
 $f_ex=false; // visualizza file
 function removeSignature($string, $filename) {
@@ -494,7 +495,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$anagra_with_same_cf['id_anagra']=$anagra_with_same_pi['id'];
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_cf, $admin_aziend['mascli'], $form['pagame']);
 			}
-			$form['tipdoc'] = 'FAI'; 
+			$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
 			$nfa=explode('/',$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue);
 			$form['numfat']=$nfa[0];
 			$form['numdoc']=$form['numfat'];
