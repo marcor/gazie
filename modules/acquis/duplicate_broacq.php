@@ -26,11 +26,12 @@
 if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato direttamente
 	require("../../library/include/datlib.inc.php");
 	$admin_aziend = checkAdmin();
+
 	//duplico la testata
    $id_testata = intval($_GET['id_tes']);
    $fornitore = intval($_GET['duplicate']);
    $tipdoc='APR';
-   $email="";
+   $email="''";
    if (isset($_GET['dest'])){ // devo trasformare un preventivo in ordine
 	 $fornitore = "`clfoco`";
 	 $tipdoc='AOR';
