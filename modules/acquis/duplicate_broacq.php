@@ -26,15 +26,15 @@
 if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato direttamente
 	require("../../library/include/datlib.inc.php");
 	$admin_aziend = checkAdmin();
-
 	//duplico la testata
-   $tabella = $gTables['tesbro'];
    $id_testata = intval($_GET['id_tes']);
    $fornitore = intval($_GET['duplicate']);
    $tipdoc='APR';
+   $email="";
    if (isset($_GET['dest'])){ // devo trasformare un preventivo in ordine
 	 $fornitore = "`clfoco`";
 	 $tipdoc='AOR';
+	 $email="`email`";
    } else { // duplico il preventivo 
 	// prevent direct access
 	$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
@@ -47,15 +47,13 @@ if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato dir
    }
    $numdoc = trovaNuovoNumero($gTables,$tipdoc);  // numero nuovo documento
    $today = gaz_today();
-   $sql = "INSERT INTO $tabella (`id_tes`, `seziva`, `tipdoc`, `template`, `email`, `print_total`, `delivery_time`, `day_of_validity`, `datemi`, `protoc`, `numdoc`, `numfat`, `datfat`, `clfoco`, `pagame`, `banapp`, `vettor`, `listin`, `destin`, `id_des`, `id_des_same_company`, `spediz`, `portos`, `imball`, `traspo`, `speban`, `spevar`, `round_stamp`, `cauven`, `caucon`, `caumag`, `id_agente`, `id_parent_doc`, `sconto`, `expense_vat`, `stamp`, `taxstamp`, `virtual_taxstamp`, `net_weight`, `gross_weight`, `units`, `volume`, `initra`, `geneff`, `id_contract`, `id_con`, `id_orderman`, `status`, `adminid`, `last_modified`) "
-           . "SELECT null, `seziva`, '".$tipdoc."', `template`, `email`, `print_total`, `delivery_time`, `day_of_validity`, '$today', `protoc`, $numdoc, '', '', ".$fornitore.", `pagame`, `banapp`, `vettor`, `listin`, `destin`, `id_des`, `id_des_same_company`, `spediz`, `portos`, `imball`, `traspo`, `speban`, `spevar`, `round_stamp`, `cauven`, `caucon`, `caumag`, `id_agente`, '".$id_testata."', `sconto`, `expense_vat`, `stamp`, `taxstamp`, `virtual_taxstamp`, `net_weight`, `gross_weight`, `units`, `volume`,  '$today', `geneff`, `id_contract`, `id_con`, `id_orderman`, `status`, `adminid`, CURRENT_TIMESTAMP FROM $tabella WHERE id_tes =". $id_testata.";";
+   $sql = "INSERT INTO ".$gTables['tesbro']." (`id_tes`, `seziva`, `tipdoc`, `template`, `email`, `print_total`, `delivery_time`, `day_of_validity`, `datemi`, `protoc`, `numdoc`, `numfat`, `datfat`, `clfoco`, `pagame`, `banapp`, `vettor`, `listin`, `destin`, `id_des`, `id_des_same_company`, `spediz`, `portos`, `imball`, `traspo`, `speban`, `spevar`, `round_stamp`, `cauven`, `caucon`, `caumag`, `id_agente`, `id_parent_doc`, `sconto`, `expense_vat`, `stamp`, `taxstamp`, `virtual_taxstamp`, `net_weight`, `gross_weight`, `units`, `volume`, `initra`, `geneff`, `id_contract`, `id_con`, `id_orderman`, `status`, `adminid`, `last_modified`) "
+           . "SELECT null, `seziva`, '".$tipdoc."', `template`, ".$email.", `print_total`, `delivery_time`, `day_of_validity`, '$today', `protoc`, $numdoc, '', '', ".$fornitore.", `pagame`, `banapp`, `vettor`, `listin`, `destin`, `id_des`, `id_des_same_company`, `spediz`, `portos`, `imball`, `traspo`, `speban`, `spevar`, `round_stamp`, `cauven`, `caucon`, `caumag`, `id_agente`, '".$id_testata."', `sconto`, `expense_vat`, `stamp`, `taxstamp`, `virtual_taxstamp`, `net_weight`, `gross_weight`, `units`, `volume`,  '$today', `geneff`, `id_contract`, `id_con`, `id_orderman`, `status`, `adminid`, CURRENT_TIMESTAMP FROM ".$gTables['tesbro']." WHERE id_tes =". $id_testata.";";
    mysqli_query($link, $sql);
    $nuovaChiave = gaz_dbi_last_id();
-//    gaz_dbi_del_row($gTables['tesbro'], "id_tes", intval($_POST['id_tes']));
-   //... e i righi
-   $tabella = $gTables['rigbro'];
-   $sql = "INSERT INTO $tabella (`id_rig`, `id_tes`, `tiprig`, `codart`, `descri`, `quality`, `id_body_text`, `unimis`, `larghezza`, `lunghezza`, `spessore`, `peso_specifico`, `pezzi`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, `id_doc`, `id_mag`, `id_orderman`, `status`) "
-           . "SELECT null, $nuovaChiave, `tiprig`, `codart`, `descri`, `quality`, `id_body_text`, `unimis`, `larghezza`, `lunghezza`, `spessore`, `peso_specifico`, `pezzi`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, 0, 0, `id_orderman`, 'INSERT' FROM $tabella WHERE id_tes =". $id_testata.";";
+   // duplico i righi
+   $sql = "INSERT INTO ".$gTables['rigbro']." (`id_rig`, `id_tes`, `tiprig`, `codart`, `descri`, `quality`, `id_body_text`, `unimis`, `larghezza`, `lunghezza`, `spessore`, `peso_specifico`, `pezzi`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, `id_doc`, `id_mag`, `id_orderman`, `status`) "
+           . "SELECT null, $nuovaChiave, `tiprig`, `codart`, `descri`, `quality`, `id_body_text`, `unimis`, `larghezza`, `lunghezza`, `spessore`, `peso_specifico`, `pezzi`, `quanti`, `prelis`, `sconto`, `codvat`, `pervat`, `codric`, `provvigione`, `ritenuta`, `delivery_date`, 0, 0, `id_orderman`, 'INSERT' FROM ".$gTables['rigbro']." WHERE id_tes =". $id_testata.";";
    mysqli_query($link, $sql);
    $head="Location: ";
    if ($tipdoc=='APR'){ // ho duplicato un preventivo
