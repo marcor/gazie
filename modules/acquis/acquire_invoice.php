@@ -321,6 +321,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']); // analizzo le possibilità 
 				// analizzo le possibilità 
 				// controllo se ho uno split payment
+				$yes_split=false;
 				if($xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >=1){
 					$yes_split=$xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
 				}
