@@ -279,6 +279,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor'],$form['pagame']);
             }
+			// non attribuisco le spese bancarie che verranno addebitate ( anche se ci sono non le conosco)
+			$form['speban']=0;
             if ($toDo == 'update') { // e' una modifica
                 $old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
                 $i = 0;
@@ -503,6 +505,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['peso_specifico'] = 0;
             $form['righi'][$next_row]['pezzi'] = 0;
             $form['righi'][$next_row]['status'] = "INSERT";
+            $form['righi'][$next_row]['quality'] = '';
+            $form['righi'][$next_row]['codart'] = "";
+            $form['righi'][$next_row]['annota'] = "";
+            $form['righi'][$next_row]['unimis'] = "";
+            $form['righi'][$next_row]['quanti'] = 0;
+            $form['righi'][$next_row]['prelis'] = 0;
+            $form['righi'][$next_row]['codric'] = 0;
+            $form['righi'][$next_row]['sconto'] = 0;
+            $form['righi'][$next_row]['pervat'] = 0;
+            $form['righi'][$next_row]['codvat'] = 0;
             if ($form['in_tiprig'] == 0) {  //rigo normale
                 $form['righi'][$next_row]['codart'] = $form['in_codart'];
                 $form['righi'][$next_row]['annota'] = $artico['annota'];
@@ -553,7 +565,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$next_row]['sconto'] = 0;
                 $form['righi'][$next_row]['pervat'] = 0;
                 $form['righi'][$next_row]['codvat'] = 0;
-            } elseif ($form['in_tiprig'] == 3) { // FORFAIT
+            } elseif ($form['in_tiprig'] == 1 || $form['in_tiprig'] == 3) { // FORFAIT
                 $form['righi'][$next_row]['codart'] = "";
                 $form['righi'][$next_row]['annota'] = "";
                 $form['righi'][$next_row]['unimis'] = "";
@@ -1210,13 +1222,10 @@ foreach ($form['righi'] as $key => $value) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
             break;
         case "3":
+			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
             echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" /></td>\n";
-            echo "	<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td>
-						<td>
-							<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-								<i class=\"glyphicon glyphicon-arrow-up\"></i>
-							</button>
-						</td>\n";
+            echo "<td></td>\n";
+            echo "	<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
