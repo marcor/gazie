@@ -51,7 +51,7 @@ function resize_iframe()
 	//resize the iframe according to the size of the
 	//window (all these should be on the same line)
 	document.getElementById("glu").style.height=parseInt(height-
-	document.getElementById("glu").offsetTop-1)+"px";
+	document.getElementById("glu").offsetTop-15)+"px";
 }
 window.onresize=resize_iframe; 
 </script>

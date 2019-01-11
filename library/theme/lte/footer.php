@@ -27,11 +27,15 @@
 global $admin_aziend;
 
 require("../../modules/root/lang.".$admin_aziend['lang'].".php");
-//require("../../library/theme/lte/function.php");
 
 ?>
 </div>
 </section>
+<?php
+// se viene visualizzata una pagina specifica non visualizzare il footer
+$url = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
+if ( $url!='ruburl.php' ) {
+?>
     <footer class="main-footer">
         <?php
          // mostra le variabili $global e $server nella pagina
@@ -141,9 +145,11 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
           </div><!-- /.tab-pane -->
         </div>
       </aside>
+      <?php
+}
+?>
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
-
     <script src="../../js/jquery/jquery.js"></script>
     <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
     <script><!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
