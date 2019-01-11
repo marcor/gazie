@@ -585,8 +585,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $el = $domDoc->createElement("CodiceFiscale", trim($XMLvars->client['codfis']));
             $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
             $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-            $results->insertBefore($el, $results1);
-
+			if ($XMLvars->client['country']=='IT'){
+				$results->insertBefore($el, $results1);
+			}
 
             // nodo 1.4.1.1 partita IVA del committente, se disponibile
             if (!empty($XMLvars->client['pariva'])) {
@@ -594,9 +595,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                 $results = $el->appendChild($domDoc->createElement('IdPaese', $XMLvars->client['country']));
                 $results = $el->appendChild($domDoc->createElement('IdCodice', $XMLvars->client['pariva']));
                 $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
-                $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0);
-                $results->insertBefore($el, $results1);
-            }
+				if ($XMLvars->client['country']=='IT'){
+					$results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0);
+				} else {
+					$results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+				}
+				$results->insertBefore($el, $results1);
+			}
 
 
             $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);
@@ -611,13 +616,18 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $el = $domDoc->createElement("Provincia", strtoupper(trim($XMLvars->client['prospe'])));
             $results = $xpath->query("//CessionarioCommittente/Sede")->item(0);
             $results1 = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
-            $results->insertBefore($el, $results1);
+			if ($XMLvars->client['country']=='IT'){
+				$results->insertBefore($el, $results1);
+			}
 
 
             $results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->client['citspe']));
             $results->appendChild($attrVal);
 
+			if ($XMLvars->client['country']!='IT'){
+				$XMLvars->client['capspe']='99999';
+			}
             $results = $xpath->query("//CessionarioCommittente/Sede/CAP")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->client['capspe']));
             $results->appendChild($attrVal);
