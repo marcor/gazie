@@ -291,7 +291,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				if (round($res_ritenute,2) >= 0) { // setto l'aliquota ritenuta ma solo se c'è stata capienza
 					$form['rows'][$nl]['ritenuta'] = $ali_ritenute;
 				}
-			 } 
+			}
 			$post_nl = $nl-1;
 			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
@@ -318,12 +318,20 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				if (preg_match('/TRASP/i',strtoupper($form['rows'][$nl]['descri']))) { // se sulla descrizione ho un trasporto lo propongo come costo d'acquisto
 					$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
 				}
-				$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']);
+				$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']); // analizzo le possibilità 
 				// analizzo le possibilità 
-				if ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
+				// controllo se ho uno split payment
+				if($xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >=1){
+					$yes_split=$xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
+				}
+				if ($yes_split=='S'){
+					$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo = " . $form['rows'][$nl]['pervat']." AND tipiva ='T'", "codice ASC", 0, 1);
+					$split_vat = gaz_dbi_fetch_array($rs_split_vat);
+					$form['codvat_'.$post_nl] = $split_vat['codice'];
+				} elseif ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
 					$form['codvat_'.$post_nl] = $expect_vat['codice'];
 				} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
-					$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], 'aliquo = ' . $form['rows'][$nl]['pervat'], "codice ASC", 0, 1);
+					$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], 'aliquo = ' . $form['rows'][$nl]['pervat']." AND tipiva <>'T'", "codice ASC", 0, 1);
 					$last_codvat = gaz_dbi_fetch_array($rs_last_codvat);
 					if ($last_codvat){
 						$form['codvat_'.$post_nl] = $last_codvat['codice'];
@@ -494,6 +502,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
             foreach ($form['rows'] as $i => $v) { // inserisco i righi 
+				if ($form['rows'][$i]['prelis']<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
+					$form['rows'][$i]['tiprig']=2;
+				}			
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
 				// i righi postati hanno un indice diverso
 				$post_nl=$i-1;
@@ -586,6 +597,26 @@ if ($toDo=='insert' || $toDo=='update' ) {
             $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);            
 			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$v['codart']);            
+			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
+			if ($v['prelis']<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
+				$v['codice_fornitore']='';
+				$v['unimis']='';			
+				$v['quanti']='';
+				$v['unimis']='';			
+				$v['prelis']='';
+				$v['sconto']='';
+				$v['amount']='';
+				$v['ritenuta']='';
+				$v['pervat']='';
+				$codric_dropdown ='';
+				$codvat_dropdown ='';
+				$codart_dropdown ='';
+			} else {
+				$v['prelis']=gaz_format_number($v['prelis']);
+				$v['amount']=gaz_format_number($v['amount']);
+				$v['ritenuta']=floatval($v['ritenuta']);
+				$v['pervat']=floatval($v['pervat']);
+			}		
 			// creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
@@ -601,17 +632,17 @@ if ($toDo=='insert' || $toDo=='update' ) {
                 array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
                     'value' => $v['quanti']),
                 array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => gaz_format_number($v['prelis'])),
+                    'value' => $v['prelis']),
                 array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
                     'value' => $v['sconto']),
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 
-					'value' => gaz_format_number($v['amount']), 'type' => ''),
+					'value' => $v['amount'], 'type' => ''),
                 array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
 					'value' => $codvat_dropdown, 'type' => ''),
                 array('head' => 'Ritenuta', 'class' => 'text-center numeric', 
-					'value' => floatval($v['ritenuta']), 'type' => ''),
+					'value' => $v['ritenuta'], 'type' => ''),
                 array('head' => '%', 'class' => 'text-center numeric', 
-					'value' => floatval($v['pervat']), 'type' => ''),
+					'value' => $v['pervat'], 'type' => ''),
                 array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
 					'value' => $codric_dropdown, 'type' => '')
             );

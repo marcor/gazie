@@ -301,7 +301,7 @@ function choicePartner(row)
 
 				// colonna produzione
 				$orderman_descr='';
-                $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
+                $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] , 'id_tes DESC');
 
 				// INIZIO crezione tabella per la visualizzazione sul tootip di tutto il documento 
 				$tt = '<table><th colspan=4 >' . $tipodoc." n.".$r["numdoc"].' del '. gaz_format_date($r["datemi"]).'</th>';
