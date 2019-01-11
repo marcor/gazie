@@ -44,7 +44,7 @@ function getLastDocument($tipo, $sezione, $anno) {
    global $gTables;
    switch ($tipo) {
       case 1:  //ddt
-         $where = "(tipdoc like 'DD%' OR tipdoc = 'FAD') AND YEAR(datemi) = $anno";
+         $where = "(tipdoc like 'DD%' OR (tipdoc = 'FAD' AND ddt_type!='R' ) ) AND YEAR(datemi) = $anno";
          break;
       case 2:  //fattura differita
          $where = "tipdoc = 'FAD' AND YEAR(datfat) = $anno";
@@ -63,6 +63,12 @@ function getLastDocument($tipo, $sezione, $anno) {
          break;
       case 7: //ricevuta
          $where = "tipdoc = 'VRI' AND YEAR(datfat) = $anno";
+         break;
+      case 8: //parcella
+         $where = "tipdoc = 'FAP' AND YEAR(datfat) = $anno";
+         break;
+      case 9: //cmr
+         $where = "(tipdoc = 'CMR' OR ( tipdoc = 'FAD' AND ddt_type='R' ) ) AND YEAR(datfat) = $anno";
          break;
    }
    $rs_lastdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where . " AND seziva = $sezione", "datfat DESC, numfat DESC", 0, 1);
@@ -97,7 +103,7 @@ function checkDocumentExist($tipo, $sezione, $data_inizio, $data_fine, $protocol
          $num_name = 'numdoc';
          $protocollo_inizio = 0;
          $protocollo_fine = 999999999;
-         $where = "(tipdoc = 'DDT' OR tipdoc = 'FAD') ";
+         $where = "(tipdoc = 'DDT' OR ( tipdoc = 'FAD' AND ddt_type!='R' ) ) ";
          break;
       case 2:  //fattura differita
          $where = "tipdoc = 'FAD'";
@@ -116,6 +122,12 @@ function checkDocumentExist($tipo, $sezione, $data_inizio, $data_fine, $protocol
          break;
       case 7: //ricevuta
          $where = "tipdoc = 'VRI'";
+         break;
+      case 8: //ricevuta
+         $where = "tipdoc = 'FAP'";
+         break;
+      case 9: //cmr
+         $where = "(tipdoc = 'CMR' OR ( tipdoc = 'FAD' AND ddt_type='R' ) ) ";
          break;
    }
    $where .= " AND seziva = $sezione
@@ -292,7 +304,7 @@ if (!empty($msg)) {
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td>
      <td class=\"FacetDataTD\">\n";
 echo "<select name=\"tipdoc\" class=\"FacetSelect\">\n";
-for ($counter = 1; $counter <= 7; $counter++) {
+for ($counter = 1; $counter <= 9; $counter++) {
    $selected = '';
    if ($form['tipdoc'] == $counter) {
       $selected = "selected";

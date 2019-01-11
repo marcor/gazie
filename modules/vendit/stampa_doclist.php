@@ -83,7 +83,7 @@ switch ($tipdoc) {
 //         $num_name = 'numdoc';
 //         $protocollo_inizio = 0;
 //         $protocollo_fine = 999999999;
-      $where = "(tipdoc like 'DD%' OR tipdoc = 'FAD') ";
+      $where = "(tipdoc like 'DD%' OR ( tipdoc = 'FAD' AND ddt_type!='R' ) ) ";
       $campoOrdinamento = "numdoc";
       $campoData = "datemi";
       break;
@@ -116,6 +116,12 @@ switch ($tipdoc) {
       break;
    case 7: //ricevuta
       $where = "tipdoc = 'VRI'";
+      break;
+   case 8: //ricevuta
+      $where = "tipdoc = 'FAP'";
+      break;
+   case 9: //ricevuta
+      $where = "( tipdoc = 'CMR' OR ( tipdoc = 'FAD' AND ddt_type='R' ) )";
       break;
 }
 
