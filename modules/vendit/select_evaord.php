@@ -942,7 +942,9 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
     <input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno']; ?>">
     <input type="hidden" name="id_tes" value="<?php echo $form['id_tes']; ?>">
     <input type="hidden" name="tipdoc" value="<?php echo $form['tipdoc']; ?>">
+	<!-- visualizzate nel campo pagamento
     <input type="hidden" name="speban" value="<?php echo $form['speban']; ?>">
+	-->
     <input type="hidden" name="expense_vat" value="<?php echo $form['expense_vat']; ?>">
     <input type="hidden" name="stamp" value="<?php echo $form['stamp']; ?>">
     <input type="hidden" name="round_stamp" value="<?php echo $form['round_stamp']; ?>">
@@ -1010,8 +1012,9 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['traspo'] . ' ' . $admin_aziend['html_symbol'] . "</td>\n";
         echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"traspo\" value=\"" . $form['traspo'] . "\" align=\"right\" maxlength=\"6\" size=\"3\" onChange=\"this.form.total.value=summa(this);\" />\n";
         echo "\t </td>\n";
-        echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['pagame'] . "</td><td  class=\"FacetDataTD\">\n";
+        echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['pagame'] . "<br>Spese incasso </td><td  class=\"FacetDataTD\">\n";
         $gForm->selectFromDB('pagame', 'pagame', 'codice', $form['pagame'], 'codice', 1, ' ', 'descri');
+		echo '<br><input type="text" name="speban" value="'.$form['speban'].'">';
         echo "\t </td>\n";
         echo '<td class="FacetFieldCaptionTD">' . $script_transl['destin'] . "</td>\n";
         if ($form['id_des_same_company'] > 0) { //  è una destinazione legata all'anagrafica
