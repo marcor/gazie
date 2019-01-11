@@ -182,9 +182,11 @@ if (isset($_GET['anteprima']) and $msg == "") {
        echo "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"6\" >$numrow ".$script_transl[5]."</td></tr>";
        require("../../modules/vendit/lang.".$admin_aziend['lang'].".php");
        //$desdoc = $strScript["admin_docven.php"][0];
+       $vendoc = $strScript["admin_docven.php"]['doc_name'];
        require("../../modules/acquis/lang.".$admin_aziend['lang'].".php");
        //$desdoc += $strScript["admin_docacq.php"][0];
-       $desdoc = array_merge($strScript["admin_docven.php"]['doc_name'], $strScript["admin_docacq.php"][0]);
+
+       $desdoc = array_merge($vendoc, $strScript["admin_docacq.php"][0]);
        while ($row = gaz_dbi_fetch_array($result)) {
              echo "<tr>\n";
              $valore = CalcolaImportoRigo($row['quanti'], $row['prelis'], $row['sconto']) ;
@@ -202,8 +204,10 @@ if (isset($_GET['anteprima']) and $msg == "") {
     } else {
        echo "<tr><td class=\"FacetDataTDred\" align=\"center\">".$script_transl[6]."</td></tr>";
     }
+    echo "</table>";
 }
 ?>
+
 </form>
 <?php
 require("../../library/include/footer.php");
