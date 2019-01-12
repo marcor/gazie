@@ -154,9 +154,11 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
             if ($r['tiprig'] <= 1  || $r['tiprig'] == 4 || $r['tiprig'] == 90) { // se del tipo normale, forfait, cassa previdenziale, vendita cespite
                 //calcolo importo rigo
                 $importo = CalcolaImportoRigo($r['quanti'], $r['prelis'], array($r['sconto'], $tes['sconto']));
-                if ($r['tiprig'] == 1  || $r['tiprig'] == 4 || $r['tiprig'] == 90) { // se di tipo forfait, cassa previdenziale e vendita cespite 
+                if ($r['tiprig']==1||$r['tiprig']== 90) { // se di tipo forfait e vendita cespite 
                     $importo = CalcolaImportoRigo(1, $r['prelis'], $tes['sconto']);
-                }
+                } elseif($r['tiprig']==4){ // cassa previdenziale sul database  trovo la percentuale sulla colonna provvigione
+                    $importo = round($r['prelis']*$r['provvigione']/100);
+				}
                 //creo il castelletto IVA
                 if (!isset($cast_vat[$r['codvat']]['impcast'])) {
                     $cast_vat[$r['codvat']]['impcast'] = 0;
