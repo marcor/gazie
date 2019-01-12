@@ -191,7 +191,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['codart'] = substr($value['codart'], 0, 15);
             $form['rows'][$i]['codice_fornitore'] = substr($value['codice_fornitore'], 0, 50);	// Aggiunto a Mano 
             $form['rows'][$i]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);
-            $form['rows'][$i]['ritenuta'] = preg_replace("/\,/", '.', $value['ritenuta']);
+            $form['rows'][$i]['ritenuta'] = floatval(preg_replace("/\,/", '.', $value['ritenuta']));
             $form['rows'][$i]['unimis'] = substr($value['unimis'], 0, 3);
             $form['rows'][$i]['prelis'] = floatval(preg_replace("/\,/", '.', $value['prelis']));
             $form['rows'][$i]['sconto'] = floatval(preg_replace("/\,/", '.', $value['sconto']));
@@ -743,8 +743,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['descri'] = $artico['descri'];
                 $mv = $magazz->getStockValue(false, $form['in_codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
-                $form['rows'][$i]['scorta'] = $artico['scorta'];
-                $form['rows'][$i]['quamag'] = $magval['q_g'];
+                $form['rows'][$old_key]['scorta'] = $artico['scorta'];
+                $form['rows'][$old_key]['quamag'] = $magval['q_g'];
                 $form['rows'][$old_key]['lot_or_serial'] = $artico['lot_or_serial'];
                 if ($artico['lot_or_serial'] == 2) {
 // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
@@ -754,7 +754,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$old_key]['quanti'] = 1;
                     $msg['err'][] = "forceone";
                 }
-                $form['rows'][$old_key]['prelis'] = floatval(preg_replace("/\,/", '.', $artico['preacq']));
+                $form['rows'][$old_key]['prelis'] = floatval($form['in_prelis']);
             } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['annota'] = "";
@@ -1384,7 +1384,7 @@ $script_transl = HeadMain(0, array(
             this.form.submit();
         });
 <?php
-if (count($msg['err']) < 1 && count($msg['war']) < 1 && $form['clfoco']>100000000) { // non ho selezionato il fornitore  oppure ho un errore allora non scrollo
+if (count($msg['err']) < 1 && count($msg['war']) < 1 && $form['clfoco']>100000000 && $toDo == 'insert') { // sono in inserimento e non ho selezionato il fornitore  oppure ho un errore allora non scrollo
     ?>
     $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top}, 1000);
     <?php
@@ -1807,7 +1807,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     $resprow[$k][9]['value'] = ''; //prelis
                     $resprow[$k][10]['value'] = '';
                     $resprow[$k][11]['value'] = '';
-                    $resprow[$k][12]['value'] = '';
+                    //$resprow[$k][12]['value'] = '';
                     break;
                 case "4":
                     // in caso di rigo cassa previdenziale 
