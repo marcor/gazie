@@ -100,10 +100,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 		// faccio i controlli sui righi
 		foreach($_POST as $kr=>$vr){
-			if (substr($kr,0,7)=='codvat_' && $vr<=0) {
+			if (substr($kr,0,7)=='codvat_' && $vr<=0 && $vr !='000000000') {
 				$msg['err'][] = 'no_codvat';
 			}	
-			if (substr($kr,0,7)=='codric_' && $vr<=0) {
+			if (substr($kr,0,7)=='codric_' && $vr<=0 && $vr !='000000000') {
 				$msg['err'][] = 'no_codric';
 			}	
 		}
@@ -609,9 +609,9 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				$v['amount']='';
 				$v['ritenuta']='';
 				$v['pervat']='';
-				$codric_dropdown ='';
-				$codvat_dropdown ='';
-				$codart_dropdown ='';
+				$codric_dropdown ='<input type="hidden" name="codric_'.$k.'" value="000000000" />';
+				$codvat_dropdown ='<input type="hidden" name="codvat_'.$k.'" value="000000000" />';
+				$codart_dropdown ='<input type="hidden" name="codart_'.$k.'" />';
 			} else {
 				$v['prelis']=gaz_format_number($v['prelis']);
 				$v['amount']=gaz_format_number($v['amount']);
