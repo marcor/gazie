@@ -23,82 +23,101 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-require("../../library/include/datlib.inc.php");
-$admin_aziend=checkAdmin();
+require('../../library/include/datlib.inc.php');
+$admin_aziend = checkAdmin();
 $cemail = gaz_dbi_get_row($gTables['company_config'], 'var', 'cemail');
 $dest_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package');
 $send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package');
 
 
 if (!isset($_POST['ritorno'])) {
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+	$form['ritorno'] = $_SERVER['HTTP_REFERER'];
 } else {
-    $form['ritorno'] = $_POST['ritorno'];
+	$form['ritorno'] = $_POST['ritorno'];
 }
 
-$nome_file="";
-$senza_esito=0;
+$nome_file = '';
+$senza_esito = 0;
 $mostra_intesta = 1;
 $mostra_intesta_riga = 1;
 
 
 if (isset($_GET['all'])) {
-   $where ="";
-   $status="";
-   $form['ritorno'] = "";
-   $mostra_intesta = 1;
-   $mostra_intesta_riga = 1; 
+	$where = '';
+	$status = '';
+	$form['ritorno'] = '';
+	$mostra_intesta = 1;
+	$mostra_intesta_riga = 1;
 } elseif (isset($_GET['id_record'])) {
-   //da migliorare l'interazione
-   $numero_record = $_GET['id_record'];
-   gaz_dbi_put_row($gTables['fae_flux'], "id", $numero_record, "flux_status", "@" );
-   $status="";
+	//da migliorare l'interazione
+	if (!empty($send_fae_zip_package['val']) && !empty($_GET['id_tes_ref']) && !empty($_GET['file_name'])) {
+		require('../../library/include/electronic_invoice.inc.php');
+		require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
+		$testata = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_tes = " . $_GET['id_tes_ref']);
+		$file_path = '../../data/files/' . $admin_aziend['codice'] . '/';
+		$file_url = $file_path . $_GET['file_name'];
+		$file_content = create_XML_invoice($testata, $gTables, 'rigdoc', false, 'from_string.xml');
+		file_put_contents($file_url, $file_content);
+		$IdentificativoSdI = SendFatturaElettronica($file_url);
+		if (!empty($IdentificativoSdI)) {
+			gaz_dbi_put_row($gTables['fae_flux'], "id", $_GET['id_record'], "flux_status", "@");
+			gaz_dbi_put_query($gTables['fae_flux'], "id = " . $_GET['id_record'], "id_SDI", $IdentificativoSdI);
+			//echo "<p>" . print_r($IdentificativoSdI, true) . "</p>";
+			header('Location: report_fae_sdi.php?post_xml_result=OK');
+		}
+	} else {
+		gaz_dbi_put_row($gTables['fae_flux'], "id", $_GET['id_record'], "flux_status", "@");
+	}
+	$status = '';
 } else {
 
-  if (isset($_GET['nome_file'])) {
-     $nome_file = $_GET['nome_file'];
-     $status="";
-     $where = " filename_ori LIKE '%".$nome_file."%'";
-     $mostra_intesta = 1;     
-  }
-  
-  if ($nome_file=="") {
-     $status="";
-     if (isset($_GET['id_tes'])) {
-         $id_tes = $_GET['id_tes'];
-         $where = " id_tes_ref = ".$id_tes."";
-         $mostra_intesta = 1;
-     }
+	if (isset($_GET['nome_file'])) {
+		$nome_file = $_GET['nome_file'];
+		$status = '';
+		$where = " filename_ori LIKE '%" . $nome_file . "%'";
+		$mostra_intesta = 1;
+	}
 
-     if (isset($_GET['status'])) {
-         $passo=1000000;
-         $status = $_GET['status'];   
-         
-         if ($status == "NO") {
-           // $status="@";           
-           $where = " flux_status LIKE '@'";
-           $senza_esito=1;
-           $mostra_intesta = 1;
-           $mostra_intesta_riga = 0;
-         } elseif ($status == "NEEC02") {
-           $where = " flux_status LIKE 'NE' and flux_descri <> 'EC01'";
-           $senza_esito=1;
-           $mostra_intesta = 1;
-           $mostra_intesta_riga = 0;                       
-         } elseif ($status == "@@") {
-           $where = " flux_status LIKE '@@' and filename_ret <> ''";
-           $senza_esito=1;
-           $mostra_intesta = 1;
-           $mostra_intesta_riga = 0;                       		   
-         } else {                                 
-           $where = " flux_status LIKE '".$status."'";
-           $mostra_intesta = 1;
-           $mostra_intesta_riga = 0;
-         }  
-     }         
-  }
-}  
+	if (empty($nome_file)) {
+		$status = '';
+		if (!empty($_GET['id_tes'])) {
+			$where = " id_tes_ref = " . $_GET['id_tes'] . "";
+			$mostra_intesta = 1;
+		}
 
+		if (isset($_GET['status'])) {
+			$passo = 1000000;
+			$status = $_GET['status'];
+
+			if ($status == 'NO') {
+				//$status = '@';
+				$where = " flux_status LIKE '@'";
+				$senza_esito=1;
+				$mostra_intesta = 1;
+				$mostra_intesta_riga = 0;
+			} elseif ($status == 'NEEC02') {
+				$where = " flux_status LIKE 'NE' and flux_descri <> 'EC01'";
+				$senza_esito = 1;
+				$mostra_intesta = 1;
+				$mostra_intesta_riga = 0;
+			} elseif ($status == '@@') {
+				$where = " flux_status LIKE '@@' and filename_ret <> ''";
+				$senza_esito = 1;
+				$mostra_intesta = 1;
+				$mostra_intesta_riga = 0;
+			} else {
+				$where = " flux_status LIKE '" . $status . "'";
+				$mostra_intesta = 1;
+				$mostra_intesta_riga = 0;
+			}
+		}
+	}
+
+	if (isset($_GET['post_xml_result'])) {
+		//TO-DO: POPUP DI ESITO INOLTRO XML A SISTEMA ESTERNO
+	}
+
+}
 
 
 require("../../library/include/header.php");
@@ -169,7 +188,7 @@ echo "</div>\n";
 if (strlen($cemail['val'])>5 || strlen($dest_fae_zip_package['val'])>5){
 	$yes_mail = ' enabled ';
 }
-if (strlen($send_fae_zip_package['val'])>5){
+if (isset($send_fae_zip_package['val']) && strlen($send_fae_zip_package['val'])>5){
 	$yes_send = ' enabled ';
 }
 if (empty($yes_mail) && empty($yes_send)) {
@@ -187,7 +206,7 @@ $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 
-<br>
+<br />
 <div class="box-primary table-responsive">
 <table id ="tableId" name="tableId" class="Tlarge table table-striped table-bordered table-condensed">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
@@ -215,17 +234,17 @@ $recordnav -> output();
 
 
 <select name="status">
-  <option value=""></option>
-  <option value="#" <?php if($status =="@") echo "selected";?> ># - Non inviata</option>
-  <option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviata</option>
-  <option value="@@" <?php if($status =="@@") echo "selected";?> >@@- Inviata sistema esterno</option>
-  <option value="NS" <?php if($status =="NS") echo "selected";?> >NS - Notifica scarto</option>
-  <option value="MC" <?php if($status =="MC") echo "selected";?> >MC - Mancata consegna</option>
-  <option value="RC" <?php if($status =="RC") echo "selected";?> >RC - Ricevuta consegna</option>
-  <option value="DT" <?php if($status =="DT") echo "selected";?> >DT - Decorrenza termini</option>
-  <option value="NE" <?php if($status =="NE") echo "selected";?> >NE - Notifica esito</option>
-  <option value="NEEC02" <?php if($status =="NEEC02") echo "selected";?> >NE EC02 - Notifica esito</option>  
-  <option value="NO" <?php if($status =="NO") echo "selected";?> >NO - Senza esiti oltre RC</option>
+	<option value=""></option>
+	<option value="#" <?php if($status =="@") echo "selected";?> ># - Non inviata</option>
+	<option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviata</option>
+	<option value="@@" <?php if($status =="@@") echo "selected";?> >@@- Inviata sistema esterno</option>
+	<option value="NS" <?php if($status =="NS") echo "selected";?> >NS - Notifica scarto</option>
+	<option value="MC" <?php if($status =="MC") echo "selected";?> >MC - Mancata consegna</option>
+	<option value="RC" <?php if($status =="RC") echo "selected";?> >RC - Ricevuta consegna</option>
+	<option value="DT" <?php if($status =="DT") echo "selected";?> >DT - Decorrenza termini</option>
+	<option value="NE" <?php if($status =="NE") echo "selected";?> >NE - Notifica esito</option>
+	<option value="NEEC02" <?php if($status =="NEEC02") echo "selected";?> >NE EC02 - Notifica esito</option>
+	<option value="NO" <?php if($status =="NO") echo "selected";?> >NO - Senza esiti oltre RC</option>
 </select> 
 </td>
 <td class="FacetFieldCaptionTD">
@@ -237,7 +256,8 @@ $recordnav -> output();
 </tr>
 </form>
 <?php
-$headers = array  ($script_transl['id']=>'id',
+$headers = array  (''=>'',
+                   $script_transl['id']=>'id',
                    $script_transl['filename_ori']=>'',
                    $script_transl['numfat']=>'',
                    $script_transl['codice']=>'',
@@ -259,108 +279,105 @@ if ( $mostra_intesta == 1 and $mostra_intesta_riga == 0 ) {
     $linkHeaders -> output();
 }
 
-$orderby = $gTables['fae_flux'].'.filename_zip_package DESC, '.$gTables['fae_flux'].'.filename_ori DESC,'. $gTables['fae_flux'].'.progr_ret'   ;
+//$orderby = $gTables['fae_flux'].'.filename_zip_package DESC, '.$gTables['fae_flux'].'.filename_ori DESC,'. $gTables['fae_flux'].'.progr_ret';
+$orderby = $gTables['fae_flux'] . '.id DESC';
 
 $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".seziva,".$gTables['tesdoc'].".numfat,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice', $where, $orderby, $limit, $passo);
 
-$ctrl_zip='';    
+$ctrl_zip = 'START_CHECK_VALUE';    
 while ($r = gaz_dbi_fetch_array($result)) {
 
-  if (strlen($r['filename_zip_package'])>16){
-	// uso un report diverso in caso di impacchettamento in files zip
-	if (empty($ctrl_zip)){ // stampo la testa della tabella
-		
-	}
-	if ($ctrl_zip!=$r['filename_zip_package']) {
-		echo '<tr><td class="bg-info" colspan="10">Il file pacchetto di fatture <span class="bg-warning">'.$r['filename_zip_package'].'</span> è stato generato per contenere le seguenti fatture elettroniche:</td>';
-        echo '<td colspan="2" align="center"><a '.$yes_mail.'class="btn btn-xs btn-info btn-email" onclick="confirMail(this);return false;" id="fn' . substr($r["filename_zip_package"],0,-4) . '" url="send_fae_package.php?fn='.$r['filename_zip_package'].'" href="#" title="Mailto: ' . $dest_fae_zip_package['val'] . '"
-            mail="' . $dest_fae_zip_package['val'] . '" namedoc="'.$r["filename_zip_package"].'">Invia <i class="glyphicon glyphicon-envelope"></i></a>';
-        echo '<td align="center"><a '.$yes_send.'class="btn btn-xs btn-info btn-email" onclick="confirSend(this);return false;" id="zn' . substr($r["filename_zip_package"],0,-4) . '" url="post_fae_package.php?zn='.$r['filename_zip_package'].'" href="#" title="POST call: ' . $send_fae_zip_package['val'] . ' library"
-            library="' . $send_fae_zip_package['val'] . '" namedoc="'.$r["filename_zip_package"].'">Inoltra <i class="glyphicon glyphicon-upload"></i></a>';
-		echo '<td align="center"><a class="btn btn-xs btn-success" title="Download del pacchetto di fatture elettroniche" href="download_zip_package.php?fn='.$r['filename_zip_package'].'">Download <i class="glyphicon glyphicon-download"></i></a></td>';
-		if (empty($ctrl_zip)) {
-			$class='btn btn-xs btn-default btn-elimina';
-			$title='Cancella il pacchetto di fatture elettroniche';
-			if ($r['flux_status'] == "@@" || $r['flux_status'] == "@"){
-				$class='btn btn-xs btn-danger btn-elimina';
-				$title='SEI SICURO? ATTENZIONE! Stai cancellando un pacchetto già inviato all\'intermediario';
+	if (strlen($r['filename_zip_package']) > 16) {// uso un report diverso in caso di impacchettamento in files zip
+		if ($ctrl_zip!=$r['filename_zip_package']) {
+			echo '<tr><td class="bg-info" colspan="11">Il file pacchetto di fatture <span class="bg-warning">'.$r['filename_zip_package'].'</span> è stato generato per contenere le seguenti fatture elettroniche:</td>';
+			echo '<td colspan="2" align="center"><a '.$yes_mail.'class="btn btn-xs btn-info btn-email" onclick="confirMail(this);return false;" id="fn' . substr($r["filename_zip_package"],0,-4) . '" url="send_fae_package.php?fn='.$r['filename_zip_package'].'" href="#" title="Mailto: ' . $dest_fae_zip_package['val'] . '"
+				mail="' . $dest_fae_zip_package['val'] . '" namedoc="'.$r["filename_zip_package"].'">Invia <i class="glyphicon glyphicon-envelope"></i></a>';
+			echo '<td align="center"><a '.$yes_send.'class="btn btn-xs btn-info btn-email" onclick="confirSend(this);return false;" id="zn' . substr($r["filename_zip_package"],0,-4) . '" url="post_fae_package.php?zn='.$r['filename_zip_package'].'" href="#" title="POST call: ' . $send_fae_zip_package['val'] . ' library"
+				library="' . $send_fae_zip_package['val'] . '" namedoc="'.$r["filename_zip_package"].'">Inoltra <i class="glyphicon glyphicon-upload"></i></a>';
+			echo '<td align="center"><a class="btn btn-xs btn-success" title="Download del pacchetto di fatture elettroniche" href="download_zip_package.php?fn='.$r['filename_zip_package'].'">Download <i class="glyphicon glyphicon-download"></i></a></td>';
+			if ($ctrl_zip == 'START_CHECK_VALUE') {
+				$class='btn btn-xs btn-default btn-elimina';
+				$title='Cancella il pacchetto di fatture elettroniche';
+				if ($r['flux_status'] == "@@" || $r['flux_status'] == "@"){
+					$class='btn btn-xs btn-danger btn-elimina';
+					$title='SEI SICURO? ATTENZIONE! Stai cancellando un pacchetto già inviato all\'intermediario';
+				}
+				// l'ultimo zip può essere eliminato ma se è stato inviato all'intermediario/servizio si deve controllare che il suo contenuto non sia stato trasmesso al SdI 
+				echo '<td colspan="2"><a class="'.$class.'" title="'.$title.'" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-remove"></i></a></td>';
+			} else {
+				echo '<td colspan="2"></td>';
 			}
-		// l'ultimo zip può essere eliminato ma se è stato inviato all'intermediario/servizio si deve controllare che il suo contenuto non sia stato trasmesso al SdI 
-			echo '<td colspan="2"><a class="'.$class.'" title="'.$title.'" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-remove"></i></a></td>';
-		} else {
-			echo '<td colspan="2"></td>';
+			echo '</tr>';
+		   $linkHeaders -> output();
 		}
-		echo '</tr>';
-	}	
-    echo '<tr>';
-	echo '<td>'.$r['id'].'</td><td colspan="2">'.$r['filename_ori'].'</td><td colspan="2">'.$script_transl['doc_type_value'][$r['tipdoc']].' n.'.$r['numfat'].'/'.$r['seziva'].'</td><td>prot.'.$r['protoc'].'</td><td colspan="2">'.gaz_format_date($r['datfat']).'</td><td colspan="7">'.$r['descri'].'</td>';
-    echo '</tr>';
-	$ctrl_zip=$r['filename_zip_package'];
-  } else {
-    if ($senza_esito == 1) {
-    
-       
-       $where1 = " filename_ori = '" . $r['filename_ori'] . ".p7m' and flux_status <> 'RC' ";    
-       $risultati = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where1, $orderby, $limit, $passo);
-       $rr = gaz_dbi_fetch_array($risultati);
-        
-       if ($rr == false) {
-          //   echo "<tr><td>-------- FALSO " . $where1 . "</td></tr>";
-        } else {
-          //   echo "<tr><td>-------- VERO "  . $where1 . " " . $rr['filename_ori'] . "</td></tr>";
-          continue;
-        }
-      
+	} else if ($ctrl_zip!=$r['filename_zip_package']) {
+		echo '<tr><td class="bg-info" colspan="16">Fatture elettroniche senza pacchetto:</td></tr>';
+		$linkHeaders -> output();
+	}
+
+	$ctrl_zip = $r['filename_zip_package'];
+
+	if ($senza_esito == 1) {
+		$where1 = " filename_ori = '" . $r['filename_ori'] . ".p7m' and flux_status <> 'RC' ";
+		$risultati = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where1, $orderby, $limit, $passo);
+		$rr = gaz_dbi_fetch_array($risultati);
+
+		if ($rr == false) {
+			//echo "<tr><td>-------- FALSO " . $where1 . "</td></tr>";
+		} else {
+			//echo "<tr><td>-------- VERO "  . $where1 . " " . $rr['filename_ori'] . "</td></tr>";
+			continue;
+		}
+	}
+
+    $class = '';
+    $class1 = '';
+    $class2 = '';
+    if ($r['flux_status'] == 'RC') {
+      $class = 'FacetDataTD';
+    } elseif ($r['flux_status'] == 'NS') {
+      $class = 'FacetDataTD';
+      $class2 = 'FacetDataTDevidenziaKO';
+    } elseif ($r['flux_status'] == 'DT') {
+      $class = 'FacetDataTDred';
+    } elseif ($r['flux_status'] == 'MC') {
+      $class = 'FacetDataTD';
+      $class2 = 'FacetDataTDred';
+    } elseif ($r['flux_status'] == '@') {
+      $class ='FacetDataTD';
+      $class1 = '';
+    } elseif ($r['flux_status'] == '@@') {
+      $class ='FacetDataTD';
+      $class1 = '';
+    } elseif ($r['flux_status'] == '#') {
+      $class ='FacetDataTD';
+      $class1 = '';
     }
     
-    $class="";
-    $class1="";
-    $class2="";
-    if ($r['flux_status'] == "RC") {
-      $class="FacetDataTD";
-    } elseif ($r['flux_status'] == "NS") {
-      $class="FacetDataTD";  
-      $class2="FacetDataTDevidenziaKO";
-    } elseif ($r['flux_status'] == "DT") {
-      $class="FacetDataTDred";
-    } elseif ($r['flux_status'] == "MC") {
-      $class="FacetDataTD";
-      $class2="FacetDataTDred";
-    } elseif ($r['flux_status'] == "@") {
-      $class="FacetDataTD";
-      $class1="";
-    } elseif ($r['flux_status'] == "@@") {
-      $class="FacetDataTD";
-      $class1="";	  
-    } elseif ($r['flux_status'] == "#") {
-      $class="FacetDataTD";
-      $class1="";  
-    }   
     
-    
-    if ($r['progr_ret'] == "000" and $mostra_intesta_riga == 1) {
-       $class="FacetDataTD";
-       $class1="";
-       $linkHeaders -> output();
-    } elseif ($r['progr_ret'] == "000" and $mostra_intesta_riga == 0) {
-       $class="FacetDataTD";
-       $class1="";
+    if ($r['progr_ret'] == '000' and $mostra_intesta_riga == 1) {
+       $class='FacetDataTD';
+       $class1='';
+    } elseif ($r['progr_ret'] == '000' and $mostra_intesta_riga == 0) {
+       $class='FacetDataTD';
+       $class1='';
     } 
      
     //Fattura accettata
-    if ($r['flux_descri'] == "EC01") {
-      $class="FacetDataTD";
-      $class2="FacetDataTDevidenziaOK";
+    if ($r['flux_descri'] == 'EC01') {
+      $class='FacetDataTD';
+      $class2='FacetDataTDevidenziaOK';
      } 
     
     //Fattura rifiutata
-    echo strpos($r['flux_descri'], "EC021");
+    echo strpos($r['flux_descri'], 'EC021');
     if (strlen($r['flux_descri']) > 5) {
-      $class="FacetDataTD";
-      $class2="FacetDataTDevidenziaKO";
+      $class='FacetDataTD';
+      $class2='FacetDataTDevidenziaKO';
     }
  
     echo "<tr class=\"$class1 $class2\">";
+    echo "<td>&nbsp;</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
     echo "<td class=\"$class paper\" align=\"left\">".$r['filename_ori']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['numfat']."</td>";
@@ -374,16 +391,19 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
     
-    //aggiungere una icona invece del cancelletto 
+    //aggiungere una icona invece del cancelletto
+	//TO-DO: COMBINARE GESTORE AUTOMATICO DELLE NOTIFICHE CON NOTIFICAZIONE MANUALE FORZATA DELLE FATTURE
     if ($r['flux_status'] == "#") {
-        $modulo_fae_report="report_fae_sdi.php?id_record=".$r['id'];
+        $modulo_fae_report="report_fae_sdi.php?id_record=".$r['id']."&amp;id_tes_ref=".$r['id_tes_ref']."&amp;file_name=".$r['filename_ori'];
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$modulo_fae_report."\">#</a>" . "</td>";
     } elseif ($r['flux_status'] == "@") {
-        $percorso_fae="/fae_inviate/".$r['filename_ori']; //definire un alias per la posizione dei documenti inviati a SDI
-        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$percorso_fae."\">@</a>" . "</td>"; 
+        //$percorso_fae="/fae_inviate/".$r['filename_ori']; //definire un alias per la posizione dei documenti inviati a SDI
+        //echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$percorso_fae."\">@</a>" . "</td>"; 
+        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"#\">@</a>" . "</td>"; 
     } elseif ($r['flux_status'] == "@@") {
-        $percorso_faeara="/fae_inviateara/".$r['filename_ori']; //definire un alias per la posizione dei documenti inviati a SDI
-        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\">". "<a href=\"".$percorso_faeara."\">@@</a>" . "</td>";      		
+        //$percorso_faeara="/fae_inviateara/".$r['filename_ori']; //definire un alias per la posizione dei documenti inviati a SDI
+        //echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\">". "<a href=\"".$percorso_faeara."\">@@</a>" . "</td>";      		
+        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\">". "<a href=\"#\">@@</a>" . "</td>";      		
     } else {
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">".$r['flux_status']."</td>";
     }
@@ -398,7 +418,6 @@ while ($r = gaz_dbi_fetch_array($result)) {
       echo "</tr><tr><td colspan=\"15\">&nbsp;</td></tr>";    
     }
     echo "</tr>";
-  } 
 }    
 
 echo "</table>\n";

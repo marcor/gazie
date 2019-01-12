@@ -16,7 +16,6 @@ function PostCallCATsrl($CATSRL_ENDPOINT, $file_to_send)
 		  'file_contents' => curl_file_create($file_to_send)
 		)
 	);
-	/**/curl_setopt($request, CURLOPT_SSL_VERIFYHOST, false); // DISATTIVARE AL PROSSIMO RILASCIO CERTIFICATO
 	curl_setopt($request, CURLOPT_URL, $CATSRL_ENDPOINT);
 
 	// output the response
@@ -42,7 +41,16 @@ function SendFattureElettroniche($zip_fatture)
 	$open_tag = '<PROTS>';
 	$close_tag = '</PROTS>';
 
-	$IdentificativiSdI = json_decode(base64_decode(substr($result, strpos($result, $open_tag)+7, strpos($result, $close_tag)-strpos($result, $open_tag)-7)), true);
+	$open_tag_pos = strpos($result, $open_tag);
+	if ($open_tag_pos === FALSE) {
+		return false;
+	}
+	$close_tag_pos = strpos($result, $close_tag);
+	if ($close_tag_pos === FALSE) {
+		return false;
+	}
+
+	$IdentificativiSdI = json_decode(base64_decode(substr($result, $open_tag_pos+7, $close_tag_pos-$open_tag_pos-7)), true);
 
 	return $IdentificativiSdI;
 }
@@ -57,7 +65,16 @@ function SendFatturaElettronica($xml_fattura)
 	$open_tag = '<PROT>';
 	$close_tag = '</PROT>';
 
-	$IdentificativoSdI = substr($result, strpos($result, $open_tag)+6, strpos($result, $close_tag)-strpos($result, $open_tag)-6);
+	$open_tag_pos = strpos($result, $open_tag);
+	if ($open_tag_pos === FALSE) {
+		return false;
+	}
+	$close_tag_pos = strpos($result, $close_tag);
+	if ($close_tag_pos === FALSE) {
+		return false;
+	}
+
+	$IdentificativoSdI = substr($result, $open_tag_pos+6, $close_tag_pos-$open_tag_pos-6);
 
 	return $IdentificativoSdI;
 }
@@ -65,7 +82,7 @@ function SendFatturaElettronica($xml_fattura)
 if (!empty($_REQUEST['xml_fattura'])) {
 	require('../../library/include/datlib.inc.php');
 	$admin_aziend = checkAdmin();
-	$file_url = '../../data/files/'.$admin_aziend['codice'].'/'.$_REQUEST['xml_fattura'];
+	$file_url = '../../data/files/' . $admin_aziend['codice'] . '/'.$_REQUEST['xml_fattura'];
 	$IdentificativoSdI = SendFatturaElettronica($file_url);
 }
 ?>
