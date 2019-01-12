@@ -2664,11 +2664,11 @@ foreach ($form['rows'] as $k => $v) {
 
     /** ENRICO FEDELE */
     /* glyph icon */
-    //if ( $v['tiprig']!="14" ) { 
+    if ( $v['tiprig']!="210" || $show_artico_composit['val']=="1" ) { 
         echo '<td align="right">
 		     <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
 		   </td>';
-    //}
+    }
     echo '</tr>';
     /** ENRICO FEDELE */
 }
