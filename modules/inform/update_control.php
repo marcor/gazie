@@ -26,25 +26,13 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin(9);
 
 // Qui viene tenuto dagli sviluppatori la lista dei siti che hanno messo a disposizione il file di check della propria versione
-$tutor= array();
-$tutor[1] = array('zone'   => 'Abruzzo',
-                  'city'   => 'Montesilvano (PE)',
-                  'sms'    => '+393383121161',
-                  'web'    => 'http://www.devincentiis.it',
-                  'check'  => 'http://www.devincentiis.it/file_ver');
+$tutor[1] = array('zone'=>'Abruzzo','city'=>'Montesilvano (PE)','sms'=>'+393383121161','web'=>'http://www.devincentiis.it','check'=>'http://www.devincentiis.it/file_ver');
 // fine lista
-
 $configurazione = gaz_dbi_get_row($gTables['config'],'variable','update_url');
-
 // se si ha un sito "personalizzato" per il download diverso da quello ufficiale su Sourceforge: modifico quello di default
 $URI_files = gaz_dbi_get_row($gTables['config'],'variable','update_URI_files');
-
-if (!empty($URI_files['cvalue'])){
-   $update_URI_files = $URI_files['cvalue'];
-}
-
+if (!empty($URI_files['cvalue'])){ $update_URI_files = $URI_files['cvalue']; }
 require("../../library/include/header.php");
-$script_transl=HeadMain();
 
 
 if (isset($_POST['check'])){// se viene richiesta una modifica della fonte di check
@@ -81,12 +69,14 @@ function tutor_list($tutor,$configurazione,$script_transl)
     echo "<tr><td colspan=\"5\" class=\"FacetDataTD\" align=\"right\"><input type=\"submit\" value=\"".$script_transl['all_disabling'][0]."\" name=\"check[disabled]\" title=\"".$script_transl['all_disabling'][1]."\" /></td></tr>\n";
     echo "</table></form>";
 }
+
+$script_transl=HeadMain();
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
 <br />
 <?php
 if ($configurazione['cvalue']) {
-   $remote_id = http_get($configurazione['cvalue']);
+   $remote_id = file_get_contents($configurazione['cvalue']);
    if (preg_match("/^([0-9]{1,2}).([0-9]{1,2})/",$remote_id,$regs)){
       // versione locale presa da gconfig.php
       $pz_local = explode(".", GAZIE_VERSION);
@@ -101,7 +91,7 @@ if ($configurazione['cvalue']) {
       if ($newversion) {
         echo "<div class=\"FacetDataTDred\" align=\"center\">".$script_transl['new_ver1'].$regs[1]. $regs[2].$script_transl['new_ver2'].": <a href=\"".$update_URI_files."\" target=\"_blank\">".$update_URI_files."</div>";
       } else {
-        echo "<div class=\"FacetDataTDred\" align=\"center\">".$script_transl['is_align']."</div>";
+        echo "<div class=\"FacetDataTDred\" align=\"center\">".$script_transl['is_align']."(".$remote_id.")</div>";
         tutor_list($tutor,$configurazione,$script_transl);
       }
    } else {
@@ -111,27 +101,6 @@ if ($configurazione['cvalue']) {
 } else {
     echo "<div class=\"FacetDataTDred\" align=\"center\">".$script_transl['disabled'].": </div>";
     tutor_list($tutor,$configurazione,$script_transl);
-}
-
-function http_get($url)
-{
-   $buffer = "";
-   $url_stuff = parse_url($url);
-   $port = isset($url_stuff['port']) ? $url_stuff['port'] : 80;
-   $fp = @fsockopen($url_stuff['host'], $port, $errno, $errstr);
-   if (!$fp) {
-      return "ERROR: $errno - $errstr check or connection is not available<br \>\n";
-   } else {
-     $query  = 'GET ' . $url_stuff['path'] . " HTTP/1.0\n";
-     $query .= 'Host: ' . $url_stuff['host'];
-     $query .= "\n\n";
-     fwrite($fp, $query);
-     while ($tmp = fread($fp, 1024)){
-       $buffer .= $tmp;
-     }
-     preg_match('/Content-Length: ([0-9]+)/', $buffer, $parts);
-     return substr($buffer, - $parts[1]);
-   }
 }
 ?>
 <?php
