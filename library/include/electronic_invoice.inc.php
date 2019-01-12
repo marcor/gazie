@@ -954,19 +954,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     }
 // --- FINE CALCOLO TOTALI
 
-    //Modifica per il sicoge che richiede obbligatoriamente popolato il punto 2.1.1.9
-    $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
-    $el = $domDoc->createElement("ImportoTotaleDocumento", number_format($totpar, 2, '.', ''));  // totale fatura al lordo di RDA
-    $results->appendChild($el);
-
     // alla fine del ciclo sui righi faccio diverse aggiunte es. causale, bolli, descrizione aggiuntive, e spese di incasso, queste essendo cumulative per diversi eventuali DdT non hanno un riferimento
 
 
-    if ($XMLvars->Causale) {
-        $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
-        $el = $domDoc->createElement("Causale", $XMLvars->Causale);
-        $results->appendChild($el);
-    }
 
     if ($XMLvars->DatiVeicoli) {
         $results = $xpath->query("//FatturaElettronicaBody")->item(0);
@@ -1114,6 +1104,16 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $results->appendChild($el);
     }
 
+    if ($XMLvars->BolloVirtuale) {
+        $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
+        $el = $domDoc->createElement("DatiBollo", "");
+        $el1 = $domDoc->createElement("BolloVirtuale", $XMLvars->BolloVirtuale);
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("ImportoBollo", number_format($XMLvars->impbol, 2, '.', ''));
+        $el->appendChild($el1);
+        $results->appendChild($el);
+    }
+
     if (count($XMLvars->cassa_prev) >= 1) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
 	    foreach ($XMLvars->cassa_prev as $key => $value) {
@@ -1139,14 +1139,14 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$results->appendChild($el);
         }
     }
+    //Modifica per il sicoge che richiede obbligatoriamente popolato il punto 2.1.1.9
+    $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
+    $el = $domDoc->createElement("ImportoTotaleDocumento", number_format($totpar, 2, '.', ''));  // totale fatura al lordo di RDA
+    $results->appendChild($el);
 
-    if ($XMLvars->BolloVirtuale) {
+    if ($XMLvars->Causale) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
-        $el = $domDoc->createElement("DatiBollo", "");
-        $el1 = $domDoc->createElement("BolloVirtuale", $XMLvars->BolloVirtuale);
-        $el->appendChild($el1);
-        $el1 = $domDoc->createElement("ImportoBollo", number_format($XMLvars->impbol, 2, '.', ''));
-        $el->appendChild($el1);
+        $el = $domDoc->createElement("Causale", $XMLvars->Causale);
         $results->appendChild($el);
     }
 
