@@ -1,0 +1,20 @@
+Titolo:
+In magna labor at magnis gloria.
+
+Presentazione:
+Stiamo raggiungendo la perfezione, grazie a voi, alla vostra partecipazione nell'analisi di ogni dettaglio il tracciato delle fatture elettroniche è sempre più preciso, e la nuova versione serve proprio per consolidare il traguardo raggiunto.
+Resto in allerta, pronto ad intervenire rapidamente con nuovi rilasci per risolvere eventuali problemi sul fronte fatturazione elettronica. 
+Non nascondo che dopo aver visto dei file XML generati da software blasonati e diffusissimi negli studi commerciali sono ENTUSIASTA del mio lavoro, perché, ad esempio, vedere scartato uno di questi a causa di elementi 2.1.1.7.5 <AliquotaIVA> valorizzato con un "22" anziché "22.00" lascia veramente perplessi.
+Anche a GAzie manca ancora un ultimo passo: l'obbiettivo è per di fine gennaio, forse anche prima, e completerò la riconciliazione e soprattutto le registrazioni dei movimenti di magazzino, e la eventuale concomitante creazione di nuovi articoli quando non presenti in magazzino.
+Vengo a descrivere il lavoro svolto in soli due giorni:
+- Acquisizione fatture (attive e passive): adesso valorizza il tipo documento distinguendo se nota credito parcella ecc, prima non lo faceva.
+- Se su DDT si inseriva il rigo descrittivo in basso, creava una inutile seconda pagina PDF solo per l'orario di trasporto.
+- Su evasione ordini visualizzate le spese di incasso che erano nascoste.
+- Modifiche alla fattura elettronica per sistemare i problemi con i clienti stranieri (senza provincia e codice fiscale, cap con 99999).
+- Ripristinato nome utente di default non funzionante da quando sono state criptate le password, lo si potrà scegliere in gconfig.myconf.php.
+- Corretto errore su controllo aggiornamenti dal mio sito.
+- Ripristinato tasto per evasione ordine di acquisto, in caso di mancanza fattura elettronica sarà possibile trasformare l'ordine in fattura.
+- Corretto il funzionamento della rimozione composizioni in lista articoli.
+- Corretto errore di errato ordinamento elementi in presenza di ritenute-cassa previdenziale.
+
+Antonio de Vincentiis, Montesilvano, 12 gennaio 2019

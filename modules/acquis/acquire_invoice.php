@@ -299,6 +299,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
 				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
 			} else { 
+				if (isset( $form['rows'][$nl]['codart'])){
+					$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
+				} else {
+					$form['rows'][$nl]['codart'] = '';
+					$form['codart_'.$post_nl] ='';
+				}			
 				/* al primo accesso dopo l'upload del file propongo:
 				   - la prima data di registrazione utile considerando quella di questa fattura e l'ultima registrazione
 				   - i costi sulle linee (righe) in base al fornitore
@@ -376,8 +382,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
 				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
-			} else { 
-				$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
+			} else {
+				if (isset( $form['rows'][$nl]['codart'])){
+					$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
+				} else {
+					$form['rows'][$nl]['codart'] = '';
+					$form['codart_'.$post_nl] ='';
+				}			
 				/* al primo accesso dopo l'upload del file propongo:
 			   - i costi sulle linee (righe) in base al fornitore
 			   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato 
@@ -597,7 +608,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			$k--;
             $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);            
-			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$v['codart']);            
+			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$form['codart_'.$k]);            
 			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
 			if ($v['prelis']<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 				$v['codice_fornitore']='';

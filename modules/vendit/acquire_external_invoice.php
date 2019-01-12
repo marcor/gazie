@@ -312,9 +312,17 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			 } 
 			$post_nl = $nl-1;
 			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
+				$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
 				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
 			} else { 
+				if (isset( $form['rows'][$nl]['codart'])){
+					$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
+				} else {
+					$form['rows'][$nl]['codart'] = '';
+					$form['codart_'.$post_nl] ='';
+				}			
 				/* al primo accesso dopo l'upload del file propongo:
 				   - la prima data di registrazione utile considerando quella di questa fattura e l'ultima registrazione
 				   - i costi sulle linee (righe) in base al cliente
@@ -389,9 +397,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			} 
 			$post_nl = $nl-1;
 			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
 				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
 			} else { 
+				if (isset( $form['rows'][$nl]['codart'])){
+					$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
+				} else {
+					$form['rows'][$nl]['codart'] = '';
+					$form['codart_'.$post_nl] ='';
+				}			
 				/* al primo accesso dopo l'upload del file propongo:
 			   - i costi sulle linee (righe) in base al cliente
 			   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato 
@@ -523,11 +538,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
 				// i righi postati hanno un indice diverso
 				$post_nl=$i-1;
+				$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
 				$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
                 rigdocInsert($form['rows'][$i]);
 			}
-            header("Location: report_docven.php");
+            header("Location: report_docven.php?field=protoc&flag_order=DESC");
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 			if (!isset($form['pagame'])){
@@ -610,6 +626,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			$k--;
             $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',2,4), '', false, "col-sm-8 small",'style="max-width: 350px;"', false, true);
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-8 small', null, 'style="max-width: 350px;"', false, true);            
+			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$form['codart_'.$k]);            
 			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
 			if ($v['prelis']<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 				$v['codice_fornitore']='';
@@ -635,7 +652,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
                 array('head' => $script_transl["nrow"], 'class' => '',
                     'value' => $k+1),
                 array('head' => $script_transl["codart"], 'class' => '',
-                    'value' => $v['codice_fornitore']),
+                    'value' => $codart_dropdown),
                 array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
                     'value' => $v['descri']),
                 array('head' => $script_transl["unimis"], 'class' => '',

@@ -140,7 +140,7 @@ if (isset($_POST['Delete'])) {
             }
             header("Location: " . $_POST['ritorno']);
             exit;
-        } elseif ($ultimo_documento['protoc'] != $protocollo) {
+        } elseif ($ultimo_documento['protoc'] != $row["protoc"]) {
             $message = "Si sta tentando di eliminare un documento <br /> diverso dall'ultimo emesso!";
         }
     } else {
