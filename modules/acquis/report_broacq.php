@@ -317,7 +317,7 @@ function choicePartner(row)
                 echo '<td>'.$orderman_descr." &nbsp;</td>\n";
 
 				// colonna numero documento
-				echo "<td><a class=\"btn btn-xs btn-success\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"> ".$tipodoc." n.".$r["numdoc"]."</i> &nbsp;</a></td>\n";
+				echo "<td><a class=\"btn btn-xs btn-success\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$tipodoc." n.".$r["numdoc"]." &nbsp;</a></td>\n";
 				
 				// colonna data documento
 				echo "<td>".gaz_format_date($r["datemi"])." &nbsp;</td>\n";
@@ -332,7 +332,8 @@ function choicePartner(row)
 				} else {
 					echo ' onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);"';
 				}
-				echo '>'.$status.'</a></td>';
+                echo '>'.$status.'</a>';
+                echo '&nbsp;<a class="btn btn-xs btn-warning" href="select_evaord.php?id_tes=' . $r['id_tes'] . '">Evadi</a></td>';
 
                 // colonna stampa
 				echo "<td align=\"center\">";
