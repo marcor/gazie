@@ -157,7 +157,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                 if ($r['tiprig']==1||$r['tiprig']== 90) { // se di tipo forfait e vendita cespite 
                     $importo = CalcolaImportoRigo(1, $r['prelis'], $tes['sconto']);
                 } elseif($r['tiprig']==4){ // cassa previdenziale sul database  trovo la percentuale sulla colonna provvigione
-                    $importo = round($r['prelis']*$r['provvigione']/100);
+                    $importo = round($r['prelis']*$r['provvigione']/100,2);
 				}
                 //creo il castelletto IVA
                 if (!isset($cast_vat[$r['codvat']]['impcast'])) {
