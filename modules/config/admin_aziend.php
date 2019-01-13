@@ -358,7 +358,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="capspe" class="col-sm-4 control-label"><?php echo $script_transl['capspe']; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['capspe']; ?>" name="capspe" maxlength="5"  />
+                        <input class="col-sm-8" id="search_location-capspe" type="text" value="<?php echo $form['capspe']; ?>" name="capspe" maxlength="5"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
