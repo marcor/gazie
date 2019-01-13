@@ -1043,13 +1043,13 @@ function gaz_dbi_fetch_all($resource) {
 }
 
 function gaz_die( $query, $riga, $funzione="" ) {
-    global $debug_active;
+    global $debug_active,$link;
     $edie = "";
     if ( $debug_active ) {
         $edie .= "Query error ";
         if ( $riga!="" ) $edie .= "-r".$riga." ";
         if ( $funzione!="" ) $edie .= "funzione ".$funzione." ";
-        $edie .= " : '".$query."' "; 
+        $edie .= " : '".$query."' ". mysqli_error($link); 
     } else {
         $edie = "Query error";
     }

@@ -23,9 +23,12 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFN','TD06'=>'AFA');
+$magazz = new magazzForm;
+$docOperat = $magazz->getOperators();
 $toDo = 'upload';
 $f_ex=false; // visualizza file
 function removeSignature($string, $filename) {
@@ -507,9 +510,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
 			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
 			$form['numfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
+			$form['numdoc']=$form['numfat'];
 			$form['datfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+			$form['datemi']=$form['datfat'];
 			$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
 			$form['datreg']=gaz_format_date($form['datreg'],true);
+			$form['caumag']=$magazz->get_codice_caumag(1,1,$docOperat[$form['tipdoc']]);
             tesdocInsert($form);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();

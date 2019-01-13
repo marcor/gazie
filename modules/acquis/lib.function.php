@@ -102,6 +102,8 @@ class acquisForm extends GAzieForm {
       $acc .= '<select id="'.$name.'" name="'.$name.'" class="'.$class.'">';
       $acc .= '<option value="" style="background-color:#5bc0de;">NON IN MAGAZZINO</option>';
       $acc .= '<option value="Insert_New" style="background-color:#f0ad4e;">INSERISCI COME NUOVO</option>';
+      $acc .= '<option value="Insert_W-lot" style="background-color:#adf04e;">INSERISCI NUOVO C/LOTTO</option>';
+      $acc .= '<option value="Insert_W-matr" style="background-color:#f04ead;">INSERISCI NUOVO C/MATRICOLA</option>';
       $result = gaz_dbi_query($query);
       while ($r = gaz_dbi_fetch_array($result)) {
           $selected = '';
