@@ -68,7 +68,7 @@ function databaseIsOk() {
 function gaz_dbi_query($query, $ar = false) {
    global $link;
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die( "Query error - r71 funzione gaz_dbi_query : '".$query."'" );
    if ($ar) {
       return mysqli_affected_rows($link);
    } else {
@@ -165,7 +165,7 @@ function gaz_dbi_get_fields_meta($result) {
 function gaz_dbi_get_row($table, $fnm, $fval, $cell="*", $other="") {
    global $link;
    $result = mysqli_query($link, "SELECT $cell FROM $table WHERE $fnm = '$fval' $other");
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r168 funzione gaz_dbi_get_row : '".$query."'");
    if ($cell != "*") {
       $row = mysqli_fetch_array($result);
       return $row[$cell];
@@ -176,9 +176,9 @@ function gaz_dbi_get_row($table, $fnm, $fval, $cell="*", $other="") {
 
 function gaz_dbi_get_single_value($table, $campo, $where) {
    global $link;
-   $result = mysqli_query($link, "SELECT $campo FROM $table WHERE $where");
-   if (!$result)
-      die("Query error");
+   $query = "SELECT $campo FROM $table WHERE $where";
+   $result = mysqli_query($link, $query);
+   if (!$result) die("Query error - r181 funzione gaz_dbi_get_single_value : '".$query."'");
    $ris = mysqli_fetch_array($result, MYSQLI_NUM);
    $rn = mysqli_num_rows($result);
    if ($rn == 1) {
@@ -220,20 +220,21 @@ function gaz_dbi_put_row($table, $CampoCond, $ValoreCond, $Campo, $Valore) {
    }
    $query .= $where . ' LIMIT 1';
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r223 funzione ".__FUNCTION__." : '".$query."'");
    return $result;
 }
 
 function gaz_dbi_put_query($table, $where, $Campo, $Valore) {
    global $link;
    $result = mysqli_query($link, "UPDATE $table SET $Campo='$Valore' WHERE $where");
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r230 funzione ".__FUNCTION__." : '".$query."'");
 }
 
 function gaz_dbi_del_row($table, $fname, $fval) {
    global $link;
-   $result = mysqli_query($link, "DELETE FROM $table WHERE $fname = '$fval'") or die(" Errore di cancellazione: " . mysqli_error($link));
-   if (!$result) die("Query error");
+   $query = "DELETE FROM $table WHERE $fname = '$fval'";
+   $result = mysqli_query($link, $query) or die(" Errore di cancellazione: " . mysqli_error($link));
+   if (!$result) die("Query error - r237 funzione ".__FUNCTION__." : '".$query."'");
 }
 
 // restituisce l'id dell'ultimo insert
@@ -273,7 +274,7 @@ function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit =
    //msgDebug($query);
 
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r277 funzione ".__FUNCTION__." : '".$query."'");
    return $result;
 }
 
@@ -349,7 +350,7 @@ function gaz_dbi_get_anagra($table, $fnm, $fval) {
    }
    $query = "SELECT $fields, " . $gTables['clfoco'] . ".* FROM $table WHERE $fnm = '$fval'";
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r353 funzione ".__FUNCTION__." : '".$query."'");
    return mysqli_fetch_array($result);
 }
 
@@ -389,7 +390,7 @@ function gaz_dbi_query_anagra($select, $tabella, $where, $orderby, $limit = 0, $
    //msgDebug($query);
 
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r393 funzione ".__FUNCTION__." : '".$query."'");
    return $result;
 }
 
@@ -527,7 +528,7 @@ function gaz_dbi_table_insert($table, $value) {
    }
    $query = "INSERT INTO " . $gTables[$table] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r531 funzione ".__FUNCTION__." : '".$query."'");
 }
 
 function gaz_dbi_table_update($table, $id, $newValue) {
@@ -575,7 +576,7 @@ function gaz_dbi_table_update($table, $id, $newValue) {
    }
    //msgDebug($query);
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r579 funzione ".__FUNCTION__." : '".$query."'");
 }
 
 // funzione gaz_aes_value_anagra
@@ -678,7 +679,7 @@ function gaz_dbi_insert_anagra($value) {
    }
    $query = "INSERT INTO " . $gTables['anagra'] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r682 funzione ".__FUNCTION__." : '".$query."'");
 }
 
 function gaz_dbi_update_anagra($id, $newValue) {
@@ -735,7 +736,7 @@ function gaz_dbi_update_anagra($id, $newValue) {
    }
    //msgDebug($query);
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r738 funzione ".__FUNCTION__." : '".$query."'");
 }
 
 function tableInsert($table, $columns, $newValue) {
@@ -751,7 +752,7 @@ function tableInsert($table, $columns, $newValue) {
    }
    $query = "INSERT INTO " . $gTables[$table] . " ( " . $colName . " ) VALUES ( " . $colValue . ")";
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r754 funzione ".__FUNCTION__." : '".$query."'");
    return mysqli_insert_id($link);
 }
 
@@ -778,13 +779,13 @@ function tableUpdate($table, $columns, $codice, $newValue) {
    }
    //msgDebug($query);
    $result = mysqli_query($link, $query);
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r782 funzione ".__FUNCTION__." : '".$query."'");
 }
 
 function mergeTable($table1, $campi1, $table2, $campi2, $campomerge, $where) {
    global $link;
    $result = mysqli_query($link, "SELECT $campi1 FROM $table1 LEFT JOIN $table2 ON $table1.$campomerge = $table2.$campomerge WHERE $where");
-   if (!$result) die("Query error");
+   if (!$result) die("Query error - r788 funzione ".__FUNCTION__." : '".$query."'");
    return $result;
 }
 
@@ -955,7 +956,7 @@ function updateAccessRights($adminid, $moduleid, $access, $company_id = 1) {
               " SET access=" . $access .
               " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id;
    }
-   $result = mysqli_query($link, $query) or die("Query error");
+   $result = mysqli_query($link, $query) or die("Query error - r959 funzione ".__FUNCTION__." : '".$query."'");
 }
 
 function getAccessRights($userid = '', $company_id = 1) {
@@ -1009,7 +1010,7 @@ function getAccessRights($userid = '', $company_id = 1) {
 						 m2_id,
 						 m3.weight';
    }
-   $result = mysqli_query($link, $query) or die("Query error");
+   $result = mysqli_query($link, $query) or die("Query error - r1013 funzione ".__FUNCTION__." : '".$query."'");
    return $result;
 }
 
@@ -1025,7 +1026,7 @@ function checkAccessRights($adminid, $module, $company_id = 0) {
               ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
               " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "' AND am.company_id = $company_id ";
    }
-   $result = mysqli_query($link, $query) or die("Query error");
+   $result = mysqli_query($link, $query) or die("Query error - r1029 funzione ".__FUNCTION__." : '".$query."'");
    if (gaz_dbi_num_rows($result) < 1) {
       return 0;
    }
