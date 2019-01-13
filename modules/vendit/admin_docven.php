@@ -117,6 +117,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 }
 
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
@@ -641,15 +642,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
                     $i++;
                 }
-                //qualora i nuovi righi fossero di piè dei vecchi inserisco l'eccedenza
+                //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
                     rigdocInsert($form['rows'][$i]);
                     if ($admin_aziend['conmag'] == 2 &&
                             $form['rows'][$i]['tiprig'] == 0 &&
-                            $form['rows'][$i]['gooser'] == 0 &&
+                            $form['rows'][$i]['gooser'] != 1 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        if ( $show_artico_composit["val"]==0 || $form['rows'][$i+1]['tiprig']!=210 ) {                                                    
+                        if ( $tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210 ) {                                                    
                             $upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
                         }
                     }
@@ -781,9 +782,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
                     if ($admin_aziend['conmag'] == 2 &&
                             $form['rows'][$i]['tiprig'] == 0 &&
-                            $form['rows'][$i]['gooser'] == 0 &&
+                            $form['rows'][$i]['gooser'] != 1 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        if ( $show_artico_composit["val"]==0 || $form['rows'][$i+1]['tiprig']!=210 ) {
+                        if ( $tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210 ) {
                             $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
                         }
                     }
@@ -1228,7 +1229,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						$form['rows'][$nr]['ritenuta'] = $admin_aziend['ritenuta'];
 					}
                 }
-                if ($artico['good_or_service']==2 ) {
+                if ($artico['good_or_service']==2 && $tipo_composti['val']=="KIT" ) {
                     $whe_dis = "codice_composizione = '".$form['in_codart']."'";
                     $res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
                     while ($row = gaz_dbi_fetch_array($res_dis)) {
@@ -2211,7 +2212,7 @@ foreach ($form['rows'] as $k => $v) {
     switch ($v['tiprig']) {
         case "0":
             echo '<tr>';
-            if ($v['gooser']>0){ 
+            if ($v['gooser']==1){ 
 				$btn_class = 'btn-info';
 				$btn_title = ' Servizio';
 			} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
@@ -2597,7 +2598,7 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "210":  // nel caso di articoli composti li visualizzo nel documento per poter inserire la seconda quantità contattare andrea
-            if ( $show_artico_composit['val']=="1" ) {    
+            if ( $show_artico_composit['val']=="1" && $tipo_composti['val']=="KIT") {    
                 echo "	<td>&nbsp;</td>
                 <td title=\"".$script_transl['update'] . $script_transl['thisrow'] . '! ' .  $btn_title . "\">
                     <button name=\"upd_row[' . $k . ']\" class=\"btn btn-xs btn-default btn-block\" type=\"submit\">
@@ -2664,7 +2665,7 @@ foreach ($form['rows'] as $k => $v) {
 
     /** ENRICO FEDELE */
     /* glyph icon */
-    if ( $v['tiprig']!="210" || $show_artico_composit['val']=="1" ) { 
+    if ( $v['tiprig']!="210" || $show_artico_composit['val']=="1" && $tipo_composti['val']=="KIT" ) { 
         echo '<td align="right">
 		     <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
 		   </td>';
