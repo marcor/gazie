@@ -28,7 +28,7 @@ $admin_aziend = checkAdmin();
 $msgtoast = "";
 $msg = "";
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
-
+$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 function getDayNameFromDayNumber($day_number) {
     return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19 + $day_number, 2017))));
 }
@@ -743,7 +743,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $magval = array_pop($mv);
                 $form['rows'][$next_row]['scorta'] = $artico['scorta'];
                 $form['rows'][$next_row]['quamag'] = $magval['q_g'];
-                if ($artico['good_or_service']==2 ) {
+                if ($artico['good_or_service']==2 and $tipo_composti['val']=="KIT") {
                     $whe_dis = "codice_composizione = '".$form['in_codart']."'";
                     $res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
                     while ($row_dis = gaz_dbi_fetch_array($res_dis)) {
@@ -1479,7 +1479,7 @@ $rit = 0;
 $carry = 0;
 
 $last_row = array();
-//$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+
 foreach ($form['rows'] as $k => $v) {
     //creo il castelletto IVA
     $imprig = 0;
@@ -1713,7 +1713,7 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "210":  // serve per gli articoli composti contattare andrea
-            if ( $show_artico_composit['val']=="1" ) {
+            if ( $show_artico_composit['val']=="1" && $tipo_composti['val']=="KIT") {
                 if ($v['scorta'] < 0) {
                     //$scorta_col = 'FacetDataTDsmallRed';
                     $btn_class = 'btn-danger';
