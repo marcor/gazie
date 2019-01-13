@@ -315,11 +315,12 @@ class DocContabVars {
 			$checklot=gaz_dbi_get_row($this->gTables['movmag'],'id_mov',$rigo['id_mag']);
 			if (strlen ($checklot['id_lotmag'])>0){
 				$getlot=gaz_dbi_get_row($this->gTables['lotmag'],'id',$checklot['id_lotmag']);
-				if (intval ($getlot['expiry'])<=0){
-					$getlot['expiry']="";
-				}
 				if (isset ($getlot['identifier']) && strlen ($getlot['identifier'])>0){
-					$rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier']." ".$getlot['expiry'];
+					if (intval ($getlot['expiry'])>0){ 
+						$rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier']." ".gaz_format_date($getlot['expiry']);
+					} else {
+						$rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier'];
+					}
 				}
 			}
 			// fine se c'è lotto
