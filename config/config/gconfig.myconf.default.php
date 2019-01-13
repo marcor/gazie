@@ -156,4 +156,7 @@ define('MY_SET_DYNAMIC_IP','');
 
 // abilita il debug delle variabili nel footer della pagina (impostare true/false)
 define('debug_active', FALSE);
+
+// permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
+define('modifica_fatture_ddt', FALSE);
 ?>

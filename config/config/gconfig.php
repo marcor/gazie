@@ -171,6 +171,6 @@ define('SET_DYNAMIC_IP', (defined('MY_SET_DYNAMIC_IP')) ? MY_SET_DYNAMIC_IP : ''
 $debug_active = (defined('debug_active')) ? debug_active : FALSE;
 
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
-$modifica_fatture_ddt = false;
+$modifica_fatture_ddt = (defined('modifica_fatture_ddt')) ? modifica_fatture_ddt : FALSE;
 
 ?>
