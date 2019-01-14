@@ -325,15 +325,13 @@ function gaz_set_time_limit($time) {
 }
 
 function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
-	if ($sconto==""){
-		$sconto=0.00;
-	}
+
     if (is_array($sconto)) {
         $res = 1;
         foreach ($sconto as $val) {
-			if ($val>0){
+
             $res -= $res * $val / 100;
-			}
+			
         }
         $res = 1 - $res;
     } else {
