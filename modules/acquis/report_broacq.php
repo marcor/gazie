@@ -126,7 +126,7 @@ function confirmemail(cod_partner,id_tes,genorder=false) {
 		show: "blind",
 		hide: "explode",
 		buttons: {
-			Invia: function() {
+			Conferma: function() {
 				if ( !( emailRegex.test( $("#mailaddress").val() ) ) && !genorder ) {
 					alert('Mail formalmente errata');
 				} else {
@@ -263,7 +263,7 @@ function choicePartner(row)
 					$status='Ordina';	
 					if ($rs_parent && $rs_parent["tipdoc"] == 'APR') { // il genitore è pure un preventivo
 					} elseif ($rs_parent && $rs_parent["tipdoc"] == 'AOR') { // è stato generato un ordine  
-						$clastatus='warning';	
+						$clastatus='success';	
 						$status='Ordinato con n.'.$rs_parent["numdoc"];
 						$linkstatus='stampa_ordfor?id_tes='.$rs_parent["id_tes"];	
 					}				
@@ -271,11 +271,17 @@ function choicePartner(row)
                     $modulo="stampa_prefor.php?id_tes=".$r['id_tes'];
                     $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
                 } elseif ($r["tipdoc"] == 'AOR') {
+					$linkstatus='stampa_ordfor?id_tes='.$r['id_tes'];	
 					$rs_parent = gaz_dbi_get_row($gTables["tesbro"],'id_tes',$r['id_parent_doc']);
-					$clastatus='success';	
-					$status='Ordinato';	
+					if (strlen($r['email'])>8){
+						$clastatus='success';	
+						$status='Inviato';	
+					} else {
+						$clastatus='warning';	
+						$status='Inserito';	
+					}
 					if ($rs_parent && $rs_parent["tipdoc"] == 'APR') { // il genitore è un preventivo
-						$status .= '(prev.n.'.$rs_parent["numdoc"].')';
+						$status .= '( da prev.n.'.$rs_parent["numdoc"].')';
 					}				
                     $tipodoc="Ordine";
                     $modulo="stampa_ordfor.php?id_tes=".$r['id_tes'];
@@ -327,13 +333,14 @@ function choicePartner(row)
 
 				// colonna bottone cambia stato	
 				echo '<td><a class="btn btn-xs btn-'.$clastatus.'"';
-				if ($linkstatus){
-					echo ' href="'.$linkstatus.'"'; 
-				} else {
-					echo ' onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);"';
+				if ($clastatus=='warning'){ // Ordine non confermato
+					echo ' onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);" title="Invia mail di conferma"';
+				}elseif($clastatus=='info'){ // Preventivo: chiedo generazione ordine 
+					echo ' onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);" title="Genera un ordine da questo preventivo"';
+				}else{ // Ordine confermato o preventivo che ha già generato ordine, visualizzo il pdf
+					echo ' href="'.$linkstatus.'" title="Visualizza PDF"'; 
 				}
-                echo '>'.$status.'</a>';
-                echo '&nbsp;<a class="btn btn-xs btn-warning" href="select_evaord.php?id_tes=' . $r['id_tes'] . '">Evadi</a></td>';
+                echo '>'.$status.'</a></td>';
 
                 // colonna stampa
 				echo "<td align=\"center\">";
