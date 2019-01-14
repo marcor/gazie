@@ -40,7 +40,7 @@
                     ?>
                     <div style="padding-bottom: 25px;" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                        <input id="user_name" type="text" name="user_name" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_USERNAME; ?>" value="<?php echo $default_user; ?>"						/>
+                        <input id="user_name" type="text" name="user_name" required class="form-control" style="height: 34px;" placeholder="<?php echo WORDING_USERNAME; ?>" value="<?php echo $default_user; ?>" />
                     </div>
 
                     <div style="padding-bottom: 25px;" class="input-group">
