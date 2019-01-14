@@ -27,6 +27,7 @@ require("../../library/include/datlib.inc.php");
 // m1 Modificato a mano
  function serchCOD()
    {
+	global $gTables;
     $max_codice = gaz_dbi_query("select max(codice) from ".$gTables['artico']);
     $max_cod = gaz_dbi_fetch_array($max_codice);
     return ++$max_cod[0];
@@ -43,6 +44,7 @@ require("../../library/include/datlib.inc.php");
   
   function serchEAN()
    {
+	global $gTables;
     $max_barcode = gaz_dbi_query("select max(barcode) from ".$gTables['artico']." where barcode like '3333333%';");
     $max_barcode = gaz_dbi_fetch_array($max_barcode);
 	if ($max_barcode[0] == null) $max_barcode[0] ='3333333000000';
@@ -390,7 +392,8 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" maxlength="15" /> 
+                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" maxlength="15" />
+							&nbsp;<input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>></td> <!-- M1 modificato a mano -->
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -437,6 +440,7 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="barcode" class="col-sm-4 control-label"><?php echo $script_transl['barcode']; ?></label>
                             <input class="col-sm-4" type="text" value="<?php echo (isset($_POST['EAN']))? serchEAN():$form["barcode"]; ?>" name="barcode" maxlength="13" />
+                        &nbsp;<input type="submit" name="EAN" value="Genera EAN13">
 						</div>
                     </div>
                 </div><!-- chiude row  -->
