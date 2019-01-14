@@ -50,7 +50,7 @@ class OrdineFornitore extends Template
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->Ln(4);
-        $this->SetFont('helvetica','',9);
+        $this->SetFont('helvetica','',8);
 	    $this->Cell(127,6,'Descrizione',1,0,'L',1); //M1 modifocato a mano
         $this->Cell(7, 6,'U.m.',1,0,'C',1);
         $this->Cell(14,6,'Quantità',1,0,'R',1); // M1 Modificato a mano
@@ -76,7 +76,7 @@ class OrdineFornitore extends Template
                 $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
                 $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
-                $this->SetFont('helvetica', '', 9);
+                $this->SetFont('helvetica', '', 8);
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
             }
@@ -85,7 +85,7 @@ class OrdineFornitore extends Template
 				$this->SetFont('helvetica', 'B', 9);
 				$this->Ln(1);
 				$this->Cell(188, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  substr($rigo['orderman_data']['datemi'],0,4), 1, 1, 'L');
-				$this->SetFont('helvetica', '', 9);
+				$this->SetFont('helvetica', '', 8);
 			}
                 switch($rigo['tiprig']) {
                 case "0":
@@ -158,7 +158,7 @@ class OrdineFornitore extends Template
                 case "1":
                     $this->Cell(127, 6, $rigo['descri'],'LBR',0,'L');
                     $this->Cell(46,6,'','B',0,'L');
-                    $this->Cell(15, 6, gaz_format_number($rigo['importo']),1,1,'R');
+                    $this->Cell(15, 6, gaz_format_number($rigo['importo']),1,1,'R',0,'',1);
                     break;
                 case "2":
                     $this->Cell(127,6,$rigo['descri'],'LR',0,'L'); // Modificato a mano
@@ -178,7 +178,7 @@ class OrdineFornitore extends Template
                     $this->Cell(27, 6, $file['file'],1,0,'L',0,'',1);
                     $this->Cell(100, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
                     if ($rigo['prelis'] > 0) {
                        $this->Cell(17, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
                     } else {
@@ -190,11 +190,12 @@ class OrdineFornitore extends Template
                        $this->Cell(8, 6, '',1);
                     }
                     if ($rigo['importo'] > 0) {
-                       $this->Cell(15, 6, gaz_format_number($rigo['importo']),1,0,'R');
+                       $this->Cell(15, 6, gaz_format_number($rigo['importo']),1,0,'R',0,'',1);
                     } else {
                        $this->Cell(15, 6, '',1);
                     }
 					$this->Ln();
+					$this->tot_rp +=$rigo['quanti'];
                     break;
                 case "51":
 					// accumulo il file da allegare e lo indico al posto del codice articolo
@@ -225,7 +226,7 @@ class OrdineFornitore extends Template
         $this->SetFont('helvetica','I',11);
         $this->Cell(186,8,'Ogni modifica ai dati soprariportati dev\'essere preventivamente autorizzata.','T',1);
         //stampo il castelletto
-        $this->SetFont('helvetica', '', 9);
+        $this->SetFont('helvetica', '', 8);
         $this->SetY(218);
         $this->Cell(63,6, 'Pagamento','LTR',0,'C',1);
         $this->Cell(68,6, 'Castelletto    I.V.A.','LTR',0,'C',1);

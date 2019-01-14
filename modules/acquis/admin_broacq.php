@@ -1257,7 +1257,7 @@ foreach ($form['righi'] as $key => $value) {
 			</div>
 		     </div>
               </div>' . "</td>\n";
-            echo "<td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"1000\" size=\"50\" class=\"col-lg-12\" /></td>\n";
             echo '<td>
 						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="righi[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" size="1" />
 					  </td>

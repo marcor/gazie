@@ -22,8 +22,6 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-
-
 require('template.php');
 
 class OrdineAcquistoProduzioni extends Template
@@ -45,7 +43,7 @@ class OrdineAcquistoProduzioni extends Template
         $this->Ln(4);
         $this->SetFont('helvetica','',12);
         $this->Cell(186,8,'Promemoria ordine d\'acquisto per reparto produzioni:',0,1);
-        $this->SetFont('helvetica','',9);
+        $this->SetFont('helvetica','',8);
 	    $this->Cell(125,6,'Descrizione',1,0,'L',1); //M1 modifocato a mano
         $this->Cell(7, 6,'U.m.',1,0,'C',1);
         $this->Cell(14,6,'Quantità',1,0,'R',1); // M1 Modificato a mano
@@ -71,7 +69,7 @@ class OrdineAcquistoProduzioni extends Template
                 $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
                 $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
-                $this->SetFont('helvetica', '', 9);
+                $this->SetFont('helvetica', '', 8);
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
             }
@@ -80,7 +78,7 @@ class OrdineAcquistoProduzioni extends Template
 				$this->SetFont('helvetica', 'B', 9);
 				$this->Ln(1);
 				$this->Cell(186, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  $rigo['orderman_descri'], 1, 1, 'L');
-				$this->SetFont('helvetica', '', 9);
+				$this->SetFont('helvetica', '', 8);
 			}
 			switch($rigo['tiprig']) {
                 case "0":
@@ -132,7 +130,7 @@ class OrdineAcquistoProduzioni extends Template
 					$this->Cell(20, 6, $pcs,'RTB',1,'L',0,'',1);
 					$this->Cell(125, 6, $rigo['codart'].$rigo['codice_fornitore'].$rigo['quality'].$res_ps ,'LRB',0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
                     $this->Cell(40, 6, '',1,1);
                     break;
                 case "1":
@@ -159,8 +157,9 @@ class OrdineAcquistoProduzioni extends Template
                     $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
                     $this->Cell(100, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
                     $this->Cell(40, 6, '',1,1);
+					$this->tot_rp +=$rigo['quanti'];
                     break;
                 case "51":
 					// accumulo il file da allegare e lo indico al posto del codice articolo
