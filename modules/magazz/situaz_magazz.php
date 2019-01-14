@@ -77,14 +77,12 @@ $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show
 
             $linkHeaders = new linkHeaders($headers_artico);
             $gForm = new magazzForm();
-            //composite_mag non permette di visualizzare i composti
-            if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'composite_mag')['val']==0) {
-                if ( $show_artico_composit["val"]==1 ) {
-                    $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 2 and ". $where, $orderby, $limit, $passo);
-                } else {
-                    $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1 and ". $where, $orderby, $limit, $passo);
-                }
-            } else {
+			$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+			$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
+            // Antonio Germani -  se siamo in composti STD si prendono anche gli articoli composti
+            if ( $tipo_composti['val']=="STD") {
+                $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1 and ". $where, $orderby, $limit, $passo);               
+            } else { // se siamo in composti KIT si prendono solo gli articoli normali
                 $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0 and ". $where, $orderby, $limit, $passo);
             }
             echo '<tr>'. $linkHeaders->output() .'</tr>';
