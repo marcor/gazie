@@ -265,13 +265,13 @@ function choicePartner(row)
 					} elseif ($rs_parent && $rs_parent["tipdoc"] == 'AOR') { // è stato generato un ordine  
 						$clastatus='success';	
 						$status='Ordinato con n.'.$rs_parent["numdoc"];
-						$linkstatus='stampa_ordfor?id_tes='.$rs_parent["id_tes"];	
+						$linkstatus='stampa_ordfor.php?id_tes='.$rs_parent["id_tes"];	
 					}				
                     $tipodoc="Preventivo";
                     $modulo="stampa_prefor.php?id_tes=".$r['id_tes'];
                     $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
                 } elseif ($r["tipdoc"] == 'AOR') {
-					$linkstatus='stampa_ordfor?id_tes='.$r['id_tes'];	
+					$linkstatus='stampa_ordfor.php?id_tes='.$r['id_tes'];	
 					$rs_parent = gaz_dbi_get_row($gTables["tesbro"],'id_tes',$r['id_parent_doc']);
 					if (strlen($r['email'])>8){
 						$clastatus='success';	
