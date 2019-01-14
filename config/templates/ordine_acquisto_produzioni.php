@@ -84,6 +84,7 @@ class OrdineAcquistoProduzioni extends Template
 			}
 			switch($rigo['tiprig']) {
                 case "0":
+					$ctrldim=0;
 					$rp=0.000;	
 					$dim='';
 					$pcs='';
@@ -91,21 +92,23 @@ class OrdineAcquistoProduzioni extends Template
 					$rigo['quality']=(!empty(trim($rigo['quality'])))? ' Qualità: '.$rigo['quality']:''; 
 					$rigo['codart']=(!empty(trim($rigo['codart'])))? ' Cod:'.$rigo['codart']:''; 
 					$rigo['codice_fornitore']=(!empty(trim($rigo['codice_fornitore'])))? ' Vs.Cod:'.$rigo['codice_fornitore']:''; 
-
                     if ($rigo['pezzi'] > 0 ) {
 						$res_ps='kg/pz';
 						if ($rigo['lunghezza'] >= 0.001) { 
 							$rp=$rigo['lunghezza']*$rigo['pezzi']/10**3;
 							$res_ps='kg/m';	
 							$dim .= floatval($rigo['lunghezza']); 
+							$ctrldim+=$rigo['lunghezza'];
 							if ($rigo['larghezza'] >= 0.001) { 
 								$rp=$rigo['larghezza']*$rp/10**3;
 								$res_ps='kg/m²';	
 								$dim .= 'x'.floatval($rigo['larghezza']); 
+								$ctrldim+=$rigo['larghezza'];
 								if ($rigo['spessore'] >= 0.001) { 
 									$rp=$rigo['spessore']*$rp;
 									$res_ps='kg/l';	
 									$dim .= 'x'.floatval($rigo['spessore']); 
+									$ctrldim+=$rigo['spessore'];
 								}
 							}
 						}
@@ -121,7 +124,11 @@ class OrdineAcquistoProduzioni extends Template
 							$this->tot_rp +=$rigo['quanti'];
 						}
 					}
-					$this->Cell(105, 6, $rigo['descri'].' Dimensioni:'.$dim,'LTR',0,'L',0,'',1);
+					if ($ctrldim>0.0001){
+						$this->Cell(105, 6, $rigo['descri'].' Dimensioni:'.$dim,'LTR',0,'L',0,'',1);
+					}else{
+						$this->Cell(105, 6, $rigo['descri'],'LTR',0,'L',0,'',1);
+					}
 					$this->Cell(20, 6, $pcs,'RTB',1,'L',0,'',1);
 					$this->Cell(125, 6, $rigo['codart'].$rigo['codice_fornitore'].$rigo['quality'].$res_ps ,'LRB',0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
@@ -251,7 +258,6 @@ class OrdineAcquistoProduzioni extends Template
 		
 		if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
 			$this->print_header = false;
-			$this->print_footer = false;
 			$this->extdoc_acc=$this->docVars->ExternalDoc;
             reset($this->extdoc_acc);
 			foreach ($this->extdoc_acc AS $key => $rigo) {
@@ -264,27 +270,28 @@ class OrdineAcquistoProduzioni extends Template
                             $this->_tplIdx = $this->importPage($i);
                             $specs = $this->getTemplateSize($this->_tplIdx);
                             $this->AddPage($specs['h'] > $specs['w'] ? 'P' : 'L');
+							$this->print_footer = false;
                             $this->useTemplate($this->_tplIdx);
                             $this->SetXY(10, 0);
                             $this->Cell(190, 3,$this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc , 1, 0, 'C', 0, '', 1);
                         }
                     }
-                    $this->print_footer = false;
                 } elseif (!empty($rigo['ext'])) {
                     list($w, $h) = getimagesize('../../data/files/' . $rigo['file']);
 					$this->SetAutoPageBreak(false, 0);
                     if ($w > $h) { //landscape
                         $this->AddPage('L');
+						$this->print_footer = false;
                         $this->SetXY(10, 0);
                         $this->Cell(280, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
 						$this->image('../../data/files/' . $rigo['file'], 5, 3,290 );
                     } else { // portrait
                         $this->AddPage('P');
+						$this->print_footer = false;
                         $this->SetXY(10, 0);
                         $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
 						$this->image('../../data/files/' . $rigo['file'], 5, 3,190 );
                     }
-                    $this->print_footer = false;
                 }
             }
 		}

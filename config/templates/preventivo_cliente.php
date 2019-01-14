@@ -72,8 +72,8 @@ class PreventivoCliente extends Template
             }
                 switch($rigo['tiprig']) {
                 case "0":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L');
+                    $this->Cell(25, 6, $rigo['codart'],1,0,'L',0,'',1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
@@ -87,20 +87,20 @@ class PreventivoCliente extends Template
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "1":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L');
+                    $this->Cell(25, 6, $rigo['codart'],1,0,'L',0,'',1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(49, 6, '',1);
                     $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "2":
                     $this->Cell(25,6,'','L');
-                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L');
+                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L',0,'',1);
                     $this->Cell(81,6,'','R',1);
                     break;
                 case "3":
                     $this->Cell(25,6,'',1,0,'L');
-                    $this->Cell(80,6,$rigo['descri'],'B',0,'L');
+                    $this->Cell(80,6,$rigo['descri'],'B',0,'L',0,'',1);
                     $this->Cell(49,6,'','B',0,'L');
                     $this->Cell(20,6,gaz_format_number($rigo['prelis']),1,0,'R');
                     $this->Cell(12,6,'',1,1,'R');
@@ -164,18 +164,26 @@ class PreventivoCliente extends Template
         $this->Cell(36, 6,'Tot.Imponibile',1,0,'C',1);
         $this->Cell(26, 6,'Tot. I.V.A.',1,0,'C',1);
         $this->Cell(22, 6,'Peso in kg',1,1,'C',1);
+		if ( $this->tesdoc['print_total']>0){
+			$this->Cell(36, 6, gaz_format_number($totimpmer),1,0,'C');
+			$this->Cell(16, 6, gaz_format_number($this->tesdoc['sconto']),1,0,'C');
+			$this->Cell(24, 6, gaz_format_number($speseincasso),1,0,'C');
+			$this->Cell(26, 6, gaz_format_number($this->tesdoc['traspo']),1,0,'C');
+			$this->Cell(36, 6, gaz_format_number($totimpfat),1,0,'C');
+			$this->Cell(26, 6, gaz_format_number($totivafat),1,0,'C');
+			$this->Cell(22, 6, '',1,0,'C');
+		} else {
+			$this->Cell(186, 6, '',1);
+		}
 
-        $this->Cell(36, 6, gaz_format_number($totimpmer),1,0,'C');
-        $this->Cell(16, 6, gaz_format_number($this->tesdoc['sconto']),1,0,'C');
-        $this->Cell(24, 6, gaz_format_number($speseincasso),1,0,'C');
-        $this->Cell(26, 6, gaz_format_number($this->tesdoc['traspo']),1,0,'C');
-        $this->Cell(36, 6, gaz_format_number($totimpfat),1,0,'C');
-        $this->Cell(26, 6, gaz_format_number($totivafat),1,0,'C');
-        $this->Cell(22, 6, '',1,0,'C');
         $this->SetY(218);
         $this->Cell(130);
         $this->SetFont('helvetica','B',18);
-        $this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol+$taxstamp), 1, 1, 'C');
+		if ( $this->tesdoc['print_total']>0){
+			$this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol+$taxstamp), 1, 1, 'C');
+        } else {
+			$this->Cell(56, 24, '',1);
+		}
         $this->SetY(224);
         $this->SetFont('helvetica','',9);
         $this->Cell(62, 6,'Spedizione',1,1,'C',1);
