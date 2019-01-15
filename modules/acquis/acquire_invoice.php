@@ -557,21 +557,25 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				} else { // il codice nuovo ricavato non esiste creo l'articolobasandomi sui dati in fattura
 					switch ($v["codart"]) {
 						case "Insert_New": // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
-						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'preacq'=>$v['prelis'],'uniacq'=>$v['unimis'],'clfoco'=>$form['clfoco']);
+						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
 						break;
 						case "Insert_W-lot": // inserisco il nuovo articolo in gaz_XXXartico con lotti
-						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'preacq'=>$v['prelis'],'uniacq'=>$v['unimis'],'clfoco'=>$form['clfoco']);
+						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
 						break;
 						case "Insert_W-matr": //  inserisco il nuovo articolo in gaz_XXXartico con matricola
-						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'preacq'=>$v['prelis'],'uniacq'=>$v['unimis'],'clfoco'=>$form['clfoco']);
+						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
 						break;
 					}
+				}
+				// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'articolo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
+				if(strlen($form['rows'][$i]['codart'])>2&&$form['rows'][$i]['tiprig']==0){
+					tableUpdate('artico',array('clfoco','preacq'),$form['rows'][$i]['codart'],array('preacq'=>CalcolaImportoRigo(1,$form['rows'][$i]['prelis'],array($form['rows'][$i]['sconto'])),'clfoco'=>$form['clfoco']));
 				}
                 rigdocInsert($form['rows'][$i]);
 			}
