@@ -1305,6 +1305,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             echo "<input type=\"hidden\" name=\"hiddentot\" value=\"$total_order\">\n";
             echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">&nbsp;</td>\n";
             echo "<td align=\"right\" colspan=\"6\" class=\"FacetFieldCaptionTD\">\n";
+			echo "<input type=\"submit\" name=\"vri\" value=\"" . $script_transl['issue_vri'] . "\" accesskey=\"m\" />\n";
             echo "<input type=\"submit\" name=\"cmr\" value=\"" . $script_transl['issue_cmr'] . "\" accesskey=\"m\" />\n";
             echo "<input type=\"submit\" name=\"ddt\" value=\"" . $script_transl['issue_ddt'] . "\" accesskey=\"d\" />\n";
             echo "<input type=\"submit\" name=\"fai\" value=\"" . $script_transl['issue_fat'] . "\" accesskey=\"f\" />\n";

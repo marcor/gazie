@@ -1325,6 +1325,7 @@ $strScript = array("admin_client.php" =>
         'issue_ddt' => 'Evadi con Documento di Trasporto',
         'issue_cmr' => 'Evadi con Documento CMR',
         'issue_cor' => 'Evadi con Corrispettivo',
+		'issue_vri' => 'Evadi con Ricevuta',
         'checkbox' => 'Questa checkbox dev\'essere selezionata per evadere il rigo',
         'alert1' => '&sup1; La sezione IVA scelta non &egrave; quella<br/>normalente usata per<br/>l\'emissione delle Fatture immediate.',
         'alert2' => '&sup1; La sezione IVA selezionata potrebbe non<br/>coincidere con quella che verr&agrave; usata per<br/>l\'emissione della Fattura immediata che per<br/>Vostra scelta sar&agrave; uguale all\'ultima emessa.',
