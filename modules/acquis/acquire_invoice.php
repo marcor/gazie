@@ -69,6 +69,21 @@ function getLastProtocol($type, $year, $sezione) {
     return array('last_protoc'=>$lastProtocol + 1,'last_datreg'=>$lastDatreg);
 }
 
+function encondeFornitorePrefix($clfoco,$b=36) {
+    $num = intval(substr($clfoco,-6));
+	/* con questa funzione ricavo un prefisso di codice articolo che dipende dal codice fornitore */
+    $base = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    $r = $num % $b;
+    $res = $base[$r];
+    $q = floor($num / $b);
+    while ($q) {
+        $r = $q % $b;
+        $q = floor($q / $b);
+        $res = $base[$r] . $res;
+    }
+    return $res;
+	
+}
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
 } else { // accessi successivi  
@@ -507,6 +522,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$anagra_with_same_pi['id_anagra']=$anagra_with_same_pi['id'];
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_pi, $admin_aziend['masfor'], $form['pagame']);
 			}
+			$prefisso_codici_articoli_fornitore=encondeFornitorePrefix($form['clfoco']);// mi servirà eventualmente per attribuire ai nuovi articoli un pre-codice univoco e uguale per tutti gli articoli dello stesso fornitore
 			$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
 			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
 			$form['numfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
@@ -520,15 +536,43 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
             foreach ($form['rows'] as $i => $v) { // inserisco i righi 
+				$post_nl=$i-1;
 				if ($form['rows'][$i]['prelis']<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 					$form['rows'][$i]['tiprig']=2;
-				}			
+				}
+				// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
+				if (empty(trim($v['codice_fornitore']))){ // non ho il codeice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
+					$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);						
+				} else { // ho il codice articolo del fornitore 
+					$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
+				}
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
 				// i righi postati hanno un indice diverso
-				$post_nl=$i-1;
 				$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
 				$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
+				$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
+				if ($exist_new_codart){ // il codice esiste lo uso  
+					$form['rows'][$i]['codart']=$exist_new_codart['codice'];			
+				} else { // il codice nuovo ricavato non esiste creo l'articolobasandomi sui dati in fattura
+					switch ($v["codart"]) {
+						case "Insert_New": // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
+						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'preacq'=>$v['prelis'],'uniacq'=>$v['unimis'],'clfoco'=>$form['clfoco']);
+						gaz_dbi_table_insert('artico', $artico);
+						$form['rows'][$i]['codart'] = $new_codart;
+						break;
+						case "Insert_W-lot": // inserisco il nuovo articolo in gaz_XXXartico con lotti
+						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'preacq'=>$v['prelis'],'uniacq'=>$v['unimis'],'clfoco'=>$form['clfoco']);
+						gaz_dbi_table_insert('artico', $artico);
+						$form['rows'][$i]['codart'] = $new_codart;
+						break;
+						case "Insert_W-matr": //  inserisco il nuovo articolo in gaz_XXXartico con matricola
+						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'preacq'=>$v['prelis'],'uniacq'=>$v['unimis'],'clfoco'=>$form['clfoco']);
+						gaz_dbi_table_insert('artico', $artico);
+						$form['rows'][$i]['codart'] = $new_codart;
+						break;
+					}
+				}
                 rigdocInsert($form['rows'][$i]);
 			}
             header("Location: report_docacq.php?auxil=".$form['seziva']);
