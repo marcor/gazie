@@ -845,6 +845,177 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
         header("Location: invsta_docven.php");
         exit;
     }
+} elseif (isset($_POST['vri'])) { //conferma dell'evasione con Ricevuta
+    //cerco l'ultimo template
+    $rs_ultimo_template = gaz_dbi_dyn_query("template", $gTables['tesdoc'], "tipdoc = '' and seziva = " . $form['seziva'], "datfat DESC, protoc DESC", 0, 1);
+    $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);
+    if ($ultimo_template['template'] == 'Received') {
+        $form['template'] = "Received";
+    } else {
+        $form['template'] = "Received";
+    }
+    //controllo i campi
+    $dataemiss = $form['datemi_Y'] . "-" . $form['datemi_M'] . "-" . $form['datemi_D'];
+    $utsDataemiss = mktime(0, 0, 0, $form['datemi_M'], $form['datemi_D'], $form['datemi_Y']);
+    $iniziotrasporto = $form['initra_Y'] . "-" . $form['initra_M'] . "-" . $form['initra_D'];
+    $utsIniziotrasporto = mktime(0, 0, 0, $form['initra_M'], $form['initra_D'], $form['initra_Y']);
+    if ($form["clfoco"] < $admin_aziend['mascli'] . '000001')
+        $msg .= "0+";
+    if (!isset($form["righi"])) {
+        $msg .= "1+";
+    } else {
+        $inevasi = "";
+        foreach ($form['righi'] as $k => $v) {
+            if (isset($v['checkval']) and $v['id_doc'] == 0 and ( $v['tiprig'] == 0 or $v['tiprig'] == 1))
+                $inevasi = "ok";
+        }
+        if (empty($inevasi)) {
+            $msg .= "2+";
+        }
+    }
+    if (empty($form["pagame"]))
+        $msg .= "3+";
+    if (!checkdate($form['datemi_M'], $form['datemi_D'], $form['datemi_Y']))
+        $msg .= "4+";
+    if (!checkdate($form['initra_M'], $form['initra_D'], $form['initra_Y']))
+        $msg .= "5+";
+    if ($utsIniziotrasporto < $utsDataemiss) {
+        $msg .= "6+";
+    }
+    // controllo che la data dell'ultima fattura emessa non sia successiva a questa
+    $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'F__'  AND seziva = " . $form['seziva'], "protoc DESC", 0, 1);
+    $r = gaz_dbi_fetch_array($rs_last);
+    if ($r) {
+        $uts_last_data_emiss = gaz_format_date($r['datfat'], false, 2); // mktime
+        if ($uts_last_data_emiss > $utsDataemiss) {
+            $msg .= "10+";
+        }
+    }
+    if ($msg == "") {//procedo all'inserimento
+        require("lang." . $admin_aziend['lang'] . ".php");
+        $script_transl = $strScript['select_evaord.php'];
+        $iniziotrasporto .= " " . $form['initra_H'] . ":" . $form['initra_I'] . ":00";
+        //ricavo il progressivo del numero fattura
+        $rs_ultima_fat = gaz_dbi_dyn_query("numfat*1 AS documento", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'VRI' AND seziva = " . $form['seziva'], "documento DESC", 0, 1);
+        $ultima_fat = gaz_dbi_fetch_array($rs_ultima_fat);
+        // se e' il primo documento dell'anno, resetto il contatore
+        if ($ultima_fat) {
+            $form['numdoc'] = $ultima_fat['documento'] + 1;
+            $form['numfat'] = $form['numdoc'];
+        } else {
+            $form['numdoc'] = 1;
+            $form['numfat'] = 1;
+        }
+        //ricavo il progressivo protocollo
+        $rs_ultimo_pro = gaz_dbi_dyn_query("protoc", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'VRI' and seziva = " . $form['seziva'], "protoc DESC", 0, 1);
+        $ultimo_pro = gaz_dbi_fetch_array($rs_ultimo_pro);
+        // se e' il primo documento dell'anno, resetto il contatore
+        if ($ultimo_pro) {
+            $form['protoc'] = $ultimo_pro['protoc'] + 1;
+        } else {
+            $form['protoc'] = 1;
+        }
+        //inserisco la testata
+        $form['tipdoc'] = 'VRI';
+        $form['id_con'] = '';
+        $form['status'] = 'GENERATO';
+        $form['initra'] = $iniziotrasporto;
+        $form['datemi'] = $dataemiss;
+        $form['datfat'] = $dataemiss;
+        tesdocInsert($form);
+        //recupero l'id assegnato dall'inserimento
+        $last_id = gaz_dbi_last_id();
+        $ctrl_tes = 0;
+        foreach ($form['righi'] as $k => $v) {
+            if ($v['id_tes'] != $ctrl_tes) {  //se fa parte di un'ordine diverso dal precedente
+                //inserisco un rigo descrittivo per il riferimento all'ordine sulla fattura immediata
+                $row_descri['descri'] = "da " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . " del " . substr($v['datemi'], 8, 2) . "-" . substr($v['datemi'], 5, 2) . "-" . substr($v['datemi'], 0, 4);
+                $row_descri['id_tes'] = $last_id;
+                $row_descri['id_order'] = $v['id_tes'];
+                $row_descri['tiprig'] = 2;
+                rigdocInsert($row_descri);
+            }
+            if (isset($v['checkval'])) {   //se e' un rigo selezionato
+                //lo inserisco nella fattura immediata
+                $row = $v;
+                if ($v['quanti'] == $v['evadibile']) {
+                    unset($row['id_rig']);
+                }
+				
+				// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione articolo
+				if (intval ($form['righi'][$k]['id_lotmag'])>0){
+					if (intval ($form['righi'][$k]['expiry'])<=0){
+						$form['righi'][$k]['expiry']="";
+					}
+					$form['righi'][$k]['descri'] = $form['righi'][$k]['descri'] . " - Lot: " . $form['righi'][$k]['identifier'] . " " . $form['righi'][$k]['expiry'];
+				}
+				// fine accodo lotto
+				
+                $row['id_tes'] = $last_id;
+                $row['id_order'] = $v['id_tes'];
+                $row['quanti'] = $v['evadibile'];
+                rigdocInsert($row);
+                $last_rigdoc_id = gaz_dbi_last_id();
+                if ($v['id_body_text'] > 0) { //se è un rigo testo copio il contenuto vecchio su uno nuovo
+                    $old_body_text = gaz_dbi_get_row($gTables['body_text'], "id_body", $v['id_body_text']);
+                    bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $old_body_text['body_text']));
+                    gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
+                }
+                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $form['righi'][$k]['codart']);
+				// Antonio Germani - vedo in quale id_mov verrà registrato il prossimo movimento di magazzino
+					$query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
+                    unset($row);
+                    $result = gaz_dbi_query($query);
+                    $row = $result->fetch_assoc();
+                    $id_movmag = $row['Auto_increment'];
+					
+                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] == 0 and
+                        $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
+                    );
+                } else if ($admin_aziend['conmag'] == 2 and
+                        $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
+                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
+                }
+				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
+				if (intval($v['id_lotmag']) >0){
+					$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $v['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
+					gaz_dbi_query($query);
+				}
+				// fine inserisco id_lotmag
+				
+                //modifico il rigo dell'ordine indicandoci l'id della testata della fattura immediata
+                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
+            }
+            if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
+                //controllo se ci sono ancora righi inevasi
+                /* $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
+                  $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
+                  if (!$inevasi) {  //se non ci sono + righi da evadere
+                  //modifico lo status della testata dell'ordine solo se completamente evaso
+                  gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
+                  } */
+            }
+            if ($v['tiprig'] >= 11 && $v['tiprig'] <= 13) {
+                $row = $v;
+                unset($row['id_rig']);
+                $row['id_tes'] = $last_id;
+                rigdocInsert($row);
+            }
+            $ctrl_tes = $v['id_tes'];
+        }
+        //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
+        /* $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
+          $inevasi = "";
+          $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
+          if (!$inevasi) {  //se non ci sono + righi da evadere
+          //modifico lo status della testata dell'ordine solo se completamente evaso
+          gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
+          } */
+        $_SESSION['print_request'] = $last_id;
+        header("Location: invsta_docven.php");
+        exit;
+    }
 } elseif (isset($_POST['Return'])) {  //ritorno indietro
     header("Location: " . $_POST['ritorno']);
     exit;

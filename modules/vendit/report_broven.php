@@ -65,6 +65,11 @@ function mostra_documenti_associati($ordine) {
             echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=FatturaAllegata\">";
             echo "scontr. " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
             echo "</a> ";
+        } elseif ($tesdoc_r["tipdoc"] == "VRI") {
+            // ricevuta
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la ricevuta\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=Received\">";
+            echo "ricevuta " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
+            echo "</a> ";
         } else {
             echo $tesdoc_r["tipdoc"] . $rigbro_r["id_doc"] . " ";
         }
