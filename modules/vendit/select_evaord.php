@@ -882,8 +882,8 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
     if ($utsIniziotrasporto < $utsDataemiss) {
         $msg .= "6+";
     }
-    // controllo che la data dell'ultima fattura emessa non sia successiva a questa
-    $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'F__'  AND seziva = " . $form['seziva'], "protoc DESC", 0, 1);
+    // controllo che la data dell'ultima ricevuta emessa non sia successiva a questa
+    $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'VRI'  AND seziva = " . $form['seziva'], "protoc DESC", 0, 1);
     $r = gaz_dbi_fetch_array($rs_last);
     if ($r) {
         $uts_last_data_emiss = gaz_format_date($r['datfat'], false, 2); // mktime
@@ -895,7 +895,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
         require("lang." . $admin_aziend['lang'] . ".php");
         $script_transl = $strScript['select_evaord.php'];
         $iniziotrasporto .= " " . $form['initra_H'] . ":" . $form['initra_I'] . ":00";
-        //ricavo il progressivo del numero fattura
+        //ricavo il progressivo del numero ricevuta
         $rs_ultima_fat = gaz_dbi_dyn_query("numfat*1 AS documento", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'VRI' AND seziva = " . $form['seziva'], "documento DESC", 0, 1);
         $ultima_fat = gaz_dbi_fetch_array($rs_ultima_fat);
         // se e' il primo documento dell'anno, resetto il contatore
@@ -928,7 +928,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
         $ctrl_tes = 0;
         foreach ($form['righi'] as $k => $v) {
             if ($v['id_tes'] != $ctrl_tes) {  //se fa parte di un'ordine diverso dal precedente
-                //inserisco un rigo descrittivo per il riferimento all'ordine sulla fattura immediata
+                //inserisco un rigo descrittivo per il riferimento all'ordine sulla ricevuta
                 $row_descri['descri'] = "da " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . " del " . substr($v['datemi'], 8, 2) . "-" . substr($v['datemi'], 5, 2) . "-" . substr($v['datemi'], 0, 4);
                 $row_descri['id_tes'] = $last_id;
                 $row_descri['id_order'] = $v['id_tes'];
@@ -936,7 +936,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                 rigdocInsert($row_descri);
             }
             if (isset($v['checkval'])) {   //se e' un rigo selezionato
-                //lo inserisco nella fattura immediata
+                //lo inserisco nella ricevuta
                 $row = $v;
                 if ($v['quanti'] == $v['evadibile']) {
                     unset($row['id_rig']);
@@ -984,7 +984,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
 				}
 				// fine inserisco id_lotmag
 				
-                //modifico il rigo dell'ordine indicandoci l'id della testata della fattura immediata
+                //modifico il rigo dell'ordine indicandoci l'id della testata della ricevuta 
                 //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
             if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
