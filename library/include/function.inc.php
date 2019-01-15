@@ -329,12 +329,13 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
     if (is_array($sconto)) {
         $res = 1;
         foreach ($sconto as $val) {
-
-            $res -= $res * $val / 100;
-			
+            $res -= $res * $val / 100;	
         }
         $res = 1 - $res;
     } else {
+		if (!$sconto){
+			$sconto=0.00;
+		}
         $res = $sconto / 100;
     }
     return round($quantita * ($prezzo - $prezzo * $res), $decimal);
