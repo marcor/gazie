@@ -57,6 +57,7 @@ class DDT extends Template_con_scheda
 		}
         $this->tipdoc = $descri.$numdoc.' del '.$this->giorno.' '.$nomemese.' '.$this->anno;
         $this->descriptive_last_ddt = $this->docVars->descriptive_last_ddt;
+		$this->show_artico_composit = $this->docVars->show_artico_composit;
     }
 
     function newPage() {
@@ -176,13 +177,15 @@ class DDT extends Template_con_scheda
                     $this->Cell(35, 6, "",'L');
                     $this->Cell(117, 6, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(35,6,'','R',1);
-                } elseif ($rigo['tiprig'] == 210) {
-                    $oldy = $this->GetY();
-                    $this->SetFont('helvetica', '', 8);
-                    $this->SetY($this->GetY()-6);
-                    $this->Cell(110, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
-                    $this->SetY( $oldy );
-                    $this->SetFont('helvetica', '', 9);
+                } elseif ($rigo['tiprig'] == 210 ) {
+					if ( $this->show_artico_composit=="1" ) {
+						$oldy = $this->GetY();
+						$this->SetFont('helvetica', '', 8);
+						$this->SetY($this->GetY()-6);
+						$this->Cell(110, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
+						$this->SetY( $oldy );
+						$this->SetFont('helvetica', '', 9);
+					}
                 } elseif ($rigo['tiprig'] == 90) {
                     $this->Cell(152, 6, 'VENDITA CESPITE: ' . $rigo['codart'], 1, 0, 'L');
                     $this->Cell(25, 6, '', 1);

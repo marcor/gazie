@@ -32,6 +32,7 @@ class DocContabVars {
         $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         $this->descriptive_last_row = trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_row')['val']);
         $this->descriptive_last_ddt = gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_ddt')['val'];
+		$this->show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit')['val'];
         $this->user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
         $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
 
