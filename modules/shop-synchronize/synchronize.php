@@ -36,10 +36,8 @@
 ------------------------------------------------------------------------------------------
 */
 
-?>
-<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-<?php
 require("../../library/include/datlib.inc.php");
+
 // Prendo l'id_currency 
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
