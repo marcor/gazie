@@ -30,6 +30,8 @@ $msg = "";
 $lm = new lotmag;
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
+$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
 /**
  * carica i dati del cliente dentro $form
@@ -437,7 +439,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment'];
 					
-                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] == 0 and
+                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] != 1 and $tipo_composti['val']=="STD" and
                         $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 } else if ($admin_aziend['conmag'] == 2 and
@@ -586,7 +588,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment'];
 					
-                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] == 0 and
+                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] != 1 and $tipo_composti['val']=="STD" and
                         $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
@@ -798,7 +800,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment'];
 					
-                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] == 0 and
+                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] != 1 and $tipo_composti['val']=="STD" and
                         $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
@@ -969,7 +971,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment'];
 					
-                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] == 0 and
+                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] != 1 and $tipo_composti['val']=="STD" and
                         $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
