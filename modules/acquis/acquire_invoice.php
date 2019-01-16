@@ -537,7 +537,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             $ultimo_id = gaz_dbi_last_id();
             foreach ($form['rows'] as $i => $v) { // inserisco i righi 
 				$post_nl=$i-1;
-				if ($form['rows'][$i]['prelis']<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
+				if (abs($form['rows'][$i]['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 					$form['rows'][$i]['tiprig']=2;
 				}
 				// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
@@ -664,7 +664,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);            
 			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$form['codart_'.$k]);            
 			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
-			if ($v['prelis']<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
+			if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 				$v['codice_fornitore']='';
 				$v['unimis']='';			
 				$v['quanti']='';
