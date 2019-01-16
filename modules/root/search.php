@@ -164,10 +164,12 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
     while ($row = gaz_dbi_fetch_assoc($result)) { 
         $return_arr[] = $row;
     }
-	$return_arr = apply_evidenze($return_arr);
+
     if ($term != '%%') { //	E' indispensabile, altrimenti si possono generare warning che non fanno funzionare l'autocompletamento
         $return_arr = apply_highlight($return_arr, str_replace("%", '', $parts));
     }
+	
+	$return_arr = apply_evidenze($return_arr);
     echo json_encode($return_arr);
 } else {
     return;
