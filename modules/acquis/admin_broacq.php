@@ -1082,7 +1082,7 @@ echo '</table>
 			<tr>
 				<th class="FacetFieldCaptionTD"></th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[20] . '</th>
-				<th class="FacetFieldCaptionTD"> Codice Fornitore/Doc. </th>
+				<th class="FacetFieldCaptionTD">Cod.Forn/Qualità/Doc.</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[21] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>
@@ -1170,8 +1170,7 @@ foreach ($form['righi'] as $key => $value) {
 						</button>
 					  </td>';
 			echo '<td>
-					<input type="text" name="righi[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" />
-					<button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#quality_'.$key.'" aria-expanded="false" aria-controls="quality_'.$key.'" title="Descrizione qualità" title="Scegli la qualità del prodotto"><i class="glyphicon glyphicon-tags"></i> '.substr($value['quality'],0,10).'</button><div class="collapse" id="quality_'.$key.'">Qualità: <input id="search_quality'.$key.'" onClick="choicequality(\''.$key.'\');"  name="righi[' . $key . '][quality]" value="'. $value['quality'] .'" rigo="'. $key .'" type="text" /></div>
+					<input type="hidden" name="righi[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" />' . $value['codice_fornitore'] .'<button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#quality_'.$key.'" aria-expanded="false" aria-controls="quality_'.$key.'" title="Descrizione qualità" title="Scegli la qualità del prodotto"><i class="glyphicon glyphicon-tags"></i> '.substr($value['quality'],0,10).'</button><div class="collapse" id="quality_'.$key.'">Qualità: <input id="search_quality'.$key.'" onClick="choicequality(\''.$key.'\');"  name="righi[' . $key . '][quality]" value="'. $value['quality'] .'" rigo="'. $key .'" type="text" /></div>
 					</td>';
             echo '<td>
 						<input type="text" name="righi[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
