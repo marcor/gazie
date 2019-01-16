@@ -294,9 +294,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		}
 	
         if (empty($msg)) {    //        nessun errore        SALVATAGGIO database
+		
 			// Antonio Germani - inizio salvataggio lotto
 			if ($form['lot_or_serial']==1){ //se è previsto un lotto 
-			
 				if (strlen($form['identifier']) == 0) { // se non è stato digitato un lotto lo inserisco d'ufficio come data e ora
                     $form['identifier'] = date("Ymd Hms");
                 }
@@ -313,13 +313,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
                     $result = gaz_dbi_query($query);
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment']; 
-				}
-				
+				}				
 				$check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE identifier = '" . $form['identifier'] . "' AND codart = '".$form['artico']."'");// vedo se il lotto inserito nel form è nuovo o esiste già
-					
 				if ($check_lot->num_rows > 0){ // se esiste già
 					$row = $check_lot->fetch_assoc();
 					$form['id_lotmag']=$row['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
+					// e aggiorno comunque il lotto nel caso fose stata cambiata la scadenza
+					gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
 				} else { // se non esiste 
 					if ($toDo=="insert") { // se è insert creo il rigo lotto memorizzandolo nella tabella lotmag
 						$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
@@ -328,12 +328,19 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 						$row = $check_lot->fetch_assoc();
 						$form['id_lotmag'] = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
 						gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['artico'] . "','" . $id_movmag. "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
-					} else { // se è update modifico il rigo lotto
-						gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['codart'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
-						
+					} else { // se è update modifico il rigo lotto 
+					
+						gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");						
 					}
+				}
+				if ($check_lot->num_rows == 0 and $toDo=="update" ) {// se il lotto non esiste e siamo in update vuol dire che questo movimento è stato creato forzando l'inserimento senza lotto. Questo si verifica acquistando con FaE.
+					$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
+					unset($check_lot);
+					$check_lot = gaz_dbi_query($query);
+					$row = $check_lot->fetch_assoc();
+					$form['id_lotmag'] = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il nuovo lotto
+					gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['artico'] . "','" . $id_movmag. "','" . $form['identifier'] . "','" . $form['expiry'] . "')");		
 				}				 
-				 
 				// Antonio Germani - salvo documento/CERTIFICATO del lotto
 				if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
                     if (!empty($form['filename'])) { // e se ha un nome impostato nel form
@@ -345,7 +352,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
                 } // altrimenti se il file non è cambiato, anche se è update, non faccio nulla
 			} else {
 				$form['id_lotmag']=0;
-			}		
+			}
+				// fine salvataggio lotti
 	
             $upd_mm = new magazzForm;
             //formatto le date
