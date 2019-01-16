@@ -83,31 +83,6 @@ class invoiceXMLvars {
         $this->cliente2 = $this->client['ragso2'];
         $this->cliente3 = $this->client['indspe'];
 		$this->pec_email = $this->client['pec_email'];
-        if (!empty($this->client['citspe'])) {
-            $this->cliente4 = sprintf("%05d", $this->client['capspe']) . ' ' . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
-        } else {
-            $this->cliente4 = '';
-        }
-
-        if (!empty($this->client['pariva'])) {
-            $this->cliente5 = 'P.I. ' . $this->client['pariva'] . ' ';
-        } else {
-            $this->cliente5 = '';
-        }
-        if (!empty($this->client['pariva'])) { //se c'e' la partita iva
-            if (!empty($this->client['codfis']) and $this->client['codfis'] == $this->client['pariva']) {
-                $this->cliente5 = 'C.F. e P.I. ' . $this->client['codfis'];
-            } elseif (!empty($this->client['codfis']) and $this->client['codfis'] != $this->client['pariva']) {
-                $this->cliente5 = 'C.F. ' . $this->client['codfis'] . ' P.I. ' . $this->client['pariva'];
-            } else { //per es. se non c'e' il codice fiscale
-                $this->cliente5 = ' P.I. ' . $this->client['pariva'];
-            }
-        } else { //se  NON c'e' la partita iva
-            $this->cliente5 = '';
-            if (!empty($this->client['codfis'])) {
-                $this->cliente5 = 'C.F. ' . $this->client['codfis'];
-            }
-        }
         // variabile e' sempre un array
         $this->id_agente = gaz_dbi_get_row($gTables['agenti'], 'id_agente', $tesdoc['id_agente']);
         $this->rs_agente = $anagrafica->getPartner($this->id_agente['id_fornitore']);
@@ -587,8 +562,14 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
 			if ($XMLvars->client['country']=='IT'){
 				$results->insertBefore($el, $results1);
+			} else {  // STRANIERI
+				// agli stranieri se non ho il codice fiscale metto quello che trovo in partita IVA, se non ho nulla metto un valore fittizio  
+				if(strlen($XMLvars->client['codfis'])>5){
+					$XMLvars->client['pariva']=$XMLvars->client['pariva'];
+				}elseif(strlen($XMLvars->client['pariva'])<6){
+					$XMLvars->client['pariva']='INDISPONIBILE';
+				}
 			}
-
             // nodo 1.4.1.1 partita IVA del committente, se disponibile
             if (!empty($XMLvars->client['pariva'])) {
                 $el = $domDoc->createElement("IdFiscaleIVA", '');
