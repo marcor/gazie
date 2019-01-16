@@ -366,8 +366,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
                         $form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
                 );
 				// aggiorno id_lotmag nel rigo di movmag
-				// e correggo il tipdoc che deve essere MAG
-				$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $form['id_lotmag'] . "' , tipdoc = 'MAG' WHERE id_mov ='" . $id_movmag . "'";
+				// 
+				$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
                 gaz_dbi_query($query);
             }
             header("Location:report_movmag.php");
