@@ -1234,8 +1234,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001contract_row` (
 DROP TABLE IF EXISTS `gaz_001distinta_base`;
 CREATE TABLE IF NOT EXISTS `gaz_001distinta_base` (
   `id` int(9) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-  `codice_composizione` varchar(15) CHARACTER SET latin1 NOT NULL COMMENT 'è il codice dell''articolo composito',
-  `codice_artico_base` varchar(15) CHARACTER SET latin1 NOT NULL COMMENT 'codice dell''articolo base',
+  `codice_composizione` varchar(15) NOT NULL COMMENT 'è il codice dell''articolo composito',
+  `codice_artico_base` varchar(15) NOT NULL COMMENT 'codice dell''articolo base',
   `quantita_artico_base` decimal(14,5) NOT NULL DEFAULT '0.00000' COMMENT 'quantità di articoli base necessari per costituire l''articolo composito',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Tabella per creare gli "articoli compositi" (distinta base). Un articolo è composito quando è presente in almeno una di queste righe e qundi fa riferimento ad almeno un altro articolo di magazzino. Questi righi si potranno aggiungere tramite lo script admin_artico,  alla fine con il bottone "aggiungi articolo di base" ed immettendo la sola quantità, l''unità di misura ed il prezzo per i documenti di vendita  saranno quelli di sempre ma presi dall''articolo composito, molto facile perchè resterà tutto come prima, mentre la contabilità di magazzino verrà aggiornata tenendo conto di questi righi e non dell''articolo composito.';
@@ -2042,8 +2042,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001staff_worked_hours` (
 DROP TABLE IF EXISTS `gaz_001syncronize_oc`;
 CREATE TABLE IF NOT EXISTS `gaz_001syncronize_oc` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `table_oc` varchar(40) CHARACTER SET latin1 NOT NULL,
-  `table_gz` varchar(40) CHARACTER SET latin1 NOT NULL,
+  `table_oc` varchar(40) NOT NULL,
+  `table_gz` varchar(40) NOT NULL,
   `id_oc` int(11) NOT NULL,
   `id_gz` int(11) NOT NULL,
   `date_created` datetime NOT NULL,
@@ -2588,9 +2588,9 @@ INSERT INTO `gaz_aziend` (`codice`, `ragso1`, `ragso2`, `image`, `sedleg`, `legr
 DROP TABLE IF EXISTS `gaz_breadcrumb`;
 CREATE TABLE IF NOT EXISTS `gaz_breadcrumb` (
   `id_bread` int(11) NOT NULL AUTO_INCREMENT,
-  `file` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '0',
-  `titolo` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '0',
-  `link` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT '0',
+  `file` varchar(255) NOT NULL DEFAULT '0',
+  `titolo` varchar(255) NOT NULL DEFAULT '0',
+  `link` varchar(255) NOT NULL DEFAULT '0',
   KEY `Indice 1` (`id_bread`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
