@@ -46,7 +46,9 @@ if (empty($lettera['oggetto'])){
 }
 
 $testata['c_a'] = $lettera['c_a'];
-$testata['corpo'] = $lettera['corpo'];
+$informForm = new informForm ($testata);
+$testata['corpo'] = $informForm->shortcode($lettera['corpo']);
+
 if ($lettera['signature'] > 0){
     $testata['signature'] = $admin_aziend['user_firstname'].' '.$admin_aziend['user_lastname'];
 } else {
