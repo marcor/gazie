@@ -452,12 +452,45 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
                         if ($form['rows'][$i]['id_mag'] > 0) {
+							// Antonio Germani - inizio salvataggio lotti e magazzino
+							$form['rows'][$i]['expiry']=gaz_format_date($form['rows'][$i]['expiry'],true);// converto la data di scadenza per mysql					
+							
 							// riprendo il vecchio movimento per non perdere il riferimento al lotto/matricola
 							$old_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $val_old_row['id_mag']);
+							
+							$check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE identifier = '" . $form['rows'][$i]['identifier'] . "' AND codart = '".$form['rows'][$i]['codart']."'");// vedo se il lotto inserito nel form è nuovo o esiste già
+							if ($check_lot->num_rows > 0){ // se esiste già
+								$row = $check_lot->fetch_assoc();
+								$id_lotmag=$row['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
+								// e aggiorno comunque il lotto nel caso fose stata cambiata la scadenza
+								
+								gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , identifier = '" . $form['rows'][$i]['identifier'] . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
+								
+							} else { // se non esiste 
+								if ($toDo=="insert") { // se è insert creo il rigo lotto memorizzandolo nella tabella lotmag
+									$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
+									unset($check_lot);
+									$check_lot = gaz_dbi_query($query);
+									$row = $check_lot->fetch_assoc();
+									$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
+									gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $val_old_row['id_mag']. "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
+								}
+							}
+							if ($check_lot->num_rows == 0 and $toDo=="update" ) {// se il lotto non esiste e siamo in update vuol dire che questo movimento è stato creato forzando l'inserimento senza lotto. Questo si verifica acquistando con FaE.
+								$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
+								unset($check_lot);
+								$check_lot = gaz_dbi_query($query);
+								$row = $check_lot->fetch_assoc();
+								$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il nuovo lotto
+								gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $val_old_row['id_mag']. "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");		
+							}
+								
+							
+							
 // se il rigo ha un movimento di magazzino associato lo aggiorno
-                            $magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc'],$old_movmag['id_lotmag']);
+                            $magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag);
 // aggiorno pure i documenti relativi ai lotti
-                            $old_lm = gaz_dbi_get_row($gTables['lotmag'], 'id_rigdoc', $val_old_row['id_rig']);
+                            $old_lm = gaz_dbi_get_row($gTables['lotmag'], 'id', $id_lotmag);
                             if ($old_lm && substr($form['rows'][$i]['filename'], 0, 7) <> 'lotmag_') {
 // se a questo rigo corrispondeva un certificato controllo che però è stato aggiornato lo cambio
                                 $dh = opendir('../../data/files/' . $admin_aziend['company_id']);
@@ -499,7 +532,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
 // se l'articolo prevede la gestione dei  lotti o della matricola/numero seriale creo un rigo in lotmag 
 // ed eventualmente sposto e rinomino il relativo documento dalla dir temporanea a quella definitiva 
-                    if ($form['rows'][$i]['lot_or_serial'] > 0) {
+                    if ($form['rows'][$i]['lot_or_serial'] > 0) { 
                         $form['rows'][$i]['id_rigdoc'] = $last_rigdoc_id;
                         $form['rows'][$i]['id_movmag'] = $last_movmag_id;
                         $form['rows'][$i]['expiry'] = gaz_format_date($form['rows'][$i]['expiry'], true);
@@ -508,7 +541,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['identifier'] = $form['datemi'] . '_' . $form['rows'][$i]['id_rigdoc'];
                         }
                         $last_lotmag_id = lotmagInsert($form['rows'][$i]);
-                        // inserisco il rifermineto anche sul relativo movimento di magazzino
+                        // inserisco il riferimento anche sul relativo movimento di magazzino
                         gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
                         if (!empty($form['rows'][$i]['filename'])) {
                             $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
@@ -1207,13 +1240,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['gooser'] = $articolo['good_or_service'];
         $form['rows'][$i]['lot_or_serial'] = $articolo['lot_or_serial'];
         $form['rows'][$i]['filename'] = '';
-        $form['rows'][$i]['identifier'] = '';
-        $form['rows'][$i]['expiry'] = '';
-        $form['rows'][$i]['status'] = "UPDATE";
+		$form['rows'][$i]['identifier'] = '';
+		$form['rows'][$i]['expiry'] = '';
+		$form['rows'][$i]['status'] = "UPDATE";
         // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
 		If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {
 		if (!isset($_GET['Duplicate'])) {
-			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id_rigdoc', $row['id_rig']);
+			$result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
+			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
 			// recupero il filename dal filesystem e lo sposto sul tmp 
 			$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
 			while (false !== ($filename = readdir($dh))) {
@@ -1225,7 +1259,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 			}
 			$form['rows'][$i]['identifier'] = $lotmag['identifier'];
-			$form['rows'][$i]['expiry'] = gaz_format_date($lotmag['expiry']);
+			if (intval($lotmag['expiry'])>0){
+				$form['rows'][$i]['expiry'] = gaz_format_date($lotmag['expiry']);
+			} else {
+				$form['rows'][$i]['expiry']="";
+			}
 		} else {
 			$form['rows'][$i]['status'] = "Insert";
 			$form['rows'][$i]['id_mag'] = 0;
