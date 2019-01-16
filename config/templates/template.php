@@ -84,6 +84,10 @@ class Template extends FPDI {
         $this->descriptive_last_row = $this->docVars->descriptive_last_row;
         $this->descriptive_last_ddt = $this->docVars->descriptive_last_ddt;
 
+        //*+ DC - 16/01/2018
+        $this->layout_pos_logo_on_doc = $this->docVars->layout_pos_logo_on_doc;
+        //*- DC - 16/01/2018
+
     }
 
     function Header() {
@@ -91,7 +95,18 @@ class Template extends FPDI {
         } else {
             $this->SetFillColor(hexdec(substr($this->colore, 0, 2)), hexdec(substr($this->colore, 2, 2)), hexdec(substr($this->colore, 4, 2)));
             $this->SetFont('times', 'B', 14);
-            $this->Cell(130, 6, $this->intesta1, 0, 1, 'L');
+
+            //*+ DC - 16/01/2018
+            //$this->Cell(130, 6, $this->intesta1, 0, 1, 'L');
+            if ($this->layout_pos_logo_on_doc=='LEFT') {
+                $this->SetXY(80,5);
+                $this->Cell(130, 6, $this->intesta1, 0, 1, 'L');
+                $this->SetXY(80,11);
+            } else {
+                $this->Cell(130, 6, $this->intesta1, 0, 1, 'L');
+            }
+            //*- DC - 16/01/2018
+
             $this->SetFont('helvetica', '', 8);
             $interlinea = 10;
             if (!empty($this->intesta1bis)) {
@@ -105,7 +120,14 @@ class Template extends FPDI {
 			$ratio = round(imagesx($im)/imagesy($im),2);
 			$x=60; $y=0;
 			if ($ratio<1.71){ $x=0; $y=35; }
-            $this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
+            //*+ DC - 16/01/2018
+            //$this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
+            if ($this->layout_pos_logo_on_doc=='LEFT') {
+              $this->Image('@' . $this->logo, 10, 7, 0, 20, '', '');
+            } else {
+              $this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
+            }
+            //*- DC - 16/01/2018
             $this->Line(0, 93, 3, 93); //questa marca la linea d'aiuto per la piegatura del documento
             $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
             $this->Ln($interlinea);

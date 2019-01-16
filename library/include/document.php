@@ -30,6 +30,11 @@ class DocContabVars {
         $this->ecr = $ecr;
         $this->gTables = $gTables;
         $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
+
+        //*+ DC - 16/01/2018
+        $this->layout_pos_logo_on_doc = gaz_dbi_get_row($gTables['company_config'], 'var', 'layout_pos_logo_on_doc')['val'];
+        //*- DC - 16/01/2018
+
         $this->descriptive_last_row = trim(gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_row')['val']);
         $this->descriptive_last_ddt = gaz_dbi_get_row($gTables['company_config'], 'var', 'descriptive_last_ddt')['val'];
 		$this->show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit')['val'];
@@ -308,7 +313,7 @@ class DocContabVars {
 			// Antonio Germani - se c'è un codice a barre valorizzo barcode
 			$barcode = gaz_dbi_get_row( $this->gTables['artico'], 'codice', $rigo['codart']);
 			if (intval($barcode['barcode']>0)){
-				$rigo['barcode']=$barcode['barcode']; 
+				$rigo['barcode']=$barcode['barcode'];
 			} else {
 				$rigo['barcode']="";
 			}
@@ -317,7 +322,7 @@ class DocContabVars {
 			if (strlen ($checklot['id_lotmag'])>0){
 				$getlot=gaz_dbi_get_row($this->gTables['lotmag'],'id',$checklot['id_lotmag']);
 				if (isset ($getlot['identifier']) && strlen ($getlot['identifier'])>0){
-					if (intval ($getlot['expiry'])>0){ 
+					if (intval ($getlot['expiry'])>0){
 						$rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier']." ".gaz_format_date($getlot['expiry']);
 					} else {
 						$rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier'];
@@ -375,7 +380,7 @@ class DocContabVars {
 				foreach($n_r as $v){
 					if (strlen($descrizione_nuova)<=60){ // se  la descrizione è ancora abbastanza corta la aggiungo
 						$descrizione_nuova .= ' '.$v;
-					} else { 
+					} else {
 						// i righi iniziali sono aggiunti e definiti descrittivi
 						$nuovi_righi[]=array('tiprig'=>2,'codart'=>'','descri'=>$descrizione_nuova,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0,'codric'=>0,'provvigione'=>0,'ritenuta'=>0,'id_order'=>0,'id_mag'=>0,'id_orderman'=>0);
 						// riparto con un nuovo valore di descrizione
@@ -383,9 +388,9 @@ class DocContabVars {
 					}
 				}
 				// quando esco dal ciclo sull'ultimo rigo rimane dello stesso tipo originale
-				$rigo['descri']=$descrizione_nuova;  
+				$rigo['descri']=$descrizione_nuova;
 				$nuovi_righi[]=$rigo;
-				foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo 
+				foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo
 					$results[] = $v_nr;
 				}
 			} else {
@@ -439,7 +444,7 @@ class DocContabVars {
 
     function getExtDoc() {
         /* con questa funzione faccio il push sull'accumulatore dei righi contenenti "documenti esterni" da allegare al pdf
-		  riprendo il nome del file relativo al documento e lo aggiungo alla matrice solo se il file esiste, prima di chiamare 
+		  riprendo il nome del file relativo al documento e lo aggiungo alla matrice solo se il file esiste, prima di chiamare
 		  questo metodo dovrò settare $this->id_rig
         */
         if (!isset($this->ExternalDoc)) {
@@ -459,7 +464,7 @@ class DocContabVars {
         }
         return $r; // in ExternalDocs troverò gli eventuali documenti da allegare
     }
-	
+
 
 }
 
