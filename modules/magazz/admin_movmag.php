@@ -251,15 +251,18 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		}
 	}
 	
+	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
+		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+		// la qtà è in questa variabile $prev_qta['quanti']; 
+	} else {
+		$prev_qta['quanti']=0;
+	}
+	
 	// controllo e WARNING su quantità e lotti
 	if (strlen($form['artico'])>0 && $form['quanti']>0 && $form['operat']==-1){
 		$mv = $gForm->getStockValue(false, $form['artico']);
-		$magval = array_pop($mv); // controllo disponibilità in magazzino
-		if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
-			$check_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-			$magval['q_g'] = $magval['q_g'] + $check_qta['quanti']; 
-		}
-		if ($magval['q_g']<$form['quanti']){
+		$magval = array_pop($mv); // controllo disponibilità in magazzino		
+		if ($magval['q_g']+$prev_qta['quanti']<$form['quanti']){
 			?>
 			<div class="alert alert-warning alert-dismissible">
 			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -687,13 +690,14 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
                 if (intval($form['expiry']) > 0) {
                     echo ' scadenza:' . gaz_format_date($selected_lot['expiry']);
                 }
-                echo ' - disponibili: ' . gaz_format_quantity($count[$selected_lot['identifier']]) . ' <i class="glyphicon glyphicon-tag"></i></button>';
+                echo ' - disponibili: ' . gaz_format_quantity($count[$selected_lot['identifier']]+$prev_qta['quanti']) . ' <i class="glyphicon glyphicon-tag"></i></button>';
 				?>
 				<input type="hidden" name="id_lotmag" value="<?php echo $selected_lot['id_lotmag']; ?>">
 				<input type="hidden" name="identifier" value="<?php echo $selected_lot['identifier']; ?>">
 				<input type="hidden" name="expiry" value="<?php echo $selected_lot['expiry']; ?>">
 				<?php
-				if ($form['quanti']>$count[$selected_lot['identifier']]) { // Se il lotto scelto non ha disponibilità sufficienti segnalo errore
+				
+				if ($form['quanti']>$count[$selected_lot['identifier']]+$prev_qta['quanti']) { // Se il lotto scelto non ha disponibilità sufficienti segnalo errore
 					?>
 					<div class="alert alert-warning alert-dismissible">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -711,7 +715,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
 								$form['id_lotmag']= $v['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
 								$selected_lot = $lm->getLot($form['id_lotmag']);
 								
-								echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente. Cliccare per cambiare lotto" data-toggle="collapse" href="#lm_dialog">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'] . ' Scadenza: ' . gaz_format_date($selected_lot['expiry']). ' disponibili:' . gaz_format_quantity($count[$selected_lot['identifier']]);
+								echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente. Cliccare per cambiare lotto" data-toggle="collapse" href="#lm_dialog">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'] . ' Scadenza: ' . gaz_format_date($selected_lot['expiry']). ' disponibili:' . gaz_format_quantity($count[$selected_lot['identifier']]+$prev_qta['quanti']);
 								echo '  <i class="glyphicon glyphicon-tag"></i></button>';
 								?>
 								<input type="hidden" name="id_lotmag" value="<?php echo $selected_lot['id_lotmag']; ?>">
