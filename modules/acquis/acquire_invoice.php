@@ -274,22 +274,33 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$acc_sconti=array();
 			if ($item->getElementsByTagName("ScontoMaggiorazione")->length >= 1) { // ho uno sconto/maggiorazione
 				$acc_sconti=array();
+				$sconti_forfait=array();
 				$sconto_maggiorazione=$item->getElementsByTagName("ScontoMaggiorazione");
 				foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
-					if ($sconti->getElementsByTagName("Importo")->length >= 1 && $item->getElementsByTagName('Importo')->item(0)->nodeValue >= 0.00001){ 
+					if ($form['rows'][$nl]['prelis'] < 0.00001) { // se trovo l'elemento 2.2.1.9 <PrezzoUnitario> a zero calcolo lo sconto a forfait
+						$sconti_forfait[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
+					} elseif ($sconti->getElementsByTagName("Importo")->length >= 1 && $item->getElementsByTagName('Importo')->item(0)->nodeValue >= 0.00001){ 
 						// calcolo la percentuale di sconto partendo dall'importo del rigo e da quello dello sconto, il funzionamento di GAzie prevede la percentuale e non l'importo dello sconto 
-						$tot_rig= $form['rows'][$nl]['quanti']*$form['rows'][$nl]['prelis'];
+						$tot_rig= (!empty($form['rows'][$nl]['quanti']) && $form['rows'][$nl]['quanti']!=0) ? $form['rows'][$nl]['quanti']*$form['rows'][$nl]['prelis'] : $form['rows'][$nl]['prelis'];
 						$acc_sconti[]=$item->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig;
 						//$form['rows'][$nl]['sconto']=$item->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig;  
 					} elseif($sconti->getElementsByTagName("Percentuale")->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001){ // ho una percentuale accodo quella
 						$acc_sconti[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue : -$sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue);
 					}				
 				}
-				$is=1;
-				foreach($acc_sconti as $vsc){ // attraverso l'accumulatore di sconti per ottenerne uno solo
-					$is *=(1-$vsc/100);
+				if (count($sconti_forfait) > 0) {
+					$sf=0;
+					foreach($sconti_forfait as $scf){ // attraverso l'accumulatore di sconti forfait per ottenerne il totale
+						$sf += $scf;
+					}
+					$form['rows'][$nl]['prelis'] = $sf;
+				} else {
+					$is=1;
+					foreach($acc_sconti as $vsc){ // attraverso l'accumulatore di sconti per ottenerne uno solo
+						$is *=(1-$vsc/100);
+					}
+					$form['rows'][$nl]['sconto'] = 100*(1-$is);
 				}
-				$form['rows'][$nl]['sconto'] = 100*(1-$is);
 			}
 			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
 			// se ho un residuo di ritenuta d'acconto valorizzo con l'aliquota di cui sopra
