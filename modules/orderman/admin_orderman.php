@@ -62,7 +62,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['quantip'] = $_POST['quantip'];
     $form['cosear'] = $_POST['cosear'];
 	$form['codart'] = $_POST['codart'];
-	echo "pippo1 codart",$form['codart']," cosear=",$form['cosear'];
 	if (strlen ($_POST['cosear'])>0) {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
 		$form['codart'] = $resartico['codice'];
@@ -71,7 +70,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
 	}
 	$form['lot_or_serial'] = $resartico['lot_or_serial']; 
-	echo "<br>pippo2",$form['codart'];
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
 			 // prendo i movimenti di magazzino dei componenti 
