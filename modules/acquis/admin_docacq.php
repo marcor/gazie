@@ -1796,7 +1796,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 					if ($v['lot_or_serial'] > 0) {
 						if (empty($form['rows'][$k]['filename'])) {
 							$lm_acc .='<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
-							. $script_transl['insert'] . 'certificato  <i class="glyphicon glyphicon-tag"></i>'
+							. $script_transl['insert'] . 'certificato o lotto  <i class="glyphicon glyphicon-tag"></i>'
 							. '</button></div>';
 						} else {
 							$lm_acc .='<div>' . $script_transl['lotmag'] . ':<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
@@ -1807,7 +1807,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                         <div class="form-group">
                           <div>';
 						$lm_acc .='<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
-                            <label>' . $script_transl['identifier'] . '</label><input type="text" name="rows[' . $k . '][identifier]" value="' . $form['rows'][$k]['identifier'] . '" >
+                            <label>' . $script_transl['identifier'] . '</label><input type="text" name="rows[' . $k . '][identifier]" value="' . $form['rows'][$k]['identifier'] . '" ><br>
                             <label>' . $script_transl['expiry'] . ' </label><input class="datepicker" type="text" name="rows[' . $k . '][expiry]"  value="' . $form['rows'][$k]['expiry'] . '" >
 							</div>
 							</div>
