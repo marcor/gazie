@@ -51,6 +51,8 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     $ob = filter_input(INPUT_POST, 'orderby');
     $so = filter_input(INPUT_POST, 'sort');
     $ca = filter_input(INPUT_POST, 'codart');
+	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
     
     if (empty($ca)) {
         $where = '1';
@@ -113,7 +115,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		</a>';
         }
         $com = '';
-        if ($admin_aziend['conmag'] > 0 && $row["good_or_service"] <= 0) {
+        if ($admin_aziend['conmag'] > 0 && $row["good_or_service"] != 1 && $tipo_composti['val']=="STD") {
             $com = '<a class="btn btn-xs btn-default" href="../magazz/select_schart.php?di=0101' . date('Y') . '&df=' . date('dmY') . '&id=' . $row['codice'] . '" target="_blank">
 		  <i class="glyphicon glyphicon-check"></i><i class="glyphicon glyphicon-print"></i>
 		  </a>&nbsp;';
