@@ -82,13 +82,18 @@ if (isset($_POST['close'])){
 				$count[$key] += $v_lm['rest'];
 			}
 			$tot+=$v_lm['rest'];
-			foreach ($rs_last_inventory as $idlot){ // se ci sono stati degli inventari che si riferiscono a quello specifico lotto, tolgo la quantità di ciascuno
-				if ($idlot['id_lotmag']==$v_lm['id']){
-					$v_lm['rest']=$v_lm['rest']-$idlot['quanti'];
-					$count[$key]=$count[$key]-$idlot['quanti'];
-					$tot=$tot-$idlot['quanti'];
+			$n=0;
+			foreach ($rs_last_inventory as $idlot){ // se ci sono stati degli inventari che si riferiscono a quello specifico lotto, tolgo la quantità di ciascuno tranne l'ultimo fatto
+				if (intval($n)>0){
+					if ($idlot['id_lotmag']==$v_lm['id']){
+						$v_lm['rest']=$v_lm['rest']-$idlot['quanti'];
+						$count[$key]=$count[$key]-$idlot['quanti'];
+						$tot=$tot-$idlot['quanti'];
+					}
 				}
+				$n++;
 			}
+			
             $img="";
             echo '<tr class="FacetDataTD"><td class="FacetFieldCaptionTD">'
                . $v_lm['id']
