@@ -1059,7 +1059,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 		$results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
 		foreach ($XMLvars->DatiDDT as $k0=>$v0) {
 			$el_ddt = $domDoc->createElement("DatiDDT", "");
-            $el1 = $domDoc->createElement("NumeroDDT", $k0);
+            $el1 = $domDoc->createElement("NumeroDDT", $k0.'/'.$XMLvars->tesdoc["seziva"]);
             $el_ddt->appendChild($el1);
             $el1 = $domDoc->createElement("DataDDT", $v0['DataDDT']);
             $el_ddt->appendChild($el1);
