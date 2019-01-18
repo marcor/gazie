@@ -51,9 +51,14 @@ class informForm extends GAzieForm {
 		if ($matches){
 			foreach ($matches as $match)
 			{
-			$matcheslist = explode(',', $match[1]);
-
-			$output = $this->righepreventivo(trim($matcheslist[0]));
+			$param = array();
+			$MatchesListTemp = explode(' ', $match[1]);
+			foreach ($MatchesListTemp as $match1)
+			{
+				$tmp = explode('=', $match1);
+				$param[$tmp[0]] = str_replace("'", '',$tmp[1]);
+			}
+			$output = $this->righepreventivo($param);
 					
 			$testo = str_replace($match[0], $output, $testo);
 			}	
@@ -66,9 +71,14 @@ class informForm extends GAzieForm {
 		if ($matches){
 			foreach ($matches as $match)
 			{
-			$matcheslist = explode(',', $match[1]);
-
-			$output = $this->totalepreventivo(trim($matcheslist[0]));
+			$param = array();
+			$MatchesListTemp = explode(' ', $match[1]);
+			foreach ($MatchesListTemp as $match1)
+			{
+				$tmp = explode('=', $match1);
+				$param[$tmp[0]] = str_replace("'", '',$tmp[1]);
+			}
+			$output = $this->totalepreventivo($param);
 					
 			$testo = str_replace($match[0], $output, $testo);
 			}	
@@ -78,41 +88,134 @@ class informForm extends GAzieForm {
 	}
 	
 	//Funzione per la creazione della tabella del preventivo
-	function righepreventivo($numero){
+	function righepreventivo($param){
 		global $gTables;
-		
+
 		//Recupero le righe del 
-		$old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $numero, "id_rig asc");
+		$old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $param['id'], "id_rig asc");
+		
+		//Colori Tabella
+		if(isset($param['thbackgroundcolor'])){
+			$thbackgroundcolor = $param['thbackgroundcolor'];
+		}else{
+			$thbackgroundcolor = "#f8f8f8";
+		}
+
+		if(isset($param['thcolor'])){
+			$thcolor = $param['thcolor'];
+		}else{
+			$thcolor = "#000";
+		}
+
+		if(isset($param['trbordertot'])){
+			$trbordertot = $param['trbordertot'];
+		}else{
+			$trbordertot = "#f2f2f2";
+		}
+		
+		//Calcolo le larghezze e i numeri delle colonne
+		if(strtolower($param['noparriga'])!= 'si'){
+			//Mostro la colonna Prezzo e quantità
+			$descrilen = 55 ;
+			$totalelen = 15 ;
+			$ncdescri = 2;
+		}else{
+			//Nascondo la colonna Prezzo e quantità
+			$descrilen = 80 ; 
+			$totalelen = 20 ; 
+			$ncdescri = 1 ;			
+		}
+		if(isset($param['checkbox']) && strtolower($param['checkbox'])== 'si'){
+			$descrilen = $descrilen - 5;
+		}
 		
 		//Disegno la tabella
 		$output = '<table cellspacing="0" cellpadding="1" border="0">';
-		$output .= '<tr style="background-color:#f8f8f8;color:#000;">';
-		$output .= '<th width="55%">Descrizione</th>';
-		$output .= '<th width="15%" align="right">Prezzo</th>';
-		$output .= '<th width="15%" align="right">Quantit&agrave;</th>';
-		$output .= '<th width="15%" align="right">Importo</th>';
+		$output .= '<tr style="background-color:' . $thbackgroundcolor . ';color:' . $thcolor .'">';
+		
+		//Intestazione della tabella
+		$output .= '<th width="' . $descrilen . '%">Descrizione</th>';
+
+		if(strtolower($param['noparriga'])!= 'si'){
+			$output .= '<th width="15%" align="right">Prezzo</th>';
+			$output .= '<th width="15%" align="right">Quantit&agrave;</th>';
+		}
+		
+		$output .= '<th width="' .$totalelen .'%" align="right">Importo</th>';
+		
+		if(isset($param['checkbox']) && strtolower($param['checkbox'])== 'si'){
+			$output .= '<th width="2%" align="right"></th>';
+			$output .= '<th width="3%" align="right"></th>';
+		}
 		$output .= '</tr>';
+		//disegno le righe della tabella del preventivo
 		while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
+			//Calcolo il prezzo e l'importo
+			if(isset($param['calciva']) && strtolower($param['calciva']) == 'si'){
+				$prezzo = round($val_old_row['prelis'] + ($val_old_row['prelis'] * $val_old_row['pervat'] / 100), 2);
+			}else{
+				$prezzo = round($val_old_row['prelis'], 2);
+			}
+			//Calcolo l'importo
+			$importo = round($val_old_row['quanti'] * $prezzo, 2);
+			
+			//Disegno la riga
 			$output .= '<tr>';
 			$output .= '<td>' . $val_old_row['descri'] . '</td>';
-			$output .= '<td align="right">&euro; ' . round($val_old_row['prelis'], 2) . '</td>';
-			$output .= '<td align="right">' . $val_old_row['unimis'] . ' ' . round($val_old_row['quanti'], 2) . '</td>';
-			$output .= '<td align="right">&euro; ' . round($val_old_row['quanti'] * $val_old_row['prelis'], 2) . '</td>';
+			//Celle prezzo unitario e quantità
+			if(strtolower($param['noparriga'])!= 'si'){
+				$output .= '<td align="right">&euro; ' . $prezzo . '</td>';
+				$output .= '<td align="right">' . $val_old_row['unimis'] . ' ' . round($val_old_row['quanti'], 2) . '</td>';
+			}
+			//Importo della riga
+			$output .= '<td align="right">&euro; ' . $importo . '</td>';
+			
+			//Checkbox sulle righe
+			if(isset($param['checkbox']) && strtolower($param['checkbox'])== 'si'){
+				$output .= '<td></td>';
+				$output .= '<td><div style="border:1px solid #a2a2a2;height:10px;"></div></td>';
+			}
 			$output .= '</tr>';
 		}
+		//disegno il totale 
+		if(isset($param['totale']) && strtolower($param['totale'])== 'si'){
+			$output .= '<tr>';
+				$output .= '<td colspan="' . $ncdescri . '"></td>';
+				
+				if(strtolower($param['noparriga'])!= 'si'){
+					$output .= '<td align="right" style="border-top:1px solid ' . $trbordertot . ';">Totale</td>';
+					$output .= '<td align="right" style="border-top:1px solid ' . $trbordertot . ';">' .$this->totalepreventivo($param) .'</td>';
+				}else{
+					$output .= '<td align="right" style="border-top:1px solid #f2f2f2;">Totale ' .$this->totalepreventivo($param) .'</td>';
+				}
+				if(isset($param['checkbox']) && strtolower($param['checkbox'])== 'si'){
+					$output .= '<th width="2%" align="right"></th>';
+					$output .= '<th width="3%" align="right"></th>';
+				}				
+			$output .= '</tr>';
+		}
+		
 		$output .= '</table>'; 
 		return $output ;
 	}
 	
 	//Funzione per la creazione della tabella del preventivo
-	function totalepreventivo($numero){
+	function totalepreventivo($param){
 		global $gTables;
 		
 		//Recupero le righe del 
-		$old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $numero, "id_rig asc");
+		$old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $param['id'], "id_rig asc");
 		$tot = 0;
 		while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
-			$tot += round($val_old_row['quanti'] * $val_old_row['prelis'], 2);
+			if(isset($param['calciva']) && strtolower($param['calciva']) == 'si'){
+				$prezzo = round($val_old_row['prelis'] + ($val_old_row['prelis'] * $val_old_row['pervat'] / 100), 2);
+			}else{
+				$prezzo = round($val_old_row['prelis'], 2);
+			}
+			//Calcolo l'importo
+			$importo = round($val_old_row['quanti'] * $prezzo, 2);
+			
+			$tot += $importo;
 		} 
 		return '&euro; ' .$tot ;
 	}	
