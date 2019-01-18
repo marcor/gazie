@@ -84,6 +84,14 @@ function encondeFornitorePrefix($clfoco,$b=36) {
     return $res;
 	
 }
+
+function existMovmag($numddt,$dataddt,$clfoco,$codart="%%") {
+	global $gTables;
+	/* Questa funzione serve per controllare se è già stato registrato in magazzino il rigo dell'eventuale DdT contenuto nella fattura che stiamo acquisendo mi baso su fornitore, numero, data e, se lo passo, il codice articolo */
+    $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "tipdoc='ADT' AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."' AND codart LIKE '".$codart."'", "id_rig DESC", 0, 1);
+    return gaz_dbi_fetch_array($result);
+}
+
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
 } else { // accessi successivi  
@@ -240,6 +248,28 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$form['virtual_taxstamp'] = 0;
 		if ($doc->getElementsByTagName("BolloVirtuale")->length >= 1){
 			$form['virtual_taxstamp'] = 1;	
+		}
+		/* 
+		Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
+		*/
+		if ($doc->getElementsByTagName("DatiDDT")->length>=1){
+			$ddt=$doc->getElementsByTagName("DatiDDT");
+			foreach ($ddt as $vd) { // attraverso DatiDDT
+				$vr=$vd->getElementsByTagName("RiferimentoNumeroLinea");
+				$dataddt=$vd->getElementsByTagName("DataDDT")->item(0)->nodeValue;
+				$numddt=$vd->getElementsByTagName("NumeroDDT")->item(0)->nodeValue;
+				foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
+					$nl=$vdd->nodeValue;
+					// qui non posso fare il controllo sull'articolo in quanto la riconciliazione potrebbe essere modificata dall'operatore, controllerò solo prima di inserire sul database se mettere l'id_mag che ho trovato sullo specifico rigo
+					if (isset($form['clfoco'])&&existMovmag($numddt,$dataddt,$form['clfoco'])){
+						$form['rows'][$nl]['exist_ddt']=existMovmag($numddt,$dataddt,$form['clfoco']);
+					}else{
+						$form['rows'][$nl]['exist_ddt']=false;
+					}
+					$form['rows'][$nl]['NumeroDDT']=$numddt;
+					$form['rows'][$nl]['DataDDT']=$dataddt;
+				}
+			}
 		}
 		/* 
 		INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
@@ -669,8 +699,20 @@ if ($toDo=='insert' || $toDo=='update' ) {
     </div>
 </div>                    
 <?php		
+		$rowshead=array();
+		$ctrl_ddt='';
+		$exist_movmag=false;
 		foreach ($form['rows'] as $k => $v) {
 			$k--;
+			if (isset($v['NumeroDDT'])&&$ctrl_ddt!=$v['NumeroDDT']){
+				// qui valorizzo il rigo di riferimento al ddt
+				$exist_ddt='';
+				if ($v['exist_ddt']){ // ho un ddt d'acquisto già inserito 
+					$exist_ddt='<span class="warning"> questo DdT è già stato inserito in magazzino: id='.$v['exist_ddt']['id_tes'].'</span>'; 
+				}
+				$ctrl_ddt=$v['NumeroDDT'];
+				$rowshead[$k]='<td colspan=13><b> da DdT n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';		
+			}
             $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);            
 			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$form['codart_'.$k]);            
@@ -723,6 +765,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
                 array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
 					'value' => $codric_dropdown, 'type' => '')
             );
+
 		}
 		if ($form['taxstamp']>=0.01) { // ho un bollo lo accodo ai righi della tabella
 			$resprow[] = array(
@@ -752,7 +795,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					'value' => '', 'type' => '')
             );
 		}
-		$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
+		$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table', $rowshead);
 ?>	   <div class="col-sm-6">
 <?php			
 		if ($nf){
