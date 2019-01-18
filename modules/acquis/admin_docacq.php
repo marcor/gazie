@@ -1794,24 +1794,30 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                 case "0":
 					$lm_acc = '';
 					if ($v['lot_or_serial'] > 0) {
-						if (empty($form['rows'][$k]['filename'])) {
-							$lm_acc .='<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
-							. $script_transl['insert'] . 'certificato o lotto  <i class="glyphicon glyphicon-tag"></i>'
-							. '</button></div>';
-						} else {
-							$lm_acc .='<div>' . $script_transl['lotmag'] . ':<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
-							. $form['rows'][$k]['filename'] . ' <i class="glyphicon glyphicon-tag"></i>'
-							. '</button></div>';
+					
+						if (intval($form['rows'][$k]['id_mag'])>0 or $form['tipdoc']!="AFA"){ // Antonio Germani - se non è una fattura acquisto o ha un movimento di magazzino associato apro pulsanti lotto
+							if (empty($form['rows'][$k]['filename'])) {
+								$lm_acc .='<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
+								. $script_transl['insert'] . 'certificato o lotto  <i class="glyphicon glyphicon-tag"></i>'
+								. '</button></div>';
+							} else {
+								$lm_acc .='<div>' . $script_transl['lotmag'] . ':<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
+								. $form['rows'][$k]['filename'] . ' <i class="glyphicon glyphicon-tag"></i>'
+								. '</button></div>';
+							}
+							$lm_acc .='<div id="lm_dialog' . $k . '" class="collapse" >
+							<div class="form-group">
+							<div>';
+							$lm_acc .='<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
+								<label>' . $script_transl['identifier'] . '</label><input type="text" name="rows[' . $k . '][identifier]" value="' . $form['rows'][$k]['identifier'] . '" ><br>
+								<label>' . $script_transl['expiry'] . ' </label><input class="datepicker" type="text" name="rows[' . $k . '][expiry]"  value="' . $form['rows'][$k]['expiry'] . '" >
+								</div>
+								</div>
+								</div>' . "\n";
+						} else { // altrimenti avviso che bisogna prima generare i movimenti
+							$lm_acc .= '<div><button class="btn btn-xs btn-danger" type="image" >Articolo con lotto. Prima generare movimento di magazzino e poi inserire lotto.<i class="glyphicon glyphicon-tag"></i>'
+								. '</button></div>';							
 						}
-						$lm_acc .='<div id="lm_dialog' . $k . '" class="collapse" >
-                        <div class="form-group">
-                          <div>';
-						$lm_acc .='<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
-                            <label>' . $script_transl['identifier'] . '</label><input type="text" name="rows[' . $k . '][identifier]" value="' . $form['rows'][$k]['identifier'] . '" ><br>
-                            <label>' . $script_transl['expiry'] . ' </label><input class="datepicker" type="text" name="rows[' . $k . '][expiry]"  value="' . $form['rows'][$k]['expiry'] . '" >
-							</div>
-							</div>
-							</div>' . "\n";
 					} else {
 						$lm_acc .=' <input type="hidden" value="' . $v['identifier'] . '" name="rows[' . $k . '][identifier]" />';
 						$lm_acc .=' <input type="hidden" value="' . $v['expiry'] . '" name="rows[' . $k . '][expiry]" />';
