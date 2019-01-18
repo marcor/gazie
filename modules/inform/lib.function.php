@@ -89,7 +89,10 @@ class informForm extends GAzieForm {
 	
 	//Funzione per la creazione della tabella del preventivo
 	function righepreventivo($param){
-		global $gTables;
+		global $gTables, $admin_aziend;
+		
+		require("../../modules/vendit/lang." . $admin_aziend['lang'] . ".php");
+		$script_transl = $strScript['admin_broven.php'];
 
 		//Recupero le righe del 
 		$old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $param['id'], "id_rig asc");
@@ -134,14 +137,14 @@ class informForm extends GAzieForm {
 		$output .= '<tr style="background-color:' . $thbackgroundcolor . ';color:' . $thcolor .'">';
 		
 		//Intestazione della tabella
-		$output .= '<th width="' . $descrilen . '%">Descrizione</th>';
+		$output .= '<th width="' . $descrilen . '%">' . $script_transl[21] . '</th>';
 
 		if(strtolower($param['noparriga'])!= 'si'){
-			$output .= '<th width="15%" align="right">Prezzo</th>';
-			$output .= '<th width="15%" align="right">Quantit&agrave;</th>';
+			$output .= '<th width="15%" align="right">' . $script_transl[23] . '</th>';
+			$output .= '<th width="15%" align="right">' . $script_transl[16] . '</th>';
 		}
 		
-		$output .= '<th width="' .$totalelen .'%" align="right">Importo</th>';
+		$output .= '<th width="' .$totalelen .'%" align="right">' . $script_transl[25] . '</th>';
 		
 		if(isset($param['checkbox']) && strtolower($param['checkbox'])== 'si'){
 			$output .= '<th width="2%" align="right"></th>';
@@ -183,10 +186,10 @@ class informForm extends GAzieForm {
 				$output .= '<td colspan="' . $ncdescri . '"></td>';
 				
 				if(strtolower($param['noparriga'])!= 'si'){
-					$output .= '<td align="right" style="border-top:1px solid ' . $trbordertot . ';">Totale</td>';
+					$output .= '<td align="right" style="border-top:1px solid ' . $trbordertot . ';">' . $script_transl[36] . '</td>';
 					$output .= '<td align="right" style="border-top:1px solid ' . $trbordertot . ';">' .$this->totalepreventivo($param) .'</td>';
 				}else{
-					$output .= '<td align="right" style="border-top:1px solid #f2f2f2;">Totale ' .$this->totalepreventivo($param) .'</td>';
+					$output .= '<td align="right" style="border-top:1px solid #f2f2f2;">' . $script_transl[36] . ' ' .$this->totalepreventivo($param) .'</td>';
 				}
 				if(isset($param['checkbox']) && strtolower($param['checkbox'])== 'si'){
 					$output .= '<th width="2%" align="right"></th>';
