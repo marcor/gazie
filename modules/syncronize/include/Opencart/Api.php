@@ -60,10 +60,10 @@ class Api {
 	    curl_setopt($ch,CURLOPT_POST, count($params));
 	    curl_setopt($ch,CURLOPT_POSTFIELDS, $params_string);
 	  }
-	 
+	   
 	  //execute post
 	  $this->result = curl_exec($ch);
-	  $error = curl_error($ch);
+	  $error = curl_error($ch); 
 	  if ( $error ) {
 		$this->errors[] = $error;
 	  }

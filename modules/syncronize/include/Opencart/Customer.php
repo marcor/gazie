@@ -63,11 +63,11 @@ class Customer implements ICustomer {
    * Return a customer of opencart
    */
   public function getById ( int $id ) {
-	$customer = $this->api->getCustomer($id);
+	 $c = $this->api->getCustomer($id);
+	$customer = $c[$id];
 	$this->setCustomerId( $customer['customer_id']);
 	$this->setStoreId($customer['store_id']);
 	$this->setDataAnagr($customer['firstname'], $customer['lastname'], $customer['email'], $customer['telephone'], $customer['fax']);
-
   }
 
   /**

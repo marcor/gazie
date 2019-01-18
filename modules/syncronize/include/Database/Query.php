@@ -148,6 +148,9 @@ class Query  {
   	  if (!$rs) {
 		  die("Error sql query:<b> $query </b> " . mysqli_error($link));
 	  }
+	  if ( $this->_type === 'INSERT' ) {
+		return mysqli_insert_id($link);
+	  }
 	  if ( $this->_type === 'SELECT' ) {
 	 	$rs_all = array();
 	 	while ( $row = gaz_dbi_fetch_array($rs) ) { 

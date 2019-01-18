@@ -28,6 +28,7 @@ require("../../modules/magazz/lib.function.php");
 require("include/Autoloader.php");
 
 $admin_aziend = checkAdmin();
+$file = "download/sync-gazie.1.1.ocmod.zip";
 
 if ( $_GET['download'] == true ) {
 	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -35,7 +36,7 @@ if ( $_GET['download'] == true ) {
 	header('Content-Disposition: attachment; filename="sync-gazie.ocmod.zip"');
 	header("Content-Transfer-Encoding: binary");
 	header('Pragma: public');
-	readfile('download/sync-gazie.1.0.ocmod.zip');
+	readfile($file);
 	exit;
 }
 

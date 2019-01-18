@@ -52,8 +52,13 @@ if ( $sync ) {
 		$customer->setApi ( $api );		
 		$customer->getById( $id_oc );
 		$result_syncronize = Gazie\Anagra::syncCustomer($customer);
-	        if ( !$result_syncronize ) 
+	        if ( !$result_syncronize ) {
 			$errors[] = "Errore nella sincronizzazione di IdOpencart $id_oc";
+		} else {
+			// Inserisco il risultato
+			echo "inserisco $id_oc, tabella di sincronizzazione";
+			echo "L'id di sincro è $result_syncronize";
+		}
 	} else {
 		$errors[] = "Id cliente non selezionato";
 	}

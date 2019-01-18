@@ -374,7 +374,7 @@ class Anagra extends \Database\TableMysqli {
 
 	public static function  syncCustomer( \Syncro\Interfaces\ICustomer $customer ) {
 		// Verifica esistenza customer
-		$sync = new \Syncro\SyncronizeOc;
+		$sync = new \Syncro\SyncronizeOc; 
 		if ( $sync->getFromOc('customer', $customer->getCustomerId() ) ) {
 			// Gia sincronizzato
 			// Ritorna id Gazie
@@ -388,6 +388,8 @@ class Anagra extends \Database\TableMysqli {
 			$anagr->setCell($customer->getTelephone());
 			$exist = $anagr->exist();
 			if ( ! $exist ) {
+				// Salva ed aggiungi id customer
+
 				return $anagr->save();
 			} else {
 				return FALSE;
