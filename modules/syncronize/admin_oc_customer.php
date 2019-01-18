@@ -58,6 +58,12 @@ if ( $sync ) {
 			// Inserisco il risultato
 			echo "inserisco $id_oc, tabella di sincronizzazione";
 			echo "L'id di sincro è $result_syncronize";
+			$syncro = new \Syncro\SyncronizeOc;
+			$syncro->setData('customer','anagra',"$id_oc","$result_syncronize");
+			$syncro->add();
+			$syncro_id =$syncro->save();
+			if ( ! $syncro_id )
+				echo "Errore nel salvataggio syncro";
 		}
 	} else {
 		$errors[] = "Id cliente non selezionato";

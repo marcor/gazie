@@ -37,5 +37,6 @@ interface ICustomer {
 	public function getRagso1( );
 	public function getEmail();
 	public function getTelephone();
+	public function getAddress();
 }
 

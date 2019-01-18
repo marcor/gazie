@@ -72,6 +72,14 @@ class SyncronizeOc extends \Database\TableMysqli {
 		return $this->date_updated;
 	}
 
+	public function setDateCreated( $date_created ) {
+		$this->date_created=$date_created;
+	}
+
+	public function setDateUpdate( $date_upd ) {
+		$this->date_updated=$date_upd;
+	}
+
 	public function setData( $table_oc, $table_gz, $id_oc, $id_gz ) {
 		$this->table_oc = $table_oc;
 		$this->table_gz = $table_gz;
@@ -80,21 +88,26 @@ class SyncronizeOc extends \Database\TableMysqli {
 	}
 
 	public function add( ) {
-		global $gTables;
-		$this->date_created = time();
-		$this->date_update = time();
-
+		$this->date_created = date('Y-m-d H:i:s');
+		$this->date_updated = date('Y-m-d H:i:s');
 	}
 
 	public function update( ) {
-		global $gTables;
-		$this->date_update = time();
-		
-
+		$this->date_updated = date('Y-m-d H:i:s'); 
 	}
 
 	public function save() {
-		
+		$values = array(
+			'id'		=>	$this->getId(),
+			'table_oc'	=>	$this->getTableOc(),
+			'table_gz'	=>	$this->getTableGz(),
+			'id_oc'		=>	$this->getIdOc(),
+			'id_gz'		=>	$this->getIdGz(),
+			'date_created'	=>	$this->getDateCreated(),
+			'date_update'	=>	$this->getDateUpdate(),
+		);
+		$this->setValues($values);
+	 	return	parent::save();			
 	}
 
 	public function getFromOc( $table_oc, $id_oc ) {

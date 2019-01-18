@@ -50,6 +50,7 @@ class Customer implements ICustomer {
   private $safe;
   private $token;
   private $date_added;
+  private $addresses;
   private $api;
 
   public function __construct( ) {
@@ -87,6 +88,10 @@ class Customer implements ICustomer {
 	  return  $r;
   }
 
+  public function setAddresses ( array $addresses ) {
+	
+  }
+
   public function setCustomerId( $customer_id ) {
 	$this->customer_id = $customer_id;
   }
@@ -101,6 +106,11 @@ class Customer implements ICustomer {
 	$this->email = $email;
 	$this->telephone = $telephone;
 	$this->fax = $fax;
+  }
+
+  public function getAddress() {
+	// Ritorna solo un indirizzo
+	 
   }
 
   public function getCustomerId() {

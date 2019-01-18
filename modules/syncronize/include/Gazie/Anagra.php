@@ -386,6 +386,10 @@ class Anagra extends \Database\TableMysqli {
 			$anagr = new Anagra($customer->getRagso1(), "G","00000000000","00000000000");
 			$anagr->setEmail($customer->getEmail());
 			$anagr->setCell($customer->getTelephone());
+			// Inserisci indirizzo
+			// CAP, SPEDIZIONE, CITTA, PROVINCIA
+			$anagr->setAddress($r['indspe'],$r['capspe'],$r['citspe'],$r['prospe']);
+
 			$exist = $anagr->exist();
 			if ( ! $exist ) {
 				// Salva ed aggiungi id customer
