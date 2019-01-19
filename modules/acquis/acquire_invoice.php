@@ -577,7 +577,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				// trovo l'ultimo codice disponibile sul piano dei conti
 				$rs_last_partner = gaz_dbi_dyn_query("*", $gTables['clfoco'], 'codice BETWEEN ' . $admin_aziend['masfor'] . '000001 AND ' . $admin_aziend['masfor'] . '999999', "codice DESC", 0, 1);
 				$last_partner = gaz_dbi_fetch_array($rs_last_partner);
-				$new_partner['codice'] =$last_partner['codice']+1;
+				if(!$last_partner){
+					$new_partner['codice']=$admin_aziend['masfor'].'000001';
+				} else {
+					$new_partner['codice'] =$last_partner['codice']+1;
+				}
 				// inserisco il partner
 				$anagrafica->insertPartner($new_partner);
 				$form['clfoco']=$new_partner['codice'];

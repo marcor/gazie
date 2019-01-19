@@ -163,9 +163,12 @@ class Template extends FPDI {
 				$this->Cell(72, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);
 				$this->Cell(25);
 				$this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
-				$to=' cod.dest.: ' . $this->cod_univoco;
-				if (trim($this->cod_univoco)==''){
-					$to='pec:'.$this->pec_cliente;
+				$to='';
+				if (trim($this->cod_univoco)!=''){
+					$to.=' Dest: '.$this->cod_univoco;
+				}
+				if (trim($this->pec_cliente)!=''){
+					$to.=' Pec: '.$this->pec_cliente;
 				}
 				$this->Cell(40, 4,$to , 'B', 0, 'L', 0, '', 1);
 				$this->Cell(25, 4, '', 'RB');
