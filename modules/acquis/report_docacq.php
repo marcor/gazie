@@ -215,14 +215,10 @@ $script_transl = HeadMain();
         $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
         $ctrlprotoc = "";
         while ($row = gaz_dbi_fetch_array($result)) {
-			$ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = ". $row['id_tes']);
-			
-			$checkcount=0;
-			while ($check = gaz_dbi_fetch_array($ck)){
-				if (gaz_dbi_get_row($gTables['movmag'], "id_rif", $check['id_rig']. "' AND artico ='" . $check['codart'])){
-					$checkcount++;
-				}
-			}
+			// faccio il check per vedere se ci sono righi da trasferire in contabilità di magazzino
+			$ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=". $row['id_tes']." AND  LENGTH(TRIM(codart))>=1 AND tiprig=0 AND id_mag=0");
+			$check = gaz_dbi_fetch_array($ck);
+			// fine check magazzino
             $y = substr($row['datfat'], 0, 4);
             if ($row["tipdoc"] == 'AFA') {
                 $tipodoc = "Fattura";
@@ -258,8 +254,8 @@ $script_transl = HeadMain();
                 } else {
                     echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
                 }
-				if ($ck -> num_rows != $checkcount) {
-                    echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"../magazz/genera_movmag.php\">Genera movimenti</a>";
+				if ($check) { // ho qualche rigo da traferire
+                    echo " <a class=\"btn btn-xs btn-default btn-warning\" href=\"../magazz/genera_movmag.php\">Movimenta magazzino</a> ";
                 }
 				echo "</td>";
                 echo "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
