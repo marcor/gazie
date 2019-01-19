@@ -46,6 +46,7 @@ $fields = array(
 );
 
 $api = new Opencart\Api( $url, $fields['username'], $fields['password']);
+$errors = new \View\Message;
 if ( $sync ) {
 	if ( $id_oc > 0 ) {
 		$customer = new Opencart\Customer;
@@ -53,7 +54,7 @@ if ( $sync ) {
 		$customer->getById( $id_oc );
 		$result_syncronize = Gazie\Anagra::syncCustomer($customer);
 	        if ( !$result_syncronize ) {
-			$errors[] = "Errore nella sincronizzazione di IdOpencart $id_oc";
+			$errors->setError("Errore nella sincronizzazione di IdOpencart $id_oc");
 		} else {
 			// Inserisco il risultato
 			echo "inserisco $id_oc, tabella di sincronizzazione";
@@ -63,10 +64,10 @@ if ( $sync ) {
 			$syncro->add();
 			$syncro_id =$syncro->save();
 			if ( ! $syncro_id )
-				echo "Errore nel salvataggio syncro";
+				$errors->setError("Errore nel salvataggio syncro");
 		}
 	} else {
-		$errors[] = "Id cliente non selezionato";
+		$errors->setError("Id cliente non selezionato");
 	}
 }
 
@@ -84,9 +85,7 @@ $anagrs = Gazie\Anagra::getAll();
 ?>
 <div class="container">
   <div class="row">
-   <?php foreach ($errors as $e ) { ?>
-	<div class="col-sm-12"><i><?= $e; ?></i></div>
-   <?php } ?>
+	<?= $errors; ?> 
    <div class="col-sm-6">
     <div class="row center">
     Lista Anagrafiche ( Totali = <?= count($anagrs) ?> )
