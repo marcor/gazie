@@ -41,7 +41,7 @@ $strScript = array(
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia anagrafica'),
-        array("LET" => " Normale ", "DIC" => "Dichiarazione", "SOL" => " Sollecito "),
+        array("LET" => " Normale ", "DIC" => "Dichiarazione", "SOL" => " Sollecito ", "PRE" => " Preventivo " ),
         " del ",
         " a ",
         " numero ",

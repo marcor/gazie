@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
 $msg = "";
-$tipoLettera = array("LET" => '', "DIC" => '', "SOL" => '');
+$tipoLettera = array("LET" => '', "DIC" => '', "SOL" => '', "PRE" => '');
 // il tipo documento dev'essere settato e del tipo giusto altrimenti torna indietro
 if ((isset($_GET['Update']) and ! isset($_GET['id_let'])) or ( isset($_GET['tipo']) and ( !array_key_exists($_GET['tipo'], $tipoLettera)))) {
     header("Location: " . $form['ritorno']);

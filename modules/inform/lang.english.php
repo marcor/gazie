@@ -41,7 +41,7 @@ $strScript = array("report_letter.php" =>
             'Insert at least 2 characters!',
             'Changing customer'
         ),
-        array("LET" => " Normal ", "DIC" => "Declaration", "SOL" => " Sollecito "),
+        array("LET" => " Normal ", "DIC" => "Declaration", "SOL" => " Sollecito ", "PRE" => " Preventivo " ),
         " of ",
         " at ",
         " number ",

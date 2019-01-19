@@ -141,8 +141,18 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     // Colonna "Mail"
     echo "<td align=\"center\">";
     if (!empty($a_row["e_mail"])) {
+		if($a_row["tipo"] == 'SOL'){
+			$namedoc = 'Sollecito del '.gaz_format_date($a_row["write_date"]);
+		}elseif($a_row["tipo"] == 'DIC'){
+			$namedoc = 'Dichiarazione del '.gaz_format_date($a_row["write_date"]);
+		}elseif($a_row["tipo"] == 'PRE'){
+			$namedoc = 'Preventivo del '.gaz_format_date($a_row["write_date"]);
+		}else{
+			$namedoc = 'Lettera n.'.$a_row["numero"].' del '.gaz_format_date($a_row["write_date"]);
+		}
+				
         echo '<a onclick="confirMail(this);return false;" id="doc'.$a_row["id_let"].'" url="stampa_letter.php?id_let='.$a_row["id_let"].'&dest=E" href="#" title="mailto: '.$a_row["e_mail"].'"
-        mail="'.$a_row["e_mail"].'" namedoc="Lettera n.'.$a_row["numero"].' del '.gaz_format_date($a_row["write_date"]).'" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-envelope"></i></a>';
+        mail="'.$a_row["e_mail"].'" namedoc="'.$namedoc.'" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-envelope"></i></a>';
     }  
     echo "</td>";
     echo "<td align=\"center\">

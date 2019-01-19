@@ -38,6 +38,8 @@ class Lettera extends Template
             $this->tipdoc = 'Sollecito del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
         } elseif ($this->tesdoc['tipdoc']=='DIC')  {
             $this->tipdoc = 'Dichiarazione del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+        } elseif ($this->tesdoc['tipdoc']=='PRE')  {
+            $this->tipdoc = 'Preventivo del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
         } else  {
             $this->tipdoc = 'Lettera n.'.$this->tesdoc['numdoc'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
         }
