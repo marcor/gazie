@@ -267,6 +267,7 @@ class Login
 							che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti
 							qui tramite HTTPS */
 						if (SET_DYNAMIC_IP != '') {
+							@ini_set('default_socket_timeout',3); 
 							@file_get_contents(SET_DYNAMIC_IP);
 						}
 
@@ -382,6 +383,7 @@ class Login
 				che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti
 				qui tramite HTTPS */
 				if (SET_DYNAMIC_IP != '') {
+					@ini_set('default_socket_timeout',3); 
 					@file_get_contents(SET_DYNAMIC_IP);
 				}
 
