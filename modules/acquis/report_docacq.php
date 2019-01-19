@@ -215,6 +215,14 @@ $script_transl = HeadMain();
         $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
         $ctrlprotoc = "";
         while ($row = gaz_dbi_fetch_array($result)) {
+			$ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = ". $row['id_tes']);
+			
+			$checkcount=0;
+			while ($check = gaz_dbi_fetch_array($ck)){
+				if (gaz_dbi_get_row($gTables['movmag'], "id_rif", $check['id_rig']. "' AND artico ='" . $check['codart'])){
+					$checkcount++;
+				}
+			}
             $y = substr($row['datfat'], 0, 4);
             if ($row["tipdoc"] == 'AFA') {
                 $tipodoc = "Fattura";
@@ -244,11 +252,16 @@ $script_transl = HeadMain();
 				echo "<td>" . $row["numfat"] . " &nbsp;</td>";
                 echo "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
                 echo "<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?auxil=" . htmlspecialchars($anagra["ragso1"]) . "&search=Cerca\">" . $anagra["ragso1"] . ((empty($anagra["ragso2"]))?"":" ".$anagra["ragso2"]) . "</a>&nbsp;</td>";
+				echo "<td align=\"center\">";
                 if ($row["id_con"] > 0) {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont. n." . $row["id_con"] . "</a></td>";
+                    echo "<a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont. n." . $row["id_con"] . "</a>";
                 } else {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a></td>";
+                    echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
                 }
+				if ($ck -> num_rows != $checkcount) {
+                    echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"../magazz/genera_movmag.php\">Genera movimenti</a>";
+                }
+				echo "</td>";
                 echo "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
                 //if ($lt_doc[$y] == $row['protoc']) {
                     echo "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
