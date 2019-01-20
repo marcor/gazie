@@ -105,9 +105,12 @@ function encondeFornitorePrefix($clfoco,$b=36) {
 	
 }
 
-function existMovmag($numddt,$dataddt,$clfoco,$codart="%%") {
+function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
 	global $gTables;
-	/* Questa funzione serve per controllare se è già stato registrato in magazzino il rigo dell'eventuale DdT contenuto nella fattura che stiamo acquisendo mi baso su fornitore, numero, data e, se lo passo, il codice articolo */
+	/* Questa funzione serve per controllare se è già stato registrato in magazzino il rigo dell'eventuale DdT contenuto nella 
+	fattura che stiamo acquisendo mi baso su fornitore, numero, data e, se lo passo, il codice articolo, quando passo $codart 
+	faccio una ricerca puntuale sull'articolo specifico
+	*/
     $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "tipdoc='ADT' AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."' AND codart LIKE '".$codart."'", "id_rig DESC", 0, 1);
     return gaz_dbi_fetch_array($result);
 }
@@ -286,28 +289,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['virtual_taxstamp'] = 1;	
 		}
 		/* 
-		Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
-		*/
-		if ($doc->getElementsByTagName("DatiDDT")->length>=1){
-			$ddt=$doc->getElementsByTagName("DatiDDT");
-			foreach ($ddt as $vd) { // attraverso DatiDDT
-				$vr=$vd->getElementsByTagName("RiferimentoNumeroLinea");
-				$dataddt=$vd->getElementsByTagName("DataDDT")->item(0)->nodeValue;
-				$numddt=$vd->getElementsByTagName("NumeroDDT")->item(0)->nodeValue;
-				foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
-					$nl=$vdd->nodeValue;
-					// qui non posso fare il controllo sull'articolo in quanto la riconciliazione potrebbe essere modificata dall'operatore, controllerò solo prima di inserire sul database se mettere l'id_mag che ho trovato sullo specifico rigo
-					if (isset($form['clfoco'])&&existMovmag($numddt,$dataddt,$form['clfoco'])){
-						$form['rows'][$nl]['exist_ddt']=existMovmag($numddt,$dataddt,$form['clfoco']);
-					}else{
-						$form['rows'][$nl]['exist_ddt']=false;
-					}
-					$form['rows'][$nl]['NumeroDDT']=$numddt;
-					$form['rows'][$nl]['DataDDT']=$dataddt;
-				}
-			}
-		}
-		/* 
 		INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
 		a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva 
 		al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei
@@ -444,6 +425,41 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 		}
 
+		/* 
+		Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
+		*/
+		foreach ($DettaglioLinee as $item) {
+			$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+			if ($doc->getElementsByTagName("DatiDDT")->length>=1){
+				$ddt=$doc->getElementsByTagName("DatiDDT");
+				foreach ($ddt as $vd) { // attraverso DatiDDT
+					$vr=$vd->getElementsByTagName("RiferimentoNumeroLinea");
+					$dataddt=$vd->getElementsByTagName("DataDDT")->item(0)->nodeValue;
+					$numddt=$vd->getElementsByTagName("NumeroDDT")->item(0)->nodeValue;
+					if (!$vr->length>=1){ // non ho un riferimento ad una linea specifica
+						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+							$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+						}else{
+							$form['rows'][$nl]['exist_ddt']=false;
+						}
+						$form['rows'][$nl]['NumeroDDT']=$numddt;
+						$form['rows'][$nl]['DataDDT']=$dataddt;
+					} else {
+						$nl_ref=$vr->item(0)->nodeValue;
+					}
+					foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
+						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+							$form['rows'][$nl_ref]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+						}else{
+							$form['rows'][$nl_ref]['exist_ddt']=false;
+						}
+						$form['rows'][$nl_ref]['NumeroDDT']=$numddt;
+						$form['rows'][$nl_ref]['DataDDT']=$dataddt;
+					}
+				}
+			}
+			
+		}
 		/*
 			QUI TRATTERO' gli elementi <DatiCassaPrevidenziale> come righi accodandoli ad essi su rigdoc (tipdoc=4) 
 		*/
@@ -560,10 +576,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0)){
 					$new_partner['descri'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0)->nodeValue;
 					if (strlen($new_partner['descri'])>50){
-						$new_partner['ragso1'] = substr($new_partner['descri'],0,50);
-						$new_partner['ragso2'] = substr($new_partner['descri'],50,100);
+						$new_partner['ragso1'] = substr(str_replace(array("'",'"',"`"),"",$new_partner['descri']),0,50);
+						$new_partner['ragso2'] = substr(str_replace(array("'",'"',"`"),"",$new_partner['descri']),50,100);
 					} else {
-						$new_partner['ragso1'] = $new_partner['descri'];							
+						$new_partner['ragso1'] = str_replace(array("'",'"',"`"),"",$new_partner['descri']);							
 					}
 				}
 				$new_partner['indspe'] = ucwords(strtolower($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0)->nodeValue));
@@ -652,6 +668,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
 						break;
+						default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
+							if($v['exist_ddt']){ 
+								/* ho un DdT di riferimento già inserito allora faccio una ricerca puntuale per trovare un eventuale movimento di magazzino riferito a questo specifico articolo altrimenti uso '999999999' per id_mag in modo che il movimento di magazzino venga comunque dal DdT inserito manualmente in precedenza e non da questa fattura */								
+								$exist_artico_movmag=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);							
+								$form['rows'][$i]['id_mag']=($exist_artico_movmag)?$exist_artico_movmag['id_mag']:'999999999';
+							}
 					}
 				}
 				// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'articolo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
