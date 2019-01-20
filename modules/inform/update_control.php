@@ -104,5 +104,173 @@ if ($configurazione['cvalue']) {
 }
 ?>
 <?php
+function getMaximumFileUploadSize()  
+{  
+    return min(convertPHPSizeToBytes(ini_get('post_max_size')), convertPHPSizeToBytes(ini_get('upload_max_filesize')));  
+}  
+
+/**
+* This function transforms the php.ini notation for numbers (like '2M') to an integer (2*1024*1024 in this case)
+* 
+* @param string $sSize
+* @return integer The value in bytes
+*/
+function convertPHPSizeToBytes($sSize)
+{
+    //
+    $sSuffix = strtoupper(substr($sSize, -1));
+    if (!in_array($sSuffix,array('P','T','G','M','K'))){
+        return (int)$sSize;  
+    } 
+    $iValue = substr($sSize, 0, -1);
+    switch ($sSuffix) {
+        case 'P':
+            $iValue *= 1024;
+            // Fallthrough intended
+        case 'T':
+            $iValue *= 1024;
+            // Fallthrough intended
+        case 'G':
+            $iValue *= 1024;
+            // Fallthrough intended
+        case 'M':
+            $iValue *= 1024;
+            // Fallthrough intended
+        case 'K':
+            $iValue *= 1024;
+            break;
+    }
+    return (int)$iValue;
+}
+
+// Copy folder 
+function copyFolder($src, $dst, $create=FALSE) { 
+    if ($src === $dst )
+	    return FALSE;
+    $dir = opendir($src); 
+    if ( !is_dir($dst) ) {
+	if ( $create )
+		@mkdir($dst); 
+	else
+	   return FALSE;
+    }
+    while(false !== ( $file = readdir($dir)) ) { 
+        if (( $file != '.' ) && ( $file != '..' )) { 
+		if ( is_dir($src . '/' . $file) ) {
+                  copyFolder($src . '/' . $file, $dst . '/' . $file,true); 
+            } 
+		else {
+                  copy($src . '/' . $file,$dst . '/' . $file); 
+            } 
+        } 
+    } 
+    closedir($dir); 
+    return true;
+} 
+
+// Delete all directory
+function deleteDirectory($dirname){
+	if (file_exists($dirname) && is_file($dirname)) {
+		unlink($dirname);
+	} elseif (is_dir($dirname)){
+		$handle = opendir($dirname);
+		while (false !== ($file = readdir($handle))) {
+		   if ( $file != '.' && $file != ".." ) {
+			if(is_file($dirname.'/'.$file)){
+				unlink($dirname.'/'.$file);
+			} else  {
+				deleteDirectory($dirname.'/'.$file);
+			}
+		   }
+		}
+		$handle = closedir($handle);
+		rmdir($dirname);
+	}
+}
+
+if ( getMaximumFileUploadSize() < 36*1024*1024 )
+	echo "Cambia la configurazione php.ini per upload > 100M ";
+
+// Verifica upload file gazie
+if ( isset($_FILES['file'])) {
+	// Verifica dimensioni > 30 MB
+	$errors = [];
+	$path_local = realpath('../..');
+	$directory = [
+			$path_local."/admin.php", 
+			$path_local."/composer.json", 
+			$path_local."/composer.lock.php", 
+			$path_local."/config.php", 
+			$path_local."/doc", 
+			$path_local."/.htaccess", 
+			$path_local."/INDEX.html", 
+			$path_local."/index.php", 
+			$path_local."/js", 
+			$path_local."/language", 
+			$path_local."/library", 
+			$path_local."/modules", 
+			$path_local."/README.html", 
+			$path_local."/setup", 
+			$path_local."/SETUP.html", 
+		];
+	$perms = substr(sprintf('%o', fileperms($path_local)), -4); 
+	if ( $perms !== '0755' && $perms !== '0777' ) {
+		$errors[] = "Non hai permessi di scrittura in '$path_local' impostali a 0755 con proprietario www-data";
+	}
+	if ( $_FILES['file']['size'] < 30*1024*1024 )
+		$errors[] = "Errore dimensioni files in upload";
+	if ( $_FILES['file']['type'] !== 'application/zip' )
+		$errors[] = "Il file non è uno zip di gazie";
+	if ( $_FILES['file']['error'] !== 0 )
+		$errors[] = "Errore nell'upload del file";
+
+	if ( empty( $errors ) ) {
+		$tmp_zip = $_FILES['file']['tmp_name'];
+		$zip_name = $_FILES['file']['name'];
+		// Unzippo tutti i files
+		$zip = new ZipArchive;
+		$res = $zip->open($tmp_zip);
+		if ($res === TRUE) {
+		  if ( !is_dir($path_local.'/tmp') )
+			  mkdir($path_local.'/tmp');
+		  $zip->extractTo($path_local.'/tmp');
+		  $zip->close();
+		  if ( !is_dir($path_local.'/tmp/gazie') ) {
+			deleteDirectory($path_local.'/tmp');
+			echo "Sembra non essere uno zip gazie";
+		  } else {
+			foreach ( $directory as $d ) {
+				deleteDirectory( $d );
+			}
+//			@mkdir($path_local."/tmp/g");
+			$m = copyFolder($path_local.'/tmp/gazie',$path_local);
+			if ( $m ) {
+		  		echo 'Esci e rientra nella nuova versione! <a href="../../modules/root/logout.php">Logout</a>';
+			} else {
+			   echo "Errore nello spostamento dei file";
+			}
+		        deleteDirectory("$path_local/tmp");
+		  }
+		} else {
+  		    echo "Errore in apertura zip file $tmp_zip";
+		}
+	        @unlink($tmp_zip);	
+	} else {
+		foreach ( $errors as $error ) {
+			echo $error;
+		}
+	}
+
+}
+?>
+<br><br><br>
+<div class="container text-center">
+<form enctype="multipart/form-data" method="post" class="text-center">
+  <input id="file" type="file" name="file" >  
+  <button type="submit" class="btn btn-primary " id="save" name="save"><i class="icon-ok icon-white"></i> Upload</button>
+</form>
+</div>
+
+<?php
 require("../../library/include/footer.php");
 ?>
