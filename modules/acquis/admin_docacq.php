@@ -597,7 +597,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $sql_documento, $where, 0, 1);
                 $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 // se e' il primo documento dell'anno, resetto il contatore
-                if ($ultimo_documento) {
+                if ($form['tipdoc']=='ADT') {  //ma se e' un ddt a fornitore il protocollo è 0 così come il numero e data fattura
+                    $form['protoc'] = 0;
+                    $form['numfat'] = 0;
+					$form['datfat'] = $datemi;
+                } elseif ($ultimo_documento) {
                     $form['numdoc'] = $ultimo_documento['numdoc'] + 1;
                 } else {
                     $form['numdoc'] = 1;

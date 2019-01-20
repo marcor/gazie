@@ -632,6 +632,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             tesdocInsert($form);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
+			$ctrl_ddt='';
             foreach ($form['rows'] as $i => $v) { // inserisco i righi 
 				$post_nl=$i-1;
 				if (abs($form['rows'][$i]['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
@@ -642,6 +643,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);						
 				} else { // ho il codice articolo del fornitore 
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
+				}
+				if(isset($v['exist_ddt'])){ 
+					if ($ctrl_ddt!=$v['NumeroDDT']){ // sul db inserisco un rigo descrittivo al cambio di DdT di riferimento
+						rigdocInsert(array('id_tes'=>$ultimo_id,'tiprig'=>2,'descri'=>'da D.d.T. n. '.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT'])));
+					}
+					/* ho un DdT di riferimento già inserito allora faccio una ricerca puntuale per trovare un eventuale movimento di magazzino riferito a questo specifico articolo altrimenti uso '999999999' per id_mag in modo che il movimento di magazzino venga comunque dal DdT inserito manualmente in precedenza e non da questa fattura */
+					$id_mag=($v['exist_ddt'])?'999999999':0;
+					$exist_artico_movmag=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);							
+					$form['rows'][$i]['id_mag']=($exist_artico_movmag)?$exist_artico_movmag['id_mag']:$id_mag;
+					$ctrl_ddt=$v['NumeroDDT'];
 				}
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
 				// i righi postati hanno un indice diverso
@@ -669,11 +680,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['rows'][$i]['codart'] = $new_codart;
 						break;
 						default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
-							if($v['exist_ddt']){ 
-								/* ho un DdT di riferimento già inserito allora faccio una ricerca puntuale per trovare un eventuale movimento di magazzino riferito a questo specifico articolo altrimenti uso '999999999' per id_mag in modo che il movimento di magazzino venga comunque dal DdT inserito manualmente in precedenza e non da questa fattura */								
-								$exist_artico_movmag=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);							
-								$form['rows'][$i]['id_mag']=($exist_artico_movmag)?$exist_artico_movmag['id_mag']:'999999999';
-							}
 					}
 				}
 				// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'articolo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
@@ -770,7 +776,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				// qui valorizzo il rigo di riferimento al ddt
 				$exist_ddt='';
 				if ($v['exist_ddt']){ // ho un ddt d'acquisto già inserito 
-					$exist_ddt='<span class="warning"> questo DdT è già stato inserito in magazzino: id='.$v['exist_ddt']['id_tes'].'</span>'; 
+					$exist_ddt='<span class="warning"> questo DdT è già stato inserito <a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='. $v['exist_ddt']["id_tes"] . '&Update"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$v['exist_ddt']["id_tes"].'</a></span>'; 
 				}
 				$ctrl_ddt=$v['NumeroDDT'];
 				$rowshead[$k]='<td colspan=13><b> da DdT n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';		

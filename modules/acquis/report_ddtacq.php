@@ -213,7 +213,7 @@ while ($val = gaz_dbi_fetch_array($res)) {
             $cliente = $anagrafica->getPartner($a_row['clfoco']);
             echo "<tr class=\"FacetDataTD\">";
 //       echo "<td class=\"FacetDataTD\"><a href=\"admin_docacq.php?id_tes=" . $a_row["id_tes"] . "&Update\">" . $a_row["id_tes"] . "</a> &nbsp</td>";
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docacq.php?id_tes=" . $a_row["id_tes"] . "&Update\">" . "<i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</td>";
+            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docacq.php?id_tes=" . $a_row["id_tes"] . "&Update\">" . "<i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a></td>";
             echo "<td>" . $a_row["tipdoc"] . " &nbsp;</td>";
             echo "<td>" . $a_row["numdoc"] . " &nbsp;</td>";
             echo "<td>" . $a_row["datemi"] . " &nbsp;</td>";
