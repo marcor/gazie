@@ -245,6 +245,7 @@ if ( isset($_FILES['file'])) {
 //			@mkdir($path_local."/tmp/g");
 			$m = copyFolder($path_local.'/tmp/gazie',$path_local);
 			if ( $m ) {
+				chmod('../../library/tcpdf/cache',0777);
 		  		echo 'Esci e rientra nella nuova versione! <a href="../../modules/root/logout.php">Logout</a>';
 			} else {
 			   echo "Errore nello spostamento dei file";
