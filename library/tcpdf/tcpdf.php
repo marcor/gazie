@@ -9994,8 +9994,12 @@ class TCPDF {
 		$this->_out($o);
 		$this->_out('%%EOF');
 		$this->state = 3; // end-of-doc
+		// GAzie patch: elimino i file che ho usato per generare il pdf ma solo se temporanei altrimenti rischio di cancellare dal filesystem del server anche quelli usati per personalizzare i templates
 		foreach ($this->imagekeys as $file) {
-			unlink($file);
+			$ex=explode('.', $file);
+			if (end($ex)=='tmp'){
+				unlink($file);
+			}
 		}
 	}
 

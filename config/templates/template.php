@@ -170,8 +170,7 @@ class Template extends FPDI {
 				if (trim($this->pec_cliente)!=''){
 					$to.=' Pec: '.$this->pec_cliente;
 				}
-				$this->Cell(40, 4,$to , 'B', 0, 'L', 0, '', 1);
-				$this->Cell(25, 4, '', 'RB');
+				$this->Cell(65, 4,$to.' ' , 'BR', 0, 'L', 0, '', 1);
             }
 			$this->SetXY(110, $interlinea + 6);
             $this->SetFont('helvetica', '', 10);
