@@ -321,7 +321,7 @@ Chart.defaults.global.defaultFontColor = '#999';
 // Populate pie chart dataset/labels
 var numOfValuesInDataset=0;
 <?php
-if( $CJSarray ) {
+if( !empty($CJSarray) && count($CJSarray)>0 ) {
 	foreach ($CJSarray as $mvf)	{
 		$margine = ($mvf[2] > 0 ? ($mvf[2] - $mvf[3]) * 100 / $mvf[2] : 0);
 ?>
@@ -394,7 +394,7 @@ var barChartDataCost=[];
 var barChartDataSold=[];
 
 <?php
-if( $CJSarray ) {
+if( !empty($CJSarray) && count($CJSarray)>0 ) {
 	foreach ($CJSarray as $mvf)	{
 ?>
 	barChartDataSold.push(parseFloat(<?php echo $mvf[2]?>).toFixed(2));

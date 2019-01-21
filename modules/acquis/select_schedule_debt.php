@@ -41,7 +41,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 }
 // fine controlli
 
-if (isset($_POST['print']) && $msg == '') {
+if (isset($_POST['print']) && empty($msg)) {
     $_SESSION['print_request'] = array('script_name' => 'print_schedule',
         'orderby' => $form['orderby']
     );

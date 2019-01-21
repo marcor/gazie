@@ -689,7 +689,7 @@ class Anagrafica {
     }
 
     function updatePartners($codice, $newValue) {
-        $newValue['descri'] = $newValue['ragso1'] . ' ' . $newValue['ragso2'];
+        $newValue['descri'] = $newValue['ragso1'] . ((!empty($newValue['ragso2'])) ? ' ' . $newValue['ragso2'] : '');
         gaz_dbi_table_update('clfoco', $codice, $newValue);
         gaz_dbi_update_anagra(array('id', $newValue['id_anagra']), $newValue);
     }

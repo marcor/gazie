@@ -396,7 +396,7 @@ Chart.defaults.global.defaultFontColor = '#999';
 // Populate pie chart dataset/labels
 var numOfValuesInDataset=0;
 <?php
-if( $CJSarray ) {
+if( !empty($CJSarray) && count($CJSarray)>0 ) {
 	foreach ($CJSarray as $mvf)	{
 		$avanzamento = ($mvf[3] > 0 ? ($mvf[2]*100) / $mvf[3] : 0);
 ?>
@@ -469,7 +469,7 @@ var barChartDataPurchased=[];
 var barChartDataSold=[];
 
 <?php
-if( $CJSarray ) {
+if( !empty($CJSarray) && count($CJSarray)>0 ) {
 	foreach ($CJSarray as $mvf)	{
 ?>
 	barChartDataPurchased.push(parseFloat(<?php echo $mvf[3]?>).toFixed(2));

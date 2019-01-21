@@ -182,7 +182,7 @@ if ($utsini >= $utsfin)
     $msg .="1-18-2+";
 
 if (isset($_GET['stampa'])) {
-    $locazione = "Location: stampa_bilanc.php?&di=".$datainizio."&df=".$datafine."&pi=".$_GET['pagini']."&sd=".$_GET['stadef']."&cf=".$_GET['dettcf'];
+    $locazione = "Location: stampa_bilanc.php?&di=".$datainizio."&df=".$datafine."&pi=".$_GET['pagini'].((!empty($_GET['stadef'])) ? "&sd=".$_GET['stadef'] : '')."&cf=".$_GET['dettcf'];
     header($locazione);
     exit;
 }
