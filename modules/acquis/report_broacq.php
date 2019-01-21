@@ -27,18 +27,22 @@ $admin_aziend = checkAdmin();
 $partner_select_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode');
 $message = "";
 $anno = date("Y");
+
 if (isset($_GET['flt_tipo'])) {
     $flt_tipo = filter_input(INPUT_GET,'flt_tipo');
+} elseif (isset($_GET['datfat'])) { // vengo da una richiesta fatta con recordnav
+    $flt_tipo = filter_input(INPUT_GET,'datfat');
 } else {
 	$flt_tipo='APR';
 }
+$datfat = substr($flt_tipo,0,3);
 
 if (isset($_GET['auxil'])) {
     $auxil = filter_input(INPUT_GET, 'auxil');
 } else {
     $auxil = 1;
 }
-$where = "tipdoc = '".$flt_tipo."' AND seziva = '$auxil'";
+$where = "tipdoc = '".$datfat."' AND seziva = '$auxil'";
 $all = $where;
 
 $documento = '';
@@ -125,6 +129,7 @@ function confirmemail(cod_partner,id_tes,genorder=false) {
 		modal: true,
 		show: "blind",
 		hide: "explode",
+		width: "400",
 		buttons: {
 			Conferma: function() {
 				if ( !( emailRegex.test( $("#mailaddress").val() ) ) && !genorder ) {
@@ -180,7 +185,6 @@ function choicePartner(row)
 </script>
 
 <form method="GET">
-    <input type="hidden" name="flt_tipo" value="<?php echo $flt_tipo;?>">
     <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title_dist'][$flt_tipo]; ?>
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
@@ -385,7 +389,7 @@ function choicePartner(row)
     <fieldset>
         <div>
             <label id="maillabel" for="mailaddress">all'indirizzo:</label>
-            <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="50" />
+            <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="50" size="40" />
         </div>
         <div id="mailbutt">
 		</div>
