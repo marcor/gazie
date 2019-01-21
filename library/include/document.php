@@ -74,6 +74,8 @@ class DocContabVars {
         $this->decimal_price = $admin_aziend['decimal_price'];
         $this->logo = $admin_aziend['image'];
         $this->link = $admin_aziend['web_url'];
+        // leggo la sede legale dell'azienda
+        $this->sedelegale = $admin_aziend['sedleg'];
         $this->perbollo = 0;
         $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['taxstamp_vat']);
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);

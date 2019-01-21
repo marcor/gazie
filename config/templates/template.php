@@ -46,6 +46,7 @@ class Template extends FPDI {
         $this->intesta2 = $docVars->intesta2;
         $this->intesta3 = $docVars->intesta3 . $docVars->intesta4;
         $this->intesta4 = $docVars->codici;
+		$this->sedelegale = $docVars->sedleg;
         $this->colore = $docVars->colore;
         $this->decimal_quantity = $docVars->decimal_quantity;
         $this->decimal_price = $docVars->decimal_price;
@@ -115,7 +116,12 @@ class Template extends FPDI {
             }
             $this->Cell(130, 3, $this->intesta2, 0, 2, 'L');
             $this->Cell(130, 3, $this->intesta3, 0, 2, 'L');
-            $this->Cell(130, 3, $this->intesta4, 0, 0, 'L');
+            if ( $this->sedelegale!="" ) {
+				$this->Cell(130, 3, $this->intesta4, 0, 2, 'L');
+				$this->Cell(130, 3, "SEDE LEGALE: ".$this->sedelegale, 0, 0, 'L');
+			} else {
+				$this->Cell(130, 3, $this->intesta4, 0, 0, 'L');
+			}
 			$im = imagecreatefromstring ( $this->logo );
 			$ratio = round(imagesx($im)/imagesy($im),2);
 			$x=60; $y=0;

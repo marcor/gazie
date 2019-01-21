@@ -465,12 +465,12 @@ class FatturaImmediata extends Template_con_scheda
           } else {
            $this->SetY(-20);
            $this->SetFont('helvetica','',8);
-           $this->MultiCell(186,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
+           $this->MultiCell(186, 4, $this->intesta1 . ' ' . $this->intesta2 . ' ' . $this->intesta3 . ' ' . $this->intesta4 . ' ' . "SEDE LEGALE: ".$this->sedelegale, 0, 'C', 0);
           }
         } else {
            $this->SetY(-20);
            $this->SetFont('helvetica','',8);
-           $this->MultiCell(186,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
+           $this->MultiCell(186, 4, $this->intesta1 . ' ' . $this->intesta2 . ' ' . $this->intesta3 . ' ' . $this->intesta4 . ' ' . "SEDE LEGALE: ".$this->sedelegale, 0, 'C', 0);
         }
     }
 }

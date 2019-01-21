@@ -59,6 +59,7 @@ class Template extends FPDI {
         $this->cliente4 = $docVars->cliente4;  // CAP, Città, Provincia
         $this->cliente4b = $docVars->cliente4b; // Nazione
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
+		$this->sedelegale = $docVars->sedleg;
         $this->agente = $docVars->name_agente;
         if ( $docVars->destinazione == "" ) {
             $this->destinazione = $docVars->client['destin'];
@@ -95,7 +96,12 @@ class Template extends FPDI {
             }
             $this->Cell(130, 3, $this->intesta2, 0, 2, 'L');
             $this->Cell(130, 3, $this->intesta3, 0, 2, 'L');
-            $this->Cell(130, 3, $this->intesta4, 0, 0, 'L');
+            if ( $this->sedelegale!="" ) {
+				$this->Cell(130, 3, $this->intesta4, 0, 2, 'L');
+				$this->Cell(130, 3, "REGISTERED OFFICE: ".$this->sedelegale, 0, 0, 'L');
+			} else {
+				$this->Cell(130, 3, $this->intesta4, 0, 0, 'L');
+			}
 			$im = imagecreatefromstring ( $this->logo );
 			$ratio = round(imagesx($im)/imagesy($im),2);
 			$x=60; $y=0;

@@ -36,6 +36,7 @@ class OrdineCliente extends Template
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
         $this->tipdoc = 'Conferma d\'Ordine da Cliente n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+		$this->show_artico_composit = $this->docVars->show_artico_composit;
     }
     function newPage() {
         $this->AddPage();
@@ -107,12 +108,14 @@ class OrdineCliente extends Template
                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
                     break;
                 case "210": // se è un'articolo composto visualizzo la quantità 
-                    $oldy = $this->GetY();
-                    $this->SetFont('helvetica', '', 8);
-                    $this->SetY($this->GetY()-6);
-                    $this->Cell(104, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
-                    $this->SetY( $oldy );
-                    $this->SetFont('helvetica', '', 9);
+                    if ( $this->show_artico_composit=="1" ) {
+						$oldy = $this->GetY();
+						$this->SetFont('helvetica', '', 8);
+						$this->SetY($this->GetY()-6);
+						$this->Cell(104, 8, '('.$rigo['unimis'].' '.gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity).')',0,0,'R');
+						$this->SetY( $oldy );
+						$this->SetFont('helvetica', '', 9);
+					}
                     break;
                 }
        }
