@@ -84,7 +84,7 @@ class OrdineFornitore extends Template
 				/* stampo il rigo riferito ad una produzione   */
 				$this->SetFont('helvetica', 'B', 9);
 				$this->Ln(1);
-				$this->Cell(188, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  substr($rigo['orderman_data']['datemi'],0,4), 1, 1, 'L');
+				$this->Cell(188, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  $rigo['orderman_descri'], 1, 1, 'L');
 				$this->SetFont('helvetica', '', 8);
 			}
                 switch($rigo['tiprig']) {
