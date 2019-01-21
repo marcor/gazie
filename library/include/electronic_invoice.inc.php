@@ -729,7 +729,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     }
                     $el1 = $domDoc->createElement("Descrizione", htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",substr($rigo['descri'], -1000)), ENT_XML1 | ENT_QUOTES, 'UTF-8', true)) ;
                     $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("Quantita", number_format($rigo['quanti'], 2, '.', ''));
+                    $el1 = $domDoc->createElement("Quantita", number_format($rigo['quanti'], 3, '.', ''));
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("UnitaMisura", $rigo['unimis']);
                     $el->appendChild($el1);
