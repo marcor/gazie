@@ -46,7 +46,7 @@ class Template extends FPDI {
         $this->intesta2 = $docVars->intesta2;
         $this->intesta3 = $docVars->intesta3 . $docVars->intesta4;
         $this->intesta4 = $docVars->codici;
-		$this->sedelegale = $docVars->sedleg;
+		$this->sedelegale = $docVars->sedelegale;
         $this->colore = $docVars->colore;
         $this->decimal_quantity = $docVars->decimal_quantity;
         $this->decimal_price = $docVars->decimal_price;
