@@ -49,7 +49,14 @@ function confirMail(link){
       hide: "explode",
          buttons: {
                       " '.$script_transl['submit'].' ": function() {
-                         window.location.href = targetUrl;
+                         //window.location.href = targetUrl;
+						 $.ajax({
+							url: targetUrl,
+							success: function (result) {
+								$("#dialog").html(result);
+								$(":button:contains(\''.$script_transl['submit'].'\')").hide();
+							}
+						})
                       },
                       " '.$script_transl['cancel'].' ": function() {
                         $(this).dialog("close");
