@@ -195,7 +195,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         $doc[$tes['protoc']]['vat'] = $calc->castle;
         $ctrlp = $tes['protoc'];
     }
-    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || (!empty($taxstamp) && $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
         $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
         $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
