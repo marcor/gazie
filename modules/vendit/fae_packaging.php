@@ -58,10 +58,24 @@ function getExtremeDocs($vat_register = '_', $vat_section = 1) {
     $docs['fin'] = array('profin' => $row['protoc'], 'date' => $row['datfat']);
     if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
 		$docs['fin'] = array('profin' => $row['numfat'], 'date' => $row['datfat']);
-		
+
     }
     return $docs;
 }
+
+// AGGIUNTA FUNZIONE PER RECUPERARE ULTIMO PROGRESSIVO PACCHETTO IN fae_flux
+function getLastPack() // RESTITUISCE IL PROGRESSIVO IN FORMATO STRINGA DELL'ULTIMO PACCKETTO INVIATO
+{
+    global $gTables;
+    $where = "(filename_zip_package IS NOT NULL OR filename_zip_package != '') ";
+    $orderby = "filename_zip_package DESC";
+    $from = $gTables['fae_flux'];
+    $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
+    $row = gaz_dbi_fetch_array($result);
+    $ultimo=substr($row['filename_zip_package'],-9,5) ;
+    return $ultimo;
+}
+/// FINE aggiunta FUNZIONE
 
 function getFAEunpacked($vat_register = '___', $vat_section = 1, $date = false, $protoc = 999999999) {
     global $gTables, $admin_aziend;
@@ -98,7 +112,7 @@ function getFAEunpacked($vat_register = '___', $vat_section = 1, $date = false, 
     $ivasplitpay = 0;
     $somma_spese = 0;
     $totimpdoc = 0;
-	$taxstamp = 0; 
+	$taxstamp = 0;
     $rit = 0;
 
     while ($tes = gaz_dbi_fetch_array($result)) {
@@ -167,7 +181,7 @@ function getFAEunpacked($vat_register = '___', $vat_section = 1, $date = false, 
             if ($r['tiprig'] <= 1 || $r['tiprig'] == 90) { //ma solo se del tipo normale, forfait, vendita cespite
                 //calcolo importo rigo
                 $importo = CalcolaImportoRigo($r['quanti'], $r['prelis'], array($r['sconto'], $tes['sconto']));
-                if ($r['tiprig'] == 1 || $r['tiprig'] == 90) { // se di tipo forfait o vendita cespite 
+                if ($r['tiprig'] == 1 || $r['tiprig'] == 90) { // se di tipo forfait o vendita cespite
                     $importo = CalcolaImportoRigo(1, $r['prelis'], $tes['sconto']);
                 }
                 //creo il castelletto IVA
@@ -189,7 +203,7 @@ function getFAEunpacked($vat_register = '___', $vat_section = 1, $date = false, 
                     $cast_acc[$r['codric']]['asset'] = 1;
                 }
                 $rit += round($importo * $r['ritenuta'] / 100, 2);
-                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment)   
+                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment)
                 if ($r['tipiva'] == 'T') {
                     $ivasplitpay += round(($importo * $r['pervat']) / 100, 2);
                 }
@@ -260,8 +274,25 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
     $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
-	// Stabilisco il nome del file tramite timestamp
-	$form['filename']='IT'.$admin_aziend['codfis'].'_'.date("YmdHis").'.zip';	
+
+// MODIFICATO SANDRO
+    $send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package');
+    echo trim($send_fae_zip_package['val']) ;
+    if (trim($send_fae_zip_package['val']) != "pec_SDI") {  // se non invio i pacchetti di fatture da PEC a PEC SdI
+                                                             // lascio invariato il comportamento di questo modulo
+      // Stabilisco il nome del file tramite timestamp
+    	$form['filename']='IT'.$admin_aziend['codfis'].'_'.date("YmdHis").'.zip';
+    } else {    //il pacchetto deve essere inviato da PEC alla PEC SDI: nome conforme allo SDI identificativoiva_xxxxx.zip, altrimenti lo rifiuta
+  $trasmissione_fae = getLastPack() ;
+  $progressivo_trasmissione_fae = intval($trasmissione_fae)+1;
+  $ninvio=sprintf("%05d",$progressivo_trasmissione_fae);
+  $form['filename']='IT'.$admin_aziend['codfis'].'_'.$ninvio.'.zip';
+  // 1) Questo progressivo in base decimale può numerare fino a 99999 invii, si dovrebbe poter fare
+  //    con altra base (come per le fatture in xml purchè non vada in conflitto con le stesse cioè non si abbia
+  //    un file trasmesso ITxxxxxxxxxxx_progressivo.xml e un file uguale ma .zip, non sò se lo SDI accetterebbe il secondo)
+    }
+// FINE MODIFICA
+
     $form['hidden_req'] = '';
 } else {    // accessi successivi
     $form['vat_register'] = substr($_POST['vat_register'], 0, 1);
@@ -287,7 +318,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $form['this_date_Y'] = date("Y");
             $form['this_date_M'] = date("m");
             $form['this_date_D'] = date("d");
-        }
+        }      
         $form['proini'] = $extreme['ini']['proini'];
         $form['profin'] = $extreme['fin']['profin'];
         $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
@@ -300,8 +331,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         if (count($rs) > 0) {
 			$zip = new ZipArchive;
 			$res = $zip->open('../../data/files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
-			if ($res === TRUE) { 
-				// ho creato l'archivio e adesso lo riempio con i file xml delle singole fatture 
+			if ($res === TRUE) {
+				// ho creato l'archivio e adesso lo riempio con i file xml delle singole fatture
 				foreach ($rs as $k => $v) {
 					if ($v['tes']['tipdoc']=='VCO'){ // in caso di fattura allegata allo scontrino
 						//vado a modificare le testate valorizzando con il nome del file zip (pacchetto) in cui desidero siano contenuti i file xml delle fatture selezionate
@@ -326,6 +357,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 					$zip->addFromString('IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml', $file_content);
 				}
 				$zip->close();
+
 				header("Location: report_fae_sdi.php");
 			} else {
 				echo 'La creazione del pacchetto è fallita!';
@@ -363,7 +395,7 @@ $(function() {
    $( "#dialog" ).dialog({
       autoOpen: false
    });
-  
+
 });
 function confirMail(link){
    codice = link.id.replace("doc", "");
