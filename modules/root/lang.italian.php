@@ -84,7 +84,13 @@ $strScript = array("admin.php" =>
         'sca_fornitore' => 'Fornitore',
         'sca_avere' => 'Avere',
         'sca_dare' => 'Dare',
-        'sca_scadenza' => 'Scadenza'
+        'sca_scadenza' => 'Scadenza',
+		'cod' => 'Codice',
+		'des' => 'Descrizione',
+		'lot' => 'Lotto',
+		'res' => 'Quantità',
+		'inscalot' => 'Lotti in scadenza',
+		'scalot' => 'Lotti scaduti'
     ),
     "config.php" =>
     array("title" => "Configurazione principale di GAzie",),
