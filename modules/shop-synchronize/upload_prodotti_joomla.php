@@ -8,15 +8,6 @@
   versione 1.0
   ------------------------------------------------------------------------ */
   
-/* impostazioni da fare prima di avviare il file
-inserire i dati dentro alle virgolette non toccare il resto */
-
-$urlinterf="https://www.???????.it/*******/articoli-gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
-
-
- // ---------------------------da qui in poi non modificare nulla---------------------------------
- 
- 
 require ("../../modules/magazz/lib.function.php");
 $gForm = new magazzForm;
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
@@ -33,6 +24,8 @@ if ($exists) {
     $c_e = 'company_id';
 }
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
+$path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
+$urlinterf = $path['val']."articoli-gazie.php";// url del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 
 ob_flush();
 flush();
