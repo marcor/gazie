@@ -636,6 +636,7 @@ $strScript = array("admin_fornit.php" =>
         'tax' => 'I.V.A.',
         'operation_type' => 'Tipo oper.',
         'conto' => 'Conto',
+		'new_acconcile'=>'Cambia conti sui righi con:'
 	),
     "admin_broacq.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',

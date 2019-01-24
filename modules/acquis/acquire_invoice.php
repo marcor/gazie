@@ -164,6 +164,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 	} else if (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
 		$form['pagame'] = intval($_POST['pagame']);
+		$form['new_acconcile'] = intval($_POST['new_acconcile']);
         if ($form['pagame'] <= 0 ) {  // ma non ho selezionato il pagamento
 			$msg['err'][] = 'no_pagame';
 		}
@@ -261,6 +262,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['partner_cost'] = $partner_with_same_pi[0]['cosric']; // costo legato al fornitore
 					}				
 					$form['pagame'] = $partner_with_same_pi[0]['codpag']; // condizione di pagamento
+					$form['new_acconcile']=0;
 					if ( $partner_with_same_pi[0]['aliiva'] > 0 ){
 						$form['partner_vat'] = $partner_with_same_pi[0]['aliiva']; 
 					}
@@ -584,6 +586,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['datreg'] = substr($_POST['datreg'],0,10);
 			$form['taxstamp'] = floatval($_POST['taxstamp']);
 			$form['pagame'] = intval($_POST['pagame']);
+			$form['new_acconcile'] = intval($_POST['new_acconcile']);
 			$form['seziva'] = intval($_POST['seziva']);
 		}
 
@@ -641,6 +644,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$new_partner['counas'] = $new_partner['country'];
 				$new_partner['id_currency'] =1;
 				$new_partner['id_language'] =1;
+				$new_partner['cosric']=intval($_POST['codric_0']);	 // prendo il primo valore di costo per valorizzare quello del fornitore			
 				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Telefono")->item(0)){
 					$new_partner['telefo'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Telefono")->item(0)->nodeValue;
 				}
@@ -663,6 +667,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['clfoco']=$new_partner['codice'];
 			} else if ($anagra_with_same_pi) { // devo inserire il fornitore, ho già l'anagrafica 
 				$anagra_with_same_pi['id_anagra']=$anagra_with_same_pi['id'];
+				$anagra_with_same_pi['cosric']=intval($_POST['codric_0']); // prendo il primo valore di costo per valorizzare quello del fornitore
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_pi, $admin_aziend['masfor'], $form['pagame']);
 			}
 			$prefisso_codici_articoli_fornitore=encondeFornitorePrefix($form['clfoco']);// mi servirà eventualmente per attribuire ai nuovi articoli un pre-codice univoco e uguale per tutti gli articoli dello stesso fornitore
@@ -703,7 +708,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
 				// i righi postati hanno un indice diverso
 				$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
-				$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
+				$form['rows'][$i]['codric']=intval($_POST['codric_'.$post_nl]);
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
 				$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
 				if ($exist_new_codart){ // il codice esiste lo uso  
@@ -739,6 +744,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 			if (!isset($form['pagame'])){
 				$form['pagame']=0;
+				$form['new_acconcile']=0;
 			}
 		}
 	}
@@ -751,7 +757,7 @@ $gForm = new acquisForm();
 <script type="text/javascript">
     $(function () {
         $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
-        $("#datreg").change(function () {
+        $("#datreg,#new_acconcile").change(function () {
             this.form.submit();
         });
     });
@@ -778,35 +784,38 @@ if ($toDo=='insert' || $toDo=='update' ) {
         </div> <!-- chiude row  -->
     </div>                    
     <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-4">
-                <div class="form-group">
-                    <div class="form-group">
-                        <label for="seziva" class="col-sm-8 control-label"><?php echo $script_transl['seziva']; ?></label>
+        <div class="form-group">
+            <div class="form-group col-md-6 col-lg-3 nopadding">
+                 <label for="seziva" class="col-form-label"><?php echo $script_transl['seziva']; ?></label>
+                 <div>
                         <?php
-                        $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-sm-4", '', 'style="max-width: 100px;"');
+                        $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-lg-12", '', 'style="max-width: 100px;"');
                         ?>
-                    </div>
                 </div>
             </div>                    
-            <div class="col-sm-12 col-md-4 col-lg-4">
-                <div class="form-group">
-                    <label for="datreg" class="col-sm-6 control-label"><?php echo $script_transl['datreg']; ?></label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
-                    </div>
+            <div class="form-group col-md-6 col-lg-3 nopadding">
+                 <label for="datreg" class="col-form-label"><?php echo $script_transl['datreg']; ?></label>
+                 <div>
+                     <input type="text" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
+                 </div>
+            </div>                    
+            <div class="form-group col-md-6 col-lg-3 nopadding">
+                 <label for="new_acconcile" class="col-form-label" ><?php echo $script_transl['new_acconcile']; ?></label>
+                 <div>
+                 <?php
+				 // new_acconcile lo riporto sempre a 0 dopo ogni post e solo quando viene cambiato cambieranno tutti i valori dei conti di costo di tutti i righi
+				 $gForm->selectAccount('new_acconcile', 0, array('sub',3),'', false, "col-sm-12 small",'style="max-width: 300px;"', false);
+				?>                
                 </div>
             </div>                    
-            <div class="col-sm-12 col-md-4 col-lg-4">
-                <div class="form-group">
-                    <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?></label>
-                    <div>
+            <div class="form-group col-md-6 col-lg-3 nopadding">
+                 <label for="pagame" class="col-form-label" ><?php echo $script_transl['pagame']; ?></label>
+                 <div>
                         <?php
                         $select_pagame = new selectpagame("pagame");
                         $select_pagame->addSelected($form["pagame"]);
-                        $select_pagame->output(false, "col-sm-8 small");
+                        $select_pagame->output(false, "col-lg-12");
                         ?>                
-                    </div>
                 </div>
             </div>                    
         </div> <!-- chiude row  -->
@@ -816,6 +825,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		$rowshead=array();
 		$ctrl_ddt='';
 		$exist_movmag=false;
+		$new_acconcile=$form['new_acconcile'];
 		foreach ($form['rows'] as $k => $v) {
 			$k--;
 			if (isset($v['NumeroDDT'])&&$ctrl_ddt!=$v['NumeroDDT']){
@@ -826,6 +836,9 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				}
 				$ctrl_ddt=$v['NumeroDDT'];
 				$rowshead[$k]='<td colspan=13><b> da DdT n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';		
+			}
+			if ($new_acconcile>100000000){
+				$form['codric_'.$k]=$new_acconcile;
 			}
             $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);            
@@ -870,14 +883,14 @@ if ($toDo=='insert' || $toDo=='update' ) {
                     'value' => $v['sconto']),
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 
 					'value' => $v['amount'], 'type' => ''),
+                array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
+					'value' => $codric_dropdown, 'type' => ''),
                 array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
 					'value' => $codvat_dropdown, 'type' => ''),
-                array('head' => 'Ritenuta', 'class' => 'text-center numeric', 
-					'value' => $v['ritenuta'], 'type' => ''),
                 array('head' => '%', 'class' => 'text-center numeric', 
 					'value' => $v['pervat'], 'type' => ''),
-                array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
-					'value' => $codric_dropdown, 'type' => '')
+                array('head' => 'Ritenuta', 'class' => 'text-center numeric', 
+					'value' => $v['ritenuta'], 'type' => '')
             );
 
 		}
@@ -899,13 +912,13 @@ if ($toDo=='insert' || $toDo=='update' ) {
                     'value' => ''),
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 
 					'value' => gaz_format_number($form['taxstamp']), 'type' => ''),
-                array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
+                array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
 					'value' => '', 'type' => ''),
-                array('head' => 'Ritenuta', 'class' => 'text-center numeric', 
+                array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
 					'value' => '', 'type' => ''),
                 array('head' => '%', 'class' => 'text-center numeric', 
 					'value' => '', 'type' => ''),
-                array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
+                array('head' => 'Ritenuta', 'class' => 'text-center numeric', 
 					'value' => '', 'type' => '')
             );
 		}
