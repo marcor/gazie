@@ -186,7 +186,8 @@ function choicePartner(row)
 
 <form method="GET">
     <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title_dist'][$flt_tipo]; ?>
-        <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
+	<input type="hidden" name="flt_tipo" value="<?php echo $flt_tipo; ?>" />
+	<select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
             for ($sez = 1; $sez <= 9; $sez++) {
                 $selected = "";
