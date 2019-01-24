@@ -282,7 +282,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $uts_this_date = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
     if (isset($_POST['submit']) && empty($msg)) {   //confermo la contabilizzazione
         $rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
-        if (count($rs > 0)) {
+        if (!empty($rs) && count($rs > 0)) {
             require("lang." . $admin_aziend['lang'] . ".php");
             $script_transl = $strScript['accounting_documents.php'];
             foreach ($rs as $k => $v) {

@@ -41,7 +41,7 @@
 
 //  se sono loggato  le impostazioni della lingua dal server
 
-$server_lang = substr(strtoupper($_SERVER['HTTP_ACCEPT_LANGUAGE']), 0, 2);
+$server_lang = (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) ? substr(strtoupper($_SERVER['HTTP_ACCEPT_LANGUAGE']), 0, 2) : '';
 if (isset($local['cvalue'])) { // se ho il valore della lingua di localizzazione lo uso
 	$server_lang = substr(strtoupper($local['cvalue']), 0, 2);
 }

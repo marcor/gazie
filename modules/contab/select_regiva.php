@@ -36,7 +36,7 @@ function getPage_ini($sez, $reg) {
         $reg = 'upgve' . $sez;
     }
     $r = gaz_dbi_get_row($gTables['company_data'], 'var', $reg);
-    return $r['data'] + 1;
+    return (!is_numeric($r['data'])) ? 1 : $r['data'] + 1;
 }
 
 function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
