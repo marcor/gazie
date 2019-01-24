@@ -7,7 +7,7 @@
   versione 1.0
   ------------------------------------------------------------------------ 
   
- Questo sistema di connessione fra GAzie e un negozio online di Joomla, quale ad esempio Hikashop o Virtuemart, si basa su due file di 
+ Questo sistema di connessione fra GAzie e alcune applicazioni di Joomla, quali ad esempio Hikashop, Virtuemart, Solidres si basa su due file di 
 interfaccia, uno presente in GAzie e l'altro presente nella root di Joomla.
   Queste doppie interfaccie sono necessarie per poter accedere al database di Joomla dal Gestionale di Gazie che spesso è in locale
 o su un altro host.
