@@ -32,6 +32,40 @@ $docOperat = $magazz->getOperators();
 $toDo = 'upload';
 $f_ex=false; // visualizza file
 
+function tryBase64Decode($s)
+{
+	// Check if there are valid base64 characters
+	if (preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $s)) {
+		// Decode the string in strict mode and check the results
+		try {
+			$decoded = base64_decode($s, true);
+			if ($decoded !== false) {
+				// Encode the string again
+				if(base64_encode($decoded) == $s) return $decoded;
+			}
+		} catch (Exception $ex) {
+			//$ex->getMessage();
+		}
+	}
+
+	return $s;
+}
+
+
+function removeSignature($string, $filename) {
+    $string = substr($string, strpos($string, '<?xml '));
+    preg_match_all('/<\/.+?>/', $string, $matches, PREG_OFFSET_CAPTURE);
+    $lastMatch = end($matches[0]);
+	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
+	$f_end = $lastMatch[1]+strlen($lastMatch[0]);
+    $string = substr($string, 0, $f_end);
+	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
+	$string = preg_replace ('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $string);
+	$string = preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
+	$string = preg_replace ('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $string); // per eliminare tag finale   
+	return $string;
+}
+
 function recoverCorruptedXML($string) {
 
 	libxml_use_internal_errors(true);
@@ -49,20 +83,6 @@ function recoverCorruptedXML($string) {
 	libxml_clear_errors();
 	return implode("\n", $lines);
 
-}
-
-function removeSignature($string, $filename) {
-    $string = substr($string, strpos($string, '<?xml '));
-    preg_match_all('/<\/.+?>/', $string, $matches, PREG_OFFSET_CAPTURE);
-    $lastMatch = end($matches[0]);
-	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
-	$f_end = $lastMatch[1]+strlen($lastMatch[0]);
-    $string = substr($string, 0, $f_end);
-	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
-	$string = preg_replace ('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $string);
-	$string = preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
-	$string = preg_replace ('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $string); // per eliminare tag finale   
-	return $string;
 }
 
 function getLastProtocol($type, $year, $sezione) {  
@@ -182,6 +202,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		// INIZIO acquisizione e pulizia file xml o p7m
 		$file_name = '../../data/files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
 		$p7mContent = @file_get_contents($file_name);
+		$p7mContent = tryBase64Decode($p7mContent);
 		$invoiceContent = removeSignature($p7mContent,$file_name);
 		$doc = new DOMDocument;
 		$doc->preserveWhiteSpace = false;
@@ -213,7 +234,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$datdoc=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 			$numdoc=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
 			$codiva=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
-			$r_invoice=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", "tipdoc='".$tipdoc."' AND pariva = ".$codiva." AND datfat='".$datdoc."' AND numfat='".$numdoc."'", "id_tes", 0, 1);
+			$codfis=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue;
+			$r_invoice=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", "tipdoc='".$tipdoc."' AND (pariva = '".$codiva."' OR codfis = '".$codfis."') AND datfat='".$datdoc."' AND numfat='".$numdoc."'", "id_tes", 0, 1);
 			$exist_invoice=gaz_dbi_fetch_array($r_invoice);
 			if ($exist_invoice) { // esiste un file che pur avendo un nome diverso è già stato acquisito ed ha lo stesso numero e data 
 				$msg['err'][] = 'same_content';
@@ -264,8 +286,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 	if ($f_ex) { // non ho errori  vincolanti sul file posso proporre la visualizzazione
 		/*	Prendo i valori delle ritenute d'acconto che purtroppo sul tracciato ufficiale non viene distinto a livello di linee pertanto devo ricavarmele */
-		$tot_ritenute = ($doc->getElementsByTagName("ImportoRitenuta")->length >= 1 ? $doc->getElementsByTagName('ImportoRitenuta')->item(0)->nodeValue : 0 );	
-		$ali_ritenute = ($doc->getElementsByTagName("AliquotaRitenuta")->length >= 1 ? $doc->getElementsByTagName('AliquotaRitenuta')->item(0)->nodeValue : 0 );	
+		$tot_ritenute = ($doc->getElementsByTagName("ImportoRitenuta")->length >= 1 ? $doc->getElementsByTagName('ImportoRitenuta')->item(0)->nodeValue : 0 );
+		$ali_ritenute = ($doc->getElementsByTagName("AliquotaRitenuta")->length >= 1 ? $doc->getElementsByTagName('AliquotaRitenuta')->item(0)->nodeValue : 0 );
 		// mi calcolo le eventuali ritenute relative alle casse previdenziali da annotare sotto quando aggiungerò i righi tipo 4 
 		$ritenute_su_casse = 0;
 		$DatiCassaPrevidenziale = $doc->getElementsByTagName('DatiCassaPrevidenziale');
@@ -515,6 +537,30 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}				
 		}
 
+		/*	Se presenti, trasformo gli sconti/maggiorazioni del campo 2.1.1.8 <ScontoMaggiorazione> in righe forfait */
+		if ($xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione")->length >= 1) {
+			$sconto_maggiorazione = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione");
+			foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
+				$nl++;
+				$form['rows'][$nl]['tiprig'] = 1;
+				$form['rows'][$nl]['codice_fornitore'] = '';
+				$form['rows'][$nl]['descri'] = '';
+				$form['rows'][$nl]['unimis'] = '';
+				$form['rows'][$nl]['quanti'] = '';
+				$form['rows'][$nl]['sconto'] = '';
+				$form['rows'][$nl]['ritenuta'] = '';
+				$form['rows'][$nl]['pervat'] = '';
+
+				$form['codart_'.($nl-1)] = '';
+				$form['codvat_'.($nl-1)] = '';
+				$form['codric_'.($nl-1)] = '';
+
+				$sconto_incondizionato = ($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
+				$form['rows'][$nl]['prelis'] = $sconto_incondizionato;
+				$form['rows'][$nl]['amount'] = $sconto_incondizionato;
+			}
+		}
+
 		/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
 		$ImponibileImporto = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/ImponibileImporto")->item(0)->nodeValue;
 		if ($ImponibileImporto>$tot_imponi){ // qualora ci sia una differenza (in genere 1 cent) la aggiunto al rigo di maggior valore
@@ -523,7 +569,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			} else {
 				$form['rows'][$max_val_linea]['prelis']+= $ImponibileImporto-$tot_imponi;
 			}
-			$form['rows'][$max_val_linea]['amount'] += $ImponibileImporto-$tot_imponi;	
+			$form['rows'][$max_val_linea]['amount'] += $ImponibileImporto-$tot_imponi;
 		}
 		// ricavo l'allegato, e se presente metterò un bottone per permettere il download
 		$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
@@ -786,18 +832,18 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$form['codart_'.$k]);            
 			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
 			if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
-				$v['codice_fornitore']='';
-				$v['unimis']='';			
-				$v['quanti']='';
-				$v['unimis']='';			
-				$v['prelis']='';
-				$v['sconto']='';
-				$v['amount']='';
-				$v['ritenuta']='';
-				$v['pervat']='';
-				$codric_dropdown ='<input type="hidden" name="codric_'.$k.'" value="000000000" />';
-				$codvat_dropdown ='<input type="hidden" name="codvat_'.$k.'" value="000000000" />';
-				$codart_dropdown ='<input type="hidden" name="codart_'.$k.'" />';
+				$v['codice_fornitore'] = '';
+				$v['unimis'] = '';
+				$v['quanti'] = '';
+				$v['unimis'] = '';
+				$v['prelis'] = '';
+				$v['sconto'] = '';
+				$v['amount'] = '';
+				$v['ritenuta'] = '';
+				$v['pervat'] = '';
+				$codric_dropdown = '<input type="hidden" name="codric_'.$k.'" value="000000000" />';
+				$codvat_dropdown = '<input type="hidden" name="codvat_'.$k.'" value="000000000" />';
+				$codart_dropdown = '<input type="hidden" name="codart_'.$k.'" />';
 			} else {
 				$v['prelis']=gaz_format_number($v['prelis']);
 				$v['amount']=gaz_format_number($v['amount']);
