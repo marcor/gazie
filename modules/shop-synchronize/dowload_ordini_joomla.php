@@ -11,7 +11,6 @@
 /* impostazioni da fare prima di avviare il file
 inserire i dati dentro alle virgolette non toccare il resto */
 
-$urlinterf="https://www.******.it/*****/ordini-gazie.php"; // url completa del file interfaccia presente nella root del sito con negozio online. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 $includevat="true"; /* LASCIARE A TRUE perché al momento la funzione false non è sviluppata. > true= il prezzo è iva compresa - false= il prezzo è iva esclusa */
 $listin="1"; /* il nome del listino prezzi del negozio online che è stato creato su GAzie */
 
