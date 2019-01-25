@@ -48,13 +48,8 @@ if ($exists) {
 }
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 
-if ($admin_aziend['company_id']==1){ // se è la prima azienda amministrata lascio i nomi file interfaccia predefiniti
-	$file_download = "dowload_ordini_joomla.php";
-	$file_upload = "upload_prodotti_joomla.php";
-} else { //altrimenti aggiungo ai nomi file l'id azienda
-	$file_download = "dowload_ordini_joomla".$admin_aziend['company_id'].".php";
-	$file_upload = "upload_prodotti_joomla".$admin_aziend['company_id'].".php";
-}
+$file_download = "dowload_ordini_joomla.php";
+$file_upload = "upload_prodotti_joomla.php";
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
