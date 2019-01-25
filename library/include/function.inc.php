@@ -2133,7 +2133,7 @@ class Compute {
                 $total_imp += $v['impcast'];
                 $row++;
             }
-            if ($total_imp >= 0.01) { // per evitare il divide by zero in caso di imponibile 0
+            if (abs($total_imp) >= 0.01) { // per evitare il divide by zero in caso di imponibile 0
                 foreach ($vat_castle as $k => $v) {   // riattraverso l'array del castelletto
                     // per aggiungere proporzionalmente (ventilazione)
                     $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
@@ -2192,7 +2192,7 @@ class Compute {
                 $this->total_imp += $new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
                 $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
             }
-            if (!$match && $value >= 0.01) { // non ho trovato una aliquota uguale a quella del nuovo valore se > 0 
+            if (!$match && abs($value) >= 0.01) { // non ho trovato una aliquota uguale a quella del nuovo valore se > 0 
                 $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $vat_rate);
                 $new_castle[$vat_rate]['codiva'] = $vat['codice'];
                 $new_castle[$vat_rate]['periva'] = $vat['aliquo'];

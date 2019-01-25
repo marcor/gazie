@@ -563,9 +563,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 		}
 
+		$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo");
+		$ImponibileImporto=0.00;
+		foreach($DatiRiepilogo as $dr){
+			$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
+		}
+		$totdiff=abs($ImponibileImporto-$tot_imponi);
 		/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
-		$ImponibileImporto = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/ImponibileImporto")->item(0)->nodeValue;
-		if ($ImponibileImporto>$tot_imponi){ // qualora ci sia una differenza (in genere 1 cent) la aggiunto al rigo di maggior valore
+		if ($totdiff>=0.01){ // qualora ci sia una differenza di almeno 1 cent la aggiunto (o lo sottraggo al rigo di maggior valore
 			if ($form['rows'][$max_val_linea]['tiprig']==0){ //rigo normale con quantità variabile
 				$form['rows'][$max_val_linea]['prelis']+= ($ImponibileImporto-$tot_imponi)/$form['rows'][$max_val_linea]['quanti'];
 			} else {
