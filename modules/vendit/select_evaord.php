@@ -431,7 +431,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $old_body_text['body_text']));
                     gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
                 }
-                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $form['righi'][$k]['codart']);
+                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", trim($form['righi'][$k]['codart']));
 				// Antonio Germani - vedo in quale id_mov verrà registrato il prossimo movimento di magazzino
 					$query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
                     unset($row);
@@ -580,7 +580,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                 $row['quanti'] = $v['evadibile'];
                 rigdocInsert($row);
                 $last_rigdoc_id = gaz_dbi_last_id();
-                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $form['righi'][$k]['codart']);
+                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", trim($form['righi'][$k]['codart']));
 				// Antonio Germani - vedo in quale id_mov verrà registrato il prossimo movimento di magazzino
 					$query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
                     unset($row);
@@ -792,7 +792,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $old_body_text['body_text']));
                     gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
                 }
-                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $form['righi'][$k]['codart']);
+                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", trim($form['righi'][$k]['codart']));
 				// Antonio Germani - vedo in quale id_mov verrà registrato il prossimo movimento di magazzino
 					$query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
                     unset($row);
@@ -945,7 +945,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                 }
 				
 				// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione articolo
-				if (intval ($form['righi'][$k]['id_lotmag'])>0){
+				if (isset ($form['righi'][$k]['id_lotmag']) and intval ($form['righi'][$k]['id_lotmag'])>0){
 					if (intval ($form['righi'][$k]['expiry'])<=0){
 						$form['righi'][$k]['expiry']="";
 					}
@@ -963,16 +963,15 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                     bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $old_body_text['body_text']));
                     gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
                 }
-                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $form['righi'][$k]['codart']);
+                $articolo = gaz_dbi_get_row($gTables['artico'], "codice", trim($form['righi'][$k]['codart']));
 				// Antonio Germani - vedo in quale id_mov verrà registrato il prossimo movimento di magazzino
 					$query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
                     unset($row);
                     $result = gaz_dbi_query($query);
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment'];
-					
-                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] != 1 and $tipo_composti['val']=="STD" and
-                        $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                if (($admin_aziend['conmag'] == 2) and ($articolo['good_or_service'] <> 1) and ($tipo_composti['val']=="STD") and
+                        ($form['righi'][$k]['tiprig'] == 0) and (!empty($form['righi'][$k]['codart']))) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
                 } else if ($admin_aziend['conmag'] == 2 and
@@ -1357,7 +1356,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 								$count[$key] += $v_lm['rest'];
 							}
 					}
-					if ($ld > 0 and $toDo!="update") { // segnalo preventivamente l'errore
+					if ($ld > 0) { // segnalo preventivamente l'errore
 						?>
 						<div class="alert alert-warning alert-dismissible">
 						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
