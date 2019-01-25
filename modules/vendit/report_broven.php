@@ -306,8 +306,9 @@ $recordnav->output();
                 while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
                     $totale_evaso += $rigdoc_r['quanti'];
                     $processed_atleastone = true;
-                }               
-                if ( $totale_evaso != $totale_da_evadere ) {
+                }    
+
+                if ( $totale_evaso < $totale_da_evadere ) {
                     $remains_atleastone = true;
                 }
             }
