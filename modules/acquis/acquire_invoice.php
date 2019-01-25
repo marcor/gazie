@@ -142,11 +142,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	if (!isset($_POST['datreg'])){
 		$form['datreg'] = date("d/m/Y");
 		$form['seziva'] = 1;
-		$form['taxstamp'] = 0;
 	} else {
 		$form['datreg'] = substr($_POST['datreg'],0,10);
 		$form['seziva'] = intval($_POST['seziva']);
-		$form['taxstamp'] = floatval($_POST['taxstamp']);
 	}
 	if (isset($_POST['Submit_file'])) { // conferma invio upload file
         if (!empty($_FILES['userfile']['name'])) {
@@ -196,7 +194,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$toDo = 'update';
 		$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
 		$form['seziva'] = $tesdoc['seziva'];
-		$form['taxstamp'] = $tesdoc['taxstamp'];
 		$msg['err'][] = 'file_exists';
 	} elseif (!empty($form['fattura_elettronica_original_name'])) { // non c'è sul database è un inserimento
 		$toDo = 'insert';
@@ -306,12 +303,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		 dovuto alla diversità del metodo di calcolo usato in gazie*/
 		$max_val_linea=1;
 		$tot_imponi=0.00;
-		/* Prendo il valore del bollo, se c'è, altrimenti è 0.00 */
-		$form['taxstamp'] = ($doc->getElementsByTagName("ImportoBollo")->length >= 1 ? $doc->getElementsByTagName('ImportoBollo')->item(0)->nodeValue : 0 );	
-		$form['virtual_taxstamp'] = 0;
-		if ($doc->getElementsByTagName("BolloVirtuale")->length >= 1){
-			$form['virtual_taxstamp'] = 1;	
-		}
 		/* 
 		INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
 		a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva 
@@ -589,7 +580,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 		if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 			$form['datreg'] = substr($_POST['datreg'],0,10);
-			$form['taxstamp'] = floatval($_POST['taxstamp']);
 			$form['pagame'] = intval($_POST['pagame']);
 			$form['new_acconcile'] = intval($_POST['new_acconcile']);
 			$form['seziva'] = intval($_POST['seziva']);
@@ -899,34 +889,6 @@ if ($toDo=='insert' || $toDo=='update' ) {
             );
 
 		}
-		if ($form['taxstamp']>=0.01) { // ho un bollo lo accodo ai righi della tabella
-			$resprow[] = array(
-                array('head' => $script_transl["nrow"], 'class' => '',
-                    'value' => ''),
-                array('head' => $script_transl["codart"], 'class' => '',
-                    'value' => ''),
-                array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
-                    'value' => 'Bolli'),
-                array('head' => $script_transl["unimis"], 'class' => '',
-                    'value' => ''),
-                array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                    'value' => ''),
-                array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => ''),
-                array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
-                    'value' => ''),
-                array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 
-					'value' => gaz_format_number($form['taxstamp']), 'type' => ''),
-                array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
-					'value' => '', 'type' => ''),
-                array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
-					'value' => '', 'type' => ''),
-                array('head' => '%', 'class' => 'text-center numeric', 
-					'value' => '', 'type' => ''),
-                array('head' => 'Ritenuta', 'class' => 'text-center numeric', 
-					'value' => '', 'type' => '')
-            );
-		}
 		$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table', $rowshead);
 ?>	   <div class="col-sm-6">
 <?php			
@@ -938,7 +900,6 @@ if ($toDo=='insert' || $toDo=='update' ) {
 ?>
 	   </div>		   
 	   <div class="col-sm-6 text-right">
-		<input name="taxstamp" type="hidden" value="<?php echo $form['taxstamp']; ?>" />
 		<input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
 	   </div>		   
 </form>
