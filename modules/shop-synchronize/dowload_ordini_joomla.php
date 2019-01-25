@@ -95,15 +95,19 @@ if (isset($_POST['conferma'])) { // se confermato
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
 				
 				// se non esiste l'articolo in GAzie lo creo come servizio perché non movimenta il magazzino
-				$ckart = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));				
+				$ckart = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));
 				if (!$ckart){ 
-				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,good_or_service,unimis,catmer,".$listinome.",aliiva,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". $_POST['descri'.$ord.$row] ."', '1', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '1', '" . $admin_aziend['adminid'] . "')");
+				if ($_POST['codvat'.$ord.$row]<1){ // se il sito non ha mandato il codice IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
+					$_POST['codvat'.$ord.$row]=$_POST['codvatcost'.$ord];
+					$_POST['aliiva'.$ord.$row]=$_POST['aliivacost'.$ord];
+				}
+				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,good_or_service,unimis,catmer,".$listinome.",aliiva,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '1', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$_POST['codvat'.$ord.$row]."', '" . $admin_aziend['adminid'] . "')");
 				}
 					
 				if ($_POST['codvat'.$ord.$row]==0){ // se il sito non ha inviato l'iva
 					if ($includevat=="true"){ // se è impostato iva compresa scorporo l'iva al prezzo articoli
-						$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);
-						if ($codvat) {// se l'articolo è presente in anagrafica di GAzie
+						$codvat=gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));
+						if ($codvat) {// se l'articolo è presente in anagrafica di GAzie 
 							$aliiva=gaz_dbi_get_row($gTables['aliiva'], "codice", $codvat['aliiva']);
 							$diviva=(($aliiva['aliquo']/100)+1);
 							$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row]/$diviva;
@@ -115,7 +119,7 @@ if (isset($_POST['conferma'])) { // se confermato
 							$aliiva=22;
 						}
 					} else { // se è impostato iva esclusa non scorporo niente
-						$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);
+						$codvat=gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));
 						if ($codvat){ // se l'articolo è presente in anagrafica di GAzie
 							$aliiva=gaz_dbi_get_row($gTables['aliiva'], "codice", $codvat['aliiva']);
 							$codvat=$codvat['aliiva'];
@@ -129,7 +133,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					$codvat=$_POST['codvat'.$ord.$row];
 					$aliiva=$_POST['aliiva'.$ord.$row];
 					if ($includevat=="true"){
-						$diviva=(($aliiva['aliquo']/100)+1);
+						$diviva=(($aliiva/100)+1);
 						$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row]/$diviva;
 					} 
 				}
@@ -140,19 +144,19 @@ if (isset($_POST['conferma'])) { // se confermato
 			// Finché GAzie non sarà in grado di gestire le spese su ricevuta fiscale è necessario procedere così, purtroppo!
 			$ckart = gaz_dbi_get_row($gTables['artico'], "codice", "Spese");				
 				if (!$ckart){ // se non esiste l'articolo 'Spese' in GAzie lo creo come servizio perché non movimenta il magazzino
-				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,good_or_service,unimis,catmer,web_price,aliiva,adminid) VALUES ('Spese', 'Spese', '1', 'n', '', '', '1', '" . $admin_aziend['adminid'] . "')");
+				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,good_or_service,unimis,catmer,web_price,aliiva,adminid) VALUES ('Spese', 'Spese', '1', 'n', '', '', '".$_POST['codvatcost'.$ord]."', '" . $admin_aziend['adminid'] . "')");
 				}
 			if ($_POST['speban'.$ord]>0) { // se ci sono spese di incasso, finché GAzie non sarà in grado di gestirle su scontrini fiscali, registro un ulteriore rigo specifico per queste spese
 				if ($includevat=="true"){ // se include l'iva gliela scorporo
 					$_POST['speban'.$ord]=$_POST['speban'.$ord] / 1.22;
 				}
-				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "',' Spese ',' Spese incasso ',' n.',' 1 ','" . $_POST['speban'.$ord] . "', '1', '420000009', '22', 'ONLINE-SHOP')");				
+				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "',' Spese ',' Spese incasso ',' n.',' 1 ','" . $_POST['speban'.$ord] . "', '".$_POST['codvatcost'.$ord]."', '420000009', '22', 'ONLINE-SHOP')");				
 			}
 			if ($_POST['traspo'.$ord]>0) { // se ci sono spese di trasporto, finché GAzie non sarà in grado di gestirle su scontrini fiscali, registro un ulteriore rigo specifico per queste spese
 				if ($includevat=="true"){ // se include l'iva gliela scorporo
 					$_POST['traspo'.$ord]=$_POST['traspo'.$ord] / 1.22;
 				}
-				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "',' Spese ',' Spese trasporto ',' n.',' 1 ','" . $_POST['traspo'.$ord] . "', '1', '420000009', '22', 'ONLINE-SHOP')");				
+				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "',' Spese ',' Spese trasporto ',' n.',' 1 ','" . $_POST['traspo'.$ord] . "', '".$_POST['codvatcost'.$ord]."', '420000009', '22', 'ONLINE-SHOP')");				
 			}
 			
 			$id_tesbro++;
@@ -264,7 +268,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 							echo '<input type="hidden" name="prelis'. $n . $nr.'" value="'. $orderrow->Price . '">';
 							echo '<input type="hidden" name="codvat'. $n . $nr.'" value="'. $orderrow->VatCode . '">';
 							echo '<input type="hidden" name="aliiva'. $n . $nr.'" value="'. $orderrow->VatAli . '">';
-							echo '<input type="hidden" name="sconto'. $n . $nr.'" value="'. $orderrow->Discounts . '">';
+							echo '<input type="hidden" name="sconto'. $n . $nr.'" value="'. $orderrow->PerDiscounts . '">';
 							echo '<input type="hidden" name="unimis'. $n . $nr.'" value="'. $orderrow->MeasureUnit . '">';
 							echo '<input type="hidden" name="num_rows'. $n .'" value="'. $nr . '">';
 							$nr++;
