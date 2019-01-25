@@ -7,15 +7,7 @@
   @Copyright Copyright (C) 2018 - 2019 Antonio Germani All Rights Reserved.
   versione 1.0
   ------------------------------------------------------------------------ */
-  
-/* impostazioni da fare prima di avviare il file
-inserire i dati dentro alle virgolette non toccare il resto */
 
-$includevat="true"; /* LASCIARE A TRUE perché al momento la funzione false non è sviluppata. > true= il prezzo è iva compresa - false= il prezzo è iva esclusa */
-$listin="1"; /* il nome del listino prezzi del negozio online che è stato creato su GAzie */
-
- // ---------------------------da qui in poi non modificare nulla---------------------------------
- 
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
 $ftp_host= $resserver['val'];
 $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
@@ -34,7 +26,7 @@ if ($exists) {
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 	
 if (isset($_POST['conferma'])) { // se confermato
-
+	
     // scrittura ordini su database di GAzie
 	
 	$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
@@ -53,6 +45,10 @@ if (isset($_POST['conferma'])) { // se confermato
 	$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// trovo il codice di CLFOCO da connettere all'anagrafica cliente	se cliente inesistente
 	    
 	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e scrivo i database
+	
+		$listin=$_POST['numlist'.$ord];
+		$listinome=$_POST['numlistnome'.$ord];
+		$includevat=$_POST['includevat'.$ord];
 		
 		if (isset($_POST['download'.$ord]) ) {
 			$esiste=0;
@@ -88,36 +84,77 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 						
 			If ($esiste==0) { //registro cliente se non esiste			
-				gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,indspe,capspe,citspe,prospe,country,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($_POST['ragso1'.$ord]) . "', '" . addslashes($_POST['ragso2'.$ord]) . "', '". addslashes($_POST['indspe'.$ord]) ."', '".$_POST['capspe'.$ord]."', '". addslashes($_POST['citspe'.$ord]) ."', '". $_POST['prospe'.$ord] ."', '" . $_POST['country'.$ord]. "', '". $_POST['telefo'.$ord] ."', '". $_POST['codfis'.$ord] ."', '" . $_POST['pariva'.$ord] . "', '" . $_POST['fe_cod_univoco'.$ord] . "', '". $_POST['email'.$ord] . "', '". $_POST['pec_email'.$ord] . "')");
-				gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri,speban) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .$_POST['ragso1'.$ord]." ".$_POST['ragso2'.$ord] . "', 'S')");
+					gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,indspe,capspe,citspe,prospe,country,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($_POST['ragso1'.$ord]) . "', '" . addslashes($_POST['ragso2'.$ord]) . "', '". addslashes($_POST['indspe'.$ord]) ."', '".$_POST['capspe'.$ord]."', '". addslashes($_POST['citspe'.$ord]) ."', '". $_POST['prospe'.$ord] ."', '" . $_POST['country'.$ord]. "', '". $_POST['telefo'.$ord] ."', '". $_POST['codfis'.$ord] ."', '" . $_POST['pariva'.$ord] . "', '" . $_POST['fe_cod_univoco'.$ord] . "', '". $_POST['email'.$ord] . "', '". $_POST['pec_email'.$ord] . "')");
+					gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri,speban) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .$_POST['ragso1'.$ord]." ".$_POST['ragso2'.$ord] . "', 'S')");
 			}
 		
 			// registro testata ordine
-			if ($includevat=="true"){// se iva compresa scorporo l'iva al trasporto
-				$_POST['traspo'.$ord]=$_POST['traspo'.$ord]/1.22;
-			}
-			/* commentato in attesa che GAzie gestisca le spese di trasporto e di incasso nell'evasione ordini con scontrino
-			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOR', '1', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '" . $_POST['traspo'.$ord] . "', '". $_POST['speban'.$ord] ."', '1', '3', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
-			*/
-			
-			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,listin,caumag,expense_vat,initra,status,adminid) VALUES ('VOR', '1', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '". $listin . "', '1', '3', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid']. "')");
+			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOR', '1', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '0', '0', '1', '". $_POST['codvatcost'.$ord]."', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
 		
-			// registro righi ordine					
+			// Gestione righi ordine					
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
-				if ($includevat=="true"){ // se è impostato iva compresa scorporo l'iva al prezzo articoli
-					$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);
-					$aliiva=gaz_dbi_get_row($gTables['aliiva'], "codice", $codvat['aliiva']);
-					$diviva=(($aliiva['aliquo']/100)+1);
-					$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row]/$diviva;
+				
+				// se non esiste l'articolo in GAzie lo creo come servizio perché non movimenta il magazzino
+				$ckart = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));				
+				if (!$ckart){ 
+				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,good_or_service,unimis,catmer,".$listinome.",aliiva,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". $_POST['descri'.$ord.$row] ."', '1', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '1', '" . $admin_aziend['adminid'] . "')");
 				}
-				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $_POST['codice'.$ord.$row] . "','" . addslashes($_POST['descri'.$ord.$row]) . "','". $_POST['unimis'.$ord.$row] . "','" . $_POST['quanti'.$ord.$row] . "','" . $_POST['prelis'.$ord.$row] . "', '". $codvat['aliiva']. "', '420000006', '". $aliiva['aliquo']. "', 'ONLINE-SHOP')");
-			}
+					
+				if ($_POST['codvat'.$ord.$row]==0){ // se il sito non ha inviato l'iva
+					if ($includevat=="true"){ // se è impostato iva compresa scorporo l'iva al prezzo articoli
+						$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);
+						if ($codvat) {// se l'articolo è presente in anagrafica di GAzie
+							$aliiva=gaz_dbi_get_row($gTables['aliiva'], "codice", $codvat['aliiva']);
+							$diviva=(($aliiva['aliquo']/100)+1);
+							$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row]/$diviva;
+							$codvat=$codvat['aliiva'];
+							$aliiva=$aliiva['aliquo'];
+						} else { // se l'articolo non esiste metto l'IVA al 22
+							$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row]/1.22;
+							$codvat=1;
+							$aliiva=22;
+						}
+					} else { // se è impostato iva esclusa non scorporo niente
+						$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);
+						if ($codvat){ // se l'articolo è presente in anagrafica di GAzie
+							$aliiva=gaz_dbi_get_row($gTables['aliiva'], "codice", $codvat['aliiva']);
+							$codvat=$codvat['aliiva'];
+							$aliiva=$aliiva['aliquo'];
+						} else { // se l'articolo non esiste metto l'IVA al 22
+							$codvat=1;
+							$aliiva=22;
+						}
+					}
+				} else { // se il sito ha inviato l'iva uso l'iva del sito
+					$codvat=$_POST['codvat'.$ord.$row];
+					$aliiva=$_POST['aliiva'.$ord.$row];
+					if ($includevat=="true"){
+						$diviva=(($aliiva['aliquo']/100)+1);
+						$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row]/$diviva;
+					} 
+				}
+				// salvo rigo su database tabella rigbro
+				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $_POST['codice'.$ord.$row] . "','" . addslashes($_POST['descri'.$ord.$row]) . "','". $_POST['unimis'.$ord.$row] . "','" . $_POST['quanti'.$ord.$row] . "','" . $_POST['prelis'.$ord.$row] . "', '".$_POST['sconto'.$ord.$row]."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
+			} 
+			
+			// Finché GAzie non sarà in grado di gestire le spese su ricevuta fiscale è necessario procedere così, purtroppo!
+			$ckart = gaz_dbi_get_row($gTables['artico'], "codice", "Spese");				
+				if (!$ckart){ // se non esiste l'articolo 'Spese' in GAzie lo creo come servizio perché non movimenta il magazzino
+				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,good_or_service,unimis,catmer,web_price,aliiva,adminid) VALUES ('Spese', 'Spese', '1', 'n', '', '', '1', '" . $admin_aziend['adminid'] . "')");
+				}
 			if ($_POST['speban'.$ord]>0) { // se ci sono spese di incasso, finché GAzie non sarà in grado di gestirle su scontrini fiscali, registro un ulteriore rigo specifico per queste spese
-				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "',' Spese ',' Spese incasso ',' n.',' 1 ','" . $_POST['speban'.$ord] . "', '3', '420000009', '22', 'ONLINE-SHOP')");				
+				if ($includevat=="true"){ // se include l'iva gliela scorporo
+					$_POST['speban'.$ord]=$_POST['speban'.$ord] / 1.22;
+				}
+				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "',' Spese ',' Spese incasso ',' n.',' 1 ','" . $_POST['speban'.$ord] . "', '1', '420000009', '22', 'ONLINE-SHOP')");				
 			}
 			if ($_POST['traspo'.$ord]>0) { // se ci sono spese di trasporto, finché GAzie non sarà in grado di gestirle su scontrini fiscali, registro un ulteriore rigo specifico per queste spese
-				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "',' Spese ',' Spese trasporto ',' n.',' 1 ','" . $_POST['traspo'.$ord] . "', '3', '420000009', '22', 'ONLINE-SHOP')");				
+				if ($includevat=="true"){ // se include l'iva gliela scorporo
+					$_POST['traspo'.$ord]=$_POST['traspo'.$ord] / 1.22;
+				}
+				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "',' Spese ',' Spese trasporto ',' n.',' 1 ','" . $_POST['traspo'.$ord] . "', '1', '420000009', '22', 'ONLINE-SHOP')");				
 			}
+			
 			$id_tesbro++;
 		}  
 	}
@@ -142,13 +179,11 @@ if ((!$conn_id) or (!$mylogin))
 	<?php
 }
 
-
 $access=base64_encode($ftp_pass);
-
 
 // avvio il file di interfaccia presente nel sito web remoto
 $headers = @get_headers($urlinterf.'?access='.$access);
-if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il esiste o mi dà accesso
+if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 
 	$xml=simplexml_load_file($urlinterf.'?access='.$access) ;
 	if (!$xml){
@@ -211,16 +246,25 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il esiste o mi dà
 						echo '<input type="hidden" name="telefo'. $n .'" value="'. $order->CustomerTel .'">';
 						echo '<input type="hidden" name="datemi'. $n .'" value="'. $order->DateOrder .'">';
 						echo '<input type="hidden" name="pagame'. $n .'" value="'. $order->PaymentName .'">';
+						echo '<input type="hidden" name="numlistnome'. $n .'" value="'. $order->PriceList .'">';
+						echo '<input type="hidden" name="numlist'. $n .'" value="'. $order->PriceListNum .'">';
+						echo '<input type="hidden" name="includevat'. $n .'" value="'. $order->PricesIncludeVat .'">';
 						echo '<input type="hidden" name="speban'. $n .'" value="'. $order->CostPaymentAmount .'">';
 						echo '<input type="hidden" name="traspo'. $n .'" value="'. $order->CostShippingAmount .'">';
+						echo '<input type="hidden" name="codvatcost'. $n .'" value="'. $order->CostVatCode .'">';
+						echo '<input type="hidden" name="aliivacost'. $n .'" value="'. $order->CostVatAli .'">';
 						echo '<input type="hidden" name="email'. $n .'" value="'. $order->CustomerEmail .'">';
 						echo '<input type="hidden" name="pec_email'. $n .'" value="'. $order->CustomerPecEmail .'">';
 						echo '<input type="hidden" name="fe_cod_univoco'. $n .'" value="'. $order->CustomerCodeFattEl .'">';
 						foreach($xml->Documents->Document[$n]->Rows->children() as $orderrow) { // carico le righe degli ordini
 							echo '<input type="hidden" name="codice'. $n . $nr.'" value="'. $orderrow->Code . '">';
 							echo '<input type="hidden" name="descri'. $n . $nr.'" value="'. $orderrow->Description . '">';
+							echo '<input type="hidden" name="catmer'. $n . $nr.'" value="'. $orderrow->Category . '">';
 							echo '<input type="hidden" name="quanti'. $n . $nr.'" value="'. $orderrow->Qty . '">';
 							echo '<input type="hidden" name="prelis'. $n . $nr.'" value="'. $orderrow->Price . '">';
+							echo '<input type="hidden" name="codvat'. $n . $nr.'" value="'. $orderrow->VatCode . '">';
+							echo '<input type="hidden" name="aliiva'. $n . $nr.'" value="'. $orderrow->VatAli . '">';
+							echo '<input type="hidden" name="sconto'. $n . $nr.'" value="'. $orderrow->Discounts . '">';
 							echo '<input type="hidden" name="unimis'. $n . $nr.'" value="'. $orderrow->MeasureUnit . '">';
 							echo '<input type="hidden" name="num_rows'. $n .'" value="'. $nr . '">';
 							$nr++;

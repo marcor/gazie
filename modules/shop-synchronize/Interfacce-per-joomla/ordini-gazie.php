@@ -101,7 +101,7 @@ if ($order_payment_method == "collectondelivery" || $order_payment_method == "no
         $xml_output .= "\t<PaymentBank></PaymentBank>\n"; 
         $xml_output .= "\t<Payments>\n \t<Payment>\n";                    
         $xml_output .= "\t<Advance>false</Advance>\n";
-        /* $xml_output .= "\t<Date>". date("d-m-Y", $inner['order_created'])."</Date>\n"; */
+        
         $xml_output .= "\t<Amount>".$row['order_full_price']."</Amount>\n";
         $xml_output .= "\t<Paid>".$inner['order_status']."</Paid>\n";
         $xml_output .= "\t</Payment>\n";                      
@@ -134,11 +134,8 @@ if ($order_payment_method == "collectondelivery" || $order_payment_method == "no
       $xml_output .= "\t<Row>\n";
       $xml_output .= "\t<Code>".$uinner['order_product_code']."</Code>\n";
 	  $description=$uinner['order_product_name']; $result = explode("<", $description);
-	  If ($result[0] == "USERPOINTS_DISCOUNT") {$description="Sconto dai punti";} else {$description=$result[0];}
-	  If ($result[0] == "USERPOINTS_USE_POINTS") {$description="Punti usati: 100";}
-      $xml_output .= "\t<Description>".$description."</Description>\n";
-	  if ($result[0] == "USERPOINTS_DISCOUNT") {$qty=1;} else {$qty=$uinner['order_product_quantity'];}
-      $xml_output .= "\t<Qty>".$qty."</Qty>\n";
+	  $xml_output .= "\t<Description>".$description."</Description>\n";
+	  $xml_output .= "\t<Qty>".$qty."</Qty>\n";
 	  $xml_output .= "\t<MeasureUnit>"."n."."</MeasureUnit>\n";
       $xml_output .= "\t<Price>".$uinner['order_product_price']."</Price>\n";
       $xml_output .= "\t<Discounts></Discounts>\n"; 
