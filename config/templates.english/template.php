@@ -65,7 +65,7 @@ class Template extends FPDI {
             $this->destinazione = $docVars->client['destin'];
         } else {
             $this->destinazione = $docVars->destinazione;
-        }       
+        }
         $this->clientSedeLegale = '';
 		$this->pers_title = $docVars->pers_title;
         if (!empty($docVars->clientSedeLegale)) {
@@ -80,6 +80,11 @@ class Template extends FPDI {
         $this->month = $docVars->month;
         $this->year = $docVars->year;
         $this->withoutPageGroup = $docVars->withoutPageGroup;
+
+        //*+ DC - 26/01/2019
+        $this->layout_pos_logo_on_doc = $this->docVars->layout_pos_logo_on_doc;
+        //*- DC - 26/01/2019
+
     }
 
     function Header() {
@@ -87,7 +92,18 @@ class Template extends FPDI {
         } else {
             $this->SetFillColor(hexdec(substr($this->colore, 0, 2)), hexdec(substr($this->colore, 2, 2)), hexdec(substr($this->colore, 4, 2)));
             $this->SetFont('times', 'B', 14);
-            $this->Cell(130, 6, $this->intesta1, 0, 1, 'L');
+
+            //*+ DC - 26/01/2019
+            //$this->Cell(130, 6, $this->intesta1, 0, 1, 'L');
+            if ($this->layout_pos_logo_on_doc=='LEFT') {
+                $this->SetXY(80,5);
+                $this->Cell(130, 6, $this->intesta1, 0, 1, 'L');
+                $this->SetXY(80,11);
+            } else {
+                $this->Cell(130, 6, $this->intesta1, 0, 1, 'L');
+            }
+            //*- DC - 26/01/2019
+
             $this->SetFont('helvetica', '', 8);
             $interlinea = 10;
             if (!empty($this->intesta1bis)) {
@@ -106,7 +122,14 @@ class Template extends FPDI {
 			$ratio = round(imagesx($im)/imagesy($im),2);
 			$x=60; $y=0;
 			if ($ratio<1.71){ $x=0; $y=35; }
-            $this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
+            //*+ DC - 26/01/2019
+            //$this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
+            if ($this->layout_pos_logo_on_doc=='LEFT') {
+              $this->Image('@' . $this->logo, 10, 7, 0, 20, '', '');
+            } else {
+              $this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
+            }
+            //*- DC - 26/01/2019
             $this->Line(0, 93, 3, 93); //questa marca la linea d'aiuto per la piegatura del documento
             $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
             $this->Ln($interlinea);
