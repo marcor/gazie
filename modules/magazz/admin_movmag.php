@@ -28,6 +28,8 @@ $admin_aziend = checkAdmin();
 $msg = "";
 $lm = new lotmag;
 $gForm = new magazzForm;
+$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -272,7 +274,6 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		}
 		
 	}
-	
     if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
         $utsreg = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
         $utsdoc = mktime(0, 0, 0, $form['mesdoc'], $form['giodoc'], $form['anndoc']);
@@ -285,6 +286,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         }
         if (empty($form['artico'])) {  //manca l'articolo
             $msg .= "18+";
+        }
+		if ($form['operat']==1 and $item_artico['good_or_service']==2 and $tipo_composti['val']=="STD") {  //E' un articolo composto che non può essere caricato da movmag
+            $msg .= "22+";
         }
         if ($form['quanti'] == 0) {  //la quantit� � zero
             $msg .= "19+";
@@ -763,6 +767,16 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
         echo '<input type="hidden" name="id_lotmag" value="">';
         echo '<input type="hidden" name="expiry" value="">';
     }
+	if (isset($form['operat']) && ($form['operat']==1 and $item_artico['good_or_service']==2 and $tipo_composti['val']=="STD")){
+		?>
+		<div class="alert alert-warning alert-dismissible">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<strong>Warning!</strong> <b>Articolo composto!</b> </br>E' possibile caricare gli articoli composti solo con una produzione.
+		</div>
+		<?php
+	}
+	
+	
 ?>
 <input type="hidden" name="lot_or_serial" value="<?php echo $form['lot_or_serial']; ?>">
 </td>

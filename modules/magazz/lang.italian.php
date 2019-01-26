@@ -98,6 +98,7 @@ $strScript = array("browse_document.php" =>
         "La quantit&agrave; non pu&ograve; essere uguale a zero!",
 		"Questo movimento può essere modificato esclusivamente dal modulo Registro di campagna!",
 		"Articolo con lotto",
+		"Gli articoli composti possono essere caricati sono con una produzione!",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
