@@ -111,7 +111,7 @@ $where="type_mov = '1'";
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
          LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['campi'].".codice)
          LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";  
-		 $result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);
+		 $result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);// acquisisco solo i movimenti con type_mov=1, cioè generati dal modulo di campagna
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
             "n.ID" => "id_mov",
@@ -153,7 +153,6 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	}
 	// fine acquisisco
 
-	if ($mostra_qdc==1 ){  // se è un movimento di campagna oppure è un articolo da mostrare nel quaderno di campagna
 		echo "<tr>\n";
 		echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
@@ -217,7 +216,6 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		/* Incremento il totale */
 		$tot_movimenti += $valore;
 		
-	} // end se è un movimento di campagna
 	
 } // end wile
 
