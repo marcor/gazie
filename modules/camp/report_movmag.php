@@ -86,11 +86,11 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+			<input type="text" name="causale" placeholder="<?php echo "ID ",$strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 		</td>
 		<!-- Antonio Germani - inserisco l'intestazione cerca per campi di coltivazione e avversità -->
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="campo" placeholder="<?php echo $script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($campo))? $campo : ""; ?>" maxlength="" size="3" tabindex="1" class="FacetInput">
+			<input type="text" name="campo" placeholder="<?php echo "ID ",$script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($campo))? $campo : ""; ?>" maxlength="" size="3" tabindex="1" class="FacetInput">
 		</td>
 		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD"></td>
@@ -100,7 +100,7 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 		<td class="FacetFieldCaptionTD"></td>
 		
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="avversita" placeholder="<?php echo $script_transl[7];?>" class="input-sm form-control" value="<?php echo (isset($avversita))? $avversita : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+			<input type="text" name="avversita" placeholder="<?php echo "ID ",$script_transl[7];?>" class="input-sm form-control" value="<?php echo (isset($avversita))? $avversita : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
 		</td>
 		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD" colspan="4">
@@ -113,8 +113,9 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
          LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['campi'].".codice)
+		 LEFT JOIN ".$gTables['camp_colture']." ON (".$gTables['movmag'].".id_colture = ".$gTables['camp_colture'].".id_colt)
          LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";  
-		 $result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);// acquisisco solo i movimenti con type_mov=1, cioè generati dal modulo di campagna
+		 $result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['camp_colture'].".nome_colt, ".$gTables['campi'].".ricarico AS superf, ".$gTables['campi'].".descri AS descamp, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);// acquisisco solo i movimenti con type_mov=1, cioè generati dal modulo di campagna
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
             "n.ID" => "id_mov",
@@ -161,29 +162,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datdoc"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
-    
-	
-		// Antonio Germani carico la tabella campi
-		$res = gaz_dbi_dyn_query ('*', $gTables['campi']);
-		// fine carico tabella campi
-	
+    	
 		// Antonio Germani inserico colonna campi di coltivazione, superficie, coltura
-	
-		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["campo_coltivazione"]." &nbsp;</td>\n";
-	
-		$colonna="0";
-		while($b_row = $res->fetch_assoc()) {
-			if ($a_row["campo_coltivazione"]==$b_row["codice"]) { 
-				echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$b_row["ricarico"])." &nbsp;</td>\n";
-				$res2 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $a_row['id_colture']);
-				echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['id_colture']." - ".$res2["nome_colt"]." &nbsp;</td>\n";
-				$colonna="1";
-			} 
-		}
-		if ($colonna<1) {
-			echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";
-			echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n"; 
-		}
+		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['campo_coltivazione']." - ".$a_row['descamp']." &nbsp;</td>\n";
+		echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$a_row["superf"])." &nbsp;</td>\n";
+		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['id_colture']." - ".$a_row["nome_colt"]." &nbsp;</td>\n";
+			 
 		// fine inserisco colonna campi di coltivazione
 		/* Antonio germani reperisco unità di misura dell'articolo 
 		$unires= gaz_dbi_dyn_query("*", $gTables['artico']);
