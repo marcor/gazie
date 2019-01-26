@@ -43,14 +43,9 @@ if (isset($_GET['all'])) {
 		$causale = $_GET['causale'];
 		$implode[] = "caumag LIKE '" . $_GET['causale'] . "%'";
 	}
-
-	if (isset($_GET['documento']) && !empty($_GET['documento'])) {
-		$documento = $_GET['documento'];
-		$implode[] = "desdoc LIKE '%".$_GET['documento']."%'";
-	}
 	
 	if (isset($_GET['campo']) && !empty($_GET['campo'])) {
-		$articolo = $_GET['campo'];
+		$campo = $_GET['campo'];
 		$implode[] = "campo_coltivazione LIKE '%".$_GET['campo']."%'";
 	}
 		
@@ -58,8 +53,18 @@ if (isset($_GET['all'])) {
 		$articolo = $_GET['articolo'];
 		$implode[] = "artico LIKE '%".$_GET['articolo']."%'";
 	}
+	
+	if (isset($_GET['avversita']) && !empty($_GET['avversita'])) {
+		$avversita = $_GET['avversita'];
+		$implode[] = "id_avversita LIKE '%".$_GET['avversita']."%'";
+	}
 		
 	$where = implode(" AND ", $implode);
+}
+if (strlen($where)>1){
+	$where=$where." AND type_mov = '1' ";
+} else {
+	$where=" type_mov = '1' ";
 }
 
 if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
@@ -83,8 +88,7 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 		</td>
-		
-		<!-- Antonio Germani - inserisco l'intestazione cerca per campi di coltivazione **DA COMPLETARE** non cerca se il campo è 0-->
+		<!-- Antonio Germani - inserisco l'intestazione cerca per campi di coltivazione e avversità -->
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="campo" placeholder="<?php echo $script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($campo))? $campo : ""; ?>" maxlength="" size="3" tabindex="1" class="FacetInput">
 		</td>
@@ -94,11 +98,11 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
 		</td>
 		<td class="FacetFieldCaptionTD"></td>
-		<td class="FacetFieldCaptionTD"></td>
-		<td class="FacetFieldCaptionTD">
-			<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-sm form-control" value="<?php echo (isset($documento))? $documento : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
-		</td>
 		
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="avversita" placeholder="<?php echo $script_transl[7];?>" class="input-sm form-control" value="<?php echo (isset($avversita))? $avversita : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+		</td>
+		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD" colspan="4">
 			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
 			<input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
@@ -107,7 +111,6 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 
 <?php
 
-$where="type_mov = '1'";
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
          LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['campi'].".codice)
          LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";  
@@ -173,7 +176,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			if ($a_row["campo_coltivazione"]==$b_row["codice"]) { 
 				echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$b_row["ricarico"])." &nbsp;</td>\n";
 				$res2 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $a_row['id_colture']);
-				echo "<td class=\"FacetDataTD\" align=\"center\">".$res2["nome_colt"]." &nbsp;</td>\n";
+				echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['id_colture']." - ".$res2["nome_colt"]." &nbsp;</td>\n";
 				$colonna="1";
 			} 
 		}
@@ -195,7 +198,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["artico"]." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])." ".$unimis."</td>\n";
 		$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avversita']);
-		echo "<td class=\"FacetDataTD\" align=\"right\">".$res["nome_avv"]." </td>\n";
+		echo "<td class=\"FacetDataTD\" align=\"left\">".$a_row['id_avversita']." - ".$res["nome_avv"]." </td>\n";
 	
 		if ($a_row['id_rif'] == 0) {
 			echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\">".$a_row['desdoc']."</td>\n";
