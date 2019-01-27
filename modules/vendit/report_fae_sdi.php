@@ -199,7 +199,7 @@ if (empty($yes_mail) && empty($yes_send)) {
 } else {
 	$yes_mail = (!empty($yes_mail) && $yes_mail == ' enabled ') ? '' : ' disabled ';
 	$yes_send = (!empty($yes_send) && $yes_send == ' enabled ') ? '' : ' disabled ';
-	echo "<p align=\"center\"><a href=\"./check_fae_sdi.php\">Verifica email (...)</a></p>";
+	echo '<p align="center"><a href=".check_fae_sdi.php">' . $script_transl['checkfae'] . '</a></p>';
 }
 
 $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);

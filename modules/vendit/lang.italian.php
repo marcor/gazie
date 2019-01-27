@@ -1410,6 +1410,7 @@ $strScript = array("admin_client.php" =>
             'DT' => 'Decorrenza termini'),
         'progr_ret' => 'Progr.',
         'flux_descri' => 'Descrizione',
+		'checkfae' => 'Controlla notifiche e aggiorna lo stato delle fatture elettroniche',
         'doc_type_value' => array('FAD' => 'FATTURA DIFFERITA',
             'FAI' => 'FATTURA IMMEDIATA',
             'FAA' => 'FATTURA D\'ACCONTO',
@@ -1426,7 +1427,6 @@ $strScript = array("admin_client.php" =>
         'send_alert0' => 'Inoltro pacchetto fatture elettroniche',
         'send_alert1' => 'tramite la libreria: ',
         'send_alert2' => 'con il seguente file zip:',
-
     ),
     "admin_destinazioni.php" =>
     array('title' => 'Gestione degli indirizzi di destinazione',

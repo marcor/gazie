@@ -145,10 +145,10 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
             }
         }
         //recupero i dati righi per creare il castelletto
-        $from = $gTables['rigdoc'] . ' AS rows
-                    LEFT JOIN ' . $gTables['aliiva'] . ' AS vat
-                    ON rows.codvat=vat.codice';
-        $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva', $from, "rows.id_tes = " . $tes['id_tes'], "rows.id_tes DESC");
+        $from = $gTables['rigdoc'] . ' AS rigdoc
+                    LEFT JOIN ' . $gTables['aliiva'] . ' AS aliiva
+                    ON rigdoc.codvat=aliiva.codice';
+        $rs_rig = gaz_dbi_dyn_query('rigdoc.*,aliiva.tipiva AS tipiva', $from, "rigdoc.id_tes = " . $tes['id_tes'], "rigdoc.id_tes DESC");
         while ($r = gaz_dbi_fetch_array($rs_rig)) {
             if ($r['tiprig'] <= 1  || $r['tiprig'] == 4 || $r['tiprig'] == 90) { // se del tipo normale, forfait, cassa previdenziale, vendita cespite
                 //calcolo importo rigo
