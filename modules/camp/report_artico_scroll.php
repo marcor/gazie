@@ -60,24 +60,33 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         $where = "codice = '" . $ca . "'";
         $no = '0';
     }
+	if ($mt==0){
+		$where=$where." AND mostra_qdc = '1' "; // Antonio Germani seleziona quali prodotti mostrare nell'elenco
+	}
     $gForm = new magazzForm();
-
     $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, $ob . ' ' . $so, $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
 		unset ($magval);unset($mv);
-		if (($mt==1) or ($row['mostra_qdc']==1 && $mt==0)){ // Antonio Germani seleziona quali prodotti mostrare
-        $lastdoc = getLastDoc($row["codice"]);
-		
-		if ($row['good_or_service']==0){
+		$lastdoc = getLastDoc($row["codice"]);
+		if ($row['good_or_service']!=1){
 			$mv = $gForm->getStockValue(false, $row['codice']);
-			
 			$magval = array_pop($mv);
-			if (round($magval['q_g'],6) == "-0"){
+			if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
 				$magval['q_g'] = 0;
 			}
 		} 	else {
 			$magval['q_g'] = 0;
 		}
+		$class = 'default';
+        if ($magval['q_g'] < 0) { // giacenza inferiore a 0
+            $class = 'danger';
+        } elseif ($magval['q_g'] > 0) { //
+			if ($magval['q_g']<=$row['scorta']){
+				$class = 'warning';
+			}
+        } else { // giacenza = 0
+            $class = 'danger';
+        }
         $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $row["aliiva"]);
         $ldoc = '';
         if ($lastdoc) {
@@ -140,7 +149,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
                 <?php echo $row["unimis"]; ?>
             </td>
             
-            <td data-title="<?php echo $script_transl["stock"]; ?>" title="Visualizza scheda prodotto">
+            <td data-title="<?php echo $script_transl["stock"]; ?>" title="Visualizza scheda prodotto" class="text-center <?php echo $class; ?>">
                <?php $print_magval=str_replace(",","",$magval['q_g']);echo gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']); echo '<p style="float:right;">'.$com.'</p></td><td title="Visualizza lotti">'; 
 			   if (intval($row['lot_or_serial'])>0) {
 			   ?>
@@ -160,7 +169,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             </td>
         </tr>  
         <?php
-		}
+		
     }
     exit();
 }
