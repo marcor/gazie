@@ -525,6 +525,9 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $pdf->compose();
     $pdf->pageFooter();
     $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
+	// aggiungo all'array con indice 'azienda' altri dati 
+	$docVars->azienda['cliente1']=$docVars->cliente1;
+	$docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';
     if ($dest && $dest == 'E') { // è stata richiesta una e-mail
         $dest = 'S';     // Genero l'output pdf come stringa binaria
         // Costruisco oggetto con tutti i dati del file pdf da allegare
@@ -544,6 +547,11 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         $content->mimeType = "PDF";
         return ($content);
     } else { // va all'interno del browser
+		if ($testata['tipdoc']=='AOR'){ 
+			/* in caso di ordine a fornitore che non viene inviato via mail al fornitore ma solo al browser 
+			cambio la descrizione del file per ricordare a chi è stato fatto*/ 
+			$doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->cliente1 . '_' . $pdf->tipdoc) . '.pdf';
+		}
         $pdf->Output($doc_name);
     }
 }
