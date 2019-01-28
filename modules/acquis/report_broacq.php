@@ -266,6 +266,10 @@ function choicePartner(row)
 					$rs_parent = gaz_dbi_get_row($gTables["tesbro"],'id_parent_doc',$r['id_tes']);
 					$clastatus='info';	
 					$status='Ordina';	
+					if (strlen($r['email'])<8){
+						$clastatus='warning';	
+						$status='da inviare';	
+					}
 					if ($rs_parent && $rs_parent["tipdoc"] == 'APR') { // il genitore è pure un preventivo
 					} elseif ($rs_parent && $rs_parent["tipdoc"] == 'AOR') { // è stato generato un ordine  
 						$clastatus='success';	

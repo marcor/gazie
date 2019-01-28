@@ -326,11 +326,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
 				}
                 //modifico la testata con i nuovi dati...
-                $old_head = array('datfat' => '', 'geneff' => '', 'id_contract' => 0, 'id_con' => 0);
-                $form['datfat'] = $old_head['datfat'];
-                $form['geneff'] = $old_head['geneff'];
-                $form['id_contract'] = $old_head['id_contract'];
-                $form['id_con'] = $old_head['id_con'];
+                $old_header = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
+				if ($old_header['datfat']<>$form['id_tes']){ // se è stato cambiato il fornitore azzero alcuni dati specifici per esso
+					$form['email'] = '';
+					$form['datfat'] = '';
+					$form['geneff'] = '';
+					$form['id_contract'] = '';
+					$form['id_con'] = '';
+				}
+				
                 $form['datemi'] = $datemi;
                 $form['initra'] = $initra;
                 $form['id_orderman'] = $form['in_id_orderman'];
