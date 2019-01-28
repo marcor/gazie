@@ -1,4 +1,3 @@
-
 <?php
 /*
   --------------------------------------------------------------------------
@@ -23,8 +22,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
 >>>>>> Antonio Germani -- MOSTRA Lotti  <<<<<<
- */
-error_reporting(E_ALL ^ E_WARNING); 
+ */ 
 require("../../library/include/datlib.inc.php");
 require("../../modules/vendit/lib.function.php");
 $lm = new lotmag;
