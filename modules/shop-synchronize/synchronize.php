@@ -35,9 +35,7 @@
 	-Caso Upload: L'interfaccia di GAzie crea un file xml che viene letto dall'interfaccia presente nella root del negozio online. Con i dati presenti nel file xml viene scritto il data base di Joomla.
 ------------------------------------------------------------------------------------------
 */
-
 require("../../library/include/datlib.inc.php");
-
 // Prendo l'id_currency 
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
@@ -75,6 +73,7 @@ if (isset ($_POST['download'])) {
 		}
 } else {
 	?>
+	<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 	<form method="POST" name="chouse" enctype="multipart/form-data">
 	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >	
 	<table class="table table-striped" style="margin: 0 auto; max-width: 40%; margin-top:100px;">
