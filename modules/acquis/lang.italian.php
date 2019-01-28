@@ -155,7 +155,8 @@ $strScript = array("admin_fornit.php" =>
         'statement_title' => 'Stampa l\'estratto conto di '
     ),
     "report_docacq.php" =>
-    array("statistica ",
+    array('title' => 'Lista dei documenti d\'acquisto',
+		"statistica ",
         "vendite",
         "acquisti",
         "anno",

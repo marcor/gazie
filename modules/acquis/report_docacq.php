@@ -106,12 +106,11 @@ if (isset($_GET['all'])) {
 }
 
 
-$titolo = "Documenti d'acquisto";
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
 <form method="GET" >
-    <div align="center" class="FacetFormHeaderFont"><?php echo $titolo; ?>
+    <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?>
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
             for ($sez = 1; $sez <= 9; $sez++) {
@@ -125,11 +124,12 @@ $script_transl = HeadMain();
         </select></font>
     </div>
     <?php
-    if (!isset($_GET['field']) || (empty($_GET['field'])))
-        $orderby = "datfat DESC, protoc DESC";
+    if (!isset($_GET['field'])||empty($_GET['field'])){
+        $orderby = "datreg DESC, protoc DESC";
+	}
     $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
     $recordnav->output();
-	
+
     ?>
     <div class="box-primary table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
