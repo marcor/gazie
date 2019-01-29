@@ -160,7 +160,7 @@ function copyFolder($src, $dst, $create=FALSE) {
                   copyFolder($src . '/' . $file, $dst . '/' . $file,true); 
             } 
 		else {
-                  copy($src . '/' . $file,$dst . '/' . $file); 
+                  @copy($src . '/' . $file,$dst . '/' . $file); 
             } 
         } 
     } 
@@ -188,13 +188,15 @@ function deleteDirectory($dirname){
 	}
 }
 
+$errors = [];
+
 if ( getMaximumFileUploadSize() < 36*1024*1024 )
-	echo "Cambia la configurazione php.ini per upload > 100M ";
+	$errors[] = "Cambia la configurazione php.ini per upload > 100M ";
 
 // Verifica upload file gazie
 if ( isset($_FILES['file'])) {
 	// Verifica dimensioni > 30 MB
-	$errors = [];
+//errors = [];
 	$path_local = realpath('../..');
 	$directory = [
 			$path_local."/admin.php", 
@@ -237,7 +239,7 @@ if ( isset($_FILES['file'])) {
 		  $zip->close();
 		  if ( !is_dir($path_local.'/tmp/gazie') ) {
 			deleteDirectory($path_local.'/tmp');
-			echo "Sembra non essere uno zip gazie";
+			$errors[] = "Sembra non essere uno zip gazie";
 		  } else {
 			foreach ( $directory as $d ) {
 				deleteDirectory( $d );
@@ -246,14 +248,14 @@ if ( isset($_FILES['file'])) {
 			$m = copyFolder($path_local.'/tmp/gazie',$path_local);
 			if ( $m ) {
 				chmod('../../library/tcpdf/cache',0777);
-		  		echo 'Esci e rientra nella nuova versione! <a href="../../modules/root/logout.php">Logout</a>';
+				$success =  TRUE;
 			} else {
-			   echo "Errore nello spostamento dei file";
+			   	$errors[] = "Errore nello spostamento dei file";
 			}
 		        deleteDirectory("$path_local/tmp");
 		  }
 		} else {
-  		    echo "Errore in apertura zip file $tmp_zip";
+  		    $errors[] = "Errore in apertura zip file $tmp_zip";
 		}
 	        @unlink($tmp_zip);	
 	} else {
@@ -261,15 +263,45 @@ if ( isset($_FILES['file'])) {
 			echo $error;
 		}
 	}
+	:w
 
 }
 ?>
 <br><br><br>
 <div class="container text-center">
-<form enctype="multipart/form-data" method="post" class="text-center">
-  <input id="file" type="file" name="file" >  
-  <button type="submit" class="btn btn-primary " id="save" name="save"><i class="icon-ok icon-white"></i> Upload</button>
+<div class="col-md-12">
+	<h3>Aggiornamento Automatico</h3>
+</div>
+<?php
+if ( !empty($errors) ) {
+	foreach( $errors as $error) {
+?>
+<div class="alert alert-danger">
+<?= $error; ?>
+</div>
+<?php
+	}
+}
+?>
+<?php
+if ( $success ) {
+?>
+<div class="alert alert-success">
+Esci e rientra nella nuova versione! <a href="../../modules/root/logout.php">Logout</a>
+</div>
+<?php
+}
+?>
+<div class="col-md-4"></div>
+<div class="col-md-4">
+<form enctype="multipart/form-data" method="post" class="form-inline">
+  <div class="form-group">
+	<input id="file" type="file" name="file" class="text-center">  
+  </div>
+  <button type="submit" class="btn btn-primary" id="save" name="save"><i class="icon-ok icon-white"></i> Upload</button>
 </form>
+</div>
+<div class="col-md-4"></div>
 </div>
 
 <?php
