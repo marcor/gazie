@@ -327,7 +327,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
                 //modifico la testata con i nuovi dati...
                 $old_header = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
-				if ($old_header['datfat']<>$form['id_tes']){ // se è stato cambiato il fornitore azzero alcuni dati specifici per esso
+				if ($old_header['clfoco']<>$form['clfoco']){ // se è stato cambiato il fornitore azzero alcuni dati specifici per esso
 					$form['email'] = '';
 					$form['datfat'] = '';
 					$form['geneff'] = '';
