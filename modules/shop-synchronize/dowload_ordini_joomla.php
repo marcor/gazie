@@ -89,7 +89,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 		
 			// registro testata ordine
-			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOR', '1', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '0', '0', '1', '". $_POST['codvatcost'.$ord]."', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
+			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOR', '1', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '".$_POST['spediz'.$ord]."', '0', '0', '1', '". $_POST['codvatcost'.$ord]."', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
 		
 			// Gestione righi ordine					
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
@@ -255,6 +255,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 						echo '<input type="hidden" name="includevat'. $n .'" value="'. $order->PricesIncludeVat .'">';
 						echo '<input type="hidden" name="speban'. $n .'" value="'. $order->CostPaymentAmount .'">';
 						echo '<input type="hidden" name="traspo'. $n .'" value="'. $order->CostShippingAmount .'">';
+						echo '<input type="hidden" name="spediz'. $n .'" value="'. $order->Carrier .'">';
 						echo '<input type="hidden" name="codvatcost'. $n .'" value="'. $order->CostVatCode .'">';
 						echo '<input type="hidden" name="aliivacost'. $n .'" value="'. $order->CostVatAli .'">';
 						echo '<input type="hidden" name="email'. $n .'" value="'. $order->CustomerEmail .'">';
