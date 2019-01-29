@@ -73,8 +73,10 @@ if (isset ($_POST['download'])) {
 		}
 } else {
 	?>
+	<!DOCTYPE html>
 	<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 	<form method="POST" name="chouse" enctype="multipart/form-data">
+	<div>
 	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >	
 	<table class="table table-striped" style="margin: 0 auto; max-width: 40%; margin-top:100px;">
 	<tr><td>
