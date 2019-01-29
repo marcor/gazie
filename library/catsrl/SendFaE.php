@@ -31,6 +31,38 @@ function PostCallCATsrl($CATSRL_ENDPOINT, $file_to_send)
 	return $result;
 }
 
+function PostRequestCATsrl($CATSRL_ENDPOINT, $enquiry)
+{
+	$CA_FILE = 'CA_Agenzia_delle_Entrate.pem';
+
+	// initialise the curl request
+	$request = curl_init();
+
+	// send a file
+	curl_setopt($request, CURLOPT_CAINFO, dirname(__FILE__).'/'.$CA_FILE);
+	curl_setopt($request, CURLOPT_POST, true);
+	curl_setopt(
+		$request,
+		CURLOPT_POSTFIELDS,
+		array(
+		  'enquiry' => base64_encode(json_encode($enquiry))
+		)
+	);
+	curl_setopt($request, CURLOPT_URL, $CATSRL_ENDPOINT);
+
+	// output the response
+	curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+	$result = curl_exec($request);
+	//echo('1-'.print_r($request,true)."<br />\n");
+	//echo('2-'.print_r($result,true)."<br />\n");
+	//echo('3-'.print_r(curl_error($request),true)."<br />\n");
+
+	// close the session
+	curl_close($request);
+
+	return $result;
+}
+
 function SendFattureElettroniche($zip_fatture)
 {
 	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/RiceviZip.php';
@@ -43,11 +75,11 @@ function SendFattureElettroniche($zip_fatture)
 
 	$open_tag_pos = strpos($result, $open_tag);
 	if ($open_tag_pos === FALSE) {
-		return false;
+		return $result;
 	}
 	$close_tag_pos = strpos($result, $close_tag);
 	if ($close_tag_pos === FALSE) {
-		return false;
+		return $result;
 	}
 
 	$IdentificativiSdI = json_decode(base64_decode(substr($result, $open_tag_pos+7, $close_tag_pos-$open_tag_pos-7)), true);
@@ -67,22 +99,40 @@ function SendFatturaElettronica($xml_fattura)
 
 	$open_tag_pos = strpos($result, $open_tag);
 	if ($open_tag_pos === FALSE) {
-		return false;
+		return $result;
 	}
 	$close_tag_pos = strpos($result, $close_tag);
 	if ($close_tag_pos === FALSE) {
-		return false;
+		return $result;
 	}
 
-	$IdentificativoSdI = substr($result, $open_tag_pos+6, $close_tag_pos-$open_tag_pos-6);
+	$IdentificativoSdI = array(substr($result, $open_tag_pos+6, $close_tag_pos-$open_tag_pos-6));
 
 	return $IdentificativoSdI;
 }
 
-if (!empty($_REQUEST['xml_fattura'])) {
-	require('../../library/include/datlib.inc.php');
-	$admin_aziend = checkAdmin();
-	$file_url = '../../data/files/' . $admin_aziend['codice'] . '/'.$_REQUEST['xml_fattura'];
-	$IdentificativoSdI = SendFatturaElettronica($file_url);
+function ReceiveNotifiche($array_sdi)
+{
+	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/InviaNotifiche.php';
+
+	$result = PostRequestCATsrl($CATSRL_ENDPOINT, $array_sdi);
+	//echo('0-'.$result."<br />\n");
+
+	$open_tag = '<PROTS>';
+	$close_tag = '</PROTS>';
+
+	$open_tag_pos = strpos($result, $open_tag);
+	if ($open_tag_pos === FALSE) {
+		return $result;
+	}
+	$close_tag_pos = strpos($result, $close_tag);
+	if ($close_tag_pos === FALSE) {
+		return $result;
+	}
+
+	$IdentificativiSdI = json_decode(base64_decode(substr($result, $open_tag_pos+7, $close_tag_pos-$open_tag_pos-7)), true);
+
+	return $IdentificativiSdI;
 }
+
 ?>

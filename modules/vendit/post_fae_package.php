@@ -34,11 +34,14 @@ if (isset($_GET['zn'])) {
 		$file_url = '../../data/files/' . $admin_aziend['codice'] . '/' . $zn;
 		$IdentificativiSdI = SendFattureElettroniche($file_url);
 		if (!empty($IdentificativiSdI)) {
-			gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $zn."'", "flux_status", "@@");
-			foreach ($IdentificativiSdI as $filename_ori=>$IdentificativoSdI) {
-				gaz_dbi_put_query($gTables['fae_flux'], "filename_ori = '" . $filename_ori."'", "id_SDI", $IdentificativoSdI);
+			if (is_array($IdentificativiSdI)) {
+				gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $zn."'", "flux_status", "@@");
+				foreach ($IdentificativiSdI as $filename_ori=>$IdentificativoSdI) {
+					gaz_dbi_put_query($gTables['fae_flux'], "filename_ori = '" . $filename_ori."'", "id_SDI", $IdentificativoSdI);
+				}
+			} else {
+				echo '<p>' . print_r($IdentificativiSdI, true) . '</p>';
 			}
-			//echo "<p>" . print_r($IdentificativiSdI, true) . "</p>";
 		}
 		header('Location: report_fae_sdi.php?post_xml_result=OK');
 	}

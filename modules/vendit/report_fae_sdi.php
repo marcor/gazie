@@ -60,10 +60,13 @@ if (isset($_GET['all'])) {
 		file_put_contents($file_url, $file_content);
 		$IdentificativoSdI = SendFatturaElettronica($file_url);
 		if (!empty($IdentificativoSdI)) {
-			gaz_dbi_put_row($gTables['fae_flux'], "id", $_GET['id_record'], "flux_status", "@");
-			gaz_dbi_put_query($gTables['fae_flux'], "id = " . $_GET['id_record'], "id_SDI", $IdentificativoSdI);
-			//echo "<p>" . print_r($IdentificativoSdI, true) . "</p>";
-			header('Location: report_fae_sdi.php?post_xml_result=OK');
+			if (is_array($IdentificativoSdI)) {
+				gaz_dbi_put_row($gTables['fae_flux'], "id", $_GET['id_record'], "flux_status", "@");
+				gaz_dbi_put_query($gTables['fae_flux'], "id = " . $_GET['id_record'], "id_SDI", $IdentificativoSdI);
+				header('Location: report_fae_sdi.php?post_xml_result=OK');
+			} else {
+				echo '<p>' . print_r($IdentificativoSdI, true) . '</p>';
+			}
 		}
 	} else {
 		gaz_dbi_put_row($gTables['fae_flux'], "id", $_GET['id_record'], "flux_status", "@");
@@ -199,7 +202,7 @@ if (empty($yes_mail) && empty($yes_send)) {
 } else {
 	$yes_mail = (!empty($yes_mail) && $yes_mail == ' enabled ') ? '' : ' disabled ';
 	$yes_send = (!empty($yes_send) && $yes_send == ' enabled ') ? '' : ' disabled ';
-	echo '<p align="center"><a href=".check_fae_sdi.php">' . $script_transl['checkfae'] . '</a></p>';
+	echo '<p align="center"><a href="check_fae_sdi.php">' . $script_transl['checkfae'] . '</a></p>';
 }
 
 $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
