@@ -258,12 +258,9 @@ if ( isset($_FILES['file'])) {
   		    $errors[] = "Errore in apertura zip file $tmp_zip";
 		}
 	        @unlink($tmp_zip);	
-	} else {
-		foreach ( $errors as $error ) {
-			echo $error;
-		}
 	}
-	:w
+
+
 
 }
 ?>
