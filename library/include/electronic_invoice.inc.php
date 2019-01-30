@@ -699,6 +699,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$sc_su_imp['importo_sconto']=0.00;
             switch ($rigo['tiprig']) {
                 case "0":       // normale
+					$last_pervat = $rigo['pervat'];
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
@@ -797,6 +798,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
                 case "1":
                 case "90": // forfait, vendita cespite
+					$last_pervat = $rigo['pervat'];
 					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
@@ -985,7 +987,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $n_linea++;
     }
 
-    if (!empty($XMLvars->descriptive_last_row) ) { // ... ed se voluto anche il rigo descrittivo derivante dalla configurazione avanzata azienda
+    if (!empty($XMLvars->descriptive_last_row) ) { // ... e se voluto anche il rigo descrittivo derivante dalla configurazione avanzata azienda
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
         $el = $domDoc->createElement("DettaglioLinee", "");
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
@@ -996,7 +998,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("PrezzoTotale", '0.00');
         $el->appendChild($el1);
-        $el1 = $domDoc->createElement("AliquotaIVA", number_format($XMLvars->expense_pervat['aliquo'], 2, '.', ''));
+        $el1 = $domDoc->createElement("AliquotaIVA", number_format($last_pervat, 2, '.', ''));
         $el->appendChild($el1);
         $results->appendChild($el);
         $n_linea++;

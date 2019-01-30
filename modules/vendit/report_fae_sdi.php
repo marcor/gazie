@@ -62,7 +62,7 @@ if (isset($_GET['all'])) {
 		if (!empty($IdentificativoSdI)) {
 			if (is_array($IdentificativoSdI)) {
 				gaz_dbi_put_row($gTables['fae_flux'], "id", $_GET['id_record'], "flux_status", "@");
-				gaz_dbi_put_query($gTables['fae_flux'], "id = " . $_GET['id_record'], "id_SDI", $IdentificativoSdI);
+				gaz_dbi_put_query($gTables['fae_flux'], "id = " . $_GET['id_record'], "id_SDI", $IdentificativoSdI[0]);
 				header('Location: report_fae_sdi.php?post_xml_result=OK');
 			} else {
 				echo '<p>' . print_r($IdentificativoSdI, true) . '</p>';
