@@ -66,22 +66,27 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 
 ?>
 <div align="center" class="FacetFormHeaderFont "><?php echo $script_transl[3].$script_transl[0]; ?></div>
+<?php
+$recordnav = new recordnav($gTables['movmag'], $where, $limit, $passo);
+$recordnav -> output();
+
+?>
 <form method="GET">
   <div class="table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed">
 	<tr>
 		<td class="FacetFieldCaptionTD">
-		  <input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
+		  <input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1">
 		</td>
 		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1">
 		</td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-sm form-control" value="<?php echo (isset($documento))? $documento : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+			<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-sm form-control" value="<?php echo (isset($documento))? $documento : ""; ?>" maxlength="15" size="3" tabindex="1">
 		</td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1">
 		</td>
 		<td class="FacetFieldCaptionTD" colspan="3">
 			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
@@ -107,9 +112,9 @@ $headers_mov = array  (
             $script_transl['delete'] => ""
             );
 $linkHeaders = new linkHeaders($headers_mov);
+echo '<tr>';
 $linkHeaders -> output();
-$recordnav = new recordnav($gTables['movmag'], $where, $limit, $passo);
-$recordnav -> output();
+echo '</tr>';
 $anagrafica = new Anagrafica();
 
 /** ENRICO FEDELE */
@@ -138,7 +143,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
             echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
         }
     }
-   	echo "<td class=\"FacetDataTD\"  align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$a_row["artico"]."</p></td>";
+   	echo "<td class=\"FacetDataTD\"  align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$a_row["artico"]."</p>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($valore)." </td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
@@ -160,9 +165,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	//}
 	/** ENRICO FEDELE */
 ?>
-        </form>
-    </table>
-</div>
+     </table>
+	</div>
+</form>
 <script>
 $(document).ready(function(){
   $('[data-toggle="tooltip"]').tooltip();   
