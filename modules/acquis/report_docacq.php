@@ -124,7 +124,7 @@ $script_transl = HeadMain();
         </select></font>
     </div>
     <?php
-    if (!isset($_GET['field'])||empty($_GET['field'])){
+	if (empty($_GET['field']) || $_GET['field']==2) {
         $orderby = "datreg DESC, protoc DESC";
 	}
     $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);

@@ -71,17 +71,21 @@ function recoverCorruptedXML($string) {
 	libxml_use_internal_errors(true);
 	$xml = @simplexml_load_string($string);
 	$errors = libxml_get_errors();
-	foreach ($errors as $error) {
-		if (strpos($error->message, 'Opening and ending tag mismatch')!==false) {
-			$tag   = trim(preg_replace('/Opening and ending tag mismatch: (.*) line.*/', '$1', $error->message));
-			$lines = explode("\n", $string);
-			$line  = $error->line-1;
-			//$lines[$line] = $lines[$line].'</'.$tag.'>'; //TO-DO: bisognerebbe rimuovere solo il tag malato
-			$lines[$line] = '</'.$tag.'>';
+	if (!empty($errors) && is_array($errors) && count($errors)>0) {
+		$lines = explode("\n", $string);
+		foreach ($errors as $error) {
+			if (strpos($error->message, 'Opening and ending tag mismatch')!==false) {
+				$tag   = trim(preg_replace('/Opening and ending tag mismatch: (.*) line.*/', '$1', $error->message));
+				$line  = $error->line-1;
+				//$lines[$line] = $lines[$line].'</'.$tag.'>'; //TO-DO: bisognerebbe rimuovere solo il tag malato
+				$lines[$line] = '</'.$tag.'>';
+			}
 		}
+		libxml_clear_errors();
+		return implode("\n", $lines);
+	} else {
+		return $string;
 	}
-	libxml_clear_errors();
-	return implode("\n", $lines);
 
 }
 
