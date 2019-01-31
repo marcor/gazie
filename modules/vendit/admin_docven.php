@@ -2040,6 +2040,7 @@ if ($form['tipdoc'] == "DDT") {
 echo '<div class="FacetSeparatorTD" align="center">' . $script_transl[1] . '</div>';
 
 echo '<table class="Tlarge table table-bordered table-condensed">
+		<tr><td class="FacetColumnTD">
 		<input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" />
 		<input type="hidden" value="' . $form['in_pervat'] . '" name="in_pervat" />
 		<input type="hidden" value="' . $form['in_tipiva'] . '" name="in_tipiva" />
@@ -2057,9 +2058,8 @@ echo '<table class="Tlarge table table-bordered table-condensed">
 		<input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 		<input type="hidden" value="' . $form['ok_barcode'] . '" name="ok_barcode" />
-		<tr>
-			<td class="FacetColumnTD">';
-echo "\n$script_transl[17]:";
+		';
+echo "$script_transl[17]:";
 $gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
 
 echo $script_transl[15] . ':';
@@ -2067,7 +2067,7 @@ echo $script_transl[15] . ':';
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 $select_artico->output(substr($form['cosear'], 0, 20));
-echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
+echo '&nbsp;<a id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
 
 // Antonio Germani - input ricerca con pistola lettore codice a barre 
 				if ($toDo == "insert"){
@@ -2075,6 +2075,7 @@ echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-t
 						?>
 								<button type="submit"  name="button_ok_barcode" class="btn btn-edit btn-default btn-xs" title="inserisci con pistola Barcode"> 
                                 <span class="glyphicon glyphicon-barcode"> Barcode</span>
+								</button>
 						<?php
 					} 
 					?>
@@ -2085,7 +2086,8 @@ echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-t
 								<label for="item" ><?php echo "Barcode"; ?></label>
 								<input  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onchange="this.form.submit()" />
 								<button type="submit"  name="no_barcode" title="Togli con pistola Barcode"> 
-                                <span class="glyphicon glyphicon-remove"></span>					
+                                <span class="glyphicon glyphicon-remove"></span>
+								</button>								
 						<?php
 						} elseif ($form['in_barcode']=="NOT FOUND") {
 							$form['in_barcode']="";
@@ -2689,12 +2691,13 @@ echo '		</tbody>
 		</table>
 		<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div>
 		<table class="Tlarge table table-bordered table-condensed">
+		<tr><td>
 			<input type="hidden" value="' . $form['numrat'] . '" name="numrat">
 			<input type="hidden" value="' . $form['stamp'] . '" name="stamp">
 			<input type="hidden" value="' . $form['round_stamp'] . '" name="round_stamp">
 			<input type="hidden" value="' . $form['spevar'] . '" name="spevar">
 			<input type="hidden" value="' . $form['cauven'] . '" name="cauven">
-			<input type="hidden" value="' . $form['caucon'] . '" name="caucon">';
+			<input type="hidden" value="' . $form['caucon'] . '" name="caucon"></td></tr>';
 
 $somma_spese = $form['traspo'] + $form['speban'] * $form['numrat'] + $form['spevar'];
 $calc->add_value_to_VAT_castle($castle, $somma_spese, $form['expense_vat']);
