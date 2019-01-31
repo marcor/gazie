@@ -2083,7 +2083,7 @@ echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-t
 						if ($form['in_barcode']==""){
 						?>						
 								<label for="item" ><?php echo "Barcode"; ?></label>
-								<input  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onchange="this.form.submit;" />
+								<input  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onchange="this.form.submit()" />
 								<button type="submit"  name="no_barcode" title="Togli con pistola Barcode"> 
                                 <span class="glyphicon glyphicon-remove"></span>					
 						<?php
@@ -2091,7 +2091,7 @@ echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-t
 							$form['in_barcode']="";
 							?>						
 									<label for="item" ><?php echo "Barcode"; ?></label>
-									<input style="border: 1px solid red;"  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onchange="this.form.submit;" />
+									<input style="border: 1px solid red;"  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onchange="this.form.submit()" />
 									<button type="submit"  name="no_barcode" title="Togli con pistola Barcode"> 
 									<span class="glyphicon glyphicon-remove"></span>							
 							<?php
