@@ -24,6 +24,8 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain('','','admin_pagame');
+// se non è impostata una modalità di ordinamento della tabella, verrà ordinata per codice desc
+if ( !isset($_GET['field']) ) $orderby = "codice DESC";
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl[0]; ?></div>
 <?php

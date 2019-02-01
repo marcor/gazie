@@ -51,8 +51,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_banapp.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
     echo "<td>".$a_row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["locali"]." &nbsp;</td>";
-    echo "<td align=\"center\">".$a_row["codabi"]." &nbsp;</td>";
-    echo "<td align=\"center\">".$a_row["codcab"]." &nbsp;</td>";
+    echo "<td align=\"center\">". sprintf("%'.05d\n", $a_row["codabi"]) ." &nbsp;</td>";
+    echo "<td align=\"center\">". sprintf("%'.05d\n", $a_row["codcab"]) ." &nbsp;</td>";
     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_banapp.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
 }
