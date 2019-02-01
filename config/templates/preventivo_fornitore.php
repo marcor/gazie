@@ -132,17 +132,23 @@ class PreventivoFornitore extends Template
 					$this->Cell(20, 6, $pcs,'RTB',1,'L',0,'',1);
 					$this->Cell(125, 6, $rigo['codart'].$rigo['codice_fornitore'].$rigo['quality'].$res_ps ,'LRB',0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
                     if ($rigo['prelis'] > 0) {
                        //$this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
                        $this->Cell(17, 6, '',1);// non stampo mai il prezzo
                     } else {
-                       $this->Cell(17, 6, '',1);
+					   $py=$this->GetY();
+					   $px=$this->GetX();
+					   $this->Rect($px,$py,17,6,'DF');
+					   $this->TextField('prelis'.$key, 17, 6);
                     }
                     if ($rigo['sconto']> 0) {
                        $this->Cell(8, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
                     } else {
-                       $this->Cell(8, 6, '',1);
+					   $py=$this->GetY();
+					   $px=$this->GetX();
+					   $this->Rect($px,$py,8,6,'DF');
+					   $this->TextField('sconto'.$key, 8, 6);
                     }
                     if ($rigo['importo'] > 0) {
                        //$this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
