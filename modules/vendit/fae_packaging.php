@@ -64,7 +64,7 @@ function getExtremeDocs($vat_register = '_', $vat_section = 1) {
 }
 
 // AGGIUNTA FUNZIONE PER RECUPERARE ULTIMO PROGRESSIVO PACCHETTO IN fae_flux
-function getLastPack() // RESTITUISCE IL PROGRESSIVO IN FORMATO STRINGA DELL'ULTIMO PACCKETTO INVIATO
+function getLastPack() // RESTITUISCE IL NUMERO PROGRESSIVO DELL'ULTIMO PACCHETTO CREATO/INVIATO
 {
     global $gTables;
     $where = "(filename_zip_package IS NOT NULL OR filename_zip_package != '') ";
@@ -72,8 +72,8 @@ function getLastPack() // RESTITUISCE IL PROGRESSIVO IN FORMATO STRINGA DELL'ULT
     $from = $gTables['fae_flux'];
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
-    $ultimo=substr($row['filename_zip_package'],-9,5) ;
-    return $ultimo;
+	if(!$row){$row['filename_zip_package']='00000.zip';}
+    return substr($row['filename_zip_package'],-9,5);
 }
 /// FINE aggiunta FUNZIONE
 
@@ -274,25 +274,16 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
     $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
-
-// MODIFICATO SANDRO
-    $send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package');
-    echo trim($send_fae_zip_package['val']) ;
-    if (trim($send_fae_zip_package['val']) != "pec_SDI") {  // se non invio i pacchetti di fatture da PEC a PEC SdI
-                                                             // lascio invariato il comportamento di questo modulo
-      // Stabilisco il nome del file tramite timestamp
-    	$form['filename']='IT'.$admin_aziend['codfis'].'_'.date("YmdHis").'.zip';
-    } else {    //il pacchetto deve essere inviato da PEC alla PEC SDI: nome conforme allo SDI identificativoiva_xxxxx.zip, altrimenti lo rifiuta
-  $trasmissione_fae = getLastPack() ;
-  $progressivo_trasmissione_fae = intval($trasmissione_fae)+1;
-  $ninvio=sprintf("%05d",$progressivo_trasmissione_fae);
-  $form['filename']='IT'.$admin_aziend['codfis'].'_'.$ninvio.'.zip';
-  // 1) Questo progressivo in base decimale può numerare fino a 99999 invii, si dovrebbe poter fare
-  //    con altra base (come per le fatture in xml purchè non vada in conflitto con le stesse cioè non si abbia
-  //    un file trasmesso ITxxxxxxxxxxx_progressivo.xml e un file uguale ma .zip, non sò se lo SDI accetterebbe il secondo)
-    }
-// FINE MODIFICA
-
+	$ultimo_progressivo_invio = getLastPack();
+	$progressivo_decimale=substr((decodeFromSendingNumber($ultimo_progressivo_invio,36)+1),-2); // aggiungo 1 al numero in base dieci dell'ultimo progressivo
+	// inizio formattazione popolando l'array con valori adatti a quanto si aspetta la funzione encodeSendingNumber
+	$data['sezione']=$form['vat_section'];
+	$data['anno']=date("Y");
+	$data['fae_reinvii']=substr(date("m"),0,1);
+	$data['protocollo']=substr(date("md"),1).$progressivo_decimale;
+	// fine formattazione array
+	$progressivo_attuale=encodeSendingNumber($data,36);
+	$form['filename']='IT'.$admin_aziend['codfis'].'_'.$progressivo_attuale.'.zip';
     $form['hidden_req'] = '';
 } else {    // accessi successivi
     $form['vat_register'] = substr($_POST['vat_register'], 0, 1);
