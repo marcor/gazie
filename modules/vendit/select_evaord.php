@@ -453,8 +453,9 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
 				}
 				// fine inserisco id_lotmag
 				
-                //modifico il rigo dell'ordine indicandoci l'id della testata del DdT
-                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
+                //Antonio Germani - modifico il rigo dell'ordine indicandoci l'id della testata del documento e del movimento magazzino
+				// N.B.: senza questo, la funzione get_magazz_ordinati non funziona bene perché vede l'ordine ancora inevaso!
+                gaz_dbi_put_row($gTables['rigbro'], "id_rig", $form['righi'][$k]['id_rig'], "id_doc", $last_id);
             }
             if ($v['tiprig'] >= 11 && $v['tiprig'] <= 13) {
                 $row = $v;
@@ -603,9 +604,9 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
 				}
 				// fine inserisco id_lotmag
 				
-                //modifico il rigo dell'ordine indicandoci l'id della testata del VCO
-                //gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
-                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
+                ///Antonio Germani - modifico il rigo dell'ordine indicandoci l'id della testata del documento e del movimento magazzino
+				// N.B.: senza questo, la funzione get_magazz_ordinati non funziona bene perché vede l'ordine ancora inevaso!
+                gaz_dbi_put_row($gTables['rigbro'], "id_rig", $form['righi'][$k]['id_rig'], "id_doc", $last_id);
             }
             /* non serve più
               if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non � il primo rigo processato
@@ -815,8 +816,9 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
 				}
 				// fine inserisco id_lotmag
 				
-                //modifico il rigo dell'ordine indicandoci l'id della testata della fattura immediata
-                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
+               //Antonio Germani - modifico il rigo dell'ordine indicandoci l'id della testata del documento e del movimento magazzino
+				// N.B.: senza questo, la funzione get_magazz_ordinati non funziona bene perché vede l'ordine ancora inevaso!
+                gaz_dbi_put_row($gTables['rigbro'], "id_rig", $form['righi'][$k]['id_rig'], "id_doc", $last_id);
             }
             if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
                 //controllo se ci sono ancora righi inevasi
@@ -847,7 +849,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
         header("Location: invsta_docven.php");
         exit;
     }
-} elseif (isset($_POST['vri'])) { //conferma dell'evasione con Ricevuta
+} elseif (isset($_POST['vri'])) { // Antonio Germani conferma dell'evasione con Ricevuta
     //cerco l'ultimo template
     $rs_ultimo_template = gaz_dbi_dyn_query("template", $gTables['tesdoc'], "tipdoc = '' and seziva = " . $form['seziva'], "datfat DESC, protoc DESC", 0, 1);
     $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);
@@ -985,8 +987,9 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
 				}
 				// fine inserisco id_lotmag
 				
-                //modifico il rigo dell'ordine indicandoci l'id della testata della ricevuta 
-                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
+                //Antonio Germani - modifico il rigo dell'ordine indicandoci l'id della testata del documento e del movimento magazzino
+				// N.B.: senza questo, la funzione get_magazz_ordinati non funziona bene perché vede l'ordine ancora inevaso!
+                gaz_dbi_put_row($gTables['rigbro'], "id_rig", $form['righi'][$k]['id_rig'], "id_doc", $last_id);
             }
             if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
                 //controllo se ci sono ancora righi inevasi
