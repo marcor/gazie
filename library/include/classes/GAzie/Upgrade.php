@@ -192,13 +192,13 @@ class Upgrade {
 				$errors[] = "Errore in apertura zip file $tmp_zip";
 			}
 			@unlink($tmp_zip);
-			if ( !empty($errors)) {
-				$this->errors = $errors;	
-				return FALSE;
-			}
 			return $success;
 		
 		}
+
+		$this->errors = $errors;	
+		return FALSE;
+
 	}
 }
 
