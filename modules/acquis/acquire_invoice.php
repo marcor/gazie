@@ -501,10 +501,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['rows'][$nl]['unimis'] = '';
 			$form['rows'][$nl]['quanti'] = '';
 			$form['rows'][$nl]['sconto'] = 0;
-			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('ImponibileCassa')->item(0)->nodeValue;
 			$form['rows'][$nl]['provvigione'] = $item->getElementsByTagName('AlCassa')->item(0)->nodeValue; // così come per le vendite uso il campo provvigioni per mettere l'aliquota della cassa previdenziale (evidenziato anche sui commenti del database)
+			if ($item->getElementsByTagName('ImponibileCassa')->length>=1){
+				$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('ImponibileCassa')->item(0)->nodeValue;
+			} else {
+				// non ho l'imponibile base di calcolo, allora lo ricavo dall'importo del contributo e dall'aliquota
+				$form['rows'][$nl]['prelis'] = round($item->getElementsByTagName('ImportoContributoCassa')->item(0)->nodeValue*100/$form['rows'][$nl]['provvigione'],2);
+			}
 			$form['rows'][$nl]['amount'] = $form['rows'][$nl]['prelis'];
-			$tot_imponi += $form['rows'][$nl]['amount'];
+			$tot_imponi += round($form['rows'][$nl]['amount']*$form['rows'][$nl]['provvigione']/100,2);
 			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
 			$form['rows'][$nl]['ritenuta']='';
 			if ($item->getElementsByTagName("Ritenuta")->length >= 1 && $item->getElementsByTagName('Ritenuta')->item(0)->nodeValue=='SI'){
