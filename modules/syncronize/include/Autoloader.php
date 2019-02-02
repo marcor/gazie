@@ -29,44 +29,24 @@ class Autoloader {
     { 
 	$file = str_replace("\\","/",$class).".php";
 	include_once($file);
-     #   $class = preg_replace('/_controller$/ui','',$class);
-       
-     #   set_include_path(get_include_path().PATH_SEPARATOR.'/controller/');
-     #   spl_autoload_extensions('.controller.php');
-     #   spl_autoload($class);
     }
 
     public function gazie($class)
     {
 	$file = str_replace("\\","/",$class).".php";
 	include_once($file);
-      #  $class = preg_replace('/_model$/ui','',$class);
-       	
-       # set_include_path(get_include_path().PATH_SEPARATOR.'/model/');
-     #   spl_autoload_extensions($file);
-     #   spl_autoload($class);
     }
 
     public function database($class)
     { 
 	$file = str_replace("\\","/",$class).".php";
 	include_once($file);
-    #    $class = preg_replace('/_helper$/ui','',$class);
-
-    #    set_include_path(get_include_path().PATH_SEPARATOR.'/helper/');
-    #    spl_autoload_extensions('.helper.php');
-    #    spl_autoload($class);
     }
 
     public function syncro($class)
     { 
 	$file = str_replace("\\","/",$class).".php";
 	include_once($file);
-    #    $class = preg_replace('/_helper$/ui','',$class);
-
-    #    set_include_path(get_include_path().PATH_SEPARATOR.'/helper/');
-    #    spl_autoload_extensions('.helper.php');
-    #    spl_autoload($class);
     }
 
 }

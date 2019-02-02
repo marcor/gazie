@@ -23,7 +23,8 @@
  --------------------------------------------------------------------------
 */
 
-namespace gazie;
+namespace GAzie;
+include('Config.php');
 
 class Upgrade {
 
@@ -35,24 +36,9 @@ class Upgrade {
 
 	public function __construct() {
 		$this->errors = [];
-		$this->path_local = realpath('../..');
-		$this->directories = [
-			$this->getPathLocal()."/admin.php", 
-			$this->getPathLocal()."/composer.json", 
-			$this->getPathLocal()."/composer.lock.php", 
-			$this->getPathLocal()."/config.php", 
-			$this->getPathLocal()."/doc", 
-			$this->getPathLocal()."/.htaccess", 
-			$this->getPathLocal()."/INDEX.html", 
-			$this->getPathLocal()."/index.php", 
-			$this->getPathLocal()."/js", 
-			$this->getPathLocal()."/language", 
-			$this->getPathLocal()."/library", 
-			$this->getPathLocal()."/modules", 
-			$this->getPathLocal()."/README.html", 
-			$this->getPathLocal()."/setup", 
-			$this->getPathLocal()."/SETUP.html", 
-		];
+		$this->path_local = Config::factory()->getPathRoot();
+var_dump(Config::factory());	
+		$this->directories = Config::factory()->getDirectories();
 	}
 
 	private function getMaximumFileUploadSize() {  
@@ -144,6 +130,7 @@ class Upgrade {
 	}
 
 	public function run() {
+		$success = FALSE;
 		$errors = [];
 		$path_local = $this->getPathLocal();
 
@@ -202,8 +189,11 @@ class Upgrade {
 				$errors[] = "Errore in apertura zip file $tmp_zip";
 			}
 			@unlink($tmp_zip);
-			$this->errors = $errors;	
-			return TRUE;
+			if ( !empty($errors)) {
+				$this->errors = $errors;	
+				return FALSE;
+			}
+			return $success;
 		
 		}
 	}

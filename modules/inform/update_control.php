@@ -34,7 +34,7 @@ $URI_files = gaz_dbi_get_row($gTables['config'],'variable','update_URI_files');
 if (!empty($URI_files['cvalue'])){ $update_URI_files = $URI_files['cvalue']; }
 require("../../library/include/header.php");
 // Richiamo la class per l'aggiornamento
-require("../../library/include/classes/gazie/upgrade.php");
+require("../../library/include/classes/GAzie/Upgrade.php");
 
 
 if (isset($_POST['check'])){// se viene richiesta una modifica della fonte di check
@@ -105,10 +105,8 @@ if ($configurazione['cvalue']) {
     tutor_list($tutor,$configurazione,$script_transl);
 }
 
-$upgrade = new \gazie\Upgrade;
+$upgrade = new \GAzie\Upgrade;
 $success = $upgrade->run();
-$errors = $upgrade->getErrors();
-
 
 ?>
 <br><br><br>
@@ -117,8 +115,8 @@ $errors = $upgrade->getErrors();
 	<h3>Aggiornamento Automatico</h3>
 </div>
 <?php
-if ( !empty($errors) ) {
-	foreach( $errors as $error) {
+if ( !$success ) {
+	foreach( $upgrade->getErrors() as $error) {
 ?>
 <div class="col-md-12 alert alert-danger">
 <?= $error; ?>
