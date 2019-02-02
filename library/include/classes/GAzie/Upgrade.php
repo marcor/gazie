@@ -26,6 +26,8 @@
 namespace GAzie;
 include('Config.php');
 
+use \ZipArchive;
+
 class Upgrade {
 
 	private $errors;
