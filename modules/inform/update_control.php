@@ -105,8 +105,9 @@ if ($configurazione['cvalue']) {
     tutor_list($tutor,$configurazione,$script_transl);
 }
 
+$file = isset($_FILES['file']) ? $_FILES['file'] : [];
 $upgrade = new \GAzie\Upgrade;
-$success = $upgrade->run();
+$success = $upgrade->zip($file);
 
 ?>
 <br><br><br>

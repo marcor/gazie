@@ -128,7 +128,11 @@ class Upgrade {
 		return $this->errors;
 	}
 
-	public function run() {
+	/**
+	 * Upgrade da uno zip file passatogli come ($_FILES['file'])
+	 *
+	 */
+	public function zip(array $zip_file) {
 		$success = FALSE;
 		$errors = [];
 		$path_local = $this->getPathLocal();
@@ -138,7 +142,7 @@ class Upgrade {
 			return FALSE;
 		}
 		// Verifica upload file gazie
-		if ( ! isset($_FILES['file'])) 
+		if ( ! isset($zip_file['size']))
 			return FALSE;
 			
 		// Verifica dimensioni > 30 MB
@@ -149,16 +153,16 @@ class Upgrade {
 			$errors[] = "Non hai permessi di scrittura in '$path_local' impostali a 0755 con proprietario www-data";
 		}
 	
-		if ( $_FILES['file']['size'] < 30*1024*1024 )
+		if ( $zip_file['size'] < 30*1024*1024 )
 			$errors[] = "Errore dimensioni files in upload";
-		if ( $_FILES['file']['type'] !== 'application/zip' )
+		if ( $zip_file['type'] !== 'application/zip' )
 			$errors[] = "Il file non è uno zip di gazie";
-		if ( $_FILES['file']['error'] !== 0 )
+		if ( $zip_file['error'] !== 0 )
 			$errors[] = "Errore nell'upload del file";
 
 		if ( empty( $errors ) ) {
-			$tmp_zip = $_FILES['file']['tmp_name'];
-			$zip_name = $_FILES['file']['name'];
+			$tmp_zip = $zip_file['tmp_name'];
+			$zip_name = $zip_file['name'];
 			// Unzippo tutti i files
 			$zip = new ZipArchive;
 			$res = $zip->open($tmp_zip);
