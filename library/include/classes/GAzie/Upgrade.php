@@ -37,7 +37,6 @@ class Upgrade {
 	public function __construct() {
 		$this->errors = [];
 		$this->path_local = Config::factory()->getPathRoot();
-var_dump(Config::factory());	
 		$this->directories = Config::factory()->getDirectories();
 	}
 
