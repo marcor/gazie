@@ -47,6 +47,7 @@ class magazzForm extends GAzieForm {
             ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes";
 
     $where = $gTables['artico'].".good_or_service != 1
+		AND ".$gTables['rigbro'].".id_doc = 0
         AND ".$gTables['artico'].".codice = '".$codice."'
         AND ".$gTables['tesbro'].".tipdoc = '".$tip."'";
 	} else { // se siamo in modalità KIT si prendono solo gli articoli semplici
@@ -57,6 +58,7 @@ class magazzForm extends GAzieForm {
             ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes";
 
 		$where = $gTables['artico'].".good_or_service = 0
+		AND ".$gTables['rigbro'].".id_doc = 0
         AND ".$gTables['artico'].".codice = '".$codice."'
         AND ".$gTables['tesbro'].".tipdoc = '".$tip."'";
 	}
