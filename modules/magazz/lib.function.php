@@ -72,37 +72,31 @@ class magazzForm extends GAzieForm {
     while ($row = gaz_dbi_fetch_array($restemp)) {
         $totord += $row['quanti'];
     }
-
-    //calcolo quanti sono già stati evasi query : 451
-    $query = "SELECT
-        gaz_001rigbro.quanti as quantio,
-        gaz_001rigdoc.quanti as quantiv,
-        gaz_001rigdoc.codart,
-        gaz_001tesdoc.tipdoc
-    FROM gaz_001tesbro
-    INNER JOIN gaz_001rigbro
-      ON gaz_001tesbro.id_tes = gaz_001rigbro.id_tes
-    CROSS JOIN gaz_001tesdoc
-    INNER JOIN gaz_001rigdoc
-      ON gaz_001tesdoc.id_tes = gaz_001rigdoc.id_tes AND gaz_001rigdoc.id_order = gaz_001tesbro.id_tes
-    WHERE gaz_001rigdoc.codart = '".$codice."' ";
-        
-    if ( $tip == 'VOR' ) {
-        $query .= "
-        AND gaz_001tesdoc.tipdoc <> 'AFA'
-        AND gaz_001tesdoc.tipdoc <> 'ADT'";
-    } else {
-        $query .= "
-        AND gaz_001tesdoc.tipdoc <> 'FAT'
-        AND gaz_001tesdoc.tipdoc <> 'DDT'";
-    }
-
-    $resevasi = gaz_dbi_query ( $query );
-    while ($rowevasi = gaz_dbi_fetch_array($resevasi)) {
-        $totord -= $rowevasi['quantiv'];
-    }
 	
-    return $totord ;
+	// Antonio Germani - calcolo evasi
+	$toteva = 0;
+	if ($tip!="AOR"){
+		$query = "SELECT " . 'codart'. ",". 'id_tes' . " FROM " . $gTables['rigbro'] . " WHERE codart ='" . $codice. "' AND tiprig <= '1'";
+		$result = gaz_dbi_query($query); // prendo tutti i righi ordine per questo articolo
+		while ($row = $result->fetch_assoc()){
+			$query = "SELECT " . 'quanti'. ",". 'id_rig' . " FROM " . $gTables['rigdoc'] . " WHERE id_order ='" . $row['id_tes']. "' AND tiprig <= '1' AND codart = '".$codice."'";
+			$res = gaz_dbi_query($query); // prendo i righi documento che rappresentano gli evasi
+			$n=0;
+			while ($row2 = $res->fetch_assoc()){
+				// qui devo evitare che, se nello stesso ordine ci sono più righi con lo stesso articolo, vengano conteggiati più volte
+				if ($preord==$row['id_tes']){ // se l'ordine è lo stesso del precedente
+				// non faccio nulla perché già conteggiato nel ciclo precedente
+					} else {		
+				$toteva=$toteva+$row2['quanti']; // incremento il totale evaso
+					}
+				$n++;
+			}
+			$preord=$row['id_tes'];
+		}		
+	}
+	// fine calcolo evasi
+	
+    return $totord-$toteva;
     }
 
     function selItem($name, $val, $strSearch = '', $mesg, $val_hiddenReq = '', $class = 'FacetSelect') {
