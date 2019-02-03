@@ -85,9 +85,17 @@ class magazzForm extends GAzieForm {
     CROSS JOIN gaz_001tesdoc
     INNER JOIN gaz_001rigdoc
       ON gaz_001tesdoc.id_tes = gaz_001rigdoc.id_tes AND gaz_001rigdoc.id_order = gaz_001tesbro.id_tes
-    WHERE gaz_001rigdoc.codart = '".$codice."' 
+    WHERE gaz_001rigdoc.codart = '".$codice."' ";
+        
+    if ( $tip == 'VOR' ) {
+        $query .= "
         AND gaz_001tesdoc.tipdoc <> 'AFA'
         AND gaz_001tesdoc.tipdoc <> 'ADT'";
+    } else {
+        $query .= "
+        AND gaz_001tesdoc.tipdoc <> 'FAT'
+        AND gaz_001tesdoc.tipdoc <> 'DDT'";
+    }
 
     $resevasi = gaz_dbi_query ( $query );
     while ($rowevasi = gaz_dbi_fetch_array($resevasi)) {
