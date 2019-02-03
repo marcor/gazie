@@ -212,6 +212,7 @@ function confirMail(link){
                         case "DDT":
                         case "DDV":
                         case "DDY":
+                        case "DDS":
                             echo "<tr class=\"FacetDataTD\">";
                             // Colonna id
                             echo "<td align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r['tipdoc'].' '. $r["id_tes"] . "</a></td>";

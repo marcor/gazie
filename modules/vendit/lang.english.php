@@ -169,6 +169,7 @@ $strScript = array("admin_client.php" =>
             "FND" => "Debit Note to customer",
             "VCO" => "Ticket Sales",
             "DDV" => "D.d.T. per Cessione in Conto Visione",
+            "DDS" => "Notula Servizio (no fat.15 mese succ.)",
             "DDY" => "D.d.T. da non fatturare automaticamente",
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Received"
@@ -803,6 +804,7 @@ $strScript = array("admin_client.php" =>
         'ddt_type' => array("T" => "sale",
             "V" => "to vision",
             "Y" => "triangulation",
+            "S" => "Notula di Servizio", //Notula
             "DDR" => "returned from supplier",
             "DDL" => "to exeternal processing"
         ),

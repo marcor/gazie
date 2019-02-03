@@ -457,7 +457,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
-        if ($form['tipdoc'] != 'DDT' && $form['tipdoc'] != 'DDY' && $form['tipdoc'] != 'RDV' && $form['tipdoc'] != 'DDV' && $form['template'] != 'FatturaImmediata') {
+        if ($form['tipdoc'] != 'DDT' && $form['tipdoc'] != 'DDY' && $form['tipdoc'] != 'DDS' && $form['tipdoc'] != 'RDV' && $form['tipdoc'] != 'DDV' && $form['template'] != 'FatturaImmediata') {
             $initra = $datemi;
             $utstra = $utsemi;
         } else {
@@ -478,7 +478,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
         // --- inizio controllo coerenza date-numerazione
         if ($toDo == 'update') {  // controlli in caso di modifica
-            if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY' || $form['tipdoc'] == 'FAD') {  //se è un DDT vs Fattura differita
+            if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY' || $form['tipdoc'] == 'DDS' || $form['tipdoc'] == 'FAD') {  //se è un DDT vs Fattura differita
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datemi < '$datemi' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
                 if ($result and ( $form['numdoc'] < $result['numdoc'])) {
@@ -525,7 +525,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
             }
         } else {    //controlli in caso di inserimento
-            if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY') {  //se è un DDT
+            if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDS' || $form['tipdoc'] == 'DDY') {  //se è un DDT
                 $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " AND (tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND ddt_type!='R' AND seziva = " . $sezione, "datemi DESC ,numdoc DESC ", 0, 1);
                 $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
                 $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
@@ -698,6 +698,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     case "DDT":
                     case "DDV": // conto visione
                     case "DDY": // triangolazione
+                    case "DDS": // notula di servizio
                         $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " AND ( tipdoc like 'DD_' or (tipdoc = 'FAD' && ddt_type != 'R')) and seziva = $sezione";
                         $where = "numdoc DESC";
                         $sql_protocollo = " 0";
@@ -1834,7 +1835,7 @@ if ($form['id_tes'] > 0) { // è una modifica
     echo "<input type=\"hidden\" value=\"" . $form['tipdoc'] . "\" name=\"tipdoc\">\n";
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 } else { // è un inserimento
-    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT'=>'','FAI'=>'','FAP'=>'','FAQ'=>'','FAA'=>'','FNC'=>'','FND'=>'','DDV'=>'','RDV'=>'','DDY'=>'','VRI'=>'','CMR'=>''));
+    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT'=>'','FAI'=>'','FAP'=>'','FAQ'=>'','FAA'=>'','FNC'=>'','FND'=>'','DDV'=>'','RDV'=>'','DDY'=>'','DDS'=>'','VRI'=>'','CMR'=>''));
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . ucfirst($script_transl[$toDo]) . $script_transl['tipdoc'];
     $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
 }
@@ -2708,7 +2709,7 @@ if ($calc->total_exc_with_duty >= $admin_aziend['taxstamp_limit'] && $form['virt
 }
 
 
-if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY' || 
+if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY' || $form['tipdoc'] == 'DDS' || 
     $form['template'] == 'FatturaImmediata' || $form['tipdoc'] == 'FAD' || $form['tipdoc']=='CMR' ||
     $form['tipdoc']=='FAC') {
     echo "		<tr>

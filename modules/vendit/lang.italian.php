@@ -176,6 +176,7 @@ $strScript = array("admin_client.php" =>
             "VCO" => "Vendita Corrispettivo",
             "DDV" => "D.d.T. per Cessione in Conto Visione",
             "DDY" => "D.d.T. da non fatturare automaticamente",
+            "DDS" => "Notula Servizio (no fat.15 mese succ.)",
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Ricevuta",
             "CMR" => "Contratto di trasporto internazionale"
@@ -1125,7 +1126,8 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Documenti di trasporto della sezione: ',
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
-            "Y" => "", //triangolazione",
+            "Y" => "triangolazione", //triangolazione"
+            "S" => "notula di servizio", //Notula
             "DDR" => "reso a fornitore",
             "DDL" => "c/lavorazione"
         ),
@@ -1201,7 +1203,8 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Selezione per la fatturazione dei Documenti di Trasporto della sezione IVA ',
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
-            "Y" => "" //triangolazione"
+            "Y" => "triangolazione", //triangolazione"
+            "S" => "notula di servizio", //Notula
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',

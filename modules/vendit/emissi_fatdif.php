@@ -42,7 +42,7 @@ function getDateLimits($sez = 1) {
     $acc['date_ini'] = $acc['date_exe'];
     global $gTables;
     // ricavo i limiti di fatturabilitÃ  e le date dei vari tipi di DdT
-    $doctype = array('DDT', 'DDV', 'DDY', 'CMR');
+    $doctype = array('DDT', 'DDV', 'DDY', 'DDS', 'CMR');
     foreach ($doctype as $k => $v) {
         switch ($v) {
             default :
@@ -67,7 +67,8 @@ function getDateLimits($sez = 1) {
                 $nd->modify('-1 year');
                 break;
             case 'DDY':
-                // anche se sono in conto triangolazione non apporto modifiche e al momento non li fatturo salvo richiesta contraria
+            case 'DDS':
+                // se sono notule di servizio o in conto triangolazione non apporto modifiche e al momento non li fatturo salvo richiesta contraria
                 break;
         }
     }
@@ -125,6 +126,8 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
             . " OR "
             . "(tipdoc = 'DDY' AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
             . " OR "
+            . "(tipdoc = 'DDS' AND datemi <= '" . $date['fin'] . "')"
+            . " OR "
             . "(tipdoc = 'CMR' AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
             . ")";
     //recupero i dati dal DB (testate+cliente+pagamento+righi)
@@ -157,6 +160,8 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
                 } else { // non sono ancora trascorsi 365 gg
                     $acc['data'][$i][$row['id_tes']] = 'maybe';
                 }
+            } elseif ($row['tipdoc'] == 'DDS') { // NOTULA DI SERVIZIO
+                $acc['data'][$i][$row['id_tes']] = 'maybe';
             } elseif ($row['tipdoc'] == 'DDY') { // TRIANGOLAZIONE
                 $acc['excluded'][$i][$row['id_tes']] = 'no';
             } else {                            // DDT
@@ -406,16 +411,16 @@ if (isset($invoices['data'])) {
             }
 			
             $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $kr);
+            $anagrafica = new Anagrafica();
+            $cliente = $anagrafica->getPartner($tes['clfoco']);
             $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $tes['pagame']);
             if (($vr == 'yes' && $tes['tipdoc']==$tipodocumento && !in_array($kr, $form['changeStatus'])) || 
                 (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != $tipodocumento)) {
-                // se Ã¨ un DDT da fatturare non escluso o  Ã¨ un DDV-Y normalmente escluso ma richiesto alla fatturazione 
+                // se c'è un DDT da fatturare non escluso o  un DDV-Y-S normalmente escluso ma richiesto alla fatturazione 
                 if ($ctrl_first) {
                     $protoc++;
                     $numfat++;
                     $tot = 0.00;
-                    $anagrafica = new Anagrafica();
-                    $cliente = $anagrafica->getPartner($tes['clfoco']);
 					if (isset($invoices['error'][$kt]) && $invoices['error'][$kt][$kr][0]=='cust_pay'){
 						$btn_class ="btn-danger";
 						$cliente['ragso2'] .= '<span class="bg-danger">'.$script_transl['errors']['cust_pay'].'</span>';
@@ -497,7 +502,7 @@ if (isset($invoices['data'])) {
                 $tot = 0.00;
                 echo "<tr class=\"alert alert-danger\">";
                 echo "<td colspan=\"8\">" . $tes['tipdoc'] . ' ' . $script_transl['ddt_type'][$tes['ddt_type']] .
-                " <a href=\"admin_docven.php?Update&id_tes=" . $kr . "\" > n." . $tes['numdoc'] . '/' . $tes['seziva'] . " </a> del " . gaz_format_date($tes['datemi']);
+                " <a href=\"admin_docven.php?Update&id_tes=" . $kr . "\" > n." . $tes['numdoc'] . '/' . $tes['seziva'] . " </a> del " . gaz_format_date($tes['datemi']).' '.$cliente['descri'];
                 echo " &nbsp;<input class=\"btn btn-xs btn-warning\" type=\"submit\" name=\"yes_change[$kr]\" value=\"FATTURA!\" /></td>";
                 echo "</tr>\n";
             }
@@ -547,7 +552,7 @@ if (count($form['changeStatus']) > 0) {
         echo "\n<input type=\"hidden\" name=\"changeStatus[$k]\" value=\"" . $id_tes . "\" />\n";
         echo "<tr>";
         echo "<td colspan=\"4\">" . $tes['tipdoc'] . ' ' . $script_transl['ddt_type'][$tes['ddt_type']] .
-        " &nbsp;. <a href=\"admin_docven.php?Update&id_tes=" . $id_tes . "\">" . $tes['numdoc'] . "</a></td>"
+        " &nbsp; <a href=\"admin_docven.php?Update&id_tes=" . $id_tes . "\">n." . $tes['numdoc'].'/'.$tes['seziva'] . "</a> ". $cliente['descri']." </td>"
         . "<td colspan=\"2\"><input  class=\"btn btn-xs btn-success\" type=\"submit\" name=\"no_change[" . $id_tes . "]\" value=\"Ripristina lo stato iniziale!\" /></td>";
         echo "</tr>\n";
     }

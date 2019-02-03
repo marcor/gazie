@@ -1253,7 +1253,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 			<td class=\"FacetDataTD\">
 				<input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\" size=\"4\" />
 			</td></tr>\n";
-        $tidoc_selectable = array("DDT" => "D.d.T. di Vendita", "DDY" => "D.d.T. da non fatturare automaticamente");
+        $tidoc_selectable = array("DDT" => "D.d.T. di Vendita", "DDY" => "D.d.T. da non fatturare automaticamente","DDS" => "Notula Servizio (no fat.15 mese succ.)");
         echo "<tr><td class=\"FacetFieldCaptionTD\">" . "Tipo documento" . "</td><td class=\"FacetDataTD\">";
         $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
         echo"</td></tr></table>";
