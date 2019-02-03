@@ -292,14 +292,14 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $row = gaz_dbi_fetch_array($res_pos);
             echo "<h1>";
             echo "<a href='".$row['link']."'>".$row['titolo']."</a>";
-            echo "</h1>";          
-            echo "<ol class='breadcrumb'>";           
+            echo "</h1>";
+            echo "<ol class='breadcrumb'>";
             while ( $row = gaz_dbi_fetch_array($res_pos) ) {
                 echo "<li><a href='".$row['link']."'>".$row['titolo']."</a></li>";
             }
             echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
             echo "</ol>";
-        } else { 
+        } else {
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
 			if ( strpos($posizione, "VOG")!==false ) $posizione = "report_broven.php?auxil=VOR";
             $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
