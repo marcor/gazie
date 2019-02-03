@@ -365,10 +365,11 @@ function choicePartner(row)
 				echo "</td>";
 
 				// colonna operazioni
-				echo '<td align="center"><button title="Stesso preventivo per altro fornitore" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"></i></button>';
+				echo '<td align="center"><button title="Stesso preventivo per altro fornitore" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"></i></button>&nbsp;';
                 echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
-                echo '<a title="Quando il fornitore consegna la merce la carico in magazzino con documento di acquisto" class="btn btn-xs btn-warning" href="select_evaord.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file"></i></a>';
-
+				if ($r["tipdoc"] == 'AOR') {
+					echo '&nbsp;<a title="Quando il fornitore consegna la merce la carico in magazzino con documento di acquisto" class="btn btn-xs btn-warning" href="select_evaord.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file"></i></a>';
+				}
 				// colonna mail
 				echo '<td align="center">';
                 if (!empty($fornitore["e_mail"])) {
