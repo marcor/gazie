@@ -345,7 +345,7 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
 //
 // La funzione table_prefix_ok() serve a determinare se il prefisso
 // delle tabelle e' valido, secondo lo schema di Gazie, oppure no.
-// In pratica, si verifica che inizi con la stringa `gaz' e può
+// In pratica, si verifica che inizi con la stringa `gaz' e puï¿½
 // continuare con lettere minuscole e cifre numeriche, fino
 // a un massimo di ulteriori nove caratteri
 //
@@ -773,8 +773,10 @@ class SelectBox {
             }
             echo "\t\t <option value=\"" . $a_row[$key] . "\" $selected >";
             if (empty($index2)) {
+                if ( strpos( $query, 'banapp' )) echo sprintf("%'.05d\n", $a_row["codabi"])." ".sprintf("%'.05d\n", $a_row["codcab"])."  ";
                 echo substr($a_row[$index1], 0, 43) . "</option>\n";
             } else {
+                if ( strpos( $query, 'banapp' )) echo sprintf("%'.05d\n", $a_row["codabi"])." ".sprintf("%'.05d\n", $a_row["codcab"])."  ";
                 echo substr($a_row[$index1], 0, 38) . $bridge . substr($a_row[$index2], 0, 35) . "</option>\n";
             }
         }
@@ -1238,7 +1240,19 @@ class selectbanapp extends SelectBox {
 
     function output($refresh = '', $class = false, $empty = true) {
         global $gTables;
-        $query = 'SELECT * FROM `' . $gTables['banapp'] . '` ORDER BY `descri`';
+        $query = 'SELECT * FROM `' . $gTables['banapp'] . '` ORDER BY `codabi`,`codcab`,`descri` ASC';
+        SelectBox::_output($query, 'descri', $empty, '', 'locali','codice', $refresh, $class);
+    }
+
+}
+
+// classe per la generazione dei select dei conti correnti
+class selectbanccb extends SelectBox {
+
+    function output($refresh = '', $class = false, $empty = true) {
+        global $gTables;
+        global $admin_aziend;
+        $query = "SELECT * FROM ".$gTables['clfoco']." where codice BETWEEN ".$admin_aziend['masban']."000001 AND ".$admin_aziend['masban']."999999 ORDER BY codice ASC";
         SelectBox::_output($query, 'descri', $empty, '', 'locali','codice', $refresh, $class);
     }
 
@@ -1249,6 +1263,7 @@ class selectpagame extends SelectBox {
 
     function output($refresh = '', $class = false, $empty = true) {
         global $gTables;
+        $refresh = 'pagame';
         $query = 'SELECT * FROM `' . $gTables['pagame'] . '` ORDER BY `descri`, `codice`';
         SelectBox::_output($query, 'descri', $empty, '', '', 'codice', $refresh, $class);
     }

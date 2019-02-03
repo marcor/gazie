@@ -1937,9 +1937,29 @@ echo "<td class=\"FacetFieldCaptionTD\">Cod.Univoco</td><td class=\"FacetDataTD\
 echo "</td>\n";
 
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[9]</td><td  class=\"FacetDataTD\">\n";
-$select_banapp = new selectbanapp("banapp");
-$select_banapp->addSelected($form["banapp"]);
-$select_banapp->output();
+// visualizzo la banca per il pagamento delle riba, oppure il conto corrente per i bonifici
+if ( $form['pagame'] ) {
+    $result_tippag = gaz_dbi_query( "select * from ".$gTables['pagame']." where codice=".$form['pagame'] );
+    $row_tippag = gaz_dbi_fetch_array( $result_tippag );
+} else {
+    $row_tippag['tippag'] = "C";
+}
+
+switch ( $row_tippag['tippag'] ) {
+    case "D":
+        $select_banccb = new selectbanccb("banccb");
+        $select_banccb->addSelected($form["banccb"]);
+        $select_banccb->output();
+        break;
+    case "B":
+        $select_banapp = new selectbanapp("banapp");
+        $select_banapp->addSelected($form["banapp"]);
+        $select_banapp->output();
+        break;
+    case "C":
+        break;
+}
+
 echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td align=\"left\" class=\"FacetFieldCaptionTD\" title=\"" . $script_transl['traspo_title'] . "\">$script_transl[28]" . ' ' . $admin_aziend['html_symbol'] . "</td>\n";

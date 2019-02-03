@@ -335,6 +335,7 @@ if (isset($_POST['preview'])) {
     }
 }
 ?>
+</table>
 </form>
 <?php
 require("../../library/include/footer.php");
