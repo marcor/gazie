@@ -47,7 +47,6 @@ class magazzForm extends GAzieForm {
             ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes";
 
     $where = $gTables['artico'].".good_or_service != 1
-        AND ".$gTables['rigbro'].".id_doc = 0
         AND ".$gTables['artico'].".codice = '".$codice."'
         AND ".$gTables['tesbro'].".tipdoc = '".$tip."'";
 	} else { // se siamo in modalità KIT si prendono solo gli articoli semplici
@@ -58,7 +57,6 @@ class magazzForm extends GAzieForm {
             ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes";
 
 		$where = $gTables['artico'].".good_or_service = 0
-        AND ".$gTables['rigbro'].".id_doc = 0
         AND ".$gTables['artico'].".codice = '".$codice."'
         AND ".$gTables['tesbro'].".tipdoc = '".$tip."'";
 	}
@@ -72,7 +70,26 @@ class magazzForm extends GAzieForm {
     while ($row = gaz_dbi_fetch_array($restemp)) {
         $totord += $row['quanti'];
     }
-    return $totord;
+	
+	// Antonio Germani - calcolo evasi
+	$toteva = 0;
+	if ($tip!="AOR"){
+		$tables = $gTables['rigbro']."
+			INNER JOIN ".$gTables['rigdoc']."
+            ON ".$gTables['rigdoc'].".id_order = ".$gTables['rigbro'].".id_tes";
+		$where = $gTables['rigdoc'].".tiprig <= 1
+			AND ".$gTables['rigdoc'].".codart = '".$codice."'";
+		$orderby = $gTables['rigbro'].".id_rig ASC";
+		$limit = "0";
+		$passo = "999";
+		$restemp = gaz_dbi_dyn_query("*", $tables, $where, $orderby, $limit, $passo);
+		while ($row = gaz_dbi_fetch_array($restemp)) {
+			$toteva += $row['quanti'];
+		}
+	}
+	// fine calcolo evasi
+	
+    return $totord - $toteva;
     }
 
     function selItem($name, $val, $strSearch = '', $mesg, $val_hiddenReq = '', $class = 'FacetSelect') {
