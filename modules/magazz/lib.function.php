@@ -72,6 +72,27 @@ class magazzForm extends GAzieForm {
     while ($row = gaz_dbi_fetch_array($restemp)) {
         $totord += $row['quanti'];
     }
+
+    //calcolo quanti sono già stati evasi query : 451
+    $query = "SELECT
+        gaz_001rigbro.quanti as quantio,
+        gaz_001rigdoc.quanti as quantiv,
+        gaz_001rigdoc.codart,
+        gaz_001tesdoc.tipdoc
+    FROM gaz_001tesbro
+    INNER JOIN gaz_001rigbro
+      ON gaz_001tesbro.id_tes = gaz_001rigbro.id_tes
+    CROSS JOIN gaz_001tesdoc
+    INNER JOIN gaz_001rigdoc
+      ON gaz_001tesdoc.id_tes = gaz_001rigdoc.id_tes AND gaz_001rigdoc.id_order = gaz_001tesbro.id_tes
+    WHERE gaz_001rigdoc.codart = '".$codice."' 
+        AND gaz_001tesdoc.tipdoc <> 'AFA'
+        AND gaz_001tesdoc.tipdoc <> 'ADT'";
+
+    $resevasi = gaz_dbi_query ( $query );
+    while ($rowevasi = gaz_dbi_fetch_array($resevasi)) {
+        $totord -= $rowevasi['quantiv'];
+    }
 	
     return $totord ;
     }
