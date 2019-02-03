@@ -1246,24 +1246,11 @@ class selectbanapp extends SelectBox {
 
 }
 
-// classe per la generazione dei select dei conti correnti
-class selectbanccb extends SelectBox {
-
-    function output($refresh = '', $class = false, $empty = true) {
-        global $gTables;
-        global $admin_aziend;
-        $query = "SELECT * FROM ".$gTables['clfoco']." where codice BETWEEN ".$admin_aziend['masban']."000001 AND ".$admin_aziend['masban']."999999 ORDER BY codice ASC";
-        SelectBox::_output($query, 'descri', $empty, '', 'locali','codice', $refresh, $class);
-    }
-
-}
-
 // classe per la generazione di select box dei pagamenti
 class selectpagame extends SelectBox {
 
     function output($refresh = '', $class = false, $empty = true) {
         global $gTables;
-        $refresh = 'pagame';
         $query = 'SELECT * FROM `' . $gTables['pagame'] . '` ORDER BY `descri`, `codice`';
         SelectBox::_output($query, 'descri', $empty, '', '', 'codice', $refresh, $class);
     }
