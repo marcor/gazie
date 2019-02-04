@@ -149,7 +149,7 @@ $query="SELECT *,".$gTables['rigbro'].".descri AS rigdes FROM ".$gTables['rigbro
 LEFT JOIN ".$gTables['tesbro']. " ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes 
 LEFT JOIN ".$gTables['clfoco']. " ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice 
 LEFT JOIN ".$gTables['anagra']. " ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id 
-WHERE tipdoc='AOR' AND ".$gTables['rigbro'].".id_orderman =".intval($_GET['id_orderman'])." ORDER BY datemi ASC";
+WHERE tipdoc='AOR' AND ".$gTables['rigbro'].".id_orderman =".intval($_GET['id_orderman'])." ORDER BY datemi ASC, ".$gTables['tesbro'].".id_tes ASC";
 $res=gaz_dbi_query($query);
 while($row=$res->fetch_assoc()){
 	//print_r($row);
@@ -171,7 +171,7 @@ while($row=$res->fetch_assoc()){
 	}
 	if ($ctrlAOR<>$row['id_tes']){
 		$pdf->Cell(277,5,$row['descri'].' ORDINE n.'.$row['numdoc'].' del '.gaz_format_date($row['datemi']),1, 1, 'L', 0, '', 1);
-		if ($ctrlAORtot==0.00){ // è cambiato l'ordine ma il precedente ha un totale a zero...
+		if ($amount>=0.01&&$ctrlAORtot==0.00){ // è cambiato l'ordine ma il precedente ha un totale a zero...
 			$pdf->SetTextColor(255,0,0);
 			$pdf->Cell(105,4);
 			$pdf->Cell(172,5,' O R D I N E   D I   V A L O R E    N U L L O   ! ?',1,1,'C');
