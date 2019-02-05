@@ -103,6 +103,7 @@ class Config {
 		global $gTables;
 		$json_data = json_encode($data);
 		$data = gaz_dbi_put_row($gTables['company_config'], 'var', 'syncronize_oc','val',$json_data);
+		return $data;
 	}
 
 	public static function factory() {

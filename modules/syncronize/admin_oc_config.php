@@ -48,18 +48,24 @@ $script_transl = HeadMain();
 
 
 $config = new GAzie\Config;
+$message = new \View\Message;
 if ( $_POST ) {
 	$data = array(
 		'user' => $_POST['user'],		
 		'pass' => $_POST['password'],		
 		'url' => $_POST['url'],		
 	);
-	$config->putData($data);
+	if ( $result = $config->putData($data) ) { 
+		$message->setSuccess("Success! Configurazione API Opencart modificata!");
+	} else {
+		$message->setError("Error! Errore nella modifica delle configurazione!");
+	}
 	$config = new GAzie\Config;
 }
 ?>
 <div class="container">
   <div class="row">
+   <?= $message; ?>
    <div class="col-sm-8">
     <div class="row center">
     Configurazione Accesso Opencart
