@@ -25,39 +25,78 @@
 
 namespace GAzie;
 
+define('PATH_ROOT', realpath(__DIR__ .'/../../../..' ));
+
 class Config {
 
-	private $username;
-	private $password;
-	private $url;
+	private static $instance = null;
+
+	private $data;
 
 	public function __construct() {
-		global $gTables; 
-		$data = gaz_dbi_get_row($gTables['company_config'], 'var', 'syncronize_oc');
-		if ( ! $data ) {
-			$json_data = json_encode(array(
-				'user'=>'',
-				'pass'=>'',
-				'url'=>'http://...',
-			));
-			gaz_dbi_table_insert('company_config', array( 'description'=>'Accesso ai dati shop opencart web','var'=>'syncronize_oc','val'=> $json_data));
-		} else {
-			$json_data = $data['val'];
-		}
-		$tmp = json_decode($json_data,TRUE);
-		$this->username = $tmp['user'];
-		$this->password = $tmp['pass'];
-		$this->url = $tmp['url'];
+                global $gTables;
+		$this->data = [];
+		if( defined('PATH_ROOT') )
+			$this->set('path_root', PATH_ROOT);
+		$this->set('directories', [
+			$this->getPathRoot()."/admin.php", 
+			$this->getPathRoot()."/composer.json", 
+			$this->getPathRoot()."/composer.lock.php", 
+			$this->getPathRoot()."/config.php", 
+			$this->getPathRoot()."/doc", 
+			$this->getPathRoot()."/.htaccess", 
+			$this->getPathRoot()."/INDEX.html", 
+			$this->getPathRoot()."/index.php", 
+			$this->getPathRoot()."/js", 
+			$this->getPathRoot()."/language", 
+			$this->getPathRoot()."/library", 
+			$this->getPathRoot()."/modules", 
+			$this->getPathRoot()."/README.html", 
+			$this->getPathRoot()."/setup", 
+			$this->getPathRoot()."/SETUP.html", 
+		]);
+                $data = gaz_dbi_get_row($gTables['company_config'], 'var', 'syncronize_oc');
+                if ( ! $data ) {
+                        $json_data = json_encode(array(
+                                'user'=>'',
+                                'pass'=>'',
+                                'url'=>'http://...',
+                        ));
+                        gaz_dbi_table_insert('company_config', array( 'description'=>'Accesso ai dati shop opencart web','var'=>'syncronize_oc','val'=> $json_data));
+                } else {
+                        $json_data = $data['val'];
+                }
+                $tmp = json_decode($json_data,TRUE);
+                $this->data['username'] = $tmp['user'];
+                $this->data['password'] = $tmp['pass'];
+                $this->data['url'] = $tmp['url'];
+
+	}
+
+	public function set($key,$value) {  
+		$this->data[$key]=$value;
+	}  
+
+	public function get($key) {
+		return $this->data[$key];
+	}
+
+	public function getPathRoot() {
+		return $this->data['path_root'];
+	}
+
+	public function getDirectories() {
+		return $this->data['directories'];
 	}
 
 	public function getUser() {
-		return $this->username;
+		return $this->data['username'];
 	}
 	public function getPassword() {
-		return $this->password;
+		return $this->data['password'];
 	}
 	public function getUrl() {
-		return $this->url;
+		return $this->data['url'];
 	}
 
 	public function putData( $data ) {
@@ -65,6 +104,13 @@ class Config {
 		$json_data = json_encode($data);
 		$data = gaz_dbi_put_row($gTables['company_config'], 'var', 'syncronize_oc','val',$json_data);
 	}
+
+	public static function factory() {
+     	    	if (  self::$instance == null ) {
+			self::$instance = new Config();
+        	}
+    		return self::$instance;
+ 	}
 }
 
 ?>

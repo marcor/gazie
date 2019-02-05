@@ -23,6 +23,8 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
+require("../../library/include/classes/Autoloader.php");
+
 $admin_aziend=checkAdmin(9);
 
 // Qui viene tenuto dagli sviluppatori la lista dei siti che hanno messo a disposizione il file di check della propria versione

@@ -24,7 +24,6 @@
 */
 
 namespace GAzie;
-include('Config.php');
 
 use \ZipArchive;
 
