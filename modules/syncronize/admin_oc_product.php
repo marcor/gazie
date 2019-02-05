@@ -25,8 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
-require("include/Autoloader.php");
-
+require("../../library/include/classes/Autoloader.php");
 
 $admin_aziend = checkAdmin();
 
@@ -37,7 +36,7 @@ $sync = boolval($_GET['sync']);
 $id_oc = intval($_GET['id_oc']);
 
 // set up params
-$config = new Gazie\Config;
+$config = new GAzie\Config;
 $url = $config->getUrl();
  
 $fields = array(
@@ -52,7 +51,7 @@ if ( $sync ) {
 		$customer = new Opencart\Customer;
 		$customer->setApi ( $api );		
 		$customer->getById( $id_oc );
-		$result_syncronize = Gazie\Anagra::syncCustomer($customer);
+		$result_syncronize = GAzie\Anagra::syncCustomer($customer);
 	        if ( !$result_syncronize ) {
 			$errors->setError("Errore nella sincronizzazione di IdOpencart $id_oc");
 		} else {
@@ -81,7 +80,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 
 // Ottengo la lista dei clienti Opencart
-$anagrs = Gazie\Anagra::getAll();
+$anagrs = GAzie\Anagra::getAll();
 ?>
 <div class="container">
   <div class="row">
