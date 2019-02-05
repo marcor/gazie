@@ -25,7 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
-require("include/Autoloader.php");
+require("../../library/include/classes/Autoloader.php");
 
 $admin_aziend = checkAdmin();
 $file = "download/sync-gazie.1.1.ocmod.zip";
@@ -47,7 +47,7 @@ $script_transl = HeadMain();
 # Ottengo configurazione
 
 
-$config = new Gazie\Config;
+$config = new GAzie\Config;
 if ( $_POST ) {
 	$data = array(
 		'user' => $_POST['user'],		
@@ -55,7 +55,7 @@ if ( $_POST ) {
 		'url' => $_POST['url'],		
 	);
 	$config->putData($data);
-	$config = new Gazie\Config;
+	$config = new GAzie\Config;
 }
 ?>
 <div class="container">

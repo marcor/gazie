@@ -23,7 +23,7 @@
   --------------------------------------------------------------------------
  */
 
-namespace Gazie;
+namespace GAzie;
 
 if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito');

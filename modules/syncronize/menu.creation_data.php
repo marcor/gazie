@@ -25,8 +25,9 @@
 $menu_data = array( 
 	'm1'=>array('link'=>"admin_oc_customer.php"),
 	'm2'=>array(
-			1=>array('link'=>"admin_oc_customer.php",'weight'=>2),
-			2=>array('link'=>"admin_oc_config.php",'weight'=>3),
+		  1=>array('link'=>"admin_oc_customer.php",'weight'=>2),
+		  2=>array('link'=>"admin_oc_product.php",'weight'=>3),
+		  3=>array('link'=>"admin_oc_config.php",'weight'=>1),
 		),
 	);
 ?>

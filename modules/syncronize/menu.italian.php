@@ -27,7 +27,8 @@ $transl['syncronize'] = array(
     'title' => "Sincronizzatore dati",
     'm2' => array(
 	    1 => array( "Clienti", "Clienti" ),
-	    2 => array( "Configurazione", "Configurazione"), 
+	    2 => array( "Prodotti", "Prodotti" ),
+	    3 => array( "Configurazione", "Configurazione"), 
     ),
     'm3' => array(
 	    1 => array( "Configurazione", "Configurazione"), 

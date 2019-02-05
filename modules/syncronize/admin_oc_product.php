@@ -25,7 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
-require("../../library/include/classes/Autoloader.php");
+require("include/Autoloader.php");
 
 
 $admin_aziend = checkAdmin();
@@ -37,7 +37,7 @@ $sync = boolval($_GET['sync']);
 $id_oc = intval($_GET['id_oc']);
 
 // set up params
-$config = new GAzie\Config;
+$config = new Gazie\Config;
 $url = $config->getUrl();
  
 $fields = array(
@@ -52,25 +52,22 @@ if ( $sync ) {
 		$customer = new Opencart\Customer;
 		$customer->setApi ( $api );		
 		$customer->getById( $id_oc );
-		$result_syncronize = GAzie\Anagra::syncCustomer($customer);
+		$result_syncronize = Gazie\Anagra::syncCustomer($customer);
 	        if ( !$result_syncronize ) {
-			$errors->setError("Errore! Anagrafica inserita o con problemi di inserimento");
+			$errors->setError("Errore nella sincronizzazione di IdOpencart $id_oc");
 		} else {
 			// Inserisco il risultato
-			$errors->setNotice("Inserisco $id_oc nella Tabella di Sincronizzazione");
-			$errors->setNotice("L'id di sincro e' $id_oc " );
+			echo "inserisco $id_oc, tabella di sincronizzazione";
+			echo "L'id di sincro è $result_syncronize";
 			$syncro = new \Syncro\SyncronizeOc;
 			$syncro->setData('customer','anagra',"$id_oc","$result_syncronize");
 			$syncro->add();
 			$syncro_id =$syncro->save();
-			if ( ! $syncro_id ) {
-				$errors->setError("Errore! Non riesco a salvare nella tabella syncronize!");
-			} else {
-				$errors->setSuccess("Success! Cliente sincronizzato correttamente!");
-			}
+			if ( ! $syncro_id )
+				$errors->setError("Errore nel salvataggio syncro");
 		}
 	} else {
-		$errors->setError("Error! Non hai selezionato il cliente!");
+		$errors->setError("Id cliente non selezionato");
 	}
 }
 
@@ -84,7 +81,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 
 // Ottengo la lista dei clienti Opencart
-$anagrs = GAzie\Anagra::getAll();
+$anagrs = Gazie\Anagra::getAll();
 ?>
 <div class="container">
   <div class="row">
@@ -104,7 +101,7 @@ $anagrs = GAzie\Anagra::getAll();
 <?php foreach( $anagrs as $a ) { ?>
       <tr>
         <td><?= $a->getId(); ?></td>
-	<td><a href="../../modules/vendit/admin_client.php?codice=<?= $a->getId() ?>&Update" target="_blank"><?= $a->getRagso1(); ?></a></td>
+        <td><?= $a->getRagso1(); ?></td>
         <td><?= $a->getAddress(); ?></td>
         <td><?= $a->getCodfis(); ?></td>
         <td><?= $a->getParIva(); ?></td>
