@@ -53,7 +53,15 @@ function tryBase64Decode($s)
 
 
 function removeSignature($string, $filename) {
-    $string = substr($string, strpos($string, '<?xml '));
+	$start_xml = strpos($string, '<?xml ');
+	if ($start_xml !== FALSE) {
+		$string = substr($string, $start_xml);
+    } else {
+		$start_xml = strpos($string, '<?xml-stylesheet ');
+		if ($start_xml !== FALSE) {
+			$string = substr($string, $start_xml);
+		}
+    }
     preg_match_all('/<\/.+?>/', $string, $matches, PREG_OFFSET_CAPTURE);
     $lastMatch = end($matches[0]);
 	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
