@@ -1,0 +1,17 @@
+Titolo:
+Nec spe nec metu.
+
+Presentazione:
+Come potrete osservare GAzie 7.20 non modifica struttura e contenuto dei vostri databases ma corregge alcuni errori e aggiunge alcune funzionalità, quindi è da considerarsi una 7.19 migliorata, elenco i cambiamenti apportati:
+- Cambiato il nome ai pacchetti .zip delle fatture elettroniche rispettando le specifiche tecniche, permetterà gli upload diretti e senza firma degli stessi sul sito "Fatture e Corrispettivi" (Antonio de Vincentiis).
+- Aggiunto nuovo tipo di Documento di Trasporto (DDS-Notula di Servizio) adatto alle imprese che svolgono installazioni e manutenzioni, non vincola alla fatturazione entro il 15 del mese successivo(Antonio de Vincentiis).
+- Corretto errore che in produzione agricola creava un ordine fittizio nullo, in produzione agricola gli articoli sono esclusi(Antonio Germani).  
+- In acquisizione fattura elettronica passiva: a volte i fornitori non indicano il loro codice fiscale pertanto si assume la partita IVA come tale.
+- Corretta la funzione get_magazz_ordinati che accettava solo ordini totalmente evasi mandando in errore la situazione di magazzino(Antonio Germani).
+- Aggiornato controllo massivo delle notifiche SdI, ed altre migliorie sull'acquisizione delle fatture elettroniche passive (Angelo Romano)
+- La lista dei pagamenti ora è ordinata per codice, e nella lista delle banche i codice abi e cab vengono visualizzati completi (Andrea Biasi)
+- Aggiornamento a nuova versione di GAzie direttamente dallo zip file su Sourceforge (Daniele Frulla)  
+- La sincronizzazione di GAzie attraverso le API con OpenCart diventa sempre più completa, tutto merito di Daniele Frulla.
+
+      
+Antonio de Vincentiis, Montesilvano, 05 febbraio 2019
