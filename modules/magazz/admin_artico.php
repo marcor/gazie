@@ -33,7 +33,7 @@ require("../../library/include/datlib.inc.php");
     return ++$max_cod[0];
    }
  function Barcode($EAN)
-   { 
+   {
     $dispari = substr($EAN,1,1)+substr($EAN,3,1)+substr($EAN,5,1)+substr($EAN,7,1)+substr($EAN,9,1)+substr($EAN,11,1);
     $dispari = $dispari * 3;
     $pari = substr($EAN,0,1)+substr($EAN,2,1)+substr($EAN,4,1)+substr($EAN,6,1)+substr($EAN,8,1)+substr($EAN,10,1);
@@ -41,7 +41,7 @@ require("../../library/include/datlib.inc.php");
     while ($totale > 10) $totale = $totale - 10;
     return (substr($EAN,0,12).(10 - $totale));
    }
-  
+
   function serchEAN()
    {
 	global $gTables;
@@ -50,7 +50,7 @@ require("../../library/include/datlib.inc.php");
 	if ($max_barcode[0] == null) $max_barcode[0] ='3333333000000';
     return Barcode($max_barcode[0]+10);
    }
-// m1 fine Modificato a mano   
+// m1 fine Modificato a mano
 
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
@@ -169,7 +169,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				}
 				// fine ridimensionamento immagine
 				$largeimg=1;
-			}	           
+			}
         }
         if (empty($form["codice"])) {
             $msg['err'][] = 'valcod';
@@ -375,6 +375,14 @@ if ($modal_ok_insert === true) {
     /* Se sono in finestra modale, non visualizzo questo titolo */
     $changesubmit = '';
     if ($modal === false) {
+        ?>
+    		<!--+ DC - 06/02/2019 -->
+    		<script type="text/javascript" src="../../library/IER/IERincludeExcludeRows.js"></script>
+
+    		<input type="hidden" id="IERincludeExcludeRowsInput" name="IERincludeExcludeRowsInput" />
+    		<div id="IERenableIncludeExcludeRows" title="Personalizza videata" onclick="enableIncludeExcludeRows()"></div><div id="IERsaveIncludeExcludeRows" title="Nessuna modifica fatta" onclick="saveIncludeExcludeRows()"></div>
+        <!--- DC - 06/02/2019 -->
+    		<?php
         if ($toDo == 'insert') {
             echo '<div class="text-center"><b>' . $script_transl['ins_this'] . '</b></div>';
         } else {
@@ -405,7 +413,19 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 -->
+                <!--
+                Come rendere una videata personalizzabile:
+                Su tutte le div con class="row" (tranne quelle che contengono campi obbligatori)
+                sostituirle nel seguente modo:
+                PRIMA:
                 <div class="row">
+                DOPO:
+                <div id="catMer" class="row IERincludeExcludeRow">
+                In pratica inserite un id (unico per ogni riga) ed aggiungere la classe "IERincludeExcludeRow"
+                -->
+                <!--- DC - 06/02/2019 -->
+                <div id="catMer" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="catmer" class="col-sm-4 control-label"><?php echo $script_transl['catmer']; ?></label>
@@ -425,7 +445,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="bodyText" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="body_text" class="col-sm-4 control-label"><?php echo $script_transl['body_text']; ?></label>
@@ -435,7 +456,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ - 06/02/2019 div class="row" --->
+                <div id="barcode" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="barcode" class="col-sm-4 control-label"><?php echo $script_transl['barcode']; ?></label>
@@ -444,7 +466,8 @@ if ($modal_ok_insert === true) {
 						</div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="lotOrSerial" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="lot_or_serial" class="col-sm-4 control-label"><?php echo $script_transl['lot_or_serial']; ?></label>
@@ -454,7 +477,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="image" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico&value=<?php echo $form['codice']; ?>" width="100" >*</label>
@@ -462,7 +486,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="uniMis" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?></label>
@@ -470,7 +495,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="quality" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="quality" class="col-sm-4 control-label"><?php echo $script_transl['quality']; ?></label>
@@ -478,7 +504,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="lunghezza" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="lunghezza" class="col-sm-4 control-label"><?php echo $script_transl['lunghezza']; ?></label>
@@ -486,7 +513,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="larghezza" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="larghezza" class="col-sm-4 control-label"><?php echo $script_transl['larghezza']; ?></label>
@@ -494,7 +522,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="spessore" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="spessore" class="col-sm-4 control-label"><?php echo $script_transl['spessore']; ?></label>
@@ -502,7 +531,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="pesoSpecifico" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
@@ -510,7 +540,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="bendingMoment" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="bending_moment" class="col-sm-4 control-label"><?php echo $script_transl['bending_moment']; ?></label>
@@ -518,7 +549,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="ragStat" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="ragstat" class="col-sm-4 control-label"><?php echo $script_transl['ragstat']; ?></label>
@@ -528,7 +560,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preAcq" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?></label>
@@ -536,7 +569,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="sconto" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="sconto" class="col-sm-4 control-label"><?php echo $script_transl['sconto']; ?></label>
@@ -544,7 +578,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve1" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve1" class="col-sm-4 control-label"><?php echo $script_transl['preve1']; ?></label>
@@ -554,7 +589,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve2" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve2" class="col-sm-4 control-label"><?php echo $script_transl['preve2']; ?></label>
@@ -564,7 +600,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve3" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve3" class="col-sm-4 control-label"><?php echo $script_transl['preve3']; ?></label>
@@ -574,7 +611,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve4" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve4" class="col-sm-4 control-label"><?php echo $script_transl['preve4']; ?></label>
@@ -584,7 +622,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="aliIva" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="aliiva" class="col-sm-4 control-label"><?php echo $script_transl['aliiva']; ?></label>
@@ -594,7 +633,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="retentionTax" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="retention_tax" class="col-sm-4 control-label"><?php echo $script_transl['retention_tax'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
@@ -604,7 +644,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="payrollTax" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?>*</label>
@@ -614,7 +655,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="esiste" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="esiste" class="col-sm-4 control-label"><?php echo $script_transl['esiste']; ?></label>
@@ -622,7 +664,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="valore" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="valore" class="col-sm-4 control-label"><?php echo $script_transl['valore']; ?></label>
@@ -630,7 +673,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="lastCost" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="last_cost" class="col-sm-4 control-label"><?php echo $script_transl['last_cost']; ?></label>
@@ -638,7 +682,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="scorta" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="scorta" class="col-sm-4 control-label"><?php echo $script_transl['scorta']; ?></label>
@@ -646,7 +691,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="riordino" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="riordino" class="col-sm-4 control-label"><?php echo $script_transl['riordino']; ?></label>
@@ -654,7 +700,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="uniAcq" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="uniacq" class="col-sm-4 control-label"><?php echo $script_transl['uniacq']; ?></label>
@@ -662,7 +709,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="classifAmb" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="classif_amb" class="col-sm-4 control-label"><?php echo $script_transl['classif_amb']; ?></label>
@@ -672,7 +720,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="volumeSpecifico" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="volume_specifico" class="col-sm-4 control-label"><?php echo $script_transl['volume_specifico']; ?></label>
@@ -680,7 +729,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="packUnits" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="pack_units" class="col-sm-4 control-label"><?php echo $script_transl['pack_units']; ?></label>
@@ -688,7 +738,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="codCon" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codcon" class="col-sm-4 control-label"><?php echo $script_transl['codcon']; ?></label>
@@ -698,7 +749,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="idCost" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_cost']; ?></label>
@@ -708,7 +760,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="annota" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['annota']; ?></label>
@@ -717,7 +770,8 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
     <?php if ($toDo == 'update') { ?>
-                    <div class="row">
+                    <!--+ DC - 06/02/2019 div class="row" --->
+                    <div id="annotaUpdate" class="row IERincludeExcludeRow">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
@@ -743,7 +797,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
     <?php } ?>
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="fornitore" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>
@@ -754,7 +809,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="webMu" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_mu" class="col-sm-4 control-label"><?php echo $script_transl['web_mu']; ?></label>
@@ -762,7 +818,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="webPrice" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_price" class="col-sm-4 control-label"><?php echo $script_transl['web_price']; ?></label>
@@ -770,7 +827,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="webMultiplier" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_multiplier" class="col-sm-4 control-label"><?php echo $script_transl['web_multiplier']; ?></label>
@@ -778,7 +836,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="webUrl" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
@@ -786,7 +845,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="depliPublic" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
@@ -796,7 +856,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="webPublic" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>
@@ -806,52 +867,56 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-				
+
 		<!-- MODIFICA A MANO  -->
-                <div class="row">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="codiceFornitore" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codice_fornitore" class="col-sm-4 control-label"><?php echo $script_transl['codice_fornitore']; ?></label>
                         	<input class="col-sm-4" type="text"  value="<?php echo $form['codice_fornitore']; ?>" name="codice_fornitore" maxlength="50" size="50" />
-							
+
                         </div>
                     </div>
-                </div><!-- chiude row  -->				
-                <div class="row">
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="ordinabile" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="ordinabile" class="col-sm-4 control-label"><?php echo $script_transl['ordinabile']; ?></label>
 	    <?php
     $gForm->variousSelect('ordinabile', $script_transl['ordinabile_value'], $form['ordinabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
-    ?>						
+    ?>
                          </div>
                     </div>
-                </div><!-- chiude row  -->	
-				
-                <div class="row">
+                </div><!-- chiude row  -->
+
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="movimentabile" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="movimentabile" class="col-sm-4 control-label"><?php echo $script_transl['movimentabile']; ?></label>
 	    <?php
     $gForm->variousSelect('movimentabile', $script_transl['movimentabile_value'], $form['movimentabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
-    ?>						
+    ?>
                          </div>
                     </div>
-                </div><!-- chiude row  -->					
+                </div><!-- chiude row  -->
 				<?php
-				
+
 				$whe_dis = "codice_artico_base = '".$form['codice']."'";
 				$res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
-				
+
 				if(gaz_dbi_num_rows($res_dis) > 0){
 				?>
-				<div class="row">
+        <!--+ DC - 06/02/2019 div class="row" --->
+        <div id="composizione" class="row IERincludeExcludeRow">
 					<div class="col-md-12">
 						<label for="composizione" class="col-sm-4 control-label"><?php echo $script_transl['utilizzato']; ?></label>
 						<div class="col-sm-8">
 						    <table class="table table-responsive table-striped table-condensed cf">
 								<thead>
-									<tr class="bg-success">              
+									<tr class="bg-success">
 										<th>
 											<a href="#" class="orby" data-order="codice">
 												<?php echo $script_transl["codice"]; ?>
@@ -863,28 +928,28 @@ if ($modal_ok_insert === true) {
 											</a>
 										</th>
 									</tr>
-							    </thead>    
-								<tbody id="all_rows">		
+							    </thead>
+								<tbody id="all_rows">
 									<?php
-									
+
 										while ($row_dis = gaz_dbi_fetch_array($res_dis)) {
 											$next_row++;
 											$result2 = gaz_dbi_dyn_query('*', $gTables['artico'], " codice = '".$row_dis['codice_composizione']."'", 'codice', 0, PER_PAGE);
 											$row2 = gaz_dbi_fetch_array($result2);
 											echo "<tr>";
 											echo "<td>" . $row2['codice'] ."</td>";
-											echo "<td>" . $row2['descri'] ."</td>";	
+											echo "<td>" . $row2['descri'] ."</td>";
 											echo "</tr>";
 										}
 									?>
-							    </tbody>     
+							    </tbody>
 							</table>
 						</div>
 					</div>
 				</div><!-- chiude row  -->
 				<?php } ?>
-        <!-- Fine modfica a mano -->				
-				
+        <!-- Fine modfica a mano -->
+
                 <div class="col-sm-12">
     <?php
     /** ENRICO FEDELE */
