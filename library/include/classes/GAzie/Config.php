@@ -42,7 +42,8 @@ class Config {
 		$this->set('path_root', PATH_ROOT);
 		$this->setDirectories( PATH_ROOT );
 		$this->setConfigFile("../../config/config/gconfig.php");
-		
+		$this->setTabelle();
+
 		$tmp = json_decode($json_data,TRUE);
                 $data = gaz_dbi_get_row($gTables['company_config'], 'var', 'syncronize_oc');
                 if ( ! $data ) {
@@ -134,9 +135,8 @@ class Config {
 
 	}
 
-
-	public function getTabelleComuni() {
-		return [
+	public function setTabelle() {
+		$tb =  [
 			'admin', 
 			'admin_config', 
 			'admin_module', 
@@ -165,8 +165,101 @@ class Config {
 			'students',
 			'breadcrumb'
 		];
+		$result = [];
+		foreach ($tb as $v) {
+			$result[$v] = $this->get('table_prefix') . "_" . $v;
+		}		
+		$tb =  [
+			'aliiva', 
+			'agenti', 
+			'artico', 
+			'assets', 
+			'banapp', 
+			'body_text', 
+			'campi', 
+			'cash_register',
+			'catmer', 
+			'caucon', 
+			'caucon_rows', 
+			'caumag', 
+			'clfoco', 
+			'company_config', 
+			'company_data',
+			'comunicazioni_dati_fatture', 
+			'contract', 
+			'effett', 
+			'extcon', 
+			'files', 
+			'imball', 
+			'letter',
+			'liquidazioni_iva',
+			'lotmag', 
+			'movmag', 
+			'pagame', 
+			'paymov', 
+			'portos', 
+			'provvigioni', 
+			'rigbro',
+			'rigdoc', 
+			'rigmoc', 
+			'rigmoi', 
+			'spediz', 
+			'staff', 
+			'staff_skills', 
+			'staff_worked_hours', 
+			'tesbro',
+			'tesdoc', 
+			'tesmov', 
+			'vettor', 
+			'fae_flux', 
+			'assist',
+			'ragstat', 
+			'agenti_forn',
+			'movimenti',
+			'sconti_articoli', 
+			'sconti_raggruppamenti', 
+			'instal', 
+			'orderman', 
+			'registro_trattamento_dati',
+			'distinta_base', 
+			'disbas', 
+			'disbas_componente', 
+			'tescmr', 
+			'rigcmr', 
+			'syncronize_oc'
+                ];
+                foreach ($tb as $v) {
+                        $result[$v] = $this->get('table_prefix') . "_" .  sprintf('%03d', $this->getIdAzienda()) . $v;
+                }               
+                $this->set('tabelle_database', $result);
+        }
+
+	/**
+	 * Return all tables name or single table
+	 * 
+	 */
+	public function getTabelle($table=NULL) {
+		$tbs=$this->get('tabelle_database');
+		if ( !$table )
+			return $tbs;
+		else
+			if ( isset($tbs[$table]) )
+				return  $tbs[$table];
+			else
+				die( "Table $table nnot exist");
 	}
 
+	/**
+	 * Return l'id azienda
+	 */
+	public function getIdAzienda() {
+		if (isset($_SESSION['company_id'])) {
+			$id = $_SESSION['company_id'];
+		} else {
+			$id = 1;
+		}
+		return  intval($id);
+	}
 
 	public function getPathRoot() {
 		return $this->data['path_root'];

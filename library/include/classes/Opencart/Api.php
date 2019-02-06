@@ -111,5 +111,14 @@ class Api {
 	  return  $this->json_to_array();  
 
   }
+
+  public function getProducts() {
+	  $url = $this->url . '/index.php?route=sync/products';
+	  $params = array(
+		'api_token'	=>	$this->getToken(),
+	  );
+	  $json = $this->do_curl_request( $url, $params ); 
+	  return  $this->json_to_array();  
+  }
 }
 ?>

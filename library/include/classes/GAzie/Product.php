@@ -81,7 +81,7 @@ class Product extends \Database\TableMysqli {
 
 	
 	public function __construct($ragso1, $sex, $codfis, $pariva) {
-		parent::__construct('anagra');
+		parent::__construct( 'artico' );
 	}
 	
 	/**
@@ -119,7 +119,7 @@ class Product extends \Database\TableMysqli {
 	  $orderby = '';
 	  $rs = gaz_dbi_dyn_query('*', $gTables['anagra'] , $where, $orderby);
 	  if ( $r = gaz_dbi_fetch_array($rs) ) {
-		$anagr = new Anagra($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
+		$anagr = new Product($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
 		$anagr->setId($r['id']);
 	  	$anagr->setSedleg($r['sedleg']);
 		$anagr->setLegrap($r['legrap_pf_nome']);
@@ -149,12 +149,12 @@ class Product extends \Database\TableMysqli {
 	 */
 	public static function getAll() {
 	  global $gTables;
-	  $orderby="ragso1 DESC";
+	  $orderby="codice DESC";
 	  $where = NULL;
-	  $rs = gaz_dbi_dyn_query('*', $gTables['anagra'] , $where, $orderby);
+	  $rs = gaz_dbi_dyn_query('*', $this->getTable() , $where, $orderby);
 	  $rs_all = array();
 	  while ( $r = gaz_dbi_fetch_array($rs) ) { 
-			$anagr = new Anagra($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
+			$anagr = new Product();
 			$anagr->setId($r['id']);
 			$anagr->setSedleg($r['sedleg']);
 			$anagr->setLegrap($r['legrap_pf_nome']);

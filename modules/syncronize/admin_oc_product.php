@@ -48,7 +48,7 @@ $api = new Opencart\Api( $url, $fields['username'], $fields['password']);
 $errors = new \View\Message;
 if ( $sync ) {
 	if ( $id_oc > 0 ) {
-		$customer = new Opencart\Customer;
+		$artico = new Opencart\Product;
 		$customer->setApi ( $api );		
 		$customer->getById( $id_oc );
 		$result_syncronize = GAzie\Anagra::syncCustomer($customer);
@@ -71,8 +71,8 @@ if ( $sync ) {
 }
 
 
-$cs = $api->getCustomers();
-$customers = Opencart\Customer::list_from_array( $cs );
+$cs = $api->getProducts();
+$customers = Opencart\Product::list_from_array( $cs );
 ?>
 
 <?php
@@ -80,14 +80,14 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 
 // Ottengo la lista dei clienti Opencart
-$anagrs = GAzie\Anagra::getAll();
+$products = GAzie\Product::getAll();
 ?>
 <div class="container">
   <div class="row">
 	<?= $errors; ?> 
    <div class="col-sm-6">
     <div class="row center">
-    Lista Anagrafiche ( Totali = <?= count($anagrs) ?> )
+    Lista Prodotti ( Totali = <?= count($products) ?> )
     </div>
     <table class="table table-striped Tmiddle">
       <tr>
