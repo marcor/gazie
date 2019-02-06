@@ -502,7 +502,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     if ($lang_template) {
 		$configTemplate->setTemplateLang($lang_template);
     }
-	require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
+	require_once ("../../config/templates" . ($configTemplate->template ? $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
     $pdf = new $templateName();
     $ecr = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $_SESSION["user_name"]);
     if (!empty($ecr['driver'])) {
