@@ -53,7 +53,8 @@ $strScript = array("select_liqiva.php" =>
         'tot' => ' cantidad ',
         't_pos' => ' IVA DEBITO',
         't_neg' => ' IVA CREDITO',
-        'carry' => 'Credito de periodo previo'
+        'carry' => 'Credito de periodo previo',
+        'pro_rata' => 'PRO RATA'
     ),
     "stampa_liqiva.php" =>
     array('title' => 'Liquidacion IVA Periodico ',
@@ -74,6 +75,7 @@ $strScript = array("select_liqiva.php" =>
         'inter' => 'Aumento de interes ',
         'pay' => ' a pagare',
         'carry' => 'Credito de periodo previo',
+        'pro_rata' => 'PRO RATA',
         'pay_date' => 'Pagado en ',
         'co' => 'a las ',
         'abi' => 'Cod.Banca',

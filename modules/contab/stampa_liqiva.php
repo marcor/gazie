@@ -50,6 +50,10 @@ $datafine = date("Ymd", mktime(0, 0, 0, $mesfin, $giofin, $annfin));
 $title = $script_transl['title'] . ' ' . $_GET['ds'];
 $cover_descri = $script_transl['cover_descri'] . "\n$annini";
 
+if (!empty($_GET['pr'])) {
+	$pro_rata = substr($_GET['pr'], 0, 2);
+}
+
 //recupero tutti i movimenti iva del periodo
 $sqlquery = "SELECT seziva,regiva,codiva,aliquo," . $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
        SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva > 5)+1)) AS imponibile,
@@ -90,24 +94,41 @@ $pdf->setTopMargin(44);
 $ctrl_sezione = 0;
 $ctrl_registro = 0;
 $pdf->SetFont('helvetica', '', 10);
+$totale_iva_sezione = 0.00;
 $totale_iva_registro = 0.00;
+$totale_iva_acquisti = 0.00;
 $saldo_periodo = 0.00;
 while ($row = gaz_dbi_fetch_array($result)) {
+    if ($ctrl_registro != 0 && $ctrl_registro != $row['regiva'] && $ctrl_sezione == $row['seziva']) {
+        $totale_iva_sezione += $totale_iva_registro;
+    }
     if ($ctrl_sezione != $row['seziva']) {
+        $totale_iva_sezione += $totale_iva_registro;
         if ($ctrl_registro != 0) {
             $pdf->Cell(109, 6, $script_transl['t_reg'], 0, 0, 'R');
             $pdf->Cell(20, 6, gaz_format_number($totale_iva_registro), 1, 1, 'R', 1);
         }
-        $pdf->Ln(1);
+        if ($ctrl_sezione != 0) {
+            $pdf->Ln(1);
+            $pdf->Cell(109, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['sez']) . ' ' . $ctrl_sezione . " - " . $admin_aziend["desez" . $ctrl_sezione], 0, 0, 'R');
+            $pdf->Cell(20, 6, gaz_format_number($totale_iva_sezione), 1, 1, 'R', 1);
+        }
+        $pdf->Ln(4);
         $ctrl_registro = 0;
         $pdf->Cell(42, 6);
         $pdf->Cell(93, 6, strtoupper($script_transl['sez']) . ' ' . $row['seziva'] . " - " . $admin_aziend["desez" . $row['seziva']], 1, 1, 'C', 1);
+        $pdf->Ln(1);
         $ctrl_sezione = $row['seziva'];
+        $totale_iva_sezione = 0.00;
     }
     if ($ctrl_registro != $row['regiva']) {
         if ($ctrl_registro != 0) {
             $pdf->Cell(109, 6, $script_transl['t_reg'], 0, 0, 'R');
-            $pdf->Cell(20, 6, gaz_format_number($totale_iva_registro), 1, 1, 'R', 1);
+            //$pdf->Cell(20, 6, gaz_format_number($totale_iva_registro), 1, 1, 'R', 1);
+            $pdf->Cell(20, 6, gaz_format_number(($totale_iva_registro<0) ? -1*$totale_iva_registro : $totale_iva_registro), 1, 1, 'R', 1);
+			if ($ctrl_registro == 6) {
+				$totale_iva_acquisti+= $totale_iva_registro;
+			}
         }
         $pdf->Cell(70, 6, $script_transl['regiva_value'][$row['regiva']], 1, 1, 'L', 1);
         $pdf->SetFont('helvetica', '', 8);
@@ -148,15 +169,32 @@ while ($row = gaz_dbi_fetch_array($result)) {
 }
 $pdf->Cell(109, 6, $script_transl['t_reg'], 0, 0, 'R');
 $pdf->Cell(20, 6, gaz_format_number($totale_iva_registro), 1, 1, 'R', 1);
+$totale_iva_sezione += $totale_iva_registro;
+if ($ctrl_registro == 6) {
+	$totale_iva_acquisti+= $totale_iva_registro;
+}
+$pdf->Ln(1);
+$pdf->Cell(109, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['sez']) . ' ' . $ctrl_sezione . " - " . $admin_aziend["desez" . $ctrl_sezione], 0, 0, 'R');
+$pdf->Cell(20, 6, gaz_format_number($totale_iva_sezione), 1, 1, 'R', 1);
 $pdf->Ln(2);
 
+if (!empty($pro_rata)) {
+	$tot_pro_rata = -$totale_iva_acquisti*((100-$pro_rata)/100);
+	// PRO RATA
+	$pdf->Cell(37, 6);
+	$pdf->Cell(67, 6, strtoupper($script_transl['pro_rata']), 'LTB', 0, 'L', 1);
+	$pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
+	$pdf->Cell(20, 6, gaz_format_number($tot_pro_rata), 'RTB', 1, 'R', 1);
+	$saldo_periodo+= $tot_pro_rata;
+}
+
 // totale periodo
-$pdf->Cell(54, 6);
+$pdf->Cell(37, 6);
 if ($saldo_periodo < 0) {
     $pdf->SetTextColor(255, 0, 0);
-    $pdf->Cell(50, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['t_neg']), 'LTB', 0, 'L', 1);
+    $pdf->Cell(67, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['t_neg']), 'LTB', 0, 'L', 1);
 } else {
-    $pdf->Cell(50, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['t_pos']), 'LTB', 0, 'L', 1);
+    $pdf->Cell(67, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['t_pos']), 'LTB', 0, 'L', 1);
 }
 $pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
 $pdf->Cell(20, 6, gaz_format_number($saldo_periodo), 'RTB', 1, 'R', 1);
@@ -181,14 +219,23 @@ if ($saldo_totale > 0 && $admin_aziend['ivam_t'] == 'T') {
     $saldo_totale += $interessi;
 }
 
-if ($saldo_totale > 0) { // se ho da pagare
+if ($saldo_totale > 0 || $_GET['cr'] > 0) { // se ho da pagare
 // totale
     $pdf->Ln(2);
-    $pdf->Cell(31, 6);
-    $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Cell(67, 6, strtoupper($script_transl['tot'] . $script_transl['pay']), 'LTB', 0, 'L', 1);
-    $pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
-    $pdf->Cell(26, 6, gaz_format_number($saldo_totale), 'RTB', 1, 'R', 1);
+    $pdf->Cell(44, 6);
+    $pdf->SetFont('helvetica', 'B', 10);
+    //$pdf->Cell(67, 6, strtoupper($script_transl['tot'] . $script_transl['pay']), 'LTB', 0, 'L', 1);
+	if ($saldo_totale < 0) {
+	    $pdf->Cell(54, 6, strtoupper($script_transl['tot'].' '.$script_transl['t_neg']), 'LTB', 0, 'L', 1);
+	    $pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
+	    $pdf->Cell(26, 6, gaz_format_number(-$saldo_totale), 'RTB', 1, 'R', 1);
+	} else {
+	    $pdf->Cell(54, 6, strtoupper($script_transl['tot'].' '.$script_transl['t_pos']), 'LTB', 0, 'L', 1);
+	    $pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
+	    $pdf->Cell(26, 6, gaz_format_number($saldo_totale), 'RTB', 1, 'R', 1);
+	}
+    //$pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
+    //$pdf->Cell(26, 6, gaz_format_number($saldo_totale), 'RTB', 1, 'R', 1);
 
 // dati versamento
     $pdf->SetFont('helvetica', '', 8);
@@ -202,6 +249,9 @@ if ($saldo_totale > 0) { // se ho da pagare
 if ($_GET['sd'] == 'sta_def') {
     gaz_dbi_put_row($gTables['company_data'],'var','upgrie','data',$pdf->getGroupPageNo() + $n_page - 1 );
     //gaz_dbi_put_row($gTables['aziend'], 'codice', 1, 'upgrie', $pdf->getGroupPageNo() + $n_page - 1);
+	if (!empty($pro_rata)) {
+		gaz_dbi_put_row($gTables['company_data'],'var','pro_rata','data',$pro_rata);
+	}
 }
 $pdf->Output($title . '.pdf');
 ?>

@@ -51,7 +51,8 @@ $strScript = array ("select_liqiva.php" =>
                            'tot'=>'BETRAG  ',
                            't_pos'=>' V.A.T. DEBIT',
                            't_neg'=>' V.A.T. CREDIT',
-                           'carry'=>'Credit gegenüber Vorperiode'
+                           'carry'=>'Credit gegenüber Vorperiode',
+                           'pro_rata' => 'PRO RATA'
                            ),
                     "stampa_liqiva.php" =>
                     array( 'title'=>'Periodische MwSt-Clearance',
@@ -72,6 +73,7 @@ $strScript = array ("select_liqiva.php" =>
                            'inter'=>'Steigern als Zinsen ',
                            'pay'=>'zu zahlen ',
                            'carry'=>'Credit gegenüber Vorperiode',
+                           'pro_rata' => 'PRO RATA',
                            'pay_date'=>' Bezahlt',
                            'co'=>' am',
                            'abi'=>' A.B.I. ',

@@ -145,6 +145,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $upgrie = gaz_dbi_get_row($gTables['company_data'],'var','upgrie');
     $form['page_ini'] = $upgrie['data']+1;
     $form['carry']=getPreviousCredit(date("Ymd",$utsdatcar));
+    $pro_rata = gaz_dbi_get_row($gTables['company_data'],'var','pro_rata');
+    $form['pro_rata'] = $pro_rata['data'];
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
@@ -155,6 +157,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_fin_M']=intval($_POST['date_fin_M']);
     $form['date_fin_Y']=intval($_POST['date_fin_Y']);
     $form['carry']=floatval(preg_replace("/\,/",'.',$_POST['carry']));
+    $form['pro_rata']=intval($_POST['pro_rata']);
     if (isset($_POST['sta_def'])){
        $form['sta_def']=substr($_POST['sta_def'],0,8);
     } else {
@@ -224,6 +227,7 @@ if (isset($_POST['print']) && $msg=='') {
                                      'mt'=>'',
                                      'cv'=>$form['cover'],
                                      'cr'=>$form['carry'],
+                                     'pr'=>$form['pro_rata'],
                                      'ri'=>date("dmY",$utsini),
                                      'rf'=>date("dmY",$utsfin)
                                      );
@@ -294,6 +298,11 @@ echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['carry'].": </td>\n";
 echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"carry\" value=\"".$form['carry']."\" maxlength=\"15\" size=\"15\" /></td>\n";
 echo "</td>\n";
 echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pro_rata'].": </td>\n";
+echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"pro_rata\" value=\"".$form['pro_rata']."\" maxlength=\"2\" size=\"2\" /></td>\n";
+echo "</td>\n";
+echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
 echo '<td colspan="3" align="right"> <input type="submit" accesskey="i" name="preview" value="';
@@ -308,6 +317,7 @@ if (isset($_POST['preview']) and $msg=='') {
   $m=getMovements($date_ini,$date_fin);
   echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
   if (isset($m['data']) && sizeof($m['data']) > 0) {
+		$totiva_acquisti=0;
         $err=0;
         echo "<tr>";
         $linkHeaders=new linkHeaders($script_transl['header']);
@@ -319,6 +329,9 @@ if (isset($_POST['preview']) and $msg=='') {
            echo "<td>".$v['periva']."% </td><td>".gaz_format_number($v['iva'])."</td><td>".gaz_format_number($v['ind'])."</td>\n";
            echo "<td>".gaz_format_number($v['ind']+$v['imp']+$v['iva']+$v['isp'])."</td>\n";
            echo "</tr>\n";
+			if ($v['regiva'] == 6) {
+				$totiva_acquisti+= $v['iva'];
+			}
         }
         echo "<tr><td colspan=8><HR></td></tr>";
         foreach($m['tot_rate'] as $k=>$v) {
@@ -328,7 +341,18 @@ if (isset($_POST['preview']) and $msg=='') {
            echo "<td>".gaz_format_number($v['ind']+$v['imp']+$v['iva']+$v['isp'])."</td>\n";
            echo "</tr>\n";
         }
+		if ($form['pro_rata'] > 0) {
+			$tot_pro_rata = -$totiva_acquisti*((100-$form['pro_rata'])/100);
+           echo "<tr align=\"right\">\n";
+           echo "<td colspan=\"2\"></td><td>".$script_transl['pro_rata']."</td><td></td>";
+           echo "<td></td><td>".gaz_format_number($tot_pro_rata)."</td><td></td>\n";
+           echo "<td>".gaz_format_number($tot_pro_rata)."</td>\n";
+           echo "</tr>\n";
+		}
         echo "<tr><td colspan=2></td><td colspan=6><HR></td></tr>";
+		if (!empty($tot_pro_rata)) {
+			$m['tot']+= $tot_pro_rata;
+		}
         if ($m['tot']<0){
            echo "<tr><td colspan=2></td><td class=\"FacetDataTDred\" align=\"right\" colspan=3>".$script_transl['tot'].$script_transl['t_neg']."</td><td class=\"FacetDataTDred\" align=\"right\">".gaz_format_number($m['tot'])."</td></tr>";
         } else {

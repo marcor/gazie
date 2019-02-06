@@ -48,7 +48,8 @@ $strScript = array("select_liqiva.php" =>
         'tot' => ' AMOUNT ',
         't_pos' => ' V.A.T. DEBIT',
         't_neg' => ' V.A.T. CREDIT',
-        'carry' => 'Credit from previous period'
+        'carry' => 'Credit from previous period',
+        'pro_rata' => 'PRO RATA'
     ),
     "stampa_liqiva.php" =>
     array('title' => 'Periodic VAT Clearance',
@@ -69,6 +70,7 @@ $strScript = array("select_liqiva.php" =>
         'inter' => 'Increase as interest ',
         'pay' => ' a pagare',
         'carry' => 'Credit from previous period',
+        'pro_rata' => 'PRO RATA',
         'pay_date' => 'Paid on ',
         'co' => 'at the ',
         'abi' => ' A.B.I. ',
