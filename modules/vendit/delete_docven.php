@@ -45,7 +45,7 @@ if (isset($_GET['id_tes'])) { //sto eliminando un singolo documento
         $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = '" . substr($row['datemi'], 0, 4) . "' AND tipdoc LIKE '" . substr($row['tipdoc'], 0, 1) . "%' AND seziva = " . $row['seziva'] . " ", "protoc DESC, numdoc DESC", 0, 1);
     }
 } elseif (isset($_GET['anno']) and isset($_GET['seziva']) and isset($_GET['protoc'])) { //sto eliminando una fattura differita
-    $result = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = '" . intval($_GET['anno']) . "' AND seziva = '" . intval($_GET['seziva']) . "' AND protoc = '" . intval($_GET['protoc']) . "' AND tipdoc NOT LIKE 'A__'");
+    $result = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = '" . intval($_GET['anno']) . "' AND seziva = '" . intval($_GET['seziva']) . "' AND protoc = '" . intval($_GET['protoc']) . "' AND tipdoc LIKE 'F__'");
     $row = gaz_dbi_fetch_array($result);
     $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = '" . substr($row['datfat'], 0, 4) . "' AND tipdoc LIKE '" . substr($row['tipdoc'], 0, 1) . "%' AND seziva = " . $row['seziva'] . " ", "protoc DESC, numdoc DESC", 0, 1);
 } else { //non ci sono dati sufficenti per stabilire cosa eliminare
