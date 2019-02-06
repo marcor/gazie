@@ -956,7 +956,11 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el = $domDoc->createElement("DettaglioLinee", "");
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
         $el->appendChild($el1);
-        $el1 = $domDoc->createElement("Descrizione", 'SPESE INCASSO N.' . $XMLvars->pagame['numrat']);
+        $el1 = $domDoc->createElement("Descrizione", 'SPESE INCASSO');
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("Quantita", $XMLvars->pagame['numrat']);
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("UnitaMisura", 'N.');
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("PrezzoUnitario", number_format($XMLvars->tesdoc['speban'], 2, '.', ''));
         $el->appendChild($el1);
