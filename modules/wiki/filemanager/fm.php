@@ -6,7 +6,7 @@
  * https://github.com/prasathmani/tinyfilemanager
  */
 
-require_once "..\config.php";
+include_once("../config.php");
 
 // Default language
 $lang = 'en';
@@ -47,7 +47,7 @@ $toMailId = ""; //yourmailid@mail.com
 $default_timezone = 'Etc/UTC'; // UTC
 
 // Root path for file manager
-$root_path = '..\library';
+$root_path = '../library';
 
 // Root url for links in file manager.Relative to $http_host. Variants: '', 'path/to/subfolder'
 // Will not working if $root_path will be outside of server document root

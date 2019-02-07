@@ -6,7 +6,7 @@
 define('APP_NAME', 'Gazie Wiki');
 
 // Set the filename of the automatic homepage here
-define('DEFAULT_FILE', '01.. Sommario.md');
+define('DEFAULT_FILE', '001.. Sommario.md');
 
 // Custom path to your wiki's library:
 //define('LIBRARY', '.\library');
