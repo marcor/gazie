@@ -67,15 +67,12 @@ function removeSignature($string, $filename) {
 	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
 	$f_end = $lastMatch[1]+strlen($lastMatch[0]);
     $string = substr($string, 0, $f_end);
-	/*
 	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
 	$string = preg_replace ('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $string);
 	$string = preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
 	$string = preg_replace ('/[\x{0004}]{1}[\s\S]{1}/i', '', $string);
-	$string = preg_replace ('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $string); // per eliminare tag finale
-	*/
-	// elimino le sequenze di caratteri non stampabili aggiunti dalla firma (da testare approfonditamente)
-	$string = preg_replace('/[[:^print:]]/', "", $string);
+	$string = preg_replace ('/[\x{0003}]{1}[\s\S]{1}/i', '', $string);
+	//$string = preg_replace ('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $string); // per eliminare tag finale
 	return $string;
 }
 
@@ -222,7 +219,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$doc->preserveWhiteSpace = false;
 		$doc->formatOutput = true;
 		if (FALSE === @$doc->loadXML(utf8_encode($invoiceContent))) {
-			$doc->loadXML(recoverCorruptedXML($invoiceContent));
+			// elimino le sequenze di caratteri non stampabili aggiunti dalla firma (da testare approfonditamente)
+			$invoiceContent = preg_replace('/[[:^print:]]/', "", $invoiceContent);
+			if (FALSE === @$doc->loadXML(utf8_encode($invoiceContent))) {
+				$doc->loadXML(recoverCorruptedXML($invoiceContent));
+			}
 		}
 		$xpath = new DOMXpath($doc);
 		$f_ex=true;
