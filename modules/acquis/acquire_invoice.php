@@ -67,11 +67,15 @@ function removeSignature($string, $filename) {
 	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
 	$f_end = $lastMatch[1]+strlen($lastMatch[0]);
     $string = substr($string, 0, $f_end);
+	/*
 	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
 	$string = preg_replace ('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $string);
 	$string = preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
 	$string = preg_replace ('/[\x{0004}]{1}[\s\S]{1}/i', '', $string);
-	$string = preg_replace ('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $string); // per eliminare tag finale   
+	$string = preg_replace ('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $string); // per eliminare tag finale
+	*/
+	// elimino le sequenze di caratteri non stampabili aggiunti dalla firma (da testare approfonditamente)
+	$string = preg_replace('/[[:^print:]]/', "", $string);
 	return $string;
 }
 
@@ -86,8 +90,7 @@ function recoverCorruptedXML($string) {
 			if (strpos($error->message, 'Opening and ending tag mismatch')!==false) {
 				$tag   = trim(preg_replace('/Opening and ending tag mismatch: (.*) line.*/', '$1', $error->message));
 				$line  = $error->line-1;
-				//$lines[$line] = $lines[$line].'</'.$tag.'>'; //TO-DO: bisognerebbe rimuovere solo il tag malato
-				$lines[$line] = '</'.$tag.'>';
+				$lines[$line] = substr($lines[$line], 0, strpos($lines[$line], '</')).'</'.$tag.'>';
 			}
 		}
 		libxml_clear_errors();
