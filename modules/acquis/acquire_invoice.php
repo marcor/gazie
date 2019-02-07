@@ -212,6 +212,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$toDo = 'insert';
 		// INIZIO acquisizione e pulizia file xml o p7m
 		$file_name = '../../data/files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
+		if (!isset($_POST['datreg'])){
+			$form['datreg'] = date("d/m/Y",filemtime($file_name));
+		}
 		$p7mContent = @file_get_contents($file_name);
 		$p7mContent = tryBase64Decode($p7mContent);
 		$invoiceContent = removeSignature($p7mContent,$file_name);
@@ -331,8 +334,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato 
 		*/
 		$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
+		$nl=0;
 		foreach ($DettaglioLinee as $item) {
-			$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+			$nl++;;
 			if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
 				$form['rows'][$nl]['codice_fornitore'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
 			} else {
@@ -425,13 +429,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$df = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 				// trovo l'ultima data di registrazione
 				$lr=getLastProtocol('AF_',substr($df,0,4),1)['last_datreg'];
-				$lrt = strtotime($lr);
-				$dft = strtotime($df);
-				if ($lrt<=$dft) { // se l'ultima registrazione è precedente alla fattura propongo la data della fattura
-					$form['datreg']	= gaz_format_date($df, false, false);			
-				} else {
-					$form['datreg']	= gaz_format_date($lr, false, false);
-				}
 				$form['codric_'.$post_nl] = $form['partner_cost'];
 				if (preg_match('/TRASP/i',strtoupper($form['rows'][$nl]['descri']))) { // se sulla descrizione ho un trasporto lo propongo come costo d'acquisto
 					$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
@@ -464,8 +461,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		/* 
 		Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
 		*/
+		$nl=0;
 		foreach ($DettaglioLinee as $item) {
-			$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+			$nl++;
 			if ($doc->getElementsByTagName("DatiDDT")->length>=1){
 				$ddt=$doc->getElementsByTagName("DatiDDT");
 				foreach ($ddt as $vd) { // attraverso DatiDDT
