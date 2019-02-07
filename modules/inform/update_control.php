@@ -139,13 +139,18 @@ Esci e rientra nella nuova versione! <a href="../../modules/root/logout.php">Log
 ?>
 <div class="col-md-4"></div>
 <div class="col-md-4">
-<form enctype="multipart/form-data" method="post" class="form-inline">
+<form enctype="multipart/form-data" method="post" class="form-inline" onsubmit="return showAlertBackup();">
   <div class="form-group">
 	<input id="file" type="file" name="file" class="text-center">  
   </div>
-  <button type="submit" class="btn btn-primary" id="save" name="save"><i class="icon-ok icon-white"></i> Upload</button>
+  <button type="submit" class="btn btn-primary" id="save" name="save" ><i class="icon-ok icon-white"></i> Upload</button>
 </form>
 </div>
+<script>
+function showAlertBackup() {
+   return confirm("Verifica Backup Database e File di Configurazione!");
+}
+</script>
 <div class="col-md-4"></div>
 </div>
 
