@@ -867,6 +867,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
                     $el->appendChild($el1);
+					$el1 = $domDoc->createElement("TipoCessionePrestazione", 'AC');
+					$el->appendChild($el1);
                     if (isset($rigo['descrittivi'])) {
                         // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
                         foreach ($rigo['descrittivi'] as $k => $v) {
@@ -956,6 +958,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el = $domDoc->createElement("DettaglioLinee", "");
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
         $el->appendChild($el1);
+        $el1 = $domDoc->createElement("TipoCessionePrestazione", 'AC');
+        $el->appendChild($el1);
         $el1 = $domDoc->createElement("Descrizione", 'SPESE INCASSO');
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("Quantita", $XMLvars->pagame['numrat']);
@@ -976,6 +980,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
         $el = $domDoc->createElement("DettaglioLinee", "");
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("TipoCessionePrestazione", 'AC');
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("Descrizione", 'RIMBORSO SPESE PER BOLLI ');
         $el->appendChild($el1);
