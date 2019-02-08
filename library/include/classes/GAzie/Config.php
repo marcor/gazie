@@ -34,18 +34,17 @@ class Config {
 	private $data;
 
 	public function __construct() {
-                global $gTables;
 		$this->data = [];
 		if (! defined('PATH_ROOT') )
 			die ('Error setting path root');
 	       
-		$this->set('path_root', PATH_ROOT);
-		$this->setDirectories( PATH_ROOT );
 		$this->setConfigFile("../../config/config/gconfig.php");
 		$this->setTabelle();
-
+		$this->set('path_root', PATH_ROOT);
+		$this->setDirectories( PATH_ROOT );
+		
 		$tmp = json_decode($json_data,TRUE);
-                $data = gaz_dbi_get_row($gTables['company_config'], 'var', 'syncronize_oc');
+                $data = gaz_dbi_get_row( $this->getTabelle('company_config'), 'var', 'syncronize_oc');
                 if ( ! $data ) {
                         $json_data = json_encode(array(
                                 'user'=>'',
@@ -60,6 +59,7 @@ class Config {
                 $this->data['username'] = $tmp['user'];
                 $this->data['password'] = $tmp['pass'];
 		$this->data['url'] = $tmp['url'];
+		$this->data['config_azienda'] = checkAdmin();
 	}
 
 	public function set($key,$value) {  
@@ -136,6 +136,7 @@ class Config {
 	}
 
 	public function setTabelle() {
+		$table_prefix = $this->get('database')['table_prefix'];
 		$tb =  [
 			'admin', 
 			'admin_config', 
@@ -167,7 +168,7 @@ class Config {
 		];
 		$result = [];
 		foreach ($tb as $v) {
-			$result[$v] = $this->get('table_prefix') . "_" . $v;
+			$result[$v] = $table_prefix . "_" . $v;
 		}		
 		$tb =  [
 			'aliiva', 
@@ -229,7 +230,7 @@ class Config {
 			'syncronize_oc'
                 ];
                 foreach ($tb as $v) {
-                        $result[$v] = $this->get('table_prefix') . "_" .  sprintf('%03d', $this->getIdAzienda()) . $v;
+                        $result[$v] = $table_prefix . "_" .  sprintf('%03d', $this->getIdAzienda()) . $v;
                 }               
                 $this->set('tabelle_database', $result);
         }
@@ -261,6 +262,15 @@ class Config {
 		return  intval($id);
 	}
 
+	/**
+	 * Return the azienda config on database
+	 *
+	 * return array
+	 */
+	public function getAzienda() {
+		return $this->get('config_azienda');
+	}
+
 	public function getPathRoot() {
 		return $this->data['path_root'];
 	}
@@ -280,9 +290,8 @@ class Config {
 	}
 
 	public function putData( $data ) {
-		global $gTables;
 		$json_data = json_encode($data);
-		$data = gaz_dbi_put_row($gTables['company_config'], 'var', 'syncronize_oc','val',$json_data);
+		$data = gaz_dbi_put_row($this->getTabelle('company_config'), 'var', 'syncronize_oc','val',$json_data);
 		return $data;
 	}
 
