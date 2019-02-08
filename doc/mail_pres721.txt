@@ -1,0 +1,20 @@
+Titolo:
+Tanto nomini nullum par elogium.
+
+Presentazione:
+
+Cercando la perfezione, intanto i miglioramenti:
+- accettati file XML di fatture passive che il SdI lascia passare senza il tag <?xml (Angelo Romano)
+- possibilità di personalizzare i campi da gestire sul form Inserisci/Modifica articolo di magazzino (m_zolfo Daniele Provenzano)
+- aggiornamento wiki con la documentazione per la modifica di cui sopra (Diego Crescenti)
+- diminuito il ridimensionamento automatico delle immagini in inserimento articolo per evitare il troncamento delle stesse (Antonio Germani)
+- bugfix: errore che causava lo scarto delle fatture con le spese di incasso relative a più di una RiBa, segnalato sul forum da Marco Betti (Antonio de Vincentiis)
+- aggiunta indicazione "spesa accessoria" su spese incasso, trasporti e bolli (Antonio de Vincentiis)
+- revisionato sistema di rimozione firma FaE (Angelo Romano)
+- acquisizione fattura elettronica passiva: adesso viene proposta come data di registrazione quella dell'ultima modifica del file che probabilmente è anche quella di ricevimento dello stesso dal SdI, inoltre con questa non vengono persi i righi delle fatture con numeri di linea doppioni che il sistema stesso lascia passare beatamente (Antonio de Vincentiis)
+- sul report delle fatture di vendita vengono distinti i file generati da GAzie da quelli importati da procedure esterne (Antonio de Vincentiis)
+- bugfix emissione ricevuta: non aumentava il numero di protocollo (Daniele Frulla)
+- aggiunte colonne dare/avere/saldo e totali su scadenzario in home page; evidenziate partite scadute in rosso, inserito tooltip sulla scadenza che riepiloga il movimento contabile collegato; possibilità di effettuare pagamenti/riscossioni direttamente dalle sezioni suddette (Diego Crescenti)
+- in generazione fattura elettronica: accodati i righi descrittivi e di testo prima della descrizione del rigo normale in modo da rendere l'XML più fedele al corrispondente pdf (Antonio de Vincentiis) 
+  
+Antonio de Vincentiis, Montesilvano, 08 febbraio 2019
