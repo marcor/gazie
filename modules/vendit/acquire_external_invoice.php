@@ -275,8 +275,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato 
 		*/
 		$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
+		$nl=0;
 		foreach ($DettaglioLinee as $item) {
-			$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+			$nl++;
 			if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
 				$form['rows'][$nl]['codice_fornitore'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
 			} else {
