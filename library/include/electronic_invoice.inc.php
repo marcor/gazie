@@ -717,12 +717,14 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 					}
                     if (isset($rigo['descrittivi'])) {
                         // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
+						$acc_descr='';
                         foreach ($rigo['descrittivi'] as $k => $v) {
                             if ($k < 16) {
-                                $rigo['descri'] .= ' '.$v; // ogni $v è lungo al massimo 60 caratteri
+                                $acc_descr .= $v.' '; // ogni $v è lungo al massimo 60 caratteri
                                 unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
                             }
                         }
+						$rigo['descri'] = $acc_descr.' '.$rigo['descri'];
                     }
                     if ($rigo['idlotto']!='') {
                         // se ho un lotto di magazzino lo accodo alla ddescrizione
