@@ -728,7 +728,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $where = "numdoc DESC";
                         $sql_protocollo = " 0";
 			break;
-                    case "VRI": // reso da visione
+                    case "VRI": // Vendita con ricevuta
                         $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " AND  tipdoc = 'VRI' and seziva = $sezione";
                         $where = "numdoc DESC";
                         $sql_protocollo = "YEAR(datfat) = " . $form['annemi'] . " AND tipdoc LIKE 'VRI' AND seziva = $sezione ";
