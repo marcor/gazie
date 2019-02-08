@@ -353,14 +353,133 @@ if ($t > 4 && $t <= 13) {
                             <table id="clienti" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
                                 <thead>
                                     <tr role="row">
-                                        <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 300px;" aria-label="Cliente"><?php echo $script_transl['sca_cliente']; ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-label="Avere"><?php echo $script_transl['sca_avere']; ?></th>
-                                        <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Scadenza"><?php echo $script_transl['sca_scadenza']; ?></th>
+                                        <!--+ DC 07/02/2019 - th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 300px;" aria-label="Cliente"><?php echo $script_transl['sca_cliente']; ?></th--->
+                                        <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 150px;" aria-label="Cliente"><?php echo $script_transl['sca_cliente']; ?></th>
+										<!--+ DC 07/02/2019 - nuova colonne Dare --->
+										<th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 70px;" aria-label="Dare"><?php echo $script_transl['sca_dare']; ?></th>
+										<!--- DC 07/02/2019 - nuova colonne Dare --->
+                                        <!--+ DC 07/02/2019 - th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-label="Avere"><?php echo $script_transl['sca_avere']; ?></th--->
+                                        <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 70px;" aria-label="Avere"><?php echo $script_transl['sca_avere']; ?></th>
+										<!--+ DC 07/02/2019 - nuova colonna Saldo --->
+                                        <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 70px;" aria-label="Saldo"><?php echo $script_transl['sca_saldo']; ?></th>
+										<!--- DC 07/02/2019 - nuove colonna Saldo --->
+                                        <!--+ DC 07/02/2019 - th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Scadenza"><?php echo $script_transl['sca_scadenza']; ?></th--->
+                                        <th style="cursor:pointer;cursor:hand" class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 70px;" aria-sort="ascending" aria-label="Scadenza"><?php echo $script_transl['sca_scadenza']; ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <!-- Scadenzario clienti -->
                                     <?php
+									
+									// Recupero dati come in 'select_partner_status.php' per recupero DARE/AVERE e calcolare SALDO
+									$paymov = new Schedule;
+									$paymov->setScheduledPartner($admin_aziend['mascli']);
+									
+									$totDare = 0;
+									$totAvere = 0;
+									$totSaldo = 0;
+									
+									if (sizeof($paymov->Partners) > 0) {
+										$anagrafica = new Anagrafica();
+										foreach ($paymov->Partners as $p) {
+											$ctrl_close_partner = false;
+											$anagrafica = new Anagrafica();
+											$prt = $anagrafica->getPartner($p);
+											
+											$paymov->getPartnerStatus($p, date("Y") . '-' . date("m") . '-' . date("d"));
+											foreach ($paymov->PartnerStatus as $k => $v) {
+												/*$paymov->docData[$k]['id_tes'] . ' ' .
+												$paymov->docData[$k]['descri'];
+												if ($paymov->docData[$k]['numdoc'] >= 1) {
+													echo ' n.' .
+													$paymov->docData[$k]['numdoc'] . '/' .
+													$paymov->docData[$k]['seziva'] . ' del ' .
+													gaz_format_date($paymov->docData[$k]['datdoc']);
+												}*/
+            
+			// INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento 
+            $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $paymov->docData[$k]['id_tes'], 'id_rig');
+            $tt = '<table><th colspan=3 >' . $paymov->docData[$k]['descri'] . '</th>';
+            //$tt = '<table><th colspan=3 >' . "Intestazione" . '</th>';
+            //$tot = 0.00;
+            while ($rr = gaz_dbi_fetch_array($res_rig)) {
+                $account = $anagrafica->getPartner($rr["codcon"]);
+                $tt .= '<tr><td>' . htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
+            }
+            $tt .= '</table>';
+            // FINE creazione tabella per il tooltip
+												
+												foreach ($v as $ki => $vi) {
+													$ctrl_close_paymov = false;
+													$lnk = '';
+													$class_paymov = 'FacetDataTDevidenziaCL';
+													$v_op = '';
+													$cl_exp = '';
+													if ($vi['op_val'] >= 0.01) {
+														$v_op = gaz_format_number($vi['op_val']);
+													}
+													$v_cl = '';
+													if ($vi['cl_val'] >= 0.01) {
+														$v_cl = gaz_format_number($vi['cl_val']);
+														$cl_exp = gaz_format_date($vi['cl_exp']);
+													}
+													$expo = '';
+													
+													$stato_partita = "";
+													$style_partita = "";
+													
+													if ($vi['expo_day'] >= 1) {
+														$expo = $vi['expo_day'];
+														if ($vi['cl_val'] == $vi['op_val']) {
+															$vi['status'] = 2; // la partita ? chiusa ma ? esposta a rischio insolvenza 
+															$class_paymov = 'FacetDataTDevidenziaOK';
+														}
+													} else {
+														$stato_partita = "warning";
+														if ($vi['cl_val'] == $vi['op_val']) { // chiusa e non esposta
+															continue;
+															$cl_exp = '';
+															$class_paymov = 'FacetDataTD';
+															$ctrl_close_paymov = true;
+														} elseif ($vi['status'] == 3) { // SCADUTA
+															$cl_exp = '';
+															$class_paymov = 'FacetDataTDevidenziaKO';
+															
+															$stato_partita = "warning";
+															$style_partita = "color:red";
+															
+														} elseif ($vi['status'] == 9) { // PAGAMENTO ANTICIPATO
+															$class_paymov = 'FacetDataTDevidenziaBL';
+															$vi['expiry'] = $vi['cl_exp'];
+														} elseif ($vi['status'] == 0) { // APERTA
+															$lnk = " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"../vendit/customer_payment.php?partner=" . $p . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+														}
+													}
+													
+													// stampa colonne
+													echo "<tr style='" . $style_partita ."' class='odd " . $stato_partita . "' role='row'>"; //*?
+													//echo "<td>" . $prt['ragso1'] . "</td>";
+													echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $paymov->docData[$k]['id_tes'] . '" data-title="' . str_replace("\"", "'", $tt) . '" >' . $prt['ragso1'] . "</div></td>";
+													
+													echo "<td align='right'>" . gaz_format_number($vi['cl_val']) . "</td>";
+													
+													echo "<td align='right'>" . gaz_format_number($vi['op_val']) . "</td>";
+													
+													echo "<td align='right'>" . gaz_format_number($vi['op_val']-$vi['cl_val']) . "</td>";
+													
+													echo "<td class='" . $class_paymov . "' align='center'><span>" . $vi['expiry'] . "</span>" . gaz_format_date($vi['expiry']) . " &nbsp; $lnk</td>";
+													echo "</tr>";
+													
+													$totDare += $vi['cl_val'];
+													$totAvere += $vi['op_val'];
+												}
+											}
+										}
+									}
+									
+									$totSaldo = $totAvere-$totDare;
+									
+									/*+ DC - 07-02-2018 - sostituito codice originale che non teneva conto dei pagamenti - vedi sopra
                                     $ctrl_partner = 0;
                                     $scdl = new Schedule;
                                     $m = $scdl->getScheduleEntries("0", $admin_aziend['mascli'], true);
@@ -385,12 +504,22 @@ if ($t > 4 && $t <= 13) {
                                             $ctrl_partner = $mv["clfoco"];
                                         }
                                     }
+									*/
+									
                                     ?>
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th rowspan="1" colspan="1"></th>
-                                        <th rowspan="1" colspan="1"></th>
+										<!--+ DC 07/02/2019 - nuova colonna Dare --->
+                                        <th style="text-align:right" rowspan="1" colspan="1"><?php echo gaz_format_number($totDare); ?></th>
+										<!--- DC 07/02/2019 - nuova colonna Dare --->
+										<!--+ DC 07/02/2019 - aggiunto style su th e stampata variabile totale Avere --->
+                                        <th style="text-align:right" align="right" rowspan="1" colspan="1"><?php echo gaz_format_number($totAvere); ?></th>
+										<!--- DC 07/02/2019 - aggiunto style su th e stampata variabile totale Avere --->
+										<!--+ DC 07/02/2019 - nuova colonna Saldo --->
+                                        <th style="text-align:right" align="right" rowspan="1" colspan="1"><?php echo gaz_format_number($totSaldo); ?></th>
+										<!--- DC 07/02/2019 - nuova colonna Saldo --->
                                         <th rowspan="1" colspan="1"></th>
                                     </tr>
                                 </tfoot>
@@ -408,19 +537,129 @@ if ($t > 4 && $t <= 13) {
                             <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
                                 <thead>
                                     <tr role="row">
-                                        <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 300px;" aria-label="Rendering engine: activate to sort column descending"><?php echo $script_transl['sca_fornitore']; ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-label="Browser: activate to sort column ascending"><?php echo $script_transl['sca_dare']; ?></th>
-                                        <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending"><?php echo $script_transl['sca_scadenza']; ?></th>
+                                        <!--+ DC 07/02/2019 - th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 300px;" aria-label="Rendering engine: activate to sort column descending"><?php echo $script_transl['sca_fornitore']; ?></th--->
+                                        <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 150px;" aria-label="Rendering engine: activate to sort column descending"><?php echo $script_transl['sca_fornitore']; ?></th>
+                                        <!--+ DC 07/02/2019 - th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-label="Browser: activate to sort column ascending"><?php echo $script_transl['sca_dare']; ?></th--->
+                                        <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 70px;" aria-label="Browser: activate to sort column ascending"><?php echo $script_transl['sca_dare']; ?></th>
+										<!--+ DC 07/02/2019 - nuove colonne Avere/Saldo --->
+										<th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 70px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending"><?php echo $script_transl['sca_avere']; ?></th>
+                                        <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 70px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending"><?php echo $script_transl['sca_saldo']; ?></th>
+										<!--- DC 07/02/2019 - nuove colonne Avere/Saldo --->
+                                        <!--+ DC 07/02/2019 - th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending"><?php echo $script_transl['sca_scadenza']; ?></th--->
+                                        <th style="cursor:pointer;cursor:hand" class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 70px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending"><?php echo $script_transl['sca_scadenza']; ?></th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     <!-- Scadenzario fornitori -->
                                     <?php
-                                    $ctrl_partner = 0;
+                                    
+									// Recupero dati come in 'select_suppliers_status.php' per recupero DARE/AVERE e calcolare SALDO
+									$paymov = new Schedule;
+									$paymov->setScheduledPartner($admin_aziend['masfor']);
+									
+									$totDare = 0;
+									$totAvere = 0;
+									
+									if (sizeof($paymov->Partners) > 0) {
+										$anagrafica = new Anagrafica();
+										foreach ($paymov->Partners as $p) {
+											$ctrl_close_partner = false;
+											$anagrafica = new Anagrafica();
+											$prt = $anagrafica->getPartner($p);
+											
+											$paymov->getPartnerStatus($p, date("Y") . '-' . date("m") . '-' . date("d"));
+											foreach ($paymov->PartnerStatus as $k => $v) {
+												/*$paymov->docData[$k]['descri'] . ' n.' .
+												$paymov->docData[$k]['numdoc'] . ' del ' .
+												gaz_format_date($paymov->docData[$k]['datdoc']);*/
+												
+			// INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento 
+            $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $paymov->docData[$k]['id_tes'], 'id_rig');
+            $tt = '<table><th colspan=3 >' . $paymov->docData[$k]['descri'] . '</th>';
+            //$tt = '<table><th colspan=3 >' . "Intestazione" . '</th>';
+            //$tot = 0.00;
+            while ($rr = gaz_dbi_fetch_array($res_rig)) {
+                $account = $anagrafica->getPartner($rr["codcon"]);
+                $tt .= '<tr><td>' . htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
+            }
+            $tt .= '</table>';
+            // FINE creazione tabella per il tooltip
+			
+												foreach ($v as $ki => $vi) {
+													$ctrl_close_paymov = false;
+													$lnk = '';
+													$class_paymov = 'FacetDataTDevidenziaCL';
+													$v_op = '';
+													$cl_exp = '';
+													if ($vi['op_val'] >= 0.01) {
+														$v_op = gaz_format_number($vi['op_val']);
+													}
+													$v_cl = '';
+													if ($vi['cl_val'] >= 0.01) {
+														$v_cl = gaz_format_number($vi['cl_val']);
+														$cl_exp = gaz_format_date($vi['cl_exp']);
+													}
+													$expo = '';
+													
+													$stato_partita = "";
+													$style_partita = "";
+													
+													if ($vi['expo_day'] >= 1) {
+														$expo = $vi['expo_day'];
+														if ($vi['cl_val'] == $vi['op_val']) {
+															$vi['status'] = 2; // la partita ? chiusa ma ? esposta a rischio insolvenza 
+															$class_paymov = 'FacetDataTDevidenziaOK';
+														}
+													} else {
+														if ($vi['cl_val'] == $vi['op_val']) { // chiusa e non esposta
+															continue;
+															$cl_exp = '';
+															$class_paymov = 'FacetDataTD';
+															$ctrl_close_paymov = true;
+														} elseif ($vi['status'] == 3) { // SCADUTA
+															$cl_exp = '';
+															$class_paymov = 'FacetDataTDevidenziaKO';
+															
+															$stato_partita = "warning";
+															$style_partita = "color:red";
+															
+														} elseif ($vi['status'] == 9) { // PAGAMENTO ANTICIPATO
+															$class_paymov = 'FacetDataTDevidenziaBL';
+															$vi['expiry'] = $vi['cl_exp'];
+														} elseif ($vi['status'] == 0) { // APERTA
+															$lnk = " &nbsp;<a title=\"Paga il fornitore\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=" . $p . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+														}
+													}
+													
+													//if ($vi['cl_val'] == $vi['op_val']) { // chiusa e non esposta - non stampo
+													// stampa colonne
+													echo "<tr style='" . $style_partita ."' class='odd " . $stato_partita . "' role='row'>"; //*?
+													//echo "<td>" . $prt['ragso1'] . "</td>";
+													echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $paymov->docData[$k]['id_tes'] . '" data-title="' . str_replace("\"", "'", $tt) . '" >' . $prt['ragso1'] . "</div></td>";
+													echo "<td align='right'>" . gaz_format_number($vi['op_val']) . "</td>";
+													
+													echo "<td align='right'>" . gaz_format_number($vi['cl_val']) . "</td>";
+													echo "<td align='right'>" . gaz_format_number($vi['op_val']-$vi['cl_val']) . "</td>";
+													
+													echo "<td class='" . $class_paymov . "' align='center'><span>" . $vi['expiry'] . "</span>" . gaz_format_date($vi['expiry']) . " &nbsp; $lnk</td>";
+													echo "</tr>";
+													
+													$totDare += $vi['op_val'];
+													$totAvere += $vi['cl_val'];
+													//}
+												}
+											}
+										}
+									}
+									
+									$totSaldo = $totDare-$totAvere;
+									
+									/*+ DC - 07-02-2018 - sostituito codice originale che non teneva conto dei pagamenti - vedi sopra
+									$ctrl_partner = 0;
                                     $scdl = new Schedule;
                                     $m = $scdl->getScheduleEntries("0", $admin_aziend['masfor'], true);
-                                    if (sizeof($scdl->Entries) > 0) {
+									if (sizeof($scdl->Entries) > 0) {
 										foreach ($scdl->Entries AS $key => $mv) {
                                             $paymov = $mv["id_tesdoc_ref"];
                                             $scdl->getStatus($paymov);
@@ -434,18 +673,33 @@ if ($t > 4 && $t <= 13) {
                                                 echo "<tr class='odd " . $stato_partita . "' role='row'>";
                                                 echo "<td>" . $mv["ragsoc"] . "</td>";
                                                 echo "<td align='right'>" . gaz_format_number($mv["amount"]) . "</td>";
+                                                
+												echo "<td align='right'>" . gaz_format_number($mv["amount"]) . "</td>";
+                                                echo "<td align='right'>" . gaz_format_number($mv["amount"]) . "</td>";
+												
                                                 echo "<td align='center'><span>" . $mv["expiry"] . "</span>" . gaz_format_date($mv["expiry"]) . "</td>";
                                                 echo "</tr>";
                                             }
                                         }
                                     }
+									*/
+									
                                     ?>
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <th rowspan="1" colspan="1"></th>
+										<!--+ DC 07/02/2019 - aggiunto style su th e stampata variabile totDare --->
+                                        <th style="text-align:right" rowspan="1" colspan="1"><?php echo gaz_format_number($totDare); ?></th>
+										<!--- DC 07/02/2019 - nuove colonne Avere/Saldo --->
+                                        
+										<!--+ DC 07/02/2019 - nuove colonne Avere/Saldo --->
+										<th style="text-align:right" rowspan="1" colspan="1"><?php echo gaz_format_number($totAvere); ?></th>
+                                        <th style="text-align:right" rowspan="1" colspan="1"><?php echo gaz_format_number($totSaldo); ?></th>
+										<!--- DC 07/02/2019 - nuove colonne Avere/Saldo --->
+										
                                         <th rowspan="1" colspan="1"></th>
-                                        <th rowspan="1" colspan="1"></th>
+										
                                     </tr>
                                 </tfoot>
                             </table>
@@ -583,15 +837,21 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     <script src="../../library/theme/lte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../library/theme/lte/plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script>
-        $(function () {
-            $("#clienti").DataTable({
+		//*+ DC - 07/02/2018
+		//modificati parametri order/filter
+        //        "order": [2, 'asc'],
+		//		  "filter": false,
+		//*- DC - 07/02/2018
+		
+		$(function () {
+			$("#clienti").DataTable({
                 "oLanguage": {
                     "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
                 },
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
                 "iDisplayLength": 5,
-                "order": [2, 'asc'],
-                "filter": false,
+                "order": [4, 'asc'],
+                "filter": true,
 				"responsive": true,
                 "stateSave": true
             });
@@ -601,8 +861,8 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
                 },
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
                 "iDisplayLength": 5,
-                "order": [2, 'asc'],
-                "filter": false,
+                "order": [4, 'asc'],
+                "filter": true,
 				"responsive": true,
                 "stateSave": true
             });

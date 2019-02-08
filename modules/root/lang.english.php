@@ -81,6 +81,7 @@ $strScript = array("admin.php" =>
         'sca_fornitore' => 'Fornitore',
         'sca_avere' => 'Avere',
         'sca_dare' => 'Dare',
+		'sca_saldo' => 'Saldo', //*+ DC - 07/02/2018 -*//
         'sca_scadenza' => 'Scadenza'
     ),
     "login_admin.php" =>
