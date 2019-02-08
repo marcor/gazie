@@ -731,7 +731,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     case "VRI": // reso da visione
                         $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " AND  tipdoc = 'VRI' and seziva = $sezione";
                         $where = "numdoc DESC";
-                        $sql_protocollo = " 0";
+                        $sql_protocollo = "YEAR(datfat) = " . $form['annemi'] . " AND tipdoc LIKE 'VRI' AND seziva = $sezione ";
 			break;
                 }
                 $rs_ultimo_documento = gaz_dbi_dyn_query("numdoc, numfat*1 AS fattura", $gTables['tesdoc'], $sql_documento, $where, 0, 1);
