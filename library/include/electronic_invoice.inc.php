@@ -962,7 +962,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("Descrizione", 'SPESE INCASSO');
         $el->appendChild($el1);
-        $el1 = $domDoc->createElement("Quantita", $XMLvars->pagame['numrat']);
+        $el1 = $domDoc->createElement("Quantita", number_format($XMLvars->pagame['numrat'],2,'.',''));
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("UnitaMisura", 'N.');
         $el->appendChild($el1);
