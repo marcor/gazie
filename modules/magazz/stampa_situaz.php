@@ -26,7 +26,7 @@
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
-$title = "Situazione magazzino";
+$title = "       Situazione magazzino";
 
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
@@ -79,10 +79,13 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $mv = $gForm->getStockValue(false, $r['codice']);
     $magval = array_pop($mv);
 	if (isset ($magval['q_g']) && round($magval['q_g'],6) == "-0") { // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
-		$magval['q_g']="";
+		$magval['q_g']=0;
 	}
     $totale = ($magval['q_g']-$ordinatic)+$ordinatif;
-
+    $pdf->SetTextColor(0);
+	if ($totale<=0.1||$magval['q_g']<=0.1){
+		$pdf->SetTextColor(255,0,0);
+	}
     $pdf->Cell(35,5,$r['codice'],$light,0,'L');
     $pdf->Cell(100,5,$r['descri'],$light,0,'L', 0, '', 1);
     $pdf->Cell(15,5,$r['unimis'],$light,0,'C');

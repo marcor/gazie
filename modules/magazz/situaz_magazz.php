@@ -96,8 +96,17 @@ $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show
 					$magval['q_g']=0;
 				}
                 $totale = $magval['q_g']-$ordinatic+$ordinatif;
-                echo '<tr class="FacetDataTD">
-	   			    <td width="5%"><a class="btn btn-xs btn-success btn-block" href="admin_artico.php?codice=' . $r["codice"] . '&amp;Update">
+				$bclass='success';
+				$rclass='';
+				if ($totale<=0.1){
+					$bclass='warning';
+					$rclass='warning';
+				}elseif($magval['q_g']<=0){
+					$bclass='danger';
+					$rclass='danger';
+				}
+                echo '<tr class="'.$rclass.'">
+	   			    <td width="5%"><a class="btn btn-xs btn-'.$bclass.' btn-block" href="admin_artico.php?codice=' . $r["codice"] . '&amp;Update">
 				    <i class="glyphicon glyphicon-edit"></i>&nbsp;' . $r["codice"] . '</a></td>';
                 echo '	<td width="30%">
 	   				<span class="gazie-tooltip" data-type="product-thumb" data-id="' . $r["codice"] . '" data-title="' . $r['annota'] . '">' . $r["descri"] . '</span>
