@@ -500,7 +500,9 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $config = new Config;
     $configTemplate = new configTemplate;
     if ($lang_template) {
+		$ts=$configTemplate->template;
 		$configTemplate->setTemplateLang($lang_template);
+		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
     }
 	require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
     $pdf = new $templateName();
@@ -576,6 +578,11 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
     );
     $config = new Config;
     $configTemplate = new configTemplate;
+    if ($lang_template) {
+		$ts=$configTemplate->template;
+		$configTemplate->setTemplateLang($lang_template);
+		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
+    }
     require("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
     $pdf = new $templateName();
     $docVars = new DocContabVars();
@@ -645,7 +652,9 @@ function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=f
     $config = new Config;
     $configTemplate = new configTemplate;
     if ($lang_template) {
+		$ts=$configTemplate->template;
 		$configTemplate->setTemplateLang($lang_template);
+		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
     }
     require_once("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/fattura_semplice.php');
     $pdf = new FatturaSemplice();
