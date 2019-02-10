@@ -364,7 +364,7 @@ if (isset($_POST['preview']) and $msg == '') {
             $linkHeaders = new linkHeaders($script_transl['header2']);
             $linkHeaders->output();
             echo "</tr>";
-            while (list($key, $mv) = each($m)) {
+            foreach($m as $key=>$mv){
                 $saldo += $mv['dare'];
                 $saldo -= $mv['avere'];
                 echo "<tr class=\"FacetDataTD\"><td>" . gaz_format_date($mv["datreg"]) . " &nbsp;</td>";
