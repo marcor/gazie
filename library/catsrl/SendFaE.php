@@ -164,4 +164,28 @@ function ReceiveFattF($array_fattf)
 	return $FattF;
 }
 
+function DownloadFattF($fattf_sdi)
+{
+	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/ScaricaFattF.php';
+
+	$result = PostRequestCATsrl($CATSRL_ENDPOINT, $fattf_sdi);
+	//echo('0-'.$result."<br />\n");
+
+	$open_tag = '<FATTF>';
+	$close_tag = '</FATTF>';
+
+	$open_tag_pos = strpos($result, $open_tag);
+	if ($open_tag_pos === FALSE) {
+		return $result;
+	}
+	$close_tag_pos = strpos($result, $close_tag);
+	if ($close_tag_pos === FALSE) {
+		return $result;
+	}
+
+	$FattF = json_decode(base64_decode(substr($result, $open_tag_pos+7, $close_tag_pos-$open_tag_pos-7)), true);
+
+	return $FattF;
+}
+
 ?>

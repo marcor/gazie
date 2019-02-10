@@ -172,8 +172,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$msg['err'][] = 'no_upload';
 				}
 			}
-		} else {
-			$msg['err'][] = 'no_upload';
+		} else if (!empty($_POST['selected_SdI'])) {
+			require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
+			$FattF = DownloadFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('id_SdI' => $_POST['selected_SdI'])));
+			if (!empty($FattF) && is_array($FattF) && file_put_contents('../../data/files/' . $admin_aziend['codice'] . '/' . key($FattF), base64_decode($FattF[key($FattF)])) !== FALSE) { // nessun errore
+				$form['fattura_elettronica_original_name'] = key($FattF);
+			} else { // no upload
+				$msg['err'][] = 'no_upload';
+			}
 		}
 	} else if (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
 		$form['pagame'] = intval($_POST['pagame']);
@@ -215,7 +221,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	}
 
 	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
-	if ($tesdoc && 	!empty($form['fattura_elettronica_original_name'])) { // c'è anche sul database, è una modifica
+	if ($tesdoc && !empty($form['fattura_elettronica_original_name'])) { // c'è anche sul database, è una modifica
 		$toDo = 'update';
 		$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
 		$form['seziva'] = $tesdoc['seziva'];
@@ -421,7 +427,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 			}
 			$post_nl = $nl-1;
-			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+			if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
 				$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
@@ -540,7 +546,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$nl]['ritenuta']= $ali_ritenute; 
 			} 
 			$post_nl = $nl-1;
-			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+			if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
 				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
@@ -614,7 +620,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$bin = base64_decode($base64);
 			file_put_contents('../../data/files/tmp/'.$name_file, $bin);
 		}
-		if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+		if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 			$form['datreg'] = substr($_POST['datreg'],0,10);
 			$form['pagame'] = intval($_POST['pagame']);
 			$form['new_acconcile'] = intval($_POST['new_acconcile']);
@@ -998,15 +1004,15 @@ if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_S
 						<br />
 <?php
 		if (is_array($AltreFattF)) {
-			echo '<center><table border="1" cellpadding="5" cellspacing="5">';
+			echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
 			echo '<tr><th>Seleziona</th><th>Id SdI</th><th>Fornitore</th><th>Data</th><th>Numero</th></tr>';
 			foreach ($AltreFattF as $AltraFattF) {
 				echo '<tr>';
-				echo '<td align="center"><input type="radio" name="selectSdI" value="' . $AltraFattF[0] . '" /></td>';
+				echo '<td align="center"><input type="radio" name="selected_SdI" value="' . $AltraFattF[0] . '" /></td>';
 				echo '<td>' . implode('</td><td>', $AltraFattF) . '</td>';
 				echo '</tr>';
 			}
-			echo '</table></center>';
+			echo '</table><br />';
 		} else {
 			echo '<p>' . print_r($AltreFattF, true) . '</p>';
 		}
@@ -1019,8 +1025,9 @@ if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_S
 	}
 }
 ?>
-	   <div class="col-sm-12 text-right"><input name="Submit_file" type="submit" class="btn btn-warning" value="<?php echo $script_transl['btn_acquire']; ?>" />
-	   </div>
+		<div class="col-sm-12 text-right"><input name="Submit_file" type="submit" class="btn btn-warning" value="<?php echo $script_transl['btn_acquire']; ?>" />
+		</div>
+		<br /><br />
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->
 <?php
