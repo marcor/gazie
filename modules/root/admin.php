@@ -309,7 +309,7 @@ if ($t > 4 && $t <= 13) {
                             <table id="scad" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
                                 <thead>
                                     <tr role="row">
-                                        <th  class="sorting tabindex="0" rowspan="1" colspan="1" style="width:120px;"><?php echo $script_transl['cod']; ?></th>
+                                        <th  class="sorting" tabindex="0" rowspan="1" colspan="1" style="width:120px;"><?php echo $script_transl['cod']; ?></th>
                                         <th  tabindex="0" rowspan="1" colspan="1" style="width: 310px;"><?php echo $script_transl['des']; ?></th>
 										<th  tabindex="0" rowspan="1" colspan="1" style="width: 120px;" ><?php echo $script_transl['lot']; ?></th>
                                         <th  tabindex="0" rowspan="1" colspan="1" style="width: 120px;" ><?php echo $script_transl['sca_scadenza']; ?></th>

@@ -47,8 +47,9 @@ DELLA CARTELLA "gazie" COMPRESO IL PRESENTE "gconfig.php"
 //versione software
 define('GAZIE_VERSION', '7.21');
 
-if (file_exists(dirname(__FILE__) . '/gconfig.myconf.php')) {
-	include_once(dirname(__FILE__) . '/gconfig.myconf.php');
+$fileConfPers=dirname(__FILE__) . '/gconfig.myconf.php';
+if (file_exists($fileConfPers)) {
+	include_once($fileConfPers);
 }
 
 

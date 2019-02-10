@@ -30,15 +30,17 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
     gaz_set_time_limit(0);
 }
 
-function get_template_lang( $clfoco ) {
+function get_template_lang($clfoco) {
     global $gTables;
 
     $lang = false;
-    $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $clfoco );
-    $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
-    if ( $stato['country']!=="IT") $lang='english';
+    $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $clfoco);
+    $stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
+    if ($stato['country'] !== "IT")
+        $lang = 'english';
     return $lang;
 }
+
 require("../../library/include/document.php");
 // recupero i dati
 if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo documento attraverso il suo id_tes
@@ -53,9 +55,10 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     }
 
     $lang = false;
-    $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
-    $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
-    if ( $stato['country']!=="IT") $lang='english';
+    $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $testata['clfoco']);
+    $stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
+    if ($stato['country'] !== "IT")
+        $lang = 'english';
 
     if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
         createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
@@ -97,7 +100,15 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         $fattEmail = '';
     } else {
         $invioPerEmail = ($_GET['ts'] == 1 ? 0 : 1);
-        $fattEmail = " AND C.fatt_email = $invioPerEmail";
+//        $fattEmail = " AND C.fatt_email = $invioPerEmail";
+        $tipoInvio = $_GET['ts'];
+        switch ($tipoInvio) {
+            case 1:
+                $fattEmail = " AND C.fatt_email = 0";
+                break;
+            default:
+                $fattEmail = " AND (C.fatt_email = 1 or C.fatt_email = 3)";
+        }
     }
     //recupero i documenti da stampare
     $where = "tipdoc = 'FAD' AND seziva = "
@@ -119,25 +130,25 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
             . $fattEmail;
     ;
     //recupero i documenti da stampare
-    $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice ".
-                                    "left join " . $gTables['anagra'] . " C on B.id_anagra=C.id ";
+    $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice " .
+            "left join " . $gTables['anagra'] . " C on B.id_anagra=C.id ";
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
 //    $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
     $clientiRS = gaz_dbi_dyn_query("distinct(A.clfoco) as clfoco", $from, $where);
     $numRecord = $clientiRS->num_rows;
     if ($numRecord > 0) {
-        if ($invioPerEmail || (isset($_GET['dest']) && $_GET['dest'] == 'E') ) {
+        if ($invioPerEmail || (isset($_GET['dest']) && $_GET['dest'] == 'E')) {
             $arrayClienti = gaz_dbi_fetch_all($clientiRS);
             foreach ($arrayClienti as $cliente) {
                 $clfoco = $cliente['clfoco'];
                 $testate = gaz_dbi_dyn_query("A.*", $from, $where . " and A.clfoco=$clfoco", $orderby);
-                $lang = get_template_lang( $clfoco );
+                $lang = get_template_lang($clfoco);
                 createInvoiceFromDDT($testate, $gTables, 'E', $lang);
             }
         } else {
             $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
             $arrayClienti = gaz_dbi_fetch_array($clientiRS);
-            $lang = get_template_lang( $arrayClienti['clfoco'] );           
+            $lang = get_template_lang($arrayClienti['clfoco']);
             createInvoiceFromDDT($testate, $gTables, false, $lang);
         }
     } else {
@@ -219,8 +230,18 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     if (!isset($_GET['ts']) or ( empty($_GET['ts']))) {
         $fattEmail = '';
     } else {
+//        $invioPerEmail = ($_GET['ts'] == 1 ? 0 : 1);
+//        $fattEmail = " AND C.fatt_email = $invioPerEmail";
         $invioPerEmail = ($_GET['ts'] == 1 ? 0 : 1);
-        $fattEmail = " AND C.fatt_email = $invioPerEmail";
+//        $fattEmail = " AND C.fatt_email = $invioPerEmail";
+        $tipoInvio = $_GET['ts'];
+        switch ($tipoInvio) {
+            case 1:
+                $fattEmail = " AND C.fatt_email = 0";
+                break;
+            default:
+                $fattEmail = " AND (C.fatt_email = 1 or C.fatt_email = 3)";
+        }
     }
     //recupero i documenti da stampare
     $where = $where
@@ -239,7 +260,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         if ($invioPerEmail) {
             foreach ($testate as $doc) {
                 $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $doc['id_tes']);
-				$lang = get_template_lang( $testata['clfoco'] );
+                $lang = get_template_lang($testata['clfoco']);
                 createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
             }
         } else {
