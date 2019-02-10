@@ -120,6 +120,7 @@ $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
+
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
 	if (isset($_POST['button_ok_barcode']) || $_POST['ok_barcode']=="ok"){
 		$form['ok_barcode']="ok";
@@ -457,6 +458,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['sconto'] = $form['rows'][0]['new_body_discount'];
         }
     }
+		
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         $sezione = $form['seziva'];
@@ -602,44 +604,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$rit_ctrl=true;
 			}
         }		
-		/* CONTROLLO SOSPESO perché bloccante
-		// Antonio Germani - controllo se negli articoli con lotti le quantità impostate sono disponibili
-		if ($toDo=="insert"){ // per il momento funziona solo se INSERT -->> da fare controllo anche su update!!!
-			$countric=array();
-			foreach ($form['rows'] as $i => $v) { // raggruppo e conteggio q.tà richieste per i lotti
-				if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
-					$key=$v['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
-					if( !array_key_exists($key, $countric) ){ // se la chiave ancora non c'è nell'array
-						// Aggiungo la chiave con il rispettivo valore iniziale
-						$countric[$key] = $v['quanti'];
-					} else {
-						// Altrimenti, aggiorno il valore della chiave
-						$countric[$key] += $v['quanti'];
-					}
-				}
-			} 
-			foreach ($form['rows'] as $i => $v) { // Antonio Germani - calcolo delle giacenze per l'articolo con lotti
-				if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
-					$lm->getAvailableLots($v['codart']);					
-					$count=array();
-					foreach ($lm->available as $v_lm) {
-						$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
-						if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
-							// Aggiungo la chiave con il rispettivo valore iniziale
-							$count[$key] = $v_lm['rest'];
-						} else {
-							// Altrimenti, aggiorno il valore della chiave
-							$count[$key] += $v_lm['rest'];
-						}
-					}
-					if ($countric[$v['identifier']] > $count[$v['identifier']]){ // confronto con la quantità richiesta
-						$msgrigo = $i + 1;
-						$msg['err'][] = "65";
-					}				
-				}
-			}
-		}
-		*/
+		
 		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
 		if ($form['annemi']>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 && $form['tipdoc']!='VRI' ){
 				//$msg['err'][] = "62";
@@ -851,6 +816,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
         }
     }
+	
     // Se viene cambiata la tipologia di documento e la nuova è una fattura immediata ricontrollo la modalitè di assegnazione della sezione IVA
     if ($_POST['hidden_req'] == 'tipdoc' && !isset($_GET['seziva'])) {
         $form['seziva'] = getFAIseziva($form['tipdoc']);
@@ -1527,6 +1493,44 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		$getlot = $lm->getLot($form['rows'][$row_lm]['id_lotmag']);
 		$form['rows'][$row_lm]['identifier'] = $getlot['identifier'];
     }
+	
+	// Antonio Germani - controllo se negli articoli con lotti le quantità impostate sono disponibili
+		if ($toDo="insert"){ // per il momento funziona solo se INSERT -->> da fare controllo anche su update!!!
+			$countric=array();
+			foreach ($form['rows'] as $i => $v) { // raggruppo e conteggio q.tà richieste per i lotti
+				if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
+					$key=$v['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
+					if( !array_key_exists($key, $countric) ){ // se la chiave ancora non c'è nell'array
+						// Aggiungo la chiave con il rispettivo valore iniziale
+						$countric[$key] = $v['quanti'];
+					} else {
+						// Altrimenti, aggiorno il valore della chiave
+						$countric[$key] += $v['quanti'];
+					}
+				}
+			} 
+			foreach ($form['rows'] as $i => $v) { // Antonio Germani - calcolo delle giacenze per l'articolo con lotti
+				if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
+					$lm->getAvailableLots($v['codart']);					
+					$count=array();
+					foreach ($lm->available as $v_lm) {
+						$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
+						if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
+							// Aggiungo la chiave con il rispettivo valore iniziale
+							$count[$key] = $v_lm['rest'];
+						} else {
+							// Altrimenti, aggiorno il valore della chiave
+							$count[$key] += $v_lm['rest'];
+						}
+					}
+					if ($countric[$v['identifier']] > $count[$v['identifier']]){ // confronto con la quantità richiesta
+						$msgrigo = $i + 1;
+						$msg['war'][] = "1";
+					}				
+				}
+			}
+		}
+		
 } elseif (((!isset($_POST['Update'])) and ( isset($_GET['Update']))) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
@@ -1874,6 +1878,11 @@ if (count($msg['err']) > 0) { // ho un errore
     echo '<div class="text-center"><div><b>';
     $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     echo "</b></div></div>\n";
+}
+if (count($msg['war']) > 0) { // ho un alert-danger
+	echo '<div class="text-center"><div><b>';
+    $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
+	echo "</b></div></div>\n";
 }
 echo '<form method="POST" name="docven">';
 echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />

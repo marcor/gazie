@@ -276,6 +276,9 @@ $strScript = array("admin_client.php" =>
         'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento',
         'fae_dati' => 'Altri dati Fattura Elettronica',
         'fae_dati_value' => array(2 => 'DatiOrdineAcquisto', 3 => 'DatiContratto', 4 => 'DatiConvenzione', 5 => 'DatiRicezione', 6 => 'DatiFattureCollegate'),
+		'war' => array (
+			'1' =>'Le quantità richieste per lotto non sono disponibili'
+		),
         'err' => array( 
 			'37' =>"La data di inizio trasporto non &egrave; corretta!",
             '38' =>"La data di inizio trasporto non pu&ograve; essere precedente alla data di emissione!",
