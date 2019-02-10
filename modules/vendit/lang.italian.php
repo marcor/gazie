@@ -277,7 +277,7 @@ $strScript = array("admin_client.php" =>
         'fae_dati' => 'Altri dati Fattura Elettronica',
         'fae_dati_value' => array(2 => 'DatiOrdineAcquisto', 3 => 'DatiContratto', 4 => 'DatiConvenzione', 5 => 'DatiRicezione', 6 => 'DatiFattureCollegate'),
 		'war' => array (
-			'1' =>'Le quantità richieste per lotto non sono disponibili'
+			'1' =>'Le quantità richieste per lotto non sono disponibili. NB: se si conferma si creeranno errori che dovranno essere corretti manualmente!'
 		),
         'err' => array( 
 			'37' =>"La data di inizio trasporto non &egrave; corretta!",

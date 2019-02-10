@@ -2334,6 +2334,9 @@ foreach ($form['rows'] as $k => $v) {
 					}
 				}
                 $selected_lot = $lm->getLot($v['id_lotmag']);
+				if (!isset($count[$selected_lot['identifier']])){
+					$count[$selected_lot['identifier']]="";
+				}
 				if ($count[$selected_lot['identifier']]>=$v['quanti']){
 					echo '<div><button class="btn btn-xs btn-success" title="clicca per cambiare lotto"';
 				} else {
