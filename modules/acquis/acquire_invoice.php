@@ -32,6 +32,8 @@ $docOperat = $magazz->getOperators();
 $toDo = 'upload';
 $f_ex=false; // visualizza file
 
+$send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package');
+
 function tryBase64Decode($s)
 {
 	// Check if there are valid base64 characters
@@ -188,7 +190,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$msg['err'][] = 'no_codric';
 			}	
 		}
-		
 	} else if (isset($_POST['Download'])) { // faccio il download dell'allegato
 		$name = filter_var($_POST['Download'], FILTER_SANITIZE_STRING);
 		header('Content-Description: File Transfer');
@@ -200,6 +201,17 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		header("Content-Length: " . filesize('../../data/files/tmp/'.$name));
 		readfile('../../data/files/tmp/'.$name);
 		exit;
+	} else if (isset($_POST['Submit_list'])) { // ho richiesto l'elenco delle fatture passive
+		$FattF = array();
+		$where1 = " tipdoc LIKE 'A%' AND fattura_elettronica_original_name!='' "; //TO-DO: intervallo date
+		$risultati = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where1);
+		if (!$risultati) {
+			while ($r = gaz_dbi_fetch_array($risultati)) {
+				$FattF[] = $r['fattura_elettronica_original_name'];
+			}
+		}
+		require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
+		$AltreFattF = ReceiveFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('fattf' => $FattF, 'ini_date' => '2019-01-01', 'fin_date' => date('Y-m-d'))));  //TO-DO: intervallo date
 	}
 
 	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
@@ -959,8 +971,56 @@ if ($toDo=='insert' || $toDo=='update' ) {
                </div>
            </div>
        </div><!-- chiude row  -->
+<?php
+if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_SDI') {
+	 //TO-DO: intervallo date
+?>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label for="image" class="col-sm-4 control-label">o consulta il canale telematico</label>
+					<div class="col-sm-8">
+						<br />
+						<div class="col-sm-12 text-center"><input name="Submit_list" type="submit" class="btn btn-success" value="VISUALIZZA" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!-- chiude row  -->
+<?php
+	if (!empty($AltreFattF)) {
+?>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label for="image" class="col-sm-4 control-label">Scegli la fattura da acquisire</label>
+					<div class="col-sm-8">
+						<br />
+<?php
+		if (is_array($AltreFattF)) {
+			echo '<center><table border="1" cellpadding="5" cellspacing="5">';
+			echo '<tr><th>Seleziona</th><th>Id SdI</th><th>Fornitore</th><th>Data</th><th>Numero</th></tr>';
+			foreach ($AltreFattF as $AltraFattF) {
+				echo '<tr>';
+				echo '<td align="center"><input type="radio" name="selectSdI" value="' . $AltraFattF[0] . '" /></td>';
+				echo '<td>' . implode('</td><td>', $AltraFattF) . '</td>';
+				echo '</tr>';
+			}
+			echo '</table></center>';
+		} else {
+			echo '<p>' . print_r($AltreFattF, true) . '</p>';
+		}
+?>
+					</div>
+				</div>
+			</div>
+		</div><!-- chiude row  -->
+<?php
+	}
+}
+?>
 	   <div class="col-sm-12 text-right"><input name="Submit_file" type="submit" class="btn btn-warning" value="<?php echo $script_transl['btn_acquire']; ?>" />
-	   </div>		   
+	   </div>
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->
 <?php

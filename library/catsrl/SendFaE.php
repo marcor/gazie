@@ -135,4 +135,33 @@ function ReceiveNotifiche($array_sdi)
 	return $IdentificativiSdI;
 }
 
+function ReceiveFattF($array_fattf)
+{
+	$CATSRL_ENDPOINT = 'https://fatture.catsrl.it/gazie/InviaFattF.php';
+
+	$result = PostRequestCATsrl($CATSRL_ENDPOINT, $array_fattf);
+	//echo('0-'.$result."<br />\n");
+
+	$open_tag = '<FATTF>';
+	$close_tag = '</FATTF>';
+
+	$open_tag_pos = strpos($result, $open_tag);
+	if ($open_tag_pos === FALSE) {
+		return $result;
+	}
+	$close_tag_pos = strpos($result, $close_tag);
+	if ($close_tag_pos === FALSE) {
+		return $result;
+	}
+
+	$AltreFattF = json_decode(base64_decode(substr($result, $open_tag_pos+7, $close_tag_pos-$open_tag_pos-7)), true);
+
+	$FattF = array();
+	foreach ($AltreFattF as $AltraFattF) {
+		$FattF[] = explode(';', $AltraFattF);
+	}
+
+	return $FattF;
+}
+
 ?>
