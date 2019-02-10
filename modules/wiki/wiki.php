@@ -270,7 +270,6 @@ class Wiki
         }
         $action = $this->_getAction();
         $actionMethod = "{$action}Action";
-
         if ($action === null || !method_exists($this, $actionMethod)) {
             $this->_404();
         }
@@ -279,9 +278,11 @@ class Wiki
     }
 
     protected function _getAction()
-    {
-        if (isset($_REQUEST['a'])) {
-            $action = $_REQUEST['a'];
+    {   
+	$request = parse_url($_SERVER['REQUEST_URI']);
+    	parse_str($request['query'],$query);
+        if (isset( $query['a'])) {
+            $action = $query['a'];
 
             if (in_array("{$action}Action", get_class_methods(get_class($this)))) {
                 $this->_action = $action;
@@ -388,7 +389,6 @@ class Wiki
 
         // Save the changes, and redirect back to the same page:
         file_put_contents($path, $source);
-
         $redirect_url = BASE_URL . "/$file";
         header("HTTP/1.0 302 Found", true);
         header("Location: $redirect_url");
