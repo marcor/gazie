@@ -279,7 +279,7 @@ class Wiki
 
     protected function _getAction()
     {   
-	$request = parse_url($_SERVER['REQUEST_URI']);
+        $request = parse_url($_SERVER['REQUEST_URI']);
     	parse_str($request['query'],$query);
         if (isset( $query['a'])) {
             $action = $query['a'];
