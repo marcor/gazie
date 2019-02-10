@@ -93,7 +93,7 @@ if ($configurazione['cvalue']) {
          $newversion = true;
       }
       if ($newversion) {
-        echo "<div class=\"FacetDataTDred\" align=\"center\">".$script_transl['new_ver1'].$regs[1]. $regs[2].$script_transl['new_ver2'].": <a href=\"".$update_URI_files."\" target=\"_blank\">".$update_URI_files."</div>";
+        echo "<div class=\"FacetDataTDred\" align=\"center\">".$script_transl['new_ver1'].$regs[1]. $regs[2].$script_transl['new_ver2'].": <a href=\"".$update_URI_files."\" target=\"_blank\">".$update_URI_files."</a></div>";
       } else {
         echo "<div class=\"FacetDataTDred\" align=\"center\">".$script_transl['is_align']."(".$remote_id.")</div>";
         tutor_list($tutor,$configurazione,$script_transl);
