@@ -602,7 +602,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$rit_ctrl=true;
 			}
         }		
-		
+		/* CONTROLLO SOSPESO perché bloccante
 		// Antonio Germani - controllo se negli articoli con lotti le quantità impostate sono disponibili
 		if ($toDo=="insert"){ // per il momento funziona solo se INSERT -->> da fare controllo anche su update!!!
 			$countric=array();
@@ -639,7 +639,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 			}
 		}
-		
+		*/
 		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
 		if ($form['annemi']>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 && $form['tipdoc']!='VRI' ){
 				//$msg['err'][] = "62";
