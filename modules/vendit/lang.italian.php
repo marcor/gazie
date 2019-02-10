@@ -251,6 +251,7 @@ $strScript = array("admin_client.php" =>
 		'Non è possibile emettere un documento ad un cliente che non ha la PEC o il codice SdI',
 		'Selezionare la causale di pagamento della ritenuta d\'acconto in configurazione azienda',
 		'Un rigo di tipo normale è senza quantità',
+		'Le quantità richieste per lotto non sono disponibili',
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
@@ -298,6 +299,7 @@ $strScript = array("admin_client.php" =>
             '62' =>'Non è possibile emettere un documento ad un cliente che non ha la PEC o il codice SdI',
             '63' =>'Selezionare la causale di pagamento della ritenuta d\'acconto in configurazione azienda',
             '64' =>'Un rigo di tipo normale è senza quantità',
+			'65' =>'Le quantità richieste per lotto non sono disponibili',
 			'id_documento'=>'Non è stato inserito il tipo rigo 13 - Id.Documento (FaE 2.1.X.2) obbligatorio in presenza di almeno uno dei tipi da 11 a 16'
 		)		
     ),
