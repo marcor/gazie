@@ -49,7 +49,7 @@ if (isset($_POST['Delete'])) {
     foreach ($paymov->PartnerStatus as $k => $v) {
         foreach ($v as $ki => $vi) {
             $ctrl_close_paymov = false;
-            if ($vi['expo_day'] <= 0 && $vi['cl_val'] == $vi['op_val']) {
+            if ($vi['expo_day'] <= 0 && round($vi['cl_val'],2) == round($vi['op_val'],2)) {
                 $ctrl_close_paymov = true;
             }
         }
@@ -92,7 +92,7 @@ $script_transl = HeadMain('delete_schedule');
             foreach ($paymov->PartnerStatus as $k => $v) {
                 foreach ($v as $ki => $vi) {
                     $ctrl_close_paymov = false;
-                    if ($vi['expo_day'] <= 0 && $vi['cl_val'] == $vi['op_val']) {
+                    if ($vi['expo_day'] <= 0 && round($vi['cl_val'],2) == round($vi['op_val'],2)) {
                         $ctrl_close_paymov = true;
                     }
                 }

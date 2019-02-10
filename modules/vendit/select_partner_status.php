@@ -162,12 +162,12 @@ if (isset($_POST['preview'])) {
                     $expo = '';
                     if ($vi['expo_day'] >= 1) {
                         $expo = $vi['expo_day'];
-                        if ($vi['cl_val'] == $vi['op_val']) {
+                        if (round($vi['cl_val'],2) == round($vi['op_val'],2)) {
                             $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza 
                             $class_paymov = 'FacetDataTDevidenziaOK';
                         }
                     } else {
-                        if ($vi['cl_val'] == $vi['op_val']) { // chiusa e non esposta
+                        if (round($vi['cl_val'],2) == round($vi['op_val'],2)) { // chiusa e non esposta
                             $cl_exp = '';
                             $class_paymov = 'FacetDataTD';
                             $ctrl_close_paymov = true;
