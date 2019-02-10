@@ -35,7 +35,8 @@ if ($tesbro['tipdoc'] <> 'AOR') {
 if (isset($_GET['dest'])){
   if ($_GET['dest']=='E'){ //  invio  mail all'indirizzo in testata o in alternativa se sta sul fornitore
   } else { // in dest ho l'indirizzo email quindi lo setto in testata e poi procedo all'invio
-  	$r=gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $testat, 'email',filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL));
+	$tesbro['email']=filter_var($_GET['dest'], FILTER_VALIDATE_EMAIL);
+  	$r=gaz_dbi_put_row($gTables['tesbro'], 'id_tes', $testat, 'email',$tesbro['email']);
   }	
   createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro','E');
 } elseif (isset($_GET['production'])){
