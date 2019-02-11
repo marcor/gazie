@@ -44,6 +44,7 @@ class humresForm extends GAzieForm {
 			}
 			$ret0 .= '>';
 			echo $ret0.$ret1."\t </select>\n</div>\n";
+			return $opt;
 		} else {
 			$retopt=array();
 			$result = gaz_dbi_query($query);
@@ -82,6 +83,7 @@ class humresForm extends GAzieForm {
 			}
 			$ret0 .= '>';
 			echo $ret0.$ret1."\t </select>\n</div>\n";
+			return $opt;
 		} else {
 			$retopt=array();
 			$result = gaz_dbi_query($query);
@@ -120,6 +122,7 @@ class humresForm extends GAzieForm {
 			}
 			$ret0 .= '>';
 			echo $ret0.$ret1."\t </select>\n</div>\n";
+			return $opt;
 		} else {
 			$retopt=array();
 			$result = gaz_dbi_query($query);
@@ -139,4 +142,50 @@ class humresForm extends GAzieForm {
 		}
     }
 }
+
+class selectEmployee extends SelectBox {
+
+     function output($cerca, $field = 'C', $class='',$sele=1) {
+        global $gTables, $script_transl;
+        $msg = "";
+        $opera = "%'";
+        if (strlen($cerca) >= 1) {
+            $opera = "%'"; ////
+            $field_sql = 'description';
+            if (substr($cerca, 0, 1) == "@") {
+                $cerca = substr($cerca, 1);
+            }
+			$sql='SELECT staff.id_staff AS id, CONCAT(ana.ragso1,\' \',ana.ragso2) AS description FROM '.$gTables['staff'] . ' AS staff ' .
+            'LEFT JOIN ' . $gTables['clfoco'] . ' AS worker ON staff.id_clfoco=worker.codice ' .
+            'LEFT JOIN ' . $gTables['anagra'] . ' AS ana ON worker.id_anagra=ana.id '." HAVING   ".$field_sql . " LIKE '" . addslashes($cerca). $opera.' ORDER BY id ASC LIMIT 0, 2000000';
+			$result = gaz_dbi_query($sql);
+            $numclfoco = gaz_dbi_num_rows($result);
+            if ($numclfoco > 0) {
+				if ($sele) {
+					echo ' <select name="' . $this->name . '" class="' . $class . '">';
+                    echo '<option value=""> ---------- </option>';
+					while ($z_row = gaz_dbi_fetch_array($result)) {
+						$selected = "";
+						if ($numclfoco==1){ // ho un solo rigo che fa matching
+							$this->selected=$z_row["id"];
+							$selected = ' selected ';
+						} elseif ($z_row["id"] == $this->selected) {
+							$selected = ' selected ';
+						}
+						echo ' <option value="' . $z_row["id"] . '"' . $selected .'>' . $z_row["id"] .' - '.$z_row["description"] . '</option>';
+					}
+					echo ' </select>';
+				}
+			} else {
+                $msg = $script_transl['notfound'] . '!';
+                echo '<input type="hidden" name="' . $this->name . '" id="' . $this->name . '" value="" />';
+            }
+        } else {
+            $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
+            echo '<input type="hidden" name="' . $this->name . '" id="' . $this->name . '"  value="" />';
+        }
+        echo '<input type="text" class="' . $class . '" name="cosemployee" placeholder="'.$msg.'" id="search_employee" value="' . $cerca . '" maxlength="30" />';
+    }
+}
+
 ?>

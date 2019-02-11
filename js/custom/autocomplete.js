@@ -146,6 +146,20 @@ $(function() {
 			$(this).closest("form").submit();
 		}
 	});
-
+	$( "#search_employee" ).autocomplete({
+		source: "../../modules/root/search.php?opt=employee",
+		minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#search_employee").val(ui.item.value);
+			$("#id_employee").val(ui.item.id);
+			$("#hidden_req").val(ui.item.id);
+			$(this).closest("form").submit();
+		}
+	});
 });
 

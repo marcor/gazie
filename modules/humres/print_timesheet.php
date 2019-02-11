@@ -58,10 +58,10 @@ $luogo_data=$admin_aziend['citspe'].", lì " . ucwords(strftime("%d %B %Y", mkti
 require("../../config/templates/report_template.php");
 require("lang.".$admin_aziend['lang'].".php");
 $script_transl=$strScript['employee_timesheet.php'];
-$where=" start_date <= '".$last_day."' AND (end_date < '2000-01-01' OR end_date IS NULL OR end_date > '".$first_day."')";
+$where=" (start_date <= '".$last_day."' OR end_date IS NULL ) AND (end_date < '2000-01-01' OR end_date IS NULL OR end_date > '".$first_day."')";
 $what="*";
 $tables=$gTables['staff'] . ' AS st LEFT JOIN ' . $gTables['clfoco'] . ' AS wo ON st.id_clfoco=wo.codice ';
-$result = gaz_dbi_dyn_query ($what, $tables,$where,'start_date DESC');
+$result = gaz_dbi_dyn_query ($what, $tables,$where,'id_staff');
 
 $title = array('luogo_data'=>$luogo_data,
                'title'=>$script_transl['title'].' del mese di '.strftime("%B %Y", strtotime($first_day)),
@@ -94,7 +94,6 @@ $pdf->AddPage('L',$config->getValue('page_format'));
 $ctrlWorker='';
 $ctrl_id=0;
 while ($mv = gaz_dbi_fetch_array($result)) {
-	//print_r($mv);
     if ($ctrlWorker!=$mv['id_staff']) {
 		if ($pdf->getY()>160){
 			$pdf->AddPage('L',$config->getValue('page_format'));

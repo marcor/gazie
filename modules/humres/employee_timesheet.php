@@ -41,7 +41,7 @@ function getStartToEndDate($week, $year) {
   $ret['sun'] = $dto->format('Y-m-d');
   return $ret;
 }
-
+/*
 function getWorkers($date) {
 	global $gTables;
     $orderby = "id_staff ASC";
@@ -57,7 +57,7 @@ function getWorkers($date) {
 	}
 	return $ret;
 }
-
+*/
 // Antonio Germani -  nuova funzione che conteggia le ore di più righi nello stesso giorno
 function getStaffTimesheet($worker,$dates) {
 	global $gTables;
@@ -91,26 +91,15 @@ function getStaffTimesheet($worker,$dates) {
 }
 
 
-// Antonio Germani - vecchia funzione che prendeva le ore solo nel primo rigo che trovava
-/*function getStaffTimesheet($worker,$dates) {
-	global $gTables;
-	foreach ($dates as $k=>$v) {
-        $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $worker."' AND work_day ='".$v);
-		if (!empty($r)){
-			$ret[$worker][$v] = $r;
-		} else {
-			$ret[$worker][$v] = array( 'hours_normal'=>'', 'id_work_type_extra'=>0,
-			'hours_extra'=>'', 'id_absence_type'=>0, 'hours_absence'=>'',
-			'id_other_type'=>0, 'hours_other'=>'', 'note'=>'', 'id_orderman'=>0
-			);
-		}
-	}
-	return $ret;
-}*/
-
 if (isset($_POST['week'])) { // accessi successivi
+    $form['hidden_req'] = intval($_POST['hidden_req']);
     $form['week'] = filter_input(INPUT_POST, 'week');
     $form['year'] = filter_input(INPUT_POST, 'year');
+    $form['id_employee'] = filter_input(INPUT_POST, 'id_employee');
+	if ($form['hidden_req']>0 && $form['hidden_req'] <> $form['id_employee']){
+		$form['id_employee']=$form['hidden_req'];
+	}
+    $form['cosemployee'] = filter_input(INPUT_POST, 'cosemployee');
 	if ($_POST['goto']=='next'){
 		if ($form['week']<52) { // settimana successiva
 			$form['week'] ++;
@@ -130,17 +119,16 @@ if (isset($_POST['week'])) { // accessi successivi
 	if (isset($_POST['go_insert']) || isset($_POST['go_print'])){
 		$week_days = getStartToEndDate($form['week'], $form['year']);
 		// inserisco o modifico i dati sul database
-		foreach ($_POST['rows'] as $id_worker=>$v_dates){ 
-			foreach ($v_dates as $k_date=>$v){
-				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $k_date . "' AND id_staff = ".$id_worker );
-				if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
-				    $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET `id_staff`='.$id_worker.",`work_day`='".$k_date."',`hours_normal`=".$v['hours_normal'].',`id_work_type_extra`='.$v['id_work_type_extra'].',`hours_extra`='.$v['hours_extra'].',`id_absence_type`='.$v['id_absence_type'].',`hours_absence`='.$v['hours_absence'].',`id_other_type`='.$v['id_other_type'].',`hours_other`='.$v['hours_other'].",`note`='".$v['note']."' WHERE `id_staff`=".$id_worker." AND `work_day`='".$k_date."'";
-					gaz_dbi_query($query);
-				} else { // faccio l'INSERT
-					$v['id_staff']=$id_worker;
-					$v['work_day']=$k_date;
-					gaz_dbi_table_insert('staff_worked_hours', $v);
-				}
+		$id_worker=$form['id_employee']; 
+		foreach ($_POST['rows'][$id_worker] as $k_date=>$v){
+			$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $k_date . "' AND id_staff = ".$id_worker );
+			if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
+			    $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET `id_staff`='.$id_worker.",`work_day`='".$k_date."',`hours_normal`=".$v['hours_normal'].',`id_work_type_extra`='.$v['id_work_type_extra'].',`hours_extra`='.$v['hours_extra'].',`id_absence_type`='.$v['id_absence_type'].',`hours_absence`='.$v['hours_absence'].',`id_other_type`='.$v['id_other_type'].',`hours_other`='.$v['hours_other'].",`note`='".$v['note']."' WHERE `id_staff`=".$id_worker." AND `work_day`='".$k_date."'";
+				gaz_dbi_query($query);
+			} else { // faccio l'INSERT
+				$v['id_staff']=$id_worker;
+				$v['work_day']=$k_date;
+				gaz_dbi_table_insert('staff_worked_hours', $v);
 			}
 		}
 		if (isset($_POST['go_insert'])) {
@@ -153,6 +141,9 @@ if (isset($_POST['week'])) { // accessi successivi
 	$dto = new DateTime();
     $form['week'] = $dto->format("W");
     $form['year'] = $dto->format("Y");
+    $form['id_employee'] = 0;
+    $form['cosemployee'] = "";
+    $form['hidden_req'] = 0;
 }
 
 $week_days = getStartToEndDate($form['week'], $form['year']);
@@ -174,31 +165,39 @@ require("../../library/include/header.php");
 	
 </script>
 <?php
-$script_transl = HeadMain();
+$script_transl = HeadMain(0,array('custom/autocomplete'));
 $gForm = new humresForm();
 ?>
 <form method="POST" id="form">
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
-	<div class="panel panel-info" style="max-width:650px;">
+	<div class="panel panel-info">
 		<div class="container-fluid">
-			<div class="row">
-				<div class="col-lg-12 text-center"><button type="button" class="btn btn-xs btn-default" id="prev"><i class="glyphicon glyphicon-chevron-left"></i><?php echo ucfirst($script_transl['prev']); ?></button> <b><?php echo intval($form["week"]).'^'; ?> SETTIMANA <?php echo ' -> dal '.gaz_format_date($week_days['mon']).' al '.gaz_format_date($week_days['sun']); ?> </b> <button type="button"  class="btn btn-xs btn-default" id="next"><i class="glyphicon glyphicon-chevron-right"></i><?php echo ucfirst($script_transl['next']); ?></button></div>
-			</div>
-	<?php
-	$workers=getWorkers($week_days['mon']);
+			<div class="row"><div class="col-lg-12 text-center"><b> COLLABORATORE: </b> 
+			<?php 
+			$select_employee = new selectEmployee("id_employee");
+			$select_employee->addSelected($form['id_employee']);
+			$select_employee->output($form['cosemployee']);
+			?>
+			</div></div>
+<?php
+
+$k=$form['id_employee'];
+if ($k>0){
+	$form['rows'] = getStaffTimesheet($k,$week_days);
 	$htopt=false;
 	$acopt=false;
 	$otopt=false;
-    foreach ($workers as $k => $v) {
-		$form['rows'] = getStaffTimesheet($k,$week_days);
-	?>
+?>
+		<div class="row">
+		<div class="col-lg-12 text-center"><button type="button" class="btn btn-xs btn-default" id="prev"><i class="glyphicon glyphicon-chevron-left"></i><?php echo ucfirst($script_transl['prev']); ?></button> <b><?php echo intval($form["week"]).'^'; ?> SETTIMANA <?php echo ' -> dal '.gaz_format_date($week_days['mon']).' al '.gaz_format_date($week_days['sun']); ?> </b> <button type="button"  class="btn btn-xs btn-default" id="next"><i class="glyphicon glyphicon-chevron-right"></i><?php echo ucfirst($script_transl['next']); ?></button></div>
+		</div>
 		<div class="row center-block">
 			<div class="panel panel-default">
-			<table>
+			<table  class="Tlarge table table-striped table-bordered table-condensed">
                 <thead>
                     <tr class="bg-success">              
-                        <th class="col-xs-4">
-							<?php echo $v['worker_descri']; ?>                       
+                        <th class="col-xs-2">
+							<?php echo $form['cosemployee']; ?>                       
 						</th>
                         <th class="col-xs-1">
                             <?php echo utf8_encode(substr(strftime("%A", strtotime("01/01/2018")),0,3)). ' ' . intval(substr($week_days['mon'],8,2));  ?>
@@ -224,6 +223,39 @@ $gForm = new humresForm();
                     </tr>      
                 </thead>    
                 <tbody>
+                    <tr>              
+                        <td align="right">
+							<?php echo 'PRODUZIONE'; ?> 
+                        </td>
+                        <td>
+						<?php
+						?>
+						</td>
+                        <td>						
+						<?php
+						?>
+                        </td>
+                        <td>						
+						<?php
+						?>
+                        </td>
+                        <td>						
+						<?php
+						?>
+                        </td>
+                        <td>						
+						<?php
+						?>
+                        </td>
+                        <td>						
+						<?php
+						?>
+                        </td>
+                        <td class="bg-warning">						
+						<?php
+						?>
+                        </td>
+                    </tr>      
                     <tr>              
                         <td>
 							<?php echo $script_transl['work_hou']; ?>  
@@ -472,6 +504,7 @@ $gForm = new humresForm();
     </div><!-- chiude panel  -->
     <input type="hidden" name="year" id="year" value="<?php echo $form["year"]; ?>">
     <input type="hidden" name="week" id="week" value="<?php echo $form["week"]; ?>">
+    <input type="hidden" name="hidden_req" id="hidden_req" value="<?php echo $form["hidden_req"]; ?>">
     <input type="hidden" name="goto" id="goto">
 </form>
 <div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
