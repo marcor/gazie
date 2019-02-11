@@ -453,7 +453,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         }
                         if ($form['rows'][$i]['id_mag'] > 0) {
 							// Antonio Germani - inizio salvataggio lotti e magazzino
-							$form['rows'][$i]['expiry']=gaz_format_date($form['rows'][$i]['expiry'],true);// converto la data di scadenza per mysql					
+							if ($form['rows'][$i]['expiry']>0){
+								$form['rows'][$i]['expiry']=gaz_format_date($form['rows'][$i]['expiry'],true);// converto la data di scadenza per mysql	
+							} else {
+								$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
+							}								
 							
 							// riprendo il vecchio movimento per non perdere il riferimento al lotto/matricola
 							$old_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $val_old_row['id_mag']);
