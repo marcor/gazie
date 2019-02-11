@@ -2494,36 +2494,38 @@ class Schedule {
                     $expo = true;
                 }
                 $v = $r['amount'];
-                foreach ($acc[$k] as $ko => $vo) { // attraverso l'array delle aperture
-                    $diff = round($vo['op_val'] - $vo['cl_val'], 2);
-                    if ($diff >= 0.01 && $v > 0.01) { // faccio il push sui dati del rigo
-                        $acc[$k][$ko]['cl_rig_data'][] = array('id_rig' => $r['id_rig'], 'descri' => $r['descri'], 'id_tes' => $r['id_tes'], 'import' => $r['import']);
-                    }
-                    if ($v <= $diff) { // se c'� capienza
-                        $acc[$k][$ko]['cl_val'] += $v;
-                        if ($expo) { // � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
-                            $acc[$k][$ko]['expo_day'] = $interval->format('%a');
-                            $acc[$k][$ko]['cl_exp'] = $r['expiry'];
-                            $expo = false;
-                        } else {
-                            $acc[$k][$ko]['cl_exp'] = $r['expiry'];
-                        }
-                        $v = 0;
-                    } else { // non c'� capienza
-                        $acc[$k][$ko]['cl_val'] += $diff;
-                        if ($expo && $diff >= 0.01) { // � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
-                            $acc[$k][$ko]['expo_day'] = $interval->format('%a');
-                            $acc[$k][$ko]['cl_exp'] = $r['expiry'];
-                        }
-                        $v = round($v - $diff, 2);
-                    }
-                    if (round($acc[$k][$ko]['op_val'] - $acc[$k][$ko]['cl_val'], 2) < 0.01) { // � chiusa
-                        $acc[$k][$ko]['status'] = 1;
-                    }
-                }
-                if (count($acc[$k]) == 0) {
-                    $acc[$k][] = array('id' => $r['id'], 'op_val' => 0, 'expiry' => 0, 'cl_val' => $r['amount'], 'cl_exp' => $r['expiry'], 'expo_day' => 0, 'status' => 9, 'op_id_rig' => 0, 'cl_rig_data' => array(0 => array('id_rig' => $r['id_rig'], 'descri' => $r['descri'], 'import' => $r['import'], 'id_tes' => $r['id_tes'])));
-                }
+				if (isset($acc[$k])){
+                  foreach ($acc[$k] as $ko => $vo) { // attraverso l'array delle aperture
+                      $diff = round($vo['op_val'] - $vo['cl_val'], 2);
+                      if ($diff >= 0.01 && $v > 0.01) { // faccio il push sui dati del rigo
+                          $acc[$k][$ko]['cl_rig_data'][] = array('id_rig' => $r['id_rig'], 'descri' => $r['descri'], 'id_tes' => $r['id_tes'], 'import' => $r['import']);
+                      }
+                      if ($v <= $diff) { // se c'� capienza
+                          $acc[$k][$ko]['cl_val'] += $v;
+                          if ($expo) { // � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
+                              $acc[$k][$ko]['expo_day'] = $interval->format('%a');
+                              $acc[$k][$ko]['cl_exp'] = $r['expiry'];
+                              $expo = false;
+                          } else {
+                              $acc[$k][$ko]['cl_exp'] = $r['expiry'];
+                          }
+                          $v = 0;
+                      } else { // non c'� capienza
+                          $acc[$k][$ko]['cl_val'] += $diff;
+                          if ($expo && $diff >= 0.01) { // � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
+                              $acc[$k][$ko]['expo_day'] = $interval->format('%a');
+                              $acc[$k][$ko]['cl_exp'] = $r['expiry'];
+                          }
+                          $v = round($v - $diff, 2);
+                      }
+                      if (round($acc[$k][$ko]['op_val'] - $acc[$k][$ko]['cl_val'], 2) < 0.01) { // � chiusa
+                          $acc[$k][$ko]['status'] = 1;
+                      }
+                  }
+                  if (count($acc[$k]) == 0) {
+                      $acc[$k][] = array('id' => $r['id'], 'op_val' => 0, 'expiry' => 0, 'cl_val' => $r['amount'], 'cl_exp' => $r['expiry'], 'expo_day' => 0, 'status' => 9, 'op_id_rig' => 0, 'cl_rig_data' => array(0 => array('id_rig' => $r['id_rig'], 'descri' => $r['descri'], 'import' => $r['import'], 'id_tes' => $r['id_tes'])));
+                  }
+				}
             }
             $ctrl_id = $r['id_tesdoc_ref'];
         }
