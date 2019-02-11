@@ -279,9 +279,12 @@ class Wiki
 
     protected function _getAction()
     {   
-/* COMMENTO PERCHE' DA ERRORE $request['query'] INDEX INDEFINITO -ANTONIO DE VINCENTIIS
-        $request = parse_url($_SERVER['REQUEST_URI']);
-    	parse_str($request['query'],$query);
+	$request = parse_url($_SERVER['REQUEST_URI']);
+	if (  isset($request['query'] )) {
+		parse_str($request['query'],$query);
+	} else {
+		$query=$_REQUEST;
+	}
         if (isset( $query['a'])) {
             $action = $query['a'];
 
@@ -292,8 +295,6 @@ class Wiki
             $this->_action = 'index';
         }
         return $this->_action;
-*/
-		return 'index';	
     }
 
     protected function _json($data = array())
