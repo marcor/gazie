@@ -474,9 +474,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 									$row = $check_lot->fetch_assoc();
 									$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
 									gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $val_old_row['id_mag']. "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
+								} else {
+									if ($toDo=="update" and intval($old_movmag['id_lotmag'])>0){ // se è update e movmag ha già un id_lotmag, aggiorno il lotto
+										$id_lotmag=$old_movmag['id_lotmag'];
+										gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , identifier = '" . $form['rows'][$i]['identifier'] . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
+									}
 								}
 							}
-							if ($check_lot->num_rows == 0 and $toDo=="update" ) {// se il lotto non esiste e siamo in update vuol dire che questo movimento è stato creato forzando l'inserimento senza lotto. Questo si verifica acquistando con FaE.
+							if (intval($old_movmag['id_lotmag']) == 0 and $toDo=="update" ) {// se siamo in update e il lotto  non esiste nel movimento di magazzino vuol dire che questo movimento è stato creato forzando l'inserimento senza lotto. Questo si verifica acquistando con FaE.
 								$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
 								unset($check_lot);
 								$check_lot = gaz_dbi_query($query);
