@@ -168,6 +168,13 @@ while($row=$res->fetch_assoc()){
 	$ctrlAORtot+=$amount;
 	if ($ctrlAOR==0){
 		$pdf->Cell(277,5,'LISTA DEGLI ORDINI A FORNITORI','LTR', 1, 'L', 1, '', 1);
+		$pdf->Cell(105,5,'Fornitore','LBR',0,'L',1);
+		$pdf->Cell(82,5,'descrizione acquisto','LBR',0,'L',1);
+		$pdf->Cell(10,5,'U.M.','LBR',0,'C',1);
+		$pdf->Cell(20,5,'quantità','LBR',0,'R',1); 
+		$pdf->Cell(20,5,'prezzo','LBR',0,'R',1);
+		$pdf->Cell(10,5,'sconto','LBR',0,'C',1);
+		$pdf->Cell(30,5,'importo','LBR',1,'R',1);
 	}
 	if ($ctrlAOR<>$row['id_tes']){
 		$pdf->Cell(277,5,$row['descri'].' ORDINE n.'.$row['numdoc'].' del '.gaz_format_date($row['datemi']),1, 1, 'L', 0, '', 1);
@@ -180,7 +187,7 @@ while($row=$res->fetch_assoc()){
 		$ctrlAORtot=0.00;
 	}	
 	if ($amount>=0.01){
-		$pdf->Cell(105,4);
+		$pdf->Cell(105,5);
 		$pdf->Cell(82,5,$row['rigdes'],1,0,'L');
 		$pdf->Cell(10,5,$row['unimis'],1,0,'C');
 		$pdf->Cell(20,5,$row['quanti'],1,0,'R'); 
