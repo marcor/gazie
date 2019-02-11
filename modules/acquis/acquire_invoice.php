@@ -152,8 +152,20 @@ function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
 
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
+	$form['date_ini_D'] = '01';
+	$form['date_ini_M'] = date('m');
+	$form['date_ini_Y'] = date('Y');
+	$form['date_fin_D'] = date('d');
+	$form['date_fin_M'] = date('m');
+	$form['date_fin_Y'] = date('Y');
 } else { // accessi successivi  
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
+	$form['date_ini_D'] = '01';
+	$form['date_ini_M'] = date('m');
+	$form['date_ini_Y'] = date('Y');
+	$form['date_fin_D'] = date('d');
+	$form['date_fin_M'] = date('m');
+	$form['date_fin_Y'] = date('Y');
 	if (!isset($_POST['datreg'])){
 		$form['datreg'] = date("d/m/Y");
 		$form['seziva'] = 1;
@@ -208,16 +220,22 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		readfile('../../data/files/tmp/'.$name);
 		exit;
 	} else if (isset($_POST['Submit_list'])) { // ho richiesto l'elenco delle fatture passive
+		$form['date_ini_D'] = str_pad($_POST['date_ini_D'], 2, '0', STR_PAD_LEFT);
+		$form['date_ini_M'] = str_pad($_POST['date_ini_M'], 2, '0', STR_PAD_LEFT);
+		$form['date_ini_Y'] = $_POST['date_ini_Y'];
+		$form['date_fin_D'] = str_pad($_POST['date_fin_D'], 2, '0', STR_PAD_LEFT);
+		$form['date_fin_M'] = str_pad($_POST['date_fin_M'], 2, '0', STR_PAD_LEFT);
+		$form['date_fin_Y'] = $_POST['date_fin_Y'];
 		$FattF = array();
-		$where1 = " tipdoc LIKE 'A%' AND fattura_elettronica_original_name!='' "; //TO-DO: intervallo date
+		$where1 = " tipdoc LIKE 'A%' AND fattura_elettronica_original_name!='' AND datreg BETWEEN '" . $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D'] . "' AND '" . $form['date_fin_Y'] . '-' . $form['date_fin_M'] . '-' . $form['date_fin_D'] . "'";
 		$risultati = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where1);
-		if (!$risultati) {
+		if ($risultati) {
 			while ($r = gaz_dbi_fetch_array($risultati)) {
 				$FattF[] = $r['fattura_elettronica_original_name'];
 			}
 		}
 		require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
-		$AltreFattF = ReceiveFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('fattf' => $FattF, 'ini_date' => '2019-01-01', 'fin_date' => date('Y-m-d'))));  //TO-DO: intervallo date
+		$AltreFattF = ReceiveFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('fattf' => $FattF, 'ini_date' => $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D'], 'fin_date' => $form['date_fin_Y'] . '-' . $form['date_fin_M'] . '-' . $form['date_fin_D'])));
 	}
 
 	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
@@ -979,7 +997,6 @@ if ($toDo=='insert' || $toDo=='update' ) {
        </div><!-- chiude row  -->
 <?php
 if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_SDI') {
-	 //TO-DO: intervallo date
 ?>
 		<div class="row">
 			<div class="col-md-12">
@@ -987,6 +1004,16 @@ if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_S
 					<label for="image" class="col-sm-4 control-label">o consulta il canale telematico</label>
 					<div class="col-sm-8">
 						<br />
+						<div class="col-sm-6">dal
+<?php
+						$gForm->CalendarPopup('date_ini', $form['date_ini_D'], $form['date_ini_M'], $form['date_ini_Y'], 'FacetSelect', 1);
+?>
+						</div>
+						<div class="col-sm-6">al
+<?php
+						$gForm->CalendarPopup('date_fin', $form['date_fin_D'], $form['date_fin_M'], $form['date_fin_Y'], 'FacetSelect', 1);
+?>
+						</div>
 						<div class="col-sm-12 text-center"><input name="Submit_list" type="submit" class="btn btn-success" value="VISUALIZZA" />
 						</div>
 					</div>
@@ -1000,12 +1027,12 @@ if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_S
 			<div class="col-md-12">
 				<div class="form-group">
 					<label for="image" class="col-sm-4 control-label">Scegli la fattura da acquisire</label>
-					<div class="col-sm-8">
+					<div class="col-sm-12">
 						<br />
 <?php
 		if (is_array($AltreFattF)) {
 			echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
-			echo '<tr><th>Seleziona</th><th>Id SdI</th><th>Fornitore</th><th>Data</th><th>Numero</th></tr>';
+			echo '<tr><th>Seleziona</th><th>Id SdI</th><th>Ricezione</th><th>Fornitore</th><th>Numero</th><th>Data</th></tr>';
 			foreach ($AltreFattF as $AltraFattF) {
 				echo '<tr>';
 				echo '<td align="center"><input type="radio" name="selected_SdI" value="' . $AltraFattF[0] . '" /></td>';
