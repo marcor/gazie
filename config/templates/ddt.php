@@ -117,7 +117,7 @@ class DDT extends Template_con_scheda
                 if ($rigo['tiprig'] < 2) {
 					$h=6;
 					if (intval($rigo['barcode'])>0){
-						$h=15;
+						$h=16;
 						$x = $this->GetX();
 						$y = $this->GetY();
 						$this->Cell(35,$h,$rigo['codart'],1,1,'L', 0, '', 0,false, '', 'T');					
