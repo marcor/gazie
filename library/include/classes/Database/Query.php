@@ -25,12 +25,12 @@
 
 namespace Database;
 
-if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
-    exit('Accesso diretto non consentito');
-}
 
-
-// Classe anagrafiche sincronizzazione
+/**
+ *  Class for creation query
+ *  from databasae
+ *
+ */
 class Query  {
 	
 	private $_table;

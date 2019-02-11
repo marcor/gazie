@@ -25,15 +25,13 @@
 
 namespace Database;
 
-if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
-    exit('Accesso diretto non consentito');
-}
-
+use \GAzie\Config;
 
 // Classe anagrafiche sincronizzazione
 abstract class TableMysqli  {
 	
 	private $_table;
+	private $_pk_name;
 	private $_columns;
 	private $_values;
 	private $_loaded;	
@@ -42,27 +40,54 @@ abstract class TableMysqli  {
 	public function __construct( $table ) {
 		$this->_loaded = FALSE;
 		$this->_result = NULL;
-	  	global $gTables;
-		$this->_table = $gTables[$table];
+		$config = Config::factory();
+		
+		$this->_table = $config->getTabelle($table);
 		$rs = gaz_dbi_query( "SHOW COLUMNS FROM " . $this->_table );
 		while ( $row=gaz_dbi_fetch_array($rs)) {
 			$this->_columns[$row[0]] = [
 				'name'=>$row[0],
 				'type'=>$row['Type']
 			];
-//			$this->_values[$row[0]] = NULL;
+			if ( $row['Key'] == 'PRI' )
+				$this->_pk_name = $row[0];
 		}
 	}
 
+	public function getPrimaryKeyName() {
+		return $this->_pk_name;
+	}
+
 	/**
-	 * Return a single record
-	 *
+	 * Return a single record from 
+	 * prymary key
 	 */
  	public function load( $key ) {
 		$query = new Query($this->getTableName());
-		$query->createSelect(['id'=>$key]);
-		$this->_loaded = TRUE;
-		$this->_result = $query->execute( $select );
+		$pk = $this->getPrimaryKeyName();
+		$query->createSelect( NULL, "`$pk` = '$key'" );
+		$this->_result = $query->execute( );
+		if ( ! empty($this->_result) )
+			$this->_loaded = TRUE;
+	}
+
+	/**
+	 * Verify loaded azienda
+	 *
+	 * @return boolean
+	 */
+	public function loaded() {
+		return $this->_loaded;
+	}
+
+	/**
+	 * Return the result of a load
+	 * by prymary key
+	 *
+	 */
+	public function getResult() {
+		if ( $this->_loaded )
+			return $this->_result;
 	}
 
 	/**
