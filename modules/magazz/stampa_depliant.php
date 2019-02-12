@@ -99,16 +99,16 @@ class Depliant extends Report_template {
 			$himg=imagesy($im);
 			if (($wimg/$himg)>0.8){
 				$w=20;
-				$h=25;
+				$h=20;
 				$xx=73;
 			} elseif (($wimg/$himg)>0.5) {
 				$w=10;
-				$h=25;
+				$h=20;
 				$xx=83;
 			} elseif (($wimg/$himg)>0.2) {
-				$w=8;
-				$h=25;
-				$xx=85;
+				$w=7;
+				$h=20;
+				$xx=86;
 			}
 			
             $this->Image('@' . $image, $x + $xx, $y, $w, $h, '', $link,'R',false,'300','',false,false,'R',false);
@@ -132,7 +132,7 @@ class Depliant extends Report_template {
         } elseif (!empty($barcode)) {
             if ($x > 20) {
                 $lf = 1;
-                $y -= 15;
+                $y -= 20;
                 $x = 103;
                 $this->SetY($y);
                 $this->SetX($x);
@@ -144,7 +144,7 @@ class Depliant extends Report_template {
 				$this->Cell(93, 5, $code . ' - ' . substr($description,0,(strlen($description)/2)), 'LTR', 2, 'L', 0, '', 1);
 				$this->Cell(93, 5, substr($description,(strlen($description)/2)), 'LR', 2, 'L', 0, '', 1);
 			} else {
-				$this->Cell(93, 5, $code . ' - ' . substr($description,0,(strlen($description)/2)), 'LR', 2, 'L', 0, '', 1);
+				$this->Cell(93, 5, $code . ' - ' . substr($description,0,(strlen($description)/2)), 'LTR', 2, 'L', 0, '', 1);
 				$this->Cell(93, 5, substr($description,(strlen($description)/2)), 'LR', 2, 'L', 0, '', 1);
 			}
             $this->Cell(93, 5, '', 'LR', 2);
