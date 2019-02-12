@@ -137,10 +137,16 @@ class Depliant extends Report_template {
                 $this->SetY($y);
                 $this->SetX($x);
             }
-            $this->EAN13($x + 40, $y + 5, $barcode, 7);
+            $this->EAN13($x + 50, $y + 10, $barcode, 6);
             $this->SetY($y);
             $this->SetX($x);
-            $this->Cell(93, 5, $code . ' - ' . $description, 'LTR', 2, 'L', 0, '', 1);
+			if (strlen($description)>110) {
+				$this->Cell(93, 5, $code . ' - ' . substr($description,0,(strlen($description)/2)), 'LTR', 2, 'L', 0, '', 1);
+				$this->Cell(93, 5, substr($description,(strlen($description)/2)), 'LR', 2, 'L', 0, '', 1);
+			} else {
+				$this->Cell(93, 5, $code . ' - ' . substr($description,0,(strlen($description)/2)), 'LR', 2, 'L', 0, '', 1);
+				$this->Cell(93, 5, substr($description,(strlen($description)/2)), 'LR', 2, 'L', 0, '', 1);
+			}
             $this->Cell(93, 5, '', 'LR', 2);
             $this->Cell(93, 5, $price . ' ' . $admin_aziend['symbol'] . '/' . $um, 'LR', 2);
             $this->Cell(93, 5, $vat, 'LBR', $lf);
