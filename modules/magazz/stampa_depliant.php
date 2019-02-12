@@ -86,7 +86,7 @@ class Depliant extends Report_template {
         if (!empty($image)) {
             if ($x > 20) {
                 $lf = 1;
-                $y -= 15;
+                $y -= 20;
                 $x = 103;
                 $this->SetY($y);
                 $this->SetX($x);
@@ -94,9 +94,33 @@ class Depliant extends Report_template {
             if (!$link) {
                 $link = 'admin_artico.php?codice=' . $code . '&Update';
             }
-            $this->Image('@' . $image, $x + 72, $y, 20, 20, '', $link);
+			$im = imagecreatefromstring($image);
+			$wimg=imagesx($im);
+			$himg=imagesy($im);
+			if (($wimg/$himg)>0.8){
+				$w=20;
+				$h=25;
+				$xx=73;
+			} elseif (($wimg/$himg)>0.5) {
+				$w=10;
+				$h=25;
+				$xx=83;
+			} elseif (($wimg/$himg)>0.2) {
+				$w=8;
+				$h=25;
+				$xx=85;
+			}
+			
+            $this->Image('@' . $image, $x + $xx, $y, $w, $h, '', $link,'R',false,'300','',false,false,'R',false);
             $this->Cell(93, 5, $code, 'LTR', 2, 'L', 0, '', 1);
-            $this->Cell(93, 5, $description, 'LR', 2, 'L', 0, '', 1);
+			if (strlen($description)>110) {
+                 $this->Cell(70, 5, substr($description,0,(strlen($description)/2)), 'L', 2, 'L', 0, '', 1);
+                 $this->Cell(70, 5, substr($description,(strlen($description)/2)), 'L', 2, 'L', 0, '', 1);
+			} else {
+				$this->Cell(70, 5, $description, 'L', 2, 'L', 0, '', 1);
+				$this->cell(70, 5,'','L',2,'L',0,'',1);
+			}
+			
             if ($un > 0) {
                 $un .= ' N./Pack';
             } else {
