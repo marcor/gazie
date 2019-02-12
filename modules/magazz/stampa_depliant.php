@@ -94,24 +94,20 @@ class Depliant extends Report_template {
             if (!$link) {
                 $link = 'admin_artico.php?codice=' . $code . '&Update';
             }
-			$im = imagecreatefromstring($image);
-			$wimg=imagesx($im);
-			$himg=imagesy($im);
-			if (($wimg/$himg)>0.8){
-				$w=20;
-				$h=20;
-				$xx=73;
-			} elseif (($wimg/$himg)>0.5) {
-				$w=10;
-				$h=20;
-				$xx=83;
-			} elseif (($wimg/$himg)>0.2) {
-				$w=7;
-				$h=20;
-				$xx=86;
+			$im = imagecreatefromstring($image); // Antonio de Vincentiis: questa funzione da problemi di fatal error con alcune immagini, quando corrotte
+			$ratio=imagesx($im)/imagesy($im);
+			$xx=73;
+			$yy=0;
+			if ($ratio>0.8){ // ho una immagine troppo larga per essere contenuta in 20
+				$w=20; // impongo venti come larghezza 
+				$h=20/$ratio;// ... e diminuisco l'altezza con il ratio
+				$yy=12.5-$h/2; // faccio il padding verticale
+			} else { // immagine che non entra per altezza
+				$w=25*$ratio; // e diminuisco la larghezza con il ratio
+				$h=25; // impongo l'altezza
+				$xx=83-$w/2; // faccio il padding orizzontale
 			}
-			
-            $this->Image('@' . $image, $x + $xx, $y, $w, $h, '', $link,'R',false,'300','',false,false,'R',false);
+            $this->Image('@'.$image,$x+$xx,$y+$yy,$w, $h,'',$link,'R',false,'300','',false,false,'R',false);
             $this->Cell(93, 5, $code, 'LTR', 2, 'L', 0, '', 1);
 			if (strlen($description)>110) {
                  $this->Cell(70, 5, substr($description,0,(strlen($description)/2)), 'L', 2, 'L', 0, '', 1);
