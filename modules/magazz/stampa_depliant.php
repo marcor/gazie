@@ -146,21 +146,29 @@ class Depliant extends Report_template {
             $this->Cell(93, 5, $vat, 'LBR', $lf);
         } else {
             if ($x > 20) {
-                $this->SetY($y + 5);
-                $this->SetX(10);
+                $lf = 1;
+                $y -= 20;
+                $x = 103;
+                $this->SetY($y);
+                $this->SetX($x);
             }
-            $this->SetX(10);
-            $this->Cell(27, 5, $code, 1, 0, 'L', 0, '', 1);
-            if (strlen(trim($description)) > 36) {
-                $this->SetFont('helvetica', '', 8);
-                $this->Cell(63, 5, $description, 1, 0, 'L', 0, '', 1);
-                $this->SetFont('helvetica', '', 9);
+			 $this->Cell(93, 5, $code, 'LTR', 2, 'L', 0, '', 1);
+			if (strlen($description)>110) {
+                 $this->Cell(93, 5, substr($description,0,(strlen($description)/2)), 'LR', 2, 'L', 0, '', 1);
+                 $this->Cell(93, 5, substr($description,(strlen($description)/2)), 'LR', 2, 'L', 0, '', 1);
+			} else {
+				$this->Cell(93, 5, $description, 'LR', 2, 'L', 0, '', 1);
+				$this->cell(93, 5,'','LR',2,'L',0,'',1);
+			}
+			
+            if ($un > 0) {
+                $un .= ' N./Pack';
             } else {
-                $this->Cell(63, 5, $description, 1, 0, 'L', 0, '', 1);
+                $un = '';
             }
-            $this->Cell(49, 5, $price . ' ' . $admin_aziend['symbol'] . '/' . $um . ' ' . $vat, 1, 0, 'R');
-            $this->SetFont('helvetica', '', 7);
-            $this->Cell(47, 5, $note, 1, 1, 'R');
+            $this->Cell(93, 5, $price . ' ' . $admin_aziend['symbol'] . '/' . $um . ' ' . $vat . ' ' . $un, 'LR', 2);
+            $this->Cell(73, 5, $note, 'LB', 0, 'R');
+            $this->Cell(20, 5, '', 'BR', $lf, 'R');
         }
     }
 
