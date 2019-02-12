@@ -156,12 +156,15 @@ function ReceiveFattF($array_fattf)
 
 	$AltreFattF = json_decode(base64_decode(substr($result, $open_tag_pos+7, $close_tag_pos-$open_tag_pos-7)), true);
 
-	$FattF = array();
-	foreach ($AltreFattF as $AltraFattF) {
-		$FattF[] = explode(';', $AltraFattF);
+	if (is_array($AltreFattF)) {
+		$FattF = array();
+		foreach ($AltreFattF as $AltraFattF) {
+			$FattF[] = explode(';', $AltraFattF);
+		}
+		return $FattF;
 	}
 
-	return $FattF;
+	return $AltreFattF;
 }
 
 function DownloadFattF($fattf_sdi)

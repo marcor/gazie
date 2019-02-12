@@ -806,8 +806,27 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain();
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
 $gForm = new acquisForm();
+echo "<script type=\"text/javascript\">
+var cal = new CalendarPopup();
+var calName = '';
+function setMultipleValues(y,m,d) {
+     document.getElementById(calName+'_Y').value=y;
+     document.getElementById(calName+'_M').selectedIndex=m*1-1;
+     document.getElementById(calName+'_D').selectedIndex=d*1-1;
+}
+function setDate(name) {
+  calName = name.toString();
+  var year = document.getElementById(calName+'_Y').value.toString();
+  var month = document.getElementById(calName+'_M').value.toString();
+  var day = document.getElementById(calName+'_D').value.toString();
+  var mdy = month+'/'+day+'/'+year;
+  cal.setReturnFunction('setMultipleValues');
+  cal.showCalendar('anchor', mdy);
+}
+</script>
+";
 ?>
 <script type="text/javascript">
     $(function () {
