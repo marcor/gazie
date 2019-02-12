@@ -94,7 +94,8 @@ class Depliant extends Report_template {
             if (!$link) {
                 $link = 'admin_artico.php?codice=' . $code . '&Update';
             }
-			$im = imagecreatefromstring($image); // Antonio de Vincentiis: questa funzione da problemi di fatal error con alcune immagini, quando corrotte
+			$im = imagecreatefromstring($image); // Antonio de Vincentiis: questa funzione da problemi di fatal error con alcune immagini, quando corrotte. Per capire qual'è l'immagine che causa il problema basta decommentare il rigo di sotto e lanciare lo script
+			//print $code.'<br>';
 			$ratio=imagesx($im)/imagesy($im);
 			$xx=73;
 			$yy=0;
