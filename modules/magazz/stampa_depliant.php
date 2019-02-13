@@ -246,10 +246,16 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $price = $row['prezzo'];
     }
     if ($row['codcat'] <> $ctrl_cm) {
-        if ($pdf->GetY() > 250) {
-            $pdf->AddPage();
-        }
-        $pdf->printGroupItem($row['codcat'], $row['descat'], $row['imacat'], $row['linkcat']);
+		if (!isset($_GET['jumpcat'])){
+			if ($pdf->GetY() > 250) {
+				$pdf->AddPage();
+			}
+		} else {
+			if ($ctrl_cm > 0) {
+				$pdf->AddPage();
+			}
+		}
+		$pdf->printGroupItem($row['codcat'], $row['descat'], $row['imacat'], $row['linkcat']);
     }
     if (!empty($row['imaart']) || !empty($row['barcod'])) {
         if ($pdf->GetY() > 235 && $pdf->GetX() > 90) {
