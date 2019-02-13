@@ -28,24 +28,23 @@ $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['az
 if (isset($_POST['conferma'])) { // se confermato
 	
     // scrittura ordini su database di GAzie
-	
-	$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
-    $result = gaz_dbi_query($query);
-    $row = $result->fetch_assoc();
-    $id_tesbro = $row['Auto_increment']; // trovo l'ID che avrà TESBRO: testata documento/ordine
-	
-	$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
-    $result = gaz_dbi_query($query);
-    $row = $result->fetch_assoc();
-    $id_anagra = $row['Auto_increment']; // trovo l'ID che avrà ANAGRA: Anagrafica cliente
-	
-	$anagrafica = new Anagrafica(); 
-    $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
-    $codice = substr($last[0]['codice'], 3) + 1;
-	$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// trovo il codice di CLFOCO da connettere all'anagrafica cliente	se cliente inesistente
-	    
 	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e scrivo i database
 	
+		$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
+		$result = gaz_dbi_query($query);
+		$row = $result->fetch_assoc();
+		$id_tesbro = $row['Auto_increment']; // trovo l'ID che avrà TESBRO: testata documento/ordine
+	
+		$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
+		$result = gaz_dbi_query($query);
+		$row = $result->fetch_assoc();
+		$id_anagra = $row['Auto_increment']; // trovo l'ID che avrà ANAGRA: Anagrafica cliente
+	
+		$anagrafica = new Anagrafica(); 
+		$last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
+		$codice = substr($last[0]['codice'], 3) + 1;
+		$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// trovo il codice di CLFOCO da connettere all'anagrafica cliente	se cliente inesistente
+	    	
 		$listin=$_POST['numlist'.$ord];
 		$listinome=$_POST['numlistnome'.$ord];
 		$includevat=$_POST['includevat'.$ord];
