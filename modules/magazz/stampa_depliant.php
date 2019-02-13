@@ -106,7 +106,7 @@ class Depliant extends Report_template {
 			} else { // immagine che non entra per altezza
 				$w=25*$ratio; // e diminuisco la larghezza con il ratio
 				$h=25; // impongo l'altezza
-				$xx=83-$w/2; // faccio il padding orizzontale
+				$xx=93-($w/2)*2; // faccio il padding orizzontale
 			}
             $this->Image('@'.$image,$x+$xx,$y+$yy,$w, $h,'',$link,'R',false,'300','',false,false,'R',false);
             $this->Cell(93, 5, $code, 'LTR', 2, 'L', 0, '', 1);
@@ -124,7 +124,7 @@ class Depliant extends Report_template {
                 $un = '';
             }
             $this->Cell(93, 5, $price . ' ' . $admin_aziend['symbol'] . '/' . $um . ' ' . $vat . ' ' . $un, 'LR', 2);
-            $this->Cell(73, 5, $note, 'LB', 0, 'R');
+            $this->Cell(73, 5, $note, 'LB', 0, 'L',0,'',1);
             $this->Cell(20, 5, '', 'BR', $lf, 'R');
         } elseif (!empty($barcode)) {
             if ($x > 20) {
