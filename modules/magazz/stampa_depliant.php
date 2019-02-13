@@ -262,7 +262,15 @@ while ($row = gaz_dbi_fetch_array($result)) {
             $pdf->printItem($row['codart'], $row['desart'], $price, $row['unimis'], $row['units'], $row['annart'], $row['imaart'], substr($row['barcod'], 0, 13), $row['linkart'], $vat);
         }
     } else {
-        $pdf->printItem($row['codart'], $row['desart'], $price, $row['unimis'], $row['units'], $row['annart'], $row['imaart'], substr($row['barcod'], 0, 13), $row['linkart'], $vat);
+		if ($pdf->GetY() > 235 && $pdf->GetX() > 90) {
+			$pdf->printItem($row['codart'], $row['desart'], $price, $row['unimis'], $row['units'], $row['annart'], $row['imaart'], substr($row['barcod'], 0, 13), $row['linkart'], $vat);
+			$pdf->AddPage();
+		} elseif ($pdf->GetY() > 235) {
+			$pdf->printItem($row['codart'], $row['desart'], $price, $row['unimis'], $row['units'], $row['annart'], $row['imaart'], substr($row['barcod'], 0, 13), $row['linkart'], $vat);
+			$pdf->AddPage();
+		} else {
+			$pdf->printItem($row['codart'], $row['desart'], $price, $row['unimis'], $row['units'], $row['annart'], $row['imaart'], substr($row['barcod'], 0, 13), $row['linkart'], $vat);
+		}
     }
     $ctrl_cm = $row['codcat'];
 }
