@@ -53,38 +53,38 @@ function tryBase64Decode($s)
 	return $s;
 }
 
-
-function removeSignature($string, $filename) {
-	$start_xml = strpos($string, '<?xml ');
+function removeSignature($s)
+{
+	$start_xml = strpos($s, '<?xml ');
 	if ($start_xml !== FALSE) {
-		$string = substr($string, $start_xml);
-    } else {
-		$start_xml = strpos($string, '<?xml-stylesheet ');
+		$s = substr($s, $start_xml);
+	} else {
+		$start_xml = strpos($s, '<?xml-stylesheet ');
 		if ($start_xml !== FALSE) {
-			$string = substr($string, $start_xml);
+			$s = substr($s, $start_xml);
 		}
-    }
-    preg_match_all('/<\/.+?>/', $string, $matches, PREG_OFFSET_CAPTURE);
-    $lastMatch = end($matches[0]);
+	}
+	preg_match_all('/<\/.+?>/', $s, $matches, PREG_OFFSET_CAPTURE);
+	$lastMatch = end($matches[0]);
 	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
 	$f_end = $lastMatch[1]+strlen($lastMatch[0]);
-    $string = substr($string, 0, $f_end);
+	$s = substr($s, 0, $f_end);
 	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
-	$string = preg_replace ('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $string);
-	$string = preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
-	$string = preg_replace ('/[\x{0004}]{1}[\s\S]{1}/i', '', $string);
-	$string = preg_replace ('/[\x{0003}]{1}[\s\S]{1}/i', '', $string);
-	//$string = preg_replace ('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $string); // per eliminare tag finale
-	return $string;
+	$s = preg_replace('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $s);
+	$s = preg_replace('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $s);
+	$s = preg_replace('/[\x{0004}]{1}[\s\S]{1}/i', '', $s);
+	$s = preg_replace('/[\x{0003}]{1}[\s\S]{1}/i', '', $s);
+	//$s = preg_replace('/[\x{0004}]{1}[A-Za-z]{1}/i', '', $s); // per eliminare tag finale
+	return $s;
 }
 
-function recoverCorruptedXML($string) {
-
+function recoverCorruptedXML($s)
+{
 	libxml_use_internal_errors(true);
-	$xml = @simplexml_load_string($string);
+	$xml = @simplexml_load_string($s);
 	$errors = libxml_get_errors();
 	if (!empty($errors) && is_array($errors) && count($errors)>0) {
-		$lines = explode("\n", $string);
+		$lines = explode("\n", $s);
 		foreach ($errors as $error) {
 			if (strpos($error->message, 'Opening and ending tag mismatch')!==false) {
 				$tag   = trim(preg_replace('/Opening and ending tag mismatch: (.*) line.*/', '$1', $error->message));
@@ -95,9 +95,8 @@ function recoverCorruptedXML($string) {
 		libxml_clear_errors();
 		return implode("\n", $lines);
 	} else {
-		return $string;
+		return $s;
 	}
-
 }
 
 function getLastProtocol($type, $year, $sezione) {  
@@ -253,7 +252,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 		$p7mContent = @file_get_contents($file_name);
 		$p7mContent = tryBase64Decode($p7mContent);
-		$invoiceContent = removeSignature($p7mContent,$file_name);
+		$invoiceContent = removeSignature($p7mContent);
 		$doc = new DOMDocument;
 		$doc->preserveWhiteSpace = false;
 		$doc->formatOutput = true;
