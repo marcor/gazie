@@ -97,10 +97,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
 }
 
-
-
-
-
 //controllo i campi
 if (!checkdate( $form['this_date_M'],$form['this_date_D'],$form['this_date_Y'])) {
     $msg .='0+';
@@ -125,7 +121,8 @@ if (isset($_POST['print']) && $msg=='') {
                                      'af'=>$form['art_fin'],
                                      'ci'=>$form['cm_ini'],
                                      'cf'=>$form['cm_fin'],
-                                     'ds'=>date("dmY",$utsexe)
+                                     'ds'=>date("dmY",$utsexe),
+									 'jumpcat'=>$_POST['jumpcat']
                                      );
     header("Location: sent_print.php");
     exit;
@@ -174,7 +171,8 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['barcode']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->variousSelect('barcode',$script_transl['barcode_value'],$form['barcode'],'FacetSelect',false);
-echo "\t </td>\n";
+
+echo ' '.$script_transl['jumpcat'].' <input type="checkbox" name="jumpcat" ></td>';
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cm_ini']."</td><td  class=\"FacetDataTD\">\n";

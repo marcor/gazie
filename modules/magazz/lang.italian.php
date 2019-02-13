@@ -271,6 +271,7 @@ $strScript = array("browse_document.php" =>
         'cm_fin' => 'Categoria merceologica fine ',
         'art_fin' => 'Articolo fine ',
         'barcode' => 'Stampa',
+		'jumpcat' => 'Cambio pagina al cambio categoria',
         'barcode_value' => array(0 => 'Immagini', 1 => 'Codici a Barre'),
         'listino' => 'Listino',
         'listino_value' => array(1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 4 => ' di Vendita 4', 'web' => ' di Vendita Online')

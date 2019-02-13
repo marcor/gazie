@@ -246,7 +246,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $price = $row['prezzo'];
     }
     if ($row['codcat'] <> $ctrl_cm) {
-		if (!isset($_GET['jumpcat'])){
+		if ($_GET['jumpcat']!="on"){
 			if ($pdf->GetY() > 250) {
 				$pdf->AddPage();
 			}
