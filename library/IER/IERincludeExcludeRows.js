@@ -9,10 +9,11 @@ $(document).ready(function(){
 	//$("head").append('<link rel="stylesheet" href="../IERincludeExcludeRows.css">');
 	$("head").append('<link rel="stylesheet" href="../../library/IER/IERincludeExcludeRows.css">');
 
-  clearIncludeExcludeRows();
+	clearIncludeExcludeRows();
 	writeExcludeRows();
 
 	$("#IERsaveIncludeExcludeRows").css("display","none");
+	$("#IERresetIncludeExcludeRows").css("display","none");
 
 	IERisModified = 1;
 });
@@ -26,6 +27,10 @@ function setExcludeRows(){
 
 	IERisModified = 0;
 	$("#IERsaveIncludeExcludeRows").removeClass("excluded");
+	$("#IERresetIncludeExcludeRows").removeClass("active");
+
+	if(listRowsAll.length > 0)
+		$("#IERresetIncludeExcludeRows").addClass("active");
 
 	for (m = 0; m < listRowsAll.length; ++m) {
 		//u =listRowsAll[m].replace(/(?:\r\n\|\r|\n)/g,"");
@@ -109,6 +114,19 @@ function writeExcludeRows(){
 	//read the array from file
 	listIERA = readIncludeExcludeRowsArray();
 
+	if(listIERA.length > 0 && listIERA[0].replace(" ", "") != "")
+	{
+		$("#IERenableIncludeExcludeRows").addClass("IERmodified");
+		$("#IERresetIncludeExcludeRows").addClass("IERenabled");
+		$("#IERresetIncludeExcludeRows").on("click",function(){resetIncludeExcludeRows()});
+	}
+	else
+	{
+		$("#IERenableIncludeExcludeRows").removeClass("IERmodified");
+		$("#IERresetIncludeExcludeRows").removeClass("IERenabled");
+		$("#IERresetIncludeExcludeRows").off("click");
+	}
+
 	for (i = 0; i < listIERA.length; ++i){
 		//u = "#"+listIERA[i].replace(/(?:\r\n|\r|\n)/g,"");
     u = "#"+listIERA[i];
@@ -136,11 +154,15 @@ function enableIncludeExcludeRows(){
 		}
 
 		writeExcludeRows();
+
 		$("#IERsaveIncludeExcludeRows").css("display","none");
+		$("#IERresetIncludeExcludeRows").css("display","none");
 
 		clearIncludeExcludeRows();
 		writeExcludeRows();
+
 		$("#IERsaveIncludeExcludeRows").css("display","none");
+		$("#IERresetIncludeExcludeRows").css("display","none");
 	}
 	else
 	{
@@ -156,6 +178,7 @@ function enableIncludeExcludeRows(){
 		$("#IERenableIncludeExcludeRows").attr('title','Esci da personalizzazione');
 
 		$("#IERsaveIncludeExcludeRows").css("display","block");
+		$("#IERresetIncludeExcludeRows").css("display","block");
 
 		setExcludeRows();
 	}
@@ -233,4 +256,18 @@ function includeExcludeRow(id) {
 		$("#iEbtn"+id).removeClass("excluded");
 	else
 		$("#iEbtn"+id).addClass("excluded");
+
+		if($(".IERincludeExcludeBTN.excluded").length > 0) {
+			$("#IERresetIncludeExcludeRows").addClass("IERenabled");
+			$("#IERresetIncludeExcludeRows").on("click",function(){resetIncludeExcludeRows()});
+		} else {
+			$("#IERresetIncludeExcludeRows").removeClass("IERenabled");
+			$("#IERresetIncludeExcludeRows").off("click");
+		}
+}
+
+function resetIncludeExcludeRows() {
+	clearIncludeExcludeRows();
+	writeIncludeExcludeRows();
+	includeExcludeRow("");
 }

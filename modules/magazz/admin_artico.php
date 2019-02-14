@@ -380,7 +380,11 @@ if ($modal_ok_insert === true) {
     		<script type="text/javascript" src="../../library/IER/IERincludeExcludeRows.js"></script>
 
     		<input type="hidden" id="IERincludeExcludeRowsInput" name="IERincludeExcludeRowsInput" />
-    		<div id="IERenableIncludeExcludeRows" title="Personalizza videata" onclick="enableIncludeExcludeRows()"></div><div id="IERsaveIncludeExcludeRows" title="Nessuna modifica fatta" onclick="saveIncludeExcludeRows()"></div>
+
+        <div id="IERenableIncludeExcludeRows" title="Personalizza videata" onclick="enableIncludeExcludeRows()"></div>
+  			<a target="_blank" href="../wiki/099 - Interfaccia generale/99.. Personalizzare una form a run-time (lato utente).md"><div id="IERhelpIncludeExcludeRows" title="Aiuto"></div></a>
+  			<div id="IERsaveIncludeExcludeRows" title="Nessuna modifica fatta" onclick="saveIncludeExcludeRows()"></div>
+      	<div id="IERresetIncludeExcludeRows" title="Ripristina"></div>
         <!--- DC - 06/02/2019 -->
     		<?php
         if ($toDo == 'insert') {

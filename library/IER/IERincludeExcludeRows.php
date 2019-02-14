@@ -14,8 +14,13 @@ if (!$isAjax) {
     trigger_error($user_error, E_USER_ERROR);
 }
 
+// check file exists
 if($_POST["fn"] == "read" && !file_exists($_POST["filename"]))
   return;
+
+// check filesize (important for unix based OS)
+if($_POST["fn"] == "read" && filesize($_POST["filename"])==0)
+    return;
 
 if($_POST["fn"] == "read" && $_POST["filename"] !="")
 {
