@@ -763,11 +763,12 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'], 2, '.', ''));
                     $el->appendChild($el1);
-                    if ($rigo['ritenuta'] > 0) {
+                    if (abs($rigo['ritenuta']) > 0.00001) {
                         $el1 = $domDoc->createElement("Ritenuta", 'SI');
                         $el->appendChild($el1);
                     }
-                    if ($rigo['pervat'] <= 0) {
+                    if (abs($rigo['pervat']) < 0.01) {
+						$last_natura = $rigo['natura'];
                         $el1 = $domDoc->createElement("Natura", $rigo['natura']);
                         $el->appendChild($el1);
                     }
@@ -843,11 +844,12 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'], 2, '.', ''));
                     $el->appendChild($el1);
-                    if ($rigo['ritenuta'] > 0) {
+                    if (abs($rigo['ritenuta']) > 0.00001) {
                         $el1 = $domDoc->createElement("Ritenuta", 'SI');
                         $el->appendChild($el1);
                     }
-                    if ($rigo['pervat'] <= 0) {
+                    if (abs($rigo['pervat']) < 0.01) {
+						$last_natura = $rigo['natura'];
                         $el1 = $domDoc->createElement("Natura", $rigo['natura']);
                         $el->appendChild($el1);
                     }
@@ -1012,6 +1014,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("AliquotaIVA", number_format($last_pervat, 2, '.', ''));
         $el->appendChild($el1);
+		if (abs($last_pervat) < 0.01) {
+			$el1 = $domDoc->createElement("Natura", $last_natura);
+			$el->appendChild($el1);
+		}
         $results->appendChild($el);
         $n_linea++;
 	}
