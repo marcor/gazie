@@ -23,72 +23,43 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
-
-use \Database\Database;
+namespace Database;
 
 /**
- * Class call all subproject and configuration
+ * Class for getting result 
+ * from a select of table
  *
  */
-class GAzie {
-
-	private static $instance = null;
-
-	private $_database;
+class Result  {
 	
-	private $_config;
+	private $_driver;
 
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
+	public function __construct( $result ) {
+		if ( ! is_array($result) )
+			$this->_rows = [];
+		else
+			$this->_rows = $result;
+	}
+
+	public function driver( MysqlResult $result) {
+		$this->_driver = $result;
 	}
 
 	/**
-	 * Return configuration of GAzie
+	 * Return number of rows
 	 *
-	 * @return \GAzie\Config
 	 */
-	public function getConfig() {
-		return $this->_config;
+	public function count() {
+		return  $this->_driver->count();
 	}
 
-	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
-	 */
-	public function getDatabase() {
-		return $this->_database;
+	public function asArray() {
+		return $this->_driver->asArray();
 	}
 
-
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
+	public function asObject() {
+		return $this->_driver->asObject();
 	}
-
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
-                }
-                return self::$instance;
-        }
 
 }
 
-?>

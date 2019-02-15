@@ -23,72 +23,38 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
+namespace Database\ORM;
 
-use \Database\Database;
 
 /**
- * Class call all subproject and configuration
+ *  Class for creation query
+ *  from databasae
  *
  */
-class GAzie {
+class Update extends Query {
 
-	private static $instance = null;
-
-	private $_database;
+	private $_where;
 	
-	private $_config;
+	public function write() {
+		if ( empty( $this->getColumns() ) || ! $this->getColumns() )
+			return '';
 
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
-	}
-
-	/**
-	 * Return configuration of GAzie
-	 *
-	 * @return \GAzie\Config
-	 */
-	public function getConfig() {
-		return $this->_config;
-	}
-
-	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
-	 */
-	public function getDatabase() {
-		return $this->_database;
-	}
-
-
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
-	}
-
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
+		if ( ! $this->getTable() )
+			return '';
+	   
+		foreach( $this->getColumns() as $k => $v ) {
+                        $f[] = "`$k` = '".$this->escape($v)."'";
                 }
-                return self::$instance;
+                $query = "UPDATE `".$this->getTable()."` SET  " . implode(',',$f);
+                if ( $this->_where )
+                        $query .= " WHERE $this->_where";
+                return $query;
+	
+	}
+    
+	public function where( $where ) {
+                $this->_where = $where;
         }
 
 }
 
-?>

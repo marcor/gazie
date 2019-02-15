@@ -23,27 +23,17 @@
   --------------------------------------------------------------------------
  */
 
-namespace Syncro;
-
-if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
-    exit('Accesso diretto non consentito');
-}
+namespace GAzie;
 
 
 // Classe indirizzo sincronizzazione
-class SyncronizeOc extends \Database\TableMysqli {
-	private $id;
-	private $table_oc;
-	private $table_gz;
-	private $id_oc;
-	private $id_gz;
-	private $date_created;
-	private $date_updated;
+class SyncronizeOc extends \Database\Table {
 
-	public function __construct( ) {
+	public function __construct( $id=NULL) {
 		parent::__construct('syncronize_oc');
+		$this->load($id);
 	}
-
+/*
 	public function getId( ) {
 		return $this->id;
 	}
@@ -79,7 +69,7 @@ class SyncronizeOc extends \Database\TableMysqli {
 	public function setDateUpdate( $date_upd ) {
 		$this->date_updated=$date_upd;
 	}
-
+ */
 	public function setData( $table_oc, $table_gz, $id_oc, $id_gz ) {
 		$this->table_oc = $table_oc;
 		$this->table_gz = $table_gz;
@@ -96,29 +86,15 @@ class SyncronizeOc extends \Database\TableMysqli {
 		$this->date_updated = date('Y-m-d H:i:s'); 
 	}
 
-	public function save() {
-		$values = array(
-			'id'		=>	$this->getId(),
-			'table_oc'	=>	$this->getTableOc(),
-			'table_gz'	=>	$this->getTableGz(),
-			'id_oc'		=>	$this->getIdOc(),
-			'id_gz'		=>	$this->getIdGz(),
-			'date_created'	=>	$this->getDateCreated(),
-			'date_update'	=>	$this->getDateUpdate(),
-		);
-		$this->setValues($values);
-	 	return	parent::save();			
-	}
-
 	public function getFromOc( $table_oc, $id_oc ) {
-		$query = new \Database\Query( $this->getTableName() );
 		$where = "`table_oc` = '$table_oc' AND `id_oc` = $id_oc";
 		$order_by = '`id_oc` DESC';
-		$query->createSelect( NULL, $where, $order_by );
-		$rs = $query->execute();
-		if ( count($rs) !== 1 ) {
-		//	$q= new \Database\Query( $this->getTableName() );
-		//	$q->create
+		$sql = $this->query->select()
+			->from( $this->getTableName() )
+			->where( $where )
+			->orderby($order_by); 
+		$rs = $this->execute($sql);
+		if ( $rs->count() !== 1 ) {
 			return false;
 		}
 		foreach ($rs as $r) {

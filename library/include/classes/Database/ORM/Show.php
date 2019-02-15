@@ -23,72 +23,37 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
+namespace Database\ORM;
 
-use \Database\Database;
 
 /**
- * Class call all subproject and configuration
+ *  Class for creation query
+ *  from databasae
  *
  */
-class GAzie {
+class Show extends Query {
 
-	private static $instance = null;
+	private $_type_show;
 
-	private $_database;
-	
-	private $_config;
-
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
+	public function columns($table) {
+		$this->_type_show = 'columns';
+		$this->from($table);
+		return $this;
 	}
 
-	/**
-	 * Return configuration of GAzie
-	 *
-	 * @return \GAzie\Config
-	 */
-	public function getConfig() {
-		return $this->_config;
+	public function write() {
+		switch ( $this->_type_show ) {
+			case 'columns':
+				if ( ! $this->getTable() )
+					return '';
+	       
+				$query = "SHOW COLUMNS FROM " . $this->getTable();
+				break;
+			default:
+				$query = NULL;
+				break;
+		}
+		return $query;	
 	}
-
-	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
-	 */
-	public function getDatabase() {
-		return $this->_database;
-	}
-
-
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
-	}
-
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
-                }
-                return self::$instance;
-        }
-
 }
 
-?>

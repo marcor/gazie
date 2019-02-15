@@ -23,72 +23,74 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
+namespace Database;
 
-use \Database\Database;
 
 /**
- * Class call all subproject and configuration
- *
+ *  Class DB for call query 
  */
-class GAzie {
+class Database {
 
-	private static $instance = null;
+	private static $instance = null;	
 
-	private $_database;
+	private $driver;
 	
-	private $_config;
-
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
+	/**
+	 * 
+	 */
+	public function __construct( array $config, $driver ) {
+		switch ( $driver ) {
+			case "mysqli":
+				$this->driver = new \Database\Driver\Mysqli\Mysqli( $config['host'], $config['user'], $config['password'], $config['database'], $config['port'] );
+				break;
+			default:
+				die( 'Not defined driver database');
+		}
 	}
 
 	/**
-	 * Return configuration of GAzie
-	 *
-	 * @return \GAzie\Config
+	 * Creation query
 	 */
-	public function getConfig() {
-		return $this->_config;
+	public function query() {
+		return new \Database\ORM\DB($this->driver);
+	}	
+
+	/**
+	 * Execute query
+	 *
+	 * @return \Database\Result or Boolean 
+	 */
+	public function execute( \Database\ORM\QueryInterface $query ) {
+		return $this->driver->query( $query->write() );
+	}
+
+	
+	public function table($name) {
+	
 	}
 
 	/**
-	 * Return database class
+	 * Return lastInsertId
 	 *
-	 * @return \Database\Database
+	 * @return Integer
 	 */
-	public function getDatabase() {
-		return $this->_database;
+	public function lastInsertId( ) {
+		return $this->driver->lastInsertId( );
 	}
 
-
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
-	}
-
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
+	public static function connect( $host, $user, $password, $dbname, $port, $driver = 'mysqli' ) {
+		$config = [
+			'host'	=>	$host,
+			'user'	=>	$user,
+			'password'	=>	$password,
+			'database'	=>	$dbname,
+			'port'		=>	$port,
+		];
                 if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
+                        self::$instance = new Database($config, $driver);
                 }
                 return self::$instance;
         }
 
 }
 
-?>

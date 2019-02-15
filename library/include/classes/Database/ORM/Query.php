@@ -23,72 +23,60 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
+namespace Database\ORM;
 
-use \Database\Database;
+use \Database\Driver\Driver;
 
 /**
- * Class call all subproject and configuration
+ *  Class for creation query
+ *  from databasae
  *
  */
-class GAzie {
+abstract class Query implements QueryInterface {
 
-	private static $instance = null;
+	private $_driver;
+	private $_table;
+	private $_columns;
 
-	private $_database;
-	
-	private $_config;
-
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
+	public function __construct( Driver $driver, $table=NULL, $columns = NULL ) {
+		$this->_driver = $driver;
+		$this->_table = $table;
+		$this->columns( $columns);
 	}
 
-	/**
-	 * Return configuration of GAzie
-	 *
-	 * @return \GAzie\Config
-	 */
-	public function getConfig() {
-		return $this->_config;
+	public function setDriver( \Database\Driver\Driver $driver ) {
+		$this->_driver = $driver;
 	}
 
-	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
-	 */
-	public function getDatabase() {
-		return $this->_database;
+	public function escape( $str ) {
+		if ( ! $str )
+			return;
+		return $this->_driver->escape($str);
 	}
 
-
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
+	public function getTable() {
+		return $this->_table;
 	}
 
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
-                }
-                return self::$instance;
-        }
+	public function from($table) {
+		$this->_table = $table;
+		return $this;
+	}
 
+	public function columns( $columns ) {
+		if ( is_array($columns) )
+			$this->_columns = $columns;
+		return $this;
+	}
+
+	public function getColumns( ) {
+		return $this->_columns;
+	}
+
+	abstract function write();
+
+	public function __toString() {
+		return $this->write();
+	}
 }
 
-?>

@@ -23,72 +23,45 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
-
-use \Database\Database;
+namespace Database\ORM;
 
 /**
- * Class call all subproject and configuration
- *
+ * Class for getting result 
  */
-class GAzie {
-
-	private static $instance = null;
-
-	private $_database;
+class Result  {
 	
-	private $_config;
+	private $_data;
 
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
+	public function __construct( $result ) {
+		$this->_data = $result;
 	}
 
 	/**
-	 * Return configuration of GAzie
+	 * Return number of rows
 	 *
-	 * @return \GAzie\Config
 	 */
-	public function getConfig() {
-		return $this->_config;
+	public function count() {
+		return count( $this->_rows );
+	}
+
+	public function asArray() {
+		return $this->_rows;
+	}
+
+	public function asObject() {
+		$result = [];
+		foreach( $this->_rows as $row ) {
+			$result[] = (object) $row;
+		} 
+		return $result;
 	}
 
 	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
+	 * Export rows into
 	 */
-	public function getDatabase() {
-		return $this->_database;
+	public function export( object $object) {
+		
+
 	}
-
-
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
-	}
-
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
-                }
-                return self::$instance;
-        }
-
 }
 
-?>

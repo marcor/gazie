@@ -23,72 +23,20 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
+namespace Database\ORM;
 
-use \Database\Database;
 
 /**
- * Class call all subproject and configuration
- *
+ *  Interface Query
  */
-class GAzie {
-
-	private static $instance = null;
-
-	private $_database;
-	
-	private $_config;
-
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
-	}
+interface QueryInterface {
 
 	/**
-	 * Return configuration of GAzie
-	 *
-	 * @return \GAzie\Config
-	 */
-	public function getConfig() {
-		return $this->_config;
-	}
-
-	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
-	 */
-	public function getDatabase() {
-		return $this->_database;
-	}
-
-
-	/**
-	 * Return version of GAzie
+	 * Write a query
 	 *
 	 * @return string
 	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
-	}
-
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
-                }
-                return self::$instance;
-        }
+	public function write();
 
 }
 
-?>

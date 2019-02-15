@@ -23,72 +23,30 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
+namespace Database\ORM;
 
-use \Database\Database;
 
 /**
- * Class call all subproject and configuration
+ *  Class for creation query
+ *  INSERT
  *
  */
-class GAzie {
+class Insert extends Query {
 
-	private static $instance = null;
+	public function write() {
+		if ( empty( $this->getColumns() ) || ! $this->getColumns() )
+			return '';
 
-	private $_database;
+		if ( ! $this->getTable() )
+			return '';
 	
-	private $_config;
-
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
-	}
-
-	/**
-	 * Return configuration of GAzie
-	 *
-	 * @return \GAzie\Config
-	 */
-	public function getConfig() {
-		return $this->_config;
-	}
-
-	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
-	 */
-	public function getDatabase() {
-		return $this->_database;
-	}
-
-
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
-	}
-
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
+		foreach( $this->getColumns() as $k=>$v ) {
+                        $fields[] = "`$k`";
+                        $vs[$k] = "'".$this->escape($v)."'";
                 }
-                return self::$instance;
-        }
+                $query = "INSERT INTO `".$this->getTable()."` ( " . implode(',',$fields) . " ) VALUES ( " . implode(',',$vs) . " );";
+                return $query;
+	}
 
 }
 
-?>

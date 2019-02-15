@@ -53,7 +53,8 @@ if ( $sync ) {
 		$customer->setApi ( $api );		
 		$customer->getById( $id_oc );
 		$result_syncronize = GAzie\Anagra::syncCustomer($customer);
-	        if ( !$result_syncronize ) {
+		if ( !$result_syncronize ) {
+			
 			$errors->setError("Errore! Anagrafica inserita o con problemi di inserimento");
 		} else {
 			// Inserisco il risultato
@@ -84,14 +85,15 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 
 // Ottengo la lista dei clienti Opencart
-$anagrs = GAzie\Anagra::getAll();
+$anagra = new \GAzie\Anagra();
+$anagrs = $anagra->getAll();
 ?>
 <div class="container">
   <div class="row">
 	<?= $errors; ?> 
    <div class="col-sm-6">
     <div class="row center">
-    Lista Anagrafiche ( Totali = <?= count($anagrs) ?> )
+    Lista Anagrafiche ( Totali = <?= $anagrs->count() ?> )
     </div>
     <table class="table table-striped Tmiddle">
       <tr>
@@ -101,13 +103,13 @@ $anagrs = GAzie\Anagra::getAll();
         <th>Codice Fiscale</th>
         <th>Partita IVA</th>
       </tr>	
-<?php foreach( $anagrs as $a ) { ?>
+<?php foreach( $anagrs->asObject() as $a ) { ?>
       <tr>
-        <td><?= $a->getId(); ?></td>
-	<td><a href="../../modules/vendit/admin_client.php?codice=<?= $a->getId() ?>&Update" target="_blank"><?= $a->getRagso1(); ?></a></td>
-        <td><?= $a->getAddress(); ?></td>
-        <td><?= $a->getCodfis(); ?></td>
-        <td><?= $a->getParIva(); ?></td>
+        <td><?= $a->id; ?></td>
+	<td><a href="../../modules/vendit/admin_client.php?codice=<?= $a->id ?>&Update" target="_blank"><?= $a->ragso1; ?></a></td>
+        <td><?= $a->indspe . " " . $a->capspe; ?></td>
+        <td><?= $a->codfis; ?></td>
+        <td><?= $a->pariva; ?></td>
       </tr>	
 <?php } ?>
     </table>

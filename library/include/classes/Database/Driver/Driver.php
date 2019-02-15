@@ -23,72 +23,39 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
+namespace Database\Driver;
 
-use \Database\Database;
 
-/**
- * Class call all subproject and configuration
- *
- */
-class GAzie {
-
-	private static $instance = null;
-
-	private $_database;
+interface Driver {
 	
-	private $_config;
-
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
-	}
+	public function connect( $host, $user, $password, $dbname, $port );
 
 	/**
-	 * Return configuration of GAzie
-	 *
-	 * @return \GAzie\Config
+	 * Execute a query
 	 */
-	public function getConfig() {
-		return $this->_config;
-	}
+	public function query( $sql );
 
 	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
+	 * Return a result of a query
 	 */
-	public function getDatabase() {
-		return $this->_database;
-	}
-
+	public function result( );
 
 	/**
-	 * Return version of GAzie
+	 * Retun Last id Insert
+	 *
+	 * @return int
+	 */
+	public function lastInsertId();
+
+	public function escape(string $str);
+
+	/**
+	 * Return last error
 	 *
 	 * @return string
 	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
-	}
+	public function error();
 
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
-                }
-                return self::$instance;
-        }
-
+	public function close();
 }
 
-?>

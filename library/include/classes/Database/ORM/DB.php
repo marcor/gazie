@@ -23,72 +23,38 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
+namespace Database\ORM;
 
-use \Database\Database;
 
 /**
- * Class call all subproject and configuration
- *
+ *  Class DB for call query 
  */
-class GAzie {
+class DB {
 
-	private static $instance = null;
+	private $_driver;	
 
-	private $_database;
-	
-	private $_config;
-
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
+	public function __construct( \Database\Driver\Driver $driver ) {
+		$this->_driver = $driver;
 	}
 
-	/**
-	 * Return configuration of GAzie
-	 *
-	 * @return \GAzie\Config
-	 */
-	public function getConfig() {
-		return $this->_config;
+	public function select($table=NULL,$columns=NULL) {
+		return new Select($this->_driver , $table, $columns);
 	}
 
-	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
-	 */
-	public function getDatabase() {
-		return $this->_database;
+	public function delete($table=NULL,$where=NULL) {
+		return new Delete($this->_driver , $table );
 	}
 
-
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
+	public function insert($table=NULL,$columns=NULL) {
+		return new Insert( $this->_driver, $table, $columns);
 	}
 
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
-                }
-                return self::$instance;
-        }
+	public function update($table=NULL,$columns=NULL) {
+		return new Update($this->_driver, $table, $columns);
+	}
 
+	public function show() {
+		return new Show( $this->_driver  );
+	}
 }
 
-?>

@@ -23,72 +23,44 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
+namespace Database\Driver\Mysqli;
 
-use \Database\Database;
-
-/**
- * Class call all subproject and configuration
- *
- */
-class GAzie {
-
-	private static $instance = null;
-
-	private $_database;
+// Classe anagrafiche sincronizzazione
+class Result  {
 	
-	private $_config;
+	private $_resource;
 
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
+	public function __construct( $rs ) {
+		$this->_resource = $rs;
 	}
 
 	/**
-	 * Return configuration of GAzie
+	 * Return number of rows
 	 *
-	 * @return \GAzie\Config
 	 */
-	public function getConfig() {
-		return $this->_config;
-	}
-
-	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
-	 */
-	public function getDatabase() {
-		return $this->_database;
+	public function count() {
+		return mysqli_num_rows( $this->_resource );
 	}
 
 
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
+	public function asArray() {
+		$result = [];
+		while ($obj = mysqli_fetch_array($this->_resource, MYSQLI_ASSOC)) {
+			$result[]=$obj;
+		}
+		return $result;
 	}
 
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
-                }
-                return self::$instance;
-        }
+	public function asObject() {
+		$result = [];
+		while ($obj = mysqli_fetch_object($this->_resource)) {
+    			$result[]=$obj;
+		}
+		return $result;
+	}
 
+	public function free() {
+		 mysqli_free_result($this->_resource);
+	}
 }
 
-?>

@@ -25,82 +25,30 @@
 
 namespace GAzie;
 
+use \GAzie\Azienda\Config as AziendaConfig;
+
 /**
  * Class for manage azienda table
- *
  */
-class Azienda extends \Database\TableMysqli {
+class Azienda extends \Database\Table {
 	
 	public function __construct( $id = NULL ) {
 		parent::__construct('aziend');
-		if ( $id )
-			$this->load( $id );
+		$this->load( $id );
 	}
 	
 	/**
-	 * Update or add 
-	 */
-	public function add() {
-		// Control exist
-		
-		// Insert or Update
-	}
-	
-	/**
-	 * Save anagr or update
-	 */
-	public function save() {
-		return parent::save();
-	}
-
-	/**
-	 * Return anagr by id
+	 * Return the config of company
 	 *
+	 * @return GAzie\Azienda\Config
 	 */
-	public static function getById( $id ) {
-	  if ( $r = gaz_dbi_fetch_array($rs) ) {
-		$anagr = new Anagra($r['ragso1'], $r['sexper'],$r['codfis'],$r['pariva']);
-		$anagr->setId($r['id']);
-	  	$anagr->setSedleg($r['sedleg']);
-		$anagr->setLegrap($r['legrap_pf_nome']);
-		$anagr->setNascita($r['datnas'],$r['luonas'],$r['luonas'],$r['pronas'],$r['counas']);
-		$anagr->setAddress($r['indspe'],$r['capspe'],$r['citspe'],$r['prospe']);
-		$anagr->setCountry($r['country']);
-		$anagr->setIdCurrency($r['id_currency']);
-		$anagr->setIdLanguage($r['id_language']);
-		$anagr->setCoordinate($r['latitude'],$r['longitude']);
-		$anagr->setTelefono($r['telef']);
-		$anagr->setFax($r['fax']);
-		$anagr->setCell($r['cell']);
-		$anagr->setFeCodUnivoco($r['fe_cod_univoco']);
-		$anagr->setEmail($r['email']);
-		$anagr->setEmailPec($r['pec_email']);
-		$anagr->setFattureByEmail($r['fatt_email']);
-	  	return $anagr;
-	  } else {
-		return false;
-	  }
-	}
-
-	/**
-	 * Getting all
-	 *
-	 * @return array of Syncro\Anagr
-	 */
-	public static function getAll() {
-	}
-
-	public function setCodice( $id ) {
-		$this->set('codice', $id);
-	}
-
-	public function getCodice() {
-		return $this->get('codice');
+	public function getConfig() {
+		return new AziendaConfig();
 	}
 
 	public function exist() {
 		// Controllo se esiste l'azioneda
-		$query = new \Database\Query( $this->getTableName() );
+		$query = $this->getQuery();
 		$where = "`codice` = '" . $this->getCodice() . "'";  
 		$query->createSelect( NULL, $where );
 		$result = $query->execute(); 

@@ -31,26 +31,19 @@ namespace Database;
  *  from databasae
  *
  */
-class Query  {
+class Query {
 	
 	private $_table;
 	private $_columns;
+	private $_pk;
 	private $_type; // SELECT, INSERT, UPDATE, DELETE	
 	private $_query;
 
-	public function __construct( $table ) {
+	public function __construct( $table, array $columns, $pk ) {
 		$this->_query = '';
-	  #	global $gTables;
-	#	if ( !isset( $gTables[$table] ) )
-	#		die ("La tabella '$table' non esiste");
 		$this->_table = $table;
-		$rs = gaz_dbi_query( "SHOW COLUMNS FROM " . $this->_table );
-		while ( $row=gaz_dbi_fetch_array($rs)) {
-			$this->_columns[$row[0]] = [
-				'name'=>$row[0],
-				'type'=>$row['Type']
-			];
-		}
+		$this->_columns = $columns;
+		$this->_pk = $pk;
 	}
 
 	public function getTable() {

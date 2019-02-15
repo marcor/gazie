@@ -23,72 +23,40 @@
   --------------------------------------------------------------------------
  */
 
-namespace GAzie;
-
-use \Database\Database;
+namespace GAzie\Azienda;
 
 /**
- * Class call all subproject and configuration
- *
+ * Class for manage azienda table
  */
-class GAzie {
+class Config extends \Database\Table {
 
-	private static $instance = null;
-
-	private $_database;
+	public function __construct( $id = NULL ) {
+		parent::__construct('company_config');
+		$this->load( $id );
+	}
 	
-	private $_config;
-
-	public function __construct() {
-		$this->_config = Config::factory();
-		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
-                        $config['user'],
-                        $config['password'],
-                        $config['dbname'],
-                        $config['port']);
-	}
-
 	/**
-	 * Return configuration of GAzie
+	 * Getting variable into config
 	 *
-	 * @return \GAzie\Config
 	 */
-	public function getConfig() {
-		return $this->_config;
+	public function getVar(string $var) {
+		$sql = $this->query->select()
+			->from( $this->getTableName() )
+		 	->where("`var`='$var'");
+		$result = $sql->execute($sql);
+		if ( count($result) == 1 ) {
+			$this->importResult( $result );
+		}
 	}
+	
 
-	/**
-	 * Return database class
-	 *
-	 * @return \Database\Database
-	 */
-	public function getDatabase() {
-		return $this->_database;
+	public function exist() {
+		// Controllo se esiste l'azioneda
+		$sql = $this->query->select()
+			->from( $this->getTableName() )
+			->where(  "`codice` = '" . $this->getCodice() . "'");  
+		return  $this->execute($sql)->count() > 0;
 	}
-
-
-	/**
-	 * Return version of GAzie
-	 *
-	 * @return string
-	 */
-	public function getVersion() {
-		return $this->getConfig()->get('GAZIE_VERSION');
-	}
-
-	/**
-	 * Return GAzie class
-	 *
-	 * @return \GAzie\GAzie
-	 */
-	public static function factory() {
-                if (  self::$instance == null ) {
-                        self::$instance = new GAzie();
-                }
-                return self::$instance;
-        }
 
 }
 
-?>

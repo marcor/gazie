@@ -40,10 +40,10 @@ class Config {
 	       
 		$this->setConfigFile("../../config/config/gconfig.php");
 		$this->setTabelle();
-		$this->set('path_root', PATH_ROOT);
+		$this->set('path_root', PATH_ROOT );
 		$this->setDirectories( PATH_ROOT );
 		
-		$tmp = json_decode($json_data,TRUE);
+		$tmp = json_decode($json_data, TRUE);
                 $data = gaz_dbi_get_row( $this->getTabelle('company_config'), 'var', 'syncronize_oc');
                 if ( ! $data ) {
                         $json_data = json_encode(array(
@@ -55,7 +55,7 @@ class Config {
                 } else {
                         $json_data = $data['val'];
                 }
-		$tmp = json_decode($json_data,TRUE);
+		$tmp = json_decode($json_data, TRUE);
                 $this->data['username'] = $tmp['user'];
                 $this->data['password'] = $tmp['pass'];
 		$this->data['url'] = $tmp['url'];
@@ -247,7 +247,7 @@ class Config {
 			if ( isset($tbs[$table]) )
 				return  $tbs[$table];
 			else
-				die( "Table $table nnot exist");
+				die( "Table $table not exist");
 	}
 
 	/**
