@@ -614,12 +614,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$msg['err'][] = "63";
         }
         if (count($msg['err']) < 1) {// nessun errore
+		
             $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['mascli'], $form['pagame']);
             }
             if ($toDo == 'update') { // e' una modifica
+				/*
 				if (strlen($form['delmovmag'])>1){ // Antonio Germani - se ci sono dei movimenti di magazzino da cancellare
 					$delmovmag=explode ("-",$form['delmovmag']);
 					print_r($delmovmag);
@@ -628,6 +630,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						gaz_dbi_query($query);
 					}		
 				}
+				*/
 			
                 $old_rows = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $form['id_tes'], "id_rig asc");
                 $i = 0;
@@ -652,10 +655,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         }
                     } else { //altrimenti lo elimino
 					
-						// questo cancellava erroneamente il movmag dell'ultimo rigo
-                     /*   if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
+                        if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
                             $upd_mm->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
-                        } */
+                        } 
                         if (intval($val_old_row['id_body_text']) > 0) {  //se c'è un testo allegato al rigo elimino anch'esso
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
