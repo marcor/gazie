@@ -109,8 +109,8 @@ if ($configurazione['cvalue']) {
 
 $file = isset($_FILES['file']) ? $_FILES['file'] : [];
 $upgrade = new \GAzie\Upgrade;
+$deleted_folder = \GAzie\GAzie::factory()->getConfig()->getDirectories();
 $success = $upgrade->zip($file);
-
 ?>
 <br><br><br>
 <div class="container text-center">
@@ -148,7 +148,8 @@ Esci e rientra nella nuova versione! <a href="../../modules/root/logout.php">Log
 </div>
 <script>
 function showAlertBackup() {
-   return confirm("Verifica Backup Database e File di Configurazione!");
+	alert('Saranno cancellate le cartelle:\n <?= implode($deleted_folder,'\n'); ?>');
+	return confirm("Verifica Backup Database e File di Configurazione!");
 }
 </script>
 <div class="col-md-4"></div>
