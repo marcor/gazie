@@ -2343,11 +2343,15 @@ foreach ($form['rows'] as $k => $v) {
 					echo '<div><button class="btn btn-xs btn-danger" title="Disponibilità non sufficiente"';
 				}
 				echo 'type="image"  data-toggle="collapse" href="#lm_dialog' . $k . '">'
-                . 'lot:' . $selected_lot['id']
-                . ' id:' . $selected_lot['identifier']
-                . ' doc:' . $selected_lot['desdoc']
-                . ' - ' . gaz_format_date($selected_lot['datdoc']) . ' <i class="glyphicon glyphicon-tag"></i>
-				  - disponibili: ' . gaz_format_quantity($count[$selected_lot['identifier']]) . 
+                . $selected_lot['id']
+                . '- lotto: ' . $selected_lot['identifier'];
+				if (intval ($selected_lot['expiry'])>0) {
+					echo ' scad:' . gaz_format_date($selected_lot['expiry']);
+				}
+				echo ' - disponibili: ' . gaz_format_quantity($count[$selected_lot['identifier']])
+				. ' <i class="glyphicon glyphicon-tag"></i>'
+				. ' rif:' . $selected_lot['desdoc']
+                . ' - ' . gaz_format_date($selected_lot['datdoc']) .
 				'</button>';
                 if ($v['id_mag'] > 0) {
                     echo ' <a class="btn btn-xs btn-default" href="lotmag_print_cert.php?id_movmag=' . $v['id_mag'] . '" target="_blank"><i class="glyphicon glyphicon-print"></i></a>';
@@ -2364,12 +2368,14 @@ foreach ($form['rows'] as $k => $v) {
 								echo '<div>change to:<button class="btn btn-xs btn-danger" title="Q.tà non sufficiente" type="image"';
 							}
 							echo 'onclick="this.form.submit();" name="new_lotmag[' . $k . '][' . $v_lm['id_lotmag'] . ']">'
-                            . 'lot:' . $v_lm['id']
-                            . ' id:' . $v_lm['identifier']
-                            . ' doc:' . $v_lm['desdoc']
+                            . $v_lm['id']
+                            . '- lotto: ' . $v_lm['identifier'];
+							if (intval ($v_lm['expiry'])>0) {
+								echo ' scad:' . gaz_format_date($v_lm['expiry']);
+							}
+                            echo ' disponibili:' . gaz_format_quantity($count[$v_lm['identifier']]).'<i class="glyphicon glyphicon-tag"></i> rif:' . $v_lm['desdoc']
                             . ' - ' . gaz_format_date($v_lm['datdoc'])
-							. ' disponibili:' . gaz_format_quantity($count[$v_lm['identifier']]).
-							'</button></div>';
+							. '</button></div>';
                         }
                     }
                 } else {
