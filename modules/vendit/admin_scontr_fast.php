@@ -382,7 +382,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     header("Location: invsta_docven.php");
                     exit;
                 } else {
-					header("Location: admin_scontr_fast.php?tipdoc=VCO&Insert");//M1 modificato a mano
+					header("Location: admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=".$_GET['Prezzo_IVA']);//M1 modificato a mano
                     //header("Location: report_scontr.php");
                     exit;
                 }
@@ -938,7 +938,7 @@ maniglia.form.submit();
                     <div class="form-group">
                         <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
                         <div class="col-sm-8">
-                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, 'col-sm-8'); ?>
+                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 5, 'col-sm-8'); ?>
                         </div>
                     </div>
                 </div>
