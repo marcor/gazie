@@ -148,8 +148,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	} else {
 		$form['in_barcode']="";
 	}
-	
-	$form['delmovmag']=$_POST['delmovmag'];	
     $form['id_tes'] = $_POST['id_tes'];
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($_POST['clfoco']);
@@ -621,21 +619,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['mascli'], $form['pagame']);
             }
             if ($toDo == 'update') { // e' una modifica
-				/*
-				if (strlen($form['delmovmag'])>1){ // Antonio Germani - se ci sono dei movimenti di magazzino da cancellare
-					$delmovmag=explode ("-",$form['delmovmag']);
-					print_r($delmovmag);
-					foreach ($delmovmag as $id_mag){
-						$query = "DELETE FROM ". $gTables['movmag'] ." WHERE id_mov = '".$id_mag."'";
-						gaz_dbi_query($query);
-					}		
-				}
-				*/
-			
                 $old_rows = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $form['id_tes'], "id_rig asc");
                 $i = 0;
                 $count = count($form['rows']) - 1;
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
+					// per evitare problemi qualora siano stati modificati i righi o comunque cambiati di ordine elimino sempre il vecchio movimento di magazzino e sotto ne inserisco un altro attenendomi a questo
+                    if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
+                        $upd_mm->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
+                    } 
                     if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
 					
                         $form['rows'][$i]['id_tes'] = $form['id_tes'];
@@ -651,13 +642,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
                         if ($form['rows'][$i]['id_mag'] > 0) { //se il rigo ha un movimento di magazzino associato
-                            $upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							if ( $tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210 ) {    
+								$upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							}
                         }
                     } else { //altrimenti lo elimino
 					
-                        if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
-                            $upd_mm->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
-                        } 
                         if (intval($val_old_row['id_body_text']) > 0) {  //se c'è un testo allegato al rigo elimino anch'esso
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
@@ -1478,10 +1468,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // Se viene inviata la richiesta elimina il rigo corrispondente
     if (isset($_POST['del'])) {
         $delri = key($_POST['del']);
-		
-		if (intval($form['rows'][$delri]['id_mag'])>0 && $toDo=="update"){// Antonio Germani - se c'è e se siamo in update, memorizzo l'id_mag del rigo cancellato
-			$form['delmovmag']=$form['delmovmag'].$form['rows'][$delri]['id_mag']."-"; 
-		}
         unset($form["RiferimentoNumeroLinea"][$delri+1]);
         // sottrazione ai totali peso,pezzi,volume
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$delri]['codart']);
@@ -1551,7 +1537,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		}
 		
 } elseif (((!isset($_POST['Update'])) and ( isset($_GET['Update']))) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
-	$form['delmovmag']=""; // Antonio Germani - variabile per memorizzare id_mag degli eventuali righi cancellati
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
     $form['id_tes'] = intval($_GET['id_tes']);
@@ -1725,7 +1710,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['mintra'] = date("i");
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
-	$form['delmovmag']="";
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
     $form['tipdoc'] = '';
@@ -1907,8 +1891,6 @@ if (count($msg['war']) > 0) { // ho un alert-danger
 }
 echo '<form method="POST" name="docven">';
 echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
-	<input type="hidden" value="' . $form['delmovmag'] . '" name="delmovmag" />
-	
 	<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
 	<input type="hidden" value="' . $form['seziva'] . '" name="seziva" />
 	<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />
