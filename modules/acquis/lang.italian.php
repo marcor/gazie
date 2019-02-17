@@ -524,6 +524,10 @@ $strScript = array("admin_fornit.php" =>
         'entry_date' => 'Data di registrazione',
         'expiry_ini' => 'Data di scadenza iniziale',
         'expiry_fin' => 'Data di scadenza finale',
+        'orderby' => 'Ordina per: ',
+        'orderby_value' => array(0 => 'Scadenza crescente', 1 => 'Scadenza decrescente',
+            2 => 'Importo crescente', 3 => 'Importo decrescente'
+        ),
         'target_account' => 'Conto corrente di addebito',
         'transfer_fees_acc' => 'Conto addebito spese bancarie',
         'transfer_fees' => 'Eventuali spese bancarie',

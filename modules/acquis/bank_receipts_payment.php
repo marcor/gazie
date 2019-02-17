@@ -32,6 +32,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['entry_date'] = date("d/m/Y");
     $form['expiry_ini'] = date("d/m/Y");
     $form['expiry_fin'] = date("t/m/Y");
+    $form['orderby'] = 0;
     $form['target_account'] = 0;
     $form['transfer_fees_acc'] = 0;
     $form['transfer_fees'] = 0.00;
@@ -46,6 +47,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['entry_date'] = substr($_POST['entry_date'], 0, 10);
     $form['expiry_ini'] = substr($_POST['expiry_ini'], 0, 10);
     $form['expiry_fin'] = substr($_POST['expiry_fin'], 0, 10);
+    $form['orderby'] = intval($_POST['orderby']);
     $form['target_account'] = intval($_POST['target_account']);
     $form['transfer_fees'] = floatval($_POST['transfer_fees']);
     $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
@@ -107,7 +109,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 $gForm = new acquisForm();
 ?>
-<SCRIPT type="text/javascript">
+<script type="text/javascript">
     $(function () {
         $("#entry_date,#expiry_ini, #expiry_fin").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#expiry_ini, #expiry_fin").change(function () {
@@ -226,6 +228,16 @@ $gForm = new acquisForm();
             </div><!-- chiude row  -->
         </div> <!-- chiude container -->
     </div><!-- chiude panel -->
+<?php
+echo '	<table class="Tmiddle table table-striped table-bordered table-condensed table-responsive">
+			<tr>
+				<td class="FacetFieldCaptionTD">' . $script_transl['orderby'] . '</td>
+				<td  class="FacetDataTD">';
+$gForm->variousSelect('orderby', $script_transl['orderby_value'], $form['orderby'], 'FacetSelect', 0, 'orderby');
+echo '			</td>
+			</tr>';
+echo '		  </table>';
+?>
     <div class="panel panel-default gaz-table-form">
         <div class="container-fluid">
             <div class="row">
@@ -245,7 +257,20 @@ $gForm = new acquisForm();
             </div><!-- chiude row  -->
             <?php
             $paymov = new Schedule;
-            $rs = gaz_dbi_dyn_query("*", $gTables['paymov'], "expiry BETWEEN '" . gaz_format_date($form['expiry_ini'], true) . "' AND '" . gaz_format_date($form['expiry_fin'], true) . "' AND id_rigmoc_doc >= 1", "amount");
+            switch ($form['orderby']) {
+                case 1:
+                    $orderby = 'expiry DESC';
+                    break;
+                case 2:
+                    $orderby = 'amount ASC';
+                    break;
+                case 3:
+                    $orderby = 'amount DESC';
+                    break;
+                default:
+                    $orderby = 'expiry ASC';
+            }
+            $rs = gaz_dbi_dyn_query("*", $gTables['paymov'], "expiry BETWEEN '" . gaz_format_date($form['expiry_ini'], true) . "' AND '" . gaz_format_date($form['expiry_fin'], true) . "' AND id_rigmoc_doc >= 1", $orderby);
             while ($r = gaz_dbi_fetch_array($rs)) {
                 $doc_data = $paymov->getDocFromID($r['id_rigmoc_doc']);
                 $status = $paymov->getAmount($r['id_tesdoc_ref'], gaz_format_date($form['expiry_fin'], true));
