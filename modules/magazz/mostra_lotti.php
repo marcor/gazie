@@ -36,6 +36,7 @@ $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codi
 
 
 require("../../library/include/header.php"); 
+$script_transl = HeadMain();
 
 if (isset($_POST['close'])){
 	foreach (glob("../../modules/camp/tmp/*") as $fn) {// prima cancello eventuali precedenti file temporanei
