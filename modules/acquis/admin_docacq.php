@@ -435,6 +435,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $i = 0;
                 $count = count($form['rows']) - 1;
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
+					// riprendo il vecchio movimento per non perdere il riferimento al lotto/matricola
+					$old_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $val_old_row['id_mag']);
+					// per evitare problemi qualora siano stati modificati i righi o comunque cambiati di ordine elimino sempre il vecchio movimento di magazzino e sotto ne inserisco un altro attenendomi a questo
+                    if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
+                        $magazz->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
+                    } 
                     if ($form['tipdoc'] == 'AFA' || $form['tipdoc'] == 'AFC') { // su fatture immediate e note credito metto il numero documento ugale al numero fatture
                         $form['numdoc'] = $form['numfat'];
                     }
@@ -459,8 +465,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
 							}								
 							
-							// riprendo il vecchio movimento per non perdere il riferimento al lotto/matricola
-							$old_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $val_old_row['id_mag']);
 							
 							$check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE identifier = '" . $form['rows'][$i]['identifier'] . "' AND codart = '".$form['rows'][$i]['codart']."'");// vedo se il lotto inserito nel form è nuovo o esiste già
 							if ($check_lot->num_rows > 0){ // se esiste già
@@ -485,7 +489,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 									}
 								}
 							}
-							if (intval($old_movmag['id_lotmag']) == 0 and $toDo=="update" ) {// se siamo in update e il lotto  non esiste nel movimento di magazzino vuol dire che questo movimento è stato creato forzando l'inserimento senza lotto. Questo si verifica acquistando con FaE.
+							if (intval($old_movmag['id_lotmag']) == 0 and $toDo=="update" ) {// se siamo in update e il lotto  non esisteva nel movimento di magazzino vuol dire che questo movimento è stato creato forzando l'inserimento senza lotto. Questo si verifica acquistando con FaE.
 								$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
 								unset($check_lot);
 								$check_lot = gaz_dbi_query($query);
@@ -493,11 +497,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il nuovo lotto
 								gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $val_old_row['id_mag']. "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");		
 							}
-								
 							
-							
-// se il rigo ha un movimento di magazzino associato lo aggiorno
-                            $magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag);
 // aggiorno pure i documenti relativi ai lotti
                             $old_lm = gaz_dbi_get_row($gTables['lotmag'], 'id', $id_lotmag);
                             if ($old_lm && substr($form['rows'][$i]['filename'], 0, 7) <> 'lotmag_') {
@@ -519,6 +519,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                                 rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . '.' . $fn['extension']);
                             }
                         }
+					// reinserisco il movimento magazzino associato lo aggiorno
+                        $magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag);
                     } else { //altrimenti lo elimino
                         if ($val_old_row['id_mag'] > 0) {  //se c'è stato un movimento di magazzino lo azzero
                             $magazz->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
@@ -530,13 +532,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                    rigdocInsert($form['rows'][$i]);
-                    $last_rigdoc_id = gaz_dbi_last_id();
+                    $last_rigdoc_id =rigdocInsert($form['rows'][$i]);
                     if ($admin_aziend['conmag'] == 2 &&
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] == 0 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $last_movmag_id = $magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']
+                        $last_movmag_id = $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']
                         );
                     }
 // se l'articolo prevede la gestione dei  lotti o della matricola/numero seriale creo un rigo in lotmag 
