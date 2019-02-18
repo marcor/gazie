@@ -583,14 +583,16 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         if ($ctrl_tot_A == 0) {
             $msg .= "4+";
         }
-        if ($_POST['registroiva'] > 0 && $ctrl_mov_iva == 0) {
-            $msg .= "5+";
-        }
 		$ctrl_mov_con += $ctrl_ritenute;
-        if ($_POST['registroiva'] > 0 && !((abs($ctrl_mov_iva-$ctrl_mov_con)/$ctrl_mov_con) < 0.00001)) {
-			print $ctrl_mov_iva . ' ' . $ctrl_mov_con . '<br><hr>';
-            $msg .= "6+";
-        }
+		if (abs($ctrl_mov_con)>=0.01){ // controlli solo in caso di totale imputabile a fornitore/cliente
+          if ($_POST['registroiva'] > 0 && $ctrl_mov_iva == 0) {
+              $msg .= "5+";
+          }
+          if ($_POST['registroiva'] > 0 && !((abs($ctrl_mov_iva-$ctrl_mov_con)/$ctrl_mov_con) < 0.00001)) {
+				print $ctrl_mov_iva . ' ' . $ctrl_mov_con . '<br><hr>';
+              $msg .= "6+";
+          }
+		}
         if (empty($_POST['descrizion'])) {
             $msg .= "7+";
         }

@@ -2140,6 +2140,7 @@ class Compute {
             if (abs($total_imp) >= 0.01) { // per evitare il divide by zero in caso di imponibile 0
                 foreach ($vat_castle as $k => $v) {   // riattraverso l'array del castelletto
                     // per aggiungere proporzionalmente (ventilazione)
+
                     $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
                     $new_castle[$k]['codiva'] = $vat['codice'];
                     $new_castle[$k]['periva'] = $vat['aliquo'];
@@ -2160,6 +2161,7 @@ class Compute {
                     if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza aliquota ed � soggetto a bolli
                         $this->total_exc_with_duty += $new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                     }
+					if(isset($v['impneg'])){$new_castle[$k]['impneg']=$v['impneg'];}
                     $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
                     if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment 
                         $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
@@ -2187,6 +2189,10 @@ class Compute {
                     $new_castle[$k]['imponi'] = $v['impcast'];
                     $new_castle[$k]['ivacast'] = round(($v['impcast'] * $vat['aliquo']) / 100, 2);
                 }
+				if (isset($v['impneg'])){
+					$new_castle[$k]['impneg']=$v['impneg'];
+					$new_castle[$k]['ivaneg']=$v['ivaneg'];
+				}
                 if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza IVA ed � soggetto a bolli
                     $this->total_exc_with_duty += $new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }

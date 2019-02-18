@@ -164,15 +164,27 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                     $cast_vat[$r['codvat']]['ivacast'] = 0;
                     $cast_vat[$r['codvat']]['periva'] = $r['pervat'];
                     $cast_vat[$r['codvat']]['tipiva'] = $r['tipiva'];
+                    $cast_vat[$r['codvat']]['impneg'] = 0;
+                    $cast_vat[$r['codvat']]['ivaneg'] = 0;
                 }
-                $cast_vat[$r['codvat']]['impcast'] += $importo;
-                $cast_vat[$r['codvat']]['ivacast'] += round(($importo * $r['pervat']) / 100, 2);
+                if ($importo<0.00) {
+                    $cast_vat[$r['codvat']]['impneg'] += $importo;
+                    $cast_vat[$r['codvat']]['ivaneg'] += round(($importo * $r['pervat']) / 100, 2);
+				} else {
+					$cast_vat[$r['codvat']]['impcast'] += $importo;
+					$cast_vat[$r['codvat']]['ivacast'] += round(($importo * $r['pervat']) / 100, 2);
+				}
                 $totimpdoc += $importo;
                 //creo il castelletto conti
                 if (!isset($cast_acc[$r['codric']]['import'])) {
                     $cast_acc[$r['codric']]['import'] = 0;
+                    $cast_acc[$r['codric']]['accneg'] = 0;
                 }
-                $cast_acc[$r['codric']]['import'] += $importo;
+                if ($importo<0.00) {
+                    $cast_acc[$r['codric']]['accneg'] += $importo;
+				} else {
+					$cast_acc[$r['codric']]['import'] += $importo;
+				}
                 if ($r['tiprig'] == 90) { // se è una vendita cespite lo indico sull'array dei conti
                     $cast_acc[$r['codric']]['asset'] = 1;
                 }
@@ -193,6 +205,9 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
         $calc->add_value_to_VAT_castle($cast_vat, $somma_spese, $tes['expense_vat']);
         $doc[$tes['protoc']]['vat'] = $calc->castle;
+		print_r($doc[$tes['protoc']]['vat']);
+		// riaggiungo i valori negativi
+		
         $ctrlp = $tes['protoc'];
     }
     if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || (!empty($taxstamp) && $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
@@ -213,8 +228,8 @@ function computeTot($data) {
     $tax = 0;
     $vat = 0;
     foreach ($data as $k => $v) {
-        $tax += $v['impcast'];
-        $vat += round($v['impcast'] * $v['periva']) / 100;
+        $tax += $v['impcast']+$v['impneg'];
+        $vat += round(($v['impcast']+$v['impneg']) * $v['periva']) / 100;
     }
     $tot = $vat + $tax;
     return array('taxable' => $tax, 'vat' => $vat, 'tot' => $tot);
@@ -371,12 +386,20 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     $vv['id_tes'] = $tes_id;
                     $vv['impost'] = round($vv['impcast'] * $vv['periva']) / 100;
                     rigmoiInsert($vv);
+					// se ho un valore negativo sulla stessa aliquota creo uno storno
+					if ($vv['impneg']<0.00){
+						$vv['impost'] = round($vv['impneg'] * $vv['periva']) / 100;
+						$vv['imponi'] = $vv['impneg'];
+						rigmoiInsert($vv);
+					}
                 }
                 //inserisco i righi contabili nel db
                 if ($v['tes']['tipdoc'] == 'VCO') {  // se è uno scontrino cassa anzichè cliente
                     $v['tes']['clfoco'] = $admin_aziend['cassa_'];
                 }
-                rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
+				if (abs($tot['tot'])>=0.01){
+					rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon' =>$v['tes']['clfoco'],'import' =>($tot['tot'] - $v['rit'])));
+				}
                 // memorizzo l'id del rigo cliente  
                 $paymov_id = gaz_dbi_last_id();
                 foreach ($v['acc'] as $acc_k => $acc_v) {
@@ -420,6 +443,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                             gaz_dbi_table_insert('assets', $asset);
                         } else {
                             rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $acc_k, 'import' => $acc_v['import']));
+							if ($acc_v['accneg']<0.00){ // ho dei righi negativi riferiti allo stesso conto
+								rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $acc_k, 'import' => -$acc_v['accneg']));
+							}
                         }
                     }
                 }

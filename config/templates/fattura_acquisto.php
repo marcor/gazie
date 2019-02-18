@@ -35,22 +35,20 @@ class FatturaAcquisto extends Template
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->trasporto = $this->tesdoc['traspo'];
         if ($this->tesdoc['tipdoc'] == 'ADT') {
-            $descri='Ricevuto DdT d\'acquisto n.'.$this->tesdoc['numdoc'];
-			$this->tesdoc['datfat']=$this->tesdoc['datemi'];
+            $descri='Ricev.DdT d\'acquisto n.'.$this->tesdoc['numdoc'].' del '.gaz_format_date($this->tesdoc['datemi']);
         } elseif ($this->tesdoc['tipdoc'] == 'AFA') {
-            $descri='Ricevuta Fattura d\'acquisto n.'.$this->tesdoc['numfat'];
+            $descri='Ricev.Fatt. d\'acquisto n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
         } elseif ($this->tesdoc['tipdoc'] == 'AFC') {
-            $descri='Ricevuta Nota di credito n.'.$this->tesdoc['numfat'];
+            $descri='Ricev.Nota di credito n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
         } elseif ($this->tesdoc['tipdoc'] == 'AFD') {
-            $descri='Ricevuta Nota di debito n.'.$this->tesdoc['numfat'];
+            $descri='Ricev.Nota di debito n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
         } else {
             $descri='** documento sconosciuto **';
         }
         $this->giorno = substr($this->tesdoc['datfat'],8,2);
         $this->mese = substr($this->tesdoc['datfat'],5,2);
         $this->anno = substr($this->tesdoc['datfat'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
-        $this->tipdoc=$descri.'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+        $this->tipdoc=$descri;
 		$this->pers_title='Ricevuto da: ';
     }
 
