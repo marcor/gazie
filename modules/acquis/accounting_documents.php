@@ -205,9 +205,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
         $calc->add_value_to_VAT_castle($cast_vat, $somma_spese, $tes['expense_vat']);
         $doc[$tes['protoc']]['vat'] = $calc->castle;
-		print_r($doc[$tes['protoc']]['vat']);
-		// riaggiungo i valori negativi
-		
+		//print_r($doc[$tes['protoc']]['vat']);
         $ctrlp = $tes['protoc'];
     }
     if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || (!empty($taxstamp) && $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
@@ -397,8 +395,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 if ($v['tes']['tipdoc'] == 'VCO') {  // se è uno scontrino cassa anzichè cliente
                     $v['tes']['clfoco'] = $admin_aziend['cassa_'];
                 }
-				if (abs($tot['tot'])>=0.01){
+				if ($tot['tot']>=0.01){
 					rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon' =>$v['tes']['clfoco'],'import' =>($tot['tot'] - $v['rit'])));
+				} elseif ($tot['tot']<=-0.01) {
+					rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon' =>$v['tes']['clfoco'],'import' =>(-$tot['tot'] + $v['rit'])));
 				}
                 // memorizzo l'id del rigo cliente  
                 $paymov_id = gaz_dbi_last_id();
@@ -449,9 +449,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         }
                     }
                 }
-                if ($tot['vat'] > 0) {
+                if ($tot['vat']>=0.01) {
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $kac, 'import' => $tot['vat']));
-                }
+                } elseif ($tot['vat']<=-0.01) {
+                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $kac, 'import' => -$tot['vat']));
+				}
                 if ($v['rit'] > 0) {  // se ho una ritenuta d'acconto
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $krit, 'import' => $v['rit']));
                 }

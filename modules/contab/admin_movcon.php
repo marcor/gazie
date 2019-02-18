@@ -573,7 +573,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             $_POST['impost_ri'][$i] = preg_replace("/\,/", '.', $_POST['impost_ri'][$i]);
             $ctrl_mov_iva += $_POST['imponi_ri'][$i] + $_POST['impost_ri'][$i];
         }
-        $ctrl_mov_iva = round($ctrl_mov_iva, 2);
+        $ctrl_mov_iva = round(abs($ctrl_mov_iva), 2);
         if ($ctrl_bal != 0) {
             $msg .= "2+";
         }
