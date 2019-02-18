@@ -28,7 +28,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package');
 
-if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_SDI') {
+if (!empty($send_fae_zip_package['val']) ) {
 	$where1 = " id_SDI!=0 AND (flux_status = '@' OR flux_status = '@@') ";
 	$risultati = gaz_dbi_dyn_query("*", $gTables['fae_flux'], $where1);
 	if (!$risultati) {
@@ -65,6 +65,8 @@ if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_S
 	echo '<p align="center"><a href="./report_fae_sdi.php">Ritorna a report Fatture elettroniche</a></p>';
 	exit();
 }
+
+// controllo su PEC SDI
 
 require_once('../../library/php-imap/ImapMailbox.php');
 
@@ -160,7 +162,7 @@ foreach($mailsIds as $mailId) {
   $nome_info=explode( '_', $nome_file_ret );
   if ($mittente != $cmailSDI['val'] )
   {
-    // non proviene da PEC SDI: non la considero e riprendo il ciclo
+    // non proviene da PEC SDI: non la considero elimino gli allegati, segno la mail come non letta  e riprendo il ciclo
     foreach ($ccc as $allegato)  {
       $bbb = $allegato ;
       $nome_file_ret = $bbb->name;
@@ -170,31 +172,18 @@ foreach($mailsIds as $mailId) {
     continue ;
   }
   if ($nome_info[0] != $identif_iva_az_lavoro) {
-    // trattasi di fattura di nostro fornitore
+    // trattasi di fattura di nostro fornitore: avrà 2 allegati uno la fattura e due
     echo "Arrivata fattura Acquisto di: " . $nome_info[0] . "<br/>";
-    $flag="acq" ;
-    $path = "../../data/files/".$admin_aziend['codice']."/FAE_ACQUISTI" ;
-    if (! is_dir($path)) {
-      if (mkdir($path,0777)) {
-       echo ' Creata cartella ' . $path . ' <br/>';
-      } else {
-       echo ' Non posso creare la cartella ' . $path . ' <br/>';
-       echo ' La fattura è nella cartella ' . CATTACHMENTS_DIR . ' <br/>';
-      }
-    }
-    foreach($ccc as $allegato) {
+		foreach ($ccc as $allegato)  {
       $bbb = $allegato ;
       $nome_file_ret = $bbb->name;
-      if (copy(CATTACHMENTS_DIR.'/'.$nome_file_ret,$path."/".$nome_file_ret)) {
-        echo 'Fattura salvata in ' . $path . ' <br/>';
-        unlink(CATTACHMENTS_DIR.'/'.$nome_file_ret) ;
-      } else {
-        echo ' Non posso spostare ' . $nome_file_ret ." in " . $path . ' <br/>';
-        echo ' La fattura è nella cartella ' . CATTACHMENTS_DIR . ' <br/>';
-      }
+      unlink(CATTACHMENTS_DIR.'/'.$nome_file_ret) ;
     }
-    continue ; //
-  }
+    $mailbox->markMailAsUnread($mailId) ;
+    continue ;
+
+     }
+
   echo "Arrivata Ricevuta: " . $nome_info[2] ." per " . $nome_info[1] . "<br/>";
   $domDoc->load($bbb->filePath);
   $xpath = new DOMXPath($domDoc);
