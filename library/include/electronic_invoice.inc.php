@@ -420,14 +420,14 @@ class invoiceXMLvars {
         $this->totimpfat = $calc->total_imp;
         $this->totivafat = $calc->total_vat;
         // aggiungo gli eventuali bolli al castelletto
-        $chk_taxstamp = true;
+        $this->chk_taxstamp = true;
         if ($this->virtual_taxstamp == 0 || $this->virtual_taxstamp == 3) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
-            $chk_taxstamp = false;
+            $this->chk_taxstamp = false;
         }
-        if ($this->impbol >= 0.01 || ($this->taxstamp >= 0.01 && $chk_taxstamp)) {
+        if ($this->impbol >= 0.01 || ($this->taxstamp >= 0.01 && $this->chk_taxstamp)) {
             $this->impbol += $this->taxstamp;
             $calc->add_value_to_VAT_castle($calc->castle, $this->impbol, $this->azienda['taxstamp_vat']);
-        } elseif (!$chk_taxstamp) { // bollo da non addebitare ma esistente
+        } elseif (!$this->chk_taxstamp) { // bollo da non addebitare ma esistente
             $this->impbol = $this->taxstamp;
         }
         $this->cast = $calc->castle;
@@ -979,8 +979,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $results->appendChild($el);
         $n_linea++;
     }
-    // eventualemente aggiungo i rimborsi per i bolli
-    if ($XMLvars->impbol >= 0.01) {
+    // eventualemente aggiungo i rimborsi per i bolli, ma solo se sono da addebitare
+    if ($XMLvars->impbol >= 0.01 && $this->chk_taxstamp) {
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
         $el = $domDoc->createElement("DettaglioLinee", "");
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
