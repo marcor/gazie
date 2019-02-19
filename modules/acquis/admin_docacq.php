@@ -510,8 +510,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 									}
 									$tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
 // sposto e rinomino il relativo file temporaneo    
-									$fn = pathinfo($form['rows'][$i]['filename']);
-									rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . '.' . $fn['extension']);
+									if ($form['rows'][$i]['filename']){
+										$fn = pathinfo($form['rows'][$i]['filename']);
+										rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . '.' . $fn['extension']);
+									}
 								}
 							} else { // se l'articolo non prevede lotti
 								$id_lotmag=0;
