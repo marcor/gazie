@@ -65,6 +65,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['protocollo'] = $testata['protoc'];
     $form['numdocumen'] = $testata['numdoc'];
     $form['datdoc'] = gaz_format_date($testata['datdoc'], false, true);
+    $form['datliq'] = gaz_format_date($testata['datliq'], false, true);
     $form['cod_partner'] = $testata['clfoco'];
     $form['pay_closure'] = 0;
     $partnersel = $anagrafica->getPartner($form['cod_partner']);
@@ -157,6 +158,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['protocollo'] = $_POST['protocollo'];
     $form['numdocumen'] = $_POST['numdocumen'];
     $form['datdoc'] = substr($_POST['datdoc'], 0, 10);
+    $form['datliq'] = substr($_POST['datliq'], 0, 10);
     $form['cod_partner'] = $_POST['cod_partner'];
     $form['pay_closure'] = $_POST['pay_closure'];
     $partnersel = $anagrafica->getPartner($form['cod_partner']);
@@ -1046,6 +1048,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['protocollo'] = "";
     $form['numdocumen'] = "";
     $form['datdoc'] = date("d/m/Y");
+    $form['datliq'] = $form['datdoc'];
     $form['inserimdoc'] = 0;
     $form['registroiva'] = 0;
     $form['operatore'] = 0;
@@ -1329,6 +1332,7 @@ echo "</script>\n";
 <script type="text/javascript">
     $(function () {
         $("#datdoc").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+        $("#datdoc").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
     });
 </script>
 <form method="POST" name="myform">
@@ -1516,36 +1520,32 @@ echo "</script>\n";
                 </ul>
                 <div class="tab-content col-sm-12 col-md-12 col-lg-12 bg-info">
                     <div id="insdoc" class="tab-pane fade in active">
-                        <div class="col-sm-6 col-md-3 col-lg-3">
-                            <div class="form-group">
-                                <label for="taxable" class="col-sm-6 control-label"><?php echo $script_transl['taxable']; ?></label>
-                                <input class="col-sm-6" type="text" <?php echo $tabimp; ?> placeholder="<?php echo $script_transl['taxable']; ?>" value="<?php echo $form['insert_imponi']; ?>" name="insert_imponi" />
-                            </div>
+						<div class="form-group col-md-6 col-lg-3 nopadding">
+                            <label for="taxable" class="col-sm-6 control-label"><?php echo $script_transl['taxable']; ?></label>
+                            <input class="col-sm-6" type="text" <?php echo $tabimp; ?> placeholder="<?php echo $script_transl['taxable']; ?>" value="<?php echo $form['insert_imponi']; ?>" name="insert_imponi" />
                         </div>
-                        <div class="col-sm-6 col-md-3 col-lg-3">
-                            <div class="form-group">
-                                <label for="insert_codiva" class="col-sm-4 control-label"><?php echo $script_transl['vat']; ?></label>
-                                <div>
-                                    <?php
-                                    $sel_vat = new selectaliiva("insert_codiva");
-                                    $sel_vat->addSelected($form["insert_codiva"]);
-                                    $sel_vat->output("col-sm-8");
-                                    ?>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-5 col-lg-5">
-                            <div class="form-group">
-                                <label for="operation_type" class="col-sm-6 control-label"><?php echo $script_transl['operation_type']; ?></label>
+						<div class="form-group col-md-6 col-lg-2 nopadding">
+                            <label for="insert_codiva" class="col-sm-4 control-label"><?php echo $script_transl['vat']; ?></label>
+                            <div>
                                 <?php
-                                $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type', 'operation_type', $form['operation_type'], true, '', 'col-sm-6');
+                                $sel_vat = new selectaliiva("insert_codiva");
+                                $sel_vat->addSelected($form["insert_codiva"]);
+                                $sel_vat->output("col-sm-8");
                                 ?>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-1 col-lg-1">
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-default btn-sm" name="adi" title="<?php echo $script_transl['addrow']; ?>" <?php echo $tabsmt; ?> ><i class="glyphicon glyphicon-ok"></i></button>
-                            </div>
+						<div class="form-group col-md-6 col-lg-3 nopadding">
+                             <label for="operation_type" class="col-sm-6 control-label"><?php echo $script_transl['operation_type']; ?></label>
+                             <?php
+                             $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type', 'operation_type', $form['operation_type'], true, '', 'col-sm-6');
+                             ?>
+                        </div>
+						<div class="form-group col-md-6 col-lg-3 nopadding">
+							<label for="datliq" class="col-sm-6 col-form-label"><?php echo $script_transl['datliq']; ?></label>
+							<input class="col-sm-6" type="text" id="datliq" name="datliq" value="<?php echo $form['datliq']; ?>">
+                        </div>
+						<div class="form-group col-md-6 col-lg-1 nopadding">
+                             <button type="submit" class="btn btn-default btn-sm" name="adi" title="<?php echo $script_transl['addrow']; ?>" <?php echo $tabsmt; ?> ><i class="glyphicon glyphicon-ok"></i></button>
                         </div>
                     </div>                    
                 </div><!-- chiude tab-pane  -->
@@ -1584,7 +1584,11 @@ echo "</script>\n";
             );
         }
         $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
-    }
+    } else {
+		?>
+        <input type="hidden" name="datliq" value="<?php echo $form['datliq']; ?>" />
+		<?php
+	}
     ?>
     <!--</div><!-- chiude panel  -->
     <?php

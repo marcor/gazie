@@ -497,11 +497,12 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'CMR' => 'cmr'
     );
 	// Antonio Germani - seleziono quale template utilizzare per le ricevute fiscali in base alla configurazione azienda
-	$stampa_ricevute = gaz_dbi_get_row($gTables['company_config'], 'var', 'received_template');
-	if ($stampa_ricevute['val']=="buffetti"){
-		$templates['Received']="received_buffetti";
+	if ($templateName=='Received'){
+		$stampa_ricevute = gaz_dbi_get_row($gTables['company_config'], 'var', 'received_template');
+		if (strlen(trim($stampa_ricevute['val']))>2){
+			$templates['Received']="received_".$stampa_ricevute['val'];
+		}
 	}
-
     $config = new Config;
     $configTemplate = new configTemplate;
     if ($lang_template) {

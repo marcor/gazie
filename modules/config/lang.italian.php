@@ -207,7 +207,9 @@ $strScript = array(
         'interessi' => 'Interessi su IVA Trimestrale',
         'amm_min' => 'Tabella Ammortamenti Ministeriali',
         'fae_tipo_cassa' => 'Tipo Cassa (fatture elettroniche)',
-        'ra_cassa' => 'Ritenuta su cassa previdenziale'		
+        'ra_cassa' => 'Ritenuta su cassa previdenziale',
+        'vat_susp' => 'Tipo di liquidazione IVA',		
+        'vat_susp_value' => array(0=>'Normale',1=> 'Iva per cassa ex art. 32 bis del D.p.r. 83/2012'),
     ),
     "report_aziend.php" =>
     array('title' => 'Lista delle aziende installate',

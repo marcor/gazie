@@ -1219,6 +1219,16 @@ if (count($msg['err']) > 0) { // ho un errore
             </div><!-- chiude row  -->
             <div class="row">
                 <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="vat_susp" class="col-sm-4 control-label"><?php echo $script_transl['vat_susp']; ?></label>
+                        <?php
+                        $gForm->variousSelect('vat_susp', $script_transl['vat_susp_value'], $form['vat_susp'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
                     <div class="form-group text-center">
                         <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
                     </div>

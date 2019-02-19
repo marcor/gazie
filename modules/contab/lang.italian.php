@@ -186,6 +186,7 @@ $strScript = array("select_liqiva.php" =>
         ),
         'id_testata' => 'Numero di movimento',
         'date_reg' => 'Data di registrazione',
+        'datliq' => 'Data liquidazione',
         'descri' => 'Descrizione',
         'caucon' => 'Causale contabile',
         'v_caucon' => 'Conferma la Causale!',
