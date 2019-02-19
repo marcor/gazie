@@ -632,6 +632,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             //formatto le date
             $datareg = $_POST['date_reg_Y'] . "-" . $_POST['date_reg_M'] . "-" . $_POST['date_reg_D'];
             $datadoc = gaz_format_date($form['datdoc'], true);
+            $dataliq = gaz_format_date($form['datliq'], true);
             if ($_POST['inserimdoc'] == 0 and $_POST['registroiva'] == 0) { //se non sono richisti i dati documenti e iva
                 $_POST['sezioneiva'] = 0;
                 $_POST['protocollo'] = 0;
@@ -820,6 +821,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     'descri' => substr($_POST['descrizion'], 0, 100),
                     'notess' => $_POST['notess'],
                     'datreg' => $datareg,
+                    'datliq' => $dataliq,
                     'seziva' => intval($_POST['sezioneiva']),
                     'protoc' => intval($_POST['protocollo']),
                     'numdoc' => substr($_POST['numdocumen'], 0, 20),
@@ -835,6 +837,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     'descri' => substr($_POST['descrizion'], 0, 100),
                     'notess' => $_POST['notess'],
                     'datreg' => $datareg,
+                    'datliq' => $dataliq,
                     'seziva' => intval($_POST['sezioneiva']),
                     'protoc' => intval($_POST['protocollo']),
                     'numdoc' => substr($_POST['numdocumen'], 0, 20),
@@ -872,6 +875,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                             'seziva' => $admin_aziend['reverse_charge_sez'],
                             'numdoc' => substr($_POST['numdocumen'], 0, 20),
                             'datdoc' => $datadoc,
+							'datliq' => $dataliq,
                             'clfoco' => $rc_cli['codice'],
                             'regiva' => 2,
                             'operat' => 1

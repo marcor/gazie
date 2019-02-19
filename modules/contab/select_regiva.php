@@ -42,13 +42,13 @@ function getPage_ini($sez, $reg) {
 function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
     global $gTables, $admin_aziend;
     $m = array();
-    $where = "datreg BETWEEN $date_ini AND $date_fin AND seziva = $vat_section AND regiva = $vat_reg";
+    $where = "(datreg BETWEEN $date_ini AND $date_fin OR datliq BETWEEN $date_ini AND $date_fin) AND seziva = $vat_section AND regiva = $vat_reg";
     $orderby = "datreg, protoc";
-    $rs = gaz_dbi_dyn_query("YEAR(datreg) AS ctrl_sr,
-                      DATE_FORMAT(datdoc,'%d-%m-%Y') AS dd,
-                      DATE_FORMAT(datreg,'%d-%m-%Y') AS dr,
+    $rs = gaz_dbi_dyn_query("YEAR(datreg) AS ctrl_sr,                       
+					  DATE_FORMAT(datliq,'%Y%m%d') AS dl,
+                      DATE_FORMAT(datreg,'%Y%m%d') AS dr,
                       CONCAT(" . $gTables['anagra'] . ".ragso1, ' '," . $gTables['anagra'] . ".ragso2) AS ragsoc,clfoco,codiva,
-                      protoc,numdoc,datreg,caucon,regiva,operat,imponi,impost,periva,
+                      protoc,numdoc,datreg,datliq,datdoc,caucon,regiva,operat,imponi,impost,periva,
                       " . $gTables['tesmov'] . ".descri AS descri,
                       " . $gTables['aliiva'] . ".descri AS desvat,
                       " . $gTables['tesmov'] . ".id_tes AS id_tes,
@@ -286,6 +286,7 @@ echo "</table>\n";
 if (isset($_POST['preview']) and $msg == '') {
     $date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
     $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
+    $date_liq = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
     $m = getMovements($form['vat_section'], $form['vat_reg'], $date_ini, $date_fin);
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     if (sizeof($m) > 0) {
@@ -297,8 +298,17 @@ if (isset($_POST['preview']) and $msg == '') {
         $totimponi = 0.00;
         $totimpost = 0.00;
         $totindetr = 0.00;
+        $totimponi_liq = 0.00;
+        $totimpost_liq = 0.00;
+        $totindetr_liq = 0.00;
         $ctrlmopre = 0;
 		foreach ($m AS $key => $mv) {
+			$class_m='';
+			if ($mv['dl']<$mv['dr']){ // movimenti presi da registrazioni successive, es. fatt. d'acquisto registrate nei 15gg successivi alla fine del mese precedente
+				$class_m='warning';
+			} elseif($mv['dl']>$mv['dr']){ // movimenti provenienti da registrazioni precedenti ma con data di liquidazione nel periodo selezionato,  es. fatture di vendita con la liquidazione in cui vale il principio di cassa
+				$class_m='danger';
+			}
             if ($mv['operat'] == 1) {
                 $imponi = $mv['imponi'];
                 $impost = $mv['impost'];
@@ -314,6 +324,7 @@ if (isset($_POST['preview']) and $msg == '') {
                 $mv['descri'] = '';
             }
             $totimponi += $imponi;
+			
             if ($mv['tipiva'] != 'D' && $mv['tipiva'] != 'T') { // se indetraibili o split payment
                 $totimpost += $impost;
             }
@@ -349,14 +360,23 @@ if (isset($_POST['preview']) and $msg == '') {
                 echo "<td colspan=\"7\" class=\"FacetDataTDred\">" . $script_transl['errors']['T'] . ":&nbsp;</td>";
                 echo "</tr>";
             }
-            echo "<tr>";
-            echo "<td class=\"FacetDataTD$red_p\">" . $mv['protoc'] . " &nbsp;</td>";
-            echo "<td class=\"FacetDataTD\">" . $mv['dr'] . "<br /><a href=\"admin_movcon.php?id_tes=" . $mv['id_tes'] . "&Update\" title=\"Modifica il movimento contabile\">id " . $mv['id_tes'] . "</a> &nbsp;</td>";
-            echo "<td class=\"FacetDataTD$red_d\">" . $mv['descri'] . " n." . $mv['numdoc'] . $script_transl['of'] . $mv['dd'] . " &nbsp;</td>";
-            echo "<td class=\"FacetDataTD\">" . substr($mv['ragsoc'], 0, 30) . " &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($imponi) . " &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD$red_t\">" . $mv['periva'] . " &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($impost) . " &nbsp;</td></tr>";
+            echo '<tr class="'.$class_m.'">';
+            echo "<td align=\"right\" class=\"FacetDataTD$red_p\">" . $mv['protoc'] . " &nbsp;</td>";
+            echo "<td align=\"center\"><a href=\"admin_movcon.php?id_tes=" . $mv['id_tes'] . "&Update\" title=\"Modifica il movimento contabile\">id " . $mv['id_tes'] . "</a><br />" . gaz_format_date($mv['datreg']). "</td>";
+            echo "<td>" . $mv['descri'] . " n." . $mv['numdoc'] . $script_transl['of'] . gaz_format_date($mv['datdoc']) . " &nbsp;</td>";
+            echo "<td>" . substr($mv['ragsoc'], 0, 30) . " &nbsp;</td>";
+            echo "<td align=\"right\">" . gaz_format_number($imponi) . " &nbsp;</td>";
+            echo "<td align=\"center\">" . $mv['periva'] . " &nbsp;</td>";
+            echo "<td align=\"right\">" . gaz_format_number($impost) . " &nbsp;</td>";
+			$liq_val='';
+			if ($mv['dl']<$date_ini){
+				$liq_val='<br>IMPOSTA GIÀ LIQUIDATA'; 					
+			} elseif ($mv['dl']>$date_fin){
+				$liq_val='<br>IMPOSTA DA LIQUIDARE'; 					
+			} else {
+				$liq_val='<br>'.gaz_format_number($impost);
+			}
+            echo "<td align=\"center\">" . substr(gaz_format_date($mv['datliq']),3) . $liq_val." &nbsp;</td>";
             echo "</tr>";
         }
         echo "<tr><td colspan=7><HR></td></tr>";

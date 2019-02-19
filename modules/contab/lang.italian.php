@@ -254,7 +254,7 @@ $strScript = array("select_liqiva.php" =>
             'err' => 'Ci sono degli errori che non giustificano la stampa del registro'
         ),
         'vat_reg' => 'Registro IVA da stampare:',
-        'vat_reg_value' => array(2 => 'Fatture di Vendita', 4 => 'Corrispettivi', 6 => 'Fatture d\'Acquisto'),
+        'vat_reg_value' => array(2 => 'Fatture di Vendita', 4 => 'Corrispettivi', 6 => 'Fatture d\'Acquisto',9=>'Lista dei versamenti'),
         'vat_section' => 'Sezione IVA ',
         'page_ini' => 'N. pagina iniziale',
         'jump' => 'Riepilogo ad ogni salto periodo',
@@ -264,15 +264,13 @@ $strScript = array("select_liqiva.php" =>
         'descri' => 'Descrizione',
         'descri_value' => array('M' => 'del mese di ', 'T' => 'del trimestre '
         ),
-        'date_ini' => 'Data registrazione inizio  ',
+        'date_ini' => 'Data inizio periodo ',
         'sem_ord' => ' Dettaglio ',
         'sem_ord_value' => array(0 => ' Senza conti costi/ricavi ', 1 => ' Con conti costi/ricavi '
         ),
         'cover' => 'Stampa la copertina',
-        'date_fin' => 'Data registrazione fine ',
-        'header' => array('Protocollo' => '', 'Data - ID movimento' => '', 'Descrizione documento' => '', 'Cliente o Fornitore' => '',
-            'Imponibile' => '', 'Aliquota' => '', 'Imposta' => ''
-        ),
+        'date_fin' => 'Data fine periodo ',
+        'header' => array('Protocollo'=>'','ID-Data Reg.'=>'','Descrizione documento'=>'','Cliente/Fornitore'=>'','Imponibile'=>'','Aliquota'=>'','Imposta'=> '','Liquidazione'=>''),
         'of' => ' del ',
         'tot' => ' TOTALE ',
         't_gen' => ' GENERALE'
