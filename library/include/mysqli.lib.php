@@ -842,7 +842,8 @@ function rigcmrUpdate($codice, $newValue) {
 function rigdocInsert($newValue) {
    $table = 'rigdoc';
    $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
-   tableInsert($table, $columns, $newValue);
+   $last_id = tableInsert($table, $columns, $newValue);
+   return $last_id;
 }
 
 function rigdocUpdate($codice, $newValue) {
