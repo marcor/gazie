@@ -980,7 +980,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $n_linea++;
     }
     // eventualemente aggiungo i rimborsi per i bolli, ma solo se sono da addebitare
-    if ($XMLvars->impbol >= 0.01 && $this->chk_taxstamp) {
+    if ($XMLvars->impbol >= 0.01 && $XMLvars->chk_taxstamp) {
 		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
         $el = $domDoc->createElement("DettaglioLinee", "");
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
