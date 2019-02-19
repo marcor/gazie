@@ -203,7 +203,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                             if (!empty($castel_transact[$row['idtes']]['seziva'])) {
                                 $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
                             }
-                        } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
+                        } elseif ($row['regiva'] == 6) {                // ACQUISTI - Fatture Ricevute o Note Ricevute
                             if ($row['operat'] == 1) { // Fattura
                                 $castel_transact[$row['idtes']]['quadro'] = 'FR';
                                 $castel_transact[$row['idtes']]['tipo_documento'] = 'TD01';
@@ -230,7 +230,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                                 if (!empty($castel_transact[$row['idtes']]['seziva'])) {
                                     $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
                                 }
-                            } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
+                            } elseif ($row['regiva'] == 6) {                // ACQUISTI - Fatture Ricevute o Note Ricevute
                                 // nei quadri FR NR è possibile indicare la sola partita iva
                                 $castel_transact[$row['idtes']]['pariva'] = $castel_transact[$row['idtes']]['codfis'];
                                 $castel_transact[$row['idtes']]['codfis'] = 0;
@@ -389,7 +389,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                 $castel_transact[$row['idtes']]['beni'] += $row['imponi']; // bene
             }
             if ($chk_intra == 'EU') { // PARTNER INTRACOMUNITARIO
-                if ($row['regiva'] >= 6 && $row['operat'] == 1)  { // ACQUISTI INTRACOMUNITARIO tipizzo in base alla prevalenza
+                if ($row['regiva'] == 6 && $row['operat'] == 1)  { // ACQUISTI INTRACOMUNITARIO tipizzo in base alla prevalenza
                     if ($castel_transact[$row['idtes']]['servizi'] > $castel_transact[$row['idtes']]['beni']) {
                         // C'è una prevalenza di SERVIZI
                         $castel_transact[$row['idtes']]['tipo_documento'] = 'TD11';
@@ -661,9 +661,9 @@ $gForm = new contabForm();
                                 $quadro = 'DTE';
                                 $ctrl_partner = 0;
                                 foreach ($queryData[0] as $k => $v) {
-                                    if ($v['regiva'] >= 6) {
+                                    if ($v['regiva'] == 6) {
                                         $quadro = 'DTR';
-                                    } else {
+                                    } elseif ($v['regiva'] < 6) {
                                         $quadro = 'DTE';
                                     }
                                     if ($ctrl_quadro != $quadro) { // AL CAMBIO QUADRO STAMPO L'INTESTAZIONE

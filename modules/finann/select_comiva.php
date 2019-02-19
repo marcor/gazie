@@ -223,7 +223,7 @@ if (isset($_POST['Return'])) {
                     $form['attnim'] -= $rs['imponibile'];
                 }
             }
-        } else {                 //registri iva acquisti
+        } elseif ($rs['regiva'] == 6) {                 //registri iva acquisti
             if ($rs['operat'] == 1) {       //in caso di operazione somma su registro
                 $form['totpas'] += $rs['imponibile'];
                 if ($rs['tipiva'] != 'D' || $rs['tipiva'] != 'T') {

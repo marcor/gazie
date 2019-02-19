@@ -56,8 +56,8 @@ if (!empty($_GET['pr'])) {
 
 //recupero tutti i movimenti iva del periodo
 $sqlquery = "SELECT seziva,regiva,codiva,aliquo," . $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
-       SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva > 5)+1)) AS imponibile,
-       SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva > 5)+1)) AS imposta
+       SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva = 6)+1)) AS imponibile,
+       SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva = 6)+1)) AS imposta
        FROM " . $gTables['rigmoi'] . "
        LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
        LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice

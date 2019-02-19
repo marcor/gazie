@@ -137,7 +137,7 @@ class vatBook extends Standard_template {
                         $this->acc_castle[$codcon] = array('value' => 0, 'descri' => '');
                         $this->acc_castle[$codcon]['descri'] = $acc_rows['descri'];
                     }
-                    if (($acc_rows['darave'] == 'A' && $mov['regiva'] > 5) || ($acc_rows['darave'] == 'D' && $mov['regiva'] <= 5)) {
+                    if (($acc_rows['darave'] == 'A' && $mov['regiva'] == 6) || ($acc_rows['darave'] == 'D' && $mov['regiva'] <= 5)) {
                         $this->acc_castle[$codcon]['value'] -= $acc_rows['import'];
                     } else {
                         $this->acc_castle[$codcon]['value'] += $acc_rows['import'];

@@ -345,7 +345,7 @@ function createRowsAndErrors($min_limit) {
                             } else {                // Note
                                 $castel_transact[$row['idtes']]['quadro'] = 'NE';
                             }
-                        } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
+                        } elseif ($row['regiva'] == 6) {                // ACQUISTI - Fatture Ricevute o Note Ricevute
                             if ($row['operat'] == 1) { // Fattura
                                 $castel_transact[$row['idtes']]['quadro'] = 'FR';
                             } else {                // Note
@@ -364,7 +364,7 @@ function createRowsAndErrors($min_limit) {
                                 } else {                // Note
                                     $castel_transact[$row['idtes']]['quadro'] = 'NE';
                                 }
-                            } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
+                            } elseif ($row['regiva'] == 6) {                // ACQUISTI - Fatture Ricevute o Note Ricevute
                                 // nei quadri FR NR è possibile indicare la sola partita iva
                                 $castel_transact[$row['idtes']]['pariva'] = $castel_transact[$row['idtes']]['codfis'];
                                 $castel_transact[$row['idtes']]['codfis'] = 0;

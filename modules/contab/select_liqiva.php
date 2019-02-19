@@ -66,8 +66,8 @@ function getMovements($date_ini,$date_fin)
         $where = "datreg BETWEEN $date_ini AND $date_fin GROUP BY seziva,regiva,codiva";
         $orderby="seziva, regiva, datreg, protoc";
         $rs=gaz_dbi_dyn_query("seziva,regiva,codiva,periva,operat,
-                               SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva > 5)+1)) AS imp,
-                               SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva > 5)+1)) AS iva,
+                               SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva = 6)+1)) AS imp,
+                               SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva = 6)+1)) AS iva,
                               ".$gTables['aliiva'].".descri AS desvat,
                               ".$gTables['aliiva'].".tipiva AS tipiva",
         $gTables['rigmoi']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes

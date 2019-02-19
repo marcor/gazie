@@ -1102,7 +1102,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
                 $el_2_2->appendChild($el_2_2_3);
             }
             $res->appendChild($el_2_2);
-        } elseif ($v['regiva'] >= 6 && $v['tipo_documento'] != 'TD99') {
+        } elseif ($v['regiva'] == 6 && $v['tipo_documento'] != 'TD99') {
             $type = 'DTR';
             // ---------- FATTURE RICEVUTE --------------
             if ($ctrl_block_file != $type . $file_group_number) { // ho un nuovo file perché è cambiato il tipo oppure ho superato il li limite 1000

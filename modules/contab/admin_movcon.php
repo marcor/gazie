@@ -1332,7 +1332,7 @@ echo "</script>\n";
 <script type="text/javascript">
     $(function () {
         $("#datdoc").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
-        $("#datdoc").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+        $("#datliq").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
     });
 </script>
 <form method="POST" name="myform">

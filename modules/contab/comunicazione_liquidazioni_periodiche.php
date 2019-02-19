@@ -111,10 +111,10 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
                 $r['ind'] = 0;
                 $r['isp'] = 0;
             }
-            if ($r['regiva'] > 5) { // acquisti
+            if ($r['regiva'] == 6) { // acquisti
                 $acc[$date['mese_trimestre']]['vp3'] += $r['imponibile'];
                 $acc[$date['mese_trimestre']]['vp5'] += $r['iva'];
-            } else { // vendite
+            } elseif ($r['regiva'] < 6) { // vendite
                 $acc[$date['mese_trimestre']]['vp2'] += $r['imponibile'];
                 $acc[$date['mese_trimestre']]['vp4'] += $r['iva'];
             }
