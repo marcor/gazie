@@ -440,7 +440,7 @@ class C_PecARUBA_SDI {
 	function sendMail($admin_data, $user, $content) {
 		global $gTables;
 		$admin_aziend=checkAdmin();
-		require_once('../../config/config/pecfae_config.php');
+		require_once "../../config/config/pecfae_config.php";
 		require_once "../../library/phpmailer/class.phpmailer.php";
 		require_once "../../library/phpmailer/class.smtp.php";
 
@@ -450,16 +450,15 @@ class C_PecARUBA_SDI {
 		$config_notif = "yes";
 		$config_port = 465;
 		$config_secure = "ssl";
-		$config_user = indirizzo_pec_azienda;
-		$config_pass = password_pec_azienda;
-		$config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
+		$config_user = indirizzo_pec_azienda; // indirizzo pec utilizzato per fatturazione elettronica
+		$config_pass = password_pec_azienda; // password pec
+		$mailto = indirizzo_pec_SDI; //destinatario indirizzo pec SDI assegnato per trasmissione fattura elelttronica
+		//$config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
 		// attingo il contenuto del corpo della email dall'apposito campo della tabella configurazione utente
 		$user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $user["user_name"]);
 		$company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
 		$admin_data['web_url'] = trim($admin_data['web_url']);
 
-		//$mailto = indirizzo_pec_SDI; //destinatario
-		$mailto = "easitaly.fae@pec.it"; //destinatario
 		$subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione documenti"; //subject
 		// aggiungo al corpo  dell'email
 		$body_text = "<div><b>" . $admin_data['cliente1']. "</b></div>\n";
