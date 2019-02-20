@@ -269,6 +269,8 @@ function gaz_format_date($date, $from_form = false, $to_form = false) {
             return date("d-m-Y", $uts);
         } elseif ($to_form === 2) { // restituisce l'mktime
             return $uts;
+        } elseif ($to_form === 3) { // il valore numerico (confrontabile)
+            return date("Ymd", $uts);
         } else { // adatto ai form input
             return date("d/m/Y", $uts);
         }

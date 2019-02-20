@@ -62,23 +62,24 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
     $c_ndoc = array();
     while ($r = gaz_dbi_fetch_array($rs)) {
         // inizio controllo errori di numerazione
+		$date_reg=gaz_format_date($r['datreg'],false,3);
         if (empty($r['tipiva'])) {  // errore: aliquota IVA non tipizzata
             $r['err_t'] = 'ERROR';
         }
-        if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perché cambiato l'anno
-            $c_sr = 0;
-            $c_id = 0;
-            $c_p = 0;
-            $c_ndoc = array();
-            if ($r['protoc'] <> 1) { // errore: il protocollo non é 1
-                // non lo rilevo in quanto i registri IVA non sono annuali
-            }
-        } else {
-            $ex = $c_p + 1;
-            if ($r['protoc'] <> $ex && $r['id_tes'] <> $c_id) {  // errore: il protocollo non � consecutivo
-                $r['err_p'] = $ex;
-            }
-        }
+		if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perché cambiato l'anno
+			$c_sr = 0;
+			$c_id = 0;
+			$c_p = 0;
+			$c_ndoc = array();
+			if ($r['protoc'] <> 1) { // errore: il protocollo non é 1
+				// non lo rilevo in quanto i registri IVA non sono annuali
+			}
+		} else {
+			$ex = $c_p + 1;
+			if ($r['protoc'] <> $ex && $r['id_tes'] <> $c_id) {  // errore: il protocollo non � consecutivo
+				$r['err_p'] = $ex;
+			}
+		}
         if ($r['regiva'] < 4 & $vat_section <> $admin_aziend['reverse_charge_sez']) { // il controllo sul numero solo per i registri delle fatture di vendita e non reverse charge
             if ($r['caucon'] == 'FAD') {
                 $r['caucon'] = 'FAI';
@@ -95,9 +96,11 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
             }
         }
         $c_ndoc[$r['caucon']] = $r['numdoc'];
-        $c_sr = $r['ctrl_sr'];
-        $c_id = $r['id_tes'];
-        $c_p = $r['protoc'];
+		if ($date_reg>=$date_ini&&$date_reg<=$date_fin){ // controllo solo i movimenti registrati nel periodo selezionato, gli altri liquidabili no
+			$c_sr = $r['ctrl_sr'];
+			$c_id = $r['id_tes'];
+			$c_p = $r['protoc'];
+		}
         // fine controllo errori di numerazione
         $m[] = $r;
     }
@@ -304,11 +307,6 @@ if (isset($_POST['preview']) and $msg == '') {
         $ctrlmopre = 0;
 		foreach ($m AS $key => $mv) {
 			$class_m='';
-			if ($mv['dl']<$mv['dr']){ // movimenti presi da registrazioni successive, es. fatt. d'acquisto registrate nei 15gg successivi alla fine del mese precedente
-				$class_m='warning';
-			} elseif($mv['dl']>$mv['dr']){ // movimenti provenienti da registrazioni precedenti ma con data di liquidazione nel periodo selezionato,  es. fatture di vendita con la liquidazione in cui vale il principio di cassa
-				$class_m='danger';
-			}
             if ($mv['operat'] == 1) {
                 $imponi = $mv['imponi'];
                 $impost = $mv['impost'];
@@ -323,19 +321,39 @@ if (isset($_POST['preview']) and $msg == '') {
                 $mv['ragsoc'] = $mv['descri'];
                 $mv['descri'] = '';
             }
-            $totimponi += $imponi;
-			
-            if ($mv['tipiva'] != 'D' && $mv['tipiva'] != 'T') { // se indetraibili o split payment
-                $totimpost += $impost;
-            }
-            if (!isset($castle_imponi[$mv['codiva']])) {
-                $castle_imponi[$mv['codiva']] = 0;
-                $castle_impost[$mv['codiva']] = 0;
-                $castle_descri[$mv['codiva']] = $mv['desvat'];
-                $castle_percen[$mv['codiva']] = $mv['periva'];
-            }
-            $castle_imponi[$mv['codiva']] += $imponi;
-            $castle_impost[$mv['codiva']] += $impost;
+			if($mv['dr']<$date_ini){ // fattura pregressa, precedente al periodo selezionato ma che concorre alla liquidazione 
+				$class_m='danger';
+			}elseif($mv['dr']>$date_fin){// fattura successiva al periodo selezionato ma che concorre alla liquidazione es. acquisto egistrato nei 15gg successivi
+				$class_m='danger';
+			} else {
+				$totimponi += $imponi;
+				if ($mv['tipiva'] != 'D' && $mv['tipiva'] != 'T') { // se indetraibili o split payment
+					$totimpost += $impost;
+				}
+				if (!isset($castle_imponi[$mv['codiva']])) {
+					$castle_imponi[$mv['codiva']] = 0;
+					$castle_impost[$mv['codiva']] = 0;
+					$castle_descri[$mv['codiva']] = $mv['desvat'];
+					$castle_percen[$mv['codiva']] = $mv['periva'];
+				}
+				$castle_imponi[$mv['codiva']] += $imponi;
+				$castle_impost[$mv['codiva']] += $impost;
+			}
+			if (!isset($castle_impost_liq[$mv['codiva']])){
+				$castle_impost_liq[$mv['codiva']] = 0;
+			}
+			$liq_val='';
+			if ($mv['dl']<$date_ini){
+				$liq_val='<br>IMPOSTA GIÀ LIQUIDATA'; 					
+				$class_m='danger';
+			} elseif ($mv['dl']>$date_fin){
+				$liq_val='<br>IMPOSTA DA LIQUIDARE'; 					
+			} else {
+				$liq_val='<br>'.gaz_format_number($impost);
+				$totimponi_liq += $imponi;
+				$totimpost_liq += $impost;
+                $castle_impost_liq[$mv['codiva']] += $impost;
+			}
             $red_p = '';
             if (isset($mv['err_p'])) {
                 $red_p = 'red';
@@ -368,24 +386,21 @@ if (isset($_POST['preview']) and $msg == '') {
             echo "<td align=\"right\">" . gaz_format_number($imponi) . " &nbsp;</td>";
             echo "<td align=\"center\">" . $mv['periva'] . " &nbsp;</td>";
             echo "<td align=\"right\">" . gaz_format_number($impost) . " &nbsp;</td>";
-			$liq_val='';
-			if ($mv['dl']<$date_ini){
-				$liq_val='<br>IMPOSTA GIÀ LIQUIDATA'; 					
-			} elseif ($mv['dl']>$date_fin){
-				$liq_val='<br>IMPOSTA DA LIQUIDARE'; 					
-			} else {
-				$liq_val='<br>'.gaz_format_number($impost);
-			}
             echo "<td align=\"center\">" . substr(gaz_format_date($mv['datliq']),3) . $liq_val." &nbsp;</td>";
             echo "</tr>";
         }
         echo "<tr><td colspan=7><HR></td></tr>";
         $totale = number_format(($totimponi + $totimpost), 2, '.', '');
         foreach ($castle_imponi as $key => $value) {
-            echo "<tr><td colspan=3></td><td class=\"FacetDataTD\">" . $script_transl['tot'] . $castle_descri[$key] . "</td><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($value) . " &nbsp;</td><td align=\"right\" class=\"FacetDataTD\">" . $castle_percen[$key] . "% &nbsp;</td><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($castle_impost[$key]) . " &nbsp;</td></tr>";
+            echo "<tr><td colspan=3></td><td class=\"FacetDataTD\">" . $script_transl['tot'] . 
+			$castle_descri[$key] . 
+			"</td><td align=\"right\">" . gaz_format_number($value) . " &nbsp;</td><td align=\"right\">" . $castle_percen[$key] . 
+			"% &nbsp;</td><td align=\"right\">" . gaz_format_number($castle_impost[$key]) . " &nbsp;</td><td align=\"center\" class=\"info\">"
+			. gaz_format_number($castle_impost_liq[$key]) . " &nbsp;</td></tr>";
         }
         echo "<tr><td colspan=3></td><td colspan=4><HR></td></tr>";
-        echo "<tr><td colspan=2></td><td class=\"FacetDataTD\">" . $script_transl['tot'] . $script_transl['t_gen'] . "</td><td class=\"FacetDataTD\"align=\"right\">" . gaz_format_number($totale) . " &nbsp;</td><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($totimponi, 2, '.', '') . " &nbsp;</td><td></td><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($totimpost, 2, '.', '') . " &nbsp;</td></tr>";
+        echo "<tr><td colspan=2></td><td>" . $script_transl['t_gen'] . "</td><td align=\"right\">" . gaz_format_number($totale) . " &nbsp;</td><td align=\"right\">" . gaz_format_number($totimponi, 2, '.', '') . " &nbsp;</td><td></td><td align=\"right\">" . gaz_format_number($totimpost, 2, '.', '') . " &nbsp;</td></tr>";
+        echo "<tr><td colspan=2></td><td class=\"info\">" .$script_transl['t_liq'] . "</td><td align=\"right\">" . gaz_format_number($totimponi_liq+$totimpost_liq) . " &nbsp;</td><td align=\"right\">" . gaz_format_number($totimponi_liq, 2, '.', '') . " &nbsp;</td><td></td><td align=\"right\" class=\"info\">" . gaz_format_number($totimpost_liq, 2, '.', '') . " &nbsp;</td></tr>";
         if ($err == 0) {
             echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
             echo '<td colspan="7" align="right"><input type="submit" name="print" value="';

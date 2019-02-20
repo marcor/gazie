@@ -273,7 +273,8 @@ $strScript = array("select_liqiva.php" =>
         'header' => array('Protocollo'=>'','ID-Data Reg.'=>'','Descrizione documento'=>'','Cliente/Fornitore'=>'','Imponibile'=>'','Aliquota'=>'','Imposta'=> '','Liquidazione'=>''),
         'of' => ' del ',
         'tot' => ' TOTALE ',
-        't_gen' => ' GENERALE'
+        't_gen' => 'TOTALE REGISTRO IVA DEL PERIODO',
+		't_liq'=>'TOTALE LIQUIDABILE NEL PERIODO'
     ),
     "stampa_regiva.php" =>
     array('title' => array(2 => 'Registro delle fatture di vendita ',
@@ -303,7 +304,8 @@ $strScript = array("select_liqiva.php" =>
         'taxable' => 'imponibile',
         'tax' => 'imposta',
         'tot' => 'totale',
-        'tot_descri' => 'TOTALE GENERALE',
+        'tot_descri' => 'TOTALE VISUALIZZATO SU REGISTRO',
+        'tot_liqui' => 'TOTALE LIQUIDABILE NEL PERIODO',
         'acc_castle_title' => ' RIEPILOGO TOTALI CONTI ',
         'amount' => 'importo',
         'operation_type_title' => 'Legenda dei tipi di operazioni',
