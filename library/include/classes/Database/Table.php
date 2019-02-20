@@ -49,14 +49,32 @@ abstract class Table  {
 		$GAzie_config = GAzie::factory()->getConfig();
 		$this->_name = $GAzie_config->getTabelle($table_name);
 		$this->query = GAzie::factory()->getDatabase()->query();
+		$this->_values = [];
 		$this->_loaded = FALSE;
 		$this->initColumns();		
 	}
 
 	public function execute( \Database\ORM\QueryInterface $query ) {
-		$result = GAzie::factory()->getDatabase()->execute($query);
-		$this->_result = $result;
+		$this->_result = GAzie::factory()->getDatabase()->execute($query);
+		if ( is_bool($this->_result) ) {
+			return $this->_result;
+		} else {
+		  if ( $this->_result->count() === 1 ) {
+			$this->_setValues($this->_result);
+			$this->_loaded = TRUE;
+			return TRUE;
+		  } else {
+			$this->_loaded = FALSE;
+			return $this->_result;
+		  }
+		}
 		return $result;
+	}
+
+	private function _setValues( $result ) {
+		foreach ( $result->asArray()[0] as $k=>$v ) {
+			$this->$k = $v;
+		}
 	}
 
 	private function initColumns() {
@@ -151,7 +169,7 @@ abstract class Table  {
 		} else {
 			// update
 			$pk = $this->getPrimaryKeyName();
-			$value = $this->$pk;
+			$value = $this->$pk; var_dump($pk);
 			$sql = $this->query->update()
 				->from($this->getTableName())
 				->columns( $this->_values )

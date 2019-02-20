@@ -43,7 +43,7 @@ class Config extends \Database\Table {
 		$sql = $this->query->select()
 			->from( $this->getTableName() )
 		 	->where("`var`='$var'");
-		$result = $sql->execute($sql);
+		$result = $this->execute($sql);
 		if ( count($result) == 1 ) {
 			$this->importResult( $result );
 		}

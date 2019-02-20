@@ -46,13 +46,19 @@ class Azienda extends \Database\Table {
 		return new AziendaConfig();
 	}
 
+	public function getCurrent() {
+	      if (isset($_SESSION['company_id'])) {
+                        $id = $_SESSION['company_id'];
+              } else {
+                        $id = 1;
+              }
+	      $this->load( intval($id) );
+	      return $this;
+	}
+
 	public function exist() {
 		// Controllo se esiste l'azioneda
-		$query = $this->getQuery();
-		$where = "`codice` = '" . $this->getCodice() . "'";  
-		$query->createSelect( NULL, $where );
-		$result = $query->execute(); 
-		return count($result) > 0;
+		return  $this->loaded();
 	}
 
 }

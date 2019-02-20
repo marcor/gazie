@@ -53,7 +53,8 @@ class Update extends Query {
 	}
     
 	public function where( $where ) {
-                $this->_where = $where;
+		$this->_where = $where;
+		return $this;
         }
 
 }
