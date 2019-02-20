@@ -36,7 +36,6 @@ $date = date("Y-m-d");
 $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
 
 // Antonio Germani - controllo se ci sono articoli con movimenti di magazzino orfani del lotto
-$orfani= gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND id_lotmag <1", "datreg DESC, id_mov DESC");
 $where= $gTables['movmag'] . ".artico = '" . $codice. "' AND ". $gTables['movmag'] . ".id_lotmag < '1'"; 
 $resorf = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
  $gTables['movmag'] . ".quanti,".
