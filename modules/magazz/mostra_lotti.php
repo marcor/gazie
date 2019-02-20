@@ -49,10 +49,6 @@ $resorf = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
  $gTables['tesdoc'] . ".protoc ",
  $gTables['movmag'] . " LEFT JOIN " . $gTables['rigdoc'] . " ON ". $gTables['movmag'] . ".id_rif = " . $gTables['rigdoc'] . ".id_rig ". " LEFT JOIN " . $gTables['tesdoc'] . " ON ". $gTables['rigdoc'] . ".id_tes = " . $gTables['tesdoc'] . ".id_tes ",$where);
 
-$mv = $gForm->getStockValue(false, $codice);
-$magval = array_pop($mv);
-$giacmag = floatval(str_replace(',', '', $magval['q_g']));
-
 require("../../library/include/header.php"); 
 $script_transl = HeadMain();
 
@@ -164,8 +160,7 @@ if (isset($_POST['close'])){
 				}
             }        
 ?>
-		</table>
-		
+		</table>		
 		<div class="panel panel-default gaz-table-form">
 			<div class="container-fluid">
 				<div class="row">
@@ -225,8 +220,7 @@ if (isset($_POST['close'])){
 							</div>
 						</div>
 					</div>															
-				</div><!-- chiude row  -->
-				
+				</div><!-- chiude row  -->			
 				<?php
 				foreach($resorf as $orf){
 					?>
