@@ -436,6 +436,9 @@ $strScript = array("browse_document.php" =>
             'Cambia fornitore'
         )
     ),
+	"mostra_lotti.php" =>
+	array('title' => 'Mostra lotti articolo'
+	),
     "admin_artico_compost.php" =>
     array('title' => 'Gestione delle composizioni',
         'ins_this' => 'Inserimento articolo',

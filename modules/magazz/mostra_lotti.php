@@ -26,6 +26,7 @@
 require("../../library/include/datlib.inc.php");
 require("../../modules/vendit/lib.function.php");
 $lm = new lotmag;
+$gForm = new magazzForm;
 $admin_aziend=checkAdmin();
 $codice = filter_input(INPUT_GET, 'codice');
 $lm -> getAvailableLots($codice,0);
@@ -34,6 +35,23 @@ $date = date("Y-m-d");
 // Antonio Germani - vedo se ci sono stati degli inventari fino alla data
 $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
 
+// Antonio Germani - controllo se ci sono articoli con movimenti di magazzino orfani del lotto
+$orfani= gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND id_lotmag <1", "datreg DESC, id_mov DESC");
+$where= $gTables['movmag'] . ".artico = '" . $codice. "' AND ". $gTables['movmag'] . ".id_lotmag < '1'"; 
+$resorf = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
+ $gTables['movmag'] . ".quanti,".
+ $gTables['movmag'] . ".tipdoc,".
+ $gTables['movmag'] . ".desdoc,".
+ $gTables['movmag'] . ".datdoc,".
+ $gTables['rigdoc'] . ".id_tes,".
+ $gTables['tesdoc'] . ".numdoc,".
+ $gTables['tesdoc'] . ".numfat,".
+ $gTables['tesdoc'] . ".protoc ",
+ $gTables['movmag'] . " LEFT JOIN " . $gTables['rigdoc'] . " ON ". $gTables['movmag'] . ".id_rif = " . $gTables['rigdoc'] . ".id_rig ". " LEFT JOIN " . $gTables['tesdoc'] . " ON ". $gTables['rigdoc'] . ".id_tes = " . $gTables['tesdoc'] . ".id_tes ",$where);
+
+$mv = $gForm->getStockValue(false, $codice);
+$magval = array_pop($mv);
+$giacmag = floatval(str_replace(',', '', $magval['q_g']));
 
 require("../../library/include/header.php"); 
 $script_transl = HeadMain();
@@ -45,8 +63,22 @@ if (isset($_POST['close'])){
 	echo "<script>window.close();</script>";exit;
 }
 ?>
+<!-- Visto che il tema LTE non funziona senza header (HeadMain) spengo i menù perché questo è un popup e i menù occuperebbero spazio -->
+<style>
+.content-header {
+	display:none;
+} 
+.main-sidebar {
+	display:none;
+}
+.main-header{
+	display:none;
+}
+.navbar {
+	display:none;
+}
+</style>
 
-<body>
 <div align="center" class="FacetFormHeaderFont">Elenco lotti disponibili per <?php echo $codice; ?></div>
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
@@ -71,8 +103,12 @@ if (isset($_POST['close'])){
 	if (count($lm->available) > 0) { 
 		$count=array();
         foreach ($lm->available as $v_lm) {
-			
-			$key=$v_lm['identifier']." - ".gaz_format_date($v_lm['expiry']); // chiave per il conteggio dei totali raggruppati per lotto e scadenza
+			if ((intval($v_lm['expiry']))>0){
+				$exp=gaz_format_date($v_lm['expiry']);
+			} else {
+				$exp="";
+			}
+			$key=$v_lm['identifier']." - ".$exp; // chiave per il conteggio dei totali raggruppati per lotto e scadenza
 			if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
 				// Aggiungo la chiave con il rispettivo valore iniziale
 				$count[$key] = $v_lm['rest'];
@@ -129,7 +165,7 @@ if (isset($_POST['close'])){
             }        
 ?>
 		</table>
-		</body>	
+		
 		<div class="panel panel-default gaz-table-form">
 			<div class="container-fluid">
 				<div class="row">
@@ -177,6 +213,69 @@ if (isset($_POST['close'])){
 			</div>                
 		</div>
 		<?php
+		
+		if (mysqli_num_rows($resorf)>0){
+		?>
+		<div class="panel panel-default gaz-table-form">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="form-group">
+						<div class="col-md-12">						
+							<div class="text-center"><b>Movimenti orfani di lotto</b>
+							</div>
+						</div>
+					</div>															
+				</div><!-- chiude row  -->
+				
+				<?php
+				foreach($resorf as $orf){
+					?>
+					<div class="row">
+						<div class="form-group">
+							<div class="col-sm-3">									
+							<?php
+							echo "<b>Q.tà:</b> ",gaz_format_quantity($orf['quanti']);
+							?>										
+							</div>
+							<div class="col-sm-3">									
+							<?php
+							echo "<b>tipo doc.:</b> ",$orf['tipdoc'];
+							?>
+							</div>
+							<div class="col-sm-3">									
+							<?php
+							echo "<b>ID:</b> ",$orf['id_tes'];
+							?>
+							</div>
+							<div class="col-sm-3">									
+							<?php
+							echo "<b>Prot:</b> ",$orf['protoc'];
+							?>
+							</div>
+							<div class="col-sm-4">									
+							<?php
+							echo "<b>Rif.:</b> ",$orf['numdoc']," - ",$orf['numfat'];
+							?>
+							</div>
+							<div class="col-sm-3">									
+							<?php
+							echo "<b>Del:</b> ",gaz_format_date($orf['datdoc']);
+							?>
+							</div>
+							<div class="col-sm-5">									
+							<?php
+							echo "<b>Descr.:</b> ",$orf['desdoc'];
+							?>
+							</div>
+						</div>
+					</div><!-- chiude row  -->	
+					<?php
+				}		
+				?>
+			</div>
+		</div>
+		<?php
+		}
 	} else {
 		echo '<div><button class="btn btn-xs btn-danger" type="image" >Non ci sono lotti disponibili.</button></div>';
     }
