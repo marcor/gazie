@@ -29,11 +29,13 @@ $lm = new lotmag;
 $gForm = new magazzForm;
 $admin_aziend=checkAdmin();
 $codice = filter_input(INPUT_GET, 'codice');
+$descr = filter_input(INPUT_GET, 'descri');
 $lm -> getAvailableLots($codice,0);
 $date = date("Y-m-d");
 
 // Antonio Germani - vedo se ci sono stati degli inventari fino alla data
 $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
+
 
 // Antonio Germani - controllo se ci sono articoli con movimenti di magazzino orfani del lotto
 $where= $gTables['movmag'] . ".artico = '" . $codice. "' AND ". $gTables['movmag'] . ".id_lotmag < '1'"; 
@@ -74,7 +76,7 @@ if (isset($_POST['close'])){
 }
 </style>
 
-<div align="center" class="FacetFormHeaderFont">Elenco lotti disponibili per <?php echo $codice; ?></div>
+<div align="center" class="FacetFormHeaderFont">Elenco lotti disponibili per <?php echo $codice," - ",substr($descr,0,50); ?></div>
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
             <tr class="FacetDataTD">
@@ -87,7 +89,11 @@ if (isset($_POST['close'])){
 				<th align="center" >Disponibilità   
                 </th>
                 <th align="center" >Certificato   
-                </th>              
+                </th>
+				<th align="center" >Entrati   
+                </th>
+				<th align="center" >Usciti   
+                </th>
             </tr>
 			</thead>
 <?php
@@ -98,6 +104,14 @@ if (isset($_POST['close'])){
 	if (count($lm->available) > 0) { 
 		$count=array();
         foreach ($lm->available as $v_lm) {
+			// Antonio Germani - vedo quanti sono entrati
+				$query="SELECT SUM(quanti) FROM ". $gTables['movmag'] . " WHERE artico='" .$codice. "' AND id_lotmag='" .$v_lm['id']. "' AND operat='1'";
+				$sum_in=gaz_dbi_query($query);
+				$in =gaz_dbi_fetch_array($sum_in);
+			// Antonio Germani - vedo quanti sono usciti
+				$query="SELECT SUM(quanti) FROM ". $gTables['movmag'] . " WHERE artico='" .$codice. "' AND id_lotmag='" .$v_lm['id']. "' AND operat='-1'";
+				$sum_out=gaz_dbi_query($query);	
+				$out =gaz_dbi_fetch_array($sum_out);
 			if ((intval($v_lm['expiry']))>0){
 				$exp=gaz_format_date($v_lm['expiry']);
 			} else {
@@ -123,7 +137,6 @@ if (isset($_POST['close'])){
 				}
 				$n++;
 			}
-			
             $img="";
             echo '<tr class="FacetDataTD"><td class="FacetFieldCaptionTD">'
                . $v_lm['id']
@@ -157,7 +170,11 @@ if (isset($_POST['close'])){
 									echo '<i class="glyphicon glyphicon-eye-close"></i>';
 								} 
 				}
-            }        
+				echo '<td>' . gaz_format_quantity($in['SUM(quanti)'], 0, $admin_aziend['decimal_quantity'])
+                .'</td>';
+				echo '<td>' . gaz_format_quantity($out['SUM(quanti)'], 0, $admin_aziend['decimal_quantity'])
+                .'</td>';
+        }        
 ?>
 		</table>		
 		<div class="panel panel-default gaz-table-form">

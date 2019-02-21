@@ -172,7 +172,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 				<?php
 			   if (intval($row['lot_or_serial'])>0) {
 			   ?>
-			   <a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"../../modules/magazz/mostra_lotti.php?codice=".$row['codice'];?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
+			   <a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"../../modules/magazz/mostra_lotti.php?codice=".$row['codice']."&descri=".$row['descri'];?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
 						<span class="glyphicon glyphicon-tag"></span></a>
 			   <?php } ?>
             </td>
