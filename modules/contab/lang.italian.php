@@ -273,6 +273,8 @@ $strScript = array("select_liqiva.php" =>
         'header' => array('Protocollo'=>'','ID-Data Reg.'=>'','Descrizione documento'=>'','Cliente/Fornitore'=>'','Imponibile'=>'','Aliquota'=>'','Imposta'=> '','Liquidazione'=>''),
         'of' => ' del ',
         'tot' => ' TOTALE ',
+        'reg' => 'REGISTRO',
+        'liq' => 'LIQUIDABILE',
         't_gen' => 'TOTALE REGISTRO IVA DEL PERIODO',
 		't_liq'=>'TOTALE LIQUIDABILE NEL PERIODO'
     ),
@@ -297,7 +299,8 @@ $strScript = array("select_liqiva.php" =>
             'txbl' => 'Imponibile',
             'perc' => 'Perc.',
             'tax' => 'Imposta',
-            'tot' => 'Totale'),
+            'tot' => 'Totale',
+			'liq' => 'Liquidabile'),
         'of' => ' del ',
         'vat_castle_title' => ' RIEPILOGO TOTALI PER ALIQUOTE ',
         'descri' => 'descrizione',

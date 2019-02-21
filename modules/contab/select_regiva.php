@@ -289,7 +289,6 @@ echo "</table>\n";
 if (isset($_POST['preview']) and $msg == '') {
     $date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
     $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
-    $date_liq = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
     $m = getMovements($form['vat_section'], $form['vat_reg'], $date_ini, $date_fin);
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     if (sizeof($m) > 0) {
@@ -325,7 +324,7 @@ if (isset($_POST['preview']) and $msg == '') {
 				$class_m='danger';
 			}elseif($mv['dr']>$date_fin){// fattura successiva al periodo selezionato ma che concorre alla liquidazione es. acquisto egistrato nei 15gg successivi
 				$class_m='danger';
-			} else {
+			}else{
 				$totimponi += $imponi;
 				if ($mv['tipiva'] != 'D' && $mv['tipiva'] != 'T') { // se indetraibili o split payment
 					$totimpost += $impost;
@@ -340,6 +339,7 @@ if (isset($_POST['preview']) and $msg == '') {
 				$castle_impost[$mv['codiva']] += $impost;
 			}
 			if (!isset($castle_impost_liq[$mv['codiva']])){
+                $castle_imponi_liq[$mv['codiva']] = 0;
 				$castle_impost_liq[$mv['codiva']] = 0;
 			}
 			$liq_val='';
@@ -348,10 +348,12 @@ if (isset($_POST['preview']) and $msg == '') {
 				$class_m='danger';
 			} elseif ($mv['dl']>$date_fin){
 				$liq_val='<br>IMPOSTA DA LIQUIDARE'; 					
+				$class_m='warning';
 			} else {
 				$liq_val='<br>'.gaz_format_number($impost);
 				$totimponi_liq += $imponi;
 				$totimpost_liq += $impost;
+                $castle_imponi_liq[$mv['codiva']] += $imponi;
                 $castle_impost_liq[$mv['codiva']] += $impost;
 			}
             $red_p = '';
@@ -393,14 +395,20 @@ if (isset($_POST['preview']) and $msg == '') {
         $totale = number_format(($totimponi + $totimpost), 2, '.', '');
         foreach ($castle_imponi as $key => $value) {
             echo "<tr><td colspan=3></td><td class=\"FacetDataTD\">" . $script_transl['tot'] . 
-			$castle_descri[$key] . 
+			$castle_descri[$key] . ' '.$script_transl['reg'] .
 			"</td><td align=\"right\">" . gaz_format_number($value) . " &nbsp;</td><td align=\"right\">" . $castle_percen[$key] . 
-			"% &nbsp;</td><td align=\"right\">" . gaz_format_number($castle_impost[$key]) . " &nbsp;</td><td align=\"center\" class=\"info\">"
-			. gaz_format_number($castle_impost_liq[$key]) . " &nbsp;</td></tr>";
+			"% &nbsp;</td><td align=\"right\">" . gaz_format_number($castle_impost[$key]) . " &nbsp;</td><td></td></tr>";
+        }
+		
+        foreach ($castle_imponi_liq as $key => $value) {
+            echo "<tr><td colspan=3></td><td class=\"info\">" . $script_transl['tot'] . 
+			$castle_descri[$key]. ' '.$script_transl['liq']  . 
+			"</td><td align=\"right\">" . gaz_format_number($value) . " &nbsp;</td><td align=\"right\">" . $castle_percen[$key] . 
+			"% &nbsp;</td><td align=\"right\"></td><td align=\"center\" class=\"info\">" . gaz_format_number($castle_impost_liq[$key]) . " &nbsp; &nbsp;</td></tr>";
         }
         echo "<tr><td colspan=3></td><td colspan=4><HR></td></tr>";
         echo "<tr><td colspan=2></td><td>" . $script_transl['t_gen'] . "</td><td align=\"right\">" . gaz_format_number($totale) . " &nbsp;</td><td align=\"right\">" . gaz_format_number($totimponi, 2, '.', '') . " &nbsp;</td><td></td><td align=\"right\">" . gaz_format_number($totimpost, 2, '.', '') . " &nbsp;</td></tr>";
-        echo "<tr><td colspan=2></td><td class=\"info\">" .$script_transl['t_liq'] . "</td><td align=\"right\">" . gaz_format_number($totimponi_liq+$totimpost_liq) . " &nbsp;</td><td align=\"right\">" . gaz_format_number($totimponi_liq, 2, '.', '') . " &nbsp;</td><td></td><td align=\"right\" class=\"info\">" . gaz_format_number($totimpost_liq, 2, '.', '') . " &nbsp;</td></tr>";
+        echo "<tr><td colspan=2></td><td class=\"info\">" .$script_transl['t_liq'] . "</td><td align=\"right\">" . gaz_format_number($totimponi_liq+$totimpost_liq) . " &nbsp;</td><td align=\"right\">" . gaz_format_number($totimponi_liq, 2, '.', '') . " &nbsp;</td><td colspan=\"2\"></td><td align=\"center\" class=\"info\">" . gaz_format_number($totimpost_liq, 2, '.', '') . " &nbsp;</td></tr>";
         if ($err == 0) {
             echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
             echo '<td colspan="7" align="right"><input type="submit" name="print" value="';

@@ -61,7 +61,9 @@ class vatBook extends Standard_template {
     function getRows($gTables) { // recupera i righi dell'intervallo settato 
         //recupero i movimenti IVA del conto insieme alle relative testate
         $what = $gTables['tesmov'] . ".*, " .
-                $gTables['rigmoi'] . ".*,
+                $gTables['rigmoi'] . ".*,                       
+				DATE_FORMAT(datliq,'%Y%m%d') AS dl,
+                DATE_FORMAT(datreg,'%Y%m%d') AS dr,
                 CONCAT(" . $gTables['anagra'] . ".ragso1, ' '," . $gTables['anagra'] . ".ragso2) AS ragsoc, " .
                 $gTables['aliiva'] . ".descri AS desiva ";
         $table = $gTables['rigmoi'] . " LEFT JOIN " . $gTables['tesmov'] . " ON (" . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes)
@@ -69,16 +71,21 @@ class vatBook extends Standard_template {
                 LEFT JOIN " . $gTables['anagra'] . " ON (" . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra)
                 LEFT JOIN " . $gTables['aliiva'] . " ON (" . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice)";
         $orderby = "datreg ASC , protoc ASC, id_rig ASC";
-        $where = "datreg BETWEEN " . $this->inidate . " AND " . $this->enddate . " AND seziva = " . $this->vatsect . " AND regiva = " . $this->typbook;
+		$where = "(datreg BETWEEN ".$this->inidate." AND ".$this->enddate." OR datliq BETWEEN ".$this->inidate." AND ".$this->enddate.") AND seziva = ".$this->vatsect." AND regiva = ".$this->typbook;
+        //$where = "datreg BETWEEN " . $this->inidate . " AND " . $this->enddate . " AND seziva = " . $this->vatsect . " AND regiva = " . $this->typbook;
         $result = gaz_dbi_dyn_query($what, $table, $where, $orderby);
         $this->rows = array();
         $this->vat_castle = array();
+        $this->vat_castle_liq = array();
         $this->acc_castle = array();
         $this->acc_operation_type[0] = 0;
         $this->taxable = 0.00;
         $this->tax = 0.00;
+        $this->taxable_liq = 0.00;
+        $this->tax_liq = 0.00;
         $ctrl_idtes = 0;
         while ($mov = gaz_dbi_fetch_array($result)) {
+			$reg_yes=false;
             $codiva = $mov['codiva'];
             $id_tes = $mov['id_tes'];
             $op_typ = trim($mov['operation_type']);
@@ -99,22 +106,52 @@ class vatBook extends Standard_template {
                     $tax = 0;
                     break;
             }
-            // aggiungo ai totali generali
-            $this->taxable += $taxable;
-            if ($mov['tipiva'] != "D" && $mov['tipiva'] != "T") {  // indetraibile o split payment
-                $this->tax += $tax;
-            }
+// INIZIO TIPIZZAZIONE MOVIMENTI PER DISTINGUERE QUELLI CHE VANNO SUL REGISTRO DEL PERIODO 
+// DA QUELLI CHE PARTECIPANO ALLA LIQUIDAZIONE IVE DEL PERIODO SELEZIONATO
+		// INIZIO MOVIMENTI DI REGISTRO
+		if($mov['dr']<$this->inidate){ // fattura pregressa, precedente al periodo selezionato ma che concorre alla liquidazione 
+			$mov['class_m']='danger';
+		}elseif($mov['dr']>$this->enddate){// fattura successiva al periodo selezionato ma che concorre alla liquidazione es. acquisto egistrato nei 15gg successivi
+			$mov['class_m']='danger';
+		}else{ // fatture che fanno parte del registro 
+  			$reg_yes=true; // il movimento fa parte del registro, a prescidere che sia liquidabile o meno
+			$this->taxable += $taxable;
+			if ($mov['tipiva'] != 'D' && $mov['tipiva'] != 'T') { // se NON indetraibili o split payment
+				$this->tax += $tax;
+			}
+			if (!isset($this->vat_castle[$codiva])) {
+				$this->vat_castle[$codiva]['taxable'] = 0;
+				$this->vat_castle[$codiva]['tax'] = 0;
+				$this->vat_castle[$codiva]['descri'] = $mov['desiva'];
+				$this->vat_castle[$codiva]['periva'] = $mov['periva'];
+			}
+			$this->vat_castle[$codiva]['taxable'] += $taxable;
+			$this->vat_castle[$codiva]['tax'] += $tax;
+		}
+		// FINE MOVIMENTI DI REGISTRO
 
-            // creo il castelletto IVA
-            if (!isset($this->vat_castle[$codiva]['taxable'])) {
-                $this->vat_castle[$codiva]['taxable'] = 0;
-            }
-            $this->vat_castle[$codiva]['taxable'] += $taxable;
-
-            if (!isset($this->vat_castle[$codiva]['tax'])) {
-                $this->vat_castle[$codiva]['tax'] = 0;
-            }
-            $this->vat_castle[$codiva]['tax'] += $tax;
+		// INIZIO MOVIMENTI DI LIQUIDAZIONE
+		if (!isset($castle_impost_liq[$codiva])){
+			$this->vat_castle_liq[$codiva]['taxable'] = 0;
+			$this->vat_castle_liq[$codiva]['tax'] = 0;
+		}
+		$mov['liq_val']='';
+		if ($mov['dl']< $this->inidate){
+			$mov['liq_val']='IMPOSTA GIÀ LIQUIDATA'; 					
+			$mov['class_m']='danger';
+		} elseif ($mov['dl']>$this->enddate){
+			$mov['liq_val']='IMPOSTA DA LIQUIDARE'; 					
+			$mov['class_m']='warning';
+		} else {
+			$mov['liq_val']=gaz_format_number($tax);
+			$this->taxable_liq += $taxable;
+			$this->tax_liq += $tax;
+            $this->vat_castle_liq[$codiva]['taxable'] += $taxable;
+            $this->vat_castle_liq[$codiva]['tax'] += $tax;
+		}
+		// FINE MOVIMENTI DI LIQUIDAZIONE		
+			
+// FINE TIPIZZAZIONE REGISTRO - LIQUIDAZIONE            // aggiungo ai totali generali
             //se e' una semplificata recupero anche i righi contabili
             $this->acc_rows = array();
             if (!isset($this->acc_operation_type[$op_typ])) {
@@ -122,7 +159,7 @@ class vatBook extends Standard_template {
             } else {
                 $this->acc_operation_type[$op_typ] += $taxable;
             }
-            if ($this->semplificata == 1 && $ctrl_idtes <> $id_tes) {
+            if ($this->semplificata == 1 && $ctrl_idtes <> $id_tes && $reg_yes==true) { // solo se il movimento fa parte del registro recupero i dati di costo
                 $rs_accounting_rows = gaz_dbi_dyn_query("*", $gTables['rigmoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON (" . $gTables['rigmoc'] . ".codcon = " . $gTables['clfoco'] . ".codice)", "id_tes = '" . $mov['id_tes'] . "'
                            AND codcon NOT LIKE '" . $this->azienda['mascli'] . "%'
                            AND codcon NOT LIKE '" . $this->azienda['masfor'] . "%'
@@ -265,11 +302,12 @@ for ($i = 1; $i <= $p_max; $i++) {
         array('lenght' => 18, 'name' => $pdf->script_transl['top']['dreg'], 'frame' => 1, 'fill' => 1),
         array('lenght' => 28, 'name' => $pdf->script_transl['top']['desc'], 'frame' => 1, 'fill' => 1),
         array('lenght' => 22, 'name' => $pdf->script_transl['top']['ddoc'], 'frame' => 1, 'fill' => 1),
-        array('lenght' => 40, 'name' => $pdf->script_transl['partner_descri'][$pdf->typbook], 'frame' => 1, 'fill' => 1),
-        array('lenght' => 20, 'name' => $pdf->script_transl['top']['txbl'], 'frame' => 1, 'fill' => 1),
-        array('lenght' => 14, 'name' => $pdf->script_transl['top']['perc'], 'frame' => 1, 'fill' => 1),
-        array('lenght' => 18, 'name' => $pdf->script_transl['top']['tax'], 'frame' => 1, 'fill' => 1),
-        array('lenght' => 20, 'name' => $pdf->script_transl['top']['tot'], 'frame' => 1, 'fill' => 1));
+        array('lenght' => 36, 'name' => $pdf->script_transl['partner_descri'][$pdf->typbook], 'frame' => 1, 'fill' => 1),
+        array('lenght' => 17, 'name' => $pdf->script_transl['top']['txbl'], 'frame' => 1, 'fill' => 1),
+        array('lenght' => 10, 'name' => $pdf->script_transl['top']['perc'], 'frame' => 1, 'fill' => 1),
+        array('lenght' => 15, 'name' => $pdf->script_transl['top']['tax'], 'frame' => 1, 'fill' => 1),
+        array('lenght' => 17, 'name' => $pdf->script_transl['top']['tot'], 'frame' => 1, 'fill' => 1),
+        array('lenght' => 17, 'name' => $pdf->script_transl['top']['liq'], 'frame' => 1, 'fill' => 1));
     $pdf->setTopBar($top);
     $pdf->AddPage();
     $pdf->setFooterMargin(20.5);
@@ -279,6 +317,10 @@ for ($i = 1; $i <= $p_max; $i++) {
     $ctrl = 0;
     $totimponi = 0.00;
     $totimpost = 0.00;
+    $totindetr = 0.00;
+    $totimponi_liq = 0.00;
+    $totimpost_liq = 0.00;
+    $totindetr_liq = 0.00;
     foreach ($pdf->rows as $k => $v) {
         $fill = false;
         switch ($v['operat']) {
@@ -300,6 +342,7 @@ for ($i = 1; $i <= $p_max; $i++) {
         if ($v['tipiva'] != "D" && $v['tipiva'] != "T") {  // indetraibile o split payment
             $totimpost += $impost;
         }
+		
         if ($ctrl != $v['id_tes']) { // primo rigo iva del movimento contabile
             if ($maxY > 265) {
                 $pdf->AddPage();
@@ -322,11 +365,12 @@ for ($i = 1; $i <= $p_max; $i++) {
             $pdf->Cell(56, 4, $v['descri'], 'LTB', 0, 'R', $fill, '', 1);
             $pdf->Cell(12, 4, $v['operation_type'], 'LTB', 0, 'C', 0, '', 1);
             $pdf->Cell(10, 4, 'cod ' . $v['codiva'], 1, 0, 'C');
-            $pdf->Cell(40, 4, $v['desiva'], 1, 0, 'L', 0, '', 1);
-            $pdf->Cell(20, 4, gaz_format_number($v['imponi']), 1, 0, 'R');
-            $pdf->Cell(14, 4, gaz_format_number($v['periva']) . '%', 1, 0, 'C');
-            $pdf->Cell(18, 4, gaz_format_number($v['impost']), 1, 0, 'R');
-            $pdf->Cell(20, 4, gaz_format_number($v['impost'] + $v['imponi']), 1, 1, 'R');
+            $pdf->Cell(36, 4, $v['desiva'], 1, 0, 'L', 0, '', 1);
+            $pdf->Cell(17, 4, gaz_format_number($v['imponi']), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(10, 4, floatval($v['periva']) . '%', 1, 0, 'C', 0, '', 1);
+            $pdf->Cell(15, 4, gaz_format_number($v['impost']), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(17, 4, gaz_format_number($v['impost'] + $v['imponi']), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(17, 4, $v['liq_val'], 1, 1, 'R', 0, '', 1);
             $topY = $pdf->GetY();
             if (isset($v['acc_rows'])) {
                 foreach ($v['acc_rows']as $k1 => $v1) {
@@ -343,11 +387,11 @@ for ($i = 1; $i <= $p_max; $i++) {
             $pdf->SetY($topY);
             $pdf->Cell(68, 4, '', 'L');
             $pdf->Cell(10, 4, 'cod ' . $v['codiva'], 1, 0, 'C');
-            $pdf->Cell(40, 4, $v['desiva'], 1, 0, 'L', 0, '', 1);
-            $pdf->Cell(20, 4, gaz_format_number($v['imponi']), 1, 0, 'R');
-            $pdf->Cell(14, 4, gaz_format_number($v['periva']) . '%', 1, 0, 'C');
-            $pdf->Cell(18, 4, gaz_format_number($v['impost']), 1, 0, 'R');
-            $pdf->Cell(20, 4, gaz_format_number($v['impost'] + $v['imponi']), 1, 1, 'R');
+            $pdf->Cell(36, 4, $v['desiva'], 1, 0, 'L', 0, '', 1, 0, '', 1);
+            $pdf->Cell(17, 4, gaz_format_number($v['imponi']), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(10, 4, floatval($v['periva']) . '%', 1, 0, 'C', 0, '', 1);
+            $pdf->Cell(15, 4, gaz_format_number($v['impost']), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(17, 4, gaz_format_number($v['impost'] + $v['imponi']), 1, 1, 'R', 0, '', 1);
             $topCarry[1]['name'] = gaz_format_number($totimponi) . ' ';
             $botCarry[1]['name'] = gaz_format_number($totimponi) . ' ';
             $topCarry[2]['name'] = gaz_format_number($totimpost) . ' ';
