@@ -182,7 +182,7 @@ if (!empty($pro_rata)) {
 	$tot_pro_rata = -$totale_iva_acquisti*((100-$pro_rata)/100);
 	// PRO RATA
 	$pdf->Cell(37, 6);
-	$pdf->Cell(67, 6, strtoupper($script_transl['pro_rata']), 'LTB', 0, 'L', 1);
+	$pdf->Cell(67, 6, strtoupper($script_transl['pro_rata']) . ' (' . $pro_rata . '%)', 'LTB', 0, 'L', 1);
 	$pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
 	$pdf->Cell(20, 6, gaz_format_number($tot_pro_rata), 'RTB', 1, 'R', 1);
 	$saldo_periodo+= $tot_pro_rata;
@@ -250,7 +250,12 @@ if ($_GET['sd'] == 'sta_def') {
     gaz_dbi_put_row($gTables['company_data'],'var','upgrie','data',$pdf->getGroupPageNo() + $n_page - 1 );
     //gaz_dbi_put_row($gTables['aziend'], 'codice', 1, 'upgrie', $pdf->getGroupPageNo() + $n_page - 1);
 	if (!empty($pro_rata)) {
-		gaz_dbi_put_row($gTables['company_data'],'var','pro_rata','data',$pro_rata);
+		$pro_rata_stored = gaz_dbi_get_row($gTables['company_data'], 'var', 'pro_rata'.$annini, 'data');
+		if (!empty($pro_rata_stored)) {
+			gaz_dbi_put_row($gTables['company_data'], 'var', 'pro_rata'.$annini, 'data', $pro_rata);
+		} else {
+			gaz_dbi_table_insert('company_data', array('description'=>'Percentuale di detrazione sugli acquisti '.$annini.' (PRO RATA)', 'var'=>'pro_rata'.$annini, 'data'=>$pro_rata));
+		}
 	}
 }
 $pdf->Output($title . '.pdf');
