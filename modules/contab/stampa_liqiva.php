@@ -61,7 +61,7 @@ $sqlquery = "SELECT seziva,regiva,codiva,aliquo," . $gTables['aliiva'] . ".tipiv
        FROM " . $gTables['rigmoi'] . "
        LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
        LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice
-       WHERE datreg BETWEEN $datainizio and $datafine
+       WHERE datliq BETWEEN $datainizio and $datafine
        GROUP BY seziva,regiva,codiva
        ORDER BY seziva,regiva,aliquo DESC";
 $result = gaz_dbi_query($sqlquery);

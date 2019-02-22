@@ -29,10 +29,10 @@ $msg='';
 function getPreviousCredit($date)
 {
         global $gTables,$admin_aziend;
-        $rs_last_opening = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'APE' AND datreg <= ".$date,"datreg DESC",0,1);
+        $rs_last_opening = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'APE' AND datliq <= ".$date,"datliq DESC",0,1);
         $last_opening = gaz_dbi_fetch_array($rs_last_opening);
         if ($last_opening) {
-           $date_ini = substr($last_opening['datreg'],0,4).substr($last_opening['datreg'],5,2).substr($last_opening['datreg'],8,2);
+           $date_ini = substr($last_opening['datliq'],0,4).substr($last_opening['datliq'],5,2).substr($last_opening['datliq'],8,2);
         } else {
            $date_ini = '20040101';
         }
@@ -41,9 +41,9 @@ function getPreviousCredit($date)
         }
         $utsdatera = mktime(0,0,0,substr($date,4,2)+2,0,substr($date,0,4));
         $date_era=date("Ymd",$utsdatera);
-        $where = "(datreg BETWEEN $date_ini AND $date AND (codcon=".$admin_aziend['ivaven']." OR codcon=".$admin_aziend['ivacor']." OR codcon=".$admin_aziend['ivaacq']."))
-                 OR (datreg BETWEEN $date_ini AND $date_era AND codcon=".$admin_aziend['ivaera'].") GROUP BY darave";
-        $orderby = " datreg ";
+        $where = "(datliq BETWEEN $date_ini AND $date AND (codcon=".$admin_aziend['ivaven']." OR codcon=".$admin_aziend['ivacor']." OR codcon=".$admin_aziend['ivaacq']."))
+                 OR (datliq BETWEEN $date_ini AND $date_era AND codcon=".$admin_aziend['ivaera'].") GROUP BY darave";
+        $orderby = " datliq ";
         $select = "darave,SUM(import) AS value";
         $table = $gTables['tesmov']." LEFT JOIN ".$gTables['rigmoc']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes ";
         $rs=gaz_dbi_dyn_query ($select, $table, $where, $orderby);
@@ -63,8 +63,8 @@ function getPreviousCredit($date)
 function getMovements($date_ini,$date_fin)
 {
         global $gTables,$admin_aziend;
-        $where = "datreg BETWEEN $date_ini AND $date_fin GROUP BY seziva,regiva,codiva";
-        $orderby="seziva, regiva, datreg, protoc";
+        $where = "datliq BETWEEN $date_ini AND $date_fin GROUP BY seziva,regiva,codiva";
+        $orderby="seziva, regiva, datliq, protoc";
         $rs=gaz_dbi_dyn_query("seziva,regiva,codiva,periva,operat,
                                SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva = 6)+1)) AS imp,
                                SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva = 6)+1)) AS iva,
