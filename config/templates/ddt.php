@@ -105,7 +105,12 @@ class DDT extends Template_con_scheda
             if ($rigo['sconto'] < 0.001) {
                 $rigo['sconto']='';
             }
-            if ($this->GetY() >= 215) {
+            if ( $this->descriptive_last_ddt!="" ){
+				$maxy=200;
+			} else {
+				$maxy=215;
+			}
+            if ($this->GetY() >= $maxy) {
                 $this->Cell(155,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
