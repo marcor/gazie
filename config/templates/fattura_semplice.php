@@ -107,7 +107,7 @@ class FatturaSemplice extends Template {
     function body() {
         $lines = $this->docVars->getRigo();
 		foreach ($lines AS $key => $rigo) {
-            if (($this->GetY() >= 166 && $this->docVars->taxstamp >= 0.01 ) || $this->GetY() >= 195) { // mi serve per poter stampare la casella del bollo
+            if (($this->GetY() >= 166 && $this->docVars->taxstamp >= 0.01 ) || $this->GetY() >= 195 || (strlen($this->descriptive_last_row)>300 && $this->GetY() >= 186)) { // mi serve per poter stampare la casella del bollo
                 $this->Cell(186, 6, '', 'T', 1);
                 $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
@@ -233,7 +233,12 @@ class FatturaSemplice extends Template {
 
     function pageFooter() {
         if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
-                $this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
+                if (strlen($this->descriptive_last_row)>300){
+					$this->Cell(186,6,substr($this->descriptive_last_row,0,strlen($this->descriptive_last_row)/2),1,1,'L',0,'',1);
+					$this->Cell(186,6,substr($this->descriptive_last_row,1+strlen($this->descriptive_last_row)/2,strlen($this->descriptive_last_row)),1,1,'L',0,'',1);
+				} else {
+					$this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
+				}
 		}
         if ($this->docVars->taxstamp >= 0.01) {
             if ($this->virtual_taxstamp == 2 || $this->virtual_taxstamp == 3) {
