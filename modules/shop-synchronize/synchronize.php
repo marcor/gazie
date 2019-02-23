@@ -82,16 +82,21 @@ if (isset ($_POST['download'])) {
 	
 	
 	<table class="table table-striped table-bordered" style="margin: 0 auto; max-width: 40%; margin-top:100px;">
-	<tr style="background-color: PaleTurquoise;"><td colspan="2" style="text-align: center;">
+	<tr style="background-color: PaleTurquoise;"><td colspan="3" style="text-align: center;">
 	<h4>Sincronizzazione di GAzie con siti internet</h4>
 	</td></tr>
-	<tr><td colspan="2" style="text-align: left;">
+	<tr><td colspan="3" style="text-align: left;">
 	<p>Scarica ordini: importa ordini dal sito a GAzie</p>
 	<p>Aggiorna prodotti: aggiorna le quantità disponibili da Gazie al sito</p>
 	</td></tr>
-	<tr><td colspan="1" style="width:50%; text-align: left;">
+	<tr>
+	<td colspan="1" style="width:33%; text-align: left;">
+	<input type="submit" name="Return"  onClick="chkSubmit();" value="Indietro">
+	</td>
+	<td colspan="1" style="width:33%; text-align: left;">
 	<input type="submit" name="download"  onClick="chkSubmit();" value="Scarica ordini">
-	</td><td colspan="1" style="width:50%; text-align: right;" >
+	</td>
+	<td colspan="1" style="width:33%; text-align: right;" >
 	<input type="submit" name="upload"  onClick="chkSubmit();" value="Aggiorna prodotti">
 	</td></tr>
 	</table>
