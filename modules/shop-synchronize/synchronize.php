@@ -76,15 +76,26 @@ if (isset ($_POST['download'])) {
 	<!DOCTYPE html>
 	<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 	<form method="POST" name="chouse" enctype="multipart/form-data">
-	<div>
-	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >	
-	<table class="table table-striped" style="margin: 0 auto; max-width: 40%; margin-top:100px;">
-	<tr><td>
+	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >
+	<div class="container">
+	<div class="table-responsive">
+	
+	
+	<table class="table table-striped table-bordered" style="margin: 0 auto; max-width: 40%; margin-top:100px;">
+	<tr style="background-color: PaleTurquoise;"><td colspan="2" style="text-align: center;">
+	<h4>Sincronizzazione di GAzie con siti internet</h4>
+	</tr></td>
+	<tr><td colspan="2" style="text-align: left;">
+	<p>Scarica ordini: importa ordini dal sito a GAzie</p>
+	<p>Aggiorna prodotti: aggiorna le quantità disponibili da Gazie al sito</p>
+	</tr></td>
+	<tr><td colspan="1" style="width:50%; text-align: left;">
 	<input type="submit" name="download"  onClick="chkSubmit();" value="Scarica ordini">
-	</td><td style="text-align: right;" >
+	</td><td colspan="1" style="width:50%; text-align: right;" >
 	<input type="submit" name="upload"  onClick="chkSubmit();" value="Aggiorna prodotti">
 	</td></tr>
 	</table>
+	</div>
 	</div>
 	</form>
 	<?php
