@@ -373,6 +373,18 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     'regiva' => $reg,
                     'operat' => $op
                 );
+				// controllo le date per inserire la giusta competenza di liquidazione
+				$dr = new DateTime($v['tes']['datreg']);
+				$df = new DateTime($v['tes']['datfat']);
+				$diff = $df->diff($dr);
+				if (($dr->format('Y')-$df->format('Y'))>0){ //  ATTENZIONE !!! Non sono sicuro se fa bene: è saltato l'anno	può essere liquidato in dichiarazione IVA ovvero nella liquidazione	del mese di ricevimento		
+					$newValue['datliq']=$v['tes']['datreg'];
+				} elseif (($dr->format('m')-$df->format('m'))==1&&$diff->format('d')<=15){ // è saltato il mese e siamo nei primi quindici giorni
+					$df->modify('last day of this month');
+					$newValue['datliq']=$df->format('Y-m-d');
+				} else {
+					$newValue['datliq']=$v['tes']['datreg'];
+				}
                 tesmovInsert($newValue);
                 $tes_id = gaz_dbi_last_id();
                 //inserisco i righi iva nel db

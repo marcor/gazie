@@ -361,6 +361,20 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     'regiva' => $reg,
                     'operat' => $op
                 );
+				/* CONTROLLO SE IN CONFIGURAZIONE AZIENDA MI POSSO AVVALERE DELL'ART.32 IVA PER CASSA, 
+				SE SI, PROSPONGO DI 12 MESI LA LIQUIDAZIONE */
+				if ($admin_aziend['vat_susp']==1&&$v['tes']['incaut']<100000000){ /* ma si dovrà implementare un sistema di 
+				controllo dei pagamenti della stessa ai fini di anticipare la data di liquidazione alla
+				data di pagamento della fatturae solo se non c'è un pagamento contestuale*/
+					$df = new DateTime($v['tes']['datfat']);
+					$df->modify('+1 year');
+					$newValue['datliq']=$df->format('Y-m-d');
+					if ($v['tes']['tippag']=='B'||$v['tes']['tippag']=='T'||$v['tes']['tippag']=='V'){ // se sono riba/tratte/MAV alla data della prima scadenza
+						$newValue['datliq']=$rate['anno'][0] . '-' . $rate['mese'][0] . '-' . $rate['giorno'][0];
+					} 
+				} else {
+					$newValue['datliq']=$v['tes']['datfat'];
+				}
                 tesmovInsert($newValue);
                 $tes_id = gaz_dbi_last_id();
                 //inserisco i righi iva nel db
@@ -490,7 +504,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
  			} else {
 				header("Location: ../../modules/vendit/report_docven.php");
  			}
-            exit;
         } else {
             $msg .= "1+";
         }

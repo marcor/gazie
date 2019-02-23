@@ -263,7 +263,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['virtual_taxstamp'] = 1;	
 		}
 		/* propongo la sezione IVA contenuto nel numero file, semmai la numerazione sia stata fatta come in GAZie */
-		$form['seziva']=1;
+		//$form['seziva']=1;
 		$nfa=explode('/',$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue);
 		if (isset($nfa[1]) && is_numeric($nfa[1])){
 			$form['seziva']=$nfa[1];
