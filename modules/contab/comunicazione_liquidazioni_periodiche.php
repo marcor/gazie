@@ -91,7 +91,7 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
                 FROM " . $gTables['rigmoi'] . "
                 LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
                 LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice
-                WHERE datreg BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "' GROUP BY seziva,regiva,codiva ORDER BY seziva,regiva,aliquo DESC";
+                WHERE datliq BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "' GROUP BY seziva,regiva,codiva ORDER BY seziva,regiva,aliquo DESC";
         $rs = gaz_dbi_query($sqlquery);
         while ($r = gaz_dbi_fetch_array($rs)) {
             if ($r['tipiva'] == 'D') { // iva indetraibile
