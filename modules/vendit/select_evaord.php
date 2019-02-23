@@ -249,7 +249,13 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             if ($totale_evadibile == 0) {
                 $form['righi'][$_POST['num_rigo']]['checkval'] = false;
             }
-
+			
+			// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
+			$mv = $upd_mm->getStockValue(false, $rigo['codart']);
+            $magval = array_pop($mv);
+			$form['righi'][$_POST['num_rigo']]['giac'] = $magval['q_g'];
+			$form['righi'][$_POST['num_rigo']]['ordin'] = $upd_mm->get_magazz_ordinati($rigo['codart'], "VOR");
+			
             $form['righi'][$_POST['num_rigo']]['evaso_in_precedenza'] = $rigo['quanti'] - $totale_evadibile;
             $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
             $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
@@ -1436,6 +1442,31 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 				}
 				// fine gestione lotti
 				
+				// Antonio Germani - controllo e warning disponibilità
+				if ($checkin == " checked"){ // solo se da evadere
+					echo "<input type=\"hidden\" value=\"" . $v['giac'] . "\" name=\"righi[$k][giac]\">\n";
+					echo "<input type=\"hidden\" value=\"" . $v['ordin'] . "\" name=\"righi[$k][ordin]\">\n";
+					if ($v['giac']<$v['quanti']){ // se la disponibilità reale di magazzino non è sufficiente
+						?>
+						<div class="alert alert-warning alert-dismissible">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						<strong>Attenzione!</strong> <b>Giacenza di magazzino non sufficiente!</b> Se si conferma, si creerà una giacenza negativa.<br>
+						Giacenza attuale: <?php echo $v['giac']; ?>
+						</div>
+						<?php
+					} else {
+						if ($v['giac']-$v['ordin']+$v['quanti'] < $v['quanti']){ // considerando anche l'ordinato, se la disponibilità non è sufficiente
+							?>
+							<div class="alert alert-info alert-dismissible">
+							<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+							<strong>Avviso!</strong> E' possibile evadere correttamente questo ordine, ma si ricorda che la giacenza di magazzino non è sufficiente per evadere gli altri ordini di questo articolo.<br>
+							Giacenza attuale: <?php echo $v['giac']; ?>   Ulteriormente ordinati: <?php echo $v['ordin']-$v['quanti']; ?>
+							</div>
+							<?php
+						}
+					}
+				}
+				
 				echo "</td>\n";
                 if ($v['tiprig'] <= 10 || $v['tiprig'] >= 210) {
                     $fields = array_merge($fields, array('unimis', 'quanti',
@@ -1443,8 +1474,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                             )
                     );
                     echo "<td align=\"center\">" . $v['unimis'] . "</td>\n";
-                    echo "<td align=\"right\">" . $v['quanti'] . "</td>\n";
-                    echo "<input type=\"hidden\" value=\"" . $v['evaso_in_precedenza'] . "\" name=\"righi[$k][evaso_in_precedenza]\">\n";
+                    echo "<td align=\"right\">" . $v['quanti'] . "\n";
+                    echo "<input type=\"hidden\" value=\"" . $v['evaso_in_precedenza'] . "\" name=\"righi[$k][evaso_in_precedenza]\"></td>\n";
                     echo "<td align=\"right\" width=\"10%\"><input type=\"text\" value=\"" . $v['evadibile'] . "\" name=\"righi[$k][evadibile]\"></td>\n";
                     echo "<td align=\"right\">" . $v['prelis'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['sconto'] . "</td>\n";
