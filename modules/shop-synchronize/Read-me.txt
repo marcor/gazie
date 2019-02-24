@@ -3,22 +3,23 @@
   ------------------------------------------------------------------------
   @Author    Antonio Germani
   @Website   http://www.lacasettabio.it
+  @Contact   340-5011912
   @Copyright Copyright (C) 2018 - 2019 Antonio Germani All Rights Reserved.
   versione 1.0
   ------------------------------------------------------------------------ 
   
- Questo sistema di connessione fra GAzie e alcune applicazioni di Joomla, quali ad esempio Hikashop, Virtuemart, Solidres si basa su due file di 
-interfaccia, uno presente in GAzie e l'altro presente nella root di Joomla.
-  Queste doppie interfaccie sono necessarie per poter accedere al database di Joomla dal Gestionale di Gazie che spesso è in locale
-o su un altro host.
-  L'interfaccia residente su GAzie può rimanere sempre la stessa mentre quella residente su Joomla dovrà essere creata specificatamente
-in base al tipo di componente utilizzato per gestire il negozio online.
- Per poter gestire più aziende, GAzie assegna un id progressivo ad ogni successiva azienda. Qualora più aziende fossero gestite con GAzie e ciascuna di esse
-utilizzasse un componente differente, questo sistema di connessione è in grado di gestire file di interfaccia differenti. Semplicemente basta aggiungere al
-nome del file interfaccia il numero id azienda. Cioè, l'azienda n.1 userà i file dowload_ordini_joomla.php e upload_prodotti_joomla.php, l'azienda n.2 userà 
-i file dowload_ordini_joomla2.php e upload_prodotti_joomla2.php e via di seguito. Ad ogni cambio azienda di GAzie questo sistema cambierà automaticamente il
-nome del file da utilizzare.
-
+ Questo è un sistema che interfaccia GAzie ad un sito internet scambiando i dati da un database ad un altro. Proprio per questo meccanismo che non implica
+di interagire con il codice del sito, benché sia stato collaudato solo con siti con CMS Joomla, si ritiene debba essere valido anche per altri sistemi.
+ Al momento la sincronizzazione è stata testata fra GAzie e alcune applicazioni di Joomla, quali ad esempio Hikashop, Virtuemart, Solidres ma, come già 
+detto, per la sua semplicità tecnica è adattabile ad ogni applicazione che utilizzi tabelle di datbase.
+ Il tutto si basa su due file di interfaccia, uno presente in GAzie e l'altro presente nella root del sito. Queste doppie interfaccie sono necessarie per 
+poter accedere al database del sito internet dal Gestionale di Gazie che spesso è in locale o su un altro host.
+  L'interfaccia residente su GAzie può rimanere sempre la stessa mentre quella residente sul sito dovrà essere creata specificatamente in base al tipo di 
+componente utilizzato per gestire il negozio online.
+ Il meccanismo di funzionamento è semplice; per ovviare al fatto che la maggiorparte dei database non sono gestibili con file residenti all'esterno del 
+dominio cui il database appartiene, una prima interfaccia crea un file xml contenente i dati da gestire. Questo file xml viene trasferito nel dominio del 
+database da modificare e da lì, con una seconda interfaccia verrà letto e utilizzato per modificare il database. Una sorta di ... cavallo di Troia da noi
+autorizzato.
 
  *ATTIVAZIONE* 
 Questo sistema è avviabile da GAZie solo con il tema G7 e stile default. Con queste impostazioni si attiverà l'icona di sincronizzazione, a destra della
@@ -28,14 +29,13 @@ Per attivare il tema G7 bisogna andare nella modifica impostazioni personali, su
 
  *DOWNLOAD ORDINI*
 
-PRIMA DELL'USO, nelle righe iniziali della configurazione avanzata azienda di GAzie, si dovranno inserire i dati di accesso FTP all'host del sito Joomla.
- Poi, nelle prime righe del file di interfaccia residente su GAzie, denominato "download_ordini_joomla.php", si dovranno fare delle impostazioni 
-seguendo le istruzioni/commenti presenti. In particolare si dovrà scrivere l'url per raggiungere il file residente su Joomla e quale tipo
-di stato dovranno avere gli ordini per poter essere scaricati.
-  Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con quella di Joomla, passa, tramite l'url,
-una password. Tale password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda.
-  
-  L'interfaccia di Joomla dovrà, quindi, fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, dovrà creare un file xml.
+PRIMA DELL'USO, nelle righe iniziali della configurazione avanzata azienda di GAzie, si dovranno inserire i dati di accesso FTP all'host del sito internet,
+su Website root directory si dovrà inserire il percorso della cartella su cui si inserira l'interfaccia (ad esempio: https://www.lacasettabio.it/syncro/ ). 
+ I file di interfaccia che si inseriranno nella suddetta cartella si dovranno chiamare: ordini-gazie.php per il downlod ordini dal sito a GAzie e 
+articoli-gazie.php per l'aggiornamento quantità da GAzie al sito.
+  Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con quella di Joomla, passa, tramite l'url, una password. Tale 
+password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda. L'interfaccia del sito dovrà, quindi,
+fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, si avvierà creando un file xml.
   
   Il file creato dovrà essere formattato come segue:
   
@@ -112,7 +112,7 @@ una password. Tale password è, per comodità, la stessa che GAzie ha per l' FTP
 	
 Ogni <Document> è la testata dell'ordine mentre le <Row> in esso contenute sono gli articoli ordinati.
 	
-Al momento non tutti i campi xml sono utilizzati ma è bene lasciarli per eventuali sviluppi futuri.
+A causa di eventuali aggiornamenti si consiglia di controllare il codice per vedere se sono stati apportati dei cambiamenti.
 
 
 
@@ -144,4 +144,11 @@ La formattazione del file xml è la seguente:
 
 L'aggiornamento delle quantità avverrà solo se verrà trovata corrispondenza con il codice e/o barcode dell'articolo. Articoli con codici non corrispondenti verranno ignorati.
 Altresì, verranno ignorati gli articoli "servizio" di GAzie e quelli dove non sarà stato abilitato il campo "pubblica su sito web".
+ A causa di eventuali aggiornamenti si consiglia di controllare il codice per vedere se sono stati apportati dei cambiamenti.
 
+
+
+* FILE DI INTERFACCIA DA INSERIRE NEL SITO *
+ I file di interfaccia da inserire nel sito devono essere creati in base alle esigenze e alle impostazioni dell'applicazione installata nel sito.
+ Nella cartella di GAzie shop_synchronize > interfacce per Joomla ci sono degli esempi da cui partire.
+ Se non si ha dimestichezza nell'adattare i file si prega di richiedere assistenza privata specifica.
