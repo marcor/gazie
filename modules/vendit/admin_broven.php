@@ -982,7 +982,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['change_pag'] = $tesbro['pagame'];
     $form['speban'] = $tesbro['speban'];
     $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
-    if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V') and $cliente['speban'] == 'S') {
+    if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V' or $pagame['tippag'] == 'K') and $cliente['speban'] == 'S') {
         $form['numrat'] = $pagame['numrat'];
     } else {
         $form['speban'] = 0.00;
