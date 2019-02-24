@@ -68,7 +68,7 @@ if (strlen($where)>1){
 }
 
 if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
-   $orderby = "id_mov desc";
+   $orderby = "datdoc desc";
    $field = 'id_mov';
    $flag_order = 'DESC';
    $flagorpost = 'ASC';
