@@ -51,7 +51,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['target_account'] = intval($_POST['target_account']);
     $form['transfer_fees'] = floatval($_POST['transfer_fees']);
     $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
-    $form['description'] = substr($_POST['description'], 0, 50);
+    $form['description'] = substr($_POST['description'], 0, 100);
     if (isset($_POST['ins'])) {
 
         // ----- INIZIO CONTROLLI FORMALI -----
