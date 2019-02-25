@@ -347,7 +347,7 @@ class lotmag {
       }
       $sqlquery = "SELECT *, SUM(quanti*operat) AS rest FROM " . $gTables['movmag'] . "
             LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_mov =" . $gTables['lotmag'] . ".id_movmag  
-            WHERE " . $gTables['movmag'] . ".artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " GROUP BY " . $gTables['movmag'] . ".id_lotmag ORDER BY " . $gTables['lotmag'] . ".expiry" . $ob;
+            WHERE " . $gTables['movmag'] . ".artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " GROUP BY " . $gTables['movmag'] . ".id_lotmag ORDER BY " . $gTables['lotmag'] . ".expiry" . $ob .", ". $gTables['lotmag'] . ".identifier" . $ob;
       $result = gaz_dbi_query($sqlquery);
       $acc = array();
       $rs = false;
