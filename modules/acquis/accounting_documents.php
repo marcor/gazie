@@ -208,7 +208,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
 		//print_r($doc[$tes['protoc']]['vat']);
         $ctrlp = $tes['protoc'];
     }
-    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || (!empty($taxstamp) && $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+    if ((!empty($doc[$ctrlp]) && $doc[$ctrlp]['tes']['stamp']>=0.01) || (!empty($taxstamp) && $taxstamp>=0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
         $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
         $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
@@ -295,7 +295,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $uts_this_date = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
     if (isset($_POST['submit']) && empty($msg)) {   //confermo la contabilizzazione
         $rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
-        if (!empty($rs) && count($rs > 0)) {
+        if (!empty($rs) && gaz_dbi_num_rows($rs)>0) {
             require("lang." . $admin_aziend['lang'] . ".php");
             $script_transl = $strScript['accounting_documents.php'];
             foreach ($rs as $k => $v) {

@@ -247,9 +247,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } else {    //controlli in caso di inserimento
             $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesbro'], "YEAR(datemi) = " . $form['annemi'] . " and tipdoc like 'DD_' and seziva = $sezione", "numdoc desc, datemi desc", 0, 1);
             $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
-            $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datfat'], 5, 2), substr($ultimo_ddt['datfat'], 8, 2), substr($ultimo_ddt['datfat'], 0, 4));
-            if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
-                $msg .= "44+";
+            if ($ultimo_ddt) {
+                $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datfat'], 5, 2), substr($ultimo_ddt['datfat'], 8, 2), substr($ultimo_ddt['datfat'], 0, 4));
+                if ($utsUltimoDdT > $utsemi) {
+                    $msg .= "44+";
+                }
             }
         }
 		// se la data di consegna richiesta non è coerente, la azzera
@@ -532,7 +534,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$next_row]['unimis'] = $artico['uniacq'];
                 $form['righi'][$next_row]['codric'] = $form['in_codric'];
                 $form['righi'][$next_row]['quality'] = $artico['quality'];
-				if ($artico['quality']==''){
+				if (empty($artico['quality'])) {
 					$form['righi'][$next_row]['quality'] = $form['in_quality'];
 				}
                 $form['righi'][$next_row]['quanti'] = $form['in_quanti'];

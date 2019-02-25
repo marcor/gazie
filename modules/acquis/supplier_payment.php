@@ -158,7 +158,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         foreach ($form['paymov'] as $k => $v) { //attraverso l'array delle partite
             $acc = 0.00;
             foreach ($v as $ki => $vi) {
-                $acc += $vi['amount'];
+                if (is_numeric($vi['amount'])) {
+                    $acc += $vi['amount'];
+                }
             }
             if ($acc >= 0.01) {
                 paymovInsert(array('id_tesdoc_ref' => $k, 'id_rigmoc_pay' => $rig_id, 'amount' => $acc, 'expiry' => $date));

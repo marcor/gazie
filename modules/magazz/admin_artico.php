@@ -135,7 +135,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 $msg['err'][] = 'codice';
             }
         }
-        if (!empty($_FILES['userfile']['name'])) {
+        if (!empty($_FILES['userfile'])) {
             if (!( $_FILES['userfile']['type'] == "image/png" ||
                     $_FILES['userfile']['type'] == "image/x-png" ||
                     $_FILES['userfile']['type'] == "image/jpeg" ||
@@ -194,7 +194,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $msg['err'][] = 'char';
         }*/
         if (count($msg['err']) == 0) { // nessun errore
-            if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
+            if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
 				if ($largeimg==0){
 					$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
 				} else {
