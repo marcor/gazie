@@ -151,7 +151,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['inserimdoc'] = $_POST['inserimdoc'];
     $form['registroiva'] = $_POST['registroiva'];
     $form['operatore'] = $_POST['operatore'];
-    if ($form['registroiva'] > 0) {
+    if ($form['registroiva']>0 && $form['registroiva']<9) {
         $form['inserimdoc'] = 1;
     }
     $form['sezioneiva'] = $_POST['sezioneiva'];
@@ -266,6 +266,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             $form['conto_rc' . $i] = $partner['cosric'];
             $loadCosRic = 0;
         }
+		if($form['registroiva'] == 9){ // è un versamento IVA forzo tutti gli importi al valore del rigo IVA
+			$form['importorc'][$i] = floatval($_POST['impost_ri'][0]);
+		}
     }
     //ricarico i registri per il form dei righi iva già  immessi
     for ($i = 0; $i < $_POST['rigiva']; $i++) {
@@ -319,7 +322,21 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     array_splice($form['imponi_ri'], $i, 1);
                     array_splice($form['impost_ri'], $i, 1);
                 }
-            } elseif ($causa['regiva'] > 0 and $_POST['registroiva'] > 0) { //se la nuova causale prevede righi IVA come la precedente li riuso per caricarci le nuove
+            } elseif ($causa['regiva'] == 9) { // pagamento IVA a debito
+			    $_POST['rigiva']=1;
+                $form['imponi_ri'][0]=0.00;
+                $form['impost_ri'][0]=0.00;
+                $form['id_rig_ri'][0]=0;
+                $form['codiva_ri'][0]=0;
+                $form['reverse_charge_ri'][0]='';
+                $form['operation_type_ri'][0]='';
+				$dr = $form['date_reg_Y'].'-'.$form['date_reg_M'].'-'.$form['date_reg_D'];
+				$dl = new DateTime($dr);
+				$dl->modify('last day of previous month');
+                $form['datliq']=$dl->format('d-m-Y');
+                $form['datdoc']=$form['datliq'];
+            }elseif($causa['regiva']>0 && $_POST['registroiva'] > 0) {
+				//se la nuova causale prevede righi IVA come la precedente li riuso per caricarci le nuove
                 //calcolo il totale dell'imponibile e dell'iva postati
                 $imponi = 0;
                 $impost = 0;
@@ -571,8 +588,8 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             $_POST['rigiva'] = 0;
         }
         for ($i = 0; $i < $_POST['rigiva']; $i++) {
-            $_POST['imponi_ri'][$i] = preg_replace("/\,/", '.', $_POST['imponi_ri'][$i]);
-            $_POST['impost_ri'][$i] = preg_replace("/\,/", '.', $_POST['impost_ri'][$i]);
+            $_POST['imponi_ri'][$i] = number_format(preg_replace("/\,/", '.', $_POST['imponi_ri'][$i]),2,'.','');
+            $_POST['impost_ri'][$i] = number_format(preg_replace("/\,/", '.', $_POST['impost_ri'][$i]),2,'.','');
             $ctrl_mov_iva += $_POST['imponi_ri'][$i] + $_POST['impost_ri'][$i];
         }
         $ctrl_mov_iva = round(abs($ctrl_mov_iva), 2);
@@ -796,6 +813,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                         $vv['reverse_charge_idtes'] = intval($_POST['reverse_charge_ri'][$i]);
                         $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
+						if ($form['registroiva']==9){$vv['tipiva']='V';}
                         gaz_dbi_table_update('rigmoi', array('id_rig', $row_iva['id_rig']), $vv);
                     } else { //altrimenti lo elimino
                         gaz_dbi_del_row($gTables['rigmoi'], "id_rig", $row_iva['id_rig']);
@@ -813,7 +831,8 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                     $vv['reverse_charge_idtes'] = intval($_POST['reverse_charge_ri'][$i]);
                     $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
-                    rigmoiInsert($vv);
+					if ($form['registroiva']==9){$vv['tipiva']='V';}
+                     rigmoiInsert($vv);
                 }
                 //modifico la testata
                 $codice = array('id_tes', intval($_POST['id_testata']));
@@ -859,6 +878,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $vv['imponi'] = floatval($_POST['imponi_ri'][$i]);
                     $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                     $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
+					if ($form['registroiva']==9){$vv['tipiva']='V';}
                     $reverse_charge_iva = 0;
                     if ($form['reverse_charge_ri'][$i] == 'N6') { // dovrò inserire una testata per il reverse charge
                         // per prima cosa dovrò controllare se c'è il cliente con la stessa anagrafica
@@ -1337,16 +1357,17 @@ echo "</script>\n";
     $(function () {
         $("#datdoc").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#datliq").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+		$("#versamentoIVA").change(function(){this.form.submit();});
     });
 </script>
-<form method="POST" name="myform">
+<form method="POST" name="myform" id="myform">
     <?php
     $gForm = new contabForm();
     if (isset($_GET['new']) && !isset($_POST['Insert'])) { // se ho inserito il movimento senza errori lo ricordo ma rimango sullo script
         $gForm->toast('Il movimento <a href="admin_movcon.php?id_tes='.$_GET['new'].'&Update" >'.$_GET['new'].'</a> è stato inserito con successo', 'alert-last-row', 'alert-success');
     }
     echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">";
-    echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
+    echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" id=\"hidden_req\"/>\n";
     echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
     if ($toDo == 'insert') {
         echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
@@ -1503,7 +1524,29 @@ echo "</script>\n";
     <input type="hidden" name="reverse_charge" value="<?php echo $form['reverse_charge']; ?>" />
     <?php
 //inserimento movimento iva
-    if ($form["registroiva"] > 0) {
+	if($form['registroiva'] == 9){ // ho un versamento IVA  
+		  // rigo di input non utilizzato	
+		  echo '<input type="hidden" value="' . $_POST['rigiva'] . '" name="rigiva">';
+		  echo '<input type="hidden" name="insert_imponi" value="' . $form['insert_imponi']. '">';
+          echo '<input type="hidden" name="insert_codiva" value="' . $form['insert_codiva'] . '">';
+          echo '<input type="hidden" name="operation_type" value="' . $form['operation_type'] . '">';
+		  // rigo unico indice zero
+		  echo '<input type="hidden" name="id_rig_ri[0]" value="' . $form['id_rig_ri'][0] . '">';
+		  echo '<input type="hidden" name="imponi_ri[0]" value="' . $form['imponi_ri'][0] . '">';
+          echo '<input type="hidden" name="codiva_ri[0]" value="' . $form['codiva_ri'][0] . '">';
+          echo '<input type="hidden" name="reverse_charge_ri[0]" value="' . $form['reverse_charge_ri'][0] . '">';
+          echo '<input type="hidden" name="operation_type_ri[0]" value="' . $form['operation_type_ri'][0] . '">';
+          // creo l'array da passare alla funzione per la creazione della tabella responsive
+          $resprow[0] = array(
+              array('head' => $script_transl["vat"], 'class' => 'text-center',
+                  'value' => 'VERSAMENTO DEBITO IVA'),
+              array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
+                  'value' => '<input type="number" step="0.01" name="impost_ri[0]" value="' . $form['impost_ri'][0]. '" maxlength="13" size="2" tabindex="20" id="versamentoIVA" />'),
+              array('head' => $script_transl["datliq"], 'class' => 'text-right numeric',
+                    'value' => '<input type="text" id="datliq" name="datliq" value="' . $form['datliq'] . '" />'),
+          );
+		  $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
+	}elseif($form["registroiva"] > 0) {
         if ($form['reverse_charge'] == 'N6') {
             $gForm->toast("L'aliquota I.V.A. selezionata (natura=N6) prevede che al termine dell'inserimento del movimento venga aggiunto un rigo sul Registro IVA vendite (REVERSE CHARGE)", 'alert-last-row', 'alert-success');
         } elseif ($form['reverse_charge'] >= 1) { // vengo da un reverse charge già inserito
@@ -1582,7 +1625,7 @@ echo "</script>\n";
                 array('head' => $script_transl["operation_type"], 'class' => 'text-center',
                     'value' => $form['operation_type_ri'][$i]),
                 array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="0.01" name="impost_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['impost_ri'][$i])) . '" maxlength="13" size="2" onchange="this.form.submit()" />'),
+                    'value' => '<input type="number" step="0.01" name="impost_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['impost_ri'][$i])) . '" maxlength="13" size="2" />'),
                 array('head' => $script_transl["delete"], 'class' => 'text-center',
                     'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="dei[' . $i . ']" title="' . $script_transl['delrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
             );
