@@ -133,7 +133,11 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
     if ($a_row['id_rif'] == 0) {
-        echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</td>\n";
+		if ($a_row['id_orderman']>0){
+			echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../orderman/admin_orderman.php?Update&codice=".$a_row['id_orderman']."\">".$a_row['descau']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])." - ID: ".$a_row['id_orderman']."</a></td>\n";
+		} else {
+			echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</td>\n";
+		}
     } else {
         if ($a_row['tipdoc'] == "ADT"
          || $a_row['tipdoc'] == "AFA"
