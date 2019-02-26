@@ -334,7 +334,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 				$dl = new DateTime($dr);
 				$dl->modify('last day of previous month');
                 $form['datliq']=$dl->format('d-m-Y');
-                $form['datdoc']=$form['datliq'];
+                $form['datdoc']=$form['date_reg_D'].'-'.$form['date_reg_M'].'-'.$form['date_reg_Y'];
             }elseif($causa['regiva']>0 && $_POST['registroiva'] > 0) {
 				//se la nuova causale prevede righi IVA come la precedente li riuso per caricarci le nuove
                 //calcolo il totale dell'imponibile e dell'iva postati

@@ -106,6 +106,11 @@ class vatBook extends Standard_template {
                     $tax = 0;
                     break;
             }
+            if ($this->typbook==9){
+               $taxable = 0;
+               $tax = $mov['impost'];
+            }
+			
 // INIZIO TIPIZZAZIONE MOVIMENTI PER DISTINGUERE QUELLI CHE VANNO SUL REGISTRO DEL PERIODO 
 // DA QUELLI CHE PARTECIPANO ALLA LIQUIDAZIONE IVE DEL PERIODO SELEZIONATO
 		// INIZIO MOVIMENTI DI REGISTRO
@@ -442,7 +447,7 @@ for ($i = 1; $i <= $p_max; $i++) {
     $pdf->setTopCarryBar('');
     $pdf->setBotCarryBar('');
     $pdf->Cell(190, 1, '', 'T');
-    if ($pdf->typbook > 5) { // se è un acquisto metto la legenda (provvisorio)
+    if ($pdf->typbook == 6) { // se è un acquisto metto la legenda (provvisorio)
         // inizio stampa legenda tipologie di operazioni
         $xml = simplexml_load_file('../../library/include/operation_type.xml');
         $pdf->SetFont('helvetica', 'B', 6);
@@ -467,81 +472,86 @@ for ($i = 1; $i <= $p_max; $i++) {
         }
         // fine stampa legenda tipi operazioni
     }
-    $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Ln(6);
-    $pdf->Cell(190, 6, $pdf->script_transl['vat_castle_title'], 1, 1, 'C', 1);
-    $pdf->Cell(20, 5, 'cod.', 1, 0, 'C', 1);
-    $pdf->Cell(60, 5, $pdf->script_transl['descri'], 1, 0, 'C', 1);
-    $pdf->Cell(30, 5, $pdf->script_transl['taxable'], 1, 0, 'R', 1);
-    $pdf->Cell(20, 5, '%', 1, 0, 'C', 1);
-    $pdf->Cell(30, 5, $pdf->script_transl['tax'], 1, 0, 'R', 1);
-    $pdf->Cell(30, 5, $pdf->script_transl['tot'], 1, 1, 'R', 1);
-    $pdf->SetFont('helvetica', '', 10);
-    foreach ($pdf->vat_castle as $k => $v) {
-        $pdf->Cell(20, 5, $k, 1, 0, 'C');
-        $pdf->Cell(60, 5, $v['descri'], 1, 0, 'C', 0, '', 1);
-        $pdf->Cell(30, 5, gaz_format_number($v['taxable']), 1, 0, 'R');
-        $pdf->Cell(20, 5, $v['periva'] . '%', 1, 0, 'C');
-        $align = 'R';
-        if ($v['tipiva'] == 'D' || $v['tipiva'] == 'T') {
-            // metto in evidenza che è indetraibile allineandolo a sinistra
-            $align = 'L';
-        }
-        $pdf->Cell(30, 5, gaz_format_number($v['tax']), 1, 0, $align);
-        $pdf->Cell(30, 5, gaz_format_number($v['taxable'] + $v['tax']), 1, 1, 'R');
-    }
-    $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Cell(80, 5, $pdf->script_transl['tot_descri'], 1, 0, 'C', 1);
-    $pdf->Cell(30, 5, gaz_format_number($pdf->taxable), 1, 0, 'R', 1);
-    $pdf->Cell(20, 5);
-    $pdf->Cell(30, 5, gaz_format_number($pdf->tax), 1, 0, 'R', 1);
-    $pdf->Cell(30, 5, gaz_format_number($pdf->taxable + $pdf->tax), 1, 1, 'R', 1);
-    if (count($pdf->acc_castle) > 0) {
-        $pdf->Ln(6);
+    if ($pdf->typbook < 9) { // se non è una lista di versamenti
         $pdf->SetFont('helvetica', 'B', 10);
-        $pdf->Cell(35);
-        $pdf->Cell(120, 6, $pdf->script_transl['acc_castle_title'], 1, 2, 'C', 1);
+        $pdf->Ln(6);
+        $pdf->Cell(190, 6, $pdf->script_transl['vat_castle_title'], 1, 1, 'C', 1);
         $pdf->Cell(20, 5, 'cod.', 1, 0, 'C', 1);
-        $pdf->Cell(75, 5, $pdf->script_transl['descri'], 1, 0, 'C', 1, '', 1);
-        $pdf->Cell(25, 5, $pdf->script_transl['amount'], 1, 1, 'R', 1);
-        $pdf->SetFont('helvetica', '', 8);
-        foreach ($pdf->acc_castle as $k => $v) {
-            $pdf->Cell(35);
+        $pdf->Cell(60, 5, $pdf->script_transl['descri'], 1, 0, 'C', 1);
+        $pdf->Cell(30, 5, $pdf->script_transl['taxable'], 1, 0, 'R', 1);
+        $pdf->Cell(20, 5, '%', 1, 0, 'C', 1);
+        $pdf->Cell(30, 5, $pdf->script_transl['tax'], 1, 0, 'R', 1);
+        $pdf->Cell(30, 5, $pdf->script_transl['tot'], 1, 1, 'R', 1);
+        $pdf->SetFont('helvetica', '', 10);
+        foreach ($pdf->vat_castle as $k => $v) {
             $pdf->Cell(20, 5, $k, 1, 0, 'C');
-            $pdf->Cell(75, 5, $v['descri'], 1, 0, 'L', 0, '', 1);
-            $pdf->Cell(25, 5, gaz_format_number($v['value']), 1, 1, 'R');
+            $pdf->Cell(60, 5, $v['descri'], 1, 0, 'C', 0, '', 1);
+            $pdf->Cell(30, 5, gaz_format_number($v['taxable']), 1, 0, 'R');
+            $pdf->Cell(20, 5, $v['periva'] . '%', 1, 0, 'C');
+            $align = 'R';
+            if ($v['tipiva'] == 'D' || $v['tipiva'] == 'T') {
+                // metto in evidenza che è indetraibile allineandolo a sinistra
+                $align = 'L';
+            }
+            $pdf->Cell(30, 5, gaz_format_number($v['tax']), 1, 0, $align);
+            $pdf->Cell(30, 5, gaz_format_number($v['taxable'] + $v['tax']), 1, 1, 'R');
         }
-    }
-    $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Ln(6);
-    $pdf->Cell(190, 6, $pdf->script_transl['vat_castle_liq_title'], 1, 1, 'C', 1);
-    $pdf->Cell(20, 5, 'cod.', 1, 0, 'C', 1);
-    $pdf->Cell(60, 5, $pdf->script_transl['descri'], 1, 0, 'C', 1);
-    $pdf->Cell(30, 5, $pdf->script_transl['taxable'], 1, 0, 'R', 1);
-    $pdf->Cell(20, 5, '%', 1, 0, 'C', 1);
-    $pdf->Cell(30, 5, $pdf->script_transl['tax'], 1, 0, 'R', 1);
-    $pdf->Cell(30, 5, $pdf->script_transl['tot'], 1, 1, 'R', 1);
-    $pdf->SetFont('helvetica', '', 10);
-    foreach ($pdf->vat_castle_liq as $k => $v) {
-        $pdf->Cell(20, 5, $k, 1, 0, 'C');
-        $pdf->Cell(60, 5, $v['descri'], 1, 0, 'C', 0, '', 1);
-        $pdf->Cell(30, 5, gaz_format_number($v['taxable']), 1, 0, 'R');
-        $pdf->Cell(20, 5, $v['periva'] . '%', 1, 0, 'C');
-        $align = 'R';
-        if ($v['tipiva'] == 'D' || $v['tipiva'] == 'T') {
-            // metto in evidenza che è indetraibile allineandolo a sinistra
-            $align = 'L';
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->Cell(80, 5, $pdf->script_transl['tot_descri'], 1, 0, 'C', 1);
+        $pdf->Cell(30, 5, gaz_format_number($pdf->taxable), 1, 0, 'R', 1);
+        $pdf->Cell(20, 5);
+        $pdf->Cell(30, 5, gaz_format_number($pdf->tax), 1, 0, 'R', 1);
+        $pdf->Cell(30, 5, gaz_format_number($pdf->taxable + $pdf->tax), 1, 1, 'R', 1);
+        if (count($pdf->acc_castle) > 0) {
+            $pdf->Ln(6);
+            $pdf->SetFont('helvetica', 'B', 10);
+            $pdf->Cell(35);
+            $pdf->Cell(120, 6, $pdf->script_transl['acc_castle_title'], 1, 2, 'C', 1);
+            $pdf->Cell(20, 5, 'cod.', 1, 0, 'C', 1);
+            $pdf->Cell(75, 5, $pdf->script_transl['descri'], 1, 0, 'C', 1, '', 1);
+            $pdf->Cell(25, 5, $pdf->script_transl['amount'], 1, 1, 'R', 1);
+            $pdf->SetFont('helvetica', '', 8);
+            foreach ($pdf->acc_castle as $k => $v) {
+                $pdf->Cell(35);
+                $pdf->Cell(20, 5, $k, 1, 0, 'C');
+                $pdf->Cell(75, 5, $v['descri'], 1, 0, 'L', 0, '', 1);
+                $pdf->Cell(25, 5, gaz_format_number($v['value']), 1, 1, 'R');
+            }
         }
-        $pdf->Cell(30, 5, gaz_format_number($v['tax']), 1, 0, $align);
-        $pdf->Cell(30, 5, gaz_format_number($v['taxable'] + $v['tax']), 1, 1, 'R');
-    }
-    $pdf->SetFont('helvetica', 'B', 10);
-    $pdf->Cell(80, 5, $pdf->script_transl['tot_liqui'], 1, 0, 'C', 1);
-    $pdf->Cell(30, 5, gaz_format_number($pdf->taxable_liq), 1, 0, 'R', 1);
-    $pdf->Cell(20, 5);
-    $pdf->Cell(30, 5, gaz_format_number($pdf->tax_liq), 1, 0, 'R', 1);
-    $pdf->Cell(30, 5, gaz_format_number($pdf->taxable_liq + $pdf->tax_liq), 1, 1, 'R', 1);
-	
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->Ln(6);
+        $pdf->Cell(190, 6, $pdf->script_transl['vat_castle_liq_title'], 1, 1, 'C', 1);
+        $pdf->Cell(20, 5, 'cod.', 1, 0, 'C', 1);
+        $pdf->Cell(60, 5, $pdf->script_transl['descri'], 1, 0, 'C', 1);
+        $pdf->Cell(30, 5, $pdf->script_transl['taxable'], 1, 0, 'R', 1);
+        $pdf->Cell(20, 5, '%', 1, 0, 'C', 1);
+        $pdf->Cell(30, 5, $pdf->script_transl['tax'], 1, 0, 'R', 1);
+        $pdf->Cell(30, 5, $pdf->script_transl['tot'], 1, 1, 'R', 1);
+        $pdf->SetFont('helvetica', '', 10);
+        foreach ($pdf->vat_castle_liq as $k => $v) {
+            $pdf->Cell(20, 5, $k, 1, 0, 'C');
+            $pdf->Cell(60, 5, $v['descri'], 1, 0, 'C', 0, '', 1);
+            $pdf->Cell(30, 5, gaz_format_number($v['taxable']), 1, 0, 'R');
+            $pdf->Cell(20, 5, $v['periva'] . '%', 1, 0, 'C');
+            $align = 'R';
+            if ($v['tipiva'] == 'D' || $v['tipiva'] == 'T') {
+                // metto in evidenza che è indetraibile allineandolo a sinistra
+                $align = 'L';
+            }
+            $pdf->Cell(30, 5, gaz_format_number($v['tax']), 1, 0, $align);
+            $pdf->Cell(30, 5, gaz_format_number($v['taxable'] + $v['tax']), 1, 1, 'R');
+		}
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->Cell(80, 5, $pdf->script_transl['tot_liqui'], 1, 0, 'C', 1);
+        $pdf->Cell(30, 5, gaz_format_number($pdf->taxable_liq), 1, 0, 'R', 1);
+        $pdf->Cell(20, 5);
+        $pdf->Cell(30, 5, gaz_format_number($pdf->tax_liq), 1, 0, 'R', 1);
+        $pdf->Cell(30, 5, gaz_format_number($pdf->taxable_liq + $pdf->tax_liq), 1, 1, 'R', 1);
+	} else { // è una lista dei versamenti
+        $pdf->Ln(4);
+        $pdf->Cell(156, 4,' T O T A L E   D E I    V E R S A M E N T I   € ', 'LTB', 0, 'R', 0, '', 1);
+        $pdf->Cell(17, 4, gaz_format_number($pdf->tax_liq), 1, 1, 'R', 1, '', 1);
+	}
 }
 if ($_GET['sd'] == 'sta_def') {
     switch ($pdf->typbook) {

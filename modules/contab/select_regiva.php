@@ -52,7 +52,7 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
                       " . $gTables['tesmov'] . ".descri AS descri,
                       " . $gTables['aliiva'] . ".descri AS desvat,
                       " . $gTables['tesmov'] . ".id_tes AS id_tes,
-                      " . $gTables['aliiva'] . ".tipiva AS tipiva", $gTables['rigmoi'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
+                      " . $gTables['rigmoi'] . ".tipiva AS tipiva", $gTables['rigmoi'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
         LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesmov'] . ".clfoco = " . $gTables['clfoco'] . ".codice
         LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra
         LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice", $where, $orderby);
@@ -170,6 +170,13 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     if ($form['hidden_req'] == 'vat_reg' || $form['hidden_req'] == 'vat_section') {
         require("lang." . $admin_aziend['lang'] . ".php");
         $form['page_ini'] = getPage_ini($form['vat_section'], $form['vat_reg']);
+		if ($form['vat_reg']==9){ // ho cambiato per vedere i versamenti propongo tutta la lista dall'anno precedente
+			$dl = new DateTime('-1 year');
+			$form['date_ini_D'] = 1;
+			$form['date_ini_M'] = 1;
+			$form['date_ini_Y'] = $dl->format('Y');
+			$form['jump'] = '';
+		}
         $form['hidden_req'] = '';
     } else {
         $form['page_ini'] = intval($_POST['page_ini']);
@@ -304,9 +311,12 @@ if (isset($_POST['preview']) and $msg == '') {
         $totimpost_liq = 0.00;
         $totindetr_liq = 0.00;
         $ctrlmopre = 0;
+		$castle_imponi=array();
+		$castle_descri[0]='';
+		$castle_percen[0]='';
 		foreach ($m AS $key => $mv) {
 			$class_m='';
-            if ($mv['operat'] == 1) {
+            if ($mv['operat'] == 1||$form['vat_reg']==9) {
                 $imponi = $mv['imponi'];
                 $impost = $mv['impost'];
             } elseif ($mv['operat'] == 2) {
