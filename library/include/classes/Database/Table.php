@@ -54,11 +54,16 @@ abstract class Table  {
 		$this->initColumns();		
 	}
 
+	/**
+	 * Return \Database\Result object or boolean
+	 *
+	 * @return \Database\Result or Boolean
+	 */
 	public function execute( \Database\ORM\QueryInterface $query ) {
 		$this->_result = GAzie::factory()->getDatabase()->execute($query);
 		if ( is_bool($this->_result) ) {
 			return $this->_result;
-		} else {
+		} else { 
 		  if ( $this->_result->count() === 1 ) {
 			$this->_setValues($this->_result);
 			$this->_loaded = TRUE;
@@ -68,7 +73,7 @@ abstract class Table  {
 			return $this->_result;
 		  }
 		}
-		return $result;
+		return $this->_result;
 	}
 
 	private function _setValues( $result ) {
@@ -104,7 +109,7 @@ abstract class Table  {
 			->from($this->_name)
 			->where("$pk = '$key'");
 			
-		$this->_result = $this->execute( $sql );
+		$this->execute( $sql );
 		if ( $this->_result->count() == 1 ) {
 			$this->_loaded = TRUE;
 			foreach( $this->_result->asArray() as $row ) {

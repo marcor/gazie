@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -26,25 +26,32 @@
 namespace GAzie\Database;
 
 /**
- *  Classe per gestione documenti fattura
+ *  Classe per gestione delle righe dei 
+ *  documenti
  *
  */
-class Fattura extends \Database\Table {
+class FatturaRow extends \Database\Table {
 	
 	public function __construct( $id = NULL ) {
-		parent::__construct('tesdoc');
+		parent::__construct('rigdoc');
 		$this->load( $id );
 	}
 
 	/**
 	 * Return array of FatturaRow
 	 *
-	 * @return array of \GAzie\Database\FatturaRows
+	 * @return array of FatturaRow
 	 */
-	public function getRows() {
-		$fattura_row = new FatturaRow();
-		return $fattura_row->getRowsOfFattura( $this );
+	public function getRowsOfFattura( Fattura $fattura ) {
+		if ( ! $fattura->loaded() ) 
+			return [];
+
+		$where = "id_tes = '". $fattura->id_tes . "'";
+		$sql = $this->query->select()
+                	->from( $this->getTableName())
+			->where( $where );
+		echo $sql;
+		return $this->execute($sql)->asObject();
 	}
-	 
 }
 
