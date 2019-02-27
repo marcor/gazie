@@ -138,7 +138,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             }
         }
     }
-	
+	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
+		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+		// la qtà è in questa variabile $prev_qta['quanti']; 
+	} else {
+		$prev_qta['quanti']=0;
+	}
 	
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {   //      se non e' il primo accesso
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
