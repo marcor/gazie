@@ -466,6 +466,8 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['spediz'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+if (!isset($form['spediz']))
+    $form['spediz'] = null;
 $gForm->selectFromDB('spediz', 'spediz', 'codice', $form['spediz'], 'codice', false, ' ', 'descri');
 echo "</td>\n";
 echo "</tr>\n";

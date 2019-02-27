@@ -135,7 +135,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 $msg['err'][] = 'codice';
             }
         }
-        if (!empty($_FILES['userfile'])) {
+        if (!empty($_FILES['userfile']['name'])) {
             if (!( $_FILES['userfile']['type'] == "image/png" ||
                     $_FILES['userfile']['type'] == "image/x-png" ||
                     $_FILES['userfile']['type'] == "image/jpeg" ||

@@ -141,13 +141,13 @@ function ValoriConti($datainizio,$datafine,$datadopo,$mastrocli,$mastrofor,$dett
     return $conti;
 }
 
-if (isset($_GET['sd'])){
+if (!empty($_GET['sd'])){
      $sd = ' checked ';
 } else {
      $sd = '';
 }
 
-if (!isset($_GET['gioini'])) { //al primo accesso allo script
+if (empty($_GET['gioini'])) { //al primo accesso allo script
     $_GET['gioini'] = "1";
     $_GET['mesini'] = "1";
     $_GET['annini'] = $anno-1;
@@ -158,7 +158,7 @@ if (!isset($_GET['gioini'])) { //al primo accesso allo script
     $_GET['pagini'] = (!empty($admin_aziend['upginv'])) ? $admin_aziend['upginv']+1 : 1;
     $_GET['dettcf'] = 1;
 } else {
-	if (isset($_GET['stadef'])) {
+	if (!empty($_GET['stadef'])) {
 		$sd="checked=\"checked\"";
 	}
 }
@@ -181,13 +181,16 @@ $datafine = date("Ymd",$utsfin);
 if ($utsini >= $utsfin)
     $msg .="1-18-2+";
 
-if (isset($_GET['stampa'])) {
-    $locazione = "Location: stampa_bilanc.php?&di=".$datainizio."&df=".$datafine."&pi=".$_GET['pagini'].((!empty($_GET['stadef'])) ? "&sd=".$_GET['stadef'] : '')."&cf=".$_GET['dettcf'];
+if (!empty($_GET['stampa'])) {
+    $locazione = "Location: stampa_bilanc.php?&di=".$datainizio."&df=".$datafine."&pi=".$_GET['pagini']."&cf=".$_GET['dettcf'];
+    if (!empty($_GET['stadef'])) {
+        $locazione.= "&sd=".$_GET['stadef'];
+    }
     header($locazione);
     exit;
 }
 
-if (isset($_GET['Return'])) {
+if (!empty($_GET['Return'])) {
     header("Location:docume_finean.php");
     exit;
 }
@@ -287,7 +290,7 @@ if ($msg == "") {
 }
 echo "</table>\n";
 
-if (isset($_GET['anteprima']) and $msg == "") {
+if (!empty($_GET['anteprima']) && empty($msg)) {
     $conti = ValoriConti($datainizio,$datafine,$datadopo,$admin_aziend['mascli'],$admin_aziend['masfor'],$_GET['dettcf']);
     if ($conti) {
         $loss = round(array_sum($conti['cos']),2);
