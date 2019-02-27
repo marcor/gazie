@@ -55,14 +55,16 @@ if (!empty($_GET['pr'])) {
 }
 
 //recupero tutti i movimenti iva del periodo
-$sqlquery = "SELECT seziva,regiva,codiva,aliquo," . $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
+$sqlquery = "SELECT seziva,datreg,regiva,codiva,aliquo," . $gTables['tesmov'] . ".id_tes," 
+		. $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
        SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva = 6)+1)) AS imponibile,
-       SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva = 6)+1)) AS imposta
-       FROM " . $gTables['rigmoi'] . "
+       SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva = 6)+1)) AS imposta,
+       impost*(regiva = 9) AS vers 
+	   FROM " . $gTables['rigmoi'] . "
        LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
        LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice
        WHERE datliq BETWEEN $datainizio and $datafine
-       GROUP BY seziva,regiva,codiva
+       GROUP BY seziva,regiva,codiva,vers
        ORDER BY seziva,regiva,aliquo DESC";
 $result = gaz_dbi_query($sqlquery);
 $topCarry = array(array('lenght' => 118, 'name' => 'da riporto : ', 'frame' => 'B', 'fill' => 0, 'font' => 8),
@@ -98,7 +100,11 @@ $totale_iva_sezione = 0.00;
 $totale_iva_registro = 0.00;
 $totale_iva_acquisti = 0.00;
 $saldo_periodo = 0.00;
+$versamenti=array();
 while ($row = gaz_dbi_fetch_array($result)) {
+  if ($row['regiva']==9){
+	  $versamenti[]=$row;
+  }	else {
     if ($ctrl_registro != 0 && $ctrl_registro != $row['regiva'] && $ctrl_sezione == $row['seziva']) {
         $totale_iva_sezione += $totale_iva_registro;
     }
@@ -166,6 +172,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     $pdf->Cell(20, 6, gaz_format_number($row['isp']), 1, 0, 'R');
     $pdf->Cell(20, 6, gaz_format_number($row['ind']), 1, 0, 'R');
     $pdf->Cell(25, 6, gaz_format_number($row['imponibile'] + $row['imposta'] + $row['isp']), 1, 1, 'R');
+  }
 }
 $pdf->Cell(109, 6, $script_transl['t_reg'], 0, 0, 'R');
 $pdf->Cell(20, 6, gaz_format_number($totale_iva_registro), 1, 1, 'R', 1);
@@ -237,14 +244,20 @@ if ($saldo_totale > 0 || $_GET['cr'] > 0) { // se ho da pagare
     //$pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
     //$pdf->Cell(26, 6, gaz_format_number($saldo_totale), 'RTB', 1, 'R', 1);
 
-// dati versamento
-    $pdf->SetFont('helvetica', '', 8);
-    $pdf->Ln(6);
-    $pdf->Cell(50, 6, $script_transl['pay_date'], 0, 0, 'L');
-    $pdf->Cell(60, 6, $script_transl['co'], 0, 0, 'L');
-    $pdf->Cell(40, 6, $script_transl['abi'], 0, 0, 'L');
-    $pdf->Cell(40, 6, $script_transl['cab'], 0, 1, 'L');
 }
+
+if (sizeof($versamenti)>0) { 
+  $pdf->SetFont('helvetica','',9);
+  foreach($versamenti as $k=>$v) {
+	// ritrovo il conto con il quale ho eseguito il pagamento
+	$rc=gaz_dbi_get_row($gTables['rigmoc'], "darave ='A' AND id_tes", $v['id_tes']); 
+	$ac=gaz_dbi_get_row($gTables['clfoco'], "codice", $rc['codcon']); 
+    $pdf->Ln(6);
+    $pdf->Cell(100,6,$script_transl['pay_date'].gaz_format_date($v['datreg']).$script_transl['co'].$ac['descri'],0,0,'L',0,'',1);
+    $pdf->Cell(29, 6, gaz_format_number($v['vers']), 0, 1, 'R');
+  }
+}
+
 
 if ($_GET['sd'] == 'sta_def') {
     gaz_dbi_put_row($gTables['company_data'],'var','upgrie','data',$pdf->getGroupPageNo() + $n_page - 1 );

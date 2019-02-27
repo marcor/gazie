@@ -68,35 +68,41 @@ function getMovements($date_ini,$date_fin)
         $rs=gaz_dbi_dyn_query("seziva,regiva,codiva,periva,operat,
                                SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva = 6)+1)) AS imp,
                                SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva = 6)+1)) AS iva,
+                               SUM(impost*(regiva = 9)) AS vers,
                               ".$gTables['aliiva'].".descri AS desvat,
                               ".$gTables['aliiva'].".tipiva AS tipiva",
         $gTables['rigmoi']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
         LEFT JOIN ".$gTables['aliiva']." ON ".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice",$where,$orderby);
         $m=array();
         $m['tot']=0;
+        $m['versamenti']=array();
         while ($r=gaz_dbi_fetch_array($rs)) {
-              if ($r['tipiva']=='D'){ // iva indetraibile
-                    $r['isp']=0;
-                    $r['ind']=$r['iva'];
-                    $r['iva']=0;
-              } elseif ($r['tipiva']=='T'){ // iva split payment
-                    $r['isp']=$r['iva'];
-                    $r['ind']=0;
-                    $r['iva']=0;
-              } else { // iva normale
-                    $r['ind']=0;
-                    $r['isp']=0;
-              }
-              $m['data'][]=$r;
-              if (!isset($m['tot_rate'][$r['codiva']])) {
-                  $m['tot_rate'][$r['codiva']]=$r;
-              } else {
-                  $m['tot_rate'][$r['codiva']]['imp']+=$r['imp'];
-                  $m['tot_rate'][$r['codiva']]['iva']+=$r['iva'];
-                  $m['tot_rate'][$r['codiva']]['ind']+=$r['ind'];
-                  $m['tot_rate'][$r['codiva']]['isp']+=$r['isp'];
-              }
-              $m['tot']+=$r['iva'];
+          if ($r['tipiva']=='D'){ // iva indetraibile
+             $r['isp']=0;
+             $r['ind']=$r['iva'];
+             $r['iva']=0;
+          } elseif ($r['tipiva']=='T'){ // iva split payment
+             $r['isp']=$r['iva'];
+             $r['ind']=0;
+             $r['iva']=0;
+          } else { // iva normale
+             $r['ind']=0;
+             $r['isp']=0;
+          }
+		  if($r['regiva']==9){
+			$m['versamenti'][]=$r;
+		  }else{
+			$m['data'][]=$r;
+			if(!isset($m['tot_rate'][$r['codiva']])) {
+              $m['tot_rate'][$r['codiva']]=$r;
+			}else{
+              $m['tot_rate'][$r['codiva']]['imp']+=$r['imp'];
+              $m['tot_rate'][$r['codiva']]['iva']+=$r['iva'];
+              $m['tot_rate'][$r['codiva']]['ind']+=$r['ind'];
+              $m['tot_rate'][$r['codiva']]['isp']+=$r['isp'];
+			}
+			$m['tot']+=$r['iva'];
+		  }
         }
         return $m;
 }
@@ -329,9 +335,7 @@ if (isset($_POST['preview']) and $msg=='') {
            echo "<td>".$v['periva']."% </td><td>".gaz_format_number($v['iva'])."</td><td>".gaz_format_number($v['ind'])."</td>\n";
            echo "<td>".gaz_format_number($v['ind']+$v['imp']+$v['iva']+$v['isp'])."</td>\n";
            echo "</tr>\n";
-			if ($v['regiva'] == 6) {
-				$totiva_acquisti+= $v['iva'];
-			}
+		   if($v['regiva']==6){$totiva_acquisti+= $v['iva'];}
         }
         echo "<tr><td colspan=8><HR></td></tr>";
         foreach($m['tot_rate'] as $k=>$v) {
@@ -358,6 +362,11 @@ if (isset($_POST['preview']) and $msg=='') {
         } else {
            echo "<tr><td colspan=2></td><td class=\"FacetDataTD\" align=\"right\" colspan=3>".$script_transl['tot'].$script_transl['t_pos']."</td><td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($m['tot'])."</td></tr>";
         }
+		if (sizeof($m['versamenti']) > 0) { 
+			foreach($m['versamenti'] as $k=>$v) {
+				echo "<tr><td colspan=2></td><td class=\"danger\" align=\"right\" colspan=3>".$script_transl['regiva_value'][$v['regiva']]."</td><td class=\"danger\" align=\"right\">".$v['vers']."</td></tr>";
+			}
+		}
         if ($err==0) {
             echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
             echo '<td colspan="7" align="right"><input type="submit" name="print" value="';

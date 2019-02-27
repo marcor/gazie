@@ -71,7 +71,7 @@ $strScript = array("select_liqiva.php" =>
         'carry' => 'Credito da periodo precedente',
         'pro_rata' => 'PRO RATA',
         'pay_date' => 'Pagata in data ',
-        'co' => 'presso ',
+        'co' => ' attraverso ',
         'abi' => ' A.B.I. ',
         'cab' => ' C.A.B. '
     ),
