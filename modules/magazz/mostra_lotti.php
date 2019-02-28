@@ -29,7 +29,6 @@ $lm = new lotmag;
 $gForm = new magazzForm;
 $admin_aziend=checkAdmin();
 $codice = filter_input(INPUT_GET, 'codice');
-$descr = filter_input(INPUT_GET, 'descri');
 $lm -> getAvailableLots($codice,0);
 $date = date("Y-m-d");
 
@@ -44,6 +43,7 @@ $resorf = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
  $gTables['movmag'] . ".tipdoc,".
  $gTables['movmag'] . ".desdoc,".
  $gTables['movmag'] . ".datdoc,".
+ $gTables['movmag'] . ".id_mov,".
  $gTables['rigdoc'] . ".id_tes,".
  $gTables['tesdoc'] . ".numdoc,".
  $gTables['tesdoc'] . ".numfat,".
@@ -76,7 +76,7 @@ if (isset($_POST['close'])){
 }
 </style>
 
-<div align="center" class="FacetFormHeaderFont">Elenco lotti disponibili per <?php echo $codice," - ",substr($descr,0,50); ?></div>
+<div align="center" class="FacetFormHeaderFont">Elenco lotti disponibili per <?php echo $codice; ?></div>
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
             <tr class="FacetDataTD">
@@ -262,7 +262,7 @@ if (isset($_POST['close'])){
 							echo "<b>Prot:</b> ",$orf['protoc'];
 							?>
 							</div>
-							<div class="col-sm-4">									
+							<div class="col-sm-2">									
 							<?php
 							echo "<b>Rif.:</b> ",$orf['numdoc']," - ",$orf['numfat'];
 							?>
@@ -272,9 +272,18 @@ if (isset($_POST['close'])){
 							echo "<b>Del:</b> ",gaz_format_date($orf['datdoc']);
 							?>
 							</div>
-							<div class="col-sm-5">									
+							<div class="col-sm-7">									
 							<?php
-							echo "<b>Descr.:</b> ",$orf['desdoc'];
+							if ($orf['tipdoc']=="AFA" or $orf['tipdoc']=="ADT"){
+								echo "<b>Descr.: </b><a class=\"btn btn-xs btn-default\" href=\"../acquis/admin_docacq.php?Update&id_tes=".$orf['id_tes']."\">".$orf['desdoc']."</a>";
+								echo "<b> Mov.mag.: </b><a class=\"btn btn-xs btn-default\" href=\"../magazz/admin_movmag.php?id_mov=".$orf['id_mov']."&Update\">".$orf['id_mov']."</a>";
+
+							} else if ($orf['tipdoc']=="VRI" or $orf['tipdoc']=="DDT" or $orf['tipdoc']=="DDT"){
+									echo "<b>Descr.: </b><a class=\"btn btn-xs btn-default\" href=\"../vendit/admin_docven.php?Update&id_tes=".$orf['id_tes']."\">".$orf['desdoc']."</a>";
+									echo "<b> Mov.mag.: </b><a class=\"btn btn-xs btn-default\" href=\"../magazz/admin_movmag.php?id_mov=".$orf['id_mov']."&Update\">".$orf['id_mov']."</a>";
+								} else {
+									echo "<b>Descr.: </b>".$orf['desdoc'];
+								}
 							?>
 							</div>
 						</div>
