@@ -77,6 +77,11 @@ class GAzie {
 		return $this->getConfig()->get('GAZIE_VERSION');
 	}
 
+	public function getCurrentAzienda() {
+		$azienda = new Azienda;
+		return $azienda->getCurrent();
+	}
+
 	/**
 	 * Return GAzie class
 	 *

@@ -44,14 +44,14 @@ class Config {
 		$this->setDirectories( PATH_ROOT );
 		
 		$tmp = json_decode($json_data, TRUE);
-                $data = gaz_dbi_get_row( $this->getTabelle('company_config'), 'var', 'syncronize_oc');
+                $data = \gaz_dbi_get_row( $this->getTabelle('company_config'), 'var', 'syncronize_oc');
                 if ( ! $data ) {
                         $json_data = json_encode(array(
                                 'user'=>'',
                                 'pass'=>'',
                                 'url'=>'http://...',
                         ));
-                        gaz_dbi_table_insert('company_config', array( 'description'=>'Accesso ai dati shop opencart web','var'=>'syncronize_oc','val'=> $json_data));
+                        \gaz_dbi_table_insert('company_config', array( 'description'=>'Accesso ai dati shop opencart web','var'=>'syncronize_oc','val'=> $json_data));
                 } else {
                         $json_data = $data['val'];
                 }
@@ -291,7 +291,7 @@ class Config {
 
 	public function putData( $data ) {
 		$json_data = json_encode($data);
-		$data = gaz_dbi_put_row($this->getTabelle('company_config'), 'var', 'syncronize_oc','val',$json_data);
+		$data = \gaz_dbi_put_row($this->getTabelle('company_config'), 'var', 'syncronize_oc','val',$json_data);
 		return $data;
 	}
 

@@ -277,6 +277,40 @@ $strScript = array("select_liqiva.php" =>
         'liq' => 'LIQUIDABILE',
         't_gen' => 'TOTALE REGISTRO IVA DEL PERIODO',
 		't_liq'=>'TOTALE LIQUIDABILE NEL PERIODO'
+	),
+    "select_regiva_day.php" =>
+    array('title' => 'Selezione per la visualizzazione e/o la stampa dei registri IVA',
+        'errors' => array('La data  non &egrave; corretta!',
+            'La data di inizio non pu&ograve; essere successiva alla data di fine !',
+            'P' => 'La sequenza dei numeri di protocollo non &egrave; corretta',
+            'N' => 'La sequenza dei numeri dei documenti non &egrave; corretta',
+            'T' => 'C\'&egrave; un movimento IVA non tipizzata',
+            'err' => 'Ci sono degli errori che non giustificano la stampa del registro'
+        ),
+        'vat_reg' => 'Registro IVA da stampare:',
+        'vat_reg_value' => array(2 => 'Fatture di Vendita', 4 => 'Corrispettivi', 6 => 'Fatture d\'Acquisto',9=>'Lista dei versamenti'),
+        'vat_section' => 'Sezione IVA ',
+        'page_ini' => 'N. pagina iniziale',
+        'jump' => 'Riepilogo ad ogni salto periodo',
+        'jump_title' => 'Se selezionato stampa sul PDF tutti i riepiloghi periodici',
+        'sta_def' => 'Stampa definitiva',
+        'sta_def_title' => 'Se selezionato modifica il valore dell\'ultima pagina stampata di questo registro in configurazione azienda',
+        'descri' => 'Descrizione',
+        'descri_value' => array('M' => 'del mese di ', 'T' => 'del trimestre '
+        ),
+        'date_ini' => 'Data inizio periodo ',
+        'sem_ord' => ' Dettaglio ',
+        'sem_ord_value' => array(0 => ' Senza conti costi/ricavi ', 1 => ' Con conti costi/ricavi '
+        ),
+        'cover' => 'Stampa la copertina',
+        'date_fin' => 'Data fine periodo ',
+        'header' => array('Protocollo'=>'','ID-Data Reg.'=>'','Descrizione documento'=>'','Cliente/Fornitore'=>'','Imponibile'=>'','Aliquota'=>'','Imposta'=> '','Liquidazione'=>''),
+        'of' => ' del ',
+        'tot' => ' TOTALE ',
+        'reg' => 'REGISTRO',
+        'liq' => 'LIQUIDABILE',
+        't_gen' => 'TOTALE REGISTRO IVA DEL PERIODO',
+                't_liq'=>'TOTALE LIQUIDABILE NEL PERIODO'
     ),
     "stampa_regiva.php" =>
     array('title' => array(2 => 'Registro delle fatture di vendita ',
