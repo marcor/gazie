@@ -620,6 +620,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if (substr($form['tipdoc'], 0, 2) == 'DD') {  //ma se e' un ddt a fornitore il protocollo è 0 così come il numero e data fattura
                     $form['protoc'] = 0;
                     $form['numfat'] = 0;
+                } else if (substr($form['tipdoc'], 0, 2) == 'AF') {
+                    $form['protoc'] = getProtocol($form['tipdoc'], substr($form['datreg'],0,4), $sezione);
                 } else { //in tutti gli altri casi si deve prendere quanto inserito nel form
                     $form['protoc'] = getProtocol($form['tipdoc'], substr($datemi,0,4), $sezione);
                 }

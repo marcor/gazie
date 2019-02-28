@@ -57,7 +57,7 @@ if (isset($_POST['Delete'])) {
     $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,$order,0,1);
     $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
     // ricavo il progressivo annuo, ma se e' il primo documento dell'anno, resetto il contatore
-    if ($ultimo_documento and $ultimo_documento['id_tes'] == $form['id_tes']) {
+    if (!empty($ultimo_documento) && $ultimo_documento['id_tes']==$form['id_tes']) {
            //allora procedo all'eliminazione della testata e dei righi...
            gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
            gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
@@ -98,7 +98,7 @@ echo '<div class="alert alert-danger text-center" role="alert">' . $script_trans
   <tr>
     <td colspan="2" class="FacetDataTD">
     <?php
-    if (! $message == "") {
+    if (!empty($message)) {
         print "$message";
     }
     ?>
