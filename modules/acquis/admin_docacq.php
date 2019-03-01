@@ -437,7 +437,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $count = count($form['rows']) - 1;
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
 					// riprendo il vecchio movimento per non perdere il riferimento al lotto/matricola
-					$old_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $val_old_row['id_mag']);
+					// Antonio Germani - commentato perché non serve più i movimenti vecchi vengono cancellati e ricreati exnovo
+					//$old_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $val_old_row['id_mag']);
 					
 					// per evitare problemi qualora siano stati modificati i righi o comunque cambiati di ordine elimino sempre il vecchio movimento di magazzino e sotto ne inserisco un altro attenendomi a questo
                     if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
@@ -473,14 +474,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								}
 								
 								$check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE identifier = '" . $form['rows'][$i]['identifier'] . "' AND codart = '".$form['rows'][$i]['codart']."'");// vedo se il lotto inserito nel form è nuovo o esiste già
-							
-							
+														
 								if ($check_lot->num_rows > 0){ // se esiste già
 									$row = $check_lot->fetch_assoc();
 									$id_lotmag=$row['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
 									// e aggiorno comunque il lotto nel caso fose stata cambiata la scadenza
-									
-									gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , identifier = '" . $form['rows'][$i]['identifier'] . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
+									// Antonio Germani -  devo anche aggiornare l' id_movmag perché il movimento di magazzino viene ogni ricreato exnovo
+									// Antonio Germani trovo l'ID che avrà il movimento di magazzino che verrà rigenerato sotto
+									$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
+									$row = $check_mag->fetch_assoc();
+									$id_mag = $row['Auto_increment']; // metto questo id in lotmag
+									gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , identifier = '" . $form['rows'][$i]['identifier'] . "', id_movmag = '" . $id_mag . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
 								
 								} else { // se non esiste 
 							
@@ -490,7 +494,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 									$check_lot = gaz_dbi_query($query);
 									$row = $check_lot->fetch_assoc();
 									$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto, lo metto da parte in id_lotmag e  salvo il lotto
-									gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $val_old_row['id_mag']. "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
+									// Antonio Germani trovo l'ID che avrà il movimento di magazzino che verrà rigenerato sotto
+									$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
+									$row = $check_mag->fetch_assoc();
+									$id_mag = $row['Auto_increment']; // metto questo id in lotmag
+									gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $id_mag. "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
 								}														
 							
 // aggiorno pure i documenti relativi ai lotti
@@ -519,9 +527,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								$id_lotmag=0;
 							}
 						
-					
-					// reinserisco il movimento magazzino associato lo aggiorno
-                        $magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag);
+						if ($form['rows'][$i]['tiprig'] <> 2) { // Antonio Germani - se NON è un rigo descrittivo
+						// reinserisco il movimento magazzino associato lo aggiorno
+							$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag);
+						}
                     } else { //altrimenti lo elimino
                         if ($val_old_row['id_mag'] > 0) {  //se c'è stato un movimento di magazzino lo azzero
                             $magazz->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
