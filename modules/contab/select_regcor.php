@@ -312,7 +312,18 @@ if (isset($_POST['preview']) and $msg == '') {
     $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
     $m = getMovements($form['vat_section'], $form['vat_reg'], $date_ini, $date_fin);
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
-    if (sizeof($m) > 0) {
+    $cont_day = [
+	    'data' 		=> NULL,
+    	    'fatt_init' 	=> NULL,
+	    'fatt_final' 	=> NULL,
+	    'imp_ricevute'	=> 0,
+	    'tot_corrisp'	=> 0,
+	    'tot_iva_corr'	=> [],
+	    'iva_esente'	=> 0,
+	    'iva_no_imp'	=> 0,
+    ];
+    if ( sizeof($m) > 0 ) {
+    //Ci sono dati e quindi procedo al conteggio
         $err = 0;
         echo "<tr>";
         $linkHeaders = new linkHeaders($script_transl['header']);
@@ -403,8 +414,43 @@ if (isset($_POST['preview']) and $msg == '') {
                 echo "<tr>";
                 echo "<td colspan=\"7\" class=\"FacetDataTDred\">" . $script_transl['errors']['T'] . ":&nbsp;</td>";
                 echo "</tr>";
-            }
-            echo '<tr class="'.$class_m.'">';
+	    }
+
+	    echo '<tr class="'.$class_m.'">';
+	    // Controllo della data precedente
+	    if ( $cont_day['data'] !== gaz_format_date($mv['datreg']) ) {
+		    // Se diversa stampo i totali della giornata 
+	    	    // ed azzero i contatori della giornata
+		    if ( !is_null( $cont_day['data'] ) ) { 
+?>
+			    <tr class="<?= $class_m ?>">
+			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['data'] ?> &nbsp;</td>    
+			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['fatt_init'] . '-' .  $cont_day['fatt_final'] ?> &nbsp;</td>    
+			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  serialize($mv) ?> &nbsp;</td>    
+			    </tr>
+<?php
+		    } 
+			// Aumento i contatori se vi sono variazioni
+		       $cont_day = [
+                        'data'              => gaz_format_date( $mv['datreg']),
+                        'fatt_init'         => $mv['numdoc'],
+                        'fatt_final'        => NULL,
+                        'imp_ricevute'      => 0,
+                        'tot_corrisp'       => 0,
+                        'tot_iva_corr'      => [],
+                        'iva_esente'        => 0,
+                        'iva_no_imp'        => 0,
+                       ];
+
+	    } else {
+		    // Aumento i contatori
+		    $cont_day['fatt_final']  	= $mv['numdoc'];
+		    $cont_day['imp_ricevute']  	= $cont_day['imp_ricevute']+$imponi;
+		    $cont_day['tot_corrisp'] 	= $cont_day['tot_corrisp']+$imponi;
+		
+	    }
+          /*  
+	    echo '<tr class="'.$class_m.'">';
             echo "<td align=\"right\" class=\"FacetDataTD$red_p\">" . $mv['protoc'] . " &nbsp;</td>";
             echo "<td align=\"center\"><a href=\"admin_movcon.php?id_tes=" . $mv['id_tes'] . "&Update\" title=\"Modifica il movimento contabile\">id " . $mv['id_tes'] . "</a><br />" . gaz_format_date($mv['datreg']). "</td>";
             echo "<td>" . $mv['descri'] . " n." . $mv['numdoc'] . $script_transl['of'] . gaz_format_date($mv['datdoc']) . " &nbsp;</td>";
@@ -413,7 +459,7 @@ if (isset($_POST['preview']) and $msg == '') {
             echo "<td align=\"center\">" . $mv['periva'] . " &nbsp;</td>";
             echo "<td align=\"right\">" . gaz_format_number($impost) . " &nbsp;</td>";
             echo "<td align=\"center\">" . substr(gaz_format_date($mv['datliq']),3) . $liq_val." &nbsp;</td>";
-            echo "</tr>";
+	    echo "</tr>";*/
         }
         echo "<tr><td colspan=7><HR></td></tr>";
         $totale = number_format(($totimponi + $totimpost), 2, '.', '');

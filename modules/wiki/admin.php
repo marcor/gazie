@@ -67,6 +67,15 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") {
 
 define('BASE_URL', "http" . ($https ? "s" : "") . "://" . $_SERVER['HTTP_HOST'] . APP_DIR);
 
+// Se una immagine visualizzala
+if (   basename($_SERVER['REQUEST_URI'])  === 'wiki.png' ) {
+	$im = imagecreatefrompng( __DIR__  . DIRECTORY_SEPARATOR . basename($_SERVER['REQUEST_URI']));
+	header('Content-Type: image/png');
+	imagepng($im);
+	imagedestroy($im);	
+	exit;
+}
+
 unset($config_file, $request_uri, $script_name, $app_dir, $https);
 
 
