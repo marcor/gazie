@@ -54,6 +54,11 @@ if (isset($_GET['all'])) {
 		$implode[] = "artico LIKE '%".$_GET['articolo']."%'";
 	}
 	
+	if (isset($_GET['lotto']) && !empty($_GET['lotto'])) {
+		$idlotto = $_GET['lotto'];
+		$implode[] = "id_lotmag LIKE '%".$_GET['lotto']."%'";
+	}
+	
 	$where = implode(" AND ", $implode);
 }
 
@@ -67,6 +72,7 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 ?>
 <div align="center" class="FacetFormHeaderFont "><?php echo $script_transl[3].$script_transl[0]; ?></div>
 <?php
+
 $recordnav = new recordnav($gTables['movmag'], $where, $limit, $passo);
 $recordnav -> output();
 
@@ -88,6 +94,9 @@ $recordnav -> output();
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1">
 		</td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="lotto" placeholder="<?php echo "ID ",$script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($idlotto))? $idlotto : ""; ?>" maxlength="15" size="3" tabindex="1">
+		</td>
 		<td class="FacetFieldCaptionTD" colspan="3">
 			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
 			<input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
@@ -98,8 +107,9 @@ $recordnav -> output();
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
          LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)
 		 LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
-         LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";
-$result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".descri AS descart, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);
+         LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)
+		 LEFT JOIN ".$gTables['lotmag']." ON (".$gTables['movmag'].".id_lotmag = ".$gTables['lotmag'].".id)";
+$result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".descri AS descart, ".$gTables['caumag'].".descri AS descau, ".$gTables['lotmag'].".*, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
             "n.ID" => "id_mov",
@@ -107,6 +117,7 @@ $headers_mov = array  (
             $strScript["admin_movmag.php"][2] => "caumag",
             $script_transl[8] => "",
             $script_transl[5] => "artico",
+			$script_transl[11] => "identifier",
             $script_transl[6] => "",
             $script_transl[7] => "",
             $script_transl['delete'] => ""
@@ -148,6 +159,11 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         }
     }
    	echo "<td class=\"FacetDataTD\"  align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$a_row["artico"]."</p>";
+	if ($a_row['id']>0) {
+		echo "<td class=\"FacetDataTD\" align=\"center\">"."ID:".$a_row['id']." - ".$a_row['identifier']."</td>\n";
+	} else {
+		echo "<td class=\"FacetDataTD\"></td>";
+	}
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($valore)." </td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";

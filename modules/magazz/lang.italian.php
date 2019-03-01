@@ -74,7 +74,8 @@ $strScript = array("browse_document.php" =>
         "Importo",
         "Documento",
         " del ",
-        "Genera movimenti da documenti"),
+        "Genera movimenti da documenti",
+		"Lotto"),
     "admin_movmag.php" =>
     array("movimento di magazzino ",
         "Data della registrazione ",
