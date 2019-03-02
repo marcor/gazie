@@ -465,7 +465,7 @@ echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $_POST['ritorno'] . "\">\n";
 echo "<input type=\"hidden\" name=\"id_mov\" value=\"" . $form['id_mov'] . "\">\n";
 echo "<input type=\"hidden\" name=\"id_rif\" value=\"" . $form['id_rif'] . "\">\n";
-echo "pippo<input type=\"text\" name=\"tipdoc\" value=\"" . $form['tipdoc'] . "\">\n";
+echo "<input type=\"hidden\" name=\"tipdoc\" value=\"" . $form['tipdoc'] . "\">\n";
 echo "<input type=\"hidden\" name=\"status\" value=\"" . $form['status'] . "\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
 $importo_rigo = CalcolaImportoRigo($form['quanti'], $form['prezzo'], $form['scorig']);
