@@ -25,6 +25,35 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
 
+function rcopy($src, $dst) {
+    if (is_dir ( $src )) {
+        if ( !file_exists($dst) ) mkdir ( $dst );
+        $files = scandir ( $src );
+        foreach ( $files as $file )
+            if ($file != "." && $file != "..")
+                rcopy ( "$src/$file", "$dst/$file" );
+    } else if (file_exists ( $src ))
+        copy ( $src, $dst );
+}
+
+function deleteDirectory($dir) {
+    if (!file_exists($dir)) {
+        return true;
+    }
+    if (!is_dir($dir)) {
+        return unlink($dir);
+    }
+    foreach (scandir($dir) as $item) {
+        if ($item == '.' || $item == '..') {
+            continue;
+        }
+        if (!deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
+            return false;
+        }
+    }
+    return rmdir($dir);
+}
+
 if (isset($_POST['Return'])) {
     header("Location: report_backup.php");
 }
@@ -37,7 +66,8 @@ if (isset($_POST['Recover'])) {
     $zip = new ZipArchive;
     $res = $zip->open('../../data/files/backups/'.$_GET["id"]);
     if ($res === TRUE) {
-        $zip->extractTo('../../data/files/backups/');
+        mkdir ( '../../data/files/backups/tmp' );
+        $zip->extractTo('../../data/files/backups/tmp');
         $zip->close();
         $mysqlImportFilename = rtrim($_GET["id"],".gaz");
     } else {
@@ -58,7 +88,7 @@ if (isset($_POST['Recover'])) {
         switch($worked){
             case 0:
                 echo 'Import file <b>' .$mysqlImportFilename .'</b> successfully imported to database <b>' .$mysqlDatabaseName .'</b>';
-                unlink ("../../data/files/backups/".$mysqlImportFilename);
+                unlink ("../../data/files/backups/".$_GET["id"]."/".$mysqlImportFilename);
                 break;
             case 1:
                 echo 'There was an error during import.';
@@ -68,7 +98,7 @@ if (isset($_POST['Recover'])) {
             exit;
     } else {
         // nome del file sql da importare
-        $filename = "../../data/files/backups/".$mysqlImportFilename;
+        $filename = "../../data/files/backups/tmp/".$mysqlImportFilename;
 
         // azzerro la stringa che ospiterà la query
         $templine = '';
@@ -90,8 +120,13 @@ if (isset($_POST['Recover'])) {
                 $templine = '';
             }
         }
-        // cancello il file temporaneo .sql (rimane comunque il file compresso .gaz)
-        unlink ("../../data/files/backups/".$mysqlImportFilename);
+        // cancello il file temporaneo .sql e copio la cartella (rimane comunque il file compresso .gaz)
+        unlink ("../../data/files/backups/tmp/".$mysqlImportFilename);
+        $src = "../../data/files/backups/tmp/";
+        $dest = "../../";
+        rcopy( $src , $dest );
+        deleteDirectory ( $src );
+
         header("Location: report_backup.php");
         exit;
     }
