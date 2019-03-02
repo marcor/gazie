@@ -119,7 +119,7 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                                     </a></td>
                                 <td>
                                     <?php 
-                                        if ( preg_match('/-v(.*?).sql/',$file, $versione)>0 )                                      
+                                        if ( preg_match('/-v(.*?).sql/',$file, $versione)>0 )
                                             echo $versione[1];
                                     ?>
                                 </td>

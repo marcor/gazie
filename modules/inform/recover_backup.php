@@ -25,58 +25,89 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
 
+if (isset($_POST['Return'])) {
+    header("Location: report_backup.php");
+}
 if (isset($_POST['Recover'])) {
-$mysqlDatabaseName =$Database;
-$mysqlUserName =$User;
-$mysqlPassword =$Password;
-$mysqlHostName =$Host;
+    $mysqlDatabaseName =$Database;
+    $mysqlUserName =$User;
+    $mysqlPassword =$Password;
+    $mysqlHostName =$Host;
 
-$zip = new ZipArchive;
-$res = $zip->open('../../data/files/backups/'.$_GET["id"]);
-if ($res === TRUE) {
-  $zip->extractTo('../../data/files/backups/');
-  $zip->close();
-  $mysqlImportFilename =rtrim($_GET["id"],".gaz");
-} else {
-  echo 'Errore!';
-  exit;
-}
+    $zip = new ZipArchive;
+    $res = $zip->open('../../data/files/backups/'.$_GET["id"]);
+    if ($res === TRUE) {
+        $zip->extractTo('../../data/files/backups/');
+        $zip->close();
+        $mysqlImportFilename = rtrim($_GET["id"],".gaz");
+    } else {
+        echo 'Errore!';
+        exit;
+    }
 
-echo 'mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
+    // importare in modalità mysql o php (false = php)
+    $mysqlimport = FALSE;
 
-//DONT EDIT BELOW THIS LINE
-//Export the database and output the status to the page
-gaz_dbi_query("DROP DATABASE ".$mysqlDatabaseName);
+    // cancello il database
+    gaz_dbi_query("DROP DATABASE ".$mysqlDatabaseName);
 
-$command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
-$output=array();
-exec($command,$output,$worked);
-switch($worked){
-    case 0:
-        echo 'Import file <b>' .$mysqlImportFilename .'</b> successfully imported to database <b>' .$mysqlDatabaseName .'</b>';
+    if ( $mysqlimport == TRUE ) {
+        $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
+        $output=array();
+        exec($command,$output,$worked);
+        switch($worked){
+            case 0:
+                echo 'Import file <b>' .$mysqlImportFilename .'</b> successfully imported to database <b>' .$mysqlDatabaseName .'</b>';
+                unlink ("../../data/files/backups/".$mysqlImportFilename);
+                break;
+            case 1:
+                echo 'There was an error during import.';
+                break;
+        }
+            header("Location: report_backup.php");
+            exit;
+    } else {
+        // nome del file sql da importare
+        $filename = "../../data/files/backups/".$mysqlImportFilename;
+
+        // azzerro la stringa che ospiterà la query
+        $templine = '';
+        // leggo il file sql
+        $lines = file($filename);
+
+        foreach ($lines as $line)
+        {
+            // è un commmento passo al prossimo rigo
+            if (substr($line, 0, 2) == '--' || $line == '')
+                continue;
+
+        // Aggiungo la linea alla query
+        $templine .= $line;
+        // se è presente un punto e virgola eseguo la query
+        if (substr(trim($line), -1, 1) == ';')
+        {
+            gaz_dbi_query($templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error() . '<br /><br />');
+            $templine = '';
+        }
+        }
         unlink ("../../data/files/backups/".$mysqlImportFilename);
-        break;
-    case 1:
-        echo 'There was an error during import.';
-        break;
-}
-    
-    header("Location: report_backup.php");
-    exit;
-} 
+        header("Location: report_backup.php");
+        exit;
+    }
 
-if (isset($_POST['Return'])){
-    header("Location: report_backup.php");
-    exit;
+    if (isset($_POST['Return'])){
+        header("Location: report_backup.php");
+        exit;
+    }
 }
 
+// visualizzo la form di conferma importazione database
 require("../../library/include/header.php");
 $script_transl=HeadMain('','','report_backup');
 print "<form method=\"POST\">\n";
-print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['warning'].'!!! '.$script_transl['title']."</div>\n";
+print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['warning']." il database verrà eliminato e sarà sostituito con il seguente</div>\n";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sure']."</td><td class=\"FacetDataTD\">".$_GET["id"]."</td></tr>";
-
 print "<td align=\"right\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\"></td><td align=\"right\"><input type=\"submit\" name=\"Recover\" value=\"".strtoupper($script_transl['recover'])."!\"></td></tr>";
 ?>
 </table>
