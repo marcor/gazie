@@ -59,6 +59,7 @@ if (isset($_POST['close'])){
     } // poi chiudo la finestra e esco
 	echo "<script>window.close();</script>";exit;
 }
+
 ?>
 <!-- Visto che il tema LTE non funziona senza header (HeadMain) spengo i menù perché questo è un popup e i menù occuperebbero spazio -->
 <style>
@@ -144,7 +145,7 @@ if (isset($_POST['close'])){
 			   if (intval($v_lm['expiry']>0)){
 				   echo '<td>' . gaz_format_date($v_lm['expiry']). '</td>';
 			   } else {
-				   echo '</td><td>';
+				   echo '<td></td>';
 			   }
                echo '<td>' . gaz_format_quantity($v_lm['rest'], 0, $admin_aziend['decimal_quantity'])
                 .'</td><td>';
@@ -300,5 +301,9 @@ if (isset($_POST['close'])){
     }
 	?>
 	<form method="post" name="closewindow">
-	<input type="submit" title="elimina file temporanei e chiudi finestra" name="close" value="X"  style="float:right">
+	<div>
+	<a class="btn btn-info btn-md" href="../../modules/magazz/stampa_lotti.php?codice=<?php echo $codice;?>" style="float:left"><span class="glyphicon glyphicon-print"></span></a>
+	<button class="btn btn-info btn-md" type="submit" title="Elimina file temporanei e chiudi finestra" name="close" style="float:right"><span class="glyphicon glyphicon-remove"></span>
+	</button>
+	</div>
 	</form>	
