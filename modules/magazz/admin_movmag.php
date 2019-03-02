@@ -398,7 +398,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['clfoco'] = 0;
     $form['clorfo'] = 0;
     $form['tipdoc'] = "MAG";
-    $form['desdoc'] = "";
+    $form['desdoc'] = "Movimento di magazzino";
     $form['giodoc'] = date("d");
     $form['mesdoc'] = date("m");
     $form['anndoc'] = date("Y");
