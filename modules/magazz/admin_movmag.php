@@ -308,7 +308,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if (empty($msg)) {    //        nessun errore        SALVATAGGIO database
 		
 			// Antonio Germani - inizio salvataggio lotto
-			if ($form['lot_or_serial']==1){ //se è previsto un lotto 
+			if ($form['lot_or_serial']==1){ // se l'articolo prevede un lotto 
 				if (strlen($form['identifier']) == 0) { // se non è stato digitato un lotto lo inserisco d'ufficio come data e ora
                     $form['identifier'] = date("Ymd Hms");
                 }
@@ -333,7 +333,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 					// e aggiorno comunque il lotto nel caso fose stata cambiata la scadenza
 					gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
 				} else { // se non esiste 
-					if ($toDo=="insert") { // se è insert creo il rigo lotto memorizzandolo nella tabella lotmag
+					if ($toDo=="insert" AND $form['operat']==1) { // se è insert creo il rigo lotto memorizzandolo nella tabella lotmag
 						$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
 						unset($check_lot);
 						$check_lot = gaz_dbi_query($query);
@@ -345,7 +345,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 						gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");						
 					}
 				}
-				if ($check_lot->num_rows == 0 and $toDo=="update" ) {// se il lotto non esiste e siamo in update vuol dire che questo movimento è stato creato forzando l'inserimento senza lotto. Questo si verifica acquistando con FaE.
+				if ($check_lot->num_rows == 0 and $toDo=="update" AND $form['operat']==1) {// se il lotto non esiste e siamo in update vuol dire che questo movimento è stato creato forzando un inserimento senza lotto.
 					$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
 					unset($check_lot);
 					$check_lot = gaz_dbi_query($query);
@@ -772,7 +772,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
         echo '<input type="hidden" name="id_lotmag" value="">';
         echo '<input type="hidden" name="expiry" value="">';
     }
-	if (isset($form['operat']) && ($form['operat']==1 and $item_artico['good_or_service']==2 and $tipo_composti['val']=="STD")){
+	if (isset($form['operat']) && strlen($form['artico'])>0 && ($form['operat']==1 and $item_artico['good_or_service']==2 and $tipo_composti['val']=="STD")){
 		?>
 		<div class="alert alert-warning alert-dismissible">
 		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
