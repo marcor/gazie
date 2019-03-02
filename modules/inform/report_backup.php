@@ -56,22 +56,16 @@ $keep = gaz_dbi_get_row($gTables['config'], 'variable', 'keep_backup');
 $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup');
 $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
 ?>
-<!--<div align="center" class="FacetFormHeaderFont">
-    <?php //echo $script_transl['title']; ?>
-</div>-->
+
 <form method="POST">
-    <!--<div class="container">
-        <div class="Tlarge">-->
-        <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="pill" href="#lista"><?php echo $script_transl['title']; ?></a></li>
-            <?php
-            if ( $admin_aziend["Abilit"]=="9" ) {
-                echo "<li><a data-toggle=\"pill\" href=\"#config\">".$script_transl['config']."</a></li>";
-            }
-            ?>
-        </ul>
-        <!--</div>
-    </div>-->
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="pill" href="#lista"><?php echo $script_transl['title']; ?></a></li>
+        <?php
+        if ( $admin_aziend["Abilit"]=="9" ) {
+            echo "<li><a data-toggle=\"pill\" href=\"#config\">".$script_transl['config']."</a></li>";
+        }
+        ?>
+    </ul>
 
     <input type="hidden" name="do_backup" value="1">
     <input type="hidden" value="<?php echo $form['hidden_req']; ?>" name="hidden_req" />
@@ -154,14 +148,13 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
             </div>
         </div>
         <div id="config" class="tab-pane fade">
-            <div class="Tlarge FacetDataTD div-config div-table">
+            <div class="FacetDataTD div-config div-table">
                 <div class="div-table-row">
                     <div class="div-table-col">
                         <h4><?php echo $script_transl['backup_mode']; ?></h4>
                         <ul class="licheck">
 
                         <?php
-                        // . ': <br/>';
 
                         foreach ($script_transl['backup_mode_value'] as $k => $v) {
                             echo '<li><input type="radio" name="backup_mode" value="' . $k . '"';

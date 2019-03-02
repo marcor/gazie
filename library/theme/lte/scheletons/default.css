@@ -100,12 +100,24 @@
 .form-group input {
 	padding-left: 10px;
 }
-.tab-content {
-    /*background-color: #aae2a8;*/
-    border: 0px solid #ddd;
-    border-top: 0px;
-    padding: 15px 15px 15px 15px;
+
+.tab-content{
+    background-color:#fff;
+    /*color:#fff;*/
+    padding: 15px;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
+.nav-tabs > li > a{
+    border: medium none;
+}
+.nav-tabs > li > a:hover{
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
 .table {
     border-collapse: initial;
     margin-bottom: 0px;

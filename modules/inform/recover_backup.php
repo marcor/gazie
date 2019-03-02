@@ -81,15 +81,16 @@ if (isset($_POST['Recover'])) {
             if (substr($line, 0, 2) == '--' || $line == '')
                 continue;
 
-        // Aggiungo la linea alla query
-        $templine .= $line;
-        // se è presente un punto e virgola eseguo la query
-        if (substr(trim($line), -1, 1) == ';')
-        {
-            gaz_dbi_query($templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error() . '<br /><br />');
-            $templine = '';
+            // Aggiungo la linea alla query
+            $templine .= $line;
+            // se è presente un punto e virgola eseguo la query
+            if (substr(trim($line), -1, 1) == ';')
+            {
+                gaz_dbi_query($templine) or print('Error performing query \'<strong>' . $templine . '\': ' . mysql_error() . '<br /><br />');
+                $templine = '';
+            }
         }
-        }
+        // cancello il file temporaneo .sql (rimane comunque il file compresso .gaz)
         unlink ("../../data/files/backups/".$mysqlImportFilename);
         header("Location: report_backup.php");
         exit;
