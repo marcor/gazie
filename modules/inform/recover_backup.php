@@ -57,7 +57,7 @@ function deleteDirectory($dir) {
 if (isset($_POST['Return'])) {
     header("Location: report_backup.php");
 }
-if (isset($_POST['Recover'])) {
+if (isset($_POST['Recover']) && $_POST['Conferma']=="accetto") {
     $mysqlDatabaseName =$Database;
     $mysqlUserName =$User;
     $mysqlPassword =$Password;
@@ -75,9 +75,10 @@ if (isset($_POST['Recover'])) {
         exit;
     }
 
+    echo $mysqlImportFilename." ".$_POST['Conferma'];
     // importare in modalità mysql o php (false = php)
     $mysqlimport = FALSE;
-
+die;
     // cancello il database
     gaz_dbi_query("DROP DATABASE ".$mysqlDatabaseName);
 
@@ -144,7 +145,8 @@ print "<form method=\"POST\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['warning']." il database verrà eliminato e sarà sostituito con il seguente</div>\n";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sure']."</td><td class=\"FacetDataTD\">".$_GET["id"]."</td></tr>";
-print "<td align=\"right\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\"></td><td align=\"right\"><input type=\"submit\" name=\"Recover\" value=\"".strtoupper($script_transl['recover'])."!\"></td></tr>";
+print "<tr><td class=\"FacetFieldCaptionTD\">Scrivi \"accetto\"</td><td><input autocomplete=\"off\" name=\"Conferma\" value=\"\" /></td></tr>";
+print "<tr></tr><td align=\"right\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\"></td><td align=\"right\"><input type=\"submit\" name=\"Recover\" value=\"".strtoupper($script_transl['recover'])."!\"></td></tr>";
 ?>
 </table>
 </form>
