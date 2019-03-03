@@ -75,10 +75,9 @@ if (isset($_POST['Recover']) && $_POST['Conferma']=="accetto") {
         exit;
     }
 
-    echo $mysqlImportFilename." ".$_POST['Conferma'];
     // importare in modalità mysql o php (false = php)
     $mysqlimport = FALSE;
-die;
+
     // cancello il database
     gaz_dbi_query("DROP DATABASE ".$mysqlDatabaseName);
 
