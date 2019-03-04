@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -278,7 +277,7 @@ $strScript = array("select_liqiva.php" =>
         't_gen' => 'TOTALE REGISTRO IVA DEL PERIODO',
 		't_liq'=>'TOTALE LIQUIDABILE NEL PERIODO'
 	),
-    "select_regiva_day.php" =>
+    "select_regcor.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa dei registri IVA',
         'errors' => array('La data  non &egrave; corretta!',
             'La data di inizio non pu&ograve; essere successiva alla data di fine !',
@@ -304,7 +303,7 @@ $strScript = array("select_liqiva.php" =>
         ),
         'cover' => 'Stampa la copertina',
         'date_fin' => 'Data fine periodo ',
-        'header' => array('Protocollo'=>'','ID-Data Reg.'=>'','Descrizione documento'=>'','Cliente/Fornitore'=>'','Imponibile'=>'','Aliquota'=>'','Imposta'=> '','Liquidazione'=>''),
+        'header' => array('Data'=>'','Prot. Da/A'=>'','Imponibile'=>'','Iva'=>''),
         'of' => ' del ',
         'tot' => ' TOTALE ',
         'reg' => 'REGISTRO',

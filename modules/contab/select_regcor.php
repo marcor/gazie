@@ -40,7 +40,8 @@ require("lang." . $user->lang . ".php");
 $admin_aziend = checkAdmin();
 
 $msg = '';
-echo $GAzie->getConfig()->get('company_data');
+var_dump(  $GAzie->getConfig()->get('company_data'));
+
 
 function getPage_ini($sez, $reg) {
     global $gTables;
@@ -421,12 +422,29 @@ if (isset($_POST['preview']) and $msg == '') {
 	    if ( $cont_day['data'] !== gaz_format_date($mv['datreg']) ) {
 		    // Se diversa stampo i totali della giornata 
 	    	    // ed azzero i contatori della giornata
-		    if ( !is_null( $cont_day['data'] ) ) { 
+		    if ( !is_null( $cont_day['data'] ) ) {
+			    // Aumento i contatori con il risultato attuale
+		    // Aumento i contatori
+		    $cont_day['fatt_final']  	= $mv['numdoc'];
+		    $cont_day['imp_ricevute']  	= $cont_day['imp_ricevute']	+ $mv['imponi'];
+		    $cont_day['tot_corrisp'] 	= $cont_day['tot_corrisp']	+ $mv['imponi'];
+		    $cont_day['tot_iva_corr'][$mv['codiva']] += $impost;
+
 ?>
 			    <tr class="<?= $class_m ?>">
 			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['data'] ?> &nbsp;</td>    
 			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['fatt_init'] . '-' .  $cont_day['fatt_final'] ?> &nbsp;</td>    
-			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  serialize($mv) ?> &nbsp;</td>    
+				<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['tot_corrisp'] ?> &nbsp;</td>    
+				<td align="right" class="FacetDataTD<?= $red_p ?>">
+<?php				if ( count( $cont_day['tot_iva_corr']) > 1 )
+					$br="<br>";
+				else
+					$br='';
+	     			foreach ($cont_day['tot_iva_corr'] as $k => $v ) {
+					echo $castle_descri[$k] .' = ' . $v.$br;
+				}
+?>
+				&nbsp;</td>    
 			    </tr>
 <?php
 		    } 
@@ -445,8 +463,9 @@ if (isset($_POST['preview']) and $msg == '') {
 	    } else {
 		    // Aumento i contatori
 		    $cont_day['fatt_final']  	= $mv['numdoc'];
-		    $cont_day['imp_ricevute']  	= $cont_day['imp_ricevute']+$imponi;
-		    $cont_day['tot_corrisp'] 	= $cont_day['tot_corrisp']+$imponi;
+		    $cont_day['imp_ricevute']  	= $cont_day['imp_ricevute']	+ $mv['imponi'];
+		    $cont_day['tot_corrisp'] 	= $cont_day['tot_corrisp']	+ $mv['imponi'];
+		    $cont_day['tot_iva_corr'][$mv['codiva']] += $impost;
 		
 	    }
           /*  
