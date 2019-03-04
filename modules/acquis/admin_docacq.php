@@ -215,7 +215,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['quanti'] = 1;
             }
             $form['rows'][$i]['identifier'] = (empty($_POST['rows'][$i]['identifier'])) ? '' : filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_STRING);
-            $form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
+			if (isset($_POST['rows'][$i]['expiry']) AND $_POST['rows'][$i]['expiry']>0){
+				$form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
+			}
             $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_STRING);
             if (!empty($_FILES['docfile_' . $i]['name'])) {
                 $move = false;
@@ -464,40 +466,41 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						// Antonio Germani - inizio salvataggio lotti e magazzino
                         	if ($form['rows'][$i]['lot_or_serial'] > 0){ // se l'aticolo prevede lotti
 							
-								if ($form['rows'][$i]['expiry']>0){
+								if ($form['rows'][$i]['expiry']>0){ // se c'è una scadenza
 									$form['rows'][$i]['expiry']=gaz_format_date($form['rows'][$i]['expiry'],true);// converto la data di scadenza per mysql	
-								} else {
+								} else { // se non c'è la imposto a zero
 									$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
 								}	
 								if (strlen ($form['rows'][$i]['identifier'])<1){ // se non è stato inserito un identificativo lotto lo inserisco d'ufficio
 									$form['rows'][$i]['identifier'] = time();
 								}
 								
-								$check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE identifier = '" . $form['rows'][$i]['identifier'] . "' AND codart = '".$form['rows'][$i]['codart']."'");// vedo se il lotto inserito nel form è nuovo o esiste già
-														
-								if ($check_lot->num_rows > 0){ // se esiste già
-									$row = $check_lot->fetch_assoc();
-									$id_lotmag=$row['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
-									// e aggiorno comunque il lotto nel caso fose stata cambiata la scadenza
-									// Antonio Germani -  devo anche aggiornare l' id_movmag perché il movimento di magazzino viene ogni ricreato exnovo
-									// Antonio Germani trovo l'ID che avrà il movimento di magazzino che verrà rigenerato sotto
-									$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
-									$row = $check_mag->fetch_assoc();
-									$id_mag = $row['Auto_increment']; // metto questo id in lotmag
-									gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , identifier = '" . $form['rows'][$i]['identifier'] . "', id_movmag = '" . $id_mag . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
+								// Anche se UPDATE verrà comunque rigenerato il movimento di magazzino
+								// quindi vedo in anticipo in quale ID verrà memorizzato il prossimo movimento di magazzino
+								$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
+								$row = $check_mag->fetch_assoc();
+								$id_mag = $row['Auto_increment']; // sarà il nuovo movimento di magazzino
 								
-								} else { // se non esiste 
-							
-									// creo il rigo lotto memorizzandolo nella tabella lotmag
+								if ($toDo == 'update'){ // se è UPDATE
+									$check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE id_movmag = '" . $form['rows'][$i]['id_mag']."'");// controllo se il lotto inserito nel form esiste già
+									$rowc = $check_lot->fetch_assoc();
+									if ($rowc['id']>0) {  // se il lotto c'era lo aggiorno
+										$id_lotmag=$rowc['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
+										gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , identifier = '" . $form['rows'][$i]['identifier'] . "', id_movmag = '" . $id_mag . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
+									} else { // se non c'era creo il rigo lotto nella tabella lotmag
+										$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
+										unset($check_lot);
+										$check_lot = gaz_dbi_query($query);
+										$row = $check_lot->fetch_assoc();
+										$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto, lo metto da parte in id_lotmag e creo il nuovo lotto
+										gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $id_mag. "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
+									}
+								} else { // se è INSERT creo il rigo lotto nella tabella lotmag
 									$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
 									unset($check_lot);
 									$check_lot = gaz_dbi_query($query);
 									$row = $check_lot->fetch_assoc();
-									$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto, lo metto da parte in id_lotmag e  salvo il lotto
-									// Antonio Germani trovo l'ID che avrà il movimento di magazzino che verrà rigenerato sotto
-									$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
-									$row = $check_mag->fetch_assoc();
-									$id_mag = $row['Auto_increment']; // metto questo id in lotmag
+									$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto, lo metto da parte in id_lotmag e creo il nuovo lotto
 									gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $id_mag. "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
 								}														
 							
