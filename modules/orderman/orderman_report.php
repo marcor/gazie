@@ -48,8 +48,8 @@ if (!isset($_GET['auxil'])) {
 ?>
 <div align="center" class="FacetFormHeaderFont">Elenco produzioni</div>
 <?php
-if (!isset($_GET['field']) || ( empty($_GET['field'])))
-   $orderby = " id ";
+if (!isset($_GET['field'])||empty($_GET['field']))
+   $orderby = "id DESC";
 
 $recordnav = new recordnav($gTables['orderman'], $where, $limit, $passo);
 $recordnav -> output();
