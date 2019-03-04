@@ -77,7 +77,9 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
 		} else {
 			$ex = $c_p + 1;
 			if ($r['protoc'] <> $ex && $r['id_tes'] <> $c_id) {  // errore: il protocollo non � consecutivo
-				$r['err_p'] = $ex;
+				if ($date_reg>=$date_ini&&$date_reg<=$date_fin){ // controllo solo i movimenti registrati nel periodo selezionato, gli altri liquidabili no
+					$r['err_p'] = $ex;
+				}
 			}
 		}
         if ($r['regiva'] < 4 & $vat_section <> $admin_aziend['reverse_charge_sez']) { // il controllo sul numero solo per i registri delle fatture di vendita e non reverse charge
@@ -96,11 +98,9 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
             }
         }
         $c_ndoc[$r['caucon']] = $r['numdoc'];
-		if ($date_reg>=$date_ini&&$date_reg<=$date_fin){ // controllo solo i movimenti registrati nel periodo selezionato, gli altri liquidabili no
-			$c_sr = $r['ctrl_sr'];
-			$c_id = $r['id_tes'];
-			$c_p = $r['protoc'];
-		}
+		$c_sr = $r['ctrl_sr'];
+		$c_id = $r['id_tes'];
+		$c_p = $r['protoc'];
         // fine controllo errori di numerazione
         $m[] = $r;
     }
