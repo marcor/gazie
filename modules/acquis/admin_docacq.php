@@ -1827,11 +1827,11 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 			//			if (intval($form['rows'][$k]['id_mag'])>0 or $form['tipdoc']!="AFA"){ // Antonio Germani - se non è una fattura acquisto o ha un movimento di magazzino associato apro pulsanti lotto
 							if (empty($form['rows'][$k]['filename'])) {
 								$lm_acc .='<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
-								. $script_transl['insert'] . 'certificato o lotto  <i class="glyphicon glyphicon-tag"></i>'
+								. $script_transl['insert'] . 'certificato  <i class="glyphicon glyphicon-tag"></i>'
 								. '</button></div>';
 							} else {
-								$lm_acc .='<div>' . $script_transl['lotmag'] . ':<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
-								. $form['rows'][$k]['filename'] . ' <i class="glyphicon glyphicon-tag"></i>'
+								$lm_acc .='<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
+								. $script_transl['lotmag']. ': '. $form['rows'][$k]['filename'] . ' <i class="glyphicon glyphicon-tag"></i>'
 								. '</button></div>';
 							}
 							$lm_acc .='<div id="lm_dialog' . $k . '" class="collapse" >
@@ -1843,6 +1843,16 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 								</div>
 								</div>
 								</div>' . "\n";
+							if (empty($form['rows'][$k]['identifier'])) {
+								$lm_acc .='<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
+								. $script_transl['insert'] . 'Lotto  <i class="glyphicon glyphicon-tag"></i>'
+								. '</button></div>';
+							} else {
+								$lm_acc .='<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
+								. "Lotto: " .$form['rows'][$k]['identifier'] . ' - '. $form['rows'][$k]['expiry'] .' <i class="glyphicon glyphicon-tag"></i>'
+								. '</button></div>';
+							}
+								
 			//			} else { // altrimenti avviso che bisogna prima generare i movimenti
 			//				$lm_acc .= '<div><button class="btn btn-xs btn-danger" type="image" >Articolo con lotto. Prima generare movimento di magazzino e poi inserire lotto.<i class="glyphicon glyphicon-tag"></i>'
 			//					. '</button></div>';							
