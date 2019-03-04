@@ -699,7 +699,7 @@ $strScript = array("admin_fornit.php" =>
         "Non hai selezionato la modalit&agrave; di pagamento!",
         "Un rigo &egrave; senza la descrizione!",
         "Un rigo &egrave; senza l'unit&agrave; di misura!",
-        "Causale mag.",
+        "Destinazione",
         "Numero ",
         "La data di registrazione non pu&ograve; essere antecedente a quella del documento da registrare!",
         "La data del documento da registrare non &egrave; corretta!",

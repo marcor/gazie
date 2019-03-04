@@ -112,8 +112,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['anncon'] = $_POST['anncon'];
     $form['spediz'] = $_POST['spediz'];
     $form['portos'] = $_POST['portos'];
-    $form['destin'] = '';
-    $form['id_des'] = '';
+    $form['destin'] = $_POST['destin'];
+    $form['id_des'] = substr($_POST['id_des'], 3);
+    $form['id_des_same_company'] = intval($_POST['id_des_same_company']);
     $form['traspo'] = 0;
     $form['spevar'] = $_POST['spevar'];
     $form['cauven'] = $_POST['cauven'];
@@ -413,6 +414,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['spediz'] = $result['descri'];
         $form['destin'] = $fornitore['destin'];
         $form['id_des'] = $fornitore['id_des'];
+        $id_des = $anagrafica->getPartner($form['id_des']);
+        $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
         $form['in_codvat'] = $fornitore['aliiva'];
         $form['sconto'] = $fornitore['sconto'];
         $form['pagame'] = $fornitore['codpag'];
@@ -505,6 +508,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['extdoc'] = 0;
 			$form['righi'][$next_row]['codice_fornitore'] = 0;
             $form['righi'][$next_row]['id_orderman'] = $form['in_id_orderman'];
+			if ($form['in_id_orderman']>0){ // controllo se la produzione ha un luogo da riportare in destinazione
+				$produzione = gaz_dbi_get_row($gTables['orderman'], "id", $form['in_id_orderman']);
+				if ($produzione['campo_impianto']>0){ // ho un luogo di produzione lo propongo come destinazione
+					$luogo = gaz_dbi_get_row($gTables['campi'], "codice", $produzione['campo_impianto']);
+					$form['destin']=$luogo['descri']."\n".$luogo['annota'];
+				}
+			}
             $form['righi'][$next_row]['larghezza'] = 0;
             $form['righi'][$next_row]['lunghezza'] = 0;
             $form['righi'][$next_row]['spessore'] = 0;
@@ -658,6 +668,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $_GET['id_tes']);
     $anagrafica = new Anagrafica();
     $fornitore = $anagrafica->getPartner($tesbro['clfoco']);
+    $id_des = $anagrafica->getPartner($tesbro['id_des']);
     $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . intval($_GET['id_tes']), "id_rig asc");
     $form['id_tes'] = intval($_GET['id_tes']);
     $form['hidden_req'] = '';
@@ -732,6 +743,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['portos'] = $tesbro['portos'];
     $form['destin'] = $tesbro['destin'];
     $form['id_des'] = $tesbro['id_des'];
+    $form['id_des_same_company'] = $tesbro['id_des_same_company'];
+    $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
     $form['traspo'] = $tesbro['traspo'];
     $form['spevar'] = $tesbro['spevar'];
     $form['cauven'] = $tesbro['cauven'];
@@ -839,6 +852,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['anncon'] = date("Y");
     $form['destin'] = "";
     $form['id_des'] = "";
+    $form['id_des_same_company'] = 0;
+    $form['search']['id_des'] = '';
     $form['spediz'] = "";
     $form['portos'] = "";
     $form['traspo'] = 0.00;
@@ -1360,21 +1375,33 @@ echo "		</td>
 					<input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\" />\n";
 $select_spediz = new SelectValue("portoresa");
 $select_spediz->output('portos', 'portos');
-echo "		</td>
-				<td class=\"FacetFieldCaptionTD\">" . $script_transl[51] . "</td>
-  				<td colspan=\"2\" class=\"FacetDataTD\">
-					<select name=\"caumag\" class=\"FacetSelect\">\n";
-$result = gaz_dbi_dyn_query("*", $gTables['caumag'], " clifor = 1 AND operat = " . $TipoDocumento[$form['tipdoc']], "codice asc, descri asc");
-while ($row = gaz_dbi_fetch_array($result)) {
-    $selected = "";
-    if ($form["caumag"] == $row['codice']) {
-        $selected = ' selected=""';
+echo "	</td>
+		<td class=\"FacetFieldCaptionTD\">" . $script_transl[51] . "</td>";
+    $tmpIdAnagra=(isset($fornitore['id_anagra']) ? $fornitore['id_anagra'] : "");
+    if (!empty($tmpIdAnagra) && gaz_dbi_record_count($gTables['destina'], "id_anagra=$tmpIdAnagra") > 0) { //  è una destinazione legata all'anagrafica
+        echo "<td class=\"FacetDataTD\">\n";
+        $gForm->selectFromDB('destina', 'id_des_same_company', 'codice', $form['id_des_same_company'], 'codice', true, '-', 'unita_locale1', '', 'FacetSelect', null, '', "id_anagra = '" . $fornitore['id_anagra'] . "'");
+//        echo selectDestinazione($cliente['id_anagra']);
+        echo "	<br/><textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
+						</td>
+						<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
+						<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
+    } elseif ($form['id_des'] > 0) { // la destinazione è un'altra anagrafica
+        echo "<td class=\"FacetDataTD\">\n";
+        $select_id_des = new selectPartner('id_des');
+        $select_id_des->selectDocPartner('id_des', 'id_' . $form['id_des'], $form['search']['id_des'], 'id_des', $script_transl['mesg'], $admin_aziend['mascli']);
+        echo "			<input type=\"hidden\" name=\"id_des_same_company\" value=\"" . $form['id_des_same_company'] . "\">
+                                <input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\" />
+						</td>\n";
+    } else {
+        echo "			<td class=\"FacetDataTD\">";
+        echo "				<textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
+						</td>
+						<input type=\"hidden\" name=\"id_des_same_company\" value=\"" . $form['id_des_same_company'] . "\">
+						<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
+						<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
     }
-    echo "				<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . "-" . substr($row['descri'], 0, 20) . "</option>\n";
-}
-echo "			</select>
-  				</td>
-			</tr>
+echo "</tr>
 			<tr>
 				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[32]</td>
 				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[33]</td>
