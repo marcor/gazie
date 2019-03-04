@@ -1824,7 +1824,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 					$lm_acc = '';
 					if ($v['lot_or_serial'] > 0) {
 					
-						if (intval($form['rows'][$k]['id_mag'])>0 or $form['tipdoc']!="AFA"){ // Antonio Germani - se non è una fattura acquisto o ha un movimento di magazzino associato apro pulsanti lotto
+			//			if (intval($form['rows'][$k]['id_mag'])>0 or $form['tipdoc']!="AFA"){ // Antonio Germani - se non è una fattura acquisto o ha un movimento di magazzino associato apro pulsanti lotto
 							if (empty($form['rows'][$k]['filename'])) {
 								$lm_acc .='<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
 								. $script_transl['insert'] . 'certificato o lotto  <i class="glyphicon glyphicon-tag"></i>'
@@ -1843,10 +1843,10 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 								</div>
 								</div>
 								</div>' . "\n";
-						} else { // altrimenti avviso che bisogna prima generare i movimenti
-							$lm_acc .= '<div><button class="btn btn-xs btn-danger" type="image" >Articolo con lotto. Prima generare movimento di magazzino e poi inserire lotto.<i class="glyphicon glyphicon-tag"></i>'
-								. '</button></div>';							
-						}
+			//			} else { // altrimenti avviso che bisogna prima generare i movimenti
+			//				$lm_acc .= '<div><button class="btn btn-xs btn-danger" type="image" >Articolo con lotto. Prima generare movimento di magazzino e poi inserire lotto.<i class="glyphicon glyphicon-tag"></i>'
+			//					. '</button></div>';							
+			//			}
 					} else {
 						$lm_acc .=' <input type="hidden" value="' . $v['identifier'] . '" name="rows[' . $k . '][identifier]" />';
 						$lm_acc .=' <input type="hidden" value="' . $v['expiry'] . '" name="rows[' . $k . '][expiry]" />';
