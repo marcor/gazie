@@ -268,8 +268,8 @@ class invoiceXMLvars {
                 }
                 $this->body_castle[$rigo['codvat']]['impcast'] += $v_for_castle;
                 $this->castel[$rigo['codvat']] += $v_for_castle;
-                $this->totimp_body += $rigo['importo'];
-                $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
+				$this->totimp_body += $rigo['importo'];
+				$this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
                 $this->totimp_doc += $v_for_castle;
                 // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)
                 if ($rigo['tipiva'] == 'T') {
@@ -704,6 +704,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
                     $el->appendChild($el1);
+					if ($rigo['quanti']*$rigo['prelis']<0) {
+						// se quantità o prezzo negativo si tratta di rigo sconto = SC
+						$el1 = $domDoc->createElement("TipoCessionePrestazione", "SC");
+						$el->appendChild($el1);
+						$rigo['quanti']=abs($rigo['quanti']);
+						$rigo['prelis']=abs($rigo['prelis'])*-1;
+					}
 					$codart=preg_replace("/[^A-Za-z0-9]i/",'',$rigo['codart']);
                     if (!empty($codart)) { // ho un codice articolo creo l'elemento
 						$el1 = $domDoc->createElement("CodiceArticolo", '');
