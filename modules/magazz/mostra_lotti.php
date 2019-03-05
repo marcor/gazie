@@ -31,6 +31,7 @@ $admin_aziend=checkAdmin();
 $codice = filter_input(INPUT_GET, 'codice');
 $lm -> getAvailableLots($codice,0);
 $date = date("Y-m-d");
+$artico = gaz_dbi_get_row($gTables['artico'], "codice", $codice);
 
 // Antonio Germani - vedo se ci sono stati degli inventari fino alla data
 $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
@@ -77,7 +78,7 @@ if (isset($_POST['close'])){
 }
 </style>
 
-<div align="center" class="FacetFormHeaderFont">Elenco lotti disponibili per <?php echo $codice; ?></div>
+<div align="center" class="FacetFormHeaderFont">Elenco lotti disponibili per <?php echo $codice," - ", substr($artico['descri'],0,60); ?></div>
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
             <tr class="FacetDataTD">
