@@ -302,7 +302,16 @@ $strScript = array("browse_document.php" =>
         'cm_fin' => 'Categoria de mercaderia final ',
         'art_fin' => 'Articulo final ',
         'listino' => 'Lista',
-        'listino_value' => array(0 => 'de compra', 1 => ' de venta 1', 2 => ' de venta 2', 3 => ' de venta 3', 4 => ' de venta 4', 'web' => 'de venta en l&iacute;nea')
+        'listino_value' => array(0 => 'de compra', 1 => ' de venta 1', 2 => ' de venta 2', 3 => ' de venta 3', 4 => ' de venta 4', 'web' => 'de venta en l&iacute;nea'),
+        'id_anagra' => 'Fornitore (vuoto per tutti)',
+        'ordineStampa' => 'Ordine di Stampa',
+        'alternativeOrdineStampa' => array('default',
+            'codice articolo',
+            'descrizione articolo',
+            'categoria articolo'
+        ),
+        'tipoStampa' => 'Tipo di Stampa',
+        'alternativeTipoStampa' => array('espansa', 'compatta', 'verticale'),
     ),
     "update_prezzi.php" =>
     array('title' => 'Actualizacion de precios de itemes',

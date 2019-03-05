@@ -298,7 +298,16 @@ $strScript = array("browse_document.php" =>
         'cm_fin' => 'Categoria merceologica fine ',
         'art_fin' => 'Articolo fine ',
         'listino' => 'Price list ',
-        'listino_value' => array(0 => 'of purchase', 1 => ' of sales 1', 2 => ' of sales 2', 3 => ' of sales 3', 4 => ' of sales 4', 'web' => 'of web sales')
+        'listino_value' => array(0 => 'of purchase', 1 => ' of sales 1', 2 => ' of sales 2', 3 => ' of sales 3', 4 => ' of sales 4', 'web' => 'of web sales'),
+        'id_anagra' => 'Fornitore (vuoto per tutti)',
+        'ordineStampa' => 'Ordine di Stampa',
+        'alternativeOrdineStampa' => array('default',
+            'codice articolo',
+            'descrizione articolo',
+            'categoria articolo'
+        ),
+        'tipoStampa' => 'Tipo di Stampa',
+        'alternativeTipoStampa' => array('espansa', 'compatta', 'verticale'),
     ),
     "update_prezzi.php" =>
     array('title' => 'Update item prices',
