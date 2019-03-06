@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -24,7 +23,8 @@
   --------------------------------------------------------------------------
  */
 
-global $admin_aziend;
+
+#$admin_aziend = \GAzie\GAzie::factory()->getCheckAdmin();
 
 require("../../modules/root/lang.".$admin_aziend['lang'].".php");
 

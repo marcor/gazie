@@ -27,21 +27,18 @@ require("../../library/include/datlib.inc.php");
 require("../../library/include/classes/Autoloader.php");
 
 $GAzie = \GAzie\GAzie::factory();
+$GAzie->loadModule('contab');
 
-$azienda = $GAzie->getCurrentAzienda();
-
-$user = new \GAzie\User;
-$user->loadLogged();
+$template = $GAzie->getTemplate();
+#var_dump($template);
 
 # Load language
-require("lang." . $user->lang . ".php");
+#require("lang." . $GAzie->getUser()->lang . ".php");
 
 # Lascio perche richiamato dal template
-$admin_aziend = checkAdmin();
+#$_admin_aziend = $GAzie->getCheckAdmin();
 
 $msg = '';
-var_dump(  $GAzie->getConfig()->get('company_data'));
-
 
 function getPage_ini($sez, $reg) {
     global $gTables;
@@ -57,7 +54,9 @@ function getPage_ini($sez, $reg) {
 }
 
 function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
-    global $gTables, $admin_aziend;
+    global $gTables;
+    $GAzie = \GAzie\GAzie::factory();
+    $admin_aziend = $GAzie->getCheckAdmin();
     $m = array();
     $where = "(datreg BETWEEN $date_ini AND $date_fin OR datliq BETWEEN $date_ini AND $date_fin) AND seziva = $vat_section AND regiva = $vat_reg";
     $orderby = "datreg, protoc";

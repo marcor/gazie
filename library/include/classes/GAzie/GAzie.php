@@ -39,14 +39,28 @@ class GAzie {
 	
 	private $_config;
 
+	private $_admin_aziend;
+
+	private $_module_loaded;
+
+	private $_level_access_module;
+	
+	private $_azienda;
+
+	private $_user;
+
 	public function __construct() {
 		$this->_config = Config::factory();
 		$config = $this->_config->get('database');
-		$this->_database = Database::connect($config['host'],
+		$this->_database = Database::connect(
+			$config['host'],
                         $config['user'],
                         $config['password'],
                         $config['dbname'],
-                        $config['port']);
+			$config['port']
+		);
+		$this->_level_access_module = 0;
+		$this->_module_loaded = FALSE;
 	}
 
 	/**
@@ -81,6 +95,48 @@ class GAzie {
 		$azienda = new Azienda;
 		return $azienda->getCurrent();
 	}
+
+	/**
+	 * Method for load module 
+	 *
+	 * 
+	 */
+	public function loadModule() {
+		$this->_admin_aziend = \checkAdmin( $this->_level_access_module);
+		$this->_azienda = $this->getCurrentAzienda();
+		$this->_user = new User;
+		$this->_user->loadLogged();
+		$this->_module_loaded = TRUE;
+		$this->_template = new \View\Template( $this->getConfig(), $this->_user );
+	}
+
+	public function getTemplate() {
+		return $this->_template;
+	}
+
+	public function moduleLoaded() {
+		return $this->_module_loaded;
+	}
+
+	public function getCheckAdmin() {
+		return $this->_admin_aziend;
+	}
+
+	public function checkAccess( int $level = 0 ) {
+		$this->_level_access_module = $level;
+	}
+
+
+	/**
+	 * Get the user logged
+	 * 
+	 * @return \GAzie\User
+	 */
+	public function getUser() {
+		return $this->_user;
+	}
+
+	
 
 	/**
 	 * Return GAzie class

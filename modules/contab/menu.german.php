@@ -37,7 +37,9 @@ $transl['contab'] = array('name'  => "Buchhaltung",
                                           2 =>array("Legen Sie neues Konto","Neues Konto"),
                                           3 =>array("Profil und / oder ausdrucken Kontoberichte","Kontobericht"),
                                           4 =>array("Legen Sie eine neue Bilanzierungs-kausalen","Neue Rechnungslegungsvorschriften kausalen"),
-                                          5 =>array("Drucken des Kontenplan","Drucken des Kontenplan")
+					  5 =>array("Drucken des Kontenplan","Drucken des Kontenplan"),
+					  13 => array("Visualizza i corrispettivi giornalieri", "Registro Corrispettivi"),
+
                                       )
                          );
 ?>

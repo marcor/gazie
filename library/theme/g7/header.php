@@ -1,3 +1,12 @@
+<?php
+	// Load object autoloader
+        include_once("../../library/include/classes/Autoloader.php");          
+        $GAzie = \GAzie\GAzie::factory();
+	if ( $GAzie->moduleLoaded() ) {
+		# Prendo admin_aziend dall'oggetto
+		$admin_aziend = $GAzie->getCheckAdmin();
+	}
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -168,7 +177,7 @@
 
                             if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) {
                                 require("../../modules/" . $row['name'] . "/lang." . $admin_aziend['lang'] . ".php");
-                                if (isset($strScript[$scriptname])) { // se è stato tradotto lo script lo ritorno al chiamante
+				if (isset($strScript[$scriptname])) { // se è stato tradotto lo script lo ritorno al chiamante
                                     $translated_script = $strScript[$scriptname];
                                     if (isset($translated_script['title'])) {
                                         $title_from_menu = $translated_script['title'];
@@ -223,7 +232,7 @@
                     $ctrl_m2 = $row['m2_id'];
                     $ctrl_m3 = $row['m3_id'];
                 }
-                ksort($menuArray);
+		ksort($menuArray);
                 /*   Fine creazione array per JSCookMenu.
                   In $menuArray c'e' la lista del menu
                   con index '0' il modulo corrente,

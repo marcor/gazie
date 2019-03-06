@@ -278,7 +278,7 @@ $strScript = array("select_liqiva.php" =>
 		't_liq'=>'TOTALE LIQUIDABILE NEL PERIODO'
 	),
     "select_regcor.php" =>
-    array('title' => 'Selezione per la visualizzazione e/o la stampa dei registri IVA',
+    array('title' => 'Selezione per la visualizzazione Registri Corrispettivi',
         'errors' => array('La data  non &egrave; corretta!',
             'La data di inizio non pu&ograve; essere successiva alla data di fine !',
             'P' => 'La sequenza dei numeri di protocollo non &egrave; corretta',

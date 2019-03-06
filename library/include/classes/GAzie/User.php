@@ -126,6 +126,15 @@ class User extends \Database\Table {
         }
 
 	/**
+	 *
+	 * @return \GAzie\Database\User\Config
+	 */
+	public function getConfig() {
+		$config = new \GAzie\Database\User\Config;
+		return $config->setUser($this);
+	}
+
+	/**
 	 * Verify if user is logged
 	 *
 	 * @return boolean

@@ -154,7 +154,7 @@ abstract class Table  {
 	 *
 	 */
 	public function getResult() {
-		if ( $this->_loaded )
+	#	if ( $this->_loaded )
 			return $this->_result;
 	}
 
