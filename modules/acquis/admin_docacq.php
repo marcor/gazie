@@ -635,6 +635,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['protoc'] = 0;
                     $form['numfat'] = 0;
 					$form['datfat'] = $datemi;
+                } elseif ($form['tipdoc']=='RDL') {  //se e' un ddt di ritorno da lavorazione non modifico il numero che ho inserito sul form
                 } elseif ($ultimo_documento) {
                     $form['numdoc'] = $ultimo_documento['numdoc'] + 1;
                 } else {
