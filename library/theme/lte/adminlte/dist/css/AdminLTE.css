@@ -328,12 +328,14 @@ a:focus {
   background: transparent;
   margin-top: 0;
   margin-bottom: 0;
-  font-size: 12px;
+  font-size: 10px;
   padding: 7px 5px;
   position: absolute;
   top: 15px;
   right: 10px;
-  border-radius: 2px;
+  border-radius: 3px;
+  /*background: #d2d6de;*/
+  background: #ccf4ca;
 }
 .content-header > .breadcrumb > li > a {
   color: #444;
@@ -2531,7 +2533,7 @@ a:focus {
   margin-right: 5px;
 }
 .nav-tabs-custom > .tab-content {
-  background: #222d32;
+  /*background: #222d32;*/
   padding: 10px;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;

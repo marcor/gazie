@@ -95,3 +95,11 @@ div.th {
   background-color: #aae2a8;
   margin-bottom: 10px;
 }
+.breadcrumb > li + li::before {
+    padding: 0 5px;
+    color: #FFC0CB;
+    content: "/\00a0";
+}
+.content-header > .breadcrumb > li > a:hover {
+    color: #000;
+}
