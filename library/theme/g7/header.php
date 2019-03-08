@@ -6,6 +6,7 @@
 		# Prendo admin_aziend dall'oggetto
 		$admin_aziend = $GAzie->getCheckAdmin();
 	}
+	if ( $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">

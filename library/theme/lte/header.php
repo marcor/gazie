@@ -30,8 +30,9 @@ if ( $GAzie->moduleLoaded() ) {
 	# Prendo admin_aziend dall'oggetto
 	$admin_aziend = $GAzie->getCheckAdmin();
 } 
-
 $config = new UserConfig;
+
+if ( $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
 
 require("../../library/theme/lte/function.php");
 
