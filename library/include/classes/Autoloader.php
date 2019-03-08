@@ -26,27 +26,31 @@ class Autoloader {
     }
 
     public function opencart($class)
-    { 
+    {
 	$file = str_replace("\\","/",$class).".php";
-	$this->include_file($file);
+	if ( ! is_null($file) )
+		$this->include_file($file);
     }
 
     public function gazie($class)
     {
 	$file = str_replace("\\","/",$class).".php"; 
-	$this->include_file($file);
+	if ( ! is_null($file) )
+		$this->include_file($file);
     }
 
     public function database($class)
     { 
 	$file = str_replace("\\","/",$class).".php";
-	$this->include_file($file);
+	if ( ! is_null($file) )
+		$this->include_file($file);
     }
 
     public function syncro($class)
     { 
 	$file = str_replace("\\","/",$class).".php";
-	$this->include_file($file);
+	if ( ! is_null($file) )
+		$this->include_file($file);
     }
 
     public function include_file($file) {
