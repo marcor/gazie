@@ -51,13 +51,14 @@ if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome 
 $testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],$where,'datemi ASC, numdoc ASC, id_tes ASC');
 if (isset($_GET['viewxml'])) {   //se viene richiesta una visualizzazione all'interno del browser
 	$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,'from_string.xml');
+	$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
 	$doc = new DOMDocument;
 	$doc->preserveWhiteSpace = false;
 	$doc->formatOutput = true;
  	$doc->loadXML($file_content);
 	$xpath = new DOMXpath($doc);
 	$xslDoc = new DOMDocument();
-	$xslDoc->load("../../library/include/fatturaordinaria_v1.2.1.xsl");
+	$xslDoc->load("../../library/include/".$fae_xsl_file.".xsl");
 	$xslt = new XSLTProcessor();
 	$xslt->importStylesheet($xslDoc);
 	echo $xslt->transformToXML($doc);

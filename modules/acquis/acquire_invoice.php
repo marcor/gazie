@@ -990,8 +990,9 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		require("../../library/include/footer.php");
 	}
 	if ($f_ex) {	// visualizzo la fattura elettronica in calce
+		$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
 		$xslDoc = new DOMDocument();
-		$xslDoc->load("../../library/include/fatturaordinaria_v1.2.1.xsl");
+		$xslDoc->load("../../library/include/".$fae_xsl_file.".xsl");
 		$xslt = new XSLTProcessor();
 		$xslt->importStylesheet($xslDoc);
 		echo $xslt->transformToXML($doc);
