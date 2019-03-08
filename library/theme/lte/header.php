@@ -156,13 +156,18 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                                 $fileDocs = $module;
                             //leggo dalla tabella admin_module se il modulo wiki è abilitato
                             $res_access_mod = gaz_dbi_dyn_query ( "*", $gTables["admin_module"], 'moduleid=16','moduleid asc');
-                            $row_access_mod = gaz_dbi_fetch_array($res_access_mod);                           
+                            $row_access_mod = gaz_dbi_fetch_array($res_access_mod);
                             if ( $row_access_mod['access'] == 0 ) {
                                 //visualizzo la documentazione standard
                                 echo "<li><a target=\"_new\" href=\"../../modules/" . $module . "/docume_" . $fileDocs . ".php\"><i class=\"fa fa-question\"></i></a></li>";
                             } else {
                                 //visualizzo il link alla wiki
                                 echo "<li><a target=\"_new\" href=\"../../modules/wiki/\"><i class=\"fa fa-question\"></i></a></li>";
+                            }
+                            $res_sync_mod = gaz_dbi_dyn_query ( "*", $gTables["admin_module"], 'moduleid=17','moduleid asc');
+                            $row_sync_mod = gaz_dbi_fetch_array($res_sync_mod);
+                            if ( $row_sync_mod['access'] != 0 ) {
+                                echo "<li><a href='../../modules/shop-synchronize/synchronize.php' class='glyphicon glyphicon-transfer'></a></li>";
                             }
                             ?>
                             <!-- Messages: style can be found in dropdown.less-->
