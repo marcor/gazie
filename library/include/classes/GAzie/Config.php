@@ -104,12 +104,10 @@ class Config {
 		if ( isset($_SESSION['table_prefix'] ) ) {
 			$table_prefix = substr($_SESSION['table_prefix'], 0, 12);
 		} else {
-    		/* lo commento e lo sostituisco con valore per evitare $table_prefix indefinita
-			 $table_prefix = filter_var(substr($table_prefix, 0, 12), FILTER_SANITIZE_MAGIC_QUOTES);
-			*/
-    		$table_prefix = 'gaz';
+			if ( defined('table_prefix') )
+    				$table_prefix = filter_var(substr(table_prefix, 0, 12), FILTER_SANITIZE_MAGIC_QUOTES);
 		}
-		if ( ! defined('GAZIE_VERSION') ) 
+		if ( ! defined('GAZIE_VERSION') )
 			die('Version of GAzie not defined. Control configuration file!');
 		$this->set('GAZIE_VERSION',defined('GAZIE_VERSION') ? GAZIE_VERSION: '');
 		$this->set('database', [

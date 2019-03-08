@@ -36,7 +36,7 @@ $template = $GAzie->getTemplate();
 #require("lang." . $GAzie->getUser()->lang . ".php");
 
 # Lascio perche richiamato dal template
-#$_admin_aziend = $GAzie->getCheckAdmin();
+$admin_aziend = $GAzie->getCheckAdmin();
 
 $msg = '';
 
