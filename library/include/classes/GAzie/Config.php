@@ -43,7 +43,6 @@ class Config {
 		$this->set('path_root', PATH_ROOT );
 		$this->setDirectories( PATH_ROOT );
 		
-		$tmp = json_decode($json_data, TRUE);
                 $data = \gaz_dbi_get_row( $this->getTabelle('company_config'), 'var', 'syncronize_oc');
                 if ( ! $data ) {
                         $json_data = json_encode(array(
