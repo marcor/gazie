@@ -169,7 +169,7 @@ $update_URI_files = (defined('update_URI_files')) ? update_URI_files : 'https://
 define('SET_DYNAMIC_IP', (defined('MY_SET_DYNAMIC_IP')) ? MY_SET_DYNAMIC_IP : '');
 
 // abilita il debug delle variabili nel footer della pagina (impostare true/false)
-$debug_active = (defined('debug_active')) ? debug_active : TRUE;
+$debug_active = (defined('debug_active')) ? debug_active : FALSE;
 
 // attiva la modalità manutenzione non è consentito l'accesso e l'uso dei moduli (FALSE oppure 'email amministratore')
 $maintenance = (defined('maintenance')) ? maintenance : FALSE;

@@ -157,6 +157,9 @@ define('MY_SET_DYNAMIC_IP','');
 // abilita il debug delle variabili nel footer della pagina (impostare true/false)
 define('debug_active', FALSE);
 
+// attiva la modalità manutenzione non è consentito l'accesso e l'uso dei moduli (FALSE oppure 'email amministratore')
+define('maintenance', FALSE);
+
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
 define('modifica_fatture_ddt', FALSE);
 ?>
