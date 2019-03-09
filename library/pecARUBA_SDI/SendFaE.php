@@ -1,5 +1,21 @@
 <?php
+/*
+QUESTO MODULO PERMETTE DI GESTIRE LA FATTURA ELETTRONICA PER MEZZO PEC SDI IN MANIERA ANALOGA ALLE LIBRERIE DI TERZE PARTI (TIPO catsrl)
+IN CONFIGURAZIONE AVANZATA AZIENDA SI DEVE METTERE ALLA VOCE
+"Nome della libreria di terze parti da usare per la eventuale trasmissione delle fatture elettroniche"
+IL VALORE:   PecARUBA_SDI
+PER LA CONFIGURAZIONE DELLA PEC UTILIZZA: config/config/pecfae_config_1.php (da creare copiando pecfae_config.php e valorizzandolo con i dati pec)
+IN QUESTO MODO LA GESTIONE FAE PEC È AUTONOMA E LE EVENTUALI MAIL UTILIZZATE ALL'INTERNO DEL PROGRAMMA POSSONO CONTINUARE LA LORO GESTIONE ORDINARIA
+SI CONSIGLIA DI FARE UNA PEC DEDICATA ALLA FATTURAZIONE ELETTRONICA (DIVERSA DALLA PEC AZIENDALE)
 
+IL MODULO TRASMETTE, SCARICA LE RICEVUTE E LE FATTURE ACQUISTI DALLA PEC DELLO SDI
+I FILE XML DA TRASMETTERE DEVONO ESSERE IN data/files/1
+LE RICEVUTE DELLO SDI VENGONO SALVATE IN data/files/1/ricevutesdi
+LE FATTURE ACQUISTI VENGONO SALVATE IN data/files/1/FAE_ACQUISTI
+dove la cartella 1 è il codice azienda (se si lavora con l'azienda 2 sarà 2 etc...)
+*/
+
+// **********************  INIZIO DA VERIFICARE ***************
 function SendFattureElettroniche($zip_fatture) {
 	//require("../../library/include/datlib.inc.php");
 	global $gTables ;
@@ -32,7 +48,7 @@ function SendFattureElettroniche($zip_fatture) {
 	}
 }
 
-// DA FARE invio file zippati
+// **********************  FINE DA VERIFICARE ***************
 
 function SendFatturaElettronica($xml_fattura) {
 	//require("../../library/include/datlib.inc.php");
@@ -58,8 +74,8 @@ function SendFatturaElettronica($xml_fattura) {
 			// se la mail è stata trasmessa con successo aggiorno lo stato sulla tabella dei flussi
 			gaz_dbi_put_query($gTables['fae_flux'], "filename_ori = '" . $content->name."'", "flux_status", "@");
 			$data_invio = date("Y-m-d") ;
-			// metto la data odierna come data di invio exec_date
-			gaz_dbi_put_query($gTables['fae_flux'], "filename_ori = '" . $content->name."'", "exec_date", $data_invio);
+			// metto la data odierna come data mail
+			gaz_dbi_put_query($gTables['fae_flux'], "filename_ori = '" . $content->name."'", "data", $data_invio);
 
 			echo "<p>INVIO FATTURA ELETTRONICA RIUSCITO!!!</p>";
 		}
@@ -90,12 +106,12 @@ function ReceiveFattF($array_fattf) {
 	set_time_limit(3600);
 
 	// IMAP
-	//require_once('../../config/config/pecfae_config_'.$admin_aziend['codice'].'.php');  // in questo file ho memorizzato
-require_once('../../config/config/pecfae_config.php');  // in questo file ho memorizzato
-
-	// l'account PEC aziendale per fatturazione elettronica
-	// e indirizzo PEC SDI assegnato
-	// N.B. questo file deve essere MOLTO RISERVATO ******
+	require_once('../../config/config/pecfae_config.php');  // questo file ha funzionamento analogo a gconfig.php e gconfig.myconf.php:
+																												// include ulteriori file pecfae_config_n.php con n=codice azienda lavoro
+																												// in cui sono contenuti:
+																												// l'account PEC aziendale per fatturazione elettronica
+																												// e indirizzo PEC SDI assegnato
+																												// N.B. questi file aziendali devono essere MOLTO RISERVATI ******
 	$cemail['val'] = indirizzo_pec_azienda ;
 	$cpassword['val'] = password_pec_azienda;
 	$cmailSDI['val'] = indirizzo_pec_SDI;
@@ -203,17 +219,9 @@ require_once('../../config/config/pecfae_config.php');  // in questo file ho mem
 	}
 	echo "Completato ... sono state ricevute N.".count($FattF)." fatture acquisto <br/>" ;
 	echo "Puoi importarle da ". CATTACHMENTS_DIR .' usando il Pulsante SFOGLIA';
-	/*
-	require_once('fae_scaricate.php');
-	$FatturePath = new fae_scaricate(CATTACHMENTS_DIR) ;
-	$FattureScaricate = $FatturePath->PrendiElenco() ;
-	$FatturePath->close() ;
-	print_r($FattureScaricate) ;
-	return $FattureScaricate ;
-	*/
-	//print_r($FattF) ;
+
 	return $FattF ;
-	//	    echo "<p align=\"center\"><a href=\"./acquire_invoice.php\">Ritorna a report Fatture elettroniche</a></p>";
+	
 }
 
 function ReceiveNotifiche () {
@@ -331,7 +339,8 @@ function ReceiveNotifiche () {
 			$nome_file = $result->textContent;
 			$result = $xpath->query("//DataOraRicezione")->item(0);
 			$data_ora_ricezione = $result->textContent;
-			$data_ora_consegna =$data_ora_ricezione;
+			$result = $xpath->query("//DataOraConsegna")->item(0);
+			$data_ora_consegna =$result->textContent;
 		} elseif ($nome_status == 'NS') {
 			$status = "NS";
 			$flag="ric" ;
