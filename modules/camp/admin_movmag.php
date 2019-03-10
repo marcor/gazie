@@ -143,12 +143,8 @@ if (isset($_POST['mov']) && isset($_POST['artico' . $_POST['mov']])) {
 		while ($row = $result_uso_fito->fetch_assoc()) {
 			$dose_usofito = $row['dose'];
 		}
-	}
-	
-    
+	}  
 }
-
-
 
 // imposta se è un update o un insert
 if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
@@ -567,10 +563,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			
         }/*  fine controllo righe articoli    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 		
-		// carico l'articolo dell'attuale mov in itemart
-		$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
-        
-        // Antonio Germani creo la data di ATTUAZIONE DELL'OPERAZIONE selezionata che poi confronterò con quella di sospensione del campo
+		// Antonio Germani creo la data di ATTUAZIONE DELL'OPERAZIONE selezionata che poi confronterò con quella di sospensione del campo
         $dt = substr("0" . $form['giodoc'], -2) . "-" . substr("0" . $form['mesdoc'], -2) . "-" . $form['anndoc'];
         $dt = strtotime($dt);
         // controllo se è ammesso il raccolto sul campo di coltivazione selezionato $msg .=24+ errore tempo di sospensione
@@ -1316,7 +1309,9 @@ for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
 ?>
 <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['artico'][$form['mov']]; ?>" name="artico<?php echo $form['mov']; ?>" maxlength="15" /> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete -->
 <?php
-    if ($form['artico'][$form['mov']] != "") { 
+    if ($form['artico'][$form['mov']] != "") {
+		// carico l'articolo dell'attuale mov in itemart
+		$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
         $print_unimis = $itemart['unimis'];
         $dose = $itemart['dose_massima']; // prendo anche la dose
         $scorta = $itemart['scorta']; // prendo la scorta minima
@@ -1673,9 +1668,7 @@ for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
 <tr>
 	<td style="font-size:5pt;" colspan="4">
 		<?php echo $form['mov'] + 1; ?>
-		<a name="<?php echo $form['mov']; ?>"></a> <!-- Antonio Germani Questa è l'ancora dello scroll -->
-	</td>
-</tr>
+		<a name="<?php echo $form['mov']; ?>"></a> <!-- Antonio Germani Questa è l'ancora dello scroll -->	
 <?php
 }
 $form['mov'] = $form['nmov'];
@@ -1691,6 +1684,7 @@ if (isset($l) && $l - 1 > $form['mov']) { // se la suddivisione dei lotti ha cre
 </script>
 <?php
 }
+echo '</td></tr>';
 //<<<<<<<<<<<<<<<<<<<<<<       Fine ciclo righi mov     <<<<<<<<<<<<<<<<<<<
 /*ANtonio Germani - visualizzo l'operatore */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[21] . "</td><td class=\"FacetDataTD\" colspan=\"1\">" . $form["adminid"] . "</td>\n";
