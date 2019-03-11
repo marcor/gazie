@@ -1765,5 +1765,14 @@ $strScript = array("admin_client.php" =>
         'operation_type' => 'Tipo oper.',
         'conto' => 'Conto',
 	),
+    "report_contcli.php" =>
+    array('title' => 'Visualizzazione partitario cliente',
+			'datini' => 'Data registrazione inizio  ',
+			'datfin' => 'Data registrazione fine ',
+			'header' => array('Data' => '', 'ID' => '', 'Descrizione' => '', 'N.Prot.' => '',
+            'N.Doc.' => '', 'Data Doc.' => '', 'Dare' => '', 'Avere' => ''),
+	        'errors' => array(4=>'Non ci sono movimenti nei limiti selezionati'),
+
+    )
 	);
 ?>

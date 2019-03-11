@@ -730,6 +730,15 @@ $strScript = array("admin_fornit.php" =>
         'gross_weight' => 'Peso lordo',
         'datreg' => 'Data registrazione contabile',
         'datfat' => 'Data della fattura'
+    ),
+    "report_contfor.php" =>
+    array('title' => 'Visualizzazione partitario fornitore',
+			'datini' => 'Data registrazione inizio  ',
+			'datfin' => 'Data registrazione fine ',
+			'header' => array('Data' => '', 'ID' => '', 'Descrizione' => '', 'N.Prot.' => '',
+            'N.Doc.' => '', 'Data Doc.' => '', 'Dare' => '', 'Avere' => ''),
+	        'errors' => array(4=>'Non ci sono movimenti nei limiti selezionati'),
+
     )
 );
 ?>
