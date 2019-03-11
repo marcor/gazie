@@ -59,7 +59,7 @@ if (isset($_GET['id_tes'])){
 	$xpath = new DOMXpath($doc);
 	$xslDoc = new DOMDocument();
 	$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
-	$xslDoc->load("../../library/include/".$fae_xsl_file.".xsl");
+	$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
 	$xslt = new XSLTProcessor();
 	$xslt->importStylesheet($xslDoc);
 	echo $xslt->transformToXML($doc);

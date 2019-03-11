@@ -58,7 +58,7 @@ if (isset($_GET['viewxml'])) {   //se viene richiesta una visualizzazione all'in
  	$doc->loadXML($file_content);
 	$xpath = new DOMXpath($doc);
 	$xslDoc = new DOMDocument();
-	$xslDoc->load("../../library/include/".$fae_xsl_file.".xsl");
+	$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
 	$xslt = new XSLTProcessor();
 	$xslt->importStylesheet($xslDoc);
 	echo $xslt->transformToXML($doc);

@@ -992,7 +992,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	if ($f_ex) {	// visualizzo la fattura elettronica in calce
 		$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
 		$xslDoc = new DOMDocument();
-		$xslDoc->load("../../library/include/".$fae_xsl_file.".xsl");
+		$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
 		$xslt = new XSLTProcessor();
 		$xslt->importStylesheet($xslDoc);
 		echo $xslt->transformToXML($doc);
