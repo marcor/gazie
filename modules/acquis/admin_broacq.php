@@ -1162,7 +1162,20 @@ foreach ($form['righi'] as $key => $value) {
     echo "<input type=\"hidden\" value=\"{$value['peso_specifico']}\" name=\"righi[{$key}][peso_specifico]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['pezzi']}\" name=\"righi[{$key}][pezzi]\">\n";
 	echo '<input type="hidden" value="' . $value['extdoc'] . '" name="righi[' . $key . '][extdoc]" />';
-
+	// formatto la visualizzazione dei dati dimensionali
+	$dialog_data='';
+	if ($value['pezzi']>=0.001){
+		$dialog_data.=' pz:'.floatval($value['pezzi']);
+		if ($value['lunghezza']>=0.001){
+			$dialog_data.=' dim:'.floatval($value['lunghezza']);
+			if ($value['larghezza']>=0.001){
+				$dialog_data.='x'.floatval($value['larghezza']);
+				if ($value['spessore']>=0.001){
+					$dialog_data.='x'.floatval($value['spessore']);
+				}
+			}
+		}
+	}
 	// stampo l'intestazione della produzione di provenienza
     if ($ctrl_orderman<>$value['id_orderman']) { // ricordo con un rigo la produzione di riferimento
 		if ($value['id_orderman']==0){
@@ -1194,7 +1207,8 @@ foreach ($form['righi'] as $key => $value) {
 					<input type="hidden" name="righi[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" />' . $value['codice_fornitore'] .'<button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#quality_'.$key.'" aria-expanded="false" aria-controls="quality_'.$key.'" title="Descrizione qualità" title="Scegli la qualità del prodotto"><i class="glyphicon glyphicon-tags"></i> '.substr($value['quality'],0,10).'</button><div class="collapse" id="quality_'.$key.'">Qualità: <input id="search_quality'.$key.'" onClick="choicequality(\''.$key.'\');"  name="righi[' . $key . '][quality]" value="'. $value['quality'] .'" rigo="'. $key .'" type="text" /></div>
 					</td>';
             echo '<td>
-						<input type="text" name="righi[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
+						<input type="text" name="righi[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" /><small>
+						<span name="righi[' . $key . '][dialog_data]">'.$dialog_data.'</span></small>
 					  </td>';
             /* Peso */
             /* <input class="myTooltip" data-type="product" data-id="firefox" data-title=""  /> */
@@ -1594,7 +1608,7 @@ echo '	</table>';
 
 	function weightfromdimSet(mu) {
 		var row=$("#dialog_row_focus").val();
-		var res_ps=''; var res_a=''; var res_b=''; var res_c=''; var res_d=''; var res_kg='';
+		var res_ps=''; var res_a=''; var res_b=''; var res_c=''; var res_d=''; var res_kg=''; var res_data='';
 		var larghezza = $("#dialog_larghezza").val();
 		var lunghezza = $("#dialog_lunghezza").val();
 		var spessore = $("#dialog_spessore").val();
@@ -1606,6 +1620,7 @@ echo '	</table>';
 		$("[name='righi["+row+"][peso_specifico]']").val(peso_specifico);
 		$("[name='righi["+row+"][pezzi]']").val(pezzi);
 		if (parseFloat(pezzi)>=0.001) {
+			res_data=' pz:'+pezzi;
 			res_a = parseFloat(pezzi).toFixed(3).toString();
 			res_kg = (parseFloat(pezzi)*parseFloat(peso_specifico)).toFixed(3).toString();
 			res_b = ''; res_c = ''; res_d = '';
@@ -1613,16 +1628,20 @@ echo '	</table>';
 				res_b = (parseFloat(lunghezza)/10**3*parseFloat(pezzi)).toFixed(3).toString();
 				res_kg = (res_b*parseFloat(peso_specifico)).toFixed(3).toString();
 				res_c = ''; res_d = '';
+				res_data+=' dim:'+parseFloat(lunghezza);
 				if (parseFloat(larghezza)>=0.001) {
 					res_c = (parseFloat(larghezza)*res_b/10**3).toFixed(3).toString();
 					res_kg = (res_c*parseFloat(peso_specifico)).toFixed(3).toString();
 					res_d = '';
+					res_data+='x'+parseFloat(larghezza);
 					if (parseFloat(spessore)>=0.001) {
 						res_d = res_c*parseFloat(spessore).toFixed(3).toString();
 						res_kg = (res_d*parseFloat(peso_specifico)).toFixed(3).toString();
+						res_data+='x'+parseFloat(spessore);
 					}
 				}
 			}
+			$("[name='righi["+row+"][dialog_data]']").html(res_data);
 		} else {
 			res_a=''; res_b=''; res_c=''; res_d=''; res_kg='';
 		}
