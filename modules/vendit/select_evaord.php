@@ -1443,7 +1443,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 				// fine gestione lotti
 				
 				// Antonio Germani - controllo e warning disponibilità
-				if ($checkin == " checked"){ // solo se da evadere
+				$articolo = gaz_dbi_get_row($gTables['artico'], "codice", $v['codart']);
+				if ($checkin == " checked" and $articolo['good_or_service']<>1 ){ // solo se da evadere
 					echo "<input type=\"hidden\" value=\"" . $v['giac'] . "\" name=\"righi[$k][giac]\">\n";
 					echo "<input type=\"hidden\" value=\"" . $v['ordin'] . "\" name=\"righi[$k][ordin]\">\n";
 					if ($v['giac']<$v['quanti']){ // se la disponibilità reale di magazzino non è sufficiente
