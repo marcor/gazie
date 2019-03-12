@@ -1,11 +1,14 @@
 <?php
+/*
+ANTONIO DE VINCENTIIS: COMMENTO perché obbliga ad avere il file gconfig.myconf.php
+
 	// Load object autoloader
         include_once("../../library/include/classes/Autoloader.php");          
         $GAzie = \GAzie\GAzie::factory();
 	if ( $GAzie->moduleLoaded() ) {
 		# Prendo admin_aziend dall'oggetto
 		$admin_aziend = $GAzie->getCheckAdmin();
-	}
+	}*/
 	if ( $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
 ?>
 <!DOCTYPE html>
