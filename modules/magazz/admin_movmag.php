@@ -144,6 +144,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	} else {
 		$prev_qta['quanti']=0;
 	}
+    $form['id_orderman'] = $result['id_orderman'];
+    $resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
+    if ($form['id_orderman'] > 0) {
+		$form['coseprod']=$resultorderman['description'];
+    } else {
+		$form['coseprod']="";
+    }
 	
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {   //      se non e' il primo accesso
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
@@ -167,6 +174,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$form['cosear'] = $_POST['cosear'];
     $form['artico'] = $_POST['artico'];
 	$form['lot_or_serial']=$_POST['lot_or_serial'];
+	$form['coseprod']= $_POST['coseprod'];
+    $form['id_orderman'] = intval($_POST['id_orderman']);
 	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0) {
 		$causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $_POST['operat']= $causa['operat'];
@@ -360,13 +369,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
             $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
             if (!empty($form['artico'])) {
-                $upd_mm->uploadMag($form['id_rif'], $form['tipdoc'], 0, // numdoc � in desdoc
-                        0, // seziva � in desdoc
+                $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0, 
                         $form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
                 );
 				// aggiorno id_lotmag nel rigo di movmag
 				// 
-				$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
+				$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = " . $form['id_lotmag'] . ", id_orderman=".$form['id_orderman']." WHERE id_mov ='" . $id_movmag . "'";
                 gaz_dbi_query($query);
             }
             header("Location:report_movmag.php");
@@ -403,6 +411,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['search_partner'] = "";
     $form['cosear'] = "";
     $form['id_rif'] = 0;
+    $form['id_orderman'] = 0;
+	$form['coseprod']="";
 }
 
 require("../../library/include/header.php");
@@ -798,7 +808,12 @@ for ($counter = -1; $counter <= 1; $counter++) {
     }
     echo "<option value=\"$counter\" $selected > " . $strScript["admin_caumag.php"][$counter + 9] . "</option>\n";
 }
-echo "</select></td></tr><tr><td colspan=\"3\"><input type=\"reset\" name=\"Cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
+echo "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\">Produzione</td><td class=\"FacetDataTD\" colspan=3 >";
+$select_production = new selectproduction("id_orderman");
+$select_production->addSelected($form['id_orderman']);			
+$select_production->output($form['coseprod']);
+echo "</td>\n";
+echo "</tr><tr><td colspan=\"3\"><input type=\"reset\" name=\"Cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
 echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
 echo "</td><td align=\"right\">\n";
 if ($toDo == 'update') {
