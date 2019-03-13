@@ -33,8 +33,8 @@ $admin_aziend = checkAdmin();
 $errors = [];
 
 // Syncronizza client da id opencart
-$sync = boolval($_GET['sync']);
-$id_oc = intval($_GET['id_oc']);
+$sync = isset($_GET['sync'])   ? boolval($_GET['sync']) : NULL;
+$id_oc = isset($_GET['id_oc']) ? intval($_GET['id_oc']) : NULL;
 
 // set up params
 $config = new GAzie\Config;
