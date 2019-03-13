@@ -37,7 +37,11 @@ class Config {
 		$this->data = [];
 		if (! defined('PATH_ROOT') )
 			die ('Error setting path root');
-	       
+
+		// Verifica file di configurazione	
+	   	if ( ! is_file("../../config/config/gconfig.myconf.php") )
+			die ('Non hai creato il file di configurazione <b>config/config/gconfig.myconf.php</b>! <br> Copialo da <b>config/config/config.myconf.default.php</b>');
+
 		$this->setConfigFile("../../config/config/gconfig.php");
 		$this->setTabelle();
 		$this->set('path_root', PATH_ROOT );
@@ -95,7 +99,7 @@ class Config {
 	}
 	
 	/**
-	 * 
+	 *  
 	 */
 	private function setConfigFile($file) {
 		if ( ! is_file($file ) )
@@ -111,11 +115,11 @@ class Config {
 			die('Version of GAzie not defined. Control configuration file!');
 		$this->set('GAZIE_VERSION',defined('GAZIE_VERSION') ? GAZIE_VERSION: '');
 		$this->set('database', [
-			'host'		=>	Host,
-			'dbname'	=>	Database,
-			'user'		=>	User,
-			'password'	=>	Password,
-			'port'		=>	Port,
+			'host'		=>	defined('Host') ? Host : $Host,
+			'dbname'	=>	defined('Database') ? Database : $Database,
+			'user'		=>	defined('User') ? User : $User,
+			'password'	=>	defined('Password') ? Password : $password,
+			'port'		=>	defined('Port') ? Port : $Port,
 			'table_prefix'	=>	defined('table_prefix') ? table_prefix : '',
 		]);
 		$this->set('default_user', defined('default_user') ? default_user : '');

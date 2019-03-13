@@ -136,7 +136,13 @@ class GAzie {
 		return $this->_user;
 	}
 
-	
+	/**
+	 * Load debug kint 
+	 *
+	 */
+	public function debug() {
+		
+	}	
 
 	/**
 	 * Return GAzie class
