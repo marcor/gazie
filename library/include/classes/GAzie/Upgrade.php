@@ -153,10 +153,18 @@ class Upgrade {
 		if ( $perms !== '0755' && $perms !== '0777' ) {
 			$errors[] = "Non hai permessi di scrittura in '$path_local' impostali a 0755 con proprietario www-data";
 		}
-	
+
+		$zip_mime = [	
+			'application/x-compressed',
+			'application/x-zip-compressed',
+			'application/zip',
+			'multipart/x-zip',
+		];
+
+
 		if ( $zip_file['size'] < 30*1024*1024 )
 			$errors[] = "Errore dimensioni files in upload";
-		if ( $zip_file['type'] !== 'application/zip' )
+		if ( ! in_array($zip_file['type'],$zip_mime )  )
 			$errors[] = "Il file non è uno zip di gazie";
 		if ( $zip_file['error'] !== 0 )
 			$errors[] = "Errore nell'upload del file";
