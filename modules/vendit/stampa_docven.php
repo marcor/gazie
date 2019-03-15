@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -23,7 +22,9 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+
 require("../../library/include/datlib.inc.php");
+
 $admin_aziend = checkAdmin();
 if (!ini_get('safe_mode')) { //se me lo posso permettere...
     ini_set('memory_limit', '128M');
@@ -70,6 +71,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
 
     if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
         createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
+	require("../../library/include/footer.php");
     } else {
         createDocument($testata, $template, $gTables, 'rigdoc', false, $lang);
     }

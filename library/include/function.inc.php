@@ -1370,9 +1370,9 @@ class GAzieMail {
 
     function sendMail($admin_data, $user, $content, $partner) {
 		// su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica  
-        global $gTables;
+        global $gTables, $debug_active;
 
-        require_once "../../library/phpmailer/class.phpmailer.php";
+	require_once "../../library/phpmailer/class.phpmailer.php";
         require_once "../../library/phpmailer/class.smtp.php";
         //
         //
@@ -1480,8 +1480,14 @@ class GAzieMail {
         require("../../library/include/header.php");
         $script_transl = HeadMain();
 
-		// Invio...
-        if ($mail->Send()) {
+	// Invio...
+	if ($debug_active) {
+		echo "<b>SIMULAZIONE INVIO DEBUG<b><br />";
+		echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
+		return true;
+	}
+				
+        if ($mail->Send() ) {
             echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
 		    require("../../library/include/footer.php");
             return true;
