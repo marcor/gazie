@@ -46,6 +46,14 @@ require("../../library/include/document.php");
 if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo documento attraverso il suo id_tes
     $id_testata = intval($_GET['id_tes']);
     $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $id_testata);
+
+    // Controllo esistenza documento
+    if ( ! $testata ) {
+//        alert("Nessun documento da stampare");
+        header("Location: report_docven.php");
+        exit;
+    }
+
     if (!empty($_GET['template'])) {
         $template = substr($_GET['template'], 0, 25);
     } elseif (!empty($testata['template'])) {
