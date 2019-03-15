@@ -109,12 +109,11 @@ $(function() {
    
 });
 function confirMail(link){
-   tes_id = link.id.replace("doc", "");
+   tes_id = link.id.replace("doc_", "");
    $.fx.speeds._default = 500;
-   targetUrl = $("#doc"+tes_id).attr("url");
-   //alert (targetUrl);
-   $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
-   $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
+   targetUrl = $("#doc_"+tes_id).attr("url");
+   $("p#mail_adrs").html($("#doc_"+tes_id).attr("mail"));
+   $("p#mail_attc").html($("#doc_"+tes_id).attr("namedoc"));
    $( "#dialog" ).dialog({
          modal: "true",
       show: "blind",
@@ -132,11 +131,11 @@ function confirMail(link){
 }
 
 function confirPecSdi(link){
-   codice = link.id.replace("doc3", "");
+   codice = link.id.replace("doc3_", "");
    $.fx.speeds._default = 500;
-   targetUrl = $("#doc3"+codice).attr("url");
-   $("p#mailpecsdi").html($("#doc3"+codice).attr("mail"));
-   $("p#mail_attc").html($("#doc3"+codice).attr("namedoc"));
+   targetUrl = $("#doc3_"+codice).attr("url");
+   $("p#mailpecsdi").html($("#doc3_"+codice).attr("mail"));
+   $("p#mail_attc").html($("#doc3_"+codice).attr("namedoc"));
    $( "#dialog3" ).dialog({
          modal: "true",
       show: "blind",
@@ -155,12 +154,12 @@ function confirPecSdi(link){
 
 
 function confirFae(link){
-	tes_id = link.id.replace("doc1", "");
+	tes_id = link.id.replace("doc1_", "");
 	$.fx.speeds._default = 500;
-	var new_title = "Genera file XML per fattura n." + $("#doc1"+tes_id).attr("n_fatt");
-	var n_reinvii = parseInt($("#doc1"+tes_id).attr("fae_n_reinvii"))+1;
-	$("p#fae1").html("nome file: " + $("#doc1"+tes_id).attr("fae_attuale"));
-	$("span#fae2").html("<a href=\'"+link.href+"&reinvia\'> " + $("#doc1"+tes_id).attr("fae_reinvio")+ " (" + n_reinvii.toString() + "° reinvio) </a>");
+	var new_title = "Genera file XML per fattura n." + $("#doc1_"+tes_id).attr("n_fatt");
+	var n_reinvii = parseInt($("#doc1_"+tes_id).attr("fae_n_reinvii"))+1;
+	$("p#fae1").html("nome file: " + $("#doc1_"+tes_id).attr("fae_attuale"));
+	$("span#fae2").html("<a href=\'"+link.href+"&reinvia\'> " + $("#doc1_"+tes_id).attr("fae_reinvio")+ " (" + n_reinvii.toString() + "° reinvio) </a>");
 	$("#dialog1").dialog({
 	  title: new_title,
       modal: "true",
@@ -495,11 +494,11 @@ switch ($admin_aziend['fatimm']) {
 								$dest='';
 								$d_title = 'Stampa richiesta cartacea (cliente senza mail)';
 							}
-                            echo '<td align=\"center\"><button onclick="confirPecSdi(this);return false;" id="doc3' . $r["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $anagra["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
+                            echo '<td align=\"center\"><button onclick="confirPecSdi(this);return false;" id="doc3_' . $r["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $anagra["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
                         } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
                             echo "<td align=\"center\">";
                         }
-                        echo '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1" '.$r["id_tes"].'" fae_reinvio="'.$r["fae_reinvio"].'" fae_attuale="'.$r["fae_attuale"].'" fae_n_reinvii="'.$r["fattura_elettronica_reinvii"].'" n_fatt="'. $r["numfat"]."/". $r["seziva"].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r["fae_attuale"].' o fai il '.intval($r["fattura_elettronica_reinvii"]+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a></td>';
+                        echo '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1_" '.$r["id_tes"].'" fae_reinvio="'.$r["fae_reinvio"].'" fae_attuale="'.$r["fae_attuale"].'" fae_n_reinvii="'.$r["fattura_elettronica_reinvii"].'" n_fatt="'. $r["numfat"]."/". $r["seziva"].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r["fae_attuale"].' o fai il '.intval($r["fattura_elettronica_reinvii"]+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a></td>';
 					  }
 					} else {
                         echo "<td></td>";
@@ -508,7 +507,7 @@ switch ($admin_aziend['fatimm']) {
                     // Colonna "Mail"
                     echo "<td align=\"center\">";
                     if (!empty($anagra["e_mail"])) {
-                        echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="Mailto: ' . $anagra["e_mail"] . '"
+                        echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="Mailto: ' . $anagra["e_mail"] . '"
             mail="' . $anagra["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                     } else {
                         echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($clfoco["codice"], 3) . '&Update#email"><i class="glyphicon glyphicon-edit"></i></a>';
