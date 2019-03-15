@@ -51,14 +51,21 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     $ob = filter_input(INPUT_POST, 'orderby');
     $so = filter_input(INPUT_POST, 'sort');
     $ca = filter_input(INPUT_POST, 'codart');
+	$cat = filter_input(INPUT_POST, 'catmer');
 	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
-    
-    if (empty($ca)) {
-        $where = '1';
+   
+    if (empty($ca) and empty($cat)) {
+		$where = '1';
     } else {
-        $where = "codice LIKE '" . $ca . "'";
-    }
+		if (!empty($ca)){
+			$where = "codice LIKE '" . $ca . "'";
+		} else {
+			if (!empty($cat)){
+				$where = "catmer LIKE '" . $cat . "'";
+			}
+		}
+	}
     
     $gForm = new magazzForm();
     $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, $ob . ' ' . $so, $no, PER_PAGE);
