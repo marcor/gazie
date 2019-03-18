@@ -115,7 +115,11 @@ if (sizeof($scdl->Entries) > 0) {
         }
         if ($mv["id_tes"] <> $ctrl_id_tes) {
             $id_tes = $mv["id_tes"];
-            $mv["datdoc"] = gaz_format_date($mv["datdoc"]);
+			if ($mv['datdoc'] != '0000-00-00') {
+				$mv["datdoc"] = gaz_format_date($mv["datdoc"]);
+			} else {
+				$mv['datdoc'] = '';
+			}
         } else {
             $mv['descri'] = '';
             $mv['numdoc'] = '';
@@ -158,7 +162,7 @@ if (sizeof($scdl->Entries) > 0) {
         /* Modifico la larghezza delle celle */
         $pdf->Cell(13, 4, $mv["datdoc"], 1, 0, 'C');
         $pdf->Cell(13, 4, gaz_format_date($mv["datreg"]), 1, 0, 'C');
-        if ($mv['id_rigmoc_pay'] == 0) {
+        if ($mv['darave'] == 'D') {
             /* Incremento il totale del dare */
             $tot_dare += $mv['amount'];
             /* Modifico la larghezza delle celle */

@@ -93,14 +93,18 @@ if (sizeof($scdl->Entries) > 0) {
         $id_tes = '';
         $paymov = '';
         $status_del = false;
-        if ($mv["clfoco"] <> $ctrl_partner) {
+        if ($mv['clfoco'] <> $ctrl_partner) {
             $class_partner = 'FacetDataTDred';
-            $partner = $mv["ragsoc"];
+            $partner = $mv['ragsoc'];
         }
-        if ($mv["id_tes"] <> $ctrl_id_tes) {
+        if ($mv['id_tes'] <> $ctrl_id_tes) {
             $class_id_tes = 'FacetFieldCaptionTD';
-            $id_tes = $mv["id_tes"];
-            $mv["datdoc"] = gaz_format_date($mv["datdoc"]);
+            $id_tes = $mv['id_tes'];
+			if ($mv['datdoc'] != '0000-00-00') {
+				$mv['datdoc'] = gaz_format_date($mv['datdoc']);
+			} else {
+				$mv['datdoc'] = '';
+			}
         } else {
             $mv['descri'] = '';
             $mv['numdoc'] = '';
@@ -109,8 +113,8 @@ if (sizeof($scdl->Entries) > 0) {
             $partner = '';
             $status_descr = '';
         }
-        if ($mv["id_tesdoc_ref"] <> $ctrl_paymov) {
-            $paymov = $mv["id_tesdoc_ref"];
+        if ($mv['id_tesdoc_ref'] <> $ctrl_paymov) {
+            $paymov = $mv['id_tesdoc_ref'];
             $scdl->getStatus($paymov);
             $r = $scdl->Status;
             $status_descr = $script_transl['status_value'][$r['sta']] ;
@@ -138,7 +142,7 @@ if (sizeof($scdl->Entries) > 0) {
 							<td class="FacetDataTD text-center">' . $mv["numdoc"] . '&nbsp;</td>
 							<td class="FacetDataTD text-center">' . $mv["datdoc"] . '&nbsp;</td>
 							<td class="FacetDataTD text-center">' . gaz_format_date($mv["datreg"]) . '&nbsp;</td>';
-        if ($mv['id_rigmoc_pay'] == 0) {
+        if ($mv['darave'] == 'D') {
             $tot['dare'] += $mv["amount"];
             //$tot['avere'] -= $mv["amount"];
 

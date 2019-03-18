@@ -167,7 +167,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                     $cast_vat[$r['codvat']]['impneg'] = 0;
                     $cast_vat[$r['codvat']]['ivaneg'] = 0;
                 }
-                if ($importo<0.00) {
+                if (FALSE && $importo<0.00) {
                     $cast_vat[$r['codvat']]['impneg'] += $importo;
                     $cast_vat[$r['codvat']]['ivaneg'] += round(($importo * $r['pervat']) / 100, 2);
 				} else {
@@ -180,7 +180,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                     $cast_acc[$r['codric']]['import'] = 0;
                     $cast_acc[$r['codric']]['accneg'] = 0;
                 }
-                if ($importo<0.00) {
+                if (FALSE && $importo<0.00) {
                     $cast_acc[$r['codric']]['accneg'] += $importo;
 				} else {
 					$cast_acc[$r['codric']]['import'] += $importo;

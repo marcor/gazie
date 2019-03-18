@@ -97,7 +97,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             }
             if ($form['transfer_fees'] >= 0.01 && $form['transfer_fees_acc'] > 100000000) { // ho le spese bancarie 
                 rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['transfer_fees_acc'], 'import' => $form['transfer_fees']));
-                $tot += $form['transfer_fees'];
+                rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => round($form['transfer_fees'], 2)));
+                //$tot += $form['transfer_fees'];
             }
             rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => round($tot, 2)));
             header("Location: ../contab/report_movcon.php");
@@ -270,13 +271,16 @@ echo '		  </table>';
                 default:
                     $orderby = 'expiry ASC';
             }
-            $rs = gaz_dbi_dyn_query("*", $gTables['paymov'], "expiry BETWEEN '" . gaz_format_date($form['expiry_ini'], true) . "' AND '" . gaz_format_date($form['expiry_fin'], true) . "' AND id_rigmoc_doc >= 1", $orderby);
+            $rs = gaz_dbi_dyn_query("*", $gTables['paymov'], "expiry BETWEEN '" . gaz_format_date($form['expiry_ini'], true) . "' AND '" . gaz_format_date($form['expiry_fin'], true) . "' AND id_rigmoc_doc >= 1 GROUP BY id_tesdoc_ref, expiry", $orderby);
             while ($r = gaz_dbi_fetch_array($rs)) {
                 $doc_data = $paymov->getDocFromID($r['id_rigmoc_doc']);
-                $status = $paymov->getAmount($r['id_tesdoc_ref'], gaz_format_date($form['expiry_fin'], true));
-                if (substr($doc_data['clfoco'], 0, 3) == $admin_aziend['masfor'] &&
+                $status = $paymov->getAmount($r['id_tesdoc_ref'], $r['expiry']);
+                if ((substr($doc_data['clfoco'], 0, 3)==$admin_aziend['masfor'] || substr($doc_data['codcon'], 0, 3)==$admin_aziend['masfor']) &&
                         $status >= 0.01) { // considero solo i fornitori non saldati 
-                    $fornitore = $anagrafica->getPartner($doc_data['clfoco']);
+                	if (substr($doc_data['clfoco'], 0, 3)!=$admin_aziend['masfor'] && substr($doc_data['codcon'], 0, 3)==$admin_aziend['masfor']) {
+                    	$doc_data['clfoco'] = $doc_data['codcon'];
+                    }
+                   	$fornitore = $anagrafica->getPartner($doc_data['clfoco']);
                     $pagamento = gaz_dbi_get_row($gTables['pagame'], 'codice', $fornitore['codpag']);
                     $class = 'check_other';
                     if ($pagamento['tippag'] == 'B') {
@@ -294,7 +298,7 @@ echo '		  </table>';
                                 </label>
                             </div>
                             <div class="col-sm-1 pull-right">
-                                <input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $r['amount']; ?>" id="<?php echo $r['id_tesdoc_ref']; ?>" name="pay[<?php echo $r['id_tesdoc_ref']; ?>]">
+                                <input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $status; ?>" id="<?php echo $r['id_tesdoc_ref']; ?>" name="pay[<?php echo $r['id_tesdoc_ref']; ?>]">
                                 <input type="hidden" value="<?php echo $r['expiry']; ?>" name="expiry[<?php echo $r['id_tesdoc_ref']; ?>]">
                                 <input type="hidden" value="<?php echo $doc_data['clfoco']; ?>" name="clfoco[<?php echo $r['id_tesdoc_ref']; ?>]">
                             </div>
@@ -304,7 +308,7 @@ echo '		  </table>';
                                 <?php echo $pagamento['descri']; ?>
                             </div>
                             <div class="col-sm-4 pull-right">
-                                <?php echo 'scad.' . gaz_format_date($r['expiry']) . ' di € ' . gaz_format_number($r['amount']); ?>
+                                <?php echo 'scad.' . gaz_format_date($r['expiry']) . ' di € ' . gaz_format_number($status); ?>
                             </div>
                         </div>
                     </div><!-- chiude row  -->
