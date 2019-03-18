@@ -190,8 +190,10 @@ class Upgrade {
 		//				@mkdir($path_local."/tmp/g");
 						$m = $this->copyFolder($path_local.'/tmp/gazie',$path_local);
 						if ( $m ) {
-							chmod('../../library/tcpdf/cache',0777);
-							$success =  TRUE;
+							if ( chmod('../../library/tcpdf/cache',0777) ) 
+								$success =  TRUE;
+							else
+								$errors[] = "Non ho potuto dare i permessi 0777 alla cartella 'library/tcpdf/cache'";
 						} else {
 						   	$errors[] = "Errore nello spostamento dei file";
 						}
