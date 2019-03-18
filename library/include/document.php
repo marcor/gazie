@@ -503,6 +503,13 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 			$templates['Received']="received_".$stampa_ricevute['val'];
 		}
 	}
+	// Antonio de Vincentiis - se sulla variabile "dda_A5" della configurazione avanzata azienda ho 1 allora seleziono il template con due DDT A5 affiancati su di un foglio A4 
+	if ($templateName=='DDT'){
+		$ddt_A5 = gaz_dbi_get_row($gTables['company_config'], 'var', 'ddt_A5');
+		if (intval($ddt_A5['val'])>=1){
+			$templates['DDT']='ddt2XA5';
+		}
+	}
     $config = new Config;
     $configTemplate = new configTemplate;
     if ($lang_template) {
