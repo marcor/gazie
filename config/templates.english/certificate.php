@@ -119,8 +119,19 @@ class Certificate extends Template {
                         for ($i = 1; $i <= $this->numPages; $i++) {
                             $this->_tplIdx = $this->importPage($i);
                             $specs = $this->getTemplateSize($this->_tplIdx);
-                            $this->AddPage($specs['h'] > $specs['w'] ? 'P' : 'L');
-                            $this->useTemplate($this->_tplIdx);
+							// stabilisco se portrait-landscape
+							if ($specs['h'] > $specs['w']){ //portrait
+								$pl='P';
+								$w=210;
+								$h=297;
+							}else{ //landscape
+								$pl='L';
+								$w=297;
+								$h=210;
+							}
+                            $this->AddPage($pl);
+							$this->print_footer = false;
+                            $this->useTemplate($this->_tplIdx,NULL,NULL,$w,$h, FALSE);
                             $this->SetXY(10, 0);
                             $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis . " - COPIA CONFORME ALL'ORIGINALE - da " . $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno . ' Lotto: ' . $rigo['identifier'] . ' ( Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias() . ' )', 1, 0, 'C', 0, '', 1);
                             $this->print_footer = false;

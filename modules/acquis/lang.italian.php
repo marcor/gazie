@@ -129,7 +129,7 @@ $strScript = array("admin_fornit.php" =>
             "Fornitore" => "",
             "Status" => "",
             "Stampa" => "",
-            "Duplica" => "",
+            "Oper." => "",
             "Mail" => "",
             "Duplica" => "",
             "Cancella" => ""

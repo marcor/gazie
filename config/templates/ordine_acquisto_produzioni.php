@@ -268,9 +268,19 @@ class OrdineAcquistoProduzioni extends Template
                         for ($i = 1; $i <= $this->numPages; $i++) {
                             $this->_tplIdx = $this->importPage($i);
                             $specs = $this->getTemplateSize($this->_tplIdx);
-                            $this->AddPage($specs['h'] > $specs['w'] ? 'P' : 'L');
+							// stabilisco se portrait-landscape
+							if ($specs['h'] > $specs['w']){ //portrait
+								$pl='P';
+								$w=210;
+								$h=297;
+							}else{ //landscape
+								$pl='L';
+								$w=297;
+								$h=210;
+							}
+                            $this->AddPage($pl);
 							$this->print_footer = false;
-                            $this->useTemplate($this->_tplIdx);
+                            $this->useTemplate($this->_tplIdx,NULL,NULL,$w,$h, FALSE);
                             $this->SetXY(10, 0);
                             $this->Cell(190, 3,$this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc , 1, 0, 'C', 0, '', 1);
                         }
