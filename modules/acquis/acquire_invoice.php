@@ -43,7 +43,12 @@ function tryBase64Decode($s)
 			$decoded = base64_decode($s, true);
 			if ($decoded !== false) {
 				// Encode the string again
-				if(base64_encode($decoded) == $s) return $decoded;
+				if(base64_encode($decoded) == $s) {
+                	return $decoded;
+                } else {
+					error_log('Charset non gestito in tryBase64Decode ' . print_r($decoded, true), 0);
+                	return $decoded;
+                }
 			}
 		} catch (Exception $ex) {
 			//$ex->getMessage();
@@ -51,6 +56,33 @@ function tryBase64Decode($s)
 	}
 
 	return $s;
+}
+
+function der2smime($file)
+{
+$to = <<<TXT
+MIME-Version: 1.0
+Content-Disposition: attachment; filename=?smime.p7m?
+Content-Type: application/x-pkcs7-mime; smime-type=signed-data; name=?smime.p7m?
+Content-Transfer-Encoding: base64
+\n
+TXT;
+	$from = file_get_contents($file);
+	$to.= chunk_split(base64_encode($from));
+	return file_put_contents($file,$to);
+}
+
+function extractDER($file)
+{
+	$tmp = tempnam(sys_get_temp_dir(), 'ricder');
+	$txt = tempnam(sys_get_temp_dir(), 'rictxt');
+	$flags = PKCS7_BINARY|PKCS7_NOVERIFY|PKCS7_NOSIGS;
+	openssl_pkcs7_verify($file, $flags, $tmp); // estrazione certificato
+	@openssl_pkcs7_verify($file, $flags, '/dev/null', array(), $tmp, $txt); // estrazione contenuto - questo potrebbe fallire se il file non è ASN.1 clean
+	unlink($tmp);
+	$out = file_get_contents($txt);
+	unlink($txt);
+	return $out;
 }
 
 function removeSignature($s)
@@ -252,7 +284,42 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 		$p7mContent = @file_get_contents($file_name);
 		$p7mContent = tryBase64Decode($p7mContent);
-		$invoiceContent = removeSignature($p7mContent);
+
+
+		$tmpfatt = tempnam(sys_get_temp_dir(), 'ricfat');
+		file_put_contents($tmpfatt, $p7mContent);
+
+		if (FALSE !== der2smime($tmpfatt)) {
+		$cert = tempnam(sys_get_temp_dir(), 'ricpem');
+		$retn = openssl_pkcs7_verify($tmpfatt, PKCS7_NOVERIFY, $cert);
+		unlink($cert);
+		if (!$retn) {
+			unlink($tmpfatt);
+			echo "Error verifying PKCS#7 signature in {$file_name}";
+			error_log('errore in Verifica firma PKCS#7', 0);
+			echo 'errore in Verifica firma PKCS#7';
+			return false;
+		}
+
+		$fatt = extractDER($tmpfatt);
+		if (empty($fatt)) {
+			$test = @base64_decode(file_get_contents($tmpfatt));
+			// Salto lo header (INDISPENSABILE perché la regexp funzioni sempre)
+			if (preg_match('#(<[^>]*FatturaElettronica.*</[^>]*FatturaElettronica>)#', substr($test, 54), $gregs)) {
+				$fatt = '<'.'?'.'xml version="1.0"'.'?'.'>' . $gregs[1]; // RECUPERO INTESTAZIONE XML
+			}
+		}
+		}
+		unlink($tmpfatt);
+
+
+		if (!empty($fatt)) {
+			$invoiceContent = $fatt;
+		} else {
+			$invoiceContent = removeSignature($p7mContent);
+		}
+
+
 		$doc = new DOMDocument;
 		$doc->preserveWhiteSpace = false;
 		$doc->formatOutput = true;
