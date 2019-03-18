@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -79,6 +79,7 @@ class Config {
                         $path_root."/composer.json",
                         $path_root."/composer.lock.php",
                         $path_root."/config.php",
+                        $path_root."/config/gconfig.php",
                         $path_root."/doc",
                         $path_root."/.htaccess",
                         $path_root."/INDEX.html",
@@ -135,8 +136,6 @@ class Config {
 		$this->set('update_URI_files', defined('update_URI_files') ? update_URI_files : 'https://sourceforge.net/projects/gazie');
 		$this->set('debug_active', defined('debug_active') ? debug_active : FALSE);
 		$this->set('modifica_fatture_ddt', defined('modifica_fatture_ddt') ? modifica_fatture_ddt : FALSE);
-
-
 	}
 
 	public function setTabelle() {
