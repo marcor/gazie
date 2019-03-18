@@ -129,9 +129,8 @@ $strScript = array("admin_fornit.php" =>
             "Fornitore" => "",
             "Status" => "",
             "Stampa" => "",
-            "Oper." => "",
+            "Operaz." => "",
             "Mail" => "",
-            "Duplica" => "",
             "Cancella" => ""
         ),
         'tuttitipi' => 'Tutti i tipi',
