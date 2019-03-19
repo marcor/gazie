@@ -106,6 +106,9 @@ if (isset($_POST['conferma'])) { // se confermato
 				
 				// se non esiste l'articolo in GAzie lo creo come servizio perché non movimenta il magazzino
 				$ckart = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));
+				if (!$ckart){ // se non esiste con il codice controllo se esiste con il codice a barre
+					$ckart = gaz_dbi_get_row($gTables['artico'], "barcode", substr($_POST['codice'.$ord.$row],0,64));
+				}
 				if (!$ckart){ 
 				if ($_POST['codvat'.$ord.$row]<1){ // se il sito non ha mandato il codice IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
 					$_POST['codvat'.$ord.$row]=$_POST['codvatcost'.$ord];
