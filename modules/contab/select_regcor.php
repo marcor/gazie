@@ -317,6 +317,7 @@ if (isset($_POST['preview']) and $msg == '') {
     	    'fatt_init' 	=> NULL,
 	    'fatt_final' 	=> NULL,
 	    'imp_ricevute'	=> 0,
+	    'totali'		=> [],
 	    'tot_corrisp'	=> 0,
 	    'tot_iva_corr'	=> [],
 	    'iva_esente'	=> 0,
@@ -425,7 +426,8 @@ if (isset($_POST['preview']) and $msg == '') {
 			    // Aumento i contatori con il risultato attuale
 		    // Aumento i contatori
 		    $cont_day['fatt_final']  	= $mv['numdoc'];
-		    $cont_day['imp_ricevute']  	= $cont_day['imp_ricevute']	+ $mv['imponi'];
+		    $cont_day['imp_ricevute'] = $cont_day['imp_ricevute']	+ $mv['imponi'];
+		    $cont_day['totali'][$mv['codiva']] = $cont_day['totali'][$mv['codiva']] + $mv['imponi'] + $impost;
 		    $cont_day['tot_corrisp'] 	= $cont_day['tot_corrisp']	+ $mv['imponi'];
 		    $cont_day['tot_iva_corr'][$mv['codiva']] += $impost;
 
@@ -433,7 +435,17 @@ if (isset($_POST['preview']) and $msg == '') {
 			    <tr class="<?= $class_m ?>">
 			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['data'] ?> &nbsp;</td>    
 			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['fatt_init'] . '-' .  $cont_day['fatt_final'] ?> &nbsp;</td>    
-				<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['tot_corrisp'] ?> &nbsp;</td>    
+				<td align="right" class="FacetDataTD<?= $red_p ?>">
+<?php				if ( count( $cont_day['totali']) > 1 )
+					$br="<br>";
+				else
+					$br='';
+	     			foreach ($cont_day['totali'] as $k => $v ) {
+					echo $castle_descri[$k] .' = ' . $v.$br;
+				}
+?>
+				&nbsp;</td>    
+<!--				<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['tot_corrisp'] ?> &nbsp;</td> -->    
 				<td align="right" class="FacetDataTD<?= $red_p ?>">
 <?php				if ( count( $cont_day['tot_iva_corr']) > 1 )
 					$br="<br>";
@@ -453,6 +465,7 @@ if (isset($_POST['preview']) and $msg == '') {
                         'fatt_init'         => $mv['numdoc'],
                         'fatt_final'        => NULL,
                         'imp_ricevute'      => 0,
+                        'totali'	    => [],
                         'tot_corrisp'       => 0,
                         'tot_iva_corr'      => [],
                         'iva_esente'        => 0,
@@ -463,6 +476,7 @@ if (isset($_POST['preview']) and $msg == '') {
 		    // Aumento i contatori
 		    $cont_day['fatt_final']  	= $mv['numdoc'];
 		    $cont_day['imp_ricevute']  	= $cont_day['imp_ricevute']	+ $mv['imponi'];
+		    $cont_day['totali'][$mv['codiva']] = $cont_day['totali'][$mv['codiva']] + $mv['imponi'] + $impost;
 		    $cont_day['tot_corrisp'] 	= $cont_day['tot_corrisp']	+ $mv['imponi'];
 		    $cont_day['tot_iva_corr'][$mv['codiva']] += $impost;
 		

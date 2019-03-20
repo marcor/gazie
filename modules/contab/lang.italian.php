@@ -303,7 +303,7 @@ $strScript = array("select_liqiva.php" =>
         ),
         'cover' => 'Stampa la copertina',
         'date_fin' => 'Data fine periodo ',
-        'header' => array('Data'=>'','Prot. Da/A'=>'','Imponibile'=>'','Iva'=>''),
+        'header' => array('Data'=>'','Prot. Da/A'=>'','Totali'=>'','Iva'=>''),
         'of' => ' del ',
         'tot' => ' TOTALE ',
         'reg' => 'REGISTRO',
