@@ -70,7 +70,7 @@ $mesini = str_pad($mesini, 2, "0", STR_PAD_LEFT);
 
 if (isset($_GET['stampa']) and $message == "") {
     //Mando in stampa i movimenti contabili generati
-    $locazione = "Location: stampa_lisdeb.php?annini=".$annini."&annfin=".$annfin;
+    $locazione = "Location: stampa_lisdeb.php?annini=".$annini."&mesini=".$mesini."&giornini=".$giornini."&annfin=".$annfin."&mesfin=".$mesfin."&giornfin=".$giornfin;
     header($locazione);
     exit;
 }

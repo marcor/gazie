@@ -217,7 +217,7 @@ for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
 <td colspan="3" align="right" nowrap class="FacetFooterTD">
 <input type="submit" name="Return" value="Indietro">
 <?php
-echo "<input type=\"submit\" name=\"stampa\" value=\"STAMPA !\">&nbsp;";
+echo "<input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']."!\">&nbsp;";
 ?>
 </td>
 </tr>

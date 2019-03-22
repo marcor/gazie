@@ -27,23 +27,39 @@ $admin_aziend=checkAdmin();
 
 require('../../config/templates/report_template.php');
 
-if(!isset($_GET["annini"])){
-            $year_start = intval($_GET["annfin"]);
-} else {
-            $year_start = date("Y")-1;
-}
+
 if(!isset($_GET["annfin"])){
-            $year_end = intval($_GET["annfin"]);
+    $day_end = 31;
+    $month_end = 12;
+    $year_end = intval(date("Y"));
 } else {
-            $year_end = date("Y");
+    $day_end = intval($_GET["giornfin"]);
+    $month_end = intval($_GET["mesfin"]);
+    $year_end = intval($_GET["annfin"]);
 }
+
+if(!isset($_GET["annini"])){
+    $day_start = 1;
+    $month_start = 1;
+    $year_start = intval(date("Y"))-1;
+} else {
+    $day_start = intval($_GET["giornini"]);
+    $month_start = intval($_GET["mesini"]);
+    $year_start = intval($_GET["annini"]);
+}
+
+$day_end = str_pad($day_end, 2, "0", STR_PAD_LEFT);
+$month_end = str_pad($month_end, 2, "0", STR_PAD_LEFT);
+
+$day_start = str_pad($day_start, 2, "0", STR_PAD_LEFT);
+$month_start = str_pad($month_start, 2, "0", STR_PAD_LEFT);
 
 //procedura per la creazione dell'array dei conti con saldo diverso da 0 e ordinati per nome...
 $sqlquery= "SELECT codcon, SUM(import) AS somma, darave FROM ".$gTables['rigmoc'].
            " LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
              LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice
              LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
-             WHERE datreg between ".$year_start."0101 AND ".$year_end."1231 AND codcon LIKE '".$admin_aziend['masfor']."%' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon LIKE '".$admin_aziend['masfor']."%' AND datreg LIKE '".$year_start.
+             WHERE datreg between ".$year_start.$month_start.$day_start." AND ".$year_end.$month_end.$day_end." AND codcon LIKE '".$admin_aziend['masfor']."%' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon LIKE '".$admin_aziend['masfor']."%' AND datreg LIKE '".$year_start.
             "%') GROUP BY codcon, darave ORDER BY ragso1, codcon, darave";
 $rs_castel = gaz_dbi_query($sqlquery);
 $ctrlcodcon = 0;
@@ -70,7 +86,7 @@ if ($ctrlsaldo != 0) {
 }
 //fine creazione array conti diversi da zero
 
-$emissione = 'Debiti verso i fornitori  periodo '.intval($_GET['annini']).'-'.intval($_GET['annfin']);
+$emissione = 'Debiti verso i fornitori per il periodo '.$day_start.'/'.$month_start.'/'.$year_start.' - '.$day_end.'/'.$month_end.'/'.$year_end;
 
 $title = array('title'=>$emissione,
                'hile'=>array(array('lun' => 20,'nam'=>'Data'),
@@ -142,7 +158,7 @@ foreach ($conti as $value) {
             $saldo -= $movimenti["import"];
         }
         $pdf->Cell(20,4,$datamov,1,0,'L');
-        $pdf->Cell(75,4,$movimenti['descri'],1,0,'L');
+        $pdf->Cell(75,4,$movimenti['descri'],1,0,'L',0,'',1);
         if ($movimenti['numdoc'] > 0) {
            $pdf->Cell(18,4,$movimenti['numdoc']."/".$movimenti['seziva'],1,0,'C');
         } else {
