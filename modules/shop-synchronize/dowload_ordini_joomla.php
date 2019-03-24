@@ -72,7 +72,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				}
 			}
 			 // controllo esistenza cliente per cognome, nome e città
-			$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE ragso1 ='" . $_POST['ragso1'.$ord] . "' AND ragso2 ='". $_POST['ragso2'.$ord] . "'";
+			$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE ragso1 ='" . addslashes($_POST['ragso1'.$ord]) . "' AND ragso2 ='". addslashes($_POST['ragso2'.$ord]) . "'";
 			$check = gaz_dbi_query($query);
 			while ($row = $check->fetch_assoc()) {
 				if (($check->num_rows > 0) && ($row['citspe']=$_POST['citspe'.$ord]) && ($row['indspe']=$_POST['indspe'.$ord])){
@@ -90,7 +90,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					}
 					gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($_POST['ragso1'.$ord]) . "', '" . addslashes($_POST['ragso2'.$ord]) . "', '". addslashes($_POST['indspe'.$ord]) ."', '".$_POST['capspe'.$ord]."', '". addslashes($_POST['citspe'.$ord]) ."', '". $_POST['prospe'.$ord] ."', '" . $_POST['country'.$ord]. "', '1', '".$lang."', '". $_POST['telefo'.$ord] ."', '". $_POST['codfis'.$ord] ."', '" . $_POST['pariva'.$ord] . "', '" . $_POST['fe_cod_univoco'.$ord] . "', '". $_POST['email'.$ord] . "', '". $_POST['pec_email'.$ord] . "')");
 					
-					gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri,speban) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .$_POST['ragso1'.$ord]." ".$_POST['ragso2'.$ord] . "', 'S')");
+					gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri,speban) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .addslashes($_POST['ragso1'.$ord])." ".addslashes($_POST['ragso2'.$ord]) . "', 'S')");
 			}
 			
 			if ($includevat=="true"){ // se il sito include l'iva la scorporo alle spese banca e trasporto
@@ -104,19 +104,22 @@ if (isset($_POST['conferma'])) { // se confermato
 			// Gestione righi ordine					
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
 				
-				// se non esiste l'articolo in GAzie lo creo come servizio perché non movimenta il magazzino
+				// controllo se esiste l'articolo in GAzie lo creo come servizio perché non movimenta il magazzino
 				$ckart = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));
+				$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
 				if (!$ckart){ // se non esiste con il codice controllo se esiste con il codice a barre
 					$ckart = gaz_dbi_get_row($gTables['artico'], "barcode", substr($_POST['codice'.$ord.$row],0,64));
+					$codart=$ckart['codice'];// se esiste ne prendo il codice come $codart
+				} 
+				if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio perché non ha magazzino
+					if ($_POST['codvat'.$ord.$row]<1){ // se il sito non ha mandato il codice IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
+						$_POST['codvat'.$ord.$row]=$_POST['codvatcost'.$ord];
+						$_POST['aliiva'.$ord.$row]=$_POST['aliivacost'.$ord];
+					}
+					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,good_or_service,unimis,catmer,".$listinome.",aliiva,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '1', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$_POST['codvat'.$ord.$row]."', '" . $admin_aziend['adminid'] . "')");
+					$codart= substr($_POST['codice'.$ord.$row],0,15);// se non esiste dopo averlo creato ne prendo il codice come $codart
 				}
-				if (!$ckart){ 
-				if ($_POST['codvat'.$ord.$row]<1){ // se il sito non ha mandato il codice IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
-					$_POST['codvat'.$ord.$row]=$_POST['codvatcost'.$ord];
-					$_POST['aliiva'.$ord.$row]=$_POST['aliivacost'.$ord];
-				}
-				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,good_or_service,unimis,catmer,".$listinome.",aliiva,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '1', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$_POST['codvat'.$ord.$row]."', '" . $admin_aziend['adminid'] . "')");
-				}
-					
+				
 				if ($_POST['codvat'.$ord.$row]==0){ // se il sito non ha inviato l'iva
 					if ($includevat=="true"){ // se è impostato iva compresa scorporo l'iva al prezzo articoli
 						$codvat=gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));
@@ -151,7 +154,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					} 
 				}
 				// salvo rigo su database tabella rigbro
-				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $_POST['codice'.$ord.$row] . "','" . addslashes($_POST['descri'.$ord.$row]) . "','". $_POST['unimis'.$ord.$row] . "','" . $_POST['quanti'.$ord.$row] . "','" . $_POST['prelis'.$ord.$row] . "', '".$_POST['sconto'.$ord.$row]."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
+				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($_POST['descri'.$ord.$row]) . "','". $_POST['unimis'.$ord.$row] . "','" . $_POST['quanti'.$ord.$row] . "','" . $_POST['prelis'.$ord.$row] . "', '".$_POST['sconto'.$ord.$row]."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
 			}
 			
 			/*
