@@ -184,6 +184,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
             $form['rows'][$next_row]['id_doc'] = intval($v['id_doc']);
             $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
+			$form['rows'][$next_row]['good_or_service'] = intval($v['good_or_service']);
             $form['rows'][$next_row]['pervat'] = preg_replace("/\,/", '.', $v['pervat']);
             $form['rows'][$next_row]['tipiva'] = strtoupper(substr($v['tipiva'], 0, 1));
             $form['rows'][$next_row]['ritenuta'] = preg_replace("/\,/", '.', $v['ritenuta']);
@@ -217,6 +218,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_descri'] = $form['rows'][$k_row]['descri'];
                     $form['in_tiprig'] = $form['rows'][$k_row]['tiprig'];
                     $form['in_codart'] = $form['rows'][$k_row]['codart'];
+					$form['in_good_or_service'] = $form['rows'][$k_row]['good_or_service'];
                     $form['in_pervat'] = $form['rows'][$k_row]['pervat'];
                     $form['in_tipiva'] = $form['rows'][$k_row]['tipiva'];
                     $form['in_ritenuta'] = $form['rows'][$k_row]['ritenuta'];
@@ -572,6 +574,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['units'] += intval(round($form['in_quanti'] / $artico['pack_units']));
         }
         $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
+		$form['in_good_or_service']=$artico['good_or_service'];
         // fine addizione peso,pezzi,volume
         if (substr($form['in_status'], 0, 6) == "UPDROW") { //se � un rigo da modificare
             $old_key = intval(substr($form['in_status'], 6));
@@ -583,6 +586,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
             $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
             $form['rows'][$old_key]['codart'] = $form['in_codart'];
+			$form['rows'][$old_key]['good_or_service'] = $form['in_good_or_service'];
             $form['rows'][$old_key]['codric'] = $form['in_codric'];
             $form['rows'][$old_key]['ritenuta'] = $form['in_ritenuta'];
             $form['rows'][$old_key]['provvigione'] = $form['in_provvigione'];
@@ -628,6 +632,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['quamag'] = $magval['q_g'];
             } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
                 $form['rows'][$old_key]['codart'] = "";
+				$form['rows'][$old_key]['good_or_service'] = "";
                 $form['rows'][$old_key]['annota'] = "";
                 $form['rows'][$old_key]['pesosp'] = "";
                 $form['rows'][$old_key]['unimis'] = "";
@@ -641,16 +646,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['codvat'] = 0;
             } elseif ($form['in_tiprig'] == 1) { //rigo forfait
                 $form['rows'][$old_key]['codart'] = "";
+				$form['rows'][$old_key]['good_or_service'] = "";
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['quanti'] = 0;
                 $form['rows'][$old_key]['sconto'] = 0;
             } elseif ($form['in_tiprig'] == 3) {   //var.tot.fatt.
                 $form['rows'][$old_key]['codart'] = "";
+				$form['rows'][$old_key]['good_or_service'] = "";
                 $form['rows'][$old_key]['quanti'] = "";
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['sconto'] = 0;
             } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //rigo fattura elettronica
                 $form['rows'][$old_key]['codart'] = "";
+				$form['rows'][$old_key]['good_or_service'] = "";
                 $form['rows'][$old_key]['annota'] = "";
                 $form['rows'][$old_key]['pesosp'] = "";
                 $form['rows'][$old_key]['gooser'] = 0;
@@ -675,6 +683,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['quamag'] = 0;
             if ($form['in_tiprig'] == 0) {  //rigo normale
                 $form['rows'][$next_row]['codart'] = $form['in_codart'];
+				$form['rows'][$next_row]['good_or_service'] = $form['in_good_or_service'];
                 $form['rows'][$next_row]['annota'] = $artico['annota'];
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
@@ -757,6 +766,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['rows'][$next_row]['status'] = "INSERT";
                         $form['rows'][$next_row]['scorta'] = 0;
                         $form['rows'][$next_row]['codart'] = $row2['codice'];
+						$form['rows'][$next_row]['good_or_service'] = $row2['good_or_service'];
                         $form['rows'][$next_row]['descri'] = $row2['descri'];
                         $form['rows'][$next_row]['unimis'] = $row2['unimis'];
                         $form['rows'][$next_row]['prelis'] = 0;
@@ -776,6 +786,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
             } elseif ($form['in_tiprig'] == 1) { //rigo forfait
                 $form['rows'][$next_row]['codart'] = "";
+				$form['rows'][$next_row]['good_or_service'] = "";
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['unimis'] = "";
@@ -796,6 +807,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
             } elseif ($form['in_tiprig'] == 2) { //descrittivo
                 $form['rows'][$next_row]['codart'] = "";
+				$form['rows'][$next_row]['good_or_service'] = "";
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['unimis'] = "";
@@ -809,6 +821,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['codvat'] = 0;
             } elseif ($form['in_tiprig'] == 3) {
                 $form['rows'][$next_row]['codart'] = "";
+				$form['rows'][$next_row]['good_or_service'] = "";
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['quanti'] = 0;
@@ -823,6 +836,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } elseif ($form['in_tiprig'] > 5 && $form['in_tiprig'] < 9) { //testo
                 $form["row_$next_row"] = "";
                 $form['rows'][$next_row]['codart'] = "";
+				$form['rows'][$next_row]['good_or_service'] = "";
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['unimis'] = "";
@@ -836,6 +850,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['ritenuta'] = 0;
             } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //dati fattura elettronica
                 $form['rows'][$next_row]['codart'] = "";
+				$form['rows'][$next_row]['good_or_service'] = "";
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['gooser'] = 0;
@@ -853,6 +868,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         // reinizializzo rigo di input tranne che per il tipo rigo e aliquota iva
         $form['in_descri'] = "";
         $form['in_codart'] = "";
+		$form['in_good_or_service'] = "";
         $form['in_unimis'] = "";
         $form['in_prelis'] = 0;
         /** inizio modifica FP 09/10/2015
@@ -933,6 +949,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_id_doc'] = 0;
     /*   $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
+	$form['in_good_or_service'] = "";
     $form['in_pervat'] = 0;
     $form['in_tipiva'] = 0;
     $form['in_ritenuta'] = 0;
@@ -1029,6 +1046,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['tiprig'] = $rigo['tiprig'];
         $form['rows'][$next_row]['id_doc'] = $rigo['id_doc'];
         $form['rows'][$next_row]['codart'] = $rigo['codart'];
+		$form['rows'][$next_row]['good_or_service'] = $articolo['good_or_service'];
         $form['rows'][$next_row]['pervat'] = $rigo['pervat'];
         $iva_row = gaz_dbi_get_row($gTables['aliiva'], 'codice', $rigo['codvat']);
         $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
@@ -1075,6 +1093,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_id_doc'] = 0;
     /*   $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
+	$form['in_good_or_service'] = "";
     $form['in_pervat'] = "";
     $form['in_tipiva'] = "";
     $form['in_ritenuta'] = 0;
@@ -1411,6 +1430,7 @@ $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 //$select_artico->output($form['cosear'], $form['in_artsea']);
 $select_artico->output($form['cosear']);
+
 /*
   echo 'ricerca per <select name="in_artsea" class="FacetDataTDsmall">';
   $selArray = array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione');
@@ -1503,6 +1523,7 @@ foreach ($form['rows'] as $k => $v) {
     ;
 
     echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
+	echo "<input type=\"hidden\" value=\"" . $v['good_or_service'] . "\" name=\"rows[$k][good_or_service]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['id_doc'] . "\" name=\"rows[$k][id_doc]\">\n";
@@ -1520,16 +1541,21 @@ foreach ($form['rows'] as $k => $v) {
     echo "<tr>";
     switch ($v['tiprig']) {
         case "0":
-            if ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
-                $btn_class = 'btn-danger';
-				$btn_title = ' ARTICOLO NON DISPONIBILE!!!';
-			} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
-                $btn_class = 'btn-warning';
-				$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
-            } else {
-                $btn_class = 'btn-success';
-				$btn_title = $v['quamag'].' '.$v['unimis'].' disponibili';
-            }
+			if ($v['good_or_service']<>1){
+				if ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
+					$btn_class = 'btn-danger';
+					$btn_title = ' ARTICOLO NON DISPONIBILE!!!';
+				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
+					$btn_class = 'btn-warning';
+					$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
+				} else {
+					$btn_class = 'btn-success';
+					$btn_title = " ".$v['quamag'].' '.$v['unimis'].' disponibili';
+				}
+			} else {
+				$btn_class = 'btn-info';
+				$btn_title = " Senza magazzino";
+			}
             /* Peso */
             $peso = 0;
             if ($v['pesosp'] <> 0) {
