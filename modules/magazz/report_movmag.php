@@ -37,26 +37,31 @@ if (isset($_GET['all'])) {
 	if (isset($_GET['movimento']) && !empty($_GET['movimento'])) {
 		$movimento = $_GET['movimento'];
 		$implode[] = $gTables['movmag'].".id_mov = " . $_GET['movimento'];
+		$passo = 100000;
 	}
 	
 	if (isset($_GET['causale']) && !empty($_GET['causale'])) {
 		$causale = $_GET['causale'];
 		$implode[] = "caumag LIKE '" . $_GET['causale'] . "%'";
+		$passo = 100000;
 	}
 
 	if (isset($_GET['documento']) && !empty($_GET['documento'])) {
 		$documento = $_GET['documento'];
 		$implode[] = "desdoc LIKE '%".$_GET['documento']."%'";
+		$passo = 100000;
 	}
 	
 	if (isset($_GET['articolo']) && !empty($_GET['articolo'])) {
 		$articolo = $_GET['articolo'];
 		$implode[] = "artico LIKE '%".$_GET['articolo']."%'";
+		$passo = 100000;
 	}
 	
 	if (isset($_GET['lotto']) && !empty($_GET['lotto'])) {
 		$idlotto = $_GET['lotto'];
 		$implode[] = "id_lotmag LIKE '%".$_GET['lotto']."%'";
+		$passo = 100000;
 	}
 	
 	$where = implode(" AND ", $implode);
