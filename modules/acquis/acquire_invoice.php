@@ -295,10 +295,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		unlink($cert);
 		if (!$retn) {
 			unlink($tmpfatt);
-			echo "Error verifying PKCS#7 signature in {$file_name}";
 			error_log('errore in Verifica firma PKCS#7', 0);
-			echo 'errore in Verifica firma PKCS#7';
-			return false;
 		}
 
 		$fatt = extractDER($tmpfatt);
