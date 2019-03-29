@@ -142,9 +142,14 @@ $tot_movimenti = 0;
 /** ENRICO FEDELE */
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    $partner = $anagrafica->getPartner($a_row["clfoco"]);
+    $partner = $anagrafica->getPartner($a_row['clfoco']);
     $title =  $partner['ragso1']." ".$partner['ragso2'];
-	$descri=$a_row["descart"];
+	$descri=$a_row['descart'];
+	if ($a_row['expiry']>0){
+		$expiry="Scad.: ".gaz_format_date($a_row['expiry']);
+	} else {
+		$expiry="";
+	}
     $valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
     $valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
     echo "<tr>\n";
@@ -166,9 +171,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
             echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
         }
     }
-   	echo "<td class=\"FacetDataTD\"  align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$a_row["artico"]."</p>";
+   	echo "<td class=\"FacetDataTD\"  align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$a_row["artico"]."</p></td>\n";
 	if ($a_row['id']>0) {
-		echo "<td class=\"FacetDataTD\" align=\"center\">"."ID:".$a_row['id']." - ".$a_row['identifier']."</td>\n";
+		echo "<td class=\"FacetDataTD\" align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$expiry\">"."ID:".$a_row['id']." - ".$a_row['identifier']."</td>\n";
 	} else {
 		echo "<td class=\"FacetDataTD\"></td>";
 	}
