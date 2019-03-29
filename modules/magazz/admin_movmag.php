@@ -694,8 +694,8 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
                 $selected_lot = $lm->getLot($form['id_lotmag']);
 					
                 echo '<div><button class="btn btn-xs btn-success" title="Lotto selezionato. Cliccare per cambiare lotto" type="image"  data-toggle="collapse" href="#lm_dialog">' . $selected_lot['id'] . ' lotto n.:' . $selected_lot['identifier'];
-                if (intval($form['expiry']) > 0) {
-                    echo ' scadenza:' . gaz_format_date($selected_lot['expiry']);
+                if (intval($selected_lot['expiry']) > 0) {
+                    echo ' scadenza: ' . gaz_format_date($selected_lot['expiry']);
                 }
 				if (!isset($count[$selected_lot['identifier']])){
 					?>
@@ -730,8 +730,11 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
 							if ($v['quanti'] >= $form['quanti']){ 
 								$form['id_lotmag']= $v['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
 								$selected_lot = $lm->getLot($form['id_lotmag']);
-								
-								echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente. Cliccare per cambiare lotto" data-toggle="collapse" href="#lm_dialog">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'] . ' Scadenza: ' . gaz_format_date($selected_lot['expiry']). ' disponibili:' . gaz_format_quantity($count[$selected_lot['identifier']]+$prev_qta['quanti']);
+								echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente. Cliccare per cambiare lotto" data-toggle="collapse" href="#lm_dialog">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
+								if ($selected_lot['expiry']>0){
+									echo ' Scadenza: ' . gaz_format_date($selected_lot['expiry']);
+								}
+								echo ' disponibili:' . gaz_format_quantity($count[$selected_lot['identifier']]+$prev_qta['quanti']);
 								echo '  <i class="glyphicon glyphicon-tag"></i></button>';
 								?>
 								<input type="hidden" name="id_lotmag" value="<?php echo $selected_lot['id_lotmag']; ?>">
@@ -752,10 +755,11 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
 				foreach ($lm->available as $v_lm) {
 					if ($v_lm['id'] <> $form['id_lotmag']) { 
 						echo '<div>Cambia con:<button class="btn btn-xs btn-warning" type="text" onclick="this.form.submit();" name="id_lotmag" value="'.$v_lm['id'].'">'
-						. $v_lm['id']
-						. ' lotto n.:' . $v_lm['identifier']
-						. ' scadenza:' . gaz_format_date($v_lm['expiry'])
-						. ' disponibili:' . gaz_format_quantity($count[$v_lm['identifier']])
+						. $v_lm['id']. ' lotto n.:' . $v_lm['identifier'];
+						if ($v_lm['expiry']>0){
+							echo ' scadenza:' . gaz_format_date($v_lm['expiry']);
+						}
+						echo ' disponibili:' . gaz_format_quantity($count[$v_lm['identifier']])
 						. '</button></div>';
 					}
 				}
