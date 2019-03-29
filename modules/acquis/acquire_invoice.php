@@ -206,7 +206,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	}
 	if (isset($_POST['Submit_file'])) { // conferma invio upload file
         if (!empty($_FILES['userfile']['name'])) {
-            if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "text/xml")) {
+            if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "application/pkcs7" || $_FILES['userfile']['type'] == "text/xml")) {
 				$msg['err'][] = 'filmim';
 			} else {
                 if (move_uploaded_file($_FILES['userfile']['tmp_name'], '../../data/files/' . $admin_aziend['codice'] . '/' . $_FILES['userfile']['name'])) { // nessun errore
@@ -294,8 +294,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$retn = openssl_pkcs7_verify($tmpfatt, PKCS7_NOVERIFY, $cert);
 		unlink($cert);
 		if (!$retn) {
-			unlink($tmpfatt);
+			//unlink($tmpfatt);
+			//echo "Error verifying PKCS#7 signature in {$file_name}";
 			error_log('errore in Verifica firma PKCS#7', 0);
+			//echo 'errore in Verifica firma PKCS#7';
+			//return false;
 		}
 
 		$fatt = extractDER($tmpfatt);
