@@ -371,7 +371,9 @@ function choicePartner(row)
                 echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
 				}
 				if ($r["tipdoc"] == 'AOR') {
-					echo '&nbsp;<a title="Quando il fornitore consegna la merce la carico in magazzino con documento di acquisto" class="btn btn-xs btn-warning" href="select_evaord.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Ricev.DdT</i></a>';
+					echo '<div><button title="Duplica questo ordine come preventivo per fornitore" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"> duplica come Preventivo</i></button></div>';
+                echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
+					echo '<div><a title="Quando il fornitore consegna la merce la carico in magazzino con documento di acquisto" class="btn btn-xs btn-warning" href="select_evaord.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Ricev.DdT</i></a></div>';
 				}
                 echo "	</td>\n";
 				// colonna mail
@@ -406,7 +408,7 @@ function choicePartner(row)
 		</div>
     </fieldset>
 </div>
-<div class="modal" id="confirm_duplicate" title="Duplica preventivo">
+<div class="modal" id="confirm_duplicate" title="Duplica su nuovo preventivo">
     <fieldset>
         <div>
             <label for="duplicate">a:</label>

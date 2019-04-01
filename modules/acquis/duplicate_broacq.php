@@ -24,11 +24,11 @@
  */
 
 if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato direttamente
-	require("../../library/include/datlib.inc.php");
-	$admin_aziend = checkAdmin();
-
-	//duplico la testata
+   require("../../library/include/datlib.inc.php");
+   $admin_aziend = checkAdmin();
+   //duplico la testata
    $id_testata = intval($_GET['id_tes']);
+   $testata = gaz_dbi_get_row($gTables['tesbro'], 'id_tes', $id_testata); // recupero i dati della testata di origine
    $fornitore = intval($_GET['duplicate']);
    $tipdoc='APR';
    $email="''";
@@ -36,7 +36,7 @@ if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato dir
 	 $fornitore = "`clfoco`";
 	 $tipdoc='AOR';
 	 $email="`email`";
-   } else { // duplico il preventivo 
+   } else { // devo fare una duplicazione  
 	// prevent direct access
 	$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
     strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -44,7 +44,10 @@ if (isset($_GET['id_tes'])) { //	Evitiamo errori se lo script viene chiamato dir
 		$user_error = 'Access denied - not an AJAX request...';
 		trigger_error($user_error, E_USER_ERROR);
 	}
-	// *****************************************************************************/
+    if ($testata['tipdoc']=='AOR'){ // provengo da un ordine e lo devo trasformare in preventivo
+	 $tipdoc='APR';
+    } else { // provvengo da un preventivo, lo duplico soltanto senza cambiare il tipo documento
+    }	
    }
    $numdoc = trovaNuovoNumero($gTables,$tipdoc);  // numero nuovo documento
    $today = gaz_today();
