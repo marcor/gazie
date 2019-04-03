@@ -24,13 +24,22 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+
 require("../../library/include/document.php");
 $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", intval($_GET['id_tes']));
+
+$lang = false;
+$id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $tesbro['clfoco']);
+$stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
+if ($stato AND $stato['country'] !== "IT"){
+    $lang = 'english';
+	}
+
 if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
     if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
-        createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro','E');
+        createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro','E',$lang);
     } else {
-        createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro');
+        createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro', false,$lang);
     }
 } elseif ($tesbro['tipdoc']=='VOW'){
     createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro');
