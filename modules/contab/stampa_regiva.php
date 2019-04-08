@@ -365,7 +365,9 @@ for ($i = 1; $i <= $p_max; $i++) {
 			$totimpost_liq += $impost;
 		}	
         if ($ctrl != $v['id_tes']) { // primo rigo iva del movimento contabile
-            if ($maxY > 265) {
+            if ($maxY > 250) {
+				$pdf->Ln();
+				$pdf->Cell(190,1,'','T');
                 $pdf->AddPage();
                 $maxY = $pdf->GetY();
             }
