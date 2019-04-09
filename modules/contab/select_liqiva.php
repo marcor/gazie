@@ -107,6 +107,78 @@ function getMovements($date_ini,$date_fin)
         return $m;
 }
 
+function sales_by_region($date_ini,$date_fin)
+{
+        global $gTables,$admin_aziend;
+        $where = "regiva <= 4 AND datliq BETWEEN $date_ini AND $date_fin GROUP BY ".$gTables['anagra'].".country, ".$gTables['anagra'].".prospe, azienda";
+        $orderby=$gTables['country'].".istat_area, ".$gTables['country'].".iso, ".$gTables['regions'].".id, ".$gTables['anagra'].".prospe";
+        $rs=gaz_dbi_dyn_query("prospe, 1*(CAST(".$gTables['anagra'].".pariva AS UNSIGNED)>10000) AS azienda, SUM((imponi*(operat = 1) - imponi*(operat = 2))*(-2*(regiva = 6)+1)) AS imponibile,
+                               SUM((impost*(operat = 1) - impost*(operat = 2))*(-2*(regiva = 6)+1)) AS iva, ".$gTables['country'].".name AS nazione,
+							  ".$gTables['regions'].".name AS regione, ".$gTables['regions'].".stat_code AS codice_regione, ".$gTables['anagra'].".prospe AS provincia, regiva AS registro, COUNT(*) AS righi",
+        $gTables['rigmoi']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
+        LEFT JOIN ".$gTables['aliiva']." ON ".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice
+        LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice
+        LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id
+        LEFT JOIN ".$gTables['provinces']." ON ".$gTables['anagra'].".prospe = ".$gTables['provinces'].".abbreviation
+        LEFT JOIN ".$gTables['regions']." ON (".$gTables['provinces'].".id_region = ".$gTables['regions'].".id AND ".$gTables['regions'].".iso_country = ".$gTables['anagra'].".country)
+        LEFT JOIN ".$gTables['country']." ON ".$gTables['anagra'].".country = ".$gTables['country'].".iso",$where,$orderby);
+        $m=array();
+		$ctrl_nazione='INIZIO';
+		$ctrl_region='INIZIO';
+        while ($r=gaz_dbi_fetch_array($rs)) {
+			if ($r['nazione']=='ITALY'){ //clienti italia
+			 // qui separo le province di trento e bolzano in due regioni separate
+			 if ($r['prospe']=='BZ'){ //bolzano
+				$r['regione']='Bolzano';
+				$r['codice_regione']=21; // forzo a 21 per aver 'VT4' della dichiarazione IVA
+			 }			
+			 if ($r['prospe']=='TN'){ //trento
+				$r['regione']='Trento';
+			 }			
+			 $m['italia']['righi'][]= $r;	
+			 if ($r['nazione']!=$ctrl_nazione){ // ho un cambio di nazione azzero i totali ad esso relativi 
+			  $m['italia']['totale_imponibile'] = $r['imponibile'];	
+			  $m['italia']['totale_iva'] = $r['iva'];	
+			 } else {
+			  $m['italia']['totale_imponibile'] += $r['imponibile'];	
+			  $m['italia']['totale_iva'] += $r['iva'];	
+			 }			
+			 if ($r['regione']!=$ctrl_regione){ // ho un cambio di regione azzero i totali ad essa relativi 
+			  $m['italia'][$r['regione']]['totale_imponibile'] = $r['imponibile'];	
+			  $m['italia'][$r['regione']]['totale_iva'] = $r['iva'];	
+			 } else {
+			  $m['italia'][$r['regione']]['totale_imponibile'] += $r['imponibile'];	
+			  $m['italia'][$r['regione']]['totale_iva'] += $r['iva'];	
+			 }			
+			} elseif ($r['nazione']==''){ //clienti anonimi, per esempio quelli serviti con scontrini 
+			 $proazienda = gaz_dbi_get_row($gTables['provinces'],'abbreviation',$admin_aziend['prospe']);
+			 $regazienda = gaz_dbi_get_row($gTables['regions'],'id',$proazienda['id_region']);
+     		 $r['regione']=$regazienda['name']; // per gli anonimi uso la regione dell'indirizzo aziendale
+     		 $r['codice_regione']=$regazienda['id']; 
+			 $m['anonimi']['righi'][]= $r;
+			 if ($r['nazione']!=$ctrl_nazione){ // ho un cambio di nazione azzero i totali ad esso relativi 
+			  $m['anonimi']['totale_imponibile'] = $r['imponibile'];	
+			  $m['anonimi']['totale_iva'] = $r['iva'];	
+			 } else {
+			  $m['anonimi']['totale_imponibile'] += $r['imponibile'];	
+			  $m['anonimi']['totale_iva'] += $r['iva'];	
+			 }			
+			} else { // clienti esteri
+			 $m['estero']['righi'][]= $r;	
+			 if ($r['nazione']!=$ctrl_nazione){ // ho un cambio di nazione azzero i totali ad esso relativi 
+			  $m['estero'][$r['nazione']]['totale_imponibile'] = $r['imponibile'];	
+			  $m['estero'][$r['nazione']]['totale_iva'] = $r['iva'];	
+			 } else {
+			  $m['estero'][$r['nazione']]['totale_imponibile'] += $r['imponibile'];	
+			  $m['estero'][$r['nazione']]['totale_iva'] += $r['iva'];	
+			 }			
+			}
+			$ctrl_regione=$r['regione'];
+			$ctrl_nazione=$r['nazione'];
+        }
+		return $m;
+}
+
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -381,8 +453,30 @@ if (isset($_POST['preview']) and $msg=='') {
         }
   }
   echo "</table>\n";
-}
+  $r=sales_by_region($date_ini,$date_fin);
 ?>
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	<th colspan="7" class="text-center">
+	 RIPARTIZIONE DELLE VENDITE PER NAZIONI-REGIONI-PROVINCIE
+	</th>
+	<tr>
+		<td colspan="7"><b> ANONIMI
+		</b></td>		
+	</tr>
+	<tr>
+		<td class="danger">ATTENZIONE!!! CI SONO VENDITE effettuate verso clienti consumatori finali ANONIMI (es. scontrini fiscali), normalmente da imputare alla regione in cui fa sede l'azienda, nel nostro caso: <?php echo $r['anonimi']['righi'][0]['regione'] ?>
+		</td>		
+	</tr>
+<?php  
+/*  foreach($r['italia']['righi'] as $k=>$v) {
+	  print rif_dichiarazione_iva($v['codice_regione'],$year=2019).'<br>';
+  }
+  print_r($r);
+*/
+}
+
+?>
+</table>
 </form>
 <?php
 require("../../library/include/footer.php");

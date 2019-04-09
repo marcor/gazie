@@ -379,4 +379,11 @@ function calcNumPartitaAperta(&$mv) {
     }
 }
 
+function rif_dichiarazione_iva($region_stat_code,$year=2019){
+	$data=array(
+		2019=>array(1=>'VT14',2=>'VT21',3=>'VT11',4=>'VT19',5=>'VT22',6=>'VT8',7=>'VT10',8=>'VT7',9=>'VT18',10=>'VT20',11=>'VT12',12=>'VT9',13=>'VT2',14=>'VT13',15=>'VT6',16=>'VT15',17=>'VT3',18=>'VT5',19=>'VT17',20=>'VT16', 21=>'VT4') 
+		// ATTENZIONE LA REGIONE TRENTINO E' STATA DIVISA NELLE DUE PROVINCIE (21->VT4 = BOLZANO E 4-> VT19 TRENTO)
+		); 
+	return $data[intval($year)][intval($region_stat_code)]; 
+}
 ?>
