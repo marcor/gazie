@@ -63,7 +63,8 @@ function getStaffTimesheet($worker,$dates) {
 	global $gTables;
 	foreach ($dates as $k=>$v) {
         $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $worker."' AND work_day ='".$v);
-		if (!empty($r)){$hnormal=0;$hextra=0;$habsence=0;$hother=0;
+		if (!empty($r)){
+			$hnormal=0;$hextra=0;$habsence=0;$hother=0;
 			$query="SELECT * FROM ".$gTables['staff_worked_hours']." WHERE id_staff = '".$worker."' and work_day = '".$v."'";
 			$rc = gaz_dbi_query($query);
 			while($rowrc = $rc->fetch_assoc()){ 
@@ -83,7 +84,7 @@ function getStaffTimesheet($worker,$dates) {
 		} else {
 			$ret[$worker][$v] = array( 'hours_normal'=>'', 'id_work_type_extra'=>0,
 			'hours_extra'=>'', 'id_absence_type'=>0, 'hours_absence'=>'',
-			'id_other_type'=>0, 'hours_other'=>'', 'note'=>'', 'id_orderman'=>0
+			'id_other_type'=>0, 'hours_other'=>'', 'note'=>'', 'id_orderman'=>0, 'coseprod'=>''
 			);
 		}
 	}
@@ -229,6 +230,9 @@ if ($k>0){
                         </td>
                         <td>
 						<?php
+							$select_prod = new selectproduction("rows[".$k."][".$week_days['mon']."][id_orderman]");
+							$select_prod->addSelected($form['rows'][$k][$week_days['mon']]['id_orderman']);
+							$select_prod->output($form['rows'][$k][$week_days['mon']]['coseprod']);
 						?>
 						</td>
                         <td>						

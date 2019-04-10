@@ -280,7 +280,13 @@ $linkHeaders->output();
             // Colonna pagamento
             echo "<td align=\"center\">" . $pagamento["descri"] . " &nbsp;</td>";
             // Colonna stato
-            echo "<td align=\"center\">" . $status . " &nbsp;</td>";
+            echo "<td align=\"center\">";
+            if ($row["id_con"] > 0) {
+                echo " <a class=\"btn btn-xs btn-default btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont." . $row["id_con"] . "</a> ";
+            } else {
+                echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"close_ecr.php\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
+            }
+            echo "&nbsp;</td>";
              // Colonna importo
            echo '<td align="right" style="font-weight=bolt;">';
             echo gaz_format_number($tot_tes);
