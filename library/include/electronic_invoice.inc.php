@@ -1212,8 +1212,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 				$el1->appendChild($el2);
 			$el->appendChild($el1);
 		}
-		$el1 = $domDoc->createElement("MezzoTrasporto", $XMLvars->tesdoc['spediz']);
-        $el->appendChild($el1);
+		if (strlen(trim($XMLvars->tesdoc['spediz']))>=4){
+			$el1 = $domDoc->createElement("MezzoTrasporto", $XMLvars->tesdoc['spediz']);
+			$el->appendChild($el1);
+		}
         $el1 = $domDoc->createElement("CausaleTrasporto", 'VENDITA');
         $el->appendChild($el1);
 		if ($XMLvars->tesdoc['units']>=1){
