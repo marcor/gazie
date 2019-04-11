@@ -65,9 +65,9 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "<table class=\"Tsmall\">\n";
     echo "<tr><td colspan=\"2\"><strong>" . $script_transl['instructions'] . ":</strong></td></tr>";
     echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"checkbox\" name=\"create_database\" value=\"1\" checked=\"checked\"></td>
-              <td class=\"FacetDataTD\"> CREATE DATABASE IF NOT EXISTS $Database;</td></tr>";
+              <td class=\"FacetDataTD\"> CREATE DATABASE IF NOT EXISTS `" . $Database . "`;</td></tr>";
     echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"checkbox\" name=\"use_database\" value=\"1\" checked=\"checked\"></td>
-              <td class=\"FacetDataTD\"> USE $Database;</td></tr>";
+              <td class=\"FacetDataTD\"> USE `" . $Database . "`;</td></tr>";
     echo "<tr><td colspan=\"2\"><hr></td></tr>";
     echo "<tr><td colspan=\"2\"><strong>" . $script_transl['text_encoding'] . ":</strong></td></tr>";
     echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"text_encoding\" value=\"0\" checked=\"checked\"></td>
@@ -153,14 +153,14 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "-- delle tabelle.\n";
     echo "--\n";
     if ($form['create_database'] == 1 || isset($_GET['internal'])) {
-        echo "CREATE DATABASE IF NOT EXISTS $Database;\n";
+        echo "CREATE DATABASE IF NOT EXISTS `" . $Database. "`;\n";
     } else {
-        echo "-- CREATE DATABASE IF NOT EXISTS $Database;\n";
+        echo "-- CREATE DATABASE IF NOT EXISTS `" . $Database . "`;\n";
     }
     if ($form['use_database'] == 1 || isset($_GET['internal'])) {
-        echo "USE $Database;\n";
+        echo "USE `" . $Database . "`;\n";
     } else {
-        echo "-- USE $Database;\n";
+        echo "-- USE `" . $Database . "`;\n";
     }
     if ($form['text_encoding'] == 0 || isset($_GET['internal'])) {
         echo "SET NAMES utf8;\n";

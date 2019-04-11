@@ -79,7 +79,7 @@ if (isset($_POST['Recover']) && $_POST['Conferma']=="accetto") {
     $mysqlimport = FALSE;
 
     // cancello il database
-    gaz_dbi_query("DROP DATABASE ".$mysqlDatabaseName);
+    gaz_dbi_query("DROP DATABASE `".$mysqlDatabaseName."`");
 
     if ( $mysqlimport == TRUE ) {
         $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
