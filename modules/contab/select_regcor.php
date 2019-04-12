@@ -322,6 +322,8 @@ if (isset($_POST['preview']) and $msg == '') {
 	    'tot_iva_corr'	=> [],
 	    'iva_esente'	=> 0,
 	    'iva_no_imp'	=> 0,
+	    'current'		=> 1,
+	    'last'		=> sizeof($m),
     ];
     if ( sizeof($m) > 0 ) {
     //Ci sono dati e quindi procedo al conteggio
@@ -337,11 +339,11 @@ if (isset($_POST['preview']) and $msg == '') {
         $totimpost_liq = 0.00;
         $totindetr_liq = 0.00;
         $ctrlmopre = 0;
-		$castle_imponi=array();
-		$castle_descri[0]='';
-		$castle_percen[0]='';
-		foreach ($m AS $key => $mv) {
-			$class_m='';
+	$castle_imponi=array();
+	$castle_descri[0]='';
+	$castle_percen[0]='';
+	foreach ($m AS $key => $mv) {
+	    $class_m='';
             if ($mv['operat'] == 1||$form['vat_reg']==9) {
                 $imponi = $mv['imponi'];
                 $impost = $mv['impost'];
@@ -418,20 +420,13 @@ if (isset($_POST['preview']) and $msg == '') {
 	    }
 
 	    echo '<tr class="'.$class_m.'">';
+//	    $last_mov =($cont_day['current'] === $cont_day['last']);
 	    // Controllo della data precedente
-	    if ( $cont_day['data'] !== gaz_format_date($mv['datreg']) ) {
-		    // Se diversa stampo i totali della giornata 
-	    	    // ed azzero i contatori della giornata
-		    if ( !is_null( $cont_day['data'] ) ) {
-			    // Aumento i contatori con il risultato attuale
-		    // Aumento i contatori
-		    $cont_day['fatt_final']  	= $mv['numdoc'];
-		    $cont_day['imp_ricevute'] = $cont_day['imp_ricevute']	+ $mv['imponi'];
-		    $cont_day['totali'][$mv['codiva']] = $cont_day['totali'][$mv['codiva']] + $mv['imponi'] + $impost;
-		    $cont_day['tot_corrisp'] 	= $cont_day['tot_corrisp']	+ $mv['imponi'];
-		    $cont_day['tot_iva_corr'][$mv['codiva']] += $impost;
+	    if (  ($cont_day['data']  !== NULL) && $cont_day['data'] !== gaz_format_date($mv['datreg'])) {
 
-?>
+		    // Se diversa stampo i totali della giornata precedente 
+		    // ed azzero i contatori della giornata
+?>  
 			    <tr class="<?= $class_m ?>">
 			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['data'] ?> &nbsp;</td>    
 			    	<td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['fatt_init'] . '-' .  $cont_day['fatt_final'] ?> &nbsp;</td>    
@@ -458,22 +453,22 @@ if (isset($_POST['preview']) and $msg == '') {
 				&nbsp;</td>    
 			    </tr>
 <?php
-		    } 
-			// Aumento i contatori se vi sono variazioni
-		       $cont_day = [
-                        'data'              => gaz_format_date( $mv['datreg']),
-                        'fatt_init'         => $mv['numdoc'],
-                        'fatt_final'        => NULL,
-                        'imp_ricevute'      => 0,
-                        'totali'	    => [],
-                        'tot_corrisp'       => 0,
-                        'tot_iva_corr'      => [],
-                        'iva_esente'        => 0,
-                        'iva_no_imp'        => 0,
-                       ];
+		    // Inizializzo contatori 
+                    $cont_day['data']     = gaz_format_date($mv['datreg']);
+                    $cont_day['fatt_init']     = $mv['numdoc'];
+                    $cont_day['fatt_final']     = $mv['numdoc'];
+                    $cont_day['imp_ricevute']   =  $mv['imponi'];
+                    $cont_day['totali'] = [];
+                    $cont_day['totali'][$mv['codiva']] =  $mv['imponi'] + $impost;
+                    $cont_day['tot_corrisp']    =  $mv['imponi'];
+                    $cont_day['tot_iva_corr'] = [];
+                    $cont_day['tot_iva_corr'][$mv['codiva']] = $impost;
 
+				 
 	    } else {
-		    // Aumento i contatori
+		    // La data è diversa
+	    	    // Aumento i contatori
+                    $cont_day['data']     = gaz_format_date($mv['datreg']);
 		    $cont_day['fatt_final']  	= $mv['numdoc'];
 		    $cont_day['imp_ricevute']  	= $cont_day['imp_ricevute']	+ $mv['imponi'];
 		    $cont_day['totali'][$mv['codiva']] = $cont_day['totali'][$mv['codiva']] + $mv['imponi'] + $impost;
@@ -481,18 +476,37 @@ if (isset($_POST['preview']) and $msg == '') {
 		    $cont_day['tot_iva_corr'][$mv['codiva']] += $impost;
 		
 	    }
-          /*  
-	    echo '<tr class="'.$class_m.'">';
-            echo "<td align=\"right\" class=\"FacetDataTD$red_p\">" . $mv['protoc'] . " &nbsp;</td>";
-            echo "<td align=\"center\"><a href=\"admin_movcon.php?id_tes=" . $mv['id_tes'] . "&Update\" title=\"Modifica il movimento contabile\">id " . $mv['id_tes'] . "</a><br />" . gaz_format_date($mv['datreg']). "</td>";
-            echo "<td>" . $mv['descri'] . " n." . $mv['numdoc'] . $script_transl['of'] . gaz_format_date($mv['datdoc']) . " &nbsp;</td>";
-            echo "<td>" . substr($mv['ragsoc'], 0, 30) . " &nbsp;</td>";
-            echo "<td align=\"right\">" . gaz_format_number($imponi) . " &nbsp;</td>";
-            echo "<td align=\"center\">" . $mv['periva'] . " &nbsp;</td>";
-            echo "<td align=\"right\">" . gaz_format_number($impost) . " &nbsp;</td>";
-            echo "<td align=\"center\">" . substr(gaz_format_date($mv['datliq']),3) . $liq_val." &nbsp;</td>";
-	    echo "</tr>";*/
-        }
+	}
+	// Stampo l'ultimo rigo 
+?>
+                            <tr class="<?= $class_m ?>">
+                                <td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['data'] ?> &nbsp;</td>
+                                <td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['fatt_init'] . '-' .  $cont_day['fatt_final'] ?> &nbsp;</td>
+                                <td align="right" class="FacetDataTD<?= $red_p ?>">
+<?php                           if ( count( $cont_day['totali']) > 1 )
+                                        $br="<br>";
+                                else
+                                        $br='';
+                                foreach ($cont_day['totali'] as $k => $v ) {
+                                        echo $castle_descri[$k] .' = ' . $v.$br;
+                                }
+?>
+                                &nbsp;</td>
+<!--                            <td align="right" class="FacetDataTD<?= $red_p ?>"><?=  $cont_day['tot_corrisp'] ?> &nbsp;</td> -->
+                                <td align="right" class="FacetDataTD<?= $red_p ?>">
+<?php                           if ( count( $cont_day['tot_iva_corr']) > 1 )
+                                        $br="<br>";
+                                else
+                                        $br='';
+                                foreach ($cont_day['tot_iva_corr'] as $k => $v ) {
+                                        echo $castle_descri[$k] .' = ' . $v.$br;
+                                }
+?>
+                                &nbsp;</td>
+                            </tr>
+
+
+<?php
         echo "</table><hr>";
     	echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         $totale = number_format(($totimponi + $totimpost), 2, '.', '');
@@ -527,6 +541,7 @@ if (isset($_POST['preview']) and $msg == '') {
     }
     echo "</table>\n";
 }
+// Fine preview
 ?>
 </form>
 <?php
