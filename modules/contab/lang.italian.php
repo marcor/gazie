@@ -34,9 +34,9 @@ $strScript = array("select_liqiva.php" =>
         'descri' => 'Descrizione',
         'descri_value' => array('M' => 'del mese di ', 'T' => 'del trimestre '
         ),
-        'date_ini' => 'Data registrazione inizio  ',
+        'date_ini' => 'Data periodo inizio  ',
         'cover' => 'Stampa la copertina',
-        'date_fin' => 'Data registrazione fine ',
+        'date_fin' => 'Data periodo fine ',
         'header' => array('Sezione' => '', 'Registro' => '', 'Descrizione aliquota' => '', 'Imponibile' => '',
             'Aliquota' => '', 'Imposta' => '', 'Indetraibile' => '', 'Totale' => ''
         ),

@@ -566,8 +566,8 @@ if (isset($_POST['preview']) and $msg=='') {
 		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_iva']); ?> </td>		
 		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['imponibile_aziende']); ?> </td>		
 		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['iva_aziende']); ?> </td>		
-		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['imponibile_consfin']>=0.01) { echo rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-1 <br/><b> '.gaz_format_number($r['italia'][$ctrl_regione]['imponibile_consfin']).'</b>';} ?></td>
-		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['iva_consfin']>=0.01) { echo rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-2 <br/><b> '.gaz_format_number($r['italia'][$ctrl_regione]['iva_consfin']).'</b>';} ?></td>
+		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['imponibile_consfin']>=0.01) { echo '<span  style="background-color:#FFAAFF;"><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-1 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['imponibile_consfin']).'</b></span>';} ?></td>
+		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['iva_consfin']>=0.01) { echo '<span  style="background-color:#FFAAFF;"><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-2 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['iva_consfin']).'</b></span>';} ?></td>
 	</tr>
 <?php		
 	 }
@@ -609,17 +609,17 @@ if (isset($_POST['preview']) and $msg=='') {
 		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['totale_iva']); ?> </td>		
 		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['imponibile_aziende']); ?> </td>		
 		<td class="text-right"><?php echo gaz_format_number($r['italia'][$ctrl_regione]['iva_aziende']); ?> </td>		
-		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['imponibile_consfin']>=0.01) { echo rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-1 <br/><b> '.gaz_format_number($r['italia'][$ctrl_regione]['imponibile_consfin']).'</b>';} ?></td>
-		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['iva_consfin']>=0.01) { echo rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-2 <br/><b> '.gaz_format_number($r['italia'][$ctrl_regione]['iva_consfin']).'</b>';} ?></td>
+		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['imponibile_consfin']>=0.01) { echo '<span  style="background-color:#FFAAFF;"><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-1 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['imponibile_consfin']).'</b></span>';} ?></td>
+		<td class="text-right"><?php if ($r['italia'][$ctrl_regione]['iva_consfin']>=0.01) { echo '<span  style="background-color:#FFAAFF;"><b>'.rif_dichiarazione_iva($ctrl_codice_regione,$year=2019).'-2 <br/>'.gaz_format_number($r['italia'][$ctrl_regione]['iva_consfin']).'</b></span>';} ?></td>
 	</tr>
 	<tr class="info">
 		<td colspan="2"><b>TOTALI ITALIA</b></td>		
-		<td class="text-right"><?php echo 'VT1-1 <br/><b>'.gaz_format_number($r['italia']['totali']['totale_imponibile']); ?></b></td>		
-		<td class="text-right"><?php echo 'VT1-2 <br/><b>'.gaz_format_number($r['italia']['totali']['totale_iva']); ?></b></td>		
-		<td class="text-right"><?php echo 'VT1-5 <br/><b>'.gaz_format_number($r['italia']['totali']['imponibile_aziende']); ?></b></td>		
-		<td class="text-right"><?php echo 'VT1-6 <br/><b>'.gaz_format_number($r['italia']['totali']['iva_aziende']); ?></b></td>		
-		<td class="text-right"><?php echo 'VT1-3 <br/><b>'.gaz_format_number($r['italia']['totali']['imponibile_consfin']); ?></b></td>
-		<td class="text-right"><?php echo 'VT1-4 <br/><b>'.gaz_format_number($r['italia']['totali']['iva_consfin']); ?> </b></td>
+		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-1 <br/>'.gaz_format_number($r['italia']['totali']['totale_imponibile']); ?></b></td>		
+		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-2 <br/>'.gaz_format_number($r['italia']['totali']['totale_iva']); ?></b></td>		
+		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-5 <br/>'.gaz_format_number($r['italia']['totali']['imponibile_aziende']); ?></b></td>		
+		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-6 <br/>'.gaz_format_number($r['italia']['totali']['iva_aziende']); ?></b></td>		
+		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-3 <br/>'.gaz_format_number($r['italia']['totali']['imponibile_consfin']); ?></b></td>
+		<td class="text-right"><?php echo '<b style="background-color:#FFAAFF;">VT1-4 <br/>'.gaz_format_number($r['italia']['totali']['iva_consfin']); ?> </b></td>
 	</tr>
 <?php		
   }
