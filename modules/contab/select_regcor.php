@@ -458,12 +458,11 @@ if (isset($_POST['preview']) and $msg == '') {
                     $cont_day['fatt_init']     = $mv['numdoc'];
                     $cont_day['fatt_final']     = $mv['numdoc'];
                     $cont_day['imp_ricevute']   =  $mv['imponi'];
-                    $cont_day['totali'] = [];
-                    $cont_day['totali'][$mv['codiva']] =  $mv['imponi'] + $impost;
+                    $cont_day['totali'] =  [];
+                    $cont_day['totali'][ $mv['codiva'] ]  =  $mv['imponi'] + $impost;
                     $cont_day['tot_corrisp']    =  $mv['imponi'];
                     $cont_day['tot_iva_corr'] = [];
                     $cont_day['tot_iva_corr'][$mv['codiva']] = $impost;
-
 				 
 	    } else {
 		    // La data è diversa
@@ -471,9 +470,15 @@ if (isset($_POST['preview']) and $msg == '') {
                     $cont_day['data']     = gaz_format_date($mv['datreg']);
 		    $cont_day['fatt_final']  	= $mv['numdoc'];
 		    $cont_day['imp_ricevute']  	= $cont_day['imp_ricevute']	+ $mv['imponi'];
-		    $cont_day['totali'][$mv['codiva']] = $cont_day['totali'][$mv['codiva']] + $mv['imponi'] + $impost;
+		    if ( !isset( $cont_day['totali'][$mv['codiva']] ) )
+			$cont_day['totali'][$mv['codiva']] =  $mv['imponi'] + $impost;
+		    else
+		    	$cont_day['totali'][$mv['codiva']] = $cont_day['totali'][$mv['codiva']] + $mv['imponi'] + $impost;
 		    $cont_day['tot_corrisp'] 	= $cont_day['tot_corrisp']	+ $mv['imponi'];
-		    $cont_day['tot_iva_corr'][$mv['codiva']] += $impost;
+		    if (!isset(  $cont_day['tot_iva_corr'][$mv['codiva']] ) )
+			$cont_day['tot_iva_corr'][$mv['codiva']] = $impost;
+		    else
+		    	$cont_day['tot_iva_corr'][$mv['codiva']] += $impost;
 		
 	    }
 	}
