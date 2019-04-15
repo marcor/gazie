@@ -77,15 +77,10 @@ function getDocRef($data) {
 
 if (isset($_GET['auxil'])) {
     $auxil = $_GET['auxil'];
-}
-if (isset($_GET['all'])) {
-    $auxil = "&all=yes";
-    $where = "caucon like '%'";
-    $passo = 100000;
+    $where = "caucon like '$auxil%'";
 } else {
-    if (isset($_GET['auxil'])) {
-        $where = "caucon like '" . addslashes($_GET['auxil']) . "%'";
-    }
+    $seziva = "1";
+    $where = "1";
 }
 if (isset($_GET['mov'])) {
     if ($_GET['mov'] > 0) {
@@ -96,14 +91,24 @@ if (isset($_GET['mov'])) {
         $numero = '';
     }
 }
-if (!isset($_GET['flag_order'])) {
+if (!isset($_GET['flag_order']) || !isset($_GET['field']) || $_GET['field'] == 2 || empty($_GET['field'])) {
     $orderby = " id_tes desc";
 }
 
-if (!isset($_GET['auxil'])) {
-    $auxil = "";
-    $where = "caucon like '$auxil%'";
+$all = $where;
+
+
+if (isset($_GET['all'])) {
+    $_GET['datemi'] = "";
+    $where = $all;
 }
+
+if (isset($_GET['datemi'])) {
+    $_GET['datreg'] = $_GET['datemi'];
+	gaz_flt_var_assign('datreg', 'd');
+    $datemi = $_GET['datemi'];
+}
+
 $script_transl = HeadMain('', '', 'admin_movcon');
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
@@ -114,7 +119,10 @@ $script_transl = HeadMain('', '', 'admin_movcon');
                 <input type="text" placeholder="Movimento" class="input-xs form-control" name="mov"
                        value="<?php if (isset($numero)) echo $numero; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
             </td>
-            <td class="FacetFieldCaptionTD"></td>
+            <td class="FacetFieldCaptionTD">
+                <?php // uso datemi per selezionare datreg
+				gaz_flt_disp_select("datemi", "YEAR(datreg) AS datemi", $gTables["tesmov"], $all, $orderby); ?>
+            </td>
             <td align="right" class="FacetFieldCaptionTD">
                 <input type="text" placeholder="<?php echo $script_transl['caucon']; ?>" class="input-xs form-control" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
             </td>
