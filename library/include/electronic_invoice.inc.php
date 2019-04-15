@@ -252,7 +252,7 @@ class invoiceXMLvars {
                 }
 				$sconto_su_imponibile = round($v_for_castle - $rigo['importo'], 2); // qui metto l'eventuale totale imponibile scontato
 				if (abs($sconto_su_imponibile)>=0.01){
-					if ($sconto_su_imponibile*$v_for_castle < 0) {// se hanno segni differenti
+					if ($sconto_su_imponibile*$v_for_castle <= 0) {// se hanno segni differenti o lo sconto è totale
                        $t = 'SC';
 					} else {
                        $t = 'MG'; // è una maggiorazione
