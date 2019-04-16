@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
-$tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFN','TD06'=>'AFA');
+$tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFN','TD06'=>'AFA','TD08'=>'AFC');
 $magazz = new magazzForm;
 $docOperat = $magazz->getOperators();
 $toDo = 'upload';
@@ -301,12 +301,24 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			//return false;
 		}
 
+		$isFatturaElettronicaSemplificata = false;
 		$fatt = extractDER($tmpfatt);
 		if (empty($fatt)) {
 			$test = @base64_decode(file_get_contents($tmpfatt));
 			// Salto lo header (INDISPENSABILE perché la regexp funzioni sempre)
-			if (preg_match('#(<[^>]*FatturaElettronica.*</[^>]*FatturaElettronica>)#', substr($test, 54), $gregs)) {
-				$fatt = '<'.'?'.'xml version="1.0"'.'?'.'>' . $gregs[1]; // RECUPERO INTESTAZIONE XML
+			if (strpos($test, 'FatturaElettronicaSemplificata') !== FALSE) {
+				$isFatturaElettronicaSemplificata = true;
+				if (preg_match('#(<[^>]*FatturaElettronicaSemplificata.*</[^>]*FatturaElettronicaSemplificata>)#', substr($test, 54), $gregs)) {
+					$fatt = '<'.'?'.'xml version="1.0"'.'?'.'>' . $gregs[1]; // RECUPERO INTESTAZIONE XML
+				}
+			} else {
+				if (preg_match('#(<[^>]*FatturaElettronica.*</[^>]*FatturaElettronica>)#', substr($test, 54), $gregs)) {
+					$fatt = '<'.'?'.'xml version="1.0"'.'?'.'>' . $gregs[1]; // RECUPERO INTESTAZIONE XML
+				}
+			}
+		} else {
+			if (strpos($p7mContent, 'FatturaElettronicaSemplificata') !== FALSE) {
+				$isFatturaElettronicaSemplificata = true;
 			}
 		}
 		}
@@ -353,11 +365,20 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$tipdoc=$tipdoc_conv[$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue];
 			$datdoc=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 			$numdoc=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
-			$codiva=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
-			if ($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->length>=1){
-				$codfis=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue;
+			if ($isFatturaElettronicaSemplificata) {
+				$codiva=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+				if ($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/CodiceFiscale")->length>=1){
+					$codfis=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/CodiceFiscale")->item(0)->nodeValue;
+				} else {
+					$codfis=$codiva;
+				}
 			} else {
-				$codfis=$codiva;
+				$codiva=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+				if ($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->length>=1){
+					$codfis=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue;
+				} else {
+					$codfis=$codiva;
+				}
 			}
 			$r_invoice=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", "tipdoc='".$tipdoc."' AND (pariva = '".$codiva."' OR codfis = '".$codfis."') AND datfat='".$datdoc."' AND numfat='".$numdoc."'", "id_tes", 0, 1);
 			$exist_invoice=gaz_dbi_fetch_array($r_invoice);
@@ -369,14 +390,19 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			if ($doc->getElementsByTagName("FatturaElettronicaHeader")->length < 1) { // non esiste il nodo <FatturaElettronicaHeader>
 				$msg['err'][] = 'invalid_fae';
 				$f_ex=false; // non è visualizzabile
-			} else if (@$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] && @$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue <> $admin_aziend['codfis'] ) { // ne partita IVA ne codice fiscale coincidono con quella della azienda che sta acquisendo la fattura 
+			} else if ( ( !$isFatturaElettronicaSemplificata && @$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] && @$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue <> $admin_aziend['codfis'] ) || 
+						 ( $isFatturaElettronicaSemplificata && @$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/IdentificativiFiscali/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] && @$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/IdentificativiFiscali/CodiceFiscale")->item(0)->nodeValue <> $admin_aziend['codfis'] ) ) { // ne partita IVA ne codice fiscale coincidono con quella della azienda che sta acquisendo la fattura 
 				$msg['err'][] = 'not_mine';
 				$f_ex=false; // non la visualizzo perché non è una mia fattura
 			} else {
 				// controllo se ho il fornitore in archivio
-				$form['partner_cost']=$admin_aziend['impacq']; 
-				$form['partner_vat']=$admin_aziend['preeminent_vat']; 
-				$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+				$form['partner_cost']=$admin_aziend['impacq'];
+				$form['partner_vat']=$admin_aziend['preeminent_vat'];
+				if ($isFatturaElettronicaSemplificata) {
+					$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+				} else {
+					$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+				}
 				$anagrafica = new Anagrafica();
                 $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
                 if ($partner_with_same_pi) { // ho già il fornitore sul piano dei conti
@@ -438,7 +464,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
 		$nl=0;
 		foreach ($DettaglioLinee as $item) {
-			$nl++;;
+			$nl++;
 			if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
 				$form['rows'][$nl]['codice_fornitore'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
 			} else {
@@ -456,7 +482,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$nl]['tiprig'] = 1; // rigo forfait
 			}
 			$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
-			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue; 
+			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue;
 
 			// inizio applicazione sconto su rigo
 			$form['rows'][$nl]['sconto'] = 0;
@@ -594,8 +620,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 				}
 			}
-			
 		}
+
 		/*
 			QUI TRATTERO' gli elementi <DatiCassaPrevidenziale> come righi accodandoli ad essi su rigdoc (tipdoc=4) 
 		*/
@@ -680,20 +706,45 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 		}
 
-		$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo");
 		$ImponibileImporto=0.00;
-		foreach($DatiRiepilogo as $dr){
-			$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
-		}
-		$totdiff=abs($ImponibileImporto-$tot_imponi);
-		/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
-		if ($totdiff>=0.01){ // qualora ci sia una differenza di almeno 1 cent la aggiunto (o lo sottraggo al rigo di maggior valore
-			if ($form['rows'][$max_val_linea]['tiprig']==0){ //rigo normale con quantità variabile
-				$form['rows'][$max_val_linea]['prelis']+= ($ImponibileImporto-$tot_imponi)/$form['rows'][$max_val_linea]['quanti'];
-			} else {
-				$form['rows'][$max_val_linea]['prelis']+= $ImponibileImporto-$tot_imponi;
+
+		/* 
+		Se la fattura è di tipo semplificata
+		*/
+		if ($isFatturaElettronicaSemplificata) {
+			$DettaglioLineeSemplificate = $doc->getElementsByTagName('DatiBeniServizi');
+			$nl=0;
+			foreach ($DettaglioLineeSemplificate as $item) {
+				$nl++;
+				$form['rows'][$nl]['tiprig'] = 1;
+				$form['rows'][$nl]['codice_fornitore'] = '';
+				$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue;
+				$form['rows'][$nl]['unimis'] = '';
+				$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('Importo')->item(0)->nodeValue;
+				$form['rows'][$nl]['quanti'] = 1;
+				$form['rows'][$nl]['amount'] = $form['rows'][$nl]['prelis'];
+				$form['rows'][$nl]['sconto'] = '';
+				$form['rows'][$nl]['ritenuta'] = '';
+				$form['rows'][$nl]['pervat'] = '' . @$item->getElementsByTagName('Aliquota')->item(0)->nodeValue;
+				@$imposta = $item->getElementsByTagName('Imposta')->item(0)->nodeValue;
 			}
-			$form['rows'][$max_val_linea]['amount'] += $ImponibileImporto-$tot_imponi;
+		}
+
+		if (!$isFatturaElettronicaSemplificata) {
+			$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo");
+			foreach($DatiRiepilogo as $dr){
+				$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
+			}
+			$totdiff=abs($ImponibileImporto-$tot_imponi);
+			/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
+			if ($totdiff>=0.01){ // qualora ci sia una differenza di almeno 1 cent la aggiunto (o lo sottraggo al rigo di maggior valore
+				if ($form['rows'][$max_val_linea]['tiprig']==0){ //rigo normale con quantità variabile
+					$form['rows'][$max_val_linea]['prelis']+= ($ImponibileImporto-$tot_imponi)/$form['rows'][$max_val_linea]['quanti'];
+				} else {
+					$form['rows'][$max_val_linea]['prelis']+= $ImponibileImporto-$tot_imponi;
+				}
+				$form['rows'][$max_val_linea]['amount'] += $ImponibileImporto-$tot_imponi;
+			}
 		}
 		// ricavo l'allegato, e se presente metterò un bottone per permettere il download
 		$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
