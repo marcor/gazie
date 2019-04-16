@@ -1482,19 +1482,64 @@ class GAzieMail {
 
 	// Invio...
 	if ($debug_active) {
-		echo "<b>SIMULAZIONE INVIO DEBUG<b><br />";
-		echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
+?>
+		<center>
+		<table class="center">
+			<tr>
+				<td><b>SIMULAZIONE INVIO DEBUG</b></td>
+			</tr>
+			<tr>
+				<td>invio e-mail riuscito... <strong>OK</strong></td>
+			</tr>
+			<tr>
+				<td>mail send has been successful... <strong>OK</strong></td>
+			</tr>
+		</table>
+		</center>
+<?php
 		return true;
 	}
 				
-        if ($mail->Send() ) {
-            echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
-		    require("../../library/include/footer.php");
+	if ($mail->Send() ) {
+?>
+		<center>
+                <table class="center">
+                        <tr>
+                                <td><b>INVIO MAIL</b></td>
+                        </tr>
+                        <tr>
+                                <td>invio e-mail riuscito... <strong>OK</strong></td>
+                        </tr>
+                        <tr>
+                                <td>mail send has been successful... <strong>OK</strong></td>
+                        </tr>
+                </table>
+                </center>
+
+<?php
+		require("../../library/include/footer.php");
             return true;
-        } else {
-            echo "<br />invio e-mail <strong style=\"color: #ff0000;\">NON riuscito... ERROR!</strong><br />mail send has<strong style=\"color: #ff0000;\"> NOT been successful... ERROR!</strong> ";
-            echo "<br />mailer error: " . $mail->ErrorInfo;
-			require("../../library/include/footer.php");
+	} else {
+?>
+		<center>
+                <table class="center">
+                        <tr>
+                                <td><b>INVIO MAIL</b></td>
+                        </tr>
+                        <tr>
+                                <td>invio e-mail <strong style="color: #ff0000;">NON riuscito... ERROR!</strong></td>
+                        </tr>
+                        <tr>
+                                <td>mail send has<strong style="color: #ff0000;"> NOT been successful... ERROR!</strong>></td>
+                        </tr>
+                        <tr>
+			<td>Errore: <?= $mail->ErrorInfo; ?></td>
+                        </tr>
+                </table>
+                </center>
+
+<?php
+		require("../../library/include/footer.php");
             return false;
         }
     }

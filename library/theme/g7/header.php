@@ -9,7 +9,7 @@ ANTONIO DE VINCENTIIS: COMMENTO perché obbliga ad avere il file gconfig.myconf.
 		# Prendo admin_aziend dall'oggetto
 		$admin_aziend = $GAzie->getCheckAdmin();
 	}*/
-	if ( $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
+	if ( isset($maintenance) && $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -117,7 +117,7 @@ ANTONIO DE VINCENTIIS: COMMENTO perché obbliga ad avere il file gconfig.myconf.
         }
 
 //aggiornamento automatico della tabella gaz_menu_usage
-        if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le statistiche solo in caso di cambio script
+        if ( isset($scriptname) && isset($prev_script) && $scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le statistiche solo in caso di cambio script
             $result = @gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend["user_name"] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
             $value = array();
             if (gaz_dbi_num_rows($result) == 0) {
