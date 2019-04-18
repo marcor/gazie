@@ -29,7 +29,14 @@ require("../../library/include/classes/Autoloader.php");
 $test_email = isset($_GET['e-test']);
 $mail = new \GAzie\Mailer();
 if ( $test_email ) {
-	$mail->testing();
+	if ( $mail->testing() )
+		echo json_encode(["send"=>true]);
+	else
+		echo json_encode([
+			"send"=>false,
+			"error"=> $mail->getError(),
+		]);
+	exit;
 }
 
 $admin_aziend = checkAdmin(9);
@@ -135,19 +142,35 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 	<div class="FacetDataTD">
 	<div class="divgroup">
 		<center>
-	<?php 
-		if ( $test_email ) { ?>
-		<div>Controlla se ti è arrivata una email in <i><?= $mail->getSender(); ?></i>!</div>
-	<?php 	} else { ?>
-			Il test di configurazione email ti permette di verificare la configurazione della tua mail. <br><b>Salva</b> la configurazione prima di avviare il test. Verr&aacute; inviata una mail a <i><?= $mail->getSender(); ?></i>
-	<?php 	} 	?>
-		</br></br>
-			<a href="?e-test=true" class="btn btn-default">TEST INVIO MAIL</a>
+			<div>Il test di configurazione email ti permette di verificare la configurazione della tua mail. <br><b>Salva</b> la configurazione prima di avviare il test. Verr&aacute; inviata una mail a <i><?= $mail->getSender(); ?></i>
+		</br></br><hr>
+			<div id="btn_send" class="btn btn-default">TEST INVIO MAIL</div>
+			<div id="reply_send"></div>
 		</center>
 	</div>
 	</div>
     </div>
- 
+    <script>
+	$("#btn_send").click( function() {
+		$.ajax({
+			url: "?e-test=true",
+			type: "GET",
+ 			data: { 'e-test': true },
+			success: function(json) {
+				result = JSON.parse(json);
+				alert(result.send);
+				if (  result.send ) {		
+   			  		$("#reply_send").html( "<strong>Invio riuscito</strong><br><div>Controlla se ti è arrivata una email in <i><?= $mail->getSender(); ?></i>!</div>");
+				} else {
+					$("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>Errore: "+result.error+"!</div>");
+				}
+  			},
+  			error: function(richiesta,stato,errori){
+     				$("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>"+errori+"</div>");
+			},
+		})
+	});
+    </script>
     <div id="elimina" class="tab-pane fade">
         <form class="form-horizontal" method="post"> 
             <div>
