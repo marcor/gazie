@@ -41,7 +41,9 @@ class Config extends \Database\Table {
                         ->from(  $this->getTableName() )
 			->where("`var` = '$key'");
 		$this->execute( $sql );
-		return $this;
+		if ( $this->loaded() )
+			return $this;
+	
 	}
 
 }

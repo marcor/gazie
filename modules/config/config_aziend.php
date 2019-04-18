@@ -24,6 +24,13 @@
  */
 
 require("../../library/include/datlib.inc.php");
+require("../../library/include/classes/Autoloader.php");
+
+$test_email = isset($_GET['e-test']);
+$mail = new \GAzie\Mailer();
+if ( $test_email ) {
+	$mail->testing();
+}
 
 $admin_aziend = checkAdmin(9);
 
@@ -68,12 +75,14 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 <div class="container-fluid">
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="pill" href="#generale">Configurazione</a></li>
+        <li class=""><a data-toggle="pill" href="#email">Email</a></li>
         <?php
         if ($admin_aziend["company_id"] >= 2) {
             echo "<li><a data-toggle=\"pill\" href=\"#elimina\">Elimina azienda</a></li>\n";
         }
         ?>
     </ul>
+    <div class="tab-content">
     <div id="generale" class="tab-pane fade in active">
         <form class="form-horizontal" method="post"> 
             <div class="FacetDataTD">
@@ -122,6 +131,23 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
         </form>
     </div>
 
+    <div id="email" class="tab-pane fade">
+	<div class="FacetDataTD">
+	<div class="divgroup">
+		<center>
+	<?php 
+		if ( $test_email ) { ?>
+		<div>Controlla se ti è arrivata una email in <i><?= $mail->getSender(); ?></i>!</div>
+	<?php 	} else { ?>
+			Il test di configurazione email ti permette di verificare la configurazione della tua mail. <br><b>Salva</b> la configurazione prima di avviare il test. Verr&aacute; inviata una mail a <i><?= $mail->getSender(); ?></i>
+	<?php 	} 	?>
+		</br></br>
+			<a href="?e-test=true" class="btn btn-default">TEST INVIO MAIL</a>
+		</center>
+	</div>
+	</div>
+    </div>
+ 
     <div id="elimina" class="tab-pane fade">
         <form class="form-horizontal" method="post"> 
             <div>
@@ -140,6 +166,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                 </div>
             </div>
         </form>
+    </div>
     </div>
 </div>
 <?php
