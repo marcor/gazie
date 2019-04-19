@@ -460,6 +460,7 @@ $strScript = array("select_liqiva.php" =>
         'anno_imposta' => 'Anno di imposta',
         'periodicita' => 'Periodicità',
         'periodicita_value' => array('T' => 'Trimestrale', 'S' => 'Semestrale'),
+        'esterometro' => 'Solo stranieri (Esterometro)',
         'trimestre_semestre' => 'Periodo di riferimento',
         'trimestre_semestre_value' => array('T'=>array(1 => 'Primo (gennaio-marzo)', 2 => 'Secondo (aprile-giugno)', 3 => 'Terzo (luglio-settembre)', 4 => 'Quarto (ottobre-dicembre)'),'S'=>array(1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)')),
         'CessionarioCommittente' => 'Cessionario Committente',

@@ -33,7 +33,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'insert';
 }
 
-function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
+function createRowsAndErrors($anno, $periodicita, $trimestre_semestre,$esterometro=false) {
     global $gTables, $admin_aziend, $script_transl;
     $nuw = new check_VATno_TAXcode();
     if ($periodicita == 'T') { // trimestrale
@@ -59,6 +59,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
         $date_ini->modify('+5 month');
         $df = $date_ini->format('Y-m-t');
     }
+	$esterometro=($esterometro)?(" AND " . $gTables['anagra'].".country <>'IT'"):'';
     $sqlquery = "SELECT " . $gTables['rigmoi'] . ".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,allegato,
                citspe,prospe,capspe,legrap_pf_nome,legrap_pf_cognome,country,codfis,pariva,id_anagra,fae_natura," .
             $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc," . $gTables['tesmov'] . ".numdoc," .
@@ -73,8 +74,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                LEFT JOIN " . $gTables['country'] . " ON " . $gTables['anagra'] . ".country = " . $gTables['country'] . ".iso
                WHERE " . $gTables['tesmov'] . ".datreg BETWEEN '" . $di . "' AND '" . $df . "'
                  AND ( " . $gTables['tesmov'] . ".clfoco LIKE '" . $admin_aziend['masfor'] . "%' OR " . $gTables['tesmov'] . ".clfoco LIKE '" . $admin_aziend['mascli'] . "%')
-                 AND " . $gTables['clfoco'] . ".allegato > 0 AND " . $gTables['tesmov'] . ".seziva <> " . $admin_aziend['reverse_charge_sez'] . "
-               ORDER BY regiva,operat,clfoco," . $gTables['tesmov'] . ".datreg,protoc";
+                 AND " . $gTables['clfoco'] . ".allegato > 0 AND " . $gTables['tesmov'] . ".seziva <> " . $admin_aziend['reverse_charge_sez'] .$esterometro." ORDER BY regiva,operat,clfoco," . $gTables['tesmov'] . ".datreg,protoc";
     $result = gaz_dbi_query($sqlquery);
     $castel_transact = array();
     $error_transact = array();
@@ -427,6 +427,10 @@ if (!isset($_POST['ritorno'])) {
 // al primo accesso allo script
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
+    $form['esterometro'] = 0;
+    if (isset($_GET['esterometro'])) { // viene chiesto un esterometro
+		$form['esterometro'] = 1;
+	}
     if ((isset($_GET['Update']) && isset($_GET['id']))) { // è una modifica
         $cdf = gaz_dbi_get_row($gTables['comunicazioni_dati_fatture'], "id", intval($_GET['id']));
         $form['trimestre_semestre'] = $cdf['trimestre_semestre'];
@@ -448,7 +452,7 @@ if (!isset($_POST['ritorno'])) {
         $rs_query = gaz_dbi_dyn_query("*", $gTables['comunicazioni_dati_fatture'], 1, "anno DESC, trimestre_semestre DESC", 0, 1);
         $ultima_comunicazione = gaz_dbi_fetch_array($rs_query);
         if ($ultima_comunicazione) {
-                $ultimo_trimestre_comunicato = $ultima_comunicazione['anno'] . $ultima_comunicazione['trimestre_semestre'];
+            $ultimo_trimestre_comunicato = $ultima_comunicazione['anno'] . $ultima_comunicazione['trimestre_semestre'];
         } else { // non ho mai fatto liquidazioni, propongo la prima da fare
             $ultimo_trimestre_comunicato = 0;
         }
@@ -462,10 +466,11 @@ if (!isset($_POST['ritorno'])) {
     $form['anno'] = intval($_POST['anno']);
     $form['trimestre_semestre'] = intval($_POST['trimestre_semestre']);
     $form['periodicita'] = substr($_POST['periodicita'], 0, 1);
+    $form['esterometro'] = intval($_POST['esterometro']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     if (isset($_POST['Submit'])) {
-        $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre']);
+        $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre'],boolval($form['esterometro']));
         if ($toDo == 'update') { // e' una modifica
             // aggiorno il database
             $id = array('anno', "'" . $form['anno'] . "' AND trimestre_semestre = '" . $form['trimestre_semestre'] . "'");
@@ -483,7 +488,7 @@ if (!isset($_POST['ritorno'])) {
             $msg['war'][] = "download";
         } else { // e' un'inserimento
             require("../../library/include/agenzia_entrate.inc.php");
-            $files = creaFileDAT20($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT));
+            $files = creaFileDAT20($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT),boolval($form['esterometro']));
             foreach ($files['files'] as $n_f) {
 				if (substr($n_f,-9,1)=='R'){
 					$form['nome_file_DTR'] = $n_f;
@@ -515,7 +520,6 @@ if ((isset($_GET['Update']) && !isset($_GET['id']))) {
     header("Location: " . $form['ritorno']);
     exit;
 }
-
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $gForm = new contabForm();
@@ -555,6 +559,7 @@ $gForm = new contabForm();
             ?>
             <input type="hidden" name="anno" value="<?php echo $form['anno']; ?>">
             <input type="hidden" name="periodicita" value="<?php echo $form['periodicita']; ?>">
+            <input type="hidden" name="esterometro" value="<?php echo $form['esterometro']; ?>">
             <input type="hidden" name="trimestre_semestre" value="<?php echo $form['trimestre_semestre']; ?>">
             <?php
         } else {
@@ -591,10 +596,20 @@ $gForm = new contabForm();
                             </div>
                         </div>
                     </div><!-- chiude row  -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="esterometro" class="col-sm-4 control-label"><?php echo $script_transl['esterometro']; ?></label>
+                                <?php
+								$gForm->selectNumber('esterometro', $form["esterometro"],true, 0, 1, "col-sm-8",'esterometro', 'style="max-width: 100px;"');
+                                ?>
+                            </div>
+                        </div>
+                    </div><!-- chiude row  -->
                 </div><!-- chiude container  -->
             </div><!-- chiude panel  -->
             <?php
-            $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre']);
+            $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre'], boolval($form['esterometro']));
             if (count($queryData[1]) >= 1) { // ho degli errori
                 echo '<div class="container">';
                 foreach ($queryData[1] as $k => $v) {

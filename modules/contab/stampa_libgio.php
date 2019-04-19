@@ -52,21 +52,11 @@ $utsfin= mktime(0,0,0,$mesfin,$giofin,$annfin);
 $datainizio = date("Y-m-d",$utsini);
 $datafine = date("Y-m-d",$utsfin);
 $admin_aziend['title'] = 'Libro Giornale dal '.date("d-m-Y",$utsini).' al '.date("d-m-Y",$utsfin);
-/*list ($usec, $sec) = explode(' ', microtime());
-$render_time = ((float) $usec + (float) $sec);
-$render_time_before = $render_time;*/
-
-//recupero tutti i movimenti contabili insieme alle relative testate...
 $where = "`datreg` >= '".$datainizio." 00:00:00' AND `datreg` <= '". $datafine." 23:59:59'";
-$rs_count = gaz_dbi_dyn_query('COUNT(*) AS nr', 
-							  $gTables['tesmov'] . ' AS tm ' .
-							  'INNER JOIN ' . $gTables['rigmoc'] . ' AS rm ON tm.id_tes=rm.id_tes ', 
-							  $where);
+$rs_count = gaz_dbi_dyn_query('COUNT(*) AS nr',$gTables['tesmov'].' AS tm INNER JOIN '.$gTables['rigmoc'].' AS rm ON tm.id_tes=rm.id_tes', $where);
 $pagetot=ceil(gaz_dbi_fetch_assoc($rs_count)['nr']/ROWS_PERPAGE); //numero di pagine necessarie
-$field = "tm.id_tes, tm.descri, DATE_FORMAT(tm.datreg,'%d-%m-%Y') AS dr, tm.seziva, tm.protoc, tm.numdoc, DATE_FORMAT(tm.datdoc,'%d-%m-%Y') AS dd,  rm.import*(rm.darave='A') AS avere, rm.import*(rm.darave='D') AS dare, rm.codcon, SUBSTR(cf.descri,1,40) AS cfdes";
-$from = $gTables['tesmov'] . ' AS tm ' .
-        'INNER JOIN ' . $gTables['rigmoc'] . ' AS rm ON tm.id_tes=rm.id_tes '.
-        'INNER JOIN ' . $gTables['clfoco'] . ' AS cf ON rm.codcon=cf.codice ';
+$field = "tm.id_tes, tm.descri, DATE_FORMAT(tm.datreg,'%d-%m-%Y') AS dr, tm.seziva, tm.protoc, tm.numdoc, DATE_FORMAT(tm.datdoc,'%d-%m-%Y') AS dd,  rm.import*(rm.darave='A') AS avere, rm.import*(rm.darave='D') AS dare, rm.codcon, SUBSTR(cf.descri,1,35) AS cfdes";
+$from = $gTables['tesmov'] . ' AS tm INNER JOIN '.$gTables['rigmoc'].' AS rm ON tm.id_tes=rm.id_tes INNER JOIN ' . $gTables['clfoco'] . ' AS cf ON rm.codcon=cf.codice ';
 $orderby = "`datreg`,`id_tes`,`id_rig`";
 $p=1;
 $r=1;
@@ -92,8 +82,6 @@ while ($mov = gaz_dbi_fetch_assoc($result)) {
 }
 $rip[$p]['dare']=$rid;
 $rip[$p]['avere']=$ria;
-/*$qt=round(get_render_time($render_time),1);
-echo  $qt;*/
 require('../../library/tFPDF/mem_image.php');
 class GL_template extends PDF_MemImage {
     function SetVars($admin_aziend) {
@@ -119,11 +107,12 @@ class GL_template extends PDF_MemImage {
 	
 }
 $pdf = new GL_template();
-// Add a Unicode font (uses UTF-8)
 $pdf->AddFont('DejaVu','','DejaVuSansCondensed.ttf',true);
 $pdf->AddFont('dejavusans','B','DejaVuSans-Bold.ttf', true);
 $pdf->SetVars($admin_aziend);
 $pdf->SetFillColor(hexdec(substr($pdf->ad_az['colore'], 0, 2)), hexdec(substr($pdf->ad_az['colore'], 2, 2)), hexdec(substr($pdf->ad_az['colore'], 4, 2)));
+$pdf->SetTitle($admin_aziend['title']);
+$pdf->SetAuthor($pdf->intesta1.' usando GAzie versione '.GAZIE_VERSION);
 $ci=0;
 foreach($a[1] as $k1=>$v1){
 	$pdf->AddPage();
@@ -139,8 +128,6 @@ foreach($a[1] as $k1=>$v1){
         $pdf->Cell(46,4,'--> da riporto ','B',0,'R');
         $pdf->Cell(20,4,number_format($rip[$k1-1]['dare'],2,',',''),1,0,'R',1);
         $pdf->Cell(20,4,number_format($rip[$k1-1]['avere'],2,',',''),1,1,'R',1);
-	} else {
-		//$pdf->Cell(88,4,'Pagina '.$k1.' di '.$a[0],1,1);
 	}
 	foreach($v1 as $k2=>$v2){
 		$v2['dare']=($v2['dare']>0)?number_format($v2['dare'],2,',',''):'';
@@ -161,18 +148,12 @@ foreach($a[1] as $k1=>$v1){
         $pdf->Cell(46,4,$v2['cfdes'],'LT',0,'L');
         $pdf->Cell(20,4,$v2['dare'],'LT',0,'R');
         $pdf->Cell(20,4,$v2['avere'],'LRT',1,'R');
-/*		echo '<BR/>Rigo '.$k2.'<br/>';
-		print_r($v2);
-		echo '<BR/><HR>';*/
 	    $ci=$v2['id_tes'];
 	}
 	$pdf->Cell(50,4,'Pagina '.$k1.' di '.$a[0],'T');
 	$pdf->Cell(100,4,'a riporto --> ','T',0,'R');
     $pdf->Cell(20,4,number_format($rip[$k1]['dare'],2,',',''),1,0,'R',1);
     $pdf->Cell(20,4,number_format($rip[$k1]['avere'],2,',',''),1,1,'R',1);
-	//echo '<BR/>riporti: D='.$rip[$k1]['dare'].' A='.$rip[$k1]['avere'].'<BR/>Pagina '.$k1.' di '.$a[0].'<HR>';
 }
 $pdf->Output();
-/*$qt=round(get_render_time($render_time),1);
-echo  $qt;*/
 ?>
