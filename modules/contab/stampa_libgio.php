@@ -82,33 +82,65 @@ while ($mov = gaz_dbi_fetch_assoc($result)) {
 }
 $rip[$p]['dare']=$rid;
 $rip[$p]['avere']=$ria;
-require('../../library/tFPDF/mem_image.php');
-class GL_template extends PDF_MemImage {
-    function SetVars($admin_aziend) {
-        $this->ad_az = $admin_aziend;
-        $this->intesta1 = $admin_aziend['ragso1'] . ' ' . $admin_aziend['ragso2'];
-        $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
-        $this->intesta3 = ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
-	}
-	function Header() {
-		$this->MemImage($this->ad_az['image'],10,10,0,12);
-		$this->SetFont('dejavusans','B',8);
-		$this->SetX(40);
-        $this->Cell(85,4,$this->intesta1,0,0,'C');
-        $this->Cell(75,4,$this->ad_az['title'],0,1,'R');
-		$this->SetFont('DejaVu','',7);
-		$this->SetX(40);
-        $this->Cell(85,4,$this->intesta2,0,2,'C');
-        $this->Cell(85,4,$this->intesta3,0,0,'C');
-	}
-    function Footer() {
-        $this->MultiCell(190,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3,0,'C');
-    }
+if (isset($_GET['pdfa'])){
+	require('../../library/tcpdf/tcpdf.php');
+    class GL_template extends TCPDF {
+        function SetVars($admin_aziend) {
+            $this->ad_az = $admin_aziend;
+            $this->intesta1 = $admin_aziend['ragso1'] . ' ' . $admin_aziend['ragso2'];
+            $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
+	        $this->intesta3 = ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
+			$this->setFooterMargin(18);
+			$this->setTopMargin(18);
+			$this->SetFont('helvetica','',7);
+		}
+		function Header() {
+            $this->Image('@'.$this->ad_az['image'],10,10,0,12);
+			$this->SetFont('helvetica','B',8);
+    		$this->SetXY(40,10);
+            $this->Cell(85,4,$this->intesta1,0,0,'C');
+	        $this->Cell(75,4,$this->ad_az['title'],0,1,'R');
+			$this->SetFont('helvetica','',7);
+    		$this->SetX(40);
+            $this->Cell(85,4,$this->intesta2,0,2,'C');
+	        $this->Cell(85,4,$this->intesta3,0,0,'C');
+    	}
+        function Footer() {
+			$this->SetFont('helvetica','',7);
+            $this->MultiCell(190,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3,0,'C');
+	    }
 	
+	}
+	$pdf = new GL_template('P', 'mm', 'A4', true, 'UTF-8', false, true);
+} else {
+	require('../../library/tFPDF/mem_image.php');
+    class GL_template extends PDF_MemImage {
+        function SetVars($admin_aziend) {
+            $this->ad_az = $admin_aziend;
+            $this->intesta1 = $admin_aziend['ragso1'] . ' ' . $admin_aziend['ragso2'];
+            $this->intesta2 = $admin_aziend['indspe'] . ' ' . sprintf("%05d", $admin_aziend['capspe']) . ' ' . $admin_aziend['citspe'] . ' (' . $admin_aziend['prospe'] . ')';
+	        $this->intesta3 = ' C.F.:' . $admin_aziend['codfis'] . ' P.I.:' . $admin_aziend['pariva'];
+		}
+		function Header() {
+			$this->MemImage($this->ad_az['image'],10,10,0,12);
+			$this->SetFont('dejavusans','B',8);
+    		$this->SetX(40);
+            $this->Cell(85,4,$this->intesta1,0,0,'C');
+	        $this->Cell(75,4,$this->ad_az['title'],0,1,'R');
+			$this->SetFont('DejaVu','',7);
+    		$this->SetX(40);
+            $this->Cell(85,4,$this->intesta2,0,2,'C');
+	        $this->Cell(85,4,$this->intesta3,0,0,'C');
+    	}
+        function Footer() {
+            $this->MultiCell(190,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3,0,'C');
+	    }
+	
+	}
+	$pdf = new GL_template();
+	$pdf->AddFont('DejaVu','','DejaVuSansCondensed.ttf',true);
+	$pdf->AddFont('dejavusans','B','DejaVuSans-Bold.ttf', true);
 }
-$pdf = new GL_template();
-$pdf->AddFont('DejaVu','','DejaVuSansCondensed.ttf',true);
-$pdf->AddFont('dejavusans','B','DejaVuSans-Bold.ttf', true);
 $pdf->SetVars($admin_aziend);
 $pdf->SetFillColor(hexdec(substr($pdf->ad_az['colore'], 0, 2)), hexdec(substr($pdf->ad_az['colore'], 2, 2)), hexdec(substr($pdf->ad_az['colore'], 4, 2)));
 $pdf->SetTitle($admin_aziend['title']);
@@ -116,6 +148,7 @@ $pdf->SetAuthor($pdf->intesta1.' usando GAzie versione '.GAZIE_VERSION);
 $ci=0;
 foreach($a[1] as $k1=>$v1){
 	$pdf->AddPage();
+	$pdf->SetXY(85,18);
 	$pdf->Cell(75,4,'Pagina '.$k1.' di '.$a[0],0,1,'R');
     $pdf->Cell(10,4,'Rigo',1,0,'R',1);
     $pdf->Cell(78,4,'Descrizione movimento',1,0,'L',1);
@@ -151,7 +184,8 @@ foreach($a[1] as $k1=>$v1){
 	    $ci=$v2['id_tes'];
 	}
 	$pdf->Cell(50,4,'Pagina '.$k1.' di '.$a[0],'T');
-	$pdf->Cell(100,4,'a riporto --> ','T',0,'R');
+	$desrip=($k1==$pagetot)?'':'a riporto --> ';
+	$pdf->Cell(100,4,$desrip,'T',0,'R');
     $pdf->Cell(20,4,number_format($rip[$k1]['dare'],2,',',''),1,0,'R',1);
     $pdf->Cell(20,4,number_format($rip[$k1]['avere'],2,',',''),1,1,'R',1);
 }

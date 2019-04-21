@@ -51,17 +51,22 @@ $utsfin= mktime(0,0,0,$form['date_fin_M'],$form['date_fin_D'],$form['date_fin_Y'
 $datainizio = date("Ymd",$utsini);
 $datafine = date("Ymd",$utsfin);
 if ($utsini > $utsfin) $msg .="2+";
-if (isset($_GET['stampa']) && $msg == "") {
-        //Mando in stampa i movimenti contabili selezionati
+if ($msg==""){
+	if (isset($_GET['stampa'])) {
         $locazione = "Location: stampa_libgio.php?regini=".date("d-m-Y",$utsini)."&regfin=".date("d-m-Y",$utsfin);
         header($locazione);
         exit;
+	}
+	if (isset($_GET['stampa_a'])) {
+        $locazione = "Location: stampa_libgio.php?regini=".date("d-m-Y",$utsini)."&regfin=".date("d-m-Y",$utsfin)."&pdfa";
+        header($locazione);
+        exit;
+	}
 }
 if (isset($_GET['Return'])) {
         header("Location:docume_contab.php");
         exit;
 }
-
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
 echo "<script type=\"text/javascript\">
@@ -114,7 +119,7 @@ while ($rs = gaz_dbi_fetch_array($result)){
 }
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['nrow']."</td><td class=\"FacetDataTD\" colspan=\"3\">".$nr." &nbsp;</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['tot_d']."</td><td class=\"FacetDataTD\">".gaz_format_number($dare)."</td><td class=\"FacetFieldCaptionTD\">".$script_transl['tot_a']."</td><td class=\"FacetDataTD\">".gaz_format_number($avere)." &nbsp;</td></tr>";
-echo "<tr><td class=\"FacetFieldCaptionTD\"> &nbsp;</td><td align=\"right\" class=\"FacetFooterTD\" colspan=4><input type=\"submit\" name=\"Return\" value=\"Indietro\"><input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']." !\" ></td></tr>";
+echo "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"Indietro\"><td align=\"right\" class=\"FacetFooterTD\"><input type=\"submit\" title=\"Se il libro giornale ha molte pagine c'è il rischio di mandare in timeout il sever!\" name=\"stampa_a\" value=\"".$script_transl['print']." PDF/A (lento)\" ></td> &nbsp;</td><td align=\"right\" class=\"FacetFooterTD\" colspan=2><input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']." PDF (veloce)\" ></td></tr>";
 ?>
 </table>
 <input type="hidden" name="hidden_req" />
