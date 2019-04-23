@@ -75,13 +75,6 @@ function getDocRef($data) {
     return $r;
 }
 
-if (isset($_GET['auxil'])) {
-    $auxil = $_GET['auxil'];
-    $where = "caucon like '$auxil%'";
-} else {
-    $seziva = "1";
-    $where = "1";
-}
 if (isset($_GET['mov'])) {
     if ($_GET['mov'] > 0) {
         $numero = $_GET['mov'];
@@ -100,6 +93,7 @@ $all = $where;
 
 if (isset($_GET['all'])) {
     $_GET['datemi'] = "";
+    $_GET['datfat'] = "";
     $where = $all;
 }
 
@@ -107,6 +101,12 @@ if (isset($_GET['datemi'])) {
     $_GET['datreg'] = $_GET['datemi'];
 	gaz_flt_var_assign('datreg', 'd');
     $datemi = $_GET['datemi'];
+}
+
+if (isset($_GET['datfat'])) {
+    $_GET['caucon'] = $_GET['datfat'];
+	gaz_flt_var_assign('caucon', 'v');
+    $datfat = $_GET['datfat'];
 }
 
 $script_transl = HeadMain('', '', 'admin_movcon');
@@ -124,7 +124,8 @@ $script_transl = HeadMain('', '', 'admin_movcon');
 				gaz_flt_disp_select("datemi", "YEAR(datreg) AS datemi", $gTables["tesmov"], $all, $orderby); ?>
             </td>
             <td align="right" class="FacetFieldCaptionTD">
-                <input type="text" placeholder="<?php echo $script_transl['caucon']; ?>" class="input-xs form-control" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+                <?php // uso datfat per selezionare caucon
+				gaz_flt_disp_select("datfat", "caucon AS datfat", $gTables["tesmov"], $all, $orderby); ?>
             </td>
             <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD"></td>
