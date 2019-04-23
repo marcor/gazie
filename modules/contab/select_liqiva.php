@@ -251,7 +251,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $upgrie = gaz_dbi_get_row($gTables['company_data'],'var','upgrie');
     $form['page_ini'] = $upgrie['data']+1;
     $form['carry']=getPreviousCredit(date("Ymd",$utsdatcar));
-    $pro_rata = gaz_dbi_get_row($gTables['company_data'], 'var', 'pro_rata'.$form['date_ini_Y'], 'data');
+    $pro_rata = gaz_dbi_get_row($gTables['company_data'], 'var', 'pro_rata'.$form['date_ini_Y'], '', 'data');
     $form['pro_rata'] = (empty($pro_rata)) ? 0 : $pro_rata;
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);

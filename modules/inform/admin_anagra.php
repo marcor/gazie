@@ -79,7 +79,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
         }
 
         if (!($form['pariva'] == "") && !($form['pariva'] == "00000000000")) {
-            $partner_with_same_pi = gaz_dbi_get_row($gTables['anagra'], 'pariva', $form['pariva'] . "' AND id <> '" . $form['id']);
+            $partner_with_same_pi = gaz_dbi_get_row($gTables['anagra'], 'pariva', $form['pariva'], "AND id <> '{$form['id']}'");
             if ($partner_with_same_pi) {
                 $msg['err'][] = 'same_pariva';
             }
@@ -88,7 +88,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             $msg['err'][] = 'codfis';
         }
         if (!($form['codfis'] == "") && !($form['codfis'] == "00000000000")) {
-            $partner_with_same_cf = gaz_dbi_get_row($gTables['anagra'], 'codfis', $form['codfis'] . "' AND id <> '" . $form['id']);
+            $partner_with_same_cf = gaz_dbi_get_row($gTables['anagra'], 'codfis', $form['codfis'], "AND id <> '{$form['id']}'");
             if ($partner_with_same_cf) { // c'� gi� una anagrafica con lo stesso CF
                 $msg['err'][] = 'same_codfis';
             }

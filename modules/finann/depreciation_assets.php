@@ -66,12 +66,13 @@ function getAssets($date) {
     $acc = array();
     while ($row = gaz_dbi_fetch_array($result)) {
         // ad ogni cambio di bene creo un array e sulla radice metto tutti i dati che mi servono sulla intestazione del bene stesso
+        $movcon = "AND id_tes = '{$row['id_movcon']}'"; 
         if ($ctrl_fix <> $row['acc_fixed_assets']) {
             // azzero i totali delle colonne
             // in ordine di data necessariamente il primo rigo dev'essere l'acquisto
             $acc[$row['acc_fixed_assets']][1] = $row;
             // prendo il valore della immobilizzazione dal rigo contabile
-            $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+            $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'], $movcon);
             $acc[$row['acc_fixed_assets']][1]['fixed_val'] = $f['import'];
             $acc[$row['acc_fixed_assets']][1]['found_val'] = 0;
             $acc[$row['acc_fixed_assets']][1]['cost_val'] = 0;
@@ -121,7 +122,7 @@ function getAssets($date) {
             switch ($row['type_mov']) {
                 case '10' : // incremento valore del bene (accessorio/ampliamento/ammodernamento/manutenzione)
                     // prendo il valore dell'incremento del costo storico dal rigo contabile
-                    $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'], $movcon);
                     $acc[$row['acc_fixed_assets']][1]['fixed_tot'] += $fx['import'];
                     $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
                     $row['fixed_val'] = $fx['import'];
@@ -136,19 +137,19 @@ function getAssets($date) {
                     break;
                 case '50' : // decremento valore del bene per ammortamento
                     // prendo il valore del fondo ammortamento dal rigo contabile
-                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_found_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_found_assets'], $movcon);
                     $row['fixed_val'] = 0;
                     $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
                     $row['found_val'] = $f['import'];
                     $acc[$row['acc_fixed_assets']][1]['found_tot'] += $f['import'];
                     $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];
                     // prendo il valore dell'ammortamento dal rigo contabile
-                    $c = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_cost_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $c = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_cost_assets'], $movcon);
                     $row['cost_val'] = $c['import'];
                     $acc[$row['acc_fixed_assets']][1]['cost_tot'] += $c['import'];
                     $row['cost_subtot'] = $acc[$row['acc_fixed_assets']][1]['cost_tot'];
                     // prendo il valore della quota indeducibile dal rigo contabile
-                    $n = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_no_deduct_cost'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $n = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_no_deduct_cost'], $movcon);
                     $row['noded_val'] = $n['import'];
                     $acc[$row['acc_fixed_assets']][1]['noded_tot'] += $n['import'];
                     $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
@@ -165,7 +166,7 @@ function getAssets($date) {
                     break;
                 case '90' : // alienazione del bene 
                     // prendo il valore del decremento del costo storico dal rigo contabile
-                    $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'], $movcon);
                     $acc[$row['acc_fixed_assets']][1]['fixed_tot'] -= $fx['import'];
                     $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
                     $row['fixed_val'] = $fx['import'];
@@ -177,7 +178,7 @@ function getAssets($date) {
                     $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
                     $row['lost_cost'] = 0;
                     // prendo il valore del fondo ammortamento dal rigo contabile
-                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_found_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_found_assets'], $movcon);
                     $acc[$row['acc_fixed_assets']][1]['found_tot'] -= $f['import'];
                     $row['found_val'] = $f['import'];
                     $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];

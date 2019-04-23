@@ -464,7 +464,7 @@ class C_PecARUBA_SDI {
 		$mailto = indirizzo_pec_SDI; //destinatario indirizzo pec SDI assegnato per trasmissione fattura elelttronica
 		//$config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
 		// attingo il contenuto del corpo della email dall'apposito campo della tabella configurazione utente
-		$user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $user["user_name"]);
+		$user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$user['user_name']}'");
 		$company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
 		$admin_data['web_url'] = trim($admin_data['web_url']);
 

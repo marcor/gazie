@@ -397,7 +397,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 foreach ($v['acc'] as $acc_k => $acc_v) {
                     if ($acc_v['import'] != 0) {
                         if (isset($acc_v['asset'])) { // qui eseguo tutte le registrazioni relative alla vendita del cespite con relativa rilevazione della eventuale plus/minusvalenza 
-                            $asset = gaz_dbi_get_row($gTables['assets'], 'acc_fixed_assets', $acc_k . "' AND type_mov = '1"); // riprendo l'asset
+                            $asset = gaz_dbi_get_row($gTables['assets'], 'acc_fixed_assets', $acc_k, "AND type_mov = '1'"); // riprendo l'asset
                             // calcolo il costo storico
                             $rs = gaz_dbi_dyn_query($gTables['rigmoc'] . ".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = " . $acc_k);
                             $saldo_costo_storico = 0;

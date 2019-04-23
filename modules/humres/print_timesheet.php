@@ -135,7 +135,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 				$pdf->SetFillColor(255,255,255);
 				$k=$i+1;
 				// richiamo dal database i dati del giorno
-				$work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $mv['id_staff']."' AND work_day = '".$aDates[$i]['strdate']);
+				$work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $mv['id_staff'], "AND work_day = '{$aDates[$i]['strdate']}'");
 				
 				if ($work_h['hours_normal']>=0.01){
 					$hn=number_format($work_h['hours_normal'],1,',','');

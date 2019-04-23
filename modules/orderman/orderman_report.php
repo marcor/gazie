@@ -107,7 +107,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $a_row['add_info'];?></td>
 			<?php $d_row = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $a_row['id_rigbro']);?>
 			<td align="center"><?php echo $d_row['codart'];?></td>
-			<?php $e_row = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $a_row['id']. " AND operat = 1");
+			<?php $e_row = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $a_row['id'], "AND operat = 1");
 			$f_row = gaz_dbi_get_row($gTables['lotmag'], "id_movmag", $e_row['id_mov']);?>
 			<?php 
 			if (strlen($f_row['identifier'])>0) {

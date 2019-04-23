@@ -87,7 +87,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
 		$form['order'] = $res['numdoc'];
 		$form['id_tes'] = $res['id_tes'];
         if (isset($res)) { // se esiste veramente l'ordine ne prendo il rigo per l'articolo selezionato
-            $res2 = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $res['id_tes'] . "' AND codart = '" . $form['codart']);
+            $res2 = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $res['id_tes'], "AND codart = '{$form['codart']}'");
             $form['quantipord'] = $res2['quanti'];
             $form['id_tesbro'] = $res['id_tes'];
             $form['id_rigbro'] = $res2['id_rig'];
@@ -97,7 +97,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
             $quantiprod = 0;
             while ($row = $resor->fetch_assoc()) { // scorro tutte le produzioni/orderman trovate
                 // per ogni orderman consulto movmag e conteggio le quantità per articolo già prodotte
-                $row = gaz_dbi_get_row($gTables['movmag'], "artico ", $form['codart'] . "' AND operat ='1' AND id_orderman ='" . $row['id']);
+                $row = gaz_dbi_get_row($gTables['movmag'], "artico", $form['codart'], "AND operat = '1' AND id_orderman ='{$row['id']}'");
                 $quantiprod = $quantiprod + $row['quanti'];
             }
         } else { // se l'ordine non esiste ed è stato inserito un numero anomalo
@@ -387,7 +387,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                     if ($form['nmov'] <= $form['nmovdb'] && $toDo == "update" && $form['staffdb'][$form['mov']] <> $id_worker) { // se è update ed è stato cambiato l'operaio già memorizzato nel database
                         if (strtotime($work_day) == strtotime($result2['datemi'])) { // se non è stata cambiata la data della produzione
                             // all'operaio che è stato sostituito, devo togliere le ore
-                            $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $form['staffdb'][$form['mov']] . "' AND work_day ='" . $work_day . "' AND id_orderman ='" . $id_orderman);
+                            $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $form['staffdb'][$form['mov']], "AND work_day = '$work_day' AND id_orderman = '$id_orderman'");
                             if (isset($rin)) { // se confermato che esiste giorno e operaio sostituito, tolgo le ore lavorate memorizzate in precedenza
                                 $ore_normal = $rin['hours_normal'] - $hours_normal_pre;
                                 $ore_extra = $rin['hours_extra'] - $hours_extra_pre;
@@ -401,7 +401,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                                 gaz_dbi_query($query);
                             }
                             // al nuovo operaio devo aggiungere le ore lavorate
-                            $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker . "' AND work_day ='" . $work_day . "' AND id_orderman ='" . $id_orderman);
+                            $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day = '$work_day' AND id_orderman = '$id_orderman'");
                             if (isset($r)) { // se esiste il nuovo operaio nel giorno e con id_orderman, vedo se ci sono ore lavorate in precedenza e ci aggiungo quelle della produzione
                                 $ore_normal = $r['hours_normal'] + $hours_normal;
                                 $ore_extra = $r['hours_extra'] + $hours_extra;
@@ -432,7 +432,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                             }
                         } else { // se è stata cambiata la data di produzione
                             // all'operaio che è stato sostituito, devo togliere le ore al giorno in cui gli erano state date
-                            $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $form['staffdb'][$form['mov']] . "' AND work_day ='" . $result2['datemi'] . "' AND id_orderman ='" . $id_orderman);
+                            $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $form['staffdb'][$form['mov']], "AND work_day = '{$result2['datemi']}' AND id_orderman = '$id_orderman'");
                             if (isset($rin)) { // se confermato che esiste giorno e operaio sostituito con quell' id_ordeman, tolgo le ore lavorate memorizzate in precedenza
                                 $ore_normal = $rin['hours_normal'] - $hours_normal_pre;
                                 $ore_extra = $rin['hours_extra'] - $hours_extra_pre;
@@ -446,7 +446,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                                 gaz_dbi_query($query);
                             }
                             // al nuovo operaio devo aggiungere le ore lavorate nel nuovo giorno di produzione
-                            $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker . "' AND work_day ='" . $work_day . "' AND id_orderman ='" . $id_orderman);
+                            $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day = '$work_day' AND id_orderman ='$id_orderman'");
                             if (isset($r)) { // se esiste giorno e nuovo operaio con id_orderman, vedo se ci sono ore lavorate in precedenza e ci aggiungo quelle della produzione
                                 $ore_normal = $r['hours_normal'] + $hours_normal;
                                 $ore_extra = $r['hours_extra'] + $hours_extra;
@@ -480,7 +480,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                         if ($toDo == "update" && $form['staffdb'][$form['mov']] == $id_worker && $form['nmov'] <= $form['nmovdb']) { // se è update e NON è stato cambiato l'operaio del database e non è un nuovo aggiunto
                             if (strtotime($work_day) <> strtotime($result2['datemi'])) { // se è stata cambiata la data
                                 // tolgo le ore al giorno iniziale e gli azzero pure il riferimento alla produzione perché non è più fatta in quel giorno, quindi id_orderman=""
-                                $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker . "' AND work_day ='" . $result2['datemi'] . "' AND id_orderman ='" . $id_orderman);
+                                $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker, "AND work_day = '{$result2['datemi']}' AND id_orderman ='$id_orderman'");
                                 if (isset($rin)) { // se esiste giorno e operaio gli tolgo le ore memorizzate in precedenza
                                     $ore_normal = $rin['hours_normal'] - $hours_normal_pre;
                                     $ore_extra = $rin['hours_extra'] - $hours_extra_pre;
@@ -492,7 +492,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                                     $query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '" . $ore_normal . "', id_work_type_extra = '" . $id_work_type_extra . "', id_orderman = '', hours_extra = '" . $ore_extra . "' WHERE id_staff = '" . $id_worker . "' AND work_day = '" . $result2['datemi'] . "' AND id_orderman= '" . $id_orderman . "'";
                                     gaz_dbi_query($query);
                                 }
-                                $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker . "' AND work_day ='" . $work_day . "' AND id_orderman ='" . $id_orderman);
+                                $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day = '$work_day' AND id_orderman = '$id_orderman'");
                                 if (isset($rin)) { // se esiste giorno e operaio con id_orderman gli aggiungo le ore
                                     $ore_normal = $rin['hours_normal'] + $hours_normal;
                                     $ore_extra = $rin['hours_extra'] + $hours_extra;
@@ -518,7 +518,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                                     gaz_dbi_table_insert('staff_worked_hours', $v);
                                 }
                             } else { //se NON è stata cambiata la data aggiorno solo le ore
-                                $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker . "' AND work_day ='" . $work_day . "' AND id_orderman ='" . $id_orderman);
+                                $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day = '$work_day' AND id_orderman = '$id_orderman'");
                                 if (isset($rin)) { // se esiste giorno e operaio con id_orderman gli modifico le ore nello stesso giorno
                                     $ore_normal = $rin['hours_normal'] - $hours_normal_pre + $hours_normal;
                                     $ore_extra = $rin['hours_extra'] - $hours_extra_pre + $hours_extra;
@@ -547,7 +547,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                         }
                     }
                     if ($toDo == "update" && $form['nmov'] > $form['nmovdb'] && $form['staffdb'][$form['mov']] <> $id_worker) { // se è update ed è stato aggiunto un nuovo operaio a quelli esistenti e si tratta proprio di quello aggiunto
-                        $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker . "' AND work_day ='" . $work_day . "' AND id_orderman ='" . $id_orderman);
+                        $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day ='$work_day' AND id_orderman ='$id_orderman'");
                         if (isset($rin)) { // se esiste giorno e operaio con id_ordeman gli aggiungo le ore e aggiorno database
                             $ore_normal = $rin['hours_normal'] + $hours_normal;
                             $ore_extra = $rin['hours_extra'] + $hours_extra;

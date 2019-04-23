@@ -36,7 +36,7 @@ if (isset($_POST['Delete'])) {
 // controllo se clfoco è un operaio e ne prendo l'id_staff
 	$res = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $form['clfoco']);
 		If (isset ($res)) { // se c'è nello staff, cioè è un operaio			
-			$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $res['id_staff']."' AND work_day ='".$form['datdoc']);
+			$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $res['id_staff'], "AND work_day ='{$form['datdoc']}'");
 			If (isset($rin)) { // se esiste il giorno dell'operaio prendo le ore normali lavorate e gli sottraggo quelle del movimento da cancellare
 				$hours_normal=$rin['hours_normal']-$form['quanti'];
 				// ne aggiorno il database

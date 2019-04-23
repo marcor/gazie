@@ -163,8 +163,9 @@ function gaz_dbi_get_fields_meta($result) {
    return $fields;
 }
 
-function gaz_dbi_get_row($table, $fnm, $fval, $cell="*", $other="") {
+function gaz_dbi_get_row($table, $fnm, $fval, $other="", $cell="*") {
    global $link;
+   $fval = mysqli_real_escape_string($link, $fval);
    $query = "SELECT $cell FROM $table WHERE $fnm = '$fval' $other";
    $result = mysqli_query($link, $query);
    debug_query($query);

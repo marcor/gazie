@@ -59,7 +59,7 @@ if (isset($_GET['table']) && isset($_GET['value'])){
           $f='codice';
      }
      $t=filter_var(substr($_GET['table'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
-     $col = gaz_dbi_get_row($gTables[$t],$f,filter_var(substr($_GET['value'],0,30),FILTER_SANITIZE_MAGIC_QUOTES));
+     $col = gaz_dbi_get_row($gTables[$t], $f, substr($_GET['value'],0,30));
      header ('Content-type: image/pjpeg');
      if (empty($col['image'])) {
         echo $img1px;

@@ -354,7 +354,7 @@ class DocContabVars {
                 if ($rigo['tiprig'] == 90) {
                     $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
                     $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
-                    $asset = gaz_dbi_get_row($this->gTables['assets'], 'acc_fixed_assets', $rigo['codric'] . "' AND type_mov = '1");
+                    $asset = gaz_dbi_get_row($this->gTables['assets'], 'acc_fixed_assets', $rigo['codric'], "AND type_mov = '1'");
                     $rigo['codart'] = $asset['id'] . ' - ' . $asset['descri'] . ' (' . $rigo['codric'] . ')';
                 }
                 if (!isset($this->castel[$rigo['codvat']])) {

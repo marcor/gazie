@@ -42,7 +42,7 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
         // sul primo mese vedo se ho un credito da quello precedente
         $date_carry = new DateTime($y . '-' . $m . '-1');
         $date_carry->modify('-1 month');
-        $carry = gaz_dbi_get_row($gTables['liquidazioni_iva'], "mese_trimestre", $date_carry->format('m') . "' AND anno = '" . $date_carry->format('Y'));
+        $carry = gaz_dbi_get_row($gTables['liquidazioni_iva'], "mese_trimestre", $date_carry->format('m'), "AND anno = '{$date_carry->format('Y')}'");
         $saldo = round($carry['vp4'] - $carry['vp5'] + $carry['vp7'] - $carry['vp8'] - $carry['vp9'] - $carry['vp10'] - $carry['vp11'] + $carry['vp12'] - $carry['vp13'], 2);
         if ($saldo <= -0.01) { // se c'è un credito
             $cre = $saldo;

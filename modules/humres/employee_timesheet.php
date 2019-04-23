@@ -62,7 +62,7 @@ function getWorkers($date) {
 function getStaffTimesheet($worker,$dates) {
 	global $gTables;
 	foreach ($dates as $k=>$v) {
-        $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $worker."' AND work_day ='".$v);
+        $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $worker, "AND work_day = '$v'");
 		if (!empty($r)){
 			$hnormal=0;$hextra=0;$habsence=0;$hother=0;
 			$query="SELECT * FROM ".$gTables['staff_worked_hours']." WHERE id_staff = '".$worker."' and work_day = '".$v."'";

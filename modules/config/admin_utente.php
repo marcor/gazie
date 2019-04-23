@@ -92,13 +92,13 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 		exit;
 	}
 	// attingo il valore del motore di template dalla tabella configurazione utente
-	$admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form["user_name"]);
+	$admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'theme', "AND adminid = '{$form['user_name']}'");
 	$form['user_password_old'] = '';
 	$form['user_password_new'] = '';
 	$form['user_password_ver'] = '';
 	$form['theme'] = $admin_config['var_value'];
 	// attingo il testo delle email dalla tabella configurazione utente
-	$bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $form["user_name"]);
+	$bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$form['user_name']}'");
 	$form['body_text'] = $bodytext['var_value'];
     $form['hidden_req'] = '';
     $form['search']['company_id'] = '';
@@ -268,7 +268,7 @@ if (isset($_POST['Submit'])) {
 			}
 			gaz_dbi_table_update('admin', array("user_name", $form["user_name"]), $form);
 			// se esiste aggiorno anche il tema
-			$admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form["user_name"]);
+			$admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'theme', "AND adminid = '{$form['user_name']}'");
 			if ($admin_config_theme) {
 				gaz_dbi_put_query($gTables['admin_config'], "adminid = '" . $form["user_name"] . "' AND var_name ='theme'", 'var_value', $form['theme']);
 			} else { // altrimenti lo inserisco
@@ -279,7 +279,7 @@ if (isset($_POST['Submit'])) {
 				gaz_dbi_table_insert('admin_config', $form);
 			}
 			// aggiorno o inserisco il testo da inserire nelle email trasmesse dall'utente
-			$bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $form["user_name"]);
+			$bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$form['user_name']}'");
 			if ($bodytext) {
 				gaz_dbi_put_query($gTables['admin_config'], "adminid = '" . $form["user_name"] . "' AND var_name ='body_send_doc_email'", 'var_value', $tbt);
 			} else {  // non c'era lo inserisco

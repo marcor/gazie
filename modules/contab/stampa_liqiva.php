@@ -263,7 +263,7 @@ if ($_GET['sd'] == 'sta_def') {
     gaz_dbi_put_row($gTables['company_data'],'var','upgrie','data',$pdf->getGroupPageNo() + $n_page - 1 );
     //gaz_dbi_put_row($gTables['aziend'], 'codice', 1, 'upgrie', $pdf->getGroupPageNo() + $n_page - 1);
 	if (!empty($pro_rata)) {
-		$pro_rata_stored = gaz_dbi_get_row($gTables['company_data'], 'var', 'pro_rata'.$annini, 'data');
+		$pro_rata_stored = gaz_dbi_get_row($gTables['company_data'], 'var', 'pro_rata'.$annini, '', 'data');
 		if (!empty($pro_rata_stored)) {
 			gaz_dbi_put_row($gTables['company_data'], 'var', 'pro_rata'.$annini, 'data', $pro_rata);
 		} else {
