@@ -76,7 +76,10 @@ if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
 		 }
       } else { 
          connectToDB ();
-         $form['hidden_req']=executeQueryFileUpgrade($table_prefix,$form['hidden_req']);
+         $exe_script=executeQueryFileUpgrade($table_prefix);
+		 if ($exe_script){
+			include($exe_script);
+		 }
       }
     }
     if (isset($_POST['install'])) {              //INSTALLO
@@ -218,7 +221,7 @@ function executeQueryFileInstall($sqlFile,$Database,$table_prefix)
     return true;
 }
 
-function executeQueryFileUpgrade($table_prefix,$exe_script) // funzione dedicata alla gestione delle sottosezioni
+function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestione delle sottosezioni
 {
     global $disable_set_time_limit;
     if (!$disable_set_time_limit) {
@@ -286,11 +289,9 @@ function executeQueryFileUpgrade($table_prefix,$exe_script) // funzione dedicata
             }
         }
     }
-	if (empty($exe_script)) {
-		// eseguo una sola volta un eventuale script correlato alle query contenuto nel file di aggiornamento
-		$exe_script=executeScriptFileUpgrade($sqlFile); 
-	}
-	return $exe_script; // ritorno un valore diverso da vuoto se voglio una esecuzione
+	// trovo un eventuale file per  script php correlato alle query di aggiornamento
+	$exe_script=executeScriptFileUpgrade($sqlFile); 
+	return $exe_script;
 }
 
 
@@ -404,7 +405,7 @@ function executeScriptFileUpgrade($name_sql) // se ho un file php da eseguire do
 		// ho un file da eseguire alla fine delle query
 		return $filename;
 	} else {
-		return '';	
+		return false;	
 	}
 }
 ?>
