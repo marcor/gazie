@@ -993,9 +993,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
                 $el_2_1_2 = $doc->createElement("AltriDatiIdentificativi", "");
                 // la denominazione se persona giuridica, nome e cognome se persona giuridica
                 if ($aziend['sexper'] == 'G') {
-					$aziend['ragso1']=str_replace('&','E',$aziend['ragso1']);
-					$aziend['ragso2']=str_replace('&','E',$aziend['ragso2']);
-                    $el_2_1_2_1 = $doc->createElement("Denominazione", preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper(str_replace('&','E',$aziend['ragso1'] . ' ' . $aziend['ragso2']))));
+                    $el_2_1_2_1 = $doc->createElement("Denominazione", _denominazione($aziend));
                     $el_2_1_2->appendChild($el_2_1_2_1);
                 } else {
                     $el_2_1_2_2 = $doc->createElement("Nome", strtoupper($aziend['legrap_pf_nome']));
@@ -1004,11 +1002,11 @@ function creaFileDAT20($aziend, $data, $periodo) {
                     $el_2_1_2->appendChild($el_2_1_2_3);
                 }
                 $el_2_1_2_4 = $doc->createElement("Sede", '');
-                $el_2_1_2_4_1 = $doc->createElement("Indirizzo", preg_replace('/[^A-Z0-9 _",\-\'\.]/', '',strtoupper($aziend['indspe'])));
+                $el_2_1_2_4_1 = $doc->createElement("Indirizzo", _formatta($aziend['indspe']));
                 $el_2_1_2_4->appendChild($el_2_1_2_4_1);
                 $el_2_1_2_4_3 = $doc->createElement("CAP", $aziend['capspe']);
                 $el_2_1_2_4->appendChild($el_2_1_2_4_3);
-                $el_2_1_2_4_4 = $doc->createElement("Comune", preg_replace('/[^A-Z0-9 _",\-\'\.]/', '',strtoupper($aziend['citspe'])));
+                $el_2_1_2_4_4 = $doc->createElement("Comune", _formatta($aziend['citspe']));
                 $el_2_1_2_4->appendChild($el_2_1_2_4_4);
                 $el_2_1_2_4_5 = $doc->createElement("Provincia", strtoupper($aziend['prospe']));
                 $el_2_1_2_4->appendChild($el_2_1_2_4_5);
@@ -1046,16 +1044,16 @@ function creaFileDAT20($aziend, $data, $periodo) {
                 $el_2_2_2 = $doc->createElement("AltriDatiIdentificativi", "");
                 // la denominazione se persona giuridica, nome e cognome se persona giuridica
                 if ($v['sexper'] == 'G') {
-                    $el_2_2_2_1 = $doc->createElement("Denominazione", substr(preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper(str_replace('&','E',$v['ragso1'] . ' ' . $v['ragso2']))), 0, 80));
+                    $el_2_2_2_1 = $doc->createElement("Denominazione", _denominazione($v, 80));
                     $el_2_2_2->appendChild($el_2_2_2_1);
                 } else {
-                    $el_2_2_2_2 = $doc->createElement("Nome", substr(preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper($v['legrap_pf_nome'])), 0, 60));
+                    $el_2_2_2_2 = $doc->createElement("Nome", _formatta($v['legrap_pf_nome'], 60));
                     $el_2_2_2->appendChild($el_2_2_2_2);
-                    $el_2_2_2_3 = $doc->createElement("Cognome", substr(preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper($v['legrap_pf_cognome'])), 0, 60));
+                    $el_2_2_2_3 = $doc->createElement("Cognome", _formatta($v['legrap_pf_cognome'], 60));
                     $el_2_2_2->appendChild($el_2_2_2_3);
                 }
                 $el_2_2_2_4 = $doc->createElement("Sede", '');
-                $el_2_2_2_4_1 = $doc->createElement("Indirizzo", substr(preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper($v['indspe'])), 0, 60));
+                $el_2_2_2_4_1 = $doc->createElement("Indirizzo", _formatta($v['indspe'], 60));
                 $el_2_2_2_4->appendChild($el_2_2_2_4_1);
                 if (is_numeric($v['capspe']) && strlen($v['capspe']) <= 5) { // per evitare l'errore (loro) il cap lo scrivo solo se è italiano
                     $el_2_2_2_4_3 = $doc->createElement("CAP", str_pad($v['capspe'], 5, "0", STR_PAD_LEFT));
@@ -1139,7 +1137,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
                 $el_3_1_2 = $doc->createElement("AltriDatiIdentificativi", "");
                 // la denominazione se persona giuridica, nome e cognome se persona giuridica
                 if ($aziend['sexper'] == 'G') {
-                    $el_3_1_2_1 = $doc->createElement("Denominazione", strtoupper(preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', str_replace('&','E',$aziend['ragso1'] . ' ' . $aziend['ragso2']))));
+                    $el_3_1_2_1 = $doc->createElement("Denominazione", _denominazione($aziend));
                     $el_3_1_2->appendChild($el_3_1_2_1);
                 } else {
                     $el_3_1_2_2 = $doc->createElement("Nome", strtoupper($aziend['legrap_pf_nome']));
@@ -1190,16 +1188,16 @@ function creaFileDAT20($aziend, $data, $periodo) {
                 $el_3_2_2 = $doc->createElement("AltriDatiIdentificativi", "");
                 // la denominazione se persona giuridica, nome e cognome se persona giuridica
                 if ($v['sexper'] == 'G') {
-                    $el_3_2_2_1 = $doc->createElement("Denominazione", substr(preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper(str_replace('&','E',$v['ragso1'] . ' ' . $v['ragso2']))), 0, 80));
+                    $el_3_2_2_1 = $doc->createElement("Denominazione", _denominazione($v, 80));
                     $el_3_2_2->appendChild($el_3_2_2_1);
                 } else {
-                    $el_3_2_2_2 = $doc->createElement("Nome", substr(preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper($v['legrap_pf_nome'])), 0, 60));
+                    $el_3_2_2_2 = $doc->createElement("Nome", _formatta($v['legrap_pf_nome'], 60));
                     $el_3_2_2->appendChild($el_3_2_2_2);
-                    $el_3_2_2_3 = $doc->createElement("Cognome", substr(preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper($v['legrap_pf_cognome'])), 0, 60));
+                    $el_3_2_2_3 = $doc->createElement("Cognome", _formatta($v['legrap_pf_cognome'], 60));
                     $el_3_2_2->appendChild($el_3_2_2_3);
                 }
                 $el_3_2_2_4 = $doc->createElement("Sede", '');
-                $el_3_2_2_4_1 = $doc->createElement("Indirizzo", substr(preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper($v['indspe'])), 0, 60));
+                $el_3_2_2_4_1 = $doc->createElement("Indirizzo", _formatta($v['indspe'], 60));
                 $el_3_2_2_4->appendChild($el_3_2_2_4_1);
                 if (is_numeric($v['capspe']) && strlen($v['capspe']) <= 5) { // per evitare l'errore (loro) il cap lo scrivo solo se è italiano
                     $el_3_2_2_4_3 = $doc->createElement("CAP", str_pad($v['capspe'], 5, "0", STR_PAD_LEFT));
@@ -1277,5 +1275,16 @@ function creaFileDAT20($aziend, $data, $periodo) {
     return $acc;
 }
 
-// --- FINE FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DEI DATI DELLE FATTURE (SPESOMETRO)
+function _formatta($stringa, $maxlen = 0) {
+    $stringa = preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper($stringa));
+    return $maxlen ? substr($stringa, 0, $maxlen) : $stringa; 
+}
+
+function _denominazione($azienda, $maxlen = 0) {
+    $ragso12 = $azienda['ragso1'] . ' ' . $azienda['ragso2'];
+    $ragso12 = str_replace('&', 'E', $ragso12);
+    return _formatta($ragso12, $maxlen);
+}
+
+// --- FINE FUNZIONI PER LA CREAZIONE DELLA COMUNICAZIONE DEI DATI DELLE FATTURE (SPESOMETRO)
 ?>
