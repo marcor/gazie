@@ -122,8 +122,8 @@ class GAzie {
 		return $this->_admin_aziend;
 	}
 
-	public function checkAccess( int $level = 0 ) {
-		$this->_level_access_module = $level;
+	public function checkAccess( $level = 0 ) {
+		$this->_level_access_module = intval($level);
 	}
 
 
