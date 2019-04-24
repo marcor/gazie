@@ -111,18 +111,21 @@ if (! is_dir($pathricevute)) {
 
 define('CATTACHMENTS_DIR',  '../../data/files/'.$admin_aziend['codice'].'/ricevutesdi');
 
-$mailbox = new ImapMailbox($cpopimap['val'], $cemail['val'], $cpassword['val'], CATTACHMENTS_DIR, 'utf-8');
-$mails = array();
-//se passato checkall verranno riscaricate tutte le email senza tener conto dell'eventule filtro: UNSEEN (solo non lette)
-if (isset($_GET['checkall'])) {
-   $cfiltro['val'] = str_replace("UNSEEN","", $cfiltro['val']);
-}
-// Get some mail
-$mailsIds = $mailbox->searchMailBox($cfiltro['val'] );
-if(!$mailsIds) {
-	echo('Nessuna nuova email con questo filtro: ' . $cfiltro['val']);
-  die("<p align=\"center\"><a href=\"./report_fae_sdi.php\">Ritorna a report Fatture elettroniche</a></p>");
-}
+try {
+	$mailbox = new ImapMailbox($cpopimap['val'], $cemail['val'], $cpassword['val'], CATTACHMENTS_DIR, 'utf-8');
+	$mails = array();
+	//se passato checkall verranno riscaricate tutte le email senza tener conto dell'eventule filtro: UNSEEN (solo non lette)
+	if (isset($_GET['checkall'])) {
+   		$cfiltro['val'] = str_replace("UNSEEN","", $cfiltro['val']);
+	}
+	
+	// Get some mail
+	$mailsIds = $mailbox->searchMailBox($cfiltro['val'] );
+	
+	if(!$mailsIds) {
+		echo('Nessuna nuova email con questo filtro: ' . $cfiltro['val']);
+		die("<p align=\"center\"><a href=\"./report_fae_sdi.php\">Ritorna a report Fatture elettroniche</a></p>");
+	}
 
 //$mailId = reset($mailsIds);
 //$mail = $mailbox->getMail($mailId);
@@ -337,5 +340,15 @@ foreach($mailsIds as $mailId) {
 
     echo "Completato";
     echo "<p align=\"center\"><a href=\"./report_fae_sdi.php\">Ritorna a report Fatture elettroniche</a></p>";
-
+} catch ( \Exception $e ) {
+?>
+	<div style="color:red">
+		<center>
+			Error: <b><?= $e->getMessage(); ?></b>
+		<br>
+			Codice: <?= $e->getCode(); ?>
+		</center>
+	</div>
+<?php
+}
 ?>
