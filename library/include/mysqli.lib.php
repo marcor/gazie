@@ -1077,7 +1077,7 @@ function gaz_die( $query, $riga, $funzione="" ) {
 }
 
 function debug_query($query) {
-    if ( defined(debug_active) && debug_active )
+    if ( defined('debug_active') && debug_active )
       d($query);
 }
 ?>
