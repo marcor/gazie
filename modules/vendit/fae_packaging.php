@@ -67,7 +67,8 @@ function getExtremeDocs($vat_register = '_', $vat_section = 1) {
 function getLastPack() // RESTITUISCE IL NUMERO PROGRESSIVO DELL'ULTIMO PACCHETTO CREATO/INVIATO
 {
     global $gTables;
-    $where = "(filename_zip_package IS NOT NULL OR filename_zip_package != '') ";
+//    $where = "(filename_zip_package IS NOT NULL OR filename_zip_package != '') ";
+    $where = "(filename_zip_package != '') ";
     $orderby = "filename_zip_package DESC";
     $from = $gTables['fae_flux'];
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
