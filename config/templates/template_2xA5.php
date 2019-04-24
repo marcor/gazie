@@ -177,7 +177,9 @@ class Template_2xA5 extends FPDI {
             $this->Cell(55, 5, $this->cliente4, 0, 1, 'L', 0, '', 1);
             if (!empty($this->cliente4b)) {
                 $this->Cell(80);
-                $this->Cell(55, 5, $this->cliente4b, 0, 1, 'L', 0, '', 1);
+                $this->Cell(55, 5, $this->cliente4b, 0, 0, 'L', 0, '', 1);
+				$this->Cell(92);
+				$this->Cell(55, 5, $this->cliente4b, 0, 1, 'L', 0, '', 1);
             }
             $this->SetFont('helvetica', '', 7);
             if (!empty($this->c_Attenzione)) {
