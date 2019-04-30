@@ -470,6 +470,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			} else {
 				$form['rows'][$nl]['codice_fornitore'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
 			}
+			$form['rows'][$nl]['codice_fornitore'] = str_replace("'", "''", $form['rows'][$nl]['codice_fornitore']);
 			// vedo se ho un codice_fornitore in gaz_artico
 			$artico = gaz_dbi_get_row($gTables['artico'], 'codice_fornitore', $form['rows'][$nl]['codice_fornitore']);
 			$form['rows'][$nl]['codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['codice']:'';
