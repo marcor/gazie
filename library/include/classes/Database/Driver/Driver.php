@@ -47,7 +47,13 @@ interface Driver {
 	 */
 	public function lastInsertId();
 
-	public function escape(string $str);
+	/**
+	 * Escape string
+	 *
+	 * @param string
+	 * @return string
+	 */
+	public function escape($str);
 
 	/**
 	 * Return last error

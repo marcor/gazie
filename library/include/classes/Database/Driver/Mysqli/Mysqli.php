@@ -77,11 +77,12 @@ class Mysqli implements \Database\Driver\Driver  {
 	}
 
 	/**
-	 * Retun Last id Insert
+	 * Escape string
 	 *
+	 * @param string
 	 * @return string
 	 */
-	public function escape( string $str ) {
+	public function escape( $str ) {
 		return mysqli_real_escape_string($this->_link, $str);
 	}
 

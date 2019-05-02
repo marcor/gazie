@@ -124,7 +124,7 @@ abstract class Table  {
 		return $this->_loaded;
 	}
 
-	public function __get( string $name ) {
+	public function __get( $name ) {
        		if ( isset($this->_values[$name]) )
 			return $this->_values[$name];
 		return;
@@ -133,7 +133,7 @@ abstract class Table  {
 	/**
 	 * Setting a value of field
 	 */
-	public function __set( string $name, $value ) {
+	public function __set( $name, $value ) {
 		$columns = $this->getColumns();
 		if ( isset( $columns[$name] ) )
 			$this->_values[$name]=$value;
