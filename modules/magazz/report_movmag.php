@@ -29,62 +29,45 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 require("lang.".$admin_aziend['lang'].".php");
 
-if (isset($_GET['all'])) {
-	$where = "";
-	$passo = 100000;
-} else {
-	$implode = array();
-	if (isset($_GET['movimento']) && !empty($_GET['movimento'])) {
-		$movimento = $_GET['movimento'];
-		$implode[] = $gTables['movmag'].".id_mov = " . $_GET['movimento'];
-		$passo = 100000;
-	}
-	
-	if (isset($_GET['causale']) && !empty($_GET['causale'])) {
-		$causale = $_GET['causale'];
-		$implode[] = "caumag LIKE '" . $_GET['causale'] . "%'";
-		$passo = 100000;
-	}
+// campi ammissibili per la ricerca
+$search_fields = [
+	'movimento'
+        => "{$gTables['movmag']}.id_mov = %d",
+	'causale'
+        => "caumag LIKE '%s%%'",
+	'documento'
+        => "desdoc LIKE '%%%s%%'",
+	'articolo'
+        => "artico LIKE '%%%s%%'",
+	'lotto'
+        => "id_lotmag LIKE '%%%s%%'"
+];
 
-	if (isset($_GET['documento']) && !empty($_GET['documento'])) {
-		$documento = $_GET['documento'];
-		$implode[] = "desdoc LIKE '%".$_GET['documento']."%'";
-		$passo = 100000;
-	}
-	
-	if (isset($_GET['articolo']) && !empty($_GET['articolo'])) {
-		$articolo = $_GET['articolo'];
-		$implode[] = "artico LIKE '%".$_GET['articolo']."%'";
-		$passo = 100000;
-	}
-	
-	if (isset($_GET['lotto']) && !empty($_GET['lotto'])) {
-		$idlotto = $_GET['lotto'];
-		$implode[] = "id_lotmag LIKE '%".$_GET['lotto']."%'";
-		$passo = 100000;
-	}
-	
-	$where = implode(" AND ", $implode);
-}
+// campi ammissibili per l'ordinamento
+$order_fields = ['id_mov', 'datreg', 'caumag', 'artico', 'identifier'];
 
-if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
-   $orderby = "id_mov desc";
-   $field = 'id_mov';
-   $flag_order = 'DESC';
-   $flagorpost = 'ASC';
-}
+// creo l'array (header => campi) per l'ordinamento dei record
+$sortable_headers = array  (
+            "n.ID" => $order_fields[0],
+            $script_transl[4] => $order_fields[1],
+            $strScript["admin_movmag.php"][2] => $order_fields[2],
+            $script_transl[8] => "",
+            $script_transl[5] => $order_fields[3],
+            $script_transl[11] => $order_fields[4],
+            $script_transl[6] => "",
+            $script_transl[7] => "",
+            $script_transl['delete'] => ""
+);
 
-?>
-<div align="center" class="FacetFormHeaderFont "><?php echo $script_transl[3].$script_transl[0]; ?></div>
-<?php
-
-$recordnav = new recordnav($gTables['movmag'], $where, $limit, $passo);
-$recordnav -> output();
+echo "<div align='center' class='FacetFormHeaderFont '>{$script_transl[3]}{$script_transl[0]}</div>\n";
+ 
+$t = new TableSorter($gTables['movmag'], $passo, "id_mov");
+$t->output_navbar();
 
 ?>
 <form method="GET">
-  <div class="table-responsive">
-    <table class="Tlarge table table-striped table-bordered table-condensed">
+	<div class="table-responsive">
+	<table class="Tlarge table table-striped table-bordered table-condensed">
 	<tr>
 		<td class="FacetFieldCaptionTD">
 		  <input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1">
@@ -100,11 +83,12 @@ $recordnav -> output();
 			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1">
 		</td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="lotto" placeholder="<?php echo "ID ",$script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($idlotto))? $idlotto : ""; ?>" maxlength="15" size="3" tabindex="1">
+			<input type="text" name="lotto" placeholder="<?php echo "ID ",$script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($lotto))? $lotto : ""; ?>" maxlength="15" size="3" tabindex="1">
 		</td>
 		<td class="FacetFieldCaptionTD" colspan="3">
 			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
-			<input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
+			<a class="btn btn-xs btn-default" href="?">Reset</a>
+			<?php  $t->output_order_form(); ?>
 		</td>
 	</tr>
 
@@ -117,22 +101,10 @@ $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['m
 		/* Antonio Germani - momentaneamente commentato, di comune accordo con Antonio de Vincentiis, perché causa un ambiguous column names con id_lotmag quando si utilizza l'ID lotto come filtro
 		LEFT JOIN ".$gTables['orderman']." ON (".$gTables['movmag'].".id_orderman = ".$gTables['orderman'].".id)
 		*/
-$result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".descri AS descart, ".$gTables['caumag'].".descri AS descau, ".$gTables['lotmag'].".*, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);
-// creo l'array (header => campi) per l'ordinamento dei record
-$headers_mov = array  (
-            "n.ID" => "id_mov",
-            $script_transl[4] => "datreg",
-            $strScript["admin_movmag.php"][2] => "caumag",
-            $script_transl[8] => "",
-            $script_transl[5] => "artico",
-			$script_transl[11] => "identifier",
-            $script_transl[6] => "",
-            $script_transl[7] => "",
-            $script_transl['delete'] => ""
-            );
-$linkHeaders = new linkHeaders($headers_mov);
+$result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".descri AS descart, ".$gTables['caumag'].".descri AS descau, ".$gTables['lotmag'].".*, ".$gTables['rigdoc'].".id_tes AS testata", $table, $t->where, $t->orderby, $t->getOffset(), $t->getLimit());
+
 echo '<tr>';
-$linkHeaders -> output();
+$t->output_headers();
 echo '</tr>';
 $anagrafica = new Anagrafica();
 
@@ -203,7 +175,18 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 </form>
 <script>
 $(document).ready(function(){
-  $('[data-toggle="tooltip"]').tooltip();   
+	$('[data-toggle="tooltip"]').tooltip();
+
+	// Remove empty fields from GET forms
+	// URL: http://www.billerickson.net/code/hide-empty-fields-get-form/
+
+	$("form").submit(function() {
+		$(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+		return true; // ensure form still submits
+	});
+
+	// Un-disable form fields when page loads, in case they click back after submission
+	$( "form" ).find( ":input" ).prop( "disabled", false );
 });
 </script>
 <?php

@@ -2081,6 +2081,271 @@ class linkHeaders {
 
 }
 
+/**
+ * Svolge le funzioni delle classi recordnav e linkHeaders, nella prospettiva di sostituirle.
+ * 
+ * Si appoggia a tre variabili globali: $search_fields, $order_fields e $sortable_headers,
+ * da definire nel modulo che vuole utilizzare la classe. Vedere /modules/magazz/report_movcon.php
+ * per un esempio di utilizzo.
+ *
+ */
+class TableSorter {
+    # database
+    protected $table;      # usata internamente per contare i record totali
+    protected $count;      # n. totale record
+    public $where = "";    # costruita a partire dall'url corrente
+    public $orderby = "";  # idem
+
+    # paginazione
+    public $paginate = True;    # dividi i record in pagine?
+    protected $passo;           # record per pagina
+    protected $cur_page = 1;    # n. pagina corrente
+    protected $pages = 1;       # n. pagine totali
+    
+    # ri/costruzione query dell'url              Esempi:
+    protected $url_search_query = "";            # "articolo=123&movimento=4560"
+    protected $url_order_query = "";             # "ord_artico=asc&ord_id_mov=desc"
+    protected $url_order_query_parts = array();  # ["artico" => "asc", "id_mov" => "desc"]
+    protected $url_page_query = "";              # "pag=3"
+    const ord_prefix = "ord_";
+
+    # header ordinabili
+    protected $sort_cycle = ["desc" => "&#9660;", "asc" => "&#9650;", null => ""];
+    protected $default_order_field;
+    protected $align = false;                   # TODO
+    protected $style = 'FacetFieldCaptionTD';   # TODO
+
+    function __construct($table, $passo, $default_order_field) {
+        $this->passo = $passo;
+        $this->parse_search_request();
+        $this->count = gaz_dbi_record_count($table, $this->where);
+        $this->set_pagination();
+        $this->default_order_field = $default_order_field;
+        $this->parse_order_request();
+    }
+
+   /**
+    * Ritorna l'offset a partire dal quale estrarre i record (LIMIT).
+    */
+    public function getOffset() {
+        if ($this->paginate)
+            return ($this->cur_page - 1) * $this->passo;
+        else return 0;
+    }
+
+   /**
+    * Ritorna il numero di record da estrarre (LIMIT).
+    */
+    public function getLimit() {
+        if ($this->paginate)
+            return $this->passo;
+        else return 100000;      # estrai tutti i record
+    }
+
+   /**
+    * Compone frammenti di query ignorando quelli vuoti.
+    */
+    public static function join_queries(...$url_queries) {
+        return implode("&", array_filter($url_queries));
+    }
+
+   /**
+    * Elabora i parametri di ricerca contenuti nell'url della richiesta.
+    *
+    * Compone la parte WHERE della query db, e ricompone la parte di ricerca della url query
+    * per utilizzarla nei link. Usa la variabile globale $search_fields, che a ogni nome di
+    * parametro ricercabile deve associare un'espressione filtro da inserire nella WHERE.
+    *
+    */
+    protected function parse_search_request() {
+        global $search_fields;
+        $url_search_query_parts = array();
+        $where_parts = array();
+        foreach ($search_fields as $field => $sql_expr) {
+            if (isset($_GET[$field]) && !empty($_GET[$field])) {
+                # settiamo una variabile globale chiamata come il parametro
+                global $$field;
+                $$field = $_GET[$field];
+                $url_search_query_parts[] = "$field=" . urlencode($$field);
+                $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
+            }
+        }
+        $this->where = implode(" AND ", $where_parts);
+        $this->url_search_query = implode("&", $url_search_query_parts);
+    }
+
+   /**
+    * Imposta i dati di paginazione in base alle preferenze e al numero totale di record.
+    */
+    protected function set_pagination() {
+        $this->pages = ceil($this->count / $this->passo) or 1;
+        if (isset($_GET['pag'])) {
+            if ($_GET['pag'] == "all") {
+                $this->paginate = False;
+                $this->url_page_query = "pag=all";
+            } else {
+                $this->cur_page = intval($_GET['pag']);
+                $this->url_page_query = sprintf("pag=%d", $this->cur_page);
+            }
+        }
+    }
+
+   /**
+    * Compone la parte di ordinamento di una url query.
+    *
+    * @param array $parts I parametri di ordinamento voluti; possono essere diversi da quelli attuali.
+    */
+    protected function make_url_order_query($parts) {
+        $a = array();
+        foreach ($parts as $field => $value) $a[] = self::ord_prefix . "$field=$value";
+        return join("&", $a);
+    }
+
+   /**
+    * Elabora i parametri di ordinamento contenuti nell'url della richiesta.
+    *
+    * I campi ammessi devono essere specificati nell'array globale $order_fields. Compone la parte 
+    * ORDER BY della query db e ricompone la parte di ordinamento dell'url, mantenendo l'ordine originale. 
+    * Per generare i link che permettono di cambiare l'ordinamento popola l'array $url_order_query_parts
+    * con i parametri esplosi.
+    *
+    */
+    protected function parse_order_request() {
+        global $order_fields;
+        $orderby = array();
+        foreach($_GET as $field => $value) {
+            list($db_fld) = sscanf($field, self::ord_prefix . "%s");
+            if ($db_fld) {
+                if (in_array($db_fld, $order_fields) && ($value == 'asc' or $value == 'desc')) {
+                    $this->url_order_query_parts[$db_fld] = $value;
+                    $orderby[] = $db_fld . " " . strtoupper($value);
+                }
+            }
+        }
+        $this->url_order_query = $this->make_url_order_query($this->url_order_query_parts);
+        if (empty($orderby)) $orderby[] = "$this->default_order_field DESC";
+        $this->orderby = implode(", ", $orderby);
+    }
+
+   /**
+    * Stampa il numero di record, e se applicabile il n. di pagina corrente.
+    */
+    protected function count_header() {
+        if ($this->count <= $this->passo) {
+            $text = "record: $this->count";
+        } elseif ($this->paginate) {
+            $query = self::join_queries($this->url_search_query, $this->url_order_query, "pag=all");
+            $text = "record: <a href='?$query' title='mostra tutti'>$this->count</a> / pag. $this->cur_page";
+        } else {
+            $query = self::join_queries($this->url_search_query, $this->url_order_query);
+            $text = "record: $this->count / <a href='?$query'>sfoglia</a>";
+        }
+        echo "<div align='center'><font class='FacetFormDataFont'> $text </font></div>\n";
+    }
+
+   /**
+    * Stampa, se occorrono, i link di navigazione tra le pagine.
+    */
+    public function output_navbar() {
+        $this->count_header();
+        if ($this->count > $this->passo && $this->paginate) {
+            $make_navtext = function ($target)  {
+                global $script_transl;
+                $text = sprintf(" %s ", ucfirst($script_transl[$target]));
+                switch ($target) {
+                    case 'first': $text = "&lt;" . $text;
+                    case 'prev': $text = " &lt;" . $text; break;
+                    case 'last': $text .= "&gt;";
+                    case 'next': $text .= "&gt; ";
+                }
+                return "<span>$text</span>";
+            };
+            $linkify = function ($text, $page_number) {
+                $main_query = self::join_queries($this->url_search_query, $this->url_order_query);
+                return "<a href='?$main_query&pag=$page_number' title='pag. $page_number'>$text</a>\n";
+            };
+            echo "<div align='center'>\n";
+            $back = array_map($make_navtext, ["first", "prev"]);
+            $forth = array_map($make_navtext, ["next", "last"]);
+            if ($this->cur_page > 1)
+                $back = array_map($linkify, $back, [1, $this->cur_page - 1]);
+            if ($this->pages > $this->cur_page)
+                $forth = array_map($linkify, $forth, [$this->cur_page + 1, $this->pages]);
+            echo implode("|", array_merge($back, $forth));
+            echo "</div>\n";
+        }
+    }
+
+   /**
+    * Ritorna il successivo modo di ordinamento disponibile.
+    */
+    protected function next_sort_order($current) {
+        $keys = array_keys($this->sort_cycle);
+        return $keys[(array_search($current, $keys) + 1) % 3];
+    }
+
+   /**
+    * Stampa il titolo cliccabile di una colonna che può essere ordinata.
+    *
+    * Utilizzata dal metodo output_headers(). 
+    *
+    */
+    protected function make_header_link($text, $field) {
+        $current = "";
+        $next = $this->next_sort_order($current);
+        $order_for = $this->url_order_query_parts;
+        $arrow_style = "";
+        if (empty($order_for) && $field == $this->default_order_field) {
+            $order_for[$field] = "desc";
+            $arrow_style = "opacity: 0.3;";
+        }
+        if (isset($order_for[$field])) {
+            $current = $order_for[$field];
+            $arrows = str_repeat($this->sort_cycle[$current], array_search($field, array_keys($this->url_order_query_parts)) + 1);
+            $text .= "<span style='float: right; $arrow_style'>$arrows</span>";
+            $next = $this->next_sort_order($current);
+            if (!$next) unset($order_for[$field]);
+        }
+        if ($next) $order_for[$field] = $next;
+        $url_query = self::join_queries($this->url_search_query, $this->make_url_order_query($order_for), $this->url_page_query);
+        echo "<th class='$this->style' $this->align ><a href='?$url_query'>$text</a></th>\n";
+    }
+
+   /**
+    * Stampa i titoli di tutte le colonne, con o senza link per l'ordinamento.
+    *
+    * Usa la variabile globale $sortable_headers, un array associativo tra titolo e 
+    * colonna del db corrispondente (o stringa vuota se quella colonna non deve poter 
+    * essere ordinata).
+    *
+    */
+    public function output_headers() {
+        global $sortable_headers;
+        foreach ($sortable_headers as $text => $field) {
+            if ($field <> "") {
+                echo $this->make_header_link($text, $field);
+            } else {
+                echo "<th class='$this->style' $this->align >$text</th>\n";
+            }
+        }
+    }
+
+   /**
+    * Stampa i parametri di ordinamento correnti per l'inclusione nella form di ricerca.
+    *
+    * In questo modo l'ordinamento delle colonne (e l'uso o meno della paginazione) può
+    * essere mantenuto da una ricerca all'altra.
+    *
+    */
+    public function output_order_form() {
+        foreach ($this->url_order_query_parts as $field => $value) {
+            printf("<input type='hidden' name='%s' value='%s' />\n", self::ord_prefix . $field, $value);
+        }
+        if (!$this->paginate) {
+            echo "<input type='hidden' name='pag' value='all' />\n";
+        }
+    }
+}
 
 function checkAdmin($Livaut = 0) {
     global $gTables, $module, $table_prefix;
