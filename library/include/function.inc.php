@@ -2261,8 +2261,8 @@ class TableSorter {
                 return "<span>$text</span>";
             };
             $linkify = function ($text, $page_number) {
-                $main_query = self::join_queries($this->url_search_query, $this->url_order_query);
-                return "<a href='?$main_query&pag=$page_number' title='pag. $page_number'>$text</a>\n";
+                $query = self::join_queries($this->url_search_query, $this->url_order_query, "pag=$page_number");
+                return "<a href='?$query' title='pag. $page_number'>$text</a>\n";
             };
             echo "<div align='center'>\n";
             $back = array_map($make_navtext, ["first", "prev"]);
