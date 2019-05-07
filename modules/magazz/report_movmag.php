@@ -43,17 +43,14 @@ $search_fields = [
         => "id_lotmag LIKE '%%%s%%'"
 ];
 
-// campi ammissibili per l'ordinamento
-$order_fields = ['id_mov', 'datreg', 'caumag', 'artico', 'identifier'];
-
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array  (
-            "n.ID" => $order_fields[0],
-            $script_transl[4] => $order_fields[1],
-            $strScript["admin_movmag.php"][2] => $order_fields[2],
+            "n.ID" => 'id_mov',
+            $script_transl[4] => 'datreg',
+            $strScript["admin_movmag.php"][2] => 'caumag',
             $script_transl[8] => "",
-            $script_transl[5] => $order_fields[3],
-            $script_transl[11] => $order_fields[4],
+            $script_transl[5] => 'artico',
+            $script_transl[11] => 'identifier',
             $script_transl[6] => "",
             $script_transl[7] => "",
             $script_transl['delete'] => ""
@@ -61,7 +58,7 @@ $sortable_headers = array  (
 
 echo "<div align='center' class='FacetFormHeaderFont '>{$script_transl[3]}{$script_transl[0]}</div>\n";
  
-$t = new TableSorter($gTables['movmag'], $passo, "id_mov");
+$t = new TableSorter($gTables['movmag'], $passo, ['id_mov' => 'desc']);
 $t->output_navbar();
 
 ?>

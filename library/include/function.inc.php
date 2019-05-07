@@ -2084,8 +2084,8 @@ class linkHeaders {
 /**
  * Svolge le funzioni delle classi recordnav e linkHeaders, nella prospettiva di sostituirle.
  * 
- * Si appoggia a tre variabili globali: $search_fields, $order_fields e $sortable_headers,
- * da definire nel modulo che vuole utilizzare la classe. Vedere /modules/magazz/report_movcon.php
+ * Si appoggia a due variabili globali: $search_fields e $sortable_headers,
+ * da definire nel modulo che vuole utilizzare la classe. Vedere /magazz/report_movmag.php
  * per un esempio di utilizzo.
  *
  */
@@ -2095,7 +2095,7 @@ class TableSorter {
     protected $count;      # n. totale record
     public $where = "";    # costruita a partire dall'url corrente
     public $orderby = "";  # idem
-
+    
     # paginazione
     public $paginate = True;    # dividi i record in pagine?
     protected $passo;           # record per pagina
@@ -2110,17 +2110,21 @@ class TableSorter {
     const ord_prefix = "ord_";
 
     # header ordinabili
-    protected $sort_cycle = ["desc" => "&#9660;", "asc" => "&#9650;", null => ""];
-    protected $default_order_field;
+    protected $arrows = ["desc" => "&#9660;", "asc" => "&#9650;", null => ""];
     protected $align = false;                   # TODO
     protected $style = 'FacetFieldCaptionTD';   # TODO
+    
+    # valori di default                Esempi:
+    protected $default_search;         # ["caumag" => "1"]
+    protected $default_order;          # analogo a $url_order_query_parts
 
-    function __construct($table, $passo, $default_order_field) {
+    function __construct($table, $passo, $default_order, $default_search=[]) {
         $this->passo = $passo;
+        $this->default_search = $default_search;
         $this->parse_search_request();
         $this->count = gaz_dbi_record_count($table, $this->where);
         $this->set_pagination();
-        $this->default_order_field = $default_order_field;
+        $this->default_order = $default_order;
         $this->parse_order_request();
     }
 
@@ -2161,12 +2165,14 @@ class TableSorter {
         global $search_fields;
         $url_search_query_parts = array();
         $where_parts = array();
+        # i valori di default vengono sovrascritti se presenti anche nella richiesta
+        $def_GET = array_merge($this->default_search, $_GET);
         foreach ($search_fields as $field => $sql_expr) {
-            if (isset($_GET[$field]) && !empty($_GET[$field])) {
-                # settiamo una variabile globale chiamata come il parametro
-                global $$field;
-                $$field = $_GET[$field];
-                $url_search_query_parts[] = "$field=" . urlencode($$field);
+            if (isset($def_GET[$field]) && !empty($def_GET[$field])) {
+                global $$field;  # settiamo una variabile globale chiamata come il parametro
+                $$field = $def_GET[$field];
+                if (isset($_GET[$field]))  # escludiamo dall'url i valori default applicati
+                    $url_search_query_parts[] = "$field=" . urlencode($$field);
                 $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
             }
         }
@@ -2211,19 +2217,23 @@ class TableSorter {
     *
     */
     protected function parse_order_request() {
-        global $order_fields;
+        global $sortable_headers;
+        $allowed_order_fields = array_filter(array_values($sortable_headers));
         $orderby = array();
         foreach($_GET as $field => $value) {
             list($db_fld) = sscanf($field, self::ord_prefix . "%s");
             if ($db_fld) {
-                if (in_array($db_fld, $order_fields) && ($value == 'asc' or $value == 'desc')) {
+                if (in_array($db_fld, $allowed_order_fields) && ($value == 'asc' or $value == 'desc')) {
                     $this->url_order_query_parts[$db_fld] = $value;
                     $orderby[] = $db_fld . " " . strtoupper($value);
                 }
             }
         }
         $this->url_order_query = $this->make_url_order_query($this->url_order_query_parts);
-        if (empty($orderby)) $orderby[] = "$this->default_order_field DESC";
+        if (empty($orderby)) {
+            foreach ($this->default_order as $field => $value)
+                $orderby[] = $field . " " . strtoupper($value);
+        }
         $this->orderby = implode(", ", $orderby);
     }
 
@@ -2280,8 +2290,16 @@ class TableSorter {
     * Ritorna il successivo modo di ordinamento disponibile.
     */
     protected function next_sort_order($current) {
-        $keys = array_keys($this->sort_cycle);
+        $keys = array_keys($this->arrows);
         return $keys[(array_search($current, $keys) + 1) % 3];
+    }
+    
+   /**
+    * Ritorna l'indicatore visivo dell'ordinamento di una colonna.
+    */
+    protected function make_arrows($field, $order, $style="") {
+        $arrows = str_repeat($this->arrows[$order[$field]], array_search($field, array_keys($order)) + 1);
+        return "<span style='float: right; $style'>$arrows</span>";
     }
 
    /**
@@ -2291,23 +2309,18 @@ class TableSorter {
     *
     */
     protected function make_header_link($text, $field) {
-        $current = "";
-        $next = $this->next_sort_order($current);
-        $order_for = $this->url_order_query_parts;
-        $arrow_style = "";
-        if (empty($order_for) && $field == $this->default_order_field) {
-            $order_for[$field] = "desc";
-            $arrow_style = "opacity: 0.3;";
+        $next = $this->next_sort_order("");
+        $order = $this->url_order_query_parts;
+        if (empty($order)) {
+            if (isset($this->default_order[$field]))
+                $text .= $this->make_arrows($field, $this->default_order, "opacity: 0.3");
+        } elseif (isset($order[$field])) {
+            $text .= $this->make_arrows($field, $order);
+            if (!$next = $this->next_sort_order($order[$field])) 
+                unset($order[$field]);
         }
-        if (isset($order_for[$field])) {
-            $current = $order_for[$field];
-            $arrows = str_repeat($this->sort_cycle[$current], array_search($field, array_keys($this->url_order_query_parts)) + 1);
-            $text .= "<span style='float: right; $arrow_style'>$arrows</span>";
-            $next = $this->next_sort_order($current);
-            if (!$next) unset($order_for[$field]);
-        }
-        if ($next) $order_for[$field] = $next;
-        $url_query = self::join_queries($this->url_search_query, $this->make_url_order_query($order_for), $this->url_page_query);
+        if ($next) $order[$field] = $next;
+        $url_query = self::join_queries($this->url_search_query, $this->make_url_order_query($order), $this->url_page_query);
         echo "<th class='$this->style' $this->align ><a href='?$url_query'>$text</a></th>\n";
     }
 
