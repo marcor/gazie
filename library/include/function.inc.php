@@ -2258,7 +2258,7 @@ class TableSorter {
     */
     public function output_navbar() {
         $this->count_header();
-        if ($this->count > $this->passo && $this->paginate) {
+        if ($this->pages > 1 && $this->paginate) {
             $make_navtext = function ($target)  {
                 global $script_transl;
                 $text = sprintf(" %s ", ucfirst($script_transl[$target]));
