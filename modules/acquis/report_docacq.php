@@ -29,15 +29,15 @@ $message = "";
 
 // campi ammissibili per la ricerca
 $search_fields = [
-	'sezione'
+    'sezione'
         => "seziva = %d",
-	'proto'
+    'proto'
         => "protoc = %d",
-	'tipo'
+    'tipo'
         => "tipdoc like '%s'",
-	'numero'
+    'numero'
         => "numfat like '%%%s%%'",
-	'anno'
+    'anno'
         => "YEAR(datfat) = %d",
     'fornitore'
         => "clfoco = '%s'"
@@ -68,56 +68,59 @@ $ts = new TableSorter($gTables['tesdoc'], $passo, ['datreg' => 'desc', 'protoc' 
 $where_select = "tipdoc LIKE 'AF_' AND seziva = '$sezione'";
 
 ?>
+
 <form method="GET" >
-    <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?>
+    <div align="center" class="FacetFormHeaderFont">
+        <?php echo $script_transl['title']; ?>
+
         <select name="sezione" class="FacetSelect" onchange="this.form.submit()">
-            <?php
-            echo "<option value=''>1</option>"; # è l'opzione di default perciò ha valore vuoto
+<?php
+            echo "<option value=''>1</option>\n"; # è l'opzione di default perciò ha valore vuoto
             for ($sez = 2; $sez <= 9; $sez++) {
                 $selected = $sezione == $sez ? "selected" : "";
-                echo "<option value='$sez' $selected > $sez </option>";
+                echo "<option value='$sez' $selected > $sez </option>\n";
             }
-            ?>
+?>
         </select>
     </div>
-    <?php
+<?php
 
     $ts->output_navbar();
 
-    ?>
+?>
     <div class="box-primary table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <tr>
             <td colspan="1" class="FacetFieldCaptionTD">
                 <input type="text" placeholder="Cerca Prot." class="input-sm form-control" name="proto" value="<?php if (isset($proto)) print $proto; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
             </td>
-			<td colspan="1" class="FacetFieldCaptionTD">
-				&nbsp;
-			</td>
-			<td colspan="1" class="FacetFieldCaptionTD">
-				<?php
+            <td colspan="1" class="FacetFieldCaptionTD">
+                &nbsp;
+            </td>
+            <td colspan="1" class="FacetFieldCaptionTD">
+                <?php
                     gaz_flt_disp_select("tipo", "tipdoc as tipo", $gTables["tesdoc"], $where_select, "tipo ASC");
                 ?>
-			</td>
+            </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-				<input type="text" placeholder="Cerca Num." class="input-sm form-control" name="numero" value="<?php if (isset($numero)) print $numero; ?>" size="3" tabindex="3" class="FacetInput">			
-			</td>
-			<td colspan="1" class="FacetFieldCaptionTD">
-				<?php 
+                <input type="text" placeholder="Cerca Num." class="input-sm form-control" name="numero" value="<?php if (isset($numero)) print $numero; ?>" size="3" tabindex="3" class="FacetInput">			
+            </td>
+            <td colspan="1" class="FacetFieldCaptionTD">
+                <?php 
                     gaz_flt_disp_select("anno", "YEAR(datfat) AS anno", $gTables["tesdoc"],  $where_select, "anno DESC");
                 ?>
-			</td>
-			<td colspan="1" class="FacetFieldCaptionTD">
+            </td>
+            <td colspan="1" class="FacetFieldCaptionTD">
                 <?php 
                     gaz_flt_disp_select("fornitore", "clfoco AS fornitore, ragso1 as nome", 
                         $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id',
                         $where_select, "nome ASC", "nome");
                 ?>
-			</td>
-			<td colspan="1" class="FacetFieldCaptionTD">
-				&nbsp;
-			</td>
-			<td colspan="1" class="FacetFieldCaptionTD">
+            </td>
+            <td colspan="1" class="FacetFieldCaptionTD">
+                &nbsp;
+            </td>
+            <td colspan="1" class="FacetFieldCaptionTD">
                 <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
@@ -125,74 +128,82 @@ $where_select = "tipdoc LIKE 'AF_' AND seziva = '$sezione'";
             </td>
         </tr>
         <tr>
-            <?php
+<?php
             $ts->output_headers();
-            ?>
+?>
         </tr>
-        <?php
-/*        $rs_last_doc = gaz_dbi_dyn_query("MAX(protoc) AS maxpro, YEAR(datfat) AS y", $gTables['tesdoc'], "tipdoc LIKE 'AF_' AND seziva = '$seziva' GROUP BY y ", 'protoc DESC');
-        while ($last_doc = gaz_dbi_fetch_array($rs_last_doc)) {
-            $lt_doc[$last_doc['y']] = $last_doc['maxpro'];
-        }*/
+<?php
+
+/*
+$rs_last_doc = gaz_dbi_dyn_query("MAX(protoc) AS maxpro, YEAR(datfat) AS y", $gTables['tesdoc'], "tipdoc LIKE 'AF_' AND seziva = '$seziva' GROUP BY y ", 'protoc DESC');
+while ($last_doc = gaz_dbi_fetch_array($rs_last_doc)) {
+    $lt_doc[$last_doc['y']] = $last_doc['maxpro'];
+}
+*/
 
 //recupero le testate in base alle scelte impostate
-    	//echo $where." ".$year." ".$ragso1;    
-        $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
-        while ($row = gaz_dbi_fetch_array($result)) {
-			// faccio il check per vedere se ci sono righi da trasferire in contabilità di magazzino
-			$ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=". $row['id_tes']." AND  LENGTH(TRIM(codart))>=1 AND tiprig=0 AND id_mag=0");
-			$check = gaz_dbi_fetch_array($ck);
-			// fine check magazzino
-            $y = substr($row['datfat'], 0, 4);
-            if ($row["tipdoc"] == 'AFA') {
-                $tipodoc = "Fattura";
-                $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
-                $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
-            } elseif ($row["tipdoc"] == 'AFC') {
-                $tipodoc = "Nota Credito";
-                $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
-                $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
-            }
+$result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
+while ($row = gaz_dbi_fetch_array($result)) {
+    // faccio il check per vedere se ci sono righi da trasferire in contabilità di magazzino
+    $ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=". $row['id_tes']." AND  LENGTH(TRIM(codart))>=1 AND tiprig=0 AND id_mag=0");
+    $check = gaz_dbi_fetch_array($ck);
+    // fine check magazzino
+    $y = substr($row['datfat'], 0, 4);
+    if ($row["tipdoc"] == 'AFA') {
+        $tipodoc = "Fattura";
+        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
+        $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+    } elseif ($row["tipdoc"] == 'AFC') {
+        $tipodoc = "Nota Credito";
+        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
+        $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+    }
 
-                $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $row['clfoco']);
-                $anagra = gaz_dbi_get_row($gTables['anagra'], 'id', $clfoco['id_anagra']);
-                echo "<tr class=\"FacetDataTD\">";
-                if (!empty($modifi)) {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
-                } else {
-                    echo "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $row["protoc"] . " &nbsp;</button></td>";
-                }
-                echo "<td>" . gaz_format_date($row["datreg"]) . " &nbsp;</td>";
-                if (empty($row["fattura_elettronica_original_name"])) {
-                    print '<td>'.$tipodoc."</td>\n";
-                } else {
-                    print '<td><a class="btn btn-xs btn-default btn-xml" target="_blank" href="view_fae.php?id_tes=' . $row["id_tes"] . '">'.$tipodoc.' '.$row["fattura_elettronica_original_name"]."</a></td>";
-                }
-                echo "<td>" . $row["numfat"] . " &nbsp;</td>";
-                echo "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
-                echo "<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?auxil=" . htmlspecialchars($anagra["ragso1"]) . "&search=Cerca\">" . $anagra["ragso1"] . ((empty($anagra["ragso2"]))?"":" ".$anagra["ragso2"]) . "</a>&nbsp;</td>";
-                echo "<td align=\"center\">";
-                if ($row["id_con"] > 0) {
-                    echo "<a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont. n." . $row["id_con"] . "</a>";
-                } else {
-                    echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
-                }
-                if ($check) { // ho qualche rigo da traferire
-                    echo " <a class=\"btn btn-xs btn-default btn-warning\" href=\"../magazz/genera_movmag.php\">Movimenta magazzino</a> ";
-                }
-                echo "</td>";
-                echo "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-//              if ($lt_doc[$y] == $row['protoc']) {
-                    echo "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-//              } else {
-//                  echo "<td><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
-//              }
-                echo "</tr>\n";
-        }
-        ?>
+    $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $row['clfoco']);
+    $anagra = gaz_dbi_get_row($gTables['anagra'], 'id', $clfoco['id_anagra']);
+    echo "<tr class=\"FacetDataTD\">";
+    if (!empty($modifi)) {
+        echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
+    } else {
+        echo "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $row["protoc"] . " &nbsp;</button></td>";
+    }
+    echo "<td>" . gaz_format_date($row["datreg"]) . " &nbsp;</td>";
+    if (empty($row["fattura_elettronica_original_name"])) {
+        print '<td>'.$tipodoc."</td>\n";
+    } else {
+        print '<td><a class="btn btn-xs btn-default btn-xml" target="_blank" href="view_fae.php?id_tes=' . $row["id_tes"] . '">'.$tipodoc.' '.$row["fattura_elettronica_original_name"]."</a></td>";
+    }
+    echo "<td>" . $row["numfat"] . " &nbsp;</td>";
+    echo "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
+    echo "<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?auxil=" . htmlspecialchars($anagra["ragso1"]) . "&search=Cerca\">" . $anagra["ragso1"] . ((empty($anagra["ragso2"]))?"":" ".$anagra["ragso2"]) . "</a>&nbsp;</td>";
+    echo "<td align=\"center\">";
+    if ($row["id_con"] > 0) {
+        echo "<a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont. n." . $row["id_con"] . "</a>";
+    } else {
+        echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
+    }
+    if ($check) { // ho qualche rigo da traferire
+        echo " <a class=\"btn btn-xs btn-default btn-warning\" href=\"../magazz/genera_movmag.php\">Movimenta magazzino</a> ";
+    }
+    echo "</td>";
+    echo "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+//  if ($lt_doc[$y] == $row['protoc']) {
+        echo "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+//  } else {
+//      echo "<td><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
+//  }
+    echo "</tr>\n";
+}
+?>
+
+
+        <tr>
+            <td colspan="9" class="FacetFieldCaptionTD"></td>
+        </tr>
+    </table>
+</div>
 </form>
-<tr><td colspan="9" class="FacetFieldCaptionTD"></td></tr>
-</table>
+
 <script>
     $(document).ready(function(){
         var selects = $("select");
@@ -215,7 +226,7 @@ $where_select = "tipdoc LIKE 'AF_' AND seziva = '$sezione'";
         $( "form" ).find( ":input" ).prop( "disabled", false );
     });
 </script>
-</div>
+
 <?php
 require("../../library/include/footer.php");
 ?>
