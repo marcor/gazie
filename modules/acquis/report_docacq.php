@@ -62,7 +62,7 @@ $script_transl = HeadMain();
 $ts = new TableSorter($gTables['tesdoc'], $passo, ['datreg' => 'desc', 'protoc' => 'desc'], ['sezione' => 1, 'tipo' => 'AF_']);
 
 # le select spaziano solo tra i documenti d'acquisto del sezionale corrente
-$where_select = "tipdoc LIKE 'AF_' AND seziva = '$sezione'";
+$where_select = sprintf("tipdoc LIKE 'AF_' AND seziva = %d", $sezione);
 
 ?>
 
