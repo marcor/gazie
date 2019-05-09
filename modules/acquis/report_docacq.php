@@ -56,9 +56,6 @@ $sortable_headers = array(
     "Cancella" => ""
 );
 
-// campi ammissibili per l'ordinamento
-$order_fields = array_filter(array_values($sortable_headers));
-
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
