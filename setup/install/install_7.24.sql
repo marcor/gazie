@@ -1076,7 +1076,7 @@ INSERT INTO `gaz_001company_config` (`id`, `description`, `var`, `val`) VALUES
 (19, 'Ultima mail fatture elettroniche', 'last_fae_email', ''),
 (20, 'GAzie - Gestionale', 'ruburl', 'http://gazie.sourceforge.net/'),
 (21, 'Descrizione contributo cassa previdenziale', 'payroll_tax_descri', 'Contributo integrativo cassa previdenziale'),
-(22, 'Modo di selezione dei clienti/fornitori sui report delle fatture.<br>Dropbox=0, Ricerca testuale=1', 'partner_select_mode', '1'),
+(22, 'Modo di selezione dei clienti/fornitori sui report delle fatture.<br>Dropdown=0, Ricerca testuale=1', 'partner_select_mode', '1'),
 (23, 'Testo in HTML delle email inviate dall\'azienda', 'company_email_text', '<h3><span style=\"color: #000000;\">La presente e-mail per trasmetterVi i documenti che troverete in allegato.</span></h3>'),
 (24, 'Visualizzazione scadenzario in Home page (0=No,1=Si)', 'schedule_view', '1'),
 (25, 'Controlla regolarità indirizzo in inserimento cliente (0=No, 1=Si)', 'check_cust_address', '1'),
