@@ -27,6 +27,9 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $message = "";
 
+$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
+$tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
+
 // campi ammissibili per la ricerca
 $search_fields = [
     'sezione'
@@ -34,13 +37,13 @@ $search_fields = [
     'proto'
         => "protoc = %d",
     'tipo'
-        => "tipdoc like '%s'",
+        => "tipdoc LIKE '%s'",
     'numero'
-        => "numfat like '%%%s%%'",
+        => "numfat LIKE '%%%s%%'",
     'anno'
         => "YEAR(datfat) = %d",
     'fornitore'
-        => "clfoco = '%s'"
+        => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%s%%'"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -59,7 +62,12 @@ $sortable_headers = array(
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
-$ts = new TableSorter($gTables['tesdoc'], $passo, ['datreg' => 'desc', 'protoc' => 'desc'], ['sezione' => 1, 'tipo' => 'AF_']);
+$ts = new TableSorter(
+    !$partner_select && isset($_GET["fornitore"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
+    $passo, 
+    ['datreg' => 'desc', 'protoc' => 'desc'], 
+    ['sezione' => 1, 'tipo' => 'AF_']
+);
 
 # le select spaziano solo tra i documenti d'acquisto del sezionale corrente
 $where_select = sprintf("tipdoc LIKE 'AF_' AND seziva = %d", $sezione);
@@ -95,33 +103,40 @@ $where_select = sprintf("tipdoc LIKE 'AF_' AND seziva = %d", $sezione);
                 &nbsp;
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-                <?php
-                    gaz_flt_disp_select("tipo", "tipdoc as tipo", $gTables["tesdoc"], $where_select, "tipo ASC");
-                ?>
+<?php
+                gaz_flt_disp_select("tipo", "tipdoc as tipo", $gTables["tesdoc"], $where_select, "tipo ASC");
+?>
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
                 <input type="text" placeholder="Cerca Num." class="input-sm form-control" name="numero" value="<?php if (isset($numero)) print $numero; ?>" size="3" tabindex="3" class="FacetInput">			
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-                <?php 
-                    gaz_flt_disp_select("anno", "YEAR(datfat) AS anno", $gTables["tesdoc"],  $where_select, "anno DESC");
-                ?>
+<?php 
+                gaz_flt_disp_select("anno", "YEAR(datfat) AS anno", $gTables["tesdoc"],  $where_select, "anno DESC");
+?>
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-                <?php 
+<?php 
+                if ($partner_select) {
                     gaz_flt_disp_select("fornitore", "clfoco AS fornitore, ragso1 as nome", 
-                        $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id',
+                        $tesdoc_e_partners,
                         $where_select, "nome ASC", "nome");
-                ?>
+                } else { 
+?>
+                    <input type="text" placeholder="Cerca fornitore" class="input-sm form-control" name="fornitore" value="<?php if (isset($fornitore)) print $fornitore; ?>" size="10" tabindex="5" class="FacetInput"> 
+<?php 
+                } 
+?>
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
                 &nbsp;
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-                <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+                <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="6" onClick="javascript:document.report.all.value = 1;">
+                <?php $ts->output_order_form(); ?>
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-                <a class="btn btn-xs btn-default" href="?">Reset</a>
+                <a class="btn btn-xs btn-default" href="?" tabindex="7">Reset</a>
             </td>
         </tr>
         <tr>
@@ -139,7 +154,7 @@ while ($last_doc = gaz_dbi_fetch_array($rs_last_doc)) {
 */
 
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
+$result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
 while ($row = gaz_dbi_fetch_array($result)) {
     // faccio il check per vedere se ci sono righi da trasferire in contabilità di magazzino
     $ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=". $row['id_tes']." AND  LENGTH(TRIM(codart))>=1 AND tiprig=0 AND id_mag=0");
