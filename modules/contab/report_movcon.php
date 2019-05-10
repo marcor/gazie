@@ -26,7 +26,32 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/header.php");
 
-function getPaymov($id_tes, $clfoco) { // restituisce l'id_rig se c'� un movimento di scadenzario
+$script_transl = HeadMain('', '', 'admin_movcon');
+
+// campi ammissibili per la ricerca
+$search_fields = [
+    'movimento'
+        => "{$gTables['tesmov']}.id_tes = %d",
+    'anno'
+        => "YEAR(datreg) = %d",
+    'causale'
+        => "caucon LIKE '%s%%'"
+];
+
+// creo l'array (header => campi) per l'ordinamento dei record
+$sortable_headers = array(
+    "N." => "id_tes",
+    $script_transl['date_reg'] => "datreg",
+    $script_transl['caucon'] => "caucon",
+    $script_transl['descri'] => "descri",
+    $script_transl['protoc'] => "",
+    $script_transl['numdoc'] => "",
+    $script_transl['amount'] => "",
+    $script_transl['source'] => "",
+    $script_transl['delete'] => ""
+);
+
+function getPaymov($id_tes, $clfoco) { // restituisce l'id_rig se c'è un movimento di scadenzario
     global $gTables;
     $rig_res = gaz_dbi_dyn_query('*', $gTables['rigmoc'], "id_tes = " . $id_tes . " AND codcon=" . $clfoco, 'id_rig ASC', 0, 1);
     $rig_r = gaz_dbi_fetch_array($rig_res);
@@ -74,140 +99,126 @@ function getDocRef($data) {
     }
     return $r;
 }
-
-if (isset($_GET['mov'])) {
-    if ($_GET['mov'] > 0) {
-        $numero = $_GET['mov'];
-        $where = $gTables['tesmov'] . ".id_tes =" . $numero;
-        $passo = 1;
-    } else {
-        $numero = '';
-    }
-}
-if (!isset($_GET['flag_order']) || !isset($_GET['field']) || $_GET['field'] == 2 || empty($_GET['field'])) {
-    $orderby = " id_tes desc";
-}
-
-$all = $where;
-
-
-if (isset($_GET['all'])) {
-    $_GET['datemi'] = "";
-    $_GET['datfat'] = "";
-    $where = $all;
-}
-
-if (isset($_GET['datemi'])) {
-    $_GET['datreg'] = $_GET['datemi'];
-	gaz_flt_var_assign('datreg', 'd');
-    $datemi = $_GET['datemi'];
-}
-
-if (isset($_GET['datfat'])) {
-    $_GET['caucon'] = $_GET['datfat'];
-	gaz_flt_var_assign('caucon', 'v');
-    $datfat = $_GET['datfat'];
-}
-
-$script_transl = HeadMain('', '', 'admin_movcon');
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
+
+<?php 
+$t = new TableSorter($gTables['tesmov'], $passo, ['id_tes' => 'desc']);
+$t -> output_navbar();
+?>
+
 <form method="GET">
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <tr>
             <td class="FacetFieldCaptionTD">
-                <input type="text" placeholder="Movimento" class="input-xs form-control" name="mov"
-                       value="<?php if (isset($numero)) echo $numero; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
+                <input type="text" placeholder="Movimento" class="input-xs form-control FacetInput" name="movimento"
+                       value="<?php if (isset($movimento)) echo $movimento; ?>" maxlength ="6" size="3" tabindex="1">
             </td>
             <td class="FacetFieldCaptionTD">
-                <?php // uso datemi per selezionare datreg
-				gaz_flt_disp_select("datemi", "YEAR(datreg) AS datemi", $gTables["tesmov"], $all, $orderby); ?>
+                <?php // uso "anno" per selezionare datreg
+                gaz_flt_disp_select("anno", "YEAR(datreg) AS anno", $gTables["tesmov"], "", "anno DESC"); ?>
             </td>
             <td align="right" class="FacetFieldCaptionTD">
-                <?php // uso datfat per selezionare caucon
-				gaz_flt_disp_select("datfat", "caucon AS datfat", $gTables["tesmov"], $all, $orderby); ?>
+                <?php // uso "causale" per selezionare caucon
+                gaz_flt_disp_select("causale", "caucon AS causale", $gTables["tesmov"], "caucon > ''", "causale ASC"); ?>
             </td>
             <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD">
-                <input type="submit" name="search" class="btn btn-xs btn-default" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+                <input type="submit" name="search" class="btn btn-xs btn-default" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="">
+                <?php $t->output_order_form(); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <input type="submit" name="all" class="btn btn-xs btn-default" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value = 1;">
+                <a class="btn btn-xs btn-default" href="?">Reset</a>
             </td>
         </tr>
-        <?php
-        $result = gaz_dbi_dyn_query("id_tes, datreg, clfoco, caucon, descri, protoc, numdoc, seziva, datdoc", $gTables['tesmov'], $where, $orderby, $limit, $passo);
-        $headers_tesmov = array(
-            "N." => "id_tes",
-            $script_transl['date_reg'] => "datreg",
-            $script_transl['caucon'] => "caucon",
-            $script_transl['descri'] => "descri",
-            $script_transl['protoc'] => "",
-            $script_transl['numdoc'] => "",
-            $script_transl['amount'] => "",
-            $script_transl['source'] => "",
-            $script_transl['delete'] => ""
-        );
-        $linkHeaders = new linkHeaders($headers_tesmov);
-        $linkHeaders->output();
-        $recordnav = new recordnav($gTables['tesmov'], $where, $limit, $passo);
-        $recordnav->output();
-        $anagrafica = new Anagrafica();
-        while ($a_row = gaz_dbi_fetch_array($result)) {
-            $paymov = false;
-            if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli'] or substr($a_row["clfoco"], 0, 3) == $admin_aziend['masfor']) {
-                if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli']) {
-                    $paymov = getPaymov($a_row["id_tes"], $a_row["clfoco"]);
-                }
-				$anagrafica = new Anagrafica();
-				$account = $anagrafica->getPartner($a_row["clfoco"]);
-				if ((!empty($account['descri']) || !empty($a_row['numdoc'])) && $a_row['caucon'] != 'APE' && $a_row['caucon'] != 'CHI'){
-					$a_row['descri'].=' ('.$account['descri'].')';
-				}
-            }
-            // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento 
-            $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $a_row["id_tes"], 'id_rig');
-            $tt = '<table><th colspan=3 >' . $a_row['descri'] . '</th>';
-            $tot = 0.00;
-            while ($rr = gaz_dbi_fetch_array($res_rig)) {
-                $account = $anagrafica->getPartner($rr["codcon"]);
-                $tt .= '<tr><td>' . htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
-                if ($rr['darave'] == 'D') {
-                    $tot += $rr['import'];
-                }
-            }
-            $tt .= '</table>';
-            // FINE creazione tabella per il tooltip
-
-            echo "<tr class=\"FacetDataTD\">";
-            echo "<td align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_movcon.php?id_tes=" . $a_row["id_tes"] . "&Update\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a> &nbsp</td>";
-            echo "<td align=\"center\">" . gaz_format_date($a_row["datreg"]) . " &nbsp;</td>";
-            echo '<td align="center"><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $a_row["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >' . $a_row["caucon"] . "</div></td>";
-            echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $a_row["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >' . $a_row["descri"] . '</div></td>';
-            if ($a_row["protoc"] > 0) {
-                echo "<td align=\"center\">" . $a_row["protoc"] . "/" . $a_row["seziva"] . "";
-                echo "</td>";
-            } else {
-                echo "<td></td>";
-            }
-            echo "<td align=\"center\">" . $a_row["numdoc"] . "</td>";
-            echo '<td align="right">' . gaz_format_number($tot) . '</td>';
-            echo "<td align=\"center\">";
-            $docref = getDocRef($a_row);
-            if (!empty($docref)) {
-                echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"" . $script_transl['sourcedoc'] . "\" href=\"$docref\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
-            } elseif ($paymov) {
-                echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"" . $script_transl['customer_receipt'] . "\" href=\"../vendit/print_customer_payment_receipt.php?id_rig=" . $paymov . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
-            }
-            echo "</td>";
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movcon.php?id_tes=" . $a_row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-            echo "</tr>\n";
+        <tr>
+<?php 
+            $result = gaz_dbi_dyn_query("id_tes, datreg, clfoco, caucon, descri, protoc, numdoc, seziva, datdoc", $gTables['tesmov'], $t->where, $t->orderby, $t->getOffset(), $t->getLimit());
+            $t -> output_headers(); 
+?>
+        </tr>
+<?php
+$anagrafica = new Anagrafica();
+while ($a_row = gaz_dbi_fetch_array($result)) {
+    $paymov = false;
+    if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli'] or substr($a_row["clfoco"], 0, 3) == $admin_aziend['masfor']) {
+        if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli']) {
+            $paymov = getPaymov($a_row["id_tes"], $a_row["clfoco"]);
         }
-        ?>
+        $anagrafica = new Anagrafica();
+        $account = $anagrafica->getPartner($a_row["clfoco"]);
+        if ((!empty($account['descri']) || !empty($a_row['numdoc'])) && $a_row['caucon'] != 'APE' && $a_row['caucon'] != 'CHI'){
+            $a_row['descri'].=' ('.$account['descri'].')';
+        }
+    }
+    // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento 
+    $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $a_row["id_tes"], 'id_rig');
+    $tt = '<table><th colspan=3 >' . $a_row['descri'] . '</th>';
+    $tot = 0.00;
+    while ($rr = gaz_dbi_fetch_array($res_rig)) {
+        $account = $anagrafica->getPartner($rr["codcon"]);
+        $tt .= '<tr><td>' . htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
+        if ($rr['darave'] == 'D') {
+            $tot += $rr['import'];
+        }
+    }
+    $tt .= '</table>';
+    // FINE creazione tabella per il tooltip
+
+    echo "<tr class=\"FacetDataTD\">";
+    echo "<td align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_movcon.php?id_tes=" . $a_row["id_tes"] . "&Update\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a> &nbsp</td>";
+    echo "<td align=\"center\">" . gaz_format_date($a_row["datreg"]) . " &nbsp;</td>";
+    echo '<td align="center"><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $a_row["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >' . $a_row["caucon"] . "</div></td>";
+    echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $a_row["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >' . $a_row["descri"] . '</div></td>';
+    if ($a_row["protoc"] > 0) {
+        echo "<td align=\"center\">" . $a_row["protoc"] . "/" . $a_row["seziva"] . "";
+        echo "</td>";
+    } else {
+        echo "<td></td>";
+    }
+    echo "<td align=\"center\">" . $a_row["numdoc"] . "</td>";
+    echo '<td align="right">' . gaz_format_number($tot) . '</td>';
+    echo "<td align=\"center\">";
+    $docref = getDocRef($a_row);
+    if (!empty($docref)) {
+        echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"" . $script_transl['sourcedoc'] . "\" href=\"$docref\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+    } elseif ($paymov) {
+        echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"" . $script_transl['customer_receipt'] . "\" href=\"../vendit/print_customer_payment_receipt.php?id_rig=" . $paymov . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
+    }
+    echo "</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movcon.php?id_tes=" . $a_row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "</tr>\n";
+}
+?>
     </table>
-    <?php
-    require("../../library/include/footer.php");
-    ?>
+</form>
+
+<script>
+$(document).ready(function(){
+    var selects = $("select");
+    // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
+    // (in questo modo i campi non usati possono essere esclusi)        
+    $("option", selects).filter(function(){ return this.value == "All"; }).val("");
+
+    // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
+    // l'azione non lancia un evento "submit" e non può essere intercettata.
+    // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
+    selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+    
+    // così ora possiamo intercettare tutti i submit
+    $("form").submit(function() {
+        $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+        return true; // ensure form still submits
+    });
+
+    // Un-disable form fields when page loads, in case they click back after submission
+    $( "form" ).find( ":input" ).prop( "disabled", false );
+});
+</script>
+
+<?php
+require("../../library/include/footer.php");
+?>
