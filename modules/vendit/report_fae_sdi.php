@@ -41,6 +41,29 @@ $senza_esito = 0;
 $mostra_intesta = 1;
 $mostra_intesta_riga = 1;
 
+@$id_record = $_GET['id_record'];
+
+if (isset($_POST['Submit_file'])) { // conferma invio upload file
+	if (!empty($_FILES)) { error_log(print_r($_FILES, true));
+		foreach($_FILES as $key => $file) {
+			$exp_key = explode('_', $key);
+			if ($exp_key[0] == 'p7mfile' && !empty($file['name'])) {
+				$p7mfile = $file;
+				$id_record = $exp_key[1];
+				break;
+			}
+		}
+		if (!empty($p7mfile) && !($p7mfile['type'] == "application/pkcs7-mime" || $p7mfile['type'] == "application/pkcs7" || $p7mfile['type'] == "text/xml")) {
+			$msg_err = 'Formato del file ' . print_r($p7mfile, true) . ' non valido';
+		} else {
+			if (move_uploaded_file($p7mfile['tmp_name'], '../../data/files/' . $admin_aziend['codice'] . '/' . $p7mfile['name'])) { // nessun errore
+				$msg_err = 'Caricamento del file riuscito!';
+			} else { // no upload
+				$msg_err = 'Caricamento del file non riuscito';
+			}
+		}
+	}
+}
 
 if (isset($_GET['all'])) {
 	$where = '';
@@ -48,7 +71,7 @@ if (isset($_GET['all'])) {
 	$form['ritorno'] = '';
 	$mostra_intesta = 1;
 	$mostra_intesta_riga = 1;
-} elseif (isset($_GET['id_record'])) {
+} elseif (!empty($id_record)) {
 	//da migliorare l'interazione
 	if (!empty($send_fae_zip_package['val']) && !empty($_GET['id_tes_ref']) && !empty($_GET['file_name'])) {
 		require('../../library/include/electronic_invoice.inc.php');
@@ -61,15 +84,15 @@ if (isset($_GET['all'])) {
 		$IdentificativoSdI = SendFatturaElettronica($file_url);
 		if (!empty($IdentificativoSdI)) {
 			if (is_array($IdentificativoSdI)) {
-				gaz_dbi_put_row($gTables['fae_flux'], "id", $_GET['id_record'], "flux_status", "@");
-				gaz_dbi_put_query($gTables['fae_flux'], "id = " . $_GET['id_record'], "id_SDI", $IdentificativoSdI[0]);
+				gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "flux_status", "@");
+				gaz_dbi_put_query($gTables['fae_flux'], "id = " . $id_record, "id_SDI", $IdentificativoSdI[0]);
 				header('Location: report_fae_sdi.php?post_xml_result=OK');
 			} else {
 				echo '<p>' . print_r($IdentificativoSdI, true) . '</p>';
 			}
 		}
 	} else {
-		gaz_dbi_put_row($gTables['fae_flux'], "id", $_GET['id_record'], "flux_status", "@");
+		gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "flux_status", "@");
 	}
 	$status = '';
 } else {
@@ -205,6 +228,10 @@ if (empty($yes_mail) && empty($yes_send)) {
 	echo '<p align="center"><a href="check_fae_sdi.php">' . $script_transl['checkfae'] . '</a></p>';
 }
 
+if (!empty($msg_err)) {
+	echo "<p class=\"bg-danger text-center\">" . $msg_err . "</p>";
+}
+
 $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
@@ -238,7 +265,8 @@ $recordnav -> output();
 
 <select name="status">
 	<option value=""></option>
-	<option value="#" <?php if($status =="@") echo "selected";?> ># - Non inviata</option>
+	<option value="##" <?php if($status =="##") echo "selected";?> >## - Non firmata</option>
+	<option value="#" <?php if($status =="#") echo "selected";?> ># - Non inviata</option>
 	<option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviata</option>
 	<option value="@@" <?php if($status =="@@") echo "selected";?> >@@- Inviata sistema esterno</option>
 	<option value="NS" <?php if($status =="NS") echo "selected";?> >NS - Notifica scarto</option>
@@ -346,22 +374,19 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } elseif ($r['flux_status'] == 'MC') {
       $class = 'FacetDataTD';
       $class2 = 'FacetDataTDred';
-    } elseif ($r['flux_status'] == '@') {
+    } elseif ($r['flux_status'] == '@' || $r['flux_status'] == '@@') {
       $class ='FacetDataTD';
       $class1 = '';
-    } elseif ($r['flux_status'] == '@@') {
-      $class ='FacetDataTD';
-      $class1 = '';
-    } elseif ($r['flux_status'] == '#') {
+    } elseif ($r['flux_status'] == '##' || $r['flux_status'] == '#') {
       $class ='FacetDataTD';
       $class1 = '';
     }
     
     
-    if ($r['progr_ret'] == '000' and $mostra_intesta_riga == 1) {
+    if ($r['progr_ret'] == '000' && $mostra_intesta_riga == 1) {
        $class='FacetDataTD';
        $class1='';
-    } elseif ($r['progr_ret'] == '000' and $mostra_intesta_riga == 0) {
+    } elseif ($r['progr_ret'] == '000' && $mostra_intesta_riga == 0) {
        $class='FacetDataTD';
        $class1='';
     } 
@@ -396,7 +421,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
     
     //aggiungere una icona invece del cancelletto
 	//TO-DO: COMBINARE GESTORE AUTOMATICO DELLE NOTIFICHE CON NOTIFICAZIONE MANUALE FORZATA DELLE FATTURE
-    if ($r['flux_status'] == "#") {
+    if ($r['flux_status'] == "##") {
+        echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<form method=\"POST\"  enctype=\"multipart/form-data\"><input type=\"file\" accept=\".xml,.p7m\" name=\"p7mfile_".$r['id']."\" />" . "<input name=\"Submit_file\" type=\"submit\" class=\"btn btn-warning\" value=\"Invia fattura firmata\" /></form>" . "</td>";
+    } elseif ($r['flux_status'] == "#") {
         $modulo_fae_report="report_fae_sdi.php?id_record=".$r['id']."&amp;id_tes_ref=".$r['id_tes_ref']."&amp;file_name=".$r['filename_ori'];
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$modulo_fae_report."\">#</a>" . "</td>";
     } elseif ($r['flux_status'] == "@") {
