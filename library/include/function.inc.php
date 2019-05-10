@@ -2174,6 +2174,7 @@ class TableSorter {
                 if (isset($_GET[$field]))  # escludiamo dall'url i valori default applicati
                     $url_search_query_parts[] = "$field=" . urlencode($$field);
                 $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
+                $$field = htmlspecialchars($$field, ENT_QUOTES);
             }
         }
         $this->where = implode(" AND ", $where_parts);
