@@ -1,0 +1,18 @@
+Titolo:
+Compos sui.
+
+Presentazione:
+Il rilascio è motivato principalmente dalla necessità di permettervi di superare l'errore che si aveva in fase di generazione del file XML della comunicazione delle liquidazioni periodiche dell'IVA per il primo trimestre 2019.
+Ma questa versione contiene altre migliorie, voglio evidenziare il lavoro di Marco Rimoldi che introduce un nuovo metodo per l'ordinamento delle tabelle e che permette di scegliere più criteri sulle colonne, per il momento è stato applicato solo alla lista dei movimenti di magazzino e a quella dei documenti di acquisto, in futuro verrà usato anche sulle altre.
+Preciso che questa nuova versione non apporta modifiche alla struttura della base dati, pertanto non troverete, ne vi verrà chiesto, di fare l'upgrade dello stesso.
+
+Ecco, comunque, il solito elenco dei cambiamenti:
+- corretto il controllo sula costante "debug_active" e rimosso int per versioni php < 7 (Daniele Frulla)
+- corretto campo "Denominazione" 3.1.2.1 in xml dati fatture e refactoring (Marco Rimoldi) 
+- visualizzazione errore su check PEC e piccola guida su Wiki per inserimento campi configurazione Fattura Elettronica (Daniele Frulla)
+- nella funzione getLastPack() restituiva un pacchetto senza valore - Eliminato IS NOT NULL (Daniele Frulla)
+- aggiornate le librerie phpmailer e filemanager (Marco Rimoldi)
+- su diversi report uova classe TableSorter, per ordinamento e paginazione di tabelle (Marco Rimoldi)
+- aggiunto file dell'header per le comunicazioni delle liquidazioni IVA dell'anno 2019 (Antonio de Vincentiis)
+
+Antonio de Vincentiis, Montesilvano, 10 maggio 2019
