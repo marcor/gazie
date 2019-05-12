@@ -35,7 +35,7 @@ if (!isset($_POST['hidden_req'])) {
     $form['search']['company_id'] = '';
 } else {
     if (isset($_POST['logout'])) {
-        header("Location: logout.php");
+        redirect("logout.php");
         exit;
     }
     $form['hidden_req'] = $_POST['hidden_req'];
@@ -93,7 +93,7 @@ $checkUpd = new CheckDbAlign;
 $data = $checkUpd->TestDbAlign();
 if ($data) {
     // induco l'utente ad aggiornare il db
-    header("Location: ../../setup/install/install.php?tp=" . $table_prefix);
+    redirect("../../setup/install/install.php?tp=" . $table_prefix);
     exit;
 }
 $lastBackup = $checkUpd->testDbBackup();
@@ -882,7 +882,6 @@ if ($t > 4 && $t <= 13) {
     </div>
 </form>
 <?php
-require("../../library/include/footer.php");
 
 /* questa parte sarebbe da mettere nel footer specifico del tema (library/theme/nome_tema/footer.php)
  * in ognuno dei quali mettere una classe contenente, oltre al costrutto, anche le varie funzioni
@@ -996,6 +995,8 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     //*- DC - 07/02/2018 - nuove funzioni per gestione posizionmento su scadenzari
     </script>
 
-    <?php
+<?php
+	
+require("../../library/include/footer.php");
 }
 ?>

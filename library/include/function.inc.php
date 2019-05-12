@@ -2361,18 +2361,34 @@ class TableSorter {
     }
 }
 
+function redirect($filename) {
+	if (!headers_sent()) {
+        	header("Location: ".$filename);
+        	exit;
+	} else {
+		echo '<script type="text/javascript">';
+	        echo 'window.location.href="'.$filename.'";';
+      		echo '</script>';
+       		echo '<noscript>';
+        	echo '<meta http-equiv="refresh" content="0;url='.$filename.'" />';
+		echo '</noscript>';
+		exit;
+	
+	}
+}
+
+
 function checkAdmin($Livaut = 0) {
     global $gTables, $module, $table_prefix;
     $_SESSION["Abilit"] = false;
     // Se utente non � loggato lo mandiamo alla pagina di login
     if (!isset($_SESSION["user_name"])) {
-        header("Location: ../root/login_user.php?tp=" . $table_prefix);
-        exit;
+	redirect( "../root/login_user.php?tp=" . $table_prefix);
     }
     if (checkAccessRights($_SESSION["user_name"], $module, $_SESSION['company_id']) == 0) {
         // Se utente non ha il diritto di accedere al modulo, lo mostriamo
         // il messaggio di errore, ma senza obligarlo di fare un altro (inutile) login
-        header("Location: ../root/access_error.php?module=" . $module);
+        redirect("../root/access_error.php?module=" . $module);
         exit;
     }
     $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
@@ -2388,7 +2404,7 @@ function checkAdmin($Livaut = 0) {
         $currency = gaz_dbi_get_row($gTables['currencies'], "id", $admin_aziend['id_currency']);
     }
     if ($Livaut > $admin_aziend["Abilit"]) {
-        header("Location: ../root/login_user.php?tp=" . $table_prefix);
+        redirect("../root/login_user.php?tp=" . $table_prefix);
         exit;
     } else {
         $_SESSION["Abilit"] = true;

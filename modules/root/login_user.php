@@ -44,7 +44,7 @@ $login = new Login();
 if ($login->isUserLoggedIn() == true) {
     // the user is logged in. you can do whatever you want here.
     // for demonstration purposes, we simply show the "you are logged in" view.
-    header("Location: admin.php");
+    redirect("admin.php");
     exit;
 } else {
     // the user is not logged in. you can do whatever you want here.
