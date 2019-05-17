@@ -33,15 +33,19 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'insert';
 }
 
-function createRowsAndErrors($anno, $periodicita, $trimestre_semestre,$esterometro=false) {
+function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$esterometro=false) {
     global $gTables, $admin_aziend, $script_transl;
     $nuw = new check_VATno_TAXcode();
-    if ($periodicita == 'T') { // trimestrale
-        if ($trimestre_semestre == 1) {
+    if ($periodicita == 'M') { // mensile
+        $date_ini = new DateTime($anno . '-'.$mese_trimestre_semestre.'-01');
+        $di = $date_ini->format('Y-m-d');
+        $df = $date_ini->format('Y-m-t');
+    } elseif ($periodicita == 'T') { // trimestrale
+        if ($mese_trimestre_semestre == 1) {
             $date_ini = new DateTime($anno . '-01-01');
-        } elseif ($trimestre_semestre == 2) {
+        } elseif ($mese_trimestre_semestre == 2) {
             $date_ini = new DateTime($anno . '-04-01');
-        } elseif ($trimestre_semestre == 3) {
+        } elseif ($mese_trimestre_semestre == 3) {
             $date_ini = new DateTime($anno . '-07-01');
         } else {
             $date_ini = new DateTime($anno . '-10-01');
@@ -50,7 +54,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre,$esteromet
         $date_ini->modify('+2 month');
         $df = $date_ini->format('Y-m-t');
     } else { // semestrale
-        if ($trimestre_semestre == 1) {
+        if ($mese_trimestre_semestre == 1) {
             $date_ini = new DateTime($anno . '-01-01');
         } else {
             $date_ini = new DateTime($anno . '-07-01');
@@ -444,7 +448,7 @@ if (!isset($_POST['ritorno'])) {
             $y--;
             $m = 4;
         }
-        $trimestre_semestre = $y . $m;
+        $mese_trimestre_semestre = $y . $m;
         $form['trimestre_semestre'] = $m;
         $form['anno'] = $y;
         $form['periodicita'] = 'T';
@@ -456,7 +460,7 @@ if (!isset($_POST['ritorno'])) {
         } else { // non ho mai fatto liquidazioni, propongo la prima da fare
             $ultimo_trimestre_comunicato = 0;
         }
-        if ($ultimo_trimestre_comunicato >= $trimestre_semestre) {
+        if ($ultimo_trimestre_comunicato >= $mese_trimestre_semestre) {
             $msg['err'][] = "eseguita";
         } else {
             // propongo una comunicazione in base ai dati che trovo sui movimenti IVA

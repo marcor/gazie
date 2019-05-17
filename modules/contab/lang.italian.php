@@ -459,10 +459,10 @@ $strScript = array("select_liqiva.php" =>
         'partita_iva' => 'Partita IVA',
         'anno_imposta' => 'Anno di imposta',
         'periodicita' => 'Periodicità',
-        'periodicita_value' => array('T' => 'Trimestrale', 'S' => 'Semestrale'),
+        'periodicita_value' => array('M'=>'Mensile','T' => 'Trimestrale', 'S' => 'Semestrale'),
         'esterometro' => 'Solo stranieri (Esterometro)',
         'trimestre_semestre' => 'Periodo di riferimento',
-        'trimestre_semestre_value' => array('T'=>array(1 => 'Primo (gennaio-marzo)', 2 => 'Secondo (aprile-giugno)', 3 => 'Terzo (luglio-settembre)', 4 => 'Quarto (ottobre-dicembre)'),'S'=>array(1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)')),
+        'trimestre_semestre_value' => array('M'=>array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>">Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre"),'T'=>array(1 => 'Primo (gennaio-marzo)', 2 => 'Secondo (aprile-giugno)', 3 => 'Terzo (luglio-settembre)', 4 => 'Quarto (ottobre-dicembre)'),'S'=>array(1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)')),
         'CessionarioCommittente' => 'Cessionario Committente',
         'CedentePrestatore' => 'Cedente Prestatore',
         'TipoDocumento' => 'Tipo Documento',
@@ -498,9 +498,9 @@ $strScript = array("select_liqiva.php" =>
     array('title' => "Lista delle comunicazioni periodiche dei dati fatture",
         'anno' => 'Anno',
         'periodicita' => 'Periodicità',
-        'periodicita_value' => array('T' => 'Trimestrale', 'S' => 'Semestrale'),
+        'periodicita_value' => array('M'=>'Mensile','T' => 'Trimestrale', 'S' => 'Semestrale'),
         'trimestre_semestre' => 'Periodo',
-        'trimestre_semestre_value' => array('T'=>array(1 => 'Primo (gennaio-marzo)', 2 => 'Secondo (aprile-giugno)', 3 => 'Terzo (luglio-settembre)', 4 => 'Quarto (ottobre-dicembre)'),'S'=>array(1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)'))
+        'trimestre_semestre_value' => array('M'=>array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>">Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre"),'T'=>array(1 => 'Primo (gennaio-marzo)', 2 => 'Secondo (aprile-giugno)', 3 => 'Terzo (luglio-settembre)', 4 => 'Quarto (ottobre-dicembre)'),'S'=>array(1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)'))
     ),
     "comunicazioni_doc.php" =>
     array('title' => "Comunicazioni dati",
