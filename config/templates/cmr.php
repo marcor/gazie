@@ -774,7 +774,6 @@ class Cmr extends Template {
      
 
 
-   
 
 
       
@@ -793,6 +792,7 @@ class Cmr extends Template {
       $ox = 16;
       $oy = 54;
 
+      // campo 2
       $this->SetPos($ox, $oy);
       $this->Cell(86, 0, $this->cliente1.' '.$this->cliente2, 0, 1, 'L', 0, '', 1);
       $this->SetX($ox);
@@ -802,21 +802,28 @@ class Cmr extends Template {
       $this->SetX($ox);
       $this->Cell(86, 0, $this->cliente4b, 0, 1, 'L', 0, '', 1);
 
+      // campo 3
       $this->SetY(82);
+      $this->SetX($ox);
+      if ( $this->destinazione!="" ) {
+        $this->MultiCell(70, 0, $this->destinazione, 0, 'J', 1, 2, '' ,'', true);
+      } else {
+        $this->Cell(70, 0, $this->cliente3.' - '.$this->cliente4 , 0, 1, 'L', 0, '', 1);
+        $this->SetX($ox);
+        $this->Cell(70, 0, $this->cliente4b , 0, 1, 'L', 0, '', 1);
+      }
+      $this->SetX($ox);
+      
+      // campo 4
+      $this->SetY(99);
       $this->SetX($ox);
       $this->Cell(86, 0, $this->intesta2, 0, 1, 'L', 0, '', 1);
       $this->SetX($ox);
       $this->Cell(86, 0, 'Italy', 0, 1, 'L', 0, '', 1);
-      
-      $this->SetY(99);
-      $this->SetX($ox);
-      $this->Cell(70, 0, $this->cliente3.' - '.$this->cliente4 , 0, 1, 'L', 0, '', 1);
-      $this->SetX($ox);
-      $this->Cell(70, 0, $this->cliente4b , 0, 1, 'L', 0, '', 1);
-
       $ox = 125;
       $oy = 58;
 
+      // campo 16
       $this->SetPos($ox,$oy);
       $this->Cell(86,0,$this->docVars->vettor['ragione_sociale'],0,1,'L',0,'',1);
       $this->SetPos($ox,$oy+5);
@@ -827,10 +834,12 @@ class Cmr extends Template {
       $ox = 144;
       $oy = 24;
 
+      // numero documento
       $this->SetFont('helvetica', '', 24);
       $this->SetPos($ox,$oy);
       $this->Cell(38, 0, $this->docVars->tesdoc['numdoc'].'/'.substr($this->tesdoc['datemi'],0,4), 0, 1, 'R', 0, '', 1);
 
+      // righi dei prodotti
       $ox = 16;
       $oy = 134;
       $num = 1;
@@ -850,11 +859,13 @@ class Cmr extends Template {
         }
       }
 
+      // campo 11
       $ox = 150;
       $oy = 136;
       $this->SetPos($ox,$oy);
       $this->Cell(15, 0, gaz_format_number($this->tesdoc['gross_weight']), 0, 1, 'R', 0, '', 1);
 
+      // campo 12
       $ox = 172;
       $oy = 136;
       $this->SetPos($ox,$oy);
@@ -884,7 +895,7 @@ class Cmr extends Template {
         $this->SetAutoPageBreak(false, 0);
         // set background image
         //$img_file = '../../config/templates/cmr.png';
-        $img_file = '../../config/templates.felis/cmr.png';
+        //$img_file = '../../config/templates.felis/cmr.png';
         $this->Image($img_file, 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0);
         // restore auto-page-break status
         $this->SetAutoPageBreak($auto_page_break, $bMargin);
