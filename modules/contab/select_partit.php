@@ -341,6 +341,8 @@ $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $f
 
 if (isset($_POST['preview']) and $msg == '') {
     $span = 6;
+    $totdare = 0.00;
+    $totavere = 0.00;
     $saldo = 0.00;
     $m = getMovements($form['account_ini'], $form['account_fin'], $date_ini, $date_fin);
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
@@ -365,10 +367,12 @@ if (isset($_POST['preview']) and $msg == '') {
             $linkHeaders->output();
             echo "</tr>";
             foreach($m as $key=>$mv){
+                $totdare+= $mv['dare'];
+                $totavere+= $mv['avere'];
                 $saldo += $mv['dare'];
                 $saldo -= $mv['avere'];
                 echo "<tr class=\"FacetDataTD\"><td>" . gaz_format_date($mv["datreg"]) . " &nbsp;</td>";
-                echo "<td align=\"center\"><a href=\"admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv["id_tes"] . "</a> &nbsp</td>";
+                echo "<td align=\"center\"><a target=\"_blank\" href=\"admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv["id_tes"] . "</a> &nbsp</td>";
                 echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $mv["id_tes"] . '" data-title="' . str_replace("\"", "'", $mv["tt"]) . '" >' . $mv["tesdes"] . '</div></td>';
                 if (!empty($mv['numdoc'])) {
                     echo "<td align=\"center\">" . $mv["protoc"] . " &nbsp;</td>";
@@ -382,6 +386,12 @@ if (isset($_POST['preview']) and $msg == '') {
                 echo "<td align=\"right\">" . gaz_format_number($saldo) . " &nbsp;</td></tr>";
             }
         }
+
+		echo "<tr class=\"FacetDataTD\"><td colspan=\"6\" align=\"right\"></td>";
+		echo "<td align=\"right\">" . gaz_format_number($totdare) . " &nbsp;</td>";
+		echo "<td align=\"right\">" . gaz_format_number($totavere) . " &nbsp;</td>";
+		echo "<td align=\"center\">" . "TOTALI" . " &nbsp;</td></tr>";
+
         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
         echo '<td colspan="' . $span . '" align="right"><input type="submit" name="print" value="';
         echo $script_transl['print'];

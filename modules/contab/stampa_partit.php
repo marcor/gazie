@@ -95,12 +95,16 @@ $pdf->SetTopMargin(51);
 $pdf->SetFooterMargin(22);
 $config = new Config;
 $ctrlConto = '';
+$totdare = 0.00;
+$totavere = 0.00;
 $movSaldo = 0.00;
 while ($row = gaz_dbi_fetch_array($result)) {
       $datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
       $datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
       $pdf->setRiporti($aRiportare);
       if ($ctrlConto != $row['codcon']) {
+         $totdare = 0.00;
+         $totavere = 0.00;
          $movSaldo = 0.00;
          if (!empty($ctrlConto)) {
                    $pdf->SetFont('helvetica','B',7);
@@ -118,10 +122,12 @@ while ($row = gaz_dbi_fetch_array($result)) {
          $pdf->AddPage('P',$config->getValue('page_format'));
       }
       if ($row['darave'] == 'D'){
+        $totdare+= $row['import'];
         $movSaldo += $row['import'];
         $dare = gaz_format_number($row['import']);
         $avere = '';
      } else {
+        $totavere+= $row['import'];
         $movSaldo -= $row['import'];
         $avere = gaz_format_number($row['import']);
         $dare = '';
@@ -147,6 +153,12 @@ while ($row = gaz_dbi_fetch_array($result)) {
       $pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
       $ctrlConto = $row['codcon'];
 }
+
+$pdf->Cell(126,4,'',1,0,'C');
+$pdf->Cell(20,4,$totdare,1,0,'R');
+$pdf->Cell(20,4,$totavere,1,0,'R');
+$pdf->Cell(20,4,'TOTALI',1,1,'C');
+
 $pdf->SetFont('helvetica','B',8);
 $pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO al '.$descrDatafin.' : ',1,0,'R');
 $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
