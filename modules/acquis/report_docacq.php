@@ -183,7 +183,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
     if (empty($row["fattura_elettronica_original_name"])) {
         print '<td>'.$tipodoc."</td>\n";
     } else {
-        print '<td><a class="btn btn-xs btn-default btn-xml" target="_blank" href="view_fae.php?id_tes=' . $row["id_tes"] . '">'.$tipodoc.' '.$row["fattura_elettronica_original_name"]."</a></td>";
+        print '<td>';
+        print '<a class="btn btn-xs btn-default btn-xml" target="_blank" href="view_fae.php?id_tes=' . $row["id_tes"] . '">'.$tipodoc.' '.$row["fattura_elettronica_original_name"] . '</a>';
+        print '<a class="btn btn-xs btn-default" href="download_fattura_elettronica.php?id='.$row["id_tes"].'"><i class="glyphicon glyphicon-download"></i></a>';
+        print '</td>';
     }
     echo "<td>" . $row["numfat"] . " &nbsp;</td>";
     echo "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
