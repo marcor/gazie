@@ -172,9 +172,6 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 $round_stamp = 0;
                 $taxstamp = 0;
                 $virtual_taxstamp = 0;
-                /*
-                  IN modules/vendit/lib.function.php IL METODO contractCalc NON CALCOLA total_exc_with_duty E AVVIENE COME ANOMALIA CHE VIENE SEMPRE APPLICATO IL BOLLO
-                 */
                 if (isset($calc->total_exc_with_duty) && $calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $admin_aziend['virtual_taxstamp'] != '0') {
                     $taxstamp = $admin_aziend['taxstamp'];
                     $virtual_taxstamp = $admin_aziend['virtual_taxstamp'];

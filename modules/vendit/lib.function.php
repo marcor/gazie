@@ -178,7 +178,7 @@ class venditCalc extends Compute {
          }
          $this->contract_castel[$row['vat_code']]['impcast']+=$r_val;
       }
-      $this->add_value_to_VAT_castle($this->contract_castel, 444, $admin_aziend['taxstamp_vat']);
+      $this->add_value_to_VAT_castle($this->contract_castel, $admin_aziend['taxstamp'], $admin_aziend['taxstamp_vat']);
    }
 
    function computeRounTo($rows, $body_discount, $down = false, $decimal = 5) {
