@@ -91,6 +91,8 @@ if (isset($_GET['all'])) {
 				echo '<p>' . print_r($IdentificativoSdI, true) . '</p>';
 			}
 		}
+	} else if (!empty($p7mfile)) {
+		gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "flux_status", "#");
 	} else {
 		gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "flux_status", "@");
 	}
@@ -265,8 +267,8 @@ $recordnav -> output();
 
 <select name="status">
 	<option value=""></option>
-	<option value="##" <?php if($status =="##") echo "selected";?> >## - Non firmata</option>
-	<option value="#" <?php if($status =="#") echo "selected";?> ># - Non inviata</option>
+	<option value="##" <?php if($status =="##") echo "selected";?> >## - Non ancora firmata</option>
+	<option value="#" <?php if($status =="#") echo "selected";?> ># - Non ancora inviata</option>
 	<option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviata</option>
 	<option value="@@" <?php if($status =="@@") echo "selected";?> >@@- Inviata sistema esterno</option>
 	<option value="NS" <?php if($status =="NS") echo "selected";?> >NS - Notifica scarto</option>
@@ -422,7 +424,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     //aggiungere una icona invece del cancelletto
 	//TO-DO: COMBINARE GESTORE AUTOMATICO DELLE NOTIFICHE CON NOTIFICAZIONE MANUALE FORZATA DELLE FATTURE
     if ($r['flux_status'] == "##") {
-        echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<form method=\"POST\"  enctype=\"multipart/form-data\"><input type=\"file\" accept=\".xml,.p7m\" name=\"p7mfile_".$r['id']."\" />" . "<input name=\"Submit_file\" type=\"submit\" class=\"btn btn-warning\" value=\"Invia fattura firmata\" /></form>" . "</td>";
+        echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<form method=\"POST\"  enctype=\"multipart/form-data\"><input type=\"file\" accept=\".xml,.p7m\" name=\"p7mfile_".$r['id']."\" />" . "<input name=\"Submit_file\" type=\"submit\" class=\"btn btn-warning\" value=\"Carica fattura firmata\" /></form>" . "</td>";
     } elseif ($r['flux_status'] == "#") {
         $modulo_fae_report="report_fae_sdi.php?id_record=".$r['id']."&amp;id_tes_ref=".$r['id_tes_ref']."&amp;file_name=".$r['filename_ori'];
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$modulo_fae_report."\">#</a>" . "</td>";
