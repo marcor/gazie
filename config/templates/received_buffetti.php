@@ -254,22 +254,23 @@ class Received extends Template_2xA5
           $this->Cell(40,4,'','LBR');
         }
         */
-        $this->SetY(170);
-		$this->Setx(3);
+        $this->SetY(172);
+		$this->Setx(0);
 		$this->SetFont('helvetica', '', 12);
         foreach ($this->docVars->cast as $key => $value) {
+			$this->Setx(0);
                 if ($this->tesdoc['id_tes'] > 0) {
                    
                    $this->Cell(30,4, gaz_format_number($value['impcast']).' ', 0, 0, 'R',0,'',1);
 				   $this->Cell(2);
-                   $this->Cell(8,4, intval($value['periva']),0,0,'C',0,'',1);
+                   $this->Cell(8,4, intval($value['periva']),0,0,'R',0,'',1);
 				   $this->Cell(2);
                    $this->Cell(22,4, gaz_format_number($value['ivacast']).' ',0,0,'R',0,'',1);
 				   $this->Cell(44);
-                   $this->Cell(40,4,'',0);
+                   $this->Cell(45,4,'',0);
                    $this->Cell(30,4, gaz_format_number($value['impcast']).' ', 0, 0, 'R',0,'',1);
 				   $this->Cell(2);
-                   $this->Cell(8,4, intval($value['periva']),0,0,'C',0,'',1);
+                   $this->Cell(8,4, intval($value['periva']),0,0,'R',0,'',1);
 				   $this->Cell(2);
                    $this->Cell(22,4, gaz_format_number($value['ivacast']).' ',0,1,'R',0,'',1);
                 } else {
@@ -341,7 +342,7 @@ class Received extends Template_2xA5
         } else {
            $this->Cell(37, 5,'','LBR');
         }
-        $this->SetY(180);
+        $this->SetY(181);
         $this->Cell(103,9,'',0);
         $totale = $totimpfat + $totivafat + $impbol+ $taxstamp;
         if ($this->tesdoc['id_tes'] > 0) {

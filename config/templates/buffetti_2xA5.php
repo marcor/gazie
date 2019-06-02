@@ -83,7 +83,7 @@ class Template_2xA5 extends FPDI {
     function Header() {
             $this->SetFillColor(hexdec(substr($this->colore, 0, 2)), hexdec(substr($this->colore, 2, 2)), hexdec(substr($this->colore, 4, 2)));
 			// INTESTAZIONE 1
-			$this->sety(10);
+			$this->sety(7);
             $this->SetFont('times', 'B', 11);
             $this->Cell(80, 6, $this->intesta1, 0, 0, 'L');
 			$this->Cell(70);
@@ -99,8 +99,8 @@ class Template_2xA5 extends FPDI {
 			
 			$y = $this->gety();
 			$this->SetFont('helvetica', '', 12);
-			$this->multiCell(8, 5, 'XX', 0, 'L', 0, 0,91,7);
-			$this->multiCell(8, 5, 'XX', 0, 'L', 0, 1,241,7);
+			$this->multiCell(8, 5, 'XX', 0, 'L', 0, 0,89,5);
+			$this->multiCell(8, 5, 'XX', 0, 'L', 0, 1,245,5);
 			$this->multiCell(10, 5, $this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'], 0, 'L', 0, 0,115,24);
 			$this->multiCell(10, 5, $this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'], 0, 'L', 0, 1,265,24);
 			$this->SetFont('helvetica', '', 10);
