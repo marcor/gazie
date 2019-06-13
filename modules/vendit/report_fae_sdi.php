@@ -92,7 +92,22 @@ if (isset($_GET['all'])) {
 			}
 		}
 	} else if (!empty($p7mfile)) {
+		gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "filename_ori", $p7mfile['name']);
+		require('../../library/include/electronic_invoice.inc.php');
+		require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
+		$file_path = '../../data/files/' . $admin_aziend['codice'] . '/';
+		$file_url = $file_path . $p7mfile['name'];
 		gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "flux_status", "#");
+		$IdentificativoSdI = SendFatturaElettronica($file_url);
+		if (!empty($IdentificativoSdI)) {
+			if (is_array($IdentificativoSdI)) {
+				gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "flux_status", "@");
+				gaz_dbi_put_query($gTables['fae_flux'], "id = " . $id_record, "id_SDI", $IdentificativoSdI[0]);
+				header('Location: report_fae_sdi.php?post_xml_result=OK');
+			} else {
+				echo '<p>' . print_r($IdentificativoSdI, true) . '</p>';
+			}
+		}
 	} else {
 		gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "flux_status", "@");
 	}
