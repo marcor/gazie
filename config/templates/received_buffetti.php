@@ -92,6 +92,8 @@ class Received extends Template_2xA5
     {
         $this->StartPageGroup();
         $this->newPage();
+		// set auto page breaks
+		$this->SetAutoPageBreak(true, 10);
     }
 
     function compose()
@@ -342,7 +344,7 @@ class Received extends Template_2xA5
         } else {
            $this->Cell(37, 5,'','LBR');
         }
-        $this->SetY(181);
+        $this->SetY(184);
         $this->Cell(103,9,'',0);
         $totale = $totimpfat + $totivafat + $impbol+ $taxstamp;
         if ($this->tesdoc['id_tes'] > 0) {
@@ -351,7 +353,7 @@ class Received extends Template_2xA5
         } else {
            $this->Cell(33,9,'',0,0);
         }
-		$this->Cell(15);
+		$this->Cell(19);
         $this->Cell(100,9,'',0);
         if ($this->tesdoc['id_tes'] > 0) {
             $this->SetFont('helvetica','B',14);

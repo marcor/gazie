@@ -183,10 +183,10 @@ class Template_2xA5 extends FPDI {
 			
             $this->SetFont('helvetica', '', 15);
             
-            $this->Cell(130, 0, 'Spett.le ' . $this->cliente1 ." ". $this->cliente2, 0, 0, 'L', 0, '', 1);
+            $this->Cell(130, 0, 'Egr. ' . $this->cliente1 ." ". $this->cliente2, 0, 0, 'L', 0, '', 1);
 			$this->Cell(20);
             
-            $this->Cell(130, 0, 'Spett.le ' .$this->cliente1 ." ". $this->cliente2, 0, 1, 'L', 0, '', 1);
+            $this->Cell(130, 0, 'Egr. ' .$this->cliente1 ." ". $this->cliente2, 0, 1, 'L', 0, '', 1);
             
            
            
