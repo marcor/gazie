@@ -165,6 +165,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $tipodoc = "Fattura";
         $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
         $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+    } elseif ($row["tipdoc"] == 'AFD') {
+        $tipodoc = "Nota Debito";
+        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
+        $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
     } elseif ($row["tipdoc"] == 'AFC') {
         $tipodoc = "Nota Credito";
         $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];

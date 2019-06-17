@@ -1600,7 +1600,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                         </div>
                     </div>
 <?php		break;
-			case 'AFA': case 'AFC': case 'AFT': ?>
+			case 'AFA': case 'AFC': case 'AFT': case 'AFD': ?>
                     <div class="form-group col-md-6 col-lg-3 nopadding">
                         <label for="numdoc" class="col-form-label"><?php echo $script_transl['numfat']; ?></label>
                         <div>
