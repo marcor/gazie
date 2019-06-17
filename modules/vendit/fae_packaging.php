@@ -99,7 +99,7 @@ function getFAEunpacked($vat_register = '___', $vat_section = 1, $date = false, 
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
              ON customer.id_anagra=anagraf.id';
-    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND tipdoc LIKE '$vat_register" . "__' $d $p";
+    $where = "LENGTH(fe_cod_univoco)<>6 AND (fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND tipdoc LIKE '$vat_register" . "__' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
@@ -310,7 +310,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $form['this_date_Y'] = date("Y");
             $form['this_date_M'] = date("m");
             $form['this_date_D'] = date("d");
-        }      
+        }
         $form['proini'] = $extreme['ini']['proini'];
         $form['profin'] = $extreme['fin']['profin'];
         $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
