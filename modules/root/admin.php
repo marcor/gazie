@@ -996,7 +996,6 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     </script>
 
 <?php
-	
-require("../../library/include/footer.php");
 }
+require("../../library/include/footer.php");
 ?>
