@@ -197,48 +197,7 @@ function confirTutti(link){
    $("#dialog2" ).dialog( "open" );
 }
 
-
-
 </script>';
-switch ($admin_aziend['fatimm']) {
-    case "1":
-        $sezfatimm = 1;
-        break;
-    case "2":
-        $sezfatimm = 2;
-        break;
-    case "3":
-        $sezfatimm = 3;
-        break;
-    case "4":
-        $sezfatimm = 4;
-        break;
-    case "5":
-        $sezfatimm = 5;
-        break;
-    case "6":
-        $sezfatimm = 6;
-        break;
-    case "7":
-        $sezfatimm = 7;
-        break;
-    case "8":
-        $sezfatimm = 8;
-        break;
-    case "9":
-        $sezfatimm = 9;
-        break;
-    case "R":
-        $sezfatimm = $seziva;
-        break;
-    case "U":
-        $rs_ultimo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "datemi LIKE '$anno%' AND tipdoc = 'FAI'", "datfat desc", 0, 1);
-        $ultimo = gaz_dbi_fetch_array($rs_ultimo);
-        $sezfatimm = $ultimo['seziva'];
-        break;
-    default:
-        $sezfatimm = $seziva;
-}
 ?>
 <form method="GET" >
     <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
