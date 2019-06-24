@@ -494,7 +494,8 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		'RegolamentoPrivacy'=>'privacy_regol',
         'DDT' => 'ddt',
         'Etichette' => 'etichette',
-        'CMR' => 'cmr'
+        'CMR' => 'cmr',
+		'Ticket'=>'ticket'
     );
 	// Antonio Germani - seleziono quale template utilizzare per le ricevute fiscali in base alla configurazione azienda
 	if ($templateName=='Received'){

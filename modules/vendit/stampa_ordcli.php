@@ -36,11 +36,15 @@ if ($stato AND $stato['country'] !== "IT"){
 	}
 
 if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
+	$type=false;
+	$template='OrdineCliente';
     if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
-        createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro','E',$lang);
-    } else {
-        createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro', false,$lang);
+		$type='E';
     }
+	if ($tesbro['template']=='Ticket'){
+		$template='Ticket';
+	}
+    createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang);
 } elseif ($tesbro['tipdoc']=='VOW'){
     createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro');
 } else {
