@@ -269,7 +269,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$AltreFattF = ReceiveFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('fattf' => $FattF, 'ini_date' => $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D'], 'fin_date' => $form['date_fin_Y'] . '-' . $form['date_fin_M'] . '-' . $form['date_fin_D'])));
 	}
 
-	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
+	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'BINARY fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
 	if ($tesdoc && !empty($form['fattura_elettronica_original_name'])) { // c'è anche sul database, è una modifica
 		$toDo = 'update';
 		$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
