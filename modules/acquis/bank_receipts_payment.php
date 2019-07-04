@@ -31,7 +31,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['paymov'] = array();
     $form['entry_date'] = date("d/m/Y");
     $form['expiry_ini'] = date("d/m/Y");
-    $form['expiry_fin'] = date("t/m/Y");
+    $form['expiry_fin'] = date("d/m/Y");
     $form['orderby'] = 0;
     $form['target_account'] = 0;
     $form['transfer_fees_acc'] = 0;
@@ -89,10 +89,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             foreach ($_POST['pay'] as $k => $v) {
                 $tot += $v;
                 $rig_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => intval($_POST['clfoco'][$k]), 'import' => $v));
-                $paymov_value = array('id_tesdoc_ref' => $k,
+                $paymov_value = array('id_tesdoc_ref' => substr($k, 0, strpos($k, '.')),
                     'id_rigmoc_pay' => $rig_id,
                     'amount' => $v,
-                    'expiry' => substr($_POST['expiry'][$k], 0, 10));
+                    'expiry' => substr($_POST['expires'][$k], 0, 10));
                 paymovInsert($paymov_value);
             }
             if ($form['transfer_fees'] >= 0.01 && $form['transfer_fees_acc'] > 100000000) { // ho le spese bancarie 
@@ -298,9 +298,9 @@ echo '		  </table>';
                                 </label>
                             </div>
                             <div class="col-sm-1 pull-right">
-                                <input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $status; ?>" id="<?php echo $r['id_tesdoc_ref']; ?>" name="pay[<?php echo $r['id_tesdoc_ref']; ?>]">
-                                <input type="hidden" value="<?php echo $r['expiry']; ?>" name="expiry[<?php echo $r['id_tesdoc_ref']; ?>]">
-                                <input type="hidden" value="<?php echo $doc_data['clfoco']; ?>" name="clfoco[<?php echo $r['id_tesdoc_ref']; ?>]">
+                                <input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $status; ?>" id="<?php echo $r['id_tesdoc_ref']; ?>" name="pay[<?php echo $r['id_tesdoc_ref'].'.'.$r['expiry']; ?>]">
+                                <input type="hidden" value="<?php echo $r['expiry']; ?>" name="expires[<?php echo $r['id_tesdoc_ref'].'.'.$r['expiry']; ?>]">
+                                <input type="hidden" value="<?php echo $doc_data['clfoco']; ?>" name="clfoco[<?php echo $r['id_tesdoc_ref'].'.'.$r['expiry']; ?>]">
                             </div>
                         </div>
                         <div class="col-md-12">
