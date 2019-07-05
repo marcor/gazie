@@ -1,34 +1,33 @@
 <?php
 /*
-  --------------------------------------------------------------------------
-  GAzie - Gestione Azienda
-  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
-  (http://www.devincentiis.it)
-  <http://gazie.sourceforge.net>
-  --------------------------------------------------------------------------
-  Questo programma e` free software;   e` lecito redistribuirlo  e/o
-  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-  come e` pubblicata dalla Free Software Foundation; o la versione 2
-  della licenza o (a propria scelta) una versione successiva.
+   --------------------------------------------------------------------------
+   GAzie - Gestione Azienda
+   Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
+   (http://www.devincentiis.it)
+   <http://gazie.sourceforge.net>
+   --------------------------------------------------------------------------
+   Questo programma e` free software;   e` lecito redistribuirlo  e/o
+   modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+   come e` pubblicata dalla Free Software Foundation; o la versione 2
+   della licenza o (a propria scelta) una versione successiva.
 
-  Questo programma  e` distribuito nella speranza  che sia utile, ma
-  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+   Questo programma  e` distribuito nella speranza  che sia utile, ma
+   SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+   NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+   veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-  Generica GNU insieme a   questo programma; in caso  contrario,  si
-  scriva   alla   Free  Software Foundation, 51 Franklin Street,
-  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
-  --------------------------------------------------------------------------
+   Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+   Generica GNU insieme a   questo programma; in caso  contrario,  si
+   scriva   alla   Free  Software Foundation, 51 Franklin Street,
+   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$anno = date("Y");
-$cliente = '';
 $message = "";
 $lot = new lotmag();
-$partner_select_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode');
+$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
+$tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
 
 function print_querytime($prev) {
     list($usec, $sec) = explode(" ", microtime());
@@ -37,59 +36,58 @@ function print_querytime($prev) {
     return $this_time;
 }
 
-if (isset($_GET['auxil'])) {
-    $seziva = intval($_GET['auxil']);
-    $where = "tipdoc LIKE 'F%' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'";
-} else {
-    $seziva = "1";
-    $where = "tipdoc LIKE 'F%' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'";
+// funzione di utilità generale, adatta a mysqli.inc.php
+function cols_from($table_name, ...$col_names) {
+    $full_names = array_map(function ($col_name) use ($table_name) { return "$table_name.$col_name"; }, $col_names);
+    return implode(", ", $full_names);
 }
 
-$all = $where;
+// campi ammissibili per la ricerca
+$search_fields = [
+    'sezione'
+    => "seziva = %d",
+    'protoc'
+    => "protoc = %d",
+    'tipo'
+    => "tipdoc LIKE '%s'",
+    'numero'
+    => "numfat LIKE '%%%s%%'",
+    'anno'
+    => "YEAR(datfat) = %d",
+    'cliente'
+    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%s%%'"
+];
 
-gaz_flt_var_assign('protoc', 'i');
-gaz_flt_var_assign('numfat', 'i');
-gaz_flt_var_assign('datfat', 'd');
-gaz_flt_var_assign('clfoco', 'v');
-
-
-if (isset($_GET['all'])) {
-    $_GET['protoc'] = "";
-    $_GET['numfat'] = "";
-    $_GET['datfat'] = "";
-    $_GET['clfoco'] = "";
-    $where = $all;
-}
-
-if (isset($_GET['datfat'])) {
-    $datfat = $_GET['datfat'];
-}
-
-$where .= " GROUP BY protoc, datfat";
-
-
-if (isset($_GET['cliente'])) {
-    if ($_GET['cliente'] <> '') {
-        $cliente = $_GET['cliente'];
-        $where = " tipdoc LIKE 'F%' AND " . $gTables['tesdoc'] . ".seziva = '$seziva' GROUP BY protoc, datfat";
-        $limit = 0;
-        $passo = 2000000;
-        unset($protocollo);
-        unset($numerof);
-    }
-}
-
-if (isset($_GET['all'])) {
-    gaz_set_time_limit(0);
-    $where = "tipdoc LIKE 'F%' AND " . $gTables['tesdoc'] . ".seziva = '$seziva' GROUP BY protoc, datfat";
-    $passo = 100000;
-    unset($cliente);
-}
-
+// creo l'array (header => campi) per l'ordinamento dei record
+$sortable_headers = array(
+    "Prot." => "protoc",
+    //"Tipo" => "tipdoc",
+    "Numero" => "numfat",
+    "Data" => "datfat",
+    "Cliente" => "",
+    "Status" => "",
+    "Stampa" => "",
+    "FAE" => "",
+    "Mail" => "",
+    "Origine" => "",
+    "Cancella" => ""
+);
 
 $titolo = "Documenti di vendita a clienti";
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
+
+$ts = new TableSorter(
+    !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
+    $passo, 
+    ['datfat' => 'desc', 'protoc' => 'desc'], 
+    ['sezione' => 1, 'tipo' => 'F%'],
+    ['protoc', 'datfat']
+);
+
+# le <select> spaziano solo tra i documenti di vendita del sezionale corrente
+$where_select = sprintf("tipdoc LIKE 'F%%' AND seziva = %d", $sezione);
+
 echo '<script>
 $(function() {
    $( "#dialog" ).dialog({
@@ -186,7 +184,7 @@ function confirTutti(link){
       hide: "explode",
       buttons: {
                       " ' . $script_transl['submit'] . ' ": function() {
-                          window.location.href = window.location.pathname + "?all=Mostra+tutti&auxil=' . $seziva . '";
+                          window.location.href = window.location.pathname + "?all=Mostra+tutti&auxil=' . $sezione . '";
                           $(this).dialog("close");
                       },
                       " ' . $script_transl['cancel'] . ' ": function() {
@@ -217,35 +215,32 @@ function confirTutti(link){
         <p id="report_alert1"><?php echo $script_transl['report_alert1']; ?></p>
         <p class="ui-state-highlight" id="report1"></p>
     </div>
-	
+    
     <div style="display:none" id="dialog3" title="<?php echo $script_transl['faesdi_alert0']; ?>">
         <p id="faesdi_alert1"><?php echo $script_transl['faesdi_alert1']; ?></p>
         <p class="ui-state-highlight" id="mailpecsdi"></p>
     </div>
-	
+    
     <div align="center" class="FacetFormHeaderFont">Documenti di vendita della sezione
-        <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
-            <?php
-            for ($sez = 1; $sez <= 9; $sez++) {
-                $selected = "";
-                if ($seziva == $sez) {
-                    $selected = " selected ";
-                }
-                echo "<option value=\"" . $sez . "\"" . $selected . ">" . $sez . "</option>";
+        <select name="sezione" class="FacetSelect" onchange="this.form.submit()">
+	    <?php
+            echo "<option value=''>1</option>\n"; # è l'opzione di default perciò ha valore vuoto
+            for ($sez = 2; $sez <= 9; $sez++) {
+                $selected = $sezione == $sez ? "selected" : "";
+                echo "<option value='$sez' $selected > $sez </option>\n";
             }
-            ?>
-        </select></div>
+	    ?>
+
+        </select>
+    </div>
 
     <div align="center">
-        <?php
-        if (!isset($_GET['field']) or ( $_GET['field'] == 2) or ( empty($_GET['field'])))
-            $orderby = "datfat desc, protoc desc";
+	<?php
         list ($usec, $sec) = explode(' ', microtime());
         $querytime = ((float) $usec + (float) $sec);
         $querytime_before = $querytime;
-        $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
-        $recordnav->output();
-        ?>
+        $ts->output_navbar();
+	?>
     </div>
 
     <div class="box-body table-responsive">
@@ -256,19 +251,22 @@ function confirTutti(link){
                     <?php gaz_flt_disp_int("protoc", "Numero Prot."); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_int("numfat", "Numero Fatt."); ?>
+                    <?php gaz_flt_disp_int("numero", "Numero Fatt."); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_select("datfat", "YEAR(datfat) as datfat", $gTables["tesdoc"], $all, $orderby); ?>
+                    <?php gaz_flt_disp_select("anno", "YEAR(datfat) as anno", $gTables["tesdoc"], $where_select, "anno DESC"); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <?php
-                    if ($partner_select_mode['val'] == null or $partner_select_mode['val'] == "0") {
-                        gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesdoc"] . ".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1");
+		    <?php 
+                    if ($partner_select) {
+                        gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 as nome", 
+					    $tesdoc_e_partners,
+					    $where_select, "nome ASC", "nome");
                     } else {
                         gaz_flt_disp_int("cliente", "Cliente");
                     }
-                    ?>
+		    ?>
+
                 </td>
                 <td class="FacetFieldCaptionTD">
                     &nbsp;
@@ -286,54 +284,40 @@ function confirTutti(link){
                     <input type="submit" class="btn btn-sm btn-default btn-50" name="search" value="Cerca" tabindex="1">
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <input type="submit" class="btn btn-sm btn-default btn-50" name="all" value="Tutti" onClick="confirTutti();
-                            return false;">
+                    <a class="btn btn-sm btn-default btn-50" href="?">Reset</a>
                 </td>
             </tr>
             <tr>
                 <?php
-// creo l'array (header => campi) per l'ordinamento dei record
-                $headers_tesdoc = array(
-                    "Prot." => "protoc",
-                    //"Tipo" => "tipdoc",
-                    "Numero" => "numfat",
-                    "Data" => "datfat",
-                    "Cliente" => "",
-                    "Status" => "",
-                    "Stampa" => "",
-                    "FAE" => "",
-                    "Mail" => "",
-                    "Origine" => "",
-                    "Cancella" => ""
-                );
-                $linkHeaders = new linkHeaders($headers_tesdoc);
-                $linkHeaders->output();
+                $ts->output_headers();
                 ?>
             </tr>
             <?php
-            $rs_ultimo_documento = gaz_dbi_dyn_query("id_tes,tipdoc,protoc", $gTables['tesdoc'], "tipdoc LIKE 'F%' AND seziva = '$seziva'", "datfat DESC, protoc DESC, id_tes DESC", 0, 1);
+            $rs_ultimo_documento = gaz_dbi_dyn_query("id_tes,tipdoc,protoc", $gTables['tesdoc'], "tipdoc LIKE 'F%' AND seziva = '$sezione'", "datfat DESC, protoc DESC, id_tes DESC", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-//recupero le testate in base alle scelte impostate
-            $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*, MAX(" . $gTables['tesdoc'] . ".id_tes) AS reftes", $gTables['tesdoc'], $where, $orderby, $limit, $passo);
-            /*
-             * $gTables['anagra'] . ".fe_cod_univoco," . 
-             * $gTables['anagra'] . ".pec_email," .  
-             * $gTables['anagra'] . ".ragso1," . 
-             * $gTables['anagra'] . ".e_mail," . 
-             * $gTables['clfoco'] . ".codice," . 
+	    //recupero le testate in base alle scelte impostate
+	    $result = gaz_dbi_dyn_query(cols_from($gTables['tesdoc'],
+						  "*") . ", " .
+					cols_from($gTables['anagra'],
+						  "fe_cod_univoco",
+						  "pec_email",
+						  "ragso1",
+						  "ragso2",
+						  "e_mail") . ", " .
+					"MAX(id_tes) as reftes, " .
+					"GROUP_CONCAT(id_tes ORDER BY datemi DESC) as refs_id, " . 
+					"GROUP_CONCAT(numdoc ORDER BY datemi DESC) as refs_num",
+					$tesdoc_e_partners,
+					$ts->where . " " . $ts->group_by,
+					$ts->orderby,
+					$ts->getOffset(),
+					$ts->getLimit());
+	    /* TODO: includere nella query principale con una JOIN aggiuntiva:
              * $gTables['pagame'] . ".tippag" 
              */
             $ctrl_doc = "";
             $ctrl_eff = 999999;
             while ($r = gaz_dbi_fetch_array($result)) {
-                // customer data
-                $match_cust = true;
-                $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $r['clfoco']);
-                $pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $r['pagame']);
-                $anagra = gaz_dbi_get_row($gTables['anagra'], 'id', $clfoco['id_anagra']);
-                if (!empty($cliente) && stripos($anagra['ragso1'], $_GET['cliente']) === false) {
-                    $match_cust = false;
-                }
                 $modulo_fae = "electronic_invoice.php?id_tes=" . $r['id_tes'];
                 $modulo_fae_report = "report_fae_sdi.php?id_tes=" . $r['id_tes'];
                 $classe_btn = "btn-default";
@@ -350,7 +334,7 @@ function confirTutti(link){
                         $modifi = "";
                     } else {
                         $classe_btn = "btn-default";
-                        $modifi = "admin_docven.php?Update&id_tes=" . $r["id_tes"];
+                        $modifi = "admin_docven.php?Update&id_tes=" . $r["reftes"];
                     }
                 } elseif ($r["tipdoc"] == 'FAP'||$r["tipdoc"] == 'FAQ') {
                     $tipodoc = "Parcella";
@@ -373,20 +357,20 @@ function confirTutti(link){
                     $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];
                     $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
                 }
-                if ($match_cust && sprintf('%09d', $r['protoc']) . $r['datfat'] <> $ctrl_doc) {
+                if (sprintf('%09d', $r['protoc']) . $r['datfat'] <> $ctrl_doc) {
                     $n_e = 0;
-					/* trovo il nome dei file xml delle fatture elettroniche, sia quello attuale sia quello frutto di un eventuale reinviio 
-					*/
-					$r['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-									'anno' => $r["datfat"],
-									'sezione' => $r["seziva"],
-									'fae_reinvii'=> $r["fattura_elettronica_reinvii"],
-									'protocollo' => $r["protoc"]), 36).".xml";
- 					$r['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
-									'anno' => $r["datfat"],
-									'sezione' => $r["seziva"],
-									'fae_reinvii'=> intval($r["fattura_elettronica_reinvii"]+1),
-									'protocollo' => $r["protoc"]), 36).".xml";
+		    /* trovo il nome dei file xml delle fatture elettroniche, sia quello attuale sia quello frutto di un eventuale reinviio 
+		     */
+		    $r['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
+												     'anno' => $r["datfat"],
+												     'sezione' => $r["seziva"],
+												     'fae_reinvii'=> $r["fattura_elettronica_reinvii"],
+												     'protocollo' => $r["protoc"]), 36).".xml";
+ 		    $r['fae_reinvio']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
+												     'anno' => $r["datfat"],
+												     'sezione' => $r["seziva"],
+												     'fae_reinvii'=> intval($r["fattura_elettronica_reinvii"]+1),
+												     'protocollo' => $r["protoc"]), 36).".xml";
                     echo "<tr class=\"FacetDataTD\">";
                     // Colonna protocollo
                     if (!empty($modifi)) {
@@ -401,7 +385,7 @@ function confirTutti(link){
                     // Colonna data documento
                     echo "<td align=\"center\">" . gaz_format_date($r["datfat"]) . " &nbsp;</td>";
                     // Colonna cliente
-                    echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . htmlspecialchars($anagra["ragso1"]) . "&search=Cerca\">" . $anagra["ragso1"] . ((empty($anagra["ragso2"]))?"":" ".$anagra["ragso2"]) . "</a>&nbsp;</td>";
+                    echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . htmlspecialchars($r["ragso1"]) . "&search=Cerca\">" . $r["ragso1"] . ((empty($r["ragso2"]))?"":" ".$r["ragso2"]) . "</a>&nbsp;</td>";
                     // Colonna movimenti contabili
                     echo "<td align=\"left\">";
                     if ($r["id_con"] > 0) {
@@ -409,7 +393,7 @@ function confirTutti(link){
                     } else {
                         echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=" . $seziva . "&last=" . $r["protoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
                     }
-                    $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $r["reftes"], 'progre');
+		    $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $r["reftes"], 'progre');
                     while ($r_e = gaz_dbi_fetch_array($effett_result)) {
                         // La fattura ha almeno un effetto emesso
                         $n_e++;
@@ -431,9 +415,12 @@ function confirTutti(link){
                             echo "</a>";
                         }
                     }
-                    if ($n_e == 0 && ($pagame["tippag"] == 'B' || $pagame["tippag"] == 'T' || $pagame["tippag"] == 'V')) {
-                        echo " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
-                    }
+                    if ($n_e == 0) {
+			$pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $r['pagame']);
+			if ($pagame["tippag"] == 'B' || $pagame["tippag"] == 'T' || $pagame["tippag"] == 'V') {
+			    echo " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
+			}
+		    }
                     echo "</td>";
                     // Colonna "Stampa"
                     echo "<td align=\"center\"><a accesskey=\"p\" class=\"btn btn-xs btn-50 btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i>&nbsp;pdf</a>";
@@ -441,63 +428,64 @@ function confirTutti(link){
 
                     // Colonna "Fattura elettronica"
                     if (substr($r["tipdoc"], 0, 1) == 'F') {
-                      if(strlen($r["fattura_elettronica_original_name"])>10){ // ho un file importato dall'esterno
-						echo '<td><a class="btn btn-xs btn-warning" target="_blank" href="../acquis/view_fae.php?id_tes=' . $r["id_tes"] . '">File importato<i class="glyphicon glyphicon-eye-open"></i></a>'.'<a class="btn btn-xs btn-edit" title="Scarica il file XML originale" href="download_zip_package.php?fn='.$r['fattura_elettronica_original_name'].'">xml <i class="glyphicon glyphicon-download"></i> </a></td>';
-					  } else { // il file è generato al volo dal database
-						if(strlen($r["fattura_elettronica_zip_package"])>10){ // se è contenuto in un pacchetto di file permetterò sia il download del singolo XML che del pacchetto in cui è contenuto
-                            echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';							
-						} elseif (strlen($anagra['pec_email'])<5 && strlen(trim($anagra['fe_cod_univoco']))<6) { //se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
-                            $d_title = 'Invia richiesta PEC e/o codice SdI all\'indirizzo: '.$anagra["e_mail"];
-							$dest='&dest=E';
-							if (strlen($anagra['e_mail'])<5){
-								$dest='';
-								$d_title = 'Stampa richiesta cartacea (cliente senza mail)';
-							}
-                            echo '<td align=\"center\"><button onclick="confirPecSdi(this);return false;" id="doc3_' . $r["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $anagra["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
-                        } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
-                            echo "<td align=\"center\">";
-                        }
-                        echo '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1_" '.$r["id_tes"].'" fae_reinvio="'.$r["fae_reinvio"].'" fae_attuale="'.$r["fae_attuale"].'" fae_n_reinvii="'.$r["fattura_elettronica_reinvii"].'" n_fatt="'. $r["numfat"]."/". $r["seziva"].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r["fae_attuale"].' o fai il '.intval($r["fattura_elettronica_reinvii"]+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a></td>';
-					  }
-					} else {
+			if(strlen($r["fattura_elettronica_original_name"])>10){ // ho un file importato dall'esterno
+			    echo '<td><a class="btn btn-xs btn-warning" target="_blank" href="../acquis/view_fae.php?id_tes=' . $r["id_tes"] . '">File importato<i class="glyphicon glyphicon-eye-open"></i></a>'.'<a class="btn btn-xs btn-edit" title="Scarica il file XML originale" href="download_zip_package.php?fn='.$r['fattura_elettronica_original_name'].'">xml <i class="glyphicon glyphicon-download"></i> </a></td>';
+			} else { // il file è generato al volo dal database
+			    if(strlen($r["fattura_elettronica_zip_package"])>10){ // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
+				echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui Ã¨ contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';							
+			    } elseif (strlen($r['pec_email'])<5 && strlen(trim($r['fe_cod_univoco']))<6) { //se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
+				$d_title = 'Invia richiesta PEC e/o codice SdI all\'indirizzo: '.$r["e_mail"];
+				$dest='&dest=E';
+				if (strlen($r['e_mail'])<5){
+				    $dest='';
+				    $d_title = 'Stampa richiesta cartacea (cliente senza mail)';
+				}
+				echo '<td align=\"center\"><button onclick="confirPecSdi(this);return false;" id="doc3_' . $r["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $r["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
+                            } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
+				echo "<td align=\"center\">";
+                            }
+                            echo '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1_" '.$r["id_tes"].'" fae_reinvio="'.$r["fae_reinvio"].'" fae_attuale="'.$r["fae_attuale"].'" fae_n_reinvii="'.$r["fattura_elettronica_reinvii"].'" n_fatt="'. $r["numfat"]."/". $r["seziva"].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r["fae_attuale"].' o fai il '.intval($r["fattura_elettronica_reinvii"]+1).'Â° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a></td>';
+			}
+		    } else {
                         echo "<td></td>";
                     }
 
                     // Colonna "Mail"
                     echo "<td align=\"center\">";
-                    if (!empty($anagra["e_mail"])) {
-                        echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="Mailto: ' . $anagra["e_mail"] . '"
-            mail="' . $anagra["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                    if (!empty($r["e_mail"])) {
+                        echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc_' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="Mailto: ' . $r["e_mail"] . '"
+            mail="' . $r["e_mail"] . '" namedoc="' . $tipodoc . ' n.' . $r["numfat"] . ' del ' . gaz_format_date($r["datfat"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                     } else {
-                        echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($clfoco["codice"], 3) . '&Update#email"><i class="glyphicon glyphicon-edit"></i></a>';
+                        echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update#email"><i class="glyphicon glyphicon-edit"></i></a>';
                     }
                     echo "</td>";
                     // Colonna "Origine"
                     if ($r["tipdoc"] == 'FAD') {
-                        $ddt_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "tipdoc = '" . $r["tipdoc"] . "' AND numfat = " . $r["numfat"] . " AND datfat = '" . $r["datfat"] . "'", 'datemi DESC');
-                        echo "<td align=\"center\">";
+                        $ddts = array_combine(explode(",", $r['refs_id']), 
+					      explode(",", $r['refs_num']));
+			echo "<td align=\"center\">";
                         $cmr = false;
                         if ( $r['ddt_type']=='R' ) {
                             $cmr = true;
                         }
-                        if ( gaz_dbi_num_rows($ddt_result) > 5 ) {
+                        if ( count($ddts) > 5 ) {
                             if ( $cmr ) {
                                 echo "<a href=\"report_doccmr.php\" style=\"font-size:10px;\" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-plane\"></i>CMR</a>";
-                                while ($r_d = gaz_dbi_fetch_array($ddt_result)) {
-                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza i CMR\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=CMR\" style=\"font-size:9px;\">" . $r_d['numdoc'] . "</a>\n";
+                                foreach ($ddts as $ddt_id => $ddt_num) {
+                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza i CMR\" href=\"stampa_docven.php?id_tes=" . $ddt_id . "&template=CMR\" style=\"font-size:9px;\">" . $ddt_num . "</a>\n";
                                 }
                             } else {
                                 echo "<a href=\"report_doctra.php\" style=\"font-size:10px;\" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-plane\"></i>DdT</a>";
-                                while ($r_d = gaz_dbi_fetch_array($ddt_result)) {
-                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=DDT\" style=\"font-size:9px;\">" . $r_d['numdoc'] . "</a>\n";
+                                foreach ($ddts as $ddt_id => $ddt_num) {
+                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $ddt_id . "&template=DDT\" style=\"font-size:9px;\">" . $ddt_num . "</a>\n";
                                 }
                             }
                         } else {
-                            while ($r_d = gaz_dbi_fetch_array($ddt_result)) {
+                            foreach ($ddts as $ddt_id => $ddt_num) {
                                 if ( $cmr ) {
-                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il CMR\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=CMR\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;CMR" . $r_d['numdoc'] . "</a>\n";
+                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il CMR\" href=\"stampa_docven.php?id_tes=" . $ddt_id . "&template=CMR\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;CMR" . $ddt_num . "</a>\n";
                                 } else {
-                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=DDT\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;DdT" . $r_d['numdoc'] . "</a>\n";
+                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $ddt_id . "&template=DDT\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;DdT" . $ddt_num . "</a>\n";
                                 }
                             }
                         }
@@ -540,8 +528,8 @@ function confirTutti(link){
                     }
                     echo "</td>";
                     /*        echo "<td class=\"FacetDataTD\" align=\"right\">";
-                      $querytime=print_querytime($querytime);
-                      echo "</td>"; */
+                       $querytime=print_querytime($querytime);
+                       echo "</td>"; */
                     echo "</tr>\n";
                 }
                 $ctrl_doc = sprintf('%09d', $r['protoc']) . $r['datfat'];
@@ -551,8 +539,32 @@ function confirTutti(link){
             echo ' sec.</td></tr>';
             ?>
         </table>
+    </div>
 </form>
-</div>
+
+<script>
+ $(document).ready(function(){
+     var selects = $("select");
+     // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
+     // (in questo modo i campi non usati possono essere esclusi)        
+     $("option", selects).filter(function(){ return this.value == "All"; }).val("");
+     
+     // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
+     // l'azione non lancia un evento "submit" e non può essere intercettata.
+     // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
+     selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+     
+     // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
+     $("form").submit(function() {
+         $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+         return true; // ensure form still submits
+     });
+     
+     // Un-disable form fields when page loads, in case they click back after submission
+     $( "form" ).find( ":input" ).prop( "disabled", false );
+ });
+</script>
+
 <?php
 require("../../library/include/footer.php");
 ?>

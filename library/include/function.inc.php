@@ -2093,6 +2093,7 @@ class TableSorter {
     # database
     protected $table;      # usata internamente per contare i record totali
     protected $count;      # n. totale record
+    public $group_by;      # se non vuota avrà forma: "GROUP BY x, y, z"
     public $where = "";    # costruita a partire dall'url corrente
     public $orderby = "";  # idem
     
@@ -2118,11 +2119,12 @@ class TableSorter {
     protected $default_search;         # ["caumag" => "1"]
     protected $default_order;          # analogo a $url_order_query_parts
 
-    function __construct($table, $passo, $default_order, $default_search=[]) {
+    function __construct($table, $passo, $default_order, $default_search=[], $group_by=[]) {
         $this->passo = $passo;
+	$this->group_by = $group_by ? "GROUP BY " . join(", ", $group_by) : "";
         $this->default_search = $default_search;
         $this->parse_search_request();
-        $this->count = gaz_dbi_record_count($table, $this->where);
+        $this->count = gaz_dbi_record_count($table, join(" ", [$this->where, $this->group_by]));
         $this->set_pagination();
         $this->default_order = $default_order;
         $this->parse_order_request();
