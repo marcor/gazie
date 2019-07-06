@@ -275,7 +275,7 @@ if (isset($_POST['genera']) && $msg == "") {
 	    foreach ($testate as $id_tes => $v) {
                 if (in_array($id_tes, $form['changeStatus'])) {
                     // lo aggiungo ai fatturabili
-		    $invoices['data'][][$id_tes] = 'maybe';
+		    $invoices['data'][$i][$id_tes] = 'maybe';
                     // e lo tolgo dagli esclusi
                     unset($invoices['excluded'][$i][$id_tes]);
 		}
@@ -391,7 +391,7 @@ if (isset($invoices['excluded'])) {
 	foreach ($testate as $id_tes => $v) {
             if (in_array($id_tes, $form['changeStatus'])) {
 		// lo aggiungo ai fatturabili
-		$invoices['data'][][$id_tes] = 'maybe';
+		$invoices['data'][$i][$id_tes] = 'maybe';
 		// e lo tolgo dagli esclusi
 		unset($invoices['excluded'][$i][$id_tes]);
 	    }
