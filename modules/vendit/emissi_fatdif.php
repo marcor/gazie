@@ -271,13 +271,14 @@ if (isset($_POST['genera']) && $msg == "") {
     $date = array('exe' => $date_exe->format('Y-m-d'), 'ini' => $date_ini->format('Y-m-d'), 'fin' => $date_fin->format('Y-m-d'));
     $invoices = getInvoiceableBills($date, $form['seziva'], $form['clfoco'], $form['changeStatus']);
     if (isset($invoices['excluded'])) {
-        foreach ($invoices['excluded'] as $k => $v) {
-            $id_tes = key($v);
-            if (in_array($id_tes, $form['changeStatus'])) {
-                // lo aggiungo ai fatturabili
-                $invoices['data'][][$id_tes] = 'maybe';
-                // e lo tolgo dagli esclusi
-                unset($invoices['excluded'][$k]);
+        foreach ($invoices['excluded'] as $i => $testate) {
+	    foreach ($testate as $id_tes => $v) {
+                if (in_array($id_tes, $form['changeStatus'])) {
+                    // lo aggiungo ai fatturabili
+		    $invoices['data'][][$id_tes] = 'maybe';
+                    // e lo tolgo dagli esclusi
+                    unset($invoices['excluded'][$i][$id_tes]);
+		}
             }
         }
     }
@@ -386,13 +387,14 @@ echo '<div align="center"><b>' . $script_transl['preview_inv'] . '</b></div>';
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
 // qui faccio il push all'array dei fatturabili se richiesti esplicitamente  
 if (isset($invoices['excluded'])) {
-    foreach ($invoices['excluded'] as $k => $v) {
-        $id_tes = key($v);
-        if (in_array($id_tes, $form['changeStatus'])) {
-            // lo aggiungo ai fatturabili
-            $invoices['data'][][$id_tes] = 'maybe';
-            // e lo tolgo dagli esclusi
-            unset($invoices['excluded'][$k]);
+    foreach ($invoices['excluded'] as $i => $testate) {
+	foreach ($testate as $id_tes => $v) {
+            if (in_array($id_tes, $form['changeStatus'])) {
+		// lo aggiungo ai fatturabili
+		$invoices['data'][][$id_tes] = 'maybe';
+		// e lo tolgo dagli esclusi
+		unset($invoices['excluded'][$i][$id_tes]);
+	    }
         }
     }
 }
@@ -528,18 +530,19 @@ if (isset($invoices['data'])) {
     echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"right\">Non ci sono DdT  da fatturare</td></tr>";
 }
 if (@count($invoices['excluded'])) {
-    echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\">I seguenti ddt non verranno mai fatturati a meno di richiesta espicita</td></tr>";
-    foreach ($invoices['excluded'] as $v) {
-        $id_tes = key($v);
-        $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $id_tes);
-        $anagrafica = new Anagrafica();
-        $cliente = $anagrafica->getPartner($tes['clfoco']);
-        echo "<tr>";
-        echo "<td> " . $tes['clfoco'] . " &nbsp;</td>";
-        echo "<td> " . $cliente['ragso1'] . ' ' . $cliente['ragso2'] . " &nbsp;</td>";
-        echo "<td colspan=\"2\"> N." . $tes['numdoc'] . "/" . $tes['seziva'] . " del " . gaz_format_date($tes['datemi']) . " </td>";
-        echo "<td colspan=\"2\"><input class=\"btn btn-xs btn-warning\" type=\"submit\" name=\"yes_change[$id_tes]\" value=\"Forza la fatturazione!\" /></td>";
-        echo "</tr>\n";
+    echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\">I seguenti ddt non verranno mai fatturati a meno di richiesta esplicita</td></tr>";
+    foreach ($invoices['excluded'] as $i => $testate) {
+	foreach ($testate as $id_tes => $v) {
+            $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $id_tes);
+            $anagrafica = new Anagrafica();
+            $cliente = $anagrafica->getPartner($tes['clfoco']);
+            echo "<tr>";
+            echo "<td> " . $tes['clfoco'] . " &nbsp;</td>";
+            echo "<td> " . $cliente['ragso1'] . ' ' . $cliente['ragso2'] . " &nbsp;</td>";
+            echo "<td colspan=\"2\"> N." . $tes['numdoc'] . "/" . $tes['seziva'] . " del " . gaz_format_date($tes['datemi']) . " </td>";
+            echo "<td colspan=\"2\"><input class=\"btn btn-xs btn-warning\" type=\"submit\" name=\"yes_change[$id_tes]\" value=\"Forza la fatturazione!\" /></td>";
+            echo "</tr>\n";
+	}
     }
 }
 
