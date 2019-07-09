@@ -1,31 +1,33 @@
 <?php
 /*
-   --------------------------------------------------------------------------
-   GAzie - Gestione Azienda
-   Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
-   (http://www.devincentiis.it)
-   <http://gazie.sourceforge.net>
-   --------------------------------------------------------------------------
-   Questo programma e` free software;   e` lecito redistribuirlo  e/o
-   modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-   come e` pubblicata dalla Free Software Foundation; o la versione 2
-   della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-   Questo programma  e` distribuito nella speranza  che sia utile, ma
-   SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-   NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-   veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-   Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-   Generica GNU insieme a   questo programma; in caso  contrario,  si
-   scriva   alla   Free  Software Foundation, 51 Franklin Street,
-   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
-   --------------------------------------------------------------------------
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+
 $admin_aziend = checkAdmin();
 $message = "";
 $lot = new lotmag();
+
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
 
@@ -176,25 +178,6 @@ function confirFae(link){
 	$("#dialog1").dialog( "open" );
 }
 
-function confirTutti(link){
-   $.fx.speeds._default = 500;
-   $( "#dialog2" ).dialog({
-      modal: "true",
-      show: "blind",
-      hide: "explode",
-      buttons: {
-                      " ' . $script_transl['submit'] . ' ": function() {
-                          window.location.href = window.location.pathname + "?all=Mostra+tutti&auxil=' . $sezione . '";
-                          $(this).dialog("close");
-                      },
-                      " ' . $script_transl['cancel'] . ' ": function() {
-                        $(this).dialog("close");
-                      }
-               }
-         });
-   $("#dialog2" ).dialog( "open" );
-}
-
 </script>';
 ?>
 <form method="GET" >
@@ -282,6 +265,7 @@ function confirTutti(link){
                 </td>
                 <td class="FacetFieldCaptionTD">
                     <input type="submit" class="btn btn-sm btn-default btn-50" name="search" value="Cerca" tabindex="1">
+                    <?php $ts->output_order_form(); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
                     <a class="btn btn-sm btn-default btn-50" href="?">Reset</a>
