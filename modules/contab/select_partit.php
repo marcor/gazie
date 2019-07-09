@@ -39,7 +39,7 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
     } else {
         $where = $gTables['clfoco'] . ".codice BETWEEN $account_ini AND $account_fin AND datreg BETWEEN $date_ini AND $date_fin GROUP BY " . $gTables['clfoco'] . ".codice";
         $orderby = " codice ASC ";
-        $select = $gTables['tesmov'] . ".id_tes," . "codice," . $gTables['clfoco'] . ".descri AS tesdes, COUNT(id_rig) AS rows, SUM(import*(darave='D')) AS dare, SUM(import*(darave='A')) AS avere";
+        $select = $gTables['tesmov'] . ".id_tes," . "codice," . $gTables['clfoco'] . ".descri AS tesdes, COUNT(id_rig) AS `rows`, SUM(import*(darave='D')) AS dare, SUM(import*(darave='A')) AS avere";
     }
     $table = $gTables['clfoco'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON " . $gTables['clfoco'] . ".codice = " . $gTables['rigmoc'] . ".codcon "
             . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes ";

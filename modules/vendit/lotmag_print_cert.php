@@ -42,12 +42,12 @@ class LotMagData extends DocContabVars {
         if ($this->id_movmag > 0) {
             $where .=' AND mm.id_mov = ' . $this->id_movmag;
         }
-        $from = $this->gTables[$this->tableName] . ' AS rows
-            LEFT JOIN ' . $this->gTables['movmag'] . ' AS mm ON rows.id_mag=mm.id_mov
+        $from = $this->gTables[$this->tableName] . ' AS rs
+            LEFT JOIN ' . $this->gTables['movmag'] . ' AS mm ON rs.id_mag=mm.id_mov
             LEFT JOIN ' . $this->gTables['lotmag'] . ' AS lm ON mm.id_lotmag=lm.id
             LEFT JOIN ' . $this->gTables['rigdoc'] . ' AS rd ON lm.id_rigdoc=rd.id_rig
             LEFT JOIN ' . $this->gTables['tesdoc'] . ' AS td ON rd.id_tes=td.id_tes';
-        $rs_rig = gaz_dbi_dyn_query('rows.*,mm.id_lotmag,lm.*,td.clfoco as supplier ', $from, "rows.id_tes = " . $this->testat . $where, "rows.id_tes DESC, rows.id_rig");
+        $rs_rig = gaz_dbi_dyn_query('rs.*,mm.id_lotmag,lm.*,td.clfoco as supplier ', $from, "rs.id_tes = " . $this->testat . $where, "rs.id_tes DESC, rs.id_rig");
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             if ($rigo['tiprig'] == 0 && $rigo['id_mag'] > 0) {
