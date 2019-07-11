@@ -35,7 +35,7 @@ function getExtremeDocs($vat_register = '_', $vat_section = 1) {
     global $gTables;
     $vat_register = substr($vat_register, 0, 1);
     $docs = array();
-    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND ";
+    $where = "LENGTH(fe_cod_univoco)<>6 AND (fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND ";
     $orderby = "datfat ASC, protoc ASC";
     if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
         $where .= "tipdoc = 'VCO' AND numfat > 0 AND clfoco > 100000000 AND datfat > '2018-01-01'";
@@ -43,8 +43,12 @@ function getExtremeDocs($vat_register = '_', $vat_section = 1) {
     } else {
         $where .= "tipdoc LIKE '$vat_register" . "__'";
 	}
-    $from = $gTables['tesdoc'];
-    $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
+    $from = $gTables['tesdoc'] . ' AS tesdoc
+             LEFT JOIN ' . $gTables['clfoco'] . ' AS customer
+             ON tesdoc.clfoco=customer.codice
+             LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
+             ON customer.id_anagra=anagraf.id';
+    $result = gaz_dbi_dyn_query('tesdoc.*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
     if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
 		$docs['ini'] = array('proini' => $row['numfat'], 'date' => $row['datfat']);
