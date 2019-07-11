@@ -69,48 +69,54 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
     return $m;
 }
 
+$rs_last_opening = gaz_dbi_dyn_query("YEAR(datreg) AS anno, MONTH(datreg) AS mese, DAY(datreg) AS giorno", $gTables['tesmov'], "caucon = 'APE'", "datreg DESC", 0, 1);
+$last_opening = gaz_dbi_fetch_array($rs_last_opening);
+if ($last_opening) {
+	$last_opening_year = $last_opening['anno'];
+	$last_opening_month = $last_opening['mese'];
+	$last_opening_day = $last_opening['giorno'];
+} else {
+	$last_opening_year = date('Y');
+	$last_opening_month = '1';
+	$last_opening_day = '1';
+}
+
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     if (!isset($_GET['di'])) {
-        $form['date_ini_D'] = "1";
+        $form['date_ini_D'] = $last_opening_day;
     } else {
         $form['date_ini_D'] = intval($_GET['di']);
     }
     if (!isset($_GET['mi'])) {
-        $form['date_ini_M'] = "1";
+        $form['date_ini_M'] = $last_opening_month;
     } else {
         $form['date_ini_M'] = intval($_GET['mi']);
     }
     if (!isset($_GET['yi'])) {
-        $rs_last_opening = gaz_dbi_dyn_query("YEAR(datreg) AS anno", $gTables['tesmov'], "caucon = 'APE'", "datreg DESC", 0, 1);
-        $last_opening = gaz_dbi_fetch_array($rs_last_opening);
-        if ($last_opening) {
-            $form['date_ini_Y'] = $last_opening['anno'];
-        } else {
-            $form['date_ini_Y'] = date("Y");
-        }
+        $form['date_ini_Y'] = $last_opening_year;
     } else {
         $form['date_ini_Y'] = intval($_GET['yi']);
     }
     if (!isset($_GET['df'])) {
-        $form['date_fin_D'] = date("d");
+        $form['date_fin_D'] = date('d');
     } else {
         $form['date_fin_D'] = intval($_GET['df']);
     }
     if (!isset($_GET['mf'])) {
-        $form['date_fin_M'] = date("m");
+        $form['date_fin_M'] = date('m');
     } else {
         $form['date_fin_M'] = intval($_GET['mf']);
     }
     if (!isset($_GET['yf'])) {
-        $form['date_fin_Y'] = date("Y");
+        $form['date_fin_Y'] = date('Y');
     } else {
         $form['date_fin_Y'] = intval($_GET['yf']);
     }
-    $form['this_date_Y'] = date("Y");
-    $form['this_date_M'] = date("m");
-    $form['this_date_D'] = date("d");
+    $form['this_date_Y'] = date('Y');
+    $form['this_date_M'] = date('m');
+    $form['this_date_D'] = date('d');
     if (isset($_GET['id'])) {
         $form['master_ini'] = substr($_GET['id'], 0, 3) . '000000';
         $form['account_ini'] = intval($_GET['id']);
@@ -352,7 +358,7 @@ if (isset($_POST['preview']) and $msg == '') {
             $linkHeaders = new linkHeaders($script_transl['header1']);
             $linkHeaders->output();
             echo "</tr>";
-            while (list($key, $mv) = each($m)) {
+            foreach ($m as $key => $mv) {
                 echo "<tr><td>" . $mv["codice"] . " &nbsp;</td>";
                 echo "<td  align=\"center\">" . $mv["rows"] . " &nbsp</td>";
                 echo "<td>" . $mv["tesdes"] . " &nbsp;</td>";
@@ -366,7 +372,22 @@ if (isset($_POST['preview']) and $msg == '') {
             $linkHeaders = new linkHeaders($script_transl['header2']);
             $linkHeaders->output();
             echo "</tr>";
-            foreach($m as $key=>$mv){
+
+            $query = "SELECT SUM((CASE WHEN darave='D' THEN 1 ELSE -1 END)*import) AS saldo " .
+                    "FROM " . $gTables['rigmoc'] . " INNER JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes=" . $gTables['tesmov'] . ".id_tes" .
+                    " WHERE codcon LIKE '" . $form['account_ini'] . "' AND datreg>='" . $last_opening_year.$last_opening_month.$last_opening_day . "' AND datreg<'" . $date_ini . "'";
+            $rs_extreme_accont = gaz_dbi_query($query);
+            $extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
+            if ($extreme_account) {
+                $saldo_precedente = $extreme_account['saldo'];
+            } else {
+                $saldo_precedente = 0.00;
+            }
+
+            echo "<tr class=\"FacetDataTD\"><td colspan=\"8\" align=\"right\">SALDO PRECEDENTE &nbsp;</td>";
+            echo "<td align=\"right\">" . gaz_format_number($saldo_precedente) . " &nbsp;</td></tr>";
+
+            foreach ($m as $key => $mv) {
                 $totdare+= $mv['dare'];
                 $totavere+= $mv['avere'];
                 $saldo += $mv['dare'];
@@ -383,14 +404,16 @@ if (isset($_POST['preview']) and $msg == '') {
                 }
                 echo "<td align=\"right\">" . gaz_format_number($mv['dare']) . " &nbsp;</td>";
                 echo "<td align=\"right\">" . gaz_format_number($mv['avere']) . " &nbsp;</td>";
-                echo "<td align=\"right\">" . gaz_format_number($saldo) . " &nbsp;</td></tr>";
+                echo "<td align=\"right\">" . gaz_format_number($saldo_precedente+$saldo) . " &nbsp;</td></tr>";
             }
-        }
 
-		echo "<tr class=\"FacetDataTD\"><td colspan=\"6\" align=\"right\"></td>";
-		echo "<td align=\"right\">" . gaz_format_number($totdare) . " &nbsp;</td>";
-		echo "<td align=\"right\">" . gaz_format_number($totavere) . " &nbsp;</td>";
-		echo "<td align=\"center\">" . "TOTALI" . " &nbsp;</td></tr>";
+			echo "<tr class=\"FacetDataTD\"><td colspan=\"9\" align=\"right\"></td></tr>";
+			echo "<tr class=\"FacetDataTD\"><td colspan=\"5\" align=\"right\"></td>";
+			echo "<td align=\"center\">" . "SALDO PERIODO" . "</td>";
+			echo "<td align=\"right\">" . gaz_format_number($totdare) . " &nbsp;</td>";
+			echo "<td align=\"right\">" . gaz_format_number($totavere) . " &nbsp;</td>";
+			echo "<td align=\"right\">" . gaz_format_number($saldo) . " &nbsp;</td>";
+        }
 
         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
         echo '<td colspan="' . $span . '" align="right"><input type="submit" name="print" value="';
