@@ -201,15 +201,15 @@ $recordnav->output();
 			                </select>
                         <?php
                     } else {
-                        gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, $orderby); 
+                        gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, "datemi DESC"); 
                     }
                 ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesbro"] . ".clfoco", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, $orderby, "ragso1"); ?>
+                <?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesbro"] . ".clfoco", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1 ASC", "ragso1"); ?>
             </td>
             <td class=FacetFieldCaptionTD>
-                <?php gaz_flt_disp_select("unita_locale1", $gTables['destina'].".unita_locale1", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id left join ". $gTables['destina']." on " .$gTables['tesbro'].".id_des_same_company = " . $gTables['destina'] . ".codice" , $all, $orderby, "unita_locale1"); ?>
+                <?php gaz_flt_disp_select("unita_locale1", $gTables['destina'].".unita_locale1", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id left join ". $gTables['destina']." on " .$gTables['tesbro'].".id_des_same_company = " . $gTables['destina'] . ".codice" , $all, "unita_locale1 ASC", "unita_locale1"); ?>
             </td>
             <td class=FacetFieldCaptionTD>
                 &nbsp;
