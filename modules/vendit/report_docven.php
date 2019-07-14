@@ -445,33 +445,17 @@ function confirFae(link){
                     echo "</td>";
                     // Colonna "Origine"
                     if ($r["tipdoc"] == 'FAD') {
-                        $ddts = array_combine(explode(",", $r['refs_id']), 
-					      explode(",", $r['refs_num']));
-			echo "<td align=\"center\">";
-                        $cmr = false;
-                        if ( $r['ddt_type']=='R' ) {
-                            $cmr = true;
+                        $docs = array_combine(explode(",", $r['refs_id']),
+                                              explode(",", $r['refs_num']));
+                        echo '<td align="center">';
+                        list($module, $doc) = ($r['ddt_type'] == 'R') ? ['doccmr', 'CMR'] : ['doctra', 'DdT'];
+                        $desc = $doc;
+                        if (count($docs) > 5) {
+                            echo "<a href='report_$module.php' style='font-size:10px;' class='btn btn-xs btn-default'><i class='glyphicon glyphicon-plane'></i>$doc</a>";
+                            $desc = "";
                         }
-                        if ( count($ddts) > 5 ) {
-                            if ( $cmr ) {
-                                echo "<a href=\"report_doccmr.php\" style=\"font-size:10px;\" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-plane\"></i>CMR</a>";
-                                foreach ($ddts as $ddt_id => $ddt_num) {
-                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza i CMR\" href=\"stampa_docven.php?id_tes=" . $ddt_id . "&template=CMR\" style=\"font-size:9px;\">" . $ddt_num . "</a>\n";
-                                }
-                            } else {
-                                echo "<a href=\"report_doctra.php\" style=\"font-size:10px;\" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-plane\"></i>DdT</a>";
-                                foreach ($ddts as $ddt_id => $ddt_num) {
-                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $ddt_id . "&template=DDT\" style=\"font-size:9px;\">" . $ddt_num . "</a>\n";
-                                }
-                            }
-                        } else {
-                            foreach ($ddts as $ddt_id => $ddt_num) {
-                                if ( $cmr ) {
-                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il CMR\" href=\"stampa_docven.php?id_tes=" . $ddt_id . "&template=CMR\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;CMR" . $ddt_num . "</a>\n";
-                                } else {
-                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $ddt_id . "&template=DDT\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;DdT" . $ddt_num . "</a>\n";
-                                }
-                            }
+                        foreach ($docs as $doc_id => $doc_num) {
+                            echo " <a class='btn btn-xs btn-default btn-ddt' title='Visualizza il $doc' href='stampa_docven.php?id_tes=$doc_id&template=" . strtoupper($doc) . "' style='font-size:9px;'> $desc $doc_num </a>\n";
                         }
                         echo "</td>";
                     } elseif ($r["id_contract"] > 0) {
