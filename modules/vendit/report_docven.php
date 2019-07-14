@@ -377,27 +377,16 @@ function confirFae(link){
                     } else {
                         echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=" . $sezione . "&last=" . $r["protoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
                     }
-		    $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $r["reftes"], 'progre');
+                    $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $r["reftes"], 'progre');
                     while ($r_e = gaz_dbi_fetch_array($effett_result)) {
                         // La fattura ha almeno un effetto emesso
                         $n_e++;
-                        if ($r_e["tipeff"] == "B") {
-                            echo " <a class=\"btn btn-xs btn-default btn-riba\" style=\"font-size:10px;\" title=\"Visualizza la ricevuta bancaria generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=" . $r_e["id_tes"] . "\">";
-                            echo "RiBa" . $r_e["progre"];
-                            echo "</a>";
-                        } elseif ($r_e["tipeff"] == "T") {
-                            echo " <a class=\"btn btn-xs btn-default btn-cambiale\" style=\"font-size:10px;\" title=\"Visualizza la cambiale tratta generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=" . $r_e["id_tes"] . "\">";
-                            echo "Tratta" . $r_e["progre"];
-                            echo "</a>";
-                        } elseif ($r_e["tipeff"] == "V") {
-                            echo " <a class=\"btn btn-xs btn-default btn-avviso\" style=\"font-size:10px;\" title=\"Visualizza il pagamento mediante avviso generato per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=" . $r_e["id_tes"] . "\">";
-                            echo "MAV" . $r_e["progre"];
-                            echo "</a>";
-                        } else {
-                            echo " <a class=\"btn btn-xs btn-default btn-effetto\" style=\"font-size:10px;\" title=\"Visualizza l'effetto\" href=\"stampa_effett.php?id_tes=" . $r_e["id_tes"] . "\">";
-                            echo $r_e["tipeff"] . $r_e["progre"];
-                            echo "</a>";
-                        }
+                        $map_eff = ['B' => ["la ricevuta bancaria generata", "RiBa", "riba"],
+                                    'T' => ["la cambiale tratta generata", "Tratta", "cambiale"],
+                                    'V' => ["il pagamento mediante avviso generato", "MAV", "avviso"]];
+                        list($eff_desc, $eff, $eff_class) = isset($map_eff[$r_e["tipeff"]]) ? $map_eff[$r_e["tipeff"]] :
+                                                             ["l'effetto generato", $r_e["tipeff"], "effetto"];
+                        echo " <a class='btn btn-xs btn-default btn-$eff_class' style='font-size:10px;' title='Visualizza $eff_desc per il regolamento della fattura' href='stampa_effett.php?id_tes={$r_e['id_tes']}'> $eff {$r_e['progre']} </a>\n";
                     }
                     if ($n_e == 0) {
 			$pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $r['pagame']);
@@ -416,7 +405,7 @@ function confirFae(link){
 			    echo '<td><a class="btn btn-xs btn-warning" target="_blank" href="../acquis/view_fae.php?id_tes=' . $r["id_tes"] . '">File importato<i class="glyphicon glyphicon-eye-open"></i></a>'.'<a class="btn btn-xs btn-edit" title="Scarica il file XML originale" href="download_zip_package.php?fn='.$r['fattura_elettronica_original_name'].'">xml <i class="glyphicon glyphicon-download"></i> </a></td>';
 			} else { // il file è generato al volo dal database
 			    if(strlen($r["fattura_elettronica_zip_package"])>10){ // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
-				echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui Ã¨ contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';							
+				echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';							
 			    } elseif (strlen($r['pec_email'])<5 && strlen(trim($r['fe_cod_univoco']))<6) { //se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
 				$d_title = 'Invia richiesta PEC e/o codice SdI all\'indirizzo: '.$r["e_mail"];
 				$dest='&dest=E';
@@ -428,7 +417,7 @@ function confirFae(link){
                             } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
 				echo "<td align=\"center\">";
                             }
-                            echo '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1_" '.$r["id_tes"].'" fae_reinvio="'.$r["fae_reinvio"].'" fae_attuale="'.$r["fae_attuale"].'" fae_n_reinvii="'.$r["fattura_elettronica_reinvii"].'" n_fatt="'. $r["numfat"]."/". $r["seziva"].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r["fae_attuale"].' o fai il '.intval($r["fattura_elettronica_reinvii"]+1).'Â° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a></td>';
+                            echo '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1_" '.$r["id_tes"].'" fae_reinvio="'.$r["fae_reinvio"].'" fae_attuale="'.$r["fae_attuale"].'" fae_n_reinvii="'.$r["fattura_elettronica_reinvii"].'" n_fatt="'. $r["numfat"]."/". $r["seziva"].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r["fae_attuale"].' o fai il '.intval($r["fattura_elettronica_reinvii"]+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a></td>';
 			}
 		    } else {
                         echo "<td></td>";
