@@ -29,10 +29,10 @@ function getDayNameFromDayNumber($day_number) {
     return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
 }
 
-function getDocRef($data) {
-    global $gTables;
-    $r = array();
-    return $r;
+// funzione di utilità generale, adatta a mysqli.inc.php
+function cols_from($table_name, ...$col_names) {
+    $full_names = array_map(function ($col_name) use ($table_name) { return "$table_name.$col_name"; }, $col_names);
+    return implode(", ", $full_names);
 }
 
 // visualizza i bottoni dei documenti di evasione associati all'ordine
@@ -76,53 +76,58 @@ function mostra_documenti_associati($ordine) {
     }
 }
 
-if (isset($_GET['auxil'])) {
-    $auxil = $_GET['auxil'];
-    if ($_GET['auxil'] == 'VPR') {
-        $what = 'VPR';
-    } else if ($_GET['auxil'] == 'VOG') {
-        $what = 'VOG'; 
-    } else {
-        $what = 'VOR';
-    }
-    $where = "tipdoc LIKE '$what'";
-} else {
-    $auxil = 'VOR';
-    $_GET['auxil'] = 'VOR';
-    $where = "tipdoc LIKE '$auxil'";
-}
+$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
+$tesbro_e_partners = "{$gTables['tesbro']} LEFT JOIN {$gTables['clfoco']} ON {$gTables['tesbro']}.clfoco = {$gTables['clfoco']}.codice LEFT JOIN {$gTables['anagra']} ON {$gTables['clfoco']}.id_anagra = {$gTables['anagra']}.id";
+$tesbro_e_destina = $tesbro_e_partners . " LEFT JOIN {$gTables['destina']} ON {$gTables['tesbro']}.id_des_same_company = {$gTables['destina']}.codice";
 
-$all = $where;
-
-gaz_flt_var_assign('id_tes', 'i');
-gaz_flt_var_assign('numdoc', 'i');
-if ( $what == "VOG" ) { 
-    gaz_flt_var_assign('weekday_repeat', 'i');
-} else {
-    gaz_flt_var_assign('datemi', 'd');
-}
-gaz_flt_var_assign('clfoco', 'v');
-gaz_flt_var_assign("unita_locale1", 'v');
-
-if (isset($_GET['all'])) {
-    $_GET['id_tes'] = "";
-    $_GET['numdoc'] = "";
-    $_GET['datemi'] = "";
-    $_GET['clfoco'] = "";
-    $_GET['unita_locale1'] = "";
-    $auxil = $_GET['auxil'] . "&all=yes";
-    if ($_GET['auxil'] == 'VPR') {
-        $what = 'VPR';
-    } else {
-        $what = substr($auxil, 0, 2) . "_";
-    }
-    $where = "tipdoc LIKE '$what'";
-    $passo = 100000;
-    $numero = '';
-}
+// campi ammissibili per la ricerca
+$search_fields = [
+    'id_doc'
+    => "id_tes = %d",
+    'numero'
+    => "numdoc = %d",
+    'auxil'  // leggi: 'tipo' (per compatibilità con link menù esistenti)
+    => "tipdoc LIKE '%s'",
+    'destinaz'
+    => "unita_locale1 LIKE '%%%s%%'",
+    'anno'
+    => "YEAR(datemi) = %d",
+    'cliente'
+    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%s%%'",
+    'giorno'
+    => "weekday_repeat = %d"
+];
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
+
+// creo l'array (header => campi) per l'ordinamento dei record
+$terzo = (isset($_GET['auxil']) && $_GET['auxil'] == 'VOG') ? ['weekday_repeat' => 'weekday_repeat'] : ['date' => 'datemi'];
+$sortable_headers = array(
+    "ID" => "id_tes",
+    $script_transl['number'] => "numdoc",
+    $script_transl[key($terzo)] => current($terzo), 
+    "Cliente" => "clfoco",
+    "Destinazione" => "unita_locale1",
+    $script_transl['status'] => "status",
+    $script_transl['print'] => "",
+    "Mail" => "",
+    $script_transl['duplicate'] => "",
+    $script_transl['delete'] => ""
+);
+unset($terzo);
+
+$ts = new TableSorter(
+    isset($_GET["destinaz"]) ? $tesbro_e_destina :
+	(!$partner_select && isset($_GET["cliente"]) ? $tesbro_e_partners : $gTables['tesbro']), 
+    $passo, 
+    ['datemi' => 'desc', 'numdoc' => 'desc'], 
+    ['auxil' => 'VOR']
+);
+$tipo = $auxil;
+
+# le <select> spaziano tra i documenti di un solo tipo (VPR, VOR o VOG)
+$where_select = sprintf("tipdoc LIKE '%s'", gaz_dbi_real_escape_string($tipo));
 
 echo '<script>
 $(function() {
@@ -154,18 +159,14 @@ function confirMail(link){
 }
 </script>';
 
-if (!isset($_GET['flag_order']))
-    $orderby = "datemi DESC, numdoc DESC";
-$a = substr($auxil, 0, 3);
 ?>
 
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][$_GET['auxil']]; ?></div>
+<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][$tipo]; ?></div>
 <?php
-$recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
-$recordnav->output();
+$ts->output_navbar();
 ?>
 <form method="GET" >
-    <input type="hidden" name="auxil" value="<?php echo substr($_GET['auxil'], 0, 3); ?>">
+    <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
     <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
         <p class="ui-state-highlight" id="mail_adrs"></p>
@@ -176,21 +177,20 @@ $recordnav->output();
     <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
             <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_int("id_tes", "Numero Prot."); ?>
+                <?php gaz_flt_disp_int("id_doc", "Numero Prot."); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_int("numdoc", "Numero Doc."); ?>
+                <?php gaz_flt_disp_int("numero", "Numero Doc."); ?>
             </td>
             <td class="FacetFieldCaptionTD">
                 <?php 
-                    if ( $what=="VOG" ) {
+                    if ( $tipo=="VOG" ) {
                         ?>
-                            <select class="form-control input-sm" onchange="this.form.submit()" name="weekday_repeat">
+                            <select class="form-control input-sm" onchange="this.form.submit()" name="giorno">
 			                <?php
-			                   if ( isset($_GET['weekday_repeat']) ) $gg = $_GET['weekday_repeat'];
-			                   else $gg = 'All';
+			                   $gg = isset($giorno) ? $giorno : 'All';
 			                ?>
-			                <option value="All" <?php if ($gg=='All') echo "selected"; ?>>Tutti</option>
+			                <option value="" <?php if ($gg=='All') echo "selected"; ?>>Tutti</option>
 			                <option value="0" <?php if ($gg=='0') echo "selected"; ?>>Domenica</option>
 			                <option value="1" <?php if ($gg=='1') echo "selected"; ?>>Lunedi</option>
 			                <option value="2" <?php if ($gg=='2') echo "selected"; ?>>Martedi</option>
@@ -201,15 +201,30 @@ $recordnav->output();
 			                </select>
                         <?php
                     } else {
-                        gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, "datemi DESC"); 
+                        gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $gTables["tesbro"], $where_select, "anno DESC"); 
                     }
                 ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesbro"] . ".clfoco", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1 ASC", "ragso1"); ?>
+		
+                <?php
+		if ($partner_select) {
+		    gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 AS nome",
+					$tesbro_e_partners,
+					$where_select,
+				        "nome ASC",
+					"nome");
+		} else {
+                    gaz_flt_disp_int("cliente", "Cliente");
+                }?>
             </td>
             <td class=FacetFieldCaptionTD>
-                <?php gaz_flt_disp_select("unita_locale1", $gTables['destina'].".unita_locale1", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id left join ". $gTables['destina']." on " .$gTables['tesbro'].".id_des_same_company = " . $gTables['destina'] . ".codice" , $all, "unita_locale1 ASC", "unita_locale1"); ?>
+                <?php gaz_flt_disp_select("destinaz",
+					  "unita_locale1 AS destinaz",
+					  $tesbro_e_destina,
+					  $where_select . " AND unita_locale1 IS NOT NULL",
+					  "destinaz DESC",
+					  "destinaz"); ?>
             </td>
             <td class=FacetFieldCaptionTD>
                 &nbsp;
@@ -218,57 +233,29 @@ $recordnav->output();
                 &nbsp;
             </td>
             <td class="FacetFieldCaptionTD">
-                <input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+                <input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1">
+                <?php $ts->output_order_form(); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <input type="submit" class="btn btn-sm btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value = 1;">
+                <a class="btn btn-sm btn-default" href="?auxil=<?php echo $tipo; ?>">Reset</a>
             </td>
             <td class="FacetFieldCaptionTD">
                 &nbsp;
             </td>
         </tr>
         <tr>
-            <?php
-            // creo l'array (header => campi) per l'ordinamento dei record
-            if ( $what=="VOG" ) {
-                $headers_tesbro = array(
-                "ID" => "id_tes",
-                //$script_transl['type'] => "tipdoc",
-                $script_transl['number'] => "numdoc",
-                $script_transl['weekday_repeat'] => "weekday_repeat",
-                "Cliente" => "clfoco",
-                "Destinazione" => "unita_locale1",
-                $script_transl['status'] => "status",
-                $script_transl['print'] => "",
-                "Mail" => "",
-                $script_transl['duplicate'] => "",
-                $script_transl['delete'] => ""
-                );
-            } else {
-                $headers_tesbro = array(
-                "ID" => "id_tes",
-                //$script_transl['type'] => "tipdoc",
-                $script_transl['number'] => "numdoc",
-                $script_transl['date'] => "datemi",
-                "Cliente" => "clfoco",
-                "Destinazione" => "unita_locale1",
-                $script_transl['status'] => "status",
-                $script_transl['print'] => "",
-                "Mail" => "",
-                $script_transl['duplicate'] => "",
-                $script_transl['delete'] => ""
-                );
-            }
-            $linkHeaders = new linkHeaders($headers_tesbro);
-            $linkHeaders->output();
-            ?>
+            <?php $ts->output_headers(); ?>
         </tr>
         <?php
         //recupero le testate in base alle scelte impostate
-        $result = gaz_dbi_dyn_query($gTables['tesbro'] . ".*," . $gTables['anagra'] . ".ragso1," . $gTables['anagra'] . ".e_mail AS base_mail," . $gTables["clfoco"] . ".codice, ".$gTables["destina"].".*", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice  LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id  left join '. $gTables['destina'].' on ' .$gTables['tesbro'].'.id_des_same_company = ' . $gTables['destina'] . '.codice', $where, $orderby, $limit, $passo);
-        if ($result == false) {
-            die(mysql_error());
-        }
+        $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'], "*") . ", " .
+				    cols_from($gTables['anagra'],
+					      "ragso1",
+					      "e_mail AS base_mail") . ", " .
+				    cols_from($gTables["destina"], "unita_locale1"),
+				    $tesbro_e_destina,
+				    $ts->where, $ts->orderby,
+				    $ts->getOffset(), $ts->getLimit());
         $ctrlprotoc = "";
         while ($r = gaz_dbi_fetch_array($result)) {
             if ($r["tipdoc"] == 'VPR') {
@@ -287,13 +274,13 @@ $recordnav->output();
                 echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r["tipdoc"], 1, 2) . "&nbsp;" . $r["id_tes"] . " </button></td>";
             }
             echo "<td>" . $r["numdoc"] . " &nbsp;</td>";
-            if ( $what=="VOG" ) {
+            if ( $tipo=="VOG" ) {
                 echo "<td>". getDayNameFromDayNumber($r["weekday_repeat"]). " &nbsp;</td>";
             } else {
                 echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
             }
             echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . $r["ragso1"] . "&search=Cerca\">" . $r["ragso1"] . "</a> &nbsp;</td>";
-            echo "<td><a href=\"admin_destinazioni.php?codice=".$r["codice"]."&Update\">".$r["unita_locale1"]."</a></td>";
+            echo "<td><a href=\"admin_destinazioni.php?codice=".$r["clfoco"]."&Update\">".$r["unita_locale1"]."</a></td>";
             
             // colonna stato ordine
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
@@ -321,7 +308,7 @@ $recordnav->output();
                 if ($r["status"] != "GENERATO") {
                     gaz_dbi_put_row($gTables['tesbro'], "id_tes", $r["id_tes"], "status", "RIGENERATO");
                 }
-                if ( $what=="VOG" ) {
+                if ( $tipo == "VOG" ) {
                     echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?weekday=".$r['weekday_repeat']."\">evadi</a></td>";
                 } else {
                     echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a>&nbsp;";
@@ -332,7 +319,7 @@ $recordnav->output();
                 echo "<td>";
                 $ultimo_documento = 0;
                 mostra_documenti_associati ( $r["id_tes"]);
-                if ( $what=="VOG" ) {
+                if ( $tipo == "VOG" ) {
                     echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord_gio.php\">evadi il rimanente</a>";
                 } else {
                     echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>&nbsp;";
@@ -359,7 +346,7 @@ $recordnav->output();
                 echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r["base_mail"] . '"
         mail="' . $r["base_mail"] . '" namedoc="' . $script_transl['type_value'][$r["tipdoc"]] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else { // non ho mail
-                echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+                echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r["clfoco"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
             }
             echo "</td>";
 
@@ -379,6 +366,30 @@ $recordnav->output();
     </table>
     </div>
 </form>
+
+<script>
+ $(document).ready(function(){
+     var selects = $("select");
+     // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
+     // (in questo modo i campi non usati possono essere esclusi)        
+     $("option", selects).filter(function(){ return this.value == "All"; }).val("");
+     
+     // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
+     // l'azione non lancia un evento "submit" e non può essere intercettata.
+     // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
+     selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+     
+     // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
+     $("form").submit(function() {
+         $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+         return true; // ensure form still submits
+     });
+     
+     // Un-disable form fields when page loads, in case they click back after submission
+     $( "form" ).find( ":input" ).prop( "disabled", false );
+ });
+</script>
+
 <?php
 require("../../library/include/footer.php");
 ?>
