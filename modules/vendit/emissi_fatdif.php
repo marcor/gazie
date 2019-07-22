@@ -515,7 +515,7 @@ if (isset($invoices['data'])) {
             echo "<td class=\"$c\">" . $script_transl['incasso'] . " </td>";
             echo "<td class=\"$c\" align=\"right\"> " . gaz_format_number($tes['speban'] * $pag['numrat']) . "</td>";
             echo "</tr>\n";
-            $tot += $tes['traspo'];
+            $tot += $tes['speban']*$pag['numrat'];
         }
         if ($tot >= 0.01) {
             echo "<tr>";
