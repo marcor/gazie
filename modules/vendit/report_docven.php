@@ -50,6 +50,8 @@ $search_fields = [
     => "seziva = %d",
     'protoc'
     => "protoc = %d",
+    'tipo'
+    => "tipdoc LIKE '%s'",
     'numero'
     => "numfat LIKE '%%%s%%'",
     'anno'
