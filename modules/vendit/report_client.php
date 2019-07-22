@@ -28,61 +28,54 @@ $admin_aziend = checkAdmin();
 
 $titolo = 'Clienti';
 
-$mascli = $admin_aziend['mascli'] . "000000";
 $clienti = $admin_aziend['mascli'];
+$mascli = $clienti . "000000";
+
+// campi ammissibili per la ricerca
+$search_fields = [
+    'codice'
+    => "codice = $mascli + %d",
+    'nome'
+    => "CONCAT(ragso1, ragso2) LIKE '%%%s%%'",
+    'codmin'
+    => "codice >= $mascli + GREATEST(%d, 1)",
+    'codmax'
+    => "codice <= $mascli + LEAST(%d, 999999)"
+];
+
+// creo l'array (header => campi) per l'ordinamento dei record
+$sortable_headers = array(
+    "Codice" => "codice",
+    "Ragione Sociale" => "ragso1",
+    "Tipo" => "sexper",
+    "Citt&agrave;" => "citspe",
+    "Telefono" => "telefo",
+    "P.IVA - C.F." => "",
+    "Privacy" => "",
+    "Riscuoti" => "",
+    "Visualizza <br /> e/o stampa" => "",
+    "Cancella" => ""
+);
+
 require("../../library/include/header.php");
 if (isset($_GET['privacy'])) {
-	echo '<script>    window.onload = function(){
-         window.open("stampa_privacy.php?codice='.intval($_GET['privacy']).'", "_blank"); // will open new tab on window.onload
-		} </script>';
+    echo '<script> window.onload = function() {
+    window.open("stampa_privacy.php?codice='.intval($_GET['privacy']).'", "_blank"); // will open new tab on window.onload
+} </script>';
 }
 $script_transl = HeadMain();
-$where = "codice BETWEEN " . $clienti . "000000 AND " . $clienti . "999999 and codice > $mascli";
-$all = $where;
 
-if (isset($_GET['auxil'])) {
-    $auxil = $_GET['auxil'];
-} else {
-    $auxil = "";
-}
+$partners = "{$gTables['clfoco']} LEFT JOIN {$gTables['anagra']} ON {$gTables['clfoco']}.id_anagra = {$gTables['anagra']}.id";
+$ts = new TableSorter(
+    $partners,
+    $passo,
+    ['codice' => 'desc'],
+    ['codmin' => 1, 'codmax' => 999999]
+);
 
-if (isset($_GET['auxil1'])) {
-    $auxil1 = $_GET['auxil1'];
-} else {
-    $auxil1 = "";
-}
-
-gaz_flt_var_assign('codice', 'v');
-gaz_flt_var_assign('ragso1', 'v');
-
-if (isset($_GET['all'])) {
-    $auxil = "&all=yes";
-    $passo = 100000;
-} else {
-    if (isset($_GET['auxil']) and $auxil1 == "") {
-        $where .= " AND ragso1 LIKE '" . addslashes($auxil) . "%'";
-    } elseif (isset($_GET['auxil1'])) {
-        $codicetemp = intval($mascli) + intval($auxil1);
-        $where .= " AND codice LIKE '" . $codicetemp . "%'";
-    }
-}
-
-if (!isset($_GET['field'])) {
-    $orderby = "codice DESC";
-}
-
-if (isset($_GET['ricerca_completa'])) {
-    $ricerca_testo = $_GET['ricerca_completa'];
-    $where .= " and ( ragso1 like '%" . $ricerca_testo . "%' ";
-    $where .= " or ragso2 like '%" . $ricerca_testo . "%' ";
-    $where .= " or legrap_pf_nome like '%" . $ricerca_testo . "%' ";
-    $where .= " or legrap_pf_cognome like '%" . $ricerca_testo . "%' ";
-    $where .= " or pariva like '%" . $ricerca_testo . "%' ";
-    $where .= " or codfis like '%" . $ricerca_testo . "%' ";
-    $where .= " or citspe like '%" . $ricerca_testo . "%' )";
-}
 ?>
 <div align="center" class="FacetFormHeaderFont">Clienti</div>
+<div align="center"><?php $ts->output_navbar(); ?></div>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
     <div class="box-primary table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed">
@@ -91,7 +84,7 @@ if (isset($_GET['ricerca_completa'])) {
                 <?php gaz_flt_disp_int("codice", "Codice cli."); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_int("ragso1", "Nome cliente"); //gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $all, $orderby, "ragso1");  ?>
+                <?php gaz_flt_disp_int("nome", "Nome cliente"); ?>
             </td>
             <td class="FacetFieldCaptionTD">
                 &nbsp;
@@ -107,37 +100,25 @@ if (isset($_GET['ricerca_completa'])) {
             </td>
             <td class="FacetFieldCaptionTD">
                 &nbsp;
+                <?php // gaz_flt_disp_int("codmin", "Min"); ?>
             </td>
             <td class="FacetFieldCaptionTD">
                 &nbsp;
+                <?php // gaz_flt_disp_int("codmax", "Max"); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+                <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" >
+                <?php $ts->output_order_form();  ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
+                <a class="btn btn-xs btn-default" href="?">Reset</a>
             </td>
         </tr>
         <?php
-        $result = gaz_dbi_dyn_query('*', $gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
-// creo l'array (header => campi) per l'ordinamento dei record
-        $headers_ = array(
-            "Codice" => "codice",
-            "Ragione Sociale" => "ragso1",
-            "Tipo" => "sexper",
-            "Citt&agrave;" => "citspe",
-            "Telefono" => "telefo",
-            "P.IVA - C.F." => "",
-            "Privacy" => "",
-            "Riscuoti" => "",
-            "Visualizza <br /> e/o stampa" => "",
-            "Cancella" => ""
-        );
-        $linkHeaders = new linkHeaders($headers_);
-        $linkHeaders->output();
-        $recordnav = new recordnav($gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $limit, $passo);
-        $recordnav->output();
+        $result = gaz_dbi_dyn_query('*', $partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
         ?>
+        <tr>
+            <?php $ts->output_headers(); ?>
         </tr>
         <?php
         while ($a_row = gaz_dbi_fetch_array($result)) {
@@ -203,9 +184,33 @@ if (isset($_GET['ricerca_completa'])) {
         }
         ?>
         <tr><th class="FacetFieldCaptionTD" colspan="10"></th></tr>
-</form>
-</table>
+    </table>
     </div>
+</form>
+
+<script>
+ $(document).ready(function(){
+     var selects = $("select");
+     // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
+     // (in questo modo i campi non usati possono essere esclusi)        
+     $("option", selects).filter(function(){ return this.value == "All"; }).val("");
+     
+     // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
+     // l'azione non lancia un evento "submit" e non può essere intercettata.
+     // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
+     selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+     
+     // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
+     $("form").submit(function() {
+         $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+         return true; // ensure form still submits
+     });
+     
+     // Un-disable form fields when page loads, in case they click back after submission
+     $( "form" ).find( ":input" ).prop( "disabled", false );
+ });
+</script>
+
 <?php
 require("../../library/include/footer.php");
 ?>
