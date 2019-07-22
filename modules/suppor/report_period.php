@@ -236,7 +236,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<i class="glyphicon glyphicon-edit"></i><?php echo $a_row["codice"]; ?></a>
 		</td>
 		<td><?php echo date("d",strtotime($a_row["data"]))." ".$month[date("n",strtotime($a_row["data"]))]." ".date("Y",strtotime($a_row["data"])); ?></td>
-		<td><a href="../vendit/report_client.php?auxil=<?php echo $a_row["ragso1"]; ?>&search=Cerca">
+		<td><a href="../vendit/report_client.php?nome=<?php echo $a_row["ragso1"]; ?>">
 		<?php 
 			if ( strlen($a_row["ragso1"]) > 20 ) {
 				echo substr($a_row["ragso1"],0,20)."..."; 

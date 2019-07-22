@@ -279,7 +279,7 @@ $ts->output_navbar();
             } else {
                 echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
             }
-            echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . $r["ragso1"] . "&search=Cerca\">" . $r["ragso1"] . "</a> &nbsp;</td>";
+            echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . $r["ragso1"] . "\">" . $r["ragso1"] . "</a> &nbsp;</td>";
             echo "<td><a href=\"admin_destinazioni.php?codice=".$r["clfoco"]."&Update\">".$r["unita_locale1"]."</a></td>";
             
             // colonna stato ordine

@@ -560,7 +560,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
                 rigdocInsert($form['rows'][$i]);
 			}
-            header("Location: report_docven.php?field=protoc&flag_order=DESC");
+            header("Location: report_docven.php");
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 			if (!isset($form['pagame'])){

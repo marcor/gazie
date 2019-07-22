@@ -50,8 +50,6 @@ $search_fields = [
     => "seziva = %d",
     'protoc'
     => "protoc = %d",
-    'tipo'
-    => "tipdoc LIKE '%s'",
     'numero'
     => "numfat LIKE '%%%s%%'",
     'anno'
@@ -63,7 +61,6 @@ $search_fields = [
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array(
     "Prot." => "protoc",
-    //"Tipo" => "tipdoc",
     "Numero" => "numfat",
     "Data" => "datfat",
     "Cliente" => "",
@@ -369,7 +366,7 @@ function confirFae(link){
                     // Colonna data documento
                     echo "<td align=\"center\">" . gaz_format_date($r["datfat"]) . " &nbsp;</td>";
                     // Colonna cliente
-                    echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . htmlspecialchars($r["ragso1"]) . "&search=Cerca\">" . $r["ragso1"] . ((empty($r["ragso2"]))?"":" ".$r["ragso2"]) . "</a>&nbsp;</td>";
+                    echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">" . $r["ragso1"] . ((empty($r["ragso2"]))?"":" ".$r["ragso2"]) . "</a>&nbsp;</td>";
                     // Colonna movimenti contabili
                     echo "<td align=\"left\">";
                     if ($r["id_con"] > 0) {

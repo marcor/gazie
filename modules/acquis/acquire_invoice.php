@@ -912,7 +912,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
                 rigdocInsert($form['rows'][$i]);
 			}
-            header('Location: report_docacq.php?auxil='.$form['seziva']);
+            header('Location: report_docacq.php?sezione='.$form['seziva']);
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 			if (!isset($form['pagame'])) {

@@ -225,7 +225,7 @@ function confirMail(link){
                             // Colonna Cliente
                             ?>
                             <td>
-                                <a href="report_client.php?auxil=<?php echo htmlspecialchars($anagra["ragso1"]); ?>&search=Cerca">
+                                <a href="report_client.php?nome=<?php echo htmlspecialchars($anagra["ragso1"]); ?>">
                                     <?php echo $anagra["ragso1"]; ?>
                                 </a>
                             </td>
@@ -360,7 +360,7 @@ function confirMail(link){
                             // Colonna Cliente
                             ?>
                             <td class="">
-                                <a href="report_client.php?auxil=<?php echo htmlspecialchars($anagra["ragso1"]); ?>&search=Cerca">
+                                <a href="report_client.php?nome=<?php echo htmlspecialchars($anagra["ragso1"]); ?>">
                                     <?php echo $anagra["ragso1"]; ?>
                                 </a>
                             </td>

@@ -134,7 +134,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<tr>";
     echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$row["id_tes"]."\">".$row['tipdoc'].$row["numdoc"]."</a> &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$row["datfat"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$row["ragso1"]."&search=Cerca\">".$row["ragso1"]."&nbsp;</a></td>";
+    echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?nome=".$row["ragso1"]."\">".$row["ragso1"]."&nbsp;</a></td>";
     echo "<td class=\"FacetDataTD\">".$row["telefo"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">
 			<a href=\"stampa_docven.php?id_tes=".$row["id_tes"]."&template=Received\" title=\"Stampa\" class=\"btn btn-xs btn-default\">

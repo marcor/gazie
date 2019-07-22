@@ -251,7 +251,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
       if ($r['saldo'] != 0) {
          echo "<tr>";
          echo "<td class=\"FacetDataTD\">".$r['codcon']."&nbsp;</td>";
-         echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$r["ragso1"]."&search=Cerca\">".$r["ragso1"]."</a> &nbsp;</td>";
+         echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?nome=".$r["ragso1"]."\">".$r["ragso1"]."</a> &nbsp;</td>";
          echo "<td class=\"FacetDataTD\">".$r['telefo']." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"center\">".$r['nummov']." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['dare'])." &nbsp;</td>";
