@@ -2177,15 +2177,7 @@ class TableSorter {
                 $$field = $def_GET[$field];
                 if (isset($pruned_GET[$field]))  # escludiamo dall'url i valori default applicati
                     $url_search_query_parts[] = "$field=" . urlencode($$field);
-					if ($sql_new_expr=preg_replace ("/LIKE \'\%{2}/","LIKE '%",$sql_expr)){
-						/* 	se sui vari file di report richiedo di aggiungere il carattere jolly % anche davanti la stringa
-							lo permetto, esempio: 
-							$search_fields = ['ragso1' => "ragso1 LIKE '%%s%%'"]; (anziché '%s%%')
-						*/						
-						$where_parts[] = str_replace("LIKE '","LIKE '%",sprintf($sql_new_expr, gaz_dbi_real_escape_string($$field)));
-					} else {
-						$where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
-					}
+                $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
                 $$field = htmlspecialchars($$field, ENT_QUOTES);
             }
         }
