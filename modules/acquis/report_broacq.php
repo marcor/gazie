@@ -338,7 +338,7 @@ function choicePartner(row)
 				echo "<td>".gaz_format_date($r["datemi"])." &nbsp;</td>\n";
 
 				// colonna fornitore
-				echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $r["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >'."<a title=\"Dettagli fornitore\" id=\"fornitore_".$r['id_tes']."\"  value=\"".$fornitore["ragso1"]."\" href=\"report_fornit.php?auxil=" . htmlspecialchars($fornitore["ragso1"]) . "&search=Cerca\">".$fornitore["ragso1"]."&nbsp;</a></div></td>";
+				echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $r["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >'."<a title=\"Dettagli fornitore\" id=\"fornitore_".$r['id_tes']."\"  value=\"".$fornitore["ragso1"]."\" href=\"report_fornit.php?nome=" . htmlspecialchars($fornitore["ragso1"]) . "\">".$fornitore["ragso1"]."&nbsp;</a></div></td>";
 
 				// colonna bottone cambia stato	
 				echo '<td><a class="btn btn-xs btn-'.$clastatus.'"';

@@ -194,7 +194,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     }
     echo "<td>" . $row["numfat"] . " &nbsp;</td>";
     echo "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
-    echo "<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?auxil=" . htmlspecialchars($anagra["ragso1"]) . "&search=Cerca\">" . $anagra["ragso1"] . ((empty($anagra["ragso2"]))?"":" ".$anagra["ragso2"]) . "</a>&nbsp;</td>";
+    echo "<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?nome=" . htmlspecialchars($anagra["ragso1"]) . "\">" . $anagra["ragso1"] . ((empty($anagra["ragso2"]))?"":" ".$anagra["ragso2"]) . "</a>&nbsp;</td>";
     echo "<td align=\"center\">";
     if ($row["id_con"] > 0) {
         echo "<a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont. n." . $row["id_con"] . "</a>";
