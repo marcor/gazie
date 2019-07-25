@@ -32,6 +32,7 @@ function connectToDB() {
              Potrebbe non essere stato installata, prova a farlo <a href=\"../../setup/install/install.php\"> cliccando QUI! </a> <br />
              <br />No se ha encontrado, la base de datos << $Database >>  ! <br />
 			No pudo ser instalado, trate de hacerlo haciendo <a href=\"../../setup/install/install.php\">  clic AQU&Iacute;! </a>");
+   mysqli_query($link, "/*!50701 SET SESSION sql_mode='' */");
    mysqli_query($link, "/*M!100204 SET SESSION sql_mode='' */");
    mysqli_set_charset($link, 'utf8');
 }
