@@ -30,12 +30,15 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     gaz_set_time_limit (0);
 }
 if (!isset($_GET['codice']) ||
-    !isset($_GET['codfin']) ||
     !isset($_GET['regini']) ||
     !isset($_GET['regfin']) ) {
     header("Location: ".$_SERVER['HTTP_REFERER']);
     exit;
 }
+if (!isset($_GET['codfin'])) {
+	$_GET['codfin']) = $_GET['codice'];
+}
+
 require("../../config/templates/report_template.php");
 $gioini = substr($_GET['regini'],0,2);
 $mesini = substr($_GET['regini'],2,2);
