@@ -94,6 +94,7 @@ class PreventivoFornitore extends Template
 					$rigo['codice_fornitore']=(!empty(trim($rigo['codice_fornitore'])))? ' Vs.Cod:'.$rigo['codice_fornitore']:''; 
                     if ($rigo['pezzi'] > 0 ) {
 						$res_ps='kg/pz';
+						$rp=$rigo['pezzi'];
 						if ($rigo['lunghezza'] >= 0.001) { 
 							$rp=$rigo['lunghezza']*$rigo['pezzi']/10**3;
 							$res_ps='kg/m';	
