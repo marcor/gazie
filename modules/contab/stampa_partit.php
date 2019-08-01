@@ -36,7 +36,7 @@ if (!isset($_GET['codice']) ||
     exit;
 }
 if (!isset($_GET['codfin'])) {
-	$_GET['codfin']) = $_GET['codice'];
+	$_GET['codfin'] = $_GET['codice'];
 }
 
 require("../../config/templates/report_template.php");
