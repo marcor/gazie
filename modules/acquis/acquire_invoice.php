@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
-$tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFN','TD06'=>'AFA','TD08'=>'AFC');
+$tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFD','TD06'=>'AFA','TD08'=>'AFC');
 $magazz = new magazzForm;
 $docOperat = $magazz->getOperators();
 $toDo = 'upload';
