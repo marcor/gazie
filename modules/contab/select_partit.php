@@ -219,6 +219,20 @@ if ($form['account_fin'] < $form['account_ini'] && $form['account_fin'] > 0) {
     $msg .= '3+';
 }
 // fine controlli
+$date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
+$date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
+
+$saldo_precedente = 0.00;
+if ($form['account_ini'] == $form['account_fin']) {
+	$query = "SELECT SUM((CASE WHEN darave='D' THEN 1 ELSE -1 END)*import) AS saldo" .
+			 " FROM " . $gTables['rigmoc'] . " INNER JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes=" . $gTables['tesmov'] . ".id_tes" .
+			 " WHERE codcon LIKE '" . $form['account_ini'] . "' AND datreg>='" . $last_opening_year.$last_opening_month.$last_opening_day . "' AND datreg<'" . $date_ini . "'";
+	$rs_extreme_accont = gaz_dbi_query($query);
+	$extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
+	if ($extreme_account) {
+		$saldo_precedente = $extreme_account['saldo'];
+	}
+}
 
 if (isset($_POST['print']) && $msg == '') {
     //Mando in stampa i movimenti contabili generati
@@ -228,6 +242,7 @@ if (isset($_POST['print']) && $msg == '') {
     $_SESSION['print_request'] = array('script_name' => 'stampa_partit',
         'codice' => $form['account_ini'],
         'codfin' => $form['account_fin'],
+        'sldpre' => $saldo_precedente,
         'regini' => date("dmY", $utsini),
         'regfin' => date("dmY", $utsfin),
         'ds' => date("dmY", $utsexe)
@@ -341,10 +356,8 @@ echo '" tabindex="100" >';
 echo "\t </td>\n";
 echo "\t </tr>\n";
 echo "</table>\n";
-//recupero tutti i movimenti contabili dei conti insieme alle relative testate...
-$date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
-$date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
 
+//recupero tutti i movimenti contabili dei conti insieme alle relative testate...
 if (isset($_POST['preview']) and $msg == '') {
     $span = 6;
     $totdare = 0.00;
@@ -372,17 +385,6 @@ if (isset($_POST['preview']) and $msg == '') {
             $linkHeaders = new linkHeaders($script_transl['header2']);
             $linkHeaders->output();
             echo "</tr>";
-
-            $query = "SELECT SUM((CASE WHEN darave='D' THEN 1 ELSE -1 END)*import) AS saldo " .
-                    "FROM " . $gTables['rigmoc'] . " INNER JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes=" . $gTables['tesmov'] . ".id_tes" .
-                    " WHERE codcon LIKE '" . $form['account_ini'] . "' AND datreg>='" . $last_opening_year.$last_opening_month.$last_opening_day . "' AND datreg<'" . $date_ini . "'";
-            $rs_extreme_accont = gaz_dbi_query($query);
-            $extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
-            if ($extreme_account) {
-                $saldo_precedente = $extreme_account['saldo'];
-            } else {
-                $saldo_precedente = 0.00;
-            }
 
             echo "<tr class=\"FacetDataTD\"><td colspan=\"8\" align=\"right\">SALDO PRECEDENTE &nbsp;</td>";
             echo "<td align=\"right\">" . gaz_format_number($saldo_precedente) . " &nbsp;</td></tr>";

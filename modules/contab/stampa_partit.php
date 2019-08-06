@@ -53,6 +53,7 @@ $datafin = date("Ymd",$utsfin);
 $descrDataini = date("d-m-Y",$utsini);
 $descrDatafin = date("d-m-Y",$utsfin);
 $luogo_data=$admin_aziend['citspe'].", lì ";
+$saldo_precedente = floatval($_GET['sldpre']);
 if (isset($_GET['ds'])) {
    $giosta = substr($_GET['ds'],0,2);
    $messta = substr($_GET['ds'],2,2);
@@ -102,68 +103,72 @@ $totdare = 0.00;
 $totavere = 0.00;
 $movSaldo = 0.00;
 while ($row = gaz_dbi_fetch_array($result)) {
-      $datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
-      $datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
-      $pdf->setRiporti($aRiportare);
-      if ($ctrlConto != $row['codcon']) {
-         $totdare = 0.00;
-         $totavere = 0.00;
-         $movSaldo = 0.00;
-         if (!empty($ctrlConto)) {
-                   $pdf->SetFont('helvetica','B',7);
-                   $pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO al '.$descrDatafin.' : ',1,0,'R');
-                   $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
-         }
-         $pdf->SetFont('helvetica','',7);
-         $aRiportare['top'][1]['nam'] = 0;
-         $aRiportare['bot'][1]['nam'] = 0;
-         $item_head['bot']= array(array('lun' => 80,'nam'=>$row['descri']),
-                                  array('lun' => 25,'nam'=>$row['codcon'])
-                                  );
-         $pdf->setItemGroup($item_head);
-         $pdf->setRiporti('');
-         $pdf->AddPage('P',$config->getValue('page_format'));
-      }
-      if ($row['darave'] == 'D'){
-        $totdare+= $row['import'];
-        $movSaldo += $row['import'];
-        $dare = gaz_format_number($row['import']);
-        $avere = '';
-     } else {
-        $totavere+= $row['import'];
-        $movSaldo -= $row['import'];
-        $avere = gaz_format_number($row['import']);
-        $dare = '';
-      }
-      $aRiportare['top'][1]['nam'] = gaz_format_number($movSaldo);
-      $aRiportare['bot'][1]['nam'] = gaz_format_number($movSaldo);
-      $pdf->Cell(18,4,$datareg,1,0,'C');
-      if ((!empty($row['partner']) || !empty($row['numdoc'])) && $row['caucon'] != 'APE' && $row['caucon'] != 'CHI'){
-          $pdf->SetFont('helvetica','',6);
-          $row['tesdes'].=' ('.$row['partner'];
-          if (!empty($row['numdoc'])){
-             $row['tesdes'] .= ' n.'.$row['numdoc'].' del '.$datadoc;
-             if ($row['protoc']>0) {
-                $row['tesdes'] .= ' sez.'.$row['seziva'].' p.'.$row['protoc'];
-             }
-          }
-          $row['tesdes'].=')';
-      }
-      $pdf->Cell(108,4,$row['tesdes'],'LTB',0,'L',0,'',1);
-      $pdf->SetFont('helvetica','',7);
-      $pdf->Cell(20,4,$dare,1,0,'R');
-      $pdf->Cell(20,4,$avere,1,0,'R');
-      $pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
-      $ctrlConto = $row['codcon'];
+	$datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
+	$datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
+	$pdf->setRiporti($aRiportare);
+	if ($ctrlConto != $row['codcon']) {
+		$totdare = 0.00;
+		$totavere = 0.00;
+		$movSaldo = 0.00;
+		if (!empty($ctrlConto)) {
+			$pdf->SetFont('helvetica','B',7);
+			$pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO al '.$descrDatafin.' : ',1,0,'R');
+			$pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
+		}
+		$pdf->SetFont('helvetica','',7);
+		$aRiportare['top'][1]['nam'] = 0;
+		$aRiportare['bot'][1]['nam'] = 0;
+		$item_head['bot']= array(array('lun' => 80,'nam'=>$row['descri']),
+			array('lun' => 25,'nam'=>$row['codcon'])
+		);
+		$pdf->setItemGroup($item_head);
+		$pdf->setRiporti('');
+		$pdf->AddPage('P',$config->getValue('page_format'));
+	}
+	if (empty($ctrlConto)) {
+		$pdf->Cell(166,4,'SALDO PRECEDENTE',1,0,'R');
+		$pdf->Cell(20,4,gaz_format_number($saldo_precedente),1,1,'R');
+	}
+	if ($row['darave'] == 'D'){
+		$totdare+= $row['import'];
+		$movSaldo += $row['import'];
+		$dare = gaz_format_number($row['import']);
+		$avere = '';
+	} else {
+		$totavere+= $row['import'];
+		$movSaldo -= $row['import'];
+		$avere = gaz_format_number($row['import']);
+		$dare = '';
+	}
+	$aRiportare['top'][1]['nam'] = gaz_format_number($movSaldo);
+	$aRiportare['bot'][1]['nam'] = gaz_format_number($movSaldo);
+	$pdf->Cell(18,4,$datareg,1,0,'C');
+	if ((!empty($row['partner']) || !empty($row['numdoc'])) && $row['caucon'] != 'APE' && $row['caucon'] != 'CHI'){
+		$pdf->SetFont('helvetica','',6);
+		$row['tesdes'].=' ('.$row['partner'];
+		if (!empty($row['numdoc'])){
+			$row['tesdes'] .= ' n.'.$row['numdoc'].' del '.$datadoc;
+			if ($row['protoc']>0) {
+				$row['tesdes'] .= ' sez.'.$row['seziva'].' p.'.$row['protoc'];
+			}
+		}
+		$row['tesdes'].=')';
+	}
+	$pdf->Cell(108,4,$row['tesdes'],'LTB',0,'L',0,'',1);
+	$pdf->SetFont('helvetica','',7);
+	$pdf->Cell(20,4,$dare,1,0,'R');
+	$pdf->Cell(20,4,$avere,1,0,'R');
+	$pdf->Cell(20,4,gaz_format_number($movSaldo + $saldo_precedente),1,1,'R');
+	$ctrlConto = $row['codcon'];
 }
 
 $pdf->Cell(126,4,'',1,0,'C');
-$pdf->Cell(20,4,$totdare,1,0,'R');
-$pdf->Cell(20,4,$totavere,1,0,'R');
+$pdf->Cell(20,4,gaz_format_number($totdare),1,0,'R');
+$pdf->Cell(20,4,gaz_format_number($totavere),1,0,'R');
 $pdf->Cell(20,4,'TOTALI',1,1,'C');
 
 $pdf->SetFont('helvetica','B',8);
-$pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO al '.$descrDatafin.' : ',1,0,'R');
+$pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO dal '.$descrDataini.' al '.$descrDatafin.' : ',1,0,'R');
 $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
 $pdf->setRiporti('');
 $pdf->Output();
