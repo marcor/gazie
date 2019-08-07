@@ -58,8 +58,11 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
         print $json_invalid;
         exit;
     }
-
-    if (strlen($term) < 2) { //	Equivalente del precedente strlen($term)>1
+	$tl=strlen($term);
+    if ($opt=='suggest_new_codart'){
+		$tl++; // in caso di proposta codice articolo forzo la ricerca ad un carattere in meno
+	}
+	if($tl<2) { 
         return;
     }
 
@@ -161,6 +164,9 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
             $result = gaz_dbi_dyn_query("id_staff AS id, CONCAT(ragso1,' ',ragso2) AS label, CONCAT(ragso1,' ',ragso2) AS value, 'S' AS movimentabile ", $gTables['staff'] . ' AS staff LEFT JOIN ' . $gTables['clfoco'] . ' AS worker ON staff.id_clfoco=worker.codice LEFT JOIN ' . $gTables['anagra'] . ' AS ana ON worker.id_anagra=ana.id ', $like, 'ragso1');
 			break;
+        case 'suggest_new_codart':
+            $result = gaz_dbi_dyn_query("codice AS id, CONCAT('Ultimo:',codice) AS label, codice AS value, movimentabile", $gTables['artico'], "codice LIKE '".$term."%'", "codice DESC", 0,1);
+            break;
 		default:
             $fields = array("ragso1", "ragso2");    //	Sono i campi sui quali effettuare la ricerca
             foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
@@ -174,11 +180,13 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
     while ($row = gaz_dbi_fetch_assoc($result)) { 
         $return_arr[] = $row;
     }
-
+    if ($opt=='suggest_new_codart'){ // in caso di suggerimento codice 
+			$return_arr[0]['value']++;
+			$return_arr[0]['label'].=' successivo: '.$return_arr[0]['value'];
+	}	
     if ($term != '%%') { //	E' indispensabile, altrimenti si possono generare warning che non fanno funzionare l'autocompletamento
         $return_arr = apply_highlight($return_arr, str_replace("%", '', $parts));
     }
-	
 	$return_arr = apply_evidenze($return_arr);
     echo json_encode($return_arr);
 } else {

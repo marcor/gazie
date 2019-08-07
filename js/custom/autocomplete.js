@@ -161,5 +161,18 @@ $(function() {
 			$(this).closest("form").submit();
 		}
 	});
+	$( "#suggest_new_codart" ).autocomplete({
+		source: "../../modules/root/search.php?opt=suggest_new_codart",
+		minLength: 1,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#suggest_new_codart").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
 });
 
