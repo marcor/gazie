@@ -1119,7 +1119,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
 		$xslt = new XSLTProcessor();
 		$xslt->importStylesheet($xslDoc);
-		echo $xslt->transformToXML($doc);
+		echo '<center>' . $xslt->transformToXML($doc) . '</center>';
 	}
 	if (substr($_SESSION['theme'],-3)=='lte'){ 
 		// footer  richiamato alla fine in caso di utilizzo di lte 

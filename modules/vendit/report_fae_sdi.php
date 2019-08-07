@@ -115,9 +115,10 @@ if (isset($_GET['all'])) {
 } else {
 
 	if (isset($_GET['nome_file'])) {
+		$passo = 1000000;
 		$nome_file = $_GET['nome_file'];
 		$status = '';
-		$where = " filename_ori LIKE '%" . $nome_file . "%'";
+		$where = " filename_ori LIKE '%" . $nome_file . "%' OR numfat LIKE '" . $nome_file . "'";
 		$mostra_intesta = 1;
 	}
 
@@ -249,7 +250,7 @@ if (!empty($msg_err)) {
 	echo "<p class=\"bg-danger text-center\">" . $msg_err . "</p>";
 }
 
-$recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
+$recordnav = new recordnav($gTables['fae_flux'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes', $where, $limit, $passo);
 $recordnav -> output();
 ?>
 

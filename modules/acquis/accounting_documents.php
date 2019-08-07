@@ -226,8 +226,13 @@ function computeTot($data) {
     $tax = 0;
     $vat = 0;
     foreach ($data as $k => $v) {
-        $tax += $v['impcast']+$v['impneg'];
-        $vat += round(($v['impcast']+$v['impneg']) * $v['periva']) / 100;
+		if (!empty($vv['impneg'])) {
+            $tax += $v['impcast']+$v['impneg'];
+            $vat += round(($v['impcast']+$v['impneg']) * $v['periva']) / 100;
+        } else {
+            $tax += $v['impcast'];
+            $vat += round(($v['impcast']) * $v['periva']) / 100;
+        }
     }
     $tot = $vat + $tax;
     return array('taxable' => $tax, 'vat' => $vat, 'tot' => $tot);
@@ -397,7 +402,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     $vv['impost'] = round($vv['impcast'] * $vv['periva']) / 100;
                     rigmoiInsert($vv);
 					// se ho un valore negativo sulla stessa aliquota creo uno storno
-					if ($vv['impneg']<0.00){
+					if (!empty($vv['impneg']) && $vv['impneg']<0.00) {
 						$vv['impost'] = round($vv['impneg'] * $vv['periva']) / 100;
 						$vv['imponi'] = $vv['impneg'];
 						rigmoiInsert($vv);
