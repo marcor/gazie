@@ -123,21 +123,17 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
 	$pdf->setRiporti($aRiportare);
 	if ($ctrlConto != $row['codcon']) {
+		if (!empty($ctrlConto)) {
+			$pdf->Cell(126,4,'TOTALI DARE/AVERE DEL PERIODO dal '.$descrDataini.' al '.$descrDatafin.' (saldo '.gaz_format_number($totdare-$totavere).') ',1,0,'R');
+			$pdf->Cell(20,4,gaz_format_number($totdare),1,0,'R');
+			$pdf->Cell(20,4,gaz_format_number($totavere),1,0,'R');
+			$pdf->Cell(20,4,'',1,1,'C');
+		}
 		$totdare = 0.00;
 		$totavere = 0.00;
 		$movSaldo = 0.00;
-		// INIZIO RICERCA SALDO PRECEDENTE
-		$query = "SELECT SUM((CASE WHEN darave='D' THEN 1 ELSE -1 END)*import) AS saldo" .
-			 " FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes=" . $gTables['tesmov'] . ".id_tes" .
-			 " WHERE codcon = " . $row['codcon'] . " AND datreg>='" . $date_last_opening . "' AND datreg<'" . $dataini . "'";
-		$rs_extreme_accont = gaz_dbi_query($query);
-		$extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
-		if ($extreme_account) {
-			$movSaldo = $extreme_account['saldo'];
-		}
-		// FINE RICERCA SALDO PRECEDENTE
 		if (!empty($ctrlConto)) {
-			$pdf->SetFont('helvetica','B',7);
+			$pdf->SetFont('helvetica','B',8);
 			$pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO al '.$descrDatafin.' : ',1,0,'R');
 			$pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
 		}
@@ -150,10 +146,20 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		$pdf->setItemGroup($item_head);
 		$pdf->setRiporti('');
 		$pdf->AddPage('P',$config->getValue('page_format'));
-	}
-	if (empty($ctrlConto)) {
-		$pdf->Cell(166,4,'SALDO PRECEDENTE',1,0,'R');
-		$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
+		// INIZIO RICERCA SALDO PRECEDENTE
+		$query = "SELECT SUM((CASE WHEN darave='D' THEN 1 ELSE -1 END)*import) AS saldo" .
+			 " FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes=" . $gTables['tesmov'] . ".id_tes" .
+			 " WHERE codcon = " . $row['codcon'] . " AND datreg>='" . $date_last_opening . "' AND datreg<'" . $dataini . "'";
+		$rs_extreme_accont = gaz_dbi_query($query);
+		$extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
+		if ($extreme_account) {
+			$movSaldo = $extreme_account['saldo'];
+		}
+		// FINE RICERCA SALDO PRECEDENTE
+		if ($movSaldo>=0.01) {
+			$pdf->Cell(166,4,'SALDO PRECEDENTE',1,0,'R');
+			$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
+		}
 	}
 	if ($row['darave'] == 'D'){
 		$totdare+= $row['import'];
@@ -194,7 +200,7 @@ $pdf->Cell(20,4,gaz_format_number($totavere),1,0,'R');
 $pdf->Cell(20,4,'',1,1,'C');
 
 $pdf->SetFont('helvetica','B',8);
-$pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO dal '.$descrDataini.' al '.$descrDatafin.' : ',1,0,'R');
+$pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO dal '.$descrDatafin.' : ',1,0,'R');
 $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
 $pdf->setRiporti('');
 $pdf->Output();
