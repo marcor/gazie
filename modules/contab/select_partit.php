@@ -29,7 +29,7 @@ $msg = "";
 
 function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
     global $gTables;
-    if ($account_ini == $account_fin || $account_fin == 0) {
+    if ($account_ini == $account_fin || $account_fin == 0) { // i conti coincidono
         if ($account_fin == 0) {
             $account_fin = $account_ini;
         }
@@ -70,15 +70,15 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
 }
 
 $rs_last_opening = gaz_dbi_dyn_query("YEAR(datreg) AS anno, MONTH(datreg) AS mese, DAY(datreg) AS giorno", $gTables['tesmov'], "caucon = 'APE'", "datreg DESC", 0, 1);
-$last_opening = gaz_dbi_fetch_array($rs_last_opening);
+$last_opening = gaz_dbi_fetch_array($rs_last_opening); // trovo la data dell'ultima apertura
 if ($last_opening) {
 	$last_opening_year = $last_opening['anno'];
 	$last_opening_month = $last_opening['mese'];
 	$last_opening_day = $last_opening['giorno'];
 } else {
-	$last_opening_year = date('Y');
+	$last_opening_year = '2004';
 	$last_opening_month = '1';
-	$last_opening_day = '1';
+	$last_opening_day = '27';
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
@@ -221,12 +221,13 @@ if ($form['account_fin'] < $form['account_ini'] && $form['account_fin'] > 0) {
 // fine controlli
 $date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
 $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
+$date_last_opening = sprintf("%04d%02d%02d", $last_opening_year, $last_opening_month, $last_opening_day);
 
 $saldo_precedente = 0.00;
 if ($form['account_ini'] == $form['account_fin']) {
 	$query = "SELECT SUM((CASE WHEN darave='D' THEN 1 ELSE -1 END)*import) AS saldo" .
-			 " FROM " . $gTables['rigmoc'] . " INNER JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes=" . $gTables['tesmov'] . ".id_tes" .
-			 " WHERE codcon LIKE '" . $form['account_ini'] . "' AND datreg>='" . $last_opening_year.$last_opening_month.$last_opening_day . "' AND datreg<'" . $date_ini . "'";
+			 " FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes=" . $gTables['tesmov'] . ".id_tes" .
+			 " WHERE codcon = " . $form['account_ini'] . " AND datreg>='" . $date_last_opening . "' AND datreg<'" . $date_ini . "'";
 	$rs_extreme_accont = gaz_dbi_query($query);
 	$extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
 	if ($extreme_account) {
@@ -242,7 +243,6 @@ if (isset($_POST['print']) && $msg == '') {
     $_SESSION['print_request'] = array('script_name' => 'stampa_partit',
         'codice' => $form['account_ini'],
         'codfin' => $form['account_fin'],
-        'sldpre' => $saldo_precedente,
         'regini' => date("dmY", $utsini),
         'regfin' => date("dmY", $utsfin),
         'ds' => date("dmY", $utsexe)
@@ -362,7 +362,7 @@ if (isset($_POST['preview']) and $msg == '') {
     $span = 6;
     $totdare = 0.00;
     $totavere = 0.00;
-    $saldo = 0.00;
+    $saldo = $saldo_precedente;
     $m = getMovements($form['account_ini'], $form['account_fin'], $date_ini, $date_fin);
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     if (sizeof($m) > 0) {

@@ -53,7 +53,6 @@ $datafin = date("Ymd",$utsfin);
 $descrDataini = date("d-m-Y",$utsini);
 $descrDatafin = date("d-m-Y",$utsfin);
 $luogo_data=$admin_aziend['citspe'].", lì ";
-$saldo_precedente = floatval($_GET['sldpre']);
 if (isset($_GET['ds'])) {
    $giosta = substr($_GET['ds'],0,2);
    $messta = substr($_GET['ds'],2,2);
@@ -80,7 +79,7 @@ $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
 $title = array('luogo_data'=>$luogo_data,
                'title'=>"PARTITARIO  dal ".$descrDataini." al ".$descrDatafin,
                'hile'=>array(   array('lun' => 18,'nam'=>'Data Reg.'),
-                                array('lun' =>108,'nam'=>'Descrizione (Dati del documento'),
+                                array('lun' =>108,'nam'=>'Descrizione (Dati del documento)'),
                                 array('lun' => 20,'nam'=>'Dare'),
                                 array('lun' => 20,'nam'=>'Avere'),
                                 array('lun' => 20,'nam'=>'SALDO')
@@ -93,6 +92,23 @@ $aRiportare = array('top'=>array(array('lun' => 166,'nam'=>'da riporto : '),
                            array('lun' => 20,'nam'=>'')
                            )
                     );
+
+// INIZIO RICERCA APERTURA PRECENDENTE
+$rs_last_opening = gaz_dbi_dyn_query("YEAR(datreg) AS anno, MONTH(datreg) AS mese, DAY(datreg) AS giorno", $gTables['tesmov'], "caucon = 'APE'", "datreg DESC", 0, 1);
+$last_opening = gaz_dbi_fetch_array($rs_last_opening); // trovo la data dell'ultima apertura
+if ($last_opening) {
+	$last_opening_year = $last_opening['anno'];
+	$last_opening_month = $last_opening['mese'];
+	$last_opening_day = $last_opening['giorno'];
+} else {
+	$last_opening_year = '2004';
+	$last_opening_month = '1';
+	$last_opening_day = '27';
+}
+$date_last_opening = sprintf("%04d%02d%02d", $last_opening_year, $last_opening_month, $last_opening_day);
+// FINE RICERCA APERTURA PRECENDENTE
+
+
 $pdf = new Report_template('P','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(51);
@@ -110,6 +126,16 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		$totdare = 0.00;
 		$totavere = 0.00;
 		$movSaldo = 0.00;
+		// INIZIO RICERCA SALDO PRECEDENTE
+		$query = "SELECT SUM((CASE WHEN darave='D' THEN 1 ELSE -1 END)*import) AS saldo" .
+			 " FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes=" . $gTables['tesmov'] . ".id_tes" .
+			 " WHERE codcon = " . $row['codcon'] . " AND datreg>='" . $date_last_opening . "' AND datreg<'" . $dataini . "'";
+		$rs_extreme_accont = gaz_dbi_query($query);
+		$extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
+		if ($extreme_account) {
+			$movSaldo = $extreme_account['saldo'];
+		}
+		// FINE RICERCA SALDO PRECEDENTE
 		if (!empty($ctrlConto)) {
 			$pdf->SetFont('helvetica','B',7);
 			$pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO al '.$descrDatafin.' : ',1,0,'R');
@@ -127,7 +153,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	}
 	if (empty($ctrlConto)) {
 		$pdf->Cell(166,4,'SALDO PRECEDENTE',1,0,'R');
-		$pdf->Cell(20,4,gaz_format_number($saldo_precedente),1,1,'R');
+		$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
 	}
 	if ($row['darave'] == 'D'){
 		$totdare+= $row['import'];
@@ -158,14 +184,14 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$pdf->SetFont('helvetica','',7);
 	$pdf->Cell(20,4,$dare,1,0,'R');
 	$pdf->Cell(20,4,$avere,1,0,'R');
-	$pdf->Cell(20,4,gaz_format_number($movSaldo + $saldo_precedente),1,1,'R');
+	$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
 	$ctrlConto = $row['codcon'];
 }
 
-$pdf->Cell(126,4,'',1,0,'C');
+$pdf->Cell(126,4,'TOTALI DARE/AVERE DEL PERIODO dal '.$descrDataini.' al '.$descrDatafin.' (saldo '.gaz_format_number($totdare-$totavere).') ',1,0,'R');
 $pdf->Cell(20,4,gaz_format_number($totdare),1,0,'R');
 $pdf->Cell(20,4,gaz_format_number($totavere),1,0,'R');
-$pdf->Cell(20,4,'TOTALI',1,1,'C');
+$pdf->Cell(20,4,'',1,1,'C');
 
 $pdf->SetFont('helvetica','B',8);
 $pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO dal '.$descrDataini.' al '.$descrDatafin.' : ',1,0,'R');
