@@ -124,7 +124,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$pdf->setRiporti($aRiportare);
 	if ($ctrlConto != $row['codcon']) {
 		if (!empty($ctrlConto)) {
-			$pdf->Cell(126,4,'TOTALI DARE/AVERE DEL PERIODO dal '.$descrDataini.' al '.$descrDatafin.' (saldo '.gaz_format_number($totdare-$totavere).') ',1,0,'R');
+			$pdf->Cell(126,4,'TOTALI DARE/AVERE PER IL PERIODO dal '.$descrDataini.' al '.$descrDatafin.' (saldo '.gaz_format_number($totdare-$totavere).') ',1,0,'R');
 			$pdf->Cell(20,4,gaz_format_number($totdare),1,0,'R');
 			$pdf->Cell(20,4,gaz_format_number($totavere),1,0,'R');
 			$pdf->Cell(20,4,'',1,1,'C');
@@ -156,7 +156,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 			$movSaldo = $extreme_account['saldo'];
 		}
 		// FINE RICERCA SALDO PRECEDENTE
-		if ($movSaldo>=0.01) {
+		if (abs($movSaldo)>=0.01) {
 			$pdf->Cell(166,4,'SALDO PRECEDENTE',1,0,'R');
 			$pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
 		}
@@ -194,7 +194,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$ctrlConto = $row['codcon'];
 }
 
-$pdf->Cell(126,4,'TOTALI DARE/AVERE DEL PERIODO dal '.$descrDataini.' al '.$descrDatafin.' (saldo '.gaz_format_number($totdare-$totavere).') ',1,0,'R');
+$pdf->Cell(126,4,'TOTALI DARE/AVERE PER IL PERIODO dal '.$descrDataini.' al '.$descrDatafin.' (saldo '.gaz_format_number($totdare-$totavere).') ',1,0,'R');
 $pdf->Cell(20,4,gaz_format_number($totdare),1,0,'R');
 $pdf->Cell(20,4,gaz_format_number($totavere),1,0,'R');
 $pdf->Cell(20,4,'',1,1,'C');
