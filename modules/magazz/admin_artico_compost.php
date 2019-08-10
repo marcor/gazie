@@ -105,7 +105,7 @@ $script_transl = HeadMain();
                         $result = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $where2, 'id', 0, PER_PAGE);
    
                         //preparo la variabile where per la prossima query
-                        $where = "codice<>'".$codice."' and good_or_service<>2";
+                        $where = "codice<>'".$codice."'";
                         //gaz_flt_var_assign('codice', 'v');
                         gaz_flt_var_assign('descri', 'v');
                         gaz_flt_var_assign('good_or_service', 'v');
@@ -199,11 +199,10 @@ $script_transl = HeadMain();
                             <tr>              
                                 <td data-title="<?php echo $script_transl["codice"]; ?>">
                                     <?php
-                                        if ( $row["good_or_service"] != 2 ) {
-                                            echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Insert&add='.$row['codice'].'&codice='.$codice.'" ><i class="glyphicon glyphicon-menu-left"></i>&nbsp;'.$row['codice'].'</a>';
-                                        } else {
+                                        if ( $row["good_or_service"] == 2 ) {
                                             echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Insert&codice='.$row['codice'].'" ><i class="glyphicon glyphicon-menu-up"></i>&nbsp;'.$row['codice'].'</a>';
                                         }
+                                        echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Insert&add='.$row['codice'].'&codice='.$codice.'" ><i class="glyphicon glyphicon-menu-left"></i>&nbsp;'.$row['codice'].'</a>';
 
                                     ?>
                                 </td>
