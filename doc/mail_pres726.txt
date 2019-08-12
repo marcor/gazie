@@ -1,0 +1,11 @@
+Titolo:
+Et ventis adversis
+
+Presentazione:
+Rilascio questa versione che si caratterizza per il miglioramento notevole dell'usabilità, oltre che per il (solito) debug. 
+Ho dato la possibilità di generare il file dell'esterometro separatamente da quelle italiane visto che con l'avvento della fatturazione elettronica non è più necessaria la comunicazione dati fatture.
+Un gran bel lavoro è stato fatto da Marco Rimoldi sulle pagine dei report che adesso risultato ordinabili con più criteri contemporaneamente.
+Angelo Romano ha aggiunto un tasto per il download delle fatture elettroniche passive acquisite, corretto il calcolo del bollo nelle fatture generate da contratti, aggiunto il saldo precedente alla stampa dei partitari contabili, permessa l'acquisizione delle note di debito e coretto l'impacchettamento delle fatture verso la PA.
+Sul form per la modifica degli articoli di magazzino (merci/servizi) in presenza di "composizione" ho aggiunto la visualizzazione della relativa distinta base (BOM) che da oggi è possibile inserirla multilivello, però è da completare nelle sue piene funzionalità con i movimenti di magazzino.
+
+Antonio de Vincentiis, Montesilvano, 12 agosto 2019
