@@ -210,6 +210,105 @@ class magazzForm extends GAzieForm {
         }
     }
 
+	private function getBOMfromDB($codcomp,$depth){
+        global $gTables;
+		$ret=[];
+		$rs_BOM = gaz_dbi_dyn_query("*", $gTables['distinta_base'].' LEFT JOIN '.$gTables['artico'].' ON codice_artico_base = codice', "codice_composizione = '".$codcomp."'");
+		while ($r = gaz_dbi_fetch_array($rs_BOM)) {
+			$r['depth']=$depth;
+			$ret[$r['codice_artico_base']]=$r;
+		}
+		return $ret;
+	}
+
+    function getBOM($codcomp) {  // Creo l'array multidimensionale della distita base (BOM)
+		$depth=0;
+		$data0=$this->getBOMfromDB($codcomp,0);
+		$n0=count($data0);
+		if ($n0>=1){
+			foreach ($data0 as $k=>$v){
+				$data1=$this->getBOMfromDB($v['codice_artico_base'],1);
+				$n1=count($data1);
+				if ($n1>=1){
+					$data0[$k]['codice_artico_base']=$data1;
+					foreach ($data1 as $k2=>$v2){	
+						$data2=$this->getBOMfromDB($v2['codice_artico_base'],2);
+						$n2=count($data2);
+						if ($n2>=1){
+							$data0[$k]['codice_artico_base'][$k2]['codice_artico_base']=$data2;
+							foreach ($data2 as $k3=>$v3){	
+								$data3=$this->getBOMfromDB($v3['codice_artico_base'],3);
+								$n3=count($data3);
+								if ($n3>=1){
+									$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base']=$data3;
+									foreach ($data3 as $k3=>$v3){	
+										$data4=$this->getBOMfromDB($v3['codice_artico_base'],4);
+										$n4=count($data4);
+										if ($n4>=1){
+											$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base']=$data4;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		//print_r($data0);
+		return $data0;
+	}
+	
+    function print_tree_BOM($codcomp) {  // Stampo la distinta base
+		$data=$this->getBOM($codcomp);
+		if (count($data)>=1){
+        echo '<div class="span4"><ul class="sTree bgC4" id="sTree2"> BOM - Distinta base della composizione'."\n";
+		foreach($data as $k0=>$v0) {
+			echo '<li class="bgC4 sortableListsClose" id="'.$v0[2].'"><div>'.$v0[2].' - '.$v0['descri'].'  '.$v0['unimis'].': '.floatval($v0['quantita_artico_base']).'</div>';
+			if (is_array($v0['codice_artico_base'])){
+			  echo '<ul class="">';
+			  foreach($v0['codice_artico_base'] as $k1=>$v1) {
+				echo '<li class="bgC4" id="'.$v1[2].'"><div>'.$v1[2].' - '.$v1['descri'].'  '.$v1['unimis'].': '.floatval($v1['quantita_artico_base']).'</div>';
+				  if (is_array($v1['codice_artico_base']))	{
+					echo '<ul class="">';
+					foreach($v1['codice_artico_base'] as $k2=>$v2) {
+					  echo '<li class="bgC4" id="'.$v2[2].'"><div>'.$v2[2].' - '.$v2['descri'].'  '.$v2['unimis'].': '.floatval($v2['quantita_artico_base']).'</div>';
+					  if (is_array($v2['codice_artico_base']))	{
+						echo '<ul class="">';
+						foreach($v2['codice_artico_base'] as $k3=>$v3) {
+						  echo '<li class="bgC4" id="'.$v3[2].'"><div>'.$v3[2].' - '.$v3['descri'].'  '.$v3['unimis'].': '.floatval($v3['quantita_artico_base']).'</div>';
+						  if (is_array($v3['codice_artico_base']))	{
+							echo '<ul class="">';
+							foreach($v3['codice_artico_base'] as $k4=>$v4) {
+							  echo '<li class="bgC4" id="'.$v4[2].'"><div>'.$v4[2].' - '.$v4['descri'].'  '.$v4['unimis'].': '.floatval($v4['quantita_artico_base']).'</div>';
+							}
+						  } else {
+							  
+						  }
+ 		  				  echo "</li>\n";
+						}
+						echo "</ul>\n";
+					  } else {
+						  
+					  }
+					  echo "</li>\n";
+					}
+					echo "</ul>\n";
+				  } else {
+					  
+				  }
+				  echo "</li>\n";
+			  }
+  			  echo "</ul>\n";
+			} else{
+				
+			}
+			echo "</li>\n";
+		}
+		echo "</ul></div>\n";
+		}
+	}
+	
     function getStockValue($id_mov = false, $item_code = null, $date = null, $stock_eval_method = null, $decimal_price = 2)
     /* Questa funzione serve per restituire la valorizzazione dello scarico
       a seconda del metodo (WMA,LIFO,FIFO) scelto per ottenerla.
