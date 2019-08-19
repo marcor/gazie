@@ -937,7 +937,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $XMLvars->setXMLtot();
     $totpar = $XMLvars->totimpfat + $XMLvars->totriport + $XMLvars->totivafat; //totale della fattura al lordo della RDA e dell'IVA
     $totpag = $totpar - $XMLvars->tot_ritenute - $XMLvars->ivasplitpay; // totale a pagare
-    if ($XMLvars->virtual_taxstamp == 1 || $XMLvars->virtual_taxstamp == 2) { // se si è scelto di assolvere il bollo sia in modo fisico che virtuale
+    if ($XMLvars->impbol >= 0.01 && ($XMLvars->virtual_taxstamp == 1 || $XMLvars->virtual_taxstamp == 2)) { // se si è scelto di assolvere il bollo sia in modo fisico che virtuale
         $totpag = $totpag + $XMLvars->impbol;
         $totpar = $totpar + $XMLvars->impbol;
     }
@@ -1112,7 +1112,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $results->appendChild($el);
     }
 
-    if ($XMLvars->BolloVirtuale) {
+    if ($XMLvars->impbol >= 0.01 && $XMLvars->BolloVirtuale) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
         $el = $domDoc->createElement("DatiBollo", "");
         $el1 = $domDoc->createElement("BolloVirtuale", $XMLvars->BolloVirtuale);
