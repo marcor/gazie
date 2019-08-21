@@ -29,7 +29,7 @@ function printDash($transl){
         $pos = bc_get_current_path($posizione);
         $posizione = array_pop( $posizione );
 
-        $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'"', ' id_bread',0,999);
+        $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'" AND exec_mode=0', ' id_bread',0,999);
         if ( gaz_dbi_num_rows($res_pos)>0 ) {             
             $row = gaz_dbi_fetch_array($res_pos);
             echo "<ol class='breadcrumb'>";
@@ -39,7 +39,7 @@ function printDash($transl){
             while ( $row = gaz_dbi_fetch_array($res_pos) ) {
                 echo "<li><a href='".$row['link']."'>".$row['titolo']."</a></li>";
             }
-            echo "<li><a href='../../modules/root/admin.php'><i class='glyphicon glyphicon'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
+            echo "<li><a href='../../modules/root/admin.php'><i class='glyphicon glyphicon-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
             echo "</ol>";
         } else {
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
@@ -61,8 +61,6 @@ function printDash($transl){
                 echo "&nbsp;".stripslashes($transl[$module]["m2"][$riga["translate_key"]][0]);
                 echo "</li>";          
                 //da fare salvare i moduli più usati tramite la stella
-                //echo "<li><a><i class=\"fa fa-star-o\"></i></a>";                
-                //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
                 while ($r = gaz_dbi_fetch_array($result2)) {
                     if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
                         echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
@@ -79,8 +77,6 @@ function printDash($transl){
                     echo "<li>";
                     echo "&nbsp;".$transl[$module]["m3"][$r["translate_key"]][0];
                     echo "</li>";                
-                    //echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
-                    //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-help\"></i></a></li>";
                     while ($r = gaz_dbi_fetch_array($result4)) {
                         if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
                             echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';

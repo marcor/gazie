@@ -287,7 +287,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         $pos = bc_get_current_path($posizione);
         $posizione = array_pop( $posizione );
 
-        $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'"', ' id_bread',0,999);
+        $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'" AND exec_mode=0', ' id_bread',0,999);
         if ( gaz_dbi_num_rows($res_pos)>0 ) {             
             $row = gaz_dbi_fetch_array($res_pos);
             echo "<h1>";
