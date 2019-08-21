@@ -10,6 +10,7 @@ ANTONIO DE VINCENTIIS: COMMENTO perché obbliga ad avere il file gconfig.myconf.
 		$admin_aziend = $GAzie->getCheckAdmin();
 	}*/
 	if ( isset($maintenance) && $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
+	require("../../library/theme/g7/function.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -304,5 +305,6 @@ ANTONIO DE VINCENTIIS: COMMENTO perché obbliga ad avere il file gconfig.myconf.
 		 }
 </script>
 <div class="container-fluid gaz-body">';
+		printDash($transl);
             return ($strCommon + $translated_script);
         } 
