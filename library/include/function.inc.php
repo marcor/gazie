@@ -332,7 +332,7 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
         $res = 1;
         foreach ($sconto as $val) {
 			if (!$val){$val=0.00;}
-            $res -= $res * $val / 100;	
+            $res -= $res * $val / 100;
         }
         $res = 1 - $res;
     } else {
@@ -347,7 +347,7 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
 //
 // La funzione table_prefix_ok() serve a determinare se il prefisso
 // delle tabelle e' valido, secondo lo schema di Gazie, oppure no.
-// In pratica, si verifica che inizi con la stringa `gaz' e pu�
+// In pratica, si verifica che inizi con la stringa `gaz' e può
 // continuare con lettere minuscole e cifre numeriche, fino
 // a un massimo di ulteriori nove caratteri
 //
@@ -1073,9 +1073,10 @@ class selectPartner extends SelectBox {
 }
 
 // Antonio Germani - classe per la generazione di select box ordini
-class selectorder extends SelectBox {
-
-     function output($cerca, $field = 'C', $class = 'FacetSelect',$sele=1) {
+class selectorder extends SelectBox
+{
+    function output($cerca, $field = 'C', $class = 'FacetSelect', $sele = 1)
+    {
         global $gTables, $script_transl, $script_transl;
         $msg = "";
         $tabula = ' tabindex="4" ';
@@ -1163,7 +1164,7 @@ class selectproduction extends SelectBox {
             $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
             echo '<input type="hidden" name="' . $this->name . '" value="" />';
         }
-        echo '<input type="text" class="' . $class . '" name="coseprod" placeholder="'.$msg.'" id="search_production" value="' . $cerca . '" maxlength="16" />';
+        echo '&nbsp;<input type="text" class="' . $class . '" name="coseprod" placeholder="'.$msg.'" id="search_production" value="' . $cerca . '" maxlength="16" />';
     }
 
 }
@@ -1372,7 +1373,7 @@ class GAzieMail {
 		// su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica  
         global $gTables, $debug_active;
 
-	require_once "../../library/phpmailer/class.phpmailer.php";
+        require_once "../../library/phpmailer/class.phpmailer.php";
         require_once "../../library/phpmailer/class.smtp.php";
         //
         //
@@ -1500,7 +1501,7 @@ class GAzieMail {
 		return true;
 	}
 				
-	if ($mail->Send() ) {
+	if ( $mail->Send() ) {
 ?>
 		<center>
                 <table class="center">
@@ -2367,8 +2368,7 @@ class TableSorter {
 
 function redirect($filename) {
 	if (!headers_sent()) {
-        	header("Location: ".$filename);
-        	exit;
+       	header("Location: ".$filename);
 	} else {
 		echo '<script type="text/javascript">';
 	        echo 'window.location.href="'.$filename.'";';
@@ -2376,9 +2376,8 @@ function redirect($filename) {
        		echo '<noscript>';
         	echo '<meta http-equiv="refresh" content="0;url='.$filename.'" />';
 		echo '</noscript>';
-		exit;
-	
 	}
+	exit;
 }
 
 
@@ -2387,7 +2386,7 @@ function checkAdmin($Livaut = 0) {
     $_SESSION["Abilit"] = false;
     // Se utente non � loggato lo mandiamo alla pagina di login
     if (!isset($_SESSION["user_name"])) {
-	redirect( "../root/login_user.php?tp=" . $table_prefix);
+	    redirect( "../root/login_user.php?tp=" . $table_prefix);
     }
     if (checkAccessRights($_SESSION["user_name"], $module, $_SESSION['company_id']) == 0) {
         // Se utente non ha il diritto di accedere al modulo, lo mostriamo

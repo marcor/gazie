@@ -139,8 +139,8 @@ $strScript = array("admin_fornit.php" =>
     ),
     "report_debiti.php" =>
     array('title' => 'Lista dei debiti verso i fornitori',
-        'start_date' => 'Anno inizio',
-        'end_date' => 'Anno fine',
+        'start_date' => 'Data inizio',
+        'end_date' => 'Data fine',
         'codice' => 'Codice',
         'partner' => 'Fornitore',
         'telefo' => 'Telefono',

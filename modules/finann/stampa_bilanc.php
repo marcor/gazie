@@ -22,12 +22,12 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
 --------------------------------------------------------------------------
 */
-require("../../library/include/datlib.inc.php");
+require('../../library/include/datlib.inc.php');
 $admin_aziend=checkAdmin();
-require("./lang.".$admin_aziend['lang'].".php");
-$script_transl = $strScript["select_bilanc.php"];
+require('./lang.'.$admin_aziend['lang'].'.php');
+$script_transl = $strScript['select_bilanc.php'];
 if (!isset($_GET['di']) or !isset($_GET['df']) or !isset($_GET['pi'])) {
-    header("Location: select_bilanc.php");
+    header('Location: select_bilanc.php');
     exit;
 }
 $pagini = intval($_GET['pi']);
@@ -40,23 +40,23 @@ $mesfin = substr($_GET['df'],4,2);
 $annfin = substr($_GET['df'],0,4);
 $utsfin= mktime(0,0,0,$mesfin,$giofin,$annfin);
 $utsdop= mktime(0,0,0,$mesini,$gioini-1,$annini+1);
-$datainizio = date("Ymd",$utsini);
-$datafine = date("Ymd",$utsfin);
-$datadopo = date("Ymd",$utsdop);
+$datainizio = date('Ymd',$utsini);
+$datafine = date('Ymd',$utsfin);
+$datadopo = date('Ymd',$utsdop);
 $dettcf = $_GET['cf'];
 
 //funzione per la creazione dell'array dei conti con saldo diverso da 0 e ordinati per tipo e numero di conto
 function ValoriConti($datainizio,$datafine,$datadopo,$mastrocli,$mastrofor,$dettcf)
 {
     global $gTables;
-    $sqlquery = 'SELECT codcon, SUM(import) AS somma, darave '.
-                'FROM '.$gTables['rigmoc'].' LEFT JOIN '.$gTables['tesmov'].' ON '.
-                $gTables['rigmoc'].'.id_tes = '.$gTables['tesmov'].'.id_tes '.
-                'WHERE datreg BETWEEN '.$datainizio.' AND '.$datafine.' '.
-                'AND caucon <> \'CHI\' AND caucon <> \'APE\' '.
-                'OR (caucon = \'APE\' AND datreg BETWEEN '.$datainizio.' AND '.$datadopo.') '.
-                'GROUP BY codcon, darave '.
-                'ORDER BY codcon desc, darave';
+    $sqlquery = "SELECT codcon, SUM(import) AS somma, darave ".
+                "FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".
+                $gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes ".
+                "WHERE datreg BETWEEN ".$datainizio." AND ".$datafine." ".
+                "AND caucon <> 'CHI' AND caucon <> 'APE' ".
+                "OR (caucon = 'APE' AND datreg BETWEEN ".$datainizio." AND ".$datadopo.") ".
+                "GROUP BY codcon, darave ".
+                "ORDER BY codcon desc, darave";
     $rs_castel = gaz_dbi_query($sqlquery);
     $ctrlcodcon=0;
     $ctrlsaldo=0;
@@ -69,12 +69,12 @@ function ValoriConti($datainizio,$datafine,$datadopo,$mastrocli,$mastrofor,$dett
     $clienti =  array();
     $fornitori =  array();
     while ($castel = gaz_dbi_fetch_array($rs_castel)) {
-         if ($dettcf==2 && substr($castel["codcon"],0,3)==$mastrocli) {
+         if ($dettcf==2 && substr($castel['codcon'],0,3)==$mastrocli) {
                $codcon=$mastrocli*1000000;
-		 } elseif ($dettcf==2 && substr($castel["codcon"],0,3)==$mastrofor) {
+		 } elseif ($dettcf==2 && substr($castel['codcon'],0,3)==$mastrofor) {
                $codcon=$mastrofor*1000000;
 		 } else {
-               $codcon=$castel["codcon"];
+               $codcon=$castel['codcon'];
 		 }
 
 
@@ -109,10 +109,10 @@ function ValoriConti($datainizio,$datafine,$datadopo,$mastrocli,$mastrofor,$dett
             }
             $ctrlsaldo=0;
         }
-        if ($castel["darave"] == 'D') {
-            $ctrlsaldo += $castel["somma"];
+        if ($castel['darave'] == 'D') {
+            $ctrlsaldo += $castel['somma'];
         } else {
-            $ctrlsaldo -= $castel["somma"];
+            $ctrlsaldo -= $castel['somma'];
         }
         $ctrlcodcon=$codcon;
     }
@@ -154,7 +154,7 @@ function ValoriConti($datainizio,$datafine,$datadopo,$mastrocli,$mastrofor,$dett
     ksort($passivo);
     ksort($clienti);
     ksort($fornitori);
-    $conti = array("cos" => $costi,"ric" => $ricavi,"att" => $attivo,"pas" => $passivo,"cli" => $clienti,"for" => $fornitori);
+    $conti = array('cos' => $costi,'ric' => $ricavi,'att' => $attivo,'pas' => $passivo,'cli' => $clienti,'for' => $fornitori);
     return $conti;
 }
 $title = $script_transl[6].$script_transl[7].$gioini.'-'.$mesini.'-'.$annini.$script_transl[8].$giofin.'-'.$mesfin.'-'.$annfin ;
@@ -164,12 +164,11 @@ $topCarry = array(array('lenght' => 100,'name'=>'da riporto : ','frame' => 0,'fi
 $botCarry = array(array('lenght' => 100,'name'=>'a riporto : ','frame' => 0,'fill'=>0),
                   array('lenght' => 35,'name'=>'','frame' => 1,'fill'=>0));
 
-require("../../config/templates/standard_template.php");
+require('../../config/templates/standard_template.php');
 $pdf = new Standard_template('P','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title,0,1);
 $pdf->AddPage();
 $pdf->SetFont('helvetica','',10);
-$totatt=0;
 $conti = ValoriConti($datainizio,$datafine,$datadopo,$admin_aziend['mascli'],$admin_aziend['masfor'],$dettcf);
 if ($conti) {
     $loss = round(array_sum($conti['cos']),2);
@@ -215,7 +214,7 @@ if ($conti) {
     $pdf->Cell(100,5,'','L');
     $pdf->Cell(40,5,'','T');
     $pdf->Cell(15,5,$admin_aziend['curr_name'],'T');
-    $pdf->Cell(35,5,gaz_format_number($totmas),1,1,"R");
+    $pdf->Cell(35,5,gaz_format_number($totmas),1,1,'R');
     $totmas=0;
     $pdf->setTopCarryBar('');
     $pdf->setBotCarryBar('');
@@ -392,9 +391,9 @@ $pdf->Cell(95,5,$script_transl[19],0,0,'L');
 $pdf->Cell(95,5,$script_transl[25],0,1,'C');
 if ($dettcf==3) {
 	$pdf->AddPage();
-//    $pdf->Cell(190,5,"DETTAGLIO CLIENTI E FORNITORI",1,1,'C',1);
+//    $pdf->Cell(190,5,'DETTAGLIO CLIENTI E FORNITORI',1,1,'C',1);
 //    $pdf->Ln(5);
-    $pdf->Cell(50,5,"DETTAGLIO CLIENTI",1,1,'C',1);
+    $pdf->Cell(50,5,'DETTAGLIO CLIENTI',1,1,'C',1);
     $pdf->Cell(100,5,'','L',1);
     $pdf->setTopCarryBar('');
     $pdf->setBotCarryBar('');
@@ -420,7 +419,7 @@ if ($dettcf==3) {
     $pdf->setTopCarryBar('');
     $pdf->setBotCarryBar('');
     $pdf->AddPage();
-    $pdf->Cell(50,5,"DETTAGLIO FORNITORI",1,1,'C',1);
+    $pdf->Cell(50,5,'DETTAGLIO FORNITORI',1,1,'C',1);
     $pdf->Cell(100,5,'','L',1);
     $totmas = 0;
     $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$admin_aziend['masfor']*1000000);

@@ -35,7 +35,7 @@ if (!isset($_POST['hidden_req'])) {
     $form['search']['company_id'] = '';
 } else {
     if (isset($_POST['logout'])) {
-        redirect("logout.php");
+        redirect('logout.php');
         exit;
     }
     $form['hidden_req'] = $_POST['hidden_req'];
@@ -48,7 +48,7 @@ if (!isset($_POST['hidden_req'])) {
 function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $class = 'FacetSelect') {
     global $gTables, $admin_aziend;
     $table = $gTables['aziend'] . ' LEFT JOIN ' . $gTables['admin_module'] . ' ON ' . $gTables['admin_module'] . '.company_id = ' . $gTables['aziend'] . '.codice';
-    $where = $gTables['admin_module'] . '.adminid=\'' . $admin_aziend["user_name"] . '\' GROUP BY company_id';
+    $where = $gTables['admin_module'] . '.adminid=\'' . $admin_aziend['user_name'] . '\' GROUP BY company_id';
     if ($val > 0 && $val < 1000) { // vengo da una modifica della precedente select case quindi non serve la ricerca
         $co_rs = gaz_dbi_dyn_query("*", $table, 'company_id = ' . $val . ' AND ' . $where, "ragso1 ASC");
         $co = gaz_dbi_fetch_array($co_rs);
@@ -93,7 +93,7 @@ $checkUpd = new CheckDbAlign;
 $data = $checkUpd->TestDbAlign();
 if ($data) {
     // induco l'utente ad aggiornare il db
-    redirect("../../setup/install/install.php?tp=" . $table_prefix);
+    redirect('../../setup/install/install.php?tp=' . $table_prefix);
     exit;
 }
 $lastBackup = $checkUpd->testDbBackup();
@@ -128,8 +128,8 @@ if ($backupMode == "automatic") {
                 $i++;
             }
         }
-        if ($admin_aziend['Abilit'] >= 8 && checkAccessRights($_SESSION["user_name"], 'inform', $_SESSION['company_id']) != 0) {
-            header("Location: ../../modules/inform/backup.php?internal");
+        if ($admin_aziend['Abilit'] >= 8 && checkAccessRights($_SESSION['user_name'], 'inform', $_SESSION['company_id']) != 0) {
+            redirect('../../modules/inform/backup.php?internal');
         }
     }
 }
@@ -247,16 +247,16 @@ if ($t > 4 && $t <= 13) {
                     </p>
                     <p>
                     <div class="img-containter">
-                        <a href="../config/admin_utente.php?user_name=<?php echo $admin_aziend["user_name"]; ?>&Update">
-                            <img class="img-circle usr-picture" src="view.php?table=admin&field=user_name&value=<?php echo $admin_aziend["user_name"] ?>" alt="<?php echo $admin_aziend['user_lastname'] . ' ' . $admin_aziend['user_firstname']; ?>" style="max-width: 100%;" title="<?php echo $script_transl['change_usr']; ?>" >
+                        <a href="../config/admin_utente.php?user_name=<?php echo $admin_aziend['user_name']; ?>&Update">
+                            <img class="img-circle usr-picture" src="view.php?table=admin&field=user_name&value=<?php echo $admin_aziend['user_name'] ?>" alt="<?php echo $admin_aziend['user_lastname'] . ' ' . $admin_aziend['user_firstname']; ?>" style="max-width: 100%;" title="<?php echo $script_transl['change_usr']; ?>" >
                         </a>
                     </div>
                     </p>
                     <p>
-                        <?php echo $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) ?>
+                        <?php echo $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) ?> 
                     </p>
                     <div>
-						<a class="btn btn-primary" href="../config/print_privacy_regol.php" class="button"> <?php echo $script_transl['user_regol'];?></a>
+						<a class="btn btn-primary" href="../config/print_privacy_regol.php" class="button"> <?php echo $script_transl['user_regol'];?></a> 
 					</div>
                 </div>
             </div>
@@ -771,8 +771,8 @@ if ($t > 4 && $t <= 13) {
         <div class="collapse navbar-collapse">
             <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
             <?php
-            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' click DESC, last_use DESC', 0, 8);
-            $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' last_use DESC, click DESC', 0, 8);
+            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['user_name'] . '" ', ' click DESC, last_use DESC', 0, 8);
+            $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['user_name'] . '" ', ' last_use DESC, click DESC', 0, 8);
 
             if (gaz_dbi_num_rows($result) > 0) {
                 while ($r = gaz_dbi_fetch_array($result)) {
@@ -997,5 +997,5 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 
 <?php
 }
-require("../../library/include/footer.php");
+require('../../library/include/footer.php');
 ?>

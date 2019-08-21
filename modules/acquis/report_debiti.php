@@ -91,7 +91,8 @@ $script_transl=HeadMain();
 <form method="GET">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
 <table class="FacetFormTABLE" align="center">
-<td class="FacetFieldCaptionTD">Data inizio &nbsp;</td>
+<tr>
+<td class="FacetFieldCaptionTD"><?php echo $script_transl['start_date']; ?> &nbsp;</td>
 <td align="center" nowrap class="FacetFooterTD">
 	<!--// select del giorno-->
 	<select name="giornini" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
@@ -129,7 +130,7 @@ for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
 </td>
 </tr>
 <tr>
-<td class="FacetFieldCaptionTD">Data fine &nbsp;</td>
+<td class="FacetFieldCaptionTD"><?php echo $script_transl['end_date']; ?> &nbsp;</td>
 <td align="center" nowrap class="FacetFooterTD">
 	<!--// select del giorno-->
 	<select name="giornfin" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
