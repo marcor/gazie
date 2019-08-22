@@ -257,7 +257,7 @@ if (isset($_POST['Submit'])) {
 				gaz_dbi_table_insert('admin_config', $form);
 			}
 			// qui aggiungo alla tabella breadcrumb/widget gli stessi che ha l'utente che abilita il nuovo, altrimenti sulla homepage non apparirebbe nulla
-			$get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"adminid='".$admin_aziend['user_name']."'", 'exec_mode,position_order');
+			$get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"adminid='".$admin_aziend['user_name']."' AND exec_mode>=1", 'exec_mode,position_order');
 			while($row=gaz_dbi_fetch_array($get_widgets)){
 				$row['adminid']=$form["user_name"];
 				gaz_dbi_table_insert('breadcrumb',$row);
