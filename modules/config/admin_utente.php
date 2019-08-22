@@ -256,6 +256,14 @@ if (isset($_POST['Submit'])) {
 				$form['var_value'] = $tbt;
 				gaz_dbi_table_insert('admin_config', $form);
 			}
+			// qui aggiungo alla tabella breadcrumb/widget gli stessi che ha l'utente che abilita il nuovo, altrimenti sulla homepage non apparirebbe nulla
+			$get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"adminid='".$admin_aziend['user_name']."'", 'exec_mode,position_order');
+			while($row=gaz_dbi_fetch_array($get_widgets)){
+				$row['adminid']=$form["user_name"];
+				gaz_dbi_table_insert('breadcrumb',$row);
+			}
+			
+			
 		} elseif ($toDo == 'update') {
 			if (!empty($form["user_password_old"])) {
 				if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) { 

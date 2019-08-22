@@ -305,6 +305,6 @@ ANTONIO DE VINCENTIIS: COMMENTO perché obbliga ad avere il file gconfig.myconf.
 		 }
 </script>
 <div class="container-fluid gaz-body">';
-		printDash($transl);
+		printDash($gTables,$module,$admin_aziend,$transl);
             return ($strCommon + $translated_script);
         } 

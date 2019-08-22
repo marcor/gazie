@@ -20,15 +20,12 @@ function bc_get_current_path( $posizione ) {
     return $pos;
 }
 
-function printDash($transl){
-        global $gTables, $module,$admin_aziend;
-
+function printDash($gTables,$module,$admin_aziend,$transl){
         $pos="";
         $ci_sono_tasti_nel_menu=false;
         $posizione = explode( '/',$_SERVER['REQUEST_URI'] );     
         $pos = bc_get_current_path($posizione);
         $posizione = array_pop( $posizione );
-
         $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'" AND exec_mode=0', ' id_bread',0,999);
         if ( gaz_dbi_num_rows($res_pos)>0 ) {             
             $row = gaz_dbi_fetch_array($res_pos);
