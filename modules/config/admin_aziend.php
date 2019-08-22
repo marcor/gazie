@@ -214,25 +214,27 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         $("#datnas, #virtual_stamp_auth_date").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
     });
     $(document).ready(function () {
-        $('.simple_color_custom').simpleColor({
-            boxWidth: '115px',
-            columns: 37,
-            border: '1px solid #333333',
-            buttonClass: 'button',
-            displayColorCode: true,
-            livePreview: true,
-            colors: ['888888', '8888AD', '8888C1', '8888D6', '8888EA', '8888FF', 'AD8888', 'AD88AD', 'AD88C1', 'AD88D6', 'AD88EA', 'AD88FF', 'C18888', 'C188AD', 'C188C1', 'C188D6', 'C188EA', 'C188FF', 'D68888', 'D688AD', 'D688C1', 'D688D6', 'D688EA', 'D688FF', 'EA8888', 'EA88AD', 'EA88C1', 'EA88D6', 'EA88EA', 'EA88FF', 'FF8888', 'FF88AD', 'FF88C1', 'FF88D6', 'FF88EA', 'FF88FF',
-                '88AD88', '88ADAD', '88ADC1', '88ADD6', '88ADEA', '88ADFF', 'ADAD88', 'ADADAD', 'ADADC1', 'ADADD6', 'ADADEA', 'ADADFF', 'C1AD88', 'C1ADAD', 'C1ADC1', 'C1ADD6', 'C1ADEA', 'C1ADFF', 'D6AD88', 'D6ADAD', 'D6ADC1', 'D6ADD6', 'D6ADEA', 'D6ADFF', 'EAAD88', 'EAADAD', 'EAADC1', 'EAADD6', 'EAADEA', 'EAADFF', 'FFAD88', 'FFADAD', 'FFADC1', 'FFADD6', 'FFADEA', 'FFADFF',
-                '88C188', '88C1AD', '88C1C1', '88C1D6', '88C1EA', '88C1FF', 'ADC188', 'ADC1AD', 'ADC1C1', 'ADC1D6', 'ADC1EA', 'ADC1FF', 'C1C188', 'C1C1AD', 'C1C1C1', 'C1C1D6', 'C1C1EA', 'C1C1FF', 'D6C188', 'D6C1AD', 'D6C1C1', 'D6C1D6', 'D6C1EA', 'D6C1FF', 'EAC188', 'EAC1AD', 'EAC1C1', 'EAC1D6', 'EAC1EA', 'EAC1FF', 'FFC188', 'FFC1AD', 'FFC1C1', 'FFC1D6', 'FFC1EA', 'FFC1FF',
-                '88D688', '88D6AD', '88D6C1', '88D6D6', '88D6EA', '88D6FF', 'ADD688', 'ADD6AD', 'ADD6C1', 'ADD6D6', 'ADD6EA', 'ADD6FF', 'C1D688', 'C1D6AD', 'C1D6C1', 'C1D6D6', 'C1D6EA', 'C1D6FF', 'D6D688', 'D6D6AD', 'D6D6C1', 'D6D6D6', 'D6D6EA', 'D6D6FF', 'EAD688', 'EAD6AD', 'EAD6C1', 'EAD6D6', 'EAD6EA', 'EAD6FF', 'FFD688', 'FFD6AD', 'FFD6C1', 'FFD6D6', 'FFD6EA', 'FFD6FF',
-                '88EA88', '88EAAD', '88EAC1', '88EAD6', '88EAEA', '88EAFF', 'ADEA88', 'ADEAAD', 'ADEAC1', 'ADEAD6', 'ADEAEA', 'ADEAFF', 'C1EA88', 'C1EAAD', 'C1EAC1', 'C1EAD6', 'C1EAEA', 'C1EAFF', 'D6EA88', 'D6EAAD', 'D6EAC1', 'D6EAD6', 'D6EAEA', 'D6EAFF', 'EAEA88', 'EAEAAD', 'EAEAC1', 'EAEAD6', 'EAEAEA', 'EAEAFF', 'FFEA88', 'FFEAAD', 'FFEAC1', 'FFEAD6', 'FFEAEA', 'FFEAFF',
-                '88FF88', '88FFAD', '88FFC1', '88FFD6', '88FFEA', '88FFFF', 'ADFF88', 'ADFFAD', 'ADFFC1', 'ADFFD6', 'ADFFEA', 'ADFFFF', 'C1FF88', 'C1FFAD', 'C1FFC1', 'C1FFD6', 'C1FFEA', 'C1FFFF', 'D6FF88', 'D6FFAD', 'D6FFC1', 'D6FFD6', 'D6FFEA', 'D6FFFF', 'EAFF88', 'EAFFAD', 'EAFFC1', 'EAFFD6', 'EAFFEA', 'EAFFFF', 'FFFF88', 'FFFFAD', 'FFFFC1', 'FFFFD6', 'FFFFEA', 'FFFFFF'],
-            colorCodeColor: '#000'
-        });
-
-
+	    if ({}.toString.call($('.simple_color_custom').simpleColor) === '[object Function]') {
+            $('.simple_color_custom').simpleColor({
+                boxWidth: '115px',
+                columns: 37,
+                border: '1px solid #333333',
+                buttonClass: 'button',
+                displayColorCode: true,
+                livePreview: true,
+                colors: ['888888', '8888AD', '8888C1', '8888D6', '8888EA', '8888FF', 'AD8888', 'AD88AD', 'AD88C1', 'AD88D6', 'AD88EA', 'AD88FF', 'C18888', 'C188AD', 'C188C1', 'C188D6', 'C188EA', 'C188FF', 'D68888', 'D688AD', 'D688C1', 'D688D6', 'D688EA', 'D688FF', 'EA8888', 'EA88AD', 'EA88C1', 'EA88D6', 'EA88EA', 'EA88FF', 'FF8888', 'FF88AD', 'FF88C1', 'FF88D6', 'FF88EA', 'FF88FF',
+                    '88AD88', '88ADAD', '88ADC1', '88ADD6', '88ADEA', '88ADFF', 'ADAD88', 'ADADAD', 'ADADC1', 'ADADD6', 'ADADEA', 'ADADFF', 'C1AD88', 'C1ADAD', 'C1ADC1', 'C1ADD6', 'C1ADEA', 'C1ADFF', 'D6AD88', 'D6ADAD', 'D6ADC1', 'D6ADD6', 'D6ADEA', 'D6ADFF', 'EAAD88', 'EAADAD', 'EAADC1', 'EAADD6', 'EAADEA', 'EAADFF', 'FFAD88', 'FFADAD', 'FFADC1', 'FFADD6', 'FFADEA', 'FFADFF',
+                    '88C188', '88C1AD', '88C1C1', '88C1D6', '88C1EA', '88C1FF', 'ADC188', 'ADC1AD', 'ADC1C1', 'ADC1D6', 'ADC1EA', 'ADC1FF', 'C1C188', 'C1C1AD', 'C1C1C1', 'C1C1D6', 'C1C1EA', 'C1C1FF', 'D6C188', 'D6C1AD', 'D6C1C1', 'D6C1D6', 'D6C1EA', 'D6C1FF', 'EAC188', 'EAC1AD', 'EAC1C1', 'EAC1D6', 'EAC1EA', 'EAC1FF', 'FFC188', 'FFC1AD', 'FFC1C1', 'FFC1D6', 'FFC1EA', 'FFC1FF',
+                    '88D688', '88D6AD', '88D6C1', '88D6D6', '88D6EA', '88D6FF', 'ADD688', 'ADD6AD', 'ADD6C1', 'ADD6D6', 'ADD6EA', 'ADD6FF', 'C1D688', 'C1D6AD', 'C1D6C1', 'C1D6D6', 'C1D6EA', 'C1D6FF', 'D6D688', 'D6D6AD', 'D6D6C1', 'D6D6D6', 'D6D6EA', 'D6D6FF', 'EAD688', 'EAD6AD', 'EAD6C1', 'EAD6D6', 'EAD6EA', 'EAD6FF', 'FFD688', 'FFD6AD', 'FFD6C1', 'FFD6D6', 'FFD6EA', 'FFD6FF',
+                    '88EA88', '88EAAD', '88EAC1', '88EAD6', '88EAEA', '88EAFF', 'ADEA88', 'ADEAAD', 'ADEAC1', 'ADEAD6', 'ADEAEA', 'ADEAFF', 'C1EA88', 'C1EAAD', 'C1EAC1', 'C1EAD6', 'C1EAEA', 'C1EAFF', 'D6EA88', 'D6EAAD', 'D6EAC1', 'D6EAD6', 'D6EAEA', 'D6EAFF', 'EAEA88', 'EAEAAD', 'EAEAC1', 'EAEAD6', 'EAEAEA', 'EAEAFF', 'FFEA88', 'FFEAAD', 'FFEAC1', 'FFEAD6', 'FFEAEA', 'FFEAFF',
+                    '88FF88', '88FFAD', '88FFC1', '88FFD6', '88FFEA', '88FFFF', 'ADFF88', 'ADFFAD', 'ADFFC1', 'ADFFD6', 'ADFFEA', 'ADFFFF', 'C1FF88', 'C1FFAD', 'C1FFC1', 'C1FFD6', 'C1FFEA', 'C1FFFF', 'D6FF88', 'D6FFAD', 'D6FFC1', 'D6FFD6', 'D6FFEA', 'D6FFFF', 'EAFF88', 'EAFFAD', 'EAFFC1', 'EAFFD6', 'EAFFEA', 'EAFFFF', 'FFFF88', 'FFFFAD', 'FFFFC1', 'FFFFD6', 'FFFFEA', 'FFFFFF'],
+                colorCodeColor: '#000'
+            });
+	    }
     });
-    $('#check').button();
+	if ({}.toString.call($('#check').button) === '[object Function]') {
+		$('#check').button();
+	}
 </script>
 <?php
 $gForm = new configForm();
@@ -514,10 +516,10 @@ if (count($msg['err']) > 0) { // ho un errore
                             <?php
                             if ($form['intermediary_code'] == $form['codice']) {
                                 ?>
-                                <input type="radio" value="y" name="intermediary_check" checked >Si - No<input type="radio" value="n" name="intermediary_check">";
+                                <input type="radio" value="y" name="intermediary_check" checked="checked" >Si - No<input type="radio" value="n" name="intermediary_check">";
                                 <?php
                             } elseif ($form['intermediary_code'] == 0) {
-                                echo '<input type="radio" value="y" name="intermediary_check">' . $script_transl['yes'] . ' - ' . $script_transl['no'] . '<input type="radio" checked value="n" name="intermediary_check">';
+                                echo '<input type="radio" value="y" name="intermediary_check">' . $script_transl['yes'] . ' - ' . $script_transl['no'] . '<input type="radio" checked="checked" value="n" name="intermediary_check">';
                             } else {
                                 echo $form['intermediary_descr'];
                             }
