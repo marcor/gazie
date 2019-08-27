@@ -150,7 +150,6 @@ if ( $url!='ruburl.php' ) {
 ?>
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
-    <script src="../../js/jquery/jquery.js"></script>
     <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
     <script><!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
       $.widget.bridge('uibutton', $.ui.button);
