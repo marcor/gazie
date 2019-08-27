@@ -61,7 +61,7 @@ class vatBook extends Standard_template {
     function getRows($gTables) { // recupera i righi dell'intervallo settato 
         //recupero i movimenti IVA del conto insieme alle relative testate
         $what = $gTables['tesmov'] . ".*, " .
-                $gTables['rigmoi'] . ".*,                       
+                $gTables['rigmoi'] . ".*,
 				DATE_FORMAT(datliq,'%Y%m%d') AS dl,
                 DATE_FORMAT(datreg,'%Y%m%d') AS dr,
                 CONCAT(" . $gTables['anagra'] . ".ragso1, ' '," . $gTables['anagra'] . ".ragso2) AS ragsoc, " .
@@ -237,9 +237,9 @@ function calcPeriod($dateIni, $dateFin, $period) {
         }
         if (substr($dateFin, 2, 2) >= 1 and substr($dateFin, 2, 2) < 4) {
             $tri_fin = 1;
-        } elseif (substr($dateFin, 2, 2) >= 4 and substr($dateFin, 2, 2) < 6) {
+        } elseif (substr($dateFin, 2, 2) >= 4 and substr($dateFin, 2, 2) < 7) {
             $tri_fin = 2;
-        } elseif (substr($dateFin, 2, 2) >= 6 and substr($dateFin, 2, 2) < 10) {
+        } elseif (substr($dateFin, 2, 2) >= 7 and substr($dateFin, 2, 2) < 10) {
             $tri_fin = 3;
         } else {
             $tri_fin = 4;
