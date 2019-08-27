@@ -200,7 +200,7 @@ $pdf->Cell(20,4,gaz_format_number($totavere),1,0,'R');
 $pdf->Cell(20,4,'',1,1,'C');
 
 $pdf->SetFont('helvetica','B',8);
-$pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO dal '.$descrDatafin.' : ',1,0,'R');
+$pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO al '.$descrDatafin.' : ',1,0,'R');
 $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
 $pdf->setRiporti('');
 $pdf->Output();

@@ -406,7 +406,7 @@ if (isset($_POST['preview']) and $msg == '') {
                 }
                 echo "<td align=\"right\">" . gaz_format_number($mv['dare']) . " &nbsp;</td>";
                 echo "<td align=\"right\">" . gaz_format_number($mv['avere']) . " &nbsp;</td>";
-                echo "<td align=\"right\">" . gaz_format_number($saldo_precedente+$saldo) . " &nbsp;</td></tr>";
+                echo "<td align=\"right\">" . gaz_format_number($saldo) . " &nbsp;</td></tr>";
             }
 
 			echo "<tr class=\"FacetDataTD\"><td colspan=\"9\" align=\"right\"></td></tr>";
