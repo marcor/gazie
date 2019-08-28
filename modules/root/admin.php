@@ -138,7 +138,28 @@ if ($t > 4 && $t <= 13) {
     $msg = $script_transl['night'];
 }
 ?>
-<form method="POST" name="gaz_form">
+<style>
+#sortable div:hover {
+    cursor: move;
+}
+</style>
+<script>
+$(function(){
+  $("#sortable").sortable({
+    update: function (event, ui) {
+        var data = $(this).sortable('serialize');
+        // POST to server using $.post or $.ajax
+        $.ajax({
+            data: data,
+            type: 'post',
+            url: './dash_order_update.php'
+        });
+    }
+	});
+  $("#sortable").disableSelection();
+});
+</script>
+  <form method="POST" name="gaz_form">
     <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
     <div class="container">
 
@@ -175,17 +196,17 @@ if ($t > 4 && $t <= 13) {
             <?php
         }
 $get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"exec_mode=2 AND adminid='".$admin_aziend['user_name']."'", 'position_order');
-$odd=true;
+echo '<div id="sortable">';
 while ( $row = gaz_dbi_fetch_array($get_widgets) ) {
-	if ($odd){ echo '<div class="row text-center">'; }
+	echo '<div class="col-sm-6 text-center" id="position-'.$row['id_bread'].'">';
 	require($row['file']);
-	if (!$odd){ echo '</div>'; }
-	$odd=!$odd;	
+	echo '</div>'; 
 }
+echo '</div>';
+
 //		 <!-- Antonio Germani - lotti in scadenza -->
 		 if (count($lotinscad)>0 or count($lotscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
 			 ?>
-            <div class="row">
                 <div class="col-sm-6">
                         <div class="box-header">
                             <h3 class="box-title"><?php echo $script_transl['inscalot']; ?></h3>

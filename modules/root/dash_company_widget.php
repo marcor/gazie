@@ -44,24 +44,22 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
 }
 
 ?>
-<div class="col-sm-6">
-    <div class="panel panel-default company-color panel-company" >
-        <p>
-            <?php echo $script_transl['company'] ?>
-        <div class="img-containter">
-            <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-width: 100%;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
-        </div>
-        </p>
-        <p>
-            <?php
-			if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
-				echo $script_transl['mesg_co'][2] . ' &rArr; ';
-				selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
-            }
-			?>
-        </p>
-        <p>
-            <?php echo $script_transl['logout']; ?> &rArr; <input name="logout" type="submit" value=" Logout ">
-        </p>
+<div class="panel panel-default company-color panel-company" >
+    <p>
+        <?php echo $script_transl['company'] ?>
+    <div class="img-containter">
+        <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-width: 100%;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
     </div>
+    </p>
+    <p>
+        <?php
+		if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
+			echo $script_transl['mesg_co'][2] . ' &rArr; ';
+			selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
+        }
+		?>
+    </p>
+    <p>
+        <?php echo $script_transl['logout']; ?> &rArr; <input name="logout" type="submit" value=" Logout ">
+    </p>
 </div>
