@@ -1,4 +1,4 @@
-<div class="panel panel-default panel-user" >
+<div class="panel panel-default panel-user col-md-12" >
     <p>
         <?php echo ucfirst($msg) . " " . $admin_aziend['user_firstname'] . ' (ip=' . $admin_aziend['last_ip'] . ')'; ?>
     </p>

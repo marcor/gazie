@@ -44,11 +44,11 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
 }
 
 ?>
-<div class="panel panel-default company-color panel-company" >
+<div class="panel panel-default company-color panel-company col-md-12" >
     <p>
         <?php echo $script_transl['company'] ?>
     <div class="img-containter">
-        <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-width: 100%;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
+        <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="height: 150px;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
     </div>
     </p>
     <p>
