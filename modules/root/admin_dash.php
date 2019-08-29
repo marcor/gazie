@@ -78,8 +78,7 @@ if(isset($_POST['addrow'])&&!empty($_POST['addrow'])){ // aggiungo il widget
     });
 </script>
 <form id="widform" method='post' class="form-horizontal">
-  <div class="mainbox mainbox col-md-offset-3 col-md-6">
-     <div class="panel panel-default">
+   <div class="panel panel-default gaz-table-form">
      <input type="hidden" id="delrow" name="delrow" />
      <input type="hidden" id="addrow" name="addrow" />
 <?php
@@ -105,8 +104,7 @@ foreach(getDashFiles() as $w){
 		 </div>';
 }
 ?> 
-	</div><!-- chiude panel  -->
-  </div><!-- chiude mainbox  -->
+  </div><!-- chiude panel  -->
 </form>
 <?php
 require("../../library/include/footer.php");
