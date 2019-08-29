@@ -26,7 +26,7 @@
 $transl['vendit'] = array('name' => "Vendite",
     'title' => "Gestione Vendite",
     'm2' => array(1 => array("Gestione Scontrini e Ricevute", "Corrispettivi"),
-        2 => array("Gestione Fatture,Note credito, Note Debito", "Fatture"),
+        2 => array("Gestione Fatture, Note credito, Note Debito", "Fatture"),
         3 => array("Gestione dei Documenti di Trasporto", "D.d.T."),
         4 => array("Gestione Preventivi ai Clienti", "Preventivi"),
         5 => array("Gestione Ordini dei Clienti", "Ordini"),

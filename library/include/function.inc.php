@@ -1470,15 +1470,15 @@ class GAzieMail {
         // Imposto il testo HTML dell'email
         $mail->MsgHTML($body_text);
         // Aggiungo la fattura in allegato
-		if ($content->urlfile){ // se devo trasmettere un file allegato passo il suo url
+		if (!empty($content->urlfile)) { // se devo trasmettere un file allegato passo il suo url
 			$mail->AddAttachment( $content->urlfile, $content->name );
 		} else { // altrimenti metto il contenuto del pdf che presumibilmente mi arriva da document.php
 			$mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
 		}
         // Creo una veste grafica
-		//require("../../library/include/datlib.inc.php");
-        $admin_aziend=checkAdmin();
-        require("../../library/include/header.php");
+		//require('../../library/include/datlib.inc.php');
+        $admin_aziend = checkAdmin();
+        require('../../library/include/header.php');
         $script_transl = HeadMain();
 
 	// Invio...

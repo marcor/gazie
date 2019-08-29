@@ -354,7 +354,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             }
 
             if ( !$ci_sono_tasti_nel_menu ) {
-                echo "<h1>Titolo mancante</h1>";
+                //echo "<h1>Titolo mancante</h1>"; //Fastidioso su varie pagine, per esempio su admin_client
                 echo "<ol class=\"breadcrumb\">";
             }
 

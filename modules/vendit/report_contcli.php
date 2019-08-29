@@ -105,7 +105,7 @@ if (sizeof($m) > 0) {
             $saldo += $mv['dare'];
             $saldo -= $mv['avere'];
             echo "<tr class=\"FacetDataTD\"><td>" . gaz_format_date($mv["datreg"]) . " &nbsp;</td>";
-            echo "<td align=\"center\"><a href=\"admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv["id_tes"] . "</a> &nbsp</td>";
+            echo "<td align=\"center\"><a href=\"../contab/admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv["id_tes"] . "</a> &nbsp</td>";
             echo '<td>' . $mv["tesdes"] . '</td>';
             if (!empty($mv['numdoc'])) {
                 echo "<td align=\"center\">" . $mv["protoc"] . " &nbsp;</td>";
