@@ -44,22 +44,22 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
 }
 
 ?>
-<div class="panel panel-default company-color panel-company col-md-12" >
-    <p>
-        <?php echo $script_transl['company'] ?>
+<div class="panel panel-default company-color col-md-12" >
+    <div>
+        <?php echo $script_transl['company'] ?>    </div>
     <div class="img-containter">
         <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="height: 150px;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
     </div>
-    </p>
-    <p>
+
+    <div>
         <?php
 		if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
 			echo $script_transl['mesg_co'][2] . ' &rArr; ';
 			selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
         }
 		?>
-    </p>
-    <p>
+    </div>
+    <div>
         <?php echo $script_transl['logout']; ?> &rArr; <input name="logout" type="submit" value=" Logout ">
-    </p>
+    </div>
 </div>

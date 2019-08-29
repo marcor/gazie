@@ -300,6 +300,10 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
             echo "</ol>";
         } else {
+		  if ($pos=='modules/root/admin.php') {             
+				echo "<a href='../../modules/root/admin_dash.php'><i class='glyphicon glyphicon-cog'></i></a>";
+				echo "</ol>";
+		  } else {
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
 			if ( strpos($posizione, "VOG")!==false ) $posizione = "report_broven.php?auxil=VOR";
             $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
@@ -356,6 +360,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 
             echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
             echo "</ol>";
+		  }
         }
          ?>     
         </section>

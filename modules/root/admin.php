@@ -166,7 +166,7 @@ $(function(){
 });
 </script>
   <form method="POST" name="gaz_form">
-    <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
+    <input type="hidden" value="<?php echo $form['hidden_req'];?>" name="hidden_req" />
     <div class="container">
 
         <?php
@@ -205,7 +205,7 @@ $get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"exec_mode=2 AND ad
 echo '<div id="sortable">';
 while ( $row = gaz_dbi_fetch_array($get_widgets) ) {
 	echo '<div class="col-md-6 text-center" id="position-'.$row['id_bread'].'">';
-	require($row['file']);
+	require('../'.$row['file']);
 	echo '</div>'; 
 }
 echo '</div>';

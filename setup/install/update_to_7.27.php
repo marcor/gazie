@@ -8,10 +8,10 @@ if (isset($_SESSION['table_prefix'])) {
 }
 
 // al momento inserisco solo i due widget principali su tutti gli utenti, ma poi dovrò mettere anche scadenzario e lotti 
-$data=array(array('exec_mode'=>2, 'file'=>'dash_company_widget.php','position_order'=>1),
-			array('exec_mode'=>2, 'file'=>'dash_user_widget.php','position_order'=>2),
-			array('exec_mode'=>2, 'file'=>'dash_customer_schedule.php','position_order'=>3),
-			array('exec_mode'=>2, 'file'=>'dash_supplier_schedule.php','position_order'=>4)
+$data=array(array('exec_mode'=>2, 'file'=>'root/dash_company_widget.php','position_order'=>1),
+			array('exec_mode'=>2, 'file'=>'root/dash_user_widget.php','position_order'=>2),
+			array('exec_mode'=>2, 'file'=>'root/dash_customer_schedule.php','position_order'=>3),
+			array('exec_mode'=>2, 'file'=>'root/dash_supplier_schedule.php','position_order'=>4)
 			);
 $get_users=gaz_dbi_dyn_query("*", $table_prefix . "_admin","1");
 $gTables['breadcrumb']=$table_prefix . "_breadcrumb";
