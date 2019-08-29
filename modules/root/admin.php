@@ -158,7 +158,7 @@ $(function(){
         $.ajax({
             data: data,
             type: 'post',
-            url: './dash_order_update.php'
+            url: './dashboard_update.php'
         });
     }
 	});

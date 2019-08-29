@@ -40,7 +40,7 @@ function printDash($gTables,$module,$admin_aziend,$transl){
 			echo "</ol>";
         } else {
 		  if ($pos=='modules/root/admin.php') {             
-				echo "<li><a href='../../modules/root/admin_dash.php'><i class='glyphicon glyphicon-cog'></i></a></li>";
+				echo "<a href='../../modules/root/admin_dash.php'><i class='glyphicon glyphicon-cog'></i></a>";
 				echo "</ol>";
 		  } else {
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
