@@ -28,6 +28,8 @@ $admin_aziend = checkAdmin();
 $company_choice = gaz_dbi_get_row($gTables['config'], 'variable', 'users_noadmin_all_company')['cvalue'];
 require("../../modules/vendit/lib.function.php");
 $lm = new lotmag;
+$schedule_view = gaz_dbi_get_row($gTables['company_config'], 'var', 'schedule_view');
+
 
 if (!isset($_POST['hidden_req'])) {
     $form['hidden_req'] = '';
@@ -285,115 +287,10 @@ echo '</div>';
         <?php
 	}
 ?>
-        <div class="collapse navbar-collapse">
-            <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
-            <?php
-            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['user_name'] . '" ', ' click DESC, last_use DESC', 0, 8);
-            $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['user_name'] . '" ', ' last_use DESC, click DESC', 0, 8);
-
-            if (gaz_dbi_num_rows($result) > 0) {
-                while ($r = gaz_dbi_fetch_array($result)) {
-                    $rref = explode('-', $r['transl_ref']);
-                    $rl = gaz_dbi_fetch_array($res_last);
-                    $rlref = explode('-', $rl['transl_ref']);
-                    switch ($rref[1]) {
-                        case 'm1':
-                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $transl[$rref[0]]['title'];
-                            break;
-                        case 'm2':
-                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
-                            break;
-                        case 'm3':
-                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
-                            break;
-                        case 'sc':
-                            require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $strScript[$rref[2]][$rref[3]];
-                            break;
-                        default:
-                            $rref_name = 'Nome script non trovato';
-                            break;
-                    }
-                    switch ($rlref[1]) {
-                        case 'm1':
-                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rlref_name = $transl[$rlref[0]]['title'];
-                            break;
-                        case 'm2':
-                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rlref_name = $transl[$rlref[0]]['m2'][$rlref[2]][0];
-                            break;
-                        case 'm3':
-                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rlref_name = $transl[$rlref[0]]['m3'][$rlref[2]][0];
-                            break;
-                        case 'sc':
-                            require '../' . $rlref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
-                            $rlref_name = $strScript[$rlref[2]][$rlref[3]];
-                            break;
-                        default:
-                            $rlref_name = 'Nome script non trovato';
-                            break;
-                    }
-                    ?>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <a href="<?php
-                            if ($r["link"] != "")
-                                echo '../../modules' . $r["link"];
-                            else
-                                echo "&nbsp;";
-                            ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
-                                <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
-                        </div>
-                        <div class="col-sm-6">
-                            <a href="<?php
-                            if ($rl["link"] != "")
-                                echo '../../modules' . $rl["link"];
-                            else
-                                echo "&nbsp;";
-                            ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
-                                <span ><?php
-                                    echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>';
-                                    if (is_string($rlref_name)) {
-                                        echo $rlref_name;
-                                    } else {
-                                        echo "Errore nello script (array)";
-                                    }
-                                    echo '</b>';
-                                    ?></span></a>
-                        </div>
-                    </div>
-                    <?php
-                }
-            }
-            ?>
-        </div>
         <div class='admin_footer' align="center">
             <div > GAzie Version: <?php echo GAZIE_VERSION; ?> Software Open Source (lic. GPL)
                 <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?>
                 <a target="_new" title="<?php echo $script_transl['auth']; ?>" href="http://www.devincentiis.it"> http://www.devincentiis.it</a>
-            </div>
-            <div>
-                <a href="http://gazie.sourceforge.net" target="_new" title="<?php echo $script_transl['devel']; ?>"><img src="../../library/images/gazie.gif" height="38" border="0"></a>
-                <?php
-                foreach ($script_transl['strBottom'] as $value) {
-                    echo "<a href=\"" . $value['href'] . "\" title=\"" . $value['title'] . "\" target=\"_NEW\" ><img src=\"../../library/images/" . $value['img'] . "\" border=\"0\" ></a>\n";
-                }
-                ?>
-
-            </div>
-        </div>
-        <div>
-            <div>
-                <?php
-                if (file_exists("help/" . $admin_aziend['lang'] . "/admin_help.php")) {
-                    include("help/" . $admin_aziend['lang'] . "/admin_help.php");
-                }
-                ?>
             </div>
         </div>
     </div>

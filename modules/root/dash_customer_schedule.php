@@ -22,7 +22,6 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-$schedule_view = gaz_dbi_get_row($gTables['company_config'], 'var', 'schedule_view');
 if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     ?>
     <!-- Scadenziari -->
