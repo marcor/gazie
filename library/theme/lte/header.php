@@ -99,12 +99,17 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         ?>
         <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>-->
-        <!--    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script> -->
-        <!--    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script> -->
-        <!--<![endif]-->
+        <style>
+            .company-color { 
+                background-color: #<?php echo $admin_aziend['colore']; ?> ; 
+            }
+            .dropdown-menu > li > a:hover {
+                background-color: #<?php echo $admin_aziend['colore']; ?> ;
+            }
+            .navbar-default .navbar-nav > li > a:hover {
+                background-color: #<?php echo $admin_aziend['colore']; ?>;
+            }
+        </style>  
     </head>
     <?php
     // imposto le opzioni del tema caricando le opzioni del database

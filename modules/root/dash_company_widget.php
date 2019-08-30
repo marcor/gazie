@@ -44,9 +44,10 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
 }
 
 ?>
-<div class="panel panel-default company-color col-md-12" >
-    <div>
-        <?php echo $script_transl['company'] ?>    </div>
+<div class="panel panel-success col-md-12" >
+    <div class="box-header company-color">
+        <h4 class="box-title"><?php echo $script_transl['company'] ?></h4>    
+	</div>
     <div class="img-containter">
         <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="height: 150px;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
     </div>

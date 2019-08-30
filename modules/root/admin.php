@@ -95,16 +95,6 @@ if ($backupMode == "automatic") {
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-$t = strftime("%H");
-if ($t > 4 && $t <= 13) {
-    $msg = $script_transl['morning'];
-} elseif ($t > 13 && $t <= 17) {
-    $msg = $script_transl['afternoon'];
-} elseif ($t > 17 && $t <= 21) {
-    $msg = $script_transl['evening'];
-} else {
-    $msg = $script_transl['night'];
-}
 ?>
 <style>
 #sortable div:hover {
@@ -115,7 +105,10 @@ if ($t > 4 && $t <= 13) {
 	display: flex;
 	flex-wrap: wrap;
 }
-
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
 </style>
 <script>
 $(function(){
@@ -170,7 +163,7 @@ $(function(){
             <?php
         }
 $get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"exec_mode=2 AND adminid='".$admin_aziend['user_name']."'", 'position_order');
-echo '<div id="sortable">';
+echo '<div id="sortable" class="vertical-align">';
 while ( $row = gaz_dbi_fetch_array($get_widgets) ) {
 	echo '<div class="col-md-6 text-center" id="position-'.$row['id_bread'].'">';
 	require('../'.$row['file']);
@@ -182,11 +175,6 @@ echo '</div>';
     </div>
 </form>
 <?php
-
-/* questa parte sarebbe da mettere nel footer specifico del tema (library/theme/nome_tema/footer.php)
- * in ognuno dei quali mettere una classe contenente, oltre al costrutto, anche le varie funzioni
- * richiamabili alla fine dagli script php e comunque presenti sui footer di TUTTU i motori di template
- */
 if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     ?>
     <script src="../../library/theme/lte/plugins/datatables/jquery.dataTables.min.js"></script>
