@@ -32,7 +32,14 @@ if (isset($styles) && is_array($styles)) {
 }
 if ( $debug_active==true ) echo "<div>".d($GLOBALS, $_SERVER)."</div>";
 ?>
+
 <!-- questo è contenuto in library/theme/g7/footer.php -->
+<div class="navbar navbar-fixed-bottom">
+    <div style="background:white;" > GAzie Version: <?php echo GAZIE_VERSION; ?> Software Open Source (lic. GPL)
+        <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?>
+        <a target="_new" title="<?php echo $script_transl['auth']; ?>" href="http://www.devincentiis.it"> http://www.devincentiis.it</a>
+    </div>
+</div>
 <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
 <script src="../../library/theme/g7/smartmenus-master/jquery.smartmenus.js" type="text/javascript"></script>
 <script src="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.js" type="text/javascript"></script>

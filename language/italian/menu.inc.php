@@ -76,5 +76,8 @@ $strCommon = array('cancel' => " Annulla ",
     'browse_for_file' => 'Sfoglia',
 	'refresh' => ' AGGIORNA ',
 	'add' => 'Aggiungi movimento',
-    'order_type' => array(""=>'',"AGR"=>'Agricola', "IND"=>'Industriale', "RIC"=>'Ricerca e sviluppo', "PRF"=>'Professionale', "ART"=>'Artigianale')
+    'order_type' => array(""=>'',"AGR"=>'Agricola', "IND"=>'Industriale', "RIC"=>'Ricerca e sviluppo', "PRF"=>'Professionale', "ART"=>'Artigianale'),
+    'business' => "per la gestione aziendale.",
+    'proj' => "Progetto di: ",
+    'auth' => "Sito dell'autore"
 );

@@ -93,40 +93,6 @@ if ($backupMode == "automatic") {
     }
 }
 
-// Antonio Germani - controllo scadenze articoli con lotti
-$query="SELECT codice, descri FROM " . $gTables['artico'] . " WHERE  lot_or_serial = '1'";
-$result = gaz_dbi_query($query);
-$cod=0;
-$inscad=0;
-$scad=0;
-$lotinscad=array();
-$lotscad=array();
-while ($row = gaz_dbi_fetch_array($result)) {
-	$lm -> getAvailableLots($row['codice'],0);
-	if (count($lm->available) > 0) {
-		foreach ($lm->available as $v_lm) {
-			// 1 giorno è 86400 secondi ;  3 mesi sono 15552000
-			if (strtotime($v_lm['expiry'])>0 and (strtotime($v_lm['expiry'])-15552000)<=strtotime (date("Ymd")) and strtotime($v_lm['expiry']) > strtotime (date("Ymd"))) {
-				$lotinscad[$inscad]['codice']=$row['codice'];
-				$lotinscad[$inscad]['descri']=$row['descri'];
-				$lotinscad[$inscad]['identifier']=$v_lm['identifier'];
-				$lotinscad[$inscad]['expiry']=$v_lm['expiry'];
-				$lotinscad[$inscad]['rest']=$v_lm['rest'];
-				$inscad++;
-			}
-			if (strtotime($v_lm['expiry'])>0 and strtotime($v_lm['expiry']) <= strtotime (date("Ymd"))) {
-				$lotscad[$scad]['codice']=$row['codice'];
-				$lotscad[$scad]['descri']=$row['descri'];
-				$lotscad[$scad]['identifier']=$v_lm['identifier'];
-				$lotscad[$scad]['expiry']=$v_lm['expiry'];
-				$lotscad[$scad]['rest']=$v_lm['rest'];
-				$scad++;
-			}
-		}
-	}
-}
-
-
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $t = strftime("%H");
@@ -212,87 +178,7 @@ while ( $row = gaz_dbi_fetch_array($get_widgets) ) {
 }
 echo '</div>';
 
-//		 <!-- Antonio Germani - lotti in scadenza -->
-		 if (count($lotinscad)>0 or count($lotscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
-			 ?>
-                <div class="col-sm-6">
-                        <div class="box-header">
-                            <h3 class="box-title"><?php echo $script_transl['inscalot']; ?></h3>
-                        </div>
-                        <div class="box-body">
-                            <table id="inscad" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
-                                <thead>
-                                    <tr role="row">
-                                        <th  tabindex="0" rowspan="1" colspan="1" style="width: 120px;"><?php echo $script_transl['cod']; ?></th>
-                                        <th  tabindex="0" rowspan="1" colspan="1" style="width: 310px;"><?php echo $script_transl['des']; ?></th>
-										<th  tabindex="0" rowspan="1" colspan="1" style="width: 120px;" ><?php echo $script_transl['lot']; ?></th>
-                                        <th  tabindex="0" rowspan="1" colspan="1" style="width: 120px;" ><?php echo $script_transl['sca_scadenza']; ?></th>
-										<th  tabindex="0" rowspan="1" colspan="1" style="width: 110px;" ><?php echo $script_transl['res']; ?></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- lotti in scadenza -->
-                                    <?php
-									for ($x=0; $x<count($lotinscad); $x++){
-										 echo "<tr role='row'>";
-										 echo "<td align='left'>" . $lotinscad[$x]['codice'] . "</td>";
-										 echo "<td align='left'>" . substr($lotinscad[$x]['descri'],0,21) . "</td>";
-										 echo "<td align='left'>" . $lotinscad[$x]['identifier'] . "</td>";
-										 echo "<td align='left'>" . gaz_format_date($lotinscad[$x]['expiry']) . "</td>";
-										 echo "<td align='left'>" . gaz_format_number($lotinscad[$x]['rest']) . "</td>";
-										echo "</tr>";
-									}
-                                    ?>
-                                </tbody>
-                              </table>
-                        </div>
-                </div>
-                <!-- Antonio Germani - lotti scaduti -->
-                <div class="col-sm-6">
-                    <div class="box gaz-home-scadenze">
-                        <div class="box-header">
-                            <h3 class="box-title"><?php echo $script_transl['scalot']; ?></h3>
-                        </div>
-                        <div class="box-body">
-                            <table id="scad" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
-                                <thead>
-                                    <tr role="row">
-                                        <th  class="sorting" tabindex="0" rowspan="1" colspan="1" style="width:120px;"><?php echo $script_transl['cod']; ?></th>
-                                        <th  tabindex="0" rowspan="1" colspan="1" style="width: 310px;"><?php echo $script_transl['des']; ?></th>
-										<th  tabindex="0" rowspan="1" colspan="1" style="width: 120px;" ><?php echo $script_transl['lot']; ?></th>
-                                        <th  tabindex="0" rowspan="1" colspan="1" style="width: 120px;" ><?php echo $script_transl['sca_scadenza']; ?></th>
-										<th  tabindex="0" rowspan="1" colspan="1" style="width: 110px;" ><?php echo $script_transl['res']; ?></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- lotti scaduti -->
-                                    <?php
-									for ($x=0; $x<count($lotscad); $x++){
-										echo "<tr role='row'>";
-										echo "<td align='left'>" . $lotscad[$x]['codice'] . "</td>";
-										echo "<td align='left'>" . substr($lotscad[$x]['descri'],0,21) . "</td>";
-										echo "<td align='left'>" . $lotscad[$x]['identifier'] . "</td>";
-										echo "<td align='left'>" . gaz_format_date($lotscad[$x]['expiry']) . "</td>";
-										echo "<td align='left'>" . gaz_format_number($lotscad[$x]['rest']) . "</td>";
-										echo "</tr>";
-									}
-                                    ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- fine scadenzario lotti -->
-        <?php
-	}
 ?>
-        <div class='admin_footer' align="center">
-            <div > GAzie Version: <?php echo GAZIE_VERSION; ?> Software Open Source (lic. GPL)
-                <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?>
-                <a target="_new" title="<?php echo $script_transl['auth']; ?>" href="http://www.devincentiis.it"> http://www.devincentiis.it</a>
-            </div>
-        </div>
     </div>
 </form>
 <?php

@@ -45,9 +45,21 @@ $script_transl = HeadMain(0, array('custom/bootstrap-switch'));
 
 // eseguo l'aggiornamento del db se richiesto
 if(isset($_POST['addrow'])&&!empty($_POST['addrow'])){ // aggiungo il widget
-	gaz_dbi_query("INSERT INTO " . $gTables['breadcrumb'] . "(position_order,exec_mode,file,titolo,adminid)  SELECT MAX(position_order)+1,'2','".filter_var($_POST['addrow'],FILTER_SANITIZE_STRING).".php','".filter_var($_POST['title-'.$_POST['addrow']], FILTER_SANITIZE_STRING)."','" . $admin_aziend['user_name'] . "' FROM " . $gTables['breadcrumb']);
-}elseif(isset($_POST['delrow'])&&!empty($_POST['delrow'])){ // elimino il widget
-	gaz_dbi_query("DELETE FROM ".$gTables['breadcrumb']." WHERE file = '".$_POST['delrow'].".php' AND adminid = '".$admin_aziend['user_name']."'");
+	$titolo=filter_var($_POST['title-'.$_POST['addrow']], FILTER_SANITIZE_STRING);
+	$file=filter_var($_POST['addrow'],FILTER_SANITIZE_STRING).".php";
+	// controllo se il widget è sul db
+	$widget_exist=gaz_dbi_get_row($gTables['breadcrumb'], "adminid ='".$admin_aziend['user_name']."' AND file", $file); 
+	if($widget_exist){ // il widget esiste faccio l'upload
+		gaz_dbi_put_row($gTables['breadcrumb'],'id_bread',$widget_exist['id_bread'],'exec_mode', 2);
+		if (!empty($titolo)){ // ho modificato il titolo
+			gaz_dbi_put_row($gTables['breadcrumb'],'id_bread',$widget_exist['id_bread'],'titolo', $titolo);
+		}
+		gaz_dbi_put_row($gTables['breadcrumb'],'id_bread',$widget_exist['id_bread'],'exec_mode', 2);
+	}else{ // non esiste lo devo inserire
+		gaz_dbi_query("INSERT INTO " . $gTables['breadcrumb'] . "(position_order,exec_mode,file,titolo,adminid)  SELECT MAX(position_order)+1,'2','".$file."','".$titolo."','" . $admin_aziend['user_name'] . "' FROM " . $gTables['breadcrumb']);
+	}
+}elseif(isset($_POST['delrow'])&&!empty($_POST['delrow'])){ // elimino il widget dall'utente facendo l'upload del rigo
+	gaz_dbi_query("UPDATE ".$gTables['breadcrumb']." SET exec_mode = 9 WHERE file = '".$_POST['delrow'].".php' AND adminid = '".$admin_aziend['user_name']."'");
 }
 ?>
 <style>
@@ -84,8 +96,8 @@ if(isset($_POST['addrow'])&&!empty($_POST['addrow'])){ // aggiungo il widget
 <?php
 foreach(getDashFiles() as $w){
 	$v=substr($w,0,-4);
-	// controllo se sulla tabella del database ho il relativo rigo
-	$widget_exist=gaz_dbi_get_row($gTables['breadcrumb'], "adminid ='".$admin_aziend['user_name']."' AND file", $w); 
+	// controllo se sulla tabella del database ho il relativo rigo ed è attivato (exec_mode=2)
+	$widget_exist=gaz_dbi_get_row($gTables['breadcrumb'], "exec_mode=2 AND adminid ='".$admin_aziend['user_name']."' AND file", $w); 
 	$cked='';
 	if($widget_exist){
 		$cked='checked';

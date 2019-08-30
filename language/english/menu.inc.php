@@ -77,6 +77,9 @@ $strCommon = array('cancel' => " Cancel ",
     'browse_for_file' => 'Browse',
 	'refresh' => ' REFRESH ',
 	'add' => 'Add movement',
-    'order_type' => array(""=>' --------- ',"AGR"=>'Agriculture', "IND"=>'Industrial', "RIC"=>'Research & develop', "PRF"=>'Professional', "ART"=>'Handicraft')
+    'order_type' => array(""=>' --------- ',"AGR"=>'Agriculture', "IND"=>'Industrial', "RIC"=>'Research & develop', "PRF"=>'Professional', "ART"=>'Handicraft'),
+    'business' => "for the business management.",
+    'proj' => "Project manager: ",
+    'auth' => "Author web site"
 );
 ?>

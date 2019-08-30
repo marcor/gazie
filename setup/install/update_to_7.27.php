@@ -7,11 +7,15 @@ if (isset($_SESSION['table_prefix'])) {
     $table_prefix = filter_var(substr($table_prefix, 0, 12), FILTER_SANITIZE_MAGIC_QUOTES);
 }
 
-// al momento inserisco solo i due widget principali su tutti gli utenti, ma poi dovrò mettere anche scadenzario e lotti 
+// inserisco i widget attualmente sviluppati sulla dashboard della home di tutti gli utenti 
 $data=array(array('exec_mode'=>2,'file'=>'root/dash_company_widget.php','titolo'=>'Azienda','position_order'=>1),
 			array('exec_mode'=>2,'file'=>'root/dash_user_widget.php','titolo'=>'Utente','position_order'=>2),
 			array('exec_mode'=>2,'file'=>'root/dash_customer_schedule.php','titolo'=>'Scadenzario clienti','position_order'=>3),
-			array('exec_mode'=>2,'file'=>'root/dash_supplier_schedule.php','titolo'=>'Scadenzario fornitori','position_order'=>4)
+			array('exec_mode'=>2,'file'=>'root/dash_supplier_schedule.php','titolo'=>'Scadenzario fornitori','position_order'=>4),
+			array('exec_mode'=>2,'file'=>'magazz/dash_lot_expired.php','titolo'=>'Lotti scaduti','position_order'=>5),
+			array('exec_mode'=>2,'file'=>'magazz/dash_lot_expiring.php','titolo'=>'Lotti in scadenza','position_order'=>6),
+			array('exec_mode'=>2,'file'=>'root/dash_numclick_widget.php','titolo'=>'Più utilizzati','position_order'=>7),
+			array('exec_mode'=>2,'file'=>'root/dash_lastclick_widget.php','titolo'=>'Ultimi utilizzati','position_order'=>8)
 			);
 $get_users=gaz_dbi_dyn_query("*", $table_prefix . "_admin","1");
 $gTables['breadcrumb']=$table_prefix . "_breadcrumb";

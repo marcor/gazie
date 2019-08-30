@@ -81,7 +81,9 @@ $strCommon = array('cancel' => " Cancelar ",
     'browse_for_file' => 'Browse',
 	'refresh' => ' ACTUALIZACIONES ',
 	'add' => 'Añadir movimiento',
-    'order_type' => array(""=>' --------- ',"AGR"=>'Agriculture', "IND"=>'Industrial', "RIC"=>'Research & develop', "PRF"=>'Professional', "ART"=>'Handicraft')
-
+    'order_type' => array(""=>' --------- ',"AGR"=>'Agriculture', "IND"=>'Industrial', "RIC"=>'Research & develop', "PRF"=>'Professional', "ART"=>'Handicraft'),
+    'business' => "para la edministracion de negocios.",
+    'proj' => "Administrador de Proyecto: ",
+    'auth' => "Sitio Web del Autor"	
 );
 ?>
