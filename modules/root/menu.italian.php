@@ -23,8 +23,8 @@
  --------------------------------------------------------------------------
 */
 $transl['root'] = array('name' => "Home",
-                        'title' => "Home page di GAZIE",
-                        'm2' => array(1 => array("Home","Home page di Gazie"),2 => array("Logout","Esci da GAzie"),3 => array("Config", "Configurazione")),
+                        'title' => "Home page",
+                        'm2' => array(1 => array("Home","Home page"),2 => array("Logout","Esci"),3 => array("Config", "Configurazione")),
                         'm3' => array()
                         );
 ?>

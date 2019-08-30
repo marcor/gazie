@@ -49,7 +49,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 if (count($lotinscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
 	 ?>
         <div class="panel panel-warning col-sm-12">
-            <div class="box-header bg-warning"">
+            <div class="box-header bg-warning">
                 <h3 class="box-title"><?php echo $script_transl['inscalot']; ?></h3>
             </div>
             <div class="box-body">
