@@ -45,14 +45,16 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		}
 	}
 }
-
-if (count($lotinscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
-	 ?>
+?>
         <div class="panel panel-warning col-sm-12">
             <div class="box-header bg-warning">
                 <h3 class="box-title"><?php echo $script_transl['inscalot']; ?></h3>
             </div>
             <div class="box-body">
+<?php
+
+if (count($lotinscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
+?>
                 <table id="inscad" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="clienti_info">
                     <thead>
                         <tr role="row">
@@ -78,9 +80,9 @@ if (count($lotinscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
                         ?>
                     </tbody>
                   </table>
-            </div>
-        </div>
-    <!-- fine scadenzario lotti -->
 <?php
+} else {
+	echo '<div class="bg-success"><h4>NON CI SONO PRODOTTI SCADENTI PRIMA DI 3 MESI </h4></div>';
 }
-?>
+?>	</div>
+        </div>

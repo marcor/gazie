@@ -44,13 +44,15 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		}
 	}
 }
-if (count($lotscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
 	 ?>
        <div class="panel panel-danger col-sm-12">
-           <div class="box-header bg-danger">
+            <div class="box-header bg-danger">
                    <h3 class="box-title"><?php echo $script_transl['scalot']; ?></h3>
                </div>
                <div class="box-body">
+<?php
+if (count($lotscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
+?>
                    <table id="scad" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="fornitori_info">
                        <thead>
                            <tr role="row">
@@ -76,8 +78,9 @@ if (count($lotscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
                            ?>
                        </tbody>
                    </table>
-               </div>
-       </div>
 <?php
+} else {
+	echo '<div class="bg-success"><h3> NON CI SONO PRODOTTI SCADUTI </h3></div>';
 }
-?>
+?>               </div>
+       </div>
