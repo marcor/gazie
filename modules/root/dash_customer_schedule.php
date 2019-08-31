@@ -33,7 +33,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
               <h3 class="box-title"><?php echo $script_transl['sca_scacli']; ?></h3>
           </div>
           <div class="box-body">
-              <table id="clienti" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
+              <table id="clienti" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="clienti_info">
                   <thead>
                       <tr role="row">
                           <!--+ DC 07/02/2019 - th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 300px;" aria-label="Cliente"><?php echo $script_transl['sca_cliente']; ?></th--->

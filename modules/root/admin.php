@@ -112,20 +112,26 @@ $script_transl = HeadMain();
 </style>
 <script>
 $(function(){
-  $("#sortable").sortable({
-    update: function (event, ui) {
-        var data = $(this).sortable('serialize');
-        // POST to server using $.post or $.ajax
-        $.ajax({
-            data: data,
-            type: 'post',
-            url: './dashboard_update.php'
-        });
-    }
-	});
-  $("#sortable").disableSelection();
+	function isMobile() {
+		return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+	}
+	if (!isMobile()) {
+      $("#sortable").sortable({
+        update: function (event, ui) {
+            var data = $(this).sortable('serialize');
+            // POST to server using $.post or $.ajax
+            $.ajax({
+                data: data,
+                type: 'post',
+                url: './dashboard_update.php'
+            });
+        }
+			});
+      $("#sortable").disableSelection();
+	}
 });
 </script>
+<div class="container-fluid gaz-body">
   <form method="POST" name="gaz_form">
     <input type="hidden" value="<?php echo $form['hidden_req'];?>" name="hidden_req" />
     <div class="container">
@@ -174,6 +180,7 @@ echo '</div>';
 ?>
     </div>
 </form>
+</div>
 <?php
 if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     ?>

@@ -53,7 +53,7 @@ if (count($lotinscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
                 <h3 class="box-title"><?php echo $script_transl['inscalot']; ?></h3>
             </div>
             <div class="box-body">
-                <table id="inscad" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
+                <table id="inscad" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="clienti_info">
                     <thead>
                         <tr role="row">
                             <th  tabindex="0" rowspan="1" colspan="1" style="width: 120px;"><?php echo $script_transl['cod']; ?></th>

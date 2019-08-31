@@ -33,7 +33,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
              <h3 class="box-title"><?php echo $script_transl['sca_scafor']; ?></h3>
          </div>
          <div class="box-body">
-             <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
+             <table id="fornitori" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="fornitori_info">
                  <thead>
                      <tr role="row">
                        <!--+ DC 07/02/2019 - th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 300px;" aria-label="Rendering engine: activate to sort column descending"><?php echo $script_transl['sca_fornitore']; ?></th--->

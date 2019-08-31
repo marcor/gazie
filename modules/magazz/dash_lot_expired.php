@@ -51,7 +51,7 @@ if (count($lotscad)>0){ // visualizzo scadenzario lotti sono se sono presenti
                    <h3 class="box-title"><?php echo $script_transl['scalot']; ?></h3>
                </div>
                <div class="box-body">
-                   <table id="scad" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
+                   <table id="scad" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="fornitori_info">
                        <thead>
                            <tr role="row">
                                <th  class="sorting" tabindex="0" rowspan="1" colspan="1" style="width:120px;"><?php echo $script_transl['cod']; ?></th>
