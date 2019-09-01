@@ -49,7 +49,7 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
         <h4 class="box-title"><?php echo $script_transl['company'] ?></h4>    
 	</div>
     <div class="img-containter">
-        <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="height: 150px;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
+        <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-height: 150px;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
     </div>
 
     <div>

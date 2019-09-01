@@ -20,8 +20,17 @@ ANTONIO DE VINCENTIIS: COMMENTO perché obbliga ad avere il file gconfig.myconf.
 		<meta name="mobile-web-app-capable" content="yes">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="author" content="Antonio de Vincentiis http://www.devincentiis.it">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-title" content="GAzie - Gestione AZIEndale">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <link rel="shortcut icon" href="../../library/images/favicon.ico" />			
 		<link rel="icon" sizes="192x192" href="../../library/images/gaz192.png" />
+		<link rel="apple-touch-icon" href="../../library/images/apple-icon-114x114-precomposed.png">
+		<link rel="apple-touch-startup-image" href="../../library/images/apple-icon-114x114-precomposed.png">		
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../../library/images/apple-icon-57x57-precomposed.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../library/images/apple-icon-72x72-precomposed.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../library/images/apple-icon-114x114-precomposed.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../library/images/apple-icon-144x144-precomposed.png" />
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
         <link href="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet" />

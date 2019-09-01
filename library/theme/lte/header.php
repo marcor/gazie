@@ -76,10 +76,19 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         <meta charset="utf-8">
 		<meta name="mobile-web-app-capable" content="yes">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-title" content="GAzie - Gestione AZIEndale">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <title><?php echo gettitolo($mod_uri).' > '.$admin_aziend['ragso1']; ?></title>
         <link rel="shortcut icon" href="../../library/images/favicon.ico">			
 		<link rel="icon" sizes="192x192" href="../../library/images/gaz192.png" />
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<link rel="apple-touch-icon" href="../../library/images/apple-icon-114x114-precomposed.png">
+		<link rel="apple-touch-startup-image" href="../../library/images/apple-icon-114x114-precomposed.png">		
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../../library/images/apple-icon-57x57-precomposed.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../library/images/apple-icon-72x72-precomposed.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../library/images/apple-icon-114x114-precomposed.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../library/images/apple-icon-144x144-precomposed.png" />
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
