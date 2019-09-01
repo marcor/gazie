@@ -105,6 +105,14 @@ $script_transl = HeadMain();
 	display: flex;
 	flex-wrap: wrap;
 }
+
+@media (max-width: 978px) {
+	form .container, form .container #sortable .col-md-6 {
+		padding-left: 1px;
+		padding-right: 1px;
+	}
+}
+
 .vertical-align {
     display: flex;
     align-items: center;
