@@ -23,8 +23,9 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-$strScript = array(
-    "synchronize_ticket.php" =>
-    array('title' => 'Gestione dei tickets')
-	);
+$menu_data = array('m1' => array('link' => "docume_shop-synchronize.php"), 
+                        'm2' => array(  1 => array('link' => "synchronize.php", 'weight' => 1)
+                         ),
+                        'm3' => array()
+                );
 ?>

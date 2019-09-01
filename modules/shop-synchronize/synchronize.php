@@ -36,6 +36,8 @@
 ------------------------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
+$admin_aziend = checkAdmin();
+
 // Prendo l'id_currency 
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
@@ -44,7 +46,6 @@ if ($exists) {
 } else {
     $c_e = 'company_id';
 }
-$admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 
 $file_download = "dowload_ordini_joomla.php";
 $file_upload = "upload_prodotti_joomla.php";
@@ -72,9 +73,9 @@ if (isset ($_POST['download'])) {
         exit;
 		}
 } else {
+	require('../../library/include/header.php');
+	$script_transl = HeadMain();
 	?>
-	<!DOCTYPE html>
-	<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 	<form method="POST" name="chouse" enctype="multipart/form-data">
 	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >
 	<div class="container">
@@ -103,6 +104,7 @@ if (isset ($_POST['download'])) {
 	</div>
 	</div>
 	</form>
+	</div>
 	<?php
 }
 ?>

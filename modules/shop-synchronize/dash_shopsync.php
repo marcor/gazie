@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -23,8 +22,27 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-$strScript = array(
-    "synchronize_ticket.php" =>
-    array('title' => 'Gestione dei tickets')
-	);
+$rs = gaz_dbi_query("SELECT ".$gTables['admin_module'].".access FROM ".$gTables['admin_module']." LEFT JOIN ".$gTables['module']." ON ".$gTables['admin_module'].".moduleid=".$gTables['module'].".id WHERE `adminid`='".$admin_aziend['user_name']."' AND ".$gTables['module'].".name='shop-synchronize'");
+$test=mysqli_fetch_array($rs)
 ?>
+<div class="panel panel-info col-sm-12">
+<?php
+if ($test && $test['access']==3){ 
+?>
+<div class="box-header bg-info">
+	<h4 class="box-title"><i class="glyphicon glyphicon-transfer"></i> SINCRONIZZAZIONE SHOP ONLINE</h4>
+</div>
+<div class="box-body">
+	<h4><a href="../shop-synchronize/synchronize.php"> Procedi alla sincronizzazione del sito per lo shopping online <i class="glyphicon glyphicon-transfer"></i></a></h4>
+</div>
+<?php
+} else {
+?>
+<div class="box-header bg-danger">
+	<h3 class="box-title">LA FUNZIONE SINCRONIZZAZIONE SHOP FUNZIONA SOLO ATTIVANDO IL RELATIVO MODULO </h3>
+</div>
+
+<?php	
+}
+?>
+</div>
