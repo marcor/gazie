@@ -294,9 +294,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                         for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // faccio un ciclo con tutti i componenti
                             if ($form['q_lot_comp'][$nc] > 0) { // se il componente ha lotti
                                 for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
-                                    $query = "INSERT INTO " . $gTables['movmag'] . "(caumag,type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('81','0', '-1', '" . $form['datreg'] . "', 'MAG', 'Scarico per Produzione', '" . $form['datemi'] . "', '" . $form['artcomp'][$nc] . "', '" . $form['campo_impianto'] . "', '" . $form['lot_quanti'][$nc][$n] . "', '" . $id_orderman . "', '" . $form['id_lot_comp'][$nc][$n] . "', '" . $admin_aziend['adminid'] . "')";
-                                    gaz_dbi_query($query); // Scarico dal magazzino il componente usato e i suoi lotti
-                                    
+									if ($form['lot_quanti'][$nc][$n]>0){ // questo evita che, se è stato forzato un lotto a quantità zero, venga generato un  movimento di magazzino
+										$query = "INSERT INTO " . $gTables['movmag'] . "(caumag,type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('81','0', '-1', '" . $form['datreg'] . "', 'MAG', 'Scarico per Produzione', '" . $form['datemi'] . "', '" . $form['artcomp'][$nc] . "', '" . $form['campo_impianto'] . "', '" . $form['lot_quanti'][$nc][$n] . "', '" . $id_orderman . "', '" . $form['id_lot_comp'][$nc][$n] . "', '" . $admin_aziend['adminid'] . "')";
+										gaz_dbi_query($query); // Scarico dal magazzino il componente usato e i suoi lotti
+                                    }
                                 }
                             } else { // se non ci sono lotti scarico semplicemente il componente dal magazzino
                                 $query = "INSERT INTO " . $gTables['movmag'] . "(caumag,type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('81','0', '-1', '" . $form['datreg'] . "', 'MAG', 'Scarico per Produzione', '" . $form['datemi'] . "', '" . $form['artcomp'][$nc] . "', '" . $form['campo_impianto'] . "', '" . $form['quanti_comp'][$nc] . "', '" . $id_orderman . "', '', '" . $admin_aziend['adminid'] . "')";
