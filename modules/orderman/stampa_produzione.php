@@ -133,7 +133,11 @@ if ($resart['good_or_service']==2){ // se l'articolo prodotto prevede componenti
 			$pdf->MultiCell(25, 4, $row['artico'] , 1, 'L', 0, 1, '150', $sp, false,0,true,true);
 			$pdf->MultiCell(25, 4, $row['quanti'] , 1, 'L', 0, 1, '175', $sp, false,0,true,true);
 			$pdf->MultiCell(25, 4, $reslot['identifier'] , 1, 'L', 0, 1, '200', $sp, false,0,true,true);
-			$pdf->MultiCell(25, 4, gaz_format_date($reslot['expiry']) , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
+			if ($reslot['expiry']==0) {
+				$pdf->MultiCell(25, 4, "" , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
+			} else {
+				$pdf->MultiCell(25, 4, gaz_format_date($reslot['expiry']) , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
+			}
 			$sp=$sp+6;
 			
 		}
