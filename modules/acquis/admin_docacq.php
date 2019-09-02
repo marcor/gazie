@@ -217,7 +217,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['identifier'] = (empty($_POST['rows'][$i]['identifier'])) ? '' : filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_STRING);
 			if (isset($_POST['rows'][$i]['expiry']) AND $_POST['rows'][$i]['expiry']>0){
 				$form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
-			}
+			} else {$form['rows'][$i]['expiry']="0000-00-00 00:00:00";}
             $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_STRING);
             if (!empty($_FILES['docfile_' . $i]['name'])) {
                 $move = false;
@@ -677,7 +677,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     if ($form['rows'][$i]['lot_or_serial'] > 0) {
                         $form['rows'][$i]['id_rigdoc'] = $last_rigdoc_id;
                         $form['rows'][$i]['id_movmag'] = $last_movmag_id;
-                        $form['rows'][$i]['expiry'] = gaz_format_date($form['rows'][$i]['expiry'], true);
+						if (intval($form['rows'][$i]['expiry'])>0){
+							$form['rows'][$i]['expiry'] = gaz_format_date($form['rows'][$i]['expiry'], true);
+						} else {
+							$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
+						}
                         if (empty($form['rows'][$i]['identifier'])) {
 // creo un identificativo del lotto/matricola interno                            
                             $form['rows'][$i]['identifier'] = $form['datemi'] . '_' . $form['rows'][$i]['id_rigdoc'];
@@ -1303,7 +1307,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			if (intval($lotmag['expiry'])>0){
 				$form['rows'][$i]['expiry'] = gaz_format_date($lotmag['expiry']);
 			} else {
-				$form['rows'][$i]['expiry']="";
+				$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
 			}
 		} else {
 			$form['rows'][$i]['status'] = "Insert";
