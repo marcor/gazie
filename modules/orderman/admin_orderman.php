@@ -671,7 +671,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['id_rigbro'] = $result['id_rigbro'];
     $form['add_info'] = $result['add_info'];
     $form['day_of_validity'] = $result['duration'];
-    $result4 = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $_GET['codice']);
+    $result4 = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $_GET['codice'], "AND operat ='1'");
     $form['datreg'] = $result4['datreg'];
     $form['quantip'] = $result4['quanti'];
     $form['id_movmag'] = $result4['id_mov'];
