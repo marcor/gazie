@@ -112,6 +112,9 @@ $script_transl = HeadMain();
 		padding-right: 1px;
 	}
 }
+.panel {
+	padding: 1px;
+}
 
 .vertical-align {
     display: flex;
