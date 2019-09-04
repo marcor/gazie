@@ -253,7 +253,7 @@ $strScript = array("select_liqiva.php" =>
             'err' => 'Ci sono degli errori che non giustificano la stampa del registro'
         ),
         'vat_reg' => 'Registro IVA da stampare:',
-        'vat_reg_value' => array(2 => 'Fatture di Vendita', 4 => 'Corrispettivi', 6 => 'Fatture d\'Acquisto',9=>'Lista dei versamenti'),
+        'vat_reg_value' => array(2 => 'Fatture di Vendita', 4 => 'Corrispettivi', 6 => 'Fatture d\'Acquisto', 9 => 'Lista dei versamenti'),
         'vat_section' => 'Sezione IVA ',
         'page_ini' => 'N. pagina iniziale',
         'jump' => 'Riepilogo ad ogni salto periodo',

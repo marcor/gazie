@@ -172,7 +172,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (empty($msg)) { // nessun errore
             $form['codice'] = $real_code;
             $form['datnas'] = date("Ymd", $uts_datnas);
-           if ($toDo == 'insert') {
+            if ($toDo == 'insert') {
                 if ($form['id_anagra'] > 0) {
                     gaz_dbi_table_insert('clfoco', $form);
                 } else {
@@ -181,7 +181,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             } elseif ($toDo == 'update') {
                 $anagrafica->updatePartners($form['codice'], $form);
             }
-            header("Location: report_fornit.php");
+            header('Location: report_fornit.php');
             exit;
         }
     } elseif (isset($_POST['Return'])) { // torno indietro

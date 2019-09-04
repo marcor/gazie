@@ -347,7 +347,7 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
 //
 // La funzione table_prefix_ok() serve a determinare se il prefisso
 // delle tabelle e' valido, secondo lo schema di Gazie, oppure no.
-// In pratica, si verifica che inizi con la stringa `gaz' e puÃ²
+// In pratica, si verifica che inizi con la stringa `gaz' e può
 // continuare con lettere minuscole e cifre numeriche, fino
 // a un massimo di ulteriori nove caratteri
 //
@@ -1518,9 +1518,9 @@ class GAzieMail {
                 </center>
 
 <?php
-		require("../../library/include/footer.php");
+		    require('../../library/include/footer.php');
             return true;
-	} else {
+    } else {
 ?>
 		<center>
                 <table class="center">
@@ -1540,7 +1540,7 @@ class GAzieMail {
                 </center>
 
 <?php
-		require("../../library/include/footer.php");
+            require('../../library/include/footer.php');
             return false;
         }
     }
@@ -2386,7 +2386,7 @@ function checkAdmin($Livaut = 0) {
     $_SESSION["Abilit"] = false;
     // Se utente non ï¿½ loggato lo mandiamo alla pagina di login
     if (!isset($_SESSION["user_name"])) {
-	    redirect( "../root/login_user.php?tp=" . $table_prefix);
+        redirect('../root/login_user.php?tp=' . $table_prefix);
     }
     if (checkAccessRights($_SESSION["user_name"], $module, $_SESSION['company_id']) == 0) {
         // Se utente non ha il diritto di accedere al modulo, lo mostriamo

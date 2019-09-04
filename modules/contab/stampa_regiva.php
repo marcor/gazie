@@ -228,9 +228,9 @@ function calcPeriod($dateIni, $dateFin, $period) {
     } else { // trimestrale
         if (substr($dateIni, 2, 2) >= 1 and substr($dateIni, 2, 2) < 4) {
             $tri_ini = 1;
-        } elseif (substr($dateIni, 2, 2) >= 4 and substr($dateIni, 2, 2) < 6) {
+        } elseif (substr($dateIni, 2, 2) >= 4 and substr($dateIni, 2, 2) < 7) {
             $tri_ini = 2;
-        } elseif (substr($dateIni, 2, 2) >= 6 and substr($dateIni, 2, 2) < 10) {
+        } elseif (substr($dateIni, 2, 2) >= 7 and substr($dateIni, 2, 2) < 10) {
             $tri_ini = 3;
         } else {
             $tri_ini = 4;

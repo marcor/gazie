@@ -371,7 +371,7 @@ if (isset($_POST['preview']) and $msg == '') {
                 $red_p = 'red';
                 $err++;
                 echo "<tr>";
-                echo "<td colspan=\"7\" class=\"FacetDataTDred\">" . $script_transl['errors']['P'] . ":&nbsp;</td>";
+                echo "<td colspan=\"8\" class=\"FacetDataTDred\">" . $script_transl['errors']['P'] . ":&nbsp;</td>";
                 echo "</tr>";
             }
             $red_d = '';
@@ -379,7 +379,7 @@ if (isset($_POST['preview']) and $msg == '') {
                 $red_d = 'red';
                 $err++;
                 echo "<tr>";
-                echo "<td colspan=\"7\" class=\"FacetDataTDred\">" . $script_transl['errors']['N'] . ":&nbsp;</td>";
+                echo "<td colspan=\"8\" class=\"FacetDataTDred\">" . $script_transl['errors']['N'] . ":&nbsp;</td>";
                 echo "</tr>";
             }
             $red_t = '';
@@ -387,7 +387,7 @@ if (isset($_POST['preview']) and $msg == '') {
                 $red_t = 'red';
                 $err++;
                 echo "<tr>";
-                echo "<td colspan=\"7\" class=\"FacetDataTDred\">" . $script_transl['errors']['T'] . ":&nbsp;</td>";
+                echo "<td colspan=\"8\" class=\"FacetDataTDred\">" . $script_transl['errors']['T'] . ":&nbsp;</td>";
                 echo "</tr>";
             }
             echo '<tr class="'.$class_m.'">';
@@ -401,7 +401,7 @@ if (isset($_POST['preview']) and $msg == '') {
             echo "<td align=\"center\">" . substr(gaz_format_date($mv['datliq']),3) . $liq_val." &nbsp;</td>";
             echo "</tr>";
         }
-        echo "<tr><td colspan=7><HR></td></tr>";
+        echo '<tr><td colspan="8"><hr/></td></tr>';
         $totale = number_format(($totimponi + $totimpost), 2, '.', '');
         foreach ($castle_imponi as $key => $value) {
             echo "<tr><td colspan=3></td><td class=\"FacetDataTD\">" . $script_transl['tot'] . 
@@ -421,14 +421,14 @@ if (isset($_POST['preview']) and $msg == '') {
         echo "<tr><td colspan=2></td><td class=\"info\">" .$script_transl['t_liq'] . "</td><td align=\"right\">" . gaz_format_number($totimponi_liq+$totimpost_liq) . " &nbsp;</td><td align=\"right\">" . gaz_format_number($totimponi_liq, 2, '.', '') . " &nbsp;</td><td colspan=\"2\"></td><td align=\"center\" class=\"info\">" . gaz_format_number($totimpost_liq, 2, '.', '') . " &nbsp;</td></tr>";
         if ($err == 0) {
             echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-            echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
+            echo '<td colspan="8" align="right"><input type="submit" name="print" value="';
             echo $script_transl['print'];
             echo '">';
             echo "\t </td>\n";
             echo "\t </tr>\n";
         } else {
             echo "<tr>";
-            echo "<td colspan=\"7\" align=\"right\" class=\"FacetDataTDred\">" . $script_transl['errors']['err'] . "</td>";
+            echo "<td colspan=\"8\" align=\"right\" class=\"FacetDataTDred\">" . $script_transl['errors']['err'] . "</td>";
             echo "</tr>\n";
         }
     }
