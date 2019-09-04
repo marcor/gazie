@@ -39,6 +39,19 @@ function getPage_ini($sez, $reg) {
     return (!is_numeric($r['data'])) ? 1 : $r['data'] + 1;
 }
 
+function getLastMonth($sez, $reg) { // Antonio Germani - funzione per recuperare, dal DB, l'ultimo mese stampato 
+    global $gTables;
+    if ($reg == 6) {
+        $reg = 'umeac' . $sez;
+    } elseif ($reg == 4) {
+        $reg = 'umeco' . $sez;
+    } else {
+        $reg = 'umeve' . $sez;
+    }
+    $r = gaz_dbi_get_row($gTables['company_data'], 'var', $reg);
+	return $r['data'];
+}
+
 function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
     global $gTables, $admin_aziend;
     $m = array();
@@ -111,21 +124,22 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     require("lang." . $admin_aziend['lang'] . ".php");
+	$last_month_print = getLastMonth(1,2);
     if ($admin_aziend['ivam_t'] == 'M') {
-        $utsdatini = mktime(0, 0, 0, date("m") - 1, 1, date("Y"));
-        $utsdatfin = mktime(0, 0, 0, date("m"), 0, date("Y"));
-    } elseif (date("m") >= 1 and date("m") < 4) {
-        $utsdatini = mktime(0, 0, 0, 10, 1, date("Y") - 1);
-        $utsdatfin = mktime(0, 0, 0, 12, 31, date("Y") - 1);
-    } elseif (date("m") >= 4 and date("m") < 7) {
-        $utsdatini = mktime(0, 0, 0, 1, 1, date("Y"));
-        $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y"));
-    } elseif (date("m") >= 7 and date("m") < 10) {
+        $utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
+        $utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
+    } elseif ($last_month_print >= 1 and $last_month_print < 4) {
+        $utsdatini = mktime(0, 0, 0, 1, 1, date("Y") - 1);
+        $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y") - 1);
+    } elseif ($last_month_print >= 4 and $last_month_print < 7) {
         $utsdatini = mktime(0, 0, 0, 4, 1, date("Y"));
-        $utsdatfin = mktime(0, 0, 0, 6, 31, date("Y"));
-    } elseif (date("m") >= 10 and date("m") <= 12) {
+        $utsdatfin = mktime(0, 0, 0, 6, 30, date("Y"));
+    } elseif ($last_month_print >= 7 and $last_month_print < 10) {
         $utsdatini = mktime(0, 0, 0, 7, 1, date("Y"));
         $utsdatfin = mktime(0, 0, 0, 9, 30, date("Y"));
+    } elseif ($last_month_print >= 10 and $last_month_print <= 12) {
+        $utsdatini = mktime(0, 0, 0, 10, 1, date("Y"));
+        $utsdatfin = mktime(0, 0, 0, 12, 31, date("Y"));
     }
     $form['jump'] = 'jump';
     $form['date_ini_D'] = 1;
@@ -135,7 +149,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_fin_M'] = date("m", $utsdatfin);
     $form['date_fin_Y'] = date("Y", $utsdatfin);
     $form['vat_section'] = 1;
-    $form['vat_reg'] = 1;
+    $form['vat_reg'] = 2;
+	$form['lastvatreg'] = $form['vat_reg'];
+	$form['lastvatsection'] = $form['vat_section'];
     $form['sta_def'] = false;
     $form['sem_ord'] = 1;
     $form['cover'] = false;
@@ -143,12 +159,42 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 } else { // accessi successivi
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     $form['ritorno'] = $_POST['ritorno'];
-    $form['date_ini_D'] = intval($_POST['date_ini_D']);
-    $form['date_ini_M'] = intval($_POST['date_ini_M']);
-    $form['date_ini_Y'] = intval($_POST['date_ini_Y']);
-    $form['date_fin_D'] = intval($_POST['date_fin_D']);
-    $form['date_fin_M'] = intval($_POST['date_fin_M']);
-    $form['date_fin_Y'] = intval($_POST['date_fin_Y']);
+	$form['lastvatreg']=$_POST['lastvatreg'];
+	$form['lastvatsection']=$_POST['lastvatsection'];
+	if (intval($_POST['vat_reg']) <> intval($_POST['lastvatreg']) OR intval($_POST['vat_section']) <> intval($_POST['lastvatsection'])){
+		$last_month_print = getLastMonth($_POST['vat_section'], $_POST['vat_reg']);		
+		if ($admin_aziend['ivam_t'] == 'M') {
+			$utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
+			$utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
+		} elseif ($last_month_print >= 1 and $last_month_print < 4) {
+			$utsdatini = mktime(0, 0, 0, 1, 1, date("Y") - 1);
+			$utsdatfin = mktime(0, 0, 0, 3, 31, date("Y") - 1);
+		} elseif ($last_month_print >= 4 and $last_month_print < 7) {
+			$utsdatini = mktime(0, 0, 0, 4, 1, date("Y"));
+			$utsdatfin = mktime(0, 0, 0, 6, 30, date("Y"));
+		} elseif ($last_month_print >= 7 and $last_month_print < 10) {
+			$utsdatini = mktime(0, 0, 0, 7, 1, date("Y"));
+			$utsdatfin = mktime(0, 0, 0, 9, 30, date("Y"));
+		} elseif ($last_month_print >= 10 and $last_month_print <= 12) {
+			$utsdatini = mktime(0, 0, 0, 10, 1, date("Y"));
+			$utsdatfin = mktime(0, 0, 0, 12, 31, date("Y"));
+		}
+		$form['date_ini_D'] = 1;
+		$form['date_ini_M'] = date("m", $utsdatini);
+		$form['date_ini_Y'] = date("Y", $utsdatini);
+		$form['date_fin_D'] = date("d", $utsdatfin);
+		$form['date_fin_M'] = date("m", $utsdatfin);
+		$form['date_fin_Y'] = date("Y", $utsdatfin);
+		$form['lastvatreg']=$_POST['vat_reg'];
+		$form['lastvatsection']=$_POST['vat_section'];
+	} else {
+		$form['date_ini_D'] = intval($_POST['date_ini_D']);
+		$form['date_ini_M'] = intval($_POST['date_ini_M']);
+		$form['date_ini_Y'] = intval($_POST['date_ini_Y']);
+		$form['date_fin_D'] = intval($_POST['date_fin_D']);
+		$form['date_fin_M'] = intval($_POST['date_fin_M']);
+		$form['date_fin_Y'] = intval($_POST['date_fin_Y']);
+	}
     $form['vat_section'] = intval($_POST['vat_section']);
     $form['vat_reg'] = intval($_POST['vat_reg']);
     if (isset($_POST['sta_def'])) {
@@ -209,7 +255,8 @@ if (isset($_POST['print']) && $msg == '') {
         'so' => $form['sem_ord'],
         'cv' => $form['cover'],
         'ri' => date("dmY", $utsini),
-        'rf' => date("dmY", $utsfin)
+        'rf' => date("dmY", $utsfin),
+		'lm' => $form['date_fin_M']
     );
     header("Location: sent_print.php");
     exit;
@@ -239,6 +286,8 @@ function setDate(name) {
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
+echo "<input type=\"hidden\" value=\"" . $form['lastvatreg'] . "\" name=\"lastvatreg\" />\n";
+echo "<input type=\"hidden\" value=\"" . $form['lastvatsection'] . "\" name=\"lastvatsection\" />\n";
 $gForm = new contabForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'];
 echo "</div>\n";

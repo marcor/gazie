@@ -137,6 +137,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_quanti'] = gaz_format_quantity($_POST['in_quanti'], 0, $admin_aziend['decimal_quantity']);
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
+    $form['in_delivery_date'] = $_POST['in_delivery_date'];
     $form['in_quality'] = $_POST['in_quality'];
     $form['in_extdoc'] = $_POST['in_extdoc'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
@@ -164,6 +165,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['quanti'] = gaz_format_quantity($value['quanti'], 0, $admin_aziend['decimal_quantity']);
             $form['righi'][$next_row]['codvat'] = intval($value['codvat']);
             $form['righi'][$next_row]['codric'] = intval($value['codric']);
+            $form['righi'][$next_row]['delivery_date'] = substr($value['delivery_date'],0,10);
             $form['righi'][$next_row]['quality'] = substr($value['quality'],0,50);
             $form['righi'][$next_row]['id_mag'] = intval($value['id_mag']);
             $form['righi'][$next_row]['id_orderman'] = intval($value['id_orderman']);
@@ -204,6 +206,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_quanti'] = $form['righi'][$key_row]['quanti'];
                     $form['in_codvat'] = $form['righi'][$key_row]['codvat'];
                     $form['in_codric'] = $form['righi'][$key_row]['codric'];
+                    $form['in_delivery_date'] = $form['righi'][$key_row]['delivery_date'];
                     $form['in_quality'] = $form['righi'][$key_row]['quality'];
                     $form['in_id_mag'] = $form['righi'][$key_row]['id_mag'];
                     $form['in_extdoc'] = $form['righi'][$key_row]['extdoc'];
@@ -456,6 +459,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$old_key]['quanti'] = $form['in_quanti'];
             $form['righi'][$old_key]['codart'] = $form['in_codart'];
             $form['righi'][$old_key]['codric'] = $form['in_codric'];
+            $form['righi'][$old_key]['delivery_date'] = $form['in_delivery_date'];
             $form['righi'][$old_key]['quality'] = $form['in_quality'];
             $form['righi'][$old_key]['prelis'] = $form['in_prelis'];
             $form['righi'][$old_key]['sconto'] = $form['in_sconto'];
@@ -486,6 +490,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$old_key]['quanti'] = 0;
                 $form['righi'][$old_key]['prelis'] = 0;
                 $form['righi'][$old_key]['codric'] = 0;
+                $form['righi'][$old_key]['delivery_date'] = 0;
                 $form['righi'][$old_key]['sconto'] = 0;
                 $form['righi'][$old_key]['pervat'] = 0;
                 $form['righi'][$old_key]['codvat'] = 0;
@@ -528,6 +533,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['quanti'] = 0;
             $form['righi'][$next_row]['prelis'] = 0;
             $form['righi'][$next_row]['codric'] = 0;
+            $form['righi'][$next_row]['delivery_date'] = 0;
             $form['righi'][$next_row]['sconto'] = 0;
             $form['righi'][$next_row]['pervat'] = 0;
             $form['righi'][$next_row]['codvat'] = 0;
@@ -543,6 +549,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['righi'][$next_row]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
                 $form['righi'][$next_row]['unimis'] = $artico['uniacq'];
                 $form['righi'][$next_row]['codric'] = $form['in_codric'];
+                $form['righi'][$next_row]['delivery_date'] = $form['in_delivery_date'];
                 $form['righi'][$next_row]['quality'] = $artico['quality'];
 				if (empty($artico['quality'])) {
 					$form['righi'][$next_row]['quality'] = $form['in_quality'];
@@ -578,6 +585,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$next_row]['quanti'] = 0;
                 $form['righi'][$next_row]['prelis'] = 0;
                 $form['righi'][$next_row]['codric'] = 0;
+                $form['righi'][$next_row]['delivery_date'] = 0;
                 $form['righi'][$next_row]['sconto'] = 0;
                 $form['righi'][$next_row]['pervat'] = 0;
                 $form['righi'][$next_row]['codvat'] = 0;
@@ -588,6 +596,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$next_row]['quanti'] = 0;
                 $form['righi'][$next_row]['prelis'] = $form['in_prelis'];
                 $form['righi'][$next_row]['codric'] = $form['in_codric'];
+                $form['righi'][$next_row]['delivery_date'] = $form['in_delivery_date'];
                 $form['righi'][$next_row]['sconto'] = 0;
                 $form['righi'][$next_row]['codvat'] = $form['in_codvat'];
                 if ($form['in_codvat'] > 0) {
@@ -606,6 +615,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['righi'][$next_row]['codice_fornitore'] = ''; //M1 aggiunto a mano
                 $form['righi'][$next_row]['unimis'] = '';
                 $form['righi'][$next_row]['codric'] = $form['in_codric'];
+                $form['righi'][$next_row]['delivery_date'] = $form['in_delivery_date'];
                 $form['righi'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['righi'][$next_row]['sconto'] = $form['in_sconto'];
                 $form['righi'][$next_row]['prelis'] = 0;
@@ -632,6 +642,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_sconto'] = 0;
         $form['in_quanti'] = 0;
         $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
+        $form['in_delivery_date'] = date("Y-m-d");
         $form['in_id_mag'] = 0;
         $form['in_annota'] = "";
         $form['in_larghezza'] = 0;
@@ -686,6 +697,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_extdoc'] = 0;
     $form['in_codvat'] = $admin_aziend['preeminent_vat'];
     $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
+    $form['in_delivery_date'] = date("Y-m-d");
     $form['in_quality'] = "";
     $form['in_id_mag'] = 0;
     $form['in_id_orderman'] = 0;
@@ -768,6 +780,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['righi'][$next_row]['quanti'] = gaz_format_quantity($rigo['quanti'], 0, $admin_aziend['decimal_quantity']);
         $form['righi'][$next_row]['codvat'] = $rigo['codvat'];
         $form['righi'][$next_row]['codric'] = $rigo['codric'];
+        $form['righi'][$next_row]['delivery_date'] = $rigo['delivery_date'];
         $form['righi'][$next_row]['quality'] = $rigo['quality'];
         $form['in_quality'] = $rigo['quality']; // ripropongo l'ultima qualità
         $form['righi'][$next_row]['id_mag'] = $rigo['id_mag'];
@@ -819,6 +832,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_quanti'] = 0;
     $form['in_codvat'] = $admin_aziend['preeminent_vat'];
     $form['in_codric'] = substr($admin_aziend['impacq'], 0, 3);
+    $form['in_delivery_date'] = date("Y-m-d");
     $form['in_quality'] = '';
     $form['in_id_mag'] = 0;
     $form['in_id_orderman'] = 0;
@@ -1111,7 +1125,7 @@ echo '</table>
 				<th class="FacetFieldCaptionTD">%' . substr($script_transl[24], 0, 2) . '</th>
 				<th class="FacetFieldCaptionTD" align="right">' . $script_transl[25] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[19] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[18] . '</th>
+				<th class="FacetFieldCaptionTD">' . $script_transl['delivery'] . '</th>
 				<th class="FacetFieldCaptionTD"></th>
 			</tr>
 		   </thead>
@@ -1162,6 +1176,7 @@ foreach ($form['righi'] as $key => $value) {
     echo "<input type=\"hidden\" value=\"{$value['peso_specifico']}\" name=\"righi[{$key}][peso_specifico]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['pezzi']}\" name=\"righi[{$key}][pezzi]\">\n";
 	echo '<input type="hidden" value="' . $value['extdoc'] . '" name="righi[' . $key . '][extdoc]" />';
+	echo '<input type="hidden" value="' . $value['delivery_date'] . '" name="righi[' . $key . '][delivery_date]" />';
 	// formatto la visualizzazione dei dati dimensionali
 	$dialog_data='';
 	if ($value['pezzi']>=0.001){
@@ -1222,9 +1237,9 @@ foreach ($form['righi'] as $key => $value) {
             /** ENRICO FEDELE */
             echo "<td><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"document.docacq.last_focus.value=this.id; this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"righi[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
-            echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
+            echo '<td class="text-right" title="'.$script_transl[18].': '.$value['codric'].'">' . gaz_format_number($imprig) . "</td>\n";
             echo "<td>{$value['pervat']}%</td>\n";
-            echo "<td>" . $value['codric'] . "</td>\n";
+            echo "<td>" . $value['delivery_date'] . "</td>\n";
 
             $last_row[] = array_unshift($last_row, '' . $value['codart'] . ', ' . $value['descri'] . ', ' . $value['quanti'] . $value['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($value['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($value['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $value['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $value['codric']);
             break;
@@ -1236,9 +1251,9 @@ foreach ($form['righi'] as $key => $value) {
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
             echo "<td></td>\n";
-            echo "<td class=\"text-right\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
+            echo "<td class=\"text-right\" title=\"".$script_transl[18].": ".$value['codric']."\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
             echo "<td>{$value['pervat']}%</td>\n";
-            echo "<td>" . $value['codric'] . "</td>\n";
+            echo "<td>" . $value['delivery_date'] . "</td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
             break;
         case "2":

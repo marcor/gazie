@@ -37,6 +37,7 @@ if (!isset($_GET['vr']) ||
         !isset($_GET['so']) ||
         !isset($_GET['cv']) ||
         !isset($_GET['ri']) ||
+		!isset($_GET['lm']) ||
         !isset($_GET['rf'])) {
     header("Location: " . $_SERVER['HTTP_REFERER']);
     exit;
@@ -559,15 +560,19 @@ if ($_GET['sd'] == 'sta_def') {
     switch ($pdf->typbook) {
         case 2:
             $azireg = 'upgve' . intval($_GET['vs']);
+			$azilastm = 'umeve' . intval($_GET['vs']);
             break;
         case 4:
             $azireg = 'upgco' . intval($_GET['vs']);
+			$azilastm = 'umeco' . intval($_GET['vs']);
             break;
         case 6:
             $azireg = 'upgac' . intval($_GET['vs']);
+			$azilastm = 'umeac' . intval($_GET['vs']);
             break;
     }
     gaz_dbi_put_row($gTables['company_data'], 'var', $azireg, 'data', $pdf->getGroupPageNo() + $ini_page - 1);
+	gaz_dbi_put_row($gTables['company_data'], 'var', $azilastm, 'data', $_GET['lm']);
 }
 $pdf->Output($descri_period . '.pdf');
 ?>

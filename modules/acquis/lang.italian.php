@@ -728,7 +728,8 @@ $strScript = array("admin_fornit.php" =>
         'net_weight' => 'Peso netto',
         'gross_weight' => 'Peso lordo',
         'datreg' => 'Data registrazione contabile',
-        'datfat' => 'Data della fattura'
+        'datfat' => 'Data della fattura',
+		'delivery'=>'Consegna'
     ),
     "report_contfor.php" =>
     array('title' => 'Visualizzazione partitario fornitore',
