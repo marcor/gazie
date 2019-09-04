@@ -128,9 +128,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     if ($admin_aziend['ivam_t'] == 'M') {
         $utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
         $utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
-    } elseif ($last_month_print >= 1 and $last_month_print < 4) {
-        $utsdatini = mktime(0, 0, 0, 1, 1, date("Y") - 1);
-        $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y") - 1);
+    } elseif ($last_month_print >= 0 and $last_month_print < 4) {
+        $utsdatini = mktime(0, 0, 0, 1, 1, date("Y"));
+        $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y"));
     } elseif ($last_month_print >= 4 and $last_month_print < 7) {
         $utsdatini = mktime(0, 0, 0, 4, 1, date("Y"));
         $utsdatfin = mktime(0, 0, 0, 6, 30, date("Y"));
@@ -166,9 +166,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 		if ($admin_aziend['ivam_t'] == 'M') {
 			$utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
 			$utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
-		} elseif ($last_month_print >= 1 and $last_month_print < 4) {
-			$utsdatini = mktime(0, 0, 0, 1, 1, date("Y") - 1);
-			$utsdatfin = mktime(0, 0, 0, 3, 31, date("Y") - 1);
+		} elseif ($last_month_print >= 0 and $last_month_print < 4) {
+			$utsdatini = mktime(0, 0, 0, 1, 1, date("Y"));
+			$utsdatfin = mktime(0, 0, 0, 3, 31, date("Y"));
 		} elseif ($last_month_print >= 4 and $last_month_print < 7) {
 			$utsdatini = mktime(0, 0, 0, 4, 1, date("Y"));
 			$utsdatfin = mktime(0, 0, 0, 6, 30, date("Y"));
