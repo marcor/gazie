@@ -124,22 +124,25 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     require("lang." . $admin_aziend['lang'] . ".php");
-	$last_month_print = getLastMonth(1,2);
+	$last_month_print = getLastMonth(1,2); // Antonio Germani - prendo l'ultimo mese stampato dal DB e propongo nel form il mese successivo
     if ($admin_aziend['ivam_t'] == 'M') {
         $utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
         $utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
-    } elseif ($last_month_print >= 0 and $last_month_print < 4) {
-        $utsdatini = mktime(0, 0, 0, 1, 1, date("Y"));
-        $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y"));
-    } elseif ($last_month_print >= 4 and $last_month_print < 7) {
+    } elseif ($last_month_print >= 1 and $last_month_print < 4) {
         $utsdatini = mktime(0, 0, 0, 4, 1, date("Y"));
         $utsdatfin = mktime(0, 0, 0, 6, 30, date("Y"));
-    } elseif ($last_month_print >= 7 and $last_month_print < 10) {
+    } elseif ($last_month_print >= 4 and $last_month_print < 7) {
         $utsdatini = mktime(0, 0, 0, 7, 1, date("Y"));
         $utsdatfin = mktime(0, 0, 0, 9, 30, date("Y"));
-    } elseif ($last_month_print >= 10 and $last_month_print <= 12) {
+    } elseif ($last_month_print >= 7 and $last_month_print < 10) {
         $utsdatini = mktime(0, 0, 0, 10, 1, date("Y"));
         $utsdatfin = mktime(0, 0, 0, 12, 31, date("Y"));
+    } elseif ($last_month_print >= 10 and $last_month_print <= 12) {
+        $utsdatini = mktime(0, 0, 0, 1, 1, date("Y")+1);
+        $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y")+1);
+    } elseif ($last_month_print == 0 ) {
+        $utsdatini = mktime(0, 0, 0, 1, 1, date("Y"));
+        $utsdatfin = mktime(0, 0, 0, 3, 31, date("Y"));
     }
     $form['jump'] = 'jump';
     $form['date_ini_D'] = 1;
@@ -161,23 +164,27 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['ritorno'] = $_POST['ritorno'];
 	$form['lastvatreg']=$_POST['lastvatreg'];
 	$form['lastvatsection']=$_POST['lastvatsection'];
+	// Antonio Germani - se è stato cambiato registro IVA o sezione IVA prendo l'ultimo mese stampato dal DB e propongo nel form il mese successivo
 	if (intval($_POST['vat_reg']) <> intval($_POST['lastvatreg']) OR intval($_POST['vat_section']) <> intval($_POST['lastvatsection'])){
 		$last_month_print = getLastMonth($_POST['vat_section'], $_POST['vat_reg']);		
 		if ($admin_aziend['ivam_t'] == 'M') {
 			$utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
 			$utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
-		} elseif ($last_month_print >= 0 and $last_month_print < 4) {
-			$utsdatini = mktime(0, 0, 0, 1, 1, date("Y"));
-			$utsdatfin = mktime(0, 0, 0, 3, 31, date("Y"));
-		} elseif ($last_month_print >= 4 and $last_month_print < 7) {
+		} elseif ($last_month_print >= 1 and $last_month_print < 4) {
 			$utsdatini = mktime(0, 0, 0, 4, 1, date("Y"));
 			$utsdatfin = mktime(0, 0, 0, 6, 30, date("Y"));
-		} elseif ($last_month_print >= 7 and $last_month_print < 10) {
+		} elseif ($last_month_print >= 4 and $last_month_print < 7) {
 			$utsdatini = mktime(0, 0, 0, 7, 1, date("Y"));
 			$utsdatfin = mktime(0, 0, 0, 9, 30, date("Y"));
-		} elseif ($last_month_print >= 10 and $last_month_print <= 12) {
+		} elseif ($last_month_print >= 7 and $last_month_print < 10) {
 			$utsdatini = mktime(0, 0, 0, 10, 1, date("Y"));
 			$utsdatfin = mktime(0, 0, 0, 12, 31, date("Y"));
+		} elseif ($last_month_print >= 10 and $last_month_print <= 12) {
+			$utsdatini = mktime(0, 0, 0, 1, 1, date("Y")+1);
+			$utsdatfin = mktime(0, 0, 0, 3, 31, date("Y")+1);
+		} elseif ($last_month_print == 0 ) {
+			$utsdatini = mktime(0, 0, 0, 1, 1, date("Y"));
+			$utsdatfin = mktime(0, 0, 0, 3, 31, date("Y"));
 		}
 		$form['date_ini_D'] = 1;
 		$form['date_ini_M'] = date("m", $utsdatini);
