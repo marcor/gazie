@@ -107,9 +107,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['banapp'] = $_POST['banapp'];
     $form['listin'] = $_POST['listin'];
-    $form['giocon'] = $_POST['giocon'];
-    $form['mescon'] = $_POST['mescon'];
-    $form['anncon'] = $_POST['anncon'];
+    $form['prop_delivery'] = substr($_POST['prop_delivery'],0,10);
     $form['spediz'] = $_POST['spediz'];
     $form['portos'] = $_POST['portos'];
     $form['destin'] = $_POST['destin'];
@@ -232,7 +230,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     if (isset($_POST['ins'])) {
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . str_pad($form['mesemi'], 2, "0", STR_PAD_LEFT). "-" .str_pad($form['gioemi'], 2, "0", STR_PAD_LEFT);
-        $initra = $form['anncon'] . "-" . str_pad($form['mescon'], 2, "0", STR_PAD_LEFT). "-" .str_pad($form['giocon'], 2, "0", STR_PAD_LEFT);
+        $initra = gaz_format_date($form['prop_delivery'],true); // formatto la data per il db
         if (!isset($_POST['righi'])) {
             $msg .= "39+";
         }
@@ -259,7 +257,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
         }
 		// se la data di consegna richiesta non è coerente, la azzera
-		if (($datemi>$initra) || !checkdate($form['mescon'], $form['giocon'], $form['anncon'])) {
+		$datcon=DateTime::createFromFormat('m/d/Y',$form['prop_delivery']);
+		$datcon_err = DateTime::getLastErrors();
+		if (($datemi>$initra) || ($datcon_err['warning_count']+$datcon_err['error_count']) <= 0) {
 			$initra = 0;
 		}
         // --- fine controllo coerenza date-numeri
@@ -344,7 +344,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 				
                 $form['datemi'] = $datemi;
-                $form['initra'] = $initra;
+				print $initra;
+                $form['initra'] = $initra.' 00:00:01';
                 $form['id_orderman'] = $form['in_id_orderman'];
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
@@ -381,7 +382,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['datfat'] = 0;
                 $form['status'] = 'GENERATO';
                 $form['datemi'] = $datemi;
-                $form['initra'] = $initra;
+                $form['initra'] = $initra.' 00:00:01';
                 $form['id_orderman'] = $form['in_id_orderman'];
                 tesbroInsert($form);
                 //recupero l'id assegnato dall'inserimento
@@ -747,12 +748,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['banapp'] = $tesbro['banapp'];
     $form['listin'] = $tesbro['listin'];
-	$form['giocon'] = substr($tesbro['initra'], 8, 2);
-	$form['mescon'] = substr($tesbro['initra'], 5, 2);
-	$form['anncon'] = substr($tesbro['initra'], 0, 4);
-	if ($form['anncon'] == 0) {
-		$form['anncon']=$form['annemi'];
-	}	
+	$form['prop_delivery'] = gaz_format_date(substr($tesbro['initra'],0,10),false,false);
     $form['spediz'] = $tesbro['spediz'];
     $form['portos'] = $tesbro['portos'];
     $form['destin'] = $tesbro['destin'];
@@ -863,9 +859,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['change_pag'] = "";
     $form['banapp'] = "";
     $form['listin'] = "";
-    $form['giocon'] = date("d");
-    $form['mescon'] = date("m");
-    $form['anncon'] = date("Y");
+    $form['prop_delivery'] = date("d-m-Y");
     $form['destin'] = "";
     $form['id_des'] = "";
     $form['id_des_same_company'] = 0;
@@ -902,6 +896,14 @@ $( function() {
 	$('.datepick').each(function(){
 		$(this).datepicker({ dateFormat: 'dd-mm-yy' });
 	});
+	$('#prop_delivery').datepicker({ dateFormat: 'dd-mm-yy', 
+									onClose:function () {
+										var pd=$(this).val();
+										$('.datepick').each(function(){
+											$(this).val(pd);
+										});
+									}
+								});
 });
 
 function pulldown_menu(selectName, destField)
@@ -1032,33 +1034,7 @@ echo "</td></tr>\n";
 // Modifica di Giorgio Zanella per gestire la data di consegna richiesta su ordine fornitore
 echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\">Data di consegna richiesta</td>\n";
 echo "<td class=\"FacetDataTD\">\n";
-// select del giorno
-echo "\t <select name=\"giocon\" class=\"FacetSelect\" >\n";
-for ($counter = 1; $counter <= 31; $counter++) {
-    $selected = "";
-    if ($counter == $form['giocon'])
-        $selected = "selected";
-    echo "\t\t <option value=\"$counter\" $selected >$counter</option>\n";
-}
-echo "\t </select>\n";
-// select del mese
-echo "\t <select name=\"mescon\" class=\"FacetSelect\" >\n";
-for ($counter = 1; $counter <= 12; $counter++) {
-    $selected = "";
-    if ($counter == $form['mescon'])
-        $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-    echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
-}
-echo "\t </select>\n";
-// select del anno
-echo "\t <select name=\"anncon\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
-for ($counter = $form['anncon'] - 10; $counter <= $form['anncon'] + 10; $counter++) {
-    $selected = "";
-    if ($counter == $form['anncon'])
-        $selected = "selected";
-    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
-}
+echo "\t <input name=\"prop_delivery\" id=\"prop_delivery\" value=\"".$form['prop_delivery']."\"/>\n";
 echo '</td><td class="FacetFieldCaptionTD">Produzione:</td><td colspan="3">  ';
 $select_prod = new selectproduction("in_id_orderman");
 $select_prod->addSelected($form['in_id_orderman']);

@@ -170,6 +170,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
+    $form['in_id_order'] = intval($_POST['in_id_order']);
     $form['in_id_orderman'] = $_POST['in_id_orderman'];
     $form['in_annota'] = $_POST['in_annota'];
     $form['in_pesosp'] = $_POST['in_pesosp'];
@@ -200,6 +201,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['codric'] = intval($value['codric']);
             $form['rows'][$i]['provvigione'] = floatval($value['provvigione']);
             $form['rows'][$i]['id_mag'] = intval($value['id_mag']);
+            $form['rows'][$i]['id_order'] = intval($value['id_order']);
             $form['rows'][$i]['id_orderman'] = intval($value['id_orderman']);
             $form['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
             $form['rows'][$i]['pesosp'] = floatval($value['pesosp']);
@@ -253,6 +255,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_codric'] = $form['rows'][$key_row]['codric'];
                     $form['in_provvigione'] = $form['rows'][$key_row]['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
                     $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
+                    $form['in_id_order'] = $form['rows'][$key_row]['id_order'];
 					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$key_row]['id_orderman']);
                     $form['coseprod'] = $orderman['description'];
                     $form['in_id_orderman'] = $form['rows'][$key_row]['id_orderman'];
@@ -790,6 +793,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$old_key]['descri'] = $form['in_descri'];
             $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
+            $form['rows'][$old_key]['id_order'] = $form['in_id_order'];
             $form['rows'][$old_key]['id_orderman'] = $form['in_id_orderman'];
             $form['rows'][$old_key]['status'] = "UPDATE";
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
@@ -861,6 +865,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$i]['descri'] = $form['in_descri'];
             $form['rows'][$i]['id_mag'] = $form['in_id_mag'];
+            $form['rows'][$i]['id_order'] = $form['in_id_order'];
             $form['rows'][$i]['id_orderman'] = $form['in_id_orderman'];
             $form['rows'][$i]['provvigione'] = $form['in_provvigione'];
             $form['rows'][$i]['codice_fornitore'] = '';
@@ -1057,6 +1062,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         /* fine modifica FP */
         $form['in_quanti'] = 0;
         $form['in_id_mag'] = 0;
+        $form['in_id_order'] = 0;
         $form['in_annota'] = "";
         $form['in_pesosp'] = 0;
         $form['in_gooser'] = 0;
@@ -1177,6 +1183,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
     }
     $form['in_id_mag'] = 0;
+    $form['in_id_order'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
     $form['in_pesosp'] = 0;
@@ -1271,6 +1278,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['codvat'] = $row['codvat'];
         $form['rows'][$i]['codric'] = $row['codric'];
         $form['rows'][$i]['id_mag'] = $row['id_mag'];
+        $form['rows'][$i]['id_order'] = $row['id_order'];
         $form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa         $form['rows'][$i]['id_mag'] = $row['id_mag'];
         $form['in_id_orderman'] = $row['id_orderman'];
 		$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $row['id_orderman']);
@@ -1370,6 +1378,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_codric'] = $admin_aziend['purchases_return'];
     }
     $form['in_id_mag'] = 0;
+    $form['in_id_order'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
     $form['in_pesosp'] = 0;
@@ -1671,6 +1680,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
     <input type="hidden" value="<?php echo $form['in_unimis']; ?>" name="in_unimis" />
     <input type="hidden" value="<?php echo $form['in_prelis']; ?>" name="in_prelis" />
     <input type="hidden" value="<?php echo $form['in_id_mag']; ?>" name="in_id_mag" />
+    <input type="hidden" value="<?php echo $form['in_id_order']; ?>" name="in_id_order" />
     <input type="hidden" value="<?php echo $form['in_annota']; ?>" name="in_annota" />
     <input type="hidden" value="<?php echo $form['in_pesosp']; ?>" name="in_pesosp" />
     <input type="hidden" value="<?php echo $form['in_quamag']; ?>" name="in_quamag" />
@@ -1767,6 +1777,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
             echo "<input type=\"hidden\" value=\"" . $v['pervat'] . "\" name=\"rows[$k][pervat]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['codric'] . "\" name=\"rows[$k][codric]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
+            echo "<input type=\"hidden\" value=\"" . $v['id_order'] . "\" name=\"rows[$k][id_order]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
 			echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";

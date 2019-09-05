@@ -625,7 +625,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             $total_order = 0;
             $hRowFlds = '';
             foreach ($form['righi'] as $k => $v) {
-                //echo $form['righi'][$k]['tiprig']."<br>";
+                echo $v['id_doc']."<br>";
                 $checkin = ' disabled ';
                 $imprig = 0;
                 $v['descri'] = htmlentities($v['descri']);
