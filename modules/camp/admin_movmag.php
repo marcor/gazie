@@ -354,7 +354,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     // Antonio Germani controllo e avviso se è stata cambiata la coltura nel campo di coltivazione
     if (isset($_POST['nome_colt'])) {
         if ($form['campo_coltivazione1'] > 0) { // se c'è un campo di coltivazione
-            $result = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione'.$n]);
+            $result = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione1']);
             if ($result['id_colture'] <> $form['id_colture']) { // se è stata cambiata la coltura avviso
                 $err = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $result['id_colture']);
 ?>
