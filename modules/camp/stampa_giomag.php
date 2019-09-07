@@ -122,7 +122,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 	while($b_row = $res->fetch_assoc()) { 
 	if ($row['campo_coltivazione']==$b_row["codice"]) { 
 	$pdf->Cell(10,6,str_replace('.', ',',$b_row["ricarico"]),1);
-	$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $b_row['id_colture']);
+	$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $row['id_colture']);
 	 $pdf->Cell(38,6,substr($res4["nome_colt"],0,40),1);
 	 $colonna="1";
 		} 

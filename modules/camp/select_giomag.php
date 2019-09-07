@@ -46,7 +46,7 @@ function getMovements($date_ini,$date_fin)
         return $m;
     }
 	
-// Antonio Germani carico la tabella campi
+// Antonio Germani carico la tabella campi di coltivazione
 $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 // fine carico tabella campi 	
 
@@ -92,7 +92,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
 }
 
-//controllo i campi
+//controllo le date
 if (!checkdate( $form['this_date_M'],$form['this_date_D'],$form['this_date_Y']) ||
     !checkdate( $form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y']) ||
     !checkdate( $form['date_fin_M'], $form['date_fin_D'], $form['date_fin_Y'])) {
@@ -212,7 +212,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 	while($b_row = $res->fetch_assoc()) { 
 	if ($mv['campo_coltivazione']==$b_row["codice"]) { 
 	echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($b_row["ricarico"],1,$admin_aziend['decimal_quantity'])." &nbsp;</td>\n";
-	$res2 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $b_row['id_colture']);
+	$res2 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $mv['id_colture']);
 	 echo "<td class=\"FacetDataTD\" align=\"center\">".$res2["nome_colt"]." &nbsp;</td>\n";
 	 $colonna="1";
 		} 
