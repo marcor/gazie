@@ -8,7 +8,6 @@ if ($login->passwordResetLinkIsValid() == true) {
                 <div class="panel panel-info" >
                     <div class="panel-heading panel-gazie">
                         <div class="panel-title">
-                            <img width="5%" src="../../library/images/gazie.gif" />
                             <?php echo MESSAGE_WELCOME; ?> 
                         </div>
                         <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
@@ -65,7 +64,6 @@ if ($login->passwordResetLinkIsValid() == true) {
                 <div class="panel panel-info" >
                     <div class="panel-heading panel-gazie">
                         <div class="panel-title">
-                            <img width="5%" src="../../library/images/gazie.gif" />
                             <?php echo MESSAGE_WELCOME_ADMIN; ?> 
                         </div>
                         <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
