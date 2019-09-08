@@ -100,12 +100,13 @@ $script_transl = HeadMain();
 #sortable div:hover {
     cursor: move;
 }
-
+#sortable>div {
+	margin: auto;
+}
 #sortable {
 	display: flex;
 	flex-wrap: wrap;
 }
-
 @media (max-width: 978px) {
 	form .container, form .container #sortable .col-md-6 {
 		padding-left: 1px;
@@ -115,7 +116,6 @@ $script_transl = HeadMain();
 .panel {
 	padding: 1px;
 }
-
 .vertical-align {
     display: flex;
     align-items: center;

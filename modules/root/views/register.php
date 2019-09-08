@@ -8,7 +8,6 @@
                 <div class="panel panel-info" >
                     <div class="panel-heading panel-gazie">
                         <div class="panel-title">
-                            <img width="7%" src="../../library/images/gazie.gif" />
                             <?php echo MESSAGE_WELCOME_REGISTRATION ?>
                         </div>
                         <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
@@ -88,7 +87,6 @@
             <div class="panel panel-success" >
                 <div class="panel-heading panel-gazie">
                     <div class="panel-title">
-                        <img width="7%" src="../../library/images/gazie.gif" />
                         <img width="5%" src="./school.png" />
                         <h4 ><?php echo MESSAGE_WELCOME ?></h4>
                         <?php
@@ -119,7 +117,6 @@
             <div class="panel panel-warning" >
                 <div class="panel-heading panel-gazie">
                     <div class="panel-title">
-                        <img width="7%" src="../../library/images/gazie.gif" />
                         <img width="5%" src="./school.png" />                    
                         <h4 ><?php echo MESSAGE_WELCOME ?></h4>
                         <?php
