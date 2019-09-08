@@ -25,8 +25,8 @@ if ($exists) {
 }
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
-$urlinterf = $path['val']."articoli-gazie.php";// url del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
-
+$urlinterf = $path['val']."articoli-gazie.php";// nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
 ob_flush();
 flush();
 ob_start();

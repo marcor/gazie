@@ -15,7 +15,8 @@ $ftp_user = $resuser['val'];
 $respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
 $ftp_pass= $respass['val'];
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
-$urlinterf = $path['val']."ordini-gazie.php";//url del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+$urlinterf = $path['val']."ordini-gazie.php";//nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
 if ($exists) {
