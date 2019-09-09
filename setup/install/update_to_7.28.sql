@@ -29,6 +29,7 @@ INSERT INTO `gaz_XXXcompany_data` (`description`, `var`, `data`) VALUES ('Ultimo
 INSERT INTO `gaz_XXXcompany_data` (`description`, `var`, `data`) VALUES ('Ultimo mese stampato del Registro delle Fatture di acquito della sezione IVA 9', 'umeac9', '0');
 ALTER TABLE `gaz_XXXcampi` ADD COLUMN `zona_vulnerabile` INT(1) NULL DEFAULT '0' COMMENT 'Nelle regioni che hanno già individuato le Zone Vulnerabili da Nitrati di origine agricola, chiamate ZVN, quando si concima, non si può superare un certo limite di azoto annuo' AFTER `id_colture`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `perc_N` DECIMAL(3,1) NULL DEFAULT NULL COMMENT 'Se un concime dev\'essere valorizzato con la percentuale di azoto (N)' AFTER `rame_metallico`, ADD COLUMN `perc_P` DECIMAL(3,1) NULL DEFAULT NULL COMMENT 'Se un concime dev\'essere valorizzato con la percentuale di fosforo (P)' AFTER `perc_N`,	ADD COLUMN `perc_K` DECIMAL(3,1) NULL DEFAULT NULL COMMENT 'Se un concime dev\'essere valorizzato con la percentuale di potassio (K)' AFTER `perc_P`;
+ALTER TABLE `gaz_XXXcampi` ADD COLUMN `limite_azoto_zona_vulnerabile` INT(3) NOT NULL DEFAULT '170' COMMENT 'Limite di azoto ad ettaro se ZVN ( valore default = 170)' AFTER `zona_vulnerabile`, ADD COLUMN `limite_azoto_zona_non_vulnerabile` INT(3) NOT NULL DEFAULT '340' COMMENT 'Limite di azoto ad ettaro se zona NON vulnerabile ( valore default = 340)' AFTER `limite_azoto_zona_vulnerabile`;
 
 
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
