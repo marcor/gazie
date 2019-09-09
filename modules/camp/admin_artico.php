@@ -95,6 +95,21 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	} else {
 		$form['rame_metallico']=0;
 	}
+	if (isset ($_POST['perc_N'])) {
+		$form['perc_N']= $_POST['perc_N'];
+	} else {
+		$form['perc_N']=0;
+	}
+	if (isset ($_POST['perc_P'])) {
+		$form['perc_P']= $_POST['perc_P'];
+	} else {
+		$form['perc_P']=0;
+	}
+	if (isset ($_POST['perc_K'])) {
+		$form['perc_K']= $_POST['perc_K'];
+	} else {
+		$form['perc_K']=0;
+	}
 		
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali 
 	
@@ -190,6 +205,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			if ($form['rame_metallico']>0 && $form["unimis"]<>"l"){
 			$msg['err'][]= 'unimis2';}			
 		} 
+		if ($form['perc_N']>0 && $form["unimis"]<>"Kg"){
+			
+			$msg['err'][]= 'unimis3';			
+		}
+		if ($form['perc_P']>0 && $form["unimis"]<>"Kg"){
+			
+			$msg['err'][]= 'unimis4';			
+		}
+		if ($form['perc_K']>0 && $form["unimis"]<>"Kg"){
+			
+			$msg['err'][]= 'unimis5';			
+		}
 		 //Antonio Germani controllo che sia stata inserita una categoria merceologica
 	   if (empty($form["catmer"])) {
             $msg['err'][] = 'catmer';
@@ -437,13 +464,7 @@ if ($modal_ok_insert === true) {
     /** ENRICO FEDELE */
     /* Se sono in finestra modale, non visualizzo questo titolo */
     $changesubmit = '';
-    if ($modal === false) {
-        if ($toDo == 'insert') {
-            echo '<div class="text-center"><b>' . $script_transl['ins_this'] . '</b></div>';
-        } else {
-            echo '<div class="text-center"><b>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</b></div>';
-        }
-    }
+   
     echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
     if (count($msg['err']) > 0) { // ho un errore
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
@@ -479,6 +500,15 @@ if ($modal_ok_insert === true) {
  <!-- fine autocompletamento --> 
         <div class="panel panel-default gaz-table-form">
             <div class="container-fluid">
+			<?php
+			if ($modal === false) {
+				if ($toDo == 'insert') {
+					echo '<div align="center" class="lead"><h1>' . $script_transl['ins_this'] . '</h1></div>';
+				} else {
+					echo '<div align="center" class="lead"><h1>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</h1></div>';
+				}
+			}
+	?>
                 <div class="row">
                     <div class="col-md-12">
 					<div class="col-sm-12 control-label">
@@ -662,12 +692,36 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-	 <!-- Antonio Germani  il RAME METALLO  -->
+	 <!-- Antonio Germani  il RAME METALLO e N P K -->
 				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="rame_metallico" class="col-sm-4 control-label"><?php echo $script_transl['rame_metallico']; ?></label>
                             <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['rame_metallico']; ?>" name="rame_metallico" maxlength="13" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="perc_N" class="col-sm-4 control-label"><?php echo $script_transl['perc_N']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['perc_N']; ?>" name="perc_N" maxlength="3" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="perc_P" class="col-sm-4 control-label"><?php echo $script_transl['perc_P']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['perc_P']; ?>" name="perc_P" maxlength="3" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="perc_K" class="col-sm-4 control-label"><?php echo $script_transl['perc_K']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['perc_K']; ?>" name="perc_K" maxlength="3" />
                         </div>
                     </div>
                 </div><!-- chiude row  --> 
