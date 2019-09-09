@@ -184,20 +184,22 @@ $strScript = array("browse_document.php" =>
         'web_url' => 'Web url<br />(es: http://site.com/group.html)'
     ),
 	"admin_campi.php" =>
-    array("campo di coltivazione ",
+    array("Campo di coltivazione ",
         "Numero ",
         "Descrizione ",
         "Immagine (jpg,png,gif) max 300kb: ",
         "Dimensione in ha ",
         "Coltura in atto",
-        "codice gi&agrave; esistente!",
-        "la descrizione &egrave; vuota!",
+        "Codice gi&agrave; esistente!",
+        "La descrizione &egrave; vuota!",
         "Il file immagine dev'essere nel formato PNG",
         "L'immagine non dev'essere pi&ugrave; grande di 300 kb",
 		"La dimensione &egrave; vuota!",
 		"ATTENZIONE: non puoi eliminare questo campo perché ci sono dei movimenti attivi. Elimina prima tutti i movimenti di questo campo.",
 		"Note",
+		'Zona vulnerabile da nitrati ZVN',
         'web_url' => 'Mappa di Google<br />(es: https://goo.gl/maps/YajAcRexvDp)'
+		
     ),
     "admin_ragstat.php" =>
     array("raggruppamento statistico ",

@@ -47,6 +47,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form=gaz_dbi_parse_post('campi');
 	$form['nome_colt'] = $_POST['nome_colt'];
 	$form['id_colture']= intval ($_POST['nome_colt']);
+	$form['zona_vulnerabile'] = $_POST['zona_vulnerabile'];
 	// Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
        if (! empty($_FILES['userfile']['name'])) {
@@ -98,6 +99,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['descri'] = $campi['descri'];
     $form['web_url'] = $campi['web_url'];
 	$form['id_colture'] = $campi['id_colture'];
+	$form['zona_vulnerabile']=$campi['zona_vulnerabile'];
 	$colt = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$form['id_colture']);
 	$form['nome_colt'] = $form['id_colture']." - ".$colt['nome_colt'];
     $form['annota'] = $campi['annota'];
@@ -114,6 +116,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['ricarico'] = 0;
     $form['web_url']='';
 	$form['id_colture']= 0;
+	$form['zona_vulnerabile']=0;
 	$form['nome_colt']="";
     $form['annota'] = '';
 	$form['giorno_decadimento'] ='0000-00-00 00:00:00';
@@ -128,10 +131,14 @@ if ($toDo == 'update') {
    $title = ucwords($script_transl[$toDo].$script_transl[0]);
 }
 print "<form method=\"POST\" enctype=\"multipart/form-data\">\n";
+
+?>
+<div class="panel panel-default gaz-table-form">
+    <div class="container-fluid">
+<?php
+print "<div align=\"center\" class=\"lead\"><h1>$title</h1></div>";
 print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
-print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice( explode('+',chop($msg)),0,-1);
@@ -143,23 +150,69 @@ if (!empty($msg)) {
             }
             $message .= "<br />";
     }
-    echo '<tr><td colspan="5" class="FacetDataTDred">'.$message."</td></tr>\n";
+    echo "<div class=\"alert alert-warning\">".$message."</div>";
 }
 if ($toDo == 'update') {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"codice\" value=\"".$form['codice']."\" />".$form['codice']."</td></tr>\n";
+	?>
+	<div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl[1]; ?></label>
+                    <input class="col-sm-8" type="hidden" value="<?php echo $form['codice']; ?>" name="codice" maxlength="3" />
+					<label><?php echo $form['codice']; ?></label>
+                </div>
+            </div>
+    </div><!-- chiude row  -->
+	<?php
 } else {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" maxlength=\"3\" size=\"3\" /></td></tr>\n";
+	?>
+	<div class="row">
+	<div class="col-md-12">
+        <div class="form-group">
+            <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl[1]; ?></label>
+            <input class="col-sm-8" type="text" value="<?php echo $form['codice']; ?>" name="codice" maxlength="3" />
+		</div>
+    </div>
+	</div><!-- chiude row  -->
+	<?php
 }
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=campi&value=".$form['codice']."\" width=\"100\"></td>";
-print "<td class=\"FacetDataTD\" align=\"center\">$script_transl[3]<br><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
-print "</tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"ricarico\" value=\"".$form['ricarico']."\" maxlength=\"5\" size=\"5\" /></td></tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['web_url']." </td>\n";
-echo "<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"web_url\" value=\"".$form['web_url']."\" maxlength=\"255\" size=\"50\" /></td>\n";
-echo "</tr>\n";
+?>
+		<div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl[2]; ?></label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="50" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+		<div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+					<img class="col-sm-2" src="../root/view.php?table=campi&value=<?php echo $form['codice'];?>" width="100">
+                    <label for="userfile" class="col-sm-5 control-label"><?php echo $script_transl[3]; ?></label>
+                    <input class="col-sm-5" type="file" value="<?php echo $form['userfile']; ?>" name="userfile" maxlength="50" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+		<div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="ricarico" class="col-sm-4 control-label"><?php echo $script_transl[4]; ?></label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['ricarico']; ?>" name="ricarico" maxlength="5" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+		<div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="255" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+		
+<?php
+
 
 /* Antonio Germani -  COLTURA */
 ?>
@@ -190,26 +243,52 @@ echo "</tr>\n";
 	});
   </script>
  <!-- fine autocompletamento -->
- <?php
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[5]."</td><td class=\"FacetDataTD\"\n>";
-?>
-     <input id="autocomplete4" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50" size="50"/>
-	 <input type="hidden" value="<?php echo intval ($form['nome_colt']); ?>" name="id_colture"/>
-	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete4 -->	 
-<?php
-/* fine coltura */
+ 
+		<div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="nome_colt" class="col-sm-4 control-label"><?php echo $script_transl[5]; ?></label>
+                    <input id="autocomplete4" class="col-sm-8" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50" />
+					<input type="hidden" value="<?php echo intval ($form['nome_colt']); ?>" name="id_colture"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
 
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[12]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" />\n";
-print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\"\n";
-print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
-print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
+<!-- fine coltura -->
+
+	<div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+				<label for="zona_vulnerabile" class="col-sm-4 control-label"><?php echo $script_transl['13']; ?></label>
+				<label >Sì</label>
+				<input  type="radio" name="zona_vulnerabile" value="1" <?php if ($form['zona_vulnerabile']==1){echo "checked";}?> >
+				<label >No</label>
+				<input  type="radio" name="zona_vulnerabile" value="0" <?php if ($form['zona_vulnerabile']==0){echo "checked";}?> >	
+			</div>
+        </div>
+    </div><!-- chiude row  -->
+	<div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl[12]; ?></label>
+                <input class="col-sm-8" type="text" value="<?php echo $form['annota']; ?>" name="annota" maxlength="50" />
+            </div>
+        </div>
+    </div><!-- chiude row  -->
+	<div class="col-sm-6 text-left"><input type="submit" name="Return" value="<?php echo $script_transl['return'] ?>"></div>
+<?php
+
+
+
 if ($toDo == 'update') {
-   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['update']).'!"></td></tr><tr></tr>';
+   print '<div class="col-sm-6"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['update']).'!"></div>';
 } else {
-   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['insert']).'!"></td></tr><tr></tr>';
+   print '<div class="col-sm-6"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['insert']).'!"></div>';
 }
-print "</td></tr></table>\n";
+
 ?>
+	</div><!-- chiude container  -->
+</div><!-- chiude panel  -->
 </form>
 <?php
 require("../../library/include/footer.php");
