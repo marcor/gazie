@@ -160,6 +160,7 @@ $strScript = array("browse_document.php" =>
 		"Non è possibile inserire articoli uguali con lotti su righe differenti.",
 		"Lotti e certificati",
 		"Gli articoli compositi possono essere caricati solo dal modulo produzioni!",
+		"Stai superando il limite di azoto per anno previsto!",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',

@@ -436,8 +436,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
             If ($service == 2 && $form['operat'] == 0) {
                 $msg.= "36+";
             }
-        
-			
+        		
 			// controllo mancanza articolo
             if (empty($form['artico'][$m])) { //manca l'articolo
                 $msg.= "18+";
@@ -522,10 +521,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                     $msg.= "28+";;
                 }
             }
-			// Antonio Germani prendo la dose massima e il rame metallo
+			// Antonio Germani dall'articolo prendo la dose massima, il rame metallo, e NPK
 				$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]);
 				$dose_artico = $item['dose_massima']; // prendo la dose
 				$rame_metallo = $item['rame_metallico']; // prendo anche il rame metallo del prodotto oggetto del movimento
+				$perc_N = $item['perc_N'];
+				$perc_P = $item['perc_P'];
+				$perc_K = $item['perc_K'];
 				$query = "SELECT " . 'dose' . ", " . 'tempo_sosp' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$m] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$m] . "'";
 				$result = gaz_dbi_query($query);
 				while ($row = $result->fetch_assoc()) {
@@ -561,36 +563,57 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						<?php
 						}
 					}
-					// Antonio Germani Calcolo quanto rame metallo è stato usato nell'anno di esecuzione di questo movimento
+					// Antonio Germani Calcolo quanto rame metallo e Azoto N è stato usato nell'anno di esecuzione di questo movimento
 					If ($form['campo_coltivazione'.$n] > 0) { // se il prodotto va in un campo di coltivazione
-						$rame_met_annuo=0;
-						if ($rame_metallo > 0) { //se questo prodotto contiene rame metallo
+						$rame_met_annuo=0;$N_annuo=0;
+						if ($rame_metallo > 0 OR $perc_N > 0) { //se questo prodotto contiene rame metallo o azoto
 							$query = "SELECT " . 'artico' . "," . 'datdoc' . "," . 'quanti' . " FROM " . $gTables['movmag'] . " WHERE datdoc >'" . $form['anndoc'] . "' AND " . 'campo_coltivazione' . " = '" . $form['campo_coltivazione'.$n] . "'"; // prendo solo le righe dell'anno di esecuzione del trattamento e degli anni successivi con il campo di coltivazione selezionato nel form
 							$result = gaz_dbi_query($query);
 							while ($row = $result->fetch_assoc()) {
 								if (substr($row['datdoc'], 0, 4) == $form['anndoc']) { // elimino dal conteggio gli eventuali anni successivi
 									$item = gaz_dbi_get_row($gTables['artico'], "codice", $row['artico']);
 									if ($item['rame_metallico'] > 0) {
-										$rame_met_annuo = $rame_met_annuo + $item['rame_metallico'] * $row['quanti'];
+										$rame_met_annuo = $rame_met_annuo + $item['rame_metallico'] * $row['quanti'];										
+									}
+									if ($item['perc_N'] > 0) {
+										$N_annuo= $N_annuo + ($item['perc_N'] * $row['quanti']) /100;
 									}
 								}
 							}
 						}
+					} 
+					// Antonio Germani controllo se con questo movimento non si supera la doce massima annua di 6Kg ad ha di rame metallo 
+					// e il limite di Azoto annuo impostato per ogni singolo campo
+					
+					// prendo il limite di azoto per anno per il campo da controllare
+					$res_N = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione'.$n]);
+					if ($res_N['zona_vulnerabile']==0){
+						$limite_N=$res_N['limite_azoto_zona_non_vulnerabile'];
+					} else {
+						$limite_N=$res_N['limite_azoto_zona_vulnerabile'];
 					}
-					// Antonio Germani controllo se con questo movimento non si supera la doce massima annua di 6Kg ad ha di rame metallo
-			
-					if ($toDo == "update" && $check_movmag['artico']==$form['artico'][$m] && $form['campo_coltivazione'.$n] > 0) { // se è un update, e non è stato cambiato l'articolo tolgo il rame metallo memorizzato in precedenza
+					if ($toDo == "update" && $check_movmag['artico']==$form['artico'][$m] && $form['campo_coltivazione'.$n] > 0) { // se è un update, e non è stato cambiato l'articolo tolgo il rame metallo e/o l'azoto memorizzato in precedenza
 						$rame_met_annuo = $rame_met_annuo - $rame_metallo * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']);
+						$N_annuo = $N_annuo - ($perc_N * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']))/100;
 					}
 					if (($quanti>0 && $form['campo_coltivazione'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($rame_met_annuo + ($rame_metallo * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity'])) > (6 * $form['dim_campo'.$n]))) {
 						$msg.= "26+"; // errore superato il limite di rame metallo ad ettaro                
 						?>
 						<div class="alert alert-warning alert-dismissible">
 						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-						<strong>Warning!</strong> ERRORE rame metallo <br> Rame metallo annuo già usato:  <?php echo gaz_format_quantity($rame_met_annuo, 1, $admin_aziend['decimal_quantity']); ?>Kg - Rame metallo che si tenta di usare:  <?php echo gaz_format_quantity($rame_metallo * $quanti, 1, $admin_aziend['decimal_quantity']); ?>Kg - Limite annuo di legge per questo campo:  <?php echo gaz_format_quantity((6 * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']); ?>Kg
+						<strong>Warning!</strong> ERRORE rame metallo <br> Rame metallo annuo già usato:  <?php echo gaz_format_quantity($rame_met_annuo, 1, $admin_aziend['decimal_quantity']); ?>Kg  - Rame metallo che si tenta di usare:  <?php echo gaz_format_quantity($rame_metallo * $quanti, 1, $admin_aziend['decimal_quantity']); ?>Kg - Limite annuo di legge per questo campo:  <?php echo gaz_format_quantity((6 * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']); ?>Kg
 						</div>
 						<?php
-					}				
+					}
+					if (($quanti>0 && $form['campo_coltivazione'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($N_annuo + ($perc_N * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']))/100 > ($limite_N * $form['dim_campo'.$n]))) {
+						$msg.= "43+"; // errore superato il limite di azoto ad ettaro                
+						?>
+						<div class="alert alert-warning alert-dismissible">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						<strong>Warning!</strong> ERRORE azoto <br> Azoto annuo già usato:  <?php echo gaz_format_quantity($N_annuo, 1, $admin_aziend['decimal_quantity']); ?>Kg  - Azoto che si tenta di usare:  <?php echo gaz_format_quantity($perc_N * $quanti, 1, $admin_aziend['decimal_quantity'])/100; ?>Kg - Limite annuo per questo campo:  <?php echo gaz_format_quantity(($limite_N * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']); ?>Kg
+						</div>
+						<?php
+					}
 				} // fine cliclo campi di coltivazione  
 			}
         }/*  fine controllo righe articoli    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
