@@ -199,6 +199,8 @@ $strScript = array("browse_document.php" =>
 		"ATTENZIONE: non puoi eliminare questo campo perché ci sono dei movimenti attivi. Elimina prima tutti i movimenti di questo campo.",
 		"Note",
 		'Zona vulnerabile da nitrati ZVN',
+		'Limite di azoto per zone ZVN in Kg/ha',
+		'Limite di azoto per zone non ZVN in Kg/ha',
         'web_url' => 'Mappa di Google<br />(es: https://goo.gl/maps/YajAcRexvDp)'
 		
     ),

@@ -48,6 +48,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['nome_colt'] = $_POST['nome_colt'];
 	$form['id_colture']= intval ($_POST['nome_colt']);
 	$form['zona_vulnerabile'] = $_POST['zona_vulnerabile'];
+	$form['limite_azoto_zona_vulnerabile']=$_POST['limite_azoto_zona_vulnerabile'];
+	$form['limite_azoto_zona_non_vulnerabile']=$_POST['limite_azoto_zona_non_vulnerabile'];
 	// Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
        if (! empty($_FILES['userfile']['name'])) {
@@ -100,6 +102,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['web_url'] = $campi['web_url'];
 	$form['id_colture'] = $campi['id_colture'];
 	$form['zona_vulnerabile']=$campi['zona_vulnerabile'];
+	$form['limite_azoto_zona_vulnerabile']=$campi['limite_azoto_zona_vulnerabile'];
+	$form['limite_azoto_zona_non_vulnerabile']=$campi['limite_azoto_zona_non_vulnerabile'];
 	$colt = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$form['id_colture']);
 	$form['nome_colt'] = $form['id_colture']." - ".$colt['nome_colt'];
     $form['annota'] = $campi['annota'];
@@ -117,6 +121,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['web_url']='';
 	$form['id_colture']= 0;
 	$form['zona_vulnerabile']=0;
+	$form['limite_azoto_zona_vulnerabile']=170;
+	$form['limite_azoto_zona_non_vulnerabile']=340;
 	$form['nome_colt']="";
     $form['annota'] = '';
 	$form['giorno_decadimento'] ='0000-00-00 00:00:00';
@@ -265,6 +271,22 @@ if ($toDo == 'update') {
 				<label >No</label>
 				<input  type="radio" name="zona_vulnerabile" value="0" <?php if ($form['zona_vulnerabile']==0){echo "checked";}?> >	
 			</div>
+        </div>
+    </div><!-- chiude row  -->
+	<div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="limite_azoto_zona_vulnerabile" class="col-sm-4 control-label"><?php echo $script_transl[14]; ?></label>
+                <input class="col-sm-8" type="text" value="<?php echo $form['limite_azoto_zona_vulnerabile']; ?>" name="limite_azoto_zona_vulnerabile" maxlength="3" />
+            </div>
+        </div>
+    </div><!-- chiude row  -->
+	<div class="row">
+		<div class="col-md-12">
+            <div class="form-group">
+                <label for="limite_azoto_zona_non_vulnerabile" class="col-sm-4 control-label"><?php echo $script_transl[15]; ?></label>
+                <input class="col-sm-8" type="text" value="<?php echo $form['limite_azoto_zona_non_vulnerabile']; ?>" name="limite_azoto_zona_non_vulnerabile" maxlength="3" />
+            </div>
         </div>
     </div><!-- chiude row  -->
 	<div class="row">
