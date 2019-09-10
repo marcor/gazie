@@ -32,8 +32,6 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     gaz_set_time_limit (0);
 }
 
-
-
 function getMovements($date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
@@ -42,7 +40,7 @@ function getMovements($date_ini,$date_fin)
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
 			  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
-              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
+              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".perc_N, ".$gTables['artico'].".perc_P, ".$gTables['artico'].".perc_K, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
 				LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['clfoco'].".codice)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
@@ -52,7 +50,6 @@ function getMovements($date_ini,$date_fin)
         }
         return $m;
     }
-
 
 $luogo_data=$admin_aziend['citspe'].", lì ";
 
@@ -104,47 +101,48 @@ $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',9);
 if (sizeof($result) > 0) {
-	
-  while (list($key, $row) = each($result)) {
-	if ($row['mostra_qdc']==1){ //escludi se è stato selezionato di non mostrare nel Q.d.c.
-		$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $row['campo_coltivazione']);// Antonio Germani carico il campo
-		$datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
-		$datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
-		$movQuanti = $row['quanti']*$row['operat'];
-		$pdf->Cell(17,6,$datadoc,1,0,'C');
-		$pdf->Cell(35,6,$row['descri'],1, 0, 'l', 0, '', 1);
-		$pdf->Cell(30,6,$row['desdoc'],1, 0, 'l', 0, '', 1);
-		if ($res['zona_vulnerabile']==0){
-			$pdf->Cell(12,6,substr($row['campo_coltivazione'],0,5),1);
-		} else {
-			$pdf->Cell(12,6,substr($row['campo_coltivazione']." ZVN",0,5),1);
-		}
-		// Antonio Germani Inserisco superficie e coltura		
-      	$pdf->Cell(10,6,str_replace('.', ',',$res['ricarico']),1);
-		$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $res['id_colture']);
-		$pdf->Cell(38,6,substr($res4["nome_colt"],0,40),1);
-		// fine inserisco superficie, coltura	  
+	while (list($key, $row) = each($result)) {
+		if ($row['mostra_qdc']==1){ //escludi se è stato selezionato di non mostrare nel Q.d.c.
+			$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $row['campo_coltivazione']);// Antonio Germani carico il campo
+			$datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
+			$datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
+			$movQuanti = $row['quanti']*$row['operat'];
+			$pdf->Cell(17,6,$datadoc,1,0,'C');
+			$pdf->Cell(35,6,$row['descri'],1, 0, 'l', 0, '', 1);
+			if ($row['perc_N']>0){
+				$row['desdoc']="NPK=".intval($row['perc_N'])."-".intval($row['perc_P'])."-".intval($row['perc_K'])." ".$row['desdoc'];
+			}
+			$pdf->Cell(30,6,$row['desdoc'],1, 0, 'l', 0, '', 1);
+			if ($res['zona_vulnerabile']==0){
+				$pdf->Cell(12,6,substr($row['campo_coltivazione'],0,5),1);
+			} else {
+				$pdf->Cell(12,6,substr($row['campo_coltivazione']." ZVN",0,5),1);
+			}
+			// Antonio Germani Inserisco superficie e coltura		
+			$pdf->Cell(10,6,str_replace('.', ',',$res['ricarico']),1);
+			$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $res['id_colture']);
+			$pdf->Cell(38,6,substr($res4["nome_colt"],0,40),1);
+			// fine inserisco superficie, coltura	  
 	  	  
-		$pdf->Cell(69,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
-		If ($row['classif_amb']==0){$pdf->Cell(6,6,"Nc",1);}
-		If ($row['classif_amb']==1){$pdf->Cell(6,6,"Xi",1);}
-		If ($row['classif_amb']==2){$pdf->Cell(6,6,"Xn",1);}
-		If ($row['classif_amb']==3){$pdf->Cell(6,6,"T",1);}
-		If ($row['classif_amb']==4){$pdf->Cell(6,6,"T+",1);}
-		If ($row['classif_amb']==5){$pdf->Cell(6,6,"Pa",1);}
-		$pdf->Cell(8,6,$row['unimis'],1,0,'C');
-		$pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
-		$res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
-		$pdf->Cell(30,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
+			$pdf->Cell(69,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
+			If ($row['classif_amb']==0){$pdf->Cell(6,6,"Nc",1);}
+			If ($row['classif_amb']==1){$pdf->Cell(6,6,"Xi",1);}
+			If ($row['classif_amb']==2){$pdf->Cell(6,6,"Xn",1);}
+			If ($row['classif_amb']==3){$pdf->Cell(6,6,"T",1);}
+			If ($row['classif_amb']==4){$pdf->Cell(6,6,"T+",1);}
+			If ($row['classif_amb']==5){$pdf->Cell(6,6,"Pa",1);}
+			$pdf->Cell(8,6,$row['unimis'],1,0,'C');
+			$pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
+			$res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
+			$pdf->Cell(30,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
 		
-		/* Antonio Germani - trasformo nome utente login in cognome e nome e lo stampo */	  
-		$res2 = gaz_dbi_get_row ($gTables['admin'], 'user_name', $row['adminid'] );	
-		$pdf->Cell(18,6,$res2['user_lastname']." ".$res2['user_firstname'],1, 1, 'l', 0, '', 1);
-		$colonna="1";
-		/* Antonio Germani FINE trasformo nome utente login in cognome e nome */	  
-      
-	} 
-  }
+			/* Antonio Germani - trasformo nome utente login in cognome e nome e lo stampo */	  
+			$res2 = gaz_dbi_get_row ($gTables['admin'], 'user_name', $row['adminid'] );	
+			$pdf->Cell(18,6,$res2['user_lastname']." ".$res2['user_firstname'],1, 1, 'l', 0, '', 1);
+			$colonna="1";
+			/* Antonio Germani FINE trasformo nome utente login in cognome e nome */	  
+		} 
+	}
 }
 $pdf->Output();
 ?>
