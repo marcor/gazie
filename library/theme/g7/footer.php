@@ -49,5 +49,6 @@ if ( $debug_active==true ) echo "<div>".d($GLOBALS, $_SERVER)."</div>";
 <script src="../../js/custom/gz-library.js"></script>
 <script src="../../js/tinymce/tinymce.min.js"></script>
 <script src="../../js/custom/tinymce.js"></script>
-</div><!-- chiude div container role main --></body>
+</div><!-- chiude <div class="container-fluid gaz-body"> presente su header.php -->
+</body>
 </html>
