@@ -41,7 +41,6 @@ function printDash($gTables,$module,$admin_aziend,$transl){
         } else {
 		  if ($pos=='modules/root/admin.php') {             
 				echo "<a href='../../modules/root/admin_dash.php'><i class='glyphicon glyphicon-cog'></i></a>";
-				echo "</div>";
 		  } else {
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
 			if ( strpos($posizione, "VOG")!==false ) $posizione = "report_broven.php?auxil=VOR";
