@@ -38,7 +38,7 @@ if (file_exists("help/".$admin_aziend['lang']."/docume_magazz_help.php")) {
 }
 ?>
 </div>
-</table>
+
 <?php
 require("../../library/include/footer.php");
 ?>

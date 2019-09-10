@@ -80,5 +80,5 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 		<p class="help-text">Da qui &egrave; possibile gestire le tabelle <strong>Avversità</strong> e <strong>Colture</strong>. La compilazione di queste tabelle servirà per la successiva compilazione della tabella <strong>Uso fitofarmaci</strong>. Tale tabella permette di effettuare i controlli delle dosi specifiche per fitofarmaci, colture e avversità.</p><p> Sempre da questo menu sarà possibile aggiornare la tabella <strong>Fitofarmaci</strong> connettendosi al database del Ministero della salute. Questo aggiornamento necessita di connessione ad internet. Tale tabella verrà utilizzata per l'inserimento di un nuovo fitofarmaco nelle merci/servizi e per i dovuti controlli sulle scadenze delle autorizzazioni dei fitofarmaci utilizzati in azienda.</p><br>
 	</div>
 </div>
-<div> <br><p align="center"> Questo Registro di campagna è stato ideato e creato da Antonio Germani (Massignano AP, www.lacasettabio.it), Utilizzando tutte le potenzialità di GAzie. </p></br>
+<div> <br><p align="center"> Questo Registro di campagna è stato ideato e creato da Antonio Germani (Massignano AP, www.lacasettabio.it), Utilizzando tutte le potenzialità di GAzie. </p><br>
 </div>
