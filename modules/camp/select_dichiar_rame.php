@@ -34,7 +34,7 @@ function getMovements($date_ini,$date_fin)
         $where="datdoc BETWEEN $date_ini AND $date_fin"; // Antonio Germani prendo la data di attuazione
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
-              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".rame_metallico ";
+              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".perc_K, ".$gTables['artico'].".perc_P, ".$gTables['artico'].".perc_N, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".rame_metallico ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)     
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
         $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, clfoco ASC, operat DESC, id_mov ASC');
@@ -46,6 +46,7 @@ function getMovements($date_ini,$date_fin)
 	
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
+	$form['sta_fert'] = false;
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['this_date_Y']=date("Y");
     $form['this_date_M']=date("m");
@@ -70,6 +71,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
+	if (isset ($_POST['sta_fert'])){
+		$form['sta_fert']=true;
+	} else {
+		$form['sta_fert']=false;
+	}
     $form['ritorno']=$_POST['ritorno'];
     $form['date_ini_D']=intval($_POST['date_ini_D']);
     $form['date_ini_M']=intval($_POST['date_ini_M']);
@@ -107,7 +113,8 @@ if (isset($_POST['print']) && $msg=='') {
     $_SESSION['print_request']=array('script_name'=>'stampa_dichiar_rame',
                                      'ri'=>date("dmY",$utsini),
                                      'rf'=>date("dmY",$utsfin),
-                                     'ds'=>date("dmY",$utsexe)
+                                     'ds'=>date("dmY",$utsexe),
+									 'stf'=>$form['sta_fert']
                                      );
     header("Location: sent_print.php");
     exit;
@@ -148,12 +155,15 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
 echo "</tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td  class=\"FacetDataTD\">\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1);
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1);
+echo "</tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sta_fert']."</td><td  class=\"FacetDataTD\">\n";
+$gForm->selCheckbox('sta_fert', $form['sta_fert'], $script_transl['sta_fert']);
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
@@ -168,63 +178,57 @@ $date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$for
 $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);
 
 if (isset($_POST['preview']) and $msg=='') {
-  $m=getMovements($date_ini,$date_fin);
-  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
-  if (sizeof($m) > 0) {
+	$m=getMovements($date_ini,$date_fin);
+	echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+	if (sizeof($m) > 0) {
         $ctr_mv='';
         echo "<tr>";
-        $linkHeaders=new linkHeaders($script_transl['header']);
+		If ($form['sta_fert']==false){
+			$linkHeaders=new linkHeaders($script_transl['header']);
+		} else {
+			$linkHeaders=new linkHeaders($script_transl['header_fert']);
+		}
         $linkHeaders->output();
         echo "</tr>";
-        $sum=0.00;		
-		$n=0;
+        		
         while (list($key, $mv) = each($m)) {
-			// qui devo controllare se ogni movimento ha un trattamento con rame metallo			
-				
+							
 			If ($mv['campo_coltivazione']>0 && $mv['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
-				if ($mv['rame_metallico']>0){ // se l'articolo contiene rame metallo
-				$camp = gaz_dbi_get_row($gTables['campi'], "codice", $mv['campo_coltivazione']); //carico i dati del campo di coltivazione			
+				if ($mv['rame_metallico']>0 OR ($mv['perc_N']>0 AND $form['sta_fert']==true)){ // se l'articolo contiene rame metallo o azoto con stampa fertilizzazioni
+					$camp = gaz_dbi_get_row($gTables['campi'], 'codice', $mv['campo_coltivazione']); //carico i dati del campo di coltivazione			
 			
-            $datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
-            $datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
-            $movQuanti = $mv['quanti']*$mv['operat'];
-            $sum += $movQuanti;
-            echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
-            echo "<td  align=\"left\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
+					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
+					$datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
+					
+					echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
+					echo "<td  align=\"left\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
             
-// Antonio Germani carico la tabella campi e Inserisco campo, superficie e coltura
-$res = gaz_dbi_dyn_query ('*', $gTables['campi']);			
-            
-			$colonna="0";
-	while($b_row = $res->fetch_assoc()) { 
-		if ($mv['campo_coltivazione']==$b_row['codice']) {
-			echo "<td align=\"left\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." - ".$b_row['descri']." &nbsp;</td>";
-			echo "<td class=\"FacetDataTD\" align=\"left\">".gaz_format_quantity($b_row['ricarico'],1,$admin_aziend['decimal_quantity'])." ha"." &nbsp;</td>\n"; 
-			
-			$colonna="1";	 
-		} 		
-	} 
-	 if ($colonna<1) {
-		echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";
-		echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n"; 
-	 }
-// fine inserisco campo, superficie, coltura
-			echo "<td class=\"FacetDataTD\" align=\"left\">".$mv['artico']." &nbsp;</td>\n";			
-            echo "<td class=\"FacetDataTD\" align=\"left\">".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
-            echo "<td align=\"left\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
-			echo "<td class=\"FacetDataTD\" align=\"left\">"."Kg ".gaz_format_quantity(($mv['quanti']*$mv['rame_metallico']),1,$admin_aziend['decimal_quantity'])." </td>\n";
-            echo "</tr>\n";
-            $ctr_mv = $mv['artico'];
-  } }	
-         }
+					// Antonio Germani carico la tabella campi e Inserisco campo, superficie e coltura
+					$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $mv['campo_coltivazione']);			
+					echo "<td align=\"left\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." - ".$res['descri']." &nbsp;</td>";
+					echo "<td class=\"FacetDataTD\" align=\"left\">".gaz_format_quantity($res['ricarico'],1,$admin_aziend['decimal_quantity'])." ha"." &nbsp;</td>\n"; 
+					// fine inserisco campo, superficie, coltura	
+	
+					echo "<td class=\"FacetDataTD\" align=\"left\">".$mv['artico']." &nbsp;</td>\n";			
+					echo "<td class=\"FacetDataTD\" align=\"left\">".$mv['unimis']." ".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
+					
+					echo "<td class=\"FacetDataTD\" align=\"left\">"."Kg ".gaz_format_quantity(($mv['quanti']*$mv['rame_metallico']),1,$admin_aziend['decimal_quantity'])." </td>\n";
+					if ($form['sta_fert']==true){					
+						echo "<td class=\"FacetDataTD\" align=\"left\">"."Kg ".gaz_format_quantity(($mv['quanti']*$mv['perc_N'])/100,1,$admin_aziend['decimal_quantity'])." </td>\n";
+					}
+					echo "</tr>\n";
+					$ctr_mv = $mv['artico'];
+				} 
+			}	
+        }
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
          echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
          echo $script_transl['print'];
          echo '">';
          echo "\t </td>\n";
          echo "\t </tr>\n";
-  }
-  echo "</table></form>";
+	}
+	echo "</table></form>";
 }
 ?>
 <?php

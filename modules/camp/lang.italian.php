@@ -261,7 +261,7 @@ $strScript = array("browse_document.php" =>
     ),
 	"select_dichiar_rame.php" =>
     array(0 => 'Dichiarazione rame metallo',
-        'title' => 'Selezione per la visualizzazione e/o la stampa della dichiarazione rame metallo',
+        'title' => 'Selezione per la visualizzazione e/o la stampa della dichiarazione rame metallo e delle fertilizzazioni',
         'errors' => array('La data  non &egrave; corretta!',
             'La data di inizio dei movimenti da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
             'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
@@ -269,7 +269,10 @@ $strScript = array("browse_document.php" =>
         'date' => 'Data di stampa ',
         'date_ini' => 'Data inizio dichiarazione  ',
         'date_fin' => 'Data fine dichiarazione ',
-        'header' => array('Data attuazione' => '', 'Causale' => '', 'Campo' => '', 'Superficie' => '', 'Prodotto' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Rame metallo usato' => ''
+		'sta_fert' => 'Stampa anche fertilizzazioni ',
+        'header' => array('Data attuazione' => '', 'Causale' => '', 'Campo' => '', 'Superficie' => '', 'Prodotto' => '', 'Quantit&agrave;' => '', 'Rame metallo usato' => ''),
+		'header_fert' => array('Data attuazione' => '', 'Causale' => '', 'Campo' => '', 'Superficie' => '', 'Prodotto' => '', 'Quantit&agrave;' => '', 'Rame metallo usato' => '', 'Fertilizzazione' => ''
+
         )
     ),
 	 "select_invmag.php" =>

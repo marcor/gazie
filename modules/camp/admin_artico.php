@@ -804,7 +804,7 @@ if ($modal_ok_insert === true) {
 }
 ?>
             </div>
-        </div> <!-- chiude container -->
+        <!-- chiude container -->
     </div><!-- chiude panel -->
 </form>
 
