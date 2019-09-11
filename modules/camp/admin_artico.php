@@ -498,8 +498,8 @@ if ($modal_ok_insert === true) {
 	});
   </script>
  <!-- fine autocompletamento --> 
-        <div class="panel panel-default gaz-table-form">
-            <div class="container-fluid">
+<div class="panel panel-default gaz-table-form">
+    <div class="container-fluid">
 			<?php
 			if ($modal === false) {
 				if ($toDo == 'insert') {
@@ -803,9 +803,10 @@ if ($modal_ok_insert === true) {
     echo '<div class="col-sm-8 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="' . strtoupper($script_transl[$toDo]) . '!" /></div>';
 }
 ?>
-            </div>
-        <!-- chiude container -->
-    </div><!-- chiude panel -->
+				</div>
+        
+    </div><!-- chiude container -->
+</div>	<!-- chiude panel -->
 </form>
 
 <script type="text/javascript">
