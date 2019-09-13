@@ -108,7 +108,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<span class="gazie-tooltip" data-type="campi-thumb" data-id="<?php echo $a_row['codice']; ?>" data-title="<?php echo $a_row['annota']; ?>"><?php echo $a_row["descri"]; ?></span>
 			</td>
 								
-			<td align="center"> <img width="100" style="cursor: -moz-zoom-in;" 
+			<td align="center"> <img width="100" style="cursor: zoom-in;" 
 			<?php echo 'src="data:image/jpeg;base64,'.base64_encode( $a_row['image'] ).'"';?>
 			onclick="this.width=500;" ondblclick="this.width=100;" title="<?php echo $a_row["descri"]; ?>" alt="IMG non presente" /></td>
 			<?php
