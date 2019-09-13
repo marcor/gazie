@@ -97,7 +97,8 @@ $recordnav -> output();
 
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-?>		<tr class="FacetDataTD">
+?>		
+			<tr class="FacetDataTD">
 			<td>
 				<a class="btn btn-xs btn-success btn-block" href="admin_campi.php?Update&codice=<?php echo $a_row["codice"]; ?>">
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row["codice"];?>
@@ -115,7 +116,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			
 			?>
 			<td align="center"><?php echo $a_row["id_colture"]." - ".$res['nome_colt'];?></td>
-			<td align="center"><?php echo $a_row["annota"];?></td>
+			<td align="center"><?php echo $a_row["annota"];
+			if ($a_row['zona_vulnerabile']==1){
+				echo "<br>Area in ZVN";
+			}
+			?>
+			</td>
 			<td align="center"><?php echo str_replace('.', ',',$a_row["ricarico"]);?></td>
 			<td align="center"><a  href="javascript:;" onclick="window.open('<?php echo($a_row["web_url"])?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
 			<i class="glyphicon glyphicon-picture"></i>
