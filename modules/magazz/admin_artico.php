@@ -317,7 +317,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 /* Solo se non sono in finestra modale carico il file di lingua del modulo */
 if ($modal === false) {
     require("../../library/include/header.php");
-    $script_transl = HeadMain(0, array('custom/autocomplete','sortable_lists/jquery-sortable-lists'));
+    $script_transl = HeadMain(0, array('custom/autocomplete'));
 } else {
     $script = basename($_SERVER['PHP_SELF']);
     require("../../language/" . $admin_aziend['lang'] . "/menu.inc.php");
@@ -333,7 +333,7 @@ if ($modal === false) {
  * in caso di finestra modale, aggiungo un campo nascosto che mi serve per salvare nel database
  */
 ?>
-<script type="text/javascript">
+<script>
     function calcDiscount() {
         var p1 = ($("#preve1").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
         $("#preve1_sc").val(p1);
@@ -351,42 +351,15 @@ if ($modal === false) {
             $(this).val(v);
             calcDiscount();
         });
-		var options = {
-			currElClass: 'red',
-			placeholderClass: 'bgC2',
-			listsClass:'',
-			collapsible: true,
-			isAllowed: function(cEl, hint, target)
-				{
-					hint.css('background-color', '#bbff99');
-					return true;
-				}
-		};
-		//$( ".bgC4" ).accordion({ collapsible: true });
-		$('#sTree2').sortableLists(options);
-
-		console.log($('#sTree2').sortableListsToArray());
-		console.log($('#sTree2').sortableListsToHierarchy());
-		console.log($('#sTree2').sortableListsToString());
     });
 </script>
-<style type="text/css">
-		.ui-accordion .ui-accordion-content {padding: 0;}
-		.container-fluid ul, .container-fluid li { list-style-type:none; padding:3px; border:1px solid #000; }
-		.container-fluid ul { padding:20px; }
-		.container-fluid ul .container-fluid li { padding-left:20px; margin 10px 0; border:1px solid #000; }
-		.container-fluid li div { padding:7px; background-color:#a8d0A9; border:1px solid #000; }
-		.container-fluid li ul .bgC4 div  { background-color:#7f77f7; border:1px }
-		.container-fluid li, ul, div { border-radius: 3px; }
-		.bgC1 { background-color:#ccc; }
-		.bgC2 { background-color:#ff8; }
-		.bgC3 { background-color:#f0f; }
-		.bgC4 { background-color:#EDf7BD; }
-		.small1 { font-size:0.8em; }
-		.small2 { font-size:0.7em; }
-		.small3 { font-size:0.6em; }
-		#sTree2 { margin:20px 0; }
+<style>
+.collapsible 
+      {
+            cursor:pointer;
+      } 
 </style>
+
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
 <?php
 if (!empty($form['descri'])) $form['descri'] = htmlentities($form['descri'], ENT_QUOTES);

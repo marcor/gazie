@@ -262,25 +262,25 @@ class magazzForm extends GAzieForm {
     function print_tree_BOM($codcomp) {  // Stampo la distinta base
 		$data=$this->getBOM($codcomp);
 		if (count($data)>=1){
-        echo '<div class="span4"><ul class="sTree bgC4" id="sTree2"> BOM - Distinta base della composizione'."\n";
+        echo '<div class=""><ul class="" id=""><h4>BOM - Distinta base della composizione'."\n</h4>";
 		foreach($data as $k0=>$v0) {
-			echo '<li class="bgC4 sortableListsClose" id="'.$v0[2].'"><div>'.$v0[2].' - '.$v0['descri'].'  '.$v0['unimis'].': '.floatval($v0['quantita_artico_base']).'</div>';
+			echo '<li class="collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><div><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].'  '.$v0['unimis'].': '.floatval($v0['quantita_artico_base']).' <i class="glyphicon glyphicon-list"></i> </div>';
 			if (is_array($v0['codice_artico_base'])){
-			  echo '<ul class="">';
+			  echo '<ul class="collapse ' . $v0[2] . '">';
 			  foreach($v0['codice_artico_base'] as $k1=>$v1) {
-				echo '<li class="bgC4" id="'.$v1[2].'"><div>'.$v1[2].' - '.$v1['descri'].'  '.$v1['unimis'].': '.floatval($v1['quantita_artico_base']).'</div>';
+				echo '<li class="" id=""><div><a class="btn btn-xs btn-info" href="admin_artico.php?Update&amp;codice=' . $v1[2] . '">'.$v1[2].'</a> - '.$v1['descri'].'  '.$v1['unimis'].': '.floatval($v1['quantita_artico_base']).'</div>';
 				  if (is_array($v1['codice_artico_base']))	{
 					echo '<ul class="">';
 					foreach($v1['codice_artico_base'] as $k2=>$v2) {
-					  echo '<li class="bgC4" id="'.$v2[2].'"><div>'.$v2[2].' - '.$v2['descri'].'  '.$v2['unimis'].': '.floatval($v2['quantita_artico_base']).'</div>';
+					  echo '<li class="" id=""><div><a class="btn btn-xs btn-primary" href="admin_artico.php?Update&amp;codice=' . $v2[2] . '">'.$v2[2].'</a> - '.$v2['descri'].'  '.$v2['unimis'].': '.floatval($v2['quantita_artico_base']).'</div>';
 					  if (is_array($v2['codice_artico_base']))	{
 						echo '<ul class="">';
 						foreach($v2['codice_artico_base'] as $k3=>$v3) {
-						  echo '<li class="bgC4" id="'.$v3[2].'"><div>'.$v3[2].' - '.$v3['descri'].'  '.$v3['unimis'].': '.floatval($v3['quantita_artico_base']).'</div>';
+						  echo '<li class="" id=""><div><a class="btn btn-xs btn-warning" href="admin_artico.php?Update&amp;codice=' . $v3[2] . '">'.$v3[2].'</a> - '.$v3['descri'].'  '.$v3['unimis'].': '.floatval($v3['quantita_artico_base']).'</div>';
 						  if (is_array($v3['codice_artico_base']))	{
 							echo '<ul class="">';
 							foreach($v3['codice_artico_base'] as $k4=>$v4) {
-							  echo '<li class="bgC4" id="'.$v4[2].'"><div>'.$v4[2].' - '.$v4['descri'].'  '.$v4['unimis'].': '.floatval($v4['quantita_artico_base']).'</div>';
+							  echo '<li class="" id=""><div><a class="btn btn-xs btn-danger" href="admin_artico.php?Update&amp;codice=' . $v4[2] . '">'.$v4[2].'</a> - '.$v4['descri'].'  '.$v4['unimis'].': '.floatval($v4['quantita_artico_base']).'</div>';
 							}
 						  } else {
 							  

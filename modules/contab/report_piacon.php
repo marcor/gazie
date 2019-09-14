@@ -40,26 +40,23 @@ if ($last_opening) {
 // FINE determinazione limiti di date
 
 require("../../library/include/header.php");
-$strTransl = HeadMain();
-
-/**
-  Tentativo di breadcrumb, ma credo sia inutile, il menu è sempre bello in alto... si allungherebbe solo la pagina, costringendo a scrollare
-  <div class="breadcrumb">
-  <li><a href="../../modules/root/admin.php">Home</a></li>
-  <li><a href="../../modules/contab/docume_contab.php">Contabilit&agrave;</a></li>
-  <li class="active"><?php echo $strTransl['title']; ?></li>
-  </div>
- */
+$script_transl = HeadMain();
 ?>
-<div class="FacetFormHeaderFont text-center"><?php echo $strTransl['title']; ?></div>
-<div class="alert alert-danger text-center" role="alert"><?php echo $strTransl['msg1']; ?></div>
+<style>
+.collapsible
+      {
+            cursor:pointer;
+      } 
+</style>
+<div class="FacetFormHeaderFont text-center"><?php echo $script_transl['title']; ?></div>
+<div class="alert alert-danger text-center" role="alert"><?php echo $script_transl['msg1']; ?></div>
 
 <form method="POST">
     <table class="table_piacon table table-striped table-bordered table-condensed table-responsive">
         <thead>
             <tr class="tr_piacon">
                 <?php
-                foreach ($strTransl['header'] as $k => $v) {
+                foreach ($script_transl['header'] as $k => $v) {
                     echo '				<th class="FacetFieldCaptionTD">' . $k . '</th>';
                 }
                 ?>
@@ -68,7 +65,7 @@ $strTransl = HeadMain();
         <tbody>
             <?php
             echo '			<tr>
-					<td colspan="8" class="FacetDataTD text-right">' . $strTransl['msg2'] . ' : <select name="annrip" class="FacetSelect" onchange="this.form.submit();">';
+					<td colspan="8" class="FacetDataTD text-right">' . $script_transl['msg2'] . ' : <select name="annrip" class="FacetSelect" onchange="this.form.submit();">';
             for ($counter = date("Y") - 3; $counter <= date("Y"); $counter++) {
                 $selected = "";
                 if ($counter == $_POST['annrip']) {
@@ -104,9 +101,9 @@ $strTransl = HeadMain();
                 $color_class = $css_class[substr($r["codice"],0,1)-1];
                 if (substr($r["codice"], 3) == '000000') {
                     $collapse = $r["codice"];
-                    echo '<tr data-toggle="collapse" data-target=".' . $collapse . '">	
+                    echo '<tr class="collapsible" data-toggle="collapse" data-target=".' . $collapse . '">	
 			<td class="'.$color_class.'">
-				<a class="btn btn-xs btn-default btn-edit" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $strTransl['edit_master'] . '" >
+				<a class="btn btn-xs btn-default btn-edit" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_master'] . '" >
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 0, 3) . '
 				</a>
 			</td>
@@ -122,7 +119,7 @@ $strTransl = HeadMain();
                     echo '<tr class="' . $collapse.' collapse tr_piacon" aria-expanded="false">
 			<td class="noborder tr_piacon"> </td>
 			<td class="'.$color_class.'">
-				<a class="btn btn-xs btn-default" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $strTransl['edit_account'] . '">
+				<a class="btn btn-xs btn-default" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $script_transl['edit_account'] . '">
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 3) . '
 				</a>
 			</td>
