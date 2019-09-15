@@ -264,7 +264,8 @@ class magazzForm extends GAzieForm {
 		if (count($data)>=1){
         echo '<div class=""><ul class="" id=""><h4>BOM - Distinta base della composizione'."\n</h4>";
 		foreach($data as $k0=>$v0) {
-			echo '<li class="collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><div><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].'  '.$v0['unimis'].': '.floatval($v0['quantita_artico_base']).' <i class="glyphicon glyphicon-list"></i> </div>';
+			$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-info"><i class="glyphicon glyphicon-list"></i></a>':'';
+			echo '<li class="collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><div><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].'  '.$v0['unimis'].': '.floatval($v0['quantita_artico_base']).' '.$icona.' </div>';
 			if (is_array($v0['codice_artico_base'])){
 			  echo '<ul class="collapse ' . $v0[2] . '">';
 			  foreach($v0['codice_artico_base'] as $k1=>$v1) {
