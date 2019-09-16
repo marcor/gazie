@@ -460,6 +460,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
     <?php
     $gForm->print_tree_BOM($form['codice']);
+	$gForm->print_trunks_BOM($form['codice']);
     ?>
                     </div>
                 </div><!-- chiude row  -->
@@ -920,55 +921,7 @@ if ($modal_ok_insert === true) {
                          </div>
                     </div>
                 </div><!-- chiude row  -->
-				<?php
-
-				$whe_dis = "codice_artico_base = '".$form['codice']."'";
-				$res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
-
-				if(gaz_dbi_num_rows($res_dis) > 0){
-				?>
-        <!--+ DC - 06/02/2019 div class="row" --->
-        <div id="composizione" class="row IERincludeExcludeRow">
-					<div class="col-md-12">
-						<label for="composizione" class="col-sm-4 control-label"><?php echo $script_transl['utilizzato']; ?></label>
-						<div class="col-sm-8">
-						    <table class="table table-responsive table-striped table-condensed cf">
-								<thead>
-									<tr class="bg-success">
-										<th>
-											<a href="#" class="orby" data-order="codice">
-												<?php echo $script_transl["codice"]; ?>
-											</a>
-										</th>
-										<th>
-											<a href="#" class="orby" data-order="descri">
-												<?php echo $script_transl["descri"]; ?>
-											</a>
-										</th>
-									</tr>
-							    </thead>
-								<tbody id="all_rows">
-									<?php
-
-										while ($row_dis = gaz_dbi_fetch_array($res_dis)) {
-											$next_row++;
-											$result2 = gaz_dbi_dyn_query('*', $gTables['artico'], " codice = '".$row_dis['codice_composizione']."'", 'codice', 0, PER_PAGE);
-											$row2 = gaz_dbi_fetch_array($result2);
-											echo "<tr>";
-											echo "<td>" . $row2['codice'] ."</td>";
-											echo "<td>" . $row2['descri'] ."</td>";
-											echo "</tr>";
-										}
-									?>
-							    </tbody>
-							</table>
-						</div>
-					</div>
-				</div><!-- chiude row  -->
-				<?php } ?>
-        <!-- Fine modfica a mano -->
-
-                <div class="col-sm-12">
+        <div class="col-sm-12">
     <?php
     /** ENRICO FEDELE */
     /* SOlo se non sono in finestra modale */

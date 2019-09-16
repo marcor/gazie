@@ -241,11 +241,25 @@ class magazzForm extends GAzieForm {
 								$n3=count($data3);
 								if ($n3>=1){
 									$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base']=$data3;
-									foreach ($data3 as $k3=>$v3){	
-										$data4=$this->getBOMfromDB($v3['codice_artico_base'],4);
+									foreach ($data3 as $k4=>$v4){	
+										$data4=$this->getBOMfromDB($v4['codice_artico_base'],4);
 										$n4=count($data4);
 										if ($n4>=1){
 											$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base']=$data4;
+											foreach ($data4 as $k5=>$v5){	
+												$data5=$this->getBOMfromDB($v5['codice_artico_base'],5);
+												$n5=count($data5);
+												if ($n5>=1){
+													$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base'][$k5]['codice_artico_base']=$data5;
+													foreach ($data5 as $k6=>$v6){	
+														$data6=$this->getBOMfromDB($v6['codice_artico_base'],6);
+														$n6=count($data6);
+														if ($n6>=1){
+															$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base'][$k5]['codice_artico_base'][$k6]['codice_artico_base']=$data6;
+														}
+													}
+												}
+											}
 										}
 									}
 								}
@@ -255,7 +269,6 @@ class magazzForm extends GAzieForm {
 				}
 			}
 		}
-		//print_r($data0);
 		return $data0;
 	}
 	
@@ -269,11 +282,11 @@ class magazzForm extends GAzieForm {
 			if (is_array($v0['codice_artico_base'])){
 			  echo '<ul class="collapse ' . $v0[2] . '">';
 			  foreach($v0['codice_artico_base'] as $k1=>$v1) {
-				echo '<li class="" id=""><div><a class="btn btn-xs btn-info" href="admin_artico.php?Update&amp;codice=' . $v1[2] . '">'.$v1[2].'</a> - '.$v1['descri'].'  '.$v1['unimis'].': '.floatval($v1['quantita_artico_base']).'</div>';
+				echo '<li class="" id=""><div><a class="btn btn-xs btn-primary" href="admin_artico.php?Update&amp;codice=' . $v1[2] . '">'.$v1[2].'</a> - '.$v1['descri'].'  '.$v1['unimis'].': '.floatval($v1['quantita_artico_base']).'</div>';
 				  if (is_array($v1['codice_artico_base']))	{
 					echo '<ul class="">';
 					foreach($v1['codice_artico_base'] as $k2=>$v2) {
-					  echo '<li class="" id=""><div><a class="btn btn-xs btn-primary" href="admin_artico.php?Update&amp;codice=' . $v2[2] . '">'.$v2[2].'</a> - '.$v2['descri'].'  '.$v2['unimis'].': '.floatval($v2['quantita_artico_base']).'</div>';
+					  echo '<li class="" id=""><div><a class="btn btn-xs btn-info" href="admin_artico.php?Update&amp;codice=' . $v2[2] . '">'.$v2[2].'</a> - '.$v2['descri'].'  '.$v2['unimis'].': '.floatval($v2['quantita_artico_base']).'</div>';
 					  if (is_array($v2['codice_artico_base']))	{
 						echo '<ul class="">';
 						foreach($v2['codice_artico_base'] as $k3=>$v3) {
@@ -282,21 +295,32 @@ class magazzForm extends GAzieForm {
 							echo '<ul class="">';
 							foreach($v3['codice_artico_base'] as $k4=>$v4) {
 							  echo '<li class="" id=""><div><a class="btn btn-xs btn-danger" href="admin_artico.php?Update&amp;codice=' . $v4[2] . '">'.$v4[2].'</a> - '.$v4['descri'].'  '.$v4['unimis'].': '.floatval($v4['quantita_artico_base']).'</div>';
+							  if (is_array($v4['codice_artico_base']))	{
+								echo '<ul class="">';
+								foreach($v4['codice_artico_base'] as $k5=>$v5) {
+								  echo '<li class="" id=""><div><a class="btn btn-xs btn-default" href="admin_artico.php?Update&amp;codice=' . $v5[2] . '">'.$v5[2].'</a> - '.$v5['descri'].'  '.$v5['unimis'].': '.floatval($v5['quantita_artico_base']).'</div>';
+								  if (is_array($v5['codice_artico_base']))	{
+									echo '<ul class="">';
+									foreach($v5['codice_artico_base'] as $k6=>$v6) {
+									 echo '<li class="" id=""><div><a class="btn btn-xs btn-basic" href="admin_artico.php?Update&amp;codice=' . $v6[2] . '">'.$v6[2].'</a> - '.$v6['descri'].'  '.$v6['unimis'].': '.floatval($v6['quantita_artico_base']).'</div></li>';
+									}
+									echo "</ul>\n";
+								  }
+								  echo "</li>\n";
+								}
+								echo "</ul>\n";
+							  }
+							  echo "</li>\n";
 							}
-						  } else {
-							  
+							echo "</ul>\n";
 						  }
  		  				  echo "</li>\n";
 						}
 						echo "</ul>\n";
-					  } else {
-						  
 					  }
 					  echo "</li>\n";
 					}
 					echo "</ul>\n";
-				  } else {
-					  
 				  }
 				  echo "</li>\n";
 			  }
@@ -308,6 +332,79 @@ class magazzForm extends GAzieForm {
 		}
 		echo "</ul></div>\n";
 		}
+	}
+	function print_trunks_BOM($codcomp){
+        global $gTables;
+		$acc=$this->getLevelfromDB($codcomp);
+		if (count($acc)>=1){
+         echo '<div class=""><ul class="warning" id=""><h3>Articolo contenuto nelle seguenti composizioni:'."\n</h3>";
+		 foreach ($acc as $k0=>$v0){
+			//$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-info"><i class="glyphicon glyphicon-list"></i></a>':'';
+			echo '<li><div><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0['codice'] . '">'.$v0['codice'].'</a> - '.$v0['descri'].'  n. '.floatval($v0['quantita_artico_base']).'</div>';
+			$acc[$k0]['dad']=$this->getLevelfromDB($v0['codice']);
+			if (count($acc[$k0]['dad'])>0){
+			  echo '<ul class="">';
+			  foreach ($acc[$k0]['dad'] as $k1=>$v1){
+				echo '<li><div><a class="btn btn-xs btn-primary" href="admin_artico.php?Update&amp;codice=' . $v1['codice'] . '">'.$v1['codice'].'</a> - '.$v1['descri'].'  n. '.floatval($v1['quantita_artico_base']).'</div>';
+				$acc[$k0]['dad'][$k1]['dad']=$this->getLevelfromDB($v1['codice']);
+				if (count($acc[$k0]['dad'][$k1]['dad'])>0){
+				  echo '<ul class="">';
+				  foreach ($acc[$k0]['dad'][$k1]['dad'] as $k2=>$v2){
+					echo '<li><div><a class="btn btn-xs btn-info" href="admin_artico.php?Update&amp;codice=' . $v2['codice'] . '">'.$v2['codice'].'</a> - '.$v2['descri'].'  n. '.floatval($v2['quantita_artico_base']).'</div>';
+					$acc[$k0]['dad'][$k1]['dad'][$k2]['dad']=$this->getLevelfromDB($v2['codice']);
+					if (count($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'])>0){
+					  echo '<ul class="">';
+					  foreach ($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'] as $k3=>$v3){
+						echo '<li><div><a class="btn btn-xs btn-warning" href="admin_artico.php?Update&amp;codice=' . $v3['codice'] . '">'.$v3['codice'].'</a> - '.$v3['descri'].'  n. '.floatval($v3['quantita_artico_base']).'</div>';
+						$acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad']=$this->getLevelfromDB($v3['codice']);
+						if (count($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad'])>0){
+						  echo '<ul class="">';
+						  foreach ($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad'] as $k4=>$v4){
+							echo '<li><div><a class="btn btn-xs btn-danger" href="admin_artico.php?Update&amp;codice=' . $v4['codice'] . '">'.$v4['codice'].'</a> - '.$v4['descri'].'  n. '.floatval($v4['quantita_artico_base']).'</div>';
+							$acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad'][$k4]['dad']=$this->getLevelfromDB($v4['codice']);
+							if (count($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad'][$k4]['dad'])>0){
+							  echo '<ul class="">';
+							  foreach ($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad'][$k4]['dad'] as $k5=>$v5){
+							    echo '<li><div><a class="btn btn-xs btn-danger" href="admin_artico.php?Update&amp;codice=' . $v5['codice'] . '">'.$v5['codice'].'</a> - '.$v5['descri'].'  n. '.floatval($v5['quantita_artico_base']).'</div></li>';
+							  }
+							  echo '</ul>';
+							}
+							echo '</li>';
+						  }
+						  echo '</ul>';
+						}
+						echo '</li>';
+					  }
+					  echo '</ul>';
+					}
+					echo '</li>';
+				  }
+	  			  echo '</ul>';
+				}
+				echo '</li>';
+			  }
+			  echo '</ul>';
+			}
+			echo '</li>';
+		  }
+		  echo "</ul></div>\n";
+		} 
+	}
+
+	function getLevelfromDB($codcomp){
+        global $gTables;
+		$acc=[];
+		$rs = gaz_dbi_dyn_query("quantita_artico_base,codice_composizione,codice_artico_base", $gTables['distinta_base'], "codice_artico_base = '".$codcomp."' GROUP BY codice_composizione");
+		while ($r = gaz_dbi_fetch_assoc($rs)) {
+			$art=gaz_dbi_get_row($gTables['artico'], "codice", $r['codice_composizione']);
+			$r['codice']=$art['codice'];
+			$r['descri']=$art['descri'];
+			$acc[]=$r;
+		}
+		return $acc;
+	}
+	
+    function print_trunk_BOM($codcomp) {  // Stampo i padri nei quali è contenuto l'articolo
 	}
 	
     function getStockValue($id_mov = false, $item_code = null, $date = null, $stock_eval_method = null, $decimal_price = 2)
