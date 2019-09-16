@@ -273,9 +273,11 @@ class magazzForm extends GAzieForm {
 	}
 	
     function print_tree_BOM($codcomp) {  // Stampo la distinta base
+		global $gTables;
+		$art=gaz_dbi_get_row($gTables['artico'], "codice", $codcomp);
 		$data=$this->getBOM($codcomp);
 		if (count($data)>=1){
-        echo '<div class=""><ul class="" id=""><h4>BOM - Distinta base della composizione'."\n</h4>";
+        echo '<div class="panel panel-default"><div class="panel-heading"><h4>Distinta base della composizione: '.$codcomp.'-'.$art['descri']."\n</h4>".'</div><div class="panel-body"><ul>';
 		foreach($data as $k0=>$v0) {
 			$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-info"><i class="glyphicon glyphicon-list"></i></a>':'';
 			echo '<li class="collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><div><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].'  '.$v0['unimis'].': '.floatval($v0['quantita_artico_base']).' '.$icona.' </div>';
@@ -330,14 +332,15 @@ class magazzForm extends GAzieForm {
 			}
 			echo "</li>\n";
 		}
-		echo "</ul></div>\n";
+		echo "</ul></div></div>\n";
 		}
 	}
 	function print_trunks_BOM($codcomp){
         global $gTables;
+		$art=gaz_dbi_get_row($gTables['artico'], "codice", $codcomp);
 		$acc=$this->getLevelfromDB($codcomp);
 		if (count($acc)>=1){
-         echo '<div class=""><ul class="warning" id=""><h3>Articolo contenuto nelle seguenti composizioni:'."\n</h3>";
+         echo '<div class="panel panel-default"><div class="panel-heading"><h4>'.$codcomp.'-'.$art['descri']. ' è un articolo contenuto nelle seguenti composizioni:</h4></div><div class="panel-body"><ul>';
 		 foreach ($acc as $k0=>$v0){
 			//$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-info"><i class="glyphicon glyphicon-list"></i></a>':'';
 			echo '<li><div><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0['codice'] . '">'.$v0['codice'].'</a> - '.$v0['descri'].'  n. '.floatval($v0['quantita_artico_base']).'</div>';
@@ -365,7 +368,7 @@ class magazzForm extends GAzieForm {
 							if (count($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad'][$k4]['dad'])>0){
 							  echo '<ul class="">';
 							  foreach ($acc[$k0]['dad'][$k1]['dad'][$k2]['dad'][$k3]['dad'][$k4]['dad'] as $k5=>$v5){
-							    echo '<li><div><a class="btn btn-xs btn-danger" href="admin_artico.php?Update&amp;codice=' . $v5['codice'] . '">'.$v5['codice'].'</a> - '.$v5['descri'].'  n. '.floatval($v5['quantita_artico_base']).'</div></li>';
+							    echo '<li><div><a class="btn btn-xs btn-default" href="admin_artico.php?Update&amp;codice=' . $v5['codice'] . '">'.$v5['codice'].'</a> - '.$v5['descri'].'  n. '.floatval($v5['quantita_artico_base']).'</div></li>';
 							  }
 							  echo '</ul>';
 							}
@@ -387,7 +390,7 @@ class magazzForm extends GAzieForm {
 			}
 			echo '</li>';
 		  }
-		  echo "</ul></div>\n";
+		  echo "</ul></div></div>\n";
 		} 
 	}
 
