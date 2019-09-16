@@ -1848,6 +1848,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 
             switch ($v['tiprig']) {
                 case "0":
+					$gForm->delivered_artico($v['codart']);
 					$lm_acc = '';
 					if ($v['lot_or_serial'] > 0) {
 					
