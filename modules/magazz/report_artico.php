@@ -21,42 +21,9 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-
 checkCustoms($_SERVER['REQUEST_URI']);
 
- function selectFrom($table, $name, $key, $val, $order, $bridge = '', $key2, $class = 'FacetSelect') { // Antonio Germani - crea un input select
-        global $gTables;
-		$acc='';
-        $refresh = '';
-        $query = 'SELECT * FROM `' . $gTables[$table] . '` '. ' ORDER BY `' . $order . '`';
-		$acc .= "\t <select id=\"$name\" name=\"$name\" class=\"$class\" onchange=\"this.form.submit();\" > <option value=\"\"></option>\n";
-        $result = gaz_dbi_query($query);
-        while ($r = gaz_dbi_fetch_array($result)) {
-            $selected = '';
-            if ($r[$key] == $val) {
-                $selected = "selected";
-            }
-            $acc .= "\t\t <option value=\"" . $r[$key] . "\" $selected >";
-            $acc .= substr($r[$key], 0, 28) . $bridge . substr($r[$key2], 0, 35) . "</option>\n";
-        }       
-        $acc .= "\t </select>\n";
-		echo $acc;
-    }
-
 $admin_aziend = checkAdmin();
-
-if (isset($_POST['erase'])) {
-	unset($_POST);
-}
-
-if (isset($_POST['catmer'])){
- $form['catmer']=$_POST['catmer'];
- $cat = filter_input(INPUT_POST, 'catmer');
-} else {
-	$form['catmer']="";
-	$cat="";
-}
-
 
 if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordinamento
     $rn = 0;
@@ -88,7 +55,7 @@ require("../../library/include/header.php");
         var ob = $("#order_by").val();
         var so = $("#sort").val();
         var ca = '<?php echo $cs ?>';
-        var cat = '<?php echo $cat ?>';
+        
         $.ajax({
             type: 'post',
             url: 'report_artico_scroll.php',
@@ -97,7 +64,6 @@ require("../../library/include/header.php");
                 orderby: ob,
                 sort: so,
                 codart: ca,
-				catmer: cat,
             },
             beforeSend: function () {
                 $('#loader-icon').show();
@@ -144,20 +110,14 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/autocomplete'));
 $gForm = new magazzForm();
 ?>
-<form method="POST" name="myform" id="form">
+<form method="POST" id="form">
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
     <div class="panel panel-info col-lg-8">
         <div class="container-fluid">
         <label for="codice" class="col-lg-3 control-label"><?php echo $script_transl['codice'].'-'.$script_transl['descri']; ?></label>
 		<?php
 		echo ' <input type="text" class="col-lg-3" name="cosear" id="search_cosear" value="' .substr($cs, 0, 20) . '"  maxlength="16" />';
-		if (strlen($cs)<1){// Antonio Germani - Se non ? stata richiesta la ricerca per singolo articolo creo un select categoria merceologica
-			echo '<label class="col-lg-2 control-label">'.$script_transl['catmer'].'</label>';
-			selectFrom('catmer', 'catmer','codice', $form['catmer'], 'codice', ' - ','descri','FacetSelect');
-		}
-		echo '<button type="submit" name="erase" title="Reset" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle"></i></button>'
-
-		?>
+        ?>
 		</div>
     </div>
     <div class="panel panel-default">
