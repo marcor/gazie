@@ -97,6 +97,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['artico'] = $result['artico'];
 	$form['cosear'] = $result['artico'];
 	$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+	$print_unimis =  $item_artico['unimis'];
+	$print_uniacq =  $item_artico['uniacq'];
 	if ($item_artico['lot_or_serial']==1){ 
 		$result_lotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
 		$form['identifier'] = $result_lotmag['identifier'];
@@ -195,15 +197,18 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         }		
 	}
 	 $form['operat'] = intval($_POST['operat']);
-	if (strlen($form['artico'])>0) {
-		$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+	$print_unimis = "";
+	$print_uniacq = "";
+	if (strlen($form['cosear'])>0) { // se c'è un articolo carico l'unità di misura e se ci sono anche gli identificativi del lotto
+		$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
 		$print_unimis =  $item_artico['unimis'];
+		$print_uniacq =  $item_artico['uniacq'];
 		if (isset($_POST['expiry'])){
 			$form['filename'] = $_POST['filename'];
 			$form['identifier'] = $_POST['identifier'];
 			$form['expiry'] = $_POST['expiry'];
 		}
-	}
+	} 
     $form['quanti'] = gaz_format_quantity($_POST['quanti'], 0, $admin_aziend['decimal_quantity']);
     $form['prezzo'] = number_format(preg_replace("/\,/", '.', $_POST['prezzo']), $admin_aziend['decimal_price'], '.', '');
     $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
@@ -614,7 +619,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td cl
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[10] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['scochi'] . "\" maxlength=\"5\" size=\"5\" name=\"scochi\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 $messaggio = "";
-$print_unimis = "";
+
 $ric_mastro = substr($form['artico'], 0, 3);
 
 $select_artico = new selectartico("artico");
@@ -799,7 +804,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
 <?php	
 	// fine LOTTO
 	
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();this.form.submit();\"> $print_unimis</td></tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();this.form.submit();\">".${'print_'.$unimis}."</td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[14] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['scorig'] . "\" maxlength=\"4\" size=\"4\" name=\"scorig\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $strScript["report_movmag.php"][7] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $importo_totale . "\" name=\"total\" size=\"20\" readonly />\n";
