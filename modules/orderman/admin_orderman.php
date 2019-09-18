@@ -620,7 +620,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                         $row = $result->fetch_assoc();
                         $id_rigbro = $row['auto_increment']; // trovo l'ID che avrà RIGBRO rigo documento
                         gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,datemi,numdoc,id_orderman,status,adminid) VALUES ('PRO','" . $form['datemi'] . "', '" . time() . "', '" . $id_orderman . "', 'AUTOGENERA', '" . $admin_aziend['adminid'] . "')"); // creo tesbro
-                        gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,status) VALUES ('" . $id_tesbro . "','" . $form['codart'] . "','" . $resartico['descri'] . "','" . $resartico['unimis'] . "', '" . $form['quantip'] . "', 'AUTOGENERA')"); // creo rigbro
+                        gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,status) VALUES ('" . $id_tesbro . "','" . $form['codart'] . "','" . addslashes ($resartico['descri']) . "','" . $resartico['unimis'] . "', '" . $form['quantip'] . "', 'AUTOGENERA')"); // creo rigbro
                         $query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . $id_tesbro . "', " . 'id_rigbro' . " = '" . $id_rigbro . "' WHERE id = '" . $form['id'] . "'";
                         gaz_dbi_query($query); // aggiorno i riferimenti su orderman
                         
@@ -631,7 +631,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                         if (isset($res)) { // se esiste il rigo lo aggiorno tesbro e rigbro
                             $query = "UPDATE " . $gTables['tesbro'] . " SET " . 'datemi' . " = '" . $form['datemi'] . "', id_orderman = '" . $id_orderman . "' WHERE id_tes = '" . $form['id_tesbro'] . "'";
                             $res = gaz_dbi_query($query);
-                            $query = "UPDATE " . $gTables['rigbro'] . " SET " . 'codart' . " = '" . $form['codart'] . "', " . 'descri' . " = '" . $resartico['descri'] . "', " . 'unimis' . " = '" . $resartico['unimis'] . "', " . 'quanti' . " = '" . $form['quantip'] . "' WHERE id_tes = '" . $form['id_tesbro'] . "'";
+                            $query = "UPDATE " . $gTables['rigbro'] . " SET " . 'codart' . " = '" . $form['codart'] . "', " . 'descri' . " = '" . addslashes ($resartico['descri']) . "', " . 'unimis' . " = '" . $resartico['unimis'] . "', " . 'quanti' . " = '" . $form['quantip'] . "' WHERE id_tes = '" . $form['id_tesbro'] . "'";
                             $res = gaz_dbi_query($query);
                         }
                     }
@@ -641,7 +641,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
                 gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,duration,adminid) VALUES ('" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" . $admin_aziend['adminid'] . "')");
                 if (intval($form['order']) <= 0 and  $form['order_type'] != "AGR") { // se non c'è un numero ordine e non siamo in produzione agricola, ne creo uno fittizio in TESBRO e RIGBRO
                     gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,datemi,numdoc,id_orderman,status,adminid) VALUES ('PRO','" . $form['datemi'] . "', '" . time() . "', '" . $id_orderman . "', 'AUTOGENERA', '" . $admin_aziend['adminid'] . "')");
-                    gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,status) VALUES ('" . $id_tesbro . "','" . $form['codart'] . "','" . $resartico['descri'] . "','" . $resartico['unimis'] . "', '" . $form['quantip'] . "', 'AUTOGENERA')");
+                    gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,status) VALUES ('" . $id_tesbro . "','" . $form['codart'] . "','" . addslashes ($resartico['descri']) . "','" . $resartico['unimis'] . "', '" . $form['quantip'] . "', 'AUTOGENERA')");
                 } else { // se c'è l'ordine lo collego ad orderman
                     $query = "UPDATE " . $gTables['tesbro'] . " SET id_orderman = '" . $id_orderman . "' WHERE id_tes = '" . $form['id_tesbro'] . "'";
                     $res = gaz_dbi_query($query);
@@ -961,8 +961,8 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				$l = 0; // numero lotto componente
 				
 				while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
-					if ($form['quantip'] > 0) {
-						$row['quantita_artico_base'] = $row['quantita_artico_base'] * $form['quantip'];
+					if ($form['quantip'] > 0) { 
+						$row['quantita_artico_base'] = number_format ($row['quantita_artico_base'] * $form['quantip'],6);
 						$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
 						$magval = array_pop($mv); // controllo disponibilità in magazzino
 						if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
@@ -974,12 +974,12 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						<div class="row" style="margin-left: 0px;">
 							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
 							</div>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Necessari: ", gaz_format_quantity($row['quantita_artico_base'], 0, $admin_aziend['decimal_quantity']); ?>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Necessari: ", $row['quantita_artico_base']; ?>
 							</div>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", gaz_format_quantity($magval['q_g'], 0, $admin_aziend['decimal_quantity']); ?>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", $magval['q_g']; ?>
 							</div>
-							<?php
-							if ($magval['q_g'] - $row['quantita_artico_base'] >= 0) { // giacenza sufficiente
+							<?php 							
+							if (number_format($magval['q_g'] - $row['quantita_artico_base'],6) >= 0) { // giacenza sufficiente
 								?>
 								<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo $row['quantita_artico_base']; ?>"> <!-- quantità utilizzata di ogni componente   -->
 								<div class="col-sm-1" style="background-color:lightgreen;"> OK</div>
