@@ -72,13 +72,15 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
 	$form['lot_or_serial'] = $resartico['lot_or_serial']; 
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
-			 // prendo i movimenti di magazzino dei componenti 
-            $query = "SELECT " . '*' . " FROM " . $gTables['movmag'] . " WHERE operat = '-1' AND id_orderman ='" . $_GET['codice'] . "'";
-            $result7 = gaz_dbi_query($query);
+			 // prendo i movimenti di magazzino dei componenti e l'unità di misura 
+			$where="operat = '-1' AND id_orderman = '". $_GET['codice']."'";
+			$table = $gTables['movmag']." LEFT JOIN ".$gTables['artico']." on (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
+			$result7 = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".unimis", $table, $where );
 		} else { // se INSERT
-			// prendo i componenti che formerano l'articolo
-            $query = "SELECT * FROM " . $gTables['distinta_base'] . " WHERE codice_composizione = '" . $form['codart'] . "'";
-            $rescompo = gaz_dbi_query($query);
+			// prendo i componenti che formerano l'articolo e l'unità di misura
+			$where="codice_composizione = '" . $form['codart'] . "'";
+			$table = $gTables['distinta_base']." LEFT JOIN ".$gTables['artico']." on (".$gTables['distinta_base'].".codice_artico_base = ".$gTables['artico'].".codice)";
+            $rescompo = gaz_dbi_dyn_query ($gTables['distinta_base'].".*, ".$gTables['artico'].".unimis", $table, $where );
 		}   
 	}    
     $form['coseor'] = $_POST['coseor'];	
@@ -695,10 +697,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
 	$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
 	$form['lot_or_serial'] = $resartico['lot_or_serial'];
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
-		// prendo i movimenti di magazzino dei componenti 
-        $query = "SELECT " . '*' . " FROM " . $gTables['movmag'] . " WHERE operat = '-1' AND id_orderman ='" . $_GET['codice'] . "'";
-        $result7 = gaz_dbi_query($query);		   
-	}
+		// prendo i movimenti di magazzino dei componenti e l'unità di misura
+		$where="operat = '-1' AND id_orderman = '". $_GET['codice']."'";
+		$table = $gTables['movmag']." LEFT JOIN ".$gTables['artico']." on (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
+		$result7 = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".unimis", $table, $where );
+    }
     // Antonio Germani - se è presente, recupero il file documento lotto
     $form['filename'] = "";
     if (file_exists('../../data/files/' . $admin_aziend['company_id']) > 0) {
@@ -733,7 +736,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['cosear'] = "";
 } else { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-	$form['codart']="";
 	$form['numdoc']="";
     if (isset($_GET['type'])) { // controllo se proviene anche da una richiesta del modulo camp
         $form['order_type'] = $_GET['type'];
@@ -768,6 +770,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['numcomp'] = 0;
 	$resartico['lot_or_serial']="";
 	$resartico['good_or_service']="";
+	$resartico['unimis']="";
 	$form['id_tes']="";
 }
 if (isset($_POST['Cancel'])) { // se è stato premuto ANNULLA
@@ -937,7 +940,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						<div class="row" style="margin-left: 0px;">
 							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['artico']; ?>
 							</div>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Q.tà usata: ", gaz_format_quantity($row['quanti'], 0, $admin_aziend['decimal_quantity']); ?>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Q.tà usata: ", gaz_format_quantity($row['quanti'], 0, $admin_aziend['decimal_quantity'])," ",$row['unimis']; ?>
 							</div>
 							<?php
 							if (intval($row['id_lotmag']) > 0) {
@@ -965,6 +968,10 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						$row['quantita_artico_base'] = number_format ($row['quantita_artico_base'] * $form['quantip'],6);
 						$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
 						$magval = array_pop($mv); // controllo disponibilità in magazzino
+						$magval['q_g']=number_format($magval['q_g'],8); // questo serve per eliminare un numero esponenziale negativo che a volte  si genera quando invece è zero
+						if ($magval['q_g']==0){
+							$magval['q_g']=0;
+						}
 						if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
 							$magval['q_g'] = $magval['q_g'] + $row['quantita_artico_base'];
 						}
@@ -974,7 +981,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						<div class="row" style="margin-left: 0px;">
 							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
 							</div>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Necessari: ", $row['quantita_artico_base']; ?>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", $row['quantita_artico_base']; ?>
 							</div>
 							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", $magval['q_g']; ?>
 							</div>
@@ -1088,7 +1095,9 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
         echo gaz_format_quantity($form['quantip'], 0, $admin_aziend['decimal_quantity']);
 ?>
 			<input type="hidden" name="quantip" Value="<?php echo $form['quantip']; ?>"/>
-			<?php
+			<?php 
+			echo $resartico['unimis'];
+		
         if ($form['quantipord'] - $form['quantip'] > 0) {
             echo " Sono ancora da produrre: ", gaz_format_quantity($form['quantipord'] - $form['quantip'], 0, $admin_aziend['decimal_quantity']);
         }
@@ -1099,6 +1108,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 ?>
 				<input type="text" name="quantip" onchange="this.form.submit()" value="<?php echo $form['quantip']; ?>" />
 				<?php
+				echo $resartico['unimis'];
         // Antonio Germani - Visualizzo quantità prodotte e rimanenti
         if (($form['order']) > 0 && strlen($form['codart']) > 0) { // se c'è un ordine e c'è un articolo selezionato, controllo se è già stato prodotto
             
