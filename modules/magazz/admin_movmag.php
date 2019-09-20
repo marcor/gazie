@@ -410,6 +410,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$form['identifier'] ="";
 	$form['expiry'] ="";
     $form['quanti'] = 0;
+	$print_unimis = "";
     $form['prezzo'] = 0;
     $form['scorig'] = 0;
     $form['status'] = "";
