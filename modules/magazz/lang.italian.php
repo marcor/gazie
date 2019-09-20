@@ -174,8 +174,11 @@ $strScript = array("browse_document.php" =>
         'date' => 'Data di stampa ',
         'date_ini' => 'Data registrazione inizio  ',
         'date_fin' => 'Data registrazione fine ',
+		'mode' => 'Tipo di stampa',
+		'mode_value' => array(2 => 'Tutti i movimenti', 4 => 'Solo le entrate', 6 => 'Solo le uscite'),
+		'price_value' => array(2 => 'Con prezzi', 4 => 'senza prezzi'),
         'header' => array('Data' => '', 'Causale' => '', 'Descrizione documento' => '' ,
-            'Articolo' => '', 'Prezzo' => '', 'Importo' => '', 'UM' => '', 'Quantit&agrave;' => ''
+        'Articolo' => '', 'Prezzo' => '', 'Importo' => '', 'UM' => '', 'Quantit&agrave;' => ''
         )
     ),
     "recalc_exist_value.php" =>

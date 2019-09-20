@@ -48,6 +48,8 @@ function getMovements($date_ini,$date_fin)
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+	$form['mode'] = "1";
+	$form['price'] = "1";
     $form['this_date_Y']=date("Y");
     $form['this_date_M']=date("m");
     $form['this_date_D']=date("d");
@@ -72,6 +74,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
+	$form['mode'] = intval($_POST['mode']);
+	$form['price'] = intval($_POST['price']);
     $form['date_ini_D']=intval($_POST['date_ini_D']);
     $form['date_ini_M']=intval($_POST['date_ini_M']);
     $form['date_ini_Y']=intval($_POST['date_ini_Y']);
@@ -108,7 +112,9 @@ if (isset($_POST['print']) && $msg=='') {
     $_SESSION['print_request']=array('script_name'=>'stampa_giomag',
                                      'ri'=>date("dmY",$utsini),
                                      'rf'=>date("dmY",$utsfin),
-                                     'ds'=>date("dmY",$utsexe)
+                                     'ds'=>date("dmY",$utsexe),
+									 'md'=> $form['mode'],
+									 'pr'=> $form['price']
                                      );
     header("Location: sent_print.php");
     exit;
@@ -155,6 +161,15 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1);
+echo "</tr>\n";
+echo "<tr>\n";
+
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['mode'] . "</td>
+<td  class=\"FacetDataTD\">\n";
+$gForm->variousSelect('mode', $script_transl['mode_value'], $form['mode'], 'FacetSelect', false, 'mode');
+
+$gForm->variousSelect('price', $script_transl['price_value'], $form['price'], 'FacetSelect', false, 'price');
+echo "</td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
