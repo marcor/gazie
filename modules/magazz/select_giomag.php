@@ -122,6 +122,16 @@ if (isset($_POST['print']) && $msg=='') {
     header("Location: sent_print.php");
     exit;
 }
+if (isset($_POST['cover']) && $msg=='') {
+    $_SESSION['print_request']=array('script_name'=>'stampa_cop_giomag',
+                                     'ri'=>date("dmY",$utsini),
+                                     'rf'=>date("dmY",$utsfin),
+                                     'ds'=>date("dmY",$utsexe),
+									 'sb'=> $form['subtitle']
+                                     );
+    header("Location: sent_print.php");
+    exit;
+}
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
@@ -157,14 +167,14 @@ if (!empty($msg)) {
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
-echo "</tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td  class=\"FacetDataTD\">\n";
+echo "</td></tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1);
-echo "</tr>\n";
+echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1);
-echo "</tr>\n";
+echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['mode'] . "</td>
 <td  class=\"FacetDataTD\">\n";
@@ -175,13 +185,11 @@ echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['subtitle']."</td>
 <td class=\"FacetDataTD\"><input type=\"text\" name=\"subtitle\" value=\"" . $form['subtitle'] . "\" maxlength=\"40\" size=\"35\" /></td>
 </tr>\n";
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
-echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
-echo $script_transl['view'];
-echo '" tabindex="100" >';
-echo "\t </td>\n";
-echo "\t </tr>\n";
+echo "<tr class=\"FacetFieldCaptionTD\">";
+echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">";
+echo "</td><td align=\"left\"><input type=\"submit\" name=\"cover\" value=\"".$script_transl['cover']."\">";
+echo "&nbsp;&nbsp;<input  type=\"submit\" accesskey=\"i\" name=\"preview\" value=\"".$script_transl['view']."\" tabindex=\"100\" >";
+echo "</td></tr>";
 echo "</table>\n";
 
 $date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$form['date_ini_D']);

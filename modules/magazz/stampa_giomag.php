@@ -106,13 +106,13 @@ if ($_GET['pr']==1){
                'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf)." - ".$_GET['sb'],
                'hile'=>array(array('lun' => 20,'nam'=>'Data Reg.'),
                              array('lun' => 36,'nam'=>'Causale'),
-                             array('lun' => 78,'nam'=>'Articolo'),
+                             array('lun' => 83,'nam'=>'Articolo'),
 							 array('lun' => 22,'nam'=>'Lotto'),
                              array('lun' => 56,'nam'=>'Rif.Documento'),
                              array('lun' => 17,'nam'=>'Prezzo'),
                              array('lun' => 18,'nam'=>'Importo'),
                              array('lun' => 10,'nam'=>'U.M.'),
-                             array('lun' => 20,'nam'=>'Mov.Quant.')
+                             array('lun' => 15,'nam'=>'Quantità')
                             )
             );
 } else {
@@ -120,11 +120,11 @@ if ($_GET['pr']==1){
                'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf)." - ".$_GET['sb'],
                'hile'=>array(array('lun' => 20,'nam'=>'Data Reg.'),
                              array('lun' => 36,'nam'=>'Causale'),
-                             array('lun' => 78,'nam'=>'Articolo'),
+                             array('lun' => 83,'nam'=>'Articolo'),
 							 array('lun' => 22,'nam'=>'Lotto'),
                              array('lun' => 56,'nam'=>'Rif.Documento'),
                              array('lun' => 10,'nam'=>'U.M.'),
-                             array('lun' => 20,'nam'=>'Mov.Quant.')
+                             array('lun' => 15,'nam'=>'Quantità')
                             )
             );
 $pdf->SetLeftMargin(25);			
@@ -144,7 +144,7 @@ if (sizeof($result) > 0) {
       $movQuanti = $row['quanti']*$row['operat'];
       $pdf->Cell(20,3,$datareg,1,0,'C');
       $pdf->Cell(36,3,$row['caumag'].'-'.substr($row['descri'],0,25),1, 0, 'l', 0, '', 1);
-      $pdf->Cell(78,3,$row['artico'].' - '.substr($row['desart'],0,58),1, 0, 'l', 0, '', 1);
+      $pdf->Cell(83,3,$row['artico'].' - '.substr($row['desart'],0,70),1, 0, 'l', 0, '', 1);
 	  $pdf->Cell(22,3,substr($row['id_lotmag'],-20),1, 0, 'l', 0, '', 1); // L'identificatore lotto, se troppo lungo, viene accorciato agli ultimi 15 caratteri
       $pdf->Cell(56,3,$row['desdoc'].' del '.$datadoc,1, 0, 'l', 0, '', 1);
 	  if ($_GET['pr']==1){
@@ -152,7 +152,7 @@ if (sizeof($result) > 0) {
 		$pdf->Cell(18,3,gaz_format_number(CalcolaImportoRigo($row['quanti'],$row['prezzo'],array($row['scochi'],$row['scorig']))),1,0,'R');
       }
 	  $pdf->Cell(10,3,$row['unimis'],1,0,'C');
-      $pdf->Cell(20,3,gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity']),1,1,'R');
+      $pdf->Cell(15,3,gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity']),1,1,'R');
   }
 }
 $pdf->Output();

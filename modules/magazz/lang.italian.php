@@ -175,6 +175,7 @@ $strScript = array("browse_document.php" =>
         'date_ini' => 'Data registrazione inizio  ',
         'date_fin' => 'Data registrazione fine ',
 		'mode' => 'Tipo di stampa sul pdf',
+		'cover' => 'Stampa copertina',
 		'subtitle' => 'Titolo aggiuntivo sul pdf (facoltativo)',
 		'mode_value' => array(1 => 'Tutti i movimenti', 2 => 'Solo le entrate', 3 => 'Solo le uscite'),
 		'price_value' => array(1 => 'con prezzi', 2 => 'senza prezzi'),
