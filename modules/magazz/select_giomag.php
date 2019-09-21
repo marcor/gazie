@@ -50,6 +50,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 	$form['mode'] = "1";
 	$form['price'] = "1";
+	$form['subtitle']="";
     $form['this_date_Y']=date("Y");
     $form['this_date_M']=date("m");
     $form['this_date_D']=date("d");
@@ -76,6 +77,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['ritorno']=$_POST['ritorno'];
 	$form['mode'] = intval($_POST['mode']);
 	$form['price'] = intval($_POST['price']);
+	$form['subtitle'] = $_POST['subtitle'];
     $form['date_ini_D']=intval($_POST['date_ini_D']);
     $form['date_ini_M']=intval($_POST['date_ini_M']);
     $form['date_ini_Y']=intval($_POST['date_ini_Y']);
@@ -114,7 +116,8 @@ if (isset($_POST['print']) && $msg=='') {
                                      'rf'=>date("dmY",$utsfin),
                                      'ds'=>date("dmY",$utsexe),
 									 'md'=> $form['mode'],
-									 'pr'=> $form['price']
+									 'pr'=> $form['price'],
+									 'sb'=> $form['subtitle']
                                      );
     header("Location: sent_print.php");
     exit;
@@ -163,14 +166,15 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td  
 $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1);
 echo "</tr>\n";
 echo "<tr>\n";
-
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['mode'] . "</td>
 <td  class=\"FacetDataTD\">\n";
 $gForm->variousSelect('mode', $script_transl['mode_value'], $form['mode'], 'FacetSelect', false, 'mode');
-
 $gForm->variousSelect('price', $script_transl['price_value'], $form['price'], 'FacetSelect', false, 'price');
 echo "</td>\n";
 echo "</tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['subtitle']."</td>
+<td class=\"FacetDataTD\"><input type=\"text\" name=\"subtitle\" value=\"" . $form['subtitle'] . "\" maxlength=\"40\" size=\"35\" /></td>
+</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
 echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';

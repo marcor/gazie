@@ -42,7 +42,13 @@ function getMovements($date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
         $m=array();
-        $where="good_or_service != '1' AND datreg BETWEEN $date_ini AND $date_fin";
+		if ($_GET['md']=="1"){
+			$where="good_or_service != '1' AND datreg BETWEEN $date_ini AND $date_fin";
+		} else if ($_GET['md']=="2"){
+			$where=$gTables['movmag'].".operat = '1' AND good_or_service != '1' AND datreg BETWEEN $date_ini AND $date_fin";
+		} else {
+			$where=$gTables['movmag'].".operat = '-1' AND good_or_service != '1' AND datreg BETWEEN $date_ini AND $date_fin";
+		}
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
               $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer ";
@@ -74,6 +80,14 @@ if (isset($_GET['ds'])) {
    $luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
 }
 
+if ($_GET['md']=="1"){
+	$title="";
+} else if ($_GET['md']=="2"){
+	$title=" - Entrate";
+} else {
+	$title=" - Uscite";
+}
+
 $giori = substr($_GET['ri'],0,2);
 $mesri = substr($_GET['ri'],2,2);
 $annri = substr($_GET['ri'],4,4);
@@ -86,8 +100,10 @@ $utsrf= mktime(0,0,0,$mesrf,$giorf,$annrf);
 $result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
 
 require("../../config/templates/report_template.php");
-$title = array('luogo_data'=>$luogo_data,
-               'title'=>"GIORNALE DI MAGAZZINO dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf),
+$pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
+if ($_GET['pr']==1){
+	$title = array('luogo_data'=>$luogo_data,
+               'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf)." - ".$_GET['sb'],
                'hile'=>array(array('lun' => 20,'nam'=>'Data Reg.'),
                              array('lun' => 36,'nam'=>'Causale'),
                              array('lun' => 78,'nam'=>'Articolo'),
@@ -98,12 +114,26 @@ $title = array('luogo_data'=>$luogo_data,
                              array('lun' => 10,'nam'=>'U.M.'),
                              array('lun' => 20,'nam'=>'Mov.Quant.')
                             )
-              );
+            );
+} else {
+	$title = array('luogo_data'=>$luogo_data,
+               'title'=>"GIORNALE DI MAGAZZINO".$title." dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf)." - ".$_GET['sb'],
+               'hile'=>array(array('lun' => 20,'nam'=>'Data Reg.'),
+                             array('lun' => 36,'nam'=>'Causale'),
+                             array('lun' => 78,'nam'=>'Articolo'),
+							 array('lun' => 22,'nam'=>'Lotto'),
+                             array('lun' => 56,'nam'=>'Rif.Documento'),
+                             array('lun' => 10,'nam'=>'U.M.'),
+                             array('lun' => 20,'nam'=>'Mov.Quant.')
+                            )
+            );
+$pdf->SetLeftMargin(25);			
+}
 
-$pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(39);
 $pdf->SetFooterMargin(20);
+
 $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',7);
@@ -117,9 +147,11 @@ if (sizeof($result) > 0) {
       $pdf->Cell(78,3,$row['artico'].' - '.substr($row['desart'],0,58),1, 0, 'l', 0, '', 1);
 	  $pdf->Cell(22,3,substr($row['id_lotmag'],-20),1, 0, 'l', 0, '', 1); // L'identificatore lotto, se troppo lungo, viene accorciato agli ultimi 15 caratteri
       $pdf->Cell(56,3,$row['desdoc'].' del '.$datadoc,1, 0, 'l', 0, '', 1);
-      $pdf->Cell(17,3,number_format($row['prezzo'],$admin_aziend['decimal_price'],',','.'),1,0,'R');
-      $pdf->Cell(18,3,gaz_format_number(CalcolaImportoRigo($row['quanti'],$row['prezzo'],array($row['scochi'],$row['scorig']))),1,0,'R');
-      $pdf->Cell(10,3,$row['unimis'],1,0,'C');
+	  if ($_GET['pr']==1){
+		$pdf->Cell(17,3,number_format($row['prezzo'],$admin_aziend['decimal_price'],',','.'),1,0,'R');
+		$pdf->Cell(18,3,gaz_format_number(CalcolaImportoRigo($row['quanti'],$row['prezzo'],array($row['scochi'],$row['scorig']))),1,0,'R');
+      }
+	  $pdf->Cell(10,3,$row['unimis'],1,0,'C');
       $pdf->Cell(20,3,gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity']),1,1,'R');
   }
 }
