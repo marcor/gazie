@@ -67,7 +67,7 @@ $pdf->SetFillColor(220, 255, 220);
 // MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0)
 $pdf->MultiCell(0, 0, 'Giornale di magazzino', 1, 'C', 1, 0, '', 110, true, 0, false, true, 40);
 if (isset($_GET['sb']) AND strlen($_GET['sb'])>0) {
-	$pdf->MultiCell(0, 0,$_GET['sb'], 1, 'C', 1, 0, '', 130, true, 0, false, true, 40);
+	$pdf->MultiCell(0, 0,$_GET['sb'], 1, 'C', 1, 0, '', 130, true, 0, false, true, 18,'M', true);
 }
 $pdf->MultiCell(100, 0,  date("Y"), 1, 'C', 0, 0, 100, 150, true);
 
