@@ -27,8 +27,9 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
 if(isset($_GET['delete'])) {
+	print_r($_GET);
     gaz_dbi_del_row($gTables['distinta_base'], 'id', intval($_GET['delete']));
-    header("Location: ../magazz/admin_artico_compost.php?Update&codice=".filter_var($_GET['codcomp'],FILTER_SANITIZE_STRING));
+    header("Location: ../magazz/admin_artico.php?Update&codice=".$_GET['codcomp']);
 	exit;
 }
 
@@ -129,7 +130,7 @@ function itemErase(id,descri,codcomp){
 		$color='eeeeee';
 		$art=gaz_dbi_get_row($gTables['artico'],"codice",$codcomp);
 		$data=$gForm->getBOM($codcomp);
-        echo '<div class="panel panel-default"><div class="panel-heading"><h4>Distinta base della composizione: '.$codcomp.'-'.$art['descri']."\n</h4>".'</div><div class="panel-body">';
+        echo '<div class="panel panel-default"><div class="panel-heading"><h4>Distinta base della composizione: <a class="btn btn-md btn-success" href="admin_artico.php?Update&codice=' . $codcomp . '">'.$codcomp.'</a> -'.$art['descri']."\n</h4>".'</div><div class="panel-body">';
 		if (count($data)>=1){
         echo '<ul class="col-xs-12 col-sm-12 col-md-11 col-lg-10">';
 		foreach($data as $k0=>$v0) {
