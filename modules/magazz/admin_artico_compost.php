@@ -68,22 +68,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	    $form['quanti'] = '';
 }
 
-if (isset($_GET['Insert']) && $codcomp!="") {
-    $form["codice_composizione"] = $codcomp;
-    $form["codice_artico_base"] = filter_var($_GET['add'],FILTER_SANITIZE_STRING);
-    $form["quantita_artico_base"] = "1";
-    gaz_dbi_table_insert('distinta_base',$form);
-    header("Location: ../magazz/admin_artico_compost.php?codice=".$codcomp );
-}
-
-
 if(isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){
     $qta=$_POST['qta'];
     foreach ($qta as $val=>$v){
         gaz_dbi_table_update ("distinta_base", array ("0"=>"id","1"=>$val), array("quantita_artico_base"=>$v) );
     }
 	if($form['quanti']>=0.01&&strlen($form['codart'])>2){
-		gaz_dbi_query("INSERT INTO " . $gTables['distinta_base'] . "(codice_composizione,codice_artico_base,quantita_artico_base) VALUES ('".$codcomp. "','".$form['codart']."','". $form['quanti'] . "')");
+		$rx=gaz_dbi_get_row($gTables['distinta_base'], 'codice_composizione', $codcomp, "AND codice_artico_base ='". $form['codart'] . "'");
+		if(!$rx){
+			gaz_dbi_query("INSERT INTO " . $gTables['distinta_base'] . "(codice_composizione,codice_artico_base,quantita_artico_base) VALUES ('".$codcomp. "','".$form['codart']."','". $form['quanti'] . "')");
+		}
 	}
     header ( 'location: ../magazz/admin_artico.php?Update&codice='.$codcomp);
 }
@@ -135,7 +129,7 @@ function itemErase(id,descri,codcomp){
         echo '<ul class="col-xs-12 col-sm-12 col-md-11 col-lg-10">';
 		foreach($data as $k0=>$v0) {
 			$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-warning collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><i class="glyphicon glyphicon-list"></i></a>':'';
-			echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].' '.$icona.' _ _ _ _ <a class="btn btn-xs btn-danger" onclick="itemErase('.intval($v0['id']).',\''.$v0['descri'].'\',\''.$codcomp.'\');">  togli X </a><span class="pull-right"> '.$v0['unimis'].':<input type="number" step="0.001" min="0.001" name="qta['.$v0['id'].']" value="'.floatval($v0['quantita_artico_base']).'" /> </span>  </div>';
+			echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].' '.$icona.' _ _ _ _ <a class="btn btn-xs btn-danger" onclick="itemErase('.intval($v0['id']).',\''.$v0['descri'].'\',\''.$codcomp.'\');">  togli X </a><span class="pull-right"> '.$v0['unimis'].':<input type="number" step="0.001" min="0.001" name="qta['.intval($v0['id']).']" value="'.floatval($v0['quantita_artico_base']).'" /> </span>  </div>';
 			$color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
 			if (is_array($v0['codice_artico_base'])){
 			  echo '<ul class="collapse ' . $v0[2] . '">';
