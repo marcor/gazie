@@ -460,9 +460,20 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
     <?php
     $gForm->print_tree_BOM($form['codice']);
+	if($form['good_or_service']==2){
+	?>
+                <div class="row">
+                    <div class="col-md-12">
+					<a href="admin_artico_compost.php?Update&codice=<?php echo $form['codice']; ?>" class="btn btn-warning btn-small pull-right" role="button" aria-pressed="true">Modifica la composizione</a>                    
+                    </div>
+                </div><!-- chiude row  -->
+	<?php
+	}
 	$gForm->print_trunks_BOM($form['codice']);
     ?>
                     </div>
+                </div><!-- chiude row  -->
+                <div class="row">
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="bodyText" class="row IERincludeExcludeRow">

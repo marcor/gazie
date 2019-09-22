@@ -23,213 +23,197 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend = checkAdmin();
-$all="";
-$where ="";
-
-if ( !isset($ritorno) )
-    $ritorno = $_SERVER['HTTP_REFERER'];
-
-if ( !isset($codice) && isset($_GET['codice']) )
-    $codice = $_GET['codice'];
-else 
-    $codice = "";
-
-if ( !isset($_POST['cosear']) ) $form['cosear'] = $codice;
-else $form['cosear'] = $_POST['cosear'];
-
 $msg = array('err' => array(), 'war' => array());
 
-if (isset($_POST['Update']) || isset($_GET['Update'])) {
+if(isset($_GET['delete'])) {
+    gaz_dbi_del_row($gTables['distinta_base'], 'id', intval($_GET['delete']));
+    header("Location: ../magazz/admin_artico_compost.php?Update&codice=".filter_var($_GET['codcomp'],FILTER_SANITIZE_STRING));
+	exit;
+}
+
+if(!isset($form['ritorno'])){
+	$form['ritorno']=$_SERVER['HTTP_REFERER'];	
+}else{
+	$form['ritorno']=$_POST['ritorno'];	
+}
+if (isset($_GET['codice'])){
+    $codcomp = filter_var($_GET['codice'],FILTER_SANITIZE_STRING);
+}else{
+    header("Location: ../magazz/admin_artico_compost.php?codice=".$codcomp );
+	
+}
+
+if(isset($_POST['Update'])||isset($_GET['Update'])){
     $toDo = 'update';
-} else {
+}else{
     $toDo = 'insert';
 }
 
-if ( isset($_GET['Insert']) && $codice!="") {
-    $form["codice_composizione"] = $codice;
-    $form["codice_artico_base"] = $_GET['add'];
+if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
+    $form['hidden_req'] = $_POST['hidden_req'];
+    $form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_STRING);
+    $form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_STRING);
+    $form['quanti'] = floatval($_POST['quanti']);
+} elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
+        $form['hidden_req'] = '';
+	    $form['cosear'] = "";
+	    $form['codart'] = "";
+	    $form['quanti'] = '';
+} else { //se e' il primo accesso per INSERT
+        $form['hidden_req'] = '';
+	    $form['cosear'] = "";
+	    $form['codart'] = "";
+	    $form['quanti'] = '';
+}
+
+if (isset($_GET['Insert']) && $codcomp!="") {
+    $form["codice_composizione"] = $codcomp;
+    $form["codice_artico_base"] = filter_var($_GET['add'],FILTER_SANITIZE_STRING);
     $form["quantita_artico_base"] = "1";
     gaz_dbi_table_insert('distinta_base',$form);
-    header("Location: ../magazz/admin_artico_compost.php?codice=".$codice );
+    header("Location: ../magazz/admin_artico_compost.php?codice=".$codcomp );
 }
 
-if ( isset($_GET['del'])) {
-    gaz_dbi_del_row($gTables['distinta_base'], 'id', $_GET['id'] );
-    header("Location: ../magazz/admin_artico_compost.php?codice=".$codice );
-}
 
-if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
-
-} elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
-    
-} else { //se e' il primo accesso per INSERT
-    
-}
-
-if ( isset($_POST['submit']) && $_POST['submit']=="Salva" ) {
-    $qta = $_POST['qta'];
-    foreach ( $qta as $val => $v ) {
+if(isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){
+    $qta=$_POST['qta'];
+    foreach ($qta as $val=>$v){
         gaz_dbi_table_update ("distinta_base", array ("0"=>"id","1"=>$val), array("quantita_artico_base"=>$v) );
     }
-    header ( 'location: ../magazz/report_artico.php');
+	if($form['quanti']>=0.01&&strlen($form['codart'])>2){
+		gaz_dbi_query("INSERT INTO " . $gTables['distinta_base'] . "(codice_composizione,codice_artico_base,quantita_artico_base) VALUES ('".$codcomp. "','".$form['codart']."','". $form['quanti'] . "')");
+	}
+    header ( 'location: ../magazz/admin_artico.php?Update&codice='.$codcomp);
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain();
+$script_transl = HeadMain(0,array('custom/autocomplete'));
 
 ?>
+<script>
+function itemErase(id,descri,codcomp){
+	$(".compost_name").append('ID:'+id+' -'+descri);
+	//alert(descri);
+	$("#confirm_erase").dialog({
+		modal: true,
+		show: "blind",
+		hide: "explode",
+		buttons: {
+			No: function() {
+				$(".compost_name").empty();
+				$( this ).dialog( "close" );
+			},
+			Togli: function() {
+				window.location.href = 'admin_artico_compost.php?delete='+id+'&codcomp='+codcomp;
+			}
+
+		  },
+		  close: function(){	
+			$(".compost_name").empty();
+		  }
+		});
+}		
+</script>
+
 <form method="POST" name="form" enctype="multipart/form-data">
 <?php
-    echo '<input type="hidden" name="ritorno" value="' . $ritorno . '" />';
+    $gForm = new magazzForm();
+    echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
     echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
+	echo '<input type="hidden" name="hidden_req" value="'.$form['hidden_req'].'" />';
     if (count($msg['err']) > 0) { // ho un errore
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     }
-    ?>
-    <div class="container-fluid">
-        <div class="col-md-6">
-            <div class="box box-success">
-                <div class="box-header with-border">
-                    <h3 class="box-title"><?php echo $script_transl['mod_this'] . ' '; ?></h3>
-                    <?php
-                    $select_artico = new selectartico("codice");
-                    $select_artico->addSelected($codice);
-                    $select_artico->output(substr($form['cosear'], 0, 20), ' and good_or_service = 2');
-                    ?>
-                </div>
-                <div class="box-body">
-                    <?php
-                        $where2 = "codice_composizione = '".$codice."'";
-                        $result = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $where2, 'id', 0, PER_PAGE);
-   
-                        //preparo la variabile where per la prossima query
-                        $where = "codice<>'".$codice."'";
-                        //gaz_flt_var_assign('codice', 'v');
-                        gaz_flt_var_assign('descri', 'v');
-                        gaz_flt_var_assign('good_or_service', 'v');
-						
-						if ( isset($_POST['search']) && $_POST['search']=="Cerca" && isset($_POST['descri']) && $_POST['descri']!="" ) {
-							$where .= " AND ( codice LIKE '%" . addslashes(substr($_POST['descri'], 0, 30)) . "%' OR descri LIKE '%" . addslashes(substr($_POST['descri'], 0, 30)) . "%')" ;
+ echo '<div class="container-fluid">';
+		$color='eeeeee';
+		$art=gaz_dbi_get_row($gTables['artico'],"codice",$codcomp);
+		$data=$gForm->getBOM($codcomp);
+        echo '<div class="panel panel-default"><div class="panel-heading"><h4>Distinta base della composizione: '.$codcomp.'-'.$art['descri']."\n</h4>".'</div><div class="panel-body">';
+		if (count($data)>=1){
+        echo '<ul class="col-xs-12 col-sm-12 col-md-11 col-lg-10">';
+		foreach($data as $k0=>$v0) {
+			$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-warning collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><i class="glyphicon glyphicon-list"></i></a>':'';
+			echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].' '.$icona.' _ _ _ _ <a class="btn btn-xs btn-danger" onclick="itemErase('.intval($v0['id']).',\''.$v0['descri'].'\',\''.$codcomp.'\');">  togli X </a><span class="pull-right"> '.$v0['unimis'].':<input type="number" step="0.001" min="0.001" name="qta['.$v0['id'].']" value="'.floatval($v0['quantita_artico_base']).'" /> </span>  </div>';
+			$color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
+			if (is_array($v0['codice_artico_base'])){
+			  echo '<ul class="collapse ' . $v0[2] . '">';
+			  foreach($v0['codice_artico_base'] as $k1=>$v1) {
+				  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-primary" href="admin_artico.php?Update&amp;codice=' . $v1[2] . '">'.$v1[2].'</a> - '.$v1['descri'].' <span class="pull-right">'.$v1['unimis'].': '.floatval($v1['quantita_artico_base']).'</span></div>';
+				  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
+				  if (is_array($v1['codice_artico_base']))	{
+					echo '<ul class="">';
+					foreach($v1['codice_artico_base'] as $k2=>$v2) {
+					  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-info" href="admin_artico.php?Update&amp;codice=' . $v2[2] . '">'.$v2[2].'</a> - '.$v2['descri'].' <span class="pull-right"> '.$v2['unimis'].': '.floatval($v2['quantita_artico_base']).'</span></div>';
+					  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
+					  if (is_array($v2['codice_artico_base']))	{
+						echo '<ul class="">';
+						foreach($v2['codice_artico_base'] as $k3=>$v3) {
+						  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-warning" href="admin_artico.php?Update&amp;codice=' . $v3[2] . '">'.$v3[2].'</a> - '.$v3['descri'].' <span class="pull-right"> '.$v3['unimis'].': '.floatval($v3['quantita_artico_base']).'</span></div>';
+						  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
+						  if (is_array($v3['codice_artico_base']))	{
+							echo '<ul class="">';
+							foreach($v3['codice_artico_base'] as $k4=>$v4) {
+							  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-danger" href="admin_artico.php?Update&amp;codice=' . $v4[2] . '">'.$v4[2].'</a> - '.$v4['descri'].' <span class="pull-right"> '.$v4['unimis'].': '.floatval($v4['quantita_artico_base']).'</span></div>';
+							  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
+							  if (is_array($v4['codice_artico_base']))	{
+								echo '<ul class="">';
+								foreach($v4['codice_artico_base'] as $k5=>$v5) {
+								  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-default" href="admin_artico.php?Update&amp;codice=' . $v5[2] . '">'.$v5[2].'</a> - '.$v5['descri'].' <span class="pull-right"> '.$v5['unimis'].': '.floatval($v5['quantita_artico_base']).'</span></div>';
+								  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
+								  if (is_array($v5['codice_artico_base']))	{
+									echo '<ul class="">';
+									foreach($v5['codice_artico_base'] as $k6=>$v6) {
+									  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-basic" href="admin_artico.php?Update&amp;codice=' . $v6[2] . '">'.$v6[2].'</a> - '.$v6['descri'].' <span class="pull-right"> '.$v6['unimis'].': '.floatval($v6['quantita_artico_base']).'</span></div></li>';
+									  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
+									}
+									echo "</ul>\n";
+								  }
+								  echo "</li>\n";
+								}
+								echo "</ul>\n";
+							  }
+							  echo "</li>\n";
+							}
+							echo "</ul>\n";
+						  }
+ 		  				  echo "</li>\n";
 						}
-						
-						
-                        if ( gaz_dbi_num_rows($result)==0 ) {
-                            echo 'non ci sono articoli';
-                        } else {
-                            ?>
-                            <table class="table table-responsive table-striped table-condensed cf">
-                            <tr>
-                                <th>Codice</th>
-                                <th>Quantità</th>
-                                <th>Remove</th>
-                            </tr>
-                            <?php
-                            while ($row = gaz_dbi_fetch_array($result)) {
-                                echo '<tr>';
-                                echo '<td>'. $row['codice_artico_base'].'</td>';
-                                echo '<td><input type="text" name="qta['.$row['id'].']" value="'. $row['quantita_artico_base'].'"></td>'; //onchange="this.form.submit()"
-                                echo '<td><a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?del='.$row['codice_artico_base'].'&id='.$row['id'].'&codice='.$codice.'"><i class="glyphicon glyphicon-remove"></i></a></td>';
-                                echo '</tr>';
-                                
-                                // se il codice è già presente nella distinta non lo visualizzo nella lista articoli
-                                $where .= " and codice<>'".$row['codice_artico_base']."'";
-                            }
-                            echo '</table>';
-                        }
-                        ?>
-                        <div class="form-group">
-                        </div>
-                    </div>
-                    <div class="box-footer">
-                        <input type="submit" class="btn btn-primary" name="submit" value="Salva">
-                    </div>        
-                </div>
-            </div>
+						echo "</ul>\n";
+					  }
+					  echo "</li>\n";
+					}
+					echo "</ul>\n";
+				  }
+				  echo "</li>\n";
+			  }
+  			  echo "</ul>\n";
+			} else{
+				
+			}
+			echo "</li>\n";
+		}
+		echo '</ul>';
+}
+echo '<div class="col-xs-12 col-md-6">Nuovo componente:'; 
+$select_artico = new selectartico("codart");
+$select_artico->addSelected($form['codart']);
+$select_artico->output(substr($form['cosear'], 0, 20),'C',"");
+	echo '</div><div class="col-xs-12 col-md-4"> Quantità:<input type="number" step="0.001" value="'.$form['quanti'].'" name="quanti" />
+</div><div class="col-xs-12 col-md-2">
+		<input type="submit" class="btn btn-warning" name="OKsub" value="Salva">
+	</div>
+		</div>
+</div>';
 
-            <!--Disegno la lista articoli da inserire-->
-            <div class="col-md-6">
-                <div class="box box-success">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Lista Articoli</h3>
-                    </div>
-                    <div class="box-body">
-                        <div class="form-group">
-                            <table class="table table-responsive table-striped table-condensed cf">
-                            <!-- Visualizzo i filtri articoli -->
-                            <tr>
-                                <th class="FacetFieldCaptionTD">
-                                    <?php //gaz_flt_disp_int("codice", "Codice art."); ?>
-                                </th>
-                                <th class="FacetFieldCaptionTD">
-                                    <?php 
-                                    gaz_flt_disp_select("good_or_service", 'good_or_service', $gTables["artico"], $all, 'good_or_service',$script_transl['good_or_service_value']);
-                                    ?>
-                                </th>
-                                <th class="FacetFieldCaptionTD">
-                                    <?php gaz_flt_disp_int("descri", "Descrizione"); //gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $all, $orderby, "ragso1");  ?>
-                                </th>
-                                
-                                <th class="FacetFieldCaptionTD" colspan="1">
-                                    <input class="btn btn-sm btn-default" type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;" autofocus />
-                                </th>
-                                <th class="FacetFieldCaptionTD" colspan="1">
-                                    <input class="btn btn-sm btn-default" type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;" />
-                                </th>
-                            </tr>
-                            <tr>
-                                <th>Codice</th>
-                                <th>Tipo</th>
-                                <th>Descrizione</th>
-                                <th>Unità misura</th>
-                                <th>Prezzo</th>
-                            </tr>
-                            <?php
-                            $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, 'codice', 0, PER_PAGE);
-                            while ($row = gaz_dbi_fetch_array($result)) {
-                                if ($row["good_or_service"] == 1) {
-                                    $gooser_i = 'wrench';
-                                } else if ($row["good_or_service"] == 0) {
-                                    $gooser_i = 'shopping-cart';
-                                } else if ($row["good_or_service"] == 2) {
-                                    $gooser_i = 'tasks';
-                                }
-                            ?>
-                            <tr>              
-                                <td data-title="<?php echo $script_transl["codice"]; ?>">
-                                    <?php
-                                        if ( $row["good_or_service"] == 2 ) {
-                                            echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Insert&codice='.$row['codice'].'" ><i class="glyphicon glyphicon-menu-up"></i>&nbsp;'.$row['codice'].'</a>';
-                                        }
-                                        echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Insert&add='.$row['codice'].'&codice='.$codice.'" ><i class="glyphicon glyphicon-menu-left"></i>&nbsp;'.$row['codice'].'</a>';
-
-                                    ?>
-                                </td>
-                                <td data-title="<?php echo $script_transl["good_or_service"]; ?>" class="text-center">
-                                    <?php //echo $ldoc; ?> &nbsp;   <i class="glyphicon glyphicon-<?php echo $gooser_i; ?>"></i> 
-                                </td>
-                                <td data-title="<?php echo $script_transl["descri"]; ?>">
-                                    <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["codice"]; ?>" data-label="<?php echo $row['annota']; ?>"><?php echo $row["descri"]; ?></span>
-                                </td>
-                                <td data-title="<?php echo $script_transl["unimis"]; ?>">
-                                    <?php echo $row["unimis"]; ?>
-                                </td>
-                                <td data-title="<?php echo $script_transl["preve1"]; ?>" class="text-right">
-                                    <?php echo number_format($row["preve1"], $admin_aziend['decimal_price'], ',', '.'); ?>
-                                </td>
-                            </tr>
-                            <?php } ?>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> <!-- chiude container -->
+?>
+    </div> <!-- chiude container -->
 </form>
-
-<script src="../../js/custom/autocomplete.js"></script>
-
+<div class="modal" id="confirm_erase" title="Togli articolo dalla composizione">
+    <fieldset>
+       <div class="compost_name"></div>
+    </fieldset>
+</div>
 <?php
     require("../../library/include/footer.php");
 ?>
