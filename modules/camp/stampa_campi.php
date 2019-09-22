@@ -59,7 +59,7 @@ $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',7);
 $pdf->setJPEGQuality(15);
 $n="";
-if (sizeof($res) > 0) { 
+if (mysqli_num_rows($res) > 0) { 
   while ($b_row = $res->fetch_assoc()) {
 	  if ($n>0){// evita la pagina bianca alla fine del ciclo while
       $pdf->AddPage(); // manda alla pagina successiva
