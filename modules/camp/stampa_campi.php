@@ -41,13 +41,15 @@ $title = array('luogo_data'=>$luogo_data,
                'title'=>"SITUAZIONE CAMPI DI COLTIVAZIONE al ".$now->format('d-m-Y'),
                'hile'=>array(array('lun' => 15,'nam'=>'N. campo'),
 							array('lun' => 50,'nam'=>'Descrizione campo'),
-                             array('lun' => 50,'nam'=>'Dimensione in ha'),
-                             array('lun' => 50,'nam'=>'Coltura in atto'),
+                             array('lun' => 28,'nam'=>'Dimensione in ha'),
+                             array('lun' => 45,'nam'=>'Coltura in atto'),
+							 array('lun' => 30,'nam'=>'note'),
                              array('lun' => 80,'nam'=>'Immagine')                             
                             )
               );
 // Antonio Germani carico la tabella campi
 $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
+$rescolt = gaz_dbi_dyn_query ('*', $gTables['camp_colture']);
 // fine carico tabella campi			
 	// Antonio Germani Inserisco superficie e coltura
 $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
@@ -61,13 +63,19 @@ $pdf->setJPEGQuality(15);
 $n="";
 if (mysqli_num_rows($res) > 0) { 
   while ($b_row = $res->fetch_assoc()) {
+	  while ($c_row = $rescolt->fetch_assoc()) {
+		  if ($b_row["id_colture"]==$c_row['id_colt']){
+			  $colt=$c_row['nome_colt'];
+		  }
+	  }
 	  if ($n>0){// evita la pagina bianca alla fine del ciclo while
-      $pdf->AddPage(); // manda alla pagina successiva
+		$pdf->AddPage(); // manda alla pagina successiva
 	  }$n=1;
       $pdf->Cell(15,3,$b_row['codice'],1);
       $pdf->Cell(50,3,$b_row['descri'],1);
-	  $pdf->Cell(50,3,str_replace('.', ',',$b_row["ricarico"]),1);
-	  $pdf->Cell(50,3,substr($b_row["annota"],0,50),1);
+	  $pdf->Cell(28,3,str_replace('.', ',',$b_row["ricarico"]),1);
+	  $pdf->Cell(45,3,substr($b_row["id_colture"]."-".$colt,0,50),1);
+	  $pdf->Cell(30,3,substr($b_row["annota"],0,50),1);
 		if (strlen($b_row['image'])>0){		      
 			$pdf->Image('@'.$b_row['image'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
 		}        
