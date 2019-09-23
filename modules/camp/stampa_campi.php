@@ -47,10 +47,14 @@ $title = array('luogo_data'=>$luogo_data,
                              array('lun' => 80,'nam'=>'Immagine')                             
                             )
               );
-// Antonio Germani carico la tabella campi
-$res = gaz_dbi_dyn_query ('*', $gTables['campi']);
-// fine carico tabella campi			
-	// Antonio Germani Inserisco superficie e coltura
+		  
+// Antonio Germani carico le tabelle campi e camp_colture
+$where=""; 
+$what=$gTables['campi'].".*, ".$gTables['camp_colture'].".* ";             
+$table=$gTables['campi']." LEFT JOIN ".$gTables['camp_colture']." ON (".$gTables['campi'].".id_colture = ".$gTables['camp_colture'].".id_colt)";
+$res=gaz_dbi_dyn_query ($what,$table,$where, 'codice ASC');
+
+// avvio la creazione del PDF
 $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(42);
@@ -61,19 +65,19 @@ $pdf->SetFont('helvetica','',7);
 $pdf->setJPEGQuality(15);
 $n="";
 if (mysqli_num_rows($res) > 0) { 
-  while ($b_row = $res->fetch_assoc()) {
-	  if ($n>0){// evita la pagina bianca alla fine del ciclo while
-		$pdf->AddPage(); // manda alla pagina successiva
-	  }$n=1;
-      $pdf->Cell(15,3,$b_row['codice'],1);
-      $pdf->Cell(50,3,$b_row['descri'],1);
-	  $pdf->Cell(28,3,str_replace('.', ',',$b_row["ricarico"]),1);
-	  $pdf->Cell(45,3,substr($b_row["id_colture"],0,50),1);
-	  $pdf->Cell(30,3,substr($b_row["annota"],0,50),1);
+	while ($b_row = $res->fetch_assoc()) {
+		if ($n>0){// evita la pagina bianca alla fine del ciclo while
+			$pdf->AddPage(); // manda alla pagina successiva
+		}$n=1;
+		$pdf->Cell(15,3,$b_row['codice'],1);
+		$pdf->Cell(50,3,$b_row['descri'],1);
+		$pdf->Cell(28,3,str_replace('.', ',',$b_row["ricarico"]),1);
+		$pdf->Cell(45,3,substr($b_row["id_colture"]." - ".$b_row['nome_colt'],0,50),1);
+		$pdf->Cell(30,3,substr($b_row["annota"],0,50),1);
 		if (strlen($b_row['image'])>0){		      
 			$pdf->Image('@'.$b_row['image'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
 		}        
-  }
+	}
 }
 $pdf->Output();
 ?>
