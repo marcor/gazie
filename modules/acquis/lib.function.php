@@ -144,7 +144,7 @@ class acquisForm extends GAzieForm {
 			unset($acc[$r1['id_rig']]);	
 		}
 	}
-	print_r($acc);
+	//print_r($acc);
    }	
 
    function concile_id_order_row($varname,$val_codart,$val_selected,$class='small') {
@@ -170,6 +170,40 @@ class acquisForm extends GAzieForm {
       $acc .= '</select>';
 	  return $acc;
    }
+   
+   	function getOrderStatus($idtes){
+		global $gTables;
+		$acc[0]=false;
+		$acc[1]=[];
+        $remains=false; // Almeno un rigo e' rimasto da evadere.
+        $processed=false; // Almeno un rigo e' gia' stato evaso.  
+        $rb_r=gaz_dbi_dyn_query('*',$gTables['rigbro'],"id_tes=" . $idtes . " AND tiprig <=1",'id_tes DESC');
+        while($rb=gaz_dbi_fetch_array($rb_r) ) {
+            $da_evadere=$rb['quanti'];
+            $evaso=0;
+            $rd_r=gaz_dbi_dyn_query('*',$gTables['rigdoc'],"id_order=".$rb['id_rig'],'id_tes DESC');
+            while($rd=gaz_dbi_fetch_array($rd_r)) {
+                $evaso+=$rd['quanti'];
+                $processed=true;
+            }    
+            if($evaso<$da_evadere ){
+				$acc[1][]=$rb['id_rig'];
+                $remains=true;
+            }
+        }
+        if($remains&&!$processed){
+            // non ho ancora ricevuto nulla
+			$acc[0]=0;
+        }elseif($remains){
+            // è parzialmente ricevuto
+			$acc[0]=1;
+        }else{
+            // è completamente ricevuto
+			$acc[0]=2;
+        }
+		return $acc;
+	}
+
 }
 
 class lotmag {

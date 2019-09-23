@@ -88,6 +88,7 @@ if (isset($_GET['all'])) {
 $what=$gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id";
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
+$gForm = new acquisForm();
 ?>
 <script>
 
@@ -370,10 +371,19 @@ function choicePartner(row)
 					echo '<button title="Stesso preventivo per altro fornitore" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags">Duplica</i></button>&nbsp;';
                 echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
 				}
+				$st=$gForm->getOrderStatus($r['id_tes']);
 				if ($r["tipdoc"] == 'AOR') {
 					echo '<div><button title="Duplica questo ordine come preventivo per fornitore" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"> duplica come Preventivo</i></button></div>';
                 echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
-					echo '<div><a title="Quando il fornitore consegna la merce la carico in magazzino con documento di acquisto" class="btn btn-xs btn-warning" href="select_evaord.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Ricev.DdT</i></a></div>';
+				echo '<div>';
+				if ($st[0]==0){ // tutto da ricevere
+					echo '<a title="Il fornitore consegna la merce ordinata" class="btn btn-xs btn-danger" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Merce da ricevere</i></a>';
+				}elseif ($st[0]==1){ //  da ricevere in parte
+					echo '<a title="Il fornitore consegna il saldo della merce" class="btn btn-xs btn-warning" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Da saldare</i></a>';
+				}else{ // completamente ricevuto
+					echo '<a title="Il fornitore ha consegnato tutta la merce ordinata" disabled class="btn btn-xs btn-success" href=""><i class="glyphicon glyphicon-save-file">Saldato</i></a>';
+				}
+				echo '</div>';
 				}
                 echo "	</td>\n";
 				// colonna mail
@@ -412,7 +422,7 @@ function choicePartner(row)
     <fieldset>
         <div>
             <label for="duplicate">a:</label>
-            <div class="supplier_name"><div/>
+            <div class="supplier_name"></div>
         </div>
     </fieldset>
 </div>
