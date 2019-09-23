@@ -241,7 +241,14 @@ if (!empty($form['rows'])) {
             // calcolo il totale del rigo stornato dell'iva
             $imprig = round($tot_row / (1 + $v['pervat'] / 100), 2);
             $tot+=$tot_row;
-			$checkin = ($form['rows'][$k]['ricevibile']) >= 0.001 ? ' checked' : '';
+			if($v['ricevibile']>=0.001){
+				$checkin=' checked ';
+				$imptype='<input type="number';
+			}else{
+				$checkin='disabled';
+				$btn_class = 'btn-default';
+				$imptype='Ricevuto<input type="hidden';
+			} 
         }
 	    // fine calcolo importo rigo, totale e castelletto IVA
         // colonne non editabili
@@ -277,7 +284,7 @@ if (!empty($form['rows'])) {
                 'value' => $v['unimis']
             ),
             array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                'value' => '<input type="number" step="any" name="rows[' . $k . '][ricevibile]" value="' . $v['ricevibile'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
+                'value' => $imptype.'" step="any" name="rows[' . $k . '][ricevibile]" value="' . $v['ricevibile'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
             ),
             array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
                 'value' =>  $v['prelis'] 
@@ -288,7 +295,7 @@ if (!empty($form['rows'])) {
             array('head' => $script_transl["codvat"], 'class' => 'text-center numeric', 'value' => $v['pervat'], 'type' => ''),
             array('head' => $script_transl["total"], 'class' => 'text-right numeric bg-warning', 'value' => gaz_format_number($tot_row), 'type' => ''),
             array('head' => 'Sel.', 'class' => 'text-center',
-                'value' => '<label class="btn btn-success"><input type="checkbox" name="rows['.$k.'][checkval]"  title="' . $script_transl['checkbox'] . '" '.$checkin.' value="'.$imprig.'" onclick="this.form.total.value=calcheck(this);"></label>')
+                'value' => '<label class="btn '.$btn_class.'"><input type="checkbox" name="rows['.$k.'][checkval]"  title="' . $script_transl['checkbox'] . '" '.$checkin.' value="'.$imprig.'" onclick="this.form.total.value=calcheck(this);"></label>')
         );
 
         switch ($v['tiprig']) {
