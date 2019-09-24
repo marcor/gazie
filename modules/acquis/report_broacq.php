@@ -209,14 +209,10 @@ function choicePartner(row)
         <table class="Tlarge table table-striped table-bordered table-condensed">
             <tr>
                 <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_int("id_tes", "ID"); ?>
-                    <!--<input placeholder="Cerca Numero" class="input-xs form-control" type="text" name="numdoc" value="<?php if (isset($documento) && $documento > 0) print $documento; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">-->
+                    <?php gaz_flt_disp_int("numdoc", "numdoc", $what, $all, $orderby); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
                     <?php gaz_flt_disp_int("id_orderman", "Produzione"); ?>
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_int("numdoc", "numdoc", $what, $all, $orderby); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
                     <?php gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, $orderby); ?>
@@ -302,18 +298,9 @@ function choicePartner(row)
                 $fornitore = $anagrafica->getPartner($r['clfoco']);
                 echo '<tr class="FacetDataTD text-center">';
 
-				// colonna id
-                if (! empty ($modifi)) {
-                   echo "<td>
-				   			<a class=\"btn btn-xs btn-default\" href=\"".$modifi."\">
-								<i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["id_tes"]."
-							</a>
-						 </td>";
-                } else {
-                   echo "<td>
-				   			<button class=\"btn btn-xs btn-default disabled\">".$r["id_tes"]." ".$tipodoc." &nbsp;</button>
-						</td>";
-                }
+				// colonna numero documento
+				echo "<td><a class=\"btn btn-xs btn-success\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$tipodoc." n.".$r["numdoc"]." &nbsp;</a></td>\n";
+
 
 				// colonna produzione
 				$orderman_descr='';
@@ -332,8 +319,6 @@ function choicePartner(row)
 
                 echo '<td>'.$orderman_descr." &nbsp;</td>\n";
 
-				// colonna numero documento
-				echo "<td><a class=\"btn btn-xs btn-success\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$tipodoc." n.".$r["numdoc"]." &nbsp;</a></td>\n";
 				
 				// colonna data documento
 				echo "<td>".gaz_format_date($r["datemi"])." &nbsp;</td>\n";

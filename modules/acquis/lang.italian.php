@@ -122,9 +122,8 @@ $strScript = array("admin_fornit.php" =>
     array('title'=>'Preventivi e ordini a fornitori',
         'title_dist' => array('APR'=>'Richieste di preventivo a fornitori','AOR'=>'Ordini a fornitori'),
         'header' => array(
-            "ID" => 'id_tes',
+			"Numero" => 'numdoc',
             "Produzione" => "id_orderman",
-            "Numero" => 'numdoc',
             "Data" => "datemi",
             "Fornitore" => "",
             "Status" => "",
