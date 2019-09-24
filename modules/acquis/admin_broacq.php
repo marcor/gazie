@@ -902,6 +902,7 @@ $( function() {
 										$('.datepick').each(function(){
 											$(this).val(pd);
 										});
+										$('[name=in_delivery_date]').val(pd);
 									}
 								});
 });

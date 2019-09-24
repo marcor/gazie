@@ -71,15 +71,28 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 if(isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){
     $qta=$_POST['qta'];
     foreach ($qta as $val=>$v){
-        gaz_dbi_table_update ("distinta_base", array ("0"=>"id","1"=>$val), array("quantita_artico_base"=>$v) );
-    }
-	if($form['quanti']>=0.01&&strlen($form['codart'])>2){
-		$rx=gaz_dbi_get_row($gTables['distinta_base'], 'codice_composizione', $codcomp, "AND codice_artico_base ='". $form['codart'] . "'");
-		if(!$rx){
-			gaz_dbi_query("INSERT INTO " . $gTables['distinta_base'] . "(codice_composizione,codice_artico_base,quantita_artico_base) VALUES ('".$codcomp. "','".$form['codart']."','". $form['quanti'] . "')");
+		if (floatval($v)<0.001) {
+			$msg['err'][] = 'quarow';
 		}
 	}
-    header ( 'location: ../magazz/admin_artico.php?Update&codice='.$codcomp);
+	if(floatval($form['quanti'])>=0.001&&strlen($form['codart'])<=2){
+			$msg['err'][] = 'codart';
+	} elseif(floatval($form['quanti'])<0.001&&strlen($form['codart'])>2){
+			$msg['err'][] = 'quanti';
+	}
+
+	if (count($msg['err']) == 0) {// nessun errore
+        foreach ($qta as $val=>$v){
+            gaz_dbi_table_update ("distinta_base", array ("0"=>"id","1"=>$val), array("quantita_artico_base"=>$v) );
+        }
+		if($form['quanti']>=0.01&&strlen($form['codart'])>2){
+			$rx=gaz_dbi_get_row($gTables['distinta_base'], 'codice_composizione', $codcomp, "AND codice_artico_base ='". $form['codart'] . "'");
+			if(!$rx){
+				gaz_dbi_query("INSERT INTO " . $gTables['distinta_base'] . "(codice_composizione,codice_artico_base,quantita_artico_base) VALUES ('".$codcomp. "','".$form['codart']."','". $form['quanti'] . "')");
+			}
+		}
+        header ( 'location: ../magazz/admin_artico.php?Update&codice='.$codcomp);
+	}
 }
 
 require("../../library/include/header.php");

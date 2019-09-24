@@ -447,20 +447,10 @@ $strScript = array("browse_document.php" =>
 	),
     "admin_artico_compost.php" =>
     array('title' => 'Gestione delle composizioni',
-        'ins_this' => 'Inserimento articolo',
-        'upd_this' => 'Modifica l\'articolo ',
-        'mod_this' => 'Composizione : ',
         'err' => array(
-            'codice' => 'Il codice articolo &egrave; gi&agrave; esistente',
-            'movmag' => 'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
-            'filmim' => 'Il file dev\'essere nel formato PNG, JPG, GIF',
-            'filsiz' => 'L\'immagine non dev\'essere pi&ugrave; grande di 64Kb',
-            'valcod' => 'Inserire un codice valido',
-            'descri' => 'Inserire una descrizione',
-            'unimis' => 'Inserire l\'unit&agrave; di misura delle vendite',
-            'aliiva' => 'Inserire l\'aliquota I.V.A.',
-            'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
-			'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" '
+            'codart' => 'Non hai selezionato l\'articolo da aggiungere alla composizione',
+            'quanti' => 'Non hai selezionato la quantità da aggiungere alla composizione',
+            'quarow' => 'Rigo con quantità zero'
         ),
         'codice' => "Codice",
         'descri' => "Descrizione",
