@@ -71,13 +71,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 if(isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){
     $qta=$_POST['qta'];
     foreach ($qta as $val=>$v){
-		if (floatval($v)<0.001) {
+		if (floatval($v)<0.00001) {
 			$msg['err'][] = 'quarow';
 		}
 	}
-	if(floatval($form['quanti'])>=0.001&&strlen($form['codart'])<=2){
+	if(floatval($form['quanti'])>=0.00001&&strlen($form['codart'])<=2){
 			$msg['err'][] = 'codart';
-	} elseif(floatval($form['quanti'])<0.001&&strlen($form['codart'])>2){
+	} elseif(floatval($form['quanti'])<0.00001&&strlen($form['codart'])>2){
 			$msg['err'][] = 'quanti';
 	}
 
@@ -85,13 +85,13 @@ if(isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){
         foreach ($qta as $val=>$v){
             gaz_dbi_table_update ("distinta_base", array ("0"=>"id","1"=>$val), array("quantita_artico_base"=>$v) );
         }
-		if($form['quanti']>=0.01&&strlen($form['codart'])>2){
+		if($form['quanti']>=0.00001&&strlen($form['codart'])>2){
 			$rx=gaz_dbi_get_row($gTables['distinta_base'], 'codice_composizione', $codcomp, "AND codice_artico_base ='". $form['codart'] . "'");
 			if(!$rx){
 				gaz_dbi_query("INSERT INTO " . $gTables['distinta_base'] . "(codice_composizione,codice_artico_base,quantita_artico_base) VALUES ('".$codcomp. "','".$form['codart']."','". $form['quanti'] . "')");
 			}
 		}
-        header ( 'location: ../magazz/admin_artico.php?Update&codice='.$codcomp);
+        header ( 'location: ../magazz/admin_artico_compost.php?Update&codice='.$codcomp);
 	}
 }
 
@@ -100,6 +100,11 @@ $script_transl = HeadMain(0,array('custom/autocomplete'));
 
 ?>
 <script>
+$(function(){
+	$("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top},'slow', function() {
+        $("#search_cosear").focus();
+    });
+});
 function itemErase(id,descri,codcomp){
 	$(".compost_name").append('ID:'+id+' -'+descri);
 	//alert(descri);
@@ -142,7 +147,7 @@ function itemErase(id,descri,codcomp){
         echo '<ul class="col-xs-12 col-sm-12 col-md-11 col-lg-10">';
 		foreach($data as $k0=>$v0) {
 			$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-warning collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><i class="glyphicon glyphicon-list"></i></a>':'';
-			echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].' '.$icona.' _ _ _ _ <a class="btn btn-xs btn-danger" onclick="itemErase('.intval($v0['id']).',\''.$v0['descri'].'\',\''.$codcomp.'\');">  togli X </a><span class="pull-right"> '.$v0['unimis'].':<input type="number" step="0.001" min="0.001" name="qta['.intval($v0['id']).']" value="'.floatval($v0['quantita_artico_base']).'" /> </span>  </div>';
+			echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].' '.$icona.' _ _ _ _ <a class="btn btn-xs btn-danger" onclick="itemErase('.intval($v0['id']).',\''.$v0['descri'].'\',\''.$codcomp.'\');">  togli X </a><span class="pull-right"> '.$v0['unimis'].':<input type="number" step="any" min="0.00001" name="qta['.intval($v0['id']).']" value="'.floatval($v0['quantita_artico_base']).'" /> </span>  </div>';
 			$color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
 			if (is_array($v0['codice_artico_base'])){
 			  echo '<ul class="collapse ' . $v0[2] . '">';
@@ -207,7 +212,7 @@ echo '<div class="col-xs-12 col-md-6">Nuovo componente:';
 $select_artico = new selectartico("codart");
 $select_artico->addSelected($form['codart']);
 $select_artico->output(substr($form['cosear'], 0, 20),'C',"");
-	echo '</div><div class="col-xs-12 col-md-4"> Quantità:<input type="number" step="0.001" value="'.$form['quanti'].'" name="quanti" />
+	echo '</div><div class="col-xs-12 col-md-4"> Quantità:<input type="number" step="any" min="0.00001" value="'.$form['quanti'].'" name="quanti" />
 </div><div class="col-xs-12 col-md-2">
 		<input type="submit" class="btn btn-warning" name="OKsub" value="Salva">
 	</div>

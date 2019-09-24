@@ -65,8 +65,10 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
                 $totale_ricevibile -= $rg_ricevuti['quanti'];
             }
             if ($totale_ricevibile==0) {
-                $form['rows'][$nr]['checkval'] = false;
-            }
+                $form['rows'][$nr]['checkval'] = '';
+            } else {
+                $form['rows'][$nr]['checkval'] = ' checked ';
+			}
             $form['rows'][$nr]['ricevibile'] = $totale_ricevibile;
             $form['rows'][$nr]['id_doc'] = $rigo['id_doc'];
             $form['rows'][$nr]['codvat'] = $rigo['codvat'];
@@ -88,8 +90,11 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['tipdoc'] = substr($_POST['tipdoc'], 0, 3);
     $form['datemi'] = substr($_POST['datemi'], 0, 10);
     $form['datreg'] = substr($_POST['datreg'], 0, 10);
-    if (isset($_POST['rows'])) {
+    if(isset($_POST['rows'])){
         $form['rows'] = $_POST['rows'];
+		foreach($_POST['rows'] as $kr=>$vr){
+			$form['rows'][$kr]['checkval']=(isset($vr['checkval']))?' checked ':' ';
+		}
     }
 }
 
@@ -213,7 +218,7 @@ $gForm = new acquisForm();
 if (!empty($form['rows'])) {
     $tot = 0;
     foreach ($form['rows'] as $k => $v) {
-        $checkin = ' disabled ';
+		$checkin='';
 		$artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
         $btn_class = 'btn-success';
         $btn_title = '';
@@ -228,7 +233,6 @@ if (!empty($form['rows'])) {
         }
         // calcolo importo totale (iva inclusa) del rigo e creazione castelletto IVA
         if ($v['tiprig'] <= 1) {    //ma solo se del tipo normale o forfait
-            $checkin = ' checked';
             if ($v['tiprig'] == 0) { // tipo normale
                 $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
             } else {                 // tipo forfait
@@ -241,14 +245,6 @@ if (!empty($form['rows'])) {
             // calcolo il totale del rigo stornato dell'iva
             $imprig = round($tot_row / (1 + $v['pervat'] / 100), 2);
             $tot+=$tot_row;
-			if($v['ricevibile']>=0.001){
-				$checkin=' checked ';
-				$imptype='<input type="number';
-			}else{
-				$checkin='disabled';
-				$btn_class = 'btn-default';
-				$imptype='Ricevuto<input type="hidden';
-			} 
         }
 	    // fine calcolo importo rigo, totale e castelletto IVA
         // colonne non editabili
@@ -284,7 +280,7 @@ if (!empty($form['rows'])) {
                 'value' => $v['unimis']
             ),
             array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                'value' => $imptype.'" step="any" name="rows[' . $k . '][ricevibile]" value="' . $v['ricevibile'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
+                'value' => '<input type="number" step="any" name="rows[' . $k . '][ricevibile]" value="' . $v['ricevibile'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
             ),
             array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
                 'value' =>  $v['prelis'] 
@@ -295,7 +291,7 @@ if (!empty($form['rows'])) {
             array('head' => $script_transl["codvat"], 'class' => 'text-center numeric', 'value' => $v['pervat'], 'type' => ''),
             array('head' => $script_transl["total"], 'class' => 'text-right numeric bg-warning', 'value' => gaz_format_number($tot_row), 'type' => ''),
             array('head' => 'Sel.', 'class' => 'text-center',
-                'value' => '<label class="btn '.$btn_class.'"><input type="checkbox" name="rows['.$k.'][checkval]"  title="' . $script_transl['checkbox'] . '" '.$checkin.' value="'.$imprig.'" onclick="this.form.total.value=calcheck(this);"></label>')
+                'value' => '<label class="btn '.$btn_class.'"><input type="checkbox" name="rows['.$k.'][checkval]"  title="' . $script_transl['checkbox'] . '" '.$checkin.' '.$v['checkval'].' value="1" onclick="this.form.total.value=calcheck(this);"></label>')
         );
 
         switch ($v['tiprig']) {
