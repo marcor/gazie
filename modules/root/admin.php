@@ -41,8 +41,8 @@ if (!isset($_POST['hidden_req'])) {
         exit;
     }
     $form['hidden_req'] = $_POST['hidden_req'];
+	$form['company_id'] = intval($_POST['company_id']);
 	if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
-		$form['company_id'] = intval($_POST['company_id']);
 		$form['search']['company_id'] = $_POST['search']['company_id'];
 	}
 }

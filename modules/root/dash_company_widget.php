@@ -57,7 +57,9 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
 		if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
 			echo $script_transl['mesg_co'][2] . ' &rArr; ';
 			selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
-        }
+        }else{
+			echo '<input type="hidden" name="company_id" value="'.$form['company_id'].'" >	';
+		}
 		?>
     </div>
     <div>
