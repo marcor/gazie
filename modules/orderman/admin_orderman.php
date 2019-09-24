@@ -986,7 +986,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", $magval['q_g']; ?>
 							</div>
 							<?php 							
-							if (number_format($magval['q_g'] - $row['quantita_artico_base'],6) >= 0) { // giacenza sufficiente
+							if (number_format(str_replace(",","",$magval['q_g']) - str_replace(",","",$row['quantita_artico_base']),6) >= 0) { // giacenza sufficiente
 								?>
 								<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo $row['quantita_artico_base']; ?>"> <!-- quantità utilizzata di ogni componente   -->
 								<div class="col-sm-1" style="background-color:lightgreen;"> OK</div>
@@ -1017,6 +1017,8 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 									foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da getAvailableLots
 									
 										if ($v['qua'] >= 0.00001) {
+											$form['id_lot_comp'][$nc][$l]="";
+											$form['lot_quanti'][$nc][$l]="";
 											if (!isset($form['id_lot_comp'][$nc][$l]) or (intval($form['id_lot_comp'][$nc][$l])==0)) {
 												$form['id_lot_comp'][$nc][$l] = $v['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
 												$form['lot_quanti'][$nc][$l] = $v['qua']; // e la quantità in base al riparto
