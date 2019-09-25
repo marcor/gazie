@@ -358,15 +358,22 @@ function choicePartner(row)
 				}
 				$st=$gForm->getOrderStatus($r['id_tes']);
 				if ($r["tipdoc"] == 'AOR') {
-					echo '<div><button title="Duplica questo ordine come preventivo per fornitore" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags"> duplica come Preventivo</i></button></div>';
+					echo '<div><button title="Duplica questo ordine come preventivo per fornitore" class="btn btn-default btn-xs" type="button" data-toggle="collapse" data-target="#duplicate_'.$r['id_tes'].'" aria-expanded="false" aria-controls="duplicate_'.$r['id_tes'].'"><i class="glyphicon glyphicon-tags">crea Preventivo</i></button></div>';
                 echo '<div class="collapse" id="duplicate_'.$r['id_tes'].'">Fornitore: <input id="search_partner'.$r['id_tes'].'" onClick="choicePartner(\''.$r['id_tes'].'\');"  value="" rigo="'. $r['id_tes'] .'" type="text" /></div>';
 				echo '<div>';
 				if ($st[0]==0){ // tutto da ricevere
-					echo '<a title="Il fornitore consegna la merce ordinata" class="btn btn-xs btn-danger" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Merce da ricevere</i></a>';
+					echo '<a title="Il fornitore consegna la merce ordinata" class="btn btn-xs btn-danger" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Ricevi</i></a>';
 				}elseif ($st[0]==1){ //  da ricevere in parte
-					echo '<a title="Il fornitore consegna il saldo della merce" class="btn btn-xs btn-warning" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file">Da saldare</i></a>';
+					foreach($st[2]as$kd=>$vd){
+						echo '<a title="Modifica il documento di acconto" class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $kd . '&Update"><i class="glyphicon glyphicon-edit">IdDoc.'.$kd.'</i></a> - ';
+					}
+					echo '<a title="Il fornitore consegna il saldo della merce" class="btn btn-xs btn-warning pull-right" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file pull-right">Salda</i></a>';
 				}else{ // completamente ricevuto
-					echo '<a title="Il fornitore ha consegnato tutta la merce ordinata" disabled class="btn btn-xs btn-success" href=""><i class="glyphicon glyphicon-save-file">Saldato</i></a>';
+				foreach($st[2]as$kd=>$vd){}
+					foreach($st[2]as$kd=>$vd){
+						echo '<a title="Modifica il documento di acconto" class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $kd . '&Update"><i class="glyphicon glyphicon-edit">IdDoc.'.$kd.'</i></a> - ';
+					}
+					echo '<a title="Il fornitore ha consegnato tutta la merce ordinata" disabled class="btn btn-xs btn-success pull-right" href=""><i class="glyphicon glyphicon-save-file">Saldato</i></a>';
 				}
 				echo '</div>';
 				}

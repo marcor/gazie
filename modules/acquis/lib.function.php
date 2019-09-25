@@ -175,6 +175,7 @@ class acquisForm extends GAzieForm {
 		global $gTables;
 		$acc[0]=false;
 		$acc[1]=[];
+		$acc[2]=false;
         $remains=false; // Almeno un rigo e' rimasto da evadere.
         $processed=false; // Almeno un rigo e' gia' stato evaso.  
         $rb_r=gaz_dbi_dyn_query('*',$gTables['rigbro'],"id_tes=" . $idtes . " AND tiprig <=1",'id_tes DESC');
@@ -183,6 +184,7 @@ class acquisForm extends GAzieForm {
             $evaso=0;
             $rd_r=gaz_dbi_dyn_query('*',$gTables['rigdoc'],"id_order=".$rb['id_rig'],'id_tes DESC');
             while($rd=gaz_dbi_fetch_array($rd_r)) {
+				$acc[2][$rd['id_tes']]='y';
                 $evaso+=$rd['quanti'];
                 $processed=true;
             }    
