@@ -135,18 +135,23 @@ if (isset($_GET['all'])) {
 
 			if ($status == 'NO') {
 				//$status = '@';
-				$where = " flux_status LIKE '@'";
-				$senza_esito=1;
+				$where = " flux_status != 'RC' AND flux_status != 'MC' AND flux_status != 'DT' AND flux_status != 'NS' AND flux_status != 'NE' AND flux_status != 'NEEC02'";
+				//$senza_esito = 1;
 				$mostra_intesta = 1;
 				$mostra_intesta_riga = 0;
 			} elseif ($status == 'NEEC02') {
-				$where = " flux_status LIKE 'NE' and flux_descri <> 'EC01'";
-				$senza_esito = 1;
+				$where = " flux_status LIKE 'NEEC02'";
+				//$senza_esito = 1;
+				$mostra_intesta = 1;
+				$mostra_intesta_riga = 0;
+			} elseif (strpos($status, 'NE') !== FALSE) {
+				$where = " flux_status LIKE 'NE%'";
+				//$senza_esito = 1;
 				$mostra_intesta = 1;
 				$mostra_intesta_riga = 0;
 			} elseif ($status == '@@') {
 				$where = " flux_status LIKE '@@' and filename_ret <> ''";
-				$senza_esito = 1;
+				//$senza_esito = 1;
 				$mostra_intesta = 1;
 				$mostra_intesta_riga = 0;
 			} else {
@@ -410,14 +415,13 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } 
      
     //Fattura accettata
-    if ($r['flux_descri'] == 'EC01') {
+    if ($r['flux_status'] == 'NE') {
       $class='FacetDataTD';
       $class2='FacetDataTDevidenziaOK';
      } 
     
     //Fattura rifiutata
-    echo strpos($r['flux_descri'], 'EC021');
-    if (strlen($r['flux_descri']) > 5) {
+    if (strlen($r['flux_status']) > 2 && strpos($r['flux_status'], 'NE') !== FALSE) {
       $class='FacetDataTD';
       $class2='FacetDataTDevidenziaKO';
     }
