@@ -548,6 +548,7 @@ $strScript = array("admin_fornit.php" =>
         'err' => array(
             'norows' => 'Non ci sono articoli da ricevere',
             'noric' => 'Non ci sono righi ricevibili',
+            'upres' => 'Rigo con quantità superiore al residuo',
             'numdoc' => 'Non hai indicato il numero di documento'
         ),
         'partner' => 'Fornitore',

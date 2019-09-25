@@ -70,7 +70,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
                 $form['rows'][$nr]['checkval'] = ' checked ';
 			}
             $form['rows'][$nr]['ricevibile'] = $totale_ricevibile;
-            $form['rows'][$nr]['id_doc'] = $rigo['id_doc'];
+            $form['rows'][$nr]['totric'] = $totale_ricevibile;
             $form['rows'][$nr]['codvat'] = $rigo['codvat'];
             $form['rows'][$nr]['pervat'] = $rigo['pervat'];
             $form['rows'][$nr]['codric'] = $rigo['codric'];
@@ -102,12 +102,10 @@ if (isset($_POST['subdoc'])) {
     if (!isset($form["rows"])) {
         $msg['err'][] = 'norows';
     } else {
-        $non_ricevuti = "";
-        foreach ($form['rows'] as $k => $v) {
-            if(isset($v['checkval'])&&$v['id_doc']==0&&($v['tiprig']==0||$v['tiprig']==1)) $non_ricevuti = "ok";
-        }
-        if (empty($non_ricevuti)) {
-			$msg['err'][] = 'noric';
+        foreach ($form['rows'] as $k => $v){
+			if($v['ricevibile']>$v['totric']&&isset($v['checkval'])&&($v['tiprig']==0||$v['tiprig']==1)){
+				$msg['err'][] = 'upres';
+			}
         }
     }
     if($form['numddt']==""){
@@ -127,7 +125,7 @@ if (isset($_POST['subdoc'])) {
         tesdocInsert($td);
 		$last_id=gaz_dbi_last_id();
 		foreach ($form['rows'] as $k => $v) {
-            if (isset($v['checkval'])) {   //se e' un rigo selezionato
+            if (isset($v['checkval'])&&$v['ricevibile']>=0.00001) {   //se e' un rigo selezionato
                 $row = $v;
                 unset($row['id_rig']);
                 $row['id_tes'] = $last_id;
@@ -140,8 +138,10 @@ if (isset($_POST['subdoc'])) {
                 gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
             }
         }
-        $_SESSION['print_request'] = $last_id;
-        header("Location: invsta_docacq.php");
+		
+		//$_SESSION['print_request'] = $last_id;
+        //header("Location: invsta_docacq.php");
+        header("Location: report_broacq.php?flt_tipo=AOR");
         exit;
     }
 } elseif (isset($_POST['Return'])) {  //ritorno indietro
@@ -252,7 +252,7 @@ if (!empty($form['rows'])) {
         echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
         echo "<input type=\"hidden\" value=\"" . $v['codvat'] . "\" name=\"rows[$k][codvat]\">\n";
         echo "<input type=\"hidden\" value=\"" . $v['pervat'] . "\" name=\"rows[$k][pervat]\">\n";
-        echo "<input type=\"hidden\" value=\"" . $v['id_doc'] . "\" name=\"rows[$k][id_doc]\">\n";
+        echo "<input type=\"hidden\" value=\"" . $v['totric'] . "\" name=\"rows[$k][totric]\">\n";
         echo "<input type=\"hidden\" value=\"" . $v['id_rig'] . "\" name=\"rows[$k][id_rig]\">\n";
         echo "<input type=\"hidden\" value=\"" . $v['id_orderman'] . "\" name=\"rows[$k][id_orderman]\">\n";
         // colonne editabili
@@ -280,7 +280,7 @@ if (!empty($form['rows'])) {
                 'value' => $v['unimis']
             ),
             array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                'value' => '<input type="number" step="any" name="rows[' . $k . '][ricevibile]" value="' . $v['ricevibile'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
+                'value' => 'residuo:'.floatval($v['totric']).' <input type="number" step="any" name="rows[' . $k . '][ricevibile]" value="' . $v['ricevibile'] . '" maxlength="11" size="4" />'
             ),
             array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
                 'value' =>  $v['prelis'] 
