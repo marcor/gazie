@@ -940,7 +940,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						<div class="row" style="margin-left: 0px;">
 							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['artico']; ?>
 							</div>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Q.tà usata: ", gaz_format_quantity($row['quanti'], 0, $admin_aziend['decimal_quantity'])," ",$row['unimis']; ?>
+							<div class="col-sm-5 "  style="background-color:lightcyan;"><?php echo "Q.tà usata: ", number_format(str_replace(",","",$row['quanti']),5,",",".")," ",$row['unimis']; ?>
 							</div>
 							<?php
 							if (intval($row['id_lotmag']) > 0) {
@@ -981,9 +981,10 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						<div class="row" style="margin-left: 0px;">
 							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
 							</div>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", $row['quantita_artico_base']; ?>
+							<!-- Antonio Germani devo usare number_format perché la funzione gaz_format_quantity non accetta più di 3 cifre dopo la virgola. -->
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", number_format(str_replace(",","",$row['quantita_artico_base']),5,",","."); ?>
 							</div>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", $magval['q_g']; ?>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", number_format(str_replace(",","",$magval['q_g']),5,",","."); ?>
 							</div>
 							<?php 							
 							if (number_format(str_replace(",","",$magval['q_g']) - str_replace(",","",$row['quantita_artico_base']),6) >= 0) { // giacenza sufficiente
