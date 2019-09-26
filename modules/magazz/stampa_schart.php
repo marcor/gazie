@@ -84,9 +84,9 @@ $what = $gTables['movmag'].".*, ".
                LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
 $result = gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datreg ASC, id_mov ASC");
 
-$item_head = array('top'=>array(array('lun' => 21,'nam'=>$script_transl['item_head'][0]),
+$item_head = array('top'=>array(array('lun' => 32,'nam'=>$script_transl['item_head'][0]),
                                 array('lun' => 18,'nam'=>$script_transl['item_head'][1]),
-                                array('lun' => 60,'nam'=>$script_transl['item_head'][2]),
+                                array('lun' => 90,'nam'=>$script_transl['item_head'][2]),
                                 array('lun' => 10,'nam'=>$script_transl['item_head'][3]),
                                 array('lun' => 18,'nam'=>$script_transl['item_head'][4])
                                )
@@ -143,9 +143,9 @@ while ($mv = gaz_dbi_fetch_array($result)) {
          $aRiportare['bot'][1]['nam'] = 0;
          $aRiportare['top'][2]['nam'] = 0;
          $aRiportare['bot'][2]['nam'] = 0;
-         $item_head['bot']= array(array('lun' => 21,'nam'=>$mv['artico']),
+         $item_head['bot']= array(array('lun' => 32,'nam'=>$mv['artico']),
                                   array('lun' => 18,'nam'=>$mv['catmer']),
-                                  array('lun' => 60,'nam'=>$mv['desart']),
+                                  array('lun' => 90,'nam'=>$mv['desart']),
                                   array('lun' => 10,'nam'=>$mv['unimis']),
                                   array('lun' => 18,'nam'=>number_format($mv['scorta'],1,',',''))
                                   );

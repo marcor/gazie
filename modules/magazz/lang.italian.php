@@ -244,7 +244,7 @@ $strScript = array("browse_document.php" =>
         'date_fin' => 'Data registrazione fine ',
         'header' => array('Data' => '', 'Causale' => '', 'Descrizione<br \>documento' => '',
             'Prezzo' => '', 'UM' => '', 'Quantit&agrave;' => '',
-            '<br \>carico' => '', '<br \> scarico' => '',
+            'Valore<br \>carico' => '', 'Valore<br \> scarico' => '',
             'Quantit&agrave;<br \>giacenza' => '', 'Valore<br \>giacenza' => ''
         ),
         'tot' => 'Consistenza'
@@ -256,7 +256,7 @@ $strScript = array("browse_document.php" =>
         'item_head' => array('Codice', 'Cat.Merc', 'Descrizione', 'U.M.', 'ScortaMin.'),
         'header' => array('Data', 'Causale', 'Descrizione documento',
             'Prezzo', 'UM', 'Quantita',
-            ' carico', ' scarico',
+            'Val. carico', 'Val. scarico',
             'Q.ta giacenza', 'Val. giacenza'
         ),
         'tot' => 'Consistenza al '
