@@ -99,6 +99,13 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0,array('custom/autocomplete'));
 
 ?>
+<style>
+@media only screen and (min-width: 762px) {
+	.pull-gazie{
+         float:right;
+	}
+} 
+</style>
 <script>
 $(function(){
 	$("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top},'slow', function() {
@@ -147,37 +154,37 @@ function itemErase(id,descri,codcomp){
         echo '<ul class="col-xs-12 col-sm-12 col-md-11 col-lg-10">';
 		foreach($data as $k0=>$v0) {
 			$icona=(is_array($v0['codice_artico_base']))?'<a class="btn btn-xs btn-warning collapsible" id="'.$v0[2].'" data-toggle="collapse" data-target=".' . $v0[2] . '"><i class="glyphicon glyphicon-list"></i></a>':'';
-			echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].' '.$icona.' _ _ _ _ <a class="btn btn-xs btn-danger" onclick="itemErase('.intval($v0['id']).',\''.$v0['descri'].'\',\''.$codcomp.'\');">  togli X </a><span class="pull-right"> '.$v0['unimis'].':<input type="number" step="any" min="0.00001" name="qta['.intval($v0['id']).']" value="'.floatval($v0['quantita_artico_base']).'" /> </span>  </div>';
+			echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $v0[2] . '">'.$v0[2].'</a> - '.$v0['descri'].' '.$icona.' _ _ _ _ <a class="btn btn-xs btn-danger" onclick="itemErase('.intval($v0['id']).',\''.$v0['descri'].'\',\''.$codcomp.'\');">  togli X </a><span class="pull-gazie"> '.$v0['unimis'].':<input type="number" style="height:25px;width:80px;" step="any" min="0.00001" name="qta['.intval($v0['id']).']" value="'.floatval($v0['quantita_artico_base']).'" /> </span>  </div>';
 			$color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
 			if (is_array($v0['codice_artico_base'])){
 			  echo '<ul class="collapse ' . $v0[2] . '">';
 			  foreach($v0['codice_artico_base'] as $k1=>$v1) {
-				  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-primary" href="admin_artico.php?Update&amp;codice=' . $v1[2] . '">'.$v1[2].'</a> - '.$v1['descri'].' <span class="pull-right">'.$v1['unimis'].': '.floatval($v1['quantita_artico_base']).'</span></div>';
+				  echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-primary" href="admin_artico.php?Update&amp;codice=' . $v1[2] . '">'.$v1[2].'</a> - '.$v1['descri'].' <span class="pull-right">'.$v1['unimis'].': '.floatval($v1['quantita_artico_base']).'</span></div>';
 				  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
 				  if (is_array($v1['codice_artico_base']))	{
-					echo '<ul class="">';
+					echo '<ul>';
 					foreach($v1['codice_artico_base'] as $k2=>$v2) {
-					  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-info" href="admin_artico.php?Update&amp;codice=' . $v2[2] . '">'.$v2[2].'</a> - '.$v2['descri'].' <span class="pull-right"> '.$v2['unimis'].': '.floatval($v2['quantita_artico_base']).'</span></div>';
+					  echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-info" href="admin_artico.php?Update&amp;codice=' . $v2[2] . '">'.$v2[2].'</a> - '.$v2['descri'].' <span class="pull-right"> '.$v2['unimis'].': '.floatval($v2['quantita_artico_base']).'</span></div>';
 					  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
 					  if (is_array($v2['codice_artico_base']))	{
-						echo '<ul class="">';
+						echo '<ul>';
 						foreach($v2['codice_artico_base'] as $k3=>$v3) {
-						  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-warning" href="admin_artico.php?Update&amp;codice=' . $v3[2] . '">'.$v3[2].'</a> - '.$v3['descri'].' <span class="pull-right"> '.$v3['unimis'].': '.floatval($v3['quantita_artico_base']).'</span></div>';
+						  echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-warning" href="admin_artico.php?Update&amp;codice=' . $v3[2] . '">'.$v3[2].'</a> - '.$v3['descri'].' <span class="pull-right"> '.$v3['unimis'].': '.floatval($v3['quantita_artico_base']).'</span></div>';
 						  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
 						  if (is_array($v3['codice_artico_base']))	{
-							echo '<ul class="">';
+							echo '<ul>';
 							foreach($v3['codice_artico_base'] as $k4=>$v4) {
-							  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-danger" href="admin_artico.php?Update&amp;codice=' . $v4[2] . '">'.$v4[2].'</a> - '.$v4['descri'].' <span class="pull-right"> '.$v4['unimis'].': '.floatval($v4['quantita_artico_base']).'</span></div>';
+							  echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-danger" href="admin_artico.php?Update&amp;codice=' . $v4[2] . '">'.$v4[2].'</a> - '.$v4['descri'].' <span class="pull-right"> '.$v4['unimis'].': '.floatval($v4['quantita_artico_base']).'</span></div>';
 							  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
 							  if (is_array($v4['codice_artico_base']))	{
-								echo '<ul class="">';
+								echo '<ul>';
 								foreach($v4['codice_artico_base'] as $k5=>$v5) {
-								  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-default" href="admin_artico.php?Update&amp;codice=' . $v5[2] . '">'.$v5[2].'</a> - '.$v5['descri'].' <span class="pull-right"> '.$v5['unimis'].': '.floatval($v5['quantita_artico_base']).'</span></div>';
+								  echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-default" href="admin_artico.php?Update&amp;codice=' . $v5[2] . '">'.$v5[2].'</a> - '.$v5['descri'].' <span class="pull-right"> '.$v5['unimis'].': '.floatval($v5['quantita_artico_base']).'</span></div>';
 								  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
 								  if (is_array($v5['codice_artico_base']))	{
-									echo '<ul class="">';
+									echo '<ul>';
 									foreach($v5['codice_artico_base'] as $k6=>$v6) {
-									  echo '<li class="" id=""><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-basic" href="admin_artico.php?Update&amp;codice=' . $v6[2] . '">'.$v6[2].'</a> - '.$v6['descri'].' <span class="pull-right"> '.$v6['unimis'].': '.floatval($v6['quantita_artico_base']).'</span></div></li>';
+									  echo '<li><div style="background-color: #'.$color.'"><a class="btn btn-xs btn-basic" href="admin_artico.php?Update&amp;codice=' . $v6[2] . '">'.$v6[2].'</a> - '.$v6['descri'].' <span class="pull-right"> '.$v6['unimis'].': '.floatval($v6['quantita_artico_base']).'</span></div></li>';
 									  $color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
 									}
 									echo "</ul>\n";
@@ -212,7 +219,7 @@ echo '<div class="col-xs-12 col-md-6">Nuovo componente:';
 $select_artico = new selectartico("codart");
 $select_artico->addSelected($form['codart']);
 $select_artico->output(substr($form['cosear'], 0, 20),'C',"");
-	echo '</div><div class="col-xs-12 col-md-4"> Quantità:<input type="number" step="any" min="0.00001" value="'.$form['quanti'].'" name="quanti" />
+	echo '</div><div class="col-xs-12 col-md-4"> Quantità:<input type="number" style="height:25px;" step="any" min="0.00001" value="'.$form['quanti'].'" name="quanti" />
 </div><div class="col-xs-12 col-md-2">
 		<input type="submit" class="btn btn-warning" name="OKsub" value="Salva">
 	</div>
