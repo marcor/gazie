@@ -51,9 +51,11 @@ function getMovements($date_ini,$date_fin)
 		}
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
+			  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
               $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-               LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
+               LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
+			   LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
         $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, clfoco ASC');
         while ($r = gaz_dbi_fetch_array($rs)) {
 			if ($r['id_lotmag']>0){
@@ -123,11 +125,12 @@ if ($_GET['pr']==1){
                              array('lun' => 83,'nam'=>'Articolo'),
 							 array('lun' => 22,'nam'=>'Lotto'),
                              array('lun' => 56,'nam'=>'Rif.Documento'),
+							 array('lun' => 20,'nam'=>'Rag. sociale'),
                              array('lun' => 10,'nam'=>'U.M.'),
                              array('lun' => 15,'nam'=>'Quantità')
                             )
             );
-$pdf->SetLeftMargin(25);			
+$pdf->SetLeftMargin(16);			
 }
 
 $pdf->setVars($admin_aziend,$title);
@@ -150,7 +153,9 @@ if (sizeof($result) > 0) {
 	  if ($_GET['pr']==1){
 		$pdf->Cell(17,3,number_format($row['prezzo'],$admin_aziend['decimal_price'],',','.'),1,0,'R');
 		$pdf->Cell(18,3,gaz_format_number(CalcolaImportoRigo($row['quanti'],$row['prezzo'],array($row['scochi'],$row['scorig']))),1,0,'R');
-      }
+      } else {
+		$pdf->Cell(20,3,substr($row['ragsoc'],0,30),1, 0, 'l', 0, '', 1);
+	  }
 	  $pdf->Cell(10,3,$row['unimis'],1,0,'C');
       $pdf->Cell(15,3,gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity']),1,1,'R');
   }

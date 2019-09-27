@@ -178,7 +178,7 @@ $strScript = array("browse_document.php" =>
 		'cover' => 'Stampa copertina',
 		'subtitle' => 'Titolo aggiuntivo sul pdf (facoltativo)',
 		'mode_value' => array(1 => 'Tutti i movimenti', 2 => 'Solo le entrate', 3 => 'Solo le uscite'),
-		'price_value' => array(1 => 'con prezzi', 2 => 'senza prezzi'),
+		'price_value' => array(1 => 'con prezzi', 2 => 'senza prezzi con rag.sociale'),
         'header' => array('Data' => '', 'Causale' => '', 'Descrizione documento' => '' ,
         'Articolo' => '', 'Prezzo' => '', 'Importo' => '', 'UM' => '', 'Quantit&agrave;' => ''
         )
