@@ -242,7 +242,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             if ($modal === false) {
 				if ($toDo == 'insert') {
 					$_SESSION['ok_ins']='1';
-					header("Location: ../../modules/magazz/admin_artico.php?Insert");
+					header("Location: ../../modules/magazz/admin_artico.php?Update&codice=".$form['codice']);
 				}else{
 					header("Location: ../../modules/magazz/report_artico.php");
 				}
