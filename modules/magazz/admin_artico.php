@@ -177,9 +177,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (empty($form["descri"])) {
             $msg['err'][] = 'descri';
         }
+/* NON OBBLIGO ALL'UNITA' DI MISURA
         if (empty($form["unimis"])) {
             $msg['err'][] = 'unimis';
         }
+*/
         if (empty($form["aliiva"])) {
             $msg['err'][] = 'aliiva';
         }
