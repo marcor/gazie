@@ -65,7 +65,7 @@ if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordin
     $cs = filter_input(INPUT_POST, 'cosear');
 } else {
     $rn = '0';
-    $ob = 'last_used';
+    $ob = 'last_modified';
     $so = 'DESC';
     $cs = '';
 }
