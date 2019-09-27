@@ -66,9 +66,6 @@ if (isset($_POST['mode']) || isset($_GET['mode'])) {
     if (isset($_GET['ok_insert'])) {
         $modal_ok_insert = true;
     }
-}elseif (isset($_SESSION['ok_ins'])){
-	$msg['war'][]='ok_ins';
-	unset($_SESSION['ok_ins']);
 }
 /** ENRICO FEDELE */
 if (isset($_POST['Update']) || isset($_GET['Update'])) {
@@ -241,7 +238,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             /* Niente redirect se sono in finestra modale */
             if ($modal === false) {
 				if ($toDo == 'insert') {
-					$_SESSION['ok_ins']='1';
+					$_SESSION['ok_ins']=$form['codice'].' - '.$form['descri'];
 					header("Location: ../../modules/magazz/admin_artico.php?Update&codice=".$form['codice']);
 				}else{
 					header("Location: ../../modules/magazz/report_artico.php");
@@ -414,9 +411,10 @@ if ($modal_ok_insert === true) {
     if (count($msg['err']) > 0) { // ho un errore
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     }
-    if (count($msg['war']) > 0) { // ho un errore
-        $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
-    }
+	if (isset($_SESSION['ok_ins'])){
+        $gForm->toast('L\'articolo ' . $_SESSION['ok_ins'].' è stato inserito con successo, sotto se lo vuoi modificare' , 'alert-last-row', 'alert-success');
+		unset($_SESSION['ok_ins']);
+	}
     ?>
         <div class="panel panel-default gaz-table-form">
             <div class="container-fluid">
