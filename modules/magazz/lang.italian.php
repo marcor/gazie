@@ -372,7 +372,10 @@ $strScript = array("browse_document.php" =>
             'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
 			'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" '
         ),
-        'codice' => "Codice",
+        'war' => array(
+            'ok_ins' => 'Articolo inserito con successo'
+		),
+		'codice' => "Codice",
         'descri' => "Descrizione",
         'good_or_service' => "Tipologia di articolo",
         'good_or_service_value' => array(0 => 'Merce', 1 => 'Servizio', 2=> 'Composizione'),
@@ -450,7 +453,8 @@ $strScript = array("browse_document.php" =>
         'err' => array(
             'codart' => 'Non hai selezionato l\'articolo da aggiungere alla composizione',
             'quanti' => 'Non hai selezionato la quantità da aggiungere alla composizione',
-            'quarow' => 'Rigo con quantità zero'
+            'quarow' => 'Rigo con quantità zero',
+			'artexi' => 'Articolo già presente in composizione'
         ),
         'codice' => "Codice",
         'descri' => "Descrizione",
