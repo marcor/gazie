@@ -344,7 +344,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 				
                 $form['datemi'] = $datemi;
-				print $initra;
                 $form['initra'] = $initra.' 00:00:01';
                 $form['id_orderman'] = $form['in_id_orderman'];
                 $codice = array('id_tes', $form['id_tes']);
@@ -560,7 +559,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
                 $form['righi'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['righi'][$next_row]['sconto'] = $form['in_sconto'];
-                $form['righi'][$next_row]['prelis'] = $artico['preacq'];
+                $form['righi'][$next_row]['prelis'] = ($artico['preacq']>=0.00001)?$artico['preacq']:'';
                 if ($form['tipdoc'] == 'APR') {  // se è un preventivo non conosco prezzo e sconto
                     $form['righi'][$next_row]['sconto'] = 0;
                     $form['righi'][$next_row]['prelis'] = 0;
@@ -1135,9 +1134,9 @@ foreach ($form['righi'] as $key => $value) {
     $descrizione = $value['descri'];
     //calcolo importo rigo
     if ($tiporigo == 0 || $tiporigo ==50) {//se del tipo normale o con documento allegato
-        $imprig = CalcolaImportoRigo($form['righi'][$key]['quanti'], $form['righi'][$key]['prelis'], $form['righi'][$key]['sconto']);
+        $imprig = CalcolaImportoRigo($form['righi'][$key]['quanti'], floatval($value['prelis']), $value['sconto']);
     } elseif ($tiporigo == 1) {//ma se del tipo forfait
-        $imprig = CalcolaImportoRigo(1, $form['righi'][$key]['prelis'], 0);
+        $imprig = CalcolaImportoRigo(1, floatval($value['prelis']), 0);
     }
     if ($tiporigo <= 1 || $tiporigo ==50) { // se del tipo normale, forfait o documento  allegato
         if (!isset($castel[$codice_vat])) {
