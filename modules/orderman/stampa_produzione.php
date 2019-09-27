@@ -149,7 +149,7 @@ if ($resart['good_or_service']==2){ // se l'articolo prodotto prevede componenti
 $ctrlAOR=0;
 $tot=0.00;
 $ctrlAORtot=0.00;
-$query="SELECT *,".$gTables['rigbro'].".descri AS rigdes FROM ".$gTables['rigbro']. " 
+$query="SELECT *,".$gTables['rigbro'].".descri AS rigdes, ".$gTables['rigbro'].".sconto AS scorig FROM ".$gTables['rigbro']. " 
 LEFT JOIN ".$gTables['tesbro']. " ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes 
 LEFT JOIN ".$gTables['clfoco']. " ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice 
 LEFT JOIN ".$gTables['anagra']. " ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id 
@@ -160,10 +160,10 @@ while($row=$res->fetch_assoc()){
 	switch ($row['tiprig']){
 	    case "0": // normale
 	    case "50": // normale c/allegato
-			$amount=CalcolaImportoRigo($row['quanti'],$row['prelis'],$row['sconto']);
+			$amount=CalcolaImportoRigo($row['quanti'],$row['prelis'],$row['scorig']);
         break;
 		case "1": //forfait
-			$amount=CalcolaImportoRigo(1,$row['prelis'],$row['sconto']);
+			$amount=CalcolaImportoRigo(1,$row['prelis'],$row['scorig']);
         break;
 		default:
 		$amount=0;
@@ -194,9 +194,9 @@ while($row=$res->fetch_assoc()){
 		$pdf->Cell(105,5);
 		$pdf->Cell(82,5,$row['rigdes'],1,0,'L');
 		$pdf->Cell(10,5,$row['unimis'],1,0,'C');
-		$pdf->Cell(20,5,$row['quanti'],1,0,'R'); 
-		$pdf->Cell(20,5,$row['prelis'],1,0,'R');
-		$pdf->Cell(10,5,$row['sconto'],1,0,'C');
+		$pdf->Cell(20,5,floatval($row['quanti']),1,0,'R'); 
+		$pdf->Cell(20,5,floatval($row['prelis']),1,0,'R');
+		$pdf->Cell(10,5,floatval($row['scorig']),1,0,'C');
 		$pdf->Cell(30,5,gaz_format_number($amount),1, 1, 'R', 0, '', 1);
 	}
 	$ctrlAOR=$row['id_tes'];
