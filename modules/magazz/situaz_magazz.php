@@ -111,10 +111,10 @@ $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show
                 echo '	<td width="30%">
 	   				<span class="gazie-tooltip" data-type="product-thumb" data-id="' . $r["codice"] . '" data-title="' . $r['annota'] . '">' . $r["descri"] . '</span>
                     </td><td align="center" title="">'.$r['unimis'].'</td>';
-                echo '<td align="right">' . floatval($magval['q_g']) . ' </td>
-                    <td align="center">' . $ordinatic . ' </td>
-                    <td align="center">' . $ordinatif . ' </td>
-                    <td align="right">'.$totale.'</td></tr>';
+                echo '<td align="right">' . gaz_format_quantity($magval['q_g'],1,3) . ' </td>
+                    <td align="center">' . gaz_format_quantity($ordinatic,1,3) . ' </td>
+                    <td align="center">' . gaz_format_quantity($ordinatif,1,3) . ' </td>
+                    <td align="right">'. gaz_format_quantity($totale,1,3).'</td></tr>';
             }
             echo '<tr><td class="FacetFieldCaptionTD" colspan="10" align="right">&nbsp;</td></tr>';
             ?>

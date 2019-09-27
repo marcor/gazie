@@ -84,15 +84,18 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $totale = ($magval['q_g']-$ordinatic)+$ordinatif;
     $pdf->SetTextColor(0);
 	if ($totale<=0.1||$magval['q_g']<=0.1){
+		$pdf->SetTextColor(255,140,0);
+	}
+	if ($totale<=0){
 		$pdf->SetTextColor(255,0,0);
 	}
     $pdf->Cell(35,5,$r['codice'],$light,0,'L');
     $pdf->Cell(100,5,$r['descri'],$light,0,'L', 0, '', 1);
     $pdf->Cell(15,5,$r['unimis'],$light,0,'C');
-    $pdf->Cell(30,5,floatval($magval['q_g']),$light,0,'R');
-    $pdf->Cell(30,5,$ordinatic,$light,0,'R');
-    $pdf->Cell(30,5,$ordinatif,$light,0,'R');
-    $pdf->Cell(30,5,$totale,$light,1,'R');  
+    $pdf->Cell(30,5,gaz_format_quantity($magval['q_g'],1,3),$light,0,'R');
+    $pdf->Cell(30,5,gaz_format_quantity($ordinatic,1,3),$light,0,'R');
+    $pdf->Cell(30,5,gaz_format_quantity($ordinatif,1,3),$light,0,'R');
+    $pdf->Cell(30,5,gaz_format_quantity($totale,1,3),$light,1,'R');   
     $i++;
 }
 $pdf->SetFont('helvetica','B',9);
