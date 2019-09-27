@@ -86,7 +86,7 @@ $result = gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datre
 
 $item_head = array('top'=>array(array('lun' => 32,'nam'=>$script_transl['item_head'][0]),
                                 array('lun' => 18,'nam'=>$script_transl['item_head'][1]),
-                                array('lun' => 90,'nam'=>$script_transl['item_head'][2]),
+                                array('lun' => 110,'nam'=>$script_transl['item_head'][2]),
                                 array('lun' => 10,'nam'=>$script_transl['item_head'][3]),
                                 array('lun' => 18,'nam'=>$script_transl['item_head'][4])
                                )
@@ -145,18 +145,19 @@ while ($mv = gaz_dbi_fetch_array($result)) {
          $aRiportare['bot'][2]['nam'] = 0;
          $item_head['bot']= array(array('lun' => 32,'nam'=>$mv['artico']),
                                   array('lun' => 18,'nam'=>$mv['catmer']),
-                                  array('lun' => 90,'nam'=>$mv['desart']),
+                                  array('lun' => 110,'nam'=>$mv['desart']),
                                   array('lun' => 10,'nam'=>$mv['unimis']),
                                   array('lun' => 18,'nam'=>number_format($mv['scorta'],1,',',''))
                                   );
-        if (empty($mv['image'])){
-           $pdf->setItemGroup($item_head);
-        } else {
-           $pdf->setItemGroup($item_head,$mv['image'],$mv['web_url']);
-        }
+        
+		$pdf->setItemGroup($item_head);
+        
         $pdf->setRiporti('');
         $pdf->AddPage('L',$config->getValue('page_format'));
       }
+	  if (!empty($mv['image'])){
+		$pdf->Image('@'.$mv['image'], 250, 22, 10, 0,'', '','', true, 300, '', false, false, 0, false, false, false);
+	  }
 
       // passo tutte le variabili al metodo in modo da non costringere lo stesso a fare le query per ricavarsele
       $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
