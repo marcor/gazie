@@ -74,7 +74,7 @@ require("../../library/include/header.php");
 <script type="text/javascript">
     $(window).scroll(function ()
     {
-        if ($(document).height() <= $(window).scrollTop() + $(window).height() +5 ) {
+        if ($(document).height() <= $(window).scrollTop() + $(window).height() +20 ) {
             loadmore();
         }
     });

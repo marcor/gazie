@@ -474,6 +474,9 @@ if ($modal_ok_insert === true) {
 	if($form['good_or_service']==2){
 	?>
                 <div class="row">
+                    <div class="col-md-6">
+					<a href="stampa_bom.php?ri=<?php echo $form['codice']; ?>" class="btn btn-info btn-small pull-left" role="button" aria-pressed="true">Stampa la distinta base (BOM)</a>                    
+                    </div>
                     <div class="col-md-12">
 					<a href="admin_artico_compost.php?Update&codice=<?php echo $form['codice']; ?>" class="btn btn-warning btn-small pull-right" role="button" aria-pressed="true">Modifica la composizione</a>                    
                     </div>

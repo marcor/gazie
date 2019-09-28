@@ -285,7 +285,7 @@ class magazzForm extends GAzieForm {
 		if ($n0>=1){
 			foreach ($data0 as $k=>$v){
 				$data1=$this->getBOMfromDB($v['codice_artico_base'],1);
-				$data0[$k]['totq']=$v['quantita_artico_base'];
+				$data0[$k]['totq']=floatval($v['quantita_artico_base']);
 				$n1=count($data1);
 				if ($n1>=1){
 					$data0[$k]['codice_artico_base']=$data1;

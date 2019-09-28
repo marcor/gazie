@@ -105,6 +105,9 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         } else if ($row["good_or_service"] == 0) {
             $gooser_i = 'shopping-cart';
         } else if ($row["good_or_service"] == 2) {
+			$ldoc='<a target="_blank" class="btn btn-xs btn-default" href="stampa_bom.php?ri=' . $row["codice"] . '">
+		BOM(pdf) 
+		</a>';
             $gooser_i = 'tasks';
         } 
         $prt = '';
