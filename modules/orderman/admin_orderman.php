@@ -928,7 +928,9 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 ?>
 		<div class="container-fluid">
 			<div class="row" style="margin-left: 0px;">
-				<div class="col-sm-12" align="center" style="border:1px solid red">Articolo composto
+				<div align="center">
+				<a  title="Vai alla distinta base composizione" class="col-sm-12 btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"../../modules/magazz/admin_artico_compost.php?Update&codice=".$form['codart'];?>', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
+				Articolo composto &nbsp<span class="glyphicon glyphicon-tasks"></span></a>
 				</div>
 			</div>
 			<?php
