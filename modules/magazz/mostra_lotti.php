@@ -303,7 +303,7 @@ if (isset($_POST['close'])){
 	?>
 	<form method="post" name="closewindow">
 	<div>
-	<a class="btn btn-info btn-md" href="../../modules/magazz/stampa_lotti.php?codice=<?php echo $codice;?>" style="float:left"><span class="glyphicon glyphicon-print"></span></a>
+	<a class="btn btn-info btn-md" title="Stampa tutti i movimenti per ciascun lotto" href="../../modules/magazz/stampa_lotti.php?codice=<?php echo $codice;?>" style="float:left"><span class="glyphicon glyphicon-print"></span></a>
 	<button class="btn btn-info btn-md" type="submit" title="Elimina file temporanei e chiudi finestra" name="close" style="float:right"><span class="glyphicon glyphicon-remove"></span>
 	</button>
 	</div>

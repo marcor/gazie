@@ -71,11 +71,15 @@ if (count($lm->available) > 0) {
 		$gTables['movmag'] . ".datdoc,".
 		$gTables['movmag'] . ".operat,".
 		$gTables['movmag'] . ".id_mov,".
+		$gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
 		$gTables['lotmag'] . ".id,".
 		$gTables['artico'] . ".unimis,".
 		$gTables['lotmag'] . ".identifier,".
 		$gTables['lotmag'] . ".expiry ",
-		$gTables['movmag'] . " LEFT JOIN " . $gTables['lotmag'] . " ON ". $gTables['movmag'] . ".id_lotmag = " . $gTables['lotmag'] . ".id ". " LEFT JOIN " . $gTables['artico'] . " ON ". $gTables['movmag'] . ".artico = " . $gTables['artico'] . ".codice ", $where, $orderby);
+		$gTables['movmag'] . " LEFT JOIN " . $gTables['lotmag'] . " ON ". $gTables['movmag'] . ".id_lotmag = " . $gTables['lotmag'] . ".id ".
+		" LEFT JOIN " . $gTables['artico'] . " ON ". $gTables['movmag'] . ".artico = " . $gTables['artico'] . ".codice ".
+		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice"
+		, $where, $orderby);
 		
 		foreach ($rs as $movlot){ // stampo tutti i movimenti del singolo lotto
 			if ( $i % 24 == 0 ) {
@@ -83,14 +87,14 @@ if (count($lm->available) > 0) {
 				$pdf->AddPage('L',"A4");
 				$pdf->Cell(50,5,"Lotto",$heavy,0,'C');
 				$pdf->Cell(25,5,"Scadenza",$heavy,0,'C');
-				$pdf->Cell(75,5,"Descrizione movimento",$heavy,0,'L');
+				$pdf->Cell(85,5,"Descrizione movimento",$heavy,0,'L');
 				$pdf->Cell(25,5,"Data",$heavy,0,'C');
 				$pdf->Cell(15,5,"U.m.",$heavy,0,'C');
 		
-				$pdf->Cell(25,5,"Entrata",$heavy,0,'R');
-				$pdf->Cell(25,5,"Uscita",$heavy,0,'R');
+				$pdf->Cell(20,5,"Entrata",$heavy,0,'R');
+				$pdf->Cell(20,5,"Uscita",$heavy,0,'R');
         
-				$pdf->Cell(35,5,"Totale",$heavy,1,'R');  
+				$pdf->Cell(30,5,"Totale",$heavy,1,'R');  
 			}
 			$totale=$totale+($movlot['operat']*$movlot['quanti']);
 			$pdf->SetTextColor(0);
@@ -103,17 +107,17 @@ if (count($lm->available) > 0) {
 			} else {
 				$pdf->Cell(25,5,'',$light);
 			}
-			$pdf->Cell(75,5,$movlot['tipdoc']." - ".$movlot['desdoc'],$light,0,'L');
+			$pdf->Cell(85,5,substr($movlot['tipdoc']." - ".$movlot['desdoc']." ".$movlot['ragsoc'],0,50),$light,0,'L');
 			$pdf->Cell(25,5,gaz_format_date($movlot['datdoc']),$light,0,'C');
 			$pdf->Cell(15,5,$movlot['unimis'],$light,0,'C');
 			if ($movlot['operat']>0) {
-				$pdf->Cell(25,5,gaz_format_number($movlot['quanti']),$light,0,'R', 0, '', 1);
-				$pdf->Cell(25,5,'',$light);				
+				$pdf->Cell(20,5,gaz_format_number($movlot['quanti']),$light,0,'R', 0, '', 1);
+				$pdf->Cell(20,5,'',$light);				
 			} else {
-				$pdf->Cell(25,5,'',$light);
-				$pdf->Cell(25,5,gaz_format_number($movlot['quanti']),$light,0,'R', 0, '', 1);
+				$pdf->Cell(20,5,'',$light);
+				$pdf->Cell(20,5,gaz_format_number($movlot['quanti']),$light,0,'R', 0, '', 1);
 			}
-			$pdf->Cell(35,5,gaz_format_number($totale),$light,1,'R');  
+			$pdf->Cell(30,5,gaz_format_number($totale),$light,1,'R');  
 			$i++;
 		}
 		$pdf->Cell(270,5,'','',1);
