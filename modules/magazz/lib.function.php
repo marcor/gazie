@@ -220,7 +220,64 @@ class magazzForm extends GAzieForm {
 		}
 		return $ret;
 	}
+	
+	private function getlevel($codbase){
+        global $gTables;
+		$ret=[];
+		$rs_BOM = gaz_dbi_dyn_query("*", $gTables['distinta_base'], "codice_artico_base = '".$codbase."' GROUP BY codice_composizione",'codice_artico_base');
+		while ($r = gaz_dbi_fetch_array($rs_BOM)) {
+			$ret[$r['codice_composizione']]=$r;
+		}
+		return $ret;
+	}
+	
 
+	function buildTrunk($cod,$exist=false){ 
+		/* funzione che permette di eseguire due operazioni:
+		1- se non si passa $exixt crea un array mutlidimensionale (profondità 5) con tutti i "genitori" in cui è presente l'articolo passato come referenza in $cod
+		2- qualora si passi $exit esso si limita a controlla la presenza dello stesso tra tutti i genitori di quello passato su $cod, in caso positivo ritorna $cod
+			altrimenti false
+		*/
+        global $gTables;
+		$acc=$this->getlevel($cod);
+		if (count($acc)>=1){
+			foreach ($acc as $k0=>$v0){
+				if ($exist==$k0) return $cod; // questi righi li utilizzo per ritornare il codice dell'articolo di base per controllare l'esistenza 
+				$acc[$k0]['up']=$this->getlevel($v0['codice_composizione']);
+				if (count($acc[$k0]['up'])>0){
+					foreach ($acc[$k0]['up'] as $k1=>$v1){
+						if ($exist==$k1) return $cod;
+						$acc[$k0]['up'][$k1]['up']=$this->getlevel($v1['codice_composizione']);
+						if (count($acc[$k0]['up'][$k1]['up'])>0){
+							foreach ($acc[$k0]['up'][$k1]['up'] as $k2=>$v2){
+								if ($exist==$k2) return $cod;
+								$acc[$k0]['up'][$k1]['up'][$k2]['up']=$this->getlevel($v2['codice_composizione']);
+								if (count($acc[$k0]['up'][$k1]['up'][$k2]['up'])>0){
+									foreach ($acc[$k0]['up'][$k1]['up'][$k2]['up'] as $k3=>$v3){
+										if ($exist==$k3) return $cod;
+										$acc[$k0]['up'][$k1]['up'][$k2]['up'][$k3]['up']=$this->getlevel($v3['codice_composizione']);
+										if (count($acc[$k0]['up'][$k1]['up'][$k2]['up'][$k3]['up'])>0){
+											foreach ($acc[$k0]['up'][$k1]['up'][$k2]['up'][$k3]['up'] as $k4=>$v4){
+												if ($exist==$k4) return $cod;
+												$acc[$k0]['up'][$k1]['up'][$k2]['up'][$k3]['up'][$k4]['up']=$this->getlevel($v4['codice_composizione']);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if ($exist){
+			return false;
+		} else{
+			return $acc;
+		}
+	}
+		
+	
     function getBOM($codcomp) {  // Creo l'array multidimensionale della distita base (BOM)
 		$depth=0;
 		$data0=$this->getBOMfromDB($codcomp,0);
@@ -228,30 +285,36 @@ class magazzForm extends GAzieForm {
 		if ($n0>=1){
 			foreach ($data0 as $k=>$v){
 				$data1=$this->getBOMfromDB($v['codice_artico_base'],1);
+				$data0[$k]['totq']=$v['quantita_artico_base'];
 				$n1=count($data1);
 				if ($n1>=1){
 					$data0[$k]['codice_artico_base']=$data1;
 					foreach ($data1 as $k2=>$v2){	
+						$data0[$k]['codice_artico_base'][$k2]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base'];
 						$data2=$this->getBOMfromDB($v2['codice_artico_base'],2);
 						$n2=count($data2);
 						if ($n2>=1){
 							$data0[$k]['codice_artico_base'][$k2]['codice_artico_base']=$data2;
 							foreach ($data2 as $k3=>$v3){	
+								$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base']*$v3['quantita_artico_base'];
 								$data3=$this->getBOMfromDB($v3['codice_artico_base'],3);
 								$n3=count($data3);
 								if ($n3>=1){
 									$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base']=$data3;
 									foreach ($data3 as $k4=>$v4){	
+										$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base']*$v3['quantita_artico_base']*$v4['quantita_artico_base'];
 										$data4=$this->getBOMfromDB($v4['codice_artico_base'],4);
 										$n4=count($data4);
 										if ($n4>=1){
 											$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base']=$data4;
 											foreach ($data4 as $k5=>$v5){	
+												$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base'][$k5]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base']*$v3['quantita_artico_base']*$v4['quantita_artico_base']*$v5['quantita_artico_base'];
 												$data5=$this->getBOMfromDB($v5['codice_artico_base'],5);
 												$n5=count($data5);
 												if ($n5>=1){
 													$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base'][$k5]['codice_artico_base']=$data5;
 													foreach ($data5 as $k6=>$v6){	
+														$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base'][$k5]['codice_artico_base'][$k6]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base']*$v3['quantita_artico_base']*$v4['quantita_artico_base']*$v5['quantita_artico_base']*$v6['quantita_artico_base'];
 														$data6=$this->getBOMfromDB($v6['codice_artico_base'],6);
 														$n6=count($data6);
 														if ($n6>=1){

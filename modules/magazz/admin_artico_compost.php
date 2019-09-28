@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
+$gForm = new magazzForm();
 
 if(isset($_GET['delete'])) {
 	print_r($_GET);
@@ -75,6 +76,11 @@ if(isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){
 			$msg['err'][] = 'quarow';
 		}
 	}
+	// controllo se l'articolo che sto aggiungendo è un genitore e quindi un assurdo...
+	$ctrl_exist_new_codart=$gForm->buildTrunk($codcomp,$form['codart']);
+	if ($ctrl_exist_new_codart==$codcomp){
+			$msg['err'][] = 'artpar';
+	}
 	if(floatval($form['quanti'])>=0.00001&&strlen($form['codart'])<=2){
 			$msg['err'][] = 'codart';
 	} elseif(floatval($form['quanti'])<0.00001&&strlen($form['codart'])>2){
@@ -89,9 +95,13 @@ if(isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){
 			$rx=gaz_dbi_get_row($gTables['distinta_base'], 'codice_composizione', $codcomp, "AND codice_artico_base ='". $form['codart'] . "'");
 			if(!$rx){
 				gaz_dbi_query("INSERT INTO " . $gTables['distinta_base'] . "(codice_composizione,codice_artico_base,quantita_artico_base) VALUES ('".$codcomp. "','".$form['codart']."','". $form['quanti'] . "')");
+			} else {
+				$msg['err'][] = 'artexi';
 			}
 		}
-        header ( 'location: ../magazz/admin_artico_compost.php?Update&codice='.$codcomp);
+		if (count($msg['err']) == 0) { // tutto è andato a buon fine, ricarico la pagina con i nuovi valori
+			header ( 'location: ../magazz/admin_artico_compost.php?Update&codice='.$codcomp);
+		}
 	}
 }
 
@@ -138,7 +148,6 @@ function itemErase(id,descri,codcomp){
 
 <form method="POST" name="form" enctype="multipart/form-data">
 <?php
-    $gForm = new magazzForm();
     echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
     echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
 	echo '<input type="hidden" name="hidden_req" value="'.$form['hidden_req'].'" />';

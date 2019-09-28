@@ -454,7 +454,8 @@ $strScript = array("browse_document.php" =>
             'codart' => 'Non hai selezionato l\'articolo da aggiungere alla composizione',
             'quanti' => 'Non hai selezionato la quantità da aggiungere alla composizione',
             'quarow' => 'Rigo con quantità zero',
-			'artexi' => 'Articolo già presente in composizione'
+			'artexi' => 'Articolo già presente in composizione: eventualmente cambia la quantità',
+			'artpar' => 'Non puoi aggiungere un articolo genitore'
         ),
         'codice' => "Codice",
         'descri' => "Descrizione",
