@@ -28,7 +28,6 @@ $msg = array('err' => array(), 'war' => array());
 $gForm = new magazzForm();
 
 if(isset($_GET['delete'])) {
-	print_r($_GET);
     gaz_dbi_del_row($gTables['distinta_base'], 'id', intval($_GET['delete']));
     header("Location: ../magazz/admin_artico.php?Update&codice=".$_GET['codcomp']);
 	exit;
