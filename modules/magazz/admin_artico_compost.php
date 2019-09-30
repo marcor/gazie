@@ -41,7 +41,9 @@ if(!isset($form['ritorno'])){
 if (isset($_GET['codice'])){
     $codcomp = filter_var($_GET['codice'],FILTER_SANITIZE_STRING);
 }else{
-    header("Location: ../magazz/admin_artico_compost.php?codice=".$codcomp );
+   // header("Location: ../magazz/admin_artico_compost.php?codice=".$codcomp )
+   // Antonio Germani Se viene aperto senza codice articolo esco e rimando all'elenco articoli
+   header ( 'location: ../magazz/report_artico.php');
 	
 }
 
