@@ -435,7 +435,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
-                            <input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="255" />
+                            <input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="255" id="suggest_descri_artico" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->

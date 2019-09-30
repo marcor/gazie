@@ -174,5 +174,18 @@ $(function() {
 			$(this).closest("form").submit();
 		}
 	});
+	$( "#suggest_descri_artico" ).autocomplete({
+		source: "../../modules/root/search.php?opt=suggest_descri_artico",
+		minLength: 3,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#suggest_descri_artico").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
 });
 
