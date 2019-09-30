@@ -59,7 +59,7 @@ $heavy = array (
     'TRBL' => array('width' => 0, 'color' => array(0,0,0), 'solid' => 1, 'cap' => 'butt'),
 );
 $i=0;
-$orderby = "datdoc";
+$orderby = "datdoc,id_mov";
 if (count($lm->available) > 0) {
 	foreach ($lm->available as $v_lm) { // per ogni lotto disponibile
 		$totale = 0;
