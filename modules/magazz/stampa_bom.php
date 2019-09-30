@@ -71,8 +71,9 @@ if (sizeof($result) > 0) {
 			$acc[$k0]['d']=$v0['descri'];
 			$acc[$k0]['u']=$v0['uniacq'];
 		}else{$acc[$k0]['t']+=$v0['totq'];}
-		$pdf->SetFillColor(240,160,190);
-		$pdf->Cell(60,5,$k0,1,0,'L',1);
+		$pdf->SetFillColor(255,225,255);
+		$pdf->Cell(27,5,$k0,1,0,'C',1, '', 1);
+		$pdf->Cell(33);
 		$pdf->Cell(106,5,$v0['descri'],1, 0, 'L', 1, '', 1);
 		$pdf->Cell(26,5,$v0['uniacq'],1, 0, 'C', 1, '', 1);
 		$pdf->Cell(37,5,floatval($v0['quantita_artico_base']),1, 0, 'C', 1, '', 1);
@@ -84,9 +85,10 @@ if (sizeof($result) > 0) {
 					$acc[$k1]['d']=$v1['descri'];
 					$acc[$k1]['u']=$v1['uniacq'];
 				}else{$acc[$k1]['t']+=$v1['totq'];}
-				$pdf->SetFillColor(160,240,190);
-				$pdf->Cell(10);
-				$pdf->Cell(50,5,$k1,1,0,'L',1);
+				$pdf->SetFillColor(225,255,255);
+				$pdf->Cell(7);
+				$pdf->Cell(27,5,$k1,1,0,'C',1);
+				$pdf->Cell(26);
 				$pdf->Cell(106,5,$v1['descri'],1, 0, 'L', 0, '', 1);
 				$pdf->Cell(26,5,$v1['uniacq'],1, 0, 'C', 0, '', 1);
 				$pdf->Cell(37,5,floatval($v1['quantita_artico_base']),1, 0, 'C', 0, '', 1);
@@ -98,8 +100,9 @@ if (sizeof($result) > 0) {
 							$acc[$k2]['d']=$v2['descri'];
 							$acc[$k2]['u']=$v2['uniacq'];
 						}else{$acc[$k2]['t']+=$v2['totq'];}
-						$pdf->Cell(20);
-						$pdf->Cell(40,5,$k2,1);
+						$pdf->Cell(14);
+						$pdf->Cell(27,5,$k2,1, 0, 'C', 0, '', 1);
+						$pdf->Cell(19);
 						$pdf->Cell(106,5,$v2['descri'],1, 0, 'L', 0, '', 1);
 						$pdf->Cell(26,5,$v2['uniacq'],1, 0, 'C', 0, '', 1);
 						$pdf->Cell(37,5,floatval($v2['quantita_artico_base']),1, 0, 'C', 0, '', 1);
@@ -109,14 +112,31 @@ if (sizeof($result) > 0) {
 								if (!isset($acc[$k3])){
 									$acc[$k3]['t']=$v3['totq'];
 									$acc[$k3]['d']=$v3['descri'];
-									$acc[$k3]['u']=$v2['uniacq'];
+									$acc[$k3]['u']=$v3['uniacq'];
 								}else{$acc[$k3]['t']+=$v3['totq'];}
-								$pdf->Cell(20);
-								$pdf->Cell(40,5,$k3,1);
+								$pdf->SetFillColor(255,255,225);
+								$pdf->Cell(21);
+								$pdf->Cell(27,5,$k3,1, 0, 'C', 1, '', 1);
+								$pdf->Cell(12);
 								$pdf->Cell(106,5,$v3['descri'],1, 0, 'L', 0, '', 1);
 								$pdf->Cell(26,5,$v3['uniacq'],1, 0, 'C', 0, '', 1);
 								$pdf->Cell(37,5,floatval($v3['quantita_artico_base']),1, 0, 'C', 0, '', 1);
 								$pdf->Cell(37,5,$v3['totq'],1,1,'R');
+								if (is_array($v3['codice_artico_base'])){
+									foreach ($v3['codice_artico_base'] as $k4=>$v4){
+										if (!isset($acc[$k4])){											$acc[$k4]['t']=$v4['totq'];
+											$acc[$k4]['d']=$v4['descri'];
+											$acc[$k4]['u']=$v4['uniacq'];
+										}else{$acc[$k4]['t']+=$v4['totq'];}
+										$pdf->Cell(28);
+										$pdf->Cell(25,5,$k4,1, 0, 'C', 0, '', 1);
+										$pdf->Cell(7);
+										$pdf->Cell(106,5,$v4['descri'],1, 0, 'L', 0, '', 1);
+										$pdf->Cell(26,5,$v4['uniacq'],1, 0, 'C', 0, '', 1);
+										$pdf->Cell(37,5,floatval($v4['quantita_artico_base']),1, 0, 'C', 0, '', 1);
+										$pdf->Cell(37,5,$v4['totq'],1,1,'R');
+									}
+								}
 							}
 						}
 					}

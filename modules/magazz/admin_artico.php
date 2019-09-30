@@ -177,11 +177,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (empty($form["descri"])) {
             $msg['err'][] = 'descri';
         }
-/* NON OBBLIGO ALL'UNITA' DI MISURA
-        if (empty($form["unimis"])) {
+/* OBBLIGO AD UNA SOLA UNITA' DI MISURA*/
+        if (empty($form["unimis"])&&empty($form["uniacq"])) {
             $msg['err'][] = 'unimis';
-        }
-*/
+        }elseif(empty($form["unimis"])){
+			$form["unimis"]=$form["uniacq"];
+		}else{
+			$form["uniacq"]=$form["unimis"];
+		}
+
         if (empty($form["aliiva"])) {
             $msg['err'][] = 'aliiva';
         }
