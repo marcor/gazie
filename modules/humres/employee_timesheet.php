@@ -135,7 +135,7 @@ if (isset($_POST['week'])) { // accessi successivi
 		if (isset($_POST['go_insert'])) {
 			header("Location: docume_humres.php"); 
 		} else {
-			header("Location: print_timesheet.php?year=".$form['year']."&week=".$form['week']);
+			header("Location: print_timesheet.php?year=".$form['year']."&week=".$form['week']."&employee=".$form['id_employee']);
 		}
 	}
 } else { // al primo accesso

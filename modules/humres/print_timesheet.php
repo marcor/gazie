@@ -59,9 +59,12 @@ require("../../config/templates/report_template.php");
 require("lang.".$admin_aziend['lang'].".php");
 $script_transl=$strScript['employee_timesheet.php'];
 $where=" (start_date <= '".$last_day."' OR end_date IS NULL ) AND (end_date < '2000-01-01' OR end_date IS NULL OR end_date > '".$first_day."')";
+if (!empty($_GET['employee']) && is_numeric($_GET['employee'])) {
+    $where.=" AND id_staff=".$_GET['employee'];
+}
 $what="*";
 $tables=$gTables['staff'] . ' AS st LEFT JOIN ' . $gTables['clfoco'] . ' AS wo ON st.id_clfoco=wo.codice ';
-$result = gaz_dbi_dyn_query ($what, $tables,$where,'id_staff');
+$result = gaz_dbi_dyn_query($what, $tables, $where, 'id_staff');
 
 $title = array('luogo_data'=>$luogo_data,
                'title'=>$script_transl['title'].' del mese di '.strftime("%B %Y", strtotime($first_day)),
