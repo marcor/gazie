@@ -158,12 +158,12 @@ class OrdineFornitore extends Template
                     //$this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "1":
-                    $this->Cell(127, 6, $rigo['descri'],'LBR',0,'L');
+                    $this->Cell(127, 6, $rigo['descri'],'LBR',0,'L',0,'',1);
                     $this->Cell(46,6,'','B',0,'L');
                     $this->Cell(15, 6, gaz_format_number($rigo['importo']),1,1,'R',0,'',1);
                     break;
                 case "2":
-                    $this->Cell(127,6,$rigo['descri'],'LR',0,'L'); // Modificato a mano
+                    $this->Cell(127,6,$rigo['descri'],'LR',0,'L',0,'',1); // Modificato a mano
                     $this->Cell(81,6,'','R',1);
                     break;
                 case "3":

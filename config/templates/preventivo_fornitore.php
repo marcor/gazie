@@ -160,12 +160,12 @@ class PreventivoFornitore extends Template
                     }
                     break;
                 case "1":
-                    $this->Cell(125, 6, $rigo['descri'],'LBR',0,'L');
+                    $this->Cell(125, 6, $rigo['descri'],'LBR',0,'L',0,'',1);
                     //$this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
                     $this->Cell(61, 6, '',1,1,'R');
                     break;
                 case "2":
-                    $this->Cell(125,6,$rigo['descri'],'LR',0,'L'); // Modificato a mano
+                    $this->Cell(125,6,$rigo['descri'],'LR',0,'L',0,'',1); // Modificato a mano
                     $this->Cell(61,6,'','R',1);
                     break;
                 case "3":

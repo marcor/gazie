@@ -1246,7 +1246,7 @@ foreach ($form['righi'] as $key => $value) {
 			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
             echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" /></td>\n";
             echo "<td></td>\n";
-            echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>\n";
+            echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][prelis]\" value=\"\" /></td>\n";
