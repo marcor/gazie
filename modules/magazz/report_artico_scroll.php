@@ -101,14 +101,12 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		</a>';
         }
         if ($row["good_or_service"] == 1) {
-            $gooser_i = 'wrench';
+            $ldoc = '<i class="glyphicon glyphicon-wrench" > </i>';
         } else if ($row["good_or_service"] == 0) {
-            $gooser_i = 'shopping-cart';
+            $ldoc = '<i class="glyphicon glyphicon-shopping-cart"> </i>';
         } else if ($row["good_or_service"] == 2) {
-			$ldoc='<a target="_blank" class="btn btn-xs btn-default" href="stampa_bom.php?ri=' . $row["codice"] . '">
-		BOM(pdf) 
-		</a>';
-            $gooser_i = 'tasks';
+			$ldoc='<a target="_blank" title="Stampa l\'albero della distinta base" class="btn btn-xs btn-default" href="stampa_bom.php?ri=' . $row["codice"] . '"> <i class="glyphicon glyphicon-tasks"></i><b>
+		BOM</b></a>';
         } 
         $prt = '';
         if ($row["payroll_tax"] > 0) {
@@ -144,7 +142,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
                 <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["codice"]; ?>" data-label="<?php echo $row['annota']; ?>"><?php echo $row["descri"]; ?></span>
             </td>
             <td data-title="<?php echo $script_transl["good_or_service"]; ?>" class="text-center">
-                <?php echo $ldoc; ?> &nbsp;   <i class="glyphicon glyphicon-<?php echo $gooser_i; ?>"></i> 
+                <?php echo $ldoc; ?> 
             </td>
             <td data-title="<?php echo $script_transl["catmer"]; ?>" class="text-center">
                 <?php echo $row["catmer"]; ?>
