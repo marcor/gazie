@@ -405,20 +405,20 @@ if ($modal_ok_insert === true) {
       	<div id="IERresetIncludeExcludeRows" title="Ripristina"></div>
         <!--- DC - 06/02/2019 -->
     		<?php
-        if ($toDo == 'insert') {
-            echo '<div class="text-center"><b>' . $script_transl['ins_this'] . '</b></div>';
-        } else {
-            echo '<div class="text-center"><b>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</b></div>';
-        }
     }
     echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
     if (count($msg['err']) > 0) { // ho un errore
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     }
 	if (isset($_SESSION['ok_ins'])){
-        $gForm->toast('L\'articolo ' . $_SESSION['ok_ins'].' è stato inserito con successo, sotto se lo vuoi modificare' , 'alert-last-row', 'alert-success');
+        $gForm->toast('L\'articolo ' . $_SESSION['ok_ins'].' è stato inserito con successo, sotto per modificarlo. Oppure puoi: <a class="btn btn-info" href="admin_artico.php?Insert">Inserire uno nuovo articolo</a> ' , 'alert-last-row', 'alert-success');
 		unset($_SESSION['ok_ins']);
 	}
+    if ($toDo == 'insert') {
+        echo '<div class="text-center"><b>' . $script_transl['ins_this'] . '</b></div>';
+    } else {
+        echo '<div class="text-center"><b>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</b></div>';
+    }
     ?>
         <div class="panel panel-default gaz-table-form">
             <div class="container-fluid">
