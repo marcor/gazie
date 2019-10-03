@@ -28,7 +28,7 @@ require("../../library/include/datlib.inc.php");
  function serchCOD()
    {
 	global $gTables;
-    $max_codice = gaz_dbi_query("select max(codice) from ".$gTables['artico']);
+	$max_codice = gaz_dbi_query("select codice from ".$gTables['artico']." order by CAST(codice AS DECIMAL) desc limit 1");
     $max_cod = gaz_dbi_fetch_array($max_codice);
     return ++$max_cod[0];
    }
