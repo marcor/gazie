@@ -5,6 +5,7 @@
         <title>GAzie è in fase di manutenzione</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="shortcut icon" href="../../library/images/favicon.ico">
         <style type="text/css">
             body { text-align: center; padding: 10%; font: 20px Helvetica, sans-serif; color: #333; background-image : url("../../library/images/sfondo.png");}
             h1 { font-size: 40px; margin: 0; }
@@ -19,8 +20,7 @@
     <body>
         <article>
             <h1>Al momento non è concesso accedere a GAzie.</h1>
-            <p>la procedura di manutenzione non durerà ancora molto, riprova più tardi.</p>
-            <p>Siamo spiacenti per il disagio causato, stiamo lavorando per voi.</p>
+            <p>Siamo spiacenti per il disagio causato, la procedura di manutenzione non durerà ancora molto. Riprova più tardi.</p>
             <p id="signature">Per informazioni contatta <a href="mailto:<?php echo $maintenance; ?>"><?php echo $maintenance; ?></a> oppure riprova e <a href="../../index.php">Torna in GAzie</a></p>
         </article>
     </body>
