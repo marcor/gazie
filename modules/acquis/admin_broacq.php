@@ -167,6 +167,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['quality'] = substr($value['quality'],0,50);
             $form['righi'][$next_row]['id_mag'] = intval($value['id_mag']);
             $form['righi'][$next_row]['id_orderman'] = intval($value['id_orderman']);
+			if(isset($_POST['all_same_orderman'])){$form['righi'][$next_row]['id_orderman']=$form['in_id_orderman'];}
             $form['righi'][$next_row]['annota'] = substr($value['annota'], 0, 50);
             $form['righi'][$next_row]['larghezza'] = floatval($value['larghezza']);
             $form['righi'][$next_row]['lunghezza'] = floatval($value['lunghezza']);
@@ -1035,11 +1036,14 @@ echo "</td></tr>\n";
 echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\">Data di consegna richiesta</td>\n";
 echo "<td class=\"FacetDataTD\">\n";
 echo "\t <input name=\"prop_delivery\" id=\"prop_delivery\" value=\"".$form['prop_delivery']."\"/>\n";
-echo '</td><td class="FacetFieldCaptionTD">Produzione:</td><td colspan="3">  ';
+echo '</td><td class="FacetFieldCaptionTD">Produzione:</td><td>  ';
 $select_prod = new selectproduction("in_id_orderman");
 $select_prod->addSelected($form['in_id_orderman']);
 $select_prod->output($form['coseprod']);
 // fine modifiche
+if ($form['in_id_orderman']>0){
+	echo '<input type="submit" class="btn btn-info btn-xs" name="all_same_orderman" title="Tutti i righi alla produzione '.$form['coseprod'].'" value=" '.$form['coseprod'].' TUTTO! " />';	
+} 
 echo '</td></tr>';
 echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";

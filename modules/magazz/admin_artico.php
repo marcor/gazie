@@ -426,7 +426,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" id="suggest_new_codart" maxlength="15" tabindex="1" />
+                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" id="suggest_new_codart" maxlength="15" tabindex="1" /><input class="btn btn-xs" type="submit" value="" />
 							&nbsp;<input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>></td> <!-- M1 modificato a mano -->
                         </div>
                     </div>
