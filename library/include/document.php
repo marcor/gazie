@@ -373,7 +373,7 @@ class DocContabVars {
             } elseif ($rigo['tiprig'] == 3) {
                 $this->riporto += $rigo['prelis'];
             }
-			if ($rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70 ){
+			if ($this->tesdoc['tipdoc']=='AFA' && $rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70  ){
 				/* 	se la descrizione no la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)
 					aggiungo righi descrittivi
 				*/
