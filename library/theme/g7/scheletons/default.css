@@ -497,9 +497,7 @@ input[type="text"]:focus, textarea:focus, select:focus {
 .ui-autocomplete span.hl_results {
     background-color: #ffff66;
 }
-.ui-autocomplete-input {
-    max-width: 250px;
-}
+
 /** ENRICO FEDELE */
 
 .navbar-toggle {
