@@ -47,7 +47,9 @@ $transl['camp'] = array('name' => "Registro di campagna",
 										 13 =>array("Gestione avversità","Avversità"),
 										 14 =>array("Gestione colture","Colture"),
 										 15 =>array("Gestione uso fitofarmaci","Uso fitofarmaci"),
-										 16 =>array("visualizza documenti e/o certificazioni","Documenti e/o certificazioni")
+										 16 =>array("visualizza documenti e/o certificazioni","Documenti e/o certificazioni"),
+										 17 =>array("Gestione recipienti stoccaggio","Recipienti stoccaggio"),
+										 18 =>array("Gestione stabilimenti depositi","Stabilimenti e depositi")
 										 
                                       )
                           );
