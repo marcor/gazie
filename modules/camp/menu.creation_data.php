@@ -28,7 +28,8 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
 								3=>array('link'=>"report_movmag.php",'weight'=>3),
 								4=>array('link'=>"report_caumag.php",'weight'=>4),
 								5=>array('link'=>"report_campi.php",'weight'=>5),
-								6=>array('link'=>"fitofarmaci.php",'weight'=>6)
+								6=>array('link'=>"fitofarmaci.php",'weight'=>6),
+								7=>array('link'=>"sian.php",'weight'=>7)
                                ),
                     'm3'=>array('m2'=>array(1=>array(
                                                     array('translate_key'=>1,'link'=>"admin_artico.php?Insert",'weight'=>1),
@@ -57,7 +58,11 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
                                                     array('translate_key'=>14,'link'=>"admin_colt.php",'weight'=>5),
 													array('translate_key'=>15,'link'=>"report_fitofarmaci.php",'weight'=>10),
 													array('translate_key'=>11,'link'=>"update_fitofarmaci.php",'weight'=>15)
-                                                    )
+                                                    ),
+											7=>array(
+                                                    
+                                                    )		
+											
                                             )
                                )
                   );

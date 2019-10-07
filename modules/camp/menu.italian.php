@@ -29,7 +29,8 @@ $transl['camp'] = array('name' => "Registro di campagna",
                                          3 =>array("Giornale di Magazzino","Movimenti"),
                                          4 =>array("Causali di Magazzino","Causali"),
 										 5=>array("Gestione Campi di coltivazione","Campi di coltivazione"),
-										 6 =>array("Gestione fitofarmaci","Fitofarmaci")
+										 6 =>array("Gestione fitofarmaci","Fitofarmaci"),
+										 7 =>array("Gestione olio SIAN","SIAN")
                                          ),
                           'm3' => array( 1 =>array("Inserisci un nuovo articolo","Nuova merce/servizio"),
                                          2 =>array("Inventario di magazzino","Inventario di magazzino"),
