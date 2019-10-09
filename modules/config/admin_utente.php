@@ -61,7 +61,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["user_firstname"] = substr($_POST['user_firstname'], 0, 30);
 	$form['user_email'] = trim($_POST['user_email']);
 	$form["lang"] = substr($_POST['lang'], 0, 15);
-	$form["theme"] = substr($_POST['theme'], 0, 20);
+	$form["theme"] = filter_input(INPUT_POST,'theme');
 	$form["style"] = substr($_POST['style'], 0, 30);
 	$form["skin"] = substr($_POST['skin'], 0, 30);
 	$form["Abilit"] = intval($_POST['Abilit']);
