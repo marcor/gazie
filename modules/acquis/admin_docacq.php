@@ -1617,7 +1617,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     <div class="form-group col-md-6 col-lg-3 nopadding">
                         <label for="numdoc" class="col-form-label"><?php echo $script_transl['numfat']; ?></label>
                         <div>
-                            <input type="text" class="form-control" id="numfat" name="numfat" value="<?php echo $form['numfat']; ?>">
+                            <input type="text" class="form-control" id="numfat" name="numfat" maxlength="20" value="<?php echo $form['numfat']; ?>">
                             <input type="hidden" id="numdoc" name="numdoc" value="<?php echo $form['numdoc']; ?>">
                         </div>
                     </div>
