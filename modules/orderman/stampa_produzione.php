@@ -155,6 +155,8 @@ LEFT JOIN ".$gTables['clfoco']. " ON ".$gTables['tesbro'].".clfoco = ".$gTables[
 LEFT JOIN ".$gTables['anagra']. " ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id 
 WHERE tipdoc='AOR' AND ".$gTables['rigbro'].".id_orderman =".intval($_GET['id_orderman'])." ORDER BY datemi ASC, ".$gTables['tesbro'].".id_tes ASC";
 $res=gaz_dbi_query($query);
+$pdf->SetFillColor(255,199,199);
+
 while($row=$res->fetch_assoc()){
 	//print_r($row);
 	switch ($row['tiprig']){
@@ -169,6 +171,7 @@ while($row=$res->fetch_assoc()){
 		$amount=0;
 	}
 	$tot+=$amount;
+	$fillcell=($amount>=0.00001)?false:'1';
 	$ctrlAORtot+=$amount;
 	if ($ctrlAOR==0){
 		$pdf->Cell(277,5,'LISTA DEGLI ORDINI A FORNITORI','LTR', 1, 'L', 1, '', 1);
@@ -190,18 +193,19 @@ while($row=$res->fetch_assoc()){
 		}
 		$ctrlAORtot=0.00;
 	}	
-	if ($amount>=0.01){
+	if ($row['quanti']>=0.00001){
 		$pdf->Cell(105,5);
-		$pdf->Cell(82,5,$row['rigdes'],1,0,'L');
+		$pdf->Cell(82,5,$row['rigdes'],1,0,'L',0,'',1);
 		$pdf->Cell(10,5,$row['unimis'],1,0,'C');
 		$pdf->Cell(20,5,floatval($row['quanti']),1,0,'R'); 
 		$pdf->Cell(20,5,floatval($row['prelis']),1,0,'R');
 		$pdf->Cell(10,5,floatval($row['scorig']),1,0,'C');
-		$pdf->Cell(30,5,gaz_format_number($amount),1, 1, 'R', 0, '', 1);
+		$pdf->Cell(30,5,gaz_format_number($amount),1, 1,'R',$fillcell,'',1);
 	}
 	$ctrlAOR=$row['id_tes'];
 }
 if ($tot>=0.01){
+	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
 	$pdf->Cell(277,4,'TOTALE DELL\'ORDINATO PER LA PRODUZIONE: '.gaz_format_number($tot),1, 1, 'R', 1, '', 1);
 	
 }
