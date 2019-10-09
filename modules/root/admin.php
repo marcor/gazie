@@ -182,7 +182,7 @@ $(function(){
 $get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"exec_mode=2 AND adminid='".$admin_aziend['user_name']."'", 'position_order');
 echo '<div id="sortable" class="vertical-align">';
 while ( $row = gaz_dbi_fetch_array($get_widgets) ) {
-	echo '<div class="col-md-6 text-center" id="position-'.$row['id_bread'].'">';
+	echo '<div class="col-xs-12 col-md-6 text-center" id="position-'.$row['id_bread'].'">';
 	require('../'.$row['file']);
 	echo '</div>'; 
 }
