@@ -22,11 +22,10 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-// gestione campi o appezzamenti di terreno
+ // IL REGISTRO DI CAMPAGNA E' UN MODULO DI ANTONIO GERMANI - MASSIGNANO AP
+// >> Gestione campi o appezzamenti di terreno <<
 
 require("../../library/include/datlib.inc.php");
-
-
 
 $admin_aziend=checkAdmin();
 $titolo = 'Campi';
@@ -48,10 +47,8 @@ if (isset($_GET['all'])) {
 
 if (!isset($_GET['auxil'])) {
    $auxil = "";
-   $where = "descri like '".addslashes($auxil)."%'";
+   $where = "descri like '".addslashes($auxil)."%' AND id_rif = 0";
 }
-/** ENRICO FEDELE */
-/* pulizia del codice, eliminato boxover, aggiunte classi bootstrap alla tabella, convertite immagini in glyphicons */
 ?>
 <div align="center" class="FacetFormHeaderFont">Campi aziendali</div>
 <?php
