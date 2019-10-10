@@ -23,6 +23,8 @@
   Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+  // IL REGISTRO DI CAMPAGNA E' UN MODULO DI ANTONIO GERMANI - MASSIGNANO AP
+ // >> Gestione File upload olio/olive SIAN <<
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();

@@ -556,6 +556,7 @@ $strScript = array("browse_document.php" =>
         'tempo_sospensione' => 'Tempo di sospensione in gg',
         'dose_ha' => 'Dose massima unità di misura ad ha',
 		'mostra_qdc' => 'Mostrare nel quaderno di campagna',
+		'SIAN' => 'Movimenta il carico e scarico del SIAN',
 		'classif_amb' => 'Classificazione tossicologica',
 		'classif_amb_value' => array(0=>'non classificato',1=>'Irritante',2=>'Nocivo',3=>'Tossico',4=>'Molto tossico',5=>'Pericoloso ambiente'),
         'peso_specifico' => 'Peso specifico/Moltiplicatore',

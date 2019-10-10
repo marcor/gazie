@@ -131,7 +131,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	</td>
 </tr>
 
-<!-- Se servirà riattivare con le dovute modifiche		
+<!-- Se servirà la STAMPA riattivare con le dovute modifiche		
 <tr class=\"FacetFieldCaptionTD\">
 	<form method="post" action="stampa_campi.php">
     <td colspan="7" align="right"><input type="submit" name="print" value="<?php echo $script_transl['print'];?>">

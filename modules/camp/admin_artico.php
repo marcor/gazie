@@ -22,6 +22,8 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+  // IL REGISTRO DI CAMPAGNA E' UN MODULO DI ANTONIO GERMANI - MASSIGNANO AP
+ // >> Gestione campi articolo <<
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
@@ -293,8 +295,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['ritorno'] = 'admin_artico.php';
     }
-    /** ENRICO FEDELE */
-    $form['ref_code'] = $form['codice'];
+    $form['ref_code'] = $form['codice']; 
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
     $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
     $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
@@ -303,9 +304,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
     $form['rows'] = array();
-    /** inizio modifica FP 03/12/2015
-     * fornitore
-     */
+   
     $form['id_anagra'] = $form['clfoco'];
 	$anagra = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['id_anagra']);
     $form['fornitore']=$form['id_anagra']." - ".$anagra['descri'];
@@ -341,6 +340,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
     $form['web_public'] = 1;
     $form['depli_public'] = 1;
+	$form['SIAN']=0;
     /** inizio modifica FP 03/12/2015
      * filtro per fornitore ed ordinamento
      */
@@ -602,7 +602,17 @@ if ($modal_ok_insert === true) {
 							<input type="radio" name="mostra_qdc" value="0" <?php if ($form['mostra_qdc']==0){echo "checked";}?> > No										
                        </div>
                    </div>
-               </div><!-- chiude row  -->				
+               </div><!-- chiude row  -->	
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+						<label for="SIAN" class="col-sm-4 control-label"><?php echo $script_transl['SIAN']; ?></label>
+							<input type="radio" name="SIAN" value="0" <?php if ($form['SIAN']==0){echo "checked";}?> > NO <br>
+							<input type="radio" name="SIAN" value="1" <?php if ($form['SIAN']==1){echo "checked";}?> > Olio										
+							<input type="radio" name="SIAN" value="2" <?php if ($form['SIAN']==2){echo "checked";}?> > Olive										
+                       </div>
+                   </div>
+               </div><!-- chiude row  -->
 				
                 <div class="row">
                     <div class="col-md-12">
