@@ -45,6 +45,33 @@ $strScript = array("browse_document.php" =>
 		"Descrizione coltura vuota",
 		"Codice già utilizzato"
     ),
+	"admin_rec_stocc.php" =>
+	 array(" Recipiente o silos di stoccaggio ",
+        "Codice recipiente SIAN ",
+		"Capacità ",
+		"Titolo di possesso",
+		"Destinato a DOP o IGP",
+		'err' => array(
+            'codice' => "Codice mancante",
+			'codice_usato' => "Esiste già un contenitore con lo stesso codice",
+			'capacita' => "Capacità mancante"
+        ),
+		
+    ),
+	"admin_stabilim.php" =>
+	 array(" Stabilimento iscritto al SIAN ",
+        "Codice stabilimento SIAN ",
+		"Denominazione ",
+		"Indirizzo",
+		"Provincia",
+		"Città",
+		'err' => array(
+            'codice' => "Codice SIAN mancante",
+			'codice_usato' => "Esiste già uno stabilimento con lo stesso codice",
+			'denomin' => "Denominazione stabilimento mancante"
+        ),
+		
+    ),
 	"admin_avversita.php" =>
     array(" avversità ",
         "ID ",

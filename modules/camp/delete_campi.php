@@ -25,25 +25,38 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 
+$form = gaz_dbi_get_row($gTables['campi'], "codice", $_GET['codice']);
 
 if (isset($_POST['Delete'])) {
     gaz_dbi_del_row($gTables['campi'], "codice", $_GET['codice']);
-    header("Location: report_campi.php");
-    exit;
-} else {
-    $form = gaz_dbi_get_row($gTables['campi'], "codice", $_GET['codice']);
+	if ($form['id_rif']==0){
+		header("Location: report_campi.php");
+		exit;
+	}else {
+		header("Location: stabilim.php");
+        exit;
+	}
 }
 
 if (isset($_POST['Return'])){
+	if ($form['id_rif']==0){
         header("Location: report_campi.php");
         exit;
+	} else {
+		header("Location: stabilim.php");
+        exit;
+	}
 }
 $ctrl = gaz_dbi_get_row($gTables['movmag'], "campo_coltivazione", $_GET['codice']);
 
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 require("./lang.".$admin_aziend['lang'].".php");
-$title = ucwords($script_transl['delete'].$strScript["admin_campi.php"][0]);
+if ($form['id_rif']==0){
+	$title = ucwords($script_transl['delete'].$strScript["admin_campi.php"][0]);
+} else {
+	$title = ucwords($script_transl['delete'].$strScript["admin_stabilim.php"][0]);
+}
 print "<form method=\"POST\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
@@ -52,8 +65,10 @@ If (isset($ctrl)) {
 }
 print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_campi.php"][1]."</td><td class=\"FacetDataTD\">".$form["codice"]."</td></tr>";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_campi.php"][2]."</td><td class=\"FacetDataTD\">".$form["descri"]."</td></tr>\n";
+if ($form['id_rif']==0){
 print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_campi.php"][4]."</td><td class=\"FacetDataTD\">".$form["ricarico"]."</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["admin_campi.php"][5]."</td><td class=\"FacetDataTD\">".$form["annota"]."</td></tr>\n";
+}
 print "<td align=\"right\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\"></td>";
 If (!isset($ctrl)) {
 print "<td align=\"right\"><input type=\"submit\" name=\"Delete\" value=\"".strtoupper($script_transl['delete'])."!\"></td></tr>";

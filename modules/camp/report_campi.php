@@ -37,11 +37,11 @@ if (isset($_GET['auxil'])) {
 }
 if (isset($_GET['all'])) {
    $auxil = "&all=yes";
-   $where = "descri like '%'";
+   $where = "descri like '%' AND id_rif = 0";
    $passo = 100000;
 } else {
    if (isset($_GET['auxil'])) {
-      $where = "descri like '".addslashes($_GET['auxil'])."%'";
+      $where = "descri like '".addslashes($_GET['auxil'])."%' AND id_rif = 0";
    }
 }
 
