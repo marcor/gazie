@@ -221,6 +221,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['hidden_req'] = '';
 	$form['external_resp']="";
 	$form["external_service_descri"]="";
+	$form['id_SIAN']="";
 }
 
 require("../../library/include/header.php");
@@ -566,7 +567,11 @@ echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td>\
 //      <input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" align=\"right\" maxlength=\"100\" size=\"50\" /></td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <textarea name=\"annota\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["annota"] . "</TEXTAREA></td>\n";
-
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\"> Codice identificativo SIAN </td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" onkeyup=\"this.value=this.value.replace(/[^\d]/,'')\" name=\"id_SIAN\" value=\"" . $form['id_SIAN'] . "\" align=\"right\" maxlength=\"10\" size=\"20\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sqn'] . "</td>";
