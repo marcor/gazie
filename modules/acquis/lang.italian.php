@@ -199,6 +199,7 @@ $strScript = array("admin_fornit.php" =>
         'upd_this' => 'Modifica ',
         'datreg' => 'Data registrazione',
         'datfat' => 'Data della fattura',
+		'cod_operaz_value' => array(11=>'',0=>'Acquisto da ditta italiana',1=>'Acquisto da ditta comunitaria',2=>'Acquisto da ditta extracomunitaria',3=>'Carico da lavorazione o deposito terzi',5=>'Carico da altro stabilimento stessa impresa',8=>'Reso da clienti',8=>'Carico olio lampante da recupero'),
         'err' => array(
             'nofold' => 'Non esiste la cartella ID azienda nel percorso data/files!',
             'sampri' => 'Nulla da variare, il prezzo dell\'articolo &egrave lo stesso',
@@ -216,6 +217,8 @@ $strScript = array("admin_fornit.php" =>
             'dtnusc' => 'Stai tentando di modificare il DdT con una data successiva a quella del DdT con numero successivo!',
 			'dtnuan' => 'Stai tentando di modificare il DdT con una data antecedente a quella del DdT con numero precedente!',
 			'norows' => 'Non ci sono righi per poter emettere il documento!',
+			'nocod_operaz' => 'Non è stato selezionato il tipo di operazione SIAN!',
+			'nofor_sian' => 'Il fornitore non ha il codice identificativo SIAN!',
 			'dtintr' => 'La data di inizio trasporto non pu&ograve; essere precedente alla data di emissione!',
 			'dttrno' => 'La data di inizio trasporto non &egrave; corretta!',
 			'nonudo' => 'Non &egrave; stato inserito il numero del documento!',
