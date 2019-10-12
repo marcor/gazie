@@ -167,7 +167,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_prelis'] = $_POST['in_prelis'];
     $form['in_sconto'] = $_POST['in_sconto'];
 	$form['in_SIAN'] = $_POST['in_SIAN'];
-	//$form['in_cod_operazione'] = $_POST['in_cod_operazione'];
     $form['in_unimis'] = $_POST['in_unimis'];
     $form['in_quanti'] = floatval($_POST['in_quanti']);
     $form['in_codvat'] = $_POST['in_codvat'];
@@ -723,7 +722,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['identifier'] = $form['datemi'] . '_' . $form['rows'][$i]['id_rigdoc'];
                         }
                         $last_lotmag_id = lotmagInsert($form['rows'][$i]);
-                        // inserisco il riferminto anche sul relativo movimento di magazzino
+                        // inserisco il riferimento anche sul relativo movimento di magazzino
                         gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
                         if (!empty($form['rows'][$i]['filename'])) {
                             $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
@@ -1352,7 +1351,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		if ($form['rows'][$i]['SIAN']>0){
 			$camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
 			$form['rows'][$i]['cod_operazione'] = $camp_mov_sian['cod_operazione'];
-			echo "pippo idmag:",$form['rows'][$i]['id_mag']," cod operaz:",$form['rows'][$i]['cod_operazione'];
 		}
         // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
 		If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {
