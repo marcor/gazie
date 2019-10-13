@@ -68,6 +68,8 @@ if (isset($_POST['Delete'])) {
                   gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
                   if (intval($a_row['id_mag']) > 0){  //se c'� stato un movimento di magazzino lo azzero
                      $upd_mm->uploadMag('DEL',$form['tipdoc'],'','','','','','','','','','',$a_row['id_mag'],$admin_aziend['stock_eval_method']);
+					 // se c'è stato, cancello pure il movimento sian 
+					gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $a_row['id_mag']);
                   }
            }
            header("Location: ".$_POST['ritorno']);

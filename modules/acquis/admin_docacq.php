@@ -586,15 +586,22 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $i++;
                 }
 //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
-                for ($i = $i; $i <= $count; $i++) { 
+                for ($i = $i; $i <= $count; $i++) {
+					// quindi vedo in anticipo in quale ID verrà memorizzato il prossimo movimento di magazzino
+					$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
+					$row = $check_mag->fetch_assoc();
+					$id_mag = $row['Auto_increment']; // sarà il nuovo movimento di magazzino
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
                     $last_rigdoc_id =rigdocInsert($form['rows'][$i]);
                     if ($admin_aziend['conmag'] == 2 &&
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] == 0 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $last_movmag_id = $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']
-                        );
+                        $last_movmag_id = $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']);
+						if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+							$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];$value_sian['id_movmag']=$id_mag;
+							gaz_dbi_table_insert('camp_mov_sian', $value_sian);
+						}
                     }
 // se l'articolo prevede la gestione dei  lotti o della matricola/numero seriale creo un rigo in lotmag 
 // ed eventualmente sposto e rinomino il relativo documento dalla dir temporanea a quella definitiva 
