@@ -75,6 +75,8 @@ if (isset($_POST['Delete'])) {
             while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
                 if (intval($val_old_row['id_mag']) > 0) {  //se c'� stato un movimento di magazzino lo azzero
                     $upd_mm->uploadMag('DEL', $row['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
+					// se c'è stato, cancello pure il movimento sian 
+					gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
                 }
                 gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
                 gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
@@ -102,6 +104,8 @@ if (isset($_POST['Delete'])) {
             while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
                 if (intval($val_old_row['id_mag']) > 0) {  //se c'� stato un movimento di magazzino lo azzero
                     $upd_mm->uploadMag('DEL', $row['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
+					// se c'è stato, cancello pure il movimento sian 
+					gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
                 }
                 gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
                 gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);

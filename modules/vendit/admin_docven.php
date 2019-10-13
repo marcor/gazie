@@ -275,8 +275,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_pesosp'] = $_POST['in_pesosp'];
     $form['in_gooser'] = intval($_POST['in_gooser']);
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
+	//$form['in_SIAN'] = intval($_POST['in_SIAN']);
     $form['in_id_lotmag'] = intval($_POST['in_id_lotmag']);
 	$form['in_identifier'] = $_POST['in_identifier'];
+	$form['in_cod_operazione'] = $_POST['in_cod_operazione'];
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
     $form['rows'] = array();
@@ -345,8 +347,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['pesosp'] = floatval($v['pesosp']);
             $form['rows'][$next_row]['gooser'] = intval($v['gooser']);
             $form['rows'][$next_row]['lot_or_serial'] = intval($v['lot_or_serial']);
+			$form['rows'][$next_row]['SIAN'] = intval($v['SIAN']);
             $form['rows'][$next_row]['id_lotmag'] = intval($v['id_lotmag']);
 			$form['rows'][$next_row]['identifier'] = $v['identifier'];
+			$form['rows'][$next_row]['cod_operazione'] = $v['cod_operazione'];
             if ($v['tiprig'] == 0 && $v['quanti'] < 0.00001 && $v['quanti'] > -0.00001) {
 				$msg['err'][] = "64";
 			}
@@ -390,8 +394,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_pesosp'] = $form['rows'][$k_row]['pesosp'];
                     $form['in_gooser'] = $form['rows'][$k_row]['gooser'];
                     $form['in_lot_or_serial'] = $form['rows'][$k_row]['lot_or_serial'];
+					$form['in_SIAN'] = $form['rows'][$k_row]['SIAN'];
                     $form['in_id_lotmag'] = $form['rows'][$k_row]['id_lotmag'];
 					$form['in_identifier'] = $form['rows'][$k_row]['identifier'];
+					$form['in_cod_operazione'] = $form['rows'][$k_row]['cod_operazione'];
                     $form['in_status'] = "UPDROW" . $k_row;
                     $form['cosear'] = $form['rows'][$k_row]['codart'];
                     //}
@@ -602,6 +608,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			if ($v['ritenuta']>=0.01){
 				$rit_ctrl=true;
 			}
+			if ($v['SIAN']>0){
+				if ($v['cod_operazione'] < 0 or $v['cod_operazione']==11){ // controllo se è stato inserito il codice operazione SIAN
+					$msgrigo = $i + 1;
+					$msg['err'][] = "nocod_operaz";
+				}
+				$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $form["clfoco"]);
+				$anagra = gaz_dbi_get_row($gTables['anagra'], "id", $clfoco["id_anagra"]);
+				if ($anagra['id_SIAN']<=0 AND ($v['cod_operazione']==1 OR $v['cod_operazione']==2 OR $v['cod_operazione']==3 OR $v['cod_operazione']==5 OR $v['cod_operazione']==10)){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "nofor_sian";
+				}
+			}
         }
 
 		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
@@ -626,6 +644,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					// per evitare problemi qualora siano stati modificati i righi o comunque cambiati di ordine elimino sempre il vecchio movimento di magazzino e sotto ne inserisco un altro attenendomi a questo
                     if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
                         $upd_mm->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
+						// se c'è stato, cancello pure il movimento sian 
+						gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
                     }
                     if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
                         $form['rows'][$i]['id_tes'] = $form['id_tes'];
@@ -640,8 +660,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //un rigo che prima era testo adesso non lo è piè
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
+						// quindi vedo in anticipo in quale ID verrà memorizzato il prossimo movimento di magazzino
+								$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
+								$row = $check_mag->fetch_assoc();
+								$id_mag = $row['Auto_increment']; // sarà il nuovo movimento di magazzino
 						if ( ($tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210) && intval($val_old_row['id_mag'])>0) {
 							$upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];$value_sian['id_movmag']=$id_mag;
+								gaz_dbi_table_insert('camp_mov_sian', $value_sian);
+							}
 						}
                     } else { //altrimenti lo elimino
 
@@ -653,7 +681,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $i++;
                 }
                 //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
+				
                 for ($i = $i; $i <= $count; $i++) {
+					// quindi vedo in anticipo in quale ID verrà memorizzato il prossimo movimento di magazzino
+					$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
+					$row = $check_mag->fetch_assoc();
+					$id_mag = $row['Auto_increment']; // sarà il nuovo movimento di magazzino
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
                     rigdocInsert($form['rows'][$i]);
                     if ($admin_aziend['conmag'] == 2 &&
@@ -662,12 +695,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         if ( $tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210 ) {                                                    
                             $upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
-                        }
+							if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];$value_sian['id_movmag']=$id_mag;
+								gaz_dbi_table_insert('camp_mov_sian', $value_sian);
+							}
+						}
                     }
                     if ($admin_aziend['conmag'] == 2 &&
                             $form['rows'][$i]['tiprig'] == 210 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         $upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+						if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+							$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];$value_sian['id_movmag']=$id_mag;
+							gaz_dbi_table_insert('camp_mov_sian', $value_sian);
+						}
                     }
                     $last_rigdoc_id = gaz_dbi_last_id();
                     if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
@@ -796,7 +837,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['gooser'] != 1 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         if ( $tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210 ) {
+							$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
+							$row = $check_mag->fetch_assoc();
+							$id_mag = $row['Auto_increment']; // sarà il nuovo movimento di magazzino
                             $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							if ($form['rows'][$i]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
+								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];$value_sian['id_movmag']=$id_mag;
+								gaz_dbi_table_insert('camp_mov_sian', $value_sian);
+							}
                         }
                     }
                     //se è un'articolo composto scarico gli articoli presenti nelle righe di tipo 210
@@ -944,8 +992,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
             $form['rows'][$old_key]['descri'] = $form['in_descri'];
             $form['rows'][$old_key]['lot_or_serial'] = $form['in_lot_or_serial'];
+			$form['rows'][$old_key]['SIAN'] = $form['in_SIAN'];
             $form['rows'][$old_key]['id_lotmag'] = $form['in_id_lotmag'];
 			$form['rows'][$old_key]['identifier'] = $form['in_identifier'];
+			$form['rows'][$old_key]['cod_operazione'] = $form['in_cod_operazione'];
             $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$old_key]['status'] = "UPDATE";
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
@@ -983,6 +1033,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$old_key]['gooser'] = $artico['good_or_service'];
                 $form['rows'][$old_key]['lot_or_serial'] = $artico['lot_or_serial'];
+				$form['rows'][$old_key]['SIAN'] = $artico['SIAN'];
                 /* devo ricaricare un nuovo id lotmag
                  */
                 if ($artico['lot_or_serial'] > 0) {
@@ -1069,7 +1120,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['id_mag'] = 0;
                     $form['rows'][$next_row]['id_lotmag'] = 0;
 					$form['rows'][$next_row]['identifier'] = "";
+					$form['rows'][$next_row]['cod_operazione'] = 11;
                     $form['rows'][$next_row]['lot_or_serial'] = 0;
+					$form['rows'][$next_row]['SIAN'] = 0;
                     $form['rows'][$next_row]['status'] = '';
                     $form['rows'][$next_row]['scorta'] = 0;
                     $form['rows'][$next_row]['quamag'] = 0;
@@ -1090,8 +1143,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
             }
             $form['rows'][$next_row]['lot_or_serial'] = 0;
+			$form['rows'][$next_row]['SIAN'] = 0;
             $form['rows'][$next_row]['id_lotmag'] = 0;
 			$form['rows'][$next_row]['identifier'] = "";
+			$form['rows'][$next_row]['cod_operazione'] = 11;
             $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
 			if ($form['in_tiprig']<=1 || $form['in_tiprig']==90){
 				$form['RiferimentoNumeroLinea'][$next_row+1] = substr($form['in_descri'],0,20);
@@ -1108,6 +1163,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$next_row]['gooser'] = $artico['good_or_service'];
                 $form['rows'][$next_row]['lot_or_serial'] = $artico['lot_or_serial'];
+				$form['rows'][$next_row]['SIAN'] = $artico['SIAN'];
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
                 $form['rows'][$next_row]['unimis'] = $artico['unimis'];
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
@@ -1227,7 +1283,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$nr]['id_mag'] = 0;
                     $form['rows'][$nr]['id_lotmag'] = 0;
 					$form['rows'][$nr]['identifier'] = "";
+					$form['rows'][$nr]['cod_operazione'] = 11;
                     $form['rows'][$nr]['lot_or_serial'] = 0;
+					$form['rows'][$nr]['SIAN'] = 0;
                     $form['rows'][$nr]['status'] = "INSERT";
                     $form['rows'][$nr]['scorta'] = 0;
                     $form['rows'][$nr]['quamag'] = 0;
@@ -1257,8 +1315,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $result2 = gaz_dbi_dyn_query('*', $gTables['artico'], " codice = '".$row['codice_artico_base']."'", 'codice', 0, PER_PAGE);
                         $row2 = gaz_dbi_fetch_array($result2);
                         $form['rows'][$next_row]['lot_or_serial'] = 0;
+						$form['rows'][$next_row]['SIAN'] = 0;
                         $form['rows'][$next_row]['id_lotmag'] = 0;
 						$form['rows'][$next_row]['identifier'] = "";
+						$form['rows'][$next_row]['cod_operazione'] = 11;
                         $form['rows'][$next_row]['tiprig'] = 210;
                         $form['rows'][$next_row]['descri'] = "";
                         $form['rows'][$next_row]['id_mag'] = "";
@@ -1569,8 +1629,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_pesosp'] = 0;
     $form['in_gooser'] = 0;
     $form['in_lot_or_serial'] = 0;
+	$form['in_SIAN'] = 0;
     $form['in_id_lotmag'] = 0;
 	$form['in_identifier'] = "";
+	$form['in_cod_operazione'] = 11;
     $form['in_status'] = "INSERT";
     // fine rigo input
     $form['rows'] = array();
@@ -1687,10 +1749,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$next_row]['gooser'] = $articolo['good_or_service'];
         $form['rows'][$next_row]['lot_or_serial'] = $articolo['lot_or_serial'];
+		$form['rows'][$next_row]['SIAN'] = $articolo['SIAN'];
         $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $rigo['id_mag']);
         $form['rows'][$next_row]['id_lotmag'] = $movmag['id_lotmag'];
 		$getlot = $lm->getLot($form['rows'][$next_row]['id_lotmag']);
 		$form['rows'][$next_row]['identifier'] = $getlot['identifier'];
+		$movsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $rigo['id_mag']);
+		$form['rows'][$next_row]['cod_operazione'] = $movsian['cod_operazione'];
         $form['rows'][$next_row]['status'] = (isset($_GET['Duplicate']) ? "Insert" : "UPDATE");
         $next_row++;
     }
@@ -1763,8 +1828,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_pesosp'] = 0;
     $form['in_gooser'] = 0;
     $form['in_lot_or_serial'] = 0;
+	$form['in_SIAN'] = 0;
     $form['in_id_lotmag'] = 0;
 	$form['in_identifier'] = "";
+	$form['in_cod_operazione'] = 11;
     $form['in_status'] = "INSERT";
     // fine rigo input
     $form['search']['clfoco'] = '';
@@ -2124,8 +2191,10 @@ echo '<table class="Tlarge table table-bordered table-condensed">
 		<input type="hidden" value="' . $form['in_pesosp'] . '" name="in_pesosp" />
 		<input type="hidden" value="' . $form['in_gooser'] . '" name="in_gooser" />
 		<input type="hidden" value="' . $form['in_lot_or_serial'] . '" name="in_lot_or_serial" />
+		
 		<input type="hidden" value="' . $form['in_id_lotmag'] . '" name="in_id_lotmag" />
 		<input type="hidden" value="' . $form['in_identifier'] . '" name="in_identifier" />
+		<input type="hidden" value="' . $form['in_cod_operazione'] . '" name="in_cod_operazione" />
 		<input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 		<input type="hidden" value="' . $form['ok_barcode'] . '" name="ok_barcode" />
@@ -2276,8 +2345,10 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['gooser'] . "\" name=\"rows[$k][gooser]\">" .
     '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />' .
+	'<input type="hidden" value="' . $v['SIAN'] . '" name="rows[' . $k . '][SIAN]" />' .
     '<input type="hidden" value="' . $v['id_lotmag'] . '" name="rows[' . $k . '][id_lotmag]" />'.
 	'<input type="hidden" value="' . $v['identifier'] . '" name="rows[' . $k . '][identifier]" />';
+	'<input type="hidden" value="' . $v['cod_operazione'] . '" name="rows[' . $k . '][cod_operazione]" />';
     switch ($v['tiprig']) {
         case "0":
             echo '<tr>';
@@ -2387,6 +2458,23 @@ foreach ($form['rows'] as $k => $v) {
                 echo '</div>'
                 . "</div>\n";
             }
+			
+			// Antonio Germani - Se l'articolo movimenta il SIAN apro il div SIAN
+			if ($form['rows'][$k]['SIAN']>0) {
+				?>						
+				<div class="col-md-12">
+					<div class="form-group">
+						<label for="good_or_service" class="col-sm-6 control-label"><?php echo "selezionare tipo operazione SIAN"; ?></label>
+						<?php
+						$gForm->variousSelect('rows[' . $k . '][cod_operazione]', $script_transl['cod_operaz_value'], $form['rows'][$k]['cod_operazione'], "col-sm-6", false, '', false)
+						?>
+					</div>
+				</div>
+				<?php				
+			} else {
+				echo ' <input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />';
+			}
+			// fine apro SIAN
 
             echo '</td>
 					<td>

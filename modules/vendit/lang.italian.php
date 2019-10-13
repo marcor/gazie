@@ -279,6 +279,7 @@ $strScript = array("admin_client.php" =>
 		'war' => array (
 			'1' =>'Le quantità richieste per lotto non sono disponibili. NB: se si conferma si creeranno errori che dovranno essere corretti manualmente!'
 		),
+		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',1=>'S1-Vendita olio a ditta italiana',2=>'S2-Vendita olio a ditta comunitaria',3=>'S3-Vendita olio a ditta extracomunitaria',4=>'S4-Scarico olio trasferimento stabilimento stessa impresa',5=>'S5-Scarico olio trasferimento a terzista',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo',9=>'S9-Trasferimento olio a punti vendita aziendali',10=>'S10-Scarico olio reso al fornitore'),
         'err' => array( 
 			'37' =>"La data di inizio trasporto non &egrave; corretta!",
             '38' =>"La data di inizio trasporto non pu&ograve; essere precedente alla data di emissione!",
@@ -303,6 +304,8 @@ $strScript = array("admin_client.php" =>
             '63' =>'Selezionare la causale di pagamento della ritenuta d\'acconto in configurazione azienda',
             '64' =>'Un rigo di tipo normale è senza quantità',
 			'65' =>'Le quantità richieste per lotto non sono disponibili',
+			'nocod_operaz' =>'Non è stato impostato il tipo di operazione SIAN!',
+			'nofor_sian' =>'Per questo tipo di operazione SIAN è necessario che il destinatario abbia il codice dell\'anagrafica del SIAN',
 			'id_documento'=>'Non è stato inserito il tipo rigo 13 - Id.Documento (FaE 2.1.X.2) obbligatorio in presenza di almeno uno dei tipi da 11 a 16'
 		)		
     ),
