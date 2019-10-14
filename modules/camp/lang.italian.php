@@ -72,6 +72,21 @@ $strScript = array("browse_document.php" =>
         ),
 		
     ),
+	"sian.php" =>
+	 array(0 => 'Creazione file upload per SIAN',
+        'title' => 'Selezione per la creazione del File di upload per il SIAN',
+		'date' => 'Data di creazione file',
+		'date_ini' => 'Data inizio movimenti',
+		'date_fin' => 'Data fine movimenti',
+        'errors' => array('La data  non &egrave; corretta!',
+            'La data di inizio dei movimenti da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
+            'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
+        ),
+		'header' => array('Data' => '', 'Prodotto' => '', 'Quantit&agrave; kg' => '',
+            'ID SIAN - Fornitore/Cliente' => '', 'Recipiente di stoccaggio' => '', 'Operazione SIAN' => ''
+			
+        )
+	),
 	"admin_avversita.php" =>
     array(" avversità ",
         "ID ",
