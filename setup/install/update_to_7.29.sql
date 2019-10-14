@@ -1,4 +1,5 @@
 UPDATE `gaz_config` SET `cvalue` = '124' WHERE `id` =2;
+ALTER TABLE `gaz_anagra` ADD `id_SIAN` INT(10) NULL DEFAULT NULL COMMENT 'identificativo stabilimento assegnato dal SIAN' AFTER `fatt_email`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 CREATE TABLE IF NOT EXISTS `gaz_XXXcamp_recip_stocc` (
   `cod_silos` varchar(10) CHARACTER SET utf8 NOT NULL COMMENT 'Codice recipiente di stoccaggio olio. Deve essere identico a quello registrato al SIAN',
@@ -36,4 +37,14 @@ ALTER TABLE `gaz_XXXcampi`
 	ADD COLUMN `id_rif` INT(10) NULL DEFAULT '0' COMMENT 'Identificativo dello stabilimento/deposito assegnato dal SIAN' AFTER `id_mov`;
 ALTER TABLE `gaz_XXXartico`
 	ADD COLUMN `SIAN` INT(1) NOT NULL DEFAULT '0' COMMENT '0 non movimenta, 1 movimenta il SIAN come olio, 2 movimenta il SIAN come olive' AFTER `tempo_sospensione`;
+CREATE TABLE IF NOT EXISTS `gaz_XXXcamp_artico` (
+  `codice` varchar(15) NOT NULL COMMENT 'Codice articolo uguale alla tabella artico',
+  `or_macro` int(2) NOT NULL COMMENT 'macroarea di origine',
+  `or_spec` varchar(80) NOT NULL COMMENT 'origine specifica',
+  `estrazione` int(1) NOT NULL COMMENT 'Flag estrazione: 0=non specificata 1=prima spremitura a freddo 2=estratto a freddo',
+  `biologico` int(1) NOT NULL COMMENT 'Flag agricoltura: 0=convenzionale 1=biologica 2=in conversione',
+  `etichetta` int(1) NOT NULL COMMENT 'Flag etichettatura: 0=non etichettato 1=etichettato',
+  `confezione` decimal(9,3) NOT NULL COMMENT 'Capacità singola confezione. 0=sfuso',
+  `categoria` int(2) NOT NULL COMMENT 'Categoria olio come codificato dal SIAN'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
