@@ -199,7 +199,7 @@ $strScript = array("admin_fornit.php" =>
         'upd_this' => 'Modifica ',
         'datreg' => 'Data registrazione',
         'datfat' => 'Data della fattura',
-		'cod_operaz_value' => array(11=>'',0=>'C0-Acquisto olio da ditta italiana',1=>'C1-Acquisto olio da ditta comunitaria',2=>'C2-Acquisto olio da ditta extracomunitaria',3=>'C3-Carico olio da lavorazione o deposito terzi',5=>'C4-Carico olio da altro stabilimento stessa impresa',8=>'C8-Reso olio da clienti',10=>'C10-Carico olio lampante da recupero'),
+		'cod_operaz_value' => array(11=>'',0=>'C0-Acquisto olio da ditta italiana',1=>'C1-Acquisto olio da ditta comunitaria',2=>'C2-Acquisto olio da ditta extracomunitaria',3=>'C3-Carico olio da lavorazione o deposito terzi',5=>'C5-Carico olio da altro stabilimento stessa impresa',8=>'C8-Reso olio da clienti',10=>'C10-Carico olio lampante da recupero'),
         'err' => array(
             'nofold' => 'Non esiste la cartella ID azienda nel percorso data/files!',
             'sampri' => 'Nulla da variare, il prezzo dell\'articolo &egrave lo stesso',
@@ -219,6 +219,8 @@ $strScript = array("admin_fornit.php" =>
 			'norows' => 'Non ci sono righi per poter emettere il documento!',
 			'nocod_operaz' => 'Non è stato selezionato il tipo di operazione SIAN!',
 			'nofor_sian' => 'Il fornitore non ha il codice identificativo SIAN!',
+			'norecipdestin' => 'Nei movimenti interni è necessario indicare anche il recipiente di destinazione',
+			'norecipstocc' => 'Non è stato selezionato il recipiente di stoccaggio',
 			'dtintr' => 'La data di inizio trasporto non pu&ograve; essere precedente alla data di emissione!',
 			'dttrno' => 'La data di inizio trasporto non &egrave; corretta!',
 			'nonudo' => 'Non &egrave; stato inserito il numero del documento!',
