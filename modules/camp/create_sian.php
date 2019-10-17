@@ -49,6 +49,7 @@ function getMovements($date_ini,$date_fin)
 			  $gTables['clfoco'].".id_anagra, ".
 			  $gTables['rigdoc'].".id_tes, ".
 			  $gTables['tesdoc'].".numdoc, ".
+			  $gTables['lotmag'].".identifier, ".
 			  $gTables['camp_artico'].".* ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON (".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag)
                LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
@@ -56,6 +57,7 @@ function getMovements($date_ini,$date_fin)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)
 			   LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)
 			   LEFT JOIN ".$gTables['tesdoc']." ON (".$gTables['rigdoc'].".id_tes = ".$gTables['tesdoc'].".id_tes)
+			   LEFT JOIN ".$gTables['lotmag']." ON (".$gTables['movmag'].".id_mov = ".$gTables['lotmag'].".id_movmag)
 			   LEFT JOIN ".$gTables['anagra']." ON (".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra)";
         $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, clfoco ASC, operat DESC, id_mov ASC');
         while ($r = gaz_dbi_fetch_array($rs)) {
@@ -113,7 +115,7 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 				if ($row['SIAN']==1){ // se è olio
 					if ($row['confezione']==0) { // se è sfuso
 						$type_array[22]=$row['quanti'];
-					} else { // se ? confezionato
+					} else { // se è confezionato
 						$type_array[24]=$row['quanti'];
 					}
 				} else { //se sono olive
@@ -132,7 +134,7 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 				if ($row['SIAN']==1){ // se è olio
 					if ($row['confezione']==0) { // se è sfuso
 						$type_array[23]=$row['quanti'];
-					} else { // se ? confezionato
+					} else { // se è confezionato
 						$type_array[25]=$row['quanti'];
 					}
 				} else { //se sono olive
@@ -155,10 +157,31 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 			$type_array[3]=str_pad($_GET['ds'], 8);//data dell'operazione
 			$type_array[4]=str_pad($row['numdoc'], 10);// numero documento giustificativo
 			$type_array[5]=str_pad($dd, 8);//data del documento giustificativo
-			$type_array[6]=str_pad($row['cod_operazione'], 10); // codice operazione
-			
-			$type_array[11]=str_pad($row['recip_stocc'], 10); ??// identificativo recipiente o silos di stoccaggio
-			$type_array[12]=str_pad($row['recip_stocc'], 10); ??// identificativo recipiente o silos di stoccaggio destinazione
+			$type_array[6]=str_pad($row['cod_operazione'], 10); // codice operazione			
+			$type_array[11]=str_pad($row['recip_stocc'], 10); // identificativo recipiente o silos di stoccaggio
+			$type_array[12]=str_pad($row['recip_stocc_destin'], 10); // identificativo recipiente o silos di stoccaggio destinazione
+			$type_array[14]=sprintf ("%02d",$row['categoria']); // Categoria olio
+			$type_array[16]=sprintf ("%02d",$row['or_macro']); // Origine olio per macro area
+			$type_array[16]=sprintf ("%02d",$row['or_spec']); // Origine olio specifica
+			$type_array[27]=str_pad($row['identifier'], 20); // Lotto di appartenenza
+			if ($row['estrazione']=1){
+				$type_array[30]="X"; // Flag prima spremitura a freddo
+			}
+			if ($row['estrazione']=2){
+				$type_array[32]="X"; // Flag estratto a freddo
+			}
+			if ($row['biologico']=1){
+				$type_array[34]="X"; // Flag biologico
+			}
+			if ($row['biologico']=2){
+				$type_array[36]="X"; // Flag in conversione
+			}
+			if ($row['etichetta']=0){
+				$type_array[38]="X"; // Flag NON etichettato
+			}
+			if ($row['confezione']>0){
+				$type_array[45]=sprintf ("%013d", str_replace(".", "", $row['confezione'])); // capacità confezione
+			}
 			$type_array[48]="I";
 			$type= implode(";",$type_array);
 			fwrite($myfile, $type);
