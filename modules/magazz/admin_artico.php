@@ -199,6 +199,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			$form["codice"] = str_replace($match,'_',$form["codice"]);
             $msg['err'][] = 'char';
         }*/
+		$codart_len = gaz_dbi_get_row($gTables['company_config'], 'var', 'codart_len')['val'];
+        if ($codart_len > 0 && trim($form['codice']) <> $codart_len) {
+            $msg['err'][] = 'codart_len';
+        }
+		
         if (count($msg['err']) == 0) { // nessun errore
             if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
 				if ($largeimg==0){
