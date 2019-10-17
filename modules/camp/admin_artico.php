@@ -58,6 +58,13 @@ if (isset($_POST['fornitore'])){
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form = gaz_dbi_parse_post('artico');
+	$form['categoria']=$_POST['categoria'];
+	$form['etichetta']=$_POST['etichetta'];
+	$form['biologico']=$_POST['biologico'];
+	$form['estrazione']=$_POST['estrazione'];
+	$form['or_spec']=$_POST['or_spec'];
+	$form['or_macro']=$_POST['or_macro'];
+	$form['confezione']=$_POST['confezione'];
     $form['codice'] = trim($form['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
@@ -253,11 +260,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             // aggiorno il db
             if ($toDo == 'insert') {
                 gaz_dbi_table_insert('artico', $form);
+				gaz_dbi_table_insert('camp_artico', $form);
                 if (!empty($tbt)) {
                     bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
                 }
             } elseif ($toDo == 'update') {
                 gaz_dbi_table_update('artico', $form['ref_code'], $form);
+				$esist=gaz_dbi_table_update('camp_artico', $form['ref_code'], $form);
+				if(!isset($esist)){ // se non esiste lo inserisco
+					gaz_dbi_table_insert('camp_artico', $form);
+				}
                 $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
                 if (empty($tbt) && $bodytext) {
                     // è vuoto il nuovo ma non lo era prima, allora lo cancello
@@ -289,6 +301,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15));
+	$camp = gaz_dbi_get_row($gTables['camp_artico'], 'codice', substr($_GET['codice'], 0, 15));
+	
+	$form['categoria']=$camp['categoria'];
+	$form['etichetta']=$camp['etichetta'];
+	$form['biologico']=$camp['biologico'];
+	$form['estrazione']=$camp['estrazione'];
+	$form['or_spec']=$camp['or_spec'];
+	$form['or_macro']=$camp['or_macro'];
+	$form['confezione']=$camp['confezione'];
+	
     /** ENRICO FEDELE */
     if ($modal === false) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -296,7 +318,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $form['ritorno'] = 'admin_artico.php';
     }
     $form['ref_code'] = $form['codice']; 
-    // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
+    // i prezzi devono essere arrotondati come richiesto dalle impostazioni aziendali
     $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
     $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
     $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
@@ -341,6 +363,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['web_public'] = 1;
     $form['depli_public'] = 1;
 	$form['SIAN']=0;
+	$form['categoria']="";
+	$form['etichetta']=0;
+	$form['biologico']=0;
+	$form['estrazione']=0;
+	$form['or_spec']="";
+	$form['or_macro']="";
+	$form['confezione']=0;
     /** inizio modifica FP 03/12/2015
      * filtro per fornitore ed ordinamento
      */
@@ -602,7 +631,7 @@ if ($modal_ok_insert === true) {
 							<input type="radio" name="mostra_qdc" value="0" <?php if ($form['mostra_qdc']==0){echo "checked";}?> > No										
                        </div>
                    </div>
-               </div><!-- chiude row  -->	
+				</div><!-- chiude row  -->	
 				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -612,8 +641,75 @@ if ($modal_ok_insert === true) {
 							<input type="radio" name="SIAN" value="2" <?php if ($form['SIAN']==2){echo "checked";}?> > Olive										
                        </div>
                    </div>
-               </div><!-- chiude row  -->
-				
+				</div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for = "or_macro" class = "col-sm-4 control-label"><?php echo $script_transl['or_macro']; ?></label>
+							<?php
+							$gForm->variousSelect('or_macro', $script_transl['or_macro_value'], $form['or_macro'], "col-sm-8", true, '', false, 'onchange = "this.form.submit();" style = "max-width: 200px;"');
+							?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for = "or_spec" class = "col-sm-4 control-label"><?php echo $script_transl['or_spec']; ?></label>
+							<?php
+							$gForm->variousSelect('or_spec', $script_transl['or_spec_value'], $form['or_spec'], "col-sm-8", true, '', false, 'onchange = "this.form.submit();" style = "max-width: 200px;"');
+							?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+						<label for="estrazione" class="col-sm-4 control-label"><?php echo $script_transl['estrazione']; ?></label>
+							<input type="radio" name="estrazione" value="0" <?php if ($form['estrazione']==0){echo "checked";}?> > null <br>
+							<input type="radio" name="estrazione" value="1" <?php if ($form['estrazione']==1){echo "checked";}?> > Prima spremitura a freddo										
+							<input type="radio" name="estrazione" value="2" <?php if ($form['estrazione']==2){echo "checked";}?> > Estratto a freddo										
+                       </div>
+                   </div>
+				</div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+						<label for="biologico" class="col-sm-4 control-label"><?php echo $script_transl['biologico']; ?></label>
+							<input type="radio" name="biologico" value="0" <?php if ($form['biologico']==0){echo "checked";}?> > Convenzionale <br>
+							<input type="radio" name="biologico" value="1" <?php if ($form['biologico']==1){echo "checked";}?> > Biologico										
+							<input type="radio" name="biologico" value="2" <?php if ($form['biologico']==2){echo "checked";}?> > In conversione										
+                       </div>
+                   </div>
+				</div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+						<label for="etichetta" class="col-sm-4 control-label"><?php echo $script_transl['etichetta']; ?></label>
+							<input type="radio" name="etichetta" value="0" <?php if ($form['etichetta']==0){echo "checked";}?> > Non etichettato <br>
+							<input type="radio" name="etichetta" value="1" <?php if ($form['etichetta']==1){echo "checked";}?> > Etichettato									
+						</div>
+					</div>
+				</div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for = "categoria" class = "col-sm-4 control-label"><?php echo $script_transl['categoria']; ?></label>
+							<?php
+							$gForm->variousSelect('categoria', $script_transl['categoria_value'], $form['categoria'], "col-sm-8", true, '', false, 'onchange = "this.form.submit();" style = "max-width: 200px;"');
+							?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="confezione" class="col-sm-4 control-label"><?php echo $script_transl['confezione']; ?></label>
+                            <input class="col-sm-2" type="number" step="any" min="0.001" value="<?php echo $form['confezione']; ?>" name="confezione" maxlength="15" /> (se sfuso indicare 0)
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+               
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
