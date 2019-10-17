@@ -305,6 +305,8 @@ $strScript = array("admin_client.php" =>
             '64' =>'Un rigo di tipo normale è senza quantità',
 			'65' =>'Le quantità richieste per lotto non sono disponibili',
 			'nocod_operaz' =>'Non è stato impostato il tipo di operazione SIAN!',
+			'norecipdestin' => 'Non è stato inserito il recipiente di destinazione olio sfuso',
+			'norecipstocc' => 'Non è stato inserito il recipiente di stoccaggio olio sfuso',
 			'nofor_sian' =>'Per questo tipo di operazione SIAN è necessario che il destinatario abbia il codice dell\'anagrafica del SIAN',
 			'id_documento'=>'Non è stato inserito il tipo rigo 13 - Id.Documento (FaE 2.1.X.2) obbligatorio in presenza di almeno uno dei tipi da 11 a 16'
 		)		
