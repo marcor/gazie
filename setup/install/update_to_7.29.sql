@@ -48,4 +48,6 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXcamp_artico` (
   `categoria` int(2) NOT NULL COMMENT 'Categoria olio come codificato dal SIAN'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 INSERT INTO `gaz_XXXcompany_config` SELECT MAX(id)+1, 'Identificativo dello stabilimento o deposito del SIAN', 'id_sian', '0' FROM `gaz_XXXcompany_config`;
+ALTER TABLE `gaz_XXXsyncronize_oc`	CHANGE COLUMN `date_update` `date_update` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `date_created`;
+INSERT INTO `gaz_XXXcompany_config` SELECT MAX(id)+1, 'Allerta se la lunghezza del codice articolo è diverso da', 'codart_len', '0' FROM `gaz_XXXcompany_config`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

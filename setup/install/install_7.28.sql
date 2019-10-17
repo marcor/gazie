@@ -2102,7 +2102,7 @@ CREATE TABLE IF NOT EXISTS `gaz_001syncronize_oc` (
   `id_oc` int(11) NOT NULL,
   `id_gz` int(11) NOT NULL,
   `date_created` datetime NOT NULL,
-  `date_update` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
