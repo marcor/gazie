@@ -200,7 +200,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $msg['err'][] = 'char';
         }*/
 		$codart_len = gaz_dbi_get_row($gTables['company_config'], 'var', 'codart_len')['val'];
-        if ($codart_len > 0 && trim($form['codice']) <> $codart_len) {
+        if ($codart_len > 0 && strlen(trim($form['codice'])) <> $codart_len) {
             $msg['err'][] = 'codart_len';
         }
 		
