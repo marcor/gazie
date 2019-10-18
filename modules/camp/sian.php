@@ -29,6 +29,38 @@ require ("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $msg='';
 
+// prendo l'id dell'ultimo movmag inviato al SIAN
+$ulmvsian = gaz_dbi_get_row($gTables['company_data'], 'var', 'ulmvsian');
+if (!isset($ulmvsian)){ // controllo che in company_data ci sia la riga ultimo movmag inviato al SIAN, se non c'è la creo
+	$comp['description']="Ultimo movmag inviato tramite file upload al SIAN";$comp['var']="ulmvsian";$comp['data']="";$comp['ref']="";
+	gaz_dbi_table_insert('company_data', $comp);
+	$ulmvsian = gaz_dbi_get_row($gTables['company_data'], 'var', 'ulmvsian'); // e prendo l'id dell'ultimo movmag inviato al SIAN
+}
+
+// prendo tutti i file della cartella sian
+if ($handle = opendir('../../data/files/1/sian/')){
+   while (false !== ($file = readdir($handle))){
+       $prevfiles[]=$file;
+   }
+   closedir($handle);
+}
+//echo "<br>",$file->getFilename();
+//echo "<br>",$file->getPathname();
+
+// Prendo l'ultimo file salvato nella cartella sian
+foreach(new DirectoryIterator('../../data/files/1/sian') as $item) {
+    if ($item->isFile() && (empty($file) || $item->getMTime() > $file->getMTime())) {
+        $file = clone $item;
+    }
+}
+if (!empty($file)){
+	$dividedfile= explode ("_", $file->getFilename());// e lo divido
+} else {
+	$dividedfile[1]=date("yy")."0101";
+}
+
+
+
 function getMovements($date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
@@ -58,30 +90,18 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['this_date_Y']=date("Y");
     $form['this_date_M']=date("m");
     $form['this_date_D']=date("d");
-    if (!isset($_GET['di'])) {
-       $form['date_ini_D']=1;
-       $form['date_ini_M']=1;
-       $form['date_ini_Y']=date("Y");
-    } else {
-       $form['date_ini_D']=intval(substr($_GET['di'],0,2));
-       $form['date_ini_M']=intval(substr($_GET['di'],2,2));
-       $form['date_ini_Y']=intval(substr($_GET['di'],4,4));
-    }
-    if (!isset($_GET['df'])) {
-       $form['date_fin_D']=date("d");
-       $form['date_fin_M']=date("m");
-       $form['date_fin_Y']=date("Y");
-    } else {
-       $form['date_fin_D']= intval(substr($_GET['df'],0,2));
-       $form['date_fin_M']= intval(substr($_GET['df'],2,2));
-       $form['date_fin_Y']= intval(substr($_GET['df'],4,4));
-    }
+    $form['date_ini_D']=substr($dividedfile[1],6,2); // imposto la data di inizio partendo da quella dell'ultimo file
+    $form['date_ini_M']=substr($dividedfile[1],4,2);
+    $form['date_ini_Y']=substr($dividedfile[1],0,4);
+    $form['date_fin_D']=date("d");
+    $form['date_fin_M']=date("m");
+    $form['date_fin_Y']=date("Y");
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
-    $form['date_ini_D']=intval($_POST['date_ini_D']);
-    $form['date_ini_M']=intval($_POST['date_ini_M']);
-    $form['date_ini_Y']=intval($_POST['date_ini_Y']);
+    $form['date_ini_D']=substr($dividedfile[1],6,2); // impongo la data di inizio partendo da quella dell'ultimo file
+    $form['date_ini_M']=substr($dividedfile[1],4,2);
+    $form['date_ini_Y']=substr($dividedfile[1],0,4);
     $form['date_fin_D']=intval($_POST['date_fin_D']);
     $form['date_fin_M']=intval($_POST['date_fin_M']);
     $form['date_fin_Y']=intval($_POST['date_fin_Y']);
@@ -93,6 +113,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         exit;
     }
 }
+$date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$form['date_ini_D']);
+$date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);
 
 //controllo le date
 if (!checkdate( $form['this_date_M'],$form['this_date_D'],$form['this_date_Y']) ||
@@ -109,15 +131,22 @@ if ($utsini > $utsfin) {
 if ($utsexe < $utsfin) {
     $msg .='2+';
 }
+// controllo se la data di inizio è inferiore a quella dell'ultimo file
+if ($date_ini<$dividedfile[1]){
+	$msg .='3+';
+}
+
 // fine controlli
 
 if (isset($_POST['create']) && $msg=='') {
     
-                                    $utsini=date("dmY",$utsini);
-                                     $utsfin=date("dmY",$utsfin);
-                                     $utsexe=date("dmY",$utsexe);
+    $utsini=date("dmY",$utsini);
+    $utsfin=date("dmY",$utsfin);
+    $utsexe=date("dmY",$utsexe);
+	$ulmvsian=$ulmvsian['data'];
+	$dividedfile=$dividedfile[1];
                                   
-    header("Location: create_sian.php?ri=$utsini&rf=$utsfin&ds=$utsexe");
+    header("Location: create_sian.php?ri=$utsini&rf=$utsfin&ds=$utsexe&umv=$ulmvsian&ud=$dividedfile");
     exit;
 }
 
@@ -173,13 +202,11 @@ echo "\t </td>\n";
 echo "\t </tr>\n";
 echo "</table>\n";
 
-$date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$form['date_ini_D']);
-$date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);
 
 if (isset($_POST['preview']) and $msg=='') {
-  $m=getMovements($date_ini,$date_fin);
-  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
-  if (sizeof($m) > 0) {
+	$m=getMovements($date_ini,$date_fin);
+	echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+	if (sizeof($m) > 0) {
         $ctr_mv='';
         echo "<tr>";
         $linkHeaders=new linkHeaders($script_transl['header']);
@@ -187,36 +214,39 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "</tr>";
         $sum=0.00;
 		
-	
+		$genera="";
         while (list($key, $mv) = each($m)) {
-			if ($mv['id_movmag']>0){ // se ? un movimento del SIAN connesso al movimento di magazzino
-            $datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
+			if ($mv['id_movmag']>0){ // se è un movimento del SIAN connesso al movimento di magazzino
+				if ( $dividedfile[1]==str_replace("-", "", $mv['datdoc']) AND $mv['id_mov']<=$ulmvsian['data']) {
+					// escludo i movimenti già inseriti null'ultimo file con stessa data
+				} else {				
+					$genera="ok";
+					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
            
-            $movQuanti = $mv['quanti']*$mv['operat'];
-            $sum += $movQuanti;
-            echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
-           
+					$movQuanti = $mv['quanti']*$mv['operat'];
+					$sum += $movQuanti;
+					echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
+					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['artico']." &nbsp;</td>\n";
 			
-
-			echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['artico']." &nbsp;</td>\n";
+					echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,3)."</td>\n";
+					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['id_SIAN']." - ".$mv['ragso1']." &nbsp;</td>\n";
 			
-            echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,3)."</td>\n";
-            echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['id_SIAN']." - ".$mv['ragso1']." &nbsp;</td>\n";
-			
-			echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc']." &nbsp;</td>\n";
-			echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['cod_operazione']." &nbsp;</td>\n";
-            echo "</tr>\n";
-            $ctr_mv = $mv['artico'];
+					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc']." &nbsp;</td>\n";
+					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['cod_operazione']." &nbsp;</td>\n";
+					echo "</tr>\n";
+					$ctr_mv = $mv['artico'];
+				}
 			}
          }
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-         echo '<td colspan="7" align="right"><input type="submit" name="create" value="';
-         echo "Genera file SIAN";
-         echo '">';
-         echo "\t </td>\n";
-		
+		 if ($genera=="ok"){
+			echo '<td colspan="7" align="right"><input type="submit" name="create" value="';
+			echo "Genera file SIAN";
+			echo '">';
+			echo "\t </td>\n";
+		 }
          echo "\t </tr>\n";
-  }
+	}
   echo "</table></form>";
 }
 ?>

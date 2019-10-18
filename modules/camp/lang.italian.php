@@ -79,8 +79,9 @@ $strScript = array("browse_document.php" =>
 		'date_ini' => 'Data inizio movimenti',
 		'date_fin' => 'Data fine movimenti',
         'errors' => array('La data  non &egrave; corretta!',
-            'La data di inizio dei movimenti da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
-            'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
+            'La data di inizio dei movimenti non pu&ograve; essere successiva alla data dell\'ultimo !',
+            'La data di creazione del file non pu&ograve; essere precedente a quella dell\'ultimo movimento!',
+			'La data di inizio non può essere precedente a quella dell\'ultimo file generato!'
         ),
 		'header' => array('Data' => '', 'Prodotto' => '', 'Quantit&agrave; kg' => '',
             'ID SIAN - Fornitore/Cliente' => '', 'Recipiente di stoccaggio' => '', 'Operazione SIAN' => ''
