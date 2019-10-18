@@ -217,8 +217,8 @@ $namefile=substr($namefile,0,-4)
 ?>
 
 <a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=1">
-		<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
-		</a>
+<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
+</a>
 <?php
 require("../../library/include/footer.php");
 ?>

@@ -44,8 +44,6 @@ if ($handle = opendir('../../data/files/1/sian/')){
    }
    closedir($handle);
 }
-//echo "<br>",$file->getFilename();
-//echo "<br>",$file->getPathname();
 
 // Prendo l'ultimo file salvato nella cartella sian
 foreach(new DirectoryIterator('../../data/files/1/sian') as $item) {
