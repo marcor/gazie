@@ -209,5 +209,16 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 }
 // aggiorno l'ultimo movmag inviato al SIAN
 gaz_dbi_put_row($gTables['company_data'], 'var', 'ulmvsian', 'data', $ulmvsian);
-echo "file generato e salvato";die;
+require("../../library/include/header.php");
+$script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
+
+echo "file generato e salvato: ",$namefile," ";
+$namefile=substr($namefile,0,-4)
+?>
+
+<a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=1">
+		<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
+		</a>
+<?php
+require("../../library/include/footer.php");
 ?>

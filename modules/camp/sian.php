@@ -24,13 +24,19 @@
 */
  // IL REGISTRO DI CAMPAGNA E' UN MODULO DI ANTONIO GERMANI - MASSIGNANO AP
 // >> Selezione per la generazione del file di upload per il SIAN <<
+$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
+strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+if (!$isAjax) {
+    $user_error = 'Access denied - not an AJAX request...';
+    trigger_error($user_error, E_USER_ERROR);
+}
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $msg='';
 
 // prendo l'id dell'ultimo movmag inviato al SIAN
-$ulmvsian = gaz_dbi_get_row($gTables['company_data'], 'var', 'ulmvsian');
+$ulmvsian = 
 if (!isset($ulmvsian)){ // controllo che in company_data ci sia la riga ultimo movmag inviato al SIAN, se non c'è la creo
 	$comp['description']="Ultimo movmag inviato tramite file upload al SIAN";$comp['var']="ulmvsian";$comp['data']="";$comp['ref']="";
 	gaz_dbi_table_insert('company_data', $comp);
