@@ -61,7 +61,8 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
                                                     ),
 											7=>array(
                                                     array('translate_key'=>17,'link'=>"rec_stocc.php",'weight'=>1),
-													array('translate_key'=>18,'link'=>"stabilim.php",'weight'=>5)
+													array('translate_key'=>18,'link'=>"stabilim.php",'weight'=>5),
+													array('translate_key'=>19,'link'=>"admin_sian_files.php",'weight'=>10)
                                                     )						
                                             )
                                )

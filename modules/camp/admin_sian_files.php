@@ -30,8 +30,18 @@ $admin_aziend = checkAdmin();
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-// prendo tutti i file della cartella sian
 
+if (isset ($_POST['confirm'])){
+	$filetodelete="../../data/files/1/sian/".$_POST['confirm'];
+	unlink ($filetodelete);
+	unset ($_POST,$form);
+}
+$form['delete']="";
+if (isset ($_POST['del'])){
+	$form['delete']=$_POST['first'];
+}
+
+// prendo tutti i file della cartella sian
 if ($handle = opendir('../../data/files/1/sian/')){
 	while ($file = readdir($handle)){
 		if ($file == '.' || $file == '..') {
@@ -43,6 +53,7 @@ if ($handle = opendir('../../data/files/1/sian/')){
 }
 
 ?>
+<form method="POST" enctype="multipart/form-data">
 <div class="panel panel-default gaz-table-form">
     <div class="container-fluid">
 		<div align="center" class="lead"><h1>Gestione dei file creati per l'upload al SIAN</h1></div>
@@ -56,19 +67,48 @@ if ($handle = opendir('../../data/files/1/sian/')){
 	</thead>
 	<tbody>
 	<?php 
-	foreach ($files as $file){
-		$data=explode("_",$file);
-		$gio = substr($data[1],6,2);
-		$mes = substr($data[1],4,2);
-		$ann = substr($data[1],0,4);
-	?>
-	<tr>
-	<td data-title="Code"><?php echo $file;?></td>
-	<td data-title="Company"><?php echo $gio,"-",$mes,"-",$ann;?></td>
-	<td data-title="Price" class="numeric"><a href="../camp/getfilesian.php?filename=<?php echo substr($file,0,-4);?>&ext=txt&company_id=1">
-<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
-</a></td>
-	</tr>
+	if (isset($files)){ // se ci sono files
+		foreach (array_reverse($files) as $file){
+			$data=explode("_",$file);
+			$gio = substr($data[1],6,2);
+			$mes = substr($data[1],4,2);
+			$ann = substr($data[1],0,4);
+			?>
+			<tr>
+				<td data-title="Code"><?php echo $file;?></td>
+				<td data-title="Company"><?php echo $gio,"-",$mes,"-",$ann;?></td>
+				<td data-title="Price" class="numeric">
+				<a href="../camp/getfilesian.php?filename=<?php echo substr($file,0,-4);?>&ext=txt&company_id=1">
+				<i class="glyphicon glyphicon-file" title="Scarica il file appena generato">
+				</i></a></td>
+				<?php
+				if (!isset($first)){
+					?>
+					<td align="center">
+					<button type="submit" onclick = "this.form.submit();" name="del" value="del" class="btn btn-xs btn-default btn-elimina" >
+					<span class="glyphicon glyphicon-remove"></span>
+					</button>
+					</td>
+					<input type="hidden" name="first" value="<?php echo $file;?>">
+				<?php
+					$first=1;
+				} 
+				?>
+			</tr>
+			<?php
+		
+		}
+	}
+	if (strlen($form['delete'])>0){
+			?>
+			<tr>
+				<td class="bg-danger">Conferma la cancellazione di
+				<input type="submit" name="confirm" value="<?php echo $form['delete']; ?>" class="btn btn-xs btn-default btn-elimina">
+				</td>
+				<td>
+				<input type="submit" name="null" value="Annulla">
+				</td>
+			</tr>
 	<?php
 	}
 	?>
@@ -76,6 +116,7 @@ if ($handle = opendir('../../data/files/1/sian/')){
 	</table>
 	</div>
 </div>
+</form>
 <?php
 require("../../library/include/footer.php");
 ?>

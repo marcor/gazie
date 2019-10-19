@@ -49,7 +49,8 @@ $transl['camp'] = array('name' => "Registro di campagna",
 										 15 =>array("Gestione uso fitofarmaci","Uso fitofarmaci"),
 										 16 =>array("visualizza documenti e/o certificazioni","Documenti e/o certificazioni"),
 										 17 =>array("Gestione recipienti stoccaggio","Recipienti stoccaggio"),
-										 18 =>array("Gestione stabilimenti depositi","Stabilimenti e depositi")
+										 18 =>array("Gestione stabilimenti depositi","Stabilimenti e depositi"),
+										 19 =>array("Gestione file di upload del SIAN","Gestione file SIAN")
 										 
                                       )
                           );
