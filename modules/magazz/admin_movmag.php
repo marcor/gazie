@@ -99,6 +99,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 	$print_unimis =  $item_artico['unimis'];
 	$print_uniacq =  $item_artico['uniacq'];
+	$form['SIAN']= $item_artico['SIAN'];
+	$resultsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_mov_sian", $_GET['id_mov']);
+	$form['cod_operazione'] = $resultsian['cod_operazione'];
+	$form['recip_stocc'] = $resultsian['recip_stocc'];
+	$form['recip_stocc_destin'] = $resultsian['recip_stocc_destin'];
 	if ($item_artico['lot_or_serial']==1){ 
 		$result_lotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
 		$form['identifier'] = $result_lotmag['identifier'];
@@ -176,6 +181,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$form['cosear'] = $_POST['cosear'];
     $form['artico'] = $_POST['artico'];
 	$form['lot_or_serial']=$_POST['lot_or_serial'];
+	$form['SIAN']=$_POST['SIAN'];
+	$form['cod_operazione'] = $_POST['cod_operazione'];
+	$form['recip_stocc'] = $_POST['recip_stocc'];
+	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
 	$form['coseprod']= $_POST['coseprod'];
     $form['id_orderman'] = intval($_POST['id_orderman']);
 	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0) {
@@ -203,6 +212,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$item_artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
 		$print_unimis =  $item_artico['unimis'];
 		$print_uniacq =  $item_artico['uniacq'];
+		$form['SIAN']=$item_artico['SIAN'];
 		if (isset($_POST['expiry'])){
 			$form['filename'] = $_POST['filename'];
 			$form['identifier'] = $_POST['identifier'];
@@ -377,8 +387,19 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
                 $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0, 
                         $form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
                 );
-				// aggiorno id_lotmag nel rigo di movmag
-				// 
+				if ($form['SIAN']>0 AND $toDo=="insert"){ 
+					$form['id_movmag']=$id_movmag;// imposto l'id mov mag e salvo il movimento del SIAN
+					gaz_dbi_table_insert('camp_mov_sian', $form);
+				}
+				if ($form['SIAN']>0 AND $toDo=="update"){
+					// aggiorno il movimento del SIAN
+					$update = array();
+					$update[]="id_movmag";
+					$update[]=$form['id_mov'];
+					gaz_dbi_table_update('camp_mov_sian',$update,$form);
+				}
+				
+				// aggiorno id_lotmag nel rigo di movmag				
 				$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = " . $form['id_lotmag'] . ", id_orderman=".$form['id_orderman']." WHERE id_mov ='" . $id_movmag . "'";
                 gaz_dbi_query($query);
             }
@@ -405,6 +426,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['scochi'] = 0;
     $form['artico'] = "";
 	$form['lot_or_serial']="";
+	$form['SIAN']="";
+	$form['cod_operazione'] = "";
+	$form['recip_stocc'] = "";
+	$form['recip_stocc_destin'] = "";
 	$form['filename'] ="";
 	$form['id_lotmag'] ="";
 	$form['identifier'] ="";
@@ -627,8 +652,6 @@ $select_artico = new selectartico("artico");
 				$select_artico->addSelected($form['artico']);			
 				$select_artico->output(substr($form['cosear'], 0, 20));
 
-
-
     // Antonio Germani > Inizio LOTTO in uscita o in entrata o creazione nuovo
 if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form 
 	$form['lot_or_serial']=$item_artico['lot_or_serial'];
@@ -639,7 +662,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
 		<input type="hidden" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
 		
 		</div>
-<?php
+	<?php
 	if ($form['operat']==1 && $form['quanti']>0){ // se è carico di magazzino ed è impostata la quantità
 		if (strlen($form['filename']) == 0) {
 			echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog">' . 'Inserire nuovo certificato' . ' ' . '<i class="glyphicon glyphicon-tag"></i>' . '</button></div>';
@@ -788,22 +811,72 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
         echo '<input type="hidden" name="identifier" value="">';
         echo '<input type="hidden" name="id_lotmag" value="">';
         echo '<input type="hidden" name="expiry" value="">';
-    }
-	if (isset($form['operat']) && strlen($form['artico'])>0 && ($form['operat']==1 and $item_artico['good_or_service']==2 and $tipo_composti['val']=="STD")){
-		?>
-		<div class="alert alert-warning alert-dismissible">
-		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		<strong>Warning!</strong> <b>Articolo composto!</b> </br>E' possibile caricare gli articoli composti solo con una produzione.
-		</div>
-		<?php
-	}
+}
+if (isset($form['operat']) && strlen($form['artico'])>0 && ($form['operat']==1 and $item_artico['good_or_service']==2 and $tipo_composti['val']=="STD")){
+	?>
+	<div class="alert alert-warning alert-dismissible">
+	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+	<strong>Warning!</strong> <b>Articolo composto!</b> </br>E' possibile caricare gli articoli composti solo con una produzione.
+	</div>
+	<?php
+}
+// Se l'articolo movimenta il SIAN	
+if ($form['SIAN']>0 AND $form['operat']<>0){
+	?>	
+	<div class="container-fluid">					
+					<div class="row">
+						<label for="cod_operazione" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN"; ?></label>
+						<?php
+						if ($form['operat']==-1){
+							$gForm->variousSelect('cod_operazione', $script_transl['cod_operaz_value'], $form['cod_operazione'], "col-sm-6", false, '', false);
+						} else {
+							$gForm->variousSelect('cod_operazione', $script_transl['cod_operaz_value_carico'], $form['cod_operazione'], "col-sm-6", false, '', false);
+						}
+						?>
+					</div>
+					<div class="row">
+						<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
+						<?php
+						$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
+						?>
+					</div>
+					<?php
+					if (($form['cod_operazione']==4 AND $form['operat']==-1) OR ($form['cod_operazione']==5 AND $form['operat']==1)) { // se è un movimento aziendale chiedo recipiente destinazione
+						?>
+						<div class="row">
+							<label for="camp_recip_destin" class="col-sm-6 control-label"><?php echo "Recipiente destinazione"; ?></label>
+							<?php
+							$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc_destin' ,'cod_silos', $form['recip_stocc_destin'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
+							?>
+						</div>
+						<?php
+					} else {
+						echo '<input type="hidden" value="" name="recip_stocc_destin" />';
+					}
+				echo '</div>';	
 	
 	
+	
+	
+	
+} else {
+	?>
+	<input type="hidden" name="cod_operazione" value="<?php echo $form['cod_operazione']; ?>">
+	<input type="hidden" name="recip_stocc" value="<?php echo $form['recip_stocc']; ?>">
+	<input type="hidden" name="recip_stocc_destin" value="<?php echo $form['recip_stocc_destin']; ?>">
+	<?php
+}	
 ?>
 <input type="hidden" name="lot_or_serial" value="<?php echo $form['lot_or_serial']; ?>">
+<input type="hidden" name="SIAN" value="<?php echo $form['SIAN']; ?>">
+
+
+
 </td>
-<?php	
-	// fine LOTTO
+<?php
+// fine LOTTO e SIAN
+
+
 	
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();this.form.submit();\">".${'print_'.$unimis}."</td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";

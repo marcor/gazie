@@ -34,6 +34,11 @@ if (isset($_POST['Delete'])) {
     if ($form['id_rif'] > 0) {  //se il movimento di magazzino � stato generato da un rigo di documento lo azzero
         gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $form['id_rif'], 'id_mag', 0);
     }
+	$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+	if ($item['SIAN']>0){ // se è SIAN cancello anche il suo movimento
+		gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", intval($_POST['id_mov']));
+	}
+
     header("Location: report_movmag.php");
     exit;
 } else {
