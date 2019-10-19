@@ -228,6 +228,111 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
                             </table>
                         </div>
 	</div>
-    <?php
+    <script src="../../library/theme/lte/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../library/theme/lte/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script>
+
+    //*+ DC - 07/02/2018
+		//modificati parametri order/filter
+        //        "order": [2, 'asc'],
+		//		  "filter": false,
+		//*- DC - 07/02/2018
+		$(function () {
+			$("#clienti").DataTable({
+                "oLanguage": {
+                    "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
+                },
+                "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
+                "iDisplayLength": 5,
+                "order": [4, 'asc'],
+                "filter": true,
+				"responsive": true,
+                "stateSave": true
+            });
+			$('#fornitori').DataTable({
+                "oLanguage": {
+                    "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
+                },
+                "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
+                "iDisplayLength": 5,
+                "order": [4, 'asc'],
+                "filter": true,
+				"responsive": true,
+                "stateSave": true
+            });
+        });
+
+  //*+ DC - 07/02/2018 - nuove funzioni per gestione posizionmento su scadenzari
+  function gotoPage(id,num)
+	{
+		var table = $(id).DataTable();
+		table.page( num ).draw( false );
+	}
+
+	function searchPageOnTable(id,keyRow,lenPage)
+	{
+		var table = $(id).DataTable();
+
+		var plainArray = table
+			.column(0)
+			.data()
+			.toArray();
+
+		var i;
+
+		for(i= 0 ; i < plainArray.length; i++)
+		{
+			if(plainArray[i].split('"keyRow">')[1].replace("</span>","") == keyRow)
+				break;
+		}
+
+		return Math.floor(i / lenPage)
+	}
+
+	//add stylesheet css
+	//$('document').ready(function() {
+		$("head").append('<link rel="stylesheet" href="./admin.css">');
+	//});
+
+	$(window).load(function(){
+		// Scadenziario Clienti
+		keyRowCli = "<?php echo $keyRowFoundCli ?>";
+
+		if(keyRowCli != ""){
+			setTimeout(function(){num = searchPageOnTable('#clienti',keyRowCli,$('#clienti').DataTable().page.len())
+				gotoPage('#clienti',num);
+				$("#clienti").css("max-height","none");
+				$("#clienti").css("opacity","1");
+				$(".wheel_load").css("display","none");
+			},1000)
+			}
+			else
+			{
+				$("#clienti").css("max-height","none");
+				$("#clienti").css("opacity","1");
+				$(".wheel_load").css("display","none");
+			}
+
+		// Scadenziario Fornitori
+		keyRowFor = "<?php echo $keyRowFoundFor ?>";
+
+		if(keyRowFor != ""){
+			setTimeout(function(){num = searchPageOnTable('#fornitori',keyRowFor,$('#fornitori').DataTable().page.len())
+				gotoPage('#fornitori',num);
+				$("#fornitori").css("max-height","none");
+				$("#fornitori").css("opacity","1");
+				$(".wheel_load").css("display","none");
+			},1000)
+			}
+			else
+			{
+				$("#fornitori").css("max-height","none");
+				$("#fornitori").css("opacity","1");
+				$(".wheel_load").css("display","none");
+			}
+		});
+    //*- DC - 07/02/2018 - nuove funzioni per gestione posizionmento su scadenzari
+    </script>
+<?php
 }
 ?>
