@@ -14,7 +14,8 @@ if ($camp_mod){
 	gaz_dbi_query("INSERT INTO `gaz_menu_module` SELECT MAX(id)+1 , ".$camp_mod['id'].", 'admin_sian.php', '', '', 7, '', 7  FROM `gaz_menu_module`");
 	// aggiungo le nuove voci di menù di 3° livello
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='admin_sian.php'), 'rec_stocc.php', '', '', 17, '', 1  FROM `gaz_menu_script`");
-	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='admin_sian.php'), 'stabilim.php', '', '', 18, '', 5  FROM `gaz_menu_script`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='admin_sian.php'), 'admin_sian_files.php', '', '', 19, '', 5  FROM `gaz_menu_script`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='admin_sian.php'), 'stabilim.php', '', '', 18, '', 10  FROM `gaz_menu_script`");
 	echo "<p>Ho modificato il menù del modulo <b>Registro di campagna</b></p>";
 }
 
