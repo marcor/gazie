@@ -31,6 +31,7 @@ $strScript = array("admin_orderman.php" =>
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!'),
         'errors' => array(),
+		'cod_operaz_value' => array(0 => '', 1 => 'L - Confezionamento con etichettatura', 2 => 'L1 - Confezionamento senza etichettatura',3 => 'L2 - Etichettatura',4 => 'X - Svuotamento di olio confezionato'),
 		"ID ",
 		"Tipo di produzione",
 		"Descrizione produzione",

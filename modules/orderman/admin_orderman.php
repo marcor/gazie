@@ -48,9 +48,8 @@ if ((isset($_GET['Update']) and !isset($_GET['codice'])) or isset($_POST['Return
     header("Location: " . $_POST['ritorno']);
     exit;
 }
-if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani se non e' il primo accesso
-    $form = gaz_dbi_parse_post('orderman');
-	
+if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani   **  Se non e' il primo accesso  **
+    $form = gaz_dbi_parse_post('orderman');	
     $form['order_type'] = $_POST['order_type'];
     $form['description'] = $_POST['description'];
     $form['add_info'] = $_POST['add_info'];
@@ -69,7 +68,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
 	}  else {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
 	}
-	$form['lot_or_serial'] = $resartico['lot_or_serial']; 
+	$form['lot_or_serial'] = $resartico['lot_or_serial'];
+	$form['SIAN'] = $resartico['SIAN'];
+	$form['cod_operazione'] = $_POST['cod_operazione'];
+    $form['recip_stocc'] = $_POST['recip_stocc'];
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
 			 // prendo i movimenti di magazzino dei componenti e l'unità di misura 
@@ -663,7 +665,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     }
     //  fine scrittura database §§§§§§§§§§§§§§§§§§§§§§§§§§§§
     
-} elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
+} elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) {//  **  se e' il primo accesso per UPDATE  **
     $result = gaz_dbi_get_row($gTables['orderman'], "id", $_GET['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['id'] = $_GET['codice'];
@@ -677,6 +679,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['datreg'] = $result4['datreg'];
     $form['quantip'] = $result4['quanti'];
     $form['id_movmag'] = $result4['id_mov'];
+	$resmov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['id_movmag']);
+	$form['cod_operazione'] = $resmov_sian['cod_operazione'];
+	$form['recip_stocc'] = $resmov_sian['recip_stocc'];
     $result2 = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $result['id_tesbro']);
     $form['gioinp'] = substr($result2['datemi'], 8, 2);
     $form['mesinp'] = substr($result2['datemi'], 5, 2);
@@ -696,6 +701,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['expiry'] = $result5['expiry'];
 	$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
 	$form['lot_or_serial'] = $resartico['lot_or_serial'];
+	$form['SIAN'] = $resartico['SIAN'];
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 		// prendo i movimenti di magazzino dei componenti e l'unità di misura
 		$where="operat = '-1' AND id_orderman = '". $_GET['codice']."'";
@@ -734,7 +740,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
         $form['nmovdb'] = $form['mov'] - 1;
     }
     $form['cosear'] = "";
-} else { //se e' il primo accesso per INSERT
+} else {                 //                  **   se e' il primo accesso per INSERT    **
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 	$form['numdoc']="";
     if (isset($_GET['type'])) { // controllo se proviene anche da una richiesta del modulo camp
@@ -762,6 +768,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
     $form['identifier'] = "";
     $form['expiry'] = "";
     $form['lot_or_serial'] = "";
+	$form['SIAN'] = "";
+	$form['cod_operazione']="";
+	$form['recip_stocc']="";
     $form['datreg'] = date("Y-m-d");
     $form['quantip'] = "";
     $form['quantipord'] = "";
@@ -1088,9 +1097,39 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 		</div>	<!-- chiude container  -->
 		<?php
 	}
-?>	
+	?>	
 	</td>
-</tr>
+	</tr>
+	<?php // Antonio Germani - Inizio form SIAN
+	if ($form['SIAN']>0 AND $form['order_type'] == "IND"){ // se l'articolo prevede un movimento SIAN e siamo su prod.industriale
+		echo "<tr><td class=\"FacetFieldCaptionTD\">Gestione SIAN</td>";
+		echo "<td>";
+		?>
+		<div class="container-fluid">					
+			<div class="row">
+				<label for="cod_operazione" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN"; ?></label>
+				<?php
+						
+				$gForm->variousSelect('cod_operazione', $script_transl['cod_operaz_value'], $form['cod_operazione'], "col-sm-6", false, '', false);
+						
+				?>
+			</div>
+			<div class="row">
+				<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
+				<?php
+				$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
+				?>
+			</div>
+			<?php
+					
+		echo "</div>";	
+		echo"</td></tr>";
+	} else {
+		echo '<input type="hidden" name="recip_stocc" value="">';
+		echo '<input type="hidden" name="cod_operazione" value="">';
+	}
+
+?>
 <!--- Antonio Germani - inserimento quantità  -->
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['15']; ?> </td>
@@ -1272,6 +1311,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
         echo '<input type="hidden" name="id_lotmag" value="' . $form['id_lotmag'] . '">';
         echo '<input type="hidden" name="expiry" value="' . $form['expiry'] . '"></td></tr>';
     }
+	
     // fine LOTTI in entrata   
 } else { //se è produzione agricola
     print "<tr><td><input type=\"hidden\" name=\"nmov\" value=\"0\">";
@@ -1281,6 +1321,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
     print "<input type=\"hidden\" name=\"expiry\" value=\"\">\n";
     print "<input type=\"hidden\" name=\"identifier\" value=\"\">\n";
     print "<input type=\"hidden\" name=\"id_lotmag\" value=\"\">\n";
+	print "<input type=\"hidden\" name=\"SIAN\" value=\"\">\n";
     print "<input type=\"hidden\" name=\"lot_or_serial\" value=\"\"></td></tr>";
 }
 if ($popup <> 1) {
