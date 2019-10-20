@@ -57,7 +57,8 @@ $strScript = array("admin_orderman.php" =>
 		"Manca la data di registrazione",
 		"Il numero d'ordine inserito è inesistente",
 		"L'articolo è già stato prodotto per questo ordine",
-		"La quantità inserita di un lotto, di un componente, è errata"
+		"La quantità inserita di un lotto, di un componente, è errata",
+		"Non è stata impostata l'operazione SIAN"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',

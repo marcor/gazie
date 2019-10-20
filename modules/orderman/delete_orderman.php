@@ -22,8 +22,9 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
+// Antonio Germani - Cancellazione di una produzione: questa cancellazione agisce anche sulla tabella tesbro, rigbro, camp_mov_sian e staff_worked_hours a cui la produzione è direttamente connessa
+
 require("../../library/include/datlib.inc.php");
-// Antonio Germani cancellazione di una produzione: questa cancellazione agisce anche sulla tabella tesbro, rigbro e staff_worked_hours a cui la produzione è direttamente connessa
 $admin_aziend=checkAdmin();
 $message = "Sei sicuro di voler rimuovere ?";
 $titolo="Cancella la Produzione";
@@ -33,6 +34,15 @@ if (isset($_POST['Delete'])){
 	
 	$query="DELETE FROM ".$gTables['staff_worked_hours']." WHERE id_orderman = '".$_POST['id']."' AND work_day = '".$res['datemi']."'"; 
 	gaz_dbi_query($query); // cancello tutti i righi operai con quel giorno e quella produzione
+	
+	// prendo tutti i movimenti di magazzino a cui fa riferimento la produzione
+	$what=$gTables['movmag'].".id_mov ";
+	$table=$gTables['movmag'];$idord=$_POST['id'];
+	$where="id_orderman = $idord";
+	$resmov=gaz_dbi_dyn_query ($what,$table,$where);
+	while ($r = gaz_dbi_fetch_array($resmov)) {// cancello i relativi movimenti SIAN
+		gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $r['id_mov']);
+    } 
 	
 	$query="DELETE FROM ".$gTables['movmag']." WHERE id_orderman = '".$_POST['id']."'"; 
 	gaz_dbi_query($query); //cancello i movimenti di magazzino corrispondenti
@@ -45,12 +55,9 @@ if (isset($_POST['Delete'])){
 		gaz_dbi_query ("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '' WHERE id_tes ='".$_GET['id_tesbro']."'") ; // sgancio tesbro da orderman
 		$result = gaz_dbi_del_row($gTables['orderman'], "id", $_POST['id']); // cancello orderman/produzione
 	}
-		
-		
-        header("Location: orderman_report.php");
-        exit;
+	header("Location: orderman_report.php");
+    exit;
 }
-
 if (isset($_POST['Return']))
         {
         header("Location: orderman_report.php");
