@@ -24,6 +24,7 @@
 */
  // IL REGISTRO DI CAMPAGNA E' UN MODULO DI ANTONIO GERMANI - MASSIGNANO AP
 // >> Selezione per la generazione del file di upload per il SIAN <<
+
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
@@ -38,7 +39,7 @@ if (!isset($ulmvsian)){ // controllo che in company_data ci sia la riga ultimo m
 }
 
 // prendo tutti i file della cartella sian
-if ($handle = opendir('../../data/files/1/sian/')){
+if ($handle = opendir('../../data/files/' . $admin_aziend['codice'] . '/sian/')){
    while (false !== ($file = readdir($handle))){
        $prevfiles[]=$file;
    }
@@ -46,18 +47,20 @@ if ($handle = opendir('../../data/files/1/sian/')){
 }
 
 // Prendo l'ultimo file salvato nella cartella sian
-foreach(new DirectoryIterator('../../data/files/1/sian') as $item) {
+foreach(new DirectoryIterator('../../data/files/' . $admin_aziend['codice'] . '/sian') as $item) {
     if ($item->isFile() && (empty($file) || $item->getMTime() > $file->getMTime())) {
         $file = clone $item;
     }
 }
+
 if (!empty($file)){
-	$dividedfile= explode ("_", $file->getFilename());// e lo divido
+	$fileContent=@file_get_contents('../../data/files/' . $admin_aziend['codice'] . '/sian/'.$file->getFilename()); // prendo il contenuto dell'ultimo file
+	$fileField=explode (";",$fileContent);
+	$uldtfile=$fileField[((((count($fileField)-1)/49)-1)*49)+3];
+	$uldtfile=str_replace("-", "", $uldtfile);
 } else {
-	$dividedfile[1]=date("yy")."0101";
+	$uldtfile="20000101";
 }
-
-
 
 function getMovements($date_ini,$date_fin)
     {
@@ -88,18 +91,18 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['this_date_Y']=date("Y");
     $form['this_date_M']=date("m");
     $form['this_date_D']=date("d");
-    $form['date_ini_D']=substr($dividedfile[1],6,2); // imposto la data di inizio partendo da quella dell'ultimo file
-    $form['date_ini_M']=substr($dividedfile[1],4,2);
-    $form['date_ini_Y']=substr($dividedfile[1],0,4);
+    $form['date_ini_D']=substr($uldtfile,6,2); // imposto la data di inizio partendo da quella dell'ultimo file
+    $form['date_ini_M']=substr($uldtfile,4,2);
+    $form['date_ini_Y']=substr($uldtfile,0,4);
     $form['date_fin_D']=date("d");
     $form['date_fin_M']=date("m");
     $form['date_fin_Y']=date("Y");
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
-    $form['date_ini_D']=substr($dividedfile[1],6,2); // impongo la data di inizio partendo da quella dell'ultimo file
-    $form['date_ini_M']=substr($dividedfile[1],4,2);
-    $form['date_ini_Y']=substr($dividedfile[1],0,4);
+    $form['date_ini_D']=substr($uldtfile,6,2); // impongo la data di inizio partendo da quella dell'ultimo file
+    $form['date_ini_M']=substr($uldtfile,4,2);
+    $form['date_ini_Y']=substr($uldtfile,0,4);
     $form['date_fin_D']=intval($_POST['date_fin_D']);
     $form['date_fin_M']=intval($_POST['date_fin_M']);
     $form['date_fin_Y']=intval($_POST['date_fin_Y']);
@@ -130,7 +133,7 @@ if ($utsexe < $utsfin) {
     $msg .='2+';
 }
 // controllo se la data di inizio è inferiore a quella dell'ultimo file
-if ($date_ini<$dividedfile[1]){
+if ($date_ini<$uldtfile){
 	$msg .='3+';
 }
 
@@ -142,7 +145,7 @@ if (isset($_POST['create']) && $msg=='') {
     $utsfin=date("dmY",$utsfin);
     $utsexe=date("dmY",$utsexe);
 	$ulmvsian=$ulmvsian['data'];
-	$dividedfile=$dividedfile[1];
+	$dividedfile=$uldtfile;
                                   
     header("Location: create_sian.php?ri=$utsini&rf=$utsfin&ds=$utsexe&umv=$ulmvsian&ud=$dividedfile");
     exit;
@@ -210,23 +213,25 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders=new linkHeaders($script_transl['header']);
         $linkHeaders->output();
         echo "</tr>";
-        $sum=0.00;
+       
 		
 		$genera="";
         while (list($key, $mv) = each($m)) {
 			if ($mv['id_movmag']>0){ // se è un movimento del SIAN connesso al movimento di magazzino
-				if ( $dividedfile[1]==str_replace("-", "", $mv['datdoc']) AND $mv['id_mov']<=$ulmvsian['data']) {
+				if ( $uldtfile==str_replace("-", "", $mv['datdoc']) AND $mv['id_mov']<=$ulmvsian['data']) {
 					// escludo i movimenti già inseriti null'ultimo file con stessa data
+				} else if ($mv['id_orderman']>0 AND $mv['operat']==-1){
+					// escludo i movimenti di produzione in uscita
 				} else {				
 					$genera="ok";
 					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
            
 					$movQuanti = $mv['quanti']*$mv['operat'];
-					$sum += $movQuanti;
+					
 					echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['artico']." &nbsp;</td>\n";
 			
-					echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,3)."</td>\n";
+					echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($movQuanti,1,3)."</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['id_SIAN']." - ".$mv['ragso1']." &nbsp;</td>\n";
 			
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc']." &nbsp;</td>\n";

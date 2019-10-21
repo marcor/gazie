@@ -706,7 +706,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="confezione" class="col-sm-4 control-label"><?php echo $script_transl['confezione']; ?></label>
-                            <input class="col-sm-2" type="number" step="any" min="0.001" value="<?php echo $form['confezione']; ?>" name="confezione" maxlength="15" /> (se sfuso indicare 0)
+                            <input class="col-sm-2" type="number" step="any" min="0" value="<?php echo $form['confezione']; ?>" name="confezione" maxlength="15" /> (se sfuso indicare 0)
                         </div>
                     </div>
                 </div><!-- chiude row  -->
