@@ -8,14 +8,14 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <?php
 $rs_az = gaz_dbi_dyn_query('*', $gTables['aziend'], '1', 'codice DESC');
-if (gaz_dbi_num_rows($rs_az) > 1) {
+if (gaz_dbi_num_rows($rs_az) > 1) { // ho più aziende gestite devo usare una icona generica
 ?>
 		<meta name="apple-mobile-web-app-title" content="GAzie - Gestione AZIEndale">
         <link rel="shortcut icon" href="../../library/images/favicon.ico">
 		<link rel="apple-touch-icon" href="../../library/images/apple-icon-114x114-precomposed.png">
 		<link rel="apple-touch-startup-image" href="../../library/images/apple-icon-114x114-precomposed.png">		
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../library/images/apple-icon-114x114-precomposed.png" />
-        <title>GAzie - Login</title>
+        <title>Login</title>
 <?php	
 } else {
 	$az = gaz_dbi_fetch_array($rs_az);
@@ -33,10 +33,13 @@ if (gaz_dbi_num_rows($rs_az) > 1) {
 
 <?php	
 }
+// utiizzo l'ultimo thema scelto dall'ultimo utente con i massimi diritti
+$rsu = gaz_dbi_dyn_query('var_value', $gTables['admin'].' LEFT JOIN '. $gTables['admin_config'].' ON '. $gTables['admin'].'.user_name='. $gTables['admin_config'].'.adminid', $gTables['admin_config'].".var_name='theme'",  $gTables['admin'].'.Abilit DESC,'.$gTables['admin'].'.datacc DESC');
+$u = gaz_dbi_fetch_array($rsu);
 ?>
         <link rel="stylesheet" href="../../library/bootstrap/css/bootstrap.min.css" >
-        <link rel="stylesheet" type="text/css" href="../../library/theme/g7/scheletons/default.css">
-        <link rel="stylesheet" type="text/css" href="../../library/theme/g7/skins/default.css">
+        <link rel="stylesheet" type="text/css" href="../..<?php echo $u['var_value'];?>/scheletons/default.css">
+        <link rel="stylesheet" type="text/css" href="../..<?php echo $u['var_value'];?>/skins/default.css">
 
 </head>
 <body>

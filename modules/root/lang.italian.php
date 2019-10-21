@@ -127,12 +127,12 @@ if (!defined("MESSAGE_WELCOME")) {
 		   se il contenuto delle costanti sottostanti viene messo dentro un file di nome "lang.mydescri.php"
 		   può essere personalizzato il form di login, ripristino password ecc..
 		*/
-        define("MESSAGE_WELCOME", "Benvenuto su: <b>GAzie a scuola</b>");
-        define("MESSAGE_WELCOME_ADMIN", "Benvenuto su: <b>GAzie</b>");
-        define("MESSAGE_LOG", "Accesso al gestionale didattico su server localizzato in ");
-        define("MESSAGE_LOG_ADMIN", "Accesso al gestionale su server localizzato in ");
+        define("MESSAGE_WELCOME", "<b>GAzie a scuola</b>");
+        define("MESSAGE_WELCOME_ADMIN", "<b>GAzie</b>");
+        define("MESSAGE_LOG", "GAzie - Accesso");
+        define("MESSAGE_LOG_ADMIN", " <b>GAzie: </b> Accesso al gestionale ");
         define("MESSAGE_INTRO", "con esso ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
-        define("MESSAGE_INTRO_ADMIN", "il Gestionale multiAZIEndale che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
+        define("MESSAGE_INTRO_ADMIN", "è un gestionale multiaziendale libero che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
         define("MESSAGE_PSW", "Inserisci il nome utente e la password che hai scelto in fase di iscrizione al servizio");
         define("MESSAGE_PSW_ADMIN", "Inserisci le credenziali di accesso per iniziare:");
         define("MESSAGE_WELCOME_REGISTRATION", "Registrati su: <b>GAzie a scuola</b>");

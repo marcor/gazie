@@ -11,9 +11,10 @@
                     <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
                 </div>
                 <div style="padding-top:10px" class="panel-body" >
-                    <h4 ><?php echo MESSAGE_WELCOME_ADMIN ?></h4>
-                    <p><?php echo MESSAGE_INTRO_ADMIN; ?></p>
-                    <p><?php echo MESSAGE_PSW_ADMIN; ?></p><br/>
+					<div><b><?php echo MESSAGE_WELCOME_ADMIN .' </b>'. MESSAGE_INTRO_ADMIN; ?><div>
+                    </br>
+                    <div class="bg-info"><?php echo MESSAGE_PSW_ADMIN; ?></div>
+					
                     <?php
 					if (is_numeric(substr($table_prefix,-4))) {
 						// se è stato uno studente ad aver fatto il logout lo riporto sulla giusta pagina
