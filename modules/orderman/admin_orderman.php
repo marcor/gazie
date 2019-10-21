@@ -1143,7 +1143,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				?>
 			</div>
 			<div class="row">
-				<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio di provenienza"; ?></label>
+				<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
 				<?php
 				$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
 				?>
