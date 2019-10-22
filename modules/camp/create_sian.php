@@ -108,7 +108,7 @@ foreach ($prevfiles as $files){
 $progr++;
 	
 // Antonio Germani - creo il nome del file
-$namefile=$admin_aziend['codfis']."_".$datsta."_".$progr."_OPERREGI.txt";
+$namefile=$admin_aziend['codfis']."_".$datsta."_".sprintf ("%05d",$progr)."_OPERREGI.txt";
 
 $result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
 

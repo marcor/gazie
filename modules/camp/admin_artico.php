@@ -265,6 +265,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
                 }
             } elseif ($toDo == 'update') {
+				gaz_dbi_table_update('artico', $form['ref_code'], $form);
                 $esist=gaz_dbi_get_row($gTables['camp_artico'], 'codice', $form['ref_code']);
 				if (isset($esist)){
 					gaz_dbi_table_update('camp_artico', $form['ref_code'], $form);

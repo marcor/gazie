@@ -50,7 +50,7 @@ if (!isset($_GET['auxil'])) {
    $where = "descri like '".addslashes($auxil)."%' AND id_rif > 0";
 }
 ?>
-<div align="center" class="FacetFormHeaderFont">Stabilimenti e depositi</div>
+<div align="center" class="FacetFormHeaderFont">Stabilimenti e depositi aggiuntivi a quello aziendale</div>
 <?php
 $recordnav = new recordnav($gTables['campi'], $where, $limit, $passo);
 $recordnav -> output();
