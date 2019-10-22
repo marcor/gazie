@@ -23,20 +23,12 @@
  --------------------------------------------------------------------------
 */
  // IL REGISTRO DI CAMPAGNA E' UN MODULO DI ANTONIO GERMANI - MASSIGNANO AP
-// >> Selezione per la generazione del file di upload per il SIAN <<
+// >> Selezione date per la generazione del file di upload per il SIAN <<
 
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $msg='';
-
-// prendo l'id dell'ultimo movmag inviato al SIAN
-$ulmvsian = gaz_dbi_get_row($gTables['company_data'], 'var', 'ulmvsian');
-if (!isset($ulmvsian)){ // controllo che in company_data ci sia la riga ultimo movmag inviato al SIAN, se non c'è la creo
-	$comp['description']="Ultimo movmag inviato tramite file upload al SIAN";$comp['var']="ulmvsian";$comp['data']="";$comp['ref']="";
-	gaz_dbi_table_insert('company_data', $comp);
-	$ulmvsian = gaz_dbi_get_row($gTables['company_data'], 'var', 'ulmvsian'); // e prendo l'id dell'ultimo movmag inviato al SIAN
-}
 
 // prendo tutti i file della cartella sian
 if ($handle = opendir('../../data/files/' . $admin_aziend['codice'] . '/sian/')){
@@ -59,7 +51,7 @@ if (!empty($file)){
 	$uldtfile=$fileField[((((count($fileField)-1)/49)-1)*49)+3];
 	$uldtfile=str_replace("-", "", $uldtfile);
 } else {
-	$uldtfile="20000101";
+	$uldtfile="01012000";
 }
 
 function getMovements($date_ini,$date_fin)
@@ -84,25 +76,25 @@ function getMovements($date_ini,$date_fin)
         }
         return $m;
     }
-	
+
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['this_date_Y']=date("Y");
     $form['this_date_M']=date("m");
     $form['this_date_D']=date("d");
-    $form['date_ini_D']=substr($uldtfile,6,2); // imposto la data di inizio partendo da quella dell'ultimo file
-    $form['date_ini_M']=substr($uldtfile,4,2);
-    $form['date_ini_Y']=substr($uldtfile,0,4);
-    $form['date_fin_D']=date("d");
-    $form['date_fin_M']=date("m");
-    $form['date_fin_Y']=date("Y");
+    $form['date_ini_D']=substr($uldtfile,0,2); // imposto la data di inizio partendo da quella dell'ultimo file
+    $form['date_ini_M']=substr($uldtfile,2,2);
+    $form['date_ini_Y']=substr($uldtfile,4,4);
+    $form['date_fin_D']=date('d', strtotime('-1 day', strtotime(date("Y-m-d"))));
+    $form['date_fin_M']=date('m', strtotime('-1 day', strtotime(date("Y-m-d"))));
+    $form['date_fin_Y']=date('Y', strtotime('-1 day', strtotime(date("Y-m-d"))));
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
-    $form['date_ini_D']=substr($uldtfile,6,2); // impongo la data di inizio partendo da quella dell'ultimo file
-    $form['date_ini_M']=substr($uldtfile,4,2);
-    $form['date_ini_Y']=substr($uldtfile,0,4);
+    $form['date_ini_D']=substr($uldtfile,0,2); // impongo la data di inizio partendo da quella dell'ultimo file
+    $form['date_ini_M']=substr($uldtfile,2,2);
+    $form['date_ini_Y']=substr($uldtfile,4,4);
     $form['date_fin_D']=intval($_POST['date_fin_D']);
     $form['date_fin_M']=intval($_POST['date_fin_M']);
     $form['date_fin_Y']=intval($_POST['date_fin_Y']);
@@ -126,15 +118,15 @@ if (!checkdate( $form['this_date_M'],$form['this_date_D'],$form['this_date_Y']) 
 $utsexe= mktime(0,0,0,$form['this_date_M'],$form['this_date_D'],$form['this_date_Y']);
 $utsini= mktime(0,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y']);
 $utsfin= mktime(0,0,0,$form['date_fin_M'],$form['date_fin_D'],$form['date_fin_Y']);
+
 if ($utsini > $utsfin) {
     $msg .='1+';
 }
 if ($utsexe < $utsfin) {
     $msg .='2+';
 }
-// controllo se la data di inizio è inferiore a quella dell'ultimo file
-if ($date_ini<$uldtfile){
-	$msg .='3+';
+if ($utsfin>strtotime('-1 day', strtotime(date("Y-m-d")))) {
+    $msg .='4+';
 }
 
 // fine controlli
@@ -144,10 +136,8 @@ if (isset($_POST['create']) && $msg=='') {
     $utsini=date("dmY",$utsini);
     $utsfin=date("dmY",$utsfin);
     $utsexe=date("dmY",$utsexe);
-	$ulmvsian=$ulmvsian['data'];
-	$dividedfile=$uldtfile;
-                                  
-    header("Location: create_sian.php?ri=$utsini&rf=$utsfin&ds=$utsexe&umv=$ulmvsian&ud=$dividedfile");
+	$uldtfile=$form['date_ini_Y'].$form['date_ini_M'].$form['date_ini_D'];                                  
+    header("Location: create_sian.php?ri=$utsini&rf=$utsfin&ds=$utsexe&ud=$uldtfile");
     exit;
 }
 
@@ -218,11 +208,11 @@ if (isset($_POST['preview']) and $msg=='') {
 		$genera="";
         while (list($key, $mv) = each($m)) {
 			if ($mv['id_movmag']>0){ // se è un movimento del SIAN connesso al movimento di magazzino
-				if ( $uldtfile==str_replace("-", "", $mv['datdoc']) AND $mv['id_mov']<=$ulmvsian['data']) {
-					// escludo i movimenti già inseriti null'ultimo file con stessa data
-				} else if ($mv['id_orderman']>0 AND $mv['operat']==-1){
+				if ($form['date_ini_Y'].$form['date_ini_M'].$form['date_ini_D']==str_replace("-", "", $mv['datdoc'])) {
+				// escludo i movimenti già inseriti null'ultimo file con stessa data
+				} else if ($mv['id_orderman']>0 AND $mv['operat']==-1 ){
 					// escludo i movimenti di produzione in uscita
-				} else {				
+				} else {		
 					$genera="ok";
 					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
            

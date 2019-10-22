@@ -114,51 +114,89 @@ $result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
 
 if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 	$myfile = fopen("../../data/files/1/sian/".$namefile, "w") or die("Unable to open file!");
-	$nprog=0;
+	$nprog=1;$lastdatdoc="";
 	while (list($key, $row) = each($result)) {
 		if ($row['SIAN']>0) {
-			if ( $_GET['ud']==str_replace("-", "", $row['datdoc']) AND $row['id_mov']<=$_GET['umv']) {
+			if ( $_GET['ud']==str_replace("-", "", $row['datdoc'])) {
 					// escludo i movimenti già inseriti null'ultimo file con stessa data
-			} else {
-					$nprog++;
-					if (intval($row['numdoc'])==0){ // se il numero documento è zero tolgo lo zero e annullo l'eventuale data
-						$row['numdoc']="";$dd="";
-					} else if (isset($row['datdoc'])) { //se c'è il numero e la data documento, imposto la data come GGMMAAA
+			} else { 
+					if ($lastdatdoc==$row['datdoc']){ // se il movimento ha la stessa data del precedente aumento il progressivo
+						$nprog++;
+					} else {
+						$nprog=1;
+					}
+					if (isset($row['datdoc'])) { //se c'è la data documento, imposto la data operazione come GGMMAAA
 						$gio = substr($row['datdoc'],8,2);
 						$mes = substr($row['datdoc'],5,2);
 						$ann = substr($row['datdoc'],0,4);
 						$dd=$gio.$mes.$ann;
+					} else { // altrimenti la data operazione è quella di registrazione movimento
+						$gio = substr($row['datreg'],8,2);
+						$mes = substr($row['datreg'],5,2);
+						$ann = substr($row['datreg'],0,4);
+						$dd=$gio.$mes.$ann;
 					}
-					
+					if (intval($row['numdoc'])==0){ // se il numero documento è zero tolgo lo zero e annullo l'eventuale data documento
+						$row['numdoc']="";$row['datdoc']="";
+					}  
 					// >> Antonio Germani - caso produzione da orderman
-					if (intval($row['id_orderman'])>0 AND $row['operat']==1){ // se è un carico da produzione
+					if (intval($row['id_orderman'])>0 AND $row['operat']==1){ // se è una produzione e il movimento è di entrata
 						// cerco il movimento di scarico connesso
-						$row2=gaz_dbi_get_row($gTables['movmag'], 'id_orderman', $row['id_orderman'], "AND operat = '-1'");
-						$row2['quanti'] = sprintf ("%013d", str_replace(".", "", $row2['quanti'])); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
-						If ($row['cod_operazione']==1){
-							$type_array[6]=str_pad("L", 10); // codice operazione
-						}
-						If ($row['cod_operazione']==2){
-							$type_array[6]=str_pad("L1", 10); // codice operazione
-						}
-						If ($row['cod_operazione']==3){
-							$type_array[6]=str_pad("L2", 10); // codice operazione
-						}
-						If ($row['cod_operazione']==4){
-							$type_array[6]=str_pad("X", 10); // codice operazione
-						}
-						$type_array[23]=sprintf ("%013d",$row2['quanti']); // quantità scarico olio sfuso
+						$row2=gaz_dbi_get_row($gTables['camp_mov_sian'], 'id_movmag', $row['id_mov'], "AND id_mov_sian_rif = '0'");
+						$row3=gaz_dbi_get_row($gTables['camp_mov_sian'], 'id_mov_sian_rif', $row2['id_mov_sian']);
+						$row4=gaz_dbi_get_row($gTables['movmag'], 'id_mov', $row3['id_movmag']);
+						$row5=gaz_dbi_get_row($gTables['camp_artico'], 'codice', $row4['artico']);
+						$row4['quanti'] = sprintf ("%013d", str_replace(".", "", $row4['quanti'])); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
 						$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
 						$quantilitri = str_replace(".", "", $quantilitri); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
-						$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
+						if ($row5['estrazione']=1){ 
+							$type_array[31]="X"; // Flag prima spremitura a freddo a fine operazione
+						}
+						if ($row5['estrazione']=2){ 
+							$type_array[33]="X"; // Flag estratto a freddo a fine operazione
+						}
+						if ($row5['biologico']=1){
+							$type_array[35]="X"; // Flag biologico a fine operazione
+						}
+						if ($row5['biologico']=2){
+							$type_array[37]="X"; // Flag in conversione a fine operazione
+						}
+						if ($row5['etichetta']=0){
+							$type_array[39]="X"; // Flag NON etichettato a fine operazione
+						}
+						If ($row['cod_operazione']==1){// Confezionamento con etichettatura
+							$type_array[6]=str_pad("L", 10); // codice operazione
+							$type_array[23]=sprintf ("%013d",$row4['quanti']); // quantità scarico olio sfuso
+							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
+							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
+							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
+													
+						}
+						If ($row['cod_operazione']==2){// Confezionamento senza etichettatura
+							$type_array[6]=str_pad("L1", 10); // codice operazione
+							$type_array[23]=sprintf ("%013d",$row4['quanti']); // quantità scarico olio sfuso
+							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
+							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
+							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
+							$type_array[39]="X"; // Flag NON etichettato a fine operazione
+						}
+						If ($row['cod_operazione']==3){// Etichettatura
+							$type_array[6]=str_pad("L2", 10); // codice operazione
+						}
+						If ($row['cod_operazione']==4){// Svuotamento di olio confezionato
+							$type_array[6]=str_pad("X", 10); // codice operazione
+							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
+							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
+							$type_array[15]=sprintf ("%02d",$row5['categoria']);// categoria olio fine operazione
+						}
+					}
+					if (intval($row['id_orderman'])>0 AND $row['operat']==-1){ // se è uno scarico di produzione
+						continue; // escludo il movimento dal ciclo di creazione file perché le uscite di produzione vengono lavorate insieme alle entrate
 					}
 					
-					if (intval($row['id_orderman'])>0 AND $row['operat']==-1){ // se è uno scarico da produzione
-						continue; // escludo il movimento dal ciclo di creazione
-					}
-					
-					// >> Antonio Germani - Caso carico e scarico da documenti e magazzino
+					// >> Antonio Germani - Caso carico da acquisti e magazzino
 					$row['quanti'] = sprintf ("%013d", str_replace(".", "", $row['quanti'])); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
+					
 					if ($row['operat']==1 AND intval($row['id_orderman'])==0){ //se è un carico NON connesso a produzione
 						$type_array[6]=str_pad("C".$row['cod_operazione'], 10); // codice operazione
 						if ($row['SIAN']==1){ // se è olio
@@ -179,7 +217,9 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 						if ($row['cod_operazione']==5) {
 							$type_array[13]=sprintf ("%010d",$row['id_SIAN']); // identificativo stabilimento di provenienza/destinazione olio
 						}
-					} 
+					}
+					
+					// >> Antonio Germani - Caso scarico da vendite e magazzino
 					if ($row['operat']==-1 AND intval($row['id_orderman'])==0){ // se è uno scarico NON connesso a produzione
 						$type_array[6]=str_pad("S".$row['cod_operazione'], 10); // codice operazione
 						if ($row['SIAN']==1){ // se è olio
@@ -206,15 +246,15 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 					$type_array[0]=str_pad($admin_aziend['codfis'], 16); // aggiunge spazi finali
 					$type_array[1]=sprintf ("%010d",$id_sian['val']); // identificativo stabilimento/deposito
 					$type_array[2]=sprintf ("%010d",$nprog); // num. progressivo
-					$type_array[3]=str_pad($row['datdoc'], 8);//data dell'operazione
+					$type_array[3]=str_pad($dd, 8);//data dell'operazione
 					$type_array[4]=str_pad($row['numdoc'], 10);// numero documento giustificativo
-					$type_array[5]=str_pad($dd, 8);//data del documento giustificativo
+					$type_array[5]=str_pad($row['datdoc'], 8);//data del documento giustificativo
 								
 					$type_array[11]=str_pad($row['recip_stocc'], 10); // identificativo recipiente o silos di stoccaggio
 					$type_array[12]=str_pad($row['recip_stocc_destin'], 10); // identificativo recipiente o silos di stoccaggio destinazione
 					$type_array[14]=sprintf ("%02d",$row['categoria']); // Categoria olio
-					$type_array[16]=sprintf ("%02d",$row['or_macro']); // Origine olio per macro area
-					$type_array[16]=sprintf ("%02d",$row['or_spec']); // Origine olio specifica
+					$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
+					$type_array[17]=str_pad($row['or_spec'], 80); // Descrizione Origine olio specifica
 					$type_array[27]=str_pad($row['identifier'], 20); // Lotto di appartenenza
 					if ($row['estrazione']=1){
 						$type_array[30]="X"; // Flag prima spremitura a freddo
@@ -237,14 +277,13 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 					$type_array[48]="I";
 					$type= implode(";",$type_array);
 					fwrite($myfile, $type);
-					$ulmvsian=$row['id_mov'];
+					$lastdatdoc=$row['datdoc'];
 			}
 		}
 	}
 	fclose($myfile);
 }
-// aggiorno l'ultimo movmag inviato al SIAN
-gaz_dbi_put_row($gTables['company_data'], 'var', 'ulmvsian', 'data', $ulmvsian);
+
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
 
