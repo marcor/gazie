@@ -30,6 +30,12 @@ require ("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $msg='';
 
+// controllo che ci sia la cartella sian
+$sianfolder = '../../data/files/' . $admin_aziend['codice'] . '/sian/';
+if (!file_exists($sianfolder)) {// se non c'è la creo
+    mkdir($sianfolder, 0777);
+}
+
 // prendo tutti i file della cartella sian
 if ($handle = opendir('../../data/files/' . $admin_aziend['codice'] . '/sian/')){
    while (false !== ($file = readdir($handle))){
