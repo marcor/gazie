@@ -208,15 +208,13 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "<tr>";
         $linkHeaders=new linkHeaders($script_transl['header']);
         $linkHeaders->output();
-        echo "</tr>";
-       
-		
+        echo "</tr>";		
 		$genera="";
         while (list($key, $mv) = each($m)) {
 			if ($mv['id_movmag']>0){ // se è un movimento del SIAN connesso al movimento di magazzino
 				if ($form['date_ini_Y'].$form['date_ini_M'].$form['date_ini_D']==str_replace("-", "", $mv['datdoc'])) {
 				// escludo i movimenti già inseriti null'ultimo file con stessa data
-				} else if ($mv['id_orderman']>0 AND $mv['operat']==-1 ){
+				} else if ($mv['id_orderman']>0 AND $mv['operat']==-1 AND $mv['cod_operazione']<>"S7"){
 					// escludo i movimenti di produzione in uscita
 				} else {		
 					$genera="ok";
