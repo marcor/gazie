@@ -93,6 +93,7 @@ $annsta = substr($_GET['ds'],4,4);
 $progr=0;
 $datsta=$annsta.$messta.$giosta;
 $datrf=$annrf.$mesrf.$giorf;
+
 foreach ($prevfiles as $files){
 	$f=explode("_",$files);
 	if (isset($f[1])){ 
@@ -128,7 +129,8 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 						$gio = substr($row['datdoc'],8,2);
 						$mes = substr($row['datdoc'],5,2);
 						$ann = substr($row['datdoc'],0,4);
-						$dd=$gio.$mes.$ann;
+						$dd=$gio.$mes.$ann;// data operazione
+						$datdoc=$gio.$mes.$ann;// data documento nel formato GGMMAAA
 					} else { // altrimenti la data operazione è quella di registrazione movimento
 						$gio = substr($row['datreg'],8,2);
 						$mes = substr($row['datreg'],5,2);
@@ -264,27 +266,26 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 					$type_array[2]=sprintf ("%010d",$nprog); // num. progressivo
 					$type_array[3]=str_pad($dd, 8);//data dell'operazione
 					$type_array[4]=str_pad($row['numdoc'], 10);// numero documento giustificativo
-					$type_array[5]=str_pad($row['datdoc'], 8);//data del documento giustificativo
-								
+					$type_array[5]=str_pad($datdoc, 8);//data del documento giustificativo								
 					$type_array[11]=str_pad($row['recip_stocc'], 10); // identificativo recipiente o silos di stoccaggio
 					$type_array[12]=str_pad($row['recip_stocc_destin'], 10); // identificativo recipiente o silos di stoccaggio destinazione
 					$type_array[14]=sprintf ("%02d",$row['categoria']); // Categoria olio
 					$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
 					$type_array[17]=str_pad($row['or_spec'], 80); // Descrizione Origine olio specifica
 					$type_array[27]=str_pad($row['identifier'], 20); // Lotto di appartenenza
-					if ($row['estrazione']=1){
+					if ($row['estrazione']==1){
 						$type_array[30]="X"; // Flag prima spremitura a freddo
 					}
-					if ($row['estrazione']=2){
+					if ($row['estrazione']==2){
 						$type_array[32]="X"; // Flag estratto a freddo
 					}
-					if ($row['biologico']=1){
+					if ($row['biologico']==1){
 						$type_array[34]="X"; // Flag biologico
 					}
-					if ($row['biologico']=2){
+					if ($row['biologico']==2){
 						$type_array[36]="X"; // Flag in conversione
 					}
-					if ($row['etichetta']=0){
+					if ($row['etichetta']==0){
 						$type_array[38]="X"; // Flag NON etichettato
 					}
 					if ($row['confezione']>0){

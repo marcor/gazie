@@ -56,8 +56,8 @@ if (!empty($file)){
 	$fileField=explode (";",$fileContent);
 	$uldtfile=$fileField[((((count($fileField)-1)/49)-1)*49)+3];
 	$uldtfile=str_replace("-", "", $uldtfile);
-} else {
-	$uldtfile="01012000";
+} else { // se non ci sono file imposto come data il primo del mese corrente
+	$uldtfile="01".date("m").date("Y");
 }
 
 function getMovements($date_ini,$date_fin)

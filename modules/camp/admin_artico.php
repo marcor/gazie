@@ -257,8 +257,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['clfoco'] = $form['id_anagra'];
             /** fine modifica FP */
             $tbt = trim($form['body_text']);
-            // aggiorno il db
-            if ($toDo == 'insert') {
+            // Se non ci sono errori  aggiorno il db
+			
+			if($_POST['or_spec']==0){$form['or_spec']="";}
+			if($_POST['or_spec']==1){$form['or_spec']="Spagna";}
+			if($_POST['or_spec']==2){$form['or_spec']="Grecia";}
+			if($_POST['or_spec']==3){$form['or_spec']="Portogallo";}
+			if($_POST['or_spec']==4){$form['or_spec']="Francia";}
+			if($_POST['or_spec']==5){$form['or_spec']="Malta";}
+			if($_POST['or_spec']==6){$form['or_spec']="Cipro";}
+			if($_POST['or_spec']==7){$form['or_spec']="Penisola Iberica";}
+			if($_POST['or_spec']==8){$form['or_spec']="Altro";}
+			if ($toDo == 'insert') {
                 gaz_dbi_table_insert('artico', $form);
 				gaz_dbi_table_insert('camp_artico', $form);
                 if (!empty($tbt)) {
