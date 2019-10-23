@@ -894,7 +894,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 ?>
 <script>
   $(function() {
-    $( ".datepicker" ).datepicker({ changeYear: true, showButtonPanel: true, dateFormat: 'yy-mm-dd' });
+    $( ".datepicker" ).datepicker({dateFormat: 'yy-mm-dd' });
 	
 });
 </script>
