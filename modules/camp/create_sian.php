@@ -42,7 +42,7 @@ $admin_aziend=checkAdmin();
 $id_sian = gaz_dbi_get_row($gTables['company_config'], 'var', 'id_sian');
 
 if (!isset ($id_sian) or intval($id_sian['val']==0)){ 
-echo "errore manca id sian";
+echo "errore manca id sian. Per utilizzare questa gestione file SIAN è necessario inserire il proprio codice identificativo in configurazione azienda";
 die;}
 function getMovements($date_ini,$date_fin)
     {
@@ -112,7 +112,7 @@ $namefile=$admin_aziend['codfis']."_".$datsta."_".sprintf ("%05d",$progr)."_OPER
 $result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
 
 if (sizeof($result) > 0) { // se ci sono movimenti creo il file
-	$myfile = fopen("../../data/files/1/sian/".$namefile, "w") or die("Unable to open file!");
+	$myfile = fopen("../../data/files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
 	$nprog=1;$lastdatdoc="";
 	while (list($key, $row) = each($result)) {
 		$type_array= explode (";", $type_zero); // azzero il type array per ogni movimento da creare
@@ -267,12 +267,12 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 					$type_array[3]=str_pad($dd, 8);//data dell'operazione
 					$type_array[4]=str_pad($row['numdoc'], 10);// numero documento giustificativo
 					$type_array[5]=str_pad($datdoc, 8);//data del documento giustificativo								
-					$type_array[11]=str_pad($row['recip_stocc'], 10); // identificativo recipiente o silos di stoccaggio
-					$type_array[12]=str_pad($row['recip_stocc_destin'], 10); // identificativo recipiente o silos di stoccaggio destinazione
+					$type_array[11]=str_pad(substr($row['recip_stocc'], 0, 10 ), 10); // identificativo recipiente o silos di stoccaggio
+					$type_array[12]=str_pad(substr($row['recip_stocc_destin'], 0, 10 ), 10); // identificativo recipiente o silos di stoccaggio destinazione
 					$type_array[14]=sprintf ("%02d",$row['categoria']); // Categoria olio
 					$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
 					$type_array[17]=str_pad($row['or_spec'], 80); // Descrizione Origine olio specifica
-					$type_array[27]=str_pad($row['identifier'], 20); // Lotto di appartenenza
+					$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 					if ($row['estrazione']==1){
 						$type_array[30]="X"; // Flag prima spremitura a freddo
 					}
