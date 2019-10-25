@@ -150,28 +150,36 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 						$row4['quanti'] = sprintf ("%013d", str_replace(".", "", $row4['quanti'])); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
 						$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
 						$quantilitri = str_replace(".", "", $quantilitri); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
+						$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 						if ($row5['estrazione']=1){ 
 							$type_array[31]="X"; // Flag prima spremitura a freddo a fine operazione
+						}
+						if ($row['estrazione']=1){ 
+							$type_array[30]="X"; // Flag prima spremitura a freddo
 						}
 						if ($row5['estrazione']=2){ 
 							$type_array[33]="X"; // Flag estratto a freddo a fine operazione
 						}
-						if ($row5['biologico']=1){
+						if ($row5['estrazione']=2){ 
+							$type_array[32]="X"; // Flag estratto a freddo
+						}
+						if ($row5['biologico']=1){ // se è biologico a fine operazione deve esserlo anche prima
 							$type_array[35]="X"; // Flag biologico a fine operazione
+							$type_array[34]="X"; // Flag biologico
 						}
-						if ($row5['biologico']=2){
+						if ($row5['biologico']=2){ // se è in conversione a fine operazione deve esserlo anche prima
 							$type_array[37]="X"; // Flag in conversione a fine operazione
+							$type_array[36]="X"; // Flag in conversione
 						}
-						if ($row5['etichetta']=0){
-							$type_array[39]="X"; // Flag NON etichettato a fine operazione
-						}
+						
 						If ($row['cod_operazione']==1){// Confezionamento con etichettatura
 							$type_array[6]=str_pad("L", 10); // codice operazione
 							$type_array[23]=sprintf ("%013d",$row4['quanti']); // quantità scarico olio sfuso
 							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
 							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
-													
+							$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
+							$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
 						}
 						If ($row['cod_operazione']==2){// Confezionamento senza etichettatura
 							$type_array[6]=str_pad("L1", 10); // codice operazione
@@ -180,15 +188,26 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
 							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
 							$type_array[39]="X"; // Flag NON etichettato a fine operazione
+							$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
+							$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
 						}
 						If ($row['cod_operazione']==3){// Etichettatura
 							$type_array[6]=str_pad("L2", 10); // codice operazione
+							$type_array[38]="X"; // Flag NON etichettato
+							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
+							$type_array[25]=sprintf ("%013d",$quantilitri); // quantità scarico olio confezionato in litri
+							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
+							$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
+							$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 						}
 						If ($row['cod_operazione']==4){// Svuotamento di olio confezionato
 							$type_array[6]=str_pad("X", 10); // codice operazione
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
 							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
 							$type_array[15]=sprintf ("%02d",$row5['categoria']);// categoria olio fine operazione
+							if ($row['etichetta']==0){// Flag NON etichettato
+								$type_array[38]="X"; 
+							}
 						}
 					}
 					if (intval($row['id_orderman'])>0 AND $row['operat']==-1 AND $row['cod_operazione']<>"S7"){ // se è uno scarico di produzione
@@ -203,6 +222,10 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 								$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
 								$quantilitri = str_replace(".", "", $quantilitri);
 								$type_array[25]=sprintf ("%013d",$quantilitri);
+								$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
+								if ($row['etichetta']==0){// Flag NON etichettato
+									$type_array[38]="X"; 
+								}
 							}
 						} else { //se sono olive
 							$type_array[10]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
@@ -212,27 +235,35 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 					// >> Antonio Germani - Caso carico da acquisti e magazzino
 					
 					if ($row['operat']==1 AND intval($row['id_orderman'])==0){ //se è un carico NON connesso a produzione
-						$type_array[6]=str_pad("C".$row['cod_operazione'], 10); // codice operazione
-						if ($row['SIAN']==1){ // se è olio
-							if ($row['confezione']==0) { // se è sfuso
-								$type_array[22]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
-							} else { // se è confezionato
-								$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
-								$quantilitri = str_replace(".", "", $quantilitri);
-								$type_array[24]=sprintf ("%013d",$quantilitri);
+						if ($row['cod_operazione']==10){// carico olio lampante da recupero
+							$type_array[22]=sprintf ("%013d", str_replace(".", "", $row['quanti'])); // carico olio sfuso
+						} else {
+							if ($row['SIAN']==1){ // se è olio
+								if ($row['confezione']==0) { // se è sfuso
+									$type_array[22]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
+								} else { // se è confezionato
+									$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
+									$quantilitri = str_replace(".", "", $quantilitri);
+									$type_array[24]=sprintf ("%013d",$quantilitri);
+									$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
+									if ($row['etichetta']==0){// Flag NON etichettato
+										$type_array[38]="X"; 
+									}
+								}
+							} else { //se sono olive
+								$type_array[9]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
 							}
-						} else { //se sono olive
-							$type_array[9]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
+							if ($row['cod_operazione']==3 OR $row['cod_operazione']==8 ){
+								$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista
+							} 
+							if ($row['cod_operazione']==0 OR $row['cod_operazione']==1 OR $row['cod_operazione']==2) {
+								$type_array[8]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/committente
+							}
+							if ($row['cod_operazione']==5) {
+								$type_array[13]=sprintf ("%010d",$row['id_SIAN']); // identificativo stabilimento di provenienza/destinazione olio
+							}
 						}
-						if ($row['cod_operazione']==3 OR $row['cod_operazione']==8 ){
-							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista
-						} 
-						if ($row['cod_operazione']==0 OR $row['cod_operazione']==1 OR $row['cod_operazione']==2) {
-							$type_array[8]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/committente
-						}
-						if ($row['cod_operazione']==5) {
-							$type_array[13]=sprintf ("%010d",$row['id_SIAN']); // identificativo stabilimento di provenienza/destinazione olio
-						}
+						$type_array[6]=str_pad("C".$row['cod_operazione'], 10); // codice operazione
 					}
 					
 					// >> Antonio Germani - Caso scarico da vendite e magazzino
@@ -245,6 +276,7 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 								$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
 								$quantilitri = str_replace(".", "", $quantilitri);
 								$type_array[25]=sprintf ("%013d",$quantilitri);
+								$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 							}
 						} else { //se sono olive
 							$type_array[10]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
@@ -272,7 +304,7 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 					$type_array[14]=sprintf ("%02d",$row['categoria']); // Categoria olio
 					$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
 					$type_array[17]=str_pad($row['or_spec'], 80); // Descrizione Origine olio specifica
-					$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
+					
 					if ($row['estrazione']==1){
 						$type_array[30]="X"; // Flag prima spremitura a freddo
 					}
@@ -285,9 +317,7 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 					if ($row['biologico']==2){
 						$type_array[36]="X"; // Flag in conversione
 					}
-					if ($row['etichetta']==0){
-						$type_array[38]="X"; // Flag NON etichettato
-					}
+					
 					if ($row['confezione']>0){
 						$type_array[45]=sprintf ("%013d", str_replace(".", "", $row['confezione'])); // capacità confezione
 					}
