@@ -169,6 +169,19 @@ function setDate(name) {
 }
 </script>
 ";
+?>
+<div class="panel panel-default gaz-table-form">
+    <div class="container-fluid">
+		<div align="center"><b>Disposizione per la tenuta del registro SIAN</b>
+		<p align="justify">
+		Le annotazioni nei registri e quindi l'invio del file di upload, si effettuano entro e non oltre il sesto giorno successivo a quello dell’operazione, giorni festivi compresi.
+		Gli olivicoltori che detengono e commercializzano esclusivamente olio, allo stato sfuso e/o confezionato, ottenuto da olive provenienti dalla propria azienda, molite
+		presso il frantoio proprio o di terzi, possono effettuare entro il 10 di ogni mese le annotazioni dei dati relativi alle operazioni del mese precedente, a condizione
+		che l’olio ottenuto dalla molitura non sia superiore ai 700 chilogrammi per campagna di commercializzazione (dal 1 luglio al 30 giugno dell'anno successivo).
+		</p></div>
+	</div>
+</div>	
+<?php
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
@@ -183,7 +196,7 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
 echo "</tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td  class=\"FacetDataTD\">\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1);
 echo "</tr>\n";
 echo "<tr>\n";

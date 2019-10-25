@@ -74,7 +74,7 @@ $strScript = array("browse_document.php" =>
     ),
 	"sian.php" =>
 	 array(0 => 'Creazione file upload per SIAN',
-        'title' => 'Selezione per la creazione del File di upload per il SIAN',
+        'title' => 'Selezione per la creazione del File di carico e scarico per l\'upload al SIAN',
 		'date' => 'Data di creazione file',
 		'date_ini' => 'Data inizio movimenti',
 		'date_fin' => 'Data fine movimenti',
