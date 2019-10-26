@@ -137,9 +137,6 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 						$ann = substr($row['datreg'],0,4);
 						$dd=$gio.$mes.$ann;
 					}
-					if (intval($row['numdoc'])==0){ // se il numero documento è zero tolgo lo zero e annullo l'eventuale data documento
-						$row['numdoc']="";$row['datdoc']="";
-					}  
 					// >> Antonio Germani - caso produzione da orderman
 					if (intval($row['id_orderman'])>0 AND $row['operat']==1){ // se è una produzione e il movimento è di entrata
 						// cerco il movimento di scarico connesso
@@ -148,7 +145,7 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 						$row4=gaz_dbi_get_row($gTables['movmag'], 'id_mov', $row3['id_movmag']);
 						$row5=gaz_dbi_get_row($gTables['camp_artico'], 'codice', $row4['artico']);
 						$row4['quanti'] = sprintf ("%013d", str_replace(".", "", $row4['quanti'])); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
-						$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
+						$quantilitri=number_format($row4['quanti']*$row5['confezione'],3);// trasformo le confezioni in litri
 						$quantilitri = str_replace(".", "", $quantilitri); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
 						$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 						if ($row5['estrazione']=1){ 
@@ -225,11 +222,14 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 								$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 								if ($row['etichetta']==0){// Flag NON etichettato
 									$type_array[38]="X"; 
-								}
+								}								
 							}
+							$type_array[28]=str_pad($row['desdoc'], 300); // note, obbligatorio con S7
 						} else { //se sono olive
 							$type_array[10]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
 						}
+						$row['confezione']=""; // annullo capacità confezione perché con S7 non è ammessa
+						$datdoc=""; // annullo data documento giustificativo perché con S7 non è ammessa
 					}
 					
 					// >> Antonio Germani - Caso carico da acquisti e magazzino

@@ -84,7 +84,7 @@ $strScript = array("browse_document.php" =>
 			'La data di inizio non può essere precedente a quella dell\'ultimo file generato!',
 			'Non è possibile generare il file SIAN con i movimenti di oggi. Potrà essere fatto domani!' 
         ),
-		'header' => array('Data' => '', 'Prodotto' => '', 'Quantit&agrave; kg' => '',
+		'header' => array('Data' => '', 'Prodotto' => '', 'Quantit&agrave;' => '',
             'ID SIAN - Fornitore/Cliente' => '', 'Recipiente di stoccaggio' => '', 'Operazione SIAN' => ''
 			
         )
