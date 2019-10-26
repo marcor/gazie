@@ -275,7 +275,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 					$id_lotmag="";
 				}					
                 $query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
-                unset($row);
+                unset($row); 
                 $result = gaz_dbi_query($query);
                 $row = $result->fetch_assoc();
                 $id_tesbro = $row['Auto_increment']; // trovo l'ID che avrà TESBRO testata documento
@@ -316,9 +316,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 						$id_mov_sian_rif="";
 					}
                     if ($itemart['good_or_service'] == 2) { // se è un articolo composto
-                        for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
+						for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
 							if ($form['q_lot_comp'][$nc] > 0) { // se il componente ha lotti
-                                for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
+							    for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
 									if ($form['lot_quanti'][$nc][$n]>0){ // questo evita che, se è stato forzato un lotto a quantità zero, venga generato un  movimento di magazzino
 										$query = "INSERT INTO " . $gTables['movmag'] . "(caumag,type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('81','0', '-1', '" . $form['datreg'] . "', 'MAG', 'Scarico per Produzione', '" . $form['datemi'] . "', '" . $form['artcomp'][$nc] . "', '" . $form['campo_impianto'] . "', '" . $form['lot_quanti'][$nc][$n] . "', '" . $id_orderman . "', '" . $form['id_lot_comp'][$nc][$n] . "', '" . $admin_aziend['adminid'] . "')";
 										gaz_dbi_query($query); // Scarico dal magazzino il componente usato e i suoi lotti
@@ -349,9 +349,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 								}
                             }
                         }
+						$form['id_movmag']=$id_movmag;
                     }
                 }
-                //Antonio Germani - > inizio salvo LOTTO, se c'è lotto e se il prodotto li richiede
+                //Antonio Germani - > inizio salvo LOTTO, se c'è lotto e se il prodotto lo richiede
                 if ($form['lot_or_serial'] > 0) { // se l'articolo prevede un lotto
                     // ripulisco il numero lotto inserito da caratteri dannosi
                     $form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING);
@@ -363,7 +364,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
                     }
                     // è un nuovo INSERT
                     if (strlen($form['identifier']) > 0 && $toDo == "insert") {
-                        $form['id_lotmag'] = $id_lotmag; //inserisco il nuovo lotto che deve essere nuovo ad ogni inerimento di orderman
+                        $form['id_lotmag'] = $id_lotmag; //inserisco il nuovo id lotto che deve essere nuovo ad ogni inerimento di orderman
                         gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['codart'] . "','" . $id_movmag . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
                         gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'"); // aggiorno id_lotmag sul movmag
                         
@@ -377,11 +378,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
                         } else { // se non è lo stesso numero, cancello il lotto iniziale e ne creo uno nuovo
                             gaz_dbi_query("DELETE FROM " . $gTables['lotmag'] . " WHERE id = " . $resin['id_lotmag']);
                             gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['codart'] . "','" . $form['id_movmag'] . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
-                            $query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
-                            unset($row);
-                            $result = gaz_dbi_query($query);
-                            $row = $result->fetch_assoc();
-                            $form['id_lotmag'] = $row['auto_increment'] - 1; // vedo dove è stato salvato lotmag
+                            
+                            $form['id_lotmag'] = gaz_dbi_last_id(); // vedo dove è stato salvato lotmag
                             gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'"); // aggiorno id_lotmag sul movmag
                             
                         }
