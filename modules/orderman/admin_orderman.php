@@ -147,19 +147,16 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
     $form['id_lotmag'] = $_POST['id_lotmag'];
 	
     if (isset($_POST['numcomp'])) {
-		
-        $form['numcomp'] = $_POST['numcomp'];
+		$form['numcomp'] = $_POST['numcomp'];
         if ($form['numcomp'] > 0) {
-			
-            for ($m = 0;$m < $form['numcomp'];++$m) {
-                $form['artcomp'][$m] = $_POST['artcomp' . $m];
+			for ($m = 0;$m < $form['numcomp'];++$m) {
+				$form['artcomp'][$m] = $_POST['artcomp' . $m];
 				$form['SIAN_comp'][$m] = $_POST['SIAN_comp' . $m];
                 $form['quanti_comp'][$m] = $_POST['quanti_comp' . $m];
                 $form['q_lot_comp'][$m] = $_POST['q_lot_comp' . $m];
-				
-                for ($n = 0;$n < $form['q_lot_comp'][$m];++$n) { // se q lot comp è zero vuol dire che non ci sono lotti
-				
-                    $form['id_lot_comp'][$m][$n] = $_POST['id_lot_comp' . $m . $n];
+				$form['recip_stocc_comp'][$m] = $_POST['recip_stocc_comp' . $m];
+				for ($n = 0;$n < $form['q_lot_comp'][$m];++$n) { // se q lot comp è zero vuol dire che non ci sono lotti
+				    $form['id_lot_comp'][$m][$n] = $_POST['id_lot_comp' . $m . $n];
                     $form['lot_quanti'][$m][$n] = $_POST['lot_quanti' . $m . $n];					
                 }
             } 
@@ -325,7 +322,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 										if ($form['SIAN_comp'][$nc]>0){ // imposto l'id movmag e salvo il movimento SIAN del componente usato, se previsto
 											$form['id_movmag']=gaz_dbi_last_id();
 											$form['id_mov_sian_rif']=$id_mov_sian_rif; // connetto il mov sian del componente a quello del prodotto
-											$form['recip_stocc']="";
+											$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
 											$form['cod_operazione']="";
 											if ($s7=1){ // S7 è uno scarico di olio destinato ad altri consumi
 												$form['cod_operazione']="S7";
@@ -340,7 +337,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
                                 if ($form['SIAN_comp'][$nc]>0){ // imposto l'id movmag e salvo il movimento SIAN del componente usato, se previsto
 									$form['id_movmag']=gaz_dbi_last_id();
 									$form['id_mov_sian_rif']=$id_mov_sian_rif;// connetto il mov sian del componente a quello del prodotto
-									$form['recip_stocc']="";
+									$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
 									$form['cod_operazione']="";
 									if ($s7=1){ // S7 è uno scarico di olio destinato ad altri consumi
 										$form['cod_operazione']="S7";
@@ -1019,10 +1016,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						$row['quantita_artico_base'] = number_format ($row['quantita_artico_base'] * $form['quantip'],6);
 						$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
 						$magval = array_pop($mv); // controllo disponibilità in magazzino
-						$magval['q_g']=number_format($magval['q_g'],8); // questo serve per eliminare un numero esponenziale negativo che a volte  si genera quando invece è zero
-						if ($magval['q_g']==0){
-							$magval['q_g']=0;
-						}
+						//$magval['q_g']=number_format($magval['q_g'],8); // questo serve per eliminare un numero esponenziale negativo che a volte  si genera quando invece è zero
 						if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
 							$magval['q_g'] = $magval['q_g'] + $row['quantita_artico_base'];
 						}
@@ -1035,10 +1029,10 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 							<!-- Antonio Germani devo usare number_format perché la funzione gaz_format_quantity non accetta più di 3 cifre dopo la virgola. -->
 							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", number_format(str_replace(",","",$row['quantita_artico_base']),5,",","."); ?>
 							</div>
-							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", number_format(str_replace(",","",$magval['q_g']),5,",","."); ?>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", number_format($magval['q_g'],5,",","."); ?>
 							</div>
 							<?php 							
-							if (number_format(str_replace(",","",$magval['q_g']) - str_replace(",","",$row['quantita_artico_base']),6) >= 0) { // giacenza sufficiente
+							if (number_format($magval['q_g'] - str_replace(",","",$row['quantita_artico_base']),6) >= 0) { // giacenza sufficiente
 								?>
 								<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo $row['quantita_artico_base']; ?>"> <!-- quantità utilizzata di ogni componente   -->
 								<div class="col-sm-1" style="background-color:lightgreen;"> OK</div>
@@ -1048,6 +1042,27 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 								<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="ERRORE"> <!-- quantità 	insufficiente componente, ERRORE -->
 								<div class="col-sm-1" style="background-color:red;"> KO</div>
 								<?php
+							}
+							
+							 // Antonio Germani - Inizio form SIAN
+							if ($row['SIAN']>0 AND $form['order_type'] == "IND"){ // se l'articolo prevede un movimento SIAN e siamo su prod.industriale
+								?>
+						</div> <!-- chiude row del nome articolo composto -->
+								<div class="container-fluid">					
+								<div class="row">
+								<label for="camp_recip_stocc_comp" class="col-sm-6"><?php echo "Recipiente stoccaggio del componente"; ?></label>
+								<?php
+								if (!isset($form['recip_stocc_comp'][$nc])){
+									$form['recip_stocc_comp'][$nc]="";
+								}
+								$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
+								?>
+								
+								</div>	
+								
+								<?php
+							} else {
+								echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value=0>';
 							}
 							// Antonio Germani - inserimento lotti in uscita
 							$artico = gaz_dbi_get_row($gTables['artico'], "codice", $row['codice_artico_base']);
@@ -1125,7 +1140,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 								echo " Componente senza lotto";
 							}
 ?>
-						</div> <!-- chiude row  -->
+						</div> <!-- chiude articolo composto  -->
 								
 				<?php
                     $nc = $nc + 1;
@@ -1157,7 +1172,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 			<div class="row">
 				<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
 				<?php
-				$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
+				$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
 				?>
 			</div>
 			<?php
@@ -1165,8 +1180,8 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 		echo "</div>";	
 		echo"</td></tr>";
 	} else {
-		echo '<input type="hidden" name="recip_stocc" value="">';
-		echo '<input type="hidden" name="cod_operazione" value="">';
+		echo '<tr><td><input type="hidden" name="recip_stocc" value="">';
+		echo '<input type="hidden" name="cod_operazione" value=""></td></tr>';
 	}
 
 ?>
