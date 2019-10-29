@@ -24,6 +24,7 @@
 */
  // IL REGISTRO DI CAMPAGNA E' UN MODULO DI ANTONIO GERMANI - MASSIGNANO AP
 // >> Creazione del file .txt di upload per il SIAN <<
+
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
@@ -44,6 +45,7 @@ $id_sian = gaz_dbi_get_row($gTables['company_config'], 'var', 'id_sian');
 if (!isset ($id_sian) or intval($id_sian['val']==0)){ 
 echo "errore manca id sian. Per utilizzare questa gestione file SIAN è necessario inserire il proprio codice identificativo in configurazione azienda";
 die;}
+
 function getMovements($date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
@@ -72,10 +74,31 @@ function getMovements($date_ini,$date_fin)
         }
         return $m;
     }
+	
+function groupMovementsDate($file,$adaz) { // raggruppo eventuali operazioni uguali e raggruppabili fatte nello stesso giorno
+	$fileContent=@file_get_contents('../../data/files/' . $adaz . '/sian/'.$file); // prendo il contenuto del file
+	$filelines = explode(PHP_EOL, $fileContent);
+	$arrayline=array();
+	foreach ($filelines as $line){
+		$array[]=explode (";",$line);
+	}		
+	print_r($array);
+    // Nuovo array contenente i dati raggruppati
+    $out = array(); // Indice di comodo usato per memorizzare l'indice dell'elemento corrente
+    $i = 0;
+    foreach( $array as $key ){ // Ciclo l'array 
+        // Controllo che l'elemento non sia gia' presente nel nuovo array di uscita funzione
+        echo $key[3],$key[4],"<br>";
+    }
+     die;
+    // Restituisco il nuovo array con i dati raggruppati
+    return $out;
+}
 
 $type_array=array(); 
 // $type_zero è la stringa formattata SIAN vuota *** NON TOCCARE MAI!!! ***
 $type_zero="                ;0000000000;0000000000;        ;          ;        ;          ;0000000000;0000000000;0000000000000;0000000000000;          ;          ;0000000000;00;00;00;                                                                                ;00;                                                                                ;0000000000000;0000000000000;0000000000000;0000000000000;0000000000000;0000000000000;0000000000000;                    ;                                                                                                                                                                                                                                                                                                            ; ; ; ; ; ; ; ; ; ; ; ;                 ;                 ;0000;          ;          ;             ;        ;          ; ;";
+// $type_zero è la stringa formattata SIAN vuota *** NON TOCCARE MAI!!! ***
 
 $giori = substr($_GET['ri'],0,2);
 $mesri = substr($_GET['ri'],2,2);
@@ -94,7 +117,7 @@ $progr=0;
 $datsta=$annsta.$messta.$giosta;
 $datrf=$annrf.$mesrf.$giorf;
 
-foreach ($prevfiles as $files){
+foreach ($prevfiles as $files){ // se nella stessa giornata sono stati creati altri file SIAN aumento il progressivo
 	$f=explode("_",$files);
 	if (isset($f[1])){ 
 		if ($f[1]==$datsta){
@@ -323,12 +346,15 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 					}
 					$type_array[48]="I";
 					$type= implode(";",$type_array);
+					$type=$type."\r\n";
 					fwrite($myfile, $type);
 					$lastdatdoc=$row['datdoc'];
 			}
 		}
 	}
 	fclose($myfile);
+	// da completare raggruppamento stessa data stessa operazione
+	// $myfilegrouped = groupMovementsDate($namefile,$admin_aziend['codice']);die;
 }
 
 require("../../library/include/header.php");

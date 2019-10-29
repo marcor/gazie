@@ -36,27 +36,34 @@ if (!file_exists($sianfolder)) {// se non c'è la creo
     mkdir($sianfolder, 0777);
 }
 
-// prendo tutti i file della cartella sian
+// prendo tutti i file della cartella sian e li leggo
 if ($handle = opendir('../../data/files/' . $admin_aziend['codice'] . '/sian/')){
-   while (false !== ($file = readdir($handle))){
-       $prevfiles[]=$file;
-   }
+	$i=0;
+	while (false !== ($file = readdir($handle))){
+		if ($file=="." OR $file==".."){ continue;}
+			$prevfiles[$i]['nome']=$file; // prendo nome file
+			$prevfiles[$i]['content']=@file_get_contents('../../data/files/' . $admin_aziend['codice'] . '/sian/'.$file);// prendo contenuto file
+			$i++;			
+	}
    closedir($handle);
+   rsort($prevfiles);// ordino per nome file
 }
 
-// Prendo l'ultimo file salvato nella cartella sian
-foreach(new DirectoryIterator('../../data/files/' . $admin_aziend['codice'] . '/sian') as $item) {
-    if ($item->isFile() && (empty($file) || $item->getMTime() > $file->getMTime())) {
-        $file = clone $item;
-    }
-}
-
-if (!empty($file)){
-	$fileContent=@file_get_contents('../../data/files/' . $admin_aziend['codice'] . '/sian/'.$file->getFilename()); // prendo il contenuto dell'ultimo file
-	$fileField=explode (";",$fileContent);
-	$uldtfile=$fileField[((((count($fileField)-1)/49)-1)*49)+3];
-	$uldtfile=str_replace("-", "", $uldtfile);
-} else { // se non ci sono file imposto come data il primo del mese corrente
+// vedo se l'ultimo file è di tipo 'I'nserimento o 'C'ancellazione
+if (isset($prevfiles)){ // se ci sono files
+	for ($n=0 ; $n <= $i-1 ; $n++){
+		
+		if (substr($prevfiles[$n]['content'],875,1)=="I"){ // se il file è di inserimento ne prendo la data dell'ultimo record
+			$fileField=explode (";",$prevfiles[$n]['content']);
+			$uldtfile=$fileField[((((count($fileField)-1)/49)-1)*49)+3];
+			$uldtfile=str_replace("-", "", $uldtfile); // imposto la data per la selezione
+			break; // esco dal ciclo
+		} else { // se non è 'I', cioè è 'C', faccio saltare il file successivo perché annullato da questo
+			$n++;
+		}
+	}
+} 
+if (!isset($uldtfile)) { // se non c'è la data imposto come data il primo del mese corrente
 	$uldtfile="01".date("m").date("Y");
 }
 
