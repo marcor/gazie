@@ -45,14 +45,15 @@ if ($handle = opendir('../../data/files/' . $admin_aziend['codice'] . '/sian/'))
 			$prevfiles[$i]['content']=@file_get_contents('../../data/files/' . $admin_aziend['codice'] . '/sian/'.$file);// prendo contenuto file
 			$i++;			
 	}
-   closedir($handle);
-   rsort($prevfiles);// ordino per nome file
+	closedir($handle);
+	if (isset($prevfiles)){ // se ci sono file
+		rsort($prevfiles);// ordino per nome file
+	}
 }
 
 // vedo se l'ultimo file è di tipo 'I'nserimento o 'C'ancellazione
 if (isset($prevfiles)){ // se ci sono files
 	for ($n=0 ; $n <= $i-1 ; $n++){
-		
 		if (substr($prevfiles[$n]['content'],875,1)=="I"){ // se il file è di inserimento ne prendo la data dell'ultimo record
 			$fileField=explode (";",$prevfiles[$n]['content']);
 			$uldtfile=$fileField[((((count($fileField)-1)/49)-1)*49)+3];
@@ -77,11 +78,13 @@ function getMovements($date_ini,$date_fin)
 			  $gTables['artico'].".SIAN, ".
 			  $gTables['anagra'].".ragso1, ".$gTables['anagra'].".id_SIAN, ".
 			  $gTables['clfoco'].".id_anagra, ".
+			  $gTables['camp_recip_stocc'].".capacita, ".
 			  $gTables['camp_artico'].".or_macro, ".$gTables['camp_artico'].".or_spec, ".$gTables['camp_artico'].".estrazione, ".$gTables['camp_artico'].".biologico, ".$gTables['camp_artico'].".etichetta, ".$gTables['camp_artico'].".categoria ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON (".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag)
                LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
 			   LEFT JOIN ".$gTables['camp_artico']." ON (".$gTables['movmag'].".artico = ".$gTables['camp_artico'].".codice)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)
+			   LEFT JOIN ".$gTables['camp_recip_stocc']." ON (".$gTables['camp_recip_stocc'].".cod_silos = ".$gTables['camp_mov_sian'].".recip_stocc)
 			   LEFT JOIN ".$gTables['anagra']." ON (".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra)";
         $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, clfoco ASC, operat DESC, id_mov ASC');
         while ($r = gaz_dbi_fetch_array($rs)) {
@@ -89,6 +92,33 @@ function getMovements($date_ini,$date_fin)
         }
         return $m;
     }
+	
+// controllo contenitori e silos
+if (isset($_POST['create'])){
+	$orderby=2;
+	$limit=0;
+	$passo=2000000;
+	$where="";
+	$what=	$gTables['camp_recip_stocc'].".cod_silos, ".
+			$gTables['camp_recip_stocc'].".capacita , SUM( quanti * operat) totalcontent";
+	$groupby= "cod_silos";
+	$table=$gTables['camp_recip_stocc']." LEFT JOIN ".$gTables['camp_mov_sian']." ON (".$gTables['camp_recip_stocc'].".cod_silos = ".$gTables['camp_mov_sian'].".recip_stocc)
+									LEFT JOIN ".$gTables['movmag']." ON (".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag)";
+	$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
+	while ($r = gaz_dbi_fetch_array($ressilos)) {
+		$silos[] = $r;
+	}
+	foreach ($silos as $sil){
+		if ($sil['totalcontent']<0){
+			$message = "Giacenza negativa nel silos ".$sil['cod_silos']." !";
+			$msg .='5+';
+		}
+		if ($sil['totalcontent']>$sil['capacita']){
+			$message = "Il contenuto del silos ".$sil['cod_silos']." supera la sua capacità dichiarata !";
+			$msg .='5+';
+		}
+	}
+}
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
@@ -198,6 +228,9 @@ echo "</div>\n";
 echo "<table class=\"Tsmall\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
+	if (!empty($message)){
+		echo "<script type='text/javascript'>alert('$message');</script>";
+	}
 }
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  class=\"FacetDataTD\">\n";
@@ -239,16 +272,13 @@ if (isset($_POST['preview']) and $msg=='') {
 				} else {		
 					$genera="ok";
 					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
-           
-					$movQuanti = $mv['quanti']*$mv['operat'];
-					
+           			$movQuanti = $mv['quanti']*$mv['operat'];
 					echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['artico']." &nbsp;</td>\n";
-			
 					echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($movQuanti,1,3)."</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['id_SIAN']." - ".$mv['ragso1']." &nbsp;</td>\n";
-			
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc']." &nbsp;</td>\n";
+					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['capacita']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['cod_operazione']." &nbsp;</td>\n";
 					echo "</tr>\n";
 					$ctr_mv = $mv['artico'];

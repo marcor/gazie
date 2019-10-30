@@ -75,26 +75,6 @@ function getMovements($date_ini,$date_fin)
         return $m;
     }
 	
-function groupMovementsDate($file,$adaz) { // raggruppo eventuali operazioni uguali e raggruppabili fatte nello stesso giorno
-	$fileContent=@file_get_contents('../../data/files/' . $adaz . '/sian/'.$file); // prendo il contenuto del file
-	$filelines = explode(PHP_EOL, $fileContent);
-	$arrayline=array();
-	foreach ($filelines as $line){
-		$array[]=explode (";",$line);
-	}		
-	print_r($array);
-    // Nuovo array contenente i dati raggruppati
-    $out = array(); // Indice di comodo usato per memorizzare l'indice dell'elemento corrente
-    $i = 0;
-    foreach( $array as $key ){ // Ciclo l'array 
-        // Controllo che l'elemento non sia gia' presente nel nuovo array di uscita funzione
-        echo $key[3],$key[4],"<br>";
-    }
-     die;
-    // Restituisco il nuovo array con i dati raggruppati
-    return $out;
-}
-
 $type_array=array(); 
 // $type_zero è la stringa formattata SIAN vuota *** NON TOCCARE MAI!!! ***
 $type_zero="                ;0000000000;0000000000;        ;          ;        ;          ;0000000000;0000000000;0000000000000;0000000000000;          ;          ;0000000000;00;00;00;                                                                                ;00;                                                                                ;0000000000000;0000000000000;0000000000000;0000000000000;0000000000000;0000000000000;0000000000000;                    ;                                                                                                                                                                                                                                                                                                            ; ; ; ; ; ; ; ; ; ; ; ;                 ;                 ;0000;          ;          ;             ;        ;          ; ;";
@@ -346,15 +326,13 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 					}
 					$type_array[48]="I";
 					$type= implode(";",$type_array);
-					$type=$type."\r\n";
+					$type=$type."\r\n";// il SIAN richiede un ritorno a capo dopo ogni record
 					fwrite($myfile, $type);
 					$lastdatdoc=$row['datdoc'];
 			}
 		}
 	}
 	fclose($myfile);
-	// da completare raggruppamento stessa data stessa operazione
-	// $myfilegrouped = groupMovementsDate($namefile,$admin_aziend['codice']);die;
 }
 
 require("../../library/include/header.php");

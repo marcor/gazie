@@ -82,10 +82,11 @@ $strScript = array("browse_document.php" =>
             'La data di inizio dei movimenti non pu&ograve; essere successiva alla data dell\'ultimo !',
             'La data di creazione del file non pu&ograve; essere precedente a quella dell\'ultimo movimento!',
 			'La data di inizio non può essere precedente a quella dell\'ultimo file generato!',
-			'Non è possibile generare il file SIAN con i movimenti di oggi. Potrà essere fatto domani!' 
+			'Non è possibile generare il file SIAN con i movimenti di oggi. Potrà essere fatto domani!',
+			'Incongruenza con la quantità di un contenitore o silos!'
         ),
 		'header' => array('Data' => '', 'Prodotto' => '', 'Quantit&agrave;' => '',
-            'ID SIAN - Fornitore/Cliente' => '', 'Recipiente di stoccaggio' => '', 'Operazione SIAN' => ''
+            'ID SIAN - Fornitore/Cliente' => '', 'Recipiente di stoccaggio' => '', 'Capacità' => '', 'Operazione SIAN' => ''
 			
         )
 	),
