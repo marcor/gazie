@@ -103,7 +103,7 @@ if (isset($_POST['subdoc'])) {
         $msg['err'][] = 'norows';
     } else {
         foreach ($form['rows'] as $k => $v){
-			if($v['ricevibile']>$v['totric']&&isset($v['checkval'])&&($v['tiprig']==0||$v['tiprig']==1)){
+			if(isset($v['ricevibile'])&&$v['ricevibile']>$v['totric']&&isset($v['checkval'])&&($v['tiprig']==0||$v['tiprig']==1)){
 				$msg['err'][] = 'upres';
 			}
         }
@@ -125,7 +125,7 @@ if (isset($_POST['subdoc'])) {
         tesdocInsert($td);
 		$last_id=gaz_dbi_last_id();
 		foreach ($form['rows'] as $k => $v) {
-            if (isset($v['checkval'])&&$v['ricevibile']>=0.00001) {   //se e' un rigo selezionato
+            if (isset($v['checkval'])&&strlen($v['checkval'])>=2&&isset($v['ricevibile'])&&$v['ricevibile']>=0.00001) {   //se e' un rigo selezionato
                 $row = $v;
                 unset($row['id_rig']);
                 $row['id_tes'] = $last_id;
@@ -138,9 +138,6 @@ if (isset($_POST['subdoc'])) {
                 gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
             }
         }
-		
-		//$_SESSION['print_request'] = $last_id;
-        //header("Location: invsta_docacq.php");
         header("Location: report_broacq.php?flt_tipo=AOR");
         exit;
     }
@@ -316,7 +313,6 @@ if (!empty($form['rows'])) {
                 $resprow[$k][8]['value'] = ''; //prelis
                 $resprow[$k][9]['value'] = '';
                 $resprow[$k][10]['value'] = '';
-                $resprow[$k][11]['value'] = '';
                 break;
         }
     }
