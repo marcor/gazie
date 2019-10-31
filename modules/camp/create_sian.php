@@ -338,13 +338,45 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
 
-echo "file generato e salvato: ",$namefile," ";
 $namefile=substr($namefile,0,-4)
 ?>
+<div class="panel panel-default gaz-table-form">
+    <div class="container-fluid">
+	<div align="center">
+		<p>
+		Il file è stato generato. <br>Prima di accedere al portale del SIAN per l'upload bisogna scaricare il file nel proprio pc.
+		</p>
+	</div>
+	<div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+				<label for="cod_silos" class="col-sm-4 control-label"><?php echo "Download del file generato: "; ?></label>
+				<a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=1" class="col-sm-6 control-label">
+				<p><?php echo $namefile; ?>
+				<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
+				</p>
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+				<label for="cod_silos" class="col-sm-4 control-label"><?php echo "Accedi al portale dell'olio del SIAN: "; ?></label>
+				<a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"https://www.sian.it/SSLicqrfportaleolio/start.do";?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
+				
+				<img src="../../modules/camp/logo_sian.jpg" alt="Logo portale SIAN" title="Vai al portale dell'olio del SIAN" style="max-width:100%">
+				</a>
+			</div>
+		</div>
+	</div>
+			
 
-<a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=1">
-<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
-</a>
+
+
+	</div>
+</div>
+
 <?php
 require("../../library/include/footer.php");
 ?>
