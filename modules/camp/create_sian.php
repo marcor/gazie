@@ -109,12 +109,16 @@ foreach ($prevfiles as $files){ // se nella stessa giornata sono stati creati al
 }
 $progr++;
 	
-// Antonio Germani - creo il nome del file
-$namefile=$admin_aziend['codfis']."_".$datsta."_".sprintf ("%05d",$progr)."_OPERREGI.txt";
 
+if (!isset($_POST['ritorno'])){// Antonio Germani - se non è stata ricaricata la pagina creo il nome del file
+	$namefile=$admin_aziend['codfis']."_".$datsta."_".sprintf ("%05d",$progr)."_OPERREGI.txt";
+} else { // altrimenti riprendo il nome file già creato
+	$namefile=$_POST['namefile'];
+}
+$ritorno="file creato";
 $result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
 
-if (sizeof($result) > 0) { // se ci sono movimenti creo il file
+if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti e la pagina non è stata ricaricata creo il file
 	$myfile = fopen("../../data/files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
 	$nprog=1;$lastdatdoc="";
 	while (list($key, $row) = each($result)) {
@@ -333,6 +337,16 @@ if (sizeof($result) > 0) { // se ci sono movimenti creo il file
 		}
 	}
 	fclose($myfile);
+	?>
+	<!-- E necessario evitare che se si ricarica la pagina si rigeneri un nuovo file  -->
+	<form name="myform" method="POST" enctype="multipart/form-data">
+	<input type="hidden" value="<?php echo $ritorno; ?>" name="ritorno">
+	<input type="hidden" value="<?php echo $namefile; ?>" name="namefile">
+	<script type="text/javascript">
+	document.myform.submit();
+	</script>
+	</form>
+	<?php
 }
 
 require("../../library/include/header.php");
@@ -342,39 +356,34 @@ $namefile=substr($namefile,0,-4)
 ?>
 <div class="panel panel-default gaz-table-form">
     <div class="container-fluid">
-	<div align="center">
-		<p>
-		Il file è stato generato. <br>Prima di accedere al portale del SIAN per l'upload bisogna scaricare il file nel proprio pc.
-		</p>
-	</div>
-	<div class="row">
-        <div class="col-md-12">
-            <div class="form-group">
-				<label for="cod_silos" class="col-sm-4 control-label"><?php echo "Download del file generato: "; ?></label>
-				<p><a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=1" class="col-sm-6 control-label">
-				<?php echo $namefile; ?>
-				<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
-				</a></p>				
+		<div align="center">
+			<p>
+			Il file è stato generato. <br>Prima di accedere al portale del SIAN per l'upload bisogna scaricare il file nel proprio pc.
+			</p>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label for="cod_silos" class="col-sm-4 control-label"><?php echo "Download del file generato: "; ?></label>
+					<p><a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=1" class="col-sm-6 control-label">
+					<?php echo $namefile; ?>
+					<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
+					</a></p>				
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="row">
-        <div class="col-md-12">
-            <div class="form-group">
-				<label for="cod_silos" class="col-sm-4 control-label"><?php echo "Accedi al portale dell'olio del SIAN: "; ?></label>
-				<p><a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"https://www.sian.it/SSLicqrfportaleolio/start.do";?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
-				<img src="../../modules/camp/logo_sian.jpg" alt="Logo portale SIAN" title="Vai al portale dell'olio del SIAN" style="max-width:100%">
-				</a></p>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label for="cod_silos" class="col-sm-4 control-label"><?php echo "Accedi al portale dell'olio del SIAN: "; ?></label>
+					<p><a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"https://www.sian.it/SSLicqrfportaleolio/start.do";?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
+					<img src="../../modules/camp/logo_sian.jpg" alt="Logo portale SIAN" title="Vai al portale dell'olio del SIAN" style="max-width:100%">
+					</a></p>
+				</div>
 			</div>
 		</div>
-	</div>
-			
-
-
-
 	</div>
 </div>
-
 <?php
 require("../../library/include/footer.php");
 ?>
