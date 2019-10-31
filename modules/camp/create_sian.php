@@ -351,11 +351,10 @@ $namefile=substr($namefile,0,-4)
         <div class="col-md-12">
             <div class="form-group">
 				<label for="cod_silos" class="col-sm-4 control-label"><?php echo "Download del file generato: "; ?></label>
-				<a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=1" class="col-sm-6 control-label">
-				<p><?php echo $namefile; ?>
+				<p><a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=1" class="col-sm-6 control-label">
+				<?php echo $namefile; ?>
 				<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
-				</p>
-				</a>
+				</a></p>				
 			</div>
 		</div>
 	</div>
@@ -363,10 +362,9 @@ $namefile=substr($namefile,0,-4)
         <div class="col-md-12">
             <div class="form-group">
 				<label for="cod_silos" class="col-sm-4 control-label"><?php echo "Accedi al portale dell'olio del SIAN: "; ?></label>
-				<a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"https://www.sian.it/SSLicqrfportaleolio/start.do";?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
-				
+				<p><a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"https://www.sian.it/SSLicqrfportaleolio/start.do";?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
 				<img src="../../modules/camp/logo_sian.jpg" alt="Logo portale SIAN" title="Vai al portale dell'olio del SIAN" style="max-width:100%">
-				</a>
+				</a></p>
 			</div>
 		</div>
 	</div>
