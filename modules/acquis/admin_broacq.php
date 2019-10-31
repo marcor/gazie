@@ -561,7 +561,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['righi'][$next_row]['sconto'] = $form['in_sconto'];
                 $form['righi'][$next_row]['prelis'] = ($artico['preacq']>=0.00001)?$artico['preacq']:'';
-                if ($form['tipdoc'] == 'APR') {  // se è un preventivo non conosco prezzo e sconto
+				// tento di attribuire un prezzo del fornitore specifico guardando dentro all'eventuale ultimo ordine
+				$lo=getLastOrdPrice($form['in_codart'],$form['clfoco']);
+				if ($lo){
+                    $form['righi'][$next_row]['sconto'] = $lo['sconto'];
+                    $form['righi'][$next_row]['prelis'] = $lo['prelis'];
+				}elseif ($form['tipdoc'] == 'APR') {  // se è un preventivo non conosco prezzo e sconto
                     $form['righi'][$next_row]['sconto'] = 0;
                     $form['righi'][$next_row]['prelis'] = 0;
                 }

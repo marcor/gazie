@@ -287,4 +287,20 @@ class lotmag {
       }
    }
 }
+
+function getLastOrdPrice($codart,$supplier) {
+// restituisce l'ultimo prezzo d'acquisto dell'articolo al fornitore
+	$r=false;
+    global $gTables, $admin_aziend;
+    $sqlquery = "SELECT * FROM " . $gTables['rigbro'] . "
+          LEFT JOIN " . $gTables['tesbro'] . " ON " . $gTables['rigbro'] . ".id_tes =" . $gTables['tesbro'] . ".id_tes
+          WHERE tipdoc = 'AOR' AND codart = '" . $codart . "' AND prelis >= 0.00001 AND clfoco = '" . $supplier . "' ORDER BY datemi DESC LIMIT 1";
+    $result = gaz_dbi_query($sqlquery);
+	$row = gaz_dbi_fetch_array($result); 
+	if($row){
+		$r=$row;	
+	}
+    return $r;
+}
+
 ?>
