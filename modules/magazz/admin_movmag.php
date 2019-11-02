@@ -100,7 +100,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$print_unimis =  $item_artico['unimis'];
 	$print_uniacq =  $item_artico['uniacq'];
 	$form['SIAN']= $item_artico['SIAN'];
-	$resultsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_mov_sian", $_GET['id_mov']);
+	$resultsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $_GET['id_mov']);
 	$form['cod_operazione'] = $resultsian['cod_operazione'];
 	$form['recip_stocc'] = $resultsian['recip_stocc'];
 	$form['recip_stocc_destin'] = $resultsian['recip_stocc_destin'];
@@ -131,20 +131,6 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['status'] = $result['status'];
     $form['search_partner'] = "";
     
-	 // Antonio Germani - se è presente, recupero il file documento lotto
-    $form['filename'] = "";
-    if (file_exists('../../data/files/' . $admin_aziend['company_id']) > 0) {
-        // recupero il filename dal filesystem
-        $dh = opendir('../../data/files/' . $admin_aziend['company_id']);
-        while (false !== ($filename = readdir($dh))) {
-            $fd = pathinfo($filename);
-            $r = explode('_', $fd['filename']);
-            if ($r[0] == 'lotmag' && $r[1] == $result['id_lotmag']) {
-                // riassegno il nome file
-                $form['filename'] = $fd['basename'];
-            }
-        }
-    }
 	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
 		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 		// la qtà è in questa variabile $prev_qta['quanti']; 
