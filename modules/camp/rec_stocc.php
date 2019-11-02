@@ -49,7 +49,38 @@ if (!isset($_GET['auxil'])) {
    $auxil = "";
    $where = "cod_silos like '".addslashes($auxil)."%'";
 }
+
+// controllo contenitori e silos
+function getCont($codsil){
+	global $gTables,$admin_aziend;
+	$content=0;
+	$orderby=2;
+	$limit=0;
+	$passo=2000000;
+	$where="cod_silos = '".$codsil."'";
+	$what=	$gTables['camp_recip_stocc'].".cod_silos, ".
+			$gTables['camp_recip_stocc'].".capacita , SUM( quanti * operat) totalcontent";
+	$groupby= "cod_silos";
+	$table=$gTables['camp_recip_stocc']." LEFT JOIN ".$gTables['camp_mov_sian']." ON (".$gTables['camp_recip_stocc'].".cod_silos = ".$gTables['camp_mov_sian'].".recip_stocc)
+									LEFT JOIN ".$gTables['movmag']." ON (".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag)";
+	$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
+	while ($r = gaz_dbi_fetch_array($ressilos)) {
+		$content = $r['totalcontent'];
+	}
+	return $content ;
+}
+
 ?>
+<style>
+	.bar {
+		max-width:100%;
+		width:282px;
+		height: 28px;
+		overflow: hidden;		
+		background: url(../../modules/camp/media/background_bar.jpg) no-repeat;
+	}
+</style>
+
 <div align="center" class="FacetFormHeaderFont">Recipienti di stoccaggio</div>
 <?php
 $recordnav = new recordnav($gTables['camp_recip_stocc'], $where, $limit, $passo);
@@ -76,6 +107,7 @@ $recordnav -> output();
 	// creo l'array (header => campi) per l'ordinamento dei record
 	$headers_silos = array("Codice SIAN del recipiente o silos"      => "cod_silos",
 							"Capacità in Kg" => "capacita",
+							"Stato" => "riempimento",
 							"Titolo di possesso" => "affitto",
 							"Destinato a DOP o IGP" => "dop_igp",
 							"Cancella"    => ""
@@ -90,14 +122,25 @@ $recordnav -> output();
 
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
+	$content=getCont($a_row['cod_silos']); 
 ?>		
 			<tr class="FacetDataTD">
 			<td>
 				<a class="btn btn-xs btn-success btn-block" href="admin_rec_stocc.php?Update&codice=<?php echo $a_row["cod_silos"]; ?>">
-					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row["cod_silos"];?>
+					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['cod_silos'];?>
 				</a>
 			</td>
 			<td align="center"><?php echo gaz_format_quantity($a_row['capacita'], 1, 3);?></td>
+			<td>
+			<?php echo $content; 
+			if ($content > $a_row['capacita']){
+				echo " ERRORE!";
+			}
+			?>
+			<div class="bar">
+				<img src="../../modules/camp/media/white_bar.jpg" alt="Barra silos" title="Contenuto silos" style="padding-left:<?php echo ((($content/$a_row['capacita'])*100)* 280 )/100;?>px;">
+			</div>
+			</td>
 			<td align="center">
 			<?php
 			if (intval($a_row['affitto'])==0){
@@ -125,11 +168,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 <?php
 }
 ?>
-<tr class=\"FacetFieldCaptionTD\">
-	<form method="post" action="admin_rec_stocc.php">
-	<td colspan="7" align="right"><input class="btn btn-info" type="submit" name="aggiungi" value="<?php echo "Inserisci nuovo contenitore o silos";?>">
-	</td>
-</tr>
+		<tr class=\"FacetFieldCaptionTD\">
+			<form method="post" action="admin_rec_stocc.php">
+			<td colspan="7" align="right">
+				<input class="btn btn-info" type="submit" name="aggiungi" value="<?php echo "Inserisci nuovo contenitore o silos";?>">
+			</td>
+		</tr>
 
 <!-- Se servirà la STAMPA riattivare con le dovute modifiche		
 <tr class=\"FacetFieldCaptionTD\">
@@ -139,7 +183,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 </tr>
 -->
     		</tbody>
-        </table></form>
+    </table>
+	</form>
     <?php
 require("../../library/include/footer.php");
 ?>
