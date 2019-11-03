@@ -244,6 +244,11 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 					if ($row['operat']==1 AND intval($row['id_orderman'])==0){ //se è un carico NON connesso a produzione
 						if ($row['cod_operazione']==10){// carico olio lampante da recupero
 							$type_array[22]=sprintf ("%013d", str_replace(".", "", $row['quanti'])); // carico olio sfuso
+							$row['categoria']="4"; // categoria olio lampante
+							$row['or_spec']="";
+							$row['or_macro']="";
+							$row['estrazione']="";
+							$row['biologico']="";
 						} else {
 							if ($row['SIAN']==1){ // se è olio
 								if ($row['confezione']==0) { // se è sfuso

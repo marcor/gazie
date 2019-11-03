@@ -64,7 +64,7 @@ if (isset($prevfiles)){ // se ci sono files
 		}
 	}
 } 
-if (!isset($uldtfile)) { // se non c'è la data, la imposto come data il primo gennaio dell'anno corrente
+if (!isset($uldtfile)) { // se non c'è la data, la imposto al primo gennaio dell'anno corrente
 	$uldtfile="01"."01".date("Y");
 }
 

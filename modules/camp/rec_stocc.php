@@ -74,7 +74,7 @@ function getCont($codsil){
 <style>
 	.bar {
 		max-width:100%;
-		width:282px;
+		width:283px;
 		height: 28px;
 		overflow: hidden;		
 		background: url(../../modules/camp/media/background_bar.jpg) no-repeat;

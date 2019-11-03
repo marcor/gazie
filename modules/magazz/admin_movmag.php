@@ -315,10 +315,32 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             $msg .= "19+";
         }
 		if (isset($_GET['id_mov']) && intval($_GET['id_mov'])>0){
-		$result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-		if ($result['type_mov']<>0){ //Antonio Germani è un movimento che va gestito esclusivamente con il modulo Camp
-			$msg .="20+";
+			$result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+			if ($result['type_mov']<>0){ //Antonio Germani è un movimento che va gestito esclusivamente con il modulo Camp
+				$msg .="20+";
+			}
 		}
+		// inizio controllo operazioni particolari SIAN 
+		if ($form['SIAN']>0 AND $form['operat']==1 AND $form['cod_operazione']==10 AND $camp_artico['confezione']>0){
+			$msg .="23+";
+		}
+		if ($form['SIAN']>0 AND $form['operat']==1 AND $form['cod_operazione']==10 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
+			$msg .="24+";
+		}
+		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==0 AND $camp_artico['confezione']==0){
+			$msg .="25+";
+		}
+		if ($form['SIAN']>0 AND $form['cod_operazione']==11){
+			$msg .="26+";
+		}
+		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==6 AND $camp_artico['confezione']==0){
+			$msg .="27+";
+		}
+		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==7 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
+			$msg .="24+";
+		}
+		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==8 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
+			$msg .="24+";
 		}
 	
         if (empty($msg)) {    //        nessun errore        SALVATAGGIO database
@@ -419,7 +441,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['artico'] = "";
 	$form['lot_or_serial']="";
 	$form['SIAN']="";
-	$form['cod_operazione'] = "";
+	$form['cod_operazione'] = 11;
 	$form['recip_stocc'] = "";
 	$form['recip_stocc_destin'] = "";
 	$form['filename'] ="";
@@ -856,9 +878,9 @@ if ($form['SIAN']>0 AND $form['operat']<>0){
 	
 } else {
 	?>
-	<input type="hidden" name="cod_operazione" value="<?php echo $form['cod_operazione']; ?>">
-	<input type="hidden" name="recip_stocc" value="<?php echo $form['recip_stocc']; ?>">
-	<input type="hidden" name="recip_stocc_destin" value="<?php echo $form['recip_stocc_destin']; ?>">
+	<input type="hidden" name="cod_operazione" value=11>
+	<input type="hidden" name="recip_stocc" value="">
+	<input type="hidden" name="recip_stocc_destin" value="">
 	<?php
 }	
 ?>
