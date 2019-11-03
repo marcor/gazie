@@ -1824,6 +1824,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 			$nr++;
             // addizione ai totali peso,pezzi,volume
             $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
+			$campart = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
             $v['descri_codric'] = gaz_dbi_get_row($gTables['clfoco'], 'codice', $v['codric'])['descri'];
             $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
             if ($artico['pack_units'] > 0) {
@@ -2016,6 +2017,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 								?>
 							</div>
 						</div>
+						<?php if ($campart['confezione']==0){?>
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="good_or_service" class="col-sm-5 control-label"><?php echo "recipiente stoccaggio rigo ",$k+1; ?></label>
@@ -2025,6 +2027,9 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 							</div>
 						</div>
 						<?php
+						} else {
+							echo '<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />';
+						}
 						if ($form['rows'][$k]['cod_operazione']==5) { // se è un movimento aziendale chiedo recipiente destinazione
 							?>
 						<div class="col-md-4">
