@@ -100,6 +100,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$print_unimis =  $item_artico['unimis'];
 	$print_uniacq =  $item_artico['uniacq'];
 	$form['SIAN']= $item_artico['SIAN'];
+	if (intval($form['SIAN'])>0) { // se movimenta il SIAN carico anche il contenuto relativo al SIAN
+		$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['cosear']);
+	}
 	$resultsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $_GET['id_mov']);
 	$form['cod_operazione'] = $resultsian['cod_operazione'];
 	$form['recip_stocc'] = $resultsian['recip_stocc'];
@@ -199,6 +202,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$print_unimis =  $item_artico['unimis'];
 		$print_uniacq =  $item_artico['uniacq'];
 		$form['SIAN']=$item_artico['SIAN'];
+		if (intval($form['SIAN'])>0) { // se movimenta il SIAN carico anche il contenuto relativo al SIAN
+			$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['cosear']);
+		}
 		if (isset($_POST['expiry'])){
 			$form['filename'] = $_POST['filename'];
 			$form['identifier'] = $_POST['identifier'];
@@ -820,13 +826,16 @@ if ($form['SIAN']>0 AND $form['operat']<>0){
 						}
 						?>
 					</div>
-					<div class="row">
-						<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
-						<?php
-						$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
-						?>
-					</div>
-					<?php
+					<?php if ($camp_artico['confezione']==0){;?>
+						<div class="row">
+							<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
+							<?php
+							$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
+							?>
+						</div>
+					<?php } else {
+						echo '<input type="hidden" value="" name="recip_stocc" />';
+					}
 					if (($form['cod_operazione']==4 AND $form['operat']==-1) OR ($form['cod_operazione']==5 AND $form['operat']==1)) { // se è un movimento aziendale chiedo recipiente destinazione
 						?>
 						<div class="row">
