@@ -275,7 +275,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_pesosp'] = $_POST['in_pesosp'];
     $form['in_gooser'] = intval($_POST['in_gooser']);
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
-	//$form['in_SIAN'] = intval($_POST['in_SIAN']);
+	$form['in_SIAN'] = intval($_POST['in_SIAN']);
     $form['in_id_lotmag'] = intval($_POST['in_id_lotmag']);
 	$form['in_identifier'] = $_POST['in_identifier'];
 	$form['in_cod_operazione'] = $_POST['in_cod_operazione'];
@@ -994,6 +994,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 
     // Se viene inviata la richiesta di conferma rigo
+	
     /** ENRICO FEDELE */
     /* Con button non funziona _x */
     //if (isset($_POST['in_submit_x'])) {
@@ -1532,6 +1533,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_quamag'] = 0;
         $form['in_pesosp'] = 0;
         $form['in_gooser'] = 0;
+		$form['in_SIAN'] = 0;
         $form['in_status'] = "INSERT";
         // fine reinizializzo rigo input
         $form['cosear'] = "";
@@ -2234,7 +2236,7 @@ echo '<table class="Tlarge table table-bordered table-condensed">
 		<input type="hidden" value="' . $form['in_pesosp'] . '" name="in_pesosp" />
 		<input type="hidden" value="' . $form['in_gooser'] . '" name="in_gooser" />
 		<input type="hidden" value="' . $form['in_lot_or_serial'] . '" name="in_lot_or_serial" />
-		
+		<input type="hidden" value="' . $form['in_SIAN'] . '" name="in_SIAN" />
 		<input type="hidden" value="' . $form['in_id_lotmag'] . '" name="in_id_lotmag" />
 		<input type="hidden" value="' . $form['in_identifier'] . '" name="in_identifier" />
 		<input type="hidden" value="' . $form['in_cod_operazione'] . '" name="in_cod_operazione" />
@@ -2508,6 +2510,7 @@ foreach ($form['rows'] as $k => $v) {
 			
 			// Antonio Germani - Se l'articolo movimenta il SIAN apro il div SIAN
 			if ($form['rows'][$k]['SIAN']>0) {
+				$art = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
 				?>	
 				<div class="container-fluid">					
 					<div class="row">
@@ -2516,6 +2519,7 @@ foreach ($form['rows'] as $k => $v) {
 						$gForm->variousSelect('rows[' . $k . '][cod_operazione]', $script_transl['cod_operaz_value'], $form['rows'][$k]['cod_operazione'], "col-sm-6", false, '', false)
 						?>
 					</div>
+					<?php if ($art['confezione']==0){ ?>
 					<div class="row">
 						<label for="good_or_service" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
 						<?php
@@ -2523,6 +2527,9 @@ foreach ($form['rows'] as $k => $v) {
 						?>
 					</div>
 					<?php
+					} else {
+						echo '<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />';
+					}
 					if ($form['rows'][$k]['cod_operazione']==4) { // se è un movimento aziendale chiedo recipiente destinazione
 						?>
 						<div class="row">
