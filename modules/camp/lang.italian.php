@@ -533,6 +533,8 @@ $strScript = array("browse_document.php" =>
             'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
 			'scaduto' =>'Il prodotto non può più essere usato: è scaduta l\'autorizzazione del Ministero!',
 			'updatedb' =>'Il db fitofarmaci non viene aggiornato da oltre 30 giorni. Per effettuarlo: Merci/servizi > Aggiorna tabella fitofarmaci',
+			'or_macro' =>'E\' necessario inserire l\'origine macro area!',
+			'or_spec' =>'E\' necessario specificare l\'origine specifica!',
 			'revocato' =>'Il prodotto non può più essere usato: l\'autorizzazione del Ministero è stata revocata!'
         ),
         'codice' => "Codice",

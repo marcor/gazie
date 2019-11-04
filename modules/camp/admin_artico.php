@@ -238,6 +238,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if ($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1) {
             $msg['err'][] = 'lotmag';
         }
+		if ($form['SIAN']>0){ // inizio controlli SIAN
+			if ($form['or_macro']==0){
+				$msg['err'][] = 'or_macro';
+			}
+			if ($form['or_macro']==2 OR $form['or_macro']==4 OR $form['or_macro']==6 OR $form['or_macro']==8 OR $form['or_macro']==10 OR $form['or_macro']==11 OR $form['or_macro']==12 OR $form['or_macro']==13 OR $form['or_macro']==14){
+				if ($form['or_spec']==0){
+					$msg['err'][] = 'or_spec';
+				}
+			}
+		}
         if (count($msg['err']) == 0) { // nessun errore
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
 				If ($largeimg==0){
@@ -322,6 +332,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['or_spec']=$camp['or_spec'];
 	$form['or_macro']=$camp['or_macro'];
 	$form['confezione']=$camp['confezione'];
+	if($form['or_spec']==""){$form['or_spec']=0;}
+	if($form['or_spec']=="Spagna"){$form['or_spec']=1;}
+	if($form['or_spec']=="Grecia"){$form['or_spec']=2;}
+	if($form['or_spec']=="Portogallo"){$form['or_spec']=3;}
+	if($form['or_spec']=="Francia"){$form['or_spec']=4;}
+	if($form['or_spec']=="Malta"){$form['or_spec']=5;}
+	if($form['or_spec']=="Cipro"){$form['or_spec']=6;}
+	if($form['or_spec']=="Penisola Iberica"){$form['or_spec']=7;}
+	if($form['or_spec']=="Altro"){$form['or_spec']=8;}
 	
     /** ENRICO FEDELE */
     if ($modal === false) {
