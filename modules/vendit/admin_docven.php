@@ -1069,13 +1069,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($artico['lot_or_serial'] > 0) {
                     $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
                     $ld = $lm->divideLots($form['in_quanti']);
-                     $i = $next_row;
                     foreach ($lm->divided as $k => $v) {
                         if ($v['qua'] >= 0.00001) {                            
                             $form['rows'][$old_key]['id_lotmag'] = $k; // setto il lotto
                            	$getlot = $lm->getLot($form['rows'][$old_key]['id_lotmag']);
 							$form['rows'][$old_key]['identifier'] = $getlot['identifier'];
-                            $i++;
                         }
                     }
 				}
