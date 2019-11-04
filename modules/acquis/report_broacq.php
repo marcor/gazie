@@ -335,7 +335,12 @@ function choicePartner(row)
 				}else{ // Ordine confermato o preventivo che ha già generato ordine, visualizzo il pdf
 					echo ' href="'.$linkstatus.'" title="Visualizza PDF"'; 
 				}
-                echo '>'.$status.'</a></td>';
+                echo '>'.$status.'</a>';
+				if ($r['tipdoc']=='AOR'){
+					echo '<br><a class="btn btn-xs btn-default" title="Data consegna">'; 
+					echo '<small> cons: '.gaz_format_date($r["initra"]).'</small></a>';
+				}
+				echo '</td>';
 
                 // colonna stampa
 				echo "<td align=\"center\">";
