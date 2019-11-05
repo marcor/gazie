@@ -225,7 +225,8 @@ $strScript = array("admin_fornit.php" =>
 			'dttrno' => 'La data di inizio trasporto non &egrave; corretta!',
 			'nonudo' => 'Non &egrave; stato inserito il numero del documento!',
 			'dregpr' => 'La data di registrazione non pu&ograve; essere antecedente a quella del documento da registrare!',
-			'notrack'=> 'Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!'
+			'notrack'=> 'Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!',
+			'soloconf' => 'Operazione effettuabile solo con olio confezionato!'
 			),
         'war' => array('serial' => "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie",'accounted'=>"Questo documento &egrave; gi&agrave; stato contabilizzato!"),
         'customer' => 'Cliente',

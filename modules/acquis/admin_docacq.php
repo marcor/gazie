@@ -448,11 +448,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$msg['err'][] = "nofor_sian";
 				}
 				$art = gaz_dbi_get_row($gTables['camp_artico'], "codice", $value['codart']);
-				if ($value['cod_operazione'] == 5 AND strlen($value['recip_stocc_destin'])==0 AND $art['confezione']==0){
+				if ($value['cod_operazione'] == 9 AND strlen($value['recip_stocc_destin'])==0 AND $art['confezione']==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "norecipdestin"; // manca il recipiente di destinazione
 				}
+				if ($value['cod_operazione'] == 8 AND $art['confezione']==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "soloconf"; // Operazione effettuabile solo con colio confezionato
+				}
 				if (strlen($value['recip_stocc'])==0 AND $art['confezione']==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "norecipstocc"; // manca il recipiente di stoccaggio
+				}
+				if (strlen($value['recip_stocc'])==0 AND $value['cod_operazione']==10){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "norecipstocc"; // manca il recipiente di stoccaggio
 				}
@@ -2030,7 +2038,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 						} else {
 							echo '<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />';
 						}
-						if ($form['rows'][$k]['cod_operazione']==5) { // se è un movimento aziendale chiedo recipiente destinazione
+						if ($form['rows'][$k]['cod_operazione']==9) { // se è un movimento aziendale chiedo recipiente destinazione
 							?>
 						<div class="col-md-4">
 							<div class="form-group">

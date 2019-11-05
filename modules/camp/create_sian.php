@@ -239,7 +239,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$datdoc=""; // annullo data documento giustificativo perché con S7 non è ammessa
 					}
 					
-					// >> Antonio Germani - Caso carico da acquisti e magazzino
+					// >> Antonio Germani - Caso Carico da acquisti e magazzino
 					
 					if ($row['operat']==1 AND intval($row['id_orderman'])==0){ //se è un carico NON connesso a produzione
 						if ($row['cod_operazione']==10){// carico olio lampante da recupero
@@ -249,6 +249,8 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$row['or_macro']="";
 							$row['estrazione']="";
 							$row['biologico']="";
+							$row['numdoc']="";
+							$datdoc="";
 						} else {
 							if ($row['SIAN']==1){ // se è olio
 								if ($row['confezione']==0) { // se è sfuso
@@ -268,8 +270,10 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							if ($row['cod_operazione']==3 OR $row['cod_operazione']==8 ){
 								$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista
 							} 
-							if ($row['cod_operazione']==0 OR $row['cod_operazione']==1 OR $row['cod_operazione']==2) {
-								$type_array[8]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/committente
+							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/committente
+							$row['confezione']="";
+							if ($row['cod_operazione']==5 OR $row['cod_operazione']==9 OR $row['cod_operazione']==10) {
+								$type_array[7]=sprintf ("%010d",""); // identificatore fornitore/cliente/terzista/committente
 							}
 							if ($row['cod_operazione']==5) {
 								$type_array[13]=sprintf ("%010d",$row['id_SIAN']); // identificativo stabilimento di provenienza/destinazione olio
@@ -278,7 +282,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$type_array[6]=str_pad("C".$row['cod_operazione'], 10); // codice operazione
 					}
 					
-					// >> Antonio Germani - Caso scarico da vendite e magazzino
+					// >> Antonio Germani - Caso Scarico da vendite e magazzino
 					if ($row['operat']==-1 AND intval($row['id_orderman'])==0){ // se è uno scarico NON connesso a produzione
 						$type_array[6]=str_pad("S".$row['cod_operazione'], 10); // codice operazione
 						if ($row['SIAN']==1){ // se è olio
