@@ -23,19 +23,20 @@ $result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
 while ($row = gaz_dbi_fetch_array($result)) {
 	$aziend_codice = sprintf("%03s", $row["codice"]);
 	// inizio controlli presenza di indici altrimenti li creo perché senza di essi le query ricorsive sarebbero troppo lente in caso di tabelle con molti righi
-	$idx=array(0=>array('ref'=>'company_data','var'=>'company_data','description'=>'company_data')); // indicizzo la colonna data di registrazione dei movimenti contabili per poter avere libro giornale e partitari velocemente
+	$idx=array(0=>array('ref'=>'company_data','var'=>'company_data','description'=>'company_data','tipdoc'=>'tesdoc','seziva'=>'tesdoc','protoc'=>'tesdoc')); // indicizzo, in particolare le colonne per il report delle fatture
 	foreach($idx as $vi){
 		foreach($vi as $k=>$v){
 			$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice.$v." WHERE 1");
 			$ex=false;	
 			while ($vk = gaz_dbi_fetch_array($rk)) {
-				if ($vk['Column_name'] == $k){
+				if ($vk['Column_name']==$k&&$k!='tipdoc'){
 					$ex=true;
 				}
 			}
 			if (!$ex){
-				gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice.$v." ADD INDEX `".$k."` (`".$k."`)");		
-				echo "<p>Ho creato l'index <b>".$k."</b> su ". $table_prefix . "_" . $aziend_codice.$v." perché non esisteva</p>";
+				$lk=($k=='tipdoc')?'(1)':'';
+				gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice.$v." ADD INDEX `idx_".$k.$lk."` (`".$k."`".$lk.") USING BTREE");		
+				echo "<p>Ho creato l'index su <b>".$k."</b> della tabella ". $table_prefix . "_" . $aziend_codice.$v." perché non esisteva</p>";
 			}
 		}
 	}

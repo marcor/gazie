@@ -42,6 +42,7 @@ function print_querytime($prev) {
 function cols_from($table_name, ...$col_names) {
     $full_names = array_map(function ($col_name) use ($table_name) { return "$table_name.$col_name"; }, $col_names);
     return implode(", ", $full_names);
+        $where = $gTables['anagra'].".ragso1 LIKE '%".gaz_dbi_real_escape_string($cliente)."%' AND tipdoc LIKE 'F%' AND " . $gTables['tesdoc'] . ".seziva = '$seziva' ";
 }
 
 // campi ammissibili per la ricerca
@@ -57,7 +58,7 @@ $search_fields = [
     'anno'
     => "YEAR(datfat) = %d",
     'cliente'
-    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%s%%'"
+    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%%%s%%'"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -68,6 +69,7 @@ $sortable_headers = array(
     "Cliente" => "",
     "Status" => "",
     "Stampa" => "",
+    "Importo" => "importo",
     "FAE" => "",
     "Mail" => "",
     "Origine" => "",
@@ -83,7 +85,7 @@ $ts = new TableSorter(
     $passo, 
     ['datfat' => 'desc', 'protoc' => 'desc'], 
     ['sezione' => 1, 'tipo' => 'F%'],
-    ['protoc', 'datfat']
+    NULL
 );
 
 # le <select> spaziano solo tra i documenti di vendita del sezionale corrente
@@ -263,6 +265,9 @@ function confirFae(link){
                     &nbsp;
                 </td>
                 <td class="FacetFieldCaptionTD">
+                    &nbsp;
+                </td>
+                <td class="FacetFieldCaptionTD">
                     <input type="submit" class="btn btn-sm btn-default btn-50" name="search" value="Cerca" tabindex="1">
                     <?php $ts->output_order_form(); ?>
                 </td>
@@ -273,6 +278,7 @@ function confirFae(link){
             <tr>
                 <?php
                 $ts->output_headers();
+                    
                 ?>
             </tr>
             <?php
@@ -287,9 +293,12 @@ function confirFae(link){
 						  "ragso1",
 						  "ragso2",
 						  "e_mail") . ", " .
-					"MAX(id_tes) as reftes, " .
-					"GROUP_CONCAT(id_tes ORDER BY datemi DESC) as refs_id, " . 
-					"GROUP_CONCAT(numdoc ORDER BY datemi DESC) as refs_num",
+					"(SELECT GROUP_CONCAT(td2.id_tes) FROM ".$gTables['tesdoc']." AS td2 WHERE td2.protoc = ".$gTables['tesdoc'].".protoc AND td2.datfat = ".$gTables['tesdoc'].".datfat) as refs_id, " .
+					"(SELECT GROUP_CONCAT(td2.numdoc) FROM ".$gTables['tesdoc']." AS td2 WHERE td2.protoc = ".$gTables['tesdoc'].".protoc AND td2.datfat = ".$gTables['tesdoc'].".datfat) as refs_num, " . 
+					"CONCAT(YEAR(".$gTables['tesdoc'].".datemi), '2', ".$gTables['tesdoc'].".seziva, LPAD(".$gTables['tesdoc'].".protoc, 9 , '0')) as tesref, " .
+					"((SELECT SUM(pm1.amount) FROM ".$gTables['paymov']." AS pm1 WHERE id_tesdoc_ref = tesref AND id_rigmoc_pay = 0)-(SELECT SUM(pm1.amount) FROM ".$gTables['paymov']."  AS pm1 WHERE id_tesdoc_ref = tesref AND id_rigmoc_pay <> 0) <= 0) AS pagata, " .
+					"(SELECT SUM(pm1.amount) FROM ".$gTables['paymov']." AS pm1 WHERE id_tesdoc_ref = tesref AND id_rigmoc_pay = 0) AS importo"
+					,
 					$tesdoc_e_partners,
 					$ts->where . " " . $ts->group_by,
 					$ts->orderby,
@@ -301,6 +310,8 @@ function confirFae(link){
             $ctrl_doc = "";
             $ctrl_eff = 999999;
             while ($r = gaz_dbi_fetch_array($result)) {
+				$pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $r['pagame']);
+                $reftes = max(explode(",", $r['refs_id']));
                 $modulo_fae = "electronic_invoice.php?id_tes=" . $r['id_tes'];
                 $modulo_fae_report = "report_fae_sdi.php?id_tes=" . $r['id_tes'];
                 $classe_btn = "btn-default";
@@ -317,7 +328,7 @@ function confirFae(link){
                         $modifi = "";
                     } else {
                         $classe_btn = "btn-default";
-                        $modifi = "admin_docven.php?Update&id_tes=" . $r["reftes"];
+                        $modifi = "admin_docven.php?Update&id_tes=" . $reftes;
                     }
                 } elseif ($r["tipdoc"] == 'FAP'||$r["tipdoc"] == 'FAQ') {
                     $tipodoc = "Parcella";
@@ -371,12 +382,18 @@ function confirFae(link){
                     echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">" . $r["ragso1"] . ((empty($r["ragso2"]))?"":" ".$r["ragso2"]) . "</a>&nbsp;</td>";
                     // Colonna movimenti contabili
                     echo "<td align=\"left\">";
+                    if($r["pagata"]&&($pagame['tippag']=='D'||$pagame["tippag"]=='C')) {
+                        echo "<span class=\"btn btn-xs btn-default\" style=\"background-color: green; color:white;\">PAGATA</span>";
+                    }elseif(!$r["pagata"]&&$r["id_con"]>0){
+                        echo "<span class=\"btn btn-xs btn-default\" style=\"background-color: red; color:white;\">NON PAGATA</span>";
+                    }
                     if ($r["id_con"] > 0) {
                         echo " <a class=\"btn btn-xs btn-default btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont." . $r["id_con"] . "</a> ";
                     } else {
                         echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=" . $sezione . "&last=" . $r["protoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
                     }
-                    $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $r["reftes"], 'progre');
+                    
+                    $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $reftes, 'progre');
                     while ($r_e = gaz_dbi_fetch_array($effett_result)) {
                         // La fattura ha almeno un effetto emesso
                         $n_e++;
@@ -388,15 +405,17 @@ function confirFae(link){
                         echo " <a class='btn btn-xs btn-default btn-$eff_class' style='font-size:10px;' title='Visualizza $eff_desc per il regolamento della fattura' href='stampa_effett.php?id_tes={$r_e['id_tes']}'> $eff {$r_e['progre']} </a>\n";
                     }
                     if ($n_e == 0) {
-			$pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $r['pagame']);
 			if ($pagame["tippag"] == 'B' || $pagame["tippag"] == 'T' || $pagame["tippag"] == 'V') {
 			    echo " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
 			}
 		    }
-                    echo "</td>";
+                    
                     // Colonna "Stampa"
                     echo "<td align=\"center\"><a accesskey=\"p\" class=\"btn btn-xs btn-50 btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i>&nbsp;pdf</a>";
                     echo "</td>";
+                    
+                    echo "</td>";
+                    echo '<td align="right">'.$r["importo"]."</td>";
 
                     // Colonna "Fattura elettronica"
                     if (substr($r["tipdoc"], 0, 1) == 'F') {
