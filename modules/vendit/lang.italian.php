@@ -308,7 +308,9 @@ $strScript = array("admin_client.php" =>
 			'norecipdestin' => 'Non è stato inserito il recipiente di destinazione olio sfuso',
 			'norecipstocc' => 'Non è stato inserito il recipiente di stoccaggio olio sfuso',
 			'nofor_sian' =>'Per questo tipo di operazione SIAN è necessario che il destinatario abbia il codice dell\'anagrafica del SIAN',
-			'id_documento'=>'Non è stato inserito il tipo rigo 13 - Id.Documento (FaE 2.1.X.2) obbligatorio in presenza di almeno uno dei tipi da 11 a 16'
+			'id_documento'=>'Non è stato inserito il tipo rigo 13 - Id.Documento (FaE 2.1.X.2) obbligatorio in presenza di almeno uno dei tipi da 11 a 16',
+			'soloconf' => 'Questa operazione SIAN ammette solo olio confezionato',
+			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto'
 		)		
     ),
     "select_docforprint.php" =>

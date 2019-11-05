@@ -297,14 +297,26 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						} else { //se sono olive
 							$type_array[10]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
 						}
-						if ($row['cod_operazione']==1 OR $row['cod_operazione']==2 OR $row['cod_operazione']==3 OR $row['cod_operazione']==10){
-							$type_array[8]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/committente
+						if ($row['cod_operazione']==1 OR $row['cod_operazione']==2 OR $row['cod_operazione']==3 OR $row['cod_operazione']==5 OR $row['cod_operazione']==10){
+							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/
 						}
-						if ($row['cod_operazione']==5 OR $row['cod_operazione']==6) {
-							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista
+						if ($row['cod_operazione']==6) { 
+							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista//facoltativo
+							$row['confezione']="";
 						}
 						if ($row['cod_operazione']==4) {
 							$type_array[13]=sprintf ("%010d",$row['id_SIAN']); // identificativo stabilimento di provenienza/destinazione olio
+						}
+						if ($row['cod_operazione']==7) {
+							$row['numdoc']="";
+							$datdoc="";
+							$row['confezione']="";
+							$type_array[28]=str_pad("altro uso generico", 300); // note, obbligatorie con S7
+						}
+						if ($row['cod_operazione']==8) {
+							$row['numdoc']="";
+							$datdoc="";
+							$row['confezione']="";
 						}
 					}
 					

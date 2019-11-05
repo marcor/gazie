@@ -626,13 +626,29 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$msg['err'][] = "nofor_sian";
 				}
 				$art = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
-				if ($v['cod_operazione'] == 4 AND strlen($v['recip_stocc_destin'])==0 AND $art['confezione']==0){
+				/*if ($v['cod_operazione'] == 4 AND strlen($v['recip_stocc_destin'])==0 AND $art['confezione']==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "norecipdestin"; // manca il recipiente di destinazione
-				}
+				}*/
 				if (strlen($v['recip_stocc'])==0 AND $art['confezione']==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "norecipstocc"; // manca il recipiente di stoccaggio
+				}
+				if ($v['cod_operazione'] == 0 AND $art['confezione']==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "soloconf"; // operazione con solo olio confezionato
+				}
+				if ($v['cod_operazione'] == 0 AND strlen($v['identifier'])==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "sololotto"; // operazione con solo olio confezionato deve avere il lotto
+				}
+				if ($v['cod_operazione'] == 6 AND $art['confezione']==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "soloconf"; // Cessione omaggio solo confezionato
+				}
+				if ($v['cod_operazione'] == 9 AND $art['confezione']==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "soloconf"; // Cessione omaggio solo confezionato
 				}
 			}
         }
@@ -2535,18 +2551,9 @@ foreach ($form['rows'] as $k => $v) {
 					} else {
 						echo '<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />';
 					}
-					if ($form['rows'][$k]['cod_operazione']==4) { // se è un movimento aziendale chiedo recipiente destinazione
-						?>
-						<div class="row">
-							<label for="good_or_service" class="col-sm-6 control-label"><?php echo "Recipiente destinazione"; ?></label>
-							<?php
-							$gForm->selectFromDB('camp_recip_stocc', 'rows[' . $k . '][recip_stocc_destin]' ,'cod_silos', $form['rows'][$k]['recip_stocc_destin'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
-							?>
-						</div>
-						<?php
-					} else {
-						echo '<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />';
-					}
+					
+					echo '<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />';
+					
 				echo '</div>';
 			} else {
 				echo ' <input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
