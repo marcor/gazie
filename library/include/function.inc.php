@@ -2741,6 +2741,7 @@ class Schedule {
          */
         global $gTables;
 		$date_ref = new DateTime($date);
+		$date_ref->modify('+ 1 hour');
 		$date_ctrl='1';
 		if ($date){
 			$date_ctrl=" (expiry <= '".$date."')";
@@ -2757,17 +2758,22 @@ class Schedule {
         $interval = $date_ref->diff($ex);
         if ($r['diff_paydoc'] >= 0.01) { // la partita � aperta
             $r['sta'] = 0;
+            $r['style'] = 'info';
             if ($date_ref > $ex) { // ... ed � pure scaduta
                 $r['sta'] = 3;
+				$r['style'] = 'danger';
             }
         } elseif ($r['diff_paydoc'] == 0.00) { // la partita � chiusa ma...
-            if ($date_ref < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
+           if ($date_ref < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
                 $r['sta'] = 2; // esposta
+				$r['style'] = 'warning';
             } else { // altrimenti � chiusa completamente
                 $r['sta'] = 1;
+ 				$r['style'] = 'success';
             }
         } else {
             $r['sta'] = 9;
+            $r['style'] = 'default';
         }
         $this->Status = $r;
     }
