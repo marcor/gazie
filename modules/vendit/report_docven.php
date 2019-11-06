@@ -57,7 +57,7 @@ $search_fields = [
     'anno'
     => "YEAR(datfat) = %d",
     'cliente'
-    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%s%%'"
+    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%%%s%%'"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
