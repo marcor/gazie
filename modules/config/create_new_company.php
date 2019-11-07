@@ -186,8 +186,21 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             }
             changeEnterprise($form['codice']);
             if ( !file_exists("../../data/files/" . $form['codice']) ) {
-                mkdir("../../data/files/" . $form['codice'], 0740);
-            }
+				$dst="../../data/files/" . $form['codice'];
+                mkdir($dst, 0740);
+				$src="../../library/images/default";
+				$dir = opendir($src);
+				while(false !== ( $file = readdir($dir)) ) { 
+					if (( $file != '.' ) && ( $file != '..' )) { 
+						if ( is_dir($src . '/' . $file) ) { 
+							recurse_copy($src . '/' . $file,$dst . '/' . $file); 
+						} else { 
+							copy($src . '/' . $file,$dst . '/' . $file); 
+						} 
+					} 
+				} 
+				closedir($dir); 
+			}
             header("Location: admin_aziend.php?Update&codice=" . $form['codice']);
             exit;
         }
