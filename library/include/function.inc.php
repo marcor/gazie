@@ -2618,8 +2618,7 @@ class Schedule {
             $partner_where = $gTables['rigmoc'] . ".codcon  BETWEEN " . $partner_type . "000001 AND " . $partner_type . "999999";
         }
         $sqlquery = "SELECT " . $gTables['rigmoc'] . ".codcon 
-          FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig ) "
-                . " WHERE  " . $partner_where . " GROUP BY " . $gTables['rigmoc'] . ".codcon ";
+          FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['rigmoc'] . ".id_rig = " . $gTables['paymov'] . ".id_rigmoc_pay  OR " . $gTables['rigmoc'] . ".id_rig =" . $gTables['paymov'] . ".id_rigmoc_doc ) WHERE  " . $partner_where . " GROUP BY " . $gTables['rigmoc'] . ".codcon ";
         $rs = gaz_dbi_query($sqlquery);
         $acc = array();
         while ($r = gaz_dbi_fetch_array($rs)) {
