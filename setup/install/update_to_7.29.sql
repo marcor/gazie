@@ -1,5 +1,9 @@
 UPDATE `gaz_config` SET `cvalue` = '124' WHERE `id` =2;
 ALTER TABLE `gaz_anagra` ADD `id_SIAN` INT(10) NULL DEFAULT NULL COMMENT 'identificativo stabilimento assegnato dal SIAN' AFTER `fatt_email`;
+INSERT INTO `gaz_breadcrumb` (`exec_mode`,`file`,`titolo`,`link`,`position_order`,`icon`,`adminid`) SELECT  `exec_mode`, 'vendit/dash_customer_schedule.php', `titolo`, `link`,`position_order`,`icon`,`adminid` from `gaz_breadcrumb` WHERE `file`='root/dash_customer_schedule.php';
+DELETE FROM `gaz_breadcrumb` WHERE `file`='root/dash_customer_schedule.php';
+INSERT INTO `gaz_breadcrumb` (`exec_mode`,`file`,`titolo`,`link`,`position_order`,`icon`,`adminid`) SELECT  `exec_mode`, 'acquis/dash_supplier_schedule.php', `titolo`, `link`,`position_order`,`icon`,`adminid` from `gaz_breadcrumb` WHERE `file`='root/dash_supplier_schedule.php';
+DELETE FROM `gaz_breadcrumb` WHERE `file`='root/dash_supplier_schedule.php';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 CREATE TABLE IF NOT EXISTS `gaz_XXXcamp_recip_stocc` (
   `cod_silos` varchar(10) NOT NULL COMMENT 'Codice recipiente di stoccaggio olio. Deve essere identico a quello registrato al SIAN',

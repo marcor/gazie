@@ -61,38 +61,17 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
          							$totAvere = 0;
 
          							// impostazioni variabili
-         							//$today = date("Y-m-d");
-         							//$today = "2019-02-13";
-         							$dateFound = "";
+          							$dateFound = "";
          							$id_tesFound = "";
          							$numdocFound = "";
          							$diffDate = 99999999;
-
          							if (sizeof($paymov->Partners) > 0) {
          								$anagrafica = new Anagrafica();
          								foreach ($paymov->Partners as $p) {
          									$ctrl_close_partner = false;
-         									$anagrafica = new Anagrafica();
          									$prt = $anagrafica->getPartner($p);
-
          									$paymov->getPartnerStatus($p, date("Y") . '-' . date("m") . '-' . date("d"));
          									foreach ($paymov->PartnerStatus as $k => $v) {
-         										/*$paymov->docData[$k]['descri'] . ' n.' .
-         										$paymov->docData[$k]['numdoc'] . ' del ' .
-         										gaz_format_date($paymov->docData[$k]['datdoc']);*/
-
-         										// INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento
-         										$res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $paymov->docData[$k]['id_tes'], 'id_rig');
-         										$tt = '<table><th colspan=3>' . $paymov->docData[$k]['descri'] . '<br /> N. ' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']) . '</th>';
-         										//$tt = '<table><th colspan=3 >' . "Intestazione" . '</th>';
-         										//$tot = 0.00;
-         										while ($rr = gaz_dbi_fetch_array($res_rig)) {
-         											$account = $anagrafica->getPartner($rr["codcon"]);
-         											$tt .= '<tr><td>' . htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
-         										}
-         										$tt .= '</table>';
-         										// FINE creazione tabella per il tooltip
-
          										foreach ($v as $ki => $vi) {
          											$ctrl_close_paymov = false;
          											$lnk = '';
@@ -141,7 +120,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 
          											// controlli per calcolo data da visualizzare in prossimit? di oggi
          											$datetime1 = date_create($vi['expiry']);
-         											$datetime2 = date_create($today);
+         											$datetime2 = date_create();
          											$diffDays = date_diff($datetime1, $datetime2);
          											$nGiorni=$diffDays->format('%R%a days');
 
@@ -159,7 +138,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
          											// stampa colonne
          											echo "<tr style='" . $style_partita ."' class='odd " . $stato_partita . "' role='row'>"; //*?
          											//echo "<td>" . $prt['ragso1'] . "</td>";
-         											echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $paymov->docData[$k]['id_tes'] . '" data-title="' . str_replace("\"", "'", $tt) . '" >' . $prt['ragso1'] . "</div><span class='keyRow'>" . $keyRowFor . "</span></td>";
+         											echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $paymov->docData[$k]['id_tes'] . '">' . $prt['ragso1'] . "</div><span class='keyRow'>" . $keyRowFor . "</span></td>";
          											echo "<td align='right'>" . gaz_format_number($vi['op_val']) . "</td>";
 
          											echo "<td align='right'>" . gaz_format_number($vi['cl_val']) . "</td>";
@@ -238,17 +217,6 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 		//		  "filter": false,
 		//*- DC - 07/02/2018
 		$(function () {
-			$("#clienti").DataTable({
-                "oLanguage": {
-                    "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
-                },
-                "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
-                "iDisplayLength": 5,
-                "order": [4, 'asc'],
-                "filter": true,
-				"responsive": true,
-                "stateSave": true
-            });
 			$('#fornitori').DataTable({
                 "oLanguage": {
                     "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
@@ -295,24 +263,6 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 	//});
 
 	$(window).load(function(){
-		// Scadenziario Clienti
-		keyRowCli = "<?php echo $keyRowFoundCli ?>";
-
-		if(keyRowCli != ""){
-			setTimeout(function(){num = searchPageOnTable('#clienti',keyRowCli,$('#clienti').DataTable().page.len())
-				gotoPage('#clienti',num);
-				$("#clienti").css("max-height","none");
-				$("#clienti").css("opacity","1");
-				$(".wheel_load").css("display","none");
-			},1000)
-			}
-			else
-			{
-				$("#clienti").css("max-height","none");
-				$("#clienti").css("opacity","1");
-				$(".wheel_load").css("display","none");
-			}
-
 		// Scadenziario Fornitori
 		keyRowFor = "<?php echo $keyRowFoundFor ?>";
 
