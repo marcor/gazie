@@ -100,7 +100,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 		$keyRowfor =  $r['expiry'].'_'.$r['id_tesdoc_ref'];
 		// stampa colonne
 		echo "\n<tr role='row'>";
-		echo '<td><small><a href="../contab/admin_movcon.php?id_tes='.$r['id_tes'].'&Update">'.$r['caucon'] .' '.$r['numdoc'] .'/'.$r['seziva'] .' '.gaz_format_date($r['datdoc']) .' </a>'.$r['ragso1'] . "</small><span class='keyRow'>" . $keyRowfor . "</span></td>";
+		echo '<td><small><a href="../contab/admin_movcon.php?id_tes='.$r['id_tes'].'&Update">'.$r['caucon'] .' '.$r['numdoc'] .' '.gaz_format_date($r['datdoc']) .' </a>'.$r['ragso1'] . "</small><span class='keyRow'>" . $keyRowfor . "</span></td>";
 		echo "<td align='right'>". gaz_format_number($v['cl_val']) . "</td>";
 		echo "<td align='right'>" . gaz_format_number($v['op_val']) . "</td>";
 		echo "<td align='right'>" . gaz_format_number($v['op_val']-$v['cl_val'])."</td>";
@@ -121,7 +121,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
             "oLanguage": {
                 "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
             },
-            "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
+            "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Tutti"]],
             "iDisplayLength": 5,
 			"responsive": true,
 			"ordering": false,

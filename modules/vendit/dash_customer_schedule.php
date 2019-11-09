@@ -121,7 +121,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
             "oLanguage": {
                 "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
             },
-            "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
+            "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "Tutti"]],
             "iDisplayLength": 5,
 			"responsive": true,
 			"ordering": false,
