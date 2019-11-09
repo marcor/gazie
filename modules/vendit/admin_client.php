@@ -171,6 +171,23 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])) {
             $msg .= "20+";
         }
+		// il codice SIAN deve essere univoco nell'ambito clienti e fornitori
+		if (intval($form['id_SIAN'])>0){
+			$rs_same_code = gaz_dbi_dyn_query('*', $gTables['anagra'], " id_SIAN = " . $form['id_SIAN']);
+			$rows=mysqli_num_rows($rs_same_code);
+			if ($rows>0 && ($toDo == 'insert')) { // c'� gi� uno stesso codice
+				$form['id_SIAN'] ++; // lo aumento di 1
+				$msg .= "21+";
+			} 
+			if ($toDo == 'update') {		 
+				foreach ($rs_same_code as $row){
+					if ($row['ragso1']!==$form['ragso1'] AND $row['id_SIAN']==$form['id_SIAN']){
+						$form['id_SIAN'] ++; // c'� gi� uno stesso codice lo aumento di 1
+						$msg .= "21+";
+					}
+				}
+			}
+		}
 
         if (empty($msg)) { // nessun errore
             $form['codice'] = $real_code;

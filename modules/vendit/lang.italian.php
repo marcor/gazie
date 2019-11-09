@@ -53,7 +53,8 @@ $strScript = array("admin_client.php" =>
             '&Egrave; necessario scegliere la modalit&agrave; di pagamento',
             'Il codice del cliente &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
             'La data di nascita &egrave; sbagliata',
-            'Indirizzo email formalmente sbagliato'
+            'Indirizzo email formalmente sbagliato',
+			'Il codice SIAN &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)'
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
         'codice' => "Codice ",

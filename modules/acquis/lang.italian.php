@@ -56,7 +56,8 @@ $strScript = array("admin_fornit.php" =>
             'Il codice del fornitore &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
             'La data di nascita &egrave; sbagliata',
             'Indirizzo email formalmente sbagliato',
-			'Non è stato descritto il servizio esternalizzato'
+			'Non è stato descritto il servizio esternalizzato',
+			'Il codice SIAN &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)'
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
         'codice' => "Codice ",
