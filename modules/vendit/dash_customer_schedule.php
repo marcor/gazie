@@ -23,189 +23,118 @@
   --------------------------------------------------------------------------
  */
 if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
+	if (isset($_POST['datref_cli'])){
+		$form['datref_cli']=substr($_POST['datref_cli'],0,10);
+	} else {
+		$form['datref_cli']=date("d-m-Y");
+	}
     ?>
     <!-- Scadenziari -->
-	<div class="panel panel-default panel-user col-md-12" >
+	<div class="panel panel-info col-sm-12" >
           <!--+ DC - 13/02/2019 -->
-  				  <div class="wheel_load"></div>
+		  <div class="wheel_load"></div>
           <!--- DC - 13/02/2019 -->
-          <div class="box-header">
-              <h3 class="box-title"><?php echo $script_transl['sca_scacli']; ?></h3>
+          <div class="box-header bg-success">
+            <div class="box-title"><b><?php echo $script_transl['sca_scacli']; ?></b> -> data di riferimento: 
+			<?php echo '<input type="text" value="'.$form['datref_cli'].'" id="datref_cli" name="datref_cli" readonly>'; ?><small>(6 mesi prima e 6 dopo)</small>
+			</div>
           </div>
           <div class="box-body">
               <table id="clienti" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="clienti_info">
                   <thead>
                       <tr role="row">
-                          <!--+ DC 07/02/2019 - th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 300px;" aria-label="Cliente"><?php echo $script_transl['sca_cliente']; ?></th--->
-                          <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 150px;" aria-label="Cliente"><?php echo $script_transl['sca_cliente']; ?></th>
-                          <!--+ DC 07/02/2019 - nuova colonne Dare --->
-                          <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 70px;" aria-label="Dare"><?php echo $script_transl['sca_dare']; ?></th>
-                          <!--- DC 07/02/2019 - nuova colonne Dare --->
-                          <!--+ DC 07/02/2019 - th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-label="Avere"><?php echo $script_transl['sca_avere']; ?></th--->
-                          <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 70px;" aria-label="Avere"><?php echo $script_transl['sca_avere']; ?></th>
-                          <!--+ DC 07/02/2019 - nuova colonna Saldo --->
-                          <th style="cursor:pointer;cursor:hand" class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 70px;" aria-label="Saldo"><?php echo $script_transl['sca_saldo']; ?></th>
-                          <!--- DC 07/02/2019 - nuove colonna Saldo --->
-                          <!--+ DC 07/02/2019 - th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Scadenza"><?php echo $script_transl['sca_scadenza']; ?></th--->
-                          <th style="cursor:pointer;cursor:hand" class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 70px;" aria-sort="ascending" aria-label="Scadenza"><?php echo $script_transl['sca_scadenza']; ?></th>
+                          <th><?php echo $script_transl['sca_cliente']; ?></th>
+                          <th><?php echo $script_transl['sca_dare']; ?></th>
+                          <th><?php echo $script_transl['sca_avere']; ?></th>
+                          <th><?php echo $script_transl['sca_saldo']; ?></th>
+                          <th><?php echo $script_transl['sca_scadenza']; ?></th>
                       </tr>
                   </thead>
                   <tbody>
                       <!-- Scadenzario clienti -->
                       <?php
 
-                      // Recupero dati come in 'select_partner_status.php' per recupero DARE/AVERE e calcolare SALDO
-    									$paymov = new Schedule;
-    									$paymov->setScheduledPartner($admin_aziend['mascli']);
-
-    									$totDare = 0;
-    									$totAvere = 0;
-    									$totSaldo = 0;
-
-    									// impostazioni variabili
-    									$today = date("Y-m-d");
-    									//$today = "2019-02-13";
-    									$dateFound = "";
-    									$id_tesFound = "";
-    									$numdocFound = "";
-    									$diffDate = 99999999;
-
-    									if (sizeof($paymov->Partners) > 0) {
-    										$anagrafica = new Anagrafica();
-    										foreach ($paymov->Partners as $p) {
-    											$ctrl_close_partner = false;
-    											$prt = $anagrafica->getPartner($p);
-    											$paymov->getPartnerStatus($p, date("Y") . '-' . date("m") . '-' . date("d"));
-    											foreach ($paymov->PartnerStatus as $k => $v) {
-    												foreach ($v as $ki => $vi) {
-    													$ctrl_close_paymov = false;
-    													$lnk = '';
-    													$class_paymov = 'FacetDataTDevidenziaCL';
-    													$v_op = '';
-    													$cl_exp = '';
-    													if ($vi['op_val'] >= 0.01) {
-    														$v_op = gaz_format_number($vi['op_val']);
-    													}
-    													$v_cl = '';
-    													if ($vi['cl_val'] >= 0.01) {
-    														$v_cl = gaz_format_number($vi['cl_val']);
-    														$cl_exp = gaz_format_date($vi['cl_exp']);
-    													}
-    													$expo = '';
-
-    													$stato_partita = "";
-    													$style_partita = "";
-
-    													if ($vi['expo_day'] >= 1) {
-    														$expo = $vi['expo_day'];
-    														if ($vi['cl_val'] == $vi['op_val']) {
-    															$vi['status'] = 2; // la partita ? chiusa ma ? esposta a rischio insolvenza
-    															$class_paymov = 'FacetDataTDevidenziaOK';
-    														}
-    													} else {
-    														$stato_partita = "warning";
-    														if ($vi['cl_val'] == $vi['op_val']) { // chiusa e non esposta
-    															continue;
-    															$cl_exp = '';
-    															$class_paymov = 'FacetDataTD';
-    															$ctrl_close_paymov = true;
-    														} elseif ($vi['status'] == 3) { // SCADUTA
-    															$cl_exp = '';
-    															$class_paymov = 'FacetDataTDevidenziaKO';
-
-    															$stato_partita = "warning";
-    															$style_partita = "color:red";
-
-    														} elseif ($vi['status'] == 9) { // PAGAMENTO ANTICIPATO
-    															$class_paymov = 'FacetDataTDevidenziaBL';
-    															$vi['expiry'] = $vi['cl_exp'];
-    														} elseif ($vi['status'] == 0) { // APERTA
-    															$lnk = " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"../vendit/customer_payment.php?partner=" . $p . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
-    														}
-    													}
-
-    													// controlli per calcolo data da visualizzare in prossimit? di oggi
-    													$datetime1 = date_create($vi['expiry']);
-    													$datetime2 = date_create();
-    													$diffDays = date_diff($datetime1, $datetime2);
-    													$nGiorni=$diffDays->format('%R%a days');
-
-    													if($nGiorni <= $diffDate) {
-    														$dateFound = $vi['expiry'];
-    														$id_tesFound = $paymov->docData[$k]['id_tes'];
-    														$numdocFound = $paymov->docData[$k]['numdoc'];
-    														$diffDate = $nGiorni;
-    													}
-
-    													// costruzione chiave partita su cui posizionarsi
-    													$keyRowCli =  $paymov->docData[$k]['id_tes'] . "~" . $paymov->docData[$k]['numdoc'] . "~" . $vi['expiry'];
-
-    													// stampa colonne
-    													echo "<tr style='" . $style_partita ."' class='odd " . $stato_partita . "' role='row'>"; //*?
-    													//echo "<td>" . $prt['ragso1'] . "</td>";
-    													echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $paymov->docData[$k]['id_tes'] . '">' . $prt['ragso1'] . "</div><span class='keyRow'>" . $keyRowCli . "</span></td>";
-
-    													echo "<td align='right'>" . gaz_format_number($vi['cl_val']) . "</td>";
-
-    													echo "<td align='right'>" . gaz_format_number($vi['op_val']) . "</td>";
-
-    													echo "<td align='right'>" . gaz_format_number($vi['op_val']-$vi['cl_val']) . "</td>";
-
-    													echo "<td class='" . $class_paymov . "' align='center'><span>" . $vi['expiry'] . "</span>" . gaz_format_date($vi['expiry']) . " &nbsp; $lnk</td>";
-    													echo "</tr>";
-
-    													$totDare += $vi['cl_val'];
-    													$totAvere += $vi['op_val'];
-    												}
-    											}
-    										}
-    									}
-
-    									$keyRowFoundCli = $id_tesFound . "~" . $numdocFound . "~" . $dateFound;
-
-    									$totSaldo = $totAvere-$totDare;
-                     ?>
+	$rs_rate = gaz_dbi_dyn_query(
+	$gTables["paymov"].'.*,'.$gTables["anagra"].'.ragso1,'.$gTables["rigmoc"].'.id_tes,'.$gTables["rigmoc"].'.codcon,'.$gTables["tesmov"].'.caucon,'.$gTables["tesmov"].'.numdoc,'.$gTables["tesmov"].'.seziva,'.$gTables["tesmov"].'.datdoc',$gTables["paymov"]."
+	LEFT JOIN ". $gTables["rigmoc"].' ON '.$gTables["paymov"].'.id_rigmoc_doc = '.$gTables["rigmoc"].".id_rig
+	LEFT JOIN ". $gTables["tesmov"].' ON '.$gTables["rigmoc"].'.id_tes = '.$gTables["tesmov"].".id_tes 
+	LEFT JOIN ". $gTables["clfoco"].' ON '.$gTables["rigmoc"].'.codcon = '.$gTables["clfoco"].".codice 
+	LEFT JOIN ". $gTables['anagra'].' ON '.$gTables["clfoco"].'.id_anagra='.$gTables['anagra'] . ".id", 
+	"id_rigmoc_doc >0 AND expiry BETWEEN DATE_SUB('".gaz_format_date($form['datref_cli'],true)."',INTERVAL 6 MONTH) AND DATE_ADD('".gaz_format_date($form['datref_cli'],true)."',INTERVAL 6 MONTH) AND ".$gTables['rigmoc'] . ".codcon BETWEEN " . $admin_aziend['mascli'] . "000001 AND ".$admin_aziend['mascli']  . "999999",$gTables["paymov"].'.expiry ASC,'.$gTables["tesmov"].'.datdoc ASC,'.$gTables["tesmov"].'.seziva ASC, '.$gTables["tesmov"].'.protoc ASC');
+	$paymov = new Schedule;
+	//$paymov->setScheduledPartner($admin_aziend['mascli'],$form['datref_cli']);
+	// impostazioni variabili
+	$today = date("Y-m-d");
+	$expiryFound = "";
+	$id_tesdocrefFound = "";
+	$diffDate = 99999999;
+    $datetime2 = date_create(gaz_format_date($form['datref_cli'],true));
+	$anagrafica = new Anagrafica();
+	while($r=gaz_dbi_fetch_array($rs_rate)) {
+		$paymov->setIdTesdocRef($r['id_tesdoc_ref']);
+		$paymov->getExpiryStatus($r['expiry']);
+		$v=$paymov->ExpiryStatus;
+        switch ($v['status']) {
+            case 1:
+				$lnk='title="SCADENZA PAGATA"';
+                break;
+            case 2:
+				$lnk='title="ESPOSTA!"';
+                break;
+            case 3:
+				$lnk='href="../vendit/customer_payment.php?partner='.$r['codcon'].'" title="IMPAGATA-RISCUOTI!"';
+                break;
+            default:
+				$lnk='';
+        }
+        // controlli per calcolo data da visualizzare in prossimit? di oggi
+        $datetime1 = date_create($v['expiry']);
+		$diffDays = $datetime1->diff($datetime2);
+		$nGiorni=$diffDays->format('%R%a');
+        if(abs($nGiorni) <= $diffDate) {
+        	$expiryFound = $r['expiry'];
+        	$id_tesdocrefFound = $r['id_tesdoc_ref'];
+        	$diffDate = $nGiorni;
+        }
+		// costruzione chiave partita su cui posizionarsi
+		$keyRowCli =  $r['expiry'].'_'.$r['id_tesdoc_ref'];
+		// stampa colonne
+		echo "\n<tr role='row'>";
+		echo '<td><small><a href="../contab/admin_movcon.php?id_tes='.$r['id_tes'].'&Update">'.$r['caucon'] .' '.$r['numdoc'] .'/'.$r['seziva'] .' '.gaz_format_date($r['datdoc']) .' </a>'.$r['ragso1'] . "</small><span class='keyRow'>" . $keyRowCli . "</span></td>";
+		echo "<td align='right'>". gaz_format_number($v['op_val']) . "</td>";
+		echo "<td align='right'>" . gaz_format_number($v['cl_val']) . "</td>";
+		echo "<td align='right'>" . gaz_format_number($v['op_val']-$v['cl_val'])."</td>";
+		echo '<td align="center"><a class="btn btn-xs btn-'.$v['style'].'" '.$lnk.'><small>' . gaz_format_date($r['expiry']) . '</small></a></td>';
+		echo "</tr>\n";
+	}
+	$keyRowFoundCli=$expiryFound.'_'.$id_tesdocrefFound;
+    ?>
                   </tbody>
-                  <tfoot>
-                      <tr>
-                        <th rowspan="1" colspan="1"></th>
-                        <!--+ DC 07/02/2019 - nuova colonna Dare --->
-                        <th style="text-align:right" rowspan="1" colspan="1"><?php echo gaz_format_number($totDare); ?></th>
-                        <!--- DC 07/02/2019 - nuova colonna Dare --->
-                        <!--+ DC 07/02/2019 - aggiunto style su th e stampata variabile totale Avere --->
-                        <th style="text-align:right" align="right" rowspan="1" colspan="1"><?php echo gaz_format_number($totAvere); ?></th>
-                        <!--- DC 07/02/2019 - aggiunto style su th e stampata variabile totale Avere --->
-                        <!--+ DC 07/02/2019 - nuova colonna Saldo --->
-                        <th style="text-align:right" align="right" rowspan="1" colspan="1"><?php echo gaz_format_number($totSaldo); ?></th>
-                        <!--- DC 07/02/2019 - nuova colonna Saldo --->
-                        <th rowspan="1" colspan="1"></th>
-                      </tr>
-                  </tfoot>
               </table>
 			</div>
       </div>
     <script src="../../library/theme/lte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../library/theme/lte/plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script>
-
-    //*+ DC - 07/02/2018
-		//modificati parametri order/filter
-        //        "order": [2, 'asc'],
-		//		  "filter": false,
-		//*- DC - 07/02/2018
-		$(function () {
-			$("#clienti").DataTable({
-                "oLanguage": {
-                    "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
-                },
-                "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
-                "iDisplayLength": 5,
-                "order": [4, 'asc'],
-                "filter": true,
-				"responsive": true,
-                "stateSave": true
-            });
+	$(function () {
+		$("#clienti").DataTable({
+            "oLanguage": {
+                "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
+            },
+            "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
+            "iDisplayLength": 5,
+			"responsive": true,
+			"ordering": false,
+            "stateSave": true
+			
         });
+		$('#datref_cli').each(function(){
+			$(this).datepicker({ dateFormat: 'dd-mm-yy' });
+		});
+		$("#datref_cli").change(function () {
+			this.form.submit();
+		});
+    });
 
   //*+ DC - 07/02/2018 - nuove funzioni per gestione posizionmento su scadenzari
   function gotoPage(id,num)

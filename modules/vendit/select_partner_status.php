@@ -123,7 +123,6 @@ if (isset($_POST['preview'])) {
         echo "</tr>";
         foreach ($paymov->Partners as $p) {
             $ctrl_close_partner = false;
-            $anagrafica = new Anagrafica();
             $prt = $anagrafica->getPartner($p);
             echo "<tr>";
             echo "<td class=\"FacetFieldCaptionTD text-center\" colspan='7'>" . $prt['ragso1'] . " " . $prt['ragso2'] .
