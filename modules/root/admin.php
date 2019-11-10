@@ -108,14 +108,21 @@ $script_transl = HeadMain();
 	flex-wrap: wrap;
 }
 @media (max-width: 978px) {
-	form .container, form .container #sortable .col-md-6 {
-		padding-left: 1px;
-		padding-right: 1px;
+	form .container, form .container #sortable .col-md-6, div .container-fluid {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+	div.panel { 
+		border-left:0px;
+		border-right:0px;
+		border-radius:0px;
 	}
 }
-.panel {
-	padding: 1px;
+.panel { 
+	padding: 0px 0px 5px 0px;
+	margin: 0px 0px 5px 0px;
 }
+
 .vertical-align {
     display: flex;
     align-items: center;

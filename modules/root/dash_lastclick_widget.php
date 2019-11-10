@@ -1,9 +1,10 @@
-<div class="collapse navbar-collapse">
-	<div class="panel panel-info" >
+<div class="panel panel-info col-md-12" >
+    <div class="box-header company-color">
+	</div>
+    <div class="img-containter">
     <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
     <?php
     $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['user_name'] . '" ', ' last_use DESC, click DESC', 0, 8);
-
     if (gaz_dbi_num_rows($res_last) > 0) {
         while ($r = gaz_dbi_fetch_array($res_last)) {
             $rref = explode('-', $r['transl_ref']);
@@ -29,8 +30,7 @@
                     break;
             }
             ?>
-            <div class="row">
-                <div class="col-lg-12">
+            <div>
                     <a href="<?php
                     if ($r["link"] != "")
                         echo '../../modules' . $r["link"];
@@ -46,7 +46,6 @@
                             }
                             echo '</b>';
                             ?></span></a>
-                </div>
             </div>
             <?php
         }
