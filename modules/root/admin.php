@@ -117,6 +117,9 @@ $script_transl = HeadMain();
 		border-right:0px;
 		border-radius:0px;
 	}
+	#gaz-responsive-table table{
+		padding: 0px;
+	}
 }
 .panel { 
 	padding: 0px 0px 5px 0px;

@@ -45,8 +45,7 @@ mark {
 }
 
 table {
-    border-collapse: separate;
-    border-spacing: 2px;
+    border-spacing: 1px;
 }
 
 table.Tlarge {
