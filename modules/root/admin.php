@@ -120,6 +120,13 @@ $script_transl = HeadMain();
 	#gaz-responsive-table table{
 		padding: 0px;
 	}
+	.dataTables_wrapper > div.row > div.col-sm-12{
+		padding-right: 0px;
+	} 
+	.row { 
+		margin-right: 0px;
+		padding: 0px;
+	}
 }
 .panel { 
 	padding: 0px 0px 5px 0px;

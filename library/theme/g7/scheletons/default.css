@@ -704,11 +704,6 @@ label {
     white-space: normal;
 }
 
-.row {
-    padding: 2px 3px 2px 3px;
-    margin-right: 0px;
-}
-
 .navbar-toggle {
     float: left;
     margin-top: 0px;
