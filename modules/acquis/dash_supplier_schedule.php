@@ -55,7 +55,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
                       <?php
 
 	$rs_rate = gaz_dbi_dyn_query(
-	$gTables["paymov"].'.*,'.$gTables["anagra"].'.ragso1,'.$gTables["rigmoc"].'.id_tes,'.$gTables["rigmoc"].'.codcon,'.$gTables["tesmov"].'.caucon,'.$gTables["tesmov"].'.numdoc,'.$gTables["tesmov"].'.seziva,'.$gTables["tesmov"].'.datdoc',$gTables["paymov"]."
+	$gTables["paymov"].'.*,'.$gTables["anagra"].'.ragso1,'.$gTables["rigmoc"].'.id_tes,'.$gTables["rigmoc"].'.codcon,'.$gTables["tesmov"].'.caucon,'.$gTables["tesmov"].'.numdoc,'.$gTables["tesmov"].'.datreg,'.$gTables["tesmov"].'.seziva,'.$gTables["tesmov"].'.datdoc',$gTables["paymov"]."
 	LEFT JOIN ". $gTables["rigmoc"].' ON '.$gTables["paymov"].'.id_rigmoc_doc = '.$gTables["rigmoc"].".id_rig
 	LEFT JOIN ". $gTables["tesmov"].' ON '.$gTables["rigmoc"].'.id_tes = '.$gTables["tesmov"].".id_tes 
 	LEFT JOIN ". $gTables["clfoco"].' ON '.$gTables["rigmoc"].'.codcon = '.$gTables["clfoco"].".codice 
@@ -99,8 +99,9 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 		// costruzione chiave partita su cui posizionarsi
 		$keyRowfor =  $r['expiry'].'_'.$r['id_tesdoc_ref'];
 		// stampa colonne
-		echo "\n<tr role='row'>";
-		echo '<td><small><a href="../contab/admin_movcon.php?id_tes='.$r['id_tes'].'&Update">'.$r['caucon'] .' '.$r['numdoc'] .' '.gaz_format_date($r['datdoc']) .' </a>'.$r['ragso1'] . "</small><span class='keyRow'>" . $keyRowfor . "</span></td>";
+				$desdoc=(strlen($r['numdoc'])>=1)?$r['numdoc'] .'/'.$r['seziva'] .' '.gaz_format_date($r['datdoc']):gaz_format_date($r['datreg']);
+		echo "\n<tr class='text-left' role='row'>";
+		echo '<td><small><a href="../contab/admin_movcon.php?id_tes='.$r['id_tes'].'&Update">'.$r['caucon'].' ' .$desdoc .' </a>'.$r['ragso1'] . "</small><span class='keyRow'>" . $keyRowfor . "</span></td>";
 		echo "<td align='right'>". gaz_format_number($v['cl_val']) . "</td>";
 		echo "<td align='right'>" . gaz_format_number($v['op_val']) . "</td>";
 		echo "<td align='right'>" . gaz_format_number($v['op_val']-$v['cl_val'])."</td>";
