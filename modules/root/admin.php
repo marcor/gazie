@@ -136,6 +136,15 @@ $script_transl = HeadMain();
 	margin: 0px 0px 5px 0px;
 }
 
+.btn-full { 
+	width: 100%;
+	margin-top: 2px;
+}
+.btn-full>span { 
+	width: 100%;
+	margin-top: 2px;
+	white-space: normal;
+}
 .vertical-align {
     display: flex;
     align-items: center;

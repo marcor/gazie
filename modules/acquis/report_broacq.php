@@ -373,12 +373,13 @@ function choicePartner(row)
 						echo '<a title="Modifica il documento di acconto" class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $kd . '&Update"><i class="glyphicon glyphicon-edit">IdDoc.'.$kd.'</i></a> - ';
 					}
 					echo '<a title="Il fornitore consegna il saldo della merce" class="btn btn-xs btn-warning pull-right" href="order_delivered.php?id_tes=' . $r['id_tes'] . '"><i class="glyphicon glyphicon-save-file pull-right">Salda</i></a>';
-				}else{ // completamente ricevuto
-				foreach($st[2]as$kd=>$vd){}
+				}elseif(is_array($st[2])){ // completamente ricevuto
 					foreach($st[2]as$kd=>$vd){
 						echo '<a title="Modifica il documento di acconto" class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $kd . '&Update"><i class="glyphicon glyphicon-edit">IdDoc.'.$kd.'</i></a> - ';
 					}
 					echo '<a title="Il fornitore ha consegnato tutta la merce ordinata" disabled class="btn btn-xs btn-success pull-right" href=""><i class="glyphicon glyphicon-save-file">Saldato</i></a>';
+				} else {
+					echo '<a title="Ordine senza righi normali, es: solo decrittivi" disabled class="btn btn-xs btn-default pull-right" href=""><i class="glyphicon glyphicon-save-file">Descrittivo</i></a>';
 				}
 				echo '</div>';
 				}
