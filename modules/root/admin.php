@@ -108,6 +108,9 @@ $script_transl = HeadMain();
 	flex-wrap: wrap;
 }
 @media (max-width: 978px) {
+	body {
+		overflow-wrap: anywhere;
+	}
 	form .container, form .container #sortable .col-md-6, div .container-fluid {
 		padding-left: 0px;
 		padding-right: 0px;
