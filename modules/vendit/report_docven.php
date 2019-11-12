@@ -371,8 +371,12 @@ function confirFae(link){
                     echo "<td align=\"center\">" . $r["numfat"] . " &nbsp;</td>";
 // Colonna data documento
                     echo "<td align=\"center\">" . gaz_format_date($r["datfat"]) . " &nbsp;</td>";
-                    // Colonna cliente
-                    echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">" . $r["ragso1"] . ((empty($r["ragso2"]))?"":" ".$r["ragso2"]) . "</a>&nbsp;</td>";
+// Colonna cliente
+                    echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">" . $r["ragso1"] . ((empty($r["ragso2"]))?"":" ".$r["ragso2"]) . "</a>";
+					if (strlen(trim($r['fe_cod_univoco']))==6){
+						echo '<a class="btn btn-sm btn-info" title="Codice Univoco Ufficio della Pubblica Amministrazione" href="admin_client.php?codice='.intval(substr($r["clfoco"],-6,6)).'&Update">[pa]@ '.$r['fe_cod_univoco'].' </a>';
+					}
+					echo "</td>";
 // Colonna movimenti contabili
                     echo "<td align=\"left\">";
                     if ($r["id_con"] > 0) {
