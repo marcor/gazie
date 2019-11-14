@@ -866,6 +866,7 @@ $strScript = array("admin_client.php" =>
             'incaut' => 'Il pagamento non pevede l\'incasso automatico pur essendo un cliente anonimo',
             'codfis' => 'Il codice fiscale &egrave; formalmente errato',
             'ecrclo' => 'NON HAI ESEGUITO LA CHIUSURA GIORNALIERA DEL REGISTRATORE DI CASSA<BR /> FALLO PRIMA DI EMETTERNE UNO!!!',
+            'ecrc10' => 'SONO PASSATI OLTRE 10 GIORNI: DEVI GENERARE Il FILE XML DEI DATI DEI CORRISPETTIVI ED INVIARLO!!!',
             'cashlimit' => 'L\'importo non consente di emettere un documento di vendita anonimo'
         ),
         'war' => array('serial' => "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie"),

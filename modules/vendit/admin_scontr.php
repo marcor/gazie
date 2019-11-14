@@ -30,9 +30,8 @@ $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
 $gForm = new venditForm();
 $magazz = new magazzForm();
-// se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non può emettere scontrini
-$ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
 
+$ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
 $ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 
 $operat = $magazz->getOperators();
@@ -735,12 +734,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_status'] = "INSERT";
     $form['cosear'] = "";
     // fine rigo input
-    // ALLERTO SE NON E' STATA ESEGUITA LA CHIUSURA/CONTABILIZZAZIONE DEL GIORNO PRECEDENTE
-    $rs_no_accounted = gaz_dbi_dyn_query("datemi", $gTables['tesdoc'], "id_con = 0 AND tipdoc = 'VCO' AND datemi < " . date("Ymd") . " AND tipdoc = 'VCO'", 'id_tes', 0, 1);
-    $no_accounted = gaz_dbi_fetch_array($rs_no_accounted);
-    if ($no_accounted) {
-        $msg['err'][] = "ecrclo";
-    }
+    // ALLERTO SE NON SONO PASSATI OLTRE 10 GIORNI DALLA  LA CHIUSURA/CONTABILIZZAZIONE IN CASO DI XML OPPURE QUELLA DEL GIORNO PRECEDENTE IN PRESENZA DI REGISTRATORE DI CASSA
+ 	if(!$ecr_user){ // creerò un XML con id_cash '0' oppure invierò all'ecr (RT)
+		$rs_no_accounted = gaz_dbi_dyn_query("datemi", $gTables['tesdoc'], "id_con = 0 AND tipdoc = 'VCO' AND datemi < DATE_SUB('" . date("Y-m-d") . "',INTERVAL 10 DAY) AND tipdoc = 'VCO'", 'id_tes', 0, 1);
+		$no_accounted = gaz_dbi_fetch_array($rs_no_accounted);
+		if ($no_accounted) {
+			$msg['err'][] = "ecrc10";
+		}
+	}else{
+		$rs_no_accounted = gaz_dbi_dyn_query("datemi", $gTables['tesdoc'], "id_con = 0 AND tipdoc = 'VCO' AND datemi < " . date("Ymd") . " AND tipdoc = 'VCO'", 'id_tes', 0, 1);
+		$no_accounted = gaz_dbi_fetch_array($rs_no_accounted);
+		if ($no_accounted) {
+			$msg['err'][] = "ecrclo";
+		}
+	}
     // FINE ALLERTAMENTO
 }
 
