@@ -24,12 +24,14 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-// se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non pu� emettere scontrini
+// se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non può inviare scontrini al RT (ecr) allora creerò un file XML
+$gForm = new venditForm();
+$ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
-if (!$ecr_user) {
-    header("Location: error_msg.php?ref=admin_scontr");
-    exit;
-};
+
+if (!$ecr_user) { // creerò un XML con id_cash '0' oppure invierò all'ecr (RT)
+	$ecr=array('id_cash'=>0,'seziva'=>1,'descri'=>'File XML');
+}
 
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -42,9 +44,6 @@ if (isset($_POST['return'])) {
     exit;
 }
 
-
-$gForm = new venditForm();
-$ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 
 function getLastProtoc($year, $seziva, $reg = 4) {
     global $gTables;
@@ -68,25 +67,26 @@ function getLastNumdoc($year, $seziva, $reg = 4) {
     return $p;
 }
 
-function getAccountedTickets($id_cash) {
+function getAccountableTickets($id_cash) {
     global $gTables, $admin_aziend;
     $from = $gTables['tesdoc'] . ' AS tesdoc
          LEFT JOIN ' . $gTables['pagame'] . ' AS pay ON tesdoc.pagame=pay.codice
          LEFT JOIN ' . $gTables['clfoco'] . ' AS customer ON tesdoc.clfoco=customer.codice
          LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf ON anagraf.id=customer.id_anagra';
-    $where = "id_con = 0 AND id_contract = " . intval($id_cash) . " AND tipdoc = 'VCO'";
+    $where = "id_con = 0 AND id_contract = " . intval($id_cash) . " AND tipdoc = 'VCO'"; // uso impropriamente id_contract per contenere il riferimento all'id dell'ecr (RT) se 0 è un XML
     $orderby = "datemi ASC, numdoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
-                    pay.tippag,pay.numrat,pay.incaut,pay.id_bank,
-                    customer.codice,
-                    customer.speban AS addebitospese,
-                    CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
-    $doc['all'] = array();
+            pay.tippag,pay.numrat,pay.incaut,pay.id_bank,
+            customer.codice,
+            customer.speban AS addebitospese,
+            CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
+    $doc['all'] = [];
     $tot = 0;
     while ($tes = gaz_dbi_fetch_array($result)) {
-        $cast_vat = array();
-        $cast_acc = array();
-        $tot_tes = 0;
+        //$cast_DTE=[];
+        $cast_vat=[];
+        $cast_acc=[];
+        $tot_tes=0;
         //recupero i dati righi per creare i castelletti
         $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $tes['id_tes'], "id_rig");
         while ($v = gaz_dbi_fetch_array($rs_rig)) {
@@ -170,13 +170,28 @@ function getAccountedTickets($id_cash) {
 }
 
 if (isset($_POST['submit'])) {
-    // INIZIO l'invio della richiesta al'ecr dell'utente
-    require("../../library/cash_register/" . $ecr['driver'] . ".php");
-    $ticket_printer = new $ecr['driver'];
-    $ticket_printer->set_serial($ecr['serial_port']);
-    $ticket_printer->fiscal_report();
+
+	// cerco l'ultimo file xml generato
+    $rs_query = gaz_dbi_dyn_query("*", $gTables['comunicazioni_dati_fatture'], "nome_file_DTE LIKE '%DF_C%'", "anno DESC, id DESC", 0, 1);
+    $ultima_comunicazione = gaz_dbi_fetch_array($rs_query);
+    if ($ultima_comunicazione) {
+        $ultimo_file = $ultima_comunicazione['trimestre_semestre']+1;
+    } else { // non ho mai fatto liquidazioni, propongo la prima da fare
+        $ultimo_file = 1;
+    }
+    $filename = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_C".str_pad($ultimo_file, 4, "0", STR_PAD_LEFT).".xml";
+
+
+	if ($ecr_user){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
+        // INIZIO l'invio della richiesta al'ecr (RT) dell'utente
+        require("../../library/cash_register/" . $ecr['driver'] . ".php");
+        $ticket_printer = new $ecr['driver'];
+        $ticket_printer->set_serial($ecr['serial_port']);
+        $ticket_printer->fiscal_report();
+	}
     // INIZIO contabilizzazione scontrini con fatture
-    $rs = getAccountedTickets($ecr['id_cash']);
+    $rs = getAccountableTickets($ecr['id_cash']);
+
     if (count($rs['invoice']) > 0) {
         foreach ($rs['invoice'] as $v) { //prima quelli con fattura allegata
             $n_prot = getLastProtoc(substr($v['tes']['datemi'], 0, 4), $v['tes']['seziva']);
@@ -214,12 +229,13 @@ if (isset($_POST['submit'])) {
             }
         }
     }
+
     if (count($rs['ticket']) > 0) {
         // poi gli scontrini senza fattura (anonimi)
-        // ma in questo caso devo accumulare i valori per data
+        // devo accumulare i valori per data
         // INIZIO accumulatore per data
-        $cast_vat = array();
-        $cast_acc = array();
+        $cast_vat=[];
+        $cast_acc=[];
         foreach ($rs['ticket'] as $v) {
             foreach ($v['vat'] as $k => $iva) { // accumulo l'iva
                 if (!isset($cast_vat[$v['tes']['datemi']][$k])) {
@@ -242,6 +258,7 @@ if (isset($_POST['submit'])) {
             }
         }
         // FINE accumulatore per data
+
         // INIZIO contabilizzazione scontrini anonimi
         foreach ($cast_vat as $k => $v) {
             $n_prot = getLastProtoc(substr($k, 0, 4), $ecr['seziva']);
@@ -260,23 +277,9 @@ if (isset($_POST['submit'])) {
                 'regiva' => 4,
                 'operat' => 1
             );
-            tesmovInsert($newValue);
+           tesmovInsert($newValue);
             $tes_id = gaz_dbi_last_id();
-            /*
-              COSA SUCCEDE QUI SOTTO SE HO UN DOCUMENTO CON id_contract=id_cash E DATA DI EMISSIONE CORRISPONDENTE CON QUELLA DI CHIUSURA CASSA?
-              CHE QUANDO FACCIO LA CHIUSURA CASSA, LA PROCEDURA MI SOVRASCRIVE IL RIFERIMENTO AL MOVIMENTO CONTABILE DI QUEL DOCUMENTO CON QUELLO DELLA CHIUSURA
-              tableUpdate('tesdoc',
-              array('id_con'),
-              array('id_contract', $ecr['id_cash'].'\' AND datemi = \''.substr($k,0,4).substr($k,5,2).substr($k,8,2)),
-              array('id_con'=>$tes_id)
-              );
-              SUGGERIMENTO A CHI HA FATTO QUESTA PROCEDURA: IO RISOLVEREI COSI'
-             */
-            tableUpdate('tesdoc', array('id_con'), array('id_contract', $ecr['id_cash'] . '\' AND tipdoc = \'VCO\' AND datemi = \'' . substr($k, 0, 4) . substr($k, 5, 2) . substr($k, 8, 2)), array('id_con' => $tes_id)
-            );
-            /* DOMANDA: E' CORRETTO?
-              RISPOSTA: FORMALMENTE SEMBRA DI SI, L'HO ANCHE PROVATA E SEMBRA FUNZIONARE BENE ALLORA L'HO ATTIVATA
-             */
+            tableUpdate('tesdoc', array('id_con'), array('id_contract', $ecr['id_cash'] . "' AND tipdoc = 'VCO' AND datemi = '" . substr($k, 0, 4) . substr($k, 5, 2) . substr($k, 8, 2)), array('id_con' => $tes_id));
             //inserisco i righi iva nel db
             foreach ($cast_vat[$k] as $key => $vv) {
                 $vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $key);
@@ -293,7 +296,62 @@ if (isset($_POST['submit'])) {
                 }
             }
         }
+		// FINE CONTABILIZZAZIONE
+
     }
+	if (!$ecr_user){ // NON è un utente abilitato all'invio all'ecr, genererò un file XML 
+        // devo accumulare i valori per data di tutto: sia degli anonimi che con fatture
+        // INIZIO accumulatore per data
+		$anagrafica = new Anagrafica();
+        $cast_COR10=[];
+        foreach ($rs['all'] as $v) {
+            foreach ($v['vat'] as $k => $iva) { // accumulo l'iva, in $k ho codvat per aliiva
+                if (!isset($cast_COR10[$v['tes']['datemi']]['tot_imponibile_giorno'])) {
+                    $cast_COR10[$v['tes']['datemi']]['tot_imponibile_giorno'] = 0;
+				}
+                $cast_COR10[$v['tes']['datemi']]['tot_imponibile_giorno'] += $iva['imponi'];
+                if (!isset($cast_COR10[$v['tes']['datemi']][$k])) {
+					$vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $k);
+                    $cast_COR10[$v['tes']['datemi']][$k]['fae_natura'] = $vat['fae_natura'];
+                    $cast_COR10[$v['tes']['datemi']][$k]['totale'] = 0;
+                    $cast_COR10[$v['tes']['datemi']][$k]['imponi'] = 0;
+                    $cast_COR10[$v['tes']['datemi']][$k]['impost'] = 0;
+                    $cast_COR10[$v['tes']['datemi']][$k]['periva'] = $iva['periva'];
+                }
+                $cast_COR10[$v['tes']['datemi']][$k]['totale'] += $iva['totale'];
+                $cast_COR10[$v['tes']['datemi']][$k]['imponi'] += $iva['imponi'];
+                $cast_COR10[$v['tes']['datemi']][$k]['impost'] += $iva['impost'];
+				/* non mi interessa l'invio delle fatture allegate, in quanto già indicato sul traccciato xml delle fatture stesse
+				if ($v['tes']['clfoco']>100000000){ // se il movimento deriva da una fattura allegata la accumulo sul valore della stessa assieme ai dati anagrafici
+					if (!isset($cast_COR10[$v['tes']['datemi']]['clfoco'][$v['tes']['numfat']])){
+						$cliente=$anagrafica->getPartner($v['tes']['clfoco']);
+						$cast_COR10[$v['tes']['datemi']]['clfoco'][$v['tes']['numfat']] = array_merge($cliente,$v['tes'],array('totale_fat'=>0.00));
+					}
+					$cast_COR10[$v['tes']['datemi']]['clfoco'][$v['tes']['numfat']]['totale_fat'] += $iva['totale'];
+				}
+				*/
+            }
+			gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $v['tes']['id_tes'], 'fattura_elettronica_original_name', basename($filename));
+        }
+        $form['nome_file_DTE'] = basename($filename);
+		$form['trimestre_semestre']= $ultimo_file;
+		$form['anno']= substr($v['tes']['datemi'],0,4);
+        gaz_dbi_table_insert('comunicazioni_dati_fatture', $form);
+
+        require("../../library/include/agenzia_entrate.inc.php");
+		creaFileCOR10($admin_aziend, $cast_COR10,$ultimo_file);
+        header("Pragma: public", true);
+        header("Expires: 0"); // set expiration time
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Content-Type: application/force-download");
+        header("Content-Type: application/octet-stream");
+        header("Content-Type: application/download");
+        header("Content-Disposition: attachment; filename=" . basename($filename));
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Length: " . filesize($filename));
+        die(file_get_contents($filename));
+        exit;
+	}
     header("Location: report_scontr.php");
     exit;
 }
@@ -304,7 +362,7 @@ echo "<div>";
 echo "<form method=\"POST\" name=\"accounting\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title1'] . $ecr['descri'] . $script_transl['title2'] . "</div>\n";
-$rs = getAccountedTickets($ecr['id_cash']);
+$rs = getAccountableTickets($ecr['id_cash']);
 echo "<div class=\"box-primary table-responsive\">";
 echo "<table class=\"Tlarge table table-striped table-bordered\">";
 echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date'] . "</th>
@@ -313,6 +371,7 @@ echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date'] . "</th>
       <th class=\"FacetFieldCaptionTD\">" . $script_transl['customer'] . "</th>
       <th class=\"FacetFieldCaptionTD\">" . $script_transl['importo'] . "</th>";
 if (count($rs['all']) > 0) {
+	$butt=($ecr_user)?' chiusura RT ':' generazione file ';
     foreach ($rs['all'] as $k => $v) {
         if ($v['tes']['clfoco'] < 100000000) {
             $v['tes']['ragsoc'] = $script_transl['anony'];
@@ -326,8 +385,8 @@ if (count($rs['all']) > 0) {
             </tr>\n";
     }
     echo "<tr class=\"FacetFieldCaptionTD\">\n";
-    echo '<td colspan="4" align="right"><input type="submit" name="submit" value="';
-    echo $script_transl['submit'];
+    echo '<td colspan="4" align="right"><input type="submit" class="btn btn-warning" name="submit" value="';
+    echo $script_transl['submit'].$butt.$ecr['descri'];
     echo '">';
     echo "</td>\n";
     echo '<td align="right" style="font-weight=bolt;">';

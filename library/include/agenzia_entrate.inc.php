@@ -1286,6 +1286,82 @@ function creaFileDAT20($aziend, $data, $periodo) {
     }
     return $acc;
 }
-
 // --- FINE FUNZIONI PER LA CREAZIONE DELLA COMUNICAZIONE DEI DATI DELLE FATTURE (SPESOMETRO)
+
+
+// --- INIZIO CREAZIONE DELL'XML PER LA COMUNICAZIONE DELLE CHIUSURE GIORNALIERE DEL REGISTRATORE TELEMATICO
+function creaFileCOR10($aziend,$data,$progressivo) {
+	$progressivo=str_pad($progressivo, 4, "0", STR_PAD_LEFT);
+    $doc = new DOMDocument;
+    $doc->preserveWhiteSpace = false;
+    $doc->formatOutput = true;
+    $doc->load("../../library/include/template_COR10.xml");
+    $xpath = new DOMXPath($doc);
+    $res = $xpath->query("//ns2:DatiCorrispettivi/DatiFatturaHeader/ProgressivoInvio")->item(0);
+    $root = $doc->createTextNode('C'.$progressivo);
+    $res->appendChild($root);
+    $res = $xpath->query("//ns2:DatiCorrispettivi")->item(0);
+    $root = $doc->createElement('DTE');
+    $res->appendChild($root);
+    $res = $xpath->query("//ns2:DatiCorrispettivi/DTE")->item(0);
+    // 2.1 - Blocco contenente le informazioni relative al cedente/prestatore (azienda)
+    $el_2_1 = $doc->createElement("CedentePrestatoreDTE", "");
+    $el_2_1_1 = $doc->createElement("IdentificativiFiscali", "");
+    $el_2_1_1_1 = $doc->createElement("IdFiscaleIVA", "");
+    $el_2_1_1_1_1 = $doc->createElement("IdPaese", $aziend['country']);
+    $el_2_1_1_1->appendChild($el_2_1_1_1_1);
+    $el_2_1_1_1_2 = $doc->createElement("IdCodice", $aziend['pariva']);
+    $el_2_1_1_1->appendChild($el_2_1_1_1_2);
+    $el_2_1_1->appendChild($el_2_1_1_1);
+    $el_2_1_1_2 = $doc->createElement("CodiceFiscale", strtoupper($aziend['codfis']));
+    $el_2_1_1->appendChild($el_2_1_1_2);
+    $el_2_1->appendChild($el_2_1_1);
+    $res->appendChild($el_2_1);
+    $el_2_2 = $doc->createElement("CessionarioCommittenteDTE", "");
+    $el_2_2_1 = $doc->createElement("IdentificativiFiscali", "");
+    $el_2_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
+    $el_2_2_1_1_1 = $doc->createElement("IdPaese", 'XX');
+    $el_2_2_1_1->appendChild($el_2_2_1_1_1);
+    $el_2_2_1_1_2 = $doc->createElement("IdCodice", 'COR10');
+    $el_2_2_1_1->appendChild($el_2_2_1_1_2);
+    $el_2_2_1->appendChild($el_2_2_1_1);
+    $el_2_2->appendChild($el_2_2_1);
+    foreach ($data as $k => $v) {
+        // 2.2.3 - Blocco dati fatture (reiterabile 1000 volte)
+        $el_2_2_3 = $doc->createElement("DatiFatturaBodyDTE", "");
+        $el_2_2_3_1 = $doc->createElement("DatiGenerali", "");
+        $el_2_2_3_1_1 = $doc->createElement("TipoDocumento", 'TD12');
+        $el_2_2_3_1->appendChild($el_2_2_3_1_1);
+        $el_2_2_3_1_2 = $doc->createElement("Data", $k);
+        $el_2_2_3_1->appendChild($el_2_2_3_1_2);
+        $el_2_2_3_1_3 = $doc->createElement("Numero", '1');
+        $el_2_2_3_1->appendChild($el_2_2_3_1_3);
+        $el_2_2_3->appendChild($el_2_2_3_1);
+        foreach ($v as $kr => $vr) {
+			if ($kr=='tot_imponibile_giorno')continue;
+            $el_2_2_3_2 = $doc->createElement("DatiRiepilogo", "");
+            $el_2_2_3_2_1 = $doc->createElement("ImponibileImporto", number_format($vr['imponi'], 2, '.', ''));
+            $el_2_2_3_2->appendChild($el_2_2_3_2_1);
+            $el_2_2_3_2_2 = $doc->createElement("DatiIVA", '');
+            $el_2_2_3_2_2_1 = $doc->createElement("Imposta", number_format($vr['impost'], 2, '.', ''));
+            $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_1);
+            $el_2_2_3_2_2_2 = $doc->createElement("Aliquota", number_format($vr['periva'], 2, '.', ''));
+            $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_2);
+            if (!empty($vr['fae_natura'])) {
+                $el_2_2_3_2_2_3 = $doc->createElement("Natura", $vr['fae_natura']);
+                $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_3);
+            }
+            $el_2_2_3_2->appendChild($el_2_2_3_2_2);
+			$el_2_2_3->appendChild($el_2_2_3_2);
+        }
+		$el_2_2->appendChild($el_2_2_3);
+	}
+    $res->appendChild($el_2_2);
+    // sono uscito dal ciclo allora scrivo il file sul fs
+    $file = $aziend['country'] . $aziend['codfis'] . "_DF_C" . $progressivo . ".xml";
+    $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
+    // salvo il file sul server
+    $doc->save($fileurl);
+}
+// --- FINE CREAZIONE DELL'XML PER LA COMUNICAZIONE DELLE CHIUSURE GIORNALIERE DEL REGISTRATORE TELEMATICO
 ?>

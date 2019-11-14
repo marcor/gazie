@@ -10,7 +10,7 @@
 body {
     /* impostare qua la dimensione dei caratteri*/
     font-size: 14px;
-
+	padding-bottom: 70px;
 }
 
 input, select {

@@ -453,7 +453,7 @@ if (!isset($_POST['ritorno'])) {
         $form['anno'] = $y;
         $form['periodicita'] = 'T';
 // cerco l'ultimo file xml generato
-        $rs_query = gaz_dbi_dyn_query("*", $gTables['comunicazioni_dati_fatture'], 1, "anno DESC, trimestre_semestre DESC", 0, 1);
+        $rs_query = gaz_dbi_dyn_query("*", $gTables['comunicazioni_dati_fatture'],"nome_file_ZIP LIKE '%DF_Z%'", "anno DESC, trimestre_semestre DESC", 0, 1);
         $ultima_comunicazione = gaz_dbi_fetch_array($rs_query);
         if ($ultima_comunicazione) {
             $ultimo_trimestre_comunicato = $ultima_comunicazione['anno'] . $ultima_comunicazione['trimestre_semestre'];

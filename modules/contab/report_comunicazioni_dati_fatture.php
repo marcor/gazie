@@ -54,7 +54,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                         <th class="FacetFieldCaptionTD">File DTR</th>
                         <th class="FacetFieldCaptionTD">File ZIP</th>
                             <?php
-                            $result = gaz_dbi_dyn_query('*', $gTables['comunicazioni_dati_fatture'], 1, 'anno DESC, trimestre_semestre DESC');
+                            $result = gaz_dbi_dyn_query('*', $gTables['comunicazioni_dati_fatture'], "nome_file_ZIP LIKE '%DF_Z%'", 'anno DESC, trimestre_semestre DESC');
                             while ($row = gaz_dbi_fetch_array($result)) {
                                 echo "<tr class=\"FacetDataTD\">";
                                 echo "<td><a class=\"btn btn-xs btn-default\" href=\"comunicazione_dati_fatture.php?id=" . $row["id"] . "&Update\"><i class=\"glyphicon glyphicon-folder-open\"></i>&nbsp;&nbsp;" . $row["id"] . "</a> &nbsp</td>";

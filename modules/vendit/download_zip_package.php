@@ -25,9 +25,11 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$file_url = "../../data/files/".$admin_aziend['codice']."/".substr($_GET['fn'],0,37);
-header('Content-Type: application/zip');
-header("Content-Disposition:attachment;filename='".substr($_GET['fn'],0,37)."'");
+$d=filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
+$file_url = "../../data/files/".$admin_aziend['codice']."/".substr($d['fn'],0,37);
+$mime=mime_content_type($file_url);
+header('Content-Type: '.$mime);
+header("Content-Disposition:attachment;filename='".substr($d['fn'],0,37)."'");
 header("Content-Transfer-Encoding: Binary");
-header("Content-disposition: attachment; filename=".substr($_GET['fn'],0,37));
+header("Content-disposition: attachment; filename=".substr($d['fn'],0,37));
 readfile($file_url);

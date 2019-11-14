@@ -25,11 +25,12 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 // se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non pu� emettere scontrini
+$gForm = new venditForm();
 $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
+$ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 if (!$ecr_user) {
-    header("Location: error_msg.php?ref=admin_scontr");
-    exit;
-};
+	$ecr=array('id_cash'=>0,'seziva'=>1,'descri'=>'File XML');
+}
 $lot = new lotmag();
 
 function getLastId($date, $seziva) {
@@ -44,8 +45,7 @@ function getLastId($date, $seziva) {
     return $id;
 }
 
-$gForm = new venditForm();
-$ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
+
 $where = "tipdoc = 'VCO' AND seziva = " . $ecr['seziva'];
 $all = $where;
 if (isset($_GET['all'])) {
@@ -282,7 +282,10 @@ $linkHeaders->output();
             // Colonna stato
             echo "<td align=\"center\">";
             if ($row["id_con"] > 0) {
-                echo " <a class=\"btn btn-xs btn-default btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont." . $row["id_con"] . "</a> ";
+                echo " <a class=\"btn btn-xs btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont." . $row["id_con"] . "</a> ";
+				if(strlen($row["fattura_elettronica_original_name"])>10){
+					echo " <a class=\"btn btn-xs btn-info\" title=\"Dato contenuto nel file\" href=\"download_zip_package.php?fn=" . $row["fattura_elettronica_original_name"] . "\"><small>" . $row["fattura_elettronica_original_name"] . "</small></a> ";
+				}
             } else {
                 echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"close_ecr.php\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
             }
