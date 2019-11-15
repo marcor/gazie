@@ -840,6 +840,7 @@ $strScript = array("admin_client.php" =>
     "close_ecr.php" =>
     array('title1' => 'Effettua la chiusura del registratore di cassa ',
         'title2' => ' e contabilizza gli scontrini emessi.',
+        'war' => array('download' => 'Il file XML è pronto per essere inviato all\'Agenzia:'),
         'message' => "ATTENZIONE!!! <br />Non risultano scontrini emessi e non chiusi/contabilizzati su questo registratore di cassa",
         'date' => 'Data',
         'num' => 'Numero',

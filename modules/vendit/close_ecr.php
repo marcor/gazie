@@ -24,6 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$msg = array('err' => array(), 'war' => array());
 // se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non può inviare scontrini al RT (ecr) allora creerò un file XML
 $gForm = new venditForm();
 $ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
@@ -168,7 +169,7 @@ function getAccountableTickets($id_cash) {
     $doc['tot'] = $tot;
     return $doc;
 }
-
+$ultimo_file = 1;
 if (isset($_POST['submit'])) {
 
 	// cerco l'ultimo file xml generato
@@ -176,8 +177,6 @@ if (isset($_POST['submit'])) {
     $ultima_comunicazione = gaz_dbi_fetch_array($rs_query);
     if ($ultima_comunicazione) {
         $ultimo_file = $ultima_comunicazione['trimestre_semestre']+1;
-    } else { // non ho mai fatto liquidazioni, propongo la prima da fare
-        $ultimo_file = 1;
     }
     $filename = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_C".str_pad($ultimo_file, 4, "0", STR_PAD_LEFT).".xml";
 
@@ -192,7 +191,7 @@ if (isset($_POST['submit'])) {
     // INIZIO contabilizzazione scontrini con fatture
     $rs = getAccountableTickets($ecr['id_cash']);
 
-    if (count($rs['invoice']) > 0) {
+    if (isset($rs['invoice'])) {
         foreach ($rs['invoice'] as $v) { //prima quelli con fattura allegata
             $n_prot = getLastProtoc(substr($v['tes']['datemi'], 0, 4), $v['tes']['seziva']);
             //inserisco la testata
@@ -230,7 +229,7 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    if (count($rs['ticket']) > 0) {
+    if (isset($rs['ticket']) > 0) {
         // poi gli scontrini senza fattura (anonimi)
         // devo accumulare i valori per data
         // INIZIO accumulatore per data
@@ -340,6 +339,10 @@ if (isset($_POST['submit'])) {
 
         require("../../library/include/agenzia_entrate.inc.php");
 		creaFileCOR10($admin_aziend, $cast_COR10,$ultimo_file);
+		$msg['war'][] = "download";
+	}
+} elseif (isset($_POST['Download'])) {
+        $filename = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_C" . str_pad(intval($_POST['ultimo_file']), 4, '0', STR_PAD_LEFT) . ".xml";
         header("Pragma: public", true);
         header("Expires: 0"); // set expiration time
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -351,9 +354,6 @@ if (isset($_POST['submit'])) {
         header("Content-Length: " . filesize($filename));
         die(file_get_contents($filename));
         exit;
-	}
-    header("Location: report_scontr.php");
-    exit;
 }
 
 require("../../library/include/header.php");
@@ -362,15 +362,16 @@ echo "<div>";
 echo "<form method=\"POST\" name=\"accounting\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title1'] . $ecr['descri'] . $script_transl['title2'] . "</div>\n";
-$rs = getAccountableTickets($ecr['id_cash']);
-echo "<div class=\"box-primary table-responsive\">";
-echo "<table class=\"Tlarge table table-striped table-bordered\">";
-echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date'] . "</th>
+if (count($msg['war']) == 0) {
+  $rs = getAccountableTickets($ecr['id_cash']);
+	echo "<div class=\"box-primary table-responsive\">";
+	echo "<table class=\"Tlarge table table-striped table-bordered\">";
+	echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date'] . "</th>
       <th class=\"FacetFieldCaptionTD\">" . $script_transl['num'] . "</th>
       <th class=\"FacetFieldCaptionTD\">" . $script_transl['sez'] . "</th>
       <th class=\"FacetFieldCaptionTD\">" . $script_transl['customer'] . "</th>
       <th class=\"FacetFieldCaptionTD\">" . $script_transl['importo'] . "</th>";
-if (count($rs['all']) > 0) {
+  if (count($rs['all']) > 0) {
 	$butt=($ecr_user)?' chiusura RT ':' generazione file ';
     foreach ($rs['all'] as $k => $v) {
         if ($v['tes']['clfoco'] < 100000000) {
@@ -393,7 +394,7 @@ if (count($rs['all']) > 0) {
     echo gaz_format_number($rs['tot']);
     echo "\t </td>\n";
     echo "</tr>\n";
-} else {
+  } else {
     echo "\t<tr>\n";
     echo '<td colspan="3" align="center" class="FacetDataTDred">';
     echo $script_transl['message'];
@@ -402,10 +403,19 @@ if (count($rs['all']) > 0) {
     echo "<input type=\"submit\" name=\"return\" value=\"" . $script_transl['return'] . "\" />\n";
     echo "\t </td>\n";
     echo "\t </tr>\n";
-}
+  }
 ?>
 </table>
 </div>
+<?php
+} else {
+    $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
+?>
+    <input type="hidden" name="ultimo_file" value="<?php echo $ultimo_file; ?>">
+    <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-success" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_C" . str_pad(intval($ultimo_file), 4, '0', STR_PAD_LEFT) . ".xml"; ?>" /></div>
+<?php	
+}
+?>
 </div>
 </form>
 <?php
