@@ -769,7 +769,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 ?>
     });
 </script>
-<form class="form-horizontal" role="form" method="post" name="tesdoc" enctype="multipart/form-data" >
+<form class="form-horizontal" role="form" method="post" name="docven" enctype="multipart/form-data" >
     <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
     <input type="hidden" value="<?php echo $form['id_tes']; ?>" name="id_tes">
     <input type="hidden" value="<?php echo $form['tipdoc']; ?>" name="tipdoc">
@@ -781,6 +781,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     <input type="hidden" value="<?php echo $form['address']; ?>" name="address">
     <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
     <input type="hidden" value="<?php echo $form['roundup_y']; ?>" name="roundup_y">
+	<input type="hidden" value="<?php echo (isset($_POST['last_focus']) ? $_POST['last_focus'] : ""); ?>" name="last_focus" />
     <div class="text-center">
         <p>
             <b>
@@ -906,7 +907,10 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         $form['net_weight'] = 0;
         $form['units'] = 0;
         $form['volume'] = 0;
+		$vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
         foreach ($form['rows'] as $k => $v) {
+			// se voglio inserire manualmente il prezzo IVA compresa (configurazione avanzata azienda) attivo il form modale
+			$ivacomp=($vp>0)?' onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" ':'';
             // addizione ai totali peso,pezzi,volume
             $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
             $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
@@ -998,7 +1002,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     'value' => '<input type="number" step="any" class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
                 ),
                 array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" size="4" onchange="this.form.submit()" />'
+                    'value' => '<input type="number" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" size="4"'.$ivacomp.' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" />'
                 ),
                 array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
                     'value' => '<input type="number" step="0.01" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="2" onchange="this.form.submit()" />'),
@@ -1247,7 +1251,43 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         </div>
     </div>
 </div>
+<div class="modal" id="vat-price" title="IMPORTO IVA COMPRESA">
+	<input type="text" id="cat_prevat" style="text-align: right;" maxlength="11" size="7" onkeyup="vatPriceCalc();" />
+	<br /><br />
+	<!--select id="codvat" name="cat_codvat" class="FacetSelect"></select-->
+	<input type="text" id="cat_pervat" style="text-align: center;" maxlength="5" size="4" disabled="disabled" />
+	<br /><br />
+	<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" size="7" disabled="disabled" />
+</div>
 <script type="text/javascript">
+	function vatPrice(row,pervat) {
+		var prelis = $("[name='rows["+row+"][prelis]']").val();
+		var prevat = Math.round(parseFloat(prelis)*(1+parseFloat(pervat)/100),4);
+		$("#cat_prevat").val(prevat);
+		$("#cat_pervat").val(pervat);
+		$("#cat_prelis").val(prelis);
+		$("#vat-price").dialog({
+			modal: true,
+			buttons: {
+				Ok: function() {
+					$("[name='rows["+row+"][prelis]']").val($("#cat_prelis").val());
+					document.docven.last_focus.value="righi_" + row + "_sconto";
+					$("[name='rows["+row+"][prelis]']").parents("form:first").submit();
+					$(this).dialog("close");
+				}
+			}
+		});
+	};
+	function vatPriceCalc() {
+		var prevat = $("#cat_prevat").val();
+		var pervat = $("#cat_pervat").val();
+		if (prevat!="" && pervat!="") {
+			var prelis = parseFloat(prevat)/(1+parseFloat(pervat)/100)
+			$("#cat_prelis").val(prelis.toFixed(2));
+		} else {
+			$("#cat_prelis").val("0");
+		}
+	}
     $(function () {
         //twitter bootstrap script
         $("#addmodal").click(function () {
@@ -1265,6 +1305,16 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             });
         });
     });
+	var last_focus_value;
+	var last_focus;
+	last_focus_value = document.docven.last_focus.value;
+	if (last_focus_value != "") {
+		last_focus = document.getElementById(last_focus_value);
+		if (last_focus != undefined) {
+			last_focus.focus();
+		}
+	}
+	last_focus_value = "";
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 <?php

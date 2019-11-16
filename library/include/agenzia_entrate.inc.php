@@ -1295,15 +1295,15 @@ function creaFileCOR10($aziend,$data,$progressivo) {
     $doc = new DOMDocument;
     $doc->preserveWhiteSpace = false;
     $doc->formatOutput = true;
-    $doc->load("../../library/include/template_COR10.xml");
+    $doc->load("../../library/include/template_DAT20.xml"); // PRENDO LO STESSO TEMPLATE DELLA COMUNICAZIONE DATI FATTURE (SPESOMETRO) E NON COR10
     $xpath = new DOMXPath($doc);
-    $res = $xpath->query("//ns2:DatiCorrispettivi/DatiFatturaHeader/ProgressivoInvio")->item(0);
+    $res = $xpath->query("//ns2:DatiFattura/DatiFatturaHeader/ProgressivoInvio")->item(0);
     $root = $doc->createTextNode('C'.$progressivo);
     $res->appendChild($root);
-    $res = $xpath->query("//ns2:DatiCorrispettivi")->item(0);
+    $res = $xpath->query("//ns2:DatiFattura")->item(0);
     $root = $doc->createElement('DTE');
     $res->appendChild($root);
-    $res = $xpath->query("//ns2:DatiCorrispettivi/DTE")->item(0);
+    $res = $xpath->query("//ns2:DatiFattura/DTE")->item(0);
     // 2.1 - Blocco contenente le informazioni relative al cedente/prestatore (azienda)
     $el_2_1 = $doc->createElement("CedentePrestatoreDTE", "");
     $el_2_1_1 = $doc->createElement("IdentificativiFiscali", "");
