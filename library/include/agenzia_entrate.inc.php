@@ -1300,6 +1300,11 @@ function creaFileCOR10($aziend,$data,$progressivo) {
     $res = $xpath->query("//ns2:DatiFattura/DatiFatturaHeader/ProgressivoInvio")->item(0);
     $root = $doc->createTextNode('C'.$progressivo);
     $res->appendChild($root);
+    $res = $xpath->query("//ns2:DatiFattura/DatiFatturaHeader")->item(0);
+    $d_1 = $doc->createElement('Dichiarante','');
+    $d_1_1= $doc->createElement('CodiceFiscale',$aziend['pariva']);
+    $d_1->appendChild($d_1_1);
+    $res->appendChild($d_1);
     $res = $xpath->query("//ns2:DatiFattura")->item(0);
     $root = $doc->createElement('DTE');
     $res->appendChild($root);
