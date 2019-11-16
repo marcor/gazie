@@ -386,7 +386,7 @@ $namefile=substr($namefile,0,-4)
 			<div class="col-md-12">
 				<div class="form-group">
 					<label for="cod_silos" class="col-sm-4 control-label"><?php echo "Download del file generato: "; ?></label>
-					<p><a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&ext=txt&company_id=1" class="col-sm-6 control-label">
+					<p><a href="../camp/getfilesian.php?filename=<?php echo $namefile;?>&folder=&ext=txt&company_id=1" class="col-sm-6 control-label">
 					<?php echo $namefile; ?>
 					<i class="glyphicon glyphicon-file" title="Scarica il file appena generato"></i>
 					</a></p>				
