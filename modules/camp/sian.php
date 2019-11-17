@@ -40,10 +40,12 @@ if (!file_exists($sianfolder)) {// se non c'è la creo
 if ($handle = opendir('../../data/files/' . $admin_aziend['codice'] . '/sian/')){
 	$i=0;
 	while (false !== ($file = readdir($handle))){
-		if ($file=="." OR $file==".."){ continue;}
-			$prevfiles[$i]['nome']=$file; // prendo nome file
-			$prevfiles[$i]['content']=@file_get_contents('../../data/files/' . $admin_aziend['codice'] . '/sian/'.$file);// prendo contenuto file
-			$i++;			
+		if (substr($file,-12) == "OPERREGI.txt"){
+			if ($file=="." OR $file==".."){ continue;}
+				$prevfiles[$i]['nome']=$file; // prendo nome file
+				$prevfiles[$i]['content']=@file_get_contents('../../data/files/' . $admin_aziend['codice'] . '/sian/'.$file);// prendo contenuto file
+				$i++;	
+		}			
 	}
 	closedir($handle);
 	if (isset($prevfiles)){ // se ci sono file
