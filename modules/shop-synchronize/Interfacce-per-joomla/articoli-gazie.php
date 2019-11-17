@@ -14,7 +14,7 @@
   ****
   ------------------------------------------------------------------------ */
   
-/* impostazioni da fare prima di avviare il download da easyfatt
+/* impostazioni da fare prima di avviare il download da GAzie
 inserire i dati dentro alle virgolette non toccare il resto */
 
 /* se non ricordate i dati di configurazione del database aprite il file configuration.php presente nella root principale del sito Joomla. LEGGETE SOLO NON TOCCATE NULLA ALTRIMENTI BLOCCHERETE IL SITO !!!!!!*/
@@ -23,8 +23,8 @@ $host = "localhost"; /* host database, di solito localhost */
 $user = "++"; /* nome utente database */
 $pass = "++"; /* password database */
 $database = "++"; /* nome database */
-$hostname="++"; /*nome host per ftp, lo stesso inserito su Danea Easyfatt */
-$passftp="++"; /* password per ftp, la stessa inserita su Danea Easyfatt */
+$hostname="++"; /*nome host per ftp, lo stesso inserito su GAzie */
+$passftp="++"; /* password per ftp, la stessa inserita su GAzie */
 $prefixdb="++"; /* il prefisso delle tabelle del database */
 
 // ---------------------------------------------------------------------

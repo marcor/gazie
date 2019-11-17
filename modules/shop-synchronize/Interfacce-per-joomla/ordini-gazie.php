@@ -12,16 +12,16 @@
   ****
    ------------------------------------------------------------------------ */
   
-/* impostazioni da fare prima di avviare il download da easyfatt
+/* impostazioni da fare prima di avviare il download da GAzie
 inserire i dati dentro alle virgolette non toccare il resto */
 
 $host = "localhost"; /* host database, di solito localhost */
 $user = "++"; /* nome utente database */
 $pass = "++"; /* password database */
 $database = "++"; /* nome database */
-$hostname="++"; /*nome host per ftp, lo stesso inserito su Danea Easyfatt */
-$passftp="++"; /* password per ftp, la stessa inserita su Danea Easyfatt */
-$orderstatus="Pronto in attesa del corriere"; /* nome o tipo di stato deve avere l'ordine di Hikashop per essere scaricato su easyfatt, di solito confirmed */
+$hostname="++"; /*nome host per ftp, lo stesso inserito su GAzie */
+$passftp="++"; /* password per ftp, la stessa inserita su GAzie */
+$orderstatus="Pronto in attesa del corriere"; /* nome o tipo di stato deve avere l'ordine di Hikashop per essere scaricato su GAzie, di solito confirmed */
 $orderstatus2="Pagato"; /* eventuale secondo stato ordine  */
 $orderstatus3="confirmed"; /* eventuale terzo stato ordine  */
 $includevat="true"; /*  true= il prezzo è iva compresa - false= il prezzo è iva esclusa */

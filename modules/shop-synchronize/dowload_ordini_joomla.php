@@ -167,7 +167,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			$id_tesbro++;
 		}  
 	}
-	header("Location: " . "../../modules/vendit/report_broven.php?auxil=VOW");
+	header("Location: " . "../../modules/vendit/report_broven.php?auxil=VOR");
     exit;
 }
  
