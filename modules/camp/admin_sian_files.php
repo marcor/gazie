@@ -89,7 +89,7 @@ if (isset ($_POST['del'])){
 }
 
 // prendo tutti i file della cartella sian
-if ($handle = opendir('../../data/files/1/sian/')){
+if ($handle = opendir('../../data/files/'.$admin_aziend['codice'].'/sian/')){
 	while ($file = readdir($handle)){
 		if ($file == '.' || $file == '..') {
 			continue;
@@ -97,6 +97,7 @@ if ($handle = opendir('../../data/files/1/sian/')){
 		$files[]=$file;
 	}
 	closedir($handle);
+	sort($files);
 }
 
 ?>
