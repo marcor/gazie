@@ -46,5 +46,5 @@ ALTER TABLE `gaz_XXXsyncronize_oc`	CHANGE COLUMN `date_update` `date_update` TIM
 INSERT INTO `gaz_XXXcompany_config` SELECT MAX(id)+1, 'Allerta se la lunghezza del codice articolo è diverso da', 'codart_len', '0' FROM `gaz_XXXcompany_config`;
 ALTER TABLE `gaz_XXXpaymov`	DROP INDEX `id_rigmoc_pay`,	ADD INDEX `id_rigmoc_pay` (`id_rigmoc_pay`) USING HASH;
 ALTER TABLE `gaz_XXXtesdoc`	CHANGE COLUMN `id_contract` `id_contract` INT(9) NOT NULL DEFAULT '0' COMMENT 'In caso di corrispettivo, scontrino con causale VCO, viene usato per contenere l\'id del registratore ovvero id_cash della tabella gaz_NNNcash_register, se "0" verrà generato un file XML, altrimenti verranno inviati i dati al RT in base a quanto indicato sul rigo della tabella citata' AFTER `geneff`;
-ALTER TABLE `gaz_001clfoco`	ADD COLUMN `status_SIAN` INT(1) NOT NULL COMMENT '0=soggetto non trasmesso al SIAN, 1=soggetto trasmesso al SIAN' AFTER `status`;
+ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `status_SIAN` INT(1) NOT NULL COMMENT '0=soggetto non trasmesso al SIAN, 1=soggetto trasmesso al SIAN' AFTER `status`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
