@@ -332,7 +332,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['or_spec']=$camp['or_spec'];
 	$form['or_macro']=$camp['or_macro'];
 	$form['confezione']=$camp['confezione'];
-	if($form['or_spec']==""){$form['or_spec']=0;}
+	if(!isset($form['or_spec'])){$form['or_spec']=0;} 
 	if($form['or_spec']=="Spagna"){$form['or_spec']=1;}
 	if($form['or_spec']=="Grecia"){$form['or_spec']=2;}
 	if($form['or_spec']=="Portogallo"){$form['or_spec']=3;}
