@@ -150,10 +150,11 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$row2=gaz_dbi_get_row($gTables['camp_mov_sian'], 'id_movmag', $row['id_mov'], "AND id_mov_sian_rif = '0'");
 						$row3=gaz_dbi_get_row($gTables['camp_mov_sian'], 'id_mov_sian_rif', $row2['id_mov_sian']);
 						$row4=gaz_dbi_get_row($gTables['movmag'], 'id_mov', $row3['id_movmag']);
-						$row5=gaz_dbi_get_row($gTables['camp_artico'], 'codice', $row4['artico']);
+						$row5=gaz_dbi_get_row($gTables['camp_artico'], 'codice', $row['artico']);
 						$row4['quanti'] = sprintf ("%013d", str_replace(".", "", $row4['quanti'])); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
-						$quantilitri=number_format($row4['quanti']*$row5['confezione'],3);// trasformo le confezioni in litri
+						$quantilitri=number_format($row['quanti']*$row5['confezione'],3);// trasformo le confezioni in litri
 						$quantilitri = str_replace(".", "", $quantilitri); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
+						
 						$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 						if ($row5['estrazione']=1){ 
 							$type_array[31]="X"; // Flag prima spremitura a freddo a fine operazione
