@@ -55,6 +55,13 @@ if (isset($_POST['Delete'])){
 		gaz_dbi_query ("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '' WHERE id_tes ='".$_GET['id_tesbro']."'") ; // sgancio tesbro da orderman
 		$result = gaz_dbi_del_row($gTables['orderman'], "id", $_POST['id']); // cancello orderman/produzione
 	}
+	// in ogni caso riporto l'auto_increment all'ultimo valore disponibile
+	$query="SELECT max(id)+1 AS li FROM ".$gTables['orderman']; 
+	$last_autincr=gaz_dbi_query($query);
+	$li=gaz_dbi_fetch_array($last_autincr);
+	$li=(isset($li['id']))?($li['id']+1):1;
+	$query="ALTER TABLE ".$gTables['orderman']." AUTO_INCREMENT=".$li; 
+	gaz_dbi_query($query); // riporto l'auto_increment al primo disponibile per non avere vuoti di numerazione
 	header("Location: orderman_report.php");
     exit;
 }
@@ -71,7 +78,8 @@ if (!isset($_POST['Delete']))
 	
     }
 
-require("../../library/include/header.php"); HeadMain();
+require("../../library/include/header.php"); 
+$script_transl=HeadMain();
 ?>
 <form method="POST">
 <input type="hidden" name="id" value="<?php print $codice?>">
