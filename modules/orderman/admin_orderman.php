@@ -323,8 +323,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 											$form['id_movmag']=gaz_dbi_last_id();
 											$form['id_mov_sian_rif']=$id_mov_sian_rif; // connetto il mov sian del componente a quello del prodotto
 											$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
+											gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
 											$form['cod_operazione']="";
-											if ($s7=1){ // S7 è uno scarico di olio destinato ad altri consumi
+											if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
 												$form['cod_operazione']="S7";
 											}
 											gaz_dbi_table_insert('camp_mov_sian', $form);
@@ -338,8 +339,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 									$form['id_movmag']=gaz_dbi_last_id();
 									$form['id_mov_sian_rif']=$id_mov_sian_rif;// connetto il mov sian del componente a quello del prodotto
 									$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
+									gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
 									$form['cod_operazione']="";
-									if ($s7=1){ // S7 è uno scarico di olio destinato ad altri consumi
+									if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
 										$form['cod_operazione']="S7";
 									}
 									gaz_dbi_table_insert('camp_mov_sian', $form);
@@ -1046,21 +1048,24 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 							
 							 // Antonio Germani - Inizio form SIAN
 							if ($row['SIAN']>0 AND $form['order_type'] == "IND"){ // se l'articolo prevede un movimento SIAN e siamo su prod.industriale
-								?>
+								$rescampbase = gaz_dbi_get_row($gTables['camp_artico'], "codice", $row['codice_artico_base']);
+								if ($rescampbase['confezione']==0){ // se è sfuso apro la richiesta contenitore
+									?>
 						</div> <!-- chiude row del nome articolo composto -->
-								<div class="container-fluid">					
-								<div class="row">
-								<label for="camp_recip_stocc_comp" class="col-sm-6"><?php echo "Recipiente stoccaggio del componente"; ?></label>
-								<?php
-								if (!isset($form['recip_stocc_comp'][$nc])){
-									$form['recip_stocc_comp'][$nc]="";
+									<div class="container-fluid">					
+									<div class="row">
+									<label for="camp_recip_stocc_comp" class="col-sm-6"><?php echo "Recipiente stoccaggio del componente"; ?></label>
+									<?php
+									if (!isset($form['recip_stocc_comp'][$nc])){
+										$form['recip_stocc_comp'][$nc]="";
+									}
+									$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
+									?>
+									</div>	
+									<?php
+								} else {
+									echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value=0>';
 								}
-								$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
-								?>
-								
-								</div>	
-								
-								<?php
 							} else {
 								echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value=0>';
 							}
@@ -1157,6 +1162,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 	</tr>
 	<?php // Antonio Germani - Inizio form SIAN
 	if ($form['SIAN']>0 AND $form['order_type'] == "IND"){ // se l'articolo prevede un movimento SIAN e siamo su prod.industriale
+		$rescampbase = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
 		echo "<tr><td class=\"FacetFieldCaptionTD\">Gestione SIAN</td>";
 		echo "<td>";
 		?>
@@ -1169,6 +1175,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						
 				?>
 			</div>
+			<?php if ($rescampbase['confezione']==0){ ?>
 			<div class="row">
 				<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
 				<?php
@@ -1176,6 +1183,9 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				?>
 			</div>
 			<?php
+			} else {
+				echo '<tr><td><input type="hidden" name="recip_stocc" value="">';
+			}
 					
 		echo "</div>";	
 		echo"</td></tr>";
