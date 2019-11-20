@@ -57,15 +57,21 @@ function getCont($codsil){
 	$orderby=2;
 	$limit=0;
 	$passo=2000000;
-	$where="cod_silos = '".$codsil."'";
-	$what=	$gTables['camp_recip_stocc'].".cod_silos, ".
-			$gTables['camp_recip_stocc'].".capacita , SUM( quanti * operat) totalcontent";
-	$groupby= "cod_silos";
-	$table=$gTables['camp_recip_stocc']." LEFT JOIN ".$gTables['camp_mov_sian']." ON (".$gTables['camp_recip_stocc'].".cod_silos = ".$gTables['camp_mov_sian'].".recip_stocc)
-									LEFT JOIN ".$gTables['movmag']." ON (".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag)";
+	$where="recip_stocc = '".$codsil."'";
+	$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".
+			$gTables['camp_mov_sian'].".* ";
+	$groupby= "";
+	$table=$gTables['camp_mov_sian']." LEFT JOIN ".$gTables['movmag']." ON (".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag)";
 	$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
+	
 	while ($r = gaz_dbi_fetch_array($ressilos)) {
-		$content = $r['totalcontent'];
+		if ($r['id_orderman']>0){
+			if ($r['operat']==-1){
+				$content=$content-$r['quanti'];
+			}
+		} else {
+			$content=$content+($r['quanti']*$r['operat']);
+		}
 	}
 	return $content ;
 }

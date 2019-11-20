@@ -156,23 +156,23 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$quantilitri = str_replace(".", "", $quantilitri); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
 						
 						$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
-						if ($row5['estrazione']=1){ 
+						if ($row5['estrazione']==1){ 
 							$type_array[31]="X"; // Flag prima spremitura a freddo a fine operazione
 						}
-						if ($row['estrazione']=1){ 
+						if ($row['estrazione']==1){ 
 							$type_array[30]="X"; // Flag prima spremitura a freddo
 						}
-						if ($row5['estrazione']=2){ 
+						if ($row5['estrazione']==2){ 
 							$type_array[33]="X"; // Flag estratto a freddo a fine operazione
 						}
-						if ($row5['estrazione']=2){ 
+						if ($row5['estrazione']==2){ 
 							$type_array[32]="X"; // Flag estratto a freddo
 						}
-						if ($row5['biologico']=1){ // se è biologico a fine operazione deve esserlo anche prima
+						if ($row5['biologico']==1){ // se è biologico a fine operazione deve esserlo anche prima
 							$type_array[35]="X"; // Flag biologico a fine operazione
 							$type_array[34]="X"; // Flag biologico
 						}
-						if ($row5['biologico']=2){ // se è in conversione a fine operazione deve esserlo anche prima
+						if ($row5['biologico']==2){ // se è in conversione a fine operazione deve esserlo anche prima
 							$type_array[37]="X"; // Flag in conversione a fine operazione
 							$type_array[36]="X"; // Flag in conversione
 						}
