@@ -342,6 +342,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==8 AND $camp_artico['confezione']==0 AND $form['recip_stocc']==""){
 			$msg .="24+";
 		}
+		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==13 AND $camp_artico['confezione']>0){
+			$msg .="28+";
+		}
 	
         if (empty($msg)) {    //        nessun errore        SALVATAGGIO database
 		

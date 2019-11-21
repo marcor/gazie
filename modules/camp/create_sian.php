@@ -144,7 +144,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$ann = substr($row['datreg'],0,4);
 						$dd=$gio.$mes.$ann;
 					}
-					// >> Antonio Germani - caso produzione da orderman
+				// >> Antonio Germani - caso produzione da orderman
 					if (intval($row['id_orderman'])>0 AND $row['operat']==1){ // se è una produzione e il movimento è di entrata
 						// cerco il movimento di scarico connesso
 						$row2=gaz_dbi_get_row($gTables['camp_mov_sian'], 'id_movmag', $row['id_mov'], "AND id_mov_sian_rif = '0'");
@@ -237,7 +237,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$datdoc=""; // annullo data documento giustificativo perché con S7 non è ammessa
 					}
 					
-					// >> Antonio Germani - Caso Carico da acquisti e magazzino
+				// >> Antonio Germani - Caso Carico da acquisti e magazzino
 					
 					if ($row['operat']==1 AND intval($row['id_orderman'])==0){ //se è un carico NON connesso a produzione
 						if ($row['cod_operazione']==10){// carico olio lampante da recupero
@@ -280,7 +280,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$type_array[6]=str_pad("C".$row['cod_operazione'], 10); // codice operazione
 					}
 					
-					// >> Antonio Germani - Caso Scarico da vendite e magazzino
+				// >> Antonio Germani - Caso Scarico da vendite e magazzino
 					if ($row['operat']==-1 AND intval($row['id_orderman'])==0){ // se è uno scarico NON connesso a produzione
 						$type_array[6]=str_pad("S".$row['cod_operazione'], 10); // codice operazione
 						if ($row['SIAN']==1){ // se è olio
@@ -315,6 +315,18 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$row['numdoc']="";
 							$datdoc="";
 							$row['confezione']="";
+						}
+						if ($row['cod_operazione']==12) { // Perdite o cali di olio
+							$row['numdoc']="";
+							$datdoc="";
+							$row['confezione']="";
+							$type_array[6]=str_pad("SP", 10); // codice operazione
+						}
+						if ($row['cod_operazione']==13) { // Separazione Morchie
+							$row['numdoc']="";
+							$datdoc="";
+							$row['confezione']="";
+							$type_array[6]=str_pad("Q", 10); // codice operazione
 						}
 					}
 					
