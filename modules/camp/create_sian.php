@@ -158,14 +158,10 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 						if ($row5['estrazione']==1){ 
 							$type_array[31]="X"; // Flag prima spremitura a freddo a fine operazione
-						}
-						if ($row['estrazione']==1){ 
 							$type_array[30]="X"; // Flag prima spremitura a freddo
 						}
 						if ($row5['estrazione']==2){ 
 							$type_array[33]="X"; // Flag estratto a freddo a fine operazione
-						}
-						if ($row5['estrazione']==2){ 
 							$type_array[32]="X"; // Flag estratto a freddo
 						}
 						if ($row5['biologico']==1){ // se è biologico a fine operazione deve esserlo anche prima
@@ -176,7 +172,8 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$type_array[37]="X"; // Flag in conversione a fine operazione
 							$type_array[36]="X"; // Flag in conversione
 						}
-						
+						$datdoc=""; // i tipi operazione L non vogliono la data del documento giustificativo
+						$row['confezione']=""; // il campo capacità confezione, pur essendo previsto fra i campi facoltativi, viene rifiutato nei tipi operazione L
 						If ($row['cod_operazione']==1){// Confezionamento con etichettatura
 							$type_array[6]=str_pad("L", 10); // codice operazione
 							$type_array[23]=sprintf ("%013d",$row4['quanti']); // quantità scarico olio sfuso
