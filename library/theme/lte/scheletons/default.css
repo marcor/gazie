@@ -220,3 +220,91 @@
         background-color: rgba(0, 0, 0, 0.04);
     }
 }
+
+/*    --------------------------------------------------
+        :: Login Section
+        -------------------------------------------------- */
+
+.panel-title {
+    vertical-align: middle;
+}
+.panel-info {
+    border-color: #88c086;
+    margin: auto;
+}
+.panel-info > .panel-gazie {
+    border-color: #88c086;
+}
+.btn-100 {
+    width: 100px;
+}
+.panel-info > .panel-heading {
+	background-color: #aae2a8 !important;
+	border-color: #88c086;
+	color: #123311;
+}
+#formlogin {
+    padding-top: 50px
+}
+#formlogin .form-wrap {
+    margin: 0 auto;
+    float: right;
+}
+.form-logo {
+    float: left;
+}
+.form-main {
+    margin: 10px 30%;
+    background-color: #77b075;
+    border: 1px solid #000;
+}
+#formlogin h1 {
+    color: #1fa67b;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 20px;
+}
+#formlogin .form-group {
+    margin-bottom: 25px;
+}
+#formlogin .checkbox {
+    margin-bottom: 20px;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+#formlogin .checkbox.show:before {
+    content: '\e013';
+    color: #1fa67b;
+    font-size: 17px;
+    margin: 1px 0 0 3px;
+    position: absolute;
+    pointer-events: none;
+    font-family: 'Glyphicons Halflings';
+}
+#formlogin .checkbox .character-checkbox {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    display: inline-block;
+}
+#formlogin .checkbox .label {
+    color: #6d6d6d;
+    font-size: 100%;
+    font-weight: normal;
+}
+#formlogin .btn.btn-custom {
+    font-size: 100%;
+    margin-bottom: 20px;
+}
+#formlogin .forget {
+    font-size: 100%;
+    text-align: center;
+    display: block;
+}
