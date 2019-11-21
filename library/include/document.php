@@ -508,7 +508,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 	if ($templateName=='DDT'){
 		$ddt_A5 = gaz_dbi_get_row($gTables['company_config'], 'var', 'ddt_A5');
 		if (intval($ddt_A5['val'])>=1){
-			$templates['DDT']='ddt2XA5';
+			$templates['DDT']='ddt2xA5';
 		}
 	}
     $config = new Config;
