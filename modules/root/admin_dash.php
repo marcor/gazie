@@ -56,7 +56,7 @@ if(isset($_POST['addrow'])&&!empty($_POST['addrow'])){ // aggiungo il widget
 		}
 		gaz_dbi_put_row($gTables['breadcrumb'],'id_bread',$widget_exist['id_bread'],'exec_mode', 2);
 	}else{ // non esiste lo devo inserire
-		gaz_dbi_query("INSERT INTO " . $gTables['breadcrumb'] . "(position_order,exec_mode,file,titolo,adminid)  SELECT MAX(position_order)+1,'2','".$file."','".$titolo."','" . $admin_aziend['user_name'] . "' FROM " . $gTables['breadcrumb']);
+		gaz_dbi_query("INSERT INTO " . $gTables['breadcrumb'] . "(position_order,exec_mode,file,titolo,adminid)  SELECT COALESCE(MAX(position_order),0)+1,'2','".$file."','".$titolo."','" . $admin_aziend['user_name'] . "' FROM " . $gTables['breadcrumb']." WHERE adminid = '".$admin_aziend['user_name']."'");
 	}
 }elseif(isset($_POST['delrow'])&&!empty($_POST['delrow'])){ // elimino il widget dall'utente facendo l'upload del rigo
 	gaz_dbi_query("UPDATE ".$gTables['breadcrumb']." SET exec_mode = 9 WHERE file = '".$_POST['delrow'].".php' AND adminid = '".$admin_aziend['user_name']."'");
