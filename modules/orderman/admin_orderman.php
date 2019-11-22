@@ -248,7 +248,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
         if ($msg == "") { // nessun errore
             // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
             // i dati dell'articolo che non sono nel form li avrò nell' array $resartico
-            
+            $form['quantip']=gaz_format_quantity($form['quantip']);// trasformo la quantità per salvarla nel database
             if ($toDo == "update") { // se è un update cancello eventuali precedenti file temporanei nella cartella tmp
                 foreach (glob("../../modules/orderman/tmp/*") as $fn) {
                     unlink($fn);
@@ -1233,7 +1233,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 	<td colspan="2" class="FacetDataTD">
 	<?php
     if ($toDo == "update") {
-        echo gaz_format_quantity($form['quantip'], 0, $admin_aziend['decimal_quantity']);
+        echo gaz_format_quantity($form['quantip'], true, $admin_aziend['decimal_quantity']);
 ?>
 			<input type="hidden" name="quantip" Value="<?php echo $form['quantip']; ?>"/>
 			<?php 
