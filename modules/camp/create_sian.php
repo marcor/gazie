@@ -155,7 +155,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$quantilitri=number_format($row['quanti']*$row5['confezione'],3);// trasformo le confezioni in litri
 						$quantilitri = str_replace(".", "", $quantilitri); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
 						
-						$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
+						
 						if ($row5['estrazione']==1){ 
 							$type_array[31]="X"; // Flag prima spremitura a freddo a fine operazione
 							$type_array[30]="X"; // Flag prima spremitura a freddo
@@ -210,6 +210,14 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							if ($row['etichetta']==0){// Flag NON etichettato
 								$type_array[38]="X"; 
 							}
+						}
+						If ($row['cod_operazione']==5){// Movimentazione interna senza cambio di origine
+							$type_array[6]=str_pad("M1", 10); // codice operazione
+							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
+							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
+							$type_array[15]=sprintf ("%02d",$row5['categoria']);// categoria olio fine operazione
+							$type_array[23]=sprintf ("%013d",$row['quanti']); // quantità scarico olio sfuso
+							$type_array[22]=sprintf ("%013d",$row['quanti']); // quantità scarico olio sfuso
 						}
 					}
 					if (intval($row['id_orderman'])>0 AND $row['operat']==-1 AND $row['cod_operazione']<>"S7"){ // se è uno scarico di produzione

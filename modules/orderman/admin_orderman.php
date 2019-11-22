@@ -72,6 +72,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 	$form['SIAN'] = $resartico['SIAN'];
 	$form['cod_operazione'] = $_POST['cod_operazione'];
     $form['recip_stocc'] = $_POST['recip_stocc'];
+	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
 			 // prendo i movimenti di magazzino dei componenti e l'unità di misura 
@@ -234,8 +235,14 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
             if (intval($form['datreg']) == 0) { // se manca la data di registrazione
                 $msg.= "22+";
             }
-			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])<1) { // se manca la data di registrazione
+			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])<1) { // se manca il codice operazione SIAN
                 $msg.= "26+"; 
+            } 
+			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])==5 AND strlen ($form['recip_stocc_destin']) == 0 ) { // se M1 e manca il recipiente di destinazione
+                $msg.= "27+"; 
+            }
+			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])==5 AND $form['recip_stocc_destin']==$form['recip_stocc'] ) { // se M1 ei recipienti sono uguali
+                $msg.= "28+"; 
             }
         }
         if ($msg == "") { // nessun errore
@@ -309,8 +316,17 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 						$id_mov_sian_rif=gaz_dbi_table_insert('camp_mov_sian', $form);
 						$s7=""; // Si sta producendo olio
 					} else {
-						$s7=1; // Non si produce olio
+						$s7=1; // Non si produce olio cioè l'articolo finito non è olio
 						$id_mov_sian_rif="";
+					}
+					if ($form['cod_operazione']==5){ // se è una movimentazione interna creo un movimento di magazzino di uscita per far riportare la giacenza
+						$query = "INSERT INTO " . $gTables['movmag'] . "(caumag,type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('81','0', '-1', '" . $form['datreg'] . "', 'MAG', 'Movimentazione interna', '" . $form['datemi'] . "', '" . $form['codart'] . "', '" . $form['campo_impianto'] . "', '" . $form['quantip'] . "', '" . $id_orderman . "', '" . $id_lotmag . "', '" . $admin_aziend['adminid'] . "')";
+						gaz_dbi_query($query); // inserisco il movimento di magazzino dell'articolo prodotto
+						// e creo anche il relativo movimento SIAN
+						$form['id_movmag']=gaz_dbi_last_id();
+						$form['cod_operazione']="";
+						$form['id_mov_sian_rif']=$id_mov_sian_rif;
+						gaz_dbi_table_insert('camp_mov_sian', $form);
 					}
                     if ($itemart['good_or_service'] == 2) { // se è un articolo composto
 						for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
@@ -719,6 +735,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 	$resmov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['id_movmag']);
 	$form['cod_operazione'] = $resmov_sian['cod_operazione'];
 	$form['recip_stocc'] = $resmov_sian['recip_stocc'];
+	$form['recip_stocc_destin'] = $resmov_sian['recip_stocc_destin'];
     $result2 = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $result['id_tesbro']);
     $form['gioinp'] = substr($result2['datemi'], 8, 2);
     $form['mesinp'] = substr($result2['datemi'], 5, 2);
@@ -808,6 +825,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 	$form['SIAN'] = "";
 	$form['cod_operazione']="";
 	$form['recip_stocc']="";
+	$form['recip_stocc_destin']="";
     $form['datreg'] = date("Y-m-d");
     $form['quantip'] = "";
     $form['quantipord'] = "";
@@ -910,6 +928,7 @@ if ($form['order_type'] == "IND") {
 } else {
     echo '<input type="hidden" name="datreg" value="">';
 	echo '<input type="hidden" name="recip_stocc" value="">';
+	echo '<input type="hidden" name="recip_stocc_destin" value="">';
 	echo '<input type="hidden" name="cod_operazione" value="">';
     if ($form['order_type'] != "") {
         echo "Non registra magazzino!";
@@ -1176,21 +1195,34 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				?>
 			</div>
 			<?php if ($rescampbase['confezione']==0){ ?>
-			<div class="row">
-				<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
+				<div class="row">
+					<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
+					<?php
+					$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
+					?>
+				</div>
 				<?php
-				$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
-				?>
-			</div>
-			<?php
+				if ($form['cod_operazione']==5){ ?>
+					<div class="row">
+					<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio destinazione"; ?></label>
+					<?php
+					$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc_destin' ,'cod_silos', $form['recip_stocc_destin'], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
+					?>
+				</div>
+				<?php
+				} else {
+					echo '<input type="hidden" name="recip_stocc_destin" value="">';
+				}
 			} else {
 				echo '<tr><td><input type="hidden" name="recip_stocc" value="">';
+				echo '<input type="hidden" name="recip_stocc_destin" value="">';
 			}
 					
 		echo "</div>";	
 		echo"</td></tr>";
 	} else {
 		echo '<tr><td><input type="hidden" name="recip_stocc" value="">';
+		echo '<input type="hidden" name="recip_stocc_destin" value="">';
 		echo '<input type="hidden" name="cod_operazione" value=""></td></tr>';
 	}
 
