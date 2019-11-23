@@ -1114,7 +1114,6 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 									
 									// ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
 									foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da getAvailableLots
-									
 										if ($v['qua'] >= 0.00001) {
 											$form['id_lot_comp'][$nc][$l]="";
 											$form['lot_quanti'][$nc][$l]="";
@@ -1123,7 +1122,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 												$form['lot_quanti'][$nc][$l] = $v['qua']; // e la quantità in base al riparto
 											}
 											$selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
-											echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'] . ' Scadenza: ' . gaz_format_date($selected_lot['expiry']). ' disponibili:' . gaz_format_quantity($selected_lot['quanti']);
+											echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'] . ' Scadenza: ' . gaz_format_date($selected_lot['expiry']). ' disponibili:' . gaz_format_quantity($v['rest']);
 											echo '  <i class="glyphicon glyphicon-tag"></i></button>';
 											?>
 											<input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
