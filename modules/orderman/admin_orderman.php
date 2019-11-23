@@ -313,6 +313,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
                     gaz_dbi_query($query); // inserisco il movimento di magazzino dell'articolo prodotto
 					if ($form['SIAN']>0){ // imposto l'id movmag e salvo il movimento SIAN dell'articolo prodotto
 						$form['id_movmag']=$id_movmag;
+						if ($form['cod_operazione']==5){ // scambio i recipienti
+							$change=$form['recip_stocc'];
+							$form['recip_stocc']=$form['recip_stocc_destin'];
+							$form['recip_stocc_destin']=$change;
+						}
 						$id_mov_sian_rif=gaz_dbi_table_insert('camp_mov_sian', $form);
 						$s7=""; // Si sta producendo olio
 					} else {
@@ -325,6 +330,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 						// e creo anche il relativo movimento SIAN
 						$form['id_movmag']=gaz_dbi_last_id();
 						$form['cod_operazione']="";
+						$change=$form['recip_stocc']; // scambio di nuovo i recipienti
+						$form['recip_stocc']=$form['recip_stocc_destin'];
+						$form['recip_stocc_destin']=$change;
 						$form['id_mov_sian_rif']=$id_mov_sian_rif;
 						gaz_dbi_table_insert('camp_mov_sian', $form);
 					}

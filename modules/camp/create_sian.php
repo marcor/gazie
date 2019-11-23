@@ -216,8 +216,11 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
 							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
 							$type_array[15]=sprintf ("%02d",$row5['categoria']);// categoria olio fine operazione
-							$type_array[23]=sprintf ("%013d",$row['quanti']); // quantità scarico olio sfuso
-							$type_array[22]=sprintf ("%013d",$row['quanti']); // quantità scarico olio sfuso
+							$type_array[23]=sprintf ("%013d",str_replace(".", "", $row['quanti'])); // quantità scarico olio sfuso
+							$type_array[22]=sprintf ("%013d",str_replace(".", "", $row['quanti'])); // quantità scarico olio sfuso
+							$change=$row['recip_stocc']; // devo scambiare i contenitori
+							$row['recip_stocc']=$row['recip_stocc_destin'];
+							$row['recip_stocc_destin']=$change;
 						}
 					}
 					if (intval($row['id_orderman'])>0 AND $row['operat']==-1 AND $row['cod_operazione']<>"S7"){ // se è uno scarico di produzione
