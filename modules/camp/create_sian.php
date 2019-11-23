@@ -146,16 +146,18 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 					}
 				// >> Antonio Germani - caso produzione da orderman
 					if (intval($row['id_orderman'])>0 AND $row['operat']==1){ // se è una produzione e il movimento è di entrata
-						// cerco il movimento di scarico connesso
-						$row2=gaz_dbi_get_row($gTables['camp_mov_sian'], 'id_movmag', $row['id_mov'], "AND id_mov_sian_rif = '0'");
-						$row3=gaz_dbi_get_row($gTables['camp_mov_sian'], 'id_mov_sian_rif', $row2['id_mov_sian']);
-						$row4=gaz_dbi_get_row($gTables['movmag'], 'id_mov', $row3['id_movmag']);
+						// cerco il movimento/i di scarico connesso/i
+						$rs=gaz_dbi_dyn_query ("*",$gTables['camp_mov_sian'],"id_mov_sian_rif = '".$row['id_mov_sian']."'");
+						$row4['quanti']=0;
 						$row5=gaz_dbi_get_row($gTables['camp_artico'], 'codice', $row['artico']);
-						$row4['quanti'] = sprintf ("%013d", str_replace(".", "", $row4['quanti'])); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
+						foreach ($rs as $mov_sian){
+							$rowmag=gaz_dbi_get_row($gTables['movmag'], 'id_mov', $mov_sian['id_movmag']);
+							$row4['quanti']=$row4['quanti']+$rowmag['quanti'];
+						}
+						$row4['quanti'] = sprintf ("%013d", str_replace(".", "", number_format ($row4['quanti'],3))); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
 						$quantilitri=number_format($row['quanti']*$row5['confezione'],3);// trasformo le confezioni in litri
 						$quantilitri = str_replace(".", "", $quantilitri); // tolgo il separatore decimali perché il SIAN non lo vuole. le ultime tre cifre sono sempre decimali. Aggiungo zeri iniziali.
-						
-						
+												
 						if ($row5['estrazione']==1){ 
 							$type_array[31]="X"; // Flag prima spremitura a freddo a fine operazione
 							$type_array[30]="X"; // Flag prima spremitura a freddo
