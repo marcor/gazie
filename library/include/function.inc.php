@@ -245,6 +245,9 @@ function gaz_create_date($d, $m, $yyyy) { // crea una data nel formato dd-mm-yyy
 }
 
 function gaz_format_date($date, $from_form = false, $to_form = false) {
+	if (intval($date)==0){
+		return null;
+	}
     if ($from_form) { // dal formato gg-mm-aaaa o gg/mm/aaaa (es. proveniente da form) a diversi 
         $m = intval(substr($date, 3, 2));
         $d = intval(substr($date, 0, 2));
