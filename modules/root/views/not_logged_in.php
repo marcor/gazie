@@ -14,7 +14,6 @@
 					<div><b><?php echo MESSAGE_WELCOME_ADMIN .' </b>'. MESSAGE_INTRO_ADMIN; ?><div>
                     </br>
                     <div class="bg-info"><?php echo MESSAGE_PSW_ADMIN; ?></div>
-					
                     <?php
 					if (is_numeric(substr($table_prefix,-4))) {
 						// se è stato uno studente ad aver fatto il logout lo riporto sulla giusta pagina

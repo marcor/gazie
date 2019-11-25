@@ -715,7 +715,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $i++;
                 }
                 //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
-				
                 for ($i = $i; $i <= $count; $i++) {
 					// quindi vedo in anticipo in quale ID verrà memorizzato il prossimo movimento di magazzino
 					$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
@@ -1010,7 +1009,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 
     // Se viene inviata la richiesta di conferma rigo
-	
+
     /** ENRICO FEDELE */
     /* Con button non funziona _x */
     //if (isset($_POST['in_submit_x'])) {
@@ -2528,7 +2527,7 @@ foreach ($form['rows'] as $k => $v) {
                 echo '</div>'
                 . "</div>\n";
             }
-			
+
 			// Antonio Germani - Se l'articolo movimenta il SIAN apro il div SIAN
 			if ($form['rows'][$k]['SIAN']>0) {
 				$art = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);

@@ -2186,7 +2186,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                             </button>
 							</div>
                 </div> 
-            </div><!-- chiude form-row  -->			
+            </div><!-- chiude form-row  -->
         </div><!-- chiude panel-body  -->
       </div><!-- chiude container  -->
     </div><!-- chiude panel  -->

@@ -342,8 +342,8 @@ for ($i = 1; $i <= $p_max; $i++) {
                 $impost = $v['impost'];
                 break;
             case "2":
-                $imponi = number_format(-$v['imponi'], 2, '.', '');
-                $impost = number_format(-$v['impost'], 2, '.', '');
+                $imponi = -$v['imponi'];
+                $impost = -$v['impost'];
 				$pdf->SetTextColor(155, 0, 0);
                 break;
             default:
