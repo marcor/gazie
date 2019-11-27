@@ -241,9 +241,29 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])==5 AND strlen ($form['recip_stocc_destin']) == 0 ) { // se M1 e manca il recipiente di destinazione
                 $msg.= "27+"; 
             }
-			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])==5 AND $form['recip_stocc_destin']==$form['recip_stocc'] ) { // se M1 ei recipienti sono uguali
+			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])==5 AND $form['recip_stocc_destin']==$form['recip_stocc'] ) { // se M1 e i recipienti sono uguali
                 $msg.= "28+"; 
             }
+			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])==3) { // se L2 l'olio prodotto può essere solo etichettato
+                $rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
+				if ($rescampartico['etichetta']==0){
+					$msg.= "30+";
+				}
+            }
+			if (intval($form['SIAN']) > 0 AND $form['numcomp']>0) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
+			    for ($m = 0;$m < $form['numcomp'];++$m) { 
+					$rescamparticocomp = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['artcomp'][$m]);
+					if (intval($form['cod_operazione'])==3 AND $rescamparticocomp['confezione']==0 ) { // se L2 etichettatura e c'è olio sfuso
+						$msg.= "29+"; 
+					}
+					if (intval($form['cod_operazione'])==3 AND $rescamparticocomp['etichetta']==1 ) { // se L2 etichettatura e c'è olio etichettato
+						$msg.= "32+"; 
+					}
+					if (intval($form['cod_operazione'])==3 AND ($rescamparticocomp['categoria']!== $rescampartico['categoria'] OR $rescamparticocomp['or_macro']!== $rescampartico['or_macro'] OR $rescamparticocomp['estrazione']!== $rescampartico['estrazione'] OR $rescamparticocomp['biologico']!== $rescampartico['biologico'] OR $rescamparticocomp['confezione']!== $rescampartico['confezione'] )) { // se L2 etichettatura e c'è olio non etichettato
+						$msg.= "31+"; 
+					}
+				}
+			}
         }
         if ($msg == "") { // nessun errore
             // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§

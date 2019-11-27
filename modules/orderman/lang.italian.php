@@ -60,7 +60,11 @@ $strScript = array("admin_orderman.php" =>
 		"La quantità inserita di un lotto, di un componente, è errata",
 		"Non è stata impostata l'operazione SIAN",
 		"Manca il recipiente di destinazione",
-		"Il recipiente di destinazione non può essere lo stesso di origine"
+		"Il recipiente di destinazione non può essere lo stesso di origine",
+		"L'operazione L2 di etichettatura prevede solo olio confezionato",
+		"L'operazione L2 di etichettatura prevede che l'olio prodotto sia etichettato",
+		"Le caratteristiche di estrazione, categoria, origine, biologico e capacità confezione dell'articolo prodotto e del componente devono essere uguali",
+		"L'olio componente non può essere già etichettato"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',
