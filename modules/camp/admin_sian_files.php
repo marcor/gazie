@@ -97,7 +97,9 @@ if ($handle = opendir('../../data/files/'.$admin_aziend['codice'].'/sian/')){
 		$files[]=$file;
 	}
 	closedir($handle);
-	sort($files);
+	if (isset($files)){
+		sort($files);
+	}
 }
 
 ?>
