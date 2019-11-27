@@ -11,12 +11,12 @@ if (isset($_SESSION['table_prefix'])) {
 $camp_mod = gaz_dbi_get_row($table_prefix.'_module','name', 'camp');
 if ($camp_mod){
 	// aggiungo una voce al menù_module (2°livello)
-	gaz_dbi_query("INSERT INTO `gaz_menu_module` SELECT MAX(id)+1 , ".$camp_mod['id'].", 'admin_sian.php', '', '', 7, '', 7  FROM `gaz_menu_module`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_module` SELECT MAX(id)+1 , ".$camp_mod['id'].", 'sian.php', '', '', 7, '', 7  FROM `gaz_menu_module`");
 	// aggiungo le nuove voci di menù di 3° livello
-	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='admin_sian.php'), 'rec_stocc.php', '', '', 17, '', 1  FROM `gaz_menu_script`");
-	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='admin_sian.php'), 'admin_sian_files.php', '', '', 19, '', 5  FROM `gaz_menu_script`");
-	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='admin_sian.php'), 'stabilim.php', '', '', 18, '', 10  FROM `gaz_menu_script`");
-	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='admin_sian.php'), 'camp_anagra.php', '', '', 20, '', 15  FROM `gaz_menu_script`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='sian.php'), 'rec_stocc.php', '', '', 17, '', 1  FROM `gaz_menu_script`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='sian.php'), 'admin_sian_files.php', '', '', 19, '', 5  FROM `gaz_menu_script`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='sian.php'), 'stabilim.php', '', '', 18, '', 10  FROM `gaz_menu_script`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='sian.php'), 'camp_anagra.php', '', '', 20, '', 15  FROM `gaz_menu_script`");
 	echo "<p>Ho modificato il menù del modulo <b>Registro di campagna</b></p>";
 }
 
