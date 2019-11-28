@@ -643,7 +643,7 @@ $strScript = array("admin_client.php" =>
         'periodic_reassessment' => 'Adeguamento annuale',
         'bank' => 'Banca d\'appoggio',
         'payment_method' => 'Metodo di pagamento',
-        'periodicity' => 'Periodicit&agrave; ',
+        'periodicity' => 'Periodicità ',
         'periodicity_value' => array(1 => 'mensile', 2 => 'bimestrale', 3 => 'trimestrale', 4 => 'quadrimestrale', 6 => 'semestrale', 12 => 'annuale'),
         'tacit_renewal' => 'Tacito rinnovo',
         'current_fee' => 'Canone corrente',
