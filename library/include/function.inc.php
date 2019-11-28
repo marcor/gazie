@@ -2707,7 +2707,7 @@ class Schedule {
         $sqlquery = "SELECT " . $gTables['tesmov'] . ".datreg ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave
             FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] .
                 " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
-            WHERE codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon = $clfoco AND datreg IN (SELECT MIN(datreg) FROM " . $gTables['tesmov'] . ")) ORDER BY datreg ASC";
+            WHERE (codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE') OR (caucon = 'APE' AND codcon = $clfoco AND datreg >= (SELECT MIN(datreg) FROM " . $gTables['tesmov'] . ")) ORDER BY datreg ASC";
         $rs = gaz_dbi_query($sqlquery);
         $date_ctrl = new DateTime($date);
         $acc = 0.00;
