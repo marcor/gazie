@@ -198,6 +198,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						If ($row['cod_operazione']==3){// Etichettatura
 							$type_array[6]=str_pad("L2", 10); // codice operazione
 							$type_array[38]="X"; // Flag NON etichettato
+							$type_array[15]=sprintf ("%02d",$row5['categoria']);// categoria olio fine operazione
 							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
 							$type_array[25]=sprintf ("%013d",$quantilitri); // quantità scarico olio confezionato in litri
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione

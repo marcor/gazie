@@ -32,13 +32,13 @@ $admin_aziend = checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
-if (isset ($_POST['confirm'])){ // cancello il file dalla cartella di GAzie
+if ( isset($_POST['confirm'])){ // cancello il file dalla cartella di GAzie
 	$filetodelete="../../data/files/".$admin_aziend['codice']."/sian/".$_POST['confirm'];
 	if (substr($_POST['confirm'],-12) == "OPERREGI.txt"){
 		unlink ($filetodelete);
 		unset ($_POST,$form);
 	}
-	if (substr($_POST['confirm'],-12) == "ANAGFCTO.txt"){
+	if (isset($_POST['confirm']) AND substr($_POST['confirm'],-12) == "ANAGFCTO.txt"){
 		$fileContent=@file_get_contents($filetodelete); // prendo il contenuto del file
 		$filerecord=str_split ($fileContent,363);
 		foreach ($filerecord as $record) { // prendo l'ID anagrafica corrispondente 
