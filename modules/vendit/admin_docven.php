@@ -403,6 +403,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$form['in_identifier'] = $form['rows'][$k_row]['identifier'];
 					$form['in_cod_operazione'] = $form['rows'][$k_row]['cod_operazione'];
 					$form['in_recip_stocc'] = $form['rows'][$k_row]['recip_stocc'];
+					$form['in_recip_stocc_destin'] = $form['rows'][$k_row]['recip_stocc_destin'];
                     $form['in_status'] = "UPDROW" . $k_row;
                     $form['cosear'] = $form['rows'][$k_row]['codart'];
                     //}
@@ -1200,7 +1201,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$form['rows'][$next_row]['identifier'] = "";
 			$form['rows'][$next_row]['cod_operazione'] = 11;
 			$form['rows'][$next_row]['recip_stocc'] = "";
-			$form['rows'][$next_row]['recip_stocc'] = "";
+			$form['rows'][$next_row]['recip_stocc_destin'] = "";
             $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
 			if ($form['in_tiprig']<=1 || $form['in_tiprig']==90){
 				$form['RiferimentoNumeroLinea'][$next_row+1] = substr($form['in_descri'],0,20);
@@ -2417,7 +2418,7 @@ foreach ($form['rows'] as $k => $v) {
 	'<input type="hidden" value="' . $v['identifier'] . '" name="rows[' . $k . '][identifier]" />';
 	'<input type="hidden" value="' . $v['cod_operazione'] . '" name="rows[' . $k . '][cod_operazione]" />';
 	'<input type="hidden" value="' . $v['recip_stocc'] . '" name="rows[' . $k . '][recip_stocc]" />';
-	'<input type="hidden" value="' . $v['recip_stocc'] . '" name="rows[' . $k . '][recip_stocc]" />';
+	'<input type="hidden" value="' . $v['recip_stocc_destin'] . '" name="rows[' . $k . '][recip_stocc_destin]" />';
     switch ($v['tiprig']) {
         case "0":
             echo '<tr>';
@@ -2555,10 +2556,10 @@ foreach ($form['rows'] as $k => $v) {
 					
 				echo '</div>';
 			} else {
-				echo ' <input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+				echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
-				';
+					';
 			}
 			// fine apro SIAN
 
