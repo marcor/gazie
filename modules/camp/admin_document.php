@@ -93,7 +93,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } elseif (isset($_POST['Return'])) { // torno indietro
           header("Location: ".$form['ritorno']);
           exit;
-    }
+    } elseif (isset($_POST['Delete'])) { // cancello il documento
+		gaz_dbi_del_row($gTables['files'], 'id_doc',$form['id_doc']);
+		header("Location: ".$form['ritorno']);
+        exit;
+	}
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['files'], 'id_doc',intval($_GET['id_doc']));
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
@@ -161,8 +165,8 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
 echo "\t </td>\n";
 echo "\t<td  class=\"FacetDataTD\">\n";
-echo '<input name="none" type="submit" value="" disabled>';
 echo '<input name="Return" type="submit" value="'.$script_transl['return'].'!">';
+echo '<input name="Delete" type="submit" value="Cancella !">';
 echo "\t </td>\n";
 echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
 echo '<input name="Submit" type="submit" value="'.strtoupper($script_transl[$toDo]).'!">';
