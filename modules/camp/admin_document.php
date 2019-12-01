@@ -39,9 +39,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if (isset($_POST['Submit'])) { // conferma tutto
 		if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
 			preg_match("/\.([^\.]+)$/", $_FILES['userfile']['name'], $matches);
-			if ($form['extension']!=$matches[1] ) { // se è stata cambiata l'estensione
-				$form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
-			}
+			
+			$form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
+			
 			$form['extension']=$matches[1];
 			//print $_FILES['userfile']['type'];
 			if ( $_FILES['userfile']['type'] == "image/png" ||

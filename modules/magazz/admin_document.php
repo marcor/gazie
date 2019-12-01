@@ -36,50 +36,50 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form=gaz_dbi_parse_post('files');
     $form['ritorno'] = $_POST['ritorno'];
     if (isset($_POST['Submit'])) { // conferma tutto
-       if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
-        preg_match("/\.([^\.]+)$/", $_FILES['userfile']['name'], $matches);
-        if ($form['extension']!=$matches[1] ) { // se è stata cambiata l'estensione
-            $form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
-        }
-        $form['extension']=$matches[1];
-        print $_FILES['userfile']['type'];
-        if ( $_FILES['userfile']['type'] == "image/png" ||
-             $_FILES['userfile']['type'] == "image/x-png" ||
-             $_FILES['userfile']['type'] == "application/pdf" ||
-             $_FILES['userfile']['type'] == "image/pjpeg" ||
-             $_FILES['userfile']['type'] == "image/jpeg" ||
-             $_FILES['userfile']['type'] == "text/richtext" ||
-             $_FILES['userfile']['type'] == "text/plain" ||
-             $_FILES['userfile']['type'] == "application/vnd.oasis.opendocument.text" ||
-             $_FILES['userfile']['type'] == "application/msword" ||
-             $_FILES['userfile']['type'] == "image/tiff" ||
-             $_FILES['userfile']['type'] == "application/doc" ||
-             $_FILES['userfile']['type'] == "application/rtf" || (
-             substr($_FILES['userfile']['type'],0,11) == "application" && ($form['extension']=='odt' ||
+		if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
+			preg_match("/\.([^\.]+)$/", $_FILES['userfile']['name'], $matches);
+			
+			$form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
+			
+			$form['extension']=$matches[1];
+			//print $_FILES['userfile']['type'];
+			if ( $_FILES['userfile']['type'] == "image/png" ||
+				$_FILES['userfile']['type'] == "image/x-png" ||
+				$_FILES['userfile']['type'] == "application/pdf" ||
+				$_FILES['userfile']['type'] == "image/pjpeg" ||
+				$_FILES['userfile']['type'] == "image/jpeg" ||
+				$_FILES['userfile']['type'] == "text/richtext" ||
+				$_FILES['userfile']['type'] == "text/plain" ||
+				$_FILES['userfile']['type'] == "application/vnd.oasis.opendocument.text" ||
+				$_FILES['userfile']['type'] == "application/msword" ||
+				$_FILES['userfile']['type'] == "image/tiff" ||
+				$_FILES['userfile']['type'] == "application/doc" ||
+				$_FILES['userfile']['type'] == "application/rtf" || (
+				substr($_FILES['userfile']['type'],0,11) == "application" && ($form['extension']=='odt' ||
                                                                            $form['extension']=='doc' ||
                                                                            $form['extension']=='docx'||
                                                                            $form['extension']=='pdf'))) {
            // vado avanti...
-        } else {
-           $msg .= "0+";
-        }
-        // controllo che il file non sia piu' grande di 10Mb
-        if ( $_FILES['userfile']['size'] > 10485760 ){
-            $msg .= "1+";
-        } elseif($_FILES['userfile']['size'] == 0)  {
-           $msg .= "2+";
-        }
-       } else {
+			} else {
+				$msg .= "0+";
+			}
+			// controllo che il file non sia piu' grande di 10Mb
+			if ( $_FILES['userfile']['size'] > 10485760 ){
+				$msg .= "1+";
+			} elseif($_FILES['userfile']['size'] == 0)  {
+				$msg .= "2+";
+			}
+		} else {
            $msg .= "3+";
-       }
-       if (empty($msg)) { // nessun errore
+		}
+		if (empty($msg)) { // nessun errore
           // aggiorno il solo db
           if ($toDo == 'insert') {
             $form['table_name_ref']= 'artico';
             gaz_dbi_table_insert('files',$form);
             //recupero l'id assegnato dall'inserimento
             $form['id_doc']= gaz_dbi_last_id();
-          } elseif ($toDo == 'update') {
+          } elseif ($toDo == 'update') { 
             gaz_dbi_table_update('files',array('id_doc',$form['id_doc']),$form);
           }
           // aggiorno il filesystem solo se è stato selezionato un nuovo file

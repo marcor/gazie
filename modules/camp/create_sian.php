@@ -32,15 +32,15 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     gaz_set_time_limit (0);
 }
 
-if ($handle = opendir('../../data/files/1/sian/')){
+$admin_aziend=checkAdmin();
+$id_sian = gaz_dbi_get_row($gTables['company_config'], 'var', 'id_sian');
+
+if ($handle = opendir('../../data/files/'.$admin_aziend['codice'].'/sian/')){
    while (false !== ($file = readdir($handle))){
        $prevfiles[]=$file;
    }
    closedir($handle);
 }
-
-$admin_aziend=checkAdmin();
-$id_sian = gaz_dbi_get_row($gTables['company_config'], 'var', 'id_sian');
 
 if (!isset ($id_sian) or intval($id_sian['val']==0)){ 
 echo "errore manca id sian. Per utilizzare questa gestione file SIAN è necessario inserire il proprio codice identificativo in configurazione azienda";
