@@ -304,12 +304,17 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
                 }
             }
-            /** ENRICO FEDELE */
+			/** ENRICO FEDELE */
             /* Niente redirect se sono in finestra modale */
             if ($modal === false) {
-                header("Location: " . $form['ritorno']);
+				if ($toDo == 'insert') {
+					$_SESSION['ok_ins']=$form['codice'].' - '.$form['descri'];
+					header("Location: ../../modules/camp/admin_artico.php?Update&codice=".$form['codice']);
+				}else{
+					header("Location: ../../modules/camp/report_artico.php");
+				}
             } else {
-                header("Location: ../../modules/magazz/admin_artico.php?mode=modal&ok_insert=1");
+                header("Location: ../../modules/camp/admin_artico.php?mode=modal&ok_insert=1");
             }
             /** ENRICO FEDELE */
             exit;
@@ -464,7 +469,7 @@ if ($modal === false) {
 } else {
     $script = basename($_SERVER['PHP_SELF']);
     require("../../language/" . $admin_aziend['lang'] . "/menu.inc.php");
-    require("../../modules/magazz/lang." . $admin_aziend['lang'] . ".php");
+    require("../../modules/camp/lang." . $admin_aziend['lang'] . ".php");
     if (isset($script)) { // se è stato tradotto lo script lo ritorno al chiamante
         $script_transl = $strScript[$script];
     }
@@ -524,10 +529,32 @@ if ($modal_ok_insert === true) {
     /** ENRICO FEDELE */
     /* Se sono in finestra modale, non visualizzo questo titolo */
     $changesubmit = '';
-   
+	if ($modal === false) {
+        ?>
+    		<!--+ DC - 06/02/2019 -->
+    		<script type="text/javascript" src="../../library/IER/IERincludeExcludeRows.js"></script>
+
+    		<input type="hidden" id="IERincludeExcludeRowsInput" name="IERincludeExcludeRowsInput" />
+
+        <div id="IERenableIncludeExcludeRows" title="Personalizza videata" onclick="enableIncludeExcludeRows()"></div>
+  			<a target="_blank" href="../wiki/099 - Interfaccia generale/99.. Personalizzare una form a run-time (lato utente).md"><div id="IERhelpIncludeExcludeRows" title="Aiuto"></div></a>
+  			<div id="IERsaveIncludeExcludeRows" title="Nessuna modifica fatta" onclick="saveIncludeExcludeRows()"></div>
+      	<div id="IERresetIncludeExcludeRows" title="Ripristina"></div>
+        <!--- DC - 06/02/2019 -->
+    		<?php
+    }   
     echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
     if (count($msg['err']) > 0) { // ho un errore
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+    }
+	if (isset($_SESSION['ok_ins'])){
+        $gForm->toast('L\'articolo ' . $_SESSION['ok_ins'].' è stato inserito con successo, sotto per modificarlo. Oppure puoi: <a class="btn btn-info" href="admin_artico.php?Insert">Inserire uno nuovo articolo</a> ' , 'alert-last-row', 'alert-success');
+		unset($_SESSION['ok_ins']);
+	}
+	if ($toDo == 'insert') {
+        echo '<div class="text-center"><b>' . $script_transl['ins_this'] . '</b></div>';
+    } else {
+        echo '<div class="text-center"><b>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</b></div>';
     }
     ?>
 <!-- Antonio Germani inizio script autocompletamento dalla tabella mysql fitofarmaci	-->
