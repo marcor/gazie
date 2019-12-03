@@ -309,6 +309,9 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						} else { //se sono olive
 							$type_array[10]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
 						}
+						if ($row['cod_operazione']==0) { // Vendita a consumatore finale
+							$row['confezione']="";							
+						}
 						if ($row['cod_operazione']==1 OR $row['cod_operazione']==2 OR $row['cod_operazione']==3 OR $row['cod_operazione']==5 OR $row['cod_operazione']==10){
 							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/
 						}
