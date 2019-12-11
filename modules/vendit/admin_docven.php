@@ -2535,14 +2535,14 @@ foreach ($form['rows'] as $k => $v) {
 				?>	
 				<div class="container-fluid">					
 					<div class="row">
-						<label for="good_or_service" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN"; ?></label>
+						<label for="cod_operazine" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN"; ?></label>
 						<?php
 						$gForm->variousSelect('rows[' . $k . '][cod_operazione]', $script_transl['cod_operaz_value'], $form['rows'][$k]['cod_operazione'], "col-sm-6", false, '', false)
 						?>
 					</div>
 					<?php if ($art['confezione']==0){ ?>
 					<div class="row">
-						<label for="good_or_service" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
+						<label for="recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
 						<?php
 						$gForm->selectFromDB('camp_recip_stocc', 'rows[' . $k . '][recip_stocc]' ,'cod_silos', $form['rows'][$k]['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
 						?>
