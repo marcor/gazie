@@ -393,10 +393,10 @@ for ($i = 1; $i <= $p_max; $i++) {
             $pdf->Cell(12, 4, $v['operation_type'], 'LTB', 0, 'C', 0, '', 1);
             $pdf->Cell(10, 4, 'cod ' . $v['codiva'], 1, 0, 'C');
             $pdf->Cell(36, 4, $v['desiva'], 1, 0, 'L', 0, '', 1);
-            $pdf->Cell(17, 4, gaz_format_number($v['imponi']), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(17, 4, gaz_format_number($imponi), 1, 0, 'R', 0, '', 1);
             $pdf->Cell(10, 4, floatval($v['periva']) . '%', 1, 0, 'C', 0, '', 1);
-            $pdf->Cell(15, 4, gaz_format_number($v['impost']), 1, 0, 'R', 0, '', 1);
-            $pdf->Cell(17, 4, gaz_format_number($v['impost'] + $v['imponi']), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(15, 4, gaz_format_number($impost), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(17, 4, gaz_format_number($impost + $imponi), 1, 0, 'R', 0, '', 1);
 			if($v['liq_class']=='warning') {
 	            $pdf->SetFillColor(255, 255, 102);
 				$pdf->Cell(17, 4, $v['liq_val'], 1, 1, 'R', 1, '', 1);
@@ -425,10 +425,10 @@ for ($i = 1; $i <= $p_max; $i++) {
             $pdf->Cell(68, 4, '', 'L');
             $pdf->Cell(10, 4, 'cod ' . $v['codiva'], 1, 0, 'C');
             $pdf->Cell(36, 4, $v['desiva'], 1, 0, 'L', 0, '', 1, 0, '', 1);
-            $pdf->Cell(17, 4, gaz_format_number($v['imponi']), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(17, 4, gaz_format_number($imponi), 1, 0, 'R', 0, '', 1);
             $pdf->Cell(10, 4, floatval($v['periva']) . '%', 1, 0, 'C', 0, '', 1);
-            $pdf->Cell(15, 4, gaz_format_number($v['impost']), 1, 0, 'R', 0, '', 1);
-            $pdf->Cell(17, 4, gaz_format_number($v['impost'] + $v['imponi']), 1, 1, 'R', 0, '', 1);
+            $pdf->Cell(15, 4, gaz_format_number($impost), 1, 0, 'R', 0, '', 1);
+            $pdf->Cell(17, 4, gaz_format_number($impost + $imponi), 1, 1, 'R', 0, '', 1);
             $topCarry[1]['name'] = gaz_format_number($totimponi) . ' ';
             $botCarry[1]['name'] = gaz_format_number($totimponi) . ' ';
             $topCarry[2]['name'] = gaz_format_number($totimpost) . ' ';
