@@ -54,7 +54,7 @@ $sortable_headers = array(
     "Numero" => "numfat",
     "Data" => "datfat",
     "Fornitore" => "ragso1",
-    "Status" => "",
+    "Info" => "",
     "Stampa" => "",
     "Cancella" => ""
 );
@@ -155,11 +155,20 @@ while ($last_doc = gaz_dbi_fetch_array($rs_last_doc)) {
 
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
+$paymov = new Schedule(); 
 while ($row = gaz_dbi_fetch_array($result)) {
     // faccio il check per vedere se ci sono righi da trasferire in contabilità di magazzino
     $ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=". $row['id_tes']." AND  LENGTH(TRIM(codart))>=1 AND tiprig=0 AND id_mag=0");
     $check = gaz_dbi_fetch_array($ck);
     // fine check magazzino
+	// se contabilizzato trovo l'eventuale stato dei pagamenti 
+	$paymov_status =false;
+	$tesmov=gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $row['id_con']);
+	$paymov->getStatus(substr($tesmov['datdoc'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
+	$paymov_status = $paymov->Status;
+	// riprendo il rigo  della contabilità con il cliente per avere l'importo 
+	$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
+ 
     $y = substr($row['datfat'], 0, 4);
     if ($row["tipdoc"] == 'AFA') {
         $tipodoc = "Fattura";
@@ -195,9 +204,12 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<td>" . $row["numfat"] . " &nbsp;</td>";
     echo "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
     echo "<td><a title=\"Dettagli fornitore\" href=\"report_fornit.php?nome=" . htmlspecialchars($anagra["ragso1"]) . "\">" . $anagra["ragso1"] . ((empty($anagra["ragso2"]))?"":" ".$anagra["ragso2"]) . "</a>&nbsp;</td>";
+// Colonna movimenti (info)
     echo "<td align=\"center\">";
     if ($row["id_con"] > 0) {
-        echo "<a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont. n." . $row["id_con"] . "</a>";
+        echo " <a class=\"btn btn-xs btn-".$paymov_status['style']."\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile " . $row["id_con"] . " generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\"> <i class=\"glyphicon glyphicon-euro\"></i> " . $importo["import"] . "</a> ";
+		
+       // echo "<a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont. n." . $row["id_con"] . "</a>";
     } else {
         echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
     }

@@ -1445,7 +1445,7 @@ CREATE TABLE IF NOT EXISTS `gaz_001fae_flux` (
   `received_date` datetime NOT NULL,
   `delivery_date` datetime NOT NULL,
   `filename_son` varchar(30) NOT NULL,
-  `id_SDI` int(20) NOT NULL DEFAULT '0',
+  `id_SDI` varchar(20) NOT NULL,
   `filename_ret` varchar(30) NOT NULL,
   `mail_id` varchar(50) NOT NULL,
   `data` blob NOT NULL,
@@ -2964,7 +2964,7 @@ CREATE TABLE IF NOT EXISTS `gaz_config` (
 
 INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `show`, `last_modified`) VALUES
 (1, 'Giorni di validita\' della password', 'giornipass', '90', '1', 1, '2016-01-26 02:09:29'),
-(2, 'Versione archivi', 'archive', '124', '2', 0, '2019-11-18 12:19:13'),
+(2, 'Versione archivi', 'archive', '125', '2', 0, '2019-11-18 12:19:13'),
 (3, 'Ultimo script PHP di aggiornamento eseguito', 'last_update_exec', '412', '3', 1, '2016-01-26 02:09:29'),
 (4, 'La lunghezza minima della password', 'psw_min_length', '8', '4', 1, '2016-01-26 02:09:29'),
 (5, 'Check Update', 'update_url', '0', '5', 0, '2016-01-26 02:09:29'),
