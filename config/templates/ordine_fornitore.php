@@ -173,6 +173,9 @@ class OrdineFornitore extends Template
                     $this->Cell(20,6,gaz_format_number($rigo['prelis']),1,0,'R');
                     $this->Cell(12,6,'',1,1,'R');
                     break;
+                case "6":
+                    $this->writeHtmlCell(188,6,10,$this->GetY(),$rigo['descri'],1,1);
+                    break;
                 case "50":
 					// accumulo il file da allegare e lo indico al posto del codice articolo
 					$this->docVars->id_rig=$rigo['id_rig'];
