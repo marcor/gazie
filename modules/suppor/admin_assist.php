@@ -23,29 +23,29 @@
  --------------------------------------------------------------------------
 */
 
-require("../../library/include/datlib.inc.php");
-$admin_aziend=checkAdmin();
+require('../../library/include/datlib.inc.php');
+$admin_aziend = checkAdmin();
 
 $msg = '';
 
-if (isset($_POST['Update']) || isset($_GET['Update'])) {    
+if (isset($_POST['Update']) || isset($_GET['Update'])) {
 	$toDo = 'update';
-} else {    
+} else {
 	$toDo = 'insert';
 }
 
-if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso	
+if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo accesso	
 	$form=gaz_dbi_parse_post('assist');
 	$anagrafica = new Anagrafica();
-        $cliente = $anagrafica->getPartner($_POST['clfoco']);
+	$cliente = $anagrafica->getPartner($_POST['clfoco']);
 	if ( isset($_POST['hidden_req']) ) $form['hidden_req'] = $_POST['hidden_req'];
-        // ...e della testata
-        foreach($_POST['search'] as $k=>$v){
-            $form['search'][$k]=$v;
-        }
+	// ...e della testata
+	foreach($_POST['search'] as $k=>$v){
+		$form['search'][$k]=$v;
+	}
 	$form['codice'] = trim($form['codice']);
 	$form['tipo'] = 'ASS';
-        $form['id'] = $_POST['id'];
+	$form['id'] = $_POST['id'];
 	$form['descrizione'] = $_POST['descrizione'];
 	$form['soluzione'] = $_POST['soluzione'];
 	$form['clfoco'] = $_POST['clfoco'];
@@ -55,89 +55,89 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['ora_inizio'] = $_POST['ora_inizio'];
 	$form['ora_fine'] = $_POST['ora_fine'];
 	$form['note'] = $_POST['note'];
-	$form['utente'] = $_SESSION["user_name"];
-    
+	$form['utente'] = $_SESSION['user_name'];
+
 	$form['rows'] = array();	
-        if (isset($_POST['Submit'])) {
-		// conferma tutto       
+	if (isset($_POST['Submit'])) {
+		// conferma tutto
 		if ($toDo == 'update') {
-			// controlli in caso di modifica         
+			// controlli in caso di modifica
 			if ($form['codice'] != $form['ref_code']) { 
-				// se sto modificando il codice originario          
-				// controllo che l'articolo ci sia gia'          
+				// se sto modificando il codice originario
+				// controllo che l'articolo ci sia gia'
 				$rs_assist = gaz_dbi_dyn_query('codice', $gTables['assist'], "codice = ".$form['codice'],"codice DESC",0,1);
 				$rs = gaz_dbi_fetch_array($rs_assist);
 				if ($rs) { 
-					$msg .= "0+";
-				}         
-			}       
-		} else {          
-			// controllo che l'articolo ci sia gia'          
+					$msg .= '0+';
+				}
+			}
+		} else {
+			// controllo che l'articolo ci sia gia'
 			$rs_articolo = gaz_dbi_dyn_query('codice', $gTables['assist'], "codice = ".$form['codice'],"codice DESC",0,1);
 			$rs = gaz_dbi_fetch_array($rs_articolo);
-			if ($rs) {             
-				$msg .= "2+";
+			if ($rs) {
+				$msg .= '2+';
 			}
-		}    
-		$msg .= (empty($form["codice"]) ? "5+" : '');
-		$msg .= (empty($form["oggetto"]) ? "6+" : '');
+		}
+		$msg .= (empty($form['codice']) ? '5+' : '');
+		$msg .= (empty($form['oggetto']) ? '6+' : '');
 		if (empty($msg)) { 
-                    if (preg_match("/^id_([0-9]+)$/",$form['clfoco'],$match)) {
-                        $new_clfoco = $anagrafica->getPartnerData($match[1],1);
-                        $form['clfoco']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli']);
-                    }
-                    // aggiorno il db          
-                    if ($toDo == 'insert') {
-                        if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
-                    	gaz_dbi_table_insert('assist',$form);
-                    } elseif ($toDo == 'update') {             
-                        if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
-                        gaz_dbi_table_update('assist',$form['ref_code'],$form);
-                    }          
-                    //header("Location: ".$form['ritorno']);
-                    header("Location: associa_install.php?id=".$form['codice']."&clfoco=".$form['clfoco']."&ritorno=".$form['ritorno']);
-                    exit;
-		}    
-	} elseif (isset($_POST['Return'])) { // torno indietro          
-            header("Location: ".$form['ritorno']);
-            exit;
+			if (preg_match("/^id_([0-9]+)$/",$form['clfoco'],$match)) {
+				$new_clfoco = $anagrafica->getPartnerData($match[1],1);
+				$form['clfoco']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli']);
+			}
+			// aggiorno il db
+			if ($toDo == 'insert') {
+				if ( $form['clfoco']==0 ) $form['clfoco'] = $admin_aziend['mascli'] . '000001';
+				gaz_dbi_table_insert('assist',$form);
+			} elseif ($toDo == 'update') {
+				if ( $form['clfoco']==0 ) $form['clfoco'] = $admin_aziend['mascli'] . '000001';
+				gaz_dbi_table_update('assist',$form['ref_code'],$form);
+			}
+			//header('Location: '.$form['ritorno']);
+			header('Location: associa_install.php?id='.$form['codice'].'&clfoco='.$form['clfoco'].'&ritorno='.$form['ritorno']);
+			exit;
+		}
+	} elseif (isset($_POST['Return'])) { // torno indietro
+		header('Location: '.$form['ritorno']);
+		exit;
 	}
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { 
-	//se e' il primo accesso per UPDATE    
-        $assist = gaz_dbi_get_row($gTables['assist'],"codice",$_GET['codice']);
+	//se e' il primo accesso per UPDATE
+	$assist = gaz_dbi_get_row($gTables['assist'],"codice",$_GET['codice']);
 	$anagrafica = new Anagrafica();
-        $cliente = $anagrafica->getPartner($assist['clfoco']);
+	$cliente = $anagrafica->getPartner($assist['clfoco']);
 	$form = gaz_dbi_get_row($gTables['assist'], 'codice', $_GET['codice']);
 	$form['search']['clfoco']=substr($cliente['ragso1'],0,10);
-        $form['ritorno']="../../modules/suppor/report_assist.php";
-        $form['ref_code']=$form['codice'];
+	$form['ritorno']='../../modules/suppor/report_assist.php';
+	$form['ref_code']=$form['codice'];
 } else { 
-	//se e' il primo accesso per INSERT   
+	//se e' il primo accesso per INSERT
 	$form=gaz_dbi_fields('assist');
 	$rs_ultima_ass = gaz_dbi_dyn_query("codice", $gTables['assist'],$where,"codice desc");
 	$ultimo_documento = gaz_dbi_fetch_array($rs_ultima_ass);
-	// se e' il primo documento dell'anno, resetto il contatore   
-	if ($ultimo_documento) {      
+	// se e' il primo documento dell'anno, resetto il contatore
+	if ($ultimo_documento) {
 		$form['codice'] = $ultimo_documento['codice'] + 1;
-	} else {      
+	} else {
 		$form['codice'] = 1;
-	}  
-        $rs_ultimo_tec = gaz_dbi_dyn_query("codice,tecnico", $gTables['assist'],"tecnico<>''","codice desc");
+	}
+	$rs_ultimo_tec = gaz_dbi_dyn_query("codice,tecnico", $gTables['assist'],"tecnico<>''","codice desc");
 	$ultimo_tecnico = gaz_dbi_fetch_array($rs_ultimo_tec);
-        $form['tecnico'] = $ultimo_tecnico['tecnico']; 
+	$form['tecnico'] = $ultimo_tecnico['tecnico']; 
 	$form['tipo'] = 'ASS';	
-        $form['utente'] = $_SESSION["user_name"];
-	$form['data'] = date("Y-m-d");
-	$form['ore'] = "0.00";
+	$form['utente'] = $_SESSION['user_name'];
+	$form['data'] = date('Y-m-d');
+	$form['ore'] = '0.00';
 	$form['stato'] = 'aperto';
 	$form['search']['clfoco']='';
-        $form['ritorno']="../../modules/suppor/report_assist.php";
+	$form['ritorno']='../../modules/suppor/report_assist.php';
 	$form['ref_code']='';
 }
 
 
 // disegno maschera di inserimento modifica
-require("../../library/include/header.php");
+require('../../library/include/header.php');
 $script_transl = HeadMain();
 
 if ($toDo == 'insert') echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>";
@@ -175,18 +175,18 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['tecnico']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-            <select name="ctecnico" onchange="updateInputTecnico(this.value)">
+		<select name="ctecnico" onchange="updateInputTecnico(this.value)">
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
-			while ($tecnici = gaz_dbi_fetch_array($result)) {				
-					if ( $form['tecnico'] == $tecnici["tecnico"] ) $selected = "selected"; 
-					else $selected = "";
-					echo "<option value=\"".$tecnici["tecnico"]."\" ".$selected.">".$tecnici["tecnico"]."</option>";
+			while ($tecnici = gaz_dbi_fetch_array($result)) {
+					if ( $form['tecnico'] == $tecnici['tecnico'] ) $selected = 'selected'; 
+					else $selected = '';
+					echo "<option value=\"".$tecnici['tecnico']."\" ".$selected.">".$tecnici['tecnico']."</option>";
 			}
 			?>
-            </select> 
-        <input type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>       
-        <button id="toggleTec" type="button">Altro</button>
+		</select> 
+		<input type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>
+		<button id="toggleTec" type="button">Altro</button>
 	</td>
 </tr>
 <tr>
@@ -219,15 +219,15 @@ $select_cliente = new selectPartner('clfoco');
 		ora inizio : <select name="ora_inizio" onchange="calculateTime()">
 		<?php
 			//$form['ora_inizio']
-			$start = "08:00";
-			$end = "19:30";
+			$start = '08:00';
+			$end = '19:30';
 			$tStart = strtotime($start);
 			$tEnd = strtotime($end);
 			$tNow = $tStart;
 			while($tNow <= $tEnd){
-				if ( date("H:i", $tNow)==$form['ora_inizio'] ) $selected = "selected";
-				else $selected="";
-				echo "<option value=\"".date("H:i",$tNow)."\" ".$selected.">".date("H:i",$tNow)."</option>";
+				if ( date('H:i', $tNow)==$form['ora_inizio'] ) $selected = 'selected';
+				else $selected='';
+				echo "<option value=\"".date('H:i',$tNow)."\" ".$selected.">".date('H:i',$tNow)."</option>";
 				$tNow = strtotime('+30 minutes',$tNow);
 			}
 		?>
@@ -236,14 +236,14 @@ $select_cliente = new selectPartner('clfoco');
 		<?php
 			$tNow = $tStart;
 			while($tNow <= $tEnd){
-				if ( date("H:i", $tNow)==$form['ora_fine'] ) $selected = "selected";
-				else $selected="";
-				echo "<option value=\"".date("H:i",$tNow)."\" ".$selected.">".date("H:i",$tNow)."</option>";
+				if ( date('H:i', $tNow)==$form['ora_fine'] ) $selected = 'selected';
+				else $selected='';
+				echo "<option value=\"".date('H:i',$tNow)."\" ".$selected.">".date('H:i',$tNow)."</option>";
 				$tNow = strtotime('+30 minutes',$tNow);
 			}
 		?>
 		</select>&nbsp;
-		Totale : <input size="16" type="text" id="ore" name="ore" value="<?php echo $form['ore']; ?>" align="right" maxlength="255" size="71"/>
+		Totale : <input size="16" type="text" id="ore" name="ore" value="<?php echo $form['ore']; ?>" align="right" maxlength="255" size="71" />
 	</td>
 </tr>
 <tr>
@@ -257,27 +257,27 @@ $select_cliente = new selectPartner('clfoco');
 	<td colspan="2" class="FacetDataTD">
 		<select name="cstato" onchange="updateInputStato(this.value)">
 			<option value="aperto" <?php if ( $form['stato']=='aperto') echo 'selected'; ?>>aperto</option>";
-                        <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo 'selected'; ?>>chiuso</option>";
+			<option value="chiuso" <?php if ( $form['stato']=='chiuso') echo 'selected'; ?>>chiuso</option>";
 			<option value="contratto" <?php if ( $form['stato']=='contratto') echo 'selected'; ?>>contratto</option>";
-                        <?php
+			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato,".$gTables['assist'].".tipo", $gTables['assist']," stato!='aperto' and stato!='chiuso' and stato != 'contratto' and tipo='ASS'", "stato", "0", "9999");
 			while ($stati = gaz_dbi_fetch_array($result)) {				
-                            if ( $form['stato'] == $stati['stato'] ) $selected = "selected"; 
-                            else $selected = "";
-                            echo "<option value='".$stati['stato']."' ".$selected.">".$stati['stato']."</option>";
+							if ( $form['stato'] == $stati['stato'] ) $selected = 'selected'; 
+							else $selected = '';
+							echo "<option value='".$stati['stato']."' ".$selected.">".$stati['stato']."</option>";
 			}
 			?>
 		</select> 
 		<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
-        <button id="toggleSta" type="button">Altro</button>
+		<button id="toggleSta" type="button">Altro</button>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['sqn']; ?></td>
-	<td  class="FacetDataTD">
+	<td class="FacetDataTD">
 		<input name="Return" type="submit" value="<?php echo $script_transl['return']; ?>!">
 	</td>
-	<td  class="FacetDataTD" align="right">
+	<td class="FacetDataTD" align="right">
 		<input name="Submit" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
 	</td>
 </tr>
@@ -287,44 +287,44 @@ $select_cliente = new selectPartner('clfoco');
 ?>
 </form>
 <?php
-require("../../library/include/footer.php");
+require('../../library/include/footer.php');
 ?>
 <script src="../../js/custom/autocomplete.js"></script>
 <script type="text/javascript">
 function updateInputStato(ish){
-    document.getElementById("stato").value = ish;
+	document.getElementById("stato").value = ish;
 }
 function updateInputTecnico(ish){
-    document.getElementById("tecnico").value = ish;
+	document.getElementById("tecnico").value = ish;
 }
 function calculateTime() {
-        var minend = parseInt($("select[name='ora_fine']").val().split(':')[1],10);
-		var minstart = parseInt($("select[name='ora_inizio']").val().split(':')[1],10);
-		var hstart = parseInt($("select[name='ora_inizio']").val().split(':')[0],10);
-		var hend   = parseInt($("select[name='ora_fine']").val().split(':')[0],10);
-		
-		var min = minend - minstart;
-		if ( min<=-1 ) {
-			min = "30";
-			hend -= 1;
-		}
-		
-		
-		if ( hstart <= hend ) {
-			var hour = hend - hstart;
-		} else {
-			var hour = (hend+24)-hstart;
-		}
-		if ( min == "30" ) min = "50";
-		document.getElementById('ore').value = hour+"."+min;
-    }
+	var minend = parseInt($("select[name='ora_fine']").val().split(':')[1],10);
+	var minstart = parseInt($("select[name='ora_inizio']").val().split(':')[1],10);
+	var hstart = parseInt($("select[name='ora_inizio']").val().split(':')[0],10);
+	var hend = parseInt($("select[name='ora_fine']").val().split(':')[0],10);
+	
+	var min = minend - minstart;
+	if ( min<=-1 ) {
+		min = "30";
+		hend -= 1;
+	}
+	
+	
+	if ( hstart <= hend ) {
+		var hour = hend - hstart;
+	} else {
+		var hour = (hend+24)-hstart;
+	}
+	if ( min == "30" ) min = "50";
+	document.getElementById('ore').value = hour+"."+min;
+}
 </script>
 <script>
 $( document.getElementById("toggleTec") ).click(function() {
-  $( "#tecnico" ).fadeIn('fast');//toggle( "fold" );
+	$( "#tecnico" ).fadeIn('fast');//toggle( "fold" );
 });
 $( document.getElementById("toggleSta") ).click(function() {
-  $( "#stato" ).fadeIn('fast');
+	$( "#stato" ).fadeIn('fast');
 });
 $(function() {
  $("#tecnico").fadeOut('fast');//toggle('fold');
