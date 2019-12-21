@@ -398,23 +398,14 @@ CREATE TABLE IF NOT EXISTS `gaz_001camp_recip_stocc` (
 
 DROP TABLE IF EXISTS `gaz_001cash_register`;
 CREATE TABLE IF NOT EXISTS `gaz_001cash_register` (
-  `id_cash` tinyint(2) NOT NULL,
-  `seziva` int(1) NOT NULL,
-  `adminid` varchar(20) NOT NULL,
-  `enterpriseid` int(3) NOT NULL,
-  `serial_port` varchar(32) NOT NULL,
-  `driver` varchar(32) NOT NULL,
-  `descri` varchar(32) NOT NULL
+  `id_cash` tinyint(2) NOT NULL COMMENT 'es. 1',
+  `seziva` int(1) NOT NULL COMMENT 'es. 1',
+  `adminid` varchar(20) NOT NULL COMMENT 'es. amministratore',
+  `enterpriseid` int(3) NOT NULL COMMENT 'es. 1',
+  `serial_port` varchar(32) NOT NULL COMMENT 'es. 0',
+  `driver` varchar(32) NOT NULL COMMENT 'es. olivetti_ela',
+  `descri` varchar(32) NOT NULL COMMENT 'es. Underwood Nettuna 700'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
---
--- Dump dei dati per la tabella `gaz_001cash_register`
---
-
-INSERT INTO `gaz_001cash_register` (`id_cash`, `seziva`, `adminid`, `enterpriseid`, `serial_port`, `driver`, `descri`) VALUES
-(1, 1, 'amministratore', 1, '0', 'olivetti_ela', 'Underwood Nettuna 700');
-
--- --------------------------------------------------------
 
 --
 -- Struttura della tabella `gaz_001catmer`
