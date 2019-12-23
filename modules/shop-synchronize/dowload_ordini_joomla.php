@@ -27,7 +27,6 @@ if ($exists) {
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 	
 if (isset($_POST['conferma'])) { // se confermato
-	
     // scrittura ordini su database di GAzie
 	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e scrivo i database
 	
@@ -91,7 +90,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					}
 					gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($_POST['ragso1'.$ord]) . "', '" . addslashes($_POST['ragso2'.$ord]) . "', '". addslashes($_POST['indspe'.$ord]) ."', '".$_POST['capspe'.$ord]."', '". addslashes($_POST['citspe'.$ord]) ."', '". $_POST['prospe'.$ord] ."', '" . $_POST['country'.$ord]. "', '1', '".$lang."', '". $_POST['telefo'.$ord] ."', '". $_POST['codfis'.$ord] ."', '" . $_POST['pariva'.$ord] . "', '" . $_POST['fe_cod_univoco'.$ord] . "', '". $_POST['email'.$ord] . "', '". $_POST['pec_email'.$ord] . "')");
 					
-					gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri,speban) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .addslashes($_POST['ragso1'.$ord])." ".addslashes($_POST['ragso2'.$ord]) . "', 'S')");
+					gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri,destin,speban) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .addslashes($_POST['ragso1'.$ord])." ".addslashes($_POST['ragso2'.$ord]) . "', '". $_POST['destin'.$ord] ."', 'S')");
 			}
 			
 			if ($_POST['order_discount_price'.$ord]>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
@@ -263,6 +262,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 						echo '<input type="hidden" name="includevat'. $n .'" value="'. $order->PricesIncludeVat .'">';
 						echo '<input type="hidden" name="speban'. $n .'" value="'. $order->CostPaymentAmount .'">';
 						echo '<input type="hidden" name="traspo'. $n .'" value="'. $order->CostShippingAmount .'">';
+						echo '<input type="hidden" name="destin'. $n .'" value="'. $order->CustomerShippingDestin .'">';
 						echo '<input type="hidden" name="spediz'. $n .'" value="'. $order->Carrier .'">';
 						echo '<input type="hidden" name="codvatcost'. $n .'" value="'. $order->CostVatCode .'">';
 						echo '<input type="hidden" name="aliivacost'. $n .'" value="'. $order->CostVatAli .'">';
