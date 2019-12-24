@@ -73,7 +73,7 @@ $script_transl=HeadMain();
          while ( $row = gaz_dbi_fetch_array($result_install) ) {
 				//if ( date("H:i", $tNow)==$form['ora_fine'] ) $selected = "selected";
 				//else $selected="";
-				echo "<option value=\"".$row['id']."\" ".$selected.">".$row['oggetto']." ".$row["descrizione"]."</option>";
+				echo "<option value=\"".$row['id']."\" ".$selected.">".$row['oggetto']." ".$row['descrizione']."</option>";
 				//$tNow = strtotime('+30 minutes',$tNow);
 			}
 		?>

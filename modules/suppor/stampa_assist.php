@@ -1,36 +1,37 @@
 <?php
 /*
- --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation, 51 Franklin Street,
-    Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
- --------------------------------------------------------------------------
-*/
-require("../../library/include/datlib.inc.php");
-$admin_aziend=checkAdmin();
-$title = "";
-require("lang.".$admin_aziend['lang'].".php");
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
+require('../../library/include/datlib.inc.php');
+$admin_aziend = checkAdmin();
+
+$title = '';
+require('lang.'.$admin_aziend['lang'].'.php');
 if ( !isset($_GET['id'])) {
-    header("Location: report_assist.php");
+    header('Location: report_assist.php');
     exit;
 }
-require("../../config/templates/report_template.php");
+require('../../config/templates/report_template.php');
 
 if ( isset($_GET['id']) ){
    $sql = $gTables['assist'].'.id = '.intval($_GET['id']).' ';
@@ -48,7 +49,7 @@ $result = gaz_dbi_dyn_query($gTables['assist'].".*,
 		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice". 
 		" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
 		$where, "id", $limit, $passo);
-		
+
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(32);
@@ -57,7 +58,7 @@ $config = new Config;
 
 $row = gaz_dbi_fetch_array($result);
 
-$html="";
+$html = '';
 if ( $row['stato']=='aperto') {
 $pdf->AddPage('P',$config->getValue('page_format'));
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
@@ -98,24 +99,21 @@ $html .= "</span>
 					</li>
 				</ol><table><tr><td align=\"center\">Firma cliente</td><td align=\"center\">Firma tecnico</td></tr></table>
 			";
-} else if ( $row['stato']=='effettuato' ) {
+} else {
     $intervento = str_pad($row["id"], 6, '0', STR_PAD_LEFT);
     $pdf->AddPage('P',$config->getValue('page_format'));
     $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
     $html .= "<span style=\"font-family: arial,helvetica,sans-serif; font-size:12px;\">";
     $html .= <<<END
 <body style="width: 790px;">
-<div style="text-align: center;"> Resoconto di intervento / codice <span
-style="font-weight: bold;">#$row[tipo]$intervento</span> / cliente <span
-style="font-weight: bold;">@$row[ragso1]</span><br>
+<div style="text-align: center;">
+Resoconto di intervento / codice <span style="font-weight: bold;">#$row[tipo]$intervento</span> / cliente <span style="font-weight: bold;">@$row[ragso1]</span><br>
 </div>
 <br>
-<table style="text-align: left; width: 540px;" border="1"
-cellpadding="5" cellspacing="0">
+<table style="text-align: left; width: 540px;" border="1" cellpadding="5" cellspacing="0">
 <tbody>
 <tr>
-<td style="vertical-align: top; width: 95%;"><small>Oggetto
-dell'intervento</small><br>
+<td style="vertical-align: top; width: 95%;"><small>Oggetto dell'intervento</small><br>
 <div style="text-align: right;">$row[oggetto]<br>
 </div>
 </td>
@@ -135,8 +133,7 @@ dell'intervento</small><br>
 </table>
 <br>
 <br>
-<table style="text-align: left; width: 540px; height: 180px;" border="1"
-cellpadding="5" cellspacing="0">
+<table style="text-align: left; width: 540px; height: 180px;" border="1" cellpadding="5" cellspacing="0">
 <tbody>
 <tr>
 <td style="vertical-align: top;"><small>Dettaglio attività svolte</small><br>
@@ -148,29 +145,23 @@ cellpadding="5" cellspacing="0">
 </table>
 <br>
 <br>
-<table class="MsoNormalTable"
-style="border: medium none ; border-collapse: collapse;" border="1"
-cellpadding="0" cellspacing="0">
+<table class="MsoNormalTable" style="border: medium none ; border-collapse: collapse;" border="1" cellpadding="0" cellspacing="0">
 <tbody>
 <tr style="height: 78.8pt;">
-<td
-style="border: 1pt solid windowtext; padding: 0cm 3.5pt; width: 282.5pt; height: 78.8pt;">
-<table class="MsoNormalTable"
-style="border: medium none ; border-collapse: collapse;" border="1"
-cellpadding="0" cellspacing="0">
+<td style="border: 1pt solid windowtext; padding: 0cm 3.5pt; width: 282.5pt; height: 78.8pt;">
+<table class="MsoNormalTable" style="border: medium none ; border-collapse: collapse;" border="1" cellpadding="0" cellspacing="0">
 <tbody>
 <tr style="page-break-inside: avoid;">
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
-valign="top" width="73"><small><small> </small></small>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;" valign="top" width="73">
+<small><small> </small></small>
 <h2><small><small><span style="font-weight: normal;">Codice</span><o:p></o:p></small></small></h2>
-<small><small> </small></small></td>
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
-valign="top" width="220"><small><small> </small></small>
-<h2><small><small><span style="font-weight: normal;">Materiale
-sostituito</span><o:p></o:p></small></small></h2>
-<small><small> </small></small></td>
+<small><small> </small></small>
+</td>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;" valign="top" width="220">
+<small><small> </small></small>
+<h2><small><small><span style="font-weight: normal;">Materiale sostituito</span><o:p></o:p></small></small></h2>
+<small><small> </small></small>
+</td>
 <td
 style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;"
 valign="top" width="73"><small><small> </small></small>
@@ -178,102 +169,66 @@ valign="top" width="73"><small><small> </small></small>
 <small><small> </small></small></td>
 </tr>
 <tr style="page-break-inside: avoid;">
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
-valign="top" width="73"><br>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;" valign="top" width="73">
+<br>
 </td>
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
-valign="top" width="220">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><br>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;" valign="top" width="220">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><br>
 <o:p></o:p></span></p>
 </td>
-<td
-style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt; vertical-align: middle;">
+<td style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt; vertical-align: middle;">
 <br>
 </td>
 </tr>
 <tr style="page-break-inside: avoid;">
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
-valign="top" width="73">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;" valign="top" width="73">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
 </td>
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
-valign="top" width="220">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;" valign="top" width="220">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
 </td>
-<td
-style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;"
-valign="top" width="73">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+<td style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;" valign="top" width="73">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
 </td>
 </tr>
 <tr style="page-break-inside: avoid;">
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
-valign="top" width="73">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;" valign="top" width="73">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
 </td>
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
-valign="top" width="220">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;" valign="top" width="220">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
 </td>
-<td
-style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;"
-valign="top" width="73">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+<td style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;" valign="top" width="73">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
 </td>
 </tr>
 <tr style="page-break-inside: avoid;">
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
-valign="top" width="73">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;" valign="top" width="73">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
 </td>
-<td
-style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
-valign="top" width="220">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+<td style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;" valign="top" width="220">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
 </td>
-<td
-style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;"
-valign="top" width="73">
-<p class="MsoNormal"><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+<td style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;" valign="top" width="73">
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
 </td>
 </tr>
 </tbody>
 </table>
 </td>
-<td
-style="border-style: solid solid solid none; border-color: windowtext windowtext windowtext -moz-use-text-color; border-width: 1pt 1pt 1pt medium; padding: 0cm 3.5pt; width: 282.5pt; height: 78.8pt; vertical-align: top;">
-<h1><small><small><small><span style="font-weight: normal;">Il
-cliente constata la ricezione dei servizi sopra indicati</span></small></small></small><o:p></o:p></h1>
-<p class="MsoNormal"><b><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
-<p class="MsoNormal"><b><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
-<p class="MsoNormal"><b><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
-<p class="MsoNormal"><b><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
-<p class="MsoNormal"><b><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;">Timbro e
-firma </span></b><span
-style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;">___________________________________</span><span
-style="font-size: 4pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p></o:p></span></p>
+</tr>
+<tr style="page-break-inside: avoid;">
+<td>
+<h1><small><small><small><span style="font-weight: normal;">Il cliente constata la ricezione dei servizi sopra indicati</span></small></small></small><o:p></o:p></h1>
+<p class="MsoNormal"><b><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
+<p class="MsoNormal"><b><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
+<p class="MsoNormal"><b><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
+<p class="MsoNormal"><b><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
+<p class="MsoNormal">
+<b><span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;">Timbro e firma </span></b>
+<span style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;">___________________________________</span>
+<span style="font-size: 4pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p></o:p></span>
+</p>
 </td>
 </tr>
 </tbody>
