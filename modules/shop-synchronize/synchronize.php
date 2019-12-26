@@ -76,35 +76,101 @@ if (isset ($_POST['download'])) {
 	require('../../library/include/header.php');
 	$script_transl = HeadMain();
 	?>
-	<form method="POST" name="chouse" enctype="multipart/form-data">
+<form method="POST" name="chouse" enctype="multipart/form-data">
 	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >
-	<div class="container">
-	<div class="table-responsive">
+	<div class="container-fluid" style="max-width:90%;">
+		<div class="row bg-primary" >
+			<div class="col-sm-12" align="center"><h4>Sincronizzazione di GAzie con siti internet</h4>
+				<p align="justify">Scarica ordini: importa ordini dal sito a GAzie</p>
+				<p align="justify">Aggiorna prodotti: aggiorna le quantità disponibili da Gazie al sito</p>
+			</div>
+		</div>
+		<div>
+			<div class="row bg-info">
+				<div class="col-sm-4 active bg-warning" align="center">
+					<input type="submit" class="btn btn-primary" name="Return"  onClick="chkSubmit();" value="Indietro">
+				</div>
+				<div class="col-sm-4 active bg-success" align="center">
+					<input type="submit" class="btn btn-primary" name="download"  onClick="chkSubmit();" value="Scarica ordini">
+				</div>
+				<div class="col-sm-4 active bg-warning" align="center">
+					<input type="submit" class="btn btn-primary" name="upload"  onClick="chkSubmit();" value="Aggiorna q.t&agrave; prodotti">
+				</div>
+			</div>
+			<div class="row bg-info">
+				<div class="col-sm-12 active bg-info" align="center">
+					<input type="button" name="button1" id="nextbt" rel="more" value="&#9660" onclick="buttonToggle(this,'&#9650','&#9660')">
+				</div>						
+			</div>
+			<div id="more">
+				<div class="row bg-info">
+					<div class="col-sm-6 active bg-warning" align="left" style="font-size: 18;">
+						<input type="checkbox" name="carquantita" value="updqty" checked> quantit&agrave &nbsp
+						<input type="checkbox" name="carprezzo" value="updprice"> prezzo &nbsp
+						<input type="checkbox" name="cardescrizione" value="upddes" > descrizione &nbsp
+					</div>
+					<div class="col-sm-6 active bg-warning" align="left">
+						<!-- Trigger the modal with a button -->
+						<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#uploader">Aggiorna prodotti nel sito</button>
+						<!-- Modal content-->
+						<div id="uploader" class="modal fade" role="dialog">    
+							<div class="modal-dialog modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h4 class="modal-title">ATTENZIONE ANCORA DA SVILUPPARE - NON FUNZIONA!</h4>
+								</div>
+								<div class="modal-body">
+									<p>Stai per aggiornare definitivamente i prodotti nel sito internet. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+									<input type="submit" class="btn btn-danger pull-right" name="uploader"  value="Aggiorna prodotti nel sito">
+								</div>
+							</div>
+						</div>						
+					</div>
+				</div>
+				<div class="row bg-info">
+					<div class="col-sm-6 active bg-success" align="left" style="font-size: 18;">
+						<input type="checkbox" name="scarquantita" value="dwldqty"> quantit&agrave &nbsp
+						<input type="checkbox" name="scarprezzo" value="dwlprice"> prezzo &nbsp
+						<input type="checkbox" name="scardescrizione" value="dwldes" > descrizione &nbsp
+					</div>
+					<div class="col-sm-6 active bg-success" align="left">
+						<!-- Trigger the modal with a button -->
+						<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#downloader">Carica prodotti in GAzie</button>
+						<!-- Modal content-->
+						<div id="downloader" class="modal fade" role="dialog">    
+							<div class="modal-dialog modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h4 class="modal-title">ATTENZIONE ANCORA DA SVILUPPARE - NON FUNZIONA!</h4>
+								</div>
+								<div class="modal-body">
+									<p>Stai per scaricare definitivamente i prodotti in GAzie. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+									<input type="submit" class="btn btn-danger pull-right" name="downloader"  value="Carica prodotti in GAzie">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>		
+</form>		
 	
-	
-	<table class="table table-striped table-bordered" style="margin: 0 auto; max-width: 40%; margin-top:100px;">
-	<tr style="background-color: PaleTurquoise;"><td colspan="3" style="text-align: center;">
-	<h4>Sincronizzazione di GAzie con siti internet</h4>
-	</td></tr>
-	<tr><td colspan="3" style="text-align: left;">
-	<p>Scarica ordini: importa ordini dal sito a GAzie</p>
-	<p>Aggiorna prodotti: aggiorna le quantità disponibili da Gazie al sito</p>
-	</td></tr>
-	<tr>
-	<td colspan="1" style="width:33%; text-align: left;">
-	<input type="submit" name="Return"  onClick="chkSubmit();" value="Indietro">
-	</td>
-	<td colspan="1" style="width:33%; text-align: left;">
-	<input type="submit" name="download"  onClick="chkSubmit();" value="Scarica ordini">
-	</td>
-	<td colspan="1" style="width:33%; text-align: right;" >
-	<input type="submit" name="upload"  onClick="chkSubmit();" value="Aggiorna prodotti">
-	</td></tr>
-	</table>
-	</div>
-	</div>
-	</form>
-	</div>
+	<style>#more { display:none; }</style>				
+	<script>
+		function buttonToggle(where, pval, nval) {
+			var table = document.getElementById(where.attributes.rel.value);
+			where.value = (where.value == pval) ? nval : pval;
+			table.style.display = (table.style.display == 'block') ? 'none' : 'block';
+		}
+	</script>
 	<?php
 }
+require("../../library/include/footer.php");
 ?>
