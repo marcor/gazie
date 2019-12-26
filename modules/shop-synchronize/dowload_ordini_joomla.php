@@ -202,9 +202,9 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 		</script>
 		<?php
 	}
+	require('../../library/include/header.php');
+	$script_transl = HeadMain();
 	?>
-	<!DOCTYPE html>
-	<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 	<form method="POST" name="download" enctype="multipart/form-data">
 	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >
 	<input type="hidden" name="download" value="download" >
@@ -323,6 +323,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 			</table>	
 	</form>
 	<?php
+	require("../../library/include/footer.php");
 } else { // IL FILE INTERFACCIA NON ESISTE > ESCO
 	ftp_quit($conn_id);
 	?>
