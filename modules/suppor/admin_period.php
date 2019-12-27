@@ -1,30 +1,29 @@
 <?php
 /*
- --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation, 51 Franklin Street,
-    Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
- --------------------------------------------------------------------------
-*/
-
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
 require('../../library/include/datlib.inc.php');
-$admin_aziend=checkAdmin();
+$admin_aziend = checkAdmin();
 
 $msg = '';
 
@@ -88,15 +87,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 		if (empty($msg)) { 
 			if (preg_match("/^id_([0-9]+)$/",$form['clfoco'],$match)) {
 				$new_clfoco = $anagrafica->getPartnerData($match[1],1);
-				$form['clfoco']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli']);
+				$form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli']);
 			}
 			// aggiorno il db
 			if ($toDo == 'insert') {
 				if ( $form['clfoco']==0 ) $form['clfoco'] = $admin_aziend['mascli'] . '000001';
-				gaz_dbi_table_insert('assist',$form);
+				gaz_dbi_table_insert('assist', $form);
 			} elseif ($toDo == 'update') {
 				if ( $form['clfoco']==0 ) $form['clfoco'] = $admin_aziend['mascli'] . '000001';
-				gaz_dbi_table_update('assist',$form['ref_code'],$form);
+				gaz_dbi_table_update('assist', $form['ref_code'], $form);
 			}
 			header('Location: associa_install.php?id='.$form['codice'].'&clfoco='.$form['clfoco'].'&ritorno='.$form['ritorno']);
 			exit;
@@ -105,23 +104,24 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 		header('Location: report_period.php');
 		exit;
 	}
-} 
-elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { 
-	$assist = gaz_dbi_get_row($gTables['assist'],"codice",$_GET['codice']);
+
+} elseif (!isset($_POST['Update']) && isset($_GET['Update'])) {
+
+	$assist = gaz_dbi_get_row($gTables['assist'], "codice", $_GET['codice']);
 	//se e' il primo accesso per UPDATE
 	$anagrafica = new Anagrafica();
 	$cliente = $anagrafica->getPartner($assist['clfoco']);
-	$form = gaz_dbi_get_row($gTables['assist'], 'codice', $_GET['codice']);
-	$form['search']['clfoco']=substr($cliente['ragso1'],0,10);
+	$form = gaz_dbi_get_row($gTables['assist'], "codice", $_GET['codice']);
+	$form['search']['clfoco'] = substr($cliente['ragso1'], 0, 10);
 	$form['codart'] = $assist['codart'];
 	$form['cosear'] = $assist['codart'];
-	$form['ritorno']='../../modules/suppor/report_period.php';
-	$form['ref_code']=$form['codice'];
-} 
-else { 
+	$form['ritorno'] = '../../modules/suppor/report_period.php';
+	$form['ref_code'] = $form['codice'];
+
+} else {
 	//se e' il primo accesso per INSERT
-	$form=gaz_dbi_fields('assist');
-	$rs_ultima_ass = gaz_dbi_dyn_query("codice", $gTables['assist'],$where,"codice desc");
+	$form = gaz_dbi_fields("assist");
+	$rs_ultima_ass = gaz_dbi_dyn_query("codice", $gTables['assist'], $where, "codice desc");
 	$ultimo_documento = gaz_dbi_fetch_array($rs_ultima_ass);
 	// se e' il primo documento dell'anno, resetto il contatore
 	if ($ultimo_documento) {
@@ -129,7 +129,7 @@ else {
 	} else {
 		$form['codice'] = 1;
 	}
-	$form['tipo'] = 'ASS';	
+	$form['tipo'] = 'ASS';
 	$form['utente'] = $_SESSION['user_name'];
 	$form['data'] = date('Y-m-d');
 	$form['cosear'] = '';
@@ -143,9 +143,9 @@ else {
 	$form['ripetizione'] = 1;
 	$form['ogni'] = 'Anni';
 	//echo $form['stato'];
-	$form['search']['clfoco']='';
-	$form['ritorno']='../../modules/suppor/report_period.php';//$_SERVER['HTTP_REFERER'];
-	$form['ref_code']='';
+	$form['search']['clfoco'] = '';
+	$form['ritorno'] = '../../modules/suppor/report_period.php';//$_SERVER['HTTP_REFERER'];
+	$form['ref_code'] = '';
 }
 
 // disegno maschera di inserimento modifica
@@ -180,7 +180,7 @@ $select_cliente = new selectPartner('clfoco');
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['cliente']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
 	<?php 
-		$select_cliente->selectDocPartner('clfoco',$form['clfoco'],$form['search']['clfoco'],'clfoco',$script_transl['mesg'],$admin_aziend['mascli']);
+		$select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);
 	?>
 </td>
 </tr>
@@ -193,7 +193,7 @@ $select_cliente = new selectPartner('clfoco');
 		while ($tecnici = gaz_dbi_fetch_array($result)) {
 			if ( $form['tecnico'] == $tecnici['tecnico'] ) $selected = 'selected'; 
 			else $selected = '';
-			echo "<option value=\"".$tecnici['tecnico']."\" ".$selected.">".$tecnici['tecnico']."</option>";
+			echo '<option value="'.$tecnici['tecnico'].'" '.$selected.'>'.$tecnici['tecnico'].'</option>';
 		}
 		?>
 		</select> 

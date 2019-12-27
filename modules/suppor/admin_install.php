@@ -22,9 +22,8 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-
 require('../../library/include/datlib.inc.php');
-$admin_aziend=checkAdmin();
+$admin_aziend = checkAdmin();
 
 $msg = '';
 
@@ -100,13 +99,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 		header('Location: report_install.php');
 		exit;
 	}
-} 
-elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { 
-	$assist = gaz_dbi_get_row($gTables['instal'], 'codice', $_GET['codice']);
+
+} elseif (!isset($_POST['Update']) && isset($_GET['Update'])) {
+
+	$assist = gaz_dbi_get_row($gTables['instal'], "codice", $_GET['codice']);
 	//se e' il primo accesso per UPDATE
 	$anagrafica = new Anagrafica();
 	$cliente = $anagrafica->getPartner($assist['clfoco']);
-	$form = gaz_dbi_get_row($gTables['instal'], 'codice', $_GET['codice']);
+	$form = gaz_dbi_get_row($gTables['instal'], "codice", $_GET['codice']);
 	$form['search']['clfoco'] = substr($cliente['ragso1'], 0, 10);
 
 	//$form['codart'] = $assist['codart'];
@@ -116,8 +116,8 @@ elseif (!isset($_POST['Update']) && isset($_GET['Update'])) {
 
 } else {
 	//se e' il primo accesso per INSERT
-	$form=gaz_dbi_fields('assist');
-	$rs_ultima_ass = gaz_dbi_dyn_query("codice", $gTables['instal'],$where,"codice desc");
+	$form = gaz_dbi_fields("assist");
+	$rs_ultima_ass = gaz_dbi_dyn_query("codice", $gTables['instal'], $where, "codice desc");
 	$ultimo_documento = gaz_dbi_fetch_array($rs_ultima_ass);
 	// se e' il primo documento dell'anno, resetto il contatore
 	if ($ultimo_documento) {
@@ -213,24 +213,17 @@ $select_cliente = new selectPartner('clfoco');
 </table>
 </div>
 
+</form>
 <?php
 if ( !isset($_GET['Insert']) ) {
-	$_GET['auxil'] = '';
-	$_GET['flt_cliente'] = $form['clfoco'];
-	$_GET['flt_tecnico'] = 'tutti';
-	$_GET['flt_stato'] = 'tutti';
-	$_GET['flt_passo'] = '20';
-	$_GET['include'] = 'included';
-	$_GET['idinstallazione'] = $form['id'];
-	$_GET['all'] = 'all';
-	$num = gaz_dbi_record_count( $gTables['assist'], "idinstallazione=0 and clfoco=".$form['clfoco'] );
 
+	$num = gaz_dbi_record_count( $gTables['assist'], "idinstallazione=0 and clfoco=".$form['clfoco'] );
 	if ( $num > 0 ) {
 		echo "<br><center>Ci sono assistenze non assegnate per ".$cliente['ragso1']."</center><br>";
 		$result = gaz_dbi_dyn_query($gTables['assist'].".*", $gTables['assist'], "idinstallazione=0 and clfoco=".$form['clfoco'], $orderby, $limit, $passo);
 		echo "<table class='Tlarge table table-striped table-bordered table-condensed table-responsive'>";
 		while ( $row = gaz_dbi_fetch_array($result) ) {
-			if ( $row['tipo']=='ASS' ) {
+			if ( $row['tipo'] == 'ASS' ) {
 				$tipo = 'Intervento di assistenza';
 				$color = '#5bc0de';
 			} else {
@@ -247,22 +240,26 @@ if ( !isset($_GET['Insert']) ) {
 		echo "</table>";
 	}
 
-	include('report_assist.php');
-
 	$_GET['auxil'] = '';
-	$_GET['flt_cliente'] = $form['clfoco'];
-	$_GET['flt_tecnico'] = 'tutti';
-	$_GET['flt_stato'] = 'tutti';
-	$_GET['flt_passo'] = '20';
-	$_GET['include'] = 'included';
+	$_GET['clfoco'] = $form['clfoco'];
+	$_GET['tecnico'] = 'All';
+	$_GET['stato'] = 'All';
+	$_GET['flt_passo'] = '50';
 	$_GET['idinstallazione'] = $form['id'];
 	$_GET['all'] = 'all';
-	//echo $form['id']." ".$form['clfoco'];
-	//$num = gaz_dbi_record_count ( $gTables['assist'], "idinstallazione=".$form["id"]." and tipo='ASP' and clfoco=".$form['clfoco'] );
-	//if ( $num > 0 ) {
+
+	include('report_assist.php');
+
+	echo "<center>------------------------------------------------------------------------------------------</center>";
+
 	include('report_period.php');
+
 	echo "</div>";
 } 
+?>
+<!--</div>-->
+<?php
+require('../../library/include/footer.php');
 ?>
 <script src="../../js/custom/autocomplete.js"></script>
 <script type="text/javascript">
@@ -271,9 +268,3 @@ tinyMCE.init({
 	statusbar: false
 });
 </script>
-<!--</div>-->
-</form>
-
-<?php
-require('../../library/include/footer.php');
-?>
