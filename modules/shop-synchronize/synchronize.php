@@ -49,6 +49,8 @@ if ($exists) {
 
 $file_download = "dowload_ordini_joomla.php";
 $file_upload = "upload_prodotti_joomla.php";
+$file_downloader = "import_articoli.php";
+$file_uploader = "export_articoli.php";
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -72,6 +74,28 @@ if (isset ($_POST['download'])) {
 		header("Location: " . $_POST['ritorno']);
         exit;
 		}
+} elseif (isset ($_POST['downloader'])) { 
+	
+	if (file_exists($file_downloader)){
+		if (!isset($_POST['scarprezzo'])){
+			$_POST['scarprezzo']="";
+		}
+		if (!isset($_POST['scardescrizione'])){
+			$_POST['scardescrizione']="";
+		}
+		header("Location: " . $file_downloader);
+	} else {
+		header("Location: " . $_POST['ritorno']);
+        exit;
+		}
+} elseif (isset ($_POST['uploader'])) { 
+	
+	if (file_exists($file_uploader)){
+		header("Location: " . $file_uploader."?prezzo=".$_POST['prezzo']."&qta=".$_POST['quantita']."&descri=".$_POST['descrizione']);
+	} else {
+		header("Location: " . $_POST['ritorno']);
+        exit;
+		}
 } else {
 	require('../../library/include/header.php');
 	$script_transl = HeadMain();
@@ -80,7 +104,7 @@ if (isset ($_POST['download'])) {
 	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >
 	<div class="container-fluid" style="max-width:90%;">
 		<div class="row bg-primary" >
-			<div class="col-sm-12" align="center"><h4>Sincronizzazione di GAzie con siti internet</h4>
+			<div class="col-sm-12" align="center"><h4>Sincronizzazione di GAzie con sito internet</h4>
 				<p align="justify">Scarica ordini: importa ordini dal sito a GAzie</p>
 				<p align="justify">Aggiorna prodotti: aggiorna le quantità disponibili da Gazie al sito</p>
 			</div>
@@ -105,56 +129,23 @@ if (isset ($_POST['download'])) {
 			<div id="more">
 				<div class="row bg-info">
 					<div class="col-sm-6 active bg-warning" align="left" style="font-size: 18;">
-						<input type="checkbox" name="carquantita" value="updqty" checked> quantit&agrave &nbsp
-						<input type="checkbox" name="carprezzo" value="updprice"> prezzo &nbsp
-						<input type="checkbox" name="cardescrizione" value="upddes" > descrizione &nbsp
+						<input type="checkbox" name="quantita" value="updqty" checked> quantit&agrave &nbsp 
+						<input type="checkbox" name="prezzo" value="updprice"> prezzo &nbsp
+						<input type="checkbox" name="descrizione" value="upddes" > descrizione &nbsp
+						<!-- <input type="checkbox" name="carimg" value="upddes" > immagine &nbsp -->
 					</div>
 					<div class="col-sm-6 active bg-warning" align="left">
-						<!-- Trigger the modal with a button -->
-						<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#uploader">Aggiorna prodotti nel sito</button>
-						<!-- Modal content-->
-						<div id="uploader" class="modal fade" role="dialog">    
-							<div class="modal-dialog modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal">&times;</button>
-									<h4 class="modal-title">ATTENZIONE ANCORA DA SVILUPPARE - NON FUNZIONA!</h4>
-								</div>
-								<div class="modal-body">
-									<p>Stai per aggiornare definitivamente i prodotti nel sito internet. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-									<input type="submit" class="btn btn-danger pull-right" name="uploader"  value="Aggiorna prodotti nel sito">
-								</div>
-							</div>
-						</div>						
+						<input type="submit" class="btn btn-danger btn-sm pull-left" name="uploader"  value="Aggiorna prodotti nell'e-commerce">
 					</div>
 				</div>
 				<div class="row bg-info">
 					<div class="col-sm-6 active bg-success" align="left" style="font-size: 18;">
-						<input type="checkbox" name="scarquantita" value="dwldqty"> quantit&agrave &nbsp
+						<!-- <input type="checkbox" name="scarquantita" value="dwldqty"> quantit&agrave &nbsp 
 						<input type="checkbox" name="scarprezzo" value="dwlprice"> prezzo &nbsp
-						<input type="checkbox" name="scardescrizione" value="dwldes" > descrizione &nbsp
+						<input type="checkbox" name="scardescrizione" value="dwldes" > descrizione &nbsp -->
 					</div>
 					<div class="col-sm-6 active bg-success" align="left">
-						<!-- Trigger the modal with a button -->
-						<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#downloader">Carica prodotti in GAzie</button>
-						<!-- Modal content-->
-						<div id="downloader" class="modal fade" role="dialog">    
-							<div class="modal-dialog modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal">&times;</button>
-									<h4 class="modal-title">ATTENZIONE ANCORA DA SVILUPPARE - NON FUNZIONA!</h4>
-								</div>
-								<div class="modal-body">
-									<p>Stai per scaricare definitivamente i prodotti in GAzie. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-									<input type="submit" class="btn btn-danger pull-right" name="downloader"  value="Carica prodotti in GAzie">
-								</div>
-							</div>
-						</div>
+						<input type="submit" class="btn btn-danger btn-sm pull-left" name="downloader"  value="Carica prodotti in GAzie">
 					</div>
 				</div>
 			</div>
