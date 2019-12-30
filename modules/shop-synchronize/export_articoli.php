@@ -57,13 +57,7 @@ if (isset($_POST['conferma'])) { // se confermato
 		location.replace("<?php echo $_POST['ritorno']; ?>");
 		</script>
 		<?php
-	} else {
-		?>
-		<div class="alert alert-success text-center" >
-		<strong>ok</strong> Connessione FTP riuscita.
-		</div>
-		<?php
-	}
+	} 
 		// creo il file xml
 	$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
 	<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
@@ -97,11 +91,7 @@ if (isset($_POST['conferma'])) { // se confermato
 	ftp_pasv($conn_id, true);
 	// upload file xml
 	if (ftp_put($conn_id, "public_html/easyfatt/prodotti.xml", $xmlFile, FTP_ASCII)){
-		?>
-		<div class="alert alert-success text-center" >
-		<strong>ok</strong> il file xml è stato trasferito al sito web.
-		</div>
-		<?php
+		
 	} else{
 		// chiudo la connessione FTP 
 		ftp_quit($conn_id);
@@ -124,13 +114,7 @@ if (isset($_POST['conferma'])) { // se confermato
 		} else {
 			// chiudo la connessione FTP 
 			ftp_quit($conn_id);
-			?>
-			<div class="alert alert-success text-center" >
-			<strong>ok</strong> Aggiornamento prodotti riuscito.
-			</div>
-			
-			<?php
-			
+						
 		}
 	} else { // IL FILE INTERFACCIA NON ESISTE > ESCO
 		// chiudo la connessione FTP 
