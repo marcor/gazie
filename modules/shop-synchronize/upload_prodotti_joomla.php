@@ -82,7 +82,8 @@ $xmlFile = "prodotti.xml";
 $xmlHandle = fopen($xmlFile, "w");
 fwrite($xmlHandle, $xml_output);
 fclose($xmlHandle);
-
+//turn passive mode on
+ftp_pasv($conn_id, true);
 // upload file xml
 if (ftp_put($conn_id, "public_html/easyfatt/prodotti.xml", $xmlFile, FTP_ASCII)){
 	?>
