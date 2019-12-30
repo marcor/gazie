@@ -8,9 +8,6 @@
   versione 1.0
   ------------------------------------------------------------------------ */
 require("../../library/include/datlib.inc.php");
-?>
-
-<?php
 $admin_aziend = checkAdmin();
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
 $ftp_host= $resserver['val'];
@@ -24,37 +21,6 @@ $urlinterf = $path['val']."dwnlArticoli-gazie.php";//nome del file interfaccia p
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
 
-?><script>
-    function selectCheckbox() {
-        var inputs = document.getElementsByTagName('input');
-        var checkboxes = [];
-        for (var i = 0; i < inputs.length; i++){
-            var input = inputs[i];
-            if (input.getAttribute('type') == 'checkbox'){
-                checkboxes.push(input);
-            }
-        } 
-        return checkboxes;
-    }    
-    function check(checks){
-      var checkboxes = selectCheckbox();
-      for(var i=0; i < checkboxes.length; i++){
-        checkboxes[i].checked = checks.checked;
-      }
-    }    
-    function submit() {
-        var checks = document.getElementsByClassName('check');
-        var str = '';
-        for ( i = 0; i < checks.length; i++) {
-            if ( checks[i].checked === true ) {
-                str += checks[i].value + " ";
-            }
-        }
-        alert(str);
-    }
-</script>
-
-<?php
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
@@ -71,9 +37,8 @@ if ($exists) {
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 	
 if (isset($_POST['conferma'])) { // se confermato
-
     // scrittura articoli su database di GAzie
-	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e scrivo i database
+	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){ // ciclo gli articoli e scrivo i database
 		if (isset($_POST['download'.$ord])){ // se selezionato
 			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord]); // prendo il codice IVA
 			$url = $_POST['imgurl'.$ord];
@@ -102,19 +67,16 @@ if (isset($_POST['conferma'])) { // se confermato
 					imagedestroy( $dst );
 				} 
 				//Carico l'immagine
-				$immagine= addslashes (file_get_contents($target_filename));
-			
+				$immagine= addslashes (file_get_contents($target_filename));			
 			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);
 			if ($esiste){ // se esiste aggiorno articolo
 				gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET descri = '".addslashes($_POST['descri'.$ord])."', web_price = '".addslashes($_POST['web_price'.$ord])."' , image = '".$immagine."' WHERE codice = '".addslashes($_POST['codice'.$ord])."'");
 			} else { // altrimenti inserisco nuovo articolo
 				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,web_price,unimis,image,web_public,depli_public,aliiva) VALUES ('" . addslashes($_POST['codice'.$ord]) . "', '" . addslashes($_POST['descri'.$ord]) . "', '". addslashes($_POST['web_price'.$ord]). "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
-			}
-			
+			}			
 			unlink ($img);// cancello l'immagine della cartella temporanea
 		}
-	}
-		
+	}	
 	header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=1");
     exit;
 } else {
@@ -129,8 +91,7 @@ $conn_id = ftp_connect($ftp_host);
 $mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 
 // controllo se la connessione è OK...
-if ((!$conn_id) or (!$mylogin))
-{ 
+if ((!$conn_id) or (!$mylogin)){ 
 	?>
 	<script>
 	alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
@@ -138,9 +99,7 @@ if ((!$conn_id) or (!$mylogin))
     </script>
 	<?php
 }
-
 $access=base64_encode($ftp_pass);
-
 if (!isset($_GET['success'])){
 	// avvio il file di interfaccia presente nel sito web remoto
 	$headers = @get_headers($urlinterf.'?access='.$access);
@@ -153,10 +112,38 @@ if (!isset($_GET['success'])){
 			location.replace("<?php echo $_POST['ritorno']; ?>");
 			</script>
 			<?php
-		}
-			
+		}		
 		// Apro il form per la selezione degli articoli
 		?>
+		<script>
+    function selectCheckbox() {
+        var inputs = document.getElementsByTagName('input');
+        var checkboxes = [];
+        for (var i = 0; i < inputs.length; i++){
+            var input = inputs[i];
+            if (input.getAttribute('type') == 'checkbox'){
+                checkboxes.push(input);
+            }
+        } 
+        return checkboxes;
+    }    
+    function check(checks){
+      var checkboxes = selectCheckbox();
+      for(var i=0; i < checkboxes.length; i++){
+        checkboxes[i].checked = checks.checked;
+      }
+    }    
+    function submit() {
+        var checks = document.getElementsByClassName('check');
+        var str = '';
+        for ( i = 0; i < checks.length; i++) {
+            if ( checks[i].checked === true ) {
+                str += checks[i].value + " ";
+            }
+        }
+        alert(str);
+    }
+</script>
 		<form method="POST" name="download" enctype="multipart/form-data">
 			<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >
 			<input type="hidden" name="download" value="download" >
