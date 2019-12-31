@@ -72,7 +72,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			if ($esiste){ // se esiste aggiorno articolo
 				gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET descri = '".addslashes($_POST['descri'.$ord])."', web_price = '".addslashes($_POST['web_price'.$ord])."' , image = '".$immagine."' WHERE codice = '".addslashes($_POST['codice'.$ord])."'");
 			} else { // altrimenti inserisco nuovo articolo
-				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,web_price,unimis,image,web_public,depli_public,aliiva) VALUES ('" . addslashes($_POST['codice'.$ord]) . "', '" . addslashes($_POST['descri'.$ord]) . "', '". addslashes($_POST['web_price'.$ord]). "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
+				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,web_mu,web_price,unimis,image,web_public,depli_public,aliiva) VALUES ('" . addslashes($_POST['codice'.$ord]) . "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '". addslashes($_POST['web_price'.$ord]). "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
 			}			
 			unlink ($img);// cancello l'immagine della cartella temporanea
 		}
@@ -149,7 +149,7 @@ if (!isset($_GET['success'])){
 			<input type="hidden" name="download" value="download" >
 			<div class="container-fluid" style="max-width:90%;">
 				<div class="row bg-primary" >
-					<div class="col-sm-12" align="center"><h4>Importazione di articoli dal negozio online</h4>
+					<div class="col-sm-12" align="center"><h4>Importazione di articoli dall'e-commerce a GAzie</h4>
 						<p align="justify">Gli articoli selezionati verranno aggiornati o, se inesistenti, verranno creati. </p>
 					</div>
 				</div>
