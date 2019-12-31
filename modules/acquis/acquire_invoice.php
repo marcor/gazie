@@ -174,8 +174,8 @@ function encondeFornitorePrefix($clfoco,$b=36) {
 function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
 	global $gTables;
 	/* Questa funzione serve per controllare se è già stato registrato in magazzino il rigo dell'eventuale DdT contenuto nella 
-	fattura che stiamo acquisendo mi baso su fornitore, numero, data e, se lo passo, il codice articolo, quando passo $codart 
-	faccio una ricerca puntuale sull'articolo specifico
+		fattura che stiamo acquisendo mi baso su fornitore, numero, data e, se lo passo, il codice articolo, quando passo $codart 
+		faccio una ricerca puntuale sull'articolo specifico
 	*/
     $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "tipdoc='ADT' AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."' AND codart LIKE '".$codart."'", "id_rig DESC", 0, 1);
     return gaz_dbi_fetch_array($result);
@@ -470,6 +470,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			} else {
 				$form['rows'][$nl]['codice_fornitore'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
 			}
+			// Elimino spazi dal codice fornitore creato
+			$form['rows'][$nl]['codice_fornitore'] = preg_replace("/\s+/","_",$form['rows'][$nl]['codice_fornitore']);
 			// vedo se ho un codice_fornitore in gaz_artico
 			$artico = gaz_dbi_get_row($gTables['artico'], 'codice_fornitore', $form['rows'][$nl]['codice_fornitore']);
 			$form['rows'][$nl]['codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['codice']:'';
@@ -863,7 +865,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['rows'][$i]['tiprig']=2;
 				}
 				// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
-				if (empty(trim($v['codice_fornitore']))) { // non ho il codeice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
+				if (empty(trim($v['codice_fornitore']))) { // non ho il codice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);						
 				} else { // ho il codice articolo del fornitore 
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
