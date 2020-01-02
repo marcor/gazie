@@ -1160,6 +1160,7 @@ INSERT INTO `gaz_001company_config` (`id`, `description`, `var`, `val`) VALUES
 (40, 'Foglio di stile xsl per la visualizzazione della fattura elettronica (nella directory /library/inclu', 'fae_style', 'fatturaordinaria_v1.2.1'),
 (41, 'Identificativo dello stabilimento o deposito del SIAN', 'id_sian', '0'),
 (42, 'Allerta se la lunghezza del codice articolo è diverso da', 'codart_len', '0');
+(43, 'Destinazione testo descrittivo articolo (0=solo su documenti, 1=entrambi, 2=solo su web, 9=nessuno)', 'article_text', '0')
 
 -- --------------------------------------------------------
 
