@@ -1163,7 +1163,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             ksort($form['rows']);
         } else { //se è un rigo da inserire
             if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale che lo precede
-                $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['in_codart']);
+				$article_text=gaz_dbi_get_row($gTables['company_config'], 'var', 'article_text');
+				if ($article_text['val']<2){
+					$bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['in_codart']);
+				} else {
+					$bodytext="";
+				}
                 if ($bodytext && ($bodytext['body_text'] != '')) { // il testo aggiuntivo c'è (e non è vuoto)
                     $form["row_$next_row"] = $bodytext['body_text'];
                     $form['rows'][$next_row]['tiprig'] = 6;
@@ -2726,6 +2731,9 @@ foreach ($form['rows'] as $k => $v) {
                     <input type="hidden" value="" name="rows[' . $k . '][quanti]" />
 					<input type="hidden" value="" name="rows[' . $k . '][prelis]" />
 					<input type="hidden" value="" name="rows[' . $k . '][sconto]" />
+					<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					<input type="hidden" value="" name="rows[' . $k . '][provvigione]" />';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
