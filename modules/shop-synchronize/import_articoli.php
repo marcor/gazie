@@ -41,12 +41,23 @@ if (isset($_POST['conferma'])) { // se confermato
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){ // ciclo gli articoli e scrivo i database
 		if (isset($_POST['download'.$ord])){ // se selezionato
 			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord]); // prendo il codice IVA
-			$url = $_POST['imgurl'.$ord];
-			$expl= explode ("/", $_POST['imgurl'.$ord]);
-			$img = '../../data/files/tmp/'.$expl[count($expl)-1]; 
-			// scrivo l'immagine nella cartella temporanea
-			file_put_contents($img, file_get_contents($url));
-			// ridimensiono l'immagine per rientrare nei 64k
+			if (strlen($_POST['imgurl'.$ord])>0){ // se c'è un'immagine
+				$url = $_POST['imgurl'.$ord];
+				$expl= explode ("/", $_POST['imgurl'.$ord]);
+				$form['table_name_ref']= 'artico';
+				$form['id_ref']= '1';
+				$form['item_ref']= $_POST['codice'.$ord];
+				$ext= explode (".",$expl[count($expl)-1]);
+				$form['extension']= $ext[count($ext)-1];
+				$form['title']= "Immagine web articolo: ".$_POST['codice'.$ord];
+				gaz_dbi_table_insert('files',$form);// inserisco i dati dell'immagine nella tabella files
+				$form['id_doc']= gaz_dbi_last_id();//recupero l'id assegnato dall'inserimento
+				$imgweb='../../data/files/'.$form['id_doc'].'.'.$form['extension'];
+				file_put_contents($imgweb, file_get_contents($url)); // scrivo l'immagine nella cartella aziendale
+				$img = '../../data/files/tmp/'.$expl[count($expl)-1]; 
+				// scrivo l'immagine nella cartella temporanea
+				file_put_contents($img, file_get_contents($url));
+				// ridimensiono l'immagine per rientrare nei 64k
 				$maxDim = 190;				
 				list($width, $height, $type, $attr) = getimagesize( $img );
 				if ( $width > $maxDim || $height > $maxDim ) {
@@ -67,14 +78,18 @@ if (isset($_POST['conferma'])) { // se confermato
 					imagedestroy( $dst );
 				} 
 				//Carico l'immagine
-				$immagine= addslashes (file_get_contents($target_filename));			
+				$immagine= addslashes (file_get_contents($target_filename));
+				unlink ($img);// cancello l'immagine della cartella temporanea
+			} else {
+				$immagine="";
+			}
 			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);
 			if ($esiste){ // se esiste aggiorno articolo
 				gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET descri = '".addslashes($_POST['descri'.$ord])."', web_price = '".addslashes($_POST['web_price'.$ord])."' , image = '".$immagine."' WHERE codice = '".addslashes($_POST['codice'.$ord])."'");
 			} else { // altrimenti inserisco nuovo articolo
 				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,web_mu,web_price,unimis,image,web_public,depli_public,aliiva) VALUES ('" . addslashes($_POST['codice'.$ord]) . "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '". addslashes($_POST['web_price'.$ord]). "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
 			}			
-			unlink ($img);// cancello l'immagine della cartella temporanea
+			
 		}
 	}	
 	header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=1");

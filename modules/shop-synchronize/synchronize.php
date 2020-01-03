@@ -84,6 +84,7 @@ if (isset ($_POST['download'])) {
 			$_POST['scardescrizione']="";
 		}
 		header("Location: " . $file_downloader);
+		exit;
 	} else {
 		header("Location: " . $_POST['ritorno']);
         exit;
@@ -92,6 +93,7 @@ if (isset ($_POST['download'])) {
 	
 	if (file_exists($file_uploader)){
 		header("Location: " . $file_uploader."?prezzo=".$_POST['prezzo']."&qta=".$_POST['quantita']."&descri=".$_POST['descrizione']);
+		exit;
 	} else {
 		header("Location: " . $_POST['ritorno']);
         exit;
