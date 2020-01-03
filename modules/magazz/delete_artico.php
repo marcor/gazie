@@ -35,6 +35,8 @@ if (isset($_POST['Delete'])) {
 		gaz_dbi_del_row($gTables['files'], "id_doc", $delimg['id_doc']);
 		unlink ("../../data/files/". $delimg['id_doc'] . "." . $delimg['extension']);
 	}
+	// Cancello l'eventuale body_text
+	gaz_dbi_del_row($gTables['body_text'], "table_name_ref", "artico_".$codice);
     //Cancello se presenti gli articoli presenti in distinta base
     $result = gaz_dbi_del_row($gTables['distinta_base'], "codice_composizione", $codice );
     //Cancello l'articolo
