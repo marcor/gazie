@@ -29,11 +29,17 @@ $message = "Sei sicuro di voler rimuovere ?";
 $codice = filter_input(INPUT_GET, 'codice');
 
 if (isset($_POST['Delete'])) {
+	//Cancello le eventuali immagini web e i documenti
+	$rs=gaz_dbi_dyn_query ("*",$gTables['files'],"table_name_ref = 'artico' AND item_ref = '".$codice."'");
+	foreach ($rs as $delimg){
+		gaz_dbi_del_row($gTables['files'], "id_doc", $delimg['id_doc']);
+		unlink ("../../data/files/". $delimg['id_doc'] . "." . $delimg['extension']);
+	}
     //Cancello se presenti gli articoli presenti in distinta base
     $result = gaz_dbi_del_row($gTables['distinta_base'], "codice_composizione", $codice );
     //Cancello l'articolo
     $result = gaz_dbi_del_row($gTables['artico'], "codice", filter_input(INPUT_POST, 'codice'));
-    //Ritorno alla pagina articoli
+    //Ritorno alla pagina articoli	
     header("Location: report_artico.php");
     exit;
 } else {
