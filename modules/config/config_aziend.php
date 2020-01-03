@@ -42,6 +42,12 @@ if ( $test_email ) {
 $admin_aziend = checkAdmin(9);
 
 if (isset($_POST["elimina"])) {   // si vuole eliminare l'azienda
+    // mi sposto con le attività sulla prima azienda 
+    gaz_dbi_put_row($gTables['admin'], "user_name", $admin_aziend["user_name"], 'company_id', 1);
+    // cancello il rigo dalla tabella aziend 
+    gaz_dbi_del_row($gTables['aziend'], 'codice', $admin_aziend["company_id"]);
+    // cancello il rigo dalla tabella admin_modules 
+    gaz_dbi_del_row($gTables['admin_module'], 'company_id', $admin_aziend["company_id"]);
     $t_erased = array();
     $tp = $table_prefix . '_' . str_pad($admin_aziend["company_id"], 3, '0', STR_PAD_LEFT);
     //print $tp;
@@ -50,17 +56,11 @@ if (isset($_POST["elimina"])) {   // si vuole eliminare l'azienda
         $t_erased[] = $r['tn'];
         gaz_dbi_query($r['query']);
     }
-    $te = gaz_dbi_query("SELECT CONCAT(  'DROP TABLE `', TABLE_NAME,  '`;' ) AS query, TABLE_NAME as tn FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE  '" . $tp . "%'");
+    $te = gaz_dbi_query("SELECT CONCAT(  'DROP TABLE IF EXISTS `', TABLE_NAME,  '`;' ) AS query, TABLE_NAME as tn FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE  '" . $tp . "%'");
     while ($r = gaz_dbi_fetch_array($te)) {
         $t_erased[] = $r['tn'];
         gaz_dbi_query($r['query']);
     }
-    // cancello il rigo dalla tabella admin_modules 
-    gaz_dbi_del_row($gTables['admin_module'], 'company_id', $admin_aziend["company_id"]);
-    // cancello il rigo dalla tabella aziend 
-    gaz_dbi_del_row($gTables['aziend'], 'codice', $admin_aziend["company_id"]);
-    // mi sposto con le attività sulla prima azienda 
-    gaz_dbi_put_row($gTables['admin'], "user_name", $admin_aziend["user_name"], 'company_id', 1);
     session_destroy();
     header("Location: ../root/login_admin.php?tp=" . $table_prefix);
     exit;
