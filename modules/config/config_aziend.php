@@ -46,8 +46,10 @@ if (isset($_POST["elimina"])) {   // si vuole eliminare l'azienda
     gaz_dbi_put_row($gTables['admin'], "user_name", $admin_aziend["user_name"], 'company_id', 1);
     // cancello il rigo dalla tabella aziend 
     gaz_dbi_del_row($gTables['aziend'], 'codice', $admin_aziend["company_id"]);
-    // cancello il rigo dalla tabella admin_modules 
+    // cancello i righi dalla tabella admin_modules 
     gaz_dbi_del_row($gTables['admin_module'], 'company_id', $admin_aziend["company_id"]);
+    // cancello i righi dalla tabella menu_usage 
+    gaz_dbi_del_row($gTables['menu_usage'], 'company_id', $admin_aziend["company_id"]);
     $t_erased = array();
     $tp = $table_prefix . '_' . str_pad($admin_aziend["company_id"], 3, '0', STR_PAD_LEFT);
     //print $tp;
