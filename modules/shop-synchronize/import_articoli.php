@@ -42,6 +42,7 @@ if (isset($_POST['conferma'])) { // se confermato
 		if (isset($_POST['download'.$ord])){ // se selezionato
 			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord]); // prendo il codice IVA
 			if (strlen($_POST['imgurl'.$ord])>0){ // se c'è un'immagine
+			
 				$url = $_POST['imgurl'.$ord];
 				$expl= explode ("/", $_POST['imgurl'.$ord]);
 				$form['table_name_ref']= 'artico';
@@ -53,7 +54,8 @@ if (isset($_POST['conferma'])) { // se confermato
 				gaz_dbi_table_insert('files',$form);// inserisco i dati dell'immagine nella tabella files
 				$form['id_doc']= gaz_dbi_last_id();//recupero l'id assegnato dall'inserimento
 				$imgweb='../../data/files/'.$form['id_doc'].'.'.$form['extension'];
-				file_put_contents($imgweb, file_get_contents($url)); // scrivo l'immagine nella cartella aziendale
+				file_put_contents($imgweb, file_get_contents($url)); // scrivo l'immagine web HQ nella cartella files
+				
 				$img = '../../data/files/tmp/'.$expl[count($expl)-1]; 
 				// scrivo l'immagine nella cartella temporanea
 				file_put_contents($img, file_get_contents($url));
@@ -77,11 +79,17 @@ if (isset($_POST['conferma'])) { // se confermato
 					imagepng( $dst, $target_filename); // adjust format as needed
 					imagedestroy( $dst );
 				} 
-				//Carico l'immagine
+				//Carico l'immagine ridimensionata
 				$immagine= addslashes (file_get_contents($target_filename));
 				unlink ($img);// cancello l'immagine della cartella temporanea
 			} else {
 				$immagine="";
+			}
+			if (strlen($_POST['body_text'.$ord])>0){ // se c'è una descrizione estesa - body_text
+				$form['body_text']=$_POST['body_text'.$ord];
+				$form['table_name_ref']="artico_".$_POST['codice'.$ord];
+				$form['lang_id']=1;
+				gaz_dbi_table_insert('body_text', $form); // la scrivo nel DB
 			}
 			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);
 			if ($esiste){ // se esiste aggiorno articolo
