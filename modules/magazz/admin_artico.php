@@ -106,6 +106,17 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
     }
     // fine documenti/certificati
+	// Antonio Germani - inizio immagini e-commerce
+    $nimg = 0;
+    if (isset($_POST['imgrows'])) {
+        foreach ($_POST['rows'] as $nimg => $value) {
+            $form['imgrows'][$nimg]['id_doc'] = intval($value['id_doc']);
+            $form['imgrows'][$nimg]['extension'] = substr($value['extension'], 0, 5);
+            $form['imgrows'][$nimg]['title'] = substr($value['title'], 0, 255);
+            $nimg++;
+        }
+    }
+    // fine inizio immagini e-commerce
     $form['body_text'] = filter_input(INPUT_POST, 'body_text');
 
     /** ENRICO FEDELE */
@@ -291,12 +302,20 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** fine modifica FP */
     // inizio documenti/certificati
     $ndoc = 0;
-    $rs_row = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '" . $form['codice'] . "'", "id_doc DESC");
+    $rs_row = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '" . $form['codice'] . "' AND id_ref = '0'", "id_doc DESC");
     while ($row = gaz_dbi_fetch_array($rs_row)) {
         $form['rows'][$ndoc] = $row;
         $ndoc++;
     }
     // fine documenti/certificati
+	// Antonio Germani - inizio immagini e-commerce
+    $nimg = 0;
+    $rs_row = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '" . $form['codice'] . "' AND id_ref = '1'", "id_doc DESC");
+    while ($row = gaz_dbi_fetch_array($rs_row)) {
+        $form['imgrows'][$nimg] = $row;
+        $nimg++;
+    }
+    // fine immagini e-commerce
     $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
     $form['body_text'] = $bodytext['body_text'];
 } else { //se e' il primo accesso per INSERT
@@ -845,6 +864,32 @@ if ($modal_ok_insert === true) {
                                     </div>
                                     <?php } else { // non ho documenti  ?>
                                     <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+					<!-- Antonio Germani inserimento/modifica immagini di qualità per e-commerce -->
+					<div id="annotaUpdate" class="row IERincludeExcludeRow">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['imageweb']; ?></label>
+        <?php if ($nimg > 0) { // se ho dei documenti  ?>
+                                    <div>
+                                    <?php foreach ($form['imgrows'] as $k => $val) { ?>
+                                            <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="imgrows[<?php echo $k; ?>][id_doc]">
+                                            <input type="hidden" value="<?php echo $val['extension']; ?>" name="imgrows[<?php echo $k; ?>][extension]">
+                                            <input type="hidden" value="<?php echo $val['title']; ?>" name="imgrows[<?php echo $k; ?>][title]">
+                <?php echo DATA_DIR . 'files/' . $val['id_doc'] . '.' . $val['extension']; ?>
+                                            <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
+                                                <i class="glyphicon glyphicon-file"></i>
+                                            </a><?php echo $val['title']; ?>
+                                            <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_image.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
+
+            <?php } ?>
+                                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
+                                    </div>
+                                    <?php } else { // non ho documenti  ?>
+                                    <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
                                 <?php } ?>
                             </div>
                         </div>
