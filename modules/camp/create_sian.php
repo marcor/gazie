@@ -235,6 +235,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							if ($row['confezione']==0) { // se è sfuso
 								$type_array[23]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
 							} else { // se è confezionato
+								$row['recip_stocc']="";
 								$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
 								$quantilitri = str_replace(".", "", $quantilitri);
 								$type_array[25]=sprintf ("%013d",$quantilitri);
