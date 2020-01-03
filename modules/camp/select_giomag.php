@@ -193,8 +193,8 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "</tr>";
         $sum=0.00;
 		
-		
-        while (list($key, $mv) = each($m)) {
+		//while (list($key, $mv) = each($m)) DEPRECATED IN PHP 7+ Antonio Germani
+			foreach($m as $key => $mv){
 			if ($mv['mostra_qdc']==1){ // se è un movimento di campagna oppure è un articolo da mostrare nel quaderno di campagna
             $datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
             $datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);

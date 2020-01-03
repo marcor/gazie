@@ -101,7 +101,8 @@ $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',9);
 if (sizeof($result) > 0) {
-	while (list($key, $row) = each($result)) {
+	//while (list($key, $row) = each($result)) DEPRECATEd IN PHP 7+ Antonio Germani
+	foreach($result as $key => $row)	{
 		if ($row['mostra_qdc']==1){ //escludi se è stato selezionato di non mostrare nel Q.d.c.
 			$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $row['campo_coltivazione']);// Antonio Germani carico il campo
 			if (!isset($res)){
