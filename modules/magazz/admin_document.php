@@ -146,7 +146,7 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">File : </td>\n";
 echo "\t<td class=\"FacetDataTD\">
 			<a class=\"btn btn-xs btn-default\" href=\"../root/retrieve.php?id_doc=".$form["id_doc"]."\" title=\"".$script_transl['view']."!\">
-				<i class=\"glyphicon glyphicon-eye-open\"></i>&nbsp;".DATA_DIR."files/".$form['id_doc'].".".$form['extension']."
+				<i class=\"glyphicon glyphicon-eye-open\"></i>&nbsp;".DATA_DIR."files/".$admin_aziend['company_id']."/doc/".$form['id_doc'].".".$form['extension']."
 			</a>
 		</td>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['update']." :  <input name=\"userfile\" type=\"file\"> </td>\n";
