@@ -84,7 +84,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           }
           // aggiorno il filesystem solo se è stato selezionato un nuovo file
           if ($_FILES['userfile']['error']==0) {
-            move_uploaded_file($_FILES["userfile"]["tmp_name"], DATA_DIR . "files/" . $form['id_doc'] . "." . $form['extension']);
+            move_uploaded_file($_FILES["userfile"]["tmp_name"], DATA_DIR . "files/" .$admin_aziend['company_id']."/doc/". $form['id_doc'] . "." . $form['extension']);
           }
           header("Location: ".$form['ritorno']);
           exit;
