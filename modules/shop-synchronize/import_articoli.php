@@ -53,7 +53,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				$form['title']= "Immagine web articolo: ".$_POST['codice'.$ord];
 				gaz_dbi_table_insert('files',$form);// inserisco i dati dell'immagine nella tabella files
 				$form['id_doc']= gaz_dbi_last_id();//recupero l'id assegnato dall'inserimento
-				$imgweb='../../data/files/'.$form['id_doc'].'.'.$form['extension'];
+				$imgweb='../../data/files/'.$admin_aziend['company_id'].'/images/'.$form['id_doc'].'.'.$form['extension'];
 				file_put_contents($imgweb, file_get_contents($url)); // scrivo l'immagine web HQ nella cartella files
 				
 				$img = '../../data/files/tmp/'.$expl[count($expl)-1]; 

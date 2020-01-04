@@ -25,6 +25,9 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $doc = gaz_dbi_get_row($gTables['files'],'id_doc',intval($_GET['id_doc']));
+if ($doc['id_ref']==1) {
+	$doc['id_doc']=$admin_aziend['company_id']."/images/".$doc['id_doc'];
+}
 header("Content-Type: application/".$doc['extension']);
 header('Content-Disposition: attachment; filename="Doc_'.$doc['id_doc'].'.'.$doc['extension'].'"');
 // data retrieved from filesystem
