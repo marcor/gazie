@@ -40,9 +40,17 @@ if (isset($_POST['conferma'])) { // se confermato
     // scrittura articoli su database di GAzie
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){ // ciclo gli articoli e scrivo i database
 		if (isset($_POST['download'.$ord])){ // se selezionato
+			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);
 			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord]); // prendo il codice IVA
-			if (strlen($_POST['imgurl'.$ord])>0){ // se c'è un'immagine
 			
+			if (strlen($esiste AND $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg"){ // se è aggiornamento, se c'è un'immagine e se selezionato
+				// cancello l'immagine presente nella cartella 
+				$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $_POST['codice'.$ord]."'");
+				gaz_dbi_del_row($gTables['files'], 'id_doc',$imgres['id_doc']);
+				unlink ("../../data/files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension']);
+			}
+			
+			if ((strlen(!$esiste AND $_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg") OR (strlen($esiste AND $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg")){ // se è inserimento, se c'è un'immagine e se selezionato
 				$url = $_POST['imgurl'.$ord];
 				$expl= explode ("/", $_POST['imgurl'.$ord]);
 				$form['table_name_ref']= 'artico';
@@ -85,17 +93,32 @@ if (isset($_POST['conferma'])) { // se confermato
 			} else {
 				$immagine="";
 			}
-			if (strlen($_POST['body_text'.$ord])>0){ // se c'è una descrizione estesa - body_text
-				$form['body_text']=$_POST['body_text'.$ord];
-				$form['table_name_ref']="artico_".$_POST['codice'.$ord];
-				$form['lang_id']=1;
-				gaz_dbi_table_insert('body_text', $form); // la scrivo nel DB
-			}
-			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);
-			if ($esiste){ // se esiste aggiorno articolo
+			
+			
+			
+			
+			if ($esiste){ // se esiste l'articolo lo aggiorno
+				if (strlen($_POST['body_text'.$ord])>0 AND $_GET['upddes']=="upddes"){ // se c'è una descrizione estesa - body_text ed è selezionata
+					$esist = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_".$_POST['codice'.$ord]);
+					$form['body_text']=$_POST['body_text'.$ord];
+					$form['table_name_ref']="artico_".$_POST['codice'.$ord];
+					$form['lang_id']=1;
+					if ($esist) { // se c'è già	
+						$where = array("0" => "table_name_ref", "1" => "artico_".$_POST['codice'.$ord]);
+						gaz_dbi_table_update("body_text",$where, $form); // la aggiorno nel DB
+					} else { // altrimenti 
+						gaz_dbi_table_insert('body_text', $form); // la scrivo nel DB
+					}
+				}
 				gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET descri = '".addslashes($_POST['descri'.$ord])."', web_price = '".addslashes($_POST['web_price'.$ord])."' , image = '".$immagine."' WHERE codice = '".addslashes($_POST['codice'.$ord])."'");
 			} else { // altrimenti inserisco nuovo articolo
 				gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,web_mu,web_price,unimis,image,web_public,depli_public,aliiva) VALUES ('" . addslashes($_POST['codice'.$ord]) . "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '". addslashes($_POST['web_price'.$ord]). "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
+				if (strlen($_POST['body_text'.$ord])>0 AND $_GET['impdes']=="dwldes"){ // se c'è una descrizione estesa - body_text ed è selezionata
+					$form['body_text']=$_POST['body_text'.$ord];
+					$form['table_name_ref']="artico_".$_POST['codice'.$ord];
+					$form['lang_id']=1;
+					gaz_dbi_table_insert('body_text', $form); // la scrivo nel DB
+				}
 			}			
 			
 		}
