@@ -193,13 +193,19 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
 				while(false !== ( $file = readdir($dir)) ) { 
 					if (( $file != '.' ) && ( $file != '..' )) { 
 						if ( is_dir($src . '/' . $file) ) { 
-							recurse_copy($src . '/' . $file,$dst . '/' . $file); 
+							// recurse_copy($src . '/' . $file,$dst . '/' . $file); 
 						} else { 
 							copy($src . '/' . $file,$dst . '/' . $file); 
 						} 
 					} 
 				} 
 				closedir($dir); 
+				// creo la subdir per contenere le immagini relative all'azienda specifica
+				$dirimg="../../data/files/" . $form['codice']."/images";
+                mkdir($dirimg, 0740);
+				// creo la subdir per contenere i documenti relativi all'azienda specifica
+				$dirdoc="../../data/files/" . $form['codice']."/doc";
+                mkdir($dirdoc, 0740);
 			}
             header("Location: admin_aziend.php?Update&codice=" . $form['codice']);
             exit;

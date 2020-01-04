@@ -287,7 +287,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001body_text` (
   `body_text` mediumtext NOT NULL,
   `lang_id` int(3) NOT NULL,
   PRIMARY KEY (`id_body`),
-  KEY `table_name_ref` (`table_name_ref`)
+  KEY `table_name_ref` (`table_name_ref`),
+  KEY `id_ref` (`id_ref`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
@@ -1159,8 +1160,8 @@ INSERT INTO `gaz_001company_config` (`id`, `description`, `var`, `val`) VALUES
 (39, 'Stampa Ricevute su moduli prenumerati es.\'buffetti\' per Buffetti art.8205L2000', 'received_template', ''),
 (40, 'Foglio di stile xsl per la visualizzazione della fattura elettronica (nella directory /library/inclu', 'fae_style', 'fatturaordinaria_v1.2.1'),
 (41, 'Identificativo dello stabilimento o deposito del SIAN', 'id_sian', '0'),
-(42, 'Allerta se la lunghezza del codice articolo è diverso da', 'codart_len', '0');
-(43, 'Destinazione testo descrittivo articolo (0=solo su documenti, 1=entrambi, 2=solo su web, 9=nessuno)', 'article_text', '0')
+(42, 'Allerta se la lunghezza del codice articolo è diverso da', 'codart_len', '0'),
+(43, 'Destinazione testo descrittivo articolo (0=solo su documenti, 1=entrambi, 2=solo su web, 9=nessuno)', 'article_text', '0');
 
 -- --------------------------------------------------------
 
@@ -1464,7 +1465,9 @@ CREATE TABLE IF NOT EXISTS `gaz_001files` (
   `title` varchar(255) NOT NULL,
   `adminid` varchar(20) NOT NULL,
   `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_doc`)
+  PRIMARY KEY (`id_doc`),
+  KEY `table_name_ref` (`table_name_ref`),
+  KEY `id_ref` (`id_ref`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
