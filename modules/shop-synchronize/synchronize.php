@@ -75,7 +75,7 @@ if (isset ($_POST['download'])) {
 		}
 } elseif (isset ($_POST['downloader'])) { 
 	
-	if (file_exists($file_downloader)){
+	if (file_exists($file_downloader)){ // importazione 
 		if (!isset($_POST['scarprezzo'])){
 			$_POST['scarprezzo']="";
 		}
@@ -90,8 +90,8 @@ if (isset ($_POST['download'])) {
 		}
 } elseif (isset ($_POST['uploader'])) { 
 	
-	if (file_exists($file_uploader)){
-		header("Location: " . $file_uploader."?prezzo=".$_POST['prezzo']."&qta=".$_POST['quantita']."&descri=".$_POST['descrizione']);
+	if (file_exists($file_uploader)){ // esportazione/aggiornamento
+		header("Location: " . $file_uploader."?prezzo=".$_POST['prezzo']."&qta=".$_POST['quantita']."&descri=".$_POST['descrizione']."&img=".$_POST['immagine']);
 		exit;
 	} else {
 		header("Location: " . $_POST['ritorno']);
@@ -130,42 +130,43 @@ if (isset ($_POST['download'])) {
 			<div id="more">
 				<div class="row bg-warning" style="border-top: 1px solid;">
 					<div class="col-sm-12 bg-warning" align="center" >
-							<h3 class="text-primary">ESPORTAZIONE</h3>
+							<h3 class="text-primary">ESPORTAZIONE - aggiornamento articoli nell'e-commerce</h3>
 						</div>
 					<div class="col-sm-6  bg-warning" align="left" style="font-size: 18;">
 						<input type="checkbox" name="quantita" value="updqty" checked> Quantit&agrave &nbsp 
 						<input type="checkbox" name="prezzo" value="updprice"> Prezzo &nbsp
 						<input type="checkbox" name="descrizione" value="upddes" > Descrizione estesa &nbsp
-						<!-- <input type="checkbox" name="carimg" value="updimg" > immagine &nbsp -->
+						<input type="checkbox" name="immagine" value="updimg" > immagine &nbsp
 					</div>
 					
 						<div class="col-sm-12  bg-warning">
-							<input type="submit" class="btn btn-danger btn-sm pull-right" name="uploader"  value="Aggiorna prodotti nell'e-commerce">
+							<input type="submit" class="btn btn-danger btn-sm pull-right" name="uploader"  value="Seleziona i prodotti da aggiornare">
 						</div>
 			
 				</div>
 				<div class="row bg-success" style="border-top: 1px solid;">
 						<div class="col-sm-12 bg-success" align="center" >
-							<h3 class="text-primary">IMPORTAZIONE</h3>
+							<h3 class="text-primary">IMPORTAZIONE - inserimento o aggiornamento articoli in GAzie</h3> 
 						</div>
+						
 						<div class="col-sm-6  bg-success" align="left" style="font-size: 18;">
 							<p> In aggiornamento variare anche:</p>
 							<!-- <input type="checkbox" name="impquantita" value="dwldqty"> quantit&agrave &nbsp -->
-							<input type="checkbox" name="updpre" value="updprice"> Prezzo &nbsp
+							<input type="checkbox" name="updpre" value="updpre"> Prezzo web &nbsp
 							<input type="checkbox" name="upddes" value="upddes" > Descrizione estesa &nbsp
 							<input type="checkbox" name="updimm" value="updimg" > Immagine &nbsp
 						</div>
 						<div class="col-sm-6  bg-success" align="left" style="font-size: 18;">
 							<p> In nuovo inserimento inserire anche:</p>
 							<!-- <input type="checkbox" name="scarquantita" value="dwldqty"> quantit&agrave &nbsp -->
-							<input type="checkbox" name="imppre" value="dwlprice"> Prezzo &nbsp
+							<input type="checkbox" name="imppre" value="dwlprice"> Prezzo web &nbsp
 							<input type="checkbox" name="impdes" value="dwldes" > Descrizione estesa &nbsp 
 							<input type="checkbox" name="impimm" value="dwlimg" > Immagine &nbsp
 						</div>
 				
 				
 						<div class="col-sm-12  bg-success">
-							<input type="submit" class="btn btn-danger btn-sm pull-right" name="downloader"  value="Carica prodotti in GAzie">
+							<input type="submit" class="btn btn-danger btn-sm pull-right" name="downloader"  value="Seleziona i prodotti da importare o aggiornare">
 						</div>
 				</div>
 					
