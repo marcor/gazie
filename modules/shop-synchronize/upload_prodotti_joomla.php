@@ -6,8 +6,28 @@
   @Website   http://www.lacasettabio.it
   @Copyright Copyright (C) 2018 - 2019 Antonio Germani All Rights Reserved.
   versione 1.0
-  ------------------------------------------------------------------------ */
-  
+  ------------------------------------------------------------------------ 
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
+
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+  */
+// IMPOSTARE QUì IL PERCORSO PER SCRIVERE I FILE VIA FTP SUL SITO E-COMMERCE (SENZA IL DOMINIO e con / finale)
+$ftp_path_upload="?public_html?/?yourfolder?/";
+// Fine impostazioni - da qui in poi non toccare più nulla!
+
 require ("../../modules/magazz/lib.function.php");
 $gForm = new magazzForm;
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
@@ -85,7 +105,7 @@ fclose($xmlHandle);
 //turn passive mode on
 ftp_pasv($conn_id, true);
 // upload file xml
-if (ftp_put($conn_id, "public_html/easyfatt/prodotti.xml", $xmlFile, FTP_ASCII)){
+if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
 	?>
 	<div class="alert alert-success text-center" >
 	<strong>ok</strong> il file xml è stato trasferito al sito web.

@@ -6,7 +6,30 @@
   @Website   http://www.lacasettabio.it
   @Copyright Copyright (C) 2018 - 2019 Antonio Germani All Rights Reserved.
   versione 1.0
-  ------------------------------------------------------------------------ */
+  ------------------------------------------------------------------------ 
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
+
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+  */
+  // IMPOSTARE QUì IL PERCORSO PER SCRIVERE I FILE VIA FTP SUL SITO E-COMMERCE (SENZA IL DOMINIO e con / finale)
+$ftp_path_upload="?public_html?/yourfolder/";
+// Fine impostazioni - da qui in poi non toccare più nulla!
+  
+  
+  
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
@@ -17,6 +40,8 @@ $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
 $ftp_user = $resuser['val'];
 $respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
 $ftp_pass= $respass['val'];
+$respath = gaz_dbi_get_row($gTables['company_config'], "var", "path");
+$web_site_path= $respath['val'];
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
 if ($exists) {
@@ -57,7 +82,14 @@ if (isset($_POST['conferma'])) { // se confermato
 		location.replace("<?php echo $_POST['ritorno']; ?>");
 		</script>
 		<?php
-	} 
+	}
+	if ($_GET['img']=="updimg"){ // se si devono aggiornare le immagini
+		ftp_rmdir($conn_id, $web_site_path."images"); // cancello la cartella images con i vecchi files
+		ftp_mkdir($conn_id, $web_site_path."images"); // creo nuovamente la cartella images per i nuovi files
+	}
+	//turn passive mode on
+	ftp_pasv($conn_id, true);
+	
 		// creo il file xml
 	$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
 	<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
@@ -70,30 +102,44 @@ if (isset($_POST['conferma'])) { // se confermato
 			$xml_output .= "\t<Product>\n";
 			$xml_output .= "\t<Code>".$_POST['codice'.$ord]."</Code>\n";
 			$xml_output .= "\t<BarCode>".$_POST['barcode'.$ord]."</BarCode>\n";
-			if ($_GET['qta']!==""){
+			if ($_GET['qta']=="updqty"){
 				$xml_output .= "\t<AvailableQty>".$_POST['quanti'.$ord]."</AvailableQty>\n";
 			}
-			if ($_GET['prezzo']!=="" AND $_POST['web_price'.$ord]>0){
+			if ($_GET['prezzo']=="updprice" AND $_POST['web_price'.$ord]>0){
 				$xml_output .= "\t<WebPrice>".$_POST['web_price'.$ord]."</WebPrice>\n";
 			}
-			if ($_GET['descri']!=="" AND strlen($_POST['descri'.$ord])>0){
-				$xml_output .= "\t<Description>".$_POST['descri'.$ord]."</Description>\n";
+			if ($_GET['name']=="updnam" AND strlen($_POST['descri'.$ord])>0){
+				$xml_output .= "\t<Name>".$_POST['descri'.$ord]."</Name>\n";
+			}
+			if ($_GET['descri']=="upddes" AND strlen($_POST['body_text'.$ord])>0){
+				$xml_output .= "\t<Description>".$_POST['body_text'.$ord]."</Description>\n";
+			}
+			if ($_GET['img']=="updimg" AND strlen($_POST['imgurl'.$ord])>0){
+				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){
+					// scrivo l'immagine web HQ nella cartella e-commerce
+					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".$_POST['imgname'.$ord]."</ImgUrl>\n"; // ne scrivo l'url nel file xml
+				} else {
+					// ERRORE chiudo la connessione FTP 
+					ftp_quit($conn_id);
+					header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=5");
+					exit;
+				}
+				
 			}
 			$xml_output .= "\t</Product>\n";
 		}
-	 }
+	}
 	$xml_output .="\n</Products>\n</GAzieDocuments>";
 	$xmlFile = "prodotti.xml";
 	$xmlHandle = fopen($xmlFile, "w");
 	fwrite($xmlHandle, $xml_output);
 	fclose($xmlHandle);
-	//turn passive mode on
-	ftp_pasv($conn_id, true);
+	
 	// upload file xml
-	if (ftp_put($conn_id, "public_html/easyfatt/prodotti.xml", $xmlFile, FTP_ASCII)){
-		
+	if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
+		// è OK
 	} else{
-		// chiudo la connessione FTP 
+		// ERRORE chiudo la connessione FTP 
 		ftp_quit($conn_id);
 		header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=4");
 		exit;
@@ -103,7 +149,9 @@ if (isset($_POST['conferma'])) { // se confermato
 
 	// avvio il file di interfaccia presente nel sito web remoto
 	$headers = @get_headers($urlinterf.'?access='.$access);
+	
 	if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
+		
 		$file = fopen ($urlinterf.'?access='.$access, "r");
 		if (!$file) {
 			// chiudo la connessione FTP 
@@ -160,6 +208,12 @@ if (!isset($_GET['success'])){
 				<div class="row bg-primary" >
 					<div class="col-sm-12" align="center"><h4>Esportazione di articoli da GAzie</h4>
 						<p align="justify">Gli articoli selezionati verranno aggiornati nell'e-commerce se esistenti, altrimenti verranno ignorati. </p>
+						<?php
+						if ($_GET['img']=="updimg") {?>
+							<b> Hai selezionato di trasferire le immagini: questa operazione potrebbe richiedere molti minuti di attesa!</b>
+							<?php
+						}
+						?>
 					</div>
 				</div>
 				<div class="row bg-info">
@@ -208,7 +262,7 @@ if (!isset($_GET['success'])){
 					</div>
 				</div>
 				<?php
-				// carico gli articoli presenti in GAzie
+				// carico in $artico gli articoli che sono presenti in GAzie
 				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
@@ -236,11 +290,24 @@ if (!isset($_GET['success'])){
 								?>
 							</div>
 							<div class="col-sm-1">
-								<?php //echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($item['description'])) . '">';
+								<?php 
+								if ($_GET['descri']=="upddes"){ // se devo aggiornare il body_text
+									$body = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_". $item['codice']);
+									echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($body['body_text'])) . '">';
+								}
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $avqty .'">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $item['web_price'] .'">';
 								echo '<input type="hidden" name="barcode'. $n .'" value="'. $item['barcode'] .'">';
-								//echo '<input type="hidden" name="imgurl'. $n .'" value="'. $item['???'] .'">';
+								if ($_GET['img']=="updimg"){ // se devo aggiornare l'immagine ne trovo l'url di GAzie
+									$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $item['codice']."'");
+									if ($imgres['id_doc']>0){ // se c'è un'immagine
+										$imgurl="../../data/files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension'];
+									} else {
+										$imgurl="";
+									}
+									echo '<input type="hidden" name="imgurl'. $n .'" value="'. $imgurl .'">';
+									echo '<input type="hidden" name="imgname'. $n .'" value="'. $imgres['id_doc'] . "." . $imgres['extension'] .'">';
+								}
 								?>
 							</div>
 							<div class="col-sm-1" align="right">
@@ -298,7 +365,7 @@ if (!isset($_GET['success'])){
 	?>
 	<div class="alert alert-danger alert-dismissible">
 		<a href="../../modules/shop-synchronize/synchronize.php" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		<strong>ERRORE!</strong> Manca il file di interfaccia nell'e-commerce!.
+		<strong>ERRORE!</strong> Manca il file di interfaccia nell'e-commerce o non è stato possibile accedervi!.
 	</div>
 <?php
 } elseif ($_GET['success']==3){
@@ -313,6 +380,13 @@ if (!isset($_GET['success'])){
 	<div class="alert alert-danger alert-dismissible">
 		<a href="../../modules/shop-synchronize/synchronize.php" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 		<strong>ERRORE!</strong> L'upload del file xml non è riuscito!.
+	</div>
+<?php
+} elseif ($_GET['success']==5){
+	?>
+	<div class="alert alert-danger alert-dismissible">
+		<a href="../../modules/shop-synchronize/synchronize.php" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<strong>ERRORE!</strong> L'upload dell'immagine dell'articolo non è riuscito!.
 	</div>
 <?php
 }

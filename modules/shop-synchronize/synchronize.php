@@ -91,7 +91,7 @@ if (isset ($_POST['download'])) {
 } elseif (isset ($_POST['uploader'])) { 
 	
 	if (file_exists($file_uploader)){ // esportazione/aggiornamento
-		header("Location: " . $file_uploader."?prezzo=".$_POST['prezzo']."&qta=".$_POST['quantita']."&descri=".$_POST['descrizione']."&img=".$_POST['immagine']);
+		header("Location: " . $file_uploader."?prezzo=".$_POST['prezzo']."&qta=".$_POST['quantita']."&descri=".$_POST['descrizione']."&img=".$_POST['immagine']."&name=".$_POST['name']);
 		exit;
 	} else {
 		header("Location: " . $_POST['ritorno']);
@@ -135,6 +135,7 @@ if (isset ($_POST['download'])) {
 					<div class="col-sm-6  bg-warning" align="left" style="font-size: 18;">
 						<input type="checkbox" name="quantita" value="updqty" checked> Quantit&agrave &nbsp 
 						<input type="checkbox" name="prezzo" value="updprice"> Prezzo &nbsp
+						<input type="checkbox" name="name" value="updnam" > Nome &nbsp
 						<input type="checkbox" name="descrizione" value="upddes" > Descrizione estesa &nbsp
 						<input type="checkbox" name="immagine" value="updimg" > immagine &nbsp
 					</div>
