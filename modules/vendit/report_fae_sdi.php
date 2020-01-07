@@ -346,8 +346,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			echo '<tr><td class="bg-info" colspan="11">Il file pacchetto di fatture <span class="bg-warning">'.$r['filename_zip_package'].'</span> è stato generato per contenere le seguenti fatture elettroniche:</td>';
 			echo '<td colspan="2" align="center"><a '.$yes_mail.'class="btn btn-xs btn-info btn-email" onclick="confirMail(this);return false;" id="fn' . substr($r["filename_zip_package"],0,-4) . '" url="send_fae_package.php?fn='.$r['filename_zip_package'].'" href="#" title="Mailto: ' . $dest_fae_zip_package['val'] . '"
 				mail="' . $dest_fae_zip_package['val'] . '" namedoc="'.$r["filename_zip_package"].'">Invia <i class="glyphicon glyphicon-envelope"></i></a>';
-			echo '<td align="center"><a '.$yes_send.'class="btn btn-xs btn-info btn-email" onclick="confirSend(this);return false;" id="zn' . substr($r["filename_zip_package"],0,-4) . '" url="post_fae_package.php?zn='.$r['filename_zip_package'].'" href="#" title="POST call: ' . $send_fae_zip_package['val'] . ' library"
-				library="' . $send_fae_zip_package['val'] . '" namedoc="'.$r["filename_zip_package"].'">Inoltra <i class="glyphicon glyphicon-upload"></i></a>';
+			if ($r['id_SDI'] == 0) {
+				echo '<td align="center"><a '.$yes_send.'class="btn btn-xs btn-info btn-email" onclick="confirSend(this);return false;" id="zn' . substr($r["filename_zip_package"],0,-4) . '" url="post_fae_package.php?zn='.$r['filename_zip_package'].'" href="#" title="POST call: ' . $send_fae_zip_package['val'] . ' library"
+					library="' . $send_fae_zip_package['val'] . '" namedoc="'.$r["filename_zip_package"].'">Inoltra <i class="glyphicon glyphicon-upload"></i></a>';
+			} else {
+				echo '<td></td>';
+			}
 			echo '<td align="center"><a class="btn btn-xs btn-success" title="Download del pacchetto di fatture elettroniche" href="download_zip_package.php?fn='.$r['filename_zip_package'].'">Download <i class="glyphicon glyphicon-download"></i></a></td>';
 			if ($ctrl_zip == 'START_CHECK_VALUE') {
 				$class='btn btn-xs btn-default btn-elimina';
