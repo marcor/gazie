@@ -184,8 +184,8 @@ function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
 	$form['date_ini_D'] = '01';
-	$form['date_ini_M'] = date('m');
-	$form['date_ini_Y'] = date('Y');
+	$form['date_ini_M'] = date('m', strtotime('last month'));
+	$form['date_ini_Y'] = date('Y', strtotime('last month'));
 	$form['date_fin_D'] = date('d');
 	$form['date_fin_M'] = date('m');
 	$form['date_fin_Y'] = date('Y');
