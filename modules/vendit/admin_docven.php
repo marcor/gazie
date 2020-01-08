@@ -2313,7 +2313,7 @@ echo '&nbsp;<a id="addmodal" href="#myModal" data-toggle="modal" data-target="#e
 						}
 					}
 				}
-					// Antonio Germani - fine ricerca con pistola lettore codice a barre -->
+// Antonio Germani - fine ricerca con pistola lettore codice a barre -->
 
 echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 echo '  </td>
@@ -2633,6 +2633,10 @@ foreach ($form['rows'] as $k => $v) {
 					<td class="text-right codricTooltip" title="Contropartita">
 						' . $v['codric'] . '
 					</td>';
+					echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "2": //descrittivo
@@ -2655,6 +2659,10 @@ foreach ($form['rows'] as $k => $v) {
 					<td></td>
 					<td></td>
 					<td></td>\n";
+					echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "3": // variazione totale fattura
@@ -2679,6 +2687,10 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td></td>
 					<td></td>\n";
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
        case "4": // rigo cassa previdenziale
@@ -2709,6 +2721,10 @@ foreach ($form['rows'] as $k => $v) {
 					<td class="text-right codricTooltip" title="Contropartita">
 						' . $v['codric'] . '
 					</td>';
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';		
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "6":
@@ -2738,6 +2754,10 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "11": // CIG fattura elettronica
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
         case "12": // CUP fattura elettronica
             echo "	<td>
 						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
@@ -2759,9 +2779,17 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "13": // ID documento fattura elettronica
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
         case "15": // NumItem fattura elettronica
             echo "	<td>
                             <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
@@ -2782,6 +2810,10 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "14": // Data ordine d'acquisto fattura elettronica      
@@ -2804,6 +2836,10 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "16": // CodiceCommessaConvenzione fattura elettronica
@@ -2826,6 +2862,10 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "21": // Causale 2.1.1.11 fattura elettronica
@@ -2845,6 +2885,10 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "25": // SAL Riferimento Fase 2.1.7 fattura elettronica
@@ -2864,6 +2908,10 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "31": // Dati veicolo 2.3 fattura elettronica
@@ -2883,6 +2931,10 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "210":  // nel caso di articoli composti li visualizzo nel documento per poter inserire la seconda quantità contattare andrea
@@ -2907,6 +2959,10 @@ foreach ($form['rows'] as $k => $v) {
                 <td></td>
                 <td></td>
                 <td></td>\n";
+				echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';
             } else {
                 echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
                     <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\" size=\"1\" />
@@ -2946,6 +3002,10 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td class="text-right">
 					</td>';
+			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					';		
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
     }
