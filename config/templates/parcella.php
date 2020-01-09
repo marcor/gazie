@@ -128,6 +128,12 @@ class Parcella extends Template
                     $this->Cell(20,5,gaz_format_number($rigo['prelis']),1,0,'R');
                     $this->Cell(12,5,'',1,1,'R');
                     break;
+                case "4":
+                    $this->Cell(25, 6, $rigo['codart'],1,0,'L', 0, '', 1);
+                    $this->Cell(129, 6, $rigo['descri'].'('.floatval($rigo['provvigione']).'% di '.gaz_format_number($rigo['prelis']).')',1,0,'L',0,'',1);
+                    $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
+                    $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
+                    break;
                 case "6":
                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
                     break;
