@@ -23,12 +23,14 @@
   --------------------------------------------------------------------------
  */
 
-require("../../config/config/gconfig.php");
-require('../../library/include/' . $NomeDB . '.lib.php');
-require("../../library/include/function.inc.php");
+$path_root = $_SERVER['DOCUMENT_ROOT'];
+require( $path_root . "/config/config/gconfig.php" );
+require( $path_root . "/library/include/" . $NomeDB . ".lib.php" );
+require( $path_root . "/library/include/function.inc.php"  );
+
 if ( $debug_active ) {
 	error_reporting(E_ALL);
-	require ("../../library/kint/build/kint.phar");
+	require ( $path_root . "/library/kint/build/kint.phar");
 }
 
 if (isset($_SESSION['table_prefix'])) {

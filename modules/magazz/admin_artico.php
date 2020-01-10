@@ -998,8 +998,46 @@ if ($modal_ok_insert === true) {
     $gForm->variousSelect('movimentabile', $script_transl['movimentabile_value'], $form['movimentabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
     ?>
                          </div>
+		    </div>
+		</div>
+		<!-- chiude row  -->
+                <div id="fornitori-codici" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+			    <label for="fornitori-codici" class="col-sm-4 control-label"><?php echo $script_transl['fornitori-codici']; ?></label>
+			    <div class="col-sm-8">
+			    <table class="table table-striped table-sm ">
+				<tr>
+					<th scope="col">Fornitore</th>
+					<th scope="col">Codice Fornitore</th>
+					<th scope="col">Ultimo Prezzo</th>
+					<th scope="col"> </th>
+				</tr>
+				<tr>
+					<td>
+                        		  <input class="col-sm-8" type="text"  value="" name="fornitore" maxlength="50" size="50" />
+    	<?php	
+//   				 $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
+	?>
+					</td>
+					<td>
+                        		  <input class="col-sm-8" type="text"  value="" name="codicefornitore" maxlength="50" size="50" />
+					</td>
+					<td>
+                        		  <input class="col-sm-8" type="text"  value="" name="lastprice" maxlength="10" size="30" />
+					</td>
+					<td>
+                        		  <input class="btn btn-primary" type="submit"  value="OK" name="submit"  />
+					</td>
+				</tr>
+			    </table>
+			    </div>
+            <?php
+//			    $gForm->variousSelect('fornitori-codici', $script_transl['fornitori-codici'], $form['movimentabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+	    ?>
+                         </div>
                     </div>
-                </div><!-- chiude row  -->
+                </div>
         <div class="col-sm-12">
     <?php
     /** ENRICO FEDELE */
@@ -1038,6 +1076,7 @@ if ($modal_ok_insert === true) {
         });
     });</script>
 
+<script src="../../js/supplier.js" ></script>
 
 <?php
 /** ENRICO FEDELE */

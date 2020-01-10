@@ -39,10 +39,10 @@ class Config {
 			die ('Error setting path root');
 
 		// Verifica file di configurazione	
-	   	if ( ! is_file("../../config/config/gconfig.myconf.php") )
+	   	if ( ! is_file( PATH_ROOT . "/config/config/gconfig.myconf.php") )
 			die ('Non hai creato il file di configurazione <b>config/config/gconfig.myconf.php</b>! <br> Copialo da <b>config/config/config.myconf.default.php</b>');
 
-		$this->setConfigFile("../../config/config/gconfig.php");
+		$this->setConfigFile( PATH_ROOT . "/config/config/gconfig.php");
 		$this->setTabelle();
 		$this->set('path_root', PATH_ROOT );
 		$this->setDirectories( PATH_ROOT );
@@ -62,7 +62,11 @@ class Config {
                 $this->data['username'] = $tmp['user'];
                 $this->data['password'] = $tmp['pass'];
 		$this->data['url'] = $tmp['url'];
-		$this->data['config_azienda'] = checkAdmin();
+		try {
+			$this->data['config_azienda'] = \checkAdmin();
+		} catch ( Exception $e ) {
+			echo "Errore: " . $e->getMessage();
+		}
 	}
 
 	public function set($key,$value) {  
@@ -194,6 +198,7 @@ class Config {
 			'effett', 
 			'extcon', 
 			'files', 
+			'fornitore_magazzino',
 			'imball', 
 			'letter',
 			'liquidazioni_iva',

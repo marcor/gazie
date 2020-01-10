@@ -23,10 +23,12 @@
   --------------------------------------------------------------------------
  */
 
-require("../../library/include/datlib.inc.php");
+$path_root = $_SERVER['DOCUMENT_ROOT'];
+
+require( $path_root . "/library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $company_choice = gaz_dbi_get_row($gTables['config'], 'variable', 'users_noadmin_all_company')['cvalue'];
-require("../../modules/vendit/lib.function.php");
+require( $path_root . "/modules/vendit/lib.function.php");
 $lm = new lotmag;
 $schedule_view = gaz_dbi_get_row($gTables['company_config'], 'var', 'schedule_view');
 
@@ -52,7 +54,7 @@ $checkUpd = new CheckDbAlign;
 $data = $checkUpd->TestDbAlign();
 if ($data) {
     // induco l'utente ad aggiornare il db
-    redirect('../../setup/install/install.php?tp=' . $table_prefix);
+    redirect( $path_root . '/setup/install/install.php?tp=' . $table_prefix);
     exit;
 }
 $lastBackup = $checkUpd->testDbBackup();
@@ -88,7 +90,7 @@ if ($backupMode == "automatic") {
             }
         }
         if ($admin_aziend['Abilit'] >= 8 && checkAccessRights($_SESSION['user_name'], 'inform', $_SESSION['company_id']) != 0) {
-            redirect('../../modules/inform/backup.php?internal');
+            redirect( $path_root . '/modules/inform/backup.php?internal');
         }
     }
 }

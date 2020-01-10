@@ -1,5 +1,7 @@
 <?php
 
+$path_root = $_SERVER['DOCUMENT_ROOT'];
+require( $path_root . "/library/include/datlib.inc.php");
 
 /**
  * Class for autoloader the databases

@@ -27,38 +27,21 @@ namespace Database\ORM;
 
 
 /**
- *  Class DB for call query 
+ *  Class for creation manual 
+ *  from database 
+ *
  */
-class DB {
+class Sql extends Query {
 
-	private $_driver;	
+	private $_query;
 
-	public function __construct( \Database\Driver\Driver $driver ) {
-		$this->_driver = $driver;
+	public function __construct( $sql ) {
+	   $this->_query = $sql;
 	}
 
-	public function select($table=NULL,$columns=NULL) {
-		return new Select($this->_driver , $table, $columns);
+	public function write() {
+		return $this->_query;
 	}
 
-	public function delete($table=NULL,$where=NULL) {
-		return new Delete($this->_driver , $table );
-	}
-
-	public function insert($table=NULL,$columns=NULL) {
-		return new Insert( $this->_driver, $table, $columns);
-	}
-
-	public function update($table=NULL,$columns=NULL) {
-		return new Update($this->_driver, $table, $columns);
-	}
-
-	public function show() {
-		return new Show( $this->_driver  );
-	}
-
-	public function sql($query) {
-		return new Sql( $query );
-	}
 }
 

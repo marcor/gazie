@@ -132,7 +132,13 @@ class Query {
 		$this->_query = $query;
 		return $query;
 	}
-	
+
+	public function setQuery( $query ) {
+	  if ( is_string( $query ) ) {
+  	    $this->_query = $query;
+	  }
+	}
+
 	public function execute( $query = NULL ) {
 	  if ( ! $query )
  	    $query = $this->_query;

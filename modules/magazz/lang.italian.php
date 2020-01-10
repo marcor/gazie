@@ -433,6 +433,7 @@ $strScript = array("browse_document.php" =>
         'codcon' => 'Conto di ricavo su vendite',
         'id_cost' => 'Conto di costo su acquisti',
         'annota' => 'Annotazioni (pubblicate anche sul web)',
+        'fornitori-codici' => 'Codici Fornitori',
         'document' => 'Documenti e/o certificazioni',
 		'imageweb' => 'immagini e foto',
         'web_mu' => 'Unit&agrave; di misura online',

@@ -76,6 +76,11 @@ abstract class Table  {
 		return $this->_result;
 	}
 
+	# Create a query manual
+	public function setQuery( $sql ) {
+		$this->query->setQuery( $sql );
+	}
+
 	private function _setValues( $result ) {
 		foreach ( $result->asArray()[0] as $k=>$v ) {
 			$this->$k = $v;
