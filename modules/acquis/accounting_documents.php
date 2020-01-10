@@ -235,6 +235,8 @@ function computeTot($data) {
         }
     }
     $tot = $vat + $tax;
+	//TO-DO: permettere registrazione contabile di documenti a ZERO
+	//print_r(array('taxable' => $tax, 'vat' => $vat, 'tot' => $tot));
     return array('taxable' => $tax, 'vat' => $vat, 'tot' => $tot);
 }
 

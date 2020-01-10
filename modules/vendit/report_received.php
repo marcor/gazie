@@ -113,7 +113,7 @@ $headers_tesdoc = array  (
               "Cliente" => "ragso1",
               "Telefono" => "Importo",
               "Stampa" => "",
-              "Cancella" => ""
+              "Status" => ""
               );
 $linkHeaders = new linkHeaders($headers_tesdoc);
 $linkHeaders -> output();
@@ -148,7 +148,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
 			 	</a>
 			 </td>";
     } else {
-        echo "<td class=\"FacetDataTD\"></td>";
+        echo "<td class=\"FacetDataTD\">";
+		if ($row["id_con"] > 0) {
+			echo " <a class=\"btn btn-xs btn-default btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont." . $row["id_con"] . "</a> ";
+		} else {
+			echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=VRI&vat_section=" . $seziva . "&last=" . $row["protoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
+		}
+        echo "</td>";
     }
     echo "</tr>\n";
 }
