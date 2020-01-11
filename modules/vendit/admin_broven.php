@@ -520,6 +520,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if ($cliente['cosric'] >= 100000000) {
             $form['in_codric'] = $cliente['cosric'];
         }
+		if ($cliente['sconto_rigo']>=0.01){
+			$form['in_sconto'] = $cliente['sconto_rigo'];
+		} else {
+			$form['in_sconto'] = '#';
+		}
+        $form['expense_vat'] = $admin_aziend['preeminent_vat'];
+        if ($cliente['aliiva'] > 0) {
+            $form['expense_vat'] = $cliente['aliiva'];
+        }
         $form['sconto'] = $cliente['sconto'];
         $form['pagame'] = $cliente['codpag'];
         $form['change_pag'] = $cliente['codpag'];
@@ -700,19 +709,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($in_sconto != "#") {
                     $form['rows'][$next_row]['sconto'] = $in_sconto;
                 } else {
-//               $form['rows'][$next_row]['sconto'] = $artico['sconto'];
-//               if ($artico['sconto'] != 0) {
-//                  $msgtoast = $form['rows'][$next_row]['codart'] . ": sconto da anagrafe articoli";
-//               }
-                    $comp = new venditCalc();
-                    $tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], $artico['sconto']);
-                    if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
-                        $form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
+					if ($form["sconto"] > 0) { // gestione sconto cliente sul totale merce o sul rigo
                         $form['rows'][$next_row]['sconto'] = 0;
-                    } else {
-                        $form['rows'][$next_row]['sconto'] = $tmpPrezzoNetto_Sconto;
-                    }
-                }
+					} else {
+						$comp = new venditCalc();
+						$tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], $artico['sconto']);
+						if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
+							$form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
+							$form['rows'][$next_row]['sconto'] = 0;
+						} else {
+							$form['rows'][$next_row]['sconto'] = $tmpPrezzoNetto_Sconto;
+						}
+					}
+				}
                 /* fine modifica FP */
                 $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
                 $provvigione = new Agenti;
@@ -871,12 +880,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		$form['in_good_or_service'] = "";
         $form['in_unimis'] = "";
         $form['in_prelis'] = 0;
-        /** inizio modifica FP 09/10/2015
-         * inizializzo il campo con '#' per indicare che voglio lo sconto standard dell'articolo
-         */
-//rimossa    $form['in_sconto'] = 0;
-        $form['in_sconto'] = '#';
-        /* fine modifica FP */
+//      $form['in_sconto'] = '#';  non azzero il campo in_sconto (sconto rigo)
         $form['in_quanti'] = 0;
         $form['in_codric'] = substr($admin_aziend['impven'], 0, 3);
         $form['in_id_mag'] = 0;
