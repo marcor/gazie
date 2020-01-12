@@ -98,7 +98,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['round_stamp'] = intval($_POST['round_stamp']);
     $form['pagame'] = $_POST['pagame'];
     $form['change_pag'] = $_POST['change_pag'];
-    if ($form['change_pag'] != $form['pagame']) {  //se � stato cambiato il pagamento
+    if ($form['change_pag'] != $form['pagame']) {  //se e' stato cambiato il pagamento
         $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         if ($toDo == 'update') {  //se � una modifica mi baso sulle vecchie spese
             $old_header = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
@@ -111,7 +111,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else {
                 $form['speban'] = 0.00;
             }
-        } else { //altrimenti, se previste,  mi avvalgo delle nuove dell'azienda
+        } else { //altrimenti, se previste, mi avvalgo delle nuove dell'azienda
             if ($cliente['speban'] == "S" && ($new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'T')) {
                 $form['speban'] = $admin_aziend['sperib'];
             } else {
@@ -154,8 +154,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_tiprig'] = $_POST['in_tiprig'];
     $form['in_id_doc'] = $_POST['in_id_doc'];
-    /*   $form['in_artsea'] = $_POST['in_artsea']; */
     $form['in_codart'] = $_POST['in_codart'];
+	/*   $form['in_artsea'] = $_POST['in_artsea']; */
     $form['in_pervat'] = $_POST['in_pervat'];
     $form['in_tipiva'] = $_POST['in_tipiva'];
     $form['in_ritenuta'] = $_POST['in_ritenuta'];
@@ -173,6 +173,28 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_pesosp'] = $_POST['in_pesosp'];
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
+	
+	$ultimoprezzo=''; //info sugli ultimi prezzi
+    if ($form['in_codart']<>$form['cosear']) { // ho cambiato articolo, cerco le 3 ultime vendite
+		
+		$what = $gTables['tesdoc'] . ".datfat, " .
+				$gTables['tesdoc'] . ".numfat, " .
+				$gTables['rigdoc'] . ".codart, " .
+				$gTables['rigdoc'] . ".quanti, " .
+				$gTables['rigdoc'] . ".prelis, " .
+				$gTables['rigdoc'] . ".sconto, " .
+				$gTables['rigdoc'] . ".provvigione";
+
+		$table = $gTables['rigdoc'] . " LEFT JOIN " . $gTables['tesdoc'] . " ON "
+        		.$gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes";
+
+        $where = $gTables['tesdoc'].".clfoco = '".$form['clfoco']."' AND ".$gTables['tesdoc'].".tipdoc LIKE 'FA_' AND ".$gTables['rigdoc'].".tiprig = 0 AND ".$gTables['rigdoc'].".codart = '".$form['cosear']."'";
+		$result = gaz_dbi_dyn_query($what, $table, $where, "datfat DESC",0,3);		
+		while ($prezzi = gaz_dbi_fetch_array($result)) {
+			$ultimoprezzo.="<br />Fattura n. ".$prezzi['numfat']." del ".gaz_format_date($prezzi['datfat'])." ____ quantit&agrave; ".gaz_format_quantity($prezzi['quanti'], 0, $admin_aziend['decimal_quantity'])." ____ prezzo ".gaz_format_number($prezzi['prelis'])." ____ sconto ".gaz_format_number($prezzi['sconto'])."% ____ provvigione ".gaz_format_number($prezzi['provvigione'])."%";
+		}
+	}
+
     $form['rows'] = array();
     $next_row = 0;
     if (isset($_POST['rows'])) {
@@ -585,7 +607,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
 		$form['in_good_or_service']=$artico['good_or_service'];
         // fine addizione peso,pezzi,volume
-        if (substr($form['in_status'], 0, 6) == "UPDROW") { //se � un rigo da modificare
+        if (substr($form['in_status'], 0, 6) == "UPDROW") { //se e' un rigo da modificare
             $old_key = intval(substr($form['in_status'], 6));
             $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$old_key]['id_doc'] = $form['in_id_doc'];
@@ -1224,8 +1246,9 @@ echo "
         return true;
     }
 ";
-echo "</script>";
-?>
+echo "</script>\n";
+
+echo '
 <SCRIPT LANGUAGE="JavaScript" ID="datapopup">
     var cal = new CalendarPopup();
     cal.setReturnFunction("setMultipleValues");
@@ -1234,8 +1257,21 @@ echo "</script>";
         document.broven.mestra.value = LZ(m);
         document.broven.giotra.value = LZ(d);
     }
-</SCRIPT>
-<?php
+</SCRIPT>';
+
+echo "\n";
+
+/******************************************************
+
+             I N I Z I O   P A G I N A
+
+******************************************************/
+/*
+echo '<pre>';
+print_r($form);
+echo '</pre>';
+*/
+
 echo "<form method=\"POST\" name=\"broven\">\n";
 $gForm = new venditForm();
 echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="">
@@ -1434,7 +1470,6 @@ $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 //$select_artico->output($form['cosear'], $form['in_artsea']);
 $select_artico->output($form['cosear']);
-
 /*
   echo 'ricerca per <select name="in_artsea" class="FacetDataTDsmall">';
   $selArray = array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione');
@@ -1591,7 +1626,7 @@ foreach ($form['rows'] as $k => $v) {
             echo "<td class=\"text-right\">" . $v['pervat'] . "%</td>\n";
             echo "<td class=\"text-right\">" . $v['codric'] . "</td>\n";
 
-            $last_row[] = array_unshift($last_row, '' . $v['codart'] . ', ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
+            $last_row[] = array_unshift($last_row, '<strong>' . $v['codart'] . '</strong>, ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             break;
         case "1":
             echo '		<td>
@@ -1772,7 +1807,7 @@ foreach ($form['rows'] as $k => $v) {
                 echo "<td class=\"text-right\"></td>\n";
                 echo "<td class=\"text-right\"></td>\n";
                 echo "<td class=\"text-right\"></td>\n";
-                $last_row[] = array_unshift($last_row, '' . $v['codart'] . ', ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
+                $last_row[] = array_unshift($last_row, '<strong>' . $v['codart'] . '</strong>, ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             } else {
                 echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
                     <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\" size=\"1\" />
@@ -1789,6 +1824,10 @@ foreach ($form['rows'] as $k => $v) {
 		    </td>';
     }
     echo "</tr>";
+}
+
+if ($ultimoprezzo<>'') {
+    $msgtoast = $upd_mm->toast(" <strong>Ultime vendite:</strong>".$ultimoprezzo, 'alert-last-row', 'alert-success'); 
 }
 
 /* Nuovo alert per scontistica, da visualizzare rigorosamente dopo l'ultima riga inserita */
