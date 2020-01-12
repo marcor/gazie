@@ -79,7 +79,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 }
 
 
-if (isset($_POST['Print'])) {
+if (isset($_POST['print']) || isset($_POST['excel'])) {
     if (!checkdate( $form['mi'], $form['gi'], $form['ai'])) {
        $msg .= "16+";
     }
@@ -95,7 +95,17 @@ if (isset($_POST['Print'])) {
        $datini = sprintf("%04d%02d%02d", $form['ai'], $form['mi'], $form['gi']);
        $datfin = sprintf("%04d%02d%02d", $form['af'], $form['mf'], $form['gf']);
        $_SESSION['print_request'] = array('id_agente'=>$form['id_agente'],'di'=>$datini,'df'=>$datfin, 'sc'=>isset($_POST['stampa_compatta']));
-       header("Location: invsta_provvigioni.php");
+	   if (isset($_POST['excel'])) {
+/*
+		   echo "<pre><blockquote>";
+		   print_r($_SESSION['print_request']);
+		   echo "</blockquote></pre>";
+		   die("esporta dati excel");
+*/		$url="?id_agente=" . $form['id_agente'] . "&datini=".$datini."&datfin=".$datfin;
+		   header("Location: excel_provvigioni.php".$url);
+	   } else {
+		   header("Location: invsta_provvigioni.php");
+	   }
        exit;
     }
 }
@@ -247,13 +257,17 @@ Stampa compatta
 
      </tr>\n";
 
-echo "<tr>\n
-     <td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"".ucfirst($script_transl['return'])."\"></td>\n
-     <td align=\"right\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"Print\" value=\"".ucfirst($script_transl['print'])."\"></td>\n
-     </tr>\n";
-?>
-</table>
-</form>
-<?php
+echo "\t<tr class=\"FacetFieldCaptionTD\">\n<td colspan=\"2\"<br/><br/>\n";
+echo "\t<table border=\"0\" width=\"100%\">\n";
+echo "\t\t<tr class=\"FacetFieldCaptionTD\">\n";
+echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".ucfirst($script_transl['return'])."\"></td>\n";
+echo "<td align=\"center\"><input type=\"submit\" name=\"excel\" value=\"EXCEL\"></td>\n";
+echo '<td align="right"> <input type="submit" name="print" value="'.ucfirst($script_transl['print']).'"></td>';
+echo "\n\t\t</tr>\n";
+echo "</table>\n";
+echo "\t </td>\n";
+echo "\t </tr>\n";
+echo "</table>\n</form>\n";
+
 require("../../library/include/footer.php");
 ?>

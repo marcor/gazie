@@ -169,7 +169,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
         } else {
         $desdoc = 'da ' . $tmpDescr . ' n.' . $row['numfat'] . '/' . $row['seziva'] . ' del ' . $row['datfat'] . ' a ' . $row['ragso1'] . ' ' . $row['ragso2'];
         } */
-      $desdoc = 'Fattura n.' . $row['numfat'] . '/' . $row['seziva'] . ' del ' . $row['datfat'] . ' a ' . $row['ragso1'] . ' ' . $row['ragso2'];
+      $desdoc = 'Fattura n.' . $row['numfat'] . '/' . $row['seziva'] . ' del ' . gaz_format_date($row['datfat']) . ' a ' . $row['ragso1'] . ' ' . $row['ragso2'];
       $pdf->Cell(140, 4, $desdoc, 1, 0);
    }
    /*
