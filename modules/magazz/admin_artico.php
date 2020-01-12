@@ -360,7 +360,6 @@ if ($modal === false) {
     if (isset($script)) { // se è stato tradotto lo script lo ritorno al chiamante
         $script_transl = $strScript[$script];
     }
-
     $script_transl = $strCommon + $script_transl;
 }
 /** ENRICO FEDELE */
@@ -1008,14 +1007,19 @@ if ($modal_ok_insert === true) {
 			    <div class="col-sm-8">
 			    <table class="table table-striped table-sm ">
 				<tr>
+					<th scope="col">#</th>
 					<th scope="col">Fornitore</th>
 					<th scope="col">Codice Fornitore</th>
 					<th scope="col">Ultimo Prezzo</th>
 					<th scope="col"> </th>
 				</tr>
 				<tr>
+		<form action="" method="POST">
 					<td>
-                        		  <input class="col-sm-8" type="text"  value="" name="fornitore" maxlength="50" size="50" />
+					  <input class="col-sm-12" type="text"  value="" name="anagr_id_fornitore" id="anagr_id_fornitore" readonly />
+					</td>
+					<td>
+                        		  <input class="col-sm-11" type="text"  value="" name="search_fornitore" id="search_fornitore" maxlength="50" size="50"  />
     	<?php	
 //   				 $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
 	?>
@@ -1029,6 +1033,7 @@ if ($modal_ok_insert === true) {
 					<td>
                         		  <input class="btn btn-primary" type="submit"  value="OK" name="submit"  />
 					</td>
+		</form>
 				</tr>
 			    </table>
 			    </div>
@@ -1076,7 +1081,6 @@ if ($modal_ok_insert === true) {
         });
     });</script>
 
-<script src="../../js/supplier.js" ></script>
 
 <?php
 /** ENRICO FEDELE */
@@ -1098,7 +1102,9 @@ if ($modal === false) {
             e.preventDefault(); // avoid to execute the actual submit of the form.
         });
     </script>
-    <?php
+
+<?php
 }
+
 require("../../library/include/footer.php");
 ?>

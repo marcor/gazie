@@ -62,6 +62,22 @@ class Anagra extends \Database\Table {
 		return $result->asArray();
 	}
 
+	public function searchSuppliers($term='') {
+		if ( $term == '' ) {
+			return $this->getSuppliers();
+		} else {
+			$GAzie = GAzie::factory();
+	                $admin_aziend = $GAzie->getCurrentAzienda();
+	                $masfor = $admin_aziend->masfor . "000000";
+	                $masfor_final = $admin_aziend->masfor . "999999";
+	                $table_clfoco = $GAzie->getConfig()->getTabelle('clfoco');
+	                $sql = $this->query->sql("SELECT * FROM " . $this->getTableName() . " AS a INNER JOIN " . $table_clfoco . " AS cl ON cl.id_anagra = a.id WHERE cl.codice >= $masfor AND cl.codice <= $masfor_final AND (a.ragso1 LIKE '%$term%' OR a.ragso2 LIKE '%$term%');");
+
+        	        $result = $this->execute( $sql );
+	                return $result->asArray();
+		}
+	}
+
 	public static function  syncCustomer( \Syncro\Interfaces\ICustomer $customer ) {
 		// Verifica esistenza customer
 		$sync = new SyncronizeOc; 

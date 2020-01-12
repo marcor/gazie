@@ -2370,6 +2370,8 @@ class TableSorter {
 }
 
 function redirect($filename) {
+	$path_root = $_SERVER['DOCUMENT_ROOT'];
+	$filename = str_replace($path_root, '', $filename);
 	if (!headers_sent()) {
        	header("Location: ".$filename);
 	} else {

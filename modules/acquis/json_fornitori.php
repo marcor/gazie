@@ -75,7 +75,6 @@ $gazie = GAzie::factory();
 
 
 $anagra = new Anagra();
-$suppliers = $anagra->getSuppliers();
 
 /*
  Il singolo fornitore il seguente risutalto
@@ -152,10 +151,21 @@ $suppliers = $anagra->getSuppliers();
 	"last_modified":"2012-06-18 20:31:59"
 }
  */
-$json = array (
-	'total'	=> count($suppliers),
-	'fornitori' => $suppliers,
-);
+
+if ( isset($_GET['term'] ) ) {
+	$term = $_GET['term'];
+	$suppliers = $anagra->searchSuppliers($term);
+	foreach ( $suppliers as $s ) {
+		$json['suppliers'][$s['id']] = $s['descri'] ;
+	}
+} else {
+	$suppliers = $anagra->getSuppliers();
+	$json = array (
+  		'total'	=> count($suppliers),
+		'fornitori' => $suppliers,
+	);
+}
+
 echo toJson( $json );
 
 

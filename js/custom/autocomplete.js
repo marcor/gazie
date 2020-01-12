@@ -187,5 +187,37 @@ $(function() {
 			$(this).closest("form").submit();
 		}
 	});
+  	$( "#search_fornitore" ).autocomplete({
+		source: function (request, response) {
+			$.getJSON("/modules/acquis/json_fornitori.php?token=51490ab5dd226e1d71ecbd7a603fe6b7&term=" + request.term, function (data) {
+				console.log(data.suppliers);
+				response($.map(data.suppliers, function (value, key) {
+		            	    return {
+			                    label: value,
+			                    value: key
+			            };
+			        }));;
+			});
+		},
+                minLength: 2,
+//	        html: true, // optional (jquery.ui.autocomplete.html.js required)
+//        	open: function(event, ui) {
+//	            $(".ui-autocomplete").css("z-index", 1000);
+//	        },
+                select: function(event, ui) {
+			console.log("items ui");
+			console.log(ui.item.value);
+			console.log(ui.item.label);
+                        $("#anagr_id_fornitore").val(ui.item.value);
+                        $("#search_fornitore").val(ui.item.label);
+			return false;
+//                        $(this).closest("form").submit();
+                },
+		focus: function(event, ui) {
+	 		event.preventDefault();
+			$("#search_fornitore").val(ui.item.label);
+		}
+        });
+
 });
 
