@@ -26,7 +26,6 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg='';
 
-
 function getMovements($cm_ini,$cm_fin,$art_ini,$art_fin,$date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
@@ -34,17 +33,13 @@ function getMovements($cm_ini,$cm_fin,$art_ini,$art_fin,$date_ini,$date_fin)
         if ($art_fin=='') {
               $art_fin='zzzzzzzzzzzzzzz';
         }
-        if ( !isset($_POST['ric']) ) {
-			$where=" catmer BETWEEN ".$cm_ini." AND ".$cm_fin." AND".
+        if ( $_POST['ric']=="" ) $_POST['ric']="%%";
+        $where=" catmer BETWEEN ".$cm_ini." AND ".$cm_fin." AND".
                " artico BETWEEN '".$art_ini."' AND '".$art_fin."' AND".
-               " datreg BETWEEN ".$date_ini." AND ".$date_fin;
-		} else {
-			$where=" catmer BETWEEN ".$cm_ini." AND ".$cm_fin." AND ".
+               " datreg BETWEEN ".$date_ini." AND ".$date_fin." AND ".
                $gTables['artico'].".descri like '".$_POST['ric']."' OR ".
-			   $gTables['artico'].".codice like '".$_POST['ric']."' AND ".
-               " datreg BETWEEN ".$date_ini." AND ".$date_fin;
-		}
-        $what=$gTables['movmag'].".*, ".
+               $gTables['artico'].".codice like '".$_POST['ric']."'";
+		$what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri AS descau, ".
               $gTables['clfoco'].".codice, ".
               $gTables['orderman'].".id AS id_orderman, ".$gTables['orderman'].".description AS desorderman, ".
@@ -92,6 +87,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
        $form['date_fin_M']= intval(substr($_GET['df'],2,2));
        $form['date_fin_Y']= intval(substr($_GET['df'],4,4));
     }
+    if ( !isset($_GET['ric']) ) {
+        $form['ric'] = "";
+    }
     if (isset($_GET['id'])) {
        $item=gaz_dbi_get_row($gTables['artico'],'codice',substr($_GET['id'],0,15));
        $form['art_ini']=$item['codice'];
@@ -138,6 +136,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['cm_fin']=intval($_POST['cm_fin']);
     $form['art_ini']=substr($_POST['art_ini'],0,15);
     $form['art_fin']=substr($_POST['art_fin'],0,15);
+    $form['ric']=substr($_POST['ric'],0,15);
 	foreach($_POST['search'] as $k=>$v){
        $form['search'][$k]=$v;
     }
@@ -231,7 +230,7 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cm_fin']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('catmer','cm_fin','codice',$form['cm_fin'],false,false,'-','descri','cm_fin');
 echo "</tr>\n";
-if ( !isset($_POST['ric']) && !isset($_GET['ric']) ) {
+//if ( !isset($form['ric']) ) {
 	echo "<tr>\n";
 	echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['art_ini']."</td><td  class=\"FacetDataTD\">\n";
 	$gForm->selItem('art_ini',$form['art_ini'],$form['search']['art_ini'],$script_transl['mesg'],$form['hidden_req']);
@@ -240,15 +239,15 @@ if ( !isset($_POST['ric']) && !isset($_GET['ric']) ) {
 	echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['art_fin']."</td><td  class=\"FacetDataTD\">\n";
 	$gForm->selItem('art_fin',$form['art_fin'],$form['search']['art_fin'],$script_transl['mesg'],$form['hidden_req']);
 	echo "</tr>\n";
-} else {
-	echo "<input type=\"hidden\" name=\"art_ini\">";
-	echo "<input type=\"hidden\" name=\"art_fin\">";
-	echo "<input type=\"hidden\" name=\"search\">";
+//} else {
+	/*echo "<input type=\"hidden\" name=\"art_ini\">";
+	echo "<input type=\"hidden\" name=\"art_fin\">";*/
+	//echo "<input type=\"hidden\" name=\"search\">";
 	echo "<tr>\n";
 	echo "<td class=\"FacetFieldCaptionTD\">Articolo pers.(% jolly)</td><td  class=\"FacetDataTD\">\n";
-	echo "<input name=\"ric\" value=\"".$_POST['ric']."\"/>";
+	echo "<input name=\"ric\" value=\"".$form['ric']."\"/>";
 	echo "</tr>\n";
-}
+//}
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1);
@@ -259,7 +258,7 @@ $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
-echo "<input type=\"submit\" name=\"ric\" value=\"Personalizzata\"></td>";
+//echo "<input type=\"submit\" name=\"ric\" value=\"Personalizzata\"></td>";
 echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
