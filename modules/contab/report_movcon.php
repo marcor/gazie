@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/header.php");
+$tesmov_e_partners = $gTables['tesmov'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesmov'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
 
 $script_transl = HeadMain('', '', 'admin_movcon');
 
@@ -35,7 +36,9 @@ $search_fields = [
     'anno'
         => "YEAR(datreg) = %d",
     'causale'
-        => "caucon LIKE '%s%%'"
+        => "caucon LIKE '%s%%'",
+    'descri'
+        => $gTables['anagra'].".ragso1 like '%%%s%%'"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -103,7 +106,7 @@ function getDocRef($data) {
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 
 <?php 
-$t = new TableSorter($gTables['tesmov'], $passo, ['id_tes' => 'desc']);
+$t = new TableSorter($tesmov_e_partners, $passo, ['id_tes' => 'desc']);
 $t -> output_navbar();
 ?>
 
@@ -122,7 +125,9 @@ $t -> output_navbar();
                 <?php // uso "causale" per selezionare caucon
                 gaz_flt_disp_select("causale", "caucon AS causale", $gTables["tesmov"], "caucon > ''", "causale ASC"); ?>
             </td>
-            <td class="FacetFieldCaptionTD"></td>
+            <td align="right" class="FacetFieldCaptionTD">
+                <?php gaz_flt_disp_int("descri","Cliente"); ?>
+            </td>
             <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD"></td>
@@ -135,14 +140,15 @@ $t -> output_navbar();
             </td>
         </tr>
         <tr>
-<?php 
-            $result = gaz_dbi_dyn_query("id_tes, datreg, clfoco, caucon, descri, protoc, numdoc, seziva, datdoc", $gTables['tesmov'], $t->where, $t->orderby, $t->getOffset(), $t->getLimit());
+<?php
+            $result = gaz_dbi_dyn_query("id_tes, datreg, clfoco, caucon, ".$gTables['tesmov'].".descri, protoc, numdoc, seziva, datdoc", $tesmov_e_partners, $t->where, $t->orderby, $t->getOffset(), $t->getLimit());
             $t -> output_headers(); 
 ?>
         </tr>
 <?php
 $anagrafica = new Anagrafica();
 while ($a_row = gaz_dbi_fetch_array($result)) {
+    
     $paymov = false;
     if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli'] or substr($a_row["clfoco"], 0, 3) == $admin_aziend['masfor']) {
         if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli']) {
@@ -167,7 +173,6 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     }
     $tt .= '</table>';
     // FINE creazione tabella per il tooltip
-
     echo "<tr class=\"FacetDataTD\">";
     echo "<td align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_movcon.php?id_tes=" . $a_row["id_tes"] . "&Update\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a> &nbsp</td>";
     echo "<td align=\"center\">" . gaz_format_date($a_row["datreg"]) . " &nbsp;</td>";
