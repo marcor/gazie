@@ -42,6 +42,7 @@ if (!empty($send_fae_zip_package['val']) ) {
 	$notifiche = ReceiveNotifiche(array($admin_aziend['country'].$admin_aziend['codfis'] => $IdentificativiSdI));
 	if (!empty($notifiche)) {
 		if (is_array($notifiche)) {
+			$nuove_notifiche = false;
 			foreach ($notifiche as $id_SDI=>$notifica) {
 				gaz_dbi_put_query($gTables['fae_flux'], "id_SDI='" . $id_SDI . "'", "flux_status", $notifica['esito']);
 				if (!empty($notifica['motivo'])) {
@@ -55,9 +56,14 @@ if (!empty($send_fae_zip_package['val']) ) {
 						$descri_notifiche = $notifica['motivo'];
 					}
 					gaz_dbi_put_query($gTables['fae_flux'], "id_SDI='" . $id_SDI . "'", "flux_descri", addslashes($descri_notifiche));
+					$nuove_notifiche = true;
 				}
 			}
-			echo 'Completato';
+			if ($nuove_notifiche) {
+				echo 'Completato';
+			} else {
+				echo 'Completato senza nuove notifiche';
+			}
 		} else {
 			echo '<p>' . print_r($notifiche, true) . '</p>';
 		}
