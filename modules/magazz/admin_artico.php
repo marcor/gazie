@@ -1014,7 +1014,7 @@ if ($modal_ok_insert === true) {
 					<th scope="col"> </th>
 				</tr>
 				<tr>
-		<form action="" method="POST">
+		<form id="form-fornitori-codici">
 					<td>
 					  <input class="col-sm-12" type="text"  value="" name="anagr_id_fornitore" id="anagr_id_fornitore" readonly />
 					</td>
@@ -1025,13 +1025,13 @@ if ($modal_ok_insert === true) {
 	?>
 					</td>
 					<td>
-                        		  <input class="col-sm-8" type="text"  value="" name="codicefornitore" maxlength="50" size="50" />
+                        		  <input class="col-sm-8" type="text"  value="" name="codicefornitore" id="codicefornitore" maxlength="50" size="50" />
 					</td>
 					<td>
-                        		  <input class="col-sm-8" type="text"  value="" name="lastprice" maxlength="10" size="30" />
+                        		  <input class="col-sm-8" type="text"  value="" name="lastprice" id="lastprice" maxlength="10" size="30" />
 					</td>
 					<td>
-                        		  <input class="btn btn-primary" type="submit"  value="OK" name="submit"  />
+                        		  <input class="btn btn-primary" type="submit"  value="OK" name="submit"  id="submit-fornitori-codici" />
 					</td>
 		</form>
 				</tr>
@@ -1081,7 +1081,42 @@ if ($modal_ok_insert === true) {
         });
     });</script>
 
-
+<script>
+$(function() {
+	// Autocomplete fornitori per inserimento codice
+        $( "#search_fornitore" ).autocomplete({
+                source: function (request, response) {
+                        $.getJSON('/modules/acquis/json_fornitori.php?token=<?php echo $_COOKIE[_SESSION_NAME]; ?>&term=' + request.term, function (data) {
+                                console.log(data.suppliers);
+                                response($.map(data.suppliers, function (value, key) {
+                                    return {
+                                            label: value,
+                                            value: key
+                                    };
+                                }));;
+                        });
+                },
+                minLength: 2,
+//              html: true, // optional (jquery.ui.autocomplete.html.js required)
+//              open: function(event, ui) {
+//                  $(".ui-autocomplete").css("z-index", 1000);
+//              },
+                select: function(event, ui) {
+                        console.log("items ui");
+                        console.log(ui.item.value);
+                        console.log(ui.item.label);
+                        $("#anagr_id_fornitore").val(ui.item.value);
+                        $("#search_fornitore").val(ui.item.label);
+                        return false;
+//                        $(this).closest("form").submit();
+                },
+                focus: function(event, ui) {
+                        event.preventDefault();
+                        $("#search_fornitore").val(ui.item.label);
+                }
+        });
+});
+</script>
 <?php
 /** ENRICO FEDELE */
 /* SOlo se non sono in finestra modale */

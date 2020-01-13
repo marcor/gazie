@@ -27,52 +27,8 @@ require("../../library/include/classes/Autoloader.php");
 use GAzie\GAzie as GAzie;
 use GAzie\Anagra as Anagra;
 
-# Message error token
-$error_token = array(
-	'error'=> true,
-        'message' => 'Token not valid',
-);
-# Message error parse json 
-$error_json = array(
-	'error'=> true,
-        'message' => 'Data is not array or failed encode json',
-);
-
-
-
-# Verify token
-function verify_token( $token = NULL ) {
-	if ( ! isset( $_SESSION['user_name'] )) {
-		return False;
-	}
-	if ( ! isset( $_COOKIE[_SESSION_NAME] ) ) {
-		return False;
-	}
-	if ( $token != NULL && $token != $_COOKIE[_SESSION_NAME] ) {
-		return False;
-	}
-	if ( $token === $_COOKIE[_SESSION_NAME] )
-		return True;
-	else
-		return False;
-}		
-
-function toJson( $data ) {
-	if ( is_array($data ) ) {
-	  return json_encode($data);
-	}
-	return json_encode( $error_json ); 
-}
-
-if ( ! isset($_GET['token']) || ! verify_token( $_GET['token'] ) ) {
-	http_response_code(201);
-	echo  json_encode( $error_token );
-	exit;
-}
-
-
 $gazie = GAzie::factory();
-
+$client_json = $gazie->Json();
 
 $anagra = new Anagra();
 
@@ -152,20 +108,42 @@ $anagra = new Anagra();
 }
  */
 
-if ( isset($_GET['term'] ) ) {
-	$term = $_GET['term'];
-	$suppliers = $anagra->searchSuppliers($term);
-	foreach ( $suppliers as $s ) {
-		$json['suppliers'][$s['id']] = $s['descri'] ;
-	}
-} else {
+
+function searchSuppliers() {
+		$anagra = new Anagra();
+		$term = $_GET['term'];
+		$suppliers = $anagra->searchSuppliers($term);
+		foreach ( $suppliers as $s ) {
+			$json['suppliers'][$s['id']] = $s['descri'] ;
+		}
+		return $json;
+		echo $client_json->response( $json );
+}
+
+function allSuppliers() {
+	$anagra = new Anagra();
 	$suppliers = $anagra->getSuppliers();
 	$json = array (
   		'total'	=> count($suppliers),
 		'fornitori' => $suppliers,
 	);
+	return $json;
 }
 
-echo toJson( $json );
+
+switch( $client_json->method() ) {
+	case 'GET':
+		if ( isset($_GET['term'] ) ) 
+			$json = searchSuppliers();
+		else
+			$json = allSuppliers();
+		break;
+	default:
+		
+		break;
+}
+
+
+echo $client_json->response( $json );
 
 

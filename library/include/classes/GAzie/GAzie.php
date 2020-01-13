@@ -1,5 +1,4 @@
-<?php
-/*
+<?php /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
   Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
@@ -154,6 +153,16 @@ class GAzie {
                         self::$instance = new GAzie();
                 }
                 return self::$instance;
+        }
+
+
+        /**
+         * Return Json class
+         *
+         * @return \GAzie\Json
+         */
+        public function Json() {
+                return new Json();
         }
 
 }

@@ -73,8 +73,8 @@ class Anagra extends \Database\Table {
 	                $table_clfoco = $GAzie->getConfig()->getTabelle('clfoco');
 	                $sql = $this->query->sql("SELECT * FROM " . $this->getTableName() . " AS a INNER JOIN " . $table_clfoco . " AS cl ON cl.id_anagra = a.id WHERE cl.codice >= $masfor AND cl.codice <= $masfor_final AND (a.ragso1 LIKE '%$term%' OR a.ragso2 LIKE '%$term%');");
 
-        	        $result = $this->execute( $sql );
-	                return $result->asArray();
+			$result = $this->execute( $sql );
+			return $this->getResult()->asArray();
 		}
 	}
 
