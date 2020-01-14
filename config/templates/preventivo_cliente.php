@@ -141,12 +141,14 @@ class PreventivoCliente extends Template
         $this->Cell(18,4, 'Aliquota',1,0,'C',1);
         $this->Cell(25,4, 'Imposta',1,1,'C',1);
         $this->docVars->setTotal($this->tesdoc['traspo']);
-        foreach ($this->docVars->cast as $key => $value) {
+		if ( $this->tesdoc['print_total']>0){
+          foreach ($this->docVars->cast as $key => $value) {
             $this->Cell(62);
             $this->Cell(18, 4, gaz_format_number($value['impcast']).' ', 0, 0, 'R');
             $this->Cell(32, 4, $value['descriz'],0,0,'C');
             $this->Cell(18, 4, gaz_format_number($value['ivacast']).' ',0,1,'R');
-        }
+          }
+		}
         $totimpmer = $this->docVars->totimpmer;
         $speseincasso = $this->docVars->speseincasso;
         $totimpfat = $this->docVars->totimpfat;
