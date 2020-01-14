@@ -43,7 +43,8 @@ function caricaCliente(&$form) {
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($form['clfoco']);
     $form['indspe'] = $cliente['indspe'] . " - " . $cliente['capspe'] . " " . $cliente['citspe'] . " " . $cliente['prospe'];
-    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc = 'VOR' AND status NOT LIKE 'EV%' ", "datemi ASC");
+//    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc = 'VOR' AND status NOT LIKE 'EV%' ", "datemi ASC");
+    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc LIKE 'V__' AND status NOT LIKE 'EV%' ", "datemi ASC");
     while ($testate = gaz_dbi_fetch_array($rs_testate)) {
         $id_des = $anagrafica->getPartner($testate['id_des']);
         $form['traspo'] += $testate['traspo'];
@@ -86,15 +87,6 @@ function caricaCliente(&$form) {
             $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
 			$form['righi'][$_POST['num_rigo']]['lot_or_serial'] = $articolo['lot_or_serial'];
-			$form['righi'][$_POST['num_rigo']]['cod_operazione'] = 11;
-			$form['righi'][$_POST['num_rigo']]['SIAN'] = $articolo['SIAN'];
-			$form['righi'][$_POST['num_rigo']]['recip_stocc'] = "";
-			if ($articolo['SIAN']>0){
-				$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $rigo['codart']);
-				$form['righi'][$_POST['num_rigo']]['confezione'] = $camp_artico['confezione'];
-			} else {
-				$form['righi'][$_POST['num_rigo']]['confezione'] = 0;
-			}
 			
 
             if (!isset($form['righi'][$_POST['num_rigo']]['evadibile'])) {
@@ -106,13 +98,6 @@ function caricaCliente(&$form) {
                 if ($totale_evadibile == 0) {
                     $form['righi'][$_POST['num_rigo']]['checkval'] = false;
                 }
-				$upd_mm = new magazzForm;
-				// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
-				$mv = $upd_mm->getStockValue(false, $rigo['codart']);
-				$magval = array_pop($mv);
-				$form['righi'][$_POST['num_rigo']]['giac'] = $magval['q_g'];
-				$form['righi'][$_POST['num_rigo']]['ordin'] = $upd_mm->get_magazz_ordinati($rigo['codart'], "VOR");
-				
                 $form['righi'][$_POST['num_rigo']]['evaso_in_precedenza'] = $rigo['quanti'] - $totale_evadibile;
                 $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
             }
@@ -235,6 +220,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
         $form['units'] = $testate['units'];
         $form['volume'] = $testate['volume'];
         $rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
+		$codiciarticoli=array();
         while ($rigo = gaz_dbi_fetch_array($rs_righi)) {
             $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
             $form['righi'][$_POST['num_rigo']]['id_rig'] = $rigo['id_rig'];
@@ -254,24 +240,20 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
 			$form['righi'][$_POST['num_rigo']]['lot_or_serial'] = $articolo['lot_or_serial'];
 			$form['righi'][$_POST['num_rigo']]['id_lotmag'] = "";
-			$form['righi'][$_POST['num_rigo']]['cod_operazione'] = 11;
-			$form['righi'][$_POST['num_rigo']]['SIAN'] = $articolo['SIAN'];
-			$form['righi'][$_POST['num_rigo']]['recip_stocc'] = "";
-			if ($articolo['SIAN']>0){
-				$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $rigo['codart']);
-				$form['righi'][$_POST['num_rigo']]['confezione'] = $camp_artico['confezione'];
-			} else {
-				$form['righi'][$_POST['num_rigo']]['confezione'] = 0;
-			}
+
             // controllo la quantità già evasa sfogliando le tabelle tesdoc e rigdoc
-            $totale_evadibile = $rigo['quanti'];
-            $rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order = " . $form['id_tes'] . " and codart='" . $rigo['codart'] . "'", "id_rig asc");
-            while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
-                $totale_evadibile -= $rg_evasi['quanti'];
-            }
-            if ($totale_evadibile == 0) {
-                $form['righi'][$_POST['num_rigo']]['checkval'] = false;
-            }
+			// solo se è il codice articolo non è già presente nei righi precedenti	
+			if (!in_array($rigo['codart'],$codiciarticoli)) {
+				$codiciarticoli[]=$rigo['codart'];
+				$totale_evadibile = $rigo['quanti'];
+				$rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order = " . $form['id_tes'] . " and codart='" . $rigo['codart'] . "'", "id_rig asc");
+				while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
+					$totale_evadibile -= $rg_evasi['quanti'];
+				}
+				if ($totale_evadibile == 0) {
+					$form['righi'][$_POST['num_rigo']]['checkval'] = false;
+				}
+			}
 			
 			// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
 			$mv = $upd_mm->getStockValue(false, $rigo['codart']);
@@ -369,17 +351,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
         $msg .= "1+";
     } else {
         $inevasi = "";
-		
         foreach ($_POST['righi'] as $k => $v) {
-			if (isset($v['checkval']) AND $v['SIAN']>0){// Antonio Germani - controllo SIAN su righi
-				if($v['cod_operazione']==11){
-					$msg .= "11+";
-				}
-				if($v['confezione']==0 AND strlen($v['recip_stocc'])==0){
-					$msg .= "12+";
-				}
-			}
-			
             if (isset($v['checkval']) and $v['id_doc'] == 0 and ( $v['tiprig'] == 0 or $v['tiprig'] == 1))
                 $inevasi = "ok";
         }
@@ -485,14 +457,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                         $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
-				// Antonio Germani - inserisco il movimento integrativo SIAN
-				if ($form['righi'][$k]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
-					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
-					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
-					$value_sian['recip_stocc_destin']= $form['righi'][$k]['recip_stocc_destin'];
-					$value_sian['id_movmag']=$id_movmag;
-					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
-				}
 				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
 				if (intval($v['id_lotmag']) >0){
 					$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $v['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
@@ -539,14 +503,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
     } else {
         $inevasi = "";
         foreach ($_POST['righi'] as $k => $v) {
-			if (isset($v['checkval']) AND $v['SIAN']>0){// Antonio Germani - controllo SIAN su righi
-				if($v['cod_operazione']==11){
-					$msg .= "11+";
-				}
-				if($v['confezione']==0 AND strlen($v['recip_stocc'])==0){
-					$msg .= "12+";
-				}
-			}
             if (isset($v['checkval']) and $v['id_doc'] == 0 and ( $v['tiprig'] == 0 or $v['tiprig'] == 1))
                 $inevasi = "ok";
         }
@@ -651,14 +607,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                         $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
-				// Antonio Germani - inserisco il movimento integrativo SIAN
-				if ($form['righi'][$k]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
-					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
-					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
-					$value_sian['recip_stocc_destin']= $form['righi'][$k]['recip_stocc_destin'];
-					$value_sian['id_movmag']=$id_movmag;
-					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
-				}
 				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
 				if (intval($v['id_lotmag']) >0){
 					$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $v['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
@@ -760,14 +708,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
     } else {
         $inevasi = "";
         foreach ($form['righi'] as $k => $v) {
-			if (isset($v['checkval']) AND $v['SIAN']>0){// Antonio Germani - controllo SIAN su righi
-				if($v['cod_operazione']==11){
-					$msg .= "11+";
-				}
-				if($v['confezione']==0 AND strlen($v['recip_stocc'])==0){
-					$msg .= "12+";
-				}
-			}
             if (isset($v['checkval']) and $v['id_doc'] == 0 and ( $v['tiprig'] == 0 or $v['tiprig'] == 1))
                 $inevasi = "ok";
         }
@@ -879,14 +819,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                         $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
-				// Antonio Germani - inserisco il movimento integrativo SIAN
-				if ($form['righi'][$k]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
-					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
-					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
-					$value_sian['recip_stocc_destin']= $form['righi'][$k]['recip_stocc_destin'];
-					$value_sian['id_movmag']=$id_movmag;
-					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
-				}
 				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
 				if (intval($v['id_lotmag']) >0){
 					$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $v['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
@@ -947,14 +879,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
     } else {
         $inevasi = "";
         foreach ($form['righi'] as $k => $v) {
-			if (isset($v['checkval']) AND $v['SIAN']>0){// Antonio Germani - controllo SIAN su righi
-				if($v['cod_operazione']==11){
-					$msg .= "11+";
-				}
-				if($v['confezione']==0 AND strlen($v['recip_stocc'])==0){
-					$msg .= "12+";
-				}
-			}
             if (isset($v['checkval']) and $v['id_doc'] == 0 and ( $v['tiprig'] == 0 or $v['tiprig'] == 1))
                 $inevasi = "ok";
         }
@@ -1065,14 +989,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                         $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
-				// Antonio Germani - inserisco il movimento integrativo SIAN
-				if ($form['righi'][$k]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
-					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
-					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
-					$value_sian['recip_stocc_destin']= $form['righi'][$k]['recip_stocc_destin'];
-					$value_sian['id_movmag']=$id_movmag;
-					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
-				}
 				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
 				if (intval($v['id_lotmag']) >0){
 					$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $v['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
@@ -1430,39 +1346,6 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 
                 echo "<td>" . $v['codart'] . "</td>\n";
                 echo "<td>" . $v['descri'];
-				
-				//Antonio Germani - form movimento SIAN
-				if ($v['SIAN']>0) {
- 					echo '<input type="hidden" value="' . $v['SIAN'] . '" name="righi[' . $k . '][SIAN]" />
-							<input type="hidden" value="' . $v['confezione'] . '" name="righi[' . $k . '][confezione]" />
-					';
-					?>
-					<div class="container-fluid">					
-						<div class="row">
-							<label for="cod_operazione" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN"; ?></label>
-							<?php
-							$gForm->variousSelect('righi[' . $k . '][cod_operazione]', $script_transl['cod_operaz_value'], $form['righi'][$k]['cod_operazione'], "col-sm-6", false, '', false)
-							?>
-						</div>
-						<?php if ($v['confezione']==0){ ?>
-						<div class="row">
-							<label for="recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
-							<?php
-							$gForm->selectFromDB('camp_recip_stocc', 'righi[' . $k . '][recip_stocc]' ,'cod_silos', $form['righi'][$k]['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
-							?>
-						</div>
-						<?php
-						} else {
-							echo '<input type="hidden" value="" name="righi[' . $k . '][recip_stocc]" />';
-						}			
-					echo '</div>';		
-				} else {
-					echo '<input type="hidden" value="" name="righi[' . $k . '][cod_operazione]" />
-					<input type="hidden" value="" name="righi[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="0" name="righi[' . $k . '][SIAN]" />
-					<input type="hidden" value="0" name="righi[' . $k . '][confezione]" />
-					';
-				}
 				
 				// Antonio Germani - inizio gestione lotti
 				echo "<input type=\"hidden\" value=\"" . $v['lot_or_serial'] . "\" name=\"righi[$k][lot_or_serial]\">\n";
