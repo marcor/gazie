@@ -49,10 +49,22 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['expiry_fin'] = substr($_POST['expiry_fin'], 0, 10);
     $form['orderby'] = intval($_POST['orderby']);
     $form['target_account'] = intval($_POST['target_account']);
-    $form['transfer_fees'] = floatval($_POST['transfer_fees']);
-    $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
     $form['description'] = substr($_POST['description'], 0, 100);
-    if (isset($_POST['ins'])) {
+    $bank_data = gaz_dbi_get_row($gTables['clfoco'], 'codice', $form['target_account']);
+    if (!isset($_POST['ins'])) {
+        if ($bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancario prevede un addebito per bonifici allora lo propongo
+            $form['transfer_fees_acc'] = $bank_data['cosric'];
+            $form['transfer_fees'] = $bank_data['maxrat'];
+        } elseif (substr($form['target_account'], 0, 3) == substr($admin_aziend['cassa_'], 0, 3)) {
+            $form['transfer_fees_acc'] = 0;
+            $form['transfer_fees'] = 0.00;
+        } else {
+            $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
+            $form['transfer_fees'] = floatval($_POST['transfer_fees']);
+        }
+    } else {
+        $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
+        $form['transfer_fees'] = floatval($_POST['transfer_fees']);
 
         // ----- INIZIO CONTROLLI FORMALI -----
         if ($form['target_account'] < 100000000) { // no ho selezionato il conto di adebito
@@ -97,8 +109,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             }
             if ($form['transfer_fees'] >= 0.01 && $form['transfer_fees_acc'] > 100000000) { // ho le spese bancarie 
                 rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['transfer_fees_acc'], 'import' => $form['transfer_fees']));
-                rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => round($form['transfer_fees'], 2)));
-                //$tot += $form['transfer_fees'];
+				if (TRUE) {//TO-DO: IN ANAGRAFICA CONTO CORRENTE CREARE OPZIONE PER CONTABILIZZAZIONE UNIFICATA O SU RIGA SEPARATA DELLE COMMISSIONI BANCARIE
+					rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => round($form['transfer_fees'], 2)));
+				} else {
+					$tot += $form['transfer_fees'];
+				}
             }
             rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => round($tot, 2)));
             header("Location: ../contab/report_movcon.php");
@@ -169,7 +184,7 @@ $gForm = new acquisForm();
                             <?php
                             $select_bank = new selectconven("target_account");
                             $select_bank->addSelected($form['target_account']);
-                            $select_bank->output($admin_aziend['masban'], false, true);
+                            $select_bank->output($admin_aziend['masban'], false, true, 'target_account');
                             ?>
                         </div>
                     </div>

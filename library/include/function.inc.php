@@ -1222,10 +1222,10 @@ class selectartico extends SelectBox {
 // classe per la generazione di select box dei conti ricavi di vendita-costi d'acquisto
 class selectconven extends SelectBox {
 
-    function output($mastri, $class = false, $empty = false) {
+    function output($mastri, $class = false, $empty = false, $refresh = '') {
         global $gTables;
         $query = 'SELECT * FROM `' . $gTables['clfoco'] . "` WHERE codice LIKE '" . $mastri . "%' AND codice NOT LIKE '%000000' ORDER BY `codice` ASC";
-        SelectBox::_output($query, 'codice', $empty, '-', 'descri', 'codice', '', $class);
+        SelectBox::_output($query, 'codice', $empty, '-', 'descri', 'codice', $refresh, $class);
     }
 
 }
