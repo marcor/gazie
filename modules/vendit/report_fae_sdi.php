@@ -36,7 +36,7 @@ if (!isset($_POST['ritorno'])) {
 	$form['ritorno'] = $_POST['ritorno'];
 }
 
-$nome_file = '';
+$ricerca_fe = '';
 $senza_esito = 0;
 $mostra_intesta = 1;
 $mostra_intesta_riga = 1;
@@ -114,15 +114,15 @@ if (isset($_GET['all'])) {
 	$status = '';
 } else {
 
-	if (isset($_GET['nome_file'])) {
+	if (isset($_GET['ricerca_fe'])) {
 		$passo = 1000000;
-		$nome_file = $_GET['nome_file'];
+		$ricerca_fe = $_GET['ricerca_fe'];
 		$status = '';
-		$where = " filename_ori LIKE '%" . $nome_file . "%' OR numfat LIKE '" . $nome_file . "'";
+		$where = " filename_ori LIKE '%" . $ricerca_fe . "%' OR numfat LIKE '" . $ricerca_fe . "' OR id_SDI LIKE '" . $ricerca_fe . "'";
 		$mostra_intesta = 1;
 	}
 
-	if (empty($nome_file)) {
+	if (empty($ricerca_fe)) {
 		$status = '';
 		if (!empty($_GET['id_tes'])) {
 			$where = " id_tes_ref = " . $_GET['id_tes'] . "";
@@ -281,7 +281,7 @@ $recordnav -> output();
 <tr style="margin-bottom: 20px !important;">
 <td class="FacetFieldCaptionTD"></td>
 <td class="FacetFieldCaptionTD">
-<input type="text" name="nome_file" id="nome_file" value="<?php echo $nome_file ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
+<input type="text" name="ricerca_fe" id="ricerca_fe" value="<?php echo $ricerca_fe ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
 </td>
 <td class="FacetFieldCaptionTD" colspan="2">
 
