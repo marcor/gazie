@@ -1086,15 +1086,18 @@ if ($modal_ok_insert === true) {
     });</script>
 
 <script>
-function getFormData(dom_query){
-    var out = {};
-    var s_data = $(dom_query).serializeArray();
-    //transform into simple data/value object
-    for(var i = 0; i<s_data.length; i++){
-        var record = s_data[i];
-        out[record.name] = record.value;
-    }
-    return out;
+// Send data fornitore codici
+function sendCodeSupplier(data) {
+    var url = '/modules/acquis/json_fornitori_codici.php?token=<?php echo $_COOKIE[_SESSION_NAME]; ?>';
+    alert("send " + url);
+    $.post(url, data )
+      .done( function(data) {
+	      alert("Dati fornitore caricati!");
+      })
+      .fail( function(error) {
+	      alert("Error... !");
+	      console.log( error );
+      });
 }
 $(function() {
 	// Autocomplete fornitori per inserimento codice
@@ -1110,11 +1113,7 @@ $(function() {
                                 }));;
                         });
                 },
-                minLength: 2,
-//              html: true, // optional (jquery.ui.autocomplete.html.js required)
-//              open: function(event, ui) {
-//                  $(".ui-autocomplete").css("z-index", 1000);
-//              },
+                minLength: 1,
                 select: function(event, ui) {
                         console.log("items ui");
                         console.log(ui.item.value);
@@ -1122,7 +1121,6 @@ $(function() {
                         $("#anagr_id_fornitore").val(ui.item.value);
                         $("#search_fornitore").val(ui.item.label);
                         return false;
-//                        $(this).closest("form").submit();
                 },
                 focus: function(event, ui) {
                         event.preventDefault();
@@ -1130,9 +1128,24 @@ $(function() {
                 }
 	});
 	$("#submit-fornitori-codici").click( function() {
-		var form_data = $("#form-fornitori-codici").serializeArray();
-		console.log(form_data);
-		alert("Stai inserendo il fornitore");
+		var data = {
+			'anagr_id': $("#anagr_id_fornitore").val(),
+			'codice_fornitore': $("#codicefornitore").val(),
+			'codice_articolo': $("#codice").val(),
+			'last_price': $("#lastprice").val()
+		};
+		if ( data.codice_fornitore == '' ) {
+			alert("Codice fornitore non inserito!");
+		} else {
+  		  if ( data.anagr_id == '' ) {
+			alert("Fornitore non selezionato!");
+		  } else {
+			// Posso qui insirire i dati con ajax
+			console.log(data);
+			sendCodeSupplier(data);
+//			alert("Stai inserendo il fornitore");
+		  }
+		}
 	   
 	});
 

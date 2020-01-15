@@ -96,6 +96,8 @@ class Json {
 		else
 			return array( 'error' => 'Not message code $code founded' );
 	}
+
+
 }
 
 ?>

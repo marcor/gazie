@@ -23,7 +23,7 @@
   --------------------------------------------------------------------------
  */
 
-require("../../library/include/datlib.inc.php");
+#require("../../library/include/datlib.inc.php");
 require("../../library/include/classes/Autoloader.php");
 
 $GAzie = \GAzie\GAzie::factory();

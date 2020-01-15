@@ -26,23 +26,68 @@
 require("../../library/include/classes/Autoloader.php");
 use GAzie\GAzie as GAzie;
 use GAzie\Anagra as Anagra;
+use GAzie\Database\FornitoreMagazzino as FornitoreMagazzino;
 
 $gazie = GAzie::factory();
 $client_json = $gazie->Json();
 
-function addSupplierCode() {
+function addSupplierCode() { 
+	$f = new FornitoreMagazzino();
+	$f->id_anagr = 18;
+	$f->codice_fornitore='ippo';
+	$f->codice_magazzino='001000020001';
+	$f->last_price = 1.3;
+	$f->save();
+
+	$result = $f->getAllSuppliers('00100002000');
+	return $result;
+}
+
+function getSuppliersCodice($codice_magazzino) {
+	$f = new FornitoreMagazzino();
+	$result = $f->getAllSuppliers($codice_magazzino);
+	return $result;
+
 }
 
 switch( $client_json->method() ) {
 	case 'POST':
-
+		# Inserisce codice fornitore
+		$data = $_POST;
+		$f = new FornitoreMagazzino();
+		if ( $f->exist($data['anagr_id'],$data['codice_articolo']) ) {
+			$json = array(
+				'error' => 'true',
+				'message' => 'Exist code supplier',
+			);
+			echo $client_json->response( $json, 202 );
+			exit;
+		}
+		$f->id_anagr = $data['anagr_id'];
+		$f->codice_fornitore= $data['codice_fornitore'];
+		$f->codice_magazzino = $data['codice_articolo'];
+		$f->last_price = $data['last_price'];
+		if ( $f->save() ) {
+			$json = array(
+				'insert' => 'true',
+			);
+		} else {
+			$json = array(
+				'insert' => 'false',
+			);
+			echo $client_json->response( $json, 201 );
+			exit;
+		}
 		break;
 	case 'GET':
-
+		if ( isset( $_GET['codice_magazzino']) ) {
+			$codice = $_GET['codice_magazzino'];
+			$json =	getSuppliersCodice($codice);
+		}
 		break;
 	case 'PUT':
 
-		break
+		break;
 	default:
 		
 		break;
