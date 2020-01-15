@@ -1017,7 +1017,7 @@ if ($modal_ok_insert === true) {
 				</tr>
 				</thead>
 				<tbody>
-				
+				<div id="table-fornitore-codice"></div>	
 				<tr>
 		<form id="form-fornitori-codici">
 					<td>
@@ -1086,16 +1086,42 @@ if ($modal_ok_insert === true) {
     });</script>
 
 <script>
+
+// Get data codici 
+$(function() {
+  	$("#table-fornitore-codice").ready(function(){
+		var url = '/modules/acquis/json_fornitori_codici.php?token=<?php echo $_COOKIE[_SESSION_NAME]; ?>&codice_magazzino=<?= $form['codice']; ?>';
+	    	$.get(url )
+		      .done( function(response, statusText,xhr) {
+			      console.log(response);
+			      response= JSON.parse(response);
+			      var t=document.createElement("TABLE");
+			      for (i in response) {
+				console.log(i);
+				var x = t.insertRow(i);
+				for ( c in response[i] ) {
+					console.log(response[i][c]);
+					var cell = x.insertCell(c);
+					cell.innerHTML = response[i][c];
+				}
+			}
+			$("#table-fornitore-codice").text(t.textContent);
+		      })
+		      .fail( function(error) {
+			      alert("Errore nell'ottenere i dati fornitori");
+			      console.log( error );
+		      });
+	});
+});
 // Send data fornitore codici
-function sendCodeSupplier(data) {
+function postCodeSupplier(data) {
     var url = '/modules/acquis/json_fornitori_codici.php?token=<?php echo $_COOKIE[_SESSION_NAME]; ?>';
-    alert("send " + url);
     $.post(url, data )
-      .done( function(data) {
+      .done( function(response, statusText,xhr) {
 	      alert("Dati fornitore caricati!");
       })
       .fail( function(error) {
-	      alert("Error... !");
+	      alert("Errore inserimento!");
 	      console.log( error );
       });
 }
@@ -1115,9 +1141,6 @@ $(function() {
                 },
                 minLength: 1,
                 select: function(event, ui) {
-                        console.log("items ui");
-                        console.log(ui.item.value);
-                        console.log(ui.item.label);
                         $("#anagr_id_fornitore").val(ui.item.value);
                         $("#search_fornitore").val(ui.item.label);
                         return false;
@@ -1142,7 +1165,7 @@ $(function() {
 		  } else {
 			// Posso qui insirire i dati con ajax
 			console.log(data);
-			sendCodeSupplier(data);
+			postCodeSupplier(data);
 //			alert("Stai inserendo il fornitore");
 		  }
 		}

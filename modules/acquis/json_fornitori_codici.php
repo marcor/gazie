@@ -43,12 +43,6 @@ function addSupplierCode() {
 	return $result;
 }
 
-function getSuppliersCodice($codice_magazzino) {
-	$f = new FornitoreMagazzino();
-	$result = $f->getAllSuppliers($codice_magazzino);
-	return $result;
-
-}
 
 switch( $client_json->method() ) {
 	case 'POST':
@@ -60,7 +54,7 @@ switch( $client_json->method() ) {
 				'error' => 'true',
 				'message' => 'Exist code supplier',
 			);
-			echo $client_json->response( $json, 202 );
+			echo $client_json->response( $json, 402 );
 			exit;
 		}
 		$f->id_anagr = $data['anagr_id'];
@@ -72,18 +66,18 @@ switch( $client_json->method() ) {
 				'insert' => 'true',
 			);
 		} else {
-			$json = array(
-				'insert' => 'false',
-			);
-			echo $client_json->response( $json, 201 );
-			exit;
+			$client_json->error(403, "Errore inserimento articolo");
 		}
 		break;
 	case 'GET':
 		if ( isset( $_GET['codice_magazzino']) ) {
 			$codice = $_GET['codice_magazzino'];
-			$json =	getSuppliersCodice($codice);
+			$f = new FornitoreMagazzino();
+			$json =	$f->getAllFromCodice($codice);
+		} else {
+			$client_json->error(405, "Codice articolo non valido");
 		}
+
 		break;
 	case 'PUT':
 

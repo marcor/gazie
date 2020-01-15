@@ -97,6 +97,11 @@ class Json {
 			return array( 'error' => 'Not message code $code founded' );
 	}
 
+	public function error( $code, $msg) {
+		$json = array('error' => $msg);
+		echo $this->response($json, $code);
+		exit;
+	}
 
 }
 
