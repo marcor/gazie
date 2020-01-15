@@ -1005,7 +1005,9 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
 			    <label for="fornitori-codici" class="col-sm-4 control-label"><?php echo $script_transl['fornitori-codici']; ?></label>
 			    <div class="col-sm-8">
-			    <table class="table table-striped table-sm ">
+			    <div class="table-responsive-md">
+			      <table class="table ">
+				<thead>
 				<tr>
 					<th scope="col">#</th>
 					<th scope="col">Fornitore</th>
@@ -1013,6 +1015,9 @@ if ($modal_ok_insert === true) {
 					<th scope="col">Ultimo Prezzo</th>
 					<th scope="col"> </th>
 				</tr>
+				</thead>
+				<tbody>
+				
 				<tr>
 		<form id="form-fornitori-codici">
 					<td>
@@ -1020,21 +1025,20 @@ if ($modal_ok_insert === true) {
 					</td>
 					<td>
                         		  <input class="col-sm-11" type="text"  value="" name="search_fornitore" id="search_fornitore" maxlength="50" size="50"  />
-    	<?php	
-//   				 $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
-	?>
 					</td>
 					<td>
+					 <input class="col-sm-8" type="hidden"  value="<?= $form['codice']; ?>" name="codice" id="codice" />
                         		  <input class="col-sm-8" type="text"  value="" name="codicefornitore" id="codicefornitore" maxlength="50" size="50" />
 					</td>
 					<td>
                         		  <input class="col-sm-8" type="text"  value="" name="lastprice" id="lastprice" maxlength="10" size="30" />
 					</td>
 					<td>
-                        		  <input class="btn btn-primary" type="submit"  value="OK" name="submit"  id="submit-fornitori-codici" />
+                        		  <div class="btn btn-primary" name="submit-fornitori-codici"  id="submit-fornitori-codici" >OK</div>
 					</td>
 		</form>
 				</tr>
+				</tbody>
 			    </table>
 			    </div>
             <?php
@@ -1082,6 +1086,16 @@ if ($modal_ok_insert === true) {
     });</script>
 
 <script>
+function getFormData(dom_query){
+    var out = {};
+    var s_data = $(dom_query).serializeArray();
+    //transform into simple data/value object
+    for(var i = 0; i<s_data.length; i++){
+        var record = s_data[i];
+        out[record.name] = record.value;
+    }
+    return out;
+}
 $(function() {
 	// Autocomplete fornitori per inserimento codice
         $( "#search_fornitore" ).autocomplete({
@@ -1114,7 +1128,14 @@ $(function() {
                         event.preventDefault();
                         $("#search_fornitore").val(ui.item.label);
                 }
-        });
+	});
+	$("#submit-fornitori-codici").click( function() {
+		var form_data = $("#form-fornitori-codici").serializeArray();
+		console.log(form_data);
+		alert("Stai inserendo il fornitore");
+	   
+	});
+
 });
 </script>
 <?php
