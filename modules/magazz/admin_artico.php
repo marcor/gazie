@@ -1088,29 +1088,42 @@ if ($modal_ok_insert === true) {
 <script>
 
 // Get data codici 
-$(function() {
-  	$("#table-fornitore-codice").ready(function(){
+function getFornitoriCodici() {
 		var url = '/modules/acquis/json_fornitori_codici.php?token=<?php echo $_COOKIE[_SESSION_NAME]; ?>&codice_magazzino=<?= $form['codice']; ?>';
 	    	$.get(url )
-		      .done( function(response, statusText,xhr) {
+			.done( function(response, statusText,xhr) {
+			      for (i in response ) {
+//				var data[i] = response[i];
+			      }
 			      console.log(response);
 			      response= JSON.parse(response);
 			      var t=document.createElement("TABLE");
+			      t.setAttribute('class', 'table table-bordered');
 			      for (i in response) {
 				console.log(i);
 				var x = t.insertRow(i);
-				for ( c in response[i] ) {
-					console.log(response[i][c]);
-					var cell = x.insertCell(c);
-					cell.innerHTML = response[i][c];
-				}
-			}
-			$("#table-fornitore-codice").text(t.textContent);
+				var cell1 = x.insertCell(0);
+				cell1.innerHTML = response[i].id;
+				var cell2 = x.insertCell(1);
+				cell2.innerHTML = response[i].id_anagr;
+				var cell3 = x.insertCell(2);
+				cell3.innerHTML = response[i].codice_fornitore;
+				var cell4 = x.insertCell(3);
+				cell4.innerHTML = response[i].codice_magazzino;
+				var cell5 = x.insertCell(4);
+				cell5.innerHTML = response[i].last_price;
+			      }
+		      	      $("#table-fornitore-codice").html("");
+		      	      $("#table-fornitore-codice").append(t);
 		      })
 		      .fail( function(error) {
 			      alert("Errore nell'ottenere i dati fornitori");
 			      console.log( error );
 		      });
+}
+$(function() {
+	$("#table-fornitore-codice").ready(function(){
+		getFornitoriCodici();
 	});
 });
 // Send data fornitore codici
@@ -1119,6 +1132,7 @@ function postCodeSupplier(data) {
     $.post(url, data )
       .done( function(response, statusText,xhr) {
 	      alert("Dati fornitore caricati!");
+	      getFornitoriCodici();
       })
       .fail( function(error) {
 	      alert("Errore inserimento!");
