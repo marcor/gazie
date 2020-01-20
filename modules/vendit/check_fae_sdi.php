@@ -56,8 +56,8 @@ if (!empty($send_fae_zip_package['val']) ) {
 						$descri_notifiche = $notifica['motivo'];
 					}
 					gaz_dbi_put_query($gTables['fae_flux'], "id_SDI='" . $id_SDI . "'", "flux_descri", addslashes($descri_notifiche));
-					$nuove_notifiche = true;
 				}
+				$nuove_notifiche = true;
 			}
 			if ($nuove_notifiche) {
 				echo 'Completato';

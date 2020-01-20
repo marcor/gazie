@@ -72,7 +72,7 @@ function getLastPack() // RESTITUISCE IL NUMERO PROGRESSIVO DELL'ULTIMO PACCHETT
 {
     global $gTables;
 //    $where = "(filename_zip_package IS NOT NULL OR filename_zip_package != '') ";
-    $where = "(filename_zip_package != '') ";
+    $where = "(filename_zip_package != '') AND exec_date LIKE '" . date('Y') . "%' ";
     $orderby = "filename_zip_package DESC";
     $from = $gTables['fae_flux'];
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
@@ -435,6 +435,9 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ti
 $gForm->selectNumber('vat_section', $form['vat_section'], 0, 1, 9, 'FacetSelect', 'vat_section');
 echo "</div>\n";
 echo "<table class=\"Tsmall\">\n";
+if (date('Y')>=2028 && date('m')==12) {
+	echo '<tr><td colspan="2" class="FacetDataTDred">Archiviare gli xml del ' . (date('Y')-9) . ' (9 anni fa) per evitarne la sovrascrittura, prima di cominciare ad emettere fatture l\'anno prossimo</td></tr>' . "\n";
+}
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
