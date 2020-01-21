@@ -200,7 +200,7 @@ if ( isset($_POST['weekday_repeat']) ) {
     $utsDataemiss = mktime(0, 0, 0, $form['datemi_M'], $form['datemi_D'], $form['datemi_Y']);
     $iniziotrasporto = $form['initra_Y'] . "-" . $form['initra_M'] . "-" . $form['initra_D'];
     $utsIniziotrasporto = mktime(0, 0, 0, $form['initra_M'], $form['initra_D'], $form['initra_Y']);
-    if ($form["clfoco"] < $admin_aziend['mascli'] . '000001')
+    if (substr($form['clfoco'], 0, 3) != $admin_aziend['mascli'])
         $msg .= "0+";
     if (!isset($form["righi"])) {
         $msg .= "1+";
@@ -446,7 +446,7 @@ $select_spediz->output('portos', 'portos');
 echo "</td>\n";
 echo "</td></tr>\n";
 echo '<tr><td class="FacetFieldCaptionTD">';
-echo "%" . $script_transl['sconto'] . ":</td><td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"sconto\" onChange=\"this.form.total.value=sconta(this);\">";
+echo "%" . $script_transl['sconto'] . ":</td><td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['sconto'] . "\" maxlength=\"5\" size=\"1\" name=\"sconto\" onChange=\"this.form.total.value=sconta(this);\">";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['imball'] . "</td>\n";
 echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"imball\" value=\"" . $form["imball"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
 $select_spediz = new SelectValue("imballo");

@@ -363,7 +363,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
     $utsDataemiss = mktime(0, 0, 0, $_POST['datemi_M'], $_POST['datemi_D'], $_POST['datemi_Y']);
     $iniziotrasporto = $_POST['initra_Y'] . "-" . $_POST['initra_M'] . "-" . $_POST['initra_D'];
     $utsIniziotrasporto = mktime(0, 0, 0, $_POST['initra_M'], $_POST['initra_D'], $_POST['initra_Y']);
-    if ($form["clfoco"] < $admin_aziend['mascli'] . '000001')
+    if (substr($form['clfoco'], 0, 3) != $admin_aziend['mascli'])
         $msg .= "0+";
     if (!isset($_POST["righi"])) {
         $msg .= "1+";
@@ -1323,7 +1323,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         echo "</td>\n";
         echo "</td></tr>\n";
         echo '<tr><td class="FacetFieldCaptionTD">';
-        echo "%" . $script_transl['sconto'] . ":</td><td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"sconto\" onChange=\"this.form.total.value=sconta(this);\">";
+        echo "%" . $script_transl['sconto'] . ":</td><td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['sconto'] . "\" maxlength=\"5\" size=\"1\" name=\"sconto\" onChange=\"this.form.total.value=sconta(this);\">";
         echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['imball'] . "</td>\n";
         echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"imball\" value=\"" . $form["imball"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
         $select_spediz = new SelectValue("imballo");
