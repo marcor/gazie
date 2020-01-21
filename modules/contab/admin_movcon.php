@@ -1107,7 +1107,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/modal_form'));
-echo '<SCRIPT type="text/javascript">
+echo '<script type="text/javascript">
       $(function() {
            $( "#search_insert_conto" ).autocomplete({
            source: "../../modules/root/search.php",
@@ -1134,9 +1134,9 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
     }
 }
 echo '});
-</SCRIPT>';
+</script>';
 echo '<script type="text/javascript" src="./dialog_schedule.js"></script>';
-echo "<SCRIPT type=\"text/javascript\">\n";
+echo "<script type=\"text/javascript\">\n";
 
 
 
@@ -1452,6 +1452,18 @@ echo "</script>\n";
             <div class="container-fluid">
                 <ul class="nav nav-tabs">
                     <li class="active bg-info"><a data-toggle="tab" href="#insdoc"><i class="glyphicon glyphicon-tag"></i> <?php echo $script_transl['insdoc']; ?></a></li>
+					<?php
+					if ($form['registroiva'] == 2 || $form['registroiva'] == 4) {
+						$urldoc = '../vendit/admin_docven.php?Update&id_tes='.$testata['id_doc'];
+					} else if ($form['registroiva'] == 6) {
+						$urldoc = '../acquis/admin_docacq.php?Update&id_tes='.$testata['id_doc'];
+					}
+					if (!empty($urldoc)) {
+					?>
+					<li><a href="<?php echo $urldoc; ?>" target="_blank">Apri il documento contabilizzato</a></li>
+					<?php
+					}
+					?>
                 </ul>
                 <div class="tab-content col-sm-12 col-md-12 col-lg-12 bg-info">
                     <div id="insdoc" class="tab-pane fade in active">
