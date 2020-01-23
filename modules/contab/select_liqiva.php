@@ -253,6 +253,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['carry']=getPreviousCredit(date("Ymd",$utsdatcar));
     $pro_rata = gaz_dbi_get_row($gTables['company_data'], 'var', 'pro_rata'.$form['date_ini_Y'], '', 'data');
     $form['pro_rata'] = (empty($pro_rata)) ? 0 : $pro_rata;
+    $form['advance']=0;
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
@@ -264,6 +265,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_fin_Y']=intval($_POST['date_fin_Y']);
     $form['carry']=floatval(preg_replace("/\,/",'.',$_POST['carry']));
     $form['pro_rata']=intval($_POST['pro_rata']);
+	if ($form['date_fin_M'] == 12) {
+		$form['advance']=floatval(preg_replace("/\,/",'.',$_POST['advance']));
+	}
     if (isset($_POST['sta_def'])){
        $form['sta_def']=substr($_POST['sta_def'],0,8);
     } else {
@@ -334,6 +338,7 @@ if (isset($_POST['print']) && $msg=='') {
                                      'cv'=>$form['cover'],
                                      'cr'=>$form['carry'],
                                      'pr'=>$form['pro_rata'],
+                                     'ad'=>(isset($form['advance']) ? $form['advance'] : 0),
                                      'ri'=>date("dmY",$utsini),
                                      'rf'=>date("dmY",$utsfin)
                                      );
@@ -425,6 +430,13 @@ echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pro_rata'].": </td>\
 echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"pro_rata\" value=\"".$form['pro_rata']."\" maxlength=\"2\" size=\"2\" /></td>\n";
 echo "</td>\n";
 echo "</tr>\n";
+if ($form['date_fin_M'] == 12) {
+	echo "<tr>\n";
+	echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['advance'].": </td>\n";
+	echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"advance\" value=\"".$form['advance']."\" maxlength=\"15\" size=\"15\" /></td>\n";
+	echo "</td>\n";
+	echo "</tr>\n";
+}
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
 echo '<td colspan="3" align="right"> <input type="submit" accesskey="i" name="preview" value="';

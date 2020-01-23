@@ -215,7 +215,15 @@ if ($_GET['cr'] > 0) {
     $pdf->Cell(20, 6, '-' . gaz_format_number($_GET['cr']), 'RTB', 1, 'R');
 }
 
-$saldo_totale = $saldo_periodo - floatval($_GET['cr']);
+// acconto versato
+if ($_GET['ad'] > 0) {
+    $pdf->Cell(54, 6);
+    $pdf->Cell(50, 6, $script_transl['advance'], 'LTB', 0, 'L');
+    $pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L');
+    $pdf->Cell(20, 6, '-' . gaz_format_number($_GET['ad']), 'RTB', 1, 'R');
+}
+
+$saldo_totale = $saldo_periodo - floatval($_GET['cr']) - floatval($_GET['ad']);
 
 // calcolo interessi su iva trimestrale da versare
 if ($saldo_totale > 0 && $admin_aziend['ivam_t'] == 'T') {
@@ -226,7 +234,7 @@ if ($saldo_totale > 0 && $admin_aziend['ivam_t'] == 'T') {
     $saldo_totale += $interessi;
 }
 
-if ($saldo_totale > 0 || $_GET['cr'] > 0) { // se ho da pagare
+if ($saldo_totale > 0 || $_GET['cr'] > 0 || $_GET['ad'] > 0) { // se ho da pagare
 // totale
     $pdf->Ln(2);
     $pdf->Cell(44, 6);
