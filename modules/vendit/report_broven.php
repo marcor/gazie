@@ -42,32 +42,32 @@ function mostra_documenti_associati($ordine) {
     $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_tes', $gTables['rigdoc'], "id_order = " . $ordine, 'id_tes ASC');
     while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
         // per ogni documento vado a leggere il numero documento
-        $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigdoc["id_tes"], 'id_tes DESC');
+        $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigdoc['id_tes'], 'id_tes DESC');
         $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
         // a seconda del tipo di documento visualizzo il bottone corrispondente
         if ($tesdoc_r["tipdoc"] == "FAI") {
             // fattura immediata
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "\">";
             echo "fatt. " . $tesdoc_r["numfat"];
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "DDT" || ($tesdoc_r["tipdoc"] == "FAD" && $tesdoc_r["ddt_type"]!='R')) {
             // documento di trasporto
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=DDT\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=DDT\">";
             echo "ddt " . $tesdoc_r["numdoc"];
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "CMR" || ($tesdoc_r["tipdoc"] == "FAD" && $tesdoc_r["ddt_type"]='R')) {
             // documento cmr
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il cmr\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=CMR\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il cmr\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=CMR\">";
             echo "cmr " . $tesdoc_r["numdoc"];
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "VCO") {
             // scontrino
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=FatturaAllegata\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=FatturaAllegata\">";
             echo "scontr. " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "VRI") {
             // ricevuta
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la ricevuta\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=Received\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la ricevuta\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=Received\">";
             echo "ricevuta " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
             echo "</a> ";
         } else {
@@ -258,34 +258,34 @@ $ts->output_navbar();
 				    $ts->getOffset(), $ts->getLimit());
         $ctrlprotoc = "";
         while ($r = gaz_dbi_fetch_array($result)) {
-            if ($r["tipdoc"] == 'VPR') {
+            if ($r['tipdoc'] == 'VPR') {
                 $modulo = "stampa_precli.php?id_tes=" . $r['id_tes'];
                 $modifi = "admin_broven.php?Update&id_tes=" . $r['id_tes'];
             }
-            if (substr($r["tipdoc"], 1, 1) == 'O') {
+            if (substr($r['tipdoc'], 1, 1) == 'O') {
                 $modulo = "stampa_ordcli.php?id_tes=" . $r['id_tes'];
                 $modifi = "admin_broven.php?Update&id_tes=" . $r['id_tes'];
             }
             echo "<tr class=\"FacetDataTD\">";
 
             if (!empty($modifi)) {
-                echo "<td><a class=\"btn btn-xs btn-default btn-edit\" title=\"" . $script_transl['type_value'][$r["tipdoc"]] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . substr($r["tipdoc"], 1, 2) . "&nbsp;" . $r["id_tes"] . "</td>";
+                echo "<td><a class=\"btn btn-xs btn-default btn-edit\" title=\"" . $script_transl['type_value'][$r['tipdoc']] . "\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . "</td>";
             } else {
-                echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r["tipdoc"], 1, 2) . "&nbsp;" . $r["id_tes"] . " </button></td>";
+                echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r['tipdoc'], 1, 2) . "&nbsp;" . $r['id_tes'] . " </button></td>";
             }
-            echo "<td>" . $r["numdoc"] . " &nbsp;</td>";
+            echo "<td>" . $r['numdoc'] . " &nbsp;</td>";
             if ( $tipo=="VOG" ) {
-                echo "<td>". getDayNameFromDayNumber($r["weekday_repeat"]). " &nbsp;</td>";
+                echo "<td>". getDayNameFromDayNumber($r['weekday_repeat']). " &nbsp;</td>";
             } else {
-                echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+                echo "<td>" . gaz_format_date($r['datemi']) . " &nbsp;</td>";
             }
-            echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . $r["ragso1"] . "\">" . $r["ragso1"] . "</a> &nbsp;</td>";
-            echo "<td><a href=\"admin_destinazioni.php?codice=".$r["clfoco"]."&Update\">".$r["unita_locale1"]."</a></td>";
+            echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . $r['ragso1'] . "\">" . $r['ragso1'] . "</a> &nbsp;</td>";
+            echo "<td><a href=\"admin_destinazioni.php?codice=".$r['clfoco']."&Update\">".$r['unita_locale1']."</a></td>";
             
             // colonna stato ordine
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
-            $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
+            $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
             while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
                 $totale_da_evadere = $rigbro_r['quanti'];
                 $totale_evaso = 0;
@@ -303,50 +303,48 @@ $ts->output_navbar();
             // Se l'ordine e' da evadere completamente, verifica lo status ed
             // eventualmente lo aggiorna.
             //
+            echo "<td>";
             if ($remains_atleastone && !$processed_atleastone) {
                 // L'ordine e' completamente da evadere.
-                if ($r["status"] != "GENERATO") {
-                    gaz_dbi_put_row($gTables['tesbro'], "id_tes", $r["id_tes"], "status", "RIGENERATO");
+                if ($r['status'] != "GENERATO") {
+                    gaz_dbi_put_row($gTables['tesbro'], "id_tes", $r['id_tes'], "status", "RIGENERATO");
                 }
                 if ( $tipo == "VOG" ) {
-                    echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?weekday=".$r['weekday_repeat']."\">evadi</a></td>";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?weekday=".$r['weekday_repeat']."\">evadi</a>";
                 } else {
-                    echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a>&nbsp;";
-                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a></td>";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a>&nbsp;";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
                 }
             } elseif ($remains_atleastone) {
                 // l'ordine è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
-                echo "<td>";
                 $ultimo_documento = 0;
-                mostra_documenti_associati ( $r["id_tes"]);
+                mostra_documenti_associati( $r['id_tes'] );
                 if ( $tipo == "VOG" ) {
                     echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord_gio.php\">evadi il rimanente</a>";
                 } else {
                     echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>&nbsp;";
                     echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?clfoco=" . $r['clfoco'] . "\">evadi cliente</a>";
                 }
-                echo "</td>";
             } else {
                 // l'ordine è completamente evaso, mostro i riferimenti ai documenti che lo hanno evaso
-                echo "<td> ";
                 $ultimo_documento = 0;
-                mostra_documenti_associati($r["id_tes"]);
-                echo "</td>";
+                mostra_documenti_associati( $r['id_tes'] );
             }
+            echo "</td>";
             
             // stampa
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
             echo "</td>";
             // Colonna "Mail"
             echo "<td align=\"center\">";
-            if (!empty($r["e_mail"])){ // ho una mail sulla destinazione
-                echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
-        mail="' . $r["e_mail"] . '" namedoc="' . $script_transl['type_value'][$r["tipdoc"]] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-            } elseif (!empty($r["base_mail"])) { // ho una mail sul cliente
-                echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r["base_mail"] . '"
-        mail="' . $r["base_mail"] . '" namedoc="' . $script_transl['type_value'][$r["tipdoc"]] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+            if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
+                echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r['e_mail'] . '"
+        mail="' . $r['e_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+            } elseif (!empty($r['base_mail'])) { // ho una mail sul cliente
+                echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r['id_tes'] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r['base_mail'] . '"
+        mail="' . $r['base_mail'] . '" namedoc="' . $script_transl['type_value'][$r['tipdoc']] . ' n.' . $r['numdoc'] . ' del ' . gaz_format_date($r['datemi']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else { // non ho mail
-                echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r["clfoco"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+                echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r['clfoco'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
             }
             echo "</td>";
 
