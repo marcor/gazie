@@ -2,21 +2,18 @@
   INTERFACCIA Download ordini e Aggiornamento quantità articoli da Joomla a GAzie
   ------------------------------------------------------------------------
   @Author    Antonio Germani
-  @Website   http://www.lacasettabio.it
+  @Website   https://www.lacasettabio.it
   @Contact   340-5011912
-  @Copyright Copyright (C) 2018 - 2019 Antonio Germani All Rights Reserved.
-  versione 1.0
+  @Copyright Copyright (C) 2018 - 2020 Antonio Germani All Rights Reserved.
+  versione 2.0
   ------------------------------------------------------------------------ 
   
- Questo è un sistema che interfaccia GAzie ad un sito internet scambiando i dati da un database ad un altro. Proprio per questo meccanismo che non implica
-di interagire con il codice del sito, benché sia stato collaudato solo con siti con CMS Joomla, si ritiene debba essere valido anche per altri sistemi.
- Al momento la sincronizzazione è stata testata fra GAzie e alcune applicazioni di Joomla, quali ad esempio Hikashop, Virtuemart, Solidres ma, come già 
-detto, per la sua semplicità tecnica è adattabile ad ogni applicazione che utilizzi tabelle di datbase.
- Il tutto si basa su due file di interfaccia, uno presente in GAzie e l'altro presente nella root del sito. Queste doppie interfaccie sono necessarie per 
-poter accedere al database del sito internet dal Gestionale di Gazie che spesso è in locale o su un altro host.
-  L'interfaccia residente su GAzie può rimanere sempre la stessa mentre quella residente sul sito dovrà essere creata specificatamente in base al tipo di 
-componente utilizzato per gestire il negozio online.
- Il meccanismo di funzionamento è semplice; per ovviare al fatto che la maggiorparte dei database non sono gestibili con file residenti all'esterno del 
+ Questo è un sistema che interfaccia GAzie ad un sito internet scambiando i dati da un database ad un altro. Trattandosi di uno scambio di dati fra DataBase tramite file xml, benché sia stato collaudato solo con siti con CMS Joomla, si ritiene debba essere valido anche per altri sistemi.
+ Al momento la sincronizzazione è stata testata fra GAzie e alcune applicazioni di Joomla, quali ad esempio Hikashop (online shop), Virtuemart (online shop), Solidres (prenotazione hotel) ma, come già detto, per la sua semplicità tecnica è adattabile ad ogni applicazione che utilizzi tabelle di database.
+ In sostanza, il meccanismo si basa su due file di interfaccia, uno presente in GAzie e l'altro presente nella root del sito. Queste doppie interfaccie sono necessarie per poter accedere al database del sito internet dal Gestionale di Gazie che spesso è in locale o su un altro host.
+  L'interfaccia residente su GAzie rimane sempre la stessa mentre quella residente sul sito dovrà essere creata/adattata specificatamente in base al tipo di 
+componente utilizzato per gestire il negozio online e al tipo di dati da scambiare.
+ Il meccanismo di funzionamento è semplice; per ovviare al fatto che la maggior parte dei database non sono gestibili con file residenti all'esterno del 
 dominio cui il database appartiene, una prima interfaccia crea un file xml contenente i dati da gestire. Questo file xml viene trasferito nel dominio del 
 database da modificare e da lì, con una seconda interfaccia verrà letto e utilizzato per modificare il database. Una sorta di ... cavallo di Troia da noi
 autorizzato.
@@ -25,16 +22,16 @@ autorizzato.
 Per attivare questa sincronizzazione, in configurazione utente si deve attivare il modulo "Sincronizza e-commerce". Poi si consiglia di attivare anche il relativo widget in home page.
 
 
- *DOWNLOAD ORDINI*
-
-PRIMA DELL'USO, nelle righe iniziali della configurazione avanzata azienda di GAzie, si dovranno inserire i dati di accesso FTP all'host del sito internet,
-su Website root directory si dovrà inserire il percorso della cartella su cui si inserira' l'interfaccia (ad esempio: https://www.tuosito.it/syncro/ ). 
- Il file di interfaccia che si inserirà nella suddetta destinazione si dovrà chiamare: ordini-gazie.php. 
-  Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con quella di Joomla, passa, tramite l'url, una password. Tale 
+*PRIMA DELL'USO*,
+nelle righe iniziali della configurazione avanzata azienda di GAzie, si dovranno inserire i dati di accesso FTP all'host del sito internet e il percorso per l'upload ftp, su Website root directory si dovrà inserire il percorso della cartella su cui risiederanno le interfaccie (ad esempio: https://www.tuosito.it/syncro/ ). 
+Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con quella di Joomla, passa, tramite l'url, una password. Tale 
 password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda. L'interfaccia del sito dovrà, quindi,
 fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, si avvierà creando un file xml.
-  
-  Il file creato dovrà essere formattato come segue:
+
+
+ *DOWNLOAD ORDINI*
+Il file di interfaccia che si inserirà nella suddetta destinazione si dovrà chiamare: ordini-gazie.php.
+ Il file xml creato dovrà essere formattato come segue:
   
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <GAzieDocuments AppVersion="2" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">   
@@ -42,6 +39,7 @@ fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, si a
 	<Document>
 	<CustomerCode></CustomerCode>
 	<CustomerEmail></CustomerEmail>
+	<CustomerShippingDestin></CustomerShippingDestin>
 	<CustomerName></CustomerName>
 	<CustomerSurname></CustomerSurname>
 	<CustomerAddress></CustomerAddress>
@@ -53,10 +51,9 @@ fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, si a
 	<CustomerVatCode></CustomerVatCode>
 	<CustomerTel></CustomerTel>
 	<CustomerCellPhone></CustomerCellPhone>
-	<CustomerEmail></CustomerEmail>
 	<CustomerPecEmail></CustomerPecEmail>
 	<CustomerCodeFattEl></CustomerCodeFattEl>
-	<Warehouse></Warehouse>
+	<Warehouse>Principale</Warehouse>
 	<DateOrder></DateOrder>
 	<Number></Number>
 	<Numbering></Numbering>
@@ -64,63 +61,64 @@ fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, si a
 	<VatAmount></VatAmount>
 	<WithholdingTaxAmount>0</WithholdingTaxAmount>
 	<Total></Total>
-	<PriceList></PriceList>
-	<PricesIncludeVat></PricesIncludeVat>
-	<WithholdingTaxPerc></WithholdingTaxPerc>
+	<TotalDiscount>0.00000</TotalDiscount>
+	<PriceList>preve2</PriceList>
+	<PriceListNum>2</PriceListNum>
+	<PricesIncludeVat>true</PricesIncludeVat>
+	<WithholdingTaxPerc>0</WithholdingTaxPerc>
 	<PaymentName></PaymentName>
-	<PaymentBank></PaymentBank>
 	<PaymentBank></PaymentBank>
 	<Payments>
  	<Payment>
-	<Advance></Advance>
+	<Advance>false</Advance>
 	<Amount></Amount>
-	<Paid></Paid>
+	<Paid>confirmed</Paid>
 	</Payment>
 	</Payments>
 	<Carrier></Carrier>
-	<CostShippingDescription></CostShippingDescription>
-	<CostShippingAmount></CostShippingAmount>
-	<CostPaymentDescription></CostPaymentDescription>
-	<CostPaymentAmount></CostPaymentAmount>
-	<CostVatCode></CostVatCode>
-	<TransportReason></TransportReason>
+	<CostShippingDescription>Spese di trasporto</CostShippingDescription>
+	<CostShippingAmount>0.00000</CostShippingAmount>
+	<CostPaymentDescription>Spese d'incasso</CostPaymentDescription>
+	<CostPaymentAmount>0.00000</CostPaymentAmount>
+	<CostVatAli>22</CostVatAli>
+	<CostVatCode>3</CostVatCode>
+	<TransportReason>C/Vendita</TransportReason>
 	<InternalComment></InternalComment>
 	<CustomField1></CustomField1>
-    <CustomField2></CustomField2>
-    <CustomField3></CustomField3>
-    <CustomField4></CustomField4>
-    <CustomField4></CustomField4>
-    <FootNotes></FootNotes>
-    <SalesAgent></SalesAgent>
-	<Rows>
-		<Row>
-		<Code></Code>
-		<Description></Description>
-		<Qty></Qty>
-		<MeasureUnit></MeasureUnit>
-		<Price></Price>
-		<Discounts></Discounts>
-		<VatCode></VatCode>
-		<Total></Total>
-		<Stock></Stock>
-		</Row>
+      	<CustomField2></CustomField2>
+    	<CustomField3></CustomField3>
+    	<CustomField4></CustomField4>
+     	<CustomField4></CustomField4>
+     	<FootNotes></FootNotes>
+     	<SalesAgent></SalesAgent>
+<Rows>
+	<Row>
+	<Code></Code>
+	<Description></Description>
+	<Category></Category>
+	<Qty></Qty>
+	<MeasureUnit>n.</MeasureUnit>
+	<Price></Price>
+	<Discounts></Discounts>
+	<VatCode></VatCode>
+	<VatAli></VatAli>
+	<Total></Total>
+	<Stock>false</Stock>
+	</Row>
 	</Rows>
-	</Document>
+
+</Document>
+</Documents>	
 	
-Ogni <Document> è la testata dell'ordine mentre le <Row> in esso contenute sono gli articoli ordinati.
+Ogni <Document> è la testata dell'ordine mentre le <Row> in esso contenute sono gli articoli ordinati. Alcuni campi non vengono usati, sono stati messi solo per eventuali scopi futuri.
 	
 A causa di eventuali aggiornamenti si consiglia di controllare il codice per vedere se sono stati apportati dei cambiamenti.
 
 
 
 
-*UPLOAD QUANTITà ARTICOLI*
-
-  Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con quella di Joomla, passa, tramite l'url,
-una password. Tale password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda.
-  
-  L'interfaccia di Joomla dovrà, quindi, fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, aggiornerà il database del negozio online.
-PRIMA DELL'USO, se ancora non è stato fatto, nelle righe iniziali della configurazione avanzata azienda di GAzie, si dovranno inserire i dati di accesso FTP all'host del sito Joomla e il percorso da seguire per trovare i file di interfaccia. Il file per l'upload residente su joomla si dovrà chiamare articoli-gazie.php
+*UPLOAD QUANTITà ARTICOLI (veloce)*
+Il file per l'upload residente su joomla si dovrà chiamare: articoli-gazie.php
 
 Al contrario dell'download ordini, nell'upload articoli sarà l'interfaccia presente su GAzie a creare il file xml. Questo file sarà poi trasferito via FTP sul sito joomla dove, attraverso la seconda interfaccia ivi residente, i dati saranno processati e verrà aggiornato il database del negozio online.
 
@@ -143,7 +141,61 @@ Altresì, verranno ignorati gli articoli "servizio" di GAzie e quelli dove non s
 
 
 
+
+*VERSIONE 2.0*
+Con la versione 2.0 questo modulo si completa con una maggiore sincronizzazione riuscendo a gestire anche le immagini, i prezzi e le descrizioni estese degli articoli.
+Inoltre la sincronizzazione è bidirezionale:
+-si possono importare, creandoli se inesistenti, gli articoli dall'ecommerce a GAzie
+-si possono aggiornare gli articoli da GAzie all'ecommerce nei prezzi, immagini e descrizioni estese.
+
+Questi sono i nuovi tracciati xml per gli articoli completi:
+
+Dall'e-commerce a GAzie (il file di interfaccia si dovrà chiamare: dwnlArticoli-gazie.php)
+<Products>
+    <Product>
+      <InternalID></InternalID>
+      <Code></Code>
+      <BarCode></BarCode>
+      <Description></Description>
+      <DescriptionHtml></DescriptionHtml>
+      <Category></Category>
+      <Vat Perc="4" Class="Imponibile" Description="Aliquota 4%">4</Vat>
+      <Um>kg</Um>
+      <NetPrice1></NetPrice1>
+      <GrossPrice1></GrossPrice1>
+      <NetPrice2></NetPrice2>
+      <GrossPrice2></GrossPrice2>
+      <NetPrice3></NetPrice3>
+      <GrossPrice3></GrossPrice3>
+      <NetPrice4></NetPrice4>
+      <GrossPrice4></GrossPrice4>
+      <ProducerName>La Casetta Bio</ProducerName>
+      <SizeUm></SizeUm>
+      <WeightUm></WeightUm>
+      <ManageWarehouse></ManageWarehouse>
+      <AvailableQty></AvailableQty>
+      <CustomField1></CustomField1>
+      <Notes></Notes>
+      <ImageFileName>0002 -- Immagine-articolo.jpg</ImageFileName>
+    </Product>
+
+
+Da GAzie all'e-commerce:
+<Product>
+	<Code></Code>
+	<BarCode></BarCode>
+	<Name>nome articolo</Name>
+	<AvailableQty>0</AvailableQty>
+	<Description>descrizione estesa</Description>
+	<Price></Price>
+	<Unimis>n</Unimis>
+	<ProductVat>4</ProductVat>
+	<ProductCategory></ProductCategory>
+	<ProductImgUrl></ProductImgUrl>
+</Product>
+
+
 * FILE DI INTERFACCIA DA INSERIRE NEL SITO *
  I file di interfaccia da inserire nel sito devono essere creati in base alle esigenze e alle impostazioni dell'applicazione installata nel sito.
  Nella cartella di GAzie shop_synchronize > interfacce per Joomla ci sono degli esempi da cui partire.
- Se non si ha dimestichezza nell'adattare i file si prega di richiedere assistenza privata specifica.
+ Se non si ha dimestichezza nell'adattare i file si prega di richiedere assistenza privata specifica: lacasettabio@lacasettabio.it
