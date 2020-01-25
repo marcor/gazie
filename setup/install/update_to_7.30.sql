@@ -15,4 +15,5 @@ CREATE TABLE IF NOT EXISTS `gaz_001fornitore_magazzino` (
   KEY `codice_fornitore` (`codice_fornitore`),
   KEY `codice_magazzino` (`codice_magazzino`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Percorso FTP con radice per il nome di dominio primario. Ad esempio: public_html/yourUploadFolder/', 'ftp_path', NULL);
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
