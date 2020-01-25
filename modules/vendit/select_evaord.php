@@ -43,7 +43,7 @@ function caricaCliente(&$form) {
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($form['clfoco']);
     $form['indspe'] = $cliente['indspe'] . " - " . $cliente['capspe'] . " " . $cliente['citspe'] . " " . $cliente['prospe'];
-    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc = 'VOR' AND status NOT LIKE 'EV%' ", "datemi ASC");
+    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc LIKE 'V__' AND status NOT LIKE 'EV%' ", "datemi ASC");
     while ($testate = gaz_dbi_fetch_array($rs_testate)) {
         $id_des = $anagrafica->getPartner($testate['id_des']);
         $form['traspo'] += $testate['traspo'];
@@ -235,6 +235,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
         $form['units'] = $testate['units'];
         $form['volume'] = $testate['volume'];
         $rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
+		$codiciarticoli=array();
         while ($rigo = gaz_dbi_fetch_array($rs_righi)) {
             $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
             $form['righi'][$_POST['num_rigo']]['id_rig'] = $rigo['id_rig'];
@@ -264,14 +265,18 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
 				$form['righi'][$_POST['num_rigo']]['confezione'] = 0;
 			}
             // controllo la quantità già evasa sfogliando le tabelle tesdoc e rigdoc
-            $totale_evadibile = $rigo['quanti'];
-            $rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order = " . $form['id_tes'] . " and codart='" . $rigo['codart'] . "'", "id_rig asc");
-            while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
-                $totale_evadibile -= $rg_evasi['quanti'];
-            }
-            if ($totale_evadibile == 0) {
-                $form['righi'][$_POST['num_rigo']]['checkval'] = false;
-            }
+			// solo se è il codice articolo non è già presente nei righi precedenti	
+			if (!in_array($rigo['codart'],$codiciarticoli)) {
+				$codiciarticoli[]=$rigo['codart'];
+				$totale_evadibile = $rigo['quanti'];
+				$rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order = " . $form['id_tes'] . " and codart='" . $rigo['codart'] . "'", "id_rig asc");
+				while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
+					$totale_evadibile -= $rg_evasi['quanti'];
+				}
+				if ($totale_evadibile == 0) {
+					$form['righi'][$_POST['num_rigo']]['checkval'] = false;
+				}
+			}
 			
 			// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
 			$mv = $upd_mm->getStockValue(false, $rigo['codart']);
