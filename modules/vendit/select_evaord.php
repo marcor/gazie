@@ -264,20 +264,15 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
 			} else {
 				$form['righi'][$_POST['num_rigo']]['confezione'] = 0;
 			}
-            // controllo la quantità già evasa sfogliando le tabelle tesdoc e rigdoc
-			// solo se è il codice articolo non è già presente nei righi precedenti	
-			if (!in_array($rigo['codart'],$codiciarticoli)) {
-				$codiciarticoli[]=$rigo['codart'];
-				$totale_evadibile = $rigo['quanti'];
-				$rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order = " . $form['id_tes'] . " and codart='" . $rigo['codart'] . "'", "id_rig asc");
-				while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
-					$totale_evadibile -= $rg_evasi['quanti'];
-				}
+			$totale_evadibile = $rigo['quanti'];
+			if (!in_array(array($rigo['codart'],$rigo['descri']),$codiciarticoli)) {
+				$codiciarticoli[]=array($rigo['codart'],$rigo['descri']);
+				$evasi = gaz_dbi_get_single_value($gTables['rigdoc'], "SUM(quanti)", "id_order = ".$form['id_tes']." and codart='".$rigo['codart']."' and descri like '".$rigo['descri']."%'");
+				$totale_evadibile -= $evasi;
 				if ($totale_evadibile == 0) {
 					$form['righi'][$_POST['num_rigo']]['checkval'] = false;
 				}
 			}
-			
 			// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
 			$mv = $upd_mm->getStockValue(false, $rigo['codart']);
             $magval = array_pop($mv);
