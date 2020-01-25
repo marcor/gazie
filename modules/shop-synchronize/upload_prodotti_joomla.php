@@ -24,14 +24,12 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
   */
-// IMPOSTARE QUì IL PERCORSO PER SCRIVERE I FILE VIA FTP SUL SITO E-COMMERCE (SENZA IL DOMINIO e con / finale)
-$ftp_path_upload="?public_html?/?yourfolder?/";
-// Fine impostazioni - da qui in poi non toccare più nulla!
-
 require ("../../modules/magazz/lib.function.php");
 $gForm = new magazzForm;
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
 $ftp_host= $resserver['val'];
+$resftp_path = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path");
+$ftp_path_upload=$resftp_path['val'];
 $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
 $ftp_user = $resuser['val'];
 $respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
