@@ -1,0 +1,10 @@
+Titolo:
+In virtute posita est vera felicitas.
+
+Presentazione:
+16 lunghissimi e interminabili anni passati a fantasticare algoritmi, ad immaginare report, bottoni, schermate, tabelle di database, il tutto condito da leggi che cambiano, le tecnologie che cambiano... e poi sempre a pigiar tasti per non cadere, per non essere travolti dagli eventi, dalla storia. 
+Quando partii con questo progetto ero come un surfista dilettante e sprovveduto: un take off che mi portò su senza sapere quando sarebbe durata la cavalcata, fin dove sarei riuscito ad accompagnare questo surf/progetto; "prima o poi si spiaggerà" dicevo, tutte le tavole tornano a riva, come le cose umane: hanno un inizio ed una fine, resterà questa bellissima esperienza fatta di scambi culturali, umani, isterie personali e collettive. 
+Sono stato profondamente cambiato da questa opera, una crescita personale senza pari che non avrei mai potuto avere senza le persone che hanno partecipato attivamente e continuano a farlo. Con voi ho scambiato idee e soluzioni, e nel farlo abbiamo incrementato reciprocamente le conoscenze.
+Oggi e il compleanno di GAzie, colgo l'occasione per rilasciare la versione 7.30; i miglioramenti apportati li potrete vedere dai commits sul repository, pertando non li elencherò. Farò solo i nomi degli altri autori:  Antonio Germani, Angelo Romano, Andrea Biasi, Daniele Frulla, Giorgio Zanella.
+
+Antonio de Vincentiis, Montesilvano, 27 gennaio 2020
