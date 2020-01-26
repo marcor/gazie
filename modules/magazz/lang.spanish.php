@@ -3,7 +3,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2020 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.devincentiis.it>
   --------------------------------------------------------------------------
