@@ -1146,11 +1146,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // fine rigo input
     $form['search']['clfoco'] = '';
     $form['print_total'] = 1;
-    $form['delivery_time'] = 30;
-    $form['day_of_validity'] = 10;
+	$delivery_time = gaz_dbi_get_row($gTables['company_config'], 'var', 'delivery_time');
+    $form['delivery_time'] = intval($delivery_time['val']);
+	$day_of_validity = gaz_dbi_get_row($gTables['company_config'], 'var', 'day_of_validity');
+    $form['day_of_validity'] = intval($day_of_validity['val']);
     $form['cosear'] = "";
     if (isset($_GET['seziva'])) {
-        $form['seziva'] = $_GET['seziva'];
+        $form['seziva'] = intval($_GET['seziva']);
     } else {
         $form['seziva'] = 1;
     }
@@ -1190,6 +1192,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caumag'] = 0;
     $form['sconto'] = 0;
     $cliente['indspe'] = "";
+	$ultimoprezzo=''; //info sugli ultimi prezzi
+
 }
 require("../../library/include/header.php");
 require("./lang." . $admin_aziend['lang'] . ".php");
