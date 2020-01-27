@@ -53,7 +53,7 @@ $checkUpd = new CheckDbAlign;
 $data = $checkUpd->TestDbAlign();
 if ($data) {
     // induco l'utente ad aggiornare il db
-    redirect( $path_root . '/setup/install/install.php?tp=' . $table_prefix);
+    redirect( '../../setup/install/install.php?tp=' . $table_prefix);
     exit;
 }
 $lastBackup = $checkUpd->testDbBackup();
