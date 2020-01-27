@@ -89,7 +89,7 @@ if ($backupMode == "automatic") {
             }
         }
         if ($admin_aziend['Abilit'] >= 8 && checkAccessRights($_SESSION['user_name'], 'inform', $_SESSION['company_id']) != 0) {
-            redirect( $path_root . '/modules/inform/backup.php?internal');
+            redirect( '../../modules/inform/backup.php?internal');
         }
     }
 }
