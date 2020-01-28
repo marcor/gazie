@@ -48,6 +48,15 @@ switch( $client_json->method() ) {
 	case 'POST':
 		# Inserisce codice fornitore
 		$data = $_POST;
+		if ( ! $data['anagr_id'] || ! $data['codice_articolo'] ) {
+			$json = array(
+				'error' => 'true',
+				'message' => 'Invalid request',
+			);
+			echo $client_json->response( $json, 402 );
+			exit;
+		}
+
 		$f = new FornitoreMagazzino();
 		if ( $f->exist($data['anagr_id'],$data['codice_articolo']) ) {
 			$json = array(

@@ -41,9 +41,9 @@ class FornitoreMagazzino extends \Database\Table {
 		$sql = $this->query->select()
 			->from( $this->getTableName())
 			->where($where);
-
 		$this->execute($sql);
-		return $this->getResult()->asArray();
+		$result = $this->getResult();
+		return $result->asArray();
 	}
 
 	/**
