@@ -80,7 +80,7 @@ $script_transl=HeadMain();
 <br />
 <?php
 if ($configurazione['cvalue']) {
-   $remote_id = file_get_contents($configurazione['cvalue']);
+   $remote_id = @file_get_contents($configurazione['cvalue']);
    if (preg_match("/^([0-9]{1,2}).([0-9]{1,2})/",$remote_id,$regs)){
       // versione locale presa da gconfig.php
       $pz_local = explode(".", GAZIE_VERSION);
