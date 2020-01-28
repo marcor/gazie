@@ -53,64 +53,67 @@ function lastDocNumber($year, $type = 'FAI', $vat_section = 1) {
 function getBillableContracts($date_ref = false, $vat_section = 1, $customer = 0) {
     global $gTables;
     if ($date_ref == false) {
-        $date_ref = date("Y-m-d");
+        $date_ref = date('Y-m-d');
     }
     $selected_customer = '';
     if ($customer > 0) {
-        $selected_customer = " AND " . $gTables['tesdoc'] . ".clfoco = $customer";
+        $selected_customer = " AND " . $gTables['clfoco'] . ".codice=" . $customer;
     }
+
+    $billable = array();
+
     /*
-      $field =  $gTables['contract'].'.*,
-      DATE_FORMAT(\''.$date_ref.'\',\'%Y\')*12 + DATE_FORMAT(\''.$date_ref.'\',\'%m\') AS this_month,
-      YEAR('.$gTables['tesdoc'].'.datfat)*12 + MONTH('.$gTables['tesdoc'].'.datfat) AS last_month,
-      YEAR('.$gTables['contract'].'.start_date)*12 + MONTH('.$gTables['contract'].'.start_date) AS start_month,
-      ('.$gTables['contract'].'.months_duration - PERIOD_DIFF(DATE_FORMAT(\''.$date_ref.'\',\'%Y%m\' ),
-      EXTRACT(YEAR_MONTH FROM '.$gTables['contract'].'.start_date))) AS months_at_end,
-      '.$gTables['tesdoc'].'.clfoco, '.$gTables['tesdoc'].'.datfat AS df, CONCAT('.$gTables['anagra'].'.ragso1,\' \','.$gTables['anagra'].'.ragso2) AS ragsoc,
-      PERIOD_ADD(EXTRACT(YEAR_MONTH FROM '.$gTables['tesdoc'].'.datfat),'.$gTables['contract'].'.periodicity) AS next_month';
-      $from =  $gTables['contract'].' LEFT JOIN '.$gTables['tesdoc'].
-      ' ON '.$gTables['contract'].'.id_contract=(SELECT '.$gTables['tesdoc'].'.id_contract FROM '.$gTables['tesdoc'].' WHERE '.$gTables['tesdoc'].'.tipdoc=\'FAI\' OR '.$gTables['tesdoc'].'.tipdoc=\'VRI\' LIMIT 1 )
-      LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['clfoco'].'.codice='.$gTables['contract'].'.id_customer
-      LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra='.$gTables['anagra'].'.id';
-      $where = $gTables['contract'].".vat_section = $vat_section $selected_customer";
-      $orderby = $gTables['contract'].'.id_contract ASC, '.$gTables['tesdoc'].'.datfat ASC, '.$gTables['tesdoc'].'.protoc ASC';
+      $field = $gTables['contract'].".*,
+      DATE_FORMAT('".$date_ref."','%Y')*12 + DATE_FORMAT('".$date_ref."','%m') AS this_month,
+      YEAR(".$gTables['tesdoc'].".datfat)*12 + MONTH(".$gTables['tesdoc'].".datfat) AS last_month,
+      YEAR(".$gTables['contract'].".start_date)*12 + MONTH(".$gTables['contract'].".start_date) AS start_month,
+      (".$gTables['contract'].".months_duration - PERIOD_DIFF(DATE_FORMAT('".$date_ref."','%Y%m'),
+      EXTRACT(YEAR_MONTH FROM ".$gTables['contract'].".start_date))) AS months_at_end,
+      ".$gTables['tesdoc'].".clfoco, ".$gTables['tesdoc'].".datfat AS df, CONCAT(".$gTables['anagra'].".ragso1,' ',".$gTables['anagra'].".ragso2) AS ragsoc,
+      PERIOD_ADD(EXTRACT(YEAR_MONTH FROM ".$gTables['tesdoc'].".datfat),".$gTables['contract'].".periodicity) AS next_month";
+      $from =  $gTables['contract']." LEFT JOIN ".$gTables['tesdoc'].
+      " ON ".$gTables['contract'].".id_contract=(SELECT ".$gTables['tesdoc'].".id_contract FROM ".$gTables['tesdoc']." WHERE ".$gTables['tesdoc'].".tipdoc='FAI' OR ".$gTables['tesdoc'].".tipdoc='VRI' LIMIT 1)
+      LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice=".$gTables['contract'].".id_customer
+      LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra=".$gTables['anagra'].".id";
+      $where = $gTables['contract'].".vat_section = ".$vat_section." ".$selected_customer;
+      $orderby = $gTables['contract'].".id_contract ASC, ".$gTables['tesdoc'].".datfat ASC, ".$gTables['tesdoc'].".protoc ASC";
      */
 
-    /* modifica da Claudio DOmiziani 29.09.2017 */
+    /* modifica da Claudio Domiziani 29.09.2017 */
 
     $field = $gTables['contract'] . ".*,
-                DATE_FORMAT('$date_ref','%Y')*12 + DATE_FORMAT('$date_ref','%m') AS this_month,
-                YEAR( MAX(" . $gTables['tesdoc'] . ".datfat))*12 + MONTH( MAX(" . $gTables['tesdoc'] . ".datfat) ) AS last_month,
+                DATE_FORMAT('" . $date_ref . "','%Y')*12 + DATE_FORMAT('" . $date_ref . "','%m') AS this_month,
+                YEAR(MAX(" . $gTables['tesdoc'] . ".datfat))*12 + MONTH(MAX(" . $gTables['tesdoc'] . ".datfat)) AS last_month,
                 YEAR(" . $gTables['contract'] . ".start_date)*12 + MONTH(" . $gTables['contract'] . ".start_date) AS start_month,
-                (" . $gTables['contract'] . ".months_duration - PERIOD_DIFF(DATE_FORMAT('$date_ref','%Y%m' ),
+                (" . $gTables['contract'] . ".months_duration - PERIOD_DIFF(DATE_FORMAT('" . $date_ref . "','%Y%m'),
                 EXTRACT(YEAR_MONTH FROM " . $gTables['contract'] . ".start_date))) AS months_at_end,
-                " . $gTables['tesdoc'] . ".clfoco, " . $gTables['tesdoc'] . ".datfat AS df1, 
+                " . $gTables['tesdoc'] . ".clfoco, " . $gTables['tesdoc'] . ".datfat AS df1,
                 CONCAT(" . $gTables['anagra'] . ".ragso1,' '," . $gTables['anagra'] . ".ragso2) AS ragsoc,
-                PERIOD_ADD(EXTRACT(YEAR_MONTH FROM " . $gTables['tesdoc'] . ".datfat)," . $gTables['contract'] . ".periodicity) AS next_month ,
+                PERIOD_ADD(EXTRACT(YEAR_MONTH FROM " . $gTables['tesdoc'] . ".datfat)," . $gTables['contract'] . ".periodicity) AS next_month,
                 " . $gTables['contract'] . ".id_contract,('Cont. N.') AS txt," . $gTables['contract'] . ".doc_number,
                 " . $gTables['contract'] . ".id_customer," . $gTables['anagra'] . ".ragso1,
                 " . $gTables['contract'] . ".vat_section, " . $gTables['contract'] . ".doc_type,
                 " . $gTables['contract'] . ".start_date," . $gTables['contract'] . ".months_duration,
                 " . $gTables['contract'] . ".current_fee," . $gTables['contract'] . ".periodicity,
-                MAX(" . $gTables['tesdoc'] . ".datfat), MAX(" . $gTables['tesdoc'] . ".datfat) AS df ";
+                MAX(" . $gTables['tesdoc'] . ".datfat), MAX(" . $gTables['tesdoc'] . ".datfat) AS df";
 
     $from = $gTables['contract'] . " 
                 INNER JOIN " . $gTables['clfoco'] . " ON " . $gTables['contract'] . ".id_customer = " . $gTables['clfoco'] . ".codice 
                 INNER JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id 
                 LEFT JOIN " . $gTables['tesdoc'] . " ON " . $gTables['contract'] . ".id_contract = " . $gTables['tesdoc'] . ".id_contract";
 
-    $where = " 1 AND " . $gTables['contract'] . ".vat_section = $vat_section $selected_customer "
-            . " GROUP BY " . $gTables['contract'] . ".id_contract ";
+    $where = $gTables['contract'] . ".vat_section=" . $vat_section . " " . $selected_customer . " AND (" . $gTables['tesdoc'] . ".id_contract IS NULL OR " . $gTables['tesdoc'] . ".datfat>=" . $gTables['contract'] . ".start_date)
+                GROUP BY " . $gTables['contract'] . ".id_contract";
 
-    $orderby = $gTables['contract'] . ".doc_number ASC, " . $gTables['contract'] . ".start_date DESC  ";
+    $orderby = $gTables['contract'] . ".start_date ASC, " . $gTables['contract'] . ".doc_number ASC";
 
     /* FINE MODIFICHE */
 
     $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
-    $billable = array();
     while ($row = gaz_dbi_fetch_array($result)) {
         $billable[$row['id_contract']] = $row;
     }
+
     return $billable;
 }
 
