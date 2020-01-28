@@ -70,6 +70,7 @@ switch( $client_json->method() ) {
 		$f->codice_fornitore= $data['codice_fornitore'];
 		$f->codice_magazzino = $data['codice_articolo'];
 		$f->last_price = $data['last_price'];
+		$f->date_insert = date("Y:m:d H:i:s");
 		if ( $f->save() ) {
 			$json = array(
 				'insert' => 'true',
