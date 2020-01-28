@@ -128,8 +128,10 @@ $tipo = $auxil;
 
 # le <select> spaziano tra i documenti di un solo tipo (VPR, VOR o VOG)
 $where_select = sprintf("tipdoc LIKE '%s'", gaz_dbi_real_escape_string($tipo));
-
-echo '<script>
+?>
+<script>
+<?php
+echo '
 $(function() {
    $( "#dialog" ).dialog({
       autoOpen: false
@@ -156,11 +158,39 @@ function confirMail(link){
                   }
          });
    $("#dialog" ).dialog( "open" );
-}
-</script>';
-
+}';
 ?>
 
+function choice_template(modulo) {
+	$( function() {
+    var dialog
+	,	 
+	dialog = $("#confirm_print").dialog({
+		modal: true,
+		show: "blind",
+		hide: "explode",
+		width: "400",
+		buttons:[{
+			text: "Su carta bianca ",
+			"class": 'btn',
+			click: function () {
+				window.location.href = modulo;
+			},
+		}, 
+		{
+			text: "Su carta intestata ",
+			"class": 'btn',
+			click: function () {
+				window.location.href = modulo+'&lh';
+			},
+		}],
+		close: function(){
+				$(this).dialog('destroy');
+		}
+	});
+	});
+}
+</script>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][$tipo]; ?></div>
 <?php
 $ts->output_navbar();
@@ -333,8 +363,19 @@ $ts->output_navbar();
             echo "</td>";
             
             // stampa
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+			//onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);" title="Invia mail di conferma"
+            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\"";
+			// vedo se è presente un file di template adatto alla stampa su carta già intestata
+			if(withoutLetterHeadTemplate($r['tipdoc'])){
+				echo ' onclick="choice_template(\''.$modulo.'\');" title="Scegli modulo per stampa"';
+			}else{
+				echo ' href="'.$modulo.'" target="_blank"';
+			}			
+			echo "><i class=\"glyphicon glyphicon-print\"></i></a>";
             echo "</td>";
+			/*
+            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+            echo "</td>";*/
             // Colonna "Mail"
             echo "<td align=\"center\">";
             if (!empty($r['e_mail'])){ // ho una mail sulla destinazione
@@ -363,6 +404,7 @@ $ts->output_navbar();
         <tr><th class="FacetFieldCaptionTD" colspan="10"></th></tr>
     </table>
     </div>
+	<div class="modal" id="confirm_print" title="Scegli la carta dove stampare"></div>
 </form>
 
 <script>
@@ -390,4 +432,20 @@ $ts->output_navbar();
 
 <?php
 require("../../library/include/footer.php");
+
+function withoutLetterHeadTemplate($tipdoc='VPR')
+{
+	$withoutLetterHeadTemplate=false;
+	$nf="preventivo_cliente";
+	if ($tipdoc=='VOR') $nf="ordine_cliente";
+	$configTemplate = new configTemplate;
+	$handle = opendir("../../config/templates".($configTemplate->template ? '.' . $configTemplate->template : ''));
+	while ($file = readdir($handle)) {
+		if(($file == ".")||($file == "..")) continue;
+		if(!preg_match("/^".$nf."_lh.php$/",$file)) continue; // se è presente un template adatto per stampa su carta intestata (suffisso "_lh" )
+		$withoutLetterHeadTemplate = true; //  
+	}
+	return $withoutLetterHeadTemplate;
+}
+
 ?>

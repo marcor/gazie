@@ -518,7 +518,9 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		$configTemplate->setTemplateLang($lang_template);
 		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
     }
-	require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
+	$lh=(($dest && $dest == 'H')?'_lh':''); // eventuale scelta di stampare su carta intestata, aggiungo il suffisso "lh";
+	
+	require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] .$lh. '.php');
     $pdf = new $templateName();
     $ecr = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $_SESSION["user_name"]);
     if (!empty($ecr['driver'])) {
