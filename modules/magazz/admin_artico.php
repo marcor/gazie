@@ -1117,7 +1117,7 @@ function getFornitoriCodici() {
 		      	      $("#table-fornitore-codice").append(t);
 		      })
 		      .fail( function(error) {
-			      alert("Errore nell'ottenere i dati fornitori");
+			      console.log("Errore nell'ottenere i dati fornitori");
 			      console.log( error );
 		      });
 }
