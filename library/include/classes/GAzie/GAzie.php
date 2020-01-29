@@ -72,6 +72,16 @@ class GAzie {
 	}
 
 	/**
+	 * Return loader of GAzie
+	 *
+	 * @return \GAzie\Loader
+	 */
+	public function getLoader() {
+		return new Loader();
+	}
+
+
+	/**
 	 * Return database class
 	 *
 	 * @return \Database\Database

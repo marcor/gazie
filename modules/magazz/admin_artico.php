@@ -22,7 +22,10 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-require("../../library/include/datlib.inc.php");
+#require("../../library/include/datlib.inc.php");
+require("../../library/include/classes/Autoloader.php");
+
+$loader = \GAzie\GAzie::factory()->getLoader();
 
 // m1 Modificato a mano
  function serchCOD()
@@ -1089,7 +1092,7 @@ if ($modal_ok_insert === true) {
 
 // Get data codici 
 function getFornitoriCodici() {
-		var url = '/modules/acquis/json_fornitori_codici.php?token=<?php echo $_COOKIE[_SESSION_NAME]; ?>&codice_magazzino=<?= $form['codice']; ?>';
+    		var url = '<?= $loader->js('/modules/acquis/json_fornitori_codici.php?token='.$_COOKIE[_SESSION_NAME]).'&codice_magazzino='.$form['codice']; ?>';
 	    	$.get(url )
 			.done( function(response, statusText,xhr) {
 			      for (i in response ) {
@@ -1128,7 +1131,7 @@ $(function() {
 });
 // Send data fornitore codici
 function postCodeSupplier(data) {
-    var url = '/modules/acquis/json_fornitori_codici.php?token=<?php echo $_COOKIE[_SESSION_NAME]; ?>';
+    var url = '<?= $loader->js('/modules/acquis/json_fornitori_codici.php?token='.$_COOKIE[_SESSION_NAME]); ?>';
     $.post(url, data )
       .done( function(response, statusText,xhr) {
 	      alert("Dati fornitore caricati!");
@@ -1143,7 +1146,8 @@ $(function() {
 	// Autocomplete fornitori per inserimento codice
         $( "#search_fornitore" ).autocomplete({
                 source: function (request, response) {
-                        $.getJSON('/modules/acquis/json_fornitori.php?token=<?php echo $_COOKIE[_SESSION_NAME]; ?>&term=' + request.term, function (data) {
+    			var url = '<?= $loader->js('/modules/acquis/json_fornitori.php?token='.$_COOKIE[_SESSION_NAME]).'&term='; ?>' + request.term;
+                        $.getJSON( url, function (data) {
                                 console.log(data.suppliers);
                                 response($.map(data.suppliers, function (value, key) {
                                     return {
