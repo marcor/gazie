@@ -1145,7 +1145,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
     // fine rigo input
     $form['search']['clfoco'] = '';
-    $form['print_total'] = 1;
+	$print_total = gaz_dbi_get_row($gTables['company_config'], 'var', 'print_total');
+    $form['print_total'] = intval($print_total['val']);
 	$delivery_time = gaz_dbi_get_row($gTables['company_config'], 'var', 'delivery_time');
     $form['delivery_time'] = intval($delivery_time['val']);
 	$day_of_validity = gaz_dbi_get_row($gTables['company_config'], 'var', 'day_of_validity');

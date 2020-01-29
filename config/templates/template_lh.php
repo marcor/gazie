@@ -96,8 +96,7 @@ class Template extends FPDI {
         } else {
             $this->SetFillColor(hexdec(substr($this->colore, 0, 2)), hexdec(substr($this->colore, 2, 2)), hexdec(substr($this->colore, 4, 2)));
             $this->SetFont('times', 'B', 14);
-            $interlinea = 30;
-
+			$this->Ln(5);
             /*
 			if ($this->layout_pos_logo_on_doc=='LEFT') {
                 $this->SetXY(80,5);
@@ -132,7 +131,6 @@ class Template extends FPDI {
 */
             $this->Line(0, 93, 3, 93); //questa marca la linea d'aiuto per la piegatura del documento
             $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
-            $this->Ln($interlinea);
 			if (!empty($this->efattura)){
 				$this->SetFont('helvetica','B',9);
 				$this->SetTextColor(255,0,0);
@@ -140,30 +138,20 @@ class Template extends FPDI {
 				$this->SetTextColor(0,0,0);
 			}
             $this->SetFont('helvetica', '', 11);
-            $this->Cell(110, 5, $this->tipdoc, 1, 1, 'L', 1, '', 1);
+            $this->Cell(78);
+            $this->Cell(110, 5, $this->tipdoc, 1, 1, 'C', 1, '', 1);
+            $this->Cell(78);
             if ($this->tesdoc['tipdoc'] == 'NOP' || $this->withoutPageGroup) {
                 $this->Cell(30, 5);
             } else {
                 $this->Cell(30, 5, 'Pag. ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias(), 0, 0, 'L');
             }
-            $this->Ln(6);
-            $interlinea = $this->GetY();
-            $this->Ln(6);
             $this->SetFont('helvetica', '', 9);
-            if (!empty($this->destinazione)) {
-                if (is_array($this->destinazione)) { //quando si vuole indicare un titolo diverso da destinazione si deve passare un array con titolo index 0 e descrizione index 1
-                    $this->Cell(80, 5, $this->destinazione[0], 'LTR', 2, 'L', 1);
-                    $this->MultiCell(80, 4, $this->destinazione[1], 'LBR', 'L');
-                } else {
-                    $this->Cell(80, 5, "Destinazione :", 'LTR', 2, 'L', 1);
-                    $this->MultiCell(80, 4, $this->destinazione, 'LBR', 'L');
-                }
-            }
 			if ($this->codice_partner > 0){
-				$this->SetXY(35, $interlinea - 5);
+				$this->SetXY(113, 17);
 				$this->Cell(13, 4, $this->descri_partner, 'LT', 0, 'R', 1, '', 1);
 				$this->Cell(72, 4, ': ' . $this->cliente5, 'TR', 1, 0, '', 1);
-				$this->Cell(25);
+				$this->Cell(103);
 				$this->Cell(20, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
 				$to='';
 				if (trim($this->cod_univoco)!=''){
@@ -174,7 +162,7 @@ class Template extends FPDI {
 				}
 				$this->Cell(65, 4,$to.' ' , 'BR', 0, 'L', 0, '', 1);
             }
-			$this->SetXY(110, $interlinea + 6);
+			$this->SetXY(110, 31);
             $this->SetFont('helvetica', '', 10);
             $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
             $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
@@ -187,6 +175,16 @@ class Template extends FPDI {
             $this->Cell(75, 5, $this->cliente3, 0, 1, 'L', 0, '', 1);
             $this->Cell(115);
             $this->Cell(75, 5, $this->cliente4, 0, 1, 'L', 0, '', 1);
+            if (!empty($this->destinazione)) {
+				$this->SetXY(116, 57);
+                if (is_array($this->destinazione)) { //quando si vuole indicare un titolo diverso da destinazione si deve passare un array con titolo index 0 e descrizione index 1
+                    $this->Cell(80, 5, $this->destinazione[0], 'LTR', 2, 'L', 1);
+                    $this->MultiCell(80, 4, $this->destinazione[1], 'LBR', 'L');
+                } else {
+                    $this->Cell(80, 5, "Destinazione :", 'LTR', 2, 'L', 1);
+                    $this->MultiCell(80, 4, $this->destinazione, 'LBR', 'L');
+                }
+            }
 /* QUESTO NON SO CHI LO HA FATTO MA MI VEDO COSTRETTO A COMMENTARLO PERCHE' VA AD ACCAVALLARSI CON IL CORPO
             if (!empty($this->cliente4b)) {
                 $this->Cell(115);
