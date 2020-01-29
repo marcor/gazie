@@ -1020,7 +1020,6 @@ if ($modal_ok_insert === true) {
 				</tr>
 				</thead>
 				<tbody>
-				<div id="table-fornitore-codice"></div>	
 				<tr>
 		<form id="form-fornitori-codici">
 					<td>
@@ -1043,6 +1042,7 @@ if ($modal_ok_insert === true) {
 				</tr>
 				</tbody>
 			    </table>
+				<div id="table-fornitore-codice"></div>	
 			    </div>
             <?php
 //			    $gForm->variousSelect('fornitori-codici', $script_transl['fornitori-codici'], $form['movimentabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
