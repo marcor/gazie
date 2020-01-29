@@ -307,18 +307,20 @@ echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
 function setMultipleValues(y,m,d) {
-     document.getElementById(calName+'_Y').value=y;
-     document.getElementById(calName+'_M').selectedIndex=m*1-1;
-     document.getElementById(calName+'_D').selectedIndex=d*1-1;
+    document.getElementById(calName+'_D').selectedIndex=d*1-1;
+    document.getElementById(calName+'_M').selectedIndex=m*1-1;
+    var year = document.getElementById(calName+'_Y');
+	year.value = y;
+	year.onchange();
 }
 function setDate(name) {
-  calName = name.toString();
-  var year = document.getElementById(calName+'_Y').value.toString();
-  var month = document.getElementById(calName+'_M').value.toString();
-  var day = document.getElementById(calName+'_D').value.toString();
-  var mdy = month+'/'+day+'/'+year;
-  cal.setReturnFunction('setMultipleValues');
-  cal.showCalendar('anchor', mdy);
+	calName = name.toString();
+	var year = document.getElementById(calName+'_Y').value.toString();
+	var month = document.getElementById(calName+'_M').value.toString();
+	var day = document.getElementById(calName+'_D').value.toString();
+	var mdy = month+'/'+day+'/'+year;
+	cal.setReturnFunction('setMultipleValues');
+	cal.showCalendar('anchor', mdy);
 }
 </script>
 ";
@@ -330,6 +332,7 @@ $gForm->selectNumber('vat_section', $form['vat_section'], 0, 1, 9, 'FacetSelect'
 echo ' ' . $script_transl['on'] . ' ';
 $gForm->CalendarPopup('this_date', $form['this_date_D'], $form['this_date_M'], $form['this_date_Y'], 'FacetSelect', 1);
 echo "</div>\n";
+echo "<center><input type=\"checkbox\" name=\"alsoexpired\" value=\"1\" title=\"spunta per mostrare anche i contratti scaduti\"".((isset($_POST['alsoexpired']) && $_POST['alsoexpired']=='1') ? ' checked="checked"' : '')." onchange=\"this.form.hidden_req.value='1'; this.form.submit();\"> mostra anche i contratti scaduti</center>";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr class=\"FacetColumnTD\">\n";
 echo "<td align=\"right\">" . $strScript['admin_contract.php']['doc_number'] . "</td>\n";
@@ -342,6 +345,7 @@ echo "<td align=\"center\">" . $strScript['admin_contract.php']['doc_type'] . "<
 echo "<td></td>\n";
 echo "\t </tr>\n";
 foreach ($form['rows'] as $k => $val) {
+	if ((!isset($_POST['alsoexpired']) || $_POST['alsoexpired']!='1') && $val['error'] == $script_transl['expired']) continue;
     echo "<tr class=\"FacetDataTD\">\n";
     echo "<td align=\"right\">" . $val['doc_number'] . "</td>\n";
     echo "<td align=\"center\">" . gaz_format_date($val['start_date']) . "</td>\n";
