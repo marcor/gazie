@@ -36,9 +36,9 @@ function getMovements($cm_ini,$cm_fin,$art_ini,$art_fin,$date_ini,$date_fin)
         if ( $_POST['ric']=="" ) $_POST['ric']="%%";
         $where=" catmer BETWEEN ".$cm_ini." AND ".$cm_fin." AND".
                " artico BETWEEN '".$art_ini."' AND '".$art_fin."' AND".
-               " datreg BETWEEN ".$date_ini." AND ".$date_fin." AND ".
+               " datreg BETWEEN ".$date_ini." AND ".$date_fin." AND (".
                $gTables['artico'].".descri like '".$_POST['ric']."' OR ".
-               $gTables['artico'].".codice like '".$_POST['ric']."'";
+               $gTables['artico'].".codice like '".$_POST['ric']."')";
 		$what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri AS descau, ".
               $gTables['clfoco'].".codice, ".

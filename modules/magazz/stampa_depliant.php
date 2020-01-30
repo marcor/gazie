@@ -94,21 +94,30 @@ class Depliant extends Report_template {
             if (!$link) {
                 $link = 'admin_artico.php?codice=' . $code . '&Update';
             }
-			$im = imagecreatefromstring($image); // Antonio de Vincentiis: questa funzione da problemi di fatal error con alcune immagini, quando corrotte. Per capire qual'è l'immagine che causa il problema basta decommentare il rigo di sotto e lanciare lo script
-			//print $code.'<br>';
-			$ratio=imagesx($im)/imagesy($im);
-			$xx=73;
-			$yy=0;
-			if ($ratio>0.8){ // ho una immagine troppo larga per essere contenuta in 20
-				$w=20; // impongo venti come larghezza 
-				$h=20/$ratio;// ... e diminuisco l'altezza con il ratio
-				$yy=12.5-$h/2; // faccio il padding verticale
-			} else { // immagine che non entra per altezza
-				$w=25*$ratio; // e diminuisco la larghezza con il ratio
-				$h=25; // impongo l'altezza
-				$xx=93-($w/2)*2; // faccio il padding orizzontale
-			}
-            $this->Image('@'.$image,$x+$xx,$y+$yy,$w, $h,'',$link,'R',false,'300','',false,false,'R',false);
+            try {   //FP: intercetto gli errori per immagini corrotte
+                $livelloPrecedente = error_reporting(E_ALL ^ E_WARNING);
+                $im = imagecreatefromstring($image); // Antonio de Vincentiis: questa funzione da problemi di fatal error con alcune immagini, quando corrotte. Per capire qual'è l'immagine che causa il problema basta decommentare il rigo di sotto e lanciare lo script
+                //print $code.'<br>';
+                $ratio=imagesx($im)/imagesy($im);
+                $xx=73;
+                $yy=0;
+                if ($ratio>0.8){ // ho una immagine troppo larga per essere contenuta in 20
+                    $w=20; // impongo venti come larghezza 
+                    $h=20/$ratio;// ... e diminuisco l'altezza con il ratio
+                    $yy=12.5-$h/2; // faccio il padding verticale
+                } else { // immagine che non entra per altezza
+                    $w=25*$ratio; // e diminuisco la larghezza con il ratio
+                    $h=25; // impongo l'altezza
+                    $xx=93-($w/2)*2; // faccio il padding orizzontale
+                }
+                $this->Image('@'.$image,$x+$xx,$y+$yy,$w, $h,'',$link,'R',false,'300','',false,false,'R',false);
+            } catch (Exception $exc) {
+//                echo $exc->getTraceAsString();
+                $this->Cell($x, $y, "Immagine non disponibile");
+            } finally {
+                error_reporting($livelloPrecedente);                
+            }
+
             $this->Cell(93, 5, $code, 'LTR', 2, 'L', 0, '', 1);
 			if (strlen($description)>110) {
                  $this->Cell(70, 5, substr($description,0,(strlen($description)/2)), 'L', 2, 'L', 0, '', 1);
