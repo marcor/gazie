@@ -1106,9 +1106,9 @@ function getFornitoriCodici() {
 				console.log(i);
 				var x = t.insertRow(i);
 				var cell1 = x.insertCell(0);
-				cell1.innerHTML = response[i].id;
+				cell1.innerHTML = response[i].id_anagr;
 				var cell2 = x.insertCell(1);
-				cell2.innerHTML = response[i].id_anagr;
+				cell2.innerHTML = response[i].name;
 				var cell3 = x.insertCell(2);
 				cell3.innerHTML = response[i].codice_fornitore;
 				var cell4 = x.insertCell(3);

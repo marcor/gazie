@@ -25,6 +25,7 @@
 
 namespace GAzie\Database;
 
+error_reporting(E_ALL);
 
 /**
  * Class for manage azienda table
@@ -42,8 +43,16 @@ class FornitoreMagazzino extends \Database\Table {
 			->from( $this->getTableName())
 			->where($where);
 		$this->execute($sql);
-		$result = $this->getResult();
-		return $result->asArray();
+		$result = $this->getResult()->asArray();
+		$r = [];
+                foreach ($result as $row ) {
+			$fornitore = new \GAzie\Anagra($row['id_anagr']);
+			$name = $fornitore->ragso1 . " " .$fornitore->ragso2;
+			$row['name'] = $name;
+			$r[] = $row;
+		}
+		return $r;
+
 	}
 
 	/**
