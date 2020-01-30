@@ -30,8 +30,17 @@ class Result  {
 	
 	private $_resource;
 
+	private $_result_array;
+
+	private $_result_obj;
+
+	private $_execute;
+
 	public function __construct( $rs ) {
 		$this->_resource = $rs;
+		$this->_result_array = [];
+		$this->_result_obj = null;
+		$this->_execute = false;
 	}
 
 	/**
@@ -44,18 +53,30 @@ class Result  {
 
 
 	public function asArray() {
+		if (  $this->_execute  )
+			return $this->_result_array;
+
 		$result = [];
 		while ($obj = mysqli_fetch_array($this->_resource, MYSQLI_ASSOC)) {
 			$result[]=$obj;
 		}
+		$this->_result_array = $result;
+		$this->_execute = true;
+		$this->free();
 		return $result;
 	}
 
 	public function asObject() {
+		if (  $this->_execute  )
+			return $this->_result_obj;
+
 		$result = [];
 		while ($obj = mysqli_fetch_object($this->_resource)) {
     			$result[]=$obj;
 		}
+		$this->_result_obj = $result;
+		$this->_execute = true;
+		$this->free();
 		return $result;
 	}
 

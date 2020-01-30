@@ -51,7 +51,7 @@ class Mysqli implements \Database\Driver\Driver  {
 	public function query( $sql ) {
 		$this->_resource = @mysqli_query($this->_link, $sql);
 		if (  $this->_resource  === FALSE ) {
-			$error = $this->error(); echo $error;
+			$error = $this->error(); 
 			if ( $error != '' ) {
 				$this->close();
 				die ('Errors query: ' . $sql . ' | '.$error);
