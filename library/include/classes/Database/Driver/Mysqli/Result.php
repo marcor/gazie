@@ -62,7 +62,7 @@ class Result  {
 		}
 		$this->_result_array = $result;
 		$this->_execute = true;
-		$this->free();
+//		$this->free();
 		return $result;
 	}
 
@@ -76,7 +76,7 @@ class Result  {
 		}
 		$this->_result_obj = $result;
 		$this->_execute = true;
-		$this->free();
+//		$this->free();
 		return $result;
 	}
 
