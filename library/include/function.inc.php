@@ -2652,9 +2652,9 @@ class Schedule {
          */
         global $gTables;
         if ($this->target == 0) {
-            $where = $gTables['rigmoc'] . ".codcon BETWEEN " . $masclifor . "000001 AND " . $masclifor . "999999";
+            $where = $gTables['rigmoc'] . ".codcon LIKE '" . $masclifor . "%'";
         } else {
-            $where = $gTables['rigmoc'] . ".codcon BETWEEN " . $this->target . "000001 AND " . $this->target . "999999";
+            $where = $gTables['rigmoc'] . ".codcon LIKE '" . $this->target . "%'";
         }
         if ($date != false) {
             $where .= " AND expiry>='" . date("Y-m-d", strtotime("-5 days")) . "' and expiry<='" . date("Y-m-d", strtotime("+2 month")) . "' group by id_tesdoc_ref ";
@@ -2746,7 +2746,7 @@ class Schedule {
         return $r['diff_paydoc'];
     }
 
-    function getStatus($id_tesdoc_ref,$date = false) {
+    function getStatus($id_tesdoc_ref, $date = false) {
         /*
          * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
          */
@@ -2775,7 +2775,7 @@ class Schedule {
 				$r['style'] = 'danger';
             }
         } elseif ($r['diff_paydoc'] == 0.00) { // la partita � chiusa ma...
-           if ($date_ref < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
+            if ($date_ref < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
                 $r['sta'] = 2; // esposta
 				$r['style'] = 'warning';
             } else { // altrimenti � chiusa completamente
@@ -2899,7 +2899,7 @@ class Schedule {
         return gaz_dbi_fetch_array($rs);
     }
 
-    function getPartnerStatus($clfoco,$date=false)
+    function getPartnerStatus($clfoco, $date = false)
     /*
      * genera un array ($this->PartnerStatus)con i valori dell'esposizione verso un partner commerciale
      * riferito ad una data, se passata, oppure alla data di sistema

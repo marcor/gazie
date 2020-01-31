@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -234,10 +233,10 @@ echo '<form method="GET">';
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
-if (strlen($cemail['val'])>5 || strlen($dest_fae_zip_package['val'])>5){
+if (strlen($cemail['val'])>5 || strlen($dest_fae_zip_package['val'])>5) {
 	$yes_mail = ' enabled ';
 }
-if (isset($send_fae_zip_package['val']) && strlen($send_fae_zip_package['val'])>5){
+if (isset($send_fae_zip_package['val']) && strlen($send_fae_zip_package['val'])>5) {
 	$yes_send = ' enabled ';
 }
 if (empty($yes_mail) && empty($yes_send)) {
@@ -256,7 +255,7 @@ if (!empty($msg_err)) {
 }
 
 $recordnav = new recordnav($gTables['fae_flux'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes', $where, $limit, $passo);
-$recordnav -> output();
+$recordnav->output();
 ?>
 
 <br />
@@ -299,13 +298,13 @@ $recordnav -> output();
 	<option value="NE" <?php if($status =="NE") echo "selected";?> >NE - Notifica esito</option>
 	<option value="NEEC02" <?php if($status =="NEEC02") echo "selected";?> >NE EC02 - Notifica esito</option>
 	<option value="NO" <?php if($status =="NO") echo "selected";?> >NO - Senza esiti oltre RC</option>
-</select> 
+</select>
 </td>
 <td class="FacetFieldCaptionTD">
-<input type="submit" name="search" colspan="11" value="Cerca" tabindex="1" >
+<input type="submit" name="search" colspan="11" value="Cerca" tabindex="1" />
 </td>
 <td colspan="1" class="FacetFieldCaptionTD">
-<input type="submit" name="all" value="Mostra tutti" >
+<input type="submit" name="all" value="Mostra tutti" />
 </td>
 </tr>
 </form>
@@ -338,7 +337,7 @@ $orderby = $gTables['fae_flux'] . '.id DESC';
 
 $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".seziva,".$gTables['tesdoc'].".numfat,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice', $where, $orderby, $limit, $passo);
 
-$ctrl_zip = 'START_CHECK_VALUE';    
+$ctrl_zip = 'START_CHECK_VALUE';
 while ($r = gaz_dbi_fetch_array($result)) {
 
 	if (strlen($r['filename_zip_package']) > 16) {// uso un report diverso in caso di impacchettamento in files zip
@@ -360,7 +359,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 					$class='btn btn-xs btn-danger btn-elimina';
 					$title='SEI SICURO? ATTENZIONE! Stai cancellando un pacchetto già inviato all\'intermediario';
 				}
-				// l'ultimo zip può essere eliminato ma se è stato inviato all'intermediario/servizio si deve controllare che il suo contenuto non sia stato trasmesso al SdI 
+				// l'ultimo zip può essere eliminato ma se è stato inviato all'intermediario/servizio si deve controllare che il suo contenuto non sia stato trasmesso al SdI
 				echo '<td colspan="2"><a class="'.$class.'" title="'.$title.'" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-remove"></i></a></td>';
 			} else {
 				echo '<td colspan="2"></td>';
@@ -392,44 +391,41 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $class1 = '';
     $class2 = '';
     if ($r['flux_status'] == 'RC') {
-      $class = 'FacetDataTD';
+        $class = 'FacetDataTD';
     } elseif ($r['flux_status'] == 'NS') {
-      $class = 'FacetDataTD';
-      $class2 = 'FacetDataTDevidenziaKO';
+        $class = 'FacetDataTD';
+        $class2 = 'FacetDataTDevidenziaKO';
     } elseif ($r['flux_status'] == 'DT') {
-      $class = 'FacetDataTDred';
+        $class = 'FacetDataTDred';
     } elseif ($r['flux_status'] == 'MC') {
-      $class = 'FacetDataTD';
-      $class2 = 'FacetDataTDred';
+        $class = 'FacetDataTD';
+        $class2 = 'FacetDataTDred';
     } elseif ($r['flux_status'] == '@' || $r['flux_status'] == '@@') {
-      $class ='FacetDataTD';
-      $class1 = '';
+        $class = 'FacetDataTD';
+        $class1 = '';
     } elseif ($r['flux_status'] == '##' || $r['flux_status'] == '#') {
-      $class ='FacetDataTD';
-      $class1 = '';
+        $class = 'FacetDataTD';
+        $class1 = '';
     }
-    
-    
+
     if ($r['progr_ret'] == '000' && $mostra_intesta_riga == 1) {
-       $class='FacetDataTD';
-       $class1='';
+        $class = 'FacetDataTD';
+        $class1 = '';
     } elseif ($r['progr_ret'] == '000' && $mostra_intesta_riga == 0) {
-       $class='FacetDataTD';
-       $class1='';
-    } 
-     
-    //Fattura accettata
-    if ($r['flux_status'] == 'NE') {
-      $class='FacetDataTD';
-      $class2='FacetDataTDevidenziaOK';
-     } 
-    
-    //Fattura rifiutata
-    if (strlen($r['flux_status']) > 2 && strpos($r['flux_status'], 'NE') !== FALSE) {
-      $class='FacetDataTD';
-      $class2='FacetDataTDevidenziaKO';
+        $class = 'FacetDataTD';
+        $class1 = '';
     }
- 
+
+    if ($r['flux_status'] == 'NE' || $r['flux_status'] == 'NEEC01') {
+        //Fattura accettata
+        $class = 'FacetDataTD';
+        $class2 = 'FacetDataTDevidenziaOK';
+    } else if (strlen($r['flux_status']) > 2 && strpos($r['flux_status'], 'NE') !== FALSE) {
+        //Fattura rifiutata
+        $class = 'FacetDataTD';
+        $class2 = 'FacetDataTDevidenziaKO';
+    }
+
     echo "<tr class=\"$class1 $class2\">";
     echo "<td>&nbsp;</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
@@ -444,7 +440,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
-    
+
     //aggiungere una icona invece del cancelletto
 	//TO-DO: COMBINARE GESTORE AUTOMATICO DELLE NOTIFICHE CON NOTIFICAZIONE MANUALE FORZATA DELLE FATTURE
     if ($r['flux_status'] == "##") {
@@ -454,27 +450,27 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$modulo_fae_report."\">#</a>" . "</td>";
     } elseif ($r['flux_status'] == "@") {
         //$percorso_fae="/fae_inviate/".$r['filename_ori']; //definire un alias per la posizione dei documenti inviati a SDI
-        //echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$percorso_fae."\">@</a>" . "</td>"; 
-        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"#\">@</a>" . "</td>"; 
+        //echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$percorso_fae."\">@</a>" . "</td>";
+        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"#\">@</a>" . "</td>";
     } elseif ($r['flux_status'] == "@@") {
         //$percorso_faeara="/fae_inviateara/".$r['filename_ori']; //definire un alias per la posizione dei documenti inviati a SDI
-        //echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\">". "<a href=\"".$percorso_faeara."\">@@</a>" . "</td>";      		
-        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\">". "<a href=\"#\">@@</a>" . "</td>";      		
+        //echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\">". "<a href=\"".$percorso_faeara."\">@@</a>" . "</td>";
+        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\">". "<a href=\"#\">@@</a>" . "</td>";
     } else {
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">".$r['flux_status']."</td>";
     }
     echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
-    
+
     if (strlen($r['flux_descri']) < 5) {
-      echo "<td class=\"$class\" >".$r['flux_descri']."</td>"; 
+        echo "<td class=\"$class\" >".$r['flux_descri']."</td>";
     } else {
-      echo "<td class=\"$class\" ></td>";   
-      echo "</tr>";
-      echo "<tr><td colspan =\"5\"><td colspan =\"10\" class=\"$class\" style=\"text-align:left;\" >".$r['flux_descri']."</td>";
-      echo "</tr><tr><td colspan=\"15\">&nbsp;</td></tr>";    
+        echo "<td class=\"$class\" ></td>";
+        echo "</tr>";
+        echo "<tr><td colspan =\"5\"><td colspan =\"10\" class=\"$class\" style=\"text-align:left;\" >".$r['flux_descri']."</td>";
+        echo "</tr><tr><td colspan=\"15\">&nbsp;</td></tr>";
     }
     echo "</tr>";
-}    
+}
 
 echo "</table>\n";
 echo "</div>";

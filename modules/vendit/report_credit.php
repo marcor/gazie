@@ -75,6 +75,12 @@ if (isset($_GET['stampa']) and $message == "") {
         header($locazione);
         exit;
 }
+if (isset($_GET['partaperte']) and $message == "") {
+        //Mando in stampa il riepilogo dei movimenti contabili non saldati elencati per data
+        $locazione = "Location: print_schedule.php?orderby=2&annini=".$annini."&mesini=".$mesini."&giornini=".$giornini."&annfin=".$annfin."&mesfin=".$mesfin."&giornfin=".$giornfin;
+        header($locazione);
+        exit;
+}
 if (isset($_GET['Return'])) {
         header("Location:docume_vendit.php");
         exit;
@@ -218,6 +224,8 @@ for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
 <input type="submit" name="Return" value="Indietro">
 <?php
 echo "<input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']."!\">&nbsp;";
+echo "<br /><br />";
+echo "<input type=\"submit\" name=\"partaperte\" value=\" ! PARTITE APERTE !\"><br /><br />";
 ?>
 </td>
 </tr>
@@ -227,7 +235,7 @@ echo "<input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']."
 <div class="box-primary table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed">
 <?php
-echo '<tr><td colspan=4>La query ha impiegato '.number_format($querytime,4,'.','').' sec.</td></tr><tr>';
+echo '<tr><td colspan=11>La query ha impiegato '.number_format($querytime,4,'.','').' sec.</td></tr><tr>';
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_tesmov = array  (
           "Codice" => "",
@@ -239,6 +247,7 @@ $headers_tesmov = array  (
           "Saldo" => "",
           "Riscuoti" => "" ,
           "Estr.Conto" => "",
+          "Partite aperte" => "",
 		  "Mail"=>''
 );
 $linkHeaders = new linkHeaders($headers_tesmov);
@@ -259,6 +268,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
          echo "<td align=\"right\">".gaz_format_number($r['saldo'])." &nbsp;</td>";
          echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" title=\"Effettuato un pagamento da ".$r["ragso1"]."\"  href=\"customer_payment.php?partner=".$r['codcon']."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
          echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa l'Estratto Conto di {$r['ragso1']}\" href=\"stampa_estcon.php?codice=".$r['codcon']."&annini=".$annini."&mesini=".$mesini."&giornini=".$giornini."&annfin=".$annfin."&mesfin=".$mesfin."&giornfin=".$giornfin."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+         echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa le Partite Aperte di {$r['ragso1']}\" href=\"print_schedule.php?clfoco=".$r['codcon']."&orderby=2\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
 		 // Colonna "Mail"
 		 echo "<td align=\"center\">";
 		 if (!empty($r["e_mail"])) {
@@ -272,7 +282,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
          $tot += $r['saldo'];
       }
 }
-echo "<tr><td colspan=\"6\"></td><td class='FacetDataTD' style='border: 2px solid #666; text-align: center;'>".gaz_format_number($tot)."</td><td></td><td></td></tr>\n";
+echo "<tr><td colspan=\"6\"></td><td class='FacetDataTD' style='border: 2px solid #666; text-align: center;'>".gaz_format_number($tot)."</td><td></td><td></td><td></td><td></td></tr>\n";
 ?>
 </table>
 </div>
