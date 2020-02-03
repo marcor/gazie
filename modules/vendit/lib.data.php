@@ -33,7 +33,7 @@ function effettInsert ($newValue)
                      'totfat','salacc','impeff','scaden','clfoco','pagame',
                      'banapp','banacc','id_doc','id_con','cigcup','status','adminid');
     $newValue['adminid'] = $_SESSION["user_name"];
-    tableInsert($table, $columns, $newValue);
+    return tableInsert($table, $columns, $newValue);
 }
 
 function agentiInsert ($codice, $newValue)
@@ -41,7 +41,7 @@ function agentiInsert ($codice, $newValue)
     $table = 'agenti';
     $columns = array('id_agente','id_fornitore','base_percent','tipo_contratto','adminid');
     $newValue['adminid'] = $_SESSION["user_name"];
-    tableInsert($table, $columns, $newValue);
+    return tableInsert($table, $columns, $newValue);
 }
 
 function agentiUpdate ($codice, $newValue)
@@ -56,7 +56,7 @@ function bodytextInsert ($newValue)
 {
     $table = 'body_text';
     $columns = array('table_name_ref','id_ref','body_text','lang_id');
-    tableInsert($table, $columns, $newValue);
+    return tableInsert($table, $columns, $newValue);
 }
 
 function bodytextUpdate ($codice, $newValue)
@@ -80,7 +80,7 @@ function contractUpdate ($newValue,$codice=false)
     if (is_array($codice)) {
        tableUpdate($table, $columns, $codice, $newValue);
     } else {
-       tableInsert($table, $columns, $newValue);
+       return tableInsert($table, $columns, $newValue);
     }
 }
 
@@ -95,7 +95,7 @@ function contractRowUpdate ($newValue,$codice=false)
     if (is_array($codice)) {
        tableUpdate($table, $columns, $codice, $newValue);
     } else {
-       tableInsert($table, $columns, $newValue);
+       return tableInsert($table, $columns, $newValue);
     }
 }
 
@@ -104,7 +104,7 @@ function provvigioniInsert ($newValue)
     $table = 'provvigioni';
     $columns = array('id_agente','id_provvigione','cod_articolo','cod_catmer','percentuale');
     $newValue['adminid'] = $_SESSION["user_name"];
-    tableInsert($table, $columns, $newValue);
+    return tableInsert($table, $columns, $newValue);
 }
 
 function provvigioniUpdate ($codice, $newValue)
@@ -120,7 +120,7 @@ function fae_fluxInsert($newValue)
 {
     $table = 'fae_flux';
     $columns = array('filename_ori','filename_zip_package','id_tes_ref','exec_date','received_date','delivery_date','filename_son','id_SDI','filename_ret','mail_id','data','flux_status','progr_ret','flux_descri');
-    tableInsert($table, $columns, $newValue);
+    return tableInsert($table, $columns, $newValue);
 }
 
 
