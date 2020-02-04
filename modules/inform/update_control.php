@@ -23,7 +23,6 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-require("../../library/include/classes/Autoloader.php");
 
 $admin_aziend=checkAdmin(9);
 
@@ -35,9 +34,6 @@ $configurazione = gaz_dbi_get_row($gTables['config'],'variable','update_url');
 $URI_files = gaz_dbi_get_row($gTables['config'],'variable','update_URI_files');
 if (!empty($URI_files['cvalue'])){ $update_URI_files = $URI_files['cvalue']; }
 require("../../library/include/header.php");
-// Richiamo la class per l'aggiornamento
-require("../../library/include/classes/GAzie/Upgrade.php");
-
 
 if (isset($_POST['check'])){// se viene richiesta una modifica della fonte di check
     foreach ($_POST['check'] as $key => $value){

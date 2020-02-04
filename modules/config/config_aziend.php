@@ -24,21 +24,6 @@
  */
 
 require("../../library/include/datlib.inc.php");
-require("../../library/include/classes/Autoloader.php");
-
-$test_email = isset($_GET['e-test']);
-$mail = new \GAzie\Mailer();
-if ( $test_email ) {
-	if ( $mail->testing() )
-		echo json_encode(["send"=>true]);
-	else
-		echo json_encode([
-			"send"=>false,
-			"error"=> $mail->getError(),
-		]);
-	exit;
-}
-
 $admin_aziend = checkAdmin(9);
 
 if (isset($_POST["elimina"])) {   // si vuole eliminare l'azienda

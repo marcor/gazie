@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2020 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -22,10 +22,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-#require("../../library/include/datlib.inc.php");
-require("../../library/include/classes/Autoloader.php");
-
-$loader = \GAzie\GAzie::factory()->getLoader();
+require("../../library/include/datlib.inc.php");
 
 // m1 Modificato a mano
  function serchCOD()
@@ -363,6 +360,7 @@ if ($modal === false) {
     if (isset($script)) { // se è stato tradotto lo script lo ritorno al chiamante
         $script_transl = $strScript[$script];
     }
+
     $script_transl = $strCommon + $script_transl;
 }
 /** ENRICO FEDELE */
@@ -1000,56 +998,8 @@ if ($modal_ok_insert === true) {
     $gForm->variousSelect('movimentabile', $script_transl['movimentabile_value'], $form['movimentabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
     ?>
                          </div>
-		    </div>
-		</div>
-		<!-- chiude row  -->
-                <div id="fornitori-codici" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-			    <label for="fornitori-codici" class="col-sm-4 control-label"><?php echo $script_transl['fornitori-codici']; ?></label>
-			    <div class="col-sm-8">
-			    <div class="table-responsive-md">
-			      <table class="table ">
-				<thead>
-				<tr>
-					<th scope="col">#</th>
-					<th scope="col">Fornitore</th>
-					<th scope="col">Codice Fornitore</th>
-					<th scope="col">Ultimo Prezzo</th>
-					<th scope="col"> </th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr>
-		<form id="form-fornitori-codici">
-					<td>
-					  <input class="col-sm-12" type="text"  value="" name="anagr_id_fornitore" id="anagr_id_fornitore" readonly />
-					</td>
-					<td>
-                        		  <input class="col-sm-11" type="text"  value="" name="search_fornitore" id="search_fornitore" maxlength="50" size="50"  />
-					</td>
-					<td>
-					 <input class="col-sm-8" type="hidden"  value="<?= $form['codice']; ?>" name="codice" id="codice" />
-                        		  <input class="col-sm-8" type="text"  value="" name="codicefornitore" id="codicefornitore" maxlength="50" size="50" />
-					</td>
-					<td>
-                        		  <input class="col-sm-8" type="text"  value="" name="lastprice" id="lastprice" maxlength="10" size="30" />
-					</td>
-					<td>
-                        		  <div class="btn btn-primary" name="submit-fornitori-codici"  id="submit-fornitori-codici" >OK</div>
-					</td>
-		</form>
-				</tr>
-				</tbody>
-			    </table>
-				<div id="table-fornitore-codice"></div>	
-			    </div>
-            <?php
-//			    $gForm->variousSelect('fornitori-codici', $script_transl['fornitori-codici'], $form['movimentabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
-	    ?>
-                         </div>
                     </div>
-                </div>
+                </div><!-- chiude row  -->
         <div class="col-sm-12">
     <?php
     /** ENRICO FEDELE */
@@ -1088,110 +1038,7 @@ if ($modal_ok_insert === true) {
         });
     });</script>
 
-<script>
 
-// Get data codici 
-function getFornitoriCodici() {
-    		var url = '<?= $loader->js('/modules/acquis/json_fornitori_codici.php?token='.$_COOKIE[_SESSION_NAME]).'&codice_magazzino='.$form['codice']; ?>';
-	    	$.get(url )
-			.done( function(response, statusText,xhr) {
-			      for (i in response ) {
-//				var data[i] = response[i];
-			      }
-			      console.log(response);
-			      response= JSON.parse(response);
-			      var t=document.createElement("TABLE");
-			      t.setAttribute('class', 'table table-bordered');
-			      for (i in response) {
-				console.log(i);
-				var x = t.insertRow(i);
-				var cell1 = x.insertCell(0);
-				cell1.innerHTML = response[i].id_anagr;
-				var cell2 = x.insertCell(1);
-				cell2.innerHTML = response[i].name;
-				var cell3 = x.insertCell(2);
-				cell3.innerHTML = response[i].codice_fornitore;
-				var cell4 = x.insertCell(3);
-				cell4.innerHTML = response[i].codice_magazzino;
-				var cell5 = x.insertCell(4);
-				cell5.innerHTML = response[i].last_price;
-			      }
-		      	      $("#table-fornitore-codice").html("");
-		      	      $("#table-fornitore-codice").append(t);
-		      })
-		      .fail( function(error) {
-			      console.log("Errore nell'ottenere i dati fornitori");
-			      console.log( error );
-		      });
-}
-$(function() {
-	$("#table-fornitore-codice").ready(function(){
-		getFornitoriCodici();
-	});
-});
-// Send data fornitore codici
-function postCodeSupplier(data) {
-    var url = '<?= $loader->js('/modules/acquis/json_fornitori_codici.php?token='.$_COOKIE[_SESSION_NAME]); ?>';
-    $.post(url, data )
-      .done( function(response, statusText,xhr) {
-	      alert("Dati fornitore caricati!");
-	      getFornitoriCodici();
-      })
-      .fail( function(error) {
-	      alert("Errore inserimento!");
-	      console.log( error );
-      });
-}
-$(function() {
-	// Autocomplete fornitori per inserimento codice
-        $( "#search_fornitore" ).autocomplete({
-                source: function (request, response) {
-    			var url = '<?= $loader->js('/modules/acquis/json_fornitori.php?token='.$_COOKIE[_SESSION_NAME]).'&term='; ?>' + request.term;
-                        $.getJSON( url, function (data) {
-                                console.log(data.suppliers);
-                                response($.map(data.suppliers, function (value, key) {
-                                    return {
-                                            label: value,
-                                            value: key
-                                    };
-                                }));;
-                        });
-                },
-                minLength: 1,
-                select: function(event, ui) {
-                        $("#anagr_id_fornitore").val(ui.item.value);
-                        $("#search_fornitore").val(ui.item.label);
-                        return false;
-                },
-                focus: function(event, ui) {
-                        event.preventDefault();
-                        $("#search_fornitore").val(ui.item.label);
-                }
-	});
-	$("#submit-fornitori-codici").click( function() {
-		var data = {
-			'anagr_id': $("#anagr_id_fornitore").val(),
-			'codice_fornitore': $("#codicefornitore").val(),
-			'codice_articolo': $("#codice").val(),
-			'last_price': $("#lastprice").val()
-		};
-		if ( data.codice_fornitore == '' ) {
-			alert("Codice fornitore non inserito!");
-		} else {
-  		  if ( data.anagr_id == '' ) {
-			alert("Fornitore non selezionato!");
-		  } else {
-			// Posso qui insirire i dati con ajax
-			console.log(data);
-			postCodeSupplier(data);
-//			alert("Stai inserendo il fornitore");
-		  }
-		}
-	   
-	});
-
-});
-</script>
 <?php
 /** ENRICO FEDELE */
 /* SOlo se non sono in finestra modale */
@@ -1212,9 +1059,7 @@ if ($modal === false) {
             e.preventDefault(); // avoid to execute the actual submit of the form.
         });
     </script>
-
-<?php
+    <?php
 }
-
 require("../../library/include/footer.php");
 ?>

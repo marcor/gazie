@@ -22,19 +22,6 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   -------------------------------------------------------------------
  */
-
-/*
-ANTONIO DE VINCENTIIS: COMMENTO perché obbliga ad avere il file gconfig.myconf.php
-
-// Load object autoloader
-include_once("../../library/include/classes/Autoloader.php");
-$GAzie = \GAzie\GAzie::factory();
-if ( $GAzie->moduleLoaded() ) {
-	# Prendo admin_aziend dall'oggetto
-	$admin_aziend = $GAzie->getCheckAdmin();
-} 
-*/
-
 $config = new UserConfig;
 
 if ( $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
