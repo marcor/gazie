@@ -37,6 +37,7 @@ if (isset($_POST['Delete'])) {
         gaz_dbi_del_row($gTables['admin'], "user_name",substr($_POST["user_name"],0,15));
         gaz_dbi_del_row($gTables['admin_module'], "adminid",substr($_POST["user_name"],0,15));
         gaz_dbi_del_row($gTables['admin_config'], "adminid",substr($_POST["user_name"],0,15));
+        gaz_dbi_del_row($gTables['breadcrumb'], "adminid",substr($_POST["user_name"],0,15)."' AND exec_mode> '0");
         header("Location: report_utenti.php");
         exit;
     }
