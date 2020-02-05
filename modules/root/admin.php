@@ -173,7 +173,7 @@ $(function(){
 <div class="container-fluid gaz-body">
   <form method="POST" name="gaz_form">
     <input type="hidden" value="<?php echo $form['hidden_req'];?>" name="hidden_req" />
-    <div class="container">
+    <div class="container" style="width: auto;">
 
         <?php
         if ($lastBackup) {
