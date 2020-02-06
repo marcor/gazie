@@ -28,7 +28,10 @@ if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
 
-if (isset($_GET['id'])) { //sto eliminando un singolo documento
+if (isset($_GET['cod'])) { //sto eliminando una intera installazione
+    $result = gaz_dbi_dyn_query("*", $gTables['instal'], "codice = " . intval($_GET['id']));
+    $row = gaz_dbi_fetch_array($result);
+} else if (isset($_GET['id'])) { //sto eliminando un singolo intervento
     $result = gaz_dbi_dyn_query("*", $gTables['assist'], "id = " . intval($_GET['id']));
     $row = gaz_dbi_fetch_array($result);
 } else {
@@ -42,7 +45,12 @@ if (!$row) {
 }
 
 if (isset($_POST['Delete'])) {
-    gaz_dbi_del_row($gTables['assist'], "id", $row['id']);
+	if (isset($_GET['cod'])) { //sto eliminando una intera installazione
+		gaz_dbi_del_row($gTables['assist'], "idinstallazione", $row['id']);
+		gaz_dbi_del_row($gTables['instal'], "id", $row['id']);
+	} else if (isset($_GET['id'])) { //sto eliminando un singolo intervento
+		gaz_dbi_del_row($gTables['assist'], "id", $row['id']);
+	}
     header("Location: " . $_POST['ritorno']);
     exit;
 }
