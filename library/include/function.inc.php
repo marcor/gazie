@@ -1886,8 +1886,8 @@ class GAzieForm {
          * eventualmente si può valorizzare $rows[row][head] per scrivere un rigo prima di quello di riferimento */
         ?>
         <div class="panel panel-default" >
-            <div id="<?php echo $id; ?>"  class="container-fluid">
-                <table class="col-xs-12 table-responsive table-striped table-condensed cf">
+            <div id="<?php echo $id; ?>"  class="table-responsive">
+                <table class="col-xs-12 table-striped table-condensed cf">
                     <thead class="cf">
                         <tr class="bg-success">
                             <?php

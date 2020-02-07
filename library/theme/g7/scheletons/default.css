@@ -835,7 +835,14 @@ label {
 .gaz-table-form .form-group > label {
     background-color: rgba(0, 0, 0, 0.04);
 }
-
+.table-responsive {
+	width: 100%;
+	min-height: .01%;
+	overflow-x: unset;
+}
+.ui-sortable-handle{
+	padding: 2px;
+}
 
 /**************************************
 ************** JQUERY UI **************

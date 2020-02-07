@@ -320,3 +320,12 @@
 #in_codvat {
 	max-width: 200px;
 }
+.table-responsive {
+	width: 100%;
+	min-height: .01%;
+	overflow-x: unset;
+}
+
+.ui-sortable-handle{
+	padding: 2px;
+}
