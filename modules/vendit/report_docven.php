@@ -74,7 +74,6 @@ $sortable_headers = array(
     "Cancella" => ""
 );
 
-$titolo = "Documenti di vendita a clienti";
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
 
@@ -443,10 +442,10 @@ function confirFae(link){
                         $docs = array_combine(explode(",", $r['refs_id']),
                                               explode(",", $r['refs_num']));
                         echo '<td align="center">';
-                        list($module, $doc) = ($r['ddt_type'] == 'R') ? ['doccmr', 'CMR'] : ['doctra', 'DdT'];
+                        list($doc_templa, $doc) = ($r['ddt_type'] == 'R') ? ['doccmr', 'CMR'] : ['doctra', 'DdT'];
                         $desc = $doc;
                         if (count($docs) > 5) {
-                            echo "<a href='report_$module.php' style='font-size:10px;' class='btn btn-xs btn-default'><i class='glyphicon glyphicon-plane'></i>$doc</a>";
+                            echo "<a href='report_$doc_templ.php' style='font-size:10px;' class='btn btn-xs btn-default'><i class='glyphicon glyphicon-plane'></i>$doc</a>";
                             $desc = "";
                         }
                         foreach ($docs as $doc_id => $doc_num) {
@@ -502,28 +501,7 @@ function confirFae(link){
     </div>
 </form>
 
-<script>
- $(document).ready(function(){
-     var selects = $("select");
-     // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
-     // (in questo modo i campi non usati possono essere esclusi)        
-     $("option", selects).filter(function(){ return this.value == "All"; }).val("");
-     
-     // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
-     // l'azione non lancia un evento "submit" e non può essere intercettata.
-     // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
-     selects.attr('onchange', null).change(function() { $(this.form).submit(); });
-     
-     // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
-     $("form").submit(function() {
-         $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
-         return true; // ensure form still submits
-     });
-     
-     // Un-disable form fields when page loads, in case they click back after submission
-     $( "form" ).find( ":input" ).prop( "disabled", false );
- });
-</script>
+
 
 <?php
 require("../../library/include/footer.php");
