@@ -1019,7 +1019,7 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 $select_fornitore = new selectPartner("clfoco");
 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
 echo "</div>\n";
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo "<div class=\" table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"seziva\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 9; $counter++) {
@@ -1107,9 +1107,9 @@ if ($form['in_id_orderman']>0){
 	echo '<input type="submit" class="btn btn-info btn-xs" name="all_same_orderman" title="Tutti i righi alla produzione '.$form['coseprod'].'" value=" '.$form['coseprod'].' TUTTO! " />';	
 } 
 echo '</td></tr>';
-echo "</table>\n";
+echo "</table></div>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo "<div class=\" table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
 echo "<input type=\"hidden\" value=\"{$form['in_codice_fornitore']}\" name=\"in_codice_fornitore\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_quality']}\" name=\"in_quality\" id=\"in_quality\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";
@@ -1164,8 +1164,8 @@ $totivafat = 0.00;
 $totimpfat = 0.00;
 /** ENRICO FEDELE */
 /* Cominciamo la transizione verso le tabelle bootstrap */
-echo '</table>
-	  <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+echo '</table></div><div class=" table-responsive">
+	  <table class="Tlarge table table-striped table-bordered table-condensed">
 		  <thead>
 			<tr>
 				<th class="FacetFieldCaptionTD"></th>
@@ -1459,9 +1459,10 @@ if (count($form['rows']) > 0) {
 		  </tr>';
 }
 echo '	</tbody>
-	  </table>';
-echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
-		<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
+	  </table></div>';
+echo "<div class=\"FacetSeparatorTD table-responsive\" align=\"center\">$script_transl[2]</div>
+		<div class=\"table-responsive\">
+		<table class=\"Tlarge table table-striped table-bordered table-condensed\">
 			<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\" />
 			<input type=\"hidden\" value=\"{$form['numrat']}\" name=\"numrat\" />
 			<input type=\"hidden\" value=\"{$form['spevar']}\" name=\"spevar\" />
@@ -1586,7 +1587,7 @@ if ($next_row > 0) {
   </td>
   </tr>';
   } */
-echo '	</table>';
+echo '	</table></div>';
 ?>
 </form>
 <!-- ENRICO FEDELE - INIZIO FINESTRA MODALE -->
