@@ -58,8 +58,8 @@ if ($auxil == "&all=yes"){
 /** ENRICO FEDELE */
 /* pulizia del codice, eliminato boxover, aggiunte classi bootstrap alla tabella, convertite immagini in glyphicons */
 print '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>
-	   <form method="GET">
-	   <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	   <form method="GET"><div class="table-responsive">
+	   <table class="Tlarge table table-striped table-bordered table-condensed">
 	   	<thead>
 			<tr>
 				<th></th>
@@ -122,7 +122,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 }
 ?>
             </tbody>
-        </table>
+        </table></div>
     <?php
 require("../../library/include/footer.php");
 ?>

@@ -462,7 +462,7 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 $select_cliente = new selectPartner("id_customer");
 $select_cliente->selectDocPartner('id_customer',$form['id_customer'],$form['search']['id_customer'],'id_customer',$script_transl['mesg'],$admin_aziend['mascli']);
 echo ' n.'.$form['doc_number']."</div>\n";
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['vat_section']."</td><td class=\"FacetDataTD\">\n";
 $gForm->selectNumber('vat_section',$form['vat_section'],0,1,9);
@@ -543,8 +543,8 @@ echo "</td></tr>\n";
 echo "\t<td colspan=\"6\">\n";
 echo "<textarea id=\"body_text\" name=\"body_text\" class=\"mceClass\" style=\"width:100%;height:400px;\" >".$form['body_text']."</textarea>\n";
 echo "</td></tr>\n";
-echo "</table>\n";
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo "</table></div>\n";
+echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
 echo "<tr>\n";
 echo "\t<td colspan=\"8\" align=\"center\">".$script_transl['rows_title']."</td>\n";
 echo "</tr>\n";
@@ -629,7 +629,7 @@ echo $script_transl['submit'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
 echo "\t </tr>\n";
-echo "</table>\n";
+echo "</table></div>\n";
 ?>
 </form>
 <?php

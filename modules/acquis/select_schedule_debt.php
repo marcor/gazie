@@ -56,20 +56,21 @@ echo '<form method="POST" name="select">
 		<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />';
 $gForm = new acquisForm();
 echo '	<div align="center" class="FacetFormHeaderFont">' . $script_transl['title'] . '</div>
-	  	<table class="Tmiddle table table-striped table-bordered table-condensed table-responsive">
+		<div class="table-responsive">
+	  	<table class="Tmiddle table table-striped table-bordered table-condensed">
 			<tr>
 				<td class="FacetFieldCaptionTD">' . $script_transl['orderby'] . '</td>
 				<td  class="FacetDataTD">';
 $gForm->variousSelect('orderby', $script_transl['orderby_value'], $form['orderby'], 'FacetSelect', 0, 'orderby');
 echo '			</td>
 			</tr>';
-echo '		  </table>';
+echo '		  </table></div>';
 
 //if (isset($_POST['preview'])) {
 $scdl = new Schedule;
 $m = $scdl->getScheduleEntries($form['orderby'], $admin_aziend['masfor']);
 
-echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">';
+echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">';
 
 if (sizeof($scdl->Entries) > 0) {
     $ctrl_partner = 0;
@@ -182,7 +183,7 @@ if (sizeof($scdl->Entries) > 0) {
 							</tr>';
 }
 echo '		</tbody>
- 			</table>
+ 			</table></div>
 		</form>';
 //}
 ?>

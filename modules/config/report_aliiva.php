@@ -27,7 +27,7 @@ $script_transl=HeadMain();
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>';
 $recordnav = new recordnav($gTables['aliiva'], $where, $limit, $passo);
 $recordnav -> output();
-echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">';
+echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">';
 $headers = array  (
             $script_transl['codice']=>'codice',
             $script_transl['descri']=>'descri',
@@ -55,7 +55,7 @@ while ($a_row = gaz_dbi_fetch_array($result))
     echo "</tr>";
     }
 ?>
-</table>
+</table></div>
 <?php
 require("../../library/include/footer.php");
 ?>

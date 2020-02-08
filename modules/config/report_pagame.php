@@ -32,7 +32,7 @@ if ( !isset($_GET['field']) ) $orderby = "codice DESC";
 $recordnav = new recordnav($gTables['pagame'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_pagame = array  (
               $script_transl[1] => "codice",
@@ -58,7 +58,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "</tr>\n";
 }
 ?>
-</table>
+</table></div>
 <?php
 require("../../library/include/footer.php");
 ?>

@@ -111,7 +111,8 @@ $t -> output_navbar();
 ?>
 
 <form method="GET">
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	<div class="table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
             <td class="FacetFieldCaptionTD">
                 <input type="text" placeholder="Movimento" class="input-xs form-control FacetInput" name="movimento"
@@ -198,7 +199,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "</tr>\n";
 }
 ?>
-    </table>
+    </table></div>
 </form>
 
 <script>

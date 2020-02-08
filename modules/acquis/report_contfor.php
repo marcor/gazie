@@ -95,7 +95,7 @@ $m = getMovements(intval($_GET['id']), gaz_format_date($form['datini'],true), ga
 		</div>
 	</div>                    
 <?php
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
 if (sizeof($m) > 0) {
         echo "<tr>";
         $linkHeaders = new linkHeaders($script_transl['header']);
@@ -120,7 +120,7 @@ if (sizeof($m) > 0) {
 } else {
     echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][4] . "</td></tr>\n";
 }
-echo "</table></form>";
+echo "</table></div></form>";
 ?>
 <?php
 

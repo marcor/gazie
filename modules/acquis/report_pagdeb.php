@@ -59,7 +59,8 @@ if (isset($_GET['all'])) {
 $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<form method="GET" >
+<form method="GET" >	
+<div class="table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <tr>
 	<td class="FacetFieldCaptionTD">
@@ -149,7 +150,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		  </tr>";
 }
 ?>
-</table>
+</table></div>
 </form>
 <?php
 require("../../library/include/footer.php");

@@ -52,6 +52,7 @@ $script_transl = HeadMain();
 <div class="alert alert-danger text-center" role="alert"><?php echo $script_transl['msg1']; ?></div>
 
 <form method="POST">
+	<div class="table-responsive">
     <table class="table_piacon table table-striped table-bordered table-condensed table-responsive">
         <thead>
             <tr class="tr_piacon">
@@ -142,7 +143,7 @@ $script_transl = HeadMain();
             }
             ?>
         </tbody>
-    </table>
+    </table></div>
 </form>
 <?php
 require("../../library/include/footer.php");

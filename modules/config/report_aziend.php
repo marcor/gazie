@@ -36,7 +36,7 @@ $where=$gTables['admin_module'].'.adminid=\''.$admin_aziend["user_name"].'\' GRO
 $rs = gaz_dbi_dyn_query ('*',$table,$where, $orderby, $limit, $passo);
 //echo '<div align="center" class="FacetFormHeaderFont"><a href="create_new_company.php">'.$script_transl['ins_this']."</a></div>\n";
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title']."</div>\n";
-echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">';
+echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed table-responsive">';
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_co = array  (
             $script_transl['codice'] => "codice",
@@ -75,7 +75,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
 }
 ?>
 </form>
-</table>
+</table></div>
 <?php
 require("../../library/include/footer.php");
 ?>

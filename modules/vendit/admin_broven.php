@@ -1271,11 +1271,7 @@ echo "\n";
              I N I Z I O   P A G I N A
 
 ******************************************************/
-/*
-echo '<pre>';
-print_r($form);
-echo '</pre>';
-*/
+
 
 echo "<form method=\"POST\" name=\"broven\">\n";
 $gForm = new venditForm();
@@ -1292,7 +1288,7 @@ echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="">
 		<div align="center" class="FacetFormHeaderFont">' . $title . '  a :';
 $select_cliente = new selectPartner('clfoco');
 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);
-echo '	</div>
+echo '	</div><div class="table-responsive">
 		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 			<tr>
 				<td class="FacetFieldCaptionTD">' . $script_transl[4] . '</td>
@@ -1449,7 +1445,7 @@ $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
 echo '		</td>
 		</tr>
-	  </table>
+	  </table></div>
 	  <div class="FacetSeparatorTD" align="center">' . $script_transl[1] . '</div>
 	  <input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" />
 	  <input type="hidden" value="' . $form['in_pervat'] . '" name="in_pervat" />
@@ -1465,7 +1461,7 @@ echo '		</td>
 	  <input type="hidden" value="' . $form['in_pesosp'] . '" name="in_pesosp" />
 	  <input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
 	  <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
-	  <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	  <div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">
 	  	<tr>
 			<td class="FacetColumnTD">' . $script_transl[17] . ':';
 /** ENRICO FEDELE */
@@ -1517,8 +1513,8 @@ $select_in_codvat->output();
 echo '		</td>
 			<td class="FacetColumnTD"></td>
 		</tr>
-	  </table>
-	  <table name="elenco" class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	  </table></div><div class="table-responsive">
+	  <table name="elenco" class="Tlarge table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
 				<td class="FacetFieldCaptionTD">' . $script_transl[20] . '</td>
@@ -1853,9 +1849,9 @@ if (count($form['rows']) > 0) {
 }
 
 echo '		</tbody>
-		</table>
-		<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div>
-		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+		</table></div>
+		<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div><div class="table-responsive">
+		<table class="Tlarge table table-striped table-bordered table-condensed">
 			<input type="hidden" value="' . $form['numrat'] . '" name="numrat" />
 			<input type="hidden" value="' . $form['expense_vat'] . '" name="expense_vat" />
 			<input type="hidden" value="' . $form['spevar'] . '" name="spevar" />
@@ -2035,7 +2031,7 @@ if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
    						<td colspan="8" class="text-right alert alert-info"><input type="submit" accesskey="o" name="ord" value="GENERA ORDINE!" /></td>
 					</tr>';
 }
-echo "	</table>";
+echo "	</table></div>";
 ?>
 </form>
 <div class="modal" id="vat-price" title="IMPORTO IVA COMPRESA">

@@ -270,7 +270,7 @@ while ($a_row = gaz_dbi_fetch_array($result))
             }
 print "\t </select>\n";
 print "</td></tr></table>\n";
-print "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+print "<div class=\"table-responsive\"> <table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
 //apro l'array contenente i righi eliminati per fare il POST
 foreach ($_POST['delrig'] as $key => $value)
     {
@@ -331,7 +331,7 @@ if ($nummov > 0)
     }
     else
     print "<tr><td colspan=\"6\" class=\"FacetDataTDred\">Non ci sono movimenti contabili relativi al fornitore ".$conto['ragso1']." ".$conto['ragso2']." !<td></tr>\n";
-print "</table></form>\n";
+print "</table></div></form>\n";
 ?>
 <?php
 require("../../library/include/footer.php");

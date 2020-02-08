@@ -39,11 +39,11 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 			<?php echo '<input type="text" value="'.$form['datref_for'].'" id="datref_for" name="datref_for" readonly>'; ?><small>(6 mesi prima e 6 dopo)</small>
 			</div>
           </div>
-          <div class="box-body">
-              <table id="fornitori" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="fornitori_info">
+          <div class="box-body table-responsive">
+              <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
                   <thead>
                       <tr role="row">
-                          <th><?php echo $script_transl['sca_cliente']; ?></th>
+                          <th><?php echo $script_transl['sca_fornitore']; ?></th>
                           <th><?php echo $script_transl['sca_dare']; ?></th>
                           <th><?php echo $script_transl['sca_avere']; ?></th>
                           <th><?php echo $script_transl['sca_saldo']; ?></th>

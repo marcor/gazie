@@ -180,7 +180,7 @@ echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" name=\"id_let\" value=\"" . $form['id_let'] . "\">\n";
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
 if (!empty($msg)) {
     echo "<tr><td colspan=\"6\" class=\"FacetDataTDred\">";
     $message = "";
@@ -253,7 +253,7 @@ echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceCla
 echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[9]<input type=\"checkbox\" name=\"signature\" " . $form['signature'] . "></td>
           <td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"submit\" accesskey=\"i\" name=\"ins\" value=\"" . $script_transl['submit'] . " !\" /></td>
           </tr>";
-echo "</table>";
+echo "</table></div>";
 ?>
 </form>
 <?php

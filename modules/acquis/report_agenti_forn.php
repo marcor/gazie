@@ -55,6 +55,7 @@ $script_transl = HeadMain('', '', 'admin_agenti_forn');
             . "left join gaz_anagra on gaz_anagra.id=" . $gTables['clfoco'] . ".id_anagra", $where, $limit, $passo);
     $recordnav->output();
     ?>
+	<div class="table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <tr>
             <td colspan="2" class="FacetFieldCaptionTD"><?php echo $script_transl[3] . ' :'; ?>
@@ -97,7 +98,7 @@ $script_transl = HeadMain('', '', 'admin_agenti_forn');
         }
         ?>
 </form>
-</table>
+</table></div>
 <?php
 require("../../library/include/footer.php");
 ?>

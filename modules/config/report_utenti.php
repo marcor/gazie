@@ -32,7 +32,7 @@ $script_transl = HeadMain('','','admin_utente');
 $recordnav = new recordnav($gTables['admin'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">
 <?php
 $headers_utenti = array  (
               $script_transl["user_name"] => "user_name",
@@ -76,7 +76,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "</tr>";
 }
 ?>
-</table>
+</table></div>
 <?php
 require("../../library/include/footer.php");
 ?>

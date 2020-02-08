@@ -178,7 +178,8 @@ echo "<input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']."
 </tr>
 </table>
 </form>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="table-responsive">
+<table class="Tlarge table table-striped table-bordered table-condensed">
 <?php
 $headers_tesmov = array  (
           $script_transl['codice'] => "",
@@ -223,7 +224,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
 }
 echo "<tr><td colspan=\"6\"></td><td class='FacetDataTD' style='border: 2px solid #666; text-align: center;'>".gaz_format_number($tot)."</td><td></td><td></td></tr>\n";
 ?>
-</table>
+</table></div>
 <?php
 require("../../library/include/footer.php");
 ?>

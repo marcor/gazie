@@ -55,8 +55,8 @@ if (!isset($_GET['field'])) {
 }
 
 ?>
-<form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>"><div class="table-responsive">
+<table class="Tlarge table table-striped table-bordered table-condensed">
 <tr>
 <td class="FacetFieldCaptionTD">
 <input placeholder="Cerca" class="input-xs form-control" type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
@@ -148,7 +148,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "</tr>\n";
 }
 ?>
-</table>
+</table></div>
 </form>
 <?php
 require("../../library/include/footer.php");

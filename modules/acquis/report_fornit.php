@@ -80,7 +80,8 @@ $ts = new TableSorter(
 <div align="center" class="FacetFormHeaderFont">Fornitori</div>
 <div align="center"><?php $ts->output_navbar(); ?></div>
 <form method="GET">
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="table-responsive">
+<table class="Tlarge table table-striped table-bordered table-condensed">
 	<tr>
 	    <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_int("codice", "Cerca cod."); ?>
@@ -194,7 +195,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "</tr>\n";
 }
 ?>
-</table>
+</table></div>
 </form>
 
 <script>

@@ -1658,7 +1658,7 @@ echo "</script>\n";
         $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['pay_closure']);
         $gForm->toast("ATTENZIONE!!! Il pagamento <span style='background-color: yellow;'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span style='background-color: yellow;'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
     }
-    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+    echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-condensed\">\n";
     echo "<tr><td class=\"bg-info\">" . $script_transl['mas'] . "</td><td class=\"bg-info\">" . $script_transl['sub'] . "</td><td class=\"bg-info\">" . $script_transl['amount'] . "</td><td class=\"bg-info\">" . $script_transl['daav'] . "</td><td class=\"bg-info\">" . $script_transl['addrow'] . "!</td></tr>\n";
     echo "<tr>\n";
     echo "<td class=\"bg-info\">\n#";
@@ -1803,7 +1803,7 @@ echo "</script>\n";
     echo "</td>\n";
     echo '<td align="right">';
     echo '<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . strtoupper($script_transl[$toDo]) . '!">';
-    echo "\n</td></tr></table>";
+    echo "\n</td></tr></table></div>";
 
 // INIZIO creazione dialog-schedule dei partner
     for ($i = 0; $i < $_POST['rigcon']; $i++) {

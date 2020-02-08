@@ -245,14 +245,14 @@ $gForm = new acquisForm();
         </div> <!-- chiude container -->
     </div><!-- chiude panel -->
 <?php
-echo '	<table class="Tmiddle table table-striped table-bordered table-condensed table-responsive">
+echo '<div class="table-responsive"><table class="Tmiddle table table-striped table-bordered table-condensed table-responsive">
 			<tr>
 				<td class="FacetFieldCaptionTD">' . $script_transl['orderby'] . '</td>
 				<td  class="FacetDataTD">';
 $gForm->variousSelect('orderby', $script_transl['orderby_value'], $form['orderby'], 'FacetSelect', 0, 'orderby');
 echo '			</td>
 			</tr>';
-echo '		  </table>';
+echo '		  </table></div>';
 ?>
     <div class="panel panel-default gaz-table-form">
         <div class="container-fluid">

@@ -32,7 +32,7 @@ $result=$anagrafica->queryPartners('*', $where, $orderby, $limit, $passo);
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>';
 $recordnav = new recordnav($gTables['clfoco'], $where, $limit, $passo);
 $recordnav -> output();
-echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">';
+echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">';
 $headers = array  (
             $script_transl['codice']=>'codice',
             $script_transl['ragso1']=>'ragso1',
@@ -62,7 +62,7 @@ foreach($result as $r) {
     echo "</tr>";
 }
 ?>
-</table>
+</table></div>
 <?php
 require("../../library/include/footer.php");
 ?>

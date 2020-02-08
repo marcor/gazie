@@ -132,7 +132,7 @@ echo "\t </tr>\n";
 echo "</table>\n";
 
 if (isset($_POST['preview'])) {
-    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+    echo "	<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">";
 	$paymov = new Schedule;
 	if ($form['clfoco']>=100000001){
 		$admin_aziend['masfor']=$form['clfoco'];		
@@ -236,7 +236,7 @@ if (isset($_POST['preview'])) {
     } else {
         echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][1] . "</td></tr>\n";
     }
-    echo "</table></form>";
+    echo "</table></div></form>";
 }
 ?>
 <?php

@@ -77,6 +77,7 @@ $script_transl = HeadMain();
     }
     ?>
     <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div class="table-responsive">
         <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
             <tr>
                 <td class="FacetFieldCaptionTD">
@@ -160,7 +161,7 @@ $script_transl = HeadMain();
             }
             ?>
     </form>
-</table>
+</table></div>
 <?php
 require("../../library/include/footer.php");
 ?>

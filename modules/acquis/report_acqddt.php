@@ -37,7 +37,7 @@ $where = "tipdoc = 'ADT' OR tipdoc = 'RDL'";
 $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">
 		<tr>
 <?php
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -61,7 +61,7 @@ while ($a_row = gaz_dbi_fetch_assoc($result)) {
     $cliente = $anagrafica->getPartner($a_row['clfoco']);
     echo '			<tr class="FacetDataTD">
 						<td>
-							<a class="btn btn-xs btn-edit" href="admin_docacq.php?id_tes='.$a_row["id_tes"].'&Update">
+							<a class="btn btn-xs btn-default" href="admin_docacq.php?id_tes='.$a_row["id_tes"].'&Update">
 								<i class="glyphicon glyphicon-edit"></i>'.$a_row["id_tes"].'
 							</a>
 						</td>

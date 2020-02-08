@@ -420,7 +420,7 @@ foreach ($_POST['delrig'] as $key => $value)
     {
     echo "<input type=\"hidden\" value=\"{$value}\" name=\"delrig[{$key}]\">\n";
     }
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
 /*echo "<tr><td colspan=\"3\" align=\"right\">Aggiungi un rigo --&raquo; <input type=\"image\" name=\"add\" src=\"../../library/images/vbut.gif\" title=\"Aggiunta rigo! \"></td></tr>";*/
 /** ENRICO FEDELE */
 /* glyph-icon */
@@ -486,7 +486,7 @@ if ($nummov > 0) {
 } else {
     echo "<tr><td colspan=\"6\" class=\"FacetDataTDred\">Non ci sono movimenti contabili relativi al fornitore ".$conto['ragso1']." ".$conto['ragso2']." !<td></tr>\n";
 }
-echo "</table></form>";
+echo "</table></div></form>";
 ?>
 <?php
 require("../../library/include/footer.php");

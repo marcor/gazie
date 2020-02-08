@@ -30,7 +30,7 @@ $script_transl = HeadMain('','','admin_banapp');
 $recordnav = new recordnav($gTables['banapp'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">
 <?php
 $headers_banapp = array  (
               $script_transl['codice'] => "codice",
@@ -57,7 +57,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "</tr>";
 }
 ?>
- </table>
+ </table></div>
 <?php
 require("../../library/include/footer.php");
 ?>
