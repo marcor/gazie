@@ -23,6 +23,6 @@ if ($t > 4 && $t <= 13) {
         <?php echo $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) ?> 
     </div>
     <div>
-		<a class="btn btn-primary" href="../config/print_privacy_regol.php" class="button"> <?php echo $script_transl['user_regol'];?></a> 
+		<a class="btn btn-info btn-block" href="../config/print_privacy_regol.php" class="button"> <?php echo $script_transl['user_regol'];?></a> 
 	</div>
 </div>

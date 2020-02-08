@@ -299,7 +299,7 @@ function choicePartner(row)
                 echo '<tr class="FacetDataTD text-center">';
 
 				// colonna numero documento
-				echo "<td><a class=\"btn btn-xs btn-success\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$tipodoc." n.".$r["numdoc"]." &nbsp;</a></td>\n";
+				echo "<td><a class=\"btn btn-xs btn-default\" id=\"tipdoc_".$r['id_tes']."\"  value=\"".$r["tipdoc"]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i> ".$tipodoc." n.".$r["numdoc"]." &nbsp;</a></td>\n";
 
 
 				// colonna produzione
