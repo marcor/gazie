@@ -1210,7 +1210,7 @@ echo "function balance(row)
           var ntot = sumA;
       }
       document.getElementById('impoRC'+rw).value = (Math.round(nv*100)/100).toFixed(2);
-      document.getElementById('impoRC'+rw).style.backgroundColor='transparent';
+      document.getElementById('impoRC'+rw).style.backgroundColor='#fff';
       document.myform.tot_A.value=(Math.round(ntot*100)/100).toFixed(2);
       document.myform.tot_D.value=(Math.round(ntot*100)/100).toFixed(2);
       document.myform.tot_A.disabled=true;
