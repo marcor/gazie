@@ -55,7 +55,8 @@ $recordnav = new recordnav($gTables['orderman'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	<div class="table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed ">
     	<thead>
             <tr>
                 <td></td>
@@ -97,7 +98,7 @@ $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>		<tr class="FacetDataTD">
 			<td>
-				<a class="btn btn-xs btn-success btn-block" href="admin_orderman.php?Update&codice=<?php echo $a_row['id']; ?>">
+				<a class="btn btn-xs btn-default btn-block" href="admin_orderman.php?Update&codice=<?php echo $a_row['id']; ?>">
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['id'];?>
 				</a>
 			</td>
@@ -149,7 +150,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 }
 ?>
     		</tbody>
-        </table>
+        </table></div>
 		</form>
 
 <?php

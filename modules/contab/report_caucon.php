@@ -32,7 +32,8 @@ $script_transl=HeadMain('','','admin_caucon');
 $recordnav = new recordnav($gTables['caucon'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="table-responsive">
+<table class="Tlarge table table-striped table-bordered table-condensed">
 <?php
 $headers_caucon = array  (
             $script_transl['codice']=> "codice",
@@ -54,7 +55,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "</tr>";
 }
 ?>
-</table>
+</table></div>
 <?php
 require("../../library/include/footer.php");
 ?>

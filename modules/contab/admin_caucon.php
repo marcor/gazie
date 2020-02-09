@@ -260,12 +260,12 @@ if (count($msg['err']) > 0) { // ho un errore
 <?php
 	echo '<input type="hidden" value="'.$form['n_rows'].'" name="n_rows" />';
     for ($k = 1; $k <= $form['n_rows']; $k++) {
-			$row_class = 'style="background-color: #efefef;"';
+			$row_class = 'alternate-row-even';
 		    if ($k % 2 == 0) {
-				$row_class = 'style="background-color: #f8f8f8;"';
+				$row_class = 'alternate-row-odd';
 			}
 			?>
-            <div class="row" <?php echo $row_class;?> >
+            <div class="row <?php echo $row_class; ?>">
                 <div class="col-sm-6 col-md-1 col-lg-1">
                     <div class="form-group">
                         <label for="n_rows" class="col-sm-6 control-label">n.</label>

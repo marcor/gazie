@@ -376,3 +376,9 @@ table.selectTable td {
 .ui-state-default .ui-icon {
     background-image: url("../../../../js/jquery.ui/images/ui-icons_222222_256x240_gazie.png");
 }
+.row.alternate-row-odd{
+  background-color: #eeeeee;
+}
+.row.alternate-row-even{
+  background-color: #cccccc;
+}

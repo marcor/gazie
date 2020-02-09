@@ -107,3 +107,9 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
     height: 34px;
     width: 65px;
 }
+.row.alternate-row-odd{
+  background-color: #eeeeee;
+}
+.row.alternate-row-even{
+  background-color: #cccccc;
+}
