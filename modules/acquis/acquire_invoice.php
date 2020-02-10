@@ -829,6 +829,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Email")->item(0)) {
 					$new_partner['e_mail'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Email")->item(0)->nodeValue;
 				}
+				if (@$xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/IBAN")->item(0)) {
+					$new_partner['iban'] = $xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/IBAN")->item(0)->nodeValue;
+				}
 				// trovo l'ultimo codice disponibile sul piano dei conti
 				$rs_last_partner = gaz_dbi_dyn_query("*", $gTables['clfoco'], 'codice BETWEEN ' . $admin_aziend['masfor'] . '000001 AND ' . $admin_aziend['masfor'] . '999999', "codice DESC", 0, 1);
 				$last_partner = gaz_dbi_fetch_array($rs_last_partner);
@@ -918,7 +921,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 			if (!isset($form['pagame'])) {
-				$form['pagame']=0;
+				//$cond_pag = $xpath->query("//FatturaElettronicaBody/DatiPagamento/CondizioniPagamento")->item(0)->nodeValue;
+				//$dat_scad = $xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/DataScadenzaPagamento")->item(0)->nodeValue;
+				//$imp_scad = $xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/ImportoPagamento")->item(0)->nodeValue;
+				$fae_mode = $xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)->nodeValue;
+				$pagame = gaz_dbi_get_row($gTables['pagame'], "fae_mode", $fae_mode);
+				$form['pagame'] = $pagame['codice'];
 				$form['new_acconcile']=0;
 			}
 		}

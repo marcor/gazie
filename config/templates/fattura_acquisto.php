@@ -316,7 +316,11 @@ class FatturaAcquisto extends Template
         }
         $this->SetY(224);
         $this->SetFont('helvetica', '', 9);
-        if (!empty($this->banapp['descri']) and $this->pagame['tippag'] != 'D') {
+        if (!empty($this->iban)) {
+            $this->Cell(62, 6, 'Conto d\'accredito', 'LTR', 1, '', 1);
+            $this->Cell(62, 6, 'IBAN', 'LR', 1);
+            $this->Cell(62, 6, $this->iban, 'LRB', 1, 'C');
+        } elseif (!empty($this->banapp['descri']) and $this->pagame['tippag'] != 'D') {
             $this->Cell(62, 6, 'Banca d\'appoggio', 'LTR', 1, 'C', 1);
             $this->Cell(62, 6, $this->banapp['descri'], 'LR', 1, 'C', 0, '', 1);
             $this->Cell(62, 6, ' ABI ' . sprintf("%05d", $this->banapp['codabi']) . ' CAB ' . $this->banapp['codcab'], 'LRB', 1, 'C');
