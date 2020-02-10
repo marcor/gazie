@@ -351,7 +351,7 @@ foreach ($form['rows'] as $k => $val) {
     echo "<td align=\"center\">" . gaz_format_date($val['start_date']) . "</td>\n";
     echo "<td>" . $val['ragsoc'] . "</td>\n";
     echo "<td align=\"right\">" . gaz_format_number($val['current_fee']) . "</td>\n";
-    echo "<td align=\"center\">" . $val['df'] . "</td>\n";
+    echo "<td align=\"center\">" . gaz_format_date($val['df']) . "</td>\n";
     echo "<td align=\"center\">" . $val['n_bill'] . "</td>\n";
     echo "<td align=\"center\">" . $strScript['admin_contract.php']['doc_type_value'][$val['doc_type']] . "</td>\n";
     if (empty($val['error'])) {
