@@ -251,7 +251,7 @@ echo "<tr><td colspan=\"6\" class=\"FacetFieldCaptionTD\" align=\"center\">$scri
 //echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass1\" style=\"width:100%;height:200px;\">".$form["corpo"]."</textarea></td></tr>\n";
 echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass\" style=\"width:100%;height:200px;\">" . $form["corpo"] . "</textarea></td></tr>\n";
 echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[9]<input type=\"checkbox\" name=\"signature\" " . $form['signature'] . "></td>
-          <td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"submit\" accesskey=\"i\" name=\"ins\" value=\"" . $script_transl['submit'] . " !\" /></td>
+          <td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"submit\" accesskey=\"i\" name=\"ins\" value=\"" . $script_transl['submit'] . "\" /></td>
           </tr>";
 echo "</table></div>";
 ?>

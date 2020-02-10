@@ -89,7 +89,7 @@ echo '<tr><td colspan="5" class="FacetDataTDred" align="center">' . "Procedura d
 echo "<tr><td class=\"FacetDataTD\">\n";
 echo '<button type="button" onclick="location.href=\'report_artico.php\'" class="btn btn-default btn-sm" name="ritorno" title="' . "Indietro" . '!"><i class="glyphicon glyphicon-backward"></i></button></td>';
 echo "<td class=\"FacetFieldCaptionTD\">" ."Questa procedura popola la tabella fitofarmaci, se è la prima volta che viene attivata; se non è la prima volta la aggiorna.<br> Può durare alcuni minuti e necessita di connessione ad internet. <br> Non cambiare pagina al browser finché non si riceve un messaggio di avvenuto aggiornamento o di errore." . "</td><td class=\"FacetDataTD\">\n";
-echo '<button type="submit" class="btn btn-default btn-sm" name="update" title="' . $script_transl['submit'] . '!"><i class="glyphicon glyphicon-refresh"></i></button></td></tr>';
+echo '<button type="submit" class="btn btn-default btn-sm" name="update" title="' . $script_transl['submit'] . '"><i class="glyphicon glyphicon-refresh"></i></button></td></tr>';
 echo '<tr><td></td><td class=\"FacetDataTD\">'.$msg.'</td><td></td></tr>';
 
 ?>

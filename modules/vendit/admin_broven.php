@@ -54,8 +54,10 @@ if (isset($_POST['newdestin'])) {
 
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
     $toDo = 'update';
+	$class_btn_confirm='btn-warning';
 } else {
     $toDo = 'insert';
+	$class_btn_confirm='btn-success';
 }
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
@@ -1491,7 +1493,7 @@ echo '			</td>
 				' . $script_transl[16] . ':&nbsp;<input type="text" value="' . $form['in_quanti'] . '" maxlength="11" size="7" name="in_quanti" tabindex="5" accesskey="q" />
 			</td>
 			<td class="FacetColumnTD" align="right">
-				<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6">
+				<button type="submit" class="btn btn-default btn-xs" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6">
 					<i class="glyphicon glyphicon-ok"></i>
 				</button>
 			</td>
@@ -1584,7 +1586,7 @@ foreach ($form['rows'] as $k => $v) {
 			if ($v['good_or_service']<>1){
 				if ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
 					$btn_class = 'btn-danger';
-					$btn_title = ' ARTICOLO NON DISPONIBILE!!!';
+					$btn_title = ' ARTICOLO NON DISPONIBILE';
 				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
 					$btn_class = 'btn-warning';
 					$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
@@ -1602,7 +1604,7 @@ foreach ($form['rows'] as $k => $v) {
                 $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
             }
             echo '	<td>
-					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
 						<i class="glyphicon glyphicon-arrow-up"></i>
 					</button>
 			  	</td>
@@ -1631,7 +1633,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "1":
             echo '		<td>
-						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
 							<i class="glyphicon glyphicon-arrow-up"></i>
 						</button>
 					</td>'
@@ -1664,7 +1666,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "2": // descrittivo
             echo "	<td>
-				<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+				<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
 						<i class=\"glyphicon glyphicon-arrow-up\"></i>
 				</button>
 			</td>	
@@ -1692,7 +1694,7 @@ foreach ($form['rows'] as $k => $v) {
 		 			<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\">
 				</td>
 				<td>
-					<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+					<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
 						<i class=\"glyphicon glyphicon-arrow-up\"></i>
 					</button>
 				</td>
@@ -1713,7 +1715,7 @@ foreach ($form['rows'] as $k => $v) {
               <textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
              */
             echo '	<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
-					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
 						<i class="glyphicon glyphicon-arrow-up"></i>
 					</button>
 		 			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
@@ -1735,7 +1737,7 @@ foreach ($form['rows'] as $k => $v) {
         case "11": // CIG fattura PA
         case "12": // CUP fattura PA
             echo "	<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
 							<i class=\"glyphicon glyphicon-arrow-up\"></i>
 						</button>
 					</td>
@@ -1758,7 +1760,7 @@ foreach ($form['rows'] as $k => $v) {
 
         case "13": // ID documento fattura PA
             echo "	<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
 							<i class=\"glyphicon glyphicon-arrow-up\"></i>
 						</button>
 					</td>
@@ -1821,7 +1823,7 @@ foreach ($form['rows'] as $k => $v) {
     }
     if ( $v['tiprig']!="210" ) {
         echo '<td class="text-right">
-		    <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
+		    <button type="submit" class="btn btn-default btn-xs" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
 		    </td>';
     }
     echo "</tr>";
@@ -1907,7 +1909,7 @@ echo "			</td>
 					<input class=\"FacetText\" type=\"text\" name=\"giotra\" VALUE=\"" . $form['giotra'] . "\" size=\"2\">
 					<input class=\"FacetText\" type=\"text\" name=\"mestra\" VALUE=\"" . $form['mestra'] . "\" size=\"2\">
 					<input class=\"FacetText\" type=\"text\" name=\"anntra\" VALUE=\"" . $form['anntra'] . "\" size=\"2\">
-					<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
+					<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-xs\">\n";
 //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
 echo '<i class="glyphicon glyphicon-calendar"></i></a>' . $script_transl[31];
 // select dell'ora
@@ -2018,20 +2020,20 @@ if ($next_row > 0) {
 					</tr>';
     }
     echo '		<tr>
-					<td colspan="7" class="text-right alert alert-success">
-						<input name="prestampa" id="preventDuplicate" onClick="preStampa();" type="button" value="Prestampa">
+					<td colspan="2" class="text-right">
+						<input name="prestampa" class="btn btn-default" id="preventDuplicate" onClick="preStampa();" type="button" value="Prestampa">
 					</td>
-					<td class="text-right alert alert-success">
-						<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
+					<td colspan="4" class="text-center">
+						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
 					</td>
-				</tr>';
+				';
 }
 if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
-    echo '			<tr>
-   						<td colspan="8" class="text-right alert alert-info"><input type="submit" accesskey="o" name="ord" value="Genera ordine" /></td>
-					</tr>';
+    echo '<td colspan="2"><input type="submit" class="btn btn-default" accesskey="o" name="ord" value="Genera ordine" /></td></tr>';
+}else{
+	echo '<td colspan="2"></td>';
 }
-echo "	</table></div>";
+echo "</tr>	</table></div>";
 ?>
 </form>
 <div class="modal" id="vat-price" title="IMPORTO IVA COMPRESA">

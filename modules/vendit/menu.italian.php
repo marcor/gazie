@@ -23,7 +23,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-$transl['vendit'] = array('name' => "Vendite",
+$transl['vendit'] = array('name' => " Vendite",
     'title' => "Gestione Vendite",
     'm2' => array(1 => array("Gestione Scontrini e Ricevute", "Corrispettivi"),
         2 => array("Gestione Fatture, Note credito, Note Debito", "Fatture"),

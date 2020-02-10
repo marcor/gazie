@@ -218,7 +218,7 @@ echo "\t </select>\n";
 </td>
 <td align="right" class="FacetFooterTD">
 <?php
-echo "<input type=\"submit\" name=\"stampa\" value=\"STAMPA !\" >\n";
+echo "<input type=\"submit\" class=\"btn btn-default\" name=\"stampa\" value=\"Stampa\" >\n";
 ?>
 </td>
 </tr>

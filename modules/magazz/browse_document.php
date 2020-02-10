@@ -100,7 +100,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	// class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="rows['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50"
     echo '<tr>
 			<td class="FacetDataTD" align="right">
-				<a href="admin_document.php?id_doc='.$a_row["id_doc"].'&Update" title="'.ucfirst($script_transl['update']).'!">'.$a_row["id_doc"].'</a>
+				<a href="admin_document.php?id_doc='.$a_row["id_doc"].'&Update" title="'.ucfirst($script_transl['update']).'">'.$a_row["id_doc"].'</a>
 			</td>
 			<td class="FacetDataTD" align="center">
 				<span class="gazie-tooltip" data-type="product-thumb" data-id="'.$a_row['item_ref'].'" data-title="'.$a_row['annota'].'">'.$a_row["item_ref"].'</span>
@@ -109,7 +109,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td class="FacetDataTD" align="center">'.$a_row["title"].'</td>
 			<td class="FacetDataTD" align="center">'.$a_row["extension"].'</td>
 			<td class="FacetDataTD" align="center">
-				<a class="btn btn-xs btn-default" href="../root/retrieve.php?id_doc='.$a_row["id_doc"].'" title="'.$script_transl['view'].'!">
+				<a class="btn btn-xs btn-default" href="../root/retrieve.php?id_doc='.$a_row["id_doc"].'" title="'.$script_transl['view'].'">
 					<i class="glyphicon glyphicon-eye-open"></i>					
 				</a>
 			</td>

@@ -388,7 +388,7 @@ if (isset($form['a'])) {
 						<input type="submit" name="Return" value="' . $script_transl['return'] . '" />
 					</td>
 					<td align="center" colspan="6" class="FacetFieldCaptionTD">
-						<input type="submit" name="preview" value="' . $script_transl['view'] . '!" />
+						<input type="submit" name="preview" value="' . $script_transl['view'].'" />
 					</td>
 					';
     if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
@@ -448,7 +448,7 @@ if (isset($form['a'])) {
         }
         echo '		<tr>
 	   					<td align="right" colspan="8" class="FacetFooterTD">
-							<input type="submit" name="insert" value="' . $script_transl['submit'] . '!">
+							<input type="submit" name="insert" value="' . $script_transl['submit'] . '">
 						</td>
 					</tr>';
     }

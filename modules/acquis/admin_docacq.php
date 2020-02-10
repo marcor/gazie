@@ -58,8 +58,10 @@ if ((isset($_GET['Update']) and ! isset($_GET['id_tes'])) and ! isset($_GET['tip
 
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
     $toDo = 'update';
+	$class_btn_confirm='btn-warning';
 } else {
     $toDo = 'insert';
+	$class_btn_confirm='btn-success';
 }
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
@@ -1849,7 +1851,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 					$btn_title = ' Servizio';
 				} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
                     $btn_class = 'btn-danger';
-					$btn_title = ' ARTICOLO NON DISPONIBILE!!!';
+					$btn_title = ' ARTICOLO NON DISPONIBILE';
 				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
                     $btn_class = 'btn-warning';
 					$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
@@ -1925,10 +1927,10 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
             // creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
-                    'value' => '<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['upper_row'] . '">
+                    'value' => '<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['upper_row'] . '">
                                 ' . ($k + 1) . ' <i class="glyphicon glyphicon-arrow-up"></i></button>'),
                 array('head' => $script_transl["codart"], 'class' => '',
-                    'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' "
+                    'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' btn-xs"
 					title="' . $script_transl['update'] . $script_transl['thisrow'] . '! ' . $btn_title . '"
 					type="submit">
                                 <i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
@@ -1957,7 +1959,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                 array('head' => $script_transl["total"], 'class' => 'text-right numeric bg-warning', 'value' => gaz_format_number($imprig), 'type' => ''),
                 array('head' => $script_transl["codric"], 'class' => 'text-center', 'value' =>'<span title="'.$v['descri_codric'].'">'. $v['codric'].'</span>'),
                 array('head' => $script_transl["delete"], 'class' => 'text-center',
-                    'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
+                    'value' => '<button type="submit" class="btn btn-default btn-xs btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
             );
 			// creo una intestazione della produzione di provenienza
             if ($ctrl_orderman<>$v['id_orderman']) { // ricordo con un rigo la produzione di riferimento
@@ -2061,7 +2063,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     break;
                 case "1":
                     // in caso di rigo cassa previdenziale 
-                    $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info "
+                    $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
 					title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 					type="submit"><i class="glyphicon glyphicon-refresh"></i> forfait </button>';
                     $resprow[$k][2]['value'] = ''; //codice_fornitore
@@ -2074,7 +2076,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     $resprow[$k][7]['value'] = ''; //sconto
                     break;
                 case "2":
-                    $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info "
+                    $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
 					title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 					type="submit"><i class="glyphicon glyphicon-refresh"></i> descrittivo </button>';
                     $resprow[$k][2]['value'] = ''; //codice_fornitore
@@ -2090,7 +2092,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     break;
                 case "4":
                     // in caso di rigo cassa previdenziale 
-                    $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info "
+                    $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
 					title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 					type="submit"><i class="glyphicon glyphicon-refresh"></i> cassa </button>';
                     $resprow[$k][2]['value'] = ''; //codice_fornitore
@@ -2181,7 +2183,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                 <div class="form-group col-md-6 col-lg-3 nopadding">
                             <label for="submit" class="col-form-label"><?php echo $script_transl['insert']; ?></label>
 							<div>
-                            <button type="submit"  tabindex="7" class="btn <?php echo $class_conf_row; ?> btn-sm" name="in_submit">
+                            <button type="submit"  tabindex="7" class="btn <?php echo $class_conf_row; ?> btn-xs" name="in_submit">
                                 <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
                             </button>
 							</div>
@@ -2328,7 +2330,7 @@ if (count($form['rows']) > 0) {
 				echo "		<input class=\"FacetText\" type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">
 						<input class=\"FacetText\" type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">
 						<input class=\"FacetText\" type=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">
-						<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
+						<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-xs\">\n";
     //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
     echo '					<i class="glyphicon glyphicon-calendar"></i>
 						</a> '.$script_transl['iniore'];
@@ -2367,7 +2369,7 @@ if (count($form['rows']) > 0) {
 <?php	
 	}
 ?>
-	<div class="form-group"><div class="col-lg-6"></div><div class="col-lg-3"><input class="btn btn-block btn-warning" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php 
+	<div class="form-group"><div class="col-lg-6"></div><div class="col-lg-3"><input class="btn btn-block <?php echo $class_btn_confirm; ?>" id="preventDuplicate" onClick="chkSubmit();" type="submit" name="ins" value="<?php 
 	if ($toDo == 'insert'){ // inserimento
 		echo $script_transl['insert'].' '.$title;
 	} else { // update

@@ -323,7 +323,7 @@ echo "\t </select>\n";
 <?php
 if ($message == "")
   {
-    echo "<tr><td class=\"FacetFieldCaptionTD\"> </td><td align=\"right\" nowrap class=\"FacetFooterTD\"><input type=\"submit\" name=\"Return\" value=\"Indietro\"> <input type=\"submit\" name=\"visualizza\" value=\"VISUALIZZA L'ANTEPRIMA !\"> </td></tr>";
+    echo "<tr><td class=\"FacetFieldCaptionTD\"> </td><td align=\"right\" nowrap class=\"FacetFooterTD\"><input type=\"submit\" name=\"Return\" value=\"Indietro\"> <input type=\"submit\" name=\"visualizza\" value=\"Visualizza l'anteprima\"> </td></tr>";
   }
 echo "</table>";
 //

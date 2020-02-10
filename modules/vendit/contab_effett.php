@@ -297,7 +297,7 @@ $script_transl = HeadMain();
             <td class="FacetFieldCaptionTD"> &nbsp;</td>
             <td colspan="2" align="right" nowrap class="FacetFooterTD">
                 <input type="submit" name="Return" value="Indietro">&nbsp;
-                <input type="submit" name="anteprima" value="VISUALIZZA L'ANTEPRIMA !">&nbsp;
+                <input type="submit" name="anteprima" value="Visualizza l'anteprima">&nbsp;
             </td>
         </tr>
     </table>

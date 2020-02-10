@@ -447,7 +447,7 @@ if (isset($form['a'])) {
 						<input type="submit" name="Return" value="' . $script_transl['return'] . '" />
 					</td>
 					<td align="center" colspan="6" class="FacetFieldCaptionTD">
-						<input type="submit" name="preview" value="' . $script_transl['view'] . '!" />
+						<input type="submit" name="preview" value="' . $script_transl['view'].'" />
 					</td>
 					<td align="right" class="bg-primary">Totale ' . gaz_format_number($tot_val_giac) . '</td>
 				</tr>';
@@ -512,7 +512,7 @@ if (isset($form['a'])) {
         }
         echo '		<tr>
 	   					<td align="right" colspan="8" class="FacetFooterTD">
-							<input type="submit" name="insert" value="' . $script_transl['submit'] . '!">
+							<input type="submit" name="insert" value="' . $script_transl['submit'] . '">
 						</td>
 					</tr>';
     }

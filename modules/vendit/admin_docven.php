@@ -2284,6 +2284,7 @@ echo '&nbsp;<a id="addmodal" href="#myModal" data-toggle="modal" data-target="#e
 
 // Antonio Germani - input ricerca con pistola lettore codice a barre 
 				if ($toDo == "insert"){
+					$class_btn_confirm='btn-success';
 					if ($form['ok_barcode']!="ok"){
 						?>
 								<button type="submit"  name="button_ok_barcode" class="btn btn-edit btn-default btn-xs" title="inserisci con pistola Barcode"> 
@@ -2312,13 +2313,15 @@ echo '&nbsp;<a id="addmodal" href="#myModal" data-toggle="modal" data-target="#e
 							<?php
 						}
 					}
+				}else{
+					$class_btn_confirm='btn-warning';
 				}
 // Antonio Germani - fine ricerca con pistola lettore codice a barre -->
 
 echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 echo '  </td>
 		<td class="FacetColumnTD" align="right">
-			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+			<button type="submit" class="btn btn-default btn-xs" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
@@ -2432,7 +2435,7 @@ foreach ($form['rows'] as $k => $v) {
 				$btn_title = ' Servizio';
 			} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
                 $btn_class = 'btn-danger';
-				$btn_title = ' ARTICOLO NON DISPONIBILE!!!';
+				$btn_title = ' ARTICOLO NON DISPONIBILE';
 			} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
                 $btn_class = 'btn-warning';
 				$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
@@ -2455,7 +2458,7 @@ foreach ($form['rows'] as $k => $v) {
             }
 
             echo '	<td>
-						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
 							<i class="glyphicon glyphicon-arrow-up">' . ($k+1) . '</i>
 						</button>
 					</td>
@@ -2604,7 +2607,7 @@ foreach ($form['rows'] as $k => $v) {
             /*
              */
             echo '	<td>
-						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
 							<i class="glyphicon glyphicon-arrow-up">' . ($k+1) . '</i>
 						</button>
 					</td>
@@ -2641,7 +2644,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "2": //descrittivo
             echo "	<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
 							<i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
 						</button>
 					</td>
@@ -2667,7 +2670,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "3": // variazione totale fattura
             echo "	<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
 							<i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
 						</button>
 					</td>
@@ -2695,7 +2698,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
        case "4": // rigo cassa previdenziale
             echo '	<td>
-						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
 							<i class="glyphicon glyphicon-arrow-up">' . ($k+1) . '</i>
 						</button>
 					</td>
@@ -2732,7 +2735,7 @@ foreach ($form['rows'] as $k => $v) {
         case "8": // testuali
             //<textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
             echo '	<td>
-						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!\">
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!\">
 							<i class="glyphicon glyphicon-arrow-up"></i>
 						</button>
 					</td>
@@ -2760,7 +2763,7 @@ foreach ($form['rows'] as $k => $v) {
 					';
         case "12": // CUP fattura elettronica
             echo "	<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
 							<i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
 						</button>
 					</td>
@@ -2792,7 +2795,7 @@ foreach ($form['rows'] as $k => $v) {
 					';
         case "15": // NumItem fattura elettronica
             echo "	<td>
-                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
                                 <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
                             </button>
 			</td>
@@ -2818,7 +2821,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "14": // Data ordine d'acquisto fattura elettronica      
             echo "	<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
 							<i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
 						</button>
 					</td>
@@ -2844,7 +2847,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "16": // CodiceCommessaConvenzione fattura elettronica
             echo "	<td>
-                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
                                 <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
                             </button>
 			</td>
@@ -2870,7 +2873,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "21": // Causale 2.1.1.11 fattura elettronica
             echo "	<td>
-                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
                                 <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
                             </button>
 			</td>
@@ -2893,7 +2896,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "25": // SAL Riferimento Fase 2.1.7 fattura elettronica
             echo "	<td>
-                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
                                 <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
                             </button>
 			</td>
@@ -2916,7 +2919,7 @@ foreach ($form['rows'] as $k => $v) {
             break;
         case "31": // Dati veicolo 2.3 fattura elettronica
             echo "	<td>
-                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
                                 <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
                             </button>
 			</td>
@@ -2978,7 +2981,7 @@ foreach ($form['rows'] as $k => $v) {
             /*
              */
             echo '	<td>
-						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['3'] . '!">
 							<i class="glyphicon glyphicon-arrow-up">' . ($k+1) . '</i>
 						</button>
 					</td>
@@ -3015,7 +3018,7 @@ foreach ($form['rows'] as $k => $v) {
     /* glyph icon */
     if ( $v['tiprig']!="210" || $show_artico_composit['val']=="1" && $tipo_composti['val']=="KIT" ) { 
         echo '<td align="right">
-		     <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
+		     <button type="submit" class="btn btn-default btn-xs" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
 		   </td>';
     }
     echo '</tr>';
@@ -3098,7 +3101,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
 						<input class=\"FacetText\" type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">
 						<input class=\"FacetText\" type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">
 						<input class=\"FacetText\" type=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">
-						<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
+						<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-xs\">\n";
     //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
     echo '					<i class="glyphicon glyphicon-calendar"></i>
 						</a>' . $script_transl[31];
@@ -3227,11 +3230,11 @@ if ($next_row > 0) {
 				<td class="text-right">' . gaz_format_number($calc->total_imp) . '</td>
 				<td class="text-right">' . gaz_format_number($calc->total_vat) . '</td>
 				<td class="text-right">' . gaz_format_number($stamp) . '</td>
-				<td class="text-center"><div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="roundup"';
+				<td class="text-center"><div class="col-sm-2"><button type="submit" class="btn btn-default btn-xs" name="roundup"';
     if (!empty($form['roundup_y']) || $rit >= 0.01) {
         echo ' disabled  title="Arrotondamento disabilitato!" ';
     }
-    echo '><i class="glyphicon glyphicon-arrow-up"></i></button></div><div class="col-sm-8"><b>' . gaz_format_number($calc->total_imp + $calc->total_vat + $stamp + $form['taxstamp']) . '</b></div><div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="rounddown"';
+    echo '><i class="glyphicon glyphicon-arrow-up"></i></button></div><div class="col-sm-8"><b>' . gaz_format_number($calc->total_imp + $calc->total_vat + $stamp + $form['taxstamp']) . '</b></div><div class="col-sm-2"><button type="submit" class="btn btn-default btn-xs" name="rounddown"';
     if ($rit >= 0.01) {
         echo ' disabled  title="Arrotondamento disabilitato!" ';
     }
@@ -3249,8 +3252,8 @@ if ($next_row > 0) {
     }
 
     echo '		<tr>
-					<td colspan="8" class="text-right FacetFieldCaptionTD">
-						<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
+					<td colspan="8" class="text-center FacetFieldCaptionTD">
+						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
 					</td>
 				</tr>';
 }

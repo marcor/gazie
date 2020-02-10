@@ -525,7 +525,7 @@ if (isset($invoices['data'])) {
             echo "</tr>\n";
         }
     }
-    echo "<tr><td  align=\"right\" colspan=\"8\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA !\"></td></tr>";
+    echo "<tr><td  align=\"right\" colspan=\"8\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA\"></td></tr>";
 } else {
     echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"right\">Non ci sono DdT  da fatturare</td></tr>";
 }

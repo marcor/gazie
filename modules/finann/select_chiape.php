@@ -370,7 +370,7 @@ if (isset($_POST['preview']) and $msg=='') {
         }
         echo "<tr><td>".$form['opening_balance']."</td><td>".$ope['descri']."</td><td align=\"right\">".gaz_format_number(-$liabilities)."</td></td><td><tr>";
         if ($ctrl_bal == 0 ) {
-          echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"genera\" value=\"".strtoupper($script_transl['submit'])." !\"></td></tr>";
+          echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"genera\" value=\"".ucfirst($script_transl['submit'])." !\"></td></tr>";
         }
     }
     echo "</table>";

@@ -982,7 +982,7 @@ maniglia.form.submit();
 					$btn_title = ' Servizio';
 				} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilitÃ  di magazzino controllo presenza articolo
                     $btn_class = 'btn-danger';
-					$btn_title = ' ARTICOLO NON DISPONIBILE!!!';
+					$btn_title = ' ARTICOLO NON DISPONIBILE';
 				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilitÃ  di magazzino controllo il sottoscorta
                     $btn_class = 'btn-warning';
 					$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);

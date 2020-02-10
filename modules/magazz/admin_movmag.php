@@ -571,7 +571,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 
 /** ENRICO FEDELE */
 /* glyph-icon 
-echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['submit'] . '!"><i class="glyphicon glyphicon-ok"></i></button>
+echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['submit'] . '"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';*/
 /** ENRICO FEDELE */

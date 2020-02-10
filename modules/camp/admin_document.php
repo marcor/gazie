@@ -146,7 +146,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">File : </td>\n";
 echo "\t<td class=\"FacetDataTD\">
-			<a class=\"btn btn-xs btn-default\" href=\"../root/retrieve.php?id_doc=".$form["id_doc"]."\" title=\"".$script_transl['view']."!\">
+			<a class=\"btn btn-xs btn-default\" href=\"../root/retrieve.php?id_doc=".$form["id_doc"]."\" title=\"".$script_transl['view']."\">
 				<i class=\"glyphicon glyphicon-eye-open\"></i>&nbsp;".DATA_DIR."files/".$form['id_doc'].".".$form['extension']."
 			</a>
 		</td>\n";
@@ -165,11 +165,11 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
 echo "\t </td>\n";
 echo "\t<td  class=\"FacetDataTD\">\n";
-echo '<input name="Return" type="submit" value="'.$script_transl['return'].'!">';
+echo '<input name="Return" type="submit" value="'.$script_transl['return'].'">';
 echo '<input name="Delete" type="submit" value="Cancella !">';
 echo "\t </td>\n";
 echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
-echo '<input name="Submit" type="submit" value="'.ucfirst($script_transl[$toDo]).'!">';
+echo '<input name="Submit" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
 echo "\t </td>\n";
 echo "</tr>\n";
 ?>

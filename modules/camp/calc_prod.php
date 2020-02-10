@@ -126,7 +126,7 @@ echo "<tr><td colspan=\"2\" class=\"FacetDataTD\" align=\"right\">".$script_tran
 </td>
 <td class="FacetDataTD" align="right">
 <!-- da fare
-<input type="submit" accesskey="i" name="print" id="preventDuplicate" onClick="chkSubmit();" value="<?php echo strtoupper($script_transl['print']);?>">
+<input type="submit" accesskey="i" name="print" id="preventDuplicate" onClick="chkSubmit();" value="<?php echo ucfirst($script_transl['print']);?>">
 -->
 </td></tr>
 </table>

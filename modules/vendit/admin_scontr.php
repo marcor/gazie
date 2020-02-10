@@ -928,7 +928,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 					$btn_title = ' Servizio';
 				} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
                     $btn_class = 'btn-danger';
-					$btn_title = ' ARTICOLO NON DISPONIBILE!!!';
+					$btn_title = ' ARTICOLO NON DISPONIBILE';
 				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
                     $btn_class = 'btn-warning';
 					$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
@@ -982,10 +982,10 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             // creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
-                    'value' => '<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['upper_row'] . '!">
+                    'value' => '<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-xs" title="' . $script_transl['upper_row'] . '!">
                                 ' . ($k + 1) . ' <i class="glyphicon glyphicon-arrow-up"></i></button>'),
                 array('head' => $script_transl["codart"], 'class' => '',
-                    'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' "
+                    'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' btn-xs"
 					title="' . $script_transl['update'] . $script_transl['thisrow'] . '! ' . $btn_title . '"
 					type="submit">
                                 <i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
@@ -1013,7 +1013,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 array('head' => $script_transl["codric"], 'class' => 'text-center',
                     'value' => $v['codric']),
                 array('head' => $script_transl["delete"], 'class' => 'text-center',
-                    'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
+                    'value' => '<button type="submit" class="btn btn-default btn-xs btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
             );
 
             switch ($v['tiprig']) {
@@ -1114,7 +1114,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     </div>
                     <div class="col-sm-6 col-md-2 col-lg-2">
                         <div class="form-group text-center">
-                            <button type="submit"  tabindex=7 class="btn btn-default btn-sm col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
+                            <button type="submit"  tabindex=7 class="btn btn-default btn-xs col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
                                 <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
                             </button>
                         </div> 
@@ -1201,13 +1201,13 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                                 . '<td>' . $r['descri'] . '</td>'
                                 . '<td>' . gaz_format_number($ivacast) . '</td>'
                                 . '<td class="bg-warning text-center">'
-                                . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="roundup"';
+                                . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-xs" name="roundup"';
                                 if (!empty($form['roundup_y'])) {
                                     echo ' disabled  title="Hai già arrotondato una volta!" ';
                                 }
                                 echo '><i class="glyphicon glyphicon-arrow-up"></i></button></div>'
                                 . '<div class="col-sm-8"><b>' . $admin_aziend['html_symbol'] . ' ' . gaz_format_number($tot) . '</b></div>'
-                                . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="rounddown" ><i class="glyphicon glyphicon-arrow-down"></i></button></div>'
+                                . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-xs" name="rounddown" ><i class="glyphicon glyphicon-arrow-down"></i></button></div>'
                                 . '</td>'
                                 . '<td class="text-center">' . gaz_format_number($form['net_weight']) . '</td>'
                                 . '<td>' . $form['units'] . '</td>'
@@ -1222,7 +1222,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         ?>
                         <tr> 
                             <td colspan="7">
-                                <input class="bg-danger center-block" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
+                                <input class="btn btn-danger center-block" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
                                 if ($toDo == 'insert'){
                                     echo $script_transl['send_ecr'] . ' ' . $ecr['descri'];
                                 } else {

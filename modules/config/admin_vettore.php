@@ -231,9 +231,9 @@ echo "<tr>\n";
 echo "<td>" . $script_transl['sqn'] . "</td>\n";
 echo "\t<td class=\"FacetDataTD\" align=\"right\">\n";
 if ($toDo == 'update') {
-    echo '<input title="' . $script_transl['upd'] . '" type="submit" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . '!">';
+    echo '<input title="' . $script_transl['upd'] . '" type="submit" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . '">';
 } else {
-    echo '<input title="' . $script_transl['ins'] . '" type="submit" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['insert']) . '!">';
+    echo '<input title="' . $script_transl['ins'] . '" type="submit" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['insert']) . '">';
 }
 echo "\t </td>\n";
 echo "</tr>\n";

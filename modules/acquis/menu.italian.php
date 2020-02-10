@@ -23,7 +23,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-$transl['acquis'] = array('name' => "Acquisti",
+$transl['acquis'] = array('name' => " Acquisti",
     'title' => "Gestione Acquisti",
     'm2' => array(1 => array("Gestione Preventivi/Offerte ", "Preventivi/Offerte"),
         2 => array("Gestione dei D.d.T. a Fornitori", "D.d.T."),

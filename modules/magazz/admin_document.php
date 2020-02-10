@@ -164,11 +164,11 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
 echo "\t </td>\n";
 echo "\t<td  class=\"FacetDataTD\">\n";
-echo '<input name="Return" type="submit" value="'.$script_transl['return'].'!">';
+echo '<input name="Return" type="submit" value="'.$script_transl['return'].'">';
 echo '<input name="Delete" type="submit" value="Cancella !">';
 echo "\t </td>\n";
 echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
-echo '<input name="Submit" type="submit" value="'.ucfirst($script_transl[$toDo]).'!">';
+echo '<input name="Submit" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
 echo "\t </td>\n";
 echo "</tr>\n";
 ?>

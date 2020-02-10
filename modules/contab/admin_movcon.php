@@ -43,8 +43,10 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
         $_POST['id_tes'] = $_GET['id_tes'];
     }
     $toDo = 'update';
+	$class_btn_confirm='btn-warning';
 } else {
     $toDo = 'insert';
+	$class_btn_confirm='btn-success';
 }
 
 if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
@@ -1794,16 +1796,15 @@ echo "</script>\n";
 //faccio il post del numero di righi
     echo "<input type=\"hidden\" value=\"" . $_POST['rigcon'] . "\" name=\"rigcon\">";
     echo "<input type=\"hidden\" value=\"" . $form['id_testata'] . "\" name=\"id_testata\">";
-    echo '<tr><td>';
-    echo '<input name="Back" type="button" value="' . $script_transl['return'] . '!" onclick="location.href=\'' . $form['ritorno'] . '\'">';
-    echo '<td colspan="2">' . $script_transl['tot_d'] . ' :';
+    echo '<tr><td></td>';
+    echo '<td align="center">';
+    echo '<input name="ins" id="preventDuplicate" class="btn '.$class_btn_confirm.'" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . '">';
+    echo "\n</td>";
+    echo '<td colspan="3">' . $script_transl['tot_d'] . ' :';
     echo "<input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" ID=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
     echo $diffV . ' ' . $script_transl['tot_a'] . ' :';
     echo "<input type=\"button\" $a_but value=\"" . number_format($form['tot_A'], 2, '.', '') . "\" ID=\"tot_A\" name=\"tot_A\" onclick=\"tot_bal('A');\" />\n";
-    echo "</td>\n";
-    echo '<td align="right">';
-    echo '<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . '!">';
-    echo "\n</td></tr></table></div>";
+    echo "</td></tr></table></div>";
 
 // INIZIO creazione dialog-schedule dei partner
     for ($i = 0; $i < $_POST['rigcon']; $i++) {

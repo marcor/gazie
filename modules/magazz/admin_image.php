@@ -171,7 +171,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
 echo "\t<td  class=\"FacetDataTD\">\n";
-echo '<input name="Return" type="submit" value="'.$script_transl['return'].'!">';
+echo '<input name="Return" type="submit" value="'.$script_transl['return'].'">';
 if ($toDo == "update"){
 	?>
 	<div class="col-sm-6">
@@ -199,7 +199,7 @@ if ($toDo == "update"){
 echo "\t </td>\n";
 if ($toDo == "insert"){
 echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
-echo '<input name="Submit" type="submit" value="'.ucfirst($script_transl[$toDo]).'!">';
+echo '<input name="Submit" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
 echo "\t </td>\n";
 }
 echo "</tr>\n";
