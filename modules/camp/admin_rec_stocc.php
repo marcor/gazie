@@ -146,9 +146,9 @@ if ($toDo == 'update') {
 		<div class="col-sm-6 text-left"><input type="submit" name="Return" value="<?php echo $script_transl['return']; ?>"></div>
 <?php
 if ($toDo == 'update') {
-	print '<div class="col-sm-6"><input type="submit" class="btn btn-warning" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['update']).'!"></div>';
+	print '<div class="col-sm-6"><input type="submit" class="btn btn-warning" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></div>';
 } else {
-	print '<div class="col-sm-6"><input type="submit" class="btn btn-warning" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['insert']).'!"></div>';
+	print '<div class="col-sm-6"><input type="submit" class="btn btn-warning" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></div>';
 }
 ?>
 </div><!-- chiude container fluid -->

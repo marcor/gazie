@@ -163,7 +163,7 @@ if (count($msg['err']) > 0) { // ho un errore
 		<div class="col-xs-1 col-md-4 col-lg-5">
         </div>
 		<div class="col-xs-6 col-md-4 col-lg-2">
-        <input class="btn btn-warning" tabindex=10 onClick="chkSubmit();" type="submit" name="Submit" value="<?php echo strtoupper($script_transl[$toDo]);?>!"> 
+        <input class="btn btn-warning" tabindex=10 onClick="chkSubmit();" type="submit" name="Submit" value="<?php echo ucfirst($script_transl[$toDo]);?>"> 
         </div>
 	</div><!-- chiude row  -->
 

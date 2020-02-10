@@ -129,7 +129,7 @@ $script_transl = HeadMain();
         <tr>
             <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
                 <input title="Torna indietro"  type="submit" name="Return" value="Indietro"> &nbsp;
-                <input title="Elimina definitivamente dall'archivio"  type="submit" name="Delete" value="ELIMINA !"> &nbsp;
+                <input title="Elimina definitivamente dall'archivio"  type="submit" name="Delete" value="Elimina"> &nbsp;
             </td>
         </tr></table>
 </form>

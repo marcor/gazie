@@ -96,7 +96,7 @@ $script_transl=HeadMain();
 <tr>
     <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
 <!-- BEGIN Button Return --><input type="submit" name="Return" value="Indietro"><!-- END Button Return -->&nbsp;
-<!-- BEGIN Button Insert --><input type="submit" name="Delete" value="ELIMINA !"><!-- END Button Insert -->&nbsp;
+<!-- BEGIN Button Insert --><input type="submit" name="Delete" value="Elimina"><!-- END Button Insert -->&nbsp;
     </td>
 </tr>
 </table>

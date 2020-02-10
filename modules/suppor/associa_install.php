@@ -83,7 +83,7 @@ $script_transl=HeadMain();
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['sqn']; ?></td>
 	<td  class="FacetDataTD">
-		<input name="Return" type="submit" value="<?php echo $script_transl['return']; ?>!">
+		<input name="Return" type="submit" value="<?php echo $script_transl['return']; ?>">
 	</td>
 	<td  class="FacetDataTD" align="right">
 		<input name="Submit" type="submit" value="Associa !">

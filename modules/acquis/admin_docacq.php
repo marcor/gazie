@@ -1925,7 +1925,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
             // creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
-                    'value' => '<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['upper_row'] . '!">
+                    'value' => '<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['upper_row'] . '">
                                 ' . ($k + 1) . ' <i class="glyphicon glyphicon-arrow-up"></i></button>'),
                 array('head' => $script_transl["codart"], 'class' => '',
                     'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' "
@@ -1933,7 +1933,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 					type="submit">
                                 <i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
                                 </button>',
-                    'td_content' => ' title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Sottoscorta =' . $v['scorta'] . '" '
+                    'td_content' => ' title="' . $script_transl['update'] . $script_transl['thisrow'] . ' Sottoscorta =' . $v['scorta'] . '" '
                 ),
                 array('head' => $script_transl["codice_fornitore"], 'class' => '',
                     'value' => '<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][codice_fornitore]" value="' . $v['codice_fornitore'] . '" maxlength="50" />'
@@ -2062,7 +2062,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                 case "1":
                     // in caso di rigo cassa previdenziale 
                     $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info "
-					title="' . $script_transl['update'] . $script_transl['thisrow'] . '!"
+					title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 					type="submit"><i class="glyphicon glyphicon-refresh"></i> forfait </button>';
                     $resprow[$k][2]['value'] = ''; //codice_fornitore
                     // in caso di rigo forfait non stampo alcune colonne
@@ -2075,7 +2075,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     break;
                 case "2":
                     $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info "
-					title="' . $script_transl['update'] . $script_transl['thisrow'] . '!"
+					title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 					type="submit"><i class="glyphicon glyphicon-refresh"></i> descrittivo </button>';
                     $resprow[$k][2]['value'] = ''; //codice_fornitore
                     $resprow[$k][4]['value'] = ''; //unimis
@@ -2091,7 +2091,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                 case "4":
                     // in caso di rigo cassa previdenziale 
                     $resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info "
-					title="' . $script_transl['update'] . $script_transl['thisrow'] . '!"
+					title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 					type="submit"><i class="glyphicon glyphicon-refresh"></i> cassa </button>';
                     $resprow[$k][2]['value'] = ''; //codice_fornitore
                     $resprow[$k][4]['value'] = ''; //unimis

@@ -1141,7 +1141,7 @@ echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" 
 /* glyph-icon */
 echo '  </td>
 		<td class="FacetColumnTD" align="right">
-			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '!" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';
 /** ENRICO FEDELE */
@@ -1263,7 +1263,7 @@ foreach ($form['rows'] as $key => $value) {
         case "0":
             echo '<tr>';
             echo '<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
-						<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+						<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '">
 							<i class="glyphicon glyphicon-arrow-up"></i>
 						</button> </td> 
 					  <td>
@@ -1342,8 +1342,8 @@ foreach ($form['rows'] as $key => $value) {
             /**
               <textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
              */
-            echo '	<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
-					<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+            echo '	<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '">
+					<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '">
 						<i class="glyphicon glyphicon-arrow-up"></i>
 					</button>
 		 			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $key . ']" value="' . $script_transl['typerow'][$value['tiprig']] . '" />
@@ -1433,7 +1433,7 @@ foreach ($form['rows'] as $key => $value) {
             break;
     }
     echo '  <td class="FacetColumnTD" align="right">
-			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $key . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
+			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $key . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
 		  </tr>';
 	$ctrl_orderman=$value['id_orderman'];
@@ -1552,41 +1552,18 @@ if ($next_row > 0) {
     if ($toDo == 'update') {
         echo '<tr>
 		   			<td colspan="8" class="text-right alert alert-success">
-		   				<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !" />
+		   				<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="Modifica" />
 					</td>
 				 </tr>';
     } else {
         echo '<tr>
 		   			<td colspan="8" class="text-right alert alert-success">
-		   				<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !" />
+		   				<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="Inserisci" />
 					</td>
 				</tr>';
     }
 }
-/* l'ho dovuto eliminare perché se si va a modificare un preventivo lo trasforma SEMPRE!?!?! in un ordine !!!!
-  if ($toDo == 'update' and $form['tipdoc'] == 'APR') {
-  echo '			<tr>
-  <td colspan="8" class="text-right alert alert-info">
-  <script type="text/javascript">
-  $("input[name=tipdoc]").val("AOR");
-  </script>
-  <input type="submit" accesskey="o" name="ord" value="GENERA ORDINE!" />
-  </td>
-  </tr>';
-  }
-  /*
-  Per sviluppi futuri: l'idea è quella di permettere il seguente flusso:
-  1. richiesta preventivo
-  2. accettazione preventivo e dunque conversione dello stesso in ordine (vedi if qui sopra)
-  3. alla ricezione del ddt o fattura, conversione del preventivo in acquisto 8e quindi carico in magazzino)
-  IL putno 3. è un pò più complesso da realizzare, occorre pensarci su
-  elseif($toDo == 'update' and $form['tipdoc'] == 'AOR') {
-  echo '			<tr>
-  <td colspan="8" class="text-right alert alert-warning">
-  <input type="submit" accesskey="o" name="ord" value="GENERA ACQUISTO!" />
-  </td>
-  </tr>';
-  } */
+
 echo '	</table></div>';
 ?>
 </form>

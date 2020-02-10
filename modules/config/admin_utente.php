@@ -584,7 +584,7 @@ if ($user_data["Abilit"] == 9) {
 ?>
 <tr>
 <td colspan="3" class="FacetDataTD text-center">
-<input name="Submit" class="btn btn-warning" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
+<input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
 </td>
 </tr>
 </table>

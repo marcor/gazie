@@ -486,7 +486,7 @@ END;
 END;
     }
 
-    $insert = strtoupper($script_transl['insert']);
+    $insert = ucfirst($script_transl['insert']);
     echo <<<END
 
             <td class="FacetFieldCaptionTD" align="center">

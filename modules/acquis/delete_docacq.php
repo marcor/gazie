@@ -75,7 +75,7 @@ if (isset($_POST['Delete'])) {
            header("Location: ".$_POST['ritorno']);
            exit;
     } else {
-          $message = "Si st&agrave; tentando di eliminare un documento diverso dall'ultimo emesso !".$ultimo_documento['tipdoc'].$ultimo_documento['id_tes'];
+          $message = "Si st&agrave; tentando di eliminare un documento diverso dall'ultimo emesso".$ultimo_documento['tipdoc'].$ultimo_documento['id_tes'];
     }
 }
 
@@ -141,7 +141,7 @@ echo '<div class="alert alert-danger text-center" role="alert">' . $script_trans
 <?php } ?>
     <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
     <!-- BEGIN Button Return --><input type="submit" name="Return" value="Indietro"><!-- END Button Return -->&nbsp;
-    <!-- BEGIN Button Insert --><input type="submit" name="Delete" value="ELIMINA !"><!-- END Button Insert -->&nbsp;
+    <!-- BEGIN Button Insert --><input type="submit" name="Delete" value="Elimina"><!-- END Button Insert -->&nbsp;
     </td>
   </tr>
 </table>

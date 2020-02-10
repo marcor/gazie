@@ -607,10 +607,10 @@ if ($form['clfoco'] == 0) {
             }
             echo "\t </select>\n";
         } else {
-            $messaggio = ucfirst($script_transl['notfound']) . " !";
+            $messaggio = ucfirst($script_transl['notfound']) ;
         }
     } else {
-        $messaggio = ucfirst($script_transl['minins']) . " 2 " . $script_transl['charat'] . "!";
+        $messaggio = ucfirst($script_transl['minins']) . " 2 " . $script_transl['charat'];
     }
     echo "\t<input type=\"text\" name=\"search_partner\" accesskey=\"e\" value=\"" . $form['search_partner'] . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
     echo $messaggio;
@@ -920,9 +920,9 @@ echo "</tr><tr><td colspan=\"3\"><input type=\"reset\" name=\"Cancel\" value=\""
 echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
 echo "</td><td align=\"right\">\n";
 if ($toDo == 'update') {
-    echo '<input type="submit" accesskey="m" name="Insert" value="' . strtoupper($script_transl['update']) . '!"></td></tr><tr></tr>';
+    echo '<input type="submit" accesskey="m" name="Insert" value="' . ucfirst($script_transl['update']) . '"></td></tr><tr></tr>';
 } else {
-    echo '<input type="submit" accesskey="i" name="Insert" value="' . strtoupper($script_transl['insert']) . '!"></td></tr><tr></tr>';
+    echo '<input type="submit" accesskey="i" name="Insert" value="' . ucfirst($script_transl['insert']) . '"></td></tr><tr></tr>';
 }
 echo "</td></tr></table>\n";
 ?>

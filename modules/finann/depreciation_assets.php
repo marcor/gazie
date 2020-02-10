@@ -497,7 +497,7 @@ if (count($msg['war']) > 0) { // ho un warning
         <div class="col-sm-12 text-right alert-success">
             <div class="form-group">
                 <div>
-                    <input class="btn-danger" name="insert" type="submit" value="<?php echo strtoupper($script_transl['submit']); ?>!">
+                    <input class="btn-danger" name="insert" type="submit" value="<?php echo strtoupper($script_transl['submit']); ?>">
                 </div>
             </div>
         </div> <!-- chiude row  -->

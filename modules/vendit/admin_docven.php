@@ -3250,7 +3250,7 @@ if ($next_row > 0) {
 
     echo '		<tr>
 					<td colspan="8" class="text-right FacetFieldCaptionTD">
-						<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . strtoupper($script_transl[$toDo]) . '!">
+						<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
 					</td>
 				</tr>';
 }

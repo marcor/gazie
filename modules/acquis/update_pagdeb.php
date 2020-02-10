@@ -311,7 +311,7 @@ if ($_POST['rigbon'] > 0)
 		print "<input type=\"hidden\" name=\"righi[{$key}][id_rig]\" value=\"{$value['id_rig']}\">\n";
        }
 if($_POST['rigbon'] > 0)
-        print "<tr><td></td><td align=\"right\"class=\"FacetAltDataTD\">Totale € ".number_format($totale,2, '.', '')."&nbsp;</td><td align=\"right\"><input type=\"submit\" title=\"Modifica l'$descridoc e proponi la stampa\" value=\"MODIFICA !\" accesskey=\"i\" name=\"update\" ></td></tr>\n";
+        print "<tr><td></td><td align=\"right\"class=\"FacetAltDataTD\">Totale € ".number_format($totale,2, '.', '')."&nbsp;</td><td align=\"right\"><input type=\"submit\" title=\"Modifica l'$descridoc e proponi la stampa\" value=\"Modifica\" accesskey=\"i\" name=\"update\" ></td></tr>\n";
 //recupero tutti i movimenti contabili del conto insieme alle relative testate...
 $result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = {$conto['codice']} and caucon <> 'CHI' and caucon <> 'APE' ORDER BY datreg asc");
 $nummov = gaz_dbi_num_rows($result);

@@ -718,7 +718,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
             <div class="row">
                     <div class="form-group">
                         <div class="col-sm-12 text-center alert-success">
-                            <input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
+                            <input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
                         </div>
                     </div>
             </div> <!-- chiude row  -->

@@ -964,7 +964,7 @@ if ($modal_ok_insert === true) {
         echo '<div class="col-sm-4 text-left"><input name="none" type="submit" value="" disabled></div>';
     }
     /** ENRICO FEDELE */
-    echo '<div class="col-sm-8 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="' . strtoupper($script_transl[$toDo]) . '!" /></div>';
+    echo '<div class="col-sm-8 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '!" /></div>';
 }
 ?>
 				</div>

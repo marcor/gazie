@@ -303,9 +303,9 @@ if ($toDo == 'update') {
 
 
 if ($toDo == 'update') {
-   print '<div class="col-sm-6"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['update']).'!"></div>';
+   print '<div class="col-sm-6"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></div>';
 } else {
-   print '<div class="col-sm-6"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['insert']).'!"></div>';
+   print '<div class="col-sm-6"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></div>';
 }
 
 ?>

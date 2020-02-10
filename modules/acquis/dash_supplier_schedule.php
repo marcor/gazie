@@ -82,7 +82,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 				$lnk='title="SCADENZA DA PAGARE"';
                 break;
             case 3:
-				$lnk='href="../acquis/supplier_payment.php?partner='.$r['codcon'].'" title="SCADUTA-PAGALA!"';
+				$lnk='href="../acquis/supplier_payment.php?partner='.$r['codcon'].'" title="Scaduta, da pagare"';
                 break;
             default:
 				$lnk='';

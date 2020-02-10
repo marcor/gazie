@@ -391,7 +391,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
         /** fine modifica FP */
         echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
     }
-    echo '<td class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . strtoupper($script_transl['insert']) . '!"></td>';
+    echo '<td class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl['insert']) . '!"></td>';
     echo "<tr>";
     echo "</table></form>";
 }

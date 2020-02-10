@@ -235,9 +235,9 @@ echo "<tr>\n
       <input type=\"reset\" name=\"Cancel\" value=\"" . ucfirst($script_transl['cancel']) . "\">\n
       </td><td class=\"FacetDataTD\" align=\"right\">\n";
 if ($toDo == 'update') {
-    echo '<input name="Submit" title="Accetta tutto e modifica" type="submit" value="MODIFICA !">';
+    echo '<input name="Submit" title="Accetta tutto e modifica" type="submit" value="Modifica">';
 } else {
-    echo '<input name="Submit" title="Accetta tutto e inserisce" type="submit" value="INSERISCI !">';
+    echo '<input name="Submit" title="Accetta tutto e inserisce" type="submit" value="Inserisci">';
 }
 ?>
 </td>

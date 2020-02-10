@@ -2019,16 +2019,16 @@ if ($next_row > 0) {
     }
     echo '		<tr>
 					<td colspan="7" class="text-right alert alert-success">
-						<input name="prestampa" id="preventDuplicate" onClick="preStampa();" type="button" value="PRESTAMPA">
+						<input name="prestampa" id="preventDuplicate" onClick="preStampa();" type="button" value="Prestampa">
 					</td>
 					<td class="text-right alert alert-success">
-						<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . strtoupper($script_transl[$toDo]) . '!">
+						<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
 					</td>
 				</tr>';
 }
 if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
     echo '			<tr>
-   						<td colspan="8" class="text-right alert alert-info"><input type="submit" accesskey="o" name="ord" value="GENERA ORDINE!" /></td>
+   						<td colspan="8" class="text-right alert alert-info"><input type="submit" accesskey="o" name="ord" value="Genera ordine" /></td>
 					</tr>';
 }
 echo "	</table></div>";

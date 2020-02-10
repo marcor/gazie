@@ -275,10 +275,10 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['sqn']; ?></td>
 	<td class="FacetDataTD">
-		<input name="Return" type="submit" value="<?php echo $script_transl['return']; ?>!">
+		<input name="Return" type="submit" value="<?php echo $script_transl['return']; ?>">
 	</td>
 	<td class="FacetDataTD" align="right">
-		<input name="Submit" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
+		<input name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
 	</td>
 </tr>
 </table>

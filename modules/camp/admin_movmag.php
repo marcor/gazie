@@ -1764,9 +1764,9 @@ if ($toDo !== 'update') {
     }
 }
 if ($toDo == 'update') {
-    echo '<input type="submit" accesskey="m" name="Insert" value="' . strtoupper($script_transl['update']) . '!"></td></tr><tr></tr>';
+    echo '<input type="submit" accesskey="m" name="Insert" value="' . ucfirst($script_transl['update']) . '!"></td></tr><tr></tr>';
 } else {
-    echo '<input type="submit" accesskey="i" name="Insert" value="' . strtoupper($script_transl['insert']) . '!"></td></tr><tr></tr>';
+    echo '<input type="submit" accesskey="i" name="Insert" value="' . ucfirst($script_transl['insert']) . '!"></td></tr><tr></tr>';
 }
 echo "</table>\n";
 // ************* Fine FORM   <<<<<<<<<<<<<<<<<<<

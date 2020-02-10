@@ -174,7 +174,7 @@ if ($form['id_agente'] == 0) {
    /** ENRICO FEDELE */
 } else {
    $agente = gaz_dbi_get_row($gTables['agenti']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['agenti'].".id_fornitore = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $gTables['agenti'].'.id_agente', intval($form['id_agente']));
-   echo "<input type=\"submit\" value=\"".$agente['ragso1'].' '.$agente['ragso2']."\" name=\"newagente\" title=\" MODIFICA ! \">\n";
+   echo "<input type=\"submit\" value=\"".$agente['ragso1'].' '.$agente['ragso2']."\" name=\"newagente\" title=\" Modifica \">\n";
    echo "\t<input type=\"hidden\" name=\"id_agente\" value=\"".$form['id_agente']."\">\n";
 }
 echo "</td></tr>\n";

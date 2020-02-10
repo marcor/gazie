@@ -171,7 +171,7 @@ echo '<input name="none" type="submit" value="" disabled>';
 echo '<input name="Return" type="submit" value="' . $script_transl['return'] . '!">';
 echo "\t </td>\n";
 echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
-echo '<input name="Submit" type="submit" value="' . strtoupper($script_transl[$toDo]) . '!">';
+echo '<input name="Submit" type="submit" value="' . ucfirst($script_transl[$toDo]) . '!">';
 echo "\t </td>\n";
 echo "</tr>\n";
 ?>

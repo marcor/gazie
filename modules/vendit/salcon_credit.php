@@ -422,9 +422,9 @@ foreach ($_POST['righi'] as $k => $v) {
 if($_POST['num_rigo'] > 0) {
     print "<tr><td></td><td align=\"right\"class=\"FacetAltDataTD\">Totale € ".number_format($totale,2, '.', '')."&nbsp;</td><td align=\"right\">\n";
     if ($toDo == 'update') {
-        echo '<input title="Modifica il movimento contabile e la ricevuta di pagamento" type="submit" value="MODIFICA !" accesskey="i" name="upd">';
+        echo '<input title="Modifica il movimento contabile e la ricevuta di pagamento" type="submit" value="Modifica" accesskey="i" name="upd">';
     } else {
-        echo '<input title="Inserisci il movimento contabile ed eventualmente proponi la stampa della ricevuta di pagamento" type="submit" value="INSERISCI !" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();">';
+        echo '<input title="Inserisci il movimento contabile ed eventualmente proponi la stampa della ricevuta di pagamento" type="submit" value="Inserisci" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();">';
     }
     print "</td></tr>\n";
 }

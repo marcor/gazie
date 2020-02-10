@@ -149,9 +149,9 @@ print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\"><input type=\"re
 print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
 print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
 if ($toDo == 'update') {
-   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['update']).'!"></td></tr><tr></tr>';
+   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></td></tr><tr></tr>';
 } else {
-   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['insert']).'!"></td></tr><tr></tr>';
+   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></td></tr><tr></tr>';
 }
 print "</td></tr></table>\n";
 ?>

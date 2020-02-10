@@ -301,11 +301,11 @@ if ($form['id_fornitore'] == 0) {
          }
          echo "\t </select>\n";
       } else {
-      $messaggio = "Non &egrave; stato trovato nulla!";
+      $messaggio = "Non &egrave; stato trovato nulla";
       echo "\t<input type=\"hidden\" name=\"id_fornitore\" value=\"".$form['id_fornitore']."\">\n";
       }
    } else {
-      $messaggio = "Inserire min. 2 caratteri!";
+      $messaggio = "Inserire min. 2 caratteri";
       echo "\t<input type=\"hidden\" name=\"id_fornitore\" value=\"".$form['id_fornitore']."\">\n";
    }
    echo "\t<input type=\"text\" name=\"cerca_fornitore\" accesskey=\"e\" value=\"".$form['cerca_fornitore']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
@@ -318,7 +318,7 @@ if ($form['id_fornitore'] == 0) {
 } else {
    $anagrafica = new Anagrafica();
    $fornitore = $anagrafica->getPartner($form['id_fornitore']);
-   echo "<input type=\"submit\" value=\"".$fornitore['ragso1'].' '.$fornitore['ragso2']."\" name=\"newfornitore\" title=\" MODIFICA ! \">\n";
+   echo "<input type=\"submit\" value=\"".$fornitore['ragso1'].' '.$fornitore['ragso2']."\" name=\"newfornitore\" title=\" Modifica \">\n";
    echo "\t<input type=\"hidden\" name=\"id_fornitore\" value=\"".$form['id_fornitore']."\">\n";
 }
 echo "</td></tr>\n";
@@ -406,9 +406,9 @@ foreach ($form['righi'] as $key => $value) {
 }
 // fine righi inseriti
 if ($toDo == 'update') {
-   echo '<td class="FacetFieldCaptionTD" colspan="5" align="right"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !"></td></tr>';
+   echo '<td class="FacetFieldCaptionTD" colspan="5" align="right"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="Modifica"></td></tr>';
 } else {
-   echo '<td class="FacetFieldCaptionTD" colspan="5" align="right"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !"></td></tr>';
+   echo '<td class="FacetFieldCaptionTD" colspan="5" align="right"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="Inserisci"></td></tr>';
 }
 echo "</table>";
 ?>

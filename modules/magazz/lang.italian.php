@@ -346,7 +346,7 @@ $strScript = array("browse_document.php" =>
             'Inserire almeno 1 carattere!',
             'Cambia articolo'
         ),
-        'errors' => array('Valore "0" inaccettabile in questa modalit&agrave; di modifica !',
+        'errors' => array('Valore "0" inaccettabile in questa modalit&agrave; di Modifica',
             'L\'articolo iniziale non pu&ograve; avere un codice successivo a quello finale!',
             'La categoria merceologica iniziale non pu&ograve; avere un codice successivo a quello finale!'
         ),

@@ -156,10 +156,10 @@ if ($_POST['cod_partner'] == 0) {
          }
          echo "\t </select>\n";
       } else {
-      $messaggio = "Non &egrave; stato trovato nulla!";
+      $messaggio = "Non &egrave; stato trovato nulla";
       }
    } else {
-      $messaggio = "Inserire min. 2 caratteri!";
+      $messaggio = "Inserire min. 2 caratteri";
    }
    echo "\t<input type=\"text\" name=\"cerca_partner\" accesskey=\"e\" value=\"".$_POST['cerca_partner']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
    echo $messaggio;
@@ -171,7 +171,7 @@ if ($_POST['cod_partner'] == 0) {
 } else {
    $anagrafica = new Anagrafica();
    $partner = $anagrafica->getPartner($_POST['cod_partner']);
-   echo "<input type=\"submit\" value=\"".substr($partner['ragso1'],0,30)."\" name=\"newpartner\" title=\" MODIFICA ! \">\n";
+   echo "<input type=\"submit\" value=\"".substr($partner['ragso1'],0,30)."\" name=\"newpartner\" title=\" Modifica \">\n";
    echo "\t<input type=\"hidden\" name=\"cod_partner\" value=\"".$_POST['cod_partner']."\">\n";
 }
 ?>

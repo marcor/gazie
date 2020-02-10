@@ -95,7 +95,7 @@ if (! $message == "") {
 <tr>
 <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
 <input type="submit" name="Return" value="Indietro">&nbsp;
-<input type="submit" name="Delete" value="ELIMINA !">&nbsp;
+<input type="submit" name="Delete" value="Elimina">&nbsp;
 </td>
 </tr>
 </table>

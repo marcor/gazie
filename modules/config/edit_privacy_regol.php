@@ -85,7 +85,7 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group text-center">
-                        <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?> & <?php echo strtoupper($script_transl['print']); ?> !">
+                        <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?> & <?php echo strtoupper($script_transl['print']); ?> !">
                     </div>
                 </div>
             </div><!-- chiude row  -->
