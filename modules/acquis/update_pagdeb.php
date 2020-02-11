@@ -171,11 +171,11 @@ if(isset($_POST['add'])) {
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 print "<form method=\"POST\">\n";
-print "<input type=\"hidden\" name=\"ritorno\" value=\"".$_POST['ritorno']."\"";
-print "<input type=\"hidden\" name=\"tipdoc\" value=\"".$_POST['tipdoc']."\"";
-print "<input type=\"hidden\" name=\"clfoco\" value=\"".$_POST['clfoco']."\"";
-print "<input type=\"hidden\" name=\"numdoc\" value=\"".$_POST['numdoc']."\"";
-print "<input type=\"hidden\" name=\"id_con\" value=\"".$_POST['id_con']."\"";
+print "<input type=\"hidden\" name=\"ritorno\" value=\"".$_POST['ritorno']."\">";
+print "<input type=\"hidden\" name=\"tipdoc\" value=\"".$_POST['tipdoc']."\">";
+print "<input type=\"hidden\" name=\"clfoco\" value=\"".$_POST['clfoco']."\">";
+print "<input type=\"hidden\" name=\"numdoc\" value=\"".$_POST['numdoc']."\">";
+print "<input type=\"hidden\" name=\"id_con\" value=\"".$_POST['id_con']."\">";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$descridoc." n.". $_POST['numdoc']." verso ".$conto['ragso1']." ".$conto['ragso2']."</div>\n";
 print "<table border=\"0\" class=\"FacetFormTABLE\" align=\"center\" width=\"50%\">\n";
 if ($message == "")
