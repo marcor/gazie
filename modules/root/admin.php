@@ -210,7 +210,7 @@ $(function(){
 $get_widgets = gaz_dbi_dyn_query("*", $gTables['breadcrumb'],"exec_mode=2 AND adminid='".$admin_aziend['user_name']."'", 'position_order');
 echo '<div id="sortable" class="vertical-align">';
 while ( $row = gaz_dbi_fetch_array($get_widgets) ) {
-	$col_lg=($row['link']>=1)?'col-lg-3':'';
+	$col_lg=(!empty($row['grid_class']))?$row['grid_class']:''; // se si mette sulla colonna del db "col-lg-12" il widget occuperà l'intera larghezza con "col-lg-3" solo 1/4 del rigo della dashboard
 	echo '<div class="col-xs-12 col-md-6 '.$col_lg.' text-center" id="position-'.$row['id_bread'].'">';
 	require('../'.$row['file']);
 	echo '</div>'; 
