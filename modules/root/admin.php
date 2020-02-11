@@ -219,7 +219,55 @@ echo '</div>';
 
 ?>
     </div>
+	<div style="display:none" id="dialog_grid" title="Scegli la larghezza del widget"></div>
 </form>
+<script>
+$(function() {
+	$("#dialog_grid").dialog({ autoOpen: false });
+	$('.dialog_grid').click(function() {
+		var id = $(this).attr('id_bread');
+		$( "#dialog_grid" ).dialog({
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+            "1": function (event, ui) {
+			  $.ajax({
+			    data: { id_bread:id,gridlg:'1'},
+				type: 'post',
+				url: './dashboard_update.php',
+				success: function(output){
+					alert(output);
+				}
+			  });
+			  window.location.reload();
+			},
+            "2": function (event, ui) {
+			  $.ajax({
+			    data: { id_bread:id,gridlg:'2'},
+				type: 'post',
+				url: './dashboard_update.php'
+			  });
+			  window.location.reload();
+			},
+            "4": function (event, ui) {
+			  $.ajax({
+			    data: { id_bread:id,gridlg:'4'},
+				type: 'post',
+				url: './dashboard_update.php'
+			  });
+			  window.location.reload();
+			},
+            "Non cambiare": function() {
+				$(this).dialog("close");
+            }
+			}
+		});
+		$("#dialog_grid" ).dialog( "open" );  
+	});
+});
+
+</script>
 </div>
 <?php
 require('../../library/include/footer.php');

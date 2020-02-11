@@ -29,15 +29,22 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
-
+require("../../library/include/datlib.inc.php");
+$admin_aziend = checkAdmin();
 if (isset($_POST['position'])) { //	Evitiamo errori se lo script viene chiamato direttamente
-    require("../../library/include/datlib.inc.php");
-    $admin_aziend = checkAdmin();
 	$i = 0;
 	foreach ($_POST['position'] as $v) {
-		gaz_dbi_put_row($gTables['breadcrumb'], 'id_bread', $v, 'position_order', $i);
+		gaz_dbi_put_row($gTables['breadcrumb'], 'id_bread', intval($v), 'position_order', $i);
 		$i++;
 	}
     exit();
+} elseif(isset($_POST['id_bread'])) {
+	$glg='col-lg-6';
+	if ($_POST['gridlg']=='4'){
+		$glg='col-lg-12';
+	}elseif($_POST['gridlg']=='1'){
+		$glg='col-lg-3';
+	}
+	gaz_dbi_put_row($gTables['breadcrumb'], 'id_bread', intval($_POST['id_bread']), 'grid_class', $glg);
 }
 ?>

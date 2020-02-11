@@ -13,6 +13,7 @@ if ($t > 4 && $t <= 13) {
 <div class="panel panel-default col-md-12" >
     <div>
         <?php echo ucfirst($msg) . " " . $admin_aziend['user_firstname'] . ' (ip=' . $admin_aziend['last_ip'] . ')'; ?>
+		<a class="pull-right dialog_grid" id_bread="<?php echo $row['id_bread']; ?>" style="cursor:pointer;"><i class="fa fa-gear"></i></a>
     </div>
     <div class="img-containter">
         <a href="../config/admin_utente.php?user_name=<?php echo $admin_aziend['user_name']; ?>&Update">

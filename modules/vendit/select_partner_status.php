@@ -147,7 +147,7 @@ if (isset($_POST['preview'])) {
                 foreach ($v as $ki => $vi) {
                     $ctrl_close_paymov = false; 
                     $lnk = '';
-                    $class_paymov = 'FacetDataTDevidenziaCL';
+                    $class_paymov = 'btn btn-success';
                     $v_op = '';
                     $cl_exp = '';
                     if ($vi['op_val'] >= 0.01) {
@@ -163,21 +163,22 @@ if (isset($_POST['preview'])) {
                         $expo = $vi['expo_day'];
                         if (round($vi['cl_val'],2) == round($vi['op_val'],2)) {
                             $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza 
-                            $class_paymov = 'FacetDataTDevidenziaOK';
+                            $class_paymov = 'btn btn-warning';
                         }
                     } else {
                         if (round($vi['cl_val'],2) == round($vi['op_val'],2)) { // chiusa e non esposta
                             $cl_exp = '';
-                            $class_paymov = 'FacetDataTD';
+                            $class_paymov = 'btn btn-success';
                             $ctrl_close_paymov = true;
                         } elseif ($vi['status'] == 3) { // SCADUTA
                             $cl_exp = '';
-                            $class_paymov = 'FacetDataTDevidenziaKO';
+                            $class_paymov = 'btn btn-danger';
                             $lnk = " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $p . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                         } elseif ($vi['status'] == 9) { // PAGAMENTO ANTICIPATO
-                            $class_paymov = 'FacetDataTDevidenziaBL';
+                            $class_paymov = 'btn btn-default';
                             $vi['expiry'] = $vi['cl_exp'];
                         } elseif ($vi['status'] == 0) { // APERTA
+							$class_paymov = 'btn btn-edit';
                             $lnk = " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $p . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                         }
                     }

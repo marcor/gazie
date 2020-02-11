@@ -31,13 +31,11 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     ?>
     <!-- Scadenziari -->
 	<div class="panel panel-info col-sm-12" >
-          <!--+ DC - 13/02/2019 -->
-		  <div class="wheel_load"></div>
-          <!--- DC - 13/02/2019 -->
           <div class="box-header bg-danger">
             <div class="box-title"><b><?php echo $script_transl['sca_scafor']; ?></b> -> data di riferimento: 
 			<?php echo '<input type="text" value="'.$form['datref_for'].'" id="datref_for" name="datref_for" readonly>'; ?><small>(6 mesi prima e 6 dopo)</small>
 			</div>
+			<a class="pull-right dialog_grid" id_bread="<?php echo $row['id_bread']; ?>" style="cursor:pointer;"><i class="fa fa-gear"></i></a>
           </div>
           <div class="box-body table-responsive">
               <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">

@@ -1,5 +1,6 @@
 <div class="panel panel-info col-md-12" >
     <div class="box-header company-color">
+		<a class="pull-right dialog_grid" id_bread="<?php echo $row['id_bread']; ?>" style="cursor:pointer;"><i class="fa fa-gear"></i></a>
 	</div>
     <div class="img-containter">
     <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->

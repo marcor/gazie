@@ -46,12 +46,12 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
 ?>
 <div class="panel panel-success col-md-12" >
     <div class="box-header company-color">
+		<a class="pull-right dialog_grid" id_bread="<?php echo $row['id_bread']; ?>" style="cursor:pointer;"><i class="fa fa-gear"></i></a>
         <h4 class="box-title"><?php echo $script_transl['company'] ?></h4>    
 	</div>
     <div class="img-containter">
         <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-height: 150px;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
     </div>
-
     <div>
         <?php
 		if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
