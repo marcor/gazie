@@ -47,7 +47,8 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	 ?>
        <div class="panel panel-danger col-sm-12">
             <div class="box-header bg-danger">
-                   <h3 class="box-title"><?php echo $script_transl['scalot']; ?></h3>
+                <h3 class="box-title"><?php echo $script_transl['scalot']; ?></h3>
+				<a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
                </div>
                <div class="box-body">
 <?php

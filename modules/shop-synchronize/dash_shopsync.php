@@ -31,6 +31,7 @@ if ($test && $test['access']==3){
 ?>
 <div class="box-header bg-info">
 	<h4 class="box-title"><i class="glyphicon glyphicon-transfer"></i> SINCRONIZZAZIONE SHOP ONLINE</h4>
+	<a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
 </div>
 <div class="box-body">
 	<h4><a href="../shop-synchronize/synchronize.php"> Procedi alla sincronizzazione del sito per lo shopping online <i class="glyphicon glyphicon-transfer"></i></a></h4>
