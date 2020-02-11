@@ -35,7 +35,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
             <div class="box-title"><b><?php echo $script_transl['sca_scacli']; ?></b> -> data di riferimento: 
 			<?php echo '<input type="text" value="'.$form['datref_cli'].'" id="datref_cli" name="datref_cli" readonly>'; ?><small>(6 mesi prima e 6 dopo)</small>
 			</div>
-			<a class="pull-right dialog_grid" id_bread="<?php echo $row['id_bread']; ?>" style="cursor:pointer;"><i class="fa fa-gear"></i></a>
+			<a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="fa fa-gear"></i></a>
           </div>
           <div class="box-body">
               <table id="clienti" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="clienti_info">

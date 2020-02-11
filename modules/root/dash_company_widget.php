@@ -46,7 +46,7 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
 ?>
 <div class="panel panel-success col-md-12" >
     <div class="box-header company-color">
-		<a class="pull-right dialog_grid" id_bread="<?php echo $row['id_bread']; ?>" style="cursor:pointer;"><i class="fa fa-gear"></i></a>
+		<a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="fa fa-gear"></i></a>
         <h4 class="box-title"><?php echo $script_transl['company'] ?></h4>    
 	</div>
     <div class="img-containter">
