@@ -237,26 +237,29 @@ $(function() {
 				type: 'post',
 				url: './dashboard_update.php',
 				success: function(output){
-					alert(output);
+					window.location.reload();
 				}
 			  });
-			  window.location.reload();
 			},
             "2": function (event, ui) {
 			  $.ajax({
 			    data: { id_bread:id,gridlg:'2'},
 				type: 'post',
-				url: './dashboard_update.php'
+				url: './dashboard_update.php',
+				success: function(output){
+					window.location.reload();
+				}
 			  });
-			  window.location.reload();
 			},
             "4": function (event, ui) {
 			  $.ajax({
 			    data: { id_bread:id,gridlg:'4'},
 				type: 'post',
-				url: './dashboard_update.php'
+				url: './dashboard_update.php',
+				success: function(output){
+					window.location.reload();
+				}			  
 			  });
-			  window.location.reload();
 			},
             "Non cambiare": function() {
 				$(this).dialog("close");
