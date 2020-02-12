@@ -28,7 +28,6 @@ $admin_aziend=checkAdmin();
 $titolo = 'Categorie Merceologiche';
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-
 if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
 }
@@ -49,24 +48,70 @@ if (!isset($_GET['auxil'])) {
 /** ENRICO FEDELE */
 /* pulizia del codice, eliminato boxover, aggiunte classi bootstrap alla tabella, convertite immagini in glyphicons */
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("catdes"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			position: { my:"right top", at:"center center", of: this },
+			minHeight: 1,
+			width: 400,
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'catmer',ref:id},
+						type: 'POST',
+						url: '../root/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_catmer.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont">Categorie Merceologiche</div>
 <?php
 $recordnav = new recordnav($gTables['catmer'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
+
+
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div style="display:none" id="dialog_delete" title="Conferma l'eliminazione dellla categoria merceologica:">
+        <p>Codice</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
             <tr>
                 <td></td>
                 <td class="FacetFieldCaptionTD">Descrizione:
-                    <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput" />
-                </td>
-                <td>
-                    <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;" />
+                    <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="100" tabindex="1" class="FacetInput" />
+					<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;" />
                 </td>
                 <td>
                     <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;" />
+                </td>
+                <td>
                 </td>
             </tr>
             <tr>
@@ -99,7 +144,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $a_row["ricarico"];?></td>
 			<td align="center"><?php echo $a_row["annota"];?></td>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina" href="delete_catmer.php?codice=<?php echo $a_row["codice"]; ?>">
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row["codice"];?>" catdes="<?php echo $a_row["descri"]; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>
