@@ -81,8 +81,8 @@ $script_transl = HeadMain();
 ?>
 <form method="POST">
     <input type="hidden" name="codice" value="<?php echo $codice; ?>">
-    <div align="center"><font class="FacetFormHeaderFont">Attenzione!!! Eliminazione Fornitore Codice: <?php echo $codice; ?> </font></div>
-    <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+    <div><font class="text-center text-danger">Attenzione!!! Eliminazione Fornitore Codice: <?php echo $codice; ?> </font></div>
+    <table class="GazFormDeleteTable">
         <tr>
             <td colspan="2" class="FacetDataTD" style="color: red;">
                 <?php

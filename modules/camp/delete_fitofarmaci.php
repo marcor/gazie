@@ -50,8 +50,8 @@ require("../../library/include/header.php"); HeadMain();
 ?>
 <form method="POST">
 <input type="hidden" name="id" value="<?php print $id?>">
-<div align="center"><font class="FacetFormHeaderFont">Attenzione!!! Eliminazione uso  ID: <?php print $id; ?> </font></div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<div><font class="text-center text-danger">Attenzione!!! Eliminazione uso  ID: <?php print $id; ?> </font></div>
+<table class="GazFormDeleteTable">
 <tr>
 <td colspan="2" class="FacetDataTDred">
 <?php
@@ -73,8 +73,7 @@ if (! $message == "")
 </tr>
 
 <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
-<!-- BEGIN Button Return --><input type="submit" name="Return" value="Indietro"><!-- END Button Return -->&nbsp;
-<!-- BEGIN Button Insert --><input type="submit" name="Delete" value="ELIMINA !"><!-- END Button Insert -->&nbsp;
+<input type="submit" name="Delete" class="btn btn-danger" value="Elimina">&nbsp;
 </td>
 </tr>
 </table>

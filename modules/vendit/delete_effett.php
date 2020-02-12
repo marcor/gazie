@@ -94,7 +94,7 @@ $script_transl = HeadMain('', '', 'select_effett');
     <input type="hidden" value="<?php print $ritorno; ?>" name="ritorno">
     <input type="hidden" name="id_tes" value="<?php print intval($_GET['id_tes']); ?>">
     <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'] . '!!! ' . $script_transl['del_this'] . ' ID= ' . intval($_GET['id_tes']); ?> </div>
-    <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+    <table class="GazFormDeleteTable">
         <tr>
             <td class="FacetFieldCaptionTD"><?php echo $script_transl['progre']; ?></td>
             <td class="FacetDataTD"><?php print $form["progre"]; ?>&nbsp;</td>

@@ -40,7 +40,7 @@ $script_transl=HeadMain('','','admin_vettore');
 <form method="POST">
 <input type="hidden" name="codice" value="<?php print intval($_GET['codice'])?>">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl['del_this'].' n.'.intval($_GET['codice']); ?> </div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<table class="GazFormDeleteTable">
   <tr>
     <td class="FacetFieldCaptionTD"><?php echo $script_transl['ragione_sociale']; ?></td>
     <td class="FacetDataTD"><?php print $form["ragione_sociale"] ?>&nbsp;</td>

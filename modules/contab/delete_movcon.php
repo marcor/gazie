@@ -68,7 +68,7 @@ $script_transl=HeadMain('','','admin_movcon');
 <form method="POST">
 <input type="hidden" name="id_tes" value="<?php print intval($_GET['id_tes'])?>">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl['del_this'].' n.'.intval($_GET['id_tes']); ?> </div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<table class="GazFormDeleteTable">
   <tr>
     <td class="FacetFieldCaptionTD"><?php echo $script_transl['date_reg']; ?></td>
         <td class="FacetDataTD" colspan=2> <?php print $form["datreg"]; ?>&nbsp;</td>

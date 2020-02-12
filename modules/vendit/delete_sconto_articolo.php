@@ -54,7 +54,7 @@ if (isset($_POST['Return'])) {
     <input type="hidden" name="codart" value="<?= $form["codart"] ?>">
     <input type="hidden" name="codclfoco" value="<?= $form["codclfoco"] ?>">
     <div align="center"><font class="FacetFormHeaderFont"><?= $script_transl['mesg'][0]; ?> </font></div>
-    <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+    <table class="GazFormDeleteTable">
         <tr>
             <td colspan="2" class="FacetDataTD" style="color: red;">
                 <?= $script_transl['mesg'][1]; ?>

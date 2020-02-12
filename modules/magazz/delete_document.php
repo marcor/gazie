@@ -46,7 +46,7 @@ $script_transl=HeadMain('','','browse_document');
 <input type="hidden" name="id_doc" value="<?php print intval($_GET['id_doc'])?>">
 <input type="hidden" name="ext" value="<?php echo $form["extension"]; ?>">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl['title'].' ID n.'.intval($_GET['id_doc']); ?> </div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<table class="GazFormDeleteTable">
   <tr>
     <td class="FacetFieldCaptionTD"><?php echo $script_transl['table_name_ref']; ?></td>
         <td class="FacetDataTD" colspan=2> <?php print $form["table_name_ref"]; ?>&nbsp;</td>

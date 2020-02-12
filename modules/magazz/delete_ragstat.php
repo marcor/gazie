@@ -50,8 +50,8 @@ require("../../library/include/header.php"); HeadMain();
 ?>
 <form method="POST">
 <input type="hidden" name="codice" value="<?php print $codice?>">
-<div align="center"><font class="FacetFormHeaderFont">Attenzione!!! Eliminazione Raggruppamento Statistico N.<?php print $codice; ?> </font></div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<div><font class="text-center text-danger">Attenzione!!! Eliminazione Raggruppamento Statistico N.<?php print $codice; ?> </font></div>
+<table class="GazFormDeleteTable">
 <tr>
 <td colspan="2" class="FacetDataTDred">
 <?php
@@ -76,8 +76,7 @@ if (! $message == "")
 <td class="FacetDataTD"><?php print $form["annota"] ?>&nbsp;</td>
 </tr>
 <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
-<!-- BEGIN Button Return --><input type="submit" name="Return" value="Indietro"><!-- END Button Return -->&nbsp;
-<!-- BEGIN Button Insert --><input type="submit" name="Delete" value="ELIMINA !"><!-- END Button Insert -->&nbsp;
+<input type="submit" name="Delete" class="btn btn-danger" value="Elimina">&nbsp;
 </td>
 </tr>
 </table>

@@ -140,8 +140,7 @@ function trovaNuovoNumero($gTables) {
         </tr>
         <tr>
             <td colspan="2" align="right">Se sei sicuro conferma la duplicazione &nbsp;
-                <!-- BEGIN Button Return --><input type="submit" name="Return" value="Indietro"><!-- END Button Return -->&nbsp;
-                <!-- BEGIN Button Insert --><input type="submit" name="Duplicate" value="DUPLICA !"><!-- END Button Insert -->&nbsp;
+                                <input type="submit" name="Duplicate" value="DUPLICA !">&nbsp;
             </td>
         </tr>
     </table>

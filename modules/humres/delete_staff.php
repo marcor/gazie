@@ -62,7 +62,7 @@ $script_transl = HeadMain();
 <?php        
 echo '<div class="alert alert-danger text-center" role="alert">' . $script_transl['title'] . '</div>';
 ?>
-    <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+    <table class="GazFormDeleteTable">
         <tr>
             <td colspan="2" class="FacetDataTD"  style="color: red;">
                 <?php
@@ -105,7 +105,7 @@ echo '<div class="alert alert-danger text-center" role="alert">' . $script_trans
         <tr>
             <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
                 <input title="Torna indietro"  type="submit" name="Return" value="Indietro">&nbsp;
-                <input title="Elimina definitivamente dall'archivio"  type="submit" name="Delete" value="ELIMINA !">&nbsp;
+                <input title="Elimina definitivamente dall'archivio"  type="submit" name="Delete" class="btn btn-danger" value="Elimina">&nbsp;
             </td>
         </tr></table>
 </form>

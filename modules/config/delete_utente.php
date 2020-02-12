@@ -54,7 +54,7 @@ $script_transl=HeadMain('','','admin_utente');
 <form method="POST">
 <input type="hidden" name="user_name" value="<?php print $form["user_name"];?>">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl['del_this'].': '.$form["user_name"]; ?></div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<table class="GazFormDeleteTable">
 <?php
 if (!$message == "") {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$script_transl[$message]."</td></tr>\n";

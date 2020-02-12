@@ -43,7 +43,7 @@ $script_transl=HeadMain('','','admin_aliiva');
 <form method="POST">
 <input type="hidden" name="codice" value="<?php print intval($_GET['codice'])?>">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl[0].' n.'.intval($_GET['codice']); ?> </div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<table class="GazFormDeleteTable">
   <tr>
     <td class="FacetFieldCaptionTD"><?php echo $script_transl[3]; ?></td>
     <td class="FacetDataTD"><?php print $form["aliquo"] ?>&nbsp;</td>

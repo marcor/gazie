@@ -65,8 +65,8 @@ $script_transl=HeadMain();
 ?>
 <form method="POST">
 <input type="hidden" name="id_tes" value="<?php print $form['id_tes']; ?>">
-<div align="center"><font class="FacetFormHeaderFont">Attenzione!!! Stai eliminando la ricevuta di riscossione n.<?php echo $form['numdoc']; ?> </font></div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<div><font class="text-center text-danger">Attenzione!!! Stai eliminando la ricevuta di riscossione n.<?php echo $form['numdoc']; ?> </font></div>
+<table class="GazFormDeleteTable">
 <!-- BEGIN Error -->
 <tr>
     <td class="FacetDataTDred">
@@ -99,8 +99,7 @@ per eliminare anche i movimenti contabili<br>seleziona questa checkbox.
 </tr>
 <tr>
 <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
-<!-- BEGIN Button Return --><input type="submit" name="Return" value="Indietro"><!-- END Button Return -->&nbsp;
-<!-- BEGIN Button Insert --><input type="submit" name="Delete" value="ELIMINA !"><!-- END Button Insert -->&nbsp;
+<input type="submit" name="Delete" class="btn btn-danger" value="Elimina">&nbsp;
 </td>
 </tr>
 </table>

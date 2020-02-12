@@ -42,7 +42,7 @@ $script_transl=HeadMain('','','admin_caucon');
 <form method="POST">
 <input type="hidden" name="codice" value="<?php echo $form['codice']; ?>">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl['del_this']." '".substr($_GET['codice'],0,3)."'" ; ?></font></div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<table class="GazFormDeleteTable">
 <tr>
     <td class="FacetFieldCaptionTD"><?php echo $script_transl['descri']; ?></td>
     <td class="FacetDataTD"><?php echo $form["descri"]; ?> &nbsp;</td>

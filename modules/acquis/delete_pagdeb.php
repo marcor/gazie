@@ -66,8 +66,8 @@ $script_transl=HeadMain();
 ?>
 <form method="POST">
 <input type="hidden" name="id_tes" value="<?php print $form['id_tes']; ?>">
-<div align="center"><font class="FacetFormHeaderFont">Attenzione!!! Stai eliminando l'<?php echo $tipobro." n.".$form['numdoc']; ?> </font></div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<div><font class="text-center text-danger">Attenzione!!! Stai eliminando l'<?php echo $tipobro." n.".$form['numdoc']; ?> </font></div>
+<table class="GazFormDeleteTable">
 <tr>
 <td colspan="2" class="FacetDataTD" style="color: red;">
 <?php

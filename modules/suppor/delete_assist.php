@@ -68,7 +68,7 @@ $script_transl = HeadMain();
 <form method="POST">
     <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
     <div align="center"><font class="FacetFormHeaderFont"><?php print $script_transl['title'] . ' n.' . $row['codice']; ?> </font></div>
-    <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+    <table class="GazFormDeleteTable">
         <!-- BEGIN Error -->
         <tr>
             <td colspan="2" class="FacetDataTDred">
@@ -95,8 +95,7 @@ $script_transl = HeadMain();
         </tr>
         <tr>
             <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
-                <!-- BEGIN Button Return --><input type="submit" name="Return" value="Indietro"><!-- END Button Return -->&nbsp;
-                <!-- BEGIN Button Insert --><input type="submit" name="Delete" value="ELIMINA !"><!-- END Button Insert -->&nbsp;
+                                <input type="submit" name="Delete" class="btn btn-danger" value="Elimina">&nbsp;
             </td>
         </tr>
     </table>

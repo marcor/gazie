@@ -64,8 +64,8 @@ $script_transl=HeadMain();
 ?>
 <form method="POST">
 <input type="hidden" name="codice" value="<?php print $codice?>">
-<div align="center"><font class="FacetFormHeaderFont">Attenzione!!! Eliminazione Conto N.<?php print $codice; ?> </font></div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<div><font class="text-center text-danger">Attenzione!!! Eliminazione Conto N.<?php print $codice; ?> </font></div>
+<table class="GazFormDeleteTable">
 <tr>
 <td colspan="2" class="FacetDataTD" style="color: red;">
 <?php
@@ -92,7 +92,7 @@ if (! $message == "") {
 <tr>
 <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
 <input title="Torna indietro" type="submit" name="Return" value="Indietro">&nbsp;
-<input title="Conferma l'eliminazione" type="submit" name="Delete" value="ELIMINA !">&nbsp;
+<input title="Conferma l'eliminazione" type="submit" name="Delete" class="btn btn-danger" value="Elimina">&nbsp;
 </td>
 </tr></table>
 </form>

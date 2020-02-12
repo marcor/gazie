@@ -40,7 +40,7 @@ $script_transl=HeadMain('','','admin_banapp');
 <form method="POST">
 <input type="hidden" name="codice" value="<?php print intval($_GET['codice'])?>">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl['del_this'].' n.'.intval($_GET['codice']); ?> </div>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<table class="GazFormDeleteTable">
   <tr>
     <td class="FacetFieldCaptionTD"><?php echo $script_transl['descri']; ?></td>
     <td class="FacetDataTD"><?php print $form["descri"] ?>&nbsp;</td>

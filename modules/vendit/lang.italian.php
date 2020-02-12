@@ -1521,7 +1521,7 @@ $strScript = array("admin_client.php" =>
             'Sei sicuro di voler rimuovere?',
             "Se sei sicuro conferma l'eliminazione",
             "Indietro",
-            "ELIMINA !",
+            "Elimina",
             "Num. righe eliminate: "
         ),
     ),
@@ -1563,7 +1563,7 @@ $strScript = array("admin_client.php" =>
             'Sei sicuro di voler rimuovere?',
             "Se sei sicuro conferma l'eliminazione",
             "Indietro",
-            "ELIMINA !",
+            "Elimina",
             "Num. righe eliminate: "
         ),
     ),
