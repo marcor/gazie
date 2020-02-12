@@ -3304,8 +3304,8 @@ echo '</table>';
 <script type="text/javascript">
 	function vatPrice(row,pervat) {
 		var prelis = $("[name='rows["+row+"][prelis]']").val();
-		var prevat = Math.round(parseFloat(prelis)*(1+parseFloat(pervat)/100),4);
-		$("#cat_prevat").val(prevat);
+		var prevat = parseFloat(prelis)*(1+parseFloat(pervat)/100);
+		$("#cat_prevat").val(prevat.toFixed(<?php echo $admin_aziend['decimal_price'] ?>));
 		$("#cat_pervat").val(pervat);
 		$("#cat_prelis").val(prelis);
 		$("#vat-price").dialog({
@@ -3324,7 +3324,8 @@ echo '</table>';
 		var prevat = $("#cat_prevat").val();
 		var pervat = $("#cat_pervat").val();
 		if (prevat!="" && pervat!="") {
-			var prelis = parseFloat(prevat)/(1+parseFloat(pervat)/100)
+			var prelis = parseFloat(prevat)/(1+parseFloat(pervat)/100);
+			$("#cat_prelis").val(prelis.toFixed(<?php echo $admin_aziend['decimal_price'] ?>));
 			$("#cat_prelis").val(prelis.toFixed(2));
 		} else {
 			$("#cat_prelis").val("0");

@@ -1277,16 +1277,17 @@ echo "\n";
 
 echo "<form method=\"POST\" name=\"broven\">\n";
 $gForm = new venditForm();
-echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="">
-		<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes">
-		<input type="hidden" value="' . $form['seziva'] . '" name="seziva">
-		<input type="hidden" value="' . $form['tipdoc'] . '" name="tipdoc">
-		<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno">
-		<input type="hidden" value="' . $form['change_pag'] . '" name="change_pag">
-		<input type="hidden" value="' . $form['protoc'] . '" name="protoc">
-		<input type="hidden" value="' . $form['numdoc'] . '" name="numdoc">
-		<input type="hidden" value="' . $form['numfat'] . '" name="numfat">
-		<input type="hidden" value="' . $form['datfat'] . '" name="datfat">
+echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
+		<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
+		<input type="hidden" value="' . $form['seziva'] . '" name="seziva" />
+		<input type="hidden" value="' . $form['tipdoc'] . '" name="tipdoc" />
+		<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />
+		<input type="hidden" value="' . $form['change_pag'] . '" name="change_pag" />
+		<input type="hidden" value="' . $form['protoc'] . '" name="protoc" />
+		<input type="hidden" value="' . $form['numdoc'] . '" name="numdoc" />
+		<input type="hidden" value="' . $form['numfat'] . '" name="numfat" />
+		<input type="hidden" value="' . $form['datfat'] . '" name="datfat" />
+		<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />
 		<div align="center" class="FacetFormHeaderFont">' . $title . '  a :';
 $select_cliente = new selectPartner('clfoco');
 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);
@@ -1539,9 +1540,8 @@ $totimpfat = 0.00;
 $castle = array();
 $rit = 0;
 $carry = 0;
-
 $last_row = array();
-
+$vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
 foreach ($form['rows'] as $k => $v) {
     //creo il castelletto IVA
     $imprig = 0;
@@ -1620,14 +1620,18 @@ foreach ($form['rows'] as $k => $v) {
 					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
 				</td>
 				<td>
-					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" id="righi_' . $k . '_quanti" onchange="document.broven.last_focus.value=\'righi_' . $k . '_prelis\'; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
                 </td>';
-            echo "<td><input type=\"text\" name=\"rows[$k][prelis]\" value=\"" . $v['prelis'] . "\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
-            echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"" . $v['sconto'] . "\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[$k][prelis]\" value=\"" . $v['prelis'] . "\" align=\"right\" maxlength=\"11\" size=\"7\"";
+			if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
+				echo ' onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
+			}
+            echo " id=\"righi_" . $k . "_prelis\" onchange=\"document.broven.last_focus.value='righi_" . $k . "_sconto'; this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"" . $v['sconto'] . "\" maxlength=\"4\" size=\"1\" id=\"righi_" . $k . "_sconto\" onchange=\"document.broven.last_focus.value=this.id; this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"rows[$k][provvigione]\" value=\"" . $v['provvigione'] . "\" maxlength=\"6\" size=\"1\" /></td>\n";
             echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
             echo "<td class=\"text-right\">" . $v['pervat'] . "%</td>\n";
-            echo "<td class=\"text-right\">" . $v['codric'] . "</td>\n";
+            echo "<td class=\"text-right codricTooltip\" title=\"Contropartita\">" . $v['codric'] . "</td>\n";
 
             $last_row[] = array_unshift($last_row, '<strong>' . $v['codart'] . '</strong>, ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             break;
@@ -1658,10 +1662,14 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td></td>
 					<td class="text-right">
-						<input style="text-align:right" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" align="right" maxlength="11" size="7" onchange="this.form.submit()" />
+						<input style="text-align:right" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" align="right" maxlength="11" size="7" ';
+						if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
+							echo ' onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
+						}
+						echo ' id="righi_' . $k . '_prelis" onchange="document.broven.last_focus.value=this.id; this.form.submit()" />
 					</td>
 					<td class="text-right">' . $v['pervat'] . '%</td>
-					<td class="text-right">' . $v['codric'] . '</td>';
+					<td class="text-right codricTooltip" title="Contropartita">' . $v['codric'] . '</td>';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "2": // descrittivo
@@ -1802,7 +1810,7 @@ foreach ($form['rows'] as $k => $v) {
                         <input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
                     </td>
                     <td>
-                        <input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+                        <input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" id="righi_' . $k . '_quanti" onchange="document.broven.last_focus.value=this.id; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
                     </td>';
                 echo "<td></td>\n";
                 echo "<td></td>\n";
@@ -1814,7 +1822,7 @@ foreach ($form['rows'] as $k => $v) {
             } else {
                 echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
                     <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\" size=\"1\" />
-                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl['weight'] . "\" type=\"text\" name=\"rows[" . $k . "][quanti]\" value=\"" . $v["quanti"] . "\" align=\"right\" maxlength=\"11\" size=\"4\" id=\"righi_" . $k . "_quanti\" onchange=\"document.docven.last_focus.value=\"righi_" . $k . "_prelis\"; this.form.hidden_req.value=\"ROW\"; this.form.submit();\" />
+                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl['weight'] . "\" type=\"text\" name=\"rows[" . $k . "][quanti]\" value=\"" . $v["quanti"] . "\" align=\"right\" maxlength=\"11\" size=\"4\" id=\"righi_" . $k . "_quanti\" onchange=\"document.broven.last_focus.value=\"righi_" . $k . "_prelis\"; this.form.hidden_req.value=\"ROW\"; this.form.submit();\" />
                     <input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
                     <input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
                     <input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />";
@@ -2021,7 +2029,7 @@ if ($next_row > 0) {
     }
     echo '		<tr>
 					<td colspan="2" class="text-right">
-						<input name="prestampa" class="btn btn-default" id="preventDuplicate" onClick="preStampa();" type="button" value="Prestampa">
+						<input name="prestampa" class="btn btn-default" onClick="preStampa();" type="button" value="Prestampa">
 					</td>
 					<td colspan="4" class="text-center">
 						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
@@ -2048,9 +2056,9 @@ echo "</tr>	</table></div>";
 	//var $options = $("#in_codvat > option").clone();
 	//$('#cat_codvat').append($options);
 	function vatPrice(row,pervat) {
-		prelis = $("[name='rows["+row+"][prelis]']").val();
-		prevat = Math.round(parseFloat(prelis)*(1+parseFloat(pervat)/100),4);
-		$("#cat_prevat").val(prevat);
+		var prelis = $("[name='rows["+row+"][prelis]']").val();
+		var prevat = parseFloat(prelis)*(1+parseFloat(pervat)/100);
+		$("#cat_prevat").val(prevat.toFixed(<?php echo $admin_aziend['decimal_price'] ?>));
 		$("#cat_pervat").val(pervat);
 		$("#cat_prelis").val(prelis);
 		$("#vat-price").dialog({
@@ -2058,16 +2066,40 @@ echo "</tr>	</table></div>";
 			buttons: {
 				Ok: function() {
 					$("[name='rows["+row+"][prelis]']").val($("#cat_prelis").val());
+					document.broven.last_focus.value="righi_" + row + "_sconto";
+					$("[name='rows["+row+"][prelis]']").parents("form:first").submit();
 					$(this).dialog("close");
 				}
 			}
 		});
 	};
 	function vatPriceCalc() {
-		prelis = $("#cat_prevat").val();
-		pervat = $("#cat_pervat").val();
-		$("#cat_prelis").val(parseFloat(prelis)/(1+parseFloat(pervat)/100));
+		var prevat = $("#cat_prevat").val();
+		var pervat = $("#cat_pervat").val();
+		if (prevat!="" && pervat!="") {
+			var prelis = parseFloat(prevat)/(1+parseFloat(pervat)/100);
+			$("#cat_prelis").val(prelis.toFixed(<?php echo $admin_aziend['decimal_price'] ?>));
+		} else {
+			$("#cat_prelis").val("0");
+		}
 	}
+</script>
+<script language="JavaScript">
+var last_focus_value;
+var last_focus;
+last_focus_value = document.broven.last_focus.value;
+if (last_focus_value != "") {
+    last_focus = document.getElementById(last_focus_value);
+    if (last_focus != undefined) {
+        last_focus.focus();
+}
+}
+last_focus_value = "";
+
+$( document ).ready(function() {
+	$(".codricTooltip").each(function(index){$(this).attr('title', $("#in_codric option[value='"+$( this ).text().trim()+"']").text());});
+});
+
 </script>
 <?php
 require("../../library/include/footer.php");
