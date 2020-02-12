@@ -239,7 +239,7 @@ $(function() {
 				type: 'post',
 				url: './dashboard_update.php',
 				success: function(output){
-					window.location.reload();
+					window.location.replace("./admin.php");
 				}
 			  });
 			},
@@ -249,7 +249,7 @@ $(function() {
 				type: 'post',
 				url: './dashboard_update.php',
 				success: function(output){
-					window.location.reload();
+					window.location.replace("./admin.php");
 				}
 			  });
 			},
@@ -259,7 +259,7 @@ $(function() {
 				type: 'post',
 				url: './dashboard_update.php',
 				success: function(output){
-					window.location.reload();
+					window.location.replace("./admin.php");
 				}			  
 			  });
 			},
