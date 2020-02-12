@@ -227,6 +227,7 @@ $(function() {
 	$('.dialog_grid').click(function() {
 		var id = $(this).attr('id_bread');
 		$( "#dialog_grid" ).dialog({
+			minHeight: 1,
 			modal: "true",
 			show: "blind",
 			hide: "explode",
