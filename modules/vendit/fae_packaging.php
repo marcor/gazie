@@ -109,7 +109,7 @@ function getFAEunpacked($vat_register = '___', $vat_section = 1, $date = false, 
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
                         customer.codice,
                         customer.speban AS addebitospese,
-                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta, anagraf.fe_cod_univoco, anagraf.pec_email, anagraf.e_mail', $from, $where, $orderby);
+                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc, anagraf.citspe, anagraf.prospe, anagraf.capspe, anagraf.country, anagraf.fe_cod_univoco, anagraf.pec_email, anagraf.e_mail', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
 
@@ -522,8 +522,26 @@ if (isset($_POST['preview'])) {
                <td align="right">' . gaz_format_number($tot['vat']) . '</td>
                <td align="right">' . gaz_format_number($tot['tot']) . "</td>
                </tr>\n";
+		if ($v['tes']['country'] == 'IT') {
+			$check_failed_message = '';
+			if (strlen($v['tes']['citspe']) < 2) {
+				$check_failed_message = 'Localit&agrave; non valida';
+			}
+			if (strlen($v['tes']['prospe']) != 2) {
+				$check_failed_message = 'Sigla della provincia non valida';
+			}
+			if (strlen($v['tes']['capspe']) != 5 || !is_numeric($v['tes']['capspe'])) {
+				$check_failed_message = 'CAP non valido';
+			}
+		}
+		if (!empty($check_failed_message)) {
         echo '<tr class="FacetDataTD">
-               <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml che dovrà essere firmato ed inviato tramite SdI </td>
+               <td colspan="5" class="bg-danger" align="left">' . $check_failed_message . '</td>
+               <td colspan="3"></td>
+               </tr>';
+		}
+        echo '<tr class="FacetDataTD">
+               <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml che dovrà essere inviato tramite SdI </td>
                <td colspan="3" class="'.$cl_sdi.'">'.$v['tes']['pec_email'] . '</td>
                </tr>';
     }
