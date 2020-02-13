@@ -352,15 +352,19 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				echo '<td></td>';
 			}
 			echo '<td align="center"><a class="btn btn-xs btn-success" title="Download del pacchetto di fatture elettroniche" href="download_zip_package.php?fn='.$r['filename_zip_package'].'">Download <i class="glyphicon glyphicon-download"></i></a></td>';
-			if ($ctrl_zip == 'START_CHECK_VALUE') {
-				$class='btn btn-xs btn-default btn-elimina';
-				$title='Cancella il pacchetto di fatture elettroniche';
-				if ($r['flux_status'] == "@@" || $r['flux_status'] == "@"){
-					$class='btn btn-xs btn-danger btn-elimina';
-					$title='SEI SICURO? ATTENZIONE! Stai cancellando un pacchetto già inviato all\'intermediario';
+			if ($r['id_SDI'] == 0) {
+				if ($ctrl_zip == 'START_CHECK_VALUE') {
+					$class='btn btn-xs btn-default btn-elimina';
+					$title='Cancella il pacchetto di fatture elettroniche';
+					if ($r['flux_status'] == "@@" || $r['flux_status'] == "@"){
+						$class='btn btn-xs btn-danger btn-elimina';
+						$title='SEI SICURO? ATTENZIONE! Stai cancellando un pacchetto già inviato all\'intermediario';
+					}
+					// l'ultimo zip può essere eliminato ma se è stato inviato all'intermediario/servizio si deve controllare che il suo contenuto non sia stato trasmesso al SdI
+					echo '<td colspan="2"><a class="'.$class.'" title="'.$title.'" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-remove"></i></a></td>';
+				} else {
+					echo '<td colspan="2"></td>';
 				}
-				// l'ultimo zip può essere eliminato ma se è stato inviato all'intermediario/servizio si deve controllare che il suo contenuto non sia stato trasmesso al SdI
-				echo '<td colspan="2"><a class="'.$class.'" title="'.$title.'" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-remove"></i></a></td>';
 			} else {
 				echo '<td colspan="2"></td>';
 			}
