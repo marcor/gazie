@@ -22,9 +22,8 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-
 require("../../library/include/datlib.inc.php");
-
+$Cu_limit_anno=4; // Limite annuo in Kg di rame metallo ad ettaro
 $admin_aziend=checkAdmin();
 
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
@@ -108,7 +107,7 @@ if ($sta_fert==false){
 }
 $n=0; $campi=array(); 
 if (sizeof($result) > 0) { 
-	while (list($key, $row) = each($result)) {
+	foreach ($result as $key => $row) {	
 		If ($row['campo_coltivazione']>0 && $row['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
 				
 			if ($row['rame_metallico']>0 OR ($row['perc_N']>0 AND $sta_fert==true)){ // se l'articolo contiene rame metallo o azoto con stampa fertilizzazioni
@@ -184,7 +183,7 @@ $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',9);
   
 	for ($i=0; $i<$c+1; $i++) {
-		$rame_ammesso = $campi[$i]['superficie']*6;
+		$rame_ammesso = $campi[$i]['superficie']*$Cu_limit_anno;
 		if ($campi[$i]['ZVN']==0){
 			$N_ammesso = $campi[$i]['lim_N']*$campi[$i]['superficie'];
 		} else {

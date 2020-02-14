@@ -27,6 +27,7 @@
 */
 require ("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
+$Cu_limit_anno=4; // Limite annuo in Kg di rame metallo ad ettaro
 $lm = new lotmag;
 $g2Form = new campForm();
 $gForm = new magazzForm;
@@ -596,12 +597,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						$rame_met_annuo = $rame_met_annuo - $rame_metallo * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']);
 						$N_annuo = $N_annuo - ($perc_N * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']))/100;
 					}
-					if (($quanti>0 && $form['campo_coltivazione'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($rame_met_annuo + ($rame_metallo * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity'])) > (6 * $form['dim_campo'.$n]))) {
+					if (($quanti>0 && $form['campo_coltivazione'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($rame_met_annuo + ($rame_metallo * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity'])) > ($Cu_limit_anno * $form['dim_campo'.$n]))) {
 						$msg.= "26+"; // errore superato il limite di rame metallo ad ettaro                
 						?>
 						<div class="alert alert-warning alert-dismissible">
 						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-						<strong>Warning!</strong> ERRORE rame metallo <br> Rame metallo annuo già usato:  <?php echo gaz_format_quantity($rame_met_annuo, 1, $admin_aziend['decimal_quantity']); ?>Kg  - Rame metallo che si tenta di usare:  <?php echo gaz_format_quantity($rame_metallo * $quanti, 1, $admin_aziend['decimal_quantity']); ?>Kg - Limite annuo di legge per questo campo:  <?php echo gaz_format_quantity((6 * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']); ?>Kg
+						<strong>Warning!</strong> ERRORE rame metallo <br> Rame metallo annuo già usato:  <?php echo gaz_format_quantity($rame_met_annuo, 1, $admin_aziend['decimal_quantity']); ?>Kg  - Rame metallo che si tenta di usare:  <?php echo gaz_format_quantity($rame_metallo * $quanti, 1, $admin_aziend['decimal_quantity']); ?>Kg - Limite annuo di legge per questo campo:  <?php echo gaz_format_quantity(($Cu_limit_anno * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']); ?>Kg
 						</div>
 						<?php
 					}
