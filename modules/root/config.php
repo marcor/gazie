@@ -85,11 +85,13 @@ $result = gaz_dbi_dyn_query("*", $gTables['config'], 1, ' id ASC', 0, 1000);
                                         }
                                     } else {
                                         ?>
-                                        <input type="text<?php /* if ( strpos($r["variable"],"pass")===false ) {
-                              echo "text";
-                              } else {
-                              echo "password";
-                              } */ ?>" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["variable"]; ?>" placeholder="<?php echo $r["variable"]; ?>" value='<?php echo $r["cvalue"]; ?>' >
+                                        <input type="<?php  
+											if ($r["variable"]=='admin_mail_pass'||
+												$r["variable"]=='admin_smtp_password') {
+												echo "password";
+											} else {
+												echo "text";
+											} ?>" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["variable"]; ?>" placeholder="<?php echo $r["variable"]; ?>" value='<?php echo $r["cvalue"]; ?>' >
 
                                         <?php
                                     }
