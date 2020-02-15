@@ -206,7 +206,7 @@ if (isset($_POST['Submit'])) {
 					if (!empty($mod_data)) {
 						updateAccessRights($form["user_name"], $mod_data['id'], $value, $id[1]);
 					}
-				} elseif (preg_match("/^([0-9]{3})new_/", $key, $id) && $value == 3) { // il nuovo modulo non ÂŠ presente in gaz_module
+				} elseif (preg_match("/^([0-9]{3})new_/", $key, $id) && $value == 3) { // il nuovo modulo non è presente in gaz_module
 					$name = preg_replace("/^[0-9]{3}new_/", '', $key);
 					// includo il file dei dati per creazione del menÂ—
 					require("../../modules/" . $name . "/menu.creation_data.php");
@@ -232,6 +232,17 @@ if (isset($_POST['Submit'])) {
 							}
 						}
 						$m2_id ++;
+					}
+					if (isset($update_db)&&is_array($update_db)){ 
+						/* 
+						Se il nuovo modulo prevede un update della base dati allora eseguo (unatantum) le query in essa contenute; 
+						pertanto se si vuole modificare il database si deve valorizzare una variabile di nome "$update_db" del file 
+						menu.creatione_data.php  e mettere in essa tutte le query al database necessarie per il funzionamento del nuovo
+						modulo 
+						*/
+						foreach ($update_db as $vq) { 
+							gaz_dbi_query($vq);
+						}						
 					}
 				}
 			}
