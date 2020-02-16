@@ -37,6 +37,10 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['catmer'],"codice",$i);
 		break;
+		case "avversity":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['camp_avversita'],"id_avv",$i);
+		break;
 	}
 }
 ?>
