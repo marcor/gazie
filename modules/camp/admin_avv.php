@@ -58,7 +58,6 @@ $(function() {
 		$("p#iddescri").html($(this).attr("avvdes"));
 		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
-			position: { my:"right top", at:"center center center center", of: this },
 			minHeight: 1,
 			width: "auto",
 			modal: "true",
