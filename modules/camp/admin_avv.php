@@ -58,9 +58,9 @@ $(function() {
 		$("p#iddescri").html($(this).attr("avvdes"));
 		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
-			position: { my:"right top", at:"center center", of: this },
+			position: { my:"right top", at:"center center center center", of: this },
 			minHeight: 1,
-			width: 300,
+			width: "auto",
 			modal: "true",
 			show: "blind",
 			hide: "explode",
@@ -94,8 +94,9 @@ $recordnav = new recordnav($gTables['camp_avversita'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-	<div style="display:none" id="dialog_delete" title="Conferma l'eliminazione dell'Avversità:">
-        <p>Codice</p>
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+		<p><b>AVVERSITA':</b></p>
+		<p>Codice</p>
         <p class="ui-state-highlight" id="idcodice"></p>
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
