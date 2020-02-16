@@ -58,7 +58,6 @@ $(function() {
 		$( "#dialog_delete" ).dialog({
 			position: { my:"right top", at:"center center", of: this },
 			minHeight: 1,
-			width: 400,
 			modal: "true",
 			show: "blind",
 			hide: "explode",
@@ -94,8 +93,9 @@ $recordnav -> output();
 
 
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-	<div style="display:none" id="dialog_delete" title="Conferma l'eliminazione dellla categoria merceologica:">
-        <p>Codice</p>
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>CATEGORIA MERCEOLOGICA:</b></p>
+        <p>codice:</p>
         <p class="ui-state-highlight" id="idcodice"></p>
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
