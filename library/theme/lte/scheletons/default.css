@@ -51,8 +51,8 @@
 	max-width: 300px;
 }
 .usr-picture {
-    width: 33%;
-	max-width: 200px;
+    width: 200px;
+	/*max-width: 200px;*/
 }
 .btn-50 {
     width: 50px;
@@ -328,4 +328,27 @@
 
 .ui-sortable-handle{
 	padding: 2px;
+}
+
+[id^=position-] .panel {
+    min-height: 300px;
+}
+
+.panel-default  {
+    margin: auto;
+}
+
+.panel-success {
+    margin: auto;
+}
+
+.content-header > .breadcrumb {
+    float: left;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 11px;
+    padding: 7px 5px;
+    position: absolute;
+    top: 15px;
+    border-radius: 3px;
 }

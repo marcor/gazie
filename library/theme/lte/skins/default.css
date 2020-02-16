@@ -113,3 +113,21 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
 .row.alternate-row-even{
   background-color: #cccccc;
 }
+
+.panel-default  {
+    border-color: #88c086;
+}
+
+.panel-success {
+    border-color: #88c086;
+}
+
+.content-header > .breadcrumb {
+    background: transparent;
+    background: #ccf4ca;
+}
+
+.btn-effetti {
+    background-color: #D4CB6A;
+    color : #000;
+}
