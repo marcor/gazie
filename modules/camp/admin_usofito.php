@@ -308,19 +308,19 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[4]."</td><td clas
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"dose\" value=\"".number_format ($form['dose'],$admin_aziend['decimal_price'], ',', '')."\" maxlength=\"8\" size=\"10\" />";
 $res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $form['cod_art']);
 echo $res2['uniacq']."/ha</td></tr>\n";
-print "<tr>";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[10]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"tempo_sosp\" value=\"".$form['tempo_sosp']."\" maxlength=\"2\" size=\"2\" /> gg </td></tr>\n";
+print "<tr>";
 if ($toDo !== 'update') {
 	print "<td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n</td>";
 }
-print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
+print "<td class=\"FacetDataTD\" align=\"right\">\n";
 print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
 if ($toDo == 'update') {
    print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></td></tr><tr></tr>';
 } else {
    print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></td></tr><tr></tr>';
 }
-print "</td></tr></table>\n";
+print "</table>\n";
 ?>
 </form>
 
