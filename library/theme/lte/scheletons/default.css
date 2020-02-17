@@ -341,7 +341,6 @@
 .panel-success {
     margin: auto;
 }
-
 .content-header > .breadcrumb {
     float: left;
     margin-top: 0;
@@ -351,4 +350,7 @@
     position: absolute;
     top: 15px;
     border-radius: 3px;
+}
+.ui-dialog-titlebar-close {
+    visibility: hidden;
 }

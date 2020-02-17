@@ -867,3 +867,6 @@ label {
 [id^=position-] .panel {
     min-height: 250px;
 }
+.ui-dialog-titlebar-close {
+    visibility: hidden;
+}
