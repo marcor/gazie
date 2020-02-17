@@ -85,13 +85,56 @@ function getCont($codsil){
 		background: url(../../modules/camp/media/background_bar.jpg) no-repeat;
 	}
 </style>
-
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("capacity"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'recstocc',ref:id},
+						type: 'POST',
+						url: '../root/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./rec_stocc.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont">Recipienti di stoccaggio</div>
 <?php
 $recordnav = new recordnav($gTables['camp_recip_stocc'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+		<p><b>recipiente di stoccaggio:</b></p>
+		<p>Codice</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
             <tr>
@@ -165,7 +208,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			?>
 			</td>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina" href="delete_recip.php?codice=<?php echo $a_row["cod_silos"]; ?>">
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['cod_silos'];?>" capacity="<?php echo $a_row['capacita']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>
