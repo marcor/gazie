@@ -106,9 +106,10 @@ $strScript = array("browse_document.php" =>
 		"Dose",
 		"Codice già utilizzato",
 		"Coltura inesistente",
-		"Articolo inesistente",
+		"Campo fitofarmaco vuoto",
 		"Avversità inesistente",
-		"Tempo sospensione"
+		"Tempo sospensione",
+		"Fitofarmaco non presente in GAzie"
     ),
     "report_artico.php" =>
     array('title' => 'Lista delle merci e dei servizi',

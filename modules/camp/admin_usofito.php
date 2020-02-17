@@ -91,7 +91,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        } else {
 			$rs_ctrl = gaz_dbi_get_row($gTables['artico'],'codice',$form['cod_art']);
 				if (empty($rs_ctrl)){
-				$msg .= "8+";
+				$msg .= "11+";
 				}
 			}
 	   if (isset ($form['id_avv'])){ // controllo avversità vuota
@@ -203,10 +203,10 @@ if ($toDo == 'update') {
 	$("input#autocomplete").autocomplete({
 		source: [<?php
 	$stringa="";
-	$query="SELECT * FROM ".$gTables['artico'];
+	$query="SELECT prodotto FROM ".$gTables['camp_fitofarmaci'];
 	$result = gaz_dbi_query($query);
 	while($row = $result->fetch_assoc()){
-		$stringa.="\"".$row['codice']."\", ";			
+		$stringa.="\"".$row['prodotto']."\", ";			
 	}
 	$stringa=substr($stringa,0,-2);
 	echo $stringa;
