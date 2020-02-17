@@ -48,14 +48,57 @@ if (!isset($_GET['auxil'])) {
    $auxil = "";
    $where = "nome_colt like '".addslashes($auxil)."%'";
 }
-
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("coltdes"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'colture',ref:id},
+						type: 'POST',
+						url: '../root/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./admin_colt.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont">Colture</div>
 <?php
 $recordnav = new recordnav($gTables['camp_colture'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div style="display:none" id="dialog_delete" title="CONFERMA ELIMINAZIONE">
+		<p><b>COLTURA:</b></p>
+		<p>Codice</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
             <tr>
@@ -98,9 +141,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['id_colt']; ?>" data-title="<?php echo $a_row['nome_colt']; ?>"><?php echo $a_row["nome_colt"]; ?></span>
 			</td>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina" title="Elimina" href="delete_coltura.php?id_colt=<?php echo $a_row["id_colt"]; ?>">
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_colt'];?>" coltdes="<?php echo $a_row['nome_colt']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
-				</a>				
+				</a>
 			</td>
 		</tr>
 <?php

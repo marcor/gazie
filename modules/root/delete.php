@@ -41,6 +41,10 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['camp_avversita'],"id_avv",$i);
 		break;
+		case "colture":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['camp_colture'],"id_colt",$i);
+		break;
 	}
 }
 ?>
