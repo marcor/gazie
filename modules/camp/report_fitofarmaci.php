@@ -50,14 +50,57 @@ if (!isset($_GET['auxil'])) {
    $auxil = "";
    $where = "cod_art like '".addslashes($auxil)."%'";
 }
-
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("codart"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'usefito',ref:id},
+						type: 'POST',
+						url: '../root/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_fitofarmaci.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont">Modalità d'uso dei fitofarmaci</div>
 <?php
 $recordnav = new recordnav($gTables['camp_uso_fitofarmaci'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+		<p><b>modo d'uso fitofarmaco:</b></p>
+		<p>Codice</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
             <tr>
@@ -123,9 +166,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<span><?php echo $a_row["tempo_sosp"]," gg"; ?></span>
 			</td>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina" title="Elimina" href="delete_fitofarmaci.php?id=<?php echo $a_row["id"]; ?>">
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id'];?>" codart="<?php echo $a_row['cod_art']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
-				</a>				
+				</a>
 			</td>
 		</tr>
 <?php
