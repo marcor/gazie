@@ -361,7 +361,7 @@ function dialogSchedule(paymov) {
             getOtherMov(clfoco, tesdoc_ref, true);
         },
         buttons: {
-            "Conferma": function () {
+			"Conferma/chiudi": function () {
                 $(this).dialog("close");
             }
         },

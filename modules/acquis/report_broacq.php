@@ -130,8 +130,11 @@ function confirmemail(cod_partner,id_tes,genorder=false) {
 		modal: true,
 		show: "blind",
 		hide: "explode",
-		width: "400",
+		width: "auto",
 		buttons: {
+			Annulla: function() {
+				$(this).dialog('close');
+			},
 			Conferma: function() {
 				if ( !( emailRegex.test( $("#mailaddress").val() ) ) && !genorder ) {
 					alert('Mail formalmente errata');
@@ -173,6 +176,10 @@ function choicePartner(row)
 				show: "blind",
 				hide: "explode",
 				buttons: {
+					Annulla: function() {
+						$(this).dialog('destroy');
+						}
+					,
 					Duplica: function() {
 						window.location.href = 'duplicate_broacq.php?id_tes='+row+'&duplicate='+ui.item.codice;
 						}
@@ -410,7 +417,7 @@ function choicePartner(row)
     <fieldset>
         <div>
             <label id="maillabel" for="mailaddress">all'indirizzo:</label>
-            <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="50" size="40" />
+            <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="100" size="40" />
         </div>
         <div id="mailbutt">
 		</div>
