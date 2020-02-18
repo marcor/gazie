@@ -52,8 +52,56 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 require("./lang.".$admin_aziend['lang'].".php");
 $script_transl += $strScript["admin_caumag.php"];
+?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("caudes"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'caumag',ref:id},
+						type: 'POST',
+						url: '../root/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_caumag.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
+<?php
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl[1].$script_transl[0]."</div>\n";
 echo "<form method=\"GET\">";
+?>
+<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+		<p><b>causale di magazzino:</b></p>
+		<p>Codice</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+<?php
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr><td></td><td class=\"FacetFieldCaptionTD\">".$script_transl[2].":\n";
 echo "<input type=\"text\" name=\"auxil\" value=\"";
@@ -82,8 +130,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td align=\"center\">".$a_row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl[$a_row['clifor']+13]."</td>";
     echo "<td align=\"center\">".$script_transl[$a_row['operat']+9]."</td>";
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_caumag.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    echo "</tr>\n";
+    echo "<td align=\"center\">";
+	?>
+	<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" caudes="<?php echo $a_row['descri']; ?>">
+		<i class="glyphicon glyphicon-remove"></i>
+	</a>
+	<?php
+	echo"</td></tr>\n";
 }
 ?>
 </table>

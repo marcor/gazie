@@ -57,6 +57,13 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['campi'],"codice",$i);
 		break;
+		case "caumag":
+			if (intval($_POST['ref']) > 80) {
+				break;
+			}
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['caumag'],"codice",$i);
+		break;
 	}
 }
 ?>
