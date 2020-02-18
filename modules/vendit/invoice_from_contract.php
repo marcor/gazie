@@ -203,6 +203,7 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                     $conclusion_date
                 );
                 rigdocInsert($rows_data);
+				$cliente = gaz_dbi_get_row($gTables['clfoco'], "codice", $cntr['id_customer']);
                 //formatto il periodo
                 if (empty($val['last_month'])) { //first time
                     $y = floor($val['start_month'] / 12);
@@ -230,6 +231,9 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                     'codric' => $cntr['cod_revenue'],
                     'provvigione' => $cntr['provvigione']
                 );
+				if ($cliente['ritenuta'] > 0) {
+					$rows_data['ritenuta'] = $cliente['ritenuta'];
+				}
                 rigdocInsert($rows_data);
                 // e se ci sono altri addebiti
                 $rs_rows = gaz_dbi_dyn_query("*", $gTables['contract_row'], "id_contract = " . $val['id_contract'], 'id_row ASC');
@@ -245,6 +249,11 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                         'pervat' => $vat_per['aliquo'],
                         'codric' => $row['cod_revenue']
                     );
+					if ($rows_data['prelis'] != 0) {
+						if ($cliente['ritenuta'] > 0) {
+							$rows_data['ritenuta'] = $cliente['ritenuta'];
+						}
+					}
                     rigdocInsert($rows_data);
                 }
             }

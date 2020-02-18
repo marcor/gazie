@@ -960,7 +960,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if ($cliente['aliiva'] > 0) {
             $form['expense_vat'] = $cliente['aliiva'];
         }
-        if ($cliente['ritenuta'] > 0 && $admin_aziend['ritenuta'] == 0) { // carico la ritenuta se previsto
+        if ($cliente['ritenuta'] > 0) { // carico la ritenuta se previsto
             $form['in_ritenuta'] = $cliente['ritenuta'];
         }
         if ($cliente['addbol'] != 'S' && $form['virtual_taxstamp'] > 1) { // in caso di cliente senza addebito di bollo virtuale
@@ -1676,7 +1676,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
     $form['in_tipiva'] = 0;
-    $form['in_ritenuta'] = 0;
+	if ($cliente['ritenuta'] > 0) {
+		$form['in_ritenuta'] = $cliente['ritenuta'];
+	} else {
+		$form['in_ritenuta'] = 0;
+	}
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0;
     /** inizio modifica FP 09/10/2015
@@ -3326,7 +3330,6 @@ echo '</table>';
 		if (prevat!="" && pervat!="") {
 			var prelis = parseFloat(prevat)/(1+parseFloat(pervat)/100);
 			$("#cat_prelis").val(prelis.toFixed(<?php echo $admin_aziend['decimal_price'] ?>));
-			$("#cat_prelis").val(prelis.toFixed(2));
 		} else {
 			$("#cat_prelis").val("0");
 		}
