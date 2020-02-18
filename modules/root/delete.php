@@ -50,7 +50,12 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			gaz_dbi_del_row($gTables['camp_uso_fitofarmaci'],"id",$i);
 		break;
 		case "recstocc":
-			gaz_dbi_del_row($gTables['camp_recip_stocc'],"cod_silos",$_POST['ref']);
+			$i=substr($_POST['ref'],0,10);
+			gaz_dbi_del_row($gTables['camp_recip_stocc'],"cod_silos",$i);
+		break;
+		case "campi":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['campi'],"codice",$i);
 		break;
 	}
 }
