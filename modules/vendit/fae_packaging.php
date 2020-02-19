@@ -517,7 +517,7 @@ if (isset($_POST['preview'])) {
                <td>' . $script_transl['doc_type_value'][$v['tes']['tipdoc']] . '</td>
                <td>' . $v['tes']['numfat'] .'/'. $v['tes']['seziva'] .'</td>
                <td align="center">' . gaz_format_date($v['tes']['datfat']) . '</td>
-               <td>' . $v['tes']['ragsoc'] . '</td>
+               <td><a href="report_client.php?nome=' . $v['tes']['ragsoc'] . '" target="_blank">' . $v['tes']['ragsoc'] . '</a></td>
                <td align="right">' . gaz_format_number($tot['taxable']) . '</td>
                <td align="right">' . gaz_format_number($tot['vat']) . '</td>
                <td align="right">' . gaz_format_number($tot['tot']) . "</td>
@@ -536,7 +536,7 @@ if (isset($_POST['preview'])) {
 		}
 		if (!empty($check_failed_message)) {
         echo '<tr class="FacetDataTD">
-               <td colspan="5" class="bg-danger" align="left">' . $check_failed_message . '</td>
+               <td colspan="5" class="bg-danger" align="right">' . $check_failed_message . '</td>
                <td colspan="3"></td>
                </tr>';
 		}
