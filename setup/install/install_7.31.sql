@@ -1166,6 +1166,7 @@ INSERT INTO `gaz_001company_config` (`id`, `description`, `var`, `val`) VALUES
 (30, 'Eventuale ultimo rigo descrittivo su fatture es. Contributo CONAI', 'descriptive_last_row', NULL),
 (31, 'Eventuale ultimo rigo descrittivo su ddt (multiriga)', 'descriptive_last_ddt', ''),
 (32, 'Nome della libreria di terze parti da usare per la eventuale trasmissione delle fatture elettroniche', 'send_fae_zip_package', ''),
+(33, 'Nome della libreria di terze parti da usare per inviare sms', 'send_sms', ''),
 (35, 'Eventuale collegamento Sezione IVA - Regime Fiscale es.1=RF04;2=RF12', 'sezione_regime_fiscale', NULL),
 (36, 'Usa articoli composti come Kit o come Standard (KIT o STD)', 'tipo_composti', 'STD'),
 (37, 'Layout posizione logo su documenti (LEFT o DEFAULT)', 'layout_pos_logo_on_doc', 'DEFAULT'),
