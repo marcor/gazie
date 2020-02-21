@@ -76,7 +76,6 @@ $paymov->setScheduledPartner($admin_aziend['mascli']);
 if (sizeof($paymov->Partners) > 0) {
     $anagrafica = new Anagrafica();
     foreach ($paymov->Partners as $p) {
-        $anagrafica = new Anagrafica();
         $prt = $anagrafica->getPartner($p);
         $pdf->SetFont('helvetica', 'B', 10);
         $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
