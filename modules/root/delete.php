@@ -57,6 +57,66 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['campi'],"codice",$i);
 		break;
+		case "campmovmag":
+			$i=intval($_POST['ref']);
+			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);$id_mov=$i;$campo_coltivazione=$form['campo_coltivazione'];// Antonio Germani 
+			// inizio cancellazione ore operaio	
+			// controllo se clfoco è un operaio e ne prendo l'id_staff
+			$res = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $form['clfoco']);
+			If (isset ($res)) { // se c'è nello staff, cioè è un operaio			
+				$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $res['id_staff'], "AND work_day ='{$form['datdoc']}'");
+				If (isset($rin)) { // se esiste il giorno dell'operaio prendo le ore normali lavorate e gli sottraggo quelle del movimento da cancellare
+					$hours_normal=$rin['hours_normal']-$form['quanti'];
+					// ne aggiorno il database
+					$query = "UPDATE ". $gTables['staff_worked_hours']." SET hours_normal ='".$hours_normal."' WHERE id_staff = '".$res['id_staff']."' AND work_day = '".$form['datdoc']."'";
+					gaz_dbi_query($query);
+				}	
+			} 
+			// fine cancellazione ore operaio
+			if ($campo_coltivazione>0) { // se c'è un campo di coltivazione aggiorno il giorno di sospensione
+				$form2 = gaz_dbi_get_row($gTables['campi'], 'codice', intval($campo_coltivazione));
+				if (intval($form2['id_mov'])==intval($id_mov)){		
+					// prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione
+					$n=0;$array=array();
+					$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE campo_coltivazione ='". $campo_coltivazione."' AND operat ='-1' AND id_mov <> ".$form2['id_mov'];		
+					$result = gaz_dbi_query($query);
+					while($row = $result->fetch_assoc()) {
+						// cerco i giorni di sospensione del prodotto che si trovano in ogni movimento
+						$artico= $row['artico'];
+						$id_avversita=$row['id_avversita'];
+						$id_colture=$row['id_colture'];
+						$form3 =gaz_dbi_get_row($gTables['artico'], 'codice', $artico);
+						$temp_sosp = $form3['tempo_sospensione'];
+						// se è presente prendo il tempo di sospensione specifico altrimenti lascio quello generico
+						$query2="SELECT ".'tempo_sosp'." FROM ".$gTables['camp_uso_fitofarmaci']. " WHERE cod_art ='". $artico ."' AND id_colt ='".$id_colture."' AND id_avv ='".$id_avversita."'";
+						$result2 = gaz_dbi_query($query2);
+						while ($row2 = $result2->fetch_assoc()) {
+							$temp_sosp=$row2['tempo_sosp'];
+						}				
+						// creo un array con tempo di sospensione + codice articolo + movimento magazzino
+						$temp_deca=(intval($temp_sosp)*86400)+strtotime($row["datdoc"]);
+						$array[$n]= array('temp_deca'=>$temp_deca,'datdoc'=>$row["datdoc"],'artico'=>$artico, 'id_mov'=>$row["id_mov"]);
+						$n=$n+1;        
+					}
+					// ordino l'array per tempo di sospensione
+					rsort ($array);				
+					if (isset ($array[0]['temp_deca']) && $n>0) { // se c'è un tempo decadimento nei movimenti di magazzino e c'è almeno un movimento
+						// aggiorno la tabella del campo di coltivazione con il movimento di magazzino che ha il decadimento più elevato
+						$dt=date('Y/m/d', $array[0]['temp_deca']);
+						$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt .  "' , codice_prodotto_usato = '"  .$array[0]['artico']. "' , id_mov = '"  .$array[0]['id_mov'].  "' WHERE codice ='". intval($campo_coltivazione)."'";
+						gaz_dbi_query ($query) ;
+					} else { // in tutti gli altri casi
+						// aggiorno la tabella del campo di coltivazione azzerando il decadimento e l'ID movimento che lo ha creato
+						$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . "" .  "' , codice_prodotto_usato = '"  ."". "' , id_mov = '"  ."".  "' WHERE codice ='". intval($campo_coltivazione)."'";
+						gaz_dbi_query ($query) ;
+					}
+				}
+			}
+			gaz_dbi_del_row($gTables['movmag'],"id_mov",$i);	// cancello il movimento di magazzino		
+			if ($form['id_rif'] > 0) {  //se il movimento di magazzino è stato generato da un rigo di documento lo azzero
+				gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $form['id_rif'], 'id_mag', 0);
+			}
+		break;
 		case "caumag":
 			if (intval($_POST['ref']) > 80) {
 				break;

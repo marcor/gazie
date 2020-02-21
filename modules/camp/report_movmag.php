@@ -73,44 +73,85 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
    $flag_order = 'DESC';
    $flagorpost = 'ASC';
 }
-
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("caudes"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'campmovmag',ref:id},
+						type: 'POST',
+						url: '../root/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_movmag.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont "><?php echo $script_transl[14]; ?></div>
 <form method="GET">
-  <div class="table-responsive">
-    <table class="Tlarge table table-striped table-bordered table-condensed">
-	<tr>
-		<td class="FacetFieldCaptionTD">
-		  <input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
-		</td>
-		<td class="FacetFieldCaptionTD"></td>
-		<td class="FacetFieldCaptionTD"></td>
-		<td class="FacetFieldCaptionTD">
-			<input type="text" name="causale" placeholder="<?php echo "ID ",$strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
-		</td>
-		<!-- Antonio Germani - inserisco l'intestazione cerca per campi di coltivazione e avversità -->
-		<td class="FacetFieldCaptionTD">
-			<input type="text" name="campo" placeholder="<?php echo "ID ",$script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($campo))? $campo : ""; ?>" maxlength="" size="3" tabindex="1" class="FacetInput">
-		</td>
-		<td class="FacetFieldCaptionTD"></td>
-		<td class="FacetFieldCaptionTD"></td>
-		<td class="FacetFieldCaptionTD">
-			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
-		</td>
-		<td class="FacetFieldCaptionTD"></td>
-		
-		<td class="FacetFieldCaptionTD">
-			<input type="text" name="avversita" placeholder="<?php echo "ID ",$script_transl[7];?>" class="input-sm form-control" value="<?php echo (isset($avversita))? $avversita : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
-		</td>
-		<td class="FacetFieldCaptionTD"></td>
-		<td class="FacetFieldCaptionTD" colspan="4">
-			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
-			<input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
-		</td>
-	</tr>
-
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+		<p><b>movimento quaderno:</b></p>
+		<p>Codice</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+	<div class="table-responsive">
+		<table class="Tlarge table table-striped table-bordered table-condensed">
+			<tr>
+				<td class="FacetFieldCaptionTD">
+				<input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
+				</td>
+				<td class="FacetFieldCaptionTD"></td>
+				<td class="FacetFieldCaptionTD"></td>
+				<td class="FacetFieldCaptionTD">
+					<input type="text" name="causale" placeholder="<?php echo "ID ",$strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+				</td>
+				<!-- Antonio Germani - inserisco l'intestazione cerca per campi di coltivazione e avversità -->
+				<td class="FacetFieldCaptionTD">
+					<input type="text" name="campo" placeholder="<?php echo "ID ",$script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($campo))? $campo : ""; ?>" maxlength="" size="3" tabindex="1" class="FacetInput">
+				</td>
+				<td class="FacetFieldCaptionTD"></td>
+				<td class="FacetFieldCaptionTD"></td>
+				<td class="FacetFieldCaptionTD">
+					<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+				</td>
+				<td class="FacetFieldCaptionTD"></td>
+				
+				<td class="FacetFieldCaptionTD">
+					<input type="text" name="avversita" placeholder="<?php echo "ID ",$script_transl[7];?>" class="input-sm form-control" value="<?php echo (isset($avversita))? $avversita : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+				</td>
+				<td class="FacetFieldCaptionTD"></td>
+				<td class="FacetFieldCaptionTD" colspan="4">
+					<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
+					<input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
+				</td>
+			</tr>
 <?php
-
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
          LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['campi'].".codice)
 		 LEFT JOIN ".$gTables['camp_colture']." ON (".$gTables['movmag'].".id_colture = ".$gTables['camp_colture'].".id_colt)
@@ -198,8 +239,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	
 		echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["adminid"]." </td>\n";
 		
-		echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
-		echo "</tr>\n";		
+		echo "<td class=\"FacetDataTD\" align=\"center\">";
+		?>
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_mov'];?>" caudes="<?php echo $a_row['descau']; ?>">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>
+		<?php
+		echo "</td></tr>\n";
 		/* Incremento il totale */
 		$tot_movimenti += $valore;
 		
