@@ -95,7 +95,7 @@ $(function() {
 					$.ajax({
 						data: {'type':'campmovmag',ref:id},
 						type: 'POST',
-						url: '../root/delete.php',
+						url: '../camp/delete.php',
 						success: function(output){
 		                    //alert(output);
 							window.location.replace("./report_movmag.php");

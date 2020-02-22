@@ -71,7 +71,7 @@ $(function() {
 					$.ajax({
 						data: {'type':'campi',ref:id},
 						type: 'POST',
-						url: '../root/delete.php',
+						url: '../camp/delete.php',
 						success: function(output){
 		                    //alert(output);
 							window.location.replace("./report_campi.php");

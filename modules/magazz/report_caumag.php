@@ -74,7 +74,7 @@ $(function() {
 					$.ajax({
 						data: {'type':'caumag',ref:id},
 						type: 'POST',
-						url: '../root/delete.php',
+						url: '../magazz/delete.php',
 						success: function(output){
 		                    //alert(output);
 							window.location.replace("./report_caumag.php");

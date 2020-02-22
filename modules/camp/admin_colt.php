@@ -70,7 +70,7 @@ $(function() {
 					$.ajax({
 						data: {'type':'colture',ref:id},
 						type: 'POST',
-						url: '../root/delete.php',
+						url: '../camp/delete.php',
 						success: function(output){
 		                    //alert(output);
 							window.location.replace("./admin_colt.php");

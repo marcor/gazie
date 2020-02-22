@@ -72,7 +72,7 @@ $(function() {
 					$.ajax({
 						data: {'type':'usefito',ref:id},
 						type: 'POST',
-						url: '../root/delete.php',
+						url: '../camp/delete.php',
 						success: function(output){
 		                    //alert(output);
 							window.location.replace("./report_fitofarmaci.php");
