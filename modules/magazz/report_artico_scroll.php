@@ -190,13 +190,52 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
                 </a>
             </td>
             <td class="text-center">
-                <a class="btn btn-xs btn-default btn-elimina" href="delete_artico.php?codice=<?php echo $row["codice"]; ?>">
-                    <i class="glyphicon glyphicon-remove"></i>
-                </a>
+                <a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $row['codice'];?>" artico="<?php echo $row['descri']; ?>">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>
             </td>
         </tr>  
         <?php
     }
+	?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("artico"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'artico',ref:id},
+						type: 'POST',
+						url: '../magazz/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_artico.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
+	<?php
     exit();
 }
 ?>
