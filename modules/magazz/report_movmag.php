@@ -62,7 +62,51 @@ $t = new TableSorter($gTables['movmag'], $passo, ['id_mov' => 'desc']);
 $t->output_navbar();
 
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("movdes"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'movmag',ref:id},
+						type: 'POST',
+						url: '../root/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_movmag.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+		<p><b>movimento magazzino:</b></p>
+		<p>Codice</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
 	<div class="table-responsive">
 	<table class="Tlarge table table-striped table-bordered table-condensed">
 	<tr>
@@ -148,7 +192,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	}
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($valore)." </td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
+    echo "<td class=\"FacetDataTD\" align=\"center\">\n";
+	?>
+	<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_mov'];?>" movdes="<?php echo $a_row['descau']; ?>">
+	<i class="glyphicon glyphicon-remove"></i>
+	</a>
+	<?php
+	echo "</td>\n";
     echo "</tr>\n";
 	/** ENRICO FEDELE */
 	/* Incremento il totale */

@@ -124,6 +124,18 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['caumag'],"codice",$i);
 		break;
+		case "movmag":
+			$i=intval($_POST['ref']);
+			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);
+			gaz_dbi_del_row($gTables['movmag'], 'id_mov', $i); // cancello il movimento di magazzino
+			if ($form['id_rif'] > 0) {  //se il movimento di magazzino � stato generato da un rigo di documento lo azzero
+				gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $form['id_rif'], 'id_mag', 0);
+			}
+			$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+			if ($item['SIAN']>0){ // se è SIAN cancello anche il suo movimento
+				gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", intval($_POST['id_mov']));
+			}		
+		break;
 	}
 }
 ?>
