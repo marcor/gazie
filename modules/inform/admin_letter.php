@@ -154,26 +154,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce' */));
-/*
-  echo "<script type=\"text/javascript\">
-  // Initialize TinyMCE with the new plugin and menu button
-  tinyMCE.init({
-  mode : \"specific_textareas\",
-  theme : \"advanced\",
-  forced_root_block : false,
-  force_br_newlines : true,
-  force_p_newlines : false,
-  elements : \"corpo\",
-  plugins : \"table,advlink\",
-  theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
-  theme_advanced_buttons2 : \"\",
-  theme_advanced_buttons3 : \"\",
-  theme_advanced_toolbar_location : \"external\",
-  theme_advanced_toolbar_align : \"left\",
-  theme_advanced_resizing : true,
-  editor_selector  : \"mceClass1\",
-  });
-  </script>\n"; */
+?>
+<style>
+  #corpo_ifr{
+	min-height: 400px; 
+  }
+</style>
+<?php
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . ucfirst($script_transl[$toDo] . $script_transl['title'] . $script_transl[0][$form['tipo']]) . "</div>\n";
 echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
@@ -248,10 +235,9 @@ if (isset($partner['indspe'])) {
 }
 echo "</td></tr>\n";
 echo "<tr><td colspan=\"6\" class=\"FacetFieldCaptionTD\" align=\"center\">$script_transl[8]</td></tr>\n";
-//echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass1\" style=\"width:100%;height:200px;\">".$form["corpo"]."</textarea></td></tr>\n";
-echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass\" style=\"width:100%;height:200px;\">" . $form["corpo"] . "</textarea></td></tr>\n";
+echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass\">" . $form["corpo"] . "</textarea></td></tr>\n";
 echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[9]<input type=\"checkbox\" name=\"signature\" " . $form['signature'] . "></td>
-          <td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"submit\" accesskey=\"i\" name=\"ins\" value=\"" . $script_transl['submit'] . "\" /></td>
+          <td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"center\"><input type=\"submit\" class=\"btn btn-warning\" name=\"ins\" value=\"" . $script_transl['submit'] . "\" /></td>
           </tr>";
 echo "</table></div>";
 ?>
