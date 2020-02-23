@@ -54,7 +54,52 @@ if (!isset($_GET['field'])||empty($_GET['field']))
 $recordnav = new recordnav($gTables['orderman'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("orddes"));
+		var id = $(this).attr('ref');
+		var id2 = $(this).attr('ref2');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'orderman',ref:id,ref2:id2},
+						type: 'POST',
+						url: '../orderman/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./orderman_report.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>produzione:</b></p>
+        <p>codice:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
 	<div class="table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed ">
     	<thead>
@@ -141,7 +186,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			}
 			?>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina" href="delete_orderman.php?id=<?php echo $a_row['id']; ?>&id_tesbro=<?php echo $a_row['id_tesbro']; ?>">
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id'];?>" ref2="<?php echo $a_row['id_tesbro'];?>" orddes="<?php echo $a_row['description']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>
