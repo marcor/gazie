@@ -467,7 +467,10 @@ echo "</td></tr>\n";
 ?>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['Abilit']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Livello " type="text" name="Abilit" value="<?php print $form["Abilit"] ?>" maxlength="1" size="1" class="FacetInput">&nbsp;</td>
+<td colspan="2" class="FacetDataTD">
+<?php
+    $gForm->variousSelect('Abilit', $script_transl['Abilit_value'], $form['Abilit'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+?>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['mesg_co'][2]; ?></td>

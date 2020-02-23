@@ -457,6 +457,7 @@ $strScript = array(
         'user_email' => "Mail (anche per recupero password)",
         'image' => 'Immagine dell\'utente<br />(solo in formato JPG, max 64kb)',
         'Abilit' => "Livello",
+        'Abilit_value' => array('9' => 'Amministratore', '8' => 'Avanzato/Studente','5'=>'Utente','0'=>'Nessuno'),
 		'company'=>'Azienda',
         'mesg_co' => array('Non &egrave; stato trovato nulla!', 'Minimo 2 caratteri', 'Azienda di lavoro'),
         'Access' => "Accesso",
