@@ -132,7 +132,8 @@ $strScript = array("browse_document.php" =>
         "la descrizione &egrave; vuota!",
         "Il file immagine dev'essere nel formato PNG",
         "L'immagine non dev'essere pi&ugrave; grande di 64Kb",
-        'web_url' => 'Web url<br />(es: http://site.com/group.html)'
+        'web_url' => 'Web url<br />(es: http://site.com/group.html)',
+        'top' => 'Bottone su home ecommerce'
     ),
     "admin_ragstat.php" =>
     array("raggruppamento statistico ",

@@ -92,6 +92,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['codice'] = $catmer['codice'];
     $form['descri'] = $catmer['descri'];
     $form['web_url'] = $catmer['web_url'];
+    $form['top'] = $catmer['top'];
     $form['annota'] = $catmer['annota'];
     $form['ricarico'] = $catmer['ricarico'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
@@ -102,6 +103,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['descri'] = '';
     $form['ricarico'] = 0;
     $form['web_url']='';
+    $form['top'] = 0;
     $form['annota'] = '';
 }
 require("../../library/include/header.php");
@@ -111,6 +113,7 @@ if ($toDo == 'update') {
 } else {
    $title = ucwords($script_transl[$toDo].$script_transl[0]);
 }
+$gForm = new magazzForm();
 echo "<form method=\"POST\" enctype=\"multipart/form-data\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
@@ -144,6 +147,16 @@ echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['web_url']." </td>\n"
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"web_url\" value=\"".$form['web_url']."\" maxlength=\"255\" size=\"50\" /></td>\n";
 echo "</tr>\n";
+?>
+<tr>
+	<td class="FacetFieldCaptionTD"><?php echo $script_transl['top']; ?></td>
+	<td colspan="2" class="FacetDataTD">
+<?php
+	$gForm->selectNumber('top', $form['top'], true);
+?>
+	</td>
+</tr>
+<?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" />\n";
 echo "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\">\n";
 echo "</td><td class=\"FacetDataTD\" align=\"right\">\n";
