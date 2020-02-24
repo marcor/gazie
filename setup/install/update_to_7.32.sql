@@ -8,4 +8,6 @@ ALTER TABLE `gaz_XXXcatmer`	ADD COLUMN `ref_ecommerce_id_category` VARCHAR(50) N
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `ref_ecommerce_id_customer` VARCHAR(50) NULL DEFAULT '' COMMENT 'Codice di riferimento allo stesso cliente in eventuale ecommerce collegato attraverso API' AFTER `descri`, ADD INDEX `ref_ecommerce_id_customer` (`ref_ecommerce_id_customer`);
 INSERT INTO `gaz_XXXcompany_config` (`description`,`var`,`val`) VALUES ('Nome della libreria di terze parti da usare per inviare sms','send_sms','');
 ALTER TABLE `gaz_XXXcatmer`	ADD COLUMN `top` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'posizione di visualizzazione/pubblicazione' AFTER `ricarico`;
+SET @a  = 0 ;
+UPDATE `gaz_XXXartico` SET `ref_ecommerce_id_product` = @a:=@a+1 WHERE 1 ORDER BY `catmer`, `codice`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

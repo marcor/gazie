@@ -346,6 +346,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** fine modifica FP */
     // eventuale descrizione amplia
     $form['body_text'] = '';
+	// propongo il primo ID libero per l'ecommerce
+	$max_ref_ecommerce_id_product = gaz_dbi_query("select ref_ecommerce_id_product from ".$gTables['artico']." ORDER BY ref_ecommerce_id_product DESC LIMIT 1");
+    $max_id = gaz_dbi_fetch_array($max_ref_ecommerce_id_product);
+    $form['ref_ecommerce_id_product'] = ++$max_id[0];
+
 }
 
 /** ENRICO FEDELE */
@@ -908,6 +913,14 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="ref_ecommerce_id_product" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="ref_ecommerce_id_product" class="col-sm-4 control-label">ID ecommerce</label>
+                            <input class="col-sm-4" type="text" value="<?php echo $form['ref_ecommerce_id_product']; ?>" name="ref_ecommerce_id_product" maxlength="15" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
                 <div id="webMu" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
