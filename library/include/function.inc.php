@@ -3024,11 +3024,11 @@ class APIeCommerce {
 		// in configurazione Azienda è stato scelto di non aggiornare lo store
 		global $gTables,$admin_aziend;
 		if ($admin_aziend['update_ecommerce']==1){ // in configurazione azienda è richiesto l'aggiornamento 
-      $oc_api_url = gaz_dbi_get_row($gTables['company_data'], 'var','oc_api_url')['data'];
+      $this->oc_api_url = gaz_dbi_get_row($gTables['company_data'], 'var','oc_api_url')['data'];
       $oc_api_username = gaz_dbi_get_row($gTables['company_data'], 'var','oc_api_username')['data'];
       $oc_api_key = gaz_dbi_get_row($gTables['company_data'], 'var','oc_api_key')['data'];
 			// prendo il token
-			$curl = curl_init($oc_api_url);
+			$curl = curl_init($this->oc_api_url);
 			$post = array('username' => $oc_api_username,'key'=>$oc_api_key); 
 			curl_setopt_array($curl,array(CURLOPT_RETURNTRANSFER=>TRUE,CURLOPT_POSTFIELDS=>$post));
 			$raw_response = curl_exec($curl);
