@@ -70,6 +70,43 @@ if (isset($_GET['ricerca_completa'])) {
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("staffdes"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'staff',ref:id},
+						type: 'POST',
+						url: '../humres/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./staff_report.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont"> <?php
     echo $script_transl['title'] . '</div>';
     if ($admin_aziend['mas_staff'] <= 199) {
@@ -77,6 +114,13 @@ $script_transl = HeadMain();
     }
     ?>
     <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>lavoratore:</b></p>
+        <p>codice:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
 	<div class="table-responsive">
         <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
             <tr>
@@ -96,6 +140,7 @@ $script_transl = HeadMain();
             <tr>        
                 <?php
                 $result = gaz_dbi_dyn_query('*', $gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id'
+						. ' LEFT JOIN ' . $gTables['rigmoc'] . ' ON ' . $gTables['rigmoc'] . '.codcon = ' . $gTables['clfoco'] . '.codice'
                         . ' LEFT JOIN ' . $gTables['staff'] . ' ON ' . $gTables['staff'] . '.id_clfoco = ' . $gTables['clfoco'] . '.codice', $where. ' AND SUBSTRING(' . $gTables['staff'] . '.id_clfoco,4,6) > 0', $orderby, $limit, $passo);
                 $recordnav = new recordnav($gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $limit, $passo);
                 $recordnav->output();
@@ -156,8 +201,21 @@ $script_transl = HeadMain();
                     </a></td>';
 
                 // colonna stampa privacy
-                echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_staff.php?codice=" . $r["id_clfoco"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-                echo "</tr>\n";
+                echo "<td align=\"center\">";
+				if (intval($r['codcon']) > 0){					
+					?>
+					<a class="btn btn-xs btn-default btn-elimina" title="Collaboratore non cancellabile perche' ha movimenti contabili">
+						<i class="glyphicon glyphicon-ban-circle"></i>
+					</a>
+					<?php
+				} else {
+				?>
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id_clfoco'];?>" staffdes="<?php echo $r['ragso1']; ?>">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>
+				<?php
+				}
+				echo "</td></tr>\n";				
             }
             ?>
     </form>
