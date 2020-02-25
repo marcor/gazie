@@ -41,6 +41,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['pec'] = trim($form['pec']);
     $form['e_mail'] = trim($form['e_mail']);
     $form['web_url'] = trim($form['web_url']);
+    $form['update_ecommerce'] = intval($_POST['update_ecommerce']);
     $form['mascli'] = intval(substr($_POST['mascli'], 0, 3));
     $form['masfor'] = intval(substr($_POST['masfor'], 0, 3));
     $form['mas_staff'] = intval(substr($_POST['mas_staff'], 0, 3));
@@ -559,6 +560,16 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
                         <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="50" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['update_ecommerce']; ?></label>
+						<?php
+						$gForm->selectNumber('update_ecommerce', $form['update_ecommerce'], true,0,1,'col-xs-12 col-sm-6 col-md-4 col-lg-2');
+						?> 
                     </div>
                 </div>
             </div><!-- chiude row  -->
