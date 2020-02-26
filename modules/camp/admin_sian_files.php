@@ -167,7 +167,7 @@ if ($handle = opendir('../../data/files/'.$admin_aziend['codice'].'/sian/')){
 				<td data-title="Giorno"><?php echo $gio,"-",$mes,"-",$ann;?></td>
 				<td data-title="Tipo"><?php echo $filetype;?></td>
 				<td data-title="Scarica">
-				<a href="../camp/getfilesian.php?filename=<?php echo substr($file,0,-4);?>&folder=&ext=txt&company_id=1">
+				<a href="../camp/getfilesian.php?filename=<?php echo substr($file,0,-4);?>&folder=&ext=txt&company_id=<?php echo $admin_aziend['company_id'];?>">
 				<i class="glyphicon glyphicon-file" title="Scarica il file appena generato">
 				</i></a></td>
 				<?php
