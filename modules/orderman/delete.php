@@ -70,11 +70,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 		break;
 		case "luoghi":
 			$i=intval($_POST['ref']);
-			// controllo se ci sono movimenti di magazzino con questo luogo
-			$ctrl = gaz_dbi_get_row($gTables['movmag'], "campo_coltivazione", $i);
-			if (!isset($ctrl)) { // se non ci sono movimenti posso cancellare
-				gaz_dbi_del_row($gTables['campi'], "codice", $i);
-			} 			
+			gaz_dbi_del_row($gTables['campi'], "codice", $i);
 		break;
 	}
 }

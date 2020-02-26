@@ -26,8 +26,6 @@
 
 require("../../library/include/datlib.inc.php");
 
-
-
 $admin_aziend=checkAdmin();
 $titolo = 'Campi';
 require("../../library/include/header.php");
@@ -118,8 +116,9 @@ $recordnav -> output();
                 </td>
             </tr>
             <tr>
-<?php
-	$result = gaz_dbi_dyn_query ('*', $gTables['campi'], $where, $orderby, $limit, $passo);
+<?php 
+	$groupby= "codice";
+	$result = gaz_dbi_dyn_query ('*', $gTables['campi']. ' LEFT JOIN ' . $gTables['movmag'] . ' ON ' . $gTables['movmag'] . '.campo_coltivazione = ' . $gTables['campi'] . '.codice', $where, $orderby, $limit, $passo, $groupby);
 	// creo l'array (header => campi) per l'ordinamento dei record
 	$headers_campi = array("Codice"      => "codice",
 							"Descrizione" => "descri",
@@ -140,7 +139,7 @@ $recordnav -> output();
 <?php
 
 
-while ($a_row = gaz_dbi_fetch_array($result)) {
+while ($a_row = gaz_dbi_fetch_array($result)) { 
 ?>		<tr class="FacetDataTD">
 			<td>
 				<a class="btn btn-xs btn-success btn-block" href="admin_luoghi.php?Update&codice=<?php echo $a_row["codice"]; ?>">
@@ -162,12 +161,21 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			</a></td>
 			
 			<td align="center">
+			<?php 
+			if (intval ($a_row['campo_coltivazione'])>0) {
+				?>
+				<a class="btn btn-xs btn-default btn-elimina" title="Luogo non cancellabile perche' ha movimenti di magazzino">
+					<i class="glyphicon glyphicon-ban-circle"></i>
+				</a>
+				<?php
+			} else {
+				?>
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row["codice"];?>" luodes="<?php echo $a_row["descri"]; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
-			</td>
-		</tr>
-<?php
+				<?php
+			}
+			echo "</td></tr>";
 }
 ?>
 <tr class=\"FacetFieldCaptionTD\">
