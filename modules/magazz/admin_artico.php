@@ -75,89 +75,86 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 }
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
-    $form = gaz_dbi_parse_post('artico');
-    $form['codice'] = trim($form['codice']);
-    $form['ritorno'] = $_POST['ritorno'];
-    $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
-    // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
-    $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
-    $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
-    $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
-    $form['rows'] = array();
-    /** inizio modifica FP 03/12/2015
-     * fornitore
-     */
-    $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
-    foreach ($_POST['search'] as $k => $v) {
-        $form['search'][$k] = $v;
+  $form = gaz_dbi_parse_post('artico');
+  $form['codice'] = trim($form['codice']);
+  $form['ritorno'] = $_POST['ritorno'];
+  $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
+  // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
+  $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
+  $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
+  $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
+  $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
+  $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
+  $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
+  $form['rows'] = array();
+  /** inizio modifica FP 03/12/2015
+   * fornitore
+   */
+  $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
+  foreach ($_POST['search'] as $k => $v) {
+      $form['search'][$k] = $v;
+  }
+  /** fine modifica FP */
+  // inizio documenti/certificati
+  $ndoc = 0;
+  if (isset($_POST['rows'])) {
+    foreach ($_POST['rows'] as $ndoc => $value) {
+      $form['rows'][$ndoc]['id_doc'] = intval($value['id_doc']);
+      $form['rows'][$ndoc]['extension'] = substr($value['extension'], 0, 5);
+      $form['rows'][$ndoc]['title'] = substr($value['title'], 0, 255);
+      $ndoc++;
     }
-    /** fine modifica FP */
-    // inizio documenti/certificati
-    $ndoc = 0;
-    if (isset($_POST['rows'])) {
-        foreach ($_POST['rows'] as $ndoc => $value) {
-            $form['rows'][$ndoc]['id_doc'] = intval($value['id_doc']);
-            $form['rows'][$ndoc]['extension'] = substr($value['extension'], 0, 5);
-            $form['rows'][$ndoc]['title'] = substr($value['title'], 0, 255);
-            $ndoc++;
-        }
-    }
-    // fine documenti/certificati
+  }
+  // fine documenti/certificati
 	// Antonio Germani - inizio immagini e-commerce
-    $nimg = 0;
-    if (isset($_POST['imgrows'])) {
-        foreach ($_POST['rows'] as $nimg => $value) {
-            $form['imgrows'][$nimg]['id_doc'] = intval($value['id_doc']);
-            $form['imgrows'][$nimg]['extension'] = substr($value['extension'], 0, 5);
-            $form['imgrows'][$nimg]['title'] = substr($value['title'], 0, 255);
-            $nimg++;
-        }
+  $nimg = 0;
+  if (isset($_POST['imgrows'])) {
+    foreach ($_POST['rows'] as $nimg => $value) {
+      $form['imgrows'][$nimg]['id_doc'] = intval($value['id_doc']);
+      $form['imgrows'][$nimg]['extension'] = substr($value['extension'], 0, 5);
+      $form['imgrows'][$nimg]['title'] = substr($value['title'], 0, 255);
+      $nimg++;
     }
-    // fine inizio immagini e-commerce
-    $form['body_text'] = filter_input(INPUT_POST, 'body_text');
-
+  }
+  // fine inizio immagini e-commerce
+  $form['body_text'] = filter_input(INPUT_POST, 'body_text');
+  /** ENRICO FEDELE */
+  /* Controllo se il submit viene da una modale */
+  if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // conferma tutto
     /** ENRICO FEDELE */
-    /* Controllo se il submit viene da una modale */
-    if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // conferma tutto
-        /** ENRICO FEDELE */
-        if ($toDo == 'update') {  // controlli in caso di modifica
-            if ($form['codice'] != $form['ref_code']) { // se sto modificando il codice originario
-                // controllo che l'articolo ci sia gia'
-                $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '" . $form['codice'] . "'", "codice DESC", 0, 1);
-                $rs = gaz_dbi_fetch_array($rs_articolo);
-                if ($rs) {
-                    $msg['err'][] = 'codice';
-                }
-                // controllo che il precedente non abbia movimenti di magazzino associati
-                $rs_articolo = gaz_dbi_dyn_query('artico', $gTables['movmag'], "artico = '" . $form['ref_code'] . "'", "artico DESC", 0, 1);
-                $rs = gaz_dbi_fetch_array($rs_articolo);
-                if ($rs) {
-                    $msg['err'][] = 'movmag';
-                }
-            }
-        } else {
+    if ($toDo == 'update') {  // controlli in caso di modifica
+        if ($form['codice'] != $form['ref_code']) { // se sto modificando il codice originario
             // controllo che l'articolo ci sia gia'
             $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '" . $form['codice'] . "'", "codice DESC", 0, 1);
             $rs = gaz_dbi_fetch_array($rs_articolo);
             if ($rs) {
                 $msg['err'][] = 'codice';
             }
+            // controllo che il precedente non abbia movimenti di magazzino associati
+            $rs_articolo = gaz_dbi_dyn_query('artico', $gTables['movmag'], "artico = '" . $form['ref_code'] . "'", "artico DESC", 0, 1);
+            $rs = gaz_dbi_fetch_array($rs_articolo);
+            if ($rs) {
+                $msg['err'][] = 'movmag';
+            }
         }
-        if (!empty($_FILES['userfile']['name'])) {
-            if (!( $_FILES['userfile']['type'] == "image/png" ||
-                    $_FILES['userfile']['type'] == "image/x-png" ||
-                    $_FILES['userfile']['type'] == "image/jpeg" ||
-                    $_FILES['userfile']['type'] == "image/jpg" ||
-                    $_FILES['userfile']['type'] == "image/gif" ||
-                    $_FILES['userfile']['type'] == "image/x-gif"))
-                $msg['err'][] = 'filmim';
-            // controllo che il file non sia piu' grande di circa 64kb
-            if ($_FILES['userfile']['size'] > 65530){
-				 //$msg['err'][] = 'filsiz';
-				 //Antonio Germani anziche segnalare errore ridimensiono l'immagine
+    } else {
+        // controllo che l'articolo ci sia gia'
+        $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '" . $form['codice'] . "'", "codice DESC", 0, 1);
+        $rs = gaz_dbi_fetch_array($rs_articolo);
+        if ($rs) {
+            $msg['err'][] = 'codice';
+        }
+    }
+    if (!empty($_FILES['userfile']['name'])) {
+      if (!( $_FILES['userfile']['type'] == "image/png" ||
+              $_FILES['userfile']['type'] == "image/x-png" ||
+              $_FILES['userfile']['type'] == "image/jpeg" ||
+              $_FILES['userfile']['type'] == "image/jpg" ||
+              $_FILES['userfile']['type'] == "image/gif" ||
+              $_FILES['userfile']['type'] == "image/x-gif")) $msg['err'][] = 'filmim';
+				// controllo che il file non sia piu' grande di circa 64kb
+      if ($_FILES['userfile']['size'] > 65530){
+				//Antonio Germani anziche segnalare errore ridimensiono l'immagine
 				$maxDim = 190;
 				$file_name = $_FILES['userfile']['tmp_name'];
 				list($width, $height, $type, $attr) = getimagesize( $file_name );
@@ -168,8 +165,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 						$new_width = $maxDim;
 						$new_height = $maxDim/$ratio;
 					} else {
-							$new_width = $maxDim*$ratio;
-							$new_height = $maxDim;
+						$new_width = $maxDim*$ratio;
+						$new_height = $maxDim;
 					}
 					$src = imagecreatefromstring( file_get_contents( $file_name ) );
 					$dst = imagecreatetruecolor( $new_width, $new_height );
@@ -178,104 +175,116 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 					imagepng( $dst, $target_filename); // adjust format as needed
 					imagedestroy( $dst );
 				}
-				// fine ridimensionamento immagine
-				$largeimg=1;
+			// fine ridimensionamento immagine
+			$largeimg=1;
 			}
-        }
-        if (empty($form["codice"])) {
-            $msg['err'][] = 'valcod';
-        }
-        if (empty($form["descri"])) {
-            $msg['err'][] = 'descri';
-        }
-/* OBBLIGO AD UNA SOLA UNITA' DI MISURA*/
-        if (empty($form["unimis"])&&empty($form["uniacq"])) {
-            $msg['err'][] = 'unimis';
-        }elseif(empty($form["unimis"])){
-			$form["unimis"]=$form["uniacq"];
-		}else{
-			$form["uniacq"]=$form["unimis"];
-		}
-
-        if (empty($form["aliiva"])) {
-            $msg['err'][] = 'aliiva';
-        }
-        // per poter avere la tracciabilità è necessario attivare la contabità di magazzino in configurazione azienda
-        if ($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1) {
-            $msg['err'][] = 'lotmag';
-        }
-		// controllo che non ci siano caratteri speciali sul codice articolo (danno problemi con l'inventario)
-		/*$pattern = '/[\'\/~`\!@#\$%\^&\*\(\) \+=\{\}\[\]\|;:"\<\>,\.\?\\\]/';
-        if (preg_match($pattern, $form["codice"],$match)) {
-			$form["codice"] = str_replace($match,'_',$form["codice"]);
-            $msg['err'][] = 'char';
-        }*/
-		$codart_len = gaz_dbi_get_row($gTables['company_config'], 'var', 'codart_len')['val'];
-        if ($codart_len > 0 && strlen(trim($form['codice'])) <> $codart_len) {
-            $msg['err'][] = 'codart_len';
-        }
-		
-        if (count($msg['err']) == 0) { // nessun errore
-            if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
-				if ($largeimg==0){
-					$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
-				} else {
-					$form['image'] = file_get_contents($target_filename);
-				}
-            } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
-                $oldimage = gaz_dbi_get_row($gTables['artico'], 'codice', $form['ref_code']);
-                $form['image'] = $oldimage['image'];
-            } else {
-                $form['image'] = '';
-            }
-            /** inizio modifica FP 03/12/2015
-             * aggiorno il campo con il codice fornitore
-             */
-            $form['clfoco'] = $form['id_anagra'];
-            /** fine modifica FP */
-            $tbt = trim($form['body_text']);
-            // aggiorno il db
-            if ($toDo == 'insert') {
-                gaz_dbi_table_insert('artico', $form);
-                if (!empty($tbt)) {
-                    bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-                }
-            } elseif ($toDo == 'update') {
-                gaz_dbi_table_update('artico', $form['ref_code'], $form);
-                $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
-                if (empty($tbt) && $bodytext) {
-                    // è vuoto il nuovo ma non lo era prima, allora lo cancello
-                    gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
-                } elseif (!empty($tbt) && $bodytext) {
-                    // c'è e c'era quindi faccio l'update
-                    bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-                } elseif (!empty($tbt)) {
-                    // non c'era lo inserisco
-                    bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-                }
-            }
-            /** ENRICO FEDELE */
-            /* Niente redirect se sono in finestra modale */
-            if ($modal === false) {
-				if ($toDo == 'insert') {
-					$_SESSION['ok_ins']=$form['codice'].' - '.$form['descri'];
-					header("Location: ../../modules/magazz/admin_artico.php?Update&codice=".$form['codice']);
-				}else{
-					header("Location: ../../modules/magazz/report_artico.php");
-				}
-            } else {
-                header("Location: ../../modules/magazz/admin_artico.php?mode=modal&ok_insert=1");
-            }
-            /** ENRICO FEDELE */
-            exit;
-        }
-        /** ENRICO FEDELE */
-    } elseif (isset($_POST['Return']) && $modal === false) { // torno indietro
-        /* Solo se non sono in finestra modale */
-        /** ENRICO FEDELE */
-        header("Location: " . $form['ritorno']);
-        exit;
     }
+    if (empty($form["codice"])) {
+        $msg['err'][] = 'valcod';
+    }
+    if (empty($form["descri"])) {
+        $msg['err'][] = 'descri';
+    }
+		/*OBBLIGO AD UNA SOLA UNITA' DI MISURA*/
+    if (empty($form["unimis"])&&empty($form["uniacq"])) {
+        $msg['err'][] = 'unimis';
+    }elseif(empty($form["unimis"])){
+		$form["unimis"]=$form["uniacq"];
+	}else{
+		$form["uniacq"]=$form["unimis"];
+	}
+  if (empty($form["aliiva"])) {
+      $msg['err'][] = 'aliiva';
+  }
+  // per poter avere la tracciabilità è necessario attivare la contabità di magazzino in configurazione azienda
+  if ($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1) {
+      $msg['err'][] = 'lotmag';
+  }
+	// controllo che non ci siano caratteri speciali sul codice articolo (danno problemi con l'inventario)
+	/*$pattern = '/[\'\/~`\!@#\$%\^&\*\(\) \+=\{\}\[\]\|;:"\<\>,\.\?\\\]/';
+		if (preg_match($pattern, $form["codice"],$match)) {
+		$form["codice"] = str_replace($match,'_',$form["codice"]);
+      $msg['err'][] = 'char';
+  }*/
+	$codart_len = gaz_dbi_get_row($gTables['company_config'], 'var', 'codart_len')['val'];
+  if ($codart_len > 0 && strlen(trim($form['codice'])) <> $codart_len) {
+      $msg['err'][] = 'codart_len';
+  }
+	
+  if (count($msg['err']) == 0) { // nessun errore
+    if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
+			if ($largeimg==0){
+				$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
+			} else {
+				$form['image'] = file_get_contents($target_filename);
+			}
+    } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
+      $oldimage = gaz_dbi_get_row($gTables['artico'], 'codice', $form['ref_code']);
+      $form['image'] = $oldimage['image'];
+    } else {
+      $form['image'] = '';
+    }
+    /** inizio modifica FP 03/12/2015
+     * aggiorno il campo con il codice fornitore
+     */
+    $form['clfoco'] = $form['id_anagra'];
+    /** fine modifica FP */
+    $tbt = trim($form['body_text']);
+    // aggiorno il db
+    if ($toDo == 'insert') {
+      gaz_dbi_table_insert('artico', $form);
+      if (!empty($tbt)) {
+        bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      }
+    } elseif ($toDo == 'update') {
+      gaz_dbi_table_update('artico', $form['ref_code'], $form);
+      $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
+      if (empty($tbt) && $bodytext) {
+          // è vuoto il nuovo ma non lo era prima, allora lo cancello
+          gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
+      } elseif (!empty($tbt) && $bodytext) {
+          // c'è e c'era quindi faccio l'update
+          bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      } elseif (!empty($tbt)) {
+          // non c'era lo inserisco
+          bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      }
+    }
+		// aggiorno l'e-commerce ove presente
+		$api = new APIeCommerce();
+		if($api->api_token){
+			$form['heximage']=bin2hex($form['image']);
+			if($admin_aziend['conmag'] <= 1){ // se non gestisco la contabilità di magazzino ci indico solo la scorta e metto sempre disponibile
+				$form['quantity']=intval($form['scorta']);
+			} else {
+				$form['quantity']=intval($magval['q_g']);
+			}
+			$api->UpsertProduct($form);
+			//print $api->rawres;
+			//exit;
+		}
+    /** ENRICO FEDELE */
+    /* Niente redirect se sono in finestra modale */
+    if ($modal === false) {
+			if ($toDo == 'insert') {
+				$_SESSION['ok_ins']=$form['codice'].' - '.$form['descri'];
+				header("Location: ../../modules/magazz/admin_artico.php?Update&codice=".$form['codice']);
+			}else{
+				header("Location: ../../modules/magazz/report_artico.php");
+			}
+    } else {
+			header("Location: ../../modules/magazz/admin_artico.php?mode=modal&ok_insert=1");
+    }
+    /** ENRICO FEDELE */
+    exit;
+  }
+  /** ENRICO FEDELE */
+} elseif (isset($_POST['Return']) && $modal === false) { // torno indietro
+      /* Solo se non sono in finestra modale */
+      /** ENRICO FEDELE */
+      header("Location: " . $form['ritorno']);
+      exit;
+  }
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15));
     /** ENRICO FEDELE */
