@@ -956,12 +956,14 @@ function movmagInsert($newValue) {
   $newValue['adminid'] = $_SESSION["user_name"];
   tableInsert($table, $columns, $newValue);
 	// aggiorno l'e-commerce ove presente
-	$api = new APIeCommerce();
-	if($api->api_token && isset($newValue['artico'])){
-		$api->SetProductQuantity($newValue['artico']);
+	if (class_exists('APIeCommerce')){
+		$api = new APIeCommerce();
+		if($api->api_token && isset($newValue['artico'])){
+			$api->SetProductQuantity($newValue['artico']);
+		}
+		//print $api->rawres;
+		//exit;
 	}
-	//print $api->rawres;
-	//exit;
 }
 
 function movmagUpdate($codice, $newValue) {
@@ -970,12 +972,14 @@ function movmagUpdate($codice, $newValue) {
   $newValue['adminid'] = $_SESSION["user_name"];
   tableUpdate($table, $columns, $codice, $newValue);
 	// aggiorno l'e-commerce ove presente
-	$api = new APIeCommerce();
-	if($api->api_token && isset($newValue['artico'])){
-		$api->SetProductQuantity($newValue['artico']);
+	if (class_exists('APIeCommerce')){
+		$api = new APIeCommerce();
+		if($api->api_token && isset($newValue['artico'])){
+			$api->SetProductQuantity($newValue['artico']);
+		}
+		//print $api->rawres;
+		//exit;
 	}
-	//print $api->rawres;
-	//exit;
 }
 
 //===============================================================
