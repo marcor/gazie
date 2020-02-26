@@ -85,7 +85,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 					// aggiorno l'e-commerce ove presente
 					$api = new APIeCommerce();
 					if($api->api_token){
-						$form['image']=bin2hex($form['image']);
+						$form['heximage']=bin2hex($form['image']);
 						$api->UpsertCategory($form);
 					}
           header("Location: ".$_POST['ritorno']);
