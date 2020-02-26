@@ -566,10 +566,8 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['update_ecommerce']; ?></label>
-						<?php
-						$gForm->selectNumber('update_ecommerce', $form['update_ecommerce'], true,0,1,'col-xs-12 col-sm-6 col-md-4 col-lg-2');
-						?> 
+                        <label for="sync_ecom_mod" class="col-sm-4 control-label"><?php echo $script_transl['sync_ecom_mod']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['sync_ecom_mod']; ?>" name="sync_ecom_mod" maxlength="50" />
                     </div>
                 </div>
             </div><!-- chiude row  -->

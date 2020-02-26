@@ -2416,9 +2416,13 @@ function checkAdmin($Livaut = 0) {
         exit;
     } else {
         $_SESSION["Abilit"] = true;
+				// includo le funzioni per la sincronizzazione dello shop online
+				if (file_exists('../'.$admin_aziend['sync_ecom_mod'].'/sync.function.php')) {
+					require('../'.$admin_aziend['sync_ecom_mod'].'/sync.function.php');
+				}
     }
-
     return array_merge($admin_aziend, $currency);
+		
 }
 
 function changeEnterprise($new_co = 1) {
@@ -3014,42 +3018,10 @@ class Schedule {
 
 }
 
-class APIeCommerce {
-
-	function __construct() {
-		// Quando istanzio questa classe prendo il token, sempre.
-		// Ogni modulo la estenderà di funzioni nel file inc.function.php ma usarà questo token
-		// ottenuto al fine di scambiare informazioni con il sito e-commerce, sotto un esempio.
-		// Se $this->api_token ritorna FALSE vuol dire che le credenziali sono sbagliate oppure 
-		// in configurazione Azienda è stato scelto di non aggiornare lo store
-		global $gTables,$admin_aziend;
-		if ($admin_aziend['update_ecommerce']==1){ // in configurazione azienda è richiesto l'aggiornamento 
-      $this->oc_api_url = gaz_dbi_get_row($gTables['company_data'], 'var','oc_api_url')['data'];
-      $oc_api_username = gaz_dbi_get_row($gTables['company_data'], 'var','oc_api_username')['data'];
-      $oc_api_key = gaz_dbi_get_row($gTables['company_data'], 'var','oc_api_key')['data'];
-			// prendo il token
-			$curl = curl_init($this->oc_api_url);
-			$post = array('username' => $oc_api_username,'key'=>$oc_api_key); 
-			curl_setopt_array($curl,array(CURLOPT_RETURNTRANSFER=>TRUE,CURLOPT_POSTFIELDS=>$post));
-			$raw_response = curl_exec($curl);
-			if(!$raw_response){
-				$this->api_token=false;
-			}else{
-				$res = json_decode($raw_response);
-				$this->api_token=$res->api_token;
-				curl_close($curl);		
-      }
-		}else{
-			$this->api_token=false;
-		}
-	}
-}
-
 /* controllo se ho delle funzioni specifiche per il modulo corrente
   residente nella directory del module stesso, con queste caratteristiche:
   modules/nome_modulo/lib.function.php
  */
-
 if (@file_exists('./lib.function.php')) {
     require('./lib.function.php');
 }
