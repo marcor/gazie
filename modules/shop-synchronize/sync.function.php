@@ -59,5 +59,10 @@ class APIeCommerce {
 			curl_close($curl);		
     }
 	}
+
+	function UpsertCategory($d) {
+		// usando il token precedentemente avuto si dovranno eseguire tutte le operazioni necessarie ad aggiornare la categorie merceologica quindi:
+		// in base alle API messe a disposizione dallo specifico store (Opencart,Prestashop,Magento,ecc) si passeranno i dati in maniera opportuna...
+	}
 }
 ?>
