@@ -67,5 +67,8 @@ class APIeCommerce {
 	function UpsertProduct($d) {
 		// aggiorno l'articolo di magazzino (product)
 	}
+	function SetProductQuantity($d) {
+		// aggiorno la quantità disponibile (quantity)
+	}
 }
 ?>

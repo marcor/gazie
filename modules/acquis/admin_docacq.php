@@ -1808,6 +1808,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
     <input type="hidden" value="<?php echo $form['in_pesosp']; ?>" name="in_pesosp" />
     <input type="hidden" value="<?php echo $form['in_quamag']; ?>" name="in_quamag" />
     <input type="hidden" value="<?php echo $form['in_scorta']; ?>" name="in_scorta" />
+    <input type="hidden" value="<?php echo $form['in_codric']; ?>" name="in_codric" />
     <input type="hidden" value="<?php echo $form['in_ritenuta']; ?>" name="in_ritenuta" />
     <input type="hidden" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
     <input type="hidden" value="<?php echo $form['in_gooser']; ?>" name="in_gooser" />
