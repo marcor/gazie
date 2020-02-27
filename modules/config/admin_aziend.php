@@ -215,6 +215,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     gaz_dbi_put_row($gTables['config'], 'variable', 'intermediary', 'cvalue', 0);
                 }
             }
+					if (class_exists('APIeCommerce')){
+						// aggiorno l'e-commerce ove presente
+						$api = new APIeCommerce();
+						if($api->api_token){
+							$api->SetupStore();
+						}
+						//print $api->rawres;
+						//exit;
+					}
+						
             header("Location: ../root/admin.php");
             exit;
         }

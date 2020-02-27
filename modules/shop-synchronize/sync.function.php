@@ -59,7 +59,9 @@ class APIeCommerce {
 			curl_close($curl);		
     }
 	}
-
+	function SetupStore() {
+		// aggiorno i dati comuni a tutto lo store: Anagrafica Azienda, Aliquote IVA, dati richiesti ai nuovi clienti (CF,PI,indirizzo,ecc) in custom_field e tutto ciò che necessita per evitare di digitarlo a mano su ecommerce-admin 
+	}
 	function UpsertCategory($d) {
 		// usando il token precedentemente avuto si dovranno eseguire tutte le operazioni necessarie ad aggiornare la categorie merceologica quindi:
 		// in base alle API messe a disposizione dallo specifico store (Opencart,Prestashop,Magento,ecc) si passeranno i dati in maniera opportuna...
@@ -69,6 +71,10 @@ class APIeCommerce {
 	}
 	function SetProductQuantity($d) {
 		// aggiorno la quantità disponibile (quantity)
+	}
+	function GetOrder($last_id) {
+		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer), 
+		// in $last_id si deve passare l'ultimo ordine già importato al fine di non importare tutto ma solo i nuovi 
 	}
 }
 ?>
