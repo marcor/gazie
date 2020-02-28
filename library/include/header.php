@@ -25,12 +25,26 @@
  */
 
 if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
-    $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
+	$_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
 }
 if (!empty($_SESSION['theme']) && file_exists("../.." . $_SESSION['theme'] . "/header.php")) {
-    include "../.." . $_SESSION['theme'] . "/header.php";
-} else {
-    $_SESSION['theme']='/library/theme/g7';
-    include "../../library/theme/g7/header.php";
+	include "../.." . $_SESSION['theme'] . "/header.php";
+} else { // se non trovo il mio tema utilizzo il primo che incontro nella dir
+	$theme=false;
+	if ($handle = opendir("../../library/theme")) {
+    while (false !== ($entry = readdir($handle))) {
+			if ($entry === "." || $entry === "..") continue;
+			if (is_dir($entry)){
+				$theme=true;
+				$_SESSION['theme']='/library/theme/'.$entry;
+				include "../../library/theme/".$entry."/header.php";
+				break;				
+			}
+		}
+    closedir($handle);
+	} 
+	if(!$theme){
+		echo "<p><br /><br />ERRORE: Non ho trovato un tema in 'library/theme' ! </p>";
+	}
 }
 ?>
