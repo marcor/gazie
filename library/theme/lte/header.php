@@ -65,17 +65,17 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-title" content="GAzie - Gestione AZIEndale">
+		<meta name="apple-mobile-web-app-title" content="<?php echo $admin_aziend['ragso1'];?>">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-        <title><?php echo gettitolo($mod_uri).' > '.$admin_aziend['ragso1']; ?></title>
-        <link rel="shortcut icon" href="../../library/images/favicon.ico">			
-		<link rel="icon" sizes="192x192" href="../../library/images/gaz192.png" />
-		<link rel="apple-touch-icon" href="../../library/images/apple-icon-114x114-precomposed.png">
-		<link rel="apple-touch-startup-image" href="../../library/images/apple-icon-114x114-precomposed.png">		
-		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="../../library/images/apple-icon-57x57-precomposed.png" />
-		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../library/images/apple-icon-72x72-precomposed.png" />
-		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../library/images/apple-icon-114x114-precomposed.png" />
-		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../library/images/apple-icon-144x144-precomposed.png" />
+		<?php
+			$ico=base64_encode(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/favicon.ico'));
+			$ico114=base64_encode(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/logo_114x114.png'));
+		?>
+        <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico?>"  type="image/x-icon" />
+		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
+		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
+		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">		
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
