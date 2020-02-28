@@ -2,6 +2,10 @@ UPDATE `gaz_config` SET `cvalue` = '127' WHERE `id` =2;
 UPDATE `gaz_admin` SET `style`='default.css',`skin`='default.css' WHERE 1;
 ALTER TABLE `gaz_breadcrumb` ADD COLUMN `grid_class` VARCHAR(127) NOT NULL DEFAULT '' AFTER `icon`;
 ALTER TABLE `gaz_aziend` ADD COLUMN `sync_ecom_mod` VARCHAR(50) NOT NULL DEFAULT 'shop-synchronize' COMMENT 'indico il modulo dove trovare la classe contenente le funzioni  necessarie per aggiornare un sito ecommerce tramite le sue API ad ogni cambiamento di movimento di magazzino, cliente, articolo, categoria merceologica, aliquota IVA, presenza di nuovi ordini e/o clienti inseriti dal sito. GAzie provvederà a fare delle chiamate alle funzioni contenute in essa' AFTER `web_url`;
+ALTER TABLE `gaz_anagra` CHANGE `indspe` `indspe` VARCHAR( 60 ) NOT NULL ;
+ALTER TABLE `gaz_anagra` CHANGE `citspe` `citspe` VARCHAR( 60 ) NOT NULL ;
+ALTER TABLE `gaz_anagra` CHANGE `e_mail` `e_mail` VARCHAR( 60 ) NOT NULL ;
+ALTER TABLE `gaz_anagra` CHANGE `pec_email` `pec_email` VARCHAR( 60 ) NOT NULL ;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesbro`	ADD COLUMN `ref_ecommerce_id_order` VARCHAR(50) NULL DEFAULT '' COMMENT 'Identificativo ordine attribuito dall\'eventuale ecommerce collegato attraverso API' AFTER `tipdoc`, ADD INDEX `ref_ecommerce_id_order` (`ref_ecommerce_id_order`);
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `ref_ecommerce_id_product` VARCHAR(50) NULL DEFAULT '' COMMENT 'Codice di riferimento allo stesso articolo in eventuale ecommerce collegato attraverso API' AFTER `codice_fornitore`, ADD INDEX `ref_ecommerce_id_product` (`ref_ecommerce_id_product`);
