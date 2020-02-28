@@ -178,7 +178,53 @@ function confirFae(link){
 
 </script>';
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("ragso1"));
+		var id = $(this).attr('ref');
+		var id2 = $(this).attr('seziva');
+		var id3 = $(this).attr('anno');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'docven',ref:id,seziva:id2,anno:id3},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_docven.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET" >
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>documento di vendita:</b></p>
+        <p>Protocollo:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Cliente:</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
         <p class="ui-state-highlight" id="mail_adrs"></p>
@@ -481,10 +527,18 @@ function confirFae(link){
                     if ($ultimo_documento['id_tes'] == $r["id_tes"] || ($ultimo_documento['tipdoc'] == 'FAD' && $ultimo_documento['protoc'] == $r['protoc'])) {
                         // Permette di cancellare il documento.
                         if ($r["id_con"] > 0) {
-                            echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"Cancella il documento e la registrazione contabile relativa\" href=\"delete_docven.php?seziva=" . $r["seziva"] . "&protoc=" . $r['protoc'] . "&anno=" . substr($r["datfat"], 0, 4) . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
-                        } else {
-                            echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"Cancella il documento\" href=\"delete_docven.php?seziva=" . $r["seziva"] . "&protoc=" . $r['protoc'] . "&anno=" . substr($r["datfat"], 0, 4) . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
-                        }
+							?>
+							<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $r['protoc'];?>" ragso1="<?php echo $r['ragso1']; ?>" seziva="<?php echo $r['seziva']; ?>" anno="<?php echo substr($r["datfat"], 0, 4); ?>">
+								<i class="glyphicon glyphicon-remove"></i>
+							</a>
+							<?php
+						} else {
+							?>
+							<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['protoc'];?>" ragso1="<?php echo $r['ragso1']; ?>" seziva="<?php echo $r['seziva']; ?>" anno="<?php echo substr($r["datfat"], 0, 4); ?>">
+								<i class="glyphicon glyphicon-remove"></i>
+							</a>
+							<?php
+						}
                     } else {
                         echo "<button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button>";
                     }

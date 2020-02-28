@@ -22,7 +22,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-// prevent direct access
+/// prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 if (!$isAjax) {
@@ -52,10 +52,8 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 					$row = gaz_dbi_fetch_array($result);
 					$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = '" . substr($row['datfat'], 0, 4) . "' AND tipdoc LIKE '" . substr($row['tipdoc'], 0, 1) . "%' AND seziva = " . $row['seziva'] . " ", "protoc DESC, numdoc DESC", 0, 1);
 				} else { //non ci sono dati sufficenti per stabilire cosa eliminare
-					break;
+				break;
 				}
-				
-				
 				//controllo se sono stati emessi documenti nel frattempo...
 				$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 				if ($ultimo_documento) {
@@ -71,7 +69,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '" . $row['id_tes'] . "'");
 						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
 							if (intval($val_old_row['id_mag']) > 0) {  //se c'� stato un movimento di magazzino lo azzero
-								$upd_mm->uploadMag('DEL', $row['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
+								gaz_dbi_del_row($gTables['movmag'], 'id_mov', $val_old_row['id_mag']);								
 								// se c'è stato, cancello pure il movimento sian 
 								gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
 							}
@@ -82,9 +80,8 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 						if ($ultimo_documento['id_doc_ritorno'] > 0 ) {
 								gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $ultimo_documento['id_doc_ritorno'], 'id_doc_ritorno',0);
 						}
-						header("Location: " . $_POST['ritorno']);
-						exit;
-					} elseif ($ultimo_documento['protoc'] == $i and $ultimo_documento['tipdoc'] != 'FAD') {
+						break;
+					} elseif ($ultimo_documento['protoc'] == intval($i) and $ultimo_documento['tipdoc'] != 'FAD') {
 						//allora procedo all'eliminazione della testata e dei righi...
 						//cancello la testata
 						gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $row['id_tes']);
@@ -98,17 +95,17 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 						gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $r_split['id_tes']);
 						//cancello i righi
 						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '" . $row['id_tes'] . "'");
+						echo "<br><br><br>";
 						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
 							if (intval($val_old_row['id_mag']) > 0) {  //se c'� stato un movimento di magazzino lo azzero
-								$upd_mm->uploadMag('DEL', $row['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
+								gaz_dbi_del_row($gTables['movmag'], 'id_mov', $val_old_row['id_mag']);
 								// se c'è stato, cancello pure il movimento sian 
 								gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
 							}
 							gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
 							gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
 						}
-						header("Location: " . $_POST['ritorno']);
-						exit;
+						break;
 					} elseif ($ultimo_documento['protoc'] == intval($i) and $ultimo_documento['tipdoc'] == 'FAD') {
 						//allora procedo alla modifica delle testate per ripristinare i DdT...
 						if ( $row["ddt_type"]!="R") {
@@ -139,21 +136,16 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 							gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $r_split['id_tes']);
 							gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $r_split['id_tes']);
 						}
-						header("Location: " . $_POST['ritorno']);
-						exit;
+						break;
 					} elseif ($ultimo_documento['protoc'] != $row["protoc"]) {
 						$message = "Si sta tentando di eliminare un documento <br /> diverso dall'ultimo emesso!";
 					}
 				} else {
 					$message = "Si sta tentando di eliminare un documento <br /> inesistente o contabilizzato!";
-				}
-		break;
-		
-		
-		
+				} 
+		break;		
 		case "????":
 			$i=intval($_POST['ref']);
-			gaz_dbi_del_row($gTables['campi'], "codice", $i);
 		break;
 	}
 }
