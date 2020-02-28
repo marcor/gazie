@@ -28,6 +28,7 @@ if (isset($_POST['logout'])) {
     header("Location: admin.php");
     exit;
 }
+$_SESSION["theme"]='';
 require("../../library/include/header.php");
 $r = gaz_dbi_get_row($gTables['admin'],"user_name",$_SESSION["user_name"]);
 require("./lang.".$r['lang'].".php");
