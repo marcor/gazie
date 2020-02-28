@@ -107,8 +107,51 @@ function confirMail(link){
 }
 </script>';
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("ragso1"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'docven',id_tes:id},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_doctra.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET">
-
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>documento di trasporto:</b></p>
+        <p>Numero:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Cliente:</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
         <p class="ui-state-highlight" id="mail_adrs"></p>
@@ -243,8 +286,13 @@ function confirMail(link){
                                 if ($r['tipdoc'] == 'DDV' && $r['id_doc_ritorno'] > 0) {
                                     echo "<td align=\"center\">"
                                     . "<a class=\"btn btn-xs btn-warning\" href=\"admin_docven.php?Update&id_tes=" . $r['id_doc_ritorno'] . "\">" . $script_transl['doc_returned'] . "</a>"
-                                    . "<a class=\"btn btn-xs btn-default btn-elimina\"href=\"delete_docven.php?id_tes=" . $r['id_doc_ritorno'] . "\" title=\"" . $script_transl['delete_returned'] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>"
-                                    . "</td>";
+                                    . "<a class=\"btn btn-xs btn-default btn-elimina\"href=\"delete_docven.php?id_tes=" . $r['id_doc_ritorno'] . "\" title=\"" . $script_transl['delete_returned'] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
+                                    ?>
+									<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
+										<i class="glyphicon glyphicon-remove"></i>
+									</a>
+									<?php
+									echo "</td>";
                                 } else {
                                     echo "<td align=\"center\"><a class=\"btn btn-xs btn-success\" href=\"emissi_fatdif.php\">" . $script_transl['to_invoice'] . "</a></td>";
                                 }
@@ -289,11 +337,18 @@ function confirMail(link){
                             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"admin_docven.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
                             echo "</td>";
 
-                            if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
-                                echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-                            else
+                            if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0){
+                                echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
+								?>
+								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
+									<i class="glyphicon glyphicon-remove"></i>
+								</a>
+								<?php
+								echo "</td>";
+                            } else{
                                 echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
-                            echo "</tr>\n";
+								echo "</tr>\n";
+							}
                             break;
                         case "DDR":
                         case "DDL":
@@ -339,12 +394,18 @@ function confirMail(link){
 							} else {
 								echo "<td class=\"alert alert-danger\"></td>";
 							}
-                            if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
+                            if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0){
                             // Colonna Elimina
                                 echo "<td class=\"alert alert-danger\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-                            else
+								?>
+								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
+									<i class="glyphicon glyphicon-remove"></i>
+								</a>
+								<?php
+							} else {
                                 echo "<td class=\"alert alert-danger\"></td>";
                             echo "</tr>\n";
+							}
                             break;
                         case "FAD":
                             if ( $r['ddt_type'] != 'R') {
