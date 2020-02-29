@@ -191,11 +191,55 @@ function choice_template(modulo) {
 	});
 }
 </script>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("nome"));
+		var id = $(this).attr('ref');		
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'broven',id_tes:id},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_broven.php?auxil=<?php echo $tipo;?>");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][$tipo]; ?></div>
 <?php
 $ts->output_navbar();
 ?>
 <form method="GET" >
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>preventivo:</b></p>
+        <p>Numero ID:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Cliente:</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <input type="hidden" name="auxil" value="<?php echo $tipo; ?>">
     <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
@@ -395,8 +439,12 @@ $ts->output_navbar();
             echo "<td align=\"center\">";
             if (!$remains_atleastone || !$processed_atleastone) {
                 //possono essere cancellati solo gli ordini inevasi o completamente evasi
-                echo "<a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_broven.php?id_tes=" . $r['id_tes'] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
-            }
+				?>
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" nome="<?php echo $r['ragso1']; ?>">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>				
+				<?php
+			}
             echo "</td>";
             echo "</tr>\n";
         }
