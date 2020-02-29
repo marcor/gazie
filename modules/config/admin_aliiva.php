@@ -45,7 +45,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['descri'] = substr($_POST['descri'], 0, 50);
     $form['aliquo'] = floatval($_POST['aliquo']);
     $form['taxstamp'] = intval($_POST['taxstamp']);
-    $form['fae_natura'] = substr($_POST['fae_natura'], 0, 2);
+    $form['fae_natura'] = substr(trim($_POST['fae_natura']), 0, 4);
     ;
     $form['annota'] = substr($_POST['annota'], 0, 50);
     if (isset($_POST['Submit'])) { // conferma tutto
