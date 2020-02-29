@@ -90,8 +90,52 @@ function confirFae(link){
 </script>';
 
 $gForm = new GAzieForm();
-echo "<form method=\"GET\" name=\"report\">\n";
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("datemi"));
+		var id = $(this).attr('ref');		
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'docven',id_tes:id},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_scontr.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
+<form method="GET" name="report">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>scontrino:</b></p>
+        <p>Numero ID:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Data:</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <div style="display:none" id="dialog1" title="<?php echo $script_transl['fae_alert0']; ?>">
         <p id="fae_alert1"><?php echo $script_transl['fae_alert1']; ?></p>
         <p class="ui-state-highlight" id="fae1"></p>
@@ -303,8 +347,14 @@ $linkHeaders->output();
             echo "</td>";
             if ($row["id_con"] == 0) {
                 if (getLastId($row['datemi'], $row['seziva']) == $row["id_tes"]) {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $row['id_tes'] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-                } else {
+                    echo "<td align=\"center\">";
+					?>
+					<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $row['id_tes'];?>" datemi="<?php echo $row['datemi']; ?>">
+						<i class="glyphicon glyphicon-remove"></i>
+					</a>
+					</td>
+					<?php
+				} else {
                     echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
                 }
             } else {
