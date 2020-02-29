@@ -62,7 +62,51 @@ if (isset($_GET['all'])) {
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("datemi"));
+		var id = $(this).attr('ref');		
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'docven',id_tes:id},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_received.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>ricevuta:</b></p>
+        <p>Numero ID:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Data:</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
 <div align="center" class="FacetFormHeaderFont"> Ricevute della sezione
 <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
 <?php
@@ -142,11 +186,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
 				</a>
 		  </td>";
     if ($last_n == $row["numfat"] && $row["id_con"] == 0){
-       echo "<td class=\"FacetDataTD\" align=\"center\">
-	   			<a href=\"delete_docven.php?id_tes=".$row["id_tes"]."\" title=\"Cancella\" class=\"btn btn-xs btn-default\">
-					<i class=\"glyphicon glyphicon-remove\"></i>
-			 	</a>
-			 </td>";
+       echo "<td class=\"FacetDataTD\" align=\"center\">";
+			?>
+			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $row['id_tes'];?>" datemi="<?php echo $row['datemi']; ?>">
+				<i class="glyphicon glyphicon-remove"></i>
+			</a>
+			</td>
+			<?php			
     } else {
         echo "<td class=\"FacetDataTD\">";
 		if ($row["id_con"] > 0) {
