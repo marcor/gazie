@@ -60,13 +60,14 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
+    <meta charset="utf-8">
 		<meta name="mobile-web-app-capable" content="yes">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-title" content="<?php echo $admin_aziend['ragso1'];?>">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title id='title_from_menu'></title>
 		<?php
 			$ico=base64_encode(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/favicon.ico'));
 			$ico114=base64_encode(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/logo_114x114.png'));
@@ -76,12 +77,12 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 		<link rel="apple-touch-icon" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">
 		<link rel="apple-touch-startup-image" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon">		
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
-        <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-        <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
-        <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
-        <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
-        <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-gazie.css"> <!-- _all-skins.min.css">-->
-        <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
+    <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-gazie.css"> <!-- _all-skins.min.css">-->
+    <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
 		<script src="../../js/jquery/jquery.js"></script>
 		
 

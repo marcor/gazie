@@ -19,13 +19,6 @@ function bc_get_current_path( $posizione ) {
     }
     return $pos;
 }
-
-function gettitolo($uri) {
-    $part = explode("/",$uri);
-    $part = explode(".",$part[2]);
-    $part = str_replace("_", " ", $part[0]);
-    return ucwords($part);
-}
   
 function get_rref_type($value) {
     if ( stristr($value, "report_") ) return "fa-list";
@@ -242,6 +235,21 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         } elseif (isset($title_from_menu)) {
             //echo '			&raquo;' . $title_from_menu;
         }
+				
+				$accTitle=$admin_aziend['ragso1'] . '» ' . $menuArray[0]['title'];
+        if (!empty($idScript)) {
+					if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
+            if ($idScript[0] == 2) {
+              $accTitle.= '» ' . $transl[$module]['m2'][$idScript[1]][0];
+            } elseif ($idScript[0] == 3) {
+              $accTitle.= '» ' . $transl[$module]['m3'][$idScript[1]][0];
+            }
+          } elseif ($idScript > 0) {
+            $accTitle.= '» ' . $transl[$module]['m3'][$idScript][0];
+          }
+        } elseif (isset($title_from_menu)) {
+          $accTitle.= '» ' . $title_from_menu;
+        }
 
     
     $i = 0;
@@ -375,7 +383,9 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         }
     }
     require("../../language/".$admin_aziend['lang']."/menu.inc.php");
-    echo '<script type="text/javascript">
+    echo '<script type="text/javascript">';
+    echo '$("#title_from_menu").text("'.$accTitle.'")';
+		echo '
 		 countclick = 0;
 		 function chkSubmit() {
 			if(countclick > 0) {
