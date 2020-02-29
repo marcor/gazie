@@ -285,8 +285,7 @@ $(function() {
                             } else {
                                 if ($r['tipdoc'] == 'DDV' && $r['id_doc_ritorno'] > 0) {
                                     echo "<td align=\"center\">"
-                                    . "<a class=\"btn btn-xs btn-warning\" href=\"admin_docven.php?Update&id_tes=" . $r['id_doc_ritorno'] . "\">" . $script_transl['doc_returned'] . "</a>"
-                                    . "<a class=\"btn btn-xs btn-default btn-elimina\"href=\"delete_docven.php?id_tes=" . $r['id_doc_ritorno'] . "\" title=\"" . $script_transl['delete_returned'] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
+                                    . "<a class=\"btn btn-xs btn-warning\" href=\"admin_docven.php?Update&id_tes=" . $r['id_doc_ritorno'] . "\">" . $script_transl['doc_returned'] . "</a>";
                                     ?>
 									<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
 										<i class="glyphicon glyphicon-remove"></i>
@@ -338,7 +337,7 @@ $(function() {
                             echo "</td>";
 
                             if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0){
-                                echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
+                                echo "<td align=\"center\">";
 								?>
 								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
 									<i class="glyphicon glyphicon-remove"></i>
@@ -382,7 +381,7 @@ $(function() {
                             echo "<td class=\"alert alert-danger\"  align=\"center\">";
                             if (!empty($anagra["e_mail"])) {
                                 echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $anagra["e_mail"] . '"
-                mail="' . $anagra["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+								mail="' . $anagra["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                             } else {
                                 echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="../acquis/admin_fornit.php?codice=' . substr($clfoco["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }
@@ -396,11 +395,12 @@ $(function() {
 							}
                             if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0){
                             // Colonna Elimina
-                                echo "<td class=\"alert alert-danger\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+                                echo "<td class=\"alert alert-danger\" align=\"center\">";
 								?>
 								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
 									<i class="glyphicon glyphicon-remove"></i>
 								</a>
+								</td>
 								<?php
 							} else {
                                 echo "<td class=\"alert alert-danger\"></td>";
