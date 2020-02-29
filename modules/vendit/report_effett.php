@@ -51,6 +51,43 @@ if (!isset($_GET['field']) || empty($_GET['field'])) {
     $orderby = "scaden DESC, numfat DESC";
 }
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("ragso"));
+		var id = $(this).attr('ref');		
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'effett',id_tes:id},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_effett.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 <?php
 $recordnav = new recordnav($gTables['effett'], $where, $limit, $passo);
@@ -58,6 +95,13 @@ $recordnav->output();
 ?>
 <form method="GET">
     <div class="box-primary table-responsive">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>effetto:</b></p>
+        <p>Numero ID:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Cliente:</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <table class="Tlarge table table-striped table-bordered table-condensed">
         <input type="hidden" name="auxil" value="<?php print substr($auxil, 0, 1); ?>">
         <tr>
@@ -180,8 +224,14 @@ $recordnav->output();
             }
             echo "</td>";
             // Colonna "Elimina"
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_effett.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-            echo "</tr>";
+            echo "<td align=\"center\">";
+            ?>
+			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $r['id_tes'];?>" ragso="<?php echo $cliente['ragso1']; ?>">
+				<i class="glyphicon glyphicon-remove"></i>
+			</a>
+			</td>
+			<?php
+			echo "</td></tr>";
         }
         ?>
         <tr><th class="FacetFieldCaptionTD" colspan="13"></th></tr>

@@ -155,6 +155,23 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				   gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref ",$a_row['id_rig']);
 				   }
 		break;
+		case "effett":
+			// Rilegge i dati dell'effetto.
+			$effetto = gaz_dbi_get_row($gTables['effett'], "id_tes", intval($_POST['id_tes']));
+			// elimina subito la registrazione.
+			if ($effetto['id_con'] > 0) {
+				gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $effetto['id_con']);
+				gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $effetto['id_con']);
+			}
+			$result = gaz_dbi_del_row($gTables['effett'], "id_tes", intval($_POST['id_tes']));
+			// i dati univoci della fattura che ha originato l'effetto
+			$where = "protoc=$effetto[protoc] AND seziva=$effetto[seziva] AND datfat='$effetto[datfat]'";
+			// se la fattura non ha altri effetti associati resettiamo il flag geneff  
+			$altri_effetti = gaz_dbi_record_count($gTables['effett'], $where);
+			if (!$altri_effetti) {
+				gaz_dbi_query("UPDATE $gTables[tesdoc] SET geneff = '' WHERE $where AND tipdoc LIKE 'F%'");
+			}
+		break;
 	}
 }
 ?>
