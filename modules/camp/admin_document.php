@@ -74,6 +74,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
            $msg .= "3+";
 		}
 		if (empty($msg)) { // nessun errore
+			// controllo che ci sia la cartella doc
+			$docfolder = '../../data/files/' . $admin_aziend['codice'] . '/doc/';
+			if (!file_exists($docfolder)) {// se non c'è la creo
+				mkdir($docfolder, 0777);
+			}
 			// aggiorno il solo db
 			if ($toDo == 'insert') {
 				$form['table_name_ref']= 'artico';
@@ -85,6 +90,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			}
 			// aggiorno il filesystem solo se è stato selezionato un nuovo file
 			if ($_FILES['userfile']['error']==0) {
+				$form['id_doc']=$admin_aziend['company_id']."/doc/".$form['id_doc'];
 				move_uploaded_file($_FILES["userfile"]["tmp_name"], DATA_DIR . "files/" . $form['id_doc'] . "." . $form['extension']);
 			}
 			header("Location: ".$form['ritorno']);

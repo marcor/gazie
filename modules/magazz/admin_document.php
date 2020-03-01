@@ -73,6 +73,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
            $msg .= "3+";
 		}
 		if (empty($msg)) { // nessun errore
+			// controllo che ci sia la cartella doc
+			$docfolder = '../../data/files/' . $admin_aziend['codice'] . '/doc/';
+			if (!file_exists($docfolder)) {// se non c'è la creo
+				mkdir($docfolder, 0777);
+			}
           // aggiorno il solo db
           if ($toDo == 'insert') {
             $form['table_name_ref']= 'artico';
