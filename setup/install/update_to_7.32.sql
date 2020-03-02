@@ -6,6 +6,7 @@ ALTER TABLE `gaz_anagra` CHANGE `indspe` `indspe` VARCHAR( 60 ) NOT NULL ;
 ALTER TABLE `gaz_anagra` CHANGE `citspe` `citspe` VARCHAR( 60 ) NOT NULL ;
 ALTER TABLE `gaz_anagra` CHANGE `e_mail` `e_mail` VARCHAR( 60 ) NOT NULL ;
 ALTER TABLE `gaz_anagra` CHANGE `pec_email` `pec_email` VARCHAR( 60 ) NOT NULL ;
+UPDATE `gaz_menu_module` SET `link`='report_broven.php?auxil=VO_' WHERE  `link`='report_broven.php?auxil=VOR';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesbro`	ADD COLUMN `ref_ecommerce_id_order` VARCHAR(50) NULL DEFAULT '' COMMENT 'Identificativo ordine attribuito dall\'eventuale ecommerce collegato attraverso API' AFTER `tipdoc`, ADD INDEX `ref_ecommerce_id_order` (`ref_ecommerce_id_order`);
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `ref_ecommerce_id_product` VARCHAR(50) NULL DEFAULT '' COMMENT 'Codice di riferimento allo stesso articolo in eventuale ecommerce collegato attraverso API' AFTER `codice_fornitore`, ADD INDEX `ref_ecommerce_id_product` (`ref_ecommerce_id_product`);

@@ -729,6 +729,7 @@ class Anagrafica {
         gaz_dbi_insert_anagra($v);
         $v['id_anagra'] = gaz_dbi_last_id();
         gaz_dbi_table_insert('clfoco', $v);
+				$this->codice=gaz_dbi_last_id();
     }
 
     function deletePartner($idClfoco) {
