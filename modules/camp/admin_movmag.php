@@ -633,6 +633,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
             //formatto le date
             $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
             $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
+			
+			$form['tipdoc']="CAM";
+			if (strlen($form['desdoc'])<1){
+				$form['desdoc']="Registro di campagna ";
+			}
             $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
             for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) { // per ogni movimento inserito
                 if (!empty($form['artico'][$form['mov']])) { // se è stato inserito un articolo
@@ -707,7 +712,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						}
 						// <<< fine salvo lotti
 						// riprendo il salvataggio del movimento di magazzino in movmag
-						$query = "UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 . "', tipdoc = 'MAG' , campo_coltivazione = '" . $form['campo_coltivazione'.$n] . "' , id_avversita = '" . $form['id_avversita'][$form['mov']] . "' , id_colture = '" . $form['id_colture'] . "' , id_orderman = '" . $form['id_orderman'] . "' , id_lotmag = '" . $form['id_lotmag'][$form['mov']] . "' WHERE id_mov ='" . $id_movmag . "'";
+						$query = "UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 . "', id_rif = '".$id_movmag."', tipdoc = '".$form['tipdoc']."' , campo_coltivazione = '" . $form['campo_coltivazione'.$n] . "' , id_avversita = '" . $form['id_avversita'][$form['mov']] . "' , id_colture = '" . $form['id_colture'] . "' , id_orderman = '" . $form['id_orderman'] . "' , id_lotmag = '" . $form['id_lotmag'][$form['mov']] . "' WHERE id_mov ='" . $id_movmag . "'";
 						gaz_dbi_query($query);
 						// Antonio Germani - aggiorno la tabella campi se c'è un campo inserito (cioè >0) e se l'operazione è uno scarico (cioè operat<0) e se la data di fine sospensione già presente nel campo è inferiore alla data di sospensione del prodotto appena usato (cioè $fine_sosp<$dt)
 						//Antonio Germani per prima cosa determino il codice del movimento che eventualmente andrà nella tabella del campo di coltivazione

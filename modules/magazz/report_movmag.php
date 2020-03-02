@@ -166,8 +166,14 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
     $valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
     echo "<tr>\n";
-    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
+	
+    echo "<td class=\"FacetDataTD\">";
+	if ($a_row['tipdoc'] == "MAG"){
+		echo "<a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
+    } else {
+		echo "<a class=\"btn btn-xs btn-default\" title=\"Questo movimento puo essere modificato solo nel documento che lo ha creato\"><i class=\"glyphicon glyphicon-ban-circle text-danger\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
+	}
+	echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
     if ($a_row['id_rif'] == 0) {
 		if ($a_row['id_orderman']>0){
@@ -175,15 +181,17 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		} else {
 			echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</td>\n";
 		}
-    } else {
-        if ($a_row['tipdoc'] == "ADT"
+    } else if ($a_row['tipdoc'] == "ADT"
          || $a_row['tipdoc'] == "AFA"
          || $a_row['tipdoc'] == "AFC") {
             echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
-        } else {
+	} else if ($a_row['tipdoc'] == "CAM"){
+		echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../camp/admin_movmag.php?id_mov=".$a_row['id_rif']."&Update\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
+
+	} else {
             echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
-        }
     }
+    
    	echo "<td class=\"FacetDataTD\"  align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$a_row["artico"]."</p></td>\n";
 	if ($a_row['id']>0) {
 		echo "<td class=\"FacetDataTD\" align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$expiry\">"."ID:".$a_row['id']." - ".$a_row['identifier']."</td>\n";
@@ -193,11 +201,19 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($valore)." </td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">\n";
-	?>
-	<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_mov'];?>" movdes="<?php echo $a_row['descau']; ?>">
-	<i class="glyphicon glyphicon-remove"></i>
-	</a>
-	<?php
+	if ($a_row['tipdoc'] == "MAG"){
+		?>
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina movimento" ref="<?php echo $a_row['id_mov'];?>" movdes="<?php echo $a_row['descau']; ?>">
+		<i class="glyphicon glyphicon-remove"></i>
+		</a>
+		<?php
+	} else {
+		?>
+		<a class="btn btn-xs btn-default btn-elimina" title="Questo movimento puo essere eliminato solo dal documento che lo ha creato">
+		<i class="glyphicon glyphicon-ban-circle"></i>
+		</a>
+		<?php
+	}
 	echo "</td>\n";
     echo "</tr>\n";
 	/** ENRICO FEDELE */

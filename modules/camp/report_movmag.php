@@ -199,7 +199,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	// fine acquisisco
 
 		echo "<tr>\n";
-		echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
+		
+		echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
+		
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datdoc"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
@@ -240,11 +242,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["adminid"]." </td>\n";
 		
 		echo "<td class=\"FacetDataTD\" align=\"center\">";
-		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_mov'];?>" caudes="<?php echo $a_row['descau']; ?>">
-					<i class="glyphicon glyphicon-remove"></i>
-				</a>
-		<?php
+		
+			?>
+			<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_mov'];?>" caudes="<?php echo $a_row['descau']; ?>">
+				<i class="glyphicon glyphicon-remove"></i>
+			</a>
+			<?php
+		
 		echo "</td></tr>\n";
 		/* Incremento il totale */
 		$tot_movimenti += $valore;
