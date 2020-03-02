@@ -329,7 +329,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 					}
                 }
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
-                    $query = "INSERT INTO " . $gTables['movmag'] . "(caumag,type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('82','0', '1', '" . $form['datreg'] . "', 'MAG', 'Produzione', '" . $form['datemi'] . "', '" . $form['codart'] . "', '" . $form['campo_impianto'] . "', '" . $form['quantip'] . "', '" . $id_orderman . "', '" . $id_lotmag . "', '" . $admin_aziend['adminid'] . "')";
+                    $query = "INSERT INTO " . $gTables['movmag'] . "(caumag,type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('82','0', '1', '" . $form['datreg'] . "', 'PRO', 'Produzione', '" . $form['datemi'] . "', '" . $form['codart'] . "', '" . $form['campo_impianto'] . "', '" . $form['quantip'] . "', '" . $id_orderman . "', '" . $id_lotmag . "', '" . $admin_aziend['adminid'] . "')";
                     gaz_dbi_query($query); // inserisco il movimento di magazzino dell'articolo prodotto
 					if ($form['SIAN']>0){ // imposto l'id movmag e salvo il movimento SIAN dell'articolo prodotto
 						$form['id_movmag']=$id_movmag;
