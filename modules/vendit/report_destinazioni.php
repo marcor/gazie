@@ -75,8 +75,52 @@ if (isset($_GET['ricerca_completa'])) {
    $where .= " or citspe like '%" . $ricerca_testo . "%' )";
 }
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("anagrafe"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'destinazioni',ref:id},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_destinazioni.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont">Indirizzi di Destinazione</div>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>Destinazione:</b></p>
+        <p>codice:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Anagrafica:</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <div class="box-primary table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
@@ -160,8 +204,13 @@ if (isset($_GET['ricerca_completa'])) {
            }
            // colonna telefono
            echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">" . gaz_html_call_tel($telefono) . " &nbsp;</td>";
-           echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_destinazioni.php?codice=" . $a_row["codice"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-           echo "</tr>\n";
+           echo "<td class=\"FacetDataTD\" align=\"center\">";
+		   ?>
+		   <a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['codice'];?>" anagrafe="<?php echo $a_row['anagrafe']; ?>">
+				<i class="glyphicon glyphicon-remove"></i>
+			</a>
+			<?php
+           echo "</td></tr>\n";
         }
         ?>
 </form>
