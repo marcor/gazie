@@ -172,6 +172,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				gaz_dbi_query("UPDATE $gTables[tesdoc] SET geneff = '' WHERE $where AND tipdoc LIKE 'F%'");
 			}
 		break;
+		case "client":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['clfoco'], 'codice', $i);
+		break;
 	}
 }
 ?>

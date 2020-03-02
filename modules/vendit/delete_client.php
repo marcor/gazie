@@ -31,6 +31,7 @@ $clienti = $admin_aziend['mascli'];
 $message = "";
 
 if (isset($_POST['Delete'])) {
+	unset ($rs_check_mov);
     $rs_check_mov = gaz_dbi_dyn_query("clfoco", $gTables['tesmov'], "clfoco = '".intval($_POST['codice'])."'","id_tes asc",0,1);
     $check_mov = gaz_dbi_num_rows($rs_check_mov);
     $rs_check_doc = gaz_dbi_dyn_query("clfoco", $gTables['tesdoc'], "clfoco = '".intval($_POST['codice'])."'","id_tes asc",0,1);

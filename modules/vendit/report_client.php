@@ -72,11 +72,54 @@ $ts = new TableSorter(
     ['codice' => 'desc'],
     ['codmin' => 1, 'codmax' => 999999]
 );
-
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("ragso"));
+		var id = $(this).attr('ref');		
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'client',ref:id},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_client.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont">Clienti</div>
 <div align="center"><?php $ts->output_navbar(); ?></div>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>cliente:</b></p>
+        <p>Codice:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Ragione sociale:</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <div class="box-primary table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
@@ -122,7 +165,13 @@ $ts = new TableSorter(
         </tr>
         <?php
         while ($a_row = gaz_dbi_fetch_array($result)) {
-            echo "<tr class=\"FacetDataTD\">";
+			$rs_check_mov = gaz_dbi_dyn_query("clfoco", $gTables['tesmov'], "clfoco = '".$a_row['codice']."'","id_tes asc",0,1);
+            $check_mov = gaz_dbi_num_rows($rs_check_mov);
+			$rs_check_doc = gaz_dbi_dyn_query("clfoco", $gTables['tesdoc'], "clfoco = '".$a_row['codice']."'","id_tes asc",0,1);
+			$check_doc = gaz_dbi_num_rows($rs_check_doc);
+			$rs_check_bro = gaz_dbi_dyn_query("clfoco", $gTables['tesbro'], "clfoco = '".$a_row['codice']."'","id_tes asc",0,1);
+			$check_bro = gaz_dbi_num_rows($rs_check_bro);
+			echo "<tr class=\"FacetDataTD\">";
             // Colonna codice cliente
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_client.php?codice=" . substr($a_row["codice"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . substr($a_row["codice"], 3) . "</a> &nbsp</td>";
             // Colonna ragione sociale
@@ -179,8 +228,22 @@ $ts = new TableSorter(
             echo "<td align=\"center\"><a title=\"stampa informativa sulla privacy\" class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=" . $a_row["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a><a title=\"stampa richiesta codice sdi o pec\" class=\"btn btn-xs btn-default\" href=\"stampa_richiesta_pecsdi.php?codice=" . $a_row["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-inbox\"></i></a></td>";
             echo "<td title=\"Effettuato un pagamento da " . $a_row["ragso1"] . "\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $a_row["codice"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
             echo "<td title=\"Visualizza e stampa il partitario\" align=\"center\">  <a class=\"btn btn-xs btn-default\" href=\"report_contcli.php?id=".$a_row["codice"]."\"  target=\"_blank\"><i class=\"glyphicon glyphicon-list-alt\"></i></a> <a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$a_row["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_client.php?codice=" . substr($a_row["codice"], 3) . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-            echo "</tr>\n";
+            echo "<td align=\"center\">";
+			if ($check_mov > 0 or $check_doc > 0 or $check_bro > 0) {
+				?>
+				<a class="btn btn-xs btn-default btn-elimina" title="Impossibile cancellare perché ci sono dei movimenti associati" ref="<?php echo substr($a_row['codice'], 3);?>" >
+					<i class="glyphicon glyphicon-ban-circle"></i>
+				</a>
+				<?php
+				
+			} else {
+				?>
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il cliente" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragso2']," ",$a_row['ragso1'];?>">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>
+				<?php
+			}
+            echo "</td></tr>\n";
         }
         ?>
         <tr><th class="FacetFieldCaptionTD" colspan="10"></th></tr>
