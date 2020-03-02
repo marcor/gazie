@@ -16,4 +16,5 @@ ALTER TABLE `gaz_XXXcatmer`	ADD COLUMN `top` TINYINT(1) NOT NULL DEFAULT 0 COMME
 SET @a  = 0 ;
 UPDATE `gaz_XXXartico` SET `ref_ecommerce_id_product` = @a:=@a+1 WHERE 1 ORDER BY `catmer`, `codice`;
 ALTER TABLE `gaz_XXXaliiva`	CHANGE COLUMN `fae_natura` `fae_natura` VARCHAR(4) NOT NULL AFTER `taxstamp`;
+ALTER TABLE `gaz_XXXpagame`	ADD COLUMN `web_payment_ref` VARCHAR(50) NOT NULL COMMENT 'Riferimento al metodo di pagamento utilizzato dall\'ecommerce' AFTER `id_bank`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

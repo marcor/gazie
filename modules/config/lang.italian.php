@@ -270,7 +270,8 @@ $strScript = array(
         "Il codice dev'essere compreso tra 1 e 99",
 		'Non hai scelto la tipologia di pagamento per la fattura elettronica',
         'ins_this' => 'Inserisci una nuova modalit&agrave; di pagamento',
-        'fae_mode' => "Modalità fatt.elettronica"
+        'fae_mode' => "Modalità fatt.elettronica",
+				'web_payment_ref'=>'Riferimento  al codice pagamento ecommerce'
     ),
     "report_aliiva.php" =>
     array('title' => "Aliquote I.V.A.",

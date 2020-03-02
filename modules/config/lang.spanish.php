@@ -267,7 +267,8 @@ $strScript = array("admin_aziend.php" =>
         "El c&oacute;digo debe estar entre 1 y 99",
 		'Non hai scelto la tipologia di pagamento per la fattura elettronica',
         'ins_this' => 'Insertar nueva modalidad el pago',
-        'fae_mode' => "Modalidad fatt.elettronica PA"
+        'fae_mode' => "Modalidad fatt.elettronica PA",
+				'web_payment_ref'=>'Riferimento  al codice pagamento ecommerce'
     ),
     "report_aliiva.php" =>
     array('title' => "Tasas I.V.A.",

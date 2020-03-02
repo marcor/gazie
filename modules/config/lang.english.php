@@ -263,7 +263,8 @@ $strScript = array("admin_aziend.php" =>
         "Il codice dev'essere compreso tra 1 e 99",
 		'Non hai scelto la tipologia di pagamento per la fattura elettronica',
         'ins_this' => 'Insert new payments method',
-        'fae_mode' => "PA electronic invoice mode"
+        'fae_mode' => "PA electronic invoice mode",
+				'web_payment_ref'=>'Riferimento  al codice pagamento ecommerce'
     ),
     "report_aliiva.php" =>
     array('title' => "V.A.T. rates",

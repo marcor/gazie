@@ -224,7 +224,15 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     }
     echo "<option value=\"" . $a_row['codice'] . "\"" . $selected . ">" . $a_row['descri'] . " - " . $a_row['iban'] . "</option>";
 }
-echo "</select></td>\n";
+echo "</select></td></tr>\n";
+?>
+<tr>
+	<td class="FacetFieldCaptionTD"><?php echo $script_transl['web_payment_ref']; ?></td>
+	<td colspan="2" class="FacetDataTD">
+		<input type="text" value="<?php echo $form['web_payment_ref']; ?>" name="web_payment_ref" maxlength="50" />
+	</td>
+</tr>
+<?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td>
      <td class=\"FacetDataTD\">\n";
 echo "\t<input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"50\" size=\"30\" class=\"FacetInput\">\n";
