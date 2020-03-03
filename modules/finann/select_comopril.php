@@ -213,7 +213,7 @@ function createRowsAndErrors($min_limit) {
                citspe,prospe,country,codfis,pariva," . $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc,
                " . $gTables['tesmov'] . ".numdoc," . $gTables['tesmov'] . ".datdoc," . $gTables['tesmov'] . ".seziva,
                " . $gTables['tesmov'] . ".caucon," . $gTables['tesdoc'] . ".numfat AS n_fatt,
-			   datreg,datnas,luonas,pronas,counas,id_doc,iso,black_list,cod_agenzia_entrate,
+			   " . $gTables['tesmov'] . ".datreg,datnas,luonas,pronas,counas,id_doc,iso,black_list,cod_agenzia_entrate,
                operat, impost AS imposta," . $gTables['rigmoi'] . ".id_tes AS idtes,
                imponi AS imponibile FROM " . $gTables['rigmoi'] . "
                LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
@@ -222,7 +222,7 @@ function createRowsAndErrors($min_limit) {
                LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesmov'] . ".clfoco = " . $gTables['clfoco'] . ".codice
                LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra
                LEFT JOIN " . $gTables['country'] . " ON " . $gTables['anagra'] . ".country = " . $gTables['country'] . ".iso
-               WHERE YEAR(datreg) = " . intval($_GET['anno']) . "
+               WHERE YEAR(" . $gTables['tesmov'] . ".datreg) = " . intval($_GET['anno']) . "
                  AND ( " . $gTables['tesmov'] . ".clfoco LIKE '" . $admin_aziend['masfor'] . "%' OR " . $gTables['tesmov'] . ".clfoco LIKE '" . $admin_aziend['mascli'] . "%')
                  AND " . $gTables['clfoco'] . ".allegato > 0 
                ORDER BY regiva,operat,country,datreg,seziva,protoc";

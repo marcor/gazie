@@ -143,7 +143,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	
     echo "<tr class=\"FacetDataTD\">";
 	 //colonna codice
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_fornit.php?codice=".substr($a_row["codice"],3)."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($a_row["codice"],3)."</a></td>";
+    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_fornit.php?codice=".substr($a_row["codice"],3)."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".intval(substr($a_row["codice"],3))."</a></td>";
     echo "<td title=\"".$a_row["ragso2"]."\">".$a_row["ragso1"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["sexper"]."</td>";
 	 $google_string = str_replace(" ","+",$a_row["indspe"]).",".str_replace(" ","+",$a_row["capspe"]).",".str_replace(" ","+",$a_row["citspe"]).",".str_replace(" ","+",$a_row["prospe"]);
