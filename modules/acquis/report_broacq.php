@@ -91,7 +91,6 @@ $script_transl = HeadMain(0, array('custom/modal_form'));
 $gForm = new acquisForm();
 ?>
 <script>
-
 function confirmemail(cod_partner,id_tes,genorder=false) {
 	var fornitore=$("#fornitore_"+id_tes).attr('value');
 	var tipdoc=$("#tipdoc_"+id_tes).attr('value');
@@ -191,8 +190,51 @@ function choicePartner(row)
 }
 
 </script>
-
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("catdes"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'broacq',id_tes:id},
+						type: 'POST',
+						url: '../acquis/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_broacq.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>ordine/preventivo:</b></p>
+        <p>Codice:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Fornitore</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title_dist'][$flt_tipo]; ?>
 	<input type="hidden" name="flt_tipo" value="<?php echo $flt_tipo; ?>" />
 	<select name="auxil" class="FacetSelect" onchange="this.form.submit()">
@@ -401,12 +443,13 @@ function choicePartner(row)
                 echo "	</td>\n";
 				
 				// colonna elimina
-				echo "<td align=\"center\">
-							<a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_broacq.php?id_tes=".$r['id_tes']."\">
-								<i class=\"glyphicon glyphicon-remove\"></i>
-							</a>
-						</td>
-					  </tr>";
+				echo "<td align=\"center\">";
+				?>			
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $fornitore['ragso1']; ?>">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>
+				<?php				
+				echo "</td></tr>";
             }
             ?>
             <tr><th class="FacetFieldCaptionTD" colspan="12"></th></tr>
