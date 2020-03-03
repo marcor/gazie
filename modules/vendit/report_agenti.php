@@ -44,7 +44,51 @@ if (isset($_GET['all'])) {
 require("../../library/include/header.php");
 $script_transl=HeadMain('','','admin_agenti');
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("nome"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'agenti',ref:id},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_agenti.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET" >
+<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+	<p><b>agente</b></p>
+	<p>Codice:</p>
+	<p class="ui-state-highlight" id="idcodice"></p>
+	<p>Nome:</p>
+	<p class="ui-state-highlight" id="iddescri"></p>
+</div>
 <div align="center" class="FacetFormHeaderFont">
 <?php echo ucfirst($script_transl[0]);?>
 </div>
@@ -97,8 +141,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"print_anagrafe.php?id_agente=".$a_row['id_agente']."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i>&nbsp;</a></td>";
         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"select_provvigioni.php?id_agente=".$a_row['id_agente']."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i>&nbsp;</a></td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["base_percent"]." &nbsp;</td>";
-        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_agenti.php?id_agente=".$a_row['id_agente']."\"><i class=\"glyphicon glyphicon-remove\"></i>&nbsp;</a></td>";
-        echo "</tr>\n";
+        echo "<td class=\"FacetDataTD\" align=\"center\">";
+		?>
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id_agente'];?>" nome="<?php echo $a_row['ragso1']," ",$a_row['ragso2']; ?>">
+			<i class="glyphicon glyphicon-remove"></i>
+		</a>
+		<?php
+        echo "</td></tr>\n";
 }
 ?>
 <tr><th class="FacetFieldCaptionTD" colspan="8"></th></tr>

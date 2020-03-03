@@ -43,7 +43,55 @@ if (isset($_GET['all'])) {
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $gForm = new GAzieForm();
+?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("cliente"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'contract',ref:id},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_contract.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
+<?php
 echo "<form method=\"GET\" name=\"report\">\n";
+?>
+<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+	<p><b>contratto</b></p>
+	<p>Codice:</p>
+	<p class="ui-state-highlight" id="idcodice"></p>
+	<p>Cliente:</p>
+	<p class="ui-state-highlight" id="iddescri"></p>
+</div>
+<?php
 echo "<input type=\"hidden\" name=\"hidden_req\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['vat_section'];
 $gForm->selectNumber('auxil',$auxil,0,1,3,'FacetSelect','auxil');
@@ -96,8 +144,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
         print "<td class=\"FacetDataTD\" align=\"center\">".$cliente['ragso1']."&nbsp;</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".$row["current_fee"]." &nbsp;</td>";
         print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"print_contract.php?id_contract=".$row['id_contract']."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-        print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_contract.php?id_contract=".$row['id_contract']."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-        print "</tr>\n";
+        print "<td class=\"FacetDataTD\" align=\"center\">";
+		?>
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $row['id_contract'];?>" cliente="<?php echo $cliente['ragso1']; ?>">
+			<i class="glyphicon glyphicon-remove"></i>
+		</a>
+		<?php
+        print "</td></tr>\n";
 }
 ?>
 <tr><th class="FacetFieldCaptionTD" colspan="7"></th></tr>
