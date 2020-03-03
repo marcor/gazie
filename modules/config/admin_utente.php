@@ -213,7 +213,8 @@ if (isset($_POST['Submit'])) {
 					// trovo l'ultimo peso assegnato ai moduli esistenti e lo accodo
 					$rs_last = gaz_dbi_dyn_query("MAX(weight)+1 AS max_we", $gTables['module'], 'id > 1');
 					$r = gaz_dbi_fetch_array($rs_last);
-					gaz_dbi_table_insert('module', array('name' => $name, 'link' => $menu_data['m1']['link'], 'icon' => $name . '.png', 'weight' => $r['max_we']));
+					$modclass=(isset($module_class))?$module_class:'';
+					gaz_dbi_table_insert('module', array('name' => $name, 'link' => $menu_data['m1']['link'], 'icon' => $name . '.png', 'class'=>$modclass, 'weight' => $r['max_we']));
 					//recupero l'id assegnato dall'inserimento
 					$mod_id = gaz_dbi_last_id();
 					updateAccessRights($form["user_name"], $mod_id, 3, $id[1]);
