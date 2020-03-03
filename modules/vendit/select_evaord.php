@@ -524,6 +524,11 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
     $utsIniziotrasporto = mktime(0, 0, 0, $_POST['initra_M'], $_POST['initra_D'], $_POST['initra_Y']);
     $gForm = new venditForm();
     $ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
+	if (!isset($ecr)){ // se non c'è registratore di cassa
+	$ecr['id_cash']=0;
+	$ecr['seziva']=$form['seziva'];
+	$ecr['descri']="NULL";
+	}
     // ALLERTO SE NON E' STATA ESEGUITA LA CHIUSURA/CONTABILIZZAZIONE DEL GIORNO PRECEDENTE
     $rs_no_accounted = gaz_dbi_dyn_query("datemi", $gTables['tesdoc'], "id_con = 0 AND tipdoc = 'VCO' AND datemi < '$dataemiss' AND tipdoc = 'VCO'", 'id_tes', 0, 1);
     $no_accounted = gaz_dbi_fetch_array($rs_no_accounted);
@@ -574,12 +579,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
     }
     if ($msg == "") {//procedo all'inserimento
         require("lang." . $admin_aziend['lang'] . ".php");
-        $script_transl = $strScript['select_evaord.php'];
-        $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
-        if (!$ecr_user) {
-            header("Location: error_msg.php?ref=admin_scontr");
-            exit;
-        };
+        $script_transl = $strScript['select_evaord.php'];                
         $iniziotrasporto .= " " . $_POST['initra_H'] . ":" . $_POST['initra_I'] . ":00";
         $form['tipdoc'] = 'VCO';
         $form['template'] = 'FatturaAllegata';
@@ -693,7 +693,10 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
           }
          */
         setOrdineEvaso($form['righi']);
-
+		if ($ecr['descri']=="NULL"){ // se non c'è registratore di cassa
+			header("Location: report_scontr.php");
+            exit;
+		}
         // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
         require("../../library/cash_register/" . $ecr['driver'] . ".php");
         $ticket_printer = new $ecr['driver'];
