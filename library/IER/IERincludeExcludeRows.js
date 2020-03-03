@@ -61,7 +61,7 @@ function readIncludeExcludeRowsString(){
 
 	$.ajax({
 		type: 'POST',
-		url: "../../library/IER/IERincludeExcludeRows.php",
+		url: "../../modules/root/IERincludeExcludeRows.php",
 		async: false,
 		data: {
 		fn: "read",
@@ -195,7 +195,7 @@ function saveIncludeExcludeRows(){
 	//alert($("#IERincludeExcludeRowsInput").val());
   //alert(getMyUrl() + ".IER");
 
-	$.post("../../library/IER/IERincludeExcludeRows.php",
+	$.post("../../modules/root/IERincludeExcludeRows.php",
 	{
     fn: "save",
 	filename: getMyUrl() + ".IER",
