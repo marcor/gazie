@@ -357,7 +357,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
                     $form['expiry'] = "0000-00-00 00:00:00";
                 }
 				$form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING); // ne ripulisco il numero da caratteri dannosi
-				// prendo l'ID del rigo di movmag
+				// Vedo dove andrà salvato il movimento di magazzino in movmag $id_movmag
 				if ($toDo=="update") {
 					$id_movmag=$_GET['id_mov'];
 				} else {
@@ -376,7 +376,6 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 						$form['id_lotmag'] = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
 						gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['artico'] . "','" . $id_movmag. "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
 				} 
-								
 				if (intval($form['id_lotmag']) > 0 and $toDo=="update" AND $form['operat']==1 ) { // se esiste il lotto e siamo in update lo modifico
 					gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");						
 				}
@@ -393,15 +392,15 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			} else {
 				$form['id_lotmag']=0;
 			}
-				// fine salvataggio lotti
-	
+			// fine salvataggio lotti
+
             $upd_mm = new magazzForm;
             //formatto le date
             $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
             $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
             $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
             if (!empty($form['artico'])) {
-                $id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0, 
+                $upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0, 
                         $form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
                 );
 				if ($form['SIAN']>0 AND $toDo=="insert"){ 
@@ -415,7 +414,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 					$update[]=$form['id_mov'];
 					gaz_dbi_table_update('camp_mov_sian',$update,$form);
 				}
-				
+	
 				// aggiorno id_lotmag nel rigo di movmag				
 				$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = " . $form['id_lotmag'] . ", id_orderman=".$form['id_orderman']." WHERE id_mov ='" . $id_movmag . "'";
                 gaz_dbi_query($query);
