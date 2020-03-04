@@ -282,7 +282,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	}
 	
 	// controllo e WARNING su quantità e lotti
-	if (strlen($form['artico'])>0 && $form['quanti']>0 && $form['operat']==-1){
+	if (strlen($form['artico'])>0 && $form['quanti']>0 && ($form['operat']==-1 OR $form['operat']==0)){
 		$mv = $gForm->getStockValue(false, $form['artico']);
 		$magval = array_pop($mv); // controllo disponibilità in magazzino		
 		if ($magval['q_g']+$prev_qta['quanti']<$form['quanti']){
@@ -292,9 +292,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			<strong>Warning!</strong> quantità articolo non sufficiente! Se si conferma si creerà una quantità negativa!
 			</div>
 			<?php
-		}
-		
+		}		
 	}
+	
+	
     if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
         $utsreg = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
         $utsdoc = mktime(0, 0, 0, $form['mesdoc'], $form['giodoc'], $form['anndoc']);
@@ -305,6 +306,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if ($utsdoc > $utsreg) {
             $msg .= "17+";
         }
+		if ($form['lot_or_serial']==1){
+			if (strlen ($form['identifier'])<= 0){
+				$msg .= "21+";
+			}
+		}
         if (empty($form['artico'])) {  //manca l'articolo
             $msg .= "18+";
         }
