@@ -1455,7 +1455,9 @@ echo "</script>\n";
                 <ul class="nav nav-tabs">
                     <li class="active bg-info"><a data-toggle="tab" href="#insdoc"><i class="glyphicon glyphicon-tag"></i> <?php echo $script_transl['insdoc']; ?></a></li>
 					<?php
-					if ($form['registroiva'] == 2 || $form['registroiva'] == 4) {
+					if (isset($_POST['Insert'])) {
+						$urldoc = '';
+					} else if ($form['registroiva'] == 2 || $form['registroiva'] == 4) {
 						$urldoc = '../vendit/admin_docven.php?Update&id_tes='.$testata['id_doc'];
 					} else if ($form['registroiva'] == 6) {
 						$urldoc = '../acquis/admin_docacq.php?Update&id_tes='.$testata['id_doc'];
@@ -1602,7 +1604,7 @@ echo "</script>\n";
                              ?>
                         </div>
 						<div class="form-group col-md-6 col-lg-3 nopadding">
-							<label for="datliq" class="col-sm-6 col-form-label"><?php echo $script_transl['datliq']; ?></label>
+							<label for="datliq" class="col-sm-6 control-label"><?php echo $script_transl['datliq']; ?></label>
 							<input class="col-sm-6" type="text" id="datliq" name="datliq" value="<?php echo $form['datliq']; ?>">
                         </div>
 						<div class="form-group col-md-6 col-lg-1 nopadding">
