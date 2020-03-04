@@ -709,7 +709,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
 		echo "<br>";
 		echo '<label>' . 'Scadenza: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="expiry"  value="' . $form['expiry'] . '"></div></div></div>';
 	} else { 
-		if ($form['operat']==-1 && $form['quanti']>0){  // se è scarico e è stata impostata la quantità
+		if (($form['operat']==-1 or $form['operat']==0) && $form['quanti']>0){  // se è scarico e è stata impostata la quantità
 		 	$lm->getAvailableLots($form['artico']); // Antonio Germani - 
 			$ld = $lm->divideLots($form['quanti']);
 			$l = 0;
