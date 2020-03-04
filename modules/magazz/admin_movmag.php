@@ -791,7 +791,16 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // s
 						}	
 					} 
 				}
+				if ($l==0){
+					?>
+					<div class="alert alert-warning alert-dismissible">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+					<strong>Warning!</strong> <b>La quantità richiesta non è disponibile in un singolo lotto</b> </br> <font color="red">Se si conferma si creeranno errori nella gestione lotti!</font></br> Si consiglia di frazionare questa operazione in più movimenti</br> rispettando le disponibilità per ciascun lotto.
+					</div>
+					<?php
+					}
 			}
+			
 			?>
 			<!-- Antonio Germani - Cambio lotto  -->
 			<div id="lm_dialog" class="collapse" >
