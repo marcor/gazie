@@ -293,12 +293,9 @@ $ts->output_navbar();
                 }?>
             </td>
             <td class=FacetFieldCaptionTD>
-                <?php gaz_flt_disp_select("destinaz",
-					  "unita_locale1 AS destinaz",
-					  $tesbro_e_destina,
-					  $where_select . " AND unita_locale1 IS NOT NULL",
-					  "destinaz DESC",
-					  "destinaz"); ?>
+                <?php 
+								gaz_flt_disp_select("destinaz","unita_locale1 AS destinaz",$tesbro_e_destina, $where_select . " AND unita_locale1 IS NOT NULL", "destinaz DESC",  "destinaz"); 
+								?>
             </td>
             <td class=FacetFieldCaptionTD>
                 &nbsp;
@@ -354,7 +351,9 @@ $ts->output_navbar();
                 echo "<td>" . gaz_format_date($r['datemi']) . " &nbsp;</td>";
             }
             echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=" . $r['ragso1'] . "\">" . $r['ragso1'] . "</a> &nbsp;</td>";
-            echo "<td><a href=\"admin_destinazioni.php?codice=".$r['clfoco']."&Update\">".$r['unita_locale1']."</a></td>";
+            echo "<td><a href=\"admin_destinazioni.php?codice=".$r['clfoco']."&Update\">".$r['unita_locale1']."</a>";
+						if(strlen($r['destin'])>5){ echo '<small>'.nl2br($r['destin']).'</small>';}
+						echo "</td>";
             
             // colonna stato ordine
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
