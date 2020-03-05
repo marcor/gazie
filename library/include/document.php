@@ -599,9 +599,9 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
     $config = new Config;
     $configTemplate = new configTemplate;
     if ($lang_template) {
-		$ts=$configTemplate->template;
-		$configTemplate->setTemplateLang($lang_template);
-		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
+			$ts=$configTemplate->template;
+			$configTemplate->setTemplateLang($lang_template);
+			if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
     }
     require("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
     $pdf = new $templateName();
@@ -617,12 +617,17 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         if ($templateName == 'DDT') {
             $ref = $tesdoc['numdoc'];
         }
+				$robj='rigdoc';
+        if (strtolower(substr($templateName,0,3))=='ord'|strtolower(substr($templateName,0,3))=='pre') { // ordini o preventivi vado su rigbro
+            $ref = $tesdoc['numdoc'];
+            $robj ='rigbro';
+        }
         if ($ref <> $ctrlprotoc && $ctrlprotoc > 0) {
             $pdf->pageFooter();
         }
         // Inizio pagina
         $testat = $tesdoc['id_tes'];
-        $docVars->setData($gTables, $tesdoc, $testat, 'rigdoc');
+        $docVars->setData($gTables,$tesdoc,$testat,$robj);
         $docVars->initializeTotals();
         $pdf->setVars($docVars, $templateName);
         $pdf->setTesDoc();
@@ -638,7 +643,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
             $ctrlprotoc = $tesdoc['numdoc'];
         }
         $testat = $tesdoc['id_tes'];
-        $pdf->docVars->setData($gTables, $tesdoc, $testat, 'rigdoc');
+        $pdf->docVars->setData($gTables,$tesdoc,$testat,$robj);
         $pdf->compose();
     }
     $pdf->pageFooter();
