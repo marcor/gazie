@@ -24,6 +24,8 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$send_sms_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_sms');
+
 $msg = "";
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('custom/modal_form'));
@@ -32,6 +34,9 @@ echo '<script>
 
 $(function() {
    $( "#dialog" ).dialog({
+      autoOpen: false
+   });
+   $( "#dialog_sms" ).dialog({
       autoOpen: false
    });
 });
@@ -65,6 +70,36 @@ function confirMail(link){
          });
    $("#dialog" ).dialog( "open" );
 }
+
+function confirSms(link){
+   tes_id = link.id.replace("doc", "");
+   $.fx.speeds._default = 500;
+   targetUrl = $("#doc"+tes_id).attr("url");
+   //alert (targetUrl);
+   $("p#sms_cell").html($("#doc"+tes_id).attr("cell"));
+   $("p#sms_text").html($("#doc"+tes_id).attr("smstext"));
+   $( "#dialog_sms" ).dialog({
+         modal: "true",
+      show: "blind",
+      hide: "explode",
+         buttons: {
+                      " '.$script_transl['submit'].' ": function() {
+                         //window.location.href = targetUrl;
+						 $.ajax({
+							url: targetUrl,
+							success: function (result) {
+								$("#dialog_sms").html(result);
+								$(":button:contains(\''.$script_transl['submit'].'\')").hide();
+							}
+						})
+                      },
+                      " '.$script_transl['cancel'].' ": function() {
+                        $(this).dialog("close");
+                      }
+                  }
+         });
+   $("#dialog_sms" ).dialog( "open" );
+}
 </script>';
 if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
@@ -93,6 +128,16 @@ if (!isset($_GET['flag_order'])) {
       <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
       <p class="ui-state-highlight" id="mail_attc"></p>
 </div>
+<div id="dialog_sms" title="Invio messaggio di testo con sms">
+<?php if (!empty($send_sms_package['val'])) { ?>
+      <p id="mail_alert1">Hai scelto di inviare un sms al numero:</p>
+      <p class="ui-state-highlight" id="sms_cell"></p>
+      <p id="mail_alert2">con il seguente testo</p>
+      <p class="ui-state-highlight" id="sms_text"></p>
+<?php } else { ?>
+      <p>Nessuna libreria sms configurata</p>
+<?php } ?>
+</div>
 <?php
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$script_transl[0]</div>\n";
 echo "<form method=\"GET\">";
@@ -115,6 +160,7 @@ $result = gaz_dbi_dyn_query ($gTables['letter'].".id_let, ".
                     $gTables['clfoco'].".codice, ".
                     $gTables['anagra'].".ragso1, ".
                     $gTables['anagra'].".ragso2, ".
+                    $gTables['anagra'].".cell, ".
                     $gTables['anagra'].".e_mail ", $table, $where, $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
@@ -125,7 +171,8 @@ $headers_mov = array  (
             $script_transl[4] => "ragso1",
             $script_transl[5] => "oggetto",
             ucwords(strtolower($script_transl['print'])) => "",
-			'Mail'=>'',
+			'Invio'=>'',
+            $script_transl['duplicate'] => "",
             $script_transl['delete'] => ""
             );
 $linkHeaders = new linkHeaders($headers_mov);
@@ -138,30 +185,38 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td align=\"center\">".$a_row["write_date"]." &nbsp;</td>\n";
     echo "<td align=\"center\">".$a_row["numero"]."</td>\n";
     echo "<td align=\"center\">".$a_row["tipo"]."</td>\n";
-    echo "<td align=\"center\">".$a_row['ragso1']." ".$a_row['ragso2']."</td>\n";
+    echo "<td align=\"center\"><a href=\"../vendit/report_client.php?nome=".$a_row["ragso1"]."\">".$a_row['ragso1']." ".$a_row['ragso2']."</a></td>\n";
     echo "<td align=\"center\">".$a_row["oggetto"]." &nbsp;</td>\n";
     echo "<td align=\"center\">
 			<a href=\"stampa_letter.php?id_let=".$a_row["id_let"]."\" title=\"Stampa\" class=\"btn btn-xs btn-default\" target=\"_blank\">
 				<i class=\"glyphicon glyphicon-print\"></i>
 			</a>
 		  </td>";
-    // Colonna "Mail"
+    // Colonna "Invio"
     echo "<td align=\"center\">";
-    if (!empty($a_row["e_mail"])) {
-		if($a_row["tipo"] == 'SOL'){
-			$namedoc = 'Sollecito del '.gaz_format_date($a_row["write_date"]);
-		}elseif($a_row["tipo"] == 'DIC'){
-			$namedoc = 'Dichiarazione del '.gaz_format_date($a_row["write_date"]);
-		}elseif($a_row["tipo"] == 'PRE'){
-			$namedoc = 'Preventivo del '.gaz_format_date($a_row["write_date"]);
-		}else{
-			$namedoc = 'Lettera n.'.$a_row["numero"].' del '.gaz_format_date($a_row["write_date"]);
+	if ($a_row["tipo"] == 'SMS') {
+		if (!empty($a_row["cell"])) {
+			$namedoc = 'Messaggio sul cellulare del '.gaz_format_date($a_row["write_date"]);
+			echo '<a onclick="confirSms(this);return false;" id="doc'.$a_row["id_let"].'" url="send_sms.php?id_sms='.$a_row["id_let"].'" href="#" title="smsto: '.$a_row["cell"].'"
+			cell="'.$a_row["cell"].'" smstext="'.$namedoc.'" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-phone"></i></a>';
 		}
-				
-        echo '<a onclick="confirMail(this);return false;" id="doc'.$a_row["id_let"].'" url="stampa_letter.php?id_let='.$a_row["id_let"].'&dest=E" href="#" title="mailto: '.$a_row["e_mail"].'"
-        mail="'.$a_row["e_mail"].'" namedoc="'.$namedoc.'" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-envelope"></i></a>';
-    }  
+	} else {
+		if (!empty($a_row["e_mail"])) {
+			if($a_row["tipo"] == 'SOL'){
+				$namedoc = 'Sollecito del '.gaz_format_date($a_row["write_date"]);
+			}elseif($a_row["tipo"] == 'DIC'){
+				$namedoc = 'Dichiarazione del '.gaz_format_date($a_row["write_date"]);
+			}elseif($a_row["tipo"] == 'PRE'){
+				$namedoc = 'Preventivo del '.gaz_format_date($a_row["write_date"]);
+			}else{
+				$namedoc = 'Lettera n.'.$a_row["numero"].' del '.gaz_format_date($a_row["write_date"]);
+			}
+			echo '<a onclick="confirMail(this);return false;" id="doc'.$a_row["id_let"].'" url="stampa_letter.php?id_let='.$a_row["id_let"].'&dest=E" href="#" title="mailto: '.$a_row["e_mail"].'"
+			mail="'.$a_row["e_mail"].'" namedoc="'.$namedoc.'" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-envelope"></i></a>';
+		}
+	}
     echo "</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"admin_letter.php?id_let=" . $a_row['id_let'] . "&Duplicate\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
     echo "<td align=\"center\">
 			<a href=\"delete_letter.php?id_let=".$a_row["id_let"]."\" title=\"".$script_transl['delete']."!\" class=\"btn btn-xs btn-default\">
 				<i class=\"glyphicon glyphicon-remove\"></i>

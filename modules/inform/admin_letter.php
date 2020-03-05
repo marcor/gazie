@@ -26,9 +26,9 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
 $msg = "";
-$tipoLettera = array("LET" => '', "DIC" => '', "SOL" => '', "PRE" => '');
+$tipoLettera = array("LET" => '', "DIC" => '', "SOL" => '', "PRE" => '', "SMS" => '');
 // il tipo documento dev'essere settato e del tipo giusto altrimenti torna indietro
-if ((isset($_GET['Update']) and ! isset($_GET['id_let'])) or ( isset($_GET['tipo']) and ( !array_key_exists($_GET['tipo'], $tipoLettera)))) {
+if (((isset($_GET['Update']) or isset($_GET['Duplicate'])) and ! isset($_GET['id_let'])) or ( isset($_GET['tipo']) and ( !array_key_exists($_GET['tipo'], $tipoLettera)))) {
     header("Location: " . $form['ritorno']);
     exit;
 }
@@ -102,7 +102,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
         }
     }
-} elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
+} elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']) or isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
     $lettera = gaz_dbi_get_row($gTables['letter'], 'id_let', intval($_GET['id_let']));
@@ -235,13 +235,30 @@ if (isset($partner['indspe'])) {
 }
 echo "</td></tr>\n";
 echo "<tr><td colspan=\"6\" class=\"FacetFieldCaptionTD\" align=\"center\">$script_transl[8]</td></tr>\n";
-echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass\">" . $form["corpo"] . "</textarea></td></tr>\n";
+if ($form["tipo"] == 'SMS') {
+	$lunghezza_sms = 160;
+    echo "<tr><td colspan=\"6\"><small id=\"metro_messaggio\" class=\"muted\">($lunghezza_sms)</small> <input type=\"text\" id=\"corpo\" name=\"corpo\" value=\"" . $form["corpo"] . "\" size=\"$lunghezza_sms\" maxlength=\"$lunghezza_sms\"/></td></tr>\n";
+} else {
+    echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass\">" . $form["corpo"] . "</textarea></td></tr>\n";
+}
 echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[9]<input type=\"checkbox\" name=\"signature\" " . $form['signature'] . "></td>
           <td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"center\"><input type=\"submit\" class=\"btn btn-warning\" name=\"ins\" value=\"" . $script_transl['submit'] . "\" /></td>
           </tr>";
 echo "</table></div>";
 ?>
 </form>
+<?php
+if ($form["tipo"] == 'SMS') {
+?>
+<script type="text/javascript">
+var messaggio;var MSG_STRING="";
+messaggio=$("form input[name=corpo]");MSG_STRING=$("#corpo").val();MSG_STRING=reparse_special_chars(MSG_STRING);$("#metro_messaggio").text("("+(<?php echo $lunghezza_sms ?>-parseInt(MSG_STRING.length))+")");
+function reparse_special_chars(b){reps={"\n":"   ","\t":"   ","\u20a4":"   ","\u20ac":"   ","^":"^^^","{":"{{{","}":"}}}","\\":"\\\\\\","[":"[[[","~":"~~~","]":"]]]","|":"|||"};for(var a in reps){temp_string=b.split(a);b=temp_string.join(reps[a])}return b}
+$("#corpo").keyup(function(){MSG_STRING=$(this).val();MSG_STRING=reparse_special_chars(MSG_STRING);$("#metro_messaggio").text("("+(<?php echo $lunghezza_sms ?>-parseInt(MSG_STRING.length))+")")});$(".dyn_c_fields").click(function(){MSG_STRING=$(messaggio).val();MSG_STRING=reparse_special_chars(MSG_STRING);if(MSG_STRING.length>=<?php echo $lunghezza_sms ?>-$(this).attr("rel").length){return}moved_caret=$(messaggio).caret()+$(this).attr("rel").length;$(messaggio).val($(messaggio).val().substr(0,$(messaggio).caret())+$(this).attr("rel")+$(messaggio).val().substr($(messaggio).caret()));$(messaggio).caret(moved_caret);MSG_STRING=$("#corpo").val();MSG_STRING=reparse_special_chars(MSG_STRING);$("#metro_messaggio").text("("+(<?php echo $lunghezza_sms ?>-parseInt(MSG_STRING.length))+")")});
+</script>
+<?php
+}
+?>
 <?php
 require("../../library/include/footer.php");
 ?>
