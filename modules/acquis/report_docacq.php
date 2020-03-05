@@ -73,8 +73,51 @@ $ts = new TableSorter(
 $where_select = sprintf("tipdoc LIKE 'AF_' AND seziva = %d", $sezione);
 
 ?>
-
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("fornitore"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'docacq',id_tes:id},
+						type: 'POST',
+						url: '../acquis/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_docacq.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET" >
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>documento di acquisto:</b></p>
+        <p>ID:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Fornitore</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <div align="center" class="FacetFormHeaderFont">
         <?php echo $script_transl['title']; ?>
 
@@ -146,17 +189,27 @@ $where_select = sprintf("tipdoc LIKE 'AF_' AND seziva = %d", $sezione);
         </tr>
 <?php
 
-/*
-$rs_last_doc = gaz_dbi_dyn_query("MAX(protoc) AS maxpro, YEAR(datfat) AS y", $gTables['tesdoc'], "tipdoc LIKE 'AF_' AND seziva = '$seziva' GROUP BY y ", 'protoc DESC');
-while ($last_doc = gaz_dbi_fetch_array($rs_last_doc)) {
-    $lt_doc[$last_doc['y']] = $last_doc['maxpro'];
-}
-*/
-
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
 $paymov = new Schedule(); 
 while ($row = gaz_dbi_fetch_array($result)) {
+	// controllo ogni rigo se è ultimo movimento per quel tipdoc
+	if  (substr($row['tipdoc'],0,2) == 'DD') {
+		$where = "tipdoc LIKE 'DD_' AND seziva = ".$row['seziva']." AND numfat = 0" ;
+		$order='numdoc DESC';
+	} elseif  (substr($row['tipdoc'],0,2) == 'AF'){ // fattura o nota credito fornitore
+		$where = "tipdoc LIKE 'AF_' AND seziva = ".$row['seziva']." AND YEAR(datreg) = '".substr($row['datreg'],0,4)."'";
+		$order='protoc DESC';
+	} elseif  (substr($row['tipdoc'],0,2) == 'AD'){
+		$where = "tipdoc LIKE 'AD_'";
+		$order='id_tes DESC';
+	} elseif  (substr($row['tipdoc'],0,2) == 'RD'){
+		$where = "tipdoc LIKE 'RD_' AND seziva = ".$row['seziva'];
+		$order='id_tes DESC';
+	}
+	$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,$order,0,1);
+	$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+	
     // faccio il check per vedere se ci sono righi da trasferire in contabilità di magazzino
     $ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=". $row['id_tes']." AND  LENGTH(TRIM(codart))>=1 AND tiprig=0 AND id_mag=0");
     $check = gaz_dbi_fetch_array($ck);
@@ -218,12 +271,19 @@ while ($row = gaz_dbi_fetch_array($result)) {
     }
     echo "</td>";
     echo "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-//  if ($lt_doc[$y] == $row['protoc']) {
-        echo "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-//  } else {
-//      echo "<td><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
-//  }
-    echo "</tr>\n";
+        echo "<td>";
+		if (!empty($ultimo_documento) && $ultimo_documento['id_tes']==$row['id_tes']) {
+			?>			
+			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $row['id_tes'];?>" fornitore="<?php echo $anagra['ragso1']; ?>">
+				<i class="glyphicon glyphicon-remove"></i>
+			</a>
+			<?php
+		} else {
+			?>
+			<i class="glyphicon glyphicon-ban-circle" title="Non puoi eliminare un documento diverso dall'ultimo emesso" ></i>
+			<?php
+		}
+    echo "</td></tr>\n";
 }
 ?>
 

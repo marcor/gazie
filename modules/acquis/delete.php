@@ -43,7 +43,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
 			}
 		break;
-		case "ddtacq":
+		case "docacq":
 			$i=intval($_POST['id_tes']);
 			$form = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $i);
 			gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $i);

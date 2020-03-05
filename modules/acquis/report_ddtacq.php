@@ -116,7 +116,7 @@ $(function() {
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
-						data: {'type':'ddtacq',id_tes:id},
+						data: {'type':'docacq',id_tes:id},
 						type: 'POST',
 						url: '../acquis/delete.php',
 						success: function(output){
@@ -243,13 +243,6 @@ while ($val = gaz_dbi_fetch_array($res)) {
             ?>
         </tr>
         <?php
-        $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where, "datemi desc, numdoc desc", 0, 1);
-        $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-        if ($ultimo_documento) {
-            $ultimoddt = $ultimo_documento['numdoc'];
-        } else {
-            $ultimoddt = 1;
-        }
         $result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], $where, $orderby, $limit, $passo);
         echo "<tr><td class=\"FacetDataTDred\" colspan=\"8\">Attenzione, la numerazione comprende anche i D.d.T. di Vendita non riportati in questa lista!</td></tr>";
 
@@ -260,7 +253,7 @@ while ($val = gaz_dbi_fetch_array($res)) {
 				$where = "tipdoc LIKE 'DD_' AND seziva = ".$a_row['seziva']." AND numfat = 0" ;
 				$order='numdoc DESC';
 			} elseif  (substr($a_row['tipdoc'],0,2) == 'AF'){ // fattura o nota credito fornitore
-				$where = "tipdoc LIKE 'AF_' AND seziva = ".$a_row['seziva']." AND YEAR(datreg) = '".substr($form['datreg'],0,4)."'";
+				$where = "tipdoc LIKE 'AF_' AND seziva = ".$a_row['seziva']." AND YEAR(datreg) = '".substr($a_row['datreg'],0,4)."'";
 				$order='protoc DESC';
 			} elseif  (substr($a_row['tipdoc'],0,2) == 'AD'){
 				$where = "tipdoc LIKE 'AD_'";
