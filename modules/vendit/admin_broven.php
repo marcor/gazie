@@ -290,7 +290,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $next_row++;
         }
     }
-    // Se viene inviata la richiesta di conferma totale ...
+		// Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
@@ -323,7 +323,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         // --- fine controllo coerenza date-numeri
         if (!checkdate($form['mesemi'], $form['gioemi'], $form['annemi']))
             $msg .= "46+";
-        if (empty($form['clfoco']))
+        if (empty($form['clfoco'])&& $toDo == 'insert')
             $msg .= "47+";
         if (empty($form['pagame']))
             $msg .= "48+";
@@ -338,8 +338,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg .= "50+";
             }
         }
-        if ($msg == "") {// nessun errore
-            $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
+		if ($msg == "") {// nessun errore
+             $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['mascli'],$form['pagame']);
