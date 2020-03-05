@@ -189,8 +189,6 @@ function choicePartner(row)
 	});
 }
 
-</script>
-<script>
 $(function() {
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
@@ -214,7 +212,7 @@ $(function() {
 						url: '../acquis/delete.php',
 						success: function(output){
 		                    //alert(output);
-							window.location.replace("./report_broacq.php");
+							window.location.replace("./report_broacq.php?flt_tipo=<?php echo $flt_tipo; ?> ");
 						}
 					});
 				}},

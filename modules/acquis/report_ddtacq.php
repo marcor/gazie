@@ -97,7 +97,51 @@ if (isset($_GET['all'])) {
     $auxil = $_GET['auxil'] . "&all=yes";
 }
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("catdes"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'ddtacq',id_tes:id},
+						type: 'POST',
+						url: '../acquis/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_ddtacq.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>"  name="auxil">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>documento di trasporto:</b></p>
+        <p>ID:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Fornitore</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
     <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
@@ -211,6 +255,23 @@ while ($val = gaz_dbi_fetch_array($res)) {
 
         $anagrafica = new Anagrafica();
         while ($a_row = gaz_dbi_fetch_array($result)) {
+			// controllo ogni rigo se è ultimo movimento per quel tipdoc
+			if  (substr($a_row['tipdoc'],0,2) == 'DD') {
+				$where = "tipdoc LIKE 'DD_' AND seziva = ".$a_row['seziva']." AND numfat = 0" ;
+				$order='numdoc DESC';
+			} elseif  (substr($a_row['tipdoc'],0,2) == 'AF'){ // fattura o nota credito fornitore
+				$where = "tipdoc LIKE 'AF_' AND seziva = ".$a_row['seziva']." AND YEAR(datreg) = '".substr($form['datreg'],0,4)."'";
+				$order='protoc DESC';
+			} elseif  (substr($a_row['tipdoc'],0,2) == 'AD'){
+				$where = "tipdoc LIKE 'AD_'";
+				$order='id_tes DESC';
+			} elseif  (substr($a_row['tipdoc'],0,2) == 'RD'){
+				$where = "tipdoc LIKE 'RD_' AND seziva = ".$a_row['seziva'];
+				$order='id_tes DESC';
+			}
+			$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,$order,0,1);
+			$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+	
             $cliente = $anagrafica->getPartner($a_row['clfoco']);
             echo "<tr class=\"FacetDataTD\">";
 //       echo "<td class=\"FacetDataTD\"><a href=\"admin_docacq.php?id_tes=" . $a_row["id_tes"] . "&Update\">" . $a_row["id_tes"] . "</a> &nbsp</td>";
@@ -224,17 +285,20 @@ while ($val = gaz_dbi_fetch_array($res)) {
 			<a class=\"btn btn-xs btn-default\" href=\"stampa_docacq.php?id_tes=" . $a_row["id_tes"] . "&template=DDT\" title=\"Stampa\">
 					<i class=\"glyphicon glyphicon-print\"></i>
 			</a>
-		  </td>";
-            if ($ultimoddt == $a_row["numdoc"] and $a_row['numdoc'] == 0) {
-                echo "<td>
-				<a class=\"btn btn-xs btn-default\" href=\"delete_docacq.php?id_tes=" . $a_row["id_tes"] . "\" title=\"Cancella\">
-					<i class=\"glyphicon glyphicon-remove\"></i>
+			</td>";            
+            echo "<td>";	
+			if (!empty($ultimo_documento) && $ultimo_documento['id_tes']==$a_row['id_tes']) {
+				?>			
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $a_row['id_tes'];?>" catdes="<?php echo $cliente['ragso1']; ?>">
+					<i class="glyphicon glyphicon-remove"></i>
 				</a>
-			  </td>";
-            } else {
-                echo "<td></td>";
-            }
-            echo "</tr>";
+				<?php
+			} else {
+				?>
+				<i class="glyphicon glyphicon-ban-circle" title="Non puoi eliminare un documento diverso dall'ultimo emesso" ></i>
+				<?php
+			}
+			echo "</td></tr>";            
         }
         ?>
 </form>
