@@ -34,13 +34,15 @@ if (!empty($_SESSION['theme']) && file_exists("../.." . $_SESSION['theme'] . "/h
 	if ($handle = opendir("../../library/theme")) {
     while (false !== ($entry = readdir($handle))) {
 			if ($entry === "." || $entry === "..") continue;
-			if (is_dir($entry)){
+			if (is_dir("../../library/theme/".$entry)){
+				//print $entry.'<br>';
 				$theme=true;
 				$_SESSION['theme']='/library/theme/'.$entry;
 				include "../../library/theme/".$entry."/header.php";
 				break;				
 			}
 		}
+
     closedir($handle);
 	} 
 	if(!$theme){
