@@ -182,7 +182,7 @@ if (!empty($msg)) {
     }
     echo $message . "</td></tr>\n";
 }
-echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[7]</td><td class=\"FacetDataTD\"><select name=\"tipo\" class=\"FacetSelect\">\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[7]</td><td class=\"FacetDataTD\"><select name=\"tipo\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 foreach ($tipoLettera as $key => $value) {
     $selected = "";
     if ($form["tipo"] == $key) {
