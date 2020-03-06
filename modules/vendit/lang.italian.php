@@ -610,7 +610,8 @@ $strScript = array("admin_client.php" =>
         'date' => 'Data',
         'number' => 'Numero',
         'customer' => 'Cliente',
-        'current_fee' => 'Canone corrente'
+        'current_fee' => 'Canone corrente',
+        'status' => 'Stato del contratto'
     ),
     "admin_contract.php" =>
     array('title' => 'Gestione dei contratti',
@@ -1430,6 +1431,8 @@ $strScript = array("admin_client.php" =>
             'MC' => 'Mancata Consegna',
             'RC' => 'Ricevuta consegna',
             'NE' => 'Notifica esito',
+            'NEEC01' => 'Accettata',
+            'NEEC02' => 'Rifiutata',
             'DT' => 'Decorrenza termini'),
         'progr_ret' => 'Progr.',
         'flux_descri' => 'Descrizione',

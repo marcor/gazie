@@ -134,7 +134,12 @@ if (isset($_GET['all'])) {
 
 			if ($status == 'NO') {
 				//$status = '@';
-				$where = " flux_status != 'RC' AND flux_status != 'MC' AND flux_status != 'DT' AND flux_status != 'NS' AND flux_status != 'NE' AND flux_status != 'NEEC02'";
+				$where = " flux_status != 'RC' AND flux_status != 'MC' AND flux_status != 'DT' AND flux_status != 'NS' AND flux_status != 'NE' AND flux_status != 'NEEC01' AND flux_status != 'NEEC02'";
+				//$senza_esito = 1;
+				$mostra_intesta = 1;
+				$mostra_intesta_riga = 0;
+			} elseif ($status == 'NEEC01') {
+				$where = " flux_status LIKE 'NEEC01'";
 				//$senza_esito = 1;
 				$mostra_intesta = 1;
 				$mostra_intesta_riga = 0;
@@ -296,7 +301,8 @@ $recordnav->output();
 	<option value="RC" <?php if($status =="RC") echo "selected";?> >RC - Ricevuta consegna</option>
 	<option value="DT" <?php if($status =="DT") echo "selected";?> >DT - Decorrenza termini</option>
 	<option value="NE" <?php if($status =="NE") echo "selected";?> >NE - Notifica esito</option>
-	<option value="NEEC02" <?php if($status =="NEEC02") echo "selected";?> >NE EC02 - Notifica esito</option>
+	<option value="NEEC01" <?php if($status =="NEEC01") echo "selected";?> >NEEC01 - Accettata</option>
+	<option value="NEEC02" <?php if($status =="NEEC02") echo "selected";?> >NEEC02 - Rifiutata</option>
 	<option value="NO" <?php if($status =="NO") echo "selected";?> >NO - Senza esiti oltre RC</option>
 </select>
 </td>
@@ -335,7 +341,7 @@ if ( $mostra_intesta == 1 and $mostra_intesta_riga == 0 ) {
 //$orderby = $gTables['fae_flux'].'.filename_zip_package DESC, '.$gTables['fae_flux'].'.filename_ori DESC,'. $gTables['fae_flux'].'.progr_ret';
 $orderby = $gTables['fae_flux'] . '.id DESC';
 
-$result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".seziva,".$gTables['tesdoc'].".numfat,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice', $where, $orderby, $limit, $passo);
+$result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".seziva,".$gTables['tesdoc'].".numfat,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri,".$gTables['anagra'].".fe_cod_univoco", $gTables['fae_flux'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $where, $orderby, $limit, $passo);
 
 $ctrl_zip = 'START_CHECK_VALUE';
 while ($r = gaz_dbi_fetch_array($result)) {
@@ -396,6 +402,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $class2 = '';
     if ($r['flux_status'] == 'RC') {
         $class = 'FacetDataTD';
+		if (strlen($r['fe_cod_univoco']) == 6) {
+			$class2 = 'FacetDataTDevidenziaOK';
+		}
     } elseif ($r['flux_status'] == 'NS') {
         $class = 'FacetDataTD';
         $class2 = 'FacetDataTDevidenziaKO';
@@ -423,11 +432,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
     if ($r['flux_status'] == 'NE' || $r['flux_status'] == 'NEEC01') {
         //Fattura accettata
         $class = 'FacetDataTD';
-        $class2 = 'FacetDataTDevidenziaOK';
+        $class2 = 'FacetDataTDevidenziaCL';
     } else if (strlen($r['flux_status']) > 2 && strpos($r['flux_status'], 'NE') !== FALSE) {
         //Fattura rifiutata
         $class = 'FacetDataTD';
-        $class2 = 'FacetDataTDevidenziaKO';
+        $class2 = 'FacetDataTDevidenziaBL';
     }
 
     echo "<tr class=\"$class1 $class2\">";
