@@ -231,7 +231,7 @@ $(function() {
             echo "<td align=\"center\">";
 			if ($check_mov > 0 or $check_doc > 0 or $check_bro > 0) {
 				?>
-				<a class="btn btn-xs btn-default btn-elimina" title="Impossibile cancellare perché ci sono dei movimenti associati" ref="<?php echo substr($a_row['codice'], 3);?>" >
+				<a class="btn btn-xs btn-default btn-elimina" title="Impossibile cancellare perché ci sono dei movimenti associati">
 					<i class="glyphicon glyphicon-ban-circle"></i>
 				</a>
 				<?php

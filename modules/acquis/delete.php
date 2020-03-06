@@ -70,6 +70,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				  gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
 			}
 		break;
+		case "fornit":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['clfoco'], 'codice', $i);
+		break;
 	}
 }
 ?>
