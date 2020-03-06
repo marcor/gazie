@@ -103,6 +103,7 @@ function removeSignature($s)
 	$s = substr($s, 0, $f_end);
 	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
 	$s = preg_replace('/[\x{0004}]{1}[\x{0082}]{1}[\x{0001}\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $s);
+	$s = preg_replace('/[\x{0004}]{1}[\x{0082}]{1}[\s\S]{1}[\x{0000}]{1}/i', '', $s);
 	$s = preg_replace('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $s);
 	$s = preg_replace('/[\x{0004}]{1}[\s\S]{1}/i', '', $s);
 	$s = preg_replace('/[\x{0003}]{1}[\s\S]{1}/i', '', $s);
