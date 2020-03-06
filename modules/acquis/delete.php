@@ -60,6 +60,16 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				}
 			}
 		break;
+		case "pagdeb":
+			$i=intval($_POST['id_tes']);
+			//cancello la testata
+			gaz_dbi_del_row($gTables['tesbro'], "id_tes", $i);
+			//... e i righi
+			$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = '{$i}'","id_tes desc");
+			while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+				  gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
+			}
+		break;
 	}
 }
 ?>

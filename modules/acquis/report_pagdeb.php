@@ -59,7 +59,51 @@ if (isset($_GET['all'])) {
 $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<form method="GET" >	
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("fornitore"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'pagdeb',id_tes:id},
+						type: 'POST',
+						url: '../acquis/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_pagdeb.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
+<form method="GET" >
+<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>pagamento:</b></p>
+        <p>ID:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Fornitore</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>	
 <div class="table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <tr>
@@ -142,12 +186,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 					<i class=\"glyphicon glyphicon-print\"></i>
 				</a>
 			  </td>
-			  <td align=\"center\">
-				<a class=\"btn btn-xs btn-default\" href=\"delete_pagdeb.php?id_tes=".$a_row['id_tes']."\" title=\"Cancella\">
-					<i class=\"glyphicon glyphicon-remove\"></i>
-				</a>
-			  </td>
-		  </tr>";
+			  <td align=\"center\">";
+	?>			
+	<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $a_row['id_tes'];?>" fornitore="<?php echo $fornitore['ragso1']; ?>">
+		<i class="glyphicon glyphicon-remove"></i>
+	</a>
+	<?php
+	echo "</td></tr>";
 }
 ?>
 </table></div>
