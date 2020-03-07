@@ -48,7 +48,7 @@ if ( isset($_GET['clfoco']) && $_GET['clfoco']!="All" ) {
 if ( isset($_GET['flt_stato']) ) {
 	if ( $_GET['flt_stato']!="All" ) {
 		if ( $_GET['flt_stato']=="nochiusi" ) {
-			$where .= " and ".$gTables['assist'].".stato != 'chiuso' and ".$gTables['assist'].".stato != 'contratto' ";
+			$where .= " and ".$gTables['assist'].".stato != 'effettuato' and ".$gTables['assist'].".stato != 'fatturato' ";
 		} else {
 			$where .= " and ".$gTables['assist'].".stato = '".$_GET['flt_stato']."'";
 		}

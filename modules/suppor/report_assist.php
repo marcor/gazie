@@ -29,7 +29,7 @@ $titolo = 'Assistenza Clienti';
 $totale_ore = 0;
 $stati = array();
 
-$orderby = "data asc";
+$orderby = "data ASC";
 
 if ( !isset( $_GET['idinstallazione']) ) { //se non viene visualizzato all'interno dello script installazioni
 	require_once('../../library/include/header.php');
@@ -37,7 +37,7 @@ if ( !isset( $_GET['idinstallazione']) ) { //se non viene visualizzato all'inter
 }
 
 if ( isset($_GET['chstato'] ) ) {
-	$rows = array ('aperto','effettuato','chiuso');
+	$rows = array ('avvisare', 'bloccato', 'aperto', 'effettuato', 'fatturato');
 	$found = false;
 	for ($t=0; $t<count($rows); $t++ ) {
 		if ( $found == true ) {
@@ -49,8 +49,8 @@ if ( isset($_GET['chstato'] ) ) {
 			$stato = $rows[0];
 		}
 	}
-	gaz_dbi_table_update("assist", array ("id", $_GET['chstato']), array("stato" => $stato));
-	header ();
+	gaz_dbi_table_update("assist", array("id", $_GET['chstato']), array("stato" => $stato));
+	//header();
 } else {
 	if ( !isset($_GET['stato']) ) $_GET['stato'] = 'nochiusi';
 }
@@ -58,11 +58,15 @@ if ( isset($_GET['chstato'] ) ) {
 if ( !isset( $_GET['clfoco'] )) $_GET['clfoco'] = 'All';
 if ( !isset( $_GET['oggetto'] )) $_GET['oggetto'] = '';
 
-$where = "tipo = 'ASS' and ".$gTables['anagra'].".ragso1 like '%%'";
-$all	= $where;
+$where = "tipo='ASS' AND " . $gTables['anagra'] . ".ragso1 LIKE '%%'";
+$all = $where;
+
+if ( $_GET['stato']=="nochiusi" ) {
+	$where .= " AND ".$gTables['assist'].".stato!='effettuato' AND ".$gTables['assist'].".stato!='fatturato'";
+}
 
 if ( isset( $_GET['idinstallazione']) ) {
-	$where .= " and idinstallazione=".$_GET['idinstallazione'];
+	$where .= " AND idinstallazione=".$_GET['idinstallazione'];
 }
 
 if ( isset($_GET['flt_passo']) ) {
@@ -71,48 +75,12 @@ if ( isset($_GET['flt_passo']) ) {
 	$passo = 50;
 }
 
-if ( !isset($_GET['tecnico']) ) $_GET['tecnico']='All';
-/*if ( isset($_GET['tecnico']) ) {
-	$flt_tecnico = $_GET['tecnico'];
-	if ( $flt_tecnico!='All' ) {
-		$where .= " and tecnico = '".$flt_tecnico."'";
-	}
-} else {
-	$flt_tecnico = 'All';
-}*/
-
-/*if ( isset($_GET['flt_stato']) ) {
-	$flt_stato = $_GET['flt_stato'];
-	if ( $flt_stato!='tutti' ) {
-		if ( $flt_stato=='nochiusi' ) {
-			$where .= " and ".$gTables['assist'].".stato != 'chiuso' and stato != 'contratto' ";
-		} else {
-			$where .= " and ".$gTables['assist'].".stato = '".$flt_stato."'";
-		}
-	}
-} else {
-	$flt_stato = 'nochiusi';
-	$where .= " and ".$gTables['assist'].".stato!='chiuso' ";
-	//$where .= " ";
-}*/
-
-if ( isset($_GET['stato']) ) {
-	$flt_stato = $_GET['stato'];
-}
-/*if ( $flt_stato!='All' ) {
-	if ( $flt_stato=='nochiusi' ) {
-		$where .= " and ".$gTables['assist'].".stato!='chiuso' and ".$gTables['assist'].".stato!='contratto' ";
-	} else {
-		$where .= " and ".$gTables['assist'].".stato='".$flt_stato."'";
-	}
-} else {
-	$flt_stato = 'nochiusi';
-	$where .= " and ".$gTables['assist'].".stato!='chiuso' ";
-}*/
+if ( !isset($_GET['tecnico']) ) $_GET['tecnico'] = 'All';
 
 if ( !isset( $_GET['idinstallazione']) ) {
 	gaz_flt_var_assign('codice', 'i', $gTables['assist']);
 	gaz_flt_var_assign('data', 'd', $gTables['assist']);
+	gaz_flt_var_assign('citspe', 'v');
 	gaz_flt_var_assign('clfoco', 'v', $gTables['assist']);
 	gaz_flt_var_assign('telefo', 'v');
 	gaz_flt_var_assign('oggetto', 'v');
@@ -121,26 +89,10 @@ if ( !isset( $_GET['idinstallazione']) ) {
 	gaz_flt_var_assign('stato', 'v', $gTables['assist']);
 }
 
-/*if ( isset($_GET['codice'])) {
-	$where .= $gTables['assist'].".codice=".$flt_codice;
-}
-if ( isset($_GET['flt_cliente']) ) {
-	$flt_cliente = $_GET['clfoco'];
-} else {
-	$flt_cliente = 'tutti';
-}
-
-if ( $flt_cliente!='tutti' ) {
-	$where .= " and ".$gTables['assist'].".clfoco = '".$flt_cliente."'";
-}*/
-
-//d($GLOBALS, $_SERVER);
-//d($_GET);
-
 $result = gaz_dbi_dyn_query($gTables['assist'].".*,
-		".$gTables['anagra'].".ragso1, ".$gTables['anagra'].".telefo ", $gTables['assist'].
-		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice". 
-		" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
+		".$gTables['anagra'].".citspe, ".$gTables['anagra'].".ragso1, ".$gTables['anagra'].".telefo ", $gTables['assist'].
+		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco=".$gTables['clfoco'].".codice". 
+		" LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra=".$gTables['anagra'].".id",
 		$where, $orderby, $limit, $passo);
 
 if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
@@ -170,7 +122,10 @@ if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 				<?php gaz_flt_disp_select("data", "YEAR(data) as data", $gTables["assist"], "9999", $orderby); ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
-				<?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["assist"] . ".clfoco", $gTables['assist'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['assist'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all." and stato='aperto' or stato='effettuato' ", "ragso1", "ragso1"); ?>
+				<?php gaz_flt_disp_int("citspe", "Zona"); ?>
+			</td>
+			<td class="FacetFieldCaptionTD">
+				<?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["assist"] . ".clfoco", $gTables['assist'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['assist'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all." AND stato<>'' ", "ragso1", "ragso1"); ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
 				<?php gaz_flt_disp_int("telefo", "Telefono"); ?>
@@ -188,7 +143,7 @@ if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 				<?php gaz_flt_disp_select("stato", "stato", $gTables["assist"], "tipo='ASS'", "stato"); ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
-				<a class="btn btn-sm btn-default" href="print_ticket_list.php?auxil=<?php echo $auxil; ?>&clfoco=<?php echo $_GET["clfoco"]; ?>&flt_stato=<?php echo $flt_stato; ?>&oggetto=<?php echo $_GET['oggetto']; ?>&flt_passo=<?php echo $passo; ?>"><i class="glyphicon glyphicon-list"></i>&nbsp;Stampa Lista</a>
+				<a class="btn btn-sm btn-default" href="print_ticket_list.php?auxil=<?php echo $auxil; ?>&clfoco=<?php echo $_GET["clfoco"]; ?>&flt_stato=<?php echo $_GET['stato']; ?>&oggetto=<?php echo $_GET['oggetto']; ?>&flt_passo=<?php echo $passo; ?>"><i class="glyphicon glyphicon-list"></i>&nbsp;Stampa Lista</a>
 			</td>
 			<td class="FacetFieldCaptionTD">
 				<input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
@@ -216,6 +171,7 @@ if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 		$headers_assist = array(
 			"ID" 	=> "codice",
 			"Data" 		=> "data",
+			"Zona" 		=> "citspe",
 			"Cliente" 	=> "cliente",
 			"Telefono" 	=> "telefono",
 			"Oggetto" 	=> "oggetto",
@@ -231,13 +187,13 @@ if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 $linkHeaders = new linkHeaders($headers_assist);
 $linkHeaders -> output();
 $recordnav = new recordnav($gTables['assist'].
-	" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice". 
-	" LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id",
+	" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco=".$gTables['clfoco'].".codice". 
+	" LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra=".$gTables['anagra'].".id",
 	$where, $limit, $passo);
 $recordnav -> output();
 
 if (!isset($_GET['field']) or ($_GET['field'] == 2) or (empty($_GET['field'])))
-	$orderby = $gTables['assist'].".codice desc";
+	$orderby = $gTables['assist'].".codice DESC";
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
@@ -248,7 +204,15 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		</td>
 		<td>
 			<?php echo date('d',strtotime($a_row['data'])).' '.$month[date('n',strtotime($a_row['data']))].' '.date('Y',strtotime($a_row['data'])); ?> 
+			<a class="btn btn-default btn-sm" href="admin_assist.php?codice=<?php echo $a_row['codice']; ?>&Update" onclick="window.open('admin_assist.php?popup=data&codice=<?php echo $a_row['codice']; ?>&Update','nuovaFinestra','top=50,left=200,width=800,height=680,location=no,menubar=no,resizable=no,status=no,titlebar=no'); return false;" onkeypress="window.open('admin_assist.php?popup=data&codice=<?php echo $a_row['codice']; ?>&Update','nuovaFinestra','top=50,left=200,width=800,height=680,location=no,menubar=no,resizable=no,status=no,titlebar=no'); return false;" title="Cambia la data">
+				<i class="glyphicon glyphicon-calendar"></i>
+			</a>
 		</td>
+		<?php
+			if ( !isset( $_GET['idinstallazione']) ) {
+				echo "<td>" . $a_row['citspe'] . "</td>";
+			}
+		?>
 		<td>
 			<a href="../vendit/report_client.php?nome=<?php echo $a_row['ragso1']; ?>">
 			<?php 
@@ -285,10 +249,30 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				$filtro = '';
 				if ( isset($_GET['clfoco']) ) $filtro .= '&clfoco='.$_GET['clfoco'];
 				if ( isset($_GET['codice']) ) $filtro .= '&codice='.$_GET['codice'];
-				if ( isset($_GET['stato']) ) $filtro .= '&stato='.$flt_stato;
+				if ( isset($_GET['stato']) ) $filtro .= '&stato='.$_GET['stato'];
 				if ( isset($_GET['data']) ) $filtro .= '&data='.$_GET['data'];
 			?>
-			<a href="report_assist.php?chstato=<?php echo $a_row['id']."&prev=".$a_row['stato'].$filtro; ?>" class="btn btn-xs btn-edit">
+<?php
+	switch ($a_row['stato']) {
+		case 'avvisare':
+			$class_label_stato = 'btn-danger';
+			break;
+		case 'bloccato':
+			$class_label_stato = 'btn-fatt';
+			break;
+		case 'aperto':
+			if (empty($a_row['idinstallazione'])) {
+				$class_label_stato = 'btn-riba';
+			} else {
+				$class_label_stato = 'btn-edit';
+			}
+			break;
+		default:
+			$class_label_stato = 'btn-edit';
+			break;
+	}
+?>
+			<a href="report_assist.php?chstato=<?php echo $a_row['id']."&prev=".$a_row['stato'].$filtro; ?>" class="btn btn-xs <?php echo $class_label_stato; ?>">
 				<?php echo $a_row['stato']; ?>
 			</a>
 		</td>

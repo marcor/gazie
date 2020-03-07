@@ -95,7 +95,7 @@ $script_transl = HeadMain();
         </tr>
         <tr>
             <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
-                                <input type="submit" name="Delete" class="btn btn-danger" value="Elimina">&nbsp;
+                <input type="submit" name="Delete" class="btn btn-danger" value="Elimina">&nbsp;
             </td>
         </tr>
     </table>

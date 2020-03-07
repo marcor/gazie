@@ -47,7 +47,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 
 	$form['descrizione'] = $_POST['descrizione'];
 	$form['seriale'] = $_POST['seriale'];
-	$form['datainst'] = $_POST['datainst'];
+	$form['datainst'] = $_POST['annins'] . "-" . $_POST['mesins'] . "-" . $_POST['gioins'];
 	$form['clfoco'] = $_POST['clfoco'];
 	$form['note'] = $_POST['note'];
 	$form['ritorno'] = $_POST['ritorno'];
@@ -102,12 +102,21 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) {
 
-	$assist = gaz_dbi_get_row($gTables['instal'], "codice", $_GET['codice']);
-	//se e' il primo accesso per UPDATE
-	$anagrafica = new Anagrafica();
-	$cliente = $anagrafica->getPartner($assist['clfoco']);
-	$form = gaz_dbi_get_row($gTables['instal'], "codice", $_GET['codice']);
-	$form['search']['clfoco'] = substr($cliente['ragso1'], 0, 10);
+	if (!empty($_GET['idinstallazione'])) {
+		$assist = gaz_dbi_get_row($gTables['instal'], "id", $_GET['idinstallazione']);
+		//se e' il primo accesso per UPDATE
+		$anagrafica = new Anagrafica();
+		$cliente = $anagrafica->getPartner($assist['clfoco']);
+		$form = gaz_dbi_get_row($gTables['instal'], "id", $_GET['idinstallazione']);
+		$form['search']['clfoco'] = substr($cliente['ragso1'], 0, 10);
+	} else {
+		$assist = gaz_dbi_get_row($gTables['instal'], "codice", $_GET['codice']);
+		//se e' il primo accesso per UPDATE
+		$anagrafica = new Anagrafica();
+		$cliente = $anagrafica->getPartner($assist['clfoco']);
+		$form = gaz_dbi_get_row($gTables['instal'], "codice", $_GET['codice']);
+		$form['search']['clfoco'] = substr($cliente['ragso1'], 0, 10);
+	}
 
 	//$form['codart'] = $assist['codart'];
 	//$form['cosear'] = $assist['codart'];
@@ -141,9 +150,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 	$form['ref_code'] = '';
 }
 
+$form['gioins'] = substr($form['datainst'], 8, 2);
+$form['mesins'] = substr($form['datainst'], 5, 2);
+$form['annins'] = substr($form['datainst'], 0, 4);
+
 // disegno maschera di inserimento modifica
 require('../../library/include/header.php');
-$script_transl = HeadMain();
+$script_transl = HeadMain(0,array('calendarpopup/CalendarPopup'));
 
 if ($toDo == 'insert') echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>";
 else echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." '".$form['codice']."'</div>";
@@ -166,7 +179,12 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD">Data Installazione</td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="datainst" value="<?php echo $form['datainst']; ?>" align="right" maxlength="255" size="70"/>
+		<input class="FacetText" type="text" style="text-align:center" name="gioins" value="<?php echo $form['gioins'] ?>" size="2">
+		<input class="FacetText" type="text" style="text-align:center" name="mesins" value="<?php echo $form['mesins'] ?>" size="2">
+		<input class="FacetText" type="text" style="text-align:center" name="annins" value="<?php echo $form['annins'] ?>" size="4">
+		<a href="#" onClick="cal.showCalendar('anchor','<?php echo $form['mesins'] . "/" . $form['gioins'] . "/" . $form['annins'] ?>'); return false;" title=" cambia la data! " name="anchor" id="anchor" class="btn btn-default btn-sm">
+			<i class="glyphicon glyphicon-calendar"></i>
+		</a>
 	</td>
 </tr>
 <tr>
@@ -258,6 +276,15 @@ if ( !isset($_GET['Insert']) ) {
 } 
 ?>
 <!--</div>-->
+<script type="text/javascript" language="JavaScript" ID="datapopup">
+    var cal = new CalendarPopup();
+    cal.setReturnFunction("setMultipleValues");
+    function setMultipleValues(y, m, d) {
+        document.form.annins.value = y;
+        document.form.mesins.value = LZ(m);
+        document.form.gioins.value = LZ(d);
+    }
+</script>
 <?php
 require('../../library/include/footer.php');
 ?>
