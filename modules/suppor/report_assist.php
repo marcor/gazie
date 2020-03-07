@@ -49,8 +49,14 @@ if ( isset($_GET['chstato'] ) ) {
 			$stato = $rows[0];
 		}
 	}
-	gaz_dbi_table_update("assist", array("id", $_GET['chstato']), array("stato" => $stato));
-	//header();
+	if (!empty($stato)) {
+		gaz_dbi_table_update("assist", array("id", $_GET['chstato']), array("stato" => $stato));
+	}
+	if (empty($_GET['popup'])) {
+		//header('Location: '.$form['ritorno']);
+	} else {
+		echo "<script>window.opener.location.reload(false);window.close();</script>";
+	}
 } else {
 	if ( !isset($_GET['stato']) ) $_GET['stato'] = 'nochiusi';
 }

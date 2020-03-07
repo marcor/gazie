@@ -51,6 +51,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 	$form['clfoco'] = $_POST['clfoco'];
 	$form['ritorno'] = $_POST['ritorno'];
 	$form['ref_code'] = $_POST['ref_code'];
+	$form['data'] = $_POST['annass'] . "-" . $_POST['mesass'] . "-" . $_POST['gioass'];
 	$form['ore'] = $_POST['ore'];
 	$form['ora_inizio'] = $_POST['ora_inizio'];
 	$form['ora_fine'] = $_POST['ora_fine'];
@@ -97,10 +98,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 			if (empty($_GET['popup'])) {
 			//header('Location: '.$form['ritorno']);
 			header('Location: associa_install.php?id='.$form['codice'].'&clfoco='.$form['clfoco'].'&ritorno='.$form['ritorno']);
-			exit;
 			} else {
 				echo "<script>window.opener.location.reload(false);window.close();</script>";
 			}
+			exit();
 		}
 	} elseif (isset($_POST['Return'])) { // torno indietro
 		header('Location: '.$form['ritorno']);
@@ -119,7 +120,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 } else { 
 	//se e' il primo accesso per INSERT
 	$form = gaz_dbi_fields('assist');
-	$rs_ultima_ass = gaz_dbi_dyn_query("codice", $gTables['assist'],$where,"codice desc");
+	$rs_ultima_ass = gaz_dbi_dyn_query("codice", $gTables['assist'],$where,"codice DESC");
 	$ultimo_documento = gaz_dbi_fetch_array($rs_ultima_ass);
 	// se e' il primo documento dell'anno, resetto il contatore
 	if ($ultimo_documento) {
@@ -127,7 +128,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 	} else {
 		$form['codice'] = 1;
 	}
-	$rs_ultimo_tec = gaz_dbi_dyn_query("codice,tecnico", $gTables['assist'],"tecnico<>''","codice desc");
+	$rs_ultimo_tec = gaz_dbi_dyn_query("codice, tecnico", $gTables['assist'], "tecnico<>''", "codice DESC");
 	$ultimo_tecnico = gaz_dbi_fetch_array($rs_ultimo_tec);
 	$form['tecnico'] = $ultimo_tecnico['tecnico']; 
 	$form['tipo'] = 'ASS';	
@@ -141,10 +142,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 	$form['ref_code'] = '';
 }
 
+$form['gioass'] = substr($form['data'], 8, 2);
+$form['mesass'] = substr($form['data'], 5, 2);
+$form['annass'] = substr($form['data'], 0, 4);
+
 
 // disegno maschera di inserimento modifica
 require('../../library/include/header.php');
-$script_transl = HeadMain();
+$script_transl = HeadMain(0,array('calendarpopup/CalendarPopup'));
 
 if ($toDo == 'insert') echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>";
 else echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." '".$form['codice']."'</div>";
@@ -167,7 +172,12 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD">Data</td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="data" value="<?php echo $form['data']; ?>" align="right" maxlength="255" size="70"/>
+		<input class="FacetText" type="text" style="text-align:center" name="gioass" value="<?php echo $form['gioass'] ?>" size="2">
+		<input class="FacetText" type="text" style="text-align:center" name="mesass" value="<?php echo $form['mesass'] ?>" size="2">
+		<input class="FacetText" type="text" style="text-align:center" name="annass" value="<?php echo $form['annass'] ?>" size="4">
+		<a href="#" onClick="cal.showCalendar('anchor','<?php echo $form['mesass'] . "/" . $form['gioass'] . "/" . $form['annass'] ?>'); return false;" title=" cambia la data! " name="anchor" id="anchor" class="btn btn-default btn-sm">
+			<i class="glyphicon glyphicon-calendar"></i>
+		</a>
 	</td>
 </tr>
 <tr>
@@ -204,13 +214,13 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['descrizione']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<textarea type="text" name="descrizione" align="right" maxlength="255" cols="67" rows="3"><?php echo $form['descrizione']; ?></textarea>
+		<textarea type="text" name="descrizione" align="right" maxlength="255" cols="67" rows="<?php echo (!empty($_GET['popup'])) ? 2 : 3; ?>"><?php echo $form['descrizione']; ?></textarea>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['soluzione']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<textarea type="text" name="soluzione" align="right" maxlength="255" cols="67" rows="4"><?php echo $form['soluzione']; ?></textarea>
+		<textarea type="text" name="soluzione" align="right" maxlength="255" cols="67" rows="<?php echo (!empty($_GET['popup'])) ? 2 : 4; ?>"><?php echo $form['soluzione']; ?></textarea>
 	</td>
 </tr>
 <tr>
@@ -255,7 +265,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['note']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<textarea type="text" name="note" align="right" maxlength="255" cols="67" rows="4"><?php echo $form['note']; ?></textarea>
+		<textarea type="text" name="note" align="right" maxlength="255" cols="67" rows="<?php echo (!empty($_GET['popup'])) ? 2 : 4; ?>"><?php echo $form['note']; ?></textarea>
 	</td>
 </tr>
 <tr>
@@ -293,13 +303,22 @@ $select_cliente = new selectPartner('clfoco');
 </tr>
 </table>
 <?php
-//$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato,".$gTables['assist'].".tipo", $gTables['assist']," stato!='chiuso' and stato!='aperto' and stato != 'contratto' and tipo='ASS'", "stato", "0", "9999");
+//$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato,".$gTables['assist'].".tipo", $gTables['assist']," stato!='effettuato' and stato!='aperto' and stato != 'fatturato' and tipo='ASS'", "stato", "0", "9999");
 ?>
 </form>
 <?php
 require('../../library/include/footer.php');
 ?>
 <script src="../../js/custom/autocomplete.js"></script>
+<script type="text/javascript" language="JavaScript" ID="datapopup">
+    var cal = new CalendarPopup();
+    cal.setReturnFunction("setMultipleValues");
+    function setMultipleValues(y, m, d) {
+        document.form.annass.value = y;
+        document.form.mesass.value = LZ(m);
+        document.form.gioass.value = LZ(d);
+    }
+</script>
 <script type="text/javascript">
 function updateInputStato(ish){
 	document.getElementById("stato").value = ish;
