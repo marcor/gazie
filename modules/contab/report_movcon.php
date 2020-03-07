@@ -240,7 +240,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "</td>";
     echo "<td align=\"center\">";
 	?>
-	<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il fornitore" ref="<?php echo $a_row['id_tes'];?>" descri="<?php echo $a_row['descri'];?>">
+	<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il movimento" ref="<?php echo $a_row['id_tes'];?>" descri="<?php echo $a_row['descri'];?>">
 		<i class="glyphicon glyphicon-remove"></i>
 	</a>
 	<?php

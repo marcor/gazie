@@ -50,8 +50,51 @@ $script_transl = HeadMain();
 </style>
 <div class="FacetFormHeaderFont text-center"><?php echo $script_transl['title']; ?></div>
 <div class="alert alert-danger text-center" role="alert"><?php echo $script_transl['msg1']; ?></div>
-
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("descri"));
+		var id = $(this).attr('ref');		
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'piacon',ref:id},
+						type: 'POST',
+						url: '../contab/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_piacon.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="POST">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+		<p><b>conto:</b></p>
+		<p>ID:</p>
+		<p class="ui-state-highlight" id="idcodice"></p>
+		<p>Descrizione:</p>
+		<p class="ui-state-highlight" id="iddescri"></p>
+	</div>
 	<div class="table-responsive">
     <table class="table_piacon table table-striped table-bordered table-condensed table-responsive">
         <thead>
@@ -94,6 +137,17 @@ $script_transl = HeadMain();
             $css_class = array ("gaz-attivo","gaz-passivo","gaz-costi","gaz-ricavi","gaz-transitori");
             
             while ($r = gaz_dbi_fetch_array($rs)) {
+				unset ($conferma); $check_moc=0;
+				$conctrl = substr($r['codice'],3);
+				$masctrl = substr($r['codice'],0,3);
+				$mas0000 = $masctrl."000000";
+				if ($conctrl == 0) {
+					$result = gaz_dbi_dyn_query ('*', $gTables['clfoco'], "codice like '$masctrl%' and codice <> '$mas0000'");
+					$conferma = gaz_dbi_fetch_array($result);
+				}
+				$rs_check_moc = gaz_dbi_dyn_query("codcon", $gTables['rigmoc'], "codcon = '{$r['codice']}'","id_rig asc",0,1);
+				$check_moc = gaz_dbi_num_rows($rs_check_moc);
+				
                 $r2 = array('dare' => 0, 'avere' => 0);
                 $rs2 = gaz_dbi_dyn_query($select, $table, 'codcon=' . $r['codice'] . $where2, 'codcon');
                 if ($rs2) {
@@ -110,12 +164,21 @@ $script_transl = HeadMain();
 			</td>
 			<td class="'.$color_class.'"></td>
 			<td class="'.$color_class.' text-danger" colspan="5"><strong><i class="glyphicon glyphicon-list"></i> ' . $r["descri"] . '</strong></td>
-			<td class="'.$color_class.' text-center">
-				<a class="btn btn-xs btn-default btn-elimina" href="delete_piacon.php?codice=' . $r["codice"] . '">
+			<td class="'.$color_class.' text-center">';
+			if (isset($conferma) OR $check_moc>0){
+			?>
+				<a class="btn btn-xs btn-default btn-elimina " title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili.">
+					<i class="glyphicon glyphicon-ban-circle"></i>
+				</a>			
+			<?php
+			} else {
+				?>
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
-			</td>
-			</tr>';
+			<?php
+			}
+			echo "</td></tr>";
                 } else {
                     echo '<tr class="' . $collapse.' collapse tr_piacon" aria-expanded="false">
 			<td class="noborder tr_piacon"> </td>
@@ -133,12 +196,21 @@ $script_transl = HeadMain();
 					<i class="glyphicon glyphicon-check"></i>&nbsp;<i class="glyphicon glyphicon-print"></i>
 				</a>
 			</td>
-			<td class="'.$color_class.' text-center">
-				<a class="btn btn-xs btn-default btn-elimina" href="delete_piacon.php?codice=' . $r["codice"] . '">
+			<td class="'.$color_class.' text-center">';
+			if (isset($conferma) OR $check_moc>0){
+			?>
+				<a class="btn btn-xs btn-default btn-elimina " title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili.">
+					<i class="glyphicon glyphicon-ban-circle"></i>
+				</a>			
+			<?php
+			} else {
+				?>
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
-			</td>
-			</tr>';
+			<?php
+			}				
+			echo "</td></tr>";
                 }
             }
             ?>

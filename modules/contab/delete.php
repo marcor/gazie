@@ -58,6 +58,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			//cancello anche l'eventuale rigo sul registro beni ammortizzabili
 			gaz_dbi_del_row($gTables['assets'], "id_movcon", $i);
 		break;
+		case "piacon":
+				$i=intval($_POST['ref']);
+				gaz_dbi_del_row($gTables['clfoco'], "codice", $i);
+		break;
 	}
 }
 ?>
