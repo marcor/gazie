@@ -27,6 +27,43 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl=HeadMain('','','admin_caucon');
 ?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("descri"));
+		var id = $(this).attr('ref');		
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'caucon',ref:id},
+						type: 'POST',
+						url: '../contab/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_caucon.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 <?php
 $recordnav = new recordnav($gTables['caucon'], $where, $limit, $passo);
@@ -34,6 +71,13 @@ $recordnav -> output();
 ?>
 <div class="table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed">
+<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+		<p><b>causale contabile:</b></p>
+		<p>ID:</p>
+		<p class="ui-state-highlight" id="idcodice"></p>
+		<p>Descrizione:</p>
+		<p class="ui-state-highlight" id="iddescri"></p>
+	</div>
 <?php
 $headers_caucon = array  (
             $script_transl['codice']=> "codice",
@@ -51,8 +95,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<td>".$row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl['regiva_value'][$row["regiva"]]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl['operat_value'][$row["operat"]]." &nbsp;</td>";
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_caucon.php?codice=".$row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    echo "</tr>";
+    echo "<td align=\"center\">";
+	?>
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella causale" ref="<?php echo $row['codice'];?>" descri="<?php echo $row['descri'];?>">
+			<i class="glyphicon glyphicon-remove"></i>
+		</a>
+	<?php
+    echo "</td></tr>";
 }
 ?>
 </table></div>

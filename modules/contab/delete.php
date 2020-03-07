@@ -62,6 +62,12 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				$i=intval($_POST['ref']);
 				gaz_dbi_del_row($gTables['clfoco'], "codice", $i);
 		break;
+		case "caucon":
+				$i=substr($_POST['ref'],0,3);
+				gaz_dbi_del_row($gTables['caucon'], "codice", $i);
+				//cancello anche i righi 
+				gaz_dbi_del_row($gTables['caucon_rows'], "caucon_cod", $i);
+		break;
 	}
 }
 ?>

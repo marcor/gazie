@@ -174,7 +174,7 @@ $(function() {
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il conto" ref="<?php echo $r['codice'];?>" descri="<?php echo $r['descri'];?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
-			<?php
+				<?php
 			}
 			echo "</td></tr>";
                 } else {
