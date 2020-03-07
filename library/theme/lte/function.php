@@ -266,10 +266,12 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "  </a>";
         } else {*/
         if ( $admin_aziend["Abilit"]>=$link["m1_ackey"] ) {
-            echo "<li class=\"treeview\">\n";
+						$rsm = explode("/",$link['link']);
+						$act=($module==$rsm[1])?' active':'';
+            echo '<li class="treeview'.$act.'">';
             echo "  <a href=\"". $link['link'] ."\">\n";
-            //echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
-            echo "    <i style=\"color:".$colors[$i]."\" class=\"".$icons[$i]."\"></i>\n";
+            echo "    <img hight=\"16\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
+           // echo "    <i style=\"color:".$colors[$i]."\" class=\"".$icons[$i]."\"></i>\n";
             echo "      <span>". $link['name'] ."</span>\n";
             echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
             echo "  </a>\n";
