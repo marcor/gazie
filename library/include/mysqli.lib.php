@@ -954,7 +954,7 @@ function movmagInsert($newValue) {
   $table = 'movmag';
   $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
   $newValue['adminid'] = $_SESSION["user_name"];
-  tableInsert($table, $columns, $newValue);
+  $last_id=tableInsert($table, $columns, $newValue);
 	// aggiorno l'e-commerce ove presente
 	if (class_exists('APIeCommerce')){
 		$api = new APIeCommerce();
@@ -964,6 +964,7 @@ function movmagInsert($newValue) {
 		//print $api->rawres;
 		//exit;
 	}
+	return $last_id;
 }
 
 function movmagUpdate($codice, $newValue) {
