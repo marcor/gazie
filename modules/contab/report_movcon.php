@@ -109,8 +109,51 @@ function getDocRef($data) {
 $t = new TableSorter($tesmov_e_partners, $passo, ['id_tes' => 'desc']);
 $t -> output_navbar();
 ?>
-
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("descri"));
+		var id = $(this).attr('ref');		
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'movcon',id_tes:id},
+						type: 'POST',
+						url: '../contab/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_movcon.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
 <form method="GET">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+	<p><b>movimento contabile:</b></p>
+	<p>ID:</p>
+	<p class="ui-state-highlight" id="idcodice"></p>
+	<p>Descrizione:</p>
+	<p class="ui-state-highlight" id="iddescri"></p>
+</div>
 	<div class="table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
@@ -195,8 +238,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"" . $script_transl['customer_receipt'] . "\" href=\"../vendit/print_customer_payment_receipt.php?id_rig=" . $paymov . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
     }
     echo "</td>";
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movcon.php?id_tes=" . $a_row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    echo "</tr>\n";
+    echo "<td align=\"center\">";
+	?>
+	<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il fornitore" ref="<?php echo $a_row['id_tes'];?>" descri="<?php echo $a_row['descri'];?>">
+		<i class="glyphicon glyphicon-remove"></i>
+	</a>
+	<?php
+    echo "</td></tr>\n";
 }
 ?>
     </table></div>
