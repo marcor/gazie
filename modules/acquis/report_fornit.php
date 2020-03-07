@@ -243,9 +243,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td title=\"Cancella\" align=\"center\">";
     if ($check_mov > 0 OR $check_doc > 0 OR $check_bro > 0){
 		?>
-		<a class="btn btn-xs btn-default btn-elimina" title="Impossibile cancellare perché ci sono dei movimenti associati">
-			<i class="glyphicon glyphicon-ban-circle"></i>
-		</a>
+		<button title="Impossibile cancellare perché ci sono movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 		<?php
 	} else {
 		?>

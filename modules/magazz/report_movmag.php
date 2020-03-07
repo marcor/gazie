@@ -209,9 +209,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		<?php
 	} else {
 		?>
-		<a class="btn btn-xs btn-default btn-elimina" title="Questo movimento puo essere eliminato solo dal documento che lo ha creato">
-		<i class="glyphicon glyphicon-ban-circle"></i>
-		</a>
+		<button title="Questo movimento puo essere eliminato solo dal documento che lo ha creato" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 		<?php
 	}
 	echo "</td>\n";

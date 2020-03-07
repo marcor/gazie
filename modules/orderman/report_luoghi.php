@@ -164,9 +164,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<?php 
 			if (intval ($a_row['campo_coltivazione'])>0) {
 				?>
-				<a class="btn btn-xs btn-default btn-elimina" title="Luogo non cancellabile perche' ha movimenti di magazzino">
-					<i class="glyphicon glyphicon-ban-circle"></i>
-				</a>
+				<button title="Luogo non cancellabile perche' ha movimenti di magazzino" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 				<?php
 			} else {
 				?>

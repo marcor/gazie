@@ -167,9 +167,7 @@ $(function() {
 			<td class="'.$color_class.' text-center">';
 			if (isset($conferma) OR $check_moc>0){
 			?>
-				<a class="btn btn-xs btn-default btn-elimina " title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili.">
-					<i class="glyphicon glyphicon-ban-circle"></i>
-				</a>			
+			<button title="Non è possibile cancellare questo conto: il mastro deve essere vuoto e non ci possono essere movimenti contabili." class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 			<?php
 			} else {
 				?>

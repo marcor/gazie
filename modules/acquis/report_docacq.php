@@ -279,8 +279,8 @@ while ($row = gaz_dbi_fetch_array($result)) {
 			</a>
 			<?php
 		} else {
-			?>
-			<i class="glyphicon glyphicon-ban-circle" title="Non puoi eliminare un documento diverso dall'ultimo emesso" ></i>
+			?>   
+			<button title="Non puoi eliminare un documento diverso dall'ultimo emesso" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 			<?php
 		}
     echo "</td></tr>\n";
