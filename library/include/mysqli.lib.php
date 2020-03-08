@@ -918,7 +918,8 @@ function tesdocInsert($newValue) {
        'ragbol', 'data_ordine'
            /** fine modifica FP */           );
    $newValue['adminid'] = $_SESSION["user_name"];
-   tableInsert($table, $columns, $newValue);
+    $last_id=tableInsert($table, $columns, $newValue);
+	  return $last_id;
 }
 
 function tesdocUpdate($codice, $newValue) {

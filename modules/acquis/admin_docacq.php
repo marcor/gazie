@@ -733,23 +733,21 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['initra'] = $initra;
                 $form['datemi'] = $datemi;
                 $form['id_orderman'] = $form['in_id_orderman'];
-               tesdocInsert($form);
-//recupero l'id assegnato dall'inserimento
-                $ultimo_id = gaz_dbi_last_id();
+               $ultimo_id =tesdocInsert($form);
 //inserisco i righi
                 foreach ($form['rows'] as $i => $value) {
                     $form['rows'][$i]['id_tes'] = $ultimo_id;
-                    rigdocInsert($form['rows'][$i]);
-                    $last_rigdoc_id = gaz_dbi_last_id();
+                    $last_rigdoc_id=rigdocInsert($form['rows'][$i]);
                     if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
-                        bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
-                        gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
+                        $last_bodytext_id=bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
+                        gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text',$last_bodytext_id);
                     }
                     if ($admin_aziend['conmag'] == 2 &&
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] != 1 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $last_movmag_id = $magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']);
+                        $last_movmag_id = $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']);
+                        gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag',$last_movmag_id);
                     }
 // se l'articolo prevede la gestione dei  lotti o della matricola/numero seriale creo un rigo in lotmag 
 // ed eventualmente sposto e rinomino il relativo documento dalla dir temporanea a quella definitiva 
