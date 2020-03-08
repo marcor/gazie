@@ -67,17 +67,14 @@ class Etichette extends Template {
       for ($k = 1; $k <= $numColli; $k++) {  //per il numero di colli
          $this->newPage();
          $this->SetY(13);
-         $this->SetFont('helvetica', '', 16);
-         $this->SetX($offsetX);
-         $this->Cell($largEtichetta, 0, $this->cliente1, 0, 1, 'L', 0, '', 1);
-//         $this->SetFont('helvetica', '', 16);
-         $this->SetX($offsetX);
-         $this->Cell($largEtichetta, 0, $this->cliente2, 0, 1, 'L', 0, '', 1);
-         $this->SetX($offsetX);
-         $this->Cell($largEtichetta, 0, $this->cliente3, 0, 1, 'L', 0, '', 1);
-         $this->SetX($offsetX);
-         $this->Cell($largEtichetta, 0, $this->cliente4, 0, 1, 'L', 0, '', 1);
-//      $tmp=$this->GetY();
+      $this->SetFont('helvetica', '', 8);
+      $this->SetX($offsetX);
+      $this->Cell($largEtichetta, 0, 'MITTENTE', 0, 1, 'L', 0, '', 1);
+      $this->SetX($offsetX);
+      $this->Cell($largEtichetta, 0, $this->intesta1, 0, 1, 'L', 0, '', 1);      
+      $this->SetX($offsetX);
+$this->Cell($largEtichetta, 0, $this->intesta2 . " " . $this->intesta3/* ." ".$this->intesta4 */, 0,1,'L',0,'', 1);
+
       }
    }
 
@@ -89,12 +86,18 @@ class Etichette extends Template {
 
    function Footer() {
 //Document footer
-      $this->SetY(-15);
-//      $tmp=$this->GetY();
-      $this->SetFont('helvetica', '', 8);
-      $this->Cell(130, 4, "----------------------------------------------", 0, 1, 'L');
-      $this->Cell(130, 4, $this->intesta1, 0, 1, 'L');
-      $this->Cell(130, 4, $this->intesta2 . " " . $this->intesta3/* ." ".$this->intesta4 */, 0, 1, 'L');
+      $this->SetY(-35);
+        $this->SetFont('helvetica', '', 16);
+        $this->Cell($largEtichetta, 0, "---------------------------------------------------------------------------", 0, 1, 'L', 0, '', 1);
+         $this->Cell($largEtichetta, 0, 'DESTINATARIO', 0, 10, 'L', 0, '', 1);
+         $this->SetFont('helvetica', '', 14);
+         $this->Cell($largEtichetta, 0, $this->cliente1 . " " . $this->cliente2, 0, 1, 'L', 0, '', 1);
+         if ($this->tesdoc['destin'] != "")
+         	{
+         	 $this->Cell($largEtichetta, 0, $this->tesdoc['destin'], 0, 1, 'L', 0, '', 1);
+         	}else{
+		     $this->Cell($largEtichetta, 0, $this->cliente3 . " " . $this->cliente4, 0, 1, 'L', 0, '', 1);
+        	}
    }
 
    function Header() {
