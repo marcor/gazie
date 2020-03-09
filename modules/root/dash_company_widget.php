@@ -49,9 +49,19 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
 		<a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
         <h4 class="box-title"><?php echo $script_transl['company'] ?></h4>    
 	</div>
-    <div class="img-containter">
-        <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-height: 150px;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
-    </div>
+    <div class="flip-image">
+        <div class="flip-image-inner">
+            <div class="flip-image-front">
+            <img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-height: 150px;" border="0" title="<?php echo $script_transl['upd_company']; ?>" >            
+            </div>
+            <div class="flip-image-back"><a href="../config/admin_aziend.php">
+            <p><b><?php echo $admin_aziend['ragso1'].' '.$admin_aziend['ragso2']; ?></b></p>
+            <p><?php echo $admin_aziend['indspe']; ?></p>
+            <p><?php echo $admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')'; ?></p>
+            <p><?php echo 'P. IVA: '.$admin_aziend['pariva']; ?></p></a>
+            </div>
+        </div>
+    </div> 
     <div>
         <?php
 		if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
@@ -66,3 +76,57 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
         <?php echo $script_transl['logout']; ?> <input class="btn btn-xs" type="submit" value="&rArr;" /> <input name="logout" type="submit" value=" Logout ">
     </div>
 </div>
+<style type="text/css">
+
+/*==============  image flip horizontal ====================*/
+
+ /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+.flip-image {
+  margin: auto;
+  background-color: transparent;
+  width: 100%;
+  height: 150px;
+  border: 1px solid #f1f1f1;
+  perspective: 1000px; /* Remove this if you don't want the 3D effect */
+}
+
+/* This container is needed to position the front and back side */
+.flip-image-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+/* Do an horizontal flip when you move the mouse over the flip box container */
+.flip-image:hover .flip-image-inner {
+  transform: rotateY(180deg);
+}
+
+/* Position the front and back side */
+.flip-image-front, .flip-image-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden; /* Safari */
+  backface-visibility: hidden;
+}
+
+/* Style the front side (fallback if image is missing) */
+.flip-image-front {
+ // background-color: #fff;
+  color: black;
+}
+
+/* Style the back side */
+.flip-image-back {
+  background-color: #<?php echo $admin_aziend['colore']; ?>;
+  color: white;
+  transform: rotateY(180deg);
+}
+.flip-image-back>a {
+  color: black;
+} 
+</style>
