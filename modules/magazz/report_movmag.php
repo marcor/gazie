@@ -171,7 +171,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	if ($a_row['tipdoc'] == "MAG"){
 		echo "<a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
     } else {
-		echo "<a class=\"btn btn-xs btn-default\" title=\"Questo movimento puo essere modificato solo nel documento che lo ha creato\"><i class=\"glyphicon glyphicon-ban-circle text-danger\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
+		echo "<button class=\"btn btn-xs btn-default disabled\" title=\"Questo movimento puo essere modificato solo nel documento che lo ha creato\">&nbsp;".$a_row["id_mov"]."</button> &nbsp</td>";
 	}
 	echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
