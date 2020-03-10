@@ -32,6 +32,53 @@ $result=$anagrafica->queryPartners('*', $where, $orderby, $limit, $passo);
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>';
 $recordnav = new recordnav($gTables['clfoco'], $where, $limit, $passo);
 $recordnav -> output();
+?>
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("descri"));
+		var id = $(this).attr('ref');		
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'piacon',ref:id},
+						type: 'POST',
+						url: '../contab/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_banche.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
+<form method="POST">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+		<p><b>conto:</b></p>
+		<p>ID:</p>
+		<p class="ui-state-highlight" id="idcodice"></p>
+		<p>Descrizione:</p>
+		<p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+<?php
 echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">';
 $headers = array  (
             $script_transl['codice']=>'codice',
@@ -58,11 +105,12 @@ foreach($result as $r) {
        echo "<td colspan=\"4\">".$script_transl['msg'][0]."</td>\n";
     }
     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"../contab/delete_piacon.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina dialog_delete\" ref=\"".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
 }
 ?>
 </table></div>
+</form>
 <?php
 require("../../library/include/footer.php");
 ?>
