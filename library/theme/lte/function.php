@@ -270,7 +270,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 						$act=($module==$rsm[1])?' active':'';
             echo '<li class="treeview'.$act.'">';
             echo "  <a href=\"". $link['link'] ."\">\n";
-            echo "    <img hight=\"16\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
+            echo "    <img height=\"16\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
            // echo "    <i style=\"color:".$colors[$i]."\" class=\"".$icons[$i]."\"></i>\n";
             echo "      <span>". $link['name'] ."</span>\n";
             echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";

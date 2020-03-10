@@ -267,10 +267,6 @@ div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6
     text-decoration: none;
 }
 
-.panel.panel-default {
-	background-color: #aae2a8;
-}
-
 .table-striped > tbody > tr:nth-of-type(odd) {
     background-color: #e9e9e9;
 }
