@@ -118,7 +118,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         }
         $brc = '';
         if ($row["barcode"] > 0) {
-            $brc = '<a target="_blank" class="btn btn-xs btn-default" href="stampa_barcode.php?code=' . $row["codice"] . '">
+            $brc = '<a target="_blank" title="' . $row["barcode"] . '" class="btn btn-xs btn-default" href="stampa_barcode.php?code=' . $row["codice"] . '">
 		<i class="glyphicon glyphicon-barcode"></i>
 		</a>';
         }
