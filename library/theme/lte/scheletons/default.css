@@ -328,11 +328,7 @@
     min-height: 300px;
 }
 
-.panel-default  {
-    margin: auto;
-}
-
-.panel-success {
+.panel-default,.panel-success,.Tmiddle,Tsmall {
     margin: auto;
 }
 .content-header > .breadcrumb {

@@ -30,11 +30,8 @@ th a:hover {
     background-color: #daeada;
     color: #000;
 }
-.box-primary {
-/*    background-color: #fff;*/
-}
 .FacetDataTD {
-    background-color: #fff;
+    background-color: #b9e3a2;
 }
 .content-wrapper {
     background-image: url("../../../../library/images/sfondo.png");
@@ -67,9 +64,6 @@ th a:hover {
 }
 #preventDuplicate {
     color: #000;
-}
-.gaz-table-form {
-    background: #aae2a8;
 }
 .sidebar-menu .treeview-menu > li > a {
     padding-left: 15px;
@@ -112,14 +106,6 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
 }
 .row.alternate-row-even{
   background-color: #cccccc;
-}
-
-.panel-default  {
-    border-color: #88c086;
-}
-
-.panel-success {
-    border-color: #88c086;
 }
 
 .content-header > .breadcrumb {
