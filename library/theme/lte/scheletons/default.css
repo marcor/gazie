@@ -23,7 +23,10 @@
 .content-wrapper {
     min-width: 300px;
 }
-
+.content {
+	padding-left: 1px;
+	padding-right: 1px;
+}
 .admin_footer {
     margin-top: 30px;
 	opacity: 0.5;
@@ -38,17 +41,8 @@
 .form-control {
 
 }
-.img-container img {
-  width: 100%;
-}
-.img-container {
-  width: 30%;
-  /*background: #777;*/
-  margin: 0 auto;
-}
-.dit-picture {
-	width: 50%;
-	max-width: 300px;
+.img-circle.dit-picture,.text-center>a>.img-circle{
+	border-radius: 10px;
 }
 .usr-picture {
     width: 200px;
