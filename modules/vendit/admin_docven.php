@@ -661,7 +661,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		if ($rit_ctrl && $admin_aziend['causale_pagam_770']==''){
 				$msg['err'][] = "63";
         }
-        if (count($msg['err']) < 1) {// nessun errore
+        if (count($msg['err']) < 1) {// *** nessun errore ***
 
             $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
@@ -692,12 +692,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //un rigo che prima era testo adesso non lo è piè
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
-						// quindi vedo in anticipo in quale ID verrà memorizzato il prossimo movimento di magazzino
-								$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
-								$row = $check_mag->fetch_assoc();
-								$id_mag = $row['Auto_increment']; // sarà il nuovo movimento di magazzino
+						// riscrivo mov mag	
 						if ( ($tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210) && intval($val_old_row['id_mag'])>0) {
-							$upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							$id_mag=$upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_mag', $id_mag); // inserisco il riferimento movmag nel rigo doc
 							if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
 								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
 								$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
@@ -717,18 +715,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
-					// quindi vedo in anticipo in quale ID verrà memorizzato il prossimo movimento di magazzino
-					$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
-					$row = $check_mag->fetch_assoc();
-					$id_mag = $row['Auto_increment']; // sarà il nuovo movimento di magazzino
-                    $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                    rigdocInsert($form['rows'][$i]);
+					$form['rows'][$i]['id_tes'] = $form['id_tes'];
+                    $last_rigdoc_id=rigdocInsert($form['rows'][$i]);// inserisco il rig doc
                     if ($admin_aziend['conmag'] == 2 &&
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] != 1 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         if ( $tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210 ) {                                                    
-                            $upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+                            $id_mag=$upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
 							if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
 								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
 								$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
@@ -877,10 +872,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['gooser'] != 1 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         if ( $tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210 ) {
-							$check_mag = gaz_dbi_query("SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'");
-							$row = $check_mag->fetch_assoc();
-							$id_mag = $row['Auto_increment']; // sarà il nuovo movimento di magazzino
-                            $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							$id_mag=$upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
 							if ($form['rows'][$i]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
 								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
 								$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
