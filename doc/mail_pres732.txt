@@ -1,0 +1,10 @@
+Titolo:
+Ars gratia artis.
+
+Presentazione:
+Abbiamo raggiunto questo nuovo traguardo lavorando su più fronti. La miglioria visibile a chiunque è quella che permette di ridimensionare la larghezza e posizionare a piacere i widgets sulla home page adattandoli alle esigenze personali ed anche al loro contenuto. Il tema LTE ora è di default e il menù a sinistra rimane aperto sul modulo in uso. E' stata facilitata  la sincronizzare di GAzie con i vari ecommerce che il mercato offre, per cui chi volesse realizzare un modulo specifico potrà guardare dentro il file modules/shop-synchronize/sync.function.php contenente le funzioni che vengono invocate in presenza della classe "APIeCommerce". Un riferimento è quanto realizzato da Antonio Germani attraverso un metodo per aggiornare la giacenze che utilizza FTP in luogo di un webservice; sempre di A.Germani la sostituzione di tutti i metodi di eliminazione con un dialog in finestra modale che procede alla cancellazione tramite una chiamata ajax e la correzione di alcuni bug che facevano perdere i riferimenti ai movimenti di magazzino.
+Angelo Romano ha allineato la lunghezza di alcuni campi con le specifiche della fattura elettronica (AdE), ha corretto diversi bug sulle notifiche di esito delle stesse ed anche sul modulo "Supporto", ha introdotto una libreria di terze parti per inviare SMS.
+Ho iniziato ad uniformare i vari tag html al fine di  facilitare la personalizzazione dei fogli di stile, ci sarebbe tanto da rivedere ma già così è accettabile da un programmatore sufficientemente avveduto.
+La futura versione della fattura elettronica chiede di indicare con più esattezza la natura delle esenzioni IVA ampliando la casistica dei tipi N2, N3, N6 e delle tipologie di documenti (fatture import ecc): ho aggiunto le suddette opzioni ma mi riservo il loro effettivo utilizzo a quando (dal 4 maggio?) potranno essere eseguiti dei test reali.  
+
+Antonio de Vincentiis, Montesilvano, 10 marzo 2020
