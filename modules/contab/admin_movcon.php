@@ -1422,7 +1422,7 @@ echo "</script>\n";
                 /** ENRICO FEDELE */
                 echo "<tr>\n";
                 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['descri'] . "</td>\n";
-                echo "\t<td colspan=\"5\" class=\"FacetDataTD\"><input type=\"text\" name=\"descrizion\" value=\"" . $form['descrizion'] . "\" maxlength=\"100\" size=\"50\" /></td>\n";
+                echo "\t<td colspan=\"5\" class=\"FacetDataTD\"><input type=\"text\" name=\"descrizion\" value=\"" . $form['descrizion'] . "\" maxlength=\"100\"  /></td>\n";
                 echo "</td>\n";
                 echo "</tr>\n";
                 echo "<tr>\n";
@@ -1557,7 +1557,7 @@ echo "</script>\n";
               array('head' => $script_transl["vat"], 'class' => 'text-center',
                   'value' => 'VERSAMENTO DEBITO IVA'),
               array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
-                  'value' => '<input type="number" step="0.01" name="impost_ri[0]" value="' . $form['impost_ri'][0]. '" maxlength="13" size="2" tabindex="20" id="versamentoIVA" />'),
+                  'value' => '<input type="number" step="0.01" name="impost_ri[0]" value="' . $form['impost_ri'][0]. '" maxlength="13"  tabindex="20" id="versamentoIVA" />'),
               array('head' => $script_transl["datliq"], 'class' => 'text-right numeric',
                     'value' => '<input type="text" id="datliq" name="datliq" value="' . $form['datliq'] . '" />'),
           );
@@ -1635,13 +1635,13 @@ echo "</script>\n";
             // creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$i] = array(
                 array('head' => $script_transl["taxable"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="0.01" name="imponi_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['imponi_ri'][$i])) . '" maxlength="13" size="2" onchange="this.form.submit()" />'),
+                    'value' => '<input type="number" step="0.01" name="imponi_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['imponi_ri'][$i])) . '" maxlength="13" onchange="this.form.submit()" />'),
                 array('head' => $script_transl["vat"], 'class' => 'text-center',
                     'value' => $rigoi["descri"]),
                 array('head' => $script_transl["operation_type"], 'class' => 'text-center',
                     'value' => $form['operation_type_ri'][$i]),
                 array('head' => $script_transl["tax"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="0.01" name="impost_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['impost_ri'][$i])) . '" maxlength="13" size="2" />'),
+                    'value' => '<input type="number" step="0.01" name="impost_ri[' . $i . ']" value="' . sprintf("%01.2f", preg_replace("/\,/", '.', $form['impost_ri'][$i])) . '" maxlength="13" />'),
                 array('head' => $script_transl["delete"], 'class' => 'text-center',
                     'value' => '<button type="submit" class="btn btn-default btn-sm btn-elimina" name="dei[' . $i . ']" title="' . $script_transl['delrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
             );
@@ -1673,7 +1673,7 @@ echo "</script>\n";
     $gForm->sub_Account('insert_conto', $form['insert_conto'], $form['search']['insert_conto'], $form['hidden_req'], $script_transl['mesg']);
     echo "</td>\n";
     echo "<td class=\"bg-info\"><div onmousedown=\"toggleContent('insert')\" class=\"clickarea\" style=\"cursor:pointer;\">";
-    echo "<input style=\"text-align:right;\" type=\"text\" value=\"\" maxlength=\"13\" size=\"13\" id=\"insert_import\" name=\"insert_import\"> &crarr;</div>\n";
+    echo "<input style=\"text-align:right;\" type=\"text\" value=\"\" maxlength=\"13\" id=\"insert_import\" name=\"insert_import\"> &crarr;</div>\n";
     $gForm->settleAccount('insert', $form['insert_conto'], sprintf("%04d%02d%02d", $form['date_reg_Y'], $form['date_reg_M'], $form['date_reg_D']));
     echo "</td>";
     echo "\t<td  class=\"bg-info\">\n";
@@ -1754,7 +1754,7 @@ echo "</script>\n";
             $valsty = ' style="text-align:right; background-color:#FFAAAA;" ';
         }
         echo "<td class=\"FacetDataTD\">
-          <input type=\"text\" name=\"importorc[$i]\" ID=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" size=\"13\"  tabindex=\"" . (30 + $i * 2) . "\" >\n";
+          <input type=\"text\" name=\"importorc[$i]\" ID=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" tabindex=\"" . (30 + $i * 2) . "\" >\n";
         echo "<input type=\"hidden\" ID=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"" . $form['id_rig_rc'][$i] . "\">\n";
         echo "<input type=\"hidden\" ID=\"paymov_op_cl$i\" name=\"paymov_op_cl[$i]\" value=\"" . $form['paymov_op_cl'][$i] . "\">\n";
         // inizio input degli sbilanci
