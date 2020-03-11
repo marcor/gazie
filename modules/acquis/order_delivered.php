@@ -155,6 +155,7 @@ $gForm = new acquisForm();
         $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
     });
 </script>
+<div class="FacetFormHeaderFont">Ricevuto materiale ordinato</div>
 <form class="form-horizontal" role="form" method="post" name="tesdoc" enctype="multipart/form-data" >
     <input type="hidden" value="<?php echo $form['id_tes']; ?>" name="id_tes">
     <input type="hidden" value="<?php echo $form['datemi']; ?>" name="datemi">
@@ -277,7 +278,7 @@ if (!empty($form['rows'])) {
                 'value' => $v['unimis']
             ),
             array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                'value' => 'residuo:'.floatval($v['totric']).' <input type="number" step="any" name="rows[' . $k . '][ricevibile]" value="' . $v['ricevibile'] . '" maxlength="11" size="4" />'
+                'value' => 'residuo:'.floatval($v['totric']).' <input type="number" step="any" name="rows[' . $k . '][ricevibile]" value="' . $v['ricevibile'] . '" maxlength="11" />'
             ),
             array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
                 'value' =>  $v['prelis'] 
