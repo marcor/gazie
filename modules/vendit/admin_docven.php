@@ -1008,7 +1008,93 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     /* Con button non funziona _x */
     //if (isset($_POST['in_submit_x'])) {
     /** ENRICO FEDELE */
-    if (isset($_POST['in_submit'])) {
+	if (isset($_POST['in_submit_desc'])) { //rigo Descrittivo rapido
+        $form['rows'][$next_row]['codart'] = '';
+        $form['rows'][$next_row]['annota'] = '';
+        $form['rows'][$next_row]['pesosp'] = '';
+        $form['rows'][$next_row]['gooser'] = 0;
+        $form['rows'][$next_row]['unimis'] = '';
+        $form['rows'][$next_row]['quanti'] = 0;
+        $form['rows'][$next_row]['prelis'] = 0;
+        $form['rows'][$next_row]['codric'] = 0;
+        $form['rows'][$next_row]['sconto'] = 0;
+        $form['rows'][$next_row]['pervat'] = 0;
+        $form['rows'][$next_row]['tipiva'] = 0;
+        $form['rows'][$next_row]['ritenuta'] = 0;
+        $form['rows'][$next_row]['codvat'] = 0;
+        $form['rows'][$next_row]['lot_or_serial'] = 0;
+		$form['rows'][$next_row]['SIAN'] = 0;
+        $form['rows'][$next_row]['id_lotmag'] = 0;
+		$form['rows'][$next_row]['identifier'] = '';
+		$form['rows'][$next_row]['cod_operazione'] = 11;
+		$form['rows'][$next_row]['recip_stocc'] = '';
+		$form['rows'][$next_row]['recip_stocc_destin'] = '';
+        $form['rows'][$next_row]['descri'] = '';
+        $form['rows'][$next_row]['id_mag'] = 0;
+        $form['rows'][$next_row]['status'] = 'INSERT';
+        $form['rows'][$next_row]['scorta'] = 0;
+        $form['rows'][$next_row]['quamag'] = 0;
+        $form['rows'][$next_row]['tiprig'] = 2;
+        $next_row++;
+    } else if (isset($_POST['in_submit_text'])) { //rigo Testo rapido
+        $form["row_$next_row"] = '';
+        $form['rows'][$next_row]['codart'] = '';
+        $form['rows'][$next_row]['annota'] = '';
+        $form['rows'][$next_row]['pesosp'] = '';
+        $form['rows'][$next_row]['gooser'] = 0;
+        $form['rows'][$next_row]['unimis'] = '';
+        $form['rows'][$next_row]['quanti'] = 0;
+        $form['rows'][$next_row]['prelis'] = 0;
+        $form['rows'][$next_row]['codric'] = 0;
+        $form['rows'][$next_row]['sconto'] = 0;
+        $form['rows'][$next_row]['pervat'] = 0;
+        $form['rows'][$next_row]['tipiva'] = 0;
+        $form['rows'][$next_row]['ritenuta'] = 0;
+        $form['rows'][$next_row]['codvat'] = 0;
+        $form['rows'][$next_row]['lot_or_serial'] = 0;
+		$form['rows'][$next_row]['SIAN'] = 0;
+        $form['rows'][$next_row]['id_lotmag'] = 0;
+		$form['rows'][$next_row]['identifier'] = '';
+		$form['rows'][$next_row]['cod_operazione'] = 11;
+		$form['rows'][$next_row]['recip_stocc'] = '';
+		$form['rows'][$next_row]['recip_stocc_destin'] = '';
+        $form['rows'][$next_row]['descri'] = '';
+        $form['rows'][$next_row]['id_mag'] = 0;
+        $form['rows'][$next_row]['status'] = 'INSERT';
+        $form['rows'][$next_row]['scorta'] = 0;
+        $form['rows'][$next_row]['quamag'] = 0;
+        $form['rows'][$next_row]['tiprig'] = 6;
+        $next_row++;
+	} else if (isset($_POST['in_submit_cig'])) { //rigo CIG rapido
+        $form['rows'][$next_row]['codart'] = '';
+        $form['rows'][$next_row]['annota'] = '';
+        $form['rows'][$next_row]['pesosp'] = '';
+        $form['rows'][$next_row]['gooser'] = 0;
+        $form['rows'][$next_row]['unimis'] = '';
+        $form['rows'][$next_row]['quanti'] = 0;
+        $form['rows'][$next_row]['prelis'] = 0;
+        $form['rows'][$next_row]['codric'] = 0;
+        $form['rows'][$next_row]['sconto'] = 0;
+        $form['rows'][$next_row]['pervat'] = 0;
+        $form['rows'][$next_row]['tipiva'] = 0;
+        $form['rows'][$next_row]['ritenuta'] = 0;
+        $form['rows'][$next_row]['codvat'] = 0;
+        $form['rows'][$next_row]['lot_or_serial'] = 0;
+		$form['rows'][$next_row]['SIAN'] = 0;
+        $form['rows'][$next_row]['id_lotmag'] = 0;
+		$form['rows'][$next_row]['identifier'] = '';
+		$form['rows'][$next_row]['cod_operazione'] = 11;
+		$form['rows'][$next_row]['recip_stocc'] = '';
+		$form['rows'][$next_row]['recip_stocc_destin'] = '';
+        $form['rows'][$next_row]['descri'] = '';
+        $form['rows'][$next_row]['id_mag'] = 0;
+        $form['rows'][$next_row]['status'] = 'INSERT';
+        $form['rows'][$next_row]['scorta'] = 0;
+        $form['rows'][$next_row]['quamag'] = 0;
+        $form['rows'][$next_row]['tiprig'] = 11;
+        $next_row++;
+    } else if (isset($_POST['in_submit'])) {
+
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
         // addizione ai totali peso,pezzi,volume, ma se l'unità di misura è uguale a KG forzo il peso specifico ad 1, ed in futuro qui dovrei utilizzare il nuovo metodo di calcolo utilizzato anche in acquis/admin_broven.php
 		if (strtoupper(substr($artico['unimis'],0,2))=='KG'){
@@ -2316,11 +2402,23 @@ echo '&nbsp;<a id="addmodal" href="#myModal" data-toggle="modal" data-target="#e
 // Antonio Germani - fine ricerca con pistola lettore codice a barre -->
 
 echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
-echo '  </td>
+?>
+        </td>
 		<td class="FacetColumnTD" align="right">
-			<button type="submit" class="btn btn-default btn-xs" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+<?php
+if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
+?>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit_desc" title="Aggiungi rigo Descrittivo"><i class="glyphicon glyphicon-pencil"></i></button>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit_text" title="Aggiungi rigo Testo"><i class="glyphicon glyphicon-list"></i></button>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit_cig" title="Aggiungi rigo CIG">CIG</button>
+			<span>||</span>
+<?php
+}
+?>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow'] ?>" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
-	  </tr>';
+	</tr>
+<?php
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
 $ric = array('sub',intval(substr($form['in_codric'], 0, 1)));
 if ($form['tipdoc'] == 'FAP' || $form['tipdoc'] == 'FAQ') {
@@ -2540,7 +2638,7 @@ foreach ($form['rows'] as $k => $v) {
 				?>	
 				<div class="container-fluid">					
 					<div class="row">
-						<label for="cod_operazine" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN"; ?></label>
+						<label for="cod_operazione" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN"; ?></label>
 						<?php
 						$gForm->variousSelect('rows[' . $k . '][cod_operazione]', $script_transl['cod_operaz_value'], $form['rows'][$k]['cod_operazione'], "col-sm-6", false, '', false)
 						?>
@@ -2754,10 +2852,6 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "11": // CIG fattura elettronica
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
-					';
         case "12": // CUP fattura elettronica
             echo "	<td>
 						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
@@ -2786,10 +2880,6 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "13": // ID documento fattura elettronica
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
-					';
         case "15": // NumItem fattura elettronica
             echo "	<td>
                             <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
