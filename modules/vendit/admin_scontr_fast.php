@@ -852,7 +852,7 @@ maniglia.form.submit();
                 if ($form['id_tes'] > 0) { // Ã¨ una modifica
                     ?>
                     <?php echo $script_transl['upd_this']; ?>
-                    <input type="text" name="numdoc" value="<?php echo $form['numdoc']; ?>" style="text-align:right" maxlength="9" size="2"  onchange="this.form.submit()" />
+                    <input type="text" name="numdoc" value="<?php echo $form['numdoc']; ?>" style="text-align:right" maxlength="9"  onchange="this.form.submit()" />
                     <?php
                 } else {
                     ?>
@@ -1052,17 +1052,17 @@ maniglia.form.submit();
                     'value' => '<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $v['descri'] . '" maxlength="100" />'
                 ),
                 array('head' => $script_transl["unimis"], 'class' => '',
-                    'value' => '<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="2" />'
+                    'value' => '<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" />'
                 ),
                 array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="any" class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
+                    'value' => '<input type="number" step="any" class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" maxlength="11" onchange="this.form.submit();" />'
                 ),
                 array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => '<input type='.(($_GET['Prezzo_IVA'] == 'S')?"hidden":"number").' ID="prezzo_'.$k.'" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" size="4" onchange="this.form.submit()" />'. // Modificato a mano
-                               '<input type='.(($_GET['Prezzo_IVA'] == 'S')?"number":"hidden").' ID="prezzo_iva_'.$k.'" step="any" name="prezzo_con_iva" value="'.$prelisiva.'" maxlength="15" size="4" onchange="cambiaimporto(this,'.$k.','.count($form['rows']).','.$v['pervat'].');" />'  // Modificato a mano
+                    'value' => '<input type='.(($_GET['Prezzo_IVA'] == 'S')?"hidden":"number").' ID="prezzo_'.$k.'" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" onchange="this.form.submit()" />'. // Modificato a mano
+                               '<input type='.(($_GET['Prezzo_IVA'] == 'S')?"number":"hidden").' ID="prezzo_iva_'.$k.'" step="any" name="prezzo_con_iva" value="'.$prelisiva.'" maxlength="15" onchange="cambiaimporto(this,'.$k.','.count($form['rows']).','.$v['pervat'].');" />'  // Modificato a mano
 					),
                 array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="0.01" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="2" onchange="this.form.submit()" />'),
+                    'value' => '<input type="number" step="0.01" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" onchange="this.form.submit()" />'),
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 'value' => gaz_format_number($imprig), 'type' => ''),
                 array('head' => $script_transl["codvat"], 'class' => 'text-center numeric', 'value' => $v['pervat'], 'type' => ''),
                 array('head' => $script_transl["total"], 'class' => 'text-right numeric bg-warning', 'value' => gaz_format_number($tot_row), 'type' => ''),

@@ -1318,7 +1318,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['2']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-	<input type="text" name="description" value="<?php echo $form['description']; ?>" maxlength="80" size="80" />
+	<input type="text" name="description" value="<?php echo $form['description']; ?>" maxlength="80" />
 	</td>
 </tr>
 <?php
@@ -1358,7 +1358,7 @@ if ($form['order_type'] == "AGR") {
 } else {
     print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td>";
 }
-print "<td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\" size=\"3\" value=\"" . $form['day_of_validity'] . "\"  /></td></tr>\n";
+print "<td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\"  value=\"" . $form['day_of_validity'] . "\"  /></td></tr>\n";
 /*Antonio Germani LUOGO di produzione  */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 		// SELECT luogo di produzione da campi

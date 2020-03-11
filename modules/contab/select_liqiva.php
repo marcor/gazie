@@ -394,7 +394,7 @@ if (!empty($msg)) {
 }
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['page_ini']."</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"page_ini\" value=\"".$form['page_ini']."\" maxlength=\"5\" size=\"5\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"page_ini\" value=\"".$form['page_ini']."\" maxlength=\"5\"  /></td>\n";
 echo "</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['sta_def']."</td><td class=\"FacetDataTD\">\n";
 $gForm->selCheckbox('sta_def',$form['sta_def'],$script_transl['sta_def_title']);
@@ -402,7 +402,7 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."</td>\n";
-echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\"  /></td>\n";
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
@@ -422,18 +422,18 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['carry'].": </td>\n";
-echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"carry\" value=\"".$form['carry']."\" maxlength=\"15\" size=\"15\" /></td>\n";
+echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"carry\" value=\"".$form['carry']."\" maxlength=\"15\"  /></td>\n";
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pro_rata'].": </td>\n";
-echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"pro_rata\" value=\"".$form['pro_rata']."\" maxlength=\"2\" size=\"2\" /></td>\n";
+echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"pro_rata\" value=\"".$form['pro_rata']."\" maxlength=\"2\"  /></td>\n";
 echo "</td>\n";
 echo "</tr>\n";
 if ($form['date_fin_M'] == 12) {
 	echo "<tr>\n";
 	echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['advance'].": </td>\n";
-	echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"advance\" value=\"".$form['advance']."\" maxlength=\"15\" size=\"15\" /></td>\n";
+	echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"advance\" value=\"".$form['advance']."\" maxlength=\"15\"  /></td>\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 }

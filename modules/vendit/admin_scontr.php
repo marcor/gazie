@@ -795,7 +795,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 if ($form['id_tes'] > 0) { // è una modifica
                     ?>
                     <?php echo $script_transl['upd_this']; ?>
-                    <input type="text" name="numdoc" value="<?php echo $form['numdoc']; ?>" style="text-align:right" maxlength="9" size="2"  onchange="this.form.submit()" />
+                    <input type="text" name="numdoc" value="<?php echo $form['numdoc']; ?>" style="text-align:right" maxlength="9"  onchange="this.form.submit()" />
                     <?php
                 } else {
                     ?>
@@ -996,16 +996,16 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     'value' => '<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $v['descri'] . '" maxlength="100" />'
                 ),
                 array('head' => $script_transl["unimis"], 'class' => '',
-                    'value' => '<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="2" />'
+                    'value' => '<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" />'
                 ),
                 array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="any" class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
+                    'value' => '<input type="number" step="any" class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" maxlength="11" onchange="this.form.submit();" />'
                 ),
                 array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" size="4"'.$ivacomp.' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" />'
+                    'value' => '<input type="number" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15"'.$ivacomp.' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" />'
                 ),
                 array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
-                    'value' => '<input type="number" step="0.01" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="2" onchange="this.form.submit()" />'),
+                    'value' => '<input type="number" step="0.01" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" onchange="this.form.submit()" />'),
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 'value' => gaz_format_number($imprig), 'type' => ''),
                 array('head' => $script_transl["codvat"], 'class' => 'text-center numeric', 'value' => $v['pervat'], 'type' => ''),
                 array('head' => $script_transl["total"], 'class' => 'text-right numeric bg-warning', 'value' => gaz_format_number($tot_row), 'type' => ''),
@@ -1252,12 +1252,12 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     </div>
 </div>
 <div class="modal" id="vat-price" title="IMPORTO IVA COMPRESA">
-	<input type="text" id="cat_prevat" style="text-align: right;" maxlength="11" size="7" onkeyup="vatPriceCalc();" />
+	<input type="text" id="cat_prevat" style="text-align: right;" maxlength="11" onkeyup="vatPriceCalc();" />
 	<br /><br />
 	<!--select id="codvat" name="cat_codvat" class="FacetSelect"></select-->
-	<input type="text" id="cat_pervat" style="text-align: center;" maxlength="5" size="4" disabled="disabled" />
+	<input type="text" id="cat_pervat" style="text-align: center;" maxlength="5" disabled="disabled" />
 	<br /><br />
-	<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" size="7" disabled="disabled" />
+	<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" disabled="disabled" />
 </div>
 <script type="text/javascript">
 	function vatPrice(row,pervat) {

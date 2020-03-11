@@ -665,13 +665,13 @@ if ($modal_ok_insert === true) {
                             <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?></label>
                          <!--   <input class="col-sm-2" type="text" value="<?php echo $form['unimis']; ?>" name="unimis" maxlength="3" /> -->
 						 <?php if ($form['good_or_service']==0){?>
-								<select name="unimis" size="1">
+								<select name="unimis">
 									<option <?php if($form['unimis'] == 'Kg'){echo("selected");}?>>Kg</option>
 									<option <?php if($form['unimis'] == 'l'){echo("selected");}?>>l</option>
 									<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
 								</select>
 						 <?php } else { ?>
-							 <select name="unimis" size="1">
+							 <select name="unimis">
 									<option <?php if($form['unimis'] == 'h'){echo("selected");}?>>h</option>
 									<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
 									<option <?php if($form['unimis'] == 'ha'){echo("selected");}?>>ha</option>

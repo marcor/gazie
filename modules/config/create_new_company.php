@@ -238,7 +238,7 @@ if (!empty($msg)) {
 }
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['codice'] . "* </td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"3\" size=\"3\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"3\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['ref_co'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";

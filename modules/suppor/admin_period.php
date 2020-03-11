@@ -173,7 +173,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD">Data</td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="data" value="<?php echo $form['data']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="data" value="<?php echo $form['data']; ?>" align="right" maxlength="255"/>
 	</td>
 </tr>
 <tr>
@@ -197,14 +197,14 @@ $select_cliente = new selectPartner('clfoco');
 		}
 		?>
 		</select> 
-		<input type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>
+		<input type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255"/>
 		<button id="toggleTec" type="button">Altro</button>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['oggetto']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="oggetto" value="<?php echo $form['oggetto']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="oggetto" value="<?php echo $form['oggetto']; ?>" align="right" maxlength="255"/>
 	</td>
 </tr>
 <tr>
@@ -226,7 +226,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['prezzo']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="prezzo" value="<?php echo $form['prezzo']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="prezzo" value="<?php echo $form['prezzo']; ?>" align="right" maxlength="255"/>
 	</td>
 </tr>
 <?php
@@ -266,7 +266,7 @@ $durata = $form['ogni'];
 			<option value="3" <?php if ( $form['stato']=='3') echo 'selected'; ?>><?php echo $per_stato[3]; ?></option>
 			<option value="4" <?php if ( $form['stato']=='4') echo 'selected'; ?>><?php echo $per_stato[4]; ?></option>
 		</select> 
-		<!--<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>-->
+		<!--<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255"/>-->
 		<!--<button id="toggleSta" type="button">Altro</button>-->
 	</td>
 </tr>

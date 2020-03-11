@@ -405,8 +405,8 @@ foreach ($_POST['righi'] as $k => $v) {
     print "<input type=\"hidden\" name=\"righi[{$k}][numdoc]\" value=\"{$v['numdoc']}\">\n";
     $totale+=$v['prelis'];
     $importo_rigo=number_format($v['prelis'],2, '.', '');
-    print "<tr><td><input type=\"text\" name=\"righi[{$k}][descri]\" value=\"{$v['descri']}\" maxlength=\"50\" size=\"50\"></td>\n";
-    print "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$k}][prelis]\" value=\"".preg_replace("/\,/",'.', $importo_rigo)."\" maxlength=\"11\" size=\"11\"></td>\n";
+    print "<tr><td><input type=\"text\" name=\"righi[{$k}][descri]\" value=\"{$v['descri']}\" maxlength=\"50\" ></td>\n";
+    print "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$k}][prelis]\" value=\"".preg_replace("/\,/",'.', $importo_rigo)."\" maxlength=\"11\" ></td>\n";
     
 
    /** ENRICO FEDELE */

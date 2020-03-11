@@ -191,7 +191,7 @@ foreach ($tipoLettera as $key => $value) {
     echo "<option value=\"" . $key . "\"" . $selected . ">" . $script_transl[0][$key] . "</option>";
 }
 echo "</select></td>";
-echo " <td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\"> <input type=\"text\" value=\"" . $form['numero'] . "\" maxlength=\"20\" size=\"20\" name=\"numero\"></td>\n";
+echo " <td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\"> <input type=\"text\" value=\"" . $form['numero'] . "\" maxlength=\"20\"  name=\"numero\"></td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"> \n";
 // select del giorno
 echo "\t <select name=\"gioemi\" class=\"FacetSelect\" >\n";
@@ -221,12 +221,12 @@ for ($counter = $form['annemi'] - 10; $counter <= $form['annemi'] + 10; $counter
     echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 echo "\t </select></td></tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4] : </td><td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['oggetto'] . "\" maxlength=\"60\" size=\"60\" name=\"oggetto\"></td>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4] : </td><td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['oggetto'] . "\" maxlength=\"60\"  name=\"oggetto\"></td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[2] : </td><td class=\"FacetDataTD\">\n";
 $select_cliente = new selectPartner('clfoco');
 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], -1);
 echo "</td></tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5] : </td><td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['c_a'] . "\" maxlength=\"60\" size=\"60\" name=\"c_a\"></td>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5] : </td><td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['c_a'] . "\" maxlength=\"60\"  name=\"c_a\"></td>\n";
 echo "<td class=\"FacetFieldCaptionTD\"></td><td class=\"FacetDataTD\" ";
 if (isset($partner['indspe'])) {
     echo "title=\"fax: " . $partner['fax'] . "\">" . $partner['indspe'] . "<br />" . $partner['capspe'] . " " . $partner['citspe'] . " (" . $partner['prospe'] . ")";
@@ -237,7 +237,7 @@ echo "</td></tr>\n";
 echo "<tr><td colspan=\"6\" class=\"FacetFieldCaptionTD\" align=\"center\">$script_transl[8]</td></tr>\n";
 if ($form["tipo"] == 'SMS') {
 	$lunghezza_sms = 160;
-    echo "<tr><td colspan=\"6\"><small id=\"metro_messaggio\" class=\"muted\">($lunghezza_sms)</small> <input type=\"text\" id=\"corpo\" name=\"corpo\" value=\"" . $form["corpo"] . "\" size=\"$lunghezza_sms\" maxlength=\"$lunghezza_sms\"/></td></tr>\n";
+    echo "<tr><td colspan=\"6\"><small id=\"metro_messaggio\" class=\"muted\">($lunghezza_sms)</small> <input type=\"text\" id=\"corpo\" name=\"corpo\" value=\"" . $form["corpo"] . "\" maxlength=\"$lunghezza_sms\"/></td></tr>\n";
 } else {
     echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass\">" . $form["corpo"] . "</textarea></td></tr>\n";
 }

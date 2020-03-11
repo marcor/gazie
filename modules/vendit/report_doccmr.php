@@ -138,7 +138,7 @@ function confirMail(link){
             <tr>
                 <td class="FacetFieldCaptionTD">
                     <?php gaz_flt_disp_int("id_tes", "Numero Prot."); ?>
-                    <!--<input placeholder="Cerca Numero" class="input-xs form-control" type="text" name="numdoc" value="<?php if (isset($documento) && $documento > 0) print $documento; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">-->
+                    <!--<input placeholder="Cerca Numero" class="input-xs form-control" type="text" name="numdoc" value="<?php if (isset($documento) && $documento > 0) print $documento; ?>" maxlength="6" tabindex="1" class="FacetInput">-->
                 </td>
                 <td class="FacetFieldCaptionTD">
                     <?php gaz_flt_disp_int("numdoc", "Numero Doc."); ?>

@@ -1280,7 +1280,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         echo "\t </select>\n";
         echo "</td></tr><tr>\n";
         echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['traspo'] . ' ' . $admin_aziend['html_symbol'] . "</td>\n";
-        echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"traspo\" value=\"" . $form['traspo'] . "\" align=\"right\" maxlength=\"6\" size=\"3\" onChange=\"this.form.total.value=summa(this);\" />\n";
+        echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"traspo\" value=\"" . $form['traspo'] . "\" align=\"right\" maxlength=\"6\"  onChange=\"this.form.total.value=summa(this);\" />\n";
         echo "\t </td>\n";
         echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['pagame'] . "<br>Spese incasso </td><td  class=\"FacetDataTD\">\n";
         $gForm->selectFromDB('pagame', 'pagame', 'codice', $form['pagame'], 'codice', 1, ' ', 'descri');
@@ -1315,20 +1315,20 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         $select_agente->output();
         echo "</td>\n";
         echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['spediz'] . "</td>\n";
-        echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"spediz\" value=\"" . $form["spediz"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
+        echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"spediz\" value=\"" . $form["spediz"] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
         $select_spediz = new SelectValue("spedizione");
         $select_spediz->output('spediz', 'spediz');
         echo "</td>\n";
         echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['portos'] . "</td>\n";
-        echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
+        echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
         $select_spediz = new SelectValue("portoresa");
         $select_spediz->output('portos', 'portos');
         echo "</td>\n";
         echo "</td></tr>\n";
         echo '<tr><td class="FacetFieldCaptionTD">';
-        echo "%" . $script_transl['sconto'] . ":</td><td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['sconto'] . "\" maxlength=\"5\" size=\"1\" name=\"sconto\" onChange=\"this.form.total.value=sconta(this);\">";
+        echo "%" . $script_transl['sconto'] . ":</td><td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['sconto'] . "\" maxlength=\"5\"  name=\"sconto\" onChange=\"this.form.total.value=sconta(this);\">";
         echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['imball'] . "</td>\n";
-        echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"imball\" value=\"" . $form["imball"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
+        echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"imball\" value=\"" . $form["imball"] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
         $select_spediz = new SelectValue("imballo");
         $select_spediz->output('imball', 'imball');
         echo "</td>\n";
@@ -1341,15 +1341,15 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         echo "</tr><tr>
 			<td class=\"FacetFieldCaptionTD\">$script_transl[0]</td>
 			<td class=\"FacetDataTD\">
-				<input type=\"text\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\" maxlength=\"9\" size=\"5\" />
+				<input type=\"text\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\" maxlength=\"9\"  />
 			</td>
 			<td class=\"FacetFieldCaptionTD\">$script_transl[1]</td>
 			<td class=\"FacetDataTD\">
-				<input type=\"text\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\" maxlength=\"9\" size=\"5\" />
+				<input type=\"text\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\" maxlength=\"9\"  />
 			</td>
 			<td class=\"FacetFieldCaptionTD\">$script_transl[2]</td>
 			<td class=\"FacetDataTD\">
-				<input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\" size=\"4\" />
+				<input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\"  />
 			</td></tr>\n";
         $tidoc_selectable = array("DDT" => "D.d.T. di Vendita", "DDY" => "D.d.T. da non fatturare automaticamente","DDS" => "Notula Servizio (no fat.15 mese succ.)");
         echo "<tr><td class=\"FacetFieldCaptionTD\">" . "Tipo documento" . "</td><td class=\"FacetDataTD\">";
@@ -1643,7 +1643,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             echo "<input type=\"submit\" name=\"vco\" value=\"" . $script_transl['issue_cor'] . "\" accesskey=\"c\" />\n";
             echo "</td>";
             echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl['taxable'] . " " . $admin_aziend['html_symbol'] . " &nbsp;\n";
-            echo "<input type=\"text\"  style=\"text-align:right;\" value=\"" . number_format(($total_order - $total_order * $form['sconto'] / 100 + $form['traspo']), 2, '.', '') . "\" name=\"total\" size=\"8\" readonly />\n";
+            echo "<input type=\"text\"  style=\"text-align:right;\" value=\"" . number_format(($total_order - $total_order * $form['sconto'] / 100 + $form['traspo']), 2, '.', '') . "\" name=\"total\"  readonly />\n";
             echo "</td></tr>";
             if (!empty($alert_sezione))
                 echo "<tr><td colspan=\"3\"></td><td colspan=\"2\" class=\"FacetDataTDred\">$alert_sezione </td></tr>";

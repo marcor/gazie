@@ -165,7 +165,7 @@ $(function() {
     <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
             <td colspan="1" class="FacetFieldCaptionTD">
-                <input type="text" placeholder="Cerca Prot." class="input-sm form-control" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+                <input type="text" placeholder="Cerca Prot." class="input-sm form-control" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" tabindex="1" class="FacetInput">
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
                 <select class="form-control input-sm" name="flt_tipo" onchange="this.form.submit()">
@@ -183,7 +183,7 @@ $(function() {
                 </select>
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-                <input type="text" placeholder="Cerca Num." class="input-sm form-control" name="numdoc" value="<?php if (isset($numdoc)) echo $numdoc; ?>" size="3" tabindex="3" class="FacetInput">			
+                <input type="text" placeholder="Cerca Num." class="input-sm form-control" name="numdoc" value="<?php if (isset($numdoc)) echo $numdoc; ?>" tabindex="3" class="FacetInput">			
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
                 <select class="form-control input-sm" name="flt_year" onchange="this.form.submit()">

@@ -140,7 +140,7 @@ $(function() {
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <tr>
             <td colspan="1" class="FacetFieldCaptionTD">
-                <input type="text" placeholder="Cerca Prot." class="input-sm form-control" name="proto" value="<?php if (isset($proto)) print $proto; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+                <input type="text" placeholder="Cerca Prot." class="input-sm form-control" name="proto" value="<?php if (isset($proto)) print $proto; ?>" maxlength="6" tabindex="1" class="FacetInput">
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
                 &nbsp;
@@ -151,7 +151,7 @@ $(function() {
 ?>
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
-                <input type="text" placeholder="Cerca Num." class="input-sm form-control" name="numero" value="<?php if (isset($numero)) print $numero; ?>" size="3" tabindex="3" class="FacetInput">			
+                <input type="text" placeholder="Cerca Num." class="input-sm form-control" name="numero" value="<?php if (isset($numero)) print $numero; ?>" tabindex="3" class="FacetInput">			
             </td>
             <td colspan="1" class="FacetFieldCaptionTD">
 <?php 
@@ -166,7 +166,7 @@ $(function() {
                         $where_select, "nome ASC", "nome");
                 } else { 
 ?>
-                    <input type="text" placeholder="Cerca fornitore" class="input-sm form-control" name="fornitore" value="<?php if (isset($fornitore)) print $fornitore; ?>" size="10" tabindex="5" class="FacetInput"> 
+                    <input type="text" placeholder="Cerca fornitore" class="input-sm form-control" name="fornitore" value="<?php if (isset($fornitore)) print $fornitore; ?>" tabindex="5" class="FacetInput"> 
 <?php 
                 } 
 ?>

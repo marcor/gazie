@@ -102,7 +102,7 @@ $recordnav -> output();
             <tr>
                 <td></td>
                 <td class="FacetFieldCaptionTD">Descrizione:
-                    <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput" />
+                    <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" tabindex="1" class="FacetInput" />
                 </td>
                 <td>
                     <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;" />

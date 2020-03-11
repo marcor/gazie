@@ -996,7 +996,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codice_fornitore" class="col-sm-4 control-label"><?php echo $script_transl['codice_fornitore']; ?></label>
-                        	<input class="col-sm-4" type="text"  value="<?php echo $form['codice_fornitore']; ?>" name="codice_fornitore" maxlength="50" size="50" />
+                        	<input class="col-sm-4" type="text"  value="<?php echo $form['codice_fornitore']; ?>" name="codice_fornitore" maxlength="50" />
 
                         </div>
                     </div>

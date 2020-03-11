@@ -131,12 +131,12 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td>
 if ($toDo == 'update') {
     echo "\t<input type=\"hidden\" name=\"codice\" value=\"" . $form['codice'] . "\" ><div class=\"FacetDataTD\">" . $form['codice'] . "<div>\n";
 } else {
-    echo "\t<input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" maxlength=\"15\" size=\"15\" class=\"FacetInput\">\n";
+    echo "\t<input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" maxlength=\"15\"  class=\"FacetInput\">\n";
 }
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"50\" size=\"30\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "</td>
      <td class=\"FacetDataTD\">\n";
@@ -170,19 +170,19 @@ foreach ($script_transl[16] as $key => $value) {
 echo "</select></td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[6] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"giodec\" value=\"" . $form['giodec'] . "\" maxlength=\"3\" size=\"3\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"giodec\" value=\"" . $form['giodec'] . "\" maxlength=\"3\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"mesesc\" value=\"" . $form['mesesc'] . "\" maxlength=\"2\" size=\"2\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"mesesc\" value=\"" . $form['mesesc'] . "\" maxlength=\"2\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"messuc\" value=\"" . $form['messuc'] . "\" maxlength=\"2\" size=\"2\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"messuc\" value=\"" . $form['messuc'] . "\" maxlength=\"2\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"giosuc\" value=\"" . $form['giosuc'] . "\" maxlength=\"2\" size=\"2\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"giosuc\" value=\"" . $form['giosuc'] . "\" maxlength=\"2\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[10] . "</td>
      <td class=\"FacetDataTD\">\n";
@@ -235,7 +235,7 @@ echo "</select></td></tr>\n";
 <?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"50\" size=\"30\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr>\n
       <td class=\"FacetFieldCaptionTD\">

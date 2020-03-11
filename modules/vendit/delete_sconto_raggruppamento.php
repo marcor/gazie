@@ -61,11 +61,11 @@ if (isset($_POST['Return'])) {
         </tr>
         <tr>
             <td class="FacetFieldCaptionTD"><?= $script_transl['header'][0]; ?> &nbsp;</td>
-            <td class="FacetDataTD"> <input type="text" size="100"  disabled value="<?= $form['clfoco']; ?>">&nbsp;</td>
+            <td class="FacetDataTD"> <input type="text"  disabled value="<?= $form['clfoco']; ?>">&nbsp;</td>
         </tr>
         <tr>
             <td class="FacetFieldCaptionTD"><?= $script_transl['header'][1]; ?> &nbsp;</td>
-            <td class="FacetDataTD"> <input type="text" size="100"  disabled value="<?= $form['descrragstat']; ?>">&nbsp;</td>
+            <td class="FacetDataTD"> <input type="text"  disabled value="<?= $form['descrragstat']; ?>">&nbsp;</td>
         </tr>
         <tr>
             <td class="FacetFieldCaptionTD"><?= $script_transl['header'][2]; ?>  &nbsp;</td>

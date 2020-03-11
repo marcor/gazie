@@ -116,7 +116,7 @@ if (strlen($form['ragso1']) >= 2) {
    $messaggio = $script_transl[1];
 }
 echo "\t </select>\n";
-echo "\t<input type=\"text\" name=\"ragso1\" " . $tabula . " accesskey=\"e\" value=\"" . $form['ragso1'] . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"ragso1\" " . $tabula . " accesskey=\"e\" value=\"" . $form['ragso1'] . "\" maxlength=\"15\"  class=\"FacetInput\">\n";
 echo $messaggio;
 //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" ".$tabula." name=\"clfoco\" src=\"../../library/images/cerbut.gif\">\n";
 /** ENRICO FEDELE */
@@ -128,7 +128,7 @@ echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td>";
 echo "<td class=\"FacetDataTD\">";
 echo "<input title=\"anno da analizzare\" type=\"text\" name=\"anno\" value=\"" .
- $form["anno"] . "\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
+ $form["anno"] . "\" maxlength=\"5\"  class=\"FacetInput\">";
 echo "</td></tr>";
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td>";

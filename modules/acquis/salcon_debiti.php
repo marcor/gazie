@@ -373,7 +373,7 @@ for( $counter = 2002; $counter <= 2030; $counter++ ) {
 }
 echo "\t </select></td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\"> IBAN </td>";
-echo "<td class=\"FacetFieldCaptionTD\"><input title=\"Coordinate bancarie del beneficiario\" type=\"text\" name=\"spediz\" value=\"{$_POST["spediz"]}\" maxlength=\"34\" size=\"34\" class=\"FacetInput\"></td></tr>";
+echo "<td class=\"FacetFieldCaptionTD\"><input title=\"Coordinate bancarie del beneficiario\" type=\"text\" name=\"spediz\" value=\"{$_POST["spediz"]}\" maxlength=\"34\"  class=\"FacetInput\"></td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">con valuta </td>\n ";
 echo "<td class=\"FacetFieldCaptionTD\">";
 echo "\t <select name=\"gioval\" class=\"FacetSelect\" >\n";
@@ -438,8 +438,8 @@ $totale=0.00;
 foreach ($_POST['righi'] as $key => $value) {
     $totale+=$value['prelis'];
     $importo_rigo=number_format($value['prelis'],2, '.', '');
-    echo "<tr><td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"{$value['descri']}\" maxlength=\"50\" size=\"50\"></td>\n";
-    echo "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$key}][prelis]\" value=\"".preg_replace("/\,/",'.', $importo_rigo)."\" maxlength=\"11\" size=\"11\"></td>\n";
+    echo "<tr><td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"{$value['descri']}\" maxlength=\"50\" ></td>\n";
+    echo "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$key}][prelis]\" value=\"".preg_replace("/\,/",'.', $importo_rigo)."\" maxlength=\"11\" ></td>\n";
     //echo "<td align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"Elimina rigo!\"></td></tr>\n";
 	
 		/** ENRICO FEDELE */

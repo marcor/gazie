@@ -146,9 +146,9 @@ if (!empty($msg)) {
 if ($toDo == 'update') {
    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[0]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"codice\" value=\"".$form['codice']."\" />".$form['codice']."</td></tr>\n";
 } else {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[0]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" maxlength=\"3\" size=\"3\" /></td></tr>\n";
+   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[0]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" maxlength=\"3\"  /></td></tr>\n";
 }
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\"  /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=campi&value=".$form['codice']."\" width=\"100\"></td>";
 print "<td class=\"FacetDataTD\" align=\"center\">$script_transl[2]<br><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\">";
 print "<input type=\"hidden\" name=\"ricarico\" value=\"\"/>";
@@ -157,7 +157,7 @@ print "</td></tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['web_url']." </td>\n";
 echo "<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"web_url\" value=\"".$form['web_url']."\" maxlength=\"255\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"web_url\" value=\"".$form['web_url']."\" maxlength=\"255\"  /></td>\n";
 echo "</tr>\n";
 
 echo "<tr><td>";
@@ -168,7 +168,7 @@ echo "<tr><td>";
 <?php
 
 
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" />\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  />\n";
 print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\"\n";
 print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
 print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";

@@ -214,7 +214,7 @@ echo "</td></tr>";
 //echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td>";
 //echo "<td class=\"FacetDataTD\">";
 //echo "<input title=\"anno da analizzare\" type=\"text\" name=\"livello\" value=\"" .
-// $form["livello"] . "\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
+// $form["livello"] . "\" maxlength=\"5\"  class=\"FacetInput\">";
 //echo "</td></tr>";
 
 echo "<tr>\n";

@@ -172,9 +172,9 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD">Data</td>
 	<td colspan="2" class="FacetDataTD">
-		<input class="FacetText" type="text" style="text-align:center" name="gioass" value="<?php echo $form['gioass'] ?>" size="2">
-		<input class="FacetText" type="text" style="text-align:center" name="mesass" value="<?php echo $form['mesass'] ?>" size="2">
-		<input class="FacetText" type="text" style="text-align:center" name="annass" value="<?php echo $form['annass'] ?>" size="4">
+		<input class="FacetText" type="text" style="text-align:center" name="gioass" value="<?php echo $form['gioass'] ?>">
+		<input class="FacetText" type="text" style="text-align:center" name="mesass" value="<?php echo $form['mesass'] ?>">
+		<input class="FacetText" type="text" style="text-align:center" name="annass" value="<?php echo $form['annass'] ?>">
 		<a href="#" onClick="cal.showCalendar('anchor','<?php echo $form['mesass'] . "/" . $form['gioass'] . "/" . $form['annass'] ?>'); return false;" title=" cambia la data! " name="anchor" id="anchor" class="btn btn-default btn-sm">
 			<i class="glyphicon glyphicon-calendar"></i>
 		</a>
@@ -201,14 +201,14 @@ $select_cliente = new selectPartner('clfoco');
 			}
 			?>
 		</select> 
-		<input type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>
+		<input type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255"/>
 		<button id="toggleTec" type="button">Altro</button>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['oggetto']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="oggetto" value="<?php echo $form['oggetto']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="oggetto" value="<?php echo $form['oggetto']; ?>" align="right" maxlength="255"/>
 	</td>
 </tr>
 <tr>
@@ -226,7 +226,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['info_agg']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="info_agg" value="<?php echo $form['info_agg']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="info_agg" value="<?php echo $form['info_agg']; ?>" align="right" maxlength="255"/>
 	</td>
 </tr>
 <tr>
@@ -259,7 +259,7 @@ $select_cliente = new selectPartner('clfoco');
 			}
 		?>
 		</select>&nbsp;
-		Totale : <input size="16" type="text" id="ore" name="ore" value="<?php echo $form['ore']; ?>" align="right" maxlength="255" size="71" />
+		Totale : <input size="16" type="text" id="ore" name="ore" value="<?php echo $form['ore']; ?>" align="right" maxlength="255" />
 	</td>
 </tr>
 <tr>
@@ -288,7 +288,7 @@ $select_cliente = new selectPartner('clfoco');
 			}
 			?>
 		</select> 
-		<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
+		<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255"/>
 		<button id="toggleSta" type="button">Altro</button>
 	</td>
 </tr>

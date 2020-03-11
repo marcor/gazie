@@ -183,7 +183,7 @@ $gForm->variousSelect('price', $script_transl['price_value'], $form['price'], 'F
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['subtitle']."</td>
-<td class=\"FacetDataTD\"><input type=\"text\" name=\"subtitle\" value=\"" . $form['subtitle'] . "\" maxlength=\"40\" size=\"35\" /></td>
+<td class=\"FacetDataTD\"><input type=\"text\" name=\"subtitle\" value=\"" . $form['subtitle'] . "\" maxlength=\"40\"  /></td>
 </tr>\n";
 echo "<tr class=\"FacetFieldCaptionTD\">";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">";

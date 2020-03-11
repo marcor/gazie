@@ -126,7 +126,7 @@ foreach ($templates as $key=>$value) {
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD">Descrizione/Num. del documento&nbsp;</td>
-<td class="FacetDataTD"> <input title="Descrizione/numero del documento" type="text" name="descri" value=<?php echo "\"".$_POST["descri"]."\""; ?> maxlength="25" size="25" class="FacetInput">&nbsp;</td>
+<td class="FacetDataTD"> <input title="Descrizione/numero del documento" type="text" name="descri" value=<?php echo "\"".$_POST["descri"]."\""; ?> maxlength="25" class="FacetInput">&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD">Stampa data&nbsp;</td>
@@ -161,7 +161,7 @@ if ($_POST['cod_partner'] == 0) {
    } else {
       $messaggio = "Inserire min. 2 caratteri";
    }
-   echo "\t<input type=\"text\" name=\"cerca_partner\" accesskey=\"e\" value=\"".$_POST['cerca_partner']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+   echo "\t<input type=\"text\" name=\"cerca_partner\" accesskey=\"e\" value=\"".$_POST['cerca_partner']."\" maxlength=\"15\"  class=\"FacetInput\">\n";
    echo $messaggio;
    //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
    /** ENRICO FEDELE */

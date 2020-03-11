@@ -101,20 +101,20 @@ if (!empty($msg)) {
 if ($toDo == 'insert') {
    echo "<tr>\n";
    echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['codice']."* </td>\n";
-   echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" align=\"right\" maxlength=\"3\" size=\"3\" /></td>\n";
+   echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" align=\"right\" maxlength=\"3\"  /></td>\n";
    echo "</tr>\n";
 }
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."* </td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"50\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['weight']."</td>
      <td class=\"FacetDataTD\" colspan=\"2\">\n";
-echo "\t<input type=\"text\" name=\"weight\" value=\"".$form['weight']."\" maxlength=\"9\" size=\"5\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"weight\" value=\"".$form['weight']."\" maxlength=\"9\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['annota']."</td>
      <td class=\"FacetDataTD\" colspan=\"2\">\n";
-echo "\t<input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"30\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";

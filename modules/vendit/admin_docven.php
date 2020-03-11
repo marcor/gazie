@@ -2233,9 +2233,9 @@ $select_banapp->output();
 echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td align=\"left\" class=\"FacetFieldCaptionTD\" title=\"" . $script_transl['traspo_title'] . "\">$script_transl[28]" . ' ' . $admin_aziend['html_symbol'] . "</td>\n";
-echo "<td class=\"FacetDataTD\" title=\"" . $script_transl['traspo_title'] . "\"><input type=\"text\" value=\"" . $form['traspo'] . "\" name=\"traspo\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
+echo "<td class=\"FacetDataTD\" title=\"" . $script_transl['traspo_title'] . "\"><input type=\"text\" value=\"" . $form['traspo'] . "\" name=\"traspo\" maxlength=\"6\"  onchange=\"this.form.submit()\" /></td>\n";
 echo "<td class=\"FacetFieldCaptionTD\" title=\"" . $script_transl['speban_title'] . "\">" . $script_transl['speban'] . "</td>
-      <td class=\"FacetDataTD\" title=\"" . $script_transl['speban_title'] . "\"><input type=\"text\" value=\"" . $form['speban'] . "\" name=\"speban\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /> x " . $form['numrat'] . " ";
+      <td class=\"FacetDataTD\" title=\"" . $script_transl['speban_title'] . "\"><input type=\"text\" value=\"" . $form['speban'] . "\" name=\"speban\" maxlength=\"6\"  onchange=\"this.form.submit()\" /> x " . $form['numrat'] . " ";
 $sel_expensevat = new selectaliiva("expense_vat");
 $sel_expensevat->addSelected($form["expense_vat"]);
 $sel_expensevat->output();
@@ -2264,7 +2264,7 @@ if ($form['tipdoc'] == "DDT") {
     echo "<tr>\n";
 // raggruppamento bolle
     echo "<td align=\"left\" class=\"FacetFieldCaptionTD\" title=\"" . $script_transl['ragbol_title'] . "\">" . $script_transl['ragbol'] . "</td>\n";
-//echo "<td class=\"FacetDataTD\" title=\"" . $script_transl['ragbol_title'] . "\"><input type=\"text\" value=\"" . $form['ragbol'] . "\" name=\"ragbol\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
+//echo "<td class=\"FacetDataTD\" title=\"" . $script_transl['ragbol_title'] . "\"><input type=\"text\" value=\"" . $form['ragbol'] . "\" name=\"ragbol\" maxlength=\"6\"  onchange=\"this.form.submit()\" /></td>\n";
     echo "<td class=\"FacetDataTD\">";
     $gForm->variousSelect('ragbol', $script_transl['ragbol_value'], $form['ragbol']);
     echo "</td>";
@@ -2401,7 +2401,7 @@ echo '&nbsp;<a id="addmodal" href="#myModal" data-toggle="modal" data-target="#e
 				}
 // Antonio Germani - fine ricerca con pistola lettore codice a barre -->
 
-echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
+echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\"  name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 ?>
         </td>
 		<td class="FacetColumnTD" align="right">
@@ -2431,9 +2431,9 @@ if (!in_array(substr($form['in_codric'],0,1),$ric)){
 }
  
 $gForm->selectAccount('in_codric', $form['in_codric'], $ric);
-echo " %$script_transl[24]: <input type=\"text\" value=\"" . $form['in_sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"in_sconto\" title=\"# = sconto standard dell'articolo\">";
-echo " %$script_transl[56]: <input type=\"text\" value=\"" . $form['in_provvigione'] . "\" maxlength=\"6\" size=\"1\" name=\"in_provvigione\">";
-echo ' %' . $script_transl['ritenuta'] . ": <input type=\"text\" value=\"" . $form['in_ritenuta'] . "\" maxlength=\"6\" size=\"1\" name=\"in_ritenuta\">";
+echo " %$script_transl[24]: <input type=\"text\" value=\"" . $form['in_sconto'] . "\" maxlength=\"4\"  name=\"in_sconto\" title=\"# = sconto standard dell'articolo\">";
+echo " %$script_transl[56]: <input type=\"text\" value=\"" . $form['in_provvigione'] . "\" maxlength=\"6\"  name=\"in_provvigione\">";
+echo ' %' . $script_transl['ritenuta'] . ": <input type=\"text\" value=\"" . $form['in_ritenuta'] . "\" maxlength=\"6\"  name=\"in_ritenuta\">";
 echo "</td><td class=\"FacetColumnTD\">" . $script_transl['vat_constrain'];
 $select_in_codvat = new selectaliiva("in_codvat");
 $select_in_codvat->addSelected($form["in_codvat"]);
@@ -2563,7 +2563,7 @@ foreach ($form['rows'] as $k => $v) {
 						</button>
 			 		</td>
 					<td>
-						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
+						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					';
             if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0) { // se l'articolo prevede lotti
 				
@@ -2668,20 +2668,20 @@ foreach ($form['rows'] as $k => $v) {
 
             echo '</td>
 					<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" />
 					</td>
 					<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" id="righi_' . $k . '_quanti" onchange="document.docven.last_focus.value=\'righi_' . $k . '_prelis\'; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" id="righi_' . $k . '_quanti" onchange="document.docven.last_focus.value=\'righi_' . $k . '_prelis\'; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
                     </td>
                     <td>
-						<input type="text" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" align="right" maxlength="11" size="7" ';
+						<input type="text" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" align="right" maxlength="11" ';
 						if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
 							echo 'onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" ';
 						}
 						echo ' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=\'righi_' . $k . '_sconto\'; this.form.submit()" />
 					</td>
-					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="1" id="righi_' . $k . '_sconto" onchange="document.docven.last_focus.value=this.id; this.form.submit();" /></td>
-					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" size="1" /></td>
+					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" id="righi_' . $k . '_sconto" onchange="document.docven.last_focus.value=this.id; this.form.submit();" /></td>
+					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" /></td>
 					<td class="text-right '.$imprig_class.'">
 						<span class="gazie-tooltip text-right text-'.$imprig_class.'" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
 							' . gaz_format_number($imprig) . '
@@ -2710,7 +2710,7 @@ foreach ($form['rows'] as $k => $v) {
 						<input class="btn btn-xs btn-success btn-block" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 					</td>
 					  <td>
-						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
+						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					</td>
                     <td><input type="hidden" name="rows[' . $k . '][unimis]" value="" /></td>
                     <td><input type="hidden" name="rows[' . $k . '][quanti]" value="" /></td>
@@ -2718,7 +2718,7 @@ foreach ($form['rows'] as $k => $v) {
 					<td><input type="hidden" name="rows[' . $k . '][provvigione]" value="" /></td>
 					<td></td>
 					<td class="text-right">
-						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7"';
+						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11"';
 						if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
 							echo 'onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
 						}
@@ -2747,7 +2747,7 @@ foreach ($form['rows'] as $k => $v) {
 						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
 					<td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" />
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\"  />
 					</td>
                     <td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
                     <td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
@@ -2773,7 +2773,7 @@ foreach ($form['rows'] as $k => $v) {
 						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
 					<td>
-						<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\">
+						<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" >
 					</td>
 					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
                     <td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
@@ -2781,7 +2781,7 @@ foreach ($form['rows'] as $k => $v) {
 					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
 					<td></td>
 					<td align=\"right\">
-						<input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"" . number_format($v['prelis'], 2, '.', '') . "\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" />
+						<input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"" . number_format($v['prelis'], 2, '.', '') . "\" align=\"right\" maxlength=\"11\"  onchange=\"this.form.submit()\" />
 					</td>
 					<td></td>
 					<td></td>\n";
@@ -2801,17 +2801,17 @@ foreach ($form['rows'] as $k => $v) {
                      $gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'rows[' . $k . '][codart]', 'rows[' . $k . '][codart]', $v["codart"], true, 'fae_tipo_cassa'.$k, 'col-sm-12');
 
 			echo '					  <td>
-						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
+						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					</td>
                     <td colspan="2" class="text-right">Imponibile:<input type="hidden" name="rows[' . $k . '][unimis]" value="" /><input type="hidden" name="rows[' . $k . '][quanti]" value="" /><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
-                    <td><input type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7"';
+                    <td><input type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11"';
 						if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
 							echo 'onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
 						}
 						echo ' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" /></td>
 					<td>==></td>';
 					// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
-			echo '	<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" size="1" />%</td>	<td class="text-right">	<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta']/100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">'.gaz_format_number($imprig).'</span>			
+			echo '	<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" />%</td>	<td class="text-right">	<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta']/100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">'.gaz_format_number($imprig).'</span>			
 					</td>
 					<td class="text-right">
 						' . $v['pervat'] . '%
@@ -2864,7 +2864,7 @@ foreach ($form['rows'] as $k => $v) {
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
 						
 					echo "
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" size=\"50\" /> riferito a ";
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\"  /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2891,7 +2891,7 @@ foreach ($form['rows'] as $k => $v) {
                         </td>
 			<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
-					echo "<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" /> riferito a ";
+					echo "<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\"  /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2917,7 +2917,7 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
-					echo "<input type=\"date\"   name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"15\" size=\"50\" /> riferito a ";
+					echo "<input type=\"date\"   name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"15\"  /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2943,7 +2943,7 @@ foreach ($form['rows'] as $k => $v) {
                         </td>
 			<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
-					echo "<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferito a ";
+					echo "<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\"  /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2968,7 +2968,7 @@ foreach ($form['rows'] as $k => $v) {
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
 			<td colspan=\"8\">
-                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> riferita a tutto il documento</td>
+                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\"  /> riferita a tutto il documento</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
@@ -2991,7 +2991,7 @@ foreach ($form['rows'] as $k => $v) {
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
 			<td colspan=\"8\">Fase dello stato di avanzamento
-                            <input type=\"number\" step=1 min=1 max=999 name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> </td>
+                            <input type=\"number\" step=1 min=1 max=999 name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\"  /> </td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
@@ -3014,7 +3014,7 @@ foreach ($form['rows'] as $k => $v) {
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
 			<td colspan=\"8\">Data prima immatricolazione
-                            <input type=\"date\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /> KM percorsi:<input type=\"number\" step=1 min=0 max=1000000  name=\"rows[$k][quanti]\" value=\"".$v['quanti']."\" /></td>
+                            <input type=\"date\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\"  /> KM percorsi:<input type=\"number\" step=1 min=0 max=1000000  name=\"rows[$k][quanti]\" value=\"".$v['quanti']."\" /></td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			
 			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
@@ -3036,12 +3036,12 @@ foreach ($form['rows'] as $k => $v) {
                     </button>
                 </td>
                     <td>
-                        <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
+                        <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\"  />
                     </td>
-                    <td><input class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\" size=\"1\" />
+                    <td><input class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\"  />
                 </td>
                 <td>
-                    <input class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl['weight'] . "\" type=\"text\" name=\"rows[" . $k . "][quanti]\" value=\"" . $v["quanti"] . "\" align=\"right\" maxlength=\"11\" size=\"4\" id=\"righi_" . $k . "_quanti\" onchange=\"document.docven.last_focus.value=\"righi_" . $k . "_prelis\"; this.form.hidden_req.value=\"ROW\"; this.form.submit();\" />
+                    <input class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl['weight'] . "\" type=\"text\" name=\"rows[" . $k . "][quanti]\" value=\"" . $v["quanti"] . "\" align=\"right\" maxlength=\"11\"  id=\"righi_" . $k . "_quanti\" onchange=\"document.docven.last_focus.value=\"righi_" . $k . "_prelis\"; this.form.hidden_req.value=\"ROW\"; this.form.submit();\" />
                 </td>
                 <td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
                 <td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
@@ -3054,9 +3054,9 @@ foreach ($form['rows'] as $k => $v) {
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
 					';
             } else {
-                echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
-                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\" size=\"1\" />
-                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl['weight'] . "\" type=\"text\" name=\"rows[" . $k . "][quanti]\" value=\"" . $v["quanti"] . "\" align=\"right\" maxlength=\"11\" size=\"4\" id=\"righi_" . $k . "_quanti\" onchange=\"document.docven.last_focus.value=\"righi_" . $k . "_prelis\"; this.form.hidden_req.value=\"ROW\"; this.form.submit();\" />
+                echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\"  />
+                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\"  />
+                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl['weight'] . "\" type=\"text\" name=\"rows[" . $k . "][quanti]\" value=\"" . $v["quanti"] . "\" align=\"right\" maxlength=\"11\"  id=\"righi_" . $k . "_quanti\" onchange=\"document.docven.last_focus.value=\"righi_" . $k . "_prelis\"; this.form.hidden_req.value=\"ROW\"; this.form.submit();\" />
                     <input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
                     <input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
                     <input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />";
@@ -3078,7 +3078,7 @@ foreach ($form['rows'] as $k => $v) {
 					  <td  colspan="6" >';
             $gForm->selectAsset('rows[' . $k . '][codric]', $v['codric']);
 
-            echo '<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="100" />
+            echo '<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					</td>
 					<td class="text-right">';
 
@@ -3086,7 +3086,7 @@ foreach ($form['rows'] as $k => $v) {
                     <input type="hidden" name="rows[' . $k . '][quanti]" value="" />
 					<input type="hidden" name="rows[' . $k . '][sconto]" value="" />
 					<input type="hidden" name="rows[' . $k . '][provvigione]" value="" />
-                    <input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7" onchange="this.form.submit()" />
+                    <input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" onchange="this.form.submit()" />
 					</td>
 					<td class="text-right">
 					</td>
@@ -3155,13 +3155,13 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     echo "		<tr>
 					<td class=\"FacetFieldCaptionTD text-right\">$script_transl[26]</td>
 					<td class=\"FacetDataTD\">
-						<input type=\"text\" name=\"imball\" value=\"" . $form["imball"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\" />\n";
+						<input type=\"text\" name=\"imball\" value=\"" . $form["imball"] . "\" maxlength=\"50\"  class=\"FacetInput\" />\n";
     $select_spediz = new SelectValue("imballo");
     $select_spediz->output('imball', 'imball');
     echo "			</td>
 					<td class=\"FacetFieldCaptionTD text-right\">$script_transl[27]</td>
 					<td class=\"FacetDataTD\">
-						<input type=\"text\" name=\"spediz\" value=\"" . $form["spediz"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\" />\n";
+						<input type=\"text\" name=\"spediz\" value=\"" . $form["spediz"] . "\" maxlength=\"50\"  class=\"FacetInput\" />\n";
     $select_spediz = new SelectValue("spedizione");
     $select_spediz->output('spediz', 'spediz');
     /** ENRICO FEDELE */
@@ -3175,7 +3175,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     echo "			</td>
 					<td class=\"FacetFieldCaptionTD text-right\">$script_transl[29]</td>
 					<td class=\"FacetDataTD\">
-						<input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\" />\n";
+						<input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=\"50\"  class=\"FacetInput\" />\n";
     $select_spediz = new SelectValue("portoresa");
     $select_spediz->output('portos', 'portos');
     echo "
@@ -3185,9 +3185,9 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
 				<tr>
 					<td class=\"FacetFieldCaptionTD text-right\">$script_transl[30]</td>
 					<td class=\"FacetDataTD\">
-						<input class=\"FacetText\" type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">
-						<input class=\"FacetText\" type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">
-						<input class=\"FacetText\" type=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">
+						<input class=\"FacetText\" type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" >
+						<input class=\"FacetText\" type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" >
+						<input class=\"FacetText\" type=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" >
 						<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-xs\">\n";
     //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
     echo '					<i class="glyphicon glyphicon-calendar"></i>
@@ -3239,17 +3239,17 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
 						<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
     }
     echo "			<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[54]</td>
-					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>
+					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\"  ></td>
 					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[55]</td>
-					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['volume'] . "\" name=\"volume\" maxlength=\"20\" size=\"20\" ></td>
+					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['volume'] . "\" name=\"volume\" maxlength=\"20\"  ></td>
 				</tr>
 				<tr>
 					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[52]</td>
-					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\" maxlength=\"9\" size=\"5\" ></td>
+					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\" maxlength=\"9\"  ></td>
 					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[53]</td>
-					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\" maxlength=\"9\" size=\"5\" ></td>
+					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\" maxlength=\"9\"  ></td>
 					<td class=\"FacetFieldCaptionTD\" colspan=\"4\">
-						" . $script_transl['taxstamp'] . "&nbsp;<input type=\"text\" value=\"" . $form['taxstamp'] . "\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" >&nbsp;" . $script_transl['virtual_taxstamp'] . "&nbsp;";
+						" . $script_transl['taxstamp'] . "&nbsp;<input type=\"text\" value=\"" . $form['taxstamp'] . "\" name=\"taxstamp\" maxlength=\"6\"  >&nbsp;" . $script_transl['virtual_taxstamp'] . "&nbsp;";
     $gForm->variousSelect('virtual_taxstamp', $script_transl['virtual_taxstamp_value'], $form['virtual_taxstamp']);
     echo "			</td>
 				</tr>";
@@ -3273,7 +3273,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
 			<input type="hidden" value="' . $form['volume'] . '" name="volume" />
 			<tr>
 				<td class="FacetFieldCaptionTD">
-					' . $script_transl['taxstamp'] . '<input type="text" value="' . $form['taxstamp'] . '" name="taxstamp" maxlength="6" size="4" />' . $script_transl['virtual_taxstamp'];
+					' . $script_transl['taxstamp'] . '<input type="text" value="' . $form['taxstamp'] . '" name="taxstamp" maxlength="6" />' . $script_transl['virtual_taxstamp'];
     $gForm->variousSelect('virtual_taxstamp', $script_transl['virtual_taxstamp_value'], $form['virtual_taxstamp']);
     echo '		</td>
 		  	</tr>';
@@ -3284,7 +3284,7 @@ echo '	<tr>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl[33] . '</td>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl[34] . '</td>
 			<td class="FacetFieldCaptionTD text-right">
-				% ' . $script_transl[24] . ' <input type="text" name="sconto" value="' . $form["sconto"] . '" maxlength="6" size="1" onchange="this.form.submit()" />
+				% ' . $script_transl[24] . ' <input type="text" name="sconto" value="' . $form["sconto"] . '" maxlength="6" onchange="this.form.submit()" />
 			</td>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl[32] . '</td>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl[19] . '</td>
@@ -3381,12 +3381,12 @@ echo '</table>';
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 <div class="modal" id="vat-price" title="IMPORTO IVA COMPRESA">
-	<input type="text" id="cat_prevat" style="text-align: right;" maxlength="11" size="7" onkeyup="vatPriceCalc();" />
+	<input type="text" id="cat_prevat" style="text-align: right;" maxlength="11" onkeyup="vatPriceCalc();" />
 	<br /><br />
 	<!--select id="codvat" name="cat_codvat" class="FacetSelect"></select-->
-	<input type="text" id="cat_pervat" style="text-align: center;" maxlength="5" size="4" disabled="disabled" />
+	<input type="text" id="cat_pervat" style="text-align: center;" maxlength="5" disabled="disabled" />
 	<br /><br />
-	<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" size="7" disabled="disabled" />
+	<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" disabled="disabled" />
 </div>
 <script type="text/javascript">
 	function vatPrice(row,pervat) {

@@ -123,7 +123,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td>
 if ($toDo == 'update') {
     echo "\t<input type=\"hidden\" name=\"codice\" value=\"" . $form['codice'] . "\" ><div class=\"FacetDataTD\">" . $form['codice'] . "<div>\n";
 } else {
-    echo "\t<input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" maxlength=\"15\" size=\"15\" class=\"FacetInput\">\n";
+    echo "\t<input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" maxlength=\"15\"  class=\"FacetInput\">\n";
 }
 echo "</td></tr>";
 echo "<tr>\n";
@@ -143,11 +143,11 @@ $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_typ
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"50\" size=\"30\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"aliquo\" value=\"" . $form['aliquo'] . "\" maxlength=\"9\" size=\"5\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"aliquo\" value=\"" . $form['aliquo'] . "\" maxlength=\"9\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr>\n";
 echo "<tr>\n";
@@ -162,7 +162,7 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[4] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"50\" size=\"30\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr>\n
       <td class=\"FacetFieldCaptionTD\">

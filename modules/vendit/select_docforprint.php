@@ -342,7 +342,7 @@ if (strlen($form['ragso1']) >= 2) {
    $messaggio = $script_transl[9];
 }
 echo "\t </select>\n";
-echo "\t<input type=\"text\" name=\"ragso1\" " . $tabula . " accesskey=\"e\" value=\"" . $form['ragso1'] . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"ragso1\" " . $tabula . " accesskey=\"e\" value=\"" . $form['ragso1'] . "\" maxlength=\"15\"  class=\"FacetInput\">\n";
 echo $messaggio;
 //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" ".$tabula." name=\"clfoco\" src=\"../../library/images/cerbut.gif\">\n";
 /** ENRICO FEDELE */
@@ -416,22 +416,22 @@ echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4] $script_transl[5]</td>";
 echo "<td class=\"FacetDataTD\">";
 echo "<input title=\"Numero del primo documento che si intende stampare\" type=\"text\" name=\"numini\" value=\"" .
- $form["numini"] . "\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
+ $form["numini"] . "\" maxlength=\"5\"  class=\"FacetInput\">";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4] $script_transl[6]</td>";
 echo "<td class=\"FacetDataTD\">";
 echo "<input title=\"Numero dell'ultimo documento che si intende stampare\" type=\"text\" name=\"numfin\" value=\"" .
- $form["numfin"] . "\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
+ $form["numfin"] . "\" maxlength=\"5\"  class=\"FacetInput\">";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3] $script_transl[5]</td>";
 echo "<td class=\"FacetDataTD\">";
 echo "<input title=\"Numero di protocollo della prima fattura che si intende stampare\" type=\"text\" name=\"proini\" value=\"" .
- $form["proini"] . "\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
+ $form["proini"] . "\" maxlength=\"5\"  class=\"FacetInput\">";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3] $script_transl[6]</td>";
 echo "<td class=\"FacetDataTD\">";
 echo "<input title=\"Numero di protocollo dell'ultima fattura che si intende stampare\" type=\"text\" name=\"profin\" value=\"" .
- $form["profin"] . "\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
+ $form["profin"] . "\" maxlength=\"5\"  class=\"FacetInput\">";
 echo "</td></tr>";
 
 echo "<tr>\n";

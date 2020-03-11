@@ -431,7 +431,7 @@ if (isset($form['a'])) {
 						<td align="right">' . gaz_format_quantity($v['v_a'], 0, $admin_aziend['decimal_price']) . '</td>
 						<td align="right">
 							<input id="vac' . $k . '" name="vac' . $k . '" ' . $form['vac_on' . $k] . ' onClick="toggle(\'vac' . $k . '\', \'a[' . $k . '][v_r]\')" type="checkbox" />
-							<input type="text" size="10" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" id="a[' . $k . '][v_r]" name="a[' . $k . '][v_r]" value="' . gaz_format_quantity($v['v_r'], 0, $admin_aziend['decimal_price']) . '" disabled="disabled" />
+							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" id="a[' . $k . '][v_r]" name="a[' . $k . '][v_r]" value="' . gaz_format_quantity($v['v_r'], 0, $admin_aziend['decimal_price']) . '" disabled="disabled" />
 						</td>
 						<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 						<td  align="right">

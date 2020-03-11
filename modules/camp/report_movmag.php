@@ -124,26 +124,26 @@ $(function() {
 		<table class="Tlarge table table-striped table-bordered table-condensed">
 			<tr>
 				<td class="FacetFieldCaptionTD">
-				<input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
+				<input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" tabindex="1" class="FacetInput">
 				</td>
 				<td class="FacetFieldCaptionTD"></td>
 				<td class="FacetFieldCaptionTD"></td>
 				<td class="FacetFieldCaptionTD">
-					<input type="text" name="causale" placeholder="<?php echo "ID ",$strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+					<input type="text" name="causale" placeholder="<?php echo "ID ",$strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" tabindex="1" class="FacetInput">
 				</td>
 				<!-- Antonio Germani - inserisco l'intestazione cerca per campi di coltivazione e avversità -->
 				<td class="FacetFieldCaptionTD">
-					<input type="text" name="campo" placeholder="<?php echo "ID ",$script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($campo))? $campo : ""; ?>" maxlength="" size="3" tabindex="1" class="FacetInput">
+					<input type="text" name="campo" placeholder="<?php echo "ID ",$script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($campo))? $campo : ""; ?>" maxlength="" tabindex="1" class="FacetInput">
 				</td>
 				<td class="FacetFieldCaptionTD"></td>
 				<td class="FacetFieldCaptionTD"></td>
 				<td class="FacetFieldCaptionTD">
-					<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+					<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" tabindex="1" class="FacetInput">
 				</td>
 				<td class="FacetFieldCaptionTD"></td>
 				
 				<td class="FacetFieldCaptionTD">
-					<input type="text" name="avversita" placeholder="<?php echo "ID ",$script_transl[7];?>" class="input-sm form-control" value="<?php echo (isset($avversita))? $avversita : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+					<input type="text" name="avversita" placeholder="<?php echo "ID ",$script_transl[7];?>" class="input-sm form-control" value="<?php echo (isset($avversita))? $avversita : ""; ?>" maxlength="15" tabindex="1" class="FacetInput">
 				</td>
 				<td class="FacetFieldCaptionTD"></td>
 				<td class="FacetFieldCaptionTD" colspan="4">

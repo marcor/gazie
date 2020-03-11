@@ -312,7 +312,7 @@ echo "\t</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['page_ini'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"page_ini\" value=\"" . $form['page_ini'] . "\" maxlength=\"5\" size=\"5\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"page_ini\" value=\"" . $form['page_ini'] . "\" maxlength=\"5\"  /></td>\n";
 echo "</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['sta_def'] . "</td><td class=\"FacetDataTD\">\n";
 $gForm->selCheckbox('sta_def', $form['sta_def'], $script_transl['sta_def_title']);

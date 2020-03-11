@@ -1274,7 +1274,7 @@ if (intval($form['nome_colt']) == 0) {
     $form['nome_colt'] = "";
 } 
 ?>
-<input id="autocomplete4" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50" size="50"/>
+<input id="autocomplete4" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50"/>
 <input type="hidden" value="<?php echo intval($form['nome_colt']); ?>" name="id_colture"/>
 <button type="submit" name="erase" title="Reset coltura" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle"></i></button>
 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete4 -->	 
@@ -1346,7 +1346,7 @@ for ($counter = date("Y") - 10;$counter <= date("Y") + 10;$counter++) {
 echo "\t </select></td></tr>\n";
 // fine data di attuazione
 // ANNOTAZIONE o DESCRIZIONE DOCUMENTO
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td></tr>";
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\"  name=\"desdoc\"></td></tr>";
 
 // >>>>>>>>>> Inizio ciclo righi mov   <<<<<<<<<<<<<<<<<
 for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
@@ -1414,7 +1414,7 @@ for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
 ?></tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl[12]; ?></td>
-	<td class="FacetDataTD" ><input type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" size="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()"><?php echo "&nbsp;" . $print_unimis; ?>
+	<td class="FacetDataTD" ><input type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()"><?php echo "&nbsp;" . $print_unimis; ?>
 		<?php
     if ($service == 0 or $service == 2) { //Antonio Germani se è un articolo con magazzino
         echo " " . $script_transl[22] . " " . gaz_format_quantity($print_magval, 1, $admin_aziend['decimal_quantity']) . " " . $print_unimis . "&nbsp;&nbsp;";
@@ -1546,7 +1546,7 @@ for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
 ?>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl[41];
-            echo "<br> <p> <font color=blue size='1pt'> N.b.: è possibile modificare <br> il lotto solo dal movimento<br> che lo ha creato </font></p>"; ?></td>
+            echo "<br><p>N.b.: è possibile modificare <br> il lotto solo dal movimento<br> che lo ha creato</p>"; ?></td>
 	<td class="FacetDataTD" >
 		<input type="hidden" name="filename<?php echo $form['mov']; ?>" value="<?php echo $form['filename'][$form['mov']]; ?>">			  
 		<?php
@@ -1729,9 +1729,9 @@ for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
 <!-- COSTO MOVIMENTO  -->
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?></td>
-	<td class="FacetDataTD" colspan="1"><input type="text" value="<?php echo number_format($importo_totale, $admin_aziend['decimal_price'], ',', ''); ?>" name="total" size="20" readonly /><?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[31]; ?>
-		<input type="text" value="<?php echo number_format($form['prezzo'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" size="12" name="prezzo<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " " . $admin_aziend['symbol']; ?>
-		<input type="hidden" value="<?php echo $form['scorig'][$form['mov']]; ?>" maxlength="4" size="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()">
+	<td class="FacetDataTD" colspan="1"><input type="text" value="<?php echo number_format($importo_totale, $admin_aziend['decimal_price'], ',', ''); ?>" name="total" readonly /><?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[31]; ?>
+		<input type="text" value="<?php echo number_format($form['prezzo'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" name="prezzo<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " " . $admin_aziend['symbol']; ?>
+		<input type="hidden" value="<?php echo $form['scorig'][$form['mov']]; ?>" maxlength="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()">
 	</td>
 </tr>
 <tr>

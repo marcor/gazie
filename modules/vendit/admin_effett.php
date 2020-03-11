@@ -212,7 +212,7 @@ if ($toDo == 'update') {
    echo "<tr>\n";
    echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['progre']."* </td>\n";
    echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-        <input type=\"text\" name=\"progre\" value=\"".$form['progre']."\" align=\"right\" maxlength=\"9\" size=\"9\" /></td>\n";
+        <input type=\"text\" name=\"progre\" value=\"".$form['progre']."\" align=\"right\" maxlength=\"9\"  /></td>\n";
    echo "</tr>\n";
 }
 echo "<tr>\n";
@@ -236,7 +236,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['numfat']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"numfat\" value=\"".$form['numfat']."\" style=\"text-align:right;\" maxlength=\"9\" size=\"9\" /></td>\n";
+      <input type=\"text\" name=\"numfat\" value=\"".$form['numfat']."\" style=\"text-align:right;\" maxlength=\"9\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['vat_section']."</td><td class=\"FacetDataTD\">\n";
@@ -250,7 +250,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['totfat']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"totfat\" value=\"".$form['totfat']."\" style=\"text-align:right;\" maxlength=\"12\" size=\"12\" /></td>\n";
+      <input type=\"text\" name=\"totfat\" value=\"".$form['totfat']."\" style=\"text-align:right;\" maxlength=\"12\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['salacc']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
@@ -260,7 +260,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['impeff']." * </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"impeff\" value=\"".$form['impeff']."\" style=\"text-align:right;\" maxlength=\"12\" size=\"12\" /></td>\n";
+      <input type=\"text\" name=\"impeff\" value=\"".$form['impeff']."\" style=\"text-align:right;\" maxlength=\"12\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_exp']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
@@ -291,7 +291,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['cigcup']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"cigcup\" value=\"".$form['cigcup']."\"  maxlength=\"40\"  size=\"80\" /></td>\n";
+      <input type=\"text\" name=\"cigcup\" value=\"".$form['cigcup']."\"  maxlength=\"40\"   /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";

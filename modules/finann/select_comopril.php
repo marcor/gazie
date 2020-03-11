@@ -539,13 +539,13 @@ if (!empty($msg)) {
 }
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['limit'] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "<input type=\"text\" name=\"min_limit\" value=\"" . $_GET['min_limit'] . "\" align=\"right\" maxlength=\"10\" size=\"10\" /></td>\n";
+echo "<input type=\"text\" name=\"min_limit\" value=\"" . $_GET['min_limit'] . "\" align=\"right\" maxlength=\"10\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso1'] . "</td>
-     <td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $_GET['ragso1'] . "\" maxlength=\"50\" size=\"40\" name=\"ragso1\"></td></td></tr>\n";
+     <td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $_GET['ragso1'] . "\" maxlength=\"50\"  name=\"ragso1\"></td></td></tr>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso2'] . "</td>
-     <td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $_GET['ragso2'] . "\" maxlength=\"50\" size=\"40\" name=\"ragso2\"></td></tr>\n";
+     <td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $_GET['ragso2'] . "\" maxlength=\"50\"  name=\"ragso2\"></td></tr>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['year'] . "</td><td class=\"FacetDataTD\" colspan=\"3\">";
 echo "\t <select name=\"anno\" class=\"FacetSelect\" >\n";

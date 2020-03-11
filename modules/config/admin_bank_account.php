@@ -160,22 +160,22 @@ if (!empty($msg)) {
 if ($toDo == 'update') {
    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\">".$admin_aziend['masban']." <input type=\"hidden\" name=\"codice\" value=\"".$form['codice']."\" />".$form['codice']."</td></tr>\n";
 } else {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]*</td><td class=\"FacetDataTD\">".$admin_aziend['masban']." <input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" maxlength=\"6\" size=\"6\" /></td></tr>\n";
+   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]*</td><td class=\"FacetDataTD\">".$admin_aziend['masban']." <input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" maxlength=\"6\"  /></td></tr>\n";
 }
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]*</td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"ragso1\" value=\"".$form['ragso1']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+       <input type=\"text\" name=\"ragso1\" value=\"".$form['ragso1']."\" maxlength=\"50\"  /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\">";
 $select_banapp = new selectbanapp("banapp");
 $select_banapp -> addSelected($form["banapp"]);
 $select_banapp -> output();
 print "</td></tr>";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]*</td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"indspe\" value=\"".$form['indspe']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+       <input type=\"text\" name=\"indspe\" value=\"".$form['indspe']."\" maxlength=\"50\"  /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]*</td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"capspe\" value=\"".$form['capspe']."\" maxlength=\"5\" size=\"5\" /></td></tr>\n";
+       <input type=\"text\" name=\"capspe\" value=\"".$form['capspe']."\" maxlength=\"5\"  /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[6]*</td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"citspe\" value=\"".$form['citspe']."\" maxlength=\"50\" size=\"43\" />
-       <input type=\"text\" name=\"prospe\" value=\"".$form['prospe']."\" maxlength=\"2\" size=\"2\" />
+       <input type=\"text\" name=\"citspe\" value=\"".$form['citspe']."\" maxlength=\"50\"  />
+       <input type=\"text\" name=\"prospe\" value=\"".$form['prospe']."\" maxlength=\"2\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[7]</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"country\" class=\"FacetSelect\">";
@@ -188,10 +188,10 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
        echo "<option value=\"".$a_row['iso']."\"".$selected.">".$a_row['iso']." - ".$a_row['name']."</option>";
 }
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]* </td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"iban\" value=\"".$form['iban']."\" maxlength=\"27\" size=\"27\" />
+       <input type=\"text\" name=\"iban\" value=\"".$form['iban']."\" maxlength=\"27\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sia_code']."* </td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"sia_code\" value=\"".$form['sia_code']."\" maxlength=\"5\" size=\"5\" />
+       <input type=\"text\" name=\"sia_code\" value=\"".$form['sia_code']."\" maxlength=\"5\"  />
        </td></tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['eof']."</td><td  class=\"FacetDataTD\">\n";
@@ -200,7 +200,7 @@ echo "\t </td>\n";
 // qui aggiungo i dati necessari in fase di pagamento delle fatture di acquisto con bonifico bancario (sullo scadenzario) per poter proporre le eventuali spese per bonifico ed il relativo conto di costo di addebito 
 echo "</tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['transfer_fees']."</td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"maxrat\" value=\"".$form['maxrat']."\" maxlength=\"5\" size=\"5\" />
+       <input type=\"text\" name=\"maxrat\" value=\"".$form['maxrat']."\" maxlength=\"5\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['transfer_fees_acc']."</td><td class=\"FacetDataTD\">";
 $gForm->selectAccount('cosric', $form['cosric'],array('sub',3), '', false, "col-sm-8");
@@ -210,16 +210,16 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[9] </td><td class=\"
        <textarea type =\"text\" name=\"sedleg\" row=\"2\" cols=\"30\">".$form['sedleg']."</textarea>
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[10] </td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"telefo\" value=\"".$form['telefo']."\" maxlength=\"50\" size=\"50\" />
+       <input type=\"text\" name=\"telefo\" value=\"".$form['telefo']."\" maxlength=\"50\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11] </td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"fax\" value=\"".$form['fax']."\" maxlength=\"50\" size=\"50\" />
+       <input type=\"text\" name=\"fax\" value=\"".$form['fax']."\" maxlength=\"50\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[12] </td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"e_mail\" value=\"".$form['e_mail']."\" maxlength=\"50\" size=\"50\" />
+       <input type=\"text\" name=\"e_mail\" value=\"".$form['e_mail']."\" maxlength=\"50\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[13] </td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" />
+       <input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
 print "</td><td class=\"FacetDataTD\" align=\"right\">\n";

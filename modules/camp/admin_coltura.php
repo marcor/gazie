@@ -114,9 +114,9 @@ if (!empty($msg)) {
 if ($toDo == 'update') {
    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id_colt\" value=\"".$form['id_colt']."\" />".$form['id_colt']."</td></tr>\n";
 } else {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"id_colt\" value=\"".$form['id_colt']."\" maxlength=\"3\" size=\"3\" /></td></tr>\n";
+   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"id_colt\" value=\"".$form['id_colt']."\" maxlength=\"3\"  /></td></tr>\n";
 }
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"nome_colt\" value=\"".$form['nome_colt']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"nome_colt\" value=\"".$form['nome_colt']."\" maxlength=\"50\"  /></td></tr>\n";
 print "<tr>";
 if ($toDo !== 'update') {
 	print "<td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n</td>";

@@ -147,7 +147,7 @@ if (!empty($msg)) {
 //      $messaggio = $script_transl[3];
 //      echo "\t<input type=\"hidden\" name=\"id_agente\" value=\"".$form['id_agente']."\">\n";
 //   }
-//   echo "\t<input type=\"text\" name=\"cerca_agente\" accesskey=\"e\" value=\"".$form['cerca_agente']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+//   echo "\t<input type=\"text\" name=\"cerca_agente\" accesskey=\"e\" value=\"".$form['cerca_agente']."\" maxlength=\"15\"  class=\"FacetInput\">\n";
 //   echo $messaggio;
 //   //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
 //
@@ -242,7 +242,7 @@ echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td>";
 echo "<td class=\"FacetDataTD\">";
 echo "<input title=\"anno da analizzare\" type=\"text\" name=\"livello\" value=\"" .
- $form["livello"] . "\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
+ $form["livello"] . "\" maxlength=\"5\"  class=\"FacetInput\">";
 echo "</td></tr>";
 
 

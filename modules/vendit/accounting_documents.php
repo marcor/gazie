@@ -561,7 +561,7 @@ echo "\t<td class=\"FacetDataTD\">" . $form['proini'] . " / " . $form['year_ini'
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['profin'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"profin\" value=\"" . $form['profin'] . "\" align=\"right\" maxlength=\"9\" size=\"3\" /> / " . $form['year_fin'] . "</td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"profin\" value=\"" . $form['profin'] . "\" align=\"right\" maxlength=\"9\"  /> / " . $form['year_fin'] . "</td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetDataTD\">\n";
 echo "\t<td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"" .

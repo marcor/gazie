@@ -181,9 +181,9 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['cod_art'] . "</td><t
 $magForm->selItem('cod_art', $form['cod_art'], $form['search']['cod_art'], $script_transl['mesg']);
 echo "</tr>\n";
 
-echo "<tr><td class=\"FacetFieldCaptionTD\"> $script_transl[6] </td><td  class=\"FacetDataTD\"> <input type=\"number\" step=\"any\" min=\"0\" value=\"" . $form['prezzo_netto'] . "\" maxlength=\"14\" size=\"14\" name=\"prezzo_netto\" ></td>";
+echo "<tr><td class=\"FacetFieldCaptionTD\"> $script_transl[6] </td><td  class=\"FacetDataTD\"> <input type=\"number\" step=\"any\" min=\"0\" value=\"" . $form['prezzo_netto'] . "\" maxlength=\"14\"  name=\"prezzo_netto\" ></td>";
 
-echo "<tr><td class=\"FacetFieldCaptionTD\"> $script_transl[5] </td><td  class=\"FacetDataTD\"> <input type=\"number\" step=\"any\" min=\"0\" max=\"100\" value=\"" . $form['sconto'] . "\" maxlength=\"6\" size=\"6\" name=\"sconto\" ></td>";
+echo "<tr><td class=\"FacetFieldCaptionTD\"> $script_transl[5] </td><td  class=\"FacetDataTD\"> <input type=\"number\" step=\"any\" min=\"0\" max=\"100\" value=\"" . $form['sconto'] . "\" maxlength=\"6\"  name=\"sconto\" ></td>";
 
 echo "</td>\n
      </tr>\n";

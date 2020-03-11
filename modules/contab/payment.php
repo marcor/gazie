@@ -192,13 +192,13 @@ function creaListaConti() {
             <tr>
                 <td class="FacetFieldCaptionTD">Descrizione</td>
                 <td class="FacetDataTD" colspan="2">
-                    <input id="descrizione" name="descrizione" value="<?= $descrizione ?>" maxlength="100" size="80" required="true" type="text">
+                    <input id="descrizione" name="descrizione" value="<?= $descrizione ?>" maxlength="100" required="true" type="text">
                 </td>
             </tr>
             <tr>
                 <td class="FacetFieldCaptionTD">Importo</td>
                 <td colspan="2" class="FacetDataTD">
-                    <input id="prezzoUnitario" name="importo" value="<?= $importo ?>" maxlength="10" size="10" required="true" step="any" type="number"> 
+                    <input id="prezzoUnitario" name="importo" value="<?= $importo ?>" maxlength="10" required="true" step="any" type="number"> 
                 </td>
             </tr>
             <tr>

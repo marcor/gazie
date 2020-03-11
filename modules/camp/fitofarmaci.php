@@ -79,7 +79,7 @@ if (!empty($msg)) {
   </script>
  <!-- fine autocompletamento --> 
 <?php
-print "<tr><td class=\"FacetFieldCaptionTD\">NOME FITOFARMACO</td><td class=\"FacetDataTD\"><input type=\"text\" id=\"autocomplete\" name=\"nome_fito\" value=\"".$form['nome_fito']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">NOME FITOFARMACO</td><td class=\"FacetDataTD\"><input type=\"text\" id=\"autocomplete\" name=\"nome_fito\" value=\"".$form['nome_fito']."\" maxlength=\"50\"  /></td></tr>\n";
 
 if (isset ($_POST['nome_fito'])) {
 	$form['nome_fito']=$_POST['nome_fito'];

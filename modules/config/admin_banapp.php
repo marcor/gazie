@@ -110,33 +110,33 @@ if (!empty($msg)) {
 if ($toDo == 'insert') {
    echo "<tr>\n";
    echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['codice']."* </td>\n";
-   echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" align=\"right\" maxlength=\"3\" size=\"3\" /></td>\n";
+   echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" align=\"right\" maxlength=\"3\"  /></td>\n";
    echo "</tr>\n";
 }
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."* </td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"50\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['codabi']."*</td>
      <td class=\"FacetDataTD\" colspan=\"2\">\n";
-echo "\t<input type=\"text\" name=\"codabi\" value=\"".$form['codabi']."\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"codabi\" value=\"".$form['codabi']."\" maxlength=\"5\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['codcab']."*</td>
      <td class=\"FacetDataTD\" colspan=\"2\">\n";
-echo "\t<input type=\"text\" name=\"codcab\" value=\"".$form['codcab']."\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"codcab\" value=\"".$form['codcab']."\" maxlength=\"5\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['locali']."</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"locali\" value=\"".$form['locali']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"locali\" value=\"".$form['locali']."\" align=\"right\" maxlength=\"50\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['codpro']."</td>
      <td class=\"FacetDataTD\" colspan=\"2\">\n";
-echo "\t<input type=\"text\" name=\"codpro\" value=\"".$form['codpro']."\" maxlength=\"2\" size=\"2\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"codpro\" value=\"".$form['codpro']."\" maxlength=\"2\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['annota']."</td>
      <td class=\"FacetDataTD\" colspan=\"2\">\n";
-echo "\t<input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";

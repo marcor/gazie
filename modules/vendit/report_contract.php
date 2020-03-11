@@ -105,7 +105,7 @@ $recordnav -> output();
 <table class="Tlarge table table-striped table-bordered table-condensed">
 <tr>
 <td colspan="2" class="FacetFieldCaptionTD"><?php echo $script_transl['number']; ?> :
-<input type="text" name="doc_number" value="<?php if (isset($doc_number)) print $doc_number; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+<input type="text" name="doc_number" value="<?php if (isset($doc_number)) print $doc_number; ?>" maxlength="6" tabindex="1" class="FacetInput">
 </td>
 <td colspan="3" class="FacetFieldCaptionTD">
 </td>

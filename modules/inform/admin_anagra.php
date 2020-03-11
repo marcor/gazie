@@ -166,7 +166,7 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="sedleg" class="col-sm-4 control-label"><?php echo $script_transl['sedleg']; ?></label>
-                    <textarea class="col-sm-4" name="sedleg" rows="2" cols="30" maxlength="100" size="50"><?php echo $form['sedleg']; ?></textarea>
+                    <textarea class="col-sm-4" name="sedleg" rows="2" cols="30" maxlength="100"><?php echo $form['sedleg']; ?></textarea>
                 </div>
             </div>
         </div><!-- chiude row  -->

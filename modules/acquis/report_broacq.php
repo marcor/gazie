@@ -458,7 +458,7 @@ $(function() {
     <fieldset>
         <div>
             <label id="maillabel" for="mailaddress">all'indirizzo:</label>
-            <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="100" size="40" />
+            <input type="text"  placeholder="seleziona sotto oppure digita" value="" id="mailaddress" name="mailaddress" maxlength="100" />
         </div>
         <div id="mailbutt">
 		</div>

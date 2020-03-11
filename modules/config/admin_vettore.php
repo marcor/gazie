@@ -164,67 +164,67 @@ if (!empty($msg)) {
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragione_sociale'] . " *</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"ragione_sociale\" value=\"" . $form['ragione_sociale'] . "\" maxlength=\"100\" size=\"70\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"ragione_sociale\" value=\"" . $form['ragione_sociale'] . "\" maxlength=\"100\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['indirizzo'] . " *</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"indirizzo\" value=\"" . $form['indirizzo'] . "\" maxlength=\"100\" size=\"70\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"indirizzo\" value=\"" . $form['indirizzo'] . "\" maxlength=\"100\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['cap'] . " *</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"cap\" id=\"search_location-capspe\" value=\"" . $form['cap'] . "\" maxlength=\"5\" size=\"10\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"cap\" id=\"search_location-capspe\" value=\"" . $form['cap'] . "\" maxlength=\"5\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['citta'] . " *</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"citta\" id=\"search_location\" value=\"" . $form['citta'] . "\" maxlength=\"100\" size=\"70\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"citta\" id=\"search_location\" value=\"" . $form['citta'] . "\" maxlength=\"100\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['provincia'] . " *</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" id=\"search_location-prospe\" name=\"provincia\" value=\"" . $form['provincia'] . "\" maxlength=\"2\" size=\"2\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" id=\"search_location-prospe\" name=\"provincia\" value=\"" . $form['provincia'] . "\" maxlength=\"2\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['partita_iva'] . " *</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"partita_iva\" value=\"" . $form['partita_iva'] . "\" maxlength=\"11\" size=\"12\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"partita_iva\" value=\"" . $form['partita_iva'] . "\" maxlength=\"11\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['codice_fiscale'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"codice_fiscale\" value=\"" . $form['codice_fiscale'] . "\" maxlength=\"16\" size=\"16\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"codice_fiscale\" value=\"" . $form['codice_fiscale'] . "\" maxlength=\"16\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['n_albo'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"n_albo\" value=\"" . $form['n_albo'] . "\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"n_albo\" value=\"" . $form['n_albo'] . "\" maxlength=\"50\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['telefo'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"telefo\" value=\"" . $form['telefo'] . "\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"telefo\" value=\"" . $form['telefo'] . "\" maxlength=\"50\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['descri'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"100\" size=\"70\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"100\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"100\" size=\"70\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"100\"  /></td>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

@@ -193,7 +193,7 @@ if (!empty($msg)) {
 if ($toDo == 'update') {
    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id\" value=\"".$form['id']."\" />".$form['id']."</td></tr>\n";
 } else {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"id\" value=\"".$form['id']."\" maxlength=\"3\" size=\"3\" /></td></tr>\n";
+   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"id\" value=\"".$form['id']."\" maxlength=\"3\"  /></td></tr>\n";
 }
 ?>
 <!-- inizio inserisci articolo   -->
@@ -227,7 +227,7 @@ if ($toDo == 'update') {
  <?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2]."</td><td class=\"FacetDataTD\"\n>";
 ?>
-     <input id="autocomplete" type="text" value="<?php echo $form['cod_art']; ?>" name="cod_art" maxlength="50" size="50"/>
+     <input id="autocomplete" type="text" value="<?php echo $form['cod_art']; ?>" name="cod_art" maxlength="50"/>
 
 	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete -->
 	 
@@ -263,7 +263,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2]."</td><td clas
  <?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3]."</td><td class=\"FacetDataTD\"\n>";
 ?>
-     <input id="autocomplete2" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50" size="50"/>
+     <input id="autocomplete2" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50"/>
 	 <input type="hidden" value="<?php echo intval ($form['nome_colt']); ?>" name="id_colt"/>
 	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete2 -->
 
@@ -299,16 +299,16 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3]."</td><td clas
  <?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[4]."</td><td class=\"FacetDataTD\"\n>";
 ?>
-     <input id="autocomplete3" type="text" value="<?php echo $form['nome_avv']; ?>" name="nome_avv" maxlength="50" size="50"/>
+     <input id="autocomplete3" type="text" value="<?php echo $form['nome_avv']; ?>" name="nome_avv" maxlength="50"/>
 	 <input type="hidden" value="<?php echo intval ($form['nome_avv']); ?>" name="id_avv"/>
 	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->
 	 
 <?php
 
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"dose\" value=\"".number_format ($form['dose'],$admin_aziend['decimal_price'], ',', '')."\" maxlength=\"8\" size=\"10\" />";
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"dose\" value=\"".number_format ($form['dose'],$admin_aziend['decimal_price'], ',', '')."\" maxlength=\"8\"  />";
 $res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $form['cod_art']);
 echo $res2['uniacq']."/ha</td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[10]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"tempo_sosp\" value=\"".$form['tempo_sosp']."\" maxlength=\"2\" size=\"2\" /> gg </td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[10]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"tempo_sosp\" value=\"".$form['tempo_sosp']."\" maxlength=\"2\"  /> gg </td></tr>\n";
 print "<tr>";
 if ($toDo !== 'update') {
 	print "<td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n</td>";

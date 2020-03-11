@@ -61,9 +61,9 @@ function azzera(righe)
                    ?>
 	     </form>
 	 <td class="FacetFieldCaptionTD"><?php echo $script_transl['giorni_app'];?>&nbsp;</td>
-     <td class="FacetDataTD"><input type="text" name="giorni_app" value="<?php echo (isset($_POST['giorni_app']) ? $_POST['giorni_app']:'120');?>" size="5" maxlength="5" onblur="Ricerca(1,this);"></td>
+     <td class="FacetDataTD"><input type="text" name="giorni_app" value="<?php echo (isset($_POST['giorni_app']) ? $_POST['giorni_app']:'120');?>" maxlength="5" onblur="Ricerca(1,this);"></td>
      <td class="FacetFieldCaptionTD"><?php echo $script_transl['calcola_giorni'];?>&nbsp;</td>
-     <td class="FacetDataTD"><input type="text" name="gio_ven" value="<?php  echo (isset($_POST['gio_ven']) ? $_POST['gio_ven']:'365');?>" size="5" maxlength="5" onblur="Ricerca(1,this);"> <?php echo $script_transl['giorni'];?></td>
+     <td class="FacetDataTD"><input type="text" name="gio_ven" value="<?php  echo (isset($_POST['gio_ven']) ? $_POST['gio_ven']:'365');?>" maxlength="5" onblur="Ricerca(1,this);"> <?php echo $script_transl['giorni'];?></td>
      <td class="FacetFieldCaptionTD"><input type="submit" name="Cerca" value="Cerca"></td>
 </tr>
 </form>
@@ -141,11 +141,11 @@ function azzera(righe)
      echo "<td align=\"center\" class=\"FacetFieldCaptionTD\">".$a_row['codice_fornitore']."</td>\n";
      echo "<td align=\"left\" class=\"FacetFieldCaptionTD\">".$a_row['descri']."</td>\n";
      echo "<td align=\"center\" class=\"FacetFieldCaptionTD\"> ".
-          "<input type='text' size='10'style='text-align: center;' name='prezzo[".$righe."]' value='".(($a_row['last_cost']==0)?$a_row['preacq']:$a_row['last_cost'])."'> (".$a_row['preacq'].")</td>\n";
+          "<input type='text' style='text-align: center;' name='prezzo[".$righe."]' value='".(($a_row['last_cost']==0)?$a_row['preacq']:$a_row['last_cost'])."'> (".$a_row['preacq'].")</td>\n";
      echo "<td align=\"center\" ".(($magval['q_g'] > 0)?"class=\"FacetFieldCaptionTD\"":"Style=\"background-color : #FFA500; color : #000000; font-size : 13px;\"").">".$a_row['uniacq']." ".(($magval['q_g']=='')?'0':$magval['q_g'])."</td>\n";
      echo "<td align=\"center\" class=\"FacetFieldCaptionTD\">".$a_row['pack_units']."</td>\n";
      echo "<td align=\"center\" ".(($app == 0)?"class=\"FacetFieldCaptionTD\"":"Style=\"background-color : #FFA500; color : #000000; font-size : 13px;\"")."\"  >".
-     "<input type='text'size='6' style='text-align: center;' name='acquista[".$righe."]' value='".gaz_format_number($app)."' title='".gaz_format_number($app)."'></td>\n";
+     "<input type='text' style='text-align: center;' name='acquista[".$righe."]' value='".gaz_format_number($app)."' title='".gaz_format_number($app)."'></td>\n";
      echo "<td align=\"center\" class=\"FacetFieldCaptionTD\">".gaz_format_number($rotazione*30)."</td>\n";
      $prez_acquisto = ($a_row['last_cost']==0)?$a_row['preacq']:$a_row['last_cost'];
      $totale = $totale + ($app * $prez_acquisto );

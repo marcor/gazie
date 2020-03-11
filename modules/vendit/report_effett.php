@@ -107,7 +107,7 @@ $recordnav->output();
         <tr>
             <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD">Num.:
-                <input type="text" name="progre" value="<?php if (isset($progressivo)) print $progressivo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+                <input type="text" name="progre" value="<?php if (isset($progressivo)) print $progressivo; ?>" maxlength="6" tabindex="1" class="FacetInput">
             </td>
             <td class="FacetFieldCaptionTD" colspan="9"></td>
             <td class="FacetFieldCaptionTD">

@@ -276,7 +276,7 @@ echo "<td class=\"FacetFieldCaptionTD\">$script_transl[2] : </td><td class=\"Fac
 if ($toDo == 'update') {
 echo "\t<input type=\"hidden\" name=\"id_agente\" value=\"".$form['id_agente']."\" /><div class=\"FacetDataTD\">".$form['id_agente']."<div>\n";
 } else {
-echo "\t<input type=\"text\" name=\"id_agente\" value=\"".$form['id_agente']."\" maxlength=\"3\" size=\"3\" class=\"FacetInput\" />\n";
+echo "\t<input type=\"text\" name=\"id_agente\" value=\"".$form['id_agente']."\" maxlength=\"3\" class=\"FacetInput\" />\n";
 }
 echo "</td></tr>\n";
 echo "<tr>\n";
@@ -308,7 +308,7 @@ if ($form['id_fornitore'] == 0) {
       $messaggio = "Inserire min. 2 caratteri";
       echo "\t<input type=\"hidden\" name=\"id_fornitore\" value=\"".$form['id_fornitore']."\">\n";
    }
-   echo "\t<input type=\"text\" name=\"cerca_fornitore\" accesskey=\"e\" value=\"".$form['cerca_fornitore']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+   echo "\t<input type=\"text\" name=\"cerca_fornitore\" accesskey=\"e\" value=\"".$form['cerca_fornitore']."\" maxlength=\"15\" class=\"FacetInput\">\n";
    echo $messaggio;
    //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
    /** ENRICO FEDELE */
@@ -324,7 +324,7 @@ if ($form['id_fornitore'] == 0) {
 echo "</td></tr>\n";
 //echo "<tr>\n";
 //echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6] : </td><td class=\"FacetDataTD\">\n";
-//echo "<input type=\"text\" name=\"base_percent\" value=\"".$form['base_percent']."\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
+//echo "<input type=\"text\" name=\"base_percent\" value=\"".$form['base_percent']."\" maxlength=\"5\"  class=\"FacetInput\">";
 //echo "</td></tr>\n";
 echo "</table>\n";
 //echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[10] $script_transl[7] / $script_transl[8]</div>\n";
@@ -339,7 +339,7 @@ echo "</table>\n";
 //$select_artico = new selectartico('in_cod_articolo');
 //$select_artico -> addSelected($form['in_cod_articolo']);
 //$select_artico -> output($form['cosear'],'C');
-//echo "</td><td class=\"FacetColumnTD\">$script_transl[9] : <input type=\"text\" value=\"".$form['in_percentuale']."\" maxlength=\"5\" size=\"5\" name=\"in_percentuale\">\n";
+//echo "</td><td class=\"FacetColumnTD\">$script_transl[9] : <input type=\"text\" value=\"".$form['in_percentuale']."\" maxlength=\"5\"  name=\"in_percentuale\">\n";
 ///*echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";*/
 //
 ///** ENRICO FEDELE */
@@ -389,7 +389,7 @@ echo "</table>\n";
 //                  <input class=\"FacetDataTD\" type=\"submit\" name=\"upd_row[$key]\" value=\"".$value['cod_articolo']."\" />
 //                  ".$artico['descri']."</td>\n";*/
 //        }
-//        echo "<td><input type=\"text\" name=\"righi[$key][percentuale]\" value=\"".$value['percentuale']."\" maxlength=\"5\" size=\"5\" class=\"FacetInput\"></td>\n";
+//        echo "<td><input type=\"text\" name=\"righi[$key][percentuale]\" value=\"".$value['percentuale']."\" maxlength=\"5\"  class=\"FacetInput\"></td>\n";
 //        
 //		//echo "<td align=\"right\"><input type=\"image\" name=\"del[$key]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
 //

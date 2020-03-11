@@ -115,17 +115,17 @@ if (!empty($msg)) {
 if ($toDo == 'insert') {
    echo "<tr>\n";
    echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['mas']."* </td>\n";
-   echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"mas\" value=\"".intval($form['codice']/1000000)."\" align=\"right\" maxlength=\"3\" size=\"3\" /></td>\n";
+   echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"mas\" value=\"".intval($form['codice']/1000000)."\" align=\"right\" maxlength=\"3\"  /></td>\n";
    echo "</tr>\n";
    echo "<tr>\n";
    echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sub']."* </td>\n";
-   echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"sub\" value=\"".($form['codice']-intval($form['codice']/1000000)*1000000)."\" align=\"right\" maxlength=\"6\" size=\"6\" /></td>\n";
+   echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"sub\" value=\"".($form['codice']-intval($form['codice']/1000000)*1000000)."\" align=\"right\" maxlength=\"6\"  /></td>\n";
    echo "</tr>\n";
 }
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."* </td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"50\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['ceedar']."</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">\n";

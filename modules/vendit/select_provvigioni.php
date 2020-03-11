@@ -164,7 +164,7 @@ if ($form['id_agente'] == 0) {
       $messaggio = $script_transl[3];
       echo "\t<input type=\"hidden\" name=\"id_agente\" value=\"".$form['id_agente']."\">\n";
    }
-   echo "\t<input type=\"text\" name=\"cerca_agente\" accesskey=\"e\" value=\"".$form['cerca_agente']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+   echo "\t<input type=\"text\" name=\"cerca_agente\" accesskey=\"e\" value=\"".$form['cerca_agente']."\" maxlength=\"15\"  class=\"FacetInput\">\n";
    echo $messaggio;
    //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
 

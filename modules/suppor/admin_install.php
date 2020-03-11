@@ -179,9 +179,9 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD">Data Installazione</td>
 	<td colspan="2" class="FacetDataTD">
-		<input class="FacetText" type="text" style="text-align:center" name="gioins" value="<?php echo $form['gioins'] ?>" size="2">
-		<input class="FacetText" type="text" style="text-align:center" name="mesins" value="<?php echo $form['mesins'] ?>" size="2">
-		<input class="FacetText" type="text" style="text-align:center" name="annins" value="<?php echo $form['annins'] ?>" size="4">
+		<input class="FacetText" type="text" style="text-align:center" name="gioins" value="<?php echo $form['gioins'] ?>">
+		<input class="FacetText" type="text" style="text-align:center" name="mesins" value="<?php echo $form['mesins'] ?>">
+		<input class="FacetText" type="text" style="text-align:center" name="annins" value="<?php echo $form['annins'] ?>">
 		<a href="#" onClick="cal.showCalendar('anchor','<?php echo $form['mesins'] . "/" . $form['gioins'] . "/" . $form['annins'] ?>'); return false;" title=" cambia la data! " name="anchor" id="anchor" class="btn btn-default btn-sm">
 			<i class="glyphicon glyphicon-calendar"></i>
 		</a>
@@ -198,13 +198,13 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD">Oggetto</td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="oggetto" value="<?php echo $form['oggetto']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="oggetto" value="<?php echo $form['oggetto']; ?>" align="right" maxlength="255"/>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['descrizione']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="descrizione" value="<?php echo $form['descrizione']; ?>" maxlength="255" size="70" />
+		<input type="text" name="descrizione" value="<?php echo $form['descrizione']; ?>" maxlength="255" />
 	</td>
 </tr>
 <tr>
@@ -216,7 +216,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD">Seriale</td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="seriale" value="<?php echo $form['seriale']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="seriale" value="<?php echo $form['seriale']; ?>" align="right" maxlength="255"/>
 	</td>
 </tr>
 <tr>

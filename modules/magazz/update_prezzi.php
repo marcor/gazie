@@ -232,7 +232,7 @@ $gForm->variousSelect('mode',$script_transl['mode_value'],$form['mode'],'FacetSe
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['valore']."</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"valore\" value=\"".$form['valore']."\" align=\"right\" maxlength=\"9\" size=\"3\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"valore\" value=\"".$form['valore']."\" align=\"right\" maxlength=\"9\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['round_mode']."</td><td  class=\"FacetDataTD\">\n";
@@ -240,7 +240,7 @@ $gForm->variousSelect('round_mode',$script_transl['round_mode_value'],$form['rou
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['weight_valadd']."</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"weight_valadd\" value=\"".$form['weight_valadd']."\" align=\"right\" maxlength=\"9\" size=\"3\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"weight_valadd\" value=\"".$form['weight_valadd']."\" align=\"right\" maxlength=\"9\"  /></td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";

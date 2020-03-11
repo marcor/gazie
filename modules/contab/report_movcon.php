@@ -159,7 +159,7 @@ $(function() {
         <tr>
             <td class="FacetFieldCaptionTD">
                 <input type="text" placeholder="Movimento" class="input-xs form-control FacetInput" name="movimento"
-                       value="<?php if (isset($movimento)) echo $movimento; ?>" maxlength ="6" size="3" tabindex="1">
+                       value="<?php if (isset($movimento)) echo $movimento; ?>" maxlength ="6" tabindex="1">
             </td>
             <td class="FacetFieldCaptionTD">
                 <?php // uso "anno" per selezionare datreg

@@ -272,13 +272,13 @@ echo "</tr>";
  */
 echo "<tr>";
 echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['descr_mov'] . "</td>\n ";
-echo "<td class=\"FacetDataTD\"> <input type=\"text\" name=\"descr_mov\" value=\"" . $form['descr_mov'] . "\" maxlength=\"85\" size=\"85\"></td>";
+echo "<td class=\"FacetDataTD\"> <input type=\"text\" name=\"descr_mov\" value=\"" . $form['descr_mov'] . "\" maxlength=\"85\" ></td>";
 echo "</tr>";
 /** fine modifica FP */
 // qui aggiungo i dati necessari in fase di pagamento delle fatture di acquisto con bonifico bancario (sullo scadenzario) per poter proporre le eventuali spese per bonifico ed il relativo conto di costo di addebito
 echo "</tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['transfer_fees'] . "</td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"transfer_fees\" value=\"" . $form['transfer_fees'] . "\" maxlength=\"5\" size=\"5\" />
+       <input type=\"text\" name=\"transfer_fees\" value=\"" . $form['transfer_fees'] . "\" maxlength=\"5\"  />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['transfer_fees_acc'] . "</td><td class=\"FacetDataTD\">";
 $gForm->selectAccount('transfer_fees_acc', $form['transfer_fees_acc'], array('sub', 3), '', false, "col-sm-8");

@@ -130,7 +130,7 @@ $recordnav -> output();
 <tr>
 <td colspan="1" class="FacetFieldCaptionTD">
 <?php gaz_flt_disp_int ( "numdoc", "Numero Ricevuta" ); ?>
-<!--<input type="text" placeholder="Cerca Numero" class="input-xs form-control" name="numdoc" value="<?php if ($doc > 0) print $doc; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">-->
+<!--<input type="text" placeholder="Cerca Numero" class="input-xs form-control" name="numdoc" value="<?php if ($doc > 0) print $doc; ?>" maxlength="6" tabindex="1" class="FacetInput">-->
 </td>
 <td colspan="1" class="FacetFieldCaptionTD">
 <?php gaz_flt_disp_select ( "datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>

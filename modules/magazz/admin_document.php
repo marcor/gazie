@@ -163,7 +163,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['note']."</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"title\" value=\"".$form['title']."\" maxlength=\"50\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"title\" value=\"".$form['title']."\" maxlength=\"50\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";

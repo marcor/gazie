@@ -125,10 +125,10 @@ $(function() {
         <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
             <tr>
                 <td class="FacetFieldCaptionTD">
-                    <input placeholder="Cerca" class="input-xs form-control" type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
+                    <input placeholder="Cerca" class="input-xs form-control" type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" tabindex="1" class="FacetInput">
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <input placeholder="Cerca Cognome" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
+                    <input placeholder="Cerca Cognome" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" tabindex="1" class="FacetInput">
                 </td>
                 <td>
                     <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">

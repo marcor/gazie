@@ -222,7 +222,7 @@ print "<td class=\"FacetFieldCaptionTD\">\n ";
            $select_banapp -> output();
 print "</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\"> C/C num. </td>\n";
-print "<td class=\"FacetFieldCaptionTD\"><input title=\"Numero di c/c del beneficiario\" type=\"text\" name=\"spediz\" value=\"{$_POST["spediz"]}\" maxlength=\"20\" size=\"20\" class=\"FacetInput\"></td></tr>\n";
+print "<td class=\"FacetFieldCaptionTD\"><input title=\"Numero di c/c del beneficiario\" type=\"text\" name=\"spediz\" value=\"{$_POST["spediz"]}\" maxlength=\"20\"  class=\"FacetInput\"></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">con valuta </td>\n ";
 print "<td class=\"FacetFieldCaptionTD\">\n";
            // select del giorno valuta
@@ -295,8 +295,8 @@ if ($_POST['rigbon'] > 0)
        {
         $totale+=$value['prelis'];
         $importo=number_format($value['prelis'],2, '.', '');
-        print "<tr><td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"{$value['descri']}\" maxlength=\"50\" size=\"50\"></td>\n";
-        print "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" maxlength=\"11\" size=\"11\"></td>\n";
+        print "<tr><td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"{$value['descri']}\" maxlength=\"50\" ></td>\n";
+        print "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" maxlength=\"11\" ></td>\n";
         
 		//print "<td align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"Elimina rigo!\"></td></tr>\n";
         

@@ -218,7 +218,7 @@ echo "<tr>
      <td class=\"FacetFieldCaptionTD\">".$script_transl[3]."</td>
      <td class=\"FacetDataTD\"><input title=\"$script_transl[20]\" type=\"checkbox\" name=\"stadef\" $sd></td>
      <td class=\"FacetFieldCaptionTD\">".$script_transl[4]."</td>
-     <td class=\"FacetDataTD\"><input title=\"$script_transl[21]\" type=\"text\" name=\"pagini\" value=\"".$_GET['pagini']."\" maxlength=\"4\" size=\"4\" class=\"FacetInput\"></td>
+     <td class=\"FacetDataTD\"><input title=\"$script_transl[21]\" type=\"text\" name=\"pagini\" value=\"".$_GET['pagini']."\" maxlength=\"4\"  class=\"FacetInput\"></td>
      </tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[1]."</td><td class=\"FacetDataTD\" colspan=\"3\">";
 echo "\t <select name=\"gioini\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";

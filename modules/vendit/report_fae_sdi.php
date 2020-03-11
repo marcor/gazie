@@ -285,7 +285,7 @@ $recordnav->output();
 <tr style="margin-bottom: 20px !important;">
 <td class="FacetFieldCaptionTD"></td>
 <td class="FacetFieldCaptionTD">
-<input type="text" name="ricerca_fe" id="ricerca_fe" value="<?php echo $ricerca_fe ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
+<input type="text" name="ricerca_fe" id="ricerca_fe" value="<?php echo $ricerca_fe ?>" maxlength="30"  tabindex="1" class="FacetInput">
 </td>
 <td class="FacetFieldCaptionTD" colspan="2">
 

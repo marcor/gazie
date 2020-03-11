@@ -305,7 +305,7 @@ echo <<<END
         <tr>
             <td class="FacetFieldCaptionTD" colspan="2">{$script_transl['descr_mov']}</td>
             <td class="FacetDataTD"> 
-                <input type="text" name="descr_mov" value="{$form['descr_mov']}" maxlength="85" size="85">
+                <input type="text" name="descr_mov" value="{$form['descr_mov']}" maxlength="85">
             </td>
         </tr>
 <!-- fine modifica FP -->

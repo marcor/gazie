@@ -120,9 +120,9 @@ if (!empty($msg)) {
 if ($toDo == 'update') {
     print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"codice\" value=\"" . $form['codice'] . "\" />" . $form['codice'] . "</td></tr>\n";
 } else {
-    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" maxlength=\"2\" size=\"2\" /></td></tr>\n";
+    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" maxlength=\"2\"  /></td></tr>\n";
 }
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"50\"  /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td><td class=\"FacetDataTD\">\n";
 print "<select name=\"clifor\" class=\"FacetSelect\">\n";
 for ($counter = -1; $counter <= 1; $counter++) {

@@ -179,7 +179,7 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['cod_ragstat'] . "</t
 $magForm->selectFromDB('ragstat', 'ragstat', 'codice', $form['ragstat'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
 echo "</tr>\n";
 
-echo "<tr><td class=\"FacetFieldCaptionTD\"> $script_transl[5] </td><td  class=\"FacetDataTD\"> <input type=\"number\" step=\"any\" min=\"0\" max=\"100\" value=\"" . $form['sconto'] . "\" maxlength=\"6\" size=\"6\" name=\"sconto\" ></td>";
+echo "<tr><td class=\"FacetFieldCaptionTD\"> $script_transl[5] </td><td  class=\"FacetDataTD\"> <input type=\"number\" step=\"any\" min=\"0\" max=\"100\" value=\"" . $form['sconto'] . "\" maxlength=\"6\"  name=\"sconto\" ></td>";
 
 echo "</td>\n
      </tr>\n";

@@ -379,7 +379,7 @@ if (count($msg['err']) > 0) { // ho un errore
                         <label for="luonas" class="col-sm-4 control-label"><?php echo $script_transl['luonas']; ?>*</label>
                         <div class="col-sm-8">
                             <input type="text" id="search_luonas" name="luonas" value="<?php echo $form['luonas']; ?>" maxlength="50" />
-                            <input type="text" id="search_pronas" name="pronas" value="<?php echo $form['pronas']; ?>" maxlength="2" size="1" />
+                            <input type="text" id="search_pronas" name="pronas" value="<?php echo $form['pronas']; ?>" maxlength="2" />
                         </div>
                     </div>
                 </div>
@@ -410,7 +410,7 @@ if (count($msg['err']) > 0) { // ho un errore
                         <label for="citspe" class="col-sm-4 control-label"><?php echo $script_transl['citspe']; ?>*</label>
                         <div class="col-sm-8">
                             <input type="text" id="search_location" name="citspe" value="<?php echo $form['citspe']; ?>" maxlength="50" />
-                            <input type="text" id="search_location-prospe" name="prospe" value="<?php echo $form['prospe']; ?>" maxlength="2" size="1" />
+                            <input type="text" id="search_location-prospe" name="prospe" value="<?php echo $form['prospe']; ?>" maxlength="2" />
                         </div>
                     </div>
                 </div>
@@ -466,7 +466,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="sedleg" class="col-sm-4 control-label"><?php echo $script_transl['sedleg']; ?></label>
                         <div class="col-sm-8">
-                            <textarea name="sedleg" rows="2" cols="40" maxlength="100" size="30"><?php echo $form['sedleg']; ?></textarea>
+                            <textarea name="sedleg" rows="2" cols="40" maxlength="100" ><?php echo $form['sedleg']; ?></textarea>
                         </div>
                     </div>
                 </div>
@@ -755,7 +755,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="min_rate_deprec" class="col-sm-4 control-label"><?php echo $script_transl['min_rate_deprec']; ?></label>
-                        <input class="col-sm-2" step="0.1" type="number" min="0" max="100" value="<?php echo $form['min_rate_deprec']; ?>" name="min_rate_deprec" size="4"  />
+                        <input class="col-sm-2" step="0.1" type="number" min="0" max="100" value="<?php echo $form['min_rate_deprec']; ?>" name="min_rate_deprec"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -773,7 +773,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="super_amm_rate" class="col-sm-4 control-label"><?php echo $script_transl['super_amm_rate']; ?></label>
-                        <input class="col-sm-2" step="0.1" type="number" min="0" max="500" value="<?php echo $form['super_amm_rate']; ?>" name="super_amm_rate" size="4"  />
+                        <input class="col-sm-2" step="0.1" type="number" min="0" max="500" value="<?php echo $form['super_amm_rate']; ?>" name="super_amm_rate"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -1053,7 +1053,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="ritenuta" class="col-sm-4 control-label"><?php echo $script_transl['ritenuta']; ?></label>
-                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['ritenuta']; ?>" name="ritenuta"  size="4" />
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['ritenuta']; ?>" name="ritenuta"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -1071,7 +1071,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?></label>
-                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['payroll_tax']; ?>" name="payroll_tax" size="4"  />
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['payroll_tax']; ?>" name="payroll_tax"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -1109,7 +1109,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="acciva" class="col-sm-4 control-label"><?php echo $script_transl['acciva']; ?></label>
-                        <input class="col-sm-2" type="number" value="<?php echo $form['acciva']; ?>" name="acciva" size="4"  />
+                        <input class="col-sm-2" type="number" value="<?php echo $form['acciva']; ?>" name="acciva"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -1117,7 +1117,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="taxstamp_limit" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp_limit']; ?></label>
-                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['taxstamp_limit']; ?>" name="taxstamp_limit" size="4"  />
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['taxstamp_limit']; ?>" name="taxstamp_limit"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -1125,7 +1125,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="taxstamp" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp']; ?></label>
-                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['taxstamp']; ?>" name="taxstamp" size="4"  />
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['taxstamp']; ?>" name="taxstamp"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -1153,7 +1153,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="perbol" class="col-sm-4 control-label"><?php echo $script_transl['perbol']; ?></label>
-                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['perbol']; ?>" name="perbol" size="4"  />
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['perbol']; ?>" name="perbol"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -1181,7 +1181,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="virtual_stamp_auth_prot" class="col-sm-4 control-label"><?php echo $script_transl['virtual_stamp_auth_prot']; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['virtual_stamp_auth_prot']; ?>" name="virtual_stamp_auth_prot" size="10" maxlength="14"  />
+                        <input class="col-sm-8" type="text" value="<?php echo $form['virtual_stamp_auth_prot']; ?>" name="virtual_stamp_auth_prot" maxlength="14"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -1197,7 +1197,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="sperib" class="col-sm-4 control-label"><?php echo $script_transl['sperib']; ?></label>
-                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['sperib']; ?>" name="sperib" size="4" />
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['sperib']; ?>" name="sperib" />
                     </div>
                 </div>
             </div><!-- chiude row  -->

@@ -378,15 +378,15 @@ echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
 <table class="table table-striped">
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_lastname']; ?>* </td>
-<td colspan="2" class="FacetDataTD"><input title="Cognome" type="text" name="user_lastname" value="<?php print $form["user_lastname"] ?>" maxlength="30" size="30" class="FacetInput">&nbsp;</td>
+<td colspan="2" class="FacetDataTD"><input title="Cognome" type="text" name="user_lastname" value="<?php print $form["user_lastname"] ?>" maxlength="30"  class="FacetInput">&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_firstname']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Nome" type="text" name="user_firstname" value="<?php print $form["user_firstname"] ?>" maxlength="30" size="30" class="FacetInput">&nbsp;</td>
+<td colspan="2" class="FacetDataTD"><input title="Nome" type="text" name="user_firstname" value="<?php print $form["user_firstname"] ?>" maxlength="30"  class="FacetInput">&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_email']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="user_email" value="<?php print $form["user_email"] ?>" class="FacetInput" maxlength="50" size="40">&nbsp;</td>
+<td colspan="2" class="FacetDataTD"><input title="Mail" type="email" name="user_email" value="<?php print $form["user_email"] ?>" class="FacetInput" maxlength="50">&nbsp;</td>
 </tr>
 <tr>
 <?php
@@ -489,18 +489,18 @@ if ($user_data['Abilit'] == 9) {
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['Access']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Accessi" type="text" name="Access" value="<?php print $form["Access"] ?>" maxlength="7" size="7" class="FacetInput">&nbsp;</td>
+<td colspan="2" class="FacetDataTD"><input title="Accessi" type="text" name="Access" value="<?php print $form["Access"] ?>" maxlength="7" class="FacetInput">&nbsp;</td>
 </tr>
 <?php
 if ($toDo == 'insert') {
 	echo '<tr><td class="FacetFieldCaptionTD">' . $script_transl["user_name"] . ' *</td>
-	<td class="FacetDataTD" colspan="2"><input title="user_name" type="text" name="user_name" value="' . $form["user_name"] . '" maxlength="20" size="20" class="FacetInput">&nbsp;</td>
+	<td class="FacetDataTD" colspan="2"><input title="user_name" type="text" name="user_name" value="' . $form["user_name"] . '" maxlength="20" class="FacetInput">&nbsp;</td>
 	</tr>';
 }
 ?>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_old'] ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Vecchia password" type="password" id="login-password" name="user_password_old" value="<?php echo $form["user_password_old"]; ?>" maxlength="40" size="20" class="FacetInput" id="ppass" /><div class="FacetDataTDred" id="pmsg"></div>&nbsp;</td>
+<td colspan="2" class="FacetDataTD"><input title="Vecchia password" type="password" id="login-password" name="user_password_old" value="<?php echo $form["user_password_old"]; ?>" maxlength="40" class="FacetInput" id="ppass" /><div class="FacetDataTDred" id="pmsg"></div>&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD" colspan="3">
@@ -509,11 +509,11 @@ if ($toDo == 'insert') {
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_new']; ?> </td>
-<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="user_password_new" name="user_password_new" value="<?php print $form["user_password_new"]; ?>" maxlength="40" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
+<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="user_password_new" name="user_password_new" value="<?php print $form["user_password_new"]; ?>" maxlength="40" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_ver']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="user_password_ver" name="user_password_ver" value="<?php print $form["user_password_ver"]; ?>" maxlength="40" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
+<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="user_password_ver" name="user_password_ver" value="<?php print $form["user_password_ver"]; ?>" maxlength="40" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_active']; ?></td>

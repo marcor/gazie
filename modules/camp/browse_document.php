@@ -64,7 +64,7 @@ print '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title']
 			<tr>
 				<th></th>
 				<th class="FacetFieldCaptionTD">
-					'.$script_transl['item'].':&nbsp;<input type="text" name="auxil" value="'.$auxil.'" maxlength="6" size="3" tabindex="1" class="FacetInput">
+					'.$script_transl['item'].':&nbsp;<input type="text" name="auxil" value="'.$auxil.'" maxlength="6" tabindex="1" class="FacetInput">
 				</th>
 				<th>
 					<input type="submit" name="search" value="'.$script_transl['search'].'" tabindex="1" onClick="javascript:document.report.all.value=1;">
@@ -97,7 +97,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
          $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$a_row['annota']."]  fade=[on] fadespeed=[0.03] \"";
     }*/
     /*print "<td class=\"FacetDataTD\" align=\"center\" $boxover >".$a_row["item_ref"]."</td>\n";*/
-	// class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="rows['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50"
+	// class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="rows['.$key.'][descri]" value="'.$descrizione.'" maxlength="50"
     echo '<tr>
 			<td class="FacetDataTD" align="right">
 				<a href="admin_document.php?id_doc='.$a_row["id_doc"].'&Update" title="'.ucfirst($script_transl['update']).'">'.$a_row["id_doc"].'</a>

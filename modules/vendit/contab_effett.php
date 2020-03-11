@@ -288,11 +288,11 @@ $script_transl = HeadMain();
         </tr>
         <tr>
             <td class="FacetFieldCaptionTD">Progressivo iniziale &nbsp;</td>
-            <td class="FacetDataTD"><input type="hidden" name="proini" value="<?php echo $_POST["proini"] ?>" maxlength="5" size="5" class="FacetInput"> <?php echo $_POST["proini"]; ?> &nbsp;</td>
+            <td class="FacetDataTD"><input type="hidden" name="proini" value="<?php echo $_POST["proini"] ?>" maxlength="5" class="FacetInput"> <?php echo $_POST["proini"]; ?> &nbsp;</td>
         </tr>
         <tr>
             <td class="FacetFieldCaptionTD">Progressivo finale &nbsp;</td>
-            <td class="FacetDataTD"><input title="Numero dell'ultimo effetto che si intende contabilizzare" type="text" name="profin" value="<?php echo $_POST["profin"] ?>" maxlength="5" size="5" class="FacetInput">&nbsp;</td>
+            <td class="FacetDataTD"><input title="Numero dell'ultimo effetto che si intende contabilizzare" type="text" name="profin" value="<?php echo $_POST["profin"] ?>" maxlength="5" class="FacetInput">&nbsp;</td>
         <tr>
             <td class="FacetFieldCaptionTD"> &nbsp;</td>
             <td colspan="2" align="right" nowrap class="FacetFooterTD">
