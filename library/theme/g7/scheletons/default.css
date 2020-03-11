@@ -87,6 +87,10 @@ table.selectTable td {
     border: 1px solid;
 }
 
+.FacetDataTD input,select,textarea {
+	padding-left: 4px;
+	margin-left: 0px;
+}
 .selectHeader {
     background-repeat: repeat-x;
     background-position: top center;
@@ -579,7 +583,7 @@ div.danger li.active span.rounded{
 .row {
     padding: 2px 3px 2px 3px;
     margin-right: 0px;
-}
+    margin-left: 0px;}
 .licheck {
     list-style-type: none;
 }
@@ -835,10 +839,11 @@ label {
 .gaz-table-form .form-group > label {
     background-color: rgba(0, 0, 0, 0.04);
 }
-.table-responsive {
-	width: 100%;
-	min-height: .01%;
-	overflow-x: unset;
+.table-responsive>table>tbody>tr>td>input[type="text"] {
+     width: 80%; 
+     box-sizing: border-box;
+     -webkit-box-sizing:border-box;
+     -moz-box-sizing: border-box;
 }
 .ui-sortable-handle{
 	padding: 2px;

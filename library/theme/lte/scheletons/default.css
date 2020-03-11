@@ -87,7 +87,7 @@
     padding: 5px 5px 5px 5px;
 }
 .FacetDataTD input,select,textarea {
-	padding-left: 10px;
+	padding-left: 4px;
 	margin-left: 0px;
 }
 
@@ -315,11 +315,15 @@
 	max-width: 200px;
 }
 .table-responsive {
-	width: 100%;
 	min-height: .01%;
-	overflow-x: unset;
 }
-
+.table-responsive>table>tbody>tr>td>input[type="text"] {
+     width: 80%; 
+     box-sizing: border-box;
+     -webkit-box-sizing:border-box;
+     -moz-box-sizing: border-box;
+     text-align: center;
+}
 .ui-sortable-handle{
 	padding: 2px;
 }
