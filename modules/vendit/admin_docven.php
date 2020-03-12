@@ -170,9 +170,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['gioemi'] = $_POST['gioemi'];
     $form['mesemi'] = $_POST['mesemi'];
     $form['annemi'] = $_POST['annemi'];
-    $form['giotra'] = $_POST['giotra'];
-    $form['mestra'] = $_POST['mestra'];
-    $form['anntra'] = $_POST['anntra'];
+	$form['initra'] = substr($_POST['initra'],0,10);
     $form['oratra'] = $_POST['oratra'];
     $form['mintra'] = $_POST['mintra'];
     $form['protoc'] = $_POST['protoc'];
@@ -479,10 +477,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $initra = $datemi;
             $utstra = $utsemi;
         } else {
-            $initra = $form['anntra'] . "-" . $form['mestra'] . "-" . $form['giotra'];
-            $utstra = mktime(0, 0, 0, $form['mestra'], $form['giotra'], $form['anntra']);
+			$initra =gaz_format_date($form['initra'],true);// adatto al db
+            $utstra = gaz_format_date($form['initra'],2); // mktime
         }
-        if (!checkdate($form['mestra'], $form['giotra'], $form['anntra'])) {
+        if (!gaz_format_date($form['initra'],'chk')) {
             $msg['err'][] = "37";
         }
         if ($utstra < $utsemi) {
@@ -1808,9 +1806,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['gioemi'] = substr($tesdoc['datemi'], 8, 2);
     $form['mesemi'] = substr($tesdoc['datemi'], 5, 2);
     $form['annemi'] = substr($tesdoc['datemi'], 0, 4);
-    $form['giotra'] = substr($tesdoc['initra'], 8, 2);
-    $form['mestra'] = substr($tesdoc['initra'], 5, 2);
-    $form['anntra'] = substr($tesdoc['initra'], 0, 4);
+    $form['initra'] = gaz_format_date($tesdoc['initra']);
     $form['oratra'] = substr($tesdoc['initra'], 11, 2);
     $form['mintra'] = substr($tesdoc['initra'], 14, 2);
     $form['protoc'] = $tesdoc['protoc'];
@@ -1917,9 +1913,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['gioemi'] = date("d");
         $form['mesemi'] = date("m");
         $form['annemi'] = date("Y");
-        $form['giotra'] = date("d");
-        $form['mestra'] = date("m");
-        $form['anntra'] = date("Y");
+        $form['initra'] = date("d/m/Y");
         $form['oratra'] = date("H");
         $form['mintra'] = date("i");
     }
@@ -1935,9 +1929,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['gioemi'] = date("d");
     $form['mesemi'] = date("m");
     $form['annemi'] = date("Y");
-    $form['giotra'] = date("d");
-    $form['mestra'] = date("m");
-    $form['anntra'] = date("Y");
+    $form['initra'] = date("d/m/Y");
     $form['oratra'] = date("H");
     $form['mintra'] = date("i");
     $form['rows'] = array();
@@ -2077,6 +2069,9 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
         ));
 ?>
 <script>
+    $(function () {
+        $("#initra").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+    });
     function pulldown_menu(selectName, destField)
     {
         // Create a variable url to contain the value of the
@@ -2327,7 +2322,6 @@ if ($form['tipdoc'] == "DDT") {
     echo '<input type="hidden" value="' . $form['id_doc_ritorno'] . '" name="id_doc_ritorno" />';
 }
 /** fine modifica FP */
-echo '<div class="FacetSeparatorTD" align="center">' . $script_transl[1] . '</div>';
 
 echo '	<input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" />
 		<input type="hidden" value="' . $form['in_pervat'] . '" name="in_pervat" />
@@ -2354,9 +2348,11 @@ echo '	<input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" 
 		';
 
 ?>
-<div class="panel panel-info">
+<div class="text-center"><?php echo $script_transl[1]; ?></div>
+<div class="panel panel-info div-bordered">
+  <div class="panel-body"> 
     <div class="container-fluid">  
-        <div class="row bg-info">
+        <div class="row">
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
                 <label for="in_tiprig" ><?php echo $script_transl[17].":"; ?></label> 
 <?php
@@ -2411,7 +2407,7 @@ if ($toDo == "insert"){
                 <input type="text" value="<?php echo $form['in_quanti']; ?>" maxlength="11" name="in_quanti" tabindex="5" accesskey="q">
             </div>
         </div>
-        <div class="row bg-info">
+        <div class="row">
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
                 <label for="in_sconto" ><?php echo ' %'.$script_transl[24].':'; ?></label>
                 <input type="text" value="<?php echo $form['in_sconto']; ?>" maxlength="4" name="in_sconto" title="# = sconto standard dell'articolo">
@@ -2433,7 +2429,7 @@ $select_in_codvat->output();
 ?>
             </div>
         </div>
-        <div class="row bg-info">
+        <div class="row">
             <div class="form-group col-xs-12 col-sm-6 col-md-6 text-left"> 
                 <label for="in_codric" class="col-xs-3"><?php echo  $script_transl[18]; ?></label>
 
@@ -2470,6 +2466,7 @@ if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modif
             </div>
 		</div>
 	</div><!-- chiude container-fuid -->
+  </div>
 </div><!-- chiude panel -->
 <br/>
 <?php
@@ -3159,17 +3156,17 @@ if (count($form['rows']) > 0) {
 		  </tr>';
 }
 echo '		</tbody>
-		</table></div>
-		<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div>
-		<div class="box-primary table-responsive"><table class="Tlarge table table-bordered table-condensed">
-		<tr><td>
-			<input type="hidden" value="' . $form['numrat'] . '" name="numrat">
-			<input type="hidden" value="' . $form['stamp'] . '" name="stamp">
-			<input type="hidden" value="' . $form['round_stamp'] . '" name="round_stamp">
-			<input type="hidden" value="' . $form['spevar'] . '" name="spevar">
-			<input type="hidden" value="' . $form['cauven'] . '" name="cauven">
-			<input type="hidden" value="' . $form['caucon'] . '" name="caucon"></td></tr>';
-
+		</table></div>';
+?>
+<div class="FacetSeparatorTD text-center"><?php echo $script_transl[2]; ?></div>
+	<input type="hidden" value="<?php echo $form['numrat']; ?>" name="numrat">
+	<input type="hidden" value="<?php echo $form['stamp']; ?>" name="stamp">
+	<input type="hidden" value="<?php echo $form['round_stamp']; ?>" name="round_stamp">
+	<input type="hidden" value="<?php echo $form['spevar']; ?>" name="spevar">
+	<input type="hidden" value="<?php echo $form['cauven']; ?>" name="cauven">
+	<input type="hidden" value="<?php echo $form['caucon']; ?>" name="caucon">
+	<div class="box-primary table-responsive"><table class="Tlarge table table-bordered table-condensed">
+<?php
 $somma_spese = $form['traspo'] + $form['speban'] * $form['numrat'] + $form['spevar'];
 $calc->add_value_to_VAT_castle($castle, $somma_spese, $form['expense_vat']);
 if ($calc->total_exc_with_duty >= $admin_aziend['taxstamp_limit'] && $form['virtual_taxstamp'] > 0 && $form['taxstamp'] < 0.01) {
@@ -3210,20 +3207,16 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     $select_spediz->output('portos', 'portos');
     echo "
 					</td>
-				</tr>
-				<!-- PRIMA RIGA - 8 colonne -->
+				</tr>";
+?>
+<!-- SECONDA RIGA - 8 colonne -->
 				<tr>
-					<td class=\"FacetFieldCaptionTD text-right\">$script_transl[30]</td>
-					<td class=\"FacetDataTD\">
-						<input class=\"FacetText\" type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" >
-						<input class=\"FacetText\" type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" >
-						<input class=\"FacetText\" type=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" >
-						<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-xs\">\n";
-    //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
-    echo '					<i class="glyphicon glyphicon-calendar"></i>
-						</a>' . $script_transl[31];
+					<td class="FacetFieldCaptionTD text-right\"><?php echo $script_transl[30];?></td>
+					<td class="FacetDataTD"><div class="col-xs-12">
+                        <input class="col-xs-6" type="text" id="initra" name="initra" value="<?php echo $form['initra']; ?>">
+						<div class="col-xs-2"><?php echo $script_transl[31];
     // select dell'ora
-    echo "\t <select name=\"oratra\" class=\"FacetText\" >\n";
+    echo "</div>\t <select name=\"oratra\" class=\"col-xs-2\" >\n";
     for ($counter = 0; $counter <= 23; $counter++) {
         $selected = "";
         if ($counter == $form['oratra'])
@@ -3232,7 +3225,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     }
     echo "\t </select>\n ";
     // select dell'ora
-    echo "\t <select name=\"mintra\" class=\"FacetText\" >\n";
+    echo "\t <select name=\"mintra\" class=\"col-xs-2\" >\n";
     for ($counter = 0; $counter <= 59; $counter++) {
         $selected = "";
         if ($counter == $form['mintra'])
@@ -3240,7 +3233,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
         echo "\t\t <option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
     }
     echo "				\t</select>
-						</td>
+						</div></td>
 						<td class=\"FacetFieldCaptionTD\">$script_transl[10]</td>\n";
 //    if ($form['id_des_same_company'] > 0) { //  è una destinazione legata all'anagrafica
     $tmpIdAnagra=(isset($cliente['id_anagra']) ? $cliente['id_anagra'] : "");

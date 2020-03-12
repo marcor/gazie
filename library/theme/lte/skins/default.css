@@ -1,5 +1,7 @@
 body {
-    background-image : url("../../../../library/images/sfondo.png");
+	background-color: #fff;
+	color: #000;
+	font-family: 'Roboto', sans-serif;
 }
 .help {
     margin-bottom: 20px;
@@ -29,6 +31,10 @@ th a:hover {
 .FacetColumnTD {
     background-color: #daeada;
     color: #000;
+}
+div.table-responsive, table.FacetFormTABLE, table.GazFormDeleteTable, table.table-bordered, div.div-bordered {
+	border: 1px solid #5f7a56;
+	border-radius: 4px;
 }
 .FacetDataTD {
     background-color: #b9e3a2;

@@ -74,20 +74,13 @@
     padding-bottom: 5px;
     border: 1px solid #f4f4f4;
 }
-.col-sm-8 {
-    padding-left: 0px;
-}
 
-.container-fluid {
-    padding-left: 0px;
-    padding-right: 0px;
-}
 .FacetFieldCaptionTD
 {
     padding: 5px 5px 5px 5px;
 }
-.FacetDataTD input,select,textarea {
-	padding-left: 4px;
+.FacetDataTD input,select,textarea,select[class^='col-'] {
+	padding-left: unset;
 	margin-left: 0px;
 }
 
@@ -130,6 +123,10 @@
 
 .logo {
 
+}
+.panel {
+	-webkit-box-shadow: 2px 1px 1px rgba(1,1,1,.5);
+	box-shadow: 2px 1px 1px rgba(1,1,1,.5);
 }
 .panel-company {
     min-height: 200px;
@@ -318,7 +315,7 @@
 	min-height: .01%;
 }
 .table-responsive>table>tbody>tr>td>input[type="text"] {
-     width: 80%; 
+     width: 100%; 
      box-sizing: border-box;
      -webkit-box-sizing:border-box;
      -moz-box-sizing: border-box;
