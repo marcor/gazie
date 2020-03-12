@@ -138,3 +138,7 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
 .gaz-transitori {
     background-color: #FF88D6;
 }
+td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
+	color: #034802;
+	background: #ccccff;
+}

@@ -379,6 +379,10 @@ table.selectTable td {
 .ui-state-default .ui-icon {
     background-image: url("../../../../js/jquery.ui/images/ui-icons_222222_256x240_gazie.png");
 }
+td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
+	color: #034802;
+	background: #ccccff;
+}
 .row.alternate-row-odd{
   background-color: #eeeeee;
 }
