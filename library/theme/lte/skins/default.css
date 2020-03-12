@@ -123,3 +123,18 @@ html body.skin-blue.sidebar-mini.sidebar-collapse form div.wrapper header.main-h
     background-color: #D4CB6A;
     color : #000;
 }
+.gaz-attivo {
+    background-color: #88D6FF;
+}
+.gaz-passivo {
+    background-color: #D6FF88;
+}
+.gaz-costi {
+    background-color: #D688FF;
+}
+.gaz-ricavi {
+    background-color: #FFD688;
+}
+.gaz-transitori {
+    background-color: #FF88D6;
+}
