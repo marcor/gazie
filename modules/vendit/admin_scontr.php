@@ -245,7 +245,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg['err'][] = "codfis";
             }
         }
-        if (count($msg['err']) < 1) { // nessun errore
+        if (count($msg['err']) < 1) { // ***   nessun errore   ***
             $form['datemi'] = gaz_format_date($form['datemi'], true);
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
@@ -314,12 +314,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 //inserisco i righi
                 foreach ($form['rows'] as $v) {
                     $v['id_tes'] = $last_id;
-                    rigdocInsert($v);
+                    $last_rigdoc_id=rigdocInsert($v);
                     if ($admin_aziend['conmag'] == 2 and
                             $v['tiprig'] == 0 and ! empty($v['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method'], false, 0, $v['id_lotmag']
+                        $id_mag=$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method'], false, 0, $v['id_lotmag']
                         );
-                    }
+						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
+	                }
                 }
 				if ($ecr_user){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
                     // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
