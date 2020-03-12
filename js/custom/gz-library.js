@@ -23,7 +23,10 @@
 
 /* Abilita/disabilita un textbox sulla base dello stato di un checkbox collegato */
 $(document).ready(function () {
-
+    // non uso size inline ma mi baso su maxlenght per avere una proporzionalità di grandezza sugli elementi input
+ 	$("input[maxlength]").each(function(index){
+        $(this).attr('size', $(this).attr('maxlength')/2);
+    });
     gzTooltip();
     
     $(".Tlarge").addClass('table table-striped table-bordered table-condensed table-responsive');

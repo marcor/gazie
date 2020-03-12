@@ -839,12 +839,7 @@ label {
 .gaz-table-form .form-group > label {
     background-color: rgba(0, 0, 0, 0.04);
 }
-.table-responsive>table>tbody>tr>td>input[type="text"] {
-     width: 80%; 
-     box-sizing: border-box;
-     -webkit-box-sizing:border-box;
-     -moz-box-sizing: border-box;
-}
+
 .ui-sortable-handle{
 	padding: 2px;
 }

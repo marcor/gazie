@@ -314,13 +314,6 @@
 .table-responsive {
 	min-height: .01%;
 }
-.table-responsive>table>tbody>tr>td>input[type="text"] {
-     width: 100%; 
-     box-sizing: border-box;
-     -webkit-box-sizing:border-box;
-     -moz-box-sizing: border-box;
-     text-align: center;
-}
 .ui-sortable-handle{
 	padding: 2px;
 }
@@ -332,6 +325,9 @@
 .panel-default,.panel-success,.Tmiddle,Tsmall {
     margin: auto;
 }
+.content-header > h1 {
+	padding-top: 18px;
+}
 .content-header > .breadcrumb {
     float: left;
     margin-top: 0;
@@ -339,7 +335,7 @@
     font-size: 11px;
     padding: 7px 5px;
     position: absolute;
-    top: 15px;
+    top: 3px;
     border-radius: 3px;
 }
 .ui-dialog-titlebar-close {

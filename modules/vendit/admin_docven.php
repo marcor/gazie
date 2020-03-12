@@ -2070,7 +2070,7 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
 ?>
 <script>
     $(function () {
-        $("#initra").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+        $("#initra").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})
     });
     function pulldown_menu(selectName, destField)
     {
@@ -2473,18 +2473,18 @@ if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modif
 echo '<div class="box-primary table-responsive"><table id="products-list" class="Tlarge table table-bordered table-condensed">
 		  <thead>
 			<tr>
-				<th class="FacetFieldCaptionTD"></th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[20] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[21] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
-                <th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>
-                <th class="FacetFieldCaptionTD">' . $script_transl[23] . '</th>            
-				<th class="FacetFieldCaptionTD">%' . substr($script_transl[24], 0, 2) . '.</th>
-				<th class="FacetFieldCaptionTD">%' . substr($script_transl[56], 0, 5) . '.</th>
-				<th class="FacetFieldCaptionTD" align="right">' . $script_transl[25] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[19] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[18] . '</th>
-				<th class="FacetFieldCaptionTD"></th>
+				<th></th>
+				<th>' . $script_transl[20] . '</th>
+				<th>' . $script_transl[21] . '</th>
+				<th>' . $script_transl[22] . '</th>
+                <th>' . $script_transl[16] . '</th>
+                <th>' . $script_transl[23] . '</th>            
+				<th>%' . substr($script_transl[24], 0, 2) . '.</th>
+				<th>%' . substr($script_transl[56], 0, 5) . '.</th>
+				<th align="right">' . $script_transl[25] . '</th>
+				<th>' . $script_transl[19] . '</th>
+				<th>' . $script_transl[18] . '</th>
+				<th></th>
 			</tr>
 		  </thead>
 		  <tbody>';
@@ -2758,9 +2758,9 @@ foreach ($form['rows'] as $k => $v) {
 					<td class="text-right codricTooltip" title="Contropartita">
 						' . $v['codric'] . '
 					</td>';
-					echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -2784,9 +2784,9 @@ foreach ($form['rows'] as $k => $v) {
 					<td></td>
 					<td></td>
 					<td></td>\n";
-					echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+					echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -2812,9 +2812,9 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td></td>
 					<td></td>\n";
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -2846,9 +2846,9 @@ foreach ($form['rows'] as $k => $v) {
 					<td class="text-right codricTooltip" title="Contropartita">
 						' . $v['codric'] . '
 					</td>';
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';		
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -2900,9 +2900,9 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -2927,9 +2927,9 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -2953,9 +2953,9 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -2979,9 +2979,9 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -3002,9 +3002,9 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -3015,7 +3015,7 @@ foreach ($form['rows'] as $k => $v) {
                             </button>
 			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\" >
-                            <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                            <input class=\"btn btn-xs btn-secondary\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
 			<td colspan=\"8\">Fase dello stato di avanzamento
                             <input type=\"number\" step=1 min=1 max=999 name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" /> </td>
@@ -3025,9 +3025,9 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -3048,9 +3048,9 @@ foreach ($form['rows'] as $k => $v) {
 			<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
 			</td>\n";
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
@@ -3076,9 +3076,9 @@ foreach ($form['rows'] as $k => $v) {
                 <td></td>
                 <td></td>
                 <td></td>\n";
-				echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+				echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';
             } else {
                 echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\"  />
@@ -3119,9 +3119,9 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td class="text-right">
 					</td>';
-			echo '<td><input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+			echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
-					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" /></td>
+					<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
 					';		
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
