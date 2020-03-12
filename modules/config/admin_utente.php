@@ -597,13 +597,9 @@ if ($user_data["Abilit"] == 9) {
 	}
 }
 ?>
-<tr>
-<td colspan="3" class="FacetDataTD text-center">
-<input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
-</td>
-</tr>
-</table>
-</div>
+    </table>
+    </div>
+    <div class="col-xs-12 text-center"><input name="Submit" class="btn btn-warning" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></div>
 </div>
 </form>
 <?php
