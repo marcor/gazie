@@ -100,19 +100,27 @@ if (!isset($_GET['field']) or ($_GET['field'] == 2) or(empty($_GET['field'])))
         $orderby = "conclusion_date DESC, doc_number DESC";
 $recordnav = new recordnav($gTables['contract'], $where, $limit, $passo);
 $recordnav -> output();
+gaz_flt_var_assign('id_customer', 'i', $gTables['contract']);
 ?>
 <div class="box-primary table-responsive">
 <table class="Tlarge table table-striped table-bordered table-condensed">
 <tr>
-<td colspan="2" class="FacetFieldCaptionTD"><?php echo $script_transl['number']; ?> :
+<td colspan="2" class="FacetFieldCaptionTD" align="right"><?php echo $script_transl['number']; ?> :
 <input type="text" name="doc_number" value="<?php if (isset($doc_number)) print $doc_number; ?>" maxlength="6" tabindex="1" class="FacetInput">
 </td>
-<td colspan="3" class="FacetFieldCaptionTD">
-</td>
-<td class="FacetFieldCaptionTD">
+<td class="FacetFieldCaptionTD" align="center">
 <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
 <td class="FacetFieldCaptionTD">
+	<?php
+	$tesdoc_e_partners = $gTables['contract'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['contract'] . ".id_customer=" . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra=" . $gTables['anagra'] . ".id";
+	$where_select = $gTables['contract'] . ".status<>''";
+	gaz_flt_disp_select("id_customer", $gTables['contract'] . ".id_customer," . $gTables['anagra'] . ".ragso1",
+	$tesdoc_e_partners,
+	$where_select, "ragso1 ASC", "ragso1");
+	?>
+</td>
+<td colspan="4" class="FacetFieldCaptionTD" align="center">
 <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
@@ -125,6 +133,7 @@ $headers_tesdoc = array  (
             $script_transl['number'] => "doc_number",
             $script_transl['customer'] => "id_customer",
             $script_transl['current_fee'] => "current_fee",
+            $script_transl['status'] => "",
             $script_transl['print'] => "",
             $script_transl['delete'] => ""
             );
@@ -139,11 +148,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $cliente = $anagrafica->getPartner($row['id_customer']);
         print "<tr>";
         print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_contract.php?Update&id_contract=".$row['id_contract']."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$row["id_contract"]."</a></td>";
-        print "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($row["conclusion_date"])."</td>";
-        print "<td class=\"FacetDataTD\" align=\"center\">".$row["doc_number"]." &nbsp;</td>";
-        print "<td class=\"FacetDataTD\" align=\"center\">".$cliente['ragso1']."&nbsp;</td>";
-        print "<td class=\"FacetDataTD\" align=\"center\">".$row["current_fee"]." &nbsp;</td>";
+        print "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($row['conclusion_date'])."</td>";
+        print "<td class=\"FacetDataTD\" align=\"center\">".$row['doc_number']." &nbsp;</td>";
+        print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"report_client.php?nome=".$cliente['ragso1']."\">".$cliente['ragso1']."</a></td>";
+        print "<td class=\"FacetDataTD\" align=\"center\">".$row['current_fee']." &nbsp;</td>";
+        print "<td class=\"FacetDataTD\" align=\"center\">".$row['status']." &nbsp;</td>";
         print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"print_contract.php?id_contract=".$row['id_contract']."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+
         print "<td class=\"FacetDataTD\" align=\"center\">";
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $row['id_contract'];?>" cliente="<?php echo $cliente['ragso1']; ?>">
@@ -153,7 +164,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
         print "</td></tr>\n";
 }
 ?>
-<tr><th class="FacetFieldCaptionTD" colspan="7"></th></tr>
+<tr><th class="FacetFieldCaptionTD" colspan="8"></th></tr>
 </form>
 </table>
 </div>
