@@ -220,7 +220,17 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			}
 		?>
 		<td>
+			<?php
+				if ( !empty( $a_row['idinstallazione']) ) {
+			?>
+			<a href="admin_install.php?idinstallazione=<?php echo $a_row['idinstallazione']; ?>&Update">
+			<?php
+				} else {
+			?>
 			<a href="../vendit/report_client.php?nome=<?php echo $a_row['ragso1']; ?>">
+			<?php
+				}
+			?>
 			<?php 
 				if ( strlen($a_row['ragso1']) > 20 ) {
 					echo substr($a_row['ragso1'],0,20).'...'; 
@@ -278,7 +288,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			break;
 	}
 ?>
-			<a href="report_assist.php?chstato=<?php echo $a_row['id']."&prev=".$a_row['stato'].$filtro; ?>" class="btn btn-xs <?php echo $class_label_stato; ?>">
+			<a href="report_assist.php?chstato=<?php echo $a_row['id']."&prev=".$a_row['stato'].$filtro; ?>" class="btn btn-xs <?php echo $class_label_stato; ?>" onclick="window.open('report_assist.php?popup=stato&chstato=<?php echo ($a_row['id']."&prev=".$a_row['stato']); ?>','nuovaFinestra','top=50,left=200,width=800,height=680,location=no,menubar=no,resizable=no,status=no,titlebar=no'); return false;" onkeypress="window.open('report_assist.php?popup=stato&chstato=<?php echo ($a_row['id']."&prev=".$a_row['stato']); ?>','nuovaFinestra','top=50,left=200,width=800,height=680,location=no,menubar=no,resizable=no,status=no,titlebar=no'); return false;" title="Aggiorna allo stato successivo">
 				<?php echo $a_row['stato']; ?>
 			</a>
 		</td>

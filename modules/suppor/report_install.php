@@ -30,7 +30,7 @@ $script_transl=HeadMain();
 $where 	= "1";
 $all 	= $where;
 
-gaz_flt_var_assign($gTables['instal'].'_codice', 'i');
+gaz_flt_var_assign('codice', 'i', $gTables['instal']);
 gaz_flt_var_assign('datainst', 'd');
 gaz_flt_var_assign('clfoco', 'v');
 gaz_flt_var_assign('telefono', 'v');
@@ -40,7 +40,7 @@ gaz_flt_var_assign('descrizione', 'v');
 $orderby = "id asc";
 
 if ( isset($_GET['all']) ) {
-    $_GET[$gTables['instal'].'_codice'] = "";
+    $_GET['codice'] = "";
     $_GET['datainst'] = "";
     $_GET['clfoco'] = "";
     $_GET['telefono'] = "";
@@ -57,7 +57,7 @@ if ( isset($_GET['all']) ) {
 	<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 		<tr>
 		<td class="FacetFieldCaptionTD">
-			<?php gaz_flt_disp_int($gTables['instal'].'_codice', "Numero"); ?>
+			<?php gaz_flt_disp_int("codice", "Numero"); ?>
 		</td>
 		<td class="FacetFieldCaptionTD">
 			<?php gaz_flt_disp_select("datainst", "YEAR(datainst) as datainst", $gTables["instal"], "9999", $orderby); ?>
@@ -96,8 +96,8 @@ if ( isset($_GET['all']) ) {
 		$linkHeaders -> output();
 
 		$recordnav = new recordnav($gTables['instal'].
-				" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['instal'].".clfoco = ".$gTables['clfoco'].".codice". 
-				" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id",
+				" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['instal'].".clfoco=".$gTables['clfoco'].".codice". 
+				" LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra=".$gTables['anagra'].".id",
 			$where, $limit, $passo);
 		$recordnav -> output();
 
@@ -105,8 +105,8 @@ $result = gaz_dbi_dyn_query( $gTables['instal'].".*,
 				".$gTables['anagra'].".ragso1, 
 				".$gTables['anagra'].".telefo ",
 				$gTables['instal'].
-					" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['instal'].".clfoco = ".$gTables['clfoco'].".codice". 
-					" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
+					" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['instal'].".clfoco=".$gTables['clfoco'].".codice". 
+					" LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra=".$gTables['anagra'].".id",
 				$where, $orderby, $limit, $passo);
 
 //$month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>">Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre");
@@ -147,7 +147,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	//$totale_ore += $a_row["ore"];
 } 
 
-$passi = array(20, 50, 100, 10000 );
+$passi = array(20, 50, 100, 10000);
 ?>
 <!-- riga riepilogo tabella -->
 <tr>
