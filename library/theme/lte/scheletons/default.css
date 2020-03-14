@@ -347,3 +347,7 @@
 .ui-dialog-titlebar-close {
     visibility: hidden;
 }
+.tooltip-inner {
+    min-width: 150px;
+    max-width: 100%; 
+}
