@@ -180,7 +180,8 @@ $strScript = array("admin_client.php" =>
             "DDS" => "Notula Servizio (no fat.15 mese succ.)",
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Ricevuta",
-            "CMR" => "Contratto di trasporto internazionale"
+            "CMR" => "Contratto di trasporto internazionale",
+			"PRO" => "Produzione"
         ),
         'title' => 'Documenti di vendita',
         'tipdoc' => ' documento di vendita tipo: ',
