@@ -12,7 +12,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$aziend_codice = sprintf("%03s", $row["codice"]);
 	// inizio controlli presenza di indici altrimenti li creo 
 	$idx=array(0=>array('descri'=>'assets','acc_fixed_assets'=>'assets','id_movcon'=>'assets','instal_type_id'=>'instal','clfoco'=>'instal','id_instal'=>'contract',
-            'id_customer'=>'contract','vat_section'=>'contract','conclusion_date'=>'contract','start_date'=>'contract','periodicity'=>'contract','id_asset'=>'contract')); 
+            'id_customer'=>'contract','vat_section'=>'contract','conclusion_date'=>'contract','start_date'=>'contract','periodicity'=>'contract','id_asset'=>'contract','idinstallazione'=>'assist')); 
 	foreach($idx as $vi){
 		foreach($vi as $k=>$v){
 			$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice.$v." WHERE 1");
