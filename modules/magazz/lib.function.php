@@ -732,8 +732,8 @@ class magazzForm extends GAzieForm {
         return $return_val;
     }
 
-    function uploadMag($id_rigo_doc = 0, $tipdoc, $numdoc, $seziva, $datdoc, $clfoco, $sconto_chiusura, $caumag, $codart, $quantita, $prezzo, $sconto_rigo, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
-        // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, id_rif)
+    function uploadMag($id_rigo_doc = 0, $tipdoc, $numdoc, $seziva, $datdoc, $clfoco, $sconto_chiusura, $caumag, $codart, $quantita, $prezzo, $sconto_rigo, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_coltivazione=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
+        // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, datreg)
         global $gTables, $admin_aziend;
         $docOperat = $this->getOperators();
         if ($tipdoc == 'FAD') {  // per il magazzino una fattura differita è come dire DDT
@@ -770,7 +770,7 @@ class magazzForm extends GAzieForm {
             $datreg = $data_from_admin_mov['datreg']; // prendo la descrizione e l'operatore da questo
             $operat = $data_from_admin_mov['operat'];
             $desdoc = $data_from_admin_mov['desdoc'];
-        }
+		}
         $row_movmag = array('caumag' => $caumag,
             'operat' => $operat,
             'datreg' => $datreg,
@@ -784,7 +784,9 @@ class magazzForm extends GAzieForm {
             'quanti' => $quantita,
             'prezzo' => $prezzo,
             'scorig' => $sconto_rigo,
-            'id_lotmag'=>$id_lotmag);
+            'id_lotmag'=>$id_lotmag,
+			'id_orderman'=>$id_orderman,
+			'campo_coltivazione'=>$campo_coltivazione);
         if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento
             $id_movmag =movmagInsert($row_movmag);
             //gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $id_rigo_doc, 'id_mag', gaz_dbi_last_id());
