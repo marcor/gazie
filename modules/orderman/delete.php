@@ -31,6 +31,8 @@ if (!$isAjax) {
 }
 if (isset($_POST['type'])&&isset($_POST['ref'])) { 
 	require("../../library/include/datlib.inc.php");
+	require("../../modules/magazz/lib.function.php");
+	$upd_mm = new magazzForm;
 	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
         case "orderman":
@@ -45,14 +47,12 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$table=$gTables['movmag'];$idord=$i;
 			$where="id_orderman = $idord";
 			$resmov=gaz_dbi_dyn_query ($what,$table,$where);
-			while ($r = gaz_dbi_fetch_array($resmov)) {// cancello i relativi movimenti SIAN
-				gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $r['id_mov']);
-			} 
+			while ($r = gaz_dbi_fetch_array($resmov)) {
+				$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $r['id_mov']);//cancello i movimenti di magazzino corrispondenti
+				gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $r['id_mov']);// cancello i relativi movimenti SIAN
+			}  
 			
-			$query="DELETE FROM ".$gTables['movmag']." WHERE id_orderman = '".$i."'"; 
-			gaz_dbi_query($query); //cancello i movimenti di magazzino corrispondenti
-			
-			if ($res['clfoco']<=0) { // se NON è un ordine cliente esistente e quindi fu generato automaticamente da orderman
+			if (intval($res['clfoco'])==0) { // se NON è un ordine cliente esistente e quindi fu generato automaticamente da orderman
 				$result = gaz_dbi_del_row($gTables['tesbro'], "id_tes", $id_tesbro); // cancello tesbro
 				$result = gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
 				$result = gaz_dbi_del_row($gTables['rigbro'], "id_tes", $id_tesbro); // cancello rigbro
