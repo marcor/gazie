@@ -21,7 +21,7 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
- */
+*/
 // prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -29,8 +29,11 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
+
 if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&isset($_POST['id_tes']))) { 
 	require("../../library/include/datlib.inc.php");
+	require("../../modules/magazz/lib.function.php");
+	$upd_mm = new magazzForm;
 	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
         case "docven": 
@@ -68,8 +71,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 						//cancello i righi
 						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '" . $row['id_tes'] . "'");
 						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
-							if (intval($val_old_row['id_mag']) > 0) {  //se c'� stato un movimento di magazzino lo azzero
-								gaz_dbi_del_row($gTables['movmag'], 'id_mov', $val_old_row['id_mag']);								
+							if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
+								$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
 								// se c'è stato, cancello pure il movimento sian 
 								gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
 							}
@@ -98,7 +101,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 						echo "<br><br><br>";
 						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
 							if (intval($val_old_row['id_mag']) > 0) {  //se c'� stato un movimento di magazzino lo azzero
-								gaz_dbi_del_row($gTables['movmag'], 'id_mov', $val_old_row['id_mag']);
+								$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
+
 								// se c'è stato, cancello pure il movimento sian 
 								gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
 							}

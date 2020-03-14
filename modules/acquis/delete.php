@@ -31,6 +31,8 @@ if (!$isAjax) {
 }
 if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&isset($_POST['id_tes']))) { 
 	require("../../library/include/datlib.inc.php");
+	require("../../modules/magazz/lib.function.php");
+	$upd_mm = new magazzForm;
 	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
         case "broacq":
@@ -55,7 +57,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 				gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
 				if (intval($a_row['id_mag']) > 0){  //se c'� stato un movimento di magazzino lo azzero
-					gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);					
+					$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $a_row['id_mag']);
+					
 					// cancello pure eventuale movimento sian 
 					gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $a_row['id_mag']);
 				}				

@@ -31,6 +31,7 @@ if (!$isAjax) {
 }
 if (isset($_POST['type'])&&isset($_POST['ref'])) { 
 	require("../../library/include/datlib.inc.php");
+	$upd_mm = new magazzForm;
 	$admin_aziend = checkAdmin();
 	switch ($_POST['type']) {
         case "catmer":
@@ -44,10 +45,11 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['caumag'],"codice",$i);
 		break;
-		case "movmag":
+		case "movmag": 
 			$i=intval($_POST['ref']);
 			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);
-			gaz_dbi_del_row($gTables['movmag'], 'id_mov', $i); // cancello il movimento di magazzino
+			$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $i);
+			// cancello il movimento di magazzino 
 			if ($form['id_rif'] > 0) {  //se il movimento di magazzino � stato generato da un rigo di documento lo azzero
 				gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $form['id_rif'], 'id_mag', 0);
 			}
