@@ -7,6 +7,8 @@ CREATE TABLE `gaz_XXXinstal_component` (
 	`id_component` INT(9) UNSIGNED NOT NULL COMMENT 'l\'id del bene figlio sempre riferito a gaz_NNNinstal',
 	`quantity` INT(9) UNSIGNED NOT NULL COMMENT 'quantità di figli contenuti nel bene padre',
 	`id_tesdoc` INT(9) UNSIGNED NOT NULL COMMENT 'riferimento al documento d\'acquisto',
+	`adminid` VARCHAR(20) NOT NULL DEFAULT '',
+	`last_modified` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`),	INDEX `id_parent_instal` (`id_parent_instal`), INDEX `id_component` (`id_component`),	INDEX `id_tesdoc` (`id_tesdoc`)
 ) COMMENT='Tabella per permettere la gestione degli attrezzi/impianti/assets aziendali quando questi sono composti da diverse parti componenti, alla stregua di come già si fa con la distinta base degli articoli di magazzino.'
 COLLATE='utf8_general_ci' ENGINE=MyISAM ROW_FORMAT=DYNAMIC;
@@ -25,4 +27,6 @@ ALTER TABLE `gaz_XXXcontract` ADD COLUMN `id_asset` INT(9) NULL DEFAULT NULL COM
 ALTER TABLE `gaz_XXXinstal` ADD COLUMN `id_asset` INT(9) NULL DEFAULT NULL COMMENT 'eventuale id riferito al bene ammortizzabile della contabilità (gaz_NNNassets)' AFTER `clfoco`;
 ALTER TABLE `gaz_XXXassist`	COMMENT='Tabella utilizzata dal modulo supporto (assistenze) ma implementabile anche per la gestione delle manutenzioni dei beni aziendali';
 ALTER TABLE `gaz_XXXinstal`	ADD COLUMN `stato` TINYINT(1) NOT NULL COMMENT 'Stato del bene aziendale: 0=inattivo ma funzionante, 1=in funzione, 2=in riparazione, 3=rotto, 8=in vendita, 9=alienato' AFTER `note`;
+ALTER TABLE `gaz_XXXassist` ADD COLUMN `adminid` VARCHAR(20) NULL DEFAULT NULL AFTER `note`, ADD COLUMN `last_modified` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `adminid`;
+ALTER TABLE `gaz_XXXinstal` ADD COLUMN `adminid` VARCHAR(20) NULL DEFAULT NULL AFTER `stato`, ADD COLUMN `last_modified` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `adminid`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
