@@ -115,7 +115,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 	$form = gaz_dbi_get_row($gTables['assist'], 'codice', $_GET['codice']);
 	$form['search']['clfoco']=substr($cliente['ragso1'],0,10);
 	$form['ritorno'] = 'report_assist.php';
-	}
+	
 	$form['ref_code'] = $form['codice'];
 } else { 
 	//se e' il primo accesso per INSERT
@@ -138,7 +138,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 	$form['stato'] = 'aperto';
 	$form['search']['clfoco'] = '';
 	$form['ritorno'] = 'report_assist.php';
-	}
 	$form['ref_code'] = '';
 }
 
