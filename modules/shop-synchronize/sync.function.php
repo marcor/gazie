@@ -73,6 +73,8 @@ class APIeCommerce {
 		// aggiorno l'articolo di magazzino (product)
 	}
 	function SetProductQuantity($d) {
+		session_start();
+		
 			// aggiornamento quantità disponibile di un articolo
 			global $gTables,$admin_aziend;			 
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
@@ -103,6 +105,7 @@ class APIeCommerce {
 			// controllo la connessione e il login
 			if ((!$conn_id) OR (!$mylogin)){ 
 				// non si connette FALSE
+				$_SESSION['errmsg'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 				echo "Hai attivato la sincronizzazione e-commerce automatica per il modulo shop-syncronize.
 				<br>Purtroppo ci sono problemi con la connessione FTP: controlla le impostazioni FTP in configurazione avanzata azienda.";
 				//die;
@@ -126,6 +129,7 @@ class APIeCommerce {
 			// upload file xml
 			if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
 			} else{
+				$_SESSION['errmsg'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 				echo "Errore di upload del file xml";//die;			
 			}
 			// chiudo la connessione FTP 
@@ -136,9 +140,11 @@ class APIeCommerce {
 			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
 				$file = fopen ($urlinterf.'?access='.$access, "r");
 				if (!$file) {
+					$_SESSION['errmsg'] = "Il file di interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					 echo "Errore: il file di interfaccia web non si apre!";//die;				
 				}
 			} else { // Riporto il codice di errore
+				$_SESSION['errmsg'] = "Impossibile connettersi al file di interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 				echo "Errore di connessione al file di interfaccia dell'e-commerce = ",intval(substr($headers[0], 9, 3));//die;
 			}
 	}
