@@ -51,30 +51,30 @@ if ( isset($_GET['all']) ) {
 }
 
 ?>
-<div align="center" class="FacetFormHeaderFont table-responsive">
+<div align="center" class="table-responsive">
 	<form method="GET">
 	<!-- riga filtro -->
-	<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	<table class="Tlarge table table-striped table-bordered table-condensed">
 		<tr>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_int("codice", "Numero"); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_select("datainst", "YEAR(datainst) as datainst", $gTables["instal"], "9999", $orderby); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["instal"] . ".clfoco", $gTables['instal'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['instal'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1"); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_int("telefono", "Telefono"); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_int("oggetto", "Oggetto"); ?>
 		</td>
-      <td class="FacetFieldCaptionTD">
+      <td>
 			<?php gaz_flt_disp_int("descrizione", "Descrizione"); ?>
 		</td>
-		<td colspan="2" class="FacetFieldCaptionTD">
+		<td colspan="2">
 			<input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
 			<input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 		</td>
@@ -109,16 +109,15 @@ $result = gaz_dbi_dyn_query( $gTables['instal'].".*,
 					" LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra=".$gTables['anagra'].".id",
 				$where, $orderby, $limit, $passo);
 
-//$month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>">Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre");
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
-   <tr class="FacetDataTD">
+   <tr>
 		<td>
-			<a class="btn btn-xs btn-default btn-100" href="admin_install.php?codice=<?php echo $a_row["codice"]; ?>&Update">
+			<a class="btn btn-xs btn-default" href="admin_install.php?codice=<?php echo $a_row["codice"]; ?>&Update">
 			<i class="glyphicon glyphicon-edit"></i><?php echo $a_row["codice"]; ?></a>
 		</td>
-		<td><?php echo date("d",strtotime($a_row["datainst"]))." ".$month[date("n",strtotime($a_row["datainst"]))]." ".date("Y",strtotime($a_row["datainst"])); ?></td>
+		<td><?php echo gaz_format_date($a_row["datainst"]); ?></td>
 		<td><a href="../vendit/report_client.php?nome=<?php echo $a_row["ragso1"]; ?>">
 		<?php 
 			if ( strlen($a_row["ragso1"]) > 20 ) {
@@ -151,15 +150,15 @@ $passi = array(20, 50, 100, 10000);
 ?>
 <!-- riga riepilogo tabella -->
 <tr>
-	<td class="FacetFieldCaptionTD" colspan="6" align="right">Totale Ore : 
+	<td colspan="6" align="right">Totale Ore : 
 		<?php //echo floatval($totale_ore); ?>
 	</td>
-	<td class="FacetFieldCaptionTD" colspan="2" align="right">Totale Euro : 
+	<td colspan="2" align="right">Totale Euro : 
 		<?php //echo floatval($totale_ore * 42); ?>
 	</td>
 </tr>
 <tr>
-	<td class="FacetFieldCaptionTD" align="center" colspan="8">Numero elementi : 
+	<td align="center" colspan="8">Numero elementi : 
 		<select name="flt_passo" onchange="this.form.submit()">		
 		<?php
 		foreach ( $passi as $val ) {

@@ -145,7 +145,7 @@ $result = gaz_dbi_dyn_query( $gTables['assist'].".*,
 if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 ?>
 <div class="row">
-<div class="FacetFormHeaderFont col-xs-12">
+<div class="col-xs-12">
 	<?php
 	if ( !isset( $_GET['idinstallazione']) ) {
 	?>
@@ -171,10 +171,10 @@ if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 		if ( !isset( $_GET['idinstallazione']) ) {
 		?>
 		<tr>
-		<td class="FacetFieldCaptionTD">
+		<td>
 						<?php gaz_flt_disp_int('id', 'Numero'); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php //gaz_flt_disp_select("data", "YEAR(data) as data", $gTables['assist'], "9999", $orderby); ?>
 					<select class="form-control input-sm" name="data" onchange="this.form.submit()">
 						<option value="0" <?php echo ($_GET['data']==0 ? 'selected' : ''); ?>>Tutti</option>
@@ -183,25 +183,25 @@ if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 					</select>
 					
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables['assist'] . ".clfoco", $gTables['assist'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['assist'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1"); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_int("telefo", "Telefono"); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_int("oggetto", "Oggetto"); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_int("descrizione", "Descrizione"); ?>
 		</td>
-				<td class="FacetFieldCaptionTD">
+				<td>
 			<?php gaz_flt_disp_select("tecnico", "tecnico", $gTables['assist'], "1=1", "tecnico"); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">
+		<td>
 			<?php gaz_flt_disp_select("stato", "stato", $gTables['assist'], "tipo='ASP'", "stato", $per_stato); ?>
 		</td>
-		<td class="FacetFieldCaptionTD" colspan="2">
+		<td colspan="2">
 			<input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
 			<input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 		</td>
@@ -247,16 +247,14 @@ if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 			$where, $limit, $passo);
 		$recordnav -> output();
 
-//$month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>">Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre");
-
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
-	<tr class="FacetDataTD">
+	<tr>
 		<td>
-			<a class="btn btn-xs btn-default btn-100" href="admin_period.php?codice=<?php echo $a_row['codice']; ?>&Update">
+			<a class="btn btn-xs btn-default" href="admin_period.php?codice=<?php echo $a_row['codice']; ?>&Update">
 			<i class="glyphicon glyphicon-edit"></i><?php echo $a_row['codice']; ?></a>
 		</td>
-		<td><?php echo date('d',strtotime($a_row['data'])).' '.$month[date('n',strtotime($a_row['data']))].' '.date('Y',strtotime($a_row['data'])); ?></td>
+		<td><?php echo gaz_format_date($a_row['data']); ?></td>
 		<td><a href="../vendit/report_client.php?nome=<?php echo $a_row['ragso1']; ?>">
 		<?php 
 			if ( strlen($a_row['ragso1']) > 20 ) {
@@ -301,17 +299,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 
 $passi = array(20, 50, 100, 10000 );
 ?>
-<!-- riga riepilogo tabella -->
-<!--<tr>
-	<td class="FacetFieldCaptionTD" colspan="8" align="right">Totale Ore : 
-		<?php //echo floatval($totale_ore); ?>
-	</td>
-	<td class="FacetFieldCaptionTD" colspan="3" align="right">Totale Euro :
-		<?php //echo floatval($totale_ore * 42); ?>
-	</td>
-</tr>-->
+
 <tr>
-	<td class="FacetFieldCaptionTD" align="center" colspan="11">Numero elementi : 
+	<td align="center" colspan="11">Numero elementi : 
 		<select name="flt_passo" onchange="this.form.submit()">		
 		<?php
 		foreach ( $passi as $val ) {
