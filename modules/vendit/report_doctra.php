@@ -35,15 +35,6 @@ if (isset($_GET['auxil'])) {
 $where = " ((tipdoc = 'FAD' && ddt_type != 'R') or tipdoc like 'DD_') and seziva = '$auxil'";
 $all = $where;
 
-if (isset($_SESSION['errmsg'])){ 
-	?>
-	<script>
-	alert("<?php echo "ERRORE: ",$_SESSION['errmsg']; ?>");
-	</script>
-	<?php
-	unset ($_SESSION['errmsg']);
-}
-
 $documento = '';
 $cliente = '';
 gaz_flt_var_assign('id_tes', 'i');
@@ -159,9 +150,6 @@ $(function() {
         <p class="ui-state-highlight" id="idcodice"></p>
         <p>Cliente:</p>
         <p class="ui-state-highlight" id="iddescri"></p>
-	</div>
-	<div style="display:none" id="err_msg" title="Errore nella sincronizzazione">
-        <p><b><?php echo "pippo"; ?></b></p>        
 	</div>
     <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>

@@ -127,7 +127,7 @@ class APIeCommerce {
 			//turn passive mode on
 			ftp_pasv($conn_id, true);
 			// upload file xml
-			if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
+			if (ftp_put($conn_i, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
 			} else{
 				$_SESSION['errmsg'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 				echo "Errore di upload del file xml";//die;			

@@ -59,7 +59,50 @@ function submenu($menu_data) {
     }
 }
 ?>
-
+<script>
+setInterval(function(){blink()}, 1000);
+    function blink() {
+        $("#box").fadeTo(100, 0.1).fadeTo(200, 1.0);
+    }
+$(function() {
+	$("#diaolog_errmsg").dialog({ autoOpen: false });
+	$('.diaolog_errmsg').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("ref2"));
+		var id = $(this).attr('ref');
+		$( "#diaolog_errmsg" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina avviso', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {},
+						type: 'POST',
+						url: '../root/delete_avviso.php',
+						success: function(data){
+							//alert(data);
+							window.location.reload(true);
+						}
+					});
+				}},
+				"Lascia avviso": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#diaolog_errmsg" ).dialog( "open" );  
+	});
+});
+</script>
+<div style="display:none" id="diaolog_errmsg" title="AVVISO">        
+        <p class="ui-state-highlight" id="idcodice"></p>        
+</div>
 <!-- Navbar static top per menu multilivello responsive -->
 <div class="navbar navbar-default" role="navigation">
     <div id="l-wrapper" class="navbar-header company-color">
@@ -72,6 +115,20 @@ function submenu($menu_data) {
         <a  href="../../modules/root/admin.php"> <?php echo strtoupper($admin_aziend["ragso1"]); ?>
         </a>
     </div>
+	<?php
+		if (isset($_SESSION['errmsg'])){
+			?>					
+			<div id="box" align="center"; style=" position:absolute; top:2px; right:3px; color:#fff;
+            padding:5px; width:80px;
+            background: orange;">
+			<a href="#" class="diaolog_errmsg" title="AVVISO" ref="<?php echo $_SESSION['errmsg'];?>">
+			AVVISO
+			</a>			
+			</div>			
+			<?php
+			//unset ($_SESSION['errmsg']);
+		}
+		?>
     <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <?php
@@ -120,6 +177,8 @@ function submenu($menu_data) {
                 <img src="../root/view.php?table=admin&field=user_name&value=<?php echo $admin_aziend["user_name"] ?>" height="30" title="<?php echo $admin_aziend['user_lastname'] . ' ' . $admin_aziend['user_firstname']; ?>" >				
 			</div>
         </li>
+	
         </ul>
     </div>
+	
 </div><!-- chiude navbar -->
