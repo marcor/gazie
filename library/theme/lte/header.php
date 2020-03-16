@@ -57,6 +57,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -132,7 +133,51 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 
     echo "<body class=\"hold-transition skin-blue sidebar-mini " . $val . "\">";
     ?>
+	<script>
+	setInterval(function(){blink()}, 1000);
+		function blink() {
+			$("#box").fadeTo(100, 0.1).fadeTo(200, 1.0);
+		}
+	$(function() {
+		$("#diaolog_errmsg").dialog({ autoOpen: false });
+		$('.diaolog_errmsg').click(function() {
+			$("p#idcodice").html($(this).attr("ref"));
+			$("p#iddescri").html($(this).attr("ref2"));
+			var id = $(this).attr('ref');
+			$( "#diaolog_errmsg" ).dialog({
+				minHeight: 1,
+				width: "auto",
+				modal: "true",
+				show: "blind",
+				hide: "explode",
+				buttons: {
+					delete:{ 
+						text:'Elimina avviso', 
+						'class':'btn btn-danger delete-button',
+						click:function (event, ui) {
+						$.ajax({
+							data: {},
+							type: 'POST',
+							url: '../root/delete_avviso.php',
+							success: function(data){
+								//alert(data);
+								window.location.reload(true);
+							}
+						});
+					}},
+					"Lascia avviso": function() {
+						$(this).dialog("close");
+					}
+				}
+			});
+			$("#diaolog_errmsg" ).dialog( "open" );  
+		});
+	});
+	</script>
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
+		<div style="display:none" id="diaolog_errmsg" title="AVVISO">        
+			<p class="ui-state-highlight" id="idcodice"></p>        
+		</div>
         <div class="wrapper">
             <header class="main-header">
                 <!-- Logo -->
@@ -158,8 +203,21 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                         <ul class="nav navbar-nav">     
                             <?php
                             //leggo se il modulo è abilitato
-														$res_access_mod = gaz_dbi_dyn_query($gTables['admin_module'].'.access', $gTables['module'].' LEFT JOIN '. $gTables['admin_module'].' ON '. $gTables['module'].'.id='. $gTables['admin_module'].'.moduleid',"adminid='".$admin_aziend["user_name"]."' AND company_id=".$admin_aziend['company_id'],'adminid' ,0,1);
+							$res_access_mod = gaz_dbi_dyn_query($gTables['admin_module'].'.access', $gTables['module'].' LEFT JOIN '. $gTables['admin_module'].' ON '. $gTables['module'].'.id='. $gTables['admin_module'].'.moduleid',"adminid='".$admin_aziend["user_name"]."' AND company_id=".$admin_aziend['company_id'],'adminid' ,0,1);
                             $row_access_mod = gaz_dbi_fetch_array($res_access_mod);
+							if (isset($_SESSION['errmsg'])){
+							?>
+							<li>
+								<div id="box" align="center"; style="margin-top:8px; color:#fff;
+								padding:5px; width:80px;
+								background: orange;">
+									<a href="#" class="diaolog_errmsg" title="AVVISO" ref="<?php echo $_SESSION['errmsg'];?>">
+									AVVISO
+									</a>			
+								</div>
+							</li>
+							<?php
+							}
                             if ($row_access_mod && $row_access_mod['access'] == 3 ) {
                                 //visualizzo la documentazione standard
                                 echo "<li><a target=\"_new\" href=\"../../modules/" . $module . "/docume_" . $module . ".php\"><i class=\"fa fa-question\"></i></a></li>";
