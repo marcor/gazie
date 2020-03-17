@@ -2419,7 +2419,7 @@ function checkAdmin($Livaut = 0) {
         $_SESSION["Abilit"] = true;
 				// includo le funzioni per la sincronizzazione dello shop online
 				if (file_exists('../'.$admin_aziend['sync_ecom_mod'].'/sync.function.php')) {
-					require('../'.$admin_aziend['sync_ecom_mod'].'/sync.function.php');
+					include_once('../'.$admin_aziend['sync_ecom_mod'].'/sync.function.php');
 				}
     }
     return array_merge($admin_aziend, $currency);
