@@ -2551,7 +2551,7 @@ foreach ($form['rows'] as $k => $v) {
 						</button>
 			 		</td>
 					<td>
-						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100"  />
+						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					';
             if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0) { // se l'articolo prevede lotti
 				
@@ -2662,14 +2662,14 @@ foreach ($form['rows'] as $k => $v) {
 						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" id="righi_' . $k . '_quanti" onchange="document.docven.last_focus.value=\'righi_' . $k . '_prelis\'; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
                     </td>
                     <td>
-						<input type="text" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" align="right" maxlength="11"  ';
+						<input type="text" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" align="right" maxlength="11" ';
 						if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
 							echo 'onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" ';
 						}
 						echo ' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=\'righi_' . $k . '_sconto\'; this.form.submit()" />
 					</td>
-					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4"  id="righi_' . $k . '_sconto" onchange="document.docven.last_focus.value=this.id; this.form.submit();" /></td>
-					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6"  /></td>
+					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" id="righi_' . $k . '_sconto" onchange="document.docven.last_focus.value=this.id; this.form.submit();" /></td>
+					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" /></td>
 					<td class="text-right '.$imprig_class.'">
 						<span class="gazie-tooltip text-right text-'.$imprig_class.'" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
 							' . gaz_format_number($imprig) . '
@@ -2769,7 +2769,7 @@ foreach ($form['rows'] as $k => $v) {
 					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
 					<td></td>
 					<td align=\"right\">
-						<input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"" . number_format($v['prelis'], 2, '.', '') . "\" align=\"right\" maxlength=\"11\"  onchange=\"this.form.submit()\" />
+						<input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"" . number_format($v['prelis'], 2, '.', '') . "\" align=\"right\" maxlength=\"11\" onchange=\"this.form.submit()\" />
 					</td>
 					<td></td>
 					<td></td>\n";
@@ -2789,7 +2789,7 @@ foreach ($form['rows'] as $k => $v) {
                      $gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'rows[' . $k . '][codart]', 'rows[' . $k . '][codart]', $v["codart"], true, 'fae_tipo_cassa'.$k, 'col-sm-12');
 
 			echo '					  <td>
-						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
+						<input type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					</td>
                     <td colspan="2" class="text-right">Imponibile:<input type="hidden" name="rows[' . $k . '][unimis]" value="" /><input type="hidden" name="rows[' . $k . '][quanti]" value="" /><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
                     <td><input type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" ';
@@ -2852,7 +2852,7 @@ foreach ($form['rows'] as $k => $v) {
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
 						
 					echo "
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\"  /> riferito a ";
+						<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2879,7 +2879,7 @@ foreach ($form['rows'] as $k => $v) {
                         </td>
 			<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
-					echo "<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" /> riferito a ";
+					echo "<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2905,7 +2905,7 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
-					echo "<input type=\"date\"   name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"15\"  /> riferito a ";
+					echo "<input type=\"date\" name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"15\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2931,7 +2931,7 @@ foreach ($form['rows'] as $k => $v) {
                         </td>
 			<td colspan=\"8\" title=\"".$script_transl['fae_dati']."\">";
 						$gForm->variousSelect('rows['.$k.'][codvat]', $script_transl['fae_dati_value'], $v['codvat'],'');// uso la colonna codvat del database per memorizzare il tipo di dato della fattura elettronica
-					echo "<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" /> riferito a ";
+					echo "<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" /> riferito a ";
 			$gForm->selRifDettaglioLinea('rows['.$k.'][codric]', $v['codric'], $form['RiferimentoNumeroLinea']); // uso la colonna codric del database per memorizzare il rigo di riferimento al dettaglio linea 
 			echo "</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
@@ -2956,7 +2956,7 @@ foreach ($form['rows'] as $k => $v) {
                             <input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
                         </td>
 			<td colspan=\"8\">
-                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" /> riferita a tutto il documento</td>
+                            <input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" /> riferita a tutto il documento</td>
 			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
 			<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
@@ -3024,7 +3024,7 @@ foreach ($form['rows'] as $k => $v) {
                     </button>
                 </td>
                     <td>
-                        <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\"  />
+                        <input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" />
                     </td>
                     <td><input class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\" />
                 </td>
@@ -3066,7 +3066,7 @@ foreach ($form['rows'] as $k => $v) {
 					  <td  colspan="6" >';
             $gForm->selectAsset('rows[' . $k . '][codric]', $v['codric']);
 
-            echo '<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
+            echo '<input type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					</td>
 					<td class="text-right">';
 

@@ -220,7 +220,7 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 if ($uts_last > $uts_first) {
                     $period .= ' - ' . strftime("%B %Y", $uts_last);
                 }
-                $vat_per = gaz_dbi_get_row($gTables['aliiva'], 'codice', $val['vat_code']);
+                $vat_per = gaz_dbi_get_row($gTables['aliiva'], 'codice', $cntr['vat_code']);
                 $rows_data = array('id_tes' => $tesdoc_id, 'tiprig' => 1,
                     'descri' => $strScript['invoice_from_contract.php']['period'] .
                     $strScript['invoice_from_contract.php']['period_value'][$cntr['periodicity']] .
@@ -236,7 +236,7 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
 				}
                 rigdocInsert($rows_data);
                 // e se ci sono altri addebiti
-                $rs_rows = gaz_dbi_dyn_query("*", $gTables['contract_row'], "id_contract = " . $val['id_contract'], 'id_row ASC');
+                $rs_rows = gaz_dbi_dyn_query("*", $gTables['contract_row'], "id_contract = " . $val['id_contract'], "id_row ASC");
                 while ($row = gaz_dbi_fetch_array($rs_rows)) {
                     $vat_per = gaz_dbi_get_row($gTables['aliiva'], 'codice', $row['vat_code']);
                     $rows_data = array('id_tes' => $tesdoc_id, 'tiprig' => 0,

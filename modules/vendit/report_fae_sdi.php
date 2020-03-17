@@ -43,7 +43,7 @@ $mostra_intesta_riga = 1;
 @$id_record = $_GET['id_record'];
 
 if (isset($_POST['Submit_file'])) { // conferma invio upload file
-	if (!empty($_FILES)) { error_log(print_r($_FILES, true));
+	if (!empty($_FILES)) {
 		foreach($_FILES as $key => $file) {
 			$exp_key = explode('_', $key);
 			if ($exp_key[0] == 'p7mfile' && !empty($file['name'])) {
@@ -285,7 +285,7 @@ $recordnav->output();
 <tr style="margin-bottom: 20px !important;">
 <td class="FacetFieldCaptionTD"></td>
 <td class="FacetFieldCaptionTD">
-<input type="text" name="ricerca_fe" id="ricerca_fe" value="<?php echo $ricerca_fe ?>" maxlength="30"  tabindex="1" class="FacetInput">
+<input type="text" name="ricerca_fe" id="ricerca_fe" value="<?php echo $ricerca_fe ?>" maxlength="30" tabindex="1" class="FacetInput">
 </td>
 <td class="FacetFieldCaptionTD" colspan="2">
 

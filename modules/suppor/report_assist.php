@@ -101,7 +101,7 @@ $result = gaz_dbi_dyn_query($gTables['assist'].".*,
 		" LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra=".$gTables['anagra'].".id",
 		$where, $orderby, $limit, $passo);
 
-if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
+if (!isset( $_GET['idinstallazione']) || (isset($result) && gaz_dbi_num_rows($result)>0)) {
 ?>
 <div align="center" class="FacetFormHeaderFont">Assistenze</div>
 	<?php
@@ -111,7 +111,7 @@ if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 	<?php
 	} else {
 	?>
-	<center>Interventi SPOT</center>
+	<center><b>Programmazione Interventi</b></center>
 	<?php
 	}
 	?>
@@ -131,7 +131,7 @@ if (!isset( $_GET['idinstallazione']) || count($result) > 0) {
 				<?php gaz_flt_disp_int("citspe", "Zona"); ?>
 			</td>
 			<td>
-				<?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["assist"] . ".clfoco", $gTables['assist'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['assist'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all." AND stato<>'' ", "ragso1", "ragso1"); ?>
+				<?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables['assist'] . ".clfoco", $gTables['assist'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['assist'] . ".clfoco=" . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra=" . $gTables['anagra'] . ".id", $all." AND stato<>'' ", "ragso1", "ragso1"); ?>
 			</td>
 			<td>
 				<?php gaz_flt_disp_int("telefo", "Telefono"); ?>
@@ -218,7 +218,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		?>
 		<td>
 			<?php
-				if ( !empty( $a_row['idinstallazione']) ) {
+				if ( !empty($a_row['idinstallazione']) && empty($_GET['idinstallazione']) ) {
 			?>
 			<a href="admin_install.php?idinstallazione=<?php echo $a_row['idinstallazione']; ?>&Update">
 			<?php
@@ -305,7 +305,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	$totale_ore += $a_row['ore'];
 } 
 
-$passi = array(20, 50, 100, 10000 );
+$passi = array(20, 50, 100, 10000);
 ?>
 <tr>
 	<td colspan="8" align="right">Totale Ore : 
