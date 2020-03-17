@@ -48,9 +48,6 @@ if (isset($_SERVER["HTTP_REFERER"])) {
 $script_uri = basename($_SERVER['REQUEST_URI']);
 $mod_uri = '/' . $module . '/' . $script_uri;
 
-//stati per le assistenze periodiche
-$per_stato = array("Aperto", "Avvisare", "Effettuare", "Fatturare", "Chiuso");
-
 //sostituisci a partire da destra
 function str_lreplace($search, $replace, $subject)
 {
