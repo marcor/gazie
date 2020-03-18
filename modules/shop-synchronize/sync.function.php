@@ -71,11 +71,77 @@ class APIeCommerce {
 	}
 	function UpsertProduct($d) {
 		// aggiorno l'articolo di magazzino (product)
+		session_start();
+			global $gTables,$admin_aziend;			 
+			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
+			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
+			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
+			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];			
+			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."dwnlArticoli-gazie.php";
+			// "dwnlArticoli-gazie.php" è il nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
+			
+			if (intval($d['barcode'])==0) {// se non c'è barcode allora è nullo
+				$d['barcode']="NULL";
+			}
+			// imposto la connessione al server
+			$conn_id = ftp_connect($ftp_host);
+			// effettuo login con user e pass
+			$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+			// controllo la connessione e il login
+			if ((!$conn_id) OR (!$mylogin)){ 
+				// non si connette FALSE
+				$_SESSION['errmsg'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				echo "Hai attivato la sincronizzazione e-commerce automatica per il modulo shop-syncronize.
+				<br>Purtroppo ci sono problemi con la connessione FTP: controlla le impostazioni FTP in configurazione avanzata azienda.";
+				//die;
+			}	 
+	 		// creo il file xml			
+			$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
+			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
+			$xml_output .= "\n<Products>\n";						
+				$xml_output .= "\t<Product>\n";
+				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
+				$xml_output .= "\t<BarCode>".$d['barcode']."</BarCode>\n";				
+				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
+				$xml_output .= "\t<Description>".$d['body_text']."</Description>\n";
+				$xml_output .= "\t<Price>".$d['web_price']."</Price>\n";
+				$xml_output .= "\t<Unimis>".$d['unimis']."</Unimis>\n";
+				$xml_output .= "\t<ProductVat>".$d['aliva']."</ProductVat>\n";
+				$xml_output .= "\t<ProductCategory>".$d['catmer']."</ProductCategory>\n";
+				$xml_output .= "\t</Product>\n";			
+			$xml_output .="\n</Products>\n</GAzieDocuments>";
+			$xmlFile = "prodotti.xml";
+			$xmlHandle = fopen($xmlFile, "w");
+			fwrite($xmlHandle, $xml_output);
+			fclose($xmlHandle);
+			//turn passive mode on
+			ftp_pasv($conn_id, true);
+			// upload file xml
+			if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
+			} else{
+				$_SESSION['errmsg'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				echo "Errore di upload del file xml";//die;			
+			}
+			// chiudo la connessione FTP 
+			ftp_quit($conn_id);
+			$access=base64_encode($ftp_pass);
+			// avvio il file di interfaccia presente nel sito web remoto
+			$headers = @get_headers($urlinterf.'?access='.$access);
+			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
+				$file = fopen ($urlinterf.'?access='.$access, "r");
+				if (!$file) {
+					$_SESSION['errmsg'] = "Il file di interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					 echo "Errore: il file di interfaccia web non si apre!";//die;				
+				}
+			} else { // Riporto il codice di errore
+				$_SESSION['errmsg'] = "Impossibile connettersi al file di interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				echo "Errore di connessione al file di interfaccia dell'e-commerce = ",intval(substr($headers[0], 9, 3));//die;
+			}
 	}
 	function SetProductQuantity($d) {
-		session_start();
-		
-			// aggiornamento quantità disponibile di un articolo
+		// aggiornamento quantità disponibile di un articolo
+			session_start();
 			global $gTables,$admin_aziend;			 
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
