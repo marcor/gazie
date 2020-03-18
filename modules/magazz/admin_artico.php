@@ -945,7 +945,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_price" class="col-sm-4 control-label"><?php echo $script_transl['web_price']; ?></label>
-                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" />
+                            <input class="col-sm-4" type="text"  value="<?php echo gaz_format_number($form['web_price']); ?>" name="web_price" maxlength="15" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
