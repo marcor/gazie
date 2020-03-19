@@ -77,7 +77,7 @@ class APIeCommerce {
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];			
-			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."dwnlArticoli-gazie.php";
+			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
 			// "dwnlArticoli-gazie.php" è il nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
 			
