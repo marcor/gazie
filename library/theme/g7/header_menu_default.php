@@ -101,7 +101,8 @@ $(function() {
 });
 </script>
 <div style="display:none" id="diaolog_errmsg" title="AVVISO">        
-        <p class="ui-state-highlight" id="idcodice"></p>        
+        <p class="ui-state-highlight" id="idcodice"></p>
+		<p class="ui-state-highlight" id="iddescri"></p>
 </div>
 <!-- Navbar static top per menu multilivello responsive -->
 <div class="navbar navbar-default" role="navigation">
@@ -121,7 +122,7 @@ $(function() {
 			<div id="box" align="center"; style=" position:absolute; top:2px; right:3px; color:#fff;
             padding:5px; width:80px;
             background: orange;">
-			<a href="#" class="diaolog_errmsg" title="AVVISO" ref="<?php echo $_SESSION['errmsg'];?>">
+			<a href="#" class="diaolog_errmsg" title="AVVISO" ref="<?php echo $_SESSION['errmsg'];?>" ref2="<?php echo $_SESSION['errref'];?>">
 			AVVISO
 			</a>			
 			</div>			

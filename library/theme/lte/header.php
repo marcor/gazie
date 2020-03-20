@@ -176,7 +176,8 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 	</script>
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
 		<div style="display:none" id="diaolog_errmsg" title="AVVISO">        
-			<p class="ui-state-highlight" id="idcodice"></p>        
+			<p class="ui-state-highlight" id="idcodice"></p>
+			<p class="ui-state-highlight" id="iddescri"></p>
 		</div>
         <div class="wrapper">
             <header class="main-header">
@@ -211,7 +212,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 								<div id="box" align="center"; style="margin-top:8px; color:#fff;
 								padding:5px; width:80px;
 								background: orange;">
-									<a href="#" class="diaolog_errmsg" title="AVVISO" ref="<?php echo $_SESSION['errmsg'];?>">
+									<a href="#" class="diaolog_errmsg" title="AVVISO" ref="<?php echo $_SESSION['errmsg'];?>" ref2="<?php echo $_SESSION['errref'];?>">
 									AVVISO
 									</a>			
 								</div>

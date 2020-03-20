@@ -32,4 +32,5 @@ if (!$isAjax) {
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 unset($_SESSION['errmsg']);
+unset($_SESSION['errref']);
 ?>
