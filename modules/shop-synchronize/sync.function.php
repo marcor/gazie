@@ -95,7 +95,10 @@ class APIeCommerce {
 				echo "Hai attivato la sincronizzazione e-commerce automatica per il modulo shop-syncronize.
 				<br>Purtroppo ci sono problemi con la connessione FTP: controlla le impostazioni FTP in configurazione avanzata azienda.";
 				//die;
-			}	 
+			}
+			// Calcolo il prezzo IVA compresa
+			$aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($d['aliiva']))['aliquo'];
+			$web_price_vat_incl=$d['web_price']+(($d['web_price']*$aliquo)/100);			 
 	 		// creo il file xml			
 			$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
@@ -106,6 +109,8 @@ class APIeCommerce {
 				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
 				$xml_output .= "\t<Description>".$d['body_text']."</Description>\n";
 				$xml_output .= "\t<Price>".$d['web_price']."</Price>\n";
+				$xml_output .= "\t<PriceVATincl>".$web_price_vat_incl."</PriceVATincl>\n";
+				$xml_output .= "\t<VAT>".$aliquo."</VAT>\n";
 				$xml_output .= "\t<Unimis>".$d['unimis']."</Unimis>\n";
 				$xml_output .= "\t<ProductVat>".$d['aliva']."</ProductVat>\n";
 				$xml_output .= "\t<ProductCategory>".$d['catmer']."</ProductCategory>\n";
