@@ -132,6 +132,7 @@ if (isset($_GET["dest"]) && $_GET["dest"]=='E'){ // � stata richiesta una e-ma
    $content->string = $pdf->Output('Estratto_conto_al_'.intval($_GET["giornfin"]).'_'.intval($_GET["mesfin"]).'_'.intval($_GET["annfin"]).'.pdf', $dest);
    $content->encoding = "base64";
    $content->mimeType = "application/pdf";
+   $admin_aziend['doc_name']= $content->name;
    $gMail = new GAzieMail();
    $gMail->sendMail($admin_aziend,$admin_aziend,$content,$conto);
 } else { // va all'interno del browser
