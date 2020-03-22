@@ -58,17 +58,17 @@ if (isset($_POST['conferma'])) { // se confermato
     // scrittura articoli su database di GAzie
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){ // ciclo gli articoli e scrivo i database
 		if (isset($_POST['download'.$ord])){ // se selezionato
-			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);
+			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord],0,15));
 			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord]); // prendo il codice IVA
 			
-			if (strlen($esiste AND $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg"){ // se è aggiornamento, se c'è un'immagine e se selezionato
+			if ($esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg"){ // se è aggiornamento, se c'è un'immagine e se selezionato
 				// cancello l'immagine presente nella cartella 
-				$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $_POST['codice'.$ord]."'");
+				$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". substr($_POST['codice'.$ord],0,15)."'");
 				gaz_dbi_del_row($gTables['files'], 'id_doc',$imgres['id_doc']);
 				unlink ("../../data/files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension']);
 			}
 			
-			if ((strlen(!$esiste AND $_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg") OR (strlen($esiste AND $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg")){ // se è inserimento, se c'è un'immagine e se selezionato
+			if ((!$esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg") OR ($esiste AND strlen( $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg")){ // se è inserimento, se c'è un'immagine e se selezionato
 				$url = $_POST['imgurl'.$ord];
 				$expl= explode ("/", $_POST['imgurl'.$ord]);
 				$form['table_name_ref']= 'artico';
