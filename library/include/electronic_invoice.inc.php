@@ -3,7 +3,7 @@
 /* $
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2020 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -585,9 +585,26 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			}
 
 
-            $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);
-            $attrVal = $domDoc->createTextNode(substr(trim($XMLvars->client['ragso1']) . " " . trim($XMLvars->client['ragso2']), 0, 80));
-            $results->appendChild($attrVal);
+            if (($XMLvars->client['sexper']!='G') and  (trim($XMLvars->client['legrap_pf_nome'])!='') and (trim($XMLvars->client['legrap_pf_nome'])!='')){
+            // se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
+            $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+            $el = $domDoc->createElement("Nome", substr(trim($XMLvars->client['legrap_pf_nome']), 0, 80));
+            $results->appendChild($el);
+            $el = $domDoc->createElement("Cognome", substr(trim($XMLvars->client['legrap_pf_cognome']), 0, 80));
+            $results->appendChild($el);
+            } else {
+            
+             // Se è una ditta inserisco la denominazione
+            $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+            $el = $domDoc->createElement("Denominazione",substr(trim($XMLvars->client['ragso1']) . " " . trim($XMLvars->client['ragso2']), 0, 80));
+            $results->appendChild($el);
+
+    }
+			
+			
+
+			
+            
 
             $results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->client['indspe']));
