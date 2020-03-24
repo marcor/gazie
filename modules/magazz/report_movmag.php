@@ -201,7 +201,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($valore)." </td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">\n";
-	if ($a_row['tipdoc'] == "MAG"){
+	if ($a_row['tipdoc'] == "MAG" OR $a_row['tipdoc'] == "INV"){
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina movimento" ref="<?php echo $a_row['id_mov'];?>" movdes="<?php echo $a_row['descau']; ?>">
 		<i class="glyphicon glyphicon-remove"></i>

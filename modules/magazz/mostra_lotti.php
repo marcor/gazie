@@ -34,8 +34,8 @@ $date = date("Y-m-d");
 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $codice);
 
 // Antonio Germani - vedo se ci sono stati degli inventari fino alla data
-$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
-
+//$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
+// Antonio Germani -gli inventari, adesso, vengono tolti direttamente nella function getAvailableLots
 
 // Antonio Germani - controllo se ci sono articoli con movimenti di magazzino orfani del lotto
 $where= $gTables['movmag'] . ".artico = '" . $codice. "' AND ". $gTables['movmag'] . ".id_lotmag < '1'"; 
@@ -107,11 +107,11 @@ if (isset($_POST['close'])){
 		$count=array();
         foreach ($lm->available as $v_lm) {
 			// Antonio Germani - vedo quanti sono entrati
-				$query="SELECT SUM(quanti) FROM ". $gTables['movmag'] . " WHERE artico='" .$codice. "' AND id_lotmag='" .$v_lm['id']. "' AND operat='1'";
+				$query="SELECT SUM(quanti) FROM ". $gTables['movmag'] . " WHERE artico='" .$codice. "' AND id_lotmag='" .$v_lm['id']. "' AND operat='1' AND caumag < '99'";
 				$sum_in=gaz_dbi_query($query);
 				$in =gaz_dbi_fetch_array($sum_in);
 			// Antonio Germani - vedo quanti sono usciti
-				$query="SELECT SUM(quanti) FROM ". $gTables['movmag'] . " WHERE artico='" .$codice. "' AND id_lotmag='" .$v_lm['id']. "' AND operat='-1'";
+				$query="SELECT SUM(quanti) FROM ". $gTables['movmag'] . " WHERE artico='" .$codice. "' AND id_lotmag='" .$v_lm['id']. "' AND operat='-1' AND caumag < '99'";
 				$sum_out=gaz_dbi_query($query);	
 				$out =gaz_dbi_fetch_array($sum_out);
 			if ((intval($v_lm['expiry']))>0){
@@ -129,6 +129,7 @@ if (isset($_POST['close'])){
 			}
 			$tot+=$v_lm['rest'];
 			$n=0;
+			/* Antonio Germani - gli inventari, adesso, vengono tolti direttamente nella function getAvailableLots
 			foreach ($rs_last_inventory as $idlot){ // se ci sono stati degli inventari che si riferiscono a quello specifico lotto, tolgo la quantità di ciascuno tranne l'ultimo fatto
 				if (intval($n)>0){
 					if ($idlot['id_lotmag']==$v_lm['id']){
@@ -138,7 +139,7 @@ if (isset($_POST['close'])){
 					}
 				}
 				$n++;
-			}
+			}*/
             $img="";
             echo '<tr class="FacetDataTD"><td class="FacetFieldCaptionTD">'
                . $v_lm['id']

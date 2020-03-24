@@ -160,7 +160,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['annreg'] = intval($_POST['annreg']);
     $form['clfoco'] = intval($_POST['clfoco']);
     $form['clorfo'] = intval($_POST['clorfo']); //cliente, fornitore o entrambi
-    $form['tipdoc'] = $_POST['tipdoc'];
+	if ($form['caumag']>97){
+		$form['tipdoc']="INV";
+	} else {
+		$form['tipdoc'] = "MAG";
+	}
     $form['desdoc'] = substr($_POST['desdoc'], 0, 50);
     $form['giodoc'] = intval($_POST['giodoc']);
     $form['mesdoc'] = intval($_POST['mesdoc']);
@@ -176,7 +180,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
 	$form['coseprod']= $_POST['coseprod'];
     $form['id_orderman'] = intval($_POST['id_orderman']);
-	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0) {
+	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0 and intval($form['caumag'])<98) {
 		$causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $_POST['operat']= $causa['operat'];
         $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
@@ -297,7 +301,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	
 	
     if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
-        $utsreg = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
+        //formatto le date
+        $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
+        $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
+		$utsreg = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
         $utsdoc = mktime(0, 0, 0, $form['mesdoc'], $form['giodoc'], $form['anndoc']);
         if (!checkdate($form['mesreg'], $form['gioreg'], $form['annreg']))
             $msg .= "16+";
@@ -310,6 +317,21 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			if (strlen ($form['identifier'])<= 0){
 				$msg .= "21+";
 			}
+		} 
+		if (intval($form['caumag'])==98 AND intval($form['operat'])==0){ // su storno inventario bisogna indicare se entrata o uscita
+			$msg .= "29+";
+		}
+		if (intval($form['caumag'])==99 AND intval($form['operat'])!==1){ // inventario deve essere entrata
+			$msg .= "30+";
+		}
+		if (intval($form['caumag'])==98 AND $form['prezzo'] <= 0) { // Se storno inventario e non è stato dato un prezzo controllo precedente inventario
+			$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '".$form['artico']."' AND caumag = 99 AND datreg <= '" . $form['datreg'] . "'", "datreg DESC, id_mov DESC");
+			$last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
+			if ($last_inventory) {
+				$form['prezzo'] = $last_inventory['prezzo'];// imposto il valore sulla base dell'ultimo inventario 99
+			} else { // se non c'è un inventario 99 non si può fare uno storno 98
+				$msg .= "31+";				
+			}		
 		}
         if (empty($form['artico'])) {  //manca l'articolo
             $msg .= "18+";
@@ -401,9 +423,6 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			// fine salvataggio lotti
 
             $upd_mm = new magazzForm;
-            //formatto le date
-            $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
-            $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
             $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
             if (!empty($form['artico'])) {
                 $upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0, 

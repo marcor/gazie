@@ -108,6 +108,9 @@ $strScript = array("browse_document.php" =>
 		"Manca il codice operazione SIAN!",
 		"La cessione omaggio è solo per olio confezionato!",
 		"Lo scarico di morchie può avvenire solo da oli NON confezionati!",
+		"Nello storno inventario bisogna indicare se carico o scarico",
+		"L'inventario di magazzino deve essere un carico",
+		"Non si può fare uno storno ad un inventario che non esiste",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
 		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo',12=>'SP-Perdite o cali di olio',13=>'Q-Separazione morchie'),
@@ -231,7 +234,8 @@ $strScript = array("browse_document.php" =>
         'noitem' => "Non sono stati trovati articoli in questa categoria merceologica",
         'errors' => array(" La giacenza reale non pu&ograve; essere negativa",
             " Il valore reale non pu&ograve; essere negativo o uguale a zero",
-            " Si st&agrave; tentando di fare l'inventario con giacenza attuale e reale entrambe a zero"),
+            " Si st&agrave; tentando di fare l'inventario con giacenza attuale e reale entrambe a zero",
+			" Per questo articolo è già stato fatto l'inventario nello stesso giorno"),
         'preview_title' => 'Confermando le scelte fatte si registreranno i seguenti movimenti di magazzino:'
     ),
     "select_schart.php" =>

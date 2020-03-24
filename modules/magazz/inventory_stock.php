@@ -176,6 +176,12 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                             $msg .= $ka . '-1+';
                         }
                     }
+					// Antonio Germani - controllo che non sia già stato fatto l'inventario nello stesso giorno per lo stesso articolo (altrimenti non funziona bene getStockValue con articoli con lotti)
+					$checkinv="NULL";
+					$checkinv = gaz_dbi_get_row($gTables['movmag'], "artico", $ka, " AND caumag = '99' AND datdoc = '$date'");
+					if ($checkinv) {
+						$msg .= $ka . '-3+';
+					}
                     $form['vac_on' . $ka] = '';
                     if (isset($_POST['vac' . $ka]))
                         $form['vac_on' . $ka] = ' checked ';
@@ -226,11 +232,10 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     }
 								
 					if ($v['i_l']==1){ // se articolo con lotti ...
+					
 						// Antonio Germani - vedo se ci sono stati degli inventari fino alla data
-						$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$k' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
-						while ($r = gaz_dbi_fetch_array($rs_last_inventory)){
-							echo "<br>idlotmag",$r['id_lotmag'];
-						} 
+						//$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$k' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
+						// non serve più
 						
 						$lm -> getAvailableLots($k,0);					
 						if (count($lm->available) > 0) { 
@@ -246,12 +251,15 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 								}							
 							}
 						}
-						foreach($count as $key => $val){ // per ogni lotto inserisco un rigo con causale 99 
+						foreach($count as $key => $val){ // per ogni lotto creo e inserisco un rigo movmag con causale 99 
+							
+							/* Antonio Germani - commentato perché adesso gli inventari caumag 99 vengono tolti nella function getAvailableLots
 							foreach ($rs_last_inventory as $idlot){ // se ci sono stati degli inventari che si riferiscono a questo specifico lotto, tolgo la quantità di ciascuno
 								if ($idlot['id_lotmag']==$key){
 									$val=$val-$idlot['quanti'];
 								}
-							}
+							}*/
+							
 							movmagInsert(array('caumag' => 99,
 								'operat' => 1,
 								'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
