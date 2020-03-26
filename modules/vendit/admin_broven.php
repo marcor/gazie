@@ -597,7 +597,52 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     /* Con button non funziona _x */
     //if (isset($_POST['in_submit_x'])) {
     /** ENRICO FEDELE */
-    if (isset($_POST['in_submit'])) {
+	if (isset($_POST['in_submit_desc'])) { //rigo Descrittivo rapido
+        $form['rows'][$next_row]['codart'] = '';
+        $form['rows'][$next_row]['annota'] = '';
+        $form['rows'][$next_row]['pesosp'] = '';
+        $form['rows'][$next_row]['good_or_service'] = 0;
+        $form['rows'][$next_row]['unimis'] = '';
+        $form['rows'][$next_row]['quanti'] = 0;
+        $form['rows'][$next_row]['prelis'] = 0;
+        $form['rows'][$next_row]['codric'] = 0;
+        $form['rows'][$next_row]['sconto'] = 0;
+        $form['rows'][$next_row]['pervat'] = 0;
+        $form['rows'][$next_row]['tipiva'] = 0;
+        $form['rows'][$next_row]['ritenuta'] = 0;
+        $form['rows'][$next_row]['codvat'] = 0;
+        $form['rows'][$next_row]['id_doc'] = '';
+        $form['rows'][$next_row]['descri'] = '';
+        $form['rows'][$next_row]['id_mag'] = 0;
+        $form['rows'][$next_row]['status'] = 'INSERT';
+        $form['rows'][$next_row]['scorta'] = 0;
+        $form['rows'][$next_row]['quamag'] = 0;
+        $form['rows'][$next_row]['tiprig'] = 2;
+        $next_row++;
+    } else if (isset($_POST['in_submit_text'])) { //rigo Testo rapido
+        $form["row_$next_row"] = '';
+        $form['rows'][$next_row]['codart'] = '';
+        $form['rows'][$next_row]['annota'] = '';
+        $form['rows'][$next_row]['pesosp'] = '';
+        $form['rows'][$next_row]['good_or_service'] = 0;
+        $form['rows'][$next_row]['unimis'] = '';
+        $form['rows'][$next_row]['quanti'] = 0;
+        $form['rows'][$next_row]['prelis'] = 0;
+        $form['rows'][$next_row]['codric'] = 0;
+        $form['rows'][$next_row]['sconto'] = 0;
+        $form['rows'][$next_row]['pervat'] = 0;
+        $form['rows'][$next_row]['tipiva'] = 0;
+        $form['rows'][$next_row]['ritenuta'] = 0;
+        $form['rows'][$next_row]['codvat'] = 0;
+        $form['rows'][$next_row]['id_doc'] = '';
+        $form['rows'][$next_row]['descri'] = '';
+        $form['rows'][$next_row]['id_mag'] = 0;
+        $form['rows'][$next_row]['status'] = 'INSERT';
+        $form['rows'][$next_row]['scorta'] = 0;
+        $form['rows'][$next_row]['quamag'] = 0;
+        $form['rows'][$next_row]['tiprig'] = 6;
+        $next_row++;
+    } else if (isset($_POST['in_submit'])) {
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
         gaz_dbi_query ("UPDATE ".$gTables['artico']." SET `last_used`='".date("Y-m-d")."' WHERE codice='".$form['in_codart']."';");
         // addizione ai totali peso,pezzi,volume
@@ -1489,18 +1534,29 @@ $select_artico->output($form['cosear']);
   echo '			</select> */
 /** ENRICO FEDELE */
 /* glyph-icon */
-echo '			</td>
+?>
+			</td>
 			<td class="FacetColumnTD">
-				' . $script_transl[16] . ':&nbsp;<input type="text" value="' . $form['in_quanti'] . '" maxlength="11" name="in_quanti" tabindex="5" accesskey="q" />
+				<?php echo $script_transl[16] ?>:&nbsp;<input type="text" value="<?php echo $form['in_quanti'] ?>" maxlength="11" name="in_quanti" tabindex="5" accesskey="q" />
 			</td>
 			<td class="FacetColumnTD" align="right">
-				<button type="submit" class="btn btn-default btn-xs" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6">
+<?php
+if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
+?>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit_desc" title="Aggiungi rigo Descrittivo"><i class="glyphicon glyphicon-pencil"></i></button>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit_text" title="Aggiungi rigo Testo"><i class="glyphicon glyphicon-list"></i></button>
+			<span>||</span>
+<?php
+}
+?>
+				<button type="submit" class="btn btn-default btn-xs" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow'] ?>" tabindex="6">
 					<i class="glyphicon glyphicon-ok"></i>
 				</button>
 			</td>
 		</tr>
 		<tr>
-			<td class="FacetColumnTD">';
+			<td class="FacetColumnTD">
+<?php
 echo $script_transl[18] . ": ";
 $select_codric = new selectconven("in_codric");
 $select_codric->addSelected($form['in_codric']);
