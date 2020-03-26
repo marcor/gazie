@@ -436,6 +436,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$old_key]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
                 } elseif ($form['listin'] == 3) {
                     $form['rows'][$old_key]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
+                } elseif ($form['listin'] == 4) {
+                    $form['rows'][$old_key]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
+                } elseif ($form['listin'] == 5) {
+                    $form['rows'][$old_key]['prelis'] = number_format($artico['web_price'], $admin_aziend['decimal_price'], '.', '');
                 } else {
                     $form['rows'][$old_key]['prelis'] = number_format($artico['preve1'], $admin_aziend['decimal_price'], '.', '');
                 }
@@ -500,6 +504,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $price = $artico['preve2'];
                 } elseif ($form['listin'] == 3) {
                     $price = $artico['preve3'];
+                } elseif ($form['listin'] == 4) {
+                    $price = $artico['preve4'];
+                } elseif ($form['listin'] == 5) {
+                    $price = $artico['web_price'];
                 } else {
                     $price = $artico['preve1'];
                 }
@@ -865,7 +873,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         <label for="listin" class="col-sm-4 control-label" ><?php echo $script_transl['listin']; ?></label>
                         <div>
                             <?php
-                            $gForm->selectNumber('listin', $form['listin'], 0, 1, 3, 'col-sm-8');
+                            $gForm->selectNumber('listin', $form['listin'], 0, 1, 5, 'col-sm-8');
                             ?>                
                         </div>
                     </div>
