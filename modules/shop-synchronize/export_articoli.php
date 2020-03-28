@@ -24,6 +24,9 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
   */
+  
+ /* Antonio Germani - ESPORTAZIONE MANUALE (update) DEGLI ARTICOLI DA GAZIE ALL'E-COMMERCE -  GLI ARTICOLI DEVONO GIà ESISTERE NELL'E-COMMERCE ALTRIMENTI NON VERRANNO CONSIDERATI */
+  
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
@@ -79,15 +82,21 @@ if (isset($_POST['conferma'])) { // se confermato
 		</script>
 		<?php
 	}
-	if ($_GET['img']=="updimg"){ // se si devono aggiornare le immagini
-		ftp_rmdir($conn_id, $web_site_path."images"); // cancello la cartella images con i vecchi files
-		ftp_mkdir($conn_id, $web_site_path."images"); // creo nuovamente la cartella images per i nuovi files
-	}
-	//turn passive mode on
+	//FTP turn passive mode on
 	ftp_pasv($conn_id, true);
 	
+	if ($_GET['img']=="updimg"){ // se si devono aggiornare le immagini
+		if (!ftp_mkdir($conn_id, $ftp_path_upload."images")){ // se non c'è la cartella images la creo				
+			// get contents of the current directory	
+			$files = ftp_nlist($conn_id, $ftp_path_upload."images");
+			foreach ($files as $file){ // se c'era, cancello i files del precedente aggiornamento
+				ftp_delete($conn_id, $ftp_path_upload."images/".$file);
+			}
+		}
+	}	
+	
 		// creo il file xml
-	$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
+	$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
 	<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
 	$xml_output .= "\n<Products>\n";
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e creo il file xml
@@ -95,6 +104,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			if (intval($_POST['barcode'.$ord])==0) {
 				$_POST['barcode'.$ord]="NULL";
 			}
+			
 			$xml_output .= "\t<Product>\n";
 			$xml_output .= "\t<Code>".$_POST['codice'.$ord]."</Code>\n";
 			$xml_output .= "\t<BarCode>".$_POST['barcode'.$ord]."</BarCode>\n";
@@ -102,13 +112,19 @@ if (isset($_POST['conferma'])) { // se confermato
 				$xml_output .= "\t<AvailableQty>".$_POST['quanti'.$ord]."</AvailableQty>\n";
 			}
 			if ($_GET['prezzo']=="updprice" AND $_POST['web_price'.$ord]>0){
-				$xml_output .= "\t<WebPrice>".$_POST['web_price'.$ord]."</WebPrice>\n";
+				// Calcolo il prezzo IVA compresa
+				$aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($_POST['aliiva'.$ord]))['aliquo'];
+				$web_price_vat_incl= $_POST['web_price'.$ord] +(($_POST['web_price'.$ord]*$aliquo)/100);
+				$web_price_vat_incl=number_format($web_price_vat_incl, $admin_aziend['decimal_price'], '.', '');
+				$xml_output .= "\t<Price>".$_POST['web_price'.$ord]."</Price>\n";
+				$xml_output .= "\t<PriceVATincl>".$web_price_vat_incl."</PriceVATincl>\n";
+				$xml_output .= "\t<VAT>".$aliquo."</VAT>\n";
 			}
 			if ($_GET['name']=="updnam" AND strlen($_POST['descri'.$ord])>0){
 				$xml_output .= "\t<Name>".$_POST['descri'.$ord]."</Name>\n";
 			}
 			if ($_GET['descri']=="upddes" AND strlen($_POST['body_text'.$ord])>0){
-				$xml_output .= "\t<Description>".$_POST['body_text'.$ord]."</Description>\n";
+				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($_POST['body_text'.$ord]))."</Description>\n";
 			}
 			if ($_GET['img']=="updimg" AND strlen($_POST['imgurl'.$ord])>0){
 				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){
@@ -119,13 +135,12 @@ if (isset($_POST['conferma'])) { // se confermato
 					ftp_quit($conn_id);
 					header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=5");
 					exit;
-				}
-				
+				}				
 			}
 			$xml_output .= "\t</Product>\n";
 		}
 	}
-	$xml_output .="\n</Products>\n</GAzieDocuments>";
+	$xml_output .="</Products>\n</GAzieDocuments>";
 	$xmlFile = "prodotti.xml";
 	$xmlHandle = fopen($xmlFile, "w");
 	fwrite($xmlHandle, $xml_output);
@@ -259,7 +274,7 @@ if (!isset($_GET['success'])){
 				</div>
 				<?php
 				// carico in $artico gli articoli che sono presenti in GAzie
-				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
+				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri, aliiva FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
 					$avqty = 0;
@@ -292,6 +307,7 @@ if (!isset($_GET['success'])){
 									echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($body['body_text'])) . '">';
 								}
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $avqty .'">';
+								echo '<input type="hidden" name="aliiva'. $n .'" value="'. $item['aliiva'] .'">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $item['web_price'] .'">';
 								echo '<input type="hidden" name="barcode'. $n .'" value="'. $item['barcode'] .'">';
 								if ($_GET['img']=="updimg"){ // se devo aggiornare l'immagine ne trovo l'url di GAzie

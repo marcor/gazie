@@ -78,8 +78,8 @@ class APIeCommerce {
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];			
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
-			// "dwnlArticoli-gazie.php" è il nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
-			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
+			// "articoli-gazie.php" è il nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 			
 			if (intval($d['barcode'])==0) {// se non c'è barcode allora è nullo
 				$d['barcode']="NULL";
@@ -96,24 +96,24 @@ class APIeCommerce {
 			}
 			// Calcolo il prezzo IVA compresa
 			$aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($d['aliiva']))['aliquo'];
-			$web_price_vat_incl=$d['web_price']+(($d['web_price']*$aliquo)/100);			 
+			$web_price_vat_incl=$d['web_price']+(($d['web_price']*$aliquo)/100);
+			$web_price_vat_incl=number_format($web_price_vat_incl, $admin_aziend['decimal_price'], '.', '');
 	 		// creo il file xml			
-			$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
+			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
 			$xml_output .= "\n<Products>\n";						
 				$xml_output .= "\t<Product>\n";
 				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
 				$xml_output .= "\t<BarCode>".$d['barcode']."</BarCode>\n";				
 				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
-				$xml_output .= "\t<Description>".$d['body_text']."</Description>\n";
+				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['body_text']))."</Description>\n";
 				$xml_output .= "\t<Price>".$d['web_price']."</Price>\n";
 				$xml_output .= "\t<PriceVATincl>".$web_price_vat_incl."</PriceVATincl>\n";
 				$xml_output .= "\t<VAT>".$aliquo."</VAT>\n";
 				$xml_output .= "\t<Unimis>".$d['unimis']."</Unimis>\n";
-				$xml_output .= "\t<ProductVat>".$d['aliva']."</ProductVat>\n";
 				$xml_output .= "\t<ProductCategory>".$d['catmer']."</ProductCategory>\n";
 				$xml_output .= "\t</Product>\n";			
-			$xml_output .="\n</Products>\n</GAzieDocuments>";
+			$xml_output .="</Products>\n</GAzieDocuments>";
 			$xmlFile = "prodotti.xml";
 			$xmlHandle = fopen($xmlFile, "w");
 			fwrite($xmlHandle, $xml_output);
@@ -124,7 +124,7 @@ class APIeCommerce {
 			if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
 			} else{
 				$_SESSION['errmsg'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$_SESSION['errref'] = "Aggiornamento dell'articolo: ". $d['codice'];			
+				$_SESSION['errref'] = "Aggiornamento dati dell'articolo: ". $d['codice'];			
 			}
 			// chiudo la connessione FTP 
 			ftp_quit($conn_id);
@@ -135,11 +135,11 @@ class APIeCommerce {
 				$file = fopen ($urlinterf.'?access='.$access, "r");
 				if (!$file) {
 					$_SESSION['errmsg'] = "Il file di interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-					$_SESSION['errref'] = "Aggiornamento dell'articolo: ". $d['codice'];				
+					$_SESSION['errref'] = "Aggiornamento dati dell'articolo: ". $d['codice'];				
 				}
 			} else { // Riporto il codice di errore
 				$_SESSION['errmsg'] = "Impossibile connettersi al file di interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$_SESSION['errref'] = "Aggiornamento dell'articolo: ". $d['codice'];
+				$_SESSION['errref'] = "Aggiornamento dati dell'articolo: ". $d['codice'];
 			}
 	}
 	function SetProductQuantity($d) {
@@ -186,7 +186,7 @@ class APIeCommerce {
 				$xml_output .= "\t<BarCode>".$id['barcode']."</BarCode>\n";
 				$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
 				$xml_output .= "\t</Product>\n";			
-			$xml_output .="\n</Products>\n</GAzieDocuments>";
+			$xml_output .="</Products>\n</GAzieDocuments>";
 			$xmlFile = "prodotti.xml";
 			$xmlHandle = fopen($xmlFile, "w");
 			fwrite($xmlHandle, $xml_output);
@@ -215,7 +215,7 @@ class APIeCommerce {
 				$_SESSION['errref'] = "Aggiornamento quantità dell'articolo: ". $d;
 			}
 	}
-	function GetOrder($last_id) {
+	function GetOrder($last_id) { echo "ordini"; die;
 		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer), 
 		// in $last_id si deve passare l'ultimo ordine già importato al fine di non importare tutto ma solo i nuovi 
 	}

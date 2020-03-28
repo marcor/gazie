@@ -25,6 +25,8 @@
   --------------------------------------------------------------------------
   
   */
+// Antonio Germani - Importazione articoli da e-commerce a GAzie con creazione articolo in GAzie se non esiste o aggiornamento se esiste
+
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
@@ -59,7 +61,7 @@ if (isset($_POST['conferma'])) { // se confermato
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){ // ciclo gli articoli e scrivo i database
 		if (isset($_POST['download'.$ord])){ // se selezionato
 			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord],0,15));
-			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord]); // prendo il codice IVA
+			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord], " AND tipiva = 'I'"); // prendo il codice IVA
 			
 			if ($esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg"){ // se è aggiornamento, se c'è un'immagine e se selezionato
 				// cancello l'immagine presente nella cartella 
@@ -68,7 +70,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				unlink ("../../data/files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension']);
 			}
 			
-			if ((!$esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg") OR ($esiste AND strlen( $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg")){ // se è inserimento, se c'è un'immagine e se selezionato
+			if ((!$esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg") OR ($esiste AND strlen( $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg")){ // se è inserimento o se è update e c'è un'immagine e se è selezionato
 				$url = $_POST['imgurl'.$ord];
 				$expl= explode ("/", $_POST['imgurl'.$ord]);
 				$form['table_name_ref']= 'artico';
@@ -80,8 +82,9 @@ if (isset($_POST['conferma'])) { // se confermato
 				gaz_dbi_table_insert('files',$form);// inserisco i dati dell'immagine nella tabella files
 				$form['id_doc']= gaz_dbi_last_id();//recupero l'id assegnato dall'inserimento
 				$imgweb='../../data/files/'.$admin_aziend['company_id'].'/images/'.$form['id_doc'].'.'.$form['extension'];
-				file_put_contents($imgweb, file_get_contents($url)); // scrivo l'immagine web HQ nella cartella files
-				
+				if (intval(file_put_contents($imgweb, file_get_contents($url))) == 0){ // scrivo l'immagine web HQ nella cartella files
+					echo "ERRORE nella scrittura in GAzie dell'immagine: ",$url;die;
+				}
 				$img = '../../data/files/tmp/'.$expl[count($expl)-1]; 
 				// scrivo l'immagine nella cartella temporanea
 				file_put_contents($img, file_get_contents($url));
@@ -292,7 +295,7 @@ if (!isset($_GET['success'])){
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $product->AvailableQty .'">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $product->Price .'">';
 								echo '<input type="hidden" name="unimis'. $n .'" value="'. $product->Unimis .'">';
-								echo '<input type="hidden" name="aliquo'. $n .'" value="'. $product->ProductVat .'">';
+								echo '<input type="hidden" name="aliquo'. $n .'" value="'. $product->VAT .'">';
 								echo '<input type="hidden" name="imgurl'. $n .'" value="'. $product->ProductImgUrl .'">';
 								?>
 							</div>
