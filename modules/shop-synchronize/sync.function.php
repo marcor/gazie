@@ -215,7 +215,7 @@ class APIeCommerce {
 				$_SESSION['errref'] = "Aggiornamento quantità dell'articolo: ". $d;
 			}
 	}
-	function GetOrder($last_id) { echo "ordini"; die;
+	function GetOrder($last_id) { 
 		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer), 
 		// in $last_id si deve passare l'ultimo ordine già importato al fine di non importare tutto ma solo i nuovi 
 	}
