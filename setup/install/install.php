@@ -31,11 +31,11 @@ $err=array();
 if (isset($_SESSION['table_prefix'])) {
    $table_prefix=substr($_SESSION['table_prefix'],0,12);
 } elseif (isset($_POST['tp'])) {
-    $table_prefix=filter_var(substr($_POST['tp'],0,12),FILTER_SANITIZE_MAGIC_QUOTES);
+    $table_prefix=filter_var(substr($_POST['tp'],0,12),FILTER_SANITIZE_ADD_SLASHES);
 } elseif(isset($_GET['tp'])) {
-    $table_prefix=filter_var(substr($_GET['tp'],0,12),FILTER_SANITIZE_MAGIC_QUOTES);
+    $table_prefix=filter_var(substr($_GET['tp'],0,12),FILTER_SANITIZE_ADD_SLASHES);
 } else {
-    $table_prefix=filter_var(substr($table_prefix,0,12),FILTER_SANITIZE_MAGIC_QUOTES);
+    $table_prefix=filter_var(substr($table_prefix,0,12),FILTER_SANITIZE_ADD_SLASHES);
 }
 //
 // Alcune directory devono essere scrivibili dal servente HTTP/PHP (www-data).
