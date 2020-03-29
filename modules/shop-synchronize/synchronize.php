@@ -26,12 +26,12 @@
 ------------------------------------------------------------------------------------------
 	** Antonio Germani - www.lacasettabio.it **
 	Questo codice serve per avviare l'interfaccia per la sincronizzazione di GAzie con un negozio online.
-	Per ogni caso specifico, sono necessari due file intefaccia, uno da mettere nella cartella "shop-synchronize" di GAzie e l'altro da mettere nella root del negozio online.
+	Per il funzionamento Ë necessario creare due file di interfaccia e inserirli nella root del negozio online.
 	I file interfaccia sono specifici per ciascun CMS e/o componente utilizzato dal negozio online.
-	La cartella synchronize di GAzie potr√† contenere tutti i file interfaccia che a mano a mano verranno crati dagli sviluppatori.
+	
 	L'utente deve scegliere quali interfacce utilizzare (sulla base delle caratteristiche del suo negozio online) e scrivere i relativi nomi dei file nella sottostante "Impostazione".
-	-Caso download: L'interfaccia presente nella root del negozio online elabora i dati del database del negozio e crea un file xml. In GAzie, la seconda interfaccia elabora il file xml scrivendone i dati sul database di GAzie.
-	-Caso Upload: L'interfaccia di GAzie crea un file xml che viene letto dall'interfaccia presente nella root del negozio online. Con i dati presenti nel file xml viene scritto il data base dell'e-commerce.
+	-Caso download: L'interfaccia presente nella root del negozio online elabora i dati del database del negozio e crea un file xml. GAzie elabora il file xml scrivendone i dati sul database di GAzie.
+	-Caso Upload: GAzie crea un file xml che viene letto dall'interfaccia presente nella root del negozio online. Con i dati presenti nel file xml viene scritto il data base dell'e-commerce.
 ------------------------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
@@ -82,7 +82,7 @@ if (isset ($_POST['download'])) {
 		if (!isset($_POST['scardescrizione'])){
 			$_POST['scardescrizione']="";
 		}
-		header("Location: " . $file_downloader."?updpre=".$_POST['updpre']."&upddes=".$_POST['upddes']."&updimm=".$_POST['updimm']."&imppre=".$_POST['imppre']."&impdes=".$_POST['impdes']."&impimm=".$_POST['impimm']);
+		header("Location: " . $file_downloader."?upd=".$_POST['upd']."&updpre=".$_POST['updpre']."&updname=".$_POST['updname']."&upddes=".$_POST['upddes']."&updimm=".$_POST['updimm']."&imp=".$_POST['imp']."&imppre=".$_POST['imppre']."&impdes=".$_POST['impdes']."&impimm=".$_POST['impimm']);
 		exit;
 	} else {
 		header("Location: " . $_POST['ritorno']);
@@ -151,14 +151,17 @@ if (isset ($_POST['download'])) {
 						</div>
 						
 						<div class="col-sm-6  bg-success" align="left" style="font-size: 18;">
-							<p> In aggiornamento variare anche:</p>
+							<input type="checkbox" name="upd" value="updval" > Attiva modifica articolo<br><br>
+							<p> Nell'articolo variare anche:</p>
 							<!-- <input type="checkbox" name="impquantita" value="dwldqty"> quantit&agrave &nbsp -->
 							<input type="checkbox" name="updpre" value="updpre"> Prezzo web &nbsp
+							<input type="checkbox" name="updname" value="updnam" > Nome &nbsp
 							<input type="checkbox" name="upddes" value="upddes" > Descrizione estesa &nbsp
 							<input type="checkbox" name="updimm" value="updimg" > Immagine &nbsp
 						</div>
 						<div class="col-sm-6  bg-success" align="left" style="font-size: 18;">
-							<p> In nuovo inserimento inserire anche:</p>
+							<input type="checkbox" name="imp" value="impval" > Attiva inserimento articolo<br><br>
+							<p> Nell'articolo inserire anche:</p>
 							<!-- <input type="checkbox" name="scarquantita" value="dwldqty"> quantit&agrave &nbsp -->
 							<input type="checkbox" name="imppre" value="dwlprice"> Prezzo web &nbsp
 							<input type="checkbox" name="impdes" value="dwldes" > Descrizione estesa &nbsp 
