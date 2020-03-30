@@ -121,7 +121,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			if ($esiste AND $_GET['upd']=="updval"){ // se esiste l'articolo ed è attivo l'update, aggiorno l'articolo
 				if (strlen($_POST['body_text'.$ord])>0 AND $_GET['upddes']=="upddes"){ // se c'è una descrizione estesa body_text ed è selezionata
 					$esist = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_".$_POST['codice'.$ord]);
-					$form['body_text']=$_POST['body_text'.$ord];
+					$form['body_text'] = htmlspecialchars_decode ($_POST['body_text'.$ord]);
 					$form['table_name_ref']="artico_".$_POST['codice'.$ord];
 					$form['lang_id']=1;
 					if ($esist) { // se c'è già	
@@ -145,7 +145,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,web_mu,unimis,image,web_public,depli_public,aliiva) VALUES ('" . $_POST['codice'.$ord] . "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
 				}
 				if (strlen($_POST['body_text'.$ord])>0 AND $_GET['impdes']=="dwldes"){ // se c'è una descrizione estesa - body_text ed è selezionata
-					$form['body_text']=$_POST['body_text'.$ord];
+					$form['body_text'] = htmlspecialchars_decode ($_POST['body_text'.$ord]);
 					$form['table_name_ref']="artico_".$_POST['codice'.$ord];
 					$form['lang_id']=1;
 					gaz_dbi_table_insert('body_text', $form); // la scrivo nel DB
@@ -292,11 +292,11 @@ if (!isset($_GET['success'])){
 							</div>
 							<div class="col-sm-5">
 								<?php echo $product->Name;
-								echo '<input type="hidden" name="descri'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Name)) . '">';
+								echo '<input type="hidden" name="descri'. $n .'" value="'. $product->Name . '">';
 								?>
 							</div>
 							<div class="col-sm-1">
-								<?php echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)) . '">';
+								<?php echo '<input type="hidden" name="body_text'. $n .'" value="'. htmlspecialchars($product->Description) . '">';
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $product->AvailableQty .'">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $product->Price .'">';
 								echo '<input type="hidden" name="unimis'. $n .'" value="'. $product->Unimis .'">';
