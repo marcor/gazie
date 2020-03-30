@@ -726,8 +726,10 @@ function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=f
     }
     if ($n > 1) { // è una stampa con molte fatture
         $doc_name = $docVars->intesta1 . '_Fatture_differite_da_DdT.pdf';
+		$doc_name_email = "Fatture differite da Ddt.pdf";
     } else { // è la stampa di una sola fattura
         $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
+		$doc_name_email = $pdf->tipdoc . '.pdf';
     }
     $pdf->pageFooter();
     if ($dest && $dest == 'E') { // è stata richiesta una e-mail
@@ -741,6 +743,7 @@ function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=f
         $content->string = $pdf->Output($doc_name, $dest);
         $content->encoding = "base64";
         $content->mimeType = "application/pdf";
+		$docVars->azienda['doc_name'] = $doc_name_email;
         $gMail = new GAzieMail();
         $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
     } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare
