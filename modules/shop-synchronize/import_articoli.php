@@ -296,7 +296,7 @@ if (!isset($_GET['success'])){
 								?>
 							</div>
 							<div class="col-sm-1">
-								<?php echo '<input type="hidden" name="body_text'. $n .'" value="'. htmlspecialchars($product->Description) . '">';
+								<?php echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)) . '">';
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $product->AvailableQty .'">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $product->Price .'">';
 								echo '<input type="hidden" name="unimis'. $n .'" value="'. $product->Unimis .'">';
