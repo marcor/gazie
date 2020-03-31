@@ -56,6 +56,35 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si deve fare un parsing di quanto arriva dal browser...
+	if (isset($_POST['button_ok_barcode']) || $_POST['ok_barcode']=="ok"){
+		$form['ok_barcode']="ok";
+	} else {
+		$form['ok_barcode']="";
+	}
+	if (isset ($_POST['no_barcode'])){
+		$form['ok_barcode']="no";
+		unset ($_POST['in_barcode']);
+		$form['ok_barcode']="";
+	}
+	if (isset ($_POST['in_barcode']) && strlen($_POST['in_barcode'])>0){
+		$form['in_barcode']=$_POST['in_barcode'];
+		$serbar = gaz_dbi_get_row($gTables['artico'], "barcode", $form['in_barcode']);
+		if (!isset($serbar)){
+			$form['in_barcode']="NOT FOUND";
+		} else {
+			$_POST['cosear']=$serbar['codice'];
+			$form['in_codart']=$serbar['codice'];
+			$_POST['in_codart']=$serbar['codice'];
+			$_POST['in_submit']="submit";
+			$form['in_barcode']="";
+			$form['in_quanti']="1";
+			$_POST['in_quanti']="1";
+		}
+	} else {
+		$form['in_barcode']="";
+	}
+	
+	
     $form['id_tes'] = intval($_POST['id_tes']);
     $form['hidden_req'] = $_POST['hidden_req'];
     $form['roundup_y'] = $_POST['roundup_y'];
@@ -617,6 +646,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $next_row--;
     }
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
+	$form['in_barcode']="";
+	$form['ok_barcode']="";
     $tesdoc = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", intval($_GET['id_tes']));
     $cliente = $anagrafica->getPartner($tesdoc['clfoco']);
     $form['hidden_req'] = '';
@@ -693,6 +724,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $next_row++;
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
+	$form['in_barcode']="";
+	$form['ok_barcode']="";
  	if (!$ecr_user) { // creerò un XML con id_cash '0' oppure invierò all'ecr (RT)
 		$form['id_cash'] = 0;
 		$form['seziva'] = 1;
@@ -910,7 +943,8 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <input type=\"hidden\" value=\"" . $form['in_lot_or_serial'] . "\" name=\"in_lot_or_serial\" />
         <input type=\"hidden\" value=\"" . $form['in_id_lotmag'] . "\" name=\"in_id_lotmag\" />
         <input type=\"hidden\" value=\"" . $form['in_status'] . "\" name=\"in_status\" />
-        <input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />";
+        <input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />
+		<input type=\"hidden\" value=\"" . $form['ok_barcode'] . "\" name=\"ok_barcode\" />";
     if ($next_row > 0) {
         $tot = 0;
         $form['net_weight'] = 0;
@@ -1097,7 +1131,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <div class="tab-content form-horizontal">
             <div id="insrow1" class="tab-pane fade in active bg-info">
                 <div class="row">
-                    <div class="col-sm-6 col-md-1 col-lg-1">
+                    <div class="col-sm-2">
                         <div class="form-group">
                             <label for="tiprig" class="col-sm-4 control-label"><?php echo $script_transl['tiprig']; ?></label>
                             <div class="col-sm-8">
@@ -1105,29 +1139,66 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                             </div>                
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-5 col-lg-5">
+                    <div class="col-sm-6">
                         <div class="form-group">
-                            <label for="item" class="col-sm-4 control-label"><?php echo $script_transl['item']; ?></label>
+                            <label for="item" class="col-sm-1 control-label"><?php echo $script_transl['item']; ?></label>
                             <?php
                             $select_artico = new selectartico("in_codart");
                             $select_artico->addSelected($form['in_codart']);
-                            $select_artico->output(substr($form['cosear'], 0, 20), 'C', "col-sm-8");
+                            $select_artico->output(substr($form['cosear'], 0, 20), 'C', "col-sm-4");
                             ?>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-lg-4">
+                        
+						<?php
+						// Antonio Germani - input con pistola lettore codice a barre 
+						
+							//$class_btn_confirm='btn-success';
+							if ($form['ok_barcode']!="ok"){
+								?>	
+										<button type="submit" name="button_ok_barcode" class="btn btn-edit btn-default btn-xs col-sm-2" title="inserisci con pistola Barcode"> 
+										<span class="glyphicon glyphicon-barcode"> Barcode</span>
+										</button>
+								<?php
+							} else {
+								if ($form['in_barcode']==""){
+								?>						
+										
+										<input  type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" class="col-sm-4" onchange="this.form.submit()" />
+										<button type="submit"  name="no_barcode" title="Togli con pistola Barcode" class="btn btn-edit btn-xs col-sm-2"> 
+										<span class="glyphicon glyphicon-remove"> Barcode</span>
+										</button>								
+								<?php
+								} elseif ($form['in_barcode']=="NOT FOUND") {
+									$form['in_barcode']="";
+									?>						
+										
+										<input style="border: 3px solid red;"  type="text" value="<?php echo $form['in_barcode']; ?>" class="col-sm-4" name="in_barcode" onchange="this.form.submit()" />
+										<button type="submit"  name="no_barcode" title="Togli con pistola Barcode" class="btn btn-edit btn-xs col-sm-2"> 
+										<span class="glyphicon glyphicon-remove"> Barcode</span>							
+									<?php
+								}
+							}
+						
+						// Antonio Germani - fine input con pistola lettore codice a barre -->
+						?>
+						</div>
+					</div>
+                    <div class="col-sm-2">
+					<?php if ($form['ok_barcode']!="ok"){?>
                         <div class="form-group">
                             <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
                             <input class="col-sm-6" type="number" step="any" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
                         </div>
+					<?php } ?>
                     </div>
-                    <div class="col-sm-6 col-md-2 col-lg-2">
+					<?php if ($form['ok_barcode']!="ok"){?>
+                    <div class="col-sm-2">
                         <div class="form-group text-center">
                             <button type="submit"  tabindex=7 class="btn btn-default btn-xs col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
                                 <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
                             </button>
                         </div> 
                     </div>
+					<?php } ?>
                 </div>
             </div><!-- chiude tab-pane  -->
             <div id="insrow2" class="tab-pane fade bg-info">
@@ -1327,5 +1398,13 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 <?php
+if ($form['ok_barcode']=="ok"){
+	?>
+	<script type="text/javascript">
+	if (this.document.docven.in_barcode.value == '') this.document.docven.in_barcode.focus();
+	</script>
+	<?php
+}
+
 require("../../library/include/footer.php");
 ?>
