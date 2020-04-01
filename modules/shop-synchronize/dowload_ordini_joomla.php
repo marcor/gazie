@@ -116,17 +116,20 @@ if (isset($_POST['conferma'])) { // se confermato
 				// controllo se esiste l'articolo in GAzie 
 				$ckart = gaz_dbi_get_row($gTables['artico'], "codice", substr($_POST['codice'.$ord.$row],0,15));
 				$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
+				$descri=$ckart['descri'];// se esiste ne prendo descri come $descri
 				if (!$ckart){ // se non esiste con il codice, controllo se esiste con il codice a barre
 					$ckart = gaz_dbi_get_row($gTables['artico'], "barcode", substr($_POST['codice'.$ord.$row],0,64));
 					$codart=$ckart['codice'];// se esiste ne prendo il codice come $codart
+					$descri=$ckart['descri'];// se esiste ne prendo descri come $descri
 				} 
-				if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio perché non ha magazzino
+				if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio in quanto non si sa se deve movimentare il magazzino					
 					if ($_POST['codvat'.$ord.$row]<1){ // se il sito non ha mandato il codice IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
 						$_POST['codvat'.$ord.$row]=$_POST['codvatcost'.$ord];
 						$_POST['aliiva'.$ord.$row]=$_POST['aliivacost'.$ord];
 					}
 					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '1', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$_POST['codvat'.$ord.$row]."', '420000006', '" . $admin_aziend['adminid'] . "')");
 					$codart= substr($_POST['codice'.$ord.$row],0,15);// se non esiste dopo averlo creato ne prendo il codice come $codart
+					$descri= $_POST['descri'.$ord.$row]; //prendo anche la descrizione
 				}
 								
 					if ($includevat=="true"){ // se è impostato iva compresa, scorporo l'iva al prezzo articoli
@@ -145,8 +148,8 @@ if (isset($_POST['conferma'])) { // se confermato
 						
 					}
 				
-				// salvo rigo su database tabella rigbro
-				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($_POST['descri'.$ord.$row]) . "','". $_POST['unimis'.$ord.$row] . "','" . $_POST['quanti'.$ord.$row] . "','" . $_POST['prelis'.$ord.$row] . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
+				// salvo rigo su database tabella rigbro 
+				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $_POST['unimis'.$ord.$row] . "','" . $_POST['quanti'.$ord.$row] . "','" . $_POST['prelis'.$ord.$row] . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
 			}
 						
 			/*
