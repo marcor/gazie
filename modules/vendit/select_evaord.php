@@ -516,7 +516,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
         header("Location: invsta_docven.php");
         exit;
     }
-} elseif (isset($_POST['vco'])) { //conferma dell'evasione di un corrispettivo
+} elseif (isset($_POST['vco']) OR isset($_POST['vcoA']) ) { //conferma dell'evasione di un corrispettivo
     //controllo i campi
     $dataemiss = $form['datemi_Y'] . "-" . $form['datemi_M'] . "-" . $form['datemi_D'];
     $utsDataemiss = mktime(0, 0, 0, $_POST['datemi_M'], $_POST['datemi_D'], $_POST['datemi_Y']);
@@ -529,6 +529,10 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
 	$ecr['seziva']=$form['seziva'];
 	$ecr['descri']="NULL";
 	}
+	if (isset($_POST['vcoA'])){ // se lo scontrino è anonimo
+		$form['clfoco']=103;
+	}
+	
     // ALLERTO SE NON E' STATA ESEGUITA LA CHIUSURA/CONTABILIZZAZIONE DEL GIORNO PRECEDENTE
     $rs_no_accounted = gaz_dbi_dyn_query("datemi", $gTables['tesdoc'], "id_con = 0 AND tipdoc = 'VCO' AND datemi < '$dataemiss' AND tipdoc = 'VCO'", 'id_tes', 0, 1);
     $no_accounted = gaz_dbi_fetch_array($rs_no_accounted);
@@ -582,7 +586,11 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
         $script_transl = $strScript['select_evaord.php'];                
         $iniziotrasporto .= " " . $_POST['initra_H'] . ":" . $_POST['initra_I'] . ":00";
         $form['tipdoc'] = 'VCO';
-        $form['template'] = 'FatturaAllegata';
+		if (isset($_POST['vcoA'])){
+			$form['template'] = "Scontrino";
+		} else {			
+			$form['template'] = 'FatturaAllegata'; 
+		}
         $form['id_con'] = '';
         $form['id_contract'] = $ecr['id_cash'];
         $form['seziva'] = $ecr['seziva'];
@@ -605,7 +613,9 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
                 $form['numfat'] = 1;
             }
             $form['datfat'] = $form['datemi'];
-        }
+        } else {
+			 $form['numfat'] = 0;
+		}
 
         tesdocInsert($form);
         $last_id = gaz_dbi_last_id();
@@ -1634,13 +1644,20 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             echo "<input type=\"hidden\" name=\"hiddentot\" value=\"$total_order\">\n";
             echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">&nbsp;</td>\n";
             echo "<td align=\"right\" colspan=\"6\" class=\"FacetFieldCaptionTD\">\n";
-			echo "<input type=\"submit\" name=\"vri\" value=\"" . $script_transl['issue_vri'] . "\" accesskey=\"m\" />\n";
-            echo "<input type=\"submit\" name=\"cmr\" value=\"" . $script_transl['issue_cmr'] . "\" accesskey=\"m\" />\n";
-            echo "<input type=\"submit\" name=\"ddt\" value=\"" . $script_transl['issue_ddt'] . "\" accesskey=\"d\" />\n";
-            echo "<input type=\"submit\" name=\"fai\" value=\"" . $script_transl['issue_fat'] . "\" accesskey=\"f\" />\n";
+			echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vri\" value=\"" . $script_transl['issue_vri'] . "\" accesskey=\"m\" />\n";
+            echo "<input type=\"submit\" class=\"btn btn-success\" name=\"cmr\" value=\"" . $script_transl['issue_cmr'] . "\" accesskey=\"m\" />\n";
+            echo "<input type=\"submit\" class=\"btn btn-success\" name=\"ddt\" value=\"" . $script_transl['issue_ddt'] . "\" accesskey=\"d\" />\n";
+            echo "<input type=\"submit\" class=\"btn btn-success\" name=\"fai\" value=\"" . $script_transl['issue_fat'] . "\" accesskey=\"f\" />\n";
             if (!empty($alert_sezione))
                 echo " &sup1;";
-            echo "<input type=\"submit\" name=\"vco\" value=\"" . $script_transl['issue_cor'] . "\" accesskey=\"c\" />\n";
+			if (intval($cliente['pariva'])==0 AND strlen($cliente['codfis'])<11){ // Antonio Germani - se non c'è partita iva e non c'è codice fiscale
+				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vcoA\" value=\"" . $script_transl['issue_cor'] . " anonimo\" accesskey=\"c\" />\n";
+			} elseif (intval($cliente['pariva'])==0 AND strlen($cliente['codfis'])>10) {
+				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vco\" value=\"" . $script_transl['issue_cor'] . "\" accesskey=\"c\" />\n";
+				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vcoA\" value=\"" . $script_transl['issue_cor'] . " anonimo\" accesskey=\"c\" />\n";
+			} else {
+				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vco\" value=\"" . $script_transl['issue_cor'] . "\" accesskey=\"c\" />\n";
+			}
             echo "</td>";
             echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl['taxable'] . " " . $admin_aziend['html_symbol'] . " &nbsp;\n";
             echo "<input type=\"text\"  style=\"text-align:right;\" value=\"" . number_format(($total_order - $total_order * $form['sconto'] / 100 + $form['traspo']), 2, '.', '') . "\" name=\"total\"  readonly />\n";

@@ -183,8 +183,13 @@ class Template extends FPDI {
             }
 			$this->SetXY(110, $interlinea + 6);
             $this->SetFont('helvetica', '', 10);
+			if (!empty($this->cliente1)){ // Antonio Germani - se non c'è cliente evito di scrivere (serve per template scontrino)
             $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
             $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
+			} else {
+				$this->Cell(15, 5,'', 0, 0, 'R');
+				$this->Cell(75, 5,'', 0, 1, 'L', 0, '', 1);
+			}
             if (!empty($this->cliente2)) {
                 $this->Cell(115);
                 $this->Cell(75, 5, $this->cliente2, 0, 1, 'L', 0, '', 1);

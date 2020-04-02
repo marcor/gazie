@@ -37,7 +37,7 @@ function get_template_lang($clfoco) {
     $lang = false;
     $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $clfoco);
     $stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
-    if ($stato['country'] !== "IT")
+    if ($stato AND $stato['country'] !== "IT")
         $lang = 'english';
     return $lang;
 }
@@ -66,7 +66,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     $lang = false;
     $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $testata['clfoco']);
     $stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
-    if ($stato['country'] !== "IT")
+    if ($stato AND $stato['country'] !== "IT")
         $lang = 'english';
 
     if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail

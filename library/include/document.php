@@ -487,6 +487,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'OrdineWeb' => 'ordine_web',
         'FatturaSemplice' => 'fattura_semplice',
         'FatturaAllegata' => 'fattura_allegata',
+		'Scontrino' => 'scontrino',
         'OrdineFornitore' => 'ordine_fornitore',
         'OrdineAcquistoProduzioni' => 'ordine_acquisto_produzioni',
         'PreventivoFornitore' => 'preventivo_fornitore',

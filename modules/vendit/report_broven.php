@@ -62,7 +62,7 @@ function mostra_documenti_associati($ordine) {
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "VCO") {
             // scontrino
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=FatturaAllegata\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r['id_tes'] . "&template=".$tesdoc_r["template"]."\">";
             echo "scontr. " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "VRI") {
