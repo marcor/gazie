@@ -64,6 +64,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);// controllo se esiste in GAzie
 			if (!$esiste) { // se non è stato trovato provo a cercarlo con il codice a barre
 				$esiste = gaz_dbi_get_row($gTables['artico'], "barcode", $_POST['codice'.$ord]);
+				$_POST['codice'.$ord]=$esiste['codice']; // se esiste per codice a barre il codice di GAzie è comunque 'codice'
 			}
 			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord], " AND tipiva = 'I'"); // prendo il codice IVA
 			
