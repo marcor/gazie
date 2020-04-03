@@ -61,7 +61,10 @@ if (isset($_POST['conferma'])) { // se confermato
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){ // ciclo gli articoli e scrivo i database
 		if (isset($_POST['download'.$ord])){ // se selezionato
 			$_POST['codice'.$ord]=addslashes(substr($_POST['codice'.$ord],0,15)); // Il codice articolo di GAzie è max 15 caratteri
-			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);
+			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);// controllo se esiste in GAzie
+			if (!$esiste) { // se non è stato trovato provo a cercarlo con il codice a barre
+				$esiste = gaz_dbi_get_row($gTables['artico'], "barcode", $_POST['codice'.$ord]);
+			}
 			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord], " AND tipiva = 'I'"); // prendo il codice IVA
 			
 			if ($esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval"){ // se è aggiornamento, se c'è un'immagine, se selezionato e se è attivo l'aggiornamento
