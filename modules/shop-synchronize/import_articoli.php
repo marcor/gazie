@@ -89,7 +89,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				$form['id_doc']= gaz_dbi_last_id();//recupero l'id assegnato dall'inserimento
 				$imgweb='../../data/files/'.$admin_aziend['company_id'].'/images/'.$form['id_doc'].'.'.$form['extension'];
 				if (intval(file_put_contents($imgweb, file_get_contents($url))) == 0){ // scrivo l'immagine web HQ nella cartella files
-					echo "ERRORE nella scrittura in GAzie dell'immagine: ",$url;die;
+					echo "ERRORE nella scrittura in GAzie dell'immagine: ",$url, " <br>Riprovare in quanto potrebbe trattarsi di un Errore momentaneo. Se persiste, controllare che sia presente la cartella images in data/files/nrAzienda/";die;
 				}
 				$img = '../../data/files/tmp/'.$expl[count($expl)-1]; 
 				// scrivo l'immagine nella cartella temporanea
