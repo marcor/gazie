@@ -180,7 +180,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
 	$form['coseprod']= $_POST['coseprod'];
     $form['id_orderman'] = intval($_POST['id_orderman']);
-	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0 and intval($form['caumag'])<98) {
+	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0 and intval($form['caumag'])<80) {
 		$causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $_POST['operat']= $causa['operat'];
         $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
@@ -198,7 +198,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             $form['id_rif'] = 0;
         }		
 	}
-	 $form['operat'] = intval($_POST['operat']);
+	if (intval($_POST['caumag'])== 82){
+		$form['operat'] = 1;
+	} elseif (intval($_POST['caumag'])== 81){
+		$form['operat'] = -1;
+	} else {
+		$form['operat'] = intval($_POST['operat']);
+	}	
 	$print_unimis = "";
 	$print_uniacq = "";
 	if (strlen($form['cosear'])>0) { // se c'è un articolo carico l'unità di misura e se ci sono anche gli identificativi del lotto
