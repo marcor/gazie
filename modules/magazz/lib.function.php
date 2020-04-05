@@ -793,7 +793,7 @@ class magazzForm extends GAzieForm {
         if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento
             $id_movmag = movmagInsert($row_movmag);
             //gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $id_rigo_doc, 'id_mag', gaz_dbi_last_id());
-            gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . gaz_dbi_last_id() . " WHERE `id_rig` = $id_rigo_doc ");
+            gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_movmag . " WHERE `id_rig` = $id_rigo_doc ");
         } elseif ($id_rigo_doc === 'DEL') {                 // si deve eliminare un movimento esistente
             $old_movmag = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $id_movmag);
             $old_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $old_movmag['caumag']);
