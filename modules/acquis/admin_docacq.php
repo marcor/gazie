@@ -727,7 +727,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['initra'] = $initra;
                 $form['datemi'] = $datemi;
                 $form['id_orderman'] = $form['in_id_orderman'];
-               $ultimo_id =tesdocInsert($form);
+                $ultimo_id = tesdocInsert($form);
 //inserisco i righi
                 foreach ($form['rows'] as $i => $value) {
                     $form['rows'][$i]['id_tes'] = $ultimo_id;
@@ -2199,7 +2199,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     <div class="form-group col-sm-12 col-md-6 text-right">
                                 <label for="submit" class="col-form-label"><?php echo $script_transl['insert']; ?></label>
 								<div>
-                                <button type="submit"  tabindex="7" class="btn <?php echo $class_conf_row; ?> btn-xs" name="in_submit">
+                                <button type="submit" tabindex="7" class="btn <?php echo $class_conf_row; ?> btn-xs" name="in_submit">
                                     <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
                                 </button>
 								</div>

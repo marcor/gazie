@@ -128,7 +128,7 @@ function confirMail(link){
    $("#dialog" ).dialog( "open" );
 }
 </script>
-<div  style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+<div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
       <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
       <p class="ui-state-highlight" id="mail_adrs"></p>
       <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
@@ -223,7 +223,7 @@ for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
 <td colspan="3" align="right" nowrap class="FacetFooterTD">
 <input type="submit" name="Return" value="Indietro">
 <?php
-echo "<input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']."!\">&nbsp;";
+echo "<input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']." !\">&nbsp;";
 echo "<br /><br />";
 echo "<input type=\"submit\" name=\"partaperte\" value=\" ! PARTITE APERTE !\"><br /><br />";
 ?>
@@ -257,7 +257,7 @@ $linkHeaders -> output();
 <?php
 $tot=0;
 while ($r = gaz_dbi_fetch_array($rs_castel)) {
-      if ($r['saldo'] != 0) {
+      if (abs($r['saldo']) >= 0.001) {
          echo "<tr class=\"FacetDataTD\">";
          echo "<td >".$r['codcon']."&nbsp;</td>";
          echo "<td ><a title=\"Dettagli cliente\" href=\"report_client.php?nome=".$r["ragso1"]."\">".$r["ragso1"]."</a> &nbsp;</td>";

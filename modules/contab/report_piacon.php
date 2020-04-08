@@ -153,7 +153,7 @@ $(function() {
                 if ($rs2) {
                     $r2 = gaz_dbi_fetch_array($rs2);
                 }
-                $color_class = $css_class[substr($r["codice"],0,1)-1];
+                $color_class = $css_class[substr($r['codice'],0,1)-1];
                 if (substr($r["codice"], 3) == '000000') {
                     $collapse = $r["codice"];
                     echo '<tr class="collapsible" data-toggle="collapse" data-target=".' . $collapse . '">	

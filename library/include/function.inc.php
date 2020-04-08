@@ -1398,7 +1398,7 @@ class GAzieMail {
 		} else {
 			$mailto = $partner['e_mail']; //recipient
 		}
-        $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione " . $admin_data['doc_name']; //subject
+        $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione " . str_lreplace('.pdf', '', $admin_data['doc_name']); //subject
         // aggiungo al corpo  dell'email
         $body_text = "<div><b>" . $admin_data['cliente1']. "</b></div>\n";
         $body_text .= "<div>" . $admin_data['doc_name']. "</div>\n";
@@ -2420,7 +2420,6 @@ function checkAdmin($Livaut = 0) {
 				}
     }
     return array_merge($admin_aziend, $currency);
-		
 }
 
 function changeEnterprise($new_co = 1) {

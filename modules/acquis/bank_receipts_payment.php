@@ -31,7 +31,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['paymov'] = array();
     $form['entry_date'] = date("d/m/Y");
     $form['expiry_ini'] = date("d/m/Y");
-    $form['expiry_fin'] = date("d/m/Y");
+    $form['expiry_fin'] = date("t/m/Y");
     $form['orderby'] = 0;
     $form['target_account'] = 0;
     $form['transfer_fees_acc'] = 0;

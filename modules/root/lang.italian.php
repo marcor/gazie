@@ -112,7 +112,7 @@ $strScript = array("admin.php" =>
         'conf_psw' => "Reinserisci la Password",
         'label_new_psw' => "Nuova Password",
         'new_psw' => "Inserisci Nuova Password",
-        'student' => "Se sei uno studente puoi acce+dere da qui"
+        'student' => "Se sei uno studente puoi accedere da qui"
         ));
 $errors = array(
     'access' => 'Non hai il diritto di accedere al modulo'
