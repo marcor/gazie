@@ -51,35 +51,35 @@ if (isset($_POST['Return'])) {
 }
 ?>
 <form method="POST">
-    <input type="hidden" name="codart" value="<?= $form["codart"] ?>">
-    <input type="hidden" name="codclfoco" value="<?= $form["codclfoco"] ?>">
-    <div align="center"><font class="FacetFormHeaderFont"><?= $script_transl['mesg'][0]; ?> </font></div>
+    <input type="hidden" name="codart" value="<?php echo $form["codart"] ?>">
+    <input type="hidden" name="codclfoco" value="<?php echo $form["codclfoco"] ?>">
+    <div align="center"><font class="FacetFormHeaderFont"><?php echo $script_transl['mesg'][0]; ?> </font></div>
     <table class="GazFormDeleteTable">
         <tr>
             <td colspan="2" class="FacetDataTD" style="color: red;">
-                <?= $script_transl['mesg'][1]; ?>
+                <?php echo $script_transl['mesg'][1]; ?>
             </td>
         </tr>
         <tr>
-            <td class="FacetFieldCaptionTD"><?= $script_transl['header'][0]; ?> &nbsp;</td>
-            <td class="FacetDataTD"> <input type="text"  disabled value="<?= $form['clfoco']; ?>">&nbsp;</td>
+            <td class="FacetFieldCaptionTD"><?php echo $script_transl['header'][0]; ?> &nbsp;</td>
+            <td class="FacetDataTD"> <input type="text"  disabled value="<?php echo $form['clfoco']; ?>">&nbsp;</td>
         </tr>
         <tr>
-            <td class="FacetFieldCaptionTD"><?= $script_transl['header'][1]; ?> &nbsp;</td>
-            <td class="FacetDataTD"> <input type="text"  disabled value="<?= $form['descrart']; ?>">&nbsp;</td>
+            <td class="FacetFieldCaptionTD"><?php echo $script_transl['header'][1]; ?> &nbsp;</td>
+            <td class="FacetDataTD"> <input type="text"  disabled value="<?php echo $form['descrart']; ?>">&nbsp;</td>
         </tr>
         <tr>
-            <td class="FacetFieldCaptionTD"><?= $script_transl['header'][3]; ?>  &nbsp;</td>
-            <td class="FacetDataTD"> <input type="text"  disabled value="<?= $form['prezzo_netto']; ?>">&nbsp;</td>
+            <td class="FacetFieldCaptionTD"><?php echo $script_transl['header'][3]; ?>  &nbsp;</td>
+            <td class="FacetDataTD"> <input type="text"  disabled value="<?php echo $form['prezzo_netto']; ?>">&nbsp;</td>
         </tr>
         <tr>
-            <td class="FacetFieldCaptionTD"><?= $script_transl['header'][2]; ?>  &nbsp;</td>
-            <td class="FacetDataTD"> <input type="text"  disabled value="<?= $form['sconto']; ?>">&nbsp;</td>
+            <td class="FacetFieldCaptionTD"><?php echo $script_transl['header'][2]; ?>  &nbsp;</td>
+            <td class="FacetDataTD"> <input type="text"  disabled value="<?php echo $form['sconto']; ?>">&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="2" align="right"><?= $script_transl['mesg'][2]; ?> &nbsp;
-                <input title="Torna indietro" type="submit" name="Return" value="<?= $script_transl['mesg'][3]; ?>" onclick="window.close()">&nbsp;
-                <input title="Conferma l'eliminazione" type="submit" name="Delete" value="<?= $script_transl['mesg'][4]; ?>"&nbsp;
+            <td colspan="2" align="right"><?php echo $script_transl['mesg'][2]; ?> &nbsp;
+                <input title="Torna indietro" type="submit" name="Return" value="<?php echo $script_transl['mesg'][3]; ?>" onclick="window.close()">&nbsp;
+                <input title="Conferma l'eliminazione" type="submit" name="Delete" value="<?php echo $script_transl['mesg'][4]; ?>"&nbsp;
             </td>
         </tr></table>
 </form>

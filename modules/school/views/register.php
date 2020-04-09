@@ -43,7 +43,7 @@
                                 $registration->select_classroom();
                                 foreach ($registration->classroom_data as $row):
                                     ?>
-                                    <option value="<?= $row["id"] ?>"><?php echo $row["classe"] . ' ' . $row["sezione"] . ' ' . MESSAGE_CLASSROOM_TEACHER . ' ' . $row["user_firstname"] . ' ' . $row["user_lastname"]; ?></option>
+                                    <option value="<?php echo $row["id"] ?>"><?php echo $row["classe"] . ' ' . $row["sezione"] . ' ' . MESSAGE_CLASSROOM_TEACHER . ' ' . $row["user_firstname"] . ' ' . $row["user_lastname"]; ?></option>
                                 <?php endforeach ?>
                             </select>
 

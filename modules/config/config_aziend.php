@@ -100,6 +100,9 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                                         <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" class="mceClass" style="width:100%;"><?php echo $r['val']; ?></textarea>
                                         <?php
                                     } else {
+										if ($r['var'] == 'reply_to') {
+											$mail_sender = $r['val'];
+										}
                                         ?>
                                         <input type="<?php
                                         if (strpos($r["var"], "pass") === false) {
@@ -129,7 +132,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 	<div class="FacetDataTD">
 	<div class="divgroup">
 		<center>
-			<div>Il test di configurazione email ti permette di verificare la configurazione della tua mail. <br><b>Salva</b> la configurazione prima di avviare il test. Verr&aacute; inviata una mail a <i><?= $mail->getSender(); ?></i>
+			<div>Il test di configurazione email ti permette di verificare la configurazione della tua mail. <br><b>Salva</b> la configurazione prima di avviare il test. Verr&aacute; inviata una mail a <i><?php echo $mail_sender; ?></i>
 		</br></br><hr>
 			<div id="btn_send" class="btn btn-default">TEST INVIO MAIL</div>
 			<div id="reply_send"></div>
@@ -147,7 +150,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				result = JSON.parse(json);
 				alert(result.send);
 				if (  result.send ) {		
-   			  		$("#reply_send").html( "<strong>Invio riuscito</strong><br><div>Controlla se ti è arrivata una email in <i><?= $mail->getSender(); ?></i>!</div>");
+   			  		$("#reply_send").html( "<strong>Invio riuscito</strong><br><div>Controlla se ti è arrivata una email in <i><?php echo $mail_sender; ?></i>!</div>");
 				} else {
 					$("#reply_send").html("<strong>Invio FALLITO!</strong><br><div>Errore: "+result.error+"!</div>");
 				}

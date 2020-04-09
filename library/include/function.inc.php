@@ -1535,7 +1535,7 @@ class GAzieMail {
                                 <td>mail send has<strong style="color: #ff0000;"> NOT been successful... ERROR!</strong>></td>
                         </tr>
                         <tr>
-			<td>Errore: <?= $mail->ErrorInfo; ?></td>
+			<td>Errore: <?php echo $mail->ErrorInfo; ?></td>
                         </tr>
                 </table>
                 </center>

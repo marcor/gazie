@@ -173,14 +173,14 @@ function creaListaConti() {
 }
 ?>
 
-<div class="FacetFormHeaderFont" align="center">Registrazione pagamento relativo a partita <?= $numpar ?></div>
+<div class="FacetFormHeaderFont" align="center">Registrazione pagamento relativo a partita <?php echo $numpar ?></div>
 
 <form action="payment.php" method="get">
     <input value="true" name="hidden_req" type="hidden">
-    <input type="hidden" name="numpar" value="<?= $numpar ?>">
-    <input type="hidden" name="partner" value="<?= $partner ?>">
-    <input type="hidden" name="datdoc" value="<?= $datdoc ?>">
-    <input type="hidden" name="clfr" value="<?= $clfr ?>">
+    <input type="hidden" name="numpar" value="<?php echo $numpar ?>">
+    <input type="hidden" name="partner" value="<?php echo $partner ?>">
+    <input type="hidden" name="datdoc" value="<?php echo $datdoc ?>">
+    <input type="hidden" name="clfr" value="<?php echo $clfr ?>">
     <table class="Tmiddle">
         <tbody>
             <tr>
@@ -192,19 +192,19 @@ function creaListaConti() {
             <tr>
                 <td class="FacetFieldCaptionTD">Descrizione</td>
                 <td class="FacetDataTD" colspan="2">
-                    <input id="descrizione" name="descrizione" value="<?= $descrizione ?>" maxlength="100" required="true" type="text">
+                    <input id="descrizione" name="descrizione" value="<?php echo $descrizione ?>" maxlength="100" required="true" type="text">
                 </td>
             </tr>
             <tr>
                 <td class="FacetFieldCaptionTD">Importo</td>
                 <td colspan="2" class="FacetDataTD">
-                    <input id="prezzoUnitario" name="importo" value="<?= $importo ?>" maxlength="10" required="true" step="any" type="number"> 
+                    <input id="prezzoUnitario" name="importo" value="<?php echo $importo ?>" maxlength="10" required="true" step="any" type="number"> 
                 </td>
             </tr>
             <tr>
                 <td class="FacetFieldCaptionTD">Conto</td>
                 <td class="FacetDataTD" colspan="2">
-                    <?= creaListaConti(); ?>
+                    <?php echo creaListaConti(); ?>
                 </td>
             </tr>
             <tr class="FacetFieldCaptionTD">

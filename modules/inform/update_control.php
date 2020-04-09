@@ -118,7 +118,7 @@ if ( !$success ) {
 	foreach( $upgrade->getErrors() as $error) {
 ?>
 <div class="col-md-12 alert alert-danger">
-<?= $error; ?>
+<?php echo $error; ?>
 </div>
 <?php
 	}
@@ -144,7 +144,7 @@ Esci e rientra nella nuova versione! <a href="../../modules/root/logout.php">Log
 </div>
 <script>
 function showAlertBackup() {
-	alert('Saranno cancellate le cartelle:\n <?= implode($deleted_folder,'\n'); ?>');
+	alert('Saranno cancellate le cartelle:\n <?php echo implode($deleted_folder,'\n'); ?>');
 	return confirm("Verifica Backup Database e File di Configurazione!");
 }
 </script>

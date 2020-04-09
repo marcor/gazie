@@ -350,9 +350,9 @@ foreach($mailsIds as $mailId) {
 ?>
 	<div style="color:red">
 		<center>
-			Error: <b><?= $e->getMessage(); ?></b>
+			Error: <b><?php echo $e->getMessage(); ?></b>
 		<br>
-			Codice: <?= $e->getCode(); ?>
+			Codice: <?php echo $e->getCode(); ?>
 		</center>
 	</div>
 <?php
