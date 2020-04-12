@@ -64,7 +64,9 @@ if (isset($_POST['conferma'])) { // se confermato
 			$esiste = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);// controllo se esiste in GAzie
 			if (!$esiste) { // se non è stato trovato provo a cercarlo con il codice a barre
 				$esiste = gaz_dbi_get_row($gTables['artico'], "barcode", $_POST['codice'.$ord]);
-				$_POST['codice'.$ord]=$esiste['codice']; // se esiste per codice a barre il codice di GAzie è comunque 'codice'
+				if ($esiste){
+					$_POST['codice'.$ord]=$esiste['codice']; // se esiste per codice a barre il codice di GAzie è comunque 'codice'
+				}
 			}
 			$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord], " AND tipiva = 'I'"); // prendo il codice IVA
 			
@@ -143,10 +145,11 @@ if (isset($_POST['conferma'])) { // se confermato
 					gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET web_price = '".addslashes($_POST['web_price'.$ord])."' WHERE codice = '".$_POST['codice'.$ord]."'");
 				}
 			} elseif (!$esiste AND $_GET['imp']=="impval"){ // altrimenti, se è attivo l'inserimento, inserisco nuovo articolo
+				
 				if ($_GET['imppre']=="dwlprice") { // se devo inserire anche il prezzo web
-					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,web_mu,web_price,unimis,image,web_public,depli_public,aliiva) VALUES ('" . $_POST['codice'.$ord] . "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '". addslashes($_POST['web_price'.$ord]). "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
+					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,ref_ecommerce_id_product,descri,web_mu,web_price,unimis,image,web_public,depli_public,aliiva) VALUES ('" . $_POST['codice'.$ord] . "', '" . $_POST['product_id'.$ord]. "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '". addslashes($_POST['web_price'.$ord]). "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
 				} else { // altrimenti lo inserisco senza prezzo web
-					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,web_mu,unimis,image,web_public,depli_public,aliiva) VALUES ('" . $_POST['codice'.$ord] . "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
+					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,ref_ecommerce_id_product,descri,web_mu,unimis,image,web_public,depli_public,aliiva) VALUES ('" . $_POST['codice'.$ord] . "', '" . $_POST['product_id'.$ord]. "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '".$_POST['unimis'.$ord]."', '".$immagine."', '1', '1', '".$vat['codice']."')");
 				}
 				if (strlen($_POST['body_text'.$ord])>0 AND $_GET['impdes']=="dwldes"){ // se c'è una descrizione estesa - body_text ed è selezionata
 					$form['body_text'] = htmlspecialchars_decode ($_POST['body_text'.$ord]);
@@ -306,6 +309,7 @@ if (!isset($_GET['success'])){
 								echo '<input type="hidden" name="unimis'. $n .'" value="'. $product->Unimis .'">';
 								echo '<input type="hidden" name="aliquo'. $n .'" value="'. $product->VAT .'">';
 								echo '<input type="hidden" name="imgurl'. $n .'" value="'. $product->ProductImgUrl .'">';
+								echo '<input type="hidden" name="product_id'. $n .'" value="'. $product->Id .'">';
 								?>
 							</div>
 							<div class="col-sm-1" align="right">
