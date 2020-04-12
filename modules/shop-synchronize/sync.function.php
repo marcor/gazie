@@ -103,6 +103,7 @@ class APIeCommerce {
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
 			$xml_output .= "\n<Products>\n";						
 				$xml_output .= "\t<Product>\n";
+				$xml_output .= "\t<Id>".$d['ref_ecommerce_id_product']."</Id>\n";
 				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
 				$xml_output .= "\t<BarCode>".$d['barcode']."</BarCode>\n";				
 				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
@@ -182,6 +183,7 @@ class APIeCommerce {
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
 			$xml_output .= "\n<Products>\n";						
 				$xml_output .= "\t<Product>\n";
+				$xml_output .= "\t<Id>".$id['ref_ecommerce_id_product']."</Id>\n";
 				$xml_output .= "\t<Code>".$id['codice']."</Code>\n";
 				$xml_output .= "\t<BarCode>".$id['barcode']."</BarCode>\n";
 				$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
