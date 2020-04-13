@@ -90,6 +90,8 @@ $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show
                 $totale = 0;
                 $ordinatif = $gForm->get_magazz_ordinati($r['codice'], "AOR");
                 $ordinatic = $gForm->get_magazz_ordinati($r['codice'], "VOR");
+				$ordinatic = $ordinatic + $gForm->get_magazz_ordinati($r['codice'], "VOW");
+				
                 $mv = $gForm->getStockValue(false, $r['codice']);
                 $magval = array_pop($mv);
 				if (isset ($magval['q_g']) && round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero

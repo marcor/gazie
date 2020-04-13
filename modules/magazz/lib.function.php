@@ -75,7 +75,7 @@ class magazzForm extends GAzieForm {
 	
 	// Antonio Germani - calcolo evasi
 	$toteva = 0;
-	if ($tip!="AOR"){
+	if ($tip!="AOR" AND $totord>0){
 		$preord=0;
 		$query = "SELECT " . 'codart'. ",". 'id_tes' . " FROM " . $gTables['rigbro'] . " WHERE codart ='" . $codice. "' AND tiprig <= '1'";
 		$result = gaz_dbi_query($query); // prendo tutti i righi ordine per questo articolo
