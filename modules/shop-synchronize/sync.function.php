@@ -161,6 +161,7 @@ class APIeCommerce {
 			$id = gaz_dbi_get_row($gTables['artico'],"codice",$d);
 			$fields = array ('product_id' => intval($id),'quantity'=>intval($magval['q_g']));
 			$ordinati = $gForm->get_magazz_ordinati($d, "VOR");
+			$ordinati = $ordinati + $gForm->get_magazz_ordinati($d, "VOW");
 			$avqty=$fields['quantity']-$ordinati;
 			if ($avqty<0 or $avqty==""){ // per l'e-commerce la disponibilità non può essere nulla o negativa
 				$avqty="0";

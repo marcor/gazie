@@ -80,6 +80,7 @@ $artico = gaz_dbi_query ('SELECT codice, barcode, ref_ecommerce_id_product FROM 
  while ($item = gaz_dbi_fetch_array($artico)){
 		$avqty = 0;
 		$ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
+		$ordinatic = $ordinatic + $gForm->get_magazz_ordinati($item['codice'], "VOW");
 		$mv = $gForm->getStockValue(false, $item['codice']);
         $magval = array_pop($mv);
 		$avqty=$magval['q_g']-$ordinatic;
