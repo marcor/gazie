@@ -76,7 +76,7 @@ if ((!$conn_id) or (!$mylogin)){
 $xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
 <GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
 $xml_output .= "\n<Products>\n";
-$artico = gaz_dbi_query ('SELECT codice, barcode FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
+$artico = gaz_dbi_query ('SELECT codice, barcode, ref_ecommerce_id_product FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
  while ($item = gaz_dbi_fetch_array($artico)){
 		$avqty = 0;
 		$ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
@@ -90,6 +90,7 @@ $artico = gaz_dbi_query ('SELECT codice, barcode FROM '.$gTables['artico'].' WHE
 			$item['barcode']="NULL";
 		}
 		$xml_output .= "\t<Product>\n";
+		$xml_output .= "\t<Id>".$item['ref_ecommerce_id_product']."</Id>\n";
 		$xml_output .= "\t<Code>".$item['codice']."</Code>\n";
 		$xml_output .= "\t<BarCode>".$item['barcode']."</BarCode>\n";
 		$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
