@@ -27,19 +27,20 @@ $admin_aziend=checkAdmin();
 
 $anagrafica = new Anagrafica();
 
-if (isset($_GET['auxil'])) {
+if (!empty($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
-   $where = "vat_section = '$auxil'";
+	$where = "vat_section='$auxil'";
 } else {
    $auxil = 1;
-   $where = "vat_section = '$auxil'";
+	$where = "vat_section='$auxil'";
 }
-if (isset($_GET['all'])) {
-   $where = "vat_section = '$auxil' ";
+if (!empty($_GET['all'])) {
+	$where = "vat_section='$auxil'";
    $auxil = $_GET['auxil']."&all=yes";
    $passo = 100000;
-   $protocollo ='';
+	$protocollo = '';
 }
+
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $gForm = new GAzieForm();
@@ -79,7 +80,31 @@ $(function() {
 		});
 		$("#dialog_delete" ).dialog( "open" );  
 	});
+   $( "#dialog" ).dialog({
+      autoOpen: false
+   });
 });
+function confirMail(link){
+   tes_id = link.id.replace("doc", "");
+   $.fx.speeds._default = 500;
+   targetUrl = $("#doc"+tes_id).attr("url");
+   $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
+   $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
+   $( "#dialog" ).dialog({
+         modal: "true",
+      show: "blind",
+      hide: "explode",
+         buttons: {
+                      "<?php echo $script_transl['submit']; ?>": function() {
+                         window.location.href = targetUrl;
+                      },
+                      "<?php echo $script_transl['cancel']; ?>": function() {
+                        $(this).dialog("close");
+                      }
+                  }
+         });
+   $("#dialog" ).dialog( "open" );
+}
 </script>
 <?php
 echo "<form method=\"GET\" name=\"report\">\n";
@@ -93,6 +118,14 @@ echo "<form method=\"GET\" name=\"report\">\n";
 </div>
 <?php
 echo "<input type=\"hidden\" name=\"hidden_req\">\n";
+?>
+    <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+        <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
+        <p class="ui-state-highlight" id="mail_adrs"></p>
+        <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
+        <p class="ui-state-highlight" id="mail_attc"></p>
+    </div>
+<?php
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['vat_section'];
 $gForm->selectNumber('auxil',$auxil,0,1,3,'FacetSelect','auxil');
 echo "</div>\n";
@@ -120,7 +153,7 @@ gaz_flt_var_assign('id_customer', 'i', $gTables['contract']);
 	$where_select, "ragso1 ASC", "ragso1");
 	?>
 </td>
-<td colspan="4" class="FacetFieldCaptionTD" align="center">
+<td colspan="5" class="FacetFieldCaptionTD" align="center">
 <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
@@ -135,6 +168,7 @@ $headers_tesdoc = array  (
             $script_transl['current_fee'] => "current_fee",
             $script_transl['status'] => "",
             $script_transl['print'] => "",
+            "Mail" => "",
             $script_transl['delete'] => ""
             );
 $linkHeaders = new linkHeaders($headers_tesdoc);
@@ -150,11 +184,24 @@ while ($row = gaz_dbi_fetch_array($result)) {
         print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_contract.php?Update&id_contract=".$row['id_contract']."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$row["id_contract"]."</a></td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($row['conclusion_date'])."</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".$row['doc_number']." &nbsp;</td>";
-        print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"report_client.php?nome=".$cliente['ragso1']."\">".$cliente['ragso1']."</a></td>";
+        print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"report_client.php?nome=".$cliente['ragso1']."\">".$cliente['ragso1']."</a>";
+		if (!empty($row['note'])) {
+			print "&nbsp;<span title=\"" . $row['note'] . "\"><i class=\"glyphicon glyphicon-map-marker\"></i></span>";
+		}
+        print "</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".$row['current_fee']." &nbsp;</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".$row['status']." &nbsp;</td>";
         print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"print_contract.php?id_contract=".$row['id_contract']."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
 
+		// Colonna "Mail"
+		print "<td align=\"center\">";
+		if (!empty($cliente['e_mail'])) { // ho una mail sul cliente
+			print '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $row['id_contract'] . '" url="print_contract.php?id_contract=' . $row['id_contract'] . '&dest=E" href="#" title="mailto: ' . $cliente['e_mail'] . '"
+	mail="' . $cliente['e_mail'] . '" namedoc="Contratto n.' . $row['doc_number'] . ' del ' . gaz_format_date($row['conclusion_date']) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+		} else { // non ho mail
+			print '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($row['id_customer'], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+		}
+		print "</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">";
 		?>
 		<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $row['id_contract'];?>" cliente="<?php echo $cliente['ragso1']; ?>">

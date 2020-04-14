@@ -47,9 +47,9 @@ $revenue= gaz_dbi_get_row($gTables['clfoco'],'codice' ,$contract['cod_revenue'])
 $vat= gaz_dbi_get_row($gTables['aliiva'],'codice' ,$contract['vat_code']);
 
 if ($contract['tacit_renewal']==0) {
-    $tacit_reneval = $script_transl['no'];
+    $tacit_renewal = $script_transl['no'];
 } else {
-    $tacit_reneval = $script_transl['yes'];
+    $tacit_renewal = $script_transl['yes'];
 }
 if ($contract['periodic_reassessment']==0) {
     $periodic_reassessment = $script_transl['no'];
@@ -145,7 +145,7 @@ $pdf->Cell(11,4,':','TB',0,'R');
 $pdf->Cell(125,4,$contract['months_duration'],'RTB',1);
 $pdf->Cell(50,4,$script_transl['tacit_renewal'],'LTB',0);
 $pdf->Cell(11,4,':','TB',0,'R');
-$pdf->Cell(125,4,$tacit_reneval,'RTB',1);
+$pdf->Cell(125,4,$tacit_renewal,'RTB',1);
 $pdf->Cell(50,4,$script_transl['periodic_reassessment'],'LTB',0);
 $pdf->Cell(11,4,':','TB',0,'R');
 $pdf->Cell(125,4,$periodic_reassessment,'RTB',1);
@@ -181,5 +181,23 @@ while ($row = gaz_dbi_fetch_array($rs_rows)) {
       $pdf->Cell(30,4,number_format($importo,2,',',''),1,1,'R');
 }
 
-$pdf->Output();
+if (!empty($_GET['dest']) && $_GET['dest'] == 'E') { // è stata richiesta una e-mail
+	require("../../library/include/document.php");
+	$dest = 'S';     // Genero l'output pdf come stringa binaria
+	$doc_name = 'Contratto n.' . $contract['doc_number'] . ' del ' . gaz_format_date($contract['conclusion_date']) . '.pdf';
+    $azienda = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
+    $user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
+	// Costruisco oggetto con tutti i dati del file pdf da allegare
+	$content = new StdClass;
+	$content->urlfile=false;
+	$content->name = $doc_name;
+	$content->string = $pdf->Output($doc_name, $dest);
+	$content->encoding = "base64";
+	$content->mimeType = "application/pdf";
+	$gMail = new GAzieMail();
+	$gMail->sendMail($azienda, $user, $content, $customer);
+} else {
+	$pdf->Output();
+}
+
 ?>

@@ -612,7 +612,10 @@ $strScript = array("admin_client.php" =>
         'number' => 'Numero',
         'customer' => 'Cliente',
         'current_fee' => 'Canone corrente',
-        'status' => 'Stato del contratto'
+        'status' => 'Stato del contratto',
+        'mail_alert0' => 'Invio contratto con email',
+        'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
+        'mail_alert2' => 'con allegato il seguente contratto:'
     ),
     "admin_contract.php" =>
     array('title' => 'Gestione dei contratti',
