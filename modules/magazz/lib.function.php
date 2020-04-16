@@ -77,7 +77,7 @@ class magazzForm extends GAzieForm {
 	$toteva = 0;
 	if ($tip!="AOR" AND $totord>0){
 		$preord=0;
-		$query = "SELECT " . 'codart'. ",". 'id_tes' . " FROM " . $gTables['rigbro'] . " WHERE codart ='" . $codice. "' AND tiprig <= '1'";
+		$query = "SELECT ".$gTables['rigbro'].".codart, ".$gTables['rigbro'].".id_tes FROM " . $gTables['rigbro'] . " LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['rigbro'].".id_tes=".$gTables['tesbro'].".id_tes  WHERE codart ='" . $codice. "' AND tiprig <= '1' AND ". $gTables['tesbro'].".tipdoc ='".$tip."'";
 		$result = gaz_dbi_query($query); // prendo tutti i righi ordine per questo articolo
 		while ($row = $result->fetch_assoc()){
 			$query = "SELECT " . 'quanti'. ",". 'id_rig' . " FROM " . $gTables['rigdoc'] . " WHERE id_order ='" . $row['id_tes']. "' AND tiprig <= '1' AND codart = '".$codice."'";
@@ -522,6 +522,7 @@ class magazzForm extends GAzieForm {
         }
 		
 		// Antonio Germani - ricerca esistenza movimento inventario  anche con articoli con lotti
+		$last_invIdMov="";
 		$checklot=gaz_dbi_get_row($gTables['artico'],"codice",$item_code);
 		if ($checklot['lot_or_serial']==0){ // se l'articolo non prevede lotti
 			$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$item_code' AND caumag = 99 AND (datreg < '" . $date . "' OR (datreg = '" . $date . "' AND id_mov <= $id_mov ))", "datreg DESC, id_mov DESC", 0, 1);
