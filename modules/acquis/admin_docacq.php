@@ -236,10 +236,24 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			} else {
 				$form['rows'][$i]['recip_stocc_destin']="";
 			}
-            $form['rows'][$i]['identifier'] = (empty($_POST['rows'][$i]['identifier'])) ? '' : filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_STRING);
-			if (isset($_POST['rows'][$i]['expiry']) AND $_POST['rows'][$i]['expiry']>0){
-				$form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
-			} else {$form['rows'][$i]['expiry']="0000-00-00 00:00:00";}
+			
+			if (isset($_POST['new_lotmag'][$i])) {// se è stato assegnato un nuovo lotto da un DDR
+				// assegno il nuovo lotto al rigo
+				
+				$form['rows'][$i]['id_lotmag'] = key($_POST['new_lotmag'][$i]);
+				$getlot = $lm->getLot($form['rows'][$i]['id_lotmag']);
+				$form['rows'][$i]['identifier'] = $getlot['identifier'];
+			} else {		
+				$form['rows'][$i]['identifier'] = (empty($_POST['rows'][$i]['identifier'])) ? '' : filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_STRING);
+				$form['rows'][$i]['id_lotmag'] = $_POST['rows'][$i]['id_lotmag'];
+
+				if (isset($_POST['rows'][$i]['expiry']) AND $_POST['rows'][$i]['expiry']>0){
+					$form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
+				} else {
+					$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
+				}			
+			}
+						
             $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_STRING);
             if (!empty($_FILES['docfile_' . $i]['name'])) {
                 $move = false;
@@ -469,7 +483,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
         }
         if (count($msg['err']) == 0) {// nessun errore
-            if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
+        
+		   if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor'],$form['pagame']);
             }
@@ -545,44 +560,47 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								
 								// Anche se UPDATE verrà comunque rigenerato il movimento di magazzino
 								// quindi vedo in anticipo in quale ID verrà memorizzato il prossimo movimento di magazzino
-																
-								if ($toDo == 'update'){ // se è UPDATE
-									$check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE id_movmag = '" . $form['rows'][$i]['id_mag']."'");// controllo se il lotto inserito nel form esiste già
-									$rowc = $check_lot->fetch_assoc();
-									if ($rowc['id']>0) {  // se il lotto c'era lo aggiorno
-										$id_lotmag=$rowc['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
-										gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , identifier = '" . $form['rows'][$i]['identifier'] . "', id_movmag = '" . $id_mag . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
-									} else { // se non c'era creo il rigo lotto nella tabella lotmag
+								if ($form['tipdoc']=="DDR"){
+									$id_lotmag=$form['rows'][$i]['id_lotmag'];
+								} else {									
+									if ($toDo == 'update'){ // se è UPDATE
+										$check_lot= gaz_dbi_query("SELECT id FROM " . $gTables['lotmag'] . " WHERE id_movmag = '" . $form['rows'][$i]['id_mag']."'");// controllo se il lotto inserito nel form esiste già
+										$rowc = $check_lot->fetch_assoc();
+										if ($rowc['id']>0) {  // se il lotto c'era lo aggiorno
+											$id_lotmag=$rowc['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
+											gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , identifier = '" . $form['rows'][$i]['identifier'] . "', id_movmag = '" . $id_mag . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
+										} else { // se non c'era creo il rigo lotto nella tabella lotmag
+											
+											gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
+											$id_lotmag=gaz_dbi_last_id();
+										}
+									} else { // se è INSERT creo il rigo lotto nella tabella lotmag
 										
 										gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
 										$id_lotmag=gaz_dbi_last_id();
-									}
-								} else { // se è INSERT creo il rigo lotto nella tabella lotmag
-									
-									gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
-									$id_lotmag=gaz_dbi_last_id();
-								}														
-							
-							// aggiorno pure i documenti relativi ai lotti
-								$old_lm = gaz_dbi_get_row($gTables['lotmag'], 'id', $id_lotmag);
-								if ($old_lm && substr($form['rows'][$i]['filename'], 0, 7) <> 'lotmag_') {
-							// se a questo rigo corrispondeva un certificato controllo che però è stato aggiornato lo cambio
-									$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
-									while (false !== ($filename = readdir($dh))) {
-										$fd = pathinfo($filename);
-										if ($fd['filename'] == 'lotmag_' . $old_lm['id']) {
-											// cancello il file precedente indipendentemente dall'estensione
-											$frep = glob('../../data/files/' . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . ".*");
-											foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
-												unlink($fdel);
+									}														
+								
+									// aggiorno pure i documenti relativi ai lotti
+									$old_lm = gaz_dbi_get_row($gTables['lotmag'], 'id', $id_lotmag);
+									if ($old_lm && substr($form['rows'][$i]['filename'], 0, 7) <> 'lotmag_') {
+										// se a questo rigo corrispondeva un certificato controllo che però è stato aggiornato lo cambio
+										$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+										while (false !== ($filename = readdir($dh))) {
+											$fd = pathinfo($filename);
+											if ($fd['filename'] == 'lotmag_' . $old_lm['id']) {
+												// cancello il file precedente indipendentemente dall'estensione
+												$frep = glob('../../data/files/' . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . ".*");
+												foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
+													unlink($fdel);
+												}
 											}
 										}
-									}
-									$tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
-								// sposto e rinomino il relativo file temporaneo    
-									if ($form['rows'][$i]['filename']){
-										$fn = pathinfo($form['rows'][$i]['filename']);
-										rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . '.' . $fn['extension']);
+										$tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
+										// sposto e rinomino il relativo file temporaneo    
+										if ($form['rows'][$i]['filename']){
+											$fn = pathinfo($form['rows'][$i]['filename']);
+											rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . '.' . $fn['extension']);
+										}
 									}
 								}
 							} else { // se l'articolo non prevede lotti
@@ -595,7 +613,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 							
 							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_mag', $id_movmag);// metto il nuovo id_mag nel rigo documento
 
-							if ($form['rows'][$i]['lot_or_serial'] > 0){ // se l'articolo ha un lotto metto l'id_movmag di riferimento nel lotto					
+							if ($form['rows'][$i]['lot_or_serial'] > 0 AND $form['tipdoc']!="DDR"){ // se l'articolo ha un lotto metto l'id_movmag di riferimento nel lotto					
 								gaz_dbi_put_row($gTables['lotmag'], 'id', $id_lotmag, 'id_movmag', $id_movmag);
 							}
 							if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
@@ -746,27 +764,32 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 // se l'articolo prevede la gestione dei  lotti o della matricola/numero seriale creo un rigo in lotmag 
 // ed eventualmente sposto e rinomino il relativo documento dalla dir temporanea a quella definitiva 
                     if ($form['rows'][$i]['lot_or_serial'] > 0) {
-                        $form['rows'][$i]['id_rigdoc'] = $last_rigdoc_id;
-                        $form['rows'][$i]['id_movmag'] = $last_movmag_id;
-						if (intval($form['rows'][$i]['expiry'])>0){
-							$form['rows'][$i]['expiry'] = gaz_format_date($form['rows'][$i]['expiry'], true);
-						} else {
-							$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
+						if ($form['tipdoc']=="DDR"){
+							$id_lotmag=$form['rows'][$i]['id_lotmag'];
+							gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $id_lotmag);
+						} else {						
+							$form['rows'][$i]['id_rigdoc'] = $last_rigdoc_id;
+							$form['rows'][$i]['id_movmag'] = $last_movmag_id;
+							if (intval($form['rows'][$i]['expiry'])>0){
+								$form['rows'][$i]['expiry'] = gaz_format_date($form['rows'][$i]['expiry'], true);
+							} else {
+								$form['rows'][$i]['expiry']="0000-00-00 00:00:00";
+							}
+							if (empty($form['rows'][$i]['identifier'])) {
+	// creo un identificativo del lotto/matricola interno                            
+								$form['rows'][$i]['identifier'] = $form['datemi'] . '_' . $form['rows'][$i]['id_rigdoc'];
+							}
+							$last_lotmag_id = lotmagInsert($form['rows'][$i]);
+							// inserisco il riferimento anche sul relativo movimento di magazzino
+							gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
+							if (!empty($form['rows'][$i]['filename'])) {
+								$tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
+	// sposto e rinomino il relativo file temporaneo    
+								$fd = pathinfo($form['rows'][$i]['filename']);
+								rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $last_lotmag_id . '.' . $fd['extension']);
+							}
 						}
-                        if (empty($form['rows'][$i]['identifier'])) {
-// creo un identificativo del lotto/matricola interno                            
-                            $form['rows'][$i]['identifier'] = $form['datemi'] . '_' . $form['rows'][$i]['id_rigdoc'];
-                        }
-                        $last_lotmag_id = lotmagInsert($form['rows'][$i]);
-                        // inserisco il riferimento anche sul relativo movimento di magazzino
-                        gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
-                        if (!empty($form['rows'][$i]['filename'])) {
-                            $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
-// sposto e rinomino il relativo file temporaneo    
-                            $fd = pathinfo($form['rows'][$i]['filename']);
-                            rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $last_lotmag_id . '.' . $fd['extension']);
-                        }
-                    }
+				}
 					if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo il movimento
 						$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
 						$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
@@ -840,7 +863,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 //if (isset($_POST['in_submit_x'])) {
     /** ENRICO FEDELE */
     /* con button non funziona _x */
-    if (isset($_POST['in_submit'])) {
+    if (isset($_POST['in_submit'])) { 
         /** ENRICO FEDELE */
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
         /** inizio modifica FP 09/01/2016
@@ -1017,7 +1040,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $magval = array_pop($mv);
                 $form['rows'][$i]['scorta'] = $artico['scorta'];
                 $form['rows'][$i]['quamag'] = $magval['q_g'];
-                if ($artico['lot_or_serial'] > 0) {
+                if ($artico['lot_or_serial'] > 0) { 
                     $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
                     $ld = $lm->divideLots($form['in_quanti']);
                     /* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
@@ -1172,6 +1195,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['cosear'] = "";
         $i++;
     }
+	
+	
 // Se viene inviata la richiesta di spostamento verso l'alto del rigo
     if (isset($_POST['upper_row'])) {
         $upp_key = key($_POST['upper_row']);
@@ -1407,9 +1432,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
 			$form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
 		}
+		
         // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
 		If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {
-		if (!isset($_GET['Duplicate'])) {
+		if (!isset($_GET['Duplicate']) OR $form['tipdoc']=="DDR") {
 			$result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
 			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
 			// recupero il filename dal filesystem e lo sposto sul tmp 
@@ -1423,6 +1449,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 			}
 			$form['rows'][$i]['identifier'] = $lotmag['identifier'];
+			$form['rows'][$i]['id_lotmag'] = $lotmag['id'];
 			if (intval($lotmag['expiry'])>0){
 				$form['rows'][$i]['expiry'] = gaz_format_date($lotmag['expiry']);
 			} else {
@@ -1918,6 +1945,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 			echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
             echo '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />';
+			echo '<input type="hidden" value="' . $v['id_lotmag'] . '" name="rows[' . $k . '][id_lotmag]" />';
             // colonne editabili
             echo "<input type=\"hidden\" value=\"" . $v['descri'] . "\" name=\"rows[$k][descri]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['unimis'] . "\" name=\"rows[$k][unimis]\">\n";
@@ -1987,7 +2015,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 					$lm_acc = '';
 					if ($v['lot_or_serial'] > 0) {
 					
-			//			if (intval($form['rows'][$k]['id_mag'])>0 or $form['tipdoc']!="AFA"){ // Antonio Germani - se non è una fattura acquisto o ha un movimento di magazzino associato apro pulsanti lotto
+						if ($form['tipdoc']!="DDR"){ // Antonio Germani - se non è Documento di Reso apro gestione lotti come nuovo inserimento
 							if (empty($form['rows'][$k]['filename'])) {
 								$lm_acc .='<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
 								. $script_transl['insert'] . 'certificato  <i class="glyphicon glyphicon-tag"></i>'
@@ -2016,10 +2044,75 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 								. '</button></div>';
 							}
 								
-			//			} else { // altrimenti avviso che bisogna prima generare i movimenti
-			//				$lm_acc .= '<div><button class="btn btn-xs btn-danger" type="image" >Articolo con lotto. Prima generare movimento di magazzino e poi inserire lotto.<i class="glyphicon glyphicon-tag"></i>'
-			//					. '</button></div>';							
-			//			}
+						} else { // altrimenti apro gestione lotti con scelta fra esistenti
+						
+							$lm->getAvailableLots($v['codart'], $v['id_mag']);
+							// Antonio Germani - calcolo delle giacenze per ogni singolo lotto
+							$count=array();
+							foreach ($lm->available as $v_lm) {
+								$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
+								if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
+									// Aggiungo la chiave con il rispettivo valore iniziale
+									$count[$key] = $v_lm['rest'];
+								} else {
+									// Altrimenti, aggiorno il valore della chiave
+									$count[$key] += $v_lm['rest'];
+								}
+							}
+							$selected_lot = $lm->getLot($v['id_lotmag']);
+							if (!isset($count[$selected_lot['identifier']])){
+								$count[$selected_lot['identifier']]="";
+							}
+							if ($count[$selected_lot['identifier']]>=$v['quanti']){
+								$lm_acc .='<div><button class="btn btn-xs btn-success" title="clicca per cambiare lotto" ';
+							} else {
+								$lm_acc .='<div><button class="btn btn-xs btn-danger" title="Disponibilità non sufficiente"';
+							}
+							$lm_acc .='type="image" data-toggle="collapse" href="#lm_dialog' . $k . '">'
+							. $selected_lot['id']
+							. '- lotto: ' . $selected_lot['identifier'];
+							$lm_acc .=' <input type="hidden" value="' . $selected_lot['identifier'] . '" name="rows[' . $k . '][identifier]" />';
+							$lm_acc .=' <input type="hidden" value="' . $selected_lot['id'] . '" name="rows[' . $k . '][id_lotmag]" />';
+							if (intval ($selected_lot['expiry'])>0) {
+								$lm_acc .=' scad:' . gaz_format_date($selected_lot['expiry']);
+								$lm_acc .=' <input type="hidden" value="' . $selected_lot['expiry'] . '" name="rows[' . $k . '][expiry]" />';
+							}
+							$lm_acc .=' - disponibili: ' . gaz_format_quantity($count[$selected_lot['identifier']])
+							. ' <i class="glyphicon glyphicon-tag"></i>'
+							. ' rif:' . $selected_lot['desdoc']
+							. ' - ' . gaz_format_date($selected_lot['datdoc']) .
+							'</button>';
+							if ($v['id_mag'] > 0) {
+								$lm_acc .=' <a class="btn btn-xs btn-default" href="lotmag_print_cert.php?id_movmag=' . $v['id_mag'] . '" target="_blank"><i class="glyphicon glyphicon-print"></i></a>';
+							}
+							$lm_acc .='</div>';
+							$lm_acc .='<div id="lm_dialog' . $k . '" class="collapse" >
+									<div class="form-group">';
+							if (count($lm->available) > 1) {
+								foreach ($lm->available as $v_lm) {
+									if ($v_lm['id'] <> $v['id_lotmag']) {
+									if ($count[$v_lm['identifier']]>=$v['quanti']){
+											$lm_acc .='<div>change to:<button class="btn btn-xs btn-warning" type="image" ';
+										} else {
+											$lm_acc .='<div>change to:<button class="btn btn-xs btn-danger" title="Q.tà non sufficiente" type="image" ';
+										}
+										$lm_acc .='onclick="this.form.submit();" name="new_lotmag[' . $k . '][' . $v_lm['id_lotmag'] . ']">'
+										. $v_lm['id']
+										. '- lotto: ' . $v_lm['identifier'];
+										if (intval ($v_lm['expiry'])>0) {
+											$lm_acc .=' scad:' . gaz_format_date($v_lm['expiry']);
+										}
+										$lm_acc .=' disponibili:' . gaz_format_quantity($count[$v_lm['identifier']]).'<i class="glyphicon glyphicon-tag"></i> rif:' . $v_lm['desdoc']
+										. ' - ' . gaz_format_date($v_lm['datdoc'])
+										. '</button></div>';
+									}
+								}
+							} else {
+								$lm_acc .='<div><button class="btn btn-xs btn-danger" type="button" disabled>Non sono disponibili altri lotti</button></div>';
+							}
+							$lm_acc .='</div>'
+							. "</div>\n";							
+						}
 					} else {
 						$lm_acc .=' <input type="hidden" value="' . $v['identifier'] . '" name="rows[' . $k . '][identifier]" />';
 						$lm_acc .=' <input type="hidden" value="' . $v['expiry'] . '" name="rows[' . $k . '][expiry]" />';
