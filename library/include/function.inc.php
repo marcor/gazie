@@ -1370,7 +1370,7 @@ class selectvettor extends SelectBox {
 // classe per l'invio di documenti allegati ad una e-mail
 class GAzieMail {
 
-    function sendMail($admin_data, $user, $content, $partner) {
+    function sendMail($admin_data, $user, $content, $partner, $mail_message = '') {
 		// su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica  
         global $gTables, $debug_active;
 
@@ -1402,7 +1402,7 @@ class GAzieMail {
         // aggiungo al corpo  dell'email
         $body_text = "<div><b>" . $admin_data['cliente1']. "</b></div>\n";
         $body_text .= "<div>" . $admin_data['doc_name']. "</div>\n";
-        $body_text .= "<div>" . $company_text['val'] . "</div>\n";
+        $body_text .= "<div>" . ( !empty($mail_message) ? $mail_message : $company_text['val']) . "</div>\n";
         $body_text .= ( empty($admin_data['web_url']) ? "" : "<h4><span style=\"color: #000000;\">Web: <a href=\"" . $admin_data['web_url'] . "\">" . $admin_data['web_url'] . "</a></span></h4>" );
         $body_text .= "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">" . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
         $body_text .= "<address><div style=\"color: #" . $admin_data['colore'] . ";\">" . $user['user_firstname'] . " " . $user['user_lastname'] . "</div>\n";
