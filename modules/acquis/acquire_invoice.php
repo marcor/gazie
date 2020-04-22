@@ -688,25 +688,37 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 		/*	Se presenti, trasformo gli sconti/maggiorazioni del campo 2.1.1.8 <ScontoMaggiorazione> in righe forfait */
 		if ($xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione")->length >= 1) {
+			$sconto_totale_incondizionato = array();
 			$sconto_maggiorazione = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione");
 			foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
-				$nl++;
-				$form['rows'][$nl]['tiprig'] = 1;
-				$form['rows'][$nl]['codice_fornitore'] = '';
-				$form['rows'][$nl]['descri'] = '';
-				$form['rows'][$nl]['unimis'] = '';
-				$form['rows'][$nl]['quanti'] = '';
-				$form['rows'][$nl]['sconto'] = '';
-				$form['rows'][$nl]['ritenuta'] = '';
-				$form['rows'][$nl]['pervat'] = '';
+				if ($sconti->getElementsByTagName('Percentuale')->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001) {
+					$sconto_totale_incondizionato[] = $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue;
+				} else {
+					$nl++;
+					$form['rows'][$nl]['tiprig'] = 1;
+					$form['rows'][$nl]['codice_fornitore'] = '';
+					$form['rows'][$nl]['descri'] = '';
+					$form['rows'][$nl]['unimis'] = '';
+					$form['rows'][$nl]['quanti'] = '';
+					$form['rows'][$nl]['sconto'] = '';
+					$form['rows'][$nl]['ritenuta'] = '';
+					$form['rows'][$nl]['pervat'] = '';
 
-				$form['codart_'.($nl-1)] = '';
-				$form['codvat_'.($nl-1)] = '';
-				$form['codric_'.($nl-1)] = '';
+					$form['codart_'.($nl-1)] = '';
+					$form['codvat_'.($nl-1)] = '';
+					$form['codric_'.($nl-1)] = '';
 
-				$sconto_incondizionato = ($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
-				$form['rows'][$nl]['prelis'] = $sconto_incondizionato;
-				$form['rows'][$nl]['amount'] = $sconto_incondizionato;
+					$sconto_incondizionato = ($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
+					$form['rows'][$nl]['prelis'] = $sconto_incondizionato;
+					$form['rows'][$nl]['amount'] = $sconto_incondizionato;
+				}
+			}
+			if (count($sconto_totale_incondizionato) > 0) {
+				$is=1;
+				foreach($sconto_totale_incondizionato as $vsc){ // attraverso l'accumulatore di sconti per ottenerne uno solo
+					$is *=(1-$vsc/100);
+				}
+				$sconto_totale_incondizionato = 100*(1-$is);
 			}
 		}
 
@@ -859,6 +871,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
 			$form['datreg']=gaz_format_date($form['datreg'],true);
 			$form['caumag']=$magazz->get_codice_caumag(1,1,$docOperat[$form['tipdoc']]);
+			if (!empty($sconto_totale_incondizionato)) {
+				$form['sconto']=$sconto_totale_incondizionato;
+			}
             tesdocInsert($form);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
