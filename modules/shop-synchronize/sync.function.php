@@ -328,7 +328,7 @@ class APIeCommerce {
 					}
 											
 					// registro testata ordine
-					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '1', '1', '" . $order->DateOrder . "', '" .$order->Number . "', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $order->CostVatCode."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
+					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '1', '1', '" . $order->DateOrder . "', '" .$order->Number . "', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
 				
 					// Gestione righi ordine					
 					foreach($xml->Documents->Document->Rows->children() as $orderrow) { // carico le righe dell'ordine
