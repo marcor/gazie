@@ -254,6 +254,7 @@ class APIeCommerce {
 				$_SESSION['errmsg'] = "L'e-commerce non crea il file xml";
 				$_SESSION['errref'] = "Impossibile scaricare gli ordini dall'e-commerce";
 			}
+			$count=0;
 			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
 				if(!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)){ // se il numero d'ordine non esiste carico l'ordine in GAzie
 					$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
@@ -329,7 +330,7 @@ class APIeCommerce {
 											
 					// registro testata ordine
 					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '1', '1', '" . $order->DateOrder . "', '" .$order->Number . "', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
-				
+					$count++;//aggiorno contatore nuovi ordini
 					// Gestione righi ordine					
 					foreach($xml->Documents->Document->Rows->children() as $orderrow) { // carico le righe dell'ordine
 						
@@ -358,7 +359,7 @@ class APIeCommerce {
 						gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $orderrow->MeasureUnit . "','" . $orderrow->Qty . "','" . $orderrow->Price . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
 					}										
 					$id_tesbro++;				
-				}							
+				}				
 			}							
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
 			ftp_quit($conn_id);
@@ -367,6 +368,13 @@ class APIeCommerce {
 			if (intval(substr($headers[0], 9, 3))==0) {
 				$_SESSION['errref'] = $_SESSION['errref']." controllare connessione internet";
 			}
-		}		
+		}
+		if ($count>0){
+			if ($count==1){
+				$_SESSION['errmsg'] = "E' arrivato ". $count ." ordine dall'e-commerce";
+			} else {
+				$_SESSION['errmsg'] = "Sono arrivati ". $count ." ordini dall'e-commerce";
+			}
+		}
 	}
 }
