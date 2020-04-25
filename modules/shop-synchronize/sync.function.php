@@ -256,6 +256,7 @@ class APIeCommerce {
 			}
 			$count=0;
 			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
+			
 				if(!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)){ // se il numero d'ordine non esiste carico l'ordine in GAzie
 					$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
 					$result = gaz_dbi_query($query);
@@ -330,10 +331,10 @@ class APIeCommerce {
 											
 					// registro testata ordine
 					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '1', '1', '" . $order->DateOrder . "', '" .$order->Number . "', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
-					$count++;//aggiorno contatore nuovi ordini
+					
 					// Gestione righi ordine					
-					foreach($xml->Documents->Document->Rows->children() as $orderrow) { // carico le righe dell'ordine
-						
+					foreach($xml->Documents->Document[$count]->Rows->children() as $orderrow) { // carico le righe dell'ordine
+					
 						// controllo se esiste l'articolo in GAzie 
 						$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $orderrow->Id);
 						$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
@@ -357,10 +358,11 @@ class APIeCommerce {
 						
 						// salvo rigo su database tabella rigbro 
 						gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $orderrow->MeasureUnit . "','" . $orderrow->Qty . "','" . $orderrow->Price . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
-					}										
+					}
+					$count++;//aggiorno contatore nuovi ordini								
 					$id_tesbro++;				
-				}				
-			}							
+				}		
+			}						
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
 			ftp_quit($conn_id);
 			$_SESSION['errmsg'] = "Il file xml degli ordini non si apre";
