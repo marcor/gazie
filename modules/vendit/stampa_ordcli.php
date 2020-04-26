@@ -47,8 +47,8 @@ if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
 		$template='Ticket';
 	}
     createDocument($tesbro,$template,$gTables,'rigbro',$type,$lang);
-} elseif ($tesbro['tipdoc']=='VOW'){
-    createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro');
+} elseif ($tesbro['tipdoc']=='VOW'){ 
+    createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro',$type,$lang);
 } else {
     header("Location: report_broven.php");
     exit;
