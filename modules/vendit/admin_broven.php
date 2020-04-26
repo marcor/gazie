@@ -701,6 +701,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$old_key]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
                 } elseif ($form['listin'] == 4) {
                     $form['rows'][$old_key]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
+                } elseif ($form['listin'] == 5) {
+                    $form['rows'][$old_key]['prelis'] = number_format($artico['web_price'], $admin_aziend['decimal_price'], '.', '');
                 } else {
                     $form['rows'][$old_key]['prelis'] = number_format($artico['preve1'], $admin_aziend['decimal_price'], '.', '');
                 }
@@ -802,6 +804,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
                     } elseif ($form['listin'] == 4) {
                         $form['rows'][$next_row]['prelis'] = number_format($artico['preve4'], $admin_aziend['decimal_price'], '.', '');
+                    } elseif ($form['listin'] == 5) {
+                        $form['rows'][$next_row]['prelis'] = number_format($artico['web_price'], $admin_aziend['decimal_price'], '.', '');
                     } else {
                         $form['rows'][$next_row]['prelis'] = number_format($artico['preve1'], $admin_aziend['decimal_price'], '.', '');
                     }
@@ -1424,7 +1428,7 @@ echo '
 				<td class="FacetFieldCaptionTD">' . $script_transl[7] . '</td>
 				<td class="FacetDataTD">
 					<select name="listin" class="FacetSelect">';
-for ($lis = 1; $lis <= 4; $lis++) {
+for ($lis = 1; $lis <= 5; $lis++) {
     $selected = "";
     if ($form['listin'] == $lis) {
         $selected = ' selected=""';
