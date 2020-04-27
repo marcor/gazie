@@ -301,7 +301,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $i++;
                 } 
                 if($count > $i){//qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
-					for ($i = $i; $i <= $count; $i++) { echo "<br>righi più eccedenza";
+					for ($i = $i; $i <= $count; $i++) {
 						$form['rows'][$i]['id_tes'] = $form['id_tes'];
 						rigdocInsert($form['rows'][$i]);
 						if ($admin_aziend['conmag'] == 2 &&
