@@ -282,9 +282,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             if ($toDo == 'update') { // e' una modifica
                 $old_rows = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $form['id_tes'], "id_tes, id_rig");
+				
                 $i = 0;
                 $count = count($form['rows']) - 1;
-                while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
+                while ($val_old_row = gaz_dbi_fetch_array($old_rows)) { 
                     if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
                         $form['rows'][$i]['id_tes'] = $form['id_tes'];
                         rigdocUpdate(array('id_rig', $val_old_row['id_rig']), $form['rows'][$i]);
@@ -298,17 +299,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         gaz_dbi_del_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig']);
                     }
                     $i++;
-                }
-                //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
-                for ($i = $i; $i <= $count; $i++) {
-                    $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                    rigdocInsert($form['rows'][$i]);
-                    if ($admin_aziend['conmag'] == 2 &&
-                            $form['rows'][$i]['tiprig'] == 0 &&
-                            !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, 0, $form['rows'][$i]['id_lotmag']);
-                    }
-                }
+                } 
+                if($count > $i){//qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
+					for ($i = $i; $i <= $count; $i++) { echo "<br>righi più eccedenza";
+						$form['rows'][$i]['id_tes'] = $form['id_tes'];
+						rigdocInsert($form['rows'][$i]);
+						if ($admin_aziend['conmag'] == 2 &&
+								$form['rows'][$i]['tiprig'] == 0 &&
+								!empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+							$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, 0, $form['rows'][$i]['id_lotmag']);
+						}
+					}
+				}
                 $form['datfat'] = $form['datemi'];
                 $form['id_contract'] = $form['id_cash'];
                 tesdocUpdate(array('id_tes', $form['id_tes']), $form);
