@@ -67,7 +67,7 @@ if ( !isset( $_GET['oggetto'] )) $_GET['oggetto'] = '';
 $where = "tipo='ASS' AND " . $gTables['anagra'] . ".ragso1 LIKE '%%'";
 $all = $where;
 
-if ( $_GET['stato']=="nochiusi" ) {
+if ( !empty($_GET['stato']) && $_GET['stato']=='nochiusi' ) {
 	$where .= " AND ".$gTables['assist'].".stato!='effettuato' AND ".$gTables['assist'].".stato!='fatturato'";
 }
 
@@ -149,7 +149,7 @@ if (!isset( $_GET['idinstallazione']) || (isset($result) && gaz_dbi_num_rows($re
 				<?php gaz_flt_disp_select("stato", "stato", $gTables["assist"], "tipo='ASS'", "stato"); ?>
 			</td>
 			<td>
-				<a class="btn btn-sm btn-default" href="print_ticket_list.php?auxil=<?php echo $auxil; ?>&clfoco=<?php echo $_GET["clfoco"]; ?>&flt_stato=<?php echo $_GET['stato']; ?>&oggetto=<?php echo $_GET['oggetto']; ?>&flt_passo=<?php echo $passo; ?>"><i class="glyphicon glyphicon-list"></i>&nbsp;Stampa Lista</a>
+				<a class="btn btn-sm btn-default" href="print_ticket_list.php?auxil=<?php echo $auxil; ?>&clfoco=<?php echo (!empty($_GET['clfoco'])) ? $_GET['clfoco'] : '' ; ?>&flt_stato=<?php echo (!empty($_GET['stato'])) ? $_GET['stato'] : '' ; ?>&oggetto=<?php echo $_GET['oggetto']; ?>&flt_passo=<?php echo $passo; ?>"><i class="glyphicon glyphicon-list"></i>&nbsp;Stampa Lista</a>
 			</td>
 			<td>
 				<input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">

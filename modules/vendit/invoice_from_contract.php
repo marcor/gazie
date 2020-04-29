@@ -148,6 +148,8 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
     if (isset($_POST['create']) && empty($msg)) {
         $first_protoc = 0;
         $first_numdoc = 0;
+        $last_protoc = 0;
+        $last_numdoc = 0;
         require("lang." . $admin_aziend['lang'] . ".php");
         foreach ($billable as $k => $val) {
             if (isset($_POST['check_' . $k])) { // se è stato selezionato il contratto da fatturare
