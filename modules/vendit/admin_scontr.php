@@ -136,6 +136,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_scorta'] = $_POST['in_scorta'];
     $form['in_quamag'] = $_POST['in_quamag'];
     $form['in_pesosp'] = $_POST['in_pesosp'];
+	$form['in_good_or_service'] = $_POST['in_good_or_service'];
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
     $form['in_id_lotmag'] = intval($_POST['in_id_lotmag']);
     $form['in_status'] = $_POST['in_status'];
@@ -163,6 +164,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['codvat'] = intval($v['codvat']);
             $form['rows'][$next_row]['pervat'] = preg_replace("/\,/", '.', $v['pervat']);
             $form['rows'][$next_row]['codric'] = intval($v['codric']);
+			$form['rows'][$next_row]['good_or_service'] = intval($v['good_or_service']);
             $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
             $form['rows'][$next_row]['lot_or_serial'] = intval($v['lot_or_serial']);
             $form['rows'][$next_row]['id_lotmag'] = intval($v['id_lotmag']);
@@ -196,6 +198,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_scorta'] = $form['rows'][$key_row]['scorta'];
                     $form['in_quamag'] = $form['rows'][$key_row]['quamag'];
                     $form['in_pesosp'] = $form['rows'][$key_row]['pesosp'];
+					$form['in_good_or_service'] = $form['rows'][$key_row]['good_or_service'];
                     $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
                     $form['in_id_lotmag'] = $form['rows'][$key_row]['id_lotmag'];
                     $form['in_status'] = "UPDROW" . $key_row;
@@ -283,41 +286,31 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if ($toDo == 'update') { // e' una modifica
                 $old_rows = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $form['id_tes'], "id_tes, id_rig");
 				
-                $i = 0;
-                $count = count($form['rows']) - 1;
-                while ($val_old_row = gaz_dbi_fetch_array($old_rows)) { 
-                    if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
-                        $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                        rigdocUpdate(array('id_rig', $val_old_row['id_rig']), $form['rows'][$i]);
-                        if ($form['rows'][$i]['id_mag'] > 0) { //se il rigo ha un movimento di magazzino associato
-                            $magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $form['rows'][$i]['id_mag'], $admin_aziend['stock_eval_method'], false, 0, $form['rows'][$i]['id_lotmag']);
-                        }
-                    } else { //altrimenti lo elimino
-                        if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
-                            $magazz->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
-                        }
-                        gaz_dbi_del_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig']);
-                    }
-                    $i++;
-                } 
-                if($count > $i){//qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
-					for ($i = $i; $i <= $count; $i++) {
-						$form['rows'][$i]['id_tes'] = $form['id_tes'];
-						rigdocInsert($form['rows'][$i]);
-						if ($admin_aziend['conmag'] == 2 &&
-								$form['rows'][$i]['tiprig'] == 0 &&
-								!empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-							$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, 0, $form['rows'][$i]['id_lotmag']);
-						}
-					}
+				// Antonio Germani - Elimino tutti i vecchi righi 
+                while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
+					if (intval($val_old_row['id_mag']) > 0) {  //se c'era un movimento di magazzino lo azzero
+                        $magazz->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
+                    } 
+                    gaz_dbi_del_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig']); // elimino il rigdoc
 				}
+								
+				//Antonio Germani - inserisco nuovamente righi
+                foreach ($form['rows'] as $v) {
+                    $v['id_tes'] = $form['id_tes'];
+                    $last_rigdoc_id=rigdocInsert($v);
+                    if ($admin_aziend['conmag'] == 2 AND $v['tiprig'] == 0 AND ! empty($v['codart']) AND $v['good_or_service']==0) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                        $id_mag=$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method'], FALSE, 0, $v['id_lotmag']);
+						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
+	                }
+                }
+				
                 $form['datfat'] = $form['datemi'];
                 $form['id_contract'] = $form['id_cash'];
                 tesdocUpdate(array('id_tes', $form['id_tes']), $form);
                 header("Location: " . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
-                $form['template'] = 'FatturaAllegata';
+			    $form['template'] = 'FatturaAllegata';
                 $form['id_contract'] = $form['id_cash'];
                 $form['seziva'] = $form['seziva'];
                 $form['spediz'] = $form['fiscal_code'];
@@ -347,7 +340,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $v['id_tes'] = $last_id;
                     $last_rigdoc_id=rigdocInsert($v);
                     if ($admin_aziend['conmag'] == 2 and
-                            $v['tiprig'] == 0 and ! empty($v['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                            $v['tiprig'] == 0 and ! empty($v['codart']) AND $v['good_or_service']==0) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         $id_mag=$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method'], false, 0, $v['id_lotmag']
                         );
 						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
@@ -1013,6 +1006,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
 			echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
+			echo "<input type=\"hidden\" value=\"" . $artico['good_or_service'] . "\" name=\"rows[$k][good_or_service]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['provvigione'] . "\" name=\"rows[$k][provvigione]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
             echo '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />';
