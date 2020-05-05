@@ -596,7 +596,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             
              // Se è una ditta inserisco la denominazione
             $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-            $el = $domDoc->createElement("Denominazione",substr(trim($XMLvars->client['ragso1']) . " " . trim($XMLvars->client['ragso2']), 0, 80));
+            $el = $domDoc->createElement("Denominazione",substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
             $results->appendChild($el);
 
     }
