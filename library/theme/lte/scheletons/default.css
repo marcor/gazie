@@ -145,11 +145,12 @@
 .sidebar-menu .treeview-menu > li > a {
     padding: 5px 5px 5px 5px;
 }
+
+/* il titolo sopra al header della tabella*/
 .FacetFormHeaderFont {
     font-size: 18px;
     text-align: center;
     font-weight: bold;
-    margin-top: 30px;
 }
 .control-sidebar-menu .menu-info {
     margin-left: 0px;
@@ -317,18 +318,36 @@
 #in_codvat {
 	max-width: 200px;
 }
+
 .table-responsive {
 	min-height: .01%;
 }
+
+.box-body {
+    padding: 0px;
+}
+
+/* la tabella responsive deve avere un po si margine destro e sinistro*/
+.table-responsive {
+    width: 98%;
+    margin: auto;
+}
+
 .ui-sortable-handle{
 	padding: 2px;
 }
 
+/* l'altezza dei pannelli in dashboard deve essere uguale per tutti*/
 [id^=position-] .panel {
-    min-height: 300px;
+    min-height: 310px; 
 }
 
-.panel-default,.panel-success,.Tmiddle,Tsmall {
+/* aggiungo un po di spazio tra i pannelli della dash*/
+[id^=position-] {
+    padding: 10px 10px 10px 10px;
+}
+
+.panel-default  {
     margin: auto;
 }
 .content-header > h1 {
@@ -336,13 +355,17 @@
 }
 .content-header > .breadcrumb {
     float: left;
-    margin-top: 0;
+    margin-top: 0px;
     margin-bottom: 0;
     font-size: 11px;
-    padding: 7px 5px;
+    padding: 4px 7px;
     position: absolute;
-    top: 3px;
-    border-radius: 3px;
+    width: 100%;
+    border-bottom: 1px solid #000 !important;
+    border-radius: 0px;
+}
+.breadcrumb li {
+    margin: 1px 0;
 }
 .ui-dialog-titlebar-close {
     visibility: hidden;

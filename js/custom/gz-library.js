@@ -29,7 +29,7 @@ $(document).ready(function () {
     });
     gzTooltip();
     
-    $(".Tlarge").addClass('table table-striped table-bordered table-condensed table-responsive');
+    $(".Tlarge").addClass('table table-striped table-bordered table-condensed');
     $("#alert-discount").fadeTo(2500, 1500).slideUp(750, function () {
         $("#alert-discount").alert('close');
     });
