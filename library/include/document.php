@@ -245,7 +245,7 @@ class DocContabVars {
 			$admin_aziend['other_email']=$tesdoc["email"];
 		}
         $this->azienda = $admin_aziend;
-		if ($tesdoc['tipdoc'] == 'AFA') {
+		if ($tesdoc['tipdoc'] == 'AFA' || $tesdoc['tipdoc'] == 'AFT') {
 			$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $tesdoc['clfoco']);
 			$this->iban = $clfoco['iban'];
 		}

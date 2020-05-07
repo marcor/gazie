@@ -84,7 +84,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
     while ($tes = gaz_dbi_fetch_array($result)) {
         if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
             switch ($tes['tipdoc']) {
-				case "AFA":case "AFC":case "AFD":
+				case "AFA":case "AFT":case "AFC":case "AFD":
 				$bol=$admin_aziend['taxstamp_account'];
 				break;
                 default:

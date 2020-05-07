@@ -29,4 +29,7 @@ ALTER TABLE `gaz_XXXassist`	COMMENT='Tabella utilizzata dal modulo supporto (ass
 ALTER TABLE `gaz_XXXinstal`	ADD COLUMN `stato` TINYINT(1) NOT NULL COMMENT 'Stato del bene aziendale: 0=inattivo ma funzionante, 1=in funzione, 2=in riparazione, 3=rotto, 8=in vendita, 9=alienato' AFTER `note`;
 ALTER TABLE `gaz_XXXassist` ADD COLUMN `adminid` VARCHAR(20) NULL DEFAULT NULL AFTER `note`, ADD COLUMN `last_modified` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `adminid`;
 ALTER TABLE `gaz_XXXinstal` ADD COLUMN `adminid` VARCHAR(20) NULL DEFAULT NULL AFTER `stato`, ADD COLUMN `last_modified` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `adminid`;
+INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`, `clfoco_ref`, `type_imp`, `dare_avere`, `n_order`) VALUES ('AFT', '212000000', 'A', 'A', '3'),('AFT', '330000004', 'B', 'D', '1'),('AFT', '106000001', 'C', 'D', '2');
+INSERT INTO `gaz_XXXcaucon` (`codice`, `descri`, `insdoc`, `regiva`, `operat`, `pay_schedule`, `adminid`) VALUES ('AFT', 'FATTURA DI ACQUISTO DIFFERITA', '1', '6', '1', '1', 'amministratore');
+UPDATE `gaz_XXXcaucon` SET `descri`='FATTURA DI ACQUISTO IMMEDIATA' WHERE  `codice`='AFA';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

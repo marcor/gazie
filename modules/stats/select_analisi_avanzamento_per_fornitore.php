@@ -123,7 +123,7 @@ sum(CASE
 		        WHEN (movmag.datreg between '$datini' and '$datfin' and movmag.tipdoc='FNC') THEN (-1)*movmag.quanti*movmag.prezzo*(1-movmag.scorig/100)
 				ELSE 0 END) as totValVen,
 sum(CASE
-                WHEN (movmag.datreg between '$datiniA' and '$datfinA' and movmag.tipdoc='AFA') THEN movmag.quanti*movmag.prezzo*(1-movmag.scorig/100)
+                WHEN (movmag.datreg between '$datiniA' and '$datfinA' and ( movmag.tipdoc='AFA' OR movmag.tipdoc='AFT')) THEN movmag.quanti*movmag.prezzo*(1-movmag.scorig/100)
 		        WHEN (movmag.datreg between '$datiniA' and '$datfinA' and movmag.tipdoc='AFC') THEN (-1)*movmag.quanti*movmag.prezzo*(1-movmag.scorig/100)
 				ELSE 0 END) as totValAcq";
 

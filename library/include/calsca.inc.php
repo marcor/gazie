@@ -267,6 +267,7 @@ function createArrayDebiti($result, $pagame, $utsval) {
                      $righiDebiti[$rigo]['id_rig'] = 0;
                      switch ($movimenti['caucon']) {
                         case "AFA":
+                        case "AFT":
                            $righiDebiti[$rigo]['descri'] = "FATTURA N." . $movimenti['numdoc'] . " DEL " . $giodoc . "-" . $mesdoc . "-" . $anndoc;
                            $righiDebiti[$rigo]['des_con'] = "FT N." . $movimenti['numdoc'];
                            break;
@@ -306,6 +307,7 @@ function createArrayDebiti($result, $pagame, $utsval) {
                      $righiDebiti[$rigo]['id_rig'] = 0;
                      switch ($movimenti['caucon']) {
                         case "AFA":
+                        case "AFT":
                            $righiDebiti[$rigo]['descri'] = "FATTURA N." . $movimenti['numdoc'] . " DEL " . $giodoc . "-" . $mesdoc . "-" . $anndoc;
                            $righiDebiti[$rigo]['des_con'] = "FT N." . $movimenti['numdoc'];
                            break;

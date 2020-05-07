@@ -277,7 +277,7 @@ if (isset($_POST['close'])){
 							</div>
 							<div class="col-sm-7">									
 							<?php
-							if ($orf['tipdoc']=="AFA" or $orf['tipdoc']=="ADT"){
+							if ($orf['tipdoc']=="AFA" || $orf['tipdoc']=="AFT" || $orf['tipdoc']=="ADT"){
 								echo "<b>Descr.: </b><a class=\"btn btn-xs btn-default\" href=\"../acquis/admin_docacq.php?Update&id_tes=".$orf['id_tes']."\">".$orf['desdoc']."</a>";
 								echo "<b> Mov.mag.: </b><a class=\"btn btn-xs btn-default\" href=\"../magazz/admin_movmag.php?id_mov=".$orf['id_mov']."&Update\">".$orf['id_mov']."</a>";
 

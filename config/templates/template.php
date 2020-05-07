@@ -89,7 +89,7 @@ class Template extends FPDI {
         $this->layout_pos_logo_on_doc = $this->docVars->layout_pos_logo_on_doc;
         //*- DC - 16/01/2018
 
-		if ($this->tesdoc['tipdoc'] == 'AFA') {
+		if ($this->tesdoc['tipdoc'] == 'AFA' || $this->tesdoc['tipdoc'] == 'AFT') {
 			$this->iban = $docVars->iban;
 		}
     }

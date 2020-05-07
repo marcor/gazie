@@ -39,7 +39,7 @@ class FatturaAcquisto extends Template
         $this->trasporto = $this->tesdoc['traspo'];
         if ($this->tesdoc['tipdoc'] == 'ADT') {
             $descri='Ricevuto DdT d\'acquisto n.';
-        } elseif ($this->tesdoc['tipdoc'] == 'AFA') {
+        } elseif ($this->tesdoc['tipdoc'] == 'AFA' || $this->tesdoc['tipdoc'] == 'AFT') {
             $descri='Ricevuta Fattura d\'acquisto n.';
         } elseif ($this->tesdoc['tipdoc'] == 'AFC') {
             $descri='Ricevuta Nota di credito n.';

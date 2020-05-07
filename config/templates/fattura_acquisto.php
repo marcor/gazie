@@ -36,7 +36,7 @@ class FatturaAcquisto extends Template
         $this->trasporto = $this->tesdoc['traspo'];
         if ($this->tesdoc['tipdoc'] == 'ADT') {
             $descri='Ricev.DdT d\'acquisto n.'.$this->tesdoc['numdoc'].' del '.gaz_format_date($this->tesdoc['datemi']);
-        } elseif ($this->tesdoc['tipdoc'] == 'AFA') {
+        } elseif ($this->tesdoc['tipdoc'] == 'AFA' || $this->tesdoc['tipdoc'] == 'AFD' ) {
             $descri='Ricev.Fatt. d\'acquisto n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
         } elseif ($this->tesdoc['tipdoc'] == 'AFC') {
             $descri='Ricev.Nota di credito n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
