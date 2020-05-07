@@ -49,7 +49,6 @@ $sqlquery = "SELECT * FROM ".$gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']
 			LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['tesmov'].".id_tes = ".$gTables['rigmoc'].".id_tes 
 			WHERE id_tesdoc_ref='".$tesdoc_ref."' AND ".$gTables['rigmoc'].".id_rig <> $id_exc 
 			ORDER BY datreg DESC, id_tesdoc_ref DESC, id_rig"; 
-error_log($sqlquery);
 $result = gaz_dbi_query($sqlquery);
 
 while($row = gaz_dbi_fetch_array($result)) {
