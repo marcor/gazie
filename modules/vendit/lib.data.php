@@ -23,8 +23,6 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-$gTables['contract'] = $table_prefix.'_'.$id."contract";
-$gTables['contract_row'] = $table_prefix.'_'.$id."contract_row";
 
 function effettInsert ($newValue)
 {
