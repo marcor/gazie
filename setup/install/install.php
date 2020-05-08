@@ -80,21 +80,22 @@ if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
     $form['hidden_req'] = substr($_POST['hidden_req'],0,20);
     $form['lang'] = substr($_POST['lang'],0,16);
     $form['install_upgrade'] = substr($_POST['install_upgrade'],0,16);
-    if (isset($_POST['upgrade'])) {              // AGGIORNO
-      if (databaseIsAlign()) {               // la base dati e' aggiornata!
-         $err[] = 'is_align';
-		 if (strlen($form['hidden_req']) > 10){ // il db è allineato ma ho trovato da eseguire uno script php  correlato
-			include($form['hidden_req']);
-		 }
-      } else { 
-         connectToDB ();
-         $exe_script=executeQueryFileUpgrade($table_prefix);
-		 if ($exe_script){
-			include($exe_script);
-		 }
-      }
+    if (isset($_POST['upgrade'])) {          // AGGIORNO
+		if (databaseIsAlign()) {             // la base dati e' aggiornata!
+			$err[] = 'is_align';
+			if (strlen($form['hidden_req'])>10 && substr($form['hidden_req'], 0, 10)=='update_to_' && substr($form['hidden_req'], -4)=='.php') {
+				// il db è allineato ma ho trovato da eseguire uno script php  correlato
+				include($form['hidden_req']);
+			}
+		} else { 
+			connectToDB();
+			$exe_script = executeQueryFileUpgrade($table_prefix);
+			if ($exe_script) {
+				include($exe_script);
+			}
+		}
     }
-    if (isset($_POST['install'])) {              //INSTALLO
+    if (isset($_POST['install'])) {          //INSTALLO
         // recupero il file sql d'installazione nella directory setup/install/
         // e possibilmente nella lingua selezonata dall'utente
         // che deve avere il nome example: "install_5.2.english.php"
@@ -103,7 +104,7 @@ if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
             // se va a buon fine controllo eventuali file di aggiornamento
             $form['install_upgrade'] = 'upgrade';
             $form['lang'] = getLang();
-            if (databaseIsAlign()) {               // la base dati e' aggiornata!
+            if (databaseIsAlign()) {         // la base dati e' aggiornata!
                $form['lang'] = getLang();
                $err[] = 'is_align';
             }
