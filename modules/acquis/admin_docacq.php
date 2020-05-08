@@ -561,6 +561,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['destin'] = addslashes($form['destin']);
 			$form['datreg'] = gaz_format_date($form['datreg'],true);
 			$form['datfat'] = gaz_format_date($form['datfat'],true);
+			$form['datemi'] = gaz_format_date($form['datfat'],true);
             if ($toDo == 'update') { // e' una modifica
                 $old_rows = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $form['id_tes'], "id_rig asc");
 				

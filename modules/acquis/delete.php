@@ -46,22 +46,38 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			}
 		break;
 		case "docacq":
+			
 			$i=intval($_POST['id_tes']);
 			$form = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $i);
-			gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $i);
-			gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
-			gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
-			gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $form['id_con']);
-			$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$i."'","id_tes desc");
-			print_r($rs_righidel);
-			while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
-				gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
-				if (intval($a_row['id_mag']) > 0){  //se c'� stato un movimento di magazzino lo azzero
-					$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $a_row['id_mag']);
-					
-					// cancello pure eventuale movimento sian 
-					gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $a_row['id_mag']);
-				}				
+			if ($form['tipdoc']!="AFT"){ // se non è una fattura con DDT a riferimento posso cancellare
+				gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $i);
+				gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
+				gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
+				gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $form['id_con']);
+				$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$i."'","id_tes desc");
+				print_r($rs_righidel);
+				while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+					gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
+					if (intval($a_row['id_mag']) > 0){  //se c'� stato un movimento di magazzino lo azzero
+						$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $a_row['id_mag']);
+						
+						// cancello pure eventuale movimento sian 
+						gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $a_row['id_mag']);
+					}				
+				}
+			} else { // se è AFT
+				
+					if ( $form["ddt_type"]!="R") {
+							$form['tipdoc']="AD".$form["ddt_type"]; 
+						} else {
+							$form['tipdoc']="AM".$form["ddt_type"]; // Contratto di traporto in entrata
+						}
+						$form['protoc']="";$form['numfat']="";$form['datfat']="";$form['ddt_type']="";
+						tesdocUpdate(array('id_tes', $form['id_tes']), $form);						
+						gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
+						gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
+						gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $form['id_con']);
+										 			
 			}
 		break;
 		case "pagdeb":
