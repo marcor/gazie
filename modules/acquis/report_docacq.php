@@ -225,7 +225,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
  
     $y = substr($row['datfat'], 0, 4);
-    if ($row["tipdoc"] == 'AFA') {
+    if ($row["tipdoc"] == 'AFA' OR $row["tipdoc"] == 'AFT') {
         $tipodoc = "Fattura";
         $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
         $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
