@@ -478,7 +478,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$initra = gaz_format_date($form['initra'],true);// adatto al db
             $utstra = gaz_format_date($form['initra'],2); // mktime
         }
-        if (!gaz_format_date($form['initra'],'chk')) {
+        // nelle fatture immediate e nelle fatture di acconto non serve inserire la data e quindi controllarla
+        if (!gaz_format_date($form['initra'],'chk') && $form['tipdoc']!='FAI' && $form['tipdoc']!='FAA') {
             $msg['err'][] = "37";
         }
         if ($utstra < $utsemi) {
@@ -2331,9 +2332,7 @@ if ($toDo == "insert"){
 	$class_btn_confirm='btn-success';
 	if ($form['ok_barcode']!="ok"){
 		?>
-				<button type="submit" name="button_ok_barcode" class="btn btn-edit btn-default btn-xs col-xs-4" title="inserisci con pistola Barcode"> 
-                <span class="glyphicon glyphicon-barcode"> Barcode</span>
-				</button>
+				
 		<?php
 	} else {
 		if ($form['in_barcode']==""){
@@ -2359,9 +2358,6 @@ if ($toDo == "insert"){
 }
 // Antonio Germani - fine ricerca con pistola lettore codice a barre -->
 ?>
-            </div>
-            <div class="form-group col-xs-12 col-sm-6 col-md-3">
-                <a id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i><?php echo $script_transl['add_article']; ?></a>
             </div>
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
                 <label for="in_quanti" ><?php echo  $script_transl[16].':'; ?></label>
@@ -2411,6 +2407,11 @@ $gForm->selectAccount('in_codric', $form['in_codric'], $ric,'',false,'col-xs-9')
 if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
 ?>
             <div class="col-xs-6 col-sm-6 col-md-3 text-right"> 
+            <!--<div class="form-group col-xs-12 col-sm-6 col-md-3">-->
+                <a id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-export"></i><?php //echo $script_transl['add_article']; ?></a>
+            <!--</div>-->
+
+                <button type="submit" class="btn btn-default btn-sm" name="button_ok_barcode" title="inserisci con pistola Barcode"><i class="glyphicon glyphicon-barcode"></i></button>
                 <button type="submit" class="btn btn-default btn-sm" name="in_submit_desc" title="Aggiungi rigo Descrittivo"><i class="glyphicon glyphicon-pencil"></i></button>
                 <button type="submit" class="btn btn-default btn-sm" name="in_submit_text" title="Aggiungi rigo Testo"><i class="glyphicon glyphicon-list"></i></button>
                 <button type="submit" class="btn btn-default btn-sm" name="in_submit_cig" title="Aggiungi rigo CIG">CIG</button>
