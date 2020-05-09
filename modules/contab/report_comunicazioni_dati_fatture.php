@@ -40,7 +40,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     <input type="hidden" value="<?php echo $form['hidden_req']; ?>" name="hidden_req" />
     <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno" />
     <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
-    <div class="tab-content">
+    <!--<div class="tab-content">-->
         <div id="lista" class="tab-pane fade in active">
             <div class="table-responsive">
 
@@ -53,6 +53,10 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                         <th class="FacetFieldCaptionTD">File DTE</th>
                         <th class="FacetFieldCaptionTD">File DTR</th>
                         <th class="FacetFieldCaptionTD">File ZIP</th>
+                        <?php
+                         if ( $admin_aziend['Abilit']==9 )  echo '<th class="FacetFieldCaptionTD">Elimina</th>';
+                        ?>
+                        </tr>
                             <?php
                             $result = gaz_dbi_dyn_query('*', $gTables['comunicazioni_dati_fatture'], "nome_file_ZIP LIKE '%DF_Z%'", 'anno DESC, trimestre_semestre DESC');
                             while ($row = gaz_dbi_fetch_array($result)) {
@@ -64,13 +68,81 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                                 echo "<td align=\"center\">" . $row['nome_file_DTE'] . " &nbsp;</td>";
                                 echo "<td align=\"center\">" . $row['nome_file_DTR'] . " &nbsp;</td>";
                                 echo '<td align="center"><a class="btn btn-xs btn-default" href="download_comunicazione_dati_fatture.php?id='.$row["id"].'">'. $row['nome_file_ZIP'] .'<i class="glyphicon glyphicon-download"></i></a> &nbsp;</td>';
+                                if ( $admin_aziend['Abilit']==9 ) 
+                                    echo '<td align="center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'.$row['id'].'"><i class="glyphicon glyphicon-remove"></i></a> &nbsp;</td>';
                                 echo "</tr>";
                             }
                             ?>
                 </table>
             </div>
         </div>
+    <!--</div>-->
+
+<script>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("ref"));
+		var id = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'comunicazioni_dati_fatture',ref:id},
+						type: 'POST',
+						url: '../contab/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_comunicazioni_dati_fatture.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});
+</script>
+
+    <div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>Comunicazioni dati fatture:</b></p>
+        <p>IDentificativo:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+	</div>
+    <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+        <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
+        <p class="ui-state-highlight" id="mail_adrs"></p>
+        <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
+        <p class="ui-state-highlight" id="mail_attc"></p>
     </div>
+
+    <div style="display:none" id="dialog1" title="<?php echo $script_transl['fae_alert0']; ?>">
+        <p id="fae_alert1"><?php echo $script_transl['fae_alert1']; ?></p>
+        <p class="ui-state-highlight" id="fae1"></p>
+        <p id="fae_alert2"><?php echo $script_transl['fae_alert2']; ?><span id="fae2" class="bg-warning"></span></p>
+    </div>
+
+    <div style="display:none" id="dialog2" title="<?php echo $script_transl['report_alert0']; ?>">
+        <p id="report_alert1"><?php echo $script_transl['report_alert1']; ?></p>
+        <p class="ui-state-highlight" id="report1"></p>
+    </div>
+    
+    <div style="display:none" id="dialog3" title="<?php echo $script_transl['faesdi_alert0']; ?>">
+        <p id="faesdi_alert1"><?php echo $script_transl['faesdi_alert1']; ?></p>
+        <p class="ui-state-highlight" id="mailpecsdi"></p>
+    </div>
+
 
 </form>
 <?php

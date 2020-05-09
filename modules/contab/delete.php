@@ -68,6 +68,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 				//cancello anche i righi 
 				gaz_dbi_del_row($gTables['caucon_rows'], "caucon_cod", $i);
 		break;
+		case "comunicazioni_dati_fatture":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['comunicazioni_dati_fatture'], 'id', $i);
+		break;
 	}
 }
 ?>

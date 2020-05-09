@@ -235,13 +235,16 @@ function gaz_dbi_put_row($table, $CampoCond, $ValoreCond, $Campo, $Valore) {
 
 function gaz_dbi_put_query($table, $where, $Campo, $Valore) {
    global $link;
-   $result = mysqli_query($link, "UPDATE $table SET $Campo='$Valore' WHERE $where");
+   $query = "UPDATE $table SET $Campo='$Valore' WHERE $where";
+   debug_query( $query );
+   $result = mysqli_query($link, $query);
    if (!$result) gaz_die ( $query, "231", __FUNCTION__ );
 }
 
 function gaz_dbi_del_row($table, $fname, $fval) {
    global $link;
    $query = "DELETE FROM $table WHERE $fname = '$fval'";
+   debug_query($query);
    $result = mysqli_query($link, $query) or die(" Errore di cancellazione: " . mysqli_error($link));
    if (!$result) gaz_die ( $query, "238", __FUNCTION__ );
 }
