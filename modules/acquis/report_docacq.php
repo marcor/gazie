@@ -274,12 +274,18 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "</td>";
     echo "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
         echo "<td>";
-		if (!empty($ultimo_documento) && $ultimo_documento['id_tes']==$row['id_tes']) {
+		// faccio il controllo di eliminazione dell'ultima fattura ricevuta 
+		if (!empty($ultimo_documento) && (
+				(substr($row['tipdoc'],0,2) == 'DD' && $ultimo_documento['numdoc']==$row['numdoc'] && $ultimo_documento['datemi']==$row['datemi']) ||
+				(substr($row['tipdoc'],0,2) == 'AF' && $ultimo_documento['protoc']==$row['protoc'] && $ultimo_documento['datreg']==$row['datreg']) 
+			  )
+			) {
 			?>			
 			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $row['id_tes'];?>" fornitore="<?php echo $anagra['ragso1']; ?>">
 				<i class="glyphicon glyphicon-remove"></i>
 			</a>
 			<?php
+
 		} else {
 			?>   
 			<button title="Non puoi eliminare un documento diverso dall'ultimo emesso" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
