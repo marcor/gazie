@@ -906,12 +906,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
 						
 						if ($exist_artico_tesdoc){// se esiste ne cancello tutti i rigdoc e i relativi movmag
-							$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
+							$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
 							while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
-								  gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
+								  gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
 								  gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
 							}
-						} 
+						}
 						// creo un nuovo tesdoc AFT
 						$form['tipdoc']="AFT";$form['ddt_type']="T";$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
 						tesdocInsert($form); // Antonio Germani - creo fattura differita
@@ -925,10 +925,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						rigdocInsert(array('id_tes'=>$ultimo_id,'tiprig'=>2,'descri'=>'da D.d.T. n. '.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT'])));
 						
 					}
-					/* ho un DdT di riferimento già inserito allora faccio una ricerca puntuale per trovare un eventuale movimento di magazzino riferito a questo specifico articolo altrimenti uso '999999999' per id_mag in modo che il movimento di magazzino venga comunque dal DdT inserito manualmente in precedenza e non da questa fattura */
-					//$id_mag=($v['exist_ddt'])?'999999999':0;
-					//$exist_artico_movmag=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);							
-					//$form['rows'][$i]['id_mag']=($exist_artico_movmag)?$exist_artico_movmag['id_mag']:$id_mag;
+					
 					$ctrl_ddt=$v['NumeroDDT'];
 				}
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
@@ -939,7 +936,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
 				if ($exist_new_codart) { // il codice esiste lo uso  
 					$form['rows'][$i]['codart']=$exist_new_codart['codice'];			
-				} else { // il codice nuovo ricavato non esiste creo l'articolobasandomi sui dati in fattura
+				} else { // il codice nuovo ricavato non esiste creo l'articolo basandomi sui dati in fattura
 					switch ($v['codart']) {
 						case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
 						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);

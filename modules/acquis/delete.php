@@ -77,6 +77,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 					
 					while ($form = gaz_dbi_fetch_array($groups)){
 						$form['protoc']="";$form['numfat']="";$form['datfat']="";$form['ddt_type']="";$form['tipdoc']="ADT";
+						$form['fattura_elettronica_original_name']="";$form['fattura_elettronica_original_content']="";
 						tesdocUpdate(array('id_tes', $form['id_tes']), $form);						
 						gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
 						gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
