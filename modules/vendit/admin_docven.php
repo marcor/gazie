@@ -582,8 +582,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (empty($form["pagame"]))
             $msg['err'][] = "48";
         //controllo che i rows non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
-		$rit_ctrl=false;
+        $rit_ctrl=false;
+
+        // controllo se ci sono diversi tipi di iva nel documento o se è presente iva split e non
+        $iva_split_payment = false;
+        $iva_altri_tipi = false;
+
         foreach ($form['rows'] as $i => $v) {
+            // controllo se presente iva split e iva normale
+            if ( $v['tipiva']=="T" ) {
+                $iva_split_payment = true;
+            } else if ( $v['tipiva']!="" ) {
+                $iva_altri_tipi = true;
+            }
             if ($v['descri'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
                 $msgrigo = $i + 1;
                 $msg['err'][] = "49";
@@ -644,6 +655,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 			}
         }
+        // faccio visualizzare l'errore in caso di iva diversa
+        if ( $iva_altri_tipi && $iva_split_payment ) {
+            $msg['err'][] = "66";
+        }
 
 		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
 		if (substr($datemi,0,4)>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 && $form['tipdoc']!='VRI' ){
@@ -653,7 +668,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$msg['err'][] = "63";
         }
         if (count($msg['err']) < 1) {// *** nessun errore ***
-
             $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
@@ -2314,7 +2328,7 @@ echo '	<input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" 
 <div class="panel panel-info div-bordered">
   <div class="panel-body"> 
     <div class="container-fluid">  
-        <div class="row">
+        <div class="row first_row">
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
                 <label for="in_tiprig" ><?php echo $script_transl[17].":"; ?></label> 
 <?php
@@ -2322,7 +2336,7 @@ $gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
 ?>
             </div>
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
-                <label for="in_codart" class="col-xs-4" ><?php echo $script_transl[15] . ':'; ?></label> 
+                <label for="in_codart" ><?php echo $script_transl[15] . ':'; ?></label> 
 <?php
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
@@ -2361,7 +2375,7 @@ if ($toDo == "insert"){
             </div>
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
                 <label for="in_quanti" ><?php echo  $script_transl[16].':'; ?></label>
-                <input type="text" value="<?php echo $form['in_quanti']; ?>" maxlength="11" name="in_quanti" tabindex="5" accesskey="q">
+                <input type="text" id="in_quanti" value="<?php echo $form['in_quanti']; ?>" maxlength="11" name="in_quanti" tabindex="5" accesskey="q">
             </div>
         </div>
         <div class="row">
@@ -2430,7 +2444,6 @@ if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modif
 	</div><!-- chiude container-fuid -->
   </div>
 </div><!-- chiude panel -->
-<br/>
 <?php
 echo '<div class="box-primary table-responsive"><table id="products-list" class="Tlarge table table-bordered table-condensed">
 		  <thead>
