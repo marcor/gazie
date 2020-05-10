@@ -613,7 +613,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['rows'][$nl]['NumeroDDT']=$numddt;
 						$form['rows'][$nl]['DataDDT']=$dataddt;
 					} else {
-						$nl_ref=$vr->item(0)->nodeValue;
+						$nl_ref=($vr->item(0)->nodeValue)-1;
 					}
 					foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
 						$nl_ref++;
@@ -877,12 +877,18 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			if (!empty($sconto_totale_incondizionato)) {
 				$form['sconto']=$sconto_totale_incondizionato;
 			}
-            tesdocInsert($form);
-            //recupero l'id assegnato dall'inserimento
-            $ultimo_id = gaz_dbi_last_id();
+			$form['template']="FatturaAcquisto";
+			if (!isset ($form['rows'][1]['exist_ddt'])){ // se non c'è ddt sul primo rigo vuol dire che non c'è proprio, quindi è una fattura immediata AFA
+				tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
+				//recupero l'id assegnato dall'inserimento
+				$ultimo_id = gaz_dbi_last_id();
+			}
+            
 			$ctrl_ddt='';
-            foreach ($form['rows'] as $i => $v) { // inserisco i righi 
+            foreach ($form['rows'] as $i => $v) { // inserisco i righi
+				$form['rows'][$i]['status']="INSERT";
 				$post_nl=$i-1;
+				
 				if (abs($form['rows'][$i]['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 					$form['rows'][$i]['tiprig']=2;
 				}
@@ -892,14 +898,37 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				} else { // ho il codice articolo del fornitore 
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
 				}
+				// Antonio Germani - inizio scrittura DB
+								
 				if (isset($v['exist_ddt'])) {
-					if ($ctrl_ddt!=$v['NumeroDDT']) { // sul db inserisco un rigo descrittivo al cambio di DdT di riferimento
+					if ($ctrl_ddt!=$v['NumeroDDT']) { 
+						// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
+						$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
+						
+						if ($exist_artico_tesdoc){// se esiste ne cancello tutti i rigdoc e i relativi movmag
+							$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
+							while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+								  gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
+								  gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+							}
+						} 
+						// creo un nuovo tesdoc AFT
+						$form['tipdoc']="AFT";$form['ddt_type']="T";$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
+						tesdocInsert($form); // Antonio Germani - creo fattura differita
+						
+						//recupero l'id assegnato dall'inserimento
+						$ultimo_id = gaz_dbi_last_id();
+						
+					// valorizzo $ultimo_id
+										
+						// sul db inserisco un rigo descrittivo al cambio di DdT di riferimento
 						rigdocInsert(array('id_tes'=>$ultimo_id,'tiprig'=>2,'descri'=>'da D.d.T. n. '.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT'])));
+						
 					}
 					/* ho un DdT di riferimento già inserito allora faccio una ricerca puntuale per trovare un eventuale movimento di magazzino riferito a questo specifico articolo altrimenti uso '999999999' per id_mag in modo che il movimento di magazzino venga comunque dal DdT inserito manualmente in precedenza e non da questa fattura */
-					$id_mag=($v['exist_ddt'])?'999999999':0;
-					$exist_artico_movmag=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);							
-					$form['rows'][$i]['id_mag']=($exist_artico_movmag)?$exist_artico_movmag['id_mag']:$id_mag;
+					//$id_mag=($v['exist_ddt'])?'999999999':0;
+					//$exist_artico_movmag=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);							
+					//$form['rows'][$i]['id_mag']=($exist_artico_movmag)?$exist_artico_movmag['id_mag']:$id_mag;
 					$ctrl_ddt=$v['NumeroDDT'];
 				}
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
@@ -934,8 +963,23 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				if (strlen($form['rows'][$i]['codart'])>2&&$form['rows'][$i]['tiprig']==0) {
 					tableUpdate('artico',array('clfoco','preacq'),$form['rows'][$i]['codart'],array('preacq'=>CalcolaImportoRigo(1,$form['rows'][$i]['prelis'],array($form['rows'][$i]['sconto'])),'clfoco'=>$form['clfoco']));
 				}
-                rigdocInsert($form['rows'][$i]);
-			}
+				
+				// inserisco il rigo rigdoc
+				$id_rif=rigdocInsert($form['rows'][$i]); 
+				
+				
+				// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
+				$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
+				"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
+				"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
+				"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto']);				
+				$id_mag=movmagInsert($rowmag);
+				
+				// aggiorno idmag nel rigdoc 
+				gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_mag . " WHERE `id_rig` = $id_rif ");
+								
+				
+			} 
             header('Location: report_docacq.php?sezione='.$form['seziva']);
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file

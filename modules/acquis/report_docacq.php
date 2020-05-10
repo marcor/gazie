@@ -190,7 +190,7 @@ $(function() {
 <?php
 
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
+$result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
 $paymov = new Schedule(); 
 while ($row = gaz_dbi_fetch_array($result)) {
 	// controllo ogni rigo se è ultimo movimento per quel tipdoc
@@ -199,7 +199,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		$order='numdoc DESC';
 	} elseif  (substr($row['tipdoc'],0,2) == 'AF'){ // fattura o nota credito fornitore
 		$where = "tipdoc LIKE 'AF_' AND seziva = ".$row['seziva']." AND YEAR(datreg) = '".substr($row['datreg'],0,4)."'";
-		$order='protoc DESC';
+		$order='protoc DESC, id_tes ASC';
 	} elseif  (substr($row['tipdoc'],0,2) == 'AD'){
 		$where = "tipdoc LIKE 'AD_'";
 		$order='id_tes DESC';

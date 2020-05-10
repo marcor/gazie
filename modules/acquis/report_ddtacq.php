@@ -29,7 +29,7 @@ if (isset($_GET["auxil"]))
     $sezione = $_GET["auxil"];
 else
     $sezione = 1;
-$where = "(tipdoc = 'DDL' OR tipdoc = 'RDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' ) AND seziva = $sezione";
+$where = "(tipdoc = 'DDL' OR tipdoc = 'RDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' OR tipdoc LIKE 'AFT') AND seziva = $sezione";
 $all = $where;
 $anno = date("Y");
 
@@ -93,7 +93,7 @@ if (isset($_GET['all'])) {
     $ragso1 = "";
     $protocollo = "";
 	$passo = 100000;
-	$where = "(tipdoc = 'DDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' ) AND seziva = $sezione";
+	$where = "(tipdoc = 'DDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' OR tipdoc LIKE 'AFT' ) AND seziva = $sezione";
     $auxil = $_GET['auxil'] . "&all=yes";
 }
 ?>
@@ -273,7 +273,11 @@ while ($val = gaz_dbi_fetch_array($res)) {
             echo "<td>" . $a_row["numdoc"] . " &nbsp;</td>";
             echo "<td>" . $a_row["datemi"] . " &nbsp;</td>";
             echo "<td>" . $cliente["ragso1"] . "&nbsp;</td>";
+			if ($a_row['numfat']>0){
+				echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $a_row["numfat"] . "\" href=\"stampa_docacq.php?id_tes=" . $a_row["id_tes"] ."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. " . $a_row["numfat"] . "</a></td>";
+			} else {
             echo "<td>" . $a_row["status"] . " &nbsp;</td>";
+			}			
             echo "<td>
 			<a class=\"btn btn-xs btn-default\" href=\"stampa_docacq.php?id_tes=" . $a_row["id_tes"] . "&template=DDT\" title=\"Stampa\">
 					<i class=\"glyphicon glyphicon-print\"></i>
