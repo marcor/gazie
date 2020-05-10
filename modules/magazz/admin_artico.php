@@ -859,10 +859,10 @@ if ($modal_ok_insert === true) {
                 </div><!-- chiude row  -->
     <?php if ($toDo == 'update') { ?>
                     <!--+ DC - 06/02/2019 div class="row" --->
-                    <div id="annotaUpdate" class="row IERincludeExcludeRow">
+                    <div id="docCert" class="row IERincludeExcludeRow">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
+                                <label for="docCert" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
         <?php if ($ndoc > 0) { // se ho dei documenti  ?>
                                     <div>
                                     <?php foreach ($form['rows'] as $k => $val) { ?>
@@ -885,10 +885,10 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
 					<!-- Antonio Germani inserimento/modifica immagini di qualità per e-commerce -->
-					<div id="annotaUpdate" class="row IERincludeExcludeRow">
+					<div id="qualityImgs" class="row IERincludeExcludeRow">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['imageweb']; ?></label>
+                                <label for="annotaUpdate" class="col-sm-4 control-label"><?php echo $script_transl['imageweb']; ?></label>
         <?php if ($nimg > 0) { // se ho dei documenti  ?>
                                     <div>
                                     <?php foreach ($form['imgrows'] as $k => $val) { ?>
@@ -915,7 +915,7 @@ if ($modal_ok_insert === true) {
                 <div id="fornitore" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>
+                            <label for="fornitore" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>
     <?php
     $select_id_anagra = new selectPartner("id_anagra");
     $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
@@ -924,7 +924,7 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="ref_ecommerce_id_product" class="row IERincludeExcludeRow">
+                <div id="refEcommercIdProduct" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="ref_ecommerce_id_product" class="col-sm-4 control-label">ID ecommerce</label>
