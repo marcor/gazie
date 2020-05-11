@@ -26,6 +26,7 @@ $(document).ready(function () {
     // non uso size inline ma mi baso su maxlenght per avere una proporzionalità di grandezza sugli elementi input
  	$("input[maxlength]").each(function(index){
         $(this).attr('size', $(this).attr('maxlength')/2);
+        $(this).attr('style', 'width: 100%;');
     });
     gzTooltip();
     
