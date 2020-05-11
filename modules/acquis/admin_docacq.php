@@ -743,20 +743,22 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else { // e' un'inserimento
 				if ($ddtchecked>0){ // se ci sono DDT a riferimento fattura
 					
+					$updtesdoc['protoc'] = getProtocol($form['tipdoc'], substr($form['datreg'],0,4), $sezione);
+					
 					for ($ddtrow=0 ; $ddtrow<=$_POST['num_ddt']; $ddtrow++){ // ciclo i ddt
 						
-						if ($_POST['check_ddt'.$ddtrow]=="checked"){ // se è stato selezionato lo trasformo in fattura
+						if ($_POST['check_ddt'.$ddtrow]=="checked"){ // se è stato selezionato il ddt lo trasformo in fattura
 							$codice = array('id_tes', $form['id_tes'.$ddtrow]);
-							$form['ddt_type']="T";$form['tipdoc']="AFD";
-							$form['protoc'] = getProtocol($form['tipdoc'], substr($form['datreg'],0,4), $sezione);
-							tesdocUpdate($codice, $form);
-							//echo "<br>Aggiorno tesdoc:",$form['id_tes'.$ddtrow];print_r($form);
+							$updtesdoc['ddt_type']="T";$updtesdoc['tipdoc']="AFT";$updtesdoc['numfat']=$form['numfat'];$updtesdoc['datfat']=$form['datfat'];
+							
+							tesdocUpdate($codice, $updtesdoc);
+							
 							$query = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=".$form['id_tes'.$ddtrow], "id_rig asc");
 							$i=0;
 							while ($row = gaz_dbi_fetch_array($query)) {
 								$codice = array('id_rig', $row['id_rig']);
 								rigdocUpdate($codice, $form['rows'][$i]);
-								//echo "<br>Aggiorno rigdoc:",$row['id_rig'];print_r($form['rows'][$i]);
+								
 								$i++;
 							}
 						}
