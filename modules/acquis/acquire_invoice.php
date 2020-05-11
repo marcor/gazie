@@ -900,13 +900,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				// Antonio Germani - inizio scrittura DB
 								
-				if (isset($v['exist_ddt'])) {
+				if (isset($v['exist_ddt'])) { 	
 					if ($ctrl_ddt!=$v['NumeroDDT']) { 
 						// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
 						$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
-						
-						if ($exist_artico_tesdoc){// se esiste ne cancello tutti i rigdoc e i relativi movmag
+							
+						if ($exist_artico_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag
 							$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
+							
+							gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_artico_tesdoc['id_tes']);
 							while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 								  gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
 								  gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
