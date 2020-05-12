@@ -1,0 +1,51 @@
+/* 
+**    selezione articolo in inserimento documenti
+*/
+
+/* tolgo il padding nella selezione articoli in inserimento documenti */
+.form-group.col-xs-12.col-sm-6.col-md-3 {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.row.first_row {
+    padding-top: 5px;
+}
+.panel.panel-info.div-bordered {
+    margin-bottom: 5px;
+}
+
+
+/*
+**    homepage
+*/
+
+/* l'altezza dei pannelli in dashboard deve essere uguale per tutti*/
+[id^=position-] .panel {
+    min-height: 310px; 
+}
+/* aggiungo un po di spazio tra i pannelli della dash*/
+[id^=position-] {
+    padding: 10px 10px 10px 10px;
+}
+
+
+/* 
+**    tabelle di report 
+*/
+
+.table {
+    margin-bottom: 0px;
+}
+
+
+/*
+**    inserimento articoli in magazzino
+*/
+
+.col-sm-4.control-label {
+    text-align: right;
+    vertical-align: middle;
+}
+div.col-md-12 div.form-group div.col-sm-8 {
+    padding-left: 0px;
+}

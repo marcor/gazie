@@ -270,8 +270,7 @@ $(function() {
 	?>
     </div>
 
-    <div class="box-body table-responsive">
-
+    <div class="table-responsive">
         <table class="Tlarge table table-bordered table-condensed table-striped">
             <tr>
                 <td class="FacetFieldCaptionTD">

@@ -1341,7 +1341,7 @@ echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 $select_cliente = new selectPartner('clfoco');
 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);
 echo '	</div><div class="table-responsive">
-		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+		<table class="Tlarge table table-striped table-bordered table-condensed">
 			<tr>
 				<td class="FacetFieldCaptionTD">' . $script_transl[4] . '</td>
 				<td class="FacetDataTD">
