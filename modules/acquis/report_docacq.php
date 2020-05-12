@@ -225,7 +225,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
  
     $y = substr($row['datfat'], 0, 4);
-    if ($row["tipdoc"] == 'AFA' OR $row["tipdoc"] == 'AFT') {
+    if ($row["tipdoc"] == 'AFA') {
         $tipodoc = "Fattura";
         $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
         $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
@@ -237,8 +237,11 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $tipodoc = "Nota Credito";
         $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
         $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
-    }
-
+    } elseif ($row["tipdoc"] == 'AFT') {
+        $tipodoc = "Fattura";
+        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
+        $modifi = "";
+	}
     $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $row['clfoco']);
     $anagra = gaz_dbi_get_row($gTables['anagra'], 'id', $clfoco['id_anagra']);
     echo "<tr class=\"FacetDataTD\">";

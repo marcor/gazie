@@ -252,15 +252,20 @@ while ($val = gaz_dbi_fetch_array($res)) {
 			if  (substr($a_row['tipdoc'],0,2) == 'DD') {
 				$where = "tipdoc LIKE 'DD_' AND seziva = ".$a_row['seziva']." AND numfat = 0" ;
 				$order='numdoc DESC';
+				$title="Modifica documento";
 			} elseif  (substr($a_row['tipdoc'],0,2) == 'AF'){ // fattura o nota credito fornitore
 				$where = "tipdoc LIKE 'AF_' AND seziva = ".$a_row['seziva']." AND YEAR(datreg) = '".substr($a_row['datreg'],0,4)."'";
 				$order='protoc DESC';
+				$update="disabled";
+				$title="Cancellare la fattura per modificare il DDT";
 			} elseif  (substr($a_row['tipdoc'],0,2) == 'AD'){
 				$where = "tipdoc LIKE 'AD_'";
 				$order='id_tes DESC';
+				$title="Modifica documento";
 			} elseif  (substr($a_row['tipdoc'],0,2) == 'RD'){
 				$where = "tipdoc LIKE 'RD_' AND seziva = ".$a_row['seziva'];
 				$order='id_tes DESC';
+				$title="Modifica documento";
 			}
 			$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,$order,0,1);
 			$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
@@ -268,7 +273,7 @@ while ($val = gaz_dbi_fetch_array($res)) {
             $cliente = $anagrafica->getPartner($a_row['clfoco']);
             echo "<tr class=\"FacetDataTD\">";
 //       echo "<td class=\"FacetDataTD\"><a href=\"admin_docacq.php?id_tes=" . $a_row["id_tes"] . "&Update\">" . $a_row["id_tes"] . "</a> &nbsp</td>";
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docacq.php?id_tes=" . $a_row["id_tes"] . "&Update\">" . "<i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a></td>";
+            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docacq.php?id_tes=" . $a_row["id_tes"] . "&Update\" ".$update." title=\"". $title ."\" >  <i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a></td>";
             echo "<td>" . $a_row["tipdoc"] . " &nbsp;</td>";
             echo "<td>" . $a_row["numdoc"] . " &nbsp;</td>";
             echo "<td>" . $a_row["datemi"] . " &nbsp;</td>";

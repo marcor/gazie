@@ -679,7 +679,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
                     }
                     $i++;
-                }
+                } 
 //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
 					$form['rows'][$i]['id_tes'] = $form['id_tes'];
@@ -757,13 +757,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 							$i=0;
 							
 							foreach ($form['rows'] as $row){
-								echo "<br>",$i,"<br>",$row['descri'];
+								$codice = array('id_rig', $row['id_rig']);
 								rigdocUpdate($codice, $row);
 								$i++;
 							}
 	
 						}
-					}die;
+					}
 					header("Location: " . $form['ritorno']);
 					exit;
 				} else {
