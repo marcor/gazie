@@ -108,8 +108,10 @@ INSERT INTO `gaz_001aliiva` (`codice`, `tipiva`, `operation_type`, `aliquo`, `ta
 (19, 'S', '', '0.0', 1, 'N2', 'NON SOGGETTA art. 26', '', '', 'amministratore', '2015-12-21 23:49:41'),
 (20, 'S', '', '0.0', 1, 'N2', 'Già applicata ex fatt. da emettere', '', '', 'amministratore', '2015-12-21 23:49:41'),
 (21, 'S', '', '0.0', 1, 'N2', 'Già applicata ex fatt. da ricevere', '', '', 'amministratore', '2015-12-21 23:49:41'),
-(22, 'T', '', '22.0', 0, '', 'IVA 22% SPLIT PAYMENT PA', '', '', '', '2016-01-26 01:09:25'),
-(23, 'I', 'SERVIZ', '22.0', 0, 'N6', 'REVERSE CHARGE art.17c.6 IVA al 22%', '', '', 'amministratore', '2017-03-23 23:17:36');
+(22, 'T', '', '22.0', 0, '', 'IVA 22% SPLIT PAYMENT', '', '', '', '2016-01-26 01:09:25'),
+(23, 'T', '', '10.0', 0, '', 'IVA 10% SPLIT PAYMENT', '', '', '', '2016-01-26 01:09:25'),
+(24, 'T', '', '4.0', 0, '', 'IVA 4% SPLIT PAYMENT', '', '', '', '2016-01-26 01:09:25'),
+(25, 'I', 'SERVIZ', '22.0', 0, 'N6', 'REVERSE CHARGE art.17c.6 IVA al 22%', '', '', 'amministratore', '2017-03-23 23:17:36');
 
 -- --------------------------------------------------------
 
@@ -2678,7 +2680,7 @@ CREATE TABLE IF NOT EXISTS `gaz_aziend` (
   `pec` varchar(50) NOT NULL DEFAULT '',
   `e_mail` varchar(50) NOT NULL DEFAULT '',
   `web_url` varchar(255) NOT NULL,
-  `sync_ecom_mod` varchar(50) NOT NULL DEFAULT 'shop-synchronize' COMMENT 'indico il modulo dove trovare la classe contenente le funzioni  necessarie per aggiornare un sito ecommerce tramite le sue API ad ogni cambiamento di movimento di magazzino, cliente, articolo, categoria merceologica, aliquota IVA, presenza di nuovi ordini e/o clienti inseriti dal sito. GAzie provvederà a fare delle chiamate alle funzioni contenute in essa',
+  `sync_ecom_mod` varchar(50) NOT NULL DEFAULT '' COMMENT 'indico il modulo ( es. shop-synchronize) dove trovare la classe contenente le funzioni  necessarie per aggiornare un sito ecommerce tramite le sue API. Ad ogni cambiamento di movimento di magazzino, cliente, articolo, categoria merceologica, aliquota IVA, presenza di nuovi ordini e/o clienti inseriti dal sito. GAzie provvederà a fare delle chiamate alle funzioni contenute in essa',
   `cod_ateco` int(6) NOT NULL DEFAULT '0',
   `regime` varchar(1) NOT NULL,
   `fiscal_reg` varchar(4) NOT NULL,

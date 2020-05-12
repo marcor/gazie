@@ -577,7 +577,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="sync_ecom_mod" class="col-sm-4 control-label"><?php echo $script_transl['sync_ecom_mod']; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['sync_ecom_mod']; ?>" name="sync_ecom_mod" maxlength="50" />
+                        <input class="col-sm-8" type="text" value="<?php echo $form['sync_ecom_mod']; ?>" name="sync_ecom_mod" maxlength="50" placeholder="es: shop-synchronize" />
                     </div>
                 </div>
             </div><!-- chiude row  -->

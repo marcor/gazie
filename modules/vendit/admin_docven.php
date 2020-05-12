@@ -180,6 +180,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['speban'] = floatval($_POST['speban']);
     $form['numrat'] = intval($_POST['numrat']);
     $form['expense_vat'] = intval($_POST['expense_vat']);
+    $form['split_payment'] = substr($_POST['split_payment'],0,1);
     $form['virtual_taxstamp'] = intval($_POST['virtual_taxstamp']);
     $form['taxstamp'] = floatval($_POST['taxstamp']);
     $form['stamp'] = floatval($_POST['stamp']);
@@ -955,9 +956,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$form['in_sconto'] = $cliente['sconto_rigo'];
 		}
         $form['expense_vat'] = $admin_aziend['preeminent_vat'];
+        $form['split_payment'] = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['expense_vat'])['tipiva'];
         if ($cliente['aliiva'] > 0) {
             $form['expense_vat'] = $cliente['aliiva'];
-        }
+			$form['split_payment'] = gaz_dbi_get_row($gTables['aliiva'], "codice", $cliente['aliiva'])['tipiva'];
+       }
         if ($cliente['ritenuta'] > 0) { // carico la ritenuta se previsto
             $form['in_ritenuta'] = $cliente['ritenuta'];
         }
@@ -1374,6 +1377,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
                     $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
                 }
+				if ($form['split_payment']=='T' &&  $artico['aliiva'] > 0) { // ho in testata lo split payment ed un articolo con aliquota IVA impostata  allora eseguo i controlli ed il push per forzare, se la trovo, anche il nuovo rigo ad una aliquota con la stessa percentuale IVA ma in split payment (tipiva=T)
+					$pervat_art=gaz_dbi_get_row($gTables['aliiva'], 'codice', $artico['aliiva']);
+					$iva_isp=gaz_dbi_get_row($gTables['aliiva'], 'tipiva', 'T', "AND aliquo = '". $pervat_art['aliquo']."'");
+					if ($iva_isp) { // ho una 
+						$form['rows'][$next_row]['codvat'] = $iva_isp['codice'];
+						$form['rows'][$next_row]['pervat'] = $iva_isp['aliquo'];
+						$form['rows'][$next_row]['tipiva'] = 'T';
+					} else {
+						// allerto che non ho trovato una aliquota split_payment con quella percentuale
+						$msg['war'][] = "aliiva_nosplit";
+					}
+				}
                 if ($artico['codcon'] > 0) {
                     $form['rows'][$next_row]['codric'] = $artico['codcon'];
                     $form['in_codric'] = $artico['codcon'];
@@ -1848,6 +1863,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['traspo'] = $tesdoc['traspo'];
     $form['spevar'] = $tesdoc['spevar'];
     $form['expense_vat'] = $tesdoc['expense_vat'];
+	$form['split_payment'] = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['expense_vat'])['tipiva'];
     $form['virtual_taxstamp'] = $tesdoc['virtual_taxstamp'];
     $form['taxstamp'] = $tesdoc['taxstamp'];
     $form['stamp'] = $tesdoc['stamp'];
@@ -2034,6 +2050,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['spevar'] = 0;
     $form['stamp'] = 0;
     $form['expense_vat'] = $admin_aziend['preeminent_vat'];
+    $form['split_payment'] = '';
     $form['virtual_taxstamp'] = $admin_aziend['virtual_taxstamp'];
     $form['taxstamp'] = 0;
     $form['round_stamp'] = $admin_aziend['round_bol'];
@@ -2116,6 +2133,7 @@ echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
 	<input type="hidden" value="' . $form['numfat'] . '" name="numfat" />
 	<input type="hidden" value="' . $form['datfat'] . '" name="datfat" />
 	<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />
+	<input type="hidden" value="' . $form['split_payment'] . '" name="split_payment" />
 	<input type="hidden" value="' . $form['data_ordine'] . '" name="data_ordine" />';
 
 if ($form['id_tes'] > 0) { // è una modifica
