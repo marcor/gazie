@@ -27,19 +27,29 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/document.php");
 if (isset($_GET['id_tes'])){   //se viene richiesta la stampa di un solo documento attraverso il suo id_tes
-   $id_testata = intval($_GET['id_tes']);
-   $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $id_testata);
-   if (!empty($_GET['template'])){
-      $template = substr($_GET['template'],0,25);
-   } elseif(!empty($testata['template']))  {
-      $template = $testata['template'];
-   } else {
-      $template = 'FatturaAcquisto';
-   }
-    if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
-        createDocument($testata, $template, $gTables, 'rigdoc', 'E');
-    } else {
-        createDocument($testata, $template, $gTables);
-    }
+	$id_testata = intval($_GET['id_tes']);
+	$testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $id_testata);
+	if (!empty($_GET['template'])){
+	  $template = substr($_GET['template'],0,25);
+	} elseif(!empty($testata['template']))  {
+	  $template = $testata['template'];
+	} else {
+	  $template = 'FatturaAcquisto';
+	}
+	if ($testata['ddt_type']<>"T"){
+		if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
+			createDocument($testata, $template, $gTables, 'rigdoc', 'E');
+		} else {
+			createDocument($testata, $template, $gTables);
+		}
+	} else {
+		$lang = "";
+		$testate= gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = '".substr($testata['datreg'],0,4)."' AND ddt_type = 'T' AND protoc = '{$testata['protoc']}'","id_tes ASC");
+		
+		// createDocument($testata, $template, $gTables);
+		createInvoiceACQFromDDT($testate, $gTables, false, $lang);
+	}
+	
+	
 }
 ?>

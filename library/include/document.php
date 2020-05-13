@@ -759,4 +759,92 @@ function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=f
     }
 }
 
+function createInvoiceACQFromDDT($result, $gTables, $dest = false, $lang_template=false) {
+
+    $templateName = "FatturaDifferita";
+
+    $config = new Config;
+    $configTemplate = new configTemplate;
+    if ($lang_template) {
+		$ts=$configTemplate->template;
+		$configTemplate->setTemplateLang($lang_template);
+		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
+    }
+    require_once("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/fattura_acquisto.php');
+    $pdf = new FatturaAcquisto();
+    $docVars = new DocContabVars();
+    //$pdf->SetPageFormat($config->getValue('page_format'));
+    $pdf->SetTitle('Fatture Differite da DDT');
+    $pdf->SetTopMargin(79);
+    $pdf->SetHeaderMargin(5);
+    $pdf->Open();
+    $ctrlprotoc = 0;
+    $n = 0;
+    while ($tesdoc = gaz_dbi_fetch_array($result)) {
+        //se il cliente non e' lo stesso di prima
+        if ($tesdoc['protoc'] <> $ctrlprotoc) {
+            $n++;
+            //se non e' piu' lo stesso cliente e non e' il primo Ddt stampo il piede della fattura
+            if ($ctrlprotoc <> 0) {
+                $pdf->pageFooter();
+            }
+            // Inizio pagina
+            // se non e' il tipo di documento stampabile da questo modulo ... va a casa
+            if ($tesdoc['tipdoc'] <> 'AFT') {
+                header("Location: report_docacq.php");
+                exit;
+            }
+
+            $testat = $tesdoc['id_tes'];
+            $docVars->setData($gTables, $tesdoc, $testat, 'rigdoc');
+            $docVars->initializeTotals();
+            $pdf->setVars($docVars);
+            $pdf->setTesDoc();
+            if ($ctrlprotoc == 0) {
+                $pdf->setCreator('GAzie - ' . $docVars->intesta1);
+                $pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
+                $pdf->Open();
+            }
+            //aggiungo una pagina
+            $pdf->pageHeader();
+            $ctrlprotoc = $tesdoc['protoc'];
+        }
+        $testat = $tesdoc['id_tes'];
+        $pdf->docVars->setData($gTables, $tesdoc, $testat, 'rigdoc');
+        $pdf->compose();
+    }
+    if ($n > 1) { // è una stampa con molte fatture
+        $doc_name = $docVars->intesta1 . '_Fatture_differite_da_DdT.pdf';
+		$doc_name_email = "Fatture differite da Ddt.pdf";
+    } else { // è la stampa di una sola fattura
+        $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
+		$doc_name_email = $pdf->tipdoc . '.pdf';
+    }
+    $pdf->pageFooter();
+    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
+        $dest = 'S';     // Genero l'output pdf come stringa binaria
+        // Costruisco oggetto con tutti i dati del file pdf da allegare
+        if (!isset($content)) {
+            $content = new stdClass;
+        }
+		$content->urlfile=false;
+        $content->name = $doc_name;
+        $content->string = $pdf->Output($doc_name, $dest);
+        $content->encoding = "base64";
+        $content->mimeType = "application/pdf";
+		$docVars->azienda['doc_name'] = $doc_name_email;
+        $gMail = new GAzieMail();
+        $gMail->sendMail($docVars->azienda, $docVars->user, $content, $docVars->client);
+    } elseif ($dest && $dest == 'X') { // è stata richiesta una stringa da allegare
+        $dest = 'S';     // Genero l'output pdf come stringa binaria
+        // Costruisco oggetto con tutti i dati del file pdf
+        $content->descri = $doc_name;
+        $content->string = $pdf->Output($content->descri, $dest);
+        $content->mimeType = "PDF";
+        return ($content);
+    } else { // va all'interno del browser
+        $pdf->Output($doc_name);
+    }
+}
+
 ?>
