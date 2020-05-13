@@ -28,15 +28,14 @@ require('template.php');
 class FatturaAcquisto extends Template
 {
 
-    function setTesDoc()
-    {
+    function setTesDoc(){
         $this->tesdoc = $this->docVars->tesdoc;
         $this->sconto = $this->tesdoc['sconto'];
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->trasporto = $this->tesdoc['traspo'];
         if ($this->tesdoc['tipdoc'] == 'ADT') {
             $descri='Ricev.DdT d\'acquisto n.'.$this->tesdoc['numdoc'].' del '.gaz_format_date($this->tesdoc['datemi']);
-        } elseif ($this->tesdoc['tipdoc'] == 'AFA' || $this->tesdoc['tipdoc'] == 'AFD' ) {
+        } elseif ($this->tesdoc['tipdoc'] == 'AFA' || $this->tesdoc['tipdoc'] == 'AFT' ) {
             $descri='Ricev.Fatt. d\'acquisto n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
         } elseif ($this->tesdoc['tipdoc'] == 'AFC') {
             $descri='Ricev.Nota di credito n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
@@ -85,8 +84,7 @@ class FatturaAcquisto extends Template
         $this->body();
     }
 
-    function body()
-    {
+    function body(){
         $lines = $this->docVars->getRigo();
 		foreach ($lines AS $key => $rigo) {
             if ($this->GetY() >= 185) {
@@ -168,8 +166,7 @@ class FatturaAcquisto extends Template
        }
     }
 
-    function pageFooter()
-    {
+    function pageFooter(){
         if ($this->docVars->taxstamp >= 0.01) {
             if ($this->virtual_taxstamp == 2 || $this->virtual_taxstamp == 3) {
                 $this->Cell(186, 5, '', 'LR', 1);
