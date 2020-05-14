@@ -36,7 +36,7 @@ if (isset($_GET['id_tes'])){   //se viene richiesta la stampa di un solo documen
 	} else {
 	  $template = 'FatturaAcquisto';
 	}
-	if ($testata['ddt_type']<>"T"){
+	if ($testata['ddt_type']<>"T" OR $_GET['template']=="DDT"){
 		if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
 			createDocument($testata, $template, $gTables, 'rigdoc', 'E');
 		} else {
