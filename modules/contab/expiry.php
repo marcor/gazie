@@ -25,8 +25,16 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$clfoco =  filter_var(intval($_GET['clfoco']),FILTER_SANITIZE_MAGIC_QUOTES);
-$tes_exc =  filter_var(substr($_GET['id_tesdoc_ref'],0,15),FILTER_SANITIZE_MAGIC_QUOTES);
+if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+	$clfoco=filter_var(intval($_GET['clfoco']),FILTER_SANITIZE_ADD_SLASHES);
+} else {
+	$clfoco=addslashes(intval($_GET['clfoco']));
+}
+if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+	$tes_exc=filter_var(substr($_GET['id_tesdoc_ref'],0,15),FILTER_SANITIZE_ADD_SLASHES);
+} else {
+	$tes_exc=addslashes(substr($_GET['id_tesdoc_ref'],0,15));
+}
 $return_arr = array();
 $sqlquery= "SELECT ".$gTables['paymov'].".*,".$gTables['rigmoc'].".*,".$gTables['tesmov'].".*,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".ragso2 FROM ".$gTables['paymov']."
             LEFT JOIN ".$gTables['rigmoc']." ON ( ".$gTables['rigmoc'].".id_rig = ".$gTables['paymov'].".id_rigmoc_doc OR ".$gTables['rigmoc'].".id_rig = ".$gTables['paymov'].".id_rigmoc_pay ) 

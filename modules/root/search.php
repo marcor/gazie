@@ -43,7 +43,11 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
     require("../../library/include/datlib.inc.php");
     $admin_aziend = checkAdmin();
     $return_arr = array();
-    $term = filter_var(substr($_GET['term'], 0, 20), FILTER_SANITIZE_MAGIC_QUOTES);
+	if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+		$term=filter_var(substr($_GET['term'],0,20),FILTER_SANITIZE_ADD_SLASHES);
+	} else {
+		$term=addslashes(substr($_GET['term'],0,20));
+	}
     $term = gaz_dbi_real_escape_string($term);
 
     $a_json_invalid = array(array("id" => "#", "value" => $term, "label" => "Alcuni caratteri impedisco la ricerca..."));

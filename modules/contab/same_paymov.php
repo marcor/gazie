@@ -32,8 +32,16 @@ if (!$isAjax) {
 }
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$tesdoc_ref =  filter_var(substr($_GET['id_tesdoc_ref'],0,15),FILTER_SANITIZE_MAGIC_QUOTES);
-$id_exc =  filter_var(intval($_GET['id_exc']),FILTER_SANITIZE_MAGIC_QUOTES);
+if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+	$tesdoc_ref=filter_var(substr($_GET['id_tesdoc_ref'],0,15),FILTER_SANITIZE_ADD_SLASHES);
+} else {
+	$tesdoc_ref=addslashes(substr($_GET['id_tesdoc_ref'],0,15));
+}
+if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+	$id_exc=filter_var(intval($_GET['id_exc']),FILTER_SANITIZE_ADD_SLASHES);
+} else {
+	$id_exc=addslashes(intval($_GET['id_exc']));
+}
 $return_arr = array();
 /********************* OLD QUERY*********************
 $sqlquery= "SELECT * FROM ".$gTables['paymov']."

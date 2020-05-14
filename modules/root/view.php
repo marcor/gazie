@@ -53,18 +53,26 @@ $img1px= pack("c*",0xFF,0xD8,0xFF,0xE0,0x00,0x10,0x4A,0x46,0x49,0x46,0x00,0x01,0
               0xDA,0x00,0x0C,0x03,0x01,0x00,0x02,0x11,0x03,0x11,0x00,0x3F,0x00,
               0xA6,0x00,0x1F,0xFF,0xD9);
 if (isset($_GET['table']) && isset($_GET['value'])){
-     if (isset($_GET['field'])){
-          $f=filter_var(substr($_GET['field'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
-     } else {
-          $f='codice';
-     }
-     $t=filter_var(substr($_GET['table'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
-     $col = gaz_dbi_get_row($gTables[$t], $f, substr($_GET['value'],0,30));
-     header ('Content-type: image/pjpeg');
-     if (empty($col['image'])) {
+    if (isset($_GET['field'])){
+		if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+			$f=filter_var(substr($_GET['field'],0,30),FILTER_SANITIZE_ADD_SLASHES);
+		} else {
+			$f=addslashes(substr($_GET['field'],0,30));
+		}
+    } else {
+        $f='codice';
+    }
+	if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+		$t=filter_var(substr($_GET['table'],0,30),FILTER_SANITIZE_ADD_SLASHES);
+	} else {
+		$t=addslashes(substr($_GET['table'],0,30));
+	}
+    $col = gaz_dbi_get_row($gTables[$t], $f, substr($_GET['value'],0,30));
+    header ('Content-type: image/pjpeg');
+    if (empty($col['image'])) {
         echo $img1px;
-     } else {
+    } else {
         echo $col['image'];
-     }
+    }
 }
 ?>

@@ -34,7 +34,11 @@ if(!$isAjax) {
 if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato direttamente
     require("../../library/include/datlib.inc.php");
     $admin_aziend = checkAdmin();
-    $term = filter_var(substr($_GET['term'], 0, 20), FILTER_SANITIZE_MAGIC_QUOTES);
+	if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+		$term=filter_var(substr($_GET['term'],0,20),FILTER_SANITIZE_ADD_SLASHES);
+	} else {
+		$term=addslashes(substr($_GET['term'],0,20));
+	}
     $a_json_invalid = array(array("id" => "#", "value" => $term, "label" => "Sono consentiti solo lettere e numeri..."));
     $json_invalid = json_encode($a_json_invalid);
     // replace multiple spaces with one

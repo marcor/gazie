@@ -36,11 +36,19 @@ if ( $debug_active ) {
 }
 
 if (isset($_SESSION['table_prefix'])) {
-    $table_prefix = substr($_SESSION['table_prefix'], 0, 12);
-} elseif (isset($_GET['tp'])) {
-    $table_prefix = filter_var(substr($_GET['tp'], 0, 12), FILTER_SANITIZE_MAGIC_QUOTES);
+   $table_prefix=substr($_SESSION['table_prefix'],0,12);
+} elseif(isset($_GET['tp'])) {
+	if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+		$table_prefix=filter_var(substr($_GET['tp'],0,12),FILTER_SANITIZE_ADD_SLASHES);
+	} else {
+		$table_prefix=addslashes(substr($_GET['tp'],0,12));
+	}
 } else {
-    $table_prefix = filter_var(substr($table_prefix, 0, 12), FILTER_SANITIZE_MAGIC_QUOTES);
+	if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
+		$table_prefix=filter_var(substr($table_prefix,0,12),FILTER_SANITIZE_ADD_SLASHES);
+	} else {
+		$table_prefix=addslashes(substr($table_prefix,0,12));
+	}
 }
 
 $month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>"Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre");
