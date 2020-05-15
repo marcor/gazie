@@ -1355,7 +1355,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $id_des = $anagrafica->getPartner($tesdoc['id_des']);
     $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $tesdoc['id_tes'], "id_rig asc");
 	
-	if ($tesdoc['ddt_type']=="T"){ // Antonio Germani - se è una fattura con DDT, carico tutti i tesdoc
+	if ($tesdoc['ddt_type']=="T" AND !isset($_GET['DDT'])){ // Antonio Germani - se è una fattura con DDT, carico tutti i tesdoc
 	$rs_tes = gaz_dbi_dyn_query("*", $gTables['tesdoc'], " YEAR (datfat) = " . substr($tesdoc['datfat'],0,4). " AND protoc = ".$tesdoc['protoc']. " AND tipdoc = 'AFT'" , "id_tes asc");
 		
 	}
