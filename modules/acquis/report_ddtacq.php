@@ -269,11 +269,16 @@ while ($val = gaz_dbi_fetch_array($res)) {
 			}
 			$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,$order,0,1);
 			$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-	
+			
+			if ($a_row['tipdoc']=="AFT"){
+				$addtip="ADT &#8594; ";
+			} else {
+				$addtip="";
+			}
             $cliente = $anagrafica->getPartner($a_row['clfoco']);
             echo "<tr class=\"FacetDataTD\">";
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docacq.php?id_tes=" . $a_row["id_tes"] . "&Update&DDT\" ".$update." title=\"". $title ."\" >  <i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a></td>";
-            echo "<td>" . $a_row["tipdoc"] . " &nbsp;</td>";
+            echo "<td>" . $addtip.$a_row["tipdoc"] . " &nbsp;</td>";
             echo "<td>" . $a_row["numdoc"] . " &nbsp;</td>";
             echo "<td>" . $a_row["datemi"] . " &nbsp;</td>";
             echo "<td>" . $cliente["ragso1"] . "&nbsp;</td>";
