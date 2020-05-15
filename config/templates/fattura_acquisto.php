@@ -81,6 +81,14 @@ class FatturaAcquisto extends Template
 
     function compose()
     {
+        $this->setTesDoc();
+        $dataddt = substr($this->tesdoc['datemi'], 8, 2) . '-' . substr($this->tesdoc['datemi'], 5, 2) . '-' . substr($this->tesdoc['datemi'], 0, 4);
+        if ($this->tesdoc['tipdoc'] == 'AFT') {
+            $this->SetFont('helvetica', 'B', 9);
+            $this->Cell(105, 6, ' Da D.d.T n. ' . $this->tesdoc['numdoc'] . ' del ' . $dataddt, 1, 0, 'L');
+            $this->Cell(81, 6, '', '', 1);
+            $this->SetFont('helvetica', '', 9);
+        }
         $this->body();
     }
 
