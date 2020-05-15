@@ -1850,12 +1850,16 @@ if (count($msg['err']) > 0) { // ho un errore
 if (count($msg['war']) > 0) { // ho un alert
     $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
 }
-
+if (isset ($_GET['DDT'])){
+	$doctransl="ADT";
+} else {
+	$doctransl=$form['tipdoc'];
+}
 if ($form['id_tes'] > 0 && substr($form['tipdoc'], 0, 2) == 'AF') {
    //$title = $script_transl[0][$form['tipdoc']] . ' prot.<input type="text" class="text-right" style="width:5em;" id="protoc" name="protoc" value="'.$form['protoc'].'">';
-    $title = $script_transl[0][$form['tipdoc']] . ' prot.'.$form['protoc'];
+    $title = $script_transl[0][$doctransl] . ' prot.'.$form['protoc'];
 } else {
-    $title = $script_transl[0][$form['tipdoc']];
+    $title = $script_transl[0][$doctransl];
 }
 if ($form['id_tes'] > 0) { // è una modifica
 	echo $script_transl['upd_this'].$title;
