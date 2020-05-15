@@ -924,7 +924,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					// valorizzo $ultimo_id
 										
 						// sul db inserisco un rigo descrittivo al cambio di DdT di riferimento
-						rigdocInsert(array('id_tes'=>$ultimo_id,'tiprig'=>2,'descri'=>'da D.d.T. n. '.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT'])));
+						//rigdocInsert(array('id_tes'=>$ultimo_id,'tiprig'=>2,'descri'=>'da D.d.T. n. '.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT'])));
 						
 					}
 					
