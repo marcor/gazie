@@ -1250,32 +1250,32 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             ksort($form['rows']);
         } else { //se è un rigo da inserire
             if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale che lo precede
-				$article_text=gaz_dbi_get_row($gTables['company_config'], 'var', 'article_text');
-				if ($article_text['val']<2){
+				$article_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'article_text');
+				if ($article_text['val'] < 2){
 					$bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['in_codart']);
 				} else {
-					$bodytext="";
+					$bodytext = '';
 				}
-                if ($bodytext && ($bodytext['body_text'] != '')) { // il testo aggiuntivo c'è (e non è vuoto)
+                if (!empty($bodytext) && !empty($bodytext['body_text'])) { // il testo aggiuntivo c'è (e non è vuoto)
                     $form["row_$next_row"] = $bodytext['body_text'];
                     $form['rows'][$next_row]['tiprig'] = 6;
                     $form['rows'][$next_row]['descri'] = '';
                     $form['rows'][$next_row]['id_mag'] = 0;
                     $form['rows'][$next_row]['id_lotmag'] = 0;
-					$form['rows'][$next_row]['identifier'] = "";
+					$form['rows'][$next_row]['identifier'] = '';
 					$form['rows'][$next_row]['cod_operazione'] = 11;
-					$form['rows'][$next_row]['recip_stocc'] = "";
-					$form['rows'][$next_row]['recip_stocc_destin'] = "";
+					$form['rows'][$next_row]['recip_stocc'] = '';
+					$form['rows'][$next_row]['recip_stocc_destin'] = '';
                     $form['rows'][$next_row]['lot_or_serial'] = 0;
 					$form['rows'][$next_row]['SIAN'] = 0;
                     $form['rows'][$next_row]['status'] = '';
                     $form['rows'][$next_row]['scorta'] = 0;
                     $form['rows'][$next_row]['quamag'] = 0;
-                    $form['rows'][$next_row]['codart'] = "";
-                    $form['rows'][$next_row]['annota'] = "";
-                    $form['rows'][$next_row]['pesosp'] = "";
+                    $form['rows'][$next_row]['codart'] = '';
+                    $form['rows'][$next_row]['annota'] = '';
+                    $form['rows'][$next_row]['pesosp'] = '';
                     $form['rows'][$next_row]['gooser'] = 0;
-                    $form['rows'][$next_row]['unimis'] = "";
+                    $form['rows'][$next_row]['unimis'] = '';
                     $form['rows'][$next_row]['quanti'] = 0;
                     $form['rows'][$next_row]['prelis'] = 0;
                     $form['rows'][$next_row]['codric'] = 0;
