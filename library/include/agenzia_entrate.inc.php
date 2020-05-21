@@ -930,7 +930,7 @@ function creaFileIVP($aziend, $data) {
         $results->appendChild($el);
 		$NumeroModulo++;
     }
-    $filename = '../../data/files/' . $aziend['codice'] . '/' . $aziend['country'] . $aziend['codfis'] . "_LI_" . $data['trimestre_liquidabile'] . ".xml";
+    $filename = DATA_DIR . 'files/' . $aziend['codice'] . '/' . $aziend['country'] . $aziend['codfis'] . "_LI_" . $data['trimestre_liquidabile'] . ".xml";
     // salvo il file sul server
     $domDoc->save($filename);
 }
@@ -975,7 +975,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
 				$partner_number = 0;
                 if ($ctrl_block_file) { // non è il primo quindi LO scrivo su un nuovo file
                     $file = $aziend['country'] . $aziend['codfis'] . "_DF_" . end($block_name) . substr($periodo, 0, 2) . substr($periodo, -1) . ".xml";
-                    $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
+                    $fileurl = DATA_DIR . 'files/' . $aziend['codice'] . '/' . $file;
                     // salvo il file sul server
                     $doc->save($fileurl);
                 }
@@ -1119,7 +1119,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
 				$partner_number = 0;
                 if ($ctrl_block_file) { // non è il primo quindi LO scrivo su un nuovo file
                     $file = $aziend['country'] . $aziend['codfis'] . "_DF_" . end($block_name) . substr($periodo, 0, 2) . substr($periodo, -1) . ".xml";
-                    $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
+                    $fileurl = DATA_DIR . 'files/' . $aziend['codice'] . '/' . $file;
                     // salvo il file sul server
                     $doc->save($fileurl);
                 }
@@ -1266,12 +1266,12 @@ function creaFileDAT20($aziend, $data, $periodo) {
     }
     // sono uscito dal ciclo allora scrivo l'ultimo file sul fs
     $file = $aziend['country'] . $aziend['codfis'] . "_DF_" . end($block_name) . substr($periodo, 0, 2) . substr($periodo, -1) . ".xml";
-    $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
+    $fileurl = DATA_DIR . 'files/' . $aziend['codice'] . '/' . $file;
     // salvo il file sul server
     $doc->save($fileurl);
 
     // infine creo lo zip partendo dall'array con i riferimenti ai files
-    $baseurl = '../../data/files/' . $aziend['codice'] . '/' . $aziend['country'] . $aziend['codfis'] . "_DF_";
+    $baseurl = DATA_DIR . 'files/' . $aziend['codice'] . '/' . $aziend['country'] . $aziend['codfis'] . "_DF_";
     $zipname = $baseurl . 'Z' . $periodo . ".zip";
     $zip = new ZipArchive();
     if ($zip->open($zipname, ZIPARCHIVE::CREATE) !== TRUE) {
@@ -1359,7 +1359,7 @@ function creaFileCOR10($aziend,$data,$progressivo) {
     $res->appendChild($el_2_2);
     // sono uscito dal ciclo allora scrivo il file sul fs
     $file = $aziend['country'] . $aziend['codfis'] . "_DF_C" . $progressivo . ".xml";
-    $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
+    $fileurl = DATA_DIR . 'files/' . $aziend['codice'] . '/' . $file;
     // salvo il file sul server
     $doc->save($fileurl);
 }

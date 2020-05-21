@@ -52,8 +52,8 @@ class Ticket extends Template
 		$url= "http://" . $_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).'/ts.php?id='.$this->tesdoc['id_orderman'].'&co='.$_SESSION['company_id'];
 		require('../../library/qrcode/phpqrcode.php');
 		$qrc = new QRcode();
-		$qrc->png($url,'../../data/files/tmp/qr.png');
-		$this->Image('../../data/files/tmp/qr.png',10,78,22,22,'',$url);
+		$qrc->png($url, DATA_DIR . 'files/tmp/qr.png');
+		$this->Image( DATA_DIR . 'files/tmp/qr.png',10,78,22,22,'',$url);
         $this->SetFont('helvetica','',10);
         $this->Cell(22,5);
         $this->Cell(35,5,'Usa il QRCode con l\'indirizzo','',0,'L',0,'',1);

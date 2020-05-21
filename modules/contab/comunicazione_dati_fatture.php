@@ -505,7 +505,7 @@ if (!isset($_POST['ritorno'])) {
             $msg['war'][] = "download";
         }
     } elseif (isset($_POST['Download'])) {
-        $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_Z" . substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT) . ".zip";
+        $file = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . '_DF_Z' . substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT) . '.zip';
         header("Pragma: public", true);
         header("Expires: 0"); // set expiration time
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");

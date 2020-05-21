@@ -291,7 +291,7 @@ class PreventivoFornitore extends Template
                 $this->SetTextColor(255, 50, 50);
                 $this->SetFont('helvetica', '', 6);
                 if ($rigo['ext'] == 'pdf') {
-                    $this->numPages = $this->setSourceFile('../../data/files/' . $rigo['file']);
+                    $this->numPages = $this->setSourceFile( DATA_DIR . 'files/' . $rigo['file'] );
                     if ($this->numPages >= 1) {
                         for ($i = 1; $i <= $this->numPages; $i++) {
                             $this->_tplIdx = $this->importPage($i);
@@ -314,20 +314,20 @@ class PreventivoFornitore extends Template
                         }
                     }
                 } elseif (!empty($rigo['ext'])) {
-                    list($w, $h) = getimagesize('../../data/files/' . $rigo['file']);
+                    list($w, $h) = getimagesize( DATA_DIR . 'files/' . $rigo['file'] );
 					$this->SetAutoPageBreak(false, 0);
                     if ($w > $h) { //landscape
                         $this->AddPage('L');
 						$this->print_footer = false;
                         $this->SetXY(10, 0);
                         $this->Cell(280, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
-						$this->image('../../data/files/' . $rigo['file'], 5, 3,290 );
+						$this->image( DATA_DIR . 'files/' . $rigo['file'], 5, 3, 290 );
                     } else { // portrait
                         $this->AddPage('P');
 						$this->print_footer = false;
                         $this->SetXY(10, 0);
                         $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
-						$this->image('../../data/files/' . $rigo['file'], 5, 3,190 );
+						$this->image( DATA_DIR . 'files/' . $rigo['file'], 5, 3, 190 );
                     }
                 }
             }

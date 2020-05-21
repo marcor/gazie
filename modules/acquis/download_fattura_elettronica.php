@@ -26,7 +26,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $fe = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", intval($_GET['id']));
-$file = '../../data/files/' . $admin_aziend['codice'].'/' . $fe['fattura_elettronica_original_name'];
+$file = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $fe['fattura_elettronica_original_name'];
 header("Pragma: public", true);
 header("Expires: 0"); // set expiration time
 header("Cache-Control: must-revalidate, post-check=0, pre-check=0");

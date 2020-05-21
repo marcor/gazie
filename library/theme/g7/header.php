@@ -14,8 +14,8 @@
 		<meta name="apple-mobile-web-app-title" content="<?php echo $admin_aziend['ragso1'];?>">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<?php
-			$ico=base64_encode(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/favicon.ico'));
-			$ico114=base64_encode(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/logo_114x114.png'));
+			$ico=base64_encode(file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/favicon.ico' ));
+			$ico114=base64_encode(file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/logo_114x114.png' ));
 		?>
         <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico?>"  type="image/x-icon" />
 		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />

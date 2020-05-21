@@ -34,8 +34,8 @@ if (isset($_POST['Download'])) { // è stato richiesto il download dell'allegato
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
-		header("Content-Length: " . filesize('../../data/files/tmp/'.$name));
-		readfile('../../data/files/tmp/'.$name);
+		header('Content-Length: ' . filesize( DATA_DIR . 'files/tmp/' . $name ));
+		readfile( DATA_DIR . 'files/tmp/' . $name );
 		exit;
 }
 
@@ -53,13 +53,13 @@ if (isset($_GET['id_tes'])){
 		$att = $doc->getElementsByTagName('Attachment')->item(0);
 		$base64 = $att->textContent;
 		$bin = base64_decode($base64);
-		file_put_contents('../../data/files/tmp/'.$name_file, $bin);
+		file_put_contents( DATA_DIR . 'files/tmp/' . $name_file, $bin );
 		echo '<form method="POST"><div class="col-sm-6"> Allegato: <input name="Download" type="submit" class="btn btn-default" value="'.$name_file.'" /></div></form>';
 	}
 	$xpath = new DOMXpath($doc);
 	$xslDoc = new DOMDocument();
 	$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
-	$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
+	$xslDoc->load('../../library/include/' . $fae_xsl_file['val'] . '.xsl');
 	$xslt = new XSLTProcessor();
 	$xslt->importStylesheet($xslDoc);
 	echo $xslt->transformToXML($doc);

@@ -213,7 +213,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "application/pkcs7" || $_FILES['userfile']['type'] == "text/xml")) {
 				$msg['err'][] = 'filmim';
 			} else {
-                if (move_uploaded_file($_FILES['userfile']['tmp_name'], '../../data/files/' . $admin_aziend['codice'] . '/' . $_FILES['userfile']['name'])) { // nessun errore
+                if (move_uploaded_file($_FILES['userfile']['tmp_name'], DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $_FILES['userfile']['name'])) { // nessun errore
 					$form['fattura_elettronica_original_name'] = $_FILES['userfile']['name'];
 				} else { // no upload
 					$msg['err'][] = 'no_upload';
@@ -222,7 +222,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		} else if (!empty($_POST['selected_SdI'])) {
 			require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
 			$FattF = DownloadFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('id_SdI' => $_POST['selected_SdI'])));
-			if (!empty($FattF) && is_array($FattF) && file_put_contents('../../data/files/' . $admin_aziend['codice'] . '/' . key($FattF), base64_decode($FattF[key($FattF)])) !== FALSE) { // nessun errore
+			if (!empty($FattF) && is_array($FattF) && file_put_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . key($FattF), base64_decode($FattF[key($FattF)])) !== FALSE) { // nessun errore
 				$form['fattura_elettronica_original_name'] = key($FattF);
 			} else { // no upload
 				$msg['err'][] = 'no_upload';
@@ -251,8 +251,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
-		header("Content-Length: " . filesize('../../data/files/tmp/'.$name));
-		readfile('../../data/files/tmp/'.$name);
+		header('Content-Length: ' . filesize( DATA_DIR . 'files/tmp/' . $name ));
+		readfile( DATA_DIR . 'files/tmp/' . $name );
 		exit;
 	} else if (isset($_POST['Submit_list'])) { // ho richiesto l'elenco delle fatture passive
 		$form['date_ini_D'] = str_pad($_POST['date_ini_D'], 2, '0', STR_PAD_LEFT);
@@ -282,7 +282,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	} elseif (!empty($form['fattura_elettronica_original_name'])) { // non c'è sul database è un inserimento
 		$toDo = 'insert';
 		// INIZIO acquisizione e pulizia file xml o p7m
-		$file_name = '../../data/files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
+		$file_name = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
 		if (!isset($_POST['datreg'])){
 			$form['datreg'] = date("d/m/Y",filemtime($file_name));
 		}
@@ -772,7 +772,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$att = $doc->getElementsByTagName('Attachment')->item(0);
 			$base64 = $att->textContent;
 			$bin = base64_decode($base64);
-			file_put_contents('../../data/files/tmp/'.$name_file, $bin);
+			file_put_contents( DATA_DIR . 'files/tmp/' . $name_file, $bin);
 		}
 		if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 			$form['datreg'] = substr($_POST['datreg'],0,10);

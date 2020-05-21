@@ -307,11 +307,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $move = false;
                 $mt = substr($_FILES['docfile_' . $i]['name'], -3);
                 $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i;
-                if (($mt == "png" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_' . $i]['size'] > 1000) { //se c'e' una nuova immagine nel buffer
-                    foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
+                if (($mt == 'png' || $mt == 'peg' || $mt == 'jpg' || $mt == 'pdf') && $_FILES['docfile_' . $i]['size'] > 1000) { //se c'e' una nuova immagine nel buffer
+                    foreach (glob( DATA_DIR . 'files/tmp/' . $prefix . '_*.*') as $fn) {// prima cancello eventuali precedenti file temporanei
                         unlink($fn);
                     }
-                    $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], '../../data/files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $i]['name']);
+                    $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], DATA_DIR . 'files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $i]['name']);
                     $form['rows'][$i]['filename'] = $_FILES['docfile_' . $i]['name'];
                 }
                 if (!$move) {
@@ -630,22 +630,22 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 									$old_lm = gaz_dbi_get_row($gTables['lotmag'], 'id', $id_lotmag);
 									if ($old_lm && substr($form['rows'][$i]['filename'], 0, 7) <> 'lotmag_') {
 										// se a questo rigo corrispondeva un certificato controllo che però è stato aggiornato lo cambio
-										$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+										$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
 										while (false !== ($filename = readdir($dh))) {
 											$fd = pathinfo($filename);
 											if ($fd['filename'] == 'lotmag_' . $old_lm['id']) {
 												// cancello il file precedente indipendentemente dall'estensione
-												$frep = glob('../../data/files/' . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . ".*");
+												$frep = glob( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/lotmag_' . $old_lm['id'] . '.*');
 												foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
 													unlink($fdel);
 												}
 											}
 										}
-										$tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
+										$tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
 										// sposto e rinomino il relativo file temporaneo    
 										if ($form['rows'][$i]['filename']){
 											$fn = pathinfo($form['rows'][$i]['filename']);
-											rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . '.' . $fn['extension']);
+											rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/lotmag_' . $old_lm['id'] . '.' . $fn['extension']);
 										}
 									}
 								}
@@ -712,10 +712,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         // inserisco il riferimento anche sul relativo movimento di magazzino
                         gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
                         if (!empty($form['rows'][$i]['filename'])) {
-                            $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
+                            $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
 // sposto e rinomino il relativo file temporaneo    
                             $fd = pathinfo($form['rows'][$i]['filename']);
-                            rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $last_lotmag_id . '.' . $fd['extension']);
+                            rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/lotmag_' . $last_lotmag_id . '.' . $fd['extension']);
                         }
                     }
                 }
@@ -735,10 +735,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 tesdocUpdate($codice, $form);
                 $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
 // prima di uscire cancello eventuali precedenti file temporanei
-                foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {
+                foreach (glob( DATA_DIR . 'files/tmp/' . $prefix . '_*.*') as $fn) {
                     unlink($fn);
                 }
-               header("Location: " . $form['ritorno']);
+               header('Location: ' . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
 				if ($ddtchecked>0){ // se ci sono DDT a riferimento fattura
@@ -856,10 +856,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								// inserisco il riferimento anche sul relativo movimento di magazzino
 								gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
 								if (!empty($form['rows'][$i]['filename'])) {
-									$tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
+									$tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
 		// sposto e rinomino il relativo file temporaneo    
 									$fd = pathinfo($form['rows'][$i]['filename']);
-									rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $last_lotmag_id . '.' . $fd['extension']);
+									rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/lotmag_' . $last_lotmag_id . '.' . $fd['extension']);
 								}
 							}
 						}
@@ -874,11 +874,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					
 					$prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
 	// prima di uscire cancello eventuali precedenti file temporanei
-					foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {
+					foreach (glob(DATA_DIR . 'files/tmp/' . $prefix . '_*.*') as $fn) {
 						unlink($fn);
 					}
 					$_SESSION['print_request'] = $ultimo_id;
-					header("Location: invsta_docacq.php");
+					header('Location: invsta_docacq.php');
 					exit;
 				}
 			}
@@ -1285,7 +1285,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } else {
             $new_key = $i - 1;
         }
-        $tmp_path = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_';
+        $tmp_path = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_';
         // rinomino prima il documento della linea target new key ( se esiste )
         @rename($tmp_path . $new_key . '_' . $form['rows'][$new_key]['filename'], $tmp_path . '_tmp_' . $new_key . '_' . $form['rows'][$new_key]['filename']);
         // rinomino il documento della linea spostata verso l'alto dandogli gli indici di quello precedente
@@ -1520,12 +1520,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 				
 				// recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
-				If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {
-				if (!isset($_GET['Duplicate']) OR $form['tipdoc']=="DDR") {
+				if (file_exists( DATA_DIR . 'files/' . $admin_aziend['company_id'] ) > 0) {
+				if (!isset($_GET['Duplicate']) OR $form['tipdoc']=='DDR') {
 					$result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
 					$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
 					// recupero il filename dal filesystem e lo sposto sul tmp 
-					$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+					$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
 					while (false !== ($filename = readdir($dh))) {
 						$fd = pathinfo($filename);
 						$r = explode('_', $fd['filename']);
@@ -1600,12 +1600,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		}
 		
         // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
-		If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {
-		if (!isset($_GET['Duplicate']) OR $form['tipdoc']=="DDR") {
+		if (file_exists( DATA_DIR . 'files/' . $admin_aziend['company_id'] ) > 0) {
+		if (!isset($_GET['Duplicate']) OR $form['tipdoc']=='DDR') {
 			$result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
 			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
 			// recupero il filename dal filesystem e lo sposto sul tmp 
-			$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+			$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
 			while (false !== ($filename = readdir($dh))) {
 				$fd = pathinfo($filename);
 				$r = explode('_', $fd['filename']);

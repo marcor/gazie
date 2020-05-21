@@ -243,15 +243,15 @@ if (!isset($_POST['ritorno'])) {
                 $vi['periodicita'] = $admin_aziend['ivam_t'];
                 $vi['anno'] = $form['y'];
                 $vi['mese_trimestre'] = $ki;
-                $vi['nome_file_xml'] = $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . $form['trimestre_liquidabile'] . ".xml";
+                $vi['nome_file_xml'] = $admin_aziend['country'] . $admin_aziend['codfis'] . '_LI_' . $form['trimestre_liquidabile'] . '.xml';
                 gaz_dbi_table_insert('liquidazioni_iva', $vi);
             }
-            require("../../library/include/agenzia_entrate.inc.php");
+            require('../../library/include/agenzia_entrate.inc.php');
             creaFileIVP($admin_aziend, $form);
-            $msg['war'][] = "download";
+            $msg['war'][] = 'download';
         }
     } elseif (isset($_POST['Download'])) {
-        $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . $form['trimestre_liquidabile'] . ".xml";
+        $file = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . '_LI_' . $form['trimestre_liquidabile'] . '.xml';
         header("Pragma: public", true);
         header("Expires: 0"); // set expiration time
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");

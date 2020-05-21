@@ -185,10 +185,10 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
                 gaz_dbi_table_insert('admin_module', $r);
             }
             changeEnterprise($form['codice']);
-            if ( !file_exists("../../data/files/" . $form['codice']) ) {
-				$dst="../../data/files/" . $form['codice'];
+            if (!file_exists( DATA_DIR . 'files/' . $form['codice'] )) {
+				$dst = DATA_DIR . 'files/' . $form['codice'];
                 mkdir($dst, 0740);
-				$src="../../library/images/default";
+				$src = '../../library/images/default';
 				$dir = opendir($src);
 				while(false !== ( $file = readdir($dir)) ) { 
 					if (( $file != '.' ) && ( $file != '..' )) { 
@@ -201,17 +201,17 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
 				} 
 				closedir($dir); 
 				// creo la subdir per contenere le immagini relative all'azienda specifica
-				$dirimg="../../data/files/" . $form['codice']."/images";
+				$dirimg = DATA_DIR . 'files/' . $form['codice'] . '/images';
                 mkdir($dirimg, 0740);
 				// creo la subdir per contenere i documenti relativi all'azienda specifica
-				$dirdoc="../../data/files/" . $form['codice']."/doc";
+				$dirdoc = DATA_DIR . 'files/' . $form['codice'] . '/doc';
                 mkdir($dirdoc, 0740);
 			}
-            header("Location: admin_aziend.php?Update&codice=" . $form['codice']);
+            header('Location: admin_aziend.php?Update&codice=' . $form['codice']);
             exit;
         }
     } elseif (isset($_POST['Return'])) { // torno indietro
-        header("Location: " . $form['ritorno']);
+        header('Location: ' . $form['ritorno']);
         exit;
     }
 } else { //se e' il primo accesso

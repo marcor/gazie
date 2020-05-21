@@ -23,10 +23,10 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-require("../../library/include/datlib.inc.php");
+require('../../library/include/datlib.inc.php');
 $admin_aziend = checkAdmin();
 $liq = gaz_dbi_get_row($gTables['liquidazioni_iva'], "id", intval($_GET['id']));
-$file = '../../data/files/'.$admin_aziend['codice'].'/' . $liq['nome_file_xml'];
+$file = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $liq['nome_file_xml'];
 header("Pragma: public", true);
 header("Expires: 0"); // set expiration time
 header("Cache-Control: must-revalidate, post-check=0, pre-check=0");

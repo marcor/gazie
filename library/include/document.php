@@ -460,7 +460,7 @@ class DocContabVars {
 		$r=false;
 		$r['file']= $this->azienda['codice'].'/';
         $r['ext'] = '';
-        $dh = opendir('../../data/files/' . $this->azienda['codice']);
+        $dh = opendir( DATA_DIR . 'files/' . $this->azienda['codice'] );
         while (false !== ($filename = readdir($dh))) {
             $fd = pathinfo($filename);
             if ($fd['filename'] == 'rigbrodoc_' . $this->id_rig) {

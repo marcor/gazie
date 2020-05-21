@@ -202,7 +202,7 @@ $strScript = array("admin_fornit.php" =>
         'datfat' => 'Data della fattura',
 		'cod_operaz_value' => array(11=>'',0=>'C0-Acquisto olio da ditta italiana',1=>'C1-Acquisto olio da ditta comunitaria',2=>'C2-Acquisto olio da ditta extracomunitaria',3=>'C3-Carico olio da lavorazione o deposito terzi',5=>'C5-Carico olio da altro stabilimento stessa impresa',8=>'C8-Reso olio da clienti',10=>'C10-Carico olio lampante da recupero'),
         'err' => array(
-            'nofold' => 'Non esiste la cartella ID azienda nel percorso data/files!',
+            'nofold' => 'Non esiste la cartella ID azienda nel percorso DATA_DIR/files!',
             'sampri' => 'Nulla da variare, il prezzo dell\'articolo &egrave lo stesso',
             'noartupd'=>'Articolo non inserito: impossibile modificare!',
             'forceone'=>'L\'articolo di magazzino ha una matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1',
@@ -682,7 +682,7 @@ $strScript = array("admin_fornit.php" =>
         "Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!",
         "L'articolo di magazzino ha una matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1",
         "Risulta un documento gi&agrave; registrato con questo numero fattura per questo fornitore",
-		"Non esiste la cartella ID azienda nel percorso data/files!",
+		"Non esiste la cartella ID azienda nel percorso DATA_DIR/files!",
 		"Nulla da variare, il prezzo dell'articolo &egrave lo stesso",
 		"Modificare il prezzo nella scheda dell'articolo di",
 		"Articolo non inserito: impossibile modificare!",

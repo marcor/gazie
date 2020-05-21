@@ -182,15 +182,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $move = false;
                 $mt = substr($_FILES['docfile_' . $next_row]['name'], -3);
                 $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $next_row;
-                if (($mt == "png" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_' . $next_row]['size'] > 1000) { //se c'e' un nuovo documento nel buffer
-                    foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
+                if (($mt == 'png' || $mt == 'peg' || $mt == 'jpg' || $mt == 'pdf') && $_FILES['docfile_' . $next_row]['size'] > 1000) { //se c'e' un nuovo documento nel buffer
+                    foreach (glob( DATA_DIR . 'files/tmp/' . $prefix . '_*.*') as $fn) {// prima cancello eventuali precedenti file temporanei
                         unlink($fn);
                     }
-                    $move = move_uploaded_file($_FILES['docfile_' . $next_row]['tmp_name'], '../../data/files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $next_row]['name']);
+                    $move = move_uploaded_file($_FILES['docfile_' . $next_row]['tmp_name'], DATA_DIR . 'files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $next_row]['name']);
                     $form['rows'][$next_row]['extdoc'] = $_FILES['docfile_' . $next_row]['name'];
                 }
                 if (!$move) {
-                    $msg .= "56+";
+                    $msg .= '56+';
                 }
             }
             $form['rows'][$next_row]['status'] = substr($value['status'], 0, 10);
@@ -312,21 +312,21 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         }
                         if ($form['rows'][$i]['tiprig']==50 && !empty($form['rows'][$i]['extdoc']) && substr($form['rows'][$i]['extdoc'],0,10)!='rigbrodoc_') {
 							// se a questo rigo corrispondeva un certificato controllo che non sia stato aggiornato, altrimenti lo cambio
-                            $dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+                            $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
                             while (false !== ($filename = readdir($dh))) {
                                 $fd = pathinfo($filename);
                                 if ($fd['filename'] == 'rigbrodoc_' . $val_old_row['id_rig']) {
                                     // cancello il file precedente indipendentemente dall'estensione
-                                    $frep = glob('../../data/files/' . $admin_aziend['company_id'] . "/rigbrodoc_" . $val_old_row['id_rig'] . ".*");
+                                    $frep = glob( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.*');
                                     foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
                                         unlink($fdel);
                                     }
                                 }
                             }
-                            $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
+                            $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
 							// sposto e rinomino il relativo file temporaneo    
                             $fn = pathinfo($form['rows'][$i]['extdoc']);
-                            rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/rigbrodoc_" . $val_old_row['id_rig'] . '.' . $fn['extension']);
+                            rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
 						
 						}						
                     } else { //altrimenti lo elimino
@@ -343,10 +343,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
                     $last_rigbro_id =rigbroInsert($form['rows'][$i]);
                     if (!empty($form['rows'][$i]['extdoc'])) {
-                        $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
+                        $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
 // sposto e rinomino il relativo file temporaneo    
                         $fd = pathinfo($form['rows'][$i]['extdoc']);
-                        rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/rigbrodoc_" . $last_rigbro_id . '.' . $fd['extension']);
+                        rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
                     }
                     if (isset($form["row_$i"])) { //se � un rigo testo lo inserisco il contenuto in body_text
                         bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
@@ -413,10 +413,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $last_rigbro_id =rigbroInsert($form['rows'][$i]);
 					// INIZIO INSERIMENTO DOCUMENTI ALLEGATI
                     if (!empty($form['rows'][$i]['extdoc'])) {
-                        $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
+                        $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
 						// sposto e rinomino il relativo file temporaneo    
                         $fd = pathinfo($form['rows'][$i]['extdoc']);
-                        rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/rigbrodoc_" . $last_rigbro_id . '.' . $fd['extension']);
+                        rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
                     }
 					// FINE INSERIMENTO DOCUMENTI ALLEGATI
                     if (isset($form["row_$i"])) { //se � un rigo testo lo inserisco il contenuto in body_text
@@ -857,7 +857,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['extdoc'] = '';
         $form['rows'][$next_row]['status'] = "UPDATE";
 		// recupero il filename dal filesystem e lo sposto sul tmp 
-		$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+		$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
 		while (false !== ($filename = readdir($dh))) {
 				$fd = pathinfo($filename);
 				$r = explode('_', $fd['filename']);

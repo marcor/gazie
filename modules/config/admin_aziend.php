@@ -143,13 +143,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['datnas'] = gaz_format_date($form['datnas'], true);
             $form['virtual_stamp_auth_date'] = gaz_format_date($form['virtual_stamp_auth_date'], true);
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
-				require("../../library/php-ico/class-php-ico.php");
+				require('../../library/php-ico/class-php-ico.php');
                 $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
 				// aggiorno anche il set di icone sul filesystem
-				$path='../../data/files/' . $admin_aziend['codice'] . '/';
-				$exten=strtolower(pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION));
+				$path = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/';
+				$exten = strtolower(pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION));
 				$file_pattern = $path.'original_logo.*' ;
-				array_map( "unlink", glob( $file_pattern ) );
+				array_map( 'unlink', glob( $file_pattern ) );
 				$ori_file = $path.'original_logo.'.$exten;
 				@move_uploaded_file($_FILES['userfile']['tmp_name'], $ori_file);
 				list($width, $height) = getimagesize($ori_file);

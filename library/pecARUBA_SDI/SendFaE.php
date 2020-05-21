@@ -9,9 +9,9 @@ IN QUESTO MODO LA GESTIONE FAE PEC È AUTONOMA E LE EVENTUALI MAIL UTILIZZATE AL
 SI CONSIGLIA DI FARE UNA PEC DEDICATA ALLA FATTURAZIONE ELETTRONICA (DIVERSA DALLA PEC AZIENDALE)
 
 IL MODULO TRASMETTE, SCARICA LE RICEVUTE E LE FATTURE ACQUISTI DALLA PEC DELLO SDI
-I FILE XML DA TRASMETTERE DEVONO ESSERE IN data/files/1
-LE RICEVUTE DELLO SDI VENGONO SALVATE IN data/files/1/ricevutesdi
-LE FATTURE ACQUISTI VENGONO SALVATE IN data/files/1/FAE_ACQUISTI
+I FILE XML DA TRASMETTERE DEVONO ESSERE IN DATA_DIR/files/1
+LE RICEVUTE DELLO SDI VENGONO SALVATE IN DATA_DIR/files/1/ricevutesdi
+LE FATTURE ACQUISTI VENGONO SALVATE IN DATA_DIR/files/1/FAE_ACQUISTI
 dove la cartella 1 è il codice azienda (se si lavora con l'azienda 2 sarà 2 etc...)
 */
 
@@ -118,13 +118,13 @@ function ReceiveFattF($array_fattf) {
 	//$cmailSDI = gaz_dbi_get_row($gTables['company_config'],'var','dest_fae_zip_package');
 	$cfiltro['val'] = "UNSEEN" ;
 	$cpopimap['val'] = "{imaps.pec.aruba.it/ssl}" ;
-	define('CATTACHMENTS_DIR',  '../../data/files/'.$admin_aziend['codice'].'/FAE_ACQUISTI');
+	define('CATTACHMENTS_DIR', DATA_DIR . 'files/' . $admin_aziend['codice'] . '/FAE_ACQUISTI');
 	if (! is_dir(CATTACHMENTS_DIR)) {
 		if (mkdir(CATTACHMENTS_DIR,0777)) {
 			echo ' Creata cartella ' . CATTACHMENTS_DIR . ' <br/>';
 		} else {
 			echo ' Non posso creare la cartella ' . CATTACHMENTS_DIR . ' <br/>';
-			echo ' Verifica i permessi della cartella ../../data/files/'.$admin_aziend['codice']. ' <br/>';
+			echo ' Verifica i permessi della cartella ' . DATA_DIR . 'files/'.$admin_aziend['codice']. ' <br/>';
 		}
 	}
 	//	$mailbox = new ImapMailbox($cpopimap['val'], $cemail['val'], $cpassword['val'], CATTACHMENTS_DIR, 'utf-8');
@@ -252,13 +252,13 @@ function ReceiveNotifiche () {
 	//$cmailSDI = gaz_dbi_get_row($gTables['company_config'],'var','dest_fae_zip_package');
 	$cfiltro['val'] = "UNSEEN" ;
 	$cpopimap['val'] = "{imaps.pec.aruba.it/ssl}" ;
-	define('CATTACHMENTS_DIR',  '../../data/files/'.$admin_aziend['codice'].'/ricevutesdi');
+	define('CATTACHMENTS_DIR', DATA_DIR . 'files/' . $admin_aziend['codice'] . '/ricevutesdi');
 	if (! is_dir(CATTACHMENTS_DIR)) {
 		if (mkdir(CATTACHMENTS_DIR,0777)) {
 			echo ' Creata cartella ' . CATTACHMENTS_DIR . ' <br/>';
 		} else {
 			echo ' Non posso creare la cartella ' . CATTACHMENTS_DIR . ' <br/>';
-			echo ' Verifica i permessi della cartella ../../data/files/'.$admin_aziend['codice']. ' <br/>';
+			echo ' Verifica i permessi della cartella ' . DATA_DIR . 'files/' . $admin_aziend['codice'] . ' <br/>';
 		}
 	}
 	$mailbox = new ImapMailbox($cpopimap['val'], $cemail['val'], $cpassword['val'], CATTACHMENTS_DIR, 'utf-8');

@@ -25,10 +25,10 @@
  function fae_scaricate()
  {
 $admin_aziend = checkAdmin();
-global $gTables ;
+global $gTables;
 // directory dove io metto le fatture acquisti scaricate dalla pec
-$pathacquisti='../../data/files/' . $admin_aziend['codice'] . '/FAE_ACQUISTI/' ;
-$fatture=array() ;
+$pathacquisti = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/FAE_ACQUISTI/' ;
+$fatture = array();
 // Apro la directory
 //echo $pathacquisti . "<br/>";
 if (is_dir($pathacquisti)) {
