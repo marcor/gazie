@@ -425,12 +425,12 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"cell\" value=\"" . $form['cell'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['codfis'] . " *</td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://telematici.agenziaentrate.gov.it/VerificaCF/Scegli.do?parameter=verificaCf\" target=\"blank\">" . $script_transl['codfis'] . "</a></td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
       <input type=\"text\" name=\"codfis\" value=\"" . $form['codfis'] . "\" align=\"right\" maxlength=\"16\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['pariva'] . " </td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva\" target=\"blank\">" . $script_transl['pariva'] . "</a></td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
       <input type=\"text\" name=\"pariva\" value=\"" . $form['pariva'] . "\" align=\"right\" maxlength=\"11\" /></td>\n";
 echo "</tr>\n";
