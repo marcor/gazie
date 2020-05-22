@@ -327,8 +327,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 							// sposto e rinomino il relativo file temporaneo    
                             $fn = pathinfo($form['rows'][$i]['extdoc']);
                             rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
-						
-						}						
+						}
                     } else { //altrimenti lo elimino
                         if (intval($val_old_row['id_body_text']) > 0) {  //se c'è un testo allegato al rigo elimino anch'esso
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
@@ -341,7 +340,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 for ($i = $i; $i <= $count; $i++) {
                     $form['rows'][$i]['delivery_date'] = gaz_format_date($form['rows'][$i]['delivery_date'], true); // formatto la data per il db
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                    $last_rigbro_id =rigbroInsert($form['rows'][$i]);
+                    $last_rigbro_id = rigbroInsert($form['rows'][$i]);
                     if (!empty($form['rows'][$i]['extdoc'])) {
                         $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
 // sposto e rinomino il relativo file temporaneo    
@@ -410,7 +409,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 foreach ($form['rows'] as $i => $value) {
                     $form['rows'][$i]['delivery_date'] = gaz_format_date($value['delivery_date'], true); // formatto la data per il db
                     $form['rows'][$i]['id_tes'] = $ultimo_id;
-                    $last_rigbro_id =rigbroInsert($form['rows'][$i]);
+                    $last_rigbro_id = rigbroInsert($form['rows'][$i]);
 					// INIZIO INSERIMENTO DOCUMENTI ALLEGATI
                     if (!empty($form['rows'][$i]['extdoc'])) {
                         $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];

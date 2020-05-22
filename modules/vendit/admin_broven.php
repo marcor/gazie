@@ -173,6 +173,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_scorta'] = $_POST['in_scorta'];
     $form['in_quamag'] = $_POST['in_quamag'];
     $form['in_pesosp'] = $_POST['in_pesosp'];
+    $form['in_extdoc'] = $_POST['in_extdoc'];
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
 	
@@ -226,6 +227,22 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
             $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
             $form['rows'][$next_row]['pesosp'] = floatval($v['pesosp']);
+            $form['rows'][$next_row]['extdoc'] = filter_var($_POST['rows'][$next_row]['extdoc'], FILTER_SANITIZE_STRING);//die(print_r($_POST['rows'],TRUE));
+            if (!empty($_FILES['docfile_' . $next_row]['name'])) {//die(print_r($_FILES,TRUE));
+                $move = false;
+                $mt = substr($_FILES['docfile_' . $next_row]['name'], -3);
+                $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $next_row;
+                if (($mt == 'png' || $mt == 'peg' || $mt == 'jpg' || $mt == 'pdf') && $_FILES['docfile_' . $next_row]['size'] > 1000) { //se c'e' un nuovo documento nel buffer
+                    foreach (glob( DATA_DIR . 'files/tmp/' . $prefix . '_*.*') as $fn) {// prima cancello eventuali precedenti file temporanei
+                        unlink($fn);
+                    }
+                    $move = move_uploaded_file($_FILES['docfile_' . $next_row]['tmp_name'], DATA_DIR . 'files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $next_row]['name']);
+                    $form['rows'][$next_row]['extdoc'] = $_FILES['docfile_' . $next_row]['name'];
+                }
+                if (!$move) {
+                    $msg .= '56+';
+                }
+            }
             $form['rows'][$next_row]['status'] = substr($v['status'], 0, 10);
             if (isset($_POST['upd_row'])) {
                 $k_row = key($_POST['upd_row']);
@@ -258,6 +275,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
                     $form['in_quamag'] = $form['rows'][$k_row]['quamag'];
                     $form['in_pesosp'] = $form['rows'][$k_row]['pesosp'];
+                    $form['in_extdoc'] = $form['rows'][$k_row]['extdoc'];
                     $form['in_status'] = "UPDROW" . $k_row;
                     /* if ($form['in_artsea'] == 'D') {
                       $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
@@ -362,6 +380,24 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //un rigo che prima era testo adesso non lo � pi�
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
                         }
+                        if ($form['rows'][$i]['tiprig']==50 && !empty($form['rows'][$i]['extdoc']) && substr($form['rows'][$i]['extdoc'],0,10)!='rigbrodoc_') {
+							// se a questo rigo corrispondeva un certificato controllo che non sia stato aggiornato, altrimenti lo cambio
+                            $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
+                            while (false !== ($filename = readdir($dh))) {
+                                $fd = pathinfo($filename);
+                                if ($fd['filename'] == 'rigbrodoc_' . $val_old_row['id_rig']) {
+                                    // cancello il file precedente indipendentemente dall'estensione
+                                    $frep = glob( DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.*');
+                                    foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
+                                        unlink($fdel);
+                                    }
+                                }
+                            }
+                            $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
+							// sposto e rinomino il relativo file temporaneo    
+                            $fn = pathinfo($form['rows'][$i]['extdoc']);
+                            rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
+						}
                     } else { //altrimenti lo elimino
                         if (intval($val_old_row['id_body_text']) > 0) {  //se c'� un testo allegato al rigo elimino anch'esso
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
@@ -373,8 +409,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 //qualora i nuovi rows fossero di pi� dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
-                    rigbroInsert($form['rows'][$i]);
-                    $last_rigbro_id = gaz_dbi_last_id();
+                    $last_rigbro_id = rigbroInsert($form['rows'][$i]);
+                    if (!empty($form['rows'][$i]['extdoc'])) {
+                        $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
+// sposto e rinomino il relativo file temporaneo    
+                        $fd = pathinfo($form['rows'][$i]['extdoc']);
+                        rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
+                    }
                     if (isset($form["row_$i"])) { //se � un rigo testo lo inserisco il contenuto in body_text
                         bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                         gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
@@ -424,8 +465,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 //inserisco i rows
                 foreach ($form['rows'] as $i => $v) {
                     $form['rows'][$i]['id_tes'] = $ultimo_id;
-                    rigbroInsert($form['rows'][$i]);
-                    $last_rigbro_id = gaz_dbi_last_id();
+                    $last_rigbro_id = rigbroInsert($form['rows'][$i]);
+					// INIZIO INSERIMENTO DOCUMENTI ALLEGATI
+                    if (!empty($form['rows'][$i]['extdoc'])) {
+                        $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
+						// sposto e rinomino il relativo file temporaneo    
+                        $fd = pathinfo($form['rows'][$i]['extdoc']);
+                        rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
+                    }
+					// FINE INSERIMENTO DOCUMENTI ALLEGATI
                     if (isset($form["row_$i"])) { //se � un rigo testo lo inserisco il contenuto in body_text
                         bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                         gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
@@ -690,6 +738,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['quamag'] = 0;
             $form['rows'][$old_key]['annota'] = '';
             $form['rows'][$old_key]['pesosp'] = '';
+            $form['rows'][$old_key]['extdoc'] = $form['in_extdoc'];
             if ($form['in_tiprig'] == 0 and ! empty($form['in_codart'])) {  //rigo normale
                 $form['rows'][$old_key]['annota'] = $artico['annota'];
                 $form['rows'][$old_key]['pesosp'] = $artico['peso_specifico'];
@@ -710,7 +759,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $magval = array_pop($mv);
                 $form['rows'][$old_key]['scorta'] = $artico['scorta'];
                 $form['rows'][$old_key]['quamag'] = $magval['q_g'];
-            } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
+            } elseif ($form['in_tiprig'] == 1 || $form['in_tiprig'] == 50) { //rigo forfait o normale con allegato
+                $form['rows'][$old_key]['codart'] = "";
+				$form['rows'][$old_key]['good_or_service'] = "";
+                $form['rows'][$old_key]['unimis'] = "";
+                $form['rows'][$old_key]['quanti'] = 0;
+                $form['rows'][$old_key]['sconto'] = 0;
+            } elseif ($form['in_tiprig'] == 2 || $form['in_tiprig'] == 51) { //descrittivo o descrittivo con allegato
                 $form['rows'][$old_key]['codart'] = "";
 				$form['rows'][$old_key]['good_or_service'] = "";
                 $form['rows'][$old_key]['annota'] = "";
@@ -724,12 +779,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['tipiva'] = 0;
                 $form['rows'][$old_key]['ritenuta'] = 0;
                 $form['rows'][$old_key]['codvat'] = 0;
-            } elseif ($form['in_tiprig'] == 1) { //rigo forfait
-                $form['rows'][$old_key]['codart'] = "";
-				$form['rows'][$old_key]['good_or_service'] = "";
-                $form['rows'][$old_key]['unimis'] = "";
-                $form['rows'][$old_key]['quanti'] = 0;
-                $form['rows'][$old_key]['sconto'] = 0;
             } elseif ($form['in_tiprig'] == 3) {   //var.tot.fatt.
                 $form['rows'][$old_key]['codart'] = "";
 				$form['rows'][$old_key]['good_or_service'] = "";
@@ -796,6 +845,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['id_doc'] = $form['in_id_doc'];
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
             $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
+            $form['rows'][$next_row]['extdoc'] = 0;
             $form['rows'][$next_row]['status'] = "INSERT";
             $form['rows'][$next_row]['scorta'] = 0;
             $form['rows'][$next_row]['quamag'] = 0;
@@ -904,7 +954,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
                 }
 
-            } elseif ($form['in_tiprig'] == 1) { //rigo forfait
+            } elseif ($form['in_tiprig'] == 1 || $form['in_tiprig'] == 50) { //rigo forfait o normale con allegato
                 $form['rows'][$next_row]['codart'] = "";
 				$form['rows'][$next_row]['good_or_service'] = "";
                 $form['rows'][$next_row]['annota'] = "";
@@ -925,7 +975,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
                 }
                 $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
-            } elseif ($form['in_tiprig'] == 2) { //descrittivo
+            } elseif ($form['in_tiprig'] == 2 || $form['in_tiprig'] == 51) { //descrittivo o descrittivo con allegato
                 $form['rows'][$next_row]['codart'] = "";
 				$form['rows'][$next_row]['good_or_service'] = "";
                 $form['rows'][$next_row]['annota'] = "";
@@ -1084,6 +1134,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_pesosp'] = 0;
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
+    $form['in_extdoc'] = 0;
     $form['in_status'] = "INSERT";
     $form['in_codric'] = $admin_aziend['impven'];
 
@@ -1180,7 +1231,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['scorta'] = $articolo['scorta'];
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
+        $form['rows'][$next_row]['extdoc'] = '';
         $form['rows'][$next_row]['status'] = "UPDATE";
+		// recupero il filename dal filesystem e lo sposto sul tmp 
+		$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
+		while (false !== ($filename = readdir($dh))) {
+				$fd = pathinfo($filename);
+				$r = explode('_', $fd['filename']);
+				if ($r[0] == 'rigbrodoc' && $r[1] == $rigo['id_rig']) { 
+					/* 	uso id_body_text per mantenere il riferimento riferimento al file del documento esterno
+					* 	e riassegno il nome file
+					*/
+					$form['rows'][$next_row]['extdoc'] = $fd['basename'];
+				}
+		}
         $next_row++;
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
@@ -1229,6 +1293,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
     $form['in_pesosp'] = 0;
+    $form['in_extdoc'] = 0;
     $form['in_status'] = "INSERT";
     $form['in_codric'] = $admin_aziend['impven'];
 
@@ -1549,6 +1614,7 @@ echo '		</td>
 	  <input type="hidden" value="' . $form['in_scorta'] . '" name="in_scorta" />
 	  <input type="hidden" value="' . $form['in_quamag'] . '" name="in_quamag" />
 	  <input type="hidden" value="' . $form['in_pesosp'] . '" name="in_pesosp" />
+	  <input type="hidden" value="' . $form['in_extdoc'] . '" name="in_extdoc" />
 	  <input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
 	  <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 	  <div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">
@@ -1677,6 +1743,7 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['extdoc'] . "\" name=\"rows[$k][extdoc]\">\n";
     //stampo i rows in modo diverso a secondo del tipo
     echo "<tr>";
     switch ($v['tiprig']) {
@@ -1884,6 +1951,82 @@ foreach ($form['rows'] as $k => $v) {
 					<td></td>
 					<td></td>
 					<td></td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            break;
+        case "50":
+			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" />\n";
+                if (empty($form['rows'][$k]['extdoc'])) {
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+                    . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                } else {
+                    echo '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+                    . $form['rows'][$k]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                }
+				echo '<div id="extdoc_dialog' . $k . '" class="collapse" >
+                        <div class="form-group">
+                          <div>';
+
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
+                            <label>File: </label><input type="text" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
+			</div>
+		     </div>
+              </div>' . "</td>\n";
+            echo '
+			   	<td>
+		 			<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
+			   	</td>
+			    <td>
+					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" />
+				</td>
+				<td>
+					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" id="righi_' . $k . '_quanti" onchange="document.broven.last_focus.value=\'righi_' . $k . '_prelis\'; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+                </td>';
+            echo "<td><input type=\"text\" name=\"rows[$k][prelis]\" value=\"" . $v['prelis'] . "\" align=\"right\" maxlength=\"11\" ";
+			if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
+				echo ' onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
+			}
+            echo " id=\"righi_" . $k . "_prelis\" onchange=\"document.broven.last_focus.value='righi_" . $k . "_sconto'; this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"" . $v['sconto'] . "\" maxlength=\"4\"  id=\"righi_" . $k . "_sconto\" onchange=\"document.broven.last_focus.value=this.id; this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[$k][provvigione]\" value=\"" . $v['provvigione'] . "\" maxlength=\"6\"  /></td>\n";
+            echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
+            echo "<td class=\"text-right\">" . $v['pervat'] . "%</td>\n";
+            echo "<td class=\"text-right codricTooltip\" title=\"Contropartita\">" . $v['codric'] . "</td>\n";
+
+            $last_row[] = array_unshift($last_row, '<strong>' . $v['codart'] . '</strong>, ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
+            break;
+        case "51":
+			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" />\n";
+                if (empty($form['rows'][$k]['extdoc'])) {
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+                    . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                } else {
+                    echo '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+                    . $form['rows'][$k]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                }
+				echo '<div id="extdoc_dialog' . $k . '" class="collapse" >
+                        <div class="form-group">
+                          <div>';
+
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
+                            <label>File: </label><input type="text" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
+			</div>
+		     </div>
+              </div>' . "</td>\n";
+            echo "<td><input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\"  /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>\n";
+            echo "<td></td>\n";
+            echo "<td></td>\n";
+            echo "<td></td>\n";
+            echo "<td></td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "210":  // serve per gli articoli composti contattare andrea
