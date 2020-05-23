@@ -1427,7 +1427,7 @@ echo "\n";
 ******************************************************/
 
 
-echo "<form method=\"POST\" name=\"broven\">\n";
+echo "<form method=\"POST\" name=\"broven\" enctype=\"multipart/form-data\">\n";
 $gForm = new venditForm();
 echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 		<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
