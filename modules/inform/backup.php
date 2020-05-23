@@ -257,7 +257,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     if (!isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
         $content = ob_get_contents();
         $zip = new ZipArchive();
-        $filename = '../../data/files/backups/' . $Database . "-" . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql.gaz';
+        $filename = DATA_DIR.'files/backups/' . $Database . "-" . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql.gaz';
         if ($zip->open($filename, ZipArchive::CREATE) !== TRUE) {
             exit("cannot open <$filename>\n");
         }

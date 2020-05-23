@@ -35,7 +35,7 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
 $admin_aziend=checkAdmin();
 $id_sian = gaz_dbi_get_row($gTables['company_config'], 'var', 'id_sian');
 
-if ($handle = opendir('../../data/files/'.$admin_aziend['codice'].'/sian/')){
+if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
    while (false !== ($file = readdir($handle))){
        $prevfiles[]=$file;
    }
@@ -119,7 +119,7 @@ $ritorno="file creato";
 $result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
 
 if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti e la pagina non è stata ricaricata creo il file
-	$myfile = fopen("../../data/files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
+	$myfile = fopen(DATA_DIR."files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
 	$nprog=1;$lastdatdoc="";
 	while (list($key, $row) = each($result)) {
 		$type_array= explode (";", $type_zero); // azzero il type array per ogni movimento da creare

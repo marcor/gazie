@@ -97,7 +97,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           exit;
     } elseif (isset($_POST['Delete'])) {
 		gaz_dbi_del_row($gTables['files'], 'id_doc',$form['id_doc']);
-		unlink ("../../data/files/".$admin_aziend['company_id']."/images/". $form['id_doc'] . "." . $form['extension']);
+		unlink (DATA_DIR."files/".$admin_aziend['company_id']."/images/". $form['id_doc'] . "." . $form['extension']);
 		header("Location: ".$form['ritorno']);
         exit;
 	}

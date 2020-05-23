@@ -55,7 +55,7 @@ if (isset($_POST['Submit_file'])) { // conferma invio upload file
 		if (!empty($p7mfile) && !($p7mfile['type'] == "application/pkcs7-mime" || $p7mfile['type'] == "application/pkcs7" || $p7mfile['type'] == "text/xml")) {
 			$msg_err = 'Formato del file ' . print_r($p7mfile, true) . ' non valido';
 		} else {
-			if (move_uploaded_file($p7mfile['tmp_name'], '../../data/files/' . $admin_aziend['codice'] . '/' . $p7mfile['name'])) { // nessun errore
+			if (move_uploaded_file($p7mfile['tmp_name'], DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $p7mfile['name'])) { // nessun errore
 				$msg_err = 'Caricamento del file riuscito!';
 			} else { // no upload
 				$msg_err = 'Caricamento del file non riuscito';
@@ -76,7 +76,7 @@ if (isset($_GET['all'])) {
 		require('../../library/include/electronic_invoice.inc.php');
 		require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
 		$testata = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_tes = " . $_GET['id_tes_ref']);
-		$file_path = '../../data/files/' . $admin_aziend['codice'] . '/';
+		$file_path = DATA_DIR.'files/' . $admin_aziend['codice'] . '/';
 		$file_url = $file_path . $_GET['file_name'];
 		$file_content = create_XML_invoice($testata, $gTables, 'rigdoc', false, 'from_string.xml');
 		file_put_contents($file_url, $file_content);
@@ -94,7 +94,7 @@ if (isset($_GET['all'])) {
 		gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "filename_ori", $p7mfile['name']);
 		require('../../library/include/electronic_invoice.inc.php');
 		require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
-		$file_path = '../../data/files/' . $admin_aziend['codice'] . '/';
+		$file_path = DATA_DIR.'files/' . $admin_aziend['codice'] . '/';
 		$file_url = $file_path . $p7mfile['name'];
 		gaz_dbi_put_row($gTables['fae_flux'], "id", $id_record, "flux_status", "#");
 		$IdentificativoSdI = SendFatturaElettronica($file_url);

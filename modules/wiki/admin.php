@@ -14,7 +14,7 @@ if (!defined('APP_NAME')) {
 
 if (!defined('LIBRARY')) {
     define('LIBRARY', __DIR__ . DIRECTORY_SEPARATOR . 'library');
-    //define('LIBRARY', '../../data/files/library/'); //ANDREA
+    //define('LIBRARY', DATA_DIR.'files/library/'); //ANDREA
 }
 
 if (!defined('DEFAULT_FILE')) {

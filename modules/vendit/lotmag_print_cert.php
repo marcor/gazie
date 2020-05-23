@@ -54,7 +54,7 @@ class LotMagData extends DocContabVars {
                 // ritrovo il file relativo al lotto e lo aggiungo alla matrice
                 $rigo['file']= $this->azienda['codice'].'/';
                 $rigo['ext'] = '';
-                $dh = opendir('../../data/files/' . $this->azienda['codice']);
+                $dh = opendir(DATA_DIR.'files/' . $this->azienda['codice']);
                 while (false !== ($filename = readdir($dh))) {
                     $fd = pathinfo($filename);
                     if ($fd['filename'] == 'lotmag_' . $rigo['id']) {

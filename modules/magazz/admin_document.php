@@ -74,7 +74,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		}
 		if (empty($msg)) { // nessun errore
 			// controllo che ci sia la cartella doc
-			$docfolder = '../../data/files/' . $admin_aziend['codice'] . '/doc/';
+			$docfolder = DATA_DIR.'files/' . $admin_aziend['codice'] . '/doc/';
 			if (!file_exists($docfolder)) {// se non c'è la creo
 				mkdir($docfolder, 0777);
 			}

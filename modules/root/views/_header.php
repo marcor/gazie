@@ -27,8 +27,8 @@ if (gaz_dbi_num_rows($rs_az) > 1) { // ho più aziende gestite devo usare una ic
 ?>
 		<meta name="apple-mobile-web-app-title" content="<?php echo $az['ragso1'];?>">
 		<?php
-			$ico=base64_encode(file_get_contents('../../data/files/'.$az['codice'].'/favicon.ico'));
-			$ico114=base64_encode(file_get_contents('../../data/files/'.$az['codice'].'/logo_114x114.png'));
+			$ico=base64_encode(file_get_contents(DATA_DIR.'files/'.$az['codice'].'/favicon.ico'));
+			$ico114=base64_encode(file_get_contents(DATA_DIR.'files/'.$az['codice'].'/logo_114x114.png'));
 		?>
         <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico?>"  type="image/x-icon" />
 		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />

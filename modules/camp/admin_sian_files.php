@@ -33,7 +33,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 
 if ( isset($_POST['confirm'])){ // cancello il file dalla cartella di GAzie
-	$filetodelete="../../data/files/".$admin_aziend['codice']."/sian/".$_POST['confirm'];
+	$filetodelete=DATA_DIR."files/".$admin_aziend['codice']."/sian/".$_POST['confirm'];
 	if (substr($_POST['confirm'],-12) == "OPERREGI.txt"){
 		unlink ($filetodelete);
 		unset ($_POST,$form);
@@ -52,7 +52,7 @@ if ( isset($_POST['confirm'])){ // cancello il file dalla cartella di GAzie
 }
 
 if (isset ($_POST['confirmsian'])){ // creo il file di cancellazione da inviare al SIAN
-	$filetodelete="../../data/files/".$admin_aziend['codice']."/sian/".$_POST['confirmsian'];
+	$filetodelete=DATA_DIR."files/".$admin_aziend['codice']."/sian/".$_POST['confirmsian'];
 	$fileContent=@file_get_contents($filetodelete); // prendo il contenuto dell'ultimo file da modificare
 	$fileField=explode (";",$fileContent);
 	$i = 0;
@@ -72,7 +72,7 @@ if (isset ($_POST['confirmsian'])){ // creo il file di cancellazione da inviare 
 		$progrfile=intval($nameContent[2])+1;
 		$nameContent[2]=sprintf ("%05d",$progrfile);
 		$namefile=implode("_",$nameContent);
-		$myfile = fopen("../../data/files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
+		$myfile = fopen(DATA_DIR."files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
 		fwrite($myfile, $fileContent);
 		fclose($myfile);
 	}
@@ -89,7 +89,7 @@ if (isset ($_POST['del'])){
 }
 
 // prendo tutti i file della cartella sian
-if ($handle = opendir('../../data/files/'.$admin_aziend['codice'].'/sian/')){
+if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
 	while ($file = readdir($handle)){
 		if ($file == '.' || $file == '..') {
 			continue;
@@ -144,7 +144,7 @@ if ($handle = opendir('../../data/files/'.$admin_aziend['codice'].'/sian/')){
 	}
 	if (isset($files)){ // se ci sono files
 		foreach (array_reverse($files) as $file){
-			$filetoread="../../data/files/".$admin_aziend['codice']."/sian/".$file;
+			$filetoread=DATA_DIR."files/".$admin_aziend['codice']."/sian/".$file;
 			$fileContent=@file_get_contents($filetoread); // prendo il contenuto del file
 			$fileField=explode (";",$fileContent);
 			if (substr($filetoread,-12) == "OPERREGI.txt"){

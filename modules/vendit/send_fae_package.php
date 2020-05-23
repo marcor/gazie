@@ -28,7 +28,7 @@ $admin_aziend = checkAdmin();
 if (isset($_GET['fn'])) {
     $user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
     $fn=substr($_GET['fn'],0,37);
-    $file_url = "../../data/files/".$admin_aziend['codice']."/".$fn;
+    $file_url = DATA_DIR."files/".$admin_aziend['codice']."/".$fn;
     $content = new StdClass;
     $content->name = $fn;
     $content->urlfile = $file_url; // se passo l'url GAzieMail allega un file del file system e non da stringa

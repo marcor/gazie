@@ -92,10 +92,10 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                 <?php
                 $interval = 0;
                 $files = array();
-                if ($handle = opendir('../../data/files/backups/')) {
+                if ($handle = opendir(DATA_DIR.'files/backups/')) {
                     while (false !== ($file = readdir($handle))) {
                         if ($file != "." && $file != ".." && strpos($file, ".gaz")) {
-                            $files[filemtime('../../data/files/backups/' . $file)] = $file;
+                            $files[filemtime(DATA_DIR.'files/backups/' . $file)] = $file;
                         }
                     }
                     closedir($handle);
@@ -121,7 +121,7 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                                     <?php echo $file; ?>
                                 </td>
                                 <td>
-                                    <?php echo formatSizeUnits(filesize('../../data/files/backups/' . $file)); ?>
+                                    <?php echo formatSizeUnits(filesize(DATA_DIR.'files/backups/' . $file)); ?>
                                 </td>
                                 <td align="center">
                                     <a class="btn btn-xs btn-default" href="downlo_backup.php?id=<?php echo $file; ?>"><i class="glyphicon glyphicon-download"></i></a>
@@ -139,7 +139,7 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                             <?php
                             $index++;
                         } else {
-                            unlink("../../data/files/backups/" . $file);
+                            unlink(DATA_DIR."files/backups/" . $file);
                         }
                     }
                 }

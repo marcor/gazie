@@ -116,9 +116,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$form['lot_or_serial']=$item_artico['lot_or_serial'];
 	 // Antonio Germani - se è presente, recupero il file documento lotto
     $form['filename'] = "";
-    if (file_exists('../../data/files/' . $admin_aziend['company_id']) > 0) {
+    if (file_exists(DATA_DIR.'files/' . $admin_aziend['company_id']) > 0) {
         // recupero il filename dal filesystem
-        $dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+        $dh = opendir(DATA_DIR.'files/' . $admin_aziend['company_id']);
         while (false !== ($filename = readdir($dh))) {
             $fd = pathinfo($filename);
             $r = explode('_', $fd['filename']);
@@ -272,12 +272,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	
 	if (!empty($_FILES['docfile_']['name'])) { // Antonio Germani - se c'è un nome in $_FILES
 		$prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
-		foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) { // prima cancello eventuali precedenti file temporanei
+		foreach (glob(DATA_DIR."files/tmp/" . $prefix . "_*.*") as $fn) { // prima cancello eventuali precedenti file temporanei
 			unlink($fn);
 		}
 		$mt = substr($_FILES['docfile_']['name'], -3);
 		if (($mt == "png" || $mt == "odt" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_']['size'] > 1000) { // se rispetta limiti e parametri lo salvo nella cartella tmp
-			move_uploaded_file($_FILES['docfile_']['tmp_name'], '../../data/files/tmp/' . $prefix . '_' . $_FILES['docfile_']['name']);
+			move_uploaded_file($_FILES['docfile_']['tmp_name'], DATA_DIR.'files/tmp/' . $prefix . '_' . $_FILES['docfile_']['name']);
 			$form['filename'] = $_FILES['docfile_']['name'];
 		} else {
 			$msg.= "14+";
@@ -417,10 +417,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 				// Antonio Germani - salvo documento/CERTIFICATO del lotto
 				if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
                     if (!empty($form['filename'])) { // e se ha un nome impostato nel form
-                        $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['filename'];
+                        $tmp_file = DATA_DIR."files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['filename'];
                         // sposto il file nella cartella definitiva, rinominandolo e cancellandolo dalla temporanea
                         $fd = pathinfo($form['filename']);
-                        rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $form['id_lotmag'] . '.' . $fd['extension']);
+                        rename($tmp_file, DATA_DIR."files/" . $admin_aziend['company_id'] . "/lotmag_" . $form['id_lotmag'] . '.' . $fd['extension']);
                     }
                 } // altrimenti se il file non è cambiato, anche se è update, non faccio nulla
 			} else {

@@ -39,7 +39,7 @@ if (!isset($_POST['ritorno'])) {
 }
 if (isset($_POST['Delete'])) {
 	// elimino il file sul filesystem
-	$file_url = "../../data/files/".$admin_aziend['codice']."/".$fn;
+	$file_url = DATA_DIR."files/".$admin_aziend['codice']."/".$fn;
 	@unlink($file_url);
 	// elimino i righi dalla tabella dei flussi
     gaz_dbi_del_row($gTables['fae_flux'], 'filename_zip_package', $fn);

@@ -152,9 +152,9 @@ if (isset($_POST['close'])){
                echo '<td>' . gaz_format_quantity($v_lm['rest'], 0, $admin_aziend['decimal_quantity'])
                 .'</td><td>';
 							
-				If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {		
+				If (file_exists(DATA_DIR.'files/' . $admin_aziend['company_id'])>0) {		
 					// recupero il filename 
-					$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+					$dh = opendir(DATA_DIR.'files/' . $admin_aziend['company_id']);
 					while (false !== ($filename = readdir($dh))) {
 						$fd = pathinfo($filename); 
 						$r = explode('_', $fd['filename']); 
@@ -164,7 +164,7 @@ if (isset($_POST['close'])){
 							} 
 						}
 						if (strlen($img)>0) {
-							$tmp_file = "../../data/files/".$admin_aziend['company_id']."/".$img;
+							$tmp_file = DATA_DIR."files/".$admin_aziend['company_id']."/".$img;
 							// sposto nella cartella di lettura il relativo file temporaneo            
 							copy($tmp_file, "../../modules/camp/tmp/".$img);
 							echo '<img src="../../modules/camp/tmp/'.$img.'" alt="certificato lotto" width="50" border="1" style="cursor: -moz-zoom-in;" onclick="this.width=500;" ondblclick="this.width=50;" />';

@@ -313,7 +313,7 @@ if (!isset($_GET['success'])){
 								if ($_GET['img']=="updimg"){ // se devo aggiornare l'immagine ne trovo l'url di GAzie
 									$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $item['codice']."'");
 									if ($imgres['id_doc']>0){ // se c'è un'immagine
-										$imgurl="../../data/files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension'];
+										$imgurl=DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension'];
 									} else {
 										$imgurl="";
 									}

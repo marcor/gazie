@@ -178,7 +178,7 @@ if (isset($_POST['submit'])) {
     if ($ultima_comunicazione) {
         $ultimo_file = $ultima_comunicazione['trimestre_semestre']+1;
     }
-    $filename = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_C".str_pad($ultimo_file, 4, "0", STR_PAD_LEFT).".xml";
+    $filename = DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_C".str_pad($ultimo_file, 4, "0", STR_PAD_LEFT).".xml";
 
 
 	if ($ecr_user){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
@@ -342,7 +342,7 @@ if (isset($_POST['submit'])) {
 		$msg['war'][] = "download";
 	}
 } elseif (isset($_POST['Download'])) {
-        $filename = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_C" . str_pad(intval($_POST['ultimo_file']), 4, '0', STR_PAD_LEFT) . ".xml";
+        $filename = DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_C" . str_pad(intval($_POST['ultimo_file']), 4, '0', STR_PAD_LEFT) . ".xml";
         header("Pragma: public", true);
         header("Expires: 0"); // set expiration time
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");

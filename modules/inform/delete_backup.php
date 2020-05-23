@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if (isset($_POST['Delete'])) {
-    unlink ("../../data/files/backups/".$_GET['id']);
+    unlink (DATA_DIR."files/backups/".$_GET['id']);
     header("Location: report_backup.php");
     exit;
 } 

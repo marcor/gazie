@@ -84,7 +84,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "text/xml")) {
 				$msg['err'][] = 'filmim';
 			} else {
-                if (move_uploaded_file($_FILES['userfile']['tmp_name'], '../../data/files/' . $admin_aziend['codice'] . '/' . $_FILES['userfile']['name'])) { // nessun errore
+                if (move_uploaded_file($_FILES['userfile']['tmp_name'], DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $_FILES['userfile']['name'])) { // nessun errore
 					$form['fattura_elettronica_original_name'] = $_FILES['userfile']['name'];
 				} else { // no upload
 					$msg['err'][] = 'no_upload';
@@ -116,8 +116,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
-		header("Content-Length: " . filesize('../../data/files/tmp/'.$name));
-		readfile('../../data/files/tmp/'.$name);
+		header("Content-Length: " . filesize(DATA_DIR.'files/tmp/'.$name));
+		readfile(DATA_DIR.'files/tmp/'.$name);
 		exit;
 	}
 
@@ -131,7 +131,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	} elseif (!empty($form['fattura_elettronica_original_name'])) { // non c'è sul database è un inserimento
 		$toDo = 'insert';
 		// INIZIO acquisizione e pulizia file xml o p7m
-		$file_name = '../../data/files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
+		$file_name = DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
 		$p7mContent = @file_get_contents($file_name);
 		$invoiceContent = removeSignature($p7mContent,$file_name);
 		$doc = new DOMDocument;
@@ -452,7 +452,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$att = $doc->getElementsByTagName('Attachment')->item(0);
 			$base64 = $att->textContent;
 			$bin = base64_decode($base64);
-			file_put_contents('../../data/files/tmp/'.$name_file, $bin);
+			file_put_contents(DATA_DIR.'files/tmp/'.$name_file, $bin);
 		}
 
 		if (isset($_POST['Submit_form']) && count($msg['err'])==0) { // confermo le scelte sul form, inserisco i dati sul db ma solo se non ho errori

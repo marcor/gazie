@@ -64,7 +64,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$rs=gaz_dbi_dyn_query ("*",$gTables['files'],"table_name_ref = 'artico' AND item_ref = '".$i."'");
 			foreach ($rs as $delimg){
 				gaz_dbi_del_row($gTables['files'], "id_doc", $delimg['id_doc']);
-				unlink ("../../data/files/".$admin_aziend['codice']."/images/". $delimg['id_doc'] . "." . $delimg['extension']);
+				unlink (DATA_DIR."files/".$admin_aziend['codice']."/images/". $delimg['id_doc'] . "." . $delimg['extension']);
 			}
 			// Cancello l'eventuale body_text
 			gaz_dbi_del_row($gTables['body_text'], "table_name_ref", "artico_".$i);

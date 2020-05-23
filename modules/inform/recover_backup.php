@@ -64,10 +64,10 @@ if (isset($_POST['Recover']) && $_POST['Conferma']=="accetto") {
     $mysqlHostName =$Host;
 
     $zip = new ZipArchive;
-    $res = $zip->open('../../data/files/backups/'.$_GET["id"]);
+    $res = $zip->open(DATA_DIR.'files/backups/'.$_GET["id"]);
     if ($res === TRUE) {
-        mkdir ( '../../data/files/backups/tmp' );
-        $zip->extractTo('../../data/files/backups/tmp');
+        mkdir ( DATA_DIR.'files/backups/tmp' );
+        $zip->extractTo(DATA_DIR.'files/backups/tmp');
         $zip->close();
         $mysqlImportFilename = rtrim($_GET["id"],".gaz");
     } else {
@@ -88,7 +88,7 @@ if (isset($_POST['Recover']) && $_POST['Conferma']=="accetto") {
         switch($worked){
             case 0:
                 echo 'Import file <b>' .$mysqlImportFilename .'</b> successfully imported to database <b>' .$mysqlDatabaseName .'</b>';
-                unlink ("../../data/files/backups/".$_GET["id"]."/".$mysqlImportFilename);
+                unlink (DATA_DIR."files/backups/".$_GET["id"]."/".$mysqlImportFilename);
                 break;
             case 1:
                 echo 'There was an error during import.';
@@ -98,7 +98,7 @@ if (isset($_POST['Recover']) && $_POST['Conferma']=="accetto") {
             exit;
     } else {
         // nome del file sql da importare
-        $filename = "../../data/files/backups/tmp/".$mysqlImportFilename;
+        $filename = DATA_DIR."files/backups/tmp/".$mysqlImportFilename;
 
         // azzerro la stringa che ospiterà la query
         $templine = '';
@@ -121,8 +121,8 @@ if (isset($_POST['Recover']) && $_POST['Conferma']=="accetto") {
             }
         }
         // cancello il file temporaneo .sql e copio la cartella (rimane comunque il file compresso .gaz)
-        unlink ("../../data/files/backups/tmp/".$mysqlImportFilename);
-        $src = "../../data/files/backups/tmp/";
+        unlink (DATA_DIR."files/backups/tmp/".$mysqlImportFilename);
+        $src = DATA_DIR."files/backups/tmp/";
         $dest = "../../";
         rcopy( $src , $dest );
         deleteDirectory ( $src );

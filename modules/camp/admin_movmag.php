@@ -173,9 +173,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['expiry'][$form['mov']] = $reslotmag['expiry'];
     // Antonio Germani - se è presente, recupero il file documento lotto
     $form['filename'][$form['mov']] = "";
-    If (file_exists('../../data/files/' . $admin_aziend['company_id']) > 0) {
+    If (file_exists(DATA_DIR.'files/' . $admin_aziend['company_id']) > 0) {
         // recupero il filename dal filesystem
-        $dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+        $dh = opendir(DATA_DIR.'files/' . $admin_aziend['company_id']);
         while (false !== ($filename = readdir($dh))) {
             $fd = pathinfo($filename);
             $r = explode('_', $fd['filename']);
@@ -703,10 +703,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							// Antonio Germani - inizio salvo documento/certificato
 							if (substr($form['filename'][$form['mov']], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
 								if (!empty($form['filename'][$form['mov']])) { // e se ha un nome impostato nel form
-									$tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['mov'] . '_' . $form['filename'][$form['mov']];
+									$tmp_file = DATA_DIR."files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['mov'] . '_' . $form['filename'][$form['mov']];
 									// sposto nella cartella definitiva, rinominandolo, il relativo file temporaneo
 									$fd = pathinfo($form['filename'][$form['mov']]);
-									rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $form['id_lotmag'][$form['mov']] . '.' . $fd['extension']);
+									rename($tmp_file, DATA_DIR."files/" . $admin_aziend['company_id'] . "/lotmag_" . $form['id_lotmag'][$form['mov']] . '.' . $fd['extension']);
 								}
 							}
 						}
@@ -1073,12 +1073,12 @@ if (isset($_POST['Del_mov'])) {
 }
 if (!empty($_FILES['docfile_' . $form['mov']]['name'])) { // Antonio Germani - se c'è un nome in $_FILES
     $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['mov'];
-    foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) { // prima cancello eventuali precedenti file temporanei
+    foreach (glob(DATA_DIR."files/tmp/" . $prefix . "_*.*") as $fn) { // prima cancello eventuali precedenti file temporanei
         unlink($fn);
     }
     $mt = substr($_FILES['docfile_' . $form['mov']]['name'], -3);
     if (($mt == "png" || $mt == "odt" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_' . $form['mov']]['size'] > 1000) { // se rispetta limiti e parametri lo salvo nella cartella tmp
-        move_uploaded_file($_FILES['docfile_' . $form['mov']]['tmp_name'], '../../data/files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $form['mov']]['name']);
+        move_uploaded_file($_FILES['docfile_' . $form['mov']]['tmp_name'], DATA_DIR.'files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $form['mov']]['name']);
         $form['filename'][$form['mov']] = $_FILES['docfile_' . $form['mov']]['name'];
     } else {
         $msg.= "39+";
@@ -1560,7 +1560,7 @@ for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
                             unlink($fn);
                         }
                         if (strlen($form['filename'][$form['mov']]) > 0) {
-                            $tmp_file = "../../data/files/" . $admin_aziend['company_id'] . "/" . $form['filename'][$form['mov']];
+                            $tmp_file = DATA_DIR."files/" . $admin_aziend['company_id'] . "/" . $form['filename'][$form['mov']];
                             // sposto nella cartella di lettura il relativo file temporaneo
                             copy($tmp_file, "../../modules/camp/tmp/" . $form['filename'][$form['mov']]);
                         }

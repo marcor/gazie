@@ -26,7 +26,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $d=filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
-$file_url = "../../data/files/".$admin_aziend['codice']."/".substr($d['fn'],0,37);
+$file_url = DATA_DIR."files/".$admin_aziend['codice']."/".substr($d['fn'],0,37);
 $mime=mime_content_type($file_url);
 header('Content-Type: '.$mime);
 header("Content-Disposition:attachment;filename='".substr($d['fn'],0,37)."'");

@@ -35,11 +35,11 @@ $admin_aziend=checkAdmin();
 $id_sian = gaz_dbi_get_row($gTables['company_config'], 'var', 'id_sian');
 
 // controllo che ci sia la cartella sian
-if (!file_exists('../../data/files/'.$admin_aziend['codice'].'/sian/')) {// se non c'è la creo
-    mkdir('../../data/files/'.$admin_aziend['codice'].'/sian/', 0777);
+if (!file_exists(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')) {// se non c'è la creo
+    mkdir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/', 0777);
 }
 // leggo i file eventualmente contenuti
-if ($handle = opendir('../../data/files/'.$admin_aziend['codice'].'/sian/')){
+if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
    while (false !== ($file = readdir($handle))){
        $prevfiles[]=$file;
    }
@@ -78,7 +78,7 @@ if (!isset($_POST['ritorno'])){// Antonio Germani - se non è stata ricaricata l
 $ritorno="file creato";
 
 if (sizeof($_GET) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti e la pagina non è stata ricaricata creo il file
-	$myfile = fopen("../../data/files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
+	$myfile = fopen(DATA_DIR."files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
 	
 	foreach ($_GET as $row) {
 		$type_array= explode (";", $type_zero); // azzero il type array per ogni movimento da creare

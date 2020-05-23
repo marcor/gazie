@@ -31,7 +31,7 @@ if (isset($_GET['zn'])) {
 	$send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
 	if (!empty($send_fae_zip_package)) {
 		require('../../library/' . $send_fae_zip_package . '/SendFaE.php');
-		$file_url = '../../data/files/' . $admin_aziend['codice'] . '/' . $zn;
+		$file_url = DATA_DIR.'files/' . $admin_aziend['codice'] . '/' . $zn;
 		$IdentificativiSdI = SendFattureElettroniche($file_url);
 		if (!empty($IdentificativiSdI)) {
 			if (is_array($IdentificativiSdI)) {

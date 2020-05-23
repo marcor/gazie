@@ -107,7 +107,7 @@ $cpassword = gaz_dbi_get_row($gTables['company_config'],'var','cpassword');
 $cfiltro = gaz_dbi_get_row($gTables['company_config'],'var','cfiltro');
 $cpopimap = gaz_dbi_get_row($gTables['company_config'],'var','cpopimap');
 $last_fae_email = gaz_dbi_get_row($gTables['company_config'],'var','last_fae_email');
-$pathricevute = '../../data/files/'.$admin_aziend['codice'].'/ricevutesdi' ;
+$pathricevute = DATA_DIR.'files/'.$admin_aziend['codice'].'/ricevutesdi' ;
 if (! is_dir($pathricevute)) {
   if (mkdir($pathricevute,0777)) {
    echo ' Creata cartella ' . $pathricevute . ' <br/>';
@@ -115,7 +115,7 @@ if (! is_dir($pathricevute)) {
 }
 
 
-define('CATTACHMENTS_DIR',  '../../data/files/'.$admin_aziend['codice'].'/ricevutesdi');
+define('CATTACHMENTS_DIR',  DATA_DIR.'files/'.$admin_aziend['codice'].'/ricevutesdi');
 
 try {
 	$mailbox = new ImapMailbox($cpopimap['val'], $cemail['val'], $cpassword['val'], CATTACHMENTS_DIR, 'utf-8');

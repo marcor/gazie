@@ -31,19 +31,19 @@ $admin_aziend=checkAdmin();
 $msg='';
 
 // controllo che ci sia la cartella sian
-$sianfolder = '../../data/files/' . $admin_aziend['codice'] . '/sian/';
+$sianfolder = DATA_DIR.'files/' . $admin_aziend['codice'] . '/sian/';
 if (!file_exists($sianfolder)) {// se non c'è la creo
     mkdir($sianfolder, 0777);
 }
 
 // prendo tutti i file della cartella sian e li leggo
-if ($handle = opendir('../../data/files/' . $admin_aziend['codice'] . '/sian/')){
+if ($handle = opendir(DATA_DIR.'files/' . $admin_aziend['codice'] . '/sian/')){
 	$i=0;
 	while (false !== ($file = readdir($handle))){
 		if (substr($file,-12) == "OPERREGI.txt"){
 			if ($file=="." OR $file==".."){ continue;}
 				$prevfiles[$i]['nome']=$file; // prendo nome file
-				$prevfiles[$i]['content']=@file_get_contents('../../data/files/' . $admin_aziend['codice'] . '/sian/'.$file);// prendo contenuto file
+				$prevfiles[$i]['content']=@file_get_contents(DATA_DIR.'files/' . $admin_aziend['codice'] . '/sian/'.$file);// prendo contenuto file
 				$i++;	
 		}			
 	}

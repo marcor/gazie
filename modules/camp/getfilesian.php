@@ -6,16 +6,16 @@ if (isset($_GET['filename'])&&isset($_GET['ext'])&&isset($_GET['company_id'])){
 	$ext = filter_var($_GET['ext'], FILTER_SANITIZE_STRING);
 	$fn=$bfn.'.'.$ext;
 	$ci = intval($_GET['company_id']);
-	if (file_exists("../../data/files/".$ci."/sian/".$fn)){
-	$mime=mime_content_type('../../data/files/'.$ci.'/sian/'.$fn);
-	$fs=filesize('../../data/files/'.$ci.'/sian/'.$fn);
+	if (file_exists(DATA_DIR."files/".$ci."/sian/".$fn)){
+	$mime=mime_content_type(DATA_DIR.'files/'.$ci.'/sian/'.$fn);
+	$fs=filesize(DATA_DIR.'files/'.$ci.'/sian/'.$fn);
 	header("Cache-Control: public");
 	header("Content-Description: File Transfer");
 	header("Content-Disposition: attachment; filename=".$fn);
 	header ('Content-length: ' .$fs);
 	header("Content-Type: ".$mime);
 	header("Content-Transfer-Encoding: binary");
-	readfile('../../data/files/'.$ci.'/sian/'.$fn);
+	readfile(DATA_DIR.'files/'.$ci.'/sian/'.$fn);
 	} else {
 		echo "ERRORE: impossibile scaricare il file perché non esiste"; 
 		$loc = $_SERVER['HTTP_REFERER'];

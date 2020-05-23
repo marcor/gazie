@@ -74,7 +74,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				// cancello l'immagine presente nella cartella 
 				$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $_POST['codice'.$ord]."'");
 				gaz_dbi_del_row($gTables['files'], 'id_doc',$imgres['id_doc']);
-				unlink ("../../data/files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension']);
+				unlink (DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension']);
 			}
 			
 			if ((!$esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg" AND $_GET['imp']=="impval") OR ($esiste AND strlen( $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval")){ // se è inserimento o se è update e c'è un'immagine e se è selezionato
@@ -89,11 +89,11 @@ if (isset($_POST['conferma'])) { // se confermato
 				$form['title']= "Immagine web articolo: ".$_POST['codice'.$ord];
 				gaz_dbi_table_insert('files',$form);// inserisco i dati dell'immagine nella tabella files
 				$form['id_doc']= gaz_dbi_last_id();//recupero l'id assegnato dall'inserimento
-				$imgweb='../../data/files/'.$admin_aziend['company_id'].'/images/'.$form['id_doc'].'.'.$form['extension'];
+				$imgweb=DATA_DIR.'files/'.$admin_aziend['company_id'].'/images/'.$form['id_doc'].'.'.$form['extension'];
 				if (intval(file_put_contents($imgweb, file_get_contents($url))) == 0){ // scrivo l'immagine web HQ nella cartella files
 					echo "ERRORE nella scrittura in GAzie dell'immagine: ",$url, " <br>Riprovare in quanto potrebbe trattarsi di un Errore momentaneo. Se persiste, controllare che sia presente la cartella images in data/files/nrAzienda/";die;
 				}
-				$img = '../../data/files/tmp/'.$expl[count($expl)-1]; 
+				$img = DATA_DIR.'files/tmp/'.$expl[count($expl)-1]; 
 				// scrivo l'immagine nella cartella temporanea
 				file_put_contents($img, file_get_contents($url));
 				// ridimensiono l'immagine per rientrare nei 64k

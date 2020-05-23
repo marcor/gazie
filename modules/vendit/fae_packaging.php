@@ -326,7 +326,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         $rs = getFAEunpacked($form['vat_register'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
         if (count($rs) > 0) {
 			$zip = new ZipArchive;
-			$res = $zip->open('../../data/files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
+			$res = $zip->open(DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
 			if ($res === TRUE) {
 				// ho creato l'archivio e adesso lo riempio con i file xml delle singole fatture
 				foreach ($rs as $k => $v) {
