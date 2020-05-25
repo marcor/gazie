@@ -56,13 +56,13 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
    
     if (empty($ca) and empty($cat)) {
-		$where = '1';
+		$where = 'id_assets = 0';
     } else {
 		if (!empty($ca)){
-			$where = "codice LIKE '" . $ca . "'";
+			$where = "codice LIKE '" . $ca . "' AND id_assets = 0";
 		} else {
 			if (!empty($cat)){
-				$where = "catmer LIKE '" . $cat . "'";
+				$where = "catmer LIKE '" . $cat . "' AND id_assets = 0";
 			}
 		}
 	}

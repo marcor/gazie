@@ -209,7 +209,7 @@ class Depliant extends Report_template {
 $title = array('luogo_data' => $luogo_data, 'title' => 'C A T A L O G O', 'hile' => array());
 
 $where = $gTables['catmer'] . ".codice BETWEEN " . intval($_GET['ci']) . " AND " . intval($_GET['cf']) . " AND " .
-        $gTables['artico'] . ".codice BETWEEN '" . substr($_GET['ai'], 0, 15) . "' AND '" . substr($_GET['af'], 0, 15) . "'";
+        $gTables['artico'] . ".codice BETWEEN '" . substr($_GET['ai'], 0, 15) . "' AND '" . substr($_GET['af'], 0, 15) . "' AND id_assets = 0";
 $result = gaz_dbi_dyn_query($gTables['artico'] . ".codice AS codart," .
         $gTables['artico'] . ".depli_public AS depli," .
         $gTables['artico'] . ".descri AS desart," .

@@ -56,7 +56,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			// se si riferisce ad un effetto contabilizzato annullo il riferimento al movimento
 			gaz_dbi_put_query($gTables['effett'], 'id_con ='.$i,'id_con',0);
 			//cancello anche l'eventuale rigo sul registro beni ammortizzabili
+			$id_assets = gaz_dbi_get_row($gTables['assets'], 'id_movcon', $i)['id'];
 			gaz_dbi_del_row($gTables['assets'], "id_movcon", $i);
+			// ... ed il relativo articolo in magazzino
+			if ($id_assets >= 1) { gaz_dbi_del_row($gTables['artico'], "id_assets", $id_assets); }
 		break;
 		case "piacon":
 				$i=intval($_POST['ref']);

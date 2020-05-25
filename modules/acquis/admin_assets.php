@@ -201,8 +201,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 // inserisco i dati sulla tabella assets
                 $form['descri'] = $descri;
                 $form['type_mov'] = 1; // è un acquisto ,10 rivalutazione, 50 ammortamento, 90 alienazione
-                gaz_dbi_table_insert('assets', $form);
-                $form['id_assets'] = gaz_dbi_last_id();
+                $form['id_assets'] = gaz_dbi_table_insert('assets', $form);
+
+
                 // ripreno i file di traduzione
                 require("./lang." . $admin_aziend['lang'] . ".php");
                 $transl = $strScript['admin_assets.php'];
@@ -277,6 +278,15 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     $form['tipiva'] = $no_iva['tipiva'];
                     gaz_dbi_table_insert('rigmoi', $form);
                 }
+				// lo inserisco anche come articolo (in futuro ho intenzione di automatizzare la rivendita)
+				$form['codice']='ASSET_'.$form['id_assets'];
+				gaz_dbi_put_row($gTables['assets'], 'id', $form['id_assets'], 'codice_artico', $form['codice']);
+				$form['descri'] = ucfirst($descri);
+				$form['preacq'] = $form['import'];
+                $form['aliiva'] = $form['codvat'];
+                $form['uniacq'] = $form['unimis'];
+				gaz_dbi_table_insert('artico', $form);
+
                 // vado alla pagina del report sul modulo Fine Anno (finann)
                 header("Location: ../finann/report_assets.php");
                 exit;
