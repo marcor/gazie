@@ -364,9 +364,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             if ($toDo == 'update') { // e' una modifica
                 $old_rows = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
-                $i = 0;
+                $i = 0;$syncarticols=array();
                 $count = count($form['rows']) - 1;
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
+					array_push($syncarticols,$val_old_row['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
                     if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
                         $form['rows'][$i]['id_tes'] = $form['id_tes'];
                         $codice = array('id_rig', $val_old_row['id_rig']);
@@ -408,6 +409,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 //qualora i nuovi rows fossero di pi� dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
+					array_push($syncarticols,$form['rows'][$i]['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
                     $last_rigbro_id = rigbroInsert($form['rows'][$i]);
                     if (!empty($form['rows'][$i]['extdoc'])) {
@@ -438,6 +440,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['datemi'] = $datemi;
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
+				if (class_exists('APIeCommerce')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
+					$api = new APIeCommerce();
+					if($api->api_token){ 
+						foreach ($syncarticols as $syncarticol){
+							$api->SetProductQuantity($syncarticol);							
+						}
+					}
+				}
                 header("Location: " . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
@@ -478,6 +488,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                         gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                     }
+					if (class_exists('APIeCommerce')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
+						$api = new APIeCommerce();
+						if($api->api_token && isset($form['rows'][$i]['codart'])){
+							$api->SetProductQuantity($form['rows'][$i]['codart']);
+						}
+					}
                 }
                 $_SESSION['print_request'] = $ultimo_id;
                 header("Location: invsta_broven.php");

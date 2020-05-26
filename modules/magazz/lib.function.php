@@ -531,7 +531,7 @@ class magazzForm extends GAzieForm {
 				$last_invDate = $last_inventory['datreg'];
 				$last_invPrice = $last_inventory['prezzo'];
 				$last_invQuanti = $last_inventory['quanti'];
-				$last_invIdMov=$latest['id_mov'];
+				$last_invIdMov=$last_inventory['id_mov'];
 			} else {
 				$last_invDate = '2000-01-01';
 				$last_invPrice = 0;

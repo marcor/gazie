@@ -71,7 +71,7 @@ class APIeCommerce {
 	}
 	function UpsertProduct($d) {
 		// aggiorno l'articolo di magazzino (product)
-		session_start();
+		@session_start();
 			global $gTables,$admin_aziend;			 
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
@@ -145,7 +145,7 @@ class APIeCommerce {
 	}
 	function SetProductQuantity($d) {
 		// aggiornamento quantità disponibile di un articolo
-			session_start();
+			@session_start();
 			global $gTables,$admin_aziend;			 
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
@@ -222,7 +222,7 @@ class APIeCommerce {
 		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer), 
 		// in $last_id si deve passare l'ultimo ordine già importato al fine di non importare tutto ma solo i nuovi
 		//Antonio Germani - $last_id non viene usato perché si controlla con una query se l'ordine è già stato importato
-		session_start();
+		@session_start();
 		global $gTables,$admin_aziend;	
 		$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
 		$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
