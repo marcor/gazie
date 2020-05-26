@@ -353,7 +353,7 @@ echo "<td align=\"right\">" . $strScript['admin_contract.php']['current_fee'] . 
 echo "<td align=\"center\">" . $strScript['admin_contract.php']['last_document_date'] . "</td>\n";
 echo "<td align=\"center\">" . $script_transl['n_creation'] . "</td>\n";
 echo "<td align=\"center\">" . $strScript['admin_contract.php']['doc_type'] . "</td>\n";
-echo "<td></td>\n";
+echo "<td><input type=\"checkbox\" onclick=\"checkboxes=document.getElementsByClassName('doc_check');for(var i=0;i<checkboxes.length;i++){checkboxes[i].checked=this.checked;}\"></td>\n";
 echo "\t </tr>\n";
 foreach ($form['rows'] as $k => $val) {
 	if ((!isset($_POST['alsoexpired']) || $_POST['alsoexpired']!='1') && $val['error'] == $script_transl['expired']) continue;
@@ -366,7 +366,7 @@ foreach ($form['rows'] as $k => $val) {
     echo "<td align=\"center\">" . $val['n_bill'] . "</td>\n";
     echo "<td align=\"center\">" . $strScript['admin_contract.php']['doc_type_value'][$val['doc_type']] . "</td>\n";
     if (empty($val['error'])) {
-        echo "<td align=\"center\"><input type=\"checkbox\" name=\"check_$k\" " . $val['check_' . $k] . " ></td>\n";
+        echo "<td align=\"center\"><input class=\"doc_check\" type=\"checkbox\" name=\"check_$k\" " . $val['check_' . $k] . " ></td>\n";
     } else {
         echo "<td class=\"FacetDataTDred\" align=\"center\">" . $val['error'] . "</td>\n";
     }
