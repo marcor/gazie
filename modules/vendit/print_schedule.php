@@ -161,13 +161,14 @@ if (sizeof($scdl->Entries) > 0) {
         if ($mv['id_rigmoc_pay'] == 0) {
             /* Incremento il totale del dare */
             $tot_dare += $mv['amount'];
+			$saldo += $mv['amount'];
             /* Modifico la larghezza delle celle */
             $pdf->Cell(15, 4, gaz_format_number($mv['amount']), 1, 0, 'R');
             $pdf->Cell(15, 4, '', 1, 0, 'R');
         } else {
             /* Incremento il totale dell'avere, e decremento quello del dare */
             $tot_avere += $mv['amount'];
-            $tot_dare -= $mv['amount'];
+            $saldo -= $mv['amount'];
             /* Modifico la larghezza delle celle */
             $pdf->Cell(15, 4, '', 1, 0, 'R');
             $pdf->Cell(15, 4, gaz_format_number($mv['amount']), 1, 0, 'R');
@@ -181,18 +182,22 @@ if (sizeof($scdl->Entries) > 0) {
     }
     $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
     /* ENRICO FEDELE */
-    /* Stampo una riga vuota sottile per separare leggermente il totale e metterlo in evidenza */
-    $pdf->SetFont('helvetica', '', 1);
-    $pdf->Cell(186, 1, '', 1, 1, 'C');
-
-    /* Stampo la riga del totale, in grassetto italico "BI" */
+    /* Antonio Germani - Stampo una riga per separare leggermente i totali e mettere la colonna saldo */
+	/* Le successive righe saranno in grassetto italico "BI" */
     $pdf->SetFont('helvetica', 'BI', 6);
-    $pdf->Cell(143, 4, 'TOTALE', 1, 0, 'R', false);
-
+	$pdf->Cell(45, 4, '', 0, 0, 'C',false);
+    $pdf->Cell(128, 4, '', T, 0, 'C',false);
+	$pdf->Cell(13, 4, 'SALDO', 1, 1, 'C',true);
+	
+    // Aggiunta la percentuale dell'avere rispetto al totale dare+avere
+    // Antonio Germani, non so a cosa possa servire ma ce la lascio spostandola ad inizio riga. Al suo posto mi sembra più corretto mettere il saldo che non c'era proprio.
+	$pdf->Cell(10, 4, gaz_format_number(100 * $tot_avere / ($tot_dare + $tot_avere)) . " %", LBT, 0, 'L', false);
+	
+    $pdf->Cell(133, 4, 'TOTALI', 1, 0, 'R', false);	
     $pdf->Cell(15, 4, gaz_format_number($tot_dare), 1, 0, 'R', false);
-    $pdf->Cell(15, 4, gaz_format_number($tot_avere), 1, 0, 'R', true);
-    /* Aggiunta la percentuale dell'avere rispetto al totale dare+avere, colorata come la cella avere per renderla intuitiva */
-    $pdf->Cell(13, 4, gaz_format_number(100 * $tot_avere / ($tot_dare + $tot_avere)) . " %", 1, 1, 'C', true);
+    $pdf->Cell(15, 4, gaz_format_number($tot_avere), 1, 0, 'R', false);
+    // Antonio Germani - Stampo il saldo
+    $pdf->Cell(13, 4, gaz_format_number($saldo), 1, 1, 'C', true);
     /* ENRICO FEDELE */
 }
 $pdf->setRiporti('');
