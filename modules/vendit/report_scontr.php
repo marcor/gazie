@@ -362,7 +362,10 @@ $linkHeaders->output();
             }
             // Colonna invia a ECR
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-primary btn-ecr\" href=\"resend_to_ecr.php?id_tes=" . $row['id_tes'] . "\" >" . $script_transl['send'] . "</a>";
-            echo "</tr>\n";
+            echo " <a href=\"stampa_docven.php?id_tes=".$row["id_tes"]."&template=Scontrino\" title=\"Stampa non fiscale\" class=\"btn btn-xs btn-default\">
+				<i class=\"glyphicon glyphicon-print\"> non fiscale</i>
+				</a>";
+			echo "</tr>\n";
         }
         ?>
     <th colspan="9" class="FacetFieldCaptionTD"></th>
