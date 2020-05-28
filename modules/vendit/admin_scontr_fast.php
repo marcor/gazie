@@ -31,6 +31,7 @@ $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
 $gForm = new venditForm();
 $magazz = new magazzForm();
+$ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
 $ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 $operat = $magazz->getOperators();
 $lm = new lotmag;
@@ -310,11 +311,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 exit;
             } else { // e' un'inserimento
                 $form['template'] = 'FatturaAllegata';
-                $form['id_contract'] = $ecr['id_cash'];
-                $form['seziva'] = $ecr['seziva'];
+                $form['id_contract'] = $form['id_cash'];
                 $form['spediz'] = $form['fiscal_code'];
                 // ricavo il progressivo della cassa del giorno (in id_contract c'Ã¨ la cassa alla quale invio lo scontrino)
-                $rs_last_n = gaz_dbi_dyn_query("numdoc", $gTables['tesdoc'], "tipdoc = 'VCO' AND id_con = 0 AND id_contract = " . $ecr['id_cash'], 'datemi DESC, numdoc DESC', 0, 1);
+                $rs_last_n = gaz_dbi_dyn_query("numdoc", $gTables['tesdoc'], "tipdoc = 'VCO' AND id_con = 0 AND id_contract = " . $form['id_cash'], 'datemi DESC, numdoc DESC', 0, 1);
                 $last_n = gaz_dbi_fetch_array($rs_last_n);
                 if ($last_n) {
                     $form['numdoc'] = $last_n['numdoc'] + 1;
@@ -323,7 +323,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 if ($form['clfoco'] > 100000000) {  // cliente selezionato quindi fattura allegata
                     // ricavo l'ultimo numero di fattura dell'anno
-                    $rs_last_f = gaz_dbi_dyn_query("numfat*1 AS fattura", $gTables['tesdoc'], "YEAR(datfat) = " . substr($form['datemi'], 0, 4) . " AND tipdoc = 'VCO' AND seziva = " . $ecr['seziva'], 'fattura DESC', 0, 1);
+                    $rs_last_f = gaz_dbi_dyn_query("numfat*1 AS fattura", $gTables['tesdoc'], "YEAR(datfat) = " . substr($form['datemi'], 0, 4) . " AND tipdoc = 'VCO' AND seziva = " . $form['seziva'], 'fattura DESC', 0, 1);
                     $last_f = gaz_dbi_fetch_array($rs_last_f);
                     if ($last_f) {
                         $form['numfat'] = $last_f['fattura'] + 1;
@@ -344,46 +344,51 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         );
                     }
                 }
-                // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
-                require("../../library/cash_register/" . $ecr['driver'] . ".php");
-                $ticket_printer = new $ecr['driver'];
-                $ticket_printer->set_serial($ecr['serial_port']);
-                $ticket_printer->open_ticket();
-                $ticket_printer->set_cashier($admin_aziend['Nome']);
-                $tot = 0;
-                foreach ($form['rows'] as $i => $v) {
-                    if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
-                        if ($v['tiprig'] == 0) { // tipo normale
-                            $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
-                        } else {                 // tipo forfait
-                            $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
-                            $v['quanti'] = 1;
-                            $v['codart'] = $v['descri'];
-                        }
-                        $price = $v['quanti'] . 'x' . round($tot_row / $v['quanti'], $admin_aziend['decimal_price']);
-                        $ticket_printer->row_ticket($tot_row, $price, $v['codvat'], $v['codart']);
-                        $tot+=$tot_row;
-                    } else {                    // se descrittivo
-                        $desc_arr = str_split(trim($v['descri']), 24);
-                        foreach ($desc_arr as $d_v) {
-                            $ticket_printer->descri_ticket($d_v);
-                        }
-                    }
-                }
-                if (!empty($form['fiscal_code'])) { // Ã¨ stata impostata la stampa del codice fiscale
-                    $ticket_printer->descri_ticket('CF= ' . $form['fiscal_code']);
-                }
-                $ticket_printer->pay_ticket();
-                $ticket_printer->close_ticket();
-                // FINE invio
+				if ($ecr_user){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
+                  // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
+                  require("../../library/cash_register/" . $ecr['driver'] . ".php");
+                  $ticket_printer = new $ecr['driver'];
+                  $ticket_printer->set_serial($ecr['serial_port']);
+                  $ticket_printer->open_ticket();
+                  $ticket_printer->set_cashier($admin_aziend['Nome']);
+                  $tot = 0;
+                  foreach ($form['rows'] as $i => $v) {
+                      if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
+                          if ($v['tiprig'] == 0) { // tipo normale
+                              $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
+                          } else {                 // tipo forfait
+                              $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
+                              $v['quanti'] = 1;
+                              $v['codart'] = $v['descri'];
+                          }
+                          $price = $v['quanti'] . 'x' . round($tot_row / $v['quanti'], $admin_aziend['decimal_price']);
+                          $ticket_printer->row_ticket($tot_row, $price, $v['codvat'], $v['codart']);
+                          $tot+=$tot_row;
+                      } else {                    // se descrittivo
+                          $desc_arr = str_split(trim($v['descri']), 24);
+                          foreach ($desc_arr as $d_v) {
+                              $ticket_printer->descri_ticket($d_v);
+                          }
+                      }
+                  }
+                  if (!empty($form['fiscal_code'])) { // Ã¨ stata impostata la stampa del codice fiscale
+                      $ticket_printer->descri_ticket('CF= ' . $form['fiscal_code']);
+                  }
+                  $ticket_printer->pay_ticket();
+                  $ticket_printer->close_ticket();
+                  // FINE invio
+				}
                 if ($form['clfoco'] > 100000000) {
                     // procedo alla stampa della fattura solo se c'Ã¨ un cliente selezionato
                     $_SESSION['print_request'] = $last_id;
                     header("Location: invsta_docven.php");
                     exit;
                 } else {
-					header("Location: admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=".$_GET['Prezzo_IVA']);//M1 modificato a mano
-                    //header("Location: report_scontr.php");
+					if ($ecr_user){
+						header("Location: admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=".$_GET['Prezzo_IVA']);//M1 modificato a mano
+                    } else { 
+						header("Location: report_scontr.php");
+					}
                     exit;
                 }
             }
@@ -707,20 +712,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     // se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non puÃ² emettere scontrini
-    $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
-    if (!$ecr_user) {
-        header("Location: error_msg.php?ref=admin_scontr");
-        exit;
-    };
+ 	if (!$ecr_user) { // creerò un XML con id_cash '0' oppure invierò all'ecr (RT)
+		$form['id_cash'] = 0;
+		$form['seziva'] = 1;
+	}else {
+		$form['id_cash'] = $ecr['id_cash'];
+		$form['seziva'] = $ecr['seziva'];
+	}
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
     $form['id_tes'] = 0;
     $form['tipdoc'] = 'VCO';
     $form['numdoc'] = 0;
     $form['numfat'] = 0;
-    $form['id_cash'] = 1;
     $form['id_con'] = 0;
-    $form['seziva'] = 1;
     $form['listin'] = 1;
     $form['datemi'] = date("d/m/Y");
     $form['clfoco'] = $admin_aziend['mascli'];
