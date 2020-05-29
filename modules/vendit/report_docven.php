@@ -449,7 +449,7 @@ $(function() {
                             $genera_effetti_previsti = " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
                         }
                     }
-                    echo $paymov_status['style'] ." -> ". $flt_info." | <br>";
+
 // visualizzo la riga solo se rispetta il filtro informazioni
 if ( $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_status['style'] == "" && $flt_info=="default") ) {
 
