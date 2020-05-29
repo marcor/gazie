@@ -295,7 +295,23 @@ $(function() {
 
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    &nbsp;
+
+        <?php
+// visualizzo il filtro per la colonna informazioni sul documento
+            $flt_info = "none";
+            if ( isset($_GET['info']) && $_GET['info']!="" ) {
+                $flt_info = $_GET['info'];
+            }
+            
+        ?>
+        <select class="form-control input-sm" name="info" onchange="this.form.submit()">
+            <option value="none" <?php if ($flt_info=="none" || $flt_info=="none") echo "selected";?>>Tutti</option>
+            <option value="info" <?php if ($flt_info=="info" ) echo "selected";?>>Aperta</option>
+            <option value="danger" <?php if ($flt_info=="danger" ) echo "selected";?>>Aperta e scaduta</option>
+            <option value="warning" <?php if ($flt_info=="warning" ) echo "selected";?>>Esposta</option>
+            <option value="success" <?php if ($flt_info=="success" ) echo "selected";?>>Chiusa</option>
+            <option value="default" <?php if ($flt_info=="default" ) echo "selected";?>>da Contab.</option>
+        </select>
                 </td>
                 <td class="FacetFieldCaptionTD">
                     &nbsp;
@@ -337,8 +353,9 @@ $(function() {
 					$tesdoc_e_partners,
 					$ts->where . " " . $ts->group_by,
 					$ts->orderby,
-					$ts->getOffset(),
-					$ts->getLimit());
+                    $ts->getOffset(),
+                    // se è impostato il filtro sulle informazioni aumento il limite righi
+					$flt_info!="none" ? 1000 : $ts->getLimit());
             $ctrl_doc = "";
             $ctrl_eff = 999999;
 			$paymov = new Schedule(); 
@@ -348,7 +365,7 @@ $(function() {
 				if ($r['id_con'] > 0) {
 					$tesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $r['id_con']);
 					$paymov->getStatus(substr($tesmov['datdoc'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
-					$paymov_status = $paymov->Status;
+                    $paymov_status = $paymov->Status;
 				}
 				// riprendo il rigo  della contabilità con il cliente per avere l'importo 
 				$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $r['id_con'], "AND codcon = ".$r['clfoco']);
@@ -405,7 +422,37 @@ $(function() {
 												     'anno' => $r["datfat"],
 												     'sezione' => $r["seziva"],
 												     'fae_reinvii'=> intval($r["fattura_elettronica_reinvii"]+1),
-												     'protocollo' => $r["protoc"]), 36).".xml";
+                                                     'protocollo' => $r["protoc"]), 36).".xml";
+                                                     
+// Calcolo i valori prima di visualizzare la colonna info per poter far funzionare il filtro
+                    $idcon_maggiore_0 = "";
+                    $visualizza_effetto_ft = "";
+                    $genera_effetti_previsti = "";
+                    if ($r["id_con"] > 0) {
+                        $idcon_maggiore_0 = " <a class=\"btn btn-xs btn-".$paymov_status['style']."\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile " . $r["id_con"] . " generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\"> <i class=\"glyphicon glyphicon-euro\"></i> " . $importo["import"] . "</a> ";
+                    } else {
+                        $idcon_maggiore_0 = " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=" . $sezione . "&last=" . $r["protoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
+                    }
+                    $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $r["reftes"], 'progre');
+                    while ($r_e = gaz_dbi_fetch_array($effett_result)) {
+                        // La fattura ha almeno un effetto emesso
+                        $n_e++;
+                        $map_eff = ['B' => ["la ricevuta bancaria generata", "RiBa", "riba"],
+                                    'T' => ["la cambiale tratta generata", "Tratta", "cambiale"],
+                                    'V' => ["il pagamento mediante avviso generato", "MAV", "avviso"]];
+                        list($eff_desc, $eff, $eff_class) = isset($map_eff[$r_e["tipeff"]]) ? $map_eff[$r_e["tipeff"]] :
+                                                            ["l'effetto generato", $r_e["tipeff"], "effetto"];
+                        $visualizza_effetto_ft .= " <a class='btn btn-xs btn-default btn-$eff_class' style='font-size:10px;' title='Visualizza $eff_desc per il regolamento della fattura' href='stampa_effett.php?id_tes={$r_e['id_tes']}'> $eff {$r_e['progre']} </a>\n";
+                    }
+                    if ($n_e == 0) {
+                        if ($pagame["tippag"] == 'B' || $pagame["tippag"] == 'T' || $pagame["tippag"] == 'V') {
+                            $genera_effetti_previsti = " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
+                        }
+                    }
+                    echo $paymov_status['style'] ." -> ". $flt_info." | <br>";
+// visualizzo la riga solo se rispetta il filtro informazioni
+if ( $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_status['style'] == "" && $flt_info=="default") ) {
+
                     echo "<tr class=\"FacetDataTD\">";
 // Colonna protocollo
                     if (!empty($modifi)) {
@@ -425,27 +472,9 @@ $(function() {
 					echo "</td>";
 // Colonna movimenti contabili
                     echo "<td align=\"left\">";
-                    if ($r["id_con"] > 0) {
-                        echo " <a class=\"btn btn-xs btn-".$paymov_status['style']."\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile " . $r["id_con"] . " generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\"> <i class=\"glyphicon glyphicon-euro\"></i> " . $importo["import"] . "</a> ";
-                    } else {
-                        echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=" . $sezione . "&last=" . $r["protoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
-                    }
-                    $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $r["reftes"], 'progre');
-                    while ($r_e = gaz_dbi_fetch_array($effett_result)) {
-                        // La fattura ha almeno un effetto emesso
-                        $n_e++;
-                        $map_eff = ['B' => ["la ricevuta bancaria generata", "RiBa", "riba"],
-                                    'T' => ["la cambiale tratta generata", "Tratta", "cambiale"],
-                                    'V' => ["il pagamento mediante avviso generato", "MAV", "avviso"]];
-                        list($eff_desc, $eff, $eff_class) = isset($map_eff[$r_e["tipeff"]]) ? $map_eff[$r_e["tipeff"]] :
-                                                             ["l'effetto generato", $r_e["tipeff"], "effetto"];
-                        echo " <a class='btn btn-xs btn-default btn-$eff_class' style='font-size:10px;' title='Visualizza $eff_desc per il regolamento della fattura' href='stampa_effett.php?id_tes={$r_e['id_tes']}'> $eff {$r_e['progre']} </a>\n";
-                    }
-                    if ($n_e == 0) {
-						if ($pagame["tippag"] == 'B' || $pagame["tippag"] == 'T' || $pagame["tippag"] == 'V') {
-							echo " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
-						}
-					}
+                    echo $idcon_maggiore_0;
+                    echo $visualizza_effetto_ft;
+                    echo $genera_effetti_previsti;
                     echo "</td>";
 // Colonna "Stampa"
                     echo "<td align=\"center\"><a accesskey=\"p\" class=\"btn btn-xs btn-50 btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i>&nbsp;pdf</a>";
@@ -545,6 +574,7 @@ $(function() {
                     }
                     echo "</td>";
                     echo "</tr>\n";
+                }
                 }
                 $ctrl_doc = sprintf('%09d', $r['protoc']) . $r['datfat'];
             }
