@@ -92,8 +92,8 @@ class Scontrino extends Template
             }
                 switch($rigo['tiprig']) {
                 case "0":
-                    $this->Cell(23, 5, $rigo['codart'],1,0,'L');
-                    $this->Cell(75, 5, $rigo['descri'],1,0,'L');
+                    $this->Cell(23, 5, $rigo['codart'],1,0,'L',false,'',2);
+                    $this->Cell(75, 5, $rigo['descri'],1,0,'L',false,'',2);
                     $this->Cell(6, 5, $rigo['unimis'],1,0,'C');
                     $this->Cell(14, 5, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(15, 5, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
@@ -107,8 +107,8 @@ class Scontrino extends Template
                     $this->Cell(18, 5, gaz_format_number($rigo['totale']),1,1,'R');
                     break;
                 case "1":
-                    $this->Cell(23, 5, $rigo['codart'],1,0,'L');
-                    $this->Cell(75, 5, $rigo['descri'],1,0,'L');
+                    $this->Cell(23, 5, $rigo['codart'],1,0,'L',false,'',2);
+                    $this->Cell(75, 5, $rigo['descri'],1,0,'L',false,'',2);
                     $this->Cell(42, 5, '',1);
                     $this->Cell(18, 5, gaz_format_number($rigo['importo']),1,0,'R');
                     $this->Cell(10, 5, gaz_format_number($rigo['pervat']),1,0,'R');
@@ -116,7 +116,7 @@ class Scontrino extends Template
                     break;
                 case "2":
                     $this->Cell(23,5,'','L');
-                    $this->Cell(75,5,$rigo['descri'],'LR',0,'L');
+                    $this->Cell(75,5,$rigo['descri'],'LR',0,'L',false,'',2);
                     $this->Cell(88,5,'','R',1);
                     break;
                 case "11":
@@ -188,7 +188,17 @@ class Scontrino extends Template
         }
         //FINE calcolo scadenze
         if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
-                $this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
+                if (strlen($this->descriptive_last_row)>200){// Antonio Germani - se è troppo lungo lo divido in due righe
+					$descrtoolong=explode(" ",$this->descriptive_last_row);					
+					for ($n=0; $n<=count($descrtoolong)/2; $n++){
+						$txt1=$txt1.$descrtoolong[$n]." ";
+						$txt2=$txt2.$descrtoolong[1+$n+count($descrtoolong)/2]." ";
+					}
+					$this->Cell(186,6,$txt1,1,1,'L',0,'',1);
+					$this->Cell(186,6,$txt2,1,1,'L',0,'',1);
+				} else {
+					$this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
+				}
 		}
         //stampo i totali
         $y = $this->GetY();
