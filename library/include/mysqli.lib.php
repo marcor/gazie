@@ -199,7 +199,7 @@ function gaz_dbi_get_single_value($table, $campo, $where) {
 
 function gaz_dbi_put_row($table, $CampoCond, $ValoreCond, $Campo, $Valore) {
    global $link;
-   $field_results = gaz_dbi_query("SELECT * FROM " . $table);
+   $field_results = gaz_dbi_query("SELECT * FROM " . $table . " LIMIT 1");
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    $where = ' WHERE ' . $CampoCond . ' = ';
    $query = "UPDATE " . $table . ' SET ' . $Campo . ' = ';
@@ -417,7 +417,7 @@ function gaz_dbi_fields($table) {
     */
    global $link, $gTables;
    $acc = array();
-   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table] . " LIMIT 1");
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    for ($j = 0; $j < $field_meta['num']; $j++) {
       switch ($field_meta['data'][$j]->type) {
@@ -449,7 +449,7 @@ function gaz_dbi_parse_post($table) {
     */
    global $link, $gTables;
    $acc = array();
-   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table] . " LIMIT 1");
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    for ($j = 0; $j < $field_meta['num']; $j++) {
       $nomeCampo = $field_meta['data'][$j]->name;
@@ -497,7 +497,7 @@ function gaz_dbi_table_insert($table, $value) {
    $auto_increment = false;
    $colName = '';
    $colValue = '';
-   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table] . " LIMIT 1");
    $rs_auto_increment = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables[$table]);
    while ($ai = mysqli_fetch_assoc($rs_auto_increment)) {
       if ($ai['Extra'] == 'auto_increment') {
@@ -558,7 +558,7 @@ function gaz_dbi_table_update($table, $id, $newValue) {
     * $newValue - array associativo del tipo nome_colonna=>valore con i valori da inserire
     */
    global $link, $gTables;
-   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table] . " LIMIT 1");
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    $query = "UPDATE " . $gTables[$table] . ' SET ';
    $first = true;
@@ -643,7 +643,7 @@ function gaz_dbi_insert_anagra($value) {
    $auto_increment = false;
    $colName = '';
    $colValue = '';
-   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra']);
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra'] . " LIMIT 1");
    $rs_auto_increment = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables['anagra']);
    while ($ai = mysqli_fetch_assoc($rs_auto_increment)) {
       if ($ai['Extra'] == 'auto_increment') {
@@ -710,7 +710,7 @@ function gaz_dbi_update_anagra($id, $newValue) {
     * $newValue - array associativo del tipo nome_colonna=>valore con i valori da inserire
     */
    global $link, $gTables;
-   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra']);
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra'] . " LIMIT 1");
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    $query = "UPDATE " . $gTables['anagra'] . ' SET ';
    $first = true;
