@@ -26,7 +26,7 @@ $(document).ready(function () {
     // non uso size inline ma mi baso su maxlenght per avere una proporzionalità di grandezza sugli elementi input
  	$("td>input[maxlength]").each(function(index){
 		var ml = parseInt($(this).attr('maxlength'));
-        $(this).attr('size', ml/2);
+        if (ml>=6){ $(this).attr('size', ml) } else { $(this).attr('size', ml/2) }
 		if (ml>=22){ $(this).attr('style', 'width: 100%;')}
     });
 	
