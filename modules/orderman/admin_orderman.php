@@ -186,13 +186,13 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
         if ($form['codart'] <> "" && !isset($itemart)) { // controllo se codice articolo non esiste o se è nullo
             $msg.= "20+";
         }
-        if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto controllo se quantità totali sufficienti dei componenti
+        /*if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto controllo se quantità totali sufficienti dei componenti
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
                 if ($form['quanti_comp'][$nc] == "ERRORE") { // se c'è errore segnalo
                     $msg.= "21+";
                 }
             }
-        }
+        }*/
 		if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto, controllo se le quantità inserite per ogni singolo lotto, di ogni componente, sono sufficienti 
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
 				if (intval($form['q_lot_comp'][$nc])>0) {
@@ -217,7 +217,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
             }
         }
         if (empty($form['description'])) { //descrizione vuota
-            $msg.= "4+";
+            // imposto la descrizione predefinita
+			$form['description'] = "Produzione ".$form['codart']." ordine ".$form['coseor']."/".$res3['descri'];
         }
         if (strlen($form['order_type']) < 3) { //tipo produzione vuota
             $msg.= "12+";
@@ -1388,10 +1389,79 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
             echo "<input type=\"submit\" title=\"Togli ultimo operaio\" name=\"Del_mov\" value=\"X\">\n";
         }
     }
+
     $form['mov'] = $form['nmov'];
     echo "<input type=\"hidden\" name=\"nmovdb\" value=\"" . $form['nmovdb'] . "\">\n";
     echo "<input type=\"hidden\" name=\"nmov\" value=\"" . $form['nmov'] . "\">\n</td></tr>";
-	
+
+    
+    function gaz_select_data ( $nomecontrollo, $valore ) {
+        $result_input = '<input type="text" id="'.$nomecontrollo.'" name="'.$nomecontrollo.'" value="'.$valore.'">';
+        $result_input .= '<script>
+        $(function () {
+            $("#'.$nomecontrollo.'").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})  
+        });</script>';
+        /*
+        $("#datemi").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})
+
+        function pulldown_menu(selectName, destField)
+        {
+            // Create a variable url to contain the value of the
+            // selected option from the the form named docven and variable selectName
+            var url = document.docven[selectName].options[document.docven[selectName].selectedIndex].value;
+            document.docven[destField].value = url;
+        }
+        </script>';*/
+    
+        /*<script type="text/javascript" language="JavaScript" ID="datapopup">
+        var cal = new CalendarPopup();
+        cal.setReturnFunction("setMultipleValues");
+        function setMultipleValues(y, m, d) {
+            document.docven.anntra.value = y;
+            document.docven.mestra.value = LZ(m);
+            document.docven.giotra.value = LZ(d);
+        }
+        </script>';*/
+        return $result_input;
+    }
+
+    function gaz_select_ora () {
+        echo "<select name=\"oratra\" class=\"col-xs-2\" >\n";
+        for ($counter = 0; $counter <= 23; $counter++) {
+            $selected = "";
+            if ($counter == $form['oratra'])
+                $selected = ' selected=""';
+            echo "\t\t <option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
+        }
+        echo "\t </select>\n ";
+        // select dell'ora
+        echo "\t <select name=\"mintra\" class=\"col-xs-2\" >\n";
+        for ($counter = 0; $counter <= 59; $counter++) {
+            $selected = "";
+            if ($counter == $form['mintra'])
+                $selected = ' selected=""';
+            echo "\t\t <option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
+        }
+        echo "				\t</select>";
+
+    }
+
+
+    // se è una produzione industriale visualizzo data e ora di inizio e fine
+    if ( $form['order_type'] <> "AGR" ) {
+        // Inserimento data inizio lavori
+        echo "<tr>
+                <td class=\"FacetFieldCaptionTD\">" . $script_transl[33] . "</td>
+                <td class=\"FacetDataTD\">". gaz_select_oramin ( "iniprod", "10/11/2020" ) ."</td>
+            </tr>";
+
+        // Inserimento data fine lavori
+        echo "<tr>
+                <td class=\"FacetFieldCaptionTD\">" . $script_transl[34] . "</td>
+                <td class=\"FacetDataTD\">". gaz_select_oramin ( "fineprod", "10/11/2020" ) ."</td>
+            </tr>";
+    }
+
     // Antonio Germani > Inizio LOTTO in entrata o creazione nuovo
 	
     if (intval($form['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form       

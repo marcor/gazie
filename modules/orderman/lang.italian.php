@@ -64,7 +64,9 @@ $strScript = array("admin_orderman.php" =>
 		"L'operazione L2 di etichettatura prevede solo olio confezionato",
 		"L'operazione L2 di etichettatura prevede che l'olio prodotto sia etichettato",
 		"Le caratteristiche di estrazione, categoria, origine, biologico e capacità confezione dell'articolo prodotto e del componente devono essere uguali",
-		"L'olio componente non può essere già etichettato"
+		"L'olio componente non può essere già etichettato",
+		"Data inizio lavori",
+		"Data fine lavori"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',

@@ -27,6 +27,8 @@ $admin_aziend = checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
+$stato_lavorazione = array(0 => "aperto", 1 => "in attesa", 2 => "in lavorazione", 3 => "materiale ordinato", 4 => "incontrate difficoltà", 5 => "in attesa di spedizione", 6 => "spedito", 7 => "consegnato", 8 => "non chiuso", 9 => "chiuso");
+
 if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
 }
@@ -130,6 +132,7 @@ $(function() {
 							"Inizio produzione" => "",
 							"Durata" => "",
 							"Luogo di produzione" => "campo_impianto",
+							"Stato" => "stato_lavorazione",
 							"Distinta" => "",
 							"Cancella"    => ""
 							);
@@ -141,6 +144,10 @@ $(function() {
         <tbody>
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
+	/*echo "<pre>";
+	print_r ( get_defined_vars ( ) );
+	echo "</pre>";*/
+
 ?>		<tr class="FacetDataTD">
 			<td>
 				<a class="btn btn-xs btn-default btn-block" href="admin_orderman.php?Update&codice=<?php echo $a_row['id']; ?>">
@@ -154,9 +161,14 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $a_row['add_info'];?></td>
 			<?php $d_row = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $a_row['id_rigbro']);?>
 			<td align="center"><?php echo $d_row['codart'];?></td>
-			<td align="center"><?php echo gaz_format_quantity($d_row['quanti'], true, $admin_aziend['decimal_quantity']);?></td>
+			
+			<!-- Colonna quantità prodotta -->
 			<?php $e_row = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $a_row['id'], "AND operat = 1");
 			$f_row = gaz_dbi_get_row($gTables['lotmag'], "id_movmag", $e_row['id_mov']);?>
+
+			<td align="center"><?php echo gaz_format_quantity($e_row['quanti'] ) ." su ". gaz_format_quantity($d_row['quanti'], true, $admin_aziend['decimal_quantity']);?></td>
+			
+
 			<?php 
 			if (strlen($f_row['identifier'])>0) {
 				echo '<td align="center">'.$f_row['identifier'].' - '.gaz_format_date($f_row['expiry']).'</td>';
@@ -172,11 +184,20 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<!-- Antonio Germani Vado a leggere la descrizione del campo connesso alla produzione -->
 			<?php $c_row = gaz_dbi_get_row($gTables['campi'], "codice", $a_row['campo_impianto']);?>
 			<td align="center"><?php echo $a_row['campo_impianto'], " ", $c_row['descri'] ;?></td>
+			
+			<!-- Colonna stato lavorazione -->
+			<td >
+				<a class="btn btn-xs btn-default" href="controlla_stato.php">
+				<i class="glyphicon glyphicon-compressed"></i><?php echo $stato_lavorazione[$a_row['stato_lavorazione']]; ?>
+				</a>
+			</td>
+			
+			<!-- Colonna stampa distinta -->
 			<?php
 			if ($a_row['order_type']=="IND" or $a_row['order_type']=="ART"){
 			?>
 			<td align="center">
-				<a class="btn btn-info" href="stampa_produzione.php?id_orderman=<?php echo $a_row['id']; ?>">
+				<a class="btn btn-xs btn-info" href="stampa_produzione.php?id_orderman=<?php echo $a_row['id']; ?>">
 					<i class="glyphicon glyphicon-list-alt"></i>
 				</a>
 			</td>
