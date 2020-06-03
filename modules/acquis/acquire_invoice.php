@@ -937,23 +937,27 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
 				$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
 				if ($exist_new_codart) { // il codice esiste lo uso  
-					$form['rows'][$i]['codart']=$exist_new_codart['codice'];			
+					$form['rows'][$i]['codart']=$exist_new_codart['codice'];
+					$form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
 				} else { // il codice nuovo ricavato non esiste creo l'articolo basandomi sui dati in fattura
 					switch ($v['codart']) {
 						case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
 						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
+						$form['rows'][$i]['good_or_service']=0;
 						break;
 						case 'Insert_W-lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
 						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
+						$form['rows'][$i]['good_or_service']=0;
 						break;
 						case 'Insert_W-matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
 						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
+						$form['rows'][$i]['good_or_service']=0;
 						break;
 						default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
 					}
@@ -964,19 +968,27 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				
 				// inserisco il rigo rigdoc
-				$id_rif=rigdocInsert($form['rows'][$i]); 
-				
-				
-				// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
-				$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
-				"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
-				"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
-				"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto']);				
-				$id_mag=movmagInsert($rowmag);
-				
-				// aggiorno idmag nel rigdoc 
-				gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_mag . " WHERE `id_rig` = $id_rif ");
+				$id_rif=rigdocInsert($form['rows'][$i]);	
 								
+				if ($form['rows'][$i]['good_or_service']==0 AND strlen($form['rows'][$i]['codart'])>0){ // se l'articolo prevede di movimentare il magazzino
+					// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
+					if ($v['NumeroDDT']>0){ // se c'è un ddt
+						$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
+						"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
+						"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
+						"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto']);
+					} else { // se non c'è DDT
+						$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
+						"desdoc"=>"Fattura di acquisto n.".$form['numfat']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
+						"datdoc"=>$form['datfat'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
+						"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto']);
+					}
+				
+					$id_mag=movmagInsert($rowmag);
+					
+					// aggiorno idmag nel rigdoc 
+					gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_mag . " WHERE `id_rig` = $id_rif ");
+				}				
 				
 			} 
             header('Location: report_docacq.php?sezione='.$form['seziva']);
