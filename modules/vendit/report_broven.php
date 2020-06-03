@@ -360,7 +360,8 @@ $ts->output_navbar();
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
             $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
             while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
-                $totale_da_evadere = $rigbro_r['quanti'];
+                if ( $rigbro_r['tiprig']==1 ) $totale_da_evadere = 1;
+                else $totale_da_evadere = $rigbro_r['quanti'];
                 $totale_evaso = 0;
                 $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND codart='".$rigbro_r['codart']."' AND tiprig <=1 ", 'id_tes DESC');
                 while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
