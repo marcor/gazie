@@ -66,7 +66,9 @@ $strScript = array("admin_orderman.php" =>
 		"Le caratteristiche di estrazione, categoria, origine, biologico e capacità confezione dell'articolo prodotto e del componente devono essere uguali",
 		"L'olio componente non può essere già etichettato",
 		"Data inizio lavori",
-		"Data fine lavori"
+		"Data fine lavori",
+		"Ora inizio",
+		"Ora fine"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',

@@ -1284,10 +1284,10 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
         if (($form['order']) > 0 && strlen($form['codart']) > 0) { // se c'è un ordine e c'è un articolo selezionato, controllo se è già stato prodotto
             
             if ($quantiprod > 0) { // se c'è stata già una produzione per questo articolo e per questo ordine
-                echo "già prodotti:", $quantiprod;
-                echo " <b> Ne servono ancora: ", gaz_format_quantity($form['quantipord'] - $quantiprod, 0, $admin_aziend['decimal_quantity']), "</b>";
+                echo " già prodotti : <b>", $quantiprod. "</b>";
+                echo " Ne servono ancora : <b>". gaz_format_quantity($form['quantipord'] - $quantiprod, 0, $admin_aziend['decimal_quantity']), "</b>";
             } else {
-                echo "L'ordine ne richiede: ", gaz_format_quantity($form['quantipord'], 0, $admin_aziend['decimal_quantity']);
+                echo "L'ordine ne richiede : <b>", gaz_format_quantity($form['quantipord'], 0, $admin_aziend['decimal_quantity'])."</b>";
             }
             if ($form['quantipord'] - $quantiprod > 0) {
                 $form['okprod'] = "ok";
@@ -1396,54 +1396,37 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 
     
     function gaz_select_data ( $nomecontrollo, $valore ) {
-        $result_input = '<input type="text" id="'.$nomecontrollo.'" name="'.$nomecontrollo.'" value="'.$valore.'">';
+        $result_input = '<input size="8" type="text" id="'.$nomecontrollo.'" name="'.$nomecontrollo.'" value="'.$valore.'">';
         $result_input .= '<script>
         $(function () {
             $("#'.$nomecontrollo.'").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})  
         });</script>';
-        /*
-        $("#datemi").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})
-
-        function pulldown_menu(selectName, destField)
-        {
-            // Create a variable url to contain the value of the
-            // selected option from the the form named docven and variable selectName
-            var url = document.docven[selectName].options[document.docven[selectName].selectedIndex].value;
-            document.docven[destField].value = url;
-        }
-        </script>';*/
-    
-        /*<script type="text/javascript" language="JavaScript" ID="datapopup">
-        var cal = new CalendarPopup();
-        cal.setReturnFunction("setMultipleValues");
-        function setMultipleValues(y, m, d) {
-            document.docven.anntra.value = y;
-            document.docven.mestra.value = LZ(m);
-            document.docven.giotra.value = LZ(d);
-        }
-        </script>';*/
         return $result_input;
     }
 
-    function gaz_select_ora () {
-        echo "<select name=\"oratra\" class=\"col-xs-2\" >\n";
+    function gaz_select_ora ( $nomecontrollo, $valore ) {
+        $nomeora = $nomecontrollo."_ora";
+        $nomeminuti = $nomecontrollo."_minuti";
+        $valoreora = explode ( ":", $valore );
+        
+        $result_input = "<select name=\"".$nomeora."\" >\n";
         for ($counter = 0; $counter <= 23; $counter++) {
             $selected = "";
-            if ($counter == $form['oratra'])
+            if ($counter == $valoreora[0])
                 $selected = ' selected=""';
-            echo "\t\t <option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
+            $result_input .=  "<option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
         }
-        echo "\t </select>\n ";
+        $result_input .= "</select>\n ";
         // select dell'ora
-        echo "\t <select name=\"mintra\" class=\"col-xs-2\" >\n";
+        $result_input .= "<select name=\"".$nomeminuti."\" >\n";
         for ($counter = 0; $counter <= 59; $counter++) {
             $selected = "";
-            if ($counter == $form['mintra'])
+            if ($counter == $valoreora[1])
                 $selected = ' selected=""';
-            echo "\t\t <option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
+            $result_input .= "<option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
         }
-        echo "				\t</select>";
-
+        $result_input .= "</select>";
+        return $result_input;
     }
 
 
@@ -1452,13 +1435,19 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
         // Inserimento data inizio lavori
         echo "<tr>
                 <td class=\"FacetFieldCaptionTD\">" . $script_transl[33] . "</td>
-                <td class=\"FacetDataTD\">". gaz_select_oramin ( "iniprod", "10/11/2020" ) ."</td>
+                <td class=\"FacetDataTD\">
+                ". gaz_select_data ( "iniprod", "10/11/2020" ) ."&nbsp;Ora inizio
+                ". gaz_select_ora ( "iniprod", "11:00" ) ."
+                </td>
             </tr>";
 
         // Inserimento data fine lavori
         echo "<tr>
                 <td class=\"FacetFieldCaptionTD\">" . $script_transl[34] . "</td>
-                <td class=\"FacetDataTD\">". gaz_select_oramin ( "fineprod", "10/11/2020" ) ."</td>
+                <td class=\"FacetDataTD\">
+                ". gaz_select_data ( "fineprod", "10/11/2020" ) ."&nbsp;Ora fine
+                ". gaz_select_ora ( "fineprod", "11:00" ) ."
+                </td>
             </tr>";
     }
 
@@ -1522,10 +1511,10 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 }
 if ($popup <> 1) {
     //ANNULLA/RESET NON FUNZIONA DA RIVEDERE > print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
-    print "<tr><td class=\"FacetDataTD\" align=\"right\">\n";
-    print "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n</td><td>";
+    print "<tr><td style=\"padding-top: 10px;\" class=\"FacetDataTD\" align=\"right\">\n";
+    print "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n</td><td style=\"padding-top: 10px;\" class=\"FacetDataTD\">";
 } else {
-    print "<tr><td></td><td>";
+    print "<tr><td>&nbsp;</td><td style=\"padding-top: 10px;\" class=\"FacetDataTD\">";
 }
 if ($toDo == 'update') {
     print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . '">';
