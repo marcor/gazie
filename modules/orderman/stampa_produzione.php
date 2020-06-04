@@ -194,7 +194,8 @@ while($row=$res->fetch_assoc()){
 		$ctrlAORtot=0.00;
 	}	
 	if ($row['quanti']>=0.00001){
-		$pdf->Cell(105,5);
+		$pdf->Cell(85,5);
+		$pdf->Cell(20,5,$row['codart'],1,0,'C',0,'',1);
 		$pdf->Cell(82,5,$row['rigdes'],1,0,'L',0,'',1);
 		$pdf->Cell(10,5,$row['unimis'],1,0,'C');
 		$pdf->Cell(20,5,floatval($row['quanti']),1,0,'R'); 
