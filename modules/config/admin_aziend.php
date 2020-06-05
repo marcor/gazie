@@ -320,7 +320,7 @@ if (count($msg['err']) > 0) { // ho un errore
         echo '<input type="hidden" value="' . $form['codice'] . '" name="codice" />';
     }
     ?>
-    <div class="panel panel-default gaz-table-form">
+    <div class="panel panel-default gaz-table-form div-bordered">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">

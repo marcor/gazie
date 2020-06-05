@@ -1459,7 +1459,7 @@ if (count($form['rows']) > 0) {
 }
 echo '	</tbody>
 	  </table></div>';
-echo "<div class=\"FacetSeparatorTD table-responsive\" align=\"center\">$script_transl[2]</div>
+echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
 		<div class=\"table-responsive\">
 		<table class=\"Tlarge table table-striped table-bordered table-condensed\">
 			<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\" />

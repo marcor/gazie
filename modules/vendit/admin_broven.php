@@ -2117,7 +2117,7 @@ if (count($form['rows']) > 0) {
 
 echo '		</tbody>
 		</table></div>
-		<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div><div class="table-responsive">
+		<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div><div>
 		<table class="Tlarge table table-striped table-bordered table-condensed">
 			<input type="hidden" value="' . $form['numrat'] . '" name="numrat" />
 			<input type="hidden" value="' . $form['expense_vat'] . '" name="expense_vat" />
