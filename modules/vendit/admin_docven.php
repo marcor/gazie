@@ -479,8 +479,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$initra = gaz_format_date($form['initra'],true);// adatto al db
             $utstra = gaz_format_date($form['initra'],2); // mktime
         }
-        // nelle fatture immediate e nelle fatture di acconto non serve inserire la data e quindi controllarla
-        if (!gaz_format_date($form['initra'],'chk') && $form['tipdoc']!='FAI' && $form['tipdoc']!='FAA') {
+        if (!gaz_format_date($form['initra'],'chk')) {
             $msg['err'][] = "37";
         }
         if ($utstra < $utsemi) {
@@ -3274,9 +3273,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
 			<input type="hidden" value="' . $form['spediz'] . '" name="spediz" />
 			<input type="hidden" value="' . $form['vettor'] . '" name="vettor" />
 			<input type="hidden" value="' . $form['portos'] . '" name="portos" />
-			<input type="hidden" value="' . $form['anntra'] . '" name="anntra" />
-			<input type="hidden" value="' . $form['mestra'] . '" name="mestra" />
-			<input type="hidden" value="' . $form['giotra'] . '" name="giotra" />
+			<input type="hidden" value="' . $form['initra'] . '" name="initra" />
 			<input type="hidden" value="' . $form['oratra'] . '" name="oratra" />
 			<input type="hidden" value="' . $form['mintra'] . '" name="mintra" />
 			<input type="hidden" value="' . $form['id_des'] . '" name="id_des" />
