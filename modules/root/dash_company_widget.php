@@ -132,10 +132,7 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
 
 @media screen and (max-width: 767px) {
   .flip-image-front {
-    height: auto;
-  }
-  .flip-image-back {
-    height: 100%;
+	width: auto;
   }
 }
 </style>
