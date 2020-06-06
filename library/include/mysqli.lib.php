@@ -259,7 +259,11 @@ function gaz_dbi_last_id() {
 // restituisce il numero record di una query
 function gaz_dbi_record_count($table, $where) {
    global $link;
-   $sql = "SELECT * FROM " . $table . (($where != "") ? " WHERE " . $where : "");
+   // per consumare meno memoria
+   $sql = "SHOW COLUMNS FROM ".$table;
+   $result = mysqli_query($link,$sql);
+   $first_column = mysqli_fetch_array($result)['Field'];
+   $sql = "SELECT ".$first_column." FROM " . $table . (($where != "") ? " WHERE " . $where : "");
    $result = mysqli_query($link, $sql);
    $count = mysqli_num_rows($result);
    return $count;
