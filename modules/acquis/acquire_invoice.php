@@ -1112,11 +1112,11 @@ if ($toDo=='insert' || $toDo=='update' ) {
 						$exist_ddt='<span class="warning"> questo DdT &egrave; gi&agrave; stato inserito <a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='. $v['exist_ddt']['id_tes'] . '&Update"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$v['exist_ddt']['id_tes'].'</a></span>'; 
 					}
 					$ctrl_ddt=$v['NumeroDDT'];
-					$rowshead[$k-1]='<td colspan=13><b> da DdT n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
+					$rowshead[$k]='<td colspan=13><b> da DdT n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
 				}
 			} else if (!empty($ctrl_ddt)){
 				$ctrl_ddt='';
-				$rowshead[$k-1]='<td colspan=13> senza riferimento a DdT</td>';
+				$rowshead[$k]='<td colspan=13> senza riferimento a DdT</td>';
 			}
 			if ($new_acconcile>100000000){
 				$form['codric_'.$k]=$new_acconcile;
