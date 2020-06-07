@@ -181,7 +181,7 @@ function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
 		fattura che stiamo acquisendo mi baso su fornitore, numero, data e, se lo passo, il codice articolo, quando passo $codart 
 		faccio una ricerca puntuale sull'articolo specifico
 	*/
-    $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "tipdoc='ADT' AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."' AND codart LIKE '".$codart."'", "id_rig DESC", 0, 1);
+    $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "(tipdoc='ADT' OR tipdoc='RDL') AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."' AND codart LIKE '".$codart."'", "id_rig DESC", 0, 1);
     return gaz_dbi_fetch_array($result);
 }
 
@@ -915,7 +915,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							}
 						}
 						// creo un nuovo tesdoc AFT
-						$form['tipdoc']="AFT";$form['ddt_type']="T";$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
+						if ($exist_artico_tesdoc['tipdoc']=="RDL"){
+							$ddt_type="L";
+						} else {
+							$ddt_type="T";
+						}
+						$form['tipdoc']="AFT";$form['ddt_type']=$ddt_type;$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
 						tesdocInsert($form); // Antonio Germani - creo fattura differita
 						
 						//recupero l'id assegnato dall'inserimento
@@ -1102,17 +1107,20 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		$ctrl_ddt='';
 		$exist_movmag=false;
 		$new_acconcile=$form['new_acconcile'];
-		foreach ($form['rows'] as $k => $v) {
+		foreach ($form['rows'] as $k => $v) { 
 			$k--;
 			if (!empty($v['NumeroDDT'])){
 				if ($ctrl_ddt!=$v['NumeroDDT']){
 					// qui valorizzo il rigo di riferimento al ddt
 					$exist_ddt='';
 					if ($v['exist_ddt']){ // ho un ddt d'acquisto già inserito 
-						$exist_ddt='<span class="warning"> questo DdT &egrave; gi&agrave; stato inserito <a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='. $v['exist_ddt']['id_tes'] . '&Update"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$v['exist_ddt']['id_tes'].'</a></span>'; 
+						$exist_ddt='<span class="warning">- questo DdT &egrave; gi&agrave; stato inserito <a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='. $v['exist_ddt']['id_tes'] . '&Update"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$v['exist_ddt']['id_tes'].'</a></span>'; 
+						$tipddt=$v['exist_ddt']['tipdoc'];
+					} else {
+						$tipddt="Ddt";
 					}
 					$ctrl_ddt=$v['NumeroDDT'];
-					$rowshead[$k]='<td colspan=13><b> da DdT n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
+					$rowshead[$k]='<td colspan=13><b> da '.$tipddt.' n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
 				}
 			} else if (!empty($ctrl_ddt)){
 				$ctrl_ddt='';

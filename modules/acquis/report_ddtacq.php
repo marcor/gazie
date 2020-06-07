@@ -256,7 +256,9 @@ while ($val = gaz_dbi_fetch_array($res)) {
 			} elseif  (substr($a_row['tipdoc'],0,2) == 'AF'){ // fattura o nota credito fornitore
 				$where = "tipdoc LIKE 'AF_' AND seziva = ".$a_row['seziva']." AND YEAR(datreg) = '".substr($a_row['datreg'],0,4)."'";
 				$order='protoc DESC';
-				//$update="disabled";
+				if ($a_row['ddt_type']=="T" OR $a_row['ddt_type']=="L"){
+					$update="disabled";
+				}
 				$title="Cancellare la fattura per modificare il DDT";
 			} elseif  (substr($a_row['tipdoc'],0,2) == 'AD'){
 				$where = "tipdoc LIKE 'AD_'";
@@ -270,8 +272,10 @@ while ($val = gaz_dbi_fetch_array($res)) {
 			$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,$order,0,1);
 			$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 			
-			if ($a_row['tipdoc']=="AFT"){
+			if ($a_row['tipdoc']=="AFT" AND $a_row['ddt_type']=="T"){
 				$addtip="ADT &#8594; ";
+			} elseif ($a_row['tipdoc']=="AFT" AND $a_row['ddt_type']=="L"){
+				$addtip="RDL &#8594; ";
 			} else {
 				$addtip="";
 			}
@@ -293,11 +297,15 @@ while ($val = gaz_dbi_fetch_array($res)) {
 			</a>
 			</td>";            
             echo "<td>";	
-			if (!empty($ultimo_documento) && $ultimo_documento['id_tes']==$a_row['id_tes']) {
+			if (!empty($ultimo_documento) && $ultimo_documento['id_tes']==$a_row['id_tes'] AND $a_row['ddt_type']=="") {
 				?>			
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $a_row['id_tes'];?>" catdes="<?php echo $cliente['ragso1']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
+				<?php
+			} elseif ($a_row['ddt_type']=="T" OR $a_row['ddt_type']=="L"){
+				?>
+				<button title="Questo Ddt &egrave; stato fatturato. Per eliminarlo devi prima eliminare la relativa fattura" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 				<?php
 			} else {
 				?>

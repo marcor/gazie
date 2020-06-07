@@ -65,18 +65,20 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 						gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $a_row['id_mag']);
 					}				
 				}
-			} else { // se è AFT
+			} else { // se è AFT (fattura con ddt a riferimento)
 				
-					if ( $form["ddt_type"]!="R") {
-							$form['tipdoc']="AD".$form["ddt_type"]; 
+					if ( $form['ddt_type']=="T") {
+							$tipdoc="AD".$form["ddt_type"]; 
+						} elseif ($form['ddt_type']=="L"){
+							$tipdoc="RD".$form["ddt_type"];
 						} else {
-							$form['tipdoc']="AM".$form["ddt_type"]; // Contratto di traporto in entrata
+							$tipdoc="AM".$form["ddt_type"]; // Contratto di traporto in entrata
 						}
 						
 					$groups=gaz_dbi_dyn_query("*", $gTables['tesdoc'], "numfat = '".$form['numfat']."' AND datfat = '".$form['datfat']."' AND seziva = '".$form['seziva']."' AND clfoco = '".$form['clfoco']."'");
 					
 					while ($form = gaz_dbi_fetch_array($groups)){
-						$form['protoc']="";$form['numfat']="";$form['datfat']="";$form['ddt_type']="";$form['tipdoc']="ADT";
+						$form['protoc']="";$form['numfat']="";$form['datfat']="";$form['ddt_type']="";$form['tipdoc']=$tipdoc;
 						$form['fattura_elettronica_original_name']="";$form['fattura_elettronica_original_content']="";
 						tesdocUpdate(array('id_tes', $form['id_tes']), $form);						
 						gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
