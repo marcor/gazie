@@ -395,14 +395,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $utsreg = mktime(0, 0, 0, substr($form['datreg'],3,2), substr($form['datreg'],0,2), substr($form['datreg'],6,4) );
         $initra = $form['anntra'] . "-" . $form['mestra'] . "-" . $form['giotra'];
         $utstra = mktime(0, 0, 0, $form['mestra'], $form['giotra'], $form['anntra']);
-        if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL' || $form['tipdoc'] == 'RDL') {  //se è un DDT vs Fattura differita
+        if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL') {  //se è un DDT vs Fattura differita
             if ($utstra < $utsemi) {
                $msg['err'][] = "dtintr";
             }
             if (!checkdate($form['mestra'], $form['giotra'], $form['anntra'])) {
                $msg['err'][] = "dttrno";
             }
-        } elseif ($form['tipdoc'] == 'ADT') { // è un ddt ricevuto da fornitore non effettuo controlli su date e numeri
+        } elseif ($form['tipdoc'] == 'ADT' OR $form['tipdoc'] == 'RDL') { // è un ddt ricevuto da fornitore non effettuo controlli su date e numeri
         } else {
 			$utsfat = mktime(0, 0, 0, substr($form['datfat'],3,2), substr($form['datfat'],0,2), substr($form['datfat'],6,4));
             if ($utsfat > $utsreg) {
@@ -428,7 +428,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($result and ( $form['numdoc'] > $result['numdoc'])) {
                     $msg['err'][]= "dtnusc";
                 }
-            } elseif ($form['tipdoc'] == 'ADT') { //se è un DDT acquisto non faccio controlli
+            } elseif ($form['tipdoc'] == 'ADT' OR $form['tipdoc'] == 'RDL') { //se è un DDT acquisto non faccio controlli
             } else { //se sono altri documenti - AFA AFC
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND datreg < '".gaz_format_date($form['datreg'],true)."' AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 2) . "_' AND seziva = ".$sezione, "protoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
@@ -449,7 +449,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
                     $msg['err'][] = "ddtpre";
                 }
-            } elseif ($form['tipdoc'] == 'ADT') {  //se è un DDT d'acquisto non effettuo controlli sulle date
+            } elseif ($form['tipdoc'] == 'ADT' OR $form['tipdoc'] == 'RDL') {  //se è un DDT d'acquisto non effettuo controlli sulle date
             } else { //se sono altri documenti AFA AFC
                 $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 1) . "%' and seziva = ".$sezione, "protoc desc, datreg desc, datfat desc", 0, 1);
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
