@@ -36,7 +36,7 @@ if (isset($_GET['id_tes'])){   //se viene richiesta la stampa di un solo documen
 	} else {
 	  $template = 'FatturaAcquisto';
 	}
-	if ($testata['ddt_type']<>"T" OR $_GET['template']=="DDT"){
+	if (($testata['ddt_type']<>"T" AND $testata['ddt_type']<>"L") OR $_GET['template']=="DDT"){
 		if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
 			createDocument($testata, $template, $gTables, 'rigdoc', 'E');
 		} else {
@@ -44,7 +44,7 @@ if (isset($_GET['id_tes'])){   //se viene richiesta la stampa di un solo documen
 		}
 	} else {
 		$lang = "";
-		$testate= gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = '".substr($testata['datreg'],0,4)."' AND ddt_type = 'T' AND protoc = '{$testata['protoc']}'","id_tes ASC");
+		$testate= gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = '".substr($testata['datreg'],0,4)."' AND (ddt_type = 'T' OR ddt_type = 'L') AND protoc = '{$testata['protoc']}'","id_tes ASC");
 		
 		// createDocument($testata, $template, $gTables);
 		createInvoiceACQFromDDT($testate, $gTables, false, $lang);
