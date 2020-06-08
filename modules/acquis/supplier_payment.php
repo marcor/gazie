@@ -72,13 +72,13 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             }
             if ($add_desc[$k] >= 0.01) { // posso mettere una descrizione perchè il pagamento interessa pure questa partita
                 $dd = $paymov->getDocumentData($k);
-                $desmov .= ' n.' . $dd['numdoc'];
+                $desmov .= ' n.' . $dd['numdoc'] . '/' . substr($dd['datdoc'], 0, 4);
             }
         }
         if (strlen($desmov) <= 85) { // la descrizione entra in 50 caratteri
             $desmov = 'PAGATO x FAT.' . $desmov;
         } else { // la descrizione è troppo lunga
-            $desmov = 'PAGATO FINO A FAT.n.' . $dd['numdoc'];
+            $desmov = 'PAGATO FINO A FAT.n.' . $dd['numdoc'] . '/' . substr($dd['datdoc'], 0, 4);
         }
         if ($acc_tot <= 0) {
             $msg .= '4+';
