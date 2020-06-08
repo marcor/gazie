@@ -891,7 +891,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$ultimo_id = gaz_dbi_last_id();
 			}
             
-			$ctrl_ddt='';print_r($form['rows']);
+			$ctrl_ddt='';
             foreach ($form['rows'] as $i => $v) { // inserisco i righi
 				$form['rows'][$i]['status']="INSERT";
 				$post_nl=$i-1;
