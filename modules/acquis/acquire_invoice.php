@@ -614,6 +614,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['rows'][$nl]['DataDDT']=$dataddt;
 					} else {
 						$nl_ref=($vr->item(0)->nodeValue)-1;
+						$form['rows'][$nl_ref]['NumeroDDT']=$numddt;
+						$form['rows'][$nl_ref]['DataDDT']=$dataddt;
+						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+							$form['rows'][$nl_ref]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+						} else {
+							$form['rows'][$nl_ref]['exist_ddt']=false;
+						}
 					}
 					foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
 						$nl_ref++;
@@ -878,13 +885,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['sconto']=$sconto_totale_incondizionato;
 			}
 			$form['template']="FatturaAcquisto";
-			if (!isset ($form['rows'][1]['exist_ddt'])){ // se non c'è ddt sul primo rigo vuol dire che non c'è proprio, quindi è una fattura immediata AFA
+			if ($doc->getElementsByTagName('DatiDDT')->length<1){ // se non ci sono ddt vuol dire che è una fattura immediata AFA
 				tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
 				//recupero l'id assegnato dall'inserimento
 				$ultimo_id = gaz_dbi_last_id();
 			}
             
-			$ctrl_ddt='';
+			$ctrl_ddt='';print_r($form['rows']);
             foreach ($form['rows'] as $i => $v) { // inserisco i righi
 				$form['rows'][$i]['status']="INSERT";
 				$post_nl=$i-1;
