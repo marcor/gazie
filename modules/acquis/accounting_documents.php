@@ -336,7 +336,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         $kac = $admin_aziend['ivacor'];
 						$krit = $admin_aziend['c_ritenute'];
                         break;
-                    case "AFA":$reg = 6;
+                    case "AFA":case "AFT":$reg = 6;
                         $op = 1;
                         $da_c = 'D';
                         $da_p = 'A';
