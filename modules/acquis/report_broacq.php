@@ -112,9 +112,21 @@ function confirmemail(cod_partner,id_tes,genorder=false) {
 				if (j==0){
 					$("#mailbutt").append("<div>Indirizzi archiviati:</div>");
 				}
-				$("#mailbutt").append("<div align='center'><button id='fillmail_" + j+"'>" + value.email + "</button></div>");
+				$("#mailbutt").append("<div id='rowmail_"+j+"' align='center'><button id='fillmail_" + j+"'>" + value.email + "</button></div>");
                 $("#fillmail_" + j).click(function () {
 					$("#mailaddress").val(value.email);
+				});
+				$("#rowmail_"+j).append(" <button id='deletemail_" + j+"' class='btn-elimina' title='rimuovi indirizzo'> <i class='glyphicon glyphicon-remove'></i> </button>");
+				$("#deletemail_" + j).click(function () { // cliccando sulla X elimino da tesbro una email non più utilizzabile
+					// richiamo il delete.php per eliminare la email dalle tesbro
+					$.ajax({
+						data: {'type':'email',ref:value.email},
+						type: 'POST',
+						url: '../acquis/delete.php',
+						success: function(output){
+							window.location.replace("./report_broacq.php?flt_tipo=<?php echo $flt_tipo; ?> ");
+						}
+					});
 				});
 				j++;
 			});
