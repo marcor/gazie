@@ -116,9 +116,11 @@ function confirMail(link){
          modal: "true",
       show: "blind",
       hide: "explode",
-         buttons: {
-                      " ' . $script_transl['submit'] . ' ": function() {
-                         window.location.href = targetUrl;
+         buttons: {'
+         #Apro la pagina di notifica invio mail su una nuova tab e poi chiudo la form di conferma
+    .'                " ' . $script_transl['submit'] . ' ": function() {
+                        window.open ( targetUrl);
+                        $(this).dialog("close");
                       },
                       " ' . $script_transl['cancel'] . ' ": function() {
                         $(this).dialog("close");
