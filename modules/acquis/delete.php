@@ -75,7 +75,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 							$tipdoc="AM".$form["ddt_type"]; // Contratto di traporto in entrata
 						}
 						
-					$groups=gaz_dbi_dyn_query("*", $gTables['tesdoc'], "numfat = '".$form['numfat']."' AND datfat = '".$form['datfat']."' AND seziva = '".$form['seziva']."' AND clfoco = '".$form['clfoco']."'");
+					$groups=gaz_dbi_dyn_query("*", $gTables['tesdoc'], "protoc = '".$form['protoc']."' AND datfat = '".$form['datfat']."' AND seziva = '".$form['seziva']."' AND clfoco = '".$form['clfoco']."'");
 					
 					while ($form = gaz_dbi_fetch_array($groups)){
 						$form['protoc']="";$form['numfat']="";$form['datfat']="";$form['ddt_type']="";$form['tipdoc']=$tipdoc;
