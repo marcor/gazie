@@ -283,7 +283,7 @@ while ($val = gaz_dbi_fetch_array($res)) {
             echo "<tr class=\"FacetDataTD\">";
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docacq.php?id_tes=" . $a_row["id_tes"] . "&Update&DDT\" ".$update." title=\"". $title ."\" >  <i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a></td>";
             echo "<td>" . $addtip.$a_row["tipdoc"] . " &nbsp;</td>";
-            echo "<td>" . $a_row["numdoc"] . " &nbsp;</td>";
+            echo "<td>" . $a_row["numdoc"] . '<span class="text-warning"><b>&nbsp;'.$a_row["status"] ."</b></span> &nbsp;</td>";
             echo "<td>" . $a_row["datemi"] . " &nbsp;</td>";
             echo "<td>" . $cliente["ragso1"] . "&nbsp;</td>";
 			if ($a_row['numfat']>0){

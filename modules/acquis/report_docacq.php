@@ -226,20 +226,20 @@ while ($row = gaz_dbi_fetch_array($result)) {
  
     $y = substr($row['datfat'], 0, 4);
     if ($row["tipdoc"] == 'AFA') {
-        $tipodoc = "Fattura";
-        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=''";
+        $tipodoc = "Fattura";$template="";
+        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
         $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
     } elseif ($row["tipdoc"] == 'AFD') {
         $tipodoc = "Nota Debito";
-        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=''";
+        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
         $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
     } elseif ($row["tipdoc"] == 'AFC') {
         $tipodoc = "Nota Credito";
-        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=''";
+        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
         $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
     } elseif ($row["tipdoc"] == 'AFT') {
         $tipodoc = "Fattura";
-        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=''";
+        $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
         $modifi = "";
 	}
     $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $row['clfoco']);

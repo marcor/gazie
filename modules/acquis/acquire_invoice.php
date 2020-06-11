@@ -595,18 +595,24 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		/* 
 		Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
 		*/
-		$nl=0;
+		$nl=0;$anomalia="";
 		foreach ($DettaglioLinee as $item) {
 			$nl++;
 			if ($doc->getElementsByTagName('DatiDDT')->length>=1) {
 				$ddt=$doc->getElementsByTagName('DatiDDT');
 				foreach ($ddt as $vd) { // attraverso DatiDDT
 					$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
+					if ($vr->item(0)->nodeValue <1){
+						$anomalia="Anomalia";
+					}
 					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
 					$numddt=$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue;
 					if (!$vr->length>=1) { // non ho un riferimento ad una linea specifica
 						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
 							$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+							if ($anomalia=="Anomalia"){
+								$anomalia="AnomaliaExistDdt";
+							}
 						} else {
 							$form['rows'][$nl]['exist_ddt']=false;
 						}
@@ -885,12 +891,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['sconto']=$sconto_totale_incondizionato;
 			}
 			$form['template']="FatturaAcquisto";
+			
+			// Antonio Germani - inizio scrittura DB
+			
 			if ($doc->getElementsByTagName('DatiDDT')->length<1){ // se non ci sono ddt vuol dire che è una fattura immediata AFA
 				tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
 				//recupero l'id assegnato dall'inserimento
 				$ultimo_id = gaz_dbi_last_id();
-			}
-            
+			}            
 			$ctrl_ddt='';
             foreach ($form['rows'] as $i => $v) { // inserisco i righi
 				$form['rows'][$i]['status']="INSERT";
@@ -904,14 +912,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);						
 				} else { // ho il codice articolo del fornitore 
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
-				}
-				// Antonio Germani - inizio scrittura DB
+				}				
 								
-				if (isset($v['exist_ddt'])) { 	
+				if (isset($v['exist_ddt']) AND $anomalia!="AnomaliaExistDdt") { // se ci sono DDT collegabili alla FAE 	
 					if ($ctrl_ddt!=$v['NumeroDDT']) { 
 						// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
 						$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
-							
+					
 						if ($exist_artico_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag
 							$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
 							
@@ -928,16 +935,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							$ddt_type="T";
 						}
 						$form['tipdoc']="AFT";$form['ddt_type']=$ddt_type;$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
+						if ($anomalia=="Anomalia"){
+							$form['status']="DdtAnomalo";
+						}
 						tesdocInsert($form); // Antonio Germani - creo fattura differita
 						
 						//recupero l'id assegnato dall'inserimento
 						$ultimo_id = gaz_dbi_last_id();
-						
-					// valorizzo $ultimo_id
-										
-						// sul db inserisco un rigo descrittivo al cambio di DdT di riferimento
-						//rigdocInsert(array('id_tes'=>$ultimo_id,'tiprig'=>2,'descri'=>'da D.d.T. n. '.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT'])));
-						
+											
 					}
 					
 					$ctrl_ddt=$v['NumeroDDT'];
@@ -1002,7 +1007,34 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_mag . " WHERE `id_rig` = $id_rif ");
 				}				
 				
-			} 
+			}
+			
+			if ($anomalia=="AnomaliaExistDdt" AND isset($form['clfoco'])){ // se c'è una anomalia, cioè la FAE ha ddt senza i riferimenti ai prodotti, ma i ddt sono già presenti in GAzie
+				$ddt=$doc->getElementsByTagName('DatiDDT');
+				foreach ($ddt as $vd) { // Ciclo nuovamente i DDt della FAE
+					
+					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
+					$numddt=$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue;
+					$exist=existDdT($numddt,$dataddt,$form['clfoco']);// controllo se esiste il tesdoc
+					if ($exist){ // se esiste, modifico il tesdoc per trasformarlo in ddt connesso a fae
+						$updt=array();
+						if ($exist['tipdoc']=="RDL"){
+							$ddt_type="L";
+						} else {
+							$ddt_type="T";
+						}
+						if ($exist['protoc']==0){ // se non ha già un protocollo ne ricavo il primo disponibile
+							$updt['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
+						}
+						$updt['tipdoc']="AFT";$updt['ddt_type']=$ddt_type;$updt['numfat']=$form['numfat'];$updt['datfat']=$form['datfat'];
+						$updt['fattura_elettronica_zip_package']=$form['fattura_elettronica_zip_package'];
+						$updt['fattura_elettronica_original_name']=$form['fattura_elettronica_original_name'];
+						$updt['fattura_elettronica_original_content']=$form['fattura_elettronica_original_content'];
+						tesdocUpdate(array('id_tes', $exist['id_tes']), $updt);					
+					}
+				}
+			}
+			
             header('Location: report_docacq.php?sezione='.$form['seziva']);
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
@@ -1128,11 +1160,20 @@ if ($toDo=='insert' || $toDo=='update' ) {
 					}
 					$ctrl_ddt=$v['NumeroDDT'];
 					$rowshead[$k]='<td colspan=13><b> da '.$tipddt.' n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
+					if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
+						if ($anomalia=="AnomaliaExistDdt"){
+						$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT senza però collegare gli articoli ai rispettivi DDT <</b></p><p>GAzie è in grado di rimediare a patto che i DDT già inseriti non differiscano dalla FAE.</p></td>';
+						} else {
+							$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT senza però collegare gli articoli ai rispettivi DDT <</b></p><p>Se è presente più di un DDT, prima di inserire la FAE, si consiglia di inserire manualmente i DDT altrimenti verrà creato automaticamente un unico ddt di raggruppamento anomalo.</p></td>';
+						}
+					}
 				}
+				
 			} else if (!empty($ctrl_ddt)){
 				$ctrl_ddt='';
 				$rowshead[$k]='<td colspan=13> senza riferimento a DdT</td>';
 			}
+			
 			if ($new_acconcile>100000000){
 				$form['codric_'.$k]=$new_acconcile;
 			}
