@@ -260,25 +260,12 @@ function gaz_dbi_last_id() {
 function gaz_dbi_record_count($table, $where) {
    global $link;
    // per consumare meno memoria
-   /*
    $sql = "SHOW COLUMNS FROM ".$table;
    $result = mysqli_query($link,$sql);
    $first_column = mysqli_fetch_array($result)['Field'];
    $sql = "SELECT ".$first_column." FROM " . $table . (($where != "") ? " WHERE " . $where : "");
    $result = mysqli_query($link, $sql);
    $count = mysqli_num_rows($result);
-   */
-   /*
-   $sql = "SELECT COUNT(*) AS num_rows FROM " . $table . (($where != "") ? " WHERE " . $where : "");
-   $result = mysqli_query($link, $sql);
-   $count = mysqli_fetch_array($result)['num_rows'];
-   */
-   $sql = "SHOW COLUMNS FROM ".$table;
-   $result = mysqli_query($link,$sql);
-   $first_column = mysqli_fetch_array($result)['Field'];
-   $sql = "SELECT COUNT(".$first_column.") AS num_rows FROM " . $table . (($where != "") ? " WHERE " . $where : "");
-   $result = mysqli_query($link, $sql);
-   $count = mysqli_fetch_array($result)['num_rows'];
    return $count;
 }
 
