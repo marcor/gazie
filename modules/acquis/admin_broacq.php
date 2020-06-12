@@ -1169,7 +1169,7 @@ echo '</table></div><div class=" table-responsive">
 			<tr>
 				<th class="FacetFieldCaptionTD"></th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[20] . '</th>
-				<th class="FacetFieldCaptionTD">Cod.Forn/Qualità/Doc.</th>
+				<th class="FacetFieldCaptionTD">Track</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[21] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>
