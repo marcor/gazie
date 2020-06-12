@@ -1844,6 +1844,15 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
         <div>
             <b>
 <?php
+if ($tesdoc['ddt_type']=="T" OR $tesdoc['ddt_type']=="L"){
+	 echo '<div class="container">
+			<div class="row alert alert-warning fade in" role="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
+			<span aria-hidden="true">&times;</span>
+			</button>';	
+    echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> ATTENZIONE!=> Si sta tentando di modificare un DDT per il quale è stata già registrata la fattura.';
+    echo "</div></div>\n";			
+}
 if (count($msg['err']) > 0) { // ho un errore
     $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
 }

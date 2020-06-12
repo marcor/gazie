@@ -257,7 +257,7 @@ while ($val = gaz_dbi_fetch_array($res)) {
 				$where = "tipdoc LIKE 'AF_' AND seziva = ".$a_row['seziva']." AND YEAR(datreg) = '".substr($a_row['datreg'],0,4)."'";
 				$order='protoc DESC';
 				if ($a_row['ddt_type']=="T" OR $a_row['ddt_type']=="L"){
-					$update="disabled";
+					//$update="disabled";
 				}
 				$title="Cancellare la fattura per modificare il DDT";
 			} elseif  (substr($a_row['tipdoc'],0,2) == 'AD'){
