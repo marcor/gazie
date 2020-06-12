@@ -1240,10 +1240,19 @@ if ($toDo=='insert' || $toDo=='update' ) {
 <?php 
 		} 
 ?>
-	   </div>		   
-	   <div class="col-sm-6 text-right">
-		<input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
-	   </div>		   
+		</div>		   
+		<div class="col-sm-6">
+			<div class="col-sm-10 bg-warning">
+				<?php
+				if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
+					echo $rowshead[0];
+				}
+				?>
+			</div>
+			<div class="col-sm-2 text-left">
+				<input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
+			</div>
+		</div>	   
 </form>
 <br>
 <?php			
