@@ -361,7 +361,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$max_ref_ecommerce_id_product = gaz_dbi_query("select ref_ecommerce_id_product from ".$gTables['artico']." ORDER BY ref_ecommerce_id_product DESC LIMIT 1");
     $max_id = gaz_dbi_fetch_array($max_ref_ecommerce_id_product);
     $form['ref_ecommerce_id_product'] = ++$max_id[0];
-
+	// ripropongo le ultima unità di misura utilizzate
+	$rs_ultime_um = gaz_dbi_dyn_query("unimis,uniacq", $gTables['artico'], "1", "last_modified DESC",0,1);
+	$ultime_um = gaz_dbi_fetch_array($rs_ultime_um);
+	$form['unimis'] = $ultime_um['unimis'];
+	$form['uniacq'] = $ultime_um['uniacq'];
 }
 
 /** ENRICO FEDELE */
