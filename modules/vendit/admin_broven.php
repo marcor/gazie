@@ -1387,8 +1387,13 @@ if ($form['id_tes'] > 0) {
 } else {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]);
 }
-echo "<script type=\"text/javascript\">";
-
+echo '<script type="text/javascript">';
+if (empty($msg)) { // se ho un errore non scrollo
+    ?>$( function() {
+            $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top}, 1000);
+        });   
+    <?php
+}
 echo "
 function pulldown_menu(selectName, destField)
 {
@@ -1616,87 +1621,8 @@ $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
 echo '		</td>
 		</tr>
-	  </table></div>
-	  <div class="FacetSeparatorTD" align="center">' . $script_transl[1] . '</div>
-	  <input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" />
-	  <input type="hidden" value="' . $form['in_pervat'] . '" name="in_pervat" />
-	  <input type="hidden" value="' . $form['in_tipiva'] . '" name="in_tipiva" />
-	  <input type="hidden" value="' . $form['in_ritenuta'] . '" name="in_ritenuta" />
-      <input type="hidden" value="' . $form['in_unimis'] . '" name="in_unimis" />
-	  <input type="hidden" value="' . $form['in_prelis'] . '" name="in_prelis" />
-	  <input type="hidden" value="' . $form['in_id_mag'] . '" name="in_id_mag" />
-	  <input type="hidden" value="' . $form['in_id_doc'] . '" name="in_id_doc" />
-	  <input type="hidden" value="' . $form['in_annota'] . '" name="in_annota" />
-	  <input type="hidden" value="' . $form['in_scorta'] . '" name="in_scorta" />
-	  <input type="hidden" value="' . $form['in_quamag'] . '" name="in_quamag" />
-	  <input type="hidden" value="' . $form['in_pesosp'] . '" name="in_pesosp" />
-	  <input type="hidden" value="' . $form['in_extdoc'] . '" name="in_extdoc" />
-	  <input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
-	  <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
-	  <div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">
-	  	<tr>
-			<td class="FacetColumnTD">' . $script_transl[17] . ':';
-/** ENRICO FEDELE */
-$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
-echo $script_transl[15] . ':&nbsp;';
-$select_artico = new selectartico("in_codart");
-$select_artico->addSelected($form['in_codart']);
-//$select_artico->output($form['cosear'], $form['in_artsea']);
-$select_artico->output($form['cosear']);
-/*
-  echo 'ricerca per <select name="in_artsea" class="FacetDataTDsmall">';
-  $selArray = array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione');
-  foreach ($selArray as $k => $v) {
-  $selected = "";
-  if (isset($form["in_artsea"]) and $form["in_artsea"] == $k) {
-  $selected = " selected ";
-  }
-  echo '<option value="'.$k.'" '.$selected.' > '.$v.' </option>';
-  }
-  / *echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";* /
-
-  echo '			</select> */
-/** ENRICO FEDELE */
-/* glyph-icon */
-?>
-			</td>
-			<td class="FacetColumnTD">
-				<?php echo $script_transl[16] ?>:&nbsp;<input type="text" value="<?php echo $form['in_quanti'] ?>" maxlength="11" name="in_quanti" tabindex="5" accesskey="q" />
-			</td>
-			<td class="FacetColumnTD" align="right">
-<?php
-if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
-?>
-			<button type="submit" class="btn btn-default btn-sm" name="in_submit_desc" title="Aggiungi rigo Descrittivo"><i class="glyphicon glyphicon-pencil"></i></button>
-			<button type="submit" class="btn btn-default btn-sm" name="in_submit_text" title="Aggiungi rigo Testo"><i class="glyphicon glyphicon-list"></i></button>
-			<span>||</span>
-<?php
-}
-?>
-				<button type="submit" class="btn btn-default btn-xs" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow'] ?>" tabindex="6">
-					<i class="glyphicon glyphicon-ok"></i>
-				</button>
-			</td>
-		</tr>
-		<tr>
-			<td class="FacetColumnTD">
-<?php
-echo $script_transl[18] . ": ";
-$select_codric = new selectconven("in_codric");
-$select_codric->addSelected($form['in_codric']);
-$select_codric->output(substr($form['in_codric'], 0, 1));
-echo '			%' . $script_transl[24] . ': <input type="text" value="' . $form['in_sconto'] . '" maxlength="4" name="in_sconto">
-	  			 %' . $script_transl[56] . ': <input type="text" value="' . $form['in_provvigione'] . '" maxlength="6" name="in_provvigione">'
- . ' %' . $script_transl['ritenuta'] . ': <input type="text" value="' . $form['in_ritenuta'] . '" maxlength="6" name="in_ritenuta">
-	   			</td>
-				<td class="FacetColumnTD">' . $script_transl['vat_constrain'];
-$select_in_codvat = new selectaliiva("in_codvat");
-$select_in_codvat->addSelected($form['in_codvat']);
-$select_in_codvat->output();
-echo '		</td>
-			<td class="FacetColumnTD"></td>
-		</tr>
-	  </table></div><div class="table-responsive">
+	  </table></div>';
+echo '<div class="table-responsive">
 	  <table name="elenco" class="Tlarge table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
@@ -2115,9 +2041,76 @@ if (count($form['rows']) > 0) {
 		  </tr>';
 }
 
-echo '		</tbody>
-		</table></div>
-		<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div><div>
+echo '</tbody></table></div>';
+
+echo '<div class="FacetSeparatorTD" align="center">' . $script_transl[1] . '</div>
+	  <input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" />
+	  <input type="hidden" value="' . $form['in_pervat'] . '" name="in_pervat" />
+	  <input type="hidden" value="' . $form['in_tipiva'] . '" name="in_tipiva" />
+	  <input type="hidden" value="' . $form['in_ritenuta'] . '" name="in_ritenuta" />
+      <input type="hidden" value="' . $form['in_unimis'] . '" name="in_unimis" />
+	  <input type="hidden" value="' . $form['in_prelis'] . '" name="in_prelis" />
+	  <input type="hidden" value="' . $form['in_id_mag'] . '" name="in_id_mag" />
+	  <input type="hidden" value="' . $form['in_id_doc'] . '" name="in_id_doc" />
+	  <input type="hidden" value="' . $form['in_annota'] . '" name="in_annota" />
+	  <input type="hidden" value="' . $form['in_scorta'] . '" name="in_scorta" />
+	  <input type="hidden" value="' . $form['in_quamag'] . '" name="in_quamag" />
+	  <input type="hidden" value="' . $form['in_pesosp'] . '" name="in_pesosp" />
+	  <input type="hidden" value="' . $form['in_extdoc'] . '" name="in_extdoc" />
+	  <input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
+	  <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
+	  <div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">
+	  	<tr>
+			<td class="FacetColumnTD">' . $script_transl[17] . ':';
+/** ENRICO FEDELE */
+$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+echo $script_transl[15] . ':&nbsp;';
+$select_artico = new selectartico("in_codart");
+$select_artico->addSelected($form['in_codart']);
+//$select_artico->output($form['cosear'], $form['in_artsea']);
+$select_artico->output($form['cosear']);
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+?>
+			</td>
+			<td class="FacetColumnTD">
+				<?php echo $script_transl[16] ?>:&nbsp;<input type="text" value="<?php echo $form['in_quanti'] ?>" maxlength="11" name="in_quanti" tabindex="5" accesskey="q" />
+			</td>
+			<td class="FacetColumnTD" align="right">
+<?php
+if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
+?>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit_desc" title="Aggiungi rigo Descrittivo"><i class="glyphicon glyphicon-pencil"></i></button>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit_text" title="Aggiungi rigo Testo"><i class="glyphicon glyphicon-list"></i></button>
+			<span>||</span>
+<?php
+}
+?>
+				<button type="submit" class="btn btn-default btn-xs" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow'] ?>" tabindex="6">
+					<i class="glyphicon glyphicon-ok"></i>
+				</button>
+			</td>
+		</tr>
+		<tr>
+			<td class="FacetColumnTD">
+<?php
+echo $script_transl[18] . ": ";
+$select_codric = new selectconven("in_codric");
+$select_codric->addSelected($form['in_codric']);
+$select_codric->output(substr($form['in_codric'], 0, 1));
+echo '			%' . $script_transl[24] . ': <input type="text" value="' . $form['in_sconto'] . '" maxlength="4" name="in_sconto">
+	  			 %' . $script_transl[56] . ': <input type="text" value="' . $form['in_provvigione'] . '" maxlength="6" name="in_provvigione">'
+ . ' %' . $script_transl['ritenuta'] . ': <input type="text" value="' . $form['in_ritenuta'] . '" maxlength="6" name="in_ritenuta">
+	   			</td>
+				<td class="FacetColumnTD">' . $script_transl['vat_constrain'];
+$select_in_codvat = new selectaliiva("in_codvat");
+$select_in_codvat->addSelected($form['in_codvat']);
+$select_in_codvat->output();
+echo '</td><td class="FacetColumnTD"></td></tr></table></div>';
+
+
+echo '<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div><div>
 		<table class="Tlarge table table-striped table-bordered table-condensed">
 			<input type="hidden" value="' . $form['numrat'] . '" name="numrat" />
 			<input type="hidden" value="' . $form['expense_vat'] . '" name="expense_vat" />
