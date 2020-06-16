@@ -966,6 +966,14 @@ $( function() {
 										$('[name=in_delivery_date]').val(pd);
 									}
 								});
+<?php
+if (empty($msg)) { // se ho un errore non scrollo
+    ?>
+            $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top}, 1000);
+    <?php
+}
+?>
+
 });
 
 function pulldown_menu(selectName, destField)
@@ -1107,63 +1115,13 @@ if ($form['in_id_orderman']>0){
 } 
 echo '</td></tr>';
 echo "</table></div>\n";
-echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
-echo "<div class=\" table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
-echo "<input type=\"hidden\" value=\"{$form['in_codice_fornitore']}\" name=\"in_codice_fornitore\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_quality']}\" name=\"in_quality\" id=\"in_quality\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_pervat']}\" name=\"in_pervat\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_unimis']}\" name=\"in_unimis\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_prelis']}\" name=\"in_prelis\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_delivery_date']}\" name=\"in_delivery_date\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_extdoc']}\" name=\"in_extdoc\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_id_mag']}\" name=\"in_id_mag\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_annota']}\" name=\"in_annota\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_larghezza']}\" name=\"in_larghezza\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_lunghezza']}\" name=\"in_lunghezza\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_spessore']}\" name=\"in_spessore\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_peso_specifico']}\" name=\"in_peso_specifico\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_pezzi']}\" name=\"in_pezzi\" />\n";
-echo "<input type=\"hidden\" value=\"{$form['in_status']}\" name=\"in_status\" />\n";
-echo '<tr><td class="FacetColumnTD">'.$script_transl[17].": ";
-$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
-echo $script_transl[15].': ';
-$select_artico = new selectartico("in_codart");
-$select_artico->addSelected($form['in_codart']);
-$select_artico->output($form['cosear']);
-echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
-/** ENRICO FEDELE */
-echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
-/*
-  echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n"; */
-/** ENRICO FEDELE */
-/* glyph-icon */
-echo '  </td>
-		<td class="FacetColumnTD" align="right">
-			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
-		</td>
-	   </tr>';
-/** ENRICO FEDELE */
-echo "</td></tr>\n";
-echo '<tr><td class="FacetColumnTD">';
-echo $script_transl[18].": ";
-$select_codric = new selectconven("in_codric");
-$select_codric->addSelected($form['in_codric']);
-$select_codric->output(substr($form['in_codric'], 0, 1));
-echo " %$script_transl[24]: <input type=\"text\" value=\"{$form['in_sconto']}\" maxlength=\"4\" name=\"in_sconto\">";
-
-echo "</td><td class=\"FacetColumnTD\"> $script_transl[19]: ";
-$select_in_codvat = new selectaliiva("in_codvat");
-$select_in_codvat->addSelected($form["in_codvat"]);
-$select_in_codvat->output();
-echo "</td><td class=\"FacetColumnTD\"></td></tr>\n";
 $quatot = 0;
 $totimpmer = 0.00;
 $totivafat = 0.00;
 $totimpfat = 0.00;
 /** ENRICO FEDELE */
 /* Cominciamo la transizione verso le tabelle bootstrap */
-echo '</table></div><div class=" table-responsive">
+echo '<div class=" table-responsive">
 	  <table class="Tlarge table table-striped table-bordered table-condensed">
 		  <thead>
 			<tr>
@@ -1459,6 +1417,60 @@ if (count($form['rows']) > 0) {
 }
 echo '	</tbody>
 	  </table></div>';
+// *** INIZIO RIGO DI INPUT
+echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
+echo "<div class=\" table-responsive\"><table class=\"Tlarge table table-striped table-bordered table-condensed\">\n";
+echo "<input type=\"hidden\" value=\"{$form['in_codice_fornitore']}\" name=\"in_codice_fornitore\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_quality']}\" name=\"in_quality\" id=\"in_quality\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_pervat']}\" name=\"in_pervat\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_unimis']}\" name=\"in_unimis\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_prelis']}\" name=\"in_prelis\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_delivery_date']}\" name=\"in_delivery_date\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_extdoc']}\" name=\"in_extdoc\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_id_mag']}\" name=\"in_id_mag\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_annota']}\" name=\"in_annota\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_larghezza']}\" name=\"in_larghezza\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_lunghezza']}\" name=\"in_lunghezza\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_spessore']}\" name=\"in_spessore\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_peso_specifico']}\" name=\"in_peso_specifico\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_pezzi']}\" name=\"in_pezzi\" />\n";
+echo "<input type=\"hidden\" value=\"{$form['in_status']}\" name=\"in_status\" />\n";
+echo '<tr><td class="FacetColumnTD">'.$script_transl[17].": ";
+$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+echo $script_transl[15].': ';
+$select_artico = new selectartico("in_codart");
+$select_artico->addSelected($form['in_codart']);
+$select_artico->output($form['cosear']);
+echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
+/** ENRICO FEDELE */
+echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
+/*
+  echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n"; */
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  </td>
+		<td class="FacetColumnTD" align="right">
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+		</td>
+	   </tr>';
+/** ENRICO FEDELE */
+echo "</td></tr>\n";
+echo '<tr><td class="FacetColumnTD">';
+echo $script_transl[18].": ";
+$select_codric = new selectconven("in_codric");
+$select_codric->addSelected($form['in_codric']);
+$select_codric->output(substr($form['in_codric'], 0, 1));
+echo " %$script_transl[24]: <input type=\"text\" value=\"{$form['in_sconto']}\" maxlength=\"4\" name=\"in_sconto\">";
+
+echo "</td><td class=\"FacetColumnTD\"> $script_transl[19]: ";
+$select_in_codvat = new selectaliiva("in_codvat");
+$select_in_codvat->addSelected($form["in_codvat"]);
+$select_in_codvat->output();
+echo "</td><td class=\"FacetColumnTD\"></td></tr></table></div>\n";
+// *** FINE RIGO DI INPUT
+
+// *** INIZIO FOOTER 
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
 		<div class=\"table-responsive\">
 		<table class=\"Tlarge table table-striped table-bordered table-condensed\">
@@ -1564,6 +1576,7 @@ if ($next_row > 0) {
 }
 
 echo '	</table></div>';
+// *** FINE FOOTER
 ?>
 </form>
 <!-- ENRICO FEDELE - INIZIO FINESTRA MODALE -->
