@@ -592,7 +592,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             // controllo se presente iva split e iva normale
             if ( $v['tipiva']=="T" ) {
                 $iva_split_payment = true;
-            } else if ( $v['tipiva']!="" ) {
+            } else if ( $v['tipiva']!="" && ($v['tiprig']==0 || $v['tiprig']==1)) {
                 $iva_altri_tipi = true;
             }
             if ($v['descri'] == '' && ($v['quanti'] > 0 || $v['quanti'] < 0)) {
