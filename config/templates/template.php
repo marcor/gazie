@@ -25,9 +25,9 @@
  */
 
 require('../../library/tcpdf/tcpdf.php');
-require('../../library/FPDI/fpdi.php');
+require('../../library/tcpdf/tcpdi.php');
 
-class Template extends FPDI {
+class Template extends TCPDI {
 
     function setVars(&$docVars, $Template = '') {
         $this->docVars = & $docVars;

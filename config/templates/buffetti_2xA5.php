@@ -28,9 +28,9 @@
 // ATTENZIONE!! QUESTO TEMPLATE è STUDIATO PER IL MODULO RICEVUTE FISCALI DELLA DITTA BUFFETTI ART.8205L2000
 
 require('../../library/tcpdf/tcpdf.php');
-require('../../library/FPDI/fpdi.php');
+require('../../library/tcpdf/tcpdi.php');
 
-class Template_2xA5 extends FPDI {
+class Template_2xA5 extends TCPDI {
 
     function setVars(&$docVars, $Template = '') {
         $this->docVars = & $docVars;
