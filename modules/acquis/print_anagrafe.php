@@ -54,7 +54,7 @@ $title = array('luogo_data' => $luogo_data,
     'title' => $titolo,
     'hile' => array(/* array('lun' => 45, 'nam' => 'Cliente'), */
         array('lun' => 60, 'nam' => 'Ragione Sociale'),
-        array('lun' => 60, 'nam' => 'Sede Legale'),
+        array('lun' => 60, 'nam' => 'Indirizzo'),
         array('lun' => 20, 'nam' => 'Telefono'),
         array('lun' => 20, 'nam' => 'Cellulare'),
 //        array('lun' => 20, 'nam' => 'Fax'),
@@ -69,16 +69,18 @@ $pdf->SetLeftMargin(5);
 $pdf->SetFillColor(160, 255, 220);
 $pdf->AddPage();
 //$config = new Config;
-$rs = gaz_dbi_dyn_query("concat(ragso1,space(1),ragso2) as ragioneSociale, sedleg, telefo, cell, fax, e_mail", $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ", $where, "ragioneSociale");
+$rs = gaz_dbi_dyn_query("anagra.*, concat(ragso1,space(1),ragso2) AS ragioneSociale, pagame.descri AS payment", $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra  LEFT JOIN " . $gTables['pagame'] . " pagame ON clfoco.codpag = pagame.codice ", $where, "ragioneSociale");
+$pdf->SetFont('helvetica', '', 10);
 
-while ($cliente = gaz_dbi_fetch_array($rs)) {
-   $pdf->SetFont('helvetica', '', 10);
-   $pdf->Cell(60, 0, $cliente['ragioneSociale'], 1, 0, 'L', false, '', 1);
-   $pdf->Cell(60, 0, $cliente['sedleg'], 1, 0, 'L', false, '', 1);
-   $pdf->Cell(20, 0, $cliente["telefo"], 1, 0, 'L', false, '', 1);
-   $pdf->Cell(20, 0, $cliente["cell"], 1, 0, 'L', false, '', 1);
-//   $pdf->Cell(20, 0, $cliente["fax"], 1, 0, 'L', false, '', 1);
-   $pdf->Cell(40, 0, $cliente["e_mail"], 1, 1, 'L', false, '', 1);
+while ($partner = gaz_dbi_fetch_array($rs)) {
+   $pdf->Cell(60, 0, $partner['ragioneSociale'], 1, 0, 'L', true, '', 1);
+   $pdf->Cell(60, 0, $partner['indspe'].' '.$partner['citspe'], 1, 0, 'L', false, '', 1);
+   $pdf->Cell(20, 0, $partner["telefo"], 1, 0, 'L', false, '', 1);
+   $pdf->Cell(20, 0, $partner["cell"], 1, 0, 'L', false, '', 1);
+   $pdf->Cell(40, 0, $partner["e_mail"], 1, 1, 'L', false, '', 1);
+   $pdf->Cell(60, 0, $partner['sedleg'], 1, 0, 'L', false, '', 1);
+   $pdf->Cell(60, 0, 'Pagamento:',1,0,'R', false, '', 1);
+   $pdf->Cell(80, 0, $partner['payment'], 1, 1, 'L', false, '', 1);
 }
 $pdf->Output();
 
