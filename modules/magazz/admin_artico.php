@@ -190,7 +190,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $msg['err'][] = 'unimis';
     }elseif(empty($form["unimis"])){
 		$form["unimis"]=$form["uniacq"];
-	}else{
+	}elseif(empty($form["uniacq"])){
 		$form["uniacq"]=$form["unimis"];
 	}
   if (empty($form["aliiva"])) {
