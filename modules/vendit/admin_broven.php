@@ -1389,11 +1389,18 @@ if ($form['id_tes'] > 0) {
 }
 echo '<script type="text/javascript">';
 if (empty($msg)) { // se ho un errore non scrollo
-    ?>$( function() {
-            $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top}, 1000);
-        });   
-    <?php
+	if (!empty($_POST['last_focus'])){
+		$idlf='#'.$_POST['last_focus'];
+		$_POST['last_focus']='';
+	} else {
+		$idlf="#search_cosear";
+	}
+	echo '	
+	$( function() {
+				$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top}, 1000); 
+				}); ';
 }
+
 echo "
 function pulldown_menu(selectName, destField)
 {

@@ -968,9 +968,13 @@ $( function() {
 								});
 <?php
 if (empty($msg)) { // se ho un errore non scrollo
-    ?>
-            $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top}, 1000);
-    <?php
+	if (!empty($_POST['last_focus'])){
+		$idlf="button[name='upper_row[".intval($_POST['last_focus'])."]']";
+		$_POST['last_focus']='';
+	} else {
+		$idlf="#search_cosear";
+	}
+	echo '		$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top}, 1000);';
 }
 ?>
 
@@ -1241,11 +1245,11 @@ foreach ($form['rows'] as $key => $value) {
 				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" />
 				</td>
 				<td>
-				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" onchange="document.docacq.last_focus.value=this.id; this.form.submit();" />';
+				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" onchange="document.docacq.last_focus.value=' . $key . '; this.form.submit();" />';
             echo ' <button class="btn btn-default btn-sm" type="image" data-toggle="collapse" onclick="weightfromdim(\''.$key.'\');" title="Calcola peso, superficie, volume"><i class="glyphicon glyphicon-scale"></i></button> ';
 		    echo '</td>';
             /** ENRICO FEDELE */
-            echo "<td><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"document.docacq.last_focus.value=this.id; this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"document.docacq.last_focus.value={$key}; this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"rows[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\"  onchange=\"this.form.submit()\" /></td>\n";
             echo '<td class="text-right" title="'.$script_transl[18].': '.$value['codric'].'">' . gaz_format_number($imprig) . "</td>\n";
             echo "<td>{$value['pervat']}%</td>\n";
@@ -1260,7 +1264,7 @@ foreach ($form['rows'] as $key => $value) {
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";
             echo "<td></td>\n";
-            echo "<td class=\"text-right\" title=\"".$script_transl[18].": ".$value['codric']."\"><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"this.form.submit()\" /></td>\n";
+            echo "<td class=\"text-right\" title=\"".$script_transl[18].": ".$value['codric']."\"><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"document.docacq.last_focus.value={$key}; this.form.submit()\" /></td>\n";
             echo "<td>{$value['pervat']}%</td>\n";
             echo "<td><input type=\"text\" class=\"datepick\" id=\"date_".$key."\" name=\"rows[{$key}][delivery_date]\" >" . $value['delivery_date'] . "/></td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
