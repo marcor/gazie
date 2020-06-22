@@ -95,7 +95,7 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
 				}
 			}
 		}
-        if ($r['regiva'] < 4 & $vat_section <> $admin_aziend['reverse_charge_sez']) { // il controllo sul numero solo per i registri delle fatture di vendita e non reverse charge
+        if ($r['regiva'] < 4 && $vat_section <> $admin_aziend['reverse_charge_sez']) { // il controllo sul numero solo per i registri delle fatture di vendita e non reverse charge
             if ($r['caucon'] == 'FAD') {
                 $r['caucon'] = 'FAI';
             }
