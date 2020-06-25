@@ -1364,7 +1364,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['sconto'] = 0;
     $cliente['indspe'] = "";
 	$ultimoprezzo=''; //info sugli ultimi prezzi
-
 }
 require("../../library/include/header.php");
 require("./lang." . $admin_aziend['lang'] . ".php");
@@ -1389,7 +1388,7 @@ if ($form['id_tes'] > 0) {
 }
 echo '<script type="text/javascript">';
 if (empty($msg)) { // se ho un errore non scrollo
-	if (!empty($_POST['last_focus'])){
+	if (!empty($_POST['last_focus'])||$form['clfoco']<=100000000){
 		$idlf='#'.$_POST['last_focus'];
 		$_POST['last_focus']='';
 	} else {
@@ -1397,7 +1396,7 @@ if (empty($msg)) { // se ho un errore non scrollo
 	}
 	echo '	
 	$( function() {
-				$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top}, 1000); 
+				$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000); 
 				}); ';
 }
 

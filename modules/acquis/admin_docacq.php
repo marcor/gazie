@@ -1785,9 +1785,9 @@ $script_transl = HeadMain(0, array(
             this.form.submit();
         });
 <?php
-if (count($msg['err']) < 1 && count($msg['war']) < 1 && $form['clfoco']>100000000 && $toDo == 'insert') { // sono in inserimento e non ho selezionato il fornitore  oppure ho un errore allora non scrollo
+if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']<=100000000 ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
     ?>
-    $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top}, 1000);
+    $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
     <?php
 }
 ?>

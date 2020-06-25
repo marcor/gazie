@@ -968,13 +968,13 @@ $( function() {
 								});
 <?php
 if (empty($msg)) { // se ho un errore non scrollo
-	if (!empty($_POST['last_focus'])){
+	if (!empty($_POST['last_focus'])||$form['clfoco']<=100000000){
 		$idlf="button[name='upper_row[".intval($_POST['last_focus'])."]']";
 		$_POST['last_focus']='';
 	} else {
 		$idlf="#search_cosear";
 	}
-	echo '		$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top}, 1000);';
+	echo '		$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);';
 }
 ?>
 
