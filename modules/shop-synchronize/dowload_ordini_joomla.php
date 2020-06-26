@@ -108,7 +108,7 @@ if (isset($_POST['conferma'])) { // se confermato
 							
 		
 			// registro testata ordine
-			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '1', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '".$_POST['spediz'.$ord]."', '". $_POST['traspo'.$ord] ."', '". $_POST['speban'.$ord] ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
+			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '" . $_POST['seziva'.$ord] . "', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '".$_POST['spediz'.$ord]."', '". $_POST['traspo'.$ord] ."', '". $_POST['speban'.$ord] ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
 		
 			// Gestione righi ordine					
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
@@ -121,15 +121,20 @@ if (isset($_POST['conferma'])) { // se confermato
 				}
 				 
 				if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio in quanto non si sa se deve movimentare il magazzino					
-					if ($_POST['aliiva'.$ord.$row]<1){ // se il sito non ha mandato l'aliquota IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
+					if ($_POST['aliiva'.$ord.$row]==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
 						$_POST['codvat'.$ord.$row]=$_POST['codvatcost'.$ord];
 						$_POST['aliiva'.$ord.$row]=$_POST['aliivacost'.$ord];
 					}
-					$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliiva'.$ord.$row], " AND tipiva = 'I'");
-					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '1', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$vat['codice']."', '420000006', '" . $admin_aziend['adminid'] . "')");
+					if ($_POST['codvat'.$ord.$row]<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
+						$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliiva'.$ord.$row], " AND tipiva = 'I'");
+						$codvat=$vat['codice'];
+					} else {
+						$codvat=$_POST['codvat'.$ord.$row];
+					}
+					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '1', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 					$codart= substr($_POST['codice'.$ord.$row],0,15);// dopo averlo creato ne prendo il codice come $codart
 					$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione
-					$codvat=$vat['codice'];
+					
 					$aliiva=$vat['aliquo'];
 				} else {
 					$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
@@ -243,6 +248,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 						echo '<input type="hidden" name="spediz'. $n .'" value="'. $order->Carrier .'">';
 						echo '<input type="hidden" name="codvatcost'. $n .'" value="'. $order->CostVatCode .'">';
 						echo '<input type="hidden" name="aliivacost'. $n .'" value="'. $order->CostVatAli .'">';
+						echo '<input type="hidden" name="seziva'. $n .'" value="'. $order->SezIva .'">';
 						echo '<input type="hidden" name="email'. $n .'" value="'. $order->CustomerEmail .'">';
 						echo '<input type="hidden" name="pec_email'. $n .'" value="'. $order->CustomerPecEmail .'">';
 						echo '<input type="hidden" name="fe_cod_univoco'. $n .'" value="'. $order->CustomerCodeFattEl .'">';
