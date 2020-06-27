@@ -25,6 +25,8 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/header.php");
+
+$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesmov_e_partners = $gTables['tesmov'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesmov'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
 
 $script_transl = HeadMain('', '', 'admin_movcon');
@@ -38,7 +40,7 @@ $search_fields = [
     'causale'
         => "caucon LIKE '%s%%'",
     'descri'
-        => $gTables['anagra'].".ragso1 like '%%%s%%'"
+        => $partner_select ? "clfoco = '%s'" : "{$gTables['anagra']}.ragso1 LIKE '%%%s%%'"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -106,7 +108,9 @@ function getDocRef($data) {
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 
 <?php 
-$t = new TableSorter($tesmov_e_partners, $passo, ['id_tes' => 'desc']);
+$t = new TableSorter(
+    !$partner_select && isset($_GET["descri"]) ? $tesmov_e_partners : $gTables['tesmov'],
+    $passo, ['id_tes' => 'desc']);
 $t -> output_navbar();
 ?>
 <script>
@@ -170,7 +174,14 @@ $(function() {
                 gaz_flt_disp_select("causale", "caucon AS causale", $gTables["tesmov"], "caucon > ''", "causale ASC"); ?>
             </td>
             <td align="right" class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_int("descri","Cliente"); ?>
+                <?php if ($partner_select) {
+                        gaz_flt_disp_select("descri", "clfoco AS descri, ragso1 as nome", 
+					    $tesmov_e_partners,
+                                            "", "nome ASC", "nome");
+                    } else {
+                        gaz_flt_disp_int("descri", "Cliente");
+                    }
+		 ?>
             </td>
             <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD"></td>
@@ -198,8 +209,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli']) {
             $paymov = getPaymov($a_row["id_tes"], $a_row["clfoco"]);
         }
-        $anagrafica = new Anagrafica();
-        $account = $anagrafica->getPartner($a_row["clfoco"]);
+        $account = $anagrafica->getPartner($a_row["clfoco"], true);
         if ((!empty($account['descri']) || !empty($a_row['numdoc'])) && $a_row['caucon'] != 'APE' && $a_row['caucon'] != 'CHI'){
             $a_row['descri'].=' ('.$account['descri'].')';
         }
@@ -209,7 +219,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $tt = '<table><th colspan=3 >' . $a_row['descri'] . '</th>';
     $tot = 0.00;
     while ($rr = gaz_dbi_fetch_array($res_rig)) {
-        $account = $anagrafica->getPartner($rr["codcon"]);
+        $account = $anagrafica->getPartner($rr["codcon"], true);
         $tt .= '<tr><td>' . htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
         if ($rr['darave'] == 'D') {
             $tot += $rr['import'];

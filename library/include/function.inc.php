@@ -229,9 +229,10 @@ function formatSizeUnits($bytes) {
 }
 
 function gaz_format_number($number = 0) {
-    global $gTables;
-    $currency = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.company_id = ' . $gTables['aziend'] . '.codice
-                                                    LEFT JOIN ' . $gTables['currencies'] . ' ON ' . $gTables['currencies'] . '.id = ' . $gTables['aziend'] . '.id_currency', "user_name", $_SESSION["user_name"]);
+    global $gTables, $currency;
+    if (!isset($currency)) {
+        $currency = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.company_id = ' . $gTables['aziend'] . '.codice LEFT JOIN ' . $gTables['currencies'] . ' ON ' . $gTables['currencies'] . '.id = ' . $gTables['aziend'] . '.id_currency', "user_name", $_SESSION["user_name"]);
+    }
     return number_format(floatval($number), $currency['decimal_place'], $currency['decimal_symbol'], $currency['thousands_symbol']);
 }
 
@@ -625,9 +626,18 @@ class Anagrafica {
         global $gTables;
         $this->gTables = $gTables;
         $this->partnerTables = $gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
+        $this->cache = array();
     }
 
-    function getPartner($idClfoco) {
+    function getPartner($idClfoco, $cache = false, $refresh = false) {
+        if ($cache) {
+             if (array_key_exists($idClfoco, $this->cache) && !$refresh) {
+                 return $this->cache[$idClfoco];
+             }
+             $anagra = gaz_dbi_get_anagra($this->partnerTables, "codice", $idClfoco);
+             $this->cache[$idClfoco] = $anagra;
+             return $anagra;
+        }
         return gaz_dbi_get_anagra($this->partnerTables, "codice", $idClfoco);
     }
 
@@ -2123,10 +2133,11 @@ class TableSorter {
 
     function __construct($table, $passo, $default_order, $default_search=[], $group_by=[]) {
         $this->passo = $passo;
-        $this->group_by = $group_by ? "GROUP BY " . join(", ", $group_by) : "";
+        $group_by = join(", ", $group_by);
+        $this->group_by = $group_by ? "GROUP BY " . $group_by : "";
         $this->default_search = $default_search;
         $this->parse_search_request();
-        $this->count = gaz_dbi_record_count($table, trim("$this->where $this->group_by"));
+        $this->count = gaz_dbi_record_count_simple($table, $this->where, $group_by);
         $this->set_pagination();
         $this->default_order = $default_order;
         $this->parse_order_request();

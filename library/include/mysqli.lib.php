@@ -260,6 +260,7 @@ function gaz_dbi_last_id() {
 function gaz_dbi_record_count($table, $where) {
    global $link;
    // per consumare meno memoria
+   // (tuttavia la funzione sembra essere chiamata molto raramente MR)
    $tn=explode('LEFT',$table);
    $sql = "SHOW COLUMNS FROM ".$tn[0];
    $result = mysqli_query($link,$sql);
@@ -268,6 +269,17 @@ function gaz_dbi_record_count($table, $where) {
    $result = mysqli_query($link, $sql);
    $count = mysqli_num_rows($result);
    return $count;
+}
+
+// -- proposta di versione piu' lineare della funzione prec. MR
+function gaz_dbi_record_count_simple($table, $where = '', $group_by = '') {
+   global $link;
+   $where = $where ? "WHERE $where" : '';
+   $group_by = $group_by ? "GROUP BY $group_by" : '';
+   $query = "SELECT NULL FROM $table $where $group_by";
+   $result = mysqli_query($link, $query);
+   if (!$result) gaz_die($query, __LINE__, __FUNCTION__);
+   return mysqli_num_rows($result);
 }
 
 // funzione che compone una query con i parametri: tabella, where, orderby, limit e passo (riga di inizio e n. record)
@@ -309,11 +321,13 @@ function array_is_assoc(array $a) {
 
 // funzione gaz_dbi_fields_anagra
 function gaz_dbi_fields_anagra() {
-   global $gTables;
-   $fields_anagra = array();
-   $rs_fields_anagra = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables['anagra'] . " WHERE Field NOT LIKE '%_aes'");
-   while ($rs_field_anagra = mysqli_fetch_assoc($rs_fields_anagra)) {
-      $fields_anagra[] = $rs_field_anagra['Field'];
+   global $gTables, $fields_anagra;
+   if (!isset($fields_anagra)) {
+       $fields_anagra = array();
+       $rs_fields_anagra = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables['anagra'] . " WHERE Field NOT LIKE '%_aes'");
+       while ($rs_field_anagra = mysqli_fetch_assoc($rs_fields_anagra)) {
+           $fields_anagra[] = $rs_field_anagra['Field'];
+       }
    }
    return $fields_anagra;
 }
