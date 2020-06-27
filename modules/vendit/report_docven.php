@@ -77,11 +77,16 @@ $sortable_headers = array(
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
 
+//Antonio Germani - dall'ultimo rigo tesdoc prendo la seziva da proporre
+$query="SELECT seziva FROM ". $gTables['tesdoc'] ." WHERE id_tes=(SELECT MAX(id_tes) FROM ". $gTables['tesdoc'] .")";
+$res= gaz_dbi_query($query);
+$sez = gaz_dbi_fetch_array($res);
+
 $ts = new TableSorter(
     !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
     $passo, 
     ['datfat' => 'desc', 'protoc' => 'desc'], 
-    ['sezione' => 1, 'tipo' => 'F%'],
+    ['sezione' => $sez['seziva'], 'tipo' => 'F%'],
     ['protoc', 'datfat']
 );
 
