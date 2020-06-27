@@ -120,7 +120,12 @@ if (isset($_POST['conferma'])) { // se confermato
 					$descri=$ckart['descri'].$_POST['adddescri'.$ord.$row];// se esiste, lo metto in $descri e aggiungo l'eventuale adddescription
 				}
 				 
-				if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio in quanto non si sa se deve movimentare il magazzino					
+				if (!$ckart){ // se non esiste creo un nuovo articolo su gazie 
+					if ($_POST['stock'.$ord.$row]>0){
+						$good_or_service=0;
+					} else {
+						$good_or_service=1;
+					}
 					if ($_POST['aliiva'.$ord.$row]==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo ci metto quello che deve mandare come base aziendale riservato alle spese
 						$_POST['codvat'.$ord.$row]=$_POST['codvatcost'.$ord];
 						$_POST['aliiva'.$ord.$row]=$_POST['aliivacost'.$ord];
@@ -131,7 +136,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					} else {
 						$codvat=$_POST['codvat'.$ord.$row];
 					}
-					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '1', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '".$good_or_service."', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 					$codart= substr($_POST['codice'.$ord.$row],0,15);// dopo averlo creato ne prendo il codice come $codart
 					$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione
 					
@@ -256,6 +261,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 							echo '<input type="hidden" name="codice'. $n . $nr.'" value="'. $orderrow->Code . '">';
 							echo '<input type="hidden" name="descri'. $n . $nr.'" value="'. $orderrow->Description . '">';
 							echo '<input type="hidden" name="adddescri'. $n . $nr.'" value="'. $orderrow->AddDescription . '">';
+							echo '<input type="hidden" name="stock'. $n . $nr.'" value="'. $orderrow->Stock . '">';
 							echo '<input type="hidden" name="catmer'. $n . $nr.'" value="'. $orderrow->Category . '">';
 							echo '<input type="hidden" name="quanti'. $n . $nr.'" value="'. $orderrow->Qty . '">';
 							echo '<input type="hidden" name="prelis'. $n . $nr.'" value="'. $orderrow->Price . '">';

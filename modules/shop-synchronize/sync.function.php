@@ -342,6 +342,11 @@ class APIeCommerce {
 							$descri=$ckart['descri'].$orderrow->AddDescription;// se esiste ne prendo descri e ci aggiungo una eventuale descrizione aggiuntiva						
 						}
 						if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio in quanto non si sa se deve movimentare il magazzino					
+							if ($orderrow->Stock>0){
+								$good_or_service=0;
+							} else {
+								$good_or_service=1;
+							}
 							if ($orderrow->VatAli==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo di GAzie ci metto quella che deve mandare come base aziendale per le spese
 								$orderrow->VatCode=$order->CostVatCode;
 								$orderrow->VatAli=$order->CostVatAli;
@@ -354,7 +359,7 @@ class APIeCommerce {
 								$codvat=$orderrow->VatCode;
 							}
 
-							gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '1', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $orderrow->Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+							gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $orderrow->Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 							$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
 							$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva	
 							
