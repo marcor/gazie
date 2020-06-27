@@ -363,6 +363,8 @@ class APIeCommerce {
 							if ($order->PricesIncludeVat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
 								$div=floatval("1.".$aliiva);
 								$Price=floatval($orderrow->Price) / $div;				
+							} else {
+								$Price=floatval($orderrow->Price);
 							}
 							gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 							$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
@@ -375,6 +377,8 @@ class APIeCommerce {
 							if ($order->PricesIncludeVat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
 								$div=floatval("1.".$aliiva);
 								$Price=floatval($orderrow->Price) / $div;					
+							} else {
+								$Price=floatval($orderrow->Price);
 							}
 						}
 						
