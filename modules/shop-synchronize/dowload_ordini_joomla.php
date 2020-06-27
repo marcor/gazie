@@ -101,7 +101,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				$percdisc="";
 			}
 			
-			if ($includevat=="true"){ // se il sito include l'iva la scorporo alle spese banca e trasporto
+			if ($includevat=="true"){ // se l'e-commerce include l'iva la scorporo alle spese banca e trasporto
 					$_POST['speban'.$ord]=$_POST['speban'.$ord] / 1.22;
 					$_POST['traspo'.$ord]=$_POST['traspo'.$ord] / 1.22;
 				}
@@ -112,7 +112,7 @@ if (isset($_POST['conferma'])) { // se confermato
 		
 			// Gestione righi ordine					
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
-				
+								
 				// controllo se esiste l'articolo in GAzie 
 				$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $_POST['refid'.$ord.$row]);
 				if ($ckart){
@@ -133,17 +133,29 @@ if (isset($_POST['conferma'])) { // se confermato
 					if ($_POST['codvat'.$ord.$row]<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
 						$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliiva'.$ord.$row], " AND tipiva = 'I'");
 						$codvat=$vat['codice'];
+						$aliiva=$vat['aliquo'];
 					} else {
 						$codvat=$_POST['codvat'.$ord.$row];
+						$aliiva=$_POST['aliiva'.$ord.$row];
+					}
+					if ($includevat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
+						$div=0;
+						$div="1.".intval($aliiva);
+						$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row] / $div;					
 					}
 					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '".$good_or_service."', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 					$codart= substr($_POST['codice'.$ord.$row],0,15);// dopo averlo creato ne prendo il codice come $codart
 					$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione
 					
-					$aliiva=$vat['aliquo'];
+					
 				} else {
 					$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
 					$aliiva=$_POST['aliiva'.$ord.$row];
+					if ($includevat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
+						$div=0;
+						$div="1.".intval($aliiva);
+						$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row] / $div;					
+					}
 				}								
 									
 				// salvo rigo su database tabella rigbro 

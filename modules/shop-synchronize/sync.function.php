@@ -355,22 +355,31 @@ class APIeCommerce {
 							if ($orderrow->VatCode<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
 								$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $orderrow->VatAli, " AND tipiva = 'I'");
 								$codvat=$vat['codice'];
+								$aliiva=$vat['aliquo'];
 							} else {
 								$codvat=$orderrow->VatCode;
+								$aliiva=$orderrow->VatAli;
 							}
-
-							gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $orderrow->Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+							if ($order->PricesIncludeVat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
+								$div=floatval("1.".$aliiva);
+								$Price=floatval($orderrow->Price) / $div;				
+							}
+							gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 							$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
 							$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva	
 							
-							$aliiva=$vat['aliquo'];
+							
 						} else {
 							$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
 							$aliiva=$orderrow->VatAli;
+							if ($order->PricesIncludeVat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
+								$div=floatval("1.".$aliiva);
+								$Price=floatval($orderrow->Price) / $div;					
+							}
 						}
 						
 						// salvo rigo su database tabella rigbro 
-						gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $orderrow->MeasureUnit . "','" . $orderrow->Qty . "','" . $orderrow->Price . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
+						gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $orderrow->MeasureUnit . "','" . $orderrow->Qty . "','" . $Price . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
 					}
 					$count++;//aggiorno contatore nuovi ordini
 					$countDocument++;//aggiorno contatore Document
