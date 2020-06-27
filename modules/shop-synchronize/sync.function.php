@@ -78,7 +78,7 @@ class APIeCommerce {
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];			
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
-			// "articoli-gazie.php" è il nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+			// "articoli-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 			
 			if (intval($d['barcode'])==0) {// se non c'è barcode allora è nullo
@@ -330,26 +330,34 @@ class APIeCommerce {
 					}
 											
 					// registro testata ordine
-					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '1', '1', '" . $order->DateOrder . "', '" .$order->Number . "', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
+					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '". $order->SezIva ."', '1', '" . $order->DateOrder . "', '" .$order->Number . "', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
 					
 					// Gestione righi ordine					
 					foreach($xml->Documents->Document[$countDocument]->Rows->children() as $orderrow) { // carico le righe dell'ordine
 					
 						// controllo se esiste l'articolo in GAzie 
 						$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $orderrow->Id);
-						$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
-						$descri=$ckart['descri'];// se esiste ne prendo descri come $descri						
-		 
+						if ($ckart){
+							$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
+							$descri=$ckart['descri'].$orderrow->AddDescription;// se esiste ne prendo descri e ci aggiungo una eventuale descrizione aggiuntiva						
+						}
 						if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio in quanto non si sa se deve movimentare il magazzino					
-							if ($orderrow->VatAli<1){ // se il sito non ha mandato l'aliquota IVA dell'articolo ci metto quella che ha mandato come base aziendale riservato alle spese
+							if ($orderrow->VatAli==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo di GAzie ci metto quella che deve mandare come base aziendale per le spese
 								$orderrow->VatCode=$order->CostVatCode;
 								$orderrow->VatAli=$order->CostVatAli;
-							} 
-							$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $orderrow->VatAli, " AND tipiva = 'I'");
-							gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '1', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $orderrow->Price ."', '". $orderrow->Price ."', '1', '".$vat['codice']."', '420000006', '" . $admin_aziend['adminid'] . "')");
+							}
+
+							if ($orderrow->VatCode<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
+								$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $orderrow->VatAli, " AND tipiva = 'I'");
+								$codvat=$vat['codice'];
+							} else {
+								$codvat=$orderrow->VatCode;
+							}
+
+							gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '1', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $orderrow->Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 							$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
-							$descri= $orderrow->Description; //prendo anche la descrizione
-							$codvat=$vat['aliiva'];
+							$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva	
+							
 							$aliiva=$vat['aliquo'];
 						} else {
 							$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
