@@ -77,16 +77,14 @@ $sortable_headers = array(
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
 
-//Antonio Germani - dall'ultimo rigo tesdoc prendo la seziva da proporre
-$query="SELECT seziva FROM ". $gTables['tesdoc'] ." WHERE id_tes=(SELECT MAX(id_tes) FROM ". $gTables['tesdoc'] .")";
-$res= gaz_dbi_query($query);
-$sez = gaz_dbi_fetch_array($res);
+// seziva ultima fattura emessa
+$last_seziva = gaz_dbi_get_single_value($gTables['tesdoc'], 'seziva',  "id_tes=(SELECT MAX(id_tes) FROM {$gTables['tesdoc']} WHERE tipdoc LIKE 'F%')") or 1;
 
 $ts = new TableSorter(
     !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
     $passo, 
     ['datfat' => 'desc', 'protoc' => 'desc'], 
-    ['sezione' => $sez['seziva'], 'tipo' => 'F%'],
+    ['sezione' => $last_seziva, 'tipo' => 'F%'],
     ['protoc', 'datfat']
 );
 
@@ -258,10 +256,9 @@ $(function() {
     <div align="center" class="FacetFormHeaderFont">Documenti di vendita della sezione
         <select name="sezione" class="FacetSelect" onchange="this.form.submit()">
 	    <?php
-            echo "<option value=''>1</option>\n"; # è l'opzione di default perciò ha valore vuoto
-            for ($sez = 2; $sez <= 9; $sez++) {
-                $selected = $sezione == $sez ? "selected" : "";
-                echo "<option value='$sez' $selected > $sez </option>\n";
+            for ($i = 1; $i <= 9; $i++) {
+                $selected = ($sezione == $i) ? "selected" : "";
+                echo "<option value='$i' $selected > $i </option>\n";
             }
 	    ?>
 
