@@ -257,22 +257,8 @@ function gaz_dbi_last_id() {
 }
 
 // restituisce il numero record di una query
-function gaz_dbi_record_count($table, $where) {
-   global $link;
-   // per consumare meno memoria
-   // (tuttavia la funzione sembra essere chiamata molto raramente MR)
-   $tn=explode('LEFT',$table);
-   $sql = "SHOW COLUMNS FROM ".$tn[0];
-   $result = mysqli_query($link,$sql);
-   $first_column = mysqli_fetch_array($result)['Field'];
-   $sql = "SELECT ".$first_column." FROM " . $table . (($where != "") ? " WHERE " . $where : "");
-   $result = mysqli_query($link, $sql);
-   $count = mysqli_num_rows($result);
-   return $count;
-}
-
-// -- proposta di versione piu' lineare della funzione prec. MR
-function gaz_dbi_record_count_simple($table, $where = '', $group_by = '') {
+// versione piu' lineare della precedente MR
+function gaz_dbi_record_count($table, $where = '', $group_by = '') {
    global $link;
    $where = $where ? "WHERE $where" : '';
    $group_by = $group_by ? "GROUP BY $group_by" : '';
