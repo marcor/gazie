@@ -78,7 +78,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
 
 // seziva ultima fattura emessa
-$last_seziva = gaz_dbi_get_single_value($gTables['tesdoc'], 'seziva',  "id_tes=(SELECT MAX(id_tes) FROM {$gTables['tesdoc']} WHERE tipdoc LIKE 'F%')") or 1;
+$last_seziva = gaz_dbi_get_single_value($gTables['tesdoc'], 'seziva',  "id_tes=(SELECT MAX(id_tes) FROM {$gTables['tesdoc']} WHERE tipdoc LIKE 'F%')") || 1;
 
 $ts = new TableSorter(
     !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
