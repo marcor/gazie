@@ -98,7 +98,7 @@ $(function() {
 						url: '../camp/delete.php',
 						success: function(output){
 		                    //alert(output);
-							window.location.replace("./report_movmag.php");
+							window.location.replace("./camp_report_movmag.php");
 						}
 					});
 				}},
@@ -129,7 +129,7 @@ $(function() {
 				<td class="FacetFieldCaptionTD"></td>
 				<td class="FacetFieldCaptionTD"></td>
 				<td class="FacetFieldCaptionTD">
-					<input type="text" name="causale" placeholder="<?php echo "ID ",$strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" tabindex="1" class="FacetInput">
+					<input type="text" name="causale" placeholder="<?php echo "ID ",$strScript['camp_admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" tabindex="1" class="FacetInput">
 				</td>
 				<!-- Antonio Germani - inserisco l'intestazione cerca per campi di coltivazione e avversità -->
 				<td class="FacetFieldCaptionTD">
@@ -162,7 +162,7 @@ $headers_mov = array  (
             "n.ID" => "id_mov",
 			$script_transl[4] => "datdoc",
             $script_transl[15] => "datreg",
-            $strScript["admin_movmag.php"][2] => "caumag",            
+            $strScript["camp_admin_movmag.php"][2] => "caumag",            
 			$script_transl[11] => "",
 			$script_transl[12] => "",
 			$script_transl[13] => "",
@@ -200,7 +200,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 
 		echo "<tr>\n";
 		
-		echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
+		echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"camp_admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
 		
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datdoc"])." &nbsp;</td>\n";

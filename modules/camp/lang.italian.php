@@ -24,7 +24,7 @@
   --------------------------------------------------------------------------
  */
 
-$strScript = array("browse_document.php" =>
+$strScript = array("camp_browse_document.php" =>
     array('title' => "Lista dei Documenti/Certificati",
         'errors' => array('Il formato del file non è stato accettato!',
             'Il file è troppo grande!',
@@ -111,7 +111,7 @@ $strScript = array("browse_document.php" =>
 		"Tempo sospensione",
 		"Fitofarmaco non presente in GAzie"
     ),
-    "report_artico.php" =>
+    "camp_report_artico.php" =>
     array('title' => 'Lista delle merci e dei servizi',
         'codice' => "Codice",
         'descri' => "Descrizione",
@@ -144,7 +144,7 @@ $strScript = array("browse_document.php" =>
         " Quantit&agrave; ",
         " Valore in ",
         " Fuori "),
-    "report_movmag.php" =>
+    "camp_report_movmag.php" =>
     array("movimenti di magazzino ",
         "codice",
         "Inserisci ",
@@ -162,7 +162,7 @@ $strScript = array("browse_document.php" =>
 		"Elenco movimenti agricoli",
 		"Data attuaz.",
 		"Operat."),
-    "admin_movmag.php" =>
+    "camp_admin_movmag.php" =>
     array("movimento registro di campagna ",
         "Data della registrazione ",
         "Causale ",
@@ -217,7 +217,7 @@ $strScript = array("browse_document.php" =>
     array("causali dei movimenti ",
         "Lista delle "
     ),
-    "admin_catmer.php" =>
+    "camp_admin_catmer.php" =>
     array("categoria merceologica ",
         "Numero ",
         "Descrizione ",
@@ -263,7 +263,7 @@ $strScript = array("browse_document.php" =>
         "L'immagine non dev'essere pi&ugrave; grande di 10 kb",
         'web_url' => 'Web url<br />(es: http://site.com/group.html)'
     ),
-    "admin_caumag.php" =>
+    "camp_admin_caumag.php" =>
     array("causale di magazzino ",
         "Codice ",
         "Descrizione ",
@@ -291,7 +291,7 @@ $strScript = array("browse_document.php" =>
         " successiva alla ",
         "  righi sono da traferire in magazzino:",
         " Non ci sono righi da trasferire in magazzino!"),
-    "select_giomag.php" =>
+    "camp_select_giomag.php" =>
     array(0 => 'Stampa Quaderno di campagna',
         'title' => 'Selezione per la visualizzazione e/o la stampa del quaderno di campagna',
         'errors' => array('La data  non &egrave; corretta!',
@@ -321,7 +321,7 @@ $strScript = array("browse_document.php" =>
 
         )
     ),
-	 "select_invmag.php" =>
+	 "camp_select_invmag.php" =>
     array(0 => 'Stampa inventario di magazzino',
         'title' => 'Selezione per la visualizzazione e/o la stampa dell\'inventario di magazzino. <br> E\' necessario creare prima i movimenti dell\'inventario su Merci/servizi > Inventario di magazzino. <br> Attenzione che il codice causale movimento dell\'inventario sia 99.',
         'errors' => array('La data  non &egrave; corretta!',
@@ -359,7 +359,7 @@ $strScript = array("browse_document.php" =>
         "(1) perch&egrave; ci sono degli acquisti negli anni successivi al ",
         "(2) perch&egrave; non ci sono movimenti di acquisto nel ",
         "Non ci sono articoli movimentati!"),
-    "inventory_stock.php" =>
+    "camp_inventory_stock.php" =>
     array('title' => "Inventario fisico di magazzino",
         'del' => "del",
         'catmer' => "Categoria Merceologica ",
@@ -381,7 +381,7 @@ $strScript = array("browse_document.php" =>
             " Si st&agrave; tentando di fare l'inventario con giacenza attuale e reale entrambe a zero"),
         'preview_title' => 'Confermando le scelte fatte si registreranno i seguenti movimenti di magazzino:'
     ),
-    "select_schart.php" =>
+    "camp_select_schart.php" =>
     array(0 => 'Stampa schedari di magazzino',
         'title' => 'Selezione per la visualizzazione e/o la stampa delle schede di magazzino',
         'mesg' => array('La ricerca non ha dato risultati!',
@@ -513,7 +513,7 @@ $strScript = array("browse_document.php" =>
         'header' => array('Cat.Merceologica' => '', 'Codice' => '', 'Descrizione' => '', 'U.M.' => '',
             'Prezzo vecchio' => '', 'Incidenza peso' => '', 'Prezzo nuovo' => ''
         )),
-    "admin_artico.php" =>
+    "camp_admin_artico.php" =>
     array('title' => 'Gestione degli articoli',
         'ins_this' => 'Inserimento articolo',
         'upd_this' => 'Modifica l\'articolo ',

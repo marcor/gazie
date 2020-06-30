@@ -953,7 +953,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                     
                 } // fine se c'è un articolo impostato nel movimento
             } //fine ciclo for mov
-            header("Location:report_movmag.php");
+            header("Location:camp_report_movmag.php");
             exit;
         }
     }

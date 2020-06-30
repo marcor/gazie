@@ -51,7 +51,7 @@ if (!isset($_GET['auxil'])) {
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 require("./lang.".$admin_aziend['lang'].".php");
-$script_transl += $strScript["admin_caumag.php"];
+$script_transl += $strScript["camp_admin_caumag.php"];
 ?>
 <script>
 $(function() {
@@ -77,7 +77,7 @@ $(function() {
 						url: '../camp/delete.php',
 						success: function(output){
 		                    //alert(output);
-							window.location.replace("./report_caumag.php");
+							window.location.replace("./camp_report_caumag.php");
 						}
 					});
 				}},
@@ -114,7 +114,7 @@ echo "<td><input type=\"submit\" name=\"all\" value=\"".$script_transl['vall']."
 $result = gaz_dbi_dyn_query ("*",$gTables['caumag'], $where, $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
-            $strScript["admin_caumag.php"][1] => "codice",
+            $strScript["camp_admin_caumag.php"][1] => "codice",
             $script_transl[2] => "descri",
             $script_transl[11] => "clifor",
             $script_transl[4] => "operat",
@@ -126,7 +126,7 @@ $recordnav = new recordnav($gTables['caumag'], $where, $limit, $passo);
 $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">\n";
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_caumag.php?codice=".$a_row["codice"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
+    echo "<td><a class=\"btn btn-xs btn-default\" href=\"camp_admin_caumag.php?codice=".$a_row["codice"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
     echo "<td align=\"center\">".$a_row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl[$a_row['clifor']+13]."</td>";
     echo "<td align=\"center\">".$script_transl[$a_row['operat']+9]."</td>";

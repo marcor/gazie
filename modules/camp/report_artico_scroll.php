@@ -47,7 +47,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 	require ("../../modules/magazz/lib.function.php");
     $admin_aziend = checkAdmin();
     require("./lang." . $admin_aziend['lang'] . ".php");
-    $script_transl = $strScript['report_artico.php'];
+    $script_transl = $strScript['camp_report_artico.php'];
     $no = intval($_POST['rowno']);
     $ob = filter_input(INPUT_POST, 'orderby');
     $so = filter_input(INPUT_POST, 'sort');
@@ -104,7 +104,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
        
         $com = '';
         if ($admin_aziend['conmag'] > 0 && $row["good_or_service"] <= 0) {
-            $com = '<a class="btn btn-xs btn-default" href="../camp/select_schart.php?di=0101' . date('Y') . '&df=' . date('dmY') . '&id=' . $row['codice'] . '" target="_blank">
+            $com = '<a class="btn btn-xs btn-default" href="../camp/camp_select_schart.php?di=0101' . date('Y') . '&df=' . date('dmY') . '&id=' . $row['codice'] . '" target="_blank">
 		  <i class="glyphicon glyphicon-check"></i><i class="glyphicon glyphicon-print"></i>
 		  </a>&nbsp;';
         }
@@ -114,7 +114,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         ?>	
         <tr>      
             <td data-title="<?php echo $script_transl["codice"]; ?>">
-                <a class="btn btn-xs btn-default" href="../camp/admin_artico.php?Update&codice=<?php echo $row['codice']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['codice']; ?></a>
+                <a class="btn btn-xs btn-default" href="../camp/camp_admin_artico.php?Update&codice=<?php echo $row['codice']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['codice']; ?></a>
             </td>
             <td data-title="<?php echo $script_transl["descri"]; ?>">
                 <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["codice"]; ?>" data-label="<?php echo $row['annota']; ?>"><?php echo $row["descri"]; ?></span>

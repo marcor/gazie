@@ -126,7 +126,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 require("./lang.".$admin_aziend['lang'].".php");
-$script_transl += $strScript["browse_document.php"];
+$script_transl += $strScript["camp_browse_document.php"];
 $gForm = new magazzForm();
 echo "<form method=\"POST\" name=\"form\" enctype=\"multipart/form-data\">\n";
 if ($toDo == 'insert') {

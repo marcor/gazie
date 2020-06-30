@@ -224,7 +224,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     ));
                 }
             }
-            header("Location: report_movmag.php");
+            header("Location: camp_report_movmag.php");
             exit;
         }
     }
@@ -232,7 +232,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 }
 require("../../library/include/header.php");
 require("./lang." . $admin_aziend['lang'] . ".php");
-$script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRICO FEDELE */
+$script_transl = $strScript["camp_inventory_stock.php"] + HeadMain(0, array(/** ENRICO FEDELE */
                 /* 'jquery/jquery-1.3.2.min',
                   'boxover/boxover' */
                 /** ENRICO FEDELE */                ));

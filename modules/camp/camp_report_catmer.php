@@ -71,7 +71,7 @@ $(function() {
 						url: '../camp/delete.php',
 						success: function(output){
 		                    //alert(output);
-							window.location.replace("./report_catmer.php");
+							window.location.replace("./camp_report_catmer.php");
 						}
 					});					
 				}},
@@ -131,7 +131,7 @@ $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>		<tr class="FacetDataTD">
 			<td>
-				<a class="btn btn-xs btn-success btn-block" href="admin_catmer.php?Update&codice=<?php echo $a_row["codice"]; ?>">
+				<a class="btn btn-xs btn-success btn-block" href="camp_admin_catmer.php?Update&codice=<?php echo $a_row["codice"]; ?>">
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row["codice"];?>
 				</a>
 			</td>

@@ -34,7 +34,7 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
 
 if (!isset($_GET['ri']) or
     !isset($_GET['rf'])) {
-    header("Location: select_invmag.php");
+    header("Location: camp_select_invmag.php");
     exit;
 }
 

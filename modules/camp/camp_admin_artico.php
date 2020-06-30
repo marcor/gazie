@@ -309,12 +309,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             if ($modal === false) {
 				if ($toDo == 'insert') {
 					$_SESSION['ok_ins']=$form['codice'].' - '.$form['descri'];
-					header("Location: ../../modules/camp/admin_artico.php?Update&codice=".$form['codice']);
+					header("Location: ../../modules/camp/camp_admin_artico.php?Update&codice=".$form['codice']);
 				}else{
-					header("Location: ../../modules/camp/report_artico.php");
+					header("Location: ../../modules/camp/camp_report_artico.php");
 				}
             } else {
-                header("Location: ../../modules/camp/admin_artico.php?mode=modal&ok_insert=1");
+                header("Location: ../../modules/camp/camp_admin_artico.php?mode=modal&ok_insert=1");
             }
             /** ENRICO FEDELE */
             exit;
@@ -351,7 +351,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if ($modal === false) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     } else {
-        $form['ritorno'] = 'admin_artico.php';
+        $form['ritorno'] = 'camp_admin_artico.php';
     }
     $form['ref_code'] = $form['codice']; 
     // i prezzi devono essere arrotondati come richiesto dalle impostazioni aziendali
@@ -384,7 +384,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if ($modal === false) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     } else {
-        $form['ritorno'] = 'admin_artico.php';
+        $form['ritorno'] = 'camp_admin_artico.php';
     }
     /** ENRICO FEDELE */
     $form['ref_code'] = '';
@@ -548,7 +548,7 @@ if ($modal_ok_insert === true) {
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     }
 	if (isset($_SESSION['ok_ins'])){
-        $gForm->toast('L\'articolo ' . $_SESSION['ok_ins'].' è stato inserito con successo, sotto per modificarlo. Oppure puoi: <a class="btn btn-info" href="admin_artico.php?Insert">Inserire uno nuovo articolo</a> ' , 'alert-last-row', 'alert-success');
+        $gForm->toast('L\'articolo ' . $_SESSION['ok_ins'].' è stato inserito con successo, sotto per modificarlo. Oppure puoi: <a class="btn btn-info" href="camp_admin_artico.php?Insert">Inserire uno nuovo articolo</a> ' , 'alert-last-row', 'alert-success');
 		unset($_SESSION['ok_ins']);
 	}
 	if ($toDo == 'insert') {
