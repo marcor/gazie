@@ -282,7 +282,7 @@ class PreventivoFornitore extends Template
         } else {
             $this->Cell(28, 6,'','LRB',1);
         }
-		
+
 		if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
 			$this->print_header = false;
 			$this->extdoc_acc=$this->docVars->ExternalDoc;

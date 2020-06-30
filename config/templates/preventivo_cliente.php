@@ -114,7 +114,25 @@ class PreventivoCliente extends Template
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(58, 6, "",1,1,'R');
-                    break; 
+                    break;
+                case "50":
+					// accumulo il file da allegare e lo indico al posto del codice articolo
+					$this->docVars->id_rig=$rigo['id_rig'];
+					$file=$this->docVars->getExtDoc();
+                    $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
+                    $this->Cell(100, 6, $rigo['descri'],1,0,'L',0,'',1);
+                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
+                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(40, 6, '',1,1);
+                    break;
+                case "51":
+					// accumulo il file da allegare e lo indico al posto del codice articolo
+					$this->docVars->id_rig=$rigo['id_rig'];
+					$file=$this->docVars->getExtDoc();
+                    $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
+                    $this->Cell(100,6,$rigo['descri'],'LR',0,'L',0,'',1);
+                    $this->Cell(61,6,'','R',1);
+                    break;
                 }
        }
     }
@@ -195,6 +213,56 @@ class PreventivoCliente extends Template
         // $this->Cell(186,6,'Il presente preventivo ha una validità di 2 giorni lavorativi, trascorso questo termine, i prezzi e le condizioni di vendita potrebbero',0,1,'L');
         $this->Cell(186,6,'Il presente preventivo ha una validità di '.$this->tesdoc['day_of_validity'].' giorni lavorativi, trascorso questo termine, i prezzi e le condizioni di vendita potrebbero',0,1,'L');
         $this->Cell(186,6,'subire delle modifiche che dipendono dalle situazioni di mercato.','B',1,'L');
+
+		if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
+			$this->print_header = false;
+			$this->extdoc_acc=$this->docVars->ExternalDoc;
+            reset($this->extdoc_acc);
+			foreach ($this->extdoc_acc AS $key => $rigo) {
+                $this->SetTextColor(255, 50, 50);
+                $this->SetFont('helvetica', '', 6);
+                if ($rigo['ext'] == 'pdf') {
+                    $this->numPages = $this->setSourceFile( DATA_DIR . 'files/' . $rigo['file'] );
+                    if ($this->numPages >= 1) {
+                        for ($i = 1; $i <= $this->numPages; $i++) {
+                            $this->_tplIdx = $this->importPage($i);
+                            $specs = $this->getTemplateSize($this->_tplIdx);
+							// stabilisco se portrait-landscape
+							if ($specs['h'] > $specs['w']){ //portrait
+								$pl='P';
+								$w=210;
+								$h=297;
+							}else{ //landscape
+								$pl='L';
+								$w=297;
+								$h=210;
+							}
+                            $this->AddPage($pl);
+							$this->print_footer = false;
+                            $this->useTemplate($this->_tplIdx,NULL,NULL,$w,$h, FALSE);
+                            $this->SetXY(10, 0);
+                            $this->Cell(190, 3,$this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc , 1, 0, 'C', 0, '', 1);
+                        }
+                    }
+                } elseif (!empty($rigo['ext'])) {
+                    list($w, $h) = getimagesize( DATA_DIR . 'files/' . $rigo['file'] );
+					$this->SetAutoPageBreak(false, 0);
+                    if ($w > $h) { //landscape
+                        $this->AddPage('L');
+						$this->print_footer = false;
+                        $this->SetXY(10, 0);
+                        $this->Cell(280, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
+						$this->image( DATA_DIR . 'files/' . $rigo['file'], 5, 3, 290 );
+                    } else { // portrait
+                        $this->AddPage('P');
+						$this->print_footer = false;
+                        $this->SetXY(10, 0);
+                        $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
+						$this->image( DATA_DIR . 'files/' . $rigo['file'], 5, 3, 190 );
+                    }
+                }
+            }
+		}
     }
 
     function Footer()
