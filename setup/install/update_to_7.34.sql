@@ -1,4 +1,4 @@
--- UPDATE `gaz_config` SET `cvalue` = '129' WHERE `id` =2; 
+-- `gaz_config` SET `cvalue` = '129' WHERE `id` =2; 
 
 SET @id_mod := 0;
 SELECT @id_mod := `id` FROM  `gaz_module` WHERE `name` = 'camp' LIMIT 1;
