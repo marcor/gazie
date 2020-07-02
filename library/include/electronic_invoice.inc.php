@@ -585,26 +585,20 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			}
 
 
-            if (($XMLvars->client['sexper']!='G') and  (trim($XMLvars->client['legrap_pf_nome'])!='') and (trim($XMLvars->client['legrap_pf_nome'])!='')){
-            // se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
-            $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-            $el = $domDoc->createElement("Nome", substr(trim($XMLvars->client['legrap_pf_nome']), 0, 80));
-            $results->appendChild($el);
-            $el = $domDoc->createElement("Cognome", substr(trim($XMLvars->client['legrap_pf_cognome']), 0, 80));
-            $results->appendChild($el);
+            if (($XMLvars->client['sexper']!='G') && (trim($XMLvars->client['legrap_pf_nome'])!='') && (trim($XMLvars->client['legrap_pf_nome'])!='')) {
+				// se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
+				$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+				$el = $domDoc->createElement("Nome", substr(trim($XMLvars->client['legrap_pf_nome']), 0, 80));
+				$results->appendChild($el);
+				$el = $domDoc->createElement("Cognome", substr(trim($XMLvars->client['legrap_pf_cognome']), 0, 80));
+				$results->appendChild($el);
             } else {
-            
-             // Se è una ditta inserisco la denominazione
-            $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-            $el = $domDoc->createElement("Denominazione",substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
-            $results->appendChild($el);
+				 // Se è una ditta inserisco la denominazione
+				$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+				$el = $domDoc->createElement("Denominazione", substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
+				$results->appendChild($el);
+			}
 
-    }
-			
-			
-
-			
-            
 
             $results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->client['indspe']));
