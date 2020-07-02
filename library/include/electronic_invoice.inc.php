@@ -560,23 +560,23 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $el = $domDoc->createElement("CodiceFiscale", trim($XMLvars->client['codfis']));
             $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
             $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-			if ($XMLvars->client['country']=='IT'){
+			if ($XMLvars->client['country']=='IT' && $XMLvars->client['codfis']!='00000000000') {
 				$results->insertBefore($el, $results1);
 			} else {  // STRANIERI
-				// agli stranieri se non ho il codice fiscale metto quello che trovo in partita IVA, se non ho nulla metto un valore fittizio  
-				if(strlen($XMLvars->client['codfis'])>5){
-					$XMLvars->client['pariva']=$XMLvars->client['pariva'];
-				}elseif(strlen($XMLvars->client['pariva'])<6){
-					$XMLvars->client['pariva']='INDISPONIBILE';
+				// agli stranieri se non ho il codice fiscale metto quello che trovo in partita IVA, se non ho nulla metto un valore fittizio
+				if (strlen($XMLvars->client['codfis'])>5 && $XMLvars->client['codfis']!='00000000000') {
+					$XMLvars->client['pariva'] = $XMLvars->client['pariva'];
+				} elseif (strlen($XMLvars->client['pariva'])<6) {
+					$XMLvars->client['pariva'] = 'INDISPONIBILE';
 				}
 			}
             // nodo 1.4.1.1 partita IVA del committente, se disponibile
-            if (!empty($XMLvars->client['pariva'])) {
+            if (!empty($XMLvars->client['pariva']) && $XMLvars->client['pariva']!='00000000000') {
                 $el = $domDoc->createElement("IdFiscaleIVA", '');
                 $results = $el->appendChild($domDoc->createElement('IdPaese', $XMLvars->client['country']));
                 $results = $el->appendChild($domDoc->createElement('IdCodice', $XMLvars->client['pariva']));
                 $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
-				if ($XMLvars->client['country']=='IT'){
+				if ($XMLvars->client['country']=='IT' && $XMLvars->client['codfis']!='00000000000') {
 					$results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0);
 				} else {
 					$results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
