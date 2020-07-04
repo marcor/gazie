@@ -23,71 +23,36 @@
   --------------------------------------------------------------------------
  */
 // prevent direct access
-/*$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
+$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
-}*/
+}
 
-	require("../../library/include/datlib.inc.php");
-	$admin_aziend = checkAdmin();
-	
-		if(isset($_POST['codice'])){
+require("../../library/include/datlib.inc.php");
+$admin_aziend = checkAdmin();
 
-		
-
-
-		$results = array('error' => false, 'data' => '');
-
- 
-
-		$codice = $_POST['codice'];
-
- 
-
-		if(empty($codice)){
-
-			$results['error'] = true;
-
-		}else{
-
-			
-	$query="SELECT PRODOTTO FROM ". $gTables['camp_fitofarmaci'] ." WHERE PRODOTTO LIKE '%$codice%' LIMIT 30";
-	$result = gaz_dbi_query($query);
-
-
-			if($result->num_rows > 0){
-
-				while($ldata = $result->fetch_assoc()){
-
-					$results['data'] .= "
-
-						<li class='dropdown-item' data-fullname='".$ldata['PRODOTTO']."'> <a href='#'>".$ldata['PRODOTTO']."</a></li>
-
-					";
-
-				}
-
-			}
-
-			else{
-
-				$results['data'] = "
-
-					<li class='dropdown-item' style='display: none;'>No found data matches Records</li>
-
+if(isset($_POST['codice'])){
+	$results = array('error' => false, 'data' => '');
+	$codice = $_POST['codice'];
+	if(empty($codice)){
+		$results['error'] = true;
+	}else{				
+		$query="SELECT PRODOTTO FROM ". $gTables['camp_fitofarmaci'] ." WHERE PRODOTTO LIKE '%$codice%' LIMIT 30";
+		$result = gaz_dbi_query($query);
+		if($result->num_rows > 0){
+			while($ldata = $result->fetch_assoc()){
+				$results['data'] .= "
+					<li class='dropdown-item' data-fullname='".$ldata['PRODOTTO']."'> <a href='#'>".$ldata['PRODOTTO']."</a></li>
 				";
-
 			}
-
+		} else {
+			$results['data'] = "
+				<li class='dropdown-item' style='display: none;'>No found data matches Records</li>
+			";
 		}
-
- 
-
-		echo json_encode($results);
-
 	}
-	
-
+	echo json_encode($results);
+}
 ?>
