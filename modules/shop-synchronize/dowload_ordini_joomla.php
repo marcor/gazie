@@ -101,14 +101,20 @@ if (isset($_POST['conferma'])) { // se confermato
 				$percdisc="";
 			}
 			
+			if ($_POST['codvatcost'.$ord] == ""){ // se l'e-commerce non ha mandato il codice delle spese incasso  e trasporto
+				$expense_vat = $admin_aziend['preeminent_vat']; // ci metto quelle preminenti aziendali
+			} else {
+				$expense_vat = $_POST['codvatcost'.$ord]; // altrimenti metto il codice che ha mandato
+			}
 			if ($includevat=="true"){ // se l'e-commerce include l'iva la scorporo alle spese banca e trasporto
-					$_POST['speban'.$ord]=$_POST['speban'.$ord] / 1.22;
-					$_POST['traspo'.$ord]=$_POST['traspo'.$ord] / 1.22;
-				}
-							
+				$vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $expense_vat);
+				$div="1.".intval($vat['aliquo']);
+				$_POST['speban'.$ord]=$_POST['speban'.$ord] / $div;
+				$_POST['traspo'.$ord]=$_POST['traspo'.$ord] / $div;
+			}		
 		
 			// registro testata ordine
-			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '" . $_POST['seziva'.$ord] . "', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '".$_POST['spediz'.$ord]."', '". $_POST['traspo'.$ord] ."', '". $_POST['speban'.$ord] ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
+			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '" . $_POST['seziva'.$ord] . "', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '".$_POST['spediz'.$ord]."', '". $_POST['traspo'.$ord] ."', '". $_POST['speban'.$ord] ."', '1', '". $expense_vat ."', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
 		
 			// Gestione righi ordine					
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
