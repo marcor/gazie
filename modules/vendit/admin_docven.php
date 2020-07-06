@@ -1998,7 +1998,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // fine rigo input
     $form['search']['clfoco'] = '';
     $form['cosear'] = "";
-    if (!isset($_GET['seziva']) && ($form['tipdoc'] == 'FAI'||$form['tipdoc'] == 'FAA')) {
+    if (!isset($_GET['seziva']) && ($form['tipdoc'] == 'FAI'||$form['tipdoc'] == 'FAA'||$form['tipdoc'] == 'FNC')) {
         $form['seziva'] = getFAIseziva($form['tipdoc']);
     } elseif (!isset($_GET['seziva'])) {
         $form['seziva'] = 1;
