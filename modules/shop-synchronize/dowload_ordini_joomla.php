@@ -102,7 +102,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 			
 			if ($includevat=="true"){ // se l'e-commerce include l'iva la scorporo alle spese banca e trasporto
-					// < le spese incasso sono esenti art. 15 > $_POST['speban'.$ord]=$_POST['speban'.$ord] / 1.22;
+					$_POST['speban'.$ord]=$_POST['speban'.$ord] / 1.22;
 					$_POST['traspo'.$ord]=$_POST['traspo'.$ord] / 1.22;
 				}
 							
