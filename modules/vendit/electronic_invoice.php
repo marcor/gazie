@@ -31,7 +31,7 @@ require("../../library/include/electronic_invoice.inc.php");
 if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo documento attraverso il suo id_tes
     $id_testata = intval($_GET['id_tes']);
     $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $id_testata);
-	$where="tipdoc LIKE 'F__' AND seziva = ".$testata['seziva']." AND YEAR(datfat) = ".substr($testata['datfat'],0,4)." AND protoc = ".$testata['protoc'];
+	$where="tipdoc = '". $testata['tipdoc'] ."' AND seziva = ".$testata['seziva']." AND YEAR(datfat) = ".substr($testata['datfat'],0,4)." AND protoc = ".$testata['protoc'];
 	if ($testata['tipdoc']=='VCO'){ // in caso di fattura allegata a scontrino mi baso solo sull'id_tes
 		$where="id_tes = ".$id_testata;
 	}
