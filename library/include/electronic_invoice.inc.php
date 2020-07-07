@@ -158,7 +158,7 @@ class invoiceXMLvars {
                 break;
             case "FND":
                 $this->TipoDocumento = 'TD05';    // <TipoDocumento> 2.1.1.1
-                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
+                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"].'/ND';
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
             case "FAP":
