@@ -49,7 +49,7 @@ function getMovements($date_ini,$date_fin)
 		} else {
 			$where=$gTables['movmag'].".operat = '-1' AND good_or_service != '1' AND datreg BETWEEN $date_ini AND $date_fin";
 		}
-		$where .= ' AND id_assets = 0';
+		$where .=  ' AND '. $gTables['artico'].'.id_assets = 0';
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
 			  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
