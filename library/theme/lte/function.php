@@ -149,7 +149,8 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         while ($row = gaz_dbi_fetch_array($result)) {
             if ($row['access'] == 3) {
                 if ($ctrl_m1 != $row['m1_id']) {
-                    require("../../modules/" . $row['name'] . "/menu.".$admin_aziend['lang'].".php");
+                    if ( file_exists ( "../../modules/" . $row['name'] . "/menu.".$admin_aziend['lang'].".php" ) )
+						require("../../modules/" . $row['name'] . "/menu.".$admin_aziend['lang'].".php");
                 }
                 if ($row['name'] == $module) {
                     $row['weight'] = 0;
