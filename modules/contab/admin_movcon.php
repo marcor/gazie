@@ -186,7 +186,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $form['operation_type'] = substr($_POST['operation_type'], 0, 15);
     }
     //ricarico i registri per il form dei righi contabili già  immessi
-    $loadCosRic = 0;
+    $loadCosRic = 0; //  1 se cliente, 2 se fornitore
     $countPartners = 0;
     for ($i = 0; $i < $_POST['rigcon']; $i++) {
         $form['id_rig_rc'][$i] = $_POST['id_rig_rc'][$i];
@@ -197,9 +197,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $form['paymov_op_cl'][$i] = 0;
         if ($_POST['mastro_rc'][$i] == $mastroclienti || $_POST['mastro_rc'][$i] == $mastrofornitori) {
             if ($_POST['conto_rc' . $i] > 0) {
-				if ($_POST['conto_rc' . $i] != $form['cod_partner']) { // ho già un partner selezionato e questo è diverso 
-					$countPartners++;
-				}
+                if ($_POST['conto_rc' . $i] != $form['cod_partner']) { // ho già un partner selezionato e questo è diverso
+                    $countPartners++;
+                }
                 $partnersel = $anagrafica->getPartner($form['conto_rc' . $i]);
                 //se viene inserito un nuovo partner do l'ok alla ricarica della contropartita costi/ricavi in base al conto presente sull'archivio clfoco
                 if ($_POST['cod_partner'] == 0 and $form['conto_rc' . $i] > 0) {
@@ -257,20 +257,20 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 $form['paymov'][$i]['new'] = array('id' => 'new', 'id_tesdoc_ref' => 'new', 'amount' => '0.00', 'expiry' => '');
             }
             /* controllo se il pagamento del cliente/fornitore prevede che vengano 
-              eseguite le scritture di chiusura e nel caso setto il valore giusto */
+               eseguite le scritture di chiusura e nel caso setto il valore giusto */
         }
-        if ($loadCosRic == 1 && substr($form['conto_rc' . $i], 0, 1) == 4 && $partner['cosric'] > 0 && $form['registroiva'] > 0) {  //e' un  cliente agisce sui ricavi
-            $form['mastro_rc'][$i] = substr($partner['cosric'], 0, 3) . "000000";
-            $form['conto_rc' . $i] = $partner['cosric'];
-            $loadCosRic = 0;
-        } elseif ($loadCosRic == 2 && substr($form['conto_rc' . $i], 0, 1) == 3 && $partner['cosric'] > 0 && $form['registroiva'] > 0) { //è un fornitore  agisce sui costi
-            $form['mastro_rc'][$i] = substr($partner['cosric'], 0, 3) . "000000";
-            $form['conto_rc' . $i] = $partner['cosric'];
-            $loadCosRic = 0;
+        if($form['registroiva'] == 9){ // è un versamento IVA forzo tutti gli importi al valore del rigo IVA
+            $form['importorc'][$i] = floatval($_POST['impost_ri'][0]);
         }
-		if($form['registroiva'] == 9){ // è un versamento IVA forzo tutti gli importi al valore del rigo IVA
-			$form['importorc'][$i] = floatval($_POST['impost_ri'][0]);
-		}
+    }
+    if ($loadCosRic && $partner['cosric'] > 0 && $form['registroiva'] > 0) {
+        for ($i = 0; $i < $_POST['rigcon']; $i++) {  // ripercorro i righi in cerca del primo...
+            if (substr($form['conto_rc' . $i], 0, 1) == (5 - $loadCosRic)) {  // ...costi(3) o ricavi(4)
+                $form['mastro_rc'][$i] = substr($partner['cosric'], 0, 3) . "000000"; // per adattarlo al partner
+                $form['conto_rc' . $i] = $partner['cosric'];
+                break;
+            }
+        }
     }
     //ricarico i registri per il form dei righi iva già  immessi
     for ($i = 0; $i < $_POST['rigiva']; $i++) {
