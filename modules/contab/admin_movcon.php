@@ -259,17 +259,17 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             /* controllo se il pagamento del cliente/fornitore prevede che vengano 
                eseguite le scritture di chiusura e nel caso setto il valore giusto */
         }
+        if ($loadCosRic == 1 && substr($form['conto_rc' . $i], 0, 1) == 4 && $partner['cosric'] > 0 && $form['registroiva'] > 0) {  //e' un  cliente agisce sui ricavi
+            $form['mastro_rc'][$i] = substr($partner['cosric'], 0, 3) . "000000";
+            $form['conto_rc' . $i] = $partner['cosric'];
+            $loadCosRic = 0;
+        } elseif ($loadCosRic == 2 && substr($form['conto_rc' . $i], 0, 1) == 3 && $partner['cosric'] > 0 && $form['registroiva'] > 0) { //è un fornitore  agisce sui costi
+            $form['mastro_rc'][$i] = substr($partner['cosric'], 0, 3) . "000000";
+            $form['conto_rc' . $i] = $partner['cosric'];
+            $loadCosRic = 0;
+        }
         if($form['registroiva'] == 9){ // è un versamento IVA forzo tutti gli importi al valore del rigo IVA
             $form['importorc'][$i] = floatval($_POST['impost_ri'][0]);
-        }
-    }
-    if ($loadCosRic && $partner['cosric'] > 0 && $form['registroiva'] > 0) {
-        for ($i = 0; $i < $_POST['rigcon']; $i++) {  // ripercorro i righi in cerca del primo...
-            if (substr($form['conto_rc' . $i], 0, 1) == (5 - $loadCosRic)) {  // ...costi(3) o ricavi(4)
-                $form['mastro_rc'][$i] = substr($partner['cosric'], 0, 3) . "000000"; // per adattarlo al partner
-                $form['conto_rc' . $i] = $partner['cosric'];
-                break;
-            }
         }
     }
     //ricarico i registri per il form dei righi iva già  immessi
