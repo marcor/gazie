@@ -281,7 +281,7 @@ class APIeCommerce {
 							$clfoco=$cl['codice'];
 						}
 					}
-					if (intval($order->CustomerVatCode)>0){ // controllo esistenza cliente per partita iva
+					if ($esiste==0 AND intval($order->CustomerVatCode)>0){ // controllo esistenza cliente per partita iva
 						$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE pariva ='" . $order->CustomerVatCode . "'";
 						$check = gaz_dbi_query($query);
 						if ($check->num_rows > 0){
@@ -292,25 +292,35 @@ class APIeCommerce {
 						}
 					}
 					 // controllo esistenza cliente per cognome, nome e città
-					$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE ragso1 ='" . addslashes($order->CustomerName) . "' AND ragso2 ='". addslashes($order->CustomerSurname) . "'";
-					$check = gaz_dbi_query($query);
-					while ($row = $check->fetch_assoc()) {
-						if (($check->num_rows > 0) && ($row['citspe']=$order->CustomerCity) && ($row['indspe']=$order->CustomerAddress)){
-							$esiste=1;
-							$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
-							$clfoco=$cl['codice'];
-						}
-					}
-								
-					If ($esiste==0) { //registro cliente se non esiste
-							if ($order->CustomerCountry=="IT"){ // se la nazione è IT
-								$lang="1";
-							} else {
-								$lang="0";
+					if ($esiste==0){
+						$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE ragso1 ='" . addslashes($order->CustomerName) . "' AND ragso2 ='". addslashes($order->CustomerSurname) . "'";
+						$check = gaz_dbi_query($query);
+						while ($row = $check->fetch_assoc()) {
+							if (($check->num_rows > 0) && ($row['citspe']=$order->CustomerCity) && ($row['indspe']=$order->CustomerAddress)){
+								$esiste=1;
+								$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
+								$clfoco=$cl['codice'];
 							}
-							gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($order->CustomerName) . "', '" . addslashes($order->CustomerSurname) . "', '". addslashes($order->CustomerAddress) ."', '".$order->CustomerPostCode."', '". addslashes($order->CustomerCity) ."', '". $order->CustomerProvince ."', '" . $order->CustomerCountry. "', '1', '".$lang."', '". $order->CustomerTel ."', '". $order->CustomerFiscalCode ."', '" . $order->CustomerVatCode . "', '" . $order->CustomerCodeFattEl . "', '". $order->CustomerEmail . "', '". $order->CustomerPecEmail . "')");
-							
-							gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri,destin,speban) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .addslashes($order->CustomerName)." ".addslashes($order->CustomerSurname) . "', '". $order->CustomerShippingDestin ."', 'S')");
+						}
+					}			
+					If ($esiste==0) { //registro cliente se non esiste
+						if ($order->CustomerCountry=="IT"){ // se la nazione è IT
+							$lang="1";
+						} else {
+							$lang="0";
+						}
+						if (strlen ($order->CustomerFiscalCode)>1 AND intval ($order->CustomerFiscalCode)==0){ // se il codice fiscale non è numerico 
+							if (substr($order->CustomerFiscalCode,9,2)>40){ // deduco il sesso 
+								$sexper="F";
+							} else {
+								$sexper="M";
+							}
+						} else {
+							$sexper="G";
+						}
+						gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($order->CustomerSurname)." ". addslashes($order->CustomerName) . "', '" . addslashes($order->BusinessName) . "', '". $sexper. "', '".addslashes($order->CustomerAddress) ."', '".$order->CustomerPostCode."', '". addslashes($order->CustomerCity) ."', '". $order->CustomerProvince ."', '" . $order->CustomerCountry. "', '1', '".$lang."', '". $order->CustomerTel ."', '". $order->CustomerFiscalCode ."', '" . $order->CustomerVatCode . "', '" . $order->CustomerCodeFattEl . "', '". $order->CustomerEmail . "', '". $order->CustomerPecEmail . "')");
+						
+						gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri,destin,speban,codpag) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .addslashes($order->CustomerName)." ".addslashes($order->CustomerSurname) . "', '". $order->CustomerShippingDestin ."', 'S', '".$order->PaymentName."')");
 					}
 					
 					if ($order->TotalDiscount>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
