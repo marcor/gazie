@@ -33,6 +33,12 @@ $docOperat = $upd_mm->getOperators();
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
+if ( isset($_GET['idfeva'])) 
+{
+    gaz_dbi_put_row($gTables['tesbro'], "id_tes", $_GET['idfeva'], "status", "EVASO");
+    header("Location: select_evaord.php?clfoco=".$_GET['clfoco']);
+}
+
 /**
  * carica i dati del cliente dentro $form
  */
@@ -43,7 +49,7 @@ function caricaCliente(&$form) {
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($form['clfoco']);
     $form['indspe'] = $cliente['indspe'] . " - " . $cliente['capspe'] . " " . $cliente['citspe'] . " " . $cliente['prospe'];
-    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc LIKE 'V__' AND status NOT LIKE 'EV%' ", "datemi ASC");
+    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc LIKE 'VO_' AND status NOT LIKE 'EV%' ", "datemi ASC");
     while ($testate = gaz_dbi_fetch_array($rs_testate)) {
         $id_des = $anagrafica->getPartner($testate['id_des']);
         $form['traspo'] += $testate['traspo'];
@@ -359,7 +365,8 @@ if (isset($_POST['clfoco']) || isset($_GET['clfoco'])) {
     $form['clfoco'] = 0;
 }
 
-if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di un ddt
+if (isset($_POST['ddt']) || isset($_POST['cmr'])) 
+{ //conferma dell'evasione di un ddt
     //controllo i campi
     $dataemiss = $_POST['datemi_Y'] . "-" . $_POST['datemi_M'] . "-" . $_POST['datemi_D'];
     $utsDataemiss = mktime(0, 0, 0, $_POST['datemi_M'], $_POST['datemi_D'], $_POST['datemi_Y']);
@@ -910,7 +917,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
 				// fine inserisco id_lotmag
 				
                 //modifico il rigo dell'ordine indicandoci l'id della testata della fattura immediata
-                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
+                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $v['id_tes'] );
             }
             if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
                 //controllo se ci sono ancora righi inevasi
@@ -1428,7 +1435,10 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                         break;
                 }
                 if ($ctrl_tes != $v['id_tes']) {
-                    echo "<tr><td class=\"FacetDataTD\" colspan=\"9\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td></tr>";
+                    echo "<tr><td class=\"FacetDataTD\" colspan=\"9\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td>
+                    <td id='forzaevasione'>
+                    <a class='btn btn-xs btn-success' href='select_evaord.php?clfoco=".$form['clfoco']."&idfeva=".$v["id_tes"]."'>Forza evasione</a>
+                    </td></tr>";
                 }
 
                 if (empty($checkin) || $checkin == ' disabled ') {
