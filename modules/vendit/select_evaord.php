@@ -130,9 +130,10 @@ function caricaCliente(&$form) {
  * 
  */
 
-function setOrdineEvaso($righi) {
+function setOrdineEvaso($righi) 
+{
     global $gTables;
-//                controllo se ci sono ancora righi inevasi
+    // controllo se ci sono ancora righi inevasi
     $id_tesArray = array_unique(array_column($righi, 'id_tes'));
     foreach ($id_tesArray as $id_tes) {
         $inevasi = false;
@@ -150,7 +151,7 @@ function setOrdineEvaso($righi) {
             }
         }
         if (!$inevasi) {  //se non ci sono + righi da evadere
-//                    modifico lo status della testata dell'ordine solo se completamente evaso
+            // modifico lo status della testata dell'ordine solo se completamente evaso
             gaz_dbi_put_row($gTables['tesbro'], "id_tes", $id_tes, "status", "EVASO");
         }
     }
@@ -434,7 +435,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr'])) { //conferma dell'evasione di 
             $form['tipdoc'] = 'CMR';
         } else {
             $form['ddt_type'] = 'T';
-//            $form['tipdoc'] = 'DDT';  // tolto perchè lo prende dall'elenco a discesa
+            //$form['tipdoc'] = 'DDT';  // tolto perchè lo prende dall'elenco a discesa
         }
         $form['template'] = "FatturaSemplice";
         $form['id_con'] = '';
