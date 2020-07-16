@@ -961,7 +961,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             $btn_title = '';
             $peso = 0;
             if ($v['tiprig'] == 0) {
-                if ($artico['good_or_service']>0){ 
+                if ($artico['good_or_service']==1){ 
 					$btn_class = 'btn-info';
 					$btn_title = ' Servizio';
 				} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
