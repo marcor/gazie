@@ -1115,12 +1115,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $magval = array_pop($mv);
                 $form['rows'][$i]['scorta'] = $artico['scorta'];
                 $form['rows'][$i]['quamag'] = $magval['q_g'];
+				/* Antonio Germani: commentato perché siamo in acquisto e non deve proporre la giacenza disponibile in magazzino
                 if ($artico['lot_or_serial'] > 0) { 
                     $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
                     $ld = $lm->divideLots($form['in_quanti']);
-                    /* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
-                     * e se è il caso creo più righi  
-                     */
+                    // ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
+                    // e se è il caso creo più righi  
+                     
                     $j = $i;
                     foreach ($lm->divided as $k => $v) {
                         if ($v['qua'] >= 0.00001) {
@@ -1131,6 +1132,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         }
                     }
                 }
+				*/
             } elseif ($form['in_tiprig'] == 1) { //forfait
                 $form['rows'][$i]['codart'] = "";
                 $form['rows'][$i]['annota'] = "";
