@@ -36,7 +36,7 @@ function getMovements($date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
         $m=array();
-        $where="datreg BETWEEN $date_ini AND $date_fin";
+        $where="type_mov = '1' AND datreg BETWEEN $date_ini AND $date_fin";
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
 			  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
