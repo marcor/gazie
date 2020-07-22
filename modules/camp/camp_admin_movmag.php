@@ -311,9 +311,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$res = gaz_dbi_get_row($gTables['orderman'], "description", $form['coseprod']);
     $form['id_orderman'] = $res['id'];
 	
-    if (intval($form['id_orderman']) > 0) { //se è stata inserita una produzione
+    if (intval($form['id_orderman']) > 0 AND intval($form['campo_coltivazione1']) == 0) { //se è stata inserita una produzione e non è stato inserito il primo campo
         $rs_orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
-        // Carico il campo della produzione nel form
+        // propongo il primo campo della produzione nel form
 		$form['campo_coltivazione1'] = $rs_orderman['campo_impianto'];
     } 
     $form['search_partner'] = "";
