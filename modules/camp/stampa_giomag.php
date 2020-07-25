@@ -44,7 +44,7 @@ function getMovements($date_ini,$date_fin,$type){
 		  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
 		  $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".perc_N, ".$gTables['artico'].".perc_P, ".$gTables['artico'].".perc_K, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
 	$table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-			LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['clfoco'].".codice)
+			LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
 		   LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
 	$rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, campo_coltivazione ASC, operat DESC, id_mov ASC');
 	while ($r = gaz_dbi_fetch_array($rs)) {
