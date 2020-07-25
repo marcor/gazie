@@ -22,7 +22,6 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
@@ -32,24 +31,27 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     gaz_set_time_limit (0);
 }
 
-function getMovements($date_ini,$date_fin)
-    {
-        global $gTables,$admin_aziend;
-        $m=array();
-        $where="type_mov = '1' AND datreg BETWEEN $date_ini AND $date_fin";
-        $what=$gTables['movmag'].".*, ".
-              $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
-			  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
-              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".perc_N, ".$gTables['artico'].".perc_P, ".$gTables['artico'].".perc_K, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
-        $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-				LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['clfoco'].".codice)
-               LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
-        $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, campo_coltivazione ASC, operat DESC, id_mov ASC');
-        while ($r = gaz_dbi_fetch_array($rs)) {
-            $m[] = $r;
-        }
-        return $m;
-    }
+function getMovements($date_ini,$date_fin,$type){
+	global $gTables,$admin_aziend;
+    $m=array();
+	if ($type == "di campagna"){		 
+		$where="mostra_qdc = '1' AND type_mov = '1' AND datreg BETWEEN $date_ini AND $date_fin";
+	} else {
+		$where="mostra_qdc = '1' AND ". $gTables['movmag'].".operat = '1' AND datreg BETWEEN $date_ini AND $date_fin";
+	}  
+	$what=$gTables['movmag'].".*, ".
+		  $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
+		  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
+		  $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".perc_N, ".$gTables['artico'].".perc_P, ".$gTables['artico'].".perc_K, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
+	$table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
+			LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['clfoco'].".codice)
+		   LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
+	$rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, campo_coltivazione ASC, operat DESC, id_mov ASC');
+	while ($r = gaz_dbi_fetch_array($rs)) {
+		$m[] = $r;
+	}
+	return $m;
+}
 
 $luogo_data=$admin_aziend['citspe'].", lì ";
 
@@ -62,7 +64,6 @@ if (isset($_GET['ds'])) {
 } else {
    $luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
 }
-
 $giori = substr($_GET['ri'],0,2);
 $mesri = substr($_GET['ri'],2,2);
 $annri = substr($_GET['ri'],4,4);
@@ -71,26 +72,42 @@ $giorf = substr($_GET['rf'],0,2);
 $mesrf = substr($_GET['rf'],2,2);
 $annrf = substr($_GET['rf'],4,4);
 $utsrf= mktime(0,0,0,$mesrf,$giorf,$annrf);
+$type = substr($_GET['type'],0,11);
 
-$result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
+$result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf),$type);
 
 require("../../config/templates/report_template_qc.php");
-$title = array('luogo_data'=>$luogo_data,
-               'title'=>"QUADERNO DI CAMPAGNA dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf),
-               'hile'=>array(array('lun' => 17,'nam'=>'Data att.'),
-                             array('lun' => 35,'nam'=>'Causale'),
-                             array('lun' => 30,'nam'=>'Annotazioni'),
-                             array('lun' => 12,'nam'=>'Campo'),
-                             array('lun' => 10,'nam'=>'ha'),
-                             array('lun' => 38,'nam'=>'Coltura'),
-							 array('lun' => 69,'nam'=>'Prodotto'),
-							 array('lun' => 6,'nam'=>'Cl.'),
-                             array('lun' => 8,'nam'=>'U.M.'),
-                             array('lun' => 12,'nam'=>'Q.tà'),
-							 array('lun' => 30,'nam'=>'Avversità'),
-							 array('lun' => 18,'nam'=>'Operat.')
-                            )
-              );
+if ($type=="di campagna"){
+	$title = array('luogo_data'=>$luogo_data,
+	'title'=>"Registro ". $type ." dal ". strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf),
+	'hile'=>array(array('lun' => 17,'nam'=>'Data att.'),
+				 array('lun' => 35,'nam'=>'Causale'),
+				 array('lun' => 30,'nam'=>'Annotazioni'),
+				 array('lun' => 12,'nam'=>'Campo'),
+				 array('lun' => 10,'nam'=>'ha'),
+				 array('lun' => 38,'nam'=>'Coltura'),
+				 array('lun' => 69,'nam'=>'Prodotto'),
+				 array('lun' => 6,'nam'=>'Cl.'),
+				 array('lun' => 8,'nam'=>'U.M.'),
+				 array('lun' => 12,'nam'=>'Q.tà'),
+				 array('lun' => 30,'nam'=>'Avversità'),
+				 array('lun' => 18,'nam'=>'Operat.')
+				)
+	);
+} else {
+	$title = array('luogo_data'=>$luogo_data,
+	   'title'=>"Registro ". $type ." dei prodotti agricoli dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf),
+	   'hile'=>array(array('lun' => 20,'nam'=>'Data Reg.'),
+					 array('lun' => 36,'nam'=>'Causale'),
+					 array('lun' => 83,'nam'=>'Articolo'),
+					 array('lun' => 22,'nam'=>'Lotto'),
+					 array('lun' => 56,'nam'=>'Rif.Documento'),
+					 array('lun' => 20,'nam'=>'Rag. sociale'),
+					 array('lun' => 10,'nam'=>'U.M.'),
+					 array('lun' => 15,'nam'=>'Quantità')
+					)
+	);
+}
 
 $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
@@ -100,52 +117,66 @@ $pdf->SetFooterMargin(20);
 $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',9);
-if (sizeof($result) > 0) {
-	//while (list($key, $row) = each($result)) DEPRECATEd IN PHP 7+ Antonio Germani
+if (sizeof($result) > 0 AND $type=="di campagna") {
 	foreach($result as $key => $row)	{
-		if ($row['mostra_qdc']==1){ //escludi se è stato selezionato di non mostrare nel Q.d.c.
-			$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $row['campo_coltivazione']);// Antonio Germani carico il campo
-			if (!isset($res)){
-				$row['campo_coltivazione']="-";
-			}
-			$datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
-			$datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
-			$movQuanti = $row['quanti']*$row['operat'];
-			$pdf->Cell(17,6,$datadoc,1,0,'C');
-			$pdf->Cell(35,6,$row['descri'],1, 0, 'l', 0, '', 1);
-			if ($row['perc_N']>0){
-				$row['desdoc']="NPK=".intval($row['perc_N'])."-".intval($row['perc_P'])."-".intval($row['perc_K'])." ".$row['desdoc'];
-			}
-			$pdf->Cell(30,6,$row['desdoc'],1, 0, 'l', 0, '', 1);
-			if ($res['zona_vulnerabile']==0){
-				$pdf->Cell(12,6,substr($row['campo_coltivazione'],0,5),1);
-			} else {
-				$pdf->Cell(12,6,substr($row['campo_coltivazione']." ZVN",0,5),1);
-			}
-			// Antonio Germani Inserisco superficie e coltura		
-			$pdf->Cell(10,6,str_replace('.', ',',$res['ricarico']),1);
-			$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $res['id_colture']);
-			$pdf->Cell(38,6,substr($res4["nome_colt"],0,40),1);
-			// fine inserisco superficie, coltura	  
-	  	  
-			$pdf->Cell(69,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
-			If ($row['classif_amb']==0){$pdf->Cell(6,6,"Nc",1);}
-			If ($row['classif_amb']==1){$pdf->Cell(6,6,"Xi",1);}
-			If ($row['classif_amb']==2){$pdf->Cell(6,6,"Xn",1);}
-			If ($row['classif_amb']==3){$pdf->Cell(6,6,"T",1);}
-			If ($row['classif_amb']==4){$pdf->Cell(6,6,"T+",1);}
-			If ($row['classif_amb']==5){$pdf->Cell(6,6,"Pa",1);}
-			$pdf->Cell(8,6,$row['unimis'],1,0,'C');
-			$pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
-			$res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
-			$pdf->Cell(30,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
 		
-			/* Antonio Germani - trasformo nome utente login in cognome e nome e lo stampo */	  
-			$res2 = gaz_dbi_get_row ($gTables['admin'], 'user_name', $row['adminid'] );	
-			$pdf->Cell(18,6,$res2['user_lastname']." ".$res2['user_firstname'],1, 1, 'l', 0, '', 1);
-			$colonna="1";
-			/* Antonio Germani FINE trasformo nome utente login in cognome e nome */	  
-		} 
+		$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $row['campo_coltivazione']);// Antonio Germani carico il campo
+		if (!isset($res)){
+			$row['campo_coltivazione']="-";
+		}
+		$datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
+		$datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
+		$movQuanti = $row['quanti']*$row['operat'];
+		$pdf->Cell(17,6,$datadoc,1,0,'C');
+		$pdf->Cell(35,6,$row['descri'],1, 0, 'l', 0, '', 1);
+		if ($row['perc_N']>0){
+			$row['desdoc']="NPK=".intval($row['perc_N'])."-".intval($row['perc_P'])."-".intval($row['perc_K'])." ".$row['desdoc'];
+		}
+		$pdf->Cell(30,6,$row['desdoc'],1, 0, 'l', 0, '', 1);
+		if ($res['zona_vulnerabile']==0){
+			$pdf->Cell(12,6,substr($row['campo_coltivazione'],0,5),1);
+		} else {
+			$pdf->Cell(12,6,substr($row['campo_coltivazione']." ZVN",0,5),1);
+		}
+		// Antonio Germani Inserisco superficie e coltura		
+		$pdf->Cell(10,6,str_replace('.', ',',$res['ricarico']),1);
+		$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $res['id_colture']);
+		$pdf->Cell(38,6,substr($res4["nome_colt"],0,40),1);
+		// fine inserisco superficie, coltura	  
+	  
+		$pdf->Cell(69,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
+		If ($row['classif_amb']==0){$pdf->Cell(6,6,"Nc",1);}
+		If ($row['classif_amb']==1){$pdf->Cell(6,6,"Xi",1);}
+		If ($row['classif_amb']==2){$pdf->Cell(6,6,"Xn",1);}
+		If ($row['classif_amb']==3){$pdf->Cell(6,6,"T",1);}
+		If ($row['classif_amb']==4){$pdf->Cell(6,6,"T+",1);}
+		If ($row['classif_amb']==5){$pdf->Cell(6,6,"Pa",1);}
+		$pdf->Cell(8,6,$row['unimis'],1,0,'C');
+		$pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
+		$res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
+		$pdf->Cell(30,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
+	
+		/* Antonio Germani - trasformo nome utente login in cognome e nome e lo stampo */	  
+		$res2 = gaz_dbi_get_row ($gTables['admin'], 'user_name', $row['adminid'] );	
+		$pdf->Cell(18,6,$res2['user_lastname']." ".$res2['user_firstname'],1, 1, 'l', 0, '', 1);
+		$colonna="1";
+		/* Antonio Germani FINE trasformo nome utente login in cognome e nome */	  
+		
+	}
+}
+if (sizeof($result) > 0 AND $type=="di carico") {
+	foreach ($result AS $key => $row) {
+		$datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
+		$datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
+		$movQuanti = $row['quanti']*$row['operat'];
+		$pdf->Cell(20,3,$datareg,1,0,'C');
+		$pdf->Cell(36,3,$row['caumag'].'-'.substr($row['descri'],0,25),1, 0, 'l', 0, '', 1);
+		$pdf->Cell(83,3,$row['artico'].' - '.substr($row['desart'],0,70),1, 0, 'l', 0, '', 1);
+		$pdf->Cell(22,3,substr($row['id_lotmag'],-20),1, 0, 'l', 0, '', 1); // L'identificatore lotto, se troppo lungo, viene accorciato agli ultimi 15 caratteri
+		$pdf->Cell(56,3,$row['desdoc'].' del '.$datadoc,1, 0, 'l', 0, '', 1);
+		$pdf->Cell(20,3,substr($row['ragsoc'],0,30),1, 0, 'l', 0, '', 1);
+		$pdf->Cell(10,3,$row['unimis'],1,0,'C');
+		$pdf->Cell(15,3,gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity']),1,1,'R');
 	}
 }
 $pdf->Output();

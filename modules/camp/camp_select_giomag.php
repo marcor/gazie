@@ -27,24 +27,23 @@ require ("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $msg='';
 
-function getMovements($date_ini,$date_fin)
-    {
-        global $gTables,$admin_aziend;
-        $m=array();
-        $where="type_mov = '1' AND datreg BETWEEN $date_ini AND $date_fin";
-        $what=$gTables['movmag'].".*, ".
-              $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
-              $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
-              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
-        $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-               LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
-               LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
-        $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, clfoco ASC, operat DESC, id_mov ASC');
-        while ($r = gaz_dbi_fetch_array($rs)) {
-            $m[] = $r;
-        }
-        return $m;
-    }
+function getMovements($where){
+	global $gTables,$admin_aziend;
+	$m=array();
+	$where = "mostra_qdc = '1' AND ".$where;
+	$what=$gTables['movmag'].".*, ".
+		  $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
+		  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
+		  $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
+	$table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
+		   LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
+		   LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
+	$rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, clfoco ASC, operat DESC, id_mov ASC');
+	while ($r = gaz_dbi_fetch_array($rs)) {
+		$m[] = $r;
+	}
+	return $m;
+}
 	
 // Antonio Germani carico la tabella campi di coltivazione
 $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
@@ -77,6 +76,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
+	$form['type']=$_POST['type'];
     $form['date_ini_D']=intval($_POST['date_ini_D']);
     $form['date_ini_M']=intval($_POST['date_ini_M']);
     $form['date_ini_Y']=intval($_POST['date_ini_Y']);
@@ -113,7 +113,8 @@ if (isset($_POST['print']) && $msg=='') {
     $_SESSION['print_request']=array('script_name'=>'stampa_giomag',
                                      'ri'=>date("dmY",$utsini),
                                      'rf'=>date("dmY",$utsfin),
-                                     'ds'=>date("dmY",$utsexe)
+                                     'ds'=>date("dmY",$utsexe),
+									 'type'=>$_POST['type']
                                      );
     header("Location: sent_print.php");
     exit;
@@ -122,7 +123,8 @@ if (isset($_POST['print_cop']) && $msg=='') {
     $_SESSION['print_request']=array('script_name'=>'stampa_cop_giomag',
                                      'ri'=>date("dmY",$utsini),
                                      'rf'=>date("dmY",$utsfin),
-                                     'ds'=>date("dmY",$utsexe)
+                                     'ds'=>date("dmY",$utsexe),
+									 'type'=>$_POST['type']
                                      );
     header("Location: sent_print.php");
     exit;
@@ -152,6 +154,7 @@ function setDate(name) {
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
+echo "<input type=\"hidden\" value=\"".$form['type']."\" name=\"type\" />\n";
 $gForm = new magazzForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
@@ -172,8 +175,10 @@ $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
-echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
-echo $script_transl['view'];
+echo '<td align="center"> <input type="submit" accesskey="i" name="preview" value="di carico"';
+echo $script_transl['view']," Carico materie prime",'" tabindex="99" >';
+echo ' <input type="submit" accesskey="i" name="preview" value="di campagna"';
+echo $script_transl['view']," Quaderno di campagna";
 echo '" tabindex="100" >';
 echo "\t </td>\n";
 echo "\t </tr>\n";
@@ -183,45 +188,46 @@ $date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$for
 $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);
 
 if (isset($_POST['preview']) and $msg=='') {
-  $m=getMovements($date_ini,$date_fin);
-  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
-  if (sizeof($m) > 0) {
-        $ctr_mv='';
+	if ($_POST['preview'] == "di campagna"){		 
+		$where="type_mov = '1' AND datreg BETWEEN $date_ini AND $date_fin";
+	} else {
+		$where=$gTables['movmag'].".operat = '1' AND datreg BETWEEN $date_ini AND $date_fin";
+	}
+	echo "<input type=\"hidden\" value=\"".$_POST['preview']."\" name=\"type\" />\n";
+	$m=getMovements($where);
+	echo "<div align = \"center\" > Registro ", $_POST['preview'], " </div>";
+	echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+	if (sizeof($m) > 0) {
+        $ctr_mv='';		
         echo "<tr>";
         $linkHeaders=new linkHeaders($script_transl['header']);
         $linkHeaders->output();
         echo "</tr>";
-        $sum=0.00;
+        $sum=0.00;		
+		foreach($m as $key => $mv){
 		
-		//while (list($key, $mv) = each($m)) DEPRECATED IN PHP 7+ Antonio Germani
-			foreach($m as $key => $mv){
-			if ($mv['mostra_qdc']==1){ // se è un movimento di campagna oppure è un articolo da mostrare nel quaderno di campagna
-            $datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
-            $datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
-            $movQuanti = $mv['quanti']*$mv['operat'];
-            $sum += $movQuanti;
-            echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
-            echo "<td  align=\"center\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
-            echo "<td class=\"FacetDataTD\">".$mv['desdoc']." &nbsp;</td>";
-// Antonio Germani carico la tabella campi
-$res = gaz_dbi_dyn_query ('*', $gTables['campi']);
-// fine carico tabella campi			
-	// Antonio Germani Inserisco campo, superficie e coltura		
-            echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." &nbsp;</td>";
+			$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
+			$datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
+			$movQuanti = $mv['quanti']*$mv['operat'];
+			$sum += $movQuanti;
+			echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
+			echo "<td  align=\"center\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
+			echo "<td class=\"FacetDataTD\">".$mv['desdoc']." &nbsp;</td>";
+			
+			// Antonio Germani Inserisco campo, superficie e coltura		
+			echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." &nbsp;</td>";
 			$colonna="0";
-	while($b_row = $res->fetch_assoc()) { 
-	if ($mv['campo_coltivazione']==$b_row["codice"]) { 
-	echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($b_row["ricarico"],1,$admin_aziend['decimal_quantity'])." &nbsp;</td>\n";
-	$res2 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $mv['id_colture']);
-	 echo "<td class=\"FacetDataTD\" align=\"center\">".$res2["nome_colt"]." &nbsp;</td>\n";
-	 $colonna="1";
-		} 
-	}
-	 if ($colonna<1) {
-		echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";
-		echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n"; 
-	 }
-// fine inserisco campo, superficie, coltura
+			$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $mv['campo_coltivazione'] );				 
+			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($res["ricarico"],1,$admin_aziend['decimal_quantity'])." &nbsp;</td>\n";
+			$res2 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $mv['id_colture']);
+			echo "<td class=\"FacetDataTD\" align=\"center\">".$res2["nome_colt"]." &nbsp;</td>\n";
+			$colonna="1";				
+			
+			if ($colonna<1) {
+				echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";
+				echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n"; 
+			 }
+			// fine inserisco campo, superficie, coltura
 			echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['artico']." &nbsp;</td>\n";
 			If ($mv['classif_amb']==0) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_0.gif\" alt=\"Non classificato\" width=\"50 px\">" ." &nbsp;</td>\n";}
 			If ($mv['classif_amb']==1) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_1.gif\" alt=\"Irritante\" width=\"50 px\">" ." &nbsp;</td>\n";}
@@ -229,29 +235,27 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 			If ($mv['classif_amb']==3) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_3.gif\" alt=\"Tossico\" width=\"50 px\">" ." &nbsp;</td>\n";}
 			If ($mv['classif_amb']==4) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_4.gif\" alt=\"Molto tossico\" width=\"50 px\">" ." &nbsp;</td>\n";}
 			If ($mv['classif_amb']==5) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_5.gif\" alt=\"Pericoloso ambiente\" width=\"50 px\">" ." &nbsp;</td>\n";}
-            echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
+			echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
 			$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $mv['id_avversita']);
-            echo "<td class=\"FacetDataTD\" align=\"right\">".$res['nome_avv']." </td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"right\">".$res['nome_avv']." </td>\n";
 			echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['adminid']." </td>\n";
-            echo "</tr>\n";
-            $ctr_mv = $mv['artico'];
-			}
-         }
-         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-         echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
-         echo $script_transl['print'];
-         echo '">';
-         echo "\t </td>\n";
-		 echo '<td colspan="7" align="right"><input type="submit" name="print_cop" value="';
-         echo $script_transl['print']." copertina";
-         echo '">';
-         echo "\t </td>\n";
-         echo "\t </tr>\n";
-  }
-  echo "</table></form>";
+			echo "</tr>\n";
+			$ctr_mv = $mv['artico'];
+		
+		}
+        echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
+        echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
+        echo $script_transl['print'];
+        echo '">';
+        echo "\t </td>\n";
+		echo '<td colspan="7" align="right"><input type="submit" name="print_cop" value="';
+        echo $script_transl['print']." copertina";
+        echo '">';
+        echo "\t </td>\n";
+        echo "\t </tr>\n";
+	}
+	echo "</table></form>";
 }
-?>
-<?php
 require("../../library/include/footer.php");
 ?>

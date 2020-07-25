@@ -34,6 +34,14 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     gaz_set_time_limit (0);
 }
 
+if (substr($_GET['type'],0,9) == "di carico"){
+	$title="Registro di carico";
+	$subtitle="dei fitofarmaci e dei prodotti agricoli";
+} else {
+	$title="Quaderno di campagna";
+	$subtitle="Registro dei trattamenti e delle lavorazioni agricole";
+}
+
 $rs_azienda = gaz_dbi_dyn_query('*', $gTables['aziend'], intval($_SESSION['company_id']), 'codice DESC', 0, 1);
 
 // create new PDF document
@@ -65,9 +73,9 @@ $pdf->SetFont('dejavusans', 'BI', 40);
 $pdf->SetFillColor(220, 255, 220);
 
 // MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0)
-$pdf->MultiCell(0, 0, 'Quaderno di campagna', TLR, 'C', 1, 0, '', 120, true, 0, false, true, 40);
+$pdf->MultiCell(0, 0, $title , TLR, 'C', 1, 0, '', 120, true, 0, false, true, 40);
 $pdf->SetFont('dejavusans', 'BI', 10);
-$pdf->MultiCell(0, 0, 'Registro dei trattamenti e delle lavorazioni agricole', LRB, 'C', 1, 0, '', 138, true, 0, false, true, 40);
+$pdf->MultiCell(0, 0, $subtitle , LRB, 'C', 1, 0, '', 138, true, 0, false, true, 40);
 $pdf->SetFont('dejavusans', 'BI', 40);
 $pdf->MultiCell(100, 0,  date("Y"), 1, 'C', 0, 0, 100, 150, true);
 
