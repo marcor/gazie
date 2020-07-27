@@ -39,7 +39,13 @@ $limit=0;
 if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'composite_mag')['val']=='0') {
     $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service != 1", $orderby, $limit, $passo);
 } else {
-    $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0", $orderby, $limit, $passo);    
+	// 27/07/20 Antonio Germani - Nella tabella company_config non esiste composite_mag ?!?! A causa di ciò vengono erroneamente esclusi gli articoli composti
+	//Nel dubbio se sia un errore o altro lascio e modifico come segue
+	if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti')['val']=='STD') {
+		$result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service!=1", $orderby, $limit, $passo);
+	}  else {
+		$result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0", $orderby, $limit, $passo);
+	}		
 }
 
 $pdf = new Report_template();
@@ -62,17 +68,7 @@ $heavy = array (
 
 $mval['q_g']=0;
 $i=0;
-while ($r = gaz_dbi_fetch_array($result)) {   
-    if ( $i % 30 == 0 ) {
-        $pdf->AddPage('L',"A4");
-        $pdf->Cell(35,5,"Codice",$heavy,0,'L');
-        $pdf->Cell(100,5,"Descrizione",$heavy,0,'L');
-        $pdf->Cell(15,5,"UmV",$heavy,0,'C');
-        $pdf->Cell(30,5,"Pezzi in stock",$heavy,0,'R');
-        $pdf->Cell(30,5,"Ordinato cliente",$heavy,0,'R');
-        $pdf->Cell(30,5,"Ordinato fornitore",$heavy,0,'R');
-        $pdf->Cell(30,5,"Totale",$heavy,1,'R');  
-    }
+while ($r = gaz_dbi_fetch_array($result)) {     
     $totale = 0;
     $ordinatif = $gForm->get_magazz_ordinati($r['codice'], "AOR");
     $ordinatic = $gForm->get_magazz_ordinati($r['codice'], "VOR");
@@ -82,21 +78,34 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		$magval['q_g']=0;
 	}
     $totale = ($magval['q_g']-$ordinatic)+$ordinatif;
-    $pdf->SetTextColor(0);
-	if ($totale<=0.1||$magval['q_g']<=0.1){
-		$pdf->SetTextColor(255,140,0);
+	if ($_GET['esc']=="escludi" AND $totale<=0){
+	} else {
+		if ( $i % 30 == 0 ) {
+			$pdf->AddPage('L',"A4");
+			$pdf->Cell(35,5,"Codice",$heavy,0,'L');
+			$pdf->Cell(100,5,"Descrizione",$heavy,0,'L');
+			$pdf->Cell(15,5,"UmV",$heavy,0,'C');
+			$pdf->Cell(30,5,"Pezzi in stock",$heavy,0,'R');
+			$pdf->Cell(30,5,"Ordinato cliente",$heavy,0,'R');
+			$pdf->Cell(30,5,"Ordinato fornitore",$heavy,0,'R');
+			$pdf->Cell(30,5,"Totale",$heavy,1,'R');  
+		}
+		$pdf->SetTextColor(0);
+		if ($totale<=0.1||$magval['q_g']<=0.1){
+			$pdf->SetTextColor(255,140,0);
+		}	
+		if ($totale<=0){
+			$pdf->SetTextColor(255,0,0);
+		}
+		$pdf->Cell(35,5,$r['codice'],$light,0,'L');
+		$pdf->Cell(100,5,$r['descri'],$light,0,'L', 0, '', 1);
+		$pdf->Cell(15,5,$r['unimis'],$light,0,'C');
+		$pdf->Cell(30,5,gaz_format_quantity($magval['q_g'],1,3),$light,0,'R');
+		$pdf->Cell(30,5,gaz_format_quantity($ordinatic,1,3),$light,0,'R');
+		$pdf->Cell(30,5,gaz_format_quantity($ordinatif,1,3),$light,0,'R');
+		$pdf->Cell(30,5,gaz_format_quantity($totale,1,3),$light,1,'R');   
+		$i++;
 	}
-	if ($totale<=0){
-		$pdf->SetTextColor(255,0,0);
-	}
-    $pdf->Cell(35,5,$r['codice'],$light,0,'L');
-    $pdf->Cell(100,5,$r['descri'],$light,0,'L', 0, '', 1);
-    $pdf->Cell(15,5,$r['unimis'],$light,0,'C');
-    $pdf->Cell(30,5,gaz_format_quantity($magval['q_g'],1,3),$light,0,'R');
-    $pdf->Cell(30,5,gaz_format_quantity($ordinatic,1,3),$light,0,'R');
-    $pdf->Cell(30,5,gaz_format_quantity($ordinatif,1,3),$light,0,'R');
-    $pdf->Cell(30,5,gaz_format_quantity($totale,1,3),$light,1,'R');   
-    $i++;
 }
 $pdf->SetFont('helvetica','B',9);
 $pdf->Output($filename);

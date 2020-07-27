@@ -26,7 +26,11 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
 if ( isset($_GET["Stampa"]) ) {
-    header("Location: ../../modules/magazz/stampa_situaz.php");
+	$esc="";
+	if (isset ($_GET['escludi'])){
+		$esc="?esc=escludi";
+	}
+    header("Location: ../../modules/magazz/stampa_situaz.php".$esc);
 }
 
 require("../../library/include/header.php");
@@ -56,14 +60,17 @@ $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show
             </td>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_int("descri", "Articolo"); //gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $all, $orderby, "ragso1");  ?>
-            </td>
-            <td class="FacetFieldCaptionTD" colspan="3"></td>
-            <td class="FacetFieldCaptionTD">
-                <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
-            </td>
+			</td>
+            <td class="FacetFieldCaptionTD" colspan="3">
+			    <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+			</td>
             <td class="FacetFieldCaptionTD">
                 <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
-            </td>
+			</td>
+            <td class="FacetFieldCaptionTD">
+				<input type='submit' class='btn btn-default btn-xs' name='Stampa' value='&nbsp;Stampa&nbsp;' />
+				<input type='checkbox' name='escludi' value='escludi'/> Escludi esauriti
+			</td>
             </tr>
             <?php
             // creo l'array (header => campi) per l'ordinamento dei record
@@ -73,7 +80,7 @@ $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show
                 "Pezzi in stock" => "",
                 "Ordinato Cliente" => "",
                 "Ordinato Fornitore" => "",
-                "<input type='submit' class='btn btn-default btn-xs' name='Stampa' value='&nbsp;Stampa&nbsp;' />" => "" );
+                "Totale" => "" );
 
             $linkHeaders = new linkHeaders($headers_artico);
             $gForm = new magazzForm();
