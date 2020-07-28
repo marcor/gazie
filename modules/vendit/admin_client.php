@@ -561,7 +561,7 @@ echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['stapre'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->variousSelect('stapre', $script_transl['yn_value'], $form['stapre']);
+$gForm->variousSelect('stapre', $script_transl['stapre_value'], $form['stapre']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

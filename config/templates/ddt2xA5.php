@@ -128,7 +128,7 @@ class DDT extends Template_2xA5
                     $this->Cell(64,6,$rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,6,$rigo['unimis'],1,0,'L');
                     $this->Cell(20,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    if ($this->docVars->client['stapre'] == 'S' && floatval($rigo['prelis']) >= 0.00001 ) {
+                    if (($this->docVars->client['stapre'] == 'S' OR $this->docVars->client['stapre'] == 'T' ) && floatval($rigo['prelis']) >= 0.00001 ) {
                         $this->Cell(17,6,number_format($tot_row,$this->decimal_price,',',''),'TB',0,'R');
                         $this->Cell(7,6,$rigo['sconto'],1,0,'R');
                     } else {
@@ -140,7 +140,7 @@ class DDT extends Template_2xA5
                     $this->Cell(64,6,$rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,6,$rigo['unimis'],1,0,'L');
                     $this->Cell(20,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    if ($this->docVars->client['stapre'] == 'S' && floatval($rigo['prelis']) >= 0.00001 ) {
+                    if (($this->docVars->client['stapre'] == 'S' OR $this->docVars->client['stapre'] == 'T') && floatval($rigo['prelis']) >= 0.00001 ) {
                         $this->Cell(17,6,number_format($tot_row,$this->decimal_price,',',''),'TB',0,'R');
                         $this->Cell(7,6,$rigo['sconto'],1,1,'R');
                     } else {
@@ -189,7 +189,7 @@ class DDT extends Template_2xA5
                     $this->Cell(17, 6, '', 1);
                     $this->Cell(7, 6, '', 1, 1);
                     $this->Cell(101, 6, $rigo['descri'],1,0,'L',0,'',1);
-                    if ($this->docVars->client['stapre'] == 'S') {
+                    if ($this->docVars->client['stapre'] == 'S' OR $this->docVars->client['stapre'] == 'T') {
                         $this->Cell(17,6,number_format($rigo['importo'],$this->decimal_price,',',''),'TB',0,'R');
                         $this->Cell(7,6,$rigo['sconto'],1,1,'R');
                     } else {

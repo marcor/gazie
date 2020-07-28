@@ -135,7 +135,7 @@ class DDT extends Template_con_scheda
                     $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
                     $this->Cell(10,$h,$rigo['unimis'],1,0,'L');
                     $this->Cell(25,$h,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    if ($this->docVars->client['stapre'] == 'S' && floatval($rigo['prelis']) >= 0.00001 ) {
+                    if (($this->docVars->client['stapre'] == 'S' OR $this->docVars->client['stapre'] == 'T' ) && floatval($rigo['prelis']) >= 0.00001 ) {
                         $this->Cell(25,$h,number_format($rigo['prelis'],$this->decimal_price,',',''),'TB',0,'R');
                         $this->Cell(10,$h,floatval($rigo['sconto']),1,1,'R');
                     } else {
@@ -198,7 +198,7 @@ class DDT extends Template_con_scheda
                     $this->Cell(25, 6, '', 1);
                     $this->Cell(10, 6, '', 1, 1);
                     $this->Cell(152, 6, $rigo['descri'],1,0,'L',0,'',1);
-                    if ($this->docVars->client['stapre'] == 'S') {
+                    if ($this->docVars->client['stapre'] == 'S' OR $this->docVars->client['stapre'] == 'T') {
                         $this->Cell(25,6,number_format($rigo['importo'],$this->decimal_price,',',''),'TB',0,'R');
                         $this->Cell(10,6,$rigo['sconto'],1,1,'R');
                     } else {
@@ -249,8 +249,8 @@ class DDT extends Template_con_scheda
         } else {
             $this->Cell(26, 5,'','LR',1);
         }
-		/* COMMENTO QUESTO PEZZO DI CODICE IN QUANTO SUL DDT NORMALMENTE NON SI CALCOLA IL TOTALE ANCHE QUANDO VIENE INDICATO IL PREZZO
-        if ($this->docVars->client['stapre'] == 'S') {
+		//Antonio Germani - Se richiesto nella scheda cliente stampo il totale iva compresa
+        if ($this->docVars->client['stapre'] == 'T') {
             $this->Cell(109,5,'Pagamento - Banca','LTR',0,'C',1);          
             $this->Cell(78,5,'TOTALE A PAGARE (segue fattura)','LTR',1,'C',1);
             $this->Cell(109,6,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',0,'C',0,'',1);
@@ -275,10 +275,10 @@ class DDT extends Template_con_scheda
             $this->Cell(78,6, "€ ". gaz_format_number($totale),'LBR',1,'C',0,'',1);
             $this->SetFont('helvetica','',9);
         } else {
-		*/
+		
             $this->Cell(187,5,'Pagamento - Banca','LTR',1,'C',1);
             $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C',0,'',1);
-        //}
+        }
         $this->Cell(51,5,'Spedizione','LTR',0,'C',1);
         $this->Cell(114,5,'Vettore','LTR',0,'C',1);
         $this->Cell(22,5,'Trasporto','LTR',1,'C',1);
