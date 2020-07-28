@@ -2,7 +2,7 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2020 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2019 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
@@ -35,20 +35,20 @@ class OrdineWeb extends Template
         $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Ordine dal sito WEB n.'.$this->tesdoc['numdoc'].' del '.$this->giorno.'.'.$this->mese.'.'.$this->anno;
+        $this->tipdoc = 'WEB order n.'.$this->tesdoc['numdoc'].' del '.$this->giorno.'.'.$this->mese.'.'.$this->anno;
     }
     function newPage() {
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->SetFont('helvetica','',9);
-        $this->Cell(25,6,'Codice',1,0,'L',1);
-        $this->Cell(80,6,'Descrizione',1,0,'L',1);
-        $this->Cell(7, 6,'U.m.',1,0,'C',1);
-        $this->Cell(16,6,'Quantità',1,0,'R',1);
-        $this->Cell(18,6,'Prezzo',1,0,'R',1);
-        $this->Cell(8, 6,'%Sc.',1,0,'C',1);
-        $this->Cell(20,6,'Importo',1,0,'R',1);
-        $this->Cell(12,6,'%IVA',1,1,'R',1);
+        $this->Cell(25,6,'Code',1,0,'L',1);
+        $this->Cell(80,6,'Description',1,0,'L',1);
+        $this->Cell(7, 6,'M.u.',1,0,'C',1);
+        $this->Cell(16,6,'Quantity',1,0,'R',1);
+        $this->Cell(18,6,'Price',1,0,'R',1);
+        $this->Cell(8, 6,'%Disc.',1,0,'C',1);
+        $this->Cell(20,6,'Amount',1,0,'R',1);
+        $this->Cell(12,6,'%VAT',1,1,'R',1);
     }
 
     function pageHeader()
@@ -65,16 +65,16 @@ class OrdineWeb extends Template
                 $this->Cell(186,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
-                $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
+                $this->Cell(186,12,'>>> --- FOLLOWS ON NEXT PAGE --- >>> ',1,1,'R');
                 $this->SetFont('helvetica', '', 9);
                 $this->newPage();
-                $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
+                $this->Cell(186,5,'<<< --- FOLLOWS FROM PREVIOUS PAGE --- <<< ',0,1);
             }
                 switch($rigo['tiprig']) {
                 case "0":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L');
-                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
+                    $this->Cell(25, 6, $rigo['codart'],1,0,'L',0,'',1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
+                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C',0,'',1);
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
                     if ($rigo['sconto']>0) {
@@ -124,14 +124,14 @@ class OrdineWeb extends Template
         //stampo il castelletto
         $this->SetY(212);
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
-        $this->Cell(62,6, 'Pagamento',1,0,'C',1);
-        $this->Cell(68,6, 'Castelletto I.V.A.',1,0,'C',1);
-        $this->Cell(56,6, 'T O T A L E',1,1,'C',1);
+        $this->Cell(62,6, 'Payment mode',1,0,'C',1);
+        $this->Cell(68,6, 'VAT summary',1,0,'C',1);
+        $this->Cell(56,6, 'T O T A L ',1,1,'C',1);
         $this->SetFont('helvetica', '', 8);
         $this->Cell(62,6, $this->pagame['descri'],1,0,'C');
-        $this->Cell(25,4, 'Imponibile',1,0,'C',1);
-        $this->Cell(18,4, 'Aliquota',1,0,'C',1);
-        $this->Cell(25,4, 'Imposta',1,1,'C',1);
+        $this->Cell(25,4, 'Taxable',1,0,'C',1);
+        $this->Cell(18,4, 'Rate',1,0,'C',1);
+        $this->Cell(25,4, 'Tax',1,1,'C',1);
         $this->docVars->setTotal($this->tesdoc['traspo']);
         foreach ($this->docVars->cast as $key => $value) {
             $this->Cell(62);
@@ -154,13 +154,13 @@ class OrdineWeb extends Template
         //stampo i totali
         $this->SetY(200);
         $this->SetFont('helvetica','',9);
-        $this->Cell(36, 6,'Tot. Corpo',1,0,'C',1);
-        $this->Cell(16, 6,'% Sconto',1,0,'C',1);
-        $this->Cell(24, 6,'Spese Incasso',1,0,'C',1);
-        $this->Cell(26, 6,'Trasporto',1,0,'C',1);
-        $this->Cell(36, 6,'Tot.Imponibile',1,0,'C',1);
-        $this->Cell(26, 6,'Tot. I.V.A.',1,0,'C',1);
-        $this->Cell(22, 6,'Peso in kg',1,1,'C',1);
+        $this->Cell(36, 6,'Article total',1,0,'C',1);
+        $this->Cell(16, 6,'% Discount',1,0,'C',1);
+        $this->Cell(24, 6,'Payment fees',1,0,'C',1);
+        $this->Cell(26, 6,'Shipping cost',1,0,'C',1);
+        $this->Cell(36, 6,'Taxable total',1,0,'C',1);
+        $this->Cell(26, 6,'Total VAT',1,0,'C',1);
+        $this->Cell(22, 6,'Wheight kg',1,1,'C',1);
 
         $this->Cell(36, 6, gaz_format_number($totimpmer),1,0,'C');
         $this->Cell(16, 6, gaz_format_number($this->tesdoc['sconto']),1,0,'C');
@@ -175,9 +175,9 @@ class OrdineWeb extends Template
         $this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol), 1, 1, 'C');
         $this->SetY(224);
         $this->SetFont('helvetica','',9);
-        $this->Cell(62, 6,'Spedizione',1,1,'C',1);
+        $this->Cell(62, 6,'Shipping',1,1,'C',1);
         $this->Cell(62, 6,$this->tesdoc['spediz'],1,1,'C');
-        $this->Cell(62, 6,'Vettore',1,1,'C',1);
+        $this->Cell(62, 6,'Shipping method',1,1,'C',1);
         $this->Cell(186,6,$vettor['descri'],1,1,'L');
     }
 
