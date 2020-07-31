@@ -2386,7 +2386,12 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 						
 						// Antonio Germani - Se l'articolo movimenta il SIAN apro il div SIAN
 						if ($form['rows'][$k]['SIAN']>0) {
-							?>						
+							?>	
+							<style>
+							#gaz-responsive-table {
+								float: left;
+							}
+							</style>
 							<div class="col-md-4">
 								<div class="form-group">
 									<label for="good_or_service" class="col-sm-5 control-label"><?php echo "Operazione SIAN rigo",$k+1; ?></label>
