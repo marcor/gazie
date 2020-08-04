@@ -479,10 +479,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$initra = gaz_format_date($form['initra'],true);// adatto al db
             $utstra = gaz_format_date($form['initra'],2); // mktime
         }
-        if (!gaz_format_date($form['initra'],'chk')) {
+		
+        if (!gaz_format_date($form['initra'],'chk') AND $form['tipdoc'] != 'VCO') {
             $msg['err'][] = "37";
         }
-        if ($utstra < $utsemi) {
+        if ($utstra < $utsemi AND $form['tipdoc'] != 'VCO') {
             $msg['err'][] = "38";
         }
         if (!isset($_POST['rows'])) {
@@ -768,12 +769,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['datfat'] = $datemi;
                     $form['numfat'] = $old_head['numfat'];
                 }
+				if ($form['tipdoc']=="VCO"){
+					$form['initra'] = "0000-00-00";
+				} else {
+					$form['initra'] = $initra;
+				}
                 $form['ddt_type'] = $old_head['ddt_type'];
                 $form['geneff'] = $old_head['geneff'];
                 $form['id_contract'] = $old_head['id_contract'];
                 $form['id_con'] = $old_head['id_con'];
                 $form['status'] = $old_head['status'];
-                $form['initra'] = $initra;
+                
                 $form['datemi'] = $datemi;
                 $codice = array('id_tes', $form['id_tes']);
                 /** inizio modifica FP 19/10/2015 */
