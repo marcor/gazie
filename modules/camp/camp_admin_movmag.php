@@ -149,7 +149,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['mesdoc'] = substr($result['datdoc'], 5, 2);
     $form['anndoc'] = substr($result['datdoc'], 0, 4);
     $form['artico'][$form['mov']] = $result['artico'];
-	$form['cosear'][$form['mov']] = $result['artico'];
+	
 	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
     $form['id_lotmag'][$form['mov']] = $result['id_lotmag'];
     $reslotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
@@ -183,16 +183,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {    //     ****    SE NON E' IL PRIMO ACCESSO   ****
 	$form['mov'] = $_POST['mov'];
 	$form['nmov'] = $_POST['nmov'];
-	if ($form['nmov']==$form['mov']){
-		$form['cosear'][$form['mov']] = $_POST['cosear'];
-		$form['artico'][$form['mov']] = $_POST['cosear'];
-		$_POST['artico'.$form['mov']] = $_POST['cosear'];
+	if ($form['nmov']==$form['mov']){		
+		$_POST['artico'.$form['mov']] = $_POST['codart'];
+		$form['artico'][$form['mov']] = $_POST['codart'];
 	}
 		
 	if (isset($_POST['mov']) ) { // Antonio Germani - se è stato inserito un rigo faccio il parsing di tutti i righi presenti
 		for ($m = 0;$m <= $form['nmov'];++$m) {
-			$form['artico'][$m] = $_POST['artico' . $m];
-			$form['cosear'][$m] = $form['artico'][$m];
+			$form['artico'][$m] = $_POST['artico' . $m];		
 			$form['id_lotmag'][$m] = $_POST['id_lotmag' . $m];
 			$form['lot_or_serial'][$m] = $_POST['lot_or_serial' . $m];
 			if ($form['lot_or_serial'][$m] == 1) {
@@ -929,7 +927,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['nome_avv'][$form['mov']] = "";
     $form['id_avversita'][$form['mov']] = 0;
     $form['artico'][$form['mov']] = "";
-	$form['cosear'][$form['mov']] = "";
+	
     $form['id_lotmag'][$form['mov']] = 0;
     $form['identifier'][$form['mov']] = "";
     $form['expiry'][$form['mov']] = "";
@@ -954,7 +952,7 @@ if (isset($_POST['Add_mov'])) {
     $form['nmov'] = $_POST['nmov'];
     for ($m = 0;$m <= $form['nmov'];++$m) {
         $form['artico'][$m] = $_POST['artico' . $m];
-		$form['cosear'][$m] = $_POST['artico' . $m];
+		
         $form['id_lotmag'][$m] = $_POST['id_lotmag' . $m];
         $form['lot_or_serial'][$m] = $_POST['lot_or_serial' . $m];
         if ($form['lot_or_serial'][$m] == 1) {
@@ -976,7 +974,7 @@ if (isset($_POST['Add_mov'])) {
     }
     $form['nmov'] = $form['nmov'] + 1;
     $form['artico'][$form['nmov']] = "";
-	$form['cosear'][$form['nmov']] = "";
+	
     $form['id_lotmag'][$form['nmov']] = 0;
     $form['identifier'][$form['nmov']] = "";
     $form['expiry'][$form['nmov']] = "";
@@ -994,7 +992,7 @@ if (isset($_POST['Add_mov'])) {
 // Antonio Germani questo serve per togliere un movimento
 if (isset($_POST['Del_mov'])) {
     $form['artico'][$form['nmov']] = "";
-	$form['cosear'][$form['nmov']] = "";
+	
     $form['id_lotmag'][$form['nmov']] = 0;
     $form['identifier'][$form['nmov']] = "";
     $form['expiry'][$form['nmov']] = "";
@@ -1041,7 +1039,7 @@ if (isset($_POST['acquis']) AND isset($fornitore) ) { //compilazione ordine a fo
 		<input type="hidden" name="annemi" value="<?php echo date('Y'); ?>"><!-- anno -->
 		<input type="hidden" value="INSERT" name="in_status">
 		<input type="hidden" name="in_codart" value="<?php echo $form['artico'][$form['mov']]; ?>">
-		<input type="hidden" name="cosear" value="<?php echo $form['artico'][$form['mov']]; ?>">
+		
 		<input type="hidden" value="<?php echo $scorta; ?>"  name="in_quanti"> 
 		<input type="hidden" name="in_codric" value="330000004">
 		<input type="hidden" value="<?php echo $form['artico'][$form['mov']]; ?>" name="codart">
@@ -1190,6 +1188,39 @@ echo $stringa;
 	});
 <!-- fine datepicker -->
 
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql fitofarmaci	-->
+	$(document).ready(function(){
+	//Autocomplete search using PHP, MySQLi, Ajax and jQuery
+	//generate suggestion on keyup
+		$('#codart').keyup(function(e){
+			e.preventDefault();
+			var form = $('#mov-camp').serialize();
+			$.ajax({
+				type: 'POST',
+				url: 'do_search.php',
+				data: form,
+				dataType: 'json',
+				success: function(response){
+					if(response.error){
+						$('#product_search').hide();
+					}
+					else{
+						$('#product_search').show().html(response.data);
+					}
+				}
+			});
+		});
+		//fill the input
+		$(document).on('click', '.dropdown-item', function(e){
+			e.preventDefault();
+			$('#product_search').hide();
+			var fullname = $(this).data('fullname');
+			$('#codart').val(fullname);
+			$('#mov-camp').submit();
+		});
+	});
+<!-- fine autocompletamento -->	
+
 </script>
 
 <?php
@@ -1204,7 +1235,7 @@ if (intval($form['nome_colt']) == 0) {
 ?>
 
 <!--   >>>>>>>>>>>    inizio FORM            >>>>>>>>>>  -->
-<form method="POST" name="myform" enctype="multipart/form-data">
+<form method="POST" name="myform" enctype="multipart/form-data" id="mov-camp">
 	<input type="hidden" name="<?php echo ucfirst($toDo) ?>" value="">
 	<input type="hidden" value="<?php echo $form['hidden_req'] ?>" name="hidden_req" >
 	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno']; ?> ">
@@ -1397,15 +1428,24 @@ if (intval($form['nome_colt']) == 0) {
 					$ric_mastro = substr($form['artico'][$form['mov']], 0, 3);
 					
 					if ($form['mov']==$form['nmov']){ // se è l'ultimo rigo attivo l'autocomplete
-						$select_artico = new selectartico("artico");
-						$select_artico->addSelected($form['artico'][$form['mov']]);			
-						$select_artico->output(substr($form['cosear'][$form['mov']], 0, 20));
+					
+						?>
+						<div class="row">
+							<div class="col-md-12">														
+								<div class="form-group">									
+									<input class="col-sm-8" type="text" id="codart" name="codart" value="<?php echo $form['artico'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
+									<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
+								</div>
+								<ul class="dropdown-menu" style="left: 30%; padding: 0px;" id="product_search"></ul>									
+							</div>
+						</div><!-- chiude row  -->
+						<?php
+						
 					} else {		
 						?>
 						<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
-						<input type="hidden" name="cosear<?php echo $form['mov']; ?>" value="<?php echo $form['cosear'][$form['mov']]; ?>" />
-						<input type="hidden" name="cosear" value="<?php echo $form['artico'][$form['mov']]; ?>" />
 						<?php
+						echo $form['artico'][$form['mov']]," - ";
 					}
 					
 					if ($form['artico'][$form['mov']] != "") { // SE C'è UN ARTICOLO
