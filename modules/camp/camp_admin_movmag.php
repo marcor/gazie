@@ -1188,7 +1188,7 @@ echo $stringa;
 	});
 <!-- fine datepicker -->
 
-<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql fitofarmaci	-->
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql artico	-->
 	$(document).ready(function(){
 	//Autocomplete search using PHP, MySQLi, Ajax and jQuery
 	//generate suggestion on keyup
@@ -1427,8 +1427,7 @@ if (intval($form['nome_colt']) == 0) {
 					$print_unimis = "";
 					$ric_mastro = substr($form['artico'][$form['mov']], 0, 3);
 					
-					if ($form['mov']==$form['nmov']){ // se è l'ultimo rigo attivo l'autocomplete
-					
+					if ($form['mov']==$form['nmov']){ // se è l'ultimo rigo attivo l'autocomplete					
 						?>
 						<div class="row">
 							<div class="col-md-12">														
@@ -1439,8 +1438,7 @@ if (intval($form['nome_colt']) == 0) {
 								<ul class="dropdown-menu" style="left: 30%; padding: 0px;" id="product_search"></ul>									
 							</div>
 						</div><!-- chiude row  -->
-						<?php
-						
+						<?php						
 					} else {		
 						?>
 						<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
