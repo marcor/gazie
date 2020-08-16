@@ -459,9 +459,9 @@ if ($modal_ok_insert === true) {
 		unset($_SESSION['ok_ins']);
 	}
     if ($toDo == 'insert') {
-        echo '<div class="text-center"><b>' . $script_transl['ins_this'] . '</b></div>';
+        echo '<div class="text-center"><h3>' . $script_transl['ins_this'] . '</h3></div>';
     } else {
-        echo '<div class="text-center"><b>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</b></div>';
+        echo '<div class="text-center"><h3>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</h3></div>';
     }
     ?>
         <div class="panel panel-default gaz-table-form">

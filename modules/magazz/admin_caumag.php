@@ -102,7 +102,7 @@ if ($toDo == 'update') {
 print "<form method=\"POST\">\n";
 print "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 print "<input type=\"hidden\" value=\"" . $_POST['ritorno'] . "\" name=\"ritorno\">\n";
-print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
+echo '<div class="text-center"><h3>'.$title.'</h3></div>';
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
     $message = "";
