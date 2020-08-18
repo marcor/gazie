@@ -123,7 +123,22 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			}
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['caumag'],"codice",$i);
-		break;		
+		break;
+		case "artico":			
+			$i=substr($_POST['ref'],0,15);
+			//Cancello le eventuali immagini web e i documenti
+			$rs=gaz_dbi_dyn_query ("*",$gTables['files'],"table_name_ref = 'artico' AND item_ref = '".$i."'");
+			foreach ($rs as $delimg){
+				gaz_dbi_del_row($gTables['files'], "id_doc", $delimg['id_doc']);
+				unlink (DATA_DIR."files/".$admin_aziend['codice']."/images/". $delimg['id_doc'] . "." . $delimg['extension']);
+			}
+			// Cancello l'eventuale body_text
+			gaz_dbi_del_row($gTables['body_text'], "table_name_ref", "artico_".$i);
+			//Cancello se presenti gli articoli presenti in distinta base
+			$result = gaz_dbi_del_row($gTables['distinta_base'], "codice_composizione", $i );
+			//Cancello l'articolo
+			$result = gaz_dbi_del_row($gTables['artico'], "codice", $i);
+		break;
 	}
 }
 ?>

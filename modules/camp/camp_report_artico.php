@@ -126,8 +126,15 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
 $gForm = new magazzForm();
 ?>
 <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
-<form method="POST" id="form">	
- <div class="panel panel-info col-lg-6">	 
+<form method="POST" id="form">
+<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+	<p><b>articolo:</b></p>
+	<p>codice:</p>
+	<p class="ui-state-highlight" id="idcodice"></p>
+	<p>Descrizione</p>
+	<p class="ui-state-highlight" id="iddescri"></p>
+</div>	
+<div class="panel panel-info col-lg-6">	 
 <?php if ($mt==1) {	?>
 	<label for="codice" ><?php echo "Elenco di tutti gli articoli"; ?></label>
 			 
