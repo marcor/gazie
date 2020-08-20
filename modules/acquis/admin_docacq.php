@@ -2116,10 +2116,10 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 		<?php
 		$nr=1;
 		if (count($form['rows']) > 0) {
-			$tot = 0;
-			$form['net_weight'] = 0;
-			$form['units'] = 0;
-			$form['volume'] = 0;
+			$tot = 0;	
+			$net_weight=0;
+			$volume=0;
+			$units=0;
 			$totimp_body = 0.00;
 			$totivafat = 0.00;
 			$totimpfat = 0.00;
@@ -2134,11 +2134,11 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				$artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
 				$campart = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
 				$v['descri_codric'] = gaz_dbi_get_row($gTables['clfoco'], 'codice', $v['codric'])['descri'];
-				$form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
+				$net_weight += $v['quanti'] * $artico['peso_specifico'];
 				if ($artico['pack_units'] > 0) {
-					$form['units'] += intval(round($v['quanti'] / $artico['pack_units']));
+					$units += intval(round($v['quanti'] / $artico['pack_units']));
 				}
-				$form['volume'] += $v['quanti'] * $artico['volume_specifico'];
+				$volume += $v['quanti'] * $artico['volume_specifico'];
 				// fine addizione peso,pezzi,volume
 				$btn_class = 'btn-success';
 				$btn_title = '';
@@ -2479,6 +2479,15 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				}
 				$ctrl_orderman=$v['id_orderman'];
 			}
+			if ($net_weight > 0 ){
+				$form['net_weight']=$net_weight;
+			}
+			if ($units > 0 ){
+				$form['units']=$units;
+			}
+			if ($volume > 0 ){
+				$form['volume']=$volume;
+			}			
 			$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table',$rowshead);
 		}
 		$class_conf_row='btn-success';
