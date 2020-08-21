@@ -813,6 +813,15 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="maintenance_period" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="maintenance_period" class="col-sm-4 control-label"><?php echo $script_transl['maintenance_period']; ?></label>
+                            <input type="number" min="0" max="999" step="1" class="col-sm-4"  value="<?php echo $form['maintenance_period']; ?>" name="maintenance_period" maxlength="3" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="volumeSpecifico" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">

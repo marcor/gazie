@@ -432,6 +432,7 @@ $strScript = array("browse_document.php" =>
         'uniacq' => 'Unit&agrave; di misura acquisti',
 		'classif_amb' => 'Classificazione ambientale',
 		'classif_amb_value' => array(0=>'non classificato',1=>'irritante',2=>'nocivo',3=>'tossico',4=>'molto tossico'),
+        'maintenance_period' => 'Periodicità manutenzione (gg)',
         'peso_specifico' => 'Peso specifico (kg/l) o Moltiplicatore',
         'volume_specifico' => 'Volume specifico',
         'pack_units' => 'Pezzi in imballo',
