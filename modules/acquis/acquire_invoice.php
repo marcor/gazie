@@ -602,6 +602,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$ddt=$doc->getElementsByTagName('DatiDDT');
 				foreach ($ddt as $vd) { // attraverso DatiDDT
 					$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
+					
+					// calcolo lo step fra i riferimenti linee del ddt: qualcuno :( si è inventato di creare fae con numeri linea del documento con passi diversi da 1
+					$step= ($vr->item($vr->length - 1)->nodeValue - $vr->item(0)->nodeValue) / ($vr->length - 1);
+					
 					if ($vr->item(0)->nodeValue <1){
 						$anomalia="Anomalia";
 					}
@@ -619,7 +623,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['rows'][$nl]['NumeroDDT']=$numddt;
 						$form['rows'][$nl]['DataDDT']=$dataddt;
 					} else {
-						$nl_ref=($vr->item(0)->nodeValue)-1;
+						$nl_ref=(($vr->item(0)->nodeValue)- $step)/$step; // attribuisco il numero di riga del riferimento sulla base dello step adoperato dal creatore della fae
 						$form['rows'][$nl_ref]['NumeroDDT']=$numddt;
 						$form['rows'][$nl_ref]['DataDDT']=$dataddt;
 						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
