@@ -29,4 +29,5 @@ ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `id_assets` INT(9) NOT NULL COMMENT 'Ref.
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `maintenance_period` INT(3) NOT NULL DEFAULT 0 COMMENT 'Periodicità in giorni della eventuale manutenzione del bene/servizio' AFTER `classif_amb`;
 INSERT IGNORE INTO `gaz_XXXcaumag` (`codice`, `descri`, `clifor`, `insdoc`, `operat`) VALUES (91, 'SCARICO PER MANUTENZIONE INTERNA', 0, 1, -1);
 ALTER TABLE `gaz_XXXcaumag`	ADD COLUMN `type_cau` TINYINT(1) NOT NULL COMMENT '0=solo modulo magazzino, 1=solo quaderno di campagna, 9=tutti' AFTER `descri`;
+UPDATE `gaz_XXXcaumag` SET `type_cau` = 9 WHERE 1;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
