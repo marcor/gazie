@@ -1316,7 +1316,7 @@ if (intval($form['nome_colt']) == 0) {
 		<tr><!--   CAUSALE    -->
 			<td class="FacetFieldCaptionTD"><?php echo $script_transl[2]; ?></td><td class="FacetDataTD">
 				<?php 
-				$gForm->selectFromDB('caumag', 'caumag','codice', $form['caumag'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
+				$gForm->selectFromDB('caumag', 'caumag','codice', $form['caumag'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '', '(type_cau = 1 OR type_cau = 9) AND codice < 80');
 				if ($res_caumag['operat'] == 0) {
 					echo " Non opera";
 				}

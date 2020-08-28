@@ -50,6 +50,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['insdoc'] = $_POST['insdoc'];
     $form['operat'] = $_POST['operat'];
     $form['clifor'] = $_POST['clifor'];
+	$form['type_cau'] = $_POST['type_cau'];
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         if ($toDo == 'insert') { // e' un inserimento, controllo se il codice esiste
@@ -82,15 +83,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['insdoc'] = $caumag['insdoc'];
     $form['clifor'] = $caumag['clifor'];
     $form['operat'] = $caumag['operat'];
+	$form['type_cau'] = intval($caumag['type_cau']);
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['caumag'], 'codice <= 89', "codice desc", 0, 1);
+    $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['caumag'], 'codice <= 79', "codice desc", 0, 1);// icodici da 80 in poi sono riservati
     $ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
     $form['codice'] = $ultimo_codice['codice'] + 1;
     $form['descri'] = "";
     $form['clifor'] = 0;
     $form['insdoc'] = 1;
     $form['operat'] = 1;
+	$form['type_cau'] = 1;
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -153,6 +156,22 @@ for ($counter = -1; $counter <= 1; $counter++) {
     print "<option value=\"$counter\" $selected > " . $script_transl[$counter + 9] . "</option>\n";
 }
 print "</select></td></tr>\n";
+
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[18]</td><td class=\"FacetDataTD\">\n";
+print "<select name=\"type_cau\" class=\"FacetSelect\">\n";
+unset ($sel);
+for ($counter = 0; $counter <= 9; $counter++) { 
+    if ($form['type_cau'] == $counter) {
+        $sel[$counter] = " selected ";
+    } else {
+		$sel[$counter] = $counter;
+	}
+}	
+print "<option value=\"0\" $sel[0] > " . $script_transl[19] . "</option>\n";
+print "<option value=\"1\" $sel[1] > " . $script_transl[20] . "</option>\n";
+print "<option value=\"9\" $sel[9] > " . $script_transl[21] . "</option>\n";
+print "</select></td></tr>\n";
+
 print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
 print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
 print "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";

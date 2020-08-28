@@ -48,6 +48,7 @@ if (!isset($_GET['auxil'])) {
    $auxil = "";
    $where = "codice like '$auxil%'";
 }
+$where ="(type_cau = 1 OR type_cau = 9) AND codice < 80 AND ".$where; echo $where;
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 require("./lang.".$admin_aziend['lang'].".php");

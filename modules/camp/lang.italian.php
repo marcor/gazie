@@ -281,7 +281,11 @@ $strScript = array("camp_browse_document.php" =>
         "Fornitore",
         "codice gi&agrave; esistente!",
         "la descrizione &egrave; vuota!",
-        "il codice dev'essere un numero minore di 99"
+        "Il codice dev'essere un numero minore di 99",
+		"Modulo",
+		"Utilizzabile solo dal modulo magazzino",
+		"Utilizzabile solo dal modulo Registro di campagna",
+		"Utilizzabile da entrambi i moduli"
     ),
     "genera_movmag.php" =>
     array("Genera movimenti di magazzino da documenti",
