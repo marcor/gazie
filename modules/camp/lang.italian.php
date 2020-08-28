@@ -281,7 +281,7 @@ $strScript = array("camp_browse_document.php" =>
         "Fornitore",
         "codice gi&agrave; esistente!",
         "la descrizione &egrave; vuota!",
-        "Il codice dev'essere un numero minore di 99",
+        "Il codice dev'essere un numero minore di 80",
 		"Modulo",
 		"Utilizzabile solo dal modulo magazzino",
 		"Utilizzabile solo dal modulo Registro di campagna",

@@ -62,7 +62,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (empty($form['descri'])) {  //descrizione vuota
             $msg .= "16+";
         }
-        if ($form['codice'] >= 98) {  //descrizione vuota
+        if ($form['codice'] >= 80) {  // codice non utilizzabile perché bloccato da altri moduli
             $msg .= "17+";
         }
         if ($msg == "") {// nessun errore

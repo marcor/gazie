@@ -589,7 +589,7 @@ echo "\t </select></td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.submit()\" >\n";
 echo "<option value=\"\">-------------</option>\n";
-$result = gaz_dbi_dyn_query("*", $gTables['caumag'], " 1 ", "codice desc, descri asc");
+$result = gaz_dbi_dyn_query("*", $gTables['caumag'], " type_cau <> 1 ", "codice desc, descri asc"); // Carico le causali escludendo quelle del modulo CAMP
 while ($row = gaz_dbi_fetch_array($result)) {
     $selected = "";
     if ($form["caumag"] == $row['codice']) {
