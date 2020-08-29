@@ -1435,7 +1435,7 @@ if (intval($form['nome_colt']) == 0) {
 									<input class="col-sm-8" type="text" id="codart" name="codart" value="<?php echo $form['artico'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
 									<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
 								</div>
-								<ul class="dropdown-menu" style="left: 30%; padding: 0px;" id="product_search"></ul>									
+								<ul class="dropdown-menu" style="left: 10%; padding: 0px;" id="product_search"></ul>									
 							</div>
 						</div><!-- chiude row  -->
 						<?php						
@@ -1718,21 +1718,34 @@ if (intval($form['nome_colt']) == 0) {
 						<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php $form['clfoco'][$form['mov']]; ?>">
 						<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="">
 					</td>
-				</tr>
+				</tr>				
 				<?php
 			} else { // se è articolo senza magazzino
-				
-				/*Antonio Germani se l'unità di misura è oraria attiva Operaio */
-				if ($print_unimis == "h") {
-					echo "&nbsp;&nbsp;" . $script_transl[32] . "&nbsp;";
-					$g2Form->selectFrom2DB('staff','clfoco','codice','descri', 'staff'.$form['mov'],'id_staff', $form['staff'][$form['mov']], 'id_staff', 1, ' - ','id_clfoco','TRUE','FacetSelect' , null, '');
-				}		
 				?>
 				<tr>
-					<td>
-					<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php echo $itm['id_clfoco']; ?>">
-					<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="<?php echo $form['staff'][$form['mov']]; ?>">
+					
+				<?php
+				/*Antonio Germani se l'unità di misura è oraria attiva Operaio */
+				if ($print_unimis == "h") {
+					?>
+					<td class="FacetFieldCaptionTD">
+						<?php echo $script_transl[32]; ?>
 					</td>
+					<td class="FacetDataTD">
+						<?php
+						$g2Form->selectFrom2DB('staff','clfoco','codice','descri', 'staff'.$form['mov'],'id_staff', $form['staff'][$form['mov']], 'id_staff', 1, ' - ','id_clfoco','TRUE','FacetSelect' , null, '');
+						?>
+					</td>
+					<?php
+				} else {		
+				?>	
+					<td>
+						<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php echo $itm['id_clfoco']; ?>">
+						<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="<?php echo $form['staff'][$form['mov']]; ?>">
+					</td>
+				<?php
+				}
+				?>
 				</tr>
 				<?php
 			}
