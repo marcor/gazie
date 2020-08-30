@@ -187,7 +187,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		 || $a_row['tipdoc'] == "DDR") {
             echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
 	} else if ($a_row['tipdoc'] == "CAM"){
-		echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../camp/admin_movmag.php?id_mov=".$a_row['id_rif']."&Update\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
+		echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../camp/camp_admin_movmag.php?id_mov=".$a_row['id_rif']."&Update\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
 
 	} else {
             echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";

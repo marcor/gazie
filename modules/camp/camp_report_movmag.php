@@ -227,7 +227,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avversita']);
 		echo "<td class=\"FacetDataTD\" align=\"left\">".$a_row['id_avversita']." - ".$res["nome_avv"]." </td>\n";
 	
-		if ($a_row['id_rif'] == 0) {
+		if ($a_row['id_rif'] == 0 OR $a_row['tipdoc'] == "CAM") {
 			echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\">".$a_row['desdoc']."</td>\n";
 		} else {
 			if ($a_row['tipdoc'] == "ADT"
