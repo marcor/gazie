@@ -39,7 +39,7 @@ function submenu($menu_data) {
             echo "\n\t\t\t\t\t\t\t" . '<ul class="dropdown-menu">' . "\n";
         }
         if (preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/", $mnu['icon'])) {
-            $submnu = '<img src="' . $mnu['icon'] . '" /> ';
+            $submnu = '<img src="' . $mnu['icon'] . '" width="32"/> ';
         }
         $submnu = '<a href="' . $mnu['link'] . '">' . $submnu . stripslashes($mnu['name']);
         if (count($mnu) > 5) { //	Esiste un sotto menu
@@ -137,11 +137,11 @@ $(function() {
             $i = 0;
             foreach ($menuArray as $menu_modules_val) {
                 if ($i == 0) { // sul modulo attivo non permetto i submenu in quanto verrano messi sulla barra orizzontale 
-                    echo "\t\t\t\t<li>" . '<a class="dropdown-toggle" data-toggle="dropdown"><img src="' . $menu_modules_val["icon"] . '"/>&nbsp;' . $menu_modules_val['name'] . '<span class="caret"></span></a>';
+                    echo "\t\t\t\t<li>" . '<a class="dropdown-toggle" data-toggle="dropdown"><img src="' . $menu_modules_val["icon"] . '" width="32"/>&nbsp;' . $menu_modules_val['name'] . '<span class="caret"></span></a>';
                     echo "\n\t\t\t\t\t" . '<ul class="dropdown-menu">' . "\n";
                 } else {
                     echo "\t\t\t\t\t";
-                    echo '<li><a href="' . $menu_modules_val['link'] . '"><img src="' . $menu_modules_val["icon"] . '"/>&nbsp;' . $menu_modules_val['name'] . "<span class=\"caret\"></span></a>\n";
+                    echo '<li><a href="' . $menu_modules_val['link'] . '"><img src="' . $menu_modules_val["icon"] . '" width="32"/>&nbsp;' . $menu_modules_val['name'] . "<span class=\"caret\"></span></a>\n";
                     submenu($menu_modules_val);
                     echo "\t\t\t\t\t</li>\n";
                 }
@@ -157,7 +157,7 @@ $(function() {
             // stampo nella barra del menù il dropdown del modulo 
             $icon_lnk = '';
             if (isset($menu['icon']) && preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/", $menu['icon'])) {
-                $icon_lnk = '<img src="' . $menu['icon'] . '" />';
+                $icon_lnk = '<img src="' . $menu['icon'] . '" width="32" />';
             }
             if ($i > 4) { // perché ci sono 5 indici prima dei dati veri e propri
                 if (count($menu) > 5) { // Esiste un sotto menu
