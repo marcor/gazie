@@ -899,8 +899,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['template']="FatturaAcquisto";
 			
 			// Antonio Germani - inizio scrittura DB
-					
-			if ($doc->getElementsByTagName('DatiDDT')->length<1 OR $anomalia == "AnomaliaDDT=FAT"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA
+				
+			if ($doc->getElementsByTagName('DatiDDT')->length<1 OR $anomalia == "AnomaliaDDT=FAT" OR $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA 
+			//oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA 
+			//oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
 				tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
 				//recupero l'id assegnato dall'inserimento
 				$ultimo_id = gaz_dbi_last_id();
@@ -923,7 +925,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
 				}				
 								
-				if (isset($v['exist_ddt']) AND $anomalia!="AnomaliaExistDdt" AND $anomalia != "AnomaliaDDT=FAT") { // se ci sono DDT collegabili alla FAE 	
+				if (isset($v['exist_ddt']) AND $anomalia!="AnomaliaExistDdt" AND $anomalia != "AnomaliaDDT=FAT" AND $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC	
 					if ($ctrl_ddt!=$v['NumeroDDT']) { 
 						// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
 						$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
@@ -996,7 +998,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				// inserisco il rigo rigdoc
 				$id_rif=rigdocInsert($form['rows'][$i]);	
 								
-				if ($form['rows'][$i]['good_or_service']==0 AND strlen($form['rows'][$i]['codart'])>0){ // se l'articolo prevede di movimentare il magazzino
+				if ($form['rows'][$i]['good_or_service']==0 AND strlen($form['rows'][$i]['codart'])>0 AND $form['tipdoc']!=="AFC"){ // se l'articolo prevede di movimentare il magazzino e non è una nota credito
 					// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
 					if ($v['NumeroDDT']>0){ // se c'è un ddt
 						$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
