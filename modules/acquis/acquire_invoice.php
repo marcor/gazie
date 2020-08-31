@@ -915,9 +915,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$i]['status']="INSERT";
 				$post_nl=$i-1;
 				
-				if (abs($form['rows'][$i]['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
+				if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 					$form['rows'][$i]['tiprig']=2;
 				}
+                if ($form['tipdoc']=="AFC" && $v['prelis'] <= 0.00001 ) { // capita a volte che dei software malfatti sulle note credito indichino i valori in negativo... allora li forziamo a positivo
+                    $form['rows'][$i]['prelis']=abs($v['prelis']);
+                    $form['rows'][$i]['quanti']=abs($v['quanti']);
+                }
 				// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
 				if (empty(trim($v['codice_fornitore']))) { // non ho il codice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);						
