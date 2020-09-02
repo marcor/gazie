@@ -104,7 +104,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 		break;
 		case "email":
 			$i=filter_var($_POST['ref'], FILTER_VALIDATE_EMAIL);
-			gaz_dbi_del_row($gTables['tesbro'], 'email', $i);
+			gaz_dbi_put_query($gTables['tesbro'], " email LIKE '%".$i."%'",'email','');
 		break;
 	}
 }

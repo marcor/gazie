@@ -30,4 +30,5 @@ ALTER TABLE `gaz_XXXartico`	ADD COLUMN `maintenance_period` INT(3) NOT NULL DEFA
 ALTER TABLE `gaz_XXXcaumag`	ADD COLUMN `type_cau` TINYINT(1) NOT NULL COMMENT '0=solo modulo magazzino, 1=solo quaderno di campagna, 9=tutti' AFTER `descri`;
 INSERT IGNORE INTO `gaz_XXXcaumag` (`codice`, `descri`, `type_cau`, `clifor`, `insdoc`, `operat`) VALUES (91, 'SCARICO PER MANUTENZIONE INTERNA',5, 0, 1, -1);
 UPDATE `gaz_XXXcaumag` SET `type_cau` = 9 WHERE 1;
+ALTER TABLE `gaz_XXXassets`	ADD COLUMN `codice_campi` INT(3) NOT NULL DEFAULT '0' COMMENT 'Riferimento alla tabella gaz_NNNcampi (luogo di produzione), ovvero il luogo ove è installata la macchina' AFTER `install_date`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
