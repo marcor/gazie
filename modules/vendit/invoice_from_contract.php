@@ -144,7 +144,6 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
     $uts_this_month = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
     $form['this_date'] = strftime("%Y-%m-%d", $uts_this_month);
     $billable = getBillableContracts($form['this_date'], $form['vat_section']);
-    $calc = new venditCalc;
     if (isset($_POST['create']) && empty($msg)) {
         $first_protoc = 0;
         $first_numdoc = 0;
@@ -164,6 +163,7 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                     $last_numdoc++;
                 }
                 //inserisco i dati della testata
+                $calc = new venditCalc;
                 $calc->contractCalc($k); // creo e calcolo il castelletto IVA e i totali del contratto
                 $cntr = gaz_dbi_get_row($gTables['contract'], 'id_contract', $k);
                 $paym = gaz_dbi_get_row($gTables['pagame'], 'codice', $cntr['payment_method']);
