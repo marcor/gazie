@@ -165,25 +165,6 @@ function gaz_flt_disp_int($flt, $hint) {
     ?><input type="text" placeholder="<?php echo $hint; ?>" class="input-sm form-control" name="<?php echo $flt; ?>" value="<?php if (isset($_GET[$flt])) print $_GET[$flt]; ?>" size="5" class="FacetInput"><?php
 }
 
-function gaz_filtro($flt_name, $table, $where, $orderby) {
-    //global $gTables;
-    echo $_GET[$flt_name];
-    if (isset($_GET[$flt_name]) && $_GET[$flt_name] != 'All') {
-        $citta = $_GET[$flt_name];
-        $where .= " and " . $flt_name . " = '$citta'";
-    } else
-        $citta = "All";
-
-    $res = gaz_dbi_dyn_query("distinct " . $flt_name, $table, $where, $orderby);
-    while ($val = gaz_dbi_fetch_array($res)) {
-        if ($citta == $val[$flt_name])
-            $selected = "selected";
-        else
-            $selected = "";
-        echo "<option value=\"" . $val[$flt_name] . "\" " . $selected . ">" . $val[$flt_name] . "</option>";
-    }
-}
-
 function gaz_today() {
     $today = date("d/m/Y");
     $tmp = DateTime::createFromFormat('d/m/Y', $today);
@@ -2185,10 +2166,10 @@ class TableSorter {
         # i valori di default vengono sovrascritti se presenti anche nella richiesta
         $def_GET = array_merge($this->default_search, $pruned_GET);
         foreach ($search_fields as $field => $sql_expr) {
-            if (isset($def_GET[$field]) && strlen($def_GET[$field])) {
+            if (isset($def_GET[$field]) && strlen($def_GET[$field]) &&  $pruned_GET[$field] != 'All') {
                 global $$field;  # settiamo una variabile globale chiamata come il parametro
                 $$field = $def_GET[$field];
-                if (isset($pruned_GET[$field]))  # escludiamo dall'url i valori default applicati
+                if (isset($pruned_GET[$field]))  # escludiamo dall'url i valori default applicati ed anche i valori esattamente 'All' 
                     $url_search_query_parts[] = "$field=" . urlencode($$field);
                 $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
                 $$field = htmlspecialchars($$field, ENT_QUOTES);
