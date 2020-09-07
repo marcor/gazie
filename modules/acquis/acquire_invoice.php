@@ -536,6 +536,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			} else {
 				$form['rows'][$nl]['amount']=CalcolaImportoRigo(1,$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']));
 			}
+
+            // tengo traccia del NumeroLinea e se il rigo è descrittivo 
+			$form['rows'][$nl]['numrig'] = $item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+			$form['rows'][$nl]['is_descri'] = ($form['rows'][$nl]['prelis']<0.00001)?1:false;
+            
 			$tot_imponi += $form['rows'][$nl]['amount'];
 			if (!empty($form['rows'][$nl]) && !empty($form['rows'][$max_val_linea]) && $form['rows'][$nl]['amount']>$form['rows'][$max_val_linea]['amount']){ // è una linea con valore più alto delle precedenti
 				$max_val_linea=$nl;
@@ -599,8 +604,49 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		/* 
 		Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
 		*/
-		$nl=0;$anomalia="";
         //print_r($nl_NumeroLinea);
+		$anomalia="";
+        if ($doc->getElementsByTagName('DatiDDT')->length>=1) { 
+            // quando ci sono dei DdT capita che il rigo che precede sia la descrizione del seguente allora faccio un primo attraversamento dei riferimenti ai righi perchè capita che alcuni righi descrittivi che precedono siano comunque riferiti a ddt
+			$ddt=$doc->getElementsByTagName('DatiDDT');
+            $ctrl_NumeroDDT='';
+			foreach ($ddt as $vd) { // attraverso DatiDDT
+				$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
+				if ($vr->item(0)->nodeValue <1){ // non ho righi riferiti al ddt, dovrei acquisirli tutti ad uno solo
+					$anomalia="Anomalia";
+				}
+                $numddt=$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue;
+				$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
+				foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
+                    $nl = $nl_NumeroLinea[$vdd->nodeValue];
+                    if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt lo assegno a questo  
+                        if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){   
+                            $form['rows'][$nl-1]['NumeroDDT']=$numddt;
+                            $form['rows'][$nl-1]['DataDDT']=$dataddt;
+                            // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
+                            unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
+                        }                    
+                    }                
+					if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+						$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+					} else {
+						$form['rows'][$nl]['exist_ddt']=false;
+					}
+					$form['rows'][$nl]['NumeroDDT']=$numddt;
+					$form['rows'][$nl]['DataDDT']=$dataddt;
+                    // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
+                    unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]);
+                    $ctrl_NumeroDDT=$numddt;
+                }
+                $ctrl_NumeroDDT=$numddt;
+            }
+        }
+        $nl=array_key_last($form['rows']); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
+        
+        //print_r($nl_NumeroLinea); // in questo mi ritrovo i righi non assegnati
+
+/*
+		$nl=0;$anomalia="";
 		foreach ($DettaglioLinee as $item) {
 			$nl++;
 			if ($doc->getElementsByTagName('DatiDDT')->length>=1) {
@@ -650,6 +696,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				} 				
 			}
 		}
+        */
 		if ($numdoc==$numddt AND $datdoc==$dataddt){ // se fattura e ddt hanno stesso numero e data modifico l'anomalia
 			$anomalia = "AnomaliaDDT=FAT";
 		}
