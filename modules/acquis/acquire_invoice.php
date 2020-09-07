@@ -467,8 +467,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		*/
 		$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
 		$nl=0;
+        $nl_NumeroLinea = []; // matrice che conterrà i riferimenti tra $nl e il NumeroLinea, da utilizzare per assegnare Numero/DataDDT se presenti
 		foreach ($DettaglioLinee as $item) {
 			$nl++;
+            // assegno i riferimenti tra $nl e il NumeroLinea
+            $nl_NumeroLinea[($item->getElementsByTagName("NumeroLinea")->length >= 1)?$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue:false]=$nl;
+            
 			if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
 				$form['rows'][$nl]['codice_fornitore'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
 			} else {
@@ -596,6 +600,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
 		*/
 		$nl=0;$anomalia="";
+        //print_r($nl_NumeroLinea);
 		foreach ($DettaglioLinee as $item) {
 			$nl++;
 			if ($doc->getElementsByTagName('DatiDDT')->length>=1) {
@@ -633,7 +638,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						}
 					}
 					foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
-						$nl_ref++;
 						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
 							$form['rows'][$nl_ref]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
 						} else {
@@ -641,6 +645,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						}
 						$form['rows'][$nl_ref]['NumeroDDT']=$numddt;
 						$form['rows'][$nl_ref]['DataDDT']=$dataddt;
+						$nl_ref++;
 					} 
 				} 				
 			}
