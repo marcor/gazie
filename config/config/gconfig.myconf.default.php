@@ -23,6 +23,9 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+
+// abilita il debug delle variabili nel footer della pagina (impostare true/false)
+define('debug_active', FALSE);
  
 /*
 --------=======oooooooooooo!!!!!  ATTENZIONE !!!!!ooooooooooo========-------------
@@ -153,9 +156,6 @@ define('update_URI_files', 'https://sourceforge.net/projects/gazie');
 
 // url per comunicare (ping) il mio nuovo IP DINAMICO  all'hosting di appoggio
 define('MY_SET_DYNAMIC_IP',''); 
-
-// abilita il debug delle variabili nel footer della pagina (impostare true/false)
-define('debug_active', FALSE);
 
 // attiva la modalità manutenzione non è consentito l'accesso e l'uso dei moduli (FALSE oppure 'email amministratore')
 define('maintenance', FALSE);
