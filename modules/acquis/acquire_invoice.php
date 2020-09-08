@@ -641,8 +641,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $ctrl_NumeroDDT=$numddt;
             }
         }
-        $nl=array_key_last($form['rows']); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
-        
+        $nl=end(array_keys($form['rows'])); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
+   
         //print_r($nl_NumeroLinea); // in questo mi ritrovo i righi non assegnati
 
 /*
