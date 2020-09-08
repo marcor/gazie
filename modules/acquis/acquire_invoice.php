@@ -61,6 +61,7 @@ function tryBase64Decode($s)
 	return $s;
 }
 
+
 function der2smime($file)
 {
 $to = <<<TXT
@@ -471,7 +472,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		foreach ($DettaglioLinee as $item) {
 			$nl++;
             // assegno i riferimenti tra $nl e il NumeroLinea
-            $nl_NumeroLinea[($item->getElementsByTagName("NumeroLinea")->length >= 1)?$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue:false]=$nl;
+            // succede di tutto: se NumeroLinea è doppio lo dobbiamo controllare...
+            $NumLin='GAZ'.$nl;
+            if ($item->getElementsByTagName("NumeroLinea")->length >= 1){ // c'è un riferimento al numero
+                $NumLin=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+                if (array_key_exists($NumLin,$nl_NumeroLinea)){ // controllo, e se c'è un numero duplicato :( ne invento uno pur di non perdere il riferimento
+                    $NumLin .= '-'.$nl;
+                }
+            }            
+            $nl_NumeroLinea[$NumLin]=$nl;
             
 			if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
 				$form['rows'][$nl]['codice_fornitore'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
@@ -610,11 +619,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             // quando ci sono dei DdT capita che il rigo che precede sia la descrizione del seguente allora faccio un primo attraversamento dei riferimenti ai righi perchè capita che alcuni righi descrittivi che precedono siano comunque riferiti a ddt
 			$ddt=$doc->getElementsByTagName('DatiDDT');
             $ctrl_NumeroDDT='';
+            $acc_DataDDT='';
 			foreach ($ddt as $vd) { // attraverso DatiDDT
 				$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
-				if ($vr->item(0)->nodeValue <1){ // non ho righi riferiti al ddt, dovrei acquisirli tutti ad uno solo
-					$anomalia="Anomalia";
-				}
                 $numddt=$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue;
 				$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
 				foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
@@ -623,6 +630,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                         if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){   
                             $form['rows'][$nl-1]['NumeroDDT']=$numddt;
                             $form['rows'][$nl-1]['DataDDT']=$dataddt;
+                            $form['rows'][$nl-1]['exist_ddt']=false;
                             // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
                             unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
                         }                    
@@ -639,64 +647,22 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                     $ctrl_NumeroDDT=$numddt;
                 }
                 $ctrl_NumeroDDT=$numddt;
+                $ctrl_DataDDT=$dataddt;
+            }
+            foreach($nl_NumeroLinea as $k=>$v){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi! 
+                // in $v ho l'indice del rigo non assegnato
+				$form['rows'][$v]['NumeroDDT']=$numddt;
+				$form['rows'][$v]['DataDDT']=$dataddt;
+				if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+					$form['rows'][$v]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+				} else {
+					$form['rows'][$v]['exist_ddt']=false;
+				}
             }
         }
         $nl=end(array_keys($form['rows'])); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
-   
-        //print_r($nl_NumeroLinea); // in questo mi ritrovo i righi non assegnati
 
-/*
-		$nl=0;$anomalia="";
-		foreach ($DettaglioLinee as $item) {
-			$nl++;
-			if ($doc->getElementsByTagName('DatiDDT')->length>=1) {
-				$ddt=$doc->getElementsByTagName('DatiDDT');
-				foreach ($ddt as $vd) { // attraverso DatiDDT
-					$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
-					
-					// calcolo lo step fra i riferimenti linee del ddt: qualcuno :( si è inventato di creare fae con numeri linea del documento con passi diversi da 1
-					$step= ($vr->item($vr->length - 1)->nodeValue - $vr->item(0)->nodeValue) / ($vr->length - 1);
-					
-					if ($vr->item(0)->nodeValue <1){
-						$anomalia="Anomalia";
-					}
-					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
-					$numddt=$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue;
-					if (!$vr->length>=1) { // non ho un riferimento ad una linea specifica
-						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
-							$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
-							if ($anomalia=="Anomalia"){
-								$anomalia="AnomaliaExistDdt";
-							}
-						} else {
-							$form['rows'][$nl]['exist_ddt']=false;
-						}
-						$form['rows'][$nl]['NumeroDDT']=$numddt;
-						$form['rows'][$nl]['DataDDT']=$dataddt;
-					} else {
-						$nl_ref=(($vr->item(0)->nodeValue)- $step)/$step; // attribuisco il numero di riga del riferimento sulla base dello step adoperato dal creatore della fae
-						$form['rows'][$nl_ref]['NumeroDDT']=$numddt;
-						$form['rows'][$nl_ref]['DataDDT']=$dataddt;
-						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
-							$form['rows'][$nl_ref]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
-						} else {
-							$form['rows'][$nl_ref]['exist_ddt']=false;
-						}
-					}
-					foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
-						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
-							$form['rows'][$nl_ref]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
-						} else {
-							$form['rows'][$nl_ref]['exist_ddt']=false;
-						}
-						$form['rows'][$nl_ref]['NumeroDDT']=$numddt;
-						$form['rows'][$nl_ref]['DataDDT']=$dataddt;
-						$nl_ref++;
-					} 
-				} 				
-			}
-		}
-        */
+
 		if ($numdoc==$numddt AND $datdoc==$dataddt){ // se fattura e ddt hanno stesso numero e data modifico l'anomalia
 			$anomalia = "AnomaliaDDT=FAT";
 		}
@@ -1005,13 +971,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						if ($anomalia=="Anomalia"){
 							$form['status']="DdtAnomalo";
 						}
-						tesdocInsert($form); // Antonio Germani - creo fattura differita
-						
-						//recupero l'id assegnato dall'inserimento
-						$ultimo_id = gaz_dbi_last_id();
-											
+						$ultimo_id =tesdocInsert($form); // Antonio Germani - creo fattura differita
 					}
-					
 					$ctrl_ddt=$v['NumeroDDT'];
 				}
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
@@ -1101,7 +1062,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 				}
 			}
-			
             header('Location: report_docacq.php?sezione='.$form['seziva']);
 			exit;
 		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
