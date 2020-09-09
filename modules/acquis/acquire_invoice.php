@@ -637,6 +637,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                     }                
 					if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
 						$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+						
 					} else {
 						$form['rows'][$nl]['exist_ddt']=false;
 					}
@@ -652,6 +653,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             foreach($nl_NumeroLinea as $k=>$v){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi! 
                 // in $v ho l'indice del rigo non assegnato questa è una anomalia e la segnalo
                 $anomalia="Anomalia";
+				if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+					$anomalia="AnomaliaExistDdt";
+				}
 				$form['rows'][$v]['NumeroDDT']=$numddt;
 				$form['rows'][$v]['DataDDT']=$dataddt;
 				if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
