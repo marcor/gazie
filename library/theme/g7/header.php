@@ -284,6 +284,9 @@
             echo '<script type="text/javascript">
 		 countclick = 0;
 		 function chkSubmit() {
+            if ( window.history.replaceState ) {
+                window.history.replaceState( null, null, window.location.href );
+            } 
 			if(countclick > 0) {
 				alert("' . $strCommon['wait_al'] . '");
 				document.getElementById("preventDuplicate").disabled=true;
