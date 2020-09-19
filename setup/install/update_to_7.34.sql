@@ -32,4 +32,7 @@ INSERT IGNORE INTO `gaz_XXXcaumag` (`codice`, `descri`, `type_cau`, `clifor`, `i
 UPDATE `gaz_XXXcaumag` SET `type_cau` = 9 WHERE 1;
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `codice_campi` INT(3) NOT NULL DEFAULT '0' COMMENT 'Riferimento alla tabella gaz_NNNcampi (luogo di produzione), ovvero il luogo ove è installata la macchina' AFTER `install_date`;
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `ip_address` VARCHAR(21) NOT NULL COMMENT 'Indirizzo IP della macchina, per IoT e Industria 4.0' AFTER `codice_campi`;
+ALTER TABLE `gaz_XXXassets`	ADD COLUMN `username` VARCHAR(50) NOT NULL COMMENT 'Nome utente per accesso a dispositivo' AFTER `ip_address`;
+ALTER TABLE `gaz_XXXassets`	ADD COLUMN `password` VARCHAR(50) NOT NULL COMMENT 'Password per accesso a dispositivo' AFTER `username`;
+ALTER TABLE `gaz_XXXassets`	ADD COLUMN `linkmode` VARCHAR(15) NOT NULL COMMENT 'Modalità-protocollo di comunicazione' AFTER `password`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
