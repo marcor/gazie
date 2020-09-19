@@ -31,7 +31,7 @@ ALTER TABLE `gaz_XXXcaumag`	ADD COLUMN `type_cau` TINYINT(1) NOT NULL COMMENT '0
 INSERT IGNORE INTO `gaz_XXXcaumag` (`codice`, `descri`, `type_cau`, `clifor`, `insdoc`, `operat`) VALUES (91, 'SCARICO PER MANUTENZIONE INTERNA',5, 0, 1, -1);
 UPDATE `gaz_XXXcaumag` SET `type_cau` = 9 WHERE 1;
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `codice_campi` INT(3) NOT NULL DEFAULT '0' COMMENT 'Riferimento alla tabella gaz_NNNcampi (luogo di produzione), ovvero il luogo ove è installata la macchina' AFTER `install_date`;
-ALTER TABLE `gaz_XXXassets`	ADD COLUMN `hostpath` VARCHAR(21) NOT NULL COMMENT 'Percorso di rete della macchina (IoT e/o Industry 4.0)' AFTER `codice_campi`;
+ALTER TABLE `gaz_XXXassets`	ADD COLUMN `hostpath` VARCHAR(200) NOT NULL COMMENT 'Percorso di rete della macchina (IoT e/o Industry 4.0)' AFTER `codice_campi`;
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `username` VARCHAR(50) NOT NULL COMMENT 'Nome utente per accesso a dispositivo (IoT e/o Industry 4.0)' AFTER `hostpath`;
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `password` VARCHAR(50) NOT NULL COMMENT 'Password per accesso a dispositivo (IoT e/o Industry 4.0)' AFTER `username`;
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `linkmode` VARCHAR(15) NOT NULL COMMENT 'Modalità-protocollo di comunicazione (IoT e/o Industry 4.0)' AFTER `password`;
