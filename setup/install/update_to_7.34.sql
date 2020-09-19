@@ -1,4 +1,4 @@
--- `gaz_config` SET `cvalue` = '129' WHERE `id` =2; 
+-- UPDATE `gaz_config` SET `cvalue` = '129' WHERE `id` =2; 
 
 SET @id_mod := 0;
 SELECT @id_mod := `id` FROM  `gaz_module` WHERE `name` = 'camp' LIMIT 1;
@@ -31,4 +31,5 @@ ALTER TABLE `gaz_XXXcaumag`	ADD COLUMN `type_cau` TINYINT(1) NOT NULL COMMENT '0
 INSERT IGNORE INTO `gaz_XXXcaumag` (`codice`, `descri`, `type_cau`, `clifor`, `insdoc`, `operat`) VALUES (91, 'SCARICO PER MANUTENZIONE INTERNA',5, 0, 1, -1);
 UPDATE `gaz_XXXcaumag` SET `type_cau` = 9 WHERE 1;
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `codice_campi` INT(3) NOT NULL DEFAULT '0' COMMENT 'Riferimento alla tabella gaz_NNNcampi (luogo di produzione), ovvero il luogo ove è installata la macchina' AFTER `install_date`;
+ALTER TABLE `gaz_XXXassets`	ADD COLUMN `ip_address` VARCHAR(21) NOT NULL COMMENT 'Indirizzo IP della macchina, per IoT e Industria 4.0' AFTER `codice_campi`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
