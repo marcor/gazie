@@ -1,5 +1,4 @@
--- UPDATE `gaz_config` SET `cvalue` = '129' WHERE `id` =2; 
-
+UPDATE `gaz_config` SET `cvalue` = '129' WHERE `id` =2; 
 SET @id_mod := 0;
 SELECT @id_mod := `id` FROM  `gaz_module` WHERE `name` = 'camp' LIMIT 1;
 UPDATE `gaz_menu_module` SET `link` = 'camp_report_artico.php' WHERE `id_module` = @id_mod AND `link`= 'report_artico.php';
