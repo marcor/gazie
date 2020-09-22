@@ -838,7 +838,7 @@ class selectPartner extends SelectBox {
         if (strlen($cerca) >= 2) {
             if (is_numeric($cerca)) {                       //ricerca per partita iva
                 $partners = $this->queryAnagra(array("pariva" => '=' . intval($cerca)));
-            } elseif (is_numeric(substr($cerca, 6, 2))) {   //ricerca per codice fiscale
+            } elseif (preg_match('/^[a-z]{6}[0-9]{2}[a-z][0-9]{2}[a-z][0-9]{3}[a-z]$/i', $cerca)) {   //ricerca per codice fiscale
                 $partners = $this->queryAnagra(array("codfis" => " LIKE '%" . addslashes($cerca) . "%'"));
             } else {                                        //ricerca per ragione sociale
                 $partners = $this->queryAnagra(array("a.ragso1" => " LIKE '" . addslashes($cerca) . "%'"));
@@ -1013,7 +1013,7 @@ class selectPartner extends SelectBox {
             if (strlen($strSearch) >= 2) { //sto ricercando un nuovo partner
                 if (is_numeric($strSearch)) {                       //ricerca per partita iva
                     $partner = $this->queryAnagra(array("pariva" => "=" . intval($strSearch)));
-                } elseif (is_numeric(substr($strSearch, 6, 2))) {   //ricerca per codice fiscale
+                } elseif (preg_match('/^[a-z]{6}[0-9]{2}[a-z][0-9]{2}[a-z][0-9]{3}[a-z]$/i', $strSearch)) {   //ricerca per codice fiscale
                     $partner = $this->queryAnagra(array("a.codfis" => " LIKE '%" . addslashes($strSearch) . "%'"));
                 } else {                                            //ricerca per ragione sociale
                     $partner = $this->queryAnagra(array("a.ragso1" => " LIKE '" . addslashes($strSearch) . "%'"));
