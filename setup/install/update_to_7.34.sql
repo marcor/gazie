@@ -20,7 +20,7 @@ UPDATE `gaz_menu_script` SET `link` = 'camp_select_schart.php' WHERE `id_menu` =
 UPDATE `gaz_menu_script` SET `link` = 'camp_select_giomag.php' WHERE `id_menu` = @id_menu_mod AND `link`= 'select_giomag.php';
 SELECT  @id__menu_mod := `id` FROM  `gaz_menu_module` WHERE `link` = 'camp_report_caumag.php' LIMIT 1;
 UPDATE `gaz_menu_script` SET `link` = 'camp_admin_caumag.php?Insert' WHERE `id_menu` = @id_menu_mod AND `link`= 'admin_caumag.php?Insert';
-
+ALTER TABLE `gaz_camp_uso_fitofarmaci` ADD COLUMN `id_reg` INT(6) NOT NULL COMMENT 'Riferimento al numero registrazione della tabella camp_fitofarmaci' AFTER `id_avv`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 UPDATE `gaz_XXXcaucon_rows` SET `n_order` = '1' WHERE `caucon_cod` = 'AFT' AND `clfoco_ref` = '212000000';
 UPDATE `gaz_XXXcaucon_rows` SET `n_order` = '2' WHERE `caucon_cod` = 'AFT' AND `clfoco_ref` = '330000004';
