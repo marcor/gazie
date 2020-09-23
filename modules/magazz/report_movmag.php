@@ -137,74 +137,105 @@ $(function() {
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
          LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)
 		 LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
-         LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)
 		 LEFT JOIN ".$gTables['lotmag']." ON (".$gTables['movmag'].".id_lotmag = ".$gTables['lotmag'].".id)";
 		/* Antonio Germani - momentaneamente commentato, di comune accordo con Antonio de Vincentiis, perché causa un ambiguous column names con id_lotmag quando si utilizza l'ID lotto come filtro
 		LEFT JOIN ".$gTables['orderman']." ON (".$gTables['movmag'].".id_orderman = ".$gTables['orderman'].".id)
 		*/
-$result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".descri AS descart, ".$gTables['caumag'].".descri AS descau, ".$gTables['lotmag'].".*, ".$gTables['rigdoc'].".id_tes AS testata", $table, $t->where, $t->orderby, $t->getOffset(), $t->getLimit());
+$result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".descri AS descart, ".$gTables['caumag'].".descri AS descau, ".$gTables['lotmag'].".*", $table, $t->where, $t->orderby, $t->getOffset(), $t->getLimit());
 
 echo '<tr>';
 $t->output_headers();
 echo '</tr>';
 $anagrafica = new Anagrafica();
 
-/** ENRICO FEDELE */
-/* Inizializzo la variabile */
 $tot_movimenti = 0;
-/** ENRICO FEDELE */
 
-while ($a_row = gaz_dbi_fetch_array($result)) {
-    $partner = $anagrafica->getPartner($a_row['clfoco']);
+/* 
+QUESTA E' LA MATRICE ORIGINALE (PERSONALIZZABILE) DELLA RIGA 'report_movmag_ref_doc' della tabella "gaz_config" in formato json e serve per ottenere i riferimenti al documento di origine in base al "tipdoc" di origine ed al id_rif del movimento di magazzino passata alla funzione NOMEMODULO_prepare_ref_doc_movmag contenuta nel file incluso e presente sul modulo stesso e sempre di nome "prepare_ref_doc_movmag.php"
+{
+"ADT":"acquis",
+"AFA":"acquis",
+"AFC":"acquis",
+"DDR":"acquis",
+"ADT":"acquis",
+"AFT":"acquis",
+"DDL":"acquis", 
+"RDL":"acquis",
+"DDR":"acquis",
+"VCO":"vendit", 
+"VRI":"vendit", 
+"DDT":"vendit", 
+"FAD":"vendit", 
+"FAI":"vendit", 
+"FAA":"vendit", 
+"FAQ":"vendit", 
+"FAP":"vendit", 
+"FNC":"vendit", 
+"FND":"vendit", 
+"DDV":"vendit", 
+"RDV":"vendit", 
+"DDY":"vendit", 
+"DDS":"vendit",
+"VPR":"vendit", 
+"VOR":"vendit", 
+"VOW":"vendit", 
+"VOG":"vendit", 
+"CMR":"vendit", 
+"CAM":"camp",
+"PRO":"orderman",
+"MAG":"magazz"
+}
+*/
+$hrefdoc = json_decode(gaz_dbi_get_row($gTables['config'], 'variable', 'report_movmag_ref_doc')['cvalue']);
+$rshref=get_object_vars($hrefdoc);
+
+while ($r = gaz_dbi_fetch_array($result)) {
+    // richiamo il file del modulo che ha generato il movimento di magazzino per avere le informazioni sul documento genitore
+    require_once("../".$rshref[$r['tipdoc']]."/prepare_ref_doc_movmag.php");
+    $funcn=preg_replace('/[0-9]+/', '', $rshref[$r['tipdoc']]);
+    $funcn=$funcn.'_prepare_ref_doc';
+    $r['id_rif']=($r['id_rif']==0 && $r['id_orderman']>0 && $r['tipdoc']=="PRO")?$r['id_orderman']:$r['id_rif'];
+    $r['id_rif']=($r['id_rif']==0 && $r['tipdoc']=="MAG")?$r['id_mov']:$r['id_rif'];
+    $docdata=$funcn($r['tipdoc'],$r['id_rif']);
+    $partner = $anagrafica->getPartner($r['clfoco']);
     $title =  $partner['ragso1']." ".$partner['ragso2'];
-	$descri=$a_row['descart'];
-	if ($a_row['expiry']>0){
-		$expiry="Scad.: ".gaz_format_date($a_row['expiry']);
+	$descri=$r['descart'];
+	if ($r['expiry']>0){
+		$expiry="Scad.: ".gaz_format_date($r['expiry']);
 	} else {
 		$expiry="";
 	}
-    $valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
-    $valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
+    $valore = CalcolaImportoRigo($r['quanti'], $r['prezzo'], $r['scorig']) ;
+    $valore = CalcolaImportoRigo(1, $valore, $r['scochi']) ;
     echo "<tr>\n";
 	
     echo "<td>";
-	if ($a_row['tipdoc'] == "MAG"){
-		echo "<a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
+	if ($r['id_rif']==0||$r['tipdoc']=="MAG"||$r['tipdoc']=="PRO"){
+        // in caso di movimento proveniente da produzione forzo l'id_rif con id_orderman
+		echo "<a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$r["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$r["id_mov"]."</a> &nbsp</td>";
     } else {
-		echo "<button class=\"btn btn-xs btn-default disabled\" title=\"Questo movimento puo essere modificato solo nel documento che lo ha creato\">&nbsp;".$a_row["id_mov"]."</button> &nbsp</td>";
+		echo "<button class=\"btn btn-xs btn-default disabled\" title=\"Questo movimento puo essere modificato solo nel documento che lo ha creato\">&nbsp;".$r["id_mov"]."</button> &nbsp</td>";
 	}
-	echo "<td align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
-    echo "<td align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
-    if ($a_row['id_rif'] == 0) {
-		if ($a_row['id_orderman']>0){
-			echo "<td align=\"center\" title=\"$title\"><a href=\"../orderman/admin_orderman.php?Update&codice=".$a_row['id_orderman']."\">".$a_row['descau']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])." - ID: ".$a_row['id_orderman']."</a></td>\n";
-		} else {
-			echo "<td align=\"center\" title=\"$title\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</td>\n";
-		}
-    } else if ($a_row['tipdoc'] == "ADT"
-         || $a_row['tipdoc'] == "AFA"
-         || $a_row['tipdoc'] == "AFC"
-		 || $a_row['tipdoc'] == "DDR") {
-            echo "<td align=\"center\" title=\"$title\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
-	} else if ($a_row['tipdoc'] == "CAM"){
-		echo "<td align=\"center\" title=\"$title\"><a href=\"../camp/camp_admin_movmag.php?id_mov=".$a_row['id_rif']."&Update\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
-
-	} else {
-            echo "<td align=\"center\" title=\"$title\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
+	echo "<td align=\"center\">".gaz_format_date($r["datreg"])." &nbsp;</td>\n";
+    echo "<td align=\"center\">".$r["caumag"]." - ".$r["descau"]."</td>\n";
+    if (array_key_exists($r['tipdoc'],$hrefdoc) && $r['id_rif'] > 0){ // vedi sopra quando si vuole riferire ad un documento genitore di un modulo specifo
+        echo '<td title="'.$title.'"><a href="'.$docdata['link'].'">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
+    } else {
+        echo '<td title="'.$title.'"><a href="admin_movmag.php?id_mov="'.$r["id_mov"].'&Update">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
     }
     
-   	echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$a_row["artico"]."</p></td>\n";
-	if ($a_row['id']>0) {
-		echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$expiry\">"."ID:".$a_row['id']." - ".$a_row['identifier']."</td>\n";
+   	echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$descri\">".$r["artico"]."</p></td>\n";
+	if ($r['id']>0) {
+		echo "<td align=\"center\"><p data-toggle=\"tooltip\" data-placement=\"auto\" title=\"$expiry\">"."ID:".$r['id']." - ".$r['identifier']."</td>\n";
 	} else {
 		echo "<td></td>";
 	}
-    echo "<td align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
+    echo "<td align=\"center\">".gaz_format_quantity($r["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
     echo "<td align=\"right\">".gaz_format_number($valore)." </td>\n";
     echo "<td align=\"center\">\n";
-	if ($a_row['tipdoc'] == "MAG" OR $a_row['tipdoc'] == "INV"){
+	if ($r['tipdoc'] == "MAG" OR $r['tipdoc'] == "INV"){
 		?>
-		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina movimento" ref="<?php echo $a_row['id_mov'];?>" movdes="<?php echo $a_row['descau']; ?>">
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina movimento" ref="<?php echo $r['id_mov'];?>" movdes="<?php echo $r['descau']; ?>">
 		<i class="glyphicon glyphicon-remove"></i>
 		</a>
 		<?php
