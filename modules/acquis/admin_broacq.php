@@ -736,12 +736,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $next_row--;
     }
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
-    $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $_GET['id_tes']);
+    $form['id_tes'] = intval($_GET['id_tes']);
+    $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
     $anagrafica = new Anagrafica();
     $fornitore = $anagrafica->getPartner($tesbro['clfoco']);
     $id_des = $anagrafica->getPartner($tesbro['id_des']);
-    $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . intval($_GET['id_tes']), "id_rig asc");
-    $form['id_tes'] = intval($_GET['id_tes']);
+    $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
     $form['hidden_req'] = '';
     // inizio rigo di input
     $form['in_descri'] = "";

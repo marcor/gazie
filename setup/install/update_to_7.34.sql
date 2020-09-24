@@ -37,4 +37,5 @@ ALTER TABLE `gaz_XXXassets`	ADD COLUMN `username` VARCHAR(50) NOT NULL COMMENT '
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `password` VARCHAR(50) NOT NULL COMMENT 'Password per accesso a dispositivo (IoT e/o Industry 4.0)' AFTER `username`;
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `linkmode` VARCHAR(15) NOT NULL COMMENT 'Modalità-protocollo di comunicazione (IoT e/o Industry 4.0)' AFTER `password`;
 ALTER TABLE `gaz_XXXartico` ADD COLUMN `id_reg` INT(6) NOT NULL COMMENT 'Riferimento al numero registrazione della tabella camp_fitofarmaci' AFTER `SIAN`;
+ALTER TABLE `gaz_XXXmovmag`	CHANGE COLUMN `desdoc` `desdoc` VARCHAR(100) NOT NULL AFTER `tipdoc`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
