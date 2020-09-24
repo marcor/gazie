@@ -54,8 +54,6 @@ if (isset($_SESSION['table_prefix'])) {
 
 }
 
-gaz_dbi_query("ALTER TABLE ". $table_prefix . "_camp_uso_fitofarmaci" . " ADD INDEX `id_reg` (`id_reg`)");		
-echo "<p>Ho creato l'index <b>id_reg</b> su ". $table_prefix . "_camp_uso_fitofarmaci perché non esisteva</p>";
 gaz_dbi_query("ALTER TABLE ". $table_prefix . "_camp_uso_fitofarmaci" . " ADD INDEX `cod_art` (`cod_art`)");		
 echo "<p>Ho creato l'index <b>cod_art</b> su ". $table_prefix . "_camp_uso_fitofarmaci perché non esisteva</p>";
 
@@ -63,7 +61,7 @@ $result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
 while ($row = gaz_dbi_fetch_array($result)) {
 	$aziend_codice = sprintf("%03s", $row["codice"]);
 	// inizio controlli presenza di indici altrimenti li creo 
-	$idx=array(0=>array('numdoc'=>'tesbro')); 
+	$idx=array(0=>array('numdoc'=>'tesbro','id_reg'=>'artico')); 
 	foreach($idx as $vi){
 		foreach($vi as $k=>$v){
 			$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice.$v." WHERE 1");
