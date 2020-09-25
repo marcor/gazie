@@ -73,9 +73,8 @@ $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(42);
 $pdf->SetFooterMargin(20);
-$config = new Config;
 $pdf->setRiporti('');
-$pdf->AddPage('L',$config->getValue('page_format'));
+$pdf->AddPage();
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
 $pdf->SetFont('helvetica','',8);
 $pdf->setJPEGQuality(15);
@@ -152,6 +151,7 @@ $title = array('luogo_data'=>$luogo_data,
           );
 
 $pdf->setVars($admin_aziend,$title);
+$pdf->SetFooterMargin(20);
 
 $ctrlAOR=0;
 $tot=0.00;
@@ -239,9 +239,23 @@ $what = $gTables['movmag'].".*, ".
 $result = gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datreg ASC, id_mov ASC");
 $numrow = gaz_dbi_num_rows($result);
 if ($numrow>=1){
+    $title = array('luogo_data'=>$luogo_data,
+           'title'=>"Distinta della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
+           'hile'=>array(array('lun' => 20,'nam'=>'Data'),
+						array('lun' => 87,'nam'=>'Operazione'),
+						array('lun' => 37,'nam'=>'Codice'),
+						array('lun' => 72,'nam'=>'Articolo'),
+						array('lun' => 17,'nam'=>'Quantità'),
+                         array('lun' => 7,'nam'=>'U.M.'),
+                         array('lun' => 37,'nam'=>'Causale'),
+                        )
+          );
+    $pdf->setVars($admin_aziend,$title);
+    $pdf->SetFooterMargin(20);
     $pdf->AddPage();
     $pdf->SetFillColor(255,199,199);
 	$pdf->Cell(277,4,'MOVIMENTI DI MAGAZZINO RELATIVI ALLA PRODUZIONE',1, 1, 'C', 1, '', 1);
+	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
     // $hrefdoc = json_decode(gaz_dbi_get_row($gTables['config'], 'variable', 'report_movmag_ref_doc')['cvalue']);
     // $rshref=get_object_vars($hrefdoc);
 }
@@ -255,7 +269,8 @@ while ($mv = gaz_dbi_fetch_array($result)) {
     //$mv['id_rif']=($mv['id_rif']==0 && $mv['tipdoc']=="MAG")?$mv['id_mov']:$mv['id_rif'];
     //$docdata=$funcn($mv['tipdoc'],$mv['id_rif']);
     $desop=(strlen($mv['desass'])>2)?$mv['desdoc'].' con '.$mv['desass']:$mv['desdoc'];
-	$pdf->Cell(107,4,$desop,1, 0, 'L', 0, '', 1);
+	$pdf->Cell(20,4,gaz_format_date($mv['datreg']),1, 0, 'C', 0, '', 1);
+	$pdf->Cell(87,4,$desop,1, 0, 'L', 0, '', 1);
 	$pdf->Cell(37,4,$mv['codice'],1, 0, 'C', 0, '', 1);
 	$pdf->Cell(72,4,$mv['desart'],1, 0, 'L', 0, '', 1);
 	$pdf->Cell(17,4,floatval($mv['quanti']*$mv['operat']),1, 0, 'R', 0, '', 1);
