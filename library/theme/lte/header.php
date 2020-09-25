@@ -94,6 +94,20 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/lte/skins/" . $admin_aziend['skin'])) {
             $skin = $admin_aziend['skin'];
         }
+        // ogni ora controllo se ho "qualcosa" da acquisire da remoto 
+		if (!$_SESSION['sync'] or strtotime(date("Y-m-d H:i:s"))>$_SESSION['sync']+(1*60*60)){// se è il primo accesso o se è passata un'ora dall'ultimo accesso
+			$_SESSION['sync']=strtotime(date("Y-m-d H:i:s"));
+			// importo gli ordini dal web
+			if (class_exists('APIeCommerce')){
+				$api = new APIeCommerce();
+				if($api->api_token){
+					$last_id="";
+					$api = new APIeCommerce();
+					$api->GetOrder($last_id);			
+				}				
+			}						
+		}
+        
         ?>
         <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />

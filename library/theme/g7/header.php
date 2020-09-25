@@ -39,6 +39,20 @@
             $skin = $admin_aziend['skin'];
         }
 
+        // ogni ora controllo se ho "qualcosa" da acquisire da remoto 
+		if (!$_SESSION['sync'] or strtotime(date("Y-m-d H:i:s"))>$_SESSION['sync']+(1*60*60)){// se è il primo accesso o se è passata un'ora dall'ultimo accesso
+			$_SESSION['sync']=strtotime(date("Y-m-d H:i:s"));
+			// importo gli ordini dal web
+			if (class_exists('APIeCommerce')){
+				$api = new APIeCommerce();
+				if($api->api_token){
+					$last_id="";
+					$api = new APIeCommerce();
+					$api->GetOrder($last_id);			
+				}				
+			}						
+		}
+
         function hex_color_mod($hex, $diff) {
             $rgb = str_split($hex, 2);
             foreach ($rgb as &$hex) {
