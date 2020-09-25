@@ -45,9 +45,11 @@ if (isset($_POST['conferma'])) { // se confermato
 		$codice = substr($last[0]['codice'], 3) + 1;
 		$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// trovo il codice di CLFOCO da connettere all'anagrafica cliente	se cliente inesistente
 	    	
-		$listin=$_POST['numlist'.$ord];
+		$listin=intval($_POST['numlist'.$ord]);
 		$listinome=$_POST['numlistnome'.$ord];
 		$includevat=$_POST['includevat'.$ord];
+		
+		$stapre="T"; // stampa prezzi con totale
 		
 		if (isset($_POST['download'.$ord]) ) {
 			$esiste=0;
@@ -100,7 +102,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					}
 					gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($_POST['ragso1'.$ord]) . "', '" . addslashes($_POST['ragso2'.$ord]) . "', '". $sexper. "', '". addslashes($_POST['indspe'.$ord]) ."', '".$_POST['capspe'.$ord]."', '". addslashes($_POST['citspe'.$ord]) ."', '". $_POST['prospe'.$ord] ."', '" . $_POST['country'.$ord]. "', '1', '".$lang."', '". $_POST['telefo'.$ord] ."', '". $_POST['codfis'.$ord] ."', '" . $_POST['pariva'.$ord] . "', '" . $_POST['fe_cod_univoco'.$ord] . "', '". $_POST['email'.$ord] . "', '". $_POST['pec_email'.$ord] . "')");
 					
-					gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,descri,destin,speban,codpag) VALUES ('". $clfoco . "', '" . $id_anagra . "', '" .addslashes($_POST['ragso1'.$ord])." ".addslashes($_POST['ragso2'.$ord]) . "', '". $_POST['destin'.$ord] ."', 'S', '". $_POST['pagame'.$ord] ."')");
+					gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('". $clfoco . "', '" . $id_anagra . "', '". $listin ."' , '" .addslashes($_POST['ragso1'.$ord])." ".addslashes($_POST['ragso2'.$ord]) . "', '". $_POST['destin'.$ord] ."', 'S', '". $stapre ."', '". $_POST['pagame'.$ord] ."')");
 			}
 			
 			if ($_POST['order_discount_price'.$ord]>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
