@@ -146,6 +146,13 @@ if ($resart['good_or_service']==2){ // se l'articolo prodotto prevede componenti
 }
 
 // STAMPA LISTA ORDINI
+$title = array('luogo_data'=>$luogo_data,
+           'title'=>"Distinta della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
+           'hile'=>array()
+          );
+
+$pdf->setVars($admin_aziend,$title);
+
 $ctrlAOR=0;
 $tot=0.00;
 $ctrlAORtot=0.00;
@@ -213,5 +220,48 @@ if ($tot>=0.01){
 // FINE STAMPA LISTA ORDINI
 
 $pdf->setRiporti('');
+
+// INIZIO REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
+$where = $gTables['movmag'].". id_orderman = ".intval($_GET['id_orderman']);
+$what = $gTables['movmag'].".*, ".
+        $gTables['caumag'].".codice, ".$gTables['caumag'].".descri AS descau, ".
+        $gTables['assets'].".descri AS desass, ".
+        $gTables['clfoco'].".codice, ".
+        $gTables['orderman'].".id AS id_orderman, ".$gTables['orderman'].".description AS desorderman, ".
+        $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
+        $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".web_url, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".image, ".$gTables['artico'].".catmer ";
+        $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON ".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice
+               LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice
+               LEFT JOIN ".$gTables['assets']." ON ".$gTables['movmag'].".id_assets = ".$gTables['assets'].".id
+               LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
+               LEFT JOIN ".$gTables['orderman']." ON ".$gTables['movmag'].".id_orderman = ".$gTables['orderman'].".id
+               LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
+$result = gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datreg ASC, id_mov ASC");
+$numrow = gaz_dbi_num_rows($result);
+if ($numrow>=1){
+    $pdf->AddPage();
+    $pdf->SetFillColor(255,199,199);
+	$pdf->Cell(277,4,'MOVIMENTI DI MAGAZZINO RELATIVI ALLA PRODUZIONE',1, 1, 'C', 1, '', 1);
+    // $hrefdoc = json_decode(gaz_dbi_get_row($gTables['config'], 'variable', 'report_movmag_ref_doc')['cvalue']);
+    // $rshref=get_object_vars($hrefdoc);
+}
+
+while ($mv = gaz_dbi_fetch_array($result)) {
+    // richiamo il file del modulo che ha generato il movimento di magazzino per avere le informazioni sul documento genitore
+    //require_once("../".$rshref[$mv['tipdoc']]."/prepare_ref_doc_movmag.php");
+    //$funcn=preg_replace('/[0-9]+/', '', $rshref[$mv['tipdoc']]);
+    //$funcn=$funcn.'_prepare_ref_doc';
+    //$mv['id_rif']=($mv['id_rif']==0 && $mv['id_orderman']>0 && $mv['tipdoc']=="PRO")?$mv['id_orderman']:$mv['id_rif'];
+    //$mv['id_rif']=($mv['id_rif']==0 && $mv['tipdoc']=="MAG")?$mv['id_mov']:$mv['id_rif'];
+    //$docdata=$funcn($mv['tipdoc'],$mv['id_rif']);
+    $desop=(strlen($mv['desass'])>2)?$mv['desdoc'].' con '.$mv['desass']:$mv['desdoc'];
+	$pdf->Cell(107,4,$desop,1, 0, 'L', 0, '', 1);
+	$pdf->Cell(37,4,$mv['codice'],1, 0, 'C', 0, '', 1);
+	$pdf->Cell(72,4,$mv['desart'],1, 0, 'L', 0, '', 1);
+	$pdf->Cell(17,4,floatval($mv['quanti']*$mv['operat']),1, 0, 'R', 0, '', 1);
+	$pdf->Cell(7,4,$mv['unimis'],1, 0, 'C', 0, '', 1);
+	$pdf->Cell(37,4,$mv['descau'],1, 1, 'C', 0, '', 1);
+}
+// FINE REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
 $pdf->Output();
 ?>
