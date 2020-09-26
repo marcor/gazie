@@ -40,7 +40,7 @@
         }
 
         // ogni ora controllo se ho "qualcosa" da acquisire da remoto 
-		if (!$_SESSION['sync'] or strtotime(date("Y-m-d H:i:s"))>$_SESSION['sync']+(1*60*60)){// se è il primo accesso o se è passata un'ora dall'ultimo accesso
+		if (!isset($_SESSION['sync']) || strtotime(date("Y-m-d H:i:s"))>$_SESSION['sync']+(1*60*60)){// se è il primo accesso o se è passata un'ora dall'ultimo accesso
 			$_SESSION['sync']=strtotime(date("Y-m-d H:i:s"));
 			// importo gli ordini dal web
 			if (class_exists('APIeCommerce')){

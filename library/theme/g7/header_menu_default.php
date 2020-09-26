@@ -74,7 +74,7 @@ $(function() {
 			hide: "explode",
 			buttons: {
 				delete:{ 
-					text:'Elimina', 
+					text:'Posponi', 
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
