@@ -33,18 +33,18 @@ if (!$isAjax) {
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
-if(isset($_POST['codice'])){
+if(isset($_GET['nomefito'])){
 	$results = array('error' => false, 'data' => '');
-	$codice = $_POST['codice'];
+	$codice = $_GET['nomefito'];
 	if(empty($codice)){
 		$results['error'] = true;
 	}else{				
-		$query="SELECT PRODOTTO FROM ". $gTables['camp_fitofarmaci'] ." WHERE PRODOTTO LIKE '%$codice%' LIMIT 30";
+		$query="SELECT PRODOTTO, NUMERO_REGISTRAZIONE FROM ". $gTables['camp_fitofarmaci'] ." WHERE PRODOTTO LIKE '%$codice%' LIMIT 30";
 		$result = gaz_dbi_query($query);
 		if($result->num_rows > 0){
 			while($ldata = $result->fetch_assoc()){
 				$results['data'] .= "
-					<li class='dropdown-item' data-fullname='".$ldata['PRODOTTO']."'> <a href='#'>".$ldata['PRODOTTO']."</a></li>
+					<li class='dropdown-item' data-fullname='".$ldata['PRODOTTO']."'> <a href='#'>".$ldata['NUMERO_REGISTRAZIONE']."-".$ldata['PRODOTTO']."</a></li>
 				";
 			}
 		} else {
@@ -66,12 +66,12 @@ if(isset($_POST['codart'])){
 		if($result->num_rows > 0){
 			while($ldata = $result->fetch_assoc()){
 				$results['data'] .= "
-					<li class='dropdown-item' data-fullname='".$ldata['codice']."'> <a href='#'>".$ldata['codice']."-".$ldata['descri']."</a></li>
+					<li class='dropdown-item2' data-fullname='".$ldata['codice']."'> <a href='#'>".$ldata['codice']."-".$ldata['descri']."</a></li>
 				";
 			}
 		} else {
 			$results['data'] = "
-				<li class='dropdown-item' style='background-color: #F6358A;'>Non esiste questo articolo per il Registro di campagna</li>
+				<li class='dropdown-item2' style='background-color: #F6358A;'>Non esiste questo articolo per il Registro di campagna</li>
 			";
 		}
 	}

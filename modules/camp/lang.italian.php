@@ -109,7 +109,8 @@ $strScript = array("camp_browse_document.php" =>
 		"Campo fitofarmaco vuoto",
 		"Avversità inesistente",
 		"Tempo sospensione",
-		"Fitofarmaco non presente in GAzie"
+		"Fitofarmaco non presente in GAzie",
+		"Dose non impostata"
     ),
     "camp_report_artico.php" =>
     array('title' => 'Lista delle merci e dei servizi',

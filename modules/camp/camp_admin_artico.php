@@ -57,7 +57,13 @@ if (isset($_POST['fornitore'])){
 }
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
-    $form = gaz_dbi_parse_post('artico');
+    if ($_POST['oldnomefito']<>$_POST['nomefito']){ // se è stato cambiato il nome del fitosanitario prendo id_reg e propongo il codice
+		$_POST['id_reg']=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'PRODOTTO', $_POST['nomefito'])['NUMERO_REGISTRAZIONE'];
+		$_POST['codice']=substr($_POST['nomefito'],0,15);
+	}
+	
+	$form = gaz_dbi_parse_post('artico');
+	$form['nomefito']=$_POST['nomefito'];
 	$form['categoria']=$_POST['categoria'];
 	$form['etichetta']=$_POST['etichetta'];
 	$form['biologico']=$_POST['biologico'];
@@ -68,6 +74,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['codice'] = trim($form['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
+	
 	if (isset ($_POST['fornitore'])) {
 		$form['fornitore'] = $_POST['fornitore'];
 		$form['id_anagra'] = intval ($form['fornitore']);
@@ -329,7 +336,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15));
 	$camp = gaz_dbi_get_row($gTables['camp_artico'], 'codice', substr($_GET['codice'], 0, 15));
-	
+	$form['nomefito']=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'NUMERO_REGISTRAZIONE', $form['id_reg'])['PRODOTTO'];
 	$form['categoria']=$camp['categoria'];
 	$form['etichetta']=$camp['etichetta'];
 	$form['biologico']=$camp['biologico'];
@@ -407,6 +414,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['web_public'] = 1;
     $form['depli_public'] = 1;
 	$form['SIAN']=0;
+	$form['id_reg']=0;
 	$form['categoria']="";
 	$form['etichetta']=0;
 	$form['biologico']=0;
@@ -427,7 +435,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 // CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO del db fitofarmaci
-if (isset($_POST['codice'])){
+if (isset($_POST['nomefito'])){
 	$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['camp_fitofarmaci']."'";
 	$result = gaz_dbi_query($query);
 		while ($row = $result->fetch_assoc()) {
@@ -438,9 +446,9 @@ if (isset($_POST['codice'])){
 		If (intval($update)+2592000<$today){$msg['err'][]= 'updatedb';}
 }
 
-if (isset($_POST['codice']) && strlen($form['codice'])>3){
+if (isset($_POST['nomefito']) && strlen($form['nomefito'])>3){
 	 
-		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'.",".'IMPRESA'.",".'SEDE_LEGALE_IMPRESA'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['codice']."'";
+		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'.",".'IMPRESA'.",".'SEDE_LEGALE_IMPRESA'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['nomefito']."'";
 		$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
 				If (isset($row)) {$presente=1;}
@@ -513,11 +521,11 @@ if ($modal === false) {
 	$(document).ready(function(){
 	//Autocomplete search using PHP, MySQLi, Ajax and jQuery
 	//generate suggestion on keyup
-		$('#codice').keyup(function(e){
+		$('#nomefito').keyup(function(e){
 			e.preventDefault();
 			var form = $('#add-product').serialize();
 			$.ajax({
-				type: 'POST',
+				type: 'GET',
 				url: 'do_search.php',
 				data: form,
 				dataType: 'json',
@@ -536,7 +544,7 @@ if ($modal === false) {
 			e.preventDefault();
 			$('#product_search').hide();
 			var fullname = $(this).data('fullname');
-			$('#codice').val(fullname);
+			$('#nomefito').val(fullname);
 			$('#add-product').submit();
 		});
 	});
@@ -578,6 +586,8 @@ select: function(event, ui) {
 	}
 	echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
 	echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />';
+	echo '<input type="hidden" name="id_reg" value="' . $form['id_reg'] . '" />';
+	echo '<input type="hidden" name="oldnomefito" value="' . $form['nomefito'] . '" />';
 
 	if ($modal_ok_insert === true) {
 		echo '<div class="alert alert-success" role="alert">' . $script_transl['modal_ok_insert'] . '</div>';
@@ -623,13 +633,13 @@ select: function(event, ui) {
 			echo '<div class="text-center"><b>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</b></div>';
 		}
 		if ($checkdbfito == "WARNING"){ // se non c'è bisogna creare il data base fitofarmaci
-		?>
-		<div class="alert alert-warning alert-dismissible" style="max-width: 70%; margin-left: 15%;">
-			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-			<strong>Warning!</strong> Il database Fitofarmaci non esiste. E' necessario crearlo <a  href="javascript:Popup('../../modules/camp/update_fitofarmaci.php')"> Crea database Fitofarmaci <i class="glyphicon glyphicon-import" style="color:green" ></i></a>
-		</div>
-		<?php
-	} 
+			?>
+			<div class="alert alert-warning alert-dismissible" style="max-width: 70%; margin-left: 15%;">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+				<strong>Warning!</strong> Il database Fitofarmaci non esiste. E' necessario crearlo <a  href="javascript:Popup('../../modules/camp/update_fitofarmaci.php')"> Crea database Fitofarmaci <i class="glyphicon glyphicon-import" style="color:green" ></i></a>
+			</div>
+			<?php
+		} 
 		?>
 
 		<div class="panel panel-default gaz-table-form">
@@ -646,12 +656,12 @@ select: function(event, ui) {
 				<div class="row">
 					<div class="col-md-12">
 						<div class="col-sm-12 control-label">
-							<p> Per connettere i fitofarmaci con il database del Ministero della salute, inserire nel Codice il nome commerciale del prodotto e confermarlo nella tendina che appare. Altrimenti scrivere il Codice e non considerare la tendina che appare. </P>
+							<p> Per connettere un fitofarmaco al database del Ministero della salute, inserire il nome commerciale del prodotto e confermarlo nella tendina che appare. Altrimenti scrivere il Codice e non considerare il campo del fitofarmaco. </P>
 						</div>
 						
 						<div class="form-group">
-							<label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-							<input class="col-sm-8" type="text" id="codice" name="codice" value="<?php echo $form['codice']; ?>" placeholder="Search Name" autocomplete="off" tabindex="1">
+							<label for="nomefito" class="col-sm-4 control-label"><?php echo "Fitofarmaco"; ?></label>
+							<input class="col-sm-8" type="text" id="nomefito" name="nomefito" value="<?php echo $form['nomefito']; ?>" placeholder="Ricerca nome fitofarmaco" autocomplete="off" tabindex="1">
 						</div>
 						<ul class="dropdown-menu" style="left: 35%; padding: 0px;" id="product_search"></ul>									
 					</div>
@@ -659,8 +669,16 @@ select: function(event, ui) {
 				<div class="row">
 					<div class="col-md-12">
 						<div class="form-group">
+							<label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
+							<input class="col-sm-8" type="text" value="<?php echo $form['codice']; ?>" name="codice" maxlength="255" tabindex="2">
+						</div>
+					</div>
+				</div><!-- chiude row  -->				
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
 							<label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
-							<input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="255" tabindex="2">
+							<input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="255" tabindex="3">
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -669,7 +687,7 @@ select: function(event, ui) {
 						<div class="form-group">
 							<label for = "good_or_service" class = "col-sm-4 control-label"><?php echo $script_transl['good_or_service']; ?>*</label>
 							<?php
-							$gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'tabindex="3" onchange = "this.form.submit();" style = "max-width: 200px;"');
+							$gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'tabindex="4" onchange = "this.form.submit();" style = "max-width: 200px;"');
 							?>
 						</div>
 					</div>
@@ -680,7 +698,7 @@ select: function(event, ui) {
 							<label for="body_text" class="col-sm-4 control-label"><?php echo $script_transl['body_text']; ?></label>
 							<div class="col-sm-8">
 							<!-- tabindex con editor mce non funziona perché TinyMCE crea un iframe! -->
-								<textarea tabindex="4" id="body_text" name="body_text" class="mceClass" ><?php echo $form['body_text']; ?></textarea>
+								<textarea tabindex="5" id="body_text" name="body_text" class="mceClass" ><?php echo $form['body_text']; ?></textarea>
 							</div>
 						</div>
 					</div>
@@ -691,7 +709,7 @@ select: function(event, ui) {
 						<div class="form-group">
 							<label for="lot_or_serial" class="col-sm-4 control-label"><?php echo $script_transl['lot_or_serial'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
 							<?php
-							$gForm->variousSelect('lot_or_serial', $script_transl['lot_or_serial_value'], $form['lot_or_serial'], "col-sm-8", true, '', false, 'tabindex="5" style="max-width: 200px;"');
+							$gForm->variousSelect('lot_or_serial', $script_transl['lot_or_serial_value'], $form['lot_or_serial'], "col-sm-8", true, '', false, 'tabindex="6" style="max-width: 200px;"');
 							?>
 						</div>
 					</div>
@@ -702,7 +720,7 @@ select: function(event, ui) {
 						<div class="form-group">
 							<label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico&value=<?php echo $form['codice']; ?>" width="100" >*</label>					
 
-							<div class="col-sm-8"><?php echo $script_transl['image']; ?><input tabindex="6" type="file" name="userfile" /></div>
+							<div class="col-sm-8"><?php echo $script_transl['image']; ?><input tabindex="7" type="file" name="userfile" /></div>
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -713,13 +731,13 @@ select: function(event, ui) {
 							<label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?></label>
 						 <!--   <input class="col-sm-2" type="text" value="<?php echo $form['unimis']; ?>" name="unimis" maxlength="6" tabindex="2"> -->
 						 <?php if ($form['good_or_service']==0){?>
-								<select tabindex="7" name="unimis">
+								<select tabindex="8" name="unimis">
 									<option <?php if($form['unimis'] == 'Kg'){echo("selected");}?>>Kg</option>
 									<option <?php if($form['unimis'] == 'l'){echo("selected");}?>>l</option>
 									<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
 								</select>
 						 <?php } else { ?>
-							 <select tabindex="7" name="unimis">
+							 <select tabindex="8" name="unimis">
 									<option <?php if($form['unimis'] == 'h'){echo("selected");}?>>h</option>
 									<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
 									<option <?php if($form['unimis'] == 'ha'){echo("selected");}?>>ha</option>
@@ -733,7 +751,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 						<label for="mostra_qdc" class="col-sm-4 control-label"><?php echo $script_transl['mostra_qdc']; ?></label>
-							<input tabindex="8" type="radio" name="mostra_qdc" value="1" <?php if ($form['mostra_qdc']==1){echo "checked";}?> > Sì <br>
+							<input tabindex="9" type="radio" name="mostra_qdc" value="1" <?php if ($form['mostra_qdc']==1){echo "checked";}?> > Sì <br>
 							<input type="radio" name="mostra_qdc" value="0" <?php if ($form['mostra_qdc']==0){echo "checked";}?> > No										
 					   </div>
 				   </div>
@@ -742,7 +760,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 						<label for="SIAN" class="col-sm-4 control-label"><?php echo $script_transl['SIAN']; ?></label>
-							<input tabindex="9" type="radio" name="SIAN" value="0" <?php if ($form['SIAN']==0){echo "checked";}?> > NO <br>
+							<input tabindex="10" type="radio" name="SIAN" value="0" <?php if ($form['SIAN']==0){echo "checked";}?> > NO <br>
 							<input type="radio" name="SIAN" value="1" <?php if ($form['SIAN']==1){echo "checked";}?> > Olio										
 							<input type="radio" name="SIAN" value="2" <?php if ($form['SIAN']==2){echo "checked";}?> > Olive										
 					   </div>
@@ -753,7 +771,7 @@ select: function(event, ui) {
 						<div class="form-group">
 							<label for = "or_macro" class = "col-sm-4 control-label"><?php echo $script_transl['or_macro']; ?></label>
 							<?php
-							$gForm->variousSelect('or_macro', $script_transl['or_macro_value'], $form['or_macro'], "col-sm-8", true, '', false, 'tabindex="10" onchange = "this.form.submit();" style = "max-width: 200px;"');
+							$gForm->variousSelect('or_macro', $script_transl['or_macro_value'], $form['or_macro'], "col-sm-8", true, '', false, 'tabindex="11" onchange = "this.form.submit();" style = "max-width: 200px;"');
 							?>
 						</div>
 					</div>
@@ -763,7 +781,7 @@ select: function(event, ui) {
 						<div class="form-group">
 							<label for = "or_spec" class = "col-sm-4 control-label"><?php echo $script_transl['or_spec']; ?></label>
 							<?php
-							$gForm->variousSelect('or_spec', $script_transl['or_spec_value'], $form['or_spec'], "col-sm-8", true, '', false, 'tabindex="11" onchange = "this.form.submit();" style = "max-width: 200px;"');
+							$gForm->variousSelect('or_spec', $script_transl['or_spec_value'], $form['or_spec'], "col-sm-8", true, '', false, 'tabindex="12" onchange = "this.form.submit();" style = "max-width: 200px;"');
 							?>
 						</div>
 					</div>
@@ -772,7 +790,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 						<label for="estrazione" class="col-sm-4 control-label"><?php echo $script_transl['estrazione']; ?></label>
-							<input tabindex="12" type="radio" name="estrazione" value="0" <?php if ($form['estrazione']==0){echo "checked";}?> > null <br>
+							<input tabindex="13" type="radio" name="estrazione" value="0" <?php if ($form['estrazione']==0){echo "checked";}?> > null <br>
 							<input type="radio" name="estrazione" value="1" <?php if ($form['estrazione']==1){echo "checked";}?> > Prima spremitura a freddo										
 							<input type="radio" name="estrazione" value="2" <?php if ($form['estrazione']==2){echo "checked";}?> > Estratto a freddo										
 					   </div>
@@ -782,7 +800,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 						<label for="biologico" class="col-sm-4 control-label"><?php echo $script_transl['biologico']; ?></label>
-							<input tabindex="13" type="radio" name="biologico" value="0" <?php if ($form['biologico']==0){echo "checked";}?> > Convenzionale <br>
+							<input tabindex="14" type="radio" name="biologico" value="0" <?php if ($form['biologico']==0){echo "checked";}?> > Convenzionale <br>
 							<input type="radio" name="biologico" value="1" <?php if ($form['biologico']==1){echo "checked";}?> > Biologico										
 							<input type="radio" name="biologico" value="2" <?php if ($form['biologico']==2){echo "checked";}?> > In conversione										
 					   </div>
@@ -792,7 +810,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 						<label for="etichetta" class="col-sm-4 control-label"><?php echo $script_transl['etichetta']; ?></label>
-							<input tabindex="14" type="radio" name="etichetta" value="0" <?php if ($form['etichetta']==0){echo "checked";}?> > Non etichettato <br>
+							<input tabindex="15" type="radio" name="etichetta" value="0" <?php if ($form['etichetta']==0){echo "checked";}?> > Non etichettato <br>
 							<input type="radio" name="etichetta" value="1" <?php if ($form['etichetta']==1){echo "checked";}?> > Etichettato									
 						</div>
 					</div>
@@ -802,7 +820,7 @@ select: function(event, ui) {
 						<div class="form-group">
 							<label for = "categoria" class = "col-sm-4 control-label"><?php echo $script_transl['categoria']; ?></label>
 							<?php
-							$gForm->variousSelect('categoria', $script_transl['categoria_value'], $form['categoria'], "col-sm-8", true, '', false, 'tabindex="15" onchange = "this.form.submit();" style = "max-width: 200px;"');
+							$gForm->variousSelect('categoria', $script_transl['categoria_value'], $form['categoria'], "col-sm-8", true, '', false, 'tabindex="16" onchange = "this.form.submit();" style = "max-width: 200px;"');
 							?>
 						</div>
 					</div>
@@ -811,7 +829,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="confezione" class="col-sm-4 control-label"><?php echo $script_transl['confezione']; ?></label>
-							<input tabindex="16" class="col-sm-2" type="number" step="any" min="0" value="<?php echo $form['confezione']; ?>" name="confezione" maxlength="15" /> (se sfuso indicare 0)
+							<input tabindex="17" class="col-sm-2" type="number" step="any" min="0" value="<?php echo $form['confezione']; ?>" name="confezione" maxlength="15" /> (se sfuso indicare 0)
 						</div>
 					</div>
 				</div><!-- chiude row  -->					   
@@ -820,7 +838,7 @@ select: function(event, ui) {
 						<div class="form-group">
 							<label for="catmer" class="col-sm-4 control-label"><?php echo $script_transl['catmer']; ?></label>
 							<?php
-							$gForm->selectFromDB('catmer', 'catmer', 'codice', $form['catmer'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'tabindex="17" style="max-width: 250px;"');
+							$gForm->selectFromDB('catmer', 'catmer', 'codice', $form['catmer'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'tabindex="18" style="max-width: 250px;"');
 							?>
 						</div>
 					</div>
@@ -831,7 +849,7 @@ select: function(event, ui) {
 						<div class="form-group">
 						<label for="classif_amb" class="col-sm-4 control-label"><?php echo $script_transl['classif_amb']; ?></label>
 					<?php
-					$gForm->variousSelect('classif_amb', $script_transl['classif_amb_value'], $form['classif_amb'], "col-sm-8", false, '', false, 'tabindex="18" style="max-width: 200px;"');
+					$gForm->variousSelect('classif_amb', $script_transl['classif_amb_value'], $form['classif_amb'], "col-sm-8", false, '', false, 'tabindex="19" style="max-width: 200px;"');
 					?>
 					   </div>
 				   </div>
@@ -841,7 +859,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?></label>
-							<input tabindex="19" class="col-sm-4" type="number" step="any" min="0" value="<?php echo $form['preacq']; ?>" name="preacq" maxlength="15" />
+							<input tabindex="20" class="col-sm-4" type="number" step="any" min="0" value="<?php echo $form['preacq']; ?>" name="preacq" maxlength="15" />
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -851,7 +869,7 @@ select: function(event, ui) {
 						<div class="form-group">
 							<label for="aliiva" class="col-sm-4 control-label"><?php echo $script_transl['aliiva']; ?></label>
 							<?php
-							$gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'tabindex="20" style="max-width: 350px;"');
+							$gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'tabindex="21" style="max-width: 350px;"');
 							?>
 						</div>
 					</div>
@@ -870,7 +888,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="scorta" class="col-sm-4 control-label"><?php echo $script_transl['scorta']; ?></label>
-							<input tabindex="21" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['scorta']; ?>" name="scorta" maxlength="13" />
+							<input tabindex="22" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['scorta']; ?>" name="scorta" maxlength="13" />
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -878,7 +896,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="riordino" class="col-sm-4 control-label"><?php echo $script_transl['riordino']; ?></label>
-							<input tabindex="22" type="text" min="0" step="any" class="col-sm-4" value="<?php echo $form['riordino']; ?>" name="riordino" maxlength="13" />
+							<input tabindex="23" type="text" min="0" step="any" class="col-sm-4" value="<?php echo $form['riordino']; ?>" name="riordino" maxlength="13" />
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -888,7 +906,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="tempo_sospensione" class="col-sm-4 control-label"><?php echo $script_transl['tempo_sospensione']; ?></label>
-							<input tabindex="23" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['tempo_sospensione']; ?>" name="tempo_sospensione" maxlength="13" />
+							<input tabindex="24" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['tempo_sospensione']; ?>" name="tempo_sospensione" maxlength="13" />
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -897,7 +915,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="dose_massima" class="col-sm-4 control-label"><?php echo $script_transl['dose_ha']; ?></label>
-							<input tabindex="24" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['dose_massima']; ?>" name="dose_massima" maxlength="13" />
+							<input tabindex="25" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['dose_massima']; ?>" name="dose_massima" maxlength="13" />
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -906,7 +924,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="rame_metallico" class="col-sm-4 control-label"><?php echo $script_transl['rame_metallico']; ?></label>
-							<input tabindex="25" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['rame_metallico']; ?>" name="rame_metallico" maxlength="13" />
+							<input tabindex="26" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['rame_metallico']; ?>" name="rame_metallico" maxlength="13" />
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -914,7 +932,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="perc_N" class="col-sm-4 control-label"><?php echo $script_transl['perc_N']; ?></label>
-							<input tabindex="26" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['perc_N']; ?>" name="perc_N" maxlength="3" />
+							<input tabindex="27" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['perc_N']; ?>" name="perc_N" maxlength="3" />
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -922,7 +940,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="perc_P" class="col-sm-4 control-label"><?php echo $script_transl['perc_P']; ?></label>
-							<input tabindex="27" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['perc_P']; ?>" name="perc_P" maxlength="3" />
+							<input tabindex="28" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['perc_P']; ?>" name="perc_P" maxlength="3" />
 						</div>
 					</div>
 				</div><!-- chiude row  -->
@@ -930,7 +948,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="perc_K" class="col-sm-4 control-label"><?php echo $script_transl['perc_K']; ?></label>
-							<input tabindex="28" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['perc_K']; ?>" name="perc_K" maxlength="3" />
+							<input tabindex="29" class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['perc_K']; ?>" name="perc_K" maxlength="3" />
 						</div>
 					</div>
 				</div><!-- chiude row  --> 
@@ -949,13 +967,13 @@ select: function(event, ui) {
 											<a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>" class="btn btn-default btn-sm">
 												<i class="glyphicon glyphicon-file"></i>
 											</a><?php echo $val['title']; ?>
-											<input tabindex="29" type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
+											<input tabindex="30" type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
 
 									<?php } ?>
-										<input tabindex="30" type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
+										<input tabindex="31" type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
 									</div>
 								<?php } else { // non ho documenti  ?>
-									<input tabindex="30" type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
+									<input tabindex="31" type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
 								<?php } ?>
 							</div>
 						</div>
@@ -965,7 +983,7 @@ select: function(event, ui) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>				
-							<input tabindex="31" class="col-sm-4" id="autocomplete2" type="text" value="<?php echo $form['fornitore']; ?>" name="fornitore" maxlength="15" /> <!-- per funzionare autocomplete2, id dell'input deve essere autocomplete -->
+							<input tabindex="32" class="col-sm-4" id="autocomplete2" type="text" value="<?php echo $form['fornitore']; ?>" name="fornitore" maxlength="15" /> <!-- per funzionare autocomplete2, id dell'input deve essere autocomplete -->
 						</div>
 					</div>
 				</div><!-- chiude row  -->  
@@ -976,10 +994,10 @@ select: function(event, ui) {
 					/** ENRICO FEDELE */
 					/* SOlo se non sono in finestra modale */
 					if ($modal === false) {
-						echo '<div class="col-sm-4 text-left"><input tabindex="32" name="none" type="submit" value="" disabled></div>';
+						echo '<div class="col-sm-4 text-left"><input tabindex="33" name="none" type="submit" value="" disabled></div>';
 					}
 					/** ENRICO FEDELE */
-					echo '<div class="col-sm-8 text-center"><input tabindex="33" name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '!" /></div>';
+					echo '<div class="col-sm-8 text-center"><input tabindex="34" name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '!" /></div>';
 	}?>
 				</div>
 				

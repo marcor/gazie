@@ -1202,18 +1202,18 @@ echo $stringa;
 				dataType: 'json',
 				success: function(response){
 					if(response.error){
-						$('#product_search').hide();
+						$('#codart_search').hide();
 					}
 					else{
-						$('#product_search').show().html(response.data);
+						$('#codart_search').show().html(response.data);
 					}
 				}
 			});
 		});
 		//fill the input
-		$(document).on('click', '.dropdown-item', function(e){
+		$(document).on('click', '.dropdown-item2', function(e){
 			e.preventDefault();
-			$('#product_search').hide();
+			$('#codart_search').hide();
 			var fullname = $(this).data('fullname');
 			$('#codart').val(fullname);
 			$('#mov-camp').submit();
@@ -1435,7 +1435,7 @@ if (intval($form['nome_colt']) == 0) {
 									<input class="col-sm-8" type="text" id="codart" name="codart" value="<?php echo $form['artico'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
 									<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
 								</div>
-								<ul class="dropdown-menu" style="left: 10%; padding: 0px;" id="product_search"></ul>									
+								<ul class="dropdown-menu" style="left: 10%; padding: 0px;" id="codart_search"></ul>									
 							</div>
 						</div><!-- chiude row  -->
 						<?php						
