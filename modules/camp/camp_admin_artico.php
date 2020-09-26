@@ -57,9 +57,13 @@ if (isset($_POST['fornitore'])){
 }
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
-    if ($_POST['oldnomefito']<>$_POST['nomefito']){ // se è stato cambiato il nome del fitosanitario prendo id_reg e propongo il codice
+    if ($_POST['oldnomefito']<>$_POST['nomefito']){ // se è stato cambiato il nome del fitofarmaco prendo id_reg e propongo il codice
 		$_POST['id_reg']=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'PRODOTTO', $_POST['nomefito'])['NUMERO_REGISTRAZIONE'];
-		$_POST['codice']=substr($_POST['nomefito'],0,15);
+		if (intval($_POST['id_reg'])>0){ // se è stato trovato nel DB del ministero propongo il codice
+			$_POST['codice']=substr($_POST['nomefito'],0,15);
+		} else { // altrimenti tolgo il nome del fitofarmaco che non esiste
+			$_POST['nomefito']=""; 
+		}
 	}
 	
 	$form = gaz_dbi_parse_post('artico');
