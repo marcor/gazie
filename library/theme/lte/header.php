@@ -121,6 +121,13 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
             .navbar-default .navbar-nav > li > a:hover {
                 background-color: #<?php echo $admin_aziend['colore']; ?>;
             }
+			div#box{
+				animation:blink 700ms infinite alternate;
+				padding:8px;
+			}
+			@keyframes blink {
+				from { opacity:1; } to { opacity:0; }
+			};   
         </style>  
     </head>
     <?php
@@ -148,17 +155,14 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
     echo "<body class=\"hold-transition skin-blue sidebar-mini " . $val . "\">";
     ?>
 	<script>
-	setInterval(function(){blink()}, 1000);
-		function blink() {
-			$("#box").fadeTo(100, 0.1).fadeTo(200, 1.0);
-		}
+
 	$(function() {
-		$("#diaolog_errmsg").dialog({ autoOpen: false });
-		$('.diaolog_errmsg').click(function() {
+		$("#dialog_errmsg").dialog({ autoOpen: false });
+		$('.dialog_errmsg').click(function() {
 			$("p#idcodice").html($(this).attr("ref"));
 			$("p#iddescri").html($(this).attr("ref2"));
 			var id = $(this).attr('ref');
-			$( "#diaolog_errmsg" ).dialog({
+			$( "#dialog_errmsg" ).dialog({
 				minHeight: 1,
 				width: "auto",
 				modal: "true",
@@ -166,7 +170,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 				hide: "explode",
 				buttons: {
 					delete:{ 
-						text:'Elimina avviso', 
+						text:'Elimina', 
 						'class':'btn btn-danger delete-button',
 						click:function (event, ui) {
 						$.ajax({
@@ -179,17 +183,17 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 							}
 						});
 					}},
-					"Lascia avviso": function() {
+					"Lascia": function() {
 						$(this).dialog("close");
 					}
 				}
 			});
-			$("#diaolog_errmsg" ).dialog( "open" );  
+			$("#dialog_errmsg" ).dialog( "open" );  
 		});
 	});
 	</script>
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
-		<div style="display:none" id="diaolog_errmsg" title="AVVISO">        
+		<div style="display:none" id="dialog_errmsg" title="Notifica">        
 			<p class="ui-state-highlight" id="idcodice"></p>
 			<p class="ui-state-highlight" id="iddescri"></p>
 		</div>
@@ -223,13 +227,11 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 							if (isset($_SESSION['errmsg'])){
 							?>
 							<li>
-								<div id="box" align="center"; style="margin-top:8px; color:#fff;
-								padding:5px; width:80px;
-								background: orange;">
-									<a href="#" class="diaolog_errmsg" title="AVVISO" ref="<?php echo $_SESSION['errmsg'];?>" ref2="<?php echo $_SESSION['errref'];?>">
-									AVVISO
-									</a>			
-								</div>
+								<div id="box" style="padding:5px;">
+								<a href="#" class="dialog_errmsg btn btn-info" title="<?php echo $_SESSION['errmsg'];?>" ref="<?php echo $_SESSION['errmsg'];?>" ref2="<?php echo $_SESSION['errref'];?>">
+								Notifica
+								</a>			
+								</div>			
 							</li>
 							<?php
 							}

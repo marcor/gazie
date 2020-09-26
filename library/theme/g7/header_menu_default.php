@@ -60,17 +60,13 @@ function submenu($menu_data) {
 }
 ?>
 <script>
-setInterval(function(){blink()}, 1000);
-    function blink() {
-        $("#box").fadeTo(100, 0.1).fadeTo(200, 1.0);
-    }
 $(function() {
-	$("#diaolog_errmsg").dialog({ autoOpen: false });
-	$('.diaolog_errmsg').click(function() {
+	$("#dialog_errmsg").dialog({ autoOpen: false });
+	$('.dialog_errmsg').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
 		$("p#iddescri").html($(this).attr("ref2"));
 		var id = $(this).attr('ref');
-		$( "#diaolog_errmsg" ).dialog({
+		$( "#dialog_errmsg" ).dialog({
 			minHeight: 1,
 			width: "auto",
 			modal: "true",
@@ -78,7 +74,7 @@ $(function() {
 			hide: "explode",
 			buttons: {
 				delete:{ 
-					text:'Elimina avviso', 
+					text:'Elimina', 
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -91,16 +87,16 @@ $(function() {
 						}
 					});
 				}},
-				"Lascia avviso": function() {
+				"Lascia": function() {
 					$(this).dialog("close");
 				}
 			}
 		});
-		$("#diaolog_errmsg" ).dialog( "open" );  
+		$("#dialog_errmsg" ).dialog( "open" );  
 	});
 });
 </script>
-<div style="display:none" id="diaolog_errmsg" title="AVVISO">        
+<div style="display:none" id="dialog_errmsg" title="Notifica">        
         <p class="ui-state-highlight" id="idcodice"></p>
 		<p class="ui-state-highlight" id="iddescri"></p>
 </div>
@@ -119,15 +115,12 @@ $(function() {
 	<?php
 		if (isset($_SESSION['errmsg'])){
 			?>					
-			<div id="box" align="center"; style=" position:absolute; top:2px; right:3px; color:#fff;
-            padding:5px; width:80px;
-            background: orange;">
-			<a href="#" class="diaolog_errmsg" title="AVVISO" ref="<?php echo $_SESSION['errmsg'];?>" ref2="<?php echo $_SESSION['errref'];?>">
-			AVVISO
+			<div id="box" style=" position:absolute; right:10px; padding:5px;">
+			<a href="#" class="dialog_errmsg btn btn-info" title="<?php echo $_SESSION['errmsg'];?>" ref="<?php echo $_SESSION['errmsg'];?>" ref2="<?php echo $_SESSION['errref'];?>">
+			Notifica
 			</a>			
 			</div>			
 			<?php
-			//unset ($_SESSION['errmsg']);
 		}
 		?>
     <div class="collapse navbar-collapse">

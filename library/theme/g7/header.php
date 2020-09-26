@@ -83,6 +83,13 @@
             .navbar-default .navbar-nav > li > a:hover {
                 background-color: #<?php echo $admin_aziend['colore']; ?>;
             }
+			div#box{
+				animation:blink 700ms infinite alternate;
+				padding:8px;
+			}
+			@keyframes blink {
+				from { opacity:1; } to { opacity:0; }
+			};   
         </style>  
         <?php
 
