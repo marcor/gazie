@@ -45,6 +45,7 @@ if ((isset($_GET['Update']) and  !isset($_GET['id'])) or isset($_POST['Return'])
 }
 
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
+print_r($_POST);
 	if (isset($_POST['Cancel'])){
 		$_POST['cod_art'] = "";
 		$_POST['codart'] = "";
@@ -79,7 +80,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 		if (intval($form['id_reg'])>0){
 			$form['nome_fito'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "NUMERO_REGISTRAZIONE", $form['id_reg'])['PRODOTTO'];
 		} else {
-			$form['cod_art']="";
+			$form['cod_art']=$_POST['codart'];
 		}
 	} 
 	if (($form['cod_art'] AND $form['nome_fito']) OR($form['cod_art']=="" AND $form['nome_fito']=="" )) {
@@ -171,6 +172,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['nome_colt'] = $form['id_colt']." - ".$colt['nome_colt'];
 	$avv = gaz_dbi_get_row($gTables['camp_avversita'],"id_avv",$form['id_avv']);
 	$form['nome_avv'] = $form['id_avv']." - ".$avv['nome_avv'];
+	$form['id_reg'] = gaz_dbi_get_row($gTables['artico'], "codice", $form['cod_art'])['id_reg'];
+	
+	$form['nome_fito'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "NUMERO_REGISTRAZIONE", $form['id_reg'])['PRODOTTO'];
+	
     
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
 	// controllo se la tabella DB fitofarmaci è popolata
