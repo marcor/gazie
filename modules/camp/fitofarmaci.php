@@ -34,7 +34,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 $form['nome_fito']="";
 
-print "<form method=\"POST\" enctype=\"multipart/form-data\">\n";
+print "<form method=\"POST\" enctype=\"multipart/form-data\" id=\"consult-product\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">CONSULTAZIONE DATABASE FITOFARMACI</div>";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
@@ -51,78 +51,121 @@ if (!empty($msg)) {
     echo '<tr><td colspan="5" class="FacetDataTDred">'.$message."</td></tr>\n";
 }
 ?>
-<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql artico	-->	
-  <script>
-	$(document).ready(function() {
-	$("input#autocomplete").autocomplete({
-		source: [<?php
-	$stringa="";
-	$query="SELECT prodotto FROM ".$gTables['camp_fitofarmaci'];
-	$result = gaz_dbi_query($query);
-	while($row = $result->fetch_assoc()){
-		$stringa.="\"".$row['prodotto']."\", ";			
-	}
-	$stringa=substr($stringa,0,-2);
-	echo $stringa;
-	?>],
-		minLength:2,
-	select: function(event, ui) {
-        //assign value back to the form element
-        if(ui.item){
-            $(event.target).val(ui.item.value);
-        }
-        //submit the form
-        $(event.target.form).submit();
-    }
+<script>
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql fitofarmaci	-->
+$(document).ready(function(){
+//Autocomplete search using PHP, MySQLi, Ajax and jQuery
+//generate suggestion on keyup
+	$('#nomefito').keyup(function(e){
+		e.preventDefault();
+		var form = $('#consult-product').serialize();
+		$.ajax({
+			type: 'GET',
+			url: 'do_search.php',
+			data: form,
+			dataType: 'json',
+			success: function(response){
+				if(response.error){
+					$('#product_search').hide();
+				}
+				else{
+					$('#product_search').show().html(response.data);
+				}
+			}
+		});
 	});
+	//fill the input
+	$(document).on('click', '.dropdown-item', function(e){
+		e.preventDefault();
+		$('#product_search').hide();
+		var fullname = $(this).data('fullname');
+		$('#nomefito').val(fullname);
+		$('#consult-product').submit();
 	});
-  </script>
- <!-- fine autocompletamento --> 
+});
+<!-- fine autocompletamento -->	
+</script>
+ 
+ <tr>
+	<td class="FacetFieldCaptionTD"> 
+		NOME FITOFARMACO
+	</td>
+	<td class="FacetDataTD">	 
+		<div class="col-md-12">				
+			<input class="col-md-12" type="text" id="nomefito" name="nomefito" value="<?php echo $form['nome_fito']; ?>" placeholder="Ricerca nome fitofarmaco" autocomplete="off" tabindex="1">
+			<ul class="dropdown-menu" style="left: 20%; padding: 0px;" id="product_search"></ul>									
+		</div>	
+	</td>
+</tr>
 <?php
-print "<tr><td class=\"FacetFieldCaptionTD\">NOME FITOFARMACO</td><td class=\"FacetDataTD\"><input type=\"text\" id=\"autocomplete\" name=\"nome_fito\" value=\"".$form['nome_fito']."\" maxlength=\"50\"  /></td></tr>\n";
 
-if (isset ($_POST['nome_fito'])) {
-	$form['nome_fito']=$_POST['nome_fito'];
+if (isset ($_POST['nomefito'])) {
+	$form['nome_fito']=$_POST['nomefito'];
 	$fito = gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'prodotto', $form['nome_fito']);
 	?>
 		
 	<tr><td colspan="5" class="FacetDataTDred" align="center">
 	<?php echo $form['nome_fito']; ?>
-	</td></tr>
+	</td>
+	</tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">NUMERO REGISTRAZIONE</td>
+	<td class="FacetDataTD">
+	<?php echo $fito['NUMERO_REGISTRAZIONE']; ?>
+	</td>
+	</tr>
 	<tr>
 	<td class="FacetFieldCaptionTD">IMPRESA</td>
-	<td class=\"FacetDataTD\">
+	<td class="FacetDataTD">
 	<?php echo $fito['IMPRESA']; ?>
 	</td>
 	</tr>
 	<tr>
 	<td class="FacetFieldCaptionTD">SEDE LEGALE</td>
-	<td class=\"FacetDataTD\">
+	<td class="FacetDataTD">
 	<?php echo $fito['SEDE_LEGALE_IMPRESA']; ?>
 	</td>
 	</tr>
 	<tr>
 	<td class="FacetFieldCaptionTD">SCADENZA AUTORIZZAZIONE</td>
-	<td class=\"FacetDataTD\">
+	<td class="FacetDataTD">
 	<?php echo $fito['SCADENZA_AUTORIZZAZIONE']; ?>
 	</td>
 	</tr>
 	<tr>
 	<td class="FacetFieldCaptionTD">INDICAZIONI DI PERICOLO</td>
-	<td class=\"FacetDataTD\">
+	<td class="FacetDataTD">
 	<?php echo $fito['INDICAZIONI_DI_PERICOLO']; ?>
 	</td>
 	</tr>
 	<tr>
 	<td class="FacetFieldCaptionTD">DESCRIZIONE FORMULAZIONE</td>
-	<td class=\"FacetDataTD\">
+	<td class="FacetDataTD">
 	<?php echo $fito['DESCRIZIONE_FORMULAZIONE']; ?>
 	</td>
 	</tr>
 	<tr>
 	<td class="FacetFieldCaptionTD">SOSTANZE ATTIVE</td>
-	<td class=\"FacetDataTD\">
+	<td class="FacetDataTD">
 	<?php echo $fito['SOSTANZE_ATTIVE']; ?>
+	</td>
+	</tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">CONTENUTO di sostanze attive per 100g di prodotto</td>
+	<td class="FacetDataTD">
+	<?php echo $fito['CONTENUTO_PER_100G']; ?>
+	</td>
+	</tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">ATTIVITà</td>
+	<td class="FacetDataTD">
+	<?php echo $fito['ATTIVITA']; ?>
+	</td>
+	</tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">PPO prodotto per piante ornamentali</td>
+	<td class="FacetDataTD">
+	<?php echo $fito['PPO']; ?>
 	</td>
 	</tr>
 	</table>
