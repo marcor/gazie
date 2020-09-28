@@ -800,10 +800,10 @@ class magazzForm extends GAzieForm {
             $old_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $old_movmag['caumag']);
             gaz_dbi_del_row($gTables['movmag'], 'id_mov', $id_movmag);
             $codart = $old_movmag['artico'];
-			if (class_exists('APIeCommerce')){
-				$api = new APIeCommerce();
-				if($api->api_token && isset($codart)){
-					$api->SetProductQuantity($codart);
+			if (class_exists('gazSynchro')){
+				$gSync = new gazSynchro();
+				if($gSync->api_token && isset($codart)){
+					$gSync->SetProductQuantity($codart);
 				}				
 			}
         } else {   // si deve modificare un movimento esistente

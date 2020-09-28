@@ -250,18 +250,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
       }
     }
-		if (class_exists('APIeCommerce')){
+		if (class_exists('gazSynchro')){
 			// aggiorno l'e-commerce ove presente
-			$api = new APIeCommerce();
-			if($api->api_token){
+			$gSync = new gazSynchro();
+			if($gSync->api_token){
 				$form['heximage']=bin2hex($form['image']);
 				if($admin_aziend['conmag'] <= 1){ // se non gestisco la contabilità di magazzino ci indico solo la scorta e metto sempre disponibile
 					$form['quantity']=intval($form['scorta']);
 				} else {
 					$form['quantity']=intval($magval['q_g']);
 				}
-				$api->UpsertProduct($form);
-				//print $api->rawres;
+				$gSync->UpsertProduct($form);
+				//print $gSync->rawres;
 				//exit;
 			}
 		}

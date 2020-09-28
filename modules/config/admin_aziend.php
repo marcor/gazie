@@ -215,13 +215,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     gaz_dbi_put_row($gTables['config'], 'variable', 'intermediary', 'cvalue', 0);
                 }
             }
-					if (class_exists('APIeCommerce')){
+					if (class_exists('gazSynchro')){
 						// aggiorno l'e-commerce ove presente
-						$api = new APIeCommerce();
-						if($api->api_token){
-							$api->SetupStore();
+						$gSync = new gazSynchro();
+						if($gSync->api_token){
+							$gSync->SetupStore();
 						}
-						//print $api->rawres;
+						//print $gSync->rawres;
 						//exit;
 					}
 						

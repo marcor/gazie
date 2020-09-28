@@ -64,14 +64,14 @@ class PasteBin
      * API Developer Key needed in order to make API requests
      * @var string
      */
-    public $apiDevKey;
+    public $gSyncDevKey;
 
     /**
      * API error, in case there is one
      * 
      * @var string
      */
-    public $apiError;
+    public $gSyncError;
 
     /**
      * cURL request error, if any

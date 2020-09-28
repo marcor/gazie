@@ -21,6 +21,11 @@ SELECT  @id__menu_mod := `id` FROM  `gaz_menu_module` WHERE `link` = 'camp_repor
 UPDATE `gaz_menu_script` SET `link` = 'camp_admin_caumag.php?Insert' WHERE `id_menu` = @id_menu_mod AND `link`= 'admin_caumag.php?Insert';
 ALTER TABLE `gaz_config` CHANGE COLUMN `cvalue` `cvalue` VARCHAR(2000) NULL DEFAULT '' AFTER `variable`;
 INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`, `weight`, `show`) VALUES	( 'Referenze per movimenti di magazzino per link al documento che lo ha generato ', 'report_movmag_ref_doc', '{\r\n"ADT":"acquis",\r\n"AFA":"acquis",\r\n"AFC":"acquis",\r\n"DDR":"acquis",\r\n"ADT":"acquis",\r\n"AFT":"acquis",\r\n"DDL":"acquis", \r\n"RDL":"acquis",\r\n"DDR":"acquis",\r\n"VCO":"vendit", \r\n"VRI":"vendit", \r\n"DDT":"vendit", \r\n"FAD":"vendit", \r\n"FAI":"vendit", \r\n"FAA":"vendit", \r\n"FAQ":"vendit", \r\n"FAP":"vendit", \r\n"FNC":"vendit", \r\n"FND":"vendit", \r\n"DDV":"vendit", \r\n"RDV":"vendit", \r\n"DDY":"vendit", \r\n"DDS":"vendit",\r\n"VPR":"vendit", \r\n"VOR":"vendit", \r\n"VOW":"vendit", \r\n"VOG":"vendit", \r\n"CMR":"vendit", \r\n"CAM":"camp",\r\n"PRO":"orderman",\r\n"MAG":"magazz"\r\n}', 0, 0);
+ALTER TABLE `gaz_camp_fitofarmaci` ADD COLUMN `CONTENUTO_PER_100G` VARCHAR(30) NOT NULL COMMENT 'Contenuto per 100 grammi di prodotto' AFTER `SOSTANZE_ATTIVE`;
+ALTER TABLE `gaz_camp_fitofarmaci` ADD COLUMN `ATTIVITA` VARCHAR(50) NOT NULL COMMENT 'Attivita d\'uso' AFTER `CONTENUTO_PER_100G`;
+ALTER TABLE `gaz_camp_fitofarmaci` ADD COLUMN `IP` VARCHAR(2) NOT NULL COMMENT 'Importazioni parallele' AFTER `ATTIVITA`;
+ALTER TABLE `gaz_camp_fitofarmaci` ADD COLUMN `PPO` VARCHAR(2) NOT NULL COMMENT 'Prodotti per piante ornamentali' AFTER `IP`;
+ALTER TABLE `gaz_aziend` CHANGE COLUMN `sync_ecom_mod` `gazSynchro` VARCHAR(100) NOT NULL DEFAULT '' COMMENT 'Indico i moduli dove trovare i file contenenti la classe "gazSynchro" con le funzioni  necessarie per eseguire aggiornamenti e/o sincronizzazioni; \r\nè indispensabile che la classe stessa contenga le funzioni api_token e get_sync_status.  \r\nAd ogni cambiamento di movimento di magazzino, cliente, articolo, categoria merceologica, aliquota IVA, presenza di nuovi ordini e/o clienti inseriti dal sito\r\nsi provvederà a fare delle chiamate alle funzioni contenute in essa.' COLLATE 'utf8_general_ci' AFTER `web_url`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 UPDATE `gaz_XXXcaucon_rows` SET `n_order` = '1' WHERE `caucon_cod` = 'AFT' AND `clfoco_ref` = '212000000';
 UPDATE `gaz_XXXcaucon_rows` SET `n_order` = '2' WHERE `caucon_cod` = 'AFT' AND `clfoco_ref` = '330000004';
@@ -37,8 +42,5 @@ ALTER TABLE `gaz_XXXassets`	ADD COLUMN `password` VARCHAR(50) NOT NULL COMMENT '
 ALTER TABLE `gaz_XXXassets`	ADD COLUMN `linkmode` VARCHAR(15) NOT NULL COMMENT 'Modalità-protocollo di comunicazione (IoT e/o Industry 4.0)' AFTER `password`;
 ALTER TABLE `gaz_XXXartico` ADD COLUMN `id_reg` INT(6) NOT NULL COMMENT 'Riferimento al numero registrazione della tabella camp_fitofarmaci' AFTER `SIAN`;
 ALTER TABLE `gaz_XXXmovmag`	CHANGE COLUMN `desdoc` `desdoc` VARCHAR(100) NOT NULL AFTER `tipdoc`;
-ALTER TABLE `gaz_camp_fitofarmaci` ADD COLUMN `CONTENUTO_PER_100G` VARCHAR(30) NOT NULL COMMENT 'Contenuto per 100 grammi di prodotto' AFTER `SOSTANZE_ATTIVE`;
-ALTER TABLE `gaz_camp_fitofarmaci` ADD COLUMN `ATTIVITA` VARCHAR(50) NOT NULL COMMENT 'Attivita d\'uso' AFTER `CONTENUTO_PER_100G`;
-ALTER TABLE `gaz_camp_fitofarmaci` ADD COLUMN `IP` VARCHAR(2) NOT NULL COMMENT 'Importazioni parallele' AFTER `ATTIVITA`;
-ALTER TABLE `gaz_camp_fitofarmaci` ADD COLUMN `PPO` VARCHAR(2) NOT NULL COMMENT 'Prodotti per piante ornamentali' AFTER `IP`;
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Periodicità in minuti per i controlli di presenza alerts (su menù) ', 'menu_alerts_check', '15');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

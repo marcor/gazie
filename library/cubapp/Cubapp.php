@@ -95,7 +95,7 @@ class CubAPP
 
 	}
 
-	private function restRequest($apiRequest, $blobObject)
+	private function restRequest($gSyncRequest, $blobObject)
 	{
 		require_once(self::$CONFIG['PHPSECLIB_DIR'].'Crypt/Random.php');
 
@@ -133,7 +133,7 @@ class CubAPP
 		$dato = $this->prepareBlobObject($retval->token, $secretKey, $secretIV, $blobObject);
 
 		/* START API REQUEST */
-		$service_url = self::$CONFIG['API_BASE_URL'].$apiRequest;
+		$service_url = self::$CONFIG['API_BASE_URL'].$gSyncRequest;
 		$curl = curl_init($service_url);
 		curl_setopt($curl, CURLOPT_FORBID_REUSE, 1);
 		curl_setopt($curl, CURLOPT_FRESH_CONNECT, 1);
@@ -181,13 +181,13 @@ class CubAPP
 
 	public function inviaSMS($cellulare, $messaggio)
 	{
-		$apiRequest = 'spedizione/sms';
+		$gSyncRequest = 'spedizione/sms';
 		$blobObject = array(
 			'contact_number' => $cellulare,
 			'sms_text' => utf8_encode($messaggio)
 		);
 
-		return $this->restRequest($apiRequest, $blobObject);
+		return $this->restRequest($gSyncRequest, $blobObject);
 	}
 
 }

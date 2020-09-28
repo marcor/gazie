@@ -156,10 +156,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =". intval($_POST['id_tes']),"id_tes DESC");
 			while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 				gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
-				if (class_exists('APIeCommerce')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
-					$api = new APIeCommerce();
-					if($api->api_token){ 
-						$api->SetProductQuantity($a_row['codart']);							
+				if (class_exists('gazSynchro')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
+					$gSync = new gazSynchro();
+					if($gSync->api_token){ 
+						$gSync->SetProductQuantity($a_row['codart']);							
 					}
 				}
 				gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref ",$a_row['id_rig']);

@@ -43,12 +43,12 @@
 		if (!isset($_SESSION['sync']) || strtotime(date("Y-m-d H:i:s"))>$_SESSION['sync']+(1*60*60)){// se è il primo accesso o se è passata un'ora dall'ultimo accesso
 			$_SESSION['sync']=strtotime(date("Y-m-d H:i:s"));
 			// importo gli ordini dal web
-			if (class_exists('APIeCommerce')){
-				$api = new APIeCommerce();
-				if($api->api_token){
+			if (class_exists('gazSynchro')){
+				$gSync = new gazSynchro();
+				if($gSync->api_token){
 					$last_id="";
-					$api = new APIeCommerce();
-					$api->GetOrder($last_id);			
+					$gSync = new gazSynchro();
+					$gSync->get_sync_status($last_id);			
 				}				
 			}						
 		}

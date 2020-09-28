@@ -440,11 +440,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['datemi'] = $datemi;
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
-				if (class_exists('APIeCommerce')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
-					$api = new APIeCommerce();
-					if($api->api_token){ 
+				if (class_exists('gazSynchro')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
+					$gSync = new gazSynchro();
+					if($gSync->api_token){ 
 						foreach ($syncarticols as $syncarticol){
-							$api->SetProductQuantity($syncarticol);							
+							$gSync->SetProductQuantity($syncarticol);							
 						}
 					}
 				}
@@ -488,10 +488,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                         gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                     }
-					if (class_exists('APIeCommerce')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
-						$api = new APIeCommerce();
-						if($api->api_token && isset($form['rows'][$i]['codart'])){
-							$api->SetProductQuantity($form['rows'][$i]['codart']);
+					if (class_exists('gazSynchro')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
+						$gSync = new gazSynchro();
+						if($gSync->api_token && isset($form['rows'][$i]['codart'])){
+							$gSync->SetProductQuantity($form['rows'][$i]['codart']);
 						}
 					}
                 }

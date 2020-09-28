@@ -30,14 +30,14 @@ GAzie userà dei nomi di funzione per eseguire le varie operazioni di sincronizz
 dello sviluppo vedrete delle chiamate ad esse che però al momento saranno vuote e a discrezione dei 
 singoli sviluppatori utilizzarle per passare O ricevere dati (d)allo store online, tramite le specifiche API.
 I nomi standard di funzione saranno: 
-"UpsertProduct","GetOrder","UpsertCategory","UpsertCustomer","UpdateStore",ecc 
+"UpsertProduct","get_sync_status","UpsertCategory","UpsertCustomer","UpdateStore",ecc 
 e dovranno essere gli stessi anche su eventuali "moduli cloni" per la sincronizzazione di GAzie.
 Con questo stratagemma basterà indicare in configurazione azienda  il nome del modulo che si vuole 
 utilizzare per il sincronismo che tutti gli altri moduli di GAzie nel momento in cui effettueranno
 un aggiornamento dei dati punteranno alle funzioni contenute nel modulo alternativo richiesto,
  pittosto che a questo. 
 */
-class APIeCommerce {
+class gazSynchro {
 
 	function __construct() {
 		// Quando istanzio questa classe prendo il token, sempre.
@@ -218,7 +218,7 @@ class APIeCommerce {
 				$_SESSION['errref'] = "Aggiornamento quantità dell'articolo: ". $d;
 			}
 	}
-	function GetOrder($last_id) { 
+	function get_sync_status($last_id) { 
 		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer), 
 		// in $last_id si deve passare l'ultimo ordine già importato al fine di non importare tutto ma solo i nuovi
 		//Antonio Germani - $last_id non viene usato perché si controlla con una query se l'ordine è già stato importato

@@ -82,14 +82,14 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           } else { // e' un'inserimento
             gaz_dbi_table_insert('catmer',$form);
           }
-					if (class_exists('APIeCommerce')){
+					if (class_exists('gazSynchro')){
 						// aggiorno l'e-commerce ove presente
-						$api = new APIeCommerce();
-						if($api->api_token){
+						$gSync = new gazSynchro();
+						if($gSync->api_token){
 							$form['heximage']=bin2hex($form['image']);
-							$api->UpsertCategory($form);
+							$gSync->UpsertCategory($form);
 						}
-						//print $api->rawres;
+						//print $gSync->rawres;
 					//exit;
 					}
 					header("Location: ".$_POST['ritorno']);
