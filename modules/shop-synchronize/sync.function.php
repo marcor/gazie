@@ -370,9 +370,9 @@ class APIeCommerce {
 								$codvat=$orderrow->VatCode;
 								$aliiva=$orderrow->VatAli;
 							}
-							if ($order->PricesIncludeVat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
+							if ($order->PricesIncludeVat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo iva compresa dell'articolo
 								$div=floatval("1.".$aliiva);
-								$Price=floatval($orderrow->Price) / $div;				
+								$Price=floatval($orderrow->PriceVATincl) / $div;				
 							} else {
 								$Price=floatval($orderrow->Price);
 							}
@@ -384,10 +384,10 @@ class APIeCommerce {
 						} else {
 							$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
 							$aliiva=$orderrow->VatAli;
-							if ($order->PricesIncludeVat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
+							if ($order->PricesIncludeVat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo iva compresa dell'articolo 
 								$div=floatval("1.".$aliiva);
-								$Price=floatval($orderrow->Price) / $div;					
-							} else {
+								$Price=floatval($orderrow->PriceVATincl) / $div;					
+							} else { // altrimenti prendo il prezzo imponibile inviato dal sito
 								$Price=floatval($orderrow->Price);
 							}
 						}

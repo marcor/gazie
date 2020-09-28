@@ -156,12 +156,17 @@ if (isset($_POST['conferma'])) { // se confermato
 						$codvat=$_POST['codvat'.$ord.$row];
 						$aliiva=$_POST['aliiva'.$ord.$row];
 					}
-					if ($includevat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
+					if ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
 						$div=0;
 						$div="1.".intval($aliiva);
-						$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row] / $div;					
+						$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;					
+					} elseif ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]>0) {
+						$prelis=$_POST['prelis_imp'.$ord.$row];
 					}
-					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '".$good_or_service."', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $_POST['prelis'.$ord.$row] ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+					if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
+						$prelis=$_POST['prelis_imp'.$ord.$row];
+					}
+					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '".$good_or_service."', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $prelis ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 					$codart= substr($_POST['codice'.$ord.$row],0,15);// dopo averlo creato ne prendo il codice come $codart
 					$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione
 					
@@ -169,15 +174,20 @@ if (isset($_POST['conferma'])) { // se confermato
 				} else {
 					$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
 					$aliiva=$_POST['aliiva'.$ord.$row];
-					if ($includevat=="true"){ // se l'e-commerce include l'iva la scorporo dal prezzo dell'articolo
+					if ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
 						$div=0;
 						$div="1.".intval($aliiva);
-						$_POST['prelis'.$ord.$row]=$_POST['prelis'.$ord.$row] / $div;					
+						$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;					
+					} elseif ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]>0) {
+						$prelis=$_POST['prelis_imp'.$ord.$row];
+					}
+					if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
+						$prelis=$_POST['prelis_imp'.$ord.$row];
 					}
 				}								
 									
 				// salvo rigo su database tabella rigbro 
-				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $_POST['unimis'.$ord.$row] . "','" . $_POST['quanti'.$ord.$row] . "','" . $_POST['prelis'.$ord.$row] . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
+				gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $_POST['unimis'.$ord.$row] . "','" . $_POST['quanti'.$ord.$row] . "','" . $prelis . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
 			}
 						
 			$id_tesbro++;
@@ -294,7 +304,8 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 							echo '<input type="hidden" name="stock'. $n . $nr.'" value="'. $orderrow->Stock . '">';
 							echo '<input type="hidden" name="catmer'. $n . $nr.'" value="'. $orderrow->Category . '">';
 							echo '<input type="hidden" name="quanti'. $n . $nr.'" value="'. $orderrow->Qty . '">';
-							echo '<input type="hidden" name="prelis'. $n . $nr.'" value="'. $orderrow->Price . '">';
+							echo '<input type="hidden" name="prelis_imp'. $n . $nr.'" value="'. $orderrow->Price . '">';
+							echo '<input type="hidden" name="prelis_vatinc'. $n . $nr.'" value="'. $orderrow->PriceVATincl . '">';
 							echo '<input type="hidden" name="codvat'. $n . $nr.'" value="'. $orderrow->VatCode . '">';
 							echo '<input type="hidden" name="aliiva'. $n . $nr.'" value="'. $orderrow->VatAli . '">';
 							echo '<input type="hidden" name="refid'. $n . $nr.'" value="'. $orderrow->Id . '">';
