@@ -37,5 +37,5 @@ $module_class='fas fas fa-exchange-alt';
 //$update_db[]="INSERT INTO ".$gTables['company_data']." (`description`, `var`) VALUES ('Chiave per accesso ad API ecommerce', 'oc_api_key')";
 
 // valorizzo automaticamente in configurazione azienda con il nome del modulo
-$update_db[]="UPDATE ".$gTables['aziend']." SET `sync_ecom_mod`='shop-synchronize' WHERE `codice`=".$user_data['company_id'];
+$update_db[]="UPDATE ".$gTables['aziend']." SET `gazSynchro`='shop-synchronize' WHERE `codice`=".$user_data['company_id'];
 ?>

@@ -576,8 +576,8 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="sync_ecom_mod" class="col-sm-4 control-label"><?php echo $script_transl['sync_ecom_mod']; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['sync_ecom_mod']; ?>" name="sync_ecom_mod" maxlength="50" placeholder="es: shop-synchronize" />
+                        <label for="gazSynchro" class="col-sm-4 control-label"><?php echo $script_transl['gazSynchro']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['gazSynchro']; ?>" name="gazSynchro" maxlength="50" placeholder="es: shop-synchronize" />
                     </div>
                 </div>
             </div><!-- chiude row  -->
