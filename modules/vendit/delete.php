@@ -148,15 +148,16 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 					$message = "Si sta tentando di eliminare un documento <br /> inesistente o contabilizzato!";
 				} 
 		break;		
-		case "broven":
+		case "broven":				
 			//procedo all'eliminazione della testata e dei righi...
+			$tipdoc = gaz_dbi_get_row($gTables['tesbro'], "id_tes", intval($_POST['id_tes']))['tipdoc'];
 			//cancello la testata
 			gaz_dbi_del_row($gTables['tesbro'], "id_tes", intval($_POST['id_tes']));
 			//... e i righi
 			$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =". intval($_POST['id_tes']),"id_tes DESC");
 			while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 				gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
-				if (class_exists('gazSynchro')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
+				if (class_exists('gazSynchro') AND $tipdoc!=="VOW"){// Antonio Germani - se non è un ordine web sincronizzo quantità prodotti e-commerce 
 					$gSync = new gazSynchro();
 					if($gSync->api_token){ 
 						$gSync->SetProductQuantity($a_row['codart']);							
