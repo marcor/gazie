@@ -37,7 +37,7 @@ utilizzare per il sincronismo che tutti gli altri moduli di GAzie nel momento in
 un aggiornamento dei dati punteranno alle funzioni contenute nel modulo alternativo richiesto,
  pittosto che a questo. 
 */
-class gazSynchro {
+class shopsynchronizegazSynchro {
 
 	function __construct() {
 		// Quando istanzio questa classe prendo il token, sempre.

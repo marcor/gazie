@@ -31,6 +31,17 @@ if (isset($styles) && is_array($styles)) {
     }
 }
 if ( $debug_active==true ) echo "<div>".d($GLOBALS, $_SERVER)."</div>";
+
+if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['menu_alerts_lastcheck'])> $period )){ // sono passati $period minuti
+	// non ho mai controllato se ci sono nuovi ordini oppure è passato troppo tempo dall'ultimo controllo vado a farlo
+		echo '<script>menu_check_from_modules();</script>';
+} elseif(isset($_SESSION['menu_alerts']) && count($_SESSION['menu_alerts'])>=1) {
+        foreach($_SESSION['menu_alerts'] as $k=>$v) {
+            // faccio il load per creae un bottone per ogni modulo che lo ha generato (mod,title,button,label,link,style)
+            echo "<script>menu_alerts_check('".$k."','".addslashes($v['title'])."','".addslashes($v['button'])."','".addslashes($v['label'])."','".addslashes($v['link'])."','".$v['style']."');</script>";
+        }
+}
+
 ?>
 
 <!-- questo è contenuto in library/theme/g7/footer.php -->
@@ -49,6 +60,9 @@ if ( $debug_active==true ) echo "<div>".d($GLOBALS, $_SERVER)."</div>";
 <script src="../../js/custom/gz-library.js"></script>
 <script src="../../js/tinymce/tinymce.min.js"></script>
 <script src="../../js/custom/tinymce.js"></script>
+<script>
+// setto comunque dei check intervallati dei minuti inseriti in configurazione avanzata azienda 15*60*1000ms perché non è detto che si facciano i refresh, ad es. se il browser rimane fermo sulla stessa pagina per un lungo periodo > $period
+setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);</script>
 </div><!-- chiude <div class="container-fluid gaz-body"> presente su header.php -->
 </body>
 </html>

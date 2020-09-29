@@ -24,6 +24,8 @@
  */
 $config = new UserConfig;
 
+$period=gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
+
 if ( $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
 
 require("../../library/theme/lte/function.php");
@@ -94,18 +96,6 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/lte/skins/" . $admin_aziend['skin'])) {
             $skin = $admin_aziend['skin'];
         }
-        // ogni ora controllo se ho "qualcosa" da acquisire da remoto 
-		if (!$_SESSION['sync'] or strtotime(date("Y-m-d H:i:s"))>$_SESSION['sync']+(1*60*60)){// se è il primo accesso o se è passata un'ora dall'ultimo accesso
-			$_SESSION['sync']=strtotime(date("Y-m-d H:i:s"));
-			// importo gli ordini dal web
-			if (class_exists('gazSynchro')){
-				$gSync = new gazSynchro();
-				if($gSync->api_token){
-					$gSync = new gazSynchro();
-					$gSync->get_sync_status('');			
-				}				
-			}						
-		}
         ?>
         <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
@@ -119,14 +109,92 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
             .navbar-default .navbar-nav > li > a:hover {
                 background-color: #<?php echo $admin_aziend['colore']; ?>;
             }
-			div#box{
-				animation:blink 700ms infinite alternate;
-				padding:8px;
+			li.blink{
+			  animation:blink 700ms infinite alternate;
+			  padding-top:10px;
+			}
+			li.blink>a.btn{
+			  padding:5px;
 			}
 			@keyframes blink {
 				from { opacity:1; } to { opacity:0; }
 			};   
         </style>  
+<script>
+$(function() {
+	$("#dialog_menu_alerts").dialog({ autoOpen: false });
+});
+function menu_alerts_check(mod,title,button,label,link,style){
+	// questa funzione attiva l'alert sulla barra del menù e viene richiamata sia dalla funzione menu_check_from_modules() dal browser tramite setInterval che alla fine della pagina (lato server) quando il controllo fatto dal php tramite $_SESSION['menu_alerts_lastcheck'] è scaduto
+    // faccio append solo se già non esiste
+    if (style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu 
+        $("li.blink").html( '<a mod="'+mod+'" class="btn btn-'+style+' dialog_menu_alerts" title="'+title+'" >'+button+'</a>').click(function() {
+			$("p#diatitle").html(title);
+			$("p#dialabel").html('<a class="btn btn-warning"  href="'+link+'" >'+label+'</a>');
+			$( "#dialog_menu_alerts" ).dialog({
+                title: button ,
+				minHeight: 1,
+				width: "auto",
+				modal: "true",
+				show: "blind",
+				hide: "explode",
+				buttons: {
+					delete:{ 
+						text:'Posponi', 
+						'class':'btn btn-danger delete-button',
+						click:function (event, ui) {
+						$.ajax({
+							data: {'mod':mod },
+							type: 'POST',
+							url: '../root/delete_menu_alert.php',
+							success: function(data){
+								//alert(data);
+								window.location.reload(true);
+							}
+						});
+					}},
+					"Lascia": function() {
+						$(this).dialog('destroy');
+					}
+				}
+			});
+			$("#dialog_menu_alerts" ).dialog( "open" );  
+		});
+    } 
+}
+
+function menu_check_from_modules() {
+    // chiamata al server per aggiornare il tempo dell'ultimo controllo    
+	$.get("../root/session_menu_alert_lastcheck.php");
+	var j=0;
+    // nome modulo
+    var title = '';
+    var button = '';
+    var label = '';
+    var style = '';
+    var link = '';
+    var mod = '';
+    // controllo la presenza di nuove notifiche
+	$.get("../root/get_sync_status_ajax.php",
+	  function (data) {
+		$.each(data, function (i, v) {
+            // nome modulo
+            title = v['title'];
+            button = v['button'];
+            label = v['label'];
+            link = v['link'];
+            style = v['style'];
+            mod = i;
+            //console.log(mod);
+			j++;
+            menu_alerts_check(mod,title,button,label,link,style);
+		});
+	  }, "json"
+    );
+}
+// setto comunque dei check intervallati dei minuti inseriti in configurazione avanzata azienda 15*60*1000ms perché non è detto che si facciano i refresh, ad es. se il browser rimane fermo sulla stessa pagina per un lungo periodo > $period
+setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
+</script>				
     </head>
     <?php
     // imposto le opzioni del tema caricando le opzioni del database
@@ -152,48 +220,10 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 
     echo "<body class=\"hold-transition skin-blue sidebar-mini " . $val . "\">";
     ?>
-	<script>
-
-	$(function() {
-		$("#dialog_errmsg").dialog({ autoOpen: false });
-		$('.dialog_errmsg').click(function() {
-			$("p#idcodice").html($(this).attr("ref"));
-			$("p#iddescri").html($(this).attr("ref2"));
-			var id = $(this).attr('ref');
-			$( "#dialog_errmsg" ).dialog({
-				minHeight: 1,
-				width: "auto",
-				modal: "true",
-				show: "blind",
-				hide: "explode",
-				buttons: {
-					delete:{ 
-						text:'Posponi', 
-						'class':'btn btn-danger delete-button',
-						click:function (event, ui) {
-						$.ajax({
-							data: {},
-							type: 'POST',
-							url: '../root/delete_avviso.php',
-							success: function(data){
-								//alert(data);
-								window.location.reload(true);
-							}
-						});
-					}},
-					"Lascia": function() {
-						$(this).dialog("close");
-					}
-				}
-			});
-			$("#dialog_errmsg" ).dialog( "open" );  
-		});
-	});
-	</script>
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
-		<div style="display:none" id="dialog_errmsg" title="Notifica">        
-			<p class="ui-state-highlight" id="idcodice"></p>
-			<p class="ui-state-highlight" id="iddescri"></p>
+		<div style="display:none" id="dialog_menu_alerts" title="">        
+			<p class="ui-state-highlight" id="diatitle"></p>
+			<p class="ui-state-highlight text-center" id="dialabel"></p>
 		</div>
         <div class="wrapper">
             <header class="main-header">
@@ -218,21 +248,11 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                     </a>    
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">     
+							<li class='blink'></li>												
                             <?php
                             //leggo se il modulo è abilitato
 							$res_access_mod = gaz_dbi_dyn_query($gTables['admin_module'].'.access', $gTables['module'].' LEFT JOIN '. $gTables['admin_module'].' ON '. $gTables['module'].'.id='. $gTables['admin_module'].'.moduleid',"adminid='".$admin_aziend["user_name"]."' AND company_id=".$admin_aziend['company_id'],'adminid' ,0,1);
                             $row_access_mod = gaz_dbi_fetch_array($res_access_mod);
-							if (isset($_SESSION['errmsg'])){
-							?>
-							<li>
-								<div id="box" style="padding:5px;">
-								<a href="#" class="dialog_errmsg btn btn-info" title="<?php echo $_SESSION['errmsg'];?>" ref="<?php echo $_SESSION['errmsg'];?>" ref2="<?php echo $_SESSION['errref'];?>">
-								Notifica
-								</a>			
-								</div>			
-							</li>
-							<?php
-							}
                             if ($row_access_mod && $row_access_mod['access'] == 3 ) {
                                 //visualizzo la documentazione standard
                                 echo "<li><a target=\"_new\" href=\"../../modules/" . $module . "/docume_" . $module . ".php\"><i class=\"fa fa-question\"></i></a></li>";
@@ -427,6 +447,16 @@ if ($admin_aziend['Abilit'] == 9) {
 } else {
     echo "<li></li>";
 }
+
+if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['menu_alerts_lastcheck'])> $period )){ // sono passati $period minuti
+	// non ho mai controllato se ci sono nuovi ordini oppure è passato troppo tempo dall'ultimo controllo vado a farlo
+		echo '<script>menu_check_from_modules();</script>';
+} elseif(isset($_SESSION['menu_alerts']) && count($_SESSION['menu_alerts'])>=1) {
+        foreach($_SESSION['menu_alerts'] as $k=>$v) {
+            // faccio il load per creae un bottone per ogni modulo che lo ha generato (mod,title,button,label,link,style)
+            echo "<script>menu_alerts_check('".$k."','".addslashes($v['title'])."','".addslashes($v['button'])."','".addslashes($v['label'])."','".addslashes($v['link'])."','".$v['style']."');</script>";
+        }
+}
 ?>
 
                         </ul>
@@ -448,6 +478,5 @@ if ($admin_aziend['Abilit'] == 9) {
                       </div>
                     </div>
                     <!-- search form--> 
-
                     <ul class="sidebar-menu">
                         <!--<li class="header">MENU' PRINCIPALE</li>-->

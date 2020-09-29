@@ -1,4 +1,5 @@
 <?php
+    $period=gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
 	if ( isset($maintenance) && $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
 	require("../../library/theme/g7/function.php");
 ?>
@@ -39,20 +40,6 @@
             $skin = $admin_aziend['skin'];
         }
 
-        // ogni ora controllo se ho "qualcosa" da acquisire da remoto 
-		if (!isset($_SESSION['sync']) || strtotime(date("Y-m-d H:i:s"))>$_SESSION['sync']+(1*60*60)){// se è il primo accesso o se è passata un'ora dall'ultimo accesso
-			$_SESSION['sync']=strtotime(date("Y-m-d H:i:s"));
-			// importo gli ordini dal web
-			if (class_exists('gazSynchro')){
-				$gSync = new gazSynchro();
-				if($gSync->api_token){
-					$last_id="";
-					$gSync = new gazSynchro();
-					$gSync->get_sync_status($last_id);			
-				}				
-			}						
-		}
-
         function hex_color_mod($hex, $diff) {
             $rgb = str_split($hex, 2);
             foreach ($rgb as &$hex) {
@@ -83,9 +70,12 @@
             .navbar-default .navbar-nav > li > a:hover {
                 background-color: #<?php echo $admin_aziend['colore']; ?>;
             }
-			div#box{
-				animation:blink 700ms infinite alternate;
-				padding:8px;
+			div.blink{
+			  animation:blink 700ms infinite alternate;
+			  padding-top:10px;
+			}
+			div.blink>a.btn{
+			  padding:5px;
 			}
 			@keyframes blink {
 				from { opacity:1; } to { opacity:0; }
@@ -332,3 +322,4 @@
 		printDash($gTables,$module,$admin_aziend,$transl);
             return ($strCommon + $translated_script);
         } 
+?>

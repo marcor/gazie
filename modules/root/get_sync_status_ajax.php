@@ -21,16 +21,32 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
- /
+ */
 // prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
-}*/
-require("../../library/include/datlib.inc.php");
+}
+require_once("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-unset($_SESSION['errmsg']);
-unset($_SESSION['errref']);
+$datares=false;
+$syncmod=explode(',',$admin_aziend['gazSynchro']);
+foreach($syncmod as $k=>$v){
+  // richiamo tutti i moduli di sync
+  require("../".$v."/sync.function.php");
+  $classname=preg_replace("/[^a-zA-Z]/", "", $v)."gazSynchro";
+  if (class_exists($classname)) {
+	// controllo se ci sono sincronizzazioni da effettuare
+	$gSync = new $classname();
+	if($gSync->api_token){
+	  $datares=[];
+      $gSync->get_sync_status($id);
+	}
+	$datares[$v]=$gSync->rawres;
+    $_SESSION['menu_alerts'][$v]=$datares[$v];
+  }
+}
+echo json_encode($datares);
 ?>

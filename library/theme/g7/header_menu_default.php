@@ -61,46 +61,83 @@ function submenu($menu_data) {
 ?>
 <script>
 $(function() {
-	$("#dialog_errmsg").dialog({ autoOpen: false });
-	$('.dialog_errmsg').click(function() {
-		$("p#idcodice").html($(this).attr("ref"));
-		$("p#iddescri").html($(this).attr("ref2"));
-		var id = $(this).attr('ref');
-		$( "#dialog_errmsg" ).dialog({
-			minHeight: 1,
-			width: "auto",
-			modal: "true",
-			show: "blind",
-			hide: "explode",
-			buttons: {
-				delete:{ 
-					text:'Posponi', 
-					'class':'btn btn-danger delete-button',
-					click:function (event, ui) {
-					$.ajax({
-						data: {},
-						type: 'POST',
-						url: '../root/delete_avviso.php',
-						success: function(data){
-							//alert(data);
-							window.location.reload(true);
-						}
-					});
-				}},
-				"Lascia": function() {
-					$(this).dialog("close");
-				}
-			}
-		});
-		$("#dialog_errmsg" ).dialog( "open" );  
-	});
+	$("#dialog_menu_alerts").dialog({ autoOpen: false });
 });
+function menu_alerts_check(mod,title,button,label,link,style){
+	// questa funzione attiva l'alert sulla barra del menù e viene richiamata sia dalla funzione menu_check_from_modules() dal browser tramite setInterval che alla fine della pagina (lato server) quando il controllo fatto dal php tramite $_SESSION['menu_alerts_lastcheck'] è scaduto
+    // faccio append solo se già non esiste
+    if (style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu 
+        $("div.blink").html( '<a mod="'+mod+'" class="btn btn-'+style+' dialog_menu_alerts" title="'+title+'" >'+button+'</a>').click(function() {
+			$("p#diatitle").html(title);
+			$("p#dialabel").html('<a class="btn btn-warning"  href="'+link+'" >'+label+'</a>');
+			$( "#dialog_menu_alerts" ).dialog({
+                title: button ,
+				minHeight: 1,
+				width: "auto",
+				modal: "true",
+				show: "blind",
+				hide: "explode",
+				buttons: {
+					delete:{ 
+						text:'Posponi', 
+						'class':'btn btn-danger delete-button',
+						click:function (event, ui) {
+						$.ajax({
+							data: {'mod':mod },
+							type: 'POST',
+							url: '../root/delete_menu_alert.php',
+							success: function(data){
+								//alert(data);
+								window.location.reload(true);
+							}
+						});
+					}},
+					"Lascia": function() {
+						$(this).dialog('destroy');
+					}
+				}
+			});
+			$("#dialog_menu_alerts" ).dialog( "open" );  
+		});
+    } 
+}
+
+function menu_check_from_modules() {
+    // chiamata al server per aggiornare il tempo dell'ultimo controllo    
+	$.get("../root/session_menu_alert_lastcheck.php");
+	var j=0;
+    // nome modulo
+    var title = '';
+    var button = '';
+    var label = '';
+    var style = '';
+    var link = '';
+    var mod = '';
+    // controllo la presenza di nuove notifiche
+	$.get("../root/get_sync_status_ajax.php",
+	  function (data) {
+		$.each(data, function (i, v) {
+            // nome modulo
+            title = v['title'];
+            button = v['button'];
+            label = v['label'];
+            link = v['link'];
+            style = v['style'];
+            mod = i;
+            //console.log(mod);
+			j++;
+            menu_alerts_check(mod,title,button,label,link,style);
+		});
+	  }, "json"
+    );
+}
+
 </script>
-<div style="display:none" id="dialog_errmsg" title="Notifica">        
-        <p class="ui-state-highlight" id="idcodice"></p>
-		<p class="ui-state-highlight" id="iddescri"></p>
-</div>
 <!-- Navbar static top per menu multilivello responsive -->
+		<div style="display:none" id="dialog_menu_alerts" title="">        
+			<p class="ui-state-highlight" id="diatitle"></p>
+			<p class="ui-state-highlight text-center" id="dialabel"></p>
+		</div>
 <div class="navbar navbar-default" role="navigation">
     <div id="l-wrapper" class="navbar-header company-color">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -112,17 +149,10 @@ $(function() {
         <a  href="../../modules/root/admin.php"> <?php echo strtoupper($admin_aziend["ragso1"]); ?>
         </a>
     </div>
-	<?php
-		if (isset($_SESSION['errmsg'])){
-			?>					
-			<div id="box" style=" position:absolute; right:10px; padding:5px;">
-			<a href="#" class="dialog_errmsg btn btn-info" title="<?php echo $_SESSION['errmsg'];?>" ref="<?php echo $_SESSION['errmsg'];?>" ref2="<?php echo $_SESSION['errref'];?>">
-			Notifica
-			</a>			
-			</div>			
-			<?php
-		}
-		?>
+    
+	<div class="blink" align="center"; style=" position:absolute; right:3px; padding:2px;"></div>												
+
+    
     <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <?php

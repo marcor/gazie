@@ -2406,10 +2406,6 @@ function checkAdmin($Livaut = 0) {
         exit;
     } else {
         $_SESSION["Abilit"] = true;
-		// includo le funzioni per la sincronizzazione dello shop online
-		if (file_exists('../'.$admin_aziend['gazSynchro'].'/sync.function.php')) {
-			include_once('../'.$admin_aziend['gazSynchro'].'/sync.function.php');
-		}
     }
     return array_merge($admin_aziend, $currency);
 }
