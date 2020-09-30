@@ -1737,19 +1737,19 @@ echo '	</table></div>';
 			$("[name='rows["+row+"][unimis]']").val('KG');
 			$("[name='rows["+row+"][quanti]']").val(res_kg);
 			close_dial=true;
-		} else if (mu=='ml' && res_a>=1) {
+		} else if (mu=='ml' && res_a>=0.00001) {
 			$("[name='rows["+row+"][unimis]']").val('ML');
 			$("[name='rows["+row+"][quanti]']").val(res_b);
 			close_dial=true;
-		} else if (mu=='mq' && res_b>=1) {
+		} else if (mu=='mq' && res_b>=0.00001) {
 			$("[name='rows["+row+"][unimis]']").val('MQ');
 			$("[name='rows["+row+"][quanti]']").val(res_c);
 			close_dial=true;
-		} else if (mu=='lt' && res_c>=1) {
+		} else if (mu=='lt' && res_c>=0.00001) {
 			$("[name='rows["+row+"][unimis]']").val('LT');
 			$("[name='rows["+row+"][quanti]']").val(res_d);
 			close_dial=true;
-		} else if (mu=='pz' && pezzi>=1) {
+		} else if (mu=='pz' && pezzi>=0.00001) {
 			$("[name='rows["+row+"][unimis]']").val('PZ');
 			$("[name='rows["+row+"][quanti]']").val(pezzi);
 			close_dial=true;
