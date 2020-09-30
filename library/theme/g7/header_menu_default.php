@@ -150,7 +150,7 @@ function menu_check_from_modules() {
         </a>
     </div>
     
-	<div class="blink" align="center"; style=" position:absolute; right:3px; padding:2px;"></div>												
+	<div class="blink" align="center" style="position:absolute; right:3px; padding:2px;"></div>												
 
     
     <div class="collapse navbar-collapse">

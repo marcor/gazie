@@ -224,6 +224,7 @@ class shopsynchronizegazSynchro {
 		//Antonio Germani - $last_id non viene usato perché si controlla con una query se l'ordine è già stato importato
 		@session_start();
 		global $gTables,$admin_aziend;	
+        $rawres=[];
 		$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
 		$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
 		$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
@@ -242,8 +243,11 @@ class shopsynchronizegazSynchro {
 		$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 		if ((!$conn_id) or (!$mylogin)){// controllo se la connessione è OK...
 			// non si connette FALSE
-			$_SESSION['errmsg'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda.";
-			$_SESSION['errref'] = "Impossibile scaricare gli ordini dall'e-commerce";
+            $rawres['title'] = "Impossibile scaricare gli ordini dall'e-commerce";
+            $rawres['button'] = 'Mancata connessione FTP';
+            $rawres['label'] = 'Cambia impostazioni';
+            $rawres['link'] = '../shop-synchronize/link_da_modificare.php;'
+            $rawres['style'] = 'danger';
 		}
 		$access=base64_encode($ftp_pass);
 		// avvio il file di interfaccia presente nel sito web remoto
@@ -251,11 +255,14 @@ class shopsynchronizegazSynchro {
 		if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 			$xml=simplexml_load_file($urlinterf.'?access='.$access) ;
 			if (!$xml){
-				$_SESSION['errmsg'] = "L'e-commerce non crea il file xml";
-				$_SESSION['errref'] = "Impossibile scaricare gli ordini dall'e-commerce";
-			}
-			$count=0;$countDocument=0;
-			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
+                    $rawres['title'] = "Impossibile scaricare gli ordini dall'e-commerce";
+                    $rawres['button'] = 'eCommerce senza XML';
+                    $rawres['label'] = "L'e-commerce non crea il file xml";
+                    $rawres['link'] = '../shop-synchronize/link_da_modificare.php;'
+                    $rawres['style'] = 'danger';
+    			}
+    			$count=0;$countDocument=0;
+    			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
 			
 				if(!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)){ // se il numero d'ordine non esiste carico l'ordine in GAzie
 					$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
@@ -409,18 +416,24 @@ class shopsynchronizegazSynchro {
 			}						
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
 			ftp_quit($conn_id);
-			$_SESSION['errmsg'] = "Il file xml degli ordini non si apre";
-			$_SESSION['errref'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
+            $rawres['title'] = "Il file xml degli ordini non si apre";
+            $rawres['button'] = 'eCommerce senza XML';
+            $rawres['label'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
+            $rawres['link'] = ''
+            $rawres['style'] = 'danger';
 			if (intval(substr($headers[0], 9, 3))==0) {
 				$_SESSION['errref'] = $_SESSION['errref']." controllare connessione internet";
 			}
 		}
 		if ($count>0){
-			if ($count==1){
-				$_SESSION['errmsg'] = "E' arrivato ". $count ." ordine dall'e-commerce";
-			} else {
-				$_SESSION['errmsg'] = "Sono arrivati ". $count ." ordini dall'e-commerce";
-			}
+            $t=($count==1)?"E' arrivato ". $count ." ordine dall'e-commerce":"Sono arrivati ". $count ." ordini dall'e-commerce";
+            $t=($count==1)?"Nuovo ordine":$count ." nuovi ordini";
+            $rawres['title'] = $t;
+            $rawres['button'] = 'Nuov';
+            $rawres['label'] = 'Cambia impostazioni';
+            $rawres['link'] = '../shop-synchronize/link_da_modificare.php;'
+            $rawres['style'] = 'success';
 		}
+        $this->rawres=$rawres;
 	}
 }
