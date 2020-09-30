@@ -243,8 +243,8 @@ class shopsynchronizegazSynchro {
 		$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 		if ((!$conn_id) or (!$mylogin)){// controllo se la connessione è OK...
 			// non si connette FALSE
-            $rawres['title'] = "Impossibile scaricare gli ordini dall'e-commerce";
-            $rawres['button'] = 'Mancata connessione FTP';
+            $rawres['title'] = "Mancata connessione FTP: impossibile scaricare gli ordini dall'e-commerce";
+            $rawres['button'] = 'Avviso eCpmmerce';
             $rawres['label'] = 'Cambia impostazioni';
             $rawres['link'] = '../shop-synchronize/link_da_modificare.php;';
             $rawres['style'] = 'danger';
@@ -255,10 +255,10 @@ class shopsynchronizegazSynchro {
 		if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 			$xml=simplexml_load_file($urlinterf.'?access='.$access) ;
 			if (!$xml){
-                    $rawres['title'] = "Impossibile scaricare gli ordini dall'e-commerce";
-                    $rawres['button'] = 'eCommerce senza XML';
+                    $rawres['title'] = "L'e-commerce non ha file XML: impossibile scaricare gli ordini dall'e-commerce";
+                    $rawres['button'] = 'Avviso eCommerce';
                     $rawres['label'] = "L'e-commerce non crea il file xml";
-                    $rawres['link'] = '../shop-synchronize/link_da_modificare.php;';
+                    $rawres['link'] = '';
                     $rawres['style'] = 'danger';
     			}
     			$count=0;$countDocument=0;
@@ -417,7 +417,7 @@ class shopsynchronizegazSynchro {
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
 			ftp_quit($conn_id);
             $rawres['title'] = "Il file xml degli ordini non si apre";
-            $rawres['button'] = 'eCommerce senza XML';
+            $rawres['button'] = 'Avviso eCommerce';
             $rawres['label'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
             $rawres['link'] = '';
             $rawres['style'] = 'danger';
@@ -426,13 +426,13 @@ class shopsynchronizegazSynchro {
 			}
 		}
 		if ($count>0){
-            $t=($count==1)?"E' arrivato ". $count ." ordine dall'e-commerce":"Sono arrivati ". $count ." ordini dall'e-commerce";
-            $t=($count==1)?"Nuovo ordine":$count ." nuovi ordini";
-            $rawres['title'] = $t;
-            $rawres['button'] = 'Nuov';
-            $rawres['label'] = 'Cambia impostazioni';
+            $t=($count==1)?"È arrivato ". $count ." ordine":"Sono arrivati ". $count ." ordini";
+            $b=($count==1)?"Nuovo ordine":$count ." nuovi ordini";
+            $rawres['title'] = $t." dall'e-commerce";
+            $rawres['button'] = $b;
+            $rawres['label'] = 'Acquisizione ordini';
             $rawres['link'] = '../shop-synchronize/link_da_modificare.php;';
-            $rawres['style'] = 'success';
+            $rawres['style'] = 'warning';
 		}
         $this->rawres=$rawres;
 	}
