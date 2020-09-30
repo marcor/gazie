@@ -246,7 +246,7 @@ class shopsynchronizegazSynchro {
             $rawres['title'] = "Impossibile scaricare gli ordini dall'e-commerce";
             $rawres['button'] = 'Mancata connessione FTP';
             $rawres['label'] = 'Cambia impostazioni';
-            $rawres['link'] = '../shop-synchronize/link_da_modificare.php;'
+            $rawres['link'] = '../shop-synchronize/link_da_modificare.php;';
             $rawres['style'] = 'danger';
 		}
 		$access=base64_encode($ftp_pass);
@@ -258,7 +258,7 @@ class shopsynchronizegazSynchro {
                     $rawres['title'] = "Impossibile scaricare gli ordini dall'e-commerce";
                     $rawres['button'] = 'eCommerce senza XML';
                     $rawres['label'] = "L'e-commerce non crea il file xml";
-                    $rawres['link'] = '../shop-synchronize/link_da_modificare.php;'
+                    $rawres['link'] = '../shop-synchronize/link_da_modificare.php;';
                     $rawres['style'] = 'danger';
     			}
     			$count=0;$countDocument=0;
@@ -419,7 +419,7 @@ class shopsynchronizegazSynchro {
             $rawres['title'] = "Il file xml degli ordini non si apre";
             $rawres['button'] = 'eCommerce senza XML';
             $rawres['label'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
-            $rawres['link'] = ''
+            $rawres['link'] = '';
             $rawres['style'] = 'danger';
 			if (intval(substr($headers[0], 9, 3))==0) {
 				$_SESSION['errref'] = $_SESSION['errref']." controllare connessione internet";
@@ -431,7 +431,7 @@ class shopsynchronizegazSynchro {
             $rawres['title'] = $t;
             $rawres['button'] = 'Nuov';
             $rawres['label'] = 'Cambia impostazioni';
-            $rawres['link'] = '../shop-synchronize/link_da_modificare.php;'
+            $rawres['link'] = '../shop-synchronize/link_da_modificare.php;';
             $rawres['style'] = 'success';
 		}
         $this->rawres=$rawres;
