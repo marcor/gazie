@@ -22,7 +22,6 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-
 if (isset($styles) && is_array($styles)) {
     foreach ($styles as $v) {
         ?>
@@ -30,8 +29,6 @@ if (isset($styles) && is_array($styles)) {
         <?php
     }
 }
-if ( $debug_active==true ) echo "<div>".d($GLOBALS, $_SERVER)."</div>";
-
 if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['menu_alerts_lastcheck'])> $period )){ // sono passati $period minuti
 	// non ho mai controllato se ci sono nuovi ordini oppure è passato troppo tempo dall'ultimo controllo vado a farlo
 		echo '<script>menu_check_from_modules();</script>';
@@ -41,6 +38,9 @@ if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['me
             echo "<script>menu_alerts_check('".$k."','".addslashes($v['title'])."','".addslashes($v['button'])."','".addslashes($v['label'])."','".addslashes($v['link'])."','".$v['style']."');</script>";
         }
 }
+
+if ( $debug_active==true ) echo "<div>".d($GLOBALS, $_SERVER)."</div>";
+
 
 ?>
 

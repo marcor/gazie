@@ -34,8 +34,10 @@ $admin_aziend = checkAdmin();
 $datares=false;
 $syncmod=explode(',',$admin_aziend['gazSynchro']);
 foreach($syncmod as $k=>$v){
-  // richiamo tutti i moduli di sync
-  require("../".$v."/sync.function.php");
+  // richiamo i file contenenti le classi di sync tranne quello del primo modulo che già ho richiamato con library/include/function.inc.php
+  if ( $k > 0 ){
+    require_once("../".$v."/sync.function.php");
+  }
   $classname=preg_replace("/[^a-zA-Z]/", "", $v)."gazSynchro";
   if (class_exists($classname)) {
 	// controllo se ci sono sincronizzazioni da effettuare

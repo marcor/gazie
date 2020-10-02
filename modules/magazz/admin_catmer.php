@@ -82,18 +82,19 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           } else { // e' un'inserimento
             gaz_dbi_table_insert('catmer',$form);
           }
-					if (class_exists('gazSynchro')){
-						// aggiorno l'e-commerce ove presente
-						$gSync = new gazSynchro();
-						if($gSync->api_token){
-							$form['heximage']=bin2hex($form['image']);
-							$gSync->UpsertCategory($form);
-						}
-						//print $gSync->rawres;
-					//exit;
-					}
-					header("Location: ".$_POST['ritorno']);
-          exit;
+        if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+            // aggiorno l'e-commerce ove presente
+            $gs=$admin_aziend['synccommerce_classname'];
+            $gSync = new $gs();
+				if($gSync->api_token){
+					$form['heximage']=bin2hex($form['image']);
+					$gSync->UpsertCategory($form);
+				}
+				//print $gSync->rawres;
+			//exit;
+		}
+		header("Location: ".$_POST['ritorno']);
+        exit;
        }
   }
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE

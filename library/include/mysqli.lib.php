@@ -965,8 +965,9 @@ function movmagInsert($newValue) {
   $newValue['adminid'] = $_SESSION["user_name"];
   $last_id=tableInsert($table, $columns, $newValue);
 	// aggiorno l'e-commerce ove presente
-	if (class_exists('gazSynchro')){
-		$gSync = new gazSynchro();
+	if (!empty($newValue['synccommerce_classname']) && class_exists($newValue['synccommerce_classname'])){
+        $gs=$newValue['synccommerce_classname'];
+		$gSync = new $gs();
 		if($gSync->api_token && isset($newValue['artico'])){
 			$gSync->SetProductQuantity($newValue['artico']);
 		}
@@ -982,14 +983,16 @@ function movmagUpdate($codice, $newValue) {
   $newValue['adminid'] = $_SESSION["user_name"];
   tableUpdate($table, $columns, $codice, $newValue);
 	// aggiorno l'e-commerce ove presente
-	if (class_exists('gazSynchro')){
-		$gSync = new gazSynchro();
+	if (!empty($newValue['synccommerce_classname']) && class_exists($newValue['synccommerce_classname'])){
+        $gs=$newValue['synccommerce_classname'];
+		$gSync = new $gs();
 		if($gSync->api_token && isset($newValue['artico'])){
 			$gSync->SetProductQuantity($newValue['artico']);
 		}
 		//print $gSync->rawres;
 		//exit;
 	}
+	return $last_id;
 }
 
 //===============================================================

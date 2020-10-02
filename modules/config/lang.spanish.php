@@ -87,7 +87,7 @@ $strScript = array("admin_aziend.php" =>
         'pec' => 'Posta Elettronica Certificata',
         'e_mail' => 'e mail',
         'web_url' => 'Web url<br />(es: http://companyname.com)',
-        'gazSynchro' => 'Modulo contenente API ecommerce',
+        'gazSynchro' => 'Moduli sincronizzazioni ecommerce e/o devices',
         'cod_ateco' => 'Codigo de Actividad (ATECOFIN)',
         'regime' => 'Regimen de Contabilidad',
         'regime_value' => array('0' => 'Ordinario', '1' => 'Semplificado'),

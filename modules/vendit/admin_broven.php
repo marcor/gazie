@@ -440,8 +440,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['datemi'] = $datemi;
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
-				if (class_exists('gazSynchro')){// Antonio Germani - sincronizzo quantità prodotti e-commerce 
-					$gSync = new gazSynchro();
+                if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+                    // aggiorno l'e-commerce ove presente
+                    $gs=$admin_aziend['synccommerce_classname'];
+                    $gSync = new $gs();
 					if($gSync->api_token){ 
 						foreach ($syncarticols as $syncarticol){
 							$gSync->SetProductQuantity($syncarticol);							

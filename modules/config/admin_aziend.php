@@ -215,15 +215,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     gaz_dbi_put_row($gTables['config'], 'variable', 'intermediary', 'cvalue', 0);
                 }
             }
-					if (class_exists('gazSynchro')){
-						// aggiorno l'e-commerce ove presente
-						$gSync = new gazSynchro();
-						if($gSync->api_token){
-							$gSync->SetupStore();
-						}
-						//print $gSync->rawres;
-						//exit;
-					}
+            if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+                // aggiorno l'e-commerce ove presente
+                $gs=$admin_aziend['synccommerce_classname'];
+                $gSync = new $gs();
+				if($gSync->api_token){
+					$gSync->SetupStore();
+				}
+				//print $gSync->rawres;
+				//exit;
+			}
 						
             header("Location: ../root/admin.php");
             exit;

@@ -790,7 +790,8 @@ class magazzForm extends GAzieForm {
             'scorig' => $sconto_rigo,
             'id_lotmag'=>$id_lotmag,
 			'id_orderman'=>$id_orderman,
-			'campo_coltivazione'=>$campo_coltivazione);
+			'campo_coltivazione'=>$campo_coltivazione,
+			'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
         if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento
             $id_movmag = movmagInsert($row_movmag);
             //gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $id_rigo_doc, 'id_mag', gaz_dbi_last_id());
@@ -800,8 +801,10 @@ class magazzForm extends GAzieForm {
             $old_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $old_movmag['caumag']);
             gaz_dbi_del_row($gTables['movmag'], 'id_mov', $id_movmag);
             $codart = $old_movmag['artico'];
-			if (class_exists('gazSynchro')){
-				$gSync = new gazSynchro();
+            if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+                // aggiorno l'e-commerce ove presente
+                $gs=$admin_aziend['synccommerce_classname'];
+                $gSync = new $gs();
 				if($gSync->api_token && isset($codart)){
 					$gSync->SetProductQuantity($codart);
 				}				

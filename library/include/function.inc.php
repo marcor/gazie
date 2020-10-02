@@ -2406,6 +2406,13 @@ function checkAdmin($Livaut = 0) {
         exit;
     } else {
         $_SESSION["Abilit"] = true;
+		// includo le funzioni per la sincronizzazione dello shop online, il nome del modulo per il sync dell'ecommerce dev'essere sempre il primo rispetto ad altri eventuali moduli
+        $admin_aziend['synccommerce_classname'] = '';        
+        $synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];
+		if ($synccommerce && file_exists('../'.$synccommerce.'/sync.function.php')) {
+			include_once('../'.$synccommerce.'/sync.function.php');
+            $admin_aziend['synccommerce_classname'] = preg_replace("/[^a-zA-Z]/", "",$synccommerce)."gazSynchro";        
+		}
     }
     return array_merge($admin_aziend, $currency);
 }
