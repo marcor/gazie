@@ -91,8 +91,11 @@ class shopsynchronizegazSynchro {
 			// controllo la connessione e il login
 			if ((!$conn_id) OR (!$mylogin)){ 
 				// non si connette FALSE
-				$_SESSION['errmsg'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$_SESSION['errref'] = "Aggiornamento dell'articolo: ". $d['codice'];
+				$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
+				$rawres['link'] = '../shop-synchronize/synchronize.php';
+				$rawres['style'] = 'danger';
 			}
 			// Calcolo il prezzo IVA compresa
 			$aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($d['aliiva']))['aliquo'];
@@ -124,8 +127,11 @@ class shopsynchronizegazSynchro {
 			// upload file xml
 			if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
 			} else{
-				$_SESSION['errmsg'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$_SESSION['errref'] = "Aggiornamento dati dell'articolo: ". $d['codice'];			
+				$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
+				$rawres['link'] = '../shop-synchronize/synchronize.php';
+				$rawres['style'] = 'danger';
 			}
 			// chiudo la connessione FTP 
 			ftp_quit($conn_id);
@@ -135,12 +141,18 @@ class shopsynchronizegazSynchro {
 			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
 				$file = fopen ($urlinterf.'?access='.$access, "r");
 				if (!$file) {
-					$_SESSION['errmsg'] = "Il file di interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-					$_SESSION['errref'] = "Aggiornamento dati dell'articolo: ". $d['codice'];				
+					$rawres['title'] = "L'interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
 				}
 			} else { // Riporto il codice di errore
-				$_SESSION['errmsg'] = "Impossibile connettersi al file di interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$_SESSION['errref'] = "Aggiornamento dati dell'articolo: ". $d['codice'];
+				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
+				$rawres['link'] = '../shop-synchronize/synchronize.php';
+				$rawres['style'] = 'danger';
 			}
 	}
 	function SetProductQuantity($d) {
@@ -176,8 +188,11 @@ class shopsynchronizegazSynchro {
 			// controllo la connessione e il login
 			if ((!$conn_id) OR (!$mylogin)){ 
 				// non si connette FALSE
-				$_SESSION['errmsg'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$_SESSION['errref'] = "Aggiornamento quantità dell'articolo: ". $d;
+				$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
+				$rawres['link'] = '../shop-synchronize/synchronize.php';
+				$rawres['style'] = 'danger';
 			}	 
 	 		// creo il file xml			
 			$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
@@ -199,8 +214,11 @@ class shopsynchronizegazSynchro {
 			// upload file xml
 			if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
 			} else{
-				$_SESSION['errmsg'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$_SESSION['errref'] = "Aggiornamento quantità dell'articolo: ". $d;			
+				$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
+				$rawres['link'] = '../shop-synchronize/synchronize.php';
+				$rawres['style'] = 'danger';
 			}
 			// chiudo la connessione FTP 
 			ftp_quit($conn_id);
@@ -210,12 +228,18 @@ class shopsynchronizegazSynchro {
 			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
 				$file = fopen ($urlinterf.'?access='.$access, "r");
 				if (!$file) {
-					$_SESSION['errmsg'] = "Il file di interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-					$_SESSION['errref'] = "Aggiornamento quantità dell'articolo: ". $d;				
+					$rawres['title'] = "L'interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
 				}
 			} else { // Riporto il codice di errore
-				$_SESSION['errmsg'] = "Impossibile connettersi al file di interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$_SESSION['errref'] = "Aggiornamento quantità dell'articolo: ". $d;
+				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
+				$rawres['link'] = '../shop-synchronize/synchronize.php';
+				$rawres['style'] = 'danger';
 			}
 	}
 	function get_sync_status($last_id) { 
@@ -244,9 +268,9 @@ class shopsynchronizegazSynchro {
 		if ((!$conn_id) or (!$mylogin)){// controllo se la connessione è OK...
 			// non si connette FALSE
             $rawres['title'] = "Mancata connessione FTP: impossibile scaricare gli ordini dall'e-commerce";
-            $rawres['button'] = 'Avviso eCpmmerce';
-            $rawres['label'] = 'Cambia impostazioni';
-            $rawres['link'] = '../shop-synchronize/link_da_modificare.php;';
+            $rawres['button'] = 'Avviso eCommerce';
+            $rawres['label'] = 'Controlla le impostazioni';
+            $rawres['link'] = '../config/config_aziend.php';
             $rawres['style'] = 'danger';
 		}
 		$access=base64_encode($ftp_pass);
@@ -255,9 +279,9 @@ class shopsynchronizegazSynchro {
 		if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 			$xml=simplexml_load_file($urlinterf.'?access='.$access) ;
 			if (!$xml){
-                    $rawres['title'] = "L'e-commerce non ha file XML: impossibile scaricare gli ordini dall'e-commerce";
+                    $rawres['title'] = "L'interfaccia non si apre: impossibile scaricare gli ordini dall'e-commerce";
                     $rawres['button'] = 'Avviso eCommerce';
-                    $rawres['label'] = "L'e-commerce non crea il file xml";
+                    $rawres['label'] = "L'interfaccia non si apre o non esiste";
                     $rawres['link'] = '';
                     $rawres['style'] = 'danger';
     			}
@@ -416,13 +440,17 @@ class shopsynchronizegazSynchro {
 			}						
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
 			ftp_quit($conn_id);
-            $rawres['title'] = "Il file xml degli ordini non si apre";
+            $rawres['title'] = "L'interfaccia non esiste: impossibile scaricare gli ordini";
             $rawres['button'] = 'Avviso eCommerce';
             $rawres['label'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
             $rawres['link'] = '';
             $rawres['style'] = 'danger';
 			if (intval(substr($headers[0], 9, 3))==0) {
-				$_SESSION['errref'] = $_SESSION['errref']." controllare connessione internet";
+				$rawres['title'] = "Controllare la connessione internet: impossibile scaricare gli ordini";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
+				$rawres['link'] = '';
+				$rawres['style'] = 'danger';
 			}
 		}
 		if ($count>0){
@@ -431,7 +459,7 @@ class shopsynchronizegazSynchro {
             $rawres['title'] = $t." dall'e-commerce";
             $rawres['button'] = $b;
             $rawres['label'] = 'Acquisizione ordini';
-            $rawres['link'] = '../shop-synchronize/link_da_modificare.php;';
+            $rawres['link'] = '../vendit/report_broven.php?auxil=VOW';
             $rawres['style'] = 'warning';
 		}
         $this->rawres=$rawres;
