@@ -69,25 +69,36 @@ function menu_alerts_check(mod,title,button,label,link,style){
     if (style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu 
         $("div.blink").html( '<a mod="'+mod+'" class="btn btn-'+style+' dialog_menu_alerts" title="'+title+'" >'+button+'</a>').click(function() {
 			$("p#diatitle").html(title);
-			$("p#dialabel").html('<a class="btn btn-warning"  href="'+link+'" >'+label+'</a>');
 			$( "#dialog_menu_alerts" ).dialog({
                 title: button ,
-				minHeight: 1,
+				minHeight: 200,
 				width: "auto",
 				modal: "true",
 				show: "blind",
 				hide: "explode",
 				buttons: {
-					delete:{ 
-						text:'Posponi', 
-						'class':'btn btn-danger delete-button',
+					'confirm':{ 
+						text: label, 
+						'class':'btn btn-confirm', 
 						click:function (event, ui) {
 						$.ajax({
 							data: {'mod':mod },
 							type: 'POST',
 							url: '../root/delete_menu_alert.php',
 							success: function(data){
-								//alert(data);
+								window.location.href=link;
+							}
+						});
+					}},
+					delete:{ 
+						text:'Posponi', 
+						'class':'btn btn-danger',
+						click:function (event, ui) {
+						$.ajax({
+							data: {'mod':mod },
+							type: 'POST',
+							url: '../root/delete_menu_alert.php',
+							success: function(data){
 								window.location.reload(true);
 							}
 						});
@@ -136,7 +147,6 @@ function menu_check_from_modules() {
 <!-- Navbar static top per menu multilivello responsive -->
 		<div style="display:none" id="dialog_menu_alerts" title="">        
 			<p class="ui-state-highlight" id="diatitle"></p>
-			<p class="ui-state-highlight text-center" id="dialabel"></p>
 		</div>
 <div class="navbar navbar-default" role="navigation">
     <div id="l-wrapper" class="navbar-header company-color">

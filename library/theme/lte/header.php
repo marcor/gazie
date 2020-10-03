@@ -118,7 +118,13 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 			}
 			@keyframes blink {
 				from { opacity:1; } to { opacity:0; }
-			};   
+			}
+            .ui-dialog-buttonset>button.btn.btn-confirm:first-child {
+                right: 30%;
+                position: absolute;
+                top: 40%;
+                background-color: #f9b54d;
+            }                   
         </style>  
 <script>
 $(function() {
@@ -130,15 +136,27 @@ function menu_alerts_check(mod,title,button,label,link,style){
     if (style.length >= 2) { // solo se style è valorizzato faccio l'alert sul menu 
         $("li.blink").html( '<a mod="'+mod+'" class="btn btn-'+style+' dialog_menu_alerts" title="'+title+'" >'+button+'</a>').click(function() {
 			$("p#diatitle").html(title);
-			$("p#dialabel").html('<a class="btn btn-warning"  href="'+link+'" >'+label+'</a>');
 			$( "#dialog_menu_alerts" ).dialog({
                 title: button ,
-				minHeight: 1,
+				minHeight: 210,
 				width: "auto",
 				modal: "true",
 				show: "blind",
 				hide: "explode",
 				buttons: {
+					'confirm':{ 
+						text: label, 
+						'class':'btn btn-confirm', 
+						click:function (event, ui) {
+						$.ajax({
+							data: {'mod':mod },
+							type: 'POST',
+							url: '../root/delete_menu_alert.php',
+							success: function(data){
+								window.location.href=link;
+							}
+						});
+					}},
 					delete:{ 
 						text:'Posponi', 
 						'class':'btn btn-danger delete-button',
@@ -223,7 +241,6 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
 		<div style="display:none" id="dialog_menu_alerts" title="">        
 			<p class="ui-state-highlight" id="diatitle"></p>
-			<p class="ui-state-highlight text-center" id="dialabel"></p>
 		</div>
         <div class="wrapper">
             <header class="main-header">
