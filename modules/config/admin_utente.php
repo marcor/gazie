@@ -570,22 +570,30 @@ if ($user_data["Abilit"] == 9) {
 		echo "<td>" . $script_transl['all'] . "</td>\n";
 		echo "<td>" . $script_transl['none'] . "</td></tr>\n";
 		$mod_found = getModule($form["user_name"], $co['id']);
+		$mod_admin = getModule($user_data["user_name"], $co['id']);
 		foreach ($mod_found as $mod) {
 			echo "<tr>\n";
 			echo '<td class="FacetFieldCaptionTD">
 								<img height="16" src="../' . $mod['name'] . '/' . $mod['name'] . '.png" /> ' . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
-			if ($mod['moduleid'] == 0) {
-				if ($toDo == 'insert') {
-					echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
-					echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-				} elseif ($co['set_co'] == 0) {
+			if ($mod['moduleid'] == 0) { // il modulo non è stato mai attivato
+				if ($form["user_name"] <> $user_data["user_name"]) { // sono un amministratore che sta operando sul profilo di altro utente
+                    if ($mod_admin[$mod['name']]['access']==3){ // il modulo è attivo sull'amministratore
+                        // per evitare conflitti nemmeno l'amministratore può attivare un modulo se questo non lo è ancora sul suo
+                        echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+                        echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
+                    } else { // modulo non attivo sull'amministratore
+                        echo '  <td>Non attivato</td>';
+                        echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
+                        
+                    }    
+				} elseif ($co['set_co'] == 0) { // il modulo mai attivato 
 					echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
 					echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-				} else {
-					echo "  <td class=\"FacetDataTDred\"><input type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Trovato nuovo modulo!</td>";
+				} else { // se l'amministratore che sta operando sul proprio profilo può attivare un nuovo modulo e creare il relativo menù
+					echo "  <td class=\"FacetDataTDred\"><input class=\"btn btn-warning\" type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Modulo attivabile</td>";
 					echo "  <td class=\"FacetDataTDred\"><input type=radio checked name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"0\"></td>";
 				}
-			} elseif ($mod['access'] == 0) {
+			} elseif ($mod['access'] == 0) { // il modulo è attivato, quindi propongo i valori precedenti
 				echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
 				echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
 			} else {
@@ -596,6 +604,7 @@ if ($user_data["Abilit"] == 9) {
 		}
 	}
 }
+
 ?>
     </table>
     </div>
