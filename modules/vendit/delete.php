@@ -157,8 +157,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =". intval($_POST['id_tes']),"id_tes DESC");
 			while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 				gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
-                if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-                    // aggiorno l'e-commerce ove presente
+                if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'] AND $tipdoc!=="VOW")){
+                    // aggiorno l'e-commerce ove presente se l'ordine non è web
                     $gs=$admin_aziend['synccommerce_classname'];
                     $gSync = new $gs();
 					if($gSync->api_token){ 
