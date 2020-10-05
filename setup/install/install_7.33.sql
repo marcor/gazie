@@ -111,7 +111,8 @@ INSERT INTO `gaz_001aliiva` (`codice`, `tipiva`, `operation_type`, `aliquo`, `ta
 (22, 'T', '', '22.0', 0, '', 'IVA 22% SPLIT PAYMENT', '', '', '', '2016-01-26 01:09:25'),
 (23, 'T', '', '10.0', 0, '', 'IVA 10% SPLIT PAYMENT', '', '', '', '2016-01-26 01:09:25'),
 (24, 'T', '', '4.0', 0, '', 'IVA 4% SPLIT PAYMENT', '', '', '', '2016-01-26 01:09:25'),
-(25, 'I', 'SERVIZ', '22.0', 0, 'N6', 'REVERSE CHARGE art.17c.6 IVA al 22%', '', '', 'amministratore', '2017-03-23 23:17:36');
+(25, 'I', 'SERVIZ', '22.0', 0, 'N6', 'Acquisto Rev.charge art.17c.6 IVA 22%', '', '', 'amministratore', '2017-03-23 23:17:36'),
+(26, 'N', 'SERVIZ', '0.0', 0, 'N6', 'Vendita subapp.edile art.17c.6', '', '', 'amministratore', '2017-03-23 23:17:36');
 
 -- --------------------------------------------------------
 

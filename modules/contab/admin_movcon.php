@@ -455,9 +455,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             $form['reverse_charge_ri'][$riiv] = '';
             $ivarigo = gaz_dbi_get_row($gTables['aliiva'], "codice", $_POST['insert_codiva']);
             // se il nuovo rigo prevede un tipo di iva per il reverse charge (natura fattura elettronica=N6) lo indico sull'apposita variabile
-            if (intval($form['reverse_charge']) == 0 && $ivarigo['fae_natura'] == 'N6') {
-                $form['reverse_charge'] = 'N6';
-                $form['reverse_charge_ri'][$riiv] = 'N6';
+            if (intval($form['reverse_charge']) == 0 && substr($ivarigo['fae_natura'],0,2) == 'N6') {
+                $form['reverse_charge'] = $ivarigo['fae_natura'];
+                $form['reverse_charge_ri'][$riiv] = $ivarigo['fae_natura'];
             }
             // riporterò il tipo operazione al giusto campo
             if ($ivarigo['operation_type'] != '' && $_POST['operation_type'] == '') {
@@ -511,10 +511,10 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         if (intval($form['reverse_charge']) >= 1) {
             // se sto eliminando un rigo che aveva già generato un movimento in registro vendite lo dovrò eliminare
             $form['reverse_charge'] = 'del';
-        } elseif ($form['reverse_charge'] == 'N6') {
+        } elseif (substr($form['reverse_charge'],0,2) == 'N6') {
             // se sto eliminando un rigo che NON aveva  generato un movimento in registro vendite mi basta deselez
             $ivarigo = gaz_dbi_get_row($gTables['aliiva'], "codice", $cod[0]);
-            if ($ivarigo['fae_natura'] == 'N6') {
+            if (substr($ivarigo['fae_natura'],0,2) == 'N6') {
                 $form['reverse_charge'] = '';
             }
         }
@@ -882,7 +882,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
 					if ($form['registroiva']==9){$vv['tipiva']='V';}
                     $reverse_charge_iva = 0;
-                    if ($form['reverse_charge_ri'][$i] == 'N6') { // dovrò inserire una testata per il reverse charge
+                    if (substr($form['reverse_charge_ri'][$i],0,2) == 'N6') { // dovrò inserire una testata per il reverse charge
                         // per prima cosa dovrò controllare se c'è il cliente con la stessa anagrafica
                         $partner = $anagrafica->getPartner(intval($_POST['cod_partner']));
                         $rc_cli = gaz_dbi_get_row($gTables['clfoco'], "codice LIKE '" . $admin_aziend['mascli'] . "%' AND id_anagra ", $partner['id']);
@@ -1563,7 +1563,7 @@ echo "</script>\n";
           );
 		  $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
 	}elseif($form["registroiva"] > 0) {
-        if ($form['reverse_charge'] == 'N6') {
+        if (substr($form['reverse_charge'],0,2) == 'N6') {
             $gForm->toast("L'aliquota I.V.A. selezionata (natura=N6) prevede che al termine dell'inserimento del movimento venga aggiunto un rigo sul Registro IVA vendite (REVERSE CHARGE)", 'alert-last-row', 'alert-success');
         } elseif ($form['reverse_charge'] >= 1) { // vengo da un reverse charge già inserito
             $gForm->toast('Il movimento ha una aliquota IVA (natura=N6) che ha aggiunto un rigo (n.<a  href="select_partit.php?id=' . $form['reverse_charge'] . '">' . $form['reverse_charge'] . "</a>) sul Registro IVA vendite per REVERSE CHARGE", 'alert-last-row', 'alert-success');
