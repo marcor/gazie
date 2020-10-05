@@ -35,6 +35,8 @@ if (!isset($_GET['orderby'])) {
     exit;
 }
 require("../../config/templates/report_template.php");
+$anagrafica = new Anagrafica();
+$conto = $anagrafica->getPartner(intval($_GET['clfoco']));
 /* ENRICO FEDELE */
 /* strftime effettivamente formatta sulla base della lingua del server, ma se l'italiano non è installato, comunque la data sarà in inglese
   stessa cosa dicasi per il fuso orario (sul mio NAS non so perchè se stampo l'ora, mi rendo conto che il fuso orario è quello cinese!!!
@@ -201,5 +203,19 @@ if (sizeof($scdl->Entries) > 0) {
     /* ENRICO FEDELE */
 }
 $pdf->setRiporti('');
-$pdf->Output();
+
+if (isset($_GET["dest"]) && $_GET["dest"]=='E'){ // � stata richiesta una e-mail
+   $dest = 'S';     // Genero l'output pdf come stringa binaria
+   // Costruisco oggetto con tutti i dati del file pdf da allegare
+   $content = new StdClass; //PHP Strict standards: Creating default object from empty value
+   $content->name = 'Partite_aperte_al_'.intval($_GET["giornfin"]).'_'.intval($_GET["mesfin"]).'_'.intval($_GET["annfin"]).'.pdf';
+   $content->string = $pdf->Output('Partite_aperte_al_'.intval($_GET["giornfin"]).'_'.intval($_GET["mesfin"]).'_'.intval($_GET["annfin"]).'.pdf', $dest);
+   $content->encoding = "base64";
+   $content->mimeType = "application/pdf";
+   $admin_aziend['doc_name']= str_replace('_', ' ', $content->name);
+   $gMail = new GAzieMail();
+   $gMail->sendMail($admin_aziend,$admin_aziend,$content,$conto);
+} else { // va all'interno del browser
+   $pdf->Output();
+}
 ?>

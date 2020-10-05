@@ -247,8 +247,7 @@ $headers_tesmov = array  (
           "Saldo" => "",
           "Riscuoti" => "" ,
           "Estr.Conto" => "",
-          "Partite aperte" => "",
-		  "Mail"=>''
+          "Partite aperte" => ""
 );
 $linkHeaders = new linkHeaders($headers_tesmov);
 $linkHeaders -> output();
@@ -267,18 +266,22 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
          echo "<td align=\"right\">".gaz_format_number($r['avere'])." &nbsp;</td>";
          echo "<td align=\"right\">".gaz_format_number($r['saldo'])." &nbsp;</td>";
          echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" title=\"Effettuato un pagamento da ".$r["ragso1"]."\"  href=\"customer_payment.php?partner=".$r['codcon']."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
-         echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa l'Estratto Conto di {$r['ragso1']}\" href=\"stampa_estcon.php?codice=".$r['codcon']."&annini=".$annini."&mesini=".$mesini."&giornini=".$giornini."&annfin=".$annfin."&mesfin=".$mesfin."&giornfin=".$giornfin."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-         echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa le Partite Aperte di {$r['ragso1']}\" href=\"print_schedule.php?clfoco=".$r['codcon']."&orderby=2\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-		 // Colonna "Mail"
-		 echo "<td align=\"center\">";
+         echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa l'Estratto Conto di {$r['ragso1']}\" href=\"stampa_estcon.php?codice=".$r['codcon']."&annini=".$annini."&mesini=".$mesini."&giornini=".$giornini."&annfin=".$annfin."&mesfin=".$mesfin."&giornfin=".$giornfin."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
 		 if (!empty($r["e_mail"])) {
 		 	echo '<a class="btn btn-xs btn-default" onclick="confirMail(this);return false;" id="doc'.$r["codcon"].'" url="stampa_estcon.php?codice='.$r["codcon"].'&annini='.$annini.'&mesini='.$mesini.'&giornini='.$giornini.'&annfin='.$annfin.'&mesfin='.$mesfin.'&giornfin='.$giornfin.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
 		 	mail="'.$r["e_mail"].'" namedoc="Estratto conto al '.$giornfin.'-'.$mesfin.'-'.$annfin.'"><i class="glyphicon glyphicon-envelope"></i></a>';
 		 } else {
 			echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
-		 } 
+		 }
 		 echo "</td>";
-         echo "</tr>";
+         echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa le Partite Aperte di {$r['ragso1']}\" href=\"print_schedule.php?clfoco=".$r['codcon']."&orderby=2\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+		 if (!empty($r["e_mail"])) {
+		 	echo '<a class="btn btn-xs btn-default" onclick="confirMail(this);return false;" id="doc'.$r["codcon"].'" url="print_schedule.php?clfoco='.$r['codcon'].'&annfin='.$annfin.'&mesfin='.$mesfin.'&giornfin='.$giornfin.'&orderby=2&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+		 	mail="'.$r["e_mail"].'" namedoc="Partite aperte al '.$giornfin.'-'.$mesfin.'-'.$annfin.'"><i class="glyphicon glyphicon-envelope"></i></a>';
+		 } else {
+			echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+		 } 
+		 echo "</tr>";
          $tot += $r['saldo'];
       }
 }
