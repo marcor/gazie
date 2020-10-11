@@ -1,5 +1,6 @@
 <?php
-    $period=gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
+    $pdb=gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
+    $period=($pdb==0)?60:$pdb;
 	if ( isset($maintenance) && $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
 	require("../../library/theme/g7/function.php");
 ?>

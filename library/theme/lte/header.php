@@ -24,8 +24,8 @@
  */
 $config = new UserConfig;
 
-$period=gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
-
+$pdb=gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
+$period=($pdb==0)?60:$pdb;
 if ( $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
 
 require("../../library/theme/lte/function.php");
@@ -183,32 +183,41 @@ function menu_alerts_check(mod,title,button,label,link,style){
 
 function menu_check_from_modules() {
     // chiamata al server per aggiornare il tempo dell'ultimo controllo    
-	$.get("../root/session_menu_alert_lastcheck.php");
-	var j=0;
-    // nome modulo
-    var title = '';
-    var button = '';
-    var label = '';
-    var style = '';
-    var link = '';
-    var mod = '';
-    // controllo la presenza di nuove notifiche
-	$.get("../root/get_sync_status_ajax.php",
-	  function (data) {
-		$.each(data, function (i, v) {
-            // nome modulo
-            title = v['title'];
-            button = v['button'];
-            label = v['label'];
-            link = v['link'];
-            style = v['style'];
-            mod = i;
-            //console.log(mod);
-			j++;
-            menu_alerts_check(mod,title,button,label,link,style);
-		});
-	  }, "json"
-    );
+	$.ajax({
+		type: 'GET',
+		url: "../root/session_menu_alert_lastcheck.php",
+		success: function(){
+		  var j=0;
+          // nome modulo
+          var title = '';
+          var button = '';
+          var label = '';
+          var style = '';
+          var link = '';
+          var mod = '';
+          // controllo la presenza di nuove notifiche
+          $.ajax({ 
+            type: 'GET', 
+            url: '../root/get_sync_status_ajax.php', 
+            data: {}, 
+            dataType: 'json',
+            success: function (data) { 
+              $.each(data, function(i, v) {
+                // nome modulo
+                title = v['title'];
+                button = v['button'];
+                label = v['label'];
+                link = v['link'];
+                style = v['style'];
+                mod = i;
+                //console.log(mod);
+				j++;
+                menu_alerts_check(mod,title,button,label,link,style);
+              });
+            }
+          });	        
+        }
+	});
 }
 // setto comunque dei check intervallati dei minuti inseriti in configurazione avanzata azienda 15*60*1000ms perché non è detto che si facciano i refresh, ad es. se il browser rimane fermo sulla stessa pagina per un lungo periodo > $period
 setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);

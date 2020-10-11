@@ -115,32 +115,41 @@ function menu_alerts_check(mod,title,button,label,link,style){
 
 function menu_check_from_modules() {
     // chiamata al server per aggiornare il tempo dell'ultimo controllo    
-	$.get("../root/session_menu_alert_lastcheck.php");
-	var j=0;
-    // nome modulo
-    var title = '';
-    var button = '';
-    var label = '';
-    var style = '';
-    var link = '';
-    var mod = '';
-    // controllo la presenza di nuove notifiche
-	$.get("../root/get_sync_status_ajax.php",
-	  function (data) {
-		$.each(data, function (i, v) {
-            // nome modulo
-            title = v['title'];
-            button = v['button'];
-            label = v['label'];
-            link = v['link'];
-            style = v['style'];
-            mod = i;
-            //console.log(mod);
-			j++;
-            menu_alerts_check(mod,title,button,label,link,style);
-		});
-	  }, "json"
-    );
+	$.ajax({
+		type: 'GET',
+		url: "../root/session_menu_alert_lastcheck.php",
+		success: function(){
+		  var j=0;
+          // nome modulo
+          var title = '';
+          var button = '';
+          var label = '';
+          var style = '';
+          var link = '';
+          var mod = '';
+          // controllo la presenza di nuove notifiche
+          $.ajax({ 
+            type: 'GET', 
+            url: '../root/get_sync_status_ajax.php', 
+            data: {}, 
+            dataType: 'json',
+            success: function (data) { 
+              $.each(data, function(i, v) {
+                // nome modulo
+                title = v['title'];
+                button = v['button'];
+                label = v['label'];
+                link = v['link'];
+                style = v['style'];
+                mod = i;
+                //console.log(mod);
+				j++;
+                menu_alerts_check(mod,title,button,label,link,style);
+              });
+            }
+          });	        
+        }
+	});
 }
 
 </script>
