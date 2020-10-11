@@ -111,6 +111,7 @@ $strScript = array("browse_document.php" =>
 		"Nello storno inventario bisogna indicare se carico o scarico",
 		"L'inventario di magazzino deve essere un carico",
 		"Non si può fare uno storno ad un inventario che non esiste",
+		"Nel recipiente di stoccaggio selezionato non c'è sufficiente quantità",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
 		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo',12=>'SP-Perdite o cali di olio',13=>'Q-Separazione morchie'),

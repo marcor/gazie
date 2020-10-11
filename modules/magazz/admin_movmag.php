@@ -24,6 +24,30 @@
  */
 require("../../library/include/datlib.inc.php");
 require ("../../modules/vendit/lib.function.php");
+// controllo contenitori e silos SIAN
+function getCont($codsil){
+	global $gTables,$admin_aziend;
+	$content=0;
+	$orderby=2;
+	$limit=0;
+	$passo=2000000;
+	$where="recip_stocc = '".$codsil."'";
+	$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".
+			$gTables['camp_mov_sian'].".*, ".$gTables['camp_artico'].".confezione ";
+	$groupby= "";
+	$table=$gTables['camp_mov_sian']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag
+										LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['movmag'].".artico
+	";
+	$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
+	while ($r = gaz_dbi_fetch_array($ressilos)) {
+		if ($r['confezione']==0){
+			$content=$content+($r['quanti']*$r['operat']);
+		} 
+	}
+	$content=number_format ($content,3);
+	
+	return $content ;
+}
 $admin_aziend = checkAdmin();
 $msg = "";
 $lm = new lotmag;
@@ -379,7 +403,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		if ($form['SIAN']>0 AND $form['operat']==-1 AND $form['cod_operazione']==13 AND $camp_artico['confezione']>0){
 			$msg .="28+";
 		}
-	
+		if ($form['SIAN']>0 AND $form['operat']==-1 AND strlen($form['recip_stocc'])>0){
+			$content=getCont($form['recip_stocc']);
+			if ($content < $form['quanti']){ // se non c'è suffiente olio nel silos selezionato
+			$msg .="32+";
+			}
+		}
+		
         if (empty($msg)) {    //        nessun errore        SALVATAGGIO database
 		
 			// Antonio Germani - inizio salvataggio lotto
