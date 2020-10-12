@@ -495,7 +495,7 @@ if ( $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_st
 					echo '<td align="center">';
 						$last_fae_packet = $r['fattura_elettronica_zip_package'];
 						echo '<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';
-						}
+						} else { echo '<td align="center">'; }
 						} elseif (strlen($r['pec_email'])<5 && strlen(trim($r['fe_cod_univoco']))<6) { //se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
 							$d_title = 'Invia richiesta PEC e/o codice SdI all\'indirizzo: '.$r['e_mail'];
 							$dest = '&dest=E';
