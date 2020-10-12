@@ -44,13 +44,10 @@ ALTER TABLE `gaz_XXXartico` ADD COLUMN `id_reg` INT(6) NOT NULL COMMENT 'Riferim
 ALTER TABLE `gaz_XXXmovmag`	CHANGE COLUMN `desdoc` `desdoc` VARCHAR(100) NOT NULL AFTER `tipdoc`;
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Periodicità in minuti per i controlli di presenza alerts (su menù) ', 'menu_alerts_check', '15');
 -- QUI TENTO DI MODIFICARE LA NATURA IVA PER LA NUOVA VERSIONE DELLA FATTURA ELETTRONICA ( VER.1.6 ) MA E' CONSIGLIABILE RICONTROLLARLE A MANO 
-UPDATE `gaz_XXXaliiva` SET `fae_natura`='N6.9' WHERE `aliquo` = 0 AND `fae_natura` = 'N6';
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N6.3' WHERE `descri` LIKE '%17%c%6%' AND `fae_natura` LIKE 'N6%';
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N6.1' WHERE `descri` LIKE '%74%c%7%' AND `fae_natura` LIKE 'N6%';
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N6.9' WHERE `descri` LIKE '%17%c%2 %' AND `fae_natura` LIKE 'N6%';
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N6.9' WHERE `descri` LIKE '%17%c%3%' AND `fae_natura` LIKE 'N6%';
-UPDATE `gaz_XXXaliiva` SET `fae_natura`='N2.2' WHERE `aliquo` = 0 AND `fae_natura` = 'N2';
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N2.1' WHERE `descri` LIKE '%art%7%' AND `fae_natura` LIKE 'N2%';
-UPDATE `gaz_XXXaliiva` SET `fae_natura`='N3.1' WHERE `aliquo` = 0  AND `fae_natura` = 'N3';
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N3.5' WHERE `descri` LIKE '%art%8%c%2%' AND `fae_natura` LIKE 'N3%';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
