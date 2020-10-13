@@ -222,7 +222,7 @@ if ($tot>=0.01){
 $pdf->setRiporti('');
 
 // INIZIO REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
-$where = $gTables['movmag'].". id_orderman = ".intval($_GET['id_orderman']);
+$where = $gTables['movmag'].". id_orderman = ".intval($_GET['id_orderman'])." AND quanti > 0";
 $what = $gTables['movmag'].".*, ".
         $gTables['caumag'].".codice, ".$gTables['caumag'].".descri AS descau, ".
         $gTables['assets'].".descri AS desass, ".
@@ -243,10 +243,11 @@ if ($numrow>=1){
            'title'=>"Distinta della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
            'hile'=>array(array('lun' => 20,'nam'=>'Data'),
 						array('lun' => 87,'nam'=>'Operazione'),
-						array('lun' => 37,'nam'=>'Codice'),
-						array('lun' => 72,'nam'=>'Articolo'),
+						array('lun' => 30,'nam'=>'Codice'),
+						array('lun' => 62,'nam'=>'Articolo'),
 						array('lun' => 17,'nam'=>'Quantità'),
                          array('lun' => 7,'nam'=>'U.M.'),
+						array('lun' => 17,'nam'=>'Prezzo'),
                          array('lun' => 37,'nam'=>'Causale'),
                         )
           );
@@ -259,24 +260,31 @@ if ($numrow>=1){
     // $hrefdoc = json_decode(gaz_dbi_get_row($gTables['config'], 'variable', 'report_movmag_ref_doc')['cvalue']);
     // $rshref=get_object_vars($hrefdoc);
 }
+$totq=0;
+$totv=0;
+require("../../modules/magazz/lib.function.php");
+$mag = new magazzForm;
 
 while ($mv = gaz_dbi_fetch_array($result)) {
-    // richiamo il file del modulo che ha generato il movimento di magazzino per avere le informazioni sul documento genitore
-    //require_once("../".$rshref[$mv['tipdoc']]."/prepare_ref_doc_movmag.php");
-    //$funcn=preg_replace('/[0-9]+/', '', $rshref[$mv['tipdoc']]);
-    //$funcn=$funcn.'_prepare_ref_doc';
-    //$mv['id_rif']=($mv['id_rif']==0 && $mv['id_orderman']>0 && $mv['tipdoc']=="PRO")?$mv['id_orderman']:$mv['id_rif'];
-    //$mv['id_rif']=($mv['id_rif']==0 && $mv['tipdoc']=="MAG")?$mv['id_mov']:$mv['id_rif'];
-    //$docdata=$funcn($mv['tipdoc'],$mv['id_rif']);
+    $totq+=floatval($mv['quanti']*$mv['operat']);
+    $totv+=floatval($mv['quanti']*$mv['prezzo']);
     $desop=(strlen($mv['desass'])>2)?$mv['desdoc'].' con '.$mv['desass']:$mv['desdoc'];
 	$pdf->Cell(20,4,gaz_format_date($mv['datreg']),1, 0, 'C', 0, '', 1);
 	$pdf->Cell(87,4,$desop,1, 0, 'L', 0, '', 1);
-	$pdf->Cell(37,4,$mv['codice'],1, 0, 'C', 0, '', 1);
-	$pdf->Cell(72,4,$mv['desart'],1, 0, 'L', 0, '', 1);
-	$pdf->Cell(17,4,floatval($mv['quanti']*$mv['operat']),1, 0, 'R', 0, '', 1);
+	$pdf->Cell(30,4,$mv['codice'],1, 0, 'C', 0, '', 1);
+	$pdf->Cell(62,4,$mv['desart'],1, 0, 'L', 0, '', 1);
+	$pdf->Cell(17,4,floatval($mv['quanti']),1, 0, 'R', 0, '', 1);
 	$pdf->Cell(7,4,$mv['unimis'],1, 0, 'C', 0, '', 1);
+	$pdf->Cell(17,4,gaz_format_number($mv['prezzo']),1, 0, 'R', 0, '', 1);
 	$pdf->Cell(37,4,$mv['descau'],1, 1, 'C', 0, '', 1);
 }
+$pdf->SetFillColor(255,199,199);
+$pdf->SetFont('helvetica','',10);
+$pdf->Cell(199,5,'TOTALE MATERIALE LAVORATO PER PRODUZIONE: ',1, 0, 'R', 0, '', 1);
+$pdf->Cell(17,5,abs($totq),1, 0, 'R', 1, '', 1);
+$pdf->Cell(7,5,'',1, 0, 'C', 0, '', 1);
+$pdf->Cell(17,5,'€ '.gaz_format_number($totv),1, 0, 'R', 1, '', 1);
+$pdf->Cell(37,5,'',1, 1, 'C', 0, '', 1);
 // FINE REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
 $pdf->Output();
 ?>
