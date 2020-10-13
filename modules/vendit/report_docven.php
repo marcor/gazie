@@ -491,11 +491,11 @@ if ( $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_st
 					echo '<td><a class="btn btn-xs btn-warning" target="_blank" href="../acquis/view_fae.php?id_tes=' . $r["id_tes"] . '">File importato<i class="glyphicon glyphicon-eye-open"></i></a>'.'<a class="btn btn-xs btn-edit" title="Scarica il file XML originale" href="download_zip_package.php?fn='.$r['fattura_elettronica_original_name'].'">xml <i class="glyphicon glyphicon-download"></i> </a></td>';
 					} else { // il file è generato al volo dal database
 						if(strlen($r['fattura_elettronica_zip_package'])>10){ // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
-						if ($r['fattura_elettronica_reinvii']==0 && $last_fae_packet!=$r['fattura_elettronica_zip_package']) {
 					echo '<td align="center">';
+						if ($r['fattura_elettronica_reinvii']==0 && $last_fae_packet!=$r['fattura_elettronica_zip_package']) {
 						$last_fae_packet = $r['fattura_elettronica_zip_package'];
 						echo '<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';
-						} else { echo '<td align="center">'; }
+						}
 						} elseif (strlen($r['pec_email'])<5 && strlen(trim($r['fe_cod_univoco']))<6) { //se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
 							$d_title = 'Invia richiesta PEC e/o codice SdI all\'indirizzo: '.$r['e_mail'];
 							$dest = '&dest=E';
