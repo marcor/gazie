@@ -236,7 +236,7 @@ $what = $gTables['movmag'].".*, ".
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
                LEFT JOIN ".$gTables['orderman']." ON ".$gTables['movmag'].".id_orderman = ".$gTables['orderman'].".id
                LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
-$result = gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datreg ASC, id_mov ASC");
+$result = gaz_dbi_dyn_query ($what, $table,$where,"datreg ASC, id_mov ASC");
 $numrow = gaz_dbi_num_rows($result);
 if ($numrow>=1){
     $title = array('luogo_data'=>$luogo_data,

@@ -463,6 +463,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 	$XMLvars->DatiVeicoli=false;
 	// inizializzo l'accumulatore per DatiDDT
 	$XMLvars->DatiDDT=array();
+	// inizializzo la somma delle SpeseAccessorie 
+	$XMLvars->SpeseIncassoTrasporti=0;
+	$XMLvars->SpeseBolli=0;
 
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
         $XMLvars->setXMLvars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
@@ -890,6 +893,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
                     $el->appendChild($el1);
 					$el1 = $domDoc->createElement("TipoCessionePrestazione", 'AC');
+                    // aggiungo la spesa accessoria al riepilogo
+                    $XMLvars->SpeseIncassoTrasporti += number_format(round($rigo['importo']+$sc_su_imp['importo_sconto'],2), 2, '.', '');
 					$el->appendChild($el1);
                     if (isset($rigo['descrittivi'])) {
                         // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
@@ -981,6 +986,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("TipoCessionePrestazione", 'AC');
+        // aggiungo la spesa accessoria al riepilogo
+        $XMLvars->SpeseIncassoTrasporti += number_format(($XMLvars->tesdoc['speban'] * $XMLvars->pagame['numrat']), 2, '.', '');
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("Descrizione", 'SPESE INCASSO');
         $el->appendChild($el1);
@@ -1004,6 +1011,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("TipoCessionePrestazione", 'AC');
+        // aggiungo la spesa accessoria al riepilogo
+        $XMLvars->SpeseBolli += number_format($XMLvars->impbol, 2, '.', '');
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("Descrizione", 'RIMBORSO SPESE PER BOLLI ');
         $el->appendChild($el1);
@@ -1176,6 +1185,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el->appendChild($el1);
         if ($value['periva'] < 0.01) {
             $el1 = $domDoc->createElement("Natura", $value['fae_natura']);
+            $el->appendChild($el1);
+        }
+        if ( $XMLvars->SpeseIncassoTrasporti>=0.01 && $key==$XMLvars->tesdoc['expense_vat'] ){ // aggiungo SpeseAccessorie di trasporti e spese incasso
+            $el1 = $domDoc->createElement("SpeseAccessorie", number_format($XMLvars->SpeseIncassoTrasporti, 2, '.', ''));
+            $el->appendChild($el1);
+        } elseif ( $XMLvars->SpeseBolli>=0.01 && $key==$XMLvars->azienda['taxstamp_vat'] ){ // aggiungo SpeseAccessorie dei bolli
+            $el1 = $domDoc->createElement("SpeseAccessorie", number_format($XMLvars->SpeseBolli, 2, '.', ''));
             $el->appendChild($el1);
         }
         // necessario per l'elemento 2.2.2.7
