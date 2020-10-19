@@ -213,7 +213,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             $form['search_partner'] = "";
         }
         if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
-            $form['tipdoc'] = "";
+            $form['tipdoc'] = "MAG";
             $form['desdoc'] = "";
             $form['giodoc'] = date("d");
             $form['mesdoc'] = date("m");

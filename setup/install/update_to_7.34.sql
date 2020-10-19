@@ -50,4 +50,5 @@ UPDATE `gaz_XXXaliiva` SET `fae_natura`='N6.9' WHERE `descri` LIKE '%17%c%2 %' A
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N6.9' WHERE `descri` LIKE '%17%c%3%' AND `fae_natura` LIKE 'N6%';
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N2.1' WHERE `descri` LIKE '%art%7%' AND `fae_natura` LIKE 'N2%';
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N3.5' WHERE `descri` LIKE '%art%8%c%2%' AND `fae_natura` LIKE 'N3%';
+UPDATE `gaz_XXXmovmag` SET `tipdoc`='MAG' WHERE `tipdoc` = '';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
