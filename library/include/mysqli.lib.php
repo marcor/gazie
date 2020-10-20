@@ -870,14 +870,14 @@ function rigcmrUpdate($codice, $newValue) {
 
 function rigdocInsert($newValue) {
    $table = 'rigdoc';
-   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
+   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'id_orderman', 'status');
    $last_id = tableInsert($table, $columns, $newValue);
    return $last_id;
 }
 
 function rigdocUpdate($codice, $newValue) {
    $table = 'rigdoc';
-   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
+   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'id_orderman', 'status');
    tableUpdate($table, $columns, $codice, $newValue);
 }
 
