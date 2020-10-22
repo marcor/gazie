@@ -500,7 +500,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msgrigo = $i + 1;
                 $msg['err'][] = "norwum";
             }
-			if ($value['SIAN']>0){ // se movimento SIAN
+			if ($value['SIAN']>0){ // se movimento SIAN Faccio i reletivi controlli				
 				if ($value['cod_operazione'] < 0 or $value['cod_operazione']==11){ // controllo se è stato inserito il codice operazione SIAN
 					$msgrigo = $i + 1;
 					$msg['err'][] = "nocod_operaz";
@@ -528,6 +528,26 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$msgrigo = $i + 1;
 					$msg['err'][] = "norecipstocc"; // manca il recipiente di stoccaggio
 				}
+				if (strlen($value['recip_stocc'])>0){
+					$content=getCont($value['recip_stocc']);
+					if ($toDo == 'update'){
+						$content=$content-$value['quanti'];
+					}
+					$recip = gaz_dbi_get_row($gTables['camp_recip_stocc'], "cod_silos", $value['recip_stocc']);
+					if ($content+$value['quanti']>$recip['capacita']){
+						$msg['err'][] = "capsuperata"; // Superata la capacità del recipiente
+					}
+				}
+				if (strlen($value['recip_stocc_destin'])>0){
+					$content=getCont($value['recip_stocc_destin']);
+					if ($toDo == 'update'){
+						$content=$content-$value['quanti'];
+					}
+					$recip = gaz_dbi_get_row($gTables['camp_recip_stocc'], "cod_silos", $value['recip_stocc_destin']);
+					if ($content+$value['quanti']>$recip['capacita']){
+						$msg['err'][] = "capsuperata"; // Superata la capacità del recipiente
+					}
+				}				
 			}
         }
         if (count($msg['err']) == 0) {// nessun errore

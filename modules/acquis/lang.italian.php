@@ -227,7 +227,8 @@ $strScript = array("admin_fornit.php" =>
 			'nonudo' => 'Non &egrave; stato inserito il numero del documento!',
 			'dregpr' => 'La data di registrazione non pu&ograve; essere antecedente a quella del documento da registrare!',
 			'notrack'=> 'Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!',
-			'soloconf' => 'Operazione effettuabile solo con olio confezionato!'
+			'soloconf' => 'Operazione effettuabile solo con olio confezionato!',
+			'capsuperata' => 'E\' stata superata la capacità del recipiente di stoccaggio'
 			),
         'war' => array('serial' => "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie",'accounted'=>"Questo documento &egrave; gi&agrave; stato contabilizzato"),
         'customer' => 'Cliente',
