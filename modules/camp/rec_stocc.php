@@ -74,6 +74,23 @@ function getCont($codsil){
 	
 	return $content ;
 }
+// funzione per trovare l'ultimo lotto inserito nel recipiente di stoccaggio
+function getLotRecip($codsil){
+	$id_lotmag=false;
+	global $gTables,$admin_aziend;
+	$what=$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".id_mov ";
+	$table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov";
+	$where="recip_stocc = '".$codsil."'";
+	$orderby="id_mov DESC";
+	$groupby= "";
+	$passo=2000000;
+	$limit=0;
+	$lastmovmag=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
+	while ($r = gaz_dbi_fetch_array($lastmovmag)) {
+		$id_lotmag = $r['id_lotmag'];break;
+	}	
+	return $id_lotmag ;
+}
 
 ?>
 <style>
@@ -170,7 +187,12 @@ $recordnav -> output();
 
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-	$content=getCont($a_row['cod_silos']); 
+	$content=getCont($a_row['cod_silos']);
+	unset ($lot);
+	if ($content>0){
+		$idlotcont=	getLotRecip($a_row['cod_silos']);
+		$lot = gaz_dbi_get_row($gTables['lotmag'], "id", $idlotcont);
+	}
 ?>		
 			<tr class="FacetDataTD">
 			<td>
@@ -180,7 +202,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			</td>
 			<td align="center"><?php echo gaz_format_quantity($a_row['capacita'], 1, 3);?></td>
 			<td>
-			<?php echo $content; 
+			<?php echo "Kg.",gaz_format_number($content)," l.",gaz_format_number($content/0.915)," Lotto: ",$lot['identifier']; 
 			if ($content > $a_row['capacita']){
 				echo " ERRORE!";
 			}
