@@ -68,7 +68,7 @@ function getMovements($date_ini,$date_fin)
 			   LEFT JOIN ".$gTables['tesdoc']." ON (".$gTables['rigdoc'].".id_tes = ".$gTables['tesdoc'].".id_tes)
 			   LEFT JOIN ".$gTables['lotmag']." ON (".$gTables['lotmag'].".id = ".$gTables['movmag'].".id_lotmag)
 			   LEFT JOIN ".$gTables['anagra']." ON (".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra)";
-        $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, clfoco ASC, operat DESC, id_mov ASC');
+        $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, id_mov ASC, clfoco ASC, operat DESC, tipdoc ASC');
         while ($r = gaz_dbi_fetch_array($rs)) {
             $m[] = $r;
         }
@@ -101,7 +101,7 @@ foreach ($prevfiles as $files){ // se nella stessa giornata sono stati creati al
 	$f=explode("_",$files);
 	if (isset($f[1])){ 
 		if ($f[1]==$datsta){
-			if($f[1]>$progr){
+			if($f[2]>$progr){
 				$progr=$f[2];
 			}
 		}
