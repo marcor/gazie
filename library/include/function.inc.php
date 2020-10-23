@@ -712,7 +712,7 @@ class Anagrafica {
     function insertPartner($v) {
         $v['descri'] = $v['ragso1'];
         if (isset($v['ragso2'])) {
-            $v['descri'] .= $v['ragso2'];
+            $v['descri'] .= ' '.$v['ragso2'];
         }
         gaz_dbi_insert_anagra($v);
         $v['id_anagra'] = gaz_dbi_last_id();
