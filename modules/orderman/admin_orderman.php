@@ -25,6 +25,25 @@
 require ("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
+
+// funzione per trovare l'ultimo lotto inserito nel recipiente di stoccaggio
+function getLotRecip($codsil){
+	$id_lotmag=false;
+	global $gTables,$admin_aziend;
+	$what=$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".id_mov ";
+	$table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov";
+	$where="recip_stocc = '".$codsil."'";
+	$orderby="id_mov DESC";
+	$groupby= "";
+	$passo=2000000;
+	$limit=0;
+	$lastmovmag=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
+	while ($r = gaz_dbi_fetch_array($lastmovmag)) {
+		$id_lotmag = $r['id_lotmag'];break;
+	}	
+	return $id_lotmag ;
+}
+
 $msg = "";
 $lm = new lotmag;
 $magazz = new magazzForm();
@@ -74,6 +93,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 	$form['cod_operazione'] = $_POST['cod_operazione'];
     $form['recip_stocc'] = $_POST['recip_stocc'];
 	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
+	if (strlen($form['recip_stocc'])>0){ // se c'è un recipiente di stoccaggio prendo l'ID del lotto
+		$idlotrecip=getLotRecip($form['recip_stocc']);
+	}	
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
 			 // prendo i movimenti di magazzino dei componenti e l'unità di misura 
@@ -252,6 +274,12 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 					$msg.= "30+";
 				}
             }
+			if (intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
+                $rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
+				if ($rescampartico['confezione']==0){ // se l'olio è sfuso segnalo l'errore
+					$msg.= "37+"; 
+				}
+            }
 			if (intval($form['SIAN']) > 0 AND $form['numcomp']>0) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
 			    for ($m = 0;$m < $form['numcomp'];++$m) { 
 					$rescamparticocomp = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['artcomp'][$m]);
@@ -271,7 +299,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
             // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
             // i dati dell'articolo che non sono nel form li avrò nell' array $resartico
             $form['quantip']=gaz_format_quantity($form['quantip']);// trasformo la quantità per salvarla nel database
-            if ($toDo == "update") { // se è un update cancello eventuali precedenti file temporanei nella cartella tmp
+            
+			if ($toDo == "update") { // se è un update cancello eventuali precedenti file temporanei nella cartella tmp
                 foreach (glob("../../modules/orderman/tmp/*") as $fn) {
                     unlink($fn);
                 }
@@ -330,6 +359,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 						gaz_dbi_table_update('camp_mov_sian',$update,$form);
 					}
                 }
+				
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
                     // inserisco il movimento di magazzino dell'articolo prodotto
 					$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], '', '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
@@ -347,9 +377,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 						$s7=1; // Non si produce olio cioè l'articolo finito non è olio
 						$id_mov_sian_rif="";
 					}
-					if ($form['cod_operazione']==5){ // se è una movimentazione interna creo un movimento di magazzino di uscita per far riportare la giacenza
+					if ($form['cod_operazione']==5){ // se è una movimentazione interna SIAN creo un movimento di magazzino in uscita per far riportare la giacenza
 						// inserisco il movimento di magazzino dell'articolo prodotto
-						$id_movmag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['codart'], $form['quantip'], '', '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Movimentazione interna'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
+						$prev_id_movmag=$id_movmag; // tengo a mente l'id_movmag del movimento di entrata
+						$id_movmag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['codart'], $form['quantip'], '', '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Movimentazione interna'), 0, $idlotrecip, $id_orderman, $form['campo_impianto']);
 
 						// e creo anche il relativo movimento SIAN
 						$form['id_movmag']=$id_movmag;
@@ -359,6 +390,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 						$form['recip_stocc_destin']=$change;
 						$form['id_mov_sian_rif']=$id_mov_sian_rif;
 						gaz_dbi_table_insert('camp_mov_sian', $form);
+						$form['id_movmag']=$prev_id_movmag;// reimposto l'id_movmag del movimento di entrata
+						$id_movmag=$form['id_movmag'];
 					}
                     if ($itemart['good_or_service'] == 2) { // se è un articolo composto
 						for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
