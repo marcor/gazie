@@ -429,6 +429,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $msg['err'][]= "dtnusc";
                 }
             } elseif ($form['tipdoc'] == 'ADT' OR $form['tipdoc'] == 'RDL') { //se è un DDT acquisto non faccio controlli
+				// ma effettuo il controllo se è stato già inserito con lo stesso numero e data
+				$checkdouble = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND numdoc = " . $form['numdoc'] . " AND seziva = $sezione AND clfoco = ". intval($form['clfoco']), 2,0,1);
+				$check = gaz_dbi_fetch_array($checkdouble);
+				if ($check){
+					$msg['err'][] = "ddtesist";
+				}
             } else { //se sono altri documenti - AFA AFC
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND datreg < '".gaz_format_date($form['datreg'],true)."' AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 2) . "_' AND seziva = ".$sezione, "protoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
@@ -450,7 +456,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $msg['err'][] = "ddtpre";
                 }
             } elseif ($form['tipdoc'] == 'ADT' OR $form['tipdoc'] == 'RDL') {  //se è un DDT d'acquisto non effettuo controlli sulle date
-            } else { //se sono altri documenti AFA AFC
+				// ma effettuo il controllo se è stato già inserito con lo stesso numero e data
+				$checkdouble = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND numdoc = " . $form['numdoc'] . " AND seziva = $sezione AND clfoco = ". intval($form['clfoco']), 2,0,1);
+				$check = gaz_dbi_fetch_array($checkdouble);
+				if ($check){
+					$msg['err'][] = "ddtesist";
+				}
+			} else { //se sono altri documenti AFA AFC
                 $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 1) . "%' and seziva = ".$sezione, "protoc desc, datreg desc, datfat desc", 0, 1);
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
 				if ($ultimo_tipo){
