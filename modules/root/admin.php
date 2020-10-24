@@ -56,6 +56,8 @@ if ($data) {
     redirect( '../../setup/install/install.php?tp=' . $table_prefix);
     exit;
 }
+
+$folderMissing = controllaEsistenzaCartelle();
 $lastBackup = $checkUpd->testDbBackup();
 
 //andrea backup automatico
@@ -176,7 +178,14 @@ $(function(){
     <div class="container" style="width: auto;">
 
         <?php
-        if ($lastBackup) {
+		if ( $folderMissing ) 
+		{
+			echo '<div class="alert alert-danger text-center" role="alert">';
+			echo 'Attenzione manca la cartella all\'interno di "data/files" per l\'azienda corrente';
+			echo '</div>';
+		}
+		
+        if ( $lastBackup ) {
             ?>
             <div class="alert alert-danger text-center" role="alert">
                 <?php

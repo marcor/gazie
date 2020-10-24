@@ -83,6 +83,15 @@ function checkCustoms($posizione) {
         die;
     }
 }
+//controllo se esiste la cartella dell'azienda corrente
+function controllaEsistenzaCartelle()
+{
+	global $admin_aziend;	
+	if ( file_exists ( '../../data/files/'.$admin_aziend['codice'] ) )
+		return false;
+	else 
+		return true;
+}
 //funzione che estrae i valori tra i tag html di una stringa
 function getTextBetweenTags($tag, $html, $strict = 0) {
     $dom = new domDocument;
