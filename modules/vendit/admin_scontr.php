@@ -31,6 +31,9 @@ $anagrafica = new Anagrafica();
 $gForm = new venditForm();
 $magazz = new magazzForm();
 
+$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
+$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
+
 $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
 $ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 
@@ -298,7 +301,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 foreach ($form['rows'] as $v) {
                     $v['id_tes'] = $form['id_tes'];
                     $last_rigdoc_id=rigdocInsert($v);
-                    if ($admin_aziend['conmag'] == 2 AND $v['tiprig'] == 0 AND ! empty($v['codart']) AND $v['good_or_service']==0) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                    if ($admin_aziend['conmag'] == 2 AND $v['tiprig'] == 0 AND ! empty($v['codart']) AND $v['good_or_service']!==1 AND $tipo_composti['val']!=="KIT") { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         $id_mag=$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method'], FALSE, 0, $v['id_lotmag']);
 						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
 	                }
@@ -340,7 +343,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $v['id_tes'] = $last_id;
                     $last_rigdoc_id=rigdocInsert($v);
                     if ($admin_aziend['conmag'] == 2 and
-                            $v['tiprig'] == 0 and ! empty($v['codart']) AND $v['good_or_service']==0) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                            $v['tiprig'] == 0 and ! empty($v['codart']) AND $v['good_or_service']!==1 AND $tipo_composti['val']!=="KIT") { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         $id_mag=$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method'], false, 0, $v['id_lotmag']
                         );
 						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
