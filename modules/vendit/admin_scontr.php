@@ -59,6 +59,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si deve fare un parsing di quanto arriva dal browser...
+	print_r($_POST);
 	if (isset($_POST['button_ok_barcode']) || $_POST['ok_barcode']=="ok"){
 		$form['ok_barcode']="ok";
 	} else {
@@ -142,8 +143,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	$form['in_good_or_service'] = $_POST['in_good_or_service'];
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
     $form['in_id_lotmag'] = intval($_POST['in_id_lotmag']);
+	$getlot = $lm->getLot($form['in_id_lotmag']);
+	$form['in_identifier'] = $getlot['identifier'];
     $form['in_status'] = $_POST['in_status'];
     $form['cosear'] = $_POST['cosear'];
+	$form['in_SIAN'] = intval($_POST['in_SIAN']);
+	$form['in_cod_operazione'] = $_POST['in_cod_operazione'];
+	$form['in_recip_stocc'] = $_POST['in_recip_stocc'];
+	$form['in_recip_stocc_destin'] = $_POST['in_recip_stocc_destin'];
     // fine rigo input
 
     $form['rows'] = array();
@@ -171,6 +178,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
             $form['rows'][$next_row]['lot_or_serial'] = intval($v['lot_or_serial']);
             $form['rows'][$next_row]['id_lotmag'] = intval($v['id_lotmag']);
+			$getlot = $lm->getLot(intval($v['id_lotmag']));
+			$form['rows'][$next_row]['identifier'] = $getlot['identifier'];
             if ($v['lot_or_serial'] == 2 && $v['id_lotmag'] > 0) {
 // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
                 if ($form['rows'][$next_row]['quanti'] <> 1) {
@@ -182,6 +191,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
             $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
             $form['rows'][$next_row]['pesosp'] = floatval($v['pesosp']);
+			$form['rows'][$next_row]['SIAN'] = intval($v['SIAN']);
+			$form['rows'][$next_row]['cod_operazione'] = $v['cod_operazione'];
+			$form['rows'][$next_row]['recip_stocc'] = $v['recip_stocc'];
+			$form['rows'][$next_row]['recip_stocc_destin'] = $v['recip_stocc_destin'];
             if (isset($_POST['upd_row'])) {
                 $key_row = key($_POST['upd_row']);
                 if ($key_row == $next_row) {
@@ -204,8 +217,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$form['in_good_or_service'] = $form['rows'][$key_row]['good_or_service'];
                     $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
                     $form['in_id_lotmag'] = $form['rows'][$key_row]['id_lotmag'];
+					$getlot = $lm->getLot(intval($form['rows'][$key_row]['id_lotmag']));
+					$form['in_identifier'] = $getlot['identifier'];
                     $form['in_status'] = "UPDROW" . $key_row;
                     $form['cosear'] = $form['rows'][$key_row]['codart'];
+					$form['in_SIAN'] = $form['rows'][$key_row]['SIAN'];
+					$form['in_cod_operazione'] = $form['rows'][$key_row]['cod_operazione'];
+					$form['in_recip_stocc'] = $form['rows'][$key_row]['recip_stocc'];
+					$form['in_recip_stocc_destin'] = $form['rows'][$key_row]['recip_stocc_destin'];
                     array_splice($form['rows'], $key_row, 1);
                     $next_row--;
                 }
@@ -264,6 +283,40 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $tot+=$tot_row;
                 $tim+=$tim_row;
             }
+			// Antonio Germani - controllo input su rigo SIAN
+			if ($v['SIAN']>0){
+				if ($v['cod_operazione'] < 0 or $v['cod_operazione']==11){ // controllo se è stato inserito il codice operazione SIAN
+					$msgrigo = $i + 1;
+					$msg['err'][] = "nocod_operaz";
+				}
+				$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $form["clfoco"]);
+				$anagra = gaz_dbi_get_row($gTables['anagra'], "id", $clfoco["id_anagra"]);
+				if ($anagra['id_SIAN']<=0 AND ($v['cod_operazione']==1 OR $v['cod_operazione']==2 OR $v['cod_operazione']==3 OR $v['cod_operazione']==5 OR $v['cod_operazione']==10)){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "nofor_sian";
+				}
+				$art = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
+				if (strlen($v['recip_stocc'])==0 AND $art['confezione']==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "norecipstocc"; // manca il recipiente di stoccaggio
+				}
+				if ($v['cod_operazione'] == 0 AND $art['confezione']==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "soloconf"; // operazione con solo olio confezionato
+				}
+				if ($v['cod_operazione'] == 0 AND strlen($v['identifier'])==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "sololotto"; // operazione con solo olio confezionato deve avere il lotto
+				}
+				if ($v['cod_operazione'] == 6 AND $art['confezione']==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "soloconf"; // Cessione omaggio solo confezionato
+				}
+				if ($v['cod_operazione'] == 9 AND $art['confezione']==0){
+					$msgrigo = $i + 1;
+					$msg['err'][] = "soloconf"; // Cessione omaggio solo confezionato
+				}
+			}
         }
         if ($tot == 0) {  //il totale e' zero
             $msg['err'][] = "totzer";
@@ -293,6 +346,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
 					if (intval($val_old_row['id_mag']) > 0) {  //se c'era un movimento di magazzino lo azzero
                         $magazz->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
+						// se c'è stato, cancello pure il movimento sian 
+						gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
                     } 
                     gaz_dbi_del_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig']); // elimino il rigdoc
 				}
@@ -304,7 +359,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     if ($admin_aziend['conmag'] == 2 AND $v['tiprig'] == 0 AND ! empty($v['codart']) AND $v['good_or_service']!==1 AND $tipo_composti['val']!=="KIT") { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         $id_mag=$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method'], FALSE, 0, $v['id_lotmag']);
 						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
-	                }
+						if ($v['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+							$value_sian['cod_operazione']= $v['cod_operazione'];
+							$value_sian['recip_stocc']= $v['recip_stocc'];
+							$value_sian['recip_stocc_destin']= $v['recip_stocc_destin'];
+							$value_sian['id_movmag']=$id_mag;
+							gaz_dbi_table_insert('camp_mov_sian', $value_sian);
+						}
+					}
                 }
 				
                 $form['datfat'] = $form['datemi'];
@@ -344,8 +406,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $last_rigdoc_id=rigdocInsert($v);
                     if ($admin_aziend['conmag'] == 2 and
                             $v['tiprig'] == 0 and ! empty($v['codart']) AND $v['good_or_service']!==1 AND $tipo_composti['val']!=="KIT") { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $id_mag=$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method'], false, 0, $v['id_lotmag']
-                        );
+                        $id_mag=$magazz->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], '', $form['datemi'], $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method'], false, 0, $v['id_lotmag']);
+						if ($v['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+							$value_sian['cod_operazione']= $v['cod_operazione'];
+							$value_sian['recip_stocc']= $v['recip_stocc'];
+							$value_sian['recip_stocc_destin']= $v['recip_stocc_destin'];
+							$value_sian['id_movmag']=$id_mag;
+							gaz_dbi_table_insert('camp_mov_sian', $value_sian);
+						}
 						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
 	                }
                 }
@@ -424,6 +492,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['descri'] = $form['in_descri'];
             $form['rows'][$old_key]['lot_or_serial'] = $form['in_lot_or_serial'];
             $form['rows'][$old_key]['id_lotmag'] = $form['in_id_lotmag'];
+			$form['rows'][$old_key]['identifier'] = $form['in_identifier'];
+			$form['rows'][$old_key]['SIAN'] = $form['in_SIAN'];
+			$form['rows'][$old_key]['cod_operazione'] = $form['in_cod_operazione'];
+			$form['rows'][$old_key]['recip_stocc'] = $form['in_recip_stocc'];
+			$form['rows'][$old_key]['recip_stocc_destin'] = $form['in_recip_stocc_destin'];
             $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$old_key]['status'] = "UPDATE";
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
@@ -497,6 +570,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
             $form['rows'][$next_row]['lot_or_serial'] = 0;
             $form['rows'][$next_row]['id_lotmag'] = 0;
+			$form['rows'][$next_row]['identifier'] = "";
+			$form['rows'][$next_row]['SIAN'] = 0;
+			$form['rows'][$next_row]['cod_operazione'] = 11;
+			$form['rows'][$next_row]['recip_stocc'] = '';
+			$form['rows'][$next_row]['recip_stocc_destin'] = '';
             $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$next_row]['status'] = "INSERT";
             $form['rows'][$next_row]['scorta'] = 0;
@@ -506,6 +584,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['annota'] = $artico['annota'];
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$next_row]['lot_or_serial'] = $artico['lot_or_serial'];
+				$form['rows'][$next_row]['SIAN'] = $artico['SIAN'];				
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
                 $form['rows'][$next_row]['unimis'] = $artico['unimis'];
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prezzo'], $admin_aziend['decimal_price'], '.', '');
@@ -562,7 +641,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i] = $form['rows'][$next_row]; // copio il rigo di origine
                             $form['rows'][$i]['id_lotmag'] = $k; // setto il lotto 
                             $form['rows'][$i]['quanti'] = $v['qua']; // e la quantità in base al riparto
-                            $i++;
+                            $getlot = $lm->getLot($form['rows'][$i]['id_lotmag']);
+							$form['rows'][$i]['identifier'] = $getlot['identifier'];
+							$i++;
                         }
                     }
                 }
@@ -689,6 +770,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_pesosp'] = 0;
     $form['in_lot_or_serial'] = 0;
     $form['in_id_lotmag'] = 0;
+	$form['in_identifier'] = "";
+	$form['in_SIAN'] = 0;
     $form['in_status'] = "INSERT";
     $form['cosear'] = "";
     // fine rigo input
@@ -716,8 +799,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$next_row]['lot_or_serial'] = $articolo['lot_or_serial'];
+		$form['rows'][$next_row]['SIAN'] = $articolo['SIAN'];
+		$form['rows'][$next_row]['cod_operazione'] = $r['cod_operazione'];
+		$form['rows'][$next_row]['recip_stocc'] = $r['recip_stocc'];
         $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $r['id_mag']);
         $form['rows'][$next_row]['id_lotmag'] = $movmag['id_lotmag'];
+		$getlot = $lm->getLot($form['rows'][$next_row]['id_lotmag']);
+		$form['rows'][$next_row]['identifier'] = $getlot['identifier'];
         $form['rows'][$next_row]['status'] = "UPDATE";
         $next_row++;
     }
@@ -771,6 +859,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_pesosp'] = 0;
     $form['in_lot_or_serial'] = 0;
     $form['in_id_lotmag'] = 0;
+	$form['in_identifier'] = "";
+	$form['in_SIAN'] = 0;
     $form['in_status'] = "INSERT";
     $form['cosear'] = "";
     // fine rigo input
@@ -940,6 +1030,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <input type=\"hidden\" value=\"" . $form['in_pesosp'] . "\" name=\"in_pesosp\" />
         <input type=\"hidden\" value=\"" . $form['in_lot_or_serial'] . "\" name=\"in_lot_or_serial\" />
         <input type=\"hidden\" value=\"" . $form['in_id_lotmag'] . "\" name=\"in_id_lotmag\" />
+		<input type=\"hidden\" value=\"" . $form['in_identifier'] . "\" name=\"in_identifier\" />
         <input type=\"hidden\" value=\"" . $form['in_status'] . "\" name=\"in_status\" />
         <input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />
 		<input type=\"hidden\" value=\"" . $form['ok_barcode'] . "\" name=\"ok_barcode\" />";
@@ -1014,13 +1105,18 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
             echo '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />';
             echo '<input type="hidden" value="' . $v['id_lotmag'] . '" name="rows[' . $k . '][id_lotmag]" />';
+			echo '<input type="hidden" value="' . $v['identifier'] . '" name="rows[' . $k . '][identifier]" />';
             // colonne editabili
             echo "<input type=\"hidden\" value=\"" . $v['descri'] . "\" name=\"rows[$k][descri]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['unimis'] . "\" name=\"rows[$k][unimis]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['quanti'] . "\" name=\"rows[$k][quanti]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['prelis'] . "\" name=\"rows[$k][prelis]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['sconto'] . "\" name=\"rows[$k][sconto]\">\n";
-
+			echo "<input type=\"hidden\" value=\"" . $v['SIAN'] . "\" name=\"rows[$k][SIAN]\">\n";
+			echo "<input type=\"hidden\" value=\"" . $v['cod_operazione'] . "\" name=\"rows[$k][cod_operazione]\">\n";
+			echo "<input type=\"hidden\" value=\"" . $v['recip_stocc'] . "\" name=\"rows[$k][recip_stocc]\">\n";
+			echo "<input type=\"hidden\" value=\"" . $v['recip_stocc_destin'] . "\" name=\"rows[$k][recip_stocc_destin]\">\n";
+			
             // creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
@@ -1091,6 +1187,39 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         $lm_acc .= '</div>'
                                 . '</div>';
                     }
+					// Antonio Germani - Se l'articolo movimenta il SIAN apro il div SIAN
+					if ($form['rows'][$k]['SIAN']>0) {
+						$art = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
+						?>	
+						<div class="container-fluid">					
+							<div class="row">
+								<label for="cod_operazione" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN rigo ",$k+1; ?></label>
+								<?php
+								$gForm->variousSelect('rows[' . $k . '][cod_operazione]', $script_transl['cod_operaz_value'], $form['rows'][$k]['cod_operazione'], "col-sm-6", false, '', false)
+								?>
+							</div>
+							<?php if ($art['confezione']==0){ ?>
+							<div class="row">
+								<label for="recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
+								<?php
+								$gForm->selectFromDB('camp_recip_stocc', 'rows[' . $k . '][recip_stocc]' ,'cod_silos', $form['rows'][$k]['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
+								?>
+							</div>
+							<?php
+							} else {
+								echo '<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />';
+							}
+							
+							echo '<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />';
+							
+						echo '</div>';
+					} else {
+						echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+							<input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+							<input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
+							';
+					}
+					// fine apro SIAN
                     $resprow[$k][2]['value'] .= $lm_acc;
                     break;
                 case "1":
