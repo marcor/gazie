@@ -59,7 +59,6 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si deve fare un parsing di quanto arriva dal browser...
-	print_r($_POST);
 	if (isset($_POST['button_ok_barcode']) || $_POST['ok_barcode']=="ok"){
 		$form['ok_barcode']="ok";
 	} else {
