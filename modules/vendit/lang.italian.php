@@ -876,7 +876,13 @@ $strScript = array("admin_client.php" =>
             'codfis' => 'Il codice fiscale &egrave; formalmente errato',
             'ecrclo' => 'NON HAI ESEGUITO LA CHIUSURA GIORNALIERA DEL REGISTRATORE DI CASSA<BR /> FALLO PRIMA DI EMETTERNE UNO!!!',
             'ecrc10' => 'SONO PASSATI OLTRE 10 GIORNI: DEVI GENERARE Il FILE XML DEI DATI DEI CORRISPETTIVI ED INVIARLO!!!',
-            'cashlimit' => 'L\'importo non consente di emettere un documento di vendita anonimo'
+            'cashlimit' => 'L\'importo non consente di emettere un documento di vendita anonimo',
+			'nocod_operaz' =>'Non è stato impostato il tipo di operazione SIAN!',
+			'norecipdestin' => 'Non è stato inserito il recipiente di destinazione olio sfuso',
+			'norecipstocc' => 'Non è stato inserito il recipiente di stoccaggio olio sfuso',
+			'nofor_sian' =>'Per questo tipo di operazione SIAN è necessario che il destinatario abbia il codice dell\'anagrafica del SIAN',
+			'soloconf' => 'Questa operazione SIAN ammette solo olio confezionato',
+			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto'
         ),
         'war' => array('serial' => "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie"),
         'customer' => 'Cliente',
@@ -907,6 +913,7 @@ $strScript = array("admin_client.php" =>
         'in_artsea_value' => array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione'),
         'tiprig' => 'Tipo',
         'tiprig_value' => array(0 => 'Normale', 1 => 'Forfait', 2 => 'Descrittivo'),
+		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo'),
         'body_title' => 'corpo',
         'foot_title' => 'totali',
         'nrow' => 'Rigo',
