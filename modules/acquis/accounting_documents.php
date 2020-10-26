@@ -197,6 +197,11 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                 $carry += $r['prelis'];
             }
         }
+        // la presenza di scadenze provenienti dall'XML mi crea l'array che valorizzerà paymov
+        $rspm = gaz_dbi_dyn_query('*', $gTables['expdoc'], " id_tes = " . $tes['id_tes']);
+        while ($r = gaz_dbi_fetch_array($rspm)) {
+            $doc[$tes['protoc']]['pay'][] = $r;
+        }        
         $doc[$tes['protoc']]['tes'] = $tes;
         $doc[$tes['protoc']]['acc'] = $cast_acc;
         $doc[$tes['protoc']]['car'] = $carry;
@@ -392,8 +397,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 				} else {
 					$newValue['datliq']=$v['tes']['datreg'];
 				}
-                tesmovInsert($newValue);
-                $tes_id = gaz_dbi_last_id();
+                $tes_id =tesmovInsert($newValue);
                 //inserisco i righi iva nel db
                 foreach ($v['vat'] as $k => $vv) {
                     $vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $k);
@@ -415,12 +419,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     $v['tes']['clfoco'] = $admin_aziend['cassa_'];
                 }
 				if ($tot['tot']>=0.01){
-					rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon' =>$v['tes']['clfoco'],'import' =>($tot['tot'] - $v['rit'])));
+					$paymov_id =rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon' =>$v['tes']['clfoco'],'import' =>($tot['tot'] - $v['rit'])));
 				} elseif ($tot['tot']<=-0.01) {
-					rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon' =>$v['tes']['clfoco'],'import' =>(-$tot['tot'] + $v['rit'])));
+					$paymov_id =rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon' =>$v['tes']['clfoco'],'import' =>(-$tot['tot'] + $v['rit'])));
 				}
-                // memorizzo l'id del rigo cliente  
-                $paymov_id = gaz_dbi_last_id();
                 foreach ($v['acc'] as $acc_k => $acc_v) {
                     if ($acc_v['import'] != 0) {
                         if (isset($acc_v['asset'])) { // qui eseguo tutte le registrazioni relative alla vendita del cespite con relativa rilevazione della eventuale plus/minusvalenza 
@@ -480,6 +482,22 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['incaut'], 'import' => ($tot['tot'] - $v['rit'])));
                 } else { // altrimenti inserisco le partite aperte
+                  if (count($v['pay'])>0){ // se ho i dati provenienti dal XML li uso
+                    foreach ($v['pay'] as $v_pay) {
+                        // preparo l'array da inserire sui movimenti delle partite aperte
+                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
+                            'id_rigmoc_doc' => $paymov_id,
+                            'amount' => $v_pay['ImportoPagamento'],
+                            'expiry' => $v_pay['DataScadenzaPagamento']);
+                        if ($op == 2) { /* le note credito sono assimilabili ad un pagamento, 
+                          ovvero ad una chiusura di partita
+                          pertanto modifico l'array prima di passarlo */
+                            unset($paymov_value['id_rigmoc_doc']);
+                            $paymov_value['id_rigmoc_pay'] = $paymov_id;
+                        }
+                        paymovInsert($paymov_value);
+                    }
+                  } else { // ... altrimenti uso le scadenze del metodo di pagamento del fornitore
                     foreach ($rate['import'] as $k_rate => $v_rate) {
                         // preparo l'array da inserire sui movimenti delle partite aperte
                         $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
@@ -494,6 +512,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         }
                         paymovInsert($paymov_value);
                     }
+                  }
                 }
                 // alla fine modifico le testate documenti introducendo il numero del movimento contabile
                 gaz_dbi_put_query($gTables['tesdoc'], "tipdoc = '" . $v['tes']['tipdoc'] . "' AND datfat = '" . $v['tes']['datfat'] . "' AND seziva = " . $v['tes']['seziva'] . " AND protoc = " . $v['tes']['protoc'], "id_con", $tes_id);
@@ -512,14 +531,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         'regiva' => '',
                         'operat' => ''
                     );
-                    tesmovInsert($newValue);
-                    $tes_id = gaz_dbi_last_id();
+                    $tes_id =tesmovInsert($newValue);
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $kac, 'import' => $v['isp']));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $admin_aziend['split_payment'], 'import' => $v['isp']));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['split_payment'], 'import' => $v['isp']));
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => $v['isp']));
-                    // memorizzo l'id del rigo cliente  
-                    $paymov_id = gaz_dbi_last_id();
+                    $paymov_id =rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => $v['isp']));
                     // chiudo le partite aperte dell'iva split payment
                     foreach ($rateisp['import'] as $k_rate => $v_rate) {
                         // preparo l'array da inserire sui movimenti delle partite aperte

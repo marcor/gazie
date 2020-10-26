@@ -2740,7 +2740,7 @@ class Schedule {
 		if ($date){
 			$date_ctrl=" (expiry <= '".$date."')";
 		}
-        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0)) AS diff_paydoc, 
+        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0) * ".$date_ctrl.") AS diff_paydoc, 
         SUM(amount*(id_rigmoc_pay>0)) AS pay, 
         SUM(amount*(id_rigmoc_doc>0))AS doc,
         MAX(expiry) AS exp

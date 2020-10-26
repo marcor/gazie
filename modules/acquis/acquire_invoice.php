@@ -920,15 +920,24 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['sconto']=$sconto_totale_incondizionato;
 			}
 			$form['template']="FatturaAcquisto";
-			
+
+            $accexpdoc=[];
+            if ($doc->getElementsByTagName('DettaglioPagamento')->length>=1) { 
+                // se ho le date e gli importi delle scadenze creo un array da inserire sulla tabella gaz_NNNexpdoc al fine di poter aprire le partite in base a quanto riportato in fattura del fornitore e senza calcolarli dalla modalità di pagamento con si faceva sulle versioni <= 7.34
+                $detpag=$doc->getElementsByTagName('DettaglioPagamento');
+                foreach ($detpag as $vdp) { // attraverso
+                    if ($vdp->getElementsByTagName('DataScadenzaPagamento')->length>=1 && $vdp->getElementsByTagName('ImportoPagamento')->length>=1){
+                        $accexpdoc[]=array('ImportoPagamento'=>$vdp->getElementsByTagName('ImportoPagamento')->item(0)->nodeValue,'DataScadenzaPagamento'=>$vdp->getElementsByTagName('DataScadenzaPagamento')->item(0)->nodeValue);
+                    }
+                    
+                }
+            }            
 			// Antonio Germani - inizio scrittura DB
 				
 			if ($doc->getElementsByTagName('DatiDDT')->length<1 OR $anomalia == "AnomaliaDDT=FAT" OR $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA 
-			//oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA 
-			//oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
-				tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
-				//recupero l'id assegnato dall'inserimento
-				$ultimo_id = gaz_dbi_last_id();
+                //oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA 
+                //oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
+				$ultimo_id=tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
 			}
 			if ($anomalia == "AnomaliaDDT=FAT"){ // se è da considerare accompagnatoria azzero la presenza del DdT
 				$v['exist_ddt']="";
@@ -1042,7 +1051,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}				
 				
 			}
-			
+            // se l'array delle scadenze ha dati li inserisco nell'apposita tabella facendo riferimento sempre all'ultimi id_tes inserito
+            foreach ($accexpdoc as $ved) { // attraverso
+                $ved['id_tes']=$ultimo_id;    
+                expdocInsert($ved);
+            }                
+
 			if ($anomalia=="AnomaliaExistDdt" AND isset($form['clfoco'])){ // se c'è una anomalia, cioè la FAE ha ddt senza i riferimenti ai prodotti, ma i ddt sono già presenti in GAzie
 				$ddt=$doc->getElementsByTagName('DatiDDT');
 				foreach ($ddt as $vd) { // Ciclo nuovamente i DDt della FAE
