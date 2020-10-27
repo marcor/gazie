@@ -49,7 +49,7 @@ function lotmagInsert($newValue)
 function expdocInsert($newValue)
 {
     $table = 'expdoc';
-    $columns = array('id_tes','DataScadenzaPagamento','ImportoPagamento');
+    $columns = array('id_tes','ModalitaPagamento','DataScadenzaPagamento','ImportoPagamento');
     $last_id=tableInsert($table, $columns, $newValue);
     return $last_id;
 }

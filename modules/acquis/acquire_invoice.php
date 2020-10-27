@@ -927,7 +927,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $detpag=$doc->getElementsByTagName('DettaglioPagamento');
                 foreach ($detpag as $vdp) { // attraverso
                     if ($vdp->getElementsByTagName('DataScadenzaPagamento')->length>=1 && $vdp->getElementsByTagName('ImportoPagamento')->length>=1){
-                        $accexpdoc[]=array('ImportoPagamento'=>$vdp->getElementsByTagName('ImportoPagamento')->item(0)->nodeValue,'DataScadenzaPagamento'=>$vdp->getElementsByTagName('DataScadenzaPagamento')->item(0)->nodeValue);
+                        $accexpdoc[]=array('ModalitaPagamento'=>$vdp->getElementsByTagName('ModalitaPagamento')->item(0)->nodeValue,'DataScadenzaPagamento'=>$vdp->getElementsByTagName('DataScadenzaPagamento')->item(0)->nodeValue,'ImportoPagamento'=>$vdp->getElementsByTagName('ImportoPagamento')->item(0)->nodeValue);
                     }
                     
                 }

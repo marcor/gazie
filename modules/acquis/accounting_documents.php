@@ -83,6 +83,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
     $rit = 0;
     while ($tes = gaz_dbi_fetch_array($result)) {
         if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
+            $tes['contanti']=false;
             switch ($tes['tipdoc']) {
 				case "AFA":case "AFT":case "AFC":case "AFD":
 				$bol=$admin_aziend['taxstamp_account'];
@@ -201,7 +202,11 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         $rspm = gaz_dbi_dyn_query('*', $gTables['expdoc'], " id_tes = " . $tes['id_tes']);
         while ($r = gaz_dbi_fetch_array($rspm)) {
             $doc[$tes['protoc']]['pay'][] = $r;
-        }        
+            // se ho una ModalitaPagamento contanti (MP01) non apro la partita
+            if ($r['ModalitaPagamento'] == 'MP01') {
+                $tes['contanti']=true;
+            }
+        }
         $doc[$tes['protoc']]['tes'] = $tes;
         $doc[$tes['protoc']]['acc'] = $cast_acc;
         $doc[$tes['protoc']]['car'] = $carry;
@@ -478,7 +483,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 if ($v['rit'] > 0) {  // se ho una ritenuta d'acconto
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $krit, 'import' => $v['rit']));
                 }
-                if ($v['tes']['incaut'] > 100000000) {  // se il pagamento prevede l'incasso automatico 
+                if ($v['tes']['incaut'] > 100000000 || $v['tes']['contanti'] ) {  // se il pagamento prevede l'incasso automatico o sul tracciato XML avevo ModalitaPagamento=MP01 
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['incaut'], 'import' => ($tot['tot'] - $v['rit'])));
                 } else { // altrimenti inserisco le partite aperte
