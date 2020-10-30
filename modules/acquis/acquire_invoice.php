@@ -665,8 +665,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
             }
         }
-        $nl=end(array_keys($form['rows'])); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
-
+        $linekeys=array_keys($form['rows']);
+        $nl=end($linekeys); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
 
 		if ($numdoc==$numddt AND $datdoc==$dataddt){ // se fattura e ddt hanno stesso numero e data modifico l'anomalia
 			$anomalia = "AnomaliaDDT=FAT";
@@ -1000,24 +1000,22 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
 				} else { // il codice nuovo ricavato non esiste creo l'articolo basandomi sui dati in fattura
 					$v['catmer'] = 1; // di default utilizzo la prima categoria merceologica, sarebbe da farla selezionare all'operatore...
+					$form['rows'][$i]['good_or_service']=0;
 					switch ($v['codart']) {
 						case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
 						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
-						$form['rows'][$i]['good_or_service']=0;
 						break;
 						case 'Insert_W-lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
 						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
-						$form['rows'][$i]['good_or_service']=0;
 						break;
 						case 'Insert_W-matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
 						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
-						$form['rows'][$i]['good_or_service']=0;
 						break;
 						default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
 					}
