@@ -326,5 +326,4 @@ function getCont($codsil){
 	
 	return $content ;
 }
-
 ?>
