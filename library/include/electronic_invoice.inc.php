@@ -1180,7 +1180,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
     foreach ($XMLvars->cast as $key => $value) {
-      if ($value['impcast']>=0.01 || $value['ivacast']>=0.01) { // creo la voce sul castelletto solo se almeno uno tra imponibile ed iva è maggiore di zero
         $el = $domDoc->createElement("DatiRiepilogo", "");
         $el1 = $domDoc->createElement("AliquotaIVA", number_format($value['periva'], 2, '.', ''));
         $el->appendChild($el1);
@@ -1220,7 +1219,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $el1 = $domDoc->createElement("RiferimentoNormativo", $value['descriz']);
         $el->appendChild($el1);
         $results->appendChild($el);
-      }
     }
 
     if ($XMLvars->sempl_accom) {
