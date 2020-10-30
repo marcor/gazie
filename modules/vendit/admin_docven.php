@@ -2475,13 +2475,12 @@ foreach ($form['rows'] as $k => $v) {
 				} else {
 					echo '<div><button class="btn btn-xs btn-danger" title="Disponibilità non sufficiente"';
 				}
-				echo 'type="image"  data-toggle="collapse" href="#lm_dialog' . $k . '">'
-                . $selected_lot['id']
+				echo 'type="image"  data-toggle="collapse" href="#lm_dialog' . $k . '">'. 'ID:'.$selected_lot['id']
                 . '- lotto: ' . $selected_lot['identifier'];
 				if (intval ($selected_lot['expiry'])>0) {
 					echo ' scad:' . gaz_format_date($selected_lot['expiry']);
 				}
-				echo ' - disponibili: ' . gaz_format_quantity($count[$selected_lot['identifier']])
+				echo ' - disp.Tot.: ' . gaz_format_quantity($count[$selected_lot['identifier']]). ' disp.ID: '. gaz_format_quantity($selected_lot['quanti'])
 				. ' <i class="glyphicon glyphicon-tag"></i>'
 				. ' rif:' . $selected_lot['desdoc']
                 . ' - ' . gaz_format_date($selected_lot['datdoc']) .
@@ -2506,7 +2505,7 @@ foreach ($form['rows'] as $k => $v) {
 							if (intval ($v_lm['expiry'])>0) {
 								echo ' scad:' . gaz_format_date($v_lm['expiry']);
 							}
-                            echo ' disponibili:' . gaz_format_quantity($count[$v_lm['identifier']]).'<i class="glyphicon glyphicon-tag"></i> rif:' . $v_lm['desdoc']
+                            echo ' disponibili:' . gaz_format_quantity($v_lm['rest']).'<i class="glyphicon glyphicon-tag"></i> rif:' . $v_lm['desdoc']
                             . ' - ' . gaz_format_date($v_lm['datdoc'])
 							. '</button></div>';
                         }
