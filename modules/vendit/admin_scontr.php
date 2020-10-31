@@ -316,6 +316,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$msg['err'][] = "soloconf"; // Cessione omaggio solo confezionato
 				}
 			}
+			// Antonio Germani - controllo input su lotti rigo
+			if ($v['lot_or_serial']>0){ 
+				// controllo se per questo ID lotto la quantità richiesta è sufficiente
+				$getlot = $lm->getLot(intval($v['id_lotmag']));
+				if ($v['quanti']>$getlot['quanti']){
+					$msg['err'][] = "lotinsuf";
+				}
+			}
         }
         if ($tot == 0) {  //il totale e' zero
             $msg['err'][] = "totzer";

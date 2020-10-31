@@ -281,6 +281,7 @@ $strScript = array("admin_client.php" =>
         'fae_dati_value' => array(2 => 'DatiOrdineAcquisto', 3 => 'DatiContratto', 4 => 'DatiConvenzione', 5 => 'DatiRicezione', 6 => 'DatiFattureCollegate'),
 		'war' => array (
 			'1' =>'Le quantità richieste per lotto non sono disponibili. NB: se si conferma si creeranno errori che dovranno essere corretti manualmente!',
+			'2' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
 			'aliiva_nosplit' => 'Il rigo appena inserito ha un articolo con una percentuale IVA senza corrispondente aliquota con tipo IVA in split payment (T) '
 		),
 		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',1=>'S1-Vendita olio a ditta italiana',2=>'S2-Vendita olio a ditta comunitaria',3=>'S3-Vendita olio a ditta extracomunitaria',4=>'S4-Scarico olio trasferimento stabilimento stessa impresa',5=>'S5-Scarico olio trasferimento a terzista',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo',9=>'S9-Trasferimento olio a punti vendita aziendali',10=>'S10-Scarico olio reso al fornitore'),
@@ -315,7 +316,8 @@ $strScript = array("admin_client.php" =>
 			'nofor_sian' =>'Per questo tipo di operazione SIAN è necessario che il destinatario abbia il codice dell\'anagrafica del SIAN',
 			'id_documento'=>'Non è stato inserito il tipo rigo 13 - Id.Documento (FaE 2.1.X.2) obbligatorio in presenza di almeno uno dei tipi da 11 a 16',
 			'soloconf' => 'Questa operazione SIAN ammette solo olio confezionato',
-			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto'
+			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto',
+			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta'
 		)		
     ),
     "select_docforprint.php" =>
@@ -882,7 +884,8 @@ $strScript = array("admin_client.php" =>
 			'norecipstocc' => 'Non è stato inserito il recipiente di stoccaggio olio sfuso',
 			'nofor_sian' =>'Per questo tipo di operazione SIAN è necessario che il destinatario abbia il codice dell\'anagrafica del SIAN',
 			'soloconf' => 'Questa operazione SIAN ammette solo olio confezionato',
-			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto'
+			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto',
+			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta'
         ),
         'war' => array('serial' => "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie"),
         'customer' => 'Cliente',

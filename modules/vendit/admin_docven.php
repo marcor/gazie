@@ -281,7 +281,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
     $form['rows'] = array();
-    // creo un array dove andò a mettere tutti i righi normali e/o forfait ai quali potranno eventualmente essere riferiti gli elementi dal 2.1.2 a 2.1.7
+    // creo un array dove andrò a mettere tutti i righi normali e/o forfait ai quali potranno eventualmente essere riferiti gli elementi dal 2.1.2 a 2.1.7
 	$form['RiferimentoNumeroLinea'] = array();
     $next_row = 0;
 	$fae_id_documento_exist=array();
@@ -417,22 +417,25 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$next_row]['codart']);
                 if ($artico['lot_or_serial'] > 0) {
-                    $lm->getAvailableLots($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_mag']);
-                    $ld = $lm->divideLots($form['rows'][$next_row]['quanti']);
-                    /* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
-                     * e se è il caso creo più righi
-                     */
-                    $i = $next_row;
-                    foreach ($lm->divided as $k => $v) {
-                        if ($v['qua'] >= 0.00001) {
-                            $form['rows'][$i] = $form['rows'][$next_row]; // copio il rigo di origine
-                            $form['rows'][$i]['id_lotmag'] = $k; // setto il lotto
-                            $form['rows'][$i]['quanti'] = $v['qua']; // e la quantità in base al riparto
-							$getlot = $lm->getLot($form['rows'][$i]['id_lotmag']);
-							$form['rows'][$i]['identifier'] = $getlot['identifier'];
-                            $i++;
-                        }
-                    }
+					$disp = $lm->dispLotID ($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_lotmag'], $form['rows'][$next_row]['id_mag']);
+                    if ($form['rows'][$next_row]['quanti']>$disp){ // suddivido la quantità richiesta solo se per l'ID inserito non c'è sufficiente disponibilità
+						$lm->getAvailableLots($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_mag']);
+						$ld = $lm->divideLots($form['rows'][$next_row]['quanti']);
+						/* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
+						 * e se è il caso creo più righi
+						 */
+						$i = $next_row;
+						foreach ($lm->divided as $k => $v) {
+							if ($v['qua'] >= 0.00001) {
+								$form['rows'][$i] = $form['rows'][$next_row]; // copio il rigo di origine
+								$form['rows'][$i]['id_lotmag'] = $k; // setto il lotto
+								$form['rows'][$i]['quanti'] = $v['qua']; // e la quantità in base al riparto
+								$getlot = $lm->getLot($form['rows'][$i]['id_lotmag']);
+								$form['rows'][$i]['identifier'] = $getlot['identifier'];
+								$i++;
+							}
+						}
+					}
                 }
                 $form['net_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
                 $form['gross_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
@@ -653,6 +656,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				if ($v['cod_operazione'] == 9 AND $art['confezione']==0){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "soloconf"; // Cessione omaggio solo confezionato
+				}
+			}
+			
+			// Antonio Germani - controllo input su lotti rigo
+			if ($v['lot_or_serial']>0){ 
+				// controllo se per questo ID lotto la quantità richiesta è sufficiente
+				$idmag="";
+				if ($toDo == 'update') { // se è update faccio togliere dal conteggio l'eventuale suo stesso movimento
+					$idmag=$v['id_mag'];
+				}
+				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag);		
+				if ($v['quanti']>$disp){
+					$msg['err'][] = "lotinsuf";
 				}
 			}
         }
@@ -1726,10 +1742,32 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 
 	// Antonio Germani - controllo se negli articoli con lotti le quantità impostate sono disponibili
-		if ($toDo=="insert"){ // per il momento funziona solo se INSERT -->> da fare controllo anche su update!!!
+		foreach ($form['rows'] as $i => $v) {
+			$n=0;
+			foreach ($form['rows'] as $ii => $vv){
+				if ($v['id_lotmag']==$vv['id_lotmag']){
+					$n++;
+					if ($n>1){
+						$msg['war'][] = "2";
+					}
+				}
+			}
+		}
+	
+		if ($toDo=="update"){ // DA controllare BENE se in caso di update il controllo q.tà lotti è giusto!!!
+		}
 			$countric=array();
 			foreach ($form['rows'] as $i => $v) { // raggruppo e conteggio q.tà richieste per i lotti
 				if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
+					$n=0;
+					foreach ($form['rows'] as $ii => $vv){ // controllo se negli articoli con lotti c'è più di un rigo con lo stesso lotto ID
+						if ($v['id_lotmag']==$vv['id_lotmag']){
+							$n++;
+							if ($n==2){
+								$msg['war'][] = "2";
+							}
+						}
+					}					
 					$key=$v['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
 					if( !array_key_exists($key, $countric) ){ // se la chiave ancora non c'è nell'array
 						// Aggiungo la chiave con il rispettivo valore iniziale
@@ -1760,7 +1798,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					}				
 				}
 			}
-		}
+		
 
 } elseif (((!isset($_POST['Update'])) and ( isset($_GET['Update']))) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
 	$form['in_barcode']="";
@@ -2456,7 +2494,7 @@ foreach ($form['rows'] as $k => $v) {
                 $lm->getAvailableLots($v['codart'], $v['id_mag']);
 				// Antonio Germani - calcolo delle giacenze per ogni singolo lotto
 				$count=array();
-				foreach ($lm->available as $v_lm) {
+				foreach ($lm->available as $v_lm) { // calcolo la disponbilità per ogni lotto raggruppato
 					$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
 					if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
 						// Aggiungo la chiave con il rispettivo valore iniziale
@@ -2467,6 +2505,7 @@ foreach ($form['rows'] as $k => $v) {
 					}
 				}
                 $selected_lot = $lm->getLot($v['id_lotmag']);
+				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $v['id_mag']);
 				if (!isset($count[$selected_lot['identifier']])){
 					$count[$selected_lot['identifier']]="";
 				}
@@ -2480,7 +2519,7 @@ foreach ($form['rows'] as $k => $v) {
 				if (intval ($selected_lot['expiry'])>0) {
 					echo ' scad:' . gaz_format_date($selected_lot['expiry']);
 				}
-				echo ' - disp.Tot.: ' . gaz_format_quantity($count[$selected_lot['identifier']]). ' disp.ID: '. gaz_format_quantity($selected_lot['quanti'])
+				echo ' - disp.ID: '. gaz_format_quantity($disp)
 				. ' <i class="glyphicon glyphicon-tag"></i>'
 				. ' rif:' . $selected_lot['desdoc']
                 . ' - ' . gaz_format_date($selected_lot['datdoc']) .
