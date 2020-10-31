@@ -1741,7 +1741,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		$form['rows'][$row_lm]['identifier'] = $getlot['identifier'];
     }
 
-	// Antonio Germani - controllo se negli articoli con lotti le quantità impostate sono disponibili
+	// Antonio Germani - controllo se un ID lotto è presente in più righi
 		foreach ($form['rows'] as $i => $v) {
 			$n=0;
 			foreach ($form['rows'] as $ii => $vv){

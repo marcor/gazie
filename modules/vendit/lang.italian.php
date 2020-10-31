@@ -885,9 +885,12 @@ $strScript = array("admin_client.php" =>
 			'nofor_sian' =>'Per questo tipo di operazione SIAN è necessario che il destinatario abbia il codice dell\'anagrafica del SIAN',
 			'soloconf' => 'Questa operazione SIAN ammette solo olio confezionato',
 			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto',
-			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta'
+			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
+			'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo'
         ),
-        'war' => array('serial' => "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie"),
+		'war' => array('serial' => 'La quantità è stata forzata ad 1 perché l\'articolo prevede il numero di serie',
+		'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo'
+		),
         'customer' => 'Cliente',
         'search_customer' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',

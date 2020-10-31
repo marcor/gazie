@@ -319,10 +319,24 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			// Antonio Germani - controllo input su lotti rigo
 			if ($v['lot_or_serial']>0){ 
 				// controllo se per questo ID lotto la quantità richiesta è sufficiente
-				$getlot = $lm->getLot(intval($v['id_lotmag']));
-				if ($v['quanti']>$getlot['quanti']){
+				$idmag="";
+				if ($toDo == 'update') { // se è update faccio togliere dal conteggio l'eventuale suo stesso movimento
+					$idmag=$v['id_mag'];
+				}
+				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag);		
+				if ($v['quanti']>$disp){
 					$msg['err'][] = "lotinsuf";
 				}
+				// Antonio Germani - controllo se un ID lotto è presente in più righi
+				$n=0;
+				foreach ($form['rows'] as $ii => $vv){
+					if ($v['id_lotmag']==$vv['id_lotmag']){
+						$n++;
+						if ($n>1){
+							$msg['err'][] = "doppioIDlot";
+						}
+					}
+				}				
 			}
         }
         if ($tot == 0) {  //il totale e' zero
@@ -813,6 +827,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['id_lotmag'] = $movmag['id_lotmag'];
 		$getlot = $lm->getLot($form['rows'][$next_row]['id_lotmag']);
 		$form['rows'][$next_row]['identifier'] = $getlot['identifier'];
+		$movsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $r['id_mag']);
+		$form['rows'][$next_row]['cod_operazione'] = $movsian['cod_operazione'];
+		$form['rows'][$next_row]['recip_stocc'] = $movsian['recip_stocc'];
+		$form['rows'][$next_row]['recip_stocc_destin'] = $movsian['recip_stocc_destin'];
         $form['rows'][$next_row]['status'] = "UPDATE";
         $next_row++;
     }
@@ -1167,10 +1185,12 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0) {
                         $lm->getAvailableLots($v['codart'], $v['id_mag']);
                         $selected_lot = $lm->getLot($v['id_lotmag']);
+						$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $v['id_mag']);
                         $lm_acc .= '<div><button class="btn btn-xs btn-success" title="clicca per cambiare lotto" type="image"  data-toggle="collapse" href="#lm_dialog' . $k . '">'
-                                . 'lot:' . $selected_lot['id']
-                                . ' id:' . $selected_lot['identifier']
-                                . ' doc:' . $selected_lot['desdoc']
+                                . 'ID:' . $selected_lot['id']
+                                . ' Lotto:' . $selected_lot['identifier']
+								. ' Disp.:' . gaz_format_quantity($disp)
+                                . ' Rif.doc:' . $selected_lot['desdoc']
                                 . ' - ' . gaz_format_date($selected_lot['datdoc']) . ' <i class="glyphicon glyphicon-tag"></i></button>';
                         if ($v['id_mag'] > 0) {
                             $lm_acc .= ' <a class="btn btn-xs btn-default" href="lotmag_print_cert.php?id_movmag=' . $v['id_mag'] . '" target="_blank"><i class="glyphicon glyphicon-print"></i></a>';
@@ -1181,10 +1201,12 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         if (count($lm->available) > 1) {
                             foreach ($lm->available as $v_lm) {
                                 if ($v_lm['id'] <> $v['id_lotmag']) {
+									$disp= $lm -> dispLotID ($v['codart'], $v_lm['id'], $v['id_mag']);
                                     $lm_acc .= '<div>change to:<button class="btn btn-xs btn-warning" type="image" onclick="this.form.submit();" name="new_lotmag[' . $k . '][' . $v_lm['id_lotmag'] . ']">'
-                                            . 'lot:' . $v_lm['id']
-                                            . ' id:' . $v_lm['identifier']
-                                            . ' doc:' . $v_lm['desdoc']
+                                            . 'ID:' . $v_lm['id']
+                                            . ' Lotto:' . $v_lm['identifier']
+											. ' Disp.:' . $disp
+                                            . ' Rif.doc:' . $v_lm['desdoc']
                                             . ' - ' . gaz_format_date($v_lm['datdoc']) . '</button></div>';
                                 }
                             }
