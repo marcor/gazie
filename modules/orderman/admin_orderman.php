@@ -245,6 +245,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
         if (strlen($form['order_type']) < 3) { //tipo produzione vuota
             $msg.= "12+";
         }
+		
         if ($form['order_type'] == "IND") { // in produzione industriale
             if (strlen($form['codart']) == 0) { // articolo vuoto
                 $msg.= "16+";
@@ -278,10 +279,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
                 $rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
 				if ($rescampartico['confezione']==0){ // se l'olio è sfuso segnalo l'errore
 					$msg.= "37+"; 
-				}
+				}				
             }
 			if (intval($form['SIAN']) > 0 AND $form['numcomp']>0) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
-			    for ($m = 0;$m < $form['numcomp'];++$m) { 
+			    for ($m = 0;$m < $form['numcomp'];++$m) {					
 					$rescamparticocomp = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['artcomp'][$m]);
 					if (intval($form['cod_operazione'])==3 AND $rescamparticocomp['confezione']==0 ) { // se L2 etichettatura e c'è olio sfuso
 						$msg.= "29+"; 
@@ -292,6 +293,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 					if (intval($form['cod_operazione'])==3 AND ($rescamparticocomp['categoria']!== $rescampartico['categoria'] OR $rescamparticocomp['or_macro']!== $rescampartico['or_macro'] OR $rescamparticocomp['estrazione']!== $rescampartico['estrazione'] OR $rescamparticocomp['biologico']!== $rescampartico['biologico'] OR $rescamparticocomp['confezione']!== $rescampartico['confezione'] )) { // se L2 etichettatura e c'è olio non etichettato
 						$msg.= "31+"; 
 					}
+					if ($rescamparticocomp['id_campartico']>0 AND strlen($form['recip_stocc_comp'][$m])==0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)){
+					$msg.= "38+";
+				}
 				}
 			}
         }
@@ -1153,6 +1157,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 								echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value=0>';
 							}
 							// Antonio Germani - inserimento lotti in uscita
+							
 							$artico = gaz_dbi_get_row($gTables['artico'], "codice", $row['codice_artico_base']);
 							if ($artico['lot_or_serial'] == 1) { // se il componente prevede lotti
 								// PROBLEMA IN UPDATE non esclude il lotti, per questo motivo non sono modificabili
@@ -1171,14 +1176,19 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 									// ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
 									foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da getAvailableLots
 										if ($v['qua'] >= 0.00001) {
-											$form['id_lot_comp'][$nc][$l]="";
-											$form['lot_quanti'][$nc][$l]="";
+											//$form['id_lot_comp'][$nc][$l]="";
+											//$form['lot_quanti'][$nc][$l]="";
 											if (!isset($form['id_lot_comp'][$nc][$l]) or (intval($form['id_lot_comp'][$nc][$l])==0)) {
 												$form['id_lot_comp'][$nc][$l] = $v['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
 												$form['lot_quanti'][$nc][$l] = $v['qua']; // e la quantità in base al riparto
 											}
 											$selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
-											echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'] . ' Scadenza: ' . gaz_format_date($selected_lot['expiry']). ' disponibili:' . gaz_format_quantity($v['rest']);
+											$disp= $lm -> dispLotID ($artico['codice'], $selected_lot['id']);
+											echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
+											if (intval($selected_lot['expiry'])>0){
+												echo ' Scadenza: ' . gaz_format_date($selected_lot['expiry']);
+											}
+											echo ' disponibili:' . gaz_format_quantity($disp);
 											echo '  <i class="glyphicon glyphicon-tag"></i></button>';
 											?>
 											<input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
@@ -1194,18 +1204,20 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 										
 									for ($cl = 0; $cl < $l; $cl++) { 
 										?>
-										<!-- Antonio Germani - Cambio lotto solo  -->
+										<!-- Antonio Germani - Cambio lotto -->
 										<div id="lm_dialog<?php echo $nc,$cl;?>" class="collapse" >
 											
 											<?php
 											if ((count($lm->available) > 1)) { 
 												foreach ($lm->available as $v_lm) {
-													if ($v_lm['id'] <> $form['id_lot_comp'][$nc][$cl]) { 
+													if ($v_lm['id'] <> $form['id_lot_comp'][$nc][$cl]) {
+														$disp= $lm -> dispLotID ($artico['codice'], $v_lm['id']);
 														echo '<div>Cambia con:<button class="btn btn-xs btn-warning" type="text" onclick="this.form.submit();" name="id_lot_comp'.$nc.$cl.'" value="'.$v_lm['id'].'">'
-														. $v_lm['id']
-														. ' lotto n.:' . $v_lm['identifier']
-														. ' scadenza:' . gaz_format_date($v_lm['expiry'])
-														. ' disponibili:' . gaz_format_quantity($v_lm['quanti'])
+														. $v_lm['id']. ' lotto n.:' . $v_lm['identifier'];
+														if (intval($v_lm['expiry'])>0){
+															echo ' scadenza:' . gaz_format_date($v_lm['expiry']);
+														}
+														echo ' disponibili:' . gaz_format_quantity($disp)
 														. '</button></div>';
 													}
 												}

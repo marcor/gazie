@@ -398,7 +398,16 @@ class lotmag {
          return NULL;
       }
    }
-
+   
+   function dispLotID ($codart, $lotMag, $excluded_movmag = 0) {
+// Antonio Germani - restituisce la disponibilità per id lotto 
+		global $gTables;
+		$query="SELECT SUM(quanti*operat) FROM ". $gTables['movmag'] . " WHERE artico='" .$codart. "' AND id_lotmag='" .$lotMag. "' AND id_mov <> '". $excluded_movmag ."' AND caumag < '99' ";
+		$sum_in=gaz_dbi_query($query);
+		$sum =gaz_dbi_fetch_array($sum_in);
+		$disp = $sum['SUM(quanti*operat)'];
+		return $disp;
+   }
 }
 
 ?>
