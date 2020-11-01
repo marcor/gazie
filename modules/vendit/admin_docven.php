@@ -418,9 +418,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$next_row]['codart']);
                 if ($artico['lot_or_serial'] > 0) {
 					$disp = $lm->dispLotID ($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_lotmag'], $form['rows'][$next_row]['id_mag']);
-                    if ($form['rows'][$next_row]['quanti']>$disp){ // suddivido la quantità richiesta solo se per l'ID inserito non c'è sufficiente disponibilità
-						$lm->getAvailableLots($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_mag']);
-						$ld = $lm->divideLots($form['rows'][$next_row]['quanti']);
+                    $lm->getAvailableLots($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_mag']);
+					$ld = $lm->divideLots($form['rows'][$next_row]['quanti']);					
+					if ($form['rows'][$next_row]['quanti'] <= $disp AND $ld > 0){ // suddivido la quantità richiesta solo se c'è sufficiente disponibilità altrimenti segnalo e permetto forzatura
 						/* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
 						 * e se è il caso creo più righi
 						 */
@@ -1740,20 +1740,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		$getlot = $lm->getLot($form['rows'][$row_lm]['id_lotmag']);
 		$form['rows'][$row_lm]['identifier'] = $getlot['identifier'];
     }
-
-	// Antonio Germani - controllo se un ID lotto è presente in più righi
-		foreach ($form['rows'] as $i => $v) {
-			$n=0;
-			foreach ($form['rows'] as $ii => $vv){
-				if ($v['id_lotmag']==$vv['id_lotmag']){
-					$n++;
-					if ($n>1){
-						$msg['war'][] = "2";
-					}
-				}
-			}
-		}
-	
+		
 		if ($toDo=="update"){ // DA controllare BENE se in caso di update il controllo q.tà lotti è giusto!!!
 		}
 			$countric=array();
@@ -1778,8 +1765,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					}
 				}
 			} 
-			foreach ($form['rows'] as $i => $v) { // Antonio Germani - calcolo delle giacenze per l'articolo con lotti
+			foreach ($form['rows'] as $i => $v) { // Antonio Germani - controllo delle giacenze per l'articolo con lotti
 				if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
+					$n=0;// controllo se un ID lotto è presente in più righi
+					foreach ($form['rows'] as $ii => $vv){
+						if ($v['id_lotmag']==$vv['id_lotmag']){
+							$n++;
+							if ($n>1){
+								$msg['war'][] = "2";
+							}
+						}
+					}
 					$lm->getAvailableLots($v['codart']);					
 					$count=array();
 					foreach ($lm->available as $v_lm) {
