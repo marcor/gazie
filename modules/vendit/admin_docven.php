@@ -3392,10 +3392,13 @@ if ($next_row > 0) {
 					<td class="text-right">' . gaz_format_number($calc->total_imp + $calc->total_vat + $stamp - $rit + $form['taxstamp']) . '</td>
 				</tr>';
     }
-
+	if (strlen($msg['war'][0])>0){
+		$class_btn_confirm = "btn-danger";
+		$addvalue=" Nonostante l'errore";
+	}
     echo '		<tr>
 					<td colspan="8" class="text-center FacetFieldCaptionTD">
-						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">
+						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]). $addvalue . '">
 					</td>
 				</tr>';
 }
