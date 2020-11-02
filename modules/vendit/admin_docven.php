@@ -1739,63 +1739,52 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$row_lm]['id_lotmag'] = key($_POST['new_lotmag'][$row_lm]);
 		$getlot = $lm->getLot($form['rows'][$row_lm]['id_lotmag']);
 		$form['rows'][$row_lm]['identifier'] = $getlot['identifier'];
-    }
-		
-		if ($toDo=="update"){ // DA controllare BENE se in caso di update il controllo q.tà lotti è giusto!!!
-		}
-			$countric=array();
-			foreach ($form['rows'] as $i => $v) { // raggruppo e conteggio q.tà richieste per i lotti
-				if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
-					$n=0;
-					foreach ($form['rows'] as $ii => $vv){ // controllo se negli articoli con lotti c'è più di un rigo con lo stesso lotto ID
-						if ($v['id_lotmag']==$vv['id_lotmag']){
-							$n++;
-							if ($n==2){
-								$msg['war'][] = "2";
-							}
-						}
-					}					
-					$key=$v['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
-					if( !array_key_exists($key, $countric) ){ // se la chiave ancora non c'è nell'array
-						// Aggiungo la chiave con il rispettivo valore iniziale
-						$countric[$key] = $v['quanti'];
-					} else {
-						// Altrimenti, aggiorno il valore della chiave
-						$countric[$key] += $v['quanti'];
+    }		
+	
+	$countric=array();
+	foreach ($form['rows'] as $i => $v) { // raggruppo e conteggio q.tà richieste per i lotti
+		if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
+			$n=0;
+			foreach ($form['rows'] as $ii => $vv){ // controllo se negli articoli con lotti c'è più di un rigo con lo stesso lotto ID
+				if ($v['id_lotmag']==$vv['id_lotmag']){
+					$n++;
+					if ($n==2){
+						$msg['war'][] = "2";
 					}
 				}
-			} 
-			foreach ($form['rows'] as $i => $v) { // Antonio Germani - controllo delle giacenze per l'articolo con lotti
-				if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
-					$n=0;// controllo se un ID lotto è presente in più righi
-					foreach ($form['rows'] as $ii => $vv){
-						if ($v['id_lotmag']==$vv['id_lotmag']){
-							$n++;
-							if ($n>1){
-								$msg['war'][] = "2";
-							}
-						}
-					}
-					$lm->getAvailableLots($v['codart']);					
-					$count=array();
-					foreach ($lm->available as $v_lm) {
-						$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
-						if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
-							// Aggiungo la chiave con il rispettivo valore iniziale
-							$count[$key] = $v_lm['rest'];
-						} else {
-							// Altrimenti, aggiorno il valore della chiave
-							$count[$key] += $v_lm['rest'];
-						}
-					}
-					if ($countric[$v['identifier']] > $count[$v['identifier']]){ // confronto con la quantità richiesta
-						$msgrigo = $i + 1;
-						$msg['war'][] = "1";
-					}				
+			}					
+			$key=$v['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
+			if( !array_key_exists($key, $countric) ){ // se la chiave ancora non c'è nell'array
+				// Aggiungo la chiave con il rispettivo valore iniziale
+				$countric[$key] = $v['quanti'];
+			} else {
+				// Altrimenti, aggiorno il valore della chiave
+				$countric[$key] += $v['quanti'];
+			}
+		}
+	} 
+	foreach ($form['rows'] as $i => $v) { // Antonio Germani - controllo delle giacenze per l'articolo con lotti
+		if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
+			
+			$lm->getAvailableLots($v['codart']);					
+			$count=array();
+			foreach ($lm->available as $v_lm) {
+				$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
+				if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
+					// Aggiungo la chiave con il rispettivo valore iniziale
+					$count[$key] = $v_lm['rest'];
+				} else {
+					// Altrimenti, aggiorno il valore della chiave
+					$count[$key] += $v_lm['rest'];
 				}
 			}
+			if ($countric[$v['identifier']] > $count[$v['identifier']]){ // confronto con la quantità richiesta
+				$msgrigo = $i + 1;
+				$msg['war'][] = "1";
+			}				
+		}
+	}
 		
-
 } elseif (((!isset($_POST['Update'])) and ( isset($_GET['Update']))) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
@@ -2421,7 +2410,7 @@ foreach ($form['rows'] as $k => $v) {
         $castle[$v['codvat']]['impcast'] += $v_for_castle;
     }
     $descrizione = htmlentities($v['descri'], ENT_QUOTES);
-    echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
+    echo "<tr><td><input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['codvat'] . "\" name=\"rows[$k][codvat]\">\n";
@@ -2441,10 +2430,10 @@ foreach ($form['rows'] as $k => $v) {
 	'<input type="hidden" value="' . $v['identifier'] . '" name="rows[' . $k . '][identifier]" />';
 	'<input type="hidden" value="' . $v['cod_operazione'] . '" name="rows[' . $k . '][cod_operazione]" />';
 	'<input type="hidden" value="' . $v['recip_stocc'] . '" name="rows[' . $k . '][recip_stocc]" />';
-	'<input type="hidden" value="' . $v['recip_stocc_destin'] . '" name="rows[' . $k . '][recip_stocc_destin]" />';
+	'<input type="hidden" value="' . $v['recip_stocc_destin'] . '" name="rows[' . $k . '][recip_stocc_destin]" /></td>';
     switch ($v['tiprig']) {
         case "0":
-            echo '<tr>';
+            
             if ($v['gooser']==1){ 
 				$btn_class = 'btn-info';
 				$btn_title = ' Servizio';
@@ -2506,11 +2495,11 @@ foreach ($form['rows'] as $k => $v) {
 					$count[$selected_lot['identifier']]="";
 				}
 				if ($count[$selected_lot['identifier']]>=$v['quanti']){
-					echo '<div><button class="btn btn-xs btn-success" title="clicca per cambiare lotto"';
+					echo '<div><button class="btn btn-xs btn-success" title="clicca per cambiare lotto" ';
 				} else {
 					echo '<div><button class="btn btn-xs btn-danger" title="Disponibilità non sufficiente"';
 				}
-				echo 'type="image"  data-toggle="collapse" href="#lm_dialog' . $k . '">'. 'ID:'.$selected_lot['id']
+				echo 'type="image" data-toggle="collapse " href="#lm_dialog' . $k . '">'. 'ID:'.$selected_lot['id']
                 . '- lotto: ' . $selected_lot['identifier'];
 				if (intval ($selected_lot['expiry'])>0) {
 					echo ' scad:' . gaz_format_date($selected_lot['expiry']);
@@ -2534,7 +2523,7 @@ foreach ($form['rows'] as $k => $v) {
 							} else {
 								echo '<div>change to:<button class="btn btn-xs btn-danger" title="Q.tà non sufficiente" type="image"';
 							}
-							echo 'onclick="this.form.submit();" name="new_lotmag[' . $k . '][' . $v_lm['id_lotmag'] . ']">'
+							echo ' onclick="this.form.submit();" name="new_lotmag[' . $k . '][' . $v_lm['id_lotmag'] . ']">'
                             . $v_lm['id']
                             . '- lotto: ' . $v_lm['identifier'];
 							if (intval ($v_lm['expiry'])>0) {
@@ -3311,7 +3300,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     echo "		</div>	</td>
 				</tr>";
 } else {
-    echo '	<input type="hidden" value="' . $form['imball'] . '" name="imball" />
+    echo '	<tr><td><input type="hidden" value="' . $form['imball'] . '" name="imball" />
 			<input type="hidden" value="' . $form['spediz'] . '" name="spediz" />
 			<input type="hidden" value="' . $form['vettor'] . '" name="vettor" />
 			<input type="hidden" value="' . $form['portos'] . '" name="portos" />
@@ -3325,8 +3314,8 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
 			<input type="hidden" value="' . $form['net_weight'] . '" name="net_weight" />
 			<input type="hidden" value="' . $form['gross_weight'] . '" name="gross_weight" />
 			<input type="hidden" value="' . $form['units'] . '" name="units" />
-			<input type="hidden" value="' . $form['volume'] . '" name="volume" />
-			<tr>
+			<input type="hidden" value="' . $form['volume'] . '" name="volume" /></td>
+			
 				<td class="FacetFieldCaptionTD" colspan="8">'."<div class=\"col-xs-2\">
 						" . $script_transl['taxstamp'] . "<input type=\"text\" value=\"" . $form['taxstamp'] . "\" name=\"taxstamp\" maxlength=\"6\" onchange=\"this.form.submit();\" ></div><div class=\"col-xs-2\">" . $script_transl['virtual_taxstamp'];
     $gForm->variousSelect('virtual_taxstamp', $script_transl['virtual_taxstamp_value'], $form['virtual_taxstamp'],'FacetSelect',true,'virtual_taxstamp');
