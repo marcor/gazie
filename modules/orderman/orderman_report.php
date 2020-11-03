@@ -92,6 +92,48 @@ $(function() {
 		});
 		$("#dialog_delete" ).dialog( "open" );  
 	});
+
+	$("#dialog_stato_lavorazione").dialog({ autoOpen: false });
+	$('.dialog_stato_lavorazione').click(function() {
+		$("p#id_status").html($(this).attr("ref"));
+		$("p#de_status").html($(this).attr("prodes"));
+		var id = $(this).attr('ref');
+        var new_stato_lavorazione = $(this).attr("prosta");
+        $("#sel_stato_lavorazione").val(new_stato_lavorazione);
+        $('#sel_stato_lavorazione').on('change', function () {
+            //ways to retrieve selected option and text outside handler
+            new_stato_lavorazione = this.value;
+        });        
+		$( "#dialog_stato_lavorazione" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Modifica', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'set_new_stato_lavorazione','ref':id,'new_status':new_stato_lavorazione},
+						type: 'POST',
+						url: '../orderman/delete.php',
+						success: function(output) {
+		                    //alert('id:'+id+' new:'+new_stato_lavorazione);
+		                    //alert(output);
+							window.location.replace("./orderman_report.php");
+						}
+					});
+				}},
+				"Non cambiare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_stato_lavorazione" ).dialog( "open" );  
+	});
+    
 });
 </script>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
@@ -101,6 +143,23 @@ $(function() {
         <p class="ui-state-highlight" id="idcodice"></p>
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+	<div style="display:none" id="dialog_stato_lavorazione" title="Cambia lo stato">
+        <p><b>produzione:</b></p>
+        <p class="ui-state-highlight" id="id_status"></p>
+        <p class="ui-state-highlight" id="de_status"></p>
+        <select name="sel_stato_lavorazione" id="sel_stato_lavorazione">
+            <option value="0">Aperta</option>
+            <option value="1">In attesa</option>
+            <option value="2">Aperta</option>
+            <option value="3">Materiale ordinato</option>
+            <option value="4">Incontrate difficoltà</option>
+            <option value="5">In attesa di spedizione</option>
+            <option value="6">Spedito</option>
+            <option value="7">Consegnato</option>
+            <option value="8">Non chiuso</option>
+            <option value="9">Chiuso</option>
+        </select>
 	</div>
 	<div class="table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed ">
@@ -187,7 +246,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			
 			<!-- Colonna stato lavorazione -->
 			<td >
-				<a class="btn btn-xs btn-default" href="controlla_stato.php">
+				<a class="btn btn-xs btn-default dialog_stato_lavorazione" ref="<?php echo $a_row['id']; ?>" prodes="<?php echo $a_row['description']; ?>" prosta="<?php echo $a_row['stato_lavorazione']; ?>">
 				<i class="glyphicon glyphicon-compressed"></i><?php echo $stato_lavorazione[$a_row['stato_lavorazione']]; ?>
 				</a>
 			</td>
