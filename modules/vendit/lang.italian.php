@@ -282,7 +282,8 @@ $strScript = array("admin_client.php" =>
 		'war' => array (
 			'1' =>'Le quantità richieste per lotto non sono disponibili. NB: se si conferma si creeranno errori che dovranno essere corretti manualmente!',
 			'2' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
-			'aliiva_nosplit' => 'Il rigo appena inserito ha un articolo con una percentuale IVA senza corrispondente aliquota con tipo IVA in split payment (T) '
+			'aliiva_nosplit' => 'Il rigo appena inserito ha un articolo con una percentuale IVA senza corrispondente aliquota con tipo IVA in split payment (T) ',
+			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta'
 		),
 		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',1=>'S1-Vendita olio a ditta italiana',2=>'S2-Vendita olio a ditta comunitaria',3=>'S3-Vendita olio a ditta extracomunitaria',4=>'S4-Scarico olio trasferimento stabilimento stessa impresa',5=>'S5-Scarico olio trasferimento a terzista',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo',9=>'S9-Trasferimento olio a punti vendita aziendali',10=>'S10-Scarico olio reso al fornitore'),
         'err' => array( 

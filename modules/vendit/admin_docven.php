@@ -666,10 +666,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				if ($toDo == 'update') { // se è update faccio togliere dal conteggio l'eventuale suo stesso movimento
 					$idmag=$v['id_mag'];
 				}
+				/* commentato per permettere di forzare in quanto l'errore viene comunque segnalato con un warning
 				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag);		
 				if ($v['quanti']>$disp){
 					$msg['err'][] = "lotinsuf";
 				}
+				*/
 			}
         }
         // faccio visualizzare l'errore in caso di iva diversa
@@ -1781,7 +1783,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			if ($countric[$v['identifier']] > $count[$v['identifier']]){ // confronto con la quantità richiesta
 				$msgrigo = $i + 1;
 				$msg['war'][] = "1";
-			}				
+			}
+			$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag); // controllo disponibilità per ID lotto		
+			if ($v['quanti']>$disp){
+				$msg['war'][] = "lotinsuf";
+			}
 		}
 	}
 		
