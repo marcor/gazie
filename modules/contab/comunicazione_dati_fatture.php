@@ -365,7 +365,7 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                 $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']] = array('imponibile' => 0,
                     'imposta' => 0,
                     'aliquota' => $row['periva'],
-                    'natura' => $row['fae_natura'],
+                    'natura' => substr($row['fae_natura'],0,2),
                     'detraibile' => '',
                     'deducibile' => '',
                     'esigibilita' => 'I');
