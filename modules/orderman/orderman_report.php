@@ -151,7 +151,7 @@ $(function() {
         <select name="sel_stato_lavorazione" id="sel_stato_lavorazione">
             <option value="0">Aperta</option>
             <option value="1">In attesa</option>
-            <option value="2">Aperta</option>
+            <option value="2">In lavorazione</option>
             <option value="3">Materiale ordinato</option>
             <option value="4">Incontrate difficoltà</option>
             <option value="5">In attesa di spedizione</option>
