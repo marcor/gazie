@@ -75,7 +75,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 		case "set_new_stato_lavorazione":
 			$i=intval($_POST['ref']); // id_orderman
 			$s=intval($_POST['new_status']); // id_orderman
-            gaz_dbi_put_row($gTables['orderman'], 'id', $id, 'stato_lavorazione', $s);
+            gaz_dbi_put_row($gTables['orderman'], 'id', $i, 'stato_lavorazione', $s);
 		break;
 	}
 }

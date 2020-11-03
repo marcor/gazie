@@ -95,9 +95,9 @@ $(function() {
 
 	$("#dialog_stato_lavorazione").dialog({ autoOpen: false });
 	$('.dialog_stato_lavorazione').click(function() {
-		$("p#id_status").html($(this).attr("ref"));
+		$("p#id_status").html($(this).attr("refsta"));
 		$("p#de_status").html($(this).attr("prodes"));
-		var id = $(this).attr('ref');
+		var refsta = $(this).attr('refsta');
         var new_stato_lavorazione = $(this).attr("prosta");
         $("#sel_stato_lavorazione").val(new_stato_lavorazione);
         $('#sel_stato_lavorazione').on('change', function () {
@@ -116,11 +116,11 @@ $(function() {
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
-						data: {'type':'set_new_stato_lavorazione','ref':id,'new_status':new_stato_lavorazione},
+						data: {'type':'set_new_stato_lavorazione','ref':refsta,'new_status':new_stato_lavorazione},
 						type: 'POST',
 						url: '../orderman/delete.php',
 						success: function(output) {
-		                    //alert('id:'+id+' new:'+new_stato_lavorazione);
+		                    //alert('id:'+refsta+' new:'+new_stato_lavorazione);
 		                    //alert(output);
 							window.location.replace("./orderman_report.php");
 						}
@@ -203,10 +203,6 @@ $(function() {
         <tbody>
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
-	/*echo "<pre>";
-	print_r ( get_defined_vars ( ) );
-	echo "</pre>";*/
-
 ?>		<tr class="FacetDataTD">
 			<td>
 				<a class="btn btn-xs btn-default btn-block" href="admin_orderman.php?Update&codice=<?php echo $a_row['id']; ?>">
@@ -246,7 +242,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			
 			<!-- Colonna stato lavorazione -->
 			<td >
-				<a class="btn btn-xs btn-default dialog_stato_lavorazione" ref="<?php echo $a_row['id']; ?>" prodes="<?php echo $a_row['description']; ?>" prosta="<?php echo $a_row['stato_lavorazione']; ?>">
+				<a class="btn btn-xs btn-default dialog_stato_lavorazione" refsta="<?php echo $a_row['id']; ?>" prodes="<?php echo $a_row['description']; ?>" prosta="<?php echo $a_row['stato_lavorazione']; ?>">
 				<i class="glyphicon glyphicon-compressed"></i><?php echo $stato_lavorazione[$a_row['stato_lavorazione']]; ?>
 				</a>
 			</td>
