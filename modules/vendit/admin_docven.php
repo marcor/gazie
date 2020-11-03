@@ -668,7 +668,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 				/* commentato per permettere di forzare in quanto l'errore viene comunque segnalato con un warning
 				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag);		
-				if ($v['quanti']>$disp){
+				if ($v['quanti']>$disp AND $form['tipdoc']<>"FNC"){
 					$msg['err'][] = "lotinsuf";
 				}
 				*/
@@ -1745,7 +1745,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		
 	$countric=array();
 	foreach ($form['rows'] as $i => $v) { // raggruppo e conteggio q.tà richieste per i lotti
-		if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
+		if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0 AND $form['tipdoc']<>"FNC"){
 								
 			$key=$v['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
 			if( !array_key_exists($key, $countric) ){ // se la chiave ancora non c'è nell'array
@@ -1780,12 +1780,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$count[$key] += $v_lm['rest'];
 				}
 			}
-			if ($countric[$v['identifier']] > $count[$v['identifier']]){ // confronto con la quantità richiesta
+			if ($countric[$v['identifier']] > $count[$v['identifier']] AND $form['tipdoc']<>"FNC"){ // confronto con la quantità richiesta
 				$msgrigo = $i + 1;
 				$msg['war'][] = "1";
 			}
 			$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag); // controllo disponibilità per ID lotto		
-			if ($v['quanti']>$disp){
+			if ($v['quanti']>$disp AND $form['tipdoc']<>"FNC"){
 				$msg['war'][] = "lotinsuf";
 			}
 		}
