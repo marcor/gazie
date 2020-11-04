@@ -275,6 +275,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 					$msg.= "30+";
 				}
             }
+			if (intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<3 AND strlen ($form['recip_stocc']) == 0)){ // se confezioniamo
+				$msg.= "38+"; // manca il recipiente dell'olio sfuso
+			}
 			if (intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
                 $rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
 				if ($rescampartico['confezione']==0){ // se l'olio è sfuso segnalo l'errore
