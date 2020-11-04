@@ -106,7 +106,7 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
             }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
             $result = gaz_dbi_dyn_query("id, CONCAT(id,' - ',description,' - ',add_info) AS label, id AS value, 'S' AS movimentabile, description ", 
-										$gTables['orderman'], $like, // così prendo solo gli ordini da clienti
+										$gTables['orderman'], "(".$like.") AND stato_lavorazione < 9", // così prendo solo gli ordini da clienti
 										"id DESC");
             break;
         case 'quality':

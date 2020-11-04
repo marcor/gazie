@@ -2030,7 +2030,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 							<?php 
 							$select_prod = new selectproduction("in_id_orderman");
 							$select_prod->addSelected($form['in_id_orderman']);
-							$select_prod->output($form['coseprod'],'C','col-lg-12');
+							$select_prod->output($form['coseprod'],true,'col-lg-12');
 							?>						
                     </div>
                 </div>				

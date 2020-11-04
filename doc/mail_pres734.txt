@@ -1,26 +1,7 @@
 Titolo:
-Labor limae.
+Non omne quod licet honestum est.
 
 Presentazione:
-A distanza di oltre cinque mesi dall’ultimo distribuisco questo rilascio che ritengo sufficientemente stabile.
-Come sapete dal 1 ottobre si possono inviare la fatture elettroniche della nuova versione 1.6, il tracciato XML ha poche differenze con il precedente, sostanzialmente solo per quanto riguarda la “natura esenzione IVA” (più dettagliata) e l’ampliamento della tipologia dei tipi di documento. L'aggiornamento del database modificherà le aliquote IVA delle categorie N2, N3, N6 tentando in maniera poco ortodossa di attribuirle ad in nuovi “NX.X”; ma siccome GAzie ha i codici IVA liberi e non bloccati e ognuno di noi li ha creati/modificati a propria discrezione non è detto che l'operazione riesca alla perfezione, conclusione: è vivamente consigliato di controllarli dopo aver aggiornato sui sistemi in produzione. 
-Voglio precisare che per quanto riguarda gli “N6.X” relativi all’inversione contabile (reverse charge) sono senza IVA solo in caso di vendita, ma in caso di utilizzo per gli acquisti essi dovranno generare movimenti contabili con IVA su entrambi i registri: acquisti e vendite. In ogni caso se installerete un database da zero troverete un esempio fatto per “subappalto edile art.17c.6” ovvero due “N6.3”, in pratica ce ne sono due: “Vendita subapp.edile art.17c.6, IVA zero, N6.3” e “Acquisto Rev.charge art.17c.6, IVA 22%, N6.3”.
-Non dimenticate il controllo degli abbinamenti DescrizioneNormativa-NaturaEsenzione-Vendita/Acquisto.
-Parliamo di informatica:
-nonostante soffra della mancanza di un pattern MVC, e più volte l’ho confidato ad alcuni di voi, voglio prepararlo comunque per essere interfacciato con in mondo esterno senza stravolgerlo nell’architettura, non ho ne la voglia ne il tempo (un’altra vita) per farlo. 
-Sto spingendo il gestionale a fare molto di più delle funzioni per le quali gli ERP erano destinati fino a pochi anni fa, ovvero espletare le incombenze amministrative, contabili e fiscali delle aziende.
-L’intenzione è quella di consentirgli di comunicare, e quindi presentare all’utente, tutto ciò che accade sui “sistemi esterni” in qualche modo collegati, siano essi dei siti per e-commerce, dei dispositivi IoT, o delle macchina per Industria 4.0, oppure degli strumento da laboratorio che devono cedere i propri Rapporti di Prova umiliando i produttori di carta in formato A4.
-Già la versione precedente consentiva di monitorare il solo sito per e-commerce allo scopo di notificare ricezione ordini e nuovi clienti iscritti; questa fa di più: in configurazione azienda possono essere indicati i nomi di più moduli sincronizzabili ( separati da una virgola ) in modo da permettere il monitoraggio e la convivenza di una moltitudine.
-Siccome la realizzazione dei suddetti moduli presuppone una adeguata conoscenza in ambito informatico, ed anche elettronico delle numerose fattispecie citate, è compito delle aziende interessate provvedere con competenze ( interne e/o esterne ) alla loro realizzazione.
-Per chi si vorrà cimentare do un accenno tecnico sul metodo che dovrà seguire per “fare il push” di un avviso che poi apparirà come un bottone arancio lampeggiante in alto a destra sulla barra del menù:
-il direttorio es. “miomoduloiot” dovrà contenere il file “sync.function.php” con all’interno la classe “miomoduloiotgazSynchro” che a sua volta avrà il metodo “get_sync_status” che poi è quello chiamato con una periodicità stabilita in minuti nella configurazione avanzata azienda alla voce “Periodicità in minuti per i controlli di presenza alerts (su menù)”.
-Quindi “get_sync_status” dopo aver fatto i controlli opportuni collegandosi all’esterno tramite webservice o ftp o MQTT o altro, potrà eventualmente valorizzare i registri:
-$_SESSION[miomoduloiot][title] 
-$_SESSION[miomoduloiot][button] 
-$_SESSION[miomoduloiot][label] 
-$_SESSION[miomoduloiot][link] 
-$_SESSION[miomoduloiot][style] 
-che serviranno al template ( g7 o LTE ) per presentare l’avviso nella posizione già citata in precedenza, un esempio di tutto quanto detto lo troverete nel modulo "shop-synchronize" di Antonio Germani (La Casetta Bio) che mi ha aiutato nella stesura migliorando il sui moduli "Quaderno di campagna" e "Shop synchronize", quest'ultimo per allinearlo al nuovo modus operandi, assieme a lui ho corretto diversi errori che si avevano durante l'acquisizione di fatture elettroniche d'acquisto, purtroppo con l'occasione abbiamo preso coscienza del fatto che alcuni gestionali creano tracciati di fatture elettroniche differite senza riferimento ai righi dei DdT o fatti in maniera "creativa", fintanto che il Sistema di Interscambio lo consente...
-Angelo Romano ha apportato correzioni e miglioramenti al modulo vendite e sostituite alcune funzioni deprecate da PHP.
+La versione che rilascio è motivata dalla nuova funzionalità che in fase di acquisizione delle fatture elettroniche d'acquisto intercetta le eventuali scadenze dei pagamenti presenti sul tracciato XML ed apre le partite con i valori di scadenza (elemento <DataScadenzaPagamento>) e importo ( elemento <ImportoPagamento> ) e solo in caso di loro assenza procede all'apertura della relativa partita fornitore basando il calcolo delle rate sulla modalità di pagamento presente in anagrafica fornitore.    
    
-Antonio de Vincentiis, Montesilvano, 11 Ottobre 2020
+Antonio de Vincentiis, Montesilvano, 29 Ottobre 2020
