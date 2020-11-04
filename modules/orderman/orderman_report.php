@@ -202,23 +202,33 @@ $(function() {
         </thead>
         <tbody>
 <?php
-while ($a_row = gaz_dbi_fetch_array($result)) {
+while ($r = gaz_dbi_fetch_array($result)) {
+        $stato_btn = 'btn-default';
+        if ($r['stato_lavorazione']=='0'){
+            $stato_btn = 'btn-success';
+        }elseif ($r['stato_lavorazione']=='2'){
+            $stato_btn = 'btn-warning';
+        }elseif ($r['stato_lavorazione']=='7'){
+            $stato_btn = 'btn-info';
+        }elseif ($r['stato_lavorazione']=='9'){
+            $stato_btn = 'btn-danger';
+        }
 ?>		<tr class="FacetDataTD">
 			<td>
-				<a class="btn btn-xs btn-default btn-block" href="admin_orderman.php?Update&codice=<?php echo $a_row['id']; ?>">
-					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['id'];?>
+				<a class="btn btn-xs btn-default btn-block" href="admin_orderman.php?Update&codice=<?php echo $r['id']; ?>">
+					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r['id'];?>
 				</a>
 			</td>
 			<td>
-				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['id']; ?>" data-title="<?php echo $a_row['add_info']; ?>"><?php echo $a_row['description']; ?></span>
+				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $r['id']; ?>" data-title="<?php echo $r['add_info']; ?>"><?php echo $r['description']; ?></span>
 			</td>
-			<td align="center"><?php echo $script_transl['order_type'][$a_row['order_type']];?></td>
-			<td align="center"><?php echo $a_row['add_info'];?></td>
-			<?php $d_row = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $a_row['id_rigbro']);?>
+			<td align="center"><?php echo $script_transl['order_type'][$r['order_type']];?></td>
+			<td align="center"><?php echo $r['add_info'];?></td>
+			<?php $d_row = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $r['id_rigbro']);?>
 			<td align="center"><?php echo $d_row['codart'];?></td>
 			
 			<!-- Colonna quantità prodotta -->
-			<?php $e_row = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $a_row['id'], "AND operat = 1");
+			<?php $e_row = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $r['id'], "AND operat = 1");
 			$f_row = gaz_dbi_get_row($gTables['lotmag'], "id_movmag", $e_row['id_mov']);?>
 
 			<td align="center"><?php echo gaz_format_quantity($e_row['quanti'] ) ." su ". gaz_format_quantity($d_row['quanti'], true, $admin_aziend['decimal_quantity']);?></td>
@@ -232,27 +242,27 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			}
 			?>
 			<!-- Antonio Germani Vado a leggere la tabella tesbro connessa alla produzione -->
-			<?php $b_row = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $a_row['id_tesbro']);?>
+			<?php $b_row = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $r['id_tesbro']);?>
 			<td align="center"><?php echo $b_row['numdoc'];?></td>
 			<td align="center"><?php echo gaz_format_date($b_row['datemi']);?></td>
-			<td align="center"><?php echo $a_row['duration'];?></td>
+			<td align="center"><?php echo $r['duration'];?></td>
 			<!-- Antonio Germani Vado a leggere la descrizione del campo connesso alla produzione -->
-			<?php $c_row = gaz_dbi_get_row($gTables['campi'], "codice", $a_row['campo_impianto']);?>
-			<td align="center"><?php echo $a_row['campo_impianto'], " ", $c_row['descri'] ;?></td>
+			<?php $c_row = gaz_dbi_get_row($gTables['campi'], "codice", $r['campo_impianto']);?>
+			<td align="center"><?php echo $r['campo_impianto'], " ", $c_row['descri'] ;?></td>
 			
 			<!-- Colonna stato lavorazione -->
 			<td >
-				<a class="btn btn-xs btn-default dialog_stato_lavorazione" refsta="<?php echo $a_row['id']; ?>" prodes="<?php echo $a_row['description']; ?>" prosta="<?php echo $a_row['stato_lavorazione']; ?>">
-				<i class="glyphicon glyphicon-compressed"></i><?php echo $stato_lavorazione[$a_row['stato_lavorazione']]; ?>
+				<a class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id']; ?>" prodes="<?php echo $r['description']; ?>" prosta="<?php echo $r['stato_lavorazione']; ?>">
+				<i class="glyphicon glyphicon-compressed"></i><?php echo $stato_lavorazione[$r['stato_lavorazione']]; ?>
 				</a>
 			</td>
 			
 			<!-- Colonna stampa distinta -->
 			<?php
-			if ($a_row['order_type']=="IND" or $a_row['order_type']=="ART"){
+			if ($r['order_type']=="IND" or $r['order_type']=="ART"){
 			?>
 			<td align="center">
-				<a class="btn btn-xs btn-info" href="stampa_produzione.php?id_orderman=<?php echo $a_row['id']; ?>">
+				<a class="btn btn-xs btn-info" href="stampa_produzione.php?id_orderman=<?php echo $r['id']; ?>">
 					<i class="glyphicon glyphicon-list-alt"></i>
 				</a>
 			</td>
@@ -262,7 +272,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			}
 			?>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['id'];?>" ref2="<?php echo $a_row['id_tesbro'];?>" orddes="<?php echo $a_row['description']; ?>">
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" ref2="<?php echo $r['id_tesbro'];?>" orddes="<?php echo $r['description']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>
