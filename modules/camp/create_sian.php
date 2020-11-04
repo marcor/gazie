@@ -124,7 +124,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 	while (list($key, $row) = each($result)) {
 		$type_array= explode (";", $type_zero); // azzero il type array per ogni movimento da creare
 		if ($row['SIAN']>0) {
-			if ( $_GET['ud']==str_replace("-", "", $row['datdoc'])) {
+			if ( $_GET['ud']==str_replace("-", "", $row['datdoc']) AND strlen ($row['status']) > 1) {
 					// escludo i movimenti già inseriti null'ultimo file con stessa data
 			} else { 
 					if ($lastdatdoc==$row['datdoc']){ // se il movimento ha la stessa data del precedente aumento il progressivo
@@ -382,6 +382,8 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 					$type=$type."\r\n";// il SIAN richiede un ritorno a capo dopo ogni record
 					fwrite($myfile, $type);
 					$lastdatdoc=$row['datdoc'];
+					// modifico lo status del movimento SIAN a 1=inviato
+					gaz_dbi_put_row($gTables['camp_mov_sian'], 'id_mov_sian', $row['id_mov_sian'], 'status', $namefile);					
 			}
 		}
 	}

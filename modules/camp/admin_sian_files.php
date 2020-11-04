@@ -35,6 +35,9 @@ $script_transl = HeadMain();
 if ( isset($_POST['confirm'])){ // cancello il file dalla cartella di GAzie
 	$filetodelete=DATA_DIR."files/".$admin_aziend['codice']."/sian/".$_POST['confirm'];
 	if (substr($_POST['confirm'],-12) == "OPERREGI.txt"){
+		// rimetto a zero lo status dei movimenti SIAN del file cancellato
+		gaz_dbi_put_query($gTables['camp_mov_sian'], "status = '". $_POST['confirm']. "'", 'status', "0");
+		// poi cancello il file
 		unlink ($filetodelete);
 		unset ($_POST,$form);
 	}
