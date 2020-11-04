@@ -275,8 +275,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 					$msg.= "30+";
 				}
             }
-			if (intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<3 AND strlen ($form['recip_stocc']) == 0)){ // se confezioniamo
-				$msg.= "38+"; // manca il recipiente dell'olio sfuso
+			if (intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<3 AND $form['numcomp']==0)){ // se confezioniamo
+				$msg.= "39+"; // manca l'olio sfuso
 			}
 			if (intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
                 $rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
@@ -765,15 +765,17 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
                     }
                 }
             } else { // e' un nuovo inserimento
-                // creo e salvo ORDERMAN
-                gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,duration,adminid) VALUES ('" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" . $admin_aziend['adminid'] . "')");
+                // creo e salvo ORDERMAN				
                 if (intval($form['order']) <= 0 and  $form['order_type'] != "AGR") { // se non c'è un numero ordine e non siamo in produzione agricola, ne creo uno fittizio in TESBRO e RIGBRO
                     gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,datemi,numdoc,id_orderman,status,adminid) VALUES ('PRO','" . $form['datemi'] . "', '" . time() . "', '" . $id_orderman . "', 'AUTOGENERA', '" . $admin_aziend['adminid'] . "')");
                     gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,id_mag,status) VALUES ('" . $id_tesbro . "','" . $form['codart'] . "','" . addslashes ($resartico['descri']) . "','" . $resartico['unimis'] . "', '" . $form['quantip'] . "', '".$id_movmag."', 'AUTOGENERA')");
+					$status=9;
                 } else { // se c'è l'ordine lo collego ad orderman
                     $query = "UPDATE " . $gTables['tesbro'] . " SET id_orderman = '" . $id_orderman . "' WHERE id_tes = '" . $form['id_tesbro'] . "'";
                     $res = gaz_dbi_query($query);
                 }
+				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,duration,stato_lavorazione,adminid) VALUES ('" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" .$status. "', '" . $admin_aziend['adminid'] . "')");
+
             }
             // fine orderman, tesbro e rigbro
             // se sono in un popup lo chiudo dopo aver salvato tutto

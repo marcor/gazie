@@ -70,7 +70,8 @@ $strScript = array("admin_orderman.php" =>
 		"Ora inizio",
 		"Ora fine",
 		"Per l'operazione SIAN imposata l'olio prodotto deve essere confezionato",
-		"Manca il reciente di stoccaggio"
+		"Manca il recipiente di stoccaggio",
+		"Per confezionare si deve avere almeno il componente Olio sfuso"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',
