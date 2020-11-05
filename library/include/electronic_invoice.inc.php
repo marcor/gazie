@@ -137,12 +137,13 @@ class invoiceXMLvars {
 		$this->protoc = $this->tesdoc["protoc"];
         $this->fae_reinvii = $this->tesdoc["fattura_elettronica_reinvii"];
         switch ($tesdoc["tipdoc"]) {
-            case "FAD":
+            case "FAD": // Fattura differita di cui all’articolo 21, comma 4, lettera a
+                $this->TipoDocumento = 'TD24';
                 $this->ddt_data = true;
                 $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
-            case "FAI":
+            case "FAI": // Fattura immediata
                 $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
