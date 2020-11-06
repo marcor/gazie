@@ -892,7 +892,8 @@ $strScript = array("admin_client.php" =>
 			'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo'
         ),
 		'war' => array('serial' => 'La quantità è stata forzata ad 1 perché l\'articolo prevede il numero di serie',
-		'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo'
+		'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
+		'siandate' => 'La data di registrazione è precedente all\'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.'
 		),
         'customer' => 'Cliente',
         'search_customer' => array('La ricerca non ha dato risultati!',

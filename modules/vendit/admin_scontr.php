@@ -59,6 +59,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si deve fare un parsing di quanto arriva dal browser...
+	$class="btn-success";$addvalue="";
 	if (isset($_POST['button_ok_barcode']) || $_POST['ok_barcode']=="ok"){
 		$form['ok_barcode']="ok";
 	} else {
@@ -185,7 +186,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $msg['war'][] = "serial";
                 }
                 $form['rows'][$next_row]['quanti'] = 1;
-            }
+            }			
             $form['rows'][$next_row]['annota'] = substr($v['annota'], 0, 50);
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
             $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
@@ -243,7 +244,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['sconto'] = $form['rows'][0]['new_body_discount'];
         }
     }
-
+	
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         if (!gaz_format_date($form["datemi"], 'chk')) {
@@ -745,6 +746,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         array_splice($form['rows'], $delri, 1);
         $next_row--;
     }
+	foreach ($form['rows'] as $i => $v) { // nel caso di righi SIAN, controllo se la data di emissione dello scontrino è precedente a quella del file inviato al SIAN
+		if (intval($v['SIAN'])>0){ 
+			$uldtfile=getLastSianDay();
+			$datem=substr($form['datemi'],6,4) . "-" . substr($form['datemi'],3,2) . "-" . substr($form['datemi'],0,2);
+			if (strtotime($datem) < strtotime($uldtfile)){
+				$msg['war'][] = "siandate";
+				$class="btn-danger";
+				$addvalue=" nonostante l'avviso";
+			}
+			break; // esco dal ciclo per evitare di avvisare più volte nel caso di più righi con lo stesso problema
+		}
+	}
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
@@ -1455,16 +1468,18 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                                 . '<td>' . gaz_format_number($ivacast) . '</td>';
                             }
                             echo "</tr>\n";
-                        }
+                        } 
                         ?>
                         <tr> 
                             <td colspan="7">
-                                <input class="btn btn-danger center-block" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
+                                <input class="btn center-block <?php echo $class; ?>" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
                                 if ($toDo == 'insert'){
                                     echo $script_transl['send_ecr'] . ' ' . $ecr['descri'];
                                 } else {
                                     echo $script_transl['update'];
-                                } ?>" />
+                                } 
+								echo $addvalue;
+								?>" />
                             </td>
                         </tr>
                     </tbody>
