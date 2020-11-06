@@ -311,12 +311,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$uldtfile=getLastSianDay();
 		$datem=$form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
 		if (strtotime($datem) < strtotime($uldtfile)){
-			?>
-			<div class="alert alert-warning alert-dismissible">
-			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-			<strong>Warning!</strong> La data di registrazione è precedente all'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.
-			</div>
-			<?php
+			$warnmsg.="33+";			
 		}			
 	}
 	
@@ -332,12 +327,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$mv = $gForm->getStockValue(false, $form['artico']);
 		$magval = array_pop($mv); // controllo disponibilità in magazzino		
 		if ($magval['q_g']+$prev_qta['quanti']<$form['quanti']){
-			?>
-			<div class="alert alert-warning alert-dismissible">
-			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-			<strong>Warning!</strong> quantità articolo non sufficiente! Se si conferma si creerà una quantità negativa!
-			</div>
-			<?php
+			$warnmsg.="34+";			
 		}		
 	}
 	
@@ -594,6 +584,19 @@ if (!empty($msg)) {
     $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
     foreach ($rsmsg as $value) {
         $message .= $script_transl['error'] . "! -> ";
+        $rsval = explode('-', chop($value));
+        foreach ($rsval as $valmsg) {
+            $message .= $script_transl[$valmsg] . " ";
+        }
+        $message .= "<br />";
+    }
+    echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
+}
+if (!empty($warnmsg)) {
+    $message = "";
+    $rsmsg = array_slice(explode('+', chop($warnmsg)), 0, -1);
+    foreach ($rsmsg as $value) {
+        $message .= $script_transl['warning'] . "! -> ";
         $rsval = explode('-', chop($value));
         foreach ($rsval as $valmsg) {
             $message .= $script_transl[$valmsg] . " ";
