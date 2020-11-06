@@ -307,6 +307,18 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$msg.= "14+";
 		}
 	}
+	if (intval($form['SIAN'])>0){ 
+		$uldtfile=getLastSianDay();
+		$datem=$form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
+		if (strtotime($datem) < strtotime($uldtfile)){
+			?>
+			<div class="alert alert-warning alert-dismissible">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Warning!</strong> La data di registrazione è precedente all'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.
+			</div>
+			<?php
+		}			
+	}
 	
 	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
 		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
