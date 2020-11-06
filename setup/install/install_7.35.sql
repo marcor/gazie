@@ -407,6 +407,7 @@ CREATE TABLE IF NOT EXISTS `gaz_001camp_mov_sian` (
   `recip_stocc` varchar(10) NOT NULL COMMENT 'Identificativo recipiente di stoccaggio. Deve essere identico a quello inserito nel SIAN',
   `cod_operazione` varchar(10) NOT NULL COMMENT 'Codice dell''operazione esguita',
   `stabil_dep` int(10) NOT NULL COMMENT 'Identificativo dello stabilimento o deposito assegnato dal SIAN',
+  `status` varchar(45) NOT NULL COMMENT '0=inviare - nome del file=inviato',
   PRIMARY KEY (`id_mov_sian`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -1449,6 +1450,27 @@ CREATE TABLE IF NOT EXISTS `gaz_001effett` (
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `gaz_001expdoc`
+--
+
+DROP TABLE IF EXISTS `gaz_001expdoc`;
+CREATE TABLE IF NOT EXISTS `gaz_001expdoc` (
+  `id_exp` int(9) NOT NULL AUTO_INCREMENT,
+  `id_tes` int(9) NOT NULL DEFAULT 0,
+  `CondizioniPagamento` varchar(4) NOT NULL DEFAULT '0',
+  `ModalitaPagamento` varchar(4) NOT NULL DEFAULT '',
+  `DataRiferimentoTerminiPagamento` date DEFAULT NULL,
+  `GiorniTerminiPagamento` int(4) NOT NULL DEFAULT 0,
+  `DataScadenzaPagamento` date DEFAULT NULL,
+  `ImportoPagamento` decimal(10,2) NOT NULL DEFAULT 0.00,
+  PRIMARY KEY (`id_exp`) USING BTREE,
+  KEY `DataScadenzaPagamento` (`DataScadenzaPagamento`),
+  KEY `id_tes` (`id_tes`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Tabella contenente gli stessi dati degli elementi  <DatiPagamento>della fattura elettronica ed i riferimenti alla tabella gaz_NNNtesdoc. In fase di contabilizzazione delle fatture d''acquisto si avranno i dati necessari per aprire le partite  (gaz_NNNpaymov) con le scadenze  giuste. Solo se l''XML della fattura acquisita non contiene questo dettaglio allora per generarle verrà usata la modalità archiviata in anagrafica fornitore. ';
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `gaz_001extcon`
 --
 
@@ -2221,7 +2243,9 @@ CREATE TABLE IF NOT EXISTS `gaz_001staff_skills` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `id_staff` int(9) NOT NULL,
   `variable_name` varchar(50) DEFAULT NULL,
-  `skill_value` varchar(100) DEFAULT NULL,
+  `skill_data` varchar(100) DEFAULT NULL,
+  `skill_description` varchar(100) DEFAULT NULL,
+  `skill_cost` decimal(8,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -2244,7 +2268,11 @@ CREATE TABLE IF NOT EXISTS `gaz_001staff_worked_hours` (
   `hours_other` decimal(3,2) NOT NULL,
   `note` varchar(255) DEFAULT NULL,
   `id_orderman` int(9) DEFAULT NULL COMMENT 'sarà legato al piano dei conti per gestire le commesse (centri di costo)',
-  KEY `idx_id_staff` (`id_staff`) USING BTREE
+  `id_tes` int(9) DEFAULT NULL COMMENT 'può essere usato per link con tesbro al fine di aver un documento/resoconto del lavoro eseguito',
+  KEY `idx_id_staff` (`id_staff`) USING BTREE,
+  KEY `work_day` (`work_day`),
+  KEY `id_orderman` (`id_orderman`),
+  KEY `id_tes` (`id_tes`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -2402,7 +2430,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001tesdoc` (
   KEY `numfat` (`numfat`),
   KEY `idx_tipdoc1` (`tipdoc`(1)) USING BTREE,
   KEY `idx_seziva` (`seziva`) USING BTREE,
-  KEY `idx_protoc` (`protoc`) USING BTREE
+  KEY `idx_protoc` (`protoc`) USING BTREE,
+  KEY `datreg` (`datreg`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Testate documenti fiscalmente validi. Fatture, Note credito, , Documenti di Trasporto, ecc';
 
 -- --------------------------------------------------------
@@ -3067,7 +3096,7 @@ CREATE TABLE IF NOT EXISTS `gaz_config` (
 
 INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `show`, `last_modified`) VALUES
 (1, 'Giorni di validita\' della password', 'giornipass', '90', '1', 1, '2016-01-26 01:09:29'),
-(2, 'Versione archivi', 'archive', '129', '2', 0, '2020-10-11 18:41:24'),
+(2, 'Versione archivi', 'archive', '130', '2', 0, '2020-11-06 16:28:43'),
 (3, 'Ultimo script PHP di aggiornamento eseguito', 'last_update_exec', '412', '3', 1, '2016-01-26 01:09:29'),
 (4, 'La lunghezza minima della password', 'psw_min_length', '8', '4', 1, '2016-01-26 01:09:29'),
 (5, 'Check Update', 'update_url', '0', '5', 0, '2016-01-26 01:09:29'),
@@ -3714,18 +3743,18 @@ CREATE TABLE IF NOT EXISTS `gaz_module` (
 --
 
 INSERT INTO `gaz_module` (`id`, `name`, `link`, `icon`, `class`, `access`, `weight`) VALUES
-(1, 'root', 'admin.php', 'root.png', '', 0, 99),
-(2, 'vendit', 'docume_vendit.php', 'vendit.png', '', 0, 2),
-(3, 'acquis', 'docume_acquis.php', 'acquis.png', '', 0, 3),
-(4, 'contab', 'docume_contab.php', 'contab.png', '', 0, 4),
-(5, 'magazz', 'docume_magazz.php', 'magazz.png', '', 0, 5),
-(6, 'finann', 'docume_finean.php', 'finann.png', '', 0, 6),
-(7, 'config', 'docume_config.php', 'config.png', '', 0, 7),
-(8, 'inform', 'docume_inform.php', 'inform.png', '', 0, 8),
-(12, 'humres', 'docume_humres.php', 'humres.png', '', 0, 12),
-(13, 'suppor', 'docume_suppor.php', 'suppor.png', '', 0, 13),
-(14, 'wiki', 'docume_wiki.php', 'wiki.png', '', 0, 15),
-(15, 'orderman', 'docume_orderman.php', 'orderman.png', '', 0, 16);
+(1, 'root', 'admin.php', 'root.png', 'fa fa-home', 0, 99),
+(2, 'vendit', 'docume_vendit.php', 'vendit.png', 'fas fa-cash-register', 0, 2),
+(3, 'acquis', 'docume_acquis.php', 'acquis.png', 'fa fa-shopping-cart', 0, 3),
+(4, 'contab', 'docume_contab.php', 'contab.png', 'fas fa-calculator', 0, 4),
+(5, 'magazz', 'docume_magazz.php', 'magazz.png', 'fas fa-dolly-flatbed', 0, 5),
+(6, 'finann', 'docume_finean.php', 'finann.png', 'fas fa-balance-scale', 0, 6),
+(7, 'config', 'docume_config.php', 'config.png', 'fas fa-cogs', 0, 7),
+(8, 'inform', 'docume_inform.php', 'inform.png', 'fa fa-info-circle', 0, 8),
+(12, 'humres', 'docume_humres.php', 'humres.png', 'fas fa-user-friends', 0, 12),
+(13, 'suppor', 'docume_suppor.php', 'suppor.png', 'fa fa-support', 0, 13),
+(14, 'wiki', 'docume_wiki.php', 'wiki.png', 'fas fa-wikipedia-w', 0, 15),
+(15, 'orderman', 'docume_orderman.php', 'orderman.png', 'fas fa-industry', 0, 16);
 
 -- --------------------------------------------------------
 

@@ -1,0 +1,22 @@
+Titolo:
+Castigat ridendo mores.
+
+Presentazione:
+Rilascio una versione caratterizzata dall'aggiunta della utilissima funzionalità che in fase di acquisizione delle fatture elettroniche d'acquisto intercetta le eventuali scadenze dei pagamenti presenti sul tracciato XML ed apre le partite dello scadenzario con i valori di scadenza ( elementi <DataScadenzaPagamento> ) e importo ( elementi <ImportoPagamento> ); in caso di loro assenza procede all'apertura della relativa partita scadenzario fornitore basando il calcolo delle rate sulla modalità di pagamento presente in anagrafica fornitore, ovvero come già avveniva sulle precedenti versioni <= 7.34.
+Antonio Germani ha migliorato di molto il suo Registro di Campagna ed ha corretto alcuni problemi riguardanti i lotti.
+
+Ecco il solito elenco dei cambiamenti e degli autori:
+- nelle vendite con scontrino non si aggiornava il magazzino se venivano venduti prodotti composti così come non si creava il movimento SIAN per i prodotti olio. (A.Germani)
+- in caso di fattura differita messo l'elemento <TipoDocumento> = TD24. (A.De Vincentiis) 
+- migliorata tutta la gestione dei movimenti SIAN in acquisti, vendite e produzioni. (A.Germani) 
+- corretto errore acquisizione fatture d'acquisto differite quando queste avevano l'elemento <TipoDocumento> TD24 o TD25. (A.De Vincentiis)
+- Sistemati alcuni problemi nella gestione lotti. (A.Germani)
+- aggiunta finestra modale per il cambio di stato delle produzioni dal report in modalità manuale e colorati i bottoni in base allo stato, inoltre se la produzione è chiusa non apparirà nella select dei vari forms. (A.De Vincentiis)
+- corretto errore esterometro segnalato sul forum e dovuto ad i nuovi codici natura IVA. (A.De Vincentiis)
+- in acquisiszione viene intercettato l'elemento 2.4.2.2 <ModalitaPagamento> per creare i movimenti di scadenzario fornitori ed evito di aprirla se questo è in contanti (MP01). (A.De Vincentiis)
+- aggiunto i riferimenti ad i fonts awesome, utili a coloro che vogliono personalizzare il tema e non utilizzare le immagini come icone dei moduli. (A.De Vincentiis)
+- aggiunto il controllo di esistenza sulla cartella aziendale all'interno di data/files. (A.Biasi)
+- corretta la vendita con scontrino che non contemplava gli articoli composti. (A.Germani)
+- aggiunto rigo totali su report produzioni tabella movimenti di magazzino. (A.De Vincentiis)
+
+Antonio de Vincentiis, Montesilvano, 6 Novembre 2020
