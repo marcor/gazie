@@ -385,6 +385,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['volume'] += $form['rows'][$next_row]['quanti'] * $artico['volume_specifico'];
             }
             $i++;
+			if ($value['SIAN']>0){ 
+			$uldtfile=getLastSianDay();
+			$datem=substr($form['datemi'],6,4) . "-" . substr($form['datemi'],3,2) . "-" . substr($form['datemi'],0,2);
+			if (strtotime($datem) < strtotime($uldtfile)){
+				$msg['war'][] = "siandate";
+			}
+		}
         }
     }
 // Se viene inviata la richiesta di conferma totale ...

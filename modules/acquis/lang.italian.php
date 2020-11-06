@@ -231,7 +231,10 @@ $strScript = array("admin_fornit.php" =>
 			'capsuperata' => 'E\' stata superata la capacità del recipiente di stoccaggio',
 			'ddtesist' => 'Questo ddt è già stato inserito'
 			),
-        'war' => array('serial' => "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie",'accounted'=>"Questo documento &egrave; gi&agrave; stato contabilizzato"),
+        'war' => array('serial' => "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie",
+		'accounted'=>"Questo documento &egrave; gi&agrave; stato contabilizzato",
+		'siandate' => 'La data di registrazione è precedente all\'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.'
+		),
         'customer' => 'Cliente',
         'search_partner' => array('La ricerca non ha dato risultati',
             'Inserire almeno 2 caratteri',
