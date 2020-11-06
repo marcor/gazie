@@ -1757,7 +1757,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
 		}
 	} 
-	foreach ($form['rows'] as $i => $v) { // Antonio Germani - controllo delle giacenze per l'articolo con lotti
+	
+	foreach ($form['rows'] as $i => $v) { // Antonio Germani - controllo delle giacenze per l'articolo con lotti e data di registrazione per SIAN
+		if ($v['SIAN']>0){ 
+			$uldtfile=getLastSianDay();
+			$datem=substr($form['datemi'],6,4) . "-" . substr($form['datemi'],3,2) . "-" . substr($form['datemi'],0,2);
+			if (strtotime($datem) < strtotime($uldtfile)){
+				$msg['war'][] = "siandate";
+			}
+		}
 		if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0){
 			$n=0;// controllo se un ID lotto è presente in più righi
 			foreach ($form['rows'] as $ii => $vv){
