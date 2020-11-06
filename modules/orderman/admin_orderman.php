@@ -109,7 +109,15 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
 			LEFT JOIN ".$gTables['artico']." on (".$gTables['distinta_base'].".codice_artico_base = ".$gTables['artico'].".codice)";
             $rescompo = gaz_dbi_dyn_query ($gTables['distinta_base'].".*, ".$gTables['artico'].".*", $table, $where );
 		}
-	}    
+	}
+	
+	if (intval($form['SIAN'])>0){ // se è una produzione SIAN se la data di questa produzione è antecedente a quella dell'ultimo file SIAN
+		$uldtfile=getLastSianDay();
+		if (strtotime($_POST['datreg']) < strtotime($uldtfile)){
+			$warnmsg.="40+";
+		}
+	}
+	
     $form['coseor'] = $_POST['coseor'];	
     if (intval($form['coseor']) > 0) { // se c'è un numero ordine lo importo tramite l'id
         $res = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['coseor']);
@@ -961,11 +969,26 @@ print "<input type=\"hidden\" value=\"" . $_POST['ritorno'] . "\" name=\"ritorno
 print "<input type=\"hidden\" name=\"hidden_req\" value=\"TRUE\">\n"; // per auto submit on change select input
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+$class="btn-success";$addvalue="";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
     foreach ($rsmsg as $value) {
         $message.= $script_transl['error'] . "! -> ";
+        $rsval = explode('-', chop($value));
+        foreach ($rsval as $valmsg) {
+            $message.= $script_transl[$valmsg] . " ";
+        }
+        $message.= "<br />";
+    }
+    echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
+}
+if (!empty($warnmsg)) {
+    $message = ""; 
+	$class="btn-danger"; $addvalue=" nonostante l'avviso";
+    $rsmsg = array_slice(explode('+', chop($warnmsg)), 0, -1);
+    foreach ($rsmsg as $value) {
+        $message.= $script_transl['warning'] . "! -> ";
         $rsval = explode('-', chop($value));
         foreach ($rsval as $valmsg) {
             $message.= $script_transl[$valmsg] . " ";
@@ -1561,15 +1584,16 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 }
 if ($popup <> 1) {
     //ANNULLA/RESET NON FUNZIONA DA RIVEDERE > print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
-    print "<tr><td style=\"padding-top: 10px;\" class=\"FacetDataTD\" align=\"right\">\n";
-    print "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n</td><td style=\"padding-top: 10px;\" class=\"FacetDataTD\">";
+    print "<tr><td style=\"padding-top: 10px; text-align:center;\" class=\"FacetDataTD\" >\n";
+    print "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n</td><td style=\"padding-top: 10px; text-align:center;\" class=\"FacetDataTD\">";
 } else {
-    print "<tr><td>&nbsp;</td><td style=\"padding-top: 10px;\" class=\"FacetDataTD\">";
+    print "<tr><td>&nbsp;</td><td style=\"padding-top: 10px; text-align:center;\" class=\"FacetDataTD\" >";
 }
+
 if ($toDo == 'update') {
-    print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . '">';
+    print '<input type="submit" accesskey="m" class="btn '.$class.'" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['update']) . $addvalue . '">';
 } else {
-    print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['insert']) . '">';
+    print '<input type="submit" accesskey="i" class="btn '.$class.'" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . ucfirst($script_transl['insert']) . $addvalue . '">';
 }
 print "</td></tr></table>\n";
 ?>
