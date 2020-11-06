@@ -407,38 +407,4 @@ class lotmag {
 		return $disp;
    }
 }
-
-function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ultimo movimento SIAN creato
-	$admin_aziend = checkAdmin();	
-	if ($handle = opendir(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sian/')){
-			$i=0;
-			while (false !== ($file = readdir($handle))){
-				if (substr($file,-12) == "OPERREGI.txt"){
-					if ($file=="." OR $file==".."){ continue;}
-						$prevfiles[$i]['nome']=$file; // prendo nome file
-						$prevfiles[$i]['content']=@file_get_contents(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sian/'.$file);// prendo contenuto file
-						$i++;	
-				}			
-			}
-			closedir($handle);
-			if (isset($prevfiles)){ // se ci sono file
-				rsort($prevfiles);// ordino per nome file
-			}
-		}
-		// vedo se l'ultimo file è di tipo 'I'nserimento o 'C'ancellazione
-		if (isset($prevfiles)){ // se ci sono files
-			for ($n=0 ; $n <= $i-1 ; $n++){
-				if (substr($prevfiles[$n]['content'],875,1)=="I"){ // se il file è di inserimento ne prendo la data dell'ultimo record
-					$fileField=explode (";",$prevfiles[$n]['content']);
-					$uldtfile=$fileField[((((count($fileField)-1)/49)-1)*49)+3];
-					$uldtfile=substr($uldtfile,4,4)."-".substr($uldtfile,2,2)."-".substr($uldtfile,0,2);// imposto la data aaaa-mm-gg
-					break; // esco dal ciclo
-				} else { // se non è 'I', cioè è 'C', faccio saltare il file successivo perché annullato da questo
-					$n++;
-				}
-			}
-		}		
-	return $uldtfile ;
-}
-
 ?>
