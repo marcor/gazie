@@ -191,25 +191,21 @@ $(function() {
 
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
-$paymov = new Schedule(); 
+$paymov = new Schedule();
+
+// creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
+$rs_last_docs = gaz_dbi_dyn_query("id_tes,MAX(protoc) AS last_protoc,YEAR(datreg) AS year", $gTables['tesdoc'],"tipdoc LIKE 'A%' AND seziva = ".$sezione." GROUP BY YEAR(datreg)",'protoc DESC');
+$rs_last_docs = gaz_dbi_query("SELECT id_tes 
+            FROM ".$gTables['tesdoc']." AS t1
+            JOIN ( SELECT MAX(protoc) AS max_protoc FROM ".$gTables['tesdoc']." WHERE tipdoc LIKE 'A%' AND seziva = ".$sezione." GROUP BY YEAR(datreg)) AS t2 
+            ON t1.protoc = t2.max_protoc WHERE t1.tipdoc LIKE 'A%' AND t1.seziva = ".$sezione);
+$year_last_protoc_id_tes=[];
+while ($ld = gaz_dbi_fetch_array($rs_last_docs)){
+    $year_last_protoc_id_tes[$ld['id_tes']]=true;
+}
+// fine creazione array con i documenti eliminabili
+
 while ($row = gaz_dbi_fetch_array($result)) {
-	// controllo ogni rigo se è ultimo movimento per quel tipdoc
-	if  (substr($row['tipdoc'],0,2) == 'DD') {
-		$where = "tipdoc LIKE 'DD_' AND seziva = ".$row['seziva']." AND numfat = 0" ;
-		$order='numdoc DESC';
-	} elseif  (substr($row['tipdoc'],0,2) == 'AF'){ // fattura o nota credito fornitore
-		$where = "tipdoc LIKE 'AF_' AND seziva = ".$row['seziva']." AND YEAR(datreg) = '".substr($row['datreg'],0,4)."'";
-		$order='protoc DESC, id_tes ASC';
-	} elseif  (substr($row['tipdoc'],0,2) == 'AD'){
-		$where = "tipdoc LIKE 'AD_'";
-		$order='id_tes DESC';
-	} elseif  (substr($row['tipdoc'],0,2) == 'RD'){
-		$where = "tipdoc LIKE 'RD_' AND seziva = ".$row['seziva'];
-		$order='id_tes DESC';
-	}
-	$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,$order,0,1);
-	$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-	
     // faccio il check per vedere se ci sono righi da trasferire in contabilità di magazzino
     $ck = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes=". $row['id_tes']." AND  LENGTH(TRIM(codart))>=1 AND tiprig=0 AND id_mag=0");
     $check = gaz_dbi_fetch_array($ck);
@@ -278,11 +274,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
         echo "<td>";
 		// faccio il controllo di eliminazione dell'ultima fattura ricevuta 
-		if (!empty($ultimo_documento) && (
-				(substr($row['tipdoc'],0,2) == 'DD' && $ultimo_documento['numdoc']==$row['numdoc'] && $ultimo_documento['datemi']==$row['datemi']) ||
-				(substr($row['tipdoc'],0,2) == 'AF' && $ultimo_documento['protoc']==$row['protoc'] && $ultimo_documento['datreg']==$row['datreg']) 
-			  )
-			) {
+		if (isset($year_last_protoc_id_tes[$row['id_tes']])) {
 			?>			
 			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $row['id_tes'];?>" fornitore="<?php echo $anagra['ragso1']; ?>">
 				<i class="glyphicon glyphicon-remove"></i>
