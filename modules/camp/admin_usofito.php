@@ -45,7 +45,7 @@ if ((isset($_GET['Update']) and  !isset($_GET['id'])) or isset($_POST['Return'])
 }
 
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
-print_r($_POST);
+
 	if (isset($_POST['Cancel'])){
 		$_POST['cod_art'] = "";
 		$_POST['codart'] = "";
