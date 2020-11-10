@@ -98,7 +98,7 @@ this.gzTooltip = function () {
                         codeDtls = this.getAttribute('data-title') + '&nbsp;' + this.getAttribute('data-id') + '€';
                         return codeDtls;
                     } else if (codeDtls == "catmer-thumb") {
-                        codeDtls = '<img src="../root/view.php?table=catmer&value=' + this.getAttribute('data-id') + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" />';
+                        codeDtls = '<span class="label">' + this.getAttribute('data-title') + '</span><img src="../root/view.php?table=catmer&value=' + this.getAttribute('data-id') + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" />';
                         return codeDtls;
                     } else if (codeDtls == "movcon-thumb") {
                         codeDtls = this.getAttribute('data-title');

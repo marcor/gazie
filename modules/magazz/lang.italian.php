@@ -51,6 +51,7 @@ $strScript = array("browse_document.php" =>
         'descri' => "Descrizione",
 		'ricerca' => "Ricerca",
         'good_or_service' => "Merce-Servizio",
+        'good_or_service_value' => array(0=>'Merce',1=>'Servizio',2=>'Composizione'),
         'unimis' => "U.M.",
         'catmer' => "Cat. merc.",
         'preacq' => 'Prezzo acquisto',
