@@ -26,9 +26,10 @@
 // >> Visualizza recipienti di stoccaggio <<
 
 require("../../library/include/datlib.inc.php");
-
+$gSil = new silos();
 $admin_aziend=checkAdmin();
-$titolo = 'Recipienti di staccaggio e silos';
+$titolo = 'Recipienti di stoccaggio e silos';
+
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
@@ -48,48 +49,6 @@ if (isset($_GET['all'])) {
 if (!isset($_GET['auxil'])) {
    $auxil = "";
    $where = "cod_silos like '".addslashes($auxil)."%'";
-}
-
-// controllo contenitori e silos
-function getCont($codsil){
-	global $gTables,$admin_aziend;
-	$content=0;
-	$orderby=2;
-	$limit=0;
-	$passo=2000000;
-	$where="recip_stocc = '".$codsil."'";
-	$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".
-			$gTables['camp_mov_sian'].".*, ".$gTables['camp_artico'].".confezione ";
-	$groupby= "";
-	$table=$gTables['camp_mov_sian']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag
-										LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['movmag'].".artico
-	";
-	$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
-	while ($r = gaz_dbi_fetch_array($ressilos)) {
-		if ($r['confezione']==0){
-			$content=$content+($r['quanti']*$r['operat']);
-		} 
-	}
-	$content=number_format ($content,3);
-	
-	return $content ;
-}
-// funzione per trovare l'ultimo lotto inserito nel recipiente di stoccaggio
-function getLotRecip($codsil){
-	$id_lotmag=false;
-	global $gTables,$admin_aziend;
-	$what=$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".id_mov ";
-	$table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov";
-	$where="recip_stocc = '".$codsil."'";
-	$orderby="id_mov DESC";
-	$groupby= "";
-	$passo=2000000;
-	$limit=0;
-	$lastmovmag=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
-	while ($r = gaz_dbi_fetch_array($lastmovmag)) {
-		$id_lotmag = $r['id_lotmag'];break;
-	}	
-	return $id_lotmag ;
 }
 
 ?>
@@ -187,54 +146,55 @@ $recordnav -> output();
 
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-	$content=getCont($a_row['cod_silos']);
-	unset ($lot);
-	if ($content>0){
-		$idlotcont=	getLotRecip($a_row['cod_silos']);
-		$lot = gaz_dbi_get_row($gTables['lotmag'], "id", $idlotcont);
-	}
-?>		
-			<tr class="FacetDataTD">
-			<td>
-				<a class="btn btn-xs btn-success btn-block" href="admin_rec_stocc.php?Update&codice=<?php echo $a_row["cod_silos"]; ?>">
-					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['cod_silos'];?>
-				</a>
-			</td>
-			<td align="center"><?php echo gaz_format_quantity($a_row['capacita'], 1, 3);?></td>
-			<td>
-			<?php echo "Kg.",gaz_format_number($content)," l.",gaz_format_number($content/0.915)," Lotto: ",$lot['identifier']; 
+	$content= $gSil -> getCont($a_row['cod_silos']);
+	unset ($lot);	
+	?>		
+	<tr class="FacetDataTD">
+		<td>
+			<a class="btn btn-xs btn-success btn-block" href="admin_rec_stocc.php?Update&codice=<?php echo $a_row["cod_silos"]; ?>">
+				<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['cod_silos'];?>
+			</a>
+		</td>
+		<td align="center"><?php echo gaz_format_quantity($a_row['capacita'], 1, 3);?></td>
+		<td>
+		<?php 
+		if ($content>0){
+			$idlotcont=	$gSil -> getLotRecip($a_row['cod_silos']);
+			$lot = gaz_dbi_get_row($gTables['lotmag'], "id", $idlotcont);			
+			echo "Kg.",gaz_format_number($content)," l.",gaz_format_number($content/0.915)," Lotto: ",$lot['identifier']; 
 			if ($content > $a_row['capacita']){
 				echo " ERRORE!";
 			}
-			?>
-			<div class="bar">
-				<img src="../../modules/camp/media/white_bar.jpg" alt="Barra silos" title="Contenuto silos" style="padding-left:<?php echo ((($content/$a_row['capacita'])*100)* 280 )/100;?>px;">
-			</div>
-			</td>
-			<td align="center">
-			<?php
-			if (intval($a_row['affitto'])==0){
-				echo "Proprietà";
-			} else{
-				echo "Affitto";
-			}
-			?>
-			</td>
-			<td align="center">
-			<?php
-			if (intval($a_row['dop_igp'])==0){
-				echo "NO";
-			} else{
-				echo "DOP IGP";
-			}
-			?>
-			</td>
-			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['cod_silos'];?>" capacity="<?php echo $a_row['capacita']; ?>">
-					<i class="glyphicon glyphicon-remove"></i>
-				</a>
-			</td>
-		</tr>
+		}
+		?>
+		<div class="bar">
+			<img src="../../modules/camp/media/white_bar.jpg" alt="Barra silos" title="Contenuto silos" style="padding-left:<?php echo ((($content/$a_row['capacita'])*100)* 280 )/100;?>px;">
+		</div>
+		</td>
+		<td align="center">
+		<?php
+		if (intval($a_row['affitto'])==0){
+			echo "Proprietà";
+		} else{
+			echo "Affitto";
+		}
+		?>
+		</td>
+		<td align="center">
+		<?php
+		if (intval($a_row['dop_igp'])==0){
+			echo "NO";
+		} else{
+			echo "DOP IGP";
+		}
+		?>
+		</td>
+		<td align="center">
+			<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['cod_silos'];?>" capacity="<?php echo $a_row['capacita']; ?>">
+				<i class="glyphicon glyphicon-remove"></i>
+			</a>
+		</td>
+	</tr>
 <?php
 }
 ?>
