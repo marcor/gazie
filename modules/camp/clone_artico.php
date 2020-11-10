@@ -52,7 +52,7 @@ if (isset($_GET['codice']) and ! isset($_POST['back'])) {
         $originalArtico = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15)); //prelevo l'originale
         $originalArtico['codice'] = $new_codice;
         gaz_dbi_table_insert('artico', $originalArtico);
-        header("Location: admin_artico.php?codice=" . $new_codice . "&Update");
+        header("Location: camp_admin_artico.php?codice=" . $new_codice . "&Update");
         exit;
     }
 } else {
