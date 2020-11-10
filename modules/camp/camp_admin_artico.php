@@ -636,7 +636,7 @@ select: function(event, ui) {
 		} else {
 			echo '<div class="text-center"><b>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</b></div>';
 		}
-		if ($checkdbfito == "WARNING"){ // se non c'è bisogna creare il data base fitofarmaci
+		if (isset($checkdbfito) AND $checkdbfito == "WARNING"){ // se non c'è bisogna creare il data base fitofarmaci
 			?>
 			<div class="alert alert-warning alert-dismissible" style="max-width: 70%; margin-left: 15%;">
 				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>

@@ -28,6 +28,7 @@
 */
 require ("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
+require ("../../modules/vendit/lib.function.php");
 $Cu_limit_anno=4; // Limite annuo in Kg di rame metallo ad ettaro
 $lm = new lotmag;
 $g2Form = new campForm();
