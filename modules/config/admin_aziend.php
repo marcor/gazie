@@ -41,7 +41,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['pec'] = trim($form['pec']);
     $form['e_mail'] = trim($form['e_mail']);
     $form['web_url'] = trim($form['web_url']);
-    $form['update_ecommerce'] = intval($_POST['update_ecommerce']);
     $form['mascli'] = intval(substr($_POST['mascli'], 0, 3));
     $form['masfor'] = intval(substr($_POST['masfor'], 0, 3));
     $form['mas_staff'] = intval(substr($_POST['mas_staff'], 0, 3));

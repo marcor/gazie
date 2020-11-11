@@ -1023,7 +1023,7 @@ echo "<input type=\"hidden\" value=\"{$form['datfat']}\" name=\"datfat\">\n";
 echo "<input type=\"hidden\" value=\"{$form['delivery_time']}\" name=\"delivery_time\">\n";
 echo "<input type=\"hidden\" value=\"{$form['day_of_validity']}\" name=\"day_of_validity\">\n";
 echo "<input type=\"hidden\" value=\"{$form['print_total']}\" name=\"print_total\">\n";
-echo '<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />';
+echo '<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" id="last_focus" />';
 echo "<input type=\"hidden\" value=\"\" id=\"dialog_row_focus\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
@@ -1249,7 +1249,7 @@ foreach ($form['rows'] as $key => $value) {
             echo ' <button class="btn btn-default btn-sm" type="image" data-toggle="collapse" onclick="weightfromdim(\''.$key.'\');" title="Calcola peso, superficie, volume"><i class="glyphicon glyphicon-scale"></i></button> ';
 		    echo '</td>';
             /** ENRICO FEDELE */
-            echo "<td><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"document.docacq.last_focus.value={$key}; this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"document.docacq.last_focus.value=" . $key . "; this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"rows[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\"  onchange=\"this.form.submit()\" /></td>\n";
             echo '<td class="text-right" title="'.$script_transl[18].': '.$value['codric'].'">' . gaz_format_number($imprig) . "</td>\n";
             echo "<td>{$value['pervat']}%</td>\n";
