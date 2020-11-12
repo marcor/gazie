@@ -125,12 +125,21 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 		$type_array= explode (";", $type_zero); // azzero il type array per ogni movimento da creare
 		if ($row['SIAN']>0) {
 			if ( $_GET['ud']==str_replace("-", "", $row['datdoc']) AND strlen ($row['status']) > 1) {
-					// escludo i movimenti già inseriti null'ultimo file con stessa data
-			} else { 
+				// escludo i movimenti già inseriti null'ultimo file con stessa data
+				$nprog_preced_file++; // segno il progressivo per la stessa data del precedente file
+			} else {
+					if (intval($row['id_orderman'])>0 AND $row['operat']==-1 AND $row['cod_operazione']<>"S7"){ // se è uno scarico di produzione
+						continue; // escludo il movimento dal ciclo di creazione file perché le uscite di produzione di olio vengono lavorate insieme alle entrate
+					}
 					if ($lastdatdoc==$row['datdoc']){ // se il movimento ha la stessa data del precedente aumento il progressivo
 						$nprog++;
 					} else {
-						$nprog=1;
+						if (intval($nprog_preced_file)>0 AND $_GET['ud']==str_replace("-", "", $row['datdoc'])){ // se ho un numero progressivo del file precedente e sono nella stessa data
+							$nprog=$nprog_preced_file+1;// proseguo la numerazione del file precedente stessa data
+							$nprog_preced_file=0;							
+						} else { // altrimenti ricomincio da 1
+							$nprog=1;
+						}
 					}
 					if (isset($row['datdoc'])) { //se c'è la data documento, imposto la data operazione come GGMMAAA
 						$gio = substr($row['datdoc'],8,2);
@@ -226,9 +235,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$row['recip_stocc_destin']=$change;
 						}
 					}
-					if (intval($row['id_orderman'])>0 AND $row['operat']==-1 AND $row['cod_operazione']<>"S7"){ // se è uno scarico di produzione
-						continue; // escludo il movimento dal ciclo di creazione file perché le uscite di produzione di olio vengono lavorate insieme alle entrate
-					} 
+					 
 					if (intval($row['id_orderman'])>0 AND $row['operat']==-1 AND $row['cod_operazione']=="S7") {// è un'uscita di olio per produrre altro
 						$type_array[6]=str_pad("S7", 10); // codice operazione > S7 scarico di olio destinato ad altri usi
 						if ($row['SIAN']==1){ // se è olio
@@ -382,7 +389,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 					$type=$type."\r\n";// il SIAN richiede un ritorno a capo dopo ogni record
 					fwrite($myfile, $type);
 					$lastdatdoc=$row['datdoc'];
-					// modifico lo status del movimento SIAN a 1=inviato
+					// modifico lo status del movimento SIAN come inviato inserendoci il nome file
 					gaz_dbi_put_row($gTables['camp_mov_sian'], 'id_mov_sian', $row['id_mov_sian'], 'status', $namefile);					
 			}
 		}
