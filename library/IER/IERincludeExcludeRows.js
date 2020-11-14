@@ -3,7 +3,7 @@ var IERisModified = 0;
 var IERresultRIERS = "";
 
 
-$(document).ready(function(){
+$(window).load(function(){
 	//read all rows from file
 	//read like array
 	//$("head").append('<link rel="stylesheet" href="../IERincludeExcludeRows.css">');
@@ -43,17 +43,13 @@ function setExcludeRows(){
 }
 
 function getMyUrl(){
-	// ritorna ./{modulo}/{nome_form} dello script in esecuzione - es.: magazz/admin_artico
+	// ritorna {modulo}/{nome_script} dello script in esecuzione - es.: magazz/admin_artico
 	url=window.location.href;
 	urlArr= url.split("/");
 	url = urlArr[urlArr.length - 2]+ "/" + urlArr[urlArr.length - 1];
 	urlArr = url.split(".");
-	url = urlArr[0];
-
-	//alert(window.location + " - " + url);
-
-	//return "./" + url;
-	return "../../modules/" + url;
+	scriptname = urlArr[0];
+	return  scriptname;
 }
 
 function readIncludeExcludeRowsString(){
@@ -62,22 +58,18 @@ function readIncludeExcludeRowsString(){
 	$.ajax({
 		type: 'POST',
 		url: "../../modules/root/IERincludeExcludeRows.php",
-		async: false,
-		data: {
-		fn: "read",
-		filename: getMyUrl() + ".IER",
-		value: "",
+        async: false,
+        data: {
+		 fn: "read",
+		 filename: getMyUrl() + ".IER",
+		 value: "",
 		},
 		success: function(msg){
 			IERresultRIERS = msg;
 		}
 	});
-
 	result = IERresultRIERS;
 	IERresultRIERS = "";
-
-  //alert(result);
-
 	return ""+result;
 }
 
@@ -111,7 +103,7 @@ function writeIncludeExcludeRows(){
 }
 
 function writeExcludeRows(){
-	//read the array from file
+	//read the array from db
 	listIERA = readIncludeExcludeRowsArray();
 
 	if(listIERA.length > 0 && listIERA[0].replace(" ", "") != "")
