@@ -682,7 +682,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="fiscal_reg" class="col-sm-4 control-label"><?php echo $script_transl['fiscal_reg']; ?></label>
                         <?php
-                        $gForm->variousSelect('fiscal_reg', $script_transl['fiscal_reg_value'], $form['fiscal_reg'], "col-sm-8", true, '', false, 'style="max-width: 350px; font-height:0.4em;"');
+                        $gForm->variousSelect('fiscal_reg', $script_transl['fiscal_reg_value'], $form['fiscal_reg'], "col-sm-8", true, '', false, 'style="width: 350px;"');
                         ?>
                     </div>
                 </div>
@@ -1126,7 +1126,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['fae_tipo_cassa']; ?></label>
                         <?php
-						$gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'fae_tipo_cassa', 'fae_tipo_cassa', $form["fae_tipo_cassa"], true, '', 'col-sm-6');
+						$gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'fae_tipo_cassa', 'fae_tipo_cassa', $form["fae_tipo_cassa"], true, '', 'col-sm-6', null, 'style="width: 350px;"' );
                         ?>
                     </div>
                 </div>
@@ -1146,7 +1146,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="causale_pagam_770" class="col-sm-4 control-label"><?php echo $script_transl['causale_pagam_770']; ?></label>
                         <?php
-                        $gForm->variousSelect('causale_pagam_770', $script_transl['causale_pagam_770_value'], $form['causale_pagam_770'], "col-sm-8", true, '', false, 'style="max-width: 350px; font-height:0.4em;"');
+                        $gForm->variousSelect('causale_pagam_770', $script_transl['causale_pagam_770_value'], $form['causale_pagam_770'], "col-sm-8", true, '', false, 'style="width: 350px;"');
                         ?>
                     </div>
                 </div>

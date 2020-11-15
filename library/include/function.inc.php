@@ -1743,7 +1743,7 @@ class GAzieForm {
     }
 
     // funzione per la generazione di una select box da file XML
-    function selectFromXML($nameFileXML, $name, $key, $val, $empty = false, $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null) {
+    function selectFromXML($nameFileXML, $name, $key, $val, $empty = false, $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style='') {
         $refresh = '';
         if (file_exists($nameFileXML)) {
             $xml = simplexml_load_file($nameFileXML);
@@ -1753,7 +1753,7 @@ class GAzieForm {
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
-        echo "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh >\n";
+        echo "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style >\n";
         if ($empty) {
             echo "\t\t <option value=\"\"></option>\n";
         }
