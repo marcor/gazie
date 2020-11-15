@@ -470,7 +470,15 @@ if ($modal_ok_insert === true) {
     ?>
         <div class="panel panel-default gaz-table-form">
             <div class="container-fluid">
-                <div class="row">
+            <ul class="nav nav-pills">
+                <li class="active"><a data-toggle="pill" href="#home">Dati principali</a></li>
+                <li><a data-toggle="pill" href="#magazz">Magazzino</a></li>
+                <li><a data-toggle="pill" href="#contab">Contabilità</a></li>
+                <li><a data-toggle="pill" href="#chifis">Chimico-fisiche</a></li>
+            </ul>            
+            <div class="tab-content">
+              <div id="home" class="tab-pane fade in active">
+                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
@@ -592,70 +600,6 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="quality" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="quality" class="col-sm-4 control-label"><?php echo $script_transl['quality']; ?></label>
-                            <input class="col-sm-2" type="text" value="<?php echo $form['quality']; ?>" name="quality"maxlength="50"/>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="lunghezza" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="lunghezza" class="col-sm-4 control-label"><?php echo $script_transl['lunghezza']; ?></label>
-                            <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['lunghezza']; ?>" name="lunghezza" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="larghezza" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="larghezza" class="col-sm-4 control-label"><?php echo $script_transl['larghezza']; ?></label>
-                            <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['larghezza']; ?>" name="larghezza" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="spessore" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="spessore" class="col-sm-4 control-label"><?php echo $script_transl['spessore']; ?></label>
-                            <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['spessore']; ?>" name="spessore" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="pesoSpecifico" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="bendingMoment" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="bending_moment" class="col-sm-4 control-label"><?php echo $script_transl['bending_moment']; ?></label>
-                            <input class="col-sm-2" name="bending_moment" id="bending_moment" type="number" step="0.01" min="0" max="100000" value="<?php echo $form['bending_moment']; ?>" maxlength="8" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="ragStat" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="ragstat" class="col-sm-4 control-label"><?php echo $script_transl['ragstat']; ?></label>
-    <?php
-    $gForm->selectFromDB('ragstat', 'ragstat', 'codice', $form['ragstat'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="preAcq" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
@@ -686,39 +630,6 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="preve2" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve2" class="col-sm-4 control-label"><?php echo $script_transl['preve2']; ?></label>
-                            <input type="number" step="any" min="0" id="preve2" name="preve2" value="<?php echo $form['preve2']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve2_sc']; ?>
-                            <input type="text" readonly="true" id="preve2_sc" name="preve2_sc" value="<?php echo gaz_format_number($form['preve2'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="preve3" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve3" class="col-sm-4 control-label"><?php echo $script_transl['preve3']; ?></label>
-                            <input type="number" step="any" min="0" id="preve3" name="preve3" value="<?php echo $form['preve3']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve3_sc']; ?>
-                            <input type="text" readonly="true" id="preve3_sc" name="preve3_sc" value="<?php echo gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="preve4" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve4" class="col-sm-4 control-label"><?php echo $script_transl['preve4']; ?></label>
-                            <input type="number" step="any" min="0" id="preve4" name="preve4" value="<?php echo $form['preve4']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve4_sc']; ?>
-                            <input type="text" readonly="true" id="preve4_sc" name="preve4_sc" value="<?php echo gaz_format_number($form['preve4'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="aliIva" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -729,25 +640,14 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+              </div><!-- chiude tab-pane  -->
+              <div id="magazz" class="tab-pane fade">
                 <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="retentionTax" class="row IERincludeExcludeRow">
+                <div id="packUnits" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="retention_tax" class="col-sm-4 control-label"><?php echo $script_transl['retention_tax'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
-    <?php
-    $gForm->variousSelect('retention_tax', $script_transl['retention_tax_value'], $form['retention_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="payrollTax" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?>*</label>
-    <?php
-    $gForm->variousSelect('payroll_tax', $script_transl['payroll_tax_value'], $form['payroll_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
+                            <label for="pack_units" class="col-sm-4 control-label"><?php echo $script_transl['pack_units']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['pack_units']; ?>" name="pack_units" maxlength="6" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -806,128 +706,16 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="classifAmb" class="row IERincludeExcludeRow">
+                <div id="ragStat" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="classif_amb" class="col-sm-4 control-label"><?php echo $script_transl['classif_amb']; ?></label>
+                            <label for="ragstat" class="col-sm-4 control-label"><?php echo $script_transl['ragstat']; ?></label>
     <?php
-    $gForm->variousSelect('classif_amb', $script_transl['classif_amb_value'], $form['classif_amb'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+    $gForm->selectFromDB('ragstat', 'ragstat', 'codice', $form['ragstat'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
     ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="maintenance_period" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="maintenance_period" class="col-sm-4 control-label"><?php echo $script_transl['maintenance_period']; ?></label>
-                            <input type="number" min="0" max="999" step="1" class="col-sm-4"  value="<?php echo $form['maintenance_period']; ?>" name="maintenance_period" maxlength="3" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="volumeSpecifico" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="volume_specifico" class="col-sm-4 control-label"><?php echo $script_transl['volume_specifico']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['volume_specifico']; ?>" name="volume_specifico" maxlength="13" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="packUnits" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="pack_units" class="col-sm-4 control-label"><?php echo $script_transl['pack_units']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['pack_units']; ?>" name="pack_units" maxlength="6" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="codCon" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="codcon" class="col-sm-4 control-label"><?php echo $script_transl['codcon']; ?></label>
-    <?php
-    $gForm->selectAccount('codcon', $form['codcon'], 4, '', false, "col-sm-8");
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="idCost" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_cost']; ?></label>
-    <?php
-    $gForm->selectAccount('id_cost', $form['id_cost'], 3, '', false, "col-sm-8");
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="annota" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['annota']; ?></label>
-                            <input class="col-sm-8" type="text" value="<?php echo $form['annota']; ?>" name="annota" maxlength="50" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-    <?php if ($toDo == 'update') { ?>
-                    <!--+ DC - 06/02/2019 div class="row" --->
-                    <div id="docCert" class="row IERincludeExcludeRow">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="docCert" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
-        <?php if ($ndoc > 0) { // se ho dei documenti  ?>
-                                    <div>
-                                    <?php foreach ($form['rows'] as $k => $val) { ?>
-                                            <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="rows[<?php echo $k; ?>][id_doc]">
-                                            <input type="hidden" value="<?php echo $val['extension']; ?>" name="rows[<?php echo $k; ?>][extension]">
-                                            <input type="hidden" value="<?php echo $val['title']; ?>" name="rows[<?php echo $k; ?>][title]">
-                <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/doc/' . $val['id_doc'] . '.' . $val['extension']; ?>
-                                            <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
-                                                <i class="glyphicon glyphicon-file"></i>
-                                            </a><?php echo $val['title']; ?>
-                                            <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
-
-            <?php } ?>
-                                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
-                                    </div>
-                                    <?php } else { // non ho documenti  ?>
-                                    <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
-                                <?php } ?>
-                            </div>
-                        </div>
-                    </div>
-					<!-- Antonio Germani inserimento/modifica immagini di qualità per e-commerce -->
-					<div id="qualityImgs" class="row IERincludeExcludeRow">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="annotaUpdate" class="col-sm-4 control-label"><?php echo $script_transl['imageweb']; ?></label>
-        <?php if ($nimg > 0) { // se ho dei documenti  ?>
-                                    <div>
-                                    <?php foreach ($form['imgrows'] as $k => $val) { ?>
-                                            <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="imgrows[<?php echo $k; ?>][id_doc]">
-                                            <input type="hidden" value="<?php echo $val['extension']; ?>" name="imgrows[<?php echo $k; ?>][extension]">
-                                            <input type="hidden" value="<?php echo $val['title']; ?>" name="imgrows[<?php echo $k; ?>][title]">
-                <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/images/' . $val['id_doc'] . '.' . $val['extension']; ?>
-                                            <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
-                                                <i class="glyphicon glyphicon-file"></i>
-                                            </a><?php echo $val['title']; ?>
-                                            <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_image.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
-
-            <?php } ?>
-                                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
-                                    </div>
-                                    <?php } else { // non ho documenti  ?>
-                                    <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
-                                <?php } ?>
-                            </div>
-                        </div>
-                    </div>
-    <?php } ?>
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="fornitore" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
@@ -946,32 +734,6 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="ref_ecommerce_id_product" class="col-sm-4 control-label">ID ecommerce</label>
                             <input class="col-sm-4" type="text" value="<?php echo $form['ref_ecommerce_id_product']; ?>" name="ref_ecommerce_id_product" maxlength="15" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <div id="webMu" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="web_mu" class="col-sm-4 control-label"><?php echo $script_transl['web_mu']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo $form['web_mu']; ?>" name="web_mu" maxlength="15" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="webPrice" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="web_price" class="col-sm-4 control-label"><?php echo $script_transl['web_price']; ?></label>
-                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="webMultiplier" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="web_multiplier" class="col-sm-4 control-label"><?php echo $script_transl['web_multiplier']; ?></label>
-                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_multiplier']; ?>" name="web_multiplier" maxlength="15" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -1041,6 +803,260 @@ if ($modal_ok_insert === true) {
                          </div>
                     </div>
                 </div><!-- chiude row  -->
+              </div><!-- chiude tab-pane  -->
+              <div id="contab" class="tab-pane fade">
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve2" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="preve2" class="col-sm-4 control-label"><?php echo $script_transl['preve2']; ?></label>
+                            <input type="number" step="any" min="0" id="preve2" name="preve2" value="<?php echo $form['preve2']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve2_sc']; ?>
+                            <input type="text" readonly="true" id="preve2_sc" name="preve2_sc" value="<?php echo gaz_format_number($form['preve2'] * (1 - $form['sconto'] / 100)); ?>" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve3" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="preve3" class="col-sm-4 control-label"><?php echo $script_transl['preve3']; ?></label>
+                            <input type="number" step="any" min="0" id="preve3" name="preve3" value="<?php echo $form['preve3']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve3_sc']; ?>
+                            <input type="text" readonly="true" id="preve3_sc" name="preve3_sc" value="<?php echo gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)); ?>" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve4" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="preve4" class="col-sm-4 control-label"><?php echo $script_transl['preve4']; ?></label>
+                            <input type="number" step="any" min="0" id="preve4" name="preve4" value="<?php echo $form['preve4']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve4_sc']; ?>
+                            <input type="text" readonly="true" id="preve4_sc" name="preve4_sc" value="<?php echo gaz_format_number($form['preve4'] * (1 - $form['sconto'] / 100)); ?>" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="webPrice" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="web_price" class="col-sm-4 control-label"><?php echo $script_transl['web_price']; ?></label>
+                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="webMultiplier" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="web_multiplier" class="col-sm-4 control-label"><?php echo $script_transl['web_multiplier']; ?></label>
+                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_multiplier']; ?>" name="web_multiplier" maxlength="15" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div id="webMu" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="web_mu" class="col-sm-4 control-label"><?php echo $script_transl['web_mu']; ?></label>
+                            <input class="col-sm-4" type="text" value="<?php echo $form['web_mu']; ?>" name="web_mu" maxlength="15" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="retentionTax" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="retention_tax" class="col-sm-4 control-label"><?php echo $script_transl['retention_tax'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
+    <?php
+    $gForm->variousSelect('retention_tax', $script_transl['retention_tax_value'], $form['retention_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="payrollTax" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?>*</label>
+    <?php
+    $gForm->variousSelect('payroll_tax', $script_transl['payroll_tax_value'], $form['payroll_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="codCon" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="codcon" class="col-sm-4 control-label"><?php echo $script_transl['codcon']; ?></label>
+    <?php
+    $gForm->selectAccount('codcon', $form['codcon'], 4, '', false, "col-sm-8");
+    ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="idCost" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_cost']; ?></label>
+    <?php
+    $gForm->selectAccount('id_cost', $form['id_cost'], 3, '', false, "col-sm-8");
+    ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+              </div><!-- chiude tab-pane  -->
+              <div id="chifis" class="tab-pane fade">
+                <div id="quality" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="quality" class="col-sm-4 control-label"><?php echo $script_transl['quality']; ?></label>
+                            <input class="col-sm-2" type="text" value="<?php echo $form['quality']; ?>" name="quality"maxlength="50"/>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="lunghezza" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="lunghezza" class="col-sm-4 control-label"><?php echo $script_transl['lunghezza']; ?></label>
+                            <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['lunghezza']; ?>" name="lunghezza" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="larghezza" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="larghezza" class="col-sm-4 control-label"><?php echo $script_transl['larghezza']; ?></label>
+                            <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['larghezza']; ?>" name="larghezza" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="spessore" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="spessore" class="col-sm-4 control-label"><?php echo $script_transl['spessore']; ?></label>
+                            <input class="col-sm-2" type="number" step="0.01" value="<?php echo $form['spessore']; ?>" name="spessore" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="pesoSpecifico" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="bendingMoment" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="bending_moment" class="col-sm-4 control-label"><?php echo $script_transl['bending_moment']; ?></label>
+                            <input class="col-sm-2" name="bending_moment" id="bending_moment" type="number" step="0.01" min="0" max="100000" value="<?php echo $form['bending_moment']; ?>" maxlength="8" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="classifAmb" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="classif_amb" class="col-sm-4 control-label"><?php echo $script_transl['classif_amb']; ?></label>
+    <?php
+    $gForm->variousSelect('classif_amb', $script_transl['classif_amb_value'], $form['classif_amb'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+    ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="maintenance_period" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="maintenance_period" class="col-sm-4 control-label"><?php echo $script_transl['maintenance_period']; ?></label>
+                            <input type="number" min="0" max="999" step="1" class="col-sm-4"  value="<?php echo $form['maintenance_period']; ?>" name="maintenance_period" maxlength="3" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="volumeSpecifico" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="volume_specifico" class="col-sm-4 control-label"><?php echo $script_transl['volume_specifico']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['volume_specifico']; ?>" name="volume_specifico" maxlength="13" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="annota" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['annota']; ?></label>
+                            <input class="col-sm-8" type="text" value="<?php echo $form['annota']; ?>" name="annota" maxlength="50" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+    <?php if ($toDo == 'update') { ?>
+                    <!--+ DC - 06/02/2019 div class="row" --->
+                    <div id="docCert" class="row IERincludeExcludeRow">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="docCert" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
+        <?php if ($ndoc > 0) { // se ho dei documenti  ?>
+                                    <div>
+                                    <?php foreach ($form['rows'] as $k => $val) { ?>
+                                            <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="rows[<?php echo $k; ?>][id_doc]">
+                                            <input type="hidden" value="<?php echo $val['extension']; ?>" name="rows[<?php echo $k; ?>][extension]">
+                                            <input type="hidden" value="<?php echo $val['title']; ?>" name="rows[<?php echo $k; ?>][title]">
+                <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/doc/' . $val['id_doc'] . '.' . $val['extension']; ?>
+                                            <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
+                                                <i class="glyphicon glyphicon-file"></i>
+                                            </a><?php echo $val['title']; ?>
+                                            <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
+
+            <?php } ?>
+                                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
+                                    </div>
+                                    <?php } else { // non ho documenti  ?>
+                                    <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+					<!-- Antonio Germani inserimento/modifica immagini di qualità per e-commerce -->
+					<div id="qualityImgs" class="row IERincludeExcludeRow">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="annotaUpdate" class="col-sm-4 control-label"><?php echo $script_transl['imageweb']; ?></label>
+        <?php if ($nimg > 0) { // se ho dei documenti  ?>
+                                    <div>
+                                    <?php foreach ($form['imgrows'] as $k => $val) { ?>
+                                            <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="imgrows[<?php echo $k; ?>][id_doc]">
+                                            <input type="hidden" value="<?php echo $val['extension']; ?>" name="imgrows[<?php echo $k; ?>][extension]">
+                                            <input type="hidden" value="<?php echo $val['title']; ?>" name="imgrows[<?php echo $k; ?>][title]">
+                <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/images/' . $val['id_doc'] . '.' . $val['extension']; ?>
+                                            <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
+                                                <i class="glyphicon glyphicon-file"></i>
+                                            </a><?php echo $val['title']; ?>
+                                            <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_image.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
+
+            <?php } ?>
+                                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
+                                    </div>
+                                    <?php } else { // non ho documenti  ?>
+                                    <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+    <?php } ?>
+            </div><!-- chiude tab-pane  -->
+          </div>
         <div class="col-sm-12">
     <?php
     /** ENRICO FEDELE */
