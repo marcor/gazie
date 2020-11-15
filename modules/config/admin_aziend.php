@@ -322,11 +322,19 @@ if (count($msg['err']) > 0) { // ho un errore
     ?>
     <div class="panel panel-default gaz-table-form div-bordered">
         <div class="container-fluid">
+        <ul class="nav nav-pills">
+            <li class="active"><a data-toggle="pill" href="#home">Dati principali</a></li>
+            <li><a data-toggle="pill" href="#setup">Impostazioni</a></li>
+            <li><a data-toggle="pill" href="#contab">Contabilità</a></li>
+            <li><a href="config_aziend.php"><i class="glyphicon glyphicon-lock"></i>Avanzata</a></li>
+        </ul>            
+        <div class="tab-content">
+          <div id="home" class="tab-pane fade in active">
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="ragso1" class="col-sm-4 control-label"><?php echo $script_transl['ragso1']; ?></label>
-                        <input class="col-sm-6" type="text" value="<?php echo $form['ragso1']; ?>" name="ragso1" /><a class="btn btn-xs btn-default col-sm-2" href="config_aziend.php"><i class="glyphicon glyphicon-lock"></i>&nbsp;Configurazione avanzata</a>
+                        <input class="col-sm-6" type="text" value="<?php echo $form['ragso1']; ?>" name="ragso1" />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -349,69 +357,10 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="legrap_pf_nome" class="col-sm-4 control-label"><?php echo $script_transl['legrap_pf_nome']; ?></label>
-                        <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_nome']; ?>" name="legrap_pf_nome" />
-                        <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_cognome']; ?>" name="legrap_pf_cognome" />
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
                         <label for="sexper" class="col-sm-4 control-label"><?php echo $script_transl['sexper']; ?>*</label>
                         <?php
                         $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
                         ?>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="datnas" class="col-sm-4 control-label"><?php echo $script_transl['datnas']; ?>*</label>
-                        <input type="text" class="col-sm-2" id="datnas" name="datnas" tabindex=7 value="<?php echo $form['datnas']; ?>">
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="luonas" class="col-sm-4 control-label"><?php echo $script_transl['luonas']; ?>*</label>
-                        <div class="col-sm-8">
-                            <input type="text" id="search_luonas" name="luonas" value="<?php echo $form['luonas']; ?>" maxlength="50" />
-                            <input type="text" id="search_pronas" name="pronas" value="<?php echo $form['pronas']; ?>" maxlength="2" />
-                        </div>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="order_type" class="col-sm-4 control-label"><?php echo $script_transl['order_type_label']; ?></label>
-                        <?php
-						$gForm->variousSelect("order_type", $script_transl['order_type'], $form['order_type'], '', true, 'order_type');
-                        ?>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="country" class="col-sm-4 control-label"><?php echo $script_transl['country']; ?>*</label>
-                        <?php
-                        $gForm->selectFromDB('country', 'country', 'iso', $form['country'], 'iso', 0, ' - ', 'name', '', 'col-sm-8', null, 'style="max-width: 250px;"');
-                        ?>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="citspe" class="col-sm-4 control-label"><?php echo $script_transl['citspe']; ?>*</label>
-                        <div class="col-sm-8">
-                            <input type="text" id="search_location" name="citspe" value="<?php echo $form['citspe']; ?>" maxlength="50" />
-                            <input type="text" id="search_location-prospe" name="prospe" value="<?php echo $form['prospe']; ?>" maxlength="2" />
-                        </div>
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -434,9 +383,10 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="latitude" class="col-sm-4 control-label"><?php echo $script_transl['latitude'] . " - " . $script_transl['longitude']; ?></label>
+                        <label for="citspe" class="col-sm-4 control-label"><?php echo $script_transl['citspe']; ?>*</label>
                         <div class="col-sm-8">
-                            <input class="col-sm-3" type="text" name="latitude" value="<?php echo $form['latitude'] ?>" maxlength="10" /><input class="col-sm-3" type="text" name="longitude" value="<?php echo $form['longitude']; ?>" maxlength="10" /><a class="btn btn-xs btn-default btn-default col-sm-2" href="http://maps.google.com/maps?q=<?php echo $form['latitude'] . "," . $form['longitude']; ?>"> maps -> <i class="glyphicon glyphicon-map-marker"></i></a>
+                            <input type="text" id="search_location" name="citspe" value="<?php echo $form['citspe']; ?>" maxlength="50" />
+                            <input type="text" id="search_location-prospe" name="prospe" value="<?php echo $form['prospe']; ?>" maxlength="2" />
                         </div>
                     </div>
                 </div>
@@ -444,46 +394,10 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="id_language" class="col-sm-4 control-label"><?php echo $script_transl['id_language']; ?></label>
+                        <label for="country" class="col-sm-4 control-label"><?php echo $script_transl['country']; ?>*</label>
                         <?php
-                        $gForm->selectFromDB('languages', 'id_language', 'lang_id', $form['id_language'], 'lang_id', 1, ' - ', 'title_native', '', 'col-sm-8', null, 'style="max-width: 200px;"');
+                        $gForm->selectFromDB('country', 'country', 'iso', $form['country'], 'iso', 0, ' - ', 'name', '', 'col-sm-8', null, 'style="max-width: 250px;"');
                         ?>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="id_currency" class="col-sm-4 control-label"><?php echo $script_transl['id_currency']; ?></label>
-                        <?php
-                        $gForm->selectFromDB('currencies', 'id_currency', 'id', $form['id_currency'], 'id', 1, ' - ', 'curr_name', '', 'col-sm-8', null, 'style="max-width: 200px;"');
-                        ?>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="sedleg" class="col-sm-4 control-label"><?php echo $script_transl['sedleg']; ?></label>
-                        <div class="col-sm-8">
-                            <textarea name="sedleg" rows="2" cols="40" maxlength="100" ><?php echo $form['sedleg']; ?></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="telefo" class="col-sm-4 control-label"><?php echo $script_transl['telefo']; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['telefo']; ?>" name="telefo" maxlength="50" />
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="fax" class="col-sm-4 control-label"><?php echo $script_transl['fax']; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['fax']; ?>" name="fax" maxlength="50" />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -500,6 +414,22 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="codfis" class="col-sm-4 control-label"><?php echo $script_transl['codfis']; ?></label>
                         <input class="col-sm-8" type="text" value="<?php echo $form['codfis']; ?>" name="codfis" maxlength="16" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="cod_ateco" class="col-sm-4 control-label"><?php echo $script_transl['cod_ateco']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['cod_ateco']; ?>" name="cod_ateco" maxlength="6" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="pec" class="col-sm-4 control-label"><?php echo $script_transl['pec']; ?></label>
+                        <input class="col-sm-8" type="pec" value="<?php echo $form['pec']; ?>" name="pec" maxlength="50" />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -552,8 +482,130 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="pec" class="col-sm-4 control-label"><?php echo $script_transl['pec']; ?></label>
-                        <input class="col-sm-8" type="pec" value="<?php echo $form['pec']; ?>" name="pec" maxlength="50" />
+                        <label for="latitude" class="col-sm-4 control-label"><?php echo $script_transl['latitude'] . " - " . $script_transl['longitude']; ?></label>
+                        <div class="col-sm-8">
+                            <input class="col-sm-3" type="text" name="latitude" value="<?php echo $form['latitude'] ?>" maxlength="10" /><input class="col-sm-3" type="text" name="longitude" value="<?php echo $form['longitude']; ?>" maxlength="10" /><a class="btn btn-xs btn-default btn-default col-sm-2" href="http://maps.google.com/maps?q=<?php echo $form['latitude'] . "," . $form['longitude']; ?>"> maps -> <i class="glyphicon glyphicon-map-marker"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="legrap_pf_nome" class="col-sm-4 control-label"><?php echo $script_transl['legrap_pf_nome']; ?></label>
+                        <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_nome']; ?>" name="legrap_pf_nome" />
+                        <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_cognome']; ?>" name="legrap_pf_cognome" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="datnas" class="col-sm-4 control-label"><?php echo $script_transl['datnas']; ?>*</label>
+                        <input type="text" class="col-sm-2" id="datnas" name="datnas" tabindex=7 value="<?php echo $form['datnas']; ?>">
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="luonas" class="col-sm-4 control-label"><?php echo $script_transl['luonas']; ?>*</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="search_luonas" name="luonas" value="<?php echo $form['luonas']; ?>" maxlength="50" />
+                            <input type="text" id="search_pronas" name="pronas" value="<?php echo $form['pronas']; ?>" maxlength="2" />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="order_type" class="col-sm-4 control-label"><?php echo $script_transl['order_type_label']; ?></label>
+                        <?php
+						$gForm->variousSelect("order_type", $script_transl['order_type'], $form['order_type'], '', true, 'order_type');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="id_language" class="col-sm-4 control-label"><?php echo $script_transl['id_language']; ?></label>
+                        <?php
+                        $gForm->selectFromDB('languages', 'id_language', 'lang_id', $form['id_language'], 'lang_id', 1, ' - ', 'title_native', '', 'col-sm-8', null, 'style="max-width: 200px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="id_currency" class="col-sm-4 control-label"><?php echo $script_transl['id_currency']; ?></label>
+                        <?php
+                        $gForm->selectFromDB('currencies', 'id_currency', 'id', $form['id_currency'], 'id', 1, ' - ', 'curr_name', '', 'col-sm-8', null, 'style="max-width: 200px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="sedleg" class="col-sm-4 control-label"><?php echo $script_transl['sedleg']; ?></label>
+                        <div class="col-sm-8">
+                            <textarea name="sedleg" rows="2" cols="40" maxlength="100" ><?php echo $form['sedleg']; ?></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+          </div><!-- chiude tab-pane  -->
+          <div id="setup" class="tab-pane fade">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="fatimm" class="col-sm-4 control-label"><?php echo $script_transl['templ_set']; ?></label>
+                        <?php
+                        echo '<select name="template">';
+                        $relativePath = '../../config';
+                        if ($handle = opendir($relativePath)) {
+                            while ($file = readdir($handle)) {
+                                if (substr($file, 0, 9) != "templates")
+                                    continue;
+                                $selected = "";
+                                if ($form["template"] == substr($file, 10)) {
+                                    $selected = " selected ";
+                                }
+                                echo "<option value=\"" . substr($file, 10) . "\"" . $selected . ">" . ucfirst($file) . "</option>";
+                            }
+                            closedir($handle);
+                        }
+                        echo "</select>\n";
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="colore" class="col-sm-4 control-label"><?php echo $script_transl['colore']; ?></label>
+                        <div class="col-md-8 company-color">
+                            <input class="simple_color_custom" type="text" value="#<?php echo $form['colore']; ?>" name="colore"  />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="telefo" class="col-sm-4 control-label"><?php echo $script_transl['telefo']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['telefo']; ?>" name="telefo" maxlength="50" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="fax" class="col-sm-4 control-label"><?php echo $script_transl['fax']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['fax']; ?>" name="fax" maxlength="50" />
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -581,6 +633,18 @@ if (count($msg['err']) > 0) { // ho un errore
                     </div>
                 </div>
             </div><!-- chiude row  -->
+          </div><!-- chiude tab-pane  -->
+          <div id="contab" class="tab-pane fade">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="regime" class="col-sm-4 control-label"><?php echo $script_transl['regime']; ?></label>
+                        <?php
+                        $gForm->variousSelect('regime', $script_transl['regime_value'], $form['regime'], "col-sm-8", false, '', 50, 'style="max-width: 200px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
@@ -600,24 +664,6 @@ if (count($msg['err']) > 0) { // ho un errore
                             }
                             ?>
                         </div>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="cod_ateco" class="col-sm-4 control-label"><?php echo $script_transl['cod_ateco']; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['cod_ateco']; ?>" name="cod_ateco" maxlength="6" />
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="regime" class="col-sm-4 control-label"><?php echo $script_transl['regime']; ?></label>
-                        <?php
-                        $gForm->variousSelect('regime', $script_transl['regime_value'], $form['regime'], "col-sm-8", false, '', 50, 'style="max-width: 200px;"');
-                        ?>
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -1235,40 +1281,6 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="fatimm" class="col-sm-4 control-label"><?php echo $script_transl['templ_set']; ?></label>
-                        <?php
-                        echo '<select name="template">';
-                        $relativePath = '../../config';
-                        if ($handle = opendir($relativePath)) {
-                            while ($file = readdir($handle)) {
-                                if (substr($file, 0, 9) != "templates")
-                                    continue;
-                                $selected = "";
-                                if ($form["template"] == substr($file, 10)) {
-                                    $selected = " selected ";
-                                }
-                                echo "<option value=\"" . substr($file, 10) . "\"" . $selected . ">" . ucfirst($file) . "</option>";
-                            }
-                            closedir($handle);
-                        }
-                        echo "</select>\n";
-                        ?>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="colore" class="col-sm-4 control-label"><?php echo $script_transl['colore']; ?></label>
-                        <div class="col-md-8 company-color">
-                            <input class="simple_color_custom" type="text" value="#<?php echo $form['colore']; ?>" name="colore"  />
-                        </div>
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
                         <label for="conmag" class="col-sm-4 control-label"><?php echo $script_transl['conmag']; ?></label>
                         <?php
                         $gForm->variousSelect('conmag', $script_transl['conmag_value'], $form['conmag'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
@@ -1311,6 +1323,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     </div>
                 </div>
             </div><!-- chiude row  -->
+          </div><!-- chiude tab-pane  -->
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
 
