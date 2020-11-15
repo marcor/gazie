@@ -1316,17 +1316,13 @@ if (count($msg['err']) > 0) { // ho un errore
                     </div>
                 </div>
             </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group text-center">
-                        <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
           </div><!-- chiude tab-pane  -->
         </div><!-- chiude container  -->
+        <div class="text-center">
+            <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
+        </div>
     </div><!-- chiude panel  -->
-
+</div>
 </form>
 <?php
 require("../../library/include/footer.php");

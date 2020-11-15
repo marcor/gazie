@@ -113,7 +113,9 @@
     margin-bottom: 0px;
 }
 .Tmiddle {
-	width: 50%;
+	width: 70%;
+    margin: 0px auto;
+    float: none;
 }
 #products-list
 {
@@ -374,4 +376,7 @@
 .tooltip-inner {
     min-width: 150px;
     max-width: 100%; 
+}
+.tab-content > .tab-pane > div.row:nth-of-type(2n+1) {
+	background-color: #f9f9f9;
 }

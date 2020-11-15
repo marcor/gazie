@@ -247,6 +247,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autocomplete'));
+
 echo "<SCRIPT type=\"text/javascript\">\n";
 echo "function toggleContent(currentContent) {
         var thisContent = document.getElementById(currentContent);
@@ -291,7 +292,8 @@ if ($toDo == 'insert') {
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form['codice'] . "'</div>\n";
     echo "<input type=\"hidden\" value=\"" . $form['codice'] . "\" name=\"codice\" />\n";
 }
-echo "<table class=\"table table-striped Tmiddle\">\n";
+?>
+<?php
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
     if (isset($anagra)) {
@@ -319,296 +321,480 @@ if (!empty($msg)) {
 }
 if ($toDo == 'insert') {
     echo "<tr>\n";
-    echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['codice'] . "* </td>\n";
-    echo "\t<td colspan=\"2\" class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"6\" /></td>\n";
+    echo "\t<td>" . $script_transl['codice'] . "* </td>\n";
+    echo "\t<td colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"6\" /></td>\n";
     echo "</tr>\n";
 }
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso1'] . "* </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ragso1\" placeholder=\"" . $script_transl['ragso1_placeholder'] . "\" value=\"" . $form['ragso1'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso2'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ragso2\" value=\"" . $form['ragso2'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['legrap_pf_nome'] . " </td>\n";
-echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"legrap_pf_nome\" title=\"" . $script_transl['legrap_pf_title'] . "\" value=\"" . $form['legrap_pf_nome'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
-echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"legrap_pf_cognome\" title=\"" . $script_transl['legrap_pf_title'] . "\" value=\"" . $form['legrap_pf_cognome'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['sexper'] . "*</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+?>
+<div class="panel panel-default gaz-table-form div-bordered">
+  <div class="container-fluid">
+  <ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#home">Anagrafica</a></li>
+    <li><a data-toggle="pill" href="#commer">Impostazioni</a></li>  
+  </ul>            
+  <div class="tab-content">
+    <div id="home" class="tab-pane fade in active">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="ragso1" class="col-sm-4 control-label"><?php echo $script_transl['ragso1']; ?> *</label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['ragso1']; ?>" name="ragso1" minlenght="8" maxlength="50" placeholder="<?php echo $script_transl['ragso1_placeholder']; ?>"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="ragso2" class="col-sm-4 control-label"><?php echo $script_transl['ragso2']; ?> </label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['ragso2']; ?>" name="ragso2" maxlength="50"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="legrap_pf_nome" class="col-sm-4 control-label"><?php echo $script_transl['legrap_pf_nome']; ?> </label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_nome']; ?>" name="legrap_pf_nome" maxlength="50"/> 
+                    <div class="text-right"><input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_cognome']; ?>" name="legrap_pf_cognome" maxlength="50"/></div>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="sexper" class="col-sm-4 control-label"><?php echo $script_transl['sexper']; ?> </label>
+    <?php
 $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper']);
-echo "\t </td>\n";
-echo "</tr>\n";
-/** ENRICO FEDELE */
-/* Cambiato l'ordine dei campi per renderlo più coerente con l'autocompletamento (prima il campo comune che ha la funzione attiva) */
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['citspe'] . " *  </td>\n";
-echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"citspe\" id=\"search_location\" value=\"" . $form['citspe'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
-echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"prospe\" id=\"search_location-prospe\" value=\"" . $form['prospe'] . "\" align=\"right\" maxlength=\"2\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['indspe'] . " * </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"indspe\" value=\"" . $form['indspe'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['capspe'] . " * </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"capspe\" id=\"search_location-capspe\" value=\"" . $form['capspe'] . "\" align=\"right\" maxlength=\"10\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['country'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="indspe" class="col-sm-4 control-label"><?php echo $script_transl['indspe']; ?> *</label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['indspe']; ?>" name="indspe" maxlength="50"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="capspe" class="col-sm-4 control-label"><?php echo $script_transl['capspe']; ?> *</label>
+                    <input class="col-sm-4" type="text" id="search_location-capspe" value="<?php echo $form['capspe']; ?>" name="capspe" maxlength="2"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="citspe" class="col-sm-4 control-label"><?php echo $script_transl['citspe']; ?> *</label>
+                    <input class="col-sm-4" type="text" id="search_location" value="<?php echo $form['citspe']; ?>" name="citspe" maxlength="60"/> 
+                    <div class="text-right"><input class="col-sm-1" type="text" id="search_location-prospe" value="<?php echo $form['prospe']; ?>" name="prospe" maxlength="2"/></div>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="country" class="col-sm-4 control-label"><?php echo $script_transl['country']; ?> *</label>
+    <?php
 $gForm->selectFromDB('country', 'country', 'iso', $form['country'], 'iso', 0, ' - ', 'name');
-echo "</td>\n";
-echo "</tr>\n";
-/** ENRICO FEDELE */
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_language'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="id_language" class="col-sm-4 control-label"><?php echo $script_transl['id_language']; ?> *</label>
+    <?php
 $gForm->selectFromDB('languages', 'id_language', 'lang_id', $form['id_language'], 'lang_id', 1, ' - ', 'title_native');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_currency'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="id_currency" class="col-sm-4 control-label"><?php echo $script_transl['id_currency']; ?> *</label>
+    <?php
 $gForm->selectFromDB('currencies', 'id_currency', 'id', $form['id_currency'], 'id', 1, ' - ', 'curr_name');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sedleg'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <textarea name=\"sedleg\" rows=\"2\" cols=\"30\" maxlength=\"100\" >" . $form['sedleg'] . "</textarea></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['datnas'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="sedleg" class="col-sm-4 control-label"><?php echo $script_transl['sedleg']; ?> </label>
+                    <textarea name="sedleg" rows="3" cols="50" maxlength="200" placeholder="scrivere nel formato:
+Via del Quirinale, 1
+00100 ROMA (RM)" ><?php echo $form['sedleg']; ?></textarea>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="datnas" class="col-sm-4 control-label"><?php echo $script_transl['datnas']; ?> </label>
+    <?php
 $gForm->CalendarPopup('datnas', $form['datnas_D'], $form['datnas_M'], $form['datnas_Y']);
-echo "\t</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-
-/** ENRICO FEDELE */
-/* Aggiunto id per autocompletamento */
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['luonas'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" id=\"search_luonas\" name=\"luonas\" value=\"" . $form['luonas'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['pronas'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" id=\"search_pronas\" name=\"pronas\" value=\"" . $form['pronas'] . "\" align=\"right\" maxlength=\"2\" /></td>\n";
-echo "</tr>\n";
-/** ENRICO FEDELE */
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['counas'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="luonas" class="col-sm-4 control-label"><?php echo $script_transl['luonas']; ?> </label>
+                    <input class="col-sm-4" type="text" id="search_luonas" value="<?php echo $form['luonas']; ?>" name="luonas" maxlength="50"/>
+                    <div class="text-right"><input class="col-sm-1" type="text" id="search_pronas" value="<?php echo $form['pronas']; ?>" name="pronas" maxlength="2"/></div>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="counas" class="col-sm-4 control-label"><?php echo $script_transl['counas']; ?> </label>
+    <?php
 $gForm->selectFromDB('country', 'counas', 'iso', $form['counas'], 'iso', 1, ' - ', 'name');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['telefo'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"telefo\" value=\"" . $form['telefo'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['fax'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"fax\" value=\"" . $form['fax'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['cell'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"cell\" value=\"" . $form['cell'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://telematici.agenziaentrate.gov.it/VerificaCF/Scegli.do?parameter=verificaCf\" target=\"blank\">" . $script_transl['codfis'] . "</a></td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"codfis\" value=\"" . $form['codfis'] . "\" align=\"right\" maxlength=\"16\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva\" target=\"blank\">" . $script_transl['pariva'] . "</a></td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"pariva\" value=\"" . $form['pariva'] . "\" align=\"right\" maxlength=\"11\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://www.inipec.gov.it/cerca-pec\" target=\"blank\">" . $script_transl['pec_email'] . "</a></td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" id=\"pec_email\" name=\"pec_email\" value=\"" . $form['pec_email'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['fatt_email'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="telefo" class="col-sm-4 control-label"><?php echo $script_transl['telefo']; ?> </label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['telefo']; ?>" name="telefo" maxlength="50"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="fax" class="col-sm-4 control-label"><?php echo $script_transl['fax']; ?> </label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['fax']; ?>" name="fax" maxlength="50"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="cell" class="col-sm-4 control-label"><?php echo $script_transl['cell']; ?> </label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['cell']; ?>" name="cell" maxlength="50"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="codfis" class="col-sm-4 control-label"><a href="https://telematici.agenziaentrate.gov.it/VerificaCF/Scegli.do?parameter=verificaCf" target="blank"><?php echo $script_transl['codfis']; ?></a></label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['codfis']; ?>" name="codfis" maxlength="16"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="pariva" class="col-sm-4 control-label"><a href="https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva" target="blank"><?php echo $script_transl['pariva']; ?></a></label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['pariva']; ?>" name="pariva" maxlength="11"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="pec_email" class="col-sm-4 control-label"><a href="https://www.inipec.gov.it/cerca-pec" target="blank"><?php echo $script_transl['pec_email']; ?></a></label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['pec_email']; ?>" name="pec_email" id="pec_email" maxlength="60"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="fatt_email" class="col-sm-4 control-label"><?php echo $script_transl['fatt_email']; ?> </label>
+    <?php
 $gForm->variousSelect('fatt_email', $script_transl['fatt_email_value'], $form['fatt_email']);
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['e_mail'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" id=\"email\" name=\"e_mail\" value=\"" . $form['e_mail'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://www.indicepa.gov.it/ricerca/n-lista-uffici-figli.php\" target=\"blank\">" . $script_transl['fe_cod_univoco'] . "</a></td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"fe_cod_univoco\" value=\"" . $form['fe_cod_univoco'] . "\" align=\"right\" maxlength=\"7\" /></td>\n";
-echo "</tr>\n";
-
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['codpag'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="e_mail" class="col-sm-4 control-label"><?php echo $script_transl['e_mail']; ?></label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['e_mail']; ?>" name="e_mail" id="email" maxlength="60"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="fe_cod_univoco" class="col-sm-4 control-label"><a href="https://www.indicepa.gov.it/ricerca/n-lista-uffici-figli.php" target="blank"><?php echo $script_transl['fe_cod_univoco']; ?></a></label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['fe_cod_univoco']; ?>" name="fe_cod_univoco" id="fe_cod_univoco" maxlength="7" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="id_SIAN" class="col-sm-4 control-label">Codice identificativo SIAN</label>
+                    <input class="col-sm-4" type="text" onkeyup="this.value=this.value.replace(/[^\d]/,'');" value="<?php echo $form['id_SIAN']; ?>" name="id_SIAN" id="id_SIAN" maxlength="10" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+      </div><!-- chiude tab-pane  -->
+      <div id="commer" class="tab-pane fade">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="codpag" class="col-sm-4 control-label"><?php echo $script_transl['codpag']; ?> </label>
+    <?php
 $gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'], 'tippag`, `giodec`, `numrat', true, ' ', 'descri');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sconto'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"sconto\" value=\"" . $form['sconto'] . "\" align=\"right\" maxlength=\"5\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sconto_rigo'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"sconto_rigo\" value=\"" . $form['sconto_rigo'] . "\" align=\"right\" maxlength=\"5\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['banapp'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="sconto" class="col-sm-4 control-label"><?php echo $script_transl['sconto']; ?></label>
+                    <input class="col-sm-1" type="text" value="<?php echo $form['sconto']; ?>" name="sconto" id="sconto" maxlength="5" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="sconto_rigo" class="col-sm-4 control-label"><?php echo $script_transl['sconto_rigo']; ?></label>
+                    <input class="col-sm-1" type="text" value="<?php echo $form['sconto_rigo']; ?>" name="sconto_rigo" id="sconto_rigo" maxlength="5" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="banapp" class="col-sm-4 control-label"><?php echo $script_transl['banapp']; ?> </label>
+    <?php
 $select_banapp = new selectbanapp("banapp");
 $select_banapp->addSelected($form["banapp"]);
 $select_banapp->output();
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['portos'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="portos" class="col-sm-4 control-label"><?php echo $script_transl['portos']; ?> </label>
+    <?php
 $gForm->selectFromDB('portos', 'portos', 'codice', $form['portos'], 'codice', false, ' ', 'descri');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['spediz'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-if (!isset($form['spediz']))
-    $form['spediz'] = null;
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="spediz" class="col-sm-4 control-label"><?php echo $script_transl['spediz']; ?> </label>
+    <?php
 $gForm->selectFromDB('spediz', 'spediz', 'codice', $form['spediz'], 'codice', false, ' ', 'descri');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['imball'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-if (!isset($form['imball']))
-    $form['imball'] = null;
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="imball" class="col-sm-4 control-label"><?php echo $script_transl['imball']; ?> </label>
+    <?php
 $gForm->selectFromDB('imball', 'imball', 'codice', $form['imball'], 'codice', true, ' ', 'descri');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['listin'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="listin" class="col-sm-4 control-label"><?php echo $script_transl['listin']; ?> </label>
+    <?php
 $gForm->selectNumber('listin', $form['listin'], 0, 1, 4);
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="id_agente" class="col-sm-4 control-label"><?php echo $script_transl['id_agente']; ?> </label>
+    <?php
 $select_agente = new selectAgente("id_agente", "C");
 $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['cosric'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="cosric" class="col-sm-4 control-label"><?php echo $script_transl['cosric']; ?> </label>
+    <?php
 $gForm->selectAccount('cosric', $form['cosric'], 4);
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['operation_type'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="operation_type" class="col-sm-4 control-label"><?php echo $script_transl['operation_type']; ?> </label>
+    <?php
 $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type', 'operation_type', $form['operation_type'], true, '', 'col-sm-6');
-echo "</td></tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['destin'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <textarea name=\"destin\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["destin"] . "</textarea></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_des'] . " </td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="destin" class="col-sm-4 control-label"><?php echo $script_transl['destin']; ?> </label>
+                    <textarea name="destin" rows="2" cols="50" maxlength="200"><?php echo $form['destin']; ?></textarea>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="id_des" class="col-sm-4 control-label"><?php echo $script_transl['id_des']; ?> </label>
+    <?php
 $select_id_des = new selectPartner("id_des");
 $select_id_des->selectAnagra('id_des', $form['id_des'], $form['search']['id_des'], 'id_des', $script_transl['mesg']);
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['iban'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"iban\" value=\"" . $form['iban'] . "\" align=\"right\" maxlength=\"27\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['maxrat'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"maxrat\" value=\"" . $form['maxrat'] . "\" align=\"right\" maxlength=\"16\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragdoc'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="iban" class="col-sm-4 control-label"><?php echo $script_transl['iban']; ?> </label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['iban']; ?>" name="iban" id="iban" maxlength="27" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="maxrat" class="col-sm-4 control-label"><?php echo $script_transl['maxrat']; ?> </label>
+                    <input class="col-sm-8" type="maxrat" value="<?php echo $form['maxrat']; ?>" name="maxrat" id="maxrat" maxlength="16" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="ragdoc" class="col-sm-4 control-label"><?php echo $script_transl['ragdoc']; ?> </label>
+    <?php
 $gForm->variousSelect('ragdoc', $script_transl['yn_value'], $form['ragdoc']);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['speban'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="speban" class="col-sm-4 control-label"><?php echo $script_transl['speban']; ?> </label>
+    <?php
 $gForm->variousSelect('speban', $script_transl['yn_value'], $form['speban']);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['addbol'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="addbol" class="col-sm-4 control-label"><?php echo $script_transl['addbol']; ?> </label>
+    <?php
 $gForm->variousSelect('addbol', $script_transl['yn_value'], $form['addbol']);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['spefat'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="spefat" class="col-sm-4 control-label"><?php echo $script_transl['spefat']; ?> </label>
+    <?php
 $gForm->variousSelect('spefat', $script_transl['yn_value'], $form['spefat']);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['stapre'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="stapre" class="col-sm-4 control-label"><?php echo $script_transl['stapre']; ?> </label>
+    <?php
 $gForm->variousSelect('stapre', $script_transl['stapre_value'], $form['stapre']);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['aliiva'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="aliiva" class="col-sm-4 control-label"><?php echo $script_transl['aliiva']; ?> </label>
+    <?php
 $gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 1, ' - ', 'descri');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ritenuta'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ritenuta\" value=\"" . $form['ritenuta'] . "\" align=\"right\" maxlength=\"4\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['allegato'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="ritenuta" class="col-sm-4 control-label"><?php echo $script_transl['ritenuta']; ?> </label>
+                    <input class="col-sm-8" type="ritenuta" value="<?php echo $form['ritenuta']; ?>" name="ritenuta" id="ritenuta" maxlength="4" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['annota']; ?> </label>
+                    <textarea name="annota" rows="2" cols="50" maxlength="50"><?php echo $form['annota']; ?></textarea>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="allegato" class="col-sm-4 control-label"><?php echo $script_transl['allegato']; ?> </label>
+    <?php
 $gForm->selectNumber('allegato', $form['allegato'], true);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['status'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->variousSelect('status', $script_transl['status_value'], $form['status'], 'FacetSelect', false);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td>\n";
-//echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-//      <input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" align=\"right\" maxlength=\"100\" /></td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <textarea name=\"annota\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["annota"] . "</textarea></td>\n";
-
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"> Codice identificativo SIAN </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" onkeyup=\"this.value=this.value.replace(/[^\d]/,'')\" name=\"id_SIAN\" value=\"" . $form['id_SIAN'] . "\" align=\"right\" maxlength=\"10\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sqn'] . "</td>";
-echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\">\n";
-echo '<input name="Return" type="submit" value="' . $script_transl['return'] . '">';
-echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
-echo '<input name="Submit" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">';
-echo "\t </td>\n";
-echo "</tr>\n";
-?>
-</table>
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="status" class="col-sm-4 control-label"><?php echo $script_transl['status']; ?> </label>
+    <?php
+$gForm->variousSelect('status', $script_transl['status_value'], $form['status'], '', false);
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+  </div>
+</div>
+</div>
+<div class="text-center">
+    <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
+</div>
+</div>
 </form>
 <?php
 require("../../library/include/footer.php");
