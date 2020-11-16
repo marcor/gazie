@@ -2357,7 +2357,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001tesbro` (
   KEY `idx_seziva` (`seziva`) USING BTREE,
   KEY `idx_datemi` (`datemi`) USING BTREE,
   KEY `ref_ecommerce_id_order` (`ref_ecommerce_id_order`),
-  KEY `numdoc` (`numdoc`)
+  KEY `numdoc` (`numdoc`),
+  KEY `clfoco` (`clfoco`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Testate documenti che non hanno valenza fiscale. Ordini, preventivi, commesse, ecc';
 
 -- --------------------------------------------------------
@@ -2431,7 +2432,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001tesdoc` (
   KEY `idx_tipdoc1` (`tipdoc`(1)) USING BTREE,
   KEY `idx_seziva` (`seziva`) USING BTREE,
   KEY `idx_protoc` (`protoc`) USING BTREE,
-  KEY `datreg` (`datreg`)
+  KEY `datreg` (`datreg`),
+  KEY `clfoco` (`clfoco`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Testate documenti fiscalmente validi. Fatture, Note credito, , Documenti di Trasporto, ecc';
 
 -- --------------------------------------------------------
@@ -2461,7 +2463,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001tesmov` (
   `last_modified` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id_tes`),
   KEY `datreg` (`datreg`),
-  KEY `datliq` (`datliq`)
+  KEY `datliq` (`datliq`),
+  KEY `clfoco` (`clfoco`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Testate dei movimenti contabili';
 
 -- --------------------------------------------------------
@@ -3096,7 +3099,7 @@ CREATE TABLE IF NOT EXISTS `gaz_config` (
 
 INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `show`, `last_modified`) VALUES
 (1, 'Giorni di validita\' della password', 'giornipass', '90', '1', 1, '2016-01-26 01:09:29'),
-(2, 'Versione archivi', 'archive', '130', '2', 0, '2020-11-06 16:28:43'),
+(2, 'Versione archivi', 'archive', '131', '2', 0, '2020-11-16 18:46:08'),
 (3, 'Ultimo script PHP di aggiornamento eseguito', 'last_update_exec', '412', '3', 1, '2016-01-26 01:09:29'),
 (4, 'La lunghezza minima della password', 'psw_min_length', '8', '4', 1, '2016-01-26 01:09:29'),
 (5, 'Check Update', 'update_url', '0', '5', 0, '2016-01-26 01:09:29'),
@@ -3107,7 +3110,7 @@ INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `
 (10, 'Locale UTF8 set for Other system', 'lin_locale', 'it_IT.UTF-8', '0', 0, '2016-01-26 01:09:29'),
 (11, 'Installation language', 'install_lang', 'italian', '0', 0, '2016-01-26 01:09:29'),
 (12, 'Intermediary company', 'intermediary', '0', '0', 0, '2016-01-26 01:09:29'),
-(13, 'Last backup', 'last_backup', NOW(), '0', 0, '2018-01-26 17:04:07'),
+(13, 'Last backup', 'last_backup',  NOW(), '0', 0, '2018-01-26 17:04:07'),
 (14, 'Where to send backup file (external or internal )', 'backup_mode', 'external', '0', 0, '2016-01-26 01:09:29'),
 (15, 'backup to keep', 'keep_backup', '200', '0', 0, '2016-01-26 01:09:29'),
 (16, 'leave free space in backup', 'freespace_backup', '10', '0', 0, '2016-01-26 01:09:29'),
