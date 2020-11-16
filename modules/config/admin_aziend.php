@@ -279,6 +279,20 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         $('#causale_pagam_770').selectmenu();
         $('#fiscal_reg').selectmenu();
         $("#datnas, #virtual_stamp_auth_date").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+        $("#config_aziend").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "config_aziend.php",
+                data: 'mode=modal',
+                success: function (msg) {
+                    $("#edit-modal .modal-sm").css('width', '100%');
+                    $("#edit-modal .modal-body").html(msg);
+                },
+                error: function () {
+                    alert("failure");
+                }
+            });
+        });
     });
     $(document).ready(function () {
 	    if ({}.toString.call($('.simple_color_custom').simpleColor) === '[object Function]') {
@@ -326,8 +340,8 @@ if (count($msg['err']) > 0) { // ho un errore
             <li class="active"><a data-toggle="pill" href="#home">Dati principali</a></li>
             <li><a data-toggle="pill" href="#setup">Impostazioni</a></li>
             <li><a data-toggle="pill" href="#contab">Contabilità</a></li>
-            <li><a href="config_aziend.php" style="color:black; background-color:white" target="blank"><i class="glyphicon glyphicon-export"></i>Avanzata<i class="glyphicon glyphicon-lock"></i></a></li>
-        </ul>            
+            <li><a id="config_aziend" href="" style="color:black; background-color:white" data-toggle="modal" data-target="#edit-modal"><i class="glyphicon glyphicon-export"></i>Avanzata<i class="glyphicon glyphicon-lock"></i></a></li>        </ul>            
+<!--            <li><a href="config_aziend.php" style="color:black; background-color:white" target="blank"><i class="glyphicon glyphicon-export"></i>Avanzata<i class="glyphicon glyphicon-lock"></i></a></li> -->        </ul>            
         <div class="tab-content">
           <div id="home" class="tab-pane fade in active">
             <div class="row">
@@ -1323,6 +1337,18 @@ if (count($msg['err']) > 0) { // ho un errore
         </div>
     </div><!-- chiude panel  -->
 </div>
+<div id="edit-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="max-width:1500px; margin:auto;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header active">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><div class="btn btn-danger glyphicon glyphicon-remove"></div></button>
+            </div>
+            <div class="modal-body edit-content small"></div>
+            <!--<div class="modal-footer"></div>-->
+        </div>
+    </div>
+</div>
+
 </form>
 <?php
 require("../../library/include/footer.php");
