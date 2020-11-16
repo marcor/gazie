@@ -68,4 +68,5 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
                                             )
                                )
                   );
+$module_class='fas fa-seedling';
 ?>

@@ -54,11 +54,11 @@ function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg,
             <div class="flip-image-front">
             <img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-height: 150px; max-width: 100%;" border="0" title="<?php echo $script_transl['upd_company']; ?>" >            
             </div>
-            <div class="flip-image-back"><a href="../config/admin_aziend.php">
+            <div class="flip-image-back"><a href="../config/admin_aziend.php"><div style="cursor:pointer;">
             <p><b><?php echo $admin_aziend['ragso1'].' '.$admin_aziend['ragso2']; ?></b></p>
             <p><?php echo $admin_aziend['indspe']; ?></p>
             <p><?php echo $admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')'; ?></p>
-            <p><?php echo 'P. IVA: '.$admin_aziend['pariva']; ?></p></a>
+            <p><?php echo 'P. IVA: '.$admin_aziend['pariva']; ?></p></div></a>
             </div>
         </div>
     </div> 
