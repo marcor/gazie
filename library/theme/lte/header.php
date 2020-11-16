@@ -72,8 +72,13 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title id='title_from_menu'></title>
 		<?php
-			$ico=base64_encode(file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/favicon.ico' ));
-			$ico114=base64_encode(file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/logo_114x114.png' ));
+        if (substr($admin_aziend['ragso1'],0,16)=='AZIENDA DI PROVA'){ // l'azienda di default prende il maialino
+			$ico=base64_encode(file_get_contents( '../../library/images/favicon.ico' ));
+            $ico114=base64_encode(file_get_contents( '../../library/images/logo_114x114.png' ));
+        } else { // altrimenti prendo le icone create in fase di scelta del logo in configurazione azienda
+            $ico=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/favicon.ico' ));
+            $ico114=base64_encode(@file_get_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/logo_114x114.png' ));
+        }
 		?>
         <link rel="icon" href="data:image/x-icon;base64,<?php echo $ico?>"  type="image/x-icon" />
 		<link rel="icon" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
