@@ -109,9 +109,9 @@ class silos {
 	}
 	
 	function getLotRecip($codsil){// funzione per trovare l'ultimo lotto inserito nel recipiente di stoccaggio
-		$id_lotmag=false;
+		$id_lotma=false;
 		global $gTables,$admin_aziend;
-		$what=$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".id_mov ";
+		$what=$gTables['movmag'].".id_lotma, ".$gTables['movmag'].".id_mov ";
 		$table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov";
 		$where="recip_stocc = '".$codsil."'";
 		$orderby="id_mov DESC";
@@ -120,9 +120,9 @@ class silos {
 		$limit=0;
 		$lastmovmag=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
 		while ($r = gaz_dbi_fetch_array($lastmovmag)) {
-			$id_lotmag = $r['id_lotmag'];break;
+			$id_lotma = $r['id_lotma'];break;
 		}	
-		return $id_lotmag ;
+		return $id_lotma ;
 	}
 	
 }

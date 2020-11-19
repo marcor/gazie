@@ -24,30 +24,13 @@
 */
 require ("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
+require ("../../modules/camp/lib.function.php");
 $admin_aziend = checkAdmin();
-
-// funzione per trovare l'ultimo lotto inserito nel recipiente di stoccaggio
-function getLotRecip($codsil){
-	$id_lotmag=false;
-	global $gTables,$admin_aziend;
-	$what=$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".id_mov ";
-	$table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov";
-	$where="recip_stocc = '".$codsil."'";
-	$orderby="id_mov DESC";
-	$groupby= "";
-	$passo=2000000;
-	$limit=0;
-	$lastmovmag=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
-	while ($r = gaz_dbi_fetch_array($lastmovmag)) {
-		$id_lotmag = $r['id_lotmag'];break;
-	}	
-	return $id_lotmag ;
-}
-
 $msg = "";
 $lm = new lotmag;
 $magazz = new magazzForm();
 $gForm = new ordermanForm();
+$campsilos = new silos();
 if (isset($_GET['popup'])) { //controllo se proviene da una richiesta apertura popup
     $popup = $_GET['popup'];
 } else {
@@ -94,7 +77,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))){ //Antonio Germani  
     $form['recip_stocc'] = $_POST['recip_stocc'];
 	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
 	if (strlen($form['recip_stocc'])>0){ // se c'è un recipiente di stoccaggio prendo l'ID del lotto
-		$idlotrecip=getLotRecip($form['recip_stocc']);
+		$idlotrecip=$campsilos->getLotRecip($form['recip_stocc']);
 	}	
 	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
