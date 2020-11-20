@@ -108,10 +108,10 @@ class silos {
 		return $content ;
 	}
 	
-	function getLotRecip($codsil){// funzione per trovare l'ultimo lotto inserito nel recipiente di stoccaggio
+	function getLotRecip($codsil){// funzione per trovare l'ID dell'ultimo lotto inserito nel recipiente di stoccaggio
 		$id_lotma=false;
 		global $gTables,$admin_aziend;
-		$what=$gTables['movmag'].".id_lotma, ".$gTables['movmag'].".id_mov ";
+		$what=$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".id_mov ";
 		$table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov";
 		$where="recip_stocc = '".$codsil."'";
 		$orderby="id_mov DESC";
@@ -120,10 +120,61 @@ class silos {
 		$limit=0;
 		$lastmovmag=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
 		while ($r = gaz_dbi_fetch_array($lastmovmag)) {
-			$id_lotma = $r['id_lotma'];break;
-		}	
-		return $id_lotma ;
+			$id_lotma = $r['id_lotmag'];break;
+		}
+		$identifier=gaz_dbi_get_row($gTables['lotmag'], "id", $id_lotma)['identifier'];
+		return array($id_lotma,$identifier) ;
 	}
+	
+	function selectSilos($name, $key, $val, $order = false, $empty = false, $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false) {
+        global $gTables;
+		$campsilos = new silos();
+		$acc='';
+        $refresh = '';
+        if (!$order) {
+            $order = $key;
+        }
+        $query = 'SELECT * FROM `' . $gTables['camp_recip_stocc'] . '` ';
+        if ($where) {
+            $query .= ' WHERE ' . $where;
+        }
+        $query .= ' ORDER BY `' . $order . '`';
+        if (!empty($val_hiddenReq)) {
+            $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
+        }
+        $acc .= "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style>\n";
+        if ($empty) {
+            $acc .= "\t\t <option value=\"\"></option>\n";
+        }
+        $result = gaz_dbi_query($query);
+        while ($r = gaz_dbi_fetch_array($result)) {
+			$lot = $campsilos->getLotRecip($r[$key]);
+			$cont = $campsilos->getCont($r[$key]);
+            $selected = '';
+            if ($r[$key] == $val) {
+                $selected = "selected";
+            }
+            $acc .= "\t\t <option value=\"" . $r[$key] . "\" $selected >";
+            if (empty($key2)) {
+                $acc .= substr($r[$key], 0, 43) . "</option>\n";
+            } else {
+                $acc .= substr($r[$key], 0, 28) . " - Kg: " . substr($r[$key2], 0, 35) . " - Lotto: " . $lot[1] . " - Cont.Kg: ". $cont ."</option>\n";
+            }
+        }
+        if ($addOption) {
+            $acc .= "\t\t <option value=\"" . $addOption['value'] . "\"";
+            if ($addOption['value'] == $val) {
+                $acc .= " selected ";
+            }
+            $acc .= ">" . $addOption['descri'] . "</option>\n";
+        }
+        $acc .= "\t </select>\n";
+		if ($echo){
+			return $acc;
+		} else {
+			echo $acc;
+		}
+    }
 	
 }
 ?>

@@ -1157,7 +1157,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 									if (!isset($form['recip_stocc_comp'][$nc])){
 										$form['recip_stocc_comp'][$nc]="";
 									}
-									$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
+									$campsilos->selectSilos('recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '');
 									?>
 									</div>	
 									<?php
@@ -1284,7 +1284,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				<div class="row">
 					<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
 					<?php
-					$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
+					//$campsilos->selectSilos('recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '');
 					?>
 				</div>
 				<?php
@@ -1292,7 +1292,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 					<div class="row">
 					<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio destinazione"; ?></label>
 					<?php
-					$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc_destin' ,'cod_silos', $form['recip_stocc_destin'], 'cod_silos', 1, ' - kg ','capacita','TRUE','col-sm-6' , null, '');
+					//$campsilos->selectSilos('recip_stocc_destin' ,'cod_silos', $form['recip_stocc_destin'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '');
 					?>
 				</div>
 				<?php
