@@ -63,7 +63,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form["campo_impianto"] = $_POST["campo_impianto"];    
     $form['quantip'] = $_POST['quantip'];
     $form['cosear'] = $_POST['cosear'];
-	$form['codart'] = $_POST['codart'];
+	$form['codart'] = $_POST['codart'];	
+	
     if (strlen ($_POST['cosear'])>0) {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
 		$form['codart'] = $resartico['codice'];
@@ -169,6 +170,19 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 $form['quanti_comp'][$m] = $_POST['quanti_comp' . $m];
                 $form['q_lot_comp'][$m] = $_POST['q_lot_comp' . $m];
 				$form['recip_stocc_comp'][$m] = $_POST['recip_stocc_comp' . $m];
+				if (isset($_POST['subtLot'. $m]) AND $form['q_lot_comp'][$m]>1){
+					$form['q_lot_comp'][$m]--;
+				}
+				if (isset($_POST['addLot'. $m])){
+					$form['q_lot_comp'][$m]++;
+				}
+				if (isset($_POST['manLot'. $m])) {
+					$form['amLot'. $m] = $_POST['manLot'. $m];
+				} elseif (isset($_POST['autoLot'. $m])) {
+					$form['amLot'. $m] = $_POST['autoLot'. $m];
+				} else {
+					$form['amLot'. $m] = $_POST['amLot'. $m];
+				}
 				for ($n = 0;$n < $form['q_lot_comp'][$m];++$n) { // se q lot comp è zero vuol dire che non ci sono lotti
 				    $form['id_lot_comp'][$m][$n] = $_POST['id_lot_comp' . $m . $n];
                     $form['lot_quanti'][$m][$n] = $_POST['lot_quanti' . $m . $n];					
@@ -1200,16 +1214,41 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 									<input type="hidden" name="lot_quanti<?php echo $nc, $l; ?>" value="ERRORE">
 									<input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="">
 									<?php
-								} else {
-									
-									// ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
-									foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da getAvailableLots
-										if ($v['qua'] >= 0.00001) {
-											//$form['id_lot_comp'][$nc][$l]="";
-											//$form['lot_quanti'][$nc][$l]="";
+								} else {									
+									if ($form['amLot'. $nc] == "autoLot" OR $form['amLot'. $nc]=="" ){ // se selezione lotti automatica
+										// ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
+										foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da getAvailableLots
+											if ($v['qua'] >= 0.00001) {
+												//$form['id_lot_comp'][$nc][$l]="";
+												//$form['lot_quanti'][$nc][$l]="";
+												if (!isset($form['id_lot_comp'][$nc][$l]) or (intval($form['id_lot_comp'][$nc][$l])==0)) {
+													$form['id_lot_comp'][$nc][$l] = $v['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
+													$form['lot_quanti'][$nc][$l] = $v['qua']; // e la quantità in base al riparto
+												}
+												$selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
+												$disp= $lm -> dispLotID ($artico['codice'], $selected_lot['id']);
+												echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente" data-toggle="collapse" href="#lm_dialog' . $nc . $l.'">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
+												if (intval($selected_lot['expiry'])>0){
+													echo ' Scadenza: ' . gaz_format_date($selected_lot['expiry']);
+												}
+												echo ' disponibili:' . gaz_format_quantity($disp);
+												echo '  <i class="glyphicon glyphicon-tag"></i></button>';
+												?>
+												<input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
+												Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.submit();">
+												<?php
+												$l++;                                  
+											}										
+										}
+																			
+										?>									
+										Passa a <input type="submit" class="btn glyphicon glyphicon-remove-circle" name="manLot<?php echo $nc; ?>" id="preventDuplicate" onClick="chkSubmit();" value="manuale">&#128075;
+										<?php
+									} elseif ($form['amLot'. $nc] == "manuale"){	// se selezione manuale									
+										for ($l = 0;$l < $form['q_lot_comp'][$nc];++$l) { 											
 											if (!isset($form['id_lot_comp'][$nc][$l]) or (intval($form['id_lot_comp'][$nc][$l])==0)) {
-												$form['id_lot_comp'][$nc][$l] = $v['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
-												$form['lot_quanti'][$nc][$l] = $v['qua']; // e la quantità in base al riparto
+												$form['id_lot_comp'][$nc][$l] = 0; // appena aggiunto rigo lotto ciclo setto il lotto a zero
+												$form['lot_quanti'][$nc][$l] = 0; 
 											}
 											$selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
 											$disp= $lm -> dispLotID ($artico['codice'], $selected_lot['id']);
@@ -1221,13 +1260,20 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 											echo '  <i class="glyphicon glyphicon-tag"></i></button>';
 											?>
 											<input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
-											
 											Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.submit();">
-											<?php
-											$l++;                                  
+											<?php																		
 										}										
+										?>
+										Passa a <input type="submit" class="btn glyphicon glyphicon-remove-circle" name="autoLot<?php echo $nc; ?>" id="preventDuplicate" onClick="chkSubmit();" value="autoLot">&#128187;
+										<div>
+										<button type="submit" name="addLot<?php echo $nc; ?>" title="Aggiungi rigo lotto" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-plus-sign"></i></button>
+										<button type="submit" name="subtLot<?php echo $nc; ?>" title="Togli rigo lotto" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-minus-sign"></i></button>
+										</div>
+										<?php
 									}
 									?>
+									<input type="hidden" name="amLot<?php echo $nc; ?>" id="preventDuplicate" value="<?php echo $form['amLot'.$nc]; ?>">
+									
 									<input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="<?php echo $l; ?>">
 									<?php // q lot comp ha volutamente una unità in più per distinguerlo da quando è zero cioè nullo  
 										
