@@ -218,12 +218,16 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     $msg.= "21+";
                 }
             }
-        }*/
-		if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto, controllo se le quantità inserite per ogni singolo lotto, di ogni componente, sono sufficienti 
+        }*/		
+		if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto, 
+		//controllo se le quantità inserite per ogni singolo lotto, di ogni componente, corrispondono alla richiesta della produzione e alla reale disponbilità 
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
-				if (intval($form['q_lot_comp'][$nc])>0) {
+				if (intval($form['q_lot_comp'][$nc])>0) {					
 					$tot=0;
 					for ($l=0; $l<$form['q_lot_comp'][$nc]; ++$l) {
+						if ($lm -> getLotQty($form['id_lot_comp'][$nc][$l]) < $form['lot_quanti'][$nc][$l]){
+							$msg.= "21+";
+						}
 						$tot=$tot + $form['lot_quanti'][$nc][$l];
 					}
 					If ($tot != $form['quanti_comp'][$nc]){
