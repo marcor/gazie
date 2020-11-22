@@ -75,6 +75,15 @@ function mostra_documenti_associati($ordine) {
         }
     }
 }
+if (isset ($_GET['inevasi'])){
+	$form['swStatus']=$_GET['inevasi'];
+} elseif (isset ($_GET['tutti'])){
+	$form['swStatus']=$_GET['tutti'];
+} else {
+if (isset ($_GET['swStatus'])){
+		$form['swStatus']=$_GET['swStatus'];
+	}
+}
 
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesbro_e_partners = "{$gTables['tesbro']} LEFT JOIN {$gTables['clfoco']} ON {$gTables['tesbro']}.clfoco = {$gTables['clfoco']}.codice LEFT JOIN {$gTables['anagra']} ON {$gTables['clfoco']}.id_anagra = {$gTables['anagra']}.id";
@@ -116,7 +125,9 @@ $sortable_headers = array(
     $script_transl['delete'] => ""
 );
 unset($terzo);
-
+if ($form['swStatus']=="Inevasi"){
+	$passo=1000;
+}
 $ts = new TableSorter(
     isset($_GET["destinaz"]) ? $tesbro_e_destina :
 	(!$partner_select && isset($_GET["cliente"]) ? $tesbro_e_partners : $gTables['tesbro']), 
@@ -297,8 +308,19 @@ $ts->output_navbar();
 								gaz_flt_disp_select("destinaz","unita_locale1 AS destinaz",$tesbro_e_destina, $where_select . " AND unita_locale1 IS NOT NULL", "destinaz DESC",  "destinaz"); 
 								?>
             </td>
-            <td class=FacetFieldCaptionTD>
-                &nbsp;
+            <td class=FacetFieldCaptionTD style="text-align: center;">
+				<?php
+				if (!isset ($form['swStatus']) OR $form['swStatus']=="Tutti"){
+					?>					
+					<input type="submit" class="btn btn-sm btn-default" name="inevasi" onClick="chkSubmit();" value="Inevasi">
+					<?php					
+				} else {
+					?>					
+					<input type="submit" class="btn btn-sm btn-default" name="tutti" onClick="chkSubmit();" value="Tutti" style="text-align: center;">
+					<?php 
+				}
+				?>
+				<input type="hidden" name="swStatus" id="preventDuplicate" value="<?php echo $form['swStatus']; ?>">
             </td>
             <td class=FacetFieldCaptionTD>
                 &nbsp;
@@ -329,6 +351,26 @@ $ts->output_navbar();
 				    $ts->getOffset(), $ts->getLimit());
         $ctrlprotoc = "";
         while ($r = gaz_dbi_fetch_array($result)) {
+			$remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
+            $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
+            $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
+            while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
+                if ( $rigbro_r['tiprig']==1 ) $totale_da_evadere = 1;
+                else $totale_da_evadere = $rigbro_r['quanti'];
+                $totale_evaso = 0;
+                $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND codart='".$rigbro_r['codart']."' AND tiprig <=1 ", 'id_tes DESC');
+                while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
+                    $totale_evaso += $rigdoc_r['quanti'];
+                    $processed_atleastone = true;
+                }    
+
+                if ( $totale_evaso < $totale_da_evadere ) {
+                    $remains_atleastone = true;
+                }
+            }
+			if ( ($form['swStatus']=="Tutti" OR $form['swStatus']=="") OR ($form['swStatus']=="Inevasi" AND  $remains_atleastone == true) ){
+			
+			
             if ($r['tipdoc'] == 'VPR') {
                 $modulo = "stampa_precli.php?id_tes=" . $r['id_tes'];
                 $modifi = "admin_broven.php?Update&id_tes=" . $r['id_tes'];
@@ -356,28 +398,12 @@ $ts->output_navbar();
 						echo "</td>";
             
             // colonna stato ordine
-            $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
-            $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
-            $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
-            while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
-                if ( $rigbro_r['tiprig']==1 ) $totale_da_evadere = 1;
-                else $totale_da_evadere = $rigbro_r['quanti'];
-                $totale_evaso = 0;
-                $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND codart='".$rigbro_r['codart']."' AND tiprig <=1 ", 'id_tes DESC');
-                while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
-                    $totale_evaso += $rigdoc_r['quanti'];
-                    $processed_atleastone = true;
-                }    
-
-                if ( $totale_evaso < $totale_da_evadere ) {
-                    $remains_atleastone = true;
-                }
-            }
+            
             //
             // Se l'ordine e' da evadere completamente, verifica lo status ed
             // eventualmente lo aggiorna.
             //
-            echo "<td>";
+            echo "<td style='text-align: center;'>";
             if ($remains_atleastone && !$processed_atleastone) {
                 // L'ordine e' completamente da evadere.
                 if ($r['status'] != "GENERATO") {
@@ -448,6 +474,7 @@ $ts->output_navbar();
             echo "</td>";
             echo "</tr>\n";
         }
+		}
         ?>
         <tr><th class="FacetFieldCaptionTD" colspan="10"></th></tr>
     </table>
