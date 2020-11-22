@@ -125,7 +125,7 @@ $sortable_headers = array(
     $script_transl['delete'] => ""
 );
 unset($terzo);
-if ($form['swStatus']=="Inevasi"){
+if (isset($form['swStatus']) AND $form['swStatus']=="Inevasi"){
 	$passo=1000;
 }
 $ts = new TableSorter(
