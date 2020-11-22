@@ -211,14 +211,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         $itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
         if ($form['codart'] <> "" && !isset($itemart)) { // controllo se codice articolo non esiste o se è nullo
             $msg.= "20+";
-        }
-        /*if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto controllo se quantità totali sufficienti dei componenti
-            for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
-                if ($form['quanti_comp'][$nc] == "ERRORE") { // se c'è errore segnalo
-                    $msg.= "21+";
-                }
-            }
-        }*/		
+        }        	
 		if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto, 
 		//controllo se le quantità inserite per ogni singolo lotto, di ogni componente, corrispondono alla richiesta della produzione e alla reale disponbilità 
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
@@ -249,7 +242,11 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         if (empty($form['description'])) { //descrizione vuota
             // imposto la descrizione predefinita
             $descli=(isset($res3['descri']))?'/'.$res3['descri']:'';
-			$form['description'] = "Produzione ".$form['codart']." ordine ".$form['coseor'].$descli;
+			if (intval($form['coseor']) > 0){
+				$form['description'] = "Produzione ".$form['codart']." ordine ".$form['coseor'].$descli;
+			} else {
+				$form['description'] = "Produzione ".$form['codart'];
+			}
         }
         if (strlen($form['order_type']) < 3) { //tipo produzione vuota
             $msg.= "12+";
@@ -327,8 +324,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     unset($row);
                     $result = gaz_dbi_query($query);
                     $row = $result->fetch_assoc();
-                    $id_movmag = $row['Auto_increment']; // trovo l'ID che avrà il nuovo movimento di magazzino MOVMAG
-                    
+                    $id_movmag = $row['Auto_increment']; // trovo l'ID che avrà il nuovo movimento di magazzino MOVMAG                    
                 }
                 $query = "SHOW TABLE STATUS LIKE '" . $gTables['orderman'] . "'";
                 unset($row);
@@ -340,8 +336,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     unset($row);
                     $result = gaz_dbi_query($query);
                     $row = $result->fetch_assoc();
-                    $id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto
-                    
+                    $id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto                    
                 } else {
 					$id_lotmag="";
 				}					
@@ -374,8 +369,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$update[]=$form['id_movmag'];
 						gaz_dbi_table_update('camp_mov_sian',$update,$form);
 					}
-                }
-				
+                }				
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
                     // inserisco il movimento di magazzino dell'articolo prodotto
 					$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], '', '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
@@ -483,8 +477,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 }
                 // Antonio Germani - inizio salvo documento/CERTIFICATO lotto
                 if ($toDo == "update") { // se è update lascio $form id_lotmag del form
-                    $form['id_lotmag']; //
-                    
+                    $form['id_lotmag']; //                    
                 } else { // se è insert nuovo metto il nuovo id cercat ad inizio salvataggio
                     $form['id_lotmag'] = $id_lotmag;
                 }
