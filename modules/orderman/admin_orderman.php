@@ -226,6 +226,9 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					If ($tot != $form['quanti_comp'][$nc]){
 						$msg.="25+";
 					}
+					if (intval($form['SIAN']) > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] ){
+						$msg.= "41+"; // il silos non ha sufficiente quantità olio
+					}
 				}
             }
         }
@@ -1181,12 +1184,12 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						</div> <!-- chiude row del nome articolo composto -->
 									<div class="container-fluid">					
 									<div class="row">
-									<label for="camp_recip_stocc_comp" class="col-sm-6"><?php echo "Recipiente stoccaggio del componente"; ?></label>
+									<label for="camp_recip_stocc_comp" class="col-sm-5"><?php echo "Recipiente stoccaggio del componente"; ?></label>
 									<?php
 									if (!isset($form['recip_stocc_comp'][$nc])){
 										$form['recip_stocc_comp'][$nc]="";
 									}
-									$campsilos->selectSilos('recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '');
+									$campsilos->selectSilos('recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1,'capacita','TRUE','col-sm-7' , null, '');
 									?>
 									</div>	
 									<?php

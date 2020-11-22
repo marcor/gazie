@@ -72,7 +72,8 @@ $strScript = array("admin_orderman.php" =>
 		"Per l'operazione SIAN imposata l'olio prodotto deve essere confezionato",
 		"Manca il recipiente di stoccaggio",
 		"Per confezionare si deve avere almeno il componente Olio sfuso",
-		"La data di registrazione è precedente all'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN."
+		"La data di registrazione è prcedente all'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.",
+		"Il recipiente di stoccaggio selezionato non ha sufficiente olio"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',
