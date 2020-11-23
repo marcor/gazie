@@ -2,7 +2,7 @@ Titolo:
 Cantabit vacuus coram latrone viator.
 
 Presentazione:
-Versione rilasciata con il fine esclusivo di rendere immediatamente operarivi i seguenti migliormenti:
+Versione rilasciata con il fine esclusivo di rendere immediatamente operativi i seguenti miglioramenti:
 - sul report delle fatture d'acquisto ho riscritto le query per trovare gli ultimi documenti eliminabili, i precedenti erano molto lenti.  
 - aggiunti gli indici sulle colonne "clfoco" delle testate documenti e movimenti contabili, l'eventuale loro assenza rallentava molto il report dei clienti/fornitori. 
 - Antonio Germani ha apportato diverse correzioni sul modulo "Registro di campagna".

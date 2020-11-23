@@ -3099,7 +3099,7 @@ CREATE TABLE IF NOT EXISTS `gaz_config` (
 
 INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `show`, `last_modified`) VALUES
 (1, 'Giorni di validita\' della password', 'giornipass', '90', '1', 1, '2016-01-26 01:09:29'),
-(2, 'Versione archivi', 'archive', '131', '2', 0, '2020-11-16 18:46:08'),
+(2, 'Versione archivi', 'archive', '132', '2', 0, '2020-11-23 16:06:16'),
 (3, 'Ultimo script PHP di aggiornamento eseguito', 'last_update_exec', '412', '3', 1, '2016-01-26 01:09:29'),
 (4, 'La lunghezza minima della password', 'psw_min_length', '8', '4', 1, '2016-01-26 01:09:29'),
 (5, 'Check Update', 'update_url', '0', '5', 0, '2016-01-26 01:09:29'),
@@ -3110,7 +3110,7 @@ INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `
 (10, 'Locale UTF8 set for Other system', 'lin_locale', 'it_IT.UTF-8', '0', 0, '2016-01-26 01:09:29'),
 (11, 'Installation language', 'install_lang', 'italian', '0', 0, '2016-01-26 01:09:29'),
 (12, 'Intermediary company', 'intermediary', '0', '0', 0, '2016-01-26 01:09:29'),
-(13, 'Last backup', 'last_backup',  NOW(), '0', 0, '2018-01-26 17:04:07'),
+(13, 'Last backup', 'last_backup', NOW(), '0', 0, '2018-01-26 17:04:07'),
 (14, 'Where to send backup file (external or internal )', 'backup_mode', 'external', '0', 0, '2016-01-26 01:09:29'),
 (15, 'backup to keep', 'keep_backup', '200', '0', 0, '2016-01-26 01:09:29'),
 (16, 'leave free space in backup', 'freespace_backup', '10', '0', 0, '2016-01-26 01:09:29'),
@@ -3127,7 +3127,7 @@ INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `
 (28, 'SMTP Password', 'admin_smtp_password', '', '0', 0, NULL),
 (29, 'Cookie secret key for hash', 'cookie_secret_key', '1gp@GaZi{+$78sfpMJFe-18s', '0', 0, NULL),
 (30, 'Utenti non amministratori (abilit < 8) possono accedere a tutte le aziende', 'users_noadmin_all_company', '0', '0', 0, NULL),
-(31, 'Referenze per movimenti di magazzino per link al documento che lo ha generato ', 'report_movmag_ref_doc', '{\r\n\"ADT\":\"acquis\",\r\n\"AFA\":\"acquis\",\r\n\"AFC\":\"acquis\",\r\n\"DDR\":\"acquis\",\r\n\"ADT\":\"acquis\",\r\n\"AFT\":\"acquis\",\r\n\"DDL\":\"acquis\", \r\n\"RDL\":\"acquis\",\r\n\"DDR\":\"acquis\",\r\n\"VCO\":\"vendit\", \r\n\"VRI\":\"vendit\", \r\n\"DDT\":\"vendit\", \r\n\"FAD\":\"vendit\", \r\n\"FAI\":\"vendit\", \r\n\"FAA\":\"vendit\", \r\n\"FAQ\":\"vendit\", \r\n\"FAP\":\"vendit\", \r\n\"FNC\":\"vendit\", \r\n\"FND\":\"vendit\", \r\n\"DDV\":\"vendit\", \r\n\"RDV\":\"vendit\", \r\n\"DDY\":\"vendit\", \r\n\"DDS\":\"vendit\",\r\n\"VPR\":\"vendit\", \r\n\"VOR\":\"vendit\", \r\n\"VOW\":\"vendit\", \r\n\"VOG\":\"vendit\", \r\n\"CMR\":\"vendit\", \r\n\"CAM\":\"camp\",\r\n\"PRO\":\"orderman\",\r\n\"MAG\":\"magazz\"\r\n,\r\n\"INV\":\"magazz\"\r\n}', '0', 0, NULL);
+(31, 'Referenze per movimenti di magazzino per link al documento che lo ha generato ', 'report_movmag_ref_doc', '{\r\n\"ADT\":\"acquis\",\r\n\"AFA\":\"acquis\",\r\n\"AFC\":\"acquis\",\r\n\"DDR\":\"acquis\",\r\n\"ADT\":\"acquis\",\r\n\"AFT\":\"acquis\",\r\n\"DDL\":\"acquis\", \r\n\"RDL\":\"acquis\",\r\n\"DDR\":\"acquis\",\r\n\"VCO\":\"vendit\", \r\n\"VRI\":\"vendit\", \r\n\"DDT\":\"vendit\", \r\n\"FAD\":\"vendit\", \r\n\"FAI\":\"vendit\", \r\n\"FAA\":\"vendit\", \r\n\"FAQ\":\"vendit\", \r\n\"FAP\":\"vendit\", \r\n\"FNC\":\"vendit\", \r\n\"FND\":\"vendit\", \r\n\"DDV\":\"vendit\", \r\n\"RDV\":\"vendit\", \r\n\"DDY\":\"vendit\", \r\n\"DDS\":\"vendit\",\r\n\"VPR\":\"vendit\", \r\n\"VOR\":\"vendit\", \r\n\"VOW\":\"vendit\", \r\n\"VOG\":\"vendit\", \r\n\"CMR\":\"vendit\", \r\n\"CAM\":\"camp\",\r\n\"PRO\":\"orderman\",\r\n\"MAG\":\"magazz\",\r\n\"INV\":\"magazz\"\r\n}', '0', 0, '2020-11-23 16:06:16');
 
 -- --------------------------------------------------------
 
