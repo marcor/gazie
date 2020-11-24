@@ -305,6 +305,7 @@ if (isset($_POST['preview']) and $msg=='') {
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['id_SIAN']." - ".$mv['ragso1']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['recip_stocc']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['capacita']." &nbsp;</td>\n";
+					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['desdoc']." &nbsp;</td>\n";
 					echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['cod_operazione']." &nbsp;</td>\n";
 					echo "</tr>\n";
 					$ctr_mv = $mv['artico'];

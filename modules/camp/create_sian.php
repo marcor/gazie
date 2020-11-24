@@ -153,7 +153,9 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$ann = substr($row['datreg'],0,4);
 						$dd=$gio.$mes.$ann;
 					}
+					
 				// >> Antonio Germani - caso produzione da orderman
+				
 					if (intval($row['id_orderman'])>0 AND $row['operat']==1){ // se è una produzione e il movimento è di entrata
 						// cerco il movimento/i di scarico connesso/i
 						$rs=gaz_dbi_dyn_query ("*",$gTables['camp_mov_sian'],"id_mov_sian_rif = '".$row['id_mov_sian']."'");
@@ -234,8 +236,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$row['recip_stocc']=$row['recip_stocc_destin'];
 							$row['recip_stocc_destin']=$change;
 						}
-					}
-					 
+					}					 
 					if (intval($row['id_orderman'])>0 AND $row['operat']==-1 AND $row['cod_operazione']=="S7") {// è un'uscita di olio per produrre altro
 						$type_array[6]=str_pad("S7", 10); // codice operazione > S7 scarico di olio destinato ad altri usi
 						if ($row['SIAN']==1){ // se è olio
@@ -303,6 +304,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 					}
 					
 				// >> Antonio Germani - Caso Scarico da vendite e magazzino
+				
 					if ($row['operat']==-1 AND intval($row['id_orderman'])==0){ // se è uno scarico NON connesso a produzione
 						$type_array[6]=str_pad("S".$row['cod_operazione'], 10); // codice operazione
 						if ($row['SIAN']==1){ // se è olio
@@ -317,9 +319,9 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						} else { //se sono olive
 							$type_array[10]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
 						}
-						if ($row['cod_operazione']==0) { // Vendita a consumatore finale
-							$row['confezione']="";							
-						}
+						 
+						$row['confezione']="";// Tutte le operazioni di Vendita non vogliono la confezione indicata							
+						
 						if ($row['cod_operazione']==1 OR $row['cod_operazione']==2 OR $row['cod_operazione']==3 OR $row['cod_operazione']==5 OR $row['cod_operazione']==10){
 							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/
 						}
