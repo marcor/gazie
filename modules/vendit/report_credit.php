@@ -100,33 +100,29 @@ $script_transl=HeadMain(0,array('custom/modal_form'));
 ?><script>
 
 $(function() {
-   $( "#dialog" ).dialog({
-      autoOpen: false
-   });
-});
-
-function confirMail(link){
-   tes_id = link.id.replace("doc", "");
-   $.fx.speeds._default = 500;
-   targetUrl = $("#doc"+tes_id).attr("url");
-   //alert (targetUrl);
-   $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
-   $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
-   $( "#dialog" ).dialog({
+    $( "#dialog" ).dialog({ autoOpen: false });
+    $('.dialog_mail').click(function() {
+      $.fx.speeds._default = 500;
+      targetUrl = $(this).attr("url");
+      //alert (targetUrl);
+      $("p#mail_adrs").html($(this).attr("mail"));
+      $("p#mail_attc").html($(this).attr("namedoc"));
+      $( "#dialog" ).dialog({
          modal: "true",
-      show: "blind",
-      hide: "explode",
-         buttons: {
-                      " <?php echo $script_transl['submit']; ?> ": function() {
-                         window.location.href = targetUrl;
-                      },
-                      " <?php echo $script_transl['cancel']; ?> ": function() {
-                        $(this).dialog("close");
-                      }
-                  }
-         });
-   $("#dialog" ).dialog( "open" );
-}
+         show: "blind",
+         hide: "explode",
+            buttons: {
+                         " <?php echo $script_transl['submit']; ?> ": function() {
+                            window.location.href = targetUrl;
+                         },
+                         " <?php echo $script_transl['cancel']; ?> ": function() {
+                           $(this).dialog("close");
+                         }
+                     }
+            });
+      $("#dialog" ).dialog( "open" );
+    });   
+});
 </script>
 <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
       <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
@@ -268,7 +264,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
          echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" title=\"Effettuato un pagamento da ".$r["ragso1"]."\"  href=\"customer_payment.php?partner=".$r['codcon']."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
          echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa l'Estratto Conto di {$r['ragso1']}\" href=\"stampa_estcon.php?codice=".$r['codcon']."&annini=".$annini."&mesini=".$mesini."&giornini=".$giornini."&annfin=".$annfin."&mesfin=".$mesfin."&giornfin=".$giornfin."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
 		 if (!empty($r["e_mail"])) {
-		 	echo '<a class="btn btn-xs btn-default" onclick="confirMail(this);return false;" id="doc'.$r["codcon"].'" url="stampa_estcon.php?codice='.$r["codcon"].'&annini='.$annini.'&mesini='.$mesini.'&giornini='.$giornini.'&annfin='.$annfin.'&mesfin='.$mesfin.'&giornfin='.$giornfin.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+		 	echo '<a class="btn btn-xs btn-default dialog_mail" url="stampa_estcon.php?codice='.$r["codcon"].'&annini='.$annini.'&mesini='.$mesini.'&giornini='.$giornini.'&annfin='.$annfin.'&mesfin='.$mesfin.'&giornfin='.$giornfin.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
 		 	mail="'.$r["e_mail"].'" namedoc="Estratto conto al '.$giornfin.'-'.$mesfin.'-'.$annfin.'"><i class="glyphicon glyphicon-envelope"></i></a>';
 		 } else {
 			echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
@@ -276,7 +272,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
 		 echo "</td>";
          echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa le Partite Aperte di {$r['ragso1']}\" href=\"print_schedule.php?clfoco=".$r['codcon']."&orderby=2\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
 		 if (!empty($r["e_mail"])) {
-		 	echo '<a class="btn btn-xs btn-default" onclick="confirMail(this);return false;" id="doc'.$r["codcon"].'" url="print_schedule.php?clfoco='.$r['codcon'].'&annfin='.$annfin.'&mesfin='.$mesfin.'&giornfin='.$giornfin.'&orderby=2&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+		 	echo '<a class="btn btn-xs btn-default dialog_mail" url="print_schedule.php?clfoco='.$r['codcon'].'&annfin='.$annfin.'&mesfin='.$mesfin.'&giornfin='.$giornfin.'&orderby=2&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
 		 	mail="'.$r["e_mail"].'" namedoc="Partite aperte al '.$giornfin.'-'.$mesfin.'-'.$annfin.'"><i class="glyphicon glyphicon-envelope"></i></a>';
 		 } else {
 			echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
