@@ -128,8 +128,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) { //se non e' il primo a
 		$form['codice'] = 1;
 	}
 	$rs_ultimo_tec = gaz_dbi_dyn_query("codice, tecnico", $gTables['assist'], "tecnico<>''", "codice DESC");
-	$ultimo_tecnico = gaz_dbi_fetch_array($rs_ultimo_tec);
-	$form['tecnico'] = $ultimo_tecnico['tecnico']; 
+	
+	// non viene assegnato il tecnico se l'intervento è aperto
+	// $ultimo_tecnico = gaz_dbi_fetch_array($rs_ultimo_tec);
+	$form['tecnico'] = ""; //$ultimo_tecnico['tecnico']; 
 	$form['tipo'] = 'ASS';	
 	$form['utente'] = $_SESSION['user_name'];
 	$form['data'] = date('Y-m-d');

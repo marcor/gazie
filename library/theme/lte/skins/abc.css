@@ -143,3 +143,37 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .gaz-table-form {
     background-color: #aae2a8;
 }
+
+
+.btn-avvisare 
+{
+    background-color: #FF88D6;
+    color: #444;
+    border-color: #ddd;
+}
+
+.btn-bloccato
+{
+    background-color: #f44;
+    color: #444;
+    background-color: #ddd;
+}
+
+.btn-aperto
+{
+    background-color: #FFD688;
+    color: #444;
+    border-color: #ddd;
+}
+
+.btn-effettuato
+{
+    background-color: #88D6FF;
+    color: #444;
+    background-color: #ddd;
+}
+
+.btn-edit
+{
+
+}
