@@ -280,7 +280,6 @@ function setDate(name) {
 }
 </script>
 ";
-
 echo "<form method=\"POST\" name=\"form\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
@@ -288,10 +287,10 @@ echo "<input type=\"hidden\" value=\"" . $form['id_anagra'] . "\" name=\"id_anag
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">";
 $gForm = new venditForm();
 if ($toDo == 'insert') {
-    echo "<div align=\"center\" class=\"FacetFormHeaderFont Titolo\"><" . $script_transl['ins_this'] . "</div>\n";
+    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . ' con ' . $script_transl['codice'] . " n° <input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"6\" /></div>\n";
 } else {
-    echo "<div align=\"center\" class=\"FacetFormHeaderFont Titolo\">" . $script_transl['upd_this'] . " '" . $form['codice'] . "'</div>\n";
-    echo "<input type=\"hidden\" value=\"" . $form['codice'] . "\" name=\"codice\" />\n";
+    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form['codice'] . "'";
+    echo "<input type=\"hidden\" value=\"" . $form['codice'] . "\" name=\"codice\" /></div>\n";
 }
 ?>
 <?php
@@ -320,21 +319,23 @@ if (!empty($msg)) {
         echo "</tr>\n";
     }
 }
-if ($toDo == 'insert') {
-    echo "<table><tr>\n";
+/*if ($toDo == 'insert') {
+    echo "<div>\n";
     echo "\t<td>" . $script_transl['codice'] . "* </td>\n";
     echo "\t<td colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"6\" /></td>\n";
-    echo "</tr></table>\n";
-}
-
+    echo "</div>\n";
+}*/
 ?>
-<ul class="nav nav-pills">
+  <div>
+  <ul class="nav nav-pills">
     <li class="active"><a data-toggle="pill" href="#home">Anagrafica</a></li>
     <li><a data-toggle="pill" href="#commer">Impostazioni</a></li>  
   </ul>
+  </div>
+
 <div class="panel panel-default gaz-table-form div-bordered">
   <div class="container-fluid">
-              
+            
   <div class="tab-content">
     <div id="home" class="tab-pane fade in active">
         <div class="row">
