@@ -35,12 +35,18 @@ $mascli = $clienti . "000000";
 $search_fields = [
     'codice'
     => "codice = $mascli + %d",
+
     'nome'
     => "CONCAT(ragso1, ragso2) LIKE '%%%s%%'",
+
     'codmin'
     => "codice >= $mascli + GREATEST(%d, 1)",
+
     'codmax'
-    => "codice <= $mascli + LEAST(%d, 999999)"
+    => "codice <= $mascli + LEAST(%d, 999999)",
+
+    'sexper' 
+    => "sexper = '%s'"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -130,7 +136,7 @@ $(function() {
                 <?php gaz_flt_disp_int("nome", "Nome cliente"); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                &nbsp;
+                <?php gaz_flt_disp_select("sexper", "sexper", $gTables["anagra"], " sexper <> ''", "sexper asc"); ?>
             </td>
             <td class="FacetFieldCaptionTD">
                 &nbsp;
@@ -150,11 +156,11 @@ $(function() {
                 <?php // gaz_flt_disp_int("codmax", "Max"); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" >
+                <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" >
                 <?php $ts->output_order_form();  ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <a class="btn btn-xs btn-default" href="?">Reset</a>
+                <a class="btn btn-sm btn-default" href="?">Reset</a>
             </td>
         </tr>
         <?php
@@ -173,7 +179,7 @@ $(function() {
 			$check_bro = gaz_dbi_num_rows($rs_check_bro);
 			echo "<tr class=\"FacetDataTD\">";
             // Colonna codice cliente
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_client.php?codice=" . substr($a_row["codice"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .intval(substr($a_row["codice"],3)) . "</a> &nbsp</td>";
+            echo "<td align=\"center\"><a class=\"btn btn-sm btn-default\" href=\"admin_client.php?codice=" . substr($a_row["codice"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .intval(substr($a_row["codice"],3)) . "</a> &nbsp</td>";
             // Colonna ragione sociale
             echo "<td title=\"" . $a_row["ragso2"] . "\">" . $a_row["ragso1"] . " &nbsp;</td>";
             // colonna sesso
@@ -181,8 +187,8 @@ $(function() {
             // colonna indirizzo
             $google_string = str_replace(" ", "+", $a_row["indspe"]) . "," . str_replace(" ", "+", $a_row["capspe"]) . "," . str_replace(" ", "+", $a_row["citspe"]) . "," . str_replace(" ", "+", $a_row["prospe"]);
             echo "<td title=\"" . $a_row["capspe"] . " " . $a_row["indspe"] . "\">";
-            echo "<a class=\"btn btn-xs btn-default\" target=\"_blank\" href=\"https://www.google.it/maps/place/" . $google_string . "\">" . $a_row["citspe"] . " (" . $a_row["prospe"] . ")&nbsp;<i class=\"glyphicon glyphicon-map-marker\"></i></a>";
-            echo "<a class=\"btn btn-xs btn-default\" target=\"_blank\" href=\"https://www.google.it/maps/dir/" . $admin_aziend['latitude'] . "," . $admin_aziend['longitude'] . "/" . $google_string . "\">  <i class=\"glyphicon glyphicon-random\"></i></a>";
+            echo "<a class=\"btn btn-sm btn-default\" target=\"_blank\" href=\"https://www.google.it/maps/place/" . $google_string . "\">" . $a_row["citspe"] . " (" . $a_row["prospe"] . ")&nbsp;<i class=\"glyphicon glyphicon-map-marker\"></i></a>";
+            echo "<a class=\"btn btn-sm btn-default\" target=\"_blank\" href=\"https://www.google.it/maps/dir/" . $admin_aziend['latitude'] . "," . $admin_aziend['longitude'] . "/" . $google_string . "\">  <i class=\"glyphicon glyphicon-random\"></i></a>";
             echo "</td>";
             // composizione telefono
             $title = "";
@@ -225,18 +231,18 @@ $(function() {
                 echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
             }
             // colonna stampa privacy
-            echo "<td align=\"center\"><a title=\"stampa informativa sulla privacy\" class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=" . $a_row["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a><a title=\"stampa richiesta codice sdi o pec\" class=\"btn btn-xs btn-default\" href=\"stampa_richiesta_pecsdi.php?codice=" . $a_row["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-inbox\"></i></a></td>";
-            echo "<td title=\"Effettuato un pagamento da " . $a_row["ragso1"] . "\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $a_row["codice"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
-            echo "<td title=\"Visualizza e stampa il partitario\" align=\"center\">  <a class=\"btn btn-xs btn-default\" href=\"report_contcli.php?id=".$a_row["codice"]."\"  target=\"_blank\"><i class=\"glyphicon glyphicon-list-alt\"></i></a> <a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$a_row["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
+            echo "<td align=\"center\"><a title=\"stampa informativa sulla privacy\" class=\"btn btn-sm btn-default\" href=\"stampa_privacy.php?codice=" . $a_row["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a><a title=\"stampa richiesta codice sdi o pec\" class=\"btn btn-sm btn-default\" href=\"stampa_richiesta_pecsdi.php?codice=" . $a_row["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-inbox\"></i></a></td>";
+            echo "<td title=\"Effettuato un pagamento da " . $a_row["ragso1"] . "\" align=\"center\"><a class=\"btn btn-sm btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $a_row["codice"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
+            echo "<td title=\"Visualizza e stampa il partitario\" align=\"center\">  <a class=\"btn btn-sm btn-default\" href=\"report_contcli.php?id=".$a_row["codice"]."\"  target=\"_blank\"><i class=\"glyphicon glyphicon-list-alt\"></i></a> <a class=\"btn btn-sm btn-default\" href=\"../contab/select_partit.php?id=".$a_row["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
             echo "<td align=\"center\">";
 			if ($check_mov > 0 or $check_doc > 0 or $check_bro > 0) {
 				?>
-				<button title="Impossibile cancellare perché ci sono dei movimenti associati" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+				<button title="Impossibile cancellare perchï¿½ ci sono dei movimenti associati" class="btn btn-sm btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 				<?php
 				
 			} else {
 				?>
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il cliente" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragso2']," ",$a_row['ragso1'];?>">
+				<a class="btn btn-sm btn-default btn-elimina dialog_delete" title="Cancella il cliente" ref="<?php echo $a_row['codice'];?>" ragso="<?php echo $a_row['ragso2']," ",$a_row['ragso1'];?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 				<?php
@@ -257,11 +263,11 @@ $(function() {
      $("option", selects).filter(function(){ return this.value == "All"; }).val("");
      
      // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
-     // l'azione non lancia un evento "submit" e non può essere intercettata.
+     // l'azione non lancia un evento "submit" e non puï¿½ essere intercettata.
      // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
      selects.attr('onchange', null).change(function() { $(this.form).submit(); });
      
-     // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
+     // cosï¿½ ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
      $("form").submit(function() {
          $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
          return true; // ensure form still submits

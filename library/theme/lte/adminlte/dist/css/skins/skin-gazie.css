@@ -185,9 +185,9 @@ select {
 	height: 28px;
 }
 
-input {
+/*input {
 	height: 28px;
-}
+}*/
 
 div.panel.panel-info div.container-fluid.bg-info ul.nav.nav-tabs li a {
     position: relative;
@@ -199,9 +199,9 @@ div.panel.panel-info div.container-fluid.bg-info ul.nav.nav-tabs li a {
 	color: #666;
 }
 
-input.btn-default {
+/*input.btn-default {
 	height: 28px;
-}
+}*/
 
 div.panel.panel-default div.container-fluid div.form-row div.form-group.col-md-6.col-lg-3.nopadding div.bg-success.text-center {
 	border: 1px;
