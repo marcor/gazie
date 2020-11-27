@@ -173,7 +173,46 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
     background-color: #ddd;
 }
 
-.btn-edit
-{
 
+/*
+    tabelle di selezione pagina
+*/
+.nav-pills > li 
+{
+    border-top: 1px solid #222d32;
+    border-left: 1px solid #222d32;
+    border-right: 1px solid #222d32;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover
+{
+    background-color: #99d197;
+    color: #000;
+    border-top: 3px solid #99d197;
+}
+.nav-pills 
+{
+    margin-left: 10px;
+}
+div .panel.panel-default 
+{
+    padding-top: 30px;
+    padding-bottom: 50px;
+}
+.form-group
+{
+    margin-bottom: 0px;
+}
+#home > div
+{
+    margin-bottom: 4px;
+}
+#commer > div
+{
+    margin-bottom: 4px;
+}
+.FacetFormHeaderFont.Titolo
+{
+    text-transform: uppercase;
 }
