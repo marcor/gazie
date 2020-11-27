@@ -330,6 +330,7 @@ if (!empty($msg)) {
   <ul class="nav nav-pills">
     <li class="active"><a data-toggle="pill" href="#home">Anagrafica</a></li>
     <li><a data-toggle="pill" href="#commer">Impostazioni</a></li>  
+    <li style="float: right;"><input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></li>
   </ul>
   </div>
 
@@ -796,7 +797,7 @@ $gForm->variousSelect('status', $script_transl['status_value'], $form['status'],
 </div>
 </div>
 <div class="text-center">
-    <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>">
+    
 </div>
 </div>
 </form>

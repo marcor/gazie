@@ -194,6 +194,7 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 .nav-pills 
 {
     margin-left: 10px;
+    margin-right: 10px;
 }
 div .panel.panel-default 
 {
@@ -211,4 +212,8 @@ div .panel.panel-default
 #commer > div
 {
     margin-bottom: 4px;
+}
+ul.nav.nav-pills li input.btn.btn-warning
+{
+    height: 43px;
 }
