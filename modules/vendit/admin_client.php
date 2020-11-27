@@ -381,7 +381,7 @@ $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper'])
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="capspe" class="col-sm-4 control-label"><?php echo $script_transl['capspe']; ?> *</label>
-                    <input class="col-sm-4" type="text" id="search_location-capspe" value="<?php echo $form['capspe']; ?>" name="capspe" maxlength="2"/>
+                    <input class="col-sm-4" type="text" id="search_location-capspe" value="<?php echo $form['capspe']; ?>" name="capspe" maxlength="10"/>
                 </div>
             </div>
         </div><!-- chiude row  -->
