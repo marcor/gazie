@@ -218,7 +218,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				if (intval($form['q_lot_comp'][$nc])>0) {					
 					$tot=0;
 					for ($l=0; $l<$form['q_lot_comp'][$nc]; ++$l) {
-						if ($lm -> getLotQty($form['id_lot_comp'][$nc][$l]) < $form['lot_quanti'][$nc][$l]){
+						if (number_format ($lm -> getLotQty($form['id_lot_comp'][$nc][$l]),4) < number_format($form['lot_quanti'][$nc][$l],4)){
 							$msg.= "21+";
 						}
 						$tot=$tot + $form['lot_quanti'][$nc][$l];
