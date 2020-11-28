@@ -114,8 +114,8 @@ $ts->output_navbar();
         </td>
 		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD" colspan="7">
-			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
-			<a class="btn btn-xs btn-default" href="?">Reset</a>
+			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
+			<a class="btn btn-sm btn-default" href="?">Reset</a>
 			<?php  $ts->output_order_form(); ?>
 		</td>
 	</tr>

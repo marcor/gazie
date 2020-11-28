@@ -468,14 +468,17 @@ if ($modal_ok_insert === true) {
         echo '<div class="text-center"><h3>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</h3></div>';
     }
     ?>
-        <div class="panel panel-default gaz-table-form">
-            <div class="container-fluid">
             <ul class="nav nav-pills">
                 <li class="active"><a data-toggle="pill" href="#home">Dati principali</a></li>
                 <li><a data-toggle="pill" href="#magazz">Magazzino</a></li>
                 <li><a data-toggle="pill" href="#contab">Contabilità</a></li>
                 <li><a data-toggle="pill" href="#chifis">Chimico-fisiche</a></li>
-            </ul>            
+                <li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
+            </ul>  
+
+        <div class="panel panel-default gaz-table-form">
+            <div class="container-fluid">
+          
             <div class="tab-content">
               <div id="home" class="tab-pane fade in active">
                  <div class="row">
