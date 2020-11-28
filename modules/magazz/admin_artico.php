@@ -476,7 +476,7 @@ if ($modal_ok_insert === true) {
                 <li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
             </ul>  
 
-        <div class="panel panel-default gaz-table-form">
+        <div class="panel panel-default gaz-table-form div-bordered">
             <div class="container-fluid">
           
             <div class="tab-content">

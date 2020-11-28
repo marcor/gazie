@@ -53,3 +53,47 @@ div.col-md-12 div.form-group div.col-sm-8 {
 {
     text-align: center;
 }
+
+/*
+    tabelle di selezione pagina
+    */
+
+    .nav-pills 
+    {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    div .panel.panel-default 
+    {
+        padding-top: 30px;
+        padding-bottom: 50px;
+    }
+    .form-group
+    {
+        margin-bottom: 0px;
+    }
+    #home > div
+    {
+        margin-bottom: 4px;
+    }
+    #commer > div
+    {
+        margin-bottom: 4px;
+    }
+    #magazz > div
+    {
+        margin-bottom: 4px;
+    }
+    #contab > div
+    {
+        margin-bottom: 4px;
+    }
+    #chifis > div
+    {
+        margin-bottom: 4px;
+    }
+   
+    ul.nav.nav-pills li input.btn.btn-warning
+    {
+        height: 43px;
+    }
