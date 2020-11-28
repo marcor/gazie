@@ -76,7 +76,7 @@ $strScript = array("admin_orderman.php" =>
 		"Il recipiente di stoccaggio selezionato non ha sufficiente olio"
 		),
 	"orderman_report.php" =>
-		array('title' => 'Lista delle produzioni',
+		array('title' => 'Gestione delle produzioni',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!')
 			),
