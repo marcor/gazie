@@ -3315,7 +3315,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     echo "		</div>	</td>
 				</tr>";
 } else {
-    echo '	<tr><td><input type="hidden" value="' . $form['imball'] . '" name="imball" />
+    echo '	<tr><td class="FacetFieldCaptionTD"><input type="hidden" value="' . $form['imball'] . '" name="imball" />
 			<input type="hidden" value="' . $form['spediz'] . '" name="spediz" />
 			<input type="hidden" value="' . $form['vettor'] . '" name="vettor" />
 			<input type="hidden" value="' . $form['portos'] . '" name="portos" />

@@ -193,6 +193,7 @@ $recordnav->output();
         <td class="FacetFieldCaptionTD" colspan="1">
             <input type="submit" class="btn btn-default btn-sm" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value = 1;">
         </td>
+        <td class="FacetFieldCaptionTD"></td>
     </tr>
     <tr>
 <?php
@@ -361,14 +362,14 @@ $linkHeaders->output();
                 echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
             }
             // Colonna invia a ECR
-            echo "<td align=\"center\"><a class=\"btn btn-xs btn-primary btn-ecr\" href=\"resend_to_ecr.php?id_tes=" . $row['id_tes'] . "\" >" . $script_transl['send'] . "</a>";
-            echo " <a href=\"stampa_docven.php?id_tes=".$row["id_tes"]."&template=Scontrino\" title=\"Stampa non fiscale\" class=\"btn btn-xs btn-default\">
-				<i class=\"glyphicon glyphicon-print\"> non fiscale</i>
-				</a>";
+            echo "<td align=\"center\">";
+            echo "<a class=\"btn btn-xs btn-primary btn-ecr\" href=\"resend_to_ecr.php?id_tes=" . $row['id_tes'] . "\" >" . $script_transl['send'] . "</a>";
+            echo "<a href=\"stampa_docven.php?id_tes=".$row["id_tes"]."&template=Scontrino\" title=\"Stampa non fiscale\" class=\"btn btn-xs btn-default\">
+				<i class=\"glyphicon glyphicon-print\"></i>  non fiscale</a>";
 			echo "</tr>\n";
         }
         ?>
-    <th colspan="9" class="FacetFieldCaptionTD"></th>
+    <th colspan="10" class="FacetFieldCaptionTD"></th>
 </form>
 </table>
 </div>

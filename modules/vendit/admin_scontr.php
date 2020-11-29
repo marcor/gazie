@@ -978,7 +978,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             </b> 
         </p>
     </div>
-    <div class="panel panel-default">
+    <div class="panel panel-default gaz-table-form div-bordered">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
@@ -1290,14 +1290,13 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
     }
     ?>
-    <div class="panel panel-info">
-        <div class="container-fluid">
-            <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="pill" href="#insrow1"> <?php echo $script_transl['conf_row']; ?> </a></li>
-                <li><a data-toggle="pill" href="#insrow2"><i class="glyphicon glyphicon-eye-open"></i> <?php echo $script_transl['other_row']; ?> </a></li>
-                <li><a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i><?php echo $script_transl['add_article']; ?></a></li>
-            </ul>
-        </div><!-- chiude container  -->
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="pill" href="#insrow1"> <?php echo $script_transl['conf_row']; ?> </a></li>
+        <li><a data-toggle="pill" href="#insrow2"><i class="glyphicon glyphicon-eye-open"></i> <?php echo $script_transl['other_row']; ?> </a></li>
+        <li><a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i><?php echo $script_transl['add_article']; ?></a></li>
+    </ul>
+
+    <div class="panel-info panel-corpo div-bordered bg-info">       
         <div class="tab-content form-horizontal">
             <div id="insrow1" class="tab-pane fade in active bg-info">
                 <div class="row">
@@ -1404,11 +1403,12 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 </div>
             </div><!-- chiude tab-pane  -->
         </div><!-- chiude tab-content  -->
+
     </div><!-- chiude panel  -->
     <?php
     if ($next_row > 0) {
         ?>
-        <div class="panel panel-success">
+        <div class="panel panel-success div-bordered">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -1498,7 +1498,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="myModalLabel"><?php echo $script_transl['add_article']; ?></h4>
             </div>
-            <div class="modal-body edit-content small"></div>
+            <div class="modal-body edit-content"></div> <!-- rimuovo small dalle classi della finestra modale -->
             <!--<div class="modal-footer"></div>-->
         </div>
     </div>
