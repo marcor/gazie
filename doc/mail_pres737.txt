@@ -3,7 +3,7 @@ Otium cum dignitate.
 
 Presentazione:
 
-A sole 10 commits dalla precedente sono qui a rilasciare una nuova versione che apporta le seguenti migliorie:  
+A soli 10 commits dalla precedente sono qui a rilasciare una nuova versione che apporta le seguenti migliorie:  
 - Corretto errore mancata visualizzazione lista movimenti magazzino dopo inventario. (A.Germani A.de Vincentiis) 
 - Produzioni: creata una select specifica per i silos/contenitori olio. Adesso nella selezione viene visualizzato il lotto contenuto e la relativa quantità. (A.Germani)
 - Lo stato delle produzioni viene chiuso quando l'ordine è completo prodotto. (A.de Vincentiis)
