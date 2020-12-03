@@ -78,12 +78,25 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 					$groups=gaz_dbi_dyn_query("*", $gTables['tesdoc'], "protoc = '".$form['protoc']."' AND datfat = '".$form['datfat']."' AND seziva = '".$form['seziva']."' AND clfoco = '".$form['clfoco']."'");
 					
 					while ($form = gaz_dbi_fetch_array($groups)){
+                      if ($form['status']=='DdtAnomalo'){
+						gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
+						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$i."'","id_tes desc");
+						while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+							gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
+							if (intval($a_row['id_mag']) > 0){  //se c'� stato un movimento di magazzino lo azzero
+								$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $a_row['id_mag']);
+								// cancello pure eventuale movimento sian 
+								gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $a_row['id_mag']);
+							}				
+						}
+                      } else {
 						$form['protoc']="";$form['numfat']="";$form['datfat']="";$form['ddt_type']="";$form['tipdoc']=$tipdoc;
 						$form['fattura_elettronica_original_name']="";$form['fattura_elettronica_original_content']="";
 						tesdocUpdate(array('id_tes', $form['id_tes']), $form);						
-						gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
-						gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
-						gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $form['id_con']);
+                      }
+                      gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
+					  gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
+					  gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $form['id_con']);
 					}
 										 			
 			}
