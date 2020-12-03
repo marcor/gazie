@@ -72,8 +72,8 @@ class OrdineWeb extends Template
             }
                 switch($rigo['tiprig']) {
                 case "0":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L');
+                    $this->Cell(25, 6, $rigo['codart'],1,0,'L',0,'',1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
@@ -86,20 +86,20 @@ class OrdineWeb extends Template
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "1":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L');
+                    $this->Cell(25, 6, $rigo['codart'],1,0,'L',0,'',1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(49, 6, '',1);
                     $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "2":
                     $this->Cell(25,6,'',1);
-                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L');
+                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L',0,'',1);
                     $this->Cell(81,6,'','R',1);
                     break;
                 case "3":
                     $this->Cell(25,6,'',1,0,'L');
-                    $this->Cell(80,6,$rigo['descri'],'B',0,'L');
+                    $this->Cell(80,6,$rigo['descri'],'B',0,'L',0,'',1);
                     $this->Cell(49,6,'','B',0,'L');
                     $this->Cell(20,6,gaz_format_number($rigo['prelis']),1,0,'R');
                     $this->Cell(12,6,'',1,1,'R');
