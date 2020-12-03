@@ -286,7 +286,7 @@ while ($val = gaz_dbi_fetch_array($res)) {
             echo "<td>" . $a_row["numdoc"] . '<span class="text-warning"><b>&nbsp;'.$a_row["status"] ."</b></span> &nbsp;</td>";
             echo "<td>" . $a_row["datemi"] . " &nbsp;</td>";
             echo "<td>" . $cliente["ragso1"] . "&nbsp;</td>";
-			if ($a_row['numfat']>0){
+			if (strlen($a_row['numfat'])>=1){
 				echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $a_row["numfat"] . "\" href=\"stampa_docacq.php?id_tes=" . $a_row["id_tes"] ."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. " . $a_row["numfat"] . "</a></td>";
 			} else {
             echo "<td>" . $a_row["status"] . " &nbsp;</td>";
