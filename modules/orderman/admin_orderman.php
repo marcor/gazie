@@ -1348,7 +1348,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				<div class="row">
 					<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
 					<?php
-					//$campsilos->selectSilos('recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '');
+					$campsilos->selectSilos('recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '');
 					?>
 				</div>
 				<?php
@@ -1356,7 +1356,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 					<div class="row">
 					<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio destinazione"; ?></label>
 					<?php
-					//$campsilos->selectSilos('recip_stocc_destin' ,'cod_silos', $form['recip_stocc_destin'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '');
+					$campsilos->selectSilos('recip_stocc_destin' ,'cod_silos', $form['recip_stocc_destin'], 'cod_silos', 1,'capacita','TRUE','col-sm-6' , null, '');
 					?>
 				</div>
 				<?php
