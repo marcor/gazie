@@ -622,7 +622,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
             $acc_DataDDT='';
 			foreach ($ddt as $vd) { // attraverso DatiDDT
 				$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
-                $numddt=$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue;
+                $numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
 				$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
 				foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
                     $nl = $nl_NumeroLinea[$vdd->nodeValue];
@@ -910,7 +910,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
 			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
 			$form['numfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
-			$form['numdoc']=$form['numfat'];
+			$form['numdoc']=preg_replace ('/\D/', '', $form['numfat'] );
 			$form['datfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 			$form['datemi']=$form['datfat'];
 			$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
@@ -1060,7 +1060,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				foreach ($ddt as $vd) { // Ciclo nuovamente i DDt della FAE
 					
 					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
-					$numddt=$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue;
+					$numddt=preg_replace ('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
 					$exist=existDdT($numddt,$dataddt,$form['clfoco']);// controllo se esiste il tesdoc
 					if ($exist){ // se esiste, modifico il tesdoc per trasformarlo in ddt connesso a fae
 						$updt=array();
