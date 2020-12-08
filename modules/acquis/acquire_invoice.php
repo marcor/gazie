@@ -502,7 +502,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
 			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue;
-
+			
+			// Antonio Germani prendo il tipo di cessione prestazione che mi servirà per le eccezioni delle anomalie
+			$form['rows'][$nl]['tipocessprest'] = $item->getElementsByTagName('TipoCessionePrestazione')->item(0)->nodeValue;
+			
 			// inizio applicazione sconto su rigo
 			$form['rows'][$nl]['sconto'] = 0;
 			$acc_sconti=array();
@@ -620,6 +623,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$ddt=$doc->getElementsByTagName('DatiDDT');
             $ctrl_NumeroDDT='';
             $acc_DataDDT='';
+			
 			foreach ($ddt as $vd) { // attraverso DatiDDT
 				$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
                 $numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
@@ -644,12 +648,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['rows'][$nl]['NumeroDDT']=$numddt;
 					$form['rows'][$nl]['DataDDT']=$dataddt;
                     // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
-                    unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]);
+                    unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]); 
                     $ctrl_NumeroDDT=$numddt;
                 }
                 $ctrl_NumeroDDT=$numddt;
                 $ctrl_DataDDT=$dataddt;
             }
+			
             foreach($nl_NumeroLinea as $k=>$v){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi! 
                 // in $v ho l'indice del rigo non assegnato questa è una anomalia e la segnalo
                 $anomalia="Anomalia";
@@ -658,6 +663,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				$form['rows'][$v]['NumeroDDT']=$numddt;
 				$form['rows'][$v]['DataDDT']=$dataddt;
+				if ($form['rows'][$v]['tipocessprest']=="AC"){ // Antonio Germani - le spese fanno eccezione e quindi tolgo l'anomalia
+					$anomalia="";
+				}
 				if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
 					$form['rows'][$v]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
 				} else {
