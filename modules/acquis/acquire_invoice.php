@@ -500,11 +500,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$nl]['quanti'] = '';
 				$form['rows'][$nl]['tiprig'] = 1; // rigo forfait
 			}
-			$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
+			$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName('UnitaMisura')->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
 			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue;
 			
 			// Antonio Germani prendo il tipo di cessione prestazione che mi servirà per le eccezioni delle anomalie
-			$form['rows'][$nl]['tipocessprest'] = $item->getElementsByTagName('TipoCessionePrestazione')->item(0)->nodeValue;
+			$form['rows'][$nl]['tipocessprest'] = $item->getElementsByTagName('TipoCessionePrestazione')->length >= 1 ? $item->getElementsByTagName('TipoCessionePrestazione')->item(0)->nodeValue : '';
 			
 			// inizio applicazione sconto su rigo
 			$form['rows'][$nl]['sconto'] = 0;
