@@ -73,7 +73,9 @@ $strScript = array("admin_orderman.php" =>
 		"Manca il recipiente di stoccaggio",
 		"Per confezionare si deve avere almeno il componente Olio sfuso",
 		"La data di registrazione è prcedente all'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.",
-		"Il recipiente di stoccaggio selezionato non ha sufficiente olio"
+		"Il recipiente di stoccaggio selezionato non ha sufficiente olio",
+		"La movimentazione interna di olio si può fare solo per singolo ID lotto. <br>La quantità produzione richiesta è superiore a quella disponibile, pertanto è stata diminuita.<br>
+		Per la parte mancante si deve fare un'ulteriore operazione."
 		),
 	"orderman_report.php" =>
 		array('title' => 'Gestione delle produzioni',

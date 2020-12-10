@@ -26,6 +26,7 @@
 // >> Visualizza recipienti di stoccaggio <<
 
 require("../../library/include/datlib.inc.php");
+require ("../../modules/vendit/lib.function.php");
 $gSil = new silos();
 $admin_aziend=checkAdmin();
 $titolo = 'Recipienti di stoccaggio e silos';

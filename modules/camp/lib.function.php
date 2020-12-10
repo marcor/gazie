@@ -108,19 +108,28 @@ class silos {
 		return $content ;
 	}
 	
-	function getLotRecip($codsil){// funzione per trovare l'ID dell'ultimo lotto inserito nel recipiente di stoccaggio
+	function getLotRecip($codsil,$codart=""){// funzione per trovare l'ID dell'ultimo lotto inserito nel recipiente di stoccaggio
 		$id_lotma=false;
 		global $gTables,$admin_aziend;
-		$what=$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".id_mov ";
+		$sil = new lotmag();
+		$what=$gTables['movmag'].".id_lotmag, ".$gTables['movmag'].".id_mov, ".$gTables['movmag'].".artico ";
 		$table=$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov";
 		$where="recip_stocc = '".$codsil."'";
+		if (strlen($codart)>0){
+			$where = $where." AND artico = '".$codart."'";
+		}
 		$orderby="id_mov DESC";
 		$groupby= "";
 		$passo=2000000;
 		$limit=0;
 		$lastmovmag=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
+		
 		while ($r = gaz_dbi_fetch_array($lastmovmag)) {
-			$id_lotma = $r['id_lotmag'];break;
+			$id_lotma = $r['id_lotmag'];
+			$cont= $sil -> dispLotID ($r['artico'], $r['id_lotmag']); 
+			if ($cont>0){
+				break;
+			}
 		}
 		$identifier=gaz_dbi_get_row($gTables['lotmag'], "id", $id_lotma)['identifier'];
 		return array($id_lotma,$identifier) ;
