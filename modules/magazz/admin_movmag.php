@@ -24,34 +24,13 @@
  */
 require("../../library/include/datlib.inc.php");
 require ("../../modules/vendit/lib.function.php");
-// controllo contenitori e silos SIAN
-function getCont($codsil){
-	global $gTables,$admin_aziend;
-	$content=0;
-	$orderby=2;
-	$limit=0;
-	$passo=2000000;
-	$where="recip_stocc = '".$codsil."'";
-	$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".
-			$gTables['camp_mov_sian'].".*, ".$gTables['camp_artico'].".confezione ";
-	$groupby= "";
-	$table=$gTables['camp_mov_sian']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag
-										LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['movmag'].".artico
-	";
-	$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
-	while ($r = gaz_dbi_fetch_array($ressilos)) {
-		if ($r['confezione']==0){
-			$content=$content+($r['quanti']*$r['operat']);
-		} 
-	}
-	$content=number_format ($content,3);
-	
-	return $content ;
-}
+require ("../../modules/camp/lib.function.php");
+
 $admin_aziend = checkAdmin();
 $msg = "";
 $lm = new lotmag;
 $gForm = new magazzForm;
+$sil= new silos();
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
@@ -406,7 +385,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$msg .="28+";
 		}
 		if ($form['SIAN']>0 AND $form['operat']==-1 AND strlen($form['recip_stocc'])>0){
-			$content=getCont($form['recip_stocc']);
+			$content = $sil -> getCont($form['recip_stocc'],$form['artico']);
 			if ($content < $form['quanti']){ // se non c'è suffiente olio nel silos selezionato
 			$msg .="32+";
 			}
@@ -939,9 +918,9 @@ if ($form['SIAN']>0 AND $form['operat']<>0){
 					</div>
 					<?php if ($camp_artico['confezione']==0){;?>
 						<div class="row">
-							<label for="camp_recip_stocc" class="col-sm-6"><?php echo "Recipiente stoccaggio"; ?></label>
+							<label for="camp_recip_stocc" class="col-sm-4"><?php echo "Recipiente stoccaggio"; ?></label>
 							<?php
-							$gForm->selectFromDB('camp_recip_stocc', 'recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','TRUE','col-sm-6' , null, '');
+							$sil -> selectSilos('recip_stocc' ,'cod_silos', $form['recip_stocc'], 'cod_silos', 1, ' - kg ','cod_silos','col-sm-8', null,'' , null, '');
 							?>
 						</div>
 					<?php } else {
