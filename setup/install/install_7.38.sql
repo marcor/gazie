@@ -1444,7 +1444,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001effett` (
   `adminid` varchar(20) NOT NULL DEFAULT '',
   `last_modified` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id_tes`),
-  KEY `id_doc` (`id_doc`)
+  KEY `id_doc` (`id_doc`),
+  KEY `progre` (`progre`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -2433,7 +2434,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001tesdoc` (
   KEY `idx_seziva` (`seziva`) USING BTREE,
   KEY `idx_protoc` (`protoc`) USING BTREE,
   KEY `datreg` (`datreg`),
-  KEY `clfoco` (`clfoco`)
+  KEY `clfoco` (`clfoco`),
+  KEY `datemi` (`datemi`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Testate documenti fiscalmente validi. Fatture, Note credito, , Documenti di Trasporto, ecc';
 
 -- --------------------------------------------------------
@@ -3099,7 +3101,7 @@ CREATE TABLE IF NOT EXISTS `gaz_config` (
 
 INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `show`, `last_modified`) VALUES
 (1, 'Giorni di validita\' della password', 'giornipass', '90', '1', 1, '2016-01-26 01:09:29'),
-(2, 'Versione archivi', 'archive', '132', '2', 0, '2020-11-23 16:06:16'),
+(2, 'Versione archivi', 'archive', '133', '2', 0, '2020-12-11 20:51:55'),
 (3, 'Ultimo script PHP di aggiornamento eseguito', 'last_update_exec', '412', '3', 1, '2016-01-26 01:09:29'),
 (4, 'La lunghezza minima della password', 'psw_min_length', '8', '4', 1, '2016-01-26 01:09:29'),
 (5, 'Check Update', 'update_url', '0', '5', 0, '2016-01-26 01:09:29'),
@@ -3635,7 +3637,6 @@ INSERT INTO `gaz_menu_script` (`id`, `id_menu`, `link`, `icon`, `class`, `transl
 (57, 1, 'accounting_documents.php?type=VRI', '', '', 24, '', 5),
 (58, 1, 'report_received.php', '', '', 25, '', 2),
 (59, 11, 'admin_docacq.php?tipdoc=ADT&Insert', '', '', 10, '', 2),
-(60, 11, 'report_acqddt.php', '', '', 9, '', 1),
 (61, 1, 'close_ecr.php', '', '', 26, '', 4),
 (62, 2, 'admin_docven.php?Insert&tipdoc=FAP', '', '', 27, '', 21),
 (63, 37, 'report_aziend.php', '', '', 10, '', 3),
