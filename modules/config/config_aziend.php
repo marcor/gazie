@@ -71,15 +71,17 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 <div align="center" class="FacetFormHeaderFont">
     <?php echo $script_transl['title']; ?><br>
 </div>
-<div class="panel panel-default gaz-table-form div-bordered">
-  <div class="container-fluid">
-    <ul class="nav nav-pills">
+
+<ul class="nav nav-pills">
         <li class="active"><a data-toggle="pill" href="#generale">Configurazione</a></li>
         <li class=""><a data-toggle="pill" href="#email">Email</a></li>
         <?php if ($admin_aziend["company_id"] >= 2) { ?>
-        <li><a data-toggle="pill" href="#elimina">Elimina azienda</a></li>
+        <li style="float: right;"><a data-toggle="pill" href="#elimina">Elimina azienda</a></li>
         <?php } ?>
-    </ul>
+        <li style="float: right;"><button type="submit" class="btn btn-warning">Salva</button></li>
+</ul>
+<div class="panel panel-default gaz-table-form div-bordered">
+  <div class="container-fluid">
     <div class="tab-content">
         <div id="generale" class="tab-pane fade in active">
         <form method="post" id="sbmt-form"> 
