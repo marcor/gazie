@@ -952,7 +952,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			$ctrl_ddt='';
             foreach ($form['rows'] as $i => $v) { // inserisco i righi
-				$form['rows'][$i]['status']="INSERT";
+             //print_r($v); print '<br>';
+             $form['rows'][$i]['status']="INSERT";
 				$post_nl=$i-1;
 				
 				if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
@@ -965,7 +966,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
 				if (empty(trim($v['codice_fornitore']))) { // non ho il codice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);						
-				} else { // ho il codice articolo del fornitore 
+				} else { // ho il codice articolo del fornitore sul tracciato ma potrei averlo cambiato
 					$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
 				}				
 								
@@ -1003,9 +1004,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
 				$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
-				if ($exist_new_codart) { // il codice esiste lo uso  
-					$form['rows'][$i]['codart']=$exist_new_codart['codice'];
-					$form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
+				if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form 
+                    if( $exist_new_codart['codice'] != $form['rows'][$i]['codart'] ){ // ho scelto un codice diverso 
+                        $other_artico=gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
+                        $form['rows'][$i]['good_or_service']=$other_artico['good_or_service'];
+                        //aggiorno l'articolo con questo codice fornitore 
+                        gaz_dbi_put_row($gTables['artico'], 'codice', $other_artico['codice'], 'codice_fornitore', $v['codice_fornitore']);
+                    } else {
+                        $form['rows'][$i]['codart']=$exist_new_codart['codice'];
+                        $form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
+                    }
 				} else { // il codice nuovo ricavato non esiste creo l'articolo basandomi sui dati in fattura
 					$v['catmer'] = 1; // di default utilizzo la prima categoria merceologica, sarebbe da farla selezionare all'operatore...
 					$form['rows'][$i]['good_or_service']=0;
