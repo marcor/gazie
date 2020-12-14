@@ -1003,6 +1003,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
 				$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
 				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
+				$aliiva=$form['rows'][$i]['codvat'];
 				$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
 				if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form 
                     if( $exist_new_codart['codice'] != $form['rows'][$i]['codart'] ){ // ho scelto un codice diverso 
@@ -1019,17 +1020,17 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['rows'][$i]['good_or_service']=0;
 					switch ($v['codart']) {
 						case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
-						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
+						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
 						break;
 						case 'Insert_W-lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
-						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
+						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
 						break;
 						case 'Insert_W-matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
-						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis']);
+						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
 						gaz_dbi_table_insert('artico', $artico);
 						$form['rows'][$i]['codart'] = $new_codart;
 						break;
