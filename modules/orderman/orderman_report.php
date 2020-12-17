@@ -29,32 +29,36 @@ $script_transl = HeadMain();
 
 $stato_lavorazione = array(0 => "aperto", 1 => "in attesa", 2 => "in lavorazione", 3 => "materiale ordinato", 4 => "incontrate difficoltà", 5 => "in attesa di spedizione", 6 => "spedito", 7 => "consegnato", 8 => "non chiuso", 9 => "chiuso");
 
-if (isset($_GET['auxil'])) {
-   $auxil = $_GET['auxil'];
-}
-if (isset($_GET['all'])) {
-   $auxil = "&all=yes";
-   $where = "description like '%'";
-   $passo = 100000;
-} else {
-   if (isset($_GET['auxil'])) {
-      $where = "description like '".addslashes($_GET['auxil'])."%'";
-   }
-}
+// campi ammissibili per la ricerca
+$search_fields = [
+    'asset' => "id = %d",
+    'descri' => "description LIKE '%%%s%%'",
+    'camp' => "campo_impianto = %d",
+];
 
-if (!isset($_GET['auxil'])) {
-   $auxil = "";
-   $where = "description like '".addslashes($auxil)."%'";
-}
+// creo l'array (header => campi) per l'ordinamento dei record
+$sortable_headers = array("Codice ID"      => "id",
+							"Descrizione" => "description",
+							"Tipo lavorazione"  => "order_type",
+							"Informazioni aggiuntive" => "add_info",
+							"Articolo" => "",
+							"Q.tà prodotta" => "",
+							"Lotto e scadenza" => "",
+							"Ordine" => "",
+							"Inizio produzione" => "",
+							"Durata" => "",
+							"Luogo di produzione" => "campo_impianto",
+							"Stato" => "stato_lavorazione",
+							"Distinta" => "",
+							"Cancella"    => ""
+							);
 
-?>
-<div align="center" class="FacetFormHeaderFont">Elenco produzioni</div>
-<?php
-if (!isset($_GET['field'])||empty($_GET['field']))
-   $orderby = "id DESC";
+$tablejoin = $gTables['orderman'];
 
-$recordnav = new recordnav($gTables['orderman'], $where, $limit, $passo);
-$recordnav -> output();
+$ts = new TableSorter(
+    $tablejoin, 
+    $passo, 
+    ['id'=>'desc']);
 ?>
 <script>
 $(function() {
@@ -136,6 +140,11 @@ $(function() {
     
 });
 </script>
+<div align="center" class="FacetFormHeaderFont">Elenco produzioni</div>
+<?php
+$ts->output_navbar();
+
+?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>produzione:</b></p>
@@ -163,45 +172,27 @@ $(function() {
 	</div>
 	<div class="table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed ">
-    	<thead>
-            <tr>
-                <td></td>
-                <td class="FacetFieldCaptionTD">Descrizione:
-                    <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" tabindex="1" class="FacetInput" />
-                </td>
-                <td>
-                    <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;" />
-                </td>
-                <td>
-                    <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;" />
-                </td>
-            </tr>
-            <tr>
+	<tr>
+	<tr>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="asset" placeholder="id" class="input-sm form-control" value="<?php echo (isset($asset))? $asset : ""; ?>" maxlength="15">
+		</td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="descri" placeholder="descrizione" class="input-sm form-control" value="<?php echo (isset($descri))? $descri : ""; ?>" maxlength="15">
+        </td>
+		<td class="FacetFieldCaptionTD" colspan="12">
+			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
+			<a class="btn btn-sm btn-default" href="?">Reset</a>
+			<?php  $ts->output_order_form(); ?>
+		</td>
+	</tr>
 <?php
-	$result = gaz_dbi_dyn_query ('*', $gTables['orderman'], $where, $orderby, $limit, $passo);
-	// creo l'array (header => campi) per l'ordinamento dei record
-	$headers_orderman = array("Codice ID"      => "id",
-							"Descrizione" => "description",
-							"Tipo lavorazione"  => "order_type",
-							"Informazioni aggiuntive" => "add_info",
-							"Articolo" => "",
-							"Q.tà prodotta" => "",
-							"Lotto e scadenza" => "",
-							"Ordine" => "",
-							"Inizio produzione" => "",
-							"Durata" => "",
-							"Luogo di produzione" => "campo_impianto",
-							"Stato" => "stato_lavorazione",
-							"Distinta" => "",
-							"Cancella"    => ""
-							);
-	$linkHeaders = new linkHeaders($headers_orderman);
-	$linkHeaders -> output();
-?>
-        	</tr>
-        </thead>
-        <tbody>
-<?php
+$gForm = new ordermanForm();
+$result = gaz_dbi_dyn_query ( '*',$tablejoin, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
+
+echo '<tr>';
+$ts->output_headers();
+echo '</tr>';
 while ($r = gaz_dbi_fetch_array($result)) {
         $stato_btn = 'btn-default';
         if ($r['stato_lavorazione']=='0'){
@@ -280,7 +271,6 @@ while ($r = gaz_dbi_fetch_array($result)) {
 <?php
 }
 ?>
-    		</tbody>
         </table></div>
 		</form>
 
