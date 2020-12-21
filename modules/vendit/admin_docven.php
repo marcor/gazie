@@ -2446,9 +2446,9 @@ foreach ($form['rows'] as $k => $v) {
 	'<input type="hidden" value="' . $v['cod_operazione'] . '" name="rows[' . $k . '][cod_operazione]" />';
 	'<input type="hidden" value="' . $v['recip_stocc'] . '" name="rows[' . $k . '][recip_stocc]" />';
 	'<input type="hidden" value="' . $v['recip_stocc_destin'] . '" name="rows[' . $k . '][recip_stocc_destin]" /></td></tr>';
+    echo '<tr>';
     switch ($v['tiprig']) {
         case "0":
-            echo '<tr>';
             if ($v['gooser']==1){ 
 				$btn_class = 'btn-info';
 				$btn_title = ' Servizio';
