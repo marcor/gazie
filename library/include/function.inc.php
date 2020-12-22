@@ -223,7 +223,7 @@ function gaz_format_number($number = 0) {
     if (!isset($currency)) {
         $currency = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.company_id = ' . $gTables['aziend'] . '.codice LEFT JOIN ' . $gTables['currencies'] . ' ON ' . $gTables['currencies'] . '.id = ' . $gTables['aziend'] . '.id_currency', "user_name", $_SESSION["user_name"]);
     }
-    return number_format(floatval($number), $currency['decimal_price'], $currency['decimal_symbol'], $currency['thousands_symbol']);
+    return number_format(floatval($number), $currency['decimal_place'], $currency['decimal_symbol'], $currency['thousands_symbol']);
 }
 
 function gaz_create_date($d, $m, $yyyy) { // crea una data nel formato dd-mm-yyyy
