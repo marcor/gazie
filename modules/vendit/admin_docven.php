@@ -2425,7 +2425,7 @@ foreach ($form['rows'] as $k => $v) {
         $castle[$v['codvat']]['impcast'] += $v_for_castle;
     }
     $descrizione = htmlentities($v['descri'], ENT_QUOTES);
-    echo "<tr><td><input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['codvat'] . "\" name=\"rows[$k][codvat]\">\n";
@@ -2445,7 +2445,7 @@ foreach ($form['rows'] as $k => $v) {
 	'<input type="hidden" value="' . $v['identifier'] . '" name="rows[' . $k . '][identifier]" />';
 	'<input type="hidden" value="' . $v['cod_operazione'] . '" name="rows[' . $k . '][cod_operazione]" />';
 	'<input type="hidden" value="' . $v['recip_stocc'] . '" name="rows[' . $k . '][recip_stocc]" />';
-	'<input type="hidden" value="' . $v['recip_stocc_destin'] . '" name="rows[' . $k . '][recip_stocc_destin]" /></td></tr>';
+	'<input type="hidden" value="' . $v['recip_stocc_destin'] . '" name="rows[' . $k . '][recip_stocc_destin]" />';
     echo '<tr>';
     switch ($v['tiprig']) {
         case "0":
