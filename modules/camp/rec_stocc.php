@@ -161,7 +161,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		<?php 
 		if ($content>0){
 			$lot=	$gSil -> getLotRecip($a_row['cod_silos']);						
-			echo "Kg.",gaz_format_number($content)," l.",gaz_format_number($content/0.915)," Lotto: ",$lot[1]; 
+			echo "Kg.",gaz_format_quantity($content,true)," l.",gaz_format_quantity($content/0.915,true)," Lotto: ",$lot[1]; 
 			if ($content > $a_row['capacita']){
 				echo " ERRORE!";
 			}
