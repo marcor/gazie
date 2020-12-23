@@ -289,13 +289,13 @@ function gaz_html_ae_checkiva($paese, $pariva) {
 }
 
 function gaz_format_quantity($number, $comma = false, $decimal = false) {
-    $number = sprintf("%.3f", preg_replace("/\,/", '.', $number)); //max 3 decimal
-    if (!$decimal) { // decimal is not defined (depreceted in recursive call)
+    $number = sprintf("%.5f", preg_replace("/\,/", '.', $number)); //max 5 decimal
+    if (!$decimal) { // decimal is not defined (deprecated in recursive call)
         global $gTables;
         $config = gaz_dbi_get_row($gTables['aziend'], 'codice', 1);
         $decimal = $config['decimal_quantity'];
     }
-    if ($decimal > 3) { //float
+    if ($decimal == 9) { //float
         if ($comma == true) {
             return preg_replace("/\./", ',', floatval($number));
         } else {
