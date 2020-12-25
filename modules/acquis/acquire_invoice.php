@@ -1016,6 +1016,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                         $form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
                     }
 				} else { // il codice nuovo ricavato non esiste creo l'articolo basandomi sui dati in fattura
+                    if ($exist_new_codart) { // il fornitore ha la pessima abitudine di usare lo stesso codice articolo per diversi articoli me lo invento con un hash a 8 caratteri della descrizione nella speranza che almeno questa sia cambiata...
+                        $new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri'].$form['datreg'].$form['protoc']);						
+                    }
 					$v['catmer'] = 1; // di default utilizzo la prima categoria merceologica, sarebbe da farla selezionare all'operatore...
 					$form['rows'][$i]['good_or_service']=0;
 					switch ($v['codart']) {
