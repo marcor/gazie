@@ -91,7 +91,9 @@ $transl['vendit'] = array('name' => " Vendite",
         52 => array("Impacchetta fatture elettroniche", "Impacchetta fatture elettroniche"),
         53 => array("Genera fatture differite da CMR", "Fatturazione CMR"),
         54 => array("Importa XML fattura di vendita", "Importa XML fattura di vendita"),
-        55 => array("Lista Clienti per zone", "Lista Clienti per zone")
+        55 => array("Lista Clienti per zone", "Lista Clienti per zone"),
+        56 => array("Lista dei Registratori Telematici", "Lista Registratori Telematici"),
+        57 => array("Nuovo Registratore Telematico", "Nuovo Registratore Telematico")
     )
 );
 ?>

@@ -1814,6 +1814,24 @@ $strScript = array("admin_client.php" =>
             'N.Doc.' => '', 'Data Doc.' => '', 'Dare' => '', 'Avere' => ''),
 	        'errors' => array(4=>'Non ci sono movimenti nei limiti selezionati'),
 
-    )
+    ),
+    "admin_ecr.php" =>
+    array('title' => 'Gestione Registratori Telematici',
+        'ins_this' => 'Nuovo Registratore Telematico',
+        'upd_this' => 'Modifica Registratore Telematico ',
+        'err' => array(
+            'descri' => 'Il Registratore Telematico è senza descrizione',
+        ),
+        'war' => array(
+            'ok_ins' => 'Registratore Telematico inserito con successo'
+		),
+		'id_cash' => "ID Registratore",
+        'descri' => "Descrizione",
+        'seziva' => "Sezione IVA",
+        'adminid' => "Ultimo utente utilizzatore",
+        'driver' => "File driver (in /library/cash_register/)",
+        'path_data' => "Percoso e/o altri dati",
+        'lotteria_scontrini' => "Stringa tipo rigo '5 = Lotteria Scontrini'" 
+        )   
 	);
 ?>

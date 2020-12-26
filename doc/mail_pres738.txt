@@ -13,7 +13,7 @@ Il solito elenco dei compiti svolti:
 - aggiunti indici mancanti su tabella gaz_NNNtesdoc al fine di migliorare la velocità di rendering del report delle fatture di vendita (A.de Vincentiis)
 - sul report dei DdT d'acquisto è stata eliminata la voce di menù che puntava ad una lista obsoleta ed è stata condizionata la visualizzazione del numero fattura alla lunghezza e non al valore dell'intero. (A.de Vincentiis)
 - in caso di importazione fattura di acquisto differita elettronica con "DdT anomali", ovvero file XML con righi non esplicitamente riferiti ad i DdT, se la stessa verrà eliminata  si cancellerà anche il DdT (unico e fittizio) creato. (A.Germani e A.de Vincentiis)
-- l'importazione di fatture di acquisto differite con all'interno righi di spese accessorie (es. spese incasso o trasporto) per loro natura non riferibili ad un rigo del DdT non segnalano più "DdT anomalo" ma le importa corretamente accodando le spese accessorie sull'ultimo DdT. (M.Bergamini, A.Germani, A.de Vincentiis)
+- l'importazione di fatture di acquisto differite con all'interno righi di spese accessorie (es. spese incasso o trasporto) per loro natura non riferibili ad un rigo del DdT non segnalano più "DdT anomalo" ma le importa correttamente accodando le spese accessorie sull'ultimo DdT. (M.Bergamini, A.Germani, A.de Vincentiis)
  
 Auguro Buone Feste a tutta la comunità.
 
