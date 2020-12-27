@@ -22,17 +22,14 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
 */
-/*    >>> LEGGIMI <<<
-------------------------------------------------------------------------------------------
-	** Antonio Germani - www.lacasettabio.it **
-	Questo codice serve per avviare l'interfaccia per la sincronizzazione di GAzie con un negozio online.
-	Per il funzionamento è necessario creare due file di interfaccia e inserirli nella root del negozio online.
-	I file interfaccia sono specifici per ciascun CMS e/o componente utilizzato dal negozio online.
-	
-	L'utente deve scegliere quali interfacce utilizzare (sulla base delle caratteristiche del suo negozio online) e scrivere i relativi nomi dei file nella sottostante "Impostazione".
-	-Caso download: L'interfaccia presente nella root del negozio online elabora i dati del database del negozio e crea un file xml. GAzie elabora il file xml scrivendone i dati sul database di GAzie.
-	-Caso Upload: GAzie crea un file xml che viene letto dall'interfaccia presente nella root del negozio online. Con i dati presenti nel file xml viene scritto il data base dell'e-commerce.
-------------------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------
+  INTERFACCIA sincronizzazione e-commerce <-> GAzie
+  ------------------------------------------------------------------------
+  @Author    Antonio Germani 340-5011912
+  @Website   http://www.programmisitiweb.lacasettabio.it
+  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
+  versione 3.0
+  ------------------------------------------------------------------------ 
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
@@ -46,8 +43,8 @@ if ($exists) {
     $c_e = 'company_id';
 }
 
-$file_download = "dowload_ordini_joomla.php";
-$file_upload = "upload_prodotti_joomla.php";
+$file_download = "dowload_ordini.php";
+$file_upload = "upload_prodotti.php";
 $file_downloader = "import_articoli.php";
 $file_uploader = "export_articoli.php";
 

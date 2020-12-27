@@ -1,11 +1,11 @@
 <?php
 /* ------------------------------------------------------------------------
-  INTERFACCIA Download articoli da online-shop a GAzie
+  Download articoli da online-shop a GAzie
   ------------------------------------------------------------------------
   @Author    Antonio Germani 340-5011912
-  @Website   http://www.lacasettabio.it
-  @Copyright Copyright (C) 2018 - 2019 Antonio Germani All Rights Reserved.
-  versione 1.0
+  @Website   http://www.programmisitiweb.lacasettabio.it
+  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
+  versione 3.0
   ------------------------------------------------------------------------ 
   --------------------------------------------------------------------------
   Questo programma e` free software;   e` lecito redistribuirlo  e/o
@@ -36,7 +36,7 @@ $ftp_user = $resuser['val'];
 $respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
 $ftp_pass= $respass['val'];
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
-$urlinterf = $path['val']."dwnlArticoli-gazie.php";//nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+$urlinterf = $path['val']."dwnlArticoli-gazie.php";//nome del file interfaccia presente nella root del sito e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 // il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;

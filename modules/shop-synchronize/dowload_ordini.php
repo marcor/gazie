@@ -1,11 +1,11 @@
 <?php
 /* ------------------------------------------------------------------------
-  INTERFACCIA Download ordini da Joomla a GAzie
+  INTERFACCIA Download ordini da e-commerce a GAzie via FTP
   ------------------------------------------------------------------------
   @Author    Antonio Germani
-  @Website   http://www.lacasettabio.it
-  @Copyright Copyright (C) 2018 - 2019 Antonio Germani All Rights Reserved.
-  versione 1.0
+  @Website   http://www.programmisitiweb.lacasettabio.it
+  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
+  versione 3.0
   ------------------------------------------------------------------------ */
 global $gTables,$admin_aziend;
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");

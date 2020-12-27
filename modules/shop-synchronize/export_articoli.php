@@ -1,11 +1,11 @@
 <?php
 /* ------------------------------------------------------------------------
-  INTERFACCIA esporta articoli da GAzie a e-commerce
+  Esporta articoli da GAzie a e-commerce
   ------------------------------------------------------------------------
   @Author    Antonio Germani
-  @Website   http://www.lacasettabio.it
-  @Copyright Copyright (C) 2018 - 2019 Antonio Germani All Rights Reserved.
-  versione 1.0
+  @Website   http://www.programmisitiweb.lacasettabio.it
+  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
+  versione 3.0
   ------------------------------------------------------------------------ 
   --------------------------------------------------------------------------
   Questo programma e` free software;   e` lecito redistribuirlo  e/o

@@ -1,11 +1,11 @@
 <?php
 /* ------------------------------------------------------------------------
-  INTERFACCIA Upload q.tà articoli da GAzie a Joomla 
+  Upload q.tà articoli da GAzie a e-commerce via FTP
   ------------------------------------------------------------------------
   @Author    Antonio Germani
-  @Website   http://www.lacasettabio.it
-  @Copyright Copyright (C) 2018 - 2019 Antonio Germani All Rights Reserved.
-  versione 1.0
+  @Website   http://www.programmisitiweb.lacasettabio.it
+  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
+  versione 3.0
   ------------------------------------------------------------------------ 
   --------------------------------------------------------------------------
   Questo programma e` free software;   e` lecito redistribuirlo  e/o
@@ -43,7 +43,7 @@ if ($exists) {
 }
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
-$urlinterf = $path['val']."articoli-gazie.php";// nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+$urlinterf = $path['val']."articoli-gazie.php";// nome del file interfaccia presente nella root del sito e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 // il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
 ob_flush();
 flush();

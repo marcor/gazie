@@ -21,6 +21,14 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
+   ------------------------------------------------------------------------
+  FUNZIONI di sincronizzazione via FTP e-commerce <-> GAzie
+  ------------------------------------------------------------------------
+  @Author    Antonio Germani 340-5011912
+  @Website   http://www.programmisitiweb.lacasettabio.it
+  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
+  versione 3.0
+  ------------------------------------------------------------------------   
  */
  
 /* 
@@ -59,7 +67,7 @@ class shopsynchronizegazSynchro {
 			$this->api_token=$res->api_token;
 			curl_close($curl);		
 		}*/
-		$this->api_token=TRUE; //Joomla non ha bisogno di TOKEN, quindi è TRUE	
+		$this->api_token=TRUE; //la sincronizzazione via FTP non ha bisogno di TOKEN, quindi è TRUE	
 				
 	}
 	function SetupStore() {
@@ -179,7 +187,7 @@ class shopsynchronizegazSynchro {
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];			
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
-			// "articoli-gazie.php" è il nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+			// "articoli-gazie.php" è il nome del file interfaccia presente nella root del sito e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
 			$gForm = new magazzForm();
 			$mv = $gForm->getStockValue(false, $d);
