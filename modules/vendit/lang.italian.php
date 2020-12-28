@@ -1826,6 +1826,7 @@ $strScript = array("admin_client.php" =>
             'ok_ins' => 'Registratore Telematico inserito con successo'
 		),
 		'id_cash' => "ID Registratore",
+        'serial_port' => "Porta seriale e/o socket",
         'descri' => "Descrizione",
         'seziva' => "Sezione IVA",
         'adminid' => "Ultimo utente utilizzatore",
