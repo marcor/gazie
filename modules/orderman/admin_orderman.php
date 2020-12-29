@@ -212,7 +212,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     }
     // Se viene inviata la richiesta di conferma totale ... ******   CONTROLLO ERRORI   ******
     $form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
-    if (isset($_POST['ins'])) {
+    if (isset($_POST['ins'])) { 
         $itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
         if ($form['codart'] <> "" && !isset($itemart)) { // controllo se codice articolo non esiste o se è nullo
             $msg.= "20+";
@@ -220,18 +220,21 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 		if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto, 
 		//controllo se le quantità inserite per ogni singolo lotto, di ogni componente, corrispondono alla richiesta della produzione e alla reale disponbilità 
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
+				if ($form['quanti_comp'][$nc] == "ERRORE"){
+					$msg.= "21+";//Non c'è sufficiente disponibilità di un ID lotto selezionato
+				}
 				if (intval($form['q_lot_comp'][$nc])>0) {					
 					$tot=0;
-					for ($l=0; $l<$form['q_lot_comp'][$nc]; ++$l) {
+					for ($l=0; $l<$form['q_lot_comp'][$nc]; ++$l) { 
 						if (number_format ($lm -> getLotQty($form['id_lot_comp'][$nc][$l]),4) < number_format($form['lot_quanti'][$nc][$l],4)){
-							$msg.= "21+";
+							$msg.= "21+";//Non c'è sufficiente disponibilità di un ID lotto selezionato
 						}
 						$tot=$tot + $form['lot_quanti'][$nc][$l];
 					}
 					If ($tot != $form['quanti_comp'][$nc]){
-						$msg.="25+";
+						$msg.="25+";//La quantità inserita di un lotto, di un componente, è errata
 					}
-					if (intval($form['SIAN']) > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] ){
+					if (intval($form['SIAN']) > 0 AND $form['SIAN_comp'][$nc] > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] ){
 						$msg.= "41+"; // il silos non ha sufficiente quantità olio
 					}
 				}
@@ -319,7 +322,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         if ($msg == "") { // nessun errore
             // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
             // i dati dell'articolo che non sono nel form li avrò nell' array $resartico
-            $form['quantip']=gaz_format_quantity($form['quantip']);// trasformo la quantità per salvarla nel database
+			$form['quantip']=gaz_format_quantity($form['quantip']);// trasformo la quantità per salvarla nel database
             
 			if ($toDo == "update") { // se è un update cancello eventuali precedenti file temporanei nella cartella tmp
                 foreach (glob("../../modules/orderman/tmp/*") as $fn) {
