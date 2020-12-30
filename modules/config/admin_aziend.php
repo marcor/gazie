@@ -334,6 +334,9 @@ if (count($msg['err']) > 0) { // ho un errore
         echo '<input type="hidden" value="' . $form['codice'] . '" name="codice" />';
     }
     ?>
+
+    <div class="panel panel-default gaz-table-form div-bordered">
+        <div class="container-fluid">
     <ul class="nav nav-pills">
             <li class="active"><a data-toggle="pill" href="#home">Dati principali</a></li>
             <li><a data-toggle="pill" href="#setup">Impostazioni</a></li>
@@ -342,9 +345,6 @@ if (count($msg['err']) > 0) { // ho un errore
 <!--            <li><a href="config_aziend.php" style="color:black; background-color:white" target="blank"><i class="glyphicon glyphicon-export"></i>Avanzata<i class="glyphicon glyphicon-lock"></i></a></li> -->        
             <li style="float: right;"><input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></li>
     </ul>
-
-    <div class="panel panel-default gaz-table-form div-bordered">
-        <div class="container-fluid">
                     
         <div class="tab-content">
           <div id="home" class="tab-pane fade in active">

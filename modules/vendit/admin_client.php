@@ -319,23 +319,15 @@ if (!empty($msg)) {
         echo "</tr>\n";
     }
 }
-/*if ($toDo == 'insert') {
-    echo "<div>\n";
-    echo "\t<td>" . $script_transl['codice'] . "* </td>\n";
-    echo "\t<td colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"6\" /></td>\n";
-    echo "</div>\n";
-}*/
 ?>
-  <div>
+
+<div class="panel panel-default gaz-table-form div-bordered">
+  <div class="container-fluid">
   <ul class="nav nav-pills">
     <li class="active"><a data-toggle="pill" href="#home">Anagrafica</a></li>
     <li><a data-toggle="pill" href="#commer">Impostazioni</a></li>  
     <li style="float: right;"><input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></li>
   </ul>
-  </div>
-
-<div class="panel panel-default gaz-table-form div-bordered">
-  <div class="container-fluid">
             
   <div class="tab-content">
     <div id="home" class="tab-pane fade in active">

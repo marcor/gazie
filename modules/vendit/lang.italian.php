@@ -1821,6 +1821,12 @@ $strScript = array("admin_client.php" =>
         'upd_this' => 'Modifica Registratore Telematico ',
         'err' => array(
             'descri' => 'Il Registratore Telematico è senza descrizione',
+            'repiva' => 'Un reparto non ha il codice IVA associato',
+            'reprep' => 'Un reparto non è stato valorizzato',
+            'repdes' => 'Un reparto è senza descrizione',
+            'tenpag' => 'Un tender non ha il pagamento associato',
+            'tenten' => 'Un tender non è stato valorizzato',
+            'tendes' => 'Un tender è senza descrizione',
         ),
         'war' => array(
             'ok_ins' => 'Registratore Telematico inserito con successo'

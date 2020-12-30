@@ -50,6 +50,7 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
   } else {
       $toDo = 'insert';
   }
+  print_r($_POST['utenti']);
   $form = gaz_dbi_parse_post('cash_register');
   $form['reparti'] = array();
   $nreparto = 0;
@@ -71,29 +72,72 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
   if (isset($_POST['tenders'])) {
     foreach ($_POST['tenders'] as $ntender => $val) {
       $form['tenders'][$ntender]['pagame_codice'] = intval($val['pagame_codice']);
-      $form['tenders'][$ntender]['tender'] = substr($val['extension'], 0, 8);
+      $form['tenders'][$ntender]['tender'] = substr($val['tender'], 0, 8);
       $form['tenders'][$ntender]['descrizione'] = substr($val['descrizione'], 0, 50);
       $ntender++;
     }
   }
   if (isset($_POST['instender'])) {
-      $form['tenders'][$nreparto]['pagame_codice'] = 0;
-      $form['tenders'][$nreparto]['tender'] = '';
-      $form['tenders'][$nreparto]['descrizione'] ='';
-      $nreparto++;
-  }  
+      $form['tenders'][$ntender]['pagame_codice'] = 0;
+      $form['tenders'][$ntender]['tender'] = '';
+      $form['tenders'][$ntender]['descrizione'] ='';
+      $ntender++;
+  } 
+  // utenti abilitati 
+  foreach ($_POST['utenti'] as $k => $v) {
+    $form['utenti'][$k]['nickname'] = $k;
+    $form['utenti'][$k]['nome'] = substr($v['nome'], 0, 30);
+    $form['utenti'][$k]['cognome'] = substr($v['cognome'], 0, 30);
+    if (isset($v['abilit']) && $v['abilit'] == 'uon'){
+        $form['utenti'][$k]['abilit'] = substr($v['abilit'], 0, 3);
+    } else {
+        $form['utenti'][$k]['abilit'] = '';
+    }
+  }
   if (isset($_POST['Submit'])) { // conferma tutto
     if ($toDo == 'update') {  // controlli in caso di modifica
     } else { // controlli inserimento
     }
     if (empty($form["descri"])) {
         $msg['err'][] = 'descri';
+        $homeactive='active';
     }
+    // controlli su reparti
+    foreach ($form['reparti'] as $v) {
+        if ($v['aliiva_codice'] < 1) {
+            $msg['err'][] = 'repiva';
+            $repartiactive='active';
+        }
+        if (strlen(trim($v['reparto']))< 1 ){
+            $msg['err'][] = 'reprep';
+            $repartiactive='active';
+        }
+        if (strlen(trim($v['descrizione']))< 3 ){
+            $msg['err'][] = 'repdes';
+            $repartiactive='active';
+        }
+    }
+    // controlli su tender
+    foreach ($form['tenders'] as $v) {
+        if ($v['pagame_codice'] < 1) {
+            $msg['err'][] = 'tenpag';
+            $tenderactive='active';
+        }
+        if (strlen(trim($v['tender']))< 1 ){
+            $msg['err'][] = 'tenten';
+            $tenderactive='active';
+        }
+        if (strlen(trim($v['descrizione']))< 3 ){
+            $msg['err'][] = 'tendes';
+            $tenderactive='active';
+        }
+    }
+
     if (count($msg['err']) == 0) { // nessun errore
         if ($toDo == 'update') {
         } else {
         }
-        header("Location: ../../modules/vendit/report_ecr.php");
+        //header("Location: ../../modules/vendit/report_ecr.php");
         exit;
     }
   }
@@ -122,6 +166,11 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
     $form = gaz_dbi_fields('cash_register');
     $form['reparti']=[];
     $form['tenders']=[];
+    // prendo tutti gli utenti dell'azienda 
+    $rsusr = gaz_dbi_dyn_query($gTables['admin_module'].".adminid AS nickname, ".$gTables['admin'].".user_firstname AS nome, ".$gTables['admin'].".user_lastname AS cognome", $gTables['admin_module'].' LEFT JOIN '.$gTables['admin']." ON ".$gTables['admin_module'].".adminid = ".$gTables['admin'].".user_name ", "moduleid = 2 AND ".$gTables['admin_module'].".company_id = " . $admin_aziend['company_id'], "adminid");
+    while ($usr = gaz_dbi_fetch_array($rsusr)) {
+        $form['utenti'][$usr['nickname']]=$usr;
+    }
 }
 
 require("../../library/include/header.php");
@@ -312,7 +361,7 @@ if (count($form['tenders']) > 0) {
     </td> 
     <td>
     <?php
-    $gForm->selectFromDB('pagame', 'tenders[' . $k . '][pagamento_codice]', 'codice',  $v['pagamento_codice'], 'codice', true, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
+    $gForm->selectFromDB('pagame', 'tenders[' . $k . '][pagame_codice]', 'codice',  $v['pagame_codice'], 'codice', true, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
     ?>
     </td> 
     <td>
@@ -338,13 +387,23 @@ if (count($form['tenders']) > 0) {
 <div class="h3">Abilitazione utenti</div>
 <?php
 foreach ($form['utenti'] as $k => $v) {
+    if ($v['abilit']=='uon'){
+     $uon='checked';   
+     $uoff='';   
+    } else {
+     $uon='';   
+     $uoff='checked';   
+    }
 ?>
-                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="path_data" class="col-xs-4 control-label"><?php echo ''; ?></label>
-                            <input class="col-xs-8" type="text" value="<?php echo ''; ?>" name="path_data" maxlength="1000"/>
-                        </div>
+<input type="hidden" name="<?php echo 'utenti[' . $v['nickname'] . '][nome]'; ?>" value="<?php echo $v['nome']; ?>"  >
+<input type="hidden" name="<?php echo 'utenti[' . $v['nickname'] . '][cognome]'; ?>" value="<?php echo $v['cognome']; ?>"  >
+                <div class="row">
+                    <div class="col-sm-4" >
+                            <label class="control-label"><?php echo $v['cognome'].' '.$v['nome'].' ('.$v['nickname'].')'; ?></label>
+                    </div>
+                    <div class="col-sm-8 radio" >
+                            <label class="radio-inline"><input type="radio" name="<?php echo 'utenti[' . $v['nickname'] . '][abilit]'; ?>" value="uon" <?php echo $uon; ?> >Abilitato</label>
+                            <label class="radio-inline"><input type="radio" name="<?php echo 'utenti[' . $v['nickname'] . '][abilit]'; ?>" value=""   <?php echo $uoff; ?>>Non Abilitato</label>
                     </div>
                 </div><!-- chiude row  -->
 <?php
