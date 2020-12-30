@@ -78,8 +78,8 @@ class shopsynchronizegazSynchro {
 		// in base alle API messe a disposizione dallo specifico store (Opencart,Prestashop,Magento,ecc) si passeranno i dati in maniera opportuna...
 	}
 	function UpsertProduct($d) {
-		// aggiorno l'articolo di magazzino (product)
-		@session_start();
+		if ($d['web_public'] == 1){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
+			@session_start();
 			global $gTables,$admin_aziend;			 
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
@@ -177,11 +177,15 @@ class shopsynchronizegazSynchro {
 				$rawres['link'] = '../shop-synchronize/synchronize.php';
 				$rawres['style'] = 'danger';
 			}
+		}
 	}
 	function SetProductQuantity($d) {
 		// aggiornamento quantità disponibile di un articolo
-			@session_start();
-			global $gTables,$admin_aziend;			 
+		
+		@session_start();
+		global $gTables,$admin_aziend;
+		$id = gaz_dbi_get_row($gTables['artico'],"codice",$d);
+		if ($id['web_public'] == 1){
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
@@ -192,8 +196,7 @@ class shopsynchronizegazSynchro {
 			$gForm = new magazzForm();
 			$mv = $gForm->getStockValue(false, $d);
 			$magval = array_pop($mv);
-			// trovo l'ID di riferimento e calcolo la disponibilità
-			$id = gaz_dbi_get_row($gTables['artico'],"codice",$d);
+			// creo array fields con ID di riferimento e  disponibilità			
 			$fields = array ('product_id' => intval($id),'quantity'=>intval($magval['q_g']));
 			$ordinati = $gForm->get_magazz_ordinati($d, "VOR");
 			$ordinati = $ordinati + $gForm->get_magazz_ordinati($d, "VOW");
@@ -264,6 +267,7 @@ class shopsynchronizegazSynchro {
 				$rawres['link'] = '../shop-synchronize/synchronize.php';
 				$rawres['style'] = 'danger';
 			}
+		}
 	}
 	function get_sync_status($last_id) { 
 		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer), 
