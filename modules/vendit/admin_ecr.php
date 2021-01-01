@@ -50,7 +50,6 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
   } else {
       $toDo = 'insert';
   }
-  print_r($_POST['utenti']);
   $form = gaz_dbi_parse_post('cash_register');
   $form['reparti'] = array();
   $nreparto = 0;
@@ -98,7 +97,7 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
     if ($toDo == 'update') {  // controlli in caso di modifica
     } else { // controlli inserimento
     }
-    if (empty($form["descri"])) {
+    if (strlen(trim($form['descri']))< 3 ){
         $msg['err'][] = 'descri';
         $homeactive='active';
     }
@@ -134,8 +133,18 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
     }
 
     if (count($msg['err']) == 0) { // nessun errore
-        if ($toDo == 'update') {
-        } else {
+        if ($toDo == 'update') { // update
+        } else { // insert
+            unset ($form['id_cash']);
+            $newid = gaz_dbi_table_insert('cash_register', $form);
+            foreach ($form['reparti'] as $k => $v) {
+                $v['cash_register_id_cash']=$newid;
+                gaz_dbi_table_insert('cash_register_reparto', $v);
+            }
+            foreach ($form['tenders'] as $k => $v) {
+                $v['cash_register_id_cash']=$newid;
+                gaz_dbi_table_insert('cash_register_tender', $v);
+            }
         }
         //header("Location: ../../modules/vendit/report_ecr.php");
         exit;
@@ -209,7 +218,14 @@ $lu=$last_urs?$last_urs['user_name']:'Mai utilizzato';
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cash" class="col-xs-4 control-label"><?php echo $script_transl['id_cash']; ?></label>
-                            <input class="col-xs-8" type="text" value="<?php echo $form["id_cash"]; ?>" name="id_cash" maxlength="2" />
+                            <?php 
+                            if ($form["id_cash"]<=0) {
+                                echo '<div class="col-xs-8" > nuovo';
+                            } else {
+                                echo '<div class="col-xs-8" >'. $form["id_cash"];
+                            } 
+                            ?>
+                            <input type="hidden" value="<?php echo $form["id_cash"]; ?>" name="id_cash" /></div>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -217,7 +233,7 @@ $lu=$last_urs?$last_urs['user_name']:'Mai utilizzato';
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="descri" class="col-xs-4 control-label"><?php echo $script_transl['descri']; ?></label>
-                            <input class="col-xs-8" type="text" value="<?php echo $form["descri"]; ?>" name="descri" maxlength="32" />
+                            <input class="col-xs-8" type="text" value="<?php echo $form["descri"]; ?>" name="descri" maxlength="32" minlength="1" placeholder=" compreso tra 3 e 32 caratteri"/>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
