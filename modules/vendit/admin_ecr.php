@@ -83,22 +83,43 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
       $ntender++;
   } 
   // utenti abilitati 
+  $accutenti=[];
   foreach ($_POST['utenti'] as $k => $v) {
     $form['utenti'][$k]['nickname'] = $k;
     $form['utenti'][$k]['nome'] = substr($v['nome'], 0, 30);
     $form['utenti'][$k]['cognome'] = substr($v['cognome'], 0, 30);
     if (isset($v['abilit']) && $v['abilit'] == 'uon'){
         $form['utenti'][$k]['abilit'] = substr($v['abilit'], 0, 3);
+        $accutenti[]=$k;
     } else {
         $form['utenti'][$k]['abilit'] = '';
     }
   }
+
+  // Se viene inviata la richiesta eliminare un reparto 
+  if (isset($_POST['repartidel'])) {
+      $delri = key($_POST['repartidel']);
+      array_splice($form['reparti'], $delri, 1);
+      $homeactive='';$repartiactive='active';$tenderactive='';$utentiactive=''; 
+  }
+
+  // Se viene inviata la richiesta eliminare un tender 
+  if (isset($_POST['tendersdel'])) {
+      $delri = key($_POST['tendersdel']);
+      array_splice($form['tenders'], $delri, 1);
+      $homeactive='';$repartiactive='';$tenderactive='active';$utentiactive=''; 
+  }
+
   if (isset($_POST['Submit'])) { // conferma tutto
     if ($toDo == 'update') {  // controlli in caso di modifica
     } else { // controlli inserimento
     }
     if (strlen(trim($form['descri']))< 3 ){
         $msg['err'][] = 'descri';
+        $homeactive='active';
+    }
+    if (strlen(trim($form['driver']))< 5 ){
+        $msg['err'][] = 'driver';
         $homeactive='active';
     }
     // controlli su reparti
@@ -133,7 +154,20 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
     }
 
     if (count($msg['err']) == 0) { // nessun errore
+        $form['enabled_users']=json_encode($accutenti);
         if ($toDo == 'update') { // update
+            gaz_dbi_table_update('cash_register', array('id_cash',$form['id_cash']), $form);
+            // prima cancello le vecchie associazioni e poi le reinserisco da capo
+            gaz_dbi_del_row($gTables['cash_register_reparto'], 'cash_register_id_cash', $form['id_cash']);
+            foreach ($form['reparti'] as $k => $v) {
+                $v['cash_register_id_cash']=$form['id_cash'];
+                gaz_dbi_table_insert('cash_register_reparto', $v);
+            }
+            gaz_dbi_del_row($gTables['cash_register_tender'], 'cash_register_id_cash', $form['id_cash']);
+            foreach ($form['tenders'] as $k => $v) {
+                $v['cash_register_id_cash']=$form['id_cash'];
+                gaz_dbi_table_insert('cash_register_tender', $v);
+            }
         } else { // insert
             unset ($form['id_cash']);
             $newid = gaz_dbi_table_insert('cash_register', $form);
@@ -153,23 +187,37 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
 } elseif (!isset($_POST['id_cash']) && isset($_GET['id_cash'])) { //se e' il primo accesso per UPDATE
     $toDo = 'update';
     $form = gaz_dbi_get_row($gTables['cash_register'], 'id_cash', intval($_GET['id_cash']));
-    $form['reparti'] = array();
+
+    // prendo tutti gli utenti dell'azienda 
+    $accutenti=json_decode($form['enabled_users']);
+    $rsusr = gaz_dbi_dyn_query($gTables['admin_module'].".adminid AS nickname, ".$gTables['admin'].".user_firstname AS nome, ".$gTables['admin'].".user_lastname AS cognome", $gTables['admin_module'].' LEFT JOIN '.$gTables['admin']." ON ".$gTables['admin_module'].".adminid = ".$gTables['admin'].".user_name ", "moduleid = 2 AND ".$gTables['admin_module'].".company_id = " . $admin_aziend['company_id'], "adminid");
+    while ($usr = gaz_dbi_fetch_array($rsusr)) {
+        $form['utenti'][$usr['nickname']]=$usr;
+        if (in_array($usr['nickname'],$accutenti)){
+            $form['utenti'][$usr['nickname']]['abilit'] = 'uon';
+        } else {
+            $form['utenti'][$usr['nickname']]['abilit'] = '';
+        }
+    }
+    
     // inizio reparti
     $nreparto = 0;
-    $rs_row = gaz_dbi_dyn_query("*", $gTables['cash_register_reparto'], "cash_register_id_cash = " . $form['id_cash'], "id_cash_register_reparto DESC");
+    $rs_row = gaz_dbi_dyn_query("*", $gTables['cash_register_reparto'], "cash_register_id_cash = " . $form['id_cash'], "reparto ASC");
     while ($row = gaz_dbi_fetch_array($rs_row)) {
         $form['reparti'][$nreparto] = $row;
         $nreparto++;
     }
     // fine reparti
+
 	// inizio tender
     $ntender = 0;
-    $rs_row = gaz_dbi_dyn_query("*", $gTables['cash_register_tender'], "cash_register_id_cash = " . $form['id_cash'] , "id_cash_register_tender DESC");
+    $rs_row = gaz_dbi_dyn_query("*", $gTables['cash_register_tender'], "cash_register_id_cash = " . $form['id_cash'] , "tender ASC");
     while ($row = gaz_dbi_fetch_array($rs_row)) {
         $form['tenders'][$ntender] = $row;
         $ntender++;
     }
     // fine tender
+
 } else { //se e' il primo accesso per INSERT
     $toDo = 'insert';
     $form = gaz_dbi_fields('cash_register');
@@ -219,14 +267,16 @@ $lu=$last_urs?$last_urs['user_name']:'Mai utilizzato';
                         <div class="form-group">
                             <label for="id_cash" class="col-xs-4 control-label"><?php echo $script_transl['id_cash']; ?></label>
                             <?php 
-                            if ($form["id_cash"]<=0) {
-                                echo '<div class="col-xs-8" > nuovo';
-                            } else {
-                                echo '<div class="col-xs-8" >'. $form["id_cash"];
+                            if ($form["id_cash"]<=0) { ?>
+                                <div class="col-xs-8" > nuovo</div>
+                            <?php 
+                            } else { ?>
+                                <div class="col-xs-8" ><?php echo $form["id_cash"]; ?></div>
+                            <?php 
                             } 
                             ?>
-                            <input type="hidden" value="<?php echo $form["id_cash"]; ?>" name="id_cash" /></div>
-                        </div>
+                            <input type="hidden" value="<?php echo $form["id_cash"]; ?>" name="id_cash" />
+                            </div>
                     </div>
                 </div><!-- chiude row  -->
                  <div class="row">
@@ -304,7 +354,7 @@ $lu=$last_urs?$last_urs['user_name']:'Mai utilizzato';
               </div><!-- chiude tab-pane  -->
 
               <div id="reparti" class="tab-pane fade in <?php echo $repartiactive; ?>">
-<div class="h3">Associazione aliquote IVA a reparti RT <input class="btn btn-success pull-right" type="submit" name="insreparto" value="Associa un nuovo reparto" /></div>
+                
 <?php
 if (count($form['reparti']) > 0) {
 ?>
@@ -347,13 +397,11 @@ if (count($form['reparti']) > 0) {
 </div>
 <?php
 }
-
 ?>
-
+<div class="col-sm-1"></div><div class="col-sm-11"><input class="btn btn-success" type="submit" name="insreparto" value="Associa un nuovo reparto" /></div>
               </div><!-- chiude tab-pane  -->
 
               <div id="tenders" class="tab-pane fade in <?php echo $tenderactive; ?>">
-<div class="h3">Associazione pagamenti a tenders RT <input class="btn btn-success pull-right" type="submit" name="instender" value="Associa un nuovo tender" /></div>
 <?php
 if (count($form['tenders']) > 0) {
 ?>
@@ -398,6 +446,8 @@ if (count($form['tenders']) > 0) {
 }
 
 ?>
+<div class="col-sm-1"></div><div class="col-sm-11"><input class="btn btn-success" type="submit" name="instender" value="Associa un nuovo tender" /></div>
+
               </div><!-- chiude tab-pane  -->
               <div id="utenti" class="tab-pane fade in <?php echo $utentiactive; ?>">
 <div class="h3">Abilitazione utenti</div>
@@ -425,16 +475,9 @@ foreach ($form['utenti'] as $k => $v) {
 <?php
 }
 ?>
-              </div><!-- chiude tab-pane  -->
-
-          </div>
-        <div class="col-sm-12">
-    <?php
-    echo '<div class="col-sm-8 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" /></div>';
-
-?>
-            </div>
-        </div> <!-- chiude container -->
+            </div><!-- chiude tab-pane  -->
+        </div> <!-- chiude tab-content -->
+     </div> <!-- chiude container -->
     </div><!-- chiude panel -->
 </form>
 <?php

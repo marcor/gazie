@@ -1821,6 +1821,7 @@ $strScript = array("admin_client.php" =>
         'upd_this' => 'Modifica Registratore Telematico ',
         'err' => array(
             'descri' => 'Il Registratore Telematico è senza descrizione',
+            'driver' => 'Non è stato selezionato il driver',
             'repiva' => 'Un reparto non ha il codice IVA associato',
             'reprep' => 'Un reparto non è stato valorizzato',
             'repdes' => 'Un reparto è senza descrizione',
