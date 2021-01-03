@@ -203,6 +203,12 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			gaz_dbi_del_row($gTables['contract'], 'id_contract', $i);
 			gaz_dbi_del_row($gTables['contract_row'], 'id_contract', $i);
 		break;
+		case "ecr":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['cash_register'], 'id_cash', $i);
+			gaz_dbi_del_row($gTables['cash_register_reparto'], 'cash_register_id_cash', $i);
+			gaz_dbi_del_row($gTables['cash_register_tender'], 'cash_register_id_cash', $i);
+		break;
 	}
 }
 ?>

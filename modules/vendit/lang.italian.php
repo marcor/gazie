@@ -1819,6 +1819,7 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Gestione Registratori Telematici',
         'ins_this' => 'Nuovo Registratore Telematico',
         'upd_this' => 'Modifica Registratore Telematico ',
+        'report' => 'Lista dei Registratori Telematici',
         'err' => array(
             'descri' => 'Il Registratore Telematico è senza descrizione',
             'driver' => 'Non è stato selezionato il driver',
