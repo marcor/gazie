@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2020 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2021 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -44,11 +44,10 @@ if ( $url!='ruburl.php' ) {
          echo "</div>";
         ?>
         <div class="pull-right hidden-xs">
-          <b>Version</b> <?php echo GAZIE_VERSION; ?>
+          <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="http://www.devincentiis.it">http://www.devincentiis.it</a>
         </div>
         <!--<strong>-->
-        <b>GA</b>zie Version: <?php echo GAZIE_VERSION; ?> Software Open Source (lic. GPL) <?php echo $strScript['admin.php']['business'] . " " . $strScript['admin.php']['proj']; ?>
-        <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="http://www.devincentiis.it">http://www.devincentiis.it</a>
+        <b>GA</b>zie Version: <?php echo GAZIE_VERSION; ?>
     </footer>
       
     <!-- Control Sidebar -->
