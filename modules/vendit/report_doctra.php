@@ -328,10 +328,6 @@ $(function() {
                                     }
                                 }
                             }
-                            if ($lot->thereisLot($r['id_tes'])) {
-                                echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_lot'] . "\" href=\"lotmag_print_cert.php?id_tesdoc=" . $r['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a>\n";
-                            }
-                            echo "</td>\n";
                             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"admin_docven.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
                             echo "</td>";
 

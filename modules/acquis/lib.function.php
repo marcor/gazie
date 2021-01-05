@@ -250,21 +250,6 @@ class lotmag {
       return $rs;
    }
 
-   function thereisLot($id_tesdoc) {
-// restituisce true se nel documento di vendita c'è almeno un rigo al quale è assegnato un lotto 
-      $r = false;
-      global $gTables;
-      $sqlquery = "SELECT * FROM " . $gTables['rigdoc'] . " AS rd
-            LEFT JOIN " . $gTables['movmag'] . " AS mm ON rd.id_mag = mm.id_mov  
-            WHERE rd.id_tes = " . $id_tesdoc . " AND mm.id_lotmag > 0 LIMIT 1";
-      $result = gaz_dbi_query($sqlquery);
-      $rows = gaz_dbi_num_rows($result);
-      if ($rows > 1) { // il documento ha almeno un lotto caricato 
-         $r = true;
-      }
-      return $r;
-   }
-
    function divideLots($quantity) {
 // riparto la quantità tra i vari lotti presenti se questi non sono sufficienti
 // ritorno il resto non assegnato 
