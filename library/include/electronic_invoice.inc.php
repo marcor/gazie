@@ -232,7 +232,7 @@ class invoiceXMLvars {
             if ($rigo['tiprig'] <= 1) {
 				if (!empty($rigo['codart'])){ // ho un codice articolo lo riprendo per settare il codice tipo ( ci metterò se bene o servizio e categoria merceologica)
 					$artico = gaz_dbi_get_row($this->gTables['artico'], "codice", $rigo['codart']);
-					$rigo['codice_tipo']=($artico['good_or_service'] == 0) ? 'BENE_CAT_'.$artico['catmer'] : 'SERVIZIO';
+					$rigo['codice_tipo']=($artico['good_or_service'] == 0 OR $artico['good_or_service'] == 2) ? 'BENE_CAT_'.$artico['catmer'] : 'SERVIZIO';
 				}
 				$id_rig_ref[$nr_idtes]=$rigo['id_rig']; // associo l'id_rig al numero rigo mi servirà per valorizzare l'accumulatore per 2.1.X
 				$nr_idtes++; // è un tipo rigo a cui possono essere riferiti i dati degli elementi 2.1.X, lo aumento
