@@ -550,9 +550,7 @@ if ( $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_st
                         echo "</td>";
                     } else {
                         echo "<td>";
-                        $resorigine = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes', 1,1);
-                        if ( gaz_dbi_num_rows( $resorigine )>0 ) {
-                            $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_order', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes');
+                            $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_order', $gTables['rigdoc'], "id_tes = " . $r["id_tes"] ." AND id_order > 0", 'id_tes');
                             while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
                                 if($rigdoc['id_order']>0){
                                     $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $rigdoc['id_order'], 'id_tes');
@@ -560,7 +558,6 @@ if ( $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_st
                                     echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Ord." . $t_r['numdoc'] . "</a>\n";
                                 }
                             }
-                        }
                         echo "</td>";
                     }
 // Colonna "Cancella"
