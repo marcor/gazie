@@ -182,7 +182,7 @@ select.input-sm {
 }
 
 select {
-	height: 28px;
+	min-height: 28px !important;
 }
 
 /*input {
