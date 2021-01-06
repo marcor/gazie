@@ -86,10 +86,10 @@ function checkCustoms($posizione) {
 //controllo se esiste la cartella dell'azienda corrente
 function controllaEsistenzaCartelle()
 {
-	global $admin_aziend;	
+	global $admin_aziend;
 	if ( file_exists ( '../../data/files/'.$admin_aziend['codice'] ) )
 		return false;
-	else 
+	else
 		return true;
 }
 //funzione che estrae i valori tra i tag html di una stringa
@@ -133,7 +133,7 @@ function gaz_flt_var_assign($flt, $typ, $tab="") {
 
 // crea una select che permette di filtrare la colonna di una tabella
 // $flt - colonna sulla quale eseguire il filtro
-// 
+//
 // $optval - valore opzionale se diverso dal valore del campo, pu� essere array (es: stato=0 diventa stato=aperto preso da var)
 function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval = "") {
     ?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
@@ -236,7 +236,7 @@ function gaz_format_date($date, $from_form = false, $to_form = false) {
 	if (intval($date)==0){
 		return null;
 	}
-    if ($from_form) { // dal formato gg-mm-aaaa o gg/mm/aaaa (es. proveniente da form) a diversi 
+    if ($from_form) { // dal formato gg-mm-aaaa o gg/mm/aaaa (es. proveniente da form) a diversi
         $m = intval(substr($date, 3, 2));
         $d = intval(substr($date, 0, 2));
         $Y = intval(substr($date, 6, 4));
@@ -251,7 +251,7 @@ function gaz_format_date($date, $from_form = false, $to_form = false) {
             return date("Ymd", $uts);
         } elseif ($from_form === 'chk') { // restituisce true o false se la data non � stata formattata bene
             return checkdate($m, $d, $Y);
-        } else { // altri restituisco il timestamp 
+        } else { // altri restituisco il timestamp
             return date("Ymd", $uts);
         }
     } else { // dal formato aaaa-mm-gg oppure aaaa/mm/gg (es. proveniente da db) a diversi
@@ -398,10 +398,10 @@ function message_fatal_error($text) {
 function selectDestinazione($idAnagrafe) {
    global $gTables;
     $retVal = "";
-    
+
     $rs_query_destinazioni = gaz_dbi_dyn_query("*", $gTables['destina'], "id_anagra='$idAnagrafe'");
     $array_destinazioni = gaz_dbi_fetch_all($rs_query_destinazioni);
-    
+
     if (count($array_destinazioni) > 0) {
         $retVal = $retVal . "<select name=\"id_des_same_company\" class=\"FacetSelect\" width=\"300\" style=\"width: 300px\" onchange=\"cambiaDestinazione(this)\">\n";
         $retVal = $retVal . "<option value=\"\" selected>-------</option>\n";
@@ -519,9 +519,9 @@ class Config {
     }
 
     function setValue($variable, $value = array('description' => '', 'cvalue' => '', 'show' => 0)) {
-        /* in $variabile va sempre il nome della variabile, 
-         * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre 
-         * viene inserita qualora non esista.  
+        /* in $variabile va sempre il nome della variabile,
+         * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre
+         * viene inserita qualora non esista.
          * In caso di inserimento � necessario passare un array in $value mentre in caso di
          * aggiornamento � sufficiente un valore */
         global $gTables;
@@ -561,9 +561,9 @@ class UserConfig {
     }
 
     function setValue($variable, $value = array('var_descri' => '', 'var_value' => '')) {
-        /* in $variabile va sempre il nome della variabile, 
-         * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre 
-         * viene inserita qualora non esista.  
+        /* in $variabile va sempre il nome della variabile,
+         * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre
+         * viene inserita qualora non esista.
          * In caso di inserimento � necessario passare un array in $value mentre in caso di
          * aggiornamento � sufficiente un valore */
         global $gTables, $form;
@@ -1092,7 +1092,7 @@ class selectorder extends SelectBox
             if ( $field!='C' ) {
                 $opera .= $field;
             }
-            
+
             $result = gaz_dbi_dyn_query("numdoc,id_tes,datemi,descri", $gTables['tesbro']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice", $field_sql . " LIKE '" . addslashes($cerca) . $opera, "id_tes DESC");
             // nella tabella tesbro seleziona id_tes, numdoc e datemi dove numdoc è come $cerca. Ordina per numdoc
             $numclfoco = gaz_dbi_num_rows($result);
@@ -1118,7 +1118,7 @@ class selectorder extends SelectBox
             $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
             echo '<input type="hidden" name="' . $this->name . '" value="" />';
         }
-       
+
         echo '&nbsp;<input type="text" class="' . $class . '" name="coseor" id="search_order" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
         //echo "<font style=\"color:#ff0000;\">$msg </font>";
         if ($msg != "") {
@@ -1184,7 +1184,7 @@ class selectartico extends SelectBox {
             if ( $field!='C' ) {
                 $opera .= $field;
             }
-            
+
             $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'], $field_sql . " LIKE '" . addslashes($cerca) . $opera, "descri DESC");
             $numclfoco = gaz_dbi_num_rows($result);
             if ($numclfoco > 0) {
@@ -1367,7 +1367,7 @@ class selectvettor extends SelectBox {
 class GAzieMail {
 
     function sendMail($admin_data, $user, $content, $partner, $mail_message = '') {
-		// su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica  
+		// su $admin_data['other_email'] ci va un eventuale indirizzo mail diverso da quello in anagrafica
         global $gTables, $debug_active;
 
         require_once "../../library/phpmailer/class.phpmailer.php";
@@ -1390,7 +1390,7 @@ class GAzieMail {
         $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
         $admin_data['web_url'] = trim($admin_data['web_url']);
 		if (!empty($admin_data['other_email']) && strlen($admin_data['other_email'])>=10){
-			$mailto = $admin_data['other_email']; //recipient	
+			$mailto = $admin_data['other_email']; //recipient
 		} else {
 			$mailto = $partner['e_mail']; //recipient
 		}
@@ -1440,7 +1440,7 @@ class GAzieMail {
         /* Imposto email a cui rispondere (se � stata impostata nella tabella gaz_xxxcompany_config`)
          * deve stare prima di $mail->SetFrom perch� altrimenti aggiunge il from al reply
          */
-        if (isset($config_replyTo) && !empty($config_replyTo['val'])) {  // utilizzo l'indirizzo in company_config 
+        if (isset($config_replyTo) && !empty($config_replyTo['val'])) {  // utilizzo l'indirizzo in company_config
             $mittente = $config_replyTo['val'];
         } elseif (strlen($user['user_email'])>=10)  { // utilizzo quella dell'utente
             $mittente = $user['user_email'];
@@ -1497,7 +1497,7 @@ class GAzieMail {
 <?php
 		return true;
 	}
-				
+
 	if ( $mail->Send() ) {
 ?>
 		<center>
@@ -1774,7 +1774,7 @@ class GAzieForm {
         echo "\t </select>\n";
     }
 
-    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 350px;"', $mas_only = true, $echo=false) {
+    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 550px;"', $mas_only = true, $echo=false) {
         global $gTables, $admin_aziend;
 		$acc='';
         $bg_class = Array(1 => "gaz-attivo", 2 => "gaz-passivo", 3 => "gaz-costi", 4 => "gaz-ricavi", 5 => "gaz-transitori",
@@ -1902,7 +1902,7 @@ class GAzieForm {
                             echo '<tr>';
                             foreach ($col as $v) {
                                 echo '<td data-title="' . $v['head'] . '" class="' . $v['class'] . '"';
-                                if (isset($v['td_content'])) { // se ho un tipo diverso dal semplice 
+                                if (isset($v['td_content'])) { // se ho un tipo diverso dal semplice
                                     echo $v['td_content'];
                                 }
                                 echo '>' . $v['value'] . "&nbsp;</td>\n";
@@ -2058,7 +2058,7 @@ class linkHeaders {
 
     function output() {
         global $flag_order, $script_transl, $auxil, $headers;
-        $k = 0; // � l'indice dell'array dei nomi di campo 
+        $k = 0; // � l'indice dell'array dei nomi di campo
         foreach ($this->headers as $header => $field) {
             $style = 'FacetFieldCaptionTD';
             $align = '';
@@ -2081,7 +2081,7 @@ class linkHeaders {
 
 /**
  * Svolge le funzioni delle classi recordnav e linkHeaders, nella prospettiva di sostituirle.
- * 
+ *
  * Si appoggia a due variabili globali: $search_fields e $sortable_headers,
  * da definire nel modulo che vuole utilizzare la classe. Vedere /magazz/report_movmag.php
  * per un esempio di utilizzo.
@@ -2094,13 +2094,13 @@ class TableSorter {
     public $group_by;      # se non vuota avrà forma: "GROUP BY x, y, z"
     public $where = "";    # costruita a partire dall'url corrente
     public $orderby = "";  # idem
-    
+
     # paginazione
     public $paginate = True;    # dividi i record in pagine?
     protected $passo;           # record per pagina
     protected $cur_page = 1;    # n. pagina corrente
     protected $pages = 1;       # n. pagine totali
-    
+
     # ri/costruzione query dell'url              Esempi:
     protected $url_search_query = "";            # "articolo=123&movimento=4560"
     protected $url_order_query = "";             # "ord_artico=asc&ord_id_mov=desc"
@@ -2112,7 +2112,7 @@ class TableSorter {
     protected $arrows = ["desc" => "&#9660;", "asc" => "&#9650;", null => ""];
     protected $align = false;                   # TODO
     protected $style = 'FacetFieldCaptionTD';   # TODO
-    
+
     # valori di default                Esempi:
     protected $default_search;         # ["caumag" => "1"]
     protected $default_order;          # analogo a $url_order_query_parts
@@ -2174,7 +2174,7 @@ class TableSorter {
             if (isset($def_GET[$field]) && strlen($def_GET[$field]) &&  $pruned_GET[$field] != 'All') {
                 global $$field;  # settiamo una variabile globale chiamata come il parametro
                 $$field = $def_GET[$field];
-                if (isset($pruned_GET[$field]))  # escludiamo dall'url i valori default applicati ed anche i valori esattamente 'All' 
+                if (isset($pruned_GET[$field]))  # escludiamo dall'url i valori default applicati ed anche i valori esattamente 'All'
                     $url_search_query_parts[] = "$field=" . urlencode($$field);
                 $where_parts[] = sprintf($sql_expr, gaz_dbi_real_escape_string($$field));
                 $$field = htmlspecialchars($$field, ENT_QUOTES);
@@ -2214,8 +2214,8 @@ class TableSorter {
    /**
     * Elabora i parametri di ordinamento contenuti nell'url della richiesta.
     *
-    * I campi ammessi devono essere specificati nell'array globale $order_fields. Compone la parte 
-    * ORDER BY della query db e ricompone la parte di ordinamento dell'url, mantenendo l'ordine originale. 
+    * I campi ammessi devono essere specificati nell'array globale $order_fields. Compone la parte
+    * ORDER BY della query db e ricompone la parte di ordinamento dell'url, mantenendo l'ordine originale.
     * Per generare i link che permettono di cambiare l'ordinamento popola l'array $url_order_query_parts
     * con i parametri esplosi.
     *
@@ -2297,7 +2297,7 @@ class TableSorter {
         $keys = array_keys($this->arrows);
         return $keys[(array_search($current, $keys) + 1) % 3];
     }
-    
+
    /**
     * Ritorna l'indicatore visivo dell'ordinamento di una colonna.
     */
@@ -2309,7 +2309,7 @@ class TableSorter {
    /**
     * Stampa il titolo cliccabile di una colonna che può essere ordinata.
     *
-    * Utilizzata dal metodo output_headers(). 
+    * Utilizzata dal metodo output_headers().
     *
     */
     protected function make_header_link($text, $field) {
@@ -2320,7 +2320,7 @@ class TableSorter {
                 $text .= $this->make_arrows($field, $this->default_order, "opacity: 0.3");
         } elseif (isset($order[$field])) {
             $text .= $this->make_arrows($field, $order);
-            if (!$next = $this->next_sort_order($order[$field])) 
+            if (!$next = $this->next_sort_order($order[$field]))
                 unset($order[$field]);
         }
         if ($next) $order[$field] = $next;
@@ -2331,8 +2331,8 @@ class TableSorter {
    /**
     * Stampa i titoli di tutte le colonne, con o senza link per l'ordinamento.
     *
-    * Usa la variabile globale $sortable_headers, un array associativo tra titolo e 
-    * colonna del db corrispondente (o stringa vuota se quella colonna non deve poter 
+    * Usa la variabile globale $sortable_headers, un array associativo tra titolo e
+    * colonna del db corrispondente (o stringa vuota se quella colonna non deve poter
     * essere ordinata).
     *
     */
@@ -2412,11 +2412,11 @@ function checkAdmin($Livaut = 0) {
     } else {
         $_SESSION["Abilit"] = true;
 		// includo le funzioni per la sincronizzazione dello shop online, il nome del modulo per il sync dell'ecommerce dev'essere sempre il primo rispetto ad altri eventuali moduli
-        $admin_aziend['synccommerce_classname'] = '';        
+        $admin_aziend['synccommerce_classname'] = '';
         $synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];
 		if ($synccommerce && file_exists('../'.$synccommerce.'/sync.function.php')) {
 			include_once('../'.$synccommerce.'/sync.function.php');
-            $admin_aziend['synccommerce_classname'] = preg_replace("/[^a-zA-Z]/", "",$synccommerce)."gazSynchro";        
+            $admin_aziend['synccommerce_classname'] = preg_replace("/[^a-zA-Z]/", "",$synccommerce)."gazSynchro";
 		}
     }
     return array_merge($admin_aziend, $currency);
@@ -2520,15 +2520,15 @@ class Compute {
                     }
 					if(isset($v['impneg'])){$new_castle[$k]['impneg']=$v['impneg'];}
                     $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
-                    if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment 
-                        $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
+                    if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment
+                        $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore
                     }
                     $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
                 }
             }
         } else {  // METODO DELL'AGGIUNTA DIRETTA (nuovo)
             $match = false;
-            foreach ($vat_castle as $k => $v) { // attraverso dell'array 
+            foreach ($vat_castle as $k => $v) { // attraverso dell'array
                 $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
                 $new_castle[$k]['codiva'] = $vat['codice'];
                 $new_castle[$k]['periva'] = $vat['aliquo'];
@@ -2541,7 +2541,7 @@ class Compute {
                     $new_castle[$k]['impcast'] = $new_imp;
                     $new_castle[$k]['imponi'] = $new_imp;
                     $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
-                } else { // � una aliquota che non interessa il valore che devo aggiungere 
+                } else { // � una aliquota che non interessa il valore che devo aggiungere
                     $new_castle[$k]['impcast'] = $v['impcast'];
                     $new_castle[$k]['imponi'] = $v['impcast'];
                     $new_castle[$k]['ivacast'] = round(($v['impcast'] * $vat['aliquo']) / 100, 2);
@@ -2553,13 +2553,13 @@ class Compute {
                 if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza IVA ed � soggetto a bolli
                     $this->total_exc_with_duty += $new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
-                if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment 
-                    $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
+                if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment
+                    $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore
                 }
                 $this->total_imp += $new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
                 $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
             }
-            if (!$match && abs($value) >= 0.01) { // non ho trovato una aliquota uguale a quella del nuovo valore se > 0 
+            if (!$match && abs($value) >= 0.01) { // non ho trovato una aliquota uguale a quella del nuovo valore se > 0
                 $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $vat_rate);
                 $new_castle[$vat_rate]['codiva'] = $vat['codice'];
                 $new_castle[$vat_rate]['periva'] = $vat['aliquo'];
@@ -2572,8 +2572,8 @@ class Compute {
                 if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza IVA ed � soggetto a bolli
                     $this->total_exc_with_duty += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
-                if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment 
-                    $this->total_isp += $new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore 
+                if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment
+                    $this->total_isp += $new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore
                 }
                 $this->total_imp += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore del totale
                 $this->total_vat += $new_castle[$vat_rate]['ivacast']; // aggiungo anche l'IVA al totale
@@ -2593,14 +2593,14 @@ class Schedule {
 
     function setPartnerTarget($account) {
         /*
-         * setta il valore del conto (piano dei conti) del partner (cliente o fornitore) 
+         * setta il valore del conto (piano dei conti) del partner (cliente o fornitore)
          */
         $this->target = $account;
     }
 
     function setIdTesdocRef($id_tesdoc_ref) {
         /*
-         * setta sia l'identificativo di partita che il valore del conto (piano dei conti) del partner (cliente o fornitore) 
+         * setta sia l'identificativo di partita che il valore del conto (piano dei conti) del partner (cliente o fornitore)
          */
         global $gTables;
         $rs = gaz_dbi_dyn_query($gTables['paymov'] . ".id_tesdoc_ref," . $gTables['tesmov'] . ".clfoco ", $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['tesmov'] . ".id_tes = " . $gTables['rigmoc'] . ".id_tes", $gTables['paymov'] . ".id_tesdoc_ref = '" . $id_tesdoc_ref . "'");
@@ -2609,9 +2609,9 @@ class Schedule {
         $this->id_target = $id_tesdoc_ref;
     }
 
-    function setScheduledPartner($partner_type = false,$datref=false) { 
+    function setScheduledPartner($partner_type = false,$datref=false) {
 		/* false=TUTTI altrimenti passare le prime tre cifre del mastro clienti o fornitori, oppure un partner specifico
-         * in $datref si può passare una data di rifermiento nel formato leggibile GG-MM-AAAA, 
+         * in $datref si può passare una data di rifermiento nel formato leggibile GG-MM-AAAA,
 		 * in questo caso vengono presi in considerazione solo i movimenti di un anno (sei mesi prima e sei dopo)
          * restituisce in $this->Partners i codici dei clienti o dei fornitori che hanno almeno un movimento nell'archivio dello scadenzario
          */
@@ -2623,14 +2623,14 @@ class Schedule {
         } else  {
             $partner_where = $gTables['rigmoc'] . ".codcon  BETWEEN " . $partner_type . "000001 AND " . $partner_type . "999999";
         }
-        if (!$datref) { // se NON mi è stata passata una data di riferimento prendo tutti i movimenti, altrimenti 
+        if (!$datref) { // se NON mi è stata passata una data di riferimento prendo tutti i movimenti, altrimenti
 			if (!$partner_type) {
 				$partner_where.='1';
 			}
 		}else{
 			$partner_where.=" AND ".$gTables["paymov"].".expiry BETWEEN DATE_SUB('".gaz_format_date($datref,true)."',INTERVAL 6 MONTH) AND DATE_ADD('".gaz_format_date($datref,true)."',INTERVAL 6 MONTH)";
 		}
-        $sqlquery = "SELECT " . $gTables['rigmoc'] . ".codcon 
+        $sqlquery = "SELECT " . $gTables['rigmoc'] . ".codcon
           FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['rigmoc'] . ".id_rig = " . $gTables['paymov'] . ".id_rigmoc_pay  OR " . $gTables['rigmoc'] . ".id_rig =" . $gTables['paymov'] . ".id_rigmoc_doc ) WHERE  " . $partner_where . " GROUP BY " . $gTables['rigmoc'] . ".codcon ";
         $rs = gaz_dbi_query($sqlquery);
         $acc = array();
@@ -2649,7 +2649,7 @@ class Schedule {
     function getScheduleEntries($ob = 0, $masclifor, $date = false) {
         /*
          * genera un array con tutti i movimenti di partite aperte con quattro tipi di ordinamento
-         * se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso 
+         * se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso
          */
         global $gTables;
         if ($this->target == 0) {
@@ -2736,8 +2736,8 @@ class Schedule {
 		if ($date){
 			$date_ctrl=" (expiry <= '".$date."')";
 		}
-        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0)) AS diff_paydoc, 
-        SUM(amount*(id_rigmoc_pay>0)) AS pay, 
+        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0)) AS diff_paydoc,
+        SUM(amount*(id_rigmoc_pay>0)) AS pay,
         SUM(amount*(id_rigmoc_doc>0))AS doc,
         MAX(expiry) AS exp
         FROM " . $gTables['paymov'] . "
@@ -2758,8 +2758,8 @@ class Schedule {
 		if ($date){
 			$date_ctrl=" (expiry <= '".$date."')";
 		}
-        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0)) AS diff_paydoc, 
-        SUM(amount*(id_rigmoc_pay>0)) AS pay, 
+        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0)) AS diff_paydoc,
+        SUM(amount*(id_rigmoc_pay>0)) AS pay,
         SUM(amount*(id_rigmoc_doc>0))AS doc,
         MAX(expiry) AS exp
         FROM " . $gTables['paymov'] . "
@@ -2823,7 +2823,7 @@ class Schedule {
                 $v = $r['amount'];
 				if (isset($acc[$k])){
                   foreach ($acc[$k] as $ko => $vo) { // attraverso l'array delle aperture
-					
+
                       $diff = round($vo['op_val'] - $vo['cl_val'], 2);
                       if ($v <= $diff) { // se c'è capienza
                           $acc[$k][$ko]['cl_val'] += $v;
@@ -2883,7 +2883,7 @@ class Schedule {
             $where_clfoco = " AND " . $gTables['tesmov'] . ".clfoco = $clfoco ";
         }
 
-        $sqlquery = "SELECT " . $gTables['tesmov'] . ".* 
+        $sqlquery = "SELECT " . $gTables['tesmov'] . ".*
             FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig
             LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
             WHERE " . $gTables['paymov'] . ".id_rigmoc_doc > 0 AND " . $gTables['paymov'] . ".id_tesdoc_ref = " . $id_tesdoc_ref . $where_clfoco . " ORDER BY datreg ASC";
@@ -2893,7 +2893,7 @@ class Schedule {
 
     function getDocFromID($id_rigmoc_doc) {
         global $gTables;
-        $sqlquery = "SELECT " . $gTables['tesmov'] . ".* 
+        $sqlquery = "SELECT " . $gTables['tesmov'] . ".*
             FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
             WHERE " . $gTables['rigmoc'] . ".id_rig = " . $id_rigmoc_doc;
         $rs = gaz_dbi_query($sqlquery);
@@ -2921,7 +2921,7 @@ class Schedule {
         $sqlquery = "SELECT " . $gTables['paymov'] . ".*, " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".*
             FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig )"
                 . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes "
-                . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['rigmoc'] . ".codcon = " . $gTables['clfoco'] . ".codice 
+                . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['rigmoc'] . ".codcon = " . $gTables['clfoco'] . ".codice
             WHERE " . $gTables['clfoco'] . ".codice  = " . $clfoco . " ORDER BY id_tesdoc_ref, id_rigmoc_pay, expiry";
         $rs = gaz_dbi_query($sqlquery);
         $date_ctrl = new DateTime($date);
@@ -3003,7 +3003,7 @@ class Schedule {
         }
     }
 
-    function setRigmocEntries($id_rig) { // 
+    function setRigmocEntries($id_rig) { //
         global $gTables;
         $sqlquery = "SELECT * FROM " . $gTables['paymov'] . " WHERE id_rigmoc_pay=$id_rig OR id_rigmoc_doc=$id_rig";
         $this->RigmocEntries = array();

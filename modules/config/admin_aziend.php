@@ -224,7 +224,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				//print $gSync->rawres;
 				//exit;
 			}
-						
+
             header("Location: ../root/admin.php");
             exit;
         }
@@ -342,10 +342,10 @@ if (count($msg['err']) > 0) { // ho un errore
             <li><a data-toggle="pill" href="#setup">Impostazioni</a></li>
             <li><a data-toggle="pill" href="#contab">Contabilità</a></li>
             <li><a id="config_aziend" href="" style="color:black; background-color:white" data-toggle="modal" data-target="#edit-modal"><i class="glyphicon glyphicon-export"></i>Avanzata<i class="glyphicon glyphicon-lock"></i></a></li>
-<!--            <li><a href="config_aziend.php" style="color:black; background-color:white" target="blank"><i class="glyphicon glyphicon-export"></i>Avanzata<i class="glyphicon glyphicon-lock"></i></a></li> -->        
+<!--            <li><a href="config_aziend.php" style="color:black; background-color:white" target="blank"><i class="glyphicon glyphicon-export"></i>Avanzata<i class="glyphicon glyphicon-lock"></i></a></li> -->
             <li style="float: right;"><input class="btn btn-warning" name="Submit" type="submit" value="<?php echo ucfirst($script_transl[$toDo]); ?>"></li>
     </ul>
-                    
+
         <div class="tab-content">
           <div id="home" class="tab-pane fade in active">
             <div class="row">
@@ -456,7 +456,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="REA_ufficio" class="col-sm-4 control-label"><?php echo $script_transl['REA_ufficio']; ?></label>
                         <?php
-                        $gForm->selectFromDB('provinces', 'REA_ufficio', 'abbreviation', $form['REA_ufficio'], 'abbreviation', 1, ' - ', 'name', '', 'col-sm-8', null, 'style="max-width: 350px;"');
+                        $gForm->selectFromDB('provinces', 'REA_ufficio', 'abbreviation', $form['REA_ufficio'], 'abbreviation', 1, ' - ', 'name', '', 'col-sm-8', null, 'style="max-width: 550px;"');
                         ?>
                     </div>
                 </div>
@@ -690,7 +690,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="preeminent_vat" class="col-sm-4 control-label"><?php echo $script_transl['preeminent_vat']; ?></label>
                         <?php
-                        $gForm->selectFromDB('aliiva', 'preeminent_vat', 'codice', $form['preeminent_vat'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
+                        $gForm->selectFromDB('aliiva', 'preeminent_vat', 'codice', $form['preeminent_vat'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 550px;"');
                         ?>
                     </div>
                 </div>
@@ -1198,7 +1198,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="taxstamp_vat" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp_vat']; ?></label>
                         <?php
-                        $gForm->selectFromDB('aliiva', 'taxstamp_vat', 'codice', $form['taxstamp_vat'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
+                        $gForm->selectFromDB('aliiva', 'taxstamp_vat', 'codice', $form['taxstamp_vat'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 550px;"');
                         ?>
                     </div>
                 </div>
