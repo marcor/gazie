@@ -180,7 +180,7 @@ if (isset($_POST['id_cash'])) {   //se non e' il primo accesso
                 gaz_dbi_table_insert('cash_register_tender', $v);
             }
         }
-        //header("Location: ../../modules/vendit/report_ecr.php");
+        header("Location: ../../modules/vendit/report_ecr.php");
         exit;
     }
   }
