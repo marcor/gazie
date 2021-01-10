@@ -158,7 +158,7 @@ class venditForm extends GAzieForm {
    function chkRegistratoreTelematico($user_name) { // controllo se l'utente è abilitato ad almeno un RT e restituisco il valore altrimenti false
         global $gTables;
         // trovo il registratore che è stato usato per ultimo dall'utente abilitato
-        $rs_last = gaz_dbi_dyn_query("*", $gTables['cash_register']." LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['cash_register'].".id_cash = ".$gTables['tesdoc'].".id_contract", "enabled_users LIKE '%".$user_name."%'", $gTables['tesdoc'].'.datemi DESC,'.$gTables['tesdoc'].'.numdoc DESC', 0, 1);
+        $rs_last = gaz_dbi_dyn_query("*", $gTables['cash_register']." LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['cash_register'].".id_cash = ".$gTables['tesdoc'].".id_contract", "tipdoc ='VCO' AND id_contract > 0 AND enabled_users LIKE '%".$user_name."%'", $gTables['tesdoc'].'.datemi DESC,'.$gTables['tesdoc'].'.numdoc DESC', 0, 1);
         $exist = gaz_dbi_fetch_array($rs_last);
         return ($exist)?$exist['id_cash']:false;
    }
