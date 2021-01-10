@@ -266,12 +266,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		if ($doc->getElementsByTagName("BolloVirtuale")->length >= 1){
 			$form['virtual_taxstamp'] = 1;	
 		}
-		/* propongo la sezione IVA contenuto nel numero file, semmai la numerazione sia stata fatta come in GAZie */
-		//$form['seziva']=1;
-		$nfa=explode('/',$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue);
-		if (isset($nfa[1]) && is_numeric($nfa[1])){
-			$form['seziva']=$nfa[1];
-		}
 		/* 
 		INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
 		a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva 
@@ -541,8 +535,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_cf, $admin_aziend['mascli'], $form['pagame']);
 			}
 			$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
-			$nfa=explode('/',$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue);
-			$form['numfat']=$nfa[0];
+			$form['numfat']=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
 			$form['numdoc']=$form['numfat'];
 			$form['datfat']=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 			$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
