@@ -862,7 +862,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		$form['id_cash']=($rt)?$rt:0;
 		$form['seziva'] = 1;
 	}
-    print $form['id_cash'];
     $form['ritorno'] = 0;
     $form['id_tes'] = 0;
     $form['tipdoc'] = 'VCO';
