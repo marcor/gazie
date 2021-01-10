@@ -23,45 +23,49 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-$admin_aziend = checkAdmin();
-// se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non pu� emettere scontrini
-$gForm = new venditForm();
-$ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
-$ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
-if (!$ecr_user) {
-	$ecr=array('id_cash'=>0,'seziva'=>1,'descri'=>'File XML');
-}
-$lot = new lotmag();
-
-function getLastId($date, $seziva) {
-    global $gTables;
-    // ricavo l'ultimo id del giorno
-    $rs_last = gaz_dbi_dyn_query("id_tes", $gTables['tesdoc'], "tipdoc = 'VCO' AND datemi = '" . $date . "' AND seziva = " . intval($seziva), 'numdoc DESC', 0, 1);
-    $last = gaz_dbi_fetch_array($rs_last);
-    $id = 0;
-    if ($last) {
-        $id = $last['id_tes'];
-    }
-    return $id;
-}
-
-
-$where = "tipdoc = 'VCO' AND seziva = " . $ecr['seziva'];
-$all = $where;
-if (isset($_GET['all'])) {
-    gaz_set_time_limit(0);
-    $passo = 100000;
-}
+$admin_aziend=checkAdmin(9);
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-echo '<script>
-$(function() {
-   $( "#dialog1" ).dialog({
-      autoOpen: false
-   });
+$search_fields = [
+    'tipdoc' => "tipdoc LIKE '%s'",
+    'id_tes' => "{$gTables['tesdoc']}.id_tes LIKE %d",
+	'numdoc' => "{$gTables['tesdoc']}.numdoc = %d",
+    'anno' => "YEAR({$gTables['tesdoc']}.datemi) = %d",
+	'cliente' => "{$gTables['anagra']}.ragso1 LIKE '%%%s%%'",
+	'cash' => "{$gTables['tesdoc']}.id_contract = %d"
+];
+// creo l'array (header => campi) per l'ordinamento dei record
+$sortable_headers = array  (
+    $script_transl['id'] => 'id_tes',
+    $script_transl['date'] => "YEAR({$gTables['tesdoc']}.datemi)",
+    "Registratore" => "id_contract", // registratore telematico
+    $script_transl['number']=>"numdoc",
+    $script_transl['invoice'] => "cliente",
+    $script_transl['pagame'] => "",
+    $script_transl['status'] => "",
+    $script_transl['amount'] => "",
+    'Cert.' => "",
+    $script_transl['delete'] => "",
+);
 
-});
+$tablejoin = $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice
+                                  LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id
+                                  LEFT JOIN ".$gTables['cash_register']." ON ".$gTables['tesdoc'].".id_contract = ".$gTables['cash_register'].".id_cash
+                                  LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice";
 
+$ts = new TableSorter(
+    $tablejoin, 
+    $passo, 
+    ['datemi'=>'desc','numdoc'=>'desc'],
+    ['tipdoc' => 'VCO']);
+?>
+    <div class="text-center"><h3><?php echo $script_transl['title'];?></h3></div>
+
+<?php
+$ts->output_navbar();
+
+?>
+<script>
 function confirFae(link){
 	tes_id = link.id.replace("doc1", "");
 	$.fx.speeds._default = 500;
@@ -75,24 +79,20 @@ function confirFae(link){
       show: "blind",
       hide: "explode",
       buttons: {
-                      " ' . $script_transl['submit'] . ' ": function() {
-                         window.location.href = link.href;
-                          $(this).dialog("close");
-                      },
-                      " ' . $script_transl['cancel'] . ' ": function() {
-                        $(this).dialog("close");
-                      }
-               }
-         });
+        "Conferma ": function() {
+            window.location.href = link.href;
+            $(this).dialog("close");
+        },
+        " Elimina ": function() {
+            $(this).dialog("close");
+        }
+      }
+    });
 	$("#dialog1").dialog( "open" );
 }
 
-</script>';
-
-$gForm = new GAzieForm();
-?>
-<script>
 $(function() {
+    $("#dialog1").dialog({autoOpen: false });
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
@@ -128,8 +128,9 @@ $(function() {
 	});
 });
 </script>
-<form method="GET" name="report">
-	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+<form method="GET">
+    <input type="hidden" name="hidden_req">	
+    <div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>scontrino:</b></p>
         <p>Numero ID:</p>
         <p class="ui-state-highlight" id="idcodice"></p>
@@ -141,90 +142,41 @@ $(function() {
         <p class="ui-state-highlight" id="fae1"></p>
         <p id="fae_alert2"><?php echo $script_transl['fae_alert2']; ?><span id="fae2" class="bg-warning"></span></p>
     </div>
+	<div class="table-responsive">
+	<table class="Tlarge table table-striped table-bordered table-condensed">
+	<tr>
+		<td class="FacetFieldCaptionTD">
+			<?php gaz_flt_disp_int('id_tes', "ID"); ?>
+		</td>
+		<td class="FacetFieldCaptionTD">
+            <?php gaz_flt_disp_select("anno", "YEAR(datemi) AS anno ", $tablejoin," tipdoc = 'VCO'" , "datemi"); ?>
+        </td>
+		<td class="FacetFieldCaptionTD">
+            <?php gaz_flt_disp_select("id_contract", "id_contract", $tablejoin, " tipdoc = 'VCO'","id_contract"); ?>
+        </td>
+		<td class="FacetFieldCaptionTD"></td>
+		<td class="FacetFieldCaptionTD">			
+            <input type="text" name="cliente" placeholder="Cliente" class="input-sm form-control" value="<?php echo (isset($cliente))? $cliente : ""; ?>" maxlength="15">
+        </td>
+		<td class="FacetFieldCaptionTD"></td>
+		<td class="FacetFieldCaptionTD" colspan="3">
+			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
+			<a class="btn btn-xs btn-default" href="?">Reset</a>
+			<?php  $ts->output_order_form(); ?>
+		</td>
+	</tr>
 <?php
-echo "<input type=\"hidden\" name=\"hidden_req\">\n";
-echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'] . $script_transl['seziva'];
-echo $ecr['seziva'];
-echo "</div>\n";
-if (!isset($_GET['field']) || $_GET['field'] == 2 || empty($_GET['field'])) {
-    $orderby = "datemi DESC, id_con ASC, numdoc DESC";
-}
-
-gaz_flt_var_assign('id_tes', 'i');
-gaz_flt_var_assign('datemi', 'd');
-gaz_flt_var_assign('numdoc', 'i');
-//gaz_flt_var_assign('clfoco','v' );
-
-if (isset($_GET['all'])) {
-    $_GET['id_tes'] = "";
-    $_GET['datemi'] = "";
-    $_GET['numdoc'] = "";
-    //$_GET['clfoco']="";
-    $where = $all;
-    $auxil = "&all=yes";
-}
-
-$recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
-$recordnav->output();
-?>
-<div class="box-primary table-responsive">
-<table class="Tlarge table table-striped table-bordered">
-    <tr>
-        <td class="FacetFieldCaptionTD" colspan="1">
-<?php gaz_flt_disp_int("id_tes", "Numero Id"); ?>
-        </td>
-        <td class="FacetFieldCaptionTD" colspan="1">
-            <?php gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>
-        </td>
-        <td class="FacetFieldCaptionTD" colspan="1">
-            <?php gaz_flt_disp_int("numdoc", "Numero Doc."); ?>
-        </td>
-        <td class="FacetFieldCaptionTD" colspan="1">
-        </td>
-        <td class="FacetFieldCaptionTD" colspan="1">
-        </td>
-        <td class="FacetFieldCaptionTD" colspan="1">
-        </td>
-        <td class="FacetFieldCaptionTD" colspan="1">
-        </td>
-        <td class="FacetFieldCaptionTD" colspan="1">
-            <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
-        </td>
-        <td class="FacetFieldCaptionTD" colspan="1">
-            <input type="submit" class="btn btn-default btn-sm" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value = 1;">
-        </td>
-        <td class="FacetFieldCaptionTD"></td>
-    </tr>
-    <tr>
-<?php
-// creo l'array (header => campi) per l'ordinamento dei record
-$headers_tesdoc = array(
-    $script_transl['id'] => "id_tes",
-    $script_transl['date'] => "datemi",
-    $script_transl['number'] => "numdoc",
-    $script_transl['invoice'] => "clfoco",
-    $script_transl['pagame'] => "",
-    $script_transl['status'] => "",
-    $script_transl['amount'] => "",
-    'Cert.' => "",
-    $script_transl['delete'] => "",
-    '' => ""
-);
-$linkHeaders = new linkHeaders($headers_tesdoc);
-$linkHeaders->output();
-?>
-    </tr>
-        <?php
-//recupero le testate in base alle scelte impostate
-        $result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], $where, $orderby, $limit, $passo);
-        $anagrafica = new Anagrafica();
+echo '<tr>';
+$ts->output_headers();
+echo '</tr>';
+        $result = gaz_dbi_dyn_query ($gTables['tesdoc'].".*, ".$gTables['cash_register'].".descri AS des_rt, ".$gTables['anagra'].".ragso1 AS cliente, ".$gTables['pagame'].".descri AS despag ", 
+        $tablejoin, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
         $tot = 0;
+        
         while ($row = gaz_dbi_fetch_array($result)) {
             $cast_vat = array();
             $cast_acc = array();
             $tot_tes = 0;
-            $pagamento = gaz_dbi_get_row($gTables['pagame'], 'codice', $row['pagame']);
-
             //recupero i dati righi per creare i castelletti
             $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $row['id_tes'], "id_rig");
             while ($v = gaz_dbi_fetch_array($rs_rig)) {
@@ -292,7 +244,6 @@ $linkHeaders->output();
                 $status = $script_transl['status_value'][0];
             }
             if ($row['numfat'] > 0) {
-                $cliente = $anagrafica->getPartner($row['clfoco']);
                 $modulo_fae = "electronic_invoice.php?id_tes=" . $row['id_tes'];
 				$row['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
 								'anno' => $row["datfat"],
@@ -304,7 +255,7 @@ $linkHeaders->output();
 								'sezione' => $row["seziva"],
 								'fae_reinvii'=> intval($row["fattura_elettronica_reinvii"]+5),
 								'protocollo' => $row["numfat"]), 36).".xml";
-                $invoice = "<a href=\"stampa_docven.php?id_tes=" . $row['id_tes'] . "&template=FatturaAllegata\" class=\"btn btn-xs btn-default\" title=\"Stampa\" target=\"_blank\">n." . $row['numfat'] . " del " . gaz_format_date($row['datfat']) . ' a ' . $cliente['ragso1'] . "&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>\n";
+                $invoice = "<a href=\"stampa_docven.php?id_tes=" . $row['id_tes'] . "&template=FatturaAllegata\" class=\"btn btn-xs btn-default\" title=\"Stampa\" target=\"_blank\">n." . $row['numfat'] . " del " . gaz_format_date($row['datfat']) . ' a ' . $row['cliente']. "&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>\n";
 				$invoice .= '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1" '.$row["id_tes"].'" fae_reinvio="'.$row["fae_reinvio"].'" fae_attuale="'.$row["fae_attuale"].'" fae_n_reinvii="'.$row["fattura_elettronica_reinvii"].'" n_fatt="'. $row["numfat"]."/". $row["seziva"].'/SCONTR" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$row["fae_attuale"].' o fai il '.intval($row["fattura_elettronica_reinvii"]+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$row['id_tes'].'&viewxml"><i class="glyphicon glyphicon-eye-open"></i> </a>';
 				if(strlen($row["fattura_elettronica_zip_package"])>10){
 					$invoice.='<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$row['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';
@@ -318,12 +269,14 @@ $linkHeaders->output();
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_scontr.php?Update&id_tes=" . $row['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["id_tes"] . "</a></td>";
             // Colonna data emissione
             echo "<td align=\"center\">" . gaz_format_date($row['datemi']) . "</td>";
+            // Colonna registratore
+            echo "<td align=\"center\">" . $row['id_contract'] . " - " . $row['des_rt'] . "</td>";
             // Colonna numero documento
             echo "<td align=\"center\">" . $row["numdoc"] . " &nbsp;</td>";
             // Colonna fattura
             echo "<td align=\"center\">$invoice</td>";
             // Colonna pagamento
-            echo "<td align=\"center\">" . $pagamento["descri"] . " &nbsp;</td>";
+            echo "<td align=\"center\">" . $row["despag"] . " &nbsp;</td>";
             // Colonna stato
             echo "<td align=\"center\">";
             if ($row["id_con"] > 0) {
@@ -341,13 +294,10 @@ $linkHeaders->output();
             echo "\t </td>\n";
             // Colonna certificato
             echo "<td align=\"center\">";
-            if ($lot->thereisLot($row['id_tes'])) {
-                    echo "<a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_lot'] . "\" href=\"lotmag_print_cert.php?id_tesdoc=" . $row['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a>\n";
-            }            
             // Colonna Elimina
             echo "</td>";
             if ($row["id_con"] == 0) {
-                if (getLastId($row['datemi'], $row['seziva']) == $row["id_tes"]) {
+/*                if (getLastId($row['datemi'], $row['seziva']) == $row["id_tes"]) {
                     echo "<td align=\"center\">";
 					?>
 					<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $row['id_tes'];?>" datemi="<?php echo $row['datemi']; ?>">
@@ -357,7 +307,7 @@ $linkHeaders->output();
 					<?php
 				} else {
                     echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
-                }
+                }*/
             } else {
                 echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
             }
@@ -368,11 +318,10 @@ $linkHeaders->output();
 				<i class=\"glyphicon glyphicon-print\"></i>  non fiscale</a>";
 			echo "</tr>\n";
         }
-        ?>
-    <th colspan="10" class="FacetFieldCaptionTD"></th>
+?>
+     </table>
+	</div>
 </form>
-</table>
-</div>
 <?php
 require("../../library/include/footer.php");
 ?>

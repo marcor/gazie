@@ -889,7 +889,8 @@ $strScript = array("admin_client.php" =>
 			'soloconf' => 'Questa operazione SIAN ammette solo olio confezionato',
 			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto',
 			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
-			'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo'
+			'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
+            'no_reparto'=>'Un rigo non ha il reparto del Registratore Telematico associato all\'aliquota IVA'
         ),
 		'war' => array('serial' => 'La quantità è stata forzata ad 1 perché l\'articolo prevede il numero di serie',
 		'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
@@ -943,7 +944,7 @@ $strScript = array("admin_client.php" =>
         'volume' => 'Volume',
         'taxable' => 'Imponibile',
         'tax' => 'I.V.A.',
-        'send_ecr' => 'INVIA alla cassa ',
+        'send_ecr' => 'EMETTI LO SCONTRINO ',
         'confirm' => 'Confermi invio dati al registratore di cassa?',
         /** ENRICO FEDELE */
         'add_article' => 'Aggiungi in magazzino',

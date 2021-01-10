@@ -34,8 +34,6 @@ $magazz = new magazzForm();
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
 
-$ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
-$ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 
 $operat = $magazz->getOperators();
 $lm = new lotmag;
@@ -152,7 +150,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	$form['in_recip_stocc'] = $_POST['in_recip_stocc'];
 	$form['in_recip_stocc_destin'] = $_POST['in_recip_stocc_destin'];
     // fine rigo input
-
     $form['rows'] = array();
     $next_row = 0;
     if (isset($_POST['rows'])) {
@@ -244,7 +241,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['sconto'] = $form['rows'][0]['new_body_discount'];
         }
     }
-	
+
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         if (!gaz_format_date($form["datemi"], 'chk')) {
@@ -273,6 +270,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg['err'][] = "unimis";
             }
             if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
+                // controllo la presenza del reparto del RT associato alle aliquote IVA    
+                $reparto=$gForm->chkReparto($v['codvat'],$form['id_cash']);
+                if ($form['id_cash'] > 0 && !$reparto) { // controllo se 
+                    $msg['err'][] = "no_reparto";
+                }
                 if ($v['tiprig'] == 0) { // tipo normale
                     $tim_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));
                     $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
@@ -392,13 +394,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
 				
                 $form['datfat'] = $form['datemi'];
-                $form['id_contract'] = $form['id_cash'];
+                $form['id_contract'] = $form['id_cash']; // ATTENZIONE!!! utilizzo una colonna con nome improprio, vedere il commento sulla colonna di gaz_NNNtesdoc
                 tesdocUpdate(array('id_tes', $form['id_tes']), $form);
                 header("Location: " . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
 			    $form['template'] = 'FatturaAllegata';
-                $form['id_contract'] = $form['id_cash'];
+                $form['id_contract'] = $form['id_cash']; // ATTENZIONE!!! utilizzo una colonna con nome improprio, vedere il commento sulla colonna di gaz_NNNtesdoc
                 $form['seziva'] = $form['seziva'];
                 $form['spediz'] = $form['fiscal_code'];
                 // ricavo il progressivo della cassa del giorno (in id_contract c'è la cassa alla quale invio lo scontrino)
@@ -439,8 +441,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
 	                }
                 }
-				if ($ecr_user){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
+				if ($form['id_cash']>=1){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
                     // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
+                    $ecr = gaz_dbi_get_row($gTables['cash_register'], 'id_cash', $form['id_cash']);
                     require("../../library/cash_register/" . $ecr['driver'] . ".php");
                     $ticket_printer = new $ecr['driver'];
                     $ticket_printer->set_serial($ecr['serial_port']);
@@ -768,7 +771,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['id_tes'] = $tesdoc['id_tes'];
     $form['tipdoc'] = $tesdoc['tipdoc'];
     $form['numdoc'] = $tesdoc['numdoc'];
-    $form['id_cash'] = $tesdoc['id_contract'];
+    $form['id_cash'] = $tesdoc['id_contract']; // ATTENZIONE!!! utilizzo una colonna con nome improprio, vedere il commento sulla colonna di gaz_NNNtesdoc
     $form['seziva'] = $tesdoc['seziva'];
     $form['id_con'] = $tesdoc['id_con'];
     $form['numfat'] = $tesdoc['numfat'];
@@ -850,6 +853,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
+    $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
+    $ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
  	if (!$ecr_user) { // creerò un XML con id_cash '0' oppure invierò all'ecr (RT)
 		$form['id_cash'] = 0;
 		$form['seziva'] = 1;
@@ -903,7 +908,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['cosear'] = "";
     // fine rigo input
     // ALLERTO SE NON SONO PASSATI OLTRE 10 GIORNI DALLA  LA CHIUSURA/CONTABILIZZAZIONE IN CASO DI XML OPPURE QUELLA DEL GIORNO PRECEDENTE IN PRESENZA DI REGISTRATORE DI CASSA
- 	if(!$ecr_user){ // creerò un XML con id_cash '0' oppure invierò all'ecr (RT)
+ 	if($form['id_cash']<=0){ // creerò un XML con id_cash '0' oppure invierò all'ecr (RT)
 		$rs_no_accounted = gaz_dbi_dyn_query("datemi", $gTables['tesdoc'], "id_con = 0 AND tipdoc = 'VCO' AND datemi < DATE_SUB('" . date("Y-m-d") . "',INTERVAL 10 DAY) AND tipdoc = 'VCO'", 'id_tes', 0, 1);
 		$no_accounted = gaz_dbi_fetch_array($rs_no_accounted);
 		if ($no_accounted) {
@@ -974,6 +979,8 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 }
                 $select_cliente = new selectPartner('clfoco');
                 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['search_customer'], $admin_aziend['mascli'], $admin_aziend['mascli']);
+                echo "\n su Registratore :\n";
+                $gForm->selectRegistratoreTelematico($form['id_cash'], $admin_aziend["user_name"]);
                 ?>
             </b> 
         </p>
@@ -1066,6 +1073,11 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <input type=\"hidden\" value=\"" . $form['in_scorta'] . "\" name=\"in_scorta\" />
         <input type=\"hidden\" value=\"" . $form['in_quamag'] . "\" name=\"in_quamag\" />
         <input type=\"hidden\" value=\"" . $form['in_pesosp'] . "\" name=\"in_pesosp\" />
+        <input type=\"hidden\" value=\"" . $form['in_good_or_service'] . "\" name=\"in_good_or_service\" />
+        <input type=\"hidden\" value=\"" . $form['in_SIAN'] . "\" name=\"in_SIAN\" />
+        <input type=\"hidden\" value=\"" . $form['in_cod_operazione'] . "\" name=\"in_cod_operazione\" />
+        <input type=\"hidden\" value=\"" . $form['in_recip_stocc'] . "\" name=\"in_recip_stocc\" />
+        <input type=\"hidden\" value=\"" . $form['in_recip_stocc_destin'] . "\" name=\"in_recip_stocc_destin\" />
         <input type=\"hidden\" value=\"" . $form['in_lot_or_serial'] . "\" name=\"in_lot_or_serial\" />
         <input type=\"hidden\" value=\"" . $form['in_id_lotmag'] . "\" name=\"in_id_lotmag\" />
 		<input type=\"hidden\" value=\"" . $form['in_identifier'] . "\" name=\"in_identifier\" />
@@ -1380,8 +1392,8 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     </div>
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
-                            <label for="vat_constrain" class="col-sm-6 control-label"><?php echo $script_transl['vat_constrain']; ?></label>
-                            <?php $gForm->selectFromDB('aliiva', 'in_codvat', 'codice', $form['in_codvat'], 'codice', true, '-', 'descri', '', 'col-sm-6'); ?>
+                            <label for="vat_constrain" class="col-sm-6 control-label"><?php echo $script_transl['vat_constrain'].' '.$form['in_codvat']; ?></label>
+                            <?php $gForm->selectRepartoIVA($form['in_codvat'],$form['id_cash']); ?>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 col-lg-3">

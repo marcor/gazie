@@ -139,6 +139,42 @@ class venditForm extends GAzieForm {
       $acc .= '</select>';
 		return $acc;
    }
+
+   function selectRegistratoreTelematico($val,$user_name) { // funzione per selezionare tra i registratori telematici abiliti per l'utente
+        global $gTables, $admin_aziend;
+        echo '<select id="id_cash" name="id_cash">';
+        echo '<option value="0">File XML (no RT)</option>';
+        $result = gaz_dbi_dyn_query("id_cash, descri", $gTables['cash_register'], "enabled_users LIKE '%".$user_name."%'");
+        while ($r = gaz_dbi_fetch_array($result)) {
+            $selected = '';
+            if ($val == $r["id_cash"]) {
+                $selected .= " selected ";
+            }
+            echo '<option value="' . $r["id_cash"] . '"' . $selected . '>' . $r['descri'] . "</option>\n";
+        }
+        echo "</select>\n";
+   }
+
+   function selectRepartoIVA($val,$id_cash) { // per selezionare l'aliquota IVA, tutte se viene prodotto un XML (id_cash=0) ed in base ai reparti del Registatore Telematico se viene utilizzato questo (id_cash > 0)  
+        global $gTables;
+        echo '<select id="in_codvat" name="in_codvat">';
+        echo '<option value="0">-------------</option>';
+        $result = gaz_dbi_dyn_query($gTables['aliiva'].".codice, ".$gTables['aliiva'].".descri", $gTables['cash_register_reparto']. " LEFT JOIN ". $gTables['aliiva']." ON ".$gTables['cash_register_reparto'].".aliiva_codice = ".$gTables['aliiva'].".codice");
+        while ($r = gaz_dbi_fetch_array($result)) {
+            $selected = '';
+            if ($val == $r["codice"]) {
+                $selected .= " selected ";
+            }
+            echo '<option value="' . $r["codice"] . '"' . $selected . '>' . $r['descri'] . "</option>\n";
+        }
+        echo "</select>\n";
+   }
+   
+   function chkReparto($codvat,$id_cash) { // controllo se il codice IVA dell'articolo ha un reparto associato, se presente restituisco il valore
+        global $gTables;
+        $exist = gaz_dbi_get_row($gTables['cash_register_reparto'],"aliiva_codice",$codvat, "AND cash_register_id_cash = ".$id_cash);
+        return ($exist)?$exist['reparto']:false;
+   }
 }
 
 class Agenti {
