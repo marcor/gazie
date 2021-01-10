@@ -155,6 +155,14 @@ class venditForm extends GAzieForm {
         echo "</select>\n";
    }
 
+   function chkRegistratoreTelematico($user_name) { // controllo se l'utente è abilitato ad almeno un RT e restituisco il valore altrimenti false
+        global $gTables;
+        // trovo il registratore che è stato usato per ultimo dall'utente abilitato
+        $rs_last = gaz_dbi_dyn_query("*", $gTables['cash_register']." LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['cash_register'].".id_cash = ".$gTables['tesdoc'].".id_contract", "enabled_users LIKE '%".$user_name."%'", $gTables['tesdoc'].'.datemi DESC,'.$gTables['tesdoc'].'.numdoc DESC', 0, 1);
+        $exist = gaz_dbi_fetch_array($rs_last);
+        return ($exist)?$exist['id_cash']:false;
+   }
+
    function selectRepartoIVA($val,$id_cash) { // per selezionare l'aliquota IVA, tutte se viene prodotto un XML (id_cash=0) ed in base ai reparti del Registatore Telematico se viene utilizzato questo (id_cash > 0)  
         global $gTables;
         echo '<select id="in_codvat" name="in_codvat">';

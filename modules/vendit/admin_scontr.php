@@ -854,14 +854,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
     $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
-    $ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
- 	if (!$ecr_user) { // creerò un XML con id_cash '0' oppure invierò all'ecr (RT)
-		$form['id_cash'] = 0;
+ 	if ($ecr_user) { // questo utente ha emesso un ultimo scontrino in un RT allora lo ripropongo
+		$form['id_cash'] = $ecr_user['id_cash'];
+		$form['seziva'] = $ecr_user['seziva'];
+	} else { // non ha emesso alcun ultimo scontrino trovo quello eventualmente abilitato altrimenti metto 0 e lascio decidere
+        $rt=$gForm->chkRegistratoreTelematico($admin_aziend['user_name']);
+		$form['id_cash']=($rt)?$rt:0;
 		$form['seziva'] = 1;
-	}else {
-		$form['id_cash'] = $ecr['id_cash'];
-		$form['seziva'] = $ecr['seziva'];
 	}
+    print $form['id_cash'];
     $form['ritorno'] = 0;
     $form['id_tes'] = 0;
     $form['tipdoc'] = 'VCO';
@@ -985,7 +986,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             </b> 
         </p>
     </div>
-    <div class="panel panel-default gaz-table-form div-bordered">
+    <div class="panel panel-default div-bordered">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
