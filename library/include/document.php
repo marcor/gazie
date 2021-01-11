@@ -222,6 +222,9 @@ class DocContabVars {
 								  'protocollo' => $this->tesdoc["numfat"]);
 					$this->efattura = "IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber($data, 36).'.xml';
 				}
+                $ecr = gaz_dbi_get_row($gTables['cash_register'], "id_cash", $tesdoc['id_contract']);
+
+                $this->ecr=($ecr)?$ecr['descri']:'';
                 break;
             case "DDT":
             case "DDL":

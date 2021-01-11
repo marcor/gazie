@@ -40,12 +40,16 @@ class Scontrino extends Template
         $this->tipdoc = 'Copia non fiscale dello Scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
         $this->descriptive_last_row = $this->docVars->descriptive_last_row;
 		$this->efattura = '';
+		$this->ecr = $this->docVars->ecr;
     }
 
     function newPage() {
         $this->AddPage();
         $this->SetFont('helvetica','',8);
-        $this->Cell(100);
+        $this->Cell(124);
+        $this->Cell(62,5,'Registratore','LTR',1,'C',1);
+        $this->Cell(124);
+        $this->Cell(62,5,$this->ecr,'LBR',1,'C');
         $this->Ln(2);
         $this->Cell(23,6,'Codice',1,0,'C',1);
         $this->Cell(75,6,'Descrizione',1,0,'C',1);
