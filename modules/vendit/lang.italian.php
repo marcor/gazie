@@ -890,7 +890,8 @@ $strScript = array("admin_client.php" =>
 			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto',
 			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
 			'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
-            'no_reparto'=>'Un rigo non ha il reparto del Registratore Telematico associato all\'aliquota IVA'
+            'no_reparto'=>'Un rigo non ha il reparto del Registratore Telematico associato all\'aliquota IVA',
+            'lotteria'=>'Codice lotteria errato'
         ),
 		'war' => array('serial' => 'La quantità è stata forzata ad 1 perché l\'articolo prevede il numero di serie',
 		'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
@@ -923,7 +924,7 @@ $strScript = array("admin_client.php" =>
         'search' => ' ricerca per ',
         'in_artsea_value' => array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione'),
         'tiprig' => 'Tipo',
-        'tiprig_value' => array(0 => 'Normale', 1 => 'Forfait', 2 => 'Descrittivo'),
+        'tiprig_value' => array(0 => 'Normale', 1 => 'Forfait', 2 => 'Descrittivo', 5 => 'Lotteria scontrini'),
 		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo'),
         'body_title' => 'corpo',
         'foot_title' => 'totali',

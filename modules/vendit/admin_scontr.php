@@ -284,7 +284,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $tot+=$tot_row;
                 $tim+=$tim_row;
-            }
+            } elseif ($v['tiprig'] == 5){
+                if (!preg_match("/^[0-9A-Z]{8}$/",$v['descri'], $match)) {
+                    $msg['err'][] = "lotteria";
+                }
+            }            
 			// Antonio Germani - controllo input su rigo SIAN
 			if ($v['SIAN']>0){
 				if ($v['cod_operazione'] < 0 or $v['cod_operazione']==11){ // controllo se è stato inserito il codice operazione SIAN
@@ -442,15 +446,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	                }
                 }
 				if ($form['id_cash']>=1){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
-                    // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
+                    // INIZIO l'invio dello scontrino al Registratore Telematico dell'utente
                     $ecr = gaz_dbi_get_row($gTables['cash_register'], 'id_cash', $form['id_cash']);
-                    require("../../library/cash_register/" . $ecr['driver'] . ".php");
-                    $ticket_printer = new $ecr['driver'];
-                    $ticket_printer->set_serial($ecr['serial_port']);
+                    require("../../library/cash_register/" . $ecr['driver']); // carico il driver per l'RT
+                    $classname=substr($ecr['driver'],0,-4);
+                    $ticket_printer = new $classname;
+                    $ticket_printer->set_serial($ecr['serial_port']); // apre la connessione utilizzando i valori di configurazione provenienti dal database
                     $ticket_printer->open_ticket();
-                    $ticket_printer->set_cashier($admin_aziend['Nome']);
                     $tot = 0;
-                    foreach ($form['rows'] as $i => $v) {
+                    foreach ($form['rows'] as $i => $v) { // invio i dati dei vari righi
                         if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
                             if ($v['tiprig'] == 0) { // tipo normale
                                 $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
@@ -459,9 +463,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                                 $v['quanti'] = 1;
                                 $v['codart'] = $v['descri'];
                             }
-                            $price = $v['quanti'] . 'x' . round($tot_row / $v['quanti'], $admin_aziend['decimal_price']);
-                            $ticket_printer->row_ticket($tot_row, $price, $v['codvat'], $v['codart']);
+                            $descrirow = $v['quanti'] . 'x' . round($tot_row / $v['quanti'], $admin_aziend['decimal_price']);
+                            $reparto = gaz_dbi_get_row($gTables['cash_register_reparto'], 'cash_register_id_cash', $form['id_cash'], " AND aliiva_codice = ".$v['codvat']);
+                            $rep=($reparto)?$reparto['reparto']:'1R';
+                            $ticket_printer->row_ticket($tot_row, $descrirow, $v['codvat'], $v['codart'],$rep);
                             $tot+=$tot_row;
+                        } elseif ($v['tiprig'] == 5) {    // se lotteria scontrini
+                            $ticket_printer->lotteria_scontrini(strtoupper($v['descri']));
                         } else {                    // se descrittivo
                             $desc_arr = str_split(trim($v['descri']), 24);
                             foreach ($desc_arr as $d_v) {
@@ -475,6 +483,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $ticket_printer->pay_ticket();
                     $ticket_printer->close_ticket();
 					// FINE invio
+                    //exit;
 				}
                 if ($form['clfoco'] > 100000000) {
                     // procedo alla stampa della fattura solo se c'è un cliente selezionato
@@ -577,6 +586,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['quanti'] = 0;
                 $form['rows'][$old_key]['sconto'] = 0;
+            } elseif ($form['in_tiprig'] == 5) { // lotteria scontrini
+                $form['rows'][$old_key]['codart'] = "";
+                $form['rows'][$old_key]['annota'] = "";
+                $form['rows'][$old_key]['pesosp'] = "";
+                $form['rows'][$old_key]['unimis'] = "";
+                $form['rows'][$old_key]['quanti'] = 0;
+                $form['rows'][$old_key]['prelis'] = 0;
+                $form['rows'][$old_key]['codric'] = 0;
+                $form['rows'][$old_key]['sconto'] = 0;
+                $form['rows'][$old_key]['pervat'] = 0;
+                $form['rows'][$old_key]['codvat'] = 0;
             } else { // rigo descrittivo
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['annota'] = "";
@@ -691,7 +711,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $provvigione = new Agenti;
                 $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente']);
-            } elseif ($form['in_tiprig'] == 2) { //descrittivo
+            } elseif ($form['in_tiprig'] == 2 || $form['in_tiprig'] == 5) { //descrittivo
                 $form['rows'][$next_row]['codart'] = "";
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
@@ -1121,6 +1141,13 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 if ($v['pesosp'] <> 0) {
                     $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
                 }
+            } elseif ($v['tiprig'] == 1) {
+                $v['codart'] ='Forfait';
+            } elseif ($v['tiprig'] == 2) {
+                $v['codart'] ='Descrittivo';
+            } elseif ($v['tiprig'] == 5) {
+                $v['codart'] ='Lotteria';
+                $v['descri'] = strtoupper($v['descri']);
             }
 
             // calcolo importo totale (iva inclusa) del rigo e creazione castelletto IVA
@@ -1287,6 +1314,17 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     $resprow[$k][6]['value'] = ''; //sconto
                     break;
                 case "2":
+                    $resprow[$k][3]['value'] = ''; //unimis
+                    $resprow[$k][4]['value'] = ''; //quanti
+                    $resprow[$k][5]['value'] = ''; //prelis
+                    $resprow[$k][6]['value'] = ''; //sconto
+                    $resprow[$k][7]['value'] = ''; //quanti
+                    $resprow[$k][8]['value'] = ''; //prelis
+                    $resprow[$k][9]['value'] = '';
+                    $resprow[$k][10]['value'] = '';
+                    $resprow[$k][11]['value'] = '';
+                    break;
+                case "5":
                     $resprow[$k][3]['value'] = ''; //unimis
                     $resprow[$k][4]['value'] = ''; //quanti
                     $resprow[$k][5]['value'] = ''; //prelis

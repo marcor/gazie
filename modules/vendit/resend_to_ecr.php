@@ -70,33 +70,38 @@ $ecr=$gForm->getECRdata($tesdoc['id_contract']);
 
 if (isset($_POST['ins'])) {
             $tesdoc = gaz_dbi_get_row($gTables['tesdoc'],"id_tes",intval($_GET['id_tes']));
+            $ecr = gaz_dbi_get_row($gTables['cash_register'], 'id_cash', $tesdoc['id_contract']);
+            $classname=substr($ecr['driver'],0,-4);
             // recupero i righi
             $rs_rows = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = ".intval($_GET['id_tes']),"id_rig");
             // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
-            require("../../library/cash_register/".$ecr['driver'].".php");
-            $ticket_printer = new $ecr['driver'];
+            require("../../library/cash_register/".$ecr['driver']);
+            $ticket_printer = new $classname;
             $ticket_printer->set_serial($ecr['serial_port']);
             $ticket_printer->open_ticket();
-            $ticket_printer->set_cashier($user['Nome']);
             $tot=0;
             while ($v = gaz_dbi_fetch_array($rs_rows)) {
-                    if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
-                       if ($v['tiprig'] == 0) { // tipo normale
-                          $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'],array($v['sconto'],$tesdoc['sconto'],-$v['pervat']));
-                       } else {                 // tipo forfait
-                          $tot_row = CalcolaImportoRigo(1,$v['prelis'],-$v['pervat']);
-                          $v['quanti']=1;
-                          $v['codart']=$v['descri'];
-                       }
-                       $price=$v['quanti'].'x'.round($tot_row/$v['quanti'],$admin_aziend['decimal_price']);
-                       $ticket_printer->row_ticket($tot_row,$price,$v['codvat'],$v['codart']);
-                       $tot+=$tot_row;
-                   } else {                    // se descrittivo
-                       $desc_arr=str_split(trim($v['descri']),24);
-                       foreach ($desc_arr as $d_v) {
-                                $ticket_printer->descri_ticket($d_v);
-                       }
-                   }
+                if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
+                    if ($v['tiprig'] == 0) { // tipo normale
+                       $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'],array($v['sconto'],$tesdoc['sconto'],-$v['pervat']));
+                    } else {                 // tipo forfait
+                       $tot_row = CalcolaImportoRigo(1,$v['prelis'],-$v['pervat']);
+                       $v['quanti']=1;
+                       $v['codart']=$v['descri'];
+                    }
+                    $descrirow=$v['quanti'].'x'.round($tot_row/$v['quanti'],$admin_aziend['decimal_price']);
+                    $reparto = gaz_dbi_get_row($gTables['cash_register_reparto'], 'cash_register_id_cash', $tesdoc['id_contract'], " AND aliiva_codice = ".$v['codvat']);
+                    $rep=($reparto)?$reparto['reparto']:'1R';
+                    $ticket_printer->row_ticket($tot_row,$descrirow,$v['codvat'],$v['codart'],$rep);
+                    $tot+=$tot_row;
+                } elseif ($v['tiprig'] == 5) {    // se lotteria scontrini
+                            $ticket_printer->lotteria_scontrini(strtoupper($v['descri']));
+                } else {                    // se descrittivo
+                    $desc_arr=str_split(trim($v['descri']),24);
+                    foreach ($desc_arr as $d_v) {
+                             $ticket_printer->descri_ticket($d_v);
+                    }
+                }
             }
             if (!empty($tesdoc['spediz'])) { // � stata impostata la stampa del codice fiscale
                $ticket_printer->descri_ticket('CF= '.$tesdoc['spediz']);

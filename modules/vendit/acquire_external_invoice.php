@@ -536,7 +536,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
 			$form['numfat']=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
-			$form['numdoc']=$form['numfat'];
+			$form['numdoc']=intval(preg_replace('/[^0-9]/', false, $form['numfat']));
 			$form['datfat']=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 			$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
 			$form['datreg']=$form['datfat'];
