@@ -39,19 +39,13 @@ class Scontrino extends Template
         $this->sconto = $this->tesdoc['sconto'];
         $this->tipdoc = 'Copia non fiscale dello Scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
         $this->descriptive_last_row = $this->docVars->descriptive_last_row;
+		$this->efattura = '';
     }
 
     function newPage() {
         $this->AddPage();
         $this->SetFont('helvetica','',8);
         $this->Cell(100);
-        $this->Cell(62,5,'Agente','LTR',0,'C',1);
-        $this->Cell(4);
-        $this->Cell(20,5,'Sconto base','LTR',1,'C',1);
-        $this->Cell(100);
-        $this->Cell(62,5,$this->docVars->rs_agente['ragso1'],'LBR');
-        $this->Cell(4);
-        $this->Cell(20,5,gaz_format_number($this->sconto).'%','LBR',1,'C');
         $this->Ln(2);
         $this->Cell(23,6,'Codice',1,0,'C',1);
         $this->Cell(75,6,'Descrizione',1,0,'C',1);
@@ -92,8 +86,8 @@ class Scontrino extends Template
             }
                 switch($rigo['tiprig']) {
                 case "0":
-                    $this->Cell(23, 5, $rigo['codart'],1,0,'L',false,'',2);
-                    $this->Cell(75, 5, $rigo['descri'],1,0,'L',false,'',2);
+                    $this->Cell(23, 5, $rigo['codart'],1,0,'L',0,'L',0,'',1);
+                    $this->Cell(75, 5, $rigo['descri'],1,0,'L',0,'L',0,'',1);
                     $this->Cell(6, 5, $rigo['unimis'],1,0,'C');
                     $this->Cell(14, 5, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(15, 5, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
@@ -107,8 +101,8 @@ class Scontrino extends Template
                     $this->Cell(18, 5, gaz_format_number($rigo['totale']),1,1,'R');
                     break;
                 case "1":
-                    $this->Cell(23, 5, $rigo['codart'],1,0,'L',false,'',2);
-                    $this->Cell(75, 5, $rigo['descri'],1,0,'L',false,'',2);
+                    $this->Cell(23, 5, $rigo['codart'],1,0,'L',0,'L',0,'',1);
+                    $this->Cell(75, 5, $rigo['descri'],1,0,'L',0,'L',0,'',1);
                     $this->Cell(42, 5, '',1);
                     $this->Cell(18, 5, gaz_format_number($rigo['importo']),1,0,'R');
                     $this->Cell(10, 5, gaz_format_number($rigo['pervat']),1,0,'R');
@@ -116,7 +110,7 @@ class Scontrino extends Template
                     break;
                 case "2":
                     $this->Cell(23,5,'','L');
-                    $this->Cell(75,5,$rigo['descri'],'LR',0,'L',false,'',2);
+                    $this->Cell(75,5,$rigo['descri'],'LR',0,'L',0,'L',0,'',1);
                     $this->Cell(88,5,'','R',1);
                     break;
                 case "11":

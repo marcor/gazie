@@ -528,15 +528,8 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 	
 	require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] .$lh. '.php');
     $pdf = new $templateName();
-    $ecr = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $_SESSION["user_name"]);
-    if (!empty($ecr['driver'])) {
-        require("../../library/cash_register/" . $ecr['driver'] . ".php");
-        $ticket_printer = new $ecr['driver'];
-    } else {
-        $ecr = false;
-    }
     $docVars = new DocContabVars();
-    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, $ecr);
+    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, false);
     $docVars->initializeTotals();
     $pdf->setVars($docVars, $templateName);
     $pdf->setTesDoc();
