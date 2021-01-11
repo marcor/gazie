@@ -694,7 +694,7 @@ $strScript = array("admin_client.php" =>
     ),
     "report_scontr.php" =>
     array('title' => 'Scontrini fiscali emessi',
-        'seziva' => ' della sezione IVA n.',
+        'seziva' => 'Sez.IVA',
         'link1' => 'Emetti uno scontrino fiscale',
         'link2' => 'Esegui la chiusura giornaliera del registratore di cassa',
         'id' => 'ID',

@@ -26,9 +26,21 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin(9);
 require("../../library/include/header.php");
 $script_transl = HeadMain();
+
+// cerco gli ultimi scontrini emessi distinguendo per RT e per data
+$last_tickets=[];
+$rs1 = gaz_dbi_query("SELECT id_contract, datemi FROM ".$gTables['tesdoc']." WHERE tipdoc='VCO' GROUP BY datemi , id_contract");
+while ($r1 = gaz_dbi_fetch_array($rs1)) {
+  $rs2 = gaz_dbi_query("SELECT id_tes FROM ".$gTables['tesdoc']." WHERE tipdoc='VCO' AND datemi='".$r1['datemi']."' AND id_contract='".$r1['id_contract']."' ORDER BY numdoc DESC LIMIT 0,1");
+  while ($r2 = gaz_dbi_fetch_array($rs2)) {
+    $last_tickets[] = $r2['id_tes'];// accumulo gli id_tes relativi agli ultimi scontrini del giorno che quindi potranno essere eliminati se sbagliati 
+  }
+}
+
 $search_fields = [
-    'tipdoc' => "tipdoc LIKE '%s'",
+    'tipo' => "tipdoc LIKE '%s'",
     'id_tes' => "{$gTables['tesdoc']}.id_tes LIKE %d",
+	'sezione' => "{$gTables['tesdoc']}.seziva = %d",
 	'numdoc' => "{$gTables['tesdoc']}.numdoc = %d",
     'anno' => "YEAR({$gTables['tesdoc']}.datemi) = %d",
 	'cliente' => "{$gTables['anagra']}.ragso1 LIKE '%%%s%%'",
@@ -39,6 +51,7 @@ $sortable_headers = array  (
     $script_transl['id'] => 'id_tes',
     $script_transl['date'] => "YEAR({$gTables['tesdoc']}.datemi)",
     "Registratore" => "id_contract", // registratore telematico
+    $script_transl['seziva']=>"seziva",
     $script_transl['number']=>"numdoc",
     $script_transl['invoice'] => "cliente",
     $script_transl['pagame'] => "",
@@ -56,7 +69,7 @@ $tablejoin = $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables
 $ts = new TableSorter(
     $tablejoin, 
     $passo, 
-    ['datemi'=>'desc','numdoc'=>'desc'],
+    ['datemi'=>'desc','id_contract'=>'desc','seziva'=>'desc','numdoc'=>'desc'],
     ['tipdoc' => 'VCO']);
 ?>
     <div class="text-center"><h3><?php echo $script_transl['title'];?></h3></div>
@@ -152,9 +165,11 @@ $(function() {
             <?php gaz_flt_disp_select("anno", "YEAR(datemi) AS anno ", $tablejoin," tipdoc = 'VCO'" , "datemi"); ?>
         </td>
 		<td class="FacetFieldCaptionTD">
-            <?php gaz_flt_disp_select("id_contract", "id_contract", $tablejoin, " tipdoc = 'VCO'","id_contract"); ?>
+            <?php gaz_flt_disp_select("cash", "id_contract AS cash", $tablejoin, " tipdoc = 'VCO'","id_contract"); ?>
         </td>
-		<td class="FacetFieldCaptionTD"></td>
+		<td class="FacetFieldCaptionTD">
+            <?php gaz_flt_disp_select("sezione", $gTables['tesdoc'].".seziva AS sezione ", $tablejoin," tipdoc = 'VCO'" , $gTables['tesdoc'].".seziva"); ?>
+        </td>
 		<td class="FacetFieldCaptionTD">			
             <input type="text" name="cliente" placeholder="Cliente" class="input-sm form-control" value="<?php echo (isset($cliente))? $cliente : ""; ?>" maxlength="15">
         </td>
@@ -270,7 +285,10 @@ echo '</tr>';
             // Colonna data emissione
             echo "<td align=\"center\">" . gaz_format_date($row['datemi']) . "</td>";
             // Colonna registratore
-            echo "<td align=\"center\">" . $row['id_contract'] . " - " . $row['des_rt'] . "</td>";
+            $descash=($row['id_contract']==0)?'Su file XML':$row['id_contract'] . " - " . $row['des_rt'];
+            echo "<td align=\"center\">" . $descash . "</td>";
+            // Colonna sezione IVA
+            echo "<td align=\"center\">" . $row["seziva"] . " &nbsp;</td>";
             // Colonna numero documento
             echo "<td align=\"center\">" . $row["numdoc"] . " &nbsp;</td>";
             // Colonna fattura
@@ -289,7 +307,7 @@ echo '</tr>';
             }
             echo "&nbsp;</td>";
              // Colonna importo
-           echo '<td align="right" style="font-weight=bolt;">';
+            echo '<td align="right" style="font-weight=bolt;">';
             echo gaz_format_number($tot_tes);
             echo "\t </td>\n";
             // Colonna certificato
@@ -297,7 +315,7 @@ echo '</tr>';
             // Colonna Elimina
             echo "</td>";
             if ($row["id_con"] == 0) {
-/*                if (getLastId($row['datemi'], $row['seziva']) == $row["id_tes"]) {
+                if (in_array($row['id_tes'],$last_tickets)) {
                     echo "<td align=\"center\">";
 					?>
 					<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento e la registrazione contabile relativa" ref="<?php echo $row['id_tes'];?>" datemi="<?php echo $row['datemi']; ?>">
@@ -307,7 +325,7 @@ echo '</tr>';
 					<?php
 				} else {
                     echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
-                }*/
+                }
             } else {
                 echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
             }
