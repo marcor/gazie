@@ -89,10 +89,10 @@ if (isset($_POST['ins'])) {
                        $v['quanti']=1;
                        $v['codart']=$v['descri'];
                     }
-                    $descrirow=$v['quanti'].'x'.round($tot_row/$v['quanti'],$admin_aziend['decimal_price']);
+                    $descricalc=floatval($v['quanti']).'x'.round($tot_row/$v['quanti'],$admin_aziend['decimal_price']);
                     $reparto = gaz_dbi_get_row($gTables['cash_register_reparto'], 'cash_register_id_cash', $tesdoc['id_contract'], " AND aliiva_codice = ".$v['codvat']);
                     $rep=($reparto)?$reparto['reparto']:'1R';
-                    $ticket_printer->row_ticket($tot_row,$descrirow,$v['codvat'],$v['codart'],$rep);
+                    $ticket_printer->row_ticket($tot_row,$descricalc,$v['codvat'],$v['codart'],$rep, $v['descri']);
                     $tot+=$tot_row;
                 } elseif ($v['tiprig'] == 5) {    // se lotteria scontrini
                             $ticket_printer->lotteria_scontrini(strtoupper($v['descri']));

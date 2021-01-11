@@ -346,31 +346,34 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
 				if ($ecr_user){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
                   // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
-                  require("../../library/cash_register/" . $ecr['driver'] . ".php");
-                  $ticket_printer = new $ecr['driver'];
+                  require("../../library/cash_register/" . $ecr['driver']); // carico il driver per l'RT
+                  $classname=substr($ecr['driver'],0,-4);
+                  $ticket_printer = new $classname;
                   $ticket_printer->set_serial($ecr['serial_port']);
                   $ticket_printer->open_ticket();
-                  $ticket_printer->set_cashier($admin_aziend['Nome']);
                   $tot = 0;
-                  foreach ($form['rows'] as $i => $v) {
-                      if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
-                          if ($v['tiprig'] == 0) { // tipo normale
-                              $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
-                          } else {                 // tipo forfait
-                              $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
-                              $v['quanti'] = 1;
-                              $v['codart'] = $v['descri'];
-                          }
-                          $price = $v['quanti'] . 'x' . round($tot_row / $v['quanti'], $admin_aziend['decimal_price']);
-                          $ticket_printer->row_ticket($tot_row, $price, $v['codvat'], $v['codart']);
-                          $tot+=$tot_row;
-                      } else {                    // se descrittivo
-                          $desc_arr = str_split(trim($v['descri']), 24);
-                          foreach ($desc_arr as $d_v) {
-                              $ticket_printer->descri_ticket($d_v);
-                          }
-                      }
-                  }
+                    foreach ($form['rows'] as $i => $v) {
+                        if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
+                            if ($v['tiprig'] == 0) { // tipo normale
+                                $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
+                            } else {                 // tipo forfait
+                                $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
+                                $v['quanti'] = 1;
+                            }
+                            $descricalc = floatval($v['quanti']) . 'x' . round($tot_row / $v['quanti'], $admin_aziend['decimal_price']);
+                            $reparto = gaz_dbi_get_row($gTables['cash_register_reparto'], 'cash_register_id_cash', $form['id_cash'], " AND aliiva_codice = ".$v['codvat']);
+                            $rep=($reparto)?$reparto['reparto']:'1R';
+                            $ticket_printer->row_ticket($tot_row, $descricalc, $v['codvat'], $v['codart'],$rep, $v['descri']);
+                            $tot+=$tot_row;
+                        } elseif ($v['tiprig'] == 5) {    // se lotteria scontrini
+                            $ticket_printer->lotteria_scontrini(strtoupper($v['descri']));
+                        } else {                    // se descrittivo
+                            $desc_arr = str_split(trim($v['descri']), 24);
+                            foreach ($desc_arr as $d_v) {
+                                $ticket_printer->descri_ticket($d_v);
+                            }
+                        }
+                    }
                   if (!empty($form['fiscal_code'])) { // Ã¨ stata impostata la stampa del codice fiscale
                       $ticket_printer->descri_ticket('CF= ' . $form['fiscal_code']);
                   }

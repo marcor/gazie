@@ -99,7 +99,7 @@ class xonxoff {
         $this->_close_port();
     }
 
-    public function row_ticket($amount, $descr = '', $vat = '', $row = '') {
+    public function row_ticket($amount, $descr = '', $vat = '', $row = '',$reparto='1R', $descriart=false) {
         // vendita articoli
         // il formato dell'importo deve essere senza punti e virgole e con 2 decimali
         $formato_ammount = number_format($amount, 2, '', '');

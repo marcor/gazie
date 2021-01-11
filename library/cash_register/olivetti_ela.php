@@ -103,7 +103,7 @@ class olivetti_ela {
         $this->_close_port();
     }
 
-    public function row_ticket($amount, $descr = '', $vat = '', $row = '') {
+    public function row_ticket($amount, $descr = '', $vat = '', $row = '',$reparto='1R', $descriart=false) {
         // vendita articoli
         $this->_send('$1325' . $this->_tag_data($amount) . $this->_tag_data($descr) . $this->_tag_data($vat) . $this->_tag_data($row));
     }
