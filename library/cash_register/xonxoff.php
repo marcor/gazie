@@ -90,9 +90,9 @@ class xonxoff {
         $this->_send('"' . $descr . '"@');
     }
 
-    public function lotteria_scontrini($codicelotteria) {
+    public function lotteria_scontrini($codicelotteria,$cmdlotteria='L') {
         // stampa codice lotteria
-        $this->_send('"' . $codicelotteria . '"L');
+        $this->_send('"' . $codicelotteria . '"'.$cmdlotteria);
     }
 
     public function close_ticket($d = '1') {
@@ -112,9 +112,9 @@ class xonxoff {
         $this->_send('"' . $descr . '"' . $formato_ammount . 'H'.$reparto);
     }
 
-    public function pay_ticket($cash = '', $descr = '') {
+    public function pay_ticket($cash = '', $descr = '', $tender = '1T') {
         // pagamento
-        $this->_send('1T');
+        $this->_send($tender);
     }
 
     public function simple_ticket($amount) {

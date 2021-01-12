@@ -90,9 +90,9 @@ class olivetti_ela {
         $this->_send('#112' . $this->_tag_data($descr));
     }
 
-    public function lotteria_scontrini($codicelotteria) {
+    public function lotteria_scontrini($codicelotteria,$cmdlotteria='') {
         // stampa codice lotteria
-        $this->_send('$1234' . $this->_tag_data($codicelotteria) );
+        $this->_send('$'.$cmdlotteria. $this->_tag_data($codicelotteria) );
     }
 
     public function close_ticket($d = '1') {
@@ -113,7 +113,7 @@ class olivetti_ela {
         $this->_send('$1325' . $this->_tag_data($amount) . $this->_tag_data($descr) . $this->_tag_data($vat) . $this->_tag_data($row));
     }
 
-    public function pay_ticket($cash = '', $descr = '') {
+    public function pay_ticket($cash = '', $descr = '', $tender = '') {
         // pagamento
         $this->_send('$1329' . $this->_tag_data($cash) . $this->_tag_data($descr));
     }

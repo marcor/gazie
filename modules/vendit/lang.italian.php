@@ -891,7 +891,8 @@ $strScript = array("admin_client.php" =>
 			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
 			'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
             'no_reparto'=>'Un rigo non ha il reparto del Registratore Telematico associato all\'aliquota IVA',
-            'lotteria'=>'Codice lotteria errato'
+            'lotteria'=>'Codice lotteria errato',
+            'tender'=>'Pagamento senza tender su Registratore Telematico'
         ),
 		'war' => array('serial' => 'La quantità è stata forzata ad 1 perché l\'articolo prevede il numero di serie',
 		'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',

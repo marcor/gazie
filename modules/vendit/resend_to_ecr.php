@@ -95,7 +95,8 @@ if (isset($_POST['ins'])) {
                     $ticket_printer->row_ticket($tot_row,$descricalc,$v['codvat'],$v['codart'],$rep, $v['descri']);
                     $tot+=$tot_row;
                 } elseif ($v['tiprig'] == 5) {    // se lotteria scontrini
-                            $ticket_printer->lotteria_scontrini(strtoupper($v['descri']));
+                    $cmdlotteria=(strlen(trim($ecr['codicelotteria']))>=1)?trim($ecr['codicelotteria']):'L';
+                    $ticket_printer->lotteria_scontrini(strtoupper($v['descri']),$cmdlotteria);
                 } else {                    // se descrittivo
                     $desc_arr=str_split(trim($v['descri']),24);
                     foreach ($desc_arr as $d_v) {
@@ -106,7 +107,9 @@ if (isset($_POST['ins'])) {
             if (!empty($tesdoc['spediz'])) { // � stata impostata la stampa del codice fiscale
                $ticket_printer->descri_ticket('CF= '.$tesdoc['spediz']);
             }
-            $ticket_printer->pay_ticket();
+            $tender = gaz_dbi_get_row($gTables['cash_register_tender'], 'cash_register_id_cash', $form['id_cash'], " AND pagame_codice = ".$form['pagame']);
+            $tender=($tender)?$tender['tender']:'1T';
+            $ticket_printer->pay_ticket('','',$tender);
             $ticket_printer->close_ticket();
             // FINE invio
             header("Location: ".$form['ritorno']);

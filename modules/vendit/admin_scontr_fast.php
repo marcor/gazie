@@ -231,6 +231,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
         if (empty($form["pagame"])) {
             $msg['err'][] = "pagame";
+        } else {
+          $tender = gaz_dbi_get_row($gTables['cash_register_tender'], 'cash_register_id_cash', $form['id_cash'], " AND pagame_codice = ".$form['pagame']);
+          if (!$tender && $form['id_cash']>0){
+            $msg['err'][] = "tender";
+          }  
         }
         //controllo dei righi e del totale
         $tot = 0;
@@ -345,13 +350,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 gaz_dbi_put_row($gTables['cash_register'], 'id_cash', $form['id_cash'], 'adminid', $admin_aziend['user_name']); // aggiorno l'ultimo utente utilizzatore
 				if ($ecr_user){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
-                  // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
-                  require("../../library/cash_register/" . $ecr['driver']); // carico il driver per l'RT
-                  $classname=substr($ecr['driver'],0,-4);
-                  $ticket_printer = new $classname;
-                  $ticket_printer->set_serial($ecr['serial_port']);
-                  $ticket_printer->open_ticket();
-                  $tot = 0;
+                    // INIZIO l'invio dello scontrino alla stampante fiscale dell'utente
+                    require("../../library/cash_register/" . $ecr['driver']); // carico il driver per l'RT
+                    $classname=substr($ecr['driver'],0,-4);
+                    $ticket_printer = new $classname;
+                    $ticket_printer->set_serial($ecr['serial_port']);
+                    $ticket_printer->open_ticket();
+                    $tot = 0;
                     foreach ($form['rows'] as $i => $v) {
                         if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
                             if ($v['tiprig'] == 0) { // tipo normale
@@ -366,7 +371,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $ticket_printer->row_ticket($tot_row, $descricalc, $v['codvat'], $v['codart'],$rep, $v['descri']);
                             $tot+=$tot_row;
                         } elseif ($v['tiprig'] == 5) {    // se lotteria scontrini
-                            $ticket_printer->lotteria_scontrini(strtoupper($v['descri']));
+                            $cmdlotteria=(strlen(trim($ecr['codicelotteria']))>=1)?trim($ecr['codicelotteria']):'L';
+                            $ticket_printer->lotteria_scontrini(strtoupper($v['descri']),$cmdlotteria);
                         } else {                    // se descrittivo
                             $desc_arr = str_split(trim($v['descri']), 24);
                             foreach ($desc_arr as $d_v) {
@@ -374,12 +380,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             }
                         }
                     }
-                  if (!empty($form['fiscal_code'])) { // Ã¨ stata impostata la stampa del codice fiscale
-                      $ticket_printer->descri_ticket('CF= ' . $form['fiscal_code']);
-                  }
-                  $ticket_printer->pay_ticket();
-                  $ticket_printer->close_ticket();
-                  // FINE invio
+                    if (!empty($form['fiscal_code'])) { // Ã¨ stata impostata la stampa del codice fiscale
+                        $ticket_printer->descri_ticket('CF= ' . $form['fiscal_code']);
+                    }
+                    $tender = gaz_dbi_get_row($gTables['cash_register_tender'], 'cash_register_id_cash', $form['id_cash'], " AND pagame_codice = ".$form['pagame']);
+                    $tender=($tender)?$tender['tender']:'1T';
+                    $ticket_printer->pay_ticket('','',$tender);
+                    $ticket_printer->close_ticket();
+                    // FINE invio
 				}
                 if ($form['clfoco'] > 100000000) {
                     // procedo alla stampa della fattura solo se c'Ã¨ un cliente selezionato
