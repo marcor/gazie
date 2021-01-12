@@ -90,6 +90,11 @@ class olivetti_ela {
         $this->_send('#112' . $this->_tag_data($descr));
     }
 
+    public function lotteria_scontrini($codicelotteria) {
+        // stampa codice lotteria
+        $this->_send('$1234' . $this->_tag_data($codicelotteria) );
+    }
+
     public function close_ticket($d = '1') {
         // chiusura scontrino fiscale, da chiamare sempre!
         $this->_send('$1323');

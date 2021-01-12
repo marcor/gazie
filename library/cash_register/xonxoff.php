@@ -90,12 +90,18 @@ class xonxoff {
         $this->_send('"' . $descr . '"@');
     }
 
+    public function lotteria_scontrini($codicelotteria) {
+        // stampa codice lotteria
+        $this->_send('"' . $codicelotteria . '"L');
+    }
+
     public function close_ticket($d = '1') {
         $this->_close_port();
     }
 
     public function open_drawer($d = '1') {
         // apertura cassetto
+        $this->_send('a');
         $this->_close_port();
     }
 
@@ -103,7 +109,7 @@ class xonxoff {
         // vendita articoli
         // il formato dell'importo deve essere senza punti e virgole e con 2 decimali
         $formato_ammount = number_format($amount, 2, '', '');
-        $this->_send('"' . $descr . '"' . $formato_ammount . 'H1R');
+        $this->_send('"' . $descr . '"' . $formato_ammount . 'H'.$reparto);
     }
 
     public function pay_ticket($cash = '', $descr = '') {
