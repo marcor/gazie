@@ -426,8 +426,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
                     $form['datfat'] = $form['datemi'];
                 }
-                tesdocInsert($form);
-                $last_id = gaz_dbi_last_id();
+                $last_id = tesdocInsert($form);
                 //inserisco i righi
                 foreach ($form['rows'] as $v) {
                     $v['id_tes'] = $last_id;
@@ -445,6 +444,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
 	                }
                 }
+                gaz_dbi_put_row($gTables['cash_register'], 'id_cash', $form['id_cash'], 'adminid', $admin_aziend['user_name']); // aggiorno l'ultimo utente utilizzatore
 				if ($form['id_cash']>=1){ // se è un utente abilitato all'invio all'ecr procedo in tal senso , altrimenti genererò un file XML dopo aver contabilizzato
                     // INIZIO l'invio dello scontrino al Registratore Telematico dell'utente
                     $ecr = gaz_dbi_get_row($gTables['cash_register'], 'id_cash', $form['id_cash']);
