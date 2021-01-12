@@ -88,6 +88,7 @@ if (isset($_POST['ins'])) {
                        $tot_row = CalcolaImportoRigo(1,$v['prelis'],-$v['pervat']);
                        $v['quanti']=1;
                        $v['codart']=$v['descri'];
+                       $v['descri']=false;
                     }
                     $descricalc=floatval($v['quanti']).'x'.round($tot_row/$v['quanti'],$admin_aziend['decimal_price']);
                     $reparto = gaz_dbi_get_row($gTables['cash_register_reparto'], 'cash_register_id_cash', $tesdoc['id_contract'], " AND aliiva_codice = ".$v['codvat']);
@@ -107,7 +108,7 @@ if (isset($_POST['ins'])) {
             if (!empty($tesdoc['spediz'])) { // � stata impostata la stampa del codice fiscale
                $ticket_printer->descri_ticket('CF= '.$tesdoc['spediz']);
             }
-            $tender = gaz_dbi_get_row($gTables['cash_register_tender'], 'cash_register_id_cash', $form['id_cash'], " AND pagame_codice = ".$form['pagame']);
+            $tender = gaz_dbi_get_row($gTables['cash_register_tender'], 'cash_register_id_cash', $tesdoc['id_contract'], " AND pagame_codice = ".$tesdoc['pagame']);
             $tender=($tender)?$tender['tender']:'1T';
             $ticket_printer->pay_ticket('','',$tender);
             $ticket_printer->close_ticket();

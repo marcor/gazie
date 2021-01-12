@@ -466,6 +466,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             } else {                 // tipo forfait
                                 $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
                                 $v['quanti'] = 1;
+                                $v['codart']=$v['descri'];
+                                $v['descri']=false;
                             }
                             $descricalc = floatval($v['quanti']) . 'x' . round($tot_row / $v['quanti'], $admin_aziend['decimal_price']);
                             $reparto = gaz_dbi_get_row($gTables['cash_register_reparto'], 'cash_register_id_cash', $form['id_cash'], " AND aliiva_codice = ".$v['codvat']);
