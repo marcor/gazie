@@ -64,11 +64,11 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             while ($rg_ricevuti = gaz_dbi_fetch_array($rs_ricevuti)) {
                 $totale_ricevibile -= $rg_ricevuti['quanti'];
             }
-            if ($totale_ricevibile==0) {
-                $form['rows'][$nr]['checkval'] = '';
-            } else {
-                $form['rows'][$nr]['checkval'] = ' checked ';
-			}
+            $form['rows'][$nr]['checkval'] = '';
+            if ($totale_ricevibile>=0.00001) {
+                // decommentare sotto in caso si voglia che venga selezionato  tutto di default 
+                //$form['rows'][$nr]['checkval'] = ' checked ';
+            }
             $form['rows'][$nr]['ricevibile'] = $totale_ricevibile;
             $form['rows'][$nr]['totric'] = $totale_ricevibile;
             $form['rows'][$nr]['codvat'] = $rigo['codvat'];

@@ -170,18 +170,21 @@ while ($mv = gaz_dbi_fetch_array($result)) {
       $aRiportare['bot'][2]['nam'] = gaz_format_number($mval['v_g']);
       $pdf->Cell(16,4,gaz_format_date($mv['datreg']),'LTR',0,'C');
       $pdf->Cell(30,4,$mv['caumag'].'-'.substr($mv['descau'],0,17),'TR',0,'',0,'',1);
+      $accdescr=$mv['desdoc'];
 	  if ($mv['id_orderman']>0){
-			$mv['desdoc'].=' Produzione '.$mv['desorderman'];
+		$accdescr.=' Produzione '.$mv['desorderman'];
+	  }
+      $accdescr.= ' del '.gaz_format_date($mv['datdoc']);
+      if (strlen($mv['ragso1'])>3) {
+			$accdescr.= $mv['ragso1'].' '.$mv['ragso2'];
 	  }
 	  if (intval($mv['id_lotmag'])>0){
-				$addlot= " lotto: ".$mv['identifier'];
-		} else {
-			$addlot="";
-		}
-      $pdf->Cell(100,4,substr($mv['desdoc'].' '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'].$addlot,0,80),'TR',0,'',0,'',1);
+		$accdescr= " lotto: ".$mv['identifier'];
+      }
+      $pdf->Cell(100,4,substr($accdescr,0,120),'TR',0,'',0,'',1);
       $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R');
       $pdf->Cell(8,4,$mv['unimis'],'TR',0,'C');
-      $pdf->Cell(17,4,gaz_format_quantity($mval['q']*$mv['operat'],1,$admin_aziend['decimal_quantity']),1,0,'R');
+      $pdf->Cell(17,4,gaz_format_quantity($mv['quanti']*$mv['operat'],1,$admin_aziend['decimal_quantity']),1,0,'R');
       if ($mv['operat']==1) {
           $pdf->Cell(17,4,number_format($mval['v'],$admin_aziend['decimal_price'],',',''),1,0,'R');
           $pdf->Cell(17,4,'',1);
