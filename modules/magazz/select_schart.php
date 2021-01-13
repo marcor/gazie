@@ -42,6 +42,7 @@ function getMovements($cm_ini,$cm_fin,$art_ini,$art_fin,$date_ini,$date_fin)
 		$what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri AS descau, ".
               $gTables['clfoco'].".codice, ".
+			  $gTables['lotmag'].".identifier, ".
               $gTables['orderman'].".id AS id_orderman, ".$gTables['orderman'].".description AS desorderman, ".
               $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
               $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".image, ".$gTables['artico'].".catmer ";
@@ -49,7 +50,8 @@ function getMovements($cm_ini,$cm_fin,$art_ini,$art_fin,$date_ini,$date_fin)
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
                LEFT JOIN ".$gTables['orderman']." ON ".$gTables['movmag'].".id_orderman = ".$gTables['orderman'].".id
-               LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
+               LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice
+			   LEFT JOIN ".$gTables['lotmag']." ON ".$gTables['movmag'].".id_lotmag = ".$gTables['lotmag'].".id";
         $rs=gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datreg ASC, id_mov ASC");
         while ($r = gaz_dbi_fetch_array($rs)) {
             $m[] = $r;
@@ -301,10 +303,14 @@ if (isset($_POST['preview']) and $msg=='') {
 			if ($mv['id_orderman']>0){
 				$mv['desdoc'].=' Produzione '.$mv['desorderman'];
 			}
-            echo "<td class=\"FacetDataTD\" >".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85)."</td>";
+            echo "<td class=\"FacetDataTD\" >".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
+			if (intval($mv['id_lotmag'])>0){
+				echo " lotto: ",$mv['identifier'];
+			}
+			echo "</td>";
             echo "<td align=\"right\" class=\"FacetDataTD\" >".number_format($mv['prezzo'],$admin_aziend['decimal_price'],',','.')."</td>";
             echo "<td align=\"right\" class=\"FacetDataTD\" >".$mv['unimis']."</td>\n";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mval['q']*$mv['operat'],1,$admin_aziend['decimal_quantity'])."</td>";
+            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mv['quanti']*$mv['operat'],1,$admin_aziend['decimal_quantity'])."</td>";
             if ($mv['operat']==1) {
               echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td><td></td>";
             } else {

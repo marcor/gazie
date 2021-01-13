@@ -74,6 +74,7 @@ $where = " catmer BETWEEN ".$_GET['ci']." AND ".$_GET['cf']." AND".
 $what = $gTables['movmag'].".*, ".
         $gTables['caumag'].".codice, ".$gTables['caumag'].".descri AS descau, ".
         $gTables['clfoco'].".codice, ".
+		$gTables['lotmag'].".identifier, ".
         $gTables['orderman'].".id AS id_orderman, ".$gTables['orderman'].".description AS desorderman, ".
         $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
         $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".web_url, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".image, ".$gTables['artico'].".catmer ";
@@ -81,7 +82,8 @@ $what = $gTables['movmag'].".*, ".
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
                LEFT JOIN ".$gTables['orderman']." ON ".$gTables['movmag'].".id_orderman = ".$gTables['orderman'].".id
-               LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
+               LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice
+			   LEFT JOIN ".$gTables['lotmag']." ON ".$gTables['movmag'].".id_lotmag = ".$gTables['lotmag'].".id";
 $result = gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datreg ASC, id_mov ASC");
 
 $item_head = array('top'=>array(array('lun' => 32,'nam'=>$script_transl['item_head'][0]),
@@ -171,7 +173,12 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 	  if ($mv['id_orderman']>0){
 			$mv['desdoc'].=' Produzione '.$mv['desorderman'];
 	  }
-      $pdf->Cell(100,4,substr($mv['desdoc'].' '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,80),'TR',0,'',0,'',1);
+	  if (intval($mv['id_lotmag'])>0){
+				$addlot= " lotto: ".$mv['identifier'];
+		} else {
+			$addlot="";
+		}
+      $pdf->Cell(100,4,substr($mv['desdoc'].' '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'].$addlot,0,80),'TR',0,'',0,'',1);
       $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R');
       $pdf->Cell(8,4,$mv['unimis'],'TR',0,'C');
       $pdf->Cell(17,4,gaz_format_quantity($mval['q']*$mv['operat'],1,$admin_aziend['decimal_quantity']),1,0,'R');

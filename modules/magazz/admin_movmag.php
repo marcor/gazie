@@ -324,9 +324,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if ($utsdoc > $utsreg) {
             $msg .= "17+";
         }
-		if ($form['lot_or_serial']==1){
+		if ($form['lot_or_serial']==1 AND $form['caumag']<>99){ // se è un articolo con lotti e non è un movimento inventario
 			if (strlen ($form['identifier'])<= 0){
-				$msg .= "21+";
+				$msg .= "21+"; // manca il lotto
 			}
 		} 
 		if (intval($form['caumag'])==98 AND intval($form['operat'])==0){ // su storno inventario bisogna indicare se entrata o uscita
@@ -724,7 +724,7 @@ $select_artico = new selectartico("artico");
 				$select_artico->output(substr($form['cosear'], 0, 20));
 
     // Antonio Germani > Inizio LOTTO in uscita o in entrata o creazione nuovo
-if ($form['artico'] != "" && intval( $item_artico['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form 
+if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['caumag']<>99) == 1) { // se l'articolo prevede il lotto e non è un inventario, apro la gestione lotti nel form 
 	$form['lot_or_serial']=$item_artico['lot_or_serial'];
 	?>	  
 		<div class="FacetFieldCaptionTD"><?php echo $script_transl[21]; ?></div>
