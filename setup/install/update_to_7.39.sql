@@ -1,6 +1,7 @@
 UPDATE `gaz_config` SET `cvalue` = '134' WHERE `id` =2;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_scontr.php'), 'report_ecr.php', '', '', 56, '', 9  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_scontr.php'), 'admin_ecr.php', '', '', 57, '', 12  FROM `gaz_menu_script`;
+UPDATE `gaz_module` SET `link`='docume_finann.php' WHERE  `link`='docume_finean.php';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXmovmag`	CHANGE COLUMN `quanti` `quanti` DECIMAL(14,5) NULL DEFAULT NULL AFTER `id_assets`;
 ALTER TABLE `gaz_XXXrigdoc`	CHANGE COLUMN `quanti` `quanti` DECIMAL(14,5) NULL DEFAULT NULL AFTER `pezzi`;
