@@ -40,7 +40,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     $utsdate = mktime(0, 0, 0, $form['date_M'], $form['date_D'], $form['date_Y']);
     $date = date("Y-m-d", $utsdate);
     if (!empty($form['catmer'])) {
-        $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', "catmer = " . $form["catmer"], 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
+        $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', "catmer = " . $form["catmer"] ." AND (" . $gTables['artico'] . '.good_or_service = 0 OR '. $gTables['artico'] . '.good_or_service = 2 )', 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
     } else {
         $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', "1=1", 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
     }
