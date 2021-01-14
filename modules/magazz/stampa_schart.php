@@ -179,7 +179,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 			$accdescr.= $mv['ragso1'].' '.$mv['ragso2'];
 	  }
 	  if (intval($mv['id_lotmag'])>0){
-		$accdescr= " lotto: ".$mv['identifier'];
+		$accdescr.=" lotto: ".$mv['identifier'];
       }
       $pdf->Cell(100,4,substr($accdescr,0,120),'TR',0,'',0,'',1);
       $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R');
