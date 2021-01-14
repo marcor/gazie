@@ -767,7 +767,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 //modifico la testata con i nuovi dati...
                 $old_head = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $form['id_tes']);
                 if (substr($form['tipdoc'], 0, 2) == 'DD') { //se è un DDT non fatturato
-                    $form['numfat'] = 0;
+                    $form['numfat'] = '';
                 }
                 $form['geneff'] = $old_head['geneff'];
                 $form['id_contract'] = $old_head['id_contract'];
@@ -841,7 +841,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	// se e' il primo documento dell'anno, resetto il contatore
 					if ($form['tipdoc']=='ADT') {  //ma se e' un ddt a fornitore il protocollo è 0 così come il numero e data fattura
 						$form['protoc'] = 0;
-						$form['numfat'] = 0;
+						$form['numfat'] = '';
 						$form['datfat'] = $datemi;
 					} elseif ($form['tipdoc']=='RDL') {  //se e' un ddt di ritorno da lavorazione non modifico il numero che ho inserito sul form
 					} elseif ($ultimo_documento) {
@@ -851,7 +851,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					}
 					if (substr($form['tipdoc'], 0, 2) == 'DD') {  //ma se e' un ddt a fornitore il protocollo è 0 così come il numero e data fattura
 						$form['protoc'] = 0;
-						$form['numfat'] = 0;
+						$form['numfat'] = '';
 					} else if (substr($form['tipdoc'], 0, 2) == 'AF') {
 						$form['protoc'] = getProtocol($form['tipdoc'], substr($form['datreg'],0,4), $sezione);
 					} else { //in tutti gli altri casi si deve prendere quanto inserito nel form
