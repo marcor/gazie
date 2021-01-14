@@ -31,11 +31,11 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
 }
 
-if (!isset($_GET['ri']) or
-    !isset($_GET['rf']) or
-    !isset($_GET['ci']) or
-    !isset($_GET['cf']) or
-    !isset($_GET['ai']) or
+if (!isset($_GET['ri']) ||
+    !isset($_GET['rf']) ||
+    !isset($_GET['ci']) ||
+    !isset($_GET['cf']) ||
+    !isset($_GET['ai']) ||
     !isset($_GET['af'])) {
     header("Location: select_schart.php");
     exit;
