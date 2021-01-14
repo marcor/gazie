@@ -33,6 +33,8 @@ require("lang.".$admin_aziend['lang'].".php");
 $search_fields = [
 	'movimento'
         => "{$gTables['movmag']}.id_mov = %d",
+	'datareg'
+        => "datreg = '%s'",
 	'causale'
         => "caumag LIKE '%s%%'",
 	'documento'
@@ -64,6 +66,7 @@ $t->output_navbar();
 ?>
 <script>
 $(function() {
+    $("#datareg").datepicker({ dateFormat: 'yy-mm-dd',showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
@@ -111,9 +114,11 @@ $(function() {
 	<table class="Tlarge table table-striped table-bordered table-condensed">
 	<tr>
 		<td class="FacetFieldCaptionTD">
-		  <input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" tabindex="1">
+		  <input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" >
 		</td>
-		<td class="FacetFieldCaptionTD"></td>
+		<td class="FacetFieldCaptionTD">
+		  <input type="text" name="datareg" id="datareg" placeholder="Data registrazione" class="input-sm form-control"  value="<?php echo (isset($datareg))? $datareg : ""; ?>" maxlength ="10">
+        </td>
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" tabindex="1">
 		</td>
