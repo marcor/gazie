@@ -178,10 +178,10 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 						if ($va['i_l']==1){ // se articolo con lotti ...
 							$lm -> getAvailableLots($ka,0);							
 							$tot=0;
-							foreach ($lm->available as $v_lm) {
-								$tot+=$v_lm['rest'];
+							foreach ($lm->available as $v_lm) {// ciclo tutti i lotti disponibili
+								$tot+=$v_lm['rest']; // sommo le quantità
 							}							
-							if ($tot <> $va['g_r']){
+							if ($tot <> $va['g_r']){ // se la quantità richiesta non corrisponde a quella reale segnalo!
 								$msg .= $ka . '-4+';
 							}
 						}
@@ -428,6 +428,7 @@ if (isset($form['a'])) {
 							</td>
 						</tr>';
         }
+		
 
         echo '		<input type="hidden" value="' . $v['i_a'] . '" name="a[' . $k . '][i_a]" />
 					<input type="hidden" value="' . $v['class'] . '" name="a[' . $k . '][class]" />
@@ -453,8 +454,14 @@ if (isset($form['a'])) {
 							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" id="a[' . $k . '][v_r]" name="a[' . $k . '][v_r]" value="' . gaz_format_quantity($v['v_r'], 0, $admin_aziend['decimal_price']) . '" disabled="disabled" />
 						</td>
 						<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
-						<td  align="right">
-							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">
+						<td  align="right">';
+						if ($v['i_l']==1 AND $v['g_r']>0){ // se articolo con lotti ...
+							$disable="disabled";
+							echo '<button type="button" class="btn" ><a href="#">&#9783;</a></button>';
+						} else {
+							$disable="";
+						}
+						echo '<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"'. $disable .'>
 						</td>
 						<td  align="right" align="right">' . gaz_format_number($v['v_g']) . '</td>
 					</tr>';
