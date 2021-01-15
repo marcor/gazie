@@ -429,8 +429,8 @@ if (isset($form['a'])) {
 			<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 			<td  align="right">';
 			if ($v['i_l']==1 AND $v['g_r']>0){ // se articolo con lotti ...							
-				echo '<button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest"><i class="glyphicon glyphicon-tag"></i>
-				<input type="text" style="text-align:right; cursor:pointer;" name="disable" value="' . $v['g_r'] . '" disabled ></a></button>
+				echo '<button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest"><div style="text-align:right; padding: 3px; cursor:pointer; border:1px;"><i class="glyphicon glyphicon-tag"></i>
+				' . $v['g_r'] . '</div></a></button>
 				<input type="hidden" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"/>';
 			} else {
 				echo '<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">';
