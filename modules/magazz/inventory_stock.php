@@ -240,61 +240,19 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                             'quanti' => $mq,
                             'prezzo' => $v['v_r'],
                         ));
-                    }
-								
-					if ($v['i_l']==1){ // se articolo con lotti ...
+                    }							
+				
+					movmagInsert(array('caumag' => 99,
+						'operat' => 1,
+						'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+						'tipdoc' => 'INV',
+						'desdoc' => $cau99['descri'],
+						'datdoc' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+						'artico' => $k,
+						'quanti' => $v['g_r'],
+						'prezzo' => $v['v_r'],
+					));
 					
-						// Antonio Germani - vedo se ci sono stati degli inventari fino alla data
-						//$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$k' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
-						// non serve più
-						
-						$lm -> getAvailableLots($k,0);					
-						if (count($lm->available) > 0) { 
-							$count=array();
-							foreach ($lm->available as $v_lm) { // raggruppo i lotti uguali
-								$key=$v_lm['id_lotmag']; // chiave per il conteggio dei totali raggruppati per lotto e scadenza; la chiave è l'ID lotto
-								if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
-									// Aggiungo la chiave con il rispettivo valore iniziale
-									$count[$key] = $v_lm['rest'];
-								} else {
-									// Altrimenti, aggiorno il valore della chiave
-									$count[$key] += $v_lm['rest'];
-								}							
-							}
-						}
-						foreach($count as $key => $val){ // per ogni lotto creo e inserisco un rigo movmag con causale 99 
-							
-							/* Antonio Germani - commentato perché adesso gli inventari caumag 99 vengono tolti nella function getAvailableLots
-							foreach ($rs_last_inventory as $idlot){ // se ci sono stati degli inventari che si riferiscono a questo specifico lotto, tolgo la quantità di ciascuno
-								if ($idlot['id_lotmag']==$key){
-									$val=$val-$idlot['quanti'];
-								}
-							}*/
-							
-							movmagInsert(array('caumag' => 99,
-								'operat' => 1,
-								'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
-								'tipdoc' => 'INV',
-								'desdoc' => $cau99['descri'],
-								'datdoc' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
-								'artico' => $k,
-								'quanti' => $val,
-								'prezzo' => $v['v_r'],
-								'id_lotmag' => $key,
-							));
-						}
-					} else {  // se articolo non prevede lotti inserisco un solo rigo con causale 99
-						movmagInsert(array('caumag' => 99,
-							'operat' => 1,
-							'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
-							'tipdoc' => 'INV',
-							'desdoc' => $cau99['descri'],
-							'datdoc' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
-							'artico' => $k,
-							'quanti' => $v['g_r'],
-							'prezzo' => $v['v_r'],
-						));
-					}
                 }
             }
             header("Location: report_movmag.php");
@@ -408,63 +366,61 @@ if (isset($form['a'])) {
         if ($ctrl_cm <> $v['i_g']) {
             //$cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_d']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
             $cm_tooltip = ' class="gazie-tooltip" data-type="catmer-thumb" data-id="' . $v['i_g'] . '" data-title="' . $v['g_d'] . '"';
-            echo '			<input type="hidden" value="' . $v['g_d'] . '" name="a[' . $k . '][g_d]" />
-						<tr>';
+            echo '<tr><td><input type="hidden" value="' . $v['g_d'] . '" name="a[' . $k . '][g_d]" />';
             if ($ctrl_cm == 0) {
                 /* <input type="checkbox" class="checkAll" title="'.$script_transl['selall'].'" />&nbsp; */
-                echo '			<td>
-									<a href="javascript:void(0);" class="checkAll all btn btn-default btn-xs" title="' . $script_transl['selall'] . '" >
-										<i class="glyphicon glyphicon-unchecked"></i>
-									</a>
-									<a href="javascript:void(0);" class="invertSelection btn btn-default btn-xs" title="' . $script_transl['invsel'] . '" >
-										<i class="glyphicon glyphicon-refresh"></i>
-									</a>
-								</td>';
-            } else {
-                echo '			<td></td>';
-            }
-            echo '			<td class="FacetFieldCaptionTD" colspan="8" align="left">
-								<span ' . $cm_tooltip . '>' . $v['i_g'] . ' - ' . $v['g_d'] . '</span>
-							</td>
-						</tr>';
-        }
-		
+                echo '			
+					<a href="javascript:void(0);" class="checkAll all btn btn-default btn-xs" title="' . $script_transl['selall'] . '" >
+					<i class="glyphicon glyphicon-unchecked"></i>
+					</a>
+					<a href="javascript:void(0);" class="invertSelection btn btn-default btn-xs" title="' . $script_transl['invsel'] . '" >
+					<i class="glyphicon glyphicon-refresh"></i>
+					</a>
+					';
+            } 
+            echo '</td><td class="FacetFieldCaptionTD" colspan="8" align="left">
+				<span ' . $cm_tooltip . '>' . $v['i_g'] . ' - ' . $v['g_d'] . '</span>
+				</td>
+				</tr>';
+        }		
 
-        echo '		<input type="hidden" value="' . $v['i_a'] . '" name="a[' . $k . '][i_a]" />
-					<input type="hidden" value="' . $v['class'] . '" name="a[' . $k . '][class]" />
-					<input type="hidden" value="' . $v['i_g'] . '" name="a[' . $k . '][i_g]" />
-					<input type="hidden" value="' . $v['g_d'] . '" name="a[' . $k . '][g_d]" />
-					<input type="hidden" value="' . $v['i_d'] . '" name="a[' . $k . '][i_d]" />
-					<input type="hidden" value="' . $v['i_l'] . '" name="a[' . $k . '][i_l]" />
-					<input type="hidden" value="' . $v['i_u'] . '" name="a[' . $k . '][i_u]" />
-					<input type="hidden" value="' . $v['v_a'] . '" name="a[' . $k . '][v_a]" />
-					<input type="hidden" value="' . $v['v_r'] . '" name="a[' . $k . '][v_r]" />
-					<input type="hidden" value="' . $v['g_a'] . '" name="a[' . $k . '][g_a]" />
-					<input type="hidden" value="' . $v['v_g'] . '" name="a[' . $k . '][v_g]" />
-					<tr class="'.$v['class'].'">
-						<td class="FacetFieldCaptionTD" align="center">
-							<input class="jq_chk" name="chk' . $k . '" ' . $form['chk_on' . $k] . ' type="checkbox" />
-						</td>
-						<td align="left"><span ' . $tooltip . '>' . $k . '</span></td>
-						<td align="left"><span ' . $tooltip . '>' . $v['i_d'] . '</span></td>
-						<td align="center">' . $v['i_u'] . '</td>
-						<td align="right">' . gaz_format_quantity($v['v_a'], 0, $admin_aziend['decimal_price']) . '</td>
-						<td align="right">
-							<input id="vac' . $k . '" name="vac' . $k . '" ' . $form['vac_on' . $k] . ' onClick="toggle(\'vac' . $k . '\', \'a[' . $k . '][v_r]\')" type="checkbox" />
-							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" id="a[' . $k . '][v_r]" name="a[' . $k . '][v_r]" value="' . gaz_format_quantity($v['v_r'], 0, $admin_aziend['decimal_price']) . '" disabled="disabled" />
-						</td>
-						<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
-						<td  align="right">';
-						if ($v['i_l']==1 AND $v['g_r']>0){ // se articolo con lotti ...
-							$disable="disabled";
-							echo '<button type="button" class="btn" ><a href="#">&#9783;</a></button>';
-						} else {
-							$disable="";
-						}
-						echo '<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"'. $disable .'>
-						</td>
-						<td  align="right" align="right">' . gaz_format_number($v['v_g']) . '</td>
-					</tr>';
+		echo '<tr class="'.$v['class'].'">
+			<td class="FacetFieldCaptionTD" align="center">
+			<input type="hidden" value="' . $v['i_a'] . '" name="a[' . $k . '][i_a]" />
+			<input type="hidden" value="' . $v['class'] . '" name="a[' . $k . '][class]" />
+			<input type="hidden" value="' . $v['i_g'] . '" name="a[' . $k . '][i_g]" />
+			<input type="hidden" value="' . $v['g_d'] . '" name="a[' . $k . '][g_d]" />
+			<input type="hidden" value="' . $v['i_d'] . '" name="a[' . $k . '][i_d]" />
+			<input type="hidden" value="' . $v['i_l'] . '" name="a[' . $k . '][i_l]" />
+			<input type="hidden" value="' . $v['i_u'] . '" name="a[' . $k . '][i_u]" />
+			<input type="hidden" value="' . $v['v_a'] . '" name="a[' . $k . '][v_a]" />
+			<input type="hidden" value="' . $v['v_r'] . '" name="a[' . $k . '][v_r]" />
+			<input type="hidden" value="' . $v['g_a'] . '" name="a[' . $k . '][g_a]" />
+			<input type="hidden" value="' . $v['v_g'] . '" name="a[' . $k . '][v_g]" />
+									
+			<input class="jq_chk" name="chk' . $k . '" ' . $form['chk_on' . $k] . ' type="checkbox" />
+			</td>
+			<td align="left"><span ' . $tooltip . '>' . $k . '</span></td>
+			<td align="left"><span ' . $tooltip . '>' . $v['i_d'] . '</span></td>
+			<td align="center">' . $v['i_u'] . '</td>
+			<td align="right">' . gaz_format_quantity($v['v_a'], 0, $admin_aziend['decimal_price']) . '</td>
+			<td align="right">
+				<input id="vac' . $k . '" name="vac' . $k . '" ' . $form['vac_on' . $k] . ' onClick="toggle(\'vac' . $k . '\', \'a[' . $k . '][v_r]\')" type="checkbox" />
+				<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" id="a[' . $k . '][v_r]" name="a[' . $k . '][v_r]" value="' . gaz_format_quantity($v['v_r'], 0, $admin_aziend['decimal_price']) . '" disabled="disabled" />
+			</td>
+			<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
+			<td  align="right">';
+			if ($v['i_l']==1 AND $v['g_r']>0){ // se articolo con lotti ...							
+				echo '<button type="button" class="btn" title="Modifica manualmente le giacenze per lotti"><a href="#">&#9783;</a></button>
+				<input type="text" style="text-align:right" name="disable" value="' . $v['g_r'] . '" disabled >
+				<input type="hidden" style="text-align:right" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"/>';
+			} else {
+				echo '<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">';
+			}
+			echo '
+			</td>
+			<td  align="right">' . gaz_format_number($v['v_g']) . '</td>
+			</tr>';
         $ctrl_cm = $v['i_g'];
         $elem_n++;
     }
