@@ -267,7 +267,7 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
                   'boxover/boxover' */
                 /** ENRICO FEDELE */                ));
 ?>
-<script type="text/javascript" language="javascript" ID="datapopup">
+<script>
     $(function () {
         // ENRICO FEDELE, .live è stato eliminato a partire dalla jquery 1.7, adesso si deve usare .on
         // la vecchia funzione dunque non andava più, ho scritto questa
@@ -306,23 +306,41 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
                 allCheckboxes.push(inputs[j]);
             }
         }
-    });
 
+        // SOTTO: attraverso una chiamata ajax sul database apre e propone sul dialog i valori da attribuire ad ogni singolo lotto dell'articolo, darò la possibilità all'utente di modificarli per singolo lotto. All'uscita, se confermo valorizzerò tanti elementi <input > quanti sono i lotti modificati, alla conferma del form padre questi <input> genereranno movimenti contabili di storno con causale 98 in base alla differenza con il valore risultante dai movimenti che lo precedono, la registrazione sul database dovrà avvenire con id_mov che precede quello di inventario causale 99 altrimenti, siccome i due movimenti sono in pari data, salterebbe tutta la logica. Quindi prima storno (98) per singoli lotti e poi inventario tutto l'articolo con causale 99  SEMPRE!          
+        $("#inputLotmagRest").dialog({ autoOpen: false });
+        $('.inputLotmagRest').click(function() {
+		//$("p#idexample").html($(this).attr("example"));
+		//var id = $(this).attr('ref');
+		$( "#inputLotmagRest" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				"Annulla": function() {
+					$(this).dialog("close");
+				},
+				confirm:{ 
+					text:'Conferma', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'broacq',id_tes:id},
+						type: 'POST',
+						url: '', // qui chiamo uno script php da scrivere per recuperare i lotti dell'articolo e le singole rimanenze
+						success: function(output){
+		                    //alert(output);
+						}
+					});
+				}}
+			}
+		});
+		$("#inputLotmagRest" ).dialog( "open" );  
+	});
+});
 
-    /*
-     $( function() {
-     // ENRICO FEDELE, .live è stato eliminato a partire dalla jquery 1.7, adesso si deve usare .on
-     
-     $( '.checkAll' ).on( 'change', function() {
-     $( '.jq_chk' ).attr( 'checked', $( this ).is( ':checked' ) ? 'checked' : '' );
-     });
-     $( '.invertSelection' ).on( 'click', function() {
-     $( '.jq_chk' ).each( function() {
-     $( this ).attr( 'checked', $( this ).is( ':checked' ) ? '' : 'checked' );
-     }).trigger( 'change' );
-     });
-     });
-     */
 </script>
 <?php
 echo '<form method="POST" name="maschera">
@@ -411,9 +429,9 @@ if (isset($form['a'])) {
 			<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 			<td  align="right">';
 			if ($v['i_l']==1 AND $v['g_r']>0){ // se articolo con lotti ...							
-				echo '<button type="button" class="btn" title="Modifica manualmente le giacenze per lotti"><a href="#">&#9783;</a></button>
-				<input type="text" style="text-align:right" name="disable" value="' . $v['g_r'] . '" disabled >
-				<input type="hidden" style="text-align:right" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"/>';
+				echo '<button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest"><i class="glyphicon glyphicon-tag"></i>
+				<input type="text" style="text-align:right; cursor:pointer;" name="disable" value="' . $v['g_r'] . '" disabled ></a></button>
+				<input type="hidden" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"/>';
 			} else {
 				echo '<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">';
 			}
@@ -507,6 +525,10 @@ if (isset($form['a'])) {
 </tbody>
 </table>
 </form>
+<div style="display: none;" id="inputLotmagRest" title="Giacenza singoli lotti">
+    <p><b>Articolo:</b></p>
+    <p class="ui-state-highlight" id="content_lots">work in progress</p>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>
