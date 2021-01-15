@@ -165,23 +165,34 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             if ($k == 'a') {
                 foreach ($v as $ka => $va) { // ciclo delle singole righe (a)
                     $form['chk_on' . $ka] = '';
-				if (isset($_POST['chk' . str_replace(" ","_",$ka)])) { // se l'articolo e' da inventariare lo controllo
-                        $form['chk_on' . $ka] = ' checked ';
-                        if ($va['g_r'] < 0) {
-                            $msg .= $ka . '-0+';
-                        } elseif ($va['g_r'] == 0 && $va['g_a'] == 0) { //inutile fare l'inventario di una cosa che non c'era e non c'e'
-                            $msg .= $ka . '-2+';
-                        }
-                        if ($va['v_r'] <= 0) {
-                            $msg .= $ka . '-1+';
-                        }
-                    }
+					if (isset($_POST['chk' . str_replace(" ","_",$ka)])) { // se l'articolo e' da inventariare lo controllo
+						$form['chk_on' . $ka] = ' checked ';
+						if ($va['g_r'] < 0) {
+							$msg .= $ka . '-0+';
+						} elseif ($va['g_r'] == 0 && $va['g_a'] == 0) { //inutile fare l'inventario di una cosa che non c'era e non c'e'
+							$msg .= $ka . '-2+';
+						}
+						if ($va['v_r'] <= 0) {
+							$msg .= $ka . '-1+';
+						}
+						if ($va['i_l']==1){ // se articolo con lotti ...
+							$lm -> getAvailableLots($ka,0);							
+							$tot=0;
+							foreach ($lm->available as $v_lm) {
+								$tot+=$v_lm['rest'];
+							}							
+							if ($tot <> $va['g_r']){
+								$msg .= $ka . '-4+';
+							}
+						}
+					}
 					// Antonio Germani - controllo che non sia già stato fatto l'inventario nello stesso giorno per lo stesso articolo (altrimenti non funziona bene getStockValue con articoli con lotti)
 					$checkinv="NULL";
 					$checkinv = gaz_dbi_get_row($gTables['movmag'], "artico", $ka, " AND caumag = '99' AND datdoc = '$date'");
 					if ($checkinv) {
 						$msg .= $ka . '-3+';
 					}
+					
                     $form['vac_on' . $ka] = '';
                     if (isset($_POST['vac' . $ka]))
                         $form['vac_on' . $ka] = ' checked ';
