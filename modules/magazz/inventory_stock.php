@@ -165,7 +165,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             if ($k == 'a') {
                 foreach ($v as $ka => $va) { // ciclo delle singole righe (a)
                     $form['chk_on' . $ka] = '';
-                    if (isset($_POST['chk' . $ka])) { // se l'articolo e' da inventariare lo controllo
+				if (isset($_POST['chk' . str_replace(" ","_",$ka)])) { // se l'articolo e' da inventariare lo controllo
                         $form['chk_on' . $ka] = ' checked ';
                         if ($va['g_r'] < 0) {
                             $msg .= $ka . '-0+';
