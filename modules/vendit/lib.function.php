@@ -444,14 +444,11 @@ class lotmag {
 // prendo tutti i movimenti dell'articolo e li raggruppo per ognuno di essi anche se non hanno lotti id_lotmag=0 
       $sqlquery = "SELECT id_lotmag, SUM(quanti*operat) AS rest FROM " . $gTables['movmag'] . " LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_lotmag =" . $gTables['lotmag'] . ".id WHERE " . $gTables['movmag'] . ".artico = '" . $codart . "' AND datreg <= '".$datref."' AND caumag < 99 GROUP BY " . $gTables['movmag'] . ".id_lotmag ORDER BY ". $gTables['lotmag'] . ".id";
       $result = gaz_dbi_query($sqlquery);
-      $acc = array();
-      $rs = false;
+      $acc=[];
       while ($row = gaz_dbi_fetch_array($result)) {
             $acc[] = $row;
       }
-      $this->available = $acc;
-//      print_r($acc);
-      return $rs;
+      return $acc;
    }
    
 

@@ -310,34 +310,45 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
         // SOTTO: attraverso una chiamata ajax sul database apre e propone sul dialog i valori da attribuire ad ogni singolo lotto dell'articolo, darò la possibilità all'utente di modificarli per singolo lotto. All'uscita, se confermo valorizzerò tanti elementi <input > quanti sono i lotti modificati, alla conferma del form padre questi <input> genereranno movimenti contabili di storno con causale 98 in base alla differenza con il valore risultante dai movimenti che lo precedono, la registrazione sul database dovrà avvenire con id_mov che precede quello di inventario causale 99 altrimenti, siccome i due movimenti sono in pari data, salterebbe tutta la logica. Quindi prima storno (98) per singoli lotti e poi inventario tutto l'articolo con causale 99  SEMPRE!          
         $("#inputLotmagRest").dialog({ autoOpen: false });
         $('.inputLotmagRest').click(function() {
-		//$("p#idexample").html($(this).attr("example"));
-		//var id = $(this).attr('ref');
-		$( "#inputLotmagRest" ).dialog({
-			minHeight: 1,
-			modal: "true",
-			show: "blind",
-			hide: "explode",
-			buttons: {
-				"Annulla": function() {
-					$(this).dialog("close");
-				},
-				confirm:{ 
-					text:'Conferma',
-					'class':'btn btn-danger delete-button',
-					click:function (event, ui) {
-					$.ajax({
-						data: {'type':'broacq',id_tes:id},
-						type: 'POST',
-						url: '', // qui chiamo uno script php da scrivere per recuperare i lotti dell'articolo e le singole rimanenze
-						success: function(output){
-		                    //alert(output);
-						}
-					});
-				}}
-			}
-		});
-		$("#inputLotmagRest" ).dialog( "open" );  
-	});
+            $("p#lot_codart").html($(this).attr("codart"));
+            var codart = $(this).attr('codart');
+            var datref = $("#lot_datref").attr('datref');
+            $.ajax({
+                data: {'codart': codart,'datref':datref},
+				dataType: 'json',
+                type: 'POST',
+                url: './get_lots.php', // qui chiamo lo script php per recuperare i lotti dell'articolo e le singole rimanenze
+                success: function(output){
+                  $.each(output, function (key, value) {
+                    if ($('#unique-selector').length === 0) {
+                        // code to run if it isn't there
+                    } else {
+                        // code to run if it is there
+                    }  
+                    $('#content_lots').html('<div class="col-xs-12 ui-state-highlight"> Lotto ID: '+value.id_lotmag + ' rimanenza ' + parseFloat(value.rest)+'</div>');
+                  });                
+                }
+            });
+            $( "#inputLotmagRest" ).dialog({
+                minHeight: 1,
+                modal: "true",
+                show: "blind",
+                hide: "explode",
+                buttons: {
+                    "Annulla": function() {
+                        $(this).dialog("destroy");
+                        $(this).dialog("close");
+                    },
+                    confirm:{ 
+                        text:'Conferma',
+                        'class':'btn btn-danger delete-button',
+                        click:function (event, ui) {
+                    }
+                    }
+                }
+            });
+            $("#inputLotmagRest" ).dialog( "open" );  
+        });
 });
 
 </script>
@@ -428,9 +439,7 @@ if (isset($form['a'])) {
 			<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 			<td  align="right">';
 			if ($v['i_l']==1 AND $v['g_r']>0){ // se articolo con lotti ...
-                // prendo tutti i lotti e anche se li faccio vedere solo sul dialog creo il form nascosto               
-                $lotrests = $lm->getAllPrevLots($k,$form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D']); 
-				echo '<button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest"><div style="text-align:right; padding: 3px; cursor:pointer; border:1px;"><i class="glyphicon glyphicon-tag"></i>
+				echo '<button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest" codart="'.$k.'"><div style="text-align:right; padding: 3px; cursor:pointer; border:1px;"><i class="glyphicon glyphicon-tag"></i>
 				' . $v['g_r'] . '</div></a></button>
 				<input type="hidden" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"/>';
 			} else {
@@ -525,11 +534,13 @@ if (isset($form['a'])) {
 ?>
 </tbody>
 </table>
-</form>
 <div style="display: none;" id="inputLotmagRest" title="Giacenza singoli lotti al <?php echo $form['date_D'].'-'.$form['date_M'].'-'.$form['date_Y']; ?>">
-    <p><b>Articolo:</b></p>
-    <p class="ui-state-highlight" id="content_lots">work in progress</p>
+    <span id="lot_datref" datref="<?php echo $form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D']; ?>" ></span>
+    <p><b>Articolo:</b><p class="ui-state-highlight" id="lot_codart"></p>
+    <div id="content_lots">
+    </div>
 </div>
+</form>
 <?php
 require("../../library/include/footer.php");
 ?>
