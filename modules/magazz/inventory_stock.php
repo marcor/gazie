@@ -331,6 +331,7 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
             });
             $( "#inputLotmagRest" ).dialog({
                 minHeight: 1,
+                minWidth: 400,
                 modal: "true",
                 show: "blind",
                 hide: "explode",
@@ -360,8 +361,8 @@ echo '<form method="POST" name="maschera">
 $gForm->Calendar('date', $form['date_D'], $form['date_M'], $form['date_Y'], 'FacetSelect', 'date');
 echo $script_transl['catmer'];
 $gForm->selectFromDB('catmer', 'catmer', 'codice', $form['catmer'], false, false, '-', 'descri', 'catmer', 'FacetSelect', array('value' => 100, 'descri' => '*** ' . $script_transl['all'] . ' ***'));
-echo '	</div>
-			<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">';
+echo '	</div><div class="table-responsive">
+			<table class="Tlarge table table-striped table-bordered table-condensed">';
 if (!empty($msg)) {
     echo '	<tr>
 				<td colspan="9" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . '
@@ -462,8 +463,8 @@ if (isset($form['a'])) {
 					<td align="right" class="bg-primary">Totale ' . gaz_format_number($tot_val_giac) . '</td>
 				</tr>';
     if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
-        echo '	</table>
-	   			<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+        echo '	</table></div><div class="table-responsive">
+	   			<table class="Tlarge table table-striped table-bordered table-condensed">
 					<tr>
 	   					<td colspan="8" class="FacetFormHeaderFont">' . $script_transl['preview_title'] . '</td>
 					</tr>
@@ -533,7 +534,7 @@ if (isset($form['a'])) {
 }
 ?>
 </tbody>
-</table>
+</table></div>
 <div style="display: none;" id="inputLotmagRest" title="Giacenza singoli lotti al <?php echo $form['date_D'].'-'.$form['date_M'].'-'.$form['date_Y']; ?>">
     <span id="lot_datref" datref="<?php echo $form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D']; ?>" ></span>
     <p><b>Articolo:</b><p class="ui-state-highlight" id="lot_codart"></p>
