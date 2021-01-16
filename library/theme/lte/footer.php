@@ -44,10 +44,9 @@ if ( $url!='ruburl.php' ) {
          echo "</div>";
         ?>
         <div class="pull-right hidden-xs">
-          <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="http://www.devincentiis.it">http://www.devincentiis.it</a>
+        <?php echo $strScript['admin.php']['auth']; ?>:  <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
         </div>
-        <!--<strong>-->
-        <b>GA</b>zie Version: <?php echo GAZIE_VERSION; ?>
+Version <?php echo GAZIE_VERSION; ?>
     </footer>
       
     <!-- Control Sidebar -->

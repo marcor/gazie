@@ -52,7 +52,7 @@ $strScript = array("admin.php" =>
         'devel' => "Desarrollo, documentacion, reporte de errores: ",
         'change_usr' => "Cambiar sus datos",
         'user_regol' => 'LEGGI IL "REGOLAMENTO UTILIZZO RISORSE INFORMATICHE"',
-        'auth' => "Sitio Web del Autor",
+        'auth' => "Contacto",
         'strBottom' => array(
             array('href' => "http://www.kernel.org/",
                 'img' => "linux.gif",

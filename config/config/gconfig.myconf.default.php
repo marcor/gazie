@@ -162,4 +162,7 @@ define('maintenance', FALSE);
 
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
 define('modifica_fatture_ddt', FALSE);
+
+// personalizzazione link al fornitore del servizio
+define('contact_link','devincentiis.it', FALSE);
 ?>

@@ -177,4 +177,5 @@ $maintenance = (defined('maintenance')) ? maintenance : FALSE;
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
 $modifica_fatture_ddt = (defined('modifica_fatture_ddt')) ? modifica_fatture_ddt : FALSE;
 
+$contact_link = (defined('contact_link')) ? contact_link : 'devincentiis.it';
 ?>

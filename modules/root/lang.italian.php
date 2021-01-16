@@ -49,7 +49,7 @@ $strScript = array("admin.php" =>
         'devel' => "Sviluppo, documentazione, segnalazione errori: ",
         'change_usr' => "Modifica i tuoi dati",
         'user_regol' => 'LEGGI IL "REGOLAMENTO UTILIZZO RISORSE INFORMATICHE"',
-        'auth' => "Sito dell'autore",
+        'auth' => "Referente",
         'strBottom' => array(
             array('href' => "http://www.kernel.org/",
                 'img' => "linux.gif",
@@ -105,7 +105,7 @@ $strScript = array("admin.php" =>
         /* 6 */ " Conferma nuova password ",
         'log' => "Accesso al sistema localizzato in:",
         'welcome' => "Benvenuto in GAzie",
-        'intro' => "il Gestionale multiAZIEndale che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.",
+        'intro' => "il Gestionale multiAZIEndale che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro.",
         'usr_psw' => "Inserisci il nome utente e la password che ti sono stati assegnati per iniziare:",
         'ins_psw' => "Inserisci Password",
         'label_conf_psw' => "Conferma Password",
@@ -131,13 +131,13 @@ if (!defined("MESSAGE_WELCOME")) {
         define("MESSAGE_WELCOME_ADMIN", "<b>GAzie</b>");
         define("MESSAGE_LOG", "GAzie - Accesso");
         define("MESSAGE_LOG_ADMIN", " <b>GAzie: </b> Accesso al gestionale ");
-        define("MESSAGE_INTRO", "con esso ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
-        define("MESSAGE_INTRO_ADMIN", "è un gestionale multiaziendale libero che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
+        define("MESSAGE_INTRO", "con esso ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro.");
+        define("MESSAGE_INTRO_ADMIN", "è un gestionale multiaziendale libero che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro.");
         define("MESSAGE_PSW", "Inserisci il nome utente e la password che hai scelto in fase di iscrizione al servizio");
         define("MESSAGE_PSW_ADMIN", "Inserisci le credenziali di accesso per iniziare:");
         define("MESSAGE_WELCOME_REGISTRATION", "Registrati su: <b>GAzie a scuola</b>");
         define("MESSAGE_WELCOME_REGISTRATION_ADMIN", "Registrati su: <b>GAzie</b>");
-        define("MESSAGE_INTRO_REGISTRATION", "così ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
+        define("MESSAGE_INTRO_REGISTRATION", "così ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro.");
         define("MESSAGE_PSW_REGISTRATION", "Dopo aver scelto la classe compila tutti gli altri campi del form sottostante, successivamante riceverai una mail con un link da cliccare per confermare l'accesso al servizio");
         define("MESSAGE_CLASSROOM_REGISTRATION", "Scegli la classe di appartenenza");
         define("MESSAGE_CLASSROOM_TEACHER", "prof.");

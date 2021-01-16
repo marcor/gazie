@@ -207,8 +207,10 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	echo "</td>\n";
     echo '<td class="text-center">';
 	if (intval($r['lot_or_serial'])>0) {
+		$classcol=(intval($r['lot_or_serial'])==1)?'btn-info':'btn-success';
+		$lor=(intval($r['lot_or_serial'])==1)?'Lot':'Ser';
 	?>
-	<a class="btn btn-info btn-xs" href="javascript:;" onclick="window.open('<?php echo"../../modules/magazz/mostra_lotti.php?codice=".$r['codice'];?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');"><i class="glyphicon glyphicon-tag"></i></a>
+	<a class="btn <?php echo $classcol; ?> btn-xs" href="javascript:;" onclick="window.open('<?php echo "../../modules/magazz/mostra_lotti.php?codice=".$r['codice'];?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');"><?php echo $lor; ?> <i class="glyphicon glyphicon-tag"></i></a>
 	<?php 
     }	
     echo "</td>\n";
