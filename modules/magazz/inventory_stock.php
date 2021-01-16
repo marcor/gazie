@@ -23,7 +23,7 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-require("../../modules/vendit/lib.function.php");
+require("../vendit/lib.function.php");
 $lm = new lotmag;
 $admin_aziend = checkAdmin();
 $gForm = new magazzForm;
@@ -314,7 +314,6 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
 		//var id = $(this).attr('ref');
 		$( "#inputLotmagRest" ).dialog({
 			minHeight: 1,
-			width: "auto",
 			modal: "true",
 			show: "blind",
 			hide: "explode",
@@ -323,7 +322,7 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
 					$(this).dialog("close");
 				},
 				confirm:{ 
-					text:'Conferma', 
+					text:'Conferma',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -428,7 +427,9 @@ if (isset($form['a'])) {
 			</td>
 			<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 			<td  align="right">';
-			if ($v['i_l']==1 AND $v['g_r']>0){ // se articolo con lotti ...							
+			if ($v['i_l']==1 AND $v['g_r']>0){ // se articolo con lotti ...
+                // prendo tutti i lotti e anche se li faccio vedere solo sul dialog creo il form nascosto               
+                $lotrests = $lm->getAllPrevLots($k,$form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D']); 
 				echo '<button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest"><div style="text-align:right; padding: 3px; cursor:pointer; border:1px;"><i class="glyphicon glyphicon-tag"></i>
 				' . $v['g_r'] . '</div></a></button>
 				<input type="hidden" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"/>';
@@ -525,7 +526,7 @@ if (isset($form['a'])) {
 </tbody>
 </table>
 </form>
-<div style="display: none;" id="inputLotmagRest" title="Giacenza singoli lotti">
+<div style="display: none;" id="inputLotmagRest" title="Giacenza singoli lotti al <?php echo $form['date_D'].'-'.$form['date_M'].'-'.$form['date_Y']; ?>">
     <p><b>Articolo:</b></p>
     <p class="ui-state-highlight" id="content_lots">work in progress</p>
 </div>
