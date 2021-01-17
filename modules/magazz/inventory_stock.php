@@ -65,6 +65,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
             $form['a'][$r['codice']]['g_r'] = $magval['q_g'];
             $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
+			$form['a'][$r['codice']]['lotRestPost']=[];
 			$form['a'][$r['codice']]['class'] = 'default';
             $form['vac_on' . $r['codice']] = '';
             if ($magval['q_g'] < 0) { // giacenza inferiore a 0
@@ -133,6 +134,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                 $form['a'][$r['codice']]['g_r'] = $magval['q_g'];
                 $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
                 $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
+                $form['a'][$r['codice']]['lotRestPost']=[];
                 $form['vac_on' . $r['codice']] = '';
                 if ($magval['q_g'] < 0) { // giacenza inferiore a 0
                     $form['chk_on' . $r['codice']] = ' checked ';
@@ -175,16 +177,6 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 						if ($va['v_r'] <= 0) {
 							$msg .= $ka . '-1+';
 						}
-						if ($va['i_l']==1){ // se articolo con lotti ...
-							$lm -> getAvailableLots($ka,0);							
-							$tot=0;
-							foreach ($lm->available as $v_lm) {// ciclo tutti i lotti disponibili
-								$tot+=$v_lm['rest']; // sommo le quantità
-							}							
-							if ($tot <> $va['g_r']){ // se la quantità richiesta non corrisponde a quella reale segnalo!
-								$msg .= $ka . '-4+';
-							}
-						}
 					}
 					// Antonio Germani - controllo che non sia già stato fatto l'inventario nello stesso giorno per lo stesso articolo (altrimenti non funziona bene getStockValue con articoli con lotti)
 					$checkinv="NULL";
@@ -208,6 +200,17 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     $form['a'][$ka]['g_a'] = gaz_format_quantity($va['g_a'], 0, $admin_aziend['decimal_quantity']);
                     $form['a'][$ka]['v_g'] = gaz_format_quantity($va['v_g'], 0, $admin_aziend['decimal_price']);
                     $form['a'][$ka]['class'] = $va['class'];
+                    if ($va['i_l']>=1){  // se è un articolo con lotti o numero seriale riprendo gli eventuali post delle rimanenze dei singoli lotti
+                        $lotrests = $lm->getAllPrevLots($ka,$form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D']);
+                        foreach($lotrests as $k=>$v){
+                            if (isset($_POST['lotRestPost' .$v['id_lotmag']])){
+                                $lotquanti=floatval($_POST['lotRestPost' .$v['id_lotmag']]);
+                                $lotquanti=($va['i_l']>1&&$lotquanti>1)?1:$lotquanti; // i seriali al massimo 1
+                                $form['a'][$ka]['lotRestPost'][$v['id_lotmag']]=$lotquanti;
+// print 'id:'.$v['id_lotmag'].' rest:'.$_POST['lotRestPost' .$v['id_lotmag']].'<br>';
+                            }    
+                        }
+                    }
                 }
             }
         } 
@@ -324,10 +327,12 @@ $(function () {
 					totReal += parseFloat(value.rest);
 					if ($('#lotRestPost'+value.id_lotmag).length === 0) { // input inesistente, propongo il resto che ho sul db
 					} else { // input esistente, propongo il valore in esso contenuto sul form del dialog  
+                        value.rest=$('#lotRestPost'+value.id_lotmag).val();
 					}  
-					$('#content_lots').append('<div class="row col-xs-12 bg-info"><div class="col-xs-6">Lotto '+value.id_lotmag+' giacenza <b>' + parseFloat(value.rest)+'</b></div><div class="col-xs-3 text-right"> reale = </div><input type="number" class="col-xs-3" min="0" id="lotRestDial'+value.id_lotmag+'" maxlength="11" onchange="lotRestCalc();" onkeyup="lotRestCalc();" value="' + parseFloat(value.rest)+'" /></div>');
+					$('#content_lots').append('<div class="row col-xs-12 bg-info"><div class="col-xs-6">'+value.identifier+' giacenza <b>' + parseFloat(value.rest)+'</b></div><div class="col-xs-3 text-right"> reale = </div><input type="number" class="col-xs-3" min="0" id="lotRestDial'+value.id_lotmag+'" name="'+value.id_lotmag+'" maxlength="11" onchange="lotRestCalc();" onkeyup="lotRestCalc();" value="' + parseFloat(value.rest)+'" /></div>');
 				});                
 				$('#content_lots').append('<div class="row col-xs-12"><div class="col-xs-9 text-right">Totale reale : </div><div><input class="bg-warning col-xs-3 text-center" id="totReal" type="numeric" value="' + parseFloat(totReal) +'" disbled/></div></div>');
+                lotRestCalc();
             }
         });
         $( "#inputLotmagRest" ).dialog({
@@ -340,18 +345,29 @@ $(function () {
                 "Annulla": function() {
 					$('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
                     $(this).dialog("destroy");
-                    $(this).dialog("close");
                 },
                 confirm:{ 
                     text:'Conferma',
                     'class':'btn btn-danger delete-button',
                     click:function (event, ui) {
+                        $('#lotContent'+codart).html('');
 						// prima di chiudere dovrò appendere gli elementi input sul form padre per fare il post dei valori settati con il dialog (lato browser) e non perderli in conferma e/o preview
+                        var lotsRests='';
+                        var totReal = 0.00;
+                        $('[id*="lotRestDial"]').each((i, v)=> {
+                            lotsRests += '<p class="bg-warning">ID ' + v.name + ' reale:'+ v.value + '</p><input type="hidden" value="' + v.value + '" id="lotRestPost'+v.name+'" name="lotRestPost'+v.name+'">';
+                            totReal += Number(v.value)<0?0:Number(v.value);
+                        });
+                        $('#totReal'+codart).html(totReal);
+                        $('#lotContent'+codart).append(lotsRests);
 						$('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
 						$(this).dialog("destroy");
-						$(this).dialog("close");
 					}
                 }
+            },
+            close:function(event, ui){
+                $('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
+                $(this).dialog("destroy");
             }
         });
         $("#inputLotmagRest" ).dialog( "open" );  
@@ -361,7 +377,6 @@ $(function () {
 function lotRestCalc() {
 	var totReal = 0.00;
 	$('[id*="lotRestDial"]').each((i, v) => {
-		//alert(v.value);
 		totReal += Number(v.value)<0?0:Number(v.value);
 	});
 	$('#totReal').val(totReal);
@@ -454,10 +469,22 @@ if (isset($form['a'])) {
 			</td>
 			<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 			<td  align="right">';
-			if ($v['i_l']>=1 AND $v['g_r']>0){ // se articolo con lotti ...
-				echo '<button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest" codart="'.$k.'"><div style="text-align:right; padding: 3px; cursor:pointer; border:1px;"><i class="glyphicon glyphicon-tag"></i>
-				' . $v['g_r'] . '</div></a></button>
-				<input type="hidden" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"/>';
+			if ($v['i_l']>=1 && $v['g_r']>0){ // se articolo con lotti ...
+				echo '<div id="lotContent'.$k.'" class="col-xs-6">';
+                if (count($v['lotRestPost'])>=1){
+                    $totReal=0.00;    
+                    $classTot='bg-danger';
+                } else {
+                    $totReal=$v['g_r'] ;    
+                    $classTot='bg-default';
+                };
+                foreach( $v['lotRestPost'] as $kl => $vl ) {
+                    $totReal += $vl;
+                    echo '<p class="bg-warning">ID '. $kl . ' reale:'.$vl.'</p><input type="hidden" value="'. $vl. '" id="lotRestPost'.$kl.'" name="lotRestPost'.$kl.'">';
+                }
+                echo '</div><button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest" codart="'.$k.'"><div style="text-align:right; padding: 3px; cursor:pointer; border:1px;"><i class="glyphicon glyphicon-tag"></i><span class="'.$classTot.'" id="totReal'.$k.'">
+				' . $totReal . '</span></div></a></button>
+				<input type="hidden" name="a[' . $k . '][g_r]" value="' . $totReal . '"/>';
 			} else {
 				echo '<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">';
 			}
@@ -552,7 +579,7 @@ if (isset($form['a'])) {
 </table></div>
 <div style="display: none;" id="inputLotmagRest" title="Giacenza singoli lotti al <?php echo $form['date_D'].'-'.$form['date_M'].'-'.$form['date_Y']; ?>">
     <span id="lot_datref" datref="<?php echo $form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D']; ?>" ></span>
-    <p><b>Articolo: </b><span class="ui-state-highlight" id="lot_codart"></span></p>
+    <p><b>Articolo: </b><span class="ui-state-highlight" id="lot_codart"></span> Lotti:</p>
     <div id="content_lots">
     </div>
 </div>
