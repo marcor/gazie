@@ -602,16 +602,6 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="preAcq" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?></label>
-                            <input class="col-sm-4" type="number" step="any" min="0" value="<?php echo $form['preacq']; ?>" name="preacq" maxlength="15" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="sconto" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -628,6 +618,24 @@ if ($modal_ok_insert === true) {
                             <input type="number" step="any" min="0" id="preve1" name="preve1" value="<?php echo $form['preve1']; ?>"  maxlength="15" />
     <?php echo $script_transl['preve1_sc']; ?>
                             <input type="text" readonly="true" id="preve1_sc" name="preve1_sc" value="<?php echo gaz_format_number($form['preve1'] * (1 - $form['sconto'] / 100)); ?>" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="uniAcq" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="uniacq" class="col-sm-4 control-label"><?php echo $script_transl['uniacq']; ?></label>
+                            <input class="col-sm-2" type="text" value="<?php echo $form['uniacq']; ?>" name="uniacq" maxlength="3" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preAcq" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?></label>
+                            <input class="col-sm-4" type="number" step="any" min="0" value="<?php echo $form['preacq']; ?>" name="preacq" maxlength="15" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -695,15 +703,6 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="riordino" class="col-sm-4 control-label"><?php echo $script_transl['riordino']; ?></label>
                             <input type="number" min="0" step="any" class="col-sm-4" type="text"  value="<?php echo $form['riordino']; ?>" name="riordino" maxlength="13" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="uniAcq" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="uniacq" class="col-sm-4 control-label"><?php echo $script_transl['uniacq']; ?></label>
-                            <input class="col-sm-2" type="text" value="<?php echo $form['uniacq']; ?>" name="uniacq" maxlength="3" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
