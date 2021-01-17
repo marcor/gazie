@@ -268,93 +268,105 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
                 /** ENRICO FEDELE */                ));
 ?>
 <script>
-    $(function () {
-        // ENRICO FEDELE, .live è stato eliminato a partire dalla jquery 1.7, adesso si deve usare .on
-        // la vecchia funzione dunque non andava più, ho scritto questa
-        // devo essere noesto, non mi piace granchè, ma funziona.
-        // IMPORTANTE: sarebbe opportuno rimuovere questo codice da qui e farlo confluire in gz-library.js
-        $('.checkAll').on('click', function () {
-            var goTo = false;
-            if ($(this).hasClass('all')) {
-                var goTo = true;
-                $(this).toggleClass('none all');
-                $(this).children('i').toggleClass('glyphicon-check glyphicon-unchecked');
-            } else {
-                $(this).toggleClass('all none');
-                $(this).children('i').toggleClass('glyphicon-unchecked glyphicon-check');
-            }
-            changeCheckboxes(allCheckboxes, goTo);
-        });
-
-        $('.invertSelection').on('click', function () {
-            changeCheckboxes(allCheckboxes);
-            $('.checkAll').removeClass('all none');
-            $('.checkAll').addClass('all');
-            $('.checkAll').children('i').removeClass('glyphicon-check');
-            $('.checkAll').children('i').addClass('glyphicon-unchecked');
-        });
-        function changeCheckboxes(list, value) {
-            for (var i = list.length - 1; i >= 0; i--) {
-                list[i].checked = (typeof value === 'boolean') ? value : !list[i].checked;
-            }
+$(function () {
+    // ENRICO FEDELE, .live è stato eliminato a partire dalla jquery 1.7, adesso si deve usare .on
+    // la vecchia funzione dunque non andava più, ho scritto questa
+    // devo essere noesto, non mi piace granchè, ma funziona.
+    // IMPORTANTE: sarebbe opportuno rimuovere questo codice da qui e farlo confluire in gz-library.js
+    $('.checkAll').on('click', function () {
+        var goTo = false;
+        if ($(this).hasClass('all')) {
+            var goTo = true;
+            $(this).toggleClass('none all');
+            $(this).children('i').toggleClass('glyphicon-check glyphicon-unchecked');
+        } else {
+            $(this).toggleClass('all none');
+            $(this).children('i').toggleClass('glyphicon-unchecked glyphicon-check');
         }
-        //var inputs = document.getElementsByTagName('input');
-        var inputs = document.getElementsByClassName('jq_chk');
-        var allCheckboxes = [];
-        for (var j = inputs.length - 1; j >= 0; j--) {
-            if (inputs[j].type === 'checkbox') {
-                allCheckboxes.push(inputs[j]);
-            }
-        }
+        changeCheckboxes(allCheckboxes, goTo);
+    });
 
-        // SOTTO: attraverso una chiamata ajax sul database apre e propone sul dialog i valori da attribuire ad ogni singolo lotto dell'articolo, darò la possibilità all'utente di modificarli per singolo lotto. All'uscita, se confermo valorizzerò tanti elementi <input > quanti sono i lotti modificati, alla conferma del form padre questi <input> genereranno movimenti contabili di storno con causale 98 in base alla differenza con il valore risultante dai movimenti che lo precedono, la registrazione sul database dovrà avvenire con id_mov che precede quello di inventario causale 99 altrimenti, siccome i due movimenti sono in pari data, salterebbe tutta la logica. Quindi prima storno (98) per singoli lotti e poi inventario tutto l'articolo con causale 99  SEMPRE!          
-        $("#inputLotmagRest").dialog({ autoOpen: false });
-        $('.inputLotmagRest').click(function() {
-            $("p#lot_codart").html($(this).attr("codart"));
-            var codart = $(this).attr('codart');
-            var datref = $("#lot_datref").attr('datref');
-            $.ajax({
-                data: {'codart': codart,'datref':datref},
-				dataType: 'json',
-                type: 'POST',
-                url: './get_lots.php', // qui chiamo lo script php per recuperare i lotti dell'articolo e le singole rimanenze
-                success: function(output){
-					$.each(output, function (key, value) {
-						if ($('#lotRestPost'+value.id_lotmag).length === 0) { // input inesistente, propongo il resto che ho sul db
-						} else { // input esistente, propongo il valore in esso contenuto sul form del dialog  
-						}  
-						$('#content_lots').append('<div class="col-xs-12 ui-state-highlight">'+value.id_lotmag+' - Giacenza reale:<input type="number" min="0" id="lotRestDial'+value.id_lotmag+'" maxlength="11" onkeyup="lotRestCalc();" value="' + parseFloat(value.rest)+'" />   risultante: ' + parseFloat(value.rest)+'</div>');
-					});                
-                }
-            });
-            $( "#inputLotmagRest" ).dialog({
-                minHeight: 1,
-                minWidth: 400,
-                modal: "true",
-                show: "blind",
-                hide: "explode",
-                buttons: {
-                    "Annulla": function() {
+    $('.invertSelection').on('click', function () {
+        changeCheckboxes(allCheckboxes);
+        $('.checkAll').removeClass('all none');
+        $('.checkAll').addClass('all');
+        $('.checkAll').children('i').removeClass('glyphicon-check');
+        $('.checkAll').children('i').addClass('glyphicon-unchecked');
+    });
+    function changeCheckboxes(list, value) {
+        for (var i = list.length - 1; i >= 0; i--) {
+            list[i].checked = (typeof value === 'boolean') ? value : !list[i].checked;
+        }
+    }
+    //var inputs = document.getElementsByTagName('input');
+    var inputs = document.getElementsByClassName('jq_chk');
+    var allCheckboxes = [];
+    for (var j = inputs.length - 1; j >= 0; j--) {
+        if (inputs[j].type === 'checkbox') {
+            allCheckboxes.push(inputs[j]);
+        }
+    }
+
+    // SOTTO: attraverso una chiamata ajax sul database apre e propone sul dialog i valori da attribuire ad ogni singolo lotto dell'articolo, darò la possibilità all'utente di modificarli per singolo lotto. All'uscita, se confermo valorizzerò tanti elementi <input > quanti sono i lotti modificati, alla conferma del form padre questi <input> genereranno movimenti contabili di storno con causale 98 in base alla differenza con il valore risultante dai movimenti che lo precedono, la registrazione sul database dovrà avvenire con id_mov che precede quello di inventario causale 99 altrimenti, siccome i due movimenti sono in pari data, salterebbe tutta la logica. Quindi prima storno (98) per singoli lotti e poi inventario tutto l'articolo con causale 99  SEMPRE!          
+    $("#inputLotmagRest").dialog({ autoOpen: false });
+    $('.inputLotmagRest').click(function() {
+        $("span#lot_codart").html($(this).attr("codart"));
+        var codart = $(this).attr('codart');
+        var datref = $("#lot_datref").attr('datref');
+        $.ajax({
+            data: {'codart': codart,'datref':datref},
+			dataType: 'json',
+            type: 'POST',
+            url: './get_lots.php', // qui chiamo lo script php per recuperare i lotti dell'articolo e le singole rimanenze
+            success: function(output){
+				var totReal = 0.00;
+				$.each(output, function (key, value) {
+					totReal += parseFloat(value.rest);
+					if ($('#lotRestPost'+value.id_lotmag).length === 0) { // input inesistente, propongo il resto che ho sul db
+					} else { // input esistente, propongo il valore in esso contenuto sul form del dialog  
+					}  
+					$('#content_lots').append('<div class="row col-xs-12 bg-info"><div class="col-xs-6">Lotto '+value.id_lotmag+' giacenza <b>' + parseFloat(value.rest)+'</b></div><div class="col-xs-3 text-right"> reale = </div><input type="number" class="col-xs-3" min="0" id="lotRestDial'+value.id_lotmag+'" maxlength="11" onchange="lotRestCalc();" onkeyup="lotRestCalc();" value="' + parseFloat(value.rest)+'" /></div>');
+				});                
+				$('#content_lots').append('<div class="row col-xs-12"><div class="col-xs-9 text-right">Totale reale : </div><div><input class="bg-warning col-xs-3 text-center" id="totReal" type="numeric" value="' + parseFloat(totReal) +'" disbled/></div></div>');
+            }
+        });
+        $( "#inputLotmagRest" ).dialog({
+            minHeight: 1,
+            minWidth: 450,
+            modal: "true",
+            show: "blind",
+            hide: "explode",
+            buttons: {
+                "Annulla": function() {
+					$('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
+                    $(this).dialog("destroy");
+                    $(this).dialog("close");
+                },
+                confirm:{ 
+                    text:'Conferma',
+                    'class':'btn btn-danger delete-button',
+                    click:function (event, ui) {
+						// prima di chiudere dovrò appendere gli elementi input sul form padre per fare il post dei valori settati con il dialog (lato browser) e non perderli in conferma e/o preview
 						$('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
-                        $(this).dialog("destroy");
-                        $(this).dialog("close");
-                    },
-                    confirm:{ 
-                        text:'Conferma',
-                        'class':'btn btn-danger delete-button',
-                        click:function (event, ui) {
-							// prima di chiudere dovrò appendere gli elementi input sul form padre per fare il post dei valori settati con il dialog (lato browser) e non perderli in conferma e/o preview
-							$('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
-							$(this).dialog("destroy");
-							$(this).dialog("close");
-						}
-                    }
+						$(this).dialog("destroy");
+						$(this).dialog("close");
+					}
                 }
-            });
-            $("#inputLotmagRest" ).dialog( "open" );  
+            }
         });
+        $("#inputLotmagRest" ).dialog( "open" );  
+    });
 });
 
+function lotRestCalc() {
+	var totReal = 0.00;
+	$('[id*="lotRestDial"]').each((i, v) => {
+		//alert(v.value);
+		totReal += Number(v.value)<0?0:Number(v.value);
+	});
+	$('#totReal').val(totReal);
+	$('#totReal').addClass('bg-danger').removeClass('bg-warning');
+}
 </script>
 <?php
 echo '<form method="POST" name="maschera">
@@ -442,7 +454,7 @@ if (isset($form['a'])) {
 			</td>
 			<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
 			<td  align="right">';
-			if ($v['i_l']==1 AND $v['g_r']>0){ // se articolo con lotti ...
+			if ($v['i_l']>=1 AND $v['g_r']>0){ // se articolo con lotti ...
 				echo '<button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest" codart="'.$k.'"><div style="text-align:right; padding: 3px; cursor:pointer; border:1px;"><i class="glyphicon glyphicon-tag"></i>
 				' . $v['g_r'] . '</div></a></button>
 				<input type="hidden" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '"/>';
@@ -540,7 +552,7 @@ if (isset($form['a'])) {
 </table></div>
 <div style="display: none;" id="inputLotmagRest" title="Giacenza singoli lotti al <?php echo $form['date_D'].'-'.$form['date_M'].'-'.$form['date_Y']; ?>">
     <span id="lot_datref" datref="<?php echo $form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D']; ?>" ></span>
-    <p><b>Articolo:</b><p class="ui-state-highlight" id="lot_codart"></p>
+    <p><b>Articolo: </b><span class="ui-state-highlight" id="lot_codart"></span></p>
     <div id="content_lots">
     </div>
 </div>
