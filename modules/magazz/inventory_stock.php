@@ -319,14 +319,12 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
                 type: 'POST',
                 url: './get_lots.php', // qui chiamo lo script php per recuperare i lotti dell'articolo e le singole rimanenze
                 success: function(output){
-                  $.each(output, function (key, value) {
-                    if ($('#unique-selector').length === 0) {
-                        // code to run if it isn't there
-                    } else {
-                        // code to run if it is there
-                    }  
-                    $('#content_lots').html('<div class="col-xs-12 ui-state-highlight"> Lotto ID: '+value.id_lotmag + ' rimanenza ' + parseFloat(value.rest)+'</div>');
-                  });                
+					$.each(output, function (key, value) {
+						if ($('#lotRestPost'+value.id_lotmag).length === 0) { // input inesistente, propongo il resto che ho sul db
+						} else { // input esistente, propongo il valore in esso contenuto sul form del dialog  
+						}  
+						$('#content_lots').append('<div class="col-xs-12 ui-state-highlight">'+value.id_lotmag+' - Giacenza reale:<input type="number" min="0" id="lotRestDial'+value.id_lotmag+'" maxlength="11" onkeyup="lotRestCalc();" value="' + parseFloat(value.rest)+'" />   risultante: ' + parseFloat(value.rest)+'</div>');
+					});                
                 }
             });
             $( "#inputLotmagRest" ).dialog({
@@ -337,6 +335,7 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
                 hide: "explode",
                 buttons: {
                     "Annulla": function() {
+						$('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
                         $(this).dialog("destroy");
                         $(this).dialog("close");
                     },
@@ -344,7 +343,11 @@ $script_transl = $strScript["inventory_stock.php"] + HeadMain(0, array(/** ENRIC
                         text:'Conferma',
                         'class':'btn btn-danger delete-button',
                         click:function (event, ui) {
-                    }
+							// prima di chiudere dovrò appendere gli elementi input sul form padre per fare il post dei valori settati con il dialog (lato browser) e non perderli in conferma e/o preview
+							$('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
+							$(this).dialog("destroy");
+							$(this).dialog("close");
+						}
                     }
                 }
             });
