@@ -38,7 +38,7 @@ $artico = gaz_dbi_get_row($gTables['artico'], "codice", $codice);
 // Antonio Germani -gli inventari, adesso, vengono tolti direttamente nella function getAvailableLots
 
 // Antonio Germani - controllo se ci sono articoli con movimenti di magazzino orfani del lotto
-$where= $gTables['movmag'] . ".artico = '" . $codice. "' AND ". $gTables['movmag'] . ".id_lotmag < '1'"; 
+$where= $gTables['movmag'] . ".artico = '" . $codice. "' AND ". $gTables['movmag'] . ".id_lotmag < '1' AND ". $gTables['movmag'] . ".caumag <> '99'"; 
 $resorf = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
  $gTables['movmag'] . ".quanti,".
  $gTables['movmag'] . ".tipdoc,".
