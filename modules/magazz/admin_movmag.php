@@ -292,7 +292,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		if (strtotime($datem) < strtotime($uldtfile)){
 			$warnmsg.="33+";			
 		}			
-	}
+	}	
 	
 	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
 		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
@@ -309,7 +309,18 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$warnmsg.="34+";			
 		}		
 	}
-	
+	if ($form['lot_or_serial']==1){ // se articolo con lotti ...
+		$form['datreg'] = $form['annreg'] . "-" . substr("0".$form['mesreg'],-2) . "-" . substr("0".$form['gioreg'],-2);
+		
+		$lm -> getAvailableLots($form['artico'],0,$form['datreg']);							
+		$tot=0;
+		foreach ($lm->available as $v_lm) {// ciclo tutti i lotti disponibili
+			$tot+=$v_lm['rest']; // sommo le quantità
+		}							
+		if ($tot <> $form['quanti']){ // se la quantità richiesta non corrisponde a quella reale segnalo!
+			$msg .= "35+";echo "Giacenza lotti: ",$tot," data reg.: ",$form['datreg'];		
+		}
+	}
 	
     if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
         //formatto le date
