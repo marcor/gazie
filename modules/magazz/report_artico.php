@@ -25,7 +25,6 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
-$script_transl = HeadMain();
 // campi ammissibili per la ricerca
 $search_fields = [
     'sea_codice' => "{$gTables['artico']}.codice LIKE '%%%s%%'",
@@ -97,6 +96,9 @@ $(function() {
 	});
 });
 </script>
+<?php
+$script_transl = HeadMain(0, array('custom/autocomplete'));
+?>
 <div class="text-center"><h3><?php echo $script_transl['title'];?></h3></div>
 <?php
 $ts->output_navbar();
@@ -117,7 +119,7 @@ $ts->output_navbar();
 			<input type="text" name="sea_codice" placeholder="codice" class="input-sm form-control" value="<?php echo (isset($sea_codice))? $sea_codice : ""; ?>" maxlength="15">
 		</td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="des_artico" placeholder="descrizione" class="input-sm form-control" value="<?php echo (isset($des_artico))? $des_artico : ""; ?>" maxlength="15">
+			<input type="text" name="des_artico" placeholder="descrizione"  id="suggest_descri_artico" class="input-sm form-control" value="<?php echo (isset($des_artico))? $des_artico : ""; ?>" maxlength="15">
         </td>
 		<td class="FacetFieldCaptionTD">
         <?php gaz_flt_disp_select("good_or_service", "good_or_service", $tablejoin, 1,'good_or_service ASC', $script_transl['good_or_service_value']); ?>
