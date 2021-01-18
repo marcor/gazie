@@ -240,8 +240,7 @@ $strScript = array("browse_document.php" =>
         'errors' => array(" La giacenza reale non pu&ograve; essere negativa",
             " Il valore reale non pu&ograve; essere negativo o uguale a zero",
             " Si st&agrave; tentando di fare l'inventario con giacenza attuale e reale entrambe a zero",
-			" Per questo articolo è già stato fatto l'inventario nello stesso giorno",
-			" La somma dei singoli lotti disponibili non corrisponde alla giacenza reale. Prima di inventariare bisogna aggiustare manualmente i lotti"),
+			" Per questo articolo è già stato fatto l'inventario nello stesso giorno"),
         'preview_title' => 'Confermando le scelte fatte si registreranno i seguenti movimenti di magazzino:'
 		
     ),
