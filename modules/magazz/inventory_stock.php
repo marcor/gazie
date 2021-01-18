@@ -392,7 +392,7 @@ $(function () {
                     text:'Conferma',
                     'class':'btn btn-danger delete-button',
                     click:function (event, ui) {
-                        $('#lotContent'+codart).html('');
+                        $("[id='lotContent"+codart+"']").html('');
 						// prima di chiudere dovrò appendere gli elementi input sul form padre per fare il post dei valori settati con il dialog (lato browser) e non perderli in conferma e/o preview
                         var lotsRests='';
                         var totReal = 0.00;
@@ -400,8 +400,8 @@ $(function () {
                             lotsRests += '<p class="bg-warning">ID ' + v.name + ' reale:'+ v.value + '</p><input type="hidden" value="' + v.value + '" id="lotRestPost'+v.name+'" name="lotRestPost'+v.name+'">';
                             totReal += Number(v.value)<0?0:Number(v.value);
                         });
-                        $('#totReal'+codart).html(totReal);
-                        $('#lotContent'+codart).append(lotsRests);
+                        $("[id='totReal"+codart+"']").html(totReal);
+                        $("[id='lotContent"+codart+"']").append(lotsRests);
 						if ($('#ispreview').length === 0) { // non c'è una anteprima
                             $('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
                             $(this).dialog("destroy");
