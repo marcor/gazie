@@ -229,7 +229,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                                     'datdoc' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
                                     'artico' => $k,
                                     'quanti' => $mq,
-                                    'prezzo' => $v['v_r']
+                                    'prezzo' => $v['v_r'],
+									'id_lotmag'=>$kl
                                 ));
                             } elseif ($vl['g_a'] < $vl['g_r']) { // senza lotti giacenza reale maggiore carico
                                 // devo fare prima uno storno per caricare
@@ -243,6 +244,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                                     'artico' => $k,
                                     'quanti' => $mq,
                                     'prezzo' => $v['v_r'],
+									'id_lotmag'=>$kl
                                 ));
                             }
                         }
