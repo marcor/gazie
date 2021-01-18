@@ -28,7 +28,6 @@ $lm = new lotmag;
 $admin_aziend = checkAdmin();
 $gForm = new magazzForm;
 $msg = '';
-
 if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['date_Y'] = date("Y");
@@ -80,12 +79,10 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                 $form['chk_on' . $r['codice']] = '';
                 $form['a'][$r['codice']]['class'] = 'danger';
             }
-            // Calcolo totale valore giacenza by DF
-            $tot_val_giac += $magval['v_g'];
+			$tot_val_giac+=$magval['v_g'];
         }
     }
 } else { //nelle  successive entrate
-    $tot_val_giac = 0;
     if (isset($_POST['Return'])) {
         header("Location: " . $_POST['ritorno']);
         exit;
@@ -112,7 +109,6 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', $where, 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
         if ($result) {
             // Imposto totale valore giacenza by DF
-
             while ($r = gaz_dbi_fetch_array($result)) {
                 if ($r['catmer'] <> $ctrl_cm) {
                     gaz_set_time_limit(30);
@@ -150,11 +146,9 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     $form['chk_on' . $r['codice']] = '';
                     $form['a'][$r['codice']]['class'] = 'danger';
                 }
-                    // Calcolo totale valore giacenza by DF
-                    $tot_val_giac += $magval['v_g'];
-                }
+            }
         }
-    } elseif (isset($_POST['preview']) || isset($_POST['insert'])) {  //in caso di conferma
+    } elseif (isset($_POST['preview']) || isset($_POST['insert'])|| $_POST['hidden_req'] == 'refr') {  //in caso di conferma
         $cau99 = gaz_dbi_get_row($gTables['caumag'], 'codice', 99);
         $cau98 = gaz_dbi_get_row($gTables['caumag'], 'codice', 98);
         $form['date_Y'] = $_POST['date_Y'];
@@ -213,6 +207,9 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                             }    
                         }
                     }
+					// Calcolo totale valore giacenza
+					$tot_val_giac += $form['a'][$ka]['v_g'];
+
                 }
             }
         } 
@@ -422,6 +419,15 @@ $(function () {
         });
         $("#inputLotmagRest" ).dialog( "open" );  
     });
+	$('.artnormal').change(function(){ // cambio il valore ad 
+		if ($('#ispreview').length === 0) { // non c'è una anteprima
+			$("[name='hidden_req']").val('refr');			
+			$("form").submit();
+		} else {
+            $('#btnpreview').click();
+        }
+    });
+
 });
 
 function lotRestCalc(ls,id_lotmag) {
@@ -546,7 +552,7 @@ if (isset($form['a'])) {
 				' . $totReal . '</span></div></a></button>
 				<input type="hidden" name="a[' . $k . '][g_r]" value="' . $totReal . '"/>';
 			} else {
-				echo '<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">';
+				echo '<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" class="artnormal" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">';
 			}
 			echo '
 			</td>
