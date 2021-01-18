@@ -44,9 +44,9 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
     $admin_aziend = checkAdmin();
     $return_arr = array();
 	if ( defined('FILTER_SANITIZE_ADD_SLASHES') ) {
-		$term=filter_var(substr($_GET['term'],0,20),FILTER_SANITIZE_ADD_SLASHES);
+		$term=filter_var(substr($_GET['term'],0,30),FILTER_SANITIZE_ADD_SLASHES);
 	} else {
-		$term=addslashes(substr($_GET['term'],0,20));
+		$term=addslashes(substr($_GET['term'],0,30));
 	}
     $term = gaz_dbi_real_escape_string($term);
 
