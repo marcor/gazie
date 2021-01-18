@@ -206,7 +206,9 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                             if (isset($_POST['lotRestPost' .$v['id_lotmag']])){
                                 $lotquanti=floatval($_POST['lotRestPost' .$v['id_lotmag']]);
                                 $lotquanti=($va['i_l']>1&&$lotquanti>1)?1:$lotquanti; // i seriali al massimo 1
-                                $form['a'][$ka]['lotRestPost'][$v['id_lotmag']]=$lotquanti;
+                                $form['a'][$ka]['lotRestPost'][$v['id_lotmag']]['g_r']=$lotquanti;
+                                $form['a'][$ka]['lotRestPost'][$v['id_lotmag']]['g_a']=$v['rest'];
+                                $form['a'][$ka]['lotRestPost'][$v['id_lotmag']]['ide']=$v['identifier'];
 // print 'id:'.$v['id_lotmag'].' rest:'.$_POST['lotRestPost' .$v['id_lotmag']].'<br>';
                             }    
                         }
@@ -217,7 +219,37 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         if (isset($_POST['insert']) && empty($msg)) { // se devo inserire e non ho errori rifaccio il ciclo dei righi per inserire i movimenti
             foreach ($form['a'] as $k => $v) { // ciclo delle singole righe (a)
 				if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
-                    if ($v['g_a'] > $v['g_r']) { // in caso di giacenza reale minore
+                    if (count($v['lotRestPost'])>=1) { // ci sono lotti stornati
+                        foreach( $v['lotRestPost'] as $kl => $vl ) {
+                            if ($vl['g_a'] > $vl['g_r']) { // senza lotti giacenza reale minore -scarico
+                                // devo fare prima uno storno per scaricare
+                                $mq = $vl['g_a'] - $vl['g_r'];
+                                movmagInsert(array('caumag' => 98,
+                                    'operat' => -1,
+                                    'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+                                    'tipdoc' => 'INV',
+                                    'desdoc' => $cau98['descri']. ' lotto: '.$vl['ide'],
+                                    'datdoc' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+                                    'artico' => $k,
+                                    'quanti' => $mq,
+                                    'prezzo' => $v['v_r']
+                                ));
+                            } elseif ($vl['g_a'] < $vl['g_r']) { // senza lotti giacenza reale maggiore carico
+                                // devo fare prima uno storno per caricare
+                                $mq = $vl['g_r'] - $vl['g_a'];
+                                movmagInsert(array('caumag' => 98,
+                                    'operat' => 1,
+                                    'datreg' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+                                    'tipdoc' => 'INV',
+                                    'desdoc' => $cau98['descri']. ' lotto: '.$vl['ide'],
+                                    'datdoc' => $form['date_Y'] . '-' . $form['date_M'] . '-' . $form['date_D'],
+                                    'artico' => $k,
+                                    'quanti' => $mq,
+                                    'prezzo' => $v['v_r'],
+                                ));
+                            }
+                        }
+                    } elseif ($v['g_a'] > $v['g_r']) { // in caso di giacenza reale minore
                         // devo fare prima uno storno per scaricare
                         $mq = $v['g_a'] - $v['g_r'];
                         movmagInsert(array('caumag' => 98,
@@ -316,6 +348,8 @@ $(function () {
         $("span#lot_codart").html($(this).attr("codart"));
         var codart = $(this).attr('codart');
         var datref = $("#lot_datref").attr('datref');
+        var lotserial=1;
+        var maxls='';
         $.ajax({
             data: {'codart': codart,'datref':datref},
 			dataType: 'json',
@@ -323,16 +357,24 @@ $(function () {
             url: './get_lots.php', // qui chiamo lo script php per recuperare i lotti dell'articolo e le singole rimanenze
             success: function(output){
 				var totReal = 0.00;
+                var existLot=false;
 				$.each(output, function (key, value) {
+                    if(Number(value.ls)==2){
+                        lotserial=2;
+                        maxls='max=1';
+                    }
+                    existLot=true;
 					totReal += parseFloat(value.rest);
 					if ($('#lotRestPost'+value.id_lotmag).length === 0) { // input inesistente, propongo il resto che ho sul db
 					} else { // input esistente, propongo il valore in esso contenuto sul form del dialog  
                         value.rest=$('#lotRestPost'+value.id_lotmag).val();
 					}  
-					$('#content_lots').append('<div class="row col-xs-12 bg-info"><div class="col-xs-6">'+value.identifier+' giacenza <b>' + parseFloat(value.rest)+'</b></div><div class="col-xs-3 text-right"> reale = </div><input type="number" class="col-xs-3" min="0" id="lotRestDial'+value.id_lotmag+'" name="'+value.id_lotmag+'" maxlength="11" onchange="lotRestCalc();" onkeyup="lotRestCalc();" value="' + parseFloat(value.rest)+'" /></div>');
-				});                
-				$('#content_lots').append('<div class="row col-xs-12"><div class="col-xs-9 text-right">Totale reale : </div><div><input class="bg-warning col-xs-3 text-center" id="totReal" type="numeric" value="' + parseFloat(totReal) +'" disbled/></div></div>');
-                lotRestCalc();
+					$('#content_lots').append('<div class="row col-xs-12 bg-info"><div class="col-xs-6">'+value.identifier+' giacenza <b>' + parseFloat(value.rest)+'</b></div><div class="col-xs-3 text-right"> reale = </div><input type="number" class="col-xs-3" min=0 '+maxls+' id="lotRestDial'+value.id_lotmag+'" name="'+value.id_lotmag+'" maxlength="11" onchange="lotRestCalc('+lotserial+','+value.id_lotmag+');" onkeyup="lotRestCalc('+lotserial+','+value.id_lotmag+');" value="' + parseFloat(value.rest)+'" /></div>');
+				});
+                if (existLot){                
+                    $('#content_lots').append('<div class="row col-xs-12"><div class="col-xs-9 text-right">Totale reale : </div><div><input class="bg-warning col-xs-3 text-center" id="totReal" type="numeric" value="' + parseFloat(totReal) +'" disbled/></div></div>');
+                    lotRestCalc(lotserial,0);
+                }
             }
         });
         $( "#inputLotmagRest" ).dialog({
@@ -360,24 +402,41 @@ $(function () {
                         });
                         $('#totReal'+codart).html(totReal);
                         $('#lotContent'+codart).append(lotsRests);
-						$('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
-						$(this).dialog("destroy");
+						if ($('#ispreview').length === 0) { // non c'è una anteprima
+                            $('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
+                            $(this).dialog("destroy");
+                        } else {
+                            $('#btnpreview').click();
+                        }
 					}
                 }
             },
             close:function(event, ui){
-                $('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
-                $(this).dialog("destroy");
+				if ($('#ispreview').length === 0) { // non c'è una anteprima
+                    $('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
+                    $(this).dialog("destroy");
+                } else {
+                    $('#btnpreview').click();
+                }
             }
         });
         $("#inputLotmagRest" ).dialog( "open" );  
     });
 });
 
-function lotRestCalc() {
+function lotRestCalc(ls,id_lotmag) {
 	var totReal = 0.00;
 	$('[id*="lotRestDial"]').each((i, v) => {
-		totReal += Number(v.value)<0?0:Number(v.value);
+        var lv = Number(v.value);
+        if (ls>1&&lv>1){
+            lv=1;
+            $('#lotRestDial'+id_lotmag).val('1');
+        }
+        if (lv<0){
+            lv=0;
+            $('#lotRestDial'+id_lotmag).val('0');
+        }
+        totReal += lv;
 	});
 	$('#totReal').val(totReal);
 	$('#totReal').addClass('bg-danger').removeClass('bg-warning');
@@ -479,9 +538,10 @@ if (isset($form['a'])) {
                     $classTot='bg-default';
                 };
                 foreach( $v['lotRestPost'] as $kl => $vl ) {
-                    $totReal += $vl;
-                    echo '<p class="bg-warning">ID '. $kl . ' reale:'.$vl.'</p><input type="hidden" value="'. $vl. '" id="lotRestPost'.$kl.'" name="lotRestPost'.$kl.'">';
+                    $totReal += $vl['g_r'];
+                    echo '<p class="bg-warning">ID '. $kl . ' reale:'.$vl['g_r'].'</p><input type="hidden" value="'. $vl['g_r']. '" id="lotRestPost'.$kl.'" name="lotRestPost'.$kl.'">';
                 }
+                $form['a'][$k]['g_r'] = $totReal;
                 echo '</div><button type="button" class="btn btn-default" style="padding: 0px 0px 0px 5px;"  title="Articolo con lotti: modifica per singoli lotti"><a class="inputLotmagRest" codart="'.$k.'"><div style="text-align:right; padding: 3px; cursor:pointer; border:1px;"><i class="glyphicon glyphicon-tag"></i><span class="'.$classTot.'" id="totReal'.$k.'">
 				' . $totReal . '</span></div></a></button>
 				<input type="hidden" name="a[' . $k . '][g_r]" value="' . $totReal . '"/>';
@@ -500,7 +560,7 @@ if (isset($form['a'])) {
 						<input type="submit" name="Return" value="' . $script_transl['return'] . '" />
 					</td>
 					<td align="center" colspan="6" class="FacetFieldCaptionTD">
-						<input type="submit" name="preview" value="' . $script_transl['view'].'" />
+						<input type="submit" name="preview" id="btnpreview" value="' . $script_transl['view'].'" />
 					</td>
 					<td align="right" class="bg-primary">Totale ' . gaz_format_number($tot_val_giac) . '</td>
 				</tr>';
@@ -524,7 +584,37 @@ if (isset($form['a'])) {
             if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
                 $load = '';
                 $unload = '';
-                if ($v['g_a'] > $v['g_r']) { // in caso di giacenza reale minore
+                if (count($v['lotRestPost'])>=1) { // ci sono lotti stornati
+                    foreach( $v['lotRestPost'] as $kl => $vl ) {
+                        if ($vl['g_a'] > $vl['g_r']) { // senza lotti giacenza reale minore -scarico
+                            // devo fare prima uno storno per scaricare
+                            $mq = $vl['g_a'] - $vl['g_r'];
+                            echo '		<tr>
+			 				<td class="FacetDataTD">98-' . $cau98['descri'] . ' lotto: '.$vl['ide'].'</td>
+							<td class="FacetDataTD" align="left">' . $k . '</td>
+							<td class="FacetDataTD" align="left">' . $v['i_d'] . '</td>
+							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
+							<td class="FacetDataTD"></td>
+							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
+							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
+							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
+                            </tr>';
+                        } elseif ($vl['g_a'] < $vl['g_r']) { // senza lotti giacenza reale maggiore carico
+                            // devo fare prima uno storno per caricare
+                            $mq = $vl['g_r'] - $vl['g_a'];
+                            echo '		<tr>
+			 				<td class="FacetDataTD">98-' . $cau98['descri'] . ' lotto: '.$vl['ide'].'</td>
+							<td class="FacetDataTD" align="left">' . $k . '</td>
+							<td class="FacetDataTD" align="left">' . $v['i_d'] . '</td>
+							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
+							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
+							<td class="FacetDataTD"></td>
+							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
+							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
+                            </tr>';
+                        }
+                    }
+                } elseif ($v['g_a'] > $v['g_r']) { // senza lotti giacenza reale minore -scarico
                     // devo fare prima uno storno per scaricare
                     $mq = $v['g_a'] - $v['g_r'];
                     echo '		<tr>
@@ -537,7 +627,7 @@ if (isset($form['a'])) {
 							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
 							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
 						</tr>';
-                } elseif ($v['g_a'] < $v['g_r']) { // se maggiore carico
+                } elseif ($v['g_a'] < $v['g_r']) { // senza lotti giacenza reale maggiore carico
                     // devo fare prima uno storno per caricare
                     $mq = $v['g_r'] - $v['g_a'];
                     echo '		<tr>
@@ -565,7 +655,7 @@ if (isset($form['a'])) {
         }
         echo '		<tr>
 	   					<td align="right" colspan="8" class="FacetFooterTD">
-							<input type="submit" name="insert" value="' . $script_transl['submit'] . '">
+							<input type="submit" name="insert" id="ispreview" value="' . $script_transl['submit'] . '">
 						</td>
 					</tr>';
     }
