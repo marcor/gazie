@@ -29,6 +29,7 @@ require("../../library/include/header.php");
 $search_fields = [
     'sea_codice' => "{$gTables['artico']}.codice LIKE '%%%s%%'",
 	'des_artico' => "{$gTables['artico']}.descri LIKE '%%%s%%'",
+    'gos' => "{$gTables['artico']}.good_or_service = %d",
 	'unimis' => "{$gTables['artico']}.unimis LIKE '%%%s%%'",
     'asset' => "id_assets = %d",
     'codcat' => "{$gTables['catmer']}.codice = %d",
@@ -122,7 +123,7 @@ $ts->output_navbar();
 			<input type="text" name="des_artico" placeholder="descrizione"  id="suggest_descri_artico" class="input-sm form-control" value="<?php echo (isset($des_artico))? htmlentities($des_artico, ENT_QUOTES) : ""; ?>" maxlength="30">
         </td>
 		<td class="FacetFieldCaptionTD">
-        <?php gaz_flt_disp_select("good_or_service", "good_or_service", $tablejoin, 1,'good_or_service ASC', $script_transl['good_or_service_value']); ?>
+        <?php gaz_flt_disp_select("gos", $gTables['artico'].".good_or_service AS gos", $tablejoin, 1,'good_or_service ASC', $script_transl['good_or_service_value']); ?>
         </td>
 		<td class="FacetFieldCaptionTD">
         <?php gaz_flt_disp_select("codcat", $gTables['catmer'].".codice AS codcat, ". $gTables['catmer'].".descri AS descat", $tablejoin, 1,'codcat ASC','descat'); ?>
@@ -181,17 +182,19 @@ while ($r = gaz_dbi_fetch_array($result)) {
     }
     // IVA
     $iva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $r['aliiva']);
-    
     echo "<tr>\n";
     echo '<td>
     <a class="btn btn-xs btn-'.$class.'" href="../magazz/admin_artico.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['codice'].'</a>';
     if ( $r["good_or_service"] == 2 ) {
         echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-plus"></i></a>';
+        $des_bom ='<a target="_blank" title="Stampa l\'albero della distinta base" class="btn btn-xs btn-info" href="stampa_bom.php?ri=' . $r["codice"] . '"><i class="glyphicon glyphicon-tasks"> <b>'.$script_transl['good_or_service_value'][$r['good_or_service']].'</b></i></a>';
+    } else {
+        $des_bom = $script_transl['good_or_service_value'][$r['good_or_service']];
     }
     echo '</td>';
     echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.$r['descri'].'</span>';
     echo "</td>\n";
-    echo '<td class="text-center">'.$script_transl['good_or_service_value'][$r['good_or_service']];
+    echo '<td class="text-center">'.$des_bom;
     echo "</td>\n";
     echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
     echo "</td>\n";
