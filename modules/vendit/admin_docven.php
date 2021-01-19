@@ -3075,6 +3075,7 @@ echo '	<input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" 
 		';
 
 ?>
+<!-- DISEGNO LA FORM DI INSERIMENTO DATI -->
 <div class="text-center"><?php echo $script_transl[1]; ?></div>
 <div class="panel panel-info div-bordered">
   <div class="panel-body"> 
@@ -3128,6 +3129,14 @@ if ($toDo == "insert"){
                 <label for="in_quanti" ><?php echo  $script_transl[16].':'; ?></label>
                 <input type="text" id="in_quanti" value="<?php echo $form['in_quanti']; ?>" maxlength="11" name="in_quanti" tabindex="5" accesskey="q">
             </div>
+            <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
+                <label for="vat_constrain" ><?php echo $script_transl['vat_constrain']; ?></label>
+                <?php
+                $select_in_codvat = new selectaliiva("in_codvat");
+                $select_in_codvat->addSelected($form["in_codvat"]);
+                $select_in_codvat->output();
+                ?>
+            </div>
         </div>
         <div class="row">
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
@@ -3143,35 +3152,31 @@ if ($toDo == "insert"){
                 <input type="text" value="<?php $form['in_ritenuta']; ?>" maxlength="6" name="in_ritenuta">
             </div>
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
-                <label for="vat_constrain" ><?php echo $script_transl['vat_constrain']; ?></label>
-<?php
-$select_in_codvat = new selectaliiva("in_codvat");
-$select_in_codvat->addSelected($form["in_codvat"]);
-$select_in_codvat->output();
-?>
+                <label for="in_codric" class="col-xs-3"><?php echo  $script_transl[18]; ?></label>
+                <?php
+                $ric = array('sub',intval(substr($form['in_codric'], 0, 1)));
+                if ($form['tipdoc'] == 'FAP' || $form['tipdoc'] == 'FAQ') {
+                    $ric = array('sub', 1, 2, 4, 5);
+                } else if (substr($form['tipdoc'],0,2) == 'FA' || $form['tipdoc']== 'DDT'){
+                    $ric = array('sub', 1, 4);
+                }
+                if (!in_array(substr($form['in_codric'],0,1),$ric)){
+                    $ric[]=substr($form['in_codric'],0,1);
+                }
+                $gForm->selectAccount('in_codric', $form['in_codric'], $ric,'',false,'col-xs-9');
+                ?>
             </div>
+
+
+
+
         </div>
         <div class="row">
-            <div class="form-group col-xs-12 col-sm-6 col-md-6 text-left"> 
-                <label for="in_codric" class="col-xs-3"><?php echo  $script_transl[18]; ?></label>
-
-<?php
-$ric = array('sub',intval(substr($form['in_codric'], 0, 1)));
-if ($form['tipdoc'] == 'FAP' || $form['tipdoc'] == 'FAQ') {
-    $ric = array('sub', 1, 2, 4, 5);
-} else if (substr($form['tipdoc'],0,2) == 'FA' || $form['tipdoc']== 'DDT'){
-    $ric = array('sub', 1, 4);
-}
-if (!in_array(substr($form['in_codric'],0,1),$ric)){
-	$ric[]=substr($form['in_codric'],0,1);
-}
-$gForm->selectAccount('in_codric', $form['in_codric'], $ric,'',false,'col-xs-9');
-?>
-            </div>
-<?php
-if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
-?>
-            <div class="col-xs-6 col-sm-6 col-md-3 text-right"> 
+            
+            <?php
+            if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
+            ?>
+            <div class="col-xs-6 col-sm-6 col-md-9 text-right"> 
             <!--<div class="form-group col-xs-12 col-sm-6 col-md-3">-->
                 <a id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-export"></i><?php //echo $script_transl['add_article']; ?></a>
             <!--</div>-->

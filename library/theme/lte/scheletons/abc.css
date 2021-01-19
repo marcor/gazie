@@ -60,45 +60,76 @@ div.col-md-12 div.form-group div.col-sm-8 {
 }
 
 /*
-    tabelle di selezione pagina
-    */
+**  tabelle di selezione pagina
+*/
 
-    .nav-pills 
-    {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-    div .panel.panel-default 
-    {
-        padding-top: 30px;
-        padding-bottom: 50px;
-    }
-    .form-group
-    {
-        margin-bottom: 0px;
-    }
-    #home > div
-    {
-        margin-bottom: 4px;
-    }
-    #commer > div
-    {
-        margin-bottom: 4px;
-    }
-    #magazz > div
-    {
-        margin-bottom: 4px;
-    }
-    #contab > div
-    {
-        margin-bottom: 4px;
-    }
-    #chifis > div
-    {
-        margin-bottom: 4px;
-    }
-   
-    ul.nav.nav-pills li input.btn.btn-warning
-    {
-        height: 43px;
-    }
+.nav-pills 
+{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+div .panel.panel-default 
+{
+    padding-top: 30px;
+    padding-bottom: 50px;
+}
+.form-group
+{
+    margin-bottom: 0px;
+}
+#home > div
+{
+    margin-bottom: 4px;
+}
+#commer > div
+{
+    margin-bottom: 4px;
+}
+#magazz > div
+{
+    margin-bottom: 4px;
+}
+#contab > div
+{
+    margin-bottom: 4px;
+}
+#chifis > div
+{
+    margin-bottom: 4px;
+}
+
+ul.nav.nav-pills li input.btn.btn-warning
+{
+    height: 43px;
+}
+
+select#banapp {
+    width: 170px;
+}
+
+select#expense_vat {
+    width: 170px;
+}
+
+select#in_codric {
+    width: 220px;
+}
+
+select#in_tiprig {
+    width: 198px;
+}
+
+input#search_cosear {
+    width: 190px;
+}
+input#in_quanti {
+    width: 175px;
+}
+
+select#in_codvat {
+    width: 170px;
+}
+
+select#in_codric {
+    width: 165px;
+}
