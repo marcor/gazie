@@ -62,7 +62,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$idx=array(0=>array('tipiva'=>'aliiva','aliquo'=>'aliiva','id_tes'=>'rigdoc','id_order'=>'rigdoc','id_mag'=>'rigdoc','id_doc'=>'effett',
     'fattura_elettronica_zip_package'=>'tesdoc','var'=>'company_config','val'=>'company_config','description'=>'company_config',
     'codart'=>'lotmag','id_movmag'=>'lotmag','datreg'=>'movmag','artico'=>'movmag','expiry'=>'paymov','id_contract'=>'contract_row',
-    'id_staff'=>'staff_skills','ragstat'=>'sconti_raggruppamenti')); 
+    'id_staff'=>'staff_skills','ragstat'=>'sconti_raggruppamenti','clfoco'=>'sconti_articoli')); 
 	foreach($idx as $vi){
 		foreach($vi as $k=>$v){
 			$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice.$v." WHERE 1");
@@ -84,7 +84,7 @@ $result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
 while ($row = gaz_dbi_fetch_array($result)) {
 	$aziend_codice = sprintf("%03s", $row["codice"]);
 	// inizio controlli presenza di indici altrimenti li creo 
-	$idx=array(0=>array('codart'=>'sconti_articoli','codice'=>'camp_artico','id_movmag'=>'camp_mov_sian')); 
+	$idx=array(0=>array('codart'=>'sconti_articoli','clfoco'=>'sconti_raggruppamenti','codice'=>'camp_artico','id_movmag'=>'camp_mov_sian')); 
 	foreach($idx as $vi){
 		foreach($vi as $k=>$v){
 			$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice.$v." WHERE 1");
