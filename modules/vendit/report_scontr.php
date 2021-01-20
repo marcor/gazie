@@ -38,7 +38,7 @@ while ($r1 = gaz_dbi_fetch_array($rs1)) {
 }
 
 $search_fields = [
-    'tipo' => "tipdoc LIKE '%s'",
+    'tipo' => "tipdoc = '%s'",
     'id_tes' => "{$gTables['tesdoc']}.id_tes LIKE %d",
 	'sezione' => "{$gTables['tesdoc']}.seziva = %d",
 	'numdoc' => "{$gTables['tesdoc']}.numdoc = %d",
@@ -70,7 +70,7 @@ $ts = new TableSorter(
     $tablejoin, 
     $passo, 
     ['datemi'=>'desc','id_contract'=>'desc','seziva'=>'desc','numdoc'=>'desc'],
-    ['tipdoc' => 'VCO']);
+    ['tipo' => 'VCO']);
 ?>
     <div class="text-center"><h3><?php echo $script_transl['title'];?></h3></div>
 
