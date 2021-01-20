@@ -162,13 +162,13 @@ $(function() {
 			<?php gaz_flt_disp_int('id_tes', "ID"); ?>
 		</td>
 		<td class="FacetFieldCaptionTD">
-            <?php gaz_flt_disp_select("anno", "YEAR(datemi) AS anno ", $tablejoin," tipdoc = 'VCO'" , "datemi"); ?>
+            <?php gaz_flt_disp_select("anno", "YEAR(datemi) AS anno ", $gTables["tesdoc"]," tipdoc = 'VCO'" , "datemi"); ?>
         </td>
 		<td class="FacetFieldCaptionTD">
-            <?php gaz_flt_disp_select("cash", "id_contract AS cash", $tablejoin, " tipdoc = 'VCO'","id_contract"); ?>
+            <?php gaz_flt_disp_select("cash", "id_contract AS cash", $gTables["tesdoc"], " tipdoc = 'VCO'","id_contract"); ?>
         </td>
 		<td class="FacetFieldCaptionTD">
-            <?php gaz_flt_disp_select("sezione", $gTables['tesdoc'].".seziva AS sezione ", $tablejoin," tipdoc = 'VCO'" , $gTables['tesdoc'].".seziva"); ?>
+            <?php gaz_flt_disp_select("sezione", $gTables['tesdoc'].".seziva AS sezione ", $gTables["tesdoc"]," tipdoc = 'VCO'" , $gTables['tesdoc'].".seziva"); ?>
         </td>
 		<td class="FacetFieldCaptionTD">			
             <input type="text" name="cliente" placeholder="Cliente" class="input-sm form-control" value="<?php echo (isset($cliente))? $cliente : ""; ?>" maxlength="15">
