@@ -121,6 +121,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['country'] = $admin_aziend['country'];
     $form['iban'] = '';
     $form['sia_code'] = '';
+    $form['cuc_code'] = '';
     $form['addbol'] = 'N';
     $form['maxrat'] = 0.00;
     $form['cosric'] = 0;
@@ -192,6 +193,9 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]* </td><td class=\
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sia_code']."* </td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"sia_code\" value=\"".$form['sia_code']."\" maxlength=\"5\"  />
+       </td></tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">Codice CUC</td><td class=\"FacetDataTD\">
+       <input type=\"text\" name=\"cuc_code\" value=\"".$form['cuc_code']."\" maxlength=\"8\"  />
        </td></tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['eof']."</td><td  class=\"FacetDataTD\">\n";

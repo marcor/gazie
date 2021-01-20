@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CBIPaymentRequest xsi:schemaLocation="urn:CBI:xsd:CBIPaymentRequest.00.04.00 CBIPaymentRequest.00.04.00.xsd" xmlns="urn:CBI:xsd:CBIPaymentRequest.00.04.00" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <GrpHdr>
+        <MsgId></MsgId>
+        <CreDtTm></CreDtTm>
+        <NbOfTxs></NbOfTxs>
+        <CtrlSum></CtrlSum>
+        <InitgPty>
+            <Nm></Nm>
+            <Id>
+                <OrgId>
+                    <Othr>
+                        <Id></Id>
+                        <Issr></Issr>
+                    </Othr>
+                </OrgId>
+            </Id>
+        </InitgPty>
+    </GrpHdr>
+    <PmtInf>
+    </PmtInf>
+</CBIPaymentRequest>
