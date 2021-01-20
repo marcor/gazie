@@ -258,7 +258,7 @@ $strScript = array("admin_aziend.php" =>
         "Tipo de tasa",
         "La cuenta bancaria para el abono",
         "Anotaciones",
-        array('C' => 'efectivo', 'K' => 'tarjetas de pago', 'D' => 'env&iacute;o de remesas directas', 'B' => 'recibo bancario', 'T' => 'letra de cambio', 'V' => 'solicitud de pago'),
+        array('C' => 'efectivo','O' => 'bonifico', 'K' => 'tarjetas de pago', 'D' => 'env&iacute;o de remesas directas', 'B' => 'recibo bancario', 'T' => 'letra de cambio', 'V' => 'solicitud de pago'),
         array('S' => 'Si', 'N' => 'No'),
         array('D' => 'fecha de la factura', 'G' => 'd&iacute;a fijado', 'F' => 'fin de mes'),
         array('Q' => 'quincenal', 'M' => 'mensual', 'B' => 'bimestral', 'T' => 'trimestral', 'U' => 'cuatrimestral', 'S' => 'semestral', 'A' => 'anual'),

@@ -83,7 +83,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         $old_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['change_pag']);
         if (($new_pag['tippag'] == 'B' or $new_pag['tippag'] == 'T' or $new_pag['tippag'] == 'V')
-                and ( $old_pag['tippag'] == 'C' or $old_pag['tippag'] == 'D')) { // se adesso devo mettere le spese e prima no
+                and ( $old_pag['tippag'] == 'C' or $old_pag['tippag'] == 'D' or $old_pag['tippag'] == 'O')) { // se adesso devo mettere le spese e prima no
             $form['numrat'] = $new_pag['numrat'];
             if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
                 $old_header = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
@@ -97,7 +97,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } elseif ($fornitore['speban'] == 'S') { //altrimenti mi avvalgo delle nuove dell'azienda se il fornitore lo richiede
                 $form['speban'] = $admin_aziend['sperib'];
             }
-        } elseif (($new_pag['tippag'] == 'C' or $new_pag['tippag'] == 'D')
+        } elseif (($new_pag['tippag'] == 'C' or $new_pag['tippag'] == 'D' or $new_pag['tippag'] == 'O')
                 and ( $old_pag['tippag'] == 'B' or $old_pag['tippag'] == 'T' or $old_pag['tippag'] == 'V')) { // se devo togliere le spese
             $form['speban'] = 0.00;
             $form['numrat'] = 1;
