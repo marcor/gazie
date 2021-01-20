@@ -68,7 +68,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
    $utsemi= mktime(0,0,0,$_POST['mesemi'],$_POST['gioemi'],$_POST['annemi']);
    $utsval= mktime(0,0,0,$_POST['mesval'],$_POST['gioval'],$_POST['annval']);
    $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$conto['codpag']);
-   if ($pagame['tippag'] == 'D') {
+   if ($pagame['tippag'] == 'D' || $pagame['tippag'] == 'O') {
       $_POST['tipdoc'] = 'AOB';
    } else {
       $_POST['tipdoc'] = 'AOA';
@@ -79,7 +79,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
    $anagrafica = new Anagrafica();
    $conto = $anagrafica->getPartner($testata['clfoco']);
    $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$conto['codpag']);
-   if ($pagame['tippag'] == 'D') {
+   if ($pagame['tippag'] == 'D' || $pagame['tippag'] == 'O') {
       $_POST['tipdoc'] = 'AOB';
    } else {
       $_POST['tipdoc'] = 'AOA';
@@ -124,7 +124,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
    $utsemi= mktime(0,0,0,$_POST['mesemi'],$_POST['gioemi'],$_POST['annemi']);
    $utsval= mktime(0,0,0,$_POST['mesval'],$_POST['gioval'],$_POST['annval']);
    $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$conto['codpag']);
-   if ($pagame['tippag'] == 'D') {
+   if ($pagame['tippag'] == 'D' || $pagame['tippag'] == 'O') {
       $_POST['tipdoc'] = 'AOB';
    } else {
       $_POST['tipdoc'] = 'AOA';

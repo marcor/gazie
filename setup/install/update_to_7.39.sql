@@ -13,6 +13,7 @@ CREATE TABLE `gaz_XXXcash_register_reparto` ( `id_cash_register_reparto` INT(2) 
 CREATE TABLE `gaz_XXXcash_register_tender` ( `id_cash_register_tender` INT(2) NOT NULL AUTO_INCREMENT, `cash_register_id_cash` INT(2) NOT NULL DEFAULT '0', `pagame_codice` INT(2) NOT NULL DEFAULT '0',`tender` VARCHAR(8) NOT NULL DEFAULT '' , `descrizione` VARCHAR(50) NOT NULL DEFAULT '' , PRIMARY KEY (`id_cash_register_tender`), INDEX (`cash_register_id_cash`) ) COMMENT='Tabella contenente le associazioni tra id_cash della tabella gaz_NNNcash_register e codice della tabella gaz_NNNpagame al fine di valorizzare il tender specifico del registratore telematico in base alla modalità di pagamento';
 ALTER TABLE `gaz_XXXaliiva`	CHANGE COLUMN `codice` `codice` INT(3) NOT NULL DEFAULT '0' FIRST;
 ALTER TABLE `gaz_XXXcash_register` DROP COLUMN `enterpriseid`;
+TRUNCATE `gaz_XXXcash_register`;
 ALTER TABLE `gaz_XXXcash_register` CHANGE COLUMN `id_cash` `id_cash` TINYINT(2) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (`id_cash`);
 ALTER TABLE `gaz_XXXrigdoc`	DROP PRIMARY KEY, ADD PRIMARY KEY (`id_rig`) USING BTREE;
 ALTER TABLE `gaz_XXXrigbro`	DROP PRIMARY KEY, ADD PRIMARY KEY (`id_rig`) USING BTREE, ADD INDEX (`id_tes`);
