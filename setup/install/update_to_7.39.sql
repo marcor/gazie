@@ -24,5 +24,5 @@ ALTER TABLE `gaz_XXXmovmag`	DROP PRIMARY KEY, ADD PRIMARY KEY (`id_mov`) USING B
 ALTER TABLE `gaz_XXXcontract_row` DROP PRIMARY KEY,	ADD PRIMARY KEY (`id_row`) USING BTREE;
 ALTER TABLE `gaz_XXXsconti_articoli` DROP PRIMARY KEY;
 ALTER TABLE `gaz_XXXsconti_raggruppamenti` DROP PRIMARY KEY;
-ALTER TABLE `gaz_XXXXclfoco` ADD COLUMN `cuc_code` VARCHAR(8) NOT NULL AFTER `sia_code`;
+ALTER TABLE `gaz_XXXclfoco` ADD COLUMN `cuc_code` VARCHAR(8) NOT NULL AFTER `sia_code`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
