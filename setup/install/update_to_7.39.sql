@@ -21,5 +21,6 @@ ALTER TABLE `gaz_XXXrigmoc`	DROP PRIMARY KEY, ADD PRIMARY KEY (`id_rig`) USING B
 ALTER TABLE `gaz_XXXprovvigioni` ADD INDEX `id_agente` (`id_agente`);
 ALTER TABLE `gaz_XXXmovmag`	DROP PRIMARY KEY, ADD PRIMARY KEY (`id_mov`) USING BTREE;
 ALTER TABLE `gaz_XXXcontract_row` DROP PRIMARY KEY,	ADD PRIMARY KEY (`id_row`) USING BTREE;
-
+ALTER TABLE `gaz_XXXsconti_articoli` DROP PRIMARY KEY,	ADD PRIMARY KEY (`clfoco`) USING BTREE;
+ALTER TABLE `gaz_XXXsconti_raggruppamenti` DROP PRIMARY KEY,	ADD PRIMARY KEY (`clfoco`) USING BTREE;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

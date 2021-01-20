@@ -23,7 +23,7 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-$admin_aziend=checkAdmin(9);
+$admin_aziend=checkAdmin(8);
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
