@@ -60,7 +60,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	// inizio controlli presenza di indici altrimenti li creo 
 	$idx=array(0=>array('tipiva'=>'aliiva','aliquo'=>'aliiva','id_tes'=>'rigdoc','id_order'=>'rigdoc','id_mag'=>'rigdoc','id_doc'=>'effett',
     'fattura_elettronica_zip_package'=>'tesdoc','var'=>'company_config','val'=>'company_config','description'=>'company_config',
-    'codart'=>'lotmag','id_movmag'=>'lotmag','datreg'=>'movmag','artico'=>'movmag')); 
+    'codart'=>'lotmag','id_movmag'=>'lotmag','datreg'=>'movmag','artico'=>'movmag','expiry'=>'paymov','id_contract'=>'contract_row')); 
 	foreach($idx as $vi){
 		foreach($vi as $k=>$v){
 			$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice.$v." WHERE 1");
