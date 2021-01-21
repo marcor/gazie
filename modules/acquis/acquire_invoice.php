@@ -999,6 +999,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$ctrl_ddt=$v['NumeroDDT'];
 				}
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
+                
+                // per A.GERMANI: se decommento rigo 1007 acquisisce quella fattura anomala (ddt + fattura immediata...  GRRR... ) ma duplica i righi del ddt inserito manualmente
+                // secondo me le segnalazioni di anomalie si devono spostare più in basso (a livello rigo), in particolare si dovrebbe fare qualcosa sopra (righi 621-675) 
+                // dove vengono fatti i controlli in presenza di elementi DDT  
+                
+                //$form['rows'][$i]['id_tes'] = ( $form['rows'][$i]['exist_ddt']['id_tes'] >= 1 && $ultimo_id == 0 ) ? $form['rows'][$i]['exist_ddt']['id_tes'] : $ultimo_id;
+                
 				// i righi postati hanno un indice diverso
 				$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
 				$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
