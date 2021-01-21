@@ -80,6 +80,9 @@ function getDocRef($data) {
         case "FAI":
         case "FND":
         case "FNC":
+        case "FAP":
+        case "FAA":
+        case "FAF":
             $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_con = " . $data["id_tes"], 'id_tes DESC', 0, 1);
             $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
             if ($tesdoc_r) {

@@ -382,6 +382,10 @@ $(function() {
                     $tipodoc = "Fattura Immediata";
                     $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];
                     $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
+                } elseif($r["tipdoc"] == 'FAF'){
+                    $tipodoc = "Autofattura (TD26)";
+                    $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];
+                    $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
                 } elseif ($r["tipdoc"] == 'FAD') {
                     $tipodoc = "Fattura Differita";
                     $classe_btn = "btn-inverse";

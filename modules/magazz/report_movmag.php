@@ -173,6 +173,7 @@ QUESTA E' LA MATRICE ORIGINALE (PERSONALIZZABILE) DELLA RIGA 'report_movmag_ref_
 "FAD":"vendit", 
 "FAI":"vendit", 
 "FAA":"vendit", 
+"FAF":"vendit", 
 "FAQ":"vendit", 
 "FAP":"vendit", 
 "FNC":"vendit", 

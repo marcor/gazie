@@ -107,7 +107,7 @@ function azzera(righe)
            "from ".$gTables['artico']." left join ".
            "(".$gTables['rigdoc']." join ".$gTables['tesdoc']." on ((".$gTables['rigdoc'].".id_tes = ".$gTables['tesdoc'].".id_tes) ".
            " and (datemi > DATE_SUB(CURDATE(),INTERVAL ".$_POST['gio_ven'].
-           " DAY)) and (tipdoc in('VCO','DDT','FAI','FAD') or tipdoc is NULL)))".
+           " DAY)) and (tipdoc in('VCO','DDT','FAI','FAD','FAA','FAF','FAP') or tipdoc is NULL)))".
            "on (codice = codart) ".
            "where (((".$gTables['artico'].".clfoco = ".$form['id_anagra'].") and (image = '".addslashes($a_row_img['image'])."') ".
            ((isset($_POST['tutti']) && ($_POST['tutti']=='on'))?"))":" and (ordinabile <> 'N'))) ").          

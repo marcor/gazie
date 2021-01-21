@@ -280,6 +280,8 @@ $strScript = array("admin_fornit.php" =>
         'doc_type' => 'Type',
         'doc_type_value' => array('FAD' => 'DEFERRED INVOICE TO THE customER',
             'FAI' => 'IMMEDIATE INVOICE TO THE customER',
+            'FAA' => 'FATTURA ACCONTO',
+            'FAF' => 'AUTOFATTURA (TD26)',
             'FNC' => 'CREDIT NOTE TO THE customER',
             'FND' => 'DEBT NOTE TO THE customER',
             'VCO' => 'FEES',

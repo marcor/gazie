@@ -125,6 +125,9 @@ function createArrayCrediti($result, $pagame, $utsval) {
                      switch ($movimenti['caucon']) {
                         case "FAD":
                         case "FAI":
+                        case "FAA":
+                        case "FAF":
+                        case "FAP":
                            $righiCrediti[$rigo]['des_con'] = "FT";
                            break;
                         case 'FND':
@@ -168,8 +171,11 @@ function createArrayCrediti($result, $pagame, $utsval) {
                               break;
                         }
                         switch ($movimenti['caucon']) {
-                           case "FAD":
-                           case "FAI":
+                            case "FAD":
+                            case "FAI":
+                            case "FAA":
+                            case "FAF":
+                            case "FAP":
                               $righiCrediti[$rigo]['des_con'] = "FT";
                               break;
                            case 'FND':

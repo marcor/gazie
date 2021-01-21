@@ -288,7 +288,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $script_transl = $strScript['accounting_documents.php'];
             foreach ($rs as $k => $v) {
                 switch ($v['tes']['tipdoc']) {
-                    case "FAD":case "FAI":case "FAP":case "FND":
+                    case "FAD":case "FAI":case "FAP":case "FND":case "FAA":case "FAF":
                         $reg = 2;
                         $op = 1;
                         $da_c = 'A';

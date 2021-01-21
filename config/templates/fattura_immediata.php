@@ -48,7 +48,12 @@ class FatturaImmediata extends Template_con_scheda
 		} else {
 			$numfat = '_ _ _ _ _ _ _';
 		}
-        $this->tipdoc = 'Fattura immediata n.'.$numfat.' del '.$this->giorno.' '.$nomemese.' '.$this->anno;
+        if ($this->tesdoc['tipdoc'] == 'FAF') {
+            $descri = 'Autofattura (TD26) n.';
+        } else {
+            $descri = 'Fattura immediata n.';
+        }
+        $this->tipdoc = $descri.$numfat.' del '.$this->giorno.' '.$nomemese.' '.$this->anno;
     }
     function newPage() {
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));

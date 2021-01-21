@@ -364,6 +364,8 @@ $strScript = array("admin_fornit.php" =>
         'doc_type_value' => array('FAD' => 'FATTURA DIFFERITA A CLIENTE',
             'FAI' => 'FATTURA IMMEDIATA A CLIENTE',
             'FAP' => 'PARCELLA',
+            'FAA' => 'FATTURA ACCONTO',
+            'FAF' => 'AUTOFATTURA (TD26)',
             'FNC' => 'NOTA CREDITO A CLIENTE',
             'FND' => 'NOTA DEBITO A CLIENTE',
             'VCO' => 'CORRISPETTIVO',

@@ -34,7 +34,7 @@ $docOperat = $upd_mm->getOperators();
 $lm = new lotmag;
 function getFAIseziva($tipdoc) {
     global $admin_aziend, $gTables, $auxil;
-    if ($tipdoc == 'FAI'||$tipdoc == 'FAA') { // se è una fattura immediata
+    if ($tipdoc == 'FAI'||$tipdoc == 'FAA'||$tipdoc == 'FAF') { // se è una fattura immediata
         switch ($admin_aziend['fatimm']) {
             case "1":
                 $si = 1;
@@ -162,7 +162,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['tipdoc'] = $_POST['tipdoc'];
     $form['id_doc_ritorno'] = intval($_POST['id_doc_ritorno']);
     $form['template'] = $_POST['template'];
-	if (substr($_POST['tipdoc'],0,2) == 'FN' || $_POST['tipdoc']=='FAA') { // forzo i template delle fatture d'acconto, note credito e debito su fattura semplice
+	if (substr($_POST['tipdoc'],0,2) == 'FN' || $_POST['tipdoc']=='FAA' || $_POST['tipdoc']=='FAF') { // forzo i template delle fatture d'acconto, note credito e debito su fattura semplice
         $form['template'] = "FatturaSemplice";
     } elseif($_POST['tipdoc']=='FAP'||$_POST['tipdoc']=='FAQ') { // forzo i template delle parcelle
         $form['template'] = "Parcella";
@@ -826,6 +826,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     case "FAI":
                     case "FAP":
                     case "FAA":
+                    case "FAF":
                     case "FAQ":
                         $sql_documento = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc LIKE 'FA_' AND seziva = $sezione ";
                         $sql_protocollo = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc LIKE 'F__' AND seziva = $sezione ";
@@ -2042,7 +2043,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // fine rigo input
     $form['search']['clfoco'] = '';
     $form['cosear'] = "";
-    if (!isset($_GET['seziva']) && ($form['tipdoc'] == 'FAI'||$form['tipdoc'] == 'FAA'||$form['tipdoc'] == 'FNC')) {
+    if (!isset($_GET['seziva']) && ($form['tipdoc'] == 'FAI'||$form['tipdoc'] == 'FAA'||$form['tipdoc'] == 'FAF'||$form['tipdoc'] == 'FNC')) {
         $form['seziva'] = getFAIseziva($form['tipdoc']);
     } elseif (!isset($_GET['seziva'])) {
         $form['seziva'] = 1;
@@ -2057,6 +2058,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     } elseif ($ultimo_template['template'] != '') {
         $form['template'] = $ultimo_template['template'];
     } elseif ($form['tipdoc'] == 'FAA') {
+        $form['template'] = "FatturaSemplice";
+    } elseif ($form['tipdoc'] == 'FAF') {
         $form['template'] = "FatturaSemplice";
     } elseif ($form['tipdoc'] == 'FAP' || $form['tipdoc'] == 'FAQ') {  //se e' una parcella
         $form['template'] = 'Parcella';
@@ -2191,7 +2194,7 @@ if ($form['id_tes'] > 0) { // è una modifica
     echo "<input type=\"hidden\" value=\"" . $form['tipdoc'] . "\" name=\"tipdoc\">\n";
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 } else { // è un inserimento
-    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT'=>'','FAI'=>'','FAP'=>'','FAQ'=>'','FAA'=>'','FNC'=>'','FND'=>'','DDV'=>'','RDV'=>'','DDY'=>'','DDS'=>'','VRI'=>'','CMR'=>''));
+    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT'=>'','FAI'=>'','FAP'=>'','FAQ'=>'','FAA'=>'','FAF'=>'','FNC'=>'','FND'=>'','DDV'=>'','RDV'=>'','DDY'=>'','DDS'=>'','VRI'=>'','CMR'=>''));
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . ucfirst($script_transl[$toDo]) . $script_transl['tipdoc'];
     $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
 }

@@ -152,6 +152,11 @@ class invoiceXMLvars {
                 $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
+            case "FAF": // Fattura d'acconto
+                $this->TipoDocumento = 'TD27';    // <TipoDocumento> 2.1.1.1
+                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
+                $this->docRelDate = $this->tesdoc["datfat"];
+                break;
             case "FNC":
                 $this->TipoDocumento = 'TD04';    // <TipoDocumento> 2.1.1.1
                 $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];

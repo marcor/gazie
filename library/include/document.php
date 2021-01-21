@@ -192,6 +192,7 @@ class DocContabVars {
             case "FAD":
             case "FAI":
             case "FAA":
+            case "FAF":
             case "FAP":
             case "FAQ":
             case "FNC":
