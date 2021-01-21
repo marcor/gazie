@@ -119,7 +119,7 @@ class Certificate extends Template {
                         for ($i = 1; $i <= $this->numPages; $i++) {
                             $this->_tplIdx = $this->importPage($i);
                             $specs = $this->getTemplateSize($this->_tplIdx);
-                            $this->AddPage($specs['height'] > $specs['width'] ? 'P' : 'L');
+                            $this->AddPage($specs['h'] > $specs['w'] ? 'P' : 'L');
                             $this->useTemplate($this->_tplIdx);
                             $this->SetXY(10, 0);
                             $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis . " - COPIA CONFORME ALL'ORIGINALE - da " . $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno . ' Lotto: ' . $rigo['identifier'] . ' ( Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias() . ' )', 1, 0, 'C', 0, '', 1);

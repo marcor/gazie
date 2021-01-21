@@ -120,7 +120,7 @@ class Certificate extends Template {
                             $this->_tplIdx = $this->importPage($i);
                             $specs = $this->getTemplateSize($this->_tplIdx);
 							// stabilisco se portrait-landscape
-							if ($specs['height'] > $specs['width']){ //portrait
+							if ($specs['h'] > $specs['w']){ //portrait
 								$pl='P';
 								$w=210;
 								$h=297;
