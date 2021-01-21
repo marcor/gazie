@@ -526,6 +526,14 @@ $gForm->variousSelect('fatt_email', $script_transl['fatt_email_value'], $form['f
                 </div>
             </div>
         </div><!-- chiude row  -->
+		<div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="e_mail2" class="col-sm-4 control-label"><?php echo $script_transl['e_mail2']; ?></label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['e_mail2']; ?>" name="e_mail2" id="email2" maxlength="60"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
