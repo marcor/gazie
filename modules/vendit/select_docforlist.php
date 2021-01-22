@@ -32,6 +32,8 @@
   5 => "Nota Credito a Cliente"
   6 => "Nota Debito a Cliente"
   7 => "Ricevuta"
+  8 => "Parcella"
+  9 => "CMR"
  */
 require("../../library/include/datlib.inc.php");
 

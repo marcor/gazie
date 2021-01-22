@@ -66,8 +66,8 @@ function der2smime($file)
 {
 $to = <<<TXT
 MIME-Version: 1.0
-Content-Disposition: attachment; filename=?smime.p7m?
-Content-Type: application/x-pkcs7-mime; smime-type=signed-data; name=?smime.p7m?
+Content-Disposition: attachment; filename="smime.p7m"
+Content-Type: application/x-pkcs7-mime; smime-type=signed-data; name="smime.p7m"
 Content-Transfer-Encoding: base64
 \n
 TXT;

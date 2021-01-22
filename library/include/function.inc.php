@@ -375,7 +375,7 @@ function table_prefix_get($table_name) {
 // Una funzione per segnalare errori fatali in modo molto semplice.
 //
 function message_fatal_error($text) {
-    echo '<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//IT\" \"http://www.w3.org/TR/html4/loose.dtd\">
+    echo '<!DOCTYPE html>
    			<html>
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8">

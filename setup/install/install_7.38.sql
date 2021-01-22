@@ -1207,7 +1207,7 @@ INSERT INTO `gaz_001company_config` (`id`, `description`, `var`, `val`) VALUES
 (37, 'Layout posizione logo su documenti (LEFT o DEFAULT)', 'layout_pos_logo_on_doc', 'DEFAULT'),
 (38, 'Stampa Documenti di Trasporto in modalità 2xA5 (affiancati)', 'ddt_A5', '0'),
 (39, 'Stampa Ricevute su moduli prenumerati es.\'buffetti\' per Buffetti art.8205L2000', 'received_template', ''),
-(40, 'Foglio di stile xsl per la visualizzazione della fattura elettronica (nella directory /library/inclu', 'fae_style', 'fatturaordinaria_v1.2.1'),
+(40, 'Foglio di stile xsl per visualizzazione della fattura elettronica (nella directory /library/include)', 'fae_style', 'fatturaordinaria_v1.2.1'),
 (41, 'Identificativo dello stabilimento o deposito del SIAN', 'id_sian', '0'),
 (42, 'Allerta se la lunghezza del codice articolo è diverso da', 'codart_len', '0'),
 (43, 'Destinazione testo descrittivo articolo (0=solo su documenti, 1=entrambi, 2=solo su web, 9=nessuno)', 'article_text', '0'),
