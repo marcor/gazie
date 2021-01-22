@@ -98,6 +98,10 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
                 $r['isp'] = 0;
                 $r['ind'] = $r['iva'];
                 $r['iva'] = 0;
+            } elseif ($r['tipiva'] == 'T') { // reverse charge escludo l'imponibile
+                $r['ind'] = 0;
+                $r['isp'] = 0;
+				$r['imponibile'] = 0;
             } elseif ($r['tipiva'] == 'T') { // iva split payment
                 $r['isp'] = $r['iva'];
                 $r['ind'] = 0;

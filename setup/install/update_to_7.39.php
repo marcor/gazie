@@ -84,7 +84,8 @@ $result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
 while ($row = gaz_dbi_fetch_array($result)) {
 	$aziend_codice = sprintf("%03s", $row["codice"]);
 	// inizio controlli presenza di indici altrimenti li creo 
-	$idx=array(0=>array('codart'=>'sconti_articoli','clfoco'=>'sconti_raggruppamenti','codice'=>'camp_artico','id_movmag'=>'camp_mov_sian','ddt_type'=>'tesdoc','id_contract'=>'tesdoc','id_con'=>'tesdoc')); 
+	$idx=array(0=>array('codart'=>'sconti_articoli','clfoco'=>'sconti_raggruppamenti','codice'=>'camp_artico',
+    'id_movmag'=>'camp_mov_sian','ddt_type'=>'tesdoc','id_contract'=>'tesdoc','id_con'=>'tesdoc','reverse_charge_idtes'=>'rigmoi')); 
 	foreach($idx as $vi){
 		foreach($vi as $k=>$v){
 			$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice.$v." WHERE 1");

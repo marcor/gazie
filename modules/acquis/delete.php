@@ -94,9 +94,19 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 						$form['fattura_elettronica_original_name']="";$form['fattura_elettronica_original_content']="";
 						tesdocUpdate(array('id_tes', $form['id_tes']), $form);						
                       }
+                      // qui controllo se il documento ha generato reverse charge ed eventualmente elimino anche quello
+                      $id_rc=gaz_dbi_get_row($gTables['rigmoi'], 'reverse_charge_idtes', $form['id_con']); // in $id_rc['id_tes'] ho il riferimento a tesmov figlio 
+                      // cancello l'eventuale figlio (fattura su reg.vendite del reverse charge)
+                      if ($id_rc){
+                        gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $id_rc['id_tes']);
+                        gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $id_rc['id_tes']);
+                        gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $id_rc['id_tes']);
+                        // manca la cancellazione del futuro tesdoc-rigdoc (entro 2023)
+                      }
                       gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
 					  gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
 					  gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $form['id_con']);
+                      
 					}
 										 			
 			}

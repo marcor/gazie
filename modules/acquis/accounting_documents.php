@@ -373,10 +373,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 }
                 $tot = computeTot($v['vat']);
                 // fine calcolo totali
-                // calcolo le rate al fine di inserire le partite aperte  
-                $rate = CalcolaScadenze($tot['tot'] - $v['rit'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
-                // rateizzo anche l'iva split payment  
-                $rateisp = CalcolaScadenze($v['isp'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
+
                 // inserisco la testata
                 $newValue = array('caucon' => $v['tes']['tipdoc'],
                     'descri' => $script_transl['doc_type_value'][$v['tes']['tipdoc']],
@@ -402,27 +399,39 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 				} else {
 					$newValue['datliq']=$v['tes']['datreg'];
 				}
+                $datliq=$newValue['datliq'];
                 $tes_id =tesmovInsert($newValue);
                 //inserisco i righi iva nel db
+                $acc_reverse_charge=[];
+                $tot_reverse_charge=0.00;
                 foreach ($v['vat'] as $k => $vv) {
-                    $vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $k);
+                    $vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $vv['codiva']);
                     //aggiungo i valori mancanti all'array
-                    $vv['tipiva'] = $vat['tipiva'];
-                    $vv['codiva'] = $k;
+                    $vv['operation_type'] = $vat['operation_type'];
                     $vv['id_tes'] = $tes_id;
                     $vv['impost'] = round($vv['impcast'] * $vv['periva']) / 100;
-                    rigmoiInsert($vv);
-					// se ho un valore negativo sulla stessa aliquota creo uno storno
-					if (!empty($vv['impneg']) && $vv['impneg']<0.00) {
+                    $iva_id = rigmoiInsert($vv);
+                    if (substr($vv['fae_natura'],0,2)=='N6') { // accumulo su matrice le aliquote che produrranno reverse charge usando come chiave l'id_rig del rigmoi appena inserito 
+                        $vv['tesmov_id'] = $tes_id;
+                        $acc_reverse_charge[$iva_id] = $vv;
+                        $tot_reverse_charge += $vv['impost'] + $vv['impcast'];
+                    }
+					if (!empty($vv['impneg']) && $vv['impneg']<0.00) {	// se ho un valore negativo sulla stessa aliquota creo uno storno
 						$vv['impost'] = round($vv['impneg'] * $vv['periva']) / 100;
 						$vv['imponi'] = $vv['impneg'];
-						rigmoiInsert($vv);
+						$iva_id = rigmoiInsert($vv);
+                        if (substr($vv['fae_natura'],0,3)=='N.6') { 
+                            $vv['tesmov_id'] = $tes_id;
+                            $acc_reverse_charge[$iva_id] = $vv;
+                            $tot_reverse_charge -= $vv['impost'] + $vv['imponi'];
+                        }
 					}
                 }
-                //inserisco i righi contabili nel db
-                if ($v['tes']['tipdoc'] == 'VCO') {  // se è uno scontrino cassa anzichè cliente
-                    $v['tes']['clfoco'] = $admin_aziend['cassa_'];
-                }
+                // calcolo le rate
+                $rate = CalcolaScadenze($tot['tot'] - $v['rit'] - $tot_reverse_charge, substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
+                // rateizzo anche l'iva split payment  
+                $rateisp = CalcolaScadenze($v['isp'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
+
 				if ($tot['tot']>=0.01){
 					$paymov_id =rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon' =>$v['tes']['clfoco'],'import' =>($tot['tot'] - $v['rit'])));
 				} elseif ($tot['tot']<=-0.01) {
@@ -492,7 +501,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         // preparo l'array da inserire sui movimenti delle partite aperte
                         $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
                             'id_rigmoc_doc' => $paymov_id,
-                            'amount' => $v_pay['ImportoPagamento'],
+                            'amount' => round($v_pay['ImportoPagamento']-$tot_reverse_charge,2),
                             'expiry' => $v_pay['DataScadenzaPagamento']);
                         if ($op == 2) { /* le note credito sono assimilabili ad un pagamento, 
                           ovvero ad una chiusura di partita
@@ -551,6 +560,57 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         paymovInsert($paymov_value);
                     }
                 }
+                if ( $tot_reverse_charge >= 0.01 ) {
+                    // ho accumulato un reverse charge creo un movimento contabile e IVA per documento di vendita sul sezionale scelto in configurazione azienda, entro il 2023 inserirò da qui anche i dati  in gaz_NNNtesdoc e rigdoc per poter generare il relativo XML da trasmette all'AdE 
+                    
+                    // per prima cosa dovrò controllare se c'è il cliente con la stessa anagrafica
+                    $anagrafica = new Anagrafica();
+                    $partner = $anagrafica->getPartner($v['tes']['clfoco']);
+                    $rc_cli = gaz_dbi_get_row($gTables['clfoco'], "codice LIKE '" . $admin_aziend['mascli'] . "%' AND id_anagra ", $partner['id']);
+                    if ($rc_cli) { // ho già il cliente 
+                    } else { // non ho il cliente lo dovrò creare sul piano dei conti
+                        $new_cli = $anagrafica->getPartnerData($partner['id']);
+                        $rc_cli['codice'] = $anagrafica->anagra_to_clfoco($new_cli, $admin_aziend['mascli'],$v['tes']['pagame']);
+                    }
+
+                    // inserisco la testata del movimento di storno Split payment
+                    $newValue = array('caucon' => 'FAI',
+                        'descri' => 'FATTURA REVERSE CHARGE',
+                        'id_doc' => $v['tes']['id_tes'],
+                        'datreg' => $v['tes']['datreg'],
+                        'datliq' => $datliq,
+                        'seziva' => $admin_aziend['reverse_charge_sez'],
+                        'protoc' => $v['tes']['protoc'],
+                        'numdoc' => $v['tes']['numfat'],
+                        'datdoc' => $v['tes']['datfat'],
+                        'clfoco' => $rc_cli['codice'],
+                        'regiva' => 2,
+                        'operat' => 1
+                    );
+                    $rctes_id =tesmovInsert($newValue);
+                    // inserisco i righi IVA
+                    $acc_iva=0.00;    
+                    $acc_imp=0.00;    
+                    foreach( $acc_reverse_charge as $krc=>$vrc ) {
+                        $acc_iva+=$vrc['impost'];
+                        $acc_imp+=$vrc['impcast'];
+                        // vado ad indicare l'id del movimento padre sul rigo iva
+                        $vrc['reverse_charge_idtes'] = $vrc['tesmov_id'];
+                        $vrc['id_tes'] = $rctes_id;
+                        rigmoiInsert($vrc);
+                    }
+                    // inserisco i tre righi contabili della fattura che vanno sul registro IVA vendite    
+                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp + $acc_iva));
+                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp));
+                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $admin_aziend['ivaven'], 'import' => $acc_iva));
+
+                    // infine creo un movimento di storno dell'IVA    
+                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $newValue['clfoco'], 'import' => $acc_iva));
+                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_iva));
+                    // in ultimo faccio l'update del riferimento sui righi inseriti per il movimento padre
+                    gaz_dbi_put_row($gTables['rigmoi'], 'id_tes', $tes_id, 'reverse_charge_idtes', $rctes_id);
+                }
+                
             }
 		    if ($form['type'] == 'AF') {
 				header("Location: ../../modules/acquis/report_docacq.php");

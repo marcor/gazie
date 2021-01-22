@@ -821,7 +821,8 @@ function mergeTable($table1, $campi1, $table2, $campi2, $campomerge, $where) {
 function rigmoiInsert($newValue) {
    $table = 'rigmoi';
    $columns = array('id_rig', 'id_tes', 'tipiva', 'reverse_charge_idtes', 'operation_type', 'codiva', 'periva', 'imponi', 'impost');
-   tableInsert($table, $columns, $newValue);
+   $last_id = tableInsert($table, $columns, $newValue);
+   return $last_id;
 }
 
 function rigmocInsert($newValue) {
