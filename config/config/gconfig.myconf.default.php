@@ -26,7 +26,10 @@
 
 // abilita il debug delle variabili nel footer della pagina (impostare true/false)
 define('debug_active', FALSE);
- 
+
+// attiva la modalità manutenzione non è consentito l'accesso e l'uso dei moduli (FALSE oppure 'email amministratore')
+define('maintenance', FALSE);
+
 /*
 --------=======oooooooooooo!!!!!  ATTENZIONE !!!!!ooooooooooo========-------------
 QUESTO FILE DI CONFIGURAZIONE IN ORIGINE DI NOME "gconfig.myconf.default.php" 
@@ -156,9 +159,6 @@ define('update_URI_files', 'https://sourceforge.net/projects/gazie');
 
 // url per comunicare (ping) il mio nuovo IP DINAMICO  all'hosting di appoggio
 define('MY_SET_DYNAMIC_IP',''); 
-
-// attiva la modalità manutenzione non è consentito l'accesso e l'uso dei moduli (FALSE oppure 'email amministratore')
-define('maintenance', FALSE);
 
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
 define('modifica_fatture_ddt', FALSE);

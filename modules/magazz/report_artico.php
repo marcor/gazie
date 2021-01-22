@@ -58,7 +58,7 @@ $ts = new TableSorter(
     $tablejoin, 
     $passo, 
     ['last_modified'=>'desc'],
-    ['asset' => NULL]);
+    ['asset' => 0]);
 ?>
 <script>
 $(function() {
