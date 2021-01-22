@@ -797,13 +797,29 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$form['rows'][$nl]['pervat'] = '' . @$item->getElementsByTagName('Aliquota')->item(0)->nodeValue;
 				@$imposta = $item->getElementsByTagName('Imposta')->item(0)->nodeValue;
 			}
-		}
-
-		if (!$isFatturaElettronicaSemplificata) {
+		} else { // non è una fattura semplificata
 			$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo");
+            $naturaN6=false;
 			foreach($DatiRiepilogo as $dr){
 				$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
+                if ($dr->getElementsByTagName("Natura")->length >= 1){ // se ho l'elemento Natura = 6.x dovrò ricercare l'aliquota per il reverse charge a tutto il documento ed attribuirla a tutti i righi del documento
+                   $Natura=$dr->getElementsByTagName("Natura")->item(0)->nodeValue;
+                   if ( substr($Natura,0,2) == 'N6' ) { // dovrò fare il reverse charge sostituisco con il codice iva relativo
+                        $naturaN6=$Natura;
+                   }
+                }
 			}
+            if (!isset($_POST['Submit_form']) && $naturaN6 ) { // al primo accesso se sopra ho trovato che è una natura da reverse charge
+                $stdiva=gaz_dbi_get_row($gTables['aliiva'], 'codice', $admin_aziend['preeminent_vat'])['aliquo']; //la percentuale dell'aliquota standard (potrebbe cambiare negli anni)
+                $rs_reverse = gaz_dbi_dyn_query("codice", $gTables['aliiva'], 'aliquo ='.$stdiva." AND fae_natura ='" .$naturaN6."'", "codice DESC", 0, 1);
+                $cod_reverse = gaz_dbi_fetch_array($rs_reverse)['codice'];
+                // riattraverso i righi e ci metto il nuovo codice IVA
+                foreach($form['rows'] as $kn => $vn) {
+                    $kp = $kn-1;
+                    $form['codvat_'.$kp]=$cod_reverse;
+                }  
+            }                        
+            
 			$totdiff=abs($ImponibileImporto-$tot_imponi);
 			/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
 			if ($totdiff>=0.01){ // qualora ci sia una differenza di almeno 1 cent la aggiunto (o lo sottraggo al rigo di maggior valore
