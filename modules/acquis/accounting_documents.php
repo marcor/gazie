@@ -501,7 +501,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         // preparo l'array da inserire sui movimenti delle partite aperte
                         $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datreg'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
                             'id_rigmoc_doc' => $paymov_id,
-                            'amount' => round($v_pay['ImportoPagamento']-$tot_reverse_charge,2),
+                            'amount' => round($v_pay['ImportoPagamento'],2),
                             'expiry' => $v_pay['DataScadenzaPagamento']);
                         if ($op == 2) { /* le note credito sono assimilabili ad un pagamento, 
                           ovvero ad una chiusura di partita
