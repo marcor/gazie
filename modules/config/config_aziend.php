@@ -25,31 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
-if (isset($_POST["elimina"])) {   // si vuole eliminare l'azienda
-    // mi sposto con le attività sulla prima azienda 
-    gaz_dbi_put_row($gTables['admin'], "user_name", $admin_aziend["user_name"], 'company_id', 1);
-    // cancello il rigo dalla tabella aziend 
-    gaz_dbi_del_row($gTables['aziend'], 'codice', $admin_aziend["company_id"]);
-    // cancello i righi dalla tabella admin_modules 
-    gaz_dbi_del_row($gTables['admin_module'], 'company_id', $admin_aziend["company_id"]);
-    // cancello i righi dalla tabella menu_usage 
-    gaz_dbi_del_row($gTables['menu_usage'], 'company_id', $admin_aziend["company_id"]);
-    $t_erased = array();
-    $tp = $table_prefix . '_' . str_pad($admin_aziend["company_id"], 3, '0', STR_PAD_LEFT);
-    //print $tp;
-    $ve = gaz_dbi_query("SELECT CONCAT(  'DROP VIEW `', TABLE_NAME,  '`;' ) AS query, TABLE_NAME as tn FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_NAME LIKE  '" . $tp . "%'");
-    while ($r = gaz_dbi_fetch_array($ve)) {
-        $t_erased[] = $r['tn'];
-        gaz_dbi_query($r['query']);
-    }
-    $te = gaz_dbi_query("SELECT CONCAT(  'DROP TABLE IF EXISTS `', TABLE_NAME,  '`;' ) AS query, TABLE_NAME as tn FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE  '" . $tp . "%'");
-    while ($r = gaz_dbi_fetch_array($te)) {
-        $t_erased[] = $r['tn'];
-        gaz_dbi_query($r['query']);
-    }
-    session_destroy();
-    exit;
-} elseif (isset($_POST["mode"])&& $_POST["mode"]=='modal') {   //  sono al primo accesso, non faccio nulla
+if (isset($_POST["mode"])&& $_POST["mode"]=='modal') {   //  sono al primo accesso, non faccio nulla
 
 } else { // ho modificato i valori
     if (count($_POST) > 0) {
@@ -75,9 +51,6 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 <ul class="nav nav-pills">
         <li class="active"><a data-toggle="pill" href="#generale">Configurazione</a></li>
         <li class=""><a data-toggle="pill" href="#email">Email</a></li>
-        <?php if ($admin_aziend["company_id"] >= 2) { ?>
-        <li style="float: right;"><a data-toggle="pill" href="#elimina">Elimina azienda</a></li>
-        <?php } ?>
         <li style="float: right;"><button type="submit" class="btn btn-warning">Salva</button></li>
 </ul>
 <div class="panel panel-default gaz-table-form div-bordered">
@@ -140,13 +113,6 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 			<div id="reply_send"></div>
     </script>
     </div><!-- chiude email  -->
-    <div id="elimina" class="tab-pane fade">
-      <form method="post" id="sbmt-elimina"> 
-        <h3 class="text-center text-danger col-xs-12">ATTENZIONE!!! Cliccando su <span class="btn btn-danger" style="cursor:default;"> Elimina </span> tutti i dati di questa azienda verranno DEFINITIVAMENTE E IRRIMEDIABILMENTE PERSI!</h3>
-        <div class="col-xs-6"><button class="btn btn-default" name="annulla" value="true">Annulla</button></div>
-        <div class="col-xs-6 text-right"><button type="submit" class="btn btn-danger" name="elimina" value="<?php echo $admin_aziend['company_id'];?>">Elimina</button></div>
-      </form>
-    </div><!-- chiude elimina  -->
   </div><!-- chiude tab-content  -->
  </div><!-- chiude container-fluid  -->
 </div><!-- chiude panel  -->
