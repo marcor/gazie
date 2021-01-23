@@ -721,7 +721,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                                 $y_paymov = $form['date_reg_Y'];
                                                 $num_paymov = $row_con['id_rig']; // in caso di mancanza di riferimento al documento metto quello del rigo contabile
                                             } else {
-                                                $y_paymov = substr($form['datdoc'], -4);
+                                                $y_paymov = substr($form['date_reg_Y'], -4);
                                                 $num_paymov = intval($_POST['protocollo']);
                                             }
                                         }
@@ -775,7 +775,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     $y_paymov = $form['date_reg_Y'];
                                     $num_paymov = $last_id_rig; // in caso di mancanza di riferimento al documento metto quello del rigo contabile
                                 } else {
-                                    $y_paymov = substr($form['datdoc'], 4);
+                                    $y_paymov = $form['date_reg_Y'];
                                     $num_paymov = intval($_POST['protocollo']);
                                 }
                                 if (intval(substr($v['id_tesdoc_ref'], 0, 4)) <= 2000) {
@@ -970,7 +970,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                         $y_paymov = $form['date_reg_Y'];
                                         $num_paymov = $last_id_rig; // in caso di mancanza di riferimento al documento metto quello del rigo contabile
                                     } else {
-                                        $y_paymov = substr($form['datdoc'], -4);
+                                        $y_paymov = $form['date_reg_Y'];
                                         $num_paymov = intval($_POST['protocollo']);
                                     }
                                     $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov .
