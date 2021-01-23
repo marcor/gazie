@@ -499,7 +499,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                   if (count($v['pay'])>0){ // se ho i dati provenienti dal XML li uso
                     foreach ($v['pay'] as $v_pay) {
                         // preparo l'array da inserire sui movimenti delle partite aperte
-                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
+                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datreg'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
                             'id_rigmoc_doc' => $paymov_id,
                             'amount' => round($v_pay['ImportoPagamento']-$tot_reverse_charge,2),
                             'expiry' => $v_pay['DataScadenzaPagamento']);
@@ -514,7 +514,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                   } else { // ... altrimenti uso le scadenze del metodo di pagamento del fornitore
                     foreach ($rate['import'] as $k_rate => $v_rate) {
                         // preparo l'array da inserire sui movimenti delle partite aperte
-                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
+                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datreg'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
                             'id_rigmoc_doc' => $paymov_id,
                             'amount' => $v_rate,
                             'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
@@ -553,7 +553,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     // chiudo le partite aperte dell'iva split payment
                     foreach ($rateisp['import'] as $k_rate => $v_rate) {
                         // preparo l'array da inserire sui movimenti delle partite aperte
-                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
+                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datreg'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
                             'id_rigmoc_pay' => $paymov_id,
                             'amount' => $v_rate,
                             'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
