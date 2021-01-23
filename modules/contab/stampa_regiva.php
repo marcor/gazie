@@ -49,10 +49,12 @@ class vatBook extends Standard_template {
 
     function setData($data, $gTables, $admin_aziend) {
         $this->azienda = $admin_aziend;
+        $this->desregrc = strtolower($admin_aziend['desez'.$admin_aziend['reverse_charge_sez']]);
         require("lang." . $admin_aziend['lang'] . ".php");
         $this->script_transl = $strScript['stampa_regiva.php'];
         $this->endyear = substr($data['f'], 4, 4);
         $this->vatsect = intval($data['vs']);
+        $this->rc_sect = $admin_aziend['reverse_charge_sez'];
         $this->typbook = intval($data['vr']);
         $this->semplificata = intval($data['so']);
         $this->inidate = date("Ymd", mktime(0, 0, 0, substr($data['i'], 2, 2), substr($data['i'], 0, 2), substr($data['i'], 4, 4)));
@@ -284,8 +286,14 @@ $p_max = count($period_chopped);
 //print_r($period_chopped);
 for ($i = 1; $i <= $p_max; $i++) {
     $pdf->setData($period_chopped[$i] + $url_get, $gTables, $admin_aziend);
+    if ($pdf->vatsect==$pdf->rc_sect){ 
+        $desreg = $pdf->desregrc.' sez.'; 
+        $pdf->script_transl['title'][$pdf->typbook] = ucfirst($desreg). ' ';
+    } else {
+        $desreg = $pdf->script_transl['vat_section']; 
+    }
     if ($i == 1) {
-        $n_page = array('ini_page' => $ini_page, 'year' => ucwords($pdf->script_transl['vat_section']) . $pdf->vatsect . ' ' . $pdf->script_transl['page'] . ' ' . substr($url_get['ri'], 4, 4));
+        $n_page = array('ini_page' => $ini_page, 'year' => ucwords($desreg) . $pdf->vatsect . ' ' . $pdf->script_transl['page'] . ' ' . substr($url_get['ri'], 4, 4));
     } else {
         $n_page = false;
     }
@@ -296,7 +304,7 @@ for ($i = 1; $i <= $p_max; $i++) {
     $pdf->setVars($admin_aziend, $descri_period, 0, $n_page);
     $pdf->getRows($gTables);
     if ($_GET['cv'] == 'cover') {
-        $pdf->setCover($pdf->script_transl['cover_descri'][$pdf->typbook] . "\n" . substr($url_get['ri'], 4, 4) . "\n" . $pdf->script_transl['vat_section'] . $pdf->vatsect);
+        $pdf->setCover($pdf->script_transl['cover_descri'][$pdf->typbook] . "\n" . substr($url_get['ri'], 4, 4) . "\n" . $desreg . $pdf->vatsect);
         $pdf->AddPage();
         $_GET['cv'] = '';
     }

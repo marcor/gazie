@@ -101,17 +101,17 @@ class Standard_template extends TCPDF {
             $this->Image('@' . $this->logo, 10, 10, $x, $y, '', $this->link);
             $this->Cell(40, 4);
             $this->SetFont('times', 'B', 10);
-            $this->Cell(123, 5, $this->intesta1, 0, 0, 'L', 0, '', 1);
+            $this->Cell(113, 5, $this->intesta1, 0, 0, 'L', 0, '', 1);
             $this->SetFont('helvetica', '', 9);
             if ($this->n_page === 1) { // se viene passato a 1 stampo luogo_data di systema
-                $this->Cell(28, 5, 'Pag. ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias(), 0, 1, 'R', 0, '', 1);
+                $this->Cell(38, 5, 'Pag. ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias(), 0, 1, 'R', 0, '', 1);
             } elseif (is_array($this->n_page) and isset($this->n_page['year'])) {  // se � un array contenente l'anno
                 $page = $this->getGroupPageNo() + $this->n_page['ini_page'] - 1;
-                $this->Cell(28, 5, $this->n_page['year'] . '/' . $page, 0, 1, 'R', 0, '', 1);
+                $this->Cell(38, 5, $this->n_page['year'] . '/' . $page, 0, 1, 'R', 0, '', 1);
             } elseif (is_string($this->n_page)) {  // opp. uso quello passato
-                $this->Cell(28, 5, $this->n_page, 0, 1, 'R', 0, '', 1);
+                $this->Cell(38, 5, $this->n_page, 0, 1, 'R', 0, '', 1);
             } else {  // altrimenti non lo stampo
-                $this->Cell(28, 5, '', 0, 1, 'R');
+                $this->Cell(38, 5, '', 0, 1, 'R');
             }
             $this->Cell(40, 4);
             $this->Cell(130, 4, $this->intesta2, 0, 2, 'L');
