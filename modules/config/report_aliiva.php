@@ -28,6 +28,8 @@ echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].
 if(!isset($_GET['field'])){
 	$field='codice';
 	$orderby='codice';
+	$flagorder='DESC';
+	$flagorpost='DESC';
 }
 $recordnav = new recordnav($gTables['aliiva'], $where, $limit, $passo);
 $recordnav -> output();
