@@ -25,6 +25,10 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>';
+if(!isset($_GET['field'])){
+	$field='codice';
+	$orderby='codice';
+}
 $recordnav = new recordnav($gTables['aliiva'], $where, $limit, $passo);
 $recordnav -> output();
 echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">';
