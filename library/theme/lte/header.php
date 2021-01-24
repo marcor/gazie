@@ -340,7 +340,7 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
                                                             </div>
                                                             <h4>
                                                     <?php echo substr($rref_name, 0, 28); ?>
-                                                                <small><i class="fa fa-thumbs-o-up"></i> <?php echo $r["click"] . ' click'; ?></small>
+                                                                <small style="top: -8px;"><i class="fa fa-thumbs-o-up"></i> <?php echo $r["click"] . ' click'; ?></small>
                                                             </h4>
                                                             <p><?php echo substr($r["link"], 0, 38); ?></p>
                                                         </a>
@@ -412,7 +412,7 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
             echo 'Nome script non trovato';
         }
         ?>
-                                                                <small><i class="fa fa-clock-o"></i> <?php echo gaz_time_from(strtotime($rl["last_use"])); ?></small>
+                                                                <small style="top: -8px;"><i class="fa fa-clock-o"></i> <?php echo gaz_time_from(strtotime($rl["last_use"])); ?></small>
                                                             </h4>
                                                             <p><?php echo substr($rl["link"], 0, 38); ?></p>
                                                         </a>
