@@ -18,5 +18,38 @@
         </InitgPty>
     </GrpHdr>
     <PmtInf>
+        <PmtInfId></PmtInfId>
+        <PmtMtd>TRA</PmtMtd>
+        <BtchBookg>false</BtchBookg>
+        <PmtTpInf>
+            <InstrPrty>NORM</InstrPrty>
+            <SvcLvl>
+                <Cd>SEPA</Cd>
+            </SvcLvl>
+        </PmtTpInf>
+        <ReqdExctnDt></ReqdExctnDt>
+        <Dbtr>
+            <Nm></Nm>
+            <Id>
+                <OrgId>
+                    <Othr>
+                        <Id></Id>
+                    </Othr>
+                </OrgId>
+            </Id>
+        </Dbtr>
+        <DbtrAcct>
+            <Id>
+                <IBAN></IBAN>
+            </Id>
+        </DbtrAcct>
+        <DbtrAgt>
+            <FinInstnId>
+                <ClrSysMmbId>
+                    <MmbId></MmbId>
+                </ClrSysMmbId>
+            </FinInstnId>
+        </DbtrAgt>
+        <ChrgBr>SLEV</ChrgBr>
     </PmtInf>
 </CBIPaymentRequest>
