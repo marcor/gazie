@@ -3,6 +3,7 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_m
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_scontr.php'), 'admin_ecr.php', '', '', 57, '', 12  FROM `gaz_menu_script`;
 UPDATE `gaz_module` SET `link`='docume_finann.php' WHERE  `link`='docume_finean.php';
 ALTER TABLE `gaz_anagra` ADD COLUMN `e_mail2` VARCHAR(60) NOT NULL AFTER `e_mail`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_pagdeb.php'), 'bank_payment_request.php', '', '', 21, '', 21  FROM `gaz_menu_script`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXmovmag`	CHANGE COLUMN `quanti` `quanti` DECIMAL(14,5) NULL DEFAULT NULL AFTER `id_assets`;
 ALTER TABLE `gaz_XXXrigdoc`	CHANGE COLUMN `quanti` `quanti` DECIMAL(14,5) NULL DEFAULT NULL AFTER `pezzi`;
