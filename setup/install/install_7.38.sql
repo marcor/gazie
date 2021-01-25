@@ -2633,7 +2633,7 @@ INSERT INTO `gaz_admin_config` (`id`, `adminid`, `var_descri`, `var_name`, `var_
 (3, 'amministratore', 'Attiva lo stile ', 'LTE_Fixed', 'true'),
 (4, 'amministratore', 'Attiva lo stile boxed', 'LTE_Boxed', 'false'),
 (5, 'amministratore', 'Collassa il menu principale', 'LTE_Collapsed', 'false'),
-(6, 'amministratore', 'Espandi automaticamente il menu', 'LTE_Onhover', 'false'),
+(6, 'amministratore', 'Espandi automaticamente il menu', 'LTE_Onhover', 'true'),
 (7, 'amministratore', 'Mantieni la barra aperta', 'LTE_SidebarOpen', 'false');
 
 -- --------------------------------------------------------
