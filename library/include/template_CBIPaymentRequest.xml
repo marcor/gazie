@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CBIPaymentRequest xsi:schemaLocation="urn:CBI:xsd:CBIPaymentRequest.00.04.00 CBIPaymentRequest.00.04.00.xsd" xmlns="urn:CBI:xsd:CBIPaymentRequest.00.04.00" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<CBIPaymentRequest xsi:schemaLocation="urn:CBI:xsd:CBIPaymentRequest.00.04.00 CBIPaymentRequest.00.04.00.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <GrpHdr>
-        <MsgId></MsgId>
-        <CreDtTm></CreDtTm>
-        <NbOfTxs></NbOfTxs>
-        <CtrlSum></CtrlSum>
+        <MsgId/>
+        <CreDtTm/>
+        <NbOfTxs/>
+        <CtrlSum/>
         <InitgPty>
-            <Nm></Nm>
+            <Nm/>
             <Id>
                 <OrgId>
                     <Othr>
-                        <Id></Id>
-                        <Issr></Issr>
+                        <Id/>
+                        <Issr>CBI</Issr>
                     </Othr>
                 </OrgId>
             </Id>
         </InitgPty>
     </GrpHdr>
     <PmtInf>
-        <PmtInfId></PmtInfId>
+        <PmtInfId/>
         <PmtMtd>TRA</PmtMtd>
         <BtchBookg>false</BtchBookg>
         <PmtTpInf>
@@ -27,26 +27,26 @@
                 <Cd>SEPA</Cd>
             </SvcLvl>
         </PmtTpInf>
-        <ReqdExctnDt></ReqdExctnDt>
+        <ReqdExctnDt/>
         <Dbtr>
             <Nm></Nm>
             <Id>
                 <OrgId>
                     <Othr>
-                        <Id></Id>
+                        <Id/>
                     </Othr>
                 </OrgId>
             </Id>
         </Dbtr>
         <DbtrAcct>
             <Id>
-                <IBAN></IBAN>
+                <IBAN/>
             </Id>
         </DbtrAcct>
         <DbtrAgt>
             <FinInstnId>
                 <ClrSysMmbId>
-                    <MmbId></MmbId>
+                    <MmbId/>
                 </ClrSysMmbId>
             </FinInstnId>
         </DbtrAgt>

@@ -25,5 +25,6 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/CBIPaymentRequest.inc.php");
-create_XML_CBIPayment($gTables,'','');	
+create_XML_CBIPayment($gTables,597000026,array(202161000000001));
+
 ?>
