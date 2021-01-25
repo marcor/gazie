@@ -337,17 +337,17 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 
 
-		$doc = new DOMDocument;
-		$doc->preserveWhiteSpace = false;
-		$doc->formatOutput = true;
-		if (FALSE === @$doc->loadXML(utf8_encode($invoiceContent))) {
+		$xml = new DOMDocument;
+		$xml->preserveWhiteSpace = false;
+		$xml->formatOutput = true;
+		if (FALSE === @$xml->loadXML(utf8_encode($invoiceContent))) {
 			// elimino le sequenze di caratteri non stampabili aggiunti dalla firma (da testare approfonditamente)
 			$invoiceContent = preg_replace('/[[:^print:]]/', "", $invoiceContent);
-			if (FALSE === @$doc->loadXML(utf8_encode($invoiceContent))) {
-				$doc->loadXML(recoverCorruptedXML($invoiceContent));
+			if (FALSE === @$xml->loadXML(utf8_encode($invoiceContent))) {
+				$xml->loadXML(recoverCorruptedXML($invoiceContent));
 			}
 		}
-		$xpath = new DOMXpath($doc);
+		$xpath = new DOMXpath($xml);
 		$f_ex=true;
 	} else {
 		$toDo = 'upload';
@@ -357,19 +357,26 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['rows'] = array();
 
 	$anagra_with_same_pi = false; // sarà true se è una anagrafica esistente ma non è un fornitore sul piano dei conti 
-		
- 	
+
+ 
 	if ($f_ex) { // non ho errori di file,  faccio altri controlli sul contenuto del file
-		
+
+	$nfatt = 0;
+
+	$docs = $xml->getElementsByTagName('FatturaElettronicaBody');
+	foreach ($docs as $doc) { // attraverso per trovare gli elementi cassa previdenziale 
+
+		$nfatt++;
+
 		// INIZIO CONTROLLI CORRETTEZZA FILE
 		$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
 		libxml_clear_errors();
 		if (empty($val_err)){
 			/* INIZIO CONTROLLO NUMERO DATA, ovvero se nonostante il nome del file sia diverso il suo contenuto è già stato importato e già c'è uno con lo stesso tipo_documento-numero_documento-anno-fornitore 
 			*/ 
-			$tipdoc=$tipdoc_conv[$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue];
-			$datdoc=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
-			$numdoc=$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
+			$tipdoc=$tipdoc_conv[$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue];
+			$datdoc=$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+			$numdoc=$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
 			if ($isFatturaElettronicaSemplificata) {
 				$codiva=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
 				if ($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/CodiceFiscale")->length>=1){
@@ -392,7 +399,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$f_ex=false; // non è visualizzabile
 			}
 			// FINE CONTROLLO NUMERO DATA	
-			if ($doc->getElementsByTagName("FatturaElettronicaHeader")->length < 1) { // non esiste il nodo <FatturaElettronicaHeader>
+			if ($xml->getElementsByTagName("FatturaElettronicaHeader")->length < 1) { // non esiste il nodo <FatturaElettronicaHeader>
 				$msg['err'][] = 'invalid_fae';
 				$f_ex=false; // non è visualizzabile
 			} else if ( ( !$isFatturaElettronicaSemplificata && @$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] && @$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue <> $admin_aziend['codfis'] ) || 
@@ -438,704 +445,704 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 		// FINE CONTROLLI SU FILE
 
-	}
-
-	if ($f_ex) { // non ho errori  vincolanti sul file posso proporre la visualizzazione
-		/*	Prendo i valori delle ritenute d'acconto che purtroppo sul tracciato ufficiale non viene distinto a livello di linee pertanto devo ricavarmele */
-		$tot_ritenute = ($doc->getElementsByTagName("ImportoRitenuta")->length >= 1 ? $doc->getElementsByTagName('ImportoRitenuta')->item(0)->nodeValue : 0 );
-		$ali_ritenute = ($doc->getElementsByTagName("AliquotaRitenuta")->length >= 1 ? $doc->getElementsByTagName('AliquotaRitenuta')->item(0)->nodeValue : 0 );
-		// mi calcolo le eventuali ritenute relative alle casse previdenziali da annotare sotto quando aggiungerò i righi tipo 4 
-		$ritenute_su_casse = 0;
-		$DatiCassaPrevidenziale = $doc->getElementsByTagName('DatiCassaPrevidenziale');
-		foreach ($DatiCassaPrevidenziale as $item) { // attraverso per trovare gli elementi cassa previdenziale 
-			if ($item->getElementsByTagName("Ritenuta")->length >= 1 && $item->getElementsByTagName('Ritenuta')->item(0)->nodeValue=='SI'){
-				// su questo contributo cassa ho la ritenuta
-				$ritenute_su_casse += round($item->getElementsByTagName('ImportoContributoCassa')->item(0)->nodeValue*$ali_ritenute/100,2); 
-			} 
-		}
-		// calcolo il residuo ritenute che sono costretto a mettere sulla prima linea questa è sicuramente una carenza strutturale del tracciato che non fa alcun riferimento alle linee 
-		$res_ritenute=round($tot_ritenute-$ritenute_su_casse,2); 
-		
-		/* mi serve per tenere traccia della linea con l'importo più grosso in modo da poterci sommare gli eventuali errori di arrotondamento sul totale imponibile
-		 dovuto alla diversità del metodo di calcolo usato in gazie*/
-		$max_val_linea=1;
-		$tot_imponi=0.00;
-		/* 
-		INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
-		a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva 
-		al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei
-		righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato 
-		*/
-		$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
-		$nl=0;
-        $nl_NumeroLinea = []; // matrice che conterrà i riferimenti tra $nl e il NumeroLinea, da utilizzare per assegnare Numero/DataDDT se presenti
-		foreach ($DettaglioLinee as $item) {
-			$nl++;
-            // assegno i riferimenti tra $nl e il NumeroLinea
-            // succede di tutto: se NumeroLinea è doppio lo dobbiamo controllare...
-            $NumLin='GAZ'.$nl;
-            if ($item->getElementsByTagName("NumeroLinea")->length >= 1){ // c'è un riferimento al numero
-                $NumLin=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
-                if (array_key_exists($NumLin,$nl_NumeroLinea)){ // controllo, e se c'è un numero duplicato :( ne invento uno pur di non perdere il riferimento
-                    $NumLin .= '-'.$nl;
-                }
-            }            
-            $nl_NumeroLinea[$NumLin]=$nl;
-            
-			if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
-				$form['rows'][$nl]['codice_fornitore'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
-			} else {
-				$form['rows'][$nl]['codice_fornitore'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
+		if ($f_ex) { // non ho errori  vincolanti sul file posso proporre la visualizzazione
+			/*	Prendo i valori delle ritenute d'acconto che purtroppo sul tracciato ufficiale non viene distinto a livello di linee pertanto devo ricavarmele */
+			$tot_ritenute = ($doc->getElementsByTagName("ImportoRitenuta")->length >= 1 ? $doc->getElementsByTagName('ImportoRitenuta')->item(0)->nodeValue : 0 );
+			$ali_ritenute = ($doc->getElementsByTagName("AliquotaRitenuta")->length >= 1 ? $doc->getElementsByTagName('AliquotaRitenuta')->item(0)->nodeValue : 0 );
+			// mi calcolo le eventuali ritenute relative alle casse previdenziali da annotare sotto quando aggiungerò i righi tipo 4 
+			$ritenute_su_casse = 0;
+			$DatiCassaPrevidenziale = $doc->getElementsByTagName('DatiCassaPrevidenziale');
+			foreach ($DatiCassaPrevidenziale as $item) { // attraverso per trovare gli elementi cassa previdenziale 
+				if ($item->getElementsByTagName("Ritenuta")->length >= 1 && $item->getElementsByTagName('Ritenuta')->item(0)->nodeValue=='SI'){
+					// su questo contributo cassa ho la ritenuta
+					$ritenute_su_casse += round($item->getElementsByTagName('ImportoContributoCassa')->item(0)->nodeValue*$ali_ritenute/100,2); 
+				} 
 			}
-			// Elimino spazi dal codice fornitore creato
-			$form['rows'][$nl]['codice_fornitore'] = preg_replace("/\s+/","_",$form['rows'][$nl]['codice_fornitore']);
-			// vedo se ho un codice_fornitore in gaz_artico
-			$artico = gaz_dbi_get_row($gTables['artico'], 'codice_fornitore', $form['rows'][$nl]['codice_fornitore']);
-			$form['rows'][$nl]['codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['codice']:'';
-			$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
-			if ($item->getElementsByTagName("Quantita")->length >= 1) {
-				$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
-				$form['rows'][$nl]['tiprig'] = 0;
-			} else {
-				$form['rows'][$nl]['quanti'] = '';
-				$form['rows'][$nl]['tiprig'] = 1; // rigo forfait
-			}
-			$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName('UnitaMisura')->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
-			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue;
+			// calcolo il residuo ritenute che sono costretto a mettere sulla prima linea questa è sicuramente una carenza strutturale del tracciato che non fa alcun riferimento alle linee 
+			$res_ritenute=round($tot_ritenute-$ritenute_su_casse,2); 
 			
-			// Antonio Germani prendo il tipo di cessione prestazione che mi servirà per le eccezioni delle anomalie
-			$form['rows'][$nl]['tipocessprest'] = $item->getElementsByTagName('TipoCessionePrestazione')->length >= 1 ? $item->getElementsByTagName('TipoCessionePrestazione')->item(0)->nodeValue : '';
-			
-			// inizio applicazione sconto su rigo
-			$form['rows'][$nl]['sconto'] = 0;
-			$acc_sconti=array();
-			if ($item->getElementsByTagName("ScontoMaggiorazione")->length >= 1) { // ho uno sconto/maggiorazione
+			/* mi serve per tenere traccia della linea con l'importo più grosso in modo da poterci sommare gli eventuali errori di arrotondamento sul totale imponibile
+			 dovuto alla diversità del metodo di calcolo usato in gazie*/
+			$max_val_linea=1;
+			$tot_imponi=0.00;
+			/* 
+			INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
+			a causa della mancanza di rigore del tracciato ufficiale siamo costretti a crearci un castelletto conti e iva 
+			al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei
+			righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato 
+			*/
+			$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
+			$nl=0;
+			$nl_NumeroLinea = []; // matrice che conterrà i riferimenti tra $nl e il NumeroLinea, da utilizzare per assegnare Numero/DataDDT se presenti
+			foreach ($DettaglioLinee as $item) {
+				$nl++;
+				// assegno i riferimenti tra $nl e il NumeroLinea
+				// succede di tutto: se NumeroLinea è doppio lo dobbiamo controllare...
+				$NumLin='GAZ'.$nl;
+				if ($item->getElementsByTagName("NumeroLinea")->length >= 1){ // c'è un riferimento al numero
+					$NumLin=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+					if (array_key_exists($NumLin,$nl_NumeroLinea)){ // controllo, e se c'è un numero duplicato :( ne invento uno pur di non perdere il riferimento
+						$NumLin .= '-'.$nl;
+					}
+				}            
+				$nl_NumeroLinea[$NumLin]=$nl;
+				
+				if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
+					$form['rows'][$nl]['codice_fornitore'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
+				} else {
+					$form['rows'][$nl]['codice_fornitore'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
+				}
+				// Elimino spazi dal codice fornitore creato
+				$form['rows'][$nl]['codice_fornitore'] = preg_replace("/\s+/","_",$form['rows'][$nl]['codice_fornitore']);
+				// vedo se ho un codice_fornitore in gaz_artico
+				$artico = gaz_dbi_get_row($gTables['artico'], 'codice_fornitore', $form['rows'][$nl]['codice_fornitore']);
+				$form['rows'][$nl]['codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['codice']:'';
+				$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
+				if ($item->getElementsByTagName("Quantita")->length >= 1) {
+					$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
+					$form['rows'][$nl]['tiprig'] = 0;
+				} else {
+					$form['rows'][$nl]['quanti'] = '';
+					$form['rows'][$nl]['tiprig'] = 1; // rigo forfait
+				}
+				$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName('UnitaMisura')->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
+				$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue;
+				
+				// Antonio Germani prendo il tipo di cessione prestazione che mi servirà per le eccezioni delle anomalie
+				$form['rows'][$nl]['tipocessprest'] = $item->getElementsByTagName('TipoCessionePrestazione')->length >= 1 ? $item->getElementsByTagName('TipoCessionePrestazione')->item(0)->nodeValue : '';
+				
+				// inizio applicazione sconto su rigo
+				$form['rows'][$nl]['sconto'] = 0;
 				$acc_sconti=array();
-				$sconti_forfait=array();
-				$sconto_maggiorazione=$item->getElementsByTagName("ScontoMaggiorazione");
-				foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
-					if ($form['rows'][$nl]['prelis'] < 0.00001) { // se trovo l'elemento 2.2.1.9 <PrezzoUnitario> a zero calcolo lo sconto a forfait
-						$sconti_forfait[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
-					} elseif ($sconti->getElementsByTagName("Importo")->length >= 1 && $item->getElementsByTagName('Importo')->item(0)->nodeValue >= 0.00001){ 
-						// calcolo la percentuale di sconto partendo dall'importo del rigo e da quello dello sconto, il funzionamento di GAzie prevede la percentuale e non l'importo dello sconto 
-						$tot_rig= (!empty($form['rows'][$nl]['quanti']) && $form['rows'][$nl]['quanti']!=0) ? $form['rows'][$nl]['quanti']*$form['rows'][$nl]['prelis'] : $form['rows'][$nl]['prelis'];
-						$acc_sconti[]=(!empty($form['rows'][$nl]['quanti']) && intval($form['rows'][$nl]['quanti'])>1) ? $form['rows'][$nl]['quanti']*$item->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig : $item->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig;
-						//$form['rows'][$nl]['sconto']=$item->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig;  
-					} elseif($sconti->getElementsByTagName("Percentuale")->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001){ // ho una percentuale accodo quella
-						$acc_sconti[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue : -$sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue);
-					}				
-				}
-				if (count($sconti_forfait) > 0) {
-					$sf=0;
-					foreach($sconti_forfait as $scf){ // attraverso l'accumulatore di sconti forfait per ottenerne il totale
-						$sf += $scf;
+				if ($item->getElementsByTagName("ScontoMaggiorazione")->length >= 1) { // ho uno sconto/maggiorazione
+					$acc_sconti=array();
+					$sconti_forfait=array();
+					$sconto_maggiorazione=$item->getElementsByTagName("ScontoMaggiorazione");
+					foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
+						if ($form['rows'][$nl]['prelis'] < 0.00001) { // se trovo l'elemento 2.2.1.9 <PrezzoUnitario> a zero calcolo lo sconto a forfait
+							$sconti_forfait[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
+						} elseif ($sconti->getElementsByTagName("Importo")->length >= 1 && $item->getElementsByTagName('Importo')->item(0)->nodeValue >= 0.00001){ 
+							// calcolo la percentuale di sconto partendo dall'importo del rigo e da quello dello sconto, il funzionamento di GAzie prevede la percentuale e non l'importo dello sconto 
+							$tot_rig= (!empty($form['rows'][$nl]['quanti']) && $form['rows'][$nl]['quanti']!=0) ? $form['rows'][$nl]['quanti']*$form['rows'][$nl]['prelis'] : $form['rows'][$nl]['prelis'];
+							$acc_sconti[]=(!empty($form['rows'][$nl]['quanti']) && intval($form['rows'][$nl]['quanti'])>1) ? $form['rows'][$nl]['quanti']*$item->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig : $item->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig;
+							//$form['rows'][$nl]['sconto']=$item->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig;  
+						} elseif($sconti->getElementsByTagName("Percentuale")->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001){ // ho una percentuale accodo quella
+							$acc_sconti[]=($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue : -$sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue);
+						}				
 					}
-					$form['rows'][$nl]['prelis'] = $sf;
+					if (count($sconti_forfait) > 0) {
+						$sf=0;
+						foreach($sconti_forfait as $scf){ // attraverso l'accumulatore di sconti forfait per ottenerne il totale
+							$sf += $scf;
+						}
+						$form['rows'][$nl]['prelis'] = $sf;
+					} else {
+						$is=1;
+						foreach($acc_sconti as $vsc){ // attraverso l'accumulatore di sconti per ottenerne uno solo
+							$is *=(1-$vsc/100);
+						}
+						$form['rows'][$nl]['sconto'] = 100*(1-$is);
+					}
+				}
+				$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
+				// se ho un residuo di ritenuta d'acconto valorizzo con l'aliquota di cui sopra
+				$form['rows'][$nl]['ritenuta'] = 0;
+				// calcolo l'importo del rigo 
+				if ($form['rows'][$nl]['tiprig']==0){
+					$form['rows'][$nl]['amount']=CalcolaImportoRigo($form['rows'][$nl]['quanti'],$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']));
 				} else {
-					$is=1;
-					foreach($acc_sconti as $vsc){ // attraverso l'accumulatore di sconti per ottenerne uno solo
-						$is *=(1-$vsc/100);
-					}
-					$form['rows'][$nl]['sconto'] = 100*(1-$is);
+					$form['rows'][$nl]['amount']=CalcolaImportoRigo(1,$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']));
 				}
-			}
-			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
-			// se ho un residuo di ritenuta d'acconto valorizzo con l'aliquota di cui sopra
-			$form['rows'][$nl]['ritenuta'] = 0;
-			// calcolo l'importo del rigo 
-			if ($form['rows'][$nl]['tiprig']==0){
-				$form['rows'][$nl]['amount']=CalcolaImportoRigo($form['rows'][$nl]['quanti'],$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']));
-			} else {
-				$form['rows'][$nl]['amount']=CalcolaImportoRigo(1,$form['rows'][$nl]['prelis'],array($form['rows'][$nl]['sconto']));
+
+				// tengo traccia del NumeroLinea e se il rigo è descrittivo 
+				$form['rows'][$nl]['numrig'] = $item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+				$form['rows'][$nl]['is_descri'] = ($form['rows'][$nl]['prelis']<0.00001)?1:false;
+				
+				$tot_imponi += $form['rows'][$nl]['amount'];
+				if (!empty($form['rows'][$nl]) && !empty($form['rows'][$max_val_linea]) && $form['rows'][$nl]['amount']>$form['rows'][$max_val_linea]['amount']){ // è una linea con valore più alto delle precedenti
+					$max_val_linea=$nl;
+				}
+				if (round($res_ritenute,2)>=0.01){
+					$res_ritenute -= $form['rows'][$nl]['amount']*$ali_ritenute/100;
+					if (round($res_ritenute,2) >= 0) { // setto l'aliquota ritenuta ma solo se c'è stata capienza
+						$form['rows'][$nl]['ritenuta'] = $ali_ritenute;
+					}
+				}
+				$post_nl = $nl-1;
+				if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
+					$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
+					$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
+					$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
+				} else { 
+					if (isset( $form['rows'][$nl]['codart'])){
+						$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
+					} else {
+						$form['rows'][$nl]['codart'] = '';
+						$form['codart_'.$post_nl] ='';
+					}			
+					/* al primo accesso dopo l'upload del file propongo:
+					   - la prima data di registrazione utile considerando quella di questa fattura e l'ultima registrazione
+					   - i costi sulle linee (righe) in base al fornitore
+					   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato 
+					*/
+					$df = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+					// trovo l'ultima data di registrazione
+					$lr=getLastProtocol('AF_',substr($df,0,4),1)['last_datreg'];
+					$form['codric_'.$post_nl] = $form['partner_cost'];
+					if (preg_match('/TRASP/i',strtoupper($form['rows'][$nl]['descri']))) { // se sulla descrizione ho un trasporto lo propongo come costo d'acquisto
+						$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
+					}
+					$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']); // analizzo le possibilità 
+					// analizzo le possibilità 
+					// controllo se ho uno split payment
+					$yes_split=false;
+					if($xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >=1){
+						$yes_split=$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
+					}
+					if ($yes_split=='S'){
+						$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo = " . $form['rows'][$nl]['pervat']." AND tipiva ='T'", "codice ASC", 0, 1);
+						$split_vat = gaz_dbi_fetch_array($rs_split_vat);
+						$form['codvat_'.$post_nl] = $split_vat['codice'];
+					} elseif ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
+						$form['codvat_'.$post_nl] = $expect_vat['codice'];
+					} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
+						$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], 'aliquo = ' . $form['rows'][$nl]['pervat']." AND tipiva <>'T'", "codice ASC", 0, 1);
+						$last_codvat = gaz_dbi_fetch_array($rs_last_codvat);
+						if ($last_codvat){
+							$form['codvat_'.$post_nl] = $last_codvat['codice'];
+						} else {
+							$form['codvat_'.$post_nl] = 'non trovata';
+						}
+					}
+				}
 			}
 
-            // tengo traccia del NumeroLinea e se il rigo è descrittivo 
-			$form['rows'][$nl]['numrig'] = $item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
-			$form['rows'][$nl]['is_descri'] = ($form['rows'][$nl]['prelis']<0.00001)?1:false;
-            
-			$tot_imponi += $form['rows'][$nl]['amount'];
-			if (!empty($form['rows'][$nl]) && !empty($form['rows'][$max_val_linea]) && $form['rows'][$nl]['amount']>$form['rows'][$max_val_linea]['amount']){ // è una linea con valore più alto delle precedenti
-				$max_val_linea=$nl;
-			}
-			if (round($res_ritenute,2)>=0.01){
-				$res_ritenute -= $form['rows'][$nl]['amount']*$ali_ritenute/100;
-				if (round($res_ritenute,2) >= 0) { // setto l'aliquota ritenuta ma solo se c'è stata capienza
-					$form['rows'][$nl]['ritenuta'] = $ali_ritenute;
+			/* 
+			Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
+			*/
+			//print_r($nl_NumeroLinea);
+			$anomalia="";
+			if ($doc->getElementsByTagName('DatiDDT')->length>=1) { 
+				// quando ci sono dei DdT capita che il rigo che precede sia la descrizione del seguente allora faccio un primo attraversamento dei riferimenti ai righi perchè capita che alcuni righi descrittivi che precedono siano comunque riferiti a ddt
+				$ddt=$doc->getElementsByTagName('DatiDDT');
+				$ctrl_NumeroDDT='';
+				$acc_DataDDT='';
+				
+				foreach ($ddt as $vd) { // attraverso DatiDDT
+					$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
+					$numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
+					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
+					foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
+						$nl = $nl_NumeroLinea[$vdd->nodeValue];
+						if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt lo assegno a questo  
+							if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){   
+								$form['rows'][$nl-1]['NumeroDDT']=$numddt;
+								$form['rows'][$nl-1]['DataDDT']=$dataddt;
+								$form['rows'][$nl-1]['exist_ddt']=false;
+								// è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
+								unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
+							}                    
+						}                
+						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+							$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+							
+						} else {
+							$form['rows'][$nl]['exist_ddt']=false;
+						}
+						$form['rows'][$nl]['NumeroDDT']=$numddt;
+						$form['rows'][$nl]['DataDDT']=$dataddt;
+						// è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
+						unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]); 
+						$ctrl_NumeroDDT=$numddt;
+					}
+					$ctrl_NumeroDDT=$numddt;
+					$ctrl_DataDDT=$dataddt;
+				}
+				
+				foreach($nl_NumeroLinea as $k=>$v){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi! 
+					// in $v ho l'indice del rigo non assegnato questa è una anomalia e la segnalo
+					$anomalia="Anomalia";
+					if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+						$anomalia="AnomaliaExistDdt";
+					}
+					$form['rows'][$v]['NumeroDDT']=$numddt;
+					$form['rows'][$v]['DataDDT']=$dataddt;
+					if ($form['rows'][$v]['tipocessprest']=="AC"){ // Antonio Germani - le spese fanno eccezione e quindi tolgo l'anomalia
+						$anomalia="";
+					}
+					if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+						$form['rows'][$v]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+					} else {
+						$form['rows'][$v]['exist_ddt']=false;
+					}
 				}
 			}
-			$post_nl = $nl-1;
-			if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
-				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
-				$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
-				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
-				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
-			} else { 
-				if (isset( $form['rows'][$nl]['codart'])){
-					$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
+			$linekeys=array_keys($form['rows']);
+			$nl=end($linekeys); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
+
+			if ($numdoc==$numddt AND $datdoc==$dataddt){ // se fattura e ddt hanno stesso numero e data modifico l'anomalia
+				$anomalia = "AnomaliaDDT=FAT";
+			}
+			/*
+				QUI TRATTERO' gli elementi <DatiCassaPrevidenziale> come righi accodandoli ad essi su rigdoc (tipdoc=4) 
+			*/
+			foreach ($DatiCassaPrevidenziale as $item) { // attraverso per trovare gli elementi cassa previdenziale
+				$nl++;
+				$form['rows'][$nl]['codice_fornitore'] = $item->getElementsByTagName('TipoCassa')->item(0)->nodeValue;
+				$form['rows'][$nl]['tiprig'] = 4;
+				// carico anche la descrizione corrispondente dal file xml
+				$xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
+				foreach ($xml->record as $v) {
+					$selected = '';
+					if ($v->field[0] == $form['rows'][$nl]['codice_fornitore']) {
+						$form['rows'][$nl]['descri']= 'Contributo '.strtolower($v->field[1]);
+					}
+				}
+				$form['rows'][$nl]['unimis'] = '';
+				$form['rows'][$nl]['quanti'] = '';
+				$form['rows'][$nl]['sconto'] = 0;
+				$form['rows'][$nl]['provvigione'] = $item->getElementsByTagName('AlCassa')->item(0)->nodeValue; // così come per le vendite uso il campo provvigioni per mettere l'aliquota della cassa previdenziale (evidenziato anche sui commenti del database)
+				if ($item->getElementsByTagName('ImponibileCassa')->length>=1) {
+					$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('ImponibileCassa')->item(0)->nodeValue;
 				} else {
-					$form['rows'][$nl]['codart'] = '';
-					$form['codart_'.$post_nl] ='';
-				}			
-				/* al primo accesso dopo l'upload del file propongo:
-				   - la prima data di registrazione utile considerando quella di questa fattura e l'ultima registrazione
+					// non ho l'imponibile base di calcolo, allora lo ricavo dall'importo del contributo e dall'aliquota
+					$form['rows'][$nl]['prelis'] = round($item->getElementsByTagName('ImportoContributoCassa')->item(0)->nodeValue*100/$form['rows'][$nl]['provvigione'],2);
+				}
+				$form['rows'][$nl]['amount'] = $form['rows'][$nl]['prelis'];
+				$tot_imponi += round($form['rows'][$nl]['amount']*$form['rows'][$nl]['provvigione']/100,2);
+				$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
+				$form['rows'][$nl]['ritenuta']='';
+				if ($item->getElementsByTagName("Ritenuta")->length >= 1 && $item->getElementsByTagName('Ritenuta')->item(0)->nodeValue=='SI'){
+					// su questo contributo cassa ho la ritenuta
+					$form['rows'][$nl]['ritenuta']= $ali_ritenute; 
+				} 
+				$post_nl = $nl-1;
+				if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
+					$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
+					$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
+				} else {
+					if (isset( $form['rows'][$nl]['codart'])){
+						$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
+					} else {
+						$form['rows'][$nl]['codart'] = '';
+						$form['codart_'.$post_nl] ='';
+					}			
+					/* al primo accesso dopo l'upload del file propongo:
 				   - i costi sulle linee (righe) in base al fornitore
 				   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato 
-				*/
-				$df = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
-				// trovo l'ultima data di registrazione
-				$lr=getLastProtocol('AF_',substr($df,0,4),1)['last_datreg'];
-				$form['codric_'.$post_nl] = $form['partner_cost'];
-				if (preg_match('/TRASP/i',strtoupper($form['rows'][$nl]['descri']))) { // se sulla descrizione ho un trasporto lo propongo come costo d'acquisto
-					$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
-				}
-				$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']); // analizzo le possibilità 
-				// analizzo le possibilità 
-				// controllo se ho uno split payment
-				$yes_split=false;
-				if($xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >=1){
-					$yes_split=$xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
-				}
-				if ($yes_split=='S'){
-					$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo = " . $form['rows'][$nl]['pervat']." AND tipiva ='T'", "codice ASC", 0, 1);
-					$split_vat = gaz_dbi_fetch_array($rs_split_vat);
-					$form['codvat_'.$post_nl] = $split_vat['codice'];
-				} elseif ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
-					$form['codvat_'.$post_nl] = $expect_vat['codice'];
-				} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
-					$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], 'aliquo = ' . $form['rows'][$nl]['pervat']." AND tipiva <>'T'", "codice ASC", 0, 1);
-					$last_codvat = gaz_dbi_fetch_array($rs_last_codvat);
-					if ($last_codvat){
-						$form['codvat_'.$post_nl] = $last_codvat['codice'];
-					} else {
+					*/
+					$form['codric_'.$post_nl] = $form['partner_cost'];
+					$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']);
+					// analizzo le possibilità 
+					if ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
+						$form['codvat_'.$post_nl] = $expect_vat['codice'];
+					} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
 						$form['codvat_'.$post_nl] = 'non trovata';
 					}
-				}
+				}				
 			}
-		}
 
-		/* 
-		Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
-		*/
-        //print_r($nl_NumeroLinea);
-		$anomalia="";
-        if ($doc->getElementsByTagName('DatiDDT')->length>=1) { 
-            // quando ci sono dei DdT capita che il rigo che precede sia la descrizione del seguente allora faccio un primo attraversamento dei riferimenti ai righi perchè capita che alcuni righi descrittivi che precedono siano comunque riferiti a ddt
-			$ddt=$doc->getElementsByTagName('DatiDDT');
-            $ctrl_NumeroDDT='';
-            $acc_DataDDT='';
-			
-			foreach ($ddt as $vd) { // attraverso DatiDDT
-				$vr=$vd->getElementsByTagName('RiferimentoNumeroLinea');
-                $numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
-				$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
-				foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
-                    $nl = $nl_NumeroLinea[$vdd->nodeValue];
-                    if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt lo assegno a questo  
-                        if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){   
-                            $form['rows'][$nl-1]['NumeroDDT']=$numddt;
-                            $form['rows'][$nl-1]['DataDDT']=$dataddt;
-                            $form['rows'][$nl-1]['exist_ddt']=false;
-                            // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
-                            unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
-                        }                    
-                    }                
-					if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
-						$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
-						
+			/*	Se presenti, trasformo gli sconti/maggiorazioni del campo 2.1.1.8 <ScontoMaggiorazione> in righe forfait */
+			if ($xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione")->length >= 1) {
+				$sconto_totale_incondizionato = array();
+				$sconto_maggiorazione = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione");
+				foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
+					if ($sconti->getElementsByTagName('Percentuale')->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001) {
+						$sconto_totale_incondizionato[] = $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue;
 					} else {
-						$form['rows'][$nl]['exist_ddt']=false;
+						$nl++;
+						$form['rows'][$nl]['tiprig'] = 1;
+						$form['rows'][$nl]['codice_fornitore'] = '';
+						$form['rows'][$nl]['descri'] = '';
+						$form['rows'][$nl]['unimis'] = '';
+						$form['rows'][$nl]['quanti'] = '';
+						$form['rows'][$nl]['sconto'] = '';
+						$form['rows'][$nl]['ritenuta'] = '';
+						$form['rows'][$nl]['pervat'] = '';
+
+						$form['codart_'.($nl-1)] = '';
+						$form['codvat_'.($nl-1)] = '';
+						$form['codric_'.($nl-1)] = '';
+
+						$sconto_incondizionato = ($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
+						$form['rows'][$nl]['prelis'] = $sconto_incondizionato;
+						$form['rows'][$nl]['amount'] = $sconto_incondizionato;
 					}
-					$form['rows'][$nl]['NumeroDDT']=$numddt;
-					$form['rows'][$nl]['DataDDT']=$dataddt;
-                    // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
-                    unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]); 
-                    $ctrl_NumeroDDT=$numddt;
-                }
-                $ctrl_NumeroDDT=$numddt;
-                $ctrl_DataDDT=$dataddt;
-            }
-			
-            foreach($nl_NumeroLinea as $k=>$v){ // in questo mi ritrovo i righi non assegnati ai ddt specifici (potrebbero essere anche tutti), alcune fatture malfatte non specificano i righi! 
-                // in $v ho l'indice del rigo non assegnato questa è una anomalia e la segnalo
-                $anomalia="Anomalia";
-				if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
-					$anomalia="AnomaliaExistDdt";
 				}
-				$form['rows'][$v]['NumeroDDT']=$numddt;
-				$form['rows'][$v]['DataDDT']=$dataddt;
-				if ($form['rows'][$v]['tipocessprest']=="AC"){ // Antonio Germani - le spese fanno eccezione e quindi tolgo l'anomalia
-					$anomalia="";
-				}
-				if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
-					$form['rows'][$v]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
-				} else {
-					$form['rows'][$v]['exist_ddt']=false;
-				}
-            }
-        }
-        $linekeys=array_keys($form['rows']);
-        $nl=end($linekeys); // trovo l'ultima linea, mi servirà per accodare CassaPrevidenziale, sconti, ecc
-
-		if ($numdoc==$numddt AND $datdoc==$dataddt){ // se fattura e ddt hanno stesso numero e data modifico l'anomalia
-			$anomalia = "AnomaliaDDT=FAT";
-		}
-		/*
-			QUI TRATTERO' gli elementi <DatiCassaPrevidenziale> come righi accodandoli ad essi su rigdoc (tipdoc=4) 
-		*/
-		foreach ($DatiCassaPrevidenziale as $item) { // attraverso per trovare gli elementi cassa previdenziale
-			$nl++;
-			$form['rows'][$nl]['codice_fornitore'] = $item->getElementsByTagName('TipoCassa')->item(0)->nodeValue;
-			$form['rows'][$nl]['tiprig'] = 4;
-			// carico anche la descrizione corrispondente dal file xml
-            $xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
-			foreach ($xml->record as $v) {
-				$selected = '';
-				if ($v->field[0] == $form['rows'][$nl]['codice_fornitore']) {
-					$form['rows'][$nl]['descri']= 'Contributo '.strtolower($v->field[1]);
+				if (count($sconto_totale_incondizionato) > 0) {
+					$is=1;
+					foreach($sconto_totale_incondizionato as $vsc){ // attraverso l'accumulatore di sconti per ottenerne uno solo
+						$is *=(1-$vsc/100);
+					}
+					$sconto_totale_incondizionato = 100*(1-$is);
 				}
 			}
-			$form['rows'][$nl]['unimis'] = '';
-			$form['rows'][$nl]['quanti'] = '';
-			$form['rows'][$nl]['sconto'] = 0;
-			$form['rows'][$nl]['provvigione'] = $item->getElementsByTagName('AlCassa')->item(0)->nodeValue; // così come per le vendite uso il campo provvigioni per mettere l'aliquota della cassa previdenziale (evidenziato anche sui commenti del database)
-			if ($item->getElementsByTagName('ImponibileCassa')->length>=1) {
-				$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('ImponibileCassa')->item(0)->nodeValue;
-			} else {
-				// non ho l'imponibile base di calcolo, allora lo ricavo dall'importo del contributo e dall'aliquota
-				$form['rows'][$nl]['prelis'] = round($item->getElementsByTagName('ImportoContributoCassa')->item(0)->nodeValue*100/$form['rows'][$nl]['provvigione'],2);
-			}
-			$form['rows'][$nl]['amount'] = $form['rows'][$nl]['prelis'];
-			$tot_imponi += round($form['rows'][$nl]['amount']*$form['rows'][$nl]['provvigione']/100,2);
-			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
-			$form['rows'][$nl]['ritenuta']='';
-			if ($item->getElementsByTagName("Ritenuta")->length >= 1 && $item->getElementsByTagName('Ritenuta')->item(0)->nodeValue=='SI'){
-				// su questo contributo cassa ho la ritenuta
-				$form['rows'][$nl]['ritenuta']= $ali_ritenute; 
-			} 
-			$post_nl = $nl-1;
-			if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
-				$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
-				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
-				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
-			} else {
-				if (isset( $form['rows'][$nl]['codart'])){
-					$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
-				} else {
-					$form['rows'][$nl]['codart'] = '';
-					$form['codart_'.$post_nl] ='';
-				}			
-				/* al primo accesso dopo l'upload del file propongo:
-			   - i costi sulle linee (righe) in base al fornitore
-			   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato 
-				*/
-				$form['codric_'.$post_nl] = $form['partner_cost'];
-				$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']);
-				// analizzo le possibilità 
-				if ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
-					$form['codvat_'.$post_nl] = $expect_vat['codice'];
-				} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
-					$form['codvat_'.$post_nl] = 'non trovata';
-				}
-			}				
-		}
 
-		/*	Se presenti, trasformo gli sconti/maggiorazioni del campo 2.1.1.8 <ScontoMaggiorazione> in righe forfait */
-		if ($xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione")->length >= 1) {
-			$sconto_totale_incondizionato = array();
-			$sconto_maggiorazione = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione");
-			foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
-				if ($sconti->getElementsByTagName('Percentuale')->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001) {
-					$sconto_totale_incondizionato[] = $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue;
-				} else {
+			$ImponibileImporto=0.00;
+
+			/* 
+			Se la fattura è di tipo semplificata
+			*/
+			if ($isFatturaElettronicaSemplificata) {
+				$DettaglioLineeSemplificate = $doc->getElementsByTagName('DatiBeniServizi');
+				$nl=0;
+				foreach ($DettaglioLineeSemplificate as $item) {
 					$nl++;
 					$form['rows'][$nl]['tiprig'] = 1;
 					$form['rows'][$nl]['codice_fornitore'] = '';
-					$form['rows'][$nl]['descri'] = '';
+					$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue;
 					$form['rows'][$nl]['unimis'] = '';
-					$form['rows'][$nl]['quanti'] = '';
+					$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('Importo')->item(0)->nodeValue;
+					$form['rows'][$nl]['quanti'] = 1;
+					$form['rows'][$nl]['amount'] = $form['rows'][$nl]['prelis'];
 					$form['rows'][$nl]['sconto'] = '';
 					$form['rows'][$nl]['ritenuta'] = '';
-					$form['rows'][$nl]['pervat'] = '';
-
-					$form['codart_'.($nl-1)] = '';
-					$form['codvat_'.($nl-1)] = '';
-					$form['codric_'.($nl-1)] = '';
-
-					$sconto_incondizionato = ($sconti->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? -$sconti->getElementsByTagName('Importo')->item(0)->nodeValue : $sconti->getElementsByTagName('Importo')->item(0)->nodeValue);
-					$form['rows'][$nl]['prelis'] = $sconto_incondizionato;
-					$form['rows'][$nl]['amount'] = $sconto_incondizionato;
+					$form['rows'][$nl]['pervat'] = '' . @$item->getElementsByTagName('Aliquota')->item(0)->nodeValue;
+					@$imposta = $item->getElementsByTagName('Imposta')->item(0)->nodeValue;
 				}
-			}
-			if (count($sconto_totale_incondizionato) > 0) {
-				$is=1;
-				foreach($sconto_totale_incondizionato as $vsc){ // attraverso l'accumulatore di sconti per ottenerne uno solo
-					$is *=(1-$vsc/100);
-				}
-				$sconto_totale_incondizionato = 100*(1-$is);
-			}
-		}
-
-		$ImponibileImporto=0.00;
-
-		/* 
-		Se la fattura è di tipo semplificata
-		*/
-		if ($isFatturaElettronicaSemplificata) {
-			$DettaglioLineeSemplificate = $doc->getElementsByTagName('DatiBeniServizi');
-			$nl=0;
-			foreach ($DettaglioLineeSemplificate as $item) {
-				$nl++;
-				$form['rows'][$nl]['tiprig'] = 1;
-				$form['rows'][$nl]['codice_fornitore'] = '';
-				$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue;
-				$form['rows'][$nl]['unimis'] = '';
-				$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('Importo')->item(0)->nodeValue;
-				$form['rows'][$nl]['quanti'] = 1;
-				$form['rows'][$nl]['amount'] = $form['rows'][$nl]['prelis'];
-				$form['rows'][$nl]['sconto'] = '';
-				$form['rows'][$nl]['ritenuta'] = '';
-				$form['rows'][$nl]['pervat'] = '' . @$item->getElementsByTagName('Aliquota')->item(0)->nodeValue;
-				@$imposta = $item->getElementsByTagName('Imposta')->item(0)->nodeValue;
-			}
-		} else { // non è una fattura semplificata
-			$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo");
-            $naturaN6=false;
-			foreach($DatiRiepilogo as $dr){
-				$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
-                if ($dr->getElementsByTagName("Natura")->length >= 1){ // se ho l'elemento Natura = 6.x dovrò ricercare l'aliquota per il reverse charge a tutto il documento ed attribuirla a tutti i righi del documento
-                   $Natura=$dr->getElementsByTagName("Natura")->item(0)->nodeValue;
-                   if ( substr($Natura,0,2) == 'N6' ) { // dovrò fare il reverse charge sostituisco con il codice iva relativo
-                        $naturaN6=$Natura;
-                   }
-                }
-			}
-            if (!isset($_POST['Submit_form']) && $naturaN6 ) { // al primo accesso se sopra ho trovato che è una natura da reverse charge
-                $stdiva=gaz_dbi_get_row($gTables['aliiva'], 'codice', $admin_aziend['preeminent_vat'])['aliquo']; //la percentuale dell'aliquota standard (potrebbe cambiare negli anni)
-                $rs_reverse = gaz_dbi_dyn_query("codice", $gTables['aliiva'], 'aliquo ='.$stdiva." AND fae_natura ='" .$naturaN6."'", "codice DESC", 0, 1);
-                $cod_reverse = gaz_dbi_fetch_array($rs_reverse)['codice'];
-                // riattraverso i righi e ci metto il nuovo codice IVA
-                foreach($form['rows'] as $kn => $vn) {
-                    $kp = $kn-1;
-                    $form['codvat_'.$kp]=$cod_reverse;
-                }  
-            }                        
-            
-			$totdiff=abs($ImponibileImporto-$tot_imponi);
-			/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
-			if ($totdiff>=0.01){ // qualora ci sia una differenza di almeno 1 cent la aggiunto (o lo sottraggo al rigo di maggior valore
-				if ($form['rows'][$max_val_linea]['tiprig']==0){ //rigo normale con quantità variabile
-					$form['rows'][$max_val_linea]['prelis']+= ($ImponibileImporto-$tot_imponi)/$form['rows'][$max_val_linea]['quanti'];
-				} else {
-					$form['rows'][$max_val_linea]['prelis']+= $ImponibileImporto-$tot_imponi;
-				}
-				$form['rows'][$max_val_linea]['amount'] += $ImponibileImporto-$tot_imponi;
-			}
-		}
-		// ricavo l'allegato, e se presente metterò un bottone per permettere il download
-		$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
-		if ($nf) {
-			$name_file = $nf->textContent;
-			$att = $doc->getElementsByTagName('Attachment')->item(0);
-			$base64 = $att->textContent;
-			$bin = base64_decode($base64);
-			file_put_contents( DATA_DIR . 'files/tmp/' . $name_file, $bin);
-		}
-		if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
-			$form['datreg'] = substr($_POST['datreg'],0,10);
-			$form['pagame'] = intval($_POST['pagame']);
-			$form['new_acconcile'] = intval($_POST['new_acconcile']);
-			$form['seziva'] = intval($_POST['seziva']);
-		}
-
-		if (isset($_POST['Submit_form']) && count($msg['err'])==0) { // confermo le scelte sul form, inserisco i dati sul db ma solo se non ho errori
-			if (!$anagra_with_same_pi && !$partner_with_same_pi) { // non ho nulla: devo inserire tutto (anagrafica e fornitore) basandomi sul pagamento e sui conti di costo scelti dall'utente
-				$new_partner = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields('anagra'));
-				$new_partner['codpag'] = $form['pagame'];
-				$new_partner['sexper'] = 'G';
-				// setto le colonne in base ai dati di questa fattura elettronica
-				$new_partner['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
-				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)) {
-					$new_partner['codfis'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue;
-					// ho un codice fiscale posso vedere se è una persona fisica e di quale sesso
-					preg_match('/^[a-z]{6}[0-9]{2}[a-z]([0-9]{2})[a-z][0-9]{3}[a-z]$/i',trim($new_partner['codfis']),$match);
-					if (count($match)>1){
-						if ($match[1] > 40 ){  // è un codice fiscale femminile
-							$new_partner['sexper'] = 'F';
-						} else {
-							$new_partner['sexper'] = 'M';
-						}
-					} else { // giuridica
-						$new_partner['sexper'] = 'G';
+			} else { // non è una fattura semplificata
+				$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiBeniServizi/DatiRiepilogo");
+				$naturaN6=false;
+				foreach($DatiRiepilogo as $dr){
+					$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
+					if ($dr->getElementsByTagName("Natura")->length >= 1){ // se ho l'elemento Natura = 6.x dovrò ricercare l'aliquota per il reverse charge a tutto il documento ed attribuirla a tutti i righi del documento
+					   $Natura=$dr->getElementsByTagName("Natura")->item(0)->nodeValue;
+					   if ( substr($Natura,0,2) == 'N6' ) { // dovrò fare il reverse charge sostituisco con il codice iva relativo
+							$naturaN6=$Natura;
+					   }
 					}
 				}
-				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->item(0)) {
-					$new_partner['legrap_pf_nome'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->item(0)->nodeValue;
-					$new_partner['legrap_pf_cognome'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Cognome")->item(0)->nodeValue;
-					$new_partner['descri'] = $new_partner['legrap_pf_cognome']. ' '.$new_partner['legrap_pf_nome'];
-					if (strlen($new_partner['descri'])>50){
-						$new_partner['ragso1'] = $new_partner['legrap_pf_cognome'];
-						$new_partner['ragso2'] = $new_partner['legrap_pf_nome'];
-					} else {
-						$new_partner['ragso1'] = $new_partner['descri'];							
-					}
-				}
-				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0)) {
-					$new_partner['descri'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0)->nodeValue;
-					if (strlen($new_partner['descri'])>50){
-						$new_partner['ragso1'] = substr(str_replace(array("'",'"',"`"),"",$new_partner['descri']),0,50);
-						$new_partner['ragso2'] = substr(str_replace(array("'",'"',"`"),"",$new_partner['descri']),50,100);
-					} else {
-						$new_partner['ragso1'] = str_replace(array("'",'"',"`"),"",$new_partner['descri']);							
-					}
-				}
-				$new_partner['indspe'] = ucwords(strtolower($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0)->nodeValue));
-				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/NumeroCivico")->item(0)){
-					$new_partner['indspe'] .= ', '.$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/NumeroCivico")->item(0)->nodeValue;
-				}
-				$new_partner['capspe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/CAP")->item(0)->nodeValue;
-				$new_partner['citspe'] = strtoupper($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0)->nodeValue);
-				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0)){
-					$new_partner['prospe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0)->nodeValue;
-				}
-				$new_partner['country'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0)->nodeValue;
-				$new_partner['counas'] = $new_partner['country'];
-				$new_partner['id_currency'] =1;
-				$new_partner['id_language'] =1;
-				$new_partner['cosric']=intval($_POST['codric_0']);	 // prendo il primo valore di costo per valorizzare quello del fornitore			
-				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Telefono")->item(0)) {
-					$new_partner['telefo'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Telefono")->item(0)->nodeValue;
-				}
-				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Fax")->item(0)) {
-					$new_partner['fax'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Fax")->item(0)->nodeValue;
-				}
-				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Email")->item(0)) {
-					$new_partner['e_mail'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Email")->item(0)->nodeValue;
-				}
-				if (@$xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/IBAN")->item(0)) {
-					$new_partner['iban'] = $xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/IBAN")->item(0)->nodeValue;
-				}
-				// trovo l'ultimo codice disponibile sul piano dei conti
-				$rs_last_partner = gaz_dbi_dyn_query("*", $gTables['clfoco'], 'codice BETWEEN ' . $admin_aziend['masfor'] . '000001 AND ' . $admin_aziend['masfor'] . '999999', "codice DESC", 0, 1);
-				$last_partner = gaz_dbi_fetch_array($rs_last_partner);
-				if (!$last_partner) {
-					$new_partner['codice']=$admin_aziend['masfor'].'000001';
-				} else {
-					$new_partner['codice'] =$last_partner['codice']+1;
-				}
-				// inserisco il partner
-				$anagrafica->insertPartner($new_partner);
-				$form['clfoco']=$new_partner['codice'];
-			} else if ($anagra_with_same_pi) { // devo inserire il fornitore, ho già l'anagrafica 
-				$anagra_with_same_pi['id_anagra']=$anagra_with_same_pi['id'];
-				$anagra_with_same_pi['cosric']=intval($_POST['codric_0']); // prendo il primo valore di costo per valorizzare quello del fornitore
-                $form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_pi, $admin_aziend['masfor'], $form['pagame']);
-			}
-			$prefisso_codici_articoli_fornitore=encondeFornitorePrefix($form['clfoco']);// mi servirà eventualmente per attribuire ai nuovi articoli un pre-codice univoco e uguale per tutti gli articoli dello stesso fornitore
-			$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
-			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
-			$form['numfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
-			$form['numdoc']=preg_replace ('/\D/', '', $form['numfat'] );
-			$form['datfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
-			$form['datemi']=$form['datfat'];
-			$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
-			$form['datreg']=gaz_format_date($form['datreg'],true);
-			$form['caumag']=$magazz->get_codice_caumag(1,1,$docOperat[$form['tipdoc']]);
-			if (!empty($sconto_totale_incondizionato)) {
-				$form['sconto']=$sconto_totale_incondizionato;
-			}
-			$form['template']="FatturaAcquisto";
-
-            $accexpdoc=[];
-            if ($doc->getElementsByTagName('DettaglioPagamento')->length>=1) { 
-                // se ho le date e gli importi delle scadenze creo un array da inserire sulla tabella gaz_NNNexpdoc al fine di poter aprire le partite in base a quanto riportato in fattura del fornitore e senza calcolarli dalla modalità di pagamento con si faceva sulle versioni <= 7.34
-                $detpag=$doc->getElementsByTagName('DettaglioPagamento');
-                foreach ($detpag as $vdp) { // attraverso
-                    if ($vdp->getElementsByTagName('DataScadenzaPagamento')->length>=1 && $vdp->getElementsByTagName('ImportoPagamento')->length>=1){
-                        $accexpdoc[]=array('ModalitaPagamento'=>$vdp->getElementsByTagName('ModalitaPagamento')->item(0)->nodeValue,'DataScadenzaPagamento'=>$vdp->getElementsByTagName('DataScadenzaPagamento')->item(0)->nodeValue,'ImportoPagamento'=>$vdp->getElementsByTagName('ImportoPagamento')->item(0)->nodeValue);
-                    }
-                    
-                }
-            }            
-			// Antonio Germani - inizio scrittura DB
+				if (!isset($_POST['Submit_form']) && $naturaN6 ) { // al primo accesso se sopra ho trovato che è una natura da reverse charge
+					$stdiva=gaz_dbi_get_row($gTables['aliiva'], 'codice', $admin_aziend['preeminent_vat'])['aliquo']; //la percentuale dell'aliquota standard (potrebbe cambiare negli anni)
+					$rs_reverse = gaz_dbi_dyn_query("codice", $gTables['aliiva'], 'aliquo ='.$stdiva." AND fae_natura ='" .$naturaN6."'", "codice DESC", 0, 1);
+					$cod_reverse = gaz_dbi_fetch_array($rs_reverse)['codice'];
+					// riattraverso i righi e ci metto il nuovo codice IVA
+					foreach($form['rows'] as $kn => $vn) {
+						$kp = $kn-1;
+						$form['codvat_'.$kp]=$cod_reverse;
+					}  
+				}                        
 				
-			if ($doc->getElementsByTagName('DatiDDT')->length<1 OR $anomalia == "AnomaliaDDT=FAT" OR $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA 
-                //oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA 
-                //oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
-				$ultimo_id=tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
-			}
-			if ($anomalia == "AnomaliaDDT=FAT"){ // se è da considerare accompagnatoria azzero la presenza del DdT
-				$v['exist_ddt']="";
-			}
-			$ctrl_ddt='';
-            foreach ($form['rows'] as $i => $v) { // inserisco i righi
-             //print_r($v); print '<br>';
-             $form['rows'][$i]['status']="INSERT";
-				$post_nl=$i-1;
-				
-				if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
-					$form['rows'][$i]['tiprig']=2;
+				$totdiff=abs($ImponibileImporto-$tot_imponi);
+				/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
+				if ($totdiff>=0.01){ // qualora ci sia una differenza di almeno 1 cent la aggiunto (o lo sottraggo al rigo di maggior valore
+					if ($form['rows'][$max_val_linea]['tiprig']==0){ //rigo normale con quantità variabile
+						$form['rows'][$max_val_linea]['prelis']+= ($ImponibileImporto-$tot_imponi)/$form['rows'][$max_val_linea]['quanti'];
+					} else {
+						$form['rows'][$max_val_linea]['prelis']+= $ImponibileImporto-$tot_imponi;
+					}
+					$form['rows'][$max_val_linea]['amount'] += $ImponibileImporto-$tot_imponi;
 				}
-                if ($form['tipdoc']=="AFC" && $v['prelis'] <= 0.00001 ) { // capita a volte che dei software malfatti sulle note credito indichino i valori in negativo... allora li forziamo a positivo
-                    $form['rows'][$i]['prelis']=abs($v['prelis']);
-                    $form['rows'][$i]['quanti']=abs($v['quanti']);
-                }
-				// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
-				if (empty(trim($v['codice_fornitore']))) { // non ho il codice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
-					$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);						
-				} else { // ho il codice articolo del fornitore sul tracciato ma potrei averlo cambiato
-					$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
-				}				
-								
-				if (isset($v['exist_ddt']) AND $anomalia!="AnomaliaExistDdt" AND $anomalia != "AnomaliaDDT=FAT" AND $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC	
-					if ($ctrl_ddt!=$v['NumeroDDT']) { 
-						// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
-						$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
-					
-						if ($exist_artico_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag
-							$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
-							
-							gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_artico_tesdoc['id_tes']);
-							while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
-								  gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
-								  gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+			}
+			// ricavo l'allegato, e se presente metterò un bottone per permettere il download
+			$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
+			if ($nf) {
+				$name_file = $nf->textContent;
+				$att = $doc->getElementsByTagName('Attachment')->item(0);
+				$base64 = $att->textContent;
+				$bin = base64_decode($base64);
+				file_put_contents( DATA_DIR . 'files/tmp/' . $name_file, $bin);
+			}
+			if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+				$form['datreg'] = substr($_POST['datreg'],0,10);
+				$form['pagame'] = intval($_POST['pagame']);
+				$form['new_acconcile'] = intval($_POST['new_acconcile']);
+				$form['seziva'] = intval($_POST['seziva']);
+			}
+
+			if (isset($_POST['Submit_form']) && count($msg['err'])==0) { // confermo le scelte sul form, inserisco i dati sul db ma solo se non ho errori
+				if (!$anagra_with_same_pi && !$partner_with_same_pi) { // non ho nulla: devo inserire tutto (anagrafica e fornitore) basandomi sul pagamento e sui conti di costo scelti dall'utente
+					$new_partner = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields('anagra'));
+					$new_partner['codpag'] = $form['pagame'];
+					$new_partner['sexper'] = 'G';
+					// setto le colonne in base ai dati di questa fattura elettronica
+					$new_partner['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)) {
+						$new_partner['codfis'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue;
+						// ho un codice fiscale posso vedere se è una persona fisica e di quale sesso
+						preg_match('/^[a-z]{6}[0-9]{2}[a-z]([0-9]{2})[a-z][0-9]{3}[a-z]$/i',trim($new_partner['codfis']),$match);
+						if (count($match)>1){
+							if ($match[1] > 40 ){  // è un codice fiscale femminile
+								$new_partner['sexper'] = 'F';
+							} else {
+								$new_partner['sexper'] = 'M';
 							}
+						} else { // giuridica
+							$new_partner['sexper'] = 'G';
 						}
-						// creo un nuovo tesdoc AFT
-						if ($exist_artico_tesdoc['tipdoc']=="RDL"){
-							$ddt_type="L";
+					}
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->item(0)) {
+						$new_partner['legrap_pf_nome'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->item(0)->nodeValue;
+						$new_partner['legrap_pf_cognome'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Cognome")->item(0)->nodeValue;
+						$new_partner['descri'] = $new_partner['legrap_pf_cognome']. ' '.$new_partner['legrap_pf_nome'];
+						if (strlen($new_partner['descri'])>50){
+							$new_partner['ragso1'] = $new_partner['legrap_pf_cognome'];
+							$new_partner['ragso2'] = $new_partner['legrap_pf_nome'];
 						} else {
-							$ddt_type="T";
+							$new_partner['ragso1'] = $new_partner['descri'];							
 						}
-						$form['tipdoc']="AFT";$form['ddt_type']=$ddt_type;$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
-						if ($anomalia=="Anomalia"){
-							$form['status']="DdtAnomalo";
+					}
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0)) {
+						$new_partner['descri'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0)->nodeValue;
+						if (strlen($new_partner['descri'])>50){
+							$new_partner['ragso1'] = substr(str_replace(array("'",'"',"`"),"",$new_partner['descri']),0,50);
+							$new_partner['ragso2'] = substr(str_replace(array("'",'"',"`"),"",$new_partner['descri']),50,100);
+						} else {
+							$new_partner['ragso1'] = str_replace(array("'",'"',"`"),"",$new_partner['descri']);							
 						}
-						$ultimo_id =tesdocInsert($form); // Antonio Germani - creo fattura differita
 					}
-					$ctrl_ddt=$v['NumeroDDT'];
-				}
-                $form['rows'][$i]['id_tes'] = $ultimo_id;
-                
-                // per A.GERMANI: se decommento rigo 1007 acquisisce quella fattura anomala (ddt + fattura immediata...  GRRR... ) ma duplica i righi del ddt inserito manualmente
-                // secondo me le segnalazioni di anomalie si devono spostare più in basso (a livello rigo), in particolare si dovrebbe fare qualcosa sopra (righi 621-675) 
-                // dove vengono fatti i controlli in presenza di elementi DDT  
-                
-                //$form['rows'][$i]['id_tes'] = ( $form['rows'][$i]['exist_ddt']['id_tes'] >= 1 && $ultimo_id == 0 ) ? $form['rows'][$i]['exist_ddt']['id_tes'] : $ultimo_id;
-                
-				// i righi postati hanno un indice diverso
-				$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
-				$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
-				$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
-				$aliiva=$form['rows'][$i]['codvat'];
-				$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
-				if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form 
-                    if( $exist_new_codart['codice'] != $form['rows'][$i]['codart'] ){ // ho scelto un codice diverso 
-                        $other_artico=gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
-                        $form['rows'][$i]['good_or_service']=$other_artico['good_or_service'];
-                        //aggiorno l'articolo con questo codice fornitore 
-                        gaz_dbi_put_row($gTables['artico'], 'codice', $other_artico['codice'], 'codice_fornitore', $v['codice_fornitore']);
-                    } else {
-                        $form['rows'][$i]['codart']=$exist_new_codart['codice'];
-                        $form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
-                    }
-				} else { // il codice nuovo ricavato non esiste creo l'articolo basandomi sui dati in fattura
-                    if ($exist_new_codart) { // il fornitore ha la pessima abitudine di usare lo stesso codice articolo per diversi articoli me lo invento con un hash a 8 caratteri della descrizione nella speranza che almeno questa sia cambiata...
-                        $new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri'].$form['datreg'].$form['protoc']);						
-                    }
-					$v['catmer'] = 1; // di default utilizzo la prima categoria merceologica, sarebbe da farla selezionare all'operatore...
-					$form['rows'][$i]['good_or_service']=0;
-					switch ($v['codart']) {
-						case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
-						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
-						gaz_dbi_table_insert('artico', $artico);
-						$form['rows'][$i]['codart'] = $new_codart;
-						break;
-						case 'Insert_W-lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
-						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
-						gaz_dbi_table_insert('artico', $artico);
-						$form['rows'][$i]['codart'] = $new_codart;
-						break;
-						case 'Insert_W-matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
-						$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
-						gaz_dbi_table_insert('artico', $artico);
-						$form['rows'][$i]['codart'] = $new_codart;
-						break;
-						default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
+					$new_partner['indspe'] = ucwords(strtolower($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0)->nodeValue));
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/NumeroCivico")->item(0)){
+						$new_partner['indspe'] .= ', '.$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/NumeroCivico")->item(0)->nodeValue;
 					}
-				}
-				// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'articolo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
-				if (strlen($form['rows'][$i]['codart'])>2&&$form['rows'][$i]['tiprig']==0) {
-					tableUpdate('artico',array('clfoco','preacq'),$form['rows'][$i]['codart'],array('preacq'=>CalcolaImportoRigo(1,$form['rows'][$i]['prelis'],array($form['rows'][$i]['sconto'])),'clfoco'=>$form['clfoco']));
-				}
-				
-				// inserisco il rigo rigdoc
-				$id_rif=rigdocInsert($form['rows'][$i]);	
-								
-				if ($form['rows'][$i]['good_or_service']==0 AND strlen($form['rows'][$i]['codart'])>0 AND $form['tipdoc']!=="AFC"){ // se l'articolo prevede di movimentare il magazzino e non è una nota credito
-					// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
-					if ($v['NumeroDDT']>0){ // se c'è un ddt
-						$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
-						"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
-						"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
-						"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
-					} else { // se non c'è DDT
-						$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
-						"desdoc"=>"Fattura di acquisto n.".$form['numfat']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
-						"datdoc"=>$form['datfat'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
-						"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
+					$new_partner['capspe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/CAP")->item(0)->nodeValue;
+					$new_partner['citspe'] = strtoupper($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0)->nodeValue);
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0)){
+						$new_partner['prospe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0)->nodeValue;
 					}
-				
-					$id_mag=movmagInsert($rowmag);
-					
-					// aggiorno idmag nel rigdoc 
-					gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_mag . " WHERE `id_rig` = $id_rif ");
-				}				
-				
-			}
-            // se l'array delle scadenze ha dati li inserisco nell'apposita tabella facendo riferimento sempre all'ultimi id_tes inserito
-            foreach ($accexpdoc as $ved) { // attraverso
-                $ved['id_tes']=$ultimo_id;    
-                expdocInsert($ved);
-            }                
+					$new_partner['country'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0)->nodeValue;
+					$new_partner['counas'] = $new_partner['country'];
+					$new_partner['id_currency'] =1;
+					$new_partner['id_language'] =1;
+					$new_partner['cosric']=intval($_POST['codric_0']);	 // prendo il primo valore di costo per valorizzare quello del fornitore			
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Telefono")->item(0)) {
+						$new_partner['telefo'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Telefono")->item(0)->nodeValue;
+					}
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Fax")->item(0)) {
+						$new_partner['fax'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Fax")->item(0)->nodeValue;
+					}
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Email")->item(0)) {
+						$new_partner['e_mail'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Email")->item(0)->nodeValue;
+					}
+					if (@$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/IBAN")->item(0)) {
+						$new_partner['iban'] = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/IBAN")->item(0)->nodeValue;
+					}
+					// trovo l'ultimo codice disponibile sul piano dei conti
+					$rs_last_partner = gaz_dbi_dyn_query("*", $gTables['clfoco'], 'codice BETWEEN ' . $admin_aziend['masfor'] . '000001 AND ' . $admin_aziend['masfor'] . '999999', "codice DESC", 0, 1);
+					$last_partner = gaz_dbi_fetch_array($rs_last_partner);
+					if (!$last_partner) {
+						$new_partner['codice']=$admin_aziend['masfor'].'000001';
+					} else {
+						$new_partner['codice'] =$last_partner['codice']+1;
+					}
+					// inserisco il partner
+					$anagrafica->insertPartner($new_partner);
+					$form['clfoco']=$new_partner['codice'];
+				} else if ($anagra_with_same_pi) { // devo inserire il fornitore, ho già l'anagrafica 
+					$anagra_with_same_pi['id_anagra']=$anagra_with_same_pi['id'];
+					$anagra_with_same_pi['cosric']=intval($_POST['codric_0']); // prendo il primo valore di costo per valorizzare quello del fornitore
+					$form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_pi, $admin_aziend['masfor'], $form['pagame']);
+				}
+				$prefisso_codici_articoli_fornitore=encondeFornitorePrefix($form['clfoco']);// mi servirà eventualmente per attribuire ai nuovi articoli un pre-codice univoco e uguale per tutti gli articoli dello stesso fornitore
+				$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
+				$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
+				$form['numfat']= $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
+				$form['numdoc']=preg_replace ('/\D/', '', $form['numfat'] );
+				$form['datfat']= $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+				$form['datemi']=$form['datfat'];
+				$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
+				$form['datreg']=gaz_format_date($form['datreg'],true);
+				$form['caumag']=$magazz->get_codice_caumag(1,1,$docOperat[$form['tipdoc']]);
+				if (!empty($sconto_totale_incondizionato)) {
+					$form['sconto']=$sconto_totale_incondizionato;
+				}
+				$form['template']="FatturaAcquisto";
 
-			if ($anomalia=="AnomaliaExistDdt" AND isset($form['clfoco'])){ // se c'è una anomalia, cioè la FAE ha ddt senza i riferimenti ai prodotti, ma i ddt sono già presenti in GAzie
-				$ddt=$doc->getElementsByTagName('DatiDDT');
-				foreach ($ddt as $vd) { // Ciclo nuovamente i DDt della FAE
+				$accexpdoc=[];
+				if ($doc->getElementsByTagName('DettaglioPagamento')->length>=1) { 
+					// se ho le date e gli importi delle scadenze creo un array da inserire sulla tabella gaz_NNNexpdoc al fine di poter aprire le partite in base a quanto riportato in fattura del fornitore e senza calcolarli dalla modalità di pagamento con si faceva sulle versioni <= 7.34
+					$detpag=$doc->getElementsByTagName('DettaglioPagamento');
+					foreach ($detpag as $vdp) { // attraverso
+						if ($vdp->getElementsByTagName('DataScadenzaPagamento')->length>=1 && $vdp->getElementsByTagName('ImportoPagamento')->length>=1){
+							$accexpdoc[]=array('ModalitaPagamento'=>$vdp->getElementsByTagName('ModalitaPagamento')->item(0)->nodeValue,'DataScadenzaPagamento'=>$vdp->getElementsByTagName('DataScadenzaPagamento')->item(0)->nodeValue,'ImportoPagamento'=>$vdp->getElementsByTagName('ImportoPagamento')->item(0)->nodeValue);
+						}
+						
+					}
+				}            
+				// Antonio Germani - inizio scrittura DB
 					
-					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
-					$numddt=preg_replace ('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
-					$exist=existDdT($numddt,$dataddt,$form['clfoco']);// controllo se esiste il tesdoc
-					if ($exist){ // se esiste, modifico il tesdoc per trasformarlo in ddt connesso a fae
-						$updt=array();
-						if ($exist['tipdoc']=="RDL"){
-							$ddt_type="L";
+				if ($doc->getElementsByTagName('DatiDDT')->length<1 OR $anomalia == "AnomaliaDDT=FAT" OR $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA 
+					//oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA 
+					//oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
+					$ultimo_id=tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
+				}
+				if ($anomalia == "AnomaliaDDT=FAT"){ // se è da considerare accompagnatoria azzero la presenza del DdT
+					$v['exist_ddt']="";
+				}
+				$ctrl_ddt='';
+				foreach ($form['rows'] as $i => $v) { // inserisco i righi
+				 //print_r($v); print '<br>';
+				 $form['rows'][$i]['status']="INSERT";
+					$post_nl=$i-1;
+					
+					if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
+						$form['rows'][$i]['tiprig']=2;
+					}
+					if ($form['tipdoc']=="AFC" && $v['prelis'] <= 0.00001 ) { // capita a volte che dei software malfatti sulle note credito indichino i valori in negativo... allora li forziamo a positivo
+						$form['rows'][$i]['prelis']=abs($v['prelis']);
+						$form['rows'][$i]['quanti']=abs($v['quanti']);
+					}
+					// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
+					if (empty(trim($v['codice_fornitore']))) { // non ho il codice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
+						$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri']);						
+					} else { // ho il codice articolo del fornitore sul tracciato ma potrei averlo cambiato
+						$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
+					}				
+									
+					if (isset($v['exist_ddt']) AND $anomalia!="AnomaliaExistDdt" AND $anomalia != "AnomaliaDDT=FAT" AND $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC	
+						if ($ctrl_ddt!=$v['NumeroDDT']) { 
+							// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
+							$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
+						
+							if ($exist_artico_tesdoc){// se esiste cancello tesdoc e ne cancello tutti i rigdoc e i relativi movmag
+								$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '{$exist_artico_tesdoc['id_tes']}'","id_tes desc");
+								
+								gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $exist_artico_tesdoc['id_tes']);
+								while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+									  gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
+									  gaz_dbi_del_row($gTables['movmag'], "id_mov", $a_row['id_mag']);
+								}
+							}
+							// creo un nuovo tesdoc AFT
+							if ($exist_artico_tesdoc['tipdoc']=="RDL"){
+								$ddt_type="L";
+							} else {
+								$ddt_type="T";
+							}
+							$form['tipdoc']="AFT";$form['ddt_type']=$ddt_type;$form['numdoc']=$v['NumeroDDT'];$form['datemi']=$v['DataDDT'];
+							if ($anomalia=="Anomalia"){
+								$form['status']="DdtAnomalo";
+							}
+							$ultimo_id =tesdocInsert($form); // Antonio Germani - creo fattura differita
+						}
+						$ctrl_ddt=$v['NumeroDDT'];
+					}
+					$form['rows'][$i]['id_tes'] = $ultimo_id;
+					
+					// per A.GERMANI: se decommento rigo 1007 acquisisce quella fattura anomala (ddt + fattura immediata...  GRRR... ) ma duplica i righi del ddt inserito manualmente
+					// secondo me le segnalazioni di anomalie si devono spostare più in basso (a livello rigo), in particolare si dovrebbe fare qualcosa sopra (righi 621-675) 
+					// dove vengono fatti i controlli in presenza di elementi DDT  
+					
+					//$form['rows'][$i]['id_tes'] = ( $form['rows'][$i]['exist_ddt']['id_tes'] >= 1 && $ultimo_id == 0 ) ? $form['rows'][$i]['exist_ddt']['id_tes'] : $ultimo_id;
+					
+					// i righi postati hanno un indice diverso
+					$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
+					$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
+					$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
+					$aliiva=$form['rows'][$i]['codvat'];
+					$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
+					if ($exist_new_codart && substr($v['codart'],0,6)!='Insert') { // il codice esiste lo uso, ma prima controllo se l'ho volutamente cambiato sul form 
+						if( $exist_new_codart['codice'] != $form['rows'][$i]['codart'] ){ // ho scelto un codice diverso 
+							$other_artico=gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$i]['codart']);
+							$form['rows'][$i]['good_or_service']=$other_artico['good_or_service'];
+							//aggiorno l'articolo con questo codice fornitore 
+							gaz_dbi_put_row($gTables['artico'], 'codice', $other_artico['codice'], 'codice_fornitore', $v['codice_fornitore']);
 						} else {
-							$ddt_type="T";
+							$form['rows'][$i]['codart']=$exist_new_codart['codice'];
+							$form['rows'][$i]['good_or_service']=$exist_new_codart['good_or_service'];
 						}
-						if ($exist['protoc']==0){ // se non ha già un protocollo ne ricavo il primo disponibile
-							$updt['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
+					} else { // il codice nuovo ricavato non esiste creo l'articolo basandomi sui dati in fattura
+						if ($exist_new_codart) { // il fornitore ha la pessima abitudine di usare lo stesso codice articolo per diversi articoli me lo invento con un hash a 8 caratteri della descrizione nella speranza che almeno questa sia cambiata...
+							$new_codart=$prefisso_codici_articoli_fornitore.'_'.crc32($v['descri'].$form['datreg'].$form['protoc']);						
 						}
-						$updt['tipdoc']="AFT";$updt['ddt_type']=$ddt_type;$updt['numfat']=$form['numfat'];$updt['datfat']=$form['datfat'];
-						$updt['fattura_elettronica_zip_package']=$form['fattura_elettronica_zip_package'];
-						$updt['fattura_elettronica_original_name']=$form['fattura_elettronica_original_name'];
-						$updt['fattura_elettronica_original_content']=$form['fattura_elettronica_original_content'];
-						tesdocUpdate(array('id_tes', $exist['id_tes']), $updt);					
+						$v['catmer'] = 1; // di default utilizzo la prima categoria merceologica, sarebbe da farla selezionare all'operatore...
+						$form['rows'][$i]['good_or_service']=0;
+						switch ($v['codart']) {
+							case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
+							$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
+							gaz_dbi_table_insert('artico', $artico);
+							$form['rows'][$i]['codart'] = $new_codart;
+							break;
+							case 'Insert_W-lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
+							$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
+							gaz_dbi_table_insert('artico', $artico);
+							$form['rows'][$i]['codart'] = $new_codart;
+							break;
+							case 'Insert_W-matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
+							$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
+							gaz_dbi_table_insert('artico', $artico);
+							$form['rows'][$i]['codart'] = $new_codart;
+							break;
+							default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
+						}
+					}
+					// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'articolo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
+					if (strlen($form['rows'][$i]['codart'])>2&&$form['rows'][$i]['tiprig']==0) {
+						tableUpdate('artico',array('clfoco','preacq'),$form['rows'][$i]['codart'],array('preacq'=>CalcolaImportoRigo(1,$form['rows'][$i]['prelis'],array($form['rows'][$i]['sconto'])),'clfoco'=>$form['clfoco']));
+					}
+					
+					// inserisco il rigo rigdoc
+					$id_rif=rigdocInsert($form['rows'][$i]);	
+									
+					if ($form['rows'][$i]['good_or_service']==0 AND strlen($form['rows'][$i]['codart'])>0 AND $form['tipdoc']!=="AFC"){ // se l'articolo prevede di movimentare il magazzino e non è una nota credito
+						// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
+						if ($v['NumeroDDT']>0){ // se c'è un ddt
+							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
+							"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
+							"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
+							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
+						} else { // se non c'è DDT
+							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
+							"desdoc"=>"Fattura di acquisto n.".$form['numfat']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
+							"datdoc"=>$form['datfat'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
+							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
+						}
+					
+						$id_mag=movmagInsert($rowmag);
+						
+						// aggiorno idmag nel rigdoc 
+						gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . $id_mag . " WHERE `id_rig` = $id_rif ");
+					}				
+					
+				}
+				// se l'array delle scadenze ha dati li inserisco nell'apposita tabella facendo riferimento sempre all'ultimi id_tes inserito
+				foreach ($accexpdoc as $ved) { // attraverso
+					$ved['id_tes']=$ultimo_id;    
+					expdocInsert($ved);
+				}                
+
+				if ($anomalia=="AnomaliaExistDdt" AND isset($form['clfoco'])){ // se c'è una anomalia, cioè la FAE ha ddt senza i riferimenti ai prodotti, ma i ddt sono già presenti in GAzie
+					$ddt=$doc->getElementsByTagName('DatiDDT');
+					foreach ($ddt as $vd) { // Ciclo nuovamente i DDt della FAE
+						
+						$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
+						$numddt=preg_replace ('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
+						$exist=existDdT($numddt,$dataddt,$form['clfoco']);// controllo se esiste il tesdoc
+						if ($exist){ // se esiste, modifico il tesdoc per trasformarlo in ddt connesso a fae
+							$updt=array();
+							if ($exist['tipdoc']=="RDL"){
+								$ddt_type="L";
+							} else {
+								$ddt_type="T";
+							}
+							if ($exist['protoc']==0){ // se non ha già un protocollo ne ricavo il primo disponibile
+								$updt['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
+							}
+							$updt['tipdoc']="AFT";$updt['ddt_type']=$ddt_type;$updt['numfat']=$form['numfat'];$updt['datfat']=$form['datfat'];
+							$updt['fattura_elettronica_zip_package']=$form['fattura_elettronica_zip_package'];
+							$updt['fattura_elettronica_original_name']=$form['fattura_elettronica_original_name'];
+							$updt['fattura_elettronica_original_content']=$form['fattura_elettronica_original_content'];
+							tesdocUpdate(array('id_tes', $exist['id_tes']), $updt);					
+						}
 					}
 				}
-			}
-            header('Location: report_docacq.php?sezione='.$form['seziva']);
-			exit;
-		} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
-			if (!isset($form['pagame'])) {
-				//$cond_pag = $xpath->query("//FatturaElettronicaBody/DatiPagamento/CondizioniPagamento")->item(0)->nodeValue;
-				//$dat_scad = $xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/DataScadenzaPagamento")->item(0)->nodeValue;
-				//$imp_scad = $xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/ImportoPagamento")->item(0)->nodeValue;
-				$fae_mode = $xpath->query("//FatturaElettronicaBody/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)->nodeValue;
-				$pagame = gaz_dbi_get_row($gTables['pagame'], "fae_mode", $fae_mode);
-				$form['pagame'] = $pagame['codice'];
-				$form['new_acconcile']=0;
+				header('Location: report_docacq.php?sezione='.$form['seziva']);
+				exit;
+			} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
+				if (!isset($form['pagame'])) {
+					//$cond_pag = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/CondizioniPagamento")->item(0)->nodeValue;
+					//$dat_scad = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/DataScadenzaPagamento")->item(0)->nodeValue;
+					//$imp_scad = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/ImportoPagamento")->item(0)->nodeValue;
+					$fae_mode = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)->nodeValue;
+					$pagame = gaz_dbi_get_row($gTables['pagame'], "fae_mode", $fae_mode);
+					$form['pagame'] = $pagame['codice'];
+					$form['new_acconcile']=0;
+				}
 			}
 		}
+	}
 	}
 }
 
@@ -1358,7 +1365,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
 		$xslt = new XSLTProcessor();
 		$xslt->importStylesheet($xslDoc);
-		echo '<center>' . $xslt->transformToXML($doc) . '</center>';
+		echo '<center>' . $xslt->transformToXML($xml) . '</center>';
 	}
 	if (substr($_SESSION['theme'],-3)=='lte'){ 
 		// footer  richiamato alla fine in caso di utilizzo di lte 
