@@ -547,11 +547,39 @@ $strScript = array("admin_fornit.php" =>
         'description' => 'Descrizione del movimento contabile',
         'description_value' => 'DISPOSTO PAGAMENTO RI.BA.',
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
-        'sel_riba' => 'Seleziona RiBa',
-        'sel_other' => 'Seleziona Altri',
-        'sel_all' => 'Seleziona TUTTO!',
+        'sel_riba' => 'RiBa',
+        'sel_payr' => 'Bonifici',
+        'sel_other' => 'Altri',
+        'sel_all' => 'TUTTO!',
         'total' => 'TOTALE €',
         'confirm_entry' => 'Conferma la registrazione dei pagamenti selezionati',
+        'upd_entry'=> 'Modifica il movimento contabile generato da questo documento'
+    ),
+    "bank_payment_request.php" =>
+    array('title' => 'Genera file XML-CBI bonifico massivo e contabilizza',
+        'err' => array(
+            'nopay' => 'Non è stata selezionata alcuna scadenza',
+            'noacc' => 'Non è stato selezionato il conto corrente di addebito',
+            'expif' => 'La data di inizio non può essere successiva a quella di fine scadenza'
+        ),
+        'entry_date' => 'Data di registrazione',
+        'expiry_ini' => 'Data di scadenza iniziale',
+        'expiry_fin' => 'Data di scadenza finale',
+        'orderby' => 'Ordina per: ',
+        'orderby_value' => array(0 => 'Scadenza crescente', 1 => 'Scadenza decrescente',
+            2 => 'Importo crescente', 3 => 'Importo decrescente'
+        ),
+        'target_account' => 'Conto corrente di addebito',
+        'transfer_fees_acc' => 'Conto addebito spese bancarie',
+        'transfer_fees' => 'Eventuali spese bancarie',
+        'description' => 'Descrizione del movimento contabile',
+        'description_value' => 'PAGATO CON BONIFICO',
+        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
+        'sel_payr' => 'Bonifici',
+        'sel_other' => 'Altri',
+        'sel_all' => 'TUTTO!',
+        'total' => 'TOTALE €',
+        'confirm_entry' => 'Genera XML-CBI e contabilizza i bonifici',
         'upd_entry'=> 'Modifica il movimento contabile generato da questo documento'
     ),
     "order_delivered.php" =>

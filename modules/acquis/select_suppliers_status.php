@@ -193,6 +193,7 @@ if (isset($_POST['preview'])) {
                         } elseif ($vi['status'] == 3) { // SCADUTA
                             $cl_exp = '';
                             $class_paymov = 'FacetDataTDevidenziaKO';
+                            $lnk = " &nbsp;<a title=\"Paga il fornitore\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=" . $p . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                         } elseif ($vi['status'] == 9) { // PAGAMENTO ANTICIPATO
                             $class_paymov = 'FacetDataTDevidenziaBL';
                             $vi['expiry'] = $vi['cl_exp'];

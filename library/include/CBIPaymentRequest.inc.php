@@ -30,8 +30,6 @@ class CBIPaymentXMLvars {
         $this->azienda = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         $this->bank = gaz_dbi_get_row($gTables['clfoco'].' LEFT JOIN '.$gTables['banapp'].' ON '.$gTables['clfoco'].'.banapp = '.$gTables['banapp'].".codice", $gTables['clfoco'].'.codice',$bank);
         $this->OthrId = (intval($this->azienda['pariva'])>=100)?$this->azienda['pariva']:$this->azienda['codfis'];
-        $this->CtrlSum = 0.00;
-        $this->NbOfTxs = 0;
 		$this->CreDtTm = date('Y-m-d\TH:i:s');
         $this->MsgId = base64_encode($this->CreDtTm);
     }
