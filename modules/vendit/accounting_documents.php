@@ -391,9 +391,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 if ($v['tes']['tipdoc'] == 'VCO') {  // se è uno scontrino cassa anzichè cliente
                     $v['tes']['clfoco'] = $admin_aziend['cassa_'];
                 }
-                rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
+                $paymov_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
                 // memorizzo l'id del rigo cliente  
-                $paymov_id = gaz_dbi_last_id();
                 foreach ($v['acc'] as $acc_k => $acc_v) {
                     if ($acc_v['import'] != 0) {
                         if (isset($acc_v['asset'])) { // qui eseguo tutte le registrazioni relative alla vendita del cespite con relativa rilevazione della eventuale plus/minusvalenza 

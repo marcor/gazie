@@ -30,5 +30,6 @@ Non manca nemmeno in questa occasione l'elenco dettagliato con i loro autori.
 - Messa in evidenza la modalità di manutenzione nella config. (Angelo Romano)
 - Implementata la gestione del reverse charge in acquisizione fatture elettroniche d'acquisto; adesso importando un XML contenente natura esenzione IVA = N6.x la procedura cerca sulle aliquote IVA quella giusta e la attribuisce ai righi. In fase di contabilizzazione verrà generata una registrazione "figlia" sul relativo registro IVA scelto in configurazione azienda. (Antonio de Vincentiis)
 - Corretta attribuzione errato riferimento partita aperta, era in base ad anno_emissione-protocollo anziché anno_registrazione-protocollo. (Antonio de Vincentiis)
+- Corretta la mancata apertura della partita dello scadenziario in chiusura giornaliera registratore telematico e contabilizzazione delle fatture allegate quando queste prevedevano un pagamento procrastinato. (Antonio de Vincentiis)
 
 Antonio de Vincentiis, Montesilvano, 27 gennaio 2020

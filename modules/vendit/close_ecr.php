@@ -24,11 +24,14 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+require("../../library/include/calsca.inc.php");
+
 $msg = array('err' => array(), 'war' => array());
 // se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non può inviare scontrini al RT (ecr) allora creerò un file XML
 $gForm = new venditForm();
 $ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
+
 
 if (!$ecr_user) { // creerò un XML con id_cash '0' oppure invierò all'ecr (RT)
 	$ecr=array('id_cash'=>0,'seziva'=>1,'descri'=>'File XML');
@@ -71,13 +74,16 @@ function getLastNumdoc($year, $seziva, $reg = 4) {
 function getAccountableTickets($id_cash) {
     global $gTables, $admin_aziend;
     $from = $gTables['tesdoc'] . ' AS tesdoc
-         LEFT JOIN ' . $gTables['pagame'] . ' AS pay ON tesdoc.pagame=pay.codice
-         LEFT JOIN ' . $gTables['clfoco'] . ' AS customer ON tesdoc.clfoco=customer.codice
-         LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf ON anagraf.id=customer.id_anagra';
+         LEFT JOIN ' . $gTables['pagame'] . ' AS pay 
+         ON tesdoc.pagame=pay.codice
+         LEFT JOIN ' . $gTables['clfoco'] . ' AS customer 
+         ON tesdoc.clfoco=customer.codice
+         LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf 
+         ON anagraf.id=customer.id_anagra';
     $where = "id_con = 0 AND id_contract = " . intval($id_cash) . " AND tipdoc = 'VCO'"; // uso impropriamente id_contract per contenere il riferimento all'id dell'ecr (RT) se 0 è un XML
     $orderby = "datemi ASC, numdoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
-            pay.tippag,pay.numrat,pay.incaut,pay.id_bank,
+            pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
             customer.codice,
             customer.speban AS addebitospese,
             CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
@@ -208,24 +214,40 @@ if (isset($_POST['submit'])) {
                 'regiva' => 4,
                 'operat' => 1
             );
-            tesmovInsert($newValue);
-            $tes_id = gaz_dbi_last_id();
+            $tes_id = tesmovInsert($newValue);
             gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $v['tes']['id_tes'], 'id_con', $tes_id);
             //inserisco i righi iva nel db
+            $tot = 0.00;
             foreach ($v['vat'] as $k => $vv) {
                 $vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $k);
                 //aggiungo i valori mancanti all'array
                 $vv['tipiva'] = $vat['tipiva'];
                 $vv['codiva'] = $k;
                 $vv['id_tes'] = $tes_id;
+                $tot += round($vv['imponi']+$vv['impost']);
                 rigmoiInsert($vv);
             }
+          
+            // calcolo le rate al fine di inserire le partite aperte  
+            $rate = CalcolaScadenze($tot, substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
+
             //inserisco i righi contabili nel db
             foreach ($v['acc'] as $acc_k => $acc_v) {
                 foreach ($acc_v as $da_k => $da_v) {
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_k, 'codcon' => $acc_k, 'import' => $da_v));
+                    $rigmoc_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_k, 'codcon' => $acc_k, 'import' => $da_v));
+                    if ($admin_aziend['mascli']==substr($acc_k,0,3) && $v['tes']['incaut'] < 100000000 ) {
+                      foreach ($rate['import'] as $k_rate => $v_rate) {
+                        // preparo l'array da inserire sui movimenti delle partite aperte
+                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datemi'], 0, 4) . 4 . $v['tes']['seziva'] . str_pad($n_prot, 9, 0, STR_PAD_LEFT),
+                            'id_rigmoc_doc' => $rigmoc_id,
+                            'amount' => $v_rate,
+                            'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
+                        paymovInsert($paymov_value);
+                      }
+                    }
                 }
             }
+           
         }
     }
 
@@ -276,8 +298,7 @@ if (isset($_POST['submit'])) {
                 'regiva' => 4,
                 'operat' => 1
             );
-           tesmovInsert($newValue);
-            $tes_id = gaz_dbi_last_id();
+            $tes_id = tesmovInsert($newValue);
             tableUpdate('tesdoc', array('id_con'), array('id_contract', $ecr['id_cash'] . "' AND tipdoc = 'VCO' AND datemi = '" . substr($k, 0, 4) . substr($k, 5, 2) . substr($k, 8, 2)), array('id_con' => $tes_id));
             //inserisco i righi iva nel db
             foreach ($cast_vat[$k] as $key => $vv) {

@@ -27,4 +27,5 @@ ALTER TABLE `gaz_XXXsconti_articoli` DROP PRIMARY KEY;
 ALTER TABLE `gaz_XXXsconti_raggruppamenti` DROP PRIMARY KEY;
 ALTER TABLE `gaz_XXXclfoco` ADD COLUMN `cuc_code` VARCHAR(8) NOT NULL AFTER `sia_code`;
 UPDATE `gaz_XXXartico` SET `id_assets`='0' WHERE `id_assets` IS NULL;
+UPDATE `gaz_XXXpagame` SET `tippag`='O' WHERE `fae_mode` = 'MP05';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
