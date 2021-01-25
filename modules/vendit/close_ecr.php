@@ -208,7 +208,7 @@ if (isset($_POST['submit'])) {
                 'seziva' => $v['tes']['seziva'],
                 'id_doc' => $v['tes']['id_tes'],
                 'protoc' => $n_prot,
-                'numdoc' => $v['tes']['numdoc'],
+                'numdoc' => $v['tes']['numfat'],
                 'datdoc' => $v['tes']['datemi'],
                 'clfoco' => $v['tes']['clfoco'],
                 'regiva' => 4,
