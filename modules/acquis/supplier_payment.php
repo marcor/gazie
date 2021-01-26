@@ -25,6 +25,7 @@ $admin_aziend = checkAdmin();
 $msg = '';
 $paymov = new Schedule;
 $anagrafica = new Anagrafica();
+$xmlcbi_button=false;
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
@@ -102,6 +103,19 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['partner'] = intval($_POST['partner']);
     $form['target_account'] = intval($_POST['target_account']);
     $bank_data = gaz_dbi_get_row($gTables['clfoco'], 'codice', $form['target_account']);
+
+	// se ho scelto un conto bancario con IBAN,CUC ed il fornitore ha per pagamento rimessa o bonifico è possibile visualizzare il pulsante per la generazione del file XML-CBI
+    if ($form['target_account'] >= 100000001) {
+		$banapp=gaz_dbi_get_row($gTables['banapp'], 'codice', $bank_data['banapp']);
+		if ($banapp && $banapp['codabi'] >= 1000 && strlen($bank_data['cuc_code']) == 8 && strlen($bank_data['iban']) == 27 ){ // se la banca selezionata ha un codice ABI ed un codice cuc 
+			// infine controllo se il pagamento del cliente è di tipo bonifico "O" 
+			$partner_pagame = gaz_dbi_get_row($gTables['clfoco'].' LEFT JOIN '.$gTables['pagame'].' ON '.$gTables['clfoco'].'.codpag = '.$gTables['pagame'].'.codice', $gTables['clfoco'].'.codice', $form['partner']);
+			if ( $partner_pagame && ($partner_pagame['tippag'] == 'O' || $partner_pagame['tippag'] == 'D') ) {
+				$xmlcbi_button = true;
+				//print_r($partner_pagame);
+			}
+		}
+	}
     if (!isset($_POST['ins'])) {
         if ($bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancario prevede un addebito per bonifici allora lo propongo
             $form['transfer_fees_acc'] = $bank_data['cosric'];
@@ -128,8 +142,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     if (isset($_POST['ins']) && $form['target_account'] < 100000001) {
         $msg = '5+';
     }
+	
+
     // fine controlli
-    if (isset($_POST['ins']) && $msg == '') {
+    if ((isset($_POST['ins']) || isset($_POST['insXml'])) && $msg == '') {
         /** inizio modifica FP 09/01/2016
          * descrizione modificabile
          */
@@ -166,7 +182,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 paymovInsert(array('id_tesdoc_ref' => $k, 'id_rigmoc_pay' => $rig_id, 'amount' => $acc, 'expiry' => $date));
             }
         }
-        header("Location: report_schedule_acq.php");
+		$xml=(isset($_POST['insXml']))?'&xml':'';
+		header("Location: report_schedule_acq.php?id_rig=".$rig_id.$xml);
         exit;
     }
 }
@@ -383,15 +400,14 @@ if ($form['partner'] > 100000000) { // partner selezionato
     }
     echo "<tr>";
     echo "<td colspan='3'>" . $script_transl['paymovbal'] . '<input type="text" value="' . number_format($paymov_bal, 2, '.', '') . '" id="total" /></td>';
-    /** inizio modifica FP 06/01/2016
-     * aggiunti campi per selezione documento da proporre per il pagamento
-     */
-//rimosso  if ($paymov_bal < $acc_bal) {
     if ($paymov_bal < $acc_bal && !$isDocumentoSelezionato) {   // se sto guardando solo un documento specifico non controllo lo sbilancio
         /** fine modifica FP */
         echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
     }
-    echo '<td class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl['insert']) . '!"></td>';
+    echo '<td align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl['insert']) . '"></td>';
+	if ( $xmlcbi_button ) {
+    echo '<td align="center"><input name="insXml" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="Inserisci e genera file bonifico"></td>';
+	}
     echo "<tr>";
     echo "</table></form>";
 }

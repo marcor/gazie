@@ -6,7 +6,7 @@ Come consuetudine rilascio la versione in occasione del compleanno di GAzie, è 
 Per raggiungere il nuovo risultato ho lavorato intensamente su più fronti, e come potete vedere sotto sono stato spesso coadiuvato dagli amici citati in appresso. 
 
 Tre sono le nuove funzionalità che voglio mettere in evidenza:
-1) Gestione dei registratori telematici.
+1) Gestione dei registratori telematici con reparti, tender e futuro lotteria scontrini
 2) Inventario articoli di magazzino distinto per lotti.
 3) Reverse charge automatico in contabilizzazione fattura d'acquisto.
 
@@ -31,5 +31,6 @@ Non manca nemmeno in questa occasione l'elenco dettagliato con i loro autori.
 - Implementata la gestione del reverse charge in acquisizione fatture elettroniche d'acquisto; adesso importando un XML contenente natura esenzione IVA = N6.x la procedura cerca sulle aliquote IVA quella giusta e la attribuisce ai righi. In fase di contabilizzazione verrà generata una registrazione "figlia" sul relativo registro IVA scelto in configurazione azienda. (Antonio de Vincentiis)
 - Corretta attribuzione errato riferimento partita aperta, era in base ad anno_emissione-protocollo anziché anno_registrazione-protocollo. (Antonio de Vincentiis)
 - Corretta la mancata apertura della partita dello scadenziario in chiusura giornaliera registratore telematico e contabilizzazione delle fatture allegate quando queste prevedevano un pagamento procrastinato. (Antonio de Vincentiis)
-
+- Inizio lavori per acquisizione file XML contenenti lotti fatture (probabilmente completa sulla prossima release 7.40 prevista per febbraio). (Angelo Romano) 
+- Inizio lavori per generazione file XML-CBI per pagamenti con bonifici singoli e/o massivi (probabilmente completa sulla prossima release 7.40 prevista per febbraio). (Antonio de Vincentiis) 
 Antonio de Vincentiis, Montesilvano, 27 gennaio 2020
