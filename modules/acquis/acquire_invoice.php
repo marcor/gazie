@@ -140,7 +140,7 @@ function getLastProtocol($type, $year, $sezione) {
 	/* 	questa funzione trova l'ultimo numero di protocollo 
 	*	controllando sia l'archivio documenti che il registro IVA acquisti 
 	*/
-	global $gTables;                      
+	global $gTables;
     $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = ".$year." AND tipdoc LIKE '" . substr($type, 0, 2) . "_' AND seziva = ".$sezione, "protoc DESC", 0, 1);
     $ultimo_tesdoc = gaz_dbi_fetch_array($rs_ultimo_tesdoc);
     $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = ".$year." AND regiva = 6 AND seziva = ".$sezione, "protoc DESC", 0, 1);
@@ -196,6 +196,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_Y'] = date('Y');
 } else { // accessi successivi  
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
+	$form['curr_doc'] = intval($_POST['curr_doc']);
 	$form['date_ini_D'] = '01';
 	$form['date_ini_M'] = date('m');
 	$form['date_ini_Y'] = date('Y');
@@ -361,12 +362,21 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
  
 	if ($f_ex) { // non ho errori di file,  faccio altri controlli sul contenuto del file
 
-	$nfatt = 0;
+	if (empty($form['curr_doc'])) {
+		$docs = $xml->getElementsByTagName('FatturaElettronicaBody');
+		if (count($docs) == 1) {
+			$form['curr_doc'] = 1;
+		}
+	}
 
-	$docs = $xml->getElementsByTagName('FatturaElettronicaBody');
-	foreach ($docs as $doc) { // attraverso per trovare gli elementi cassa previdenziale 
+	if (!empty($form['curr_doc'])) {
 
-		$nfatt++;
+		$ndoc = 0;
+		$docs = $xml->getElementsByTagName('FatturaElettronicaBody');
+		foreach ($docs as $doc) {
+			$ndoc++;
+			if ($ndoc == $form['curr_doc']) break;
+		}
 
 		// INIZIO CONTROLLI CORRETTEZZA FILE
 		$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
@@ -374,9 +384,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		if (empty($val_err)){
 			/* INIZIO CONTROLLO NUMERO DATA, ovvero se nonostante il nome del file sia diverso il suo contenuto è già stato importato e già c'è uno con lo stesso tipo_documento-numero_documento-anno-fornitore 
 			*/ 
-			$tipdoc=$tipdoc_conv[$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue];
-			$datdoc=$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
-			$numdoc=$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
+			$tipdoc=$tipdoc_conv[$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue];
+			$datdoc=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+			$numdoc=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
 			if ($isFatturaElettronicaSemplificata) {
 				$codiva=$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
 				if ($xpath->query("//FatturaElettronicaHeader/CedentePrestatore/CodiceFiscale")->length>=1){
@@ -586,9 +596,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					   - i costi sulle linee (righe) in base al fornitore
 					   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato 
 					*/
-					$df = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+					/* NON SEMBRA ESSERE UTILIZZATA - DA RIVEDERE*/
+					$df = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 					// trovo l'ultima data di registrazione
-					$lr=getLastProtocol('AF_',substr($df,0,4),1)['last_datreg'];
+					$lr = getLastProtocol('AF_',substr($df,0,4),1)['last_datreg'];/**/
+					if ($lr > $df) {
+						$form['datreg'] = gaz_format_date($lr, false, true);
+					}
 					$form['codric_'.$post_nl] = $form['partner_cost'];
 					if (preg_match('/TRASP/i',strtoupper($form['rows'][$nl]['descri']))) { // se sulla descrizione ho un trasporto lo propongo come costo d'acquisto
 						$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
@@ -597,8 +611,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					// analizzo le possibilità 
 					// controllo se ho uno split payment
 					$yes_split=false;
-					if($xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >=1){
-						$yes_split=$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
+					if($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >=1){
+						$yes_split=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
 					}
 					if ($yes_split=='S'){
 						$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo = " . $form['rows'][$nl]['pervat']." AND tipiva ='T'", "codice ASC", 0, 1);
@@ -642,8 +656,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 								$form['rows'][$nl-1]['exist_ddt']=false;
 								// è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
 								unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
-							}                    
-						}                
+							}
+						}
 						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
 							$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
 							
@@ -745,9 +759,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 
 			/*	Se presenti, trasformo gli sconti/maggiorazioni del campo 2.1.1.8 <ScontoMaggiorazione> in righe forfait */
-			if ($xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione")->length >= 1) {
+			if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione")->length >= 1) {
 				$sconto_totale_incondizionato = array();
-				$sconto_maggiorazione = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione");
+				$sconto_maggiorazione = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/ScontoMaggiorazione");
 				foreach ($sconto_maggiorazione as $sconti) { // potrei avere più elementi 2.2.1.10 <ScontoMaggiorazione>
 					if ($sconti->getElementsByTagName('Percentuale')->length >= 1 && $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001) {
 						$sconto_totale_incondizionato[] = $sconti->getElementsByTagName('Percentuale')->item(0)->nodeValue;
@@ -803,7 +817,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					@$imposta = $item->getElementsByTagName('Imposta')->item(0)->nodeValue;
 				}
 			} else { // non è una fattura semplificata
-				$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiBeniServizi/DatiRiepilogo");
+				$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo");
 				$naturaN6=false;
 				foreach($DatiRiepilogo as $dr){
 					$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
@@ -823,7 +837,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$kp = $kn-1;
 						$form['codvat_'.$kp]=$cod_reverse;
 					}  
-				}                        
+				}
 				
 				$totdiff=abs($ImponibileImporto-$tot_imponi);
 				/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
@@ -846,7 +860,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				file_put_contents( DATA_DIR . 'files/tmp/' . $name_file, $bin);
 			}
 			if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
-				$form['datreg'] = substr($_POST['datreg'],0,10);
+				//$form['datreg'] = substr($_POST['datreg'],0,10);
 				$form['pagame'] = intval($_POST['pagame']);
 				$form['new_acconcile'] = intval($_POST['new_acconcile']);
 				$form['seziva'] = intval($_POST['seziva']);
@@ -916,8 +930,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Email")->item(0)) {
 						$new_partner['e_mail'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Contatti/Email")->item(0)->nodeValue;
 					}
-					if (@$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/IBAN")->item(0)) {
-						$new_partner['iban'] = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/IBAN")->item(0)->nodeValue;
+					if (@$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/IBAN")->item(0)) {
+						$new_partner['iban'] = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/IBAN")->item(0)->nodeValue;
 					}
 					// trovo l'ultimo codice disponibile sul piano dei conti
 					$rs_last_partner = gaz_dbi_dyn_query("*", $gTables['clfoco'], 'codice BETWEEN ' . $admin_aziend['masfor'] . '000001 AND ' . $admin_aziend['masfor'] . '999999', "codice DESC", 0, 1);
@@ -931,36 +945,36 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$anagrafica->insertPartner($new_partner);
 					$form['clfoco']=$new_partner['codice'];
 				} else if ($anagra_with_same_pi) { // devo inserire il fornitore, ho già l'anagrafica 
-					$anagra_with_same_pi['id_anagra']=$anagra_with_same_pi['id'];
-					$anagra_with_same_pi['cosric']=intval($_POST['codric_0']); // prendo il primo valore di costo per valorizzare quello del fornitore
+					$anagra_with_same_pi['id_anagra'] = $anagra_with_same_pi['id'];
+					$anagra_with_same_pi['cosric'] = intval($_POST['codric_0']); // prendo il primo valore di costo per valorizzare quello del fornitore
 					$form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_pi, $admin_aziend['masfor'], $form['pagame']);
 				}
 				$prefisso_codici_articoli_fornitore=encondeFornitorePrefix($form['clfoco']);// mi servirà eventualmente per attribuire ai nuovi articoli un pre-codice univoco e uguale per tutti gli articoli dello stesso fornitore
-				$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
-				$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
-				$form['numfat']= $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
-				$form['numdoc']=preg_replace ('/\D/', '', $form['numfat'] );
-				$form['datfat']= $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
-				$form['datemi']=$form['datfat'];
+				$form['tipdoc'] = $tipdoc_conv[$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue]; 
+				$form['protoc'] = getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
+				$form['numfat'] = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
+				$form['numdoc'] = preg_replace ('/\D/', '', $form['numfat']);
+				$form['datfat'] = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+				$form['datemi'] = $form['datfat'];
 				$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
-				$form['datreg']=gaz_format_date($form['datreg'],true);
-				$form['caumag']=$magazz->get_codice_caumag(1,1,$docOperat[$form['tipdoc']]);
+				$form['datreg'] = gaz_format_date($form['datreg'], true);
+				$form['caumag'] = $magazz->get_codice_caumag(1, 1, $docOperat[$form['tipdoc']]);
 				if (!empty($sconto_totale_incondizionato)) {
-					$form['sconto']=$sconto_totale_incondizionato;
+					$form['sconto'] = $sconto_totale_incondizionato;
 				}
 				$form['template']="FatturaAcquisto";
 
-				$accexpdoc=[];
+				$accexpdoc = array();
 				if ($doc->getElementsByTagName('DettaglioPagamento')->length>=1) { 
 					// se ho le date e gli importi delle scadenze creo un array da inserire sulla tabella gaz_NNNexpdoc al fine di poter aprire le partite in base a quanto riportato in fattura del fornitore e senza calcolarli dalla modalità di pagamento con si faceva sulle versioni <= 7.34
 					$detpag=$doc->getElementsByTagName('DettaglioPagamento');
 					foreach ($detpag as $vdp) { // attraverso
 						if ($vdp->getElementsByTagName('DataScadenzaPagamento')->length>=1 && $vdp->getElementsByTagName('ImportoPagamento')->length>=1){
-							$accexpdoc[]=array('ModalitaPagamento'=>$vdp->getElementsByTagName('ModalitaPagamento')->item(0)->nodeValue,'DataScadenzaPagamento'=>$vdp->getElementsByTagName('DataScadenzaPagamento')->item(0)->nodeValue,'ImportoPagamento'=>$vdp->getElementsByTagName('ImportoPagamento')->item(0)->nodeValue);
+							$accexpdoc[] = array('ModalitaPagamento'=>$vdp->getElementsByTagName('ModalitaPagamento')->item(0)->nodeValue,'DataScadenzaPagamento'=>$vdp->getElementsByTagName('DataScadenzaPagamento')->item(0)->nodeValue,'ImportoPagamento'=>$vdp->getElementsByTagName('ImportoPagamento')->item(0)->nodeValue);
 						}
 						
 					}
-				}            
+				}
 				// Antonio Germani - inizio scrittura DB
 					
 				if ($doc->getElementsByTagName('DatiDDT')->length<1 OR $anomalia == "AnomaliaDDT=FAT" OR $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA 
@@ -1101,7 +1115,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				foreach ($accexpdoc as $ved) { // attraverso
 					$ved['id_tes']=$ultimo_id;    
 					expdocInsert($ved);
-				}                
+				}
 
 				if ($anomalia=="AnomaliaExistDdt" AND isset($form['clfoco'])){ // se c'è una anomalia, cioè la FAE ha ddt senza i riferimenti ai prodotti, ma i ddt sono già presenti in GAzie
 					$ddt=$doc->getElementsByTagName('DatiDDT');
@@ -1132,10 +1146,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				exit;
 			} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
 				if (!isset($form['pagame'])) {
-					//$cond_pag = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/CondizioniPagamento")->item(0)->nodeValue;
-					//$dat_scad = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/DataScadenzaPagamento")->item(0)->nodeValue;
-					//$imp_scad = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/ImportoPagamento")->item(0)->nodeValue;
-					$fae_mode = $xpath->query("//FatturaElettronicaBody[".$nfatt."]/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)->nodeValue;
+					//$cond_pag = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/CondizioniPagamento")->item(0)->nodeValue;
+					//$dat_scad = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/DataScadenzaPagamento")->item(0)->nodeValue;
+					//$imp_scad = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/ImportoPagamento")->item(0)->nodeValue;
+					$fae_mode = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)->nodeValue;
 					$pagame = gaz_dbi_get_row($gTables['pagame'], "fae_mode", $fae_mode);
 					$form['pagame'] = $pagame['codice'];
 					$form['new_acconcile']=0;
@@ -1180,6 +1194,7 @@ function setDate(name) {
 <div align="center" ><b><?php echo $script_transl['title'];?></b></div>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
     <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>">
+    <input type="hidden" name="curr_doc" value="<?php echo $form['curr_doc']; ?>">
 <?php
 	// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
     if (count($msg['err']) > 0) { // ho un errore
@@ -1188,16 +1203,51 @@ function setDate(name) {
     if (count($msg['war']) > 0) { // ho un alert
         $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
     }
+
 if ($toDo=='insert' || $toDo=='update' ) {
 	if ($f_ex){
- ?>    
+	if (empty($form['curr_doc']) && count($docs) > 1) {
+?>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label for="image" class="col-sm-4 control-label">Scegli la fattura da acquisire</label>
+					<div class="col-sm-12">
+						<br />
+
+<?php
+			$ndoc = 0;
+			echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
+			echo '<tr><th>Seleziona</th><th>Tipo Doc.</th><th>Numero</th><th>Data</th></tr>';
+			foreach ($docs as $doc) {
+				$ndoc++;
+				$tipdoc = $xpath->query("//FatturaElettronicaBody[".$ndoc."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue;
+				$datdoc = $xpath->query("//FatturaElettronicaBody[".$ndoc."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+				$numdoc = $xpath->query("//FatturaElettronicaBody[".$ndoc."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
+				echo '<tr>';
+				echo '<td align="center">' . $ndoc . ' <input type="radio" name="curr_doc" value="' . $ndoc . '" /></td>';
+				echo '<td>' . $tipdoc . '</td>';
+				echo '<td>' . gaz_format_date($datdoc, false) . '</td>';
+				echo '<td>' . $numdoc . '</td>';
+				echo '</tr>';
+			}
+			echo '</table><br />';
+			echo '<div class="col-sm-12 text-right"><input name="Select_doc" type="submit" class="btn btn-warning" value="Seleziona documento" />';
+?>
+					</div>
+				</div>
+			</div>
+		</div><!-- chiude row  -->
+<?php
+	} else {
+?>
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['head_text1']. '<span class="label label-success">'.$form['fattura_elettronica_original_name'] .'</span>'.$script_transl['head_text2']; ?>
-            </div>                    
+            </div>
         </div> <!-- chiude row  -->
-    </div>                    
+    </div>
     <div class="panel-body">
         <div class="form-group">
             <div class="form-group col-md-6 col-lg-3 nopadding">
@@ -1207,22 +1257,22 @@ if ($toDo=='insert' || $toDo=='update' ) {
                         $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-lg-12", '', 'style="max-width: 100px;"');
                         ?>
                 </div>
-            </div>                    
+            </div>
             <div class="form-group col-md-6 col-lg-3 nopadding">
                  <label for="datreg" class="col-form-label"><?php echo $script_transl['datreg']; ?></label>
                  <div>
                      <input type="text" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
                  </div>
-            </div>                    
+            </div>
             <div class="form-group col-md-6 col-lg-3 nopadding">
-                 <label for="new_acconcile" class="col-form-label" ><?php echo $script_transl['new_acconcile']; ?></label>
-                 <div>
-                 <?php
-				 // new_acconcile lo riporto sempre a 0 dopo ogni post e solo quando viene cambiato cambieranno tutti i valori dei conti di costo di tutti i righi
-				 $gForm->selectAccount('new_acconcile', 0, array('sub',3),'', false, "col-sm-12 small",'style="max-width: 300px;"', false);
-				?>                
+                <label for="new_acconcile" class="col-form-label" ><?php echo $script_transl['new_acconcile']; ?></label>
+                <div>
+                <?php
+				// new_acconcile lo riporto sempre a 0 dopo ogni post e solo quando viene cambiato cambieranno tutti i valori dei conti di costo di tutti i righi
+				$gForm->selectAccount('new_acconcile', 0, array('sub',3),'', false, "col-sm-12 small",'style="max-width: 300px;"', false);
+				?>
                 </div>
-            </div>                    
+            </div>
             <div class="form-group col-md-6 col-lg-3 nopadding">
                  <label for="pagame" class="col-form-label" ><?php echo $script_transl['pagame']; ?></label>
                  <div>
@@ -1230,12 +1280,12 @@ if ($toDo=='insert' || $toDo=='update' ) {
                         $select_pagame = new selectpagame("pagame");
                         $select_pagame->addSelected($form["pagame"]);
                         $select_pagame->output(false, "col-lg-12");
-                        ?>                
+                        ?>
                 </div>
-            </div>                    
+            </div>
         </div> <!-- chiude row  -->
     </div>
-</div>                    
+</div>
 <?php		
 		$rowshead=array();
 		$ctrl_ddt='';
@@ -1275,8 +1325,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				$form['codric_'.$k]=$new_acconcile;
 			}
             $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
-			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);            
-			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$form['codart_'.$k]);            
+			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
+			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$form['codart_'.$k]);
 			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
 			if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 				$v['codice_fornitore'] = '';
@@ -1352,7 +1402,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		</div>	   
 </form>
 <br>
-<?php			
+<?php
+	}
 	}
 	if (substr($_SESSION['theme'],-2)!='te'){ 
 		/* se non ho "lte" come motore di interfaccia allora richiamo subito il footer
