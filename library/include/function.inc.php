@@ -905,18 +905,18 @@ class selectPartner extends SelectBox {
         }
         if ($val > 100000000) { //vengo da una modifica della precedente select case quindi non serve la ricerca
             $partner = gaz_dbi_get_row($gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', "codice", $val);
-            echo "\t<input type=\"submit\" value=\"=>\" name=\"fantoccio\" disabled>\n";
+            echo "\t<input type=\"submit\" value=\"→ \" name=\"fantoccio\" disabled>\n";
             echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner['ragso1'], 0, 8) . "\">\n";
             echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
         } elseif (preg_match("/^id_([0-9]+)$/", $val, $match)) { // e' stato selezionata la sola anagrafica
             $partner = gaz_dbi_get_row($gTables['anagra'], 'id', $match[1]);
-            echo "\t<input type=\"submit\" value=\"=>\" name=\"fantoccio\" disabled>\n";
+            echo "\t<input type=\"submit\" value=\"→ \" name=\"fantoccio\" disabled>\n";
             echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner['ragso1'], 0, 8) . "\">\n";
             echo "\t<input type=\"submit\" tabindex=\"999\" style=\"background:#FFBBBB\"; value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
         } elseif ($val == $anonimo) { // e' un cliente anonimo
-            echo "\t<input type=\"submit\" value=\"=>\" name=\"fantoccio\" disabled>\n";
+            echo "\t<input type=\"submit\" value=\"→ \" name=\"fantoccio\" disabled>\n";
             echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"\">\n";
             echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $mesg[5] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";

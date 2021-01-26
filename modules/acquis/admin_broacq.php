@@ -968,7 +968,7 @@ $( function() {
 								});
 <?php
 if (empty($msg)) { // se ho un errore non scrollo
-	if (!empty($_POST['last_focus'])||$form['clfoco']<=100000000){
+	if (!empty($_POST['last_focus'])){
 		$idlf="button[name='upper_row[".intval($_POST['last_focus'])."]']";
 		$_POST['last_focus']='';
 	} else {

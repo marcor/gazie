@@ -1394,7 +1394,7 @@ if ($form['id_tes'] > 0) {
 }
 echo '<script type="text/javascript">';
 if (empty($msg)) { // se ho un errore non scrollo
-	if (!empty($_POST['last_focus'])||$form['clfoco']<=100000000){
+	if (!empty($_POST['last_focus'])){
 		$idlf='#'.$_POST['last_focus'];
 		$_POST['last_focus']='';
 	} else {
