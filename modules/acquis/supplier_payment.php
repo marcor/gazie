@@ -110,7 +110,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 		if ($banapp && $banapp['codabi'] >= 1000 && strlen($bank_data['cuc_code']) == 8 && strlen($bank_data['iban']) == 27 ){ // se la banca selezionata ha un codice ABI ed un codice cuc 
 			// infine controllo se il pagamento del cliente è di tipo bonifico "O" 
 			$partner_pagame = gaz_dbi_get_row($gTables['clfoco'].' LEFT JOIN '.$gTables['pagame'].' ON '.$gTables['clfoco'].'.codpag = '.$gTables['pagame'].'.codice', $gTables['clfoco'].'.codice', $form['partner']);
-			if ( $partner_pagame && ($partner_pagame['tippag'] == 'O' || $partner_pagame['tippag'] == 'D') ) {
+			if ( $partner_pagame && ($partner_pagame['tippag'] == 'O' || $partner_pagame['tippag'] == 'D') && strlen($partner_pagame['iban']) == 27 ) {
 				$xmlcbi_button = true;
 				//print_r($partner_pagame);
 			}
@@ -405,9 +405,8 @@ if ($form['partner'] > 100000000) { // partner selezionato
         echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
     }
     echo '<td align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl['insert']) . '"></td>';
-	if ( $xmlcbi_button ) {
-    echo '<td align="center"><input name="insXml" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="Inserisci e genera file bonifico"></td>';
-	}
+	$disxml=($xmlcbi_button )?'':' disabled';
+    echo '<td align="center"><input name="insXml" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="Inserisci e genera file bonifico" '.$disxml.'></td>';
     echo "<tr>";
     echo "</table></form>";
 }

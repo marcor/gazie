@@ -10,12 +10,10 @@
   modificarlo secondo i  termini della Licenza Pubblica Generica GNU
   come e` pubblicata dalla Free Software Foundation; o la versione 2
   della licenza o (a propria scelta) una versione successiva.
-
   Questo programma  e` distribuito nella speranza  che sia utile, ma
   SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
   NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
   veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-
   Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
   Generica GNU insieme a   questo programma; in caso  contrario,  si
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
@@ -61,5 +59,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
 </table></div>
 <?php
+if ( isset($_GET['xml']) && isset($_GET['id_rig']) && $_GET['id_rig'] > 0 ){
+ echo '<script>
+	$( window ).load(function() {
+		window.location.href = "CBIPaymentRequest.php?id_rig='.intval($_GET['id_rig']).'";
+	});
+	</script>';
+}
 require("../../library/include/footer.php");
 ?>

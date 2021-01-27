@@ -77,7 +77,43 @@ function create_XML_CBIPayment($gTables,$bank,$data) {
 	$attrVal = $domDoc->createTextNode(str_pad($XMLvars->bank['codabi'],5,'0',STR_PAD_LEFT));
 	$results->appendChild($attrVal);
 	// creo gli elementi dei singoli bonifici
+	$nbon=1;
 	foreach($data as $v){
+		$PmtInf = $xpath->query("//PmtInf")->item(0);
+        $el = $domDoc->createElement("CdtTrfTxInf", "");
+            $el1 = $domDoc->createElement("PmtId", "");
+				$el2 = $domDoc->createElement("InstrId", $nbon);
+				$el1->appendChild($el2);
+				$el2 = $domDoc->createElement("EndToEndId", $XMLvars->MsgId.$nbon);
+				$el1->appendChild($el2);
+			$el->appendChild($el1);
+            $el1 = $domDoc->createElement("PmtTpInf", "");
+				$el2 = $domDoc->createElement("CtgyPurp", "");
+					$el3 = $domDoc->createElement("Cd", "OTHR");
+					$el2->appendChild($el3);
+				$el1->appendChild($el2);
+			$el->appendChild($el1);
+            $el1 = $domDoc->createElement("Amt", "");
+				$el2 = $domDoc->createElement("InstdAmt", $v['InstdAmt']);
+				$newel2 = $el1->appendChild($el2);
+				$newel2->setAttribute("Ccy", "EUR");
+			$el->appendChild($el1);
+            $el1 = $domDoc->createElement("Cdtr", "");
+				$el2 = $domDoc->createElement("Nm", $v['Nm']);
+				$el1->appendChild($el2);
+			$el->appendChild($el1);
+            $el1 = $domDoc->createElement("CdtrAcct", "");
+				$el2 = $domDoc->createElement("Id", "");
+					$el3 = $domDoc->createElement("IBAN", $v['IBAN']);
+					$el2->appendChild($el3);
+				$el1->appendChild($el2);
+			$el->appendChild($el1);
+            $el1 = $domDoc->createElement("RmtInf", "");
+				$el2 = $domDoc->createElement("Ustrd", $v['Ustrd']);
+				$el1->appendChild($el2);
+			$el->appendChild($el1);
+		$PmtInf->appendChild($el);
+		$nbon++;	
 	}
 	header("Content-type: text/plain");
 	header("Content-Disposition: attachment; filename=provaCBI.xml");

@@ -25,6 +25,15 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/CBIPaymentRequest.inc.php");
-create_XML_CBIPayment($gTables,597000026,array(202161000000001));
-
+if (isset($_GET['id_rig'])){ // ho id_rig del movimento contabile che ha generato la partita
+	// riprendo sia la testata del movimento contabile che le partite contenute nel pagamento
+    $result = gaz_dbi_dyn_query($gTables['tesmov'].'.*, '.$gTables['rigmoc'].'.import, '.$gTables['anagra'].'.ragso1, '.$gTables['anagra'].'.ragso2, '.$gTables['clfoco'].'.iban ', $gTables['paymov'].' LEFT JOIN '.$gTables['rigmoc'].' ON '.$gTables['paymov'].'.id_rigmoc_pay = '.$gTables['rigmoc'].'.id_rig LEFT JOIN '.$gTables['tesmov'].' ON '.$gTables['rigmoc'].'.id_tes = '.$gTables['tesmov'].'.id_tes LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['rigmoc'].'.codcon = '.$gTables['clfoco'].'.codice LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $gTables['paymov'].'.id_rigmoc_pay = '.intval($_GET['id_rig']),'expiry',0,1);
+	$r=gaz_dbi_fetch_array($result);
+	// riprendo la contropartita della partita dove è indicata la banca (darave='A')
+    $result = gaz_dbi_dyn_query($gTables['clfoco'].'.codice', $gTables['tesmov'].' LEFT JOIN '.$gTables['rigmoc'].' ON '.$gTables['tesmov'].'.id_tes = '.$gTables['rigmoc'].'.id_tes LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['rigmoc'].'.codcon = '.$gTables['clfoco'].'.codice LEFT JOIN '.$gTables['banapp'].' ON '.$gTables['clfoco'].'.banapp = '.$gTables['banapp'].'.codice ', $gTables['tesmov'].'.id_tes = '.$r['id_tes'].' AND '.$gTables['rigmoc'].".darave = 'A'" ,$gTables['tesmov'].'.id_tes',0,1);
+	$b=gaz_dbi_fetch_array($result);
+	// adesso creo un array con i dati del beneficiario da passare alla funzione 
+	$d[0]=array('InstdAmt'=>$r['import'],'Nm'=>trim($r['ragso1'].' '.$r['ragso2']),'IBAN'=>$r['iban'],'Ustrd'=>$r['descri']);
+	create_XML_CBIPayment($gTables,$b['codice'],$d);
+}
 ?>
