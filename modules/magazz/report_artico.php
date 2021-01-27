@@ -95,6 +95,20 @@ $(function() {
 		});
 		$("#dialog_delete" ).dialog( "open" );  
 	});
+	$( "#suggest_codice_artico" ).autocomplete({
+		source: "../../modules/root/search.php?opt=suggest_codice_artico",
+		minLength: 3,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#suggest_codice_artico").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
+    
 });
 </script>
 <?php
@@ -117,7 +131,7 @@ $ts->output_navbar();
 	<table class="Tlarge table table-striped table-bordered table-condensed">
 	<tr>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="sea_codice" placeholder="codice" class="input-sm form-control" value="<?php echo (isset($sea_codice))? $sea_codice : ""; ?>" maxlength="15">
+			<input type="text" name="sea_codice" placeholder="codice" id="suggest_codice_artico" class="input-sm form-control" value="<?php echo (isset($sea_codice))? htmlentities($sea_codice, ENT_QUOTES) : ""; ?>" maxlength="15">
 		</td>
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="des_artico" placeholder="descrizione"  id="suggest_descri_artico" class="input-sm form-control" value="<?php echo (isset($des_artico))? htmlentities($des_artico, ENT_QUOTES) : ""; ?>" maxlength="30">

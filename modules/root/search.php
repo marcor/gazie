@@ -174,6 +174,9 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
         case 'suggest_descri_artico':
             $result = gaz_dbi_dyn_query("descri AS id, CONCAT(codice,' - ',descri) AS label, descri AS value, movimentabile", $gTables['artico'], "descri LIKE '%".$term."%'", "codice DESC");
             break;
+        case 'suggest_codice_artico':
+            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri) AS label, codice AS value, movimentabile", $gTables['artico'], "codice LIKE '%".$term."%'", "codice DESC");
+            break;
 		default:
             $fields = array("ragso1", "ragso2");    //	Sono i campi sui quali effettuare la ricerca
             foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
