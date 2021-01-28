@@ -24,37 +24,35 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain();
+$where = " SUBSTR(codcon,1,3) = '".$admin_aziend['masfor']."'";
 echo '<div align="center" class="FacetFormHeaderFont">' . $script_transl['title'] . '</div>';
-$recordnav = new recordnav($gTables['paymov'], $where, $limit, $passo);
+$recordnav = new recordnav($gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig)", $where, $limit, $passo);
 $recordnav->output();
 echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">';
 $linkHeaders = new linkHeaders($script_transl['header']);
 $linkHeaders->setAlign(array('left', 'center', 'center', 'center', 'right', 'center'));
 $linkHeaders->output();
 
-$result = gaz_dbi_dyn_query('*', $gTables['paymov'], 1, 'id DESC');
-while ($a_row = gaz_dbi_fetch_array($result)) {
+$result = gaz_dbi_dyn_query('*', $gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig)" , $where, $orderby, $limit, $passo);
+while ($r = gaz_dbi_fetch_array($result)) {
     // faccio una subquery che sembra più veloce di LEFT JOIN per ricavare l'id_tes
-    $rigmoc = gaz_dbi_get_row($gTables['rigmoc'], 'id_rig = ' . $a_row["id_rigmoc_pay"] . ' OR id_rig', $a_row["id_rigmoc_doc"]);
-    $tesmov = gaz_dbi_get_row($gTables['tesmov'],'id_tes',$rigmoc['id_tes']);
-	if (substr($rigmoc['codcon'],0,3)==$admin_aziend['masfor']){ // stampo solo le partite relative ai fornitori
+    $tesmov = gaz_dbi_get_row($gTables['tesmov'],'id_tes',$r['id_tes']);
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td>" . $a_row["id"] . " &nbsp;</td>";
-    echo "<td>" . $a_row["id_tesdoc_ref"] . "</td>";
-    if ($a_row["id_rigmoc_doc"] > 0) {
-        echo "<td><a class=\"btn btn-xs btn-default btn-warning\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $rigmoc["id_tes"] . "&Update\">" . $rigmoc["id_tes"] . "</a>&nbsp; ".$tesmov["descri"]." &nbsp;</td>";
+    echo "<td>" . $r["id"] . " &nbsp;</td>";
+    echo "<td>" . $r["id_tesdoc_ref"] . "</td>";
+    if ($r["id_rigmoc_doc"] > 0) {
+        echo "<td><a class=\"btn btn-xs btn-default btn-warning\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_tes"] . "&Update\">" . $r["id_tes"] . "</a>&nbsp; ".$tesmov["descri"]." &nbsp;</td>";
     } else {
         echo "<td></td>";
     }
-    if ($a_row["id_rigmoc_pay"] > 0) {
-        echo "<td><a class=\"btn btn-xs btn-default btn-success\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $rigmoc["id_tes"] . "&Update\">" . $rigmoc["id_tes"] . "</a>&nbsp; ".$tesmov["descri"]." &nbsp;</td>";
+    if ($r["id_rigmoc_pay"] > 0) {
+        echo "<td><a class=\"btn btn-xs btn-default btn-success\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_tes"] . "&Update\">" . $r["id_tes"] . "</a>&nbsp; ".$tesmov["descri"]." &nbsp;</td>";
     } else {
         echo "<td></td>";
     }
-    echo "<td align=\"right\">" . $a_row["amount"] . " &nbsp;</td>";
-    echo "<td align=\"center\">" . $a_row["expiry"] . " &nbsp;</td>";
+    echo "<td align=\"right\">" . $r["amount"] . " &nbsp;</td>";
+    echo "<td align=\"center\">" . $r["expiry"] . " &nbsp;</td>";
     echo "</tr>";
-	}
 }
 ?>
 </table></div>
