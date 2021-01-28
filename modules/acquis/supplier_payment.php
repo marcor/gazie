@@ -25,9 +25,9 @@ $admin_aziend = checkAdmin();
 $msg = '';
 $paymov = new Schedule;
 $anagrafica = new Anagrafica();
-$xmlcbi_button=false;
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
+	$xmlcbi_button=array('Non è possibile generare il file XML-CBI: selezionare la banca di addebito');
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['paymov'] = array();
@@ -58,6 +58,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['descr_mov'] = '';
     /** fine modifica FP */
 } else { // accessi successivi
+	$xmlcbi_button=array('Non è possibile generare il file XML-CBI: ');
     $first = false;
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     $form['ritorno'] = $_POST['ritorno'];
@@ -111,11 +112,17 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 			// infine controllo se il pagamento del cliente è di tipo bonifico "O" 
 			$partner_pagame = gaz_dbi_get_row($gTables['clfoco'].' LEFT JOIN '.$gTables['pagame'].' ON '.$gTables['clfoco'].'.codpag = '.$gTables['pagame'].'.codice', $gTables['clfoco'].'.codice', $form['partner']);
 			if ( $partner_pagame && ($partner_pagame['tippag'] == 'O' || $partner_pagame['tippag'] == 'D') && strlen($partner_pagame['iban']) == 27 ) {
-				$xmlcbi_button = true;
-				//print_r($partner_pagame);
+				$xmlcbi_button = [];
+			} else {
+				$xmlcbi_button[] = 'il fornitore ha un tipo pagamento diverso da rimessa o bonifico o non ha IBAN';
 			}
+		} else {
+			$xmlcbi_button[] = 'banca addebito non selezionata o mancante di abi - cuc - iban';
 		}
+	} else {
+		$xmlcbi_button[] = 'fornitore non selezionato';
 	}
+
     if (!isset($_POST['ins'])) {
         if ($bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancario prevede un addebito per bonifici allora lo propongo
             $form['transfer_fees_acc'] = $bank_data['cosric'];
@@ -404,9 +411,17 @@ if ($form['partner'] > 100000000) { // partner selezionato
         /** fine modifica FP */
         echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
     }
-    echo '<td align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl['insert']) . '"></td>';
-	$disxml=($xmlcbi_button )?'':' disabled';
-    echo '<td align="center"><input name="insXml" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="Inserisci e genera file bonifico" '.$disxml.'></td>';
+    echo '<td align="center"><input title="Registra in contabilità" name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl['insert']) . '"></td>';
+	if ( count( $xmlcbi_button ) >= 1 ) { 
+		$disxml=' disabled';
+		$clsxml='btn-danger';
+		$titxml=implode($xmlcbi_button);
+	} else {
+		$disxml='';
+		$clsxml='btn-success';
+		$titxml='Registra in contabilità e crea il file XML-CBI da trasmettere alla banca';
+	}
+    echo '<td align="center" title="'.$titxml.'"><input class="'.$clsxml.'" name="insXml" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="Inserisci e genera file bonifico" '.$disxml.'></td>';
     echo "<tr>";
     echo "</table></form>";
 }
