@@ -24,29 +24,117 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-$where = " SUBSTR(codcon,1,3) = '".$admin_aziend['masfor']."'";
-echo '<div align="center" class="FacetFormHeaderFont">' . $script_transl['title'] . '</div>';
-$recordnav = new recordnav($gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig)", $where, $limit, $passo);
-$recordnav->output();
-echo '<div class="table-responsive"><table class="Tlarge table table-striped table-bordered table-condensed">';
-$linkHeaders = new linkHeaders($script_transl['header']);
-$linkHeaders->setAlign(array('left', 'center', 'center', 'center', 'right', 'center'));
-$linkHeaders->output();
 
-$result = gaz_dbi_dyn_query('*', $gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig)" , $where, $orderby, $limit, $passo);
+$search_fields = [
+    'sea_tesdoc_ref' => "{$gTables['paymov']}.id_tesdoc_ref LIKE '%%%s%%'",
+	'sea_descri' => "{$gTables['tesmov']}.descri LIKE '%%%s%%'",
+    'sea_expiry' => "{$gTables['paymov']}.expiry  LIKE '%%%s%%'",
+    'codmin' => "codcon >= ". $admin_aziend['masfor']."000000 + GREATEST(%d, 1)",
+    'codmax' => "codcon <= ". $admin_aziend['masfor']."000000 + LEAST(%d, 999999)",
+	
+];
+
+// creo l'array (header => campi) per l'ordinamento dei record
+$sortable_headers = array  (
+            "Identificativo partita" => 'id_tesdoc_ref',
+            "Apertura partita (fattura)"=>'id_rigmoc_doc',
+            "Chiusura partita (pagamento)"=>'id_rigmoc_pay',
+            "Importo"=>'',
+            'Scadenzza' => 'exppiry'
+);
+
+$tablejoin = $gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig) LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes";
+
+$ts = new TableSorter(
+    $tablejoin, 
+    $passo, 
+    ['id'=>'desc'],
+    ['codmin' => 1, 'codmax' => 999999]
+	);
+?>
+<script>
+$(function() {
+	$( "#suggest_tesdoc_ref" ).autocomplete({
+		source: "./search.php?opt=suggest_tesdoc_ref",
+		minLength: 4,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#suggest_tesdoc_ref").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
+	$( "#suggest_sea_descri" ).autocomplete({
+		source: "./search.php?opt=suggest_sea_descri",
+		minLength: 4,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#suggest_sea_descri").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
+	$( "#suggest_sea_expiry" ).autocomplete({
+		source: "./search.php?opt=suggest_sea_expiry",
+		minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#suggest_sea_expiry").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
+});
+</script>
+
+<div class="text-center"><h3><?php echo $script_transl['title'];?></h3></div>
+<?php
+$ts->output_navbar();
+?>
+<form method="GET">
+	<div class="table-responsive">
+	<table class="Tlarge table table-striped table-bordered table-condensed">
+	<tr>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="sea_tesdoc_ref" placeholder="riferimento partita" id="suggest_tesdoc_ref" class="input-sm form-control" value="<?php echo (isset($sea_tesdoc_ref))? htmlentities($sea_tesdoc_ref, ENT_QUOTES) : ""; ?>" maxlength="15">
+		</td>
+		<td class="FacetFieldCaptionTD" colspan="2">
+			<input type="text" name="sea_descri" placeholder="descrizione" id="suggest_sea_descri" class="input-sm form-control" value="<?php echo (isset($sea_descri))? $sea_descri : ""; ?>" maxlength="15">
+        </td>
+		<td class="FacetFieldCaptionTD text-center">
+			<a class="btn btn-sm btn-default" href="?">Reset</a>
+			<?php  $ts->output_order_form(); ?>
+        </td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="sea_expiry" placeholder="scadenza" id="suggest_sea_expiry" class="input-sm form-control" value="<?php echo (isset($sea_expiry))? htmlentities($sea_expiry, ENT_QUOTES) : ""; ?>" maxlength="15">
+        </td>
+	</tr>
+
+<?php
+$result = gaz_dbi_dyn_query('*', $tablejoin , $ts->where, $ts->orderby,  $ts->getOffset(), $ts->getLimit());
+echo '<tr>';
+$ts->output_headers();
+echo '</tr>';
 while ($r = gaz_dbi_fetch_array($result)) {
     // faccio una subquery che sembra più veloce di LEFT JOIN per ricavare l'id_tes
-    $tesmov = gaz_dbi_get_row($gTables['tesmov'],'id_tes',$r['id_tes']);
-    echo "<tr class=\"FacetDataTD\">";
-    echo "<td>" . $r["id"] . " &nbsp;</td>";
+    echo "<tr>";
     echo "<td>" . $r["id_tesdoc_ref"] . "</td>";
     if ($r["id_rigmoc_doc"] > 0) {
-        echo "<td><a class=\"btn btn-xs btn-default btn-warning\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_tes"] . "&Update\">" . $r["id_tes"] . "</a>&nbsp; ".$tesmov["descri"]." &nbsp;</td>";
+        echo "<td><a class=\"btn btn-xs btn-default btn-warning\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_tes"] . "&Update\">" . $r["id_tes"] . "</a>&nbsp; ".$r["descri"]." &nbsp;</td>";
     } else {
         echo "<td></td>";
     }
     if ($r["id_rigmoc_pay"] > 0) {
-        echo "<td><a class=\"btn btn-xs btn-default btn-success\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_tes"] . "&Update\">" . $r["id_tes"] . "</a>&nbsp; ".$tesmov["descri"]." &nbsp;</td>";
+        echo "<td><a class=\"btn btn-xs btn-default btn-success\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_tes"] . "&Update\">" . $r["id_tes"] . "</a>&nbsp; ".$r["descri"]." &nbsp;</td>";
     } else {
         echo "<td></td>";
     }

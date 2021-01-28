@@ -382,7 +382,7 @@ $strScript = array("admin_fornit.php" =>
         'tot' => 'Totale'
     ),
     "report_schedule_acq.php" =>
-    array('title' => 'Lista dei movimenti delle partite',
+    array('title' => 'Movimenti dello scadenzario fornitori',
         'header' => array('ID' => 'id',
             'Identificativo partita' => "id_tesdoc_ref",
             'Movimento contabile apertura (documento)' => "id_rigmoc_doc",
