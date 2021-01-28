@@ -25,27 +25,37 @@
  */
 
 class CBIPaymentXMLvars {
-    function setPaymentsVars($gTables,$bank) {
+    function setPaymentsVars($gTables,$head) {
 		// qui setto tutti i valori per l'intestazione 
         $this->azienda = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
-        $this->bank = gaz_dbi_get_row($gTables['clfoco'].' LEFT JOIN '.$gTables['banapp'].' ON '.$gTables['clfoco'].'.banapp = '.$gTables['banapp'].".codice", $gTables['clfoco'].'.codice',$bank);
+        $this->bank = gaz_dbi_get_row($gTables['clfoco'].' LEFT JOIN '.$gTables['banapp'].' ON '.$gTables['clfoco'].'.banapp = '.$gTables['banapp'].".codice", $gTables['clfoco'].'.codice',$head['bank']);
         $this->OthrId = (intval($this->azienda['pariva'])>=100)?$this->azienda['pariva']:$this->azienda['codfis'];
 		$this->CreDtTm = date('Y-m-d\TH:i:s');
-        $this->MsgId = base64_encode($this->CreDtTm);
+        $this->MsgId = dechex(rand(100,999).date('siHdmY')).'-';
+		$this->CtgyPurpCd = (isset($head['CtgyPurpCd']) && strlen($head['CtgyPurpCd']) == 4) ? $head['CtgyPurpCd'] : 'OTHR';
+		// INTC  IntraCompanyPayment  Intra-company payment
+		// INTE  Interest  Payment of interest. 
+		// PENS  PensionPayment  Payment of pension. 
+		// SALA  SalaryPayment  Payment of salaries. 
+		// SSBE  SocialSecurityBenefit  Payment of child benefit, family allowance. 
+		// SUPP  SupplierPayment  Payment to a supplier. 
+		// TAXS  TaxPayment  Payment of taxes. 
+		// TREA  TreasuryPayment  Treasury transaction
+		// OTHR  Other
+		$this->FileName = (isset($head['FileName']) && strlen($head['FileName']) >= 16) ? $head['FileName'] : 'XMLCBIpay'.date('Ymdhis');
     }
 }
 
-function create_XML_CBIPayment($gTables,$bank,$data) {
+function create_XML_CBIPayment($gTables,$head,$data) {
 	// in $data dovrò passare tutti i dati necessari per la creazione degli elementi <CdtTrfTxInf>
 	// le chiavi sono: EndToEndId (id univoco) ,InstdAmt (importo), Nm (descrizione creditore), IBAN (iban accredito), Ustrd (descrizione debito pagato) ognuno creerà il relativo elemento dentro <CdtTrfTxInf>
-	// EndToEndId non è indispensabile e se EndToEndId[0] non è valorizzato ne verrà creato uno random e non verrà considerata la presenza sugli eventuali altri indici in quanto ne verrà creato uno random
     $CtrlSum = 0.00;
     $NbOfTxs = 1;
     $XMLvars = new CBIPaymentXMLvars();
     $domDoc = new DOMDocument;
 	$domDoc->preserveWhiteSpace = false;
 	$domDoc->formatOutput = true;
-    $XMLvars->setPaymentsVars($gTables,$bank);
+    $XMLvars->setPaymentsVars($gTables,$head);
 	$domDoc->load("../../library/include/template_CBIPaymentRequest.xml");
 	$xpath = new DOMXPath($domDoc);
 	$results = $xpath->query("//GrpHdr/MsgId")->item(0);
@@ -90,7 +100,7 @@ function create_XML_CBIPayment($gTables,$bank,$data) {
 			$el->appendChild($el1);
             $el1 = $domDoc->createElement("PmtTpInf", "");
 				$el2 = $domDoc->createElement("CtgyPurp", "");
-					$el3 = $domDoc->createElement("Cd", "OTHR");
+					$el3 = $domDoc->createElement("Cd", $XMLvars->CtgyPurpCd);
 					$el2->appendChild($el3);
 				$el1->appendChild($el2);
 			$el->appendChild($el1);
@@ -125,7 +135,7 @@ function create_XML_CBIPayment($gTables,$bank,$data) {
 	$results->appendChild($attrVal);
 
 	header("Content-type: text/plain");
-	header("Content-Disposition: attachment; filename=provaCBI.xml");
+	header("Content-Disposition: attachment; filename=".$XMLvars->FileName.".xml");
 	print $domDoc->saveXML();
 }
 ?>

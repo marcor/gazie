@@ -34,6 +34,7 @@ if (isset($_GET['id_rig'])){ // ho id_rig del movimento contabile che ha generat
 	$b=gaz_dbi_fetch_array($result);
 	// adesso creo un array con i dati del beneficiario da passare alla funzione 
 	$d[0]=array('InstdAmt'=>$r['import'],'Nm'=>trim($r['ragso1'].' '.$r['ragso2']),'IBAN'=>$r['iban'],'Ustrd'=>$r['descri']);
-	create_XML_CBIPayment($gTables,$b['codice'],$d);
+	$h=array('bank'=>$b['codice'],'CtgyPurpCd'=>'SUPP','FileName'=>'Bonifico'.preg_replace("/[^a-zA-Z0-9]/", "",$r['ragso1']).'_'.$r['id_tes']);
+	create_XML_CBIPayment($gTables,$h,$d);
 }
 ?>
