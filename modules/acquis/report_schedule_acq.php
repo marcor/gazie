@@ -40,7 +40,7 @@ $sortable_headers = array  (
             "Apertura partita (fattura)"=>'id_rigmoc_doc',
             "Chiusura partita (pagamento)"=>'id_rigmoc_pay',
             "Importo"=>'',
-            'Scadenzza' => 'exppiry'
+            'Scadenza' => 'expiry'
 );
 
 $tablejoin = $gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig) LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes";
