@@ -39,6 +39,8 @@ function create_XML_CBIPayment($gTables,$bank,$data) {
 	// in $data dovrò passare tutti i dati necessari per la creazione degli elementi <CdtTrfTxInf>
 	// le chiavi sono: EndToEndId (id univoco) ,InstdAmt (importo), Nm (descrizione creditore), IBAN (iban accredito), Ustrd (descrizione debito pagato) ognuno creerà il relativo elemento dentro <CdtTrfTxInf>
 	// EndToEndId non è indispensabile e se EndToEndId[0] non è valorizzato ne verrà creato uno random e non verrà considerata la presenza sugli eventuali altri indici in quanto ne verrà creato uno random
+    $CtrlSum = 0.00;
+    $NbOfTxs = 1;
     $XMLvars = new CBIPaymentXMLvars();
     $domDoc = new DOMDocument;
 	$domDoc->preserveWhiteSpace = false;
@@ -77,14 +79,13 @@ function create_XML_CBIPayment($gTables,$bank,$data) {
 	$attrVal = $domDoc->createTextNode(str_pad($XMLvars->bank['codabi'],5,'0',STR_PAD_LEFT));
 	$results->appendChild($attrVal);
 	// creo gli elementi dei singoli bonifici
-	$nbon=1;
 	foreach($data as $v){
 		$PmtInf = $xpath->query("//PmtInf")->item(0);
         $el = $domDoc->createElement("CdtTrfTxInf", "");
             $el1 = $domDoc->createElement("PmtId", "");
-				$el2 = $domDoc->createElement("InstrId", $nbon);
+				$el2 = $domDoc->createElement("InstrId", $NbOfTxs);
 				$el1->appendChild($el2);
-				$el2 = $domDoc->createElement("EndToEndId", $XMLvars->MsgId.$nbon);
+				$el2 = $domDoc->createElement("EndToEndId", $XMLvars->MsgId.$NbOfTxs);
 				$el1->appendChild($el2);
 			$el->appendChild($el1);
             $el1 = $domDoc->createElement("PmtTpInf", "");
@@ -113,8 +114,16 @@ function create_XML_CBIPayment($gTables,$bank,$data) {
 				$el1->appendChild($el2);
 			$el->appendChild($el1);
 		$PmtInf->appendChild($el);
-		$nbon++;	
+		$NbOfTxs++;	
+        $CtrlSum += $v['InstdAmt'];
 	}
+	$results = $xpath->query("//GrpHdr/NbOfTxs")->item(0);
+	$attrVal = $domDoc->createTextNode($NbOfTxs-1);
+	$results->appendChild($attrVal);
+	$results = $xpath->query("//GrpHdr/CtrlSum")->item(0);
+	$attrVal = $domDoc->createTextNode(number_format(round($CtrlSum,2),2,'.',''));
+	$results->appendChild($attrVal);
+
 	header("Content-type: text/plain");
 	header("Content-Disposition: attachment; filename=provaCBI.xml");
 	print $domDoc->saveXML();
