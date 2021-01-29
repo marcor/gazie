@@ -155,6 +155,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$i=filter_var($_POST['ref'], FILTER_VALIDATE_EMAIL);
 			gaz_dbi_put_query($gTables['tesbro'], " email LIKE '%".$i."%'",'email','');
 		break;
+		case "supplier_schedule":
+			$i=intval($_POST['ref']);
+			gaz_dbi_del_row($gTables['paymov'], 'id_tesdoc_ref', $i);
+		break;
 	}
 }
 ?>

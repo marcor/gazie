@@ -74,7 +74,8 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 		$v=$paymov->ExpiryStatus;
         switch ($v['status']) {
             case 1:
-				$lnk='title="Pagata"';
+				$lnk='title="Pagata">
+					<i class="glyphicon glyphicon-remove delete_supplier_schedule" title="Elimina partita chiusa, rimangono i movimenti contabili" ref="'.$r['id_tesdoc_ref'].'" nome="'.$r['ragso1'].'"> </i';
                 break;
             case 2: // esposta
 				$lnk='href="../acquis/supplier_payment.php?partner='.$r['codcon'].'" title="In scadenza"';
@@ -112,6 +113,13 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
               </table>
 			</div>
       </div>
+	<div style="display:none" id="delete_supplier_schedule" title="Conferma eliminazione">
+        <p><b>Eliminazione scadenza:</b></p>
+        <p>Partita ID:</p>
+        <p class="ui-state-highlight" id="id_supplier_schedule"></p>
+        <p>Fornitore:</p>
+        <p class="ui-state-highlight" id="id_supplier_descri"></p>
+	</div>
     <script src="../../library/theme/lte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../library/theme/lte/plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script>
@@ -132,6 +140,39 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 		});
 		$("#datref_for").change(function () {
 			this.form.submit();
+		});
+		$("#delete_supplier_schedule").dialog({ autoOpen: false });
+		$('.delete_supplier_schedule').click(function() {
+			$("p#id_supplier_schedule").html($(this).attr("ref"));
+			$("p#id_supplier_descri").html($(this).attr("nome"));
+			var id_tesdoc_ref = $(this).attr('ref');		
+			$( "#delete_supplier_schedule" ).dialog({
+				minHeight: 1,
+				width: "auto",
+				modal: "true",
+				show: "blind",
+				hide: "explode",
+				buttons: {
+					delete:{ 
+						text:'Elimina', 
+						'class':'btn btn-danger delete-button',
+						click:function (event, ui) {
+						$.ajax({
+							data: {'type':'supplier_schedule',ref:id_tesdoc_ref},
+							type: 'POST',
+							url: '../acquis/delete.php',
+							success: function(output){
+			                    //alert(output);
+								window.location.replace("./admin.php");
+							}
+						});
+					}},
+					"Non eliminare": function() {
+						$(this).dialog("close");
+					}
+				}
+			});
+			$("#delete_supplier_schedule" ).dialog( "open" );  
 		});
     });
 
