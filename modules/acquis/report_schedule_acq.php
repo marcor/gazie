@@ -145,10 +145,16 @@ while ($r = gaz_dbi_fetch_array($result)) {
 ?>
 </table></div>
 <?php
-if ( isset($_GET['xml']) && isset($_GET['id_rig']) && $_GET['id_rig'] > 0 ){
- echo '<script>
+if ( isset($_GET['xml']) ){
+  $ref='';
+  if  ( isset($_GET['id_rig']) && $_GET['id_rig'] > 0 ){
+	$ref='?id_rig='.intval($_GET['id_rig']); 
+  } elseif  ( isset($_GET['id_tes']) && $_GET['id_tes'] > 0 ){
+	$ref='?id_tes='.intval($_GET['id_tes']); 
+  }
+  echo '<script>
 	$( window ).load(function() {
-		window.location.href = "CBIPaymentRequest.php?id_rig='.intval($_GET['id_rig']).'";
+		window.location.href = "CBIPaymentRequest.php'.$ref.'"
 	});
 	</script>';
 }

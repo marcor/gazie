@@ -104,7 +104,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 $paymov_value = array('id_tesdoc_ref' => substr($k, 0, strpos($k, '.')),
                     'id_rigmoc_pay' => $rig_id,
                     'amount' => $v,
-                    'expiry' => substr($_POST['expires'][$k], 0, 10));
+                    'expiry' => $newValue['datreg']);
                 paymovInsert($paymov_value);
             }
             if ($form['transfer_fees'] >= 0.01 && $form['transfer_fees_acc'] > 100000000) { // ho le spese bancarie 
@@ -116,7 +116,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 				}
             }
             rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => round($tot, 2)));
-            header("Location: ../contab/report_movcon.php");
+			header("Location: report_schedule_acq.php?id_tes=".$tes_id.'&xml');
             exit;
         }
     }
