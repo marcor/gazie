@@ -2631,7 +2631,7 @@ class Schedule {
 			$partner_where.=" AND ".$gTables["paymov"].".expiry BETWEEN DATE_SUB('".gaz_format_date($datref,true)."',INTERVAL 6 MONTH) AND DATE_ADD('".gaz_format_date($datref,true)."',INTERVAL 6 MONTH)";
 		}
         $sqlquery = "SELECT " . $gTables['rigmoc'] . ".codcon
-          FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['rigmoc'] . ".id_rig = " . $gTables['paymov'] . ".id_rigmoc_pay  OR " . $gTables['rigmoc'] . ".id_rig =" . $gTables['paymov'] . ".id_rigmoc_doc ) WHERE  " . $partner_where . " GROUP BY " . $gTables['rigmoc'] . ".codcon ";
+          FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay  + " . $gTables['paymov'] . ".id_rigmoc_doc ) =  " . $gTables['rigmoc'] . ".id_rig WHERE  " . $partner_where . " GROUP BY " . $gTables['rigmoc'] . ".codcon ";
         $rs = gaz_dbi_query($sqlquery);
         $acc = array();
         while ($r = gaz_dbi_fetch_array($rs)) {
@@ -2661,7 +2661,7 @@ class Schedule {
             $where .= " AND expiry>='" . date("Y-m-d", strtotime("-5 days")) . "' and expiry<='" . date("Y-m-d", strtotime("+2 month")) . "' group by id_tesdoc_ref ";
         }
         $sqlquery = "SELECT * FROM " . $gTables['paymov']
-                . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig ) "
+                . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay + " . $gTables['paymov'] . ".id_rigmoc_doc) = " . $gTables['rigmoc'] . ".id_rig  "
                 . " WHERE  " . $where . " ORDER BY id_tesdoc_ref, expiry";
         $rs = gaz_dbi_query($sqlquery);
         $this->Entries = array();
@@ -2919,7 +2919,7 @@ class Schedule {
             $date = strftime("%Y-%m-%d", mktime(0, 0, 0, date("m"), date("d"), date("Y")));
         }
         $sqlquery = "SELECT " . $gTables['paymov'] . ".*, " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".*
-            FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig )"
+            FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay + " . $gTables['paymov'] . ".id_rigmoc_doc) = " . $gTables['rigmoc'] . ".id_rig "
                 . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes "
                 . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['rigmoc'] . ".codcon = " . $gTables['clfoco'] . ".codice
             WHERE " . $gTables['clfoco'] . ".codice  = " . $clfoco . " ORDER BY id_tesdoc_ref, id_rigmoc_pay, expiry";
