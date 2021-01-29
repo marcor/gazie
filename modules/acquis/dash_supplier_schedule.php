@@ -74,16 +74,16 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 		$v=$paymov->ExpiryStatus;
         switch ($v['status']) {
             case 1:
-				$lnk='title="SCADENZA PAGATA"';
+				$lnk='title="Pagata"';
                 break;
-            case 2:
-				$lnk='title="SCADENZA DA PAGARE"';
+            case 2: // esposta
+				$lnk='href="../acquis/supplier_payment.php?partner='.$r['codcon'].'" title="In scadenza"';
                 break;
-            case 3:
+            case 3: // scaduta
 				$lnk='href="../acquis/supplier_payment.php?partner='.$r['codcon'].'" title="Scaduta, da pagare"';
                 break;
-            default:
-				$lnk='';
+            default: // non ancora scaduta
+				$lnk='href="../acquis/supplier_payment.php?partner='.$r['codcon'].'" title="Non scaduta"';
         }
         // controlli per calcolo data da visualizzare in prossimit? di oggi
         $datetime1 = date_create($v['expiry']);
