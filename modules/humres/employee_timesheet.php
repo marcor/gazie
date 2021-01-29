@@ -102,7 +102,7 @@ if (isset($_POST['week'])) { // accessi successivi
 	}
     $form['cosemployee'] = filter_input(INPUT_POST, 'cosemployee');
 	if ($_POST['goto']=='next'){
-		if ($form['week']<52) { // settimana successiva
+		if ($form['week']<53) { // settimana successiva
 			$form['week'] ++;
 		} else {
 			$form['year'] ++;
@@ -114,7 +114,7 @@ if (isset($_POST['week'])) { // accessi successivi
 			$form['week'] --;
 		} else {
 			$form['year'] --;
-			$form['week'] =52;
+			$form['week'] =53;
 		}
 	}
 	if (isset($_POST['go_insert']) || isset($_POST['go_print'])){
