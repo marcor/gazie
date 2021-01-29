@@ -43,7 +43,7 @@ $sortable_headers = array  (
             'Scadenza' => 'expiry'
 );
 
-$tablejoin = $gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig) LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes";
+$tablejoin = $gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay + ".$gTables['paymov'].".id_rigmoc_doc ) = ".$gTables['rigmoc'].".id_rig LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes";
 
 $ts = new TableSorter(
     $tablejoin, 
