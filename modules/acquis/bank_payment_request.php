@@ -306,14 +306,19 @@ echo '		  </table></div>';
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="entry_date" class="col-sm-11 control-label">
-                                    <?php echo $fornitore['ragso1'] . ' ' . $fornitore['ragso2']; ?>
+								<?php
+								if (!strlen($fornitore['iban'])==27){
+									echo '<a class="btn btn-xs btn-danger" title="Il fornirore non ha l\'IBAN" href="./admin_fornit.php?codice='.intval(substr($fornitore['codice'],3,6)).'&Update">NO IBAN</a>';
+								}
+								echo $fornitore['ragso1'] . ' ' . $fornitore['ragso2']; 
+								?>
                                     <a class="btn btn-xs btn-default btn-edit" title="<?php echo $script_transl['upd_entry']; ?>" href="../contab/admin_movcon.php?id_tes=<?php echo $doc_data['id_tes']; ?>&Update">
                                         <?php echo ' ' . $doc_data['descri'] . ' ' . $doc_data['numdoc'] . ' del ' . gaz_format_date($doc_data['datdoc']) . ' prot.' . $doc_data['protoc']; ?>
                                     </a>
                                 </label>
                             </div>
                             <div class="col-sm-1 pull-right">
-                                <input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $status; ?>" id="<?php echo $r['id_tesdoc_ref']; ?>" name="pay[<?php echo $r['id_tesdoc_ref'].'.'.$r['expiry']; ?>]">
+                                <input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $status; ?>" id="<?php echo $r['id_tesdoc_ref']; ?>" name="pay[<?php echo $r['id_tesdoc_ref'].'.'.$r['expiry']; ?>]" <?php echo (!strlen($fornitore['iban'])==27)?'disabled title="Inserire IBAN del fornitore"':''; ?>>
                                 <input type="hidden" value="<?php echo $r['expiry']; ?>" name="expires[<?php echo $r['id_tesdoc_ref'].'.'.$r['expiry']; ?>]">
                                 <input type="hidden" value="<?php echo $doc_data['clfoco']; ?>" name="clfoco[<?php echo $r['id_tesdoc_ref'].'.'.$r['expiry']; ?>]">
                             </div>
