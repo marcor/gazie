@@ -224,7 +224,7 @@ if (isset($_POST['submit'])) {
                 $vv['tipiva'] = $vat['tipiva'];
                 $vv['codiva'] = $k;
                 $vv['id_tes'] = $tes_id;
-                $tot += round($vv['imponi']+$vv['impost']);
+                $tot += round($vv['imponi']+$vv['impost'],2);
                 rigmoiInsert($vv);
             }
           
