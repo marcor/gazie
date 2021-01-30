@@ -33,7 +33,8 @@ $transl['acquis'] = array('name' => "Purchases",
         6 => array("View and print debit report", "Debit report"),
         7 => array("Print fuel note", "Fuel note"),
         8 => array("Scadenzario a partite aperte", "Scadenzario"),
-        9 => array("Agenti di Fornitori", "Agenti")
+        9 => array("Agenti di Fornitori", "Agenti"),
+        10 => array("Gestione Ordini a Fornitori", "Ordini")
     ),
     'm3' => array(1 => array("Ask for a quote to supplier", "Ask a quote"),
         2 => array("Order to supplier", "Order to supplier"),
@@ -54,7 +55,8 @@ $transl['acquis'] = array('name' => "Purchases",
         17 => array("Pagamento RiBa fornitori", "Paga RiBa a fornitori"),
 		18 => array("Automatic vendor order", "Automatic vendor order"),
 		19 => array("Acquisisci fattura elettronica", "Acquisisci fattura elettronica"),
-        20 => array("Ricevuto DdT ritorno da lavorazione", "Ricevuto DdT ritorno da lavorazione")
+        20 => array("Ricevuto DdT ritorno da lavorazione", "Ricevuto DdT ritorno da lavorazione"),
+        21 => array("Genera XML-CBI bonifico", "Genera XML-CBI bonifico")
     )
 );
 ?>
