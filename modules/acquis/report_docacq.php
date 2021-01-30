@@ -27,6 +27,13 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $message = "";
 
+function print_querytime($prev) {
+    list($usec, $sec) = explode(" ", microtime());
+    $this_time = ((float) $usec + (float) $sec);
+    echo round($this_time - $prev, 3);
+    return $this_time;
+}
+
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
 
@@ -132,9 +139,10 @@ $(function() {
         </select>
     </div>
 <?php
-
+    list ($usec, $sec) = explode(' ', microtime());
+    $querytime = ((float) $usec + (float) $sec);
+    $querytime_before = $querytime;
     $ts->output_navbar();
-
 ?>
     <div class="box-primary table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
@@ -190,11 +198,10 @@ $(function() {
 <?php
 
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
+$result = gaz_dbi_dyn_query($gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".numfat,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".clfoco,".$gTables['tesdoc'].".id_tes,".$gTables['tesdoc'].".datreg,".$gTables['tesdoc'].".fattura_elettronica_original_name,". $gTables['tesdoc'].".id_con,".$gTables['anagra'].".ragso1",$tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit(),"protoc,datfat");
 $paymov = new Schedule();
 
 // creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
-$rs_last_docs = gaz_dbi_dyn_query("id_tes,MAX(protoc) AS last_protoc,YEAR(datreg) AS year", $gTables['tesdoc'],"tipdoc LIKE 'A%' AND seziva = ".$sezione." GROUP BY YEAR(datreg)",'protoc DESC');
 $rs_last_docs = gaz_dbi_query("SELECT id_tes 
             FROM ".$gTables['tesdoc']." AS t1
             JOIN ( SELECT MAX(protoc) AS max_protoc FROM ".$gTables['tesdoc']." WHERE tipdoc LIKE 'A%' AND seziva = ".$sezione." GROUP BY YEAR(datreg)) AS t2 
@@ -214,11 +221,11 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$paymov_status = false;
 	if ($row['id_con'] > 0) {
 		$tesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $row['id_con']);
-		$paymov->getStatus(substr($tesmov['datdoc'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
+		$paymov->getStatus(substr($tesmov['datreg'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
 		$paymov_status = $paymov->Status;
+		// riprendo il rigo  della contabilità con il cliente per avere l'importo 
+		$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
 	}
-	// riprendo il rigo  della contabilità con il cliente per avere l'importo 
-	$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
  
     $y = substr($row['datfat'], 0, 4);
     if ($row["tipdoc"] == 'AFA') {
@@ -286,14 +293,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
 			<button title="Non puoi eliminare un documento diverso dall'ultimo emesso" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 			<?php
 		}
-    echo "</td></tr>\n";
+    echo "</td></tr>";
 }
+	echo '<tr><td colspan="6"></td><td colspan="3">Query & render: '; print_querytime($querytime); echo " sec.</td></tr>\n";
 ?>
-
-
-        <tr>
-            <td colspan="9" class="FacetFieldCaptionTD"></td>
-        </tr>
     </table>
 </div>
 </form>
