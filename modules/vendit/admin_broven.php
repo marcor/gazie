@@ -176,10 +176,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_extdoc'] = $_POST['in_extdoc'];
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
-	
+
 	$ultimoprezzo=''; //info sugli ultimi prezzi
     if ($form['in_codart']<>$form['cosear']) { // ho cambiato articolo, cerco le 3 ultime vendite
-		
+
 		$what = $gTables['tesdoc'] . ".datfat, " .
 				$gTables['tesdoc'] . ".numfat, " .
 				$gTables['rigdoc'] . ".codart, " .
@@ -192,7 +192,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         		.$gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes";
 
         $where = $gTables['tesdoc'].".clfoco = '".$form['clfoco']."' AND ".$gTables['tesdoc'].".tipdoc LIKE 'FA_' AND ".$gTables['rigdoc'].".tiprig = 0 AND ".$gTables['rigdoc'].".codart = '".$form['cosear']."'";
-		$result = gaz_dbi_dyn_query($what, $table, $where, "datfat DESC",0,3);		
+		$result = gaz_dbi_dyn_query($what, $table, $where, "datfat DESC",0,3);
 		while ($prezzi = gaz_dbi_fetch_array($result)) {
 			$ultimoprezzo.="<br />Fattura n. ".$prezzi['numfat']." del ".gaz_format_date($prezzi['datfat'])." ____ quantit&agrave; ".gaz_format_quantity($prezzi['quanti'], 0, $admin_aziend['decimal_quantity'])." ____ prezzo ".gaz_format_number($prezzi['prelis'])." ____ sconto ".gaz_format_number($prezzi['sconto'])."% ____ provvigione ".gaz_format_number($prezzi['provvigione'])."%";
 		}
@@ -367,13 +367,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $i = 0;$syncarticols=array();
                 $count = count($form['rows']) - 1;
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
-					array_push($syncarticols,$val_old_row['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
+                  array_push($syncarticols,$val_old_row['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
                     if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
                         $form['rows'][$i]['id_tes'] = $form['id_tes'];
                         $codice = array('id_rig', $val_old_row['id_rig']);
                         rigbroUpdate($codice, $form['rows'][$i]);
-                        if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se � un rigo testo gi� presente lo modifico
-                            bodytextUpdate(array('id_body', $val_old_row['id_body_text']), array('table_name_ref' => 'rigdoc', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
+                        if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se è un rigo testo già presente lo modifico
+                            bodytextUpdate(array('id_body', $val_old_row['id_body_text']), array('table_name_ref' => 'rigbro', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                             gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', $val_old_row['id_body_text']);
                         } elseif (isset($form["row_$i"]) && $val_old_row['id_body_text'] == 0) { //prima era un rigo diverso da testo
                             bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $val_old_row['id_rig'], 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
@@ -382,7 +382,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
                         }
                         if ($form['rows'][$i]['tiprig']==50 && !empty($form['rows'][$i]['extdoc']) && substr($form['rows'][$i]['extdoc'],0,10)!='rigbrodoc_') {
-							// se a questo rigo corrispondeva un certificato controllo che non sia stato aggiornato, altrimenti lo cambio
+                            // se a questo rigo corrispondeva un certificato controllo che non sia stato aggiornato, altrimenti lo cambio
                             $dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
                             while (false !== ($filename = readdir($dh))) {
                                 $fd = pathinfo($filename);
@@ -395,7 +395,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                                 }
                             }
                             $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-							// sposto e rinomino il relativo file temporaneo    
+							// sposto e rinomino il relativo file temporaneo
                             $fn = pathinfo($form['rows'][$i]['extdoc']);
                             rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
 						}
@@ -414,7 +414,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $last_rigbro_id = rigbroInsert($form['rows'][$i]);
                     if (!empty($form['rows'][$i]['extdoc'])) {
                         $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-// sposto e rinomino il relativo file temporaneo    
+// sposto e rinomino il relativo file temporaneo
                         $fd = pathinfo($form['rows'][$i]['extdoc']);
                         rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
                     }
@@ -444,9 +444,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     // aggiorno l'e-commerce ove presente
                     $gs=$admin_aziend['synccommerce_classname'];
                     $gSync = new $gs();
-					if($gSync->api_token){ 
+					if($gSync->api_token){
 						foreach ($syncarticols as $syncarticol){
-							$gSync->SetProductQuantity($syncarticol);							
+							$gSync->SetProductQuantity($syncarticol);
 						}
 					}
 				}
@@ -481,7 +481,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					// INIZIO INSERIMENTO DOCUMENTI ALLEGATI
                     if (!empty($form['rows'][$i]['extdoc'])) {
                         $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-						// sposto e rinomino il relativo file temporaneo    
+						// sposto e rinomino il relativo file temporaneo
                         $fd = pathinfo($form['rows'][$i]['extdoc']);
                         rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
                     }
@@ -490,16 +490,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                         gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                     }
-					
+
 					if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 						// aggiorno l'e-commerce ove presente
 						$gs=$admin_aziend['synccommerce_classname'];
 						$gSync = new $gs();
-						if($gSync->api_token){ 
-							$gSync->SetProductQuantity($form['rows'][$i]['codart']);						
+						if($gSync->api_token){
+							$gSync->SetProductQuantity($form['rows'][$i]['codart']);
 						}
-					}				
-					
+					}
+
                 }
                 $_SESSION['print_request'] = $ultimo_id;
                 header("Location: invsta_broven.php");
@@ -541,7 +541,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			// creo la descrizione del preventivo di origine
             require("lang." . $admin_aziend['lang'] . ".php");
             $descripreventivo = "rif. " . $strScript['admin_broven.php'][0]['VPR'] . " n." . $form['numdoc'] . " del " . $form['gioemi'] . "." . $form['mesemi'] . "." . $form['annemi'];
-			// fine creazione descrizione preventivo di origine	
+			// fine creazione descrizione preventivo di origine
 			$sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOR'";
             $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, "numdoc desc", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
@@ -1255,12 +1255,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$next_row]['extdoc'] = '';
         $form['rows'][$next_row]['status'] = "UPDATE";
-		// recupero il filename dal filesystem e lo sposto sul tmp 
+		// recupero il filename dal filesystem e lo sposto sul tmp
 		$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
 		while (false !== ($filename = readdir($dh))) {
 				$fd = pathinfo($filename);
 				$r = explode('_', $fd['filename']);
-				if ($r[0] == 'rigbrodoc' && $r[1] == $rigo['id_rig']) { 
+				if ($r[0] == 'rigbrodoc' && $r[1] == $rigo['id_rig']) {
 					/* 	uso id_body_text per mantenere il riferimento riferimento al file del documento esterno
 					* 	e riassegno il nome file
 					*/
@@ -1400,9 +1400,9 @@ if (empty($msg)) { // se ho un errore non scrollo
 	} else {
 		$idlf="#search_cosear";
 	}
-	echo '	
+	echo '
 	$( function() {
-				$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000); 
+				$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);
 				}); ';
 }
 
@@ -1557,7 +1557,7 @@ if ($form['tipdoc'] == 'VOG') {
     }
     echo '				</select>';
 }
-echo '              
+echo '
                 </td>
 			</tr>
 			<tr>
@@ -1796,7 +1796,7 @@ foreach ($form['rows'] as $k => $v) {
 				<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
 						<i class=\"glyphicon glyphicon-arrow-up\"></i>
 				</button>
-			</td>	
+			</td>
                         <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
                                 <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 			</td>
@@ -1848,8 +1848,8 @@ foreach ($form['rows'] as $k => $v) {
 		 			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 				</td>
 				<td colspan="10">
-					<textarea id="row_' . $k . 
-                '" name="row_' . $k . 
+					<textarea id="row_' . $k .
+                '" name="row_' . $k .
                 '" class="mceClass" style="width:100%;height:100px;">'
                 . $form["row_$k"] . '</textarea>
 				</td>
@@ -1923,7 +1923,7 @@ foreach ($form['rows'] as $k => $v) {
                         <div class="form-group">
                           <div>';
 
-                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '">
                             <label>File: </label><input type="text" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
 			</div>
 		     </div>
@@ -1967,7 +1967,7 @@ foreach ($form['rows'] as $k => $v) {
                         <div class="form-group">
                           <div>';
 
-                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '">
                             <label>File: </label><input type="text" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
 			</div>
 		     </div>
@@ -2033,7 +2033,7 @@ foreach ($form['rows'] as $k => $v) {
 }
 
 if ($ultimoprezzo<>'') {
-    $msgtoast = $upd_mm->toast(" <strong>Ultime vendite:</strong>".$ultimoprezzo, 'alert-last-row', 'alert-success'); 
+    $msgtoast = $upd_mm->toast(" <strong>Ultime vendite:</strong>".$ultimoprezzo, 'alert-last-row', 'alert-success');
 }
 
 /* Nuovo alert per scontistica, da visualizzare rigorosamente dopo l'ultima riga inserita */
@@ -2320,7 +2320,7 @@ echo "</tr>	</table></div>";
 	function vatPrice(row,pervat) {
 		var prelis = $("[name='rows["+row+"][prelis]']").val();
 		var prevat = parseFloat(prelis)*(1+parseFloat(pervat)/100);
-		$("#cat_prevat").val(prevat.toFixed(<?php echo $admin_aziend['decimal_price'] ?>));
+    $("#cat_prevat").val(prevat.toFixed(<?php echo $admin_aziend['decimal_price'] ?>));
 		$("#cat_pervat").val(pervat);
 		$("#cat_prelis").val(prelis);
 		$("#vat-price").dialog({
