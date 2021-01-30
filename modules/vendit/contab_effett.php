@@ -117,15 +117,14 @@ if (isset($_POST['genera'])and $message == "") {
                 'datdoc' => $effett['datemi'],
                 'clfoco' => $effett['clfoco']
             );
-            tesmovInsert($newValue);
+            $ultimo_id = tesmovInsert($newValue);
             //recupero l'id assegnato dall'inserimento
-            $ultimo_id = gaz_dbi_last_id();
+
             // inserisco i due righi, partendo dal conto dare.
             rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $admin_aziend['coriba'], 'import' => $effett['impeff']));
             // continuo con il conto clienti.
-            rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
+            $paymov_id = rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
             // memorizzo l'id del cliente  
-            $paymov_id = gaz_dbi_last_id();
         }
         if ($effett['tipeff'] == 'T') {
             //inserisco la testata
@@ -139,15 +138,14 @@ if (isset($_POST['genera'])and $message == "") {
                 'datdoc' => $effett['datemi'],
                 'clfoco' => $effett['clfoco']
             );
-            tesmovInsert($newValue);
+            $ultimo_id = tesmovInsert($newValue);
             //recupero l'id assegnato dall'inserimento
-            $ultimo_id = gaz_dbi_last_id();
+
             // inserisco i due righi partendo dal conto dare
             rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $admin_aziend['cotrat'], 'import' => $effett['impeff']));
             // continuo con il conto clienti.
-            rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
+            $paymov_id = rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
             // memorizzo l'id del cliente  
-            $paymov_id = gaz_dbi_last_id();
         }
         if ($effett['tipeff'] == 'V') {
             //inserisco la testata
@@ -161,18 +159,17 @@ if (isset($_POST['genera'])and $message == "") {
                 'datdoc' => $effett['datemi'],
                 'clfoco' => $effett['clfoco']
             );
-            tesmovInsert($newValue);
+            $ultimo_id = tesmovInsert($newValue);
             //recupero l'id assegnato dall'inserimento
-            $ultimo_id = gaz_dbi_last_id();
+
             // inserisco i due righi partendo dal conto dare.
             rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $effett['banacc'], 'import' => $effett['impeff']));
             // continuo con il cliente.
-            rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
+            $paymov_id = rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
             // memorizzo l'id del cliente  
-            $paymov_id = gaz_dbi_last_id();
         }
         // aggiungo un movimento alle partite aperte
-        paymovInsert(array('id_tesdoc_ref' => substr($effett['datfat'], 0, 4) . '2' . $effett['seziva'] . str_pad($effett['protoc'], 9, 0, STR_PAD_LEFT), 'id_rigmoc_pay' => $paymov_id, 'amount' => $effett['impeff'], 'expiry' => $effett['scaden']));
+        paymovInsert(array('id_tesdoc_ref' => substr($newValue['datreg'], 0, 4) . '2' . $effett['seziva'] . str_pad($effett['protoc'], 9, 0, STR_PAD_LEFT), 'id_rigmoc_pay' => $paymov_id, 'amount' => $effett['impeff'], 'expiry' => $effett['scaden']));
         //vado a modificare l'effetto cambiando il numero di riferimento al movimento
         gaz_dbi_put_row($gTables['effett'], "id_tes", $effett["id_tes"], "id_con", $ultimo_id);
     }
