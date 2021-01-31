@@ -47,7 +47,7 @@ if ( $debug_active==true ) echo "<div>".d($GLOBALS, $_SERVER)."</div>";
 <!-- questo è contenuto in library/theme/g7/footer.php -->
 <div class="navbar navbar-fixed-bottom" style="border:none;" >
     <div style="background:white;" >Version: <?php echo GAZIE_VERSION; ?> 
-        <a  class="pull-right hidden-xs" target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
+        <a  class="pull-right hidden-xs" target="_new" href="https://<?php echo $contact_link; ?>">https://<?php echo $contact_link; ?></a>
     </div>
 </div>
 <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
