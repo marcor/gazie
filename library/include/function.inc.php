@@ -2117,10 +2117,11 @@ class TableSorter {
     protected $default_search;         # ["caumag" => "1"]
     protected $default_order;          # analogo a $url_order_query_parts
 
-    function __construct($table, $passo, $default_order, $default_search=[], $group_by=[]) {
+    function __construct($table, $passo, $default_order, $default_search=[], $group_by=[], $where_fix='' ) {
         $this->passo = $passo;
         $group_by = join(", ", $group_by);
         $this->group_by = $group_by ? "GROUP BY " . $group_by : "";
+        $this->where_fix = $where_fix;
         $this->default_search = $default_search;
         $this->parse_search_request();
         $this->count = gaz_dbi_record_count($table, $this->where, $group_by);
@@ -2183,6 +2184,8 @@ class TableSorter {
             }
         }
         $this->where = implode(" AND ", $where_parts);
+		if (count($where_parts)>=1&&!empty($this->where_fix)){ $this->where .= ' AND '; }
+		$this->where .= $this->where_fix;
         $this->url_search_query = implode("&", $url_search_query_parts);
     }
 
