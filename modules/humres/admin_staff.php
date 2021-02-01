@@ -127,6 +127,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['codice'] = $real_code;
             $form['id_clfoco'] = $real_code;
             $form['datnas'] = date("Ymd", $uts_datnas);
+            $form['legrap_pf_cognome'] = trim($form['ragso1']);
+            $form['legrap_pf_nome'] = trim($form['ragso2']);
             $form['start_date'] = gaz_format_date($form['start_date'], true);
             $form['end_date'] = gaz_format_date($form['end_date'], true);
             if ($toDo == 'insert') {

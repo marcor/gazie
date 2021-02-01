@@ -456,6 +456,7 @@ $strScript = array("admin_aziend.php" =>
         'user_email' => "Mail (anche per recupero password)",
         'image' => 'Icon de lo usuario<br />(solo formato JPG, max 64kb)',
         'Abilit' => "Nivel",
+        'Abilit_value' => array('9' => 'Admin', '8' => 'Advanced/Student','5'=>'User','0'=>'None'),
 		'company'=>'Empresa',
         'mesg_co' => array('Non &egrave; stato trovato nulla!', 'Minimo 2 caratteri', 'Azienda di lavoro'),
         'Access' => "Acceso",

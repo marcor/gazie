@@ -101,6 +101,25 @@ $strScript = array("admin_staff.php" =>
             "C.F." => "",
             "Visualizza <br /> e/o stampa" => "",
             "Cancella" => "")
+    ),
+    "pay_salary.php" =>
+    array('title' => 'Genera file XML-CBI per bonifico massivo salari e stipendi e contabilizzazione',
+        'err' => array(
+            'nopay' => 'Non sono stati selezionati stipendi',
+            'noacc' => 'Non è stato selezionato il conto corrente di addebito',
+            'expif' => 'La data di inizio non può essere precedente a quella dell\'ultimo emesso'
+        ),
+        'entry_date' => 'Data di registrazione',
+        'orderby' => 'Ordina per: ',
+        'target_account' => 'Conto corrente di addebito',
+        'transfer_fees_acc' => 'Conto addebito spese bancarie',
+        'transfer_fees' => 'Eventuali spese bancarie',
+        'description' => 'Descrizione del movimento contabile',
+        'description_value' => 'PAGATO STIPENDIO',
+        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
+        'total' => 'TOTALE €',
+        'confirm_entry' => 'Genera XML-CBI e contabilizza i bonifici',
+        'upd_entry'=> 'Modifica il movimento contabile generato da questo documento'
     )
 );
 ?>

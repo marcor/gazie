@@ -34,7 +34,7 @@ $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . "
 function print_querytime($prev) {
     list($usec, $sec) = explode(" ", microtime());
     $this_time = ((float) $usec + (float) $sec);
-    echo round($this_time - $prev, 8);
+    echo round($this_time - $prev,3);
     return $this_time;
 }
 
