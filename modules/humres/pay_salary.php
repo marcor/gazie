@@ -292,7 +292,7 @@ $upd=($form['id_tes']>0)?'_upd':'';
                             <label for="entry_date" class="col-xs-7 control-label">
 							<?php
 							if (!strlen($v['iban'])==27){
-								echo '<a class="btn btn-xs btn-danger" title="Il fornirore non ha l\'IBAN" href="./admin_staff.php?codice='.intval(substr($v['codice'],3,6)).'&Update">NO IBAN</a>';
+								echo '<a class="btn btn-xs btn-danger" title="Il collaboratore non ha l\'IBAN" href="./admin_staff.php?codice='.intval(substr($v['codice'],3,6)).'&Update">NO IBAN</a>';
 							}
 							echo $v['ragso1'].' '.$v['ragso2']; ?><div class="text-right">
 							Importo:</div>
