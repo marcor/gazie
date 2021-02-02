@@ -187,7 +187,7 @@ require("../../config/templates/report_template.php");
 
 $form['assets'] = getAssets($dt);
 $title = array('luogo_data' => $luogo_data,
-    'title' => 'LIBRO DEI CESPITI - BENI AMMORTIZABILI',
+    'title' => 'LIBRO DEI CESPITI - BENI AMMORTIZZABILI',
     'hile' => array(array('lun' => 84, 'nam' => 'Descrizione bene'),
         array('lun' => 18, 'nam' => '%'),
         array('lun' => 28, 'nam' => 'Immobilizzazione'),
