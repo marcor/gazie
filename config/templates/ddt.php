@@ -49,6 +49,8 @@ class DDT extends Template_con_scheda
             $descri='D.d.T. cessione per triangolazione n.';
         } elseif ($this->tesdoc['ddt_type'] == 'S') {
             $descri='Notula di Servizio - DdT n.';
+        } elseif (substr($this->tesdoc['clfoco'],0,1) == '2') { // DdT ricevuto da fornitore
+            $descri='Ricevuto DdT da fornitore n.';
         } else {
             $descri='Documento di Trasporto n.';
         }
