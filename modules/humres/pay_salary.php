@@ -68,7 +68,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['id_tes']) && intval($_GET['id_
     $script_transl = $strScript['pay_salary.php'];
     $form['description'] = $script_transl['description_value'];
 	$rs = gaz_dbi_dyn_query("*", $gTables['staff']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", 
-	"start_date <= '".gaz_format_date($form['entry_date'],true)."'", 'ragso1');
+	" (start_date <= '".gaz_format_date($form['entry_date'],true)."' OR start_date IS NULL) AND (end_date IS NULL OR end_date > '".gaz_format_date($form['entry_date'],true)."' - INTERVAL 3 MONTH OR end_date <= '2010-01-01')", 'ragso1');
 	$form['rows']=[];
     while ($r = gaz_dbi_fetch_array($rs)) { // propongo il form degli stipendi in base ai dati presnti sul db
 		$lsr = gaz_dbi_dyn_query("*", $gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes","codcon = ".$r['codice'], 'datreg DESC',0,1);
@@ -94,7 +94,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['id_tes']) && intval($_GET['id_
 		$form['rows'][$k]['iban']= substr($v['iban'],0,27);
 		$form['rows'][$k]['amount']= number_format($v['amount'],2,'.','');
 		$form['rows'][$k]['check_status']= (isset($_POST['rows'][$k]['check_status']))?$k:false;
-		if ($v['amount'] < 1){ // importo troppo basso
+		if ($v['amount'] < 1 && isset($_POST['rows'][$k]['check_status'])){ // importo troppo basso
 			$msg['err'][] = 'nopay';
 		}
 	}
@@ -170,15 +170,17 @@ $upd=($form['id_tes']>0)?'_upd':'';
         $("#entry_date").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $('input:checkbox,input[name*="amount"]').on('change', function () {
             var sum = 0;
+            var nbo = 0;
             $('input[name*="amount"]').each(function () {
 				var checkid = $(this).attr('chk_id');
 				var tal = parseFloat($(this).val()) || 0.00;
-				if ($('#'+checkid).is(':checked')) {
+				if ($('#'+checkid).is(':checked') && $('#'+checkid).is(':enabled')) {
 					sum = sum + tal;
+                    nbo ++;
 				}
             });
 
-			$("#preventDuplicate").attr('value',(button_text + ' '+(Math.round(sum * 100) / 100).toFixed(2)).toString().replace(".", ",") );
+			$("#preventDuplicate").attr('value',button_text + nbo + ' tot.€ '+((Math.round(sum * 100) / 100).toFixed(2)).toString().replace(".", ",") );
         }).trigger("change");
         $("#checkPayr").click(function () {
             $('input:checkbox.check_payr').not(this).prop('checked', this.checked);
@@ -292,7 +294,7 @@ $upd=($form['id_tes']>0)?'_upd':'';
                             <label for="entry_date" class="col-xs-7 control-label">
 							<?php
 							if (!strlen($v['iban'])==27){
-								echo '<a class="btn btn-xs btn-danger" title="Il collaboratore non ha l\'IBAN" href="./admin_staff.php?codice='.intval(substr($v['codice'],3,6)).'&Update">NO IBAN</a>';
+								echo '<a class="btn btn-xs btn-danger" title="Il collaboratore non ha l\'IBAN" href="./admin_staff.php?codice='.intval(substr($k,3,6)).'&Update">NO IBAN</a>';
 							}
 							echo $v['ragso1'].' '.$v['ragso2']; ?><div class="text-right">
 							Importo:</div>

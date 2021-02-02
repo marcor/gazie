@@ -161,7 +161,7 @@ $strScript = array("admin_staff.php" =>
         'description' => 'Descrizione del movimento contabile',
         'description_value' => 'BONIFICO SALARI & STIPENDI',
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
-        'total' => 'TOTALE €',
+        'total' => ' N.',
         'confirm_entry' => 'Genera XML-CBI e contabilizza i bonifici',
         'confirm_entry_upd' => 'Rigenera l\'XML-CBI e aggiorna la contabilità dei bonifici',
         'upd_entry'=> 'Modifica il movimento contabile generato da questo documento'
