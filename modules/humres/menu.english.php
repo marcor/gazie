@@ -29,7 +29,8 @@ $transl['humres'] = array('name' => "Human resources",
     ),
     'm3' => array(1 => array("Insert new employee", "Insert new employee"),
 				  2 => array("Employee timesheet", "Employee timesheet"),
-				  3 => array("Pay salary", "Pay salary")
+				  3 => array("Pay salary", "Pay salary"),
+				  4 => array("Salary payments report", "Salary payments report")
     )
 );
 ?>

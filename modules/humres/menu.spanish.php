@@ -30,12 +30,13 @@
 
 */
 $transl['humres'] = array( 'name' => "MASE Recursos Humanos",
-                           'title' => "MASE Recursos Humanos",
-                           'm2' => array( 1 =>array("Lista del personal","Lista del personal")
-                                       ),
-                           'm3' => array( 1 =>array("Nuevo colaborador","Nuevo colaborador"),
+    'title' => "MASE Recursos Humanos",
+    'm2' => array(1 =>array("Lista del personal","Lista del personal")
+    ),
+    'm3' => array(1 =>array("Nuevo colaborador","Nuevo colaborador"),
 				  2 => array("Employee timesheet", "Employee timesheet"),
-				  3 => array("Pay salary", "Pay salary")
-                                       )
-                         );
+				  3 => array("Pay salary", "Pay salary"),
+				  4 => array("Salary payments report", "Salary payments report")
+    )
+);
 ?>

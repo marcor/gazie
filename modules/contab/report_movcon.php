@@ -75,7 +75,7 @@ function getPaymov($id_tes, $clfoco) { // restituisce l'id_rig se c'è un movime
 
 function getDocRef($data) {
     global $gTables;
-    $r = '';
+    $r = false;
     switch ($data['caucon']) {
         case "FAI":
         case "FND":
@@ -103,6 +103,12 @@ function getDocRef($data) {
             if ($effett_r) {
                 $r = "../vendit/stampa_effett.php?id_tes=" . $effett_r["id_tes"];
             }
+            break;
+        case "BBH":
+            $r = array('lnk'=>"../humres/pay_salary.php?id_tes=" . $data["id_tes"],'icon'=>'glyphicon glyphicon-euro glyphicon-euro');
+            break;
+        case "BBA":
+            $r = array('lnk'=> "../acquis/report_paymov.php?id_tes=" . $data["id_tes"]."&xml", 'icon'=>'glyphicon glyphicon-euro');
             break;
     }
     return $r;
@@ -245,8 +251,14 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo '<td align="right">' . gaz_format_number($tot) . '</td>';
     echo "<td align=\"center\">";
     $docref = getDocRef($a_row);
-    if (!empty($docref)) {
-        echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"" . $script_transl['sourcedoc'] . "\" href=\"$docref\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+    if ($docref) {
+		$icon='glyphicon glyphicon-print';
+		$lnk=$docref;
+		if (is_array($docref)){
+			$icon=$docref['icon'];
+			$lnk=$docref['lnk'];
+		}
+        echo '<a class="btn btn-xs btn-default btn-default" title="' . $script_transl['sourcedoc'] . '" href="'.$lnk.'" target="_blank"><i class="'.$icon.'"></i></a>';
     } elseif ($paymov) {
         echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"" . $script_transl['customer_receipt'] . "\" href=\"../vendit/print_customer_payment_receipt.php?id_rig=" . $paymov . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
     }

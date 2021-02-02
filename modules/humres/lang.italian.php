@@ -146,9 +146,10 @@ $strScript = array("admin_staff.php" =>
 		'hours_other'=>"altra quantità",
 		),
     "pay_salary.php" =>
-    array('title' => 'Genera file XML-CBI per bonifico massivo salari e stipendi e contabilizzazione',
+    array('title' => 'Genera il file XML-CBI per bonifico massivo e contabilizza salari e stipendi ',
+		  'title_upd' => 'Modifica la registrazione e rigenera il file XML-CBI dei bonifici salari e stipendi',
         'err' => array(
-            'nopay' => 'Non sono stati selezionati stipendi',
+            'nopay' => 'Salario - stipendio non valorizzato',
             'noacc' => 'Non è stato selezionato il conto corrente di addebito',
             'expif' => 'La data di inizio non può essere precedente a quella dell\'ultimo emesso'
         ),
@@ -158,11 +159,16 @@ $strScript = array("admin_staff.php" =>
         'transfer_fees_acc' => 'Conto addebito spese bancarie',
         'transfer_fees' => 'Eventuali spese bancarie',
         'description' => 'Descrizione del movimento contabile',
-        'description_value' => 'SALARIO-STIPENDIO',
+        'description_value' => 'BONIFICO SALARI & STIPENDI',
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
         'total' => 'TOTALE €',
         'confirm_entry' => 'Genera XML-CBI e contabilizza i bonifici',
+        'confirm_entry_upd' => 'Rigenera l\'XML-CBI e aggiorna la contabilità dei bonifici',
         'upd_entry'=> 'Modifica il movimento contabile generato da questo documento'
+    ),
+    "report_pay_salary.php" =>
+    array('title' => 'Lista bonifici per salari e stipendi ',
     )
+	
 );
 ?>

@@ -160,7 +160,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $desmov = $form['descr_mov'];
         }
         /** fine modifica FP */
-        $tes_val = array('caucon' => '',
+        $tes_val = array('caucon' => 'BBA',
             'descri' => $desmov,
             'datreg' => $date,
             'datdoc' => $date,
@@ -171,11 +171,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         $rig_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['partner'], 'import' => $acc_tot));
         if ($form['transfer_fees'] >= 0.01 && $form['transfer_fees_acc'] > 100000000) {
             rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['transfer_fees_acc'], 'import' => $form['transfer_fees']));
-			if (TRUE) {//TO-DO: IN ANAGRAFICA CONTO CORRENTE CREARE OPZIONE PER CONTABILIZZAZIONE UNIFICATA O SU RIGA SEPARATA DELLE COMMISSIONI BANCARIE
-				rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => round($form['transfer_fees'], 2)));
-			} else {
-				$tot_avere += $form['transfer_fees'];
-			}
+			$tot_avere += $form['transfer_fees'];
         }
         rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => $tot_avere));
         foreach ($form['paymov'] as $k => $v) { //attraverso l'array delle partite

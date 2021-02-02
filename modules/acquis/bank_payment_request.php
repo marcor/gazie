@@ -84,7 +84,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         if (count($msg['err']) <= 0) { // non ci sono errori, posso procedere
             $paymov = new Schedule;
             // inserisco i dati postati
-            $newValue = array('caucon' => 'PRB',
+            $newValue = array('caucon' => 'BBA',
                 'descri' => $form['description'],
                 'id_doc' => 0,
                 'datreg' => gaz_format_date($form['entry_date'], TRUE),
