@@ -125,14 +125,14 @@ switch ($tipdoc) {
       break;
 }
 if ( $tipdoc==0 ) {
-   $result = gaz_dbi_query( "SELECT DISTINCT gaz_anagra.ragso1, gaz_anagra.ragso2,
+   $result = gaz_dbi_query( "SELECT DISTINCT ".$gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2,
       SUM(".$gTables['rigdoc'].".quanti * ".$gTables['rigdoc'].".prelis * (1 - ".$gTables['rigdoc'].".sconto / 100) * (1 - ".$gTables['tesdoc'].".sconto / 100)) AS imponibile,
       SUM(".$gTables['rigdoc'].".quanti * ".$gTables['rigdoc'].".prelis * (1 - ".$gTables['rigdoc'].".sconto / 100) * (1 - ".$gTables['tesdoc'].".sconto / 100) * ".$gTables['rigdoc'].".pervat / 100) AS iva,
       ".$gTables['tesdoc'].".*
          FROM ".$gTables['rigdoc']."
             LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['rigdoc'].".id_tes = ".$gTables['tesdoc'].".id_tes
             LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['tesdoc'].".clfoco
-            LEFT JOIN gaz_anagra ON ".$gTables['clfoco'].".id_anagra = gaz_anagra.id
+            LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id
          WHERE 
             tipdoc not like 'AF%' and tipdoc!='DDL' and seziva = "
         . intval($_GET['si'])
@@ -155,8 +155,8 @@ if ( $tipdoc==0 ) {
         . " AND "
         . intval($_GET['pf'])
         . $cliente
-        ." GROUP BY gaz_anagra.ragso1,
-               gaz_anagra.ragso2,
+        ." GROUP BY ".$gTables['anagra'].".ragso1,
+               ".$gTables['anagra'].".ragso2,
                ".$gTables['tesdoc'].".protoc,
                ".$gTables['tesdoc'].".numdoc,
                ".$gTables['tesdoc'].".numfat,
@@ -407,33 +407,33 @@ function calcolaBolli($row, $spese) {
                ".$gTables['tesdoc'].".status,
                ".$gTables['tesdoc'].".adminid,
                ".$gTables['tesdoc'].".last_modified,
-               gaz_anagra.id,
-               gaz_anagra.sedleg,
-               gaz_anagra.legrap_pf_nome,
-               gaz_anagra.legrap_pf_cognome,
-               gaz_anagra.sexper,
-               gaz_anagra.datnas,
-               gaz_anagra.luonas,
-               gaz_anagra.pronas,
-               gaz_anagra.counas,
-               gaz_anagra.indspe,
-               gaz_anagra.capspe,
-               gaz_anagra.citspe,
-               gaz_anagra.prospe,
-               gaz_anagra.country,
-               gaz_anagra.id_currency,
-               gaz_anagra.id_language,
-               gaz_anagra.latitude,
-               gaz_anagra.longitude,
-               gaz_anagra.telefo,
-               gaz_anagra.fax,
-               gaz_anagra.cell,
-               gaz_anagra.codfis,
-               gaz_anagra.pariva,
-               gaz_anagra.fe_cod_univoco,
-               gaz_anagra.e_mail,
-               gaz_anagra.pec_email,
-               gaz_anagra.fatt_email,
+               ".$gTables['anagra'].".id,
+               ".$gTables['anagra'].".sedleg,
+               ".$gTables['anagra'].".legrap_pf_nome,
+               ".$gTables['anagra'].".legrap_pf_cognome,
+               ".$gTables['anagra'].".sexper,
+               ".$gTables['anagra'].".datnas,
+               ".$gTables['anagra'].".luonas,
+               ".$gTables['anagra'].".pronas,
+               ".$gTables['anagra'].".counas,
+               ".$gTables['anagra'].".indspe,
+               ".$gTables['anagra'].".capspe,
+               ".$gTables['anagra'].".citspe,
+               ".$gTables['anagra'].".prospe,
+               ".$gTables['anagra'].".country,
+               ".$gTables['anagra'].".id_currency,
+               ".$gTables['anagra'].".id_language,
+               ".$gTables['anagra'].".latitude,
+               ".$gTables['anagra'].".longitude,
+               ".$gTables['anagra'].".telefo,
+               ".$gTables['anagra'].".fax,
+               ".$gTables['anagra'].".cell,
+               ".$gTables['anagra'].".codfis,
+               ".$gTables['anagra'].".pariva,
+               ".$gTables['anagra'].".fe_cod_univoco,
+               ".$gTables['anagra'].".e_mail,
+               ".$gTables['anagra'].".pec_email,
+               ".$gTables['anagra'].".fatt_email,
                ".$gTables['tesdoc'].".id_tes,
                ".$gTables['tesdoc'].".protoc,
                ".$gTables['tesdoc'].".numdoc,

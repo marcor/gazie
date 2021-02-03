@@ -52,7 +52,7 @@ $script_transl = HeadMain('', '', 'admin_agenti_forn');
     if (!isset($_GET['field']) or ( $_GET['field'] == 2) or ( empty($_GET['field'])))
        $orderby = "id_agente DESC";
     $recordnav = new recordnav($gTables['agenti_forn'] . " LEFT JOIN " . $gTables['clfoco'] . " on " . $gTables['agenti_forn'] . ".id_fornitore = " . $gTables['clfoco'] . ".codice "
-            . "left join gaz_anagra on gaz_anagra.id=" . $gTables['clfoco'] . ".id_anagra", $where, $limit, $passo);
+            . "left join ".$gTables['anagra']." on ".$gTables['anagra'].".id=" . $gTables['clfoco'] . ".id_anagra", $where, $limit, $passo);
     $recordnav->output();
     ?>
 	<div class="table-responsive">

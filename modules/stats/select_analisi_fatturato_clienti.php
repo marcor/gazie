@@ -113,9 +113,9 @@ left join $tab_anagra dati_clienti on clienti.id_anagra=dati_clienti.id ";
 //join gaz_002tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes 
 //join gaz_002artico artico on artico.codice=rigdoc.codart 
 //join gaz_002clfoco fornitori on artico.clfoco=fornitori.codice 
-//join gaz_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
+//join ".$gTables['anagra']." dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
 //join gaz_002clfoco clienti on tesdoc.clfoco=clienti.codice 
-//join gaz_anagra dati_clienti on clienti.id_anagra=dati_clienti.id 
+//join ".$gTables['anagra']." dati_clienti on clienti.id_anagra=dati_clienti.id 
 //WHERE tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 and artico.ragstat is not null and artico.ragstat!=''
 //GROUP BY clienti.codice
 //order by nome_cliente";
