@@ -54,7 +54,7 @@ if (isset($_SESSION['table_prefix'])) {
 $month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>"Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre");
 
 // tabelle comuni alle aziende della stessa gestione
-$tn = array('admin', 'admin_config', 'admin_module', 'anagra', 'aziend', 'classroom', 'config',
+$tn = array('admin', 'admin_config', 'admin_module', 'anagra', 'aziend', 'bank', 'classroom', 'config',
     'country', 'currencies', 'currency_history', 'destina', 'camp_avversita', 'camp_colture', 
 	'camp_fitofarmaci', 'camp_uso_fitofarmaci',	'languages', 'menu_module', 'menu_script', 'menu_usage', 
     'module', 'municipalities', 'provinces', 'regions', 'staff_absence_type', 'staff_work_type', 'students',
