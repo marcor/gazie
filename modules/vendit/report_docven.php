@@ -453,7 +453,7 @@ $(function() {
                                                             ["l'effetto generato", $r_e["tipeff"], "effetto"];
                         $visualizza_effetto_ft .= " <a class='btn btn-xs btn-default btn-$eff_class' style='font-size:10px;' title='Visualizza $eff_desc per il regolamento della fattura' href='stampa_effett.php?id_tes={$r_e['id_tes']}'> $eff {$r_e['progre']} </a>\n";
                     }
-                    if ($n_e == 0) {
+                    if ($n_e == 0 && $r["geneff"]<>'S') {
                         if ($pagame["tippag"] == 'B' || $pagame["tippag"] == 'T' || $pagame["tippag"] == 'V') {
                             $genera_effetti_previsti = " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
                         }
