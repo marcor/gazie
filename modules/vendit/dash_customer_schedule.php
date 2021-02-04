@@ -38,7 +38,7 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
 			<a class="pull-right dialog_grid" id_bread="<?php echo $grr['id_bread']; ?>" style="cursor:pointer;"><i class="glyphicon glyphicon-cog"></i></a>
           </div>
           <div class="box-body">
-              <table id="clienti" class="table table-bordered table-striped table-responsive dataTable" role="grid" aria-describedby="clienti_info">
+              <table id="clienti" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
                   <thead>
                       <tr role="row">
                           <th><?php echo $script_transl['sca_cliente']; ?></th>

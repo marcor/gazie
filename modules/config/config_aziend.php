@@ -26,13 +26,17 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
 if (isset($_POST["mode"])&& $_POST["mode"]=='modal') {   //  sono al primo accesso, non faccio nulla
-
 } else { // ho modificato i valori
     if (count($_POST) > 0) {
-        foreach ($_POST as $key => $value) {
+        $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        foreach ($_POST as $k => $v) {
+            $value=filter_var($v, FILTER_SANITIZE_STRING);
+            $key=filter_var($k, FILTER_SANITIZE_STRING);
+            print 'sasasa:'. $key. ' asda>'.$value.'<br>';
             gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
         }
         header("Location: config_aziend.php?ok");
+        exit;
     }
 }
 $script = basename($_SERVER['PHP_SELF']);
@@ -51,7 +55,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 <ul class="nav nav-pills">
         <li class="active"><a data-toggle="pill" href="#generale">Configurazione</a></li>
         <li class=""><a data-toggle="pill" href="#email">Email</a></li>
-        <li style="float: right;"><button type="submit" class="btn btn-warning">Salva</button></li>
+        <li style="float: right;"><div class="btn btn-warning" id="upsave">Salva</div></li>
 </ul>
 <div class="panel panel-default gaz-table-form div-bordered">
   <div class="container-fluid">
@@ -73,7 +77,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                         <?php
                         if ($r['var'] == 'company_email_text') {
                             ?>
-                            <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" class="mceClass" style="width:100%;"><?php echo $r['val']; ?></textarea>
+                            <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" style="width:100%;"><?php echo $r['val']; ?></textarea>
                             <?php
                         } else {
 							if ($r['var'] == 'reply_to') {
@@ -151,11 +155,11 @@ $("#sbmt-form").submit(function (e) {
     });
     e.preventDefault(); // avoid to execute the actual submit of the form.
 });
-$("#sbmt-elimina").submit(function (e) {
+$( "#upsave" ).click(function() {
     $.ajax({
         type: "POST",
         url: "config_aziend.php",
-        data: {'elimina':true}, // serializes the form's elements.
+        data: $("#sbmt-form").serialize(), // serializes the form's elements.
         success: function (data) {
             $("#edit-modal .modal-sm").css('width', '100%');
             $("#edit-modal .modal-body").html(data);
