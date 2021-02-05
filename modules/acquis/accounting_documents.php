@@ -605,8 +605,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $admin_aziend['ivaven'], 'import' => $acc_iva));
 
                     // infine creo un movimento di storno dell'IVA    
-                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $newValue['clfoco'], 'import' => $acc_iva));
-                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $v['tes']['clfoco'], 'import' => $acc_iva));
+                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $v['tes']['clfoco'], 'import' => $acc_iva));
+                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_iva));
                     // in ultimo faccio l'update del riferimento sui righi inseriti per il movimento padre
                     gaz_dbi_put_row($gTables['rigmoi'], 'id_tes', $tes_id, 'reverse_charge_idtes', $rctes_id);
                 }
