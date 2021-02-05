@@ -606,7 +606,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 
                     // infine creo un movimento di storno dell'IVA    
                     rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $newValue['clfoco'], 'import' => $acc_iva));
-                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_iva));
+                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $v['tes']['clfoco'], 'import' => $acc_iva));
                     // in ultimo faccio l'update del riferimento sui righi inseriti per il movimento padre
                     gaz_dbi_put_row($gTables['rigmoi'], 'id_tes', $tes_id, 'reverse_charge_idtes', $rctes_id);
                 }
@@ -656,7 +656,7 @@ $gForm = new GAzieForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'] . $script_transl['vat_section'];
 $gForm->selectNumber('vat_section', $form['vat_section'], 0, 1, 9, 'FacetSelect', 'vat_section');
 echo "</div>\n";
-echo "<table class=\"Tsmall\">\n";
+echo "<table class=\"Tmiddle\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
