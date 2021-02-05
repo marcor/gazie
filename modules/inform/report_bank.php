@@ -101,7 +101,10 @@ $(function() {
 <?php
 $script_transl = HeadMain(0, array('custom/autocomplete'));
 ?>
-<div class="text-center"><h3>Sportelli bancari</h3></div>
+<div class="text-center"><h3>Sportelli bancari</h3>
+</div>
+<div class="col-xs-12 text-center"><div class="col-xs-6"></div><div class="col-xs-6 text-center"><a href="./admin_bank.php" class="btn btn-success">Inserisci Nuovo</a></div>
+</div>
 <?php
 $ts->output_navbar();
 ?>
