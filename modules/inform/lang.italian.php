@@ -261,6 +261,25 @@ $strScript = array(
 		'web_url'=>'Sito web',
 		'email'=>'E-Mail'
     ),
+	"admin_bank.php" =>
+    array('title' => 'Gestione archivio dei sportelli bancari',
+        'ins_this' => "Inserimento nuovo sportello bancario",
+        'upd_this' => "Modifica sportello bancario ID:",
+        'err' => array('name' => '&Egrave; necessario indicare il nome del comune',
+            'postal_code' => '&Egrave; necessario indicare il codice postale',
+            'email' => 'L\'indirizzo e-mail è sbagliato',
+            'web_url' => 'L\'indirizzo del sito web è sbagliato'
+        ),
+        'id' => "ID",
+        'iso_country' => "Nazione",
+        'codabi' => "Codice ABI",
+		'descriabi'=>'Banca',
+        'codcab' => "Codice CAB",
+		'descricab'=>'Descrizione sportello',
+		'indiri'=>'Indirizzo',
+		'id_municipalities'=>'Comune'
+
+    ),
     "report_ruburl.php" =>
     array('title'       => 'Gestione archivio dei siti internet',
         'subtitle'      => 'Accesso rapido ai siti aziendali',

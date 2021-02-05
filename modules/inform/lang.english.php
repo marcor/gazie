@@ -234,6 +234,53 @@ $strScript = array("report_letter.php" =>
         'stat_code' => 'Codice statistico',
 		'web_url'=>'Sito web',
 		'email'=>'E-Mail'
+    ),
+	"admin_bank.php" =>
+    array('title' => 'Gestione archivio dei sportelli bancari',
+        'ins_this' => "Inserimento nuovo sportello bancario",
+        'upd_this' => "Modifica sportello bancario ID:",
+        'err' => array('name' => '&Egrave; necessario indicare il nome del comune',
+            'postal_code' => '&Egrave; necessario indicare il codice postale',
+            'email' => 'L\'indirizzo e-mail è sbagliato',
+            'web_url' => 'L\'indirizzo del sito web è sbagliato'
+        ),
+        'id' => "ID",
+        'iso_country' => "Nazione",
+        'codabi' => "Codice ABI",
+		'descriabi'=>'Banca',
+        'codcab' => "Codice CAB",
+		'descricab'=>'Descrizione sportello',
+		'indiri'=>'Indirizzo',
+		'id_municipalities'=>'Comune'
+
+    ),
+    "report_ruburl.php" =>
+    array('title'       => 'Gestione archivio dei siti internet',
+        'subtitle'      => 'Accesso rapido ai siti aziendali',
+        'ins_this'      => "Inserimento nuovo indirizzo",
+        'upd_this'      => "Modifica l'indirizzo",
+        'id'            => "id",
+        'description'   => "Descrizione",
+        'address'       => "Indirizzo",
+        'open'          => "Visita",
+        'opentab'       => "Apri in un'altra finestra",
+        'search'        => "Cerca",
+        'delete'        => "Elimina",
+        'category'      => "Categoria"
+    ),
+    "admin_ruburl.php"  =>
+    array('title'       => 'Aggiungi sito internet',
+        'subtitle'      => 'Inserisci la descrizione e l\'indirizzo completo del tipo protocollo',
+        'description'   => 'Descrizione',
+        'address'       => 'Indirizzo',
+        'category'      => 'Categoria',
+        'other'         => 'Altro',
+        'inscat'        => 'Inserisci una categoria',
+        'insdes'        => 'Inserisci una descrizione',
+        'insadd'        => 'Inserisci l\'indirizzo in formato URL',
+        'back'          => 'Torna alla rubrica',
+        'add'           => 'Aggiungi'
     )
+
 );
 ?>

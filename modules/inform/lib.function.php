@@ -28,7 +28,7 @@ class informForm extends GAzieForm {
 	
 	private $testata = array(); 
 	
-	function __construct($testata) {
+	function __construct($testata='') {
 		$this->TestataLettera = $testata;
 	}
 	

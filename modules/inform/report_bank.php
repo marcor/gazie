@@ -144,7 +144,7 @@ echo '</tr>';
 while ($r = gaz_dbi_fetch_array($result)) {
     echo "<tr>\n";
     echo '<td>
-    <a class="btn btn-xs btn-default" href="../admin_bank.php?id='.$r['id'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['id'].'</a>';
+    <a class="btn btn-xs btn-default" href="./admin_bank.php?id='.$r['id'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['id'].'</a>';
     echo '</td>';
     echo '<td class="text-center">'.$r['codabi'];
     echo "</td>\n";
