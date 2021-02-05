@@ -27,9 +27,8 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 // campi ammissibili per la ricerca
 $search_fields = [
-    'sea_abi' => "{$gTables['bank']}.codabi LIKE '%%%s%%'",
-	'sea_cab' => "{$gTables['bank']}.codcab LIKE '%%%s%%'",
-    'sea_descri' => "{$gTables['bank']}.descri LIKE '%%%s%%'"
+    'sea_bank' => " CONCAT(".$gTables['bank']. ".codcab,' ',".$gTables['bank']. ".descricab,' ',".$gTables['bank']. ".indiri,' ',".$gTables['municipalities']. ".name) LIKE '%%%s%%'",
+    'abi'  => "codabi = %d",
 ];
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array  (
@@ -84,16 +83,16 @@ $(function() {
 		});
 		$("#dialog_delete" ).dialog( "open" );  
 	});
-	$( "#suggest_codabi" ).autocomplete({
-		source: "../../modules/root/search.php?opt=suggest_codabi",
-		minLength: 3,
+	$( "#suggest_search" ).autocomplete({
+		source: "./search.php?opt=suggest_search",
+		minLength: 5,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
         },
 		select: function(event, ui) {
-			$("#suggest_codabi").val(ui.item.value);
+			$("#suggest_search").val(ui.item.value);
 			$(this).closest("form").submit();
 		}
 	});
@@ -120,16 +119,12 @@ $ts->output_navbar();
 		<td class="FacetFieldCaptionTD">
         </td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="sea_abi" placeholder="ABI" id="suggest_codabi" class="input-sm form-control" value="<?php echo (isset($sea_abi))? htmlentities($sea_abi, ENT_QUOTES) : ""; ?>" maxlength="5">
+        <?php  gaz_flt_disp_select("abi", "codabi AS abi",$tablejoin, $ts->where, "codabi ASC"); ?>
 		</td>
 		<td class="FacetFieldCaptionTD">
         </td>
-		<td class="FacetFieldCaptionTD">
-			<input type="text" name="sea_cab" placeholder="CAB"  id="suggest_codcab" class="input-sm form-control" value="<?php echo (isset($sea_cab))? htmlentities($sea_cab, ENT_QUOTES) : ""; ?>" maxlength="5">
-        </td>
-		<td class="FacetFieldCaptionTD">
-        </td>
-		<td class="FacetFieldCaptionTD">
+		<td class="FacetFieldCaptionTD" colspan="3">
+			<input type="text" name="sea_bank" placeholder="ricerca sportello ( min.5 caratteri )"  id="suggest_search" class="input-sm form-control" value="<?php echo (isset($sea_bank))? htmlentities($sea_bank, ENT_QUOTES) : ""; ?>" maxlength="20">
         </td>
 		<td class="FacetFieldCaptionTD" colspan="2">
 			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
