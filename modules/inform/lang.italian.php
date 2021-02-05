@@ -265,10 +265,14 @@ $strScript = array(
     array('title' => 'Gestione archivio dei sportelli bancari',
         'ins_this' => "Inserimento nuovo sportello bancario",
         'upd_this' => "Modifica sportello bancario ID:",
-        'err' => array('name' => '&Egrave; necessario indicare il nome del comune',
-            'postal_code' => '&Egrave; necessario indicare il codice postale',
-            'email' => 'L\'indirizzo e-mail è sbagliato',
-            'web_url' => 'L\'indirizzo del sito web è sbagliato'
+        'err' => array('id_municipalities' => '&Egrave; necessario indicare il comune',
+            'cap' => '&Egrave; necessario indicare il codice postale',
+            'codabi' => 'Codice ABI non valido',
+            'codcab' => 'Codice CAB non valido',
+            'descriabi' => 'Descrizione banca non valida',
+            'descricab' => 'Descrizione sportello non valido',
+            'indiri' => 'Indirizzo non valido',
+            'exist' => 'Sportello già in archivio'
         ),
         'id' => "ID",
         'iso_country' => "Nazione",
@@ -277,7 +281,8 @@ $strScript = array(
         'codcab' => "Codice CAB",
 		'descricab'=>'Descrizione sportello',
 		'indiri'=>'Indirizzo',
-		'id_municipalities'=>'Comune'
+		'id_municipalities'=>'Comune',
+		'cap'=>'Codice postale'
 
     ),
     "report_ruburl.php" =>

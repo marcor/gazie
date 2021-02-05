@@ -221,6 +221,19 @@ class informForm extends GAzieForm {
 			$tot += $importo;
 		} 
 		return '&euro; ' .$tot ;
-	}	
+	}
+
+    function selectMunicipalities($cerca,$val) {
+        global $gTables;
+        if ($val >= 1) {
+            $municipalities = gaz_dbi_get_row($gTables['municipalities'], 'id',  $val);
+            echo '<input type="submit" tabindex="999" value="'.$municipalities['name'].'" name="change" onclick="this.form.hidden_req.value=\'change_municipalities\';" title="Cambia comune">';
+            echo '<input type="hidden" name="search_municipalities" id="search_municipalities" value="' . $municipalities['name'] . '" />';
+        } else {
+            echo '<input type="text" name="search_municipalities" id="search_municipalities" placeholder=" cerca" tabindex="1" value="' . $cerca . '"  maxlength="16" />';
+        }
+        echo '<input type="hidden" id="id_municipalities" name="id_municipalities" value="'.$val.'">';
+    }
+	
 }
 ?>

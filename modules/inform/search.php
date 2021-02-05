@@ -71,7 +71,25 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
 
     switch ($opt) {
         case 'suggest_search':
-			$result = gaz_dbi_dyn_query ( $gTables['bank']. ".id AS id, CONCAT(".$gTables['bank']. ".descriabi,' ',".$gTables['bank']. ".codcab,' ',".$gTables['bank']. ".descricab,' ',".$gTables['bank']. ".indiri,' ',".$gTables['municipalities']. ".name) AS label, CONCAT(".$gTables['bank']. ".codcab,' ',".$gTables['bank']. ".descricab,' ',".$gTables['bank']. ".indiri,' ',".$gTables['municipalities']. ".name) AS value , 'S' AS movimentabile",$gTables['bank']. " LEFT JOIN " . $gTables['municipalities'] . " ON " . $gTables['bank'] . ".id_municipalities = " . $gTables['municipalities'] . ".id", "CONCAT(".$gTables['bank']. ".codcab,' ',".$gTables['bank']. ".descricab,' ',".$gTables['bank']. ".indiri,' ',".$gTables['municipalities']. ".name) LIKE '%".$term."%'");
+//			$result = gaz_dbi_dyn_query ( $gTables['bank']. ".id AS id, CONCAT(".$gTables['bank']. ".descriabi,' ',".$gTables['bank']. ".codcab,' ',".$gTables['bank']. ".descricab,' ',".$gTables['bank']. ".indiri,' ',".$gTables['municipalities']. ".name) AS label, CONCAT(".$gTables['bank']. ".codcab,' ',".$gTables['bank']. ".descricab,' ',".$gTables['bank']. ".indiri,' ',".$gTables['municipalities']. ".name) AS value , 'S' AS movimentabile",$gTables['bank']. " LEFT JOIN " . $gTables['municipalities'] . " ON " . $gTables['bank'] . ".id_municipalities = " . $gTables['municipalities'] . ".id", "CONCAT(".$gTables['bank']. ".codcab,' ',".$gTables['bank']. ".descricab,' ',".$gTables['bank']. ".indiri,' ',".$gTables['municipalities']. ".name) LIKE '%".$term."%'");
+            $fields = array("id", "descriabi", "codcab", "descricab", "indiri"); //	Sono i campi sui quali effettuare la ricerca
+            foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
+                foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
+                    $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
+                }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
+            $result = gaz_dbi_dyn_query("id, CONCAT( descriabi,' - ',codcab,' - ',descricab,' - ',indiri) AS label, id AS value", $gTables['bank'], $like, "id");
+            break;
+        case 'municipalities':
+            $fields = array("id", "name"); //	Sono i campi sui quali effettuare la ricerca
+            foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
+                foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
+                    $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
+                }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
+            $result = gaz_dbi_dyn_query("id, name AS label, id AS value", $gTables['municipalities'], $like, "id");
             break;
     }
     while ($row = gaz_dbi_fetch_assoc($result)) { 

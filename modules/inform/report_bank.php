@@ -27,7 +27,7 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 // campi ammissibili per la ricerca
 $search_fields = [
-    'sea_bank' => " CONCAT(".$gTables['bank']. ".codcab,' ',".$gTables['bank']. ".descricab,' ',".$gTables['bank']. ".indiri,' ',".$gTables['municipalities']. ".name) LIKE '%%%s%%'",
+    'sea_id' => $gTables['bank']. ".id = %d",
     'abi'  => "codabi = %d",
 ];
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -36,6 +36,7 @@ $sortable_headers = array  (
             "ABI"=>'codabi',
             "Banca"=>'descriabi',
             "CAB"=>'codcab',
+            "Banca<br/>appoggio"=>'',
             "Sportello"=>'descricab',
             'Indirizzo' => 'indiri',
             'Comune' => 'descomune',
@@ -50,10 +51,44 @@ $ts = new TableSorter(
 ?>
 <script>
 $(function() {
-	$("#dialog_delete").dialog({ autoOpen: false });
+
+    $("#dialog_banapp").dialog({ autoOpen: false });
+	$('.dialog_banapp').click(function() {
+		$("p#banappabicab").html($(this).attr("banappabicab"));
+		$("p#banappbank").html($(this).attr("banappbank"));
+		var id = $(this).attr('ref');
+		$( "#dialog_banapp" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Aggiungi', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'add_banapp',ref:id},
+						type: 'POST',
+						url: './operat.php',
+						success: function(output){
+							window.location.replace("./report_bank.php?abi=All&sea_id="+id);
+						}
+					});
+				}},
+				"Non aggiungere": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_banapp" ).dialog( "open" );  
+	});
+
+    $("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
-		$("p#idabicab").html($(this).attr("ref"));
-		$("p#iddescri").html($(this).attr("bank"));
+		$("p#abicab").html($(this).attr("abicab"));
+		$("p#describank").html($(this).attr("describank"));
 		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
@@ -67,9 +102,9 @@ $(function() {
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
-						data: {'type':'bank',ref:id},
+						data: {'type':'del_bank',ref:id},
 						type: 'POST',
-						url: './delete.php',
+						url: './operat.php',
 						success: function(output){
 		                    //alert(output);
 							window.location.replace("./report_bank.php");
@@ -83,6 +118,7 @@ $(function() {
 		});
 		$("#dialog_delete" ).dialog( "open" );  
 	});
+
 	$( "#suggest_search" ).autocomplete({
 		source: "./search.php?opt=suggest_search",
 		minLength: 5,
@@ -111,10 +147,15 @@ $ts->output_navbar();
 <form method="GET">
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>Banca:</b></p>
-        <p>ABI CAB:</p>
-        <p class="ui-state-highlight" id="idbank"></p>
+        <p class="ui-state-highlight" id="abicab"></p>
         <p>Descrizione</p>
-        <p class="ui-state-highlight" id="iddescri"></p>
+        <p class="ui-state-highlight" id="describank"></p>
+	</div>
+	<div style="display:none" id="dialog_banapp" title="Banca d'appoggio">
+        <p><b>Aggiungi </b></p>
+        <p class="ui-state-highlight" id="banappabicab"></p>
+        <p>Descrizione</p>
+        <p class="ui-state-highlight" id="banappbank"></p>
 	</div>
 	<div class="table-responsive">
 	<table class="Tlarge table table-striped table-bordered table-condensed">
@@ -126,13 +167,11 @@ $ts->output_navbar();
 		</td>
 		<td class="FacetFieldCaptionTD">
         </td>
-		<td class="FacetFieldCaptionTD" colspan="3">
-			<input type="text" name="sea_bank" placeholder="ricerca sportello ( min.5 caratteri )"  id="suggest_search" class="input-sm form-control" value="<?php echo (isset($sea_bank))? htmlentities($sea_bank, ENT_QUOTES) : ""; ?>" maxlength="20">
+		<td class="FacetFieldCaptionTD" colspan="4">
+			<input type="text" name="sea_id" placeholder="ricerca sportello ( min.5 caratteri )"  id="suggest_search" class="input-sm form-control" value="<?php echo (isset($sea_id))? htmlentities($sea_id, ENT_QUOTES) : ""; ?>" maxlength="20">
         </td>
 		<td class="FacetFieldCaptionTD" colspan="2">
-			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
 			<a class="btn btn-sm btn-default" href="?">Reset</a>
-			<?php  $ts->output_order_form(); ?>
 		</td>
 	</tr>
 <?php
@@ -142,6 +181,7 @@ echo '<tr>';
 $ts->output_headers();
 echo '</tr>';
 while ($r = gaz_dbi_fetch_array($result)) {
+    $banapp = gaz_dbi_get_row($gTables['banapp'], 'codabi', $r['codabi'], "AND codcab ='".$r['codcab']."'");
     echo "<tr>\n";
     echo '<td>
     <a class="btn btn-xs btn-default" href="./admin_bank.php?id='.$r['id'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['id'].'</a>';
@@ -152,13 +192,15 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	echo "</td>\n";
     echo '<td>'.$r['codcab'];
 	echo "</td>\n";
+    echo '<td class="text-center">'.(($banapp)?'<a href="../config/admin_banapp.php?Update&codice='.$banapp['codice'].'" class="btn btn-xs btn-success" title="Banca d\'appoggio presente"><i class="glyphicon glyphicon-edit">'.$banapp['descri'].'</i></a>':'<div class="btn btn-xs btn-info dialog_banapp" ref="'.$r['id'].'" title="Aggiungi come banca d\'appoggio" banappabicab="ABI: '. $r['codabi'].' CAB:'.$r['codcab'].'" banappbank="'. $r['descriabi'].' '.$r['descricab'].'"><i class="glyphicon glyphicon-share"> aggiungi</i> </div>');
+	echo "</td>\n";
     echo '<td>'.$r['descricab'];
 	echo "</td>\n";
     echo '<td>'.$r['indiri'];
 	echo "</td>\n";
     echo '<td>'.strtoupper($r['descomune']);
 	echo "</td>\n";
-    echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['id'].'" bankdes="'. $r['descriabi'].' '.$r['descricab'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
+    echo '<td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="'. $r['id'].'" abicab="ABI: '. $r['codabi'].' CAB:'.$r['codcab'].'" describank="'. $r['descriabi'].' '.$r['descricab'].'"> <i class="glyphicon glyphicon-remove"></i></a>';
 	echo "</td>\n";
     echo "</tr>\n";
 }
