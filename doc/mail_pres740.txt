@@ -1,0 +1,16 @@
+Titolo:
+Qui scribit, bis legit.
+
+Presentazione:
+Rilascio GAzie 7.40 certo di fare cosa molto gradita: ho completato la generazione di files XML-CBI per i bonifici al fine di facilitare l'effettuazione tramite home banking dei pagamenti singoli e/o massivi dei compensi ai collaboratori e delle quietanza dei debiti verso fornitori.
+Da questa release le anagrafiche comuni comprendono l'archivo dei sportelli bancari italiani usufruibili all'occorrenza per popolare l'archivio delle banche d'appoggio aziendali. Voglio precisare che si tratta di una tabella (gaz_bank) popolata con dati che ho trovato pubblicati in rete liberamente, anche sui siti di diverse banche, erano dati non strutturati e soprattutto non è detto che siano aggiornatissimi. Inoltre ho dovuto integrarli ad esempio con le anagrafiche dei comuni di GAzie e per fare questo mi sono avvalso della funzione similar_text del PHP, poi l'ho rivisto "ad occhio" ma più di qualcosa può essere sfuggito. A causa di quanto detto ho dato la possibilità di editarle e se vi accorgerete di errori siete cortesemente pregati di segnalari sul forum, e per chi ha accesso al repository, modificare il file install/install_X.XX.sql in maniera che la correzione si propaghi. Meglio e più comodo sarebbe (e opportuno!?) se l'ABI, la Banca d'Italia e/o le singole banche commerciali mettessero a disposizione un servizio di consultazione (open data) standard, quantomeno dei dati basilari: nome,abi,cab,indirizzo.
+
+Oltre alle due nuove funzionalità sopra descritte ecco il solito elenco modifiche-autori:
+- riscritti i report degli scadenzari clienti - fornitori. (Antonio de Vincentiis)
+- ottimizzate tutte le query riguardanti lo scadenzario, adesso sono notevolmente più veloci. (Antonio de Vincentiis)
+- bugfix: chiusura del registratore telematico arrotondava le eventuali partite di scadenzario all'euro. (Antonio de Vincentiis)
+- aggiunto dialog modale per l'eliminazione delle partite chiuse direttamente dal windget dello scadenzario sulla homepage. (Antonio de Vincentiis)
+- bugfix: alla creazione del preventivo per le righe tipo 6 testo il riferimento in body_text il valore del campo table_name_ref veniva forzato a 'rigdoc'. (Giovanni Vallesi)
+- bugfix: in contabilizzazione fatture acquisto lo storno del reverse charge (solo 7.39) andava a cliente anziché fornitore. (Antonio de Vincentiis)
+
+Antonio de Vincentiis, Montesilvano, 6 febbraio 2020
