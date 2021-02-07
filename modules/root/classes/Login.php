@@ -415,7 +415,9 @@ class Login
                 if ($handle = @opendir(K_PATH_CACHE)) {
                   while ( false !== ( $file_name = readdir( $handle ) ) ) {
 					if (preg_match('/^__[A-Za-z0-9]{4,5}.tmp$/',$file_name) || preg_match('/^__tcpdf_[A-Za-z0-9]+_img_[A-Za-z0-9]+$/',$file_name) ) {
-                        unlink(K_PATH_CACHE.$file_name);
+						if ((filemtime(K_PATH_CACHE.$file_name)+1000) < time()){ // se sono passati 1000 secondi posso cancellarlo
+							unlink(K_PATH_CACHE.$file_name);
+						}
                     }
                   }
                   closedir($handle);
