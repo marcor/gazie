@@ -8,8 +8,13 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <?php
 // utiLizzo l'ultimo thema scelto dall'ultimo utente con i massimi diritti
-$rsu = gaz_dbi_dyn_query('var_value', $gTables['admin'].' LEFT JOIN '. $gTables['admin_config'].' ON '. $gTables['admin'].'.user_name='. $gTables['admin_config'].'.adminid', $gTables['admin_config'].".var_name='theme'",  $gTables['admin'].'.Abilit DESC,'.$gTables['admin'].'.datacc DESC');
-$u = gaz_dbi_fetch_array($rsu);
+$exist_ac=gaz_dbi_query("SHOW TABLES LIKE '" . DB_TABLE_PREFIX ."_admin_config'");
+if (gaz_dbi_num_rows($exist_ac) >= 1){
+    $rsu = gaz_dbi_dyn_query('var_value', $gTables['admin'].' LEFT JOIN '. $gTables['admin_config'].' ON '. $gTables['admin'].'.user_name='. $gTables['admin_config'].'.adminid', $gTables['admin_config'].".var_name='theme'",  $gTables['admin'].'.Abilit DESC,'.$gTables['admin'].'.datacc DESC');
+    $u = gaz_dbi_fetch_array($rsu);    
+} else {
+    $u['var_value']='lte';
+}
 
 // CONTROLLO QUANTE AZIENDE HA L'INSTALLAZIONE
 $rs_az = gaz_dbi_dyn_query('*', $gTables['aziend'], '1', 'codice DESC');

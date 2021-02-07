@@ -90,9 +90,14 @@ include('_footer.php');
 
 function checkSchool() {
     global $gTables;
-    $ns = gaz_dbi_record_count($gTables['classroom'], 1);
-    if ($ns >= 1) {
-        return true;
+    $exist_cr=gaz_dbi_query("SHOW TABLES LIKE '" . $gTables['classroom'] ."'");
+    if (gaz_dbi_num_rows($exist_cr) >= 1){
+        $ns = gaz_dbi_record_count($gTables['classroom'], 1);
+        if ($ns >= 1) {
+            return true;
+        } else {
+            return false;
+        }
     } else {
         return false;
     }
