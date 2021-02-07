@@ -411,7 +411,15 @@ class Login
 				$this->user_email = $result_row->user_email;
 				$this->company_id = $result_row->company_id;
 				$this->user_is_logged_in = true;
-
+                // ad ogni login cancello il direttorio della cache dei files temporanei di tcpdf
+                if ($handle = @opendir(K_PATH_CACHE)) {
+                  while ( false !== ( $file_name = readdir( $handle ) ) ) {
+					if (preg_match('/^__[A-Za-z0-9]{4,5}.tmp$/',$file_name) ) {
+                        unlink(K_PATH_CACHE.$file_name);
+                    }
+                  }
+                  closedir($handle);
+                }
 				// reset the failed login counter for that user
 				$sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
 				. 'SET user_failed_logins = 0, user_last_failed_login = NULL '
