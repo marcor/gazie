@@ -414,7 +414,7 @@ class Login
                 // ad ogni login cancello il direttorio della cache dei files temporanei di tcpdf
                 if ($handle = @opendir(K_PATH_CACHE)) {
                   while ( false !== ( $file_name = readdir( $handle ) ) ) {
-					if (preg_match('/^__[A-Za-z0-9]{4,5}.tmp$/',$file_name) ) {
+					if (preg_match('/^__[A-Za-z0-9]{4,5}.tmp$/',$file_name) || preg_match('/^__tcpdf_[A-Za-z0-9]+_img_[A-Za-z0-9]+$/',$file_name) ) {
                         unlink(K_PATH_CACHE.$file_name);
                     }
                   }
