@@ -299,6 +299,20 @@ $strScript = array(
         'delete'        => "Elimina",
         'category'      => "Categoria"
     ),
+	"reconstruction_schedule.php" =>
+    array('title' => 'Ricostruzione scadenzario da movimenti contabili',
+        'err' => array('name' => '&Egrave; necessario indicare il nome della provincia',
+            'abbreviation' => '&Egrave; necessario indicare la sigla della provincia',
+            'email' => 'L\'indirizzo e-mail è sbagliato',
+            'web_url' => 'L\'indirizzo del sito web è sbagliato'
+        ),
+        'id_partner' => "Cliente/Fornitore",
+        'abbreviation' => "Sigla provincia",
+        'id_region' => "Regione",
+        'stat_code' => 'Codice statistico',
+		'web_url'=>'Sito web',
+		'email'=>'E-Mail'
+    ),
     "admin_ruburl.php"  =>
     array('title'       => 'Aggiungi sito internet',
         'subtitle'      => 'Inserisci la descrizione e l\'indirizzo completo del tipo protocollo',

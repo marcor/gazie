@@ -234,6 +234,19 @@ class informForm extends GAzieForm {
         }
         echo '<input type="hidden" id="id_municipalities" name="id_municipalities" value="'.$val.'">';
     }
+
+    function selectPartner($cerca,$val,$mascli) {
+        global $gTables;
+        if ($val >= 1) {
+            $partner = gaz_dbi_get_row($gTables['clfoco'], 'codice',  $val);
+            $clifor=(substr($val,0,3)==$mascli)?'Cliente: ':'Fornitore: ';
+            echo '<input type="submit" tabindex="999" value="'.$clifor.$partner['descri'].'" name="change" onclick="this.form.hidden_req.value=\'change_partner\';" title="Cambia cliente/fornitore">';
+            echo '<input type="hidden" name="search_partner" id="search_partner" value="' . $cerca . '" />';
+        } else {
+            echo '<input type="text" name="search_partner" id="search_partner" placeholder=" cerca" tabindex="1" value="' . $cerca . '"  maxlength="16" />';
+        }
+        echo '<input type="hidden" id="id_partner" name="id_partner" value="'.$val.'">';
+    }
 	
 }
 ?>
