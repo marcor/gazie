@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
-$tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFD','TD06'=>'AFA','TD08'=>'AFC','TD24'=>'AFD','TD25'=>'AFD');
+$tipdoc_conv=array('TD01'=>'AFA','TD02'=>'AFA','TD03'=>'AFA','TD04'=>'AFC','TD05'=>'AFD','TD06'=>'AFA','TD08'=>'AFC','TD24'=>'AFT','TD25'=>'AFT');
 
 // ATTENZIONE TD01 deve indicizzare per AFT nel caso in cui ci sono DDT di riferimento all'interno del tracciato, quindi si dovrà gestire questa accezione. Comunque con la prossima versione della fattura elettronica (2.0) saranno da implementare anche altri tipi di doc
 
