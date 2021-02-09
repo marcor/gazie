@@ -31,7 +31,8 @@ $transl['inform'] = array('name' => "Tools & Info",
         4 => array("Controllo nuova versione", "Aggiornamento"),
         5 => array("Aggiorna Sito Web", "Crea/aggiorna sito web"),
         6 => array("Rubrica Indirizzi", "Siti Aziendali"),
-        7 => array("Anagrafiche comuni a tutte le aziende", "Anagrafiche comuni")
+        7 => array("Anagrafiche comuni a tutte le aziende", "Anagrafiche comuni"),
+        8 => array("Ricostruzione scadenzario", "Ricostruzione scadenzario")
     ),
     'm3' => array(1 => array("Controllo sbilancio dare-avere dei movimenti contabili", "Controllo sbilancio movimenti contabili"),
         2 => array("Controllo numerazione protocolli IVA", "Controllo numerazione protocolli IVA"),

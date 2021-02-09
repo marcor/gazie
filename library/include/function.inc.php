@@ -2712,13 +2712,22 @@ class Schedule {
         if (!$date) {
             $date = strftime("%Y-%m-%d", mktime(0, 0, 0, date("m"), date("d"), date("Y")));
         }
+        // prima trovo la eventuale ultima apertura dei conti
+        $sqllastAPE = "SELECT " . $gTables['tesmov'] . ".datreg ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave
+            FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] ." ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
+            WHERE codcon = $clfoco AND caucon = 'APE' AND datreg < '".$date."' ORDER BY datreg DESC LIMIT 1";
+        $rslastAPE = gaz_dbi_query($sqllastAPE);
+        $lastAPE = gaz_dbi_fetch_array($rslastAPE);
+        $dat =($lastAPE)?$lastAPE['datreg']:'2000-01-01';
+        $acc=0.00;
+        $acc =($lastAPE && $lastAPE['darave']=='D')?$lastAPE['import']:$acc;
+        $acc =($lastAPE && $lastAPE['darave']=='A')?-$lastAPE['import']:$acc;
         $sqlquery = "SELECT " . $gTables['tesmov'] . ".datreg ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave
             FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] .
                 " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
-            WHERE (codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE') OR (caucon = 'APE' AND codcon = $clfoco AND datreg >= (SELECT MIN(datreg) FROM " . $gTables['tesmov'] . ")) ORDER BY datreg ASC";
+            WHERE datreg >= '".$dat."' AND codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE'";
         $rs = gaz_dbi_query($sqlquery);
         $date_ctrl = new DateTime($date);
-        $acc = 0.00;
         while ($r = gaz_dbi_fetch_array($rs)) {
             $dr = new DateTime($r['datreg']);
             if ($dr <= $date_ctrl) {
@@ -2905,7 +2914,7 @@ class Schedule {
         return gaz_dbi_fetch_array($rs);
     }
 
-    function getPartnerStatus($clfoco, $date = false)
+    function getPartnerStatus($clfoco, $date = false, $order='')
     /*
      * genera un array ($this->PartnerStatus)con i valori dell'esposizione verso un partner commerciale
      * riferito ad una data, se passata, oppure alla data di sistema
@@ -2927,7 +2936,7 @@ class Schedule {
             FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay + " . $gTables['paymov'] . ".id_rigmoc_doc) = " . $gTables['rigmoc'] . ".id_rig "
                 . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes "
                 . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['rigmoc'] . ".codcon = " . $gTables['clfoco'] . ".codice
-            WHERE " . $gTables['clfoco'] . ".codice  = " . $clfoco . " ORDER BY id_tesdoc_ref, id_rigmoc_pay, expiry";
+            WHERE " . $gTables['clfoco'] . ".codice  = " . $clfoco . " ORDER BY id_tesdoc_ref ".$order.", id_rigmoc_pay ".$order.", expiry ".$order;
         $rs = gaz_dbi_query($sqlquery);
         $date_ctrl = new DateTime($date);
         $ctrl_id = 0;

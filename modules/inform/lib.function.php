@@ -247,6 +247,19 @@ class informForm extends GAzieForm {
         }
         echo '<input type="hidden" id="id_partner" name="id_partner" value="'.$val.'">';
     }
+
+    function amout_to_paymov($clfoco,$amount) {
+        // serve per generare un array contenente le scadenze delle ultime fatture attive/passive fino a "coprire" l'importo ($amout) passato come referenza 
+        global $gTables;
+    }
+
+    function delete_all_partner_paymov($clfoco) {
+        // serve per ELIMINARE TUTTE LE PARTITE le cui testate sono riferite al cliente/fornitore passato a riferimento
+        global $gTables;
+        $sql_del_paymov = "DELETE " . $gTables['paymov'] . " FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig) LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes WHERE ".$gTables['tesmov'] .".clfoco = ".$clfoco;
+        gaz_dbi_query($sql_del_paymov);
+    }
 	
+
 }
 ?>

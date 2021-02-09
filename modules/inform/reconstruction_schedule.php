@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
+$paymov = new Schedule;
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script per update
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -44,7 +45,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script per update
     $form['id_partner'] = intval($_POST['id_partner']);
     $form['search_partner'] = '';
     if ($form['id_partner']>0){
-       $form['search_partner'] = gaz_dbi_get_row($gTables['clfoco']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", 'codice',  $form['id_partner'])['ragso1'];
+       $partner = gaz_dbi_get_row($gTables['clfoco']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", 'codice',  $form['id_partner']);
+       $form['search_partner'] = $partner['ragso1'];
     }
     // Se viene inviata la richiesta di cambio produzione
     if ($_POST['hidden_req'] == 'change_partner') {
@@ -110,5 +112,138 @@ if (count($msg['war']) > 0) { // ho un alert
 </div>
 </form>
 <?php
+$date=date('Y-m-d');
+// ottengo il valore del saldo contabile per confrontarlo con quello dello scedenziario
+$acc_bal = $paymov->getPartnerAccountingBalance($form['id_partner'], $date);
+$paymov->getPartnerStatus($form['id_partner'], $date,'DESC');
+
+if ($form['id_partner'] > 100000000) { // partner selezionato
+    $acc_bal = (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$acc_bal:-$acc_bal;
+    ?>
+<div class="col-xs-6">
+<h3 class="sub-header">Movimenti partite da scadenzario</h3>
+    <div class="table-responsive">
+        <table class="table">
+             <thead>
+                <tr>
+                  <th class="col-xs-3 text-center">Documento</th>
+                  <th class="col-xs-3 text-right">Importo</th>
+                  <th class="col-xs-3 text-center">Scadenza</th>
+                  <th class="col-xs-3 text-center">Progressivo</th>
+                </tr>
+              </thead>
+              <tbody>
+<?php        
+    echo "<tr><td colspan='8'>" . $acc_bal . "</td></tr>";
+    $paymov_bal = 0.00;
+    foreach ($paymov->PartnerStatus as $k => $v) {
+        $tmpNumDoc = $paymov->docData[$k]['numdoc'];
+        $tmpDatDoc = $paymov->docData[$k]['datdoc'];
+        $tmpData = $paymov->docData[$k];
+        /** fine modifica FP */
+        $amount = 0.00;
+        echo "<tr>";
+        echo '<td class="FacetDataTD" colspan=4><a class="btn btn-xs btn-default" href="../contab/admin_movcon.php?Update&id_tes='. $paymov->docData[$k]['id_tes'] . '"><i class="glyphicon glyphicon-edit"></i>' .$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']) . "</a> ID partita $k</td></tr>\n";
+        foreach ($v as $ki => $vi) {
+            $class_paymov = 'FacetDataTDevidenziaCL';
+            $v_op = '';
+            $cl_exp = '';
+            if ($vi['op_val'] >= 0.01) {
+                $v_op = gaz_format_number($vi['op_val']);
+                $paymov_bal += $vi['op_val'];
+            }
+            $v_cl = '';
+            if ($vi['cl_val'] >= 0.01) {
+                $v_cl = gaz_format_number($vi['cl_val']);
+                $cl_exp = gaz_format_date($vi['cl_exp']);
+                $paymov_bal -= $vi['cl_val'];
+            }
+            $expo = '';
+            if ($vi['expo_day'] >= 1) {
+                $expo = $vi['expo_day'];
+                if ($vi['cl_val'] == $vi['op_val']) {
+                    $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza
+                    $class_paymov = 'FacetDataTDevidenziaOK';
+                }
+            } else {
+                if ($vi['cl_val'] == $vi['op_val']) { // chiusa e non esposta
+                    $cl_exp = '';
+                    $class_paymov = 'FacetDataTD';
+                } elseif ($vi['status'] == 3) { // SCADUTA
+                    $cl_exp = '';
+                    $class_paymov = 'FacetDataTDevidenziaKO';
+                } elseif ($vi['status'] == 9) { // PAGAMENTO ANTICIPATO
+                    $class_paymov = 'FacetDataTDevidenziaBL';
+                    $vi['expiry'] = $vi['cl_exp'];
+                }
+            }
+            echo '<tr class="' . $class_paymov . '">';
+            echo '<td colspan=2 class="text-right">' . $v_op . "</td>";
+            echo '<td class="text-center">' . gaz_format_date($vi['expiry']) . "</td>";
+            echo '<td class="text-center">';
+            foreach ($vi['cl_rig_data'] as $vj) {
+                echo "<a class=\"btn btn-xs btn-default btn-edit\"  href=\"../contab/admin_movcon.php?id_tes=" . $vj['id_tes'] . "&Update\" title=\"" . $script_transl['update'] . ': ' . $vj['descri'] . " € " . gaz_format_number($vj['import']) . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $vj['id_tes'] . "</a>\n ";
+            }
+            echo $v_cl . "</td>";
+            if ($vi['status'] <> 1 || $vi['status'] < 9) { // accumulo solo se non è chiusa
+                $amount += round($vi['op_val'] - $vi['cl_val'], 2);
+            }
+            echo "</tr>\n";
+        }
+        if (!isset($_POST['paymov'])) {
+            $form['paymov'][$k][$ki]['amount'] = $amount;
+            $form['paymov'][$k][$ki]['id_tesdoc_ref'] = $k;
+        }
+        $open = 'cl';
+        if ($amount >= 0.01) {
+            // attributo opcl per js come aperto
+            $open = 'op';
+        }
+        echo '<input type="hidden" id="post_' . $k . '_' . $ki . '_id_tesdoc_ref" name="paymov[' . $k . '][' . $ki . '][id_tesdoc_ref]" value="' . $k . "\" />";
+        echo '<tr><td colspan=2 class="text-right"><b>Totale partita: € ' . gaz_format_number($form['paymov'][$k][$ki]['amount']) . '</b></td><td colspan=2 class="text-right"><b>'.gaz_format_number($paymov_bal)."</b></td></tr>\n";
+    }
+?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="col-xs-6">
+<h3 class="sub-header">Partitario da movimenti contabili</h3>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th class="col-xs-3">#</th>
+                  <th class="col-xs-3">#</th>
+                  <th class="col-xs-3">#</th>
+                  <th class="col-xs-3">#</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tbody>
+        </table>
+    </div>
+</div>
+<?php
+}
+//$gForm->delete_all_partner_paymov($form['id_partner']);
+
+
+/* 
+
+PAYMOV DELETE
+
+$gForm->delete_all_partner_paymov($form['id_partner']);
+
+
+PAYMOV INSERT
+
+$paymov_value = array('id_tesdoc_ref' => $year . '6' . $form['seziva'] . str_pad($form['protoc'], 9, 0, STR_PAD_LEFT),
+    'id_rigmoc_doc' => $last_id_rig,
+    'amount' => $v['amount'],
+    'expiry' => $v['date']);
+paymovInsert($paymov_value);
+
+*/
 require("../../library/include/footer.php");
 ?>
