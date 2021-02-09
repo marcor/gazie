@@ -573,14 +573,21 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         $rc_cli['codice'] = $anagrafica->anagra_to_clfoco($new_cli, $admin_aziend['mascli'],$v['tes']['pagame']);
                     }
 
-                    // inserisco la testata del movimento di storno Split payment
+                    // inserisco la testata del movimento di storno reverse charge
+                    $rs_ultimo_protoc = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = ".substr($v['tes']['datreg'],0,4)." AND regiva = 2 AND seziva = ".$admin_aziend['reverse_charge_sez'],  "protoc DESC", 0, 1);
+                    $ultimo_protoc = gaz_dbi_fetch_array($rs_ultimo_protoc);
+                    $protoc = 1;
+                    if ($ultimo_tesdoc) {
+                        $protoc = $ultimo_tesdoc['protoc']+1;
+                    }
+
                     $newValue = array('caucon' => 'FAI',
                         'descri' => 'FATTURA REVERSE CHARGE',
                         'id_doc' => $v['tes']['id_tes'],
                         'datreg' => $v['tes']['datreg'],
                         'datliq' => $datliq,
                         'seziva' => $admin_aziend['reverse_charge_sez'],
-                        'protoc' => $v['tes']['protoc'],
+                        'protoc' => $protoc,
                         'numdoc' => $v['tes']['numfat'],
                         'datdoc' => $v['tes']['datfat'],
                         'clfoco' => $rc_cli['codice'],
