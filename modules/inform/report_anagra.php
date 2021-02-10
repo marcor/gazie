@@ -62,7 +62,7 @@ if (!isset($_GET['field'])) {
 <input placeholder="Cerca" class="input-xs form-control" type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" tabindex="1" class="FacetInput">
 </td>
 <td class="FacetFieldCaptionTD">
-<input placeholder="Cerca Ragione Sociale" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" tabindex="1" class="FacetInput">
+<input placeholder="Cerca Ragione Sociale" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="20" tabindex="1" class="FacetInput">
 </td>
 <td class="FacetFieldCaptionTD" colspan="5">&nbsp;</td>
 <td class="FacetFieldCaptionTD" align="right">

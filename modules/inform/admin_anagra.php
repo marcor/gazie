@@ -356,7 +356,7 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="fe_cod_univoco" class="col-sm-4 control-label"><?php echo $script_transl['fe_cod_univoco']; ?></label>
-                    <input class="col-sm-2" type="text" value="<?php echo $form['fe_cod_univoco']; ?>" name="fe_cod_univoco" maxlength="6" />
+                    <input class="col-sm-2" type="text" value="<?php echo $form['fe_cod_univoco']; ?>" name="fe_cod_univoco" maxlength="7" />
                 </div>
             </div>
         </div><!-- chiude row  -->
