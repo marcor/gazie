@@ -2946,11 +2946,13 @@ class Schedule {
             $k = $r['id_tesdoc_ref'];
             if ($k <> $ctrl_id) { // PARTITA DIVERSA DALLA PRECEDENTE
                 $acc[$k] = array();
-                $this->docData[$k] = array('id_tes' => $r['id_tes'], 'descri' => $r['descri'], 'numdoc' => $r['numdoc'], 'seziva' => $r['seziva'], 'datdoc' => $r['datdoc'], 'amount' => $r['amount']);
             }
             $ex = new DateTime($r['expiry']);
             $interval = $date_ctrl->diff($ex);
             if ($r['id_rigmoc_doc'] > 0) { // APERTURE (vengono prima delle chiusure)
+                if (!isset($this->docData[$k])){
+                    $this->docData[$k] = array('id_tes' => $r['id_tes'], 'descri' => $r['descri'], 'numdoc' => $r['numdoc'], 'seziva' => $r['seziva'], 'datdoc' => $r['datdoc'], 'amount' => $r['amount']);
+                }    
                 $s = 0;
 				$style='info';
                 if ($date_ctrl >= $ex) {
