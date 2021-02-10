@@ -864,7 +864,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
                     $nl++;
 					$form['rows'][$nl]['tiprig'] = 1;
 					$form['rows'][$nl]['codice_fornitore'] = '';
-					$form['rows'][$nl]['descri'] = '';
+					$form['rows'][$nl]['descri'] = 'Arrotondamento';
 					$form['rows'][$nl]['unimis'] = '';
 					$form['rows'][$nl]['quanti'] = '';
 					$form['rows'][$nl]['sconto'] = '';
