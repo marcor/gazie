@@ -114,11 +114,13 @@ if (count($msg['war']) > 0) { // ho un alert
 <?php
 $date=date('Y-m-d');
 // ottengo il valore del saldo contabile per confrontarlo con quello dello scedenziario
-$acc_bal = $paymov->getPartnerAccountingBalance($form['id_partner'], $date);
+$allrows = $paymov->getPartnerAccountingBalance($form['id_partner'], $date, true);
 $paymov->getPartnerStatus($form['id_partner'], $date,'DESC');
+krsort($allrows['rows']);
 
 if ($form['id_partner'] > 100000000) { // partner selezionato
-    $acc_bal = (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$acc_bal:-$acc_bal;// in $acc_bal ho il saldo risultate dai movimenti contabili
+  //  $saldo_contabile = (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$allrows['saldo']:-$allrows['saldo'];// in $allrows ho il saldo risultate dai movimenti contabili
+ //   print $saldo_contabile.'<br>';
     ?>
 <div class="col-xs-6">
 <h3 class="sub-header">Movimenti partite da scadenzario</h3>
@@ -209,19 +211,39 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
         </table>
     </div>
 </div>
-<div class="col-xs-6">
+<div class="col-xs-1">
+</div>
+<div class="col-xs-5">
 <h3 class="sub-header">Partitario da movimenti contabili</h3>
     <div class="table-responsive">
-        <table class="table">
+        <table class="table table-striped">
             <thead>
                 <tr>
-                  <th class="col-xs-3">#</th>
-                  <th class="col-xs-3">#</th>
-                  <th class="col-xs-3">#</th>
-                  <th class="col-xs-3">#</th>
+                  <th class="col-xs-3">Data</th>
+                  <th class="col-xs-3">Descrizione</th>
+                  <th class="col-xs-3 text-center">A - importo - D</th>
+                  <th class="col-xs-3 text-right">Progressivo</th>
                 </tr>
             </thead>
             <tbody>
+<?php
+foreach($allrows['rows'] as $k=>$r){
+?>
+<tr>
+    <td><?php echo gaz_format_date($r['datreg']);?></td>
+    <td><?php echo $r['descri'];?></td>
+    <?php 
+    if ($r['darave']=='D') {
+        echo '<td class="text-right">'.gaz_format_number($r['import']).'</td>';
+    } else {
+        echo '<td>'.gaz_format_number($r['import']).'</td>';
+    }
+    ?>
+    <td class="text-right"><?php echo $r['progressivo'];?></td>
+</tr>    
+<?php
+}
+?>
             <tbody>
         </table>
     </div>

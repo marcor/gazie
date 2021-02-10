@@ -2701,10 +2701,8 @@ class Schedule {
         }
     }
 
-    function getPartnerAccountingBalance($clfoco, $date = false) {
-        /*
-         * restituisce il valore del saldo contabile di un cliente ad una data, se passata, oppure alla data di sistema
-         * */
+    function getPartnerAccountingBalance($clfoco, $date = false, $allrows=false) {
+        // restituisce il valore del saldo contabile di un cliente ad una data, se passata, oppure alla data di sistema
         global $gTables;
         if ($this->target > 0 && $clfoco == 0) {
             $clfoco = $this->target;
@@ -2713,16 +2711,17 @@ class Schedule {
             $date = strftime("%Y-%m-%d", mktime(0, 0, 0, date("m"), date("d"), date("Y")));
         }
         // prima trovo la eventuale ultima apertura dei conti
-        $sqllastAPE = "SELECT " . $gTables['tesmov'] . ".datreg ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave
+        $sqllastAPE = "SELECT " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave
             FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] ." ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
             WHERE codcon = $clfoco AND caucon = 'APE' AND datreg < '".$date."' ORDER BY datreg DESC LIMIT 1";
         $rslastAPE = gaz_dbi_query($sqllastAPE);
         $lastAPE = gaz_dbi_fetch_array($rslastAPE);
         $dat =($lastAPE)?$lastAPE['datreg']:'2000-01-01';
+        $acc_allrows = ($lastAPE)?array(0=>$lastAPE):[];
         $acc=0.00;
         $acc =($lastAPE && $lastAPE['darave']=='D')?$lastAPE['import']:$acc;
         $acc =($lastAPE && $lastAPE['darave']=='A')?-$lastAPE['import']:$acc;
-        $sqlquery = "SELECT " . $gTables['tesmov'] . ".datreg ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave
+        $sqlquery = "SELECT " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave
             FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] .
                 " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
             WHERE datreg >= '".$dat."' AND codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE'";
@@ -2737,8 +2736,15 @@ class Schedule {
                     $acc -= $r['import'];
                 }
             }
+            $r['progressivo']=round($acc, 2);
+            $acc_allrows[]=$r;
         }
-        return round($acc, 2);
+        $t= round($acc, 2);
+        if ($allrows){
+            return array('saldo'=>$t,'rows'=>$acc_allrows);    
+        } else {
+            return $t;
+        }
     }
 
     function getAmount($id_tesdoc_ref, $date = false) {
