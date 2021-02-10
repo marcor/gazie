@@ -118,7 +118,7 @@ $acc_bal = $paymov->getPartnerAccountingBalance($form['id_partner'], $date);
 $paymov->getPartnerStatus($form['id_partner'], $date,'DESC');
 
 if ($form['id_partner'] > 100000000) { // partner selezionato
-    $acc_bal = (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$acc_bal:-$acc_bal;
+    $acc_bal = (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$acc_bal:-$acc_bal;// in $acc_bal ho il saldo risultate dai movimenti contabili
     ?>
 <div class="col-xs-6">
 <h3 class="sub-header">Movimenti partite da scadenzario</h3>
@@ -134,7 +134,6 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
               </thead>
               <tbody>
 <?php        
-    echo "<tr><td colspan='8'>" . $acc_bal . "</td></tr>";
     $paymov_bal = 0.00;
     foreach ($paymov->PartnerStatus as $k => $v) {
         $tmpNumDoc = $paymov->docData[$k]['numdoc'];
@@ -143,7 +142,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
         /** fine modifica FP */
         $amount = 0.00;
         echo "<tr>";
-        echo '<td class="FacetDataTD" colspan=4><a class="btn btn-xs btn-default" href="../contab/admin_movcon.php?Update&id_tes='. $paymov->docData[$k]['id_tes'] . '"><i class="glyphicon glyphicon-edit"></i>' .$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']) . "</a> ID partita $k</td></tr>\n";
+        echo '<td class="FacetDataTD" colspan=4><a class="btn btn-xs btn-default" title="Modifica il movimento contabile '.$paymov->docData[$k]['id_tes'].' e/o lo scadenzario" href="../contab/admin_movcon.php?Update&id_tes='. $paymov->docData[$k]['id_tes'] . '"><i class="glyphicon glyphicon-edit"></i>' .$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']) . "</a> ID partita $k</td></tr>\n";
         foreach ($v as $ki => $vi) {
             $class_paymov = 'FacetDataTDevidenziaCL';
             $v_op = '';
@@ -178,13 +177,16 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
                 }
             }
             echo '<tr class="' . $class_paymov . '">';
-            echo '<td colspan=2 class="text-right">' . $v_op . "</td>";
-            echo '<td class="text-center">' . gaz_format_date($vi['expiry']) . "</td>";
-            echo '<td class="text-center">';
-            foreach ($vi['cl_rig_data'] as $vj) {
-                echo "<a class=\"btn btn-xs btn-default btn-edit\"  href=\"../contab/admin_movcon.php?id_tes=" . $vj['id_tes'] . "&Update\" title=\"" . $script_transl['update'] . ': ' . $vj['descri'] . " € " . gaz_format_number($vj['import']) . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $vj['id_tes'] . "</a>\n ";
+            echo '<td colspan=2 class="text-right">';
+            if ( $v_op>=0.01){
+                echo $v_op;
+            } else {
+              foreach ($vi['cl_rig_data'] as $vj) {
+                echo '<a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>Pagato €' .  gaz_format_number($vj['import'])  . "</a>\n ";
+              }
             }
-            echo $v_cl . "</td>";
+            echo "</td>";
+            echo '<td class="text-center">' . gaz_format_date($vi['expiry']) . "</td>";
             if ($vi['status'] <> 1 || $vi['status'] < 9) { // accumulo solo se non è chiusa
                 $amount += round($vi['op_val'] - $vi['cl_val'], 2);
             }
