@@ -795,6 +795,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 
 			$ImponibileImporto=0.00;
+			$ImpostaDocumento=0.00;
 
 			/* 
 			Se la fattura è di tipo semplificata
@@ -820,6 +821,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo");
 				$naturaN6=false;
 				foreach($DatiRiepilogo as $dr){
+					if ($dr->getElementsByTagName("Imposta")->length >= 1){ 
+                        $ImpostaDocumento += $dr->getElementsByTagName('Imposta')->item(0)->nodeValue;
+                    }
 					$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
 					if ($dr->getElementsByTagName("Natura")->length >= 1){ // se ho l'elemento Natura = 6.x dovrò ricercare l'aliquota per il reverse charge a tutto il documento ed attribuirla a tutti i righi del documento
 					   $Natura=$dr->getElementsByTagName("Natura")->item(0)->nodeValue;
@@ -850,6 +854,30 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['rows'][$max_val_linea]['amount'] += $ImponibileImporto-$tot_imponi;
 				}
 			}
+            
+            // qui eseguo un controllo per vedere se c'è l'elemento <Arrotondamento> dentro <DatiGeneraliDocumento> e se l'elemento <ImportoTotaleDocumento> non coincide con i righi procedo con l'aggiunta di un rigo fittizio in art.15 (natura esenzione N1)
+			if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Arrotondamento")->length >= 1) {
+                $Arrotondamento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Arrotondamento")->item(0)->nodeValue;
+                $ImportoTotaleDocumento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento")->item(0)->nodeValue;
+                if (abs($ImportoTotaleDocumento-($ImponibileImporto + $ImpostaDocumento)) >= 0.01) { // ho una effettiva differenza tra i totali del castelletto IVA e il totale documennto allora aggiungo un rigo fuori campo IVA N1
+  					$codvat_fc=gaz_dbi_get_row($gTables['aliiva'], "fae_natura", 'N1')['codice'];
+                    $nl++;
+					$form['rows'][$nl]['tiprig'] = 1;
+					$form['rows'][$nl]['codice_fornitore'] = '';
+					$form['rows'][$nl]['descri'] = '';
+					$form['rows'][$nl]['unimis'] = '';
+					$form['rows'][$nl]['quanti'] = '';
+					$form['rows'][$nl]['sconto'] = '';
+					$form['rows'][$nl]['ritenuta'] = '';
+					$form['rows'][$nl]['pervat'] = '';
+					$form['codart_'.($nl-1)] = '';
+					$form['codvat_'.($nl-1)] = $codvat_fc;
+					$form['codric_'.($nl-1)] = $form['codric_'.($nl-2)]; // attribuisco il costo del rigo che lo precede
+					$form['rows'][$nl]['prelis'] = $Arrotondamento;
+					$form['rows'][$nl]['amount'] = $Arrotondamento;
+                }
+            }
+            
 			// ricavo l'allegato, e se presente metterò un bottone per permettere il download
 			$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
 			if ($nf) {

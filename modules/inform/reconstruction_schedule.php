@@ -119,8 +119,8 @@ $paymov->getPartnerStatus($form['id_partner'], $date,'DESC');
 krsort($allrows['rows']);
 
 if ($form['id_partner'] > 100000000) { // partner selezionato
-  //  $saldo_contabile = (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$allrows['saldo']:-$allrows['saldo'];// in $allrows ho il saldo risultate dai movimenti contabili
- //   print $saldo_contabile.'<br>';
+  //  $progressivo_contabile = (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$allrows['saldo']:-$allrows['saldo'];// in $allrows ho il saldo risultate dai movimenti contabili
+ //   print $progressivo_contabile.'<br>';
     ?>
 <div class="col-xs-6">
 <h3 class="sub-header">Movimenti partite da scadenzario</h3>
@@ -131,17 +131,18 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
                   <th class="col-xs-3 text-center">Documento</th>
                   <th class="col-xs-3 text-right">Importo</th>
                   <th class="col-xs-3 text-center">Scadenza</th>
-                  <th class="col-xs-3 text-center">Progressivo</th>
+                  <th class="col-xs-3 text-right">Progressivo</th>
                 </tr>
               </thead>
               <tbody>
 <?php        
-    $paymov_bal = 0.00;
+    $first_row=true;
     foreach ($paymov->PartnerStatus as $k => $v) {
-        $tmpNumDoc = $paymov->docData[$k]['numdoc'];
-        $tmpDatDoc = $paymov->docData[$k]['datdoc'];
-        $tmpData = $paymov->docData[$k];
-        /** fine modifica FP */
+        if ($first_row) {
+            $progressivo= $paymov->docData[$k]['saldo'];
+            $first_row=false;
+            echo '<tr><td colspan=4 class="text-right">Saldo: <b>'.gaz_format_number($progressivo).'</b></td></tr>';
+        }
         $amount = 0.00;
         echo "<tr>";
         echo '<td class="FacetDataTD" colspan=4><a class="btn btn-xs btn-default" title="Modifica il movimento contabile '.$paymov->docData[$k]['id_tes'].' e/o lo scadenzario" href="../contab/admin_movcon.php?Update&id_tes='. $paymov->docData[$k]['id_tes'] . '"><i class="glyphicon glyphicon-edit"></i>' .$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']) . "</a> ID partita $k</td></tr>\n";
@@ -151,13 +152,13 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             $cl_exp = '';
             if ($vi['op_val'] >= 0.01) {
                 $v_op = gaz_format_number($vi['op_val']);
-                $paymov_bal += $vi['op_val'];
+                $progressivo -= $vi['op_val'];
             }
             $v_cl = '';
             if ($vi['cl_val'] >= 0.01) {
                 $v_cl = gaz_format_number($vi['cl_val']);
                 $cl_exp = gaz_format_date($vi['cl_exp']);
-                $paymov_bal -= $vi['cl_val'];
+                $progressivo += $vi['cl_val'];
             }
             $expo = '';
             if ($vi['expo_day'] >= 1) {
@@ -204,7 +205,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             $open = 'op';
         }
         echo '<input type="hidden" id="post_' . $k . '_' . $ki . '_id_tesdoc_ref" name="paymov[' . $k . '][' . $ki . '][id_tesdoc_ref]" value="' . $k . "\" />";
-        echo '<tr><td colspan=2 class="text-right"><b>Totale partita: € ' . gaz_format_number($form['paymov'][$k][$ki]['amount']) . '</b></td><td colspan=2 class="text-right"><b>'.gaz_format_number($paymov_bal)."</b></td></tr>\n";
+        echo '<tr><td colspan=2 class="text-right"><b>Totale partita: € ' . gaz_format_number($form['paymov'][$k][$ki]['amount']) . '</b></td><td colspan=2 class="text-right"><b>'.(($progressivo>=0.01)?gaz_format_number($progressivo):"")."</b></td></tr>\n";
     }
 ?>
             </tbody>
@@ -219,9 +220,10 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
         <table class="table table-striped">
             <thead>
                 <tr>
-                  <th class="col-xs-3">Data</th>
+                  <th class="col-xs-2">Data</th>
                   <th class="col-xs-3">Descrizione</th>
-                  <th class="col-xs-3 text-center">A - importo - D</th>
+                  <th class="col-xs-2 text-right">A</th>
+                  <th class="col-xs-2">- Importo - D</th>
                   <th class="col-xs-3 text-right">Progressivo</th>
                 </tr>
             </thead>
@@ -230,16 +232,18 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
 foreach($allrows['rows'] as $k=>$r){
 ?>
 <tr>
-    <td><?php echo gaz_format_date($r['datreg']);?></td>
-    <td><?php echo $r['descri'];?></td>
+    <td>
+    <?php echo '<a class="btn btn-xs btn-default"  href="../contab/admin_movcon.php?id_tes=' . $r['id_tes'] . '&Update" title="Modifica il movimento contabile ' . $r['id_tes'] . '"><i class="glyphicon glyphicon-edit">'.$r['id_tes'] .'</i><br>' . gaz_format_date($r['datreg'])  . "</a>\n";?>
+    </td>
+    <td><small><?php echo $r['descri'];?></small></td>
     <?php 
     if ($r['darave']=='D') {
-        echo '<td class="text-right">'.gaz_format_number($r['import']).'</td>';
+        echo '<td></td><td class="text-right">'.gaz_format_number($r['import']).'</td>';
     } else {
-        echo '<td>'.gaz_format_number($r['import']).'</td>';
+        echo '<td class="text-right">'.gaz_format_number($r['import']).'</td><td></td>';
     }
     ?>
-    <td class="text-right"><?php echo $r['progressivo'];?></td>
+    <td class="text-right"><?php echo (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$r['progressivo']:-$r['progressivo'];?></td>
 </tr>    
 <?php
 }

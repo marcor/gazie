@@ -2946,12 +2946,15 @@ class Schedule {
         $rs = gaz_dbi_query($sqlquery);
         $date_ctrl = new DateTime($date);
         $ctrl_id = 0;
-        $acc = array();
+        $acc = [];
+        $acc_amount=0;
+        $first_id_tesdoc_ref=0;
         while ($r = gaz_dbi_fetch_array($rs)) {
             $expo = false;
             $k = $r['id_tesdoc_ref'];
             if ($k <> $ctrl_id) { // PARTITA DIVERSA DALLA PRECEDENTE
-                $acc[$k] = array();
+                $acc[$k] = [];
+                if ($ctrl_id==0){ $first_id_tesdoc_ref=$k; } // conservo l'id del documento iniziale per metterci il saldo alla fine del ciclo
             }
             $ex = new DateTime($r['expiry']);
             $interval = $date_ctrl->diff($ex);
@@ -2966,10 +2969,15 @@ class Schedule {
 					$style='danger';
                 }
                 $acc[$k][] = array('id' => $r['id'], 'op_val' => $r['amount'], 'expiry' => $r['expiry'], 'cl_val' => 0, 'cl_exp' => '', 'expo_day' => 0, 'status' => $s,'style'=>$style, 'op_id_rig' => $r['id_rig'], 'cl_rig_data' => array());
+                // aggiungo l'apertura al totale
+                 $acc_amount += $r['amount'];
+                
             } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTURE (in ordine di scadenza)
                 if ($date_ctrl < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
                     $expo = true;
                 }
+                // detraggo la chiusura al totale
+                $acc_amount -= $r['amount'];
                 $v = $r['amount'];
 				if (isset($acc[$k])){
                   foreach ($acc[$k] as $ko => $vo) { // attraverso l'array delle aperture
@@ -3007,6 +3015,8 @@ class Schedule {
             }
             $ctrl_id = $r['id_tesdoc_ref'];
         }
+        // alla fine attribuisco il saldo totale al primo documento 
+        $this->docData[$first_id_tesdoc_ref]['saldo']=round($acc_amount,2);
         $this->PartnerStatus = $acc;
     }
 
