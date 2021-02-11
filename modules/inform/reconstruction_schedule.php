@@ -61,8 +61,16 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script per update
     
 }
 
+function random_color_part() {
+    return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
+}
+
+function random_color() {
+    return '#'.random_color_part() . random_color_part() . random_color_part();
+}
+
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('custom/autocomplete'));
+$script_transl = HeadMain(0, array('custom/autocomplete','html-svg-connect/jquery.html-svg-connect'));
 ?>
 <script>
 $( function() {
@@ -132,6 +140,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
                   <th class="col-xs-3 text-right">Importo</th>
                   <th class="col-xs-3 text-center">Scadenza</th>
                   <th class="col-xs-3 text-right">Progressivo</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -145,9 +154,9 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             echo '<tr><td colspan=4 class="text-right">Saldo: <b>'.gaz_format_number($progressivo).'</b></td></tr>';
         }
         $amount = 0.00;
-        $svg_conn[$paymov->docData[$k]['id_tes']]=array('color'=>'448833','doc'=>$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']));
-        echo '<tr id="pm'.$paymov->docData[$k]['id_tes'].'">';
-        echo '<td class="FacetDataTD" colspan=4><a class="btn btn-xs btn-default" title="Modifica il movimento contabile '.$paymov->docData[$k]['id_tes'].' e/o lo scadenzario" href="../contab/admin_movcon.php?Update&id_tes='. $paymov->docData[$k]['id_tes'] . '"><i class="glyphicon glyphicon-edit"></i>' .$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']) . "</a> ID partita $k</td></tr>\n";
+        $svg_conn[$paymov->docData[$k]['id_tes']]=array('stroke'=>random_color(),'doc'=>$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']));
+        echo '<tr>';
+        echo '<td class="FacetDataTD" colspan=4><a class="btn btn-xs btn-default" title="Modifica il movimento contabile '.$paymov->docData[$k]['id_tes'].' e/o lo scadenzario" href="../contab/admin_movcon.php?Update&id_tes='. $paymov->docData[$k]['id_tes'] . '"><i class="glyphicon glyphicon-edit"></i>' .$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']) . '</a> ID partita'.$k.'</td><td id="pm'.$paymov->docData[$k]['id_tes'].'" title="pm'.$paymov->docData[$k]['id_tes'].'"></td></tr>';
         foreach ($v as $ki => $vi) {
             $class_paymov = 'FacetDataTDevidenziaCL';
             $v_op = '';
@@ -187,8 +196,8 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
                 echo $v_op;
             } else {
               foreach ($vi['cl_rig_data'] as $vj) {
-                $svg_conn[$vj['id_tes']]=array('color'=>'ad8833','pay'=>'Pagato €' .  gaz_format_number($vj['import']));
-                echo '<a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>Pagato €' .  gaz_format_number($vj['import'])  . '</a><span id="pm'.$vj['id_tes'].'" class="text-right"></span>';
+                $svg_conn[$vj['id_tes']]=array('stroke'=>random_color(),'pay'=>'Pagato €' .  gaz_format_number($vj['import']));
+                echo '<a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>Pagato €' .  gaz_format_number($vj['import'])  . '</a>';
               }
             }
             echo "</td>";
@@ -196,7 +205,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             if ($vi['status'] <> 1 || $vi['status'] < 9) { // accumulo solo se non è chiusa
                 $amount += round($vi['op_val'] - $vi['cl_val'], 2);
             }
-            echo "</tr>\n";
+            echo '<td id="pm'.(($v_op<0.01)?$vj['id_tes']:'').'" title="pm'.(($v_op<0.01)?$vj['id_tes']:'').'"></td></tr>';
         }
         if (!isset($_POST['paymov'])) {
             $form['paymov'][$k][$ki]['amount'] = $amount;
@@ -223,6 +232,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
         <table class="table table-striped">
             <thead>
                 <tr>
+                  <th></th>
                   <th class="col-xs-2">Data</th>
                   <th class="col-xs-3">Descrizione</th>
                   <th class="col-xs-2 text-right">Avere</th>
@@ -234,7 +244,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
 <?php
 foreach($allrows['rows'] as $k=>$r){
 ?>
-<tr>
+<tr ><td id="mc<?php echo $r['id_tes']; ?>"></td>
     <td>
     <?php echo '<a class="btn btn-xs btn-default"  href="../contab/admin_movcon.php?id_tes=' . $r['id_tes'] . '&Update" title="Modifica il movimento contabile ' . $r['id_tes'] . '"><i class="glyphicon glyphicon-edit">'.$r['id_tes'] .'</i><br>' . gaz_format_date($r['datreg'])  . "</a>\n";?>
     </td>
@@ -247,7 +257,7 @@ foreach($allrows['rows'] as $k=>$r){
     }
     ?>
     <td class="text-right"><?php echo gaz_format_number((substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$r['progressivo']:-$r['progressivo']);?></td>
-</tr>    
+</tr> 
 <?php
 }
 ?>
@@ -256,9 +266,19 @@ foreach($allrows['rows'] as $k=>$r){
     </div>
 </div>
 <?php
-    foreach($svg_conn as $kc=>$vc){
-       print_r($vc); 
-    }
+echo '<script type="text/javascript">
+    $(function() {
+      $("#svgContainer").HTMLSVGconnect({
+        stroke: "#000",
+        strokeWidth: 2,
+        orientation: "vertical",
+        paths: [';
+  foreach($svg_conn as $kc=>$vc){
+    echo ' { start: "#pm'.$kc.'", end: "#mc'.$kc.'", stroke: "'.$vc['stroke'].'" },';
+  }
+echo    '] });
+    });
+</script>';
 }
 
 //$gForm->delete_all_partner_paymov($form['id_partner']);
