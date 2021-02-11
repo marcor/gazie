@@ -55,7 +55,7 @@ if (isset($_SESSION['table_prefix'])) {
 }
 
 $path=explode('setup',dirname(__FILE__));
-$dir= $path[0].'modules' . DIRECTORY_SEPARATOR . 'test';
+$dir= $path[0].'modules' . DIRECTORY_SEPARATOR . 'wiki';
 $it = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
 $files = new RecursiveIteratorIterator($it,
              RecursiveIteratorIterator::CHILD_FIRST);
