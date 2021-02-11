@@ -769,7 +769,7 @@ $gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 1,
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['annota']; ?> </label>
-                    <textarea name="annota" rows="2" cols="50" maxlength="50"><?php echo $form['annota']; ?></textarea>
+                    <textarea name="annota" rows="2" cols="50" maxlength="3000"><?php echo $form['annota']; ?></textarea>
                 </div>
             </div>
         </div><!-- chiude row  -->

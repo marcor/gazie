@@ -2122,14 +2122,6 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
     'calendarpopup/CalendarPopup',
     'custom/autocomplete',
     'custom/miojs',
-        /*    'jquery/toast/javascript/jquery.toastmessage' */
-        /** ENRICO FEDELE */
-        /* 'jquery/jquery-1.7.1.min',
-          'jquery/ui/jquery.ui.core',
-          'jquery/ui/jquery.ui.widget',
-          'jquery/ui/jquery.ui.position',
-          'jquery/ui/jquery.ui.autocomplete', */
-        /** ENRICO FEDELE */
         ));
 ?>
 <script>
@@ -2137,7 +2129,7 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
         $("#initra").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#datemi").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
 <?php
-if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']<=100000000 ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
+if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
     ?>
             $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
     <?php

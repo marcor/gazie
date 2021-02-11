@@ -56,14 +56,16 @@ if (isset($_SESSION['table_prefix'])) {
 
 $path=explode('setup',dirname(__FILE__));
 $dir= $path[0].'modules' . DIRECTORY_SEPARATOR . 'wiki';
-$it = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
-$files = new RecursiveIteratorIterator($it,
+if(file_exists ($dir)) {
+    $it = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
+    $files = new RecursiveIteratorIterator($it,
              RecursiveIteratorIterator::CHILD_FIRST);
-foreach($files as $file) {
-    if ($file->isDir()){
-        rmdir($file->getRealPath());
-    } else {
-        unlink($file->getRealPath());
+    foreach($files as $file) {
+        if ($file->isDir()){
+            rmdir($file->getRealPath());
+        } else {
+            unlink($file->getRealPath());
+        }
     }
 }
 rmdir($dir);

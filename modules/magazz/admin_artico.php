@@ -622,6 +622,39 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve2" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="preve2" class="col-sm-4 control-label"><?php echo $script_transl['preve2']; ?></label>
+                            <input type="number" step="any" min="0" id="preve2" name="preve2" value="<?php echo $form['preve2']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve2_sc']; ?>
+                            <input type="text" readonly="true" id="preve2_sc" name="preve2_sc" value="<?php echo gaz_format_number($form['preve2'] * (1 - $form['sconto'] / 100)); ?>" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve3" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="preve3" class="col-sm-4 control-label"><?php echo $script_transl['preve3']; ?></label>
+                            <input type="number" step="any" min="0" id="preve3" name="preve3" value="<?php echo $form['preve3']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve3_sc']; ?>
+                            <input type="text" readonly="true" id="preve3_sc" name="preve3_sc" value="<?php echo gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)); ?>" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="preve4" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="preve4" class="col-sm-4 control-label"><?php echo $script_transl['preve4']; ?></label>
+                            <input type="number" step="any" min="0" id="preve4" name="preve4" value="<?php echo $form['preve4']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve4_sc']; ?>
+                            <input type="text" readonly="true" id="preve4_sc" name="preve4_sc" value="<?php echo gaz_format_number($form['preve4'] * (1 - $form['sconto'] / 100)); ?>" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
                 <div id="uniAcq" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -806,39 +839,6 @@ if ($modal_ok_insert === true) {
                 </div><!-- chiude row  -->
               </div><!-- chiude tab-pane  -->
               <div id="contab" class="tab-pane fade">
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="preve2" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve2" class="col-sm-4 control-label"><?php echo $script_transl['preve2']; ?></label>
-                            <input type="number" step="any" min="0" id="preve2" name="preve2" value="<?php echo $form['preve2']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve2_sc']; ?>
-                            <input type="text" readonly="true" id="preve2_sc" name="preve2_sc" value="<?php echo gaz_format_number($form['preve2'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="preve3" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve3" class="col-sm-4 control-label"><?php echo $script_transl['preve3']; ?></label>
-                            <input type="number" step="any" min="0" id="preve3" name="preve3" value="<?php echo $form['preve3']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve3_sc']; ?>
-                            <input type="text" readonly="true" id="preve3_sc" name="preve3_sc" value="<?php echo gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="preve4" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve4" class="col-sm-4 control-label"><?php echo $script_transl['preve4']; ?></label>
-                            <input type="number" step="any" min="0" id="preve4" name="preve4" value="<?php echo $form['preve4']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve4_sc']; ?>
-                            <input type="text" readonly="true" id="preve4_sc" name="preve4_sc" value="<?php echo gaz_format_number($form['preve4'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="webPrice" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
