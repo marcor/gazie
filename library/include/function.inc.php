@@ -2711,7 +2711,7 @@ class Schedule {
             $date = strftime("%Y-%m-%d", mktime(0, 0, 0, date("m"), date("d"), date("Y")));
         }
         // prima trovo la eventuale ultima apertura dei conti
-        $sqllastAPE = "SELECT " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave
+        $sqllastAPE = "SELECT " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave, '0' AS progressivo
             FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] ." ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
             WHERE codcon = $clfoco AND caucon = 'APE' AND datreg < '".$date."' ORDER BY datreg DESC LIMIT 1";
         $rslastAPE = gaz_dbi_query($sqllastAPE);
