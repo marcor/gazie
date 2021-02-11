@@ -1,6 +1,0 @@
-RewriteEngine On
-
-RewriteCond %{THE_REQUEST} !^GET\ /.*?static/(css|js|img)
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ admin.php [L,QSA]
