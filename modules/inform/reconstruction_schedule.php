@@ -76,7 +76,7 @@ $script_transl = HeadMain(0, array('custom/autocomplete','html-svg-connect/jquer
 $( function() {
     $( "#search_partner" ).autocomplete({
         source: "search.php?opt=partner",
-        minLength: 2,
+        minLength: 3,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
 
         // optional (if other layers overlap autocomplete list)
@@ -121,14 +121,12 @@ if (count($msg['war']) > 0) { // ho un alert
 </form>
 <?php
 $date=date('Y-m-d');
-// ottengo il valore del saldo contabile per confrontarlo con quello dello scedenziario
+// prendo l'array con i righi  ed il saldo contabile per confrontarlo con quello dello scedenziario
 $allrows = $paymov->getPartnerAccountingBalance($form['id_partner'], $date, true);
 $paymov->getPartnerStatus($form['id_partner'], $date,'DESC');
 krsort($allrows['rows']);
 
 if ($form['id_partner'] > 100000000) { // partner selezionato
-  //  $progressivo_contabile = (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$allrows['saldo']:-$allrows['saldo'];// in $allrows ho il saldo risultate dai movimenti contabili
- //   print $progressivo_contabile.'<br>';
     ?>
 <div class="col-xs-6">
 <h3 class="sub-header">Movimenti partite da scadenzario</h3>
@@ -154,7 +152,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             echo '<tr><td colspan=4 class="text-right">Saldo: <b>'.gaz_format_number($progressivo).'</b></td></tr>';
         }
         $amount = 0.00;
-        $svg_conn[$paymov->docData[$k]['id_tes']]=array('stroke'=>random_color(),'doc'=>$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']));
+        $svg_conn[$paymov->docData[$k]['id_tes']]=array('stroke'=>random_color());
         echo '<tr>';
         echo '<td class="FacetDataTD" colspan=4><a class="btn btn-xs btn-default" title="Modifica il movimento contabile '.$paymov->docData[$k]['id_tes'].' e/o lo scadenzario" href="../contab/admin_movcon.php?Update&id_tes='. $paymov->docData[$k]['id_tes'] . '"><i class="glyphicon glyphicon-edit"></i>' .$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']) . '</a> ID partita'.$k.'</td><td id="pm'.$paymov->docData[$k]['id_tes'].'" title="pm'.$paymov->docData[$k]['id_tes'].'"></td></tr>';
         foreach ($v as $ki => $vi) {
@@ -197,7 +195,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             } else {
               foreach ($vi['cl_rig_data'] as $vj) {
                 $svg_conn[$vj['id_tes']]=array('stroke'=>random_color(),'pay'=>'Pagato €' .  gaz_format_number($vj['import']));
-                echo '<a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>Pagato €' .  gaz_format_number($vj['import'])  . '</a>';
+                echo '<a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. $vj['descri'].' €' .  gaz_format_number($vj['import'])  . '</a>';
               }
             }
             echo "</td>";

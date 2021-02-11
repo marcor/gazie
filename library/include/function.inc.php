@@ -2959,9 +2959,6 @@ class Schedule {
             $ex = new DateTime($r['expiry']);
             $interval = $date_ctrl->diff($ex);
             if ($r['id_rigmoc_doc'] > 0) { // APERTURE (vengono prima delle chiusure)
-                if (!isset($this->docData[$k])){
-                    $this->docData[$k] = array('id_tes' => $r['id_tes'], 'descri' => $r['descri'], 'numdoc' => $r['numdoc'], 'seziva' => $r['seziva'], 'datdoc' => $r['datdoc'], 'amount' => $r['amount']);
-                }    
                 $s = 0;
 				$style='info';
                 if ($date_ctrl >= $ex) {
@@ -3013,6 +3010,11 @@ class Schedule {
                   }
 				}
             }
+            $invocecau=substr($r['caucon'],0,2);
+            if (!isset($this->docData[$k]) || $invocecau=='AF' || $invocecau=='FA' ) { // le note credito solo se non hanno già una fattura a riferimento
+                $this->docData[$k] = array('id_tes' => $r['id_tes'], 'descri' => $r['descri'], 'numdoc' => $r['numdoc'], 'seziva' => $r['seziva'], 'datdoc' => $r['datdoc'], 'amount' => $r['amount']);
+            }    
+
             $ctrl_id = $r['id_tesdoc_ref'];
         }
         // alla fine attribuisco il saldo totale al primo documento 
