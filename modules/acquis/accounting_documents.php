@@ -218,10 +218,20 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         $doc[$tes['protoc']]['rit'] = $rit;
         $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
         $calc->add_value_to_VAT_castle($cast_vat, $somma_spese, $tes['expense_vat']);
-        $doc[$tes['protoc']]['vat'] = $calc->castle;
-		//print_r($doc[$tes['protoc']]['vat']);
+        if (count($calc->castle)==0){
+            $vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $admin_aziend['preeminent_vat']);
+            $vat['periva']=$vat['aliquo'];
+            $vat['impcast']=0;
+            $vat['imponi']=0;
+            $vat['impneg']=0;
+            $vat['ivacast']=0;
+            $doc[$tes['protoc']]['vat']=array($vat['codice']=>$vat);
+        } else {
+            $doc[$tes['protoc']]['vat'] = $calc->castle;
+        }
         $ctrlp = $tes['protoc'];
     }
+
     if ((!empty($doc[$ctrlp]) && $doc[$ctrlp]['tes']['stamp']>=0.01) || (!empty($taxstamp) && $taxstamp>=0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
         $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
