@@ -267,12 +267,12 @@ foreach($allrows['rows'] as $k=>$r){
 echo '<script type="text/javascript">
     $(function() {
       $("#svgContainer").HTMLSVGconnect({
-        stroke: "#000",
         strokeWidth: 2,
-        orientation: "vertical",
         paths: [';
+	$offset=30;
   foreach($svg_conn as $kc=>$vc){
-    echo ' { start: "#pm'.$kc.'", end: "#mc'.$kc.'", stroke: "'.$vc['stroke'].'" },';
+    echo ' { start: "#pm'.$kc.'", end: "#mc'.$kc.'", stroke: "'.$vc['stroke'].'", orientation: "vertical", offset: '.$offset.' },';
+	$offset += 2;
   }
 echo    '] });
     });

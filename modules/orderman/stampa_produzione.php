@@ -97,7 +97,7 @@ if (strlen($reslot['expiry'])>=10){
 	$pdf->Cell(18,4,'',1, 0, 'L', 0, '', 1);
 }
 $pdf->Cell(25,4,substr($rescamp['descri'],0,25),1, 0, 'L', 0, '', 1);
-$pdf->Cell(10,4,$resord['duration'],1, 1, 'C', 0, '', 1);
+$pdf->Cell(10,4,(($resord['duration']>=0.01)?$resord['duration']:''),1, 1, 'C', 0, '', 1);
 $pdf->Ln(2);
 
 // INIZIO STAMPA LAVORI
