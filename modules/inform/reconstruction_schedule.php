@@ -109,16 +109,13 @@ if (count($msg['war']) > 0) { // ho un alert
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="id_partner" class="col-sm-4 control-label"><?php echo $script_transl['id_partner']; ?></label>
+                    <label for="id_partner" class="col-sm-4 control-label text-right"><?php echo $script_transl['id_partner']; ?></label>
     <?php
     $gForm->selectPartner($form['search_partner'], $form['id_partner'], $admin_aziend['mascli']);    
     ?>
                 </div>
             </div>
         </div><!-- chiude row  -->
-</div>
-</div>
-</form>
 <?php
 $date=date('Y-m-d');
 // prendo l'array con i righi  ed il saldo contabile per confrontarlo con quello dello scedenziario
@@ -129,7 +126,7 @@ krsort($allrows['rows']);
 if ($form['id_partner'] > 100000000) { // partner selezionato
     ?>
 <div class="col-xs-6">
-<h3 class="sub-header">Movimenti partite da scadenzario</h3>
+<h3 class="sub-header">Movimenti dello scadenzario</h3>
     <div class="table-responsive">
         <table class="table">
              <thead>
@@ -225,7 +222,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
 <div class="col-xs-1" id="svgContainer">
 </div>
 <div class="col-xs-5">
-<h3 class="sub-header">Partitario da movimenti contabili</h3>
+<h3 class="sub-header">Partitario dei movimenti contabili</h3>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
@@ -263,6 +260,8 @@ foreach($allrows['rows'] as $k=>$r){
         </table>
     </div>
 </div>
+
+
 <?php
 echo '<script type="text/javascript">
     $(function() {
@@ -278,6 +277,12 @@ echo    '] });
     });
 </script>';
 }
+?>
+</div>
+</div>
+</form>
+
+<?php
 
 //$gForm->delete_all_partner_paymov($form['id_partner']);
 
