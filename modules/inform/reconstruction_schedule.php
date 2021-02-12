@@ -186,6 +186,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
     $svg_conn=[];
     $saldo_paymov=0.00;
     foreach ($paymov->PartnerStatus as $k => $v) {
+      //  print_r($v); print '<br>';
         if ($first_row) {
             $progressivo= $paymov->docData[$k]['saldo'];
             $saldo_paymov=$progressivo;
@@ -231,21 +232,22 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
                 }
             }
             echo '<tr class="' . $class_paymov . '">';
-            echo '<td colspan=2 class="text-right">';
-            if ( $v_op>=0.01){
-                echo $v_op;
-            } else {
-              foreach ($vi['cl_rig_data'] as $vj) {
+            echo '<td class="text-right"> Scadenza del </td><td>' . gaz_format_date($vi['expiry']) . "</td>";
+            echo '<td class="text-right">'. gaz_format_number($vi['op_val']).'</td>';
+            $first_cl=true;
+            foreach ($vi['cl_rig_data'] as $vj) {
+                if($first_cl){
+                    echo '<td id="pm'.$vj['id_tes'].'" title="pm'.$vj['id_tes'].'" ><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. substr($vj['descri'],0,15) . ' €'. gaz_format_number($vi['cl_val']).'</a></td></tr>';
+                    $first_cl=false;
+                } else {
+                    echo '<tr class="' . $class_paymov . '"><td colspan=3 id="pm'.$vj['id_tes'].'" title="pm'.$vj['id_tes'].'"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. $vj['descri'] . '</a></td></tr>';
+                }
                 $svg_conn[$vj['id_tes']]=array('stroke'=>random_color(),'pay'=>'Pagato €' .  gaz_format_number($vj['import']));
-                echo '<a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. $vj['descri'].' €' .  gaz_format_number($vj['import'])  . '</a>';
-              }
             }
-            echo "</td>";
-            echo '<td class="text-center">' . gaz_format_date($vi['expiry']) . "</td>";
             if ($vi['status'] <> 1 || $vi['status'] < 9) { // accumulo solo se non è chiusa
                 $amount += round($vi['op_val'] - $vi['cl_val'], 2);
             }
-            echo '<td id="pm'.(($v_op<0.01)?$vj['id_tes']:'').'" title="pm'.(($v_op<0.01)?$vj['id_tes']:'').'"></td></tr>';
+            //echo '<td id="pm'.(($v_op<0.01)?$vj['id_tes']:'').'" title="pm'.(($v_op<0.01)?$vj['id_tes']:'').'"></td></tr>';
         }
         if (!isset($_POST['paymov'])) {
             $form['paymov'][$k][$ki]['amount'] = $amount;
@@ -256,8 +258,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             // attributo opcl per js come aperto
             $open = 'op';
         }
-        echo '<input type="hidden" id="post_' . $k . '_' . $ki . '_id_tesdoc_ref" name="paymov[' . $k . '][' . $ki . '][id_tesdoc_ref]" value="' . $k . "\" />";
-        echo '<tr><td colspan=2 class="text-right"><b>Totale partita: € ' . gaz_format_number($form['paymov'][$k][$ki]['amount']) . '</b></td><td colspan=2 class="text-right"><b>'.(($progressivo>=0.01)?gaz_format_number($progressivo):"")."</b></td></tr>\n";
+        echo '<tr><td colspan=3 class="text-right"><b>Totale partita: € ' . gaz_format_number($form['paymov'][$k][$ki]['amount']) . '</b></td><td class="text-right"><b>'.(($progressivo>=0.01)?gaz_format_number($progressivo):"")."</b></td></tr>\n";
     }
 ?>
             </tbody>
@@ -332,7 +333,7 @@ echo '<script type="text/javascript">
       $("#svgContainer").HTMLSVGconnect({
         strokeWidth: 2,
         paths: [';
-	$offset=30;
+	$offset=32;
   foreach($svg_conn as $kc=>$vc){
     echo ' { start: "#pm'.$kc.'", end: "#mc'.$kc.'", stroke: "'.$vc['stroke'].'", orientation: "vertical", offset: '.$offset.' },';
 	$offset += 2;
