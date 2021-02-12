@@ -23,7 +23,7 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-$admin_aziend = checkAdmin();
+$admin_aziend = checkAdmin(8);
 $msg = array('err' => array(), 'war' => array());
 $paymov = new Schedule;
 
@@ -164,8 +164,23 @@ $date=date('Y-m-d');
 $allrows = $paymov->getPartnerAccountingBalance($form['id_partner'], $date, true);
 $paymov->getPartnerStatus($form['id_partner'], $date,'DESC');
 krsort($allrows['rows']);
-
+$sc=reset($allrows);
+$ss=reset($paymov->docData);
+$saldocontabile=(substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$sc:-$sc;
+$saldoscadenzario=$ss['saldo'];
 if ($form['id_partner'] > 100000000) { // partner selezionato
+    // Qui eseguo il controllo di congruità tra il saldo derivante dai movimenti di scadenzario (paymov) e quello contabile, se coincidono non faccio alcuna proposta, altrimenti mi comporto in maniera diversa a secondo che sia maggiore l'uno o l'altro. Se maggiore il saldo contabile propongo l'apertura di una o più partite, se maggiore quello dello scadenzario propongo l'eliminazione di una o più scadenze. Usando il pulsante "Automatico" il riallineamento avverrà in automatico. In ogni caso quello che fa fede è il SALDO CONTABILE! Si prende per giusto sempre e comunque quello, se così non fosse bisognerà modificare prima le registrazioni contabili in quanto dati fiscalmente rilevanti (libro giornale).
+    $diff_saldi=$saldocontabile-$saldoscadenzario;
+    $dida='<p class="bg-warning">ATTENZIONE! Il riallineamento dello scadenzario verrà eseguito partendo dal valore del saldo contabile di  <b> € '.gaz_format_number($saldocontabile).'  RITENUTO GIUSTO </b> in quanto ha valenza fiscale ( libro giornale ). Esso modificherà i soli dati presenti sui movimenti dello scadenzario (tabella di sinistra) lasciando aperte le ultime partite in ordine di scadenze decrescenti. Se il saldo contabile non è giusto astenersi dall\'uso di questo automatismo ed agire manualmente sui singoli movimenti di prima nota e correggere il saldo contabile del partner commerciale.</p>';
+    if ($diff_saldi>=0.01){
+        $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov">Differenza saldi € '. gaz_format_number(abs($diff_saldi)).', clicca per riallineare al saldo contabile di <b>€'. gaz_format_number($saldocontabile).'</b></div>'.$dida;
+    } elseif ($diff_saldi <= -0.01){
+        $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov">Differenza saldi € '. gaz_format_number(abs($diff_saldi)).', clicca per riallineare al saldo contabile di <b>€ '. gaz_format_number($saldocontabile).'</b></div>'.$dida;
+    } else {
+        $btn_diff='<div class="btn btn-success col-xs-12">***** SALDI COINCIDENTI *****</div>';
+    }
+    echo '<tr><td colspan=6 class="text-center">'.$btn_diff.'</td></tr>';
+
     ?>
 <div class="col-xs-6">
 <h3 class="sub-header">Movimenti dello scadenzario</h3>
@@ -174,8 +189,8 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
              <thead>
                 <tr>
                   <th class="col-xs-3 text-center">Documento</th>
-                  <th class="col-xs-3 text-right">Importo</th>
                   <th class="col-xs-3 text-center">Scadenza</th>
+                  <th class="col-xs-3 text-right">Importo</th>
                   <th class="col-xs-3 text-right">Progressivo</th>
                   <th></th>
                 </tr>
@@ -184,12 +199,10 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
 <?php        
     $first_row=true;
     $svg_conn=[];
-    $saldo_paymov=0.00;
     foreach ($paymov->PartnerStatus as $k => $v) {
       //  print_r($v); print '<br>';
         if ($first_row) {
             $progressivo= $paymov->docData[$k]['saldo'];
-            $saldo_paymov=$progressivo;
             $first_row=false;
             echo '<tr><td colspan=4 class="text-right">Saldo: <b>'.gaz_format_number($progressivo).'</b></td></tr>';
             
@@ -237,10 +250,10 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             $first_cl=true;
             foreach ($vi['cl_rig_data'] as $vj) {
                 if($first_cl){
-                    echo '<td id="pm'.$vj['id_tes'].'" title="pm'.$vj['id_tes'].'" ><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. substr($vj['descri'],0,15) . ' €'. gaz_format_number($vi['cl_val']).'</a></td></tr>';
+                    echo '<td id="pm'.$vj['id_tes'].'" title="pm'.$vj['id_tes'].'" class="text-right"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. substr($vj['descri'],0,15) . ' €'. gaz_format_number($vi['cl_val']).'</a></td></tr>';
                     $first_cl=false;
                 } else {
-                    echo '<tr class="' . $class_paymov . '"><td colspan=3 id="pm'.$vj['id_tes'].'" title="pm'.$vj['id_tes'].'"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. $vj['descri'] . '</a></td></tr>';
+                    echo '<tr class="' . $class_paymov . '"><td colspan=3 id="pm'.$vj['id_tes'].'" title="pm'.$vj['id_tes'].'" class="text-right"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. $vj['descri'] . '</a></td></tr>';
                 }
                 $svg_conn[$vj['id_tes']]=array('stroke'=>random_color(),'pay'=>'Pagato €' .  gaz_format_number($vj['import']));
             }
@@ -258,7 +271,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             // attributo opcl per js come aperto
             $open = 'op';
         }
-        echo '<tr><td colspan=3 class="text-right"><b>Totale partita: € ' . gaz_format_number($form['paymov'][$k][$ki]['amount']) . '</b></td><td class="text-right"><b>'.(($progressivo>=0.01)?gaz_format_number($progressivo):"")."</b></td></tr>\n";
+        echo '<tr><td colspan=3 class="text-right"><b>saldo partita: € ' . gaz_format_number($form['paymov'][$k][$ki]['amount']) . '</b></td><td class="text-right"><b>'.(($progressivo>=0.01)?gaz_format_number($progressivo):"")."</b></td></tr>\n";
     }
 ?>
             </tbody>
@@ -284,25 +297,8 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             <tbody>
 <?php
 $first_row=true;
-$saldo_movcon=0.00;
 foreach($allrows['rows'] as $k=>$r) {
         $progressivo= (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$r['progressivo']:-$r['progressivo'];
-        if ($first_row) {
-            $saldo_movcon=$progressivo;
-            $first_row=false;
-            // Qui eseguo il controllo di congruità tra il saldo derivante dai movimenti di scadenzario (paymov) e quello contabile, se coincidono non faccio alcuna proposta, altrimenti mi comporto in maniera diversa a secondo che sia maggiore l'uno o l'altro. Se maggiore il saldo contabile propongo l'apertura di una o più partite, se maggiore quello dello scadenzario propongo l'eliminazione di una o più scadenze. Usando il pulsante "Automatico" il riallineamento avverrà in automatico. In ogni caso quello che fa fede è il SALDO CONTABILE! Si prende per giusto sempre e comunque quello, se così non fosse bisognerà modificare prima le registrazioni contabili in quanto dati fiscalmente rilevanti (libro giornale).
-            $diff_saldi=$saldo_movcon-$saldo_paymov;
-            if ($diff_saldi>=0.01){
-                $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov">ATTENZIONE: saldi differenti per € '. gaz_format_number($diff_saldi).'</div>';
-            } elseif ($diff_saldi <= -0.01){
-                $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov">ATTENZIONE: saldi differenti per € '. gaz_format_number($diff_saldi).'</div>';
-            } else {
-                $btn_diff='<div class="btn btn-success col-xs-12"> SALDI COINCIDENTI </div>';
-            }
-            echo '<tr><td colspan=6 class="text-center">'.$btn_diff.'</td></tr>';
-            
-        }
-
 ?>
 <tr ><td id="mc<?php echo $r['id_tes']; ?>"></td>
     <td>
