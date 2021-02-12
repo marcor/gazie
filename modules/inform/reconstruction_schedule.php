@@ -88,9 +88,51 @@ $( function() {
             $(this).closest("form").submit();
         }
     });
+
+	$("#dialog_paymov").dialog({ autoOpen: false });
+	$('.dialog_paymov').click(function() {
+		$("p#idsaldo").html($(this).attr("refsaldo"));
+		$("p#idtype").html($(this).attr("reftype"));
+		var id = $(this).attr('ref');
+		$( "#dialog_paymov" ).dialog({
+			minHeight: 1,
+			minWidth: 500,
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Allinea', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'align',id_tes:id},
+						type: 'POST',
+						url: './align_paymov.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./reconstruction_schedule.php");
+						}
+					});
+				}},
+				"Annulla": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_paymov" ).dialog( "open" );  
+	});
+    
 });
 </script>
 <form method="POST" name="form">
+	<div style="display:none" id="dialog_paymov" title="Allineamento scadenzario">
+        <p>SALDO:</p>
+        <p class="ui-state-highlight" id="idsaldo"></p>
+        <p>Fornitore</p>
+        <p class="ui-state-highlight" id="idtype"></p>
+	</div>
+
 <input type="hidden" name="ritorno" value="<?php echo $form['ritorno']; ?>">
 <input type="hidden" name="hidden_req" value="<?php echo $form['hidden_req']; ?>">
 <?php
@@ -104,7 +146,7 @@ if (count($msg['war']) > 0) { // ho un alert
 }
 ?>
 <div class="h3 text-center"><?php echo ucfirst($script_transl['title']); ?></div>
-<div class="panel panel-default gaz-table-form div-bordered">
+<div class="panel panel-default div-bordered">
   <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
@@ -142,11 +184,14 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
 <?php        
     $first_row=true;
     $svg_conn=[];
+    $saldo_paymov=0.00;
     foreach ($paymov->PartnerStatus as $k => $v) {
         if ($first_row) {
             $progressivo= $paymov->docData[$k]['saldo'];
+            $saldo_paymov=$progressivo;
             $first_row=false;
             echo '<tr><td colspan=4 class="text-right">Saldo: <b>'.gaz_format_number($progressivo).'</b></td></tr>';
+            
         }
         $amount = 0.00;
         $svg_conn[$paymov->docData[$k]['id_tes']]=array('stroke'=>random_color());
@@ -237,7 +282,26 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             </thead>
             <tbody>
 <?php
-foreach($allrows['rows'] as $k=>$r){
+$first_row=true;
+$saldo_movcon=0.00;
+foreach($allrows['rows'] as $k=>$r) {
+        $progressivo= (substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$r['progressivo']:-$r['progressivo'];
+        if ($first_row) {
+            $saldo_movcon=$progressivo;
+            $first_row=false;
+            // Qui eseguo il controllo di congruità tra il saldo derivante dai movimenti di scadenzario (paymov) e quello contabile, se coincidono non faccio alcuna proposta, altrimenti mi comporto in maniera diversa a secondo che sia maggiore l'uno o l'altro. Se maggiore il saldo contabile propongo l'apertura di una o più partite, se maggiore quello dello scadenzario propongo l'eliminazione di una o più scadenze. Usando il pulsante "Automatico" il riallineamento avverrà in automatico. In ogni caso quello che fa fede è il SALDO CONTABILE! Si prende per giusto sempre e comunque quello, se così non fosse bisognerà modificare prima le registrazioni contabili in quanto dati fiscalmente rilevanti (libro giornale).
+            $diff_saldi=$saldo_movcon-$saldo_paymov;
+            if ($diff_saldi>=0.01){
+                $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov">ATTENZIONE: saldi differenti per € '. gaz_format_number($diff_saldi).'</div>';
+            } elseif ($diff_saldi <= -0.01){
+                $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov">ATTENZIONE: saldi differenti per € '. gaz_format_number($diff_saldi).'</div>';
+            } else {
+                $btn_diff='<div class="btn btn-success col-xs-12"> SALDI COINCIDENTI </div>';
+            }
+            echo '<tr><td colspan=6 class="text-center">'.$btn_diff.'</td></tr>';
+            
+        }
+
 ?>
 <tr ><td id="mc<?php echo $r['id_tes']; ?>"></td>
     <td>
@@ -251,7 +315,7 @@ foreach($allrows['rows'] as $k=>$r){
         echo '<td class="text-right">'.gaz_format_number($r['import']).'</td><td></td>';
     }
     ?>
-    <td class="text-right"><?php echo gaz_format_number((substr($form['id_partner'],0,3)==$admin_aziend['mascli'])?$r['progressivo']:-$r['progressivo']);?></td>
+    <td class="text-right"><?php echo gaz_format_number($progressivo);?></td>
 </tr> 
 <?php
 }
