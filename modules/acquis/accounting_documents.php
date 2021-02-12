@@ -204,7 +204,11 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
             $doc[$tes['protoc']]['pay'][] = $r;
             // se ho una ModalitaPagamento contanti (MP01) non apro la partita
             if ($r['ModalitaPagamento'] == 'MP01') {
-                $tes['contanti']=true;
+                $contanti = gaz_dbi_get_row($gTables['pagame'], 'fae_mode', 'MP01','AND incaut > 100000000');
+                if ($contanti){
+                    $tes['contanti']=true;
+                    $tes['incaut']=$contanti['incaut'];                    
+                }
             }
         }
         $doc[$tes['protoc']]['tes'] = $tes;
