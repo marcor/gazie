@@ -1171,10 +1171,10 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 							</div>
 							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", number_format($magval['q_g'],5,",","."); ?>
 							</div>
-							<?php 							
-							if (number_format($magval['q_g'] - str_replace(",","",$row['quantita_artico_base']),6) >= 0) { // giacenza sufficiente
+							<?php 
+							if (number_format($magval['q_g'],5,".","") - floatval(preg_replace('/[^\d.]/', '', $row['quantita_artico_base'])) >= 0) { // giacenza sufficiente
 								?>
-								<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo $row['quantita_artico_base']; ?>"> <!-- quantità utilizzata di ogni componente   -->
+								<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', $row['quantita_artico_base'])); ?>"> <!-- quantità utilizzata di ogni componente   -->
 								<div class="col-sm-1" style="background-color:lightgreen;"> OK</div>
 								<?php
 							} else { // giacenza insufficiente
