@@ -200,7 +200,6 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
     $first_row=true;
     $svg_conn=[];
     foreach ($paymov->PartnerStatus as $k => $v) {
-      //  print_r($v); print '<br>';
         if ($first_row) {
             $progressivo= $paymov->docData[$k]['saldo'];
             $first_row=false;
@@ -208,9 +207,10 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             
         }
         $amount = 0.00;
-        $svg_conn[$paymov->docData[$k]['id_tes']]=array('stroke'=>random_color());
+        $svg_conn['open'][]=array('stroke'=>random_color(),'id_tes'=>$paymov->docData[$k]['id_tes']);
         echo '<tr>';
         echo '<td class="FacetDataTD" colspan=4><a class="btn btn-xs btn-default" title="Modifica il movimento contabile '.$paymov->docData[$k]['id_tes'].' e/o lo scadenzario" href="../contab/admin_movcon.php?Update&id_tes='. $paymov->docData[$k]['id_tes'] . '"><i class="glyphicon glyphicon-edit"></i>' .$paymov->docData[$k]['descri'] . ' n.' . $paymov->docData[$k]['numdoc'] . ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']) . '</a> ID partita'.$k.'</td><td id="pm'.$paymov->docData[$k]['id_tes'].'" title="pm'.$paymov->docData[$k]['id_tes'].'"></td></tr>';
+        $row_cl=0;
         foreach ($v as $ki => $vi) {
             $class_paymov = 'FacetDataTDevidenziaCL';
             $v_op = '';
@@ -249,18 +249,18 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
             echo '<td class="text-right">'. gaz_format_number($vi['op_val']).'</td>';
             $first_cl=true;
             foreach ($vi['cl_rig_data'] as $vj) {
+                $row_cl++;
                 if($first_cl){
-                    echo '<td id="pm'.$vj['id_tes'].'" title="pm'.$vj['id_tes'].'" class="text-right"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. substr($vj['descri'],0,15) . ' €'. gaz_format_number($vi['cl_val']).'</a></td></tr>';
+                    echo '<td id="'.$paymov->docData[$k]['id_tes'].'_'.$row_cl.'" class="text-right"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. substr($vj['descri'],0,15) . ' €'. gaz_format_number($vi['cl_val']).'</a></td></tr>';
                     $first_cl=false;
                 } else {
-                    echo '<tr class="' . $class_paymov . '"><td colspan=3 id="pm'.$vj['id_tes'].'" title="pm'.$vj['id_tes'].'" class="text-right"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. $vj['descri'] . '</a></td></tr>';
+                    echo '<tr class="' . $class_paymov . '"><td colspan=3 id="'.$paymov->docData[$k]['id_tes'].'_'.$row_cl.'" class="text-right"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. $vj['descri'] . '</a></td></tr>';
                 }
-                $svg_conn[$vj['id_tes']]=array('stroke'=>random_color(),'pay'=>'Pagato €' .  gaz_format_number($vj['import']));
+                $svg_conn['close'][]=array('stroke'=>random_color(),'id_tes'=>$vj['id_tes'],'row_cl'=>$paymov->docData[$k]['id_tes'].'_'.$row_cl);
             }
             if ($vi['status'] <> 1 || $vi['status'] < 9) { // accumulo solo se non è chiusa
                 $amount += round($vi['op_val'] - $vi['cl_val'], 2);
             }
-            //echo '<td id="pm'.(($v_op<0.01)?$vj['id_tes']:'').'" title="pm'.(($v_op<0.01)?$vj['id_tes']:'').'"></td></tr>';
         }
         if (!isset($_POST['paymov'])) {
             $form['paymov'][$k][$ki]['amount'] = $amount;
@@ -330,10 +330,14 @@ echo '<script type="text/javascript">
         strokeWidth: 2,
         paths: [';
 	$offset=32;
-  foreach($svg_conn as $kc=>$vc){
-    echo ' { start: "#pm'.$kc.'", end: "#mc'.$kc.'", stroke: "'.$vc['stroke'].'", orientation: "vertical", offset: '.$offset.' },';
-	$offset += 2;
-  }
+    foreach($svg_conn['open'] as $vo){
+        echo ' { start: "#pm'.$vo['id_tes'].'", end: "#mc'.$vo['id_tes'].'", stroke: "'.$vo['stroke'].'", orientation: "vertical", offset: '.$offset.' },';
+        $offset += 2;
+    }
+    foreach($svg_conn['close'] as $vc){
+        echo ' { start: "#'.$vc['row_cl'].'", end: "#mc'.$vc['id_tes'].'", stroke: "'.$vc['stroke'].'", orientation: "vertical", offset: '.$offset.' },';
+        $offset += 2;
+    }
 echo    '] });
     });
 </script>';
