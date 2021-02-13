@@ -254,7 +254,7 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
                     echo '<td id="'.$paymov->docData[$k]['id_tes'].'_'.$row_cl.'" class="text-right"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. substr($vj['descri'],0,15) . ' €'. gaz_format_number($vi['cl_val']).'</a></td></tr>';
                     $first_cl=false;
                 } else {
-                    echo '<tr class="' . $class_paymov . '"><td colspan=3 id="'.$paymov->docData[$k]['id_tes'].'_'.$row_cl.'" class="text-right"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. $vj['descri'] . '</a></td></tr>';
+                    echo '<tr class="' . $class_paymov . '"><td colspan=4 id="'.$paymov->docData[$k]['id_tes'].'_'.$row_cl.'" class="text-right"><a class="btn btn-xs btn-success"  href="../contab/admin_movcon.php?id_tes=' . $vj['id_tes'] . '&Update" title="' . $script_transl['update'] . ': ' . $vj['descri'] . '"><i class="glyphicon glyphicon-edit"></i>'. $vj['descri'] . '</a></td></tr>';
                 }
                 $svg_conn['close'][]=array('stroke'=>random_color(),'id_tes'=>$vj['id_tes'],'row_cl'=>$paymov->docData[$k]['id_tes'].'_'.$row_cl);
             }
@@ -341,6 +341,7 @@ echo '<script type="text/javascript">
 echo    '] });
     });
 </script>';
+// $gForm->get_openable_schedule($form['id_partner'],$saldocontabile,$admin_aziend); // funzione che userò anche su un file che verrà chiamato tramite ajax e sul dialog visualizzerà la proposta di riattribuzione del saldo contabile
 }
 ?>
 </div>

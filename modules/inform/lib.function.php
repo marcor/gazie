@@ -260,6 +260,48 @@ class informForm extends GAzieForm {
         gaz_dbi_query($sql_del_paymov);
     }
 	
+    function get_openable_schedule($clfoco,$amount,$admin_aziend) {
+        // passando il codice cliente/fornitore e l'importo da riaprire ritorna una array con tutti i dati e i riferimenti per riaprire/ricostruire lo scadenzario basandosi sugli ultimi documenti di vendita/acquisti, le loro condizioni di pagamento    
+        global $gTables;
+        $partner = gaz_dbi_get_row($gTables['clfoco'], 'codice',  $clfoco);
+        $p = gaz_dbi_get_row($gTables['pagame'], 'codice', $partner['codpag']);
+        require("../../library/include/calsca.inc.php");
+        $da=(substr($clfoco,0,3)==$admin_aziend['mascli'])?'D':'A';
+        // riprendo tutti i movimenti di apertura (documenti) senza considerare le chiusure/aperture di fine anno  
+        $sqlquery = "SELECT  " . $gTables['rigmoc'] . ".id_rig AS id_rigmoc_doc, CONCAT(SUBSTR(" . $gTables['tesmov'] . ".datreg,1,4)," . $gTables['tesmov'] . ".regiva," . $gTables['tesmov'] . ".seziva, LPAD(" . $gTables['tesmov'] . ".protoc,9,'0')) AS id_tesdoc_ref ," . $gTables['pagame'] . ".*," . $gTables['tesmov'] . ".datdoc AS datfat," . $gTables['rigmoc'] . ".import
+            FROM " . $gTables['rigmoc'] . " 
+            LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
+            LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['tesmov'].".id_doc = ".$gTables['tesdoc'].".id_tes
+            LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice
+            WHERE codcon = ".$clfoco." AND darave = '".$da."' AND ".$gTables['tesmov'].".caucon <> 'CHI' AND ".$gTables['tesmov'].".caucon <> 'APE' ORDER BY ".$gTables['tesmov'].".datreg DESC";
+        $rs = gaz_dbi_query($sqlquery);
+        $acc=[];
+        while ($r = gaz_dbi_fetch_array($rs)) {
+            if (empty($r['codice'])){
+                $rate = CalcolaScadenze($r['import'], substr($r['datfat'], 8, 2), substr($r['datfat'], 5, 2), substr($r['datfat'], 0, 4), $p['tipdec'], $p['giodec'], $p['numrat'], $p['tiprat'], $p['mesesc'], $p['giosuc']);
+            } else {
+                $rate = CalcolaScadenze($r['import'], substr($r['datfat'], 8, 2), substr($r['datfat'], 5, 2), substr($r['datfat'], 0, 4), $r['tipdec'], $r['giodec'], $r['numrat'], $r['tiprat'], $r['mesesc'], $r['giosuc']);
+            }
+            foreach($rate['import'] as $k=>$v){
+                $acc[$rate['anno'][$k].$rate['mese'][$k].$rate['giorno'][$k].$r['id_tesdoc_ref']]=array('amount'=> $v,'expiry'=>$rate['anno'][$k].'-'.$rate['mese'][$k].'-'.$rate['giorno'][$k],'data'=>$r);
+            }
+        }
+        krsort($acc); // ordino per datascadenza-riferimento descrescenti
+        $rest=$amount;
+        $accret=[];
+        foreach($acc as $v){ // ciclo fino a quando non ho esaurito tutto l'importo da attribuire
+            if ($rest>=0.01){
+                if ($rest>=$v['amount']){ // posso assegnare tutto il valore
+                    $accret[]=array('id_tesdoc_ref'=>$v['data']['id_tesdoc_ref'],'id_rigmoc_doc'=>$v['data']['id_rigmoc_doc'],'amount'=>$v['amount'],'expiry'=>$v['expiry']); 
+                    $rest-=$v['amount'];                    
+                } elseif ($rest<$v['amount']){ // posso assegnare tutto il valore
+                    $accret[]=array('id_tesdoc_ref'=>$v['data']['id_tesdoc_ref'],'id_rigmoc_doc'=>$v['data']['id_rigmoc_doc'],'amount'=>$rest,'expiry'=>$v['expiry']); 
+                    $rest=0;                    
+                }   
+            } else { break; }
+        }
+        return $accret;
+    }
 
 }
 ?>
