@@ -2724,7 +2724,7 @@ class Schedule {
         $sqlquery = "SELECT " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".import, " . $gTables['rigmoc'] . ".darave
             FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] .
                 " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
-            WHERE datreg >= '".$dat."' AND codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE'";
+            WHERE datreg >= '".$dat."' AND codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE' ORDER BY datreg ASC";
         $rs = gaz_dbi_query($sqlquery);
         $date_ctrl = new DateTime($date);
         while ($r = gaz_dbi_fetch_array($rs)) {
