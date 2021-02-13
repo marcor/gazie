@@ -70,7 +70,7 @@ $script_transl = HeadMain();
 
 $ts = new TableSorter(
     !$partner_select && isset($_GET["fornitore"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
-    $passo, ['id_tes' => 'desc'], ['sezione'=>1],[], " (tipdoc = 'DDL' OR tipdoc = 'RDL' OR tipdoc = 'DDR' OR tipdoc = 'ADT' OR tipdoc = 'AFT')", 
+    $passo, ['id_tes' => 'desc'], ['sezione'=>1],[], " (tipdoc = 'DDL' OR tipdoc = 'RDL' OR tipdoc = 'DDR' OR tipdoc = 'ADT' OR tipdoc = 'AFT')" 
 );
 
 ?>
