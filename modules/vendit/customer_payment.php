@@ -228,18 +228,16 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
 <?php
 
 $gForm = new venditForm();
-
-echo <<<END
+?>
 <form method="POST" name="select">
-    <input type="hidden" value="{$form['hidden_req']}" name="hidden_req" />
-    <input type="hidden" value="{$form['ritorno']}" name="ritorno" />
-    <input type="hidden" value="{$form['numdoc']}" name="numdoc" />
-    <input type="hidden" value="{$form['datdoc']}" name="datdoc" />
+    <input type="hidden" value="<?php echo $form['hidden_req'];?>" name="hidden_req" />
+    <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno" />
+    <input type="hidden" value="<?php echo $form['numdoc']; ?>" name="numdoc" />
+    <input type="hidden" value="<?php echo $form['datdoc']; ?>" name="datdoc" />
     <br />
-    <div align="center" class="FacetFormHeaderFont"> {$script_transl['title']} </div>
+    <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
     <table class="Tmiddle">
-END;
-
+<?php
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['mesg']) . "</td></tr>\n";
 }
@@ -257,23 +255,21 @@ $selectCustomer = capture(array($gForm, 'selectCustomer'),
     $form['search']['partner'], 
     $form['hidden_req'], 
     $script_transl['mesg']);
-
-echo <<<END
-
+?>
         <tr>
-            <td class="FacetFieldCaptionTD">{$script_transl['date_ini']}</td>
-            <td colspan="3" class="FacetDataTD"> $selectDate </td>
+            <td class="FacetFieldCaptionTD"><?php echo $script_transl['date_ini']; ?></td>
+            <td colspan="3" class="FacetDataTD"><?php echo $selectDate; ?> </td>
         </tr>
         <tr>
-            <td class="FacetFieldCaptionTD">{$script_transl['partner']}</td>
-            <td colspan="3" class="FacetDataTD"> $selectCustomer </td>
+            <td class="FacetFieldCaptionTD"><?php echo $script_transl['partner']; ?></td>
+            <td colspan="3" class="FacetDataTD"><?php echo  $selectCustomer; ?> </td>
         </tr>
         <tr>
-            <td class="FacetFieldCaptionTD">{$script_transl['target_account']}</td>
+            <td class="FacetFieldCaptionTD"><?php echo $script_transl['target_account']; ?></td>
             <td class="FacetFieldCaptionTD">
-                <!-- impropriamente usato per il numero di conto d'accredito -->
-                <select name="target_account" tabindex="4" class="FacetSelect" onchange="this.form.submit()">;
-END;
+            <!-- impropriamente usato per il numero di conto d'accredito -->
+        <select name="target_account" tabindex="4" class="FacetSelect" onchange="this.form.submit()">
+<?php
 
 $masban = $admin_aziend['masban'] * 1000000;
 $casse = substr($admin_aziend['cassa_'], 0, 3);
@@ -314,7 +310,7 @@ END;
 
 if ($form['partner'] > 100000000) { // partner selezionato
     // ottengo il valore del saldo contabile per confrontarlo con quello dello scadenziario
-    $acc_bal = $paymov->getPartnerAccountingBalance($form['partner'], $date);
+    $saldocontabile = $paymov->getPartnerAccountingBalance($form['partner'], $date);
     $paymov->getPartnerStatus($form['partner'], $date);
     $kd_paymov = 0;
     $date_ctrl = new DateTime($date);
@@ -328,15 +324,12 @@ if ($form['partner'] > 100000000) { // partner selezionato
 
     <table id="tablebody" border="1" width="100%">
         <tr>
-            <td colspan="8">
-                {$script_transl['accbal']}{$gaz_format_number($acc_bal)}
-            </td>
-        <tr>
             $linkHeadersOutput 
         </tr>
 END;
 
-    $paymov_bal = 0.00;
+    $saldoscadenzario = 0.00;
+    $form_tot=0.00;    
     foreach ($paymov->PartnerStatus as $k => $v) {
         /** inizio modifica FP 28/11/2015
          * selezione solo il documento richiesto
@@ -372,13 +365,13 @@ END;
             $d_chiusura = '';
             if ($vi['op_val'] >= 0.01) {
                 $v_apertura = gaz_format_number($vi['op_val']);
-                $paymov_bal += $vi['op_val'];
+                $saldoscadenzario += $vi['op_val'];
             }
             $v_chiusura = '';
             if ($vi['cl_val'] >= 0.01) {
                 $v_chiusura = gaz_format_number($vi['cl_val']);
                 $d_chiusura = gaz_format_date($vi['cl_exp']);
-                $paymov_bal -= $vi['cl_val'];
+                $saldoscadenzario -= $vi['cl_val'];
             }
             $gg_esposti = '';
             $diffValClOp = abs($vi['cl_val'] - (float) $vi['op_val']);
@@ -438,6 +431,7 @@ END;
             $form['paymov'][$k][$ki]['amount'] = $amount;
             $form['paymov'][$k][$ki]['id_tesdoc_ref'] = $k;
         }
+        $form_tot += $form['paymov'][$k][$ki]['amount'];
         $open = 'cl';
         if ($amount >= 0.01) {
             // attributo opcl per js come aperto
@@ -461,46 +455,26 @@ END;
             </td>
         </tr>
 END;
-    }
-    $paymov_bal = round($paymov_bal, 2);
-    $value = number_format($paymov_bal, 2, '.', '');
-    echo <<<END
-
-        <tr>
-            <td colspan="3">
-                {$script_transl['paymovbal']}
-                <input type="text" value="$value" id="total" />
-            </td>
-END;
+}
+    $saldoscadenzario = round($saldoscadenzario, 2);
+    $value = number_format($saldoscadenzario, 2, '.', '');
+    echo '<tr><td colspan=4>';
 
     // se sto guardando solo un documento specifico non controllo lo sbilancio
-    if ($paymov_bal < $acc_bal && !$isDocumentoSelezionato) {   
-        echo <<<END
-
-            <td class="FacetDataTDred" colspan="4">
-                {$script_transl['mesg'][3]}
-                <a class="btn btn-xs btn-default btn-edit" href="../contab/admin_movcon.php?Insert">
-                    <i class="glyphicon glyphicon-edit"> </i>
-                </a>
-            </td>
-END;
+    if ($saldoscadenzario < $saldocontabile && !$isDocumentoSelezionato) {   
+        echo '<a class="btn btn-xs btn-danger col-xs-12" href="../inform/reconstruction_schedule.php?id_partner='.$form['partner'].'">Differenza saldi € '. gaz_format_number(abs($saldocontabile+$saldoscadenzario)).' prova a riallineare al saldo contabile di <b>€ '. gaz_format_number(abs($saldocontabile)).'</b></a>';
+            
     }
-
-    $insert = ucfirst($script_transl['insert']);
-    echo <<<END
-
-            <td class="FacetFieldCaptionTD" align="center">
+    echo '</td><td class="FacetFieldCaptionTD text-center" colspan=3 >
                 <input name="ins" id="preventDuplicate" 
                     onClick="chkSubmit();" 
                     type="submit" 
-                    value="$insert!">
-            </td>
+                    value="'.strtoupper($script_transl['insert']).'">
+            </td><td class="text-right"><b>Totale: </b><input type="text" class="text-right" value="' . number_format($form_tot, 2, '.', '') . '" id="total" /></td>
+            
         </tr>
     </table>
-</form>
-END;
+</form>';
 }
-?>
-<?php
 require("../../library/include/footer.php");
 ?>

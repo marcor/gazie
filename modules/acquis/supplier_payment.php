@@ -308,19 +308,20 @@ echo "</td></tr>\n";
 echo "</table>\n";
 if ($form['partner'] > 100000000) { // partner selezionato
     // ottengo il valore del saldo contabile per confrontarlo con quello dello scedenziario
-    $acc_bal = $paymov->getPartnerAccountingBalance($form['partner'], $date);
+    $saldocontabile = $paymov->getPartnerAccountingBalance($form['partner'], $date);
     $paymov->getPartnerStatus($form['partner'], $date);
     $kd_paymov = 0;
     $date_ctrl = new DateTime($date);
     $saldo = 0.00;
     echo '<table id="tablebody" border="1" width="100%">' . "\n";
     echo "<tr>";
-    echo "<td colspan='8'>" . $script_transl['accbal'] . gaz_format_number($acc_bal) . "</td>";
+//    echo "<td colspan='8'>" . $script_transl['accbal'] . gaz_format_number($saldocontabile) . "</td>";
     echo "<tr>";
     $linkHeaders = new linkHeaders($script_transl['header']);
     $linkHeaders->output();
     echo "</tr>\n";
-    $paymov_bal = 0.00;
+    $saldoscadenzario = 0.00;
+    $form_tot=0.00;    
     foreach ($paymov->PartnerStatus as $k => $v) {
         /** inizio modifica FP 28/11/2015
          * selezione solo il documento richiesto
@@ -345,13 +346,13 @@ if ($form['partner'] > 100000000) { // partner selezionato
             $cl_exp = '';
             if ($vi['op_val'] >= 0.01) {
                 $v_op = gaz_format_number($vi['op_val']);
-                $paymov_bal += $vi['op_val'];
+                $saldoscadenzario += $vi['op_val'];
             }
             $v_cl = '';
             if ($vi['cl_val'] >= 0.01) {
                 $v_cl = gaz_format_number($vi['cl_val']);
                 $cl_exp = gaz_format_date($vi['cl_exp']);
-                $paymov_bal -= $vi['cl_val'];
+                $saldoscadenzario -= $vi['cl_val'];
             }
             $expo = '';
             if ($vi['expo_day'] >= 1) {
@@ -393,6 +394,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
             $form['paymov'][$k][$ki]['amount'] = $amount;
             $form['paymov'][$k][$ki]['id_tesdoc_ref'] = $k;
         }
+        $form_tot += $form['paymov'][$k][$ki]['amount'];
         $open = 'cl';
         if ($amount >= 0.01) {
             // attributo opcl per js come aperto
@@ -401,9 +403,12 @@ if ($form['partner'] > 100000000) { // partner selezionato
         echo '<input type="hidden" id="post_' . $k . '_' . $ki . '_id_tesdoc_ref" name="paymov[' . $k . '][' . $ki . '][id_tesdoc_ref]" value="' . $k . "\" />";
         echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" orival=\"" . number_format(floatval($form['paymov'][$k][$ki]['amount']), 2, '.', '') . "\" opcl=\"" . $open . "\" value=\"" . number_format(floatval($form['paymov'][$k][$ki]['amount']), 2, '.', '') . "\"></td></tr>\n";
     }
-    echo "<tr>";
-    echo "<td colspan='3'>" . $script_transl['paymovbal'] . '<input type="text" value="' . number_format($paymov_bal, 2, '.', '') . '" id="total" /></td>';
-    if ($paymov_bal < $acc_bal && !$isDocumentoSelezionato) {   // se sto guardando solo un documento specifico non controllo lo sbilancio
+    echo "<tr><td colspan=5>";
+    if (abs($saldocontabile+$saldoscadenzario)>=0.01) {  // ho uno sbilancio sui saldi propongo un rialiineamento
+        echo '<a class="btn btn-xs btn-danger col-xs-12" href="../inform/reconstruction_schedule.php?id_partner='.$form['partner'].'">Differenza saldi € '. gaz_format_number(abs($saldocontabile+$saldoscadenzario)).' prova a riallineare al saldo contabile di <b>€ '. gaz_format_number(abs($saldocontabile)).'</b></a>';
+    }
+    echo '</td>';
+    if ($saldoscadenzario < $saldocontabile && !$isDocumentoSelezionato) {   // se sto guardando solo un documento specifico non controllo lo sbilancio
         /** fine modifica FP */
         echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
     }
@@ -418,6 +423,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
 		$titxml='Registra in contabilità e crea il file XML-CBI da trasmettere alla banca';
 	}
     echo '<td align="center" title="'.$titxml.'"><input class="'.$clsxml.'" name="insXml" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="Inserisci e genera file bonifico" '.$disxml.'></td>';
+    echo '<td class="text-right"><b>Totale: </b><input type="text" class="text-right" value="' . number_format($form_tot, 2, '.', '') . '" id="total" /></td>';
     echo "<tr>";
     echo "</table></form>";
 }
