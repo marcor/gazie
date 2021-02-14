@@ -268,7 +268,7 @@ class informForm extends GAzieForm {
         require("../../library/include/calsca.inc.php");
         $da=(substr($clfoco,0,3)==$admin_aziend['mascli'])?'D':'A';
         // riprendo tutti i movimenti di apertura (documenti) senza considerare le chiusure/aperture di fine anno  
-        $sqlquery = "SELECT  " . $gTables['rigmoc'] . ".id_rig AS id_rigmoc_doc, CONCAT(SUBSTR(" . $gTables['tesmov'] . ".datreg,1,4)," . $gTables['tesmov'] . ".regiva," . $gTables['tesmov'] . ".seziva, LPAD(" . $gTables['tesmov'] . ".protoc,9,'0')) AS id_tesdoc_ref ," . $gTables['pagame'] . ".*," . $gTables['tesmov'] . ".datdoc AS datfat," . $gTables['rigmoc'] . ".import, CONCAT(" . $gTables['tesmov'] . ".descri,' n.'," . $gTables['tesmov'] . ".numdoc,' del ', DATE_FORMAT(" . $gTables['tesmov'] . ".datdoc,'%m/%d/%Y')) AS descridoc
+        $sqlquery = "SELECT  " . $gTables['rigmoc'] . ".id_rig AS id_rigmoc_doc, CONCAT(SUBSTR(" . $gTables['tesmov'] . ".datreg,1,4)," . $gTables['tesmov'] . ".regiva," . $gTables['tesmov'] . ".seziva, LPAD(" . $gTables['tesmov'] . ".protoc,9,'0')) AS id_tesdoc_ref ," . $gTables['pagame'] . ".*," . $gTables['tesmov'] . ".datdoc AS datfat," . $gTables['rigmoc'] . ".import, CONCAT(" . $gTables['tesmov'] . ".descri,' n.'," . $gTables['tesmov'] . ".numdoc,' del ', DATE_FORMAT(" . $gTables['tesmov'] . ".datdoc,'%d/%m/%Y')) AS descridoc
             FROM " . $gTables['rigmoc'] . " 
             LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
             LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['tesmov'].".id_doc = ".$gTables['tesdoc'].".id_tes
