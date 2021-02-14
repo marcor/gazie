@@ -256,7 +256,7 @@ class informForm extends GAzieForm {
     function delete_all_partner_paymov($clfoco) {
         // serve per ELIMINARE TUTTE LE PARTITE le cui testate sono riferite al cliente/fornitore passato a riferimento
         global $gTables;
-        $sql_del_paymov = "DELETE " . $gTables['paymov'] . " FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig) LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes WHERE ".$gTables['tesmov'] .".clfoco = ".$clfoco;
+        $sql_del_paymov = "DELETE " . $gTables['paymov'] . " FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig) WHERE ".$gTables['rigmoc'] .".codcon = ".$clfoco;
         gaz_dbi_query($sql_del_paymov);
     }
 	
@@ -268,7 +268,7 @@ class informForm extends GAzieForm {
         require("../../library/include/calsca.inc.php");
         $da=(substr($clfoco,0,3)==$admin_aziend['mascli'])?'D':'A';
         // riprendo tutti i movimenti di apertura (documenti) senza considerare le chiusure/aperture di fine anno  
-        $sqlquery = "SELECT  " . $gTables['rigmoc'] . ".id_rig AS id_rigmoc_doc, CONCAT(SUBSTR(" . $gTables['tesmov'] . ".datreg,1,4)," . $gTables['tesmov'] . ".regiva," . $gTables['tesmov'] . ".seziva, LPAD(" . $gTables['tesmov'] . ".protoc,9,'0')) AS id_tesdoc_ref ," . $gTables['pagame'] . ".*," . $gTables['tesmov'] . ".datdoc AS datfat," . $gTables['rigmoc'] . ".import
+        $sqlquery = "SELECT  " . $gTables['rigmoc'] . ".id_rig AS id_rigmoc_doc, CONCAT(SUBSTR(" . $gTables['tesmov'] . ".datreg,1,4)," . $gTables['tesmov'] . ".regiva," . $gTables['tesmov'] . ".seziva, LPAD(" . $gTables['tesmov'] . ".protoc,9,'0')) AS id_tesdoc_ref ," . $gTables['pagame'] . ".*," . $gTables['tesmov'] . ".datdoc AS datfat," . $gTables['rigmoc'] . ".import, CONCAT(" . $gTables['tesmov'] . ".descri,' n.'," . $gTables['tesmov'] . ".numdoc,' del ', DATE_FORMAT(" . $gTables['tesmov'] . ".datdoc,'%m/%d/%Y')) AS descridoc
             FROM " . $gTables['rigmoc'] . " 
             LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
             LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['tesmov'].".id_doc = ".$gTables['tesdoc'].".id_tes
@@ -289,17 +289,20 @@ class informForm extends GAzieForm {
         krsort($acc); // ordino per datascadenza-riferimento descrescenti
         $rest=$amount;
         $accret=[];
+		$n=0;
         foreach($acc as $v){ // ciclo fino a quando non ho esaurito tutto l'importo da attribuire
             if ($rest>=0.01){
                 if ($rest>=$v['amount']){ // posso assegnare tutto il valore
-                    $accret[]=array('id_tesdoc_ref'=>$v['data']['id_tesdoc_ref'],'id_rigmoc_doc'=>$v['data']['id_rigmoc_doc'],'amount'=>$v['amount'],'expiry'=>$v['expiry']); 
+                    $accret[$v['data']['id_tesdoc_ref'].gaz_format_date($v['expiry'],false,3)]=array('descridoc'=>$v['data']['descridoc'],'id_tesdoc_ref'=>$v['data']['id_tesdoc_ref'],'id_rigmoc_doc'=>$v['data']['id_rigmoc_doc'],'amount'=>round($v['amount'],2),'expiry'=>$v['expiry']); 
                     $rest-=$v['amount'];                    
                 } elseif ($rest<$v['amount']){ // posso assegnare tutto il valore
-                    $accret[]=array('id_tesdoc_ref'=>$v['data']['id_tesdoc_ref'],'id_rigmoc_doc'=>$v['data']['id_rigmoc_doc'],'amount'=>$rest,'expiry'=>$v['expiry']); 
+                    $accret[$v['data']['id_tesdoc_ref'].gaz_format_date($v['expiry'],false,3)]=array('descridoc'=>$v['data']['descridoc'],'id_tesdoc_ref'=>$v['data']['id_tesdoc_ref'],'id_rigmoc_doc'=>$v['data']['id_rigmoc_doc'],'amount'=>round($rest,2),'expiry'=>$v['expiry']); 
                     $rest=0;                    
                 }   
             } else { break; }
+			$n++;
         }
+        krsort($accret); // ordino per datascadenza-riferimento descrescenti
         return $accret;
     }
 

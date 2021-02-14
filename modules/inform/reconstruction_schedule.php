@@ -91,32 +91,48 @@ $( function() {
 
 	$("#dialog_paymov").dialog({ autoOpen: false });
 	$('.dialog_paymov').click(function() {
-		$("p#idsaldo").html($(this).attr("refsaldo"));
-		$("p#idtype").html($(this).attr("reftype"));
-		var id = $(this).attr('ref');
+		var fragment = '';
+		var id_partner = $(this).attr('id_partner');
+		var val_amount = $(this).attr('val_amount');
+		$("span#idsaldo").html(val_amount);
+		$.post("operat.php",
+		  {type:'propose_schedule', ref:id_partner, val:val_amount},
+		  function (data) {
+			var ctrl=0;
+			$.each(data, function (i, v) {
+				if (ctrl!=v['id_tesdoc_ref']){	
+					fragment +='<div class="bg-info col-xs-12">'+v['descridoc']+'</div>';
+				}
+				var exp = new Date(v['expiry']);
+				fragment +='<div class="col-xs-8 text-right">Scadenza: '+exp.toLocaleDateString('IT-it')+'</div><div class="col-xs-4 text-right">€ '+v['amount'].toFixed(2)+'</div>';
+				ctrl=v['id_tesdoc_ref'];
+			});
+			$("#proposeTable").append(fragment); 
+		  }, "json"
+        );
 		$( "#dialog_paymov" ).dialog({
 			minHeight: 1,
-			minWidth: 500,
+			minWidth: 600,
 			modal: "true",
 			show: "blind",
 			hide: "explode",
 			buttons: {
 				delete:{ 
-					text:'Allinea', 
+					text:'Allinea ad € '+val_amount, 
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
-						data: {'type':'align',id_tes:id},
+						data: {type:'align_schedule', ref:id_partner, val:val_amount},
 						type: 'POST',
-						url: './align_paymov.php',
+						url: './operat.php',
 						success: function(output){
-		                    //alert(output);
-							window.location.replace("./reconstruction_schedule.php");
+							window.location.replace("./reconstruction_schedule.php?id_partner="+id_partner);
 						}
 					});
 				}},
 				"Annulla": function() {
-					$(this).dialog("close");
+					$(this).dialog("destroy");
+					$("#proposeTable").html(''); 
 				}
 			}
 		});
@@ -127,12 +143,10 @@ $( function() {
 </script>
 <form method="POST" name="form">
 	<div style="display:none" id="dialog_paymov" title="Allineamento scadenzario">
-        <p>SALDO:</p>
-        <p class="ui-state-highlight" id="idsaldo"></p>
-        <p>Fornitore</p>
-        <p class="ui-state-highlight" id="idtype"></p>
+	<h4 class="text-center">Proposta di riallinaemento</h4>
+        <p class="ui-state-highlight">Questa è una proposta di riallineamento automatico al saldo contabile, <b> solo se il VALORE di € <span id="idsaldo"></span> è GIUSTO </b> puoi confermare ed eliminare tutto lo scadenzario precedente per ricrearne uno come quello della tabella sottostante</p>
+		<table id="proposeTable"></table>
 	</div>
-
 <input type="hidden" name="ritorno" value="<?php echo $form['ritorno']; ?>">
 <input type="hidden" name="hidden_req" value="<?php echo $form['hidden_req']; ?>">
 <?php
@@ -173,9 +187,9 @@ if ($form['id_partner'] > 100000000) { // partner selezionato
     $diff_saldi=$saldocontabile-$saldoscadenzario;
     $dida='<p class="bg-warning">ATTENZIONE! Il riallineamento dello scadenzario verrà eseguito partendo dal valore del saldo contabile di  <b> € '.gaz_format_number($saldocontabile).'  RITENUTO GIUSTO </b> in quanto ha valenza fiscale ( libro giornale ). Esso modificherà i soli dati presenti sui movimenti dello scadenzario (tabella di sinistra) lasciando aperte le ultime partite in ordine di scadenze decrescenti. Se il saldo contabile non è giusto astenersi dall\'uso di questo automatismo ed agire manualmente sui singoli movimenti di prima nota e correggere il saldo contabile del partner commerciale.</p>';
     if ($diff_saldi>=0.01){
-        $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov">Differenza saldi € '. gaz_format_number(abs($diff_saldi)).', clicca per riallineare al saldo contabile di <b>€'. gaz_format_number($saldocontabile).'</b></div>'.$dida;
+        $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov" val_amount="'.$saldocontabile.'" id_partner="'.$form['id_partner'].'">Differenza saldi € '. gaz_format_number(abs($diff_saldi)).', clicca per riallineare al saldo contabile di <b>€'. gaz_format_number($saldocontabile).'</b></div>'.$dida;
     } elseif ($diff_saldi <= -0.01){
-        $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov">Differenza saldi € '. gaz_format_number(abs($diff_saldi)).', clicca per riallineare al saldo contabile di <b>€ '. gaz_format_number($saldocontabile).'</b></div>'.$dida;
+        $btn_diff='<div class="btn btn-danger col-xs-12 dialog_paymov" val_amount="'.$saldocontabile.'" id_partner="'.$form['id_partner'].'">Differenza saldi € '. gaz_format_number(abs($diff_saldi)).', clicca per riallineare al saldo contabile di <b>€ '. gaz_format_number($saldocontabile).'</b></div>'.$dida;
     } else {
         $btn_diff='<div class="btn btn-success col-xs-12">***** SALDI COINCIDENTI *****</div>';
     }
@@ -341,33 +355,12 @@ echo '<script type="text/javascript">
 echo    '] });
     });
 </script>';
-// $gForm->get_openable_schedule($form['id_partner'],$saldocontabile,$admin_aziend); // funzione che userò anche su un file che verrà chiamato tramite ajax e sul dialog visualizzerà la proposta di riattribuzione del saldo contabile
 }
+ 
 ?>
 </div>
 </div>
 </form>
-
 <?php
-
-//$gForm->delete_all_partner_paymov($form['id_partner']);
-
-
-/* 
-
-PAYMOV DELETE
-
-$gForm->delete_all_partner_paymov($form['id_partner']);
-
-
-PAYMOV INSERT
-
-$paymov_value = array('id_tesdoc_ref' => $year . '6' . $form['seziva'] . str_pad($form['protoc'], 9, 0, STR_PAD_LEFT),
-    'id_rigmoc_doc' => $last_id_rig,
-    'amount' => $v['amount'],
-    'expiry' => $v['date']);
-paymovInsert($paymov_value);
-
-*/
 require("../../library/include/footer.php");
 ?>

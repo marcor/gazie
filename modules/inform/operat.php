@@ -26,23 +26,35 @@ $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
-   // trigger_error($user_error, E_USER_ERROR);
+    trigger_error($user_error, E_USER_ERROR);
 }
 if (isset($_POST['type'])&&isset($_POST['ref'])) { 
 	require("../../library/include/datlib.inc.php");
 	$admin_aziend = checkAdmin();
+	$i=intval($_POST['ref']);
 	switch ($_POST['type']) {
         case "del_bank":
-			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['bank'], "id", $i);
 		break;
         case "add_banapp":
-			$i=intval($_POST['ref']);
             $d=gaz_dbi_get_row($gTables['bank'], 'id',$i);
             $m=gaz_dbi_get_row($gTables['municipalities'], 'id',$d['id_municipalities']);
             $p=gaz_dbi_get_row($gTables['provinces'], 'id',$m['id_province']);
             $sql="INSERT INTO ".$gTables['banapp']." SELECT MAX(codice)+1,".$i." ,'".addslashes(substr($d['descriabi'],0,20).' '.substr($d['descricab'],0,30))."',". $d['codabi'].",". $d['codcab'].",'".addslashes(substr($d['indiri'],0,20).' '.substr($m['name'],0,30))."', '".$p['abbreviation']."', '".$d['cap']."','".$admin_aziend['user_name']."', '".date("Y-m-d H:i:s")."'  FROM ".$gTables['banapp'];
             gaz_dbi_query($sql);
+		break;
+        case "propose_schedule":
+			$gForm = new informForm();
+			$ret=$gForm->get_openable_schedule($i,floatval($_POST['val']),$admin_aziend); 
+			echo json_encode($ret);
+		break;
+        case "align_schedule":
+			$gForm = new informForm();
+			$ret=$gForm->get_openable_schedule($i,floatval($_POST['val']),$admin_aziend); 
+			$gForm->delete_all_partner_paymov($i);
+			foreach($ret as $v){
+				paymovInsert($v);
+			}
 		break;
 	}
 }
