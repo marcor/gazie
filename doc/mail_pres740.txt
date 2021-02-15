@@ -13,4 +13,4 @@ Oltre alle due nuove funzionalità sopra descritte ecco il solito elenco modific
 - bugfix: alla creazione del preventivo per le righe tipo 6 testo il riferimento in body_text il valore del campo table_name_ref veniva forzato a 'rigdoc'. (Giovanni Vallesi)
 - bugfix: in contabilizzazione fatture acquisto lo storno del reverse charge (solo 7.39) andava a cliente anziché fornitore. (Antonio de Vincentiis)
 
-Antonio de Vincentiis, Montesilvano, 6 febbraio 2020
+Antonio de Vincentiis, Montesilvano, 6 febbraio 2021
