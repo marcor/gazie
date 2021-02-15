@@ -434,7 +434,7 @@ $gForm = new GAzieForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'] . $script_transl['vat_section'];
 $gForm->selectNumber('vat_section', $form['vat_section'], 0, 1, 9, 'FacetSelect', 'vat_section');
 echo "</div>\n";
-echo "<table class=\"Tsmall\">\n";
+echo "<table class=\"Tsmall\" align=\"center\">\n";
 if (date('Y')>=2028 && date('m')==12) {
 	echo '<tr><td colspan="2" class="FacetDataTDred">Archiviare gli xml del ' . (date('Y')-9) . ' (9 anni fa) per evitarne la sovrascrittura, prima di cominciare ad emettere fatture l\'anno prossimo</td></tr>' . "\n";
 }

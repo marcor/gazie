@@ -61,7 +61,7 @@ $script_transl=HeadMain();
 <center>Sono presenti delle installazioni per questo cliente, vuoi associare l'intervento?</center>
 <br>
 <form method="POST" name="form" enctype="multipart/form-data">
-<table class="Tsmall">
+<table class="Tsmall" align="center">
 <tr>
    <td class="FacetFieldCaptionTD">Installazioni per questo cliente </td>
 		<td>

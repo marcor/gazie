@@ -121,7 +121,7 @@ $script_transl = HeadMain(0);
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['head'].$tesdoc['numdoc'].'('.gaz_format_date($tesdoc['datemi']).')'.$script_transl['on'].'<font class="FacetDataTD">'.$ecr['descri']."</font></div>\n";
 echo "<form method=\"POST\" name=\"ecr\">\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
-echo "<table class=\"Tsmall\">\n";
+echo "<table class=\"Tsmall\" align=\"center\">\n";
 echo "\t<tr><td colspan=\"2\" class=\"FacetDataTDred\">".$script_transl['message']."</td></tr>\n";
 echo "<tr><td colspan=\"2\" align=\"center\">".$script_transl['total'].' '.$admin_aziend['html_symbol'].' '.gaz_format_number($tot)."</td></tr>\n";
 echo "<tr><td align=\"left\"> <input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\" /></td><td align=\"right\"><input  style=\"color:red;\" type=\"submit\" name=\"ins\" value=\"".$script_transl['submit']."\" /></td></tr>\n";

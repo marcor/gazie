@@ -255,7 +255,7 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_tran
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 echo "<input type=\"hidden\" value=\"".$form['id_agente']."\" name=\"id_agente\">\n";
-echo "<table class=\"Tsmall\">\n";
+echo "<table class=\"Tsmall\" align=\"center\">\n";
 if (!empty($msg)) {
     echo "<tr><td colspan=\"2\" class=\"FacetDataTDred\">";
     $message = "";

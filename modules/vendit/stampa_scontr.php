@@ -27,7 +27,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl=HeadMain();
-echo "<table class=\"Tsmall\">\n";
+echo "<table class=\"Tsmall\" align=\"center\">\n";
 echo "<tr><td align=\"center\"><img src=\"../../library/images/vendit.png\"></td></tr><tr>
           <td class=\"FacetFormHeaderFont\">Se stai leggendo questo messaggio &egrave;
 perch&eacute; non hai ancora sostituito questo script (stampa_scontr.php) con uno

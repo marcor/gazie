@@ -62,7 +62,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "<input type=\"hidden\" name=\"do_backup\" value=\"1\">";
     echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
     echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
-    echo "<table class=\"Tsmall\">\n";
+    echo "<table class=\"Tsmall\" align=\"center\">\n";
     echo "<tr><td colspan=\"2\"><strong>" . $script_transl['instructions'] . ":</strong></td></tr>";
     echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"checkbox\" name=\"create_database\" value=\"1\" checked=\"checked\"></td>
               <td class=\"FacetDataTD\"> CREATE DATABASE IF NOT EXISTS `" . $Database . "`;</td></tr>";

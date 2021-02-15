@@ -52,7 +52,7 @@ $script_transl = HeadMain('','','admin_agenti_forn');
 <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
 <div align="center" class="FacetFormHeaderFont">
 <?php echo $script_transl['warning'].'!!! '.$script_transl[18] ; ?></div>
-<table class="Tsmall">
+<table class="Tsmall" align="center">
 <tr>
 <?php
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[2] : </td>
