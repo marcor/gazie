@@ -201,7 +201,12 @@ function trovaNuovoNumero($gTables) {
 	//
 	$orderBy = "datemi desc, numdoc desc";
 	parse_str(parse_url($_POST['ritorno'],PHP_URL_QUERY),$output);
-	$rs_ultimo_documento = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], $gTables['tesbro'].".tipdoc="."'".$output['auxil']."'", $orderBy, 0, 1);
+	$condition = "{$gTables['tesbro']}.tipdoc='{$output['auxil']}'";
+	if ($output['auxil'] == 'VO_') {
+		$condition = "{$gTables['tesbro']}.tipdoc='VOR' OR {$gTables['tesbro']}.tipdoc='VOW'";
+	}
+	// ToDo: è da dimostrare che questa query faccia quello che ci si aspetta... in particolare fini del successivo IF
+	$rs_ultimo_documento = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], $condition, $orderBy, 0, 1);
 	$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 	// se e' il primo documento dell'anno, resetto il contatore
 	if ($ultimo_documento) {
