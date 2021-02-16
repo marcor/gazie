@@ -211,7 +211,6 @@ $res=gaz_dbi_query($query);
 $pdf->SetFillColor(255,199,199);
 
 while($row=$res->fetch_assoc()){
-	//print_r($row);
 	switch ($row['tiprig']){
 	    case "0": // normale
 	    case "50": // normale c/allegato
@@ -224,7 +223,7 @@ while($row=$res->fetch_assoc()){
 		$amount=0;
 	}
 	$tot+=$amount;
-	$fillcell=($amount>=0.00001)?false:'1';
+    $fillcell=($amount>=0.00001)?false:'1';
 	$ctrlAORtot+=$amount;
 	if ($ctrlAOR==0){
 		$pdf->Cell(277,5,'LISTA DEGLI ORDINI A FORNITORI','LTR', 1, 'L', 1, '', 1);
@@ -235,7 +234,17 @@ while($row=$res->fetch_assoc()){
 		$pdf->Cell(20,5,'prezzo','LBR',0,'R',1);
 		$pdf->Cell(10,5,'sconto','LBR',0,'C',1);
 		$pdf->Cell(30,5,'importo','LBR',1,'R',1);
-	}
+	} elseif ($ctrlAOR<>$row['id_tes']) {
+		$pdf->Cell(85,5);
+        $pdf->SetFillColor(230,230,230);
+        $pdf->Cell(162,4,'Totale ordine n.'.$row['numdoc'].' del '.gaz_format_date($row['datemi']).' a '.$row['descri'].' € ','LBT', 0, 'R', 1, '', 1);
+        $pdf->SetFont('helvetica','B',8);
+        $pdf->Cell(30,4,gaz_format_number($totord),'RBT', 1, 'C', 1, '', 1);
+        $pdf->SetFont('helvetica','',8);
+        $pdf->Ln(2);
+		$totord=0.00;
+    }
+    
 	if ($ctrlAOR<>$row['id_tes']){
 		$pdf->Cell(277,5,$row['descri'].' ORDINE n.'.$row['numdoc'].' del '.gaz_format_date($row['datemi']),1, 1, 'L', 0, '', 1);
 		if ($amount>=0.01&&$ctrlAORtot==0.00){ // è cambiato l'ordine ma il precedente ha un totale a zero...
@@ -244,7 +253,7 @@ while($row=$res->fetch_assoc()){
 			$pdf->Cell(172,5,' O R D I N E   D I   V A L O R E    N U L L O   ! ?',1,1,'C');
 			$pdf->SetTextColor(0);
 		}
-		$ctrlAORtot=0.00;
+       
 	}	
 	if ($row['quanti']>=0.00001){
 		$pdf->Cell(85,5);
@@ -256,11 +265,20 @@ while($row=$res->fetch_assoc()){
 		$pdf->Cell(10,5,floatval($row['scorig']),1,0,'C');
 		$pdf->Cell(30,5,gaz_format_number($amount),1, 1,'R',$fillcell,'',1);
 	}
+    $totord+=$amount;
 	$ctrlAOR=$row['id_tes'];
 }
 if ($tot>=0.01){
+	$pdf->Cell(85,5);
+    $pdf->SetFillColor(230,230,230);
+    $pdf->Cell(162,4,'Totale ordine n.'.$row['numdoc'].' del '.gaz_format_date($row['datemi']).' a '.$row['descri'].' € ','LBT', 0, 'R', 1, '', 1);
+    $pdf->SetFont('helvetica','B',8);
+    $pdf->Cell(30,4,gaz_format_number($totord),'RBT', 1, 'C', 1, '', 1);
+    $pdf->Ln(2);
+    $pdf->SetFont('helvetica','B',9);
 	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
 	$pdf->Cell(277,4,'TOTALE DELL\'ORDINATO PER LA PRODUZIONE: '.gaz_format_number($tot),1, 1, 'R', 1, '', 1);
+    $pdf->SetFont('helvetica','',8);
 	
 }
 // FINE STAMPA LISTA ORDINI
