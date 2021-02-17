@@ -78,8 +78,8 @@ TXT;
 
 function extractDER($file)
 {
-	$tmp = tempnam(sys_get_temp_dir(), 'ricder');
-	$txt = tempnam(sys_get_temp_dir(), 'rictxt');
+	$tmp = tempnam(DATA_DIR . 'files/tmp/', 'ricder');
+	$txt = tempnam(DATA_DIR . 'files/tmp/', 'rictxt');
 	$flags = PKCS7_BINARY|PKCS7_NOVERIFY|PKCS7_NOSIGS;
 	openssl_pkcs7_verify($file, $flags, $tmp); // estrazione certificato
 	@openssl_pkcs7_verify($file, $flags, '/dev/null', array(), $tmp, $txt); // estrazione contenuto - questo potrebbe fallire se il file non è ASN.1 clean
@@ -292,11 +292,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$p7mContent = tryBase64Decode($p7mContent);
 
 
-		$tmpfatt = tempnam(sys_get_temp_dir(), 'ricfat');
+		$tmpfatt = tempnam(DATA_DIR . 'files/tmp/', 'ricfat');
 		file_put_contents($tmpfatt, $p7mContent);
 
 		if (FALSE !== der2smime($tmpfatt)) {
-		$cert = tempnam(sys_get_temp_dir(), 'ricpem');
+		$cert = tempnam(DATA_DIR . 'files/tmp/', 'ricpem');
 		$retn = openssl_pkcs7_verify($tmpfatt, PKCS7_NOVERIFY, $cert);
 		unlink($cert);
 		if (!$retn) {

@@ -67,8 +67,8 @@ TXT;
 
 function extractDER($file)
 {
-	$tmp = tempnam(sys_get_temp_dir(), 'ricder');
-	$txt = tempnam(sys_get_temp_dir(), 'rictxt');
+	$tmp = tempnam(DATA_DIR . 'files/tmp/', 'ricder');
+	$txt = tempnam(DATA_DIR . 'files/tmp/', 'rictxt');
 	$flags = PKCS7_BINARY|PKCS7_NOVERIFY|PKCS7_NOSIGS;
 	openssl_pkcs7_verify($file, $flags, $tmp); // estrazione certificato
 	@openssl_pkcs7_verify($file, $flags, '/dev/null', array(), $tmp, $txt); // estrazione contenuto - questo potrebbe fallire se il file non è ASN.1 clean
@@ -146,11 +146,11 @@ if (isset($_GET['id_tes'])){
 	$p7mContent = tryBase64Decode($p7mContent);
 
 
-	$fattxml = @tempnam(dirname(__FILE__) . '/', 'fatt');
+	$fattxml = @tempnam(DATA_DIR . 'files/tmp/', 'fatt');
 	file_put_contents($fattxml,$p7mContent);
 
 	if (FALSE !== der2smime($fattxml)) {
-	$cert = @tempnam(dirname(__FILE__) . '/', 'pem');
+	$cert = @tempnam(DATA_DIR . 'files/tmp/', 'pem');
 	$retn = openssl_pkcs7_verify($fattxml, PKCS7_NOVERIFY, $cert);
 	unlink($cert);
 	if (!$retn) {
