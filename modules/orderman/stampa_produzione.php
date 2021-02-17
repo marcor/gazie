@@ -237,11 +237,12 @@ while($row=$res->fetch_assoc()){
 	} elseif ($ctrlAOR<>$row['id_tes']) {
 		$pdf->Cell(85,5);
         $pdf->SetFillColor(230,230,230);
-        $pdf->Cell(162,4,'Totale ordine n.'.$row['numdoc'].' del '.gaz_format_date($row['datemi']).' a '.$row['descri'].' € ','LBT', 0, 'R', 1, '', 1);
+        $pdf->Cell(162,4,'Totale ordine n.'.$d['numdoc'].' del '.gaz_format_date($d['datemi']).' a '.$d['descri'].' € ','LBT', 0, 'R', 1, '', 1);
         $pdf->SetFont('helvetica','B',8);
-        $pdf->Cell(30,4,gaz_format_number($totord),'RBT', 1, 'C', 1, '', 1);
+        $pdf->Cell(30,4,gaz_format_number($totord),'RBT', 1, 'R', 1, '', 1);
         $pdf->SetFont('helvetica','',8);
         $pdf->Ln(2);
+        $pdf->SetFillColor(255,199,199);
 		$totord=0.00;
     }
     
@@ -263,21 +264,23 @@ while($row=$res->fetch_assoc()){
 		$pdf->Cell(20,5,floatval($row['quanti']),1,0,'R'); 
 		$pdf->Cell(20,5,floatval($row['prelis']),1,0,'R');
 		$pdf->Cell(10,5,floatval($row['scorig']),1,0,'C');
-		$pdf->Cell(30,5,gaz_format_number($amount),1, 1,'R',$fillcell,'',1);
+		$pdf->Cell(30,5,gaz_format_number($amount),1, 1,'C',$fillcell,'',1);
 	}
     $totord+=$amount;
 	$ctrlAOR=$row['id_tes'];
+    $d=$row;
 }
 if ($tot>=0.01){
 	$pdf->Cell(85,5);
     $pdf->SetFillColor(230,230,230);
-    $pdf->Cell(162,4,'Totale ordine n.'.$row['numdoc'].' del '.gaz_format_date($row['datemi']).' a '.$row['descri'].' € ','LBT', 0, 'R', 1, '', 1);
+    $pdf->Cell(162,4,'Totale ordine n.'.$d['numdoc'].' del '.gaz_format_date($d['datemi']).' a '.$d['descri'].' € ','LBT', 0, 'R', 1, '', 1);
     $pdf->SetFont('helvetica','B',8);
-    $pdf->Cell(30,4,gaz_format_number($totord),'RBT', 1, 'C', 1, '', 1);
+    $pdf->Cell(30,4,gaz_format_number($totord),'RBT', 1, 'R', 1, '', 1);
     $pdf->Ln(2);
     $pdf->SetFont('helvetica','B',9);
 	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
-	$pdf->Cell(277,4,'TOTALE DELL\'ORDINATO PER LA PRODUZIONE: '.gaz_format_number($tot),1, 1, 'R', 1, '', 1);
+	$pdf->Cell(247,4,'TOTALE DELL\'ORDINATO PER LA PRODUZIONE: ','LBT', 0, 'R', 1, '', 1);
+	$pdf->Cell(30,4,'€ '.gaz_format_number($tot),'RBT', 1, 'R', 1, '', 1);
     $pdf->SetFont('helvetica','',8);
 	
 }
@@ -306,13 +309,13 @@ if ($numrow>=1){
     $title = array('luogo_data'=>$luogo_data,
            'title'=>"Distinta della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
            'hile'=>array(array('lun' => 20,'nam'=>'Data'),
+                         array('lun' => 37,'nam'=>'Causale'),
 						array('lun' => 87,'nam'=>'Operazione'),
 						array('lun' => 30,'nam'=>'Codice'),
 						array('lun' => 62,'nam'=>'Articolo'),
 						array('lun' => 17,'nam'=>'Quantità'),
                          array('lun' => 7,'nam'=>'U.M.'),
-						array('lun' => 17,'nam'=>'Prezzo'),
-                         array('lun' => 37,'nam'=>'Causale'),
+						array('lun' => 17,'nam'=>'Prezzo')
                         )
           );
     $pdf->setVars($admin_aziend,$title);
@@ -334,21 +337,20 @@ if ($numrow>=1){
         $totv+=floatval($mv['quanti']*$mv['prezzo']);
         $desop=(strlen($mv['desass'])>2)?$mv['desdoc'].' con '.$mv['desass']:$mv['desdoc'];
         $pdf->Cell(20,4,gaz_format_date($mv['datreg']),1, 0, 'C', 0, '', 1);
+        $pdf->Cell(37,4,$mv['descau'],1, 0, 'C', 0, '', 1);
         $pdf->Cell(87,4,$desop,1, 0, 'L', 0, '', 1);
         $pdf->Cell(30,4,$mv['codice'],1, 0, 'C', 0, '', 1);
         $pdf->Cell(62,4,$mv['desart'],1, 0, 'L', 0, '', 1);
         $pdf->Cell(17,4,floatval($mv['quanti']),1, 0, 'R', 0, '', 1);
         $pdf->Cell(7,4,$mv['unimis'],1, 0, 'C', 0, '', 1);
-        $pdf->Cell(17,4,gaz_format_number($mv['prezzo']),1, 0, 'R', 0, '', 1);
-        $pdf->Cell(37,4,$mv['descau'],1, 1, 'C', 0, '', 1);
+        $pdf->Cell(17,4,gaz_format_number($mv['prezzo']),1, 1, 'C', 0, '', 1);
     }
-    $pdf->SetFillColor(255,199,199);
-    $pdf->SetFont('helvetica','',10);
-    $pdf->Cell(199,5,'TOTALE MATERIALE LAVORATO PER PRODUZIONE: ',1, 0, 'R', 0, '', 1);
-    $pdf->Cell(17,5,abs($totq),1, 0, 'R', 1, '', 1);
-    $pdf->Cell(7,5,'',1, 0, 'C', 0, '', 1);
-    $pdf->Cell(17,5,'€ '.gaz_format_number($totv),1, 0, 'R', 1, '', 1);
-    $pdf->Cell(37,5,'',1, 1, 'C', 0, '', 1);
+    $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
+    $pdf->SetFont('helvetica','B',9);
+    $pdf->Cell(236,5,'TOTALE MATERIALE LAVORATO PER PRODUZIONE: ','LBT', 0, 'R', 1, '', 1);
+    $pdf->Cell(17,5,abs($totq),'BT', 0, 'R', 1, '', 1);
+    $pdf->Cell(7,5,'','BT', 0, 'C', 0, '', 1);
+    $pdf->Cell(17,5,'€ '.gaz_format_number($totv),'RBT', 1, 'R', 1, '', 1);
 }
 // FINE REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
 $pdf->Output();
