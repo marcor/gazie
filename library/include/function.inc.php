@@ -2913,7 +2913,7 @@ class Schedule {
 
     function getDocFromID($id_rigmoc_doc) {
         global $gTables;
-        $sqlquery = "SELECT " . $gTables['tesmov'] . ".*
+        $sqlquery = "SELECT " . $gTables['tesmov'] . ".* , " . $gTables['rigmoc'] . ".codcon
             FROM " . $gTables['rigmoc'] . " LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
             WHERE " . $gTables['rigmoc'] . ".id_rig = " . $id_rigmoc_doc;
         $rs = gaz_dbi_query($sqlquery);
