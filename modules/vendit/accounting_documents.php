@@ -54,7 +54,8 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
     $calc = new Compute;
     $type = substr($type, 0, 1);
     if ($date) {
-        $p = ' AND (YEAR(datfat)*1000000+protoc) <= ' . (substr($date, 0, 4) * 1000000 + $protoc);
+        //$p = ' AND (YEAR(datfat)*1000000+protoc) <= ' . (substr($date, 0, 4) * 1000000 + $protoc);
+        $p = ' AND protoc <= ' . $protoc . ' AND YEAR(datfat) = ' . substr($date, 0, 4);
         $d = ' AND datfat <= ' . $date;
     } else {
         $d = '';
@@ -259,7 +260,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['proini'] = intval($_POST['proini']);
     $form['profin'] = intval($_POST['profin']);
     $form['year_ini'] = intval($_POST['year_ini']);
-    $form['year_fin'] = intval($_POST['year_fin']);
+    $form['year_fin'] = intval($_POST['this_date_Y']);
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     if (!checkdate($form['this_date_M'], $form['this_date_D'], $form['this_date_Y']))
         $msg .= "0+";
@@ -553,6 +554,10 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl['type'] . " </td><td  class=\"FacetDataTD\">\n";
 $gForm->variousSelect('type', $script_transl['type_value'], $form['type'], 'FacetSelect', 0, 'type');
 echo "\t </td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">Anno contabile</td>\n";
+echo "\t<td class=\"FacetDataTD\">" . $form['year_fin'] . "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['proini'] . "</td>\n";
