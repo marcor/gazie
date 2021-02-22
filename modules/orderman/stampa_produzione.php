@@ -279,7 +279,7 @@ if ($tot>=0.01){
     $pdf->Ln(2);
     $pdf->SetFont('helvetica','B',9);
 	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
-	$pdf->Cell(247,4,'TOTALE DELL\'ORDINATO PER LA PRODUZIONE: ','LBT', 0, 'R', 1, '', 1);
+	$pdf->Cell(247,4,'TOTALE DELL\'ORDINATO: ','LBT', 0, 'R', 1, '', 1);
 	$pdf->Cell(30,4,'€ '.gaz_format_number($tot),'RBT', 1, 'R', 1, '', 1);
     $pdf->SetFont('helvetica','',8);
 	
@@ -305,6 +305,7 @@ $what = $gTables['movmag'].".*, ".
                LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
 $result = gaz_dbi_dyn_query ($what, $table,$where,"datreg ASC, id_mov ASC");
 $numrow = gaz_dbi_num_rows($result);
+$totv=0;
 if ($numrow>=1){
     $title = array('luogo_data'=>$luogo_data,
            'title'=>"Distinta della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
@@ -324,11 +325,9 @@ if ($numrow>=1){
     $pdf->SetFillColor(255,199,199);
 	$pdf->Cell(277,4,'MOVIMENTI DI MAGAZZINO RELATIVI ALLA PRODUZIONE',1, 1, 'C', 1, '', 1);
 	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
-    // $hrefdoc = json_decode(gaz_dbi_get_row($gTables['config'], 'variable', 'report_movmag_ref_doc')['cvalue']);
-    // $rshref=get_object_vars($hrefdoc);
 
     $totq=0;
-    $totv=0;
+
     require("../../modules/magazz/lib.function.php");
     $mag = new magazzForm;
 
@@ -347,11 +346,32 @@ if ($numrow>=1){
     }
     $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
     $pdf->SetFont('helvetica','B',9);
-    $pdf->Cell(236,5,'TOTALE MATERIALE LAVORATO PER PRODUZIONE: ','LBT', 0, 'R', 1, '', 1);
+    $pdf->Cell(236,5,'TOTALE MATERIALE LAVORATO: ','LBT', 0, 'R', 1, '', 1);
     $pdf->Cell(17,5,abs($totq),'BT', 0, 'R', 1, '', 1);
     $pdf->Cell(7,5,'','BT', 0, 'C', 0, '', 1);
     $pdf->Cell(17,5,'€ '.gaz_format_number($totv),'RBT', 1, 'R', 1, '', 1);
 }
 // FINE REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
+
+// RIEPILOGO
+if( $pdf->GetY() > 150 ){ $pdf->AddPage(); }
+$totgen=$tot+$totv;
+if ($totgen>=0.01){
+    $pdf->SetFont('helvetica','',9);
+    $pdf->Ln(8);
+    $pdf->Cell(70);
+    $pdf->Cell(126,5,' R I E P I L O G O    T O T A L I',1, 1, 'C', 1, '', 1);
+    $pdf->Cell(70);
+    $pdf->Cell(100,5,'MATERIALE ORDINATO: ','LBT', 0, 'L', 0, '', 1);
+    $pdf->Cell(26,5,gaz_format_number($tot),'RBT', 1, 'R', 0, '', 1);
+    $pdf->Cell(70);
+    $pdf->Cell(100,5,'MATERIALE LAVORATO: ','LBT', 0, 'L', 0, '', 1);
+    $pdf->Cell(26,5,gaz_format_number($totv),'RBT', 1, 'R', 0, '', 1);
+    $pdf->SetFont('helvetica','B',10);
+    $pdf->Cell(70);
+    $pdf->Cell(100,8,'TOTALE GENERALE PER PRODUZIONE: ','LBT', 0, 'R', 1, '', 1);
+    $pdf->Cell(26,8,'€ '.gaz_format_number($totgen),'RBT', 1, 'R', 1, '', 1);
+}
+
 $pdf->Output();
 ?>

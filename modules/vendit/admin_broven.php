@@ -1402,7 +1402,7 @@ if (empty($msg)) { // se ho un errore non scrollo
 	}
 	echo '
 	$( function() {
-				$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);
+				$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);
 				}); ';
 }
 
@@ -1746,7 +1746,7 @@ foreach ($form['rows'] as $k => $v) {
 				echo ' onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
 			}
             echo " id=\"righi_" . $k . "_prelis\" onchange=\"document.broven.last_focus.value='righi_" . $k . "_sconto'; this.form.submit()\" /></td>\n";
-            echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"" . $v['sconto'] . "\" maxlength=\"4\"  id=\"righi_" . $k . "_sconto\" onchange=\"document.broven.last_focus.value=this.id; this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"" . $v['sconto'] . "\" maxlength=\"6\"  id=\"righi_" . $k . "_sconto\" onchange=\"document.broven.last_focus.value=this.id; this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"rows[$k][provvigione]\" value=\"" . $v['provvigione'] . "\" maxlength=\"6\"  /></td>\n";
             echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
             echo "<td class=\"text-right\">" . $v['pervat'] . "%</td>\n";
@@ -1943,7 +1943,7 @@ foreach ($form['rows'] as $k => $v) {
 				echo ' onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
 			}
             echo " id=\"righi_" . $k . "_prelis\" onchange=\"document.broven.last_focus.value='righi_" . $k . "_sconto'; this.form.submit()\" /></td>\n";
-            echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"" . $v['sconto'] . "\" maxlength=\"4\"  id=\"righi_" . $k . "_sconto\" onchange=\"document.broven.last_focus.value=this.id; this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"" . $v['sconto'] . "\" maxlength=\"6\"  id=\"righi_" . $k . "_sconto\" onchange=\"document.broven.last_focus.value=this.id; this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"rows[$k][provvigione]\" value=\"" . $v['provvigione'] . "\" maxlength=\"6\"  /></td>\n";
             echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
             echo "<td class=\"text-right\">" . $v['pervat'] . "%</td>\n";

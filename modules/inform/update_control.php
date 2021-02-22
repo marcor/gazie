@@ -23,6 +23,7 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
+require("../../library/include/classes/Autoloader.php");
 
 $admin_aziend=checkAdmin(9);
 

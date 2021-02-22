@@ -964,7 +964,7 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
 <?php
 if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non scrollo
     ?>
-            $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
+            $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
     <?php
 }
 ?>
@@ -1076,7 +1076,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     <div class="form-group">
                         <label for="sconto" class="col-sm-8 control-label"><?php echo $script_transl['sconto']; ?></label>
                         <div class="col-sm-4">
-                            <input type="number" step="0.01" max="100" class="form-control" id="sconto" name="sconto" placeholder="<?php echo $script_transl['sconto']; ?>" value="<?php echo $form['sconto']; ?>" onchange="this.form.submit();">
+                            <input type="number" step="0.001" max="100" class="form-control" id="sconto" name="sconto" placeholder="<?php echo $script_transl['sconto']; ?>" value="<?php echo $form['sconto']; ?>" onchange="this.form.submit();">
                         </div>
                     </div>
                 </div>

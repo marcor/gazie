@@ -2131,7 +2131,7 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
 <?php
 if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
     ?>
-            $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
+            $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
     <?php
 }
 ?>
@@ -2599,7 +2599,7 @@ foreach ($form['rows'] as $k => $v) {
 						}
 						echo ' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=\'righi_' . $k . '_sconto\'; this.form.submit()" />
 					</td>
-					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" id="righi_' . $k . '_sconto" onchange="document.docven.last_focus.value=this.id; this.form.submit();" /></td>
+					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="6" id="righi_' . $k . '_sconto" onchange="document.docven.last_focus.value=this.id; this.form.submit();" /></td>
 					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" /></td>
 					<td class="text-right '.$imprig_class.'">
 						<span class="gazie-tooltip text-right text-'.$imprig_class.'" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
@@ -3136,7 +3136,7 @@ if ($toDo == "insert"){
         <div class="row">
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
                 <label for="in_sconto" ><?php echo ' %'.$script_transl[24].':'; ?></label>
-                <input type="text" value="<?php echo $form['in_sconto']; ?>" maxlength="4" name="in_sconto" title="# = sconto standard dell'articolo">
+                <input type="text" value="<?php echo $form['in_sconto']; ?>" maxlength="6" name="in_sconto" title="# = sconto standard dell'articolo">
             </div>
             <div class="form-group col-xs-12 col-sm-6 col-md-3"> 
                 <label for="in_provvigione" ><?php echo  $script_transl[56].':'; ?></label>

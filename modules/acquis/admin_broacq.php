@@ -974,7 +974,7 @@ if (empty($msg)) { // se ho un errore non scrollo
 	} else {
 		$idlf="#search_cosear";
 	}
-	echo '		$("html, body").delay(500).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);';
+	echo '		$("html, body").delay(100).animate({scrollTop: $("'.$idlf.'").offset().top-100}, 1000);';
 }
 ?>
 

@@ -123,7 +123,7 @@ $script_transl = HeadMain(0,array('custom/autocomplete'));
 </style>
 <script>
 $(function(){
-	$("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top-100},'slow', function() {
+	$("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100},'slow', function() {
         $("#search_cosear").focus();
     });
 });
