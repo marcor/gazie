@@ -2499,38 +2499,40 @@ class Compute {
                 $total_imp += $v['impcast'];
                 $row++;
             }
-            if (abs($total_imp) >= 0.01) { // per evitare il divide by zero in caso di imponibile 0
-                foreach ($vat_castle as $k => $v) {   // riattraverso l'array del castelletto
-                    // per aggiungere proporzionalmente (ventilazione)
+			foreach ($vat_castle as $k => $v) {   // riattraverso l'array del castelletto
+				// per aggiungere proporzionalmente (ventilazione)
 
-                    $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
-                    $new_castle[$k]['codiva'] = $vat['codice'];
-                    $new_castle[$k]['periva'] = $vat['aliquo'];
-                    $new_castle[$k]['tipiva'] = $vat['tipiva'];
-                    $new_castle[$k]['descriz'] = $vat['descri'];
-                    $new_castle[$k]['fae_natura'] = $vat['fae_natura'];
-                    $row--;
-                    if ($row == 0) { // � l'ultimo rigo del castelletto
-                        // aggiungo il resto
-                        $new_imp = round($total_imp - $decalc_imp + ($value * ($total_imp - $decalc_imp) / $total_imp), 2);
-                    } else {
-                        $new_imp = round($v['impcast'] + ($value * $v['impcast'] / $total_imp), 2);
-                        $decalc_imp += $v['impcast'];
-                    }
-                    $new_castle[$k]['impcast'] = $new_imp;
-                    $new_castle[$k]['imponi'] = $new_imp;
-                    $this->total_imp += $new_imp; // aggiungo all'accumulatore del totale
-                    if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza aliquota ed � soggetto a bolli
-                        $this->total_exc_with_duty += $new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
-                    }
-					if(isset($v['impneg'])){$new_castle[$k]['impneg']=$v['impneg'];}
-                    $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
-                    if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment
-                        $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore
-                    }
-                    $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
-                }
-            }
+				$vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
+				$new_castle[$k]['codiva'] = $vat['codice'];
+				$new_castle[$k]['periva'] = $vat['aliquo'];
+				$new_castle[$k]['tipiva'] = $vat['tipiva'];
+				$new_castle[$k]['descriz'] = $vat['descri'];
+				$new_castle[$k]['fae_natura'] = $vat['fae_natura'];
+				$row--;
+				if (abs($total_imp) >= 0.01) { // per evitare il divide by zero in caso di imponibile 0
+					if ($row == 0) { // � l'ultimo rigo del castelletto
+						// aggiungo il resto
+						$new_imp = round($total_imp - $decalc_imp + ($value * ($total_imp - $decalc_imp) / $total_imp), 2);
+					} else {
+						$new_imp = round($v['impcast'] + ($value * $v['impcast'] / $total_imp), 2);
+						$decalc_imp += $v['impcast'];
+					}
+				} else {
+					$new_imp = $v['impcast'];
+				}
+				$new_castle[$k]['impcast'] = $new_imp;
+				$new_castle[$k]['imponi'] = $new_imp;
+				$this->total_imp += $new_imp; // aggiungo all'accumulatore del totale
+				if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza aliquota ed � soggetto a bolli
+					$this->total_exc_with_duty += $new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+				}
+				if(isset($v['impneg'])){$new_castle[$k]['impneg']=$v['impneg'];}
+				$new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
+				if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment
+					$this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore
+				}
+				$this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
+			}
         } else {  // METODO DELL'AGGIUNTA DIRETTA (nuovo)
             $match = false;
             foreach ($vat_castle as $k => $v) { // attraverso dell'array
