@@ -34,8 +34,8 @@ $recordnav -> output();
 <?php
 $headers_vettor = array  (
               $script_transl['codice'] => "codice",
-              $script_transl['ragione_sociale'] => "ragione_sociale",
-              $script_transl['citta'] => "citta",
+              $script_transl['ragso1'] => "ragione_sociale",
+              $script_transl['citspe'] => "citta",
               $script_transl['telefo'] => "telefo",
               $script_transl['delete'] => ""
               );

@@ -37,7 +37,6 @@ class invoiceXMLvars {
         $this->banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
         $anagrafica = new Anagrafica();
         $this->banacc = $anagrafica->getPartner($this->pagame['id_bank']);
-        $this->vettor = gaz_dbi_get_row($gTables['vettor'], "codice", $tesdoc['vettor']);
         $this->tableName = $tableName;
         $this->intesta1 = $admin_aziend['ragso1'];
         $this->intesta1bis = $admin_aziend['ragso2'];
@@ -116,7 +115,7 @@ class invoiceXMLvars {
         }
         $this->vettore = false;
 		if ($tesdoc['vettor']>0){
-			$this->vettore = gaz_dbi_get_row($gTables['vettor'], "codice", $tesdoc['vettor']);
+			$this->vettore = gaz_dbi_get_row($gTables['vettor'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['vettor'].'.id_anagra = '.$gTables['anagra'].".id", "codice", $tesdoc['vettor']);
 		}
         $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
@@ -1234,7 +1233,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 		if ($XMLvars->vettore) { // ho un vettore
 			$el1 = $domDoc->createElement("DatiAnagraficiVettore", '');
 				$el2 = $domDoc->createElement("IdFiscaleIVA", '');
-					$el3 = $domDoc->createElement("IdPaese", 'IT');
+					$el3 = $domDoc->createElement("IdPaese", $XMLvars->vettore['country']);
 					$el2->appendChild($el3);
 					$el3 = $domDoc->createElement("IdCodice", $XMLvars->vettore['partita_iva']);
 					$el2->appendChild($el3);
