@@ -161,7 +161,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             if ($k == 'a') {
                 foreach ($v as $ka => $va) { // ciclo delle singole righe (a)
                     $form['chk_on' . $ka] = '';
-					if (isset($_POST['chk' . str_replace(" ","_",$ka)])) { // se l'articolo e' da inventariare lo controllo
+                    $postcodart=preg_replace("/[^a-zA-Z0-9-_]/",'_',$ka); // il post del codice articolo sostituisce i caratteri speciali con underscore, esempio punti o spazi
+					if (isset($_POST['chk' .$postcodart])) { // se l'articolo e' da inventariare lo controllo
 						$form['chk_on' . $ka] = ' checked ';
 						if ($va['g_r'] < 0) {
 							$msg .= $ka . '-0+';
