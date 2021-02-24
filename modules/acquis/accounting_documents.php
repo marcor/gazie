@@ -55,7 +55,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
     $type = substr($type, 0, 2);
     if ($date) {
         //$p = ' AND (YEAR(datfat)*1000000+protoc) <= ' . (substr($date, 0, 4) * 1000000 + $protoc);
-        $p = ' AND protoc <= ' . $protoc . ' AND YEAR(datemi) = ' . substr($date, 0, 4);
+        $p = ' AND protoc <= ' . $protoc . ' AND YEAR(datreg) = ' . substr($date, 0, 4);
         $d = ' AND datfat <= ' . $date;
     } else {
         $d = '';
