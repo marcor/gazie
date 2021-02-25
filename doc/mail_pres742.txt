@@ -1,0 +1,18 @@
+Titolo:
+Veritas filia temporis.
+
+Presentazione:
+Sono lontani i tempi de "La miserabile fatica quotidiana", e per "Il piacere" è bastato un pizzico di debug, qualche miglioramento funzionale o poco più; ecco la 7.42 che comprende quanto segue:
+
+- Correzione mancato incremento numero ordine segnalato da M.Dulli. (Giovanni Vallesi)
+- Aggiunta riepilogativo e totali dei singoli ordini sulla stampa delle produzioni. (Antonio de Vincentiis)
+- Normalizzazione percorsi per files temporanei. (Angelo Romano)
+- Risoluzione non congruità colonne sconti tra le tabelle gaz_NNNrigbro e gaz_NNNrigdoc. (Antonio de Vincentiis)
+- Incremento velocità di scroll per riposizionamento del focus su rigo di inserimento documenti vari. (Antonio de Vincentiis)
+- Separazione degli anni in contabilizzazione basandosi sulla data filtro per evitare la fusione indiscriminata di imponibili dentro un'unica scrittura contabile in caso di protocolli coincidenti. (Angelo Romano)
+- Inserimento foglio di stile Assosoftware per la visualizzazione delle fatture elettroniche; settato per default sulle nuove istallazioni. (Giorgio Zanella)
+- Cambio della modalità di gestione dei vettori che adesso si appoggia alle anagrafiche comuni pur mantenendo la retrocompatibilità, sarà possibile indicare la nazionalità egli stessi. (Antonio de Vincentiis)
+- Risoluzione del bug sull'inventario degli articoli con il codice contenente punti, segnalato sul forum da M.Betti. (Antonio de Vincentiis) 
+- Risoluzione del bug della ventilazione dell'IVA nel caso in cui nelle fatture d'acquisto il totale imponibile fosse pari a zero. (Angelo Romano)
+
+Antonio de Vincentiis, Montesilvano, 25 febbraio 2021

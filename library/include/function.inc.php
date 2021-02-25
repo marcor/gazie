@@ -2969,8 +2969,7 @@ class Schedule {
                 }
                 $acc[$k][] = array('id' => $r['id'], 'op_val' => $r['amount'], 'expiry' => $r['expiry'], 'cl_val' => 0, 'cl_exp' => '', 'expo_day' => 0, 'status' => $s,'style'=>$style, 'op_id_rig' => $r['id_rig'], 'cl_rig_data' => array());
                 // aggiungo l'apertura al totale
-                 $acc_amount += $r['amount'];
-                
+                $acc_amount += $r['amount'];
             } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTURE (in ordine di scadenza)
                 if ($date_ctrl < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
                     $expo = true;
