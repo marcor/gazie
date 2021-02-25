@@ -296,37 +296,37 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		file_put_contents($tmpfatt, $p7mContent);
 
 		if (FALSE !== der2smime($tmpfatt)) {
-		$cert = tempnam(DATA_DIR . 'files/tmp/', 'ricpem');
-		$retn = openssl_pkcs7_verify($tmpfatt, PKCS7_NOVERIFY, $cert);
-		unlink($cert);
-		if (!$retn) {
-			//unlink($tmpfatt);
-			//echo "Error verifying PKCS#7 signature in {$file_name}";
-			error_log('errore in Verifica firma PKCS#7', 0);
-			//echo 'errore in Verifica firma PKCS#7';
-			//return false;
-		}
+			$cert = tempnam(DATA_DIR . 'files/tmp/', 'ricpem');
+			$retn = openssl_pkcs7_verify($tmpfatt, PKCS7_NOVERIFY, $cert);
+			unlink($cert);
+			if (!$retn) {
+				//unlink($tmpfatt);
+				//echo "Error verifying PKCS#7 signature in {$file_name}";
+				error_log('errore in Verifica firma PKCS#7', 0);
+				//echo 'errore in Verifica firma PKCS#7';
+				//return false;
+			}
 
-		$isFatturaElettronicaSemplificata = false;
-		$fatt = extractDER($tmpfatt);
-		if (empty($fatt)) {
-			$test = @base64_decode(file_get_contents($tmpfatt));
-			// Salto lo header (INDISPENSABILE perché la regexp funzioni sempre)
-			if (strpos($test, 'FatturaElettronicaSemplificata') !== FALSE) {
-				$isFatturaElettronicaSemplificata = true;
-				if (preg_match('#(<[^>]*FatturaElettronicaSemplificata.*</[^>]*FatturaElettronicaSemplificata>)#', substr($test, 54), $gregs)) {
-					$fatt = '<'.'?'.'xml version="1.0"'.'?'.'>' . $gregs[1]; // RECUPERO INTESTAZIONE XML
+			$isFatturaElettronicaSemplificata = false;
+			$fatt = extractDER($tmpfatt);
+			if (empty($fatt)) {
+				$test = @base64_decode(file_get_contents($tmpfatt));
+				// Salto lo header (INDISPENSABILE perché la regexp funzioni sempre)
+				if (strpos($test, 'FatturaElettronicaSemplificata') !== FALSE) {
+					$isFatturaElettronicaSemplificata = true;
+					if (preg_match('#(<[^>]*FatturaElettronicaSemplificata.*</[^>]*FatturaElettronicaSemplificata>)#', substr($test, 54), $gregs)) {
+						$fatt = '<'.'?'.'xml version="1.0"'.'?'.'>' . $gregs[1]; // RECUPERO INTESTAZIONE XML
+					}
+				} else {
+					if (preg_match('#(<[^>]*FatturaElettronica.*</[^>]*FatturaElettronica>)#', substr($test, 54), $gregs)) {
+						$fatt = '<'.'?'.'xml version="1.0"'.'?'.'>' . $gregs[1]; // RECUPERO INTESTAZIONE XML
+					}
 				}
 			} else {
-				if (preg_match('#(<[^>]*FatturaElettronica.*</[^>]*FatturaElettronica>)#', substr($test, 54), $gregs)) {
-					$fatt = '<'.'?'.'xml version="1.0"'.'?'.'>' . $gregs[1]; // RECUPERO INTESTAZIONE XML
+				if (strpos($p7mContent, 'FatturaElettronicaSemplificata') !== FALSE) {
+					$isFatturaElettronicaSemplificata = true;
 				}
 			}
-		} else {
-			if (strpos($p7mContent, 'FatturaElettronicaSemplificata') !== FALSE) {
-				$isFatturaElettronicaSemplificata = true;
-			}
-		}
 		}
 		unlink($tmpfatt);
 
@@ -802,7 +802,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			*/
 			if ($isFatturaElettronicaSemplificata) {
 				$DettaglioLineeSemplificate = $doc->getElementsByTagName('DatiBeniServizi');
-				$nl=0;
+				$nl = 0;
 				foreach ($DettaglioLineeSemplificate as $item) {
 					$nl++;
 					$form['rows'][$nl]['tiprig'] = 1;
@@ -814,35 +814,47 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['rows'][$nl]['amount'] = $form['rows'][$nl]['prelis'];
 					$form['rows'][$nl]['sconto'] = '';
 					$form['rows'][$nl]['ritenuta'] = '';
-					$form['rows'][$nl]['pervat'] = '' . @$item->getElementsByTagName('Aliquota')->item(0)->nodeValue;
-					@$imposta = $item->getElementsByTagName('Imposta')->item(0)->nodeValue;
+					if ($item->getElementsByTagName('Aliquota')->length > 0) {
+						$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('Aliquota')->item(0)->nodeValue;
+                    } else {
+						$form['rows'][$nl]['pervat'] = 0;
+					}
+					if ($item->getElementsByTagName('Imposta')->length > 0) {
+						$ImpostaDocumento += $item->getElementsByTagName('Imposta')->item(0)->nodeValue;
+                    }
+					if ($item->getElementsByTagName('Natura')->length > 0) {
+						$Natura = $item->getElementsByTagName('Natura')->item(0)->nodeValue;
+						$rs_vat = gaz_dbi_dyn_query("codice", $gTables['aliiva'], "fae_natura='" . $Natura . "'", "codice DESC", 0, 1);
+						$cod_vat = gaz_dbi_fetch_array($rs_vat)['codice'];
+						$form['codvat_'.($nl-1)] = $cod_vat;
+					}
 				}
 			} else { // non è una fattura semplificata
 				$DatiRiepilogo = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo");
-				$naturaN6=false;
-				foreach($DatiRiepilogo as $dr){
-					if ($dr->getElementsByTagName("Imposta")->length >= 1){ 
-                        $ImpostaDocumento += $dr->getElementsByTagName('Imposta')->item(0)->nodeValue;
-                    }
+				$naturaN6 = false;
+				foreach($DatiRiepilogo as $dr) {
+					if ($dr->getElementsByTagName('Imposta')->length >= 1) {
+						$ImpostaDocumento += $dr->getElementsByTagName('Imposta')->item(0)->nodeValue;
+					}
 					$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
-					if ($dr->getElementsByTagName("Natura")->length >= 1){ // se ho l'elemento Natura = 6.x dovrò ricercare l'aliquota per il reverse charge a tutto il documento ed attribuirla a tutti i righi del documento
-					   $Natura=$dr->getElementsByTagName("Natura")->item(0)->nodeValue;
-					   if ( substr($Natura,0,2) == 'N6' ) { // dovrò fare il reverse charge sostituisco con il codice iva relativo
-							$naturaN6=$Natura;
-					   }
+					if ($dr->getElementsByTagName('Natura')->length >= 1) { // se ho l'elemento Natura = 6.x dovrò ricercare l'aliquota per il reverse charge a tutto il documento ed attribuirla a tutti i righi del documento
+						$Natura = $dr->getElementsByTagName('Natura')->item(0)->nodeValue;
+						if ( substr($Natura,0,2) == 'N6' ) { // dovrò fare il reverse charge sostituisco con il codice iva relativo
+							$naturaN6 = $Natura;
+						}
 					}
 				}
 				if (!isset($_POST['Submit_form']) && $naturaN6 ) { // al primo accesso se sopra ho trovato che è una natura da reverse charge
-					$stdiva=gaz_dbi_get_row($gTables['aliiva'], 'codice', $admin_aziend['preeminent_vat'])['aliquo']; //la percentuale dell'aliquota standard (potrebbe cambiare negli anni)
-					$rs_reverse = gaz_dbi_dyn_query("codice", $gTables['aliiva'], 'aliquo ='.$stdiva." AND fae_natura ='" .$naturaN6."'", "codice DESC", 0, 1);
+					$stdiva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $admin_aziend['preeminent_vat'])['aliquo']; //la percentuale dell'aliquota standard (potrebbe cambiare negli anni)
+					$rs_reverse = gaz_dbi_dyn_query("codice", $gTables['aliiva'], "aliquo=".$stdiva." AND fae_natura='" .$naturaN6."'", "codice DESC", 0, 1);
 					$cod_reverse = gaz_dbi_fetch_array($rs_reverse)['codice'];
 					// riattraverso i righi e ci metto il nuovo codice IVA
 					foreach($form['rows'] as $kn => $vn) {
 						$kp = $kn-1;
 						$form['codvat_'.$kp]=$cod_reverse;
-					}  
+					}
 				}
-				
+
 				$totdiff=abs($ImponibileImporto-$tot_imponi);
 				/* Infine aggiungo un eventuale differenza di centesimo di imponibile sul rigo di maggior valore, questo succede perché il tracciato non è rigoroso nei confronti dell'importo totale dell'elemento  */
 				if ($totdiff>=0.01){ // qualora ci sia una differenza di almeno 1 cent la aggiunto (o lo sottraggo al rigo di maggior valore
@@ -854,7 +866,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['rows'][$max_val_linea]['amount'] += $ImponibileImporto-$tot_imponi;
 				}
 			}
-            
+
             // qui eseguo un controllo per vedere se c'è l'elemento <Arrotondamento> dentro <DatiGeneraliDocumento> e se l'elemento <ImportoTotaleDocumento> non coincide con i righi procedo con l'aggiunta di un rigo fittizio in art.15 (natura esenzione N1)
 			if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Arrotondamento")->length >= 1) {
                 $Arrotondamento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Arrotondamento")->item(0)->nodeValue;
@@ -1441,7 +1453,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	if ($f_ex) {	// visualizzo la fattura elettronica in calce
 		$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
 		$xslDoc = new DOMDocument();
-		$xslDoc->load("../../library/include/".$fae_xsl_file['val'].".xsl");
+		$xslDoc->load('../../library/include/'.$fae_xsl_file['val'].'.xsl');
 		$xslt = new XSLTProcessor();
 		$xslt->importStylesheet($xslDoc);
 		echo '<center>' . $xslt->transformToXML($xml) . '</center>';

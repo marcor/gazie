@@ -213,8 +213,8 @@ if (isset($_GET['id_tes'])){
 		echo '<form method="POST"><div class="col-sm-6"> Allegato: <input name="Download" type="submit" class="btn btn-default" value="'.$name_file.'" /></div></form>';
 	}
 	$xpath = new DOMXpath($doc);
-	$xslDoc = new DOMDocument();
 	$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
+	$xslDoc = new DOMDocument();
 	$xslDoc->load('../../library/include/' . $fae_xsl_file['val'] . '.xsl');
 	$xslt = new XSLTProcessor();
 	$xslt->importStylesheet($xslDoc);
