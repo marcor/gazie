@@ -253,32 +253,33 @@ if ($_POST['acquista'][$k] > 0)
 {
 $result = gaz_dbi_query("Select codice_fornitore,".$gTables['artico'].".descri,uniacq,aliquo from ".$gTables['artico']." join ".$gTables['aliiva']." on (".$gTables['aliiva'].".codice = ".$gTables['artico'].".aliiva ) where (".$gTables['artico'].".codice = '".$_POST['codice'][$k]."') limit 1;");
 $a_row = gaz_dbi_fetch_array($result);
-
-echo'.<input type="hidden" value="'.$_POST['codice'][$k].'" name="righi['.$i.'][codart]">';
-echo'<input type="hidden" value="INSERT" name="righi['.$i.'][status]">';
-echo'<input type="hidden" value="0" name="righi['.$i.'][tiprig]">';
-echo'<input type="hidden" value="1" name="righi['.$i.'][codvat]">';
-echo'<input type="hidden" value="'.$a_row['aliquo'].'" name="righi['.$i.'][pervat]">';
-echo'<input type="hidden" value="330000004" name="righi['.$i.'][codric]">';
-echo'<input type="hidden" name="righi['.$i.'][codice_fornitore]" value="'.$a_row['codice_fornitore'].'" />';
-echo'<input type="hidden" name="righi['.$i.'][descri]" value="'.$a_row['descri'].'" />';
-echo'<input type="hidden" name="righi['.$i.'][unimis]" value="'.$a_row['uniacq'].'" />';
-echo'<input type="hidden" name="righi['.$i.'][quanti]" value="'.$_POST['acquista'][$k].'" />';
-echo'<input type="hidden" name="righi['.$i.'][prelis]" value="'.$_POST['prezzo'][$k].'"  />';
-echo'<input type="hidden" name="righi['.$i.'][sconto]" value="0"  />';
-echo'<input type="hidden" name="righi['.$i.'][quality]" value=""  />';
-echo'<input type="hidden" name="righi['.$i.'][id_orderman]" value=""  />';
-echo'<input type="hidden" name="righi['.$i.'][id_mag]" value=""  />';
-echo'<input type="hidden" name="righi['.$i.'][annota]" value=""  />';
-echo'<input type="hidden" name="righi['.$i.'][larghezza]" value=""  />';
-echo'<input type="hidden" name="righi['.$i.'][lunghezza]" value=""  />';
-echo'<input type="hidden" name="righi['.$i.'][spessore]" value=""  />';
-echo'<input type="hidden" name="righi['.$i.'][peso_specifico]" value=""  />';
-echo'<input type="hidden" name="righi['.$i.'][pezzi]" value=""  />';
-echo'<input type="hidden" name="righi['.$i.'][extdoc]" value=""  />';
+echo'.';
+echo'.<input type="hidden" value="'.$_POST['codice'][$k].'" name="rows['.$i.'][codart]">';
+echo'<input type="hidden" value="INSERT" name="rows['.$i.'][status]">';
+echo'<input type="hidden" value="0" name="rows['.$i.'][tiprig]">';
+echo'<input type="hidden" value="1" name="rows['.$i.'][codvat]">';
+echo'<input type="hidden" value="'.$a_row['aliquo'].'" name="rows['.$i.'][pervat]">';
+echo'<input type="hidden" value="330000004" name="rows['.$i.'][codric]">';
+echo'<input type="hidden" name="rows['.$i.'][codice_fornitore]" value="'.$a_row['codice_fornitore'].'" />';
+echo'<input type="hidden" name="rows['.$i.'][descri]" value="'.$a_row['descri'].'" />';
+echo'<input type="hidden" name="rows['.$i.'][unimis]" value="'.$a_row['uniacq'].'" />';
+echo'<input type="hidden" name="rows['.$i.'][quanti]" value="'.$_POST['acquista'][$k].'" />';
+echo'<input type="hidden" name="rows['.$i.'][prelis]" value="'.$_POST['prezzo'][$k].'"  />';
+echo'<input type="hidden" name="rows['.$i.'][sconto]" value="0"  />';
+echo'<input type="hidden" name="rows['.$i.'][quality]" value=""  />';
+echo'<input type="hidden" name="rows['.$i.'][id_orderman]" value=""  />';
+echo'<input type="hidden" name="rows['.$i.'][id_mag]" value=""  />';
+echo'<input type="hidden" name="rows['.$i.'][annota]" value=""  />';
+echo'<input type="hidden" name="rows['.$i.'][larghezza]" value=""  />';
+echo'<input type="hidden" name="rows['.$i.'][lunghezza]" value=""  />';
+echo'<input type="hidden" name="rows['.$i.'][spessore]" value=""  />';
+echo'<input type="hidden" name="rows['.$i.'][peso_specifico]" value=""  />';
+echo'<input type="hidden" name="rows['.$i.'][pezzi]" value=""  />';
+echo'<input type="hidden" name="rows['.$i.'][extdoc]" value=""  />';
 $i++;
 }
 }
+
 ?></h1>
 <script type="text/javascript" >
  document.forms["docacq"].submit(); 
