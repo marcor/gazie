@@ -112,9 +112,9 @@ class CheckDbAlign {
         function compareSqlFiles($struct1, $struct2) {
             // Luigi Rambaldi 13 Ottobre 2005
             if ($struct2[2] < $struct1[1])
-                return True;
+                return 1;
             else
-                return False;
+                return 0;
         }
 
         if ($handle = opendir($relativePath)) {

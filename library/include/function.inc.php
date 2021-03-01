@@ -889,7 +889,7 @@ class selectPartner extends SelectBox {
         /** ENRICO FEDELE */
     }
 
-    function selectDocPartner($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $m = 0, $anonimo = -1, $tab = 1, $soloMastroSelezionato = false) {
+    function selectDocPartner($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg='', $m = 0, $anonimo = -1, $tab = 1, $soloMastroSelezionato = false) {
         /* se passo $m=-1 ottengo tutti i partner nel piano dei conti indistintamente
           passare false su $tab se non si vuole la tabulazione
           $soloMastroSelezionato = true se si vogliono visualizzare solo i clienti (o i fornitori) in base a $m
@@ -1003,7 +1003,7 @@ class selectPartner extends SelectBox {
         }
     }
 
-    function selectAnagra($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $tab = false) {
+    function selectAnagra($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg='', $tab = false) {
         global $gTables;
         $tab1 = '';
         $tab2 = '';
@@ -2653,7 +2653,7 @@ class Schedule {
         $this->Partners = $res;
     }
 
-    function getScheduleEntries($ob = 0, $masclifor, $date = false) {
+    function getScheduleEntries($ob = 0, $masclifor=0, $date = false) {
         /*
          * genera un array con tutti i movimenti di partite aperte con quattro tipi di ordinamento
          * se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso

@@ -2407,7 +2407,7 @@ foreach ($form['rows'] as $k => $v) {
         }
         $totimp_body += $imprig;
         $castle[$v['codvat']]['impcast'] += $v_for_castle;
-        $rit += round($imprig * $v['ritenuta'] / 100, 2);
+        $rit += round($imprig * floatval($v['ritenuta']) / 100, 2);
     } elseif ($v['tiprig'] == 3) {
         $carry += $v['prelis'];
     } elseif ($v['tiprig'] == 90) { // rigo vendita cespite ammortizzabile
@@ -2602,12 +2602,12 @@ foreach ($form['rows'] as $k => $v) {
 					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="6" id="righi_' . $k . '_sconto" onchange="document.docven.last_focus.value=this.id; this.form.submit();" /></td>
 					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" /></td>
 					<td class="text-right '.$imprig_class.'">
-						<span class="gazie-tooltip text-right text-'.$imprig_class.'" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
+						<span class="gazie-tooltip text-right text-'.$imprig_class.'" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * floatval($v['ritenuta']) / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
 							' . gaz_format_number($imprig) . '
 						</span>
 					</td>
 					<td class="text-right">
-						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
+						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * floatval($v['ritenuta']) / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
 							' . $v['pervat'] . '%
 						</span>
 					</td>
