@@ -66,7 +66,7 @@ class contabForm extends GAzieForm {
         $this->sub_name = $subName;
     }
 
-    function selSubAccount($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $class = 'FacetSelect') {
+    function selSubAccount($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg='', $class = 'FacetSelect') {
         global $gTables, $admin_aziend;
         $mas_query = '';
         $ctrl_mas = substr($val, 0, 3);
@@ -229,7 +229,7 @@ class contabForm extends GAzieForm {
         return $anagrafiche;
     }
 
-    function sub_Account($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg) {
+    function sub_Account($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg='') {
         global $gTables, $admin_aziend;
         $this->gTables = $gTables;
         $this->name = $name;

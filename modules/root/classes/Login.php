@@ -500,7 +500,7 @@ class Login
 		// if database connection opened
 		if ($this->databaseConnection()) {
 			// Reset rememberme token
-			$sth = $this->db_connection->prepare("UPDATE " . DB_TABLE_PREFIX . "_admin SET user_rememberme_token = NULL WHERE user = :user_id");
+			$sth = $this->db_connection->prepare("UPDATE " . DB_TABLE_PREFIX . "_admin SET user_rememberme_token = NULL WHERE user_id = :user_id");
 			$sth->execute(array(':user_id' => $_SESSION['user_id']));
 		}
 

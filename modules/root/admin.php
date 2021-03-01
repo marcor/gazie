@@ -51,7 +51,7 @@ if (!isset($_POST['hidden_req'])) {
 
 $checkUpd = new CheckDbAlign;
 $data = $checkUpd->TestDbAlign();
-if ($data) {
+if (is_array($data)) {
     // induco l'utente ad aggiornare il db
     redirect( '../../setup/install/install.php?tp=' . $table_prefix);
     exit;

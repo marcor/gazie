@@ -141,6 +141,7 @@ class CheckDbAlign {
             }
             closedir($handle);
         }
+        ksort($structArray);
         return end($structArray);
     }
 

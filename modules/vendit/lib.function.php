@@ -51,7 +51,7 @@ class venditForm extends GAzieForm {
       return gaz_dbi_get_row($gTables['cash_register'], 'id_cash', $id);
    }
 
-   function selectCustomer($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $class = 'FacetSelect') {
+   function selectCustomer($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg='', $class = 'FacetSelect') {
       global $gTables, $admin_aziend;
       $anagrafica = new Anagrafica();
       if ($val > 100000000) { //vengo da una modifica della precedente select case quindi non serve la ricerca

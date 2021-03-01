@@ -100,7 +100,7 @@ class magazzForm extends GAzieForm {
     return $totord-$toteva;
     }
 
-    function selItem($name, $val, $strSearch = '', $mesg, $val_hiddenReq = '', $class = 'FacetSelect') {
+    function selItem($name, $val, $strSearch = '', $mesg='', $val_hiddenReq = '', $class = 'FacetSelect') {
         global $gTables, $admin_aziend;
         if ($admin_aziend['artsea'] == 'B') {        //ricerca per codice a barre
             $field = 'barcode';
@@ -711,7 +711,7 @@ class magazzForm extends GAzieForm {
         return $return_val;
     }
 
-    function uploadMag($id_rigo_doc = 0, $tipdoc, $numdoc, $seziva, $datdoc, $clfoco, $sconto_chiusura, $caumag, $codart, $quantita, $prezzo, $sconto_rigo, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_coltivazione=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
+    function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_coltivazione=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
         // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, datreg)
         global $gTables, $admin_aziend;
         $docOperat = $this->getOperators();

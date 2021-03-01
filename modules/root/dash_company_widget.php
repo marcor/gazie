@@ -1,5 +1,5 @@
 <?php
-function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $class = 'FacetSelect') {
+function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg='', $class = 'FacetSelect') {
     global $gTables, $admin_aziend;
     $table = $gTables['aziend'] . ' LEFT JOIN ' . $gTables['admin_module'] . ' ON ' . $gTables['admin_module'] . '.company_id = ' . $gTables['aziend'] . '.codice';
     $where = $gTables['admin_module'] . '.adminid=\'' . $admin_aziend['user_name'] . '\' GROUP BY company_id';
