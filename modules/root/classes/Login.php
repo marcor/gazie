@@ -342,7 +342,7 @@ class Login
 			// if this user not exists
 			if (! isset($result_row->user_id)) {
 				// se la password risulta essere sbagliata ed ho un il vecchio nome della colonna "Password" propongo di aggiornare il database 
-				$query_us = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_admin WHERE Login = :user_name');
+				$query_us = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name');
 				$query_us->bindValue(':user_name', trim($user_name), PDO::PARAM_STR);
 				$query_us->execute();
 				// get result row (as an object)
