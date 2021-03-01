@@ -244,7 +244,7 @@ class TCPDI extends FPDF_TPL {
         $parser->setPageno($pageno);
         $boxes = $parser->getPageBoxes($pageno, $this->k);
         foreach ($boxes as $name => $box) {
-            if ($name{0} == '/') {
+            if ($name[0] == '/') {
                 $boxes[substr($name, 1)] = $box;
                 unset($boxes[$name]);
             }
@@ -723,9 +723,11 @@ class TCPDI extends FPDF_TPL {
      * close all files opened by parsers
      */
     function _closeParsers() {
-        if ($this->state > 2 && count($this->parsers) > 0) {
-          	$this->cleanUp();
+        if (is_array($this->parsers)) {
+            if ($this->state > 2 && count($this->parsers) > 0) {
+                $this->cleanUp();
             return true;
+            }
         }
         return false;
     }

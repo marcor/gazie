@@ -133,8 +133,8 @@ class DocContabVars {
         }
         // variabile e' sempre un array
         $this->id_agente = gaz_dbi_get_row($gTables['agenti'], 'id_agente', $tesdoc['id_agente']);
-        $this->rs_agente = $anagrafica->getPartner($this->id_agente['id_fornitore']);
-        $this->name_agente = substr($this->rs_agente['ragso1'] . " " . $this->rs_agente['ragso2'], 0, 47);
+        $this->rs_agente = ($this->id_agente)?$anagrafica->getPartner($this->id_agente['id_fornitore']):'';
+        $this->name_agente = ($this->id_agente)?substr($this->rs_agente['ragso1'] . " " . $this->rs_agente['ragso2'], 0, 47):'';
         if ((isset($tesdoc['id_des_same_company'])) and ( $tesdoc['id_des_same_company'] > 0)) {
             $this->partner_dest = gaz_dbi_get_row($gTables['destina'], 'codice', $tesdoc['id_des_same_company']);
             $this->destinazione = substr($this->partner_dest['unita_locale1'] . " " . $this->partner_dest['unita_locale2'], 0, 45);
@@ -323,14 +323,14 @@ class DocContabVars {
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
 			// Antonio Germani - se c'è un codice a barre valorizzo barcode
 			$barcode = gaz_dbi_get_row( $this->gTables['artico'], 'codice', $rigo['codart']);
-			if (intval($barcode['barcode']>0)){
+			if ($barcode && intval($barcode['barcode'])>0){
 				$rigo['barcode']=$barcode['barcode'];
 			} else {
 				$rigo['barcode']="";
 			}
 			// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione
 			$checklot=gaz_dbi_get_row($this->gTables['movmag'],'id_mov',$rigo['id_mag']);
-			if (strlen ($checklot['id_lotmag'])>0){
+			if ($checklot && strlen ($checklot['id_lotmag'])>0){
 				$getlot=gaz_dbi_get_row($this->gTables['lotmag'],'id',$checklot['id_lotmag']);
 				if (isset ($getlot['identifier']) && strlen ($getlot['identifier'])>0){
 					if (intval ($getlot['expiry'])>0){
@@ -346,7 +346,7 @@ class DocContabVars {
                  ON om.id_tesbro=tb.id_tes';
 			$rs_orderman = gaz_dbi_dyn_query('om.*,tb.datemi', $from, "om.id = " .  intval($rigo['id_orderman']));
             $rigo['orderman_data'] = gaz_dbi_fetch_array($rs_orderman);
-			$rigo['orderman_descri']=$rigo['orderman_data']['description'];
+			$rigo['orderman_descri']=($rigo['orderman_data'])?$rigo['orderman_data']['description']:'';
             if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
                 $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
