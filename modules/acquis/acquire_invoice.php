@@ -610,20 +610,25 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']); // analizzo le possibilità 
 					// analizzo le possibilità 
 					// controllo se ho uno split payment
-					$yes_split=false;
-					if($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >=1){
-						$yes_split=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
+					$yes_split = false;
+					if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >= 1) {
+						$yes_split = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->item(0)->nodeValue;
 					}
-					if ($yes_split=='S'){
-						$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo = " . $form['rows'][$nl]['pervat']." AND tipiva ='T'", "codice ASC", 0, 1);
+					if ($yes_split == 'S') {
+						$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo=" . $form['rows'][$nl]['pervat'] . " AND tipiva='T'", "codice ASC", 0, 1);
 						$split_vat = gaz_dbi_fetch_array($rs_split_vat);
 						$form['codvat_'.$post_nl] = $split_vat['codice'];
 					} elseif ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
 						$form['codvat_'.$post_nl] = $expect_vat['codice'];
 					} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
-						$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], 'aliquo = ' . $form['rows'][$nl]['pervat']." AND tipiva <>'T'", "codice ASC", 0, 1);
+						$filter_vat = "aliquo=" . $form['rows'][$nl]['pervat'];
+						@$Natura = $item->getElementsByTagName('Natura')->item(0)->nodeValue;
+						if (!empty($Natura)) {
+							$filter_vat.= " AND fae_natura='" . $Natura . "'";
+						}
+						$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], $filter_vat . " AND tipiva<>'T'", "codice ASC", 0, 1);
 						$last_codvat = gaz_dbi_fetch_array($rs_last_codvat);
-						if ($last_codvat){
+						if ($last_codvat) {
 							$form['codvat_'.$post_nl] = $last_codvat['codice'];
 						} else {
 							$form['codvat_'.$post_nl] = 'non trovata';
@@ -753,7 +758,18 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					if ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
 						$form['codvat_'.$post_nl] = $expect_vat['codice'];
 					} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
-						$form['codvat_'.$post_nl] = 'non trovata';
+						$filter_vat = "aliquo=" . $form['rows'][$nl]['pervat'];
+						@$Natura = $item->getElementsByTagName('Natura')->item(0)->nodeValue;
+						if (!empty($Natura)) {
+							$filter_vat.= " AND fae_natura='" . $Natura . "'";
+						}
+						$rs_last_codvat = gaz_dbi_dyn_query("*", $gTables['aliiva'], $filter_vat . " AND tipiva<>'T'", "codice ASC", 0, 1);
+						$last_codvat = gaz_dbi_fetch_array($rs_last_codvat);
+						if ($last_codvat) {
+							$form['codvat_'.$post_nl] = $last_codvat['codice'];
+						} else {
+							$form['codvat_'.$post_nl] = 'non trovata';
+						}
 					}
 				}				
 			}
@@ -851,7 +867,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					// riattraverso i righi e ci metto il nuovo codice IVA
 					foreach($form['rows'] as $kn => $vn) {
 						$kp = $kn-1;
-						$form['codvat_'.$kp]=$cod_reverse;
+						//$form['codvat_'.$kp]=$cod_reverse;
 					}
 				}
 
