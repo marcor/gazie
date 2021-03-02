@@ -65,9 +65,12 @@ $aRiportare = array('top' => array(array('lun' => 166, 'nam' => 'da riporto : ')
 $restes = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $resord['id_tesbro']);
 $resrig = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $resord['id_rigbro']);
 $resclfo = gaz_dbi_get_row($gTables['clfoco'], "codice", $restes['clfoco']);
+$resclfo = ($resclfo)?$resclfo:array('descri'=>'');
 $reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $resord['id_lotmag']);
+$reslot = ($reslot)?$reslot:array('identifier'=>'','expiry'=>0);
 $resart = gaz_dbi_get_row($gTables['artico'], "codice", $resrig['codart']);
 $rescamp = gaz_dbi_get_row($gTables['campi'], "codice", $resord['campo_impianto']);
+$rescamp = ($rescamp)?$rescamp:array('descri'=>'');
 
 $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
@@ -159,7 +162,7 @@ if ($result->num_rows >0 && $admin_aziend['Abilit']>=8) { // permetto la stampa 
 		$sp=$sp+5;
 	}
   }
-  if ($resart['good_or_service']==2){ // se l'articolo prodotto prevede componenti
+  if ($resart && $resart['good_or_service']==2){ // se l'articolo prodotto prevede componenti
 	$query="SELECT artico, quanti, id_lotmag FROM ".$gTables['movmag']. " WHERE id_orderman =". intval($_GET['id_orderman'])." AND operat = '-1'";
 	$rescomp = gaz_dbi_query($query);
 	if ($rescomp->num_rows >0) {
@@ -234,6 +237,7 @@ while($row=$res->fetch_assoc()){
 		$pdf->Cell(20,5,'prezzo','LBR',0,'R',1);
 		$pdf->Cell(10,5,'sconto','LBR',0,'C',1);
 		$pdf->Cell(30,5,'importo','LBR',1,'R',1);
+		$totord=0.00;
 	} elseif ($ctrlAOR<>$row['id_tes']) {
 		$pdf->Cell(85,5);
         $pdf->SetFillColor(230,230,230);
