@@ -285,6 +285,14 @@ $gForm->selectFromDB('country', 'country', 'iso', $form['country'], 'iso', 0, ' 
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
+                    <label for="n_albo" class="col-sm-4 control-label"><?php echo $script_transl['n_albo']; ?> </label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['n_albo']; ?>" name="n_albo" maxlength="100"/>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
                     <label for="id_language" class="col-sm-4 control-label"><?php echo $script_transl['id_language']; ?></label>
     <?php
 $gForm->selectFromDB('languages', 'id_language', 'lang_id', $form['id_language'], 'lang_id', 1, ' - ', 'title_native');
