@@ -884,9 +884,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 
             // qui eseguo un controllo per vedere se c'è l'elemento <Arrotondamento> dentro <DatiGeneraliDocumento> e se l'elemento <ImportoTotaleDocumento> non coincide con i righi procedo con l'aggiunta di un rigo fittizio in art.15 (natura esenzione N1)
+            $ImportoTotaleDocumento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento")->item(0)->nodeValue;
 			if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Arrotondamento")->length >= 1) {
                 $Arrotondamento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/Arrotondamento")->item(0)->nodeValue;
-                $ImportoTotaleDocumento=$xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiGenerali/DatiGeneraliDocumento/ImportoTotaleDocumento")->item(0)->nodeValue;
                 if (abs($ImportoTotaleDocumento-($ImponibileImporto + $ImpostaDocumento)) >= 0.01) { // ho una effettiva differenza tra i totali del castelletto IVA e il totale documennto allora aggiungo un rigo fuori campo IVA N1
   					$codvat_fc=gaz_dbi_get_row($gTables['aliiva'], "fae_natura", 'N1')['codice'];
                     $nl++;
@@ -1050,9 +1050,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					if (abs($v['prelis'])<0.00001) { // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 						$form['rows'][$i]['tiprig']=2;
 					}
-					if ($form['tipdoc']=="AFC" && $v['prelis'] <= 0.00001 ) { // capita a volte che dei software malfatti sulle note credito indichino i valori in negativo... allora li forziamo a positivo
-						$form['rows'][$i]['prelis']=abs($v['prelis']);
-						$form['rows'][$i]['quanti']=abs($v['quanti']);
+					if ($form['tipdoc']=="AFC" && $ImportoTotaleDocumento <= -0.01 ) { // capita a volte che dei software malfatti sulle note credito indichino i valori in negativo... allora per renderli compatibili con la contabilizzazione di GAzie invertiamo il segno
+                            $form['rows'][$i]['prelis']=-$v['prelis'];
 					}
 					// questo mi servirà sotto se è stata richiesta la creazione di un articolo nuovo
 					if (empty(trim($v['codice_fornitore']))) { // non ho il codice del fornitore me lo invento accodando al precedente prefisso dipendente dal codice del fornitore un hash a 8 caratteri della descrizione
