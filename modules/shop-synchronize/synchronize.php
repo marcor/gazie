@@ -44,6 +44,7 @@ if ($exists) {
 }
 
 $file_download = "dowload_ordini.php";
+$file_download2 = "dowload_ordini2.php";
 $file_upload = "upload_prodotti.php";
 $file_downloader = "import_articoli.php";
 $file_uploader = "export_articoli.php";
@@ -58,6 +59,13 @@ if (isset($_POST['Return'])) {
 if (isset ($_POST['download'])) {
 	if (file_exists($file_download)) {
 		include $file_download;
+	} else {
+		header("Location: " . $_POST['ritorno']);
+        exit;
+	}
+} elseif (isset ($_POST['download2'])){
+	if (file_exists($file_download2)) {
+		include $file_download2;
 	} else {
 		header("Location: " . $_POST['ritorno']);
         exit;
@@ -114,6 +122,7 @@ if (isset ($_POST['download'])) {
 				</div>
 				<div class="col-sm-4  bg-success" align="center">
 					<input type="submit" class="btn btn-primary" name="download"  onClick="chkSubmit();" value="Scarica ordini">
+					<input type="submit" class="btn btn-primary" name="download2"  onClick="chkSubmit();" value="Scarica ordini2">
 				</div>
 				<div class="col-sm-4 bg-warning" align="center">
 					<input type="submit" class="btn btn-primary" name="upload"  onClick="chkSubmit();" value="Aggiorna q.t&agrave; prodotti">
