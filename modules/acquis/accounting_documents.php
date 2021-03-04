@@ -492,7 +492,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                             $asset['a_value'] = $acc_v['import'];
                             gaz_dbi_table_insert('assets', $asset);
                         } else {
-                            rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $acc_k, 'import' => $acc_v['import']));
+                            $dacost=$da_c;
+                            if($acc_v['import']<0.00) {
+                                $dacost = ($da_c=='A')?'D':'A'; 
+                                $acc_v['import']=abs($acc_v['import']);                                
+                            }
+                            rigmocInsert(array('id_tes' => $tes_id, 'darave' => $dacost, 'codcon' => $acc_k, 'import' => $acc_v['import']));
 							if ($acc_v['accneg']<0.00){ // ho dei righi negativi riferiti allo stesso conto
 								rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $acc_k, 'import' => -$acc_v['accneg']));
 							}
