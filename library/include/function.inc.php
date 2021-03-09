@@ -2254,7 +2254,7 @@ class TableSorter {
             $text = "record: $this->count";
         } elseif ($this->paginate) {
             $query = self::join_queries($this->url_search_query, $this->url_order_query, "pag=all");
-            $text = "record: <a href='?$query' title='mostra tutti'>$this->count</a> / pag. $this->cur_page";
+            $text = "record: <a href='?$query' title='mostra tutti'>$this->count</a> / pag. $this->cur_page di $this->pages";
         } else {
             $query = self::join_queries($this->url_search_query, $this->url_order_query);
             $text = "record: $this->count / <a href='?$query'>sfoglia</a>";
