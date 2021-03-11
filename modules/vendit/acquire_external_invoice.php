@@ -378,6 +378,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 		}
 
+
 		/*
 			QUI TRATTERO' gli elementi <DatiCassaPrevidenziale> come righi accodandoli ad essi su rigdoc (tipdoc=4) 
 		*/
@@ -542,13 +543,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['datreg']=$form['datfat'];
 			$form['datemi']=$form['datfat'];
 			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],0,4),$form['seziva'])['last_protoc'];
-            tesdocInsert($form);
+            $ultimo_id =tesdocInsert($form);
             //recupero l'id assegnato dall'inserimento
-            $ultimo_id = gaz_dbi_last_id();
             foreach ($form['rows'] as $i => $v) { // inserisco i righi 
-				if ($form['rows'][$i]['prelis']<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
+				if (abs($form['rows'][$i]['prelis'])<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 					$form['rows'][$i]['tiprig']=2;
-				}			
+				}
+				if ( $form['tipdoc']=='FNC' && $form['rows'][$i]['prelis']<0.01 ){ // ho un rigo negativo ma è una nota di credito
+                    $form['rows'][$i]['prelis']=abs($form['rows'][$i]['prelis']);                
+                }
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
 				// i righi postati hanno un indice diverso
 				$post_nl=$i-1;
@@ -642,7 +645,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-8 small', null, 'style="max-width: 350px;"', false, true);            
 			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$form['codart_'.$k]);            
 			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
-			if ($v['prelis']<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
+			if (abs($v['prelis'])<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 				$v['codice_fornitore']='';
 				$v['unimis']='';			
 				$v['quanti']='';
