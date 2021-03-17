@@ -2611,9 +2611,11 @@ class Schedule {
          */
         global $gTables;
         $rs = gaz_dbi_dyn_query($gTables['paymov'] . ".id_tesdoc_ref," . $gTables['tesmov'] . ".clfoco ", $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['tesmov'] . ".id_tes = " . $gTables['rigmoc'] . ".id_tes", $gTables['paymov'] . ".id_tesdoc_ref = '" . $id_tesdoc_ref . "'");
-        $r = gaz_dbi_fetch_array($rs);
-        $this->target = $r['clfoco'];
+        while($r = gaz_dbi_fetch_array($rs)){
+          $this->target = ($r['clfoco']>100000000)?$r['clfoco']:false;
+        }
         $this->id_target = $id_tesdoc_ref;
+        print  $this->target.' id:'.$this->id_target;
     }
 
     function setScheduledPartner($partner_type = false,$datref=false) {
@@ -2933,6 +2935,7 @@ class Schedule {
         if ($clfoco <= 999 && $clfoco >= 100) { // ho un mastro clienti o foritori
             $clfoco = "999999999 OR " . $gTables['clfoco'] . ".codice LIKE '" . $clfoco . "%'";
         } elseif ($this->target > 0 && $this->id_target > 0) {
+          print $this->target;
             $clfoco = $this->target . " AND id_tesdoc_ref = '" . $this->id_target . "'";
         } elseif ($this->target > 0 && $clfoco == 0) {
             $clfoco = $this->target;
