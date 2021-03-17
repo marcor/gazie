@@ -2615,7 +2615,6 @@ class Schedule {
           $this->target = ($r['clfoco']>100000000)?$r['clfoco']:false;
         }
         $this->id_target = $id_tesdoc_ref;
-        print  $this->target.' id:'.$this->id_target;
     }
 
     function setScheduledPartner($partner_type = false,$datref=false) {
