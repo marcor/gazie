@@ -1397,7 +1397,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				$codvat_dropdown = '<input type="hidden" name="codvat_'.$k.'" value="000000000" />';
 				$codart_dropdown = '<input type="hidden" name="codart_'.$k.'" />';
 			} else {
-				$v['prelis']=gaz_format_number($v['prelis']);
+				//$v['prelis']=gaz_format_number($v['prelis']);
 				$v['amount']=gaz_format_number($v['amount']);
 				$v['ritenuta']=floatval($v['ritenuta']);
 				$v['pervat']=floatval($v['pervat']);
