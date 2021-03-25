@@ -392,8 +392,9 @@ $strScript = array("browse_document.php" =>
             'unimis' => 'Inserire l\'unit&agrave; di misura delle vendite',
             'aliiva' => 'Inserire l\'aliquota I.V.A.',
             'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
-			'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
-			'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda '
+            'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
+            'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
+            'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda '
         ),
         'war' => array(
             'ok_ins' => 'Articolo inserito con successo'

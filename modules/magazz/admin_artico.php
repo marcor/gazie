@@ -273,16 +273,23 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /* Niente redirect se sono in finestra modale */
     if ($modal === false) {
 			if ($toDo == 'insert') {
-				$_SESSION['ok_ins']=$form['codice'].' - '.$form['descri'];
-				header("Location: ../../modules/magazz/admin_artico.php?Update&codice=".$form['codice']);
+        // riprendo il codice e se non è stato realmente inserito sul db lo segnalo all'utente e non reindirizzo
+        $catch = gaz_dbi_get_row($gTables['artico'], 'codice', $form['codice']); 
+        if ($catch){ 
+          $_SESSION['ok_ins']=$form['codice'].' - '.$form['descri'];
+          header("Location: ../../modules/magazz/admin_artico.php?Update&codice=".$form['codice']);
+          exit;
+        } else {
+          $msg['err'][] = 'no_ins';
+        }
 			}else{
 				header("Location: ../../modules/magazz/report_artico.php");
+        exit;
 			}
     } else {
 			header("Location: ../../modules/magazz/admin_artico.php?mode=modal&ok_insert=1");
+      exit;
     }
-    /** ENRICO FEDELE */
-    exit;
   }
   /** ENRICO FEDELE */
 } elseif (isset($_POST['Return']) && $modal === false) { // torno indietro
