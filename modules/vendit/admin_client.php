@@ -197,6 +197,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     $form['fatt_email'] = 2;
                 }
                 if ($form['id_anagra'] > 0) {
+                    $form['descri']= $form['ragso1'].' '. $form['ragso2'];
                     gaz_dbi_table_insert('clfoco', $form);
                 } else {
                     $anagrafica->insertPartner($form);
@@ -295,14 +296,15 @@ if ($toDo == 'insert') {
 ?>
 <?php
 if (!empty($msg)) {
-    echo '<tr><td colspan="3" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
+    echo '<div align="center"><table>';
     if (isset($anagra)) {
+        echo '<tr><td colspan="3" class="FacetDataTDred">' . ((strpos($msg,'15+'))?$script_transl['errors'][15]:''). ((strpos($msg,'16+'))?$script_transl['errors'][16]:''). "</td></tr>\n";
         echo "<tr>\n";
         echo "\t <td>\n";
         echo "\t </td>\n";
         echo "<td colspan=\"2\"><div onmousedown=\"toggleContent('id_anagra')\" class=\"FacetDataTDred\" style=\"cursor:pointer;\">";
         echo ' &dArr; ' . $script_transl['link_anagra'] . " &dArr;</div>\n";
-        echo "<div style=\"display: ;\" class=\"selectContainer\" id=\"id_anagra\" onclick=\"selectValue('" . $anagra['id'] . "');\" >\n";
+        echo "<div id=\"id_anagra\" onclick=\"selectValue('" . $anagra['id'] . "');\" style=\"cursor: pointer;\">\n";
         echo "<div class=\"selectHeader\"> ID = " . $anagra['id'] . "</div>\n";
         echo '<table cellspacing="0" cellpadding="0" width="100%" class="selectTable">';
         echo "\n<tr class=\"odd\"><td>" . $script_transl['ragso1'] . " </td><td> " . $anagra['ragso1'] . "</td></tr>\n";
@@ -317,7 +319,10 @@ if (!empty($msg)) {
         echo "</div></table></div>\n";
         echo "\t </td>\n";
         echo "</tr>\n";
+    } else {
+      echo '<tr><td colspan="3" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
     }
+    echo '</table></div>';
 }
 ?>
 
