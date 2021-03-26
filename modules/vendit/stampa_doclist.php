@@ -24,24 +24,19 @@
   --------------------------------------------------------------------------
  */
 
-function getNewAgente($id) {
-   global $gTables;
-   $agente = gaz_dbi_get_row($gTables['agenti'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['agenti'] . ".id_fornitore = " . $gTables['clfoco'] . ".codice
-                                                  LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $gTables['agenti'] . '.id_agente', $id);
-   return $agente;
-}
-
 require("../../library/include/datlib.inc.php");
-require("../../config/templates/report_template.php");
 $admin_aziend = checkAdmin();
-require("lang." . $admin_aziend['lang'] . ".php");
+require("../../library/include/calsca.inc.php");
+$msg = '';
 
+if (!isset($_GET['si'])) {
+   $_GET['si'] = 1;
+}
 if (!isset($_GET['pi'])) {
-   header("Location: select_docforlist.php");
-   exit;
+   $_GET['pi'] = 1;
 }
 if (!isset($_GET['pf'])) {
-   $_GET['pf'] = intval($_GET['pi']);
+   $_GET['pf'] = 999999999;
 }
 if (!isset($_GET['ni'])) {
    $_GET['ni'] = 1;
@@ -50,396 +45,241 @@ if (!isset($_GET['nf'])) {
    $_GET['nf'] = 999999999;
 }
 if (!isset($_GET['di'])) {
-   $_GET['di'] = 20050101;
+   $_GET['di'] = intval(date("Y").'0101');
 }
 if (!isset($_GET['df'])) {
-   $_GET['df'] = 20991231;
+   $_GET['df'] = date("Ymd");
 }
-if (!isset($_GET['cl']) or ( empty($_GET['cl']))) {
-   $cliente = '';
-} else {
-   $cliente = ' AND clfoco = ' . intval($_GET['cl']);
+if (!isset($_GET['cl'])) { // cliente
+   $_GET['cl'] = 0;
 }
-if (!isset($_GET['ag']) or ( empty($_GET['ag']))) {   // selezione agente
-   $agente = '';
-} else {
-   $agente = ' AND tesdoc.id_agente = ' . intval($_GET['ag']);
+if (!isset($_GET['ag'])) {   // selezione agente
+   $_GET['ag'] = 0;
 }
-if (!isset($_GET['cm']) or ( empty($_GET['cm']))) {   // selezione agente
-   $caumag = '';
-} else {
-   $caumag = ' AND tesdoc.caumag = ' . intval($_GET['cm']);
+
+function getDocuments($td = 0, $si = 1, $where_data) {
+    global $gTables, $admin_aziend;
+    $calc = new Compute;
+    $type=[0=>'F__',1=>'FAD', 2=>'FAI', 3=> 'FNC', 4=> 'FND',5 => 'FAP'];
+    $customer =($where_data['cl']>100000000)?' AND clfoco = '.$where_data['cl']:'';
+    $agente =($where_data['ag']>=1)?' AND id_agente = '.$where_data['ag']:'';
+    $where = "seziva = $si AND tipdoc LIKE '".$type[$td]."' AND datfat BETWEEN ". $where_data['di'] ." AND ". $where_data['df']." AND protoc BETWEEN ". $where_data['pi'] ." AND ". $where_data['pf']
+    ." AND numfat BETWEEN ". $where_data['ni'] ." AND ". $where_data['nf']. $customer . $agente;
+    $from = $gTables['tesdoc'] . ' AS tesdoc
+             LEFT JOIN ' . $gTables['pagame'] . ' AS pay
+             ON tesdoc.pagame=pay.codice
+             LEFT JOIN ' . $gTables['clfoco'] . ' AS customer
+             ON tesdoc.clfoco=customer.codice
+             LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
+             ON customer.id_anagra=anagraf.id';
+//    $where = "seziva = $vat_section AND tipdoc LIKE '$type' $d $p";
+    $orderby = "datfat ASC, protoc ASC";
+    $result = gaz_dbi_dyn_query('tesdoc.*,
+                        pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
+                        customer.codice,
+                        customer.speban AS addebitospese,
+                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
+    $doc = array();
+    $ctrlp = 0;
+
+    $carry = 0;
+    $ivasplitpay = 0;
+    $somma_spese = 0;
+    $totimpdoc = 0;
+    $rit = 0;
+    while ($tes = gaz_dbi_fetch_array($result)) {
+        if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
+            switch ($tes['tipdoc']) {
+				case "AFA":case "AFC":case "AFD":
+				$bol=$admin_aziend['taxstamp_account'];
+				break;
+                default:
+				$bol=$admin_aziend['boleff'];
+				break;
+
+			}
+            if ($ctrlp > 0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+                $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
+                $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
+                $doc[$ctrlp]['vat'] = $calc->castle;
+                // aggiungo il castelleto conti
+                if (!isset($doc[$ctrlp]['acc'][$bol])) {
+                    $doc[$ctrlp]['acc'][$bol]['import'] = 0;
+                }
+                $doc[$ctrlp]['acc'][$bol]['import'] += $taxstamp + $calc->pay_taxstamp;
+            }
+            $carry = 0;
+            $ivasplitpay = 0;
+            $cast_vat = array();
+            $cast_acc = array();
+            $somma_spese = 0;
+            $totimpdoc = 0;
+            $totimp_decalc = 0.00;
+            $n_vat_decalc = 0;
+            $spese_incasso = $tes['numrat'] * $tes['speban'];
+            $taxstamp = 0;
+            $rit = 0;
+        } else {
+            $spese_incasso = 0;
+        }
+        // aggiungo il bollo sugli esenti/esclusi se nel DdT c'è ma non è ancora stato mai aggiunto
+        if ($tes['taxstamp'] >= 0.01 && $taxstamp < 0.01) {
+            $taxstamp = $tes['taxstamp'];
+        }
+        if ($tes['virtual_taxstamp'] == 0 || $tes['virtual_taxstamp'] == 3) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
+            $taxstamp = 0.00;
+        }
+        if ($tes['traspo'] >= 0.01) {
+            if (!isset($cast_acc[$admin_aziend['imptra']]['import'])) {
+                $cast_acc[$admin_aziend['imptra']]['import'] = $tes['traspo'];
+            } else {
+                $cast_acc[$admin_aziend['imptra']]['import'] += $tes['traspo'];
+            }
+        }
+        if ($spese_incasso >= 0.01) {
+            if (!isset($cast_acc[$admin_aziend['impspe']]['import'])) {
+                $cast_acc[$admin_aziend['impspe']]['import'] = $spese_incasso;
+            } else {
+                $cast_acc[$admin_aziend['impspe']]['import'] += $spese_incasso;
+            }
+        }
+        if ($tes['spevar'] >= 0.01) {
+            if (!isset($cast_acc[$admin_aziend['impvar']]['import'])) {
+                $cast_acc[$admin_aziend['impvar']]['import'] = $tes['spevar'];
+            } else {
+                $cast_acc[$admin_aziend['impvar']]['import'] += $tes['spevar'];
+            }
+        }
+        //recupero i dati righi per creare il castelletto
+        $from = $gTables['rigdoc'] . ' AS rs
+                    LEFT JOIN ' . $gTables['aliiva'] . ' AS vat
+                    ON rs.codvat=vat.codice';
+        $rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $tes['id_tes'], "id_tes DESC");
+        while ($r = gaz_dbi_fetch_array($rs_rig)) {
+            if ($r['tiprig'] <= 1  || $r['tiprig'] == 4 || $r['tiprig'] == 90) { // se del tipo normale, forfait, cassa previdenziale, vendita cespite
+                //calcolo importo rigo
+                $importo = CalcolaImportoRigo($r['quanti'], $r['prelis'], array($r['sconto'], $tes['sconto']));
+                if ($r['tiprig']==1||$r['tiprig']== 90) { // se di tipo forfait e vendita cespite 
+                    $importo = CalcolaImportoRigo(1, $r['prelis'], $tes['sconto']);
+                } elseif($r['tiprig']==4){ // cassa previdenziale sul database  trovo la percentuale sulla colonna provvigione
+                    $importo = round($r['prelis']*$r['provvigione']/100,2);
+				}
+                //creo il castelletto IVA
+                if (!isset($cast_vat[$r['codvat']]['impcast'])) {
+                    $cast_vat[$r['codvat']]['impcast'] = 0;
+                    $cast_vat[$r['codvat']]['ivacast'] = 0;
+                    $cast_vat[$r['codvat']]['periva'] = $r['pervat'];
+                    $cast_vat[$r['codvat']]['tipiva'] = $r['tipiva'];
+                }
+                $cast_vat[$r['codvat']]['impcast'] += $importo;
+                $cast_vat[$r['codvat']]['ivacast'] += round(($importo * $r['pervat']) / 100, 2);
+                $totimpdoc += $importo;
+                //creo il castelletto conti
+                if (!isset($cast_acc[$r['codric']]['import'])) {
+                    $cast_acc[$r['codric']]['import'] = 0;
+                }
+                $cast_acc[$r['codric']]['import'] += $importo;
+                if ($r['tiprig'] == 90) { // se è una vendita cespite lo indico sull'array dei conti
+                    $cast_acc[$r['codric']]['asset'] = 1;
+                }
+                $rit += round($importo * $r['ritenuta'] / 100, 2);
+                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment)   
+                if ($r['tipiva'] == 'T') {
+                    $ivasplitpay += round(($importo * $r['pervat']) / 100, 2);
+                }
+            } elseif ($r['tiprig'] == 3) {
+                $carry += $r['prelis'];
+            }
+        }
+        $doc[$tes['protoc']]['tes'] = $tes;
+        $doc[$tes['protoc']]['acc'] = $cast_acc;
+        $doc[$tes['protoc']]['car'] = $carry;
+        $doc[$tes['protoc']]['isp'] = $ivasplitpay;
+        $doc[$tes['protoc']]['rit'] = $rit;
+        $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
+        $calc->add_value_to_VAT_castle($cast_vat, $somma_spese, $tes['expense_vat']);
+        $doc[$tes['protoc']]['vat'] = $calc->castle;
+        $ctrlp = $tes['protoc'];
+    }
+    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+        $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
+        // aggiungo al castelletto IVA
+        $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
+        $doc[$ctrlp]['vat'] = $calc->castle;
+        // aggiungo il castelleto conti
+        if (!isset($doc[$ctrlp]['acc'][$bol])) {
+            $doc[$ctrlp]['acc'][$bol]['import'] = 0;
+        }
+        $doc[$ctrlp]['acc'][$bol]['import'] += $taxstamp + $calc->pay_taxstamp;
+    }
+    return $doc;
 }
+
+// preparo l'array dei limiti
+$where_data = [
+'di'=>intval($_GET['di']), 
+'df'=>intval($_GET['df']), 
+'pi'=>intval($_GET['pi']), 
+'pf'=>intval($_GET['pf']), 
+'ni'=>intval($_GET['ni']), 
+'nf'=>intval($_GET['nf']), 
+'cl'=>intval($_GET['cl']), 
+'ag'=>intval($_GET['ag'])];
+$rs = getDocuments(intval($_GET['td']), intval($_GET['si']), $where_data);
+
+require("../../config/templates/report_template.php");
+require("lang." . $admin_aziend['lang'] . ".php");
+
 $titolo = $_GET['ti'];
 $tipdoc = $_GET['td'];
-$campoOrdinamento = "numfat";
-$campoData = "datfat";
-$campiCosto = "tesdoc.traspo, tesdoc.speban, tesdoc.spevar, tesdoc.expense_vat, tesdoc.stamp, tesdoc.round_stamp, ";
-
-//recupero i documenti da stampare
-switch ($tipdoc) {
-   case 1:  //ddt
-//         $date_name = 'datemi';
-//         $num_name = 'numdoc';
-//         $protocollo_inizio = 0;
-//         $protocollo_fine = 999999999;
-      $where = "(tipdoc like 'DD%' OR ( tipdoc = 'FAD' AND ddt_type!='R' ) ) ";
-      $campoOrdinamento = "numdoc";
-      $campoData = "datemi";
-      break;
-   case 2:  //fattura differita
-      $where = "tipdoc = 'FAD'";
-      $campiCosto = "(select sum(tesdocTmp.traspo) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD') as traspo , "
-              . "(select tesdocTmp.speban from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as speban, " //le spese sono nell'ultimo record
-              . "(select tesdocTmp.spevar from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as spevar, " //le spese sono nell'ultimo record
-              . "(select tesdocTmp.expense_vat from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as expense_vat, " //l'iva per le spese è nell'ultimo record
-              . "(select tesdocTmp.stamp from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as stamp, " //l'aliquota bolli è nell'ultimo record
-              . "(select tesdocTmp.round_stamp from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as round_stamp, "; //l'aliquota bolli è nell'ultimo record
-//      $campiCosto = "(select sum(tesdocTmp.traspo) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as traspo , "
-//              . "(select max(tesdocTmp.speban) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as speban, " //le spese sono nell'ultimo record
-//              . "(select max(tesdocTmp.spevar) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as spevar, " //le spese sono nell'ultimo record
-//              . "(select max(tesdocTmp.expense_vat) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as expense_vat, " //l'iva per le spese è nell'ultimo record
-//              . "(select max(tesdocTmp.stamp) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as stamp, " //l'aliquota bolli è nell'ultimo record
-//              . "(select max(tesdocTmp.round_stamp) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as round_stamp, "; //l'aliquota bolli è nell'ultimo record
-      break;
-   case 3:  //fattura immediata accompagnatoria
-      $where = "tipdoc = 'FAI' AND template = 'FatturaImmediata'";
-      break;
-   case 4: //fattura immediata semplice
-      $where = "tipdoc = 'FAI' AND template <> 'FatturaImmediata'";
-      break;
-   case 5: //nota di credito
-      $where = "tipdoc = 'FNC'";
-      break;
-   case 6: //nota di debito
-      $where = "tipdoc = 'FND'";
-      break;
-   case 7: //ricevuta
-      $where = "tipdoc = 'VRI'";
-      break;
-   case 8: //ricevuta
-      $where = "tipdoc = 'FAP'";
-      break;
-   case 9: //ricevuta
-      $where = "( tipdoc = 'CMR' OR ( tipdoc = 'FAD' AND ddt_type='R' ) )";
-      break;
+$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+$title = array('luogo_data' => $luogo_data,
+'title' => 'Vendite: '.$titolo.' dal '.gaz_format_date(substr($_GET['di'],0,4).'-'.substr($_GET['di'],4,2).'-'.substr($_GET['di'],6,2)).' al '.gaz_format_date(substr($_GET['df'],0,4).'-'.substr($_GET['df'],4,2).'-'.substr($_GET['df'],6,2)),
+'hile' => array(
+array('lun' => 16, 'nam' => 'Data'),
+array('lun' => 14, 'nam' => 'Num.'),
+array('lun' => 12, 'nam' => 'Tipo'),
+array('lun' => 62, 'nam' => 'Cliente'),
+array('lun' => 20, 'nam' => 'Impon.'),
+array('lun' => 36, 'nam' => '%'),
+array('lun' => 16, 'nam' => 'Iva'),
+array('lun' => 20, 'nam' => 'Totale')));
+$pdf = new Report_template();
+$pdf->setVars($admin_aziend, $title);
+$pdf->SetTopMargin(40);
+$pdf->SetFooterMargin(18);
+$config = new Config;
+$pdf->AddPage('P', $config->getValue('page_format'));
+$pdf->SetFont('helvetica', '', 8);
+$tot_imponibile = 0.00;
+$tot_iva = 0.00;
+$tot_importo = 0.00;
+foreach($rs as $row){
+  $pdf->Cell(16, 4, gaz_format_date($row['tes']['datfat']), 1, 0, 'C');
+  $pdf->Cell(14, 4, $row['tes']['numfat'], 1, 0, 'C');
+  $pdf->Cell(12, 4, $row['tes']['tipdoc'], 1, 0, 'C');
+  $pdf->Cell(62, 4, $row['tes']['ragsoc'], 1, 0, 'L', false, '', 1);
+  $first=true;
+  foreach($row['vat'] as $r){
+    $tot_iva+=$r['ivacast'];
+    $tot_imponibile += $r['impcast'];
+    if (!$first){
+      $pdf->Cell(104,4);
+    }
+    $first=false;
+    $pdf->Cell(20, 4, gaz_format_number($r['impcast']), 1, 0, 'R');
+    $pdf->Cell(36, 4, $r['descriz'], 1, 0, 'C', false, '', 1);
+    $pdf->Cell(16, 4, gaz_format_number($r['ivacast']), 1, 0, 'R');
+    $pdf->Cell(20, 4, gaz_format_number($r['impcast'] + $r['ivacast']), 1, 1, 'R');
+  }
 }
-if ( $tipdoc==0 ) {
-   $result = gaz_dbi_query( "SELECT DISTINCT ".$gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2,
-      SUM(".$gTables['rigdoc'].".quanti * ".$gTables['rigdoc'].".prelis * (1 - ".$gTables['rigdoc'].".sconto / 100) * (1 - ".$gTables['tesdoc'].".sconto / 100)) AS imponibile,
-      SUM(".$gTables['rigdoc'].".quanti * ".$gTables['rigdoc'].".prelis * (1 - ".$gTables['rigdoc'].".sconto / 100) * (1 - ".$gTables['tesdoc'].".sconto / 100) * ".$gTables['rigdoc'].".pervat / 100) AS iva,
-      ".$gTables['tesdoc'].".*
-         FROM ".$gTables['rigdoc']."
-            LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['rigdoc'].".id_tes = ".$gTables['tesdoc'].".id_tes
-            LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['tesdoc'].".clfoco
-            LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id
-         WHERE 
-            tipdoc not like 'AF%' and tipdoc!='DDL' and seziva = "
-        . intval($_GET['si'])
-        . " AND datemi BETWEEN '"
-        . substr($_GET['di'], 0, 10)
-        . "' AND '"
-        . substr($_GET['df'], 0, 10)
-        . "'"
-        . " AND (numdoc BETWEEN "
-        . intval($_GET['ni'])
-        . " AND "
-        . intval($_GET['nf'])
-        . " OR numfat BETWEEN "
-        . intval($_GET['ni'])
-        . " AND "
-        . intval($_GET['nf'])
-        . ") "
-        . " AND protoc BETWEEN "
-        . intval($_GET['pi'])
-        . " AND "
-        . intval($_GET['pf'])
-        . $cliente
-        ." GROUP BY ".$gTables['anagra'].".ragso1,
-               ".$gTables['anagra'].".ragso2,
-               ".$gTables['tesdoc'].".protoc,
-               ".$gTables['tesdoc'].".numdoc,
-               ".$gTables['tesdoc'].".numfat,
-               ".$gTables['tesdoc'].".datfat
-               ORDER BY CAST(numfat as unsigned), CAST(numdoc as unsigned), datfat, datemi, tipdoc" );
-      $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
-      $title = array('luogo_data' => $luogo_data,
-         'title' => "Lista documenti: " . $titolo,
-         'hile' => array(
-         array('lun' => 20, 'nam' => 'Data'),
-         array('lun' => 10, 'nam' => 'Num.'),
-         array('lun' => 12, 'nam' => 'Tipo'),
-         array('lun' => 82, 'nam' => 'Destinatario'),
-         array('lun' => 20, 'nam' => 'Impon.'),
-         array('lun' => 16, 'nam' => 'Spese'),
-         array('lun' => 16, 'nam' => 'Iva'),
-         array('lun' => 20, 'nam' => 'Totale')
-      )
-   );
-
-   $pdf = new Report_template();
-   $pdf->setVars($admin_aziend, $title);
-   $pdf->SetTopMargin(40);
-   $pdf->SetFooterMargin(18);
-   $config = new Config;
-   $pdf->AddPage('P', $config->getValue('page_format'));
-   $pdf->SetFont('helvetica', '', 8);
-
-   $tot_imponibile = 0.00;
-   $tot_iva = 0.00;
-   $tot_spese = 0.00;
-   $tot_importo = 0.00;
-   while ($row = gaz_dbi_fetch_array($result)) {
-      $spese = 0;
-      $alivaSpese = 0;
-      // numrat per adesso non è valorizzato devo correggere la query Andrea
-      if ( !isset($row['numrat']) ) $row['numrat'] = 1;
-      $spese = $row['traspo'] + $row['speban'] * $row['numrat'] + $row['spevar'];
-      $alivaSpese = gaz_dbi_get_row($gTables['aliiva'], "codice", $row['expense_vat']);
-      
-      $row['iva'] = $row['iva'] + ($spese * $alivaSpese['aliquo'] / 100);
-      $bolli = calcolaBolli($row, $spese);   // bolli per le tratte
-      $spese+=$bolli;
-      if ($row['tipdoc'] == 'FNC') {   // nota di credito
-         $row['imponibile'] = -$row['imponibile'];
-         $row['iva'] = -$row['iva'];
-         $spese = -$spese;
-      }
-      // nei dd% non sono presenti la data del documento e il numero fattura, uso numdoc e datemi
-      if ( substr($row['tipdoc'],0,2)=="DD" ) {
-         $pdf->Cell(20, 4, gaz_format_date($row['datemi']), 1);
-         $pdf->Cell(10, 4, $row['numdoc'], 1);  
-      } else {
-         $pdf->Cell(20, 4, gaz_format_date($row["$campoData"]), 1);
-         $pdf->Cell(10, 4, $row["$campoOrdinamento"], 1);  
-      }
-      // se è una fattura differita aggiungo carattere ddt_type per individuare il tipo
-      if ( $row['tipdoc']=="FAD") 
-         $pdf->Cell(12, 4, $row['tipdoc'].$row['ddt_type'], 1);
-      else 
-         $pdf->Cell(12, 4, $row['tipdoc'], 1);
-     
-      $tot_imponibile += $row['imponibile'];
-      $tot_iva += $row['iva'];
-      $tot_spese += $spese;
-      $pdf->Cell(82, 4, $row['ragso1'] . " " . $row['ragso2'], 1, 0, '', false, '', 1);  
-      $pdf->Cell(20, 4, gaz_format_number($row['imponibile']), 1, 0, 'R');
-      $pdf->Cell(16, 4, gaz_format_number($spese), 1, 0, 'R');
-      $pdf->Cell(16, 4, gaz_format_number($row['iva']), 1, 0, 'R');
-      $pdf->Cell(20, 4, gaz_format_number($row['imponibile'] + $row['iva'] + $spese), 1, 1, 'R');
-   }
-   $pdf->SetFont('helvetica', 'B', 8);
-   $pdf->Cell(124, 4, 'Totali: ', 1, 0, 'R');
-   $pdf->Cell(20, 4, gaz_format_number($tot_imponibile), 1, 0, 'R', false, '', 1);
-   $pdf->Cell(16, 4, gaz_format_number($tot_spese), 1, 0, 'R', false, '', 1);
-   $pdf->Cell(16, 4, gaz_format_number($tot_iva), 1, 0, 'R', false, '', 1);
-   $pdf->Cell(20, 4, gaz_format_number($tot_imponibile + $tot_iva + $tot_spese), 1, 0, 'R', false, '', 1);
-   $pdf->Output();
-   
-} else {
-
-   $where = $where . " AND seziva = "
-        . intval($_GET['si'])
-        . " AND $campoData BETWEEN '"
-        . substr($_GET['di'], 0, 10)
-        . "' AND '"
-        . substr($_GET['df'], 0, 10)
-        . "' AND $campoOrdinamento BETWEEN "
-        . intval($_GET['ni'])
-        . " AND "
-        . intval($_GET['nf'])
-        . " AND protoc BETWEEN "
-        . intval($_GET['pi'])
-        . " AND "
-        . intval($_GET['pf'])
-        . $cliente
-        . $agente
-        . $caumag;
-   $what = "tesdoc.id_agente, " .
-        "tesdoc.id_tes, " .
-        "tesdoc.datfat, " .
-        "tesdoc.datemi, " .
-        "tesdoc.clfoco, " .
-        "tesdoc.tipdoc, " .
-        "tesdoc.protoc, " .
-        "tesdoc.numdoc, " .
-        "tesdoc.numfat, " .
-        "tesdoc.seziva, " .
-        "tesdoc.sconto AS scochi, " .
-        "anagra.ragso1, " .
-        "anagra.ragso2, " .
-        "anagra.citspe, " .
-        "anagra.prospe, " .
-        "rigdoc.id_tes, " .
-        "pagame.descri as pagame, " .
-        "pagame.numrat, " .
-        "caumag.descri as caumag, " .
-        "SUM(rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100)*(1-tesdoc.sconto/100)) as imponibile, " .
-        "SUM(rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100)*(1-tesdoc.sconto/100)*rigdoc.pervat/100) as iva," .
-       $campiCosto .
-        "CONVERT($campoOrdinamento,UNSIGNED INTEGER) AS campoOrdinamento";
-   $table = $gTables['tesdoc'] . " tesdoc "
-        . "LEFT JOIN " . $gTables['rigdoc'] . " rigdoc ON tesdoc.id_tes = rigdoc.id_tes "
-        . "LEFT JOIN " . $gTables['clfoco'] . " clfoco ON tesdoc.clfoco = clfoco.codice "
-        . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra "
-        . "LEFT JOIN " . $gTables['pagame'] . " pagame ON tesdoc.pagame = pagame.codice "
-        . "LEFT JOIN " . $gTables['caumag'] . " caumag ON tesdoc.caumag = caumag.codice ";
-        //echo $where;
-   $result = gaz_dbi_dyn_query($what, $table, $where, 'campoOrdinamento', 0, 20000, 'campoOrdinamento');
-   $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
-   $title = array('luogo_data' => $luogo_data,
-    'title' => "Lista documenti: " . $titolo,
-    'hile' => array(
-        array('lun' => 16, 'nam' => 'Data'),
-        array('lun' => 10, 'nam' => 'Num.'),
-        array('lun' => 62, 'nam' => 'Destinatario'),
-        array('lun' => 25, 'nam' => 'Agente'),
-        array('lun' => 25, 'nam' => 'Causale'),
-        array('lun' => 16, 'nam' => 'Impon.'),
-        array('lun' => 12, 'nam' => 'Spese'),
-        array('lun' => 14, 'nam' => 'Iva'),
-        array('lun' => 16, 'nam' => 'Totale')
-      )
-   );
-   $pdf = new Report_template();
-   $pdf->setVars($admin_aziend, $title);
-   $pdf->SetTopMargin(40);
-   $pdf->SetFooterMargin(18);
-   $config = new Config;
-   $pdf->AddPage('P', $config->getValue('page_format'));
-   $pdf->SetFont('helvetica', '', 8);
-
-   $tot_imponibile = 0.00;
-   $tot_iva = 0.00;
-   $tot_spese = 0.00;
-   $tot_importo = 0.00;
-   while ($row = gaz_dbi_fetch_array($result)) {
-      $spese = $row['traspo'] + $row['speban'] * $row['numrat'] + $row['spevar'];
-      $alivaSpese = gaz_dbi_get_row($gTables['aliiva'], "codice", $row['expense_vat']);
-      $row['iva'] = $row['iva'] + ($spese * $alivaSpese['aliquo'] / 100);
-      //$bolli = $row['stamp'] * ($spese + $row['imponibile'] + $row['iva']) / 100;   // bolli per le tratte
-      $bolli = calcolaBolli($row, $spese);   // bolli per le tratte
-      $spese+=$bolli;
-      if ($row['tipdoc'] == 'FNC') {   // nota di credito
-         //$row['quanti'] = -$row['quanti'];
-         $row['imponibile'] = -$row['imponibile'];
-         $row['iva'] = -$row['iva'];
-         $spese = -$spese;
-      }
-      $tot_imponibile += $row['imponibile'];
-      $tot_iva += $row['iva'];
-      $tot_spese += $spese;
-      //$tot_importo += $row_imponibile + $row_iva;
-      $pdf->Cell(16, 4, gaz_format_date($row["$campoData"]), 1);
-      $pdf->Cell(10, 4, $row["$campoOrdinamento"], 1);
-      $pdf->Cell(62, 4, $row['ragso1'] . " " . $row['ragso2'], 1, 0, '', false, '', 1);  
-      $agente = getNewAgente($row['id_agente']);
-      $pdf->Cell(25, 4, $agente['ragso1'] . ' ' . $agente['ragso2'], 1, 0, '', false, '', 1);
-      $pdf->Cell(25, 4, $row['caumag'], 1, 0, '', false, '', 1);
-      $pdf->Cell(16, 4, gaz_format_number($row['imponibile']), 1, 0, 'R');
-      $pdf->Cell(12, 4, gaz_format_number($spese), 1, 0, 'R');
-      $pdf->Cell(14, 4, gaz_format_number($row['iva']), 1, 0, 'R');
-      $pdf->Cell(16, 4, gaz_format_number($row['imponibile'] + $row['iva'] + $spese), 1, 1, 'R');
-   }
-   $pdf->SetFont('helvetica', 'B', 8);
-   $pdf->Cell(138, 4, 'Totali: ', 1, 0, 'R');
-   $pdf->Cell(16, 4, gaz_format_number($tot_imponibile), 1, 0, 'R', false, '', 1);
-   $pdf->Cell(12, 4, gaz_format_number($tot_spese), 1, 0, 'R', false, '', 1);
-   $pdf->Cell(14, 4, gaz_format_number($tot_iva), 1, 0, 'R', false, '', 1);
-   $pdf->Cell(16, 4, gaz_format_number($tot_imponibile + $tot_iva + $tot_spese), 1, 0, 'R', false, '', 1);
-   $pdf->Output();
-}
-
-function calcolaBolli($row, $spese) {
-   $calc = new Compute();
-   $calc->pay_taxstamp = 0;
-   if ($row['stamp'] > 0) {
-      $calc->payment_taxstamp($row['imponibile'] + $row['iva'] + $spese, $row['stamp'], $row['round_stamp'] * $row['numrat']);
-   }
-   return $calc->pay_taxstamp;
-}
-
-
-/*az_anagra.ragso2,
-               ".$gTables['tesdoc'].".seziva,
-               ".$gTables['tesdoc'].".ddt_type,
-               ".$gTables['tesdoc'].".id_doc_ritorno,
-               ".$gTables['tesdoc'].".template,
-               ".$gTables['tesdoc'].".email,
-               ".$gTables['tesdoc'].".datemi,
-               ".$gTables['tesdoc'].".weekday_repeat,
-               ".$gTables['tesdoc'].".data_ordine,
-               ".$gTables['tesdoc'].".clfoco,
-               ".$gTables['tesdoc'].".pagame,
-               ".$gTables['tesdoc'].".ragbol,
-               ".$gTables['tesdoc'].".banapp,
-               ".$gTables['tesdoc'].".vettor,
-               ".$gTables['tesdoc'].".listin,
-               ".$gTables['tesdoc'].".destin,
-               ".$gTables['tesdoc'].".id_des,
-               ".$gTables['tesdoc'].".id_des_same_company,
-               ".$gTables['tesdoc'].".spediz,
-               ".$gTables['tesdoc'].".portos,
-               ".$gTables['tesdoc'].".imball,
-               ".$gTables['tesdoc'].".round_stamp,
-               ".$gTables['tesdoc'].".cauven,
-               ".$gTables['tesdoc'].".caucon,
-               ".$gTables['tesdoc'].".caumag,
-               ".$gTables['tesdoc'].".id_agente,
-               ".$gTables['tesdoc'].".id_parent_doc,
-               ".$gTables['tesdoc'].".expense_vat,
-               ".$gTables['tesdoc'].".stamp,
-               ".$gTables['tesdoc'].".taxstamp,
-               ".$gTables['tesdoc'].".virtual_taxstamp,
-               ".$gTables['tesdoc'].".net_weight,
-               ".$gTables['tesdoc'].".gross_weight,
-               ".$gTables['tesdoc'].".units,
-               ".$gTables['tesdoc'].".volume,
-               ".$gTables['tesdoc'].".initra,
-               ".$gTables['tesdoc'].".geneff,
-               ".$gTables['tesdoc'].".id_contract,
-               ".$gTables['tesdoc'].".id_con,
-               ".$gTables['tesdoc'].".datreg,
-               ".$gTables['tesdoc'].".fattura_elettronica_zip_package,
-               ".$gTables['tesdoc'].".fattura_elettronica_original_name,
-               ".$gTables['tesdoc'].".fattura_elettronica_original_content,
-               ".$gTables['tesdoc'].".fattura_elettronica_reinvii,
-               ".$gTables['tesdoc'].".status,
-               ".$gTables['tesdoc'].".adminid,
-               ".$gTables['tesdoc'].".last_modified,
-               ".$gTables['anagra'].".id,
-               ".$gTables['anagra'].".sedleg,
-               ".$gTables['anagra'].".legrap_pf_nome,
-               ".$gTables['anagra'].".legrap_pf_cognome,
-               ".$gTables['anagra'].".sexper,
-               ".$gTables['anagra'].".datnas,
-               ".$gTables['anagra'].".luonas,
-               ".$gTables['anagra'].".pronas,
-               ".$gTables['anagra'].".counas,
-               ".$gTables['anagra'].".indspe,
-               ".$gTables['anagra'].".capspe,
-               ".$gTables['anagra'].".citspe,
-               ".$gTables['anagra'].".prospe,
-               ".$gTables['anagra'].".country,
-               ".$gTables['anagra'].".id_currency,
-               ".$gTables['anagra'].".id_language,
-               ".$gTables['anagra'].".latitude,
-               ".$gTables['anagra'].".longitude,
-               ".$gTables['anagra'].".telefo,
-               ".$gTables['anagra'].".fax,
-               ".$gTables['anagra'].".cell,
-               ".$gTables['anagra'].".codfis,
-               ".$gTables['anagra'].".pariva,
-               ".$gTables['anagra'].".fe_cod_univoco,
-               ".$gTables['anagra'].".e_mail,
-               ".$gTables['anagra'].".pec_email,
-               ".$gTables['anagra'].".fatt_email,
-               ".$gTables['tesdoc'].".id_tes,
-               ".$gTables['tesdoc'].".protoc,
-               ".$gTables['tesdoc'].".numdoc,
-               ".$gTables['tesdoc'].".numfat,
-               ".$gTables['tesdoc'].".datfat,
-               ".$gTables['tesdoc'].".traspo,
-               ".$gTables['tesdoc'].".speban,
-               ".$gTables['tesdoc'].".spevar,*/
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
+$pdf->SetFont('helvetica', 'B', 10);
+$pdf->Ln(2);
+$pdf->Cell(104, 5, 'Totali: ', 1, 0, 'R',1);
+$pdf->Cell(20, 5, gaz_format_number($tot_imponibile), 1, 0, 'R', 1, '', 1);
+$pdf->Cell(36, 5,'', 1, 0, 'R', false, '', 1);
+$pdf->Cell(16, 5, gaz_format_number($tot_iva), 1, 0, 'R', 1, '', 1);
+$pdf->Cell(20, 5, gaz_format_number($tot_imponibile + $tot_iva ), 1, 0, 'R', 1, '', 1);
+$pdf->Output();
 ?>

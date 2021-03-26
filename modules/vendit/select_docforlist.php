@@ -23,18 +23,15 @@
   --------------------------------------------------------------------------
  */
 
-/* TIPI DI DOCUMENTO SELEZIONABILI PER LA RI/STAMPA:
-  valori che si possono dare alla variabile "tipdoc" da passare tramite URL (metodo GET)
-  1 => "D.d.T. di Vendita"
-  2 => "Fattura Differita"
-  3 => "Fattura Immediata Accompagnatoria"
-  4 => "Fattura Immediata Semplice"
-  5 => "Nota Credito a Cliente"
-  6 => "Nota Debito a Cliente"
-  7 => "Ricevuta"
-  8 => "Parcella"
-  9 => "CMR"
- */
+$tipdoc=[
+0 => "Tutti i documenti",
+1 => "Fattura Differita",
+2 => "Fattura Immediata",
+3 => "Nota Credito a Cliente",
+4 => "Nota Debito a Cliente",
+5 => "Parcella"
+];
+
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
@@ -45,45 +42,30 @@ function getLastDocument($tipo, $sezione, $anno) {
    //recupero l'ultimo documento dello stesso tipo emesso nell'anno
    global $gTables;
    switch ($tipo) {
-      case 1:  //ddt
-         $where = "(tipdoc like 'DD%' OR (tipdoc = 'FAD' AND ddt_type!='R' ) ) AND YEAR(datemi) = $anno";
+      case 0:  // tutti
+         $where = "tipdoc LIKE 'F__' AND YEAR(datfat) = $anno";
          break;
-      case 2:  //fattura differita
+      case 1:  //fattura differita
          $where = "tipdoc = 'FAD' AND YEAR(datfat) = $anno";
          break;
-      case 3:  //fattura immediata accompagnatoria
-         $where = "tipdoc = 'FAI' AND YEAR(datfat) = $anno AND template = 'FatturaImmediata'";
+      case 2:  //fattura immediata 
+         $where = "tipdoc = 'FAI' AND YEAR(datfat) = $anno";
          break;
-      case 4: //fattura immediata semplice
-         $where = "tipdoc = 'FAI' AND YEAR(datfat) = $anno AND template = 'FatturaSemplice'";
-         break;
-      case 5: //nota di credito
+      case 3: //nota di credito
          $where = "tipdoc = 'FNC' AND YEAR(datfat) = $anno";
          break;
-      case 6: //nota di debito
+      case 4: //nota di debito
          $where = "tipdoc = 'FND' AND YEAR(datfat) = $anno";
          break;
-      case 7: //ricevuta
-         $where = "tipdoc = 'VRI' AND YEAR(datfat) = $anno";
-         break;
-      case 8: //parcella
+      case 5: //parcella
          $where = "tipdoc = 'FAP' AND YEAR(datfat) = $anno";
-         break;
-      case 9: //cmr
-         $where = "(tipdoc = 'CMR' OR ( tipdoc = 'FAD' AND ddt_type='R' ) ) AND YEAR(datfat) = $anno";
          break;
    }
    $rs_lastdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where . " AND seziva = $sezione", "datfat DESC, numfat DESC", 0, 1);
    $last = gaz_dbi_fetch_array($rs_lastdoc);
    if ($last) {
-      if ($tipo == 1) {
-         $last['numero'] = $last['numdoc'];
-         $last['protoc'] = 0;
-         $last['data_fine'] = $last['datemi'];
-      } else {
-         $last['numero'] = $last['numfat'];
-         $last['data_fine'] = $last['datfat'];
-      }
+      $last['numero'] = $last['numfat'];
+      $last['data_fine'] = $last['datfat'];
    } else {
       $last['protoc'] = 1;
       $last['numero'] = 1;
@@ -100,36 +82,23 @@ function checkDocumentExist($tipo, $sezione, $data_inizio, $data_fine, $protocol
    $date_name = 'datfat';
    $num_name = 'numfat';
    switch ($tipo) {
-      case 1:  //ddt
-         $date_name = 'datemi';
-         $num_name = 'numdoc';
-         $protocollo_inizio = 0;
-         $protocollo_fine = 999999999;
-         $where = "(tipdoc = 'DDT' OR ( tipdoc = 'FAD' AND ddt_type!='R' ) ) ";
+      case 0:  
+         $where = "tipdoc LIKE 'F__'";
          break;
-      case 2:  //fattura differita
+      case 1:  //fattura differita
          $where = "tipdoc = 'FAD'";
          break;
-      case 3:  //fattura immediata accompagnatoria
-         $where = "tipdoc = 'FAI' AND template = 'FatturaImmediata'";
+      case 2:  //fattura immediata accompagnatoria
+         $where = "tipdoc = 'FAI'";
          break;
-      case 4: //fattura immediata semplice
-         $where = "tipdoc = 'FAI' AND template <> 'FatturaImmediata'";
-         break;
-      case 5: //nota di credito
+      case 3: //nota di credito
          $where = "tipdoc = 'FNC'";
          break;
-      case 6: //nota di debito
+      case 4: //nota di debito
          $where = "tipdoc = 'FND'";
          break;
-      case 7: //ricevuta
-         $where = "tipdoc = 'VRI'";
-         break;
-      case 8: //ricevuta
+      case 5: //parcella
          $where = "tipdoc = 'FAP'";
-         break;
-      case 9: //cmr
-         $where = "(tipdoc = 'CMR' OR ( tipdoc = 'FAD' AND ddt_type='R' ) ) ";
          break;
    }
    $where .= " AND seziva = $sezione
@@ -156,7 +125,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    if (isset($_GET['tipdoc'])) {
       $form['tipdoc'] = intval($_GET['tipdoc']);
    } else {
-      $form['tipdoc'] = 2; //fattura differita
+      $form['tipdoc'] = 0; //tutte le fatture 
    }
    $last = getLastDocument($form['tipdoc'], $form['seziva'], date("Y"));
    if (isset($_GET['datini'])) {
@@ -225,7 +194,6 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $form['caumag'] = $_POST['caumag'];
 }
 
-
 if (isset($_POST['Print'])) {
    //Mando in stampa le fatture generate solo se non ci sono errori
    if ($form['numini'] <= 0) {
@@ -254,9 +222,6 @@ if (isset($_POST['Print'])) {
    if (empty($msg)) {
       $datini = sprintf("%04d%02d%02d", $form['annini'], $form['mesini'], $form['gioini']);
       $datfin = sprintf("%04d%02d%02d", $form['annfin'], $form['mesfin'], $form['giofin']);
-//      if (!checkDocumentExist($form['tipdoc'], $form['seziva'], $datini, $datfin, $form['proini'], $form['profin'], $form['numini'], $form['numfin'])) {
-//         $msg .="19+";
-//      }
    }
    if (empty($msg)) { //non ci sono errori
       unset($form['gioini'], $form['giofin'], $form['mesini'], $form['mesfin'], $form['annini'], $form['annfin']);
@@ -306,39 +271,16 @@ if (!empty($msg)) {
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td>
      <td class=\"FacetDataTD\">\n";
 echo "<select name=\"tipdoc\" class=\"FacetSelect\">\n";
-for ($counter = 1; $counter <= 9; $counter++) {
+for ($counter = 0; $counter <= 5; $counter++) {
    $selected = '';
    if ($form['tipdoc'] == $counter) {
       $selected = "selected";
    }
-   echo "\t\t <option value=\"" . $counter . "\" $selected >" . $script_transl[0][$counter] . "</option>\n";
+   echo "\t\t <option value=\"" . $counter . "\" $selected >" . $tipdoc[$counter] . "</option>\n";
 }
 echo "</select></td></tr>\n";
-$serialized_tipdoc = base64_encode(serialize($script_transl[0]));
+$serialized_tipdoc = base64_encode(serialize($tipdoc));
 echo "<input type='hidden' value='$serialized_tipdoc' name='serialized_tipdoc'>";
-//echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['tipoSelezione'] . "</td>"
-// . "<td class=\"FacetDataTD\">\n<select name=\"tipo_selezione\" class=\"FacetSelect\">\n"
-// . "<option value=\"1\" selected>Tutti i filtri</option>\n"
-// . "<option value=\"2\">Cliente</option>\n"
-// . "<option value=\"3\">Data</option>\n"
-// . "<option value=\"4\">Numero</option>\n"
-// . "<option value=\"5\">Protocollo</option>\n"
-// . "<option value=\"6\">Agente</option>\n"
-// . "</select></td></tr>\n";
-echo "<tr>";
-echo "<td align=\"left\" class=\"FacetFieldCaptionTD\">" . $script_transl['caumag'] . "</td><td class=\"FacetDataTD\">\n";
-echo "<select name=\"caumag\" class=\"FacetSelect\" width=\"20\">\n";
-$result = gaz_dbi_dyn_query("*", $gTables['caumag'], "", "codice asc, descri asc");
-   echo "<option value=\"0\">0-Tutte</option>\n";
-while ($row = gaz_dbi_fetch_array($result)) {
-   $selected = "";
-   if ($form["caumag"] == $row['codice']) {
-      $selected = " selected ";
-   }
-   echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . "-" . substr($row['descri'], 0, 20) . "</option>\n";
-}
-echo "</select></td>\n";
-echo "</tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]</td>";
 echo "<td class=\"FacetDataTD\">";
 $messaggio = '';

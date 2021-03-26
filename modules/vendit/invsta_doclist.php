@@ -41,7 +41,6 @@ if (isset($_SESSION['print_request'])) {
               "&ni=" . $id_tes['numini'] . "&nf=" . $id_tes['numfin'] .
               "&ag=" . $id_tes['id_agente'] .
               "&ti=" . $id_tes['titolo'] .
-              "&cm=" . $id_tes['caumag'] .
               "'\",1000)\n";
       echo $url;
       echo "</script></HEAD>\n<BODY><DIV align=\"center\">Wait for PDF</DIV><DIV align=\"center\">Aspetta il PDF</DIV></BODY></HTML>";
