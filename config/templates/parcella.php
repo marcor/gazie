@@ -176,7 +176,7 @@ class Parcella extends Template
         $this->Cell(68,6,'Castelletto I.V.A.','LTR',0,'C',1);
         $this->Cell(56,6,'T O T A L E  P A R C E L L A','LTR',1,'C',1);
         $this->SetFont('helvetica','',8);
-        $this->Cell(62,6,$this->pagame['descri'],'LBR',0,'L');
+        $this->Cell(62,6,$this->pagame['descri'],'LBR',0,'L',0,'',1);
         $this->Cell(18,4,'Imponibile','LR',0,'C',1);
         $this->Cell(32,4,'Aliquota','LR',0,'C',1);
         $this->Cell(18,4,'Imposta','LR',1,'C',1);
@@ -185,7 +185,7 @@ class Parcella extends Template
                 if ($this->tesdoc['id_tes'] > 0) {
                    $this->Cell(62);
                    $this->Cell(18, 4, gaz_format_number($value['impcast']).' ','LR', 0, 'R');
-                   $this->Cell(32, 4, $value['descriz'],0,0,'C');
+                   $this->Cell(32, 4, $value['descriz'],0,0,'C',0,'',1);
                    $this->Cell(18, 4, gaz_format_number($value['ivacast']).' ','LR',1,'R');
                 } else {
                    $this->Cell(62);
