@@ -51,7 +51,7 @@ function printDash($gTables,$module,$admin_aziend,$transl){
             }
             $riga = gaz_dbi_fetch_array($result);
             
-            if ( $riga["id"]!="" ) {
+            if ($riga && $riga["id"]!="" ) {
                 // siamo su una pagina di 2 livello nel menu principale
                 // mostra il titolo se siamo su una pagina di secondo livello
                 $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);

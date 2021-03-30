@@ -29,7 +29,8 @@ $tipdoc=[
 2 => "Fattura Immediata",
 3 => "Nota Credito a Cliente",
 4 => "Nota Debito a Cliente",
-5 => "Parcella"
+5 => "Parcella",
+6 => "D.d.T."
 ];
 
 require("../../library/include/datlib.inc.php");
@@ -60,61 +61,31 @@ function getLastDocument($tipo, $sezione, $anno) {
       case 5: //parcella
          $where = "tipdoc = 'FAP' AND YEAR(datfat) = $anno";
          break;
+      case 6: //parcella
+         $where = "tipdoc LIKE 'DD_' AND YEAR(datemi) = $anno";
+         break;
    }
-   $rs_lastdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where . " AND seziva = $sezione", "datfat DESC, numfat DESC", 0, 1);
+   $orderby=($tipo==6)?'datemi DESC, numdoc DESC':'datfat DESC, numfat DESC';
+   $rs_lastdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where . " AND seziva = $sezione", $orderby, 0, 1);
    $last = gaz_dbi_fetch_array($rs_lastdoc);
    if ($last) {
-      $last['numero'] = $last['numfat'];
-      $last['data_fine'] = $last['datfat'];
+      $last['protoc'] = $last['protoc'];
+      $last['numero'] = ($tipo==6)?$last['numdoc']:$last['numfat'];
+      $last['data_fine'] = ($tipo==6)?$last['datemi']:$last['datfat'];
    } else {
       $last['protoc'] = 1;
       $last['numero'] = 1;
-      $last['template'] = '';
       $last['data_fine'] = date("Y-m-d");
    }
 //   return array('protoc' => intval($last['protoc']), 'numero' => intval($last['numero']), 'template' => $last['template'], 'datfin' => $last['data_fine']);
-   return array('protoc' => 99999, 'numero' => 99999, 'template' => $last['template'], 'datfin' => $last['data_fine']);
+   return array('protoc' => $last['protoc'], 'numero' => $last['numero'], 'datfin' => $last['data_fine']);
 }
 
-function checkDocumentExist($tipo, $sezione, $data_inizio, $data_fine, $protocollo_inizio = 0, $protocollo_fine = 999999999, $numero_inizio = 0, $numero_fine = 999999999, $cliente = 0) {
-   //esiste almeno un documento nel periodo selezionato
-   global $gTables;
-   $date_name = 'datfat';
-   $num_name = 'numfat';
-   switch ($tipo) {
-      case 0:  
-         $where = "tipdoc LIKE 'F__'";
-         break;
-      case 1:  //fattura differita
-         $where = "tipdoc = 'FAD'";
-         break;
-      case 2:  //fattura immediata accompagnatoria
-         $where = "tipdoc = 'FAI'";
-         break;
-      case 3: //nota di credito
-         $where = "tipdoc = 'FNC'";
-         break;
-      case 4: //nota di debito
-         $where = "tipdoc = 'FND'";
-         break;
-      case 5: //parcella
-         $where = "tipdoc = 'FAP'";
-         break;
-   }
-   $where .= " AND seziva = $sezione
-                AND $num_name BETWEEN $numero_inizio AND $numero_fine
-                AND protoc BETWEEN $protocollo_inizio AND $protocollo_fine
-                AND $date_name BETWEEN $data_inizio AND $data_fine";
-   if ($cliente > 0) {
-      $where .= " AND codcli = $cliente";
-   }
-   $rs_existdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where, "$date_name DESC, $num_name DESC", 0, 1);
-   return gaz_dbi_fetch_array($rs_existdoc);
-}
 
 if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $msg = '';
    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+   $form['hidden_req'] = '';
    if (isset($_GET['seziva'])) {
       $form['seziva'] = intval($_GET['seziva']);
    } else {
@@ -134,9 +105,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $form['annini'] = substr($_GET['datini'], 0, 4);
    } else {
       $form['gioini'] = 1;
-//      $form['mesini'] = substr($last['datfin'], 5, 2);
-      $form['mesini'] = 1;
-      $form['annini'] = date("Y");
+      $form['mesini'] = substr($last['datfin'], 5, 2);
+      $form['annini'] = substr($last['datfin'], 0, 4);
    }
    // controllo se un'altro script passa dei valori tramite URL per facilitare la scelta
    // ad esempio in fase di generazione e stampa fatture differite
@@ -155,11 +125,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $form['mesfin'] = substr($_GET['datfin'], 4, 2);
       $form['annfin'] = substr($_GET['datfin'], 0, 4);
    } else {
-//      $form['giofin'] = substr($last['datfin'], 8, 2);
-//      $form['mesfin'] = substr($last['datfin'], 5, 2);
-//      $form['annfin'] = substr($last['datfin'], 0, 4);
-      $form['giofin'] = 31;
-      $form['mesfin'] = 12;
+      $form['giofin'] = substr($last['datfin'], 8, 2);
+      $form['mesfin'] = substr($last['datfin'], 5, 2);
       $form['annfin'] = substr($last['datfin'], 0, 4);
    }
    if (isset($_GET['profin'])) {
@@ -172,10 +139,13 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    } else {
       $form['numfin'] = $last['numero'];
    }
+
    $form['id_agente'] = 0;
    $form['caumag'] = 0;
 } else { // le richieste successive
+
    $form['ritorno'] = $_POST['ritorno'];
+   $form['hidden_req'] = $_POST['hidden_req'];
    $form['seziva'] = intval($_POST['seziva']);
    $form['codcli'] = intval($_POST['codcli']);
    $form['ragso1'] = substr($_POST['ragso1'], 0, 15);
@@ -191,7 +161,23 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $form['profin'] = intval($_POST['profin']);
    $form['numfin'] = intval($_POST['numfin']);
    $form['id_agente'] = intval($_POST['id_agente']);
-   $form['caumag'] = $_POST['caumag'];
+  // Se viene inviata la richiesta di cambio tipo
+  if ($_POST['hidden_req'] == 'change_tipo') {
+    $last = getLastDocument($form['tipdoc'], $form['seziva'], date("Y"));
+    if ($last){
+      $form['gioini'] = 1;
+      $form['mesini'] = substr($last['datfin'], 5, 2);
+      $form['annini'] = substr($last['datfin'], 0, 4);
+      $form['proini'] = 0;
+      $form['numini'] = 1;
+      $form['giofin'] = substr($last['datfin'], 8, 2);
+      $form['mesfin'] = substr($last['datfin'], 5, 2);
+      $form['annfin'] = substr($last['datfin'], 0, 4);
+      $form['profin'] = $last['protoc'];
+      $form['numfin'] = $last['numero'];
+    }
+    $form['hidden_req'] = '';
+  }
 }
 
 if (isset($_POST['Print'])) {
@@ -243,6 +229,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain('', '', 'select_docforprint');
 echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
+echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">Stampa elenco documenti gi&agrave; emessi " . $script_transl[1];
 echo "<select name=\"seziva\" class=\"FacetFormHeaderFont\">\n";
 for ($counter = 1; $counter <= 9; $counter++) {
@@ -270,8 +257,8 @@ if (!empty($msg)) {
 }
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "<select name=\"tipdoc\" class=\"FacetSelect\">\n";
-for ($counter = 0; $counter <= 5; $counter++) {
+echo "<select name=\"tipdoc\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='change_tipo'; this.form.submit();\">\n";
+for ($counter = 0; $counter <= 6; $counter++) {
    $selected = '';
    if ($form['tipdoc'] == $counter) {
       $selected = "selected";

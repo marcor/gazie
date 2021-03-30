@@ -60,11 +60,15 @@ if (!isset($_GET['ag'])) {   // selezione agente
 function getDocuments($td = 0, $si = 1, $where_data) {
     global $gTables, $admin_aziend;
     $calc = new Compute;
-    $type=[0=>'F__',1=>'FAD', 2=>'FAI', 3=> 'FNC', 4=> 'FND',5 => 'FAP'];
+    $type=[0=>'F__',1=>'FAD', 2=>'FAI', 3=> 'FNC', 4=> 'FND',5 => 'FAP',6=> 'DD_'];
     $customer =($where_data['cl']>100000000)?' AND clfoco = '.$where_data['cl']:'';
     $agente =($where_data['ag']>=1)?' AND id_agente = '.$where_data['ag']:'';
-    $where = "seziva = $si AND tipdoc LIKE '".$type[$td]."' AND datfat BETWEEN ". $where_data['di'] ." AND ". $where_data['df']." AND protoc BETWEEN ". $where_data['pi'] ." AND ". $where_data['pf']
-    ." AND numfat BETWEEN ". $where_data['ni'] ." AND ". $where_data['nf']. $customer . $agente;
+    $datfat=($td==6)?'datemi':'datfat';
+    $numfat=($td==6)?'numdoc':'numfat';
+    $where_data['pi']=($td==6)?'0':$where_data['pi'];        
+    $where_data['pf']=($td==6)?'999999999':$where_data['pf'];        
+    $where = "seziva = $si AND tipdoc LIKE '".$type[$td]."' AND $datfat BETWEEN ". $where_data['di'] ." AND ". $where_data['df']." AND protoc BETWEEN ". $where_data['pi'] ." AND ". $where_data['pf']
+    ." AND $numfat BETWEEN ". $where_data['ni'] ." AND ". $where_data['nf']. $customer . $agente;
     $from = $gTables['tesdoc'] . ' AS tesdoc
              LEFT JOIN ' . $gTables['pagame'] . ' AS pay
              ON tesdoc.pagame=pay.codice
@@ -72,8 +76,7 @@ function getDocuments($td = 0, $si = 1, $where_data) {
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
              ON customer.id_anagra=anagraf.id';
-//    $where = "seziva = $vat_section AND tipdoc LIKE '$type' $d $p";
-    $orderby = "datfat ASC, protoc ASC";
+    $orderby = "$datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
                         customer.codice,
@@ -88,37 +91,37 @@ function getDocuments($td = 0, $si = 1, $where_data) {
     $totimpdoc = 0;
     $rit = 0;
     while ($tes = gaz_dbi_fetch_array($result)) {
+        $tes['protoc']=($td==6)?$tes['numdoc']:$tes['protoc'];        
         if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
-            switch ($tes['tipdoc']) {
-				case "AFA":case "AFC":case "AFD":
-				$bol=$admin_aziend['taxstamp_account'];
-				break;
-                default:
-				$bol=$admin_aziend['boleff'];
-				break;
-
-			}
-            if ($ctrlp > 0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
-                $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
-                $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
-                $doc[$ctrlp]['vat'] = $calc->castle;
-                // aggiungo il castelleto conti
-                if (!isset($doc[$ctrlp]['acc'][$bol])) {
-                    $doc[$ctrlp]['acc'][$bol]['import'] = 0;
-                }
-                $doc[$ctrlp]['acc'][$bol]['import'] += $taxstamp + $calc->pay_taxstamp;
+          switch ($tes['tipdoc']) {
+            case "AFA":case "AFC":case "AFD":
+            $bol=$admin_aziend['taxstamp_account'];
+            break;
+            default:
+            $bol=$admin_aziend['boleff'];
+            break;
+          }
+          if ($ctrlp > 0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+            $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
+            $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
+            $doc[$ctrlp]['vat'] = $calc->castle;
+            // aggiungo il castelleto conti
+            if (!isset($doc[$ctrlp]['acc'][$bol])) {
+                $doc[$ctrlp]['acc'][$bol]['import'] = 0;
             }
-            $carry = 0;
-            $ivasplitpay = 0;
-            $cast_vat = array();
-            $cast_acc = array();
-            $somma_spese = 0;
-            $totimpdoc = 0;
-            $totimp_decalc = 0.00;
-            $n_vat_decalc = 0;
-            $spese_incasso = $tes['numrat'] * $tes['speban'];
-            $taxstamp = 0;
-            $rit = 0;
+            $doc[$ctrlp]['acc'][$bol]['import'] += $taxstamp + $calc->pay_taxstamp;
+          }
+          $carry = 0;
+          $ivasplitpay = 0;
+          $cast_vat = array();
+          $cast_acc = array();
+          $somma_spese = 0;
+          $totimpdoc = 0;
+          $totimp_decalc = 0.00;
+          $n_vat_decalc = 0;
+          $spese_incasso = $tes['numrat'] * $tes['speban'];
+          $taxstamp = 0;
+          $rit = 0;
         } else {
             $spese_incasso = 0;
         }
@@ -199,7 +202,7 @@ function getDocuments($td = 0, $si = 1, $where_data) {
         $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
         $calc->add_value_to_VAT_castle($cast_vat, $somma_spese, $tes['expense_vat']);
         $doc[$tes['protoc']]['vat'] = $calc->castle;
-        $ctrlp = $tes['protoc'];
+        $ctrlp=$tes['protoc'];
     }
     if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
         $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
@@ -255,6 +258,10 @@ $tot_imponibile = 0.00;
 $tot_iva = 0.00;
 $tot_importo = 0.00;
 foreach($rs as $row){
+  if ( substr($row['tes']['tipdoc'],0,2) =='DD' ) {
+    $row['tes']['datfat']= $row['tes']['datemi'];
+    $row['tes']['numfat']= $row['tes']['numdoc'];
+  }
   $pdf->Cell(16, 4, gaz_format_date($row['tes']['datfat']), 1, 0, 'C');
   $pdf->Cell(14, 4, $row['tes']['numfat'], 1, 0, 'C');
   $pdf->Cell(12, 4, $row['tes']['tipdoc'], 1, 0, 'C');
