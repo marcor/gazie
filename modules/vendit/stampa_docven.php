@@ -35,10 +35,22 @@ function get_template_lang($clfoco) {
     global $gTables;
 
     $lang = false;
-    $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $clfoco);
-    $stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
-    if ($stato AND $stato['country'] !== "IT")
-        $lang = 'english';
+	$rs_customer_language = gaz_dbi_dyn_query("sef",
+	$gTables['clfoco']." LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id
+	LEFT JOIN ".$gTables['languages']." ON ".$gTables['anagra'].".id_language = ".$gTables['languages'].".lang_id",$gTables['clfoco'].".codice = ".$clfoco);
+    if ($rs_customer_language->num_rows > 0) {
+        $customer_language = gaz_dbi_fetch_array($rs_customer_language)['sef'];
+		if (!empty($customer_language)) {
+			switch ($customer_language) {
+				case 'en':
+					$lang = 'english';
+					break;
+				case 'es':
+					$lang = 'espanol';
+					break;
+			}
+		}
+	}
     return $lang;
 }
 
@@ -63,12 +75,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         $template = 'FatturaImmediata';
     }
 
-    $lang = false;
-    $id_anagra = gaz_dbi_get_row($gTables['clfoco'], 'codice', $testata['clfoco']);
-    $stato = gaz_dbi_get_row($gTables['anagra'], 'id', $id_anagra['id_anagra']);
-    if ($stato AND $stato['country'] !== "IT")
-        $lang = 'english';
-
+    $lang = get_template_lang($testata['clfoco']);
     if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
         createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
 	require("../../library/include/footer.php");
