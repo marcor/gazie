@@ -171,7 +171,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		// il codice SIAN deve essere univoco nell'ambito clienti e fornitori
 		if (intval($form['id_SIAN'])>0){
 			$rs_same_code = gaz_dbi_dyn_query('*', $gTables['anagra'], " id_SIAN = " . $form['id_SIAN']);
-			$rows=mysqli_num_rows($rs_same_code);
+			$rows=gaz_dbi_num_rows($rs_same_code);
 			if ($rows>0 && ($toDo == 'insert')) { // c'� gi� uno stesso codice
 				$form['id_SIAN'] ++; // lo aumento di 1
 				$msg .= "22+";

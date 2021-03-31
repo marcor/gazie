@@ -24,45 +24,11 @@
   --------------------------------------------------------------------------
  */
 
-function connectToDB() {
-   global $link, $Host, $Database, $User, $Password;
-   $link = @mysqli_connect($Host, $User, $Password, $Database, $Port) or die("Was not found, << $Database >>  database! <br />
-             Could not be installed, try to do so by <a href=\"../../setup/install/install.php\"> clicking HERE! </a><br />
-             <br />Non &egrave; stata trovata la base dati di nome << $Database >>! <br />
-             Potrebbe non essere stato installata, prova a farlo <a href=\"../../setup/install/install.php\"> cliccando QUI! </a> <br />
-             <br />No se ha encontrado, la base de datos << $Database >>  ! <br />
-			No pudo ser instalado, trate de hacerlo haciendo <a href=\"../../setup/install/install.php\">  clic AQU&Iacute;! </a>");
-   mysqli_query($link, "/*!50701 SET SESSION sql_mode='' */");
-   mysqli_query($link, "/*M!100204 SET SESSION sql_mode='' */");
-   mysqli_set_charset($link, 'utf8');
-}
-
 function connectIsOk() {
    global $Host, $User, $Password, $link;
    $result = True;
    $link = @mysqli_connect($Host, $User, $Password) or ( $result = False); // In $result l'esito della connessione
    mysqli_options($link, MYSQLI_INIT_COMMAND, "SET SQL_MODE = ''");
-   return $result;
-}
-
-function createDatabase($Database) {
-   global $link;
-   mysqli_query($link, "CREATE DATABASE $Database DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;") or die("ERRORE: il database $Database non &egrave; stato creato!");
-}
-
-function databaseIsOk() {
-   global $link, $Database;
-   $result = True;
-   mysqli_select_db($link, $Database) or ( $result = False); // In $result l'esito della selezione
-   // Verifico che il database non sia vuoto (condizione che può invece verificarsi nel caso in cui un amministratore di sistema fornisca db e user senza grant CREATE)
-   if ($tablesResult = mysqli_query($link, "SELECT COUNT(*) AS numTables FROM information_schema.tables WHERE table_schema = '$Database';")) {
-      $numTables = mysqli_fetch_row($tablesResult);
-      if ($numTables[0] == 0) {
-         $result = False;
-      }
-   } else {
-      $result = False;
-   }
    return $result;
 }
 
@@ -78,14 +44,56 @@ function gaz_dbi_query($query, $ar = false) {
    }
 }
 
-function gaz_dbi_fetch_array($resource) {
-   $result = mysqli_fetch_array($resource);
+function connectToDB() {
+   global $link, $Host, $Database, $User, $Password;
+   $link = @mysqli_connect($Host, $User, $Password, $Database, $Port) or die("Was not found, << $Database >>  database! <br />
+             Could not be installed, try to do so by <a href=\"../../setup/install/install.php\"> clicking HERE! </a><br />
+             <br />Non &egrave; stata trovata la base dati di nome << $Database >>! <br />
+             Potrebbe non essere stato installata, prova a farlo <a href=\"../../setup/install/install.php\"> cliccando QUI! </a> <br />
+             <br />No se ha encontrado, la base de datos << $Database >>  ! <br />
+			No pudo ser instalado, trate de hacerlo haciendo <a href=\"../../setup/install/install.php\">  clic AQU&Iacute;! </a>");
+   gaz_dbi_query("/*!50701 SET SESSION sql_mode='' */");
+   gaz_dbi_query("/*M!100204 SET SESSION sql_mode='' */");
+   mysqli_set_charset($link, 'utf8');
+}
+
+function createDatabase($Database) {
+   gaz_dbi_query("CREATE DATABASE $Database DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;") or die("ERRORE: il database $Database non &egrave; stato creato!");
+}
+
+function databaseIsOk() {
+   global $link, $Database;
+   $result = True;
+   mysqli_select_db($link, $Database) or ( $result = False); // In $result l'esito della selezione
+   // Verifico che il database non sia vuoto (condizione che può invece verificarsi nel caso in cui un amministratore di sistema fornisca db e user senza grant CREATE)
+   if ($tablesResult = gaz_dbi_query("SELECT COUNT(*) AS numTables FROM information_schema.tables WHERE table_schema = '$Database';")) {
+      $numTables = mysqli_fetch_row($tablesResult);
+      if ($numTables[0] == 0) {
+         $result = False;
+      }
+   } else {
+      $result = False;
+   }
    return $result;
+}
+
+function gaz_dbi_fetch_array($resource, $mode='') {
+	if (empty($mode)) {
+		$result = mysqli_fetch_array($resource);
+	} else {
+		switch ($mode) {
+			case 'NUM':
+				$mode = MYSQLI_NUM;
+				break;
+		}
+		$result = mysqli_fetch_array($resource, $mode);
+	}
+	return $result;
 }
 
 /** ENRICO FEDELE */
 /* Possiamo usare questa funzione in futuro?
- *  Ritengo che sia decisamente più i mmediata, perchè restituisce giù un array associativo
+ *  Ritengo che sia decisamente più immediata, perchè restituisce giù un array associativo
  *  e ci evita di dover creare un array apposito in cui mettere quello che ci interessa
  */
 function gaz_dbi_fetch_assoc($resource) {
@@ -168,28 +176,28 @@ function gaz_dbi_get_row($table, $fnm, $fval, $other="", $cell="*") {
    global $link;
    $fval = mysqli_real_escape_string($link, $fval);
    $query = "SELECT $cell FROM $table WHERE $fnm = '$fval' $other";
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    debug_query($query);
    if (!$result) gaz_die ( $query, "168", __FUNCTION__ );
    if ($cell != "*") {
-      $row = mysqli_fetch_array($result);
+      $row = gaz_dbi_fetch_array($result);
       if ($row) {
          return $row[$cell];
       } else {
          return '';
       }
    } else {
-      return mysqli_fetch_array($result);
+      return gaz_dbi_fetch_array($result);
    }
 }
 
 function gaz_dbi_get_single_value($table, $campo, $where) {
    global $link;
    $query = "SELECT $campo FROM $table WHERE $where";
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "182", __FUNCTION__ );
-   $ris = mysqli_fetch_array($result, MYSQLI_NUM);
-   $rn = mysqli_num_rows($result);
+   $ris = gaz_dbi_fetch_array($result, MYSQLI_NUM);
+   $rn = gaz_dbi_num_rows($result);
    if ($rn == 1) {
       return $ris[0];
    } else {
@@ -198,7 +206,6 @@ function gaz_dbi_get_single_value($table, $campo, $where) {
 }
 
 function gaz_dbi_put_row($table, $CampoCond, $ValoreCond, $Campo, $Valore) {
-   global $link;
    $field_results = gaz_dbi_query("SELECT * FROM " . $table . " LIMIT 1");
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    $where = ' WHERE ' . $CampoCond . ' = ';
@@ -228,16 +235,15 @@ function gaz_dbi_put_row($table, $CampoCond, $ValoreCond, $Campo, $Valore) {
       }
    }
    $query .= $where . ' LIMIT 1';
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "224", __FUNCTION__ );
    return $result;
 }
 
 function gaz_dbi_put_query($table, $where, $Campo, $Valore) {
-   global $link;
    $query = "UPDATE $table SET $Campo='$Valore' WHERE $where";
    debug_query( $query );
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "231", __FUNCTION__ );
 }
 
@@ -245,7 +251,7 @@ function gaz_dbi_del_row($table, $fname, $fval) {
    global $link;
    $query = "DELETE FROM $table WHERE $fname = '$fval'";
    debug_query($query);
-   $result = mysqli_query($link, $query) or die(" Errore di cancellazione: " . mysqli_error($link));
+   $result = gaz_dbi_query($query) or die(" Errore di cancellazione: " . mysqli_error($link));
    if (!$result) gaz_die ( $query, "238", __FUNCTION__ );
 }
 
@@ -259,18 +265,17 @@ function gaz_dbi_last_id() {
 // restituisce il numero record di una query
 // versione piu' lineare della precedente MR
 function gaz_dbi_record_count($table, $where = '', $group_by = '') {
-   global $link;
    $where = $where ? "WHERE $where" : '';
    $group_by = $group_by ? "GROUP BY $group_by" : '';
    $query = "SELECT NULL FROM $table $where $group_by";
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die($query, __LINE__, __FUNCTION__);
-   return mysqli_num_rows($result);
+   return gaz_dbi_num_rows($result);
 }
 
 // funzione che compone una query con i parametri: tabella, where, orderby, limit e passo (riga di inizio e n. record)
 function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit = 0, $passo = 2000000, $groupby = '') {
-   global $link, $session;
+   global $session;
    $query = "SELECT " . $select . " FROM " . $tabella;
    if ($where != '') {
       $query .= " WHERE $where ";
@@ -289,7 +294,7 @@ function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit =
    //msgDebug($query);
    debug_query($query);
 
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "277", __FUNCTION__ );
    return $result;
 }
@@ -353,7 +358,7 @@ function gaz_aes_field_anagra($field) {
 }
 
 function gaz_dbi_get_anagra($table, $fnm, $fval) {
-   global $link, $gTables;
+   global $gTables;
    $fields_anagra = gaz_dbi_fields_anagra();
    $fields = '';
    foreach ($fields_anagra as $field_anagra) {
@@ -368,14 +373,14 @@ function gaz_dbi_get_anagra($table, $fnm, $fval) {
    }
    $query = "SELECT $fields, " . $gTables['clfoco'] . ".* FROM $table WHERE $fnm = '$fval'";
    debug_query($query);
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "353", __FUNCTION__ );
-   return mysqli_fetch_array($result);
+   return gaz_dbi_fetch_array($result);
 }
 
 // funzione gaz_dbi_query_anagra
 function gaz_dbi_query_anagra($select, $tabella, $where, $orderby, $limit = 0, $passo = 2000000, $groupby = '') {
-   global $link, $session;
+   global $session;
    $select_fields = '';
    $select_is_assoc = array_is_assoc($select);
    foreach ($select as $field_name => $field_alias) {
@@ -409,7 +414,7 @@ function gaz_dbi_query_anagra($select, $tabella, $where, $orderby, $limit = 0, $
    //msgDebug($query);
 
    debug_query($query);
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "394", __FUNCTION__ );
    return $result;
 }
@@ -548,7 +553,7 @@ function gaz_dbi_table_insert($table, $value) {
    }
    $query = "INSERT INTO " . $gTables[$table] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
    debug_query($query);
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) { 
 	  gaz_die ( $query, "532", __FUNCTION__ );
    } else {
@@ -562,7 +567,7 @@ function gaz_dbi_table_update($table, $id, $newValue) {
     * $id - stringa con il valore del campo "codice" da aggiornare o array(0=>nome,1=>valore,2=>nuovo_valore)
     * $newValue - array associativo del tipo nome_colonna=>valore con i valori da inserire
     */
-   global $link, $gTables;
+   global $gTables;
    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table] . " LIMIT 1");
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    $query = "UPDATE " . $gTables[$table] . ' SET ';
@@ -601,7 +606,7 @@ function gaz_dbi_table_update($table, $id, $newValue) {
    }
    //msgDebug($query);
    debug_query($query);
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "580", __FUNCTION__ );
 }
 
@@ -705,7 +710,7 @@ function gaz_dbi_insert_anagra($value) {
    }
    $query = "INSERT INTO " . $gTables['anagra'] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
    debug_query($query);
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "683", __FUNCTION__ );
 }
 
@@ -763,7 +768,7 @@ function gaz_dbi_update_anagra($id, $newValue) {
    }
    //msgDebug($query);
    debug_query($query);
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "738", __FUNCTION__ );
 }
 
@@ -779,7 +784,7 @@ function tableInsert($table, $columns, $newValue) {
       $colValue .= (isset($newValue[$field]) ? addslashes($newValue[$field]) : '') . "'";
    }
    $query = "INSERT INTO " . $gTables[$table] . " ( " . $colName . " ) VALUES ( " . $colValue . ")";
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "754", __FUNCTION__ );
    return mysqli_insert_id($link);
 }
@@ -807,13 +812,12 @@ function tableUpdate($table, $columns, $codice, $newValue) {
    }
    //msgDebug($query);
    debug_query($query);
-   $result = mysqli_query($link, $query);
+   $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "782", __FUNCTION__ );
 }
 
 function mergeTable($table1, $campi1, $table2, $campi2, $campomerge, $where) {
-   global $link;
-   $result = mysqli_query($link, "SELECT $campi1 FROM $table1 LEFT JOIN $table2 ON $table1.$campomerge = $table2.$campomerge WHERE $where");
+   $result = gaz_dbi_query("SELECT $campi1 FROM $table1 LEFT JOIN $table2 ON $table1.$campomerge = $table2.$campomerge WHERE $where");
    if (!$result) gaz_die ( $query, "788", __FUNCTION__ );
    return $result;
 }
@@ -1000,9 +1004,9 @@ function movmagUpdate($codice, $newValue) {
 // Gestione Access Rights
 //===============================================================
 function updateAccessRights($adminid, $moduleid, $access, $company_id = 1) {
-   global $gTables, $link;
+   global $gTables;
 
-   $result = mysqli_query($link, "SELECT * FROM " . $gTables['admin_module'] . " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id);
+   $result = gaz_dbi_query("SELECT * FROM " . $gTables['admin_module'] . " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id);
    if (gaz_dbi_num_rows($result) < 1) {
       $query = "INSERT INTO " . $gTables['admin_module'] .
               " (adminid, company_id, moduleid, access) VALUES ('" . $adminid . "',$company_id,$moduleid,$access)";
@@ -1012,11 +1016,11 @@ function updateAccessRights($adminid, $moduleid, $access, $company_id = 1) {
               " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id;
    }
    debug_query($query);
-   $result = mysqli_query($link, $query) or gaz_die ( $query, "959", __FUNCTION__ );
+   $result = gaz_dbi_query($query) or gaz_die ( $query, "959", __FUNCTION__ );
 }
 
 function getAccessRights($userid = '', $company_id = 1) {
-   global $gTables, $link;
+   global $gTables;
    $query_co = " AND am.company_id='" . $company_id . "'";
    $ck_co = gaz_dbi_fields('admin_module');
    if (!array_key_exists('company_id', $ck_co)) {
@@ -1067,12 +1071,12 @@ function getAccessRights($userid = '', $company_id = 1) {
 						 m3.weight';
    }
    debug_query($query);
-   $result = mysqli_query($link, $query) or gaz_die ( $query, "1014", __FUNCTION__ );
+   $result = gaz_dbi_query($query) or gaz_die ( $query, "1014", __FUNCTION__ );
    return $result;
 }
 
 function checkAccessRights($adminid, $module, $company_id = 0) {
-   global $gTables, $link;
+   global $gTables;
    $ck_co = gaz_dbi_fields('admin_module');
    if ($company_id == 0 || (!array_key_exists('company_id', $ck_co))) {  // vengo da una vecchia versione (<4.0.12)
       $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
@@ -1084,7 +1088,7 @@ function checkAccessRights($adminid, $module, $company_id = 0) {
               " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "' AND am.company_id = $company_id ";
    }
    debug_query($query);
-   $result = mysqli_query($link, $query) or gaz_die ( $query, "1030", __FUNCTION__ );
+   $result = gaz_dbi_query($query) or gaz_die ( $query, "1030", __FUNCTION__ );
    if (gaz_dbi_num_rows($result) < 1) {
       return 0;
    }

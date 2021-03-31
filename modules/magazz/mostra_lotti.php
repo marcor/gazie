@@ -228,7 +228,7 @@ if (isset($_POST['close'])){
 		</div>
 		<?php
 		
-		if (mysqli_num_rows($resorf)>0){
+		if (gaz_dbi_num_rows($resorf)>0){
 		?>
 		<div class="panel panel-default gaz-table-form">
 			<div class="container-fluid">

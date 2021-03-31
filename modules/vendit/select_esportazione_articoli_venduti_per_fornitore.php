@@ -58,7 +58,7 @@ function esportaFattureVendita() {
            . "(tipdoc like 'DD_' or tipdoc = 'FAD') and "
            . "tesdoc.clfoco in (select codice from $clfoco clfoco where sel4esp_art)";
    $rs = gaz_dbi_query($query);
-   while ($row = mysqli_fetch_array($rs, MYSQLI_NUM))
+   while ($row = gaz_dbi_fetch_array($rs, 'NUM'))
       $rows[] = $row;
 
    $_SESSION['rs_ftven'] = $rows; //$rs;
@@ -85,7 +85,7 @@ function esportaAnagrafeArticoli() {
            . "(tipdoc like 'DD_' or tipdoc = 'FAD') and "
            . "tesdoc.clfoco in (select codice from $clfoco clfoco where sel4esp_art)";
    $rs = gaz_dbi_query($query);
-   while ($row = mysqli_fetch_array($rs, MYSQLI_NUM))
+   while ($row = gaz_dbi_fetch_array($rs, 'NUM'))
       $rows[] = $row;
 
    $_SESSION['rs_artven'] = $rows; //$rs;
@@ -109,7 +109,7 @@ function esportaAnagrafeClienti() {
            . "where clfoco.codice like '$mascli%' and clfoco.sel4esp_art "
            . "order by clfoco.descri";
    $rs = gaz_dbi_query($query);
-   while ($row = mysqli_fetch_array($rs, MYSQLI_NUM))
+   while ($row = gaz_dbi_fetch_array($rs, 'NUM'))
       $rows[] = $row;
 
    $_SESSION['rs_cliven'] = $rows; //$rs;

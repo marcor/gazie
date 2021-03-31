@@ -23,7 +23,7 @@
   --------------------------------------------------------------------------
  */
 $rs = gaz_dbi_query("SELECT ".$gTables['admin_module'].".access FROM ".$gTables['admin_module']." LEFT JOIN ".$gTables['module']." ON ".$gTables['admin_module'].".moduleid=".$gTables['module'].".id WHERE `adminid`='".$admin_aziend['user_name']."' AND ".$gTables['module'].".name='shop-synchronize'");
-$test=mysqli_fetch_array($rs)
+$test=gaz_dbi_fetch_array($rs);
 ?>
 <div class="panel panel-info col-sm-12">
 <?php
