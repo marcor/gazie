@@ -368,15 +368,17 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** fine modifica FP */
     // eventuale descrizione amplia
     $form['body_text'] = '';
-	// propongo il primo ID libero per l'ecommerce
-	$max_ref_ecommerce_id_product = gaz_dbi_query("select ref_ecommerce_id_product from ".$gTables['artico']." ORDER BY ref_ecommerce_id_product DESC LIMIT 1");
+    // propongo il primo ID libero per l'ecommerce
+    $max_ref_ecommerce_id_product = gaz_dbi_query("select ref_ecommerce_id_product from ".$gTables['artico']." ORDER BY ref_ecommerce_id_product DESC LIMIT 1");
     $max_id = gaz_dbi_fetch_array($max_ref_ecommerce_id_product);
     $form['ref_ecommerce_id_product'] = ++$max_id[0];
-	// ripropongo le ultima unità di misura utilizzate
-	$rs_ultime_um = gaz_dbi_dyn_query("unimis,uniacq", $gTables['artico'], "1", "last_modified DESC",0,1);
-	$ultime_um = gaz_dbi_fetch_array($rs_ultime_um);
-	$form['unimis'] = $ultime_um['unimis'];
-	$form['uniacq'] = $ultime_um['uniacq'];
+    // ripropongo le ultime unità di misura più utilizzate
+    $rs_unimis = gaz_dbi_query("SELECT unimis, COUNT(unimis) c FROM ".$gTables['artico']." GROUP BY unimis ORDER BY c DESC LIMIT 1");
+    $unimis = gaz_dbi_fetch_array($rs_unimis);
+    $form['unimis'] = $unimis['unimis'];
+    $rs_uniacq = gaz_dbi_query("SELECT uniacq, COUNT(uniacq) c FROM ".$gTables['artico']." GROUP BY uniacq ORDER BY c DESC LIMIT 1");
+    $uniacq = gaz_dbi_fetch_array($rs_uniacq);
+    $form['uniacq'] = $uniacq['uniacq'];
 }
 
 /** ENRICO FEDELE */
