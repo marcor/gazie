@@ -177,7 +177,6 @@ function gaz_dbi_get_row($table, $fnm, $fval, $other="", $cell="*") {
    $fval = mysqli_real_escape_string($link, $fval);
    $query = "SELECT $cell FROM $table WHERE $fnm = '$fval' $other";
    $result = gaz_dbi_query($query);
-   debug_query($query);
    if (!$result) gaz_die ( $query, "168", __FUNCTION__ );
    if ($cell != "*") {
       $row = gaz_dbi_fetch_array($result);
@@ -242,7 +241,6 @@ function gaz_dbi_put_row($table, $CampoCond, $ValoreCond, $Campo, $Valore) {
 
 function gaz_dbi_put_query($table, $where, $Campo, $Valore) {
    $query = "UPDATE $table SET $Campo='$Valore' WHERE $where";
-   debug_query( $query );
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "231", __FUNCTION__ );
 }
@@ -250,7 +248,6 @@ function gaz_dbi_put_query($table, $where, $Campo, $Valore) {
 function gaz_dbi_del_row($table, $fname, $fval) {
    global $link;
    $query = "DELETE FROM $table WHERE $fname = '$fval'";
-   debug_query($query);
    $result = gaz_dbi_query($query) or die(" Errore di cancellazione: " . mysqli_error($link));
    if (!$result) gaz_die ( $query, "238", __FUNCTION__ );
 }
@@ -292,7 +289,6 @@ function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit =
    }
    //echo $query."<br>";
    //msgDebug($query);
-   debug_query($query);
 
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "277", __FUNCTION__ );
@@ -372,7 +368,6 @@ function gaz_dbi_get_anagra($table, $fnm, $fval) {
       }
    }
    $query = "SELECT $fields, " . $gTables['clfoco'] . ".* FROM $table WHERE $fnm = '$fval'";
-   debug_query($query);
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "353", __FUNCTION__ );
    return gaz_dbi_fetch_array($result);
@@ -413,7 +408,6 @@ function gaz_dbi_query_anagra($select, $tabella, $where, $orderby, $limit = 0, $
    //echo $query."<br>";
    //msgDebug($query);
 
-   debug_query($query);
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "394", __FUNCTION__ );
    return $result;
@@ -552,7 +546,6 @@ function gaz_dbi_table_insert($table, $value) {
       }
    }
    $query = "INSERT INTO " . $gTables[$table] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
-   debug_query($query);
    $result = gaz_dbi_query($query);
    if (!$result) { 
 	  gaz_die ( $query, "532", __FUNCTION__ );
@@ -605,7 +598,6 @@ function gaz_dbi_table_update($table, $id, $newValue) {
       $query .= " WHERE codice = $quote_id$id$quote_id";
    }
    //msgDebug($query);
-   debug_query($query);
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "580", __FUNCTION__ );
 }
@@ -709,7 +701,6 @@ function gaz_dbi_insert_anagra($value) {
       }
    }
    $query = "INSERT INTO " . $gTables['anagra'] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
-   debug_query($query);
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "683", __FUNCTION__ );
 }
@@ -767,7 +758,6 @@ function gaz_dbi_update_anagra($id, $newValue) {
       $query .= " WHERE codice = $quote_id$id$quote_id";
    }
    //msgDebug($query);
-   debug_query($query);
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "738", __FUNCTION__ );
 }
@@ -811,7 +801,6 @@ function tableUpdate($table, $columns, $codice, $newValue) {
       $query .= " WHERE codice = '$codice'";
    }
    //msgDebug($query);
-   debug_query($query);
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "782", __FUNCTION__ );
 }
@@ -1015,7 +1004,6 @@ function updateAccessRights($adminid, $moduleid, $access, $company_id = 1) {
               " SET access=" . $access .
               " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id;
    }
-   debug_query($query);
    $result = gaz_dbi_query($query) or gaz_die ( $query, "959", __FUNCTION__ );
 }
 
@@ -1070,7 +1058,6 @@ function getAccessRights($userid = '', $company_id = 1) {
 						 m2_id,
 						 m3.weight';
    }
-   debug_query($query);
    $result = gaz_dbi_query($query) or gaz_die ( $query, "1014", __FUNCTION__ );
    return $result;
 }
@@ -1087,7 +1074,6 @@ function checkAccessRights($adminid, $module, $company_id = 0) {
               ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
               " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "' AND am.company_id = $company_id ";
    }
-   debug_query($query);
    $result = gaz_dbi_query($query) or gaz_die ( $query, "1030", __FUNCTION__ );
    if (gaz_dbi_num_rows($result) < 1) {
       return 0;
@@ -1119,7 +1105,10 @@ function gaz_die( $query, $riga, $funzione="" ) {
 }
 
 function debug_query($query) {
-    if ( defined('debug_active') && debug_active )
-      d($query);
+	if ( defined('debug_active') && debug_active ) {
+		if (function_exists('d')) {
+			d($query);
+		}
+	}
 }
 ?>
