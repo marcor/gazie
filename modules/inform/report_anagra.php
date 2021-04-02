@@ -95,7 +95,7 @@ $recordnav -> output();
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td ><a class=\"btn btn-xs btn-default\" href=\"admin_anagra.php?id=".$a_row["id"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id"]."</a> &nbsp</td>";
+    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_anagra.php?id=".$a_row["id"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id"]."</a> &nbsp</td>";
 	echo "<td title=\"".$a_row["ragso2"]."\">".$a_row["ragso1"]." ".$a_row["ragso2"]."</td>";
 	echo "<td align=\"center\">".$a_row["sexper"]."</td>";
 	$google_string = str_replace(" ","+",$a_row["indspe"]).",".str_replace(" ","+",$a_row["capspe"]).",".str_replace(" ","+",$a_row["citspe"]).",".str_replace(" ","+",$a_row["prospe"]);

@@ -242,7 +242,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $r['campo_impianto'], " ", $c_row['descri'] ;?></td>
 			
 			<!-- Colonna stato lavorazione -->
-			<td >
+			<td>
 				<a class="btn btn-xs <?php echo $stato_btn; ?> dialog_stato_lavorazione" refsta="<?php echo $r['id']; ?>" prodes="<?php echo $r['description']; ?>" prosta="<?php echo $r['stato_lavorazione']; ?>">
 				<i class="glyphicon glyphicon-compressed"></i><?php echo $stato_lavorazione[$r['stato_lavorazione']]; ?>
 				</a>

@@ -254,9 +254,9 @@ $tot=0;
 while ($r = gaz_dbi_fetch_array($rs_castel)) {
       if (abs($r['saldo']) >= 0.001) {
          echo "<tr class=\"FacetDataTD\">";
-         echo "<td >".$r['codcon']."&nbsp;</td>";
-         echo "<td ><a title=\"Dettagli cliente\" href=\"report_client.php?nome=".$r["ragso1"]."\">".$r["ragso1"]."</a> &nbsp;</td>";
-         echo "<td >".$r['telefo']." &nbsp;</td>";
+         echo "<td>".$r['codcon']."&nbsp;</td>";
+         echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?nome=".$r["ragso1"]."\">".$r["ragso1"]."</a> &nbsp;</td>";
+         echo "<td>".$r['telefo']." &nbsp;</td>";
          echo "<td align=\"center\">".$r['nummov']." &nbsp;</td>";
          echo "<td align=\"right\">".gaz_format_number($r['dare'])." &nbsp;</td>";
          echo "<td align=\"right\">".gaz_format_number($r['avere'])." &nbsp;</td>";

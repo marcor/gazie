@@ -96,7 +96,7 @@ $linkHeaders = new linkHeaders($headers);
 						}
 					?>
 					<tr>
-						<td >
+						<td>
 						<a class="btn btn-xs btn-default" href="admin_ruburl.php?id=<?php echo $row["id"]; ?>&Update">
 							<i class="glyphicon glyphicon-edit"></i> <?php echo $row["id"]; ?>
 						</a>

@@ -568,7 +568,7 @@ echo "\t </td>\n";
 echo "<td>\n";
 echo "<input type=\"text\" style=\"text-align:right\" value=\"".$form['in_quanti']."\" maxlength=\"11\" name=\"in_quanti\">\n";
 echo "\t </td>\n";
-echo "<td >\n";
+echo "<td>\n";
 echo "<input type=\"text\" style=\"text-align:right\" value=\"".$form['in_price']."\" maxlength=\"15\" name=\"in_price\">\n";
 echo "\t </td>\n";
 echo "<td>\n";
