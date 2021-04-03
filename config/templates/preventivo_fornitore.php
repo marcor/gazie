@@ -62,144 +62,135 @@ class PreventivoFornitore extends Template
     }
     function body()
     {
-		$this->tot_rp=0;
-        $lines = $this->docVars->getRigo();
-		$ctrl_orderman=0;
-		foreach ($lines AS $key => $rigo) {
-            if ($this->GetY() >= 185) {
-                $this->Cell(186,6,'','T',1);
-                $this->SetFont('helvetica', '', 20);
-                $this->SetY(225);
-                $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
-                $this->SetFont('helvetica', '', 9);
-                $this->newPage();
-                $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
-            }
-			if ($ctrl_orderman!=$rigo['id_orderman'] && $rigo['id_orderman']>0) {
-				/* stampo il rigo riferito ad una produzione   */
-				$this->SetFont('helvetica', 'B', 9);
-				$this->Ln(1);
-				$this->Cell(186, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  substr($rigo['orderman_data']['datemi'],0,4), 1, 1, 'L');
-				$this->SetFont('helvetica', '', 9);
-			}
-			switch($rigo['tiprig']) {
-                case "0":
-					$ctrldim=0;
-					$rp=0.000;	
-					$dim='';
-					$pcs='';
-					$res_ps='';
-					$rigo['quality']=(!empty(trim($rigo['quality'])))? ' Qualità: '.$rigo['quality']:''; 
-					$rigo['codart']=(!empty(trim($rigo['codart'])))? ' Cod:'.$rigo['codart']:''; 
-					$rigo['codice_fornitore']=(!empty(trim($rigo['codice_fornitore'])))? ' Vs.Cod:'.$rigo['codice_fornitore']:''; 
-                    if ($rigo['pezzi'] > 0 ) {
-						$res_ps='kg/pz';
-						$rp=$rigo['pezzi'];
-						if ($rigo['lunghezza'] >= 0.001) { 
-							$rp=$rigo['lunghezza']*$rigo['pezzi']/10**3;
-							$res_ps='kg/m';	
-							$dim .= floatval($rigo['lunghezza']); 
-							$ctrldim+=$rigo['lunghezza'];
-							if ($rigo['larghezza'] >= 0.001) { 
-								$rp=$rigo['larghezza']*$rp/10**3;
-								$res_ps='kg/m²';	
-								$dim .= 'x'.floatval($rigo['larghezza']); 
-								$ctrldim+=$rigo['larghezza'];
-								if ($rigo['spessore'] >= 0.001) { 
-									$rp=$rigo['spessore']*$rp;
-									$res_ps='kg/l';	
-									$dim .= 'x'.floatval($rigo['spessore']); 
-									$ctrldim+=$rigo['spessore'];
+			$this->tot_rp=0;
+          $lines = $this->docVars->getRigo();
+			$ctrl_orderman=0;
+			foreach ($lines AS $key => $rigo) {
+              if ($this->GetY() >= 185) {
+                  $this->Cell(186,6,'','T',1);
+                  $this->SetFont('helvetica', '', 20);
+                  $this->SetY(225);
+                  $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
+                  $this->SetFont('helvetica', '', 9);
+                  $this->newPage();
+                  $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
+              }
+				if ($ctrl_orderman!=$rigo['id_orderman'] && $rigo['id_orderman']>0) {
+					/* stampo il rigo riferito ad una produzione   */
+					$this->SetFont('helvetica', 'B', 9);
+					$this->Ln(1);
+					$this->Cell(186, 6, 'Materiale per Produzione n. ' . $rigo['id_orderman'] . ' - ' .  substr($rigo['orderman_data']['datemi'],0,4), 1, 1, 'L');
+					$this->SetFont('helvetica', '', 9);
+				}
+				switch($rigo['tiprig']) {
+          case "0":
+						$ctrldim=0;
+						$rp=0.000;	
+						$dim='';
+						$pcs='';
+						$res_ps='';
+						$rigo['quality']=(!empty(trim($rigo['quality'])))? ' Qualità: '.$rigo['quality']:''; 
+						$rigo['codart']=(!empty(trim($rigo['codart'])))? ' Cod:'.$rigo['codart']:''; 
+						$rigo['codice_fornitore']=(!empty(trim($rigo['codice_fornitore'])))? ' Vs.Cod:'.$rigo['codice_fornitore']:''; 
+            if ($rigo['pezzi'] > 0 ) {
+							$res_ps='kg/pz';
+							$rp=$rigo['pezzi'];
+							if ($rigo['lunghezza'] >= 0.001) { 
+								$rp=$rigo['lunghezza']*$rigo['pezzi']/10**3;
+								$res_ps='kg/m';	
+								$dim .= floatval($rigo['lunghezza']); 
+								$ctrldim+=$rigo['lunghezza'];
+								if ($rigo['larghezza'] >= 0.001) { 
+									$rp=$rigo['larghezza']*$rp/10**3;
+									$res_ps='kg/m²';	
+									$dim .= 'x'.floatval($rigo['larghezza']); 
+									$ctrldim+=$rigo['larghezza'];
+									if ($rigo['spessore'] >= 0.001) { 
+										$rp=$rigo['spessore']*$rp;
+										$res_ps='kg/l';	
+										$dim .= 'x'.floatval($rigo['spessore']); 
+										$ctrldim+=$rigo['spessore'];
+									}
 								}
-							}
+              }
+              $dim.='mm';
+              $pcs='n.'.$rigo['pezzi'].' pezzi';
+              if ($rigo['peso_specifico'] >= 0.001) { 
+                $res_ps = ' - '.floatval($rigo['peso_specifico']).' '.$res_ps.' peso teor. '.floatval($rp*$rigo['peso_specifico']).' kg'; 
+                $this->tot_rp +=$rp*$rigo['peso_specifico'];
+              }
+            } else {
+              // non ho i pezzi ma ho il peso specifico per calcolare il peso ma ho l'unità di misura in KG  allora aggiungo al peso totale
+              if (strtoupper(substr(trim($rigo['unimis']),0,2))=='KG' ){
+                $this->tot_rp +=$rigo['quanti'];
+              }
 						}
-						$dim.='mm';
-						$pcs='n.'.$rigo['pezzi'].' pezzi';
-						if ($rigo['peso_specifico'] >= 0.001) { 
-							$res_ps = ' - '.floatval($rigo['peso_specifico']).' '.$res_ps.' peso teor. '.floatval($rp*$rigo['peso_specifico']).' kg'; 
-							$this->tot_rp +=$rp*$rigo['peso_specifico'];
+						if ($ctrldim>0.0001){
+							$this->Cell(105, 6, $rigo['descri'].' Dimensioni:'.$dim,'LTR',0,'L',0,'',1);
+						}else{
+							$this->Cell(105, 6, $rigo['descri'],'LTR',0,'L',0,'',1);
 						}
-                    } else {
-						// non ho i pezzi ma ho il peso specifico per calcolare il peso ma ho l'unità di misura in KG  allora aggiungo al peso totale
-						if (strtoupper(substr(trim($rigo['unimis']),0,2))=='KG' ){
-							$this->tot_rp +=$rigo['quanti'];
-						}
-					}
-					if ($ctrldim>0.0001){
-						$this->Cell(105, 6, $rigo['descri'].' Dimensioni:'.$dim,'LTR',0,'L',0,'',1);
-					}else{
-						$this->Cell(105, 6, $rigo['descri'],'LTR',0,'L',0,'',1);
-					}
-					$this->Cell(20, 6, $pcs,'RTB',0,'L',0,'',1);
-					$this->Cell(46, 6, 'Consegna richiesta per il '.gaz_format_date($rigo['delivery_date']),'RTB',1,'L',0,'',1);
-					$this->Cell(125, 6, $rigo['codart'].$rigo['codice_fornitore'].$rigo['quality'].$res_ps ,'LRB',0,'L',0,'',1);
-                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
-                    if ($rigo['prelis'] > 0) {
-                       //$this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
-                       $this->Cell(17, 6, '',1);// non stampo mai il prezzo
-                    } else {
-					   $py=$this->GetY();
-					   $px=$this->GetX();
-					   $this->Rect($px,$py,17,6,'DF');
-					   $this->TextField('prelis'.$key, 17, 6);
-                    }
-                    if ($rigo['sconto']> 0) {
-                       $this->Cell(8, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
-                    } else {
-					   $py=$this->GetY();
-					   $px=$this->GetX();
-					   $this->Rect($px,$py,8,6,'DF');
-					   $this->TextField('sconto'.$key, 8, 6);
-                    }
-                    if ($rigo['importo'] > 0) {
-                       //$this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
-					   $this->Cell(15,6,'',1,1); // non stampo mai il prezzo
-                    } else {
-                       $this->Cell(15, 6, '',1,1);
-                    }
-                    break;
-                case "1":
-                    $this->Cell(125, 6, $rigo['descri'],'LBR',0,'L',0,'',1);
-                    //$this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
-                    $this->Cell(61, 6, '',1,1,'R');
-                    break;
-                case "2":
-                    $this->Cell(125,6,$rigo['descri'],'LR',0,'L',0,'',1); // Modificato a mano
-                    $this->Cell(61,6,'','R',1);
-                    break;
-                case "3":
-                    $this->Cell(25,6,'',1,0,'L');
-                    $this->Cell(100,6,$rigo['descri'],'B',0,'L',0,'',1);
-                    $this->Cell(49,6,'','B',0,'L');
-                    //$this->Cell(20,6,gaz_format_number($rigo['prelis']),1,0,'R');
-                    $this->Cell(20,6,'',1); // non stampo mai il prezzo
-                    $this->Cell(12,6,'',1,1,'R');
-                    break;
-                case "6":
-                    $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
-                    break;
-                case "50":
-					// accumulo il file da allegare e lo indico al posto del codice articolo
-					$this->docVars->id_rig=$rigo['id_rig'];
-					$file=$this->docVars->getExtDoc();
-                    $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
-                    $this->Cell(100, 6, $rigo['descri'],1,0,'L',0,'',1);
-                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    $this->Cell(40, 6, '',1,1);
-                    break;
-                case "51":
-					// accumulo il file da allegare e lo indico al posto del codice articolo
-					$this->docVars->id_rig=$rigo['id_rig'];
-					$file=$this->docVars->getExtDoc();
-                    $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
-                    $this->Cell(100,6,$rigo['descri'],'LR',0,'L',0,'',1);
-                    $this->Cell(61,6,'','R',1);
-                    break;
-                }
+						$this->Cell(20, 6, $pcs,'RTB',0,'L',0,'',1);
+						$this->Cell(46, 6, 'Consegna richiesta per il '.gaz_format_date($rigo['delivery_date']),'RTB',1,'L',0,'',1);
+						$this->Cell(125, 6, $rigo['codart'].$rigo['codice_fornitore'].$rigo['quality'].$res_ps ,'LRB',0,'L',0,'',1);
+            $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
+            $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R',0,'',1);
+						$py=$this->GetY();
+						$px=$this->GetX();
+						$this->Rect($px,$py,17,6,'DF');
+						$this->TextField('prelis'.$key, 17, 6, array('multiline'=>true, 'lineWidth'=>0, 'borderStyle'=>'none','alignment' => 'right', 'fillColor'=>array(230, 230, 230)),array('v'=>number_format($rigo['prelis'],$this->decimal_price,',',''),'dv'=>number_format($rigo['prelis'],$this->decimal_price,',','')));
+						$py=$this->GetY();
+						$px=$this->GetX();
+						$this->Rect($px,$py,8,6,'DF');
+						$this->TextField('sconto'.$key, 8, 6, array('multiline'=>true, 'lineWidth'=>0, 'borderStyle'=>'none','alignment' => 'right', 'fillColor'=>array(230, 230, 230)),array('v'=> number_format($rigo['sconto'],1,',',''),'dv'=> number_format($rigo['sconto'],1,',','')));
+            if ($rigo['importo'] > 0) {
+              //$this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
+              $this->Cell(15,6,'',1,1); // non stampo mai il prezzo
+            } else {
+              $this->Cell(15, 6, '',1,1);
+            }
+          break;
+          case "1":
+            $this->Cell(125, 6, $rigo['descri'],'LBR',0,'L',0,'',1);
+            //$this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
+            $this->Cell(61, 6, '',1,1,'R');
+          break;
+          case "2":
+            $this->Cell(125,6,$rigo['descri'],'LR',0,'L',0,'',1); // Modificato a mano
+            $this->Cell(61,6,'','R',1);
+          break;
+          case "3":
+            $this->Cell(25,6,'',1,0,'L');
+            $this->Cell(100,6,$rigo['descri'],'B',0,'L',0,'',1);
+            $this->Cell(49,6,'','B',0,'L');
+            //$this->Cell(20,6,gaz_format_number($rigo['prelis']),1,0,'R');
+            $this->Cell(20,6,'',1); // non stampo mai il prezzo
+            $this->Cell(12,6,'',1,1,'R');
+          break;
+          case "6":
+            $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
+          break;
+          case "50":
+            // accumulo il file da allegare e lo indico al posto del codice articolo
+            $this->docVars->id_rig=$rigo['id_rig'];
+            $file=$this->docVars->getExtDoc();
+            $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
+            $this->Cell(100, 6, $rigo['descri'],1,0,'L',0,'',1);
+            $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
+            $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+            $this->Cell(40, 6, '',1,1);
+          break;
+          case "51":
+						// accumulo il file da allegare e lo indico al posto del codice articolo
+						$this->docVars->id_rig=$rigo['id_rig'];
+						$file=$this->docVars->getExtDoc();
+            $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
+            $this->Cell(100,6,$rigo['descri'],'LR',0,'L',0,'',1);
+            $this->Cell(61,6,'','R',1);
+          break;
+        }
 				$ctrl_orderman=$rigo['id_orderman'];
-		}
+			}
     }
 
 
