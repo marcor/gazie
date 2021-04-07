@@ -597,8 +597,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     $rs_ultimo_protoc = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = ".substr($v['tes']['datreg'],0,4)." AND regiva = 2 AND seziva = ".$admin_aziend['reverse_charge_sez'],  "protoc DESC", 0, 1);
                     $ultimo_protoc = gaz_dbi_fetch_array($rs_ultimo_protoc);
                     $protoc = 1;
-                    if ($ultimo_tesdoc) {
-                        $protoc = $ultimo_tesdoc['protoc']+1;
+                    if ($ultimo_protoc) {
+                        $protoc = $ultimo_protoc['protoc']+1;
                     }
 
                     $newValue = array('caucon' => 'FAI',
