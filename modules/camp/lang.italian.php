@@ -162,7 +162,8 @@ $strScript = array("camp_browse_document.php" =>
 		"Coltura",
 		"Elenco movimenti agricoli",
 		"Data attuaz.",
-		"Operat."),
+		"Operatore",
+		"Acqua"),
     "camp_admin_movmag.php" =>
     array("movimento registro di campagna ",
         "Data della registrazione ",
@@ -208,6 +209,7 @@ $strScript = array("camp_browse_document.php" =>
 		"Lotti e certificati",
 		"Gli articoli compositi possono essere caricati solo dal modulo produzioni!",
 		"Stai superando il limite di azoto per anno previsto!",
+		"Non è stato creato il codice articolo ACQUA. Per proseguire creare in Merci/servizi un articolo con codice ACQUA",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',

@@ -30,7 +30,7 @@ $msg='';
 function getMovements($where){
 	global $gTables,$admin_aziend;
 	$m=array();
-	$where = "mostra_qdc = '1' AND ".$where;
+	$where = "mostra_qdc = '1' AND ".$gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov AND ".$where;
 	$what=$gTables['movmag'].".*, ".
 		  $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
 		  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".

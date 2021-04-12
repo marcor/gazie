@@ -35,9 +35,9 @@ function getMovements($date_ini,$date_fin,$type){
 	global $gTables,$admin_aziend;
     $m=array();
 	if ($type == "di campagna"){		 
-		$where="mostra_qdc = '1' AND type_mov = '1' AND datreg BETWEEN $date_ini AND $date_fin";
+		$where="mostra_qdc = '1' AND type_mov = '1' AND datreg BETWEEN $date_ini AND $date_fin AND ". $gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov" ;
 	} else {
-		$where="mostra_qdc = '1' AND ". $gTables['movmag'].".operat = '1' AND datreg BETWEEN $date_ini AND $date_fin";
+		$where="mostra_qdc = '1' AND ". $gTables['movmag'].".operat = '1' AND datreg BETWEEN $date_ini AND $date_fin AND ". $gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov" ;
 	}  
 	$what=$gTables['movmag'].".*, ".
 		  $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
@@ -86,10 +86,11 @@ if ($type=="di campagna"){
 				 array('lun' => 12,'nam'=>'Campo'),
 				 array('lun' => 10,'nam'=>'ha'),
 				 array('lun' => 38,'nam'=>'Coltura'),
-				 array('lun' => 69,'nam'=>'Prodotto'),
+				 array('lun' => 58,'nam'=>'Prodotto'),
 				 array('lun' => 6,'nam'=>'Cl.'),
 				 array('lun' => 8,'nam'=>'U.M.'),
 				 array('lun' => 12,'nam'=>'Q.tà'),
+				 array('lun' => 12,'nam'=>'Acqua'),
 				 array('lun' => 30,'nam'=>'Avversità'),
 				 array('lun' => 18,'nam'=>'Operat.')
 				)
@@ -144,7 +145,7 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		$pdf->Cell(38,6,substr($res4["nome_colt"],0,40),1);
 		// fine inserisco superficie, coltura	  
 	  
-		$pdf->Cell(69,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
+		$pdf->Cell(58,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
 		If ($row['classif_amb']==0){$pdf->Cell(6,6,"Nc",1);}
 		If ($row['classif_amb']==1){$pdf->Cell(6,6,"Xi",1);}
 		If ($row['classif_amb']==2){$pdf->Cell(6,6,"Xn",1);}
@@ -153,6 +154,14 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		If ($row['classif_amb']==5){$pdf->Cell(6,6,"Pa",1);}
 		$pdf->Cell(8,6,$row['unimis'],1,0,'C');
 		$pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
+		
+		if ($row['id_rif']>$row['id_mov']){
+			$acqua = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $row['id_rif'])['quanti'];
+			$pdf->Cell(12,6,"l ".gaz_format_quantity($acqua,1,$admin_aziend['decimal_quantity']),1);
+		} else {
+			$pdf->Cell(12,6,"",1);
+		}
+		
 		$res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
 		$pdf->Cell(30,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
 	

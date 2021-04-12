@@ -61,10 +61,11 @@ if (isset($_GET['all'])) {
 		
 	$where = implode(" AND ", $implode);
 }
+// escludo i movimenti Acqua dal report
 if (strlen($where)>1){
-	$where=$where." AND type_mov = '1' ";
+	$where=$where." AND type_mov = '1' AND ". $gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov";
 } else {
-	$where=" type_mov = '1' ";
+	$where=" type_mov = '1' AND ". $gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov";
 }
 
 if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
@@ -141,7 +142,7 @@ $(function() {
 					<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" tabindex="1" class="FacetInput">
 				</td>
 				<td class="FacetFieldCaptionTD"></td>
-				
+				<td class="FacetFieldCaptionTD"></td>
 				<td class="FacetFieldCaptionTD">
 					<input type="text" name="avversita" placeholder="<?php echo "ID ",$script_transl[7];?>" class="input-sm form-control" value="<?php echo (isset($avversita))? $avversita : ""; ?>" maxlength="15" tabindex="1" class="FacetInput">
 				</td>
@@ -154,9 +155,11 @@ $(function() {
 <?php
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
          LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['campi'].".codice)
+		 LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)
 		 LEFT JOIN ".$gTables['camp_colture']." ON (".$gTables['movmag'].".id_colture = ".$gTables['camp_colture'].".id_colt)
          LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";  
-		 $result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['camp_colture'].".nome_colt, ".$gTables['campi'].".ricarico AS superf, ".$gTables['campi'].".descri AS descamp, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);// acquisisco solo i movimenti con type_mov=1, cioè generati dal modulo di campagna
+		 $result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['camp_colture'].".nome_colt, ".$gTables['campi'].".ricarico AS superf, ".$gTables['campi'].".descri AS descamp, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata, " .$gTables['artico'].".unimis, " .$gTables['artico'].".mostra_qdc"
+		 , $table, $where, $orderby, $limit, $passo);// acquisisco solo i movimenti con type_mov=1, cioè generati dal modulo di campagna
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
             "n.ID" => "id_mov",
@@ -168,6 +171,7 @@ $headers_mov = array  (
 			$script_transl[13] => "",
             $script_transl[5] => "artico",
             $script_transl[6] => "",
+			$script_transl[17] => "",
             $script_transl[7] => "",
 			$script_transl[8] => "",
 			$script_transl[16] => "",
@@ -185,23 +189,19 @@ $tot_movimenti = 0;
 /** ENRICO FEDELE */
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    $partner = $anagrafica->getPartner($a_row["clfoco"]);
-    $title =  $partner['ragso1']." ".$partner['ragso2'];
-    $valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
-    $valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
-	// antonio Germani acquisisco unità di misura e mostra_qdc dall'articolo	
-	$unires= gaz_dbi_dyn_query("*", $gTables['artico']);
-	while ($unirow = gaz_dbi_fetch_array($unires)) {    
-		if ($a_row["artico"] == $unirow['codice']) {
-			$unimis = $unirow['unimis'];$mostra_qdc=$unirow['mostra_qdc'];
+	
+		$partner = $anagrafica->getPartner($a_row['clfoco']);
+		$title =  $partner['ragso1']." ".$partner['ragso2'];
+		$valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
+		$valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
+		$mostra_qdc=$a_row["mostra_qdc"];
+		if ($a_row["id_rif"] !== $a_row["id_mov"]){ // se il movimento è connesso con un rigo acqua, carico il rigo acqua
+			$acqua = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $a_row['id_rif'])['quanti'];
+		} else {
+			$acqua="";
 		}
-	}
-	// fine acquisisco
-
-		echo "<tr>\n";
-		
+		echo "<tr>\n";		
 		echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"camp_admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
-		
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datdoc"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
@@ -210,20 +210,14 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['campo_coltivazione']." - ".$a_row['descamp']." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$a_row["superf"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['id_colture']." - ".$a_row["nome_colt"]." &nbsp;</td>\n";
-			 
-		// fine inserisco colonna campi di coltivazione
-		/* Antonio germani reperisco unità di misura dell'articolo 
-		$unires= gaz_dbi_dyn_query("*", $gTables['artico']);
-		while ($unirow = gaz_dbi_fetch_array($unires)) {
-    
-			if ($a_row["artico"] == $unirow['codice']) {
-				$unimis = $unirow['unimis'];
-			}
-		}
-		/* fine reperisco unità di misura */	
-	
+					
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["artico"]." &nbsp;</td>\n";
-		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])." ".$unimis."</td>\n";
+		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])." ".$a_row["unimis"]."</td>\n";
+		if ($acqua>0){
+			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($acqua,1,$admin_aziend['decimal_quantity'])." l</td>\n";
+		} else {
+			echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";
+		}
 		$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avversita']);
 		echo "<td class=\"FacetDataTD\" align=\"left\">".$a_row['id_avversita']." - ".$res["nome_avv"]." </td>\n";
 	
