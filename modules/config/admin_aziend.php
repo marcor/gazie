@@ -181,20 +181,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 					foreach($dim as $d){
 						$percent=$sqr/$d;
 						$new_img = imagecreatetruecolor($d,$d);
-						$transp = imagecolorallocatealpha($new_img,255,255,255,127);
-						imagefill($new_img,0,0,$transp);
-						/*
-						purtroppo se uso offset/2 perdo la trasparenza
 						imagecopyresampled($new_img,$im,$offsetX/$percent/2,$offsetY/$percent/2,0,0,$d,$d,$sqr,$sqr);
-						*/
-						imagecopyresampled($new_img,$im,$offsetX/$percent,$offsetY/$percent,0,0,$d,$d,$sqr,$sqr);
 						imagealphablending($new_img,FALSE);
 						imagesavealpha($new_img,TRUE);
+						$transp = imagecolorallocatealpha($new_img,255,255,255,127);
+						imagefill($new_img,0,0,$transp);
 						imagepng( $new_img, $path."logo_".$d."x".$d.".png",9);
 						if ($d==72){ // creo le 2 favicon a partire dalle
 							$ico_lib = new PHP_ICO($path."logo_64x64.png",array(array(32,32),array(64,64)));
 							$ico_lib->save_ico($path."favicon.ico");
-							//imagegif( $new_img, $path."logo_".$d."x".$d.".gif",9);
 						}
 						imagedestroy( $new_img );
 					}

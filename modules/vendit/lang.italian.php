@@ -156,6 +156,13 @@ $strScript = array("admin_client.php" =>
         'title' => 'Gestione degli Agenti di vendita',
         'ins_this' => 'Inserisci un nuovo agente di vendita',
         "Lista Clienti",
+        'search_partner' => array('La ricerca non ha dato risultati',
+          'Inserire almeno 2 caratteri',
+          'Cambia cliente',
+          'Scegli un cliente',
+          ' C.F.:',
+          'Anonimo'
+        )
     ),
     "select_provvigioni.php" =>
     array("Selezione per Stampa lista Provvigioni",

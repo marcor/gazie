@@ -50,26 +50,19 @@ if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si dovrebbe fare un parsing di quanto arriva dal browser... o altro;-)
     $form['id_agente'] = intval($_POST['id_agente']);
-    if (isset($_POST['cerca_fornitore'])){
-       $form['cerca_fornitore'] = $_POST['cerca_fornitore'];
-    }
-    $form['id_fornitore'] = intval($_POST['id_fornitore']);
+    $form['clfoco'] = substr($_POST['clfoco'],0,12);
     $form['base_percent'] = floatval(preg_replace("/\,/",'.',$_POST['base_percent']));
     $anagrafica = new Anagrafica();
-    $fornitore = $anagrafica->getPartner($form['id_fornitore']);
-    //--- variabili temporanee
-    if (isset($_POST['newfornitore'])) {
-            $anagrafica = new Anagrafica();
-            $fornitore = $anagrafica->getPartner($form['id_fornitore']);
-            $form['cerca_fornitore'] = substr($fornitore['ragso1'],0,4);
-            $form['id_fornitore'] = 0;
-    }
+    $fornitore = $anagrafica->getPartner($form['clfoco']);
     // inizio rigo di input
     $form['in_cod_articolo'] = substr($_POST['in_cod_articolo'],0,15);
     $form['in_cod_catmer'] = intval($_POST['in_cod_catmer']);
     $form['in_percentuale'] = floatval(preg_replace("/\,/",'.',$_POST['in_percentuale']));
     $form['in_status'] = $_POST['in_status'];
     $form['cosear'] = $_POST['cosear'];
+    foreach ($_POST['search'] as $k => $v) {
+        $form['search'][$k] = $v;
+    }
     // fine rigo input
     $form['righi'] = array();
     $next_row = 0;
@@ -103,12 +96,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $next_row++;
        }
     }
-
-  // Se viene inviata la richiesta di conferma rigo
-   	/** ENRICO FEDELE */
-	/* Con button non funziona _x */
-    //if (isset($_POST['in_submit_x'])) {
-	/** ENRICO FEDELE */
    if (isset($_POST['in_submit'])) {
    if ((!empty($form['in_cod_articolo']) || $form['in_cod_catmer'] > 0) && $form['in_percentuale'] > 0) {
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se � un rigo da modificare
@@ -138,60 +125,62 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        $msg .= "12+";
    }
   }
-
-    // Se viene inviata la richiesta di conferma totale ...
-    if (isset($_POST['ins'])) {
-//       if ($form['base_percent'] <= 0.01 )
-//          $msg .= "13+"; ci sono agenti che non prendono provvigioni, quindi questo controllo non va bene
-       if ($form['id_fornitore'] < $inifornitori || $form['id_fornitore'] > $finfornitori) {
-          $msg .= "14+";
+  // Se viene inviata la richiesta di conferma totale ...
+  if (isset($_POST['ins'])) {
+    if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
+      $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
+      $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor']);
+    }
+    $form['id_fornitore']=$form['clfoco'];
+    if ($form['clfoco'] < $inifornitori || $form['clfoco'] > $finfornitori) {
+       $msg .= "14+";
+    }
+    if ($form['id_agente'] <= 0) {
+       $msg .= "15+";
+    }
+    $fornitore_exist = gaz_dbi_get_row($gTables['agenti'],'id_fornitore',$form['clfoco']);
+    if (!empty($fornitore_exist) && $fornitore_exist['id_agente'] != $form['id_agente']) { // il fornitore � gi� un agente (ma non ha lo stesso id)
+          $msg .= "16+";
+    }
+    if ($toDo == 'insert') {
+       $agente_exist = gaz_dbi_get_row($gTables['agenti'],'id_agente',$form['id_agente']);
+       if (!empty($agente_exist)) { // esiste un agente con lo stesso codice
+          $msg .= "17+";
        }
-       if ($form['id_agente'] <= 0) {
-          $msg .= "15+";
-       }
-       $fornitore_exist = gaz_dbi_get_row($gTables['agenti'],'id_fornitore',$form['id_fornitore']);
-       if (!empty($fornitore_exist) && $fornitore_exist['id_agente'] != $form['id_agente']) { // il fornitore � gi� un agente (ma non ha lo stesso id)
-             $msg .= "16+";
-       }
-       if ($toDo == 'insert') {
-          $agente_exist = gaz_dbi_get_row($gTables['agenti'],'id_agente',$form['id_agente']);
-          if (!empty($agente_exist)) { // esiste un agente con lo stesso codice
-             $msg .= "17+";
-          }
-       }
-       if ($msg == "") {// nessun errore
-             if ($toDo == 'update') { // e' una modifica
-                $old_rows = gaz_dbi_dyn_query("*", $gTables['provvigioni'], "id_agente = ".$form['id_agente'],"id_provvigione asc");
-                $i=0;
-                $count = count($form['righi'])-1;
-                while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
-                   if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
-                      $form['righi'][$i]['id_agente'] = $form['id_agente'];
-                      provvigioniUpdate(array('id_provvigione',$val_old_row['id_provvigione']),$form['righi'][$i]);
-                   } else { //altrimenti lo elimino
-                      gaz_dbi_del_row($gTables['provvigioni'], 'id_provvigione', $val_old_row['id_provvigione']);
-                   }
-                   $i++;
-                }
-                //qualora i nuovi righi fossero di pi� dei vecchi inserisco l'eccedenza
-                for ($i = $i; $i <= $count; $i++) {
-                    $form['righi'][$i]['id_agente'] = $form['id_agente'];
-                    provvigioniInsert($form['righi'][$i]);
-                }
-                //modifico la testata con i nuovi dati...
-                agentiUpdate(array('id_agente',$form['id_agente']),$form);
-                header("Location: ".$form['ritorno']);
-                exit;
-             } else { // e' un'inserimento
-                agentiInsert(array('id_agente',$form['id_agente']),$form);
-                foreach ($form['righi'] as $i => $value) {
-                   $form['righi'][$i]['id_agente'] = $form['id_agente'];
-                   provvigioniInsert($form['righi'][$i]);
-                }
-                header("Location: ".$form['ritorno']);
-                exit;
-             }
-          }
+    }
+    if ($msg == "") {// nessun errore
+      if ($toDo == 'update') { // e' una modifica
+         $old_rows = gaz_dbi_dyn_query("*", $gTables['provvigioni'], "id_agente = ".$form['id_agente'],"id_provvigione asc");
+         $i=0;
+         $count = count($form['righi'])-1;
+         while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
+            if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
+               $form['righi'][$i]['id_agente'] = $form['id_agente'];
+               provvigioniUpdate(array('id_provvigione',$val_old_row['id_provvigione']),$form['righi'][$i]);
+            } else { //altrimenti lo elimino
+               gaz_dbi_del_row($gTables['provvigioni'], 'id_provvigione', $val_old_row['id_provvigione']);
+            }
+            $i++;
+         }
+         //qualora i nuovi righi fossero di pi� dei vecchi inserisco l'eccedenza
+         for ($i = $i; $i <= $count; $i++) {
+             $form['righi'][$i]['id_agente'] = $form['id_agente'];
+             provvigioniInsert($form['righi'][$i]);
+         }
+         //modifico la testata con i nuovi dati...
+         agentiUpdate(array('id_agente',$form['id_agente']),$form);
+         header("Location: ".$form['ritorno']);
+         exit;
+      } else { // e' un'inserimento
+         agentiInsert(array('id_agente',$form['id_agente']),$form);
+         foreach ($form['righi'] as $i => $value) {
+            $form['righi'][$i]['id_agente'] = $form['id_agente'];
+            provvigioniInsert($form['righi'][$i]);
+         }
+         header("Location: ".$form['ritorno']);
+         exit;
+      }
+    }
   }
 
   // Se viene inviata la richiesta elimina il rigo corrispondente
@@ -217,17 +206,17 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['righi'] = array();
     // ...e della testata
     $form['id_agente'] = $agenti['id_agente'];
-    $form['cerca_fornitore'] = substr($fornitore['ragso1'],0,6);
-    $form['id_fornitore'] = $agenti['id_fornitore'];
+    $form['seach_clfoco'] = substr($fornitore['ragso1'],0,10);
+    $form['clfoco'] = $agenti['id_fornitore'];
     $form['base_percent'] = $agenti['base_percent'];
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
-         $form['righi'][$next_row]['id_provvigione'] = $rigo['id_provvigione'];
-         $form['righi'][$next_row]['cod_articolo'] = $rigo['cod_articolo'];
-         $form['righi'][$next_row]['cod_catmer'] = $rigo['cod_catmer'];
-         $form['righi'][$next_row]['percentuale'] = $rigo['percentuale'];
-         $form['righi'][$next_row]['status'] = "UPDATE";
-         $next_row++;
+      $form['righi'][$next_row]['id_provvigione'] = $rigo['id_provvigione'];
+      $form['righi'][$next_row]['cod_articolo'] = $rigo['cod_articolo'];
+      $form['righi'][$next_row]['cod_catmer'] = $rigo['cod_catmer'];
+      $form['righi'][$next_row]['percentuale'] = $rigo['percentuale'];
+      $form['righi'][$next_row]['status'] = "UPDATE";
+      $next_row++;
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['righi'] = array();
@@ -239,12 +228,13 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_status'] = "INSERT";
     // fine rigo input
     $form['cosear'] = '';
+    $form['search']['clfoco'] = '';
     $rs_ultimo_agente = gaz_dbi_dyn_query("id_agente", $gTables['agenti'], 1,"id_agente DESC",0,1);
     $ultimo_agente = gaz_dbi_fetch_array($rs_ultimo_agente);
     $form['id_agente'] = $ultimo_agente['id_agente']+1;
-    $form['id_fornitore'] = '';
+    $form['clfoco'] = '';
     $form['base_percent'] = 0;
-    $form['cerca_fornitore'] = '';
+    $form['seach_clfoco'] = '';
     $form['change_pag'] = '';
 }
 
@@ -281,20 +271,22 @@ echo "\t<input type=\"text\" name=\"id_agente\" value=\"".$form['id_agente']."\"
 echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[3] : </td><td class=\"FacetDataTD\">\n";
-$messaggio = "";
-$ric_mastro = substr($form['id_fornitore'],0,3);
-if ($form['id_fornitore'] == 0) {
+$select_fornitore = new selectPartner('clfoco');
+$select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['search_partner'], $admin_aziend['masfor']);
+/*$messaggio = "";
+$ric_mastro = substr($form['clfoco'],0,3);
+if ($form['clfoco'] == 0) {
    $tabula =" tabindex=\"1\" ";
-   if (strlen($form['cerca_fornitore']) >= 2) {
+   if (strlen($form['seach_clfoco']) >= 2) {
       $anagrafica = new Anagrafica();
-      $fornitore = $anagrafica->queryPartners("*", "(codice between '$inifornitori' and '$finfornitori' ) and ragso1 like '".addslashes($form['cerca_fornitore'])."%'", "ragso1 asc");
+      $fornitore = $anagrafica->queryPartners("*", "(codice between '$inifornitori' and '$finfornitori' ) and ragso1 like '".addslashes($form['seach_clfoco'])."%'", "ragso1 asc");
       if (sizeof($fornitore) > 0) {
          $tabula="";
-         echo "\t<select name=\"id_fornitore\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+         echo "\t<select name=\"clfoco\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
          echo "<option value=\"000000000\"> ---------- </option>";
 		 foreach ($fornitore AS $key => $row) {
            $selected = "";
-           if ($row["codice"] == $form['id_fornitore']) {
+           if ($row["codice"] == $form['clfoco']) {
                $selected = "selected";
            }
            echo "\t\t <option value=\"".$row["codice"]."\" $selected >".$row["ragso1"]."&nbsp;".$row["citspe"]."</option>\n";
@@ -302,25 +294,22 @@ if ($form['id_fornitore'] == 0) {
          echo "\t </select>\n";
       } else {
       $messaggio = "Non &egrave; stato trovato nulla";
-      echo "\t<input type=\"hidden\" name=\"id_fornitore\" value=\"".$form['id_fornitore']."\">\n";
+      echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"".$form['clfoco']."\">\n";
       }
    } else {
       $messaggio = "Inserire min. 2 caratteri";
-      echo "\t<input type=\"hidden\" name=\"id_fornitore\" value=\"".$form['id_fornitore']."\">\n";
+      echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"".$form['clfoco']."\">\n";
    }
-   echo "\t<input type=\"text\" name=\"cerca_fornitore\" accesskey=\"e\" value=\"".$form['cerca_fornitore']."\" maxlength=\"15\"  class=\"FacetInput\">\n";
+   echo "\t<input type=\"text\" name=\"seach_clfoco\" accesskey=\"e\" value=\"".$form['seach_clfoco']."\" maxlength=\"15\"  class=\"FacetInput\">\n";
    echo $messaggio;
    //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
-   /** ENRICO FEDELE */
-   /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
    echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
-   /** ENRICO FEDELE */
 } else {
    $anagrafica = new Anagrafica();
-   $fornitore = $anagrafica->getPartner($form['id_fornitore']);
+   $fornitore = $anagrafica->getPartner($form['clfoco']);
    echo "<input type=\"submit\" value=\"".$fornitore['ragso1'].' '.$fornitore['ragso2']."\" name=\"newfornitore\" title=\" Modifica \">\n";
-   echo "\t<input type=\"hidden\" name=\"id_fornitore\" value=\"".$form['id_fornitore']."\">\n";
-}
+   echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"".$form['clfoco']."\">\n";
+}*/
 echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6] : </td><td class=\"FacetDataTD\">\n";
