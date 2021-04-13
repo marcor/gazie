@@ -239,7 +239,11 @@ if (isset($_POST['preview']) and $msg=='') {
 			echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
 			$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $mv['id_avversita']);
 			echo "<td class=\"FacetDataTD\" align=\"right\">".$res['nome_avv']." </td>\n";
-			echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['adminid']." </td>\n";
+			if ($mv['clfoco']>0){
+				echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['ragsoc']." </td>\n";
+			} else {
+				echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['adminid']." </td>\n";
+			}
 			echo "</tr>\n";
 			$ctr_mv = $mv['artico'];
 		

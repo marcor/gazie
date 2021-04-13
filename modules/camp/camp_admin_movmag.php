@@ -135,7 +135,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['clfocoin'] = $result['clfoco'];
     $result2 = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $result['clfoco']);
     $form['staff'][$form['mov']] = $result2['id_staff'];
-    $form['adminid'] = $result['adminid'];
+    
+	if (intval($result['clfoco'])>0){
+		$form['adminname'] = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['adminid'])['descri'];
+		$form['adminid'] = $result['clfoco'];
+	} else {
+		$form['adminname'] = $admin_aziend['user_lastname'];
+		$form['adminid'] = $result['adminid'];
+	}
     $form['id_orderman'] = intval($result['id_orderman']);
     $resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
     If ($form['id_orderman'] > 0) {
@@ -193,6 +200,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['search_item'] = "";
 	
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {    //     ****    SE NON E' IL PRIMO ACCESSO   ****
+
 	$form['mov'] = $_POST['mov'];
 	$form['nmov'] = $_POST['nmov'];
 	if ($form['nmov']==$form['mov']){		
@@ -291,7 +299,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	if ($form['ncamp']==0){
 		$form['ncamp']=1;
 	}
-    $form['adminid'] = "Utente connesso";
+    $form['adminid'] = $_POST['adminid'];
+	if (intval($form['adminid'])>0){
+		$form['adminname'] = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['adminid'])['descri'];
+	} else {
+		$form['adminname'] = gaz_dbi_get_row($gTables['admin'], "user_name", $form['adminid'])['user_lastname'];
+	}
     $form['tipdoc'] = intval($_POST['tipdoc']);
     $form['desdoc'] = substr($_POST['desdoc'], 0, 50);
     $form['giodoc'] = intval($_POST['giodoc']);
@@ -626,6 +639,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						} else {
 							$quanti=$form['quanti'][$form['mov']];
 						}
+						if ($form['adminid']>0){
+							$form['clfoco'][$form['mov']]=$form['adminid'];
+						}
 						$id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'], 0, // numdoc � in desdoc
 						0, // seziva � in desdoc
 						$form['datdoc'], $form['clfoco'][$form['mov']], $form['scochi'], $form['caumag'], $form['artico'][$form['mov']], $quanti, $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
@@ -636,13 +652,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						
 						// se è stata inserita ACQUA
 						if (!empty($form['artico2'][$form['mov']]) AND $form['quanti2'][$form['mov']]>0) { // divido l'acqua per i campi e creo movimenti di uscita acqua per ogni campo
-							
 							$quanti2=((($form['dim_campo'.$n]/$tot_sup)*100)*$form['quanti2'][$form['mov']])/100; // questa è la dose suddivisa in percentuale per il campo 
 							$id_movmag_acqua=$upd_mm->uploadMag($id_movmag, $form['tipdoc'], 0, 0, $form['datdoc'], $form['clfoco'][$form['mov']], 
 							$form['scochi'], $form['caumag'], $form['artico2'][$form['mov']], $quanti2, $form['prezzo2'][$form['mov']], 
 							$form['scorig2'][$form['mov']], $form['id_mov2'], $admin_aziend['stock_eval_method'], 
 							array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
-							// riprendo il salvataggio del movimento di magazzino in movmag con i dati mancanti del quaderno di campagna
+							// riprendo il salvataggio del movimento acqua in movmag con i dati mancanti del quaderno di campagna
 							$query = "UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 . "', id_rif = '".$id_movmag."', tipdoc = '".$form['tipdoc']."' , campo_coltivazione = '" . $form['campo_coltivazione'.$n] . "' , id_avversita = '" . $form['id_avversita'][$form['mov']] . "' , id_colture = '" . $form['id_colture'] . "' , id_orderman = '" . $form['id_orderman'] . "' , id_lotmag = '" . $form['id_lotmag'][$form['mov']] . "' WHERE id_mov ='" . $id_movmag_acqua . "'";
 							gaz_dbi_query($query);
 							$id_rif=$id_movmag_acqua;// il movmag padre avrà il riferimento del movmag acqua						
@@ -958,7 +973,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['clfocoin'] = 0;
     $form['quantiin'] = 0;
     $form['datdocin'] = "";
-    $form['adminid'] = "Utente connesso";
+    $form['adminid'] = $admin_aziend['user_name'];
+	$form['adminname']=$admin_aziend['user_lastname'];
     $form['tipdoc'] = "";
     $form['desdoc'] = "";
     $form['giodoc'] = date("d");
@@ -1957,8 +1973,39 @@ if (intval($form['nome_colt']) == 0) {
 			<td class="FacetFieldCaptionTD">
 				<?php echo $script_transl[21]; ?>
 			</td>
-			<td class="FacetDataTD" colspan="1">
-				<?php echo $form["adminid"]; ?><!-- visualizzo l'operatore -->
+			<td class="FacetDataTD" colspan="1"><!-- visualizzo l'operatore -->
+			<?php echo $form['adminid']," - ",$form['adminname']; ?>
+				<select name="adminid" onchange="this.form.submit()">
+					<?php 				
+					 $sql = gaz_dbi_dyn_query ($gTables['staff'].".*, ".$gTables['clfoco'].".descri ", 
+					 $gTables['staff']." LEFT JOIN ".$gTables['clfoco']." on (".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice)");
+					$sel=0;
+					while ($row = $sql->fetch_assoc()){ 
+						$selected = "";
+						if ($row['id_clfoco'] == $form['adminid']) {
+							$selected = "selected";
+							$sel=1;
+							
+						}
+						echo "<option ".$selected." value=\"".$row['id_clfoco']."\">" . $row['descri'] . "</option>";
+					}
+						// la selezione fra gli admin è stata limitata al solo admin loggato; se la si vuole ampliare a tutti basta togliere il where, cioè user_name= ... bisognerà però modificare la scrittura del DB: todo
+						$sql = gaz_dbi_dyn_query ($gTables['admin'].".* ", $gTables['admin'], "user_name = '".$admin_aziend['user_name']."'");
+						while ($row = $sql->fetch_assoc()){ 
+							$selected = "";
+							if ($row['user_name'] == $form['adminid'] AND $sel == 0) {
+								$selected = "selected";
+								$sel=1;								
+							}
+							echo "<option ".$selected." value=\"".$row['user_name']."\">" . $row['user_lastname'] . "</option>";
+						}
+					
+					if ($sel==0){						
+						echo "<option selected value=\"".$admin_aziend['user_name']."\">amministratore</option>";
+					} 					
+					?>				
+				</select>
+				<input type="hidden" value="<?php echo $form['adminname']; ?>" name="adminname"/>						
 			</td>
 		
 		</tr>

@@ -189,9 +189,11 @@ $tot_movimenti = 0;
 /** ENRICO FEDELE */
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-	
-		$partner = $anagrafica->getPartner($a_row['clfoco']);
-		$title =  $partner['ragso1']." ".$partner['ragso2'];
+		if ($partner = $anagrafica->getPartner($a_row['clfoco'])){ 
+		$operatore =  $partner['ragso1']." ".$partner['ragso2'];
+		} else {
+			$operatore=$a_row["adminid"];
+		}
 		$valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
 		$valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
 		$mostra_qdc=$a_row["mostra_qdc"];
@@ -234,7 +236,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			}
 		}
 	
-		echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["adminid"]." </td>\n";
+		echo "<td class=\"FacetDataTD\" align=\"right\">".$operatore." </td>\n";
 		
 		echo "<td class=\"FacetDataTD\" align=\"center\">";
 		

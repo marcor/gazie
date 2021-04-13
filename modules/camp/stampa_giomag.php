@@ -164,13 +164,16 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		
 		$res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
 		$pdf->Cell(30,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
-	
-		/* Antonio Germani - trasformo nome utente login in cognome e nome e lo stampo */	  
-		$res2 = gaz_dbi_get_row ($gTables['admin'], 'user_name', $row['adminid'] );	
-		$pdf->Cell(18,6,$res2['user_lastname']." ".$res2['user_firstname'],1, 1, 'l', 0, '', 1);
-		$colonna="1";
-		/* Antonio Germani FINE trasformo nome utente login in cognome e nome */	  
 		
+		if ($row['clfoco']>0){
+			$pdf->Cell(18,6,$row['ragsoc'],1, 1, 'l', 0, '', 1);
+		} else {
+		/* Antonio Germani - trasformo admin in cognome e nome e lo stampo */	  
+		$res2 = gaz_dbi_get_row ($gTables['admin'], 'user_name', $row['adminid'] );	
+		$pdf->Cell(18,6,$res2['user_lastname']." ".$res2['user_firstname'],1, 1, 'l', 0, '', 1);		
+		/* Antonio Germani FINE trasformo nome utente login in cognome e nome */
+		}		
+		$colonna="1";
 	}
 }
 if (sizeof($result) > 0 AND $type=="di carico") {
