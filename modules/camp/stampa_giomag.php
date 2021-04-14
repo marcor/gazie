@@ -82,7 +82,6 @@ if ($type=="di campagna"){
 	'title'=>"Registro ". $type ." dal ". strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf),
 	'hile'=>array(array('lun' => 17,'nam'=>'Data att.'),
 				 array('lun' => 35,'nam'=>'Causale'),
-				 array('lun' => 30,'nam'=>'Annotazioni'),
 				 array('lun' => 12,'nam'=>'Campo'),
 				 array('lun' => 10,'nam'=>'ha'),
 				 array('lun' => 38,'nam'=>'Coltura'),
@@ -92,7 +91,8 @@ if ($type=="di campagna"){
 				 array('lun' => 12,'nam'=>'Q.tà'),
 				 array('lun' => 12,'nam'=>'Acqua'),
 				 array('lun' => 30,'nam'=>'Avversità'),
-				 array('lun' => 18,'nam'=>'Operat.')
+				 array('lun' => 18,'nam'=>'Operat.'),
+				 array('lun' => 30,'nam'=>'Annotazioni')
 				)
 	);
 } else {
@@ -130,10 +130,7 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		$movQuanti = $row['quanti']*$row['operat'];
 		$pdf->Cell(17,6,$datadoc,1,0,'C');
 		$pdf->Cell(35,6,$row['descri'],1, 0, 'l', 0, '', 1);
-		if ($row['perc_N']>0){
-			$row['desdoc']="NPK=".intval($row['perc_N'])."-".intval($row['perc_P'])."-".intval($row['perc_K'])." ".$row['desdoc'];
-		}
-		$pdf->Cell(30,6,$row['desdoc'],1, 0, 'l', 0, '', 1);
+		
 		if ($res['zona_vulnerabile']==0){
 			$pdf->Cell(12,6,substr($row['campo_coltivazione'],0,5),1);
 		} else {
@@ -166,13 +163,18 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		$pdf->Cell(30,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
 		
 		if ($row['clfoco']>0){
-			$pdf->Cell(18,6,$row['ragsoc'],1, 1, 'l', 0, '', 1);
+			$pdf->Cell(18,6,$row['ragsoc'],1, 0, 'l', 0, '', 1);
 		} else {
 		/* Antonio Germani - trasformo admin in cognome e nome e lo stampo */	  
 		$res2 = gaz_dbi_get_row ($gTables['admin'], 'user_name', $row['adminid'] );	
-		$pdf->Cell(18,6,$res2['user_lastname']." ".$res2['user_firstname'],1, 1, 'l', 0, '', 1);		
+		$pdf->Cell(18,6,$res2['user_lastname']." ".$res2['user_firstname'],1, 0, 'l', 0, '', 1);		
 		/* Antonio Germani FINE trasformo nome utente login in cognome e nome */
-		}		
+		}
+		if ($row['perc_N']>0){
+			$row['desdoc']="NPK=".intval($row['perc_N'])."-".intval($row['perc_P'])."-".intval($row['perc_K'])." ".$row['desdoc'];
+		}
+		$pdf->Cell(30,6,$row['desdoc'],1, 1, 'l', 0, '', 1);
+		
 		$colonna="1";
 	}
 }

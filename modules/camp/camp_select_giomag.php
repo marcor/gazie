@@ -212,8 +212,7 @@ if (isset($_POST['preview']) and $msg=='') {
 			$sum += $movQuanti;
 			echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
 			echo "<td  align=\"center\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
-			echo "<td class=\"FacetDataTD\">".$mv['desdoc']." &nbsp;</td>";
-			
+						
 			// Antonio Germani Inserisco campo, superficie e coltura		
 			echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." &nbsp;</td>";
 			$colonna="0";
@@ -244,6 +243,7 @@ if (isset($_POST['preview']) and $msg=='') {
 			} else {
 				echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['adminid']." </td>\n";
 			}
+			echo "<td class=\"FacetDataTD\">".$mv['desdoc']." &nbsp;</td>";
 			echo "</tr>\n";
 			$ctr_mv = $mv['artico'];
 		

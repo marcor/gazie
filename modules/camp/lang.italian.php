@@ -308,8 +308,8 @@ $strScript = array("camp_browse_document.php" =>
         'date' => 'Data di stampa ',
         'date_ini' => 'Data registrazione inizio  ',
         'date_fin' => 'Data registrazione fine ',
-        'header' => array('Data' => '', 'Causale' => '', 'Annotazioni' => '',
-            'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '', 'Classe' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Avversit&agrave;' => '','Operatore' => ''
+        'header' => array('Data' => '', 'Causale' => '', 'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '', 
+		'Classe' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Avversit&agrave;' => '','Operatore' => '', 'Annotazioni' => ''
         )
     ),
 	"select_dichiar_rame.php" =>
