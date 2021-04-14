@@ -28,18 +28,18 @@ $admin_aziend = checkAdmin();
 $msg = "";
 
 function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
-    global $gTables;
+    global $gTables, $admin_aziend;
     if ($account_ini == $account_fin || $account_fin == 0) { // i conti coincidono
         if ($account_fin == 0) {
             $account_fin = $account_ini;
         }
         $where = " codcon = $account_ini AND datreg BETWEEN $date_ini AND $date_fin";
         $orderby = " datreg, id_tes ASC ";
-        $select = $gTables['tesmov'] . ".id_tes," . $gTables['tesmov'] . ".descri AS tesdes,datreg,codice,protoc,numdoc,datdoc," . $gTables['clfoco'] . ".descri,import*(darave='D') AS dare,import*(darave='A') AS avere";
+        $select = $gTables['tesmov'] . ".id_tes," .$gTables['tesmov'] . ".caucon," .$gTables['tesmov'] . ".clfoco AS codpart," . $gTables['tesmov'] . ".descri AS tesdes,datreg,codice,protoc,numdoc,datdoc," . $gTables['clfoco'] . ".descri,import*(darave='D') AS dare,import*(darave='A') AS avere";
     } else {
         $where = $gTables['clfoco'] . ".codice BETWEEN $account_ini AND $account_fin AND datreg BETWEEN $date_ini AND $date_fin GROUP BY " . $gTables['clfoco'] . ".codice";
         $orderby = " codice ASC ";
-        $select = $gTables['tesmov'] . ".id_tes," . "codice," . $gTables['clfoco'] . ".descri AS tesdes, COUNT(id_rig) AS `rows`, SUM(import*(darave='D')) AS dare, SUM(import*(darave='A')) AS avere";
+        $select = $gTables['tesmov'] . ".id_tes,".$gTables['tesmov'] . ".clfoco AS codpart," . "codice," . $gTables['clfoco'] . ".descri AS tesdes, COUNT(id_rig) AS `rows`, SUM(import*(darave='D')) AS dare, SUM(import*(darave='A')) AS avere";
     }
     $table = $gTables['clfoco'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON " . $gTables['clfoco'] . ".codice = " . $gTables['rigmoc'] . ".codcon "
             . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes ";
@@ -54,12 +54,22 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
             $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $r["id_tes"], 'id_rig');
             $r['tt'] = '<table><th colspan=3 >' . $r['tesdes'] . '</th>';
             $tot = 0.00;
+            $refclfoco=0;
             while ($rr = gaz_dbi_fetch_array($res_rig)) {
-                $account = $anagrafica->getPartner($rr["codcon"]);
-                $r['tt'] .= '<tr><td>' . htmlspecialchars($account['descri']) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
-                if ($rr['darave'] == 'D') {
-                    $tot += $rr['import'];
+              $account = $anagrafica->getPartner($rr["codcon"]);
+              $r['tt'] .= '<tr><td>' . htmlspecialchars($account['descri']) . ' </td><td align=right> ' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
+              if ($rr['darave'] == 'D') {
+                  $tot += $rr['import'];
+              }
+              // faccio l'upload di tesmov quando incontro un rigo con testata senza riferimento al partner pur avendo un rigo con un cliente o fornitore 
+              if ($r['codpart']==0 && (substr($rr['codcon'],0,3) == $admin_aziend['mascli'] || substr($rr['codcon'],0,3) == $admin_aziend['masfor'] )){
+                if ( $refclfoco == 0 ) { 
+                  gaz_dbi_query("UPDATE ".$gTables['tesmov']." SET clfoco = ".$rr['codcon']." WHERE id_tes = ".$r['id_tes']);
+                } elseif ( $refclfoco  != $rr['codcon'] ) { // se ho troppi partner non posso riferirli
+                  gaz_dbi_query("UPDATE ".$gTables['tesmov']." SET clfoco = 0 WHERE id_tes = ".$r['id_tes']);
                 }
+                $refclfoco=$rr['codcon'];
+              }
             }
             $r['tt'] .= '</table>';
             // FINE creazione tabella per il tooltip
