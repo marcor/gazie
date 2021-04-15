@@ -745,6 +745,7 @@ select: function(event, ui) {
 									<option <?php if($form['unimis'] == 'h'){echo("selected");}?>>h</option>
 									<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
 									<option <?php if($form['unimis'] == 'ha'){echo("selected");}?>>ha</option>
+									<option <?php if($form['unimis'] == 'l'){echo("selected");}?>>l</option>
 								</select>
 						<?php } ?>
 						</div>

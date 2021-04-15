@@ -88,9 +88,9 @@ if ($type=="di campagna"){
 				 array('lun' => 58,'nam'=>'Prodotto'),
 				 array('lun' => 6,'nam'=>'Cl.'),
 				 array('lun' => 8,'nam'=>'U.M.'),
-				 array('lun' => 12,'nam'=>'Q.tà'),
-				 array('lun' => 12,'nam'=>'Acqua'),
-				 array('lun' => 30,'nam'=>'Avversità'),
+				 array('lun' => 13,'nam'=>'Q.tà'),
+				 array('lun' => 13,'nam'=>'Acqua'),
+				 array('lun' => 28,'nam'=>'Avversità'),
 				 array('lun' => 18,'nam'=>'Operat.'),
 				 array('lun' => 30,'nam'=>'Annotazioni')
 				)
@@ -150,17 +150,20 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		If ($row['classif_amb']==4){$pdf->Cell(6,6,"T+",1);}
 		If ($row['classif_amb']==5){$pdf->Cell(6,6,"Pa",1);}
 		$pdf->Cell(8,6,$row['unimis'],1,0,'C');
-		$pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
+		$pdf->Cell(13,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
 		
 		if ($row['id_rif']>$row['id_mov']){
-			$acqua = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $row['id_rif'])['quanti'];
-			$pdf->Cell(12,6,"l ".gaz_format_quantity($acqua,1,$admin_aziend['decimal_quantity']),1);
+			
+			$acqua = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $row['id_rif']);
+			$unimis_acqua = gaz_dbi_get_row($gTables['artico'], 'codice', $acqua['artico'])['unimis'];
+			
+			$pdf->Cell(13,6,$unimis_acqua. " ".gaz_format_quantity($acqua['quanti'],1,$admin_aziend['decimal_quantity']),1);
 		} else {
-			$pdf->Cell(12,6,"",1);
+			$pdf->Cell(13,6,"",1);
 		}
 		
 		$res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
-		$pdf->Cell(30,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
+		$pdf->Cell(28,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
 		
 		if ($row['clfoco']>0){
 			$pdf->Cell(18,6,$row['ragsoc'],1, 0, 'l', 0, '', 1);

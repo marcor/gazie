@@ -197,10 +197,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		$valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
 		$valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
 		$mostra_qdc=$a_row["mostra_qdc"];
-		if ($a_row["id_rif"] !== $a_row["id_mov"]){ // se il movimento è connesso con un rigo acqua, carico il rigo acqua
-			$acqua = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $a_row['id_rif'])['quanti'];
+		if ($a_row["id_rif"] !== $a_row["id_mov"]){ // se il movimento è connesso con un rigo acqua, carico il movmag rigo acqua
+			$acqua = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $a_row['id_rif']);
+			$unimis_acqua = gaz_dbi_get_row($gTables['artico'], 'codice', $acqua['artico'])['unimis'];
 		} else {
-			$acqua="";
+			$acqua['quanti']="";
+			$unimis_acqua="";
 		}
 		echo "<tr>\n";		
 		echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"camp_admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit text-success\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
@@ -215,8 +217,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 					
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["artico"]." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])." ".$a_row["unimis"]."</td>\n";
-		if ($acqua>0){
-			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($acqua,1,$admin_aziend['decimal_quantity'])." l</td>\n";
+		if ($acqua['quanti']>0){
+			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($acqua['quanti'],1,$admin_aziend['decimal_quantity'])." ". $unimis_acqua ."</td>\n";
 		} else {
 			echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";
 		}
