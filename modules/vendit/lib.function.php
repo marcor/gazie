@@ -384,7 +384,7 @@ class lotmag {
 // restituisce tutti i lotti non completamente venduti ordinandoli in base alla configurazione aziendale (FIFO o LIFO)
 // e propone una ripartizione, se viene passato un movimento di magazzino questo verrà escluso perché si suppone sia lo stesso
 // che si sta modificando
-// Antonio Germani - si escludono dal conteggio tutti gli inventari: caumag 99
+// Antonio Germani - si escludono dal conteggio tutti gli inventari: caumag 98 e 99. Gli inventari non hanno lotti, quindi bisogna analizzare sempre tutto il database.
       global $gTables, $admin_aziend;
       $ob = ' ASC'; // FIFO-PWM-STANDARD (First In First Out)
       if ($admin_aziend['stock_eval_method'] == 2) {
@@ -395,9 +395,11 @@ class lotmag {
 		$add_where=$gTables['movmag'] . ".datreg < '". $date ."' AND "; 
 	  }
 		  
-      $sqlquery = "SELECT *, SUM(quanti*operat) AS rest FROM " . $gTables['movmag'] . "
-            LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_mov =" . $gTables['lotmag'] . ".id_movmag  
-            WHERE ". $add_where . $gTables['movmag'] . ".artico = '" . $codart . "' AND id_mov <> '" . $excluded_movmag . "' AND caumag < '99' GROUP BY " . $gTables['movmag'] . ".id_lotmag ORDER BY " . $gTables['lotmag'] . ".expiry" . $ob .", ". $gTables['lotmag'] . ".identifier" . $ob;
+      $sqlquery = "SELECT *, SUM(CASE WHEN caumag < 98 THEN (quanti*operat) ELSE 0 END)AS rest FROM " . $gTables['movmag'] . "
+            LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_mov =" . $gTables['lotmag'] . ".id_movmag
+            WHERE ". $add_where . "artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " 
+			GROUP BY " . $gTables['movmag'] . ".id_lotmag 
+			ORDER BY " . $gTables['lotmag'] .".expiry" . $ob .", ". $gTables['lotmag'] . ".identifier" . $ob;
       $result = gaz_dbi_query($sqlquery);
       $acc = array();
       $rs = false;
