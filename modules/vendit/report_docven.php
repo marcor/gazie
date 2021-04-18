@@ -599,26 +599,31 @@ if ( $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_st
 </form>
 
 <script>
- $(document).ready(function(){
-     var selects = $("select");
-     // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
-     // (in questo modo i campi non usati possono essere esclusi)        
-     $("option", selects).filter(function(){ return this.value == "All"; }).val("");
-     
-     // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
-     // l'azione non lancia un evento "submit" e non può essere intercettata.
-     // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
-     selects.attr('onchange', null).change(function() { $(this.form).submit(); });
-     
-     // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
-     $("form").submit(function() {
-         $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
-         return true; // ensure form still submits
-     });
-     
-     // Un-disable form fields when page loads, in case they click back after submission
-     $( "form" ).find( ":input" ).prop( "disabled", false );
- });
+$(document).ready(function(){
+  var selects = $("select");
+  // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
+  // (in questo modo i campi non usati possono essere esclusi)        
+  $("option", selects).filter(function(){ return this.value == "All"; }).val("");
+  
+  // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
+  // l'azione non lancia un evento "submit" e non può essere intercettata.
+  // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
+  selects.attr('onchange', null).change(function() { $(this.form).submit(); });
+  
+  // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
+  $("form").submit(function() {
+      $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+      return true; // ensure form still submits
+  });
+  
+  // Un-disable form fields when page loads, in case they click back after submission
+  $( "form" ).find( ":input" ).prop( "disabled", false );
+  var _sezi = $("select[name='sezione'] option:selected").text();
+  $.each(['FAI','FNC','FND','FAP'], function( i, v ) {
+    var _href = $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href');
+    $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href', _href + '&seziva=' + _sezi);  
+  });
+});
 </script>
 
 <?php

@@ -473,6 +473,16 @@ $(function() {
         </table>
     </div>
 </form>
+<script>
+$(document).ready(function(){
+  var _sezi = $("select[name='auxil'] option:selected").text();
+  $.each(['DDT','CMR'], function( i, v ) {
+    var _href = $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href');
+    $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href', _href + '&seziva=' + _sezi);  
+  });
+});
+</script>
+
 <?php
 require("../../library/include/footer.php");
 ?>
