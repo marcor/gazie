@@ -82,7 +82,7 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
             }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri,' - ',barcode,' - ',codice_fornitore) AS label, codice AS value, movimentabile", $gTables['artico'], $like, "CASE movimentabile WHEN 'N' THEN 'z' WHEN 'E' THEN 'm' ELSE 'a' END ASC , catmer ASC, codice ASC");
+            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri,' - ',barcode,' - ',codice_fornitore) AS label, codice AS value, movimentabile", $gTables['artico'], $like, "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC , catmer ASC, codice ASC");
             break;
 		case 'order':
             $fields = array("numdoc", "descri"); //	Sono i campi sui quali effettuare la ricerca
@@ -172,10 +172,10 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
             $result = gaz_dbi_dyn_query("codice AS id, CONCAT('Ultimo:',codice) AS label, codice AS value, movimentabile", $gTables['artico'], "codice LIKE '".$term."%'", "codice DESC", 0,1);
             break;
         case 'suggest_descri_artico':
-            $result = gaz_dbi_dyn_query("descri AS id, CONCAT(codice,' - ',descri) AS label, descri AS value, movimentabile", $gTables['artico'], "descri LIKE '%".$term."%'", "codice DESC");
+            $result = gaz_dbi_dyn_query("descri AS id, CONCAT(codice,' - ',descri) AS label, descri AS value, movimentabile", $gTables['artico'], "descri LIKE '%".$term."%'", "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC, codice ASC");
             break;
         case 'suggest_codice_artico':
-            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri) AS label, codice AS value, movimentabile", $gTables['artico'], "codice LIKE '%".$term."%'", "codice DESC");
+            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri) AS label, codice AS value, movimentabile", $gTables['artico'], "codice LIKE '%".$term."%'", "CASE movimentabile WHEN 'N' THEN 2 WHEN 'E' THEN 1 WHEN 'S' THEN 0 END ASC, codice ASC");
             break;
 		default:
             $fields = array("ragso1", "ragso2");    //	Sono i campi sui quali effettuare la ricerca
@@ -215,8 +215,14 @@ function apply_evidenze($evidenza)
 	$rows = count($evidenza);
 
     for ($row = 0; $row < $rows; $row++) {
-					if ($evidenza[$row]["movimentabile"] == 'E') $evidenza[$row]["label"] = '<mark style="background-color:#FFA500;">' . $evidenza[$row]["label"] . '</mark>';
-				//	if ($evidenza[$row]["movimentabile"] == 'N')  - da completare - bisogna disabilitare gli articoli non movimentabili
+		switch ($evidenza[$row]["movimentabile"]) {
+        case 'E':
+			$evidenza[$row]["label"] = '<mark style="background-color:#FFA500;">' . $evidenza[$row]["label"] . '</mark>';
+		break;
+        case 'N':
+			$evidenza[$row]["label"] = '<mark style="background-color:#FD3030;">' . $evidenza[$row]["label"] . '</mark>';
+		break;
+		}
 	}
 
 	return $evidenza;
