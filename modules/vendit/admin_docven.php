@@ -34,61 +34,32 @@ $docOperat = $upd_mm->getOperators();
 $lm = new lotmag;
 function getFAIseziva($tipdoc) {
     global $admin_aziend, $gTables, $auxil;
-    if ($tipdoc == 'FAI'||$tipdoc == 'FAA'||$tipdoc == 'FAF') { // se è una fattura immediata
+    if ($tipdoc == 'FAI'||$tipdoc == 'FAA'||$tipdoc == 'FAF'||$tipdoc == 'FAP') { // se è una fattura immediata
         switch ($admin_aziend['fatimm']) {
-            case "1":
-                $si = 1;
-                break;
-            case "2":
-                $si = 2;
-                break;
-            case "3":
-                $si = 3;
-                break;
-            case "4":
-                $si = 4;
-                break;
-            case "5":
-                $si = 5;
-                break;
-            case "6":
-                $si = 6;
-                break;
-            case "7":
-                $si = 7;
-                break;
-            case "8":
-                $si = 8;
-                break;
-            case "9":
-                $si = 9;
-                break;
+            case 1:
+            case 2:
+            case 3:
+                $si = $admin_aziend['fatimm'];
+            break;
             case "R":
-                $si = substr($auxil, 0, 1);
-                break;
+                $si = (isset($_GET['seziva']) && $_GET['seziva'] >= 1 && $_GET['seziva'] <= 3 )? $_GET['seziva'] : 1;
+            break;
             case "U":
                 $rs_ultimo = gaz_dbi_dyn_query("seziva", $gTables['tesdoc'], "tipdoc = '" . $tipdoc . "'", "datfat desc", 0, 1);
                 $ultimo = gaz_dbi_fetch_array($rs_ultimo);
-                if ($ultimo) {
-                    $si = $ultimo['seziva'];
-                } else {
-                    $si = 1;
-                }
-                break;
+                $si = ($ultimo)? $ultimo['seziva']:1;
+            break;
             default:
                 $si = 1;
         }
-    } else { // per gli altri documenti mi baso sull'ultimo
-        if ($tipdoc == 'DDT' || $tipdoc == 'DDV') {
+    } else { // per gli altri documenti mi baso su quello passato da url o eventualmente sull'ultimo
+        if ($tipdoc == 'DDT' || $tipdoc == 'DDV' || $tipdoc == 'CMR') {
             $tipdoc .= "' OR tipdoc ='FAD";
         }
-        $rs_ultimo = gaz_dbi_dyn_query("seziva", $gTables['tesdoc'], "tipdoc = '" . $tipdoc . "'", "datfat desc", 0, 1);
+        $rs_ultimo = gaz_dbi_dyn_query("seziva", $gTables['tesdoc'], "tipdoc = '" . $tipdoc . "'", "datfat DESC", 0, 1);
         $ultimo = gaz_dbi_fetch_array($rs_ultimo);
-        if ($ultimo) {
-            $si = $ultimo['seziva'];
-        } else {
-            $si = 1;
-        }
+        $si = ($ultimo) ? $ultimo['seziva'] : 1;
+        $si = (isset($_GET['seziva']))? $_GET['seziva'] : $si;
     }
     return $si;
 }
@@ -934,7 +905,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 
     // Se viene cambiata la tipologia di documento e la nuova è una fattura immediata ricontrollo la modalitè di assegnazione della sezione IVA
-    if ($_POST['hidden_req'] == 'tipdoc' && !isset($_GET['seziva'])) {
+    if ($_POST['hidden_req'] == 'tipdoc') {
         $form['seziva'] = getFAIseziva($form['tipdoc']);
         $form['hidden_req'] = '';
     }
@@ -2043,13 +2014,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // fine rigo input
     $form['search']['clfoco'] = '';
     $form['cosear'] = "";
-    if (!isset($_GET['seziva']) && ($form['tipdoc'] == 'FAI'||$form['tipdoc'] == 'FAA'||$form['tipdoc'] == 'FAF'||$form['tipdoc'] == 'FNC')) {
-        $form['seziva'] = getFAIseziva($form['tipdoc']);
-    } elseif (!isset($_GET['seziva'])) {
-        $form['seziva'] = 1;
-    } else {
-        $form['seziva'] = intval($_GET['seziva']);
-    }
+    $form['seziva'] = getFAIseziva($form['tipdoc']);
     //cerco l'ultimo template
     $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' and ddt_type!='R' and seziva = " .$form['seziva'], 'datfat desc, protoc desc', 0, 1);
     $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);

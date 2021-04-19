@@ -48,7 +48,8 @@ $strScript = array(
             'pec' => 'Indirizzo posta elettronica certificata formalmente sbagliato',
             'e_mail' => 'Indirizzo email formalmente sbagliato',
             'web_url' => 'Indirizzo web formalmente sbagliato',
-            'cod_ateco' => 'Codice ATECO 2007 non valido'
+            'cod_ateco' => 'Codice ATECO 2007 non valido',
+            'sez_rc' => 'Il sezionale delle fatture immediate non può essere lo stesso di quello usato per il reverse charge'
         ),
         'codice' => "Codice ",
         'ragso1' => "Ragione Sociale 1",

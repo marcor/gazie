@@ -138,6 +138,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if ($form['cod_ateco'] < 10000) {
             $msg['err'][] = 'cod_ateco';
         }
+        if ($form['fatimm'] == $form['reverse_charge_sez']) {
+            $msg['err'][] = 'sez_rc';
+        }
         if (count($msg['err']) == 0) { // nessun errore
             $form['datnas'] = gaz_format_date($form['datnas'], true);
             $form['virtual_stamp_auth_date'] = gaz_format_date($form['virtual_stamp_auth_date'], true);

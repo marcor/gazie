@@ -47,7 +47,8 @@ $strScript = array("admin_aziend.php" =>
             'pec' => 'Email address formally wrong',
             'e_mail' => 'Email address formally wrong',
             'web_url' => 'Web address formally wrong',
-            'cod_ateco' => 'ATECO 2007 code invalid'
+            'cod_ateco' => 'ATECO 2007 code invalid',
+			'sez_rc' => 'The sectional of immediate invoices cannot be the same as that used for the reverse charge'
         ),
         'codice' => "Code ",
         'ragso1' => "Company name 1",

@@ -51,7 +51,9 @@ $strScript = array("admin_aziend.php" =>
             'capspe' => 'Email formalmente mal la dirección',
             'pec' => 'Email address formally wrong',
             'e_mail' => 'Web formalmente mal la dirección',
-            'web_url' => 'ATECO 2007 code invalid'
+            'web_url' => 'Dirección web formalmente incorrecta',
+            'cod_ateco' => 'Código ATECO 2007 no válido',
+			'sez_rc' => 'El seccional de facturas inmediatas no puede ser el mismo que el utilizado para el cobro revertido'
         ),
         'codice' => "Codigo ",
         'ragso1' => "Nombre de la empresa 1",
