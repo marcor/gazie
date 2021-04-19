@@ -59,8 +59,7 @@ $script_transl=HeadMain('','','admin_aliiva');
 <form method="POST">
 <div class="FacetFormHeaderFont text-center"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl[0].' ID '.intval($_GET['codice']); ?> </div>
 <div class="text-center"><b class="text-danger"><?php echo $message; ?></b> </div>
-<div class="table-responsive">
-<table class="GazFormDeleteTable" style="margin: auto; width: 400px !important;">
+<table class="GazFormDeleteTable">
   <tr>
     <td class="FacetFieldCaptionTD"><?php echo $script_transl[3]; ?></td>
     <td class="FacetDataTD"><?php print $form["aliquo"] ?>&nbsp;</td>
@@ -86,7 +85,7 @@ echo ' <input type="submit" accesskey="d" name="Delete" value="'.$script_transl[
 ?>
 </td>
 </tr>
-</table></div>
+</table>
 </form>
 <?php
 require("../../library/include/footer.php");

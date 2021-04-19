@@ -22,24 +22,35 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$message = "Sei sicuro di voler rimuovere ?";
 if (isset($_POST['Delete'])) {
-    $result = gaz_dbi_del_row($gTables['pagame'], "codice", intval($_POST['codice']));
+  // eseguo i controlli di integrità, evito la cancellazione nel caso in cui il pagamento sia stato utilizzato sui documenti fiscali
+  $nt=0;
+  $c=intval($_GET['codice']);
+  $rs=gaz_dbi_query("SELECT COUNT(*) AS nu FROM ".$gTables['tesdoc']." WHERE pagame=".$c);
+  $r=gaz_dbi_fetch_array($rs);
+  $nt += ($r['nu'] >= 1)? $r['nu'] : 0;
+  if ($nt >= 1) {
+    $message= "Errore: stai tentando di eliminare un pagameto usato ".$nt." volte sui documenti fiscali di vendita e/o acquisti.";  
+    $form = gaz_dbi_get_row($gTables['pagame'], "codice", $c);
+  }else{
+    gaz_dbi_del_row($gTables['pagame'], "codice", $c);
     header("Location: report_pagame.php");
     exit;
+  }
+} else {
+  $form = gaz_dbi_get_row($gTables['pagame'], "codice", intval($_GET['codice']));
 }
 if (isset($_POST['Return'])) {
     header("Location: report_pagame.php");
     exit;
 }
-if (!isset($_POST['Delete'])) {
-    $form = gaz_dbi_get_row($gTables['pagame'], "codice", intval($_GET['codice']));
-}
 require("../../library/include/header.php");
 $script_transl = HeadMain('','','admin_pagame');
 ?>
 <form method="POST">
-<input type="hidden" name="codice" value="<?php print intval($_GET['codice'])?>">
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl[0].' n.'.intval($_GET['codice']); ?> </div>
+<div class="FacetFormHeaderFont text-center"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl[0].' n.'.intval($_GET['codice']); ?> </div>
+<div class="text-center"><b class="text-danger"><?php echo $message; ?></b> </div>
 <table class="GazFormDeleteTable">
 <tr>
     <td class="FacetFieldCaptionTD"><?php echo $script_transl[2]; ?></td>
