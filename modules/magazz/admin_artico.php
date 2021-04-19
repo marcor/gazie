@@ -695,15 +695,6 @@ if ($modal_ok_insert === true) {
               </div><!-- chiude tab-pane  -->
               <div id="magazz" class="tab-pane fade">
                 <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="packUnits" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="pack_units" class="col-sm-4 control-label"><?php echo $script_transl['pack_units']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['pack_units']; ?>" name="pack_units" maxlength="6" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="esiste" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -722,11 +713,11 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="lastCost" class="row IERincludeExcludeRow">
+                <div id="packUnits" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="last_cost" class="col-sm-4 control-label"><?php echo $script_transl['last_cost']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['last_cost']; ?>" name="last_cost" maxlength="15" />
+                            <label for="pack_units" class="col-sm-4 control-label"><?php echo $script_transl['pack_units']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['pack_units']; ?>" name="pack_units" maxlength="6" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -755,18 +746,6 @@ if ($modal_ok_insert === true) {
                             <label for="ragstat" class="col-sm-4 control-label"><?php echo $script_transl['ragstat']; ?></label>
     <?php
     $gForm->selectFromDB('ragstat', 'ragstat', 'codice', $form['ragstat'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="fornitore" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="fornitore" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>
-    <?php
-    $select_id_anagra = new selectPartner("id_anagra");
-    $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
     ?>
                         </div>
                     </div>
@@ -811,18 +790,6 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-
-		<!-- MODIFICA A MANO  -->
-                <!--+ DC - 06/02/2019 div class="row" --->
-                <div id="codiceFornitore" class="row IERincludeExcludeRow">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="codice_fornitore" class="col-sm-4 control-label"><?php echo $script_transl['codice_fornitore']; ?></label>
-                        	<input class="col-sm-4" type="text"  value="<?php echo $form['codice_fornitore']; ?>" name="codice_fornitore" maxlength="50" />
-
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="ordinabile" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
@@ -834,7 +801,6 @@ if ($modal_ok_insert === true) {
                          </div>
                     </div>
                 </div><!-- chiude row  -->
-
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="movimentabile" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
@@ -842,6 +808,17 @@ if ($modal_ok_insert === true) {
                             <label for="movimentabile" class="col-sm-4 control-label"><?php echo $script_transl['movimentabile']; ?></label>
 	    <?php
     $gForm->variousSelect('movimentabile', $script_transl['movimentabile_value'], $form['movimentabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+    ?>
+                         </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
+                <div id="last_buys" class="row IERincludeExcludeRow">
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label for="last_buys" class="col-xs-12 control-label"><?php echo $script_transl['last_buys']; ?></label>
+	    <?php
+    echo $gForm->getLastBuys($form['codice'], true);
     ?>
                          </div>
                     </div>

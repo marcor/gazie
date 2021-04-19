@@ -465,7 +465,7 @@ $strScript = array("browse_document.php" =>
         'iterate_invitation' => 'INSERISCI UN ALTRO ARTICOLO DI MAGAZZINO',
         'browse_for_file' => 'Sfoglia',
         'id_anagra' => 'Fornitore',
-		'codice_fornitore' => 'Codice del fornitore',
+		'last_buys' => 'Ultimi acquisti da fornitori',
 		'ordinabile' => 'Articolo ordinabile',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 1 carattere!',
