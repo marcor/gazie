@@ -129,9 +129,13 @@ if (isset ($_POST['download'])) {
 				</div>
 			</div>
 			<div class="row bg-info">
-				<div class="col-sm-12  bg-info" align="center">
-					<input type="button" name="button1" id="nextbt" rel="more" value="&#9660" onclick="buttonToggle(this,'&#9650','&#9660')">
-				</div>						
+				<div class="col-sm-9  bg-info" align="center">
+					<input title="Più selezioni" type="button" name="button1" id="nextbt" rel="more" value="&#9660 più selezioni" onclick="buttonToggle(this,'&#9650','&#9660')">
+				</div>
+				<div class="col-sm-3  bg-info" align="center">
+					<input title="Impostazioni" type="button" name="settings"  onclick="window.location.href='config_sync.php'" value="Impostazioni" >
+					<input title="Documentazione" type="button" name="document"  onclick="window.location.href='docume_shop-synchronize'" value="Documentazione">
+				</div>
 			</div>
 			<div id="more">
 				<div class="row bg-warning" style="border-top: 1px solid;">
@@ -183,7 +187,11 @@ if (isset ($_POST['download'])) {
 				
 			</div>
 		</div>
-	</div>		
+	</div>
+<div class="navbar navbar-fixed-bottom"	style="
+    margin-left: 25%; border: none; z-index:2000; max-width: 170px;">
+<a target="_new" href="https://programmisitiweb.lacasettabio.it/">Modulo di Antonio Germani</a>
+</div>
 </form>		
 	
 	<style>#more { display:none; }</style>				
