@@ -325,8 +325,8 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizionex[0].'" ',' id',0,1);	
             }
             $riga = gaz_dbi_fetch_array($result);
-            
-            if ( $riga["id"]!="" ) {
+ 
+            if ($riga && $riga["id"]!="" ) {
                 // siamo su una pagina di 2 livello nel menu principale
                 // mostra il titolo se siamo su una pagina di secondo livello
                 echo "<h1>";

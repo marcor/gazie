@@ -1402,7 +1402,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $fornitore = $anagrafica->getPartner($tesdoc['clfoco']);
     $id_des = $anagrafica->getPartner($tesdoc['id_des']);
     $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $tesdoc['id_tes'], "id_rig asc");
-	
+	$rs_tes =false;
 	if ($tesdoc['ddt_type']=="T" AND !isset($_GET['DDT'])){ // Antonio Germani - se è una fattura con DDT, carico tutti i tesdoc
 	$rs_tes = gaz_dbi_dyn_query("*", $gTables['tesdoc'], " YEAR (datfat) = " . substr($tesdoc['datfat'],0,4). " AND protoc = ".$tesdoc['protoc']. " AND tipdoc = 'AFT'" , "id_tes asc");
 		
@@ -1503,7 +1503,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['destin'] = $tesdoc['destin'];
     $form['id_des'] = $tesdoc['id_des'];
     $form['id_des_same_company'] = $tesdoc['id_des_same_company'];
-    $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+    $form['search']['id_des'] =($id_des)?substr($id_des['ragso1'], 0, 10):'';
     $form['traspo'] = $tesdoc['traspo'];
     $form['spevar'] = $tesdoc['spevar'];
     $form['ivaspe'] = 0;
@@ -1624,8 +1624,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['id_order'] = $row['id_order'];
         $form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa         $form['rows'][$i]['id_mag'] = $row['id_mag'];
         $form['in_id_orderman'] = $row['id_orderman'];
-		$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $row['id_orderman']);
-        $form['coseprod'] = $orderman['description'];
+        $orderman = gaz_dbi_get_row($gTables['orderman'], "id", $row['id_orderman']);
+        $form['coseprod'] =($orderman)?$orderman['description']:'';
         $form['rows'][$i]['id_orderman'] = $row['id_orderman'];
         $form['rows'][$i]['annota'] = $articolo['annota'];
         $mv = $magazz->getStockValue(false, $row['codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
@@ -1652,6 +1652,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		if (!isset($_GET['Duplicate']) OR $form['tipdoc']=='DDR') {
 			$result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
 			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
+      if (!$lotmag) $lotmag=['identifier'=>'','id'=>0,'expiry'=>0];
 			// recupero il filename dal filesystem e lo sposto sul tmp 
 			$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
 			while (false !== ($filename = readdir($dh))) {
@@ -1689,6 +1690,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['oratra'] = date("H");
         $form['mintra'] = date("i");
     }
+    $ddt = (object)[]; 
+    $ddt->num_rows = 0;
+    $ddtchecked=0;    
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['tipdoc'] = $_GET['tipdoc'];
     $form['address'] = '';
