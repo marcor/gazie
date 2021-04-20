@@ -353,10 +353,8 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                     echo "</h1>";                
                     // disegno i bottoni di accesso alle funzioni di questa pagina
                     $posizionex = explode ("?",$posizione );
-                    $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link like "%'.$posizionex[0].'%" ',' id',0,99);
+                    $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script']. " LEFT JOIN ".$gTables['menu_module']." ON ".$gTables['menu_script'].".id_menu = ".$gTables['menu_module'].".id LEFT JOIN ".$gTables['module']." ON ".$gTables['menu_module'].".id_module = ".$gTables['module'].".id", $gTables['menu_script'].".link LIKE '%".$posizionex[0]."%' AND ".$gTables['module'].".name = '".$module."'",'name',0,99);
                     echo "<ol class=\"breadcrumb\">";
-                    //echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
-                    //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-help\"></i></a></li>";
                     while ($r = gaz_dbi_fetch_array($result4)) {
                         if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
                             echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';

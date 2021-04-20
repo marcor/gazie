@@ -823,10 +823,12 @@ class magazzForm extends GAzieForm {
       $rs=gaz_dbi_query("SELECT ".$gTables['movmag'] .".desdoc,".$gTables['movmag'] .".quanti,".$gTables['movmag'] .".scorig,".$gTables['movmag'] .".prezzo, ".$gTables['rigdoc'] .".id_tes AS docref, ".$gTables['rigdoc'] .".codice_fornitore, CONCAT(".$gTables['anagra'] .".ragso1,".$gTables['anagra'] .".ragso2) AS supplier, SUM(ROUND(".$gTables['movmag'] .".quanti*prezzo*(100-scorig)/100,2)) AS amount FROM " . $gTables['movmag'] . " LEFT JOIN ".$gTables['clfoco'] ." ON ".$gTables['movmag'] .".clfoco = ".$gTables['clfoco'] .".codice LEFT JOIN ".$gTables['anagra'] ." ON ".$gTables['clfoco'] .".id_anagra = ".$gTables['anagra'] .".id LEFT JOIN ".$gTables['rigdoc'] ." ON ".$gTables['movmag'] .".id_rif = ".$gTables['rigdoc'] .".id_rig WHERE ".$gTables['movmag'] .".artico = '".$codart."' AND ".$gTables['movmag'] .".clfoco LIKE '". $admin_aziend['masfor'] ."%' GROUP BY ".$gTables['movmag'] .".clfoco ORDER BY ".$gTables['movmag'] .".datdoc DESC");
       $acc=false;
       while ($r = gaz_dbi_fetch_array($rs)) {
-        if ($rettable){
+        if ($rettable===true){
           // creo una tabella direttamente stampabile
-          //print_r($r);
           $acc .= '<div class="col-xs-1"></div><div class="col-xs-11 row"><div class="col-sm-4">'.$r['supplier'].'</div><div class="col-sm-4"><a class="btn btn-default btn-xs" href="../acquis/admin_docacq.php?Update&id_tes='.$r['docref'].'">'.$r['desdoc'].'</a></div><div class="col-sm-4"><b>'.$r['codice_fornitore'].'</b> '.floatval($r['quanti']).' x '.floatval($r['prezzo']).(($r['scorig']>0.01)?(' sconto:'.floatval($r['scorig']).'% '):('')).' tot. € '.floatval($r['amount']).'</div></div>'; 
+        } elseif ($rettable==='col'){
+          // creo dei righi per la colonna del report degli articolo
+          $acc .= '<div class="row"><div class="col-sm-6">'.$r['supplier'].'</div><div class="col-sm-2"><a class="btn btn-default btn-xs" href="../acquis/admin_docacq.php?Update&id_tes='.$r['docref'].'"><i class="glyphicon glyphicon-list-alt"></i></a></div><div class="col-sm-4"><b>'.$r['codice_fornitore'].'</b> '.floatval($r['quanti']).' x '.floatval($r['prezzo']).(($r['scorig']>0.01)?(' sconto:'.floatval($r['scorig']).'% '):('')).'</div></div>'; 
         } else {
           // creo un array con chiave il codice fornitore
           $acc[$r['clfoco']]=$r;  

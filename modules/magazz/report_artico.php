@@ -165,7 +165,6 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
   // acquisti
-
     // giacenza
     $mv = $gForm->getStockValue(false, $r['codice']);
     $magval = array_pop($mv);
@@ -195,6 +194,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     }
     // IVA
     $iva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $r['aliiva']);
+    if (!$iva) $iva=array('aliquo'=>0);
     echo "<tr>\n";
     echo '<td>
     <a class="btn btn-xs btn-'.$class.'" href="../magazz/admin_artico.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['codice'].'</a>';
@@ -215,7 +215,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	echo "</td>\n";
     echo '<td class="text-right">'.number_format($r['preve1'], $admin_aziend['decimal_price'], ',', '.');
 	echo "</td>\n";
-    echo '<td class="text-right">'.number_format($r['preacq'], $admin_aziend['decimal_price'], ',', '.');
+    echo '<td class="text-right">'.$gForm->getLastBuys($r['codice'], 'col');
 	echo "</td>\n";
     echo '<td class="text-right">'.gaz_format_quantity(floatval($magval['q_g']),1,$admin_aziend['decimal_quantity']).' '.$com;
 	echo "</td>\n";
