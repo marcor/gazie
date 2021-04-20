@@ -40,7 +40,8 @@ if ( $url!='ruburl.php' ) {
         <?php
          // mostra le variabili $global e $server nella pagina
          echo "<div>";
-         if ( $debug_active == true ) d($GLOBALS, $_SERVER);
+          // solo quando verrà aggiornato KINT potremo utilizzarlo, tolto sulla 7.43
+          // if ( $debug_active == true ) d($GLOBALS, $_SERVER);
          echo "</div>";
         ?>
         <div class="pull-right hidden-xs">
@@ -169,8 +170,9 @@ Version <?php echo GAZIE_VERSION; ?>
             //window.location.reload();
         }
         <?php
+         // solo quando verrà aggiornato KINT potremo utilizzarlo, tolto sulla 7.43
          // mostra le variabili $global e $server nella pagina
-         if ( $debug_active == true ) d($GLOBALS, $_SERVER);
+         //if ( $debug_active == true ) d($GLOBALS, $_SERVER);
     ?>
     </script>  
     <script src="../../library/bootstrap/js/bootstrap.min.js"></script>

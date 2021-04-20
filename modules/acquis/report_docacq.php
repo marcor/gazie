@@ -226,10 +226,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		// riprendo il rigo  della contabilità con il cliente per avere l'importo 
 		$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
 	}
- 
+  $template=""; 
     $y = substr($row['datfat'], 0, 4);
     if ($row["tipdoc"] == 'AFA') {
-        $tipodoc = "Fattura";$template="";
+        $tipodoc = "Fattura";
         $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes']."&template=".$template;
         $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
     } elseif ($row["tipdoc"] == 'AFD') {

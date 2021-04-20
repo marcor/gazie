@@ -797,7 +797,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['change_pag'] = $tesbro['pagame'];
     $form['speban'] = $tesbro['speban'];
     $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
-    if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V') and $fornitore['speban'] == 'S') {
+    if ($pagame && ($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V') && $fornitore['speban'] == 'S') {
         $form['numrat'] = $pagame['numrat'];
     } else {
         $form['speban'] = 0.00;
@@ -811,7 +811,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['destin'] = $tesbro['destin'];
     $form['id_des'] = $tesbro['id_des'];
     $form['id_des_same_company'] = $tesbro['id_des_same_company'];
-    $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+    $form['search']['id_des'] = ($id_des)?substr($id_des['ragso1'], 0, 10):'';
     $form['traspo'] = $tesbro['traspo'];
     $form['spevar'] = $tesbro['spevar'];
     $form['cauven'] = $tesbro['cauven'];
@@ -829,7 +829,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form["row_$next_row"] = $text['body_text'];
         }
         $form['rows'][$next_row]['descri'] = $rigo['descri'];
-		$form['rows'][$next_row]['codice_fornitore'] = $rigo['codice_fornitore'];//M1 aggiunto a mano
+        $form['rows'][$next_row]['codice_fornitore'] = $rigo['codice_fornitore'];//M1 aggiunto a mano
         $form['rows'][$next_row]['tiprig'] = $rigo['tiprig'];
         $form['rows'][$next_row]['codart'] = $rigo['codart'];
         $form['rows'][$next_row]['pervat'] = $rigo['pervat'];
@@ -844,8 +844,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_quality'] = $rigo['quality']; // ripropongo l'ultima qualità
         $form['rows'][$next_row]['id_mag'] = $rigo['id_mag'];
         $form['in_id_orderman'] = $rigo['id_orderman'];
-		$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $rigo['id_orderman']);
-        $form['coseprod'] = $orderman['description'];
+        $orderman = gaz_dbi_get_row($gTables['orderman'], "id", $rigo['id_orderman']);
+        $form['coseprod'] = ($orderman)?$orderman['description']:'';
         $form['rows'][$next_row]['id_orderman'] = $rigo['id_orderman'];
         $form['rows'][$next_row]['annota'] = $articolo['annota'];
         $form['rows'][$next_row]['larghezza'] = $rigo['larghezza'];

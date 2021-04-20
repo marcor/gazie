@@ -26,7 +26,7 @@ require("../../config/config/gconfig.php");
 require('../../library/include/'.$NomeDB.'.lib.php');
 if ( $debug_active ) {
 	error_reporting(E_ALL);
-	require ( "../../library/kint/build/kint.phar");
+	//require ( "../../library/kint/build/kint.phar");
 } else {
 	error_reporting(0);
 }

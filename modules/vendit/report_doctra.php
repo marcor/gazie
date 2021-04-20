@@ -246,6 +246,8 @@ $(function() {
                 $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $r['clfoco']);
                 $anagra = gaz_dbi_get_row($gTables['anagra'], 'id', $clfoco['id_anagra']);
                 $destina = gaz_dbi_get_row($gTables['destina'], 'codice', $r['id_des_same_company']);
+                if(!$destina) $destina=['codice'=>'','unita_locale1'=>''];
+  
                 if (!empty($cliente) && stripos($anagra['ragso1'], $_GET['cliente']) === false ) {
                     $match_cust=false;
                 }

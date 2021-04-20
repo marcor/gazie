@@ -339,7 +339,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
     // fine immagini e-commerce
     $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
-    $form['body_text'] = $bodytext['body_text'];
+    $form['body_text'] = ($bodytext)?$bodytext['body_text']:'';
 } else { //se e' il primo accesso per INSERT
     $form = gaz_dbi_fields('artico');
     /** ENRICO FEDELE */
@@ -445,7 +445,7 @@ if ($modal_ok_insert === true) {
     $gForm = new magazzForm();
     $mv = $gForm->getStockValue(false, $form['codice']);
     $magval = array_pop($mv);
-
+    $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
     /** ENRICO FEDELE */
     /* Se sono in finestra modale, non visualizzo questo titolo */
     $changesubmit = '';

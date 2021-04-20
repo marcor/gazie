@@ -80,9 +80,7 @@ if (isset ($_GET['inevasi'])){
 } elseif (isset ($_GET['tutti'])){
 	$form['swStatus']=$_GET['tutti'];
 } else {
-if (isset ($_GET['swStatus'])){
-		$form['swStatus']=$_GET['swStatus'];
-	}
+	$form['swStatus']=(isset($_GET['swStatus']))?$_GET['swStatus']:'';
 }
 
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
@@ -239,7 +237,7 @@ $(function() {
 	});
 });
 </script>
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][$tipo]; ?></div>
+<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][substr($tipo,0,2).'R']; ?></div>
 <?php
 $ts->output_navbar();
 ?>

@@ -384,3 +384,6 @@ form table.GazFormDeleteTable {
   margin: auto; 
   width: 400px;
 }
+html body form section.content form.form-horizontal{
+  padding-top: 12px;  
+}

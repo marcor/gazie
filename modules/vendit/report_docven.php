@@ -460,7 +460,7 @@ $(function() {
                     }
 
 // visualizzo la riga solo se rispetta il filtro informazioni
-if ( $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_status['style'] == "" && $flt_info=="default") ) {
+if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_info == "none" || ( $paymov_status['style'] == "" && $flt_info=="default") ) {
 
                     echo "<tr class=\"FacetDataTD\">";
 // Colonna protocollo

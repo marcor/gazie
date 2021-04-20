@@ -21,6 +21,7 @@ function bc_get_current_path( $posizione ) {
 }
 
 function printDash($gTables,$module,$admin_aziend,$transl){
+        $mod_data = gaz_dbi_get_row($gTables['module'], 'name',$module);
         $pos="";
         $ci_sono_tasti_nel_menu=false;
         $posizione = explode( '/',$_SERVER['REQUEST_URI'] );     
@@ -72,11 +73,11 @@ function printDash($gTables,$module,$admin_aziend,$transl){
                 if ( $r = gaz_dbi_fetch_array($result3) ) {
                     // disegno i bottoni di accesso alle funzioni di questa pagina
                     $posizionex = explode ("?",$posizione );
-                    $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link like "%'.$posizionex[0].'%" ',' id',0,99);
+                    $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script']. " LEFT JOIN ".$gTables['menu_module']." ON ".$gTables['menu_script'].".id_menu = ".$gTables['menu_module'].".id LEFT JOIN ".$gTables['module']." ON ".$gTables['menu_module'].".id_module = ".$gTables['module'].".id", $gTables['menu_script'].".link LIKE '%".$posizionex[0]."%' AND ".$gTables['module'].".name = '".$module."'",'name',0,99);
                     echo "<ol class=\"breadcrumb\">";
                     echo "<li>";
                     echo "&nbsp;".$transl[$module]["m3"][$r["translate_key"]][0];
-                    echo "</li>";                
+                    echo "</li>";                   
                     while ($r = gaz_dbi_fetch_array($result4)) {
                         if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
                             echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';

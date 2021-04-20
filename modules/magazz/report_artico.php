@@ -43,8 +43,7 @@ $sortable_headers = array  (
             "Categoria" => 'catmer',
             'U.M.' => 'unimis',
             'Prezzo vendita<br/>listino 1' => 'preve1',
-            'Fornitore' => '',
-            'Prezzo acquisto' => '',
+            'Acquisti' => '',
             'Giacenza' => '',
             '% IVA' => 'aliiva',
             'Lotti' => '',
@@ -162,15 +161,11 @@ echo '<tr>';
 $ts->output_headers();
 echo '</tr>';
 while ($r = gaz_dbi_fetch_array($result)) {
-    // da configurazione azienda
+  // da configurazione azienda
 	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
-    // fornitore
-    $desfor='';
-    if ($r['clfoco']>100000000){
-        $rsfor = gaz_dbi_get_row($gTables['clfoco'], "codice", $r['clfoco']);
-        if ($rsfor) { $desfor = $rsfor['descri']; }
-    }
+  // acquisti
+
     // giacenza
     $mv = $gForm->getStockValue(false, $r['codice']);
     $magval = array_pop($mv);
@@ -178,12 +173,16 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		 $magval['q_g']=0;
 	 }
 	$class = 'success';
-    if ($magval['q_g'] < 0) { // giacenza inferiore a 0
+    if (is_numeric($magval)) { // giacenza = 0
+        $class = 'danger';
+        $magval=[];
+        $magval['q_g']=0;
+    } elseif ($magval['q_g'] < 0) { // giacenza inferiore a 0
         $class = 'danger';
     } elseif ($magval['q_g'] > 0) { //
-		if ($magval['q_g']<=$row['scorta']){
-			$class = 'warning';
-		}
+      if ($magval['q_g']<=$r['scorta']){
+        $class = 'warning';
+      }
     } else { // giacenza = 0
         $class = 'danger';
     }
@@ -215,8 +214,6 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo '<td class="text-center">'.$r['unimis'];
 	echo "</td>\n";
     echo '<td class="text-right">'.number_format($r['preve1'], $admin_aziend['decimal_price'], ',', '.');
-	echo "</td>\n";
-    echo '<td>'.$desfor;
 	echo "</td>\n";
     echo '<td class="text-right">'.number_format($r['preacq'], $admin_aziend['decimal_price'], ',', '.');
 	echo "</td>\n";

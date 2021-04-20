@@ -101,12 +101,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['numrat'] = $_POST['numrat'];
     $form['pagame'] = $_POST['pagame'];
     $form['change_pag'] = $_POST['change_pag'];
+    $ddtchecked=0;
 	if (isset($_POST['Insert'])){// se insert carico in $ddt i ddt che non sono ancora fatturati
 		$ddt = gaz_dbi_query ('SELECT * FROM '.$gTables['tesdoc'].' WHERE clfoco = \''.$form['clfoco'].'\' AND tipdoc = \'ADT\' AND ddt_type = \'\' ORDER BY id_tes');
 		if (isset($_POST['ddt'])){ // se cliccato ddt azzero i righi nel caso fossero cambiati
 			unset ($_POST['rows']); 
 		}
-		$ddtchecked=0;$i=0;
+		$i=0;
 		for ($ddtrow=0 ; $ddtrow<=$_POST['num_ddt']; $ddtrow++){
 			$form['id_tes'.$ddtrow] = $_POST['id_tes'.$ddtrow];
 			if ($_POST['check_ddt'.$ddtrow]=="checked"){
@@ -1801,6 +1802,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['id_parent_doc'] = 0;
     $form['sconto'] = 0;
+    $ddt = (object)[]; 
+    $ddt->num_rows = 0;
+    $ddtchecked=0;
 }
 require("../../library/include/header.php");
 /** Mi pare che jquery in questa pagina venga caricato per la seconda volta
@@ -1891,7 +1895,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
         <div>
             <b>
 <?php
-if ($tesdoc['ddt_type']=="T" OR $tesdoc['ddt_type']=="L"){
+if (isset($tesdoc) && ($tesdoc['ddt_type']=="T"||$tesdoc['ddt_type']=="L")){
 	 echo '<div class="container">
 			<div class="row alert alert-warning fade in" role="alert">
 			<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
@@ -2543,7 +2547,8 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 		} else {
 			$script_transl['conf_row'] = $script_transl['insert'].$script_transl['conf_row'].$nr;
 		}
-		if ($ddtchecked<1 ){ // se non ci sono DDT selezionati apro input manuale righi doc
+
+		if ($ddtchecked < 1 ){ // se non ci sono DDT selezionati apro input manuale righi doc
 		?>
 		<div class="panel panel-info">
 		  <div class="container-fluid bg-info">

@@ -41,10 +41,13 @@ function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
+    if (!$row) $row=['protoc'=>'1','datfat'=>date("Y-m-d")]; 
     $docs['ini'] = array('proini' => $row['protoc'], 'date' => $row['datfat']);
+    $row=false;
     $orderby = "datfat DESC, protoc DESC";
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
+    if (!$row) $row=['protoc'=>$docs['ini']['proini'],'datfat'=>$docs['ini']['date']]; 
     $docs['fin'] = array('profin' => $row['protoc'], 'date' => $row['datfat']);
     return $docs;
 }
