@@ -204,7 +204,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $r['id_rif']=($r['id_rif']==0 && $r['tipdoc']=="MAG")?$r['id_mov']:$r['id_rif'];
     $docdata=$funcn($r['tipdoc'],$r['id_rif']);
     $partner = $anagrafica->getPartner($r['clfoco']);
-    $title =  $partner['ragso1']." ".$partner['ragso2'];
+    $title=($partner)?$partner['ragso1']." ".$partner['ragso2']:'';
 	$descri=$r['descart'];
 	if ($r['expiry']>0){
 		$expiry="Scad.: ".gaz_format_date($r['expiry']);

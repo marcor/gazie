@@ -289,9 +289,9 @@ echo '		  </table></div>';
             $rs = gaz_dbi_dyn_query("*", $gTables['paymov'], "expiry BETWEEN '" . gaz_format_date($form['expiry_ini'], true) . "' AND '" . gaz_format_date($form['expiry_fin'], true) . "' AND id_rigmoc_doc >= 1 GROUP BY id_tesdoc_ref, expiry", $orderby);
             while ($r = gaz_dbi_fetch_array($rs)) {
                 $doc_data = $paymov->getDocFromID($r['id_rigmoc_doc']);
+                //print_r($doc_data);print '<br>';
                 $status = $paymov->getAmount($r['id_tesdoc_ref'], $r['expiry']);
-                if ((substr($doc_data['clfoco'], 0, 3)==$admin_aziend['masfor'] || substr($doc_data['codcon'], 0, 3)==$admin_aziend['masfor']) &&
-                        $status >= 0.01) { // considero solo i fornitori non saldati 
+                if ($doc_data && (substr($doc_data['clfoco'], 0, 3)==$admin_aziend['masfor'] || substr($doc_data['codcon'], 0, 3)==$admin_aziend['masfor']) && $status >= 0.01) { // considero solo i fornitori non saldati 
                 	if (substr($doc_data['clfoco'], 0, 3)!=$admin_aziend['masfor'] && substr($doc_data['codcon'], 0, 3)==$admin_aziend['masfor']) {
                     	$doc_data['clfoco'] = $doc_data['codcon'];
                     }

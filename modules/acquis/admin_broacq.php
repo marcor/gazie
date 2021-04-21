@@ -564,7 +564,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['sconto'] = 0;
             $form['rows'][$next_row]['pervat'] = 0;
             $form['rows'][$next_row]['codvat'] = 0;
-            if ($form['in_tiprig'] == 0) {  //rigo normale
+            if ($form['in_tiprig'] == 0 && $artico) {  //rigo normale
                 $form['rows'][$next_row]['codart'] = $form['in_codart'];
                 $form['rows'][$next_row]['annota'] = $artico['annota'];
                 $form['rows'][$next_row]['larghezza'] = $artico['larghezza'];
@@ -583,7 +583,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
-                $form['rows'][$next_row]['prelis'] = ($artico['preacq']>=0.00001)?$artico['preacq']:'';
+                $form['rows'][$next_row]['prelis'] = ($artico && $artico['preacq']>=0.00001)?$artico['preacq']:'';
 				// tento di attribuire un prezzo del fornitore specifico guardando dentro all'eventuale ultimo ordine
 				$lo=getLastOrdPrice($form['in_codart'],$form['clfoco']);
 				if ($lo){
@@ -1545,14 +1545,14 @@ echo "</tr>
 foreach ($castel as $k => $v) {
     $result = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
     $impcast = CalcolaImportoRigo(1, $v, $form['sconto']);
-    $ivacast = round($impcast * $result['aliquo']) / 100;
+    $ivacast =($result)?round($impcast * $result['aliquo']) / 100:0;
     $totimpmer += $v;
     $totimpfat += $impcast;
     $totivafat += $ivacast;
     if ($next_row > 0) {
         echo "<tr>
 				<td class=\"text-right\">" . number_format($impcast, 2, '.', '') . "</td>
-				<td class=\"text-right\">" . $result['descri'] . " " . number_format($ivacast, 2, '.', '') . "</td>
+				<td class=\"text-right\">" .(($result)?$result['descri'] . " " . number_format($ivacast, 2, '.', ''):'') . "</td>
 				<td colspan=\"6\"></td>
 			  </tr>\n";
     }

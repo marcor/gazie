@@ -28,7 +28,7 @@ require("../../library/include/calsca.inc.php");
 $admin_aziend=checkAdmin();
 $message="";
 $anagrafica = new Anagrafica();
-
+$descridoc="";
 $masban = $admin_aziend['masban']."000000";
 $banche = $admin_aziend['masban'];
 if (!isset($_POST['ritorno']))
@@ -260,7 +260,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\"> da addebitare sul c/c </td>\n ";
 print "<td class=\"FacetFieldCaptionTD\">\n";
 print "\t <select name=\"numfat\" class=\"FacetSelect\">\n";
 $selected = "selected";
-$result = gaz_dbi_dyn_query ('*', $gTables['clfoco'], "codice like '$banche%' and codice > '$masban' and banapp > 0", "codice asc");//recupero i c/c
+$result = gaz_dbi_dyn_query ('*', $gTables['clfoco'].' LEFT JOIN '. $gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '. $gTables['anagra'].'.id', "codice like '$banche%' and codice > '$masban' and banapp > 0", "codice asc");//recupero i c/c
 while ($a_row = gaz_dbi_fetch_array($result))
             {
             $selected = "";

@@ -43,10 +43,9 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
 <style>
-.collapsible
-      {
-            cursor:pointer;
-      } 
+.collapsible td.gaz-attivo.text-danger {
+  cursor: n-resize;
+} 
 </style>
 <div class="FacetFormHeaderFont text-center"><?php echo $script_transl['title']; ?></div>
 <div class="alert alert-danger text-center" role="alert"><?php echo $script_transl['msg1']; ?></div>
@@ -148,11 +147,9 @@ $(function() {
 				$rs_check_moc = gaz_dbi_dyn_query("codcon", $gTables['rigmoc'], "codcon = '{$r['codice']}'","id_rig asc",0,1);
 				$check_moc = gaz_dbi_num_rows($rs_check_moc);
 				
-                $r2 = array('dare' => 0, 'avere' => 0);
                 $rs2 = gaz_dbi_dyn_query($select, $table, 'codcon=' . $r['codice'] . $where2, 'codcon');
-                if ($rs2) {
-                    $r2 = gaz_dbi_fetch_array($rs2);
-                }
+                $r2 = gaz_dbi_fetch_array($rs2);
+                if (!$r2) $r2 = array('dare' => 0, 'avere' => 0);
                 $color_class = $css_class[substr($r['codice'],0,1)-1];
                 if (substr($r["codice"], 3) == '000000') {
                     $collapse = $r["codice"];
