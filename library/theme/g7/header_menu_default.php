@@ -23,6 +23,18 @@
   --------------------------------------------------------------------------
  */
 global $gTables;
+// SFTP
+
+set_include_path(get_include_path() . PATH_SEPARATOR . '../../library/phpseclib');
+include 'Net/SSH2.php';
+include 'Net/SFTP.php';
+include 'Net/SFTP/Stream.php';
+include 'Crypt/AES.php';
+include 'Crypt/RSA.php';
+use phpseclib\Crypt\RSA;
+use phpseclib\Net\SFTP;
+if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
+}
 
 function submenu($menu_data) {
     if (!is_array($menu_data)) {
