@@ -81,8 +81,6 @@ echo "<input type=\"hidden\" name=\"ref_code\" value=\"" . $form['ref_code'] . "
 echo "<input type=\"hidden\" name=\"codice\" value=\"" . $form['codice'] . "\">\n";
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">";
 $gForm = new GAzieForm();
-//$mv = $gForm->getStockValue(false, $form['codice']);
-//$magval = array_pop($mv);
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
 } else {

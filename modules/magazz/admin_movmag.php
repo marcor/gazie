@@ -305,6 +305,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	if (strlen($form['artico'])>0 && $form['quanti']>0 && ($form['operat']==-1 OR $form['operat']==0)){
 		$mv = $gForm->getStockValue(false, $form['artico']);
 		$magval = array_pop($mv); // controllo disponibilità in magazzino		
+    $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 		if ($magval['q_g']+$prev_qta['quanti']<$form['quanti']){
 			$warnmsg.="34+";			
 		}		

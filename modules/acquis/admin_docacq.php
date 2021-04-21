@@ -33,6 +33,8 @@ $magazz = new magazzForm;
 $docOperat = $magazz->getOperators();
 $lm = new lotmag;
 $value_sian=array();
+$ddt = (object)[]; 
+$ddt->num_rows = 0;
 
 function get_tmp_doc($i) {
     global $admin_aziend;
@@ -103,11 +105,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['change_pag'] = $_POST['change_pag'];
     $ddtchecked=0;
 	if (isset($_POST['Insert'])){// se insert carico in $ddt i ddt che non sono ancora fatturati
-		$ddt = gaz_dbi_query ('SELECT * FROM '.$gTables['tesdoc'].' WHERE clfoco = \''.$form['clfoco'].'\' AND tipdoc = \'ADT\' AND ddt_type = \'\' ORDER BY id_tes');
+		$ddt_rs = gaz_dbi_query ('SELECT * FROM '.$gTables['tesdoc'].' WHERE clfoco = \''.$form['clfoco'].'\' AND tipdoc = \'ADT\' AND ddt_type = \'\' ORDER BY id_tes');
+    if ($ddt_rs) $ddt = $ddt_rs;
 		if (isset($_POST['ddt'])){ // se cliccato ddt azzero i righi nel caso fossero cambiati
 			unset ($_POST['rows']); 
 		}
 		$i=0;
+    if (!isset($_POST['num_ddt'])) $_POST['num_ddt']=-1;
 		for ($ddtrow=0 ; $ddtrow<=$_POST['num_ddt']; $ddtrow++){
 			$form['id_tes'.$ddtrow] = $_POST['id_tes'.$ddtrow];
 			if ($_POST['check_ddt'.$ddtrow]=="checked"){
@@ -939,17 +943,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $fornitore = $anagrafica->getPartner($form['clfoco']);
         }
         if (substr($form['tipdoc'], 0, 1) != 'A') {
-            $result = gaz_dbi_get_row($gTables['imball'], "codice", $fornitore['imball']);
-            $form['imball'] = $result['descri'];
+          $result = gaz_dbi_get_row($gTables['imball'], "codice", $fornitore['imball']);
+          $form['imball']=($result)?$result['descri']:'';
         }
         $result = gaz_dbi_get_row($gTables['portos'], "codice", $fornitore['portos']);
-        $form['portos'] = $result['descri'];
+        $form['portos']=($result)?$result['descri']:'';
         $result = gaz_dbi_get_row($gTables['spediz'], "codice", $fornitore['spediz']);
-        $form['spediz'] = $result['descri'];
+        $form['spediz']=($result)?$result['descri']:'';
         $form['destin'] = $fornitore['destin'];
         $form['id_des'] = $fornitore['id_des'];
         $id_des = $anagrafica->getPartner($form['id_des']);
-        $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+        $form['search']['id_des']=($id_des)?substr($id_des['ragso1'], 0, 10):'';
         if ($fornitore['aliiva'] > 0) {
             $form['ivaspe'] = $fornitore['aliiva'];
             $result = gaz_dbi_get_row($gTables['aliiva'], 'codice', $fornitore['aliiva']);
@@ -987,9 +991,23 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     if (isset($_POST['in_submit'])) { 
         /** ENRICO FEDELE */
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
-        /** inizio modifica FP 09/01/2016
-         * modifica piede ddt
-         */
+      if (!$artico) {
+        $artico['peso_specifico']=0;
+        $artico['volume_specifico']=0;
+        $artico['pack_units']=0;
+        $artico['annota']='';
+        $artico['peso_specifico']=0;
+        $artico['good_or_service']='';
+        $artico['uniacq']=0;
+        $artico['scorta']=0;
+        $artico['descri']='';
+        $artico['codice_fornitore']='';
+        $artico['lot_or_serial']=0;
+        $artico['SIAN']='';
+        $artico['preacq']=0;
+        $artico['aliiva']=0;
+        $artico['id_cost']=0;
+     }
 // addizione ai totali peso,pezzi,volume
         $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
         $form['gross_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
@@ -1047,6 +1065,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['descri'] = $artico['descri'];
                 $mv = $magazz->getStockValue(false, $form['in_codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
+                $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
                 $form['rows'][$old_key]['scorta'] = $artico['scorta'];
                 $form['rows'][$old_key]['quamag'] = $magval['q_g'];
                 $form['rows'][$old_key]['lot_or_serial'] = $artico['lot_or_serial'];
@@ -1159,6 +1178,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $mv = $magazz->getStockValue(false, $form['in_codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
+                $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
                 $form['rows'][$i]['scorta'] = $artico['scorta'];
                 $form['rows'][$i]['quamag'] = $magval['q_g'];
 				/* Antonio Germani: commentato perché siamo in acquisto e non deve proporre la giacenza disponibile in magazzino
@@ -1374,6 +1394,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
          */
 // sottrazione ai totali peso,pezzi,volume
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$delri]['codart']);
+        if (!$artico) $artico=array('peso_specifico'=>0,'pack_units'=>0,'volume_specifico'=>0);
         $form['net_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
         $form['gross_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
         if ($artico['pack_units'] > 0) {
@@ -1550,6 +1571,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['annota'] = $articolo['annota'];
 				$mv = $magazz->getStockValue(false, $row['codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
 				$magval = array_pop($mv);
+        $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 				$form['rows'][$i]['scorta'] = $articolo['scorta'];
 				$form['rows'][$i]['quamag'] = $magval['q_g'];
 				$form['rows'][$i]['pesosp'] = $articolo['peso_specifico'];
@@ -1627,16 +1649,28 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $orderman = gaz_dbi_get_row($gTables['orderman'], "id", $row['id_orderman']);
         $form['coseprod'] =($orderman)?$orderman['description']:'';
         $form['rows'][$i]['id_orderman'] = $row['id_orderman'];
+      if ($articolo){ 
         $form['rows'][$i]['annota'] = $articolo['annota'];
         $mv = $magazz->getStockValue(false, $row['codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
+        $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
         $form['rows'][$i]['scorta'] = $articolo['scorta'];
         $form['rows'][$i]['quamag'] = $magval['q_g'];
         $form['rows'][$i]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$i]['gooser'] = $articolo['good_or_service'];
         $form['rows'][$i]['lot_or_serial'] = $articolo['lot_or_serial'];
-		$form['rows'][$i]['SIAN'] = $articolo['SIAN'];
-        $form['rows'][$i]['filename'] = '';
+        $form['rows'][$i]['SIAN'] = $articolo['SIAN'];
+      } else {
+        $form['rows'][$i]['codart']='';
+        $form['rows'][$i]['scorta']=0;
+        $form['rows'][$i]['quamag']=0;
+        $form['rows'][$i]['pesosp']=0;
+        $form['rows'][$i]['gooser']=0;
+        $form['rows'][$i]['lot_or_serial']='';
+        $form['rows'][$i]['SIAN']='';
+        $form['rows'][$i]['annota']='';
+      }
+    $form['rows'][$i]['filename'] = '';
 		$form['rows'][$i]['identifier'] = '';
 		$form['rows'][$i]['expiry'] = '';
 		$form['rows'][$i]['status'] = "UPDATE";
@@ -1651,6 +1685,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		if (file_exists( DATA_DIR . 'files/' . $admin_aziend['company_id'] ) > 0) {
 		if (!isset($_GET['Duplicate']) OR $form['tipdoc']=='DDR') {
 			$result_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
+      if (!$result_movmag) $result_movmag['id_lotmag']=0;
 			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id', $result_movmag['id_lotmag']);
       if (!$lotmag) $lotmag=['identifier'=>'','id'=>0,'expiry'=>0];
 			// recupero il filename dal filesystem e lo sposto sul tmp 
@@ -1690,8 +1725,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['oratra'] = date("H");
         $form['mintra'] = date("i");
     }
-    $ddt = (object)[]; 
-    $ddt->num_rows = 0;
     $ddtchecked=0;    
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['tipdoc'] = $_GET['tipdoc'];
@@ -1806,8 +1839,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['id_parent_doc'] = 0;
     $form['sconto'] = 0;
-    $ddt = (object)[]; 
-    $ddt->num_rows = 0;
     $ddtchecked=0;
 }
 require("../../library/include/header.php");
@@ -2185,8 +2216,9 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				$nr++;
 				// addizione ai totali peso,pezzi,volume
 				$artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
-				$campart = gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
-				$v['descri_codric'] = gaz_dbi_get_row($gTables['clfoco'], 'codice', $v['codric'])['descri'];
+        if (!$artico) $artico=array('peso_specifico'=>0,'volume_specifico'=>1,'pack_units'=>1,'good_or_service'=>0,'annota'=>'');
+				$campart = @gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
+				$v['descri_codric'] = @gaz_dbi_get_row($gTables['clfoco'], 'codice', $v['codric'])['descri'];
 				$net_weight += $v['quanti'] * $artico['peso_specifico'];
 				if ($artico['pack_units'] > 0) {
 					$units += intval(round($v['quanti'] / $artico['pack_units']));
@@ -2318,19 +2350,19 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 						'value' => '<button '.$disabled.' type="submit" class="btn btn-default btn-xs btn-elimina" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>')
 				);
 				// creo una intestazione della produzione di provenienza
-				if ($ctrl_orderman<>$v['id_orderman']) { // ricordo con un rigo la produzione di riferimento
+				if ($ctrl_orderman<>$v['id_orderman'] && $v['id_orderman'] != '') { // ricordo con un rigo la produzione di riferimento
 					if ($v['id_orderman']==0){
 						$descri_orderman='<div class="btn btn-xs btn-warning"> Non riferiti ad una produzione <i class="glyphicon glyphicon-arrow-down"> </i></div>';
 					} else {
 						$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $v['id_orderman']);
-						$descri_orderman='<div class="btn btn-xs btn-info">Materiale per Produzione n. ' .$orderman['id'].' - '.$orderman['description'].' <i class="glyphicon glyphicon-arrow-down"> </i></div>';
+            if (!$orderman ) $orderman = array('id'=>0,'description'=>'');
+						$descri_orderman='<div class="btn btn-xs btn-info">Materiale per Produzione n. ' .$orderman['id'].' - '.$orderman['description'].' '.$v['id_orderman'].' <i class="glyphicon glyphicon-arrow-down"> </i></div>';
 					}
 					$rowshead[$k]='<td colspan=13>'.$descri_orderman.'</td>';
 				}
 
 				switch ($v['tiprig']) {
 					case "0":
-						$gForm->delivered_artico($v['codart']);
 						$lm_acc = '';
 						if ($v['lot_or_serial'] > 0) {
 						

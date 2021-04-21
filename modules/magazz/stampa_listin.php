@@ -136,6 +136,7 @@ switch ($_GET['ts']) {
 	   while ($row = gaz_dbi_fetch_array($result)) {
 		  $mv = $gForm->getStockValue(false, $row['codice']);
 		  $magval = array_pop($mv);
+      $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 		  $pdf->SetFont('helvetica', '', 10);
 		  switch ($_GET['li']) {
 			 case '0':
@@ -229,6 +230,7 @@ switch ($_GET['ts']) {
 	   while ($row = gaz_dbi_fetch_array($result)) {
 		  $mv = $gForm->getStockValue(false, $row['codice']);
 		  $magval = array_pop($mv);
+      $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 	//      $pdf->SetFont('helvetica', '', 10);
 		  switch ($_GET['li']) {
 			 case '0':

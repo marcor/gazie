@@ -61,6 +61,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['delivery_time'] = intval($_POST['delivery_time']);
     $form['day_of_validity'] = intval($_POST['day_of_validity']);
     $form['cosear'] = $_POST['cosear'];
+    $form['indspe'] = $_POST['indspe'];
     $form['coseprod'] = $_POST['coseprod'];
     $form['seziva'] = $_POST['seziva'];
     $form['tipdoc'] = $_POST['tipdoc'];
@@ -151,32 +152,32 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['rows'] = array();
     $next_row = 0;
     if (isset($_POST['rows'])) {
-        foreach ($_POST['rows'] as $next_row => $value) {
+        foreach ($_POST['rows'] as $next_row => $v) {
             if (isset($_POST["row_$next_row"])) { //se ho un rigo testo
                 $form["row_$next_row"] = $_POST["row_$next_row"];
             }
-            $form['rows'][$next_row]['descri'] = substr($value['descri'], 0, 100);
-            $form['rows'][$next_row]['tiprig'] = intval($value['tiprig']);
-            $form['rows'][$next_row]['codice_fornitore'] = substr($value['codice_fornitore'], 0, 50);	// Aggiunto a Mano 
-            $form['rows'][$next_row]['codart'] = substr($value['codart'], 0, 15);
-            $form['rows'][$next_row]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);
-            $form['rows'][$next_row]['unimis'] = substr($value['unimis'], 0, 3);
-            $form['rows'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/", '.', $value['prelis'])), $admin_aziend['decimal_price'], ".", "");
-            $form['rows'][$next_row]['sconto'] = floatval(preg_replace("/\,/", '.', $value['sconto']));
-            $form['rows'][$next_row]['quanti'] = gaz_format_quantity($value['quanti'], 0, $admin_aziend['decimal_quantity']);
-            $form['rows'][$next_row]['codvat'] = intval($value['codvat']);
-            $form['rows'][$next_row]['codric'] = intval($value['codric']);
-            $form['rows'][$next_row]['delivery_date'] = substr($value['delivery_date'],0,10);
-            $form['rows'][$next_row]['quality'] = substr($value['quality'],0,50);
-            $form['rows'][$next_row]['id_mag'] = intval($value['id_mag']);
-            $form['rows'][$next_row]['id_orderman'] = intval($value['id_orderman']);
+            $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 100);
+            $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
+            $form['rows'][$next_row]['codice_fornitore'] = substr($v['codice_fornitore'], 0, 50);	// Aggiunto a Mano 
+            $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
+            $form['rows'][$next_row]['pervat'] = preg_replace("/\,/", '.', $v['pervat']);
+            $form['rows'][$next_row]['unimis'] = substr($v['unimis'], 0, 3);
+            $form['rows'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/", '.', $v['prelis'])), $admin_aziend['decimal_price'], ".", "");
+            $form['rows'][$next_row]['sconto'] = floatval(preg_replace("/\,/", '.', $v['sconto']));
+            $form['rows'][$next_row]['quanti'] = gaz_format_quantity($v['quanti'], 0, $admin_aziend['decimal_quantity']);
+            $form['rows'][$next_row]['codvat'] = intval($v['codvat']);
+            $form['rows'][$next_row]['codric'] = intval($v['codric']);
+            $form['rows'][$next_row]['delivery_date'] = substr($v['delivery_date'],0,10);
+            $form['rows'][$next_row]['quality'] = substr($v['quality'],0,50);
+            $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
+            $form['rows'][$next_row]['id_orderman'] = intval($v['id_orderman']);
 			if(isset($_POST['all_same_orderman'])){$form['rows'][$next_row]['id_orderman']=$form['in_id_orderman'];}
-            $form['rows'][$next_row]['annota'] = substr($value['annota'], 0, 50);
-            $form['rows'][$next_row]['larghezza'] = floatval($value['larghezza']);
-            $form['rows'][$next_row]['lunghezza'] = floatval($value['lunghezza']);
-            $form['rows'][$next_row]['spessore'] = floatval($value['spessore']);
-            $form['rows'][$next_row]['peso_specifico'] = floatval($value['peso_specifico']);
-            $form['rows'][$next_row]['pezzi'] = floatval($value['pezzi']);
+            $form['rows'][$next_row]['annota'] = substr($v['annota'], 0, 50);
+            $form['rows'][$next_row]['larghezza'] = floatval($v['larghezza']);
+            $form['rows'][$next_row]['lunghezza'] = floatval($v['lunghezza']);
+            $form['rows'][$next_row]['spessore'] = floatval($v['spessore']);
+            $form['rows'][$next_row]['peso_specifico'] = floatval($v['peso_specifico']);
+            $form['rows'][$next_row]['pezzi'] = floatval($v['pezzi']);
             $form['rows'][$next_row]['extdoc'] = filter_var($_POST['rows'][$next_row]['extdoc'], FILTER_SANITIZE_STRING);
             if (!empty($_FILES['docfile_' . $next_row]['name'])) {
                 $move = false;
@@ -193,37 +194,37 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $msg .= '56+';
                 }
             }
-            $form['rows'][$next_row]['status'] = substr($value['status'], 0, 10);
+            $form['rows'][$next_row]['status'] = substr($v['status'], 0, 10);
             if (isset($_POST['upd_row'])) {
-                $key_row = key($_POST['upd_row']);
-                if ($key_row == $next_row) {
-                    $form['in_descri'] = $form['rows'][$key_row]['descri'];
-                    $form['in_tiprig'] = $form['rows'][$key_row]['tiprig'];
-                    $form['in_codart'] = $form['rows'][$key_row]['codart'];
-                    $form['in_codice_fornitore'] = $form['rows'][$key_row]['codice_fornitore'];
-                    $form['in_pervat'] = $form['rows'][$key_row]['pervat'];
-                    $form['in_unimis'] = $form['rows'][$key_row]['unimis'];
-                    $form['in_prelis'] = $form['rows'][$key_row]['prelis'];
-                    $form['in_sconto'] = $form['rows'][$key_row]['sconto'];
-                    $form['in_quanti'] = $form['rows'][$key_row]['quanti'];
-                    $form['in_codvat'] = $form['rows'][$key_row]['codvat'];
-                    $form['in_codric'] = $form['rows'][$key_row]['codric'];
-                    $form['in_delivery_date'] = $form['rows'][$key_row]['delivery_date'];
-                    $form['in_quality'] = $form['rows'][$key_row]['quality'];
-                    $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
-                    $form['in_extdoc'] = $form['rows'][$key_row]['extdoc'];
-					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$key_row]['id_orderman']);
+                $k_row = key($_POST['upd_row']);
+                if ($k_row == $next_row) {
+                    $form['in_descri'] = $form['rows'][$k_row]['descri'];
+                    $form['in_tiprig'] = $form['rows'][$k_row]['tiprig'];
+                    $form['in_codart'] = $form['rows'][$k_row]['codart'];
+                    $form['in_codice_fornitore'] = $form['rows'][$k_row]['codice_fornitore'];
+                    $form['in_pervat'] = $form['rows'][$k_row]['pervat'];
+                    $form['in_unimis'] = $form['rows'][$k_row]['unimis'];
+                    $form['in_prelis'] = $form['rows'][$k_row]['prelis'];
+                    $form['in_sconto'] = $form['rows'][$k_row]['sconto'];
+                    $form['in_quanti'] = $form['rows'][$k_row]['quanti'];
+                    $form['in_codvat'] = $form['rows'][$k_row]['codvat'];
+                    $form['in_codric'] = $form['rows'][$k_row]['codric'];
+                    $form['in_delivery_date'] = $form['rows'][$k_row]['delivery_date'];
+                    $form['in_quality'] = $form['rows'][$k_row]['quality'];
+                    $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
+                    $form['in_extdoc'] = $form['rows'][$k_row]['extdoc'];
+					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$k_row]['id_orderman']);
                     $form['coseprod'] = $orderman['description'];
-                    $form['in_id_orderman'] = $form['rows'][$key_row]['id_orderman'];
-                    $form['in_annota'] = $form['rows'][$key_row]['annota'];
-                    $form['in_larghezza'] = $form['rows'][$key_row]['larghezza'];
-                    $form['in_lunghezza'] = $form['rows'][$key_row]['lunghezza'];
-                    $form['in_spessore'] = $form['rows'][$key_row]['spessore'];
-                    $form['in_peso_specifico'] = $form['rows'][$key_row]['peso_specifico'];
-                    $form['in_pezzi'] = $form['rows'][$key_row]['pezzi'];
-                    $form['in_status'] = "UPDROW_" . $key_row.'_'.$form['in_codart']; // ricordo il vecchio codice articolo 
-                    $form['cosear'] = $form['rows'][$key_row]['codart'];
-                    array_splice($form['rows'], $key_row, 1);
+                    $form['in_id_orderman'] = $form['rows'][$k_row]['id_orderman'];
+                    $form['in_annota'] = $form['rows'][$k_row]['annota'];
+                    $form['in_larghezza'] = $form['rows'][$k_row]['larghezza'];
+                    $form['in_lunghezza'] = $form['rows'][$k_row]['lunghezza'];
+                    $form['in_spessore'] = $form['rows'][$k_row]['spessore'];
+                    $form['in_peso_specifico'] = $form['rows'][$k_row]['peso_specifico'];
+                    $form['in_pezzi'] = $form['rows'][$k_row]['pezzi'];
+                    $form['in_status'] = "UPDROW_" . $k_row.'_'.$form['in_codart']; // ricordo il vecchio codice articolo 
+                    $form['cosear'] = $form['rows'][$k_row]['codart'];
+                    array_splice($form['rows'], $k_row, 1);
                     $next_row--;
                 }
             }
@@ -274,12 +275,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (empty($form["pagame"]) && $form['tipdoc'] != 'APR')
             $msg .= "48+";
         //controllo che i righi non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
-        foreach ($form['rows'] as $i => $value) {
-            if ($value['descri'] == '' &&  $value['quanti']!=0) {
+        foreach ($form['rows'] as $i => $v) {
+            if ($v['descri'] == '' &&  $v['quanti']!=0) {
                 $msgrigo = $i + 1;
                 $msg .= "49+";
             }
-            if ($value['unimis'] == '' && $value['tiprig']==0 ) { // con un rigo normale 
+            if ($v['unimis'] == '' && $v['tiprig']==0 ) { // con un rigo normale 
                 $msgrigo = $i + 1;
                 $msg .= "50+";
             }
@@ -406,8 +407,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 //recupero l'id assegnato dall'inserimento
                 $ultimo_id = gaz_dbi_last_id();
                 //inserisco i rows
-                foreach ($form['rows'] as $i => $value) {
-                    $form['rows'][$i]['delivery_date'] = gaz_format_date($value['delivery_date'], true); // formatto la data per il db
+                foreach ($form['rows'] as $i => $v) {
+                    $form['rows'][$i]['delivery_date'] = gaz_format_date($v['delivery_date'], true); // formatto la data per il db
                     $form['rows'][$i]['id_tes'] = $ultimo_id;
                     $last_rigbro_id = rigbroInsert($form['rows'][$i]);
 					// INIZIO INSERIMENTO DOCUMENTI ALLEGATI
@@ -444,7 +445,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['destin'] = $fornitore['destin'];
         $form['id_des'] = $fornitore['id_des'];
         $id_des = $anagrafica->getPartner($form['id_des']);
-        $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+        $form['search']['id_des']=($id_des)?substr($id_des['ragso1'], 0, 10):'';
         $form['in_codvat'] = $fornitore['aliiva'];
         $form['sconto'] = $fornitore['sconto'];
         $form['pagame'] = $fornitore['codpag'];
@@ -740,6 +741,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
     $anagrafica = new Anagrafica();
     $fornitore = $anagrafica->getPartner($tesbro['clfoco']);
+    $form['indspe'] = $fornitore['indspe'];
     $id_des = $anagrafica->getPartner($tesbro['id_des']);
     $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
     $form['hidden_req'] = '';
@@ -824,6 +826,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
         $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
+        if (!$articolo) $articolo['annota']='';
         if ($rigo['id_body_text'] > 0) { //se ho un rigo testo
             $text = gaz_dbi_get_row($gTables['body_text'], "id_body", $rigo['id_body_text']);
             $form["row_$next_row"] = $text['body_text'];
@@ -940,7 +943,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['print_total'] = 1;
     $form['delivery_time'] = 10;
     $form['day_of_validity'] = 15;
-    $fornitore['indspe'] = "";
+    $form['indspe'] = "";
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete'));
@@ -1012,6 +1015,7 @@ function choicequality(row)
 echo "<form method=\"POST\" name=\"docacq\" enctype=\"multipart/form-data\">\n";
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"{$form['id_tes']}\" name=\"id_tes\">\n";
+echo "<input type=\"hidden\" value=\"{$form['indspe']}\" name=\"indspe\">\n";
 echo "<input type=\"hidden\" value=\"{$form['seziva']}\" name=\"seziva\">\n";
 echo "<input type=\"hidden\" value=\"{$form['tipdoc']}\" name=\"tipdoc\">\n";
 echo "<input type=\"hidden\" value=\"{$form['ritorno']}\" name=\"ritorno\">\n";
@@ -1044,9 +1048,9 @@ echo "</select></td>\n";
 if (!empty($msg)) {
     $message = "";
     $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
-    foreach ($rsmsg as $value) {
+    foreach ($rsmsg as $v) {
         $message .= $script_transl['error'] . "! -> ";
-        $rsval = explode('-', chop($value));
+        $rsval = explode('-', chop($v));
         foreach ($rsval as $valmsg) {
             $message .= $script_transl[$valmsg] . " ";
         }
@@ -1054,7 +1058,7 @@ if (!empty($msg)) {
     }
     echo '<td colspan="2" class="FacetDataTDred">' . $message . "</td>\n";
 } else {
-    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td>" . $fornitore['indspe'] . "<br />";
+    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td>" . $form['indspe'] . "<br />";
     echo "</td>\n";
 }
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td><td class=\"FacetDataTD\">\n";
@@ -1148,22 +1152,22 @@ echo '<div class=" table-responsive">
 $castel = array();
 $last_row = array();
 $ctrl_orderman=0;
-foreach ($form['rows'] as $key => $value) {
+foreach ($form['rows'] as $k => $v) {
     //calcolo il totale del peso in kg
-    switch (strtolower($value['unimis'])) {
+    switch (strtolower($v['unimis'])) {
         case "kg":
-            $quatot = $value['quanti'] + $quatot;
+            $quatot = $v['quanti'] + $quatot;
             break;
     }
     //creo il castelletto IVA
-    $codice_vat = $value['codvat'];
-    $tiporigo = $value['tiprig'];
-    $descrizione = $value['descri'];
+    $codice_vat = $v['codvat'];
+    $tiporigo = $v['tiprig'];
+    $descrizione = $v['descri'];
     //calcolo importo rigo
     if ($tiporigo == 0 || $tiporigo ==50) {//se del tipo normale o con documento allegato
-        $imprig = CalcolaImportoRigo($form['rows'][$key]['quanti'], floatval($value['prelis']), $value['sconto']);
+        $imprig = CalcolaImportoRigo($form['rows'][$k]['quanti'], floatval($v['prelis']), $v['sconto']);
     } elseif ($tiporigo == 1) {//ma se del tipo forfait
-        $imprig = CalcolaImportoRigo(1, floatval($value['prelis']), 0);
+        $imprig = CalcolaImportoRigo(1, floatval($v['prelis']), 0);
     }
     if ($tiporigo <= 1 || $tiporigo ==50) { // se del tipo normale, forfait o documento  allegato
         if (!isset($castel[$codice_vat])) {
@@ -1171,131 +1175,132 @@ foreach ($form['rows'] as $key => $value) {
         }
         $castel[$codice_vat] = number_format(($castel[$codice_vat] + $imprig), 2, '.', '');
     }
-    if ($form['rows'][$key]['tiprig'] == 1)
-        $imprig = number_format($form['rows'][$key]['prelis'], 2, '.', '');
-    echo "<input type=\"hidden\" value=\"{$value['codart']}\" name=\"rows[{$key}][codart]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['codice_fornitore']}\" name=\"rows[{$key}][codice_fornitore]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['status']}\" name=\"rows[{$key}][status]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['tiprig']}\" name=\"rows[{$key}][tiprig]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['codvat']}\" name=\"rows[{$key}][codvat]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['pervat']}\" name=\"rows[{$key}][pervat]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['codric']}\" name=\"rows[{$key}][codric]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['quality']}\" name=\"rows[{$key}][quality]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['id_mag']}\" name=\"rows[{$key}][id_mag]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['id_orderman']}\" name=\"rows[{$key}][id_orderman]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['annota']}\" name=\"rows[{$key}][annota]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['larghezza']}\" name=\"rows[{$key}][larghezza]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['lunghezza']}\" name=\"rows[{$key}][lunghezza]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['spessore']}\" name=\"rows[{$key}][spessore]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['peso_specifico']}\" name=\"rows[{$key}][peso_specifico]\">\n";
-    echo "<input type=\"hidden\" value=\"{$value['pezzi']}\" name=\"rows[{$key}][pezzi]\">\n";
-	echo '<input type="hidden" value="' . $value['extdoc'] . '" name="rows[' . $key . '][extdoc]" />';
-	echo '<input type="hidden" value="' . $value['delivery_date'] . '" name="rows[' . $key . '][delivery_date]" />';
+    if ($form['rows'][$k]['tiprig'] == 1)
+        $imprig = number_format($form['rows'][$k]['prelis'], 2, '.', '');
+    echo "<input type=\"hidden\" value=\"{$v['codart']}\" name=\"rows[{$k}][codart]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['codice_fornitore']}\" name=\"rows[{$k}][codice_fornitore]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['status']}\" name=\"rows[{$k}][status]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['tiprig']}\" name=\"rows[{$k}][tiprig]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['codvat']}\" name=\"rows[{$k}][codvat]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['pervat']}\" name=\"rows[{$k}][pervat]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['codric']}\" name=\"rows[{$k}][codric]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['quality']}\" name=\"rows[{$k}][quality]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['id_mag']}\" name=\"rows[{$k}][id_mag]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['id_orderman']}\" name=\"rows[{$k}][id_orderman]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['annota']}\" name=\"rows[{$k}][annota]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['larghezza']}\" name=\"rows[{$k}][larghezza]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['lunghezza']}\" name=\"rows[{$k}][lunghezza]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['spessore']}\" name=\"rows[{$k}][spessore]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['peso_specifico']}\" name=\"rows[{$k}][peso_specifico]\">\n";
+    echo "<input type=\"hidden\" value=\"{$v['pezzi']}\" name=\"rows[{$k}][pezzi]\">\n";
+	echo '<input type="hidden" value="' . $v['extdoc'] . '" name="rows[' . $k . '][extdoc]" />';
+	echo '<input type="hidden" value="' . $v['delivery_date'] . '" name="rows[' . $k . '][delivery_date]" />';
 	// formatto la visualizzazione dei dati dimensionali
 	$dialog_data='';
-	if ($value['pezzi']>=0.001){
-		$dialog_data.=' pz:'.floatval($value['pezzi']);
-		if ($value['lunghezza']>=0.001){
-			$dialog_data.=' dim:'.floatval($value['lunghezza']);
-			if ($value['larghezza']>=0.001){
-				$dialog_data.='x'.floatval($value['larghezza']);
-				if ($value['spessore']>=0.001){
-					$dialog_data.='x'.floatval($value['spessore']);
+	if ($v['pezzi']>=0.001){
+		$dialog_data.=' pz:'.floatval($v['pezzi']);
+		if ($v['lunghezza']>=0.001){
+			$dialog_data.=' dim:'.floatval($v['lunghezza']);
+			if ($v['larghezza']>=0.001){
+				$dialog_data.='x'.floatval($v['larghezza']);
+				if ($v['spessore']>=0.001){
+					$dialog_data.='x'.floatval($v['spessore']);
 				}
 			}
 		}
 	}
 	// stampo l'intestazione della produzione di provenienza
-    if ($ctrl_orderman<>$value['id_orderman']) { // ricordo con un rigo la produzione di riferimento
-		if ($value['id_orderman']==0){
+    if ($ctrl_orderman<>$v['id_orderman'] && $v['id_orderman'] != '') { // ricordo con un rigo la produzione di riferimento
+		if ($v['id_orderman']==0){
 			$descri_orderman='<div class="btn btn-xs btn-warning"> Non ho riferimenti ad una produzione <i class="glyphicon glyphicon-arrow-down"> </i></div>';
 		} else {
-			$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $value['id_orderman']);
+			$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $v['id_orderman']);
+      if (!$orderman) $orderman=array('id'=>0,'description'=>'');
 			$descri_orderman='<div class="btn btn-xs btn-info">Materiale per Produzione n. ' .$orderman['id'].' - '.$orderman['description'].' <i class="glyphicon glyphicon-arrow-down"> </i></div>';
 		}
 		echo '<tr><td colspan=12>'.$descri_orderman."</td></tr>\n";
 	}
     //stampo i righi in modo diverso a secondo del tipo
     $peso = 0;
-    if ($value['peso_specifico'] <> 0) {
-        $peso = gaz_format_number($value['quanti'] / $value['peso_specifico']);
+    if ($v['peso_specifico'] <> 0) {
+        $peso = gaz_format_number($v['quanti'] / $v['peso_specifico']);
     }
-    switch ($value['tiprig']) {
+    switch ($v['tiprig']) {
         case "0":
             echo '<tr>';
             echo '<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
-						<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '">
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '">
 							<i class="glyphicon glyphicon-arrow-up"></i>
 						</button> </td> 
 					  <td>
-<button name="upd_row[' . $key . ']" class="btn btn-xs btn-success btn-block" type="submit">
-							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $value['codart'] . '
+<button name="upd_row[' . $k . ']" class="btn btn-xs btn-success btn-block" type="submit">
+							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
 						</button>
 					  </td>';
 			echo '<td>
-					<input type="hidden" name="rows[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" />' . $value['codice_fornitore'] .'<button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#quality_'.$key.'" aria-expanded="false" aria-controls="quality_'.$key.'" title="Descrizione qualità" title="Scegli la qualità del prodotto"><i class="glyphicon glyphicon-tags"></i> '.substr($value['quality'],0,10).'</button><div class="collapse" id="quality_'.$key.'">Qualità: <input id="search_quality'.$key.'" onClick="choicequality(\''.$key.'\');"  name="rows[' . $key . '][quality]" value="'. $value['quality'] .'" rigo="'. $key .'" type="text" /></div>
+					<input type="hidden" name="rows[' . $k . '][codice_fornitore]" value="' . $v['codice_fornitore'] . '" />' . $v['codice_fornitore'] .'<button class="btn btn-default btn-sm" type="button" data-toggle="collapse" data-target="#quality_'.$k.'" aria-expanded="false" aria-controls="quality_'.$k.'" title="Descrizione qualità" title="Scegli la qualità del prodotto"><i class="glyphicon glyphicon-tags"></i> '.substr($v['quality'],0,10).'</button><div class="collapse" id="quality_'.$k.'">Qualità: <input id="search_quality'.$k.'" onClick="choicequality(\''.$k.'\');"  name="rows[' . $k . '][quality]" value="'. $v['quality'] .'" rigo="'. $k .'" type="text" /></div>
 					</td>';
             echo '<td>
-						<input type="text" name="rows[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" /><small>
-						<span name="rows[' . $key . '][dialog_data]">'.$dialog_data.'</span></small>
+						<input type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="50" /><small>
+						<span name="rows[' . $k . '][dialog_data]">'.$dialog_data.'</span></small>
 					  </td>';
             /* Peso */
             /* <input class="myTooltip" data-type="product" data-id="firefox" data-title=""  /> */
             echo '<td>
-				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" />
+				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" />
 				</td>
 				<td>
-				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" onchange="document.docacq.last_focus.value=' . $key . '; this.form.submit();" />';
-            echo ' <button class="btn btn-default btn-sm" type="image" data-toggle="collapse" onclick="weightfromdim(\''.$key.'\');" title="Calcola peso, superficie, volume"><i class="glyphicon glyphicon-scale"></i></button> ';
+				<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" onchange="document.docacq.last_focus.value=' . $k . '; this.form.submit();" />';
+            echo ' <button class="btn btn-default btn-sm" type="image" data-toggle="collapse" onclick="weightfromdim(\''.$k.'\');" title="Calcola peso, superficie, volume"><i class="glyphicon glyphicon-scale"></i></button> ';
 		    echo '</td>';
             /** ENRICO FEDELE */
-            echo "<td><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"document.docacq.last_focus.value=" . $key . "; this.form.submit()\" /></td>\n";
-            echo "<td><input type=\"text\" name=\"rows[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\"  onchange=\"this.form.submit()\" /></td>\n";
-            echo '<td class="text-right" title="'.$script_transl[18].': '.$value['codric'].'">' . gaz_format_number($imprig) . "</td>\n";
-            echo "<td>{$value['pervat']}%</td>\n";
-            echo "<td><input type=\"text\" class=\"datepick\" id=\"date_".$key."\" name=\"rows[{$key}][delivery_date]\" value=\"" . $value['delivery_date'] . "\" /></td>\n";
-            $last_row[] = array_unshift($last_row, '' . $value['codart'] . ', ' . $value['descri'] . ', ' . $value['quanti'] . $value['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($value['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($value['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $value['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $value['codric']);
+            echo "<td><input type=\"text\" name=\"rows[{$k}][prelis]\" value=\"{$v['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"document.docacq.last_focus.value=" . $k . "; this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[{$k}][sconto]\" value=\"{$v['sconto']}\" maxlength=\"4\"  onchange=\"this.form.submit()\" /></td>\n";
+            echo '<td class="text-right" title="'.$script_transl[18].': '.$v['codric'].'">' . gaz_format_number($imprig) . "</td>\n";
+            echo "<td>{$v['pervat']}%</td>\n";
+            echo "<td><input type=\"text\" class=\"datepick\" id=\"date_".$k."\" name=\"rows[{$k}][delivery_date]\" value=\"" . $v['delivery_date'] . "\" /></td>\n";
+            $last_row[] = array_unshift($last_row, '' . $v['codart'] . ', ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             break;
         case "1":
-			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" /></td>\n";
-            echo "<td></td><td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\"  /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";
+			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* forfait *\" /></td>\n";
+            echo "<td></td><td><input type=\"text\" name=\"rows[{$k}][descri]\" value=\"$descrizione\" maxlength=\"50\"  /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][unimis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][quanti]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][sconto]\" value=\"\" /></td>\n";
             echo "<td></td>\n";
-            echo "<td class=\"text-right\" title=\"".$script_transl[18].": ".$value['codric']."\"><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"document.docacq.last_focus.value={$key}; this.form.submit()\" /></td>\n";
-            echo "<td>{$value['pervat']}%</td>\n";
-            echo "<td><input type=\"text\" class=\"datepick\" id=\"date_".$key."\" name=\"rows[{$key}][delivery_date]\" >" . $value['delivery_date'] . "/></td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+            echo "<td class=\"text-right\" title=\"".$script_transl[18].": ".$v['codric']."\"><input type=\"text\" name=\"rows[{$k}][prelis]\" value=\"{$v['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"document.docacq.last_focus.value={$k}; this.form.submit()\" /></td>\n";
+            echo "<td>{$v['pervat']}%</td>\n";
+            echo "<td><input type=\"text\" class=\"datepick\" id=\"date_".$k."\" name=\"rows[{$k}][delivery_date]\" >" . $v['delivery_date'] . "/></td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "2":
-			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" /></td>\n";
+			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* descrittivo *\" /></td>\n";
             echo "<td></td>\n";
-            echo "<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\"  /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][prelis]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"text\"   name=\"rows[{$k}][descri]\" value=\"$descrizione\" maxlength=\"100\"  /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][unimis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][quanti]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][prelis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][sconto]\" value=\"\" /></td>\n";
             echo "<td></td>\n";
             echo "<td></td>\n";
             echo "<td></td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "3":
-			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" /></td>\n";
+			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* var.tot.fattura *\" /></td>\n";
             echo "<td></td>\n";
-            echo "	<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" ></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";
+            echo "	<td><input type=\"text\"   name=\"rows[{$k}][descri]\" value=\"$descrizione\" maxlength=\"50\" ></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][unimis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][quanti]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][sconto]\" value=\"\" /></td>\n";
             echo "<td></td>\n";
-            echo "<td class=\"text-right\"><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  /></td>\n";
+            echo "<td class=\"text-right\"><input type=\"text\" name=\"rows[{$k}][prelis]\" value=\"{$v['prelis']}\" align=\"right\" maxlength=\"11\"  /></td>\n";
             echo "<td></td>\n";
             echo "<td></td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "6":
         case "7":
@@ -1304,100 +1309,100 @@ foreach ($form['rows'] as $key => $value) {
               <textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
              */
             echo '	<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '">
-					<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '">
+					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '">
 						<i class="glyphicon glyphicon-arrow-up"></i>
 					</button>
-		 			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $key . ']" value="' . $script_transl['typerow'][$value['tiprig']] . '" />
+		 			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 				</td>
 				<td colspan="10">
-					<textarea id="row_' . $key . 
-                '" name="row_' . $key . 
+					<textarea id="row_' . $k . 
+                '" name="row_' . $k . 
                 '" class="mceClass" style="width:100%;height:100px;">'
-                . $form["row_$key"] . '</textarea>
+                . $form["row_$k"] . '</textarea>
 				</td>
-				<input type="hidden" value="" name="rows[' . $key . '][descri]" />
-				<input type="hidden" value="" name="rows[' . $key . '][unimis]" />
-                <input type="hidden" value="" name="rows[' . $key . '][quanti]" />
-				<input type="hidden" value="" name="rows[' . $key . '][prelis]" />
-				<input type="hidden" value="" name="rows[' . $key . '][sconto]" />
-				<input type="hidden" value="" name="rows[' . $key . '][provvigione]" />';
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+				<input type="hidden" value="" name="rows[' . $k . '][descri]" />
+				<input type="hidden" value="" name="rows[' . $k . '][unimis]" />
+                <input type="hidden" value="" name="rows[' . $k . '][quanti]" />
+				<input type="hidden" value="" name="rows[' . $k . '][prelis]" />
+				<input type="hidden" value="" name="rows[' . $k . '][sconto]" />
+				<input type="hidden" value="" name="rows[' . $k . '][provvigione]" />';
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "50":
-			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* documento allegato *\" /></td>\n";
+			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" /></td>\n";
                 echo '<td>';
-                if (empty($form['rows'][$key]['extdoc'])) {
-                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
+                if (empty($form['rows'][$k]['extdoc'])) {
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
                     . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
                 } else {
-                    echo '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
-                    . $form['rows'][$key]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
+                    echo '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+                    . $form['rows'][$k]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
                 }
-				echo '<div id="extdoc_dialog' . $key . '" class="collapse" >
+				echo '<div id="extdoc_dialog' . $k . '" class="collapse" >
                         <div class="form-group">
                           <div>';
 
-                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $key . '"> 
-                            <label>File: </label><input type="text" name="rows[' . $key . '][extdoc]" value="' . $form['rows'][$key]['extdoc'] . '" >
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
+                            <label>File: </label><input type="text" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
 			</div>
 		     </div>
               </div>' . "</td>\n";
-            echo "<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"1000\"  class=\"col-lg-12\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[{$k}][descri]\" value=\"$descrizione\" maxlength=\"1000\"  class=\"col-lg-12\" /></td>\n";
             echo '<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" />
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" />
 					  </td>
 					  <td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" onchange="this.form.submit();" />
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" onchange="this.form.submit();" />
 					  </td>';
             /** ENRICO FEDELE */
-            echo "<td><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"this.form.submit()\" /></td>\n";
-            echo "<td><input type=\"text\" name=\"rows[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\"  onchange=\"this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[{$k}][prelis]\" value=\"{$v['prelis']}\" align=\"right\" maxlength=\"11\"  onchange=\"this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"rows[{$k}][sconto]\" value=\"{$v['sconto']}\" maxlength=\"4\"  onchange=\"this.form.submit()\" /></td>\n";
             echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
-            echo "<td>{$value['pervat']}%</td>\n";
-            echo "<td>" . $value['codric'] . "</td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+            echo "<td>{$v['pervat']}%</td>\n";
+            echo "<td>" . $v['codric'] . "</td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "51":
-			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* documento allegato *\" /></td>\n";
+			echo "<td><button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$k}]\" value=\"* documento allegato *\" /></td>\n";
                 echo '<td>';
-                if (empty($form['rows'][$key]['extdoc'])) {
-                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
+                if (empty($form['rows'][$k]['extdoc'])) {
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
                     . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
                 } else {
-                    echo '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
-                    . $form['rows'][$key]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
+                    echo '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $k . '">'
+                    . $form['rows'][$k]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
                 }
-				echo '<div id="extdoc_dialog' . $key . '" class="collapse" >
+				echo '<div id="extdoc_dialog' . $k . '" class="collapse" >
                         <div class="form-group">
                           <div>';
 
-                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $key . '"> 
-                            <label>File: </label><input type="text" name="rows[' . $key . '][extdoc]" value="' . $form['rows'][$key]['extdoc'] . '" >
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
+                            <label>File: </label><input type="text" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
 			</div>
 		     </div>
               </div>' . "</td>\n";
-            echo "<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\"  /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][prelis]\" value=\"\" /></td>\n";
-            echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"text\"   name=\"rows[{$k}][descri]\" value=\"$descrizione\" maxlength=\"50\"  /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][unimis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][quanti]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][prelis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[{$k}][sconto]\" value=\"\" /></td>\n";
             echo "<td></td>\n";
             echo "<td></td>\n";
             echo "<td></td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
     }
     echo '  <td class="FacetColumnTD" align="right">
-			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $key . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
+			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
 		  </tr>';
-	$ctrl_orderman=$value['id_orderman'];
+	$ctrl_orderman=$v['id_orderman'];
 }
 
 /** ENRICO FEDELE */
@@ -1537,11 +1542,11 @@ echo "</tr>
 				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[35]</td>
 				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[36] " . $admin_aziend['symbol'] . "</td>
 			 </tr>\n";
-foreach ($castel as $key => $value) {
-    $result = gaz_dbi_get_row($gTables['aliiva'], "codice", $key);
-    $impcast = CalcolaImportoRigo(1, $value, $form['sconto']);
+foreach ($castel as $k => $v) {
+    $result = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
+    $impcast = CalcolaImportoRigo(1, $v, $form['sconto']);
     $ivacast = round($impcast * $result['aliquo']) / 100;
-    $totimpmer += $value;
+    $totimpmer += $v;
     $totimpfat += $impcast;
     $totivafat += $ivacast;
     if ($next_row > 0) {

@@ -122,7 +122,7 @@ function azzera(righe)
     {
     $mv = $gForm->getStockValue(false,$a_row['codice']); //q_g
     $magval = array_pop($mv);
-	
+    $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
      echo "<tr>\n";
      $righe++;
      $rotazione = ($a_row['venduti'] / $_POST['gio_ven']);

@@ -124,8 +124,9 @@ if ($form['catmer'] == 100) {
              $ctrl_cm=$r['catmer'];
            }
            
-           $mv=$gForm->getStockValue(false,$r['codice'],$date,null,$admin_aziend['decimal_price']); 
-           $magval=array_pop($mv);
+          $mv=$gForm->getStockValue(false,$r['codice'],$date,null,$admin_aziend['decimal_price']); 
+          $magval=array_pop($mv);
+          $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
            if ( $magval['q_g'] > 0 )
            {
 	           $form['a'][$r['codice']]['i_d'] = $r['descri'];

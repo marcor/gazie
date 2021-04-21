@@ -1152,7 +1152,7 @@ class selectproduction extends SelectBox {
 					}
 					echo ' <option value="' . $z_row["id"] . '"' . $selected .'>' . $z_row["id"] .' - '.$z_row["description"] . '</option>';
 				}
-                echo "<option value=\"\"> ---------- </option>\n";
+                echo "<option value=\"0\"> ---------- </option>\n";
 				echo ' </select>';
 			} else {
                 $msg = $script_transl['notfound'] . '!';

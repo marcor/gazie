@@ -116,6 +116,7 @@ function caricaCliente(&$form) {
 				// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
 				$mv = $upd_mm->getStockValue(false, $rigo['codart']);
 				$magval = array_pop($mv);
+        $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 				$form['righi'][$_POST['num_rigo']]['giac'] = $magval['q_g'];
 				$form['righi'][$_POST['num_rigo']]['ordin'] = $upd_mm->get_magazz_ordinati($rigo['codart'], "VOR");
 				
@@ -283,7 +284,8 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
 			}
 			// Antonio Germani - controllo la giacenza in magazzino e gli ordini già ricevuti
 			$mv = $upd_mm->getStockValue(false, $rigo['codart']);
-            $magval = array_pop($mv);
+      $magval = array_pop($mv);
+      $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 			$form['righi'][$_POST['num_rigo']]['giac'] = $magval['q_g'];
 			$form['righi'][$_POST['num_rigo']]['ordin'] = $upd_mm->get_magazz_ordinati($rigo['codart'], "VOR");
 			

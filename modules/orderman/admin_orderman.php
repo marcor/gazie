@@ -1156,7 +1156,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						$row['quantita_artico_base'] = number_format ($row['quantita_artico_base'] * $form['quantip'],6);
 						$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
 						$magval = array_pop($mv); // controllo disponibilità in magazzino
-						//$magval['q_g']=number_format($magval['q_g'],8); // questo serve per eliminare un numero esponenziale negativo che a volte  si genera quando invece è zero
+            $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 						if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
 							$magval['q_g'] = $magval['q_g'] + $row['quantita_artico_base'];
 						}

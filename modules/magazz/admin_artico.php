@@ -259,9 +259,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			if($admin_aziend['conmag'] <= 1){ // se non gestisco la contabilità di magazzino ci indico solo la scorta e metto sempre disponibile
 				$form['quantity']=intval($form['scorta']);
 			} else {
-                $gForm = new magazzForm();
-                $mv = $gForm->getStockValue(false, $form['codice']);
-                $magval = array_pop($mv);
+        $gForm = new magazzForm();
+        $mv = $gForm->getStockValue(false, $form['codice']);
+        $magval = array_pop($mv);
+        $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 				$form['quantity']=intval($magval['q_g']);
 			}
 			$gSync->UpsertProduct($form);

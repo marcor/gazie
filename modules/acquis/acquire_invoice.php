@@ -194,6 +194,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_D'] = date('d');
 	$form['date_fin_M'] = date('m');
 	$form['date_fin_Y'] = date('Y');
+	$form['curr_doc'] = 0;
 } else { // accessi successivi  
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
 	$form['curr_doc'] = intval($_POST['curr_doc']);

@@ -587,6 +587,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $mv = $magazz->getStockValue(false, $form['in_codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
+                $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
                 $form['rows'][$old_key]['scorta'] = $artico['scorta'];
                 $form['rows'][$old_key]['quamag'] = $magval['q_g'];
             } elseif ($form['in_tiprig'] == 1) { //rigo forfait
@@ -680,6 +681,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $mv = $magazz->getStockValue(false, $form['in_codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
+                $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
                 $form['rows'][$next_row]['scorta'] = $artico['scorta'];
                 $form['rows'][$next_row]['quamag'] = $magval['q_g'];
                 if ($artico['lot_or_serial'] > 0) {
@@ -860,6 +862,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['annota'] = $articolo['annota'];
         $mv = $magazz->getStockValue(false, $r['codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
+        $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
         $form['rows'][$next_row]['scorta'] = $articolo['scorta'];
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];

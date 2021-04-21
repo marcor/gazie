@@ -101,6 +101,7 @@ $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show
 				
                 $mv = $gForm->getStockValue(false, $r['codice']);
                 $magval = array_pop($mv);
+                $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 				if (isset ($magval['q_g']) && round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
 					$magval['q_g']=0;
 				}

@@ -168,6 +168,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     // giacenza
     $mv = $gForm->getStockValue(false, $r['codice']);
     $magval = array_pop($mv);
+    $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 	 if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
 		 $magval['q_g']=0;
 	 }

@@ -118,35 +118,6 @@ class acquisForm extends GAzieForm {
 		return $acc;
    }
 
-   function delivered_artico($codart=false){
-	/* 	questa funzione ricerca e restituisce lo stato degli ordini di acquisto a fornitori dettagliato per ordine e/o articolo
-		se $codart è false allora restituisce lo stato dei righi di tutti ordini
-	*/
-	global $gTables;
-	$acc=[];
-	$where_codart=($codart?" AND codart ='".$codart."'":'');
-	// riprendo tutti i righi degli ordini relativi all'articolo
-	$q1 = 'SELECT * FROM '.$gTables['rigbro']." LEFT JOIN ".$gTables['tesbro']." ON ".$gTables['rigbro'].".id_tes=".$gTables['tesbro'].".id_tes WHERE tiprig=0 ".$where_codart." AND tipdoc ='AOR' AND id_doc=0 ORDER BY codart,delivery_date";
-	$f1 = gaz_dbi_query($q1);
-    while ($r1=gaz_dbi_fetch_array($f1)) {
-		$acc[$r1['id_rig']]['fornitore']=$r1['clfoco'];
-		$acc[$r1['id_rig']]['id_tesbro']=$r1['id_tes'];
-		$acc[$r1['id_rig']]['codart']=$r1['codart'];
-		$acc[$r1['id_rig']]['ordered']=$r1['quanti'];
-		$acc[$r1['id_rig']]['residual']=$r1['quanti'];
-		$acc[$r1['id_rig']]['delivery_date']=$r1['delivery_date'];
-		$q2 = 'SELECT SUM(quanti) AS delivered FROM '.$gTables['rigdoc']." LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['rigdoc'].".id_tes=".$gTables['tesdoc'].".id_tes WHERE id_order=".$r1['id_rig']." GROUP BY id_rig";
-		$f2 = gaz_dbi_query($q2);
-		while ($r2=gaz_dbi_fetch_array($f2)) {
-			$acc[$r1['id_rig']]['residual']-=$r2['delivered'];
-		}
-		if ($acc[$r1['id_rig']]['residual']<0.0001){ // se non ho un residuo di ordine ne un articolo specifico cancello tutto
-			unset($acc[$r1['id_rig']]);	
-		}
-	}
-	//print_r($acc);
-   }	
-
    function concile_id_order_row($varname,$val_codart,$val_selected,$class='small') {
       global $gTables;
 	  $acc='';
