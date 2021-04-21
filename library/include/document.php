@@ -46,10 +46,12 @@ class DocContabVars {
             $this->caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $tesdoc['caumag']);
             /** fine modifica FP */
         }
-        $this->banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
+        $banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
+        $this->banapp =($banapp)?$banapp:array('descri'=>'');
         $anagrafica = new Anagrafica();
         $this->banacc = $anagrafica->getPartner($this->pagame['id_bank']);
-        $this->vettor = gaz_dbi_get_row($gTables['vettor'], "codice", $tesdoc['vettor']);
+        $vettor = gaz_dbi_get_row($gTables['vettor'], "codice", $tesdoc['vettor']);
+        $this->vettor =($vettor)?$vettor:array('ragione_sociale'=>'','indirizzo'=>'','citta'=>'','provincia'=>'');
         $this->tableName = $tableName;
         $this->intesta1 = $admin_aziend['ragso1'];
         $this->intesta1bis = $admin_aziend['ragso2'];
