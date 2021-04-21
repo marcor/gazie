@@ -26,9 +26,9 @@ require("../../config/config/gconfig.php");
 require('../../library/include/'.$NomeDB.'.lib.php');
 if ( $debug_active ) {
 	error_reporting(E_ALL);
-	//require ( "../../library/kint/build/kint.phar");
+	//require ( "../../library/kint/build/kint.phar");// solo quando verrà aggiornato KINT potremo utilizzarlo, tolto sulla 7.43
 } else {
-	error_reporting(0);
+	error_reporting($error_reporting_level);
 }
 
 $err=array();
