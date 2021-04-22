@@ -305,6 +305,7 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                     case 'I':
                     case 'D':
                     case 'T':
+                    case 'R':
                         $castel_transact[$row['idtes']]['operazioni_imponibili'] = $value_imponi;
                         $castel_transact[$row['idtes']]['imposte_addebitate'] = $value_impost;
                         if ($value_impost == 0) {  //se non c'è imposta il movimento è sbagliato
