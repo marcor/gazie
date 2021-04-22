@@ -184,7 +184,7 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                         $chk_intra = 'ZZ'; // EXTRACEE
                     }
                     if ($row['operat'] == 1) { // Fattura
-                        $castel_transact[$row['idtes']]['tipo_documento'] = 'TD01';
+                        $castel_transact[$row['idtes']]['tipo_documento'] = 'TD17';
                     } else {                // Note
                         $castel_transact[$row['idtes']]['tipo_documento'] = 'TD04';
                     }
@@ -305,6 +305,7 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                     case 'I':
                     case 'D':
                     case 'T':
+                    case 'R':
                         $castel_transact[$row['idtes']]['operazioni_imponibili'] = $value_imponi;
                         $castel_transact[$row['idtes']]['imposte_addebitate'] = $value_impost;
                         if ($value_impost == 0) {  //se non c'è imposta il movimento è sbagliato
@@ -313,10 +314,6 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                         if ($row['tipiva'] == 'T') {  //scissione dei pagamenti
                             $castel_transact[$row['idtes']]['esigibilita_iva'] = 'S';
                         }
-                        break;
-                    case 'R': // reverse charge, sul movimento IVA ho l'IVA che non deve stare sull'esterometro 
-                        $castel_transact[$row['idtes']]['operazioni_imponibili'] = $value_imponi;
-                        $castel_transact[$row['idtes']]['imposte_addebitate'] = 0;
                         break;
                     case 'E':
                         $castel_transact[$row['idtes']]['tipiva'] = 3;
@@ -339,6 +336,7 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                     case 'I':
                     case 'D':
                     case 'T':
+                    case 'R':
                         $castel_transact[$row['idtes']]['operazioni_imponibili'] += $value_imponi;
                         $castel_transact[$row['idtes']]['imposte_addebitate'] += $value_impost;
                         if ($value_impost == 0) {  //se non c'è imposta il movimento è sbagliato
@@ -346,10 +344,9 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                         }
                         if ($row['tipiva'] == 'T') {  //scissione dei pagamenti
                             $castel_transact[$row['idtes']]['esigibilita_iva'] = 'S';
+                        } elseif ($row['tipiva'] == 'R') {  //INVERSIONE CONTABILE
+                            $castel_transact[$row['idtes']]['esigibilita_iva'] = 'I';
                         }
-                        break;
-                    case 'R':
-                        $castel_transact[$row['idtes']]['operazioni_imponibili'] += $value_imponi;
                         break;
                     case 'E':
                         $castel_transact[$row['idtes']]['operazioni_esente'] += $value_imponi;
@@ -372,16 +369,18 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                 $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']] = array('imponibile' => 0,
                     'imposta' => 0,
                     'aliquota' => $row['periva'],
-                    'natura' => $row['fae_natura'],
+                    'natura' => ($row['tipiva']=='R')?'':$row['fae_natura'],
                     'detraibile' => '',
                     'deducibile' => '',
                     'esigibilita' => 'I');
             }
             if ($row['tipiva'] == 'T') {  // se è una aliquota con scissione dei pagamenti
-                $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['esigibilita'] = 'S';
+               $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['esigibilita'] = 'S';
             } else if ($row['tipiva'] == 'D') { // se è una imposta indetraibile
                 $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['detraibile'] = 0.00;
-            }
+            } elseif ($row['tipiva'] == 'R') {  //INVERSIONE CONTABILE
+               $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['esigibilita'] = 'I';
+            } 
             $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['imponibile'] += $row['imponi'];
             $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['imposta'] += $row['impost'];
             // FINE creazione castelletto iva

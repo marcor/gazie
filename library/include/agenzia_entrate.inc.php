@@ -1256,6 +1256,8 @@ function creaFileDAT20($aziend, $data, $periodo) {
                     $el_3_2_3_2_4 = $doc->createElement("Detraibile", '0.00');
                     $el_3_2_3_2->appendChild($el_3_2_3_2_4);
                 }
+                $el_3_2_3_2_6 = $doc->createElement("EsigibilitaIVA", $vr['esigibilita']);
+                $el_3_2_3_2->appendChild($el_3_2_3_2_6);
                 $el_3_2_3->appendChild($el_3_2_3_2);
                 $el_3_2->appendChild($el_3_2_3);
             }
