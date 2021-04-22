@@ -348,6 +348,9 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                             $castel_transact[$row['idtes']]['esigibilita_iva'] = 'S';
                         }
                         break;
+                    case 'R':
+                        $castel_transact[$row['idtes']]['operazioni_imponibili'] += $value_imponi;
+                        break;
                     case 'E':
                         $castel_transact[$row['idtes']]['operazioni_esente'] += $value_imponi;
                         if ($value_impost != 0) {  //se c'è imposta il movimento è sbagliato
@@ -369,7 +372,7 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                 $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']] = array('imponibile' => 0,
                     'imposta' => 0,
                     'aliquota' => $row['periva'],
-                    'natura' => substr($row['fae_natura'],0,2),
+                    'natura' => $row['fae_natura'],
                     'detraibile' => '',
                     'deducibile' => '',
                     'esigibilita' => 'I');
