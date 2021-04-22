@@ -299,13 +299,13 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                 $castel_transact[$row['idtes']]['imposte_addebitate'] = 0;
                 $castel_transact[$row['idtes']]['operazioni_esente'] = 0;
                 $castel_transact[$row['idtes']]['operazioni_nonimp'] = 0;
-                $castel_transact[$row['idtes']]['tipiva'] = 1;
+                $castel_transact[$row['idtes']]['tipiva'] = '';
                 $castel_transact[$row['idtes']]['esigibilita_iva'] = 'I'; // [I]: esigibilità immediata [D]: esigibilità differita [S] scissione dei pagamenti
+				print$row['tipiva'].'<br>';
                 switch ($row['tipiva']) {
                     case 'I':
                     case 'D':
                     case 'T':
-                    case 'R':
                         $castel_transact[$row['idtes']]['operazioni_imponibili'] = $value_imponi;
                         $castel_transact[$row['idtes']]['imposte_addebitate'] = $value_impost;
                         if ($value_impost == 0) {  //se non c'è imposta il movimento è sbagliato
@@ -314,6 +314,10 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                         if ($row['tipiva'] == 'T') {  //scissione dei pagamenti
                             $castel_transact[$row['idtes']]['esigibilita_iva'] = 'S';
                         }
+                        break;
+                    case 'R': // reverse charge, sul movimento IVA ho l'IVA che non deve stare sull'esterometro 
+                        $castel_transact[$row['idtes']]['operazioni_imponibili'] = $value_imponi;
+                        $castel_transact[$row['idtes']]['imposte_addebitate'] = 0;
                         break;
                     case 'E':
                         $castel_transact[$row['idtes']]['tipiva'] = 3;
