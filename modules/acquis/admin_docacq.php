@@ -2292,7 +2292,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
 				echo '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />';
-				echo '<input type="hidden" value="' . $v['id_lotmag'] . '" name="rows[' . $k . '][id_lotmag]" />';
+				echo '<input type="hidden" value="' . ((array_key_exists('id_lotmag',$v)) ? $v['id_lotmag'] : '') . '" name="rows[' . $k . '][id_lotmag]" />';
 				// colonne editabili
 				echo "<input type=\"hidden\" value=\"" . $v['descri'] . "\" name=\"rows[$k][descri]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['unimis'] . "\" name=\"rows[$k][unimis]\">\n";

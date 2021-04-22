@@ -940,7 +940,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
         $form['id_des'] = $cliente['id_des'];
         $id_des = $anagrafica->getPartner($form['id_des']);
-        $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+        $form['search']['id_des'] = (empty($id_des)) ?: substr($id_des['ragso1'], 0, 10);
 //        $des_same = gaz_dbi_get_row($gTables['destina'], "id_anagra", $cliente['id_anagra']);
 //        $form['id_des_same_company'] = $des_same['codice'];
         $form['in_codvat'] = $cliente['aliiva'];
@@ -1100,15 +1100,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
         // addizione ai totali peso,pezzi,volume, ma se l'unità di misura è uguale a KG forzo il peso specifico ad 1, ed in futuro qui dovrei utilizzare il nuovo metodo di calcolo utilizzato anche in acquis/admin_broven.php
-		if (strtoupper(substr($artico['unimis'],0,2))=='KG'){
+		if (isset($artico) && strtoupper(substr($artico['unimis'],0,2))=='KG'){
 			$artico['peso_specifico']=1;	
 		}
-        $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
-        $form['gross_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
-        if ($artico['pack_units'] > 0) {
+        $form['net_weight'] += (isset($artico)) ? $form['in_quanti'] * $artico['peso_specifico'] : 0;
+        $form['gross_weight'] += (isset($artico)) ? $form['in_quanti'] * $artico['peso_specifico'] : 0;
+        if (isset($artico) && $artico['pack_units'] > 0) {
             $form['units'] += intval(round($form['in_quanti'] / $artico['pack_units']));
         }
-        $form['volume'] += $form['in_quanti'] * $artico['volume_specifico'];
+        $form['volume'] += (isset($artico)) ? $form['in_quanti'] * $artico['volume_specifico'] : 0;
         // fine addizione peso,pezzi,volume
         if (substr($form['in_status'], 0, 6) == "UPDROW") { //se è un rigo da modificare
             $old_key = intval(substr($form['in_status'], 6));
@@ -1689,12 +1689,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         unset($form["RiferimentoNumeroLinea"][$delri+1]);
         // sottrazione ai totali peso,pezzi,volume
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$delri]['codart']);
-        $form['net_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
-        $form['gross_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
-        if ($artico['pack_units'] > 0) {
+        $form['net_weight'] -= (isset($artico)) ? $form['rows'][$delri]['quanti'] * $artico['peso_specifico'] : 0;
+        $form['gross_weight'] -= (isset($artico)) ? $form['rows'][$delri]['quanti'] * $artico['peso_specifico'] : 0;
+        if (isset($artico) && $artico['pack_units'] > 0) {
             $form['units'] -= intval(round($form['rows'][$delri]['quanti'] / $artico['pack_units']));
         }
-        $form['volume'] -= $form['rows'][$delri]['quanti'] * $artico['volume_specifico'];
+        $form['volume'] -= (isset($artico)) ? $form['rows'][$delri]['quanti'] * $artico['volume_specifico'] : 0;
         // fine sottrazione peso,pezzi,volume
         // diminuisco o lascio inalterati gli index dei testi
         foreach ($form['rows'] as $k => $val) {
@@ -2021,9 +2021,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     //cerco l'ultimo template
     $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' and ddt_type!='R' and seziva = " .$form['seziva'], 'datfat desc, protoc desc', 0, 1);
     $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);
-    if ($ultimo_template['template'] == 'FatturaImmediata') {
+    if (isset($ultimo_template['template']) && $ultimo_template['template'] == 'FatturaImmediata') {
         $form['template'] = "FatturaImmediata";
-    } elseif ($ultimo_template['template'] != '') {
+    } elseif (!empty($ultimo_template['template'])) {
         $form['template'] = $ultimo_template['template'];
     } elseif ($form['tipdoc'] == 'FAA') {
         $form['template'] = "FatturaSemplice";
@@ -2195,14 +2195,14 @@ for ($counter = 1; $counter <= 5; $counter++) {
     echo "<option value=\"" . $counter . "\"" . $selected . ">" . $counter . "</option>\n";
 }
 echo "</select></td>\n";
-    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\" colspan=\"1\">" . $cliente['indspe'] . "<br />";
+    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['indspe'] . "<br />";
     echo "</td>\n";
 
-    if ($cliente['pariva'] > 0) {
-        echo "<td class=\"FacetFieldCaptionTD\">P.IVA</td><td class=\"FacetDataTD\" colspan=\"1\">" . $cliente['pariva'] . "<br />";
+    if (@$cliente['pariva'] > 0) {
+        echo "<td class=\"FacetFieldCaptionTD\">P.IVA</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['pariva'] . "<br />";
         echo "</td>\n";
     } else {
-        echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td class=\"FacetDataTD\" colspan=\"1\">" . $cliente['codfis'] . "<br />";
+        echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['codfis'] . "<br />";
         echo "</td>\n";
     }
 ?>
@@ -2226,7 +2226,7 @@ $select_pagame->addSelected($form["pagame"]);
 $select_pagame->output();
 echo "</td>";
 
-echo "<td class=\"FacetFieldCaptionTD\">Cod.Univoco</td><td class=\"FacetDataTD\" colspan=\"1\">" . $cliente['fe_cod_univoco'] . "<br />";
+echo "<td class=\"FacetFieldCaptionTD\">Cod.Univoco</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['fe_cod_univoco'] . "<br />";
 echo "</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[9]</td><td  class=\"FacetDataTD\">\n";
 $select_banapp = new selectbanapp("banapp");
@@ -2605,14 +2605,14 @@ foreach ($form['rows'] as $k => $v) {
 					<td><input type="hidden" name="rows[' . $k . '][provvigione]" value="" /></td>
 					<td></td>
 					<td class="text-right">
-						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11"';
+						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * (($v['ritenuta']) ?: 0) / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11"';
 						if ($vp>0) { // solo se scelto in configurazione avanzata azienda si vedrà il dialog per mettere il prezzo iva compresa
 							echo 'onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');"';
 						}
 						echo ' id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" />
 					</td>
 					<td class="text-right">
-						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">' . $v['pervat'] . '%
+						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * (($v['ritenuta']) ?: 0) / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">' . $v['pervat'] . '%
 						</span>
 					</td>
 					<td class="text-right codricTooltip" title="Contropartita">
@@ -3364,13 +3364,13 @@ if ($next_row > 0) {
 					<td class="text-right">' . gaz_format_number($calc->total_imp + $calc->total_vat + $stamp - $rit + $form['taxstamp']) . '</td>
 				</tr>';
     }
-	if (strlen($msg['war'][0])>0){
+	if (!empty($msg['war'][0])){
 		$class_btn_confirm = "btn-danger";
 		$addvalue=" Nonostante l'errore";
 	}
     echo '		<tr>
 					<td colspan="8" class="text-center FacetFieldCaptionTD">
-						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]). $addvalue . '">
+						<input name="ins" class="btn '.$class_btn_confirm.'" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . ucfirst($script_transl[$toDo]). @$addvalue . '">
 					</td>
 				</tr>';
 }
