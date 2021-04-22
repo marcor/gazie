@@ -301,7 +301,6 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                 $castel_transact[$row['idtes']]['operazioni_nonimp'] = 0;
                 $castel_transact[$row['idtes']]['tipiva'] = '';
                 $castel_transact[$row['idtes']]['esigibilita_iva'] = 'I'; // [I]: esigibilità immediata [D]: esigibilità differita [S] scissione dei pagamenti
-				print$row['tipiva'].'<br>';
                 switch ($row['tipiva']) {
                     case 'I':
                     case 'D':
