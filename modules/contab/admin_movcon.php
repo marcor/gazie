@@ -1498,7 +1498,7 @@ echo "</script>\n";
                     </div><!-- chiude tab-pane  -->
                 </div><!-- chiude tab-content  -->
                 <?php
-                if ($partnersel['ragso1'] != '') {
+                if ($partnersel && $partnersel['ragso1'] != '') {
                     ?>
                     <div class="tab-content col-sm-12 col-md-12 col-lg-12">
                         <?php

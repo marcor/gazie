@@ -118,7 +118,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['check_ddt'.$ddtrow] = "checked";
 				if (isset($_POST['ddt'])){ // se cliccato ddt carico pure tutti i righi dei DDT checked					
 					$rigdoc = gaz_dbi_dyn_query('*', $gTables['rigdoc'], 'id_tes = '.$_POST['id_tes'.$ddtrow],"id_rig ASC");
-					while ($row = gaz_dbi_fetch_array($rigdoc)) {				
+					while ($row = gaz_dbi_fetch_array($rigdoc)) {		
 						$_POST['rows'][$i]['descri'] = substr($row['descri'], 0, 100);
 						$_POST['rows'][$i]['tiprig'] = intval($row['tiprig']);
 						$_POST['rows'][$i]['codart'] = substr($row['codart'], 0, 15);
@@ -998,7 +998,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $artico['annota']='';
         $artico['peso_specifico']=0;
         $artico['good_or_service']='';
-        $artico['uniacq']=0;
+        $artico['uniacq']='';
         $artico['scorta']=0;
         $artico['descri']='';
         $artico['codice_fornitore']='';
@@ -1181,24 +1181,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
                 $form['rows'][$i]['scorta'] = $artico['scorta'];
                 $form['rows'][$i]['quamag'] = $magval['q_g'];
-				/* Antonio Germani: commentato perché siamo in acquisto e non deve proporre la giacenza disponibile in magazzino
-                if ($artico['lot_or_serial'] > 0) { 
-                    $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
-                    $ld = $lm->divideLots($form['in_quanti']);
-                    // ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
-                    // e se è il caso creo più righi  
-                     
-                    $j = $i;
-                    foreach ($lm->divided as $k => $v) {
-                        if ($v['qua'] >= 0.00001) {
-                            $form['rows'][$j] = $form['rows'][$i]; // copio il rigo di origine
-                            $form['rows'][$j]['id_lotmag'] = $k; // setto il lotto 
-                            $form['rows'][$j]['quanti'] = $v['qua']; // e la quantità in base al riparto
-                            $j++;
-                        }
-                    }
-                }
-				*/
             } elseif ($form['in_tiprig'] == 1) { //forfait
                 $form['rows'][$i]['codart'] = "";
                 $form['rows'][$i]['annota'] = "";
@@ -1394,7 +1376,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
          */
 // sottrazione ai totali peso,pezzi,volume
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$delri]['codart']);
-        if (!$artico) $artico=array('peso_specifico'=>0,'pack_units'=>0,'volume_specifico'=>0);
+        if (!$artico) $artico=array('peso_specifico'=>false,'pack_units'=>false,'volume_specifico'=>false);
         $form['net_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
         $form['gross_weight'] -= $form['rows'][$delri]['quanti'] * $artico['peso_specifico'];
         if ($artico['pack_units'] > 0) {
@@ -2216,7 +2198,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				$nr++;
 				// addizione ai totali peso,pezzi,volume
 				$artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
-        if (!$artico) $artico=array('peso_specifico'=>0,'volume_specifico'=>1,'pack_units'=>1,'good_or_service'=>0,'annota'=>'');
+        if (!$artico) $artico=array('peso_specifico'=>false,'volume_specifico'=>false,'pack_units'=>false,'good_or_service'=>0,'annota'=>'','unimis'=>'');
 				$campart = @gaz_dbi_get_row($gTables['camp_artico'], "codice", $v['codart']);
 				$v['descri_codric'] = @gaz_dbi_get_row($gTables['clfoco'], 'codice', $v['codric'])['descri'];
 				$net_weight += $v['quanti'] * $artico['peso_specifico'];
@@ -2244,6 +2226,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 					}
 					if ($v['pesosp'] <> 0) {
 						$peso = gaz_format_number($v['quanti'] / $v['pesosp']);
+            
 					}
 				}
 				$imprig = 0;

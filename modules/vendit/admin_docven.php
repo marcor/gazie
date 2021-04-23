@@ -441,10 +441,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
     }
 
+    $datemi = gaz_format_date($form['datemi'],true);// adatto al db;
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         $sezione = $form['seziva'];
-        $datemi = gaz_format_date($form['datemi'],true);// adatto al db;
         $utsemi = gaz_format_date($form['datemi'],2); // mktime
         if ($form['tipdoc'] != 'DDT' && $form['tipdoc'] != 'DDY' && $form['tipdoc'] != 'DDS' && $form['tipdoc'] != 'RDV' && $form['tipdoc'] != 'DDV' && $form['template'] != 'FatturaImmediata') {
             $initra = $datemi;
@@ -1099,13 +1099,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     } else if (isset($_POST['in_submit'])) {
 
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
+        if (!$artico) $artico=array('codart'=>'','sconto'=>'','annota'=>'','peso_specifico'=>0,'SIAN'=>0,'volume_specifico'=>0,'preve1'=>0,'pack_units'=>0,'retention_tax'=>0,'good_or_service'=>'','lot_or_serial'=>'','descri'=>'','unimis'=>'','codcon'=>'','aliiva'=>0,'scorta'=>0,'payroll_tax'=>0);
         // addizione ai totali peso,pezzi,volume, ma se l'unità di misura è uguale a KG forzo il peso specifico ad 1, ed in futuro qui dovrei utilizzare il nuovo metodo di calcolo utilizzato anche in acquis/admin_broven.php
 		if (isset($artico) && strtoupper(substr($artico['unimis'],0,2))=='KG'){
 			$artico['peso_specifico']=1;	
 		}
-        $form['net_weight'] += (isset($artico)) ? $form['in_quanti'] * $artico['peso_specifico'] : 0;
-        $form['gross_weight'] += (isset($artico)) ? $form['in_quanti'] * $artico['peso_specifico'] : 0;
-        if (isset($artico) && $artico['pack_units'] > 0) {
+        $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
+        $form['gross_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
+        if ($artico['pack_units'] > 0) {
             $form['units'] += intval(round($form['in_quanti'] / $artico['pack_units']));
         }
         $form['volume'] += (isset($artico)) ? $form['in_quanti'] * $artico['volume_specifico'] : 0;
@@ -1326,7 +1327,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['rows'][$next_row]['sconto'] = 0;
 					} else {
 						$comp = new venditCalc();
-						$tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], $artico['sconto']);
+						$tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto(((isset($cliente))?$cliente['codice']:''), $form['rows'][$next_row]['codart'], $artico['sconto']);
 						if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
 							$form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
 							$form['rows'][$next_row]['sconto'] = 0;
@@ -1731,12 +1732,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
 		}
 	} 
-	
 	foreach ($form['rows'] as $i => $v) { // Antonio Germani - controllo delle giacenze per l'articolo con lotti e data di registrazione per SIAN
 		if ($v['SIAN']>0){ 
 			$uldtfile=getLastSianDay();
-			$datem=substr($form['datemi'],6,4) . "-" . substr($form['datemi'],3,2) . "-" . substr($form['datemi'],0,2);
-			if (strtotime($datem) < strtotime($uldtfile)){
+			if (strtotime($datemi) < strtotime($uldtfile)){
 				$msg['war'][] = "siandate";
 			}
 		}
