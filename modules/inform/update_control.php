@@ -23,12 +23,10 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-require("../../library/include/classes/Autoloader.php");
-
 $admin_aziend=checkAdmin(9);
 
 // Qui viene tenuto dagli sviluppatori la lista dei siti che hanno messo a disposizione il file di check della propria versione
-$tutor[1] = array('zone'=>'Abruzzo','city'=>'Montesilvano (PE)','sms'=>'+393383121161','web'=>'http://www.devincentiis.it','check'=>'http://www.devincentiis.it/file_ver');
+$tutor[1] = array('zone'=>'Abruzzo','city'=>'Montesilvano (PE)','sms'=>'+393383121161','web'=>'https://www.devincentiis.it','check'=>'http://www.devincentiis.it/file_ver');
 // fine lista
 $configurazione = gaz_dbi_get_row($gTables['config'],'variable','update_url');
 // se si ha un sito "personalizzato" per il download diverso da quello ufficiale su Sourceforge: modifico quello di default
@@ -61,7 +59,7 @@ function tutor_list($tutor,$configurazione,$script_transl)
             echo "<td>".$value['city']."</td>\n";
             echo "<td>".$value['sms']."</td>\n";
             echo "<td align=\"center\"><a href=\"".$value['web']."\" target=\"_NEW\">".$value['web']."</a></td>\n";
-            if (!empty($value['check']) and $configurazione['cvalue'] == $value['check']) {
+            if ($configurazione && !empty($value['check']) && $configurazione['cvalue'] == $value['check']) {
                echo "<td class=\"FacetDataTD\" align=\"right\"><input disabled style=\"color:red;\" type=\"submit\" value=\"".$script_transl['check_value'][1]."\" name=\"check[$key]\" title=\"".$script_transl['check_title_value'][1]."\" /></td></tr>\n";
             } else {
                echo "<td align=\"right\"><input type=\"submit\" value=\"".$script_transl['check_value'][0]."\" name=\"check[$key]\" title=\"".$script_transl['check_title_value'][0]."\" /></td></tr>\n";
@@ -76,7 +74,7 @@ $script_transl=HeadMain();
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
 <br />
 <?php
-if ($configurazione['cvalue']) {
+if ($configurazione && $configurazione['cvalue']) {
    $remote_id = @file_get_contents($configurazione['cvalue']);
    if (preg_match("/^([0-9]{1,2}).([0-9]{1,2})/",$remote_id,$regs)){
       // versione locale presa da gconfig.php
@@ -104,54 +102,5 @@ if ($configurazione['cvalue']) {
     tutor_list($tutor,$configurazione,$script_transl);
 }
 
-$file = isset($_FILES['file']) ? $_FILES['file'] : [];
-$upgrade = new \GAzie\Upgrade;
-$deleted_folder = \GAzie\GAzie::factory()->getConfig()->getDirectories();
-$success = $upgrade->zip($file);
-?>
-<br><br><br>
-<div class="container text-center">
-<div class="col-md-12">
-	<h3>Aggiornamento Automatico</h3>
-</div>
-<?php
-if ( !$success ) {
-	foreach( $upgrade->getErrors() as $error) {
-?>
-<div class="col-md-12 alert alert-danger">
-<?php echo $error; ?>
-</div>
-<?php
-	}
-}
-?>
-<?php
-if ( $success ) {
-?>
-<div class="col-md-12 alert alert-success">
-Esci e rientra nella nuova versione! <a href="../../modules/root/logout.php">Logout</a>
-</div>
-<?php
-}
-?>
-<div class="col-md-4"></div>
-<div class="col-md-4">
-<form enctype="multipart/form-data" method="post" class="form-inline" onsubmit="return showAlertBackup();">
-  <div class="form-group">
-	<input id="file" type="file" name="file" class="text-center">  
-  </div>
-  <button type="submit" class="btn btn-primary" id="save" name="save" ><i class="icon-ok icon-white"></i> Upload</button>
-</form>
-</div>
-<script>
-function showAlertBackup() {
-	alert('Saranno cancellate le cartelle:\n <?php echo implode($deleted_folder,'\n'); ?>');
-	return confirm("Verifica Backup Database e File di Configurazione!");
-}
-</script>
-<div class="col-md-4"></div>
-</div>
-
-<?php
 require("../../library/include/footer.php");
 ?>

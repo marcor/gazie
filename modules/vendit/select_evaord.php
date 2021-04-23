@@ -230,7 +230,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
         $form['pagame'] = $testate['pagame'];
         $form['destin'] = $testate['destin'];
         $form['id_des'] = $testate['id_des'];
-        $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+        $form['search']['id_des'] =($id_des)?substr($id_des['ragso1'], 0, 10):'';
         $form['id_des_same_company'] = $testate['id_des_same_company'];
         $form['caumag'] = $testate['caumag'];
         $form['id_agente'] = $testate['id_agente'];

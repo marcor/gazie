@@ -226,7 +226,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			
 
 			<?php 
-			if (strlen($f_row['identifier'])>0) {
+			if ($f_row && strlen($f_row['identifier'])>0) {
 				echo '<td align="center">'.$f_row['identifier'].' - '.gaz_format_date($f_row['expiry']).'</td>';
 			} else {
 				echo '<td></td>';
@@ -239,7 +239,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $r['duration'];?></td>
 			<!-- Antonio Germani Vado a leggere la descrizione del campo connesso alla produzione -->
 			<?php $c_row = gaz_dbi_get_row($gTables['campi'], "codice", $r['campo_impianto']);?>
-			<td align="center"><?php echo $r['campo_impianto'], " ", $c_row['descri'] ;?></td>
+			<td align="center"><?php echo $r['campo_impianto'], " ",(($c_row)?$c_row['descri']:'');?></td>
 			
 			<!-- Colonna stato lavorazione -->
 			<td>

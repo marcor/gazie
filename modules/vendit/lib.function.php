@@ -193,7 +193,9 @@ class Agenti {
          return false;
       } else { // devo ricavare la percentuale associata all'articolo(prioritaria) o categoria merceologica
          $value = gaz_dbi_get_row($gTables['artico'], 'codice', $articolo);
-         $rs = gaz_dbi_dyn_query($gTables['agenti'] . ".*," . $gTables['provvigioni'] . ".*", $gTables['agenti'] . " LEFT JOIN " . $gTables['provvigioni'] . " ON " . $gTables['agenti'] . ".id_agente = " . $gTables['provvigioni'] . ".id_agente", $gTables['provvigioni'] . ".id_agente = " . $id_agente . " AND ((cod_articolo = '" . $articolo . "' AND cod_articolo != '') OR (cod_catmer = " . intval($value['catmer']) . " AND cod_articolo = ''))", 'cod_articolo DESC', 0, 1);
+         if (!isset($value['catmer'])) $value['catmer']=0;
+         $rs = gaz_dbi_dyn_query($gTables['agenti'] . ".*," . $gTables['provvigioni'] . ".*", $gTables['agenti'] . " LEFT JOIN " . $gTables['provvigioni'] . " ON " . $gTables['agenti'] . ".id_agente = ". $gTables['provvigioni'] . ".id_agente", $gTables['provvigioni'] . ".id_agente = " . $id_agente . " AND ((cod_articolo = '" . $articolo . "' AND cod_articolo != '') OR (cod_catmer = " .         intval($value['catmer']) . 
+         " AND cod_articolo = ''))", 'cod_articolo DESC', 0, 1);
          $result = gaz_dbi_fetch_array($rs);
          if ($result) {
             return $result['percentuale'];

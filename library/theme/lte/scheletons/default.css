@@ -387,3 +387,7 @@ form table.GazFormDeleteTable {
 html body form section.content form.form-horizontal{
   padding-top: 12px;  
 }
+table.xdebug-error{
+  z-index: 2000;
+  position: relative;
+}

@@ -133,3 +133,7 @@ select#in_codvat {
 select#in_codric {
     width: 165px;
 }
+table.xdebug-error{
+  z-index: 2000;
+  position: relative;
+}

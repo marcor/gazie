@@ -97,7 +97,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['web_url'] = $campi['web_url'];
 	$form['id_colture'] = $campi['id_colture'];
 	$colt = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$form['id_colture']);
-	$form['nome_colt'] = $form['id_colture']." - ".$colt['nome_colt'];
+	$form['nome_colt'] = $form['id_colture']." - ".(($colt)?$colt['nome_colt']:'');
     $form['annota'] = $campi['annota'];
     $form['ricarico'] = str_replace('.', ',',$campi["ricarico"]);
 	$form['giorno_decadimento'] =$campi['giorno_decadimento'];

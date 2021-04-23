@@ -63,16 +63,21 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form["campo_impianto"] = $_POST["campo_impianto"];    
     $form['quantip'] = $_POST['quantip'];
     $form['cosear'] = $_POST['cosear'];
-	$form['codart'] = $_POST['codart'];	
+    $form['codart'] = $_POST['codart'];	
 	
     if (strlen ($_POST['cosear'])>0) {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
-		$form['codart'] = $resartico['codice'];
+		$form['codart'] =($resartico)?$resartico['codice']:'';
 	}  else {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
 	}
-	$form['lot_or_serial'] = $resartico['lot_or_serial'];
-	$form['SIAN'] = $resartico['SIAN'];
+  if ($resartico) {
+    $form['lot_or_serial'] = $resartico['lot_or_serial'];
+    $form['SIAN'] = $resartico['SIAN'];
+  } else {
+    $form['lot_or_serial'] = '';
+    $form['SIAN'] = '';
+  }
 	$form['cod_operazione'] = $_POST['cod_operazione'];
     $form['recip_stocc'] = $_POST['recip_stocc'];
 	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
@@ -85,7 +90,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			}
 		}
 	}
-	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
+	if ($resartico && $resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
 			 // prendo i movimenti di magazzino dei componenti e l'unità di misura 
 			$where="operat = '-1' AND id_orderman = ". intval($_GET['codice']);
@@ -217,7 +222,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         if ($form['codart'] <> "" && !isset($itemart)) { // controllo se codice articolo non esiste o se è nullo
             $msg.= "20+";
         }        	
-		if ($itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto, 
+		if ($itemart && $itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto, 
 		//controllo se le quantità inserite per ogni singolo lotto, di ogni componente, corrispondono alla richiesta della produzione e alla reale disponbilità 
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
 				if ($form['quanti_comp'][$nc] == "ERRORE"){
@@ -414,7 +419,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$form['id_movmag']=$prev_id_movmag;// reimposto l'id_movmag del movimento di entrata
 						$id_movmag=$form['id_movmag'];
 					}
-                    if ($itemart['good_or_service'] == 2) { // se è un articolo composto
+          if ($itemart && $itemart['good_or_service'] == 2) { // se è un articolo composto
 						for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
 							if ($form['q_lot_comp'][$nc] > 0) { // se il componente ha lotti
 							    for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
@@ -835,10 +840,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['datreg'] = $result4['datreg'];
     $form['quantip'] = $result4['quanti'];
     $form['id_movmag'] = $result4['id_mov'];
-	$resmov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['id_movmag']);
-	$form['cod_operazione'] = $resmov_sian['cod_operazione'];
-	$form['recip_stocc'] = $resmov_sian['recip_stocc'];
-	$form['recip_stocc_destin'] = $resmov_sian['recip_stocc_destin'];
+    $resmov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['id_movmag']);
+    $form['cod_operazione'] =($resmov_sian)?$resmov_sian['cod_operazione']:'';
+    $form['recip_stocc'] =($resmov_sian)?$resmov_sian['recip_stocc']:'';
+    $form['recip_stocc_destin'] =($resmov_sian)?$resmov_sian['recip_stocc_destin']:'';
     $result2 = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $result['id_tesbro']);
     $form['gioinp'] = substr($result2['datemi'], 8, 2);
     $form['mesinp'] = substr($result2['datemi'], 5, 2);
@@ -847,19 +852,25 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['campo_impianto'] = $result['campo_impianto'];
     $form['id_lotmag'] = $result['id_lotmag'];
     $form['order'] = $result2['numdoc'];	
-	$res3 = gaz_dbi_get_row($gTables['clfoco'], "codice", $result2['clfoco']);// importo il nome del cliente dell'ordine
-	$form['coseor'] = $result2['id_tes'];
-	$form['id_tes'] = $result2['id_tes'];
+    $res3 = gaz_dbi_get_row($gTables['clfoco'], "codice", $result2['clfoco']);// importo il nome del cliente dell'ordine
+    $form['coseor'] = $result2['id_tes'];
+    $form['id_tes'] = $result2['id_tes'];
     $result3 = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $result['id_rigbro']);
     $form['codart'] = $result3['codart'];
     $form['quantipord'] = $result3['quanti'];
     $result5 = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
-    $form['identifier'] = $result5['identifier'];
-    $form['expiry'] = $result5['expiry'];
-	$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
-	$form['lot_or_serial'] = $resartico['lot_or_serial'];
-	$form['SIAN'] = $resartico['SIAN'];
-	if ($resartico['good_or_service'] == 2) { // se è un articolo composto
+    $form['identifier'] =($result5)?$result5['identifier']:'';
+    $form['expiry'] =($result5)?$result5['expiry']:'';
+    $resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
+    if ($resartico){
+      $form['lot_or_serial'] = $resartico['lot_or_serial'];
+      $form['SIAN'] = $resartico['SIAN'];
+    } else {
+      $form['lot_or_serial'] = '';
+      $form['SIAN'] = '';
+      $resartico=array('unimis'=>'','lot_or_serial'=>'','good_or_service'=>'');
+    }
+    if (count($resartico) > 4 && $resartico['good_or_service'] == 2) { // se è un articolo composto
 		// prendo i movimenti di magazzino dei componenti e l'unità di misura
 		$where="operat = '-1' AND id_orderman = ". intval($_GET['codice']);
 		$table = $gTables['movmag']." LEFT JOIN ".$gTables['artico']." on (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
@@ -897,6 +908,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         $form['nmovdb'] = $form['mov'] - 1;
     }
     $form['cosear'] = "";
+
 } else {                 //                  **   se e' il primo accesso per INSERT    **
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 	$form['numdoc']="";
@@ -1065,7 +1077,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['8']; ?> </td>	
 	<td colspan="2" class="FacetDataTD">
 		<?php
-    if ($toDo == "update") {
+    if (isset($res3) && $res3 && $toDo == "update") {
         echo "N: ",$form['order']," - Cliente: ",$res3['descri'];
 ?>
 		<input type="hidden" name="order" Value="<?php echo $form['order']; ?>"/>
@@ -1108,9 +1120,9 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				$select_artico->output(substr($form['cosear'], 0, 20));
 			}
 		}	
-	echo '<input type="hidden" name="lot_or_serial" value="' . $resartico['lot_or_serial'] . '"/>';
+	echo '<input type="hidden" name="lot_or_serial" value="' .(($resartico)?$resartico['lot_or_serial']:''). '"/>';
 	
-    if ($resartico['good_or_service'] == 2) { // se è un articolo composto
+    if ($resartico && $resartico['good_or_service'] == 2) { // se è un articolo composto
 ?>
 		<div class="container-fluid">
 			<div class="row" style="margin-left: 0px;">

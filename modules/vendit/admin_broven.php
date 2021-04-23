@@ -75,6 +75,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['day_of_validity'] = intval($_POST['day_of_validity']);
     $form['cosear'] = $_POST['cosear'];
     $form['seziva'] = $_POST['seziva'];
+    $form['indspe'] = $_POST['indspe'];
     $form['tipdoc'] = $_POST['tipdoc'];
     $form['gioemi'] = $_POST['gioemi'];
     $form['mesemi'] = $_POST['mesemi'];
@@ -333,9 +334,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } else {    //controlli in caso di inserimento
             $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesbro'], "YEAR(datemi) = " . $form['annemi'] . " and tipdoc = '" . $form['tipdoc'] . "' and seziva = $sezione", "numdoc desc, datemi desc", 0, 1);
             $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
-            $utsUltimoDocumento = mktime(0, 0, 0, substr($ultimo_tipo['datemi'], 5, 2), substr($ultimo_tipo['datemi'], 8, 2), substr($ultimo_tipo['datemi'], 0, 4));
-            if ($ultimo_tipo and ( $utsUltimoDocumento > $utsemi)) {
+            if ($ultimo_tipo){
+              $utsUltimoDocumento = mktime(0, 0, 0, substr($ultimo_tipo['datemi'], 5, 2), substr($ultimo_tipo['datemi'], 8, 2), substr($ultimo_tipo['datemi'], 0, 4));
+              if ($ultimo_tipo and ( $utsUltimoDocumento > $utsemi)) {
                 $msg .= "45+";
+              }
             }
         }
         // --- fine controllo coerenza date-numeri
@@ -586,14 +589,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $cliente = $anagrafica->getPartner($form['clfoco']);
         }
         $result = gaz_dbi_get_row($gTables['imball'], "codice", $cliente['imball']);
-        $form['imball'] = $result['descri'];
+        $form['imball'] =($result)?$result['descri']:'';
         if (($form['net_weight'] - $form['gross_weight']) >= 0) {
-            $form['gross_weight'] += $result['weight'];
+            $form['gross_weight'] +=($result)?$result['weight']:0;
         }
         $result = gaz_dbi_get_row($gTables['portos'], "codice", $cliente['portos']);
-        $form['portos'] = $result['descri'];
+        $form['portos'] = ($result)?$result['descri']:'';
         $result = gaz_dbi_get_row($gTables['spediz'], "codice", $cliente['spediz']);
-        $form['spediz'] = $result['descri'];
+        $form['spediz'] = ($result)?$result['descri']:'';
         $form['destin'] = $cliente['destin'];
         $form['id_agente'] = $cliente['id_agente'];
         if ($form['id_agente'] > 0) { // carico la provvigione standard
@@ -607,9 +610,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
         $form['id_des'] = $cliente['id_des'];
         $id_des = $anagrafica->getPartner($form['id_des']);
-        $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+        $form['search']['id_des'] =($id_des)?substr($id_des['ragso1'], 0, 10):'';
         $des_same = gaz_dbi_get_row($gTables['destina'], "id_anagra", $cliente['id_anagra']);
-        $form['id_des_same_company'] = $des_same['codice'];
+        $form['id_des_same_company'] =($des_same)?$des_same['codice']:'';
         $form['in_codvat'] = $cliente['aliiva'];
         if ($cliente['cosric'] >= 100000000) {
             $form['in_codric'] = $cliente['cosric'];
@@ -628,6 +631,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['change_pag'] = $cliente['codpag'];
         $form['banapp'] = $cliente['banapp'];
         $form['listin'] = $cliente['listin'];
+        $form['indspe'] = $cliente['indspe'];
         $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V')
                 and $cliente['speban'] == 'S') {
@@ -1128,6 +1132,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $tesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $_GET['id_tes']);
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($tesbro['clfoco']);
+    $form['indspe'] = $cliente['indspe'];
     $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . intval($_GET['id_tes']), "id_rig asc");
     $id_des = $anagrafica->getPartner($tesbro['id_des']);
     $form['id_tes'] = intval($_GET['id_tes']);
@@ -1371,7 +1376,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['caucon'] = '';
     $form['caumag'] = 0;
     $form['sconto'] = 0;
-    $cliente['indspe'] = "";
+    $form['indspe'] = "";
 	$ultimoprezzo=''; //info sugli ultimi prezzi
 }
 require("../../library/include/header.php");
@@ -1467,7 +1472,7 @@ echo "<form method=\"POST\" name=\"broven\" enctype=\"multipart/form-data\">\n";
 $gForm = new venditForm();
 echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 		<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
-		<input type="hidden" value="' . $form['seziva'] . '" name="seziva" />
+		<input type="hidden" value="' . $form['indspe'] . '" name="indspe" />
 		<input type="hidden" value="' . $form['tipdoc'] . '" name="tipdoc" />
 		<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />
 		<input type="hidden" value="' . $form['change_pag'] . '" name="change_pag" />
@@ -1508,7 +1513,7 @@ if (!empty($msg)) {
     echo '			<td colspan="2" class="FacetDataTDred">' . $message . '</td>';
 } else {
     echo '			<td class="FacetFieldCaptionTD">' . $script_transl[5] . '</td>
-   					<td class="FacetDataTD">' . $cliente['indspe'] . '<br /></td>';
+   					<td class="FacetDataTD">' . $form['indspe'] . '<br /></td>';
 }
 echo '			<td class="FacetFieldCaptionTD">' . $script_transl[6] . '</td>
 				<td class="FacetDataTD">';
