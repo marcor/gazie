@@ -94,26 +94,27 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 						//cancello la testata
 						gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $row['id_tes']);
 						gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $row['id_con']);
-                        // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
-                        $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$row['id_con'],"id_tes");
-                        while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
-                            gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
-                        }
+            // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
+            $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$row['id_con'],"id_tes");
+            while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
+                gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
+            }
 						gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $row['id_con']);
 						gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $row['id_con']);
 						gaz_dbi_put_query($gTables['rigbro'], 'id_doc = ' . $row["id_tes"], "id_doc", "");
 						// cancello pure l'eventuale movimento di split payment
 						$r_split = gaz_dbi_get_row($gTables['tesmov'], 'id_doc', $row['id_tes']);
-						gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $r_split['id_tes']);
-                        // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
-                        $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$r_split['id_tes'],"id_tes");
-                        while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
-                            gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
-                        }
-						gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $r_split['id_tes']);
+            if ($r_split) {	
+              gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $r_split['id_tes']);
+              // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
+              $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$r_split['id_tes'],"id_tes");
+              while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
+                gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
+              }
+              gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $r_split['id_tes']);
+            }
 						//cancello i righi
-						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '" . $row['id_tes'] . "'");
-						echo "<br><br><br>";
+						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $row['id_tes'] );
 						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
 							if (intval($val_old_row['id_mag']) > 0) {  //se c'� stato un movimento di magazzino lo azzero
 								$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
@@ -136,11 +137,11 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 						gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "numfat", "");
 						gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "datfat", "");
 						gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $row['id_con']);
-                        // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
-                        $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$row['id_con'],"id_tes");
-                        while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
-                            gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
-                        }
+            // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
+            $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$row['id_con'],"id_tes");
+            while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
+                gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
+            }
 						gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $row['id_con']);
 						gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $row['id_con']);
 						while ($a_row = gaz_dbi_fetch_array($result)) {
@@ -153,22 +154,24 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 							gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "numfat", "");
 							gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "datfat", "");
 							gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $row['id_con']);
-                            // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
-                            $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$row['id_con'],"id_tes");
-                            while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
-                                gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
-                            }
+              // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
+              $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$row['id_con'],"id_tes");
+              while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
+                  gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
+              }
 							gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $row['id_con']);
 							gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $row['id_con']);
 							// cancello pure l'eventuale movimento di split payment
 							$r_split = gaz_dbi_get_row($gTables['tesmov'], 'id_doc', $a_row['id_tes']);
-							gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $r_split['id_tes']);
-                            // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
-                            $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$r_split['id_tes'],"id_tes");
-                            while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
-                                gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
-                            }
-							gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $r_split['id_tes']);
+              if ($r_split) {	
+                gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $r_split['id_tes']);
+                // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
+                $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$r_split['id_tes'],"id_tes");
+                while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
+                    gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
+                }
+                gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $r_split['id_tes']);
+              }
 						}
 						break;
 					} elseif ($ultimo_documento['protoc'] != $row["protoc"]) {
