@@ -61,6 +61,7 @@ $admin_aziend = checkAdmin(9);
         }
 		
 		$n=0;
+		unset ($value);
 		if (isset ($_POST['addval'])){
 			foreach ($_POST['addval'] as $add) { 
 				if ($_POST['addvar'][$n]=="chiave" AND !empty($_FILES['myfile']['name'])){
@@ -69,6 +70,7 @@ $admin_aziend = checkAdmin(9);
 				$value['val']=$add;
 				$value['var']=$_POST['addvar'][$n];
 				$value['description']=$_POST['adddes'][$n];
+				
 				gaz_dbi_table_insert('company_config', $value);
 				$n++;
 			}
@@ -180,6 +182,13 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 					$path["val"]=$r["val"];		
 				}
 				
+				if ($r['var']=="keypass"){
+					$keypass["id"]=$r["id"];
+					$keypass["description"]=$r["description"];
+					$keypass["var"]=$r["var"];
+					$keypass["val"]=$r["val"];		
+				}
+				
             }
 			
 			?>
@@ -258,7 +267,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				<div class="row">
 				<div class="form-group" >
 				<label for="input<?php echo $Sftp["id"]; ?>" class="col-sm-5 control-label"><?php echo $Sftp["description"]; ?></label>
-				<div class="col-sm-7">
+				<div class="col-sm-3">
 					
 				    <?php 
 					if ($Sftp["val"]=="SI"){
@@ -272,6 +281,20 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 					}
 					?>
 				</div>
+				<div class="col-sm-4">					
+					<?php				
+					if ($keypass["val"]=="key"){
+						?>
+						
+						<input type="radio" value="key" name="<?php echo $keypass["var"]; ?>" checked="checked" >Key - Password<input type="radio" value="pass" name="<?php echo $keypass["var"]; ?>">
+						<?php
+					} else {
+						?>
+						<input type="radio" value="key" name="<?php echo $keypass["var"]; ?>">Key - Password<input type="radio" value="pass" name="<?php echo $keypass["var"]; ?>" checked="checked">
+						<?php
+					}
+					?>
+				</div>
 				</div>
 				</div><!-- chiude row  -->
 				<?php
@@ -280,10 +303,19 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				<div class="row">
 				<div class="form-group" >
 				<label for="inputSftp" class="col-sm-5 control-label">Usa il protocollo di trasferimento file sicuro Sftp</label>
-				<div class="col-sm-7">					
+				<div class="col-sm-3">					
 					<input type="radio" value="SI" name="addval[]">Si - No<input type="radio" value="NO" name="addval[]" checked="checked">
 					<input type="hidden" name="addvar[]" value="Sftp">
 					<input type="hidden" name="adddes[]" value="Usa il protocollo di trasferimento file sicuro Sftp">
+				</div>				
+			
+				<div class="col-sm-4">
+				<select name="addval[]" id="cars" >
+					<option value="pass">Password</option>
+					<option value="key">File chiave segreta</option>				  				  
+				</select>
+					<input type="hidden" name="addvar[]" value="keypass">
+					<input type="hidden" name="adddes[]" value="Usa password o file chiave segreta">
 				</div>
 				</div>
 				</div><!-- chiude row  -->
@@ -333,7 +365,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				?>
 				<div class="row">
 				<div class="form-group" >
-				<label for="inputport" class="col-sm-5 control-label">Chiave segreta Sftp !!!!!!primo ins</label>
+				<label for="inputport" class="col-sm-5 control-label">Chiave segreta Sftp</label>
 				<div class="col-sm-7">
 				<input type="file" id="myfile" name="myfile">
 				<input type="text" class="form-control input-sm" name="addval[]" disabled="disabled" value="" >
