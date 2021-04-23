@@ -421,13 +421,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				// controllo se ho il fornitore in archivio
 				$form['partner_cost']=$admin_aziend['impacq'];
 				$form['partner_vat']=$admin_aziend['preeminent_vat'];
-				if ($isFatturaElettronicaSemplificata) {
-					$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
-				} else {
-					$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
-				}
+				$form['pariva'] = $codiva;
+				$form['codfis'] = $codfis;
 				$anagrafica = new Anagrafica();
-                $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
+                $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva'] . "'", "CASE WHEN codfis LIKE '" . $form['codfis'] . "' THEN 1 ELSE 0 END DESC");
                 if ($partner_with_same_pi) { // ho già il fornitore sul piano dei conti
 					$form['clfoco'] = $partner_with_same_pi[0]['codice'];
 					if ($partner_with_same_pi[0]['cosric']>100000000) { // ho un costo legato al fornitore 
