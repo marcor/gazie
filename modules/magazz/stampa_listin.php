@@ -58,7 +58,7 @@ $table = $gTables['artico'] . " LEFT JOIN " . $gTables['catmer'] . " ON (" . $gT
 $where = "catmer BETWEEN '" . intval($_GET['ci']) .
         "' AND '" . intval($_GET['cf']) .
         "' AND " . $gTables['artico'] . ".codice BETWEEN '" . substr($_GET['ai'], 0, 15) .
-        "' AND '" . substr($_GET['af'], 0, 15) . "' AND id_assets = 0";
+        "' AND '" . substr($_GET['af'], 0, 15) . "' AND id_assets = 0 AND movimentabile <> 'N'";
 /** inizio modifica FP 28/11/2015
  * filtro per fornitore ed ordinamento
  */
