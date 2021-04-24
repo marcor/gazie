@@ -28,7 +28,7 @@ Dopo i buoni propositi, ecco la sostanza di un mese di lavoro:
 - La generazione delle favicon non quadrate (ratio <> 1:1) verranno comunque centrate. (A.De Vincentiis)
 - Prima di stampare un partitario dei conti controllo i riferimenti al partner commerciale ed eventualmente viene fatto l'update. (A.De Vincentiis) 
 - Se un articolo è segnalato come "non movimentabile" viene messo alla fine della select-option della ricerca. (A.De Vincentiis)
-- Gestione lotti: corretto la funzione getAvailableLots. (A.Germani)
+- Gestione lotti: corretta la funzione getAvailableLots. (A.Germani)
 - Chiedendo l'emissione di un nuovo documento viene proposta la sezione IVA visualizzata sul report delle fatture o dei ddt di vendita. (A.De Vincentiis)
 - L'eliminazione di aliquote IVA, banche d'appoggio e pagamenti è impedita se sono state usate in documenti fiscali (fatture, dtt, ecc) di vendita e/o acquisto. (A.De Vincentiis)
 - Anagrafica articoli Merci e servizi di magazzino e relativo report: implementata tabella per la visualizzazione degli ultimi acquisti raggruppati per fornitore. (A.De Vincentiis)
@@ -40,4 +40,4 @@ Dopo i buoni propositi, ecco la sostanza di un mese di lavoro:
 - Portate avanti con z-index:2000 le segnalazioni di xdebug sul tema LTE. (A.De Vincentiis)
 
  
-Antonio de Vincentiis, Montesilvano, 24 marzo 2021
+Antonio de Vincentiis, Montesilvano, 24 aprile 2021
