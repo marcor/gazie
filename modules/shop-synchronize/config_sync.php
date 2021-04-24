@@ -189,6 +189,13 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 					$keypass["val"]=$r["val"];		
 				}
 				
+				if ($r['var']=="accpass"){
+					$accpass["id"]=$r["id"];
+					$accpass["description"]=$r["description"];
+					$accpass["var"]=$r["var"];
+					$accpass["val"]=$r["val"];		
+				}
+				
             }
 			
 			?>
@@ -261,6 +268,32 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				</div>
 			</div><!-- chiude row  -->
 			<?php
+			
+			if (isset($accpass['id']) AND $accpass['id']>0){
+				?>
+				<div class="row">
+				<div class="form-group" >
+				<label for="input<?php echo $accpass["id"]; ?>" class="col-sm-5 control-label"><?php echo $accpass["description"]; ?></label>
+				<div class="col-sm-7">
+					<input type="password" class="form-control input-sm" id="input<?php echo $accpass["id"]; ?>" name="<?php echo $accpass["var"]; ?>" placeholder="<?php echo $accpass["var"]; ?>" value="<?php echo $accpass["val"]; ?>">
+				</div>
+				</div>
+				</div><!-- chiude row  -->
+				<?php
+			} else {				
+				?>
+				<div class="row">
+				<div class="form-group" >
+				<label for="inputport" class="col-sm-5 control-label">Password di accesso ai file interfaccia shop-sync</label>
+				<div class="col-sm-7">
+					<input type="password" class="form-control input-sm" name="addval[]" >
+					<input type="hidden" name="addvar[]" value="accpass">
+					<input type="hidden" name="adddes[]" value="Password di accesso ai file di interfaccia shop-sync">
+				</div>
+				</div>
+				</div><!-- chiude row  -->
+				<?php				
+			}
 			
 			if (isset($Sftp['id']) AND $Sftp['id']>0){
 				?>
@@ -376,8 +409,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				</div>
 				</div><!-- chiude row  -->
 				<?php				
-			}
-			
+			}		
 			
         }
         ?>                    
