@@ -1,5 +1,5 @@
 ﻿  -----------------------------------------------------------------------
- Sincronizzazione articoli e-commerce <-> GAzie e Download ordini, via FTP
+ Sincronizzazione e-commerce <-> GAzie via FTP e SFTP
   ------------------------------------------------------------------------
   @Author    Antonio Germani
   @Website   https://www.programmisitiweb.lacasettabio.it
@@ -8,20 +8,22 @@
   versione 3.0
   ------------------------------------------------------------------------ 
   
- Questo è un sistema che, tramite appositi file inseriti nell'e-commerce, permette di interfacciare GAzie ad un sito internet scambiando i dati da un database ad un altro. Lo scambio dei dati fra DataBase avviane tramite file xml trasferiti via FTP.
+ Questo è un sistema che, tramite appositi file inseriti nell'e-commerce, permette di interfacciare GAzie ad un sito internet scambiando i dati da un database ad un altro. Lo scambio dei dati fra DataBase avviane tramite file xml trasferiti via FTP o SFTP; i file xml verranno poi elaborati per modificare il DataBase.
  Grazie alla sua semplicità tecnica questo sistema è adattabile ad ogni applicazione che utilizzi tabelle di database.
-L'adattabilità fra i vari CMS e siti e-commerce è realizzata creando specifici file di interfaccia mentre il modulo di GAzie "Shop-synchronize" rimane sempre lo stesso.
- Il meccanismo di funzionamento è semplice; per ovviare al fatto che la maggior parte dei database non sono gestibili da programmi residenti all'esterno del dominio cui il database appartiene, si caricano i dati da trasferire tramite un file xml via FTP e poi si avvia ul programma, residente nel dominio del database da modificare, che si occuperà di aggiornare il data base.
+L'adattabilità fra i vari CMS e siti e-commerce è realizzata creando specifici file di interfaccia che dovranno elaborare i file xml inviati da GAzie. Il modulo di GAzie "Shop-synchronize", invece, è già in grado di elaborare i file xml che gli e-commerce gli inviano.
+ Il meccanismo di funzionamento è semplice; per ovviare al fatto che la maggior parte dei database non sono gestibili da programmi residenti all'esterno del dominio cui il database appartiene, si caricano i dati da trasferire tramite un file xml via FTP e poi si avvia il programma, residente nel dominio del database da modificare, che si occuperà di aggiornare il proprio data base.
+Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con l'e-commerce, passa, tramite l'url, una password criptata. Tale 
+password potrà essere decriptata e controllata dal file interfaccia dell'e-commerce.
+Al momento, il modulo shop-synchronize è in grado di sincronizzare i prodotti bidirezionalmente. Inoltre è in grado di importare gli ordini creando cliente e prodotti in GAzie qualora non esistenti.
 
 *ATTIVAZIONE* 
 Per attivare la sincronizzazione manuale basta semplicemente mantere attivo questo modulo e cliccare sui relativi pulsanti di sincronizzazione presenti alla pagina "Sincronizza"
-Esiste, poi, anche una sincronizzazione automatica attivale dalla pagina impostazioni, raggiungibile cliccando su "Impostazioni" sempre sulla pagina "Sincronizza"; è possibile impostare anche l'intervallo di tempo fra una sincronizzazione e l'altra. 
-Poi si consiglia di attivare anche il relativo widget in home page. 
+Nel caso specifico dell'importazione degli ordini, c'è una sincronizzazione automatica attivabile dalla pagina impostazioni del modulo con la possibilità di regolare l'intervallo di tempo fra una sincronizzazione e l'altra. 
+Infine, si consiglia di attivare anche il relativo widget in home page. 
 
 *PRIMA DELL'USO*,
 Nella pagina "Sincronizza", cliccando sul pulsante "Impostazioni", si dovranno inserire i dati di accesso FTP all'host del sito internet e il percorso per l'upload ftp, su Website root directory si dovrà inserire il percorso della cartella su cui risiederanno le interfaccie (ad esempio: https://www.tuosito.it/syncro/ ). 
-Per evitare intrusioni indesiderate, l'interfaccia di GAzie, al momento di connettersi con l'e-commerce, passa, tramite l'url, una password. Tale 
-password è, per comodità, la stessa che GAzie ha per l' FTP e che viene memorizzata su configurazione avanzata azienda. L'interfaccia del sito dovrà, quindi,fare un controllo sulla password che ha ricevuto da GAzie e, se confermata, si avvierà.
+Sempre nella stessa pagina sarà possibile scegliere se usare il più sicuro sistema Sftp al posto del semplice ftp. In questo caso si dovranno fare ulteriori impostazioni specifiche del Sftp. 
 
  *DOWNLOAD ORDINI*
 Il file di interfaccia che si inserirà nel percorso impostato del sito web/e-commerce si dovrà chiamare: ordini-gazie.php.
@@ -38,8 +40,8 @@ Inoltre la sincronizzazione è bidirezionale:
 Dall'e-commerce a GAzie (il file di interfaccia si dovrà chiamare: dwnlArticoli-gazie.php)
 
 
-* FILE DI INTERFACCIA DA INSERIRE NEL SITO *
- I file di interfaccia da inserire nel sito devono essere creati in base alle esigenze e alle impostazioni dell'applicazione installata nel sito.
+* FILE DI INTERFACCIA DA INSERIRE NEL SITO E-COMMERCE*
+ I file di interfaccia da inserire nel sito devono essere creati in base alle esigenze e alle impostazioni dell'applicazione installata nell'e-commerce.
  
 Nel sito di Antonio Germani sono disponibili i file di interfaccia per Joomla! e per WordPress così come è possibile richiedere ulteriori file di interfaccia specifici per altri e-commerce: https:www.programmisitiweb.lacasettabio.it
 
