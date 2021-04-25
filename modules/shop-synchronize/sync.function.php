@@ -45,6 +45,10 @@ utilizzare per il sincronismo che tutti gli altri moduli di GAzie nel momento in
 un aggiornamento dei dati punteranno alle funzioni contenute nel modulo alternativo richiesto,
  pittosto che a questo. 
 */
+
+use phpseclib\Crypt\RSA;
+use phpseclib\Net\SFTP;
+
 class shopsynchronizegazSynchro {
 
 	function __construct() {
@@ -79,12 +83,14 @@ class shopsynchronizegazSynchro {
 	}
 	function UpsertProduct($d) {
 		if ($d['web_public'] == 1){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
-			@session_start();
-			global $gTables,$admin_aziend;			 
+			@session_start();		
+			global $gTables,$admin_aziend;
+			$rawres=[];
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
-			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];			
+			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
+			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
 			// "articoli-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
@@ -106,19 +112,64 @@ class shopsynchronizegazSynchro {
 			if (intval($d['barcode'])==0) {// se non c'è barcode allora è nullo
 				$d['barcode']="NULL";
 			}
-			// imposto la connessione al server
-			$conn_id = ftp_connect($ftp_host);
-			// effettuo login con user e pass
-			$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-			// controllo la connessione e il login
-			if ((!$conn_id) OR (!$mylogin)){ 
-				// non si connette FALSE
-				$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$rawres['button'] = 'Avviso eCommerce';
-				$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
-				$rawres['link'] = '../shop-synchronize/synchronize.php';
-				$rawres['style'] = 'danger';
-			}
+			
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password	
+							
+				set_include_path(get_include_path() . PATH_SEPARATOR . '../../library');
+				include_once '../../library/phpseclib/Net/SSH2.php';
+				include_once '../../library/phpseclib/Net/SFTP.php';
+				include_once '../../library/phpseclib/Net/SFTP/Stream.php';
+				include_once '../../library/phpseclib/Crypt/AES.php';
+				include_once '../../library/phpseclib/Crypt/RSA.php';				
+
+				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
+				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
+
+				if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
+					$key = new RSA();
+					$key->setPassword($ftp_pass);
+					$key -> loadKey(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''));
+
+					$sftp = new SFTP($ftp_host, $ftp_port);
+					if (!$sftp->login($ftp_user, $key)) {
+						// non si connette: key LOG-IN FALSE
+						$rawres['title'] = "Problemi con la connessione Sftp usando il file chiave. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+						$rawres['button'] = 'Avviso eCommerce';
+						$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
+						$rawres['link'] = '../shop-synchronize/synchronize.php';
+						$rawres['style'] = 'danger';										
+					} 
+				} else { // SFTP log-in con password
+				
+					$sftp = new SFTP($ftp_host, $ftp_port);
+					if (!$sftp->login($ftp_user, $ftp_pass)) {
+						// non si connette: password LOG-IN FALSE						
+						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+						$rawres['button'] = 'Avviso eCommerce';
+						$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
+						$rawres['link'] = '../shop-synchronize/synchronize.php';
+						$rawres['style'] = 'danger';									
+					} 
+				}				
+			} else {
+			 
+				// imposto la connessione al server
+				$conn_id = ftp_connect($ftp_host);
+
+				// effettuo login con user e pass
+				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+
+				// controllo se la connessione è OK...
+				if ((!$conn_id) or (!$mylogin)){ 
+					// non si connette FALSE
+					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
+				} 
+			}		
+			
 			// Calcolo il prezzo IVA compresa
 			$aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($d['aliiva']))['aliquo'];
 			$web_price_vat_incl=$d['web_price']+(($d['web_price']*$aliquo)/100);
@@ -145,20 +196,36 @@ class shopsynchronizegazSynchro {
 			$xmlHandle = fopen($xmlFile, "w");
 			fwrite($xmlHandle, $xml_output);
 			fclose($xmlHandle);
-			//turn passive mode on
-			ftp_pasv($conn_id, true);
-			// upload file xml
-			if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
-			} else{
-				$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$rawres['button'] = 'Avviso eCommerce';
-				$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
-				$rawres['link'] = '../shop-synchronize/synchronize.php';
-				$rawres['style'] = 'danger';
+			
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
+				// invio file xml tramite Sftp
+				if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
+					$sftp->disconnect();					
+				}else {
+					// chiudo la connessione SFTP 
+					$sftp->disconnect();
+					$rawres['title'] = "Upload tramite Sftp del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';			
+				}	
+			} else {
+				//turn passive mode on
+				ftp_pasv($conn_id, true);
+				// upload file xml
+				if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
+				} else{
+					$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
+				}
+				// chiudo la connessione FTP 
+				ftp_quit($conn_id);
 			}
-			// chiudo la connessione FTP 
-			ftp_quit($conn_id);
-			$access=base64_encode($ftp_pass);
+			$access=base64_encode($accpass);
 			// avvio il file di interfaccia presente nel sito web remoto
 			$headers = @get_headers($urlinterf.'?access='.$access);
 			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
@@ -178,18 +245,22 @@ class shopsynchronizegazSynchro {
 				$rawres['style'] = 'danger';
 			}
 		}
+		
+		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 	}
 	function SetProductQuantity($d) {
 		// aggiornamento quantità disponibile di un articolo
 		
 		@session_start();
 		global $gTables,$admin_aziend;
+		$rawres=[];
 		$id = gaz_dbi_get_row($gTables['artico'],"codice",$d);
 		if ($id['web_public'] == 1){
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
-			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];			
+			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
+			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
 			// "articoli-gazie.php" è il nome del file interfaccia presente nella root del sito e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
@@ -206,20 +277,65 @@ class shopsynchronizegazSynchro {
 			}
 			if (intval($id['barcode'])==0) {// se non c'è barcode allora è nullo
 				$id['barcode']="NULL";
-			}
-			// imposto la connessione al server
-			$conn_id = ftp_connect($ftp_host);
-			// effettuo login con user e pass
-			$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-			// controllo la connessione e il login
-			if ((!$conn_id) OR (!$mylogin)){ 
-				// non si connette FALSE
-				$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$rawres['button'] = 'Avviso eCommerce';
-				$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
-				$rawres['link'] = '../shop-synchronize/synchronize.php';
-				$rawres['style'] = 'danger';
-			}	 
+			}			
+		
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
+
+				set_include_path(get_include_path() . PATH_SEPARATOR . '../../library');
+				include_once '../../library/phpseclib/Net/SSH2.php';
+				include_once '../../library/phpseclib/Net/SFTP.php';
+				include_once '../../library/phpseclib/Net/SFTP/Stream.php';
+				include_once '../../library/phpseclib/Crypt/AES.php';
+				include_once '../../library/phpseclib/Crypt/RSA.php';				
+
+				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
+				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
+
+				if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
+					$key = new RSA();
+					$key->setPassword($ftp_pass);
+					$key -> loadKey(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''));
+
+					$sftp = new SFTP($ftp_host, $ftp_port);
+					if (!$sftp->login($ftp_user, $key)) {
+						// non si connette: key LOG-IN FALSE
+						$rawres['title'] = "Problemi con la connessione Sftp usando il file chiave. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+						$rawres['button'] = 'Avviso eCommerce';
+						$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
+						$rawres['link'] = '../shop-synchronize/synchronize.php';
+						$rawres['style'] = 'danger';										
+					} 
+				} else { // SFTP log-in con password
+				
+					$sftp = new SFTP($ftp_host, $ftp_port);
+					if (!$sftp->login($ftp_user, $ftp_pass)) {
+						// non si connette: password LOG-IN FALSE						
+						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+						$rawres['button'] = 'Avviso eCommerce';
+						$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
+						$rawres['link'] = '../shop-synchronize/synchronize.php';
+						$rawres['style'] = 'danger';									
+					} 
+				}				
+			} else {
+			 
+				// imposto la connessione al server
+				$conn_id = ftp_connect($ftp_host);
+
+				// effettuo login con user e pass
+				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+
+				// controllo se la connessione è OK...
+				if ((!$conn_id) or (!$mylogin)){ 
+					// non si connette FALSE
+					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
+				} 
+			}			
+				 
 	 		// creo il file xml			
 			$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
@@ -235,20 +351,36 @@ class shopsynchronizegazSynchro {
 			$xmlHandle = fopen($xmlFile, "w");
 			fwrite($xmlHandle, $xml_output);
 			fclose($xmlHandle);
-			//turn passive mode on
-			ftp_pasv($conn_id, true);
-			// upload file xml
-			if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
-			} else{
-				$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$rawres['button'] = 'Avviso eCommerce';
-				$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
-				$rawres['link'] = '../shop-synchronize/synchronize.php';
-				$rawres['style'] = 'danger';
+			
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
+				// invio file xml tramite Sftp
+				if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
+					$sftp->disconnect();					
+				}else {
+					// chiudo la connessione SFTP 
+					$sftp->disconnect();
+					$rawres['title'] = "Upload tramite Sftp del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';			
+				}	
+			} else { // invio tramite ftp semplice			
+				//turn passive mode on
+				ftp_pasv($conn_id, true);
+				// upload file xml
+				if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
+				} else{
+					$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
+				}
+				// chiudo la connessione FTP 
+				ftp_quit($conn_id);
 			}
-			// chiudo la connessione FTP 
-			ftp_quit($conn_id);
-			$access=base64_encode($ftp_pass);
+			$access=base64_encode($accpass);
 			// avvio il file di interfaccia presente nel sito web remoto
 			$headers = @get_headers($urlinterf.'?access='.$access);
 			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
@@ -268,6 +400,7 @@ class shopsynchronizegazSynchro {
 				$rawres['style'] = 'danger';
 			}
 		}
+		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 	}
 	function get_sync_status($last_id) { 
 		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer), 
@@ -275,11 +408,9 @@ class shopsynchronizegazSynchro {
 		//Antonio Germani - $last_id non viene usato perché si controlla con una query se l'ordine è già stato importato
 		@session_start();
 		global $gTables,$admin_aziend;	
-        $rawres=[];
-		$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
-		$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
-		$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
+        $rawres=[];		
 		$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."ordini-gazie.php";
+		$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 		$test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 		$exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
 		if ($exists) {
@@ -288,19 +419,8 @@ class shopsynchronizegazSynchro {
 			$c_e = 'company_id';
 		}
 		$admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
-		// imposto la connessione al server
-		$conn_id = ftp_connect($ftp_host);
-		// effettuo login con user e pass
-		$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-		if ((!$conn_id) or (!$mylogin)){// controllo se la connessione è OK...
-			// non si connette FALSE
-            $rawres['title'] = "Mancata connessione FTP: impossibile scaricare gli ordini dall'e-commerce";
-            $rawres['button'] = 'Avviso eCommerce';
-            $rawres['label'] = 'Controlla le impostazioni';
-            $rawres['link'] = '../config/config_aziend.php';
-            $rawres['style'] = 'danger';
-		}
-		$access=base64_encode($ftp_pass);
+		
+		$access=base64_encode($accpass);
 		// avvio il file di interfaccia presente nel sito web remoto
 		$headers = @get_headers($urlinterf.'?access='.$access);
 		if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
@@ -466,14 +586,14 @@ class shopsynchronizegazSynchro {
 				}					
 			}						
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
-			ftp_quit($conn_id);
+			
             $rawres['title'] = "L'interfaccia non esiste: impossibile scaricare gli ordini";
             $rawres['button'] = 'Avviso eCommerce';
             $rawres['label'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
             $rawres['link'] = '';
             $rawres['style'] = 'danger';
 			if (intval(substr($headers[0], 9, 3))==0) {
-				$rawres['title'] = "Controllare la connessione internet: impossibile scaricare gli ordini";
+				$rawres['title'] = "Controllare la connessione internet, la presenza dei file di intefaccia e le impostazioni ftp: impossibile scaricare gli ordini";
 				$rawres['button'] = 'Avviso eCommerce';
 				$rawres['label'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
 				$rawres['link'] = '';

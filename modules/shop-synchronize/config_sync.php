@@ -144,7 +144,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 					$ftp_path["id"]=$r["id"];
 					$ftp_path["description"]=$r["description"];
 					$ftp_path["var"]=$r["var"];
-					$ftp_path["val"]=$r["val"];		
+					$ftp_path["val"]=$r["val"];
 				}
 				
 				if ($r['var']=="Sftp"){
@@ -179,7 +179,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 					$path["id"]=$r["id"];
 					$path["description"]=$r["description"];
 					$path["var"]=$r["var"];
-					$path["val"]=$r["val"];		
+					$path["val"]=$r["val"];					
 				}
 				
 				if ($r['var']=="keypass"){
@@ -227,7 +227,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 			</div><!-- chiude row  -->
 			<div class="row">
 				<div class="form-group" >
-				<label for="input<?php echo $ftp_path["id"]; ?>" class="col-sm-5 control-label"><?php echo $ftp_path["description"]; ?></label>
+				<label for="input<?php echo $ftp_path["id"]; ?>" class="col-sm-5 control-label"><?php echo $ftp_path["description"],". <p style='font-size:8px;'> Percorso FTP assoluto del server per raggiungere la cartella dei file di interfaccia a partire dalla posizione di accesso FTP </p>"; ?></label>
 				<div class="col-sm-7">
 					<input type="text" class="form-control input-sm" id="input<?php echo $ftp_path["id"]; ?>" name="<?php echo $ftp_path["var"]; ?>" placeholder="<?php echo $ftp_path["var"]; ?>" value="<?php echo $ftp_path["val"]; ?>">
 				</div>
@@ -235,7 +235,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 			</div><!-- chiude row  -->
 			<div class="row">
 				<div class="form-group" >
-				<label for="input<?php echo $path["id"]; ?>" class="col-sm-5 control-label"><?php echo $path["description"]; ?></label>
+				<label for="input<?php echo $path["id"]; ?>" class="col-sm-5 control-label"><?php echo $path["description"],". <p style='font-size:8px;'> Percorso per raggiungere la cartella dei file di interfaccia a partire dal dominio del sito e compreso http(s) </p>"; ?></label>
 				<div class="col-sm-7">
 					<input type="text" class="form-control input-sm" id="input<?php echo $path["id"]; ?>" name="<?php echo $path["var"]; ?>" placeholder="<?php echo $path["var"]; ?>" value="<?php echo $path["val"]; ?>">
 				</div>
@@ -299,7 +299,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				?>
 				<div class="row">
 				<div class="form-group" >
-				<label for="input<?php echo $Sftp["id"]; ?>" class="col-sm-5 control-label"><?php echo $Sftp["description"]; ?></label>
+				<label for="input<?php echo $Sftp["id"]; ?>" class="col-sm-5 control-label"><?php echo $Sftp["description"],". <p style='font-size:8px;'> Se impostato su sì, selezionare anche se si intende usare la password o il file della chiave segreta </p>"; ?></label>
 				<div class="col-sm-3">
 					
 				    <?php 
@@ -335,7 +335,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				?>
 				<div class="row">
 				<div class="form-group" >
-				<label for="inputSftp" class="col-sm-5 control-label">Usa il protocollo di trasferimento file sicuro Sftp</label>
+				<label for="inputSftp" class="col-sm-5 control-label">Usa il protocollo di trasferimento file sicuro Sftp. Se impostato su sì, selezionare anche se si intende usare la password o il file della chiave segreta.</label>
 				<div class="col-sm-3">					
 					<input type="radio" value="SI" name="addval[]">Si - No<input type="radio" value="NO" name="addval[]" checked="checked">
 					<input type="hidden" name="addvar[]" value="Sftp">
@@ -353,39 +353,13 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				</div>
 				</div><!-- chiude row  -->
 				<?php				
-			}
-			
-			if (isset($port['id']) AND $port['id']>0){
-				?>
-				<div class="row">
-				<div class="form-group" >
-				<label for="input<?php echo $port["id"]; ?>" class="col-sm-5 control-label"><?php echo $port["description"]; ?></label>
-				<div class="col-sm-7">
-					<input type="text" class="form-control input-sm" id="input<?php echo $port["id"]; ?>" name="<?php echo $port["var"]; ?>" placeholder="<?php echo $port["var"]; ?>" value="<?php echo $port["val"]; ?>">
-				</div>
-				</div>
-				</div><!-- chiude row  -->
-				<?php
-			} else {				
-				?>
-				<div class="row">
-				<div class="form-group" >
-				<label for="inputport" class="col-sm-5 control-label">Porta Sftp</label>
-				<div class="col-sm-7">
-					<input type="text" class="form-control input-sm" name="addval[]" >
-					<input type="hidden" name="addvar[]" value="port">
-					<input type="hidden" name="adddes[]" value="Porta Sftp">
-				</div>
-				</div>
-				</div><!-- chiude row  -->
-				<?php				
-			}
+			}			
 			
 			if (isset($chiave['id']) AND $chiave['id']>0){
 				?>
 				<div class="row">
 				<div class="form-group" >
-				<label for="input<?php echo $chiave["id"]; ?>" class="col-sm-5 control-label"><?php echo $chiave["description"]; ?></label>
+				<label for="input<?php echo $chiave["id"]; ?>" class="col-sm-5 control-label"><?php echo $chiave["description"],". <p style='font-size:8px;'> Se impostato sopra, selezionare il file della chiave segreta da caricare. </p>"; ?></label>
 				<div class="col-sm-7">
 				<input type="file" id="myfile" name="myfile">
 				<input type="text" class="form-control input-sm" id="input<?php echo $chiave["id"]; ?>" name="<?php echo $chiave["var"]; ?>" placeholder="<?php echo $chiave["var"]; ?>" value="<?php echo $chiave["val"]; ?>" disabled="disabled">
@@ -398,7 +372,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				?>
 				<div class="row">
 				<div class="form-group" >
-				<label for="inputport" class="col-sm-5 control-label">Chiave segreta Sftp</label>
+				<label for="inputport" class="col-sm-5 control-label">Chiave segreta Sftp. Se impostato sopra, caricare il file della chiave segreta.</label>
 				<div class="col-sm-7">
 				<input type="file" id="myfile" name="myfile">
 				<input type="text" class="form-control input-sm" name="addval[]" disabled="disabled" value="" >
@@ -409,7 +383,33 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				</div>
 				</div><!-- chiude row  -->
 				<?php				
-			}		
+			}
+
+			if (isset($port['id']) AND $port['id']>0){
+				?>
+				<div class="row">
+				<div class="form-group" >
+				<label for="input<?php echo $port["id"]; ?>" class="col-sm-5 control-label"><?php echo $port["description"],". <p style='font-size:8px;'> Se si usa il semplice FTP lasciare vuoto. </p>"; ?></label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control input-sm" id="input<?php echo $port["id"]; ?>" name="<?php echo $port["var"]; ?>" placeholder="<?php echo $port["var"]; ?>" value="<?php echo $port["val"]; ?>">
+				</div>
+				</div>
+				</div><!-- chiude row  -->
+				<?php
+			} else {				
+				?>
+				<div class="row">
+				<div class="form-group" >
+				<label for="inputport" class="col-sm-5 control-label">Porta Sftp. Se si usa il semplice FTP lasciare vuoto.</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control input-sm" name="addval[]" >
+					<input type="hidden" name="addvar[]" value="port">
+					<input type="hidden" name="adddes[]" value="Porta Sftp">
+				</div>
+				</div>
+				</div><!-- chiude row  -->
+				<?php				
+			}
 			
         }
         ?>                    

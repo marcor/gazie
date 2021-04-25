@@ -14,6 +14,7 @@ $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
 $ftp_user = $resuser['val'];
 $respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
 $ftp_pass= $respass['val'];
+$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
 $urlinterf = $path['val']."ordini-gazie.php";//nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 // il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
@@ -196,25 +197,8 @@ if (isset($_POST['conferma'])) { // se confermato
 	header("Location: " . "../../modules/vendit/report_broven.php?auxil=VOW");
     exit;
 }
- 
-// imposto la connessione al server
-$conn_id = ftp_connect($ftp_host);
 
-// effettuo login con user e pass
-$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-
-// controllo se la connessione è OK...
-if ((!$conn_id) or (!$mylogin))
-{ 
-	?>
-	<script>
-	alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
-	location.replace("<?php echo $_POST['ritorno']; ?>");
-    </script>
-	<?php
-}
-
-$access=base64_encode($ftp_pass);
+$access=base64_encode($accpass);
 
 // avvio il file di interfaccia presente nel sito web remoto
 $headers = @get_headers($urlinterf.'?access='.$access);
@@ -356,16 +340,11 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 	<?php
 	require("../../library/include/footer.php");
 } else { // IL FILE INTERFACCIA NON ESISTE > ESCO
-	ftp_quit($conn_id);
 	?>
 	<script>
 	alert("<?php echo "Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)); ?>");
 	location.replace("<?php echo $_POST['ritorno']; ?>");
     </script>
 	<?php
-	exit;
-}
-// chiudo la connessione FTP 
-ftp_quit($conn_id); 
+} 
 ?>
-                            

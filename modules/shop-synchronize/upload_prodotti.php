@@ -34,6 +34,7 @@ $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
 $ftp_user = $resuser['val'];
 $respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
 $ftp_pass= $respass['val'];
+$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
 $exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
 if ($exists) {
@@ -48,29 +49,93 @@ $urlinterf = $path['val']."articoli-gazie.php";// nome del file interfaccia pres
 ob_flush();
 flush();
 ob_start();
- 
-// imposto la connessione al server
-$conn_id = ftp_connect($ftp_host);
 
-// effettuo login con user e pass
-$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 
-// controllo se la connessione è OK...
-if ((!$conn_id) or (!$mylogin)){ 
+use phpseclib\Crypt\RSA;
+use phpseclib\Net\SFTP;
+if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
+
+	// SFTP login with private key and password
 	
-	?>
-	<script>
-	alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
-	location.replace("<?php echo $_POST['ritorno']; ?>");
-    </script>
-	<?php
+	set_include_path(get_include_path() . PATH_SEPARATOR . '../../library');
+
+	include '../../library/phpseclib/Net/SSH2.php';
+
+	include '../../library/phpseclib/Net/SFTP.php';
+	include '../../library/phpseclib/Net/SFTP/Stream.php';
+
+	include '../../library/phpseclib/Crypt/AES.php';
+
+	include '../../library/phpseclib/Crypt/RSA.php';	
+	
+
+	$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
+	$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
+
+	if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
+		$key = new RSA();
+		$key->setPassword($ftp_pass);
+		$key -> loadKey(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''));
+
+		$sftp = new SFTP($ftp_host, $ftp_port);
+		if (!$sftp->login($ftp_user, $key)) {
+			// non si connette: key LOG-IN FALSE
+			?>
+			<script>
+			alert("<?php echo "Mancata connessione Sftp con file chiave segreta: impossibile scaricare gli ordini dall\'e-commerce"; ?>");
+			location.replace("<?php echo $_POST['ritorno']; ?>");
+			</script>
+			<?php										
+		} else {
+			?>
+			<div class="alert alert-success text-center" >
+			<strong>ok</strong> Connessione SFTP con chiave riuscita.
+			</div>
+			<?php
+		} 
+	} else { // SFTP log-in con password
+	
+		$sftp = new SFTP($ftp_host, $ftp_port);
+		if (!$sftp->login($ftp_user, $ftp_pass)) {
+			// non si connette: password LOG-IN FALSE
+			?>
+			<script>
+			alert("<?php echo "Mancata connessione Sftp con password: impossibile scaricare gli ordini dall\'e-commerce"; ?>");
+			location.replace("<?php echo $_POST['ritorno']; ?>");
+			</script>
+			<?php			
+		} else {
+			?>
+			<div class="alert alert-success text-center" >
+			<strong>ok</strong> Connessione SFTP con password riuscita.
+			</div>
+			<?php
+		}
+	}				
 } else {
-	?>
-	<div class="alert alert-success text-center" >
-	<strong>ok</strong> Connessione FTP riuscita.
-	</div>
-	<?php
-}
+ 
+	// imposto la connessione al server
+	$conn_id = ftp_connect($ftp_host);
+
+	// effettuo login con user e pass
+	$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+
+	// controllo se la connessione è OK...
+	if ((!$conn_id) or (!$mylogin)){ 
+		?>
+		<script>
+		alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
+		location.replace("<?php echo $_POST['ritorno']; ?>");
+		</script>
+		<?php
+	} else {
+		?>
+		<div class="alert alert-success text-center" >
+		<strong>ok</strong> Connessione FTP riuscita.
+		</div>
+		<?php
+	}
+} 
 
 // creo il file xml
 $xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
@@ -102,35 +167,57 @@ $xmlFile = "prodotti.xml";
 $xmlHandle = fopen($xmlFile, "w");
 fwrite($xmlHandle, $xml_output);
 fclose($xmlHandle);
-//turn passive mode on
-ftp_pasv($conn_id, true);
-// upload file xml
-if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
-	?>
-	<div class="alert alert-success text-center" >
-	<strong>ok</strong> il file xml è stato trasferito al sito web.
-	</div>
-	<?php
-} else{
-	// chiudo la connessione FTP 
-	ftp_quit($conn_id);
-  	?>
-	<script>
-	alert("<?php echo "Errore di upload del file xml"; ?>");
-	location.replace("<?php echo $_POST['ritorno']; ?>");
-    </script>
-	<?php
+if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
+		
+		if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
+			$sftp->disconnect();
+			?>
+			<div class="alert alert-success text-center" >
+			<strong>ok</strong> il file xml è stato trasferito al sito web tramite SFTP.
+			</div>
+			<?php
+			
+		}else {
+			// chiudo la connessione FTP 
+			$sftp->disconnect();
+			?>
+			<script>
+			alert("<?php echo "Errore di upload del file xml tramite SFTP"; ?>");
+			location.replace("<?php echo $_POST['ritorno']; ?>");
+			</script>
+			<?php			
+		}	
+} else { // FTP semplice
+	//turn passive mode on
+	ftp_pasv($conn_id, true);
+	// upload file xml
+	if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
+		?>
+		<div class="alert alert-success text-center" >
+		<strong>ok</strong> il file xml è stato trasferito al sito web.
+		</div>
+		<?php
+		// chiudo la connessione FTP 
+		ftp_quit($conn_id);
+	} else{
+		// chiudo la connessione FTP 
+		ftp_quit($conn_id);
+		?>
+		<script>
+		alert("<?php echo "Errore di upload del file xml"; ?>");
+		location.replace("<?php echo $_POST['ritorno']; ?>");
+		</script>
+		<?php
+	}
 }
-
-$access=base64_encode($ftp_pass);
+$access=base64_encode($accpass);
 
 // avvio il file di interfaccia presente nel sito web remoto
 $headers = @get_headers($urlinterf.'?access='.$access);
 if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 	$file = fopen ($urlinterf.'?access='.$access, "r");
 	if (!$file) {
-		// chiudo la connessione FTP 
-		ftp_quit($conn_id);
+		
 		?>
 		<script>
 		alert("<?php echo "Errore: il file di interfaccia web non si apre!"; ?>");
@@ -139,21 +226,20 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 		<?php
 		
 	} else {
-		// chiudo la connessione FTP 
-		ftp_quit($conn_id);
+		
 		?>
 		<div class="alert alert-success text-center" >
 		<strong>ok</strong> Aggiornamento prodotti riuscito.
 		</div>
 		<script>
+		alert("<?php echo "Aggiornamento prodotti riuscito!"; ?>");
 		location.replace("<?php echo $_POST['ritorno']; ?>");
 		</script>
 		<?php
 		exit;
 	}
 } else { // IL FILE INTERFACCIA NON ESISTE > ESCO
-	// chiudo la connessione FTP 
-	ftp_quit($conn_id);
+	
 	?>
 	<script>
 		alert("<?php echo "Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)); ?>");
