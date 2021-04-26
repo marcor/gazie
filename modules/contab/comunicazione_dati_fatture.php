@@ -184,7 +184,7 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                         $chk_intra = 'ZZ'; // EXTRACEE
                     }
                     if ($row['operat'] == 1) { // Fattura
-                        $castel_transact[$row['idtes']]['tipo_documento'] = 'TD17';
+                        $castel_transact[$row['idtes']]['tipo_documento'] = 'TD10';
                     } else {                // Note
                         $castel_transact[$row['idtes']]['tipo_documento'] = 'TD04';
                     }

@@ -50,6 +50,8 @@ function getErrors($year) {
             }
         }
         if ($r['regiva'] < 4) { // il controllo sul numero solo per i registri delle fatture
+            // per evitare la segnalazione di errore quando si passa da fattura immediata a differita e viceversa
+            $r['caucon'] = ($r['caucon']=='FAD')?'FAI':$r['caucon'];
             if (isset($c_ndoc[$r['caucon']])) { // controllo se il numero precedente � questo-1
                 $ex = $c_ndoc[$r['caucon']] + 1;
                 if ($r['numdoc'] <> $ex) {  // errore: il numero non � consecutivo
