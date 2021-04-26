@@ -940,7 +940,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
         $form['id_des'] = $cliente['id_des'];
         $id_des = $anagrafica->getPartner($form['id_des']);
-        $form['search']['id_des'] = (empty($id_des)) ?: substr($id_des['ragso1'], 0, 10);
+        $form['search']['id_des'] = ($id_des) ? substr($id_des['ragso1'], 0, 10):'';
 //        $des_same = gaz_dbi_get_row($gTables['destina'], "id_anagra", $cliente['id_anagra']);
 //        $form['id_des_same_company'] = $des_same['codice'];
         $form['in_codvat'] = $cliente['aliiva'];
@@ -1875,11 +1875,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['destin'] = $tesdoc['destin'];
     $form['id_des'] = $tesdoc['id_des'];
     $form['id_des_same_company'] = $tesdoc['id_des_same_company'];
-    $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+    $form['search']['id_des'] =($id_des)?substr($id_des['ragso1'], 0, 10):'';
     $form['traspo'] = $tesdoc['traspo'];
     $form['spevar'] = $tesdoc['spevar'];
     $form['expense_vat'] = $tesdoc['expense_vat'];
-	$form['split_payment'] = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['expense_vat'])['tipiva'];
+    $exp_vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['expense_vat']);
+    $form['split_payment'] = ($exp_vat)?$exp_vat['tipiva']:'';
     $form['virtual_taxstamp'] = $tesdoc['virtual_taxstamp'];
     $form['taxstamp'] = $tesdoc['taxstamp'];
     $form['stamp'] = $tesdoc['stamp'];
@@ -1905,6 +1906,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$form['RiferimentoNumeroLinea'][$next_row+1] = substr($rigo['descri'],0,20);
 		}
         $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
+        if (!$articolo) $articolo = array('peso_specifico'=>false,'scorta'=>false,'good_or_service'=>0,'annota'=>'','lot_or_serial'=>'','SIAN'=>'');
         if ($rigo['id_body_text'] > 0) { //se ho un rigo testo
             $text = gaz_dbi_get_row($gTables['body_text'], "id_body", $rigo['id_body_text']);
             $form["row_$next_row"] = $text['body_text'];
@@ -1914,7 +1916,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['codart'] = $rigo['codart'];
         $form['rows'][$next_row]['pervat'] = $rigo['pervat'];
         $iva_row = gaz_dbi_get_row($gTables['aliiva'], 'codice', $rigo['codvat']);
-        $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
+        $form['rows'][$next_row]['tipiva'] = ($iva_row)?$iva_row['tipiva']:'';
         $form['rows'][$next_row]['ritenuta'] = $rigo['ritenuta'];
         $form['rows'][$next_row]['unimis'] = $rigo['unimis'];
         $form['rows'][$next_row]['prelis'] = number_format($rigo['prelis'], $admin_aziend['decimal_price'], '.', '');
@@ -1925,7 +1927,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
         $form['rows'][$next_row]['id_mag'] = (isset($_GET['Duplicate']) ? 0 : $rigo['id_mag']);
         $form['rows'][$next_row]['annota'] = $articolo['annota'];
-        $mv = $upd_mm->getStockValue(false, $rigo['codart'], $datemi, $admin_aziend['stock_eval_method']);
+        $mv = $upd_mm->getStockValue(false, $rigo['codart'], $tesdoc['datemi'], $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
         $form['rows'][$next_row]['scorta'] = $articolo['scorta'];
@@ -1933,16 +1935,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$next_row]['gooser'] = $articolo['good_or_service'];
         $form['rows'][$next_row]['lot_or_serial'] = $articolo['lot_or_serial'];
-		$form['rows'][$next_row]['SIAN'] = $articolo['SIAN'];
+        $form['rows'][$next_row]['SIAN'] = $articolo['SIAN'];
         $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $rigo['id_mag']);
-        $form['rows'][$next_row]['id_lotmag'] = $movmag['id_lotmag'];
-		$getlot = $lm->getLot($form['rows'][$next_row]['id_lotmag']);
-		$form['rows'][$next_row]['identifier'] = $getlot['identifier'];
-		$movsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $rigo['id_mag']);
-		$form['rows'][$next_row]['cod_operazione'] = $movsian['cod_operazione'];
-		$form['rows'][$next_row]['recip_stocc'] = $movsian['recip_stocc'];
-		$form['rows'][$next_row]['recip_stocc_destin'] = $movsian['recip_stocc_destin'];
-        $form['rows'][$next_row]['status'] = (isset($_GET['Duplicate']) ? "Insert" : "UPDATE");
+        $form['rows'][$next_row]['id_lotmag'] =($movmag)?$movmag['id_lotmag']:0;
+        $getlot = $lm->getLot($form['rows'][$next_row]['id_lotmag']);
+        $form['rows'][$next_row]['identifier'] =($getlot)?$getlot['identifier']:'';
+        $movsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $rigo['id_mag']);
+        $form['rows'][$next_row]['cod_operazione'] = ($movsian)?$movsian['cod_operazione']:'';
+        $form['rows'][$next_row]['recip_stocc'] = ($movsian)?$movsian['recip_stocc']:'';
+        $form['rows'][$next_row]['recip_stocc_destin'] = ($movsian)?$movsian['recip_stocc_destin']:'';
+        $form['rows'][$next_row]['status'] = (isset($_GET['Duplicate'])) ? "Insert" : "UPDATE";
         $next_row++;
     }
     if (isset($_GET['Duplicate'])) {  // duplicate: devo reinizializzare i campi come per la insert
@@ -3182,7 +3184,7 @@ if ($calc->total_exc_with_duty >= $admin_aziend['taxstamp_limit'] && $form['virt
 
 
 if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY' || $form['tipdoc'] == 'DDS' || 
-    $form['template'] == 'FatturaImmediata' || $form['tipdoc'] == 'FAD' || $form['tipdoc']=='CMR' ||
+    $form['template'] == 'FatturaImmediata' || $form['tipdoc'] == 'FAD' || $form['tipdoc'] == 'FAI' || $form['tipdoc']=='CMR' ||
     $form['tipdoc']=='FAC') {
     echo "		<tr>
 					<td class=\"FacetFieldCaptionTD text-right\">$script_transl[26]</td>
