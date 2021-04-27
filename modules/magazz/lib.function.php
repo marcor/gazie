@@ -874,12 +874,12 @@ class magazzForm extends GAzieForm {
 function getorders($codice){ // Antonio Germani - restituisce gli ordini (riferito agli id tesbro) ancora aperti per un dato articolo fornito con $codice 
 	global $gTables;
 	$query ="
-	SELECT ". $gTables['rigbro'] .".quanti as quantiord, ". $gTables['rigdoc'] .".quanti as quantivend, ". $gTables['rigbro'] .".id_rig as id_rig_bro, ". $gTables['tesbro'] .".id_tes, ". $gTables['rigdoc'] .".id_rig as id_rig_doc
+	SELECT ". $gTables['rigbro'] .".quanti AS quantiord, ". $gTables['rigdoc'] .".quanti as quantivend, ". $gTables['rigbro'] .".id_rig AS id_rig_bro, ". $gTables['tesbro'] .".id_tes, ". $gTables['rigdoc'] .".id_rig as id_rig_doc
 	, SUM(". $gTables['rigdoc'] .".quanti) AS sum
 	FROM " . $gTables['rigbro'] . "
 	LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['tesbro'].".id_tes=".$gTables['rigbro'].".id_tes 
 	LEFT JOIN ". $gTables['rigdoc'] ." ON ".$gTables['rigdoc'].".id_order = ".$gTables['rigbro'].".id_tes AND ". $gTables['rigdoc'].".codart = '". $codice. "'
-	WHERE ". $gTables['rigbro'] .".codart ='" . $codice. "'  AND ". $gTables['rigbro'] .".tiprig <= 1 AND ".$gTables['tesbro'].".tipdoc != 'AOR' AND ".$gTables['tesbro'].".status != 'EVASO'
+	WHERE ". $gTables['rigbro'] .".codart ='" . $codice. "'  AND ". $gTables['rigbro'] .".tiprig = 0 AND ".$gTables['tesbro'].".tipdoc NOT LIKE  'A__' AND ".$gTables['tesbro'].".status != 'EVASO'
 	GROUP BY id_rig_bro ASC
 	";
 	$result = gaz_dbi_query($query); // eseguo query
