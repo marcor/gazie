@@ -1217,7 +1217,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['destin'] = $tesbro['destin'];
     $form['id_des'] = $tesbro['id_des'];
     $form['id_des_same_company'] = $tesbro['id_des_same_company'];
-    $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+    $form['search']['id_des'] =($id_des)?substr($id_des['ragso1'], 0, 10):'';
     $form['traspo'] = $tesbro['traspo'];
     $form['spevar'] = $tesbro['spevar'];
     $form['expense_vat'] = $tesbro['expense_vat'];
@@ -2040,7 +2040,7 @@ foreach ($form['rows'] as $k => $v) {
     echo "</tr>";
 }
 
-if ($ultimoprezzo<>'') {
+if (isset($ultimoprezzo) && $ultimoprezzo<>'') {
     $msgtoast = $upd_mm->toast(" <strong>Ultime vendite:</strong>".$ultimoprezzo, 'alert-last-row', 'alert-success');
 }
 
