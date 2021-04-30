@@ -105,11 +105,20 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
         <style>
-            .company-color { 
-                background-color: #<?php echo $admin_aziend['colore']; ?> ; 
+            .company-color, .company-color-bright, li.user-header { 
+              background-color: #<?php echo $admin_aziend['colore']; ?>; 
+              filter: brightness(120%);
+              color: black;
+            }
+            .company-color-logo { 
+              background-color: #<?php echo $admin_aziend['colore']; ?>; 
+              color: black;
+            }
+            .company-color-logo:hover {
+              filter: brightness(80%);
             }
             .dropdown-menu > li > a:hover {
-                background-color: #<?php echo $admin_aziend['colore']; ?> ;
+                background-color: #<?php echo $admin_aziend['colore']; ?>;
             }
             .navbar-default .navbar-nav > li > a:hover {
                 background-color: #<?php echo $admin_aziend['colore']; ?>;
@@ -259,7 +268,7 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
         <div class="wrapper">
             <header class="main-header">
                 <!-- Logo -->
-                <a href="../../modules/root/admin.php" class="logo">
+                <a href="../../modules/root/admin.php" class="logo company-color-logo">
                     <!-- mini logo for sidebar mini 50x50 pixels -->
                     <span class="logo-mini">
                         <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="30" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
@@ -272,7 +281,7 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
                     </span>
                 </a>
                 <!-- Header Navbar: style can be found in header.less -->
-                <nav class="navbar navbar-static-top" role="navigation">
+                <nav class="navbar navbar-static-top company-color-bright" role="navigation">
                     <!-- Sidebar toggle button-->
                     <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                         <span class="sr-only">Toggle navigation</span>
