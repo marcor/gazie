@@ -846,7 +846,7 @@ class magazzForm extends GAzieForm {
       LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['tesbro'].".id_tes=".$gTables['rigbro'].".id_tes 
       LEFT JOIN ". $gTables['rigdoc'] ." ON ".$gTables['rigdoc'].".id_order = ".$gTables['rigbro'].".id_tes AND ". $gTables['rigdoc'].".codart = '". $codice. "'
       LEFT JOIN ". $gTables['clfoco'] ." ON ".$gTables['clfoco'].".codice=".$gTables['tesbro'].".clfoco 
-      WHERE ". $gTables['rigbro'] .".codart ='" . $codice. "'  AND ". $gTables['rigbro'] .".tiprig = 0 AND ".$gTables['tesbro'].".tipdoc NOT LIKE  'A__' AND ".$gTables['tesbro'].".status != 'EVASO'
+      WHERE ". $gTables['rigbro'] .".codart ='" . $codice. "'  AND ". $gTables['rigbro'] .".tiprig = 0 AND ".$gTables['tesbro'].".tipdoc NOT LIKE  'PRO' AND ".$gTables['tesbro'].".tipdoc NOT LIKE  'A__' AND ".$gTables['tesbro'].".status != 'EVASO'
       GROUP BY id_rig_bro ASC
       ";
       $result = gaz_dbi_query($query); // eseguo query
