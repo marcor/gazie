@@ -21,16 +21,17 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
-*/
+
 // prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
-}
+}*/
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$libFunc = new magazzForm();
 if (isset($_GET['term'])) {
     if (isset($_GET['opt'])) {
         $opt = $_GET['opt'];
@@ -40,8 +41,13 @@ if (isset($_GET['term'])) {
     switch ($opt) {
       case 'orders':
         $codice= substr($_GET['term'],0,15);
-        $orders= getorders($codice);
+        $orders= $libFunc->getorders($codice);
         echo json_encode($orders);
+      break;
+      case 'lastbuys':
+        $codice= substr($_GET['term'],0,15);
+        $lastbuys= $libFunc->getLastBuys($codice,false);
+        echo json_encode($lastbuys);
       break;
       default:
       return false;

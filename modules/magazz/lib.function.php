@@ -820,15 +820,13 @@ class magazzForm extends GAzieForm {
     function getLastBuys($codart, $rettable=false) {
       global $gTables, $admin_aziend;
       // ritorna un array con gli acquisti aggregati per fornitore
-      $rs=gaz_dbi_query("SELECT ".$gTables['movmag'] .".desdoc,".$gTables['movmag'] .".quanti,".$gTables['movmag'] .".scorig,".$gTables['movmag'] .".prezzo, ".$gTables['rigdoc'] .".id_tes AS docref, ".$gTables['rigdoc'] .".codice_fornitore, CONCAT(".$gTables['anagra'] .".ragso1,".$gTables['anagra'] .".ragso2) AS supplier, SUM(ROUND(".$gTables['movmag'] .".quanti*prezzo*(100-scorig)/100,2)) AS amount FROM " . $gTables['movmag'] . " LEFT JOIN ".$gTables['clfoco'] ." ON ".$gTables['movmag'] .".clfoco = ".$gTables['clfoco'] .".codice LEFT JOIN ".$gTables['anagra'] ." ON ".$gTables['clfoco'] .".id_anagra = ".$gTables['anagra'] .".id LEFT JOIN ".$gTables['rigdoc'] ." ON ".$gTables['movmag'] .".id_rif = ".$gTables['rigdoc'] .".id_rig WHERE ".$gTables['movmag'] .".artico = '".$codart."' AND ".$gTables['movmag'] .".clfoco LIKE '". $admin_aziend['masfor'] ."%' GROUP BY ".$gTables['movmag'] .".clfoco ORDER BY ".$gTables['movmag'] .".datdoc DESC");
-      $acc=false;
+      $rs=gaz_dbi_query("SELECT ".$gTables['movmag'] .".clfoco, ".$gTables['movmag'] .".desdoc,".$gTables['movmag'] .".quanti,".$gTables['movmag'] .".scorig,".$gTables['movmag'] .".prezzo, ".$gTables['rigdoc'] .".id_tes AS docref, ".$gTables['rigdoc'] .".codice_fornitore, CONCAT(".$gTables['anagra'] .".ragso1,".$gTables['anagra'] .".ragso2) AS supplier, SUM(ROUND(".$gTables['movmag'] .".quanti*prezzo*(100-scorig)/100,2)) AS amount FROM " . $gTables['movmag'] . " LEFT JOIN ".$gTables['clfoco'] ." ON ".$gTables['movmag'] .".clfoco = ".$gTables['clfoco'] .".codice LEFT JOIN ".$gTables['anagra'] ." ON ".$gTables['clfoco'] .".id_anagra = ".$gTables['anagra'] .".id LEFT JOIN ".$gTables['rigdoc'] ." ON ".$gTables['movmag'] .".id_rif = ".$gTables['rigdoc'] .".id_rig WHERE ".$gTables['movmag'] .".artico = '".$codart."' AND ".$gTables['movmag'] .".clfoco LIKE '". $admin_aziend['masfor'] ."%' GROUP BY ".$gTables['movmag'] .".clfoco ORDER BY ".$gTables['movmag'] .".datdoc DESC");
+      $acc=($rettable)?false:[];
       while ($r = gaz_dbi_fetch_array($rs)) {
-        if ($rettable===true){
+        $r['desvalue']=floatval($r['quanti']).' x € '.floatval($r['prezzo']).(($r['scorig']>0.01)?(' sconto:'.floatval($r['scorig']).'% '):('')).' = '.floatval($r['amount']);
+        if ($rettable){
           // creo una tabella direttamente stampabile
-          $acc .= '<div class="col-xs-1"></div><div class="col-xs-11 row"><div class="col-sm-4">'.$r['supplier'].'</div><div class="col-sm-4"><a class="btn btn-default btn-xs" href="../acquis/admin_docacq.php?Update&id_tes='.$r['docref'].'">'.$r['desdoc'].'</a></div><div class="col-sm-4"><b>'.$r['codice_fornitore'].'</b> '.floatval($r['quanti']).' x '.floatval($r['prezzo']).(($r['scorig']>0.01)?(' sconto:'.floatval($r['scorig']).'% '):('')).' tot. € '.floatval($r['amount']).'</div></div>'; 
-        } elseif ($rettable==='col'){
-          // creo dei righi per la colonna del report degli articolo
-          $acc .= '<div class="row"><div class="col-sm-6">'.$r['supplier'].'</div><div class="col-sm-2"><a class="btn btn-default btn-xs" href="../acquis/admin_docacq.php?Update&id_tes='.$r['docref'].'"><i class="glyphicon glyphicon-list-alt"></i></a></div><div class="col-sm-4"><b>'.$r['codice_fornitore'].'</b> '.floatval($r['quanti']).' x '.floatval($r['prezzo']).(($r['scorig']>0.01)?(' sconto:'.floatval($r['scorig']).'% '):('')).'</div></div>'; 
+          $acc .= '<div class="col-xs-1"></div><div class="col-xs-11 row"><div class="col-sm-4">'.$r['supplier'].'</div><div class="col-sm-4"><a class="btn btn-default btn-xs" href="../acquis/admin_docacq.php?Update&id_tes='.$r['docref'].'">'.$r['desdoc'].'</a></div><div class="col-sm-4"><b>'.$r['codice_fornitore'].'</b> '.$r['desvalue'].'</div></div>'; 
         } else {
           // creo un array con chiave il codice fornitore
           $acc[$r['clfoco']]=$r;  
@@ -836,7 +834,30 @@ class magazzForm extends GAzieForm {
       }
       return $acc;
     }
-    
+    function getorders($codice){ // Antonio Germani - restituisce gli ordini (riferito agli id tesbro) ancora aperti per un dato articolo fornito con $codice 
+      global $gTables;
+      $query ="
+      SELECT ". $gTables['rigbro'] .".quanti AS quantiord, ". $gTables['rigdoc'] .".quanti as quantivend, ". $gTables['rigbro'] .".id_rig AS id_rig_bro, ". 
+      $gTables['tesbro'] .".datemi, ".$gTables['tesbro'] .".numdoc, ".
+      $gTables['clfoco'] .".descri,".
+      $gTables['tesbro'] .".id_tes, ". $gTables['rigdoc'] .".id_rig as id_rig_doc
+      , SUM(". $gTables['rigdoc'] .".quanti) AS sum
+      FROM " . $gTables['rigbro'] . "
+      LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['tesbro'].".id_tes=".$gTables['rigbro'].".id_tes 
+      LEFT JOIN ". $gTables['rigdoc'] ." ON ".$gTables['rigdoc'].".id_order = ".$gTables['rigbro'].".id_tes AND ". $gTables['rigdoc'].".codart = '". $codice. "'
+      LEFT JOIN ". $gTables['clfoco'] ." ON ".$gTables['clfoco'].".codice=".$gTables['tesbro'].".clfoco 
+      WHERE ". $gTables['rigbro'] .".codart ='" . $codice. "'  AND ". $gTables['rigbro'] .".tiprig = 0 AND ".$gTables['tesbro'].".tipdoc NOT LIKE  'A__' AND ".$gTables['tesbro'].".status != 'EVASO'
+      GROUP BY id_rig_bro ASC
+      ";
+      $result = gaz_dbi_query($query); // eseguo query
+      $return=[]; // creo l'array che conterrà tutti gli id tesbro ancora inevasi, anche se parzialmente
+      while ($res=$result->fetch_assoc()){
+        if ($res['quantiord'] > $res['sum']){
+          $return[$res['id_tes']]=$res;
+        }
+      }	
+      return $return;	
+    }
     
 }
  function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ultimo movimento SIAN creato
@@ -870,29 +891,5 @@ class magazzForm extends GAzieForm {
 			}
 		}		
 	return $uldtfile ;
-}
-function getorders($codice){ // Antonio Germani - restituisce gli ordini (riferito agli id tesbro) ancora aperti per un dato articolo fornito con $codice 
-	global $gTables;
-	$query ="
-	SELECT ". $gTables['rigbro'] .".quanti AS quantiord, ". $gTables['rigdoc'] .".quanti as quantivend, ". $gTables['rigbro'] .".id_rig AS id_rig_bro, ". 
-	$gTables['tesbro'] .".datemi, ".$gTables['tesbro'] .".numdoc, ".
-	$gTables['clfoco'] .".descri,".
-	$gTables['tesbro'] .".id_tes, ". $gTables['rigdoc'] .".id_rig as id_rig_doc
-	, SUM(". $gTables['rigdoc'] .".quanti) AS sum
-	FROM " . $gTables['rigbro'] . "
-	LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['tesbro'].".id_tes=".$gTables['rigbro'].".id_tes 
-	LEFT JOIN ". $gTables['rigdoc'] ." ON ".$gTables['rigdoc'].".id_order = ".$gTables['rigbro'].".id_tes AND ". $gTables['rigdoc'].".codart = '". $codice. "'
-	LEFT JOIN ". $gTables['clfoco'] ." ON ".$gTables['clfoco'].".codice=".$gTables['tesbro'].".clfoco 
-	WHERE ". $gTables['rigbro'] .".codart ='" . $codice. "'  AND ". $gTables['rigbro'] .".tiprig = 0 AND ".$gTables['tesbro'].".tipdoc NOT LIKE  'A__' AND ".$gTables['tesbro'].".status != 'EVASO'
-	GROUP BY id_rig_bro ASC
-	";
-	$result = gaz_dbi_query($query); // eseguo query
-	$return=array(); // creo l'array che conterrà tutti gli id tesbro ancora inevasi, anche se parzialmente
-	while ($res=$result->fetch_assoc()){
-		if ($res['quantiord'] > $res['sum']){
-			$return[$res['id_tes']]=$res;
-		}
-	}	
-	return $return;	
 }
 ?>
