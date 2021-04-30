@@ -111,8 +111,8 @@ $(function() {
 });
 function getorders(artico) {	
 	$("#idartico").append("articolo: "+artico);
-	$.get("ajax_orders.php",
-		{codice: artico},
+	$.get("ajax_request.php?opt=orders",
+		{term: artico},
 		function (data) {
 			var j=0;			
 				$.each(data, function(i, value) {

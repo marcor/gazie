@@ -21,8 +21,8 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
- */
- // prevent direct access
+*/
+// prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
         strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 if (!$isAjax) {
@@ -31,8 +31,21 @@ if (!$isAjax) {
 }
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$codice= substr ($_GET['codice'],0,15);
-$orders=array();
-$orders= getorders($codice);
-echo json_encode($orders);
+if (isset($_GET['term'])) {
+    if (isset($_GET['opt'])) {
+        $opt = $_GET['opt'];
+    } else {
+        $opt = 'orders';
+    }
+    switch ($opt) {
+      case 'orders':
+        $codice= substr($_GET['term'],0,15);
+        $orders= getorders($codice);
+        echo json_encode($orders);
+      break;
+      default:
+      return false;
+    }
+}
+
 ?>
