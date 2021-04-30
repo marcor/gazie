@@ -93,7 +93,7 @@ $(function() {
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );  
-	});
+	});	
 	$( "#suggest_codice_artico" ).autocomplete({
 		source: "../../modules/root/search.php?opt=suggest_codice_artico",
 		minLength: 3,
@@ -109,6 +109,45 @@ $(function() {
 	});
     
 });
+function getorders(artico) {	
+	$("#idartico").append("articolo: "+artico);
+	$.get("ajax_orders.php",
+		{codice: artico},
+		function (data) {
+			var j=0;			
+				$.each(data, function(i, value) {
+				j++;	
+				$(".list_orders").append("<tr><td align='left'>"+j+": <a>"+value.descri+"</a>&nbsp</td><td align='right'> <button style='float:right;'> ordine n."+ value.numdoc +" del "+ value.datemi + " </button></td></tr>");
+				$(".list_orders").click(function () {
+					window.open('../vendit/admin_broven.php?Update&id_tes='+ value.id_tes);
+				});				
+				});
+				if (j==0){
+					$(".list_orders").append("<tr><td>Non ci sono ordini</td></tr>");
+				}					
+		}, "json"  
+	);		  
+	$( function() {		
+    var dialog
+	,	
+	dialog = $("#dialog_orders").dialog({		
+		modal: true,
+		show: "blind",
+		hide: "explode",
+		width: "auto",
+		buttons: {
+			Chiudi: function() {
+				$(this).dialog('close');
+			}			
+		},		 
+		close: function(){
+				$("p#idartico").empty();
+				$("div.list_orders tr").remove();
+				$(this).dialog('destroy');
+		}
+	});
+	});
+};
 </script>
 <?php
 $script_transl = HeadMain(0, array('custom/autocomplete'));
@@ -125,6 +164,11 @@ $ts->output_navbar();
         <p class="ui-state-highlight" id="idcodice"></p>
         <p>Descrizione</p>
         <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+	<div style="display:none; min-width:150px; " id="dialog_orders" title="Elenco ordini aperti">		
+		<p class="ui-state-highlight" id="idartico"></p>        
+		<div class="list_orders">
+		</div>
 	</div>
 	<div class="table-responsive">
 	<table class="Tlarge table table-striped table-bordered table-condensed">
@@ -219,6 +263,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo '<td class="text-right">'.$gForm->getLastBuys($r['codice'], 'col');
 	echo "</td>\n";
     echo '<td class="text-right">'.gaz_format_quantity(floatval($magval['q_g']),1,$admin_aziend['decimal_quantity']).' '.$com;
+	echo '<a class="btn btn-xs btn-default" title="ordini aperti"  onclick="getorders(\''.$r['codice'].'\');"> <i class="glyphicon glyphicon-th-list"></i></a>';
+
 	echo "</td>\n";
     echo '<td class="text-center">'.floatval($iva['aliquo']);
 	echo "</td>\n";
