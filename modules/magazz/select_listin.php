@@ -23,6 +23,8 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 $admin_aziend = checkAdmin();
 $msg = '';
 
@@ -30,6 +32,29 @@ function getExtremeValue($table_name, $min_max = 'MIN') {
    $rs = gaz_dbi_dyn_query($min_max . '(codice) AS value', $table_name);
    $data = gaz_dbi_fetch_array($rs);
    return $data['value'];
+}
+
+function selezionaOrdine($sceltaOrdine, $order) {
+   global $gTables;
+
+   $daAggiungere = "";
+   switch ($sceltaOrdine) {
+      case 1:  // codice
+         $daAggiungere = $gTables['artico'] . ".codice ASC";
+         break;
+      case 2:  // descrizione
+         $daAggiungere = $gTables['artico'] . ".descri ASC";
+         break;
+      case 3:  // categoria
+         $daAggiungere = "catmer ASC";
+         break;
+      default:
+         break;
+   }
+   if (!empty($daAggiungere)) {
+      $daAggiungere = (empty($order) ? "" : ",") . $daAggiungere;
+   }
+   return $order . $daAggiungere;
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
@@ -96,23 +121,62 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    $form['art_ini'] = substr($_POST['art_ini'], 0, 15);
    $form['art_fin'] = substr($_POST['art_fin'], 0, 15);
 
-   /** inizio modifica FP 28/11/2015
-    * filtro per fornitore ed ordinamento
-    */
    $form['id_anagra'] = $_POST['id_anagra'];
    $form['ordine1'] = $_POST['ordine1'];
    $form['ordine2'] = $_POST['ordine2'];
    $form['ordine3'] = $_POST['ordine3'];
    $form['tipoStampa'] = $_POST['tipoStampa'];
 
-   /** fine modifica FP */
    foreach ($_POST['search'] as $k => $v) {
       $form['search'][$k] = $v;
    }
-   if (isset($_POST['return'])) {
-      header("Location: " . $form['ritorno']);
-      exit;
-   }
+   if (isset($_POST['export'])) {
+    $what = $gTables['catmer'] . ".codice AS codcat , " . $gTables['catmer'] . ".descri AS descat , " .
+            $gTables['artico'] . ".codice AS codart," . $gTables['artico'] . ".descri AS desart," . $gTables['artico'] . ".* , " .
+            $gTables['aliiva'] . ".codice AS codiva, " . $gTables['aliiva'] . ".aliquo ";
+    $table = $gTables['artico'] . " LEFT JOIN " . $gTables['catmer'] . " ON (" . $gTables['artico'] . ".catmer = " . $gTables['catmer'] . ".codice)
+             LEFT JOIN " . $gTables['aliiva'] . " ON (" . $gTables['artico'] . ".aliiva = " . $gTables['aliiva'] . ".codice)";
+    $where = "catmer BETWEEN '" . $form['cm_ini'] .
+            "' AND '" . $form['cm_fin'] .
+            "' AND " . $gTables['artico'] . ".codice BETWEEN '" . $form['art_ini'] .
+            "' AND '" . $form['art_fin'] . "' AND id_assets = 0 AND movimentabile <> 'N'";
+    $titoloAddizionale = "";
+    if (intval($form['id_anagra']) > 0) {
+       $where = $where . " and " . $gTables['artico'] . ".clfoco='" . intval($form['id_anagra'])  . "'";
+       $titoloAddizionale = " - Fornitore: "  . $form['search']['id_anagra'] ;
+    }
+    $order = "";
+    if ($form['ordine1'] >= 1) {
+       $order = selezionaOrdine($form['ordine1'], $order);
+    }
+    if ($form['ordine2'] >= 1) {
+       $order = selezionaOrdine($form['ordine2'], $order);
+    }
+    if ($form['ordine3'] >= 1) {
+       $order = selezionaOrdine($form['ordine3'], $order);
+    }
+    if (empty($order)) {
+       $order = "catmer ASC," . $gTables['artico'] . ".codice ASC";
+    }
+    $result = gaz_dbi_dyn_query($what, $table, $where, $order);
+    $acc=[];
+		while ($row = gaz_dbi_fetch_assoc($result)) {
+      if (count($acc)==0){ $acc[0] = array_keys($row); }
+      $acc[$row['codart']]=$row;
+    }    
+    $spreadsheet = new Spreadsheet();
+    $spreadsheet->setActiveSheetIndex(0);
+    $sheet = $spreadsheet->getActiveSheet()->fromArray($acc);
+    //mime type
+    header('Content-Type: application/vnd.ms-excel');
+    //tell browser what's the file name
+    header('Content-Disposition: attachment;filename="Listino_'.$form['listino'].'.xls"');
+    header('Cache-Control: max-age=0'); // no cache
+    $writer = new Xls($spreadsheet);
+    //force user to download the Excel file without writing it to server's HD
+    $writer->save('php://output');
+    exit;
+  }
 }
 
 //controllo i campi
@@ -239,8 +303,8 @@ echo "</tr>\n";
 
 /** fine modifica FP */
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"" . $script_transl['return'] . "\">\n";
-echo '<td align="right"> <input type="submit" accesskey="i" name="print" value="';
+echo "<td align=\"right\"><input type=\"submit\" name=\"export\" value=\"Esporta XLS\">\n";
+echo '<td align="center"> <input type="submit" accesskey="i" name="print" value="';
 echo $script_transl['print'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
