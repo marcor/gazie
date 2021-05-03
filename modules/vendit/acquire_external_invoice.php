@@ -455,7 +455,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		}
 
 		if (isset($_POST['Submit_form']) && count($msg['err'])==0) { // confermo le scelte sul form, inserisco i dati sul db ma solo se non ho errori
-			if (!$anagra_with_same_pi && !$anagra_with_same_cf && !$partner_with_same_pi) { // non ho nulla: devo inserire tutto (anagrafica e cliente) basandomi sul pagamento e sui conti di costo scelti dall'utente
+			if (!$anagra_with_same_pi && !$anagra_with_same_cf && !$partner_with_same_pi && !$partner_with_same_cf ) { // non ho nulla: devo inserire tutto (anagrafica e cliente) basandomi sul pagamento e sui conti di costo scelti dall'utente
 				$new_partner = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields('anagra'));
 				$new_partner['codpag'] = $form['pagame'];
 				$new_partner['sexper'] = 'G';

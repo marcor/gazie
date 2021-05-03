@@ -7,11 +7,11 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-    	<meta charset="utf-8">
-        <meta http-equiv="content-language" content="en, it, es">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-language" content="en, it, es">
 		<meta name="mobile-web-app-capable" content="yes">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="author" content="Antonio de Vincentiis http://www.devincentiis.it">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Antonio de Vincentiis http://www.devincentiis.it">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-title" content="<?php echo $admin_aziend['ragso1'];?>">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
