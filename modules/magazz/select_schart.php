@@ -316,7 +316,7 @@ if (isset($_POST['preview']) and $msg=='') {
             } else {
               echo "<td></td><td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td>";
             }
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity'])."</td>";
+            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity(substr($mval['q_g'],0,15),1,$admin_aziend['decimal_quantity'])."</td>";
             echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mval['v_g'])."</td>";
             echo "</tr>";
             $ctr_mv = $mv['artico'];

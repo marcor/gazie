@@ -309,7 +309,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo '<td class="text-center">';
     echo ' <a class="btn btn-xs btn-default" title="Acquisti"  onclick="getlastbuys(\''.$r['codice'].'\');"> <i class="glyphicon glyphicon-download-alt"></i></a>';
 	echo "</td>\n";
-    echo '<td class="text-right">'.gaz_format_quantity(floatval($magval['q_g']),1,$admin_aziend['decimal_quantity']).' '.$com;
+    echo '<td class="text-right">'.gaz_format_quantity(floatval(substr($magval['q_g'],0,15)),1,$admin_aziend['decimal_quantity']).' '.$com;
 	echo "</td>\n";
     echo '<td class="text-center">'.floatval($iva['aliquo']);
 	echo "</td>\n";
