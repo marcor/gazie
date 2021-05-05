@@ -24,70 +24,58 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$partner_select_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode');
-$message = "";
-$anno = date("Y");
+
+$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
+$tesbro_e_partners = $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
 
 if (isset($_GET['flt_tipo'])) {
-    $flt_tipo = filter_input(INPUT_GET,'flt_tipo');
-} elseif (isset($_GET['datfat'])) { // vengo da una richiesta fatta con recordnav
-    $flt_tipo = filter_input(INPUT_GET,'datfat');
+  $flt_tipo = substr($_GET['flt_tipo'],0,3);
 } else {
 	$flt_tipo='APR';
 }
-$datfat = substr($flt_tipo,0,3);
 
-if (isset($_GET['auxil'])) {
-    $auxil = filter_input(INPUT_GET, 'auxil');
-} else {
-    $auxil = 1;
-}
-$where = "tipdoc = '".$datfat."' AND seziva = '$auxil'";
-$all = $where;
-
-$documento = '';
-$fornitore = '';
-
-gaz_flt_var_assign('id_tes', 'i');
-gaz_flt_var_assign('numdoc', 'i');
-gaz_flt_var_assign('id_orderman', 'i');
-gaz_flt_var_assign('datemi', 'd');
-gaz_flt_var_assign('clfoco', 'v');
-
-
-if (isset($_GET['datemi'])) {
-    $datemi = filter_input(INPUT_GET,'datemi');
+// funzione di utilità generale, adatta a mysqli.inc.php
+function cols_from($table_name, ...$col_names) {
+    $full_names = array_map(function ($col_name) use ($table_name) { return "$table_name.$col_name"; }, $col_names);
+    return implode(", ", $full_names);
 }
 
+// campi ammissibili per la ricerca
+$search_fields = [
+    'sezione' => "seziva = %d",
+    'numdoc'  => "numdoc = %d",
+    'id_orderman'  => "id_orderman = %d",
+    'tipo'    => "tipdoc LIKE '%s'",
+    'numero'  => "numfat LIKE '%%%s%%'",
+    'anno'    => "YEAR(datemi) = %d",
+    'fornitore'=> $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%%%s%%'"
+];
 
-if (isset($_GET['fornitore'])) {
-    if ($_GET['fornitore'] <> '') {
-        $fornitore = filter_input(INPUT_GET,'fornitore');
-        $where = "tipdoc = '".$flt_tipo."' AND ragso1 LIKE \"%" . $fornitore.'%"';
-        $limit = 0;
-        $passo = 2000000;
-        unset($documento);
-    }
-}
+// creo l'array (header => campi) per l'ordinamento dei record
+$sortable_headers = array(
+    "ID" => "id_tes",
+    "Numero" => "numdoc",
+    "Produzione" => "id_orderman",
+    "Data" => "datemi",
+    "Fornitore" => "",
+    "Stampa" => "",
+    "Operaz." => "",
+    "Mail" => "",
+    "Cancella" => ""
+);
 
-if (isset($_GET['all'])) {
-    $_GET['id_tes'] = "";
-    $_GET['numdoc'] = "";
-    $_GET['id_orderman'] = "";
-    $_GET['datemi'] = "";
-    $_GET['clfoco'] = "";
-    gaz_set_time_limit(0);
-    $auxil = filter_input(INPUT_GET, 'auxil') . "&all=yes";
-    $passo = 100000;
-    $where = "tipdoc = '".$flt_tipo."' AND seziva = '$auxil' ";
-    unset($documento);
-    $fornitore = '';
-}
-
+/*
 // prendo i dati facendo il join con le anagrafiche
-$what=$gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id";
+$what=$gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id";*/
+
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
+
+$ts = new TableSorter(
+    !$partner_select && isset($_GET["fornitore"]) ? $tesbro_e_partners : $gTables['tesbro'], 
+    $passo, ['id_tes' => 'desc'], ['sezione'=>1],[], " tipdoc = '".$flt_tipo."'" 
+);
+
 $gForm = new acquisForm();
 ?>
 <script>
@@ -258,56 +246,44 @@ $(function() {
             ?>
         </select>
     </div>
-    <?php
-    if (!isset($_GET['field']) or ( $_GET['field'] == 2) or ( empty($_GET['field'])))
-        $orderby = "datemi desc, numdoc desc";
-    $recordnav = new recordnav($what, $where, $limit, $passo);
-    $recordnav->output();
-    ?>
+	<?php
+        $ts->output_navbar();
+	?>
     <div class="box-primary table-responsive">
         <table class="Tlarge table table-striped table-bordered table-condensed">
-            <tr>
-                <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_int("numdoc", "numdoc", $what, $all, $orderby); ?>
-                </td>
-                <td class="FacetFieldCaptionTD">
+        <tr>
+            <td class="FacetFieldCaptionTD">
+                    <?php gaz_flt_disp_int("numdoc", "Numero"); ?>
+            </td>
+            <td class="FacetFieldCaptionTD">
                     <?php gaz_flt_disp_int("id_orderman", "Produzione"); ?>
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, $orderby); ?>
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    <?php
-                    if ($partner_select_mode['val'] == null or $partner_select_mode['val'] == "0") {
-                        gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesbro"] . ".clfoco", $what, $all, "ragso1", "ragso1");
+            </td>
+            <td  class="FacetFieldCaptionTD">
+                <?php  gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $tesbro_e_partners, $ts->where, "anno DESC"); ?>
+            </td>
+            <td  class="FacetFieldCaptionTD">
+		    <?php 
+                    if ($partner_select) {
+                        gaz_flt_disp_select("fornitore", "clfoco AS fornitore, ragso1 as nome", $tesbro_e_partners, $ts->where, "nome ASC", "nome");
                     } else {
-                        gaz_flt_disp_int("fornitore", "fornitore");
+                        gaz_flt_disp_int("fornitore", "Fornitore");
                     }
-                    ?>
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    &nbsp;
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    &nbsp;
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    <input class="btn btn-sm btn-default" type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    <input class="btn btn-sm btn-default" type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
-                </td>
-            </tr>
+		    ?>
 
-            <tr>
+            <td  class="FacetFieldCaptionTD">
+			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
+			<a class="btn btn-sm btn-default" href="?">Reset</a>
+			<?php  $ts->output_order_form(); ?>
+            </td>
+        </tr>
+
+		            <tr>
                 <?php
-                $linkHeaders = new linkHeaders($script_transl['header']);
-                $linkHeaders->setAlign(array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center'));
-                $linkHeaders->output();
+                $ts->output_headers();
                 ?>
             </tr>
             <?php
-            $rs_ultimo_documento = gaz_dbi_dyn_query("*",  $what, $where, "datemi desc, numdoc desc", 0, 1);
+            $rs_ultimo_documento = gaz_dbi_dyn_query("*", $tesbro_e_partners, $ts->where, "datemi desc, numdoc desc", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             if ($ultimo_documento)
                 $ultimoddt = $ultimo_documento['numdoc'];
@@ -315,7 +291,19 @@ $(function() {
                 $ultimoddt = 1;
 			$anagrafica = new Anagrafica();
 			//recupero le testate in base alle scelte impostate
-            $result = gaz_dbi_dyn_query("*", $what, $where, $orderby, $limit, $passo);
+            //$result = gaz_dbi_dyn_query("*", $what, $where, $orderby, $limit, $passo);
+            $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'],
+						  "id_tes","tipdoc","clfoco","seziva","datemi","email","id_parent_doc","initra","numdoc","status") . ", " .
+					cols_from($gTables['anagra'],
+						  "pec_email",
+						  "ragso1",
+						  "ragso2",
+						  "e_mail")
+					,$tesbro_e_partners,
+					$ts->where,
+					$ts->orderby,
+                    $ts->getOffset(),
+					$ts->getLimit());
             while ($r = gaz_dbi_fetch_array($result)) {
 				$linkstatus=false;	
 				if ($r["tipdoc"] == 'APR') { // preventivo
@@ -354,7 +342,6 @@ $(function() {
                 }
 				
 				
-                $fornitore = $anagrafica->getPartner($r['clfoco']);
                 echo '<tr class="FacetDataTD text-center">';
 
 				// colonna numero documento
@@ -383,7 +370,7 @@ $(function() {
 				echo "<td>".gaz_format_date($r["datemi"])." &nbsp;</td>\n";
 
 				// colonna fornitore
-				echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $r["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >'."<a title=\"Dettagli fornitore\" id=\"fornitore_".$r['id_tes']."\"  value=\"".$fornitore["ragso1"]."\" href=\"report_fornit.php?nome=" . htmlspecialchars($fornitore["ragso1"]) . "\">".$fornitore["ragso1"]."&nbsp;</a></div></td>";
+				echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $r["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >'."<a title=\"Dettagli fornitore\" id=\"fornitore_".$r['id_tes']."\"  value=\"".$r["ragso1"]."\" href=\"report_fornit.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">".$r["ragso1"]."&nbsp;</a></div></td>";
 
 				// colonna bottone cambia stato	
 				echo '<td><a class="btn btn-xs btn-'.$clastatus.'"';
@@ -445,7 +432,7 @@ $(function() {
                 echo "	</td>\n";
 				// colonna mail
 				echo '<td align="center">';
-                if (!empty($fornitore["e_mail"])) {
+                if (!empty($r["e_mail"])) {
                     echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',false);" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-envelope"></i></a>';
                 } else {
 					echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="admin_fornit.php?codice='.substr($r["clfoco"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
@@ -455,7 +442,7 @@ $(function() {
 				// colonna elimina
 				echo "<td align=\"center\">";
 				?>			
-				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $fornitore['ragso1']; ?>">
+				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $r['ragso1']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 				<?php				
