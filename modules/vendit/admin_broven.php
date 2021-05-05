@@ -318,9 +318,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $utstra = mktime(0, 0, 0, $form['mestra'], $form['giotra'], $form['anntra']);
         if (!checkdate($form['mestra'], $form['giotra'], $form['anntra']))
             $msg .= "37+";
+        /* Antonio Germani - la data di inizio trasporto non può bloccare un ordine da cliente in quanto non è una vendita
         if ($utstra < $utsemi) {
-            $msg .= "38+";
+            // $msg .= "38+";
         }
+		*/
         if (!isset($_POST['rows'])) {
             $msg .= "39+";
         }
