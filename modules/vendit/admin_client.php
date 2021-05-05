@@ -73,7 +73,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         // faccio i controlli sul codice postale
         $rs_pc = gaz_dbi_get_row($gTables['country'], 'iso', $form["country"]);
         $cap = new postal_code;
-        if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'check_cust_address')==1 ) {
+        if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'check_cust_address')['val']==1 ) {
             if ($cap->check_postal_code($form["capspe"], $form["country"], $rs_pc['postal_code_length'])) {
                 $msg .= '2+';
             }

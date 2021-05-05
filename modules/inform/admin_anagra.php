@@ -50,15 +50,17 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
         }
         // faccio i controlli sul codice postale 
         $rs_pc = gaz_dbi_get_row($gTables['country'], 'iso', $form["country"]);
-        $cap = new postal_code;
-        if ($cap->check_postal_code($form["capspe"], $form["country"], $rs_pc['postal_code_length'])) {
-            $msg['err'][] = 'capspe';
-        }
-        if (empty($form["citspe"])) {
-            $msg['err'][] = 'citspe';
-        }
-        if (empty($form["prospe"])) {
-            $msg['err'][] = 'prospe';
+        if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'check_cust_address')['val']==1 ) {
+          $cap = new postal_code;
+          if ($cap->check_postal_code($form["capspe"], $form["country"], $rs_pc['postal_code_length'])) {
+              $msg['err'][] = 'capspe';
+          }
+          if (empty($form["citspe"])) {
+              $msg['err'][] = 'citspe';
+          }
+          if (empty($form["prospe"])) {
+              $msg['err'][] = 'prospe';
+          }
         }
         if (empty($form["sexper"])) {
             $msg['err'][] = 'sexper';
