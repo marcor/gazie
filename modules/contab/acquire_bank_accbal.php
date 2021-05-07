@@ -131,16 +131,19 @@ if (!isset($_POST['item_ref'])) { // primo accesso nessun upload
 		$toDo = 'insert';
 		// INIZIO acquisizione e pulizia file xml o p7m
 		$file_name = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $form['item_ref'];
+        $path_info = pathinfo($file_name);
 		if (!isset($_POST['datreg'])){
 			$form['datreg'] = date("d/m/Y",filemtime($file_name));
 		}
         // inizio caricamento contenuto del file
         $sheet = PhpOffice\PhpSpreadsheet\IOFactory::load($file_name);
+        $writer = new PhpOffice\PhpSpreadsheet\Writer\Html($sheet);
+        $writer->save(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' .$path_info['filename'].".htm");
         $res = $sheet->getActiveSheet()->toArray(null, true, true, true);
         foreach($res as $i=>$v){ // faccio un primo giro per analizzare e tentare di mappare automaticamente
-            print "<br/>".$i.": ";
+            // print "<br/>".$i.": ";
             foreach($v as $k=>$vc){ // faccio un primo giro per analizzare e tentare di mappare automaticamente
-                print ' '.$k.'['.$vc.']';
+               // print ' '.$k.'['.$vc.']';
             }
         }
 		$f_ex=true;
@@ -192,6 +195,11 @@ function setDate(name) {
         });
     });
 </script>
+<style>
+#htmlSheet table[class^="sheet"] {
+    width: 100%;
+}
+</style>
 <div align="center" ><b><?php echo $script_transl['title'];?></b></div>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
     <input type="hidden" name="item_ref" value="<?php echo $form['item_ref']; ?>">
@@ -224,20 +232,28 @@ if ($toDo=='insert' || $toDo=='update' ) {
                  </div>
             </div>
             <div class="form-group col-md-6 col-lg-3 nopadding">
-                 <label for="pagame" class="col-form-label" ><?php echo $script_transl['pagame']; ?></label>
+                 <label for="pagame" class="col-form-label" >Banca</label>
                  <div>
                         <?php
-                        $select_pagame = new selectpagame("pagame");
-                        $select_pagame->addSelected($form["pagame"]);
-                        $select_pagame->output(false, "col-lg-12");
+                      //  $select_pagame = new selectpagame("pagame");
+                      //  $select_pagame->addSelected($form["pagame"]);
+                      //  $select_pagame->output(false, "col-lg-12");
                         ?>
                 </div>
             </div>
         </div> <!-- chiude row  -->
     </div>
 </div>
-<?php		
-		$rowshead=array();
+<div class="col-xs-12">
+  <a class="btn btn-primary" data-toggle="collapse" href="#htmlSheet" role="button" aria-expanded="false" aria-controls="htmlSheet">
+    Visualizza il contenuto del file <?php echo $form['item_ref']; ?>
+  </a>
+ <div class="collapse col-xs-12" id="htmlSheet">
+ <?php echo file_get_contents(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' .$path_info['filename'].".htm"); ?>
+ </div>
+</div>	
+<?php
+/*		$rowshead=array();
 		$ctrl_ddt='';
 		$exist_movmag=false;
 		$new_acconcile=$form['new_acconcile'];
@@ -329,27 +345,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
 
 		}
 		$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table', $rowshead);
-?>	   <div class="col-sm-6">
-<?php			
-		if ($nf){
-?>		
-		Allegato: <input name="Download" type="submit" class="btn btn-default" value="<?php echo $name_file; ?>" />
-<?php 
-		} 
-?>
-		</div>		   
-		<div class="col-sm-6">
-			<div class="col-sm-10 bg-warning">
-				<?php
-				if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
-					echo $rowshead[0];
-				}
-				?>
-			</div>
-			<div class="col-sm-2 text-left">
-				<input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
-			</div>
-		</div>	   
+*/
+?>	   
 </form>
 <br>
 <?php
@@ -358,14 +355,6 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		/* se non ho "lte" come motore di interfaccia allora richiamo subito il footer
 		 * della pagina e poi visualizzo l'xml altrimenti non mi fa il submit del form */
 		require("../../library/include/footer.php");
-	}
-	if ($f_ex) {	// visualizzo la fattura elettronica in calce
-		$fae_xsl_file = gaz_dbi_get_row($gTables['company_config'], 'var', 'fae_style');
-		$xslDoc = new DOMDocument();
-		$xslDoc->load('../../library/include/'.$fae_xsl_file['val'].'.xsl');
-		$xslt = new XSLTProcessor();
-		$xslt->importStylesheet($xslDoc);
-		echo '<center>' . $xslt->transformToXML($xml) . '</center>';
 	}
 	if (substr($_SESSION['theme'],-3)=='lte'){ 
 		// footer  richiamato alla fine in caso di utilizzo di lte 
@@ -446,7 +435,7 @@ if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_S
 		<br /><br />
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->
-<?php
+<?php 
 	require("../../library/include/footer.php");
 }
 ?>
