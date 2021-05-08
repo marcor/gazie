@@ -45,11 +45,11 @@ if ( isset($_GET['idfeva']))
 function caricaCliente(&$form) {
     global $gTables;
     $_POST['num_rigo'] = 0;
-    $form['traspo'] = 0;
+    $form['traspo'] =($form['clfoco']>100000000)?0:$form['traspo']; // azzero il trasporto e per ricalcolarlo solo se non è un cliente anonimo
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($form['clfoco']);
-    $form['indspe'] = $cliente['indspe'] . " - " . $cliente['capspe'] . " " . $cliente['citspe'] . " " . $cliente['prospe'];
-    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc LIKE 'VO_' AND status NOT LIKE 'EV%' ", "datemi ASC");
+    $form['indspe'] =($cliente)?$cliente['indspe'] . " - " . $cliente['capspe'] . " " . $cliente['citspe'] . " " . $cliente['prospe']:'';
+    $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' AND tipdoc LIKE 'VO_' AND status NOT LIKE 'EV%' ", "datemi ASC");
     while ($testate = gaz_dbi_fetch_array($rs_testate)) {
         $id_des = $anagrafica->getPartner($testate['id_des']);
         $form['traspo'] += $testate['traspo'];
@@ -66,7 +66,7 @@ function caricaCliente(&$form) {
         $form['caumag'] = $testate['caumag'];
         $form['destin'] = $testate['destin'];
         $form['id_des'] = $testate['id_des'];
-        $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
+        $form['search']['id_des'] =($id_des)?substr($id_des['ragso1'], 0, 10):'';
         $form['id_des_same_company'] = $testate['id_des_same_company'];
         $form['id_agente'] = $testate['id_agente'];
         $form['banapp'] = $testate['banapp'];
@@ -105,7 +105,7 @@ function caricaCliente(&$form) {
 
             if (!isset($form['righi'][$_POST['num_rigo']]['evadibile'])) {
                 $totale_evadibile = $rigo['quanti'];
-                $rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order=" . $rigo['id_tes'] . " and codart='" . $rigo['codart'] . "'", "id_rig asc");
+                $rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_order=" . $rigo['id_tes'] . " AND codart='" . $rigo['codart'] . "'", "id_rig asc");
                 while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
                     $totale_evadibile -= $rg_evasi['quanti'];
                 }
@@ -145,8 +145,8 @@ function setOrdineEvaso($righi)
     foreach ($id_tesArray as $id_tes) {
         $inevasi = false;
         foreach ($righi as $rigo) {
-            $qtEvasa = (float) $rigo["evaso_in_precedenza"];
-            if($rigo["checkval"]){  // solo se il rigo è selezionato per essere evaso
+            $qtEvasa =(isset($rigo["evaso_in_precedenza"]))?(float)$rigo["evaso_in_precedenza"]:0;
+            if(isset($rigo["checkval"]) && $rigo["checkval"]){  // solo se il rigo è selezionato per essere evaso
                 $qtEvasa += (float) $rigo["evadibile"];
             }
             $qtOrdinata = (float) $rigo["quanti"];
@@ -276,7 +276,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
 			$totale_evadibile = $rigo['quanti'];
 			if (!in_array(array($rigo['codart'],$rigo['descri']),$codiciarticoli)) {
 				$codiciarticoli[]=array($rigo['codart'],$rigo['descri']);
-				$evasi = gaz_dbi_get_single_value($gTables['rigdoc'], "SUM(quanti)", "id_order = ".$form['id_tes']." and codart='".$rigo['codart']."' and descri like '".addslashes($rigo['descri'])."%'");
+				$evasi = gaz_dbi_get_single_value($gTables['rigdoc'], "SUM(quanti)", "id_order = ".$form['id_tes']." AND codart='".$rigo['codart']."' AND descri like '".addslashes($rigo['descri'])."%'");
 				$totale_evadibile -= $evasi;
 				if ($totale_evadibile == 0) {
 					$form['righi'][$_POST['num_rigo']]['checkval'] = false;
@@ -299,7 +299,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
         }
     }
     if (isset($_GET['clfoco'])) { //quando viene caricato un cliente
-        $form['clfoco'] = $_GET['clfoco'];
+        $form['clfoco'] = intval($_GET['clfoco']);
         caricaCliente($form);
     }
 } else { //negli accessi successivi riporto solo il form
@@ -391,7 +391,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 				}
 			}
 			
-            if (isset($v['checkval']) and $v['id_doc'] == 0 and ( $v['tiprig'] == 0 or $v['tiprig'] == 1))
+            if (isset($v['checkval']) && $v['id_doc'] == 0 && ( $v['tiprig'] == 0 || $v['tiprig'] == 1))
                 $inevasi = "ok";
         }
         if (empty($inevasi)) {
@@ -489,11 +489,11 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment'];
 					
-                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] != 1 and $tipo_composti['val']=="STD" and
-                        $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                if ($admin_aziend['conmag'] == 2 && $articolo['good_or_service'] != 1 && $tipo_composti['val']=="STD" and
+                        $form['righi'][$k]['tiprig'] == 0 && ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 } else if ($admin_aziend['conmag'] == 2 and
-                        $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
+                        $form['righi'][$k]['tiprig'] == 210 && ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
 				// Antonio Germani - inserisco il movimento integrativo SIAN
@@ -510,9 +510,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 					gaz_dbi_query($query);
 				}
 				// fine inserisco id_lotmag
-				
-                //modifico il rigo dell'ordine indicandoci l'id della testata del DdT
-                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
             if ($v['tiprig'] >= 11 && $v['tiprig'] <= 13) {
                 $row = $v;
@@ -527,7 +524,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
         header("Location: invsta_docven.php");
         exit;
     }
-} elseif (isset($_POST['vco']) OR isset($_POST['vcoA']) ) { //conferma dell'evasione di un corrispettivo
+} elseif (isset($_POST['vco']) || isset($_POST['vcoA']) ) { //conferma dell'evasione di un corrispettivo
     //controllo i campi
     $dataemiss = $form['datemi_Y'] . "-" . $form['datemi_M'] . "-" . $form['datemi_D'];
     $utsDataemiss = mktime(0, 0, 0, $_POST['datemi_M'], $_POST['datemi_D'], $_POST['datemi_Y']);
@@ -559,15 +556,15 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
     } else {
         $inevasi = "";
         foreach ($_POST['righi'] as $k => $v) {
-			if (isset($v['checkval']) AND $v['SIAN']>0){// Antonio Germani - controllo SIAN su righi
+			if (isset($v['checkval']) && $v['SIAN']>0){// Antonio Germani - controllo SIAN su righi
 				if($v['cod_operazione']==11){
 					$msg .= "11+";
 				}
-				if($v['confezione']==0 AND strlen($v['recip_stocc'])==0){
+				if($v['confezione']==0 && strlen($v['recip_stocc'])==0){
 					$msg .= "12+";
 				}
 			}
-            if (isset($v['checkval']) and $v['id_doc'] == 0 and ( $v['tiprig'] == 0 or $v['tiprig'] == 1))
+            if (isset($v['checkval']) && $v['id_doc'] == 0 && ( $v['tiprig'] == 0 || $v['tiprig'] == 1))
                 $inevasi = "ok";
         }
         if (empty($inevasi)) {
@@ -606,6 +603,16 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
         $form['id_contract'] = $ecr['id_cash'];
         $form['seziva'] = $ecr['seziva'];
         $form['datemi'] = $dataemiss;
+        $expensvat = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['expense_vat']);
+        if ($form['traspo']>0.01) { // siccome sugli scontrini non posso mettere in testata le spese di trasporto le sposterò su un rigo
+            $form['righi'][]=array('id_tes'=>$form['id_tes'],'tiprig'=>1,'descri'=>'Trasporto','quanti'=>1,'prelis'=>$form['traspo'],'codvat'=>$form['expense_vat'],'codric'=>$admin_aziend['imptra'],'pervat'=>$expensvat['aliquo'],'id_lotmag'=>0,'datemi'=>$dataemiss,'checkval'=>1,'evadibile'=>1,'SIAN'=>'','codart'=>'');
+            $form['traspo']=0;
+        }    
+        if ($form['speban']>0.01) { // siccome sugli scontrini non posso mettere in testata le spese incasso le sposterò su un rigo
+            $payment = gaz_dbi_get_row($gTables['pagame'], 'codice', $form['pagame']);
+            $form['righi'][]=array('id_tes'=>$form['id_tes'],'tiprig'=>0,'descri'=>'Spese incasso','unimis'=>'rat','quanti'=>$payment['numrat'],'prelis'=>$form['speban'],'codvat'=>$form['expense_vat'],'codric'=>$admin_aziend['impspe'],'pervat'=>$expensvat['aliquo'],'id_lotmag'=>0,'datemi'=>$dataemiss,'checkval'=>1,'evadibile'=>$payment['numrat'],'SIAN'=>'','codart'=>'');
+            $form['speban']=0;
+        }    
         // ricavo il progressivo della cassa del giorno (in id_contract c'� la cassa alla quale invio lo scontrino)
         $rs_last_n = gaz_dbi_dyn_query("numdoc", $gTables['tesdoc'], "tipdoc = 'VCO' AND id_con = 0 AND id_contract = " . $ecr['id_cash'], 'datemi DESC, numdoc DESC', 0, 1);
         $last_n = gaz_dbi_fetch_array($rs_last_n);
@@ -628,8 +635,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 			 $form['numfat'] = 0;
 		}
 
-        tesdocInsert($form);
-        $last_id = gaz_dbi_last_id();
+        $last_id =tesdocInsert($form);
         $ctrl_tes = 0;
         foreach ($form['righi'] as $k => $v) {
             if ($v['id_tes'] != $ctrl_tes) {  //se fa parte di un'ordine diverso dal precedente
@@ -664,12 +670,10 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment'];
 					
-                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] != 1 and $tipo_composti['val']=="STD" and
-                        $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                if ($articolo && $admin_aziend['conmag'] == 2 && $articolo['good_or_service'] != 1 && $tipo_composti['val']=="STD" && $form['righi'][$k]['tiprig'] == 0 && ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
-                } else if ($admin_aziend['conmag'] == 2 and
-                        $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
+                } else if ($admin_aziend['conmag'] == 2 && $form['righi'][$k]['tiprig'] == 210 && ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
 				// Antonio Germani - inserisco il movimento integrativo SIAN
@@ -681,38 +685,13 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
 				}
 				// Antonio Germani - inserisco id_lotmag nel movimento di magazzino appena registrato
-				if (intval($v['id_lotmag']) >0){
+				if (isset($v['id_lotmag']) && intval($v['id_lotmag']) >0){
 					$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $v['id_lotmag'] . "' WHERE id_mov ='" . $id_movmag . "'";
 					gaz_dbi_query($query);
 				}
-				// fine inserisco id_lotmag
-				
-                //modifico il rigo dell'ordine indicandoci l'id della testata del VCO
-                //gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
-                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
-            /* non serve più
-              if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non � il primo rigo processato
-              //controllo se ci sono ancora righi inevasi
-              $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-              $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-              if (!$inevasi) {  //se non ci sono + righi da evadere
-              //modifico lo status della testata dell'ordine solo se completamente evaso
-              gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-              }
-              }
-             */
             $ctrl_tes = $v['id_tes'];
         }
-        /* non serve più
-          //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
-          $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-          $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-          if (!$inevasi) {  //se non ci sono + righi da evadere
-          //modifico lo status della testata dell'ordine solo se completamente evaso
-          gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-          }
-         */
         setOrdineEvaso($form['righi']);
 		if ($ecr['descri']=="NULL"){ // se non c'è registratore di cassa
 			header("Location: report_scontr.php");
@@ -765,7 +744,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
     }
 } elseif (isset($_POST['fai'])) { //conferma dell'evasione di una fattura immediata
     //cerco l'ultimo template
-    $rs_ultimo_template = gaz_dbi_dyn_query("template", $gTables['tesdoc'], "tipdoc = 'FAI' and seziva = " . $form['seziva'], "datfat DESC, protoc DESC", 0, 1);
+    $rs_ultimo_template = gaz_dbi_dyn_query("template", $gTables['tesdoc'], "tipdoc = 'FAI' AND seziva = " . $form['seziva'], "datfat DESC, protoc DESC", 0, 1);
     $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);
     if ($ultimo_template['template'] == 'FatturaImmediata') {
         $form['template'] = "FatturaImmediata";
@@ -792,7 +771,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 					$msg .= "12+";
 				}
 			}
-            if (isset($v['checkval']) and $v['id_doc'] == 0 and ( $v['tiprig'] == 0 or $v['tiprig'] == 1))
+            if (isset($v['checkval']) && $v['id_doc'] == 0 && ( $v['tiprig'] == 0 || $v['tiprig'] == 1))
                 $inevasi = "ok";
         }
         if (empty($inevasi)) {
@@ -833,7 +812,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
             $form['numfat'] = 1;
         }
         //ricavo il progressivo protocollo
-        $rs_ultimo_pro = gaz_dbi_dyn_query("protoc", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'F__' and seziva = " . $form['seziva'], "protoc DESC", 0, 1);
+        $rs_ultimo_pro = gaz_dbi_dyn_query("protoc", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'F__' AND seziva = " . $form['seziva'], "protoc DESC", 0, 1);
         $ultimo_pro = gaz_dbi_fetch_array($rs_ultimo_pro);
         // se e' il primo documento dell'anno, resetto il contatore
         if ($ultimo_pro) {
@@ -895,12 +874,10 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment'];
 					
-                if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service'] != 1 and $tipo_composti['val']=="STD" and
-                        $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                if ($admin_aziend['conmag'] == 2 && $articolo['good_or_service'] != 1 && $tipo_composti['val']=="STD" && $form['righi'][$k]['tiprig'] == 0 && ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
-                } else if ($admin_aziend['conmag'] == 2 and
-                        $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
+                } else if ($admin_aziend['conmag'] == 2 && $form['righi'][$k]['tiprig'] == 210 && ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
 				// Antonio Germani - inserisco il movimento integrativo SIAN
@@ -917,18 +894,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 					gaz_dbi_query($query);
 				}
 				// fine inserisco id_lotmag
-				
-                //modifico il rigo dell'ordine indicandoci l'id della testata della fattura immediata
-                //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $v['id_tes'] );
-            }
-            if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
-                //controllo se ci sono ancora righi inevasi
-                /* $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-                  $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-                  if (!$inevasi) {  //se non ci sono + righi da evadere
-                  //modifico lo status della testata dell'ordine solo se completamente evaso
-                  gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-                  } */
             }
             if ($v['tiprig'] >= 11 && $v['tiprig'] <= 13) {
                 $row = $v;
@@ -938,21 +903,13 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
             }
             $ctrl_tes = $v['id_tes'];
         }
-        //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
-        /* $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-          $inevasi = "";
-          $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-          if (!$inevasi) {  //se non ci sono + righi da evadere
-          //modifico lo status della testata dell'ordine solo se completamente evaso
-          gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-          } */
         $_SESSION['print_request'] = $last_id;
         header("Location: invsta_docven.php");
         exit;
     }
 } elseif (isset($_POST['vri'])) { //conferma dell'evasione con Ricevuta
     //cerco l'ultimo template
-    $rs_ultimo_template = gaz_dbi_dyn_query("template", $gTables['tesdoc'], "tipdoc = '' and seziva = " . $form['seziva'], "datfat DESC, protoc DESC", 0, 1);
+    $rs_ultimo_template = gaz_dbi_dyn_query("template", $gTables['tesdoc'], "tipdoc = '' AND seziva = " . $form['seziva'], "datfat DESC, protoc DESC", 0, 1);
     $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);
     if ($ultimo_template['template'] == 'Received') {
         $form['template'] = "Received";
@@ -979,7 +936,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 					$msg .= "12+";
 				}
 			}
-            if (isset($v['checkval']) and $v['id_doc'] == 0 and ( $v['tiprig'] == 0 or $v['tiprig'] == 1))
+            if (isset($v['checkval']) && $v['id_doc'] == 0 && ( $v['tiprig'] == 0 || $v['tiprig'] == 1))
                 $inevasi = "ok";
         }
         if (empty($inevasi)) {
@@ -1020,7 +977,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
             $form['numfat'] = 1;
         }
         //ricavo il progressivo protocollo
-        $rs_ultimo_pro = gaz_dbi_dyn_query("protoc", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'VRI' and seziva = " . $form['seziva'], "protoc DESC", 0, 1);
+        $rs_ultimo_pro = gaz_dbi_dyn_query("protoc", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'VRI' AND seziva = " . $form['seziva'], "protoc DESC", 0, 1);
         $ultimo_pro = gaz_dbi_fetch_array($rs_ultimo_pro);
         // se e' il primo documento dell'anno, resetto il contatore
         if ($ultimo_pro) {
@@ -1056,7 +1013,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
                 }
 				
 				// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione articolo
-				if (isset ($form['righi'][$k]['id_lotmag']) and intval ($form['righi'][$k]['id_lotmag'])>0){
+				if (isset ($form['righi'][$k]['id_lotmag']) && intval ($form['righi'][$k]['id_lotmag'])>0){
 					if (intval ($form['righi'][$k]['expiry'])<=0){
 						$form['righi'][$k]['expiry']="";
 					}
@@ -1081,12 +1038,12 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
                     $result = gaz_dbi_query($query);
                     $row = $result->fetch_assoc();
                     $id_movmag = $row['Auto_increment'];
-                if (($admin_aziend['conmag'] == 2) and ($articolo['good_or_service'] <> 1) and ($tipo_composti['val']=="STD") and
-                        ($form['righi'][$k]['tiprig'] == 0) and (!empty($form['righi'][$k]['codart']))) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                if (($admin_aziend['conmag'] == 2) && ($articolo['good_or_service'] <> 1) && ($tipo_composti['val']=="STD") and
+                        ($form['righi'][$k]['tiprig'] == 0) && (!empty($form['righi'][$k]['codart']))) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
                 } else if ($admin_aziend['conmag'] == 2 and
-                        $form['righi'][$k]['tiprig'] == 210 and ! empty($form['righi'][$k]['codart'])) {
+                        $form['righi'][$k]['tiprig'] == 210 && ! empty($form['righi'][$k]['codart'])) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
 				// Antonio Germani - inserisco il movimento integrativo SIAN
@@ -1107,15 +1064,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
                 //modifico il rigo dell'ordine indicandoci l'id della testata della ricevuta 
                 //gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
-            if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
-                //controllo se ci sono ancora righi inevasi
-                /* $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-                  $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-                  if (!$inevasi) {  //se non ci sono + righi da evadere
-                  //modifico lo status della testata dell'ordine solo se completamente evaso
-                  gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-                  } */
-            }
             if ($v['tiprig'] >= 11 && $v['tiprig'] <= 13) {
                 $row = $v;
                 unset($row['id_rig']);
@@ -1124,14 +1072,6 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
             }
             $ctrl_tes = $v['id_tes'];
         }
-        //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
-        /* $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-          $inevasi = "";
-          $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-          if (!$inevasi) {  //se non ci sono + righi da evadere
-          //modifico lo status della testata dell'ordine solo se completamente evaso
-          gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-          } */
         $_SESSION['print_request'] = $last_id;
         header("Location: invsta_docven.php");
         exit;
@@ -1541,7 +1481,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 							<?php
 						}				
 					} else {  // selezione automatica INIZIALE  del lotto disponibile 								
-						if (!isset($v['id_lotmag']) or (intval($v['id_lotmag'])==0)) { 
+						if (!isset($v['id_lotmag']) || (intval($v['id_lotmag'])==0)) { 
 				
 							foreach ($lm->divided as $x => $vc) { // ciclo i lotti scelti da getAvailableLots
 						
@@ -1593,7 +1533,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 				
 				// Antonio Germani - controllo e warning disponibilità
 				$articolo = gaz_dbi_get_row($gTables['artico'], "codice", $v['codart']);
-				if ($checkin == " checked" and $articolo['good_or_service']<>1 ){ // solo se da evadere
+				if ($checkin == " checked" && $articolo['good_or_service']<>1 ){ // solo se da evadere
 					echo "<input type=\"hidden\" value=\"" . $v['giac'] . "\" name=\"righi[$k][giac]\">\n";
 					echo "<input type=\"hidden\" value=\"" . $v['ordin'] . "\" name=\"righi[$k][ordin]\">\n";
 					if ($v['giac']<$v['quanti']){ // se la disponibilità reale di magazzino non è sufficiente
@@ -1664,7 +1604,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             echo "<input type=\"submit\" class=\"btn btn-success\" name=\"fai\" value=\"" . $script_transl['issue_fat'] . "\" accesskey=\"f\" />\n";
             if (!empty($alert_sezione))
                 echo " &sup1;";
-			if (intval($cliente['pariva'])==0 AND strlen($cliente['codfis'])<11){ // Antonio Germani - se non c'è partita iva e non c'è codice fiscale
+			if (!isset($cliente) || (intval($cliente['pariva'])==0 && strlen($cliente['codfis'])<11)){ // Antonio Germani - se non c'è partita iva e non c'è codice fiscale
 				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vcoA\" value=\"" . $script_transl['issue_cor'] . " anonimo\" accesskey=\"c\" />\n";
 			} elseif (intval($cliente['pariva'])==0 AND strlen($cliente['codfis'])>10) {
 				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vco\" value=\"" . $script_transl['issue_cor'] . "\" accesskey=\"c\" />\n";

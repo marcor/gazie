@@ -30,6 +30,8 @@ $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
 $gForm = new venditForm();
 $magazz = new magazzForm();
+$class="btn-danger";
+$addvalue=" nonostante l'avviso";
 
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
@@ -142,7 +144,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
     $form['in_id_lotmag'] = intval($_POST['in_id_lotmag']);
 	$getlot = $lm->getLot($form['in_id_lotmag']);
-	$form['in_identifier'] = $getlot['identifier'];
+	$form['in_identifier'] = ($getlot)?$getlot['identifier']:'';
     $form['in_status'] = $_POST['in_status'];
     $form['cosear'] = $_POST['cosear'];
 	$form['in_SIAN'] = intval($_POST['in_SIAN']);
@@ -808,14 +810,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['clfoco'] = $tesdoc['clfoco'];
     // uso impropriamente la colonna spediz per mettere il codice fiscale inserito manualmente
     $form['fiscal_code'] = $tesdoc['spediz'];
-    $form['search']['clfoco'] = substr($cliente['ragso1'], 0, 6);
+    $form['search']['clfoco'] =($cliente)?substr($cliente['ragso1'], 0, 6):'';
     $form['id_agente'] = $tesdoc['id_agente'];
     $provvigione = new Agenti;
     $form['in_provvigione'] = $provvigione->getPercent($form['id_agente']);
     $form['listin'] = $tesdoc['listin'];
     $form['datemi'] = gaz_format_date($tesdoc['datemi'], false, false);
     $form['sconto'] = $tesdoc['sconto'];
-    $form['address'] = $cliente['indspe'] . ' ' . $cliente['citspe'];
+    $form['address'] =($cliente)?$cliente['indspe'] . ' ' . $cliente['citspe']:'';
     $form['pagame'] = $tesdoc['pagame'];
     $form['caumag'] = $tesdoc['caumag'];
 
@@ -824,6 +826,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_tiprig'] = 0;
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
+    $form['in_good_or_service'] = 0;
+    $form['in_cod_operazione'] = 0;
+    $form['in_recip_stocc'] = 0;
+    $form['in_recip_stocc_destin'] = 0;
     $form['in_unimis'] = "";
     $form['in_prezzo'] = 0;
     $form['in_sconto'] = 0;
@@ -859,25 +865,25 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['codric'] = $r['codric'];
         $form['rows'][$next_row]['provvigione'] = $r['provvigione'];
         $form['rows'][$next_row]['id_mag'] = $r['id_mag'];
-        $form['rows'][$next_row]['annota'] = $articolo['annota'];
+        $form['rows'][$next_row]['annota'] =($articolo)?$articolo['annota']:'';
         $mv = $magazz->getStockValue(false, $r['codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-        $form['rows'][$next_row]['scorta'] = $articolo['scorta'];
+        $form['rows'][$next_row]['scorta'] = ($articolo)?$articolo['scorta']:'';
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
-        $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
-        $form['rows'][$next_row]['lot_or_serial'] = $articolo['lot_or_serial'];
-		$form['rows'][$next_row]['SIAN'] = $articolo['SIAN'];
-		$form['rows'][$next_row]['cod_operazione'] = $r['cod_operazione'];
-		$form['rows'][$next_row]['recip_stocc'] = $r['recip_stocc'];
+        $form['rows'][$next_row]['pesosp'] = ($articolo)?$articolo['peso_specifico']:'';
+        $form['rows'][$next_row]['lot_or_serial'] = ($articolo)?$articolo['lot_or_serial']:'';
+		$form['rows'][$next_row]['SIAN'] = ($articolo)?$articolo['SIAN']:'';
+		$form['rows'][$next_row]['cod_operazione'] = (isset($r['cod_operazione']))?$r['cod_operazione']:'';
+		$form['rows'][$next_row]['recip_stocc'] =(isset($r['recip_stocc']))?$r['recip_stocc']:'';
         $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $r['id_mag']);
-        $form['rows'][$next_row]['id_lotmag'] = $movmag['id_lotmag'];
+        $form['rows'][$next_row]['id_lotmag'] = ($movmag)?$movmag['id_lotmag']:0;
 		$getlot = $lm->getLot($form['rows'][$next_row]['id_lotmag']);
-		$form['rows'][$next_row]['identifier'] = $getlot['identifier'];
+		$form['rows'][$next_row]['identifier'] = ($getlot)?$getlot['identifier']:'';
 		$movsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $r['id_mag']);
-		$form['rows'][$next_row]['cod_operazione'] = $movsian['cod_operazione'];
-		$form['rows'][$next_row]['recip_stocc'] = $movsian['recip_stocc'];
-		$form['rows'][$next_row]['recip_stocc_destin'] = $movsian['recip_stocc_destin'];
+		$form['rows'][$next_row]['cod_operazione'] = ($movsian)?$movsian['cod_operazione']:'';
+		$form['rows'][$next_row]['recip_stocc'] = ($movsian)?$movsian['recip_stocc']:'';
+		$form['rows'][$next_row]['recip_stocc_destin'] = ($movsian)?$movsian['recip_stocc_destin']:'';
         $form['rows'][$next_row]['status'] = "UPDATE";
         $next_row++;
     }
@@ -919,6 +925,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_tiprig'] = 0;
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
+    $form['in_good_or_service'] = 0;
+    $form['in_cod_operazione'] = 0;
+    $form['in_recip_stocc'] = 0;
+    $form['in_recip_stocc_destin'] = 0;
     $form['in_unimis'] = "";
     $form['in_prezzo'] = 0;
     $form['in_sconto'] = 0;
@@ -1117,20 +1127,26 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 		<input type=\"hidden\" value=\"" . $form['ok_barcode'] . "\" name=\"ok_barcode\" />";
     if ($next_row > 0) {
         $tot = 0;
+        $tot_row = 0;
         $form['net_weight'] = 0;
         $form['units'] = 0;
         $form['volume'] = 0;
 		$vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
         foreach ($form['rows'] as $k => $v) {
+            $imprig=0;
 			// se voglio inserire manualmente il prezzo IVA compresa (configurazione avanzata azienda) attivo il form modale
 			$ivacomp=($vp>0)?' onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" ':'';
             // addizione ai totali peso,pezzi,volume
             $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
-            $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
-            if ($artico['pack_units'] > 0) {
-                $form['units'] += intval(round($v['quanti'] / $artico['pack_units']));
+            if ($artico) {
+                $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
+                if ($artico['pack_units'] > 0) {
+                    $form['units'] += intval(round($v['quanti'] / $artico['pack_units']));
+                }
+                $form['volume'] += $v['quanti'] * $artico['volume_specifico'];
+            } else {
+                $artico=array('good_or_service'=>0);   
             }
-            $form['volume'] += $v['quanti'] * $artico['volume_specifico'];
             // fine addizione peso,pezzi,volume
             $btn_class = 'btn-success';
             $btn_title = '';
@@ -1535,6 +1551,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                             <td colspan="7">
                                 <input class="btn center-block <?php echo $class; ?>" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
                                 if ($toDo == 'insert'){
+                                    $ecr['descri'] = (isset($ecr['descri']))?$ecr['descri']:'su File XML';
                                     echo $script_transl['send_ecr'] . ' ' . $ecr['descri'];
                                 } else {
                                     echo $script_transl['update'];

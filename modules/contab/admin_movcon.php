@@ -71,7 +71,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['cod_partner'] = $testata['clfoco'];
     $form['pay_closure'] = 0;
     $partnersel = $anagrafica->getPartner($form['cod_partner']);
-    $form['pagame'] = $partnersel['codpag'];
+    $form['pagame'] =($partnersel)?$partnersel['codpag']:'';
     if ($form['numdocumen'] > 0 or ! empty($form['numdocumen'])) {
         $form['inserimdoc'] = '1';
     } else {

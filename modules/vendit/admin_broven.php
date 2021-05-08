@@ -115,22 +115,22 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['speban'] = 0.00;
             }
         } else { //altrimenti, se previste, mi avvalgo delle nuove dell'azienda
-            if ($cliente['speban'] == "S" && ($new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'T')) {
+            if ($new_pag && $cliente['speban'] == "S" && ($new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'T')) {
                 $form['speban'] = $admin_aziend['sperib'];
             } else {
                 $form['speban'] = 0;
             }
         }
-        if ($new_pag['tippag'] == 'T' && $form['stamp'] == 0) {  //se il pagamento prevede il bollo
+        if ($new_pag && $new_pag['tippag'] == 'T' && $form['stamp'] == 0) {  //se il pagamento prevede il bollo
             $form['stamp'] = $admin_aziend['perbol'];
             $form['round_stamp'] = $admin_aziend['round_bol'];
-        } elseif ($new_pag['tippag'] != 'T') {
+        } elseif ($new_pag && $new_pag['tippag'] != 'T') {
             $form['stamp'] = 0;
             $form['round_stamp'] = 0;
         }
-        $form['numrat'] = $new_pag['numrat'];
-        $form['pagame'] = $_POST['pagame'];
-        $form['change_pag'] = $_POST['pagame'];
+        $form['numrat'] =($new_pag)?$new_pag['numrat']:1;
+        $form['pagame'] = intval($_POST['pagame']);
+        $form['change_pag'] = intval($_POST['pagame']);
     }
     $form['banapp'] = $_POST['banapp'];
     $form['vettor'] = $_POST['vettor'];
@@ -635,18 +635,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['listin'] = $cliente['listin'];
         $form['indspe'] = $cliente['indspe'];
         $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
-        if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V')
-                and $cliente['speban'] == 'S') {
+        if ($pagame && ($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V') && $cliente['speban'] == 'S') {
             $form['speban'] = $admin_aziend['sperib'];
             $form['numrat'] = $pagame['numrat'];
         } else {
             $form['speban'] = 0.00;
             $form['numrat'] = 1;
         }
-        if ($pagame['tippag'] == 'T' && $form['stamp'] == 0) {  //se il pagamento prevede il bollo
+        if ($pagame && $pagame['tippag'] == 'T' && $form['stamp'] == 0) {  //se il pagamento prevede il bollo
             $form['stamp'] = $admin_aziend['perbol'];
             $form['round_stamp'] = $admin_aziend['round_bol'];
-        } elseif ($pagame['tippag'] != 'T') {
+        } elseif ($pagame && $pagame['tippag'] != 'T') {
             $form['stamp'] = 0;
             $form['round_stamp'] = 0;
         }

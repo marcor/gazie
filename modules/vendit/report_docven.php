@@ -365,12 +365,18 @@ $(function() {
 			$last_fae_packet = '';
 			$paymov = new Schedule(); 
             while ($r = gaz_dbi_fetch_array($result)) {
-				// se contabilizzato trovo l'eventuale stato dei pagamenti 
+				// se contabilizzato trovo l'eventuale stato dei pagamenti e se qualcosa non è andato a buon fine riporto la contabilizzazione nello stato ancora da eseguire 
 				$paymov_status = false;
 				if ($r['id_con'] > 0) {
 					$tesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $r['id_con']);
-					$paymov->getStatus(substr($tesmov['datdoc'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
-                    $paymov_status = $paymov->Status;
+                    // controllo effettiva presenza movimento completo      
+                    if ($tesmov) {
+                        $paymov->getStatus(substr($tesmov['datdoc'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
+                        $paymov_status = $paymov->Status;
+                    } else {
+                        gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET id_con = 0 WHERE id_tes = ".$r['id_tes']);
+                        $r['id_con']=0;                        
+                    }
 				}
 				// riprendo il rigo  della contabilità con il cliente per avere l'importo 
 				$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $r['id_con'], "AND codcon = ".$r['clfoco']);
