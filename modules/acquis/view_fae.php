@@ -140,15 +140,12 @@ if (isset($_POST['Download'])) { // è stato richiesto il download dell'allegato
 
 if (isset($_GET['id_tes'])){
     $id=intval($_GET['id_tes']);
-    $fat = gaz_dbi_get_row($gTables['tesdoc'],'id_tes',$id);
-
- 	$p7mContent = $fat['fattura_elettronica_original_content'];
-	$p7mContent = tryBase64Decode($p7mContent);
-
-
-	$fattxml = @tempnam(DATA_DIR . 'files/tmp/', 'fatt');
-	file_put_contents($fattxml,$p7mContent);
-
+ 	//$p7mContent = $fat['fattura_elettronica_original_content'];
+	//$p7mContent = tryBase64Decode($p7mContent);
+	//$fattxml = @tempnam(DATA_DIR . 'files/tmp/', 'fatt');
+	//file_put_contents($fattxml,$p7mContent);
+    $fattxml = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$id.'.inv';
+    $p7mContent = file_get_contents($fattxml);
 	if (FALSE !== der2smime($fattxml)) {
 	$cert = @tempnam(DATA_DIR . 'files/tmp/', 'pem');
 	$retn = openssl_pkcs7_verify($fattxml, PKCS7_NOVERIFY, $cert);

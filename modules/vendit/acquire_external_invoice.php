@@ -544,6 +544,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$form['datemi']=$form['datfat'];
 			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],0,4),$form['seziva'])['last_protoc'];
             $ultimo_id =tesdocInsert($form);
+            $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
+            file_put_contents($fn,$form['fattura_elettronica_original_content']); 
             //recupero l'id assegnato dall'inserimento
             foreach ($form['rows'] as $i => $v) { // inserisco i righi 
 				if (abs($form['rows'][$i]['prelis'])<0.01){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 

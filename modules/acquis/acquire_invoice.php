@@ -1035,6 +1035,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					//oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA 
 					//oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
 					$ultimo_id=tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
+                    $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
+                    file_put_contents($fn,$form['fattura_elettronica_original_content']); 
 				}
 				if ($anomalia == "AnomaliaDDT=FAT"){ // se è da considerare accompagnatoria azzero la presenza del DdT
 					$v['exist_ddt']="";
@@ -1190,7 +1192,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							$updt['tipdoc']="AFT";$updt['ddt_type']=$ddt_type;$updt['numfat']=$form['numfat'];$updt['datfat']=$form['datfat'];
 							$updt['fattura_elettronica_zip_package']=$form['fattura_elettronica_zip_package'];
 							$updt['fattura_elettronica_original_name']=$form['fattura_elettronica_original_name'];
-							$updt['fattura_elettronica_original_content']=$form['fattura_elettronica_original_content'];
+                            $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$exist['id_tes'].'.inv';
+                            file_put_contents($fn,$form['fattura_elettronica_original_content']); 
+							//$updt['fattura_elettronica_original_content']=$form['fattura_elettronica_original_content'];
 							tesdocUpdate(array('id_tes', $exist['id_tes']), $updt);					
 						}
 					}

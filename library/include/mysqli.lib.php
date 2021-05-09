@@ -915,7 +915,7 @@ function tesdocInsert($newValue) {
    $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
        'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
        'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
-       'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'datreg', 'fattura_elettronica_original_name', 'fattura_elettronica_original_content', 'status', 'adminid',
+       'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'datreg', 'fattura_elettronica_original_name', 'status', 'adminid',
        /** inizio modifica FP 19/10/2015 */
        'ragbol', 'data_ordine'
            /** fine modifica FP */           );
@@ -929,7 +929,7 @@ function tesdocUpdate($codice, $newValue) {
    $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
        'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
        'id_agente', 'id_parent_doc', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
-       'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'datreg', 'fattura_elettronica_original_name', 'fattura_elettronica_original_content', 'status', 'adminid',
+       'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'datreg', 'fattura_elettronica_original_name', 'status', 'adminid',
        /** inizio modifica FP 19/10/2015 */
        'ragbol', 'data_ordine'
            /** fine modifica FP */
