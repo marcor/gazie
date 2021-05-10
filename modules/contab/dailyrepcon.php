@@ -104,6 +104,9 @@ $totimp=0;
 				<?php echo "Categoria";; ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
+				<?php echo "Prezzo unitario medio imponibile"; ?>
+			</td>
+			<td class="FacetFieldCaptionTD">
 				<?php echo "Prezzo unitario medio IVA compresa"; ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
@@ -116,7 +119,7 @@ $totimp=0;
 				<?php echo "Imponibile"; ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
-				<?php echo "IVA"; ?>
+				<?php echo "IVA tot."; ?>
 			</td>
 		</tr>
 		<?php
@@ -133,7 +136,7 @@ $totimp=0;
 			foreach ($cat as $catrow){
 				
 				if (isset($catrow['descri_cat']) AND $catrow['catmer']<9999){ // se categoria esistente stampo il rigo
-					echo "<tr><td>".gaz_format_date($catrow['datemi'])."</td><td>".gaz_format_number($cat['count'])."</td><td>".$catrow['descri_cat']."</td><td>".gaz_format_number(($cat['sum']+$cat['sumvat'])/$cat['count'])."</td><td>".$catrow['pervat']."</td><td>".gaz_format_number($cat['sumvat']/$cat['count'])."</td><td>".gaz_format_number($cat['sum'])."</td><td>".gaz_format_number($cat['sumvat'])."</td>";
+					echo "<tr><td>".gaz_format_date($catrow['datemi'])."</td><td>".gaz_format_number($cat['count'])."</td><td>".$catrow['descri_cat']."</td><td>".gaz_format_number($cat['sum']/$cat['count'])."</td><td>".gaz_format_number(($cat['sum']+$cat['sumvat'])/$cat['count'])."</td><td>".$catrow['pervat']."</td><td>".gaz_format_number($cat['sumvat']/$cat['count'])."</td><td>".gaz_format_number($cat['sum'])."</td><td>".gaz_format_number($cat['sumvat'])."</td>";
 					break;					
 				} elseif (isset($catrow['descri'])){// se è una categoria fittizia
 					if(isset($key[$catrow['descri']])){// e se c'è descri Creo una chiave per le spese
@@ -161,7 +164,7 @@ $totimp=0;
 		}
 		
 		foreach($key as $k => $value){ // stampo i righi delle categorie fittizie	
-			echo "<tr><td>".gaz_format_date($catrow['datemi'])."</td><td> 1 </td><td>".$k."</td><td></td><td></td><td>".$value['pervat']."</td><td>".gaz_format_number($value[0])."</td><td>".gaz_format_number($value['vat'])."</td>";
+			echo "<tr><td>".gaz_format_date($catrow['datemi'])."</td><td> 1 </td><td>".$k."</td><td>".gaz_format_number($value[0])."</td><td>".gaz_format_number($value[0]+$value['vat'])."</td><td>".$value['pervat']."</td><td>".gaz_format_number($value['vat'])."</td><td>".gaz_format_number($value[0])."</td><td>".gaz_format_number($value['vat'])."</td>";
 		}
 		// se presenti in testata (vecchio sistema) stampo le spese della testata
 		if ($tottraspo>0){
