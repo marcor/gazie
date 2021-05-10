@@ -31,10 +31,6 @@ $admin_aziend=checkAdmin();
 function dailyrep($id_con) { // restituisce i righi delle vendite giornaliere del movimento contabile
 	global $gTables;
 	
-	// LEFT JOIN ". $gTables['rigdoc'] ." ON ".$gTables['rigdoc'].".id_order = ".$gTables['rigbro'].".id_tes AND ". $gTables['rigdoc'].".codart = '". $codice. "'
-	// LEFT JOIN ". $gTables['clfoco'] ." ON ".$gTables['clfoco'].".codice=".$gTables['tesbro'].".clfoco 
-	// GROUP BY id_rig ASC
-	
 	$query ="
       SELECT ". $gTables['rigdoc'] .".*, ". $gTables['artico'] .".catmer, ". $gTables['catmer'] .".descri AS descri_cat, ". $gTables['tesdoc'] .".*, ". $gTables['aliiva'] .".aliquo
 	  FROM " . $gTables['tesdoc'] . "
@@ -58,7 +54,7 @@ function dailyrep($id_con) { // restituisce i righi delle vendite giornaliere de
 		if (isset($cat[$res['catmer']]['sum'])){
 			$cat[$res['catmer']]['sum'] += ($res['quanti']*$res['prelis'])-((($res['quanti']*$res['prelis'])*$res['sconto'])/100);
 			$cat[$res['catmer']]['sumvat'] += (((($res['quanti']*$res['prelis'])-((($res['quanti']*$res['prelis'])*$res['sconto'])/100))*$res['pervat'])/100);
-			$cat[$res['catmer']]['count']++;
+			$cat[$res['catmer']]['count'] += $res['quanti'];
 			if ($res['id_tes'] <> $lastest){
 				$cat[$res['catmer']]['traspo'] += $res['traspo'];
 				$cat[$res['catmer']]['speban'] += $res['speban'];
@@ -70,7 +66,7 @@ function dailyrep($id_con) { // restituisce i righi delle vendite giornaliere de
 		} else {
 			$cat[$res['catmer']]['sum'] = ($res['quanti']*$res['prelis'])-((($res['quanti']*$res['prelis'])*$res['sconto'])/100);
 			$cat[$res['catmer']]['sumvat'] = (($cat[$res['catmer']]['sum']*$res['pervat'])/100);
-			$cat[$res['catmer']]['count'] = 1;
+			$cat[$res['catmer']]['count'] = $res['quanti'];
 			$cat[$res['catmer']]['traspo'] = $res['traspo'];
 			$cat[$res['catmer']]['speban'] = $res['speban'];
 			$cat[$res['catmer']]['spevar'] = $res['spevar'];
@@ -93,7 +89,7 @@ $totivacomp=0;
 $totiva=0;
 $totimp=0;
 ?>
-<div align="center" class="FacetFormHeaderFont">Riepilogo vendite contabilizzate nel movimento ID <?php echo $id_con; ?></div>
+<div align="center" class="FacetFormHeaderFont">Riepilogo corrispettivi contabilizzati del movimento n. <?php echo $id_con; ?></div>
 <form method="GET" >
 <div class="table-responsive">
 	<table class="Tlarge table table-bordered table-condensed table-striped">
@@ -108,13 +104,13 @@ $totimp=0;
 				<?php echo "Categoria";; ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
-				<?php echo "Prezzo unitario medio"; ?>
+				<?php echo "Prezzo unitario medio IVA compresa"; ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
 				<?php echo "Aliquota IVA"; ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
-				<?php echo "IVA"; ?>
+				<?php echo "IVA unitaria"; ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
 				<?php echo "Imponibile"; ?>
@@ -137,7 +133,7 @@ $totimp=0;
 			foreach ($cat as $catrow){
 				
 				if (isset($catrow['descri_cat']) AND $catrow['catmer']<9999){ // se categoria esistente stampo il rigo
-					echo "<tr><td>".gaz_format_date($catrow['datemi'])."</td><td>".$cat['count']."</td><td>".$catrow['descri_cat']."</td><td>".gaz_format_number($cat['sum']/$cat['count'])."</td><td>".$catrow['pervat']."</td><td>".gaz_format_number($cat['sumvat']/$cat['count'])."</td><td>".gaz_format_number($cat['sum'])."</td><td>".gaz_format_number($cat['sumvat'])."</td>";
+					echo "<tr><td>".gaz_format_date($catrow['datemi'])."</td><td>".gaz_format_number($cat['count'])."</td><td>".$catrow['descri_cat']."</td><td>".gaz_format_number(($cat['sum']+$cat['sumvat'])/$cat['count'])."</td><td>".$catrow['pervat']."</td><td>".gaz_format_number($cat['sumvat']/$cat['count'])."</td><td>".gaz_format_number($cat['sum'])."</td><td>".gaz_format_number($cat['sumvat'])."</td>";
 					break;					
 				} elseif (isset($catrow['descri'])){// se è una categoria fittizia
 					if(isset($key[$catrow['descri']])){// e se c'è descri Creo una chiave per le spese
