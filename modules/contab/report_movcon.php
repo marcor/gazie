@@ -262,7 +262,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     } elseif ($paymov) {
         echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"" . $script_transl['customer_receipt'] . "\" href=\"../vendit/print_customer_payment_receipt.php?id_rig=" . $paymov . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
     } elseif ($a_row['caucon']=="VCO"){
-		echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"Visualizza riepilogo vendite giornaliero\" href=\"../contab/dailyrepcon.php?id_con=" . $a_row['id_tes']. "\" target=\"_blank\"><i class=\"glyphicon glyphicon-th-list\"></a>";
+		echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"Visualizza riepilogo chiusura corrispettivi raggruppati per categoria\" href=\"../contab/dailyrepcon.php?id_con=" . $a_row['id_tes']. "\" target=\"_blank\"><i class=\"glyphicon glyphicon-th-list\"></a>";
 	}
     echo "</td>";
     echo "<td align=\"center\">";
