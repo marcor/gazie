@@ -408,6 +408,8 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
                         $castel_transact[$row['idtes']]['tipo_documento'] = 'TD10';
                     }
                 }
+            } elseif($chk_intra == 'ZZ') { // EXTRA COMUNITARIO
+                $castel_transact[$row['idtes']]['tipo_documento'] = 'TD01';
             }
             $ctrl_id = $row['idtes'];
         }
