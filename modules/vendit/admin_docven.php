@@ -967,7 +967,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['change_pag'] = $cliente['codpag'];
         $form['banapp'] = $cliente['banapp'];
         $form['listin'] = $cliente['listin'];
+        $form['speban'] = 0.00;
+        $form['numrat'] = 1;
+        $form['stamp'] = 0;
+        $form['round_stamp'] = 0;
         $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
+        if (!$pagame) { $pagame=array('tippag' => 'T','numrat'=>1); }
         if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V') && $cliente['speban'] == 'S') {
             $form['speban'] = $admin_aziend['sperib'];
             $form['numrat'] = $pagame['numrat'];
@@ -977,11 +982,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['speban'] = 0.00;
             $form['numrat'] = 1;
             $form['stamp'] = $admin_aziend['taxstamp'];
-            $form['round_stamp'] = 0;
-        } else {
-            $form['speban'] = 0.00;
-            $form['numrat'] = 1;
-            $form['stamp'] = 0;
             $form['round_stamp'] = 0;
         }
         if ($pagame['tippag'] == 'T' && $cliente['addbol'] == 'S') {
