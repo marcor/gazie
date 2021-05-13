@@ -51,32 +51,27 @@ flush();
 ob_start();
 
 
-use phpseclib\Crypt\RSA;
-use phpseclib\Net\SFTP;
+
+//use phpseclib\phpseclib\phpseclib\Crypt\RSA;
+//use phpseclib\phpseclib\Net\SFTP;
+
+use phpseclib3\Net\SSH2;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Net\SFTP;
+//use phpseclib3\Crypt\RSA;
 if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 
 	// SFTP login with private key and password
-	
-	set_include_path(get_include_path() . PATH_SEPARATOR . '../../library');
-
-	include '../../library/phpseclib/Net/SSH2.php';
-
-	include '../../library/phpseclib/Net/SFTP.php';
-	include '../../library/phpseclib/Net/SFTP/Stream.php';
-
-	include '../../library/phpseclib/Crypt/AES.php';
-
-	include '../../library/phpseclib/Crypt/RSA.php';	
-	
-
 	$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
 	$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
 
 	if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
+		$key = PublicKeyLoader::load(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''),$ftp_pass);
+		/*
 		$key = new RSA();
 		$key->setPassword($ftp_pass);
 		$key -> loadKey(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''));
-
+*/
 		$sftp = new SFTP($ftp_host, $ftp_port);
 		if (!$sftp->login($ftp_user, $key)) {
 			// non si connette: key LOG-IN FALSE
@@ -143,12 +138,18 @@ $xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
 $xml_output .= "\n<Products>\n";
 $artico = gaz_dbi_query ('SELECT codice, barcode, ref_ecommerce_id_product FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
  while ($item = gaz_dbi_fetch_array($artico)){
-		$avqty = 0;
-		$ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
-		$ordinatic = $ordinatic + $gForm->get_magazz_ordinati($item['codice'], "VOW");
+		$avqty = 0;$ordinatic=0;
+		
 		$mv = $gForm->getStockValue(false, $item['codice']);
         $magval = array_pop($mv);
-		$avqty=$magval['q_g']-$ordinatic;
+		if ($magval){
+		$avqty = $magval['q_g'];
+		}
+		
+		$ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
+		$ordinatic = $ordinatic + $gForm->get_magazz_ordinati($item['codice'], "VOW");
+		$avqty -= $ordinatic;
+		
 		if ($avqty<0 or $avqty==""){
 			$avqty="0";
 		}

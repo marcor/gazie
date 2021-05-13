@@ -46,8 +46,11 @@ un aggiornamento dei dati punteranno alle funzioni contenute nel modulo alternat
  pittosto che a questo. 
 */
 
-use phpseclib\Crypt\RSA;
-use phpseclib\Net\SFTP;
+//use phpseclib\Crypt\RSA;
+//use phpseclib\Net\SFTP;
+use phpseclib3\Net\SSH2;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Net\SFTP;
 
 class shopsynchronizegazSynchro {
 
@@ -115,21 +118,11 @@ class shopsynchronizegazSynchro {
 			
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password	
 							
-				set_include_path(get_include_path() . PATH_SEPARATOR . '../../library');
-				include_once '../../library/phpseclib/Net/SSH2.php';
-				include_once '../../library/phpseclib/Net/SFTP.php';
-				include_once '../../library/phpseclib/Net/SFTP/Stream.php';
-				include_once '../../library/phpseclib/Crypt/AES.php';
-				include_once '../../library/phpseclib/Crypt/RSA.php';				
-
 				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
 				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
 
 				if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
-					$key = new RSA();
-					$key->setPassword($ftp_pass);
-					$key -> loadKey(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''));
-
+					$key = PublicKeyLoader::load(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''),$ftp_pass);
 					$sftp = new SFTP($ftp_host, $ftp_port);
 					if (!$sftp->login($ftp_user, $key)) {
 						// non si connette: key LOG-IN FALSE
@@ -281,21 +274,11 @@ class shopsynchronizegazSynchro {
 		
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
 
-				set_include_path(get_include_path() . PATH_SEPARATOR . '../../library');
-				include_once '../../library/phpseclib/Net/SSH2.php';
-				include_once '../../library/phpseclib/Net/SFTP.php';
-				include_once '../../library/phpseclib/Net/SFTP/Stream.php';
-				include_once '../../library/phpseclib/Crypt/AES.php';
-				include_once '../../library/phpseclib/Crypt/RSA.php';				
-
 				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
 				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
 
 				if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
-					$key = new RSA();
-					$key->setPassword($ftp_pass);
-					$key -> loadKey(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''));
-
+					$key = PublicKeyLoader::load(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''),$ftp_pass);
 					$sftp = new SFTP($ftp_host, $ftp_port);
 					if (!$sftp->login($ftp_user, $key)) {
 						// non si connette: key LOG-IN FALSE

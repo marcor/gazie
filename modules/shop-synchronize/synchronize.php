@@ -48,8 +48,7 @@ $file_download2 = "dowload_ordini2.php";
 $file_upload = "upload_prodotti.php";
 $file_downloader = "import_articoli.php";
 $file_uploader = "export_articoli.php";
-use phpseclib\Crypt\RSA;
-	use phpseclib\Net\SFTP;
+
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
