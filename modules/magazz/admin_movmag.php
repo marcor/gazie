@@ -107,9 +107,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['cosear']);
 	}
 	$resultsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $_GET['id_mov']);
-	$form['cod_operazione'] = $resultsian['cod_operazione'];
-	$form['recip_stocc'] = $resultsian['recip_stocc'];
-	$form['recip_stocc_destin'] = $resultsian['recip_stocc_destin'];
+	if ($resultsian){
+		$form['cod_operazione'] = $resultsian['cod_operazione'];
+		$form['recip_stocc'] = $resultsian['recip_stocc'];
+		$form['recip_stocc_destin'] = $resultsian['recip_stocc_destin'];
+	}
 	if ($item_artico['lot_or_serial']==1){ 
 		$result_lotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
 		$form['identifier'] = $result_lotmag['identifier'];
