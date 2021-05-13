@@ -50,15 +50,10 @@ ob_flush();
 flush();
 ob_start();
 
-
-
-//use phpseclib\phpseclib\phpseclib\Crypt\RSA;
-//use phpseclib\phpseclib\Net\SFTP;
-
 use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Net\SFTP;
-//use phpseclib3\Crypt\RSA;
+
 if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 
 	// SFTP login with private key and password
@@ -67,11 +62,7 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 
 	if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
 		$key = PublicKeyLoader::load(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''),$ftp_pass);
-		/*
-		$key = new RSA();
-		$key->setPassword($ftp_pass);
-		$key -> loadKey(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''));
-*/
+
 		$sftp = new SFTP($ftp_host, $ftp_port);
 		if (!$sftp->login($ftp_user, $key)) {
 			// non si connette: key LOG-IN FALSE

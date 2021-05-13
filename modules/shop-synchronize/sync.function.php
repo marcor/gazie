@@ -46,8 +46,6 @@ un aggiornamento dei dati punteranno alle funzioni contenute nel modulo alternat
  pittosto che a questo. 
 */
 
-//use phpseclib\Crypt\RSA;
-//use phpseclib\Net\SFTP;
 use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Net\SFTP;
