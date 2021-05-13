@@ -228,8 +228,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			$form['quanti'][$m] = gaz_format_quantity($_POST['quanti' . $m], 0, $admin_aziend['decimal_quantity']);
 			$form['scorig'][$m] = $_POST['scorig' . $m];
 			$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
-			$form['quanti2'][$m] = gaz_format_quantity($_POST['quanti2' . $m], 0, $admin_aziend['decimal_quantity']);
-			$form['scorig2'][$m] = $_POST['scorig2' . $m];
+			if (isset($_POST['quanti2' . $m])){
+				$form['quanti2'][$m] = gaz_format_quantity($_POST['quanti2' . $m], 0, $admin_aziend['decimal_quantity']);
+			} else {
+				$form['quanti2'][$m]=0;
+			}
+			$form['scorig2'][$m] = ($_POST['scorig2' . $m]);
 			$form['prezzo2'][$m] = gaz_format_quantity($_POST['prezzo2' . $m], 0, $admin_aziend['decimal_quantity']);
 			$form['clfoco'][$m] = $_POST['clfoco' . $m];
 			$form['nome_avv'][$m] = $_POST['nome_avv' . $m];
@@ -264,17 +268,18 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	
     $form['caumag'] = intval($_POST['caumag']);
 	$res_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
-	$form['operat'] = $res_caumag['operat'];
-	if ($res_caumag['insdoc'] == 0) { //se la nuova causale non prevede i dati del documento
-            $form['tipdoc'] = "";
-            $form['desdoc'] = "";
-            $form['giodoc'] = date("d");
-            $form['mesdoc'] = date("m");
-            $form['anndoc'] = date("Y");
-            $form['scochi'] = 0;
-            $form['id_rif'] = 0;
-        }
-	
+	if (isset($res_caumag)){
+		$form['operat'] = $res_caumag['operat'];
+		if ($res_caumag['insdoc'] == 0) { //se la nuova causale non prevede i dati del documento
+				$form['tipdoc'] = "";
+				$form['desdoc'] = "";
+				$form['giodoc'] = date("d");
+				$form['mesdoc'] = date("m");
+				$form['anndoc'] = date("Y");
+				$form['scochi'] = 0;
+				$form['id_rif'] = 0;
+			}
+	}
     $form['gioreg'] = intval($_POST['gioreg']);
     $form['mesreg'] = intval($_POST['mesreg']);
     $form['annreg'] = intval($_POST['annreg']);
@@ -335,8 +340,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     } else {
         $form['scorig'][$form['mov']] = 0;
     }
-	$form['quanti2'][$form['mov']] = gaz_format_quantity($_POST['quanti2' . $form['mov']], 0, $admin_aziend['decimal_quantity']);
-    if ((isset($_POST['prezzo2' . $form['mov']]) > 0) && (strlen($_POST['prezzo2' . $form['mov']]) > 0)) {
+	if (isset($_POST['quanti2' . $form['mov']])){
+		$form['quanti2'][$form['mov']] = gaz_format_quantity($_POST['quanti2' . $form['mov']], 0, $admin_aziend['decimal_quantity']);
+    } else {
+		$form['quanti2'][$form['mov']]=0;
+	}
+	if ((isset($_POST['prezzo2' . $form['mov']]) > 0) && (strlen($_POST['prezzo2' . $form['mov']]) > 0)) {
         $form['prezzo2'][$form['mov']] = $_POST['prezzo2' . $form['mov']];
         $form['prezzo2'][$form['mov']] = str_replace('.', '', $form['prezzo2'][$form['mov']]);
         $form['prezzo2'][$form['mov']] = str_replace(',', '.', $form['prezzo2'][$form['mov']]);
@@ -352,9 +361,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$form['coseprod']= $_POST['coseprod'];
 	$form['description']= $_POST['coseprod'];
 	$res = gaz_dbi_get_row($gTables['orderman'], "description", $form['coseprod']);
-    $form['id_orderman'] = $res['id'];
-	
-    if (intval($form['id_orderman']) > 0 AND intval($form['campo_coltivazione1']) == 0) { //se è stata inserita una produzione e non è stato inserito il primo campo
+	if (isset($res)){
+		$form['id_orderman'] = $res['id'];
+	}
+    if (isset($form['id_orderman']) AND intval($form['id_orderman']) > 0 AND intval($form['campo_coltivazione1']) == 0) { //se è stata inserita una produzione e non è stato inserito il primo campo
         $rs_orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
         // propongo il primo campo della produzione nel form
 		$form['campo_coltivazione1'] = $rs_orderman['campo_impianto'];
@@ -426,7 +436,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 					$form['dim_campo'.$n] = $row['ricarico']; // prendo pure la dimensione del campo e la metto in $dim_campo
 				}
 				// controllo se è ammesso il raccolto sul campo di coltivazione selezionato $msg .=24+ errore tempo di sospensione
-				If ($form['campo_coltivazione'.$n] > 0 && $form['operat'] == 1 && intval($dt) < intval($form['fine_sosp'.$n])) {
+				if (isset($form['operat']) AND $form['campo_coltivazione'.$n] > 0 && $form['operat'] == 1 && intval($dt) < intval($form['fine_sosp'.$n])) {
 					$msg.= "24+";
 				}
 				$tot_sup=$tot_sup+$form['dim_campo'.$n];
@@ -444,8 +454,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				}
 			}
 			// Antonio Germani controllo che, se la causale movimento non opera, non ci sia un articolo con magazzino
-			$service = intval($itemart['good_or_service']);
-            If ($service == 0 && $form['operat'] == 0) {
+			if (isset($itemart)){
+				$service = intval($itemart['good_or_service']);
+			}
+            If (isset($form['operat']) AND $service == 0 && $form['operat'] == 0) {
                 $msg.= "36+";
             }
             If ($service == 2 && $form['operat'] == 0) {
@@ -465,7 +477,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			}					
             // Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
             
-            If ($itemart['good_or_service'] == 0 or $itemart['good_or_service'] == 2) { // se non è un servizio
+            if (isset($itemart) AND ($itemart['good_or_service'] == 0 or $itemart['good_or_service'] == 2)){ // se non è un servizio
                 // controllo se sono stati inseriti articoli merci uguali in più righe /perché non è possibile altrimenti non funzionano i controlli sulle quantità per lotto/
 				
                 for ($mart = 0;$mart <= $form['nmov'];++$mart) {
@@ -489,12 +501,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                 }
             }
             // Antonio Germani > controllo che non sia caricato un articolo composito
-            if ($itemart['good_or_service'] == 2 && $form['operat'] == 1) {
+            if (isset($itemart) AND $itemart['good_or_service'] == 2 && $form['operat'] == 1) {
                 $msg.= "42+"; // il carico di articolo composti si può fare solo dal modulo produzioni
                 
             }
             // Antonio Germani - se l'articolo ha lotti in uscita controllo se il lotto selezionato ha quantità sufficiente
-            If (($itemart['good_or_service'] == 0) && ($itemart['lot_or_serial'] == 1) && ($form['operat'] == - 1)) { // se è merce e ha lotti
+            if (isset($itemart) AND ($itemart['good_or_service'] == 0) && ($itemart['lot_or_serial'] == 1) && ($form['operat'] == - 1)) { // se è merce e ha lotti
                 $lotqty = $lm->getLotQty($form['id_lotmag'][$m]);
 				if ($toDo=="update" && intval ($check_movmag['id_lotmag']) == intval($form['id_lotmag'][$m])){
 					$lotqty=$lotqty+$check_movmag['quanti'];
@@ -503,7 +515,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                     $msg.= "38+";
                 }
             }
-            If (($itemart['good_or_service'] == 2) && ($itemart['lot_or_serial'] == 1) && ($form['operat'] == - 1)) { // se è articolo composto e ha lotti
+            If ((isset($itemart) AND $itemart['good_or_service'] == 2) && ($itemart['lot_or_serial'] == 1) && ($form['operat'] == - 1)) { // se è articolo composto e ha lotti
                 $lotqty = $lm->getLotQty($form['id_lotmag'][$m]);				
 				if ($toDo=="update" && intval ($check_movmag['id_lotmag']) == intval($form['id_lotmag'][$m])){
 					$lotqty=$lotqty+$check_movmag['quanti'];
@@ -538,11 +550,16 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
             }
 			// Antonio Germani dall'articolo prendo la dose massima, il rame metallo, e NPK
 				$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]);
-				$dose_artico = $item['dose_massima']; // prendo la dose
-				$rame_metallo = $item['rame_metallico']; // prendo anche il rame metallo del prodotto oggetto del movimento
-				$perc_N = $item['perc_N'];
-				$perc_P = $item['perc_P'];
-				$perc_K = $item['perc_K'];
+				$dose_artico = 0;
+				$rame_metallo = 0;
+				$perc_N = 0;
+				if (isset($item)){
+					$dose_artico = $item['dose_massima']; // prendo la dose
+					$rame_metallo = $item['rame_metallico']; // prendo anche il rame metallo del prodotto oggetto del movimento
+					$perc_N = $item['perc_N'];
+					$perc_P = $item['perc_P'];
+					$perc_K = $item['perc_K'];
+				}
 				$query = "SELECT " . 'dose' . ", " . 'tempo_sosp' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$m] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$m] . "'";
 				$result = gaz_dbi_query($query);
 				while ($row = $result->fetch_assoc()) {
@@ -1031,7 +1048,11 @@ if (isset($_POST['Add_mov'])) {
         $form['quanti'][$m] = gaz_format_quantity($_POST['quanti' . $m], 0, $admin_aziend['decimal_quantity']);
         $form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
         $form['scorig'][$m] = $_POST['scorig' . $m];
-		$form['quanti2'][$m] = gaz_format_quantity($_POST['quanti2' . $m], 0, $admin_aziend['decimal_quantity']);
+		if (isset($_POST['quanti2' . $m])){
+			$form['quanti2'][$m] = gaz_format_quantity($_POST['quanti2' . $m], 0, $admin_aziend['decimal_quantity']);
+		} else {
+			$form['quanti2'][$m] = 0;
+		}
         $form['prezzo2'][$m] = gaz_format_quantity($_POST['prezzo2' . $m], 0, $admin_aziend['decimal_quantity']);
         $form['scorig2'][$m] = $_POST['scorig2' . $m];
         $form['staff'][$m] = intval($_POST['staff' . $m]);
@@ -1177,8 +1198,11 @@ If (isset($_POST['cancel'])) {// se è stato premuto annulla
 if (isset($_POST['nome_colt'])) {
 	if ($form['campo_coltivazione1'] > 0) { // se c'è un campo di coltivazione
 		$result = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione1']);
-		if ($result['id_colture'] <> $form['id_colture']) { // se è stata cambiata la coltura avviso
+		if (isset($result) AND $result['id_colture'] <> $form['id_colture']) { // se è stata cambiata la coltura avviso
 			$err = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $result['id_colture']);
+			if (!isset($err)){
+				$err['nome_colt']="Nessuna coltura";
+			}
 			$instantwarning="Nel campo di coltivazione è presente la coltura ". $result['id_colture'] ." - ". $err['nome_colt']. " che è diversa da quella inserita. Se si conferma, verrà modificata la coltura nel campo di coltivazione!";
 		}
 	}
@@ -1428,13 +1452,13 @@ if (intval($form['nome_colt']) == 0) {
 			<td class="FacetFieldCaptionTD"><?php echo $script_transl[2]; ?></td><td class="FacetDataTD">
 				<?php 
 				$gForm->selectFromDB('caumag', 'caumag','codice', $form['caumag'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '', '(type_cau = 1 OR type_cau = 9) AND codice < 80');
-				if ($res_caumag['operat'] == 0) {
+				if (isset($res_caumag['operat']) AND $res_caumag['operat'] == 0) {
 					echo " Non opera";
 				}
-				if ($res_caumag['operat'] == 1) {
+				if (isset($res_caumag['operat']) AND $res_caumag['operat'] == 1) {
 					echo " Carico";
 				}
-				if ($res_caumag['operat'] == - 1) {
+				if (isset($res_caumag['operat']) AND $res_caumag['operat'] == - 1) {
 					echo " Scarico";
 				}
 				?>
@@ -1548,7 +1572,7 @@ if (intval($form['nome_colt']) == 0) {
 									<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
 									<input type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" />
 									<?php 
-									if ($res_caumag['operat'] == - 1) {
+									if (isset($res_caumag['operat']) AND $res_caumag['operat'] == - 1) {
 										?>
 										<input class="col-sm-2" type="text" id="codart2" name="codart2" value="<?php echo $form['artico2'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
 										<input type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" />
@@ -1556,7 +1580,10 @@ if (intval($form['nome_colt']) == 0) {
 																			
 										if ($form['artico2'][$form['mov']]!==""){ // se è stata inserita l'acqua carico unità di misura e visualizzo input q.tà
 											$itemart2 = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico2'][$form['mov']]);
-											$print_unimis2 = $itemart2['unimis'];
+											$print_unimis2="";
+											if (isset($itemart2)){
+												$print_unimis2 = $itemart2['unimis'];
+											}
 											?>
 											<span class="col-sm-1"><?php echo $print_unimis2;?></span>
 											<input class="col-sm-2" type="text" value="<?php echo gaz_format_quantity($form['quanti2'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti2<?php echo $form['mov']; ?>" >
@@ -1586,22 +1613,25 @@ if (intval($form['nome_colt']) == 0) {
 					if ($form['artico'][$form['mov']] != "") { // SE C'è UN ARTICOLO
 						// carico l'articolo dell'attuale mov in itemart
 						$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
-						$print_unimis = $itemart['unimis'];
-						
-						$dose = $itemart['dose_massima']; // prendo anche la dose
-						$scorta = $itemart['scorta']; // prendo la scorta minima
-						$descri = $itemart['descri']; //prendo descrizione articolo
-						$form['lot_or_serial'][$form['mov']] = $itemart['lot_or_serial']; // prendo il lotto
-						$form['prezzo'][$form['mov']] = $itemart['preacq']; // prendo il prezzo di acquisto
-						$service = intval($itemart['good_or_service']); // carico $service per vedere se è articolo o servizio
-						if ($form['mov']!=$form['nmov']){ // se non è il movimento attivo visualizzo la descrizione
+						if (isset($itemart)){
+							$print_unimis = $itemart['unimis'];						
+							$dose = $itemart['dose_massima']; // prendo anche la dose
+							$scorta = $itemart['scorta']; // prendo la scorta minima
+							$descri = $itemart['descri']; //prendo descrizione articolo
+							$form['lot_or_serial'][$form['mov']] = $itemart['lot_or_serial']; // prendo il lotto
+							$form['prezzo'][$form['mov']] = $itemart['preacq']; // prendo il prezzo di acquisto
+							$service = intval($itemart['good_or_service']); // carico $service per vedere se è articolo o servizio
+						}
+						if (isset($itemart['descri']) AND $form['mov']!=$form['nmov']){ // se non è il movimento attivo visualizzo la descrizione
 								echo " ", substr($itemart['descri'], 0, 25), " ";
 							}
 						If ($service == 0 or $service == 2) { //Antonio Germani se è un articolo con magazzino
 							// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
-							$mv = $gForm->getStockValue(false, $itemart['codice']);
-							$magval = array_pop($mv);
-							$print_magval = str_replace(",", "", $magval['q_g']);
+							if (isset($itemart['codice'])){
+								$mv = $gForm->getStockValue(false, $itemart['codice']);
+								$magval = array_pop($mv);
+								$print_magval = str_replace(",", "", $magval['q_g']);
+							}
 							if (isset($_POST['Update']) or $toDo == "update") { // se è un update
 								$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 								if ($qta['artico'] == $form['artico'][$form['mov']]) { // se l'update è per lo stesso articolo
@@ -1931,8 +1961,10 @@ if (intval($form['nome_colt']) == 0) {
 					<input type="text" class="FacetFieldCaptionTD" value="<?php echo number_format($importo_totale, $admin_aziend['decimal_price'], ',', ''); ?>" name="total" readonly>
 					<?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[31]; ?>
 					<input type="text" class="FacetFieldCaptionTD" value="<?php echo number_format($form['prezzo'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" name="prezzo<?php echo $form['mov'] ?>" readonly>
+					<input type="hidden" class="FacetFieldCaptionTD" value="<?php echo number_format($form['prezzo2'][$form['mov']], $admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" name="prezzo2<?php echo $form['mov'] ?>" readonly>
 					<?php echo " " . $admin_aziend['symbol']; ?>
 					<input type="hidden" value="<?php echo $form['scorig'][$form['mov']]; ?>" maxlength="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()">
+					<input type="hidden" value="<?php echo $form['scorig2'][$form['mov']]; ?>" maxlength="4" name="scorig2<?php echo $form['mov'] ?>" onChange="this.form.submit()">
 				</td>
 			</tr>
 			<tr>

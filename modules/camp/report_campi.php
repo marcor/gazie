@@ -154,7 +154,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			onclick="this.width=500;" ondblclick="this.width=100;" title="<?php echo $a_row["descri"]; ?>" alt="IMG non presente" /></td>
 			<?php
 			$res = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $a_row['id_colture']);
-			
+			if (!isset($res)){
+				$res['nome_colt']="Nessuna coltura";
+			}
 			?>
 			<td align="center"><?php echo $a_row["id_colture"]." - ".$res['nome_colt'];?></td>
 			<td align="center"><?php echo $a_row["annota"];
