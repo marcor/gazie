@@ -509,7 +509,7 @@ $strScript = array("select_liqiva.php" =>
         'text'=>"In questo sottomenù troverete tutte le procedure per l'invio dati in formato XML all'Agenzia delle Entrate"
     ),
     "acquire_bank_accbal.php" =>
-    array('title' => 'Riconciliazione con estratto conto bancario',
+    array('title' => 'Riconciliazione estratto conto bancario',
 		'btn_acquire'=>'ACQUISISCI!',
         'war' => array(
             'ok_suppl' => 'Il fornitore è già in archivio',
@@ -530,7 +530,7 @@ $strScript = array("select_liqiva.php" =>
             'same_content' => 'Una fattura di questo fornitore, contenente lo stesso numero e data fattura, è già stato acquisito'
         ),
         'head_text1' => "L'estratto conto: ",
-		'head_text2' => " sta per essere acquisito, ti invitiamo a ricontrollare ed eventualemente ricollegare i movimenti contabili ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificare successivamente i movimenti contabili dopo averlo acquisito agendo attraverso le apposite interfacce. Dopo la conferma verrai portato sulla lista dei movimenti contabili",
+		'head_text2' => " sta per essere acquisito, ti invitiamo a ricontrollare ed eventualemente ricollegare i movimenti contabili per apportare le opportune modifiche. Avrai comunque la possibilità di editare successivamente i movimenti contabili agendo attraverso le apposite interfacce.",
         'seziva' => 'Sezione IVA',
         'datreg' => 'Data Registrazione',
 		'pagame'=>'Modalità di pagamento',
