@@ -135,7 +135,7 @@ $totimp=0;
 		foreach ($retcat as $cat){ // ciclo le righe per categoria raggruppata			
 			foreach ($cat as $catrow){				
 				if (isset($catrow['descri_cat']) AND $catrow['catmer']<9999){ // se categoria esistente stampo il rigo
-					$rigo_stampa['datemi'][$n]=$catrow['datemi'];$rigo_stampa['count'][$n]=gaz_format_number($cat['count']);$rigo_stampa['descri_cat'][$n]=$catrow['descri_cat'];$rigo_stampa['pr_un'][$n]=number_format($cat['sum']/$cat['count'],4,",",".");$rigo_stampa['pr_un_ivato'][$n]=number_format(($cat['sum']+$cat['sumvat'])/$cat['count'],2);$rigo_stampa['pervat'][$n]=$catrow['pervat'];$rigo_stampa['iva_unit'][$n]=gaz_format_number($cat['sumvat']/$cat['count']);$rigo_stampa['impon'][$n]=gaz_format_number($cat['sum']);$rigo_stampa['iva'][$n]=gaz_format_number($cat['sumvat']);
+					$rigo_stampa['datemi'][$n]=$catrow['datemi'];$rigo_stampa['count'][$n]=$cat['count'];$rigo_stampa['descri_cat'][$n]=$catrow['descri_cat'];$rigo_stampa['pr_un'][$n]=number_format($cat['sum']/$cat['count'],4,",",".");$rigo_stampa['pr_un_ivato'][$n]=number_format(($cat['sum']+$cat['sumvat'])/$cat['count'],2);$rigo_stampa['pervat'][$n]=$catrow['pervat'];$rigo_stampa['iva_unit'][$n]=gaz_format_number($cat['sumvat']/$cat['count']);$rigo_stampa['impon'][$n]=gaz_format_number($cat['sum']);$rigo_stampa['iva'][$n]=gaz_format_number($cat['sumvat']);
 					$n++;$tot_qta += gaz_format_number($cat['count']);
 					break;					
 				} elseif (isset($catrow['descri'])){// se è una categoria fittizia
@@ -161,7 +161,7 @@ $totimp=0;
 		}
 		
 		foreach($key as $k => $value){ // stampo i righi delle categorie fittizie	
-			$rigo_stampa['datemi'][$n]=$catrow['datemi'];$rigo_stampa['count'][$n]=1;$rigo_stampa['descri_cat'][$n]=$k;$rigo_stampa['pr_un'][$n]=gaz_format_number($value[0]);$rigo_stampa['pr_un_ivato'][$n] = number_format(($value[0]+$value['vat']),2);$rigo_stampa['pervat'][$n]=$value['pervat'];$rigo_stampa['iva_unit'][$n]=gaz_format_number($value['vat']);$rigo_stampa['impon'][$n]=gaz_format_number($value[0]);$rigo_stampa['iva'][$n]=gaz_format_number($value['vat']);
+			$rigo_stampa['datemi'][$n]=$catrow['datemi'];$rigo_stampa['count'][$n]=1.00000;$rigo_stampa['descri_cat'][$n]=$k;$rigo_stampa['pr_un'][$n]=gaz_format_number($value[0]);$rigo_stampa['pr_un_ivato'][$n] = number_format(($value[0]+$value['vat']),2);$rigo_stampa['pervat'][$n]=$value['pervat'];$rigo_stampa['iva_unit'][$n]=gaz_format_number($value['vat']);$rigo_stampa['impon'][$n]=gaz_format_number($value[0]);$rigo_stampa['iva'][$n]=gaz_format_number($value['vat']);
 			$n++;$tot_qta += 1;
 		}
 		// se presenti in testata (vecchio sistema) stampo le spese della testata
@@ -220,16 +220,20 @@ $totimp=0;
 			$totAdE += $totspevar + $totspevarvat;
 			$totAdE_iva += $totspevarvat;
 		}
-		$rk="";
+		$rk=-1;
 		if ($totAdE <> gaz_format_number(($totimp+$totiva))){ // se i totali non coincidono
 			$key1="";$key2="";$r=0;$aster="";
 			foreach ($rigo_stampa['pr_un_ivato'] as $row){ // trovo il prezzo unitario più alto con la minima quantità
-				if ($r == 0){ $key2=$rigo_stampa['count'][$r]; $key1=$row; $rk=$r; }
-				if ($key2<=$rigo_stampa['count'][$r]){			
-					if ($key1<$row){
-						$key1=$row; $rk=$r;
+				if ($r == 0){ 
+					$key2=$rigo_stampa['count'][$r]; $key1=$row; $rk=$r; 
+				} else {
+					if ($key2>=$rigo_stampa['count'][$r]){					
+						if ($key1<$row){
+							$key1=$row; $rk=$r;
+						}
+						$key2=$rigo_stampa['count'][$r];
 					}
-				}				
+				}
 				$r++;
 			}		
 			$diff =  ($totimp+$totiva) - $totAdE;
@@ -242,7 +246,7 @@ $totimp=0;
 			if ($x == $rk){ // se c'è stato un arrotondamento lo segnalo
 				$aster=" *";
 			}
-			echo "<tr><td>".gaz_format_date($rigo_stampa['datemi'][$x])."</td><td>".$rigo_stampa['count'][$x]."</td><td>".$rigo_stampa['descri_cat'][$x]."</td><td>".$rigo_stampa['pr_un'][$x]."</td><td>".number_format((($rigo_stampa['pr_un_ivato'][$x])),2,",",".").$aster."</td><td>".$rigo_stampa['pervat'][$x]."</td><td>".$rigo_stampa['iva_unit'][$x]."</td><td>".$rigo_stampa['impon'][$x]."</td><td>".$rigo_stampa['iva'][$x]."</td></tr>";
+			echo "<tr><td>".gaz_format_date($rigo_stampa['datemi'][$x])."</td><td>".gaz_format_number($rigo_stampa['count'][$x])."</td><td>".$rigo_stampa['descri_cat'][$x]."</td><td>".$rigo_stampa['pr_un'][$x]."</td><td>".number_format((($rigo_stampa['pr_un_ivato'][$x])),2,",",".").$aster."</td><td>".$rigo_stampa['pervat'][$x]."</td><td>".$rigo_stampa['iva_unit'][$x]."</td><td>".$rigo_stampa['impon'][$x]."</td><td>".$rigo_stampa['iva'][$x]."</td></tr>";
 		}		
 		
 		// stampo i totali
@@ -253,7 +257,8 @@ $totimp=0;
 		</tr>
 	</table>
 	<?php
-	if ($rk<>""){
+	
+	if ($rk !== -1){
 		echo " * = apportato arrotondamento";
 	}
 	?>
