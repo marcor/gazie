@@ -438,7 +438,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 						$vv['impost'] = round($vv['impneg'] * $vv['periva']) / 100;
 						$vv['imponi'] = $vv['impneg'];
 						$iva_id = rigmoiInsert($vv);
-                        if (substr($vv['fae_natura'],0,3)=='N.6') { 
+                        if (substr($vv['fae_natura'],0,3)=='N6.') { 
                             $vv['tesmov_id'] = $tes_id;
                             $acc_reverse_charge[$iva_id] = $vv;
                             $tot_reverse_charge -= $vv['impost'] + $vv['imponi'];
