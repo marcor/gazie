@@ -45,7 +45,7 @@ $search_fields = [
     'sezione' => "seziva = %d",
     'numdoc'  => "numdoc = %d",
     'id_orderman'  => "id_orderman = %d",
-    'tipo'    => "tipdoc LIKE '%s'",
+    'flt_tipo'    => "tipdoc LIKE '%s'",
     'numero'  => "numfat LIKE '%%%s%%'",
     'anno'    => "YEAR(datemi) = %d",
     'fornitore'=> $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%%%s%%'"
@@ -73,7 +73,10 @@ $script_transl = HeadMain(0, array('custom/modal_form'));
 
 $ts = new TableSorter(
     !$partner_select && isset($_GET["fornitore"]) ? $tesbro_e_partners : $gTables['tesbro'], 
-    $passo, ['id_tes' => 'desc'], ['sezione'=>1],[], " tipdoc = '".$flt_tipo."'" 
+    $passo, 
+    ['id_tes' => 'desc'], 
+    ['sezione'=>1, 'flt_tipo'=>$flt_tipo],
+    [] 
 );
 
 $gForm = new acquisForm();
