@@ -4,8 +4,8 @@
   ------------------------------------------------------------------------
   @Author    Antonio Germani
   @Website   http://www.programmisitiweb.lacasettabio.it
-  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
-  versione 3.0
+  @Copyright Copyright (C) Antonio Germani All Rights Reserved.
+  versione 3.1
   ------------------------------------------------------------------------ 
   --------------------------------------------------------------------------
   Questo programma e` free software;   e` lecito redistribuirlo  e/o
@@ -39,6 +39,7 @@ $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
 $ftp_user = $resuser['val'];
 $respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
 $ftp_pass= $respass['val'];
+$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 $respath = gaz_dbi_get_row($gTables['company_config'], "var", "path");
 $web_site_path= $respath['val'];
 $test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
@@ -53,9 +54,13 @@ $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
 $urlinterf = $path['val']."articoli-gazie.php";// nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 // il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
 
-//ob_flush();
-//flush();
-//ob_start();
+ob_flush();
+flush();
+ob_start();
+
+use phpseclib3\Net\SSH2;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Net\SFTP;
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -66,25 +71,71 @@ if (isset($_POST['Return'])) {
     }
  
 if (isset($_POST['conferma'])) { // se confermato
-	// imposto la connessione al server
-	$conn_id = ftp_connect($ftp_host);
-	
-	// effettuo login con user e pass
-	$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-	
-	// controllo se la connessione è OK...
-	if ((!$conn_id) or (!$mylogin)){ 
+	if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
+
+		// SFTP login with private key and password
+		$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
+		$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
+
+		if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
+			$key = PublicKeyLoader::load(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''),$ftp_pass);
+			
+			$sftp = new SFTP($ftp_host, $ftp_port);
+			if (!$sftp->login($ftp_user, $key)) {
+				// non si connette: key LOG-IN FALSE
+				?>
+				<script>
+				alert("<?php echo "Mancata connessione Sftp con file chiave segreta: impossibile scaricare gli ordini dall\'e-commerce"; ?>");
+				location.replace("<?php echo $_POST['ritorno']; ?>");
+				</script>
+				<?php
+			} else {
+				?>
+				<!--
+				<div class="alert alert-success text-center" >
+				<strong>ok</strong> Connessione SFTP con chiave riuscita.
+				</div>
+				-->
+				<?php
+			}
+		} else { // SFTP log-in con password
 		
-		?>
-		<script>
-		alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
-		location.replace("<?php echo $_POST['ritorno']; ?>");
-		</script>
-		<?php
-	}
-	//FTP turn passive mode on
-	ftp_pasv($conn_id, true);
-	
+			$sftp = new SFTP($ftp_host, $ftp_port);
+			if (!$sftp->login($ftp_user, $ftp_pass)) {
+				// non si connette: password LOG-IN FALSE
+				?>
+				<script>
+				alert("<?php echo "Mancata connessione Sftp con password: impossibile scaricare gli ordini dall\'e-commerce"; ?>");
+				location.replace("<?php echo $_POST['ritorno']; ?>");
+				</script>
+				<?php
+			} else {
+				?>
+				<div class="alert alert-success text-center" >
+				<strong>ok</strong> Connessione SFTP con password riuscita.
+				</div>
+				<?php
+			}
+		}				
+	} else {
+		// imposto la connessione al server
+		$conn_id = ftp_connect($ftp_host);
+		
+		// effettuo login con user e pass
+		$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+		
+		// controllo se la connessione è OK...
+		if ((!$conn_id) or (!$mylogin)){			
+			?>
+			<script>
+			alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
+			location.replace("<?php echo $_POST['ritorno']; ?>");
+			</script>
+			<?php
+		}
+		//FTP turn passive mode on
+		ftp_pasv($conn_id, true);
+	}	
 	if ($_GET['img']=="updimg"){ // se si devono aggiornare le immagini
 		if (!ftp_mkdir($conn_id, $ftp_path_upload."images")){ // se non c'è la cartella images la creo				
 			// get contents of the current directory	
@@ -97,7 +148,7 @@ if (isset($_POST['conferma'])) { // se confermato
 	
 		// creo il file xml
 	$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
-	<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
+	<GAzieDocuments AppVersion="1" Creator="Antonio Germani Copyright" CreatorUrl="https://www.lacasettabio.it">';
 	$xml_output .= "\n<Products>\n";
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e creo il file xml
 		if (isset($_POST['download'.$ord])){ // se selezionato	
@@ -145,21 +196,43 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xmlHandle = fopen($xmlFile, "w");
 	fwrite($xmlHandle, $xml_output);
 	fclose($xmlHandle);
-	
-	// upload file xml
-	if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
-		// è OK
-	} else{
-		// ERRORE chiudo la connessione FTP 
-		ftp_quit($conn_id);
-		header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=4");
-		exit;
+	if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
+		
+		if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
+			$sftp->disconnect();
+			?>
+			<!--
+			<div class="alert alert-success text-center" >
+			<strong>ok</strong> il file xml è stato trasferito al sito web tramite SFTP.
+			</div>
+			-->
+			<?php			
+		}else {
+			// chiudo la connessione FTP 
+			$sftp->disconnect();
+			?>
+			<script>
+			alert("<?php echo "Errore di upload del file xml tramite SFTP"; ?>");
+			location.replace("<?php echo $_POST['ritorno']; ?>");
+			</script>
+			<?php			
+		}	
+	} else { // FTP semplice
+		// upload file xml
+		if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
+			// è OK
+			//echo "xml trasferito";
+		} else{
+			// ERRORE chiudo la connessione FTP 
+			ftp_quit($conn_id);
+			header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=4");
+			exit;
+		}
 	}
-
-	$access=base64_encode($ftp_pass);
+	$access=base64_encode($accpass);
 
 	// avvio il file di interfaccia presente nel sito web remoto
-	$headers = @get_headers($urlinterf.'?access='.$access);
+	$headers = get_headers ($urlinterf.'?access='.$access);
 	
 	if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 		
@@ -342,22 +415,7 @@ if (!isset($_GET['success'])){
 					<div class="col-sm-4" align="right">
 						<!-- Trigger the modal with a button -->
 						<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#downloader">Aggiorna i prodotti nell'e-commerce</button>
-						<!-- Modal content-->
-						<div id="downloader" class="modal fade" role="dialog">    
-							<div class="modal-dialog modal-content">
-								<div class="modal-header" align="left">
-									<button type="button" class="close" data-dismiss="modal">&times;</button>
-									<h4 class="modal-title">ATTENZIONE!</h4>
-								</div>
-								<div class="modal-body">
-									<p>Stai per aggiornare definitivamente i prodotti nell'e-commerce. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Annulla</button>
-									<input type="submit" class="btn btn-danger pull-right" name="conferma"  value="Aggiorna l'e-commerce">
-								</div>
-							</div>
-						</div>
+												
 					</div>						
 				</div>
 				
@@ -404,4 +462,3 @@ if (!isset($_GET['success'])){
 }
 require("../../library/include/footer.php");
 ?>
-                            

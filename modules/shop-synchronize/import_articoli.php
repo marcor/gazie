@@ -4,8 +4,8 @@
   ------------------------------------------------------------------------
   @Author    Antonio Germani 340-5011912
   @Website   http://www.programmisitiweb.lacasettabio.it
-  @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
-  versione 3.0
+  @Copyright Copyright (C) Antonio Germani All Rights Reserved.
+  versione 3.1
   ------------------------------------------------------------------------ 
   --------------------------------------------------------------------------
   Questo programma e` free software;   e` lecito redistribuirlo  e/o
@@ -32,7 +32,7 @@ $admin_aziend = checkAdmin();
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
 $ftp_host= $resserver['val'];
 $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
-$ftp_user = $resuser['val'];
+
 $respass = gaz_dbi_get_row($gTables['company_config'], "var", "pass");
 $ftp_pass= $respass['val'];
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
@@ -167,29 +167,14 @@ if (isset($_POST['conferma'])) { // se confermato
 	require('../../library/include/header.php');
 	$script_transl = HeadMain();
 }
- 
-// imposto la connessione al server
-$conn_id = ftp_connect($ftp_host);
 
-// effettuo login con user e pass
-$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-
-// controllo se la connessione è OK...
-if ((!$conn_id) or (!$mylogin)){ 
-	?>
-	<script>
-	alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
-	location.replace("<?php echo $_POST['ritorno']; ?>");
-    </script>
-	<?php
-}
 $access=base64_encode($ftp_pass);
 if (!isset($_GET['success'])){
 	// avvio il file di interfaccia presente nel sito web remoto
 	$headers = @get_headers($urlinterf.'?access='.$access);
-	if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
-		$xml=simplexml_load_file($urlinterf.'?access='.$access) ; // lo carico
-		if (!$xml){
+	if ( intval(substr($headers[0], 9, 3))==200){ // controllo se ho avuto accesso al file interfaccia
+		$xml=simplexml_load_file($urlinterf.'?access='.$access) ; // carico il file xml appena creato
+		if (!$xml){ // se non è stato creato o non ho accesso
 			?>
 			<script>
 			alert("<?php echo "Errore! Il file xml non è stato creato oppure non è possibile accedervi"; ?>");
@@ -233,7 +218,7 @@ if (!isset($_GET['success'])){
 			<input type="hidden" name="download" value="download" >
 			<div class="container-fluid" style="max-width:90%;">
 				<div class="row bg-primary" >
-					<div class="col-sm-12" align="center"><h4>Importazione di articoli dall'e-commerce a GAzie</h4>
+					<div class="col-sm-12" align="center"><h4>Importazione di articoli dall'e-commerce in GAzie</h4>
 						<p align="justify">Gli articoli selezionati verranno aggiornati o, se inesistenti, verranno creati. </p>
 					</div>
 				</div>
@@ -255,7 +240,7 @@ if (!isset($_GET['success'])){
 									<h4 class="modal-title">ATTENZIONE !</h4>
 								</div>
 								<div class="modal-body">
-									<p>Stai per scaricare definitivamente i prodotti in GAzie. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
+									<p>Stai per caricare/aggiornare definitivamente i prodotti in GAzie. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Annulla</button>
@@ -331,22 +316,7 @@ if (!isset($_GET['success'])){
 						<div class="col-sm-4" align="right">
 							<!-- Trigger the modal with a button -->
 							<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#downloader">Carica prodotti in GAzie</button>
-							<!-- Modal content-->
-							<div id="downloader" class="modal fade" role="dialog">    
-								<div class="modal-dialog modal-content">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal">&times;</button>
-										<h4 class="modal-title">ATTENZIONE !</h4>
-									</div>
-									<div class="modal-body">
-										<p>Stai per scaricare definitivamente i prodotti in GAzie. <br>Questa operazione &egrave irreversibile. <br>Sei sicuro di volerlo fare?</p>
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Annulla</button>
-										<input type="submit" class="btn btn-danger pull-right" name="conferma"  value="Carica prodotti in GAzie">
-									</div>
-								</div>
-							</div>
+							
 						</div>						
 					</div>				
 			</div>
@@ -354,10 +324,10 @@ if (!isset($_GET['success'])){
 		<?php
 	
 	} else { // IL FILE INTERFACCIA NON ESISTE > ESCO
-		ftp_quit($conn_id);
+		
 		?>
 		<script>
-		alert("<?php echo "Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)),"<br> Riprovare fra qualche minuto!"; ?>");
+		alert("<?php echo "Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)),"<br> Controllare codice errore o riprovare fra qualche minuto!"; ?>");
 		location.replace("<?php echo $_POST['ritorno']; ?>");
 		</script>
 		<?php
@@ -371,8 +341,6 @@ if (!isset($_GET['success'])){
 	</div>
 <?php
 }
-// chiudo la connessione FTP 
-ftp_quit($conn_id);
+
 require("../../library/include/footer.php");
 ?>
-                            
