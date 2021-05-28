@@ -604,19 +604,35 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         $protoc = $ultimo_protoc['protoc']+1;
                     }
 
-                    $newValue = array('caucon' => 'FAI',
-                        'descri' => 'FATTURA REVERSE CHARGE',
-                        'id_doc' => $v['tes']['id_tes'],
-                        'datreg' => $v['tes']['datreg'],
-                        'datliq' => $datliq,
-                        'seziva' => $admin_aziend['reverse_charge_sez'],
-                        'protoc' => $protoc,
-                        'numdoc' => $v['tes']['numfat'],
-                        'datdoc' => $v['tes']['datfat'],
-                        'clfoco' => $rc_cli['codice'],
-                        'regiva' => 2,
-                        'operat' => 1
-                    );
+					if ($v['tes']['tipdoc'] == 'FNC') {
+						$newValue = array('caucon' => 'FNC',
+							'descri' => $script_transl['doc_type_value'][$v['tes']['tipdoc']]. ' REVERSE CHARGE',
+							'id_doc' => $v['tes']['id_tes'],
+							'datreg' => $v['tes']['datreg'],
+							'datliq' => $datliq,
+							'seziva' => $admin_aziend['reverse_charge_sez'],
+							'protoc' => $protoc,
+							'numdoc' => $v['tes']['numfat'],
+							'datdoc' => $v['tes']['datfat'],
+							'clfoco' => $rc_cli['codice'],
+							'regiva' => 2,
+							'operat' => 2
+						);
+					} else {
+						$newValue = array('caucon' => 'FAI',
+							'descri' => $script_transl['doc_type_value'][$v['tes']['tipdoc']]. ' REVERSE CHARGE',
+							'id_doc' => $v['tes']['id_tes'],
+							'datreg' => $v['tes']['datreg'],
+							'datliq' => $datliq,
+							'seziva' => $admin_aziend['reverse_charge_sez'],
+							'protoc' => $protoc,
+							'numdoc' => $v['tes']['numfat'],
+							'datdoc' => $v['tes']['datfat'],
+							'clfoco' => $rc_cli['codice'],
+							'regiva' => 2,
+							'operat' => 1
+						);
+					}
                     $rctes_id =tesmovInsert($newValue);
                     // inserisco i righi IVA
                     $acc_iva=0.00;    
@@ -629,14 +645,27 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         $vrc['id_tes'] = $rctes_id;
                         rigmoiInsert($vrc);
                     }
-                    // inserisco i tre righi contabili della fattura che vanno sul registro IVA vendite    
-                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp + $acc_iva));
-                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp));
-                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $admin_aziend['ivaven'], 'import' => $acc_iva));
 
-                    // infine creo un movimento di storno dell'IVA    
-                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $v['tes']['clfoco'], 'import' => $acc_iva));
-                    rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_iva));
+					if ($v['tes']['tipdoc'] == 'FNC') {
+						// inserisco i tre righi contabili della fattura che vanno sul registro IVA vendite    
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp + $acc_iva));
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp));
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $admin_aziend['ivaven'], 'import' => $acc_iva));
+
+						// infine creo un movimento di storno dell'IVA    
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $v['tes']['clfoco'], 'import' => $acc_iva));
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $acc_iva));
+					} else {
+						// inserisco i tre righi contabili della fattura che vanno sul registro IVA vendite    
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp + $acc_iva));
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp));
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $admin_aziend['ivaven'], 'import' => $acc_iva));
+
+						// infine creo un movimento di storno dell'IVA    
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $v['tes']['clfoco'], 'import' => $acc_iva));
+						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_iva));
+					}
+
                     // in ultimo faccio l'update del riferimento sui righi inseriti per il movimento padre
                     gaz_dbi_put_row($gTables['rigmoi'], 'id_tes', $tes_id, 'reverse_charge_idtes', $rctes_id);
                 }
