@@ -604,9 +604,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         $protoc = $ultimo_protoc['protoc']+1;
                     }
 
-					if ($v['tes']['tipdoc'] == 'FNC') {
+					if ($v['tes']['tipdoc'] == 'AFC') {
 						$newValue = array('caucon' => 'FNC',
-							'descri' => $script_transl['doc_type_value'][$v['tes']['tipdoc']]. ' REVERSE CHARGE',
+							'descri' => 'NOTA CREDITO REVERSE CHARGE',
 							'id_doc' => $v['tes']['id_tes'],
 							'datreg' => $v['tes']['datreg'],
 							'datliq' => $datliq,
@@ -620,7 +620,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 						);
 					} else {
 						$newValue = array('caucon' => 'FAI',
-							'descri' => $script_transl['doc_type_value'][$v['tes']['tipdoc']]. ' REVERSE CHARGE',
+							'descri' => 'FATTURA REVERSE CHARGE',
 							'id_doc' => $v['tes']['id_tes'],
 							'datreg' => $v['tes']['datreg'],
 							'datliq' => $datliq,
@@ -646,7 +646,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         rigmoiInsert($vrc);
                     }
 
-					if ($v['tes']['tipdoc'] == 'FNC') {
+					if ($v['tes']['tipdoc'] == 'AFC') {
 						// inserisco i tre righi contabili della fattura che vanno sul registro IVA vendite    
 						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp + $acc_iva));
 						rigmocInsert(array('id_tes' => $rctes_id, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $acc_imp));
