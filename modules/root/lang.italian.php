@@ -173,7 +173,7 @@ if (!defined("MESSAGE_WELCOME")) {
         define("MESSAGE_PASSWORD_RESET_MAIL_SUCCESSFULLY_SENT", "La mail per la reimpostazione della password è stata inviata con successo!");
         define("MESSAGE_PASSWORD_TOO_SHORT", "Password has a minimum length of 6 characters");
         define("MESSAGE_PASSWORD_WRONG", "Credenziali sbagliate. Riprova");
-        define("MESSAGE_PASSWORD_WRONG_3_TIMES", "Hai sbagliato  la password 3 o più volte. Attendi 30 seconds per provare di nuovo.");
+        define("MESSAGE_PASSWORD_WRONG_3_TIMES", "Hai sbagliato  la password più di 3 volte. Attendi 60 secondi per provare di nuovo.");
         define("MESSAGE_REGISTRATION_ACTIVATION_NOT_SUCCESSFUL", "Spiecenti, ma il codice di verifica non risulta essere più valido!");
         define("MESSAGE_REGISTRATION_ACTIVATION_SUCCESSFUL", "L'attivazione ha avuto successo, ho popolato il tuo database con il file: ");
         define("MESSAGE_REGISTRATION_FAILED", "Sorry, your registration failed. Please go back and try again.");
