@@ -89,7 +89,7 @@ if (@file_exists('./lib.data.php')) {
 }
 
 //tabelle aziendali
-$tn = array('aliiva', 'agenti', 'artico', 'assets', 'banapp', 'body_text', 'campi', 'cash_register', 'cash_register_reparto', 'cash_register_tender',
+$tn = array('aliiva', 'agenti', 'artico', 'artico_group', 'assets', 'banapp', 'body_text', 'campi', 'cash_register', 'cash_register_reparto', 'cash_register_tender',
     'catmer', 'caucon', 'caucon_rows', 'caumag', 'clfoco', 'company_config', 'company_data','contract', 'contract_row', 
 	'comunicazioni_dati_fatture', 'contract', 'effett', 'expdoc', 'extcon', 'files', 'imball', 'letter', 
 	'liquidazioni_iva', 'lotmag', 'movmag', 'pagame', 'paymov', 'portos', 'provvigioni', 'rigbro', 
