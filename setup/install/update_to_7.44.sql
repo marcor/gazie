@@ -6,9 +6,9 @@ ALTER TABLE `gaz_XXXfiles` ADD INDEX (`item_ref`);
 ALTER TABLE `gaz_XXXfiles`	CHANGE COLUMN `item_ref` `item_ref` VARCHAR(100) NOT NULL COMMENT 'a secondo dell\'utilizzo che se ne fà può contenere il codice articolo, il filename o altre referenze' AFTER `id_ref`;
 ALTER TABLE `gaz_XXXcatmer`	CHANGE COLUMN `ref_ecommerce_id_category` `ref_ecommerce_id_category` VARCHAR(50) NULL DEFAULT '' COMMENT 'Riferimento alla categoria articoli in eventuale ecommerce sincronizzato' AFTER `web_url`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `id_artico_group` INT(9) NOT NULL DEFAULT '0' COMMENT 'Se valorizzato punta all\'id di gaz_NNNartico_group e serve per indicare ad un ecommerce sincronizzato che questa è una variante del prodotto genericamente indicato nella tabella citata' AFTER `descri`, CHANGE COLUMN `ref_ecommerce_id_product` `ref_ecommerce_id_product` VARCHAR(50) NULL DEFAULT '' COMMENT 'Riferimento all\'articolo in eventuale ecommerce sincronizzato' AFTER `id_assets`, ADD INDEX `id_artico_group` (`id_artico_group`);
-ALTER TABLE `gaz_XXXartico`	CHANGE COLUMN `quality` `quality` VARCHAR(255) NOT NULL COMMENT 'per indicare la qualità del materiale, normativa, o taglia, colore, tipologia ecc. Eventualmente anche in array json' COLLATE 'utf8_general_ci' AFTER `ref_ecommerce_id_product`;
+ALTER TABLE `gaz_XXXartico`	ADD COLUMN `ecomm_option_attribute` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Riferimenti  agli attributi, opzioni, varianti utilizzati dall\'ecommerce sincronizzato. Normalmente un array json' AFTER `ref_ecommerce_id_product`;
 CREATE TABLE IF NOT EXISTS `gaz_XXXartico_group` (
-  `id_artico_group` int(3) NOT NULL DEFAULT '0',
+  `id_artico_group` int(9) NOT NULL DEFAULT '0',
   `descri` varchar(50) NOT NULL DEFAULT '',
   `large_descri` text NOT NULL,
   `image` blob NOT NULL,
