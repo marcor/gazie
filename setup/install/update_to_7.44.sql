@@ -8,7 +8,7 @@ ALTER TABLE `gaz_XXXcatmer`	CHANGE COLUMN `ref_ecommerce_id_category` `ref_ecomm
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `id_artico_group` INT(9) NOT NULL DEFAULT '0' COMMENT 'Se valorizzato punta all\'id di gaz_NNNartico_group e serve per indicare ad un ecommerce sincronizzato che questa è una variante del prodotto genericamente indicato nella tabella citata' AFTER `descri`, CHANGE COLUMN `ref_ecommerce_id_product` `ref_ecommerce_id_product` VARCHAR(50) NULL DEFAULT '' COMMENT 'Riferimento all\'articolo in eventuale ecommerce sincronizzato' AFTER `id_assets`, ADD INDEX `id_artico_group` (`id_artico_group`);
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `ecomm_option_attribute` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Riferimenti  agli attributi, opzioni, varianti utilizzati dall\'ecommerce sincronizzato. Normalmente un array json' AFTER `ref_ecommerce_id_product`;
 CREATE TABLE IF NOT EXISTS `gaz_XXXartico_group` (
-  `id_artico_group` int(9) NOT NULL DEFAULT '0',
+  `id_artico_group` int(9) NOT NULL AUTO_INCREMENT,
   `descri` varchar(50) NOT NULL DEFAULT '',
   `large_descri` text NOT NULL,
   `image` blob NOT NULL,
