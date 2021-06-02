@@ -1,0 +1,26 @@
+Titolo:
+Rem tene, verba sequentur.
+
+Presentazione:
+In questa versione ho iniziato il lavoro per l'importazione e riconciliazione contabile degli estratti conto bancari; non mi affretto a completarlo nella speranza di essere facilitato dall'introduzione a stretto giro di una tassonomia in formato XML, purtroppo, nostro malgrado, le  banche italiane non hanno adottato uno standard, quindi ho dovuto aggiungere la libreria "PHPOffice/PhpSpreadsheet" che consente l'importazione degli estratti conto generalmente prodotti in formato foglio di calcolo, libreria che ho utilizzato la potete vedere in azione andando su Magazzino->Listini e consente l'esportazione degli articoli di magazzino in formato XLS.  
+Ho colto questa occasione al fine di rendere possibile l'utilizzo di Composer per la gestione delle librerie PHP e delle loro dipendenze; non ho spostato quelle già presenti sul direttorio "library" sul più standard "vendor", conto di farlo a breve; già da oggi la presenza di autoloader consente l'utilizzo di quelle indicate sul file composer.json, per aggiungerne di nuove ci basterà il comando da shell "composer update" e ritrovarsele pronte all'uso.
+Un altro importante cambiamento non visibile agli utenti è che aggiornando il database a questa versione verranno spostati i dati relativi alle fatture elettroniche di acquisto dal database al filesystem del server web, è stato precisamente verrano copiati i dati attualmente presenti nella colonna MEDIUMBLOB "fattura_elettronica_original_content" della tabella gaz_NNNtesdoc nella cartella "data/files/NNN" in file con estensioni ".inv"; si è reso necessario perché sulle installazioni produttive con tantissime fatture elettroniche acquisite la grandezza del dump(backup) si incrementava in maniera esponenziale a causa del fatto che molti allegano l'inutile copia pdf di cortesia all'XML e perché i dati venivano inseriti con encode base64. Non mi sono permesso di cancellare o svuotare il contenuto della colonna per evitare nel modo più assoluto la perdita di dati, chi vorrà lo potrà fare manualmente tra qualche tempo rendendo più veloci i report delle fatture, ovviamente le nuove installazioni non avranno la colonna citata.
+
+Segue changelog:
+- Il modulo per la sincronizzazione dell'e-commerce (shop-synchronize) utilizza attraverso autoloader il più sicuro SFTP (phpseclib3) al posto di FTP. (A.Germani)
+- Corretti errori su esterometro in presenza di clienti extracee. (A.De Vincentiis)
+- Lista merci/servizi: dialog modale per la visualizzazione degli "ultimi acquisti da fornitori" e "ordini aperti da clienti". (A.De Vincentiis e A.Germani)
+- Barra del menù su tema LTE con i colori aziendali. (A.De Vincentiis)
+- Corretto problema di duplicazione anagrafica su importazione fattura elettronica di vendita verso clienti con solo codice fiscale. (A.Montanari) 
+- Introduzione di Composer e relativo autoloader. (A.De Vincentiis)
+- Importazione estratto conto bancario in formato foglio elettronico (solo visualizzazione tabella). (A.De Vincentiis)
+- Emissione corrispettivi da ordini: risolti i problemi relativi alle spese di trasporto e di incasso. (A.De Vincentiis)
+- Lista dei movimenti contabili di prima nota con causale contabile VCO: inserito il pulsante per riepilogo dei movimenti contabilizzati. (A.Germani)
+- Spostati gli XML delle fatture elettroniche importate dalla colonna MEDIUMBLOB "fattura_elettronica_original_content" del database al filesystem. (A.De Vincentiis)
+- Corretto errore sul Lipe 2021. (M.Bergamini)
+- Contabilizzazione fatture di acquisto: corretto refuso nel calcolo di reverse charge in presenza di storni. (A.Romano)
+- Contabilizzazione fatture di acquisto: corretto errore che contabilizzava le note credito reverse charge come fatture. (A.Romano) 
+- Aggiunta nuova tabella per consentire la sincronizzazione con gli e-commerce che gestiscono le varianti, opzioni, attributi, ecc. (A.De Vincentiis)
+- La sincronizzazione da e-commerce verso GAzie adesso importa le varianti(o opzioni/attributi) e crea l'articolo padre in artico_group. (A.Germani)
+
+Antonio de Vincentiis, Montesilvano, 2 giugno 2021
