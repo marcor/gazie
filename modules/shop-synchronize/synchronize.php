@@ -88,7 +88,7 @@ if (isset ($_POST['download'])) {
 		if (!isset($_POST['scardescrizione'])){
 			$_POST['scardescrizione']="";
 		}
-		header("Location: " . $file_downloader."?upd=".$_POST['upd']."&updpre=".$_POST['updpre']."&updname=".$_POST['updname']."&upddes=".$_POST['upddes']."&updimm=".$_POST['updimm']."&imp=".$_POST['imp']."&imppre=".$_POST['imppre']."&impdes=".$_POST['impdes']."&impimm=".$_POST['impimm']);
+		header("Location: " . $file_downloader."?upd=".(isset($_POST['upd']) ? $_POST['upd'] : 0) ."&updpre=".(isset($_POST['updpre']) ? $_POST['updpre'] : 0)."&updname=".(isset($_POST['updname']) ? $_POST['updname'] : 0)."&upddes=".(isset($_POST['upddes']) ? $_POST['upddes'] : 0)."&updimm=".(isset($_POST['updimm']) ? $_POST['updimm'] : 0)."&imp=".(isset($_POST['imp']) ? $_POST['imp'] : 0)."&imppre=".(isset($_POST['imppre']) ? $_POST['imppre'] : 0)."&impdes=".(isset($_POST['impdes']) ? $_POST['impdes'] : 0)."&impimm=".(isset($_POST['impimm']) ? $_POST['impimm'] : 0));
 		exit;
 	} else {
 		header("Location: " . $_POST['ritorno']);
@@ -97,7 +97,7 @@ if (isset ($_POST['download'])) {
 } elseif (isset ($_POST['uploader'])) { 
 	
 	if (file_exists($file_uploader)){ // esportazione/aggiornamento
-		header("Location: " . $file_uploader."?prezzo=".$_POST['prezzo']."&qta=".$_POST['quantita']."&descri=".$_POST['descrizione']."&img=".$_POST['immagine']."&name=".$_POST['name']);
+		header("Location: " . $file_uploader."?prezzo=".(isset($_POST['prezzo']) ? $_POST['prezzo'] : 0)."&qta=".(isset($_POST['quantita']) ? $_POST['quantita'] : 0)."&descri=".(isset($_POST['descri']) ? $_POST['descri'] : 0)."&img=".(isset($_POST['immagine']) ? $_POST['immagine'] : 0)."&name=".(isset($_POST['name']) ? $_POST['name'] : 0));
 		exit;
 	} else {
 		header("Location: " . $_POST['ritorno']);

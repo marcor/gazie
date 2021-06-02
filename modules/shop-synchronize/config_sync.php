@@ -57,6 +57,7 @@ $admin_aziend = checkAdmin(9);
 			}
             $value=filter_var($v, FILTER_SANITIZE_STRING);
             $key=filter_var($k, FILTER_SANITIZE_STRING);
+			
             $res=gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);	          
         }
 		
@@ -75,6 +76,7 @@ $admin_aziend = checkAdmin(9);
 				$n++;
 			}
 		}
+		
 		if ($_POST['enable_sync']=="SI"){
 			gaz_dbi_table_update("aziend", $admin_aziend['codice'], array("gazSynchro"=>"shop-synchronize"));
 		} else {

@@ -353,11 +353,15 @@ if (!isset($_GET['success'])){
 					$avqty = 0;
 					$ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
 					$mv = $gForm->getStockValue(false, $item['codice']);
-					$magval = array_pop($mv);
-					$avqty=$magval['q_g']-$ordinatic;
-					if ($avqty<0 or $avqty==""){
-						$avqty="0";
-					}
+					
+						$magval = array_pop($mv);
+						if ($magval){
+							$avqty=$magval['q_g']-$ordinatic;
+						}
+						if ($avqty<0 or $avqty==""){
+							$avqty="0";
+						}
+					
 					?>
 					<div class="row bg-success" style="border-bottom: 1px solid;">
 							<div class="col-sm-2">
