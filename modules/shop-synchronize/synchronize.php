@@ -135,7 +135,7 @@ if (isset ($_POST['download'])) {
 				</div>
 				<div class="col-sm-3  bg-info" align="center">
 					<input title="Impostazioni" type="button" name="settings"  onclick="window.location.href='config_sync.php'" value="Impostazioni" >
-					<input title="Documentazione" type="button" name="document"  onclick="window.location.href='docume_shop-synchronize'" value="Documentazione">
+					<input title="Documentazione" type="button" name="document"  onclick="window.location.href='docume_shop-synchronize.php'" value="Documentazione">
 				</div>
 			</div>
 			<div id="more">
