@@ -54,19 +54,28 @@ if (isset($_SESSION['table_prefix'])) {
 
 }
 
-$path=explode('setup',dirname(__FILE__));
-$dir= $path[0].'modules' . DIRECTORY_SEPARATOR . 'wiki';
-if(file_exists ($dir)) {
-    $it = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
-    $files = new RecursiveIteratorIterator($it,
-             RecursiveIteratorIterator::CHILD_FIRST);
-    foreach($files as $file) {
-        if ($file->isDir()){
-            rmdir($file->getRealPath());
-        } else {
-            unlink($file->getRealPath());
-        }
-    }
+$result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
+
+while ($row = gaz_dbi_fetch_array($result)) {
+	$aziend_codice = sprintf("%03s", $row["codice"]);
+	// inizio controlli presenza di indici altrimenti li creo 
+	$idx=array(0=>array('caumag'=>'movmag')); 
+	foreach($idx as $vi){
+		foreach($vi as $k=>$v){
+			$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice.$v." WHERE 1");
+			$ex=false;	
+			while ($vk = gaz_dbi_fetch_array($rk)) {
+				if ($vk['Column_name'] == $k){
+					$ex=true;
+				}
+			}
+			if (!$ex){
+				gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice.$v." ADD INDEX `".$k."` (`".$k."`)");		
+				echo "<p>Ho creato l'index <b>".$k."</b> su ". $table_prefix . "_" . $aziend_codice.$v." perché non esisteva</p>";
+			}
+		}
+	}
+	// fine controlli - creazioni indici mancanti
 }
-@rmdir($dir);
+
 ?>

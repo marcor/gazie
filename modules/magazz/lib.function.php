@@ -544,7 +544,7 @@ class magazzForm extends GAzieForm {
         switch ($stock_eval_method) { //calcolo il nuovo valore in base al metodo scelto in configurazione azienda
             case "0": //standard
             case "3": // FIFO
-                $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], "caumag < 99 AND " . $where, $orderby);
+                $rs_movmag = gaz_dbi_dyn_query("id_mov,quanti,prezzo,scorig,scochi,operat", $gTables['movmag'], "caumag < 99 AND " . $where, $orderby);
                 // Qui metto i valori dell'ultimo inventario
                 $accumulatore[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice);
                 $giacenza = array('q_g' => $last_invQuanti, 'v_g' => $last_invPrice * $last_invQuanti);
@@ -609,7 +609,7 @@ class magazzForm extends GAzieForm {
                 }
                 break;
             case "1": // WMA
-                $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where . " AND caumag < 99", $orderby);
+                $rs_movmag = gaz_dbi_dyn_query("id_mov,quanti,prezzo,scorig,scochi,operat", $gTables['movmag'], $where . " AND caumag < 99", $orderby);
                 $giacenza = array('q_g' => $last_invQuanti, 'v_g' => $last_invPrice * $last_invQuanti);
                 $return_val[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice,
                     'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
@@ -639,7 +639,7 @@ class magazzForm extends GAzieForm {
                 }
                 break;
             case "2": // LIFO
-                $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where . " AND caumag < 99", $orderby);
+                $rs_movmag = gaz_dbi_dyn_query("id_mov,quanti,prezzo,scorig,scochi,operat", $gTables['movmag'], $where . " AND caumag < 99", $orderby);
                 // Qui metto i valori dell'ultimo inventario
                 $accumulatore[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice);
                 $giacenza = array('q_g' => $last_invQuanti, 'v_g' => $last_invPrice * $last_invQuanti);

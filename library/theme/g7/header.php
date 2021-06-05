@@ -232,7 +232,7 @@
                                     'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
                                     'class' => $row['m2_class']);
                             }
-                            //if ($row['m3_trkey']==2) echo $row['name'] . '/' . $row['m3_link'].'<br>'; // decommentandolo e sostituendo al 2 la key indefinita evidenzio gli script con quella key indefinita
+                            // if (!isset($transl[$row['name']]['m3'][$row['m3_trkey']][1])) echo $row['name'] . '/' . $row['m3_link'].'<br>'; // decommentandolo evidenzio gli script con la key indefinita
                             $menuArray[$row['weight']][$row['m2_weight']][$row['m3_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m3_link'],
                                 'icon' => '../' . $row['name'] . '/' . $row['m3_icon'],
                                 'name' => $transl[$row['name']]['m3'][$row['m3_trkey']][1],

@@ -23,7 +23,7 @@ ALTER TABLE `gaz_XXXrigmoi`	DROP PRIMARY KEY, ADD PRIMARY KEY (`id_rig`) USING B
 ALTER TABLE `gaz_XXXrigmoc`	DROP PRIMARY KEY, ADD PRIMARY KEY (`id_rig`) USING BTREE, ADD INDEX (`id_tes`);
 ALTER TABLE `gaz_XXXprovvigioni` ADD INDEX `id_agente` (`id_agente`);
 ALTER TABLE `gaz_XXXmovmag`	DROP PRIMARY KEY, ADD PRIMARY KEY (`id_mov`) USING BTREE;
-ALTER TABLE `gaz_XXXcontract_row` DROP PRIMARY KEY,	ADD PRIMARY KEY (`id_row`) USING BTREE;
+-- ALTER TABLE `gaz_XXXcontract_row` DROP PRIMARY KEY,	ADD PRIMARY KEY (`id_row`) USING BTREE;
 ALTER TABLE `gaz_XXXsconti_articoli` DROP PRIMARY KEY;
 ALTER TABLE `gaz_XXXsconti_raggruppamenti` DROP PRIMARY KEY;
 ALTER TABLE `gaz_XXXclfoco` ADD COLUMN `cuc_code` VARCHAR(8) NOT NULL AFTER `sia_code`;
