@@ -140,6 +140,8 @@ $strScript = array("browse_document.php" =>
         "la descrizione &egrave; vuota!",
         "Il file immagine dev'essere nel formato PNG",
         "L'immagine non dev'essere pi&ugrave; grande di 64Kb",
+		"Descrizione estesa",
+		"ID riferimento e-commerce",
         'web_url' => 'Web url<br />(es: http://site.com/group.html)',
         'top' => 'Bottone su home ecommerce'
     ),

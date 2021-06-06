@@ -45,6 +45,7 @@ if ((isset($_GET['Update']) and  !isset($_GET['codice'])) or isset($_POST['Retur
 
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
     $form=gaz_dbi_parse_post('catmer');
+	$form['large_descri']=$_POST['large_descri'];
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
        if (! empty($_FILES['userfile']['name'])) {
@@ -102,6 +103,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['ritorno'] = $_POST['ritorno'];
     $form['codice'] = $catmer['codice'];
     $form['descri'] = $catmer['descri'];
+	$form['large_descri'] = $catmer['large_descri'];
+    $form['ref_ecommerce_id_category'] = $catmer['ref_ecommerce_id_category'];
     $form['web_url'] = $catmer['web_url'];
     $form['top'] = $catmer['top'];
     $form['annota'] = $catmer['annota'];
@@ -112,7 +115,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
     $form['codice'] = $ultimo_codice['codice']+1;
     $form['descri'] = '';
-    $form['ricarico'] = 0;
+	$form['large_descri'] = '';
+    $form['ref_ecommerce_id_category'] = '';
+	$form['ricarico'] = 0;
     $form['web_url']='';
     $form['top'] = 0;
     $form['annota'] = '';
@@ -152,6 +157,16 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"Fa
 echo "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=catmer&value=".$form['codice']."\" width=\"100\"></td>";
 echo "<td class=\"FacetDataTD\" align=\"center\">$script_transl[3]<br><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
 echo "</tr>\n";
+?>
+<tr>
+	<td class="FacetFieldCaptionTD">
+        <label for="large_descri" class="col-sm-4 control-label"><?php echo $script_transl[10]; ?></label>
+	</td>	
+    <td class="FacetFieldCaptionTD">
+        <textarea id="large_descri" name="large_descri" class="mceClass"><?php echo $form['large_descri']; ?></textarea>
+    </td>                 
+</tr>             
+<?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"ricarico\" value=\"".$form['ricarico']."\" maxlength=\"4\"  /></td></tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['web_url']." </td>\n";
@@ -168,6 +183,8 @@ echo "</tr>\n";
 	</td>
 </tr>
 <?php
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"ref_ecommerce_id_category\" value=\"".$form['ref_ecommerce_id_category']."\" maxlength=\"4\"  /></td></tr>\n";
+echo "<tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\"  />\n";
 echo "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\">\n";
 echo "</td><td class=\"FacetDataTD\" align=\"right\">\n";
