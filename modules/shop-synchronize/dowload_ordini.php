@@ -167,7 +167,48 @@ if (isset($_POST['conferma'])) { // se confermato
 					if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
 						$prelis=$_POST['prelis_imp'.$ord.$row];
 					}
-					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". substr($_POST['codice'.$ord.$row],0,15) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '".$good_or_service."', '" . $_POST['unimis'.$ord.$row] . "', '" .$_POST['catmer'.$ord.$row] . "', '". $prelis ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+					
+					$id_artico_group="";
+					$arrayvar="";
+					if ($_POST['product_parent_id'.$ord.$row] > 0){ // se è una variante
+					
+						// controllo se esiste il suo artico_group/padre in GAzie
+						unset($parent);
+						$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_parent_id'.$ord.$row]);// trovo il padre in GAzie
+						if ($parent){ // se esiste il padre
+							$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
+						} else {// se non esiste lo devo creare con i pochi dati che ho
+							$parent['descri']=$_POST['descri'.$ord.$row];
+							gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode (addslashes($parent['descri'])). "', '', '', '". $_POST['product_parent_id'.$ord.$row] . "', '1', '1', '". $admin_aziend['adminid'] ."')");
+							$id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
+						}
+						
+						if (strlen($_POST['descri'.$ord.$row])<2){ // se non c'è la descrizione della variante 
+							$_POST['descri'.$ord.$row]=$parent['descri']."-".$_POST['characteristic'.$ord.$row];// ci metto quella del padre accodandoci la variante
+						}
+						
+						// creo un json array per la variante
+						$arrayvar= array("var_id" => floatval($_POST['characteristic_id'.$ord.$row]), "var_name" => $_POST['characteristic'.$ord.$row]);
+						$arrayvar = json_encode ($arrayvar);
+						
+					}
+					
+					// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste					
+					if (intval($_POST['catmer'.$ord.$row])>0){
+						$category = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($_POST['catmer'.$ord.$row],0,15)))['codice'];// controllo se esiste in GAzie
+					} else {
+						$category="";
+					}
+					
+					// prima di inserire il nuovo controllo se il codice articolo è stato già usato				
+					unset($usato);
+					$usato = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);// controllo se il codice è già stato usato in GAzie	
+					if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
+						$_POST['codice'.$ord.$row]=substr($_POST['codice'.$ord.$row],0,10)."-".substr($_POST['refid'.$ord.$row],0,4);
+					}
+					
+					// inserisco il nuovo articolo
+					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,web_public,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". $_POST['peso_specifico'.$ord.$row] ."', '". $_POST['unimis'.$ord.$row] ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '1', '". addslashes (substr($_POST['codice'.$ord.$row],0,15)) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '".$good_or_service."', '" . $_POST['unimis'.$ord.$row] . "', '". $category ."', '". $prelis ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 					$codart= substr($_POST['codice'.$ord.$row],0,15);// dopo averlo creato ne prendo il codice come $codart
 					$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione
 					
@@ -281,7 +322,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 						echo '<input type="hidden" name="email'. $n .'" value="'. $order->CustomerEmail .'">';
 						echo '<input type="hidden" name="pec_email'. $n .'" value="'. $order->CustomerPecEmail .'">';
 						echo '<input type="hidden" name="fe_cod_univoco'. $n .'" value="'. $order->CustomerCodeFattEl .'">';
-						foreach($xml->Documents->Document[$n]->Rows->children() as $orderrow) { // carico le righe degli ordini
+						foreach($xml->Documents->Document[$n]->Rows->children() as $orderrow) { // carico le righe degli articoli ordinati
 							echo '<input type="hidden" name="codice'. $n . $nr.'" value="'. $orderrow->Code . '">';
 							echo '<input type="hidden" name="descri'. $n . $nr.'" value="'. $orderrow->Description . '">';
 							echo '<input type="hidden" name="adddescri'. $n . $nr.'" value="'. $orderrow->AddDescription . '">';
@@ -294,7 +335,11 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 							echo '<input type="hidden" name="aliiva'. $n . $nr.'" value="'. $orderrow->VatAli . '">';
 							echo '<input type="hidden" name="refid'. $n . $nr.'" value="'. $orderrow->Id . '">';
 							echo '<input type="hidden" name="unimis'. $n . $nr.'" value="'. $orderrow->MeasureUnit . '">';
+							echo '<input type="hidden" name="peso_specifico'. $n . $nr.'" value="'. $orderrow->ProductWeight . '">';
 							echo '<input type="hidden" name="num_rows'. $n .'" value="'. $nr . '">';
+							echo '<input type="hidden" name="product_parent_id'. $n . $nr .'" value="'. $orderrow->ParentId .'">';// se ci sono varianti questo è l'id del padre
+							echo '<input type="hidden" name="characteristic_id'. $n . $nr .'" value="'. $orderrow->CharacteristicId .'">';
+							echo '<input type="hidden" name="characteristic'. $n . $nr .'" value="'. $orderrow->Characteristic .'">';
 							$nr++;
 						}
 						
