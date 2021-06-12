@@ -532,12 +532,10 @@ class shopsynchronizegazSynchro {
 							if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
 								$div=floatval("1.".$aliiva);
 								$Price=floatval($orderrow->PriceVATincl) / $div;				
-							} else {
+							} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
 								$Price=floatval($orderrow->Price);
 							}
-							if ($order->PricesIncludeVat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
-								$Price=floatval($orderrow->Price);
-							}
+							
 							gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 							$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
 							$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva	
@@ -548,12 +546,9 @@ class shopsynchronizegazSynchro {
 							if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
 								$div=floatval("1.".$aliiva);
 								$Price=floatval($orderrow->PriceVATincl) / $div;				
-							} else {
+							} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
 								$Price=floatval($orderrow->Price);
-							}
-							if ($order->PricesIncludeVat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile 
-								$Price=floatval($orderrow->Price);
-							}
+							}							
 						}
 						
 						// salvo rigo su database tabella rigbro 
