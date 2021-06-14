@@ -167,6 +167,10 @@ class DocContabVars {
 
         $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
 
+        $this->fiscal_rapresentative = false;
+        if ($this->client['fiscal_rapresentative_id'] > 0) {
+           $this->fiscal_rapresentative = gaz_dbi_get_row($gTables['anagra'], "id", $this->client['fiscal_rapresentative_id']); 
+        }
         if (isset($tesdoc['c_a'])) {
             $this->c_Attenzione = $tesdoc['c_a'];
         } else {

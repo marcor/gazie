@@ -117,6 +117,10 @@ class invoiceXMLvars {
 		if ($tesdoc['vettor']>0){
 			$this->vettore = gaz_dbi_get_row($gTables['vettor'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['vettor'].'.id_anagra = '.$gTables['anagra'].".id", "codice", $tesdoc['vettor']);
 		}
+        $this->fiscal_rapresentative = false;
+		if ($this->client['fiscal_rapresentative_id']>0){
+			$this->fiscal_rapresentative = gaz_dbi_get_row($gTables['anagra'], "id", $this->client['fiscal_rapresentative_id']);
+		}
         $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $this->tesdoc = $tesdoc;
@@ -635,6 +639,31 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $results = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->client['country']));
             $results->appendChild($attrVal);
+
+            // creo il nodo 1.4.4 <RappresentanteFiscale> se il cliente ne ha uno con partita IVA
+            if ($XMLvars->fiscal_rapresentative && $XMLvars->fiscal_rapresentative['pariva'] > 100000) {
+                $resfr = $xpath->query("//CessionarioCommittente")->item(0);
+				$el = $domDoc->createElement("RappresentanteFiscale","");
+				$el1 = $domDoc->createElement("IdFiscaleIVA", $XMLvars->fiscal_rapresentative['country'].$XMLvars->fiscal_rapresentative['pariva']);
+				$el->appendChild($el1);
+				$el2 = $domDoc->createElement("IdPaese", $XMLvars->fiscal_rapresentative['country']);
+				$el1->appendChild($el2);
+				$el2 = $domDoc->createElement("IdCodice", $XMLvars->fiscal_rapresentative['pariva']);
+				$el1->appendChild($el2);
+                if (($XMLvars->fiscal_rapresentative['sexper']!='G') && (trim($XMLvars->fiscal_rapresentative['legrap_pf_nome'])!='') && (trim($XMLvars->fiscal_rapresentative['legrap_pf_nome'])!='')) {
+                    // se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
+                    $el1 = $domDoc->createElement("Nome", substr(trim($XMLvars->fiscal_rapresentative['legrap_pf_nome']), 0, 80));
+                    $el->appendChild($el1);
+                    $el1 = $domDoc->createElement("Cognome", substr(trim($XMLvars->fiscal_rapresentative['legrap_pf_cognome']), 0, 80));
+                    $el->appendChild($el1);
+                } else {
+                     // Se è una ditta inserisco la denominazione
+                    $el1 = $domDoc->createElement("Denominazione", substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->fiscal_rapresentative['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->fiscal_rapresentative['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
+                    $el->appendChild($el1);
+                }
+				$resfr->appendChild($el);
+			}
+
 
             $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);
             $attrVal = $domDoc->createTextNode($XMLvars->TipoDocumento);

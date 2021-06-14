@@ -74,6 +74,7 @@ class Template extends TCPDI {
                 $this->clientSedeLegale .= $value . ' ';
             }
         }
+        $this->fiscal_rapresentative = $docVars->fiscal_rapresentative;
         $this->c_Attenzione = $docVars->c_Attenzione;
         $this->min = $docVars->min;
         $this->ora = $docVars->ora;
@@ -212,7 +213,10 @@ class Template extends TCPDI {
                 $this->Cell(75, 8, $this->c_Attenzione, 0, 1, 'L', 0, '', 1);
             }
             $this->SetFont('helvetica', '', 7);
-            if (!empty($this->clientSedeLegale)) {
+            if ($this->fiscal_rapresentative) {
+                $this->Cell(115, 8, 'Legale Rappresentante ', 0, 0, 'R');
+                $this->Cell(75, 8, $this->fiscal_rapresentative['ragso1']." ".$this->fiscal_rapresentative['ragso2']." ".$this->fiscal_rapresentative['country'].$this->fiscal_rapresentative['pariva'], 0, 1, 'L', 0, '', 1);
+            } elseif (!empty($this->clientSedeLegale)) {
                 $this->Cell(115, 8, 'Sede legale: ', 0, 0, 'R');
                 $this->Cell(75, 8, $this->clientSedeLegale, 0, 1, 'L', 0, '', 1);
             } else {
