@@ -74,6 +74,7 @@ $strScript = array("admin_fornit.php" =>
         'counas' => 'Nazione di Nascita',
         'legrap_pf_nome' => "Legale rappr(Nome - Cognome)",
         'legrap_pf_title' => "la ragione sociale lasciata vuota verrà riempita con questi campi",
+        'legrap_id' => "Legale Rappresentante",
         'sexper' => "Sesso/pers.giuridica ",
         'sexper_value' => array('' => '-', 'M' => 'Maschio', 'F' => 'Femmina', 'G' => 'Giuridica'),
         'indspe' => 'Indirizzo',

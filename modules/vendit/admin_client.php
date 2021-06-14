@@ -218,6 +218,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['codice'] = intval(substr($form['codice'], 3));
     $toDo = 'update';
     $form['search']['id_des'] = '';
+    $form['search']['legrap_id'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
     $form['datnas_Y'] = substr($form['datnas'], 0, 4);
@@ -230,6 +231,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['codice'] = substr($last[0]['codice'], 3) + 1;
     $toDo = 'insert';
     $form['search']['id_des'] = '';
+    $form['search']['legrap_id'] = '';
     $form['country'] = $admin_aziend['country'];
     $form['id_language'] = $admin_aziend['id_language'];
     $form['id_currency'] = $admin_aziend['id_currency'];
@@ -422,6 +424,17 @@ $gForm->selectFromDB('languages', 'id_language', 'lang_id', $form['id_language']
                     <label for="id_currency" class="col-sm-4 control-label"><?php echo $script_transl['id_currency']; ?> *</label>
     <?php
 $gForm->selectFromDB('currencies', 'id_currency', 'id', $form['id_currency'], 'id', 1, ' - ', 'curr_name');
+    ?>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="legrap_id" class="col-sm-4 control-label"><?php echo $script_transl['legrap_id']; ?> </label>
+    <?php
+$select_legrap_id = new selectPartner("legrap_id");
+$select_legrap_id->selectAnagra('legrap_id', $form['legrap_id'], $form['search']['legrap_id'], 'legrap_id', $script_transl['mesg']);
     ?>
                 </div>
             </div>

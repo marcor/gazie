@@ -72,6 +72,7 @@ $strScript = array("admin_client.php" =>
         'counas' => 'Country of birth',
         'legrap_pf_nome' => "Representante Legal ",
         'legrap_pf_title' => "la ragione sociale lasciata vuota verrà riempita con questi campi",
+        'legrap_id' => "Legal rapresentante",
         'sexper' => "Genero/persona juridica ",
         'sexper_value' => array('' => '-', 'M' => 'Masculino', 'F' => 'Femenino', 'G' => 'Juridica'),
         'indspe' => 'Direccion',
