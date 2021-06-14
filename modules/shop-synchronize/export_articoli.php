@@ -157,6 +157,8 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 			
 			$xml_output .= "\t<Product>\n";
+			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
+			$xml_output .= "\t<IdMain>".$_POST['ref_ecommerce_id_main_product'.$ord]."</IdMain>\n";
 			$xml_output .= "\t<Code>".$_POST['codice'.$ord]."</Code>\n";
 			$xml_output .= "\t<BarCode>".$_POST['barcode'.$ord]."</BarCode>\n";
 			if ($_GET['qta']=="updqty"){
@@ -347,9 +349,15 @@ if (!isset($_GET['success'])){
 				</div>
 				<?php
 				// carico in $artico gli articoli che sono presenti in GAzie
-				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri, aliiva FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
+				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
+					$ref_ecommerce_id_main_product="";
+					if ($item['id_artico_group']>0){
+						$artico_group = gaz_dbi_query ('SELECT ref_ecommerce_id_main_product FROM '.$gTables['artico_group'].' WHERE id_artico_group = \''.$item['id_artico_group'].'\'');
+						$item_group = gaz_dbi_fetch_array($artico_group);
+						$ref_ecommerce_id_main_product = $item_group['ref_ecommerce_id_main_product'];
+					}
 					$avqty = 0;
 					$ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
 					$mv = $gForm->getStockValue(false, $item['codice']);
@@ -386,13 +394,16 @@ if (!isset($_GET['success'])){
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $avqty .'">';
 								echo '<input type="hidden" name="aliiva'. $n .'" value="'. $item['aliiva'] .'">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $item['web_price'] .'">';
-								echo '<input type="hidden" name="barcode'. $n .'" value="'. $item['barcode'] .'">';
+								echo '<input type="hidden" name="ref_ecommerce_id_main_product'. $n .'" value="'. $ref_ecommerce_id_main_product .'">';
+								echo '<input type="hidden" name="ref_ecommerce_id_product'. $n .'" value="'. $item['ref_ecommerce_id_product'] .'">';
 								if ($_GET['img']=="updimg"){ // se devo aggiornare l'immagine ne trovo l'url di GAzie
 									$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $item['codice']."'");
-									if ($imgres['id_doc']>0){ // se c'è un'immagine
+									if (isset($imgres['id_doc']) AND $imgres['id_doc']>0){ // se c'è un'immagine
 										$imgurl=DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension'];
 									} else {
 										$imgurl="";
+										$imgres['id_doc']="";
+										$imgres['extension']="";
 									}
 									echo '<input type="hidden" name="imgurl'. $n .'" value="'. $imgurl .'">';
 									echo '<input type="hidden" name="imgname'. $n .'" value="'. $imgres['id_doc'] . "." . $imgres['extension'] .'">';
