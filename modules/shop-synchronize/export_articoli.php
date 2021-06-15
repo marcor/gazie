@@ -24,9 +24,9 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
   */
-  
- /* Antonio Germani - ESPORTAZIONE MANUALE (update) DEGLI ARTICOLI DA GAZIE ALL'E-COMMERCE -  GLI ARTICOLI DEVONO GIà ESISTERE NELL'E-COMMERCE ALTRIMENTI NON VERRANNO CONSIDERATI */
-  
+
+/* Antonio Germani - ESPORTAZIONE MANUALE (update) DEGLI ARTICOLI DA GAZIE ALL'E-COMMERCE -  GLI ARTICOLI DEVONO GIà ESISTERE NELL'E-COMMERCE ALTRIMENTI NON VERRANNO CONSIDERATI */
+
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
@@ -53,10 +53,6 @@ $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['az
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
 $urlinterf = $path['val']."articoli-gazie.php";// nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 // il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
-
-ob_flush();
-flush();
-ob_start();
 
 use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
@@ -137,7 +133,7 @@ if (isset($_POST['conferma'])) { // se confermato
 		ftp_pasv($conn_id, true);
 	}	
 	if ($_GET['img']=="updimg"){ // se si devono aggiornare le immagini
-		if (!ftp_mkdir($conn_id, $ftp_path_upload."images")){ // se non c'è la cartella images la creo				
+		if (!@ftp_mkdir($conn_id, $ftp_path_upload."images")){ // se non c'è la cartella images la creo				
 			// get contents of the current directory	
 			$files = ftp_nlist($conn_id, $ftp_path_upload."images");
 			foreach ($files as $file){ // se c'era, cancello i files del precedente aggiornamento
@@ -152,9 +148,9 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xml_output .= "\n<Products>\n";
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){// ciclo gli articoli e creo il file xml
 		if (isset($_POST['download'.$ord])){ // se selezionato	
-			if (intval($_POST['barcode'.$ord])==0) {
+			if ((isset ($_POST['barcode'.$ord]) AND intval($_POST['barcode'.$ord])==0) OR !isset ($_POST['barcode'.$ord])) {
 				$_POST['barcode'.$ord]="NULL";
-			}
+			} 
 			
 			$xml_output .= "\t<Product>\n";
 			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
@@ -180,7 +176,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($_POST['body_text'.$ord]))."</Description>\n";
 			}
 			if ($_GET['img']=="updimg" AND strlen($_POST['imgurl'.$ord])>0){
-				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){
+				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){					
 					// scrivo l'immagine web HQ nella cartella e-commerce
 					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".$_POST['imgname'.$ord]."</ImgUrl>\n"; // ne scrivo l'url nel file xml
 				} else {
@@ -198,6 +194,7 @@ if (isset($_POST['conferma'])) { // se confermato
 	$xmlHandle = fopen($xmlFile, "w");
 	fwrite($xmlHandle, $xml_output);
 	fclose($xmlHandle);
+	
 	if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 		
 		if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
@@ -437,7 +434,6 @@ if (!isset($_GET['success'])){
 				
 			</div> <!-- container fluid -->
 		</form>
-
 <?php
 } elseif ($_GET['success']==1){
 	?>
