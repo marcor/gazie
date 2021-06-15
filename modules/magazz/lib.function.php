@@ -821,7 +821,17 @@ class magazzForm extends GAzieForm {
       global $gTables, $admin_aziend;
       // ritorna un array con gli acquisti aggregati per fornitore
       // trovo i fornitori 
-      $rs=gaz_dbi_query("SELECT ".$gTables['movmag'] .".clfoco, ".$gTables['movmag'] .".desdoc,".$gTables['movmag'] .".quanti,".$gTables['movmag'] .".scorig,".$gTables['movmag'] .".prezzo, ".$gTables['rigdoc'] .".id_tes AS docref, ".$gTables['rigdoc'] .".codice_fornitore, CONCAT(".$gTables['anagra'] .".ragso1,".$gTables['anagra'] .".ragso2) AS supplier, SUM(ROUND(".$gTables['movmag'] .".quanti*prezzo*(100-scorig)/100,2)) AS amount FROM " . $gTables['movmag'] . " LEFT JOIN ".$gTables['clfoco'] ." ON ".$gTables['movmag'] .".clfoco = ".$gTables['clfoco'] .".codice LEFT JOIN ".$gTables['anagra'] ." ON ".$gTables['clfoco'] .".id_anagra = ".$gTables['anagra'] .".id LEFT JOIN ".$gTables['rigdoc'] ." ON ".$gTables['movmag'] .".id_rif = ".$gTables['rigdoc'] .".id_rig WHERE id_mov=( SELECT ".$gTables['movmag'] .".id_mov FROM ".$gTables['movmag'] ." WHERE ".$gTables['movmag'] .".artico = '".$codart."' AND ".$gTables['movmag'] .".clfoco LIKE '". $admin_aziend['masfor'] ."%' GROUP BY ".$gTables['movmag'] .".clfoco ORDER BY ".$gTables['movmag'] .".datdoc DESC LIMIT 1)");
+      $rs=gaz_dbi_query("SELECT mm1.clfoco, mm1.desdoc,mm1.quanti,mm1.scorig,mm1.prezzo, ".$gTables['rigdoc'] .".id_tes AS docref, ".$gTables['rigdoc'] .".codice_fornitore, CONCAT(".$gTables['anagra'] .".ragso1,".$gTables['anagra'] .".ragso2) AS supplier, SUM(ROUND(mm1.quanti*prezzo*(100-scorig)/100,2)) AS amount FROM " . $gTables['movmag'] . " mm1 LEFT JOIN ".$gTables['clfoco'] ." ON mm1.clfoco = ".$gTables['clfoco'] .".codice LEFT JOIN ".$gTables['anagra'] ." ON ".$gTables['clfoco'] .".id_anagra = ".$gTables['anagra'] .".id LEFT JOIN ".$gTables['rigdoc'] ." ON mm1.id_rif = ".$gTables['rigdoc'] .".id_rig 
+      INNER JOIN (
+        SELECT max(datdoc) MaxDateDoc, clfoco
+        FROM ".$gTables['movmag'] ."
+        WHERE artico='".$codart."' AND clfoco LIKE '". $admin_aziend['masfor'] ."%'
+        GROUP BY clfoco
+      ) mm2
+        ON mm1.clfoco = mm2.clfoco
+        AND mm1.datdoc = mm2.MaxDateDoc
+      WHERE mm1.artico = '".$codart."' AND mm1.clfoco LIKE '". $admin_aziend['masfor'] ."%' 
+      ORDER BY mm1.datdoc DESC");
       $acc=($rettable)?false:[];
       while ($r = gaz_dbi_fetch_array($rs)) {
         $r['desvalue']=floatval($r['quanti']).' x € '.floatval($r['prezzo']).(($r['scorig']>0.01)?(' sconto:'.floatval($r['scorig']).'% '):('')).' = '.floatval($r['amount']);
