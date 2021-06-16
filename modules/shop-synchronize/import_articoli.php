@@ -66,9 +66,12 @@ if (isset($_POST['conferma'])) { // se confermato
 			$_POST['codice'.$ord]=addslashes(substr($_POST['codice'.$ord],0,15)); // Il codice articolo di GAzie è max 15 caratteri
 			
 			// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
-			$category="";
+			$category="";echo "<br>cat:",$_POST['category_id'.$ord];
 			if (intval($_POST['category_id'.$ord])>0){
-				$category = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", $_POST['category_id'.$ord])['codice'];// controllo se esiste in GAzie
+				$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", $_POST['category_id'.$ord]);
+				if ($cat){// controllo se esiste in GAzie
+					$category=$cat['codice'];
+				}
 			}			
 			
 			if ($_POST['product_type'.$ord]=="parent"){ // se è un parent
