@@ -66,7 +66,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			$_POST['codice'.$ord]=addslashes(substr($_POST['codice'.$ord],0,15)); // Il codice articolo di GAzie è max 15 caratteri
 			
 			// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
-			$category="";echo "<br>cat:",$_POST['category_id'.$ord];
+			$category="";
 			if (intval($_POST['category_id'.$ord])>0){
 				$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", $_POST['category_id'.$ord]);
 				if ($cat){// controllo se esiste in GAzie
@@ -104,7 +104,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				$form['id_doc']= gaz_dbi_last_id();//recupero l'id assegnato dall'inserimento
 				$imgweb=DATA_DIR.'files/'.$admin_aziend['company_id'].'/images/'.$form['id_doc'].'.'.$form['extension'];
 				if (intval(file_put_contents($imgweb, file_get_contents($url))) == 0){ // scrivo l'immagine web HQ nella cartella files
-					echo "ERRORE nella scrittura in GAzie dell'immagine: ",$url, " <br>Riprovare in quanto potrebbe trattarsi di un Errore momentaneo. Se persiste, controllare che sia presente la cartella images in data/files/nrAzienda/";die;
+					echo "ERRORE nella scrittura in GAzie dell'immagine: ",$url, " <br>Riprovare in quanto potrebbe trattarsi di un Errore momentaneo. Se persiste, controllare che le immagine dell'e-commerce abbiano il permesso per essere lette oppure che sia presente in GAzie la cartella images in data/files/nrAzienda/";die;
 				}
 				$img = DATA_DIR.'files/tmp/'.$expl[count($expl)-1]; 
 				// scrivo l'immagine nella cartella tmp temporanea
