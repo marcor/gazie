@@ -53,6 +53,8 @@ function tryBase64Decode($s)
 
 function der2smime($file)
 {
+    /* COMMENTO per non sovrascrivere il file id_tes.inv
+    
 $to = <<<TXT
 MIME-Version: 1.0
 Content-Disposition: attachment; filename="smime.p7m"
@@ -63,6 +65,8 @@ TXT;
 	$from = file_get_contents($file);
 	$to.= chunk_split(base64_encode($from));
 	return file_put_contents($file,$to);
+    */
+    return true;
 }
 
 function extractDER($file)
