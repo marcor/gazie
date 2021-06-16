@@ -63,7 +63,7 @@ function createRowsAndErrors($anno, $periodicita, $mese_trimestre_semestre,$este
         $date_ini->modify('+5 month');
         $df = $date_ini->format('Y-m-t');
     }
-	$esterometro=($esterometro)?(" AND " . $gTables['anagra'].".country <>'IT'"):'';
+	$esterometro=($esterometro)?(" AND " . $gTables['anagra'].".country <>'IT' AND " . $gTables['anagra'].".fiscal_rapresentative_id < 1"):'';
     $sqlquery = "SELECT " . $gTables['rigmoi'] . ".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,allegato,
                citspe,prospe,capspe,legrap_pf_nome,legrap_pf_cognome,country,codfis,pariva,id_anagra,fae_natura," .
             $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc," . $gTables['tesmov'] . ".numdoc," .
