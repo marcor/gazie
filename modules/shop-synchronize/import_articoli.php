@@ -188,11 +188,16 @@ if (isset($_POST['conferma'])) { // se confermato
 				
 			} elseif (!$esiste AND $_GET['imp']=="impval"){ // altrimenti, se è attivo l'inserimento, inserisco un nuovo articolo
 			
-				// prima di inserire il nuovo controllo se il codice articolo è stato già usato				
+				// prima di inserire il nuovo controllo se l'e-commerce ha mandato il codice articolo e se è già in uso in GAzie	
+				
+				if (strlen($_POST['codice'.$ord])<1){// se l'e-commerce non ha inviato un codice me lo creo
+					$_POST['codice'.$ord] = substr($parent['descri'],0,10)."-".substr($_POST['product_id'.$ord],-4);
+				}
+				
 				unset($usato);
 				$usato = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord]);// controllo se il codice è già stato usato in GAzie	
 				if ($usato){ // se il codice è già in uso lo modifico
-					$_POST['codice'.$ord]=substr($_POST['codice'.$ord],0,10)."-".substr($_POST['product_id'.$ord],0,4);
+					$_POST['codice'.$ord]=substr($_POST['codice'.$ord],0,10)."-".substr($_POST['product_id'.$ord],-4);
 				}
 				
 				// creo un json array per la variante
