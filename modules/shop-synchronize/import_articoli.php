@@ -144,7 +144,12 @@ if (isset($_POST['conferma'])) { // se confermato
 			
 			$id_artico_group="";
 			if ($_POST['product_parent_id'.$ord] > 0){ // se è una variante
+			
 				$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_parent_id'.$ord]);// trovo il padre in GAzie
+				if (!isset($parent)){
+					header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=2");
+					exit;
+				}
 				$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
 				if (strlen($_POST['descri'.$ord])<2){ // se non c'è la descrizione della variante 
 					$_POST['descri'.$ord]=$parent['descri']."-".$_POST['characteristic'.$ord];// ci metto quella del padre accodandoci la variante
@@ -191,7 +196,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				// prima di inserire il nuovo controllo se l'e-commerce ha mandato il codice articolo e se è già in uso in GAzie	
 				
 				if (strlen($_POST['codice'.$ord])<1){// se l'e-commerce non ha inviato un codice me lo creo
-					$_POST['codice'.$ord] = substr($parent['descri'],0,10)."-".substr($_POST['product_id'.$ord],-4);
+					$_POST['codice'.$ord] = substr($_POST['descri'.$ord],0,10)."-".substr($_POST['product_id'.$ord],-4);
 				}
 				
 				unset($usato);
@@ -410,13 +415,21 @@ if (!isset($_GET['success'])){
 		exit;
 	}
 } else {
+	if ($_GET['success']==1){
 	?>
 	<div class="alert alert-success alert-dismissible">
 		<a href="../../modules/shop-synchronize/synchronize.php" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 		<strong>Fatto!</strong> Operazione conclusa con successo.
 	</div>
-<?php
+	<?php
+	} else {
+		?>
+	<div class="alert alert-danger alert-dismissible">
+		<a href="../../modules/shop-synchronize/synchronize.php" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<strong>Errore, importazione interrotta!</strong> Si è tentato di importare una variante senza aver prima importato/creato un articolo padre in artico_group.
+	</div>
+	<?php
+	}
 }
-
 require("../../library/include/footer.php");
 ?>
