@@ -1085,6 +1085,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 								$form['status']="DdtAnomalo";
 							}
 							$ultimo_id =tesdocInsert($form); // Antonio Germani - creo fattura differita
+                            $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
+                            file_put_contents($fn,$form['fattura_elettronica_original_content']); 
 						}
 						$ctrl_ddt=$v['NumeroDDT'];
 					}
