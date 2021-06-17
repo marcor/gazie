@@ -69,6 +69,29 @@ TXT;
     return true;
 }
 
+function recursiveDecodeContent($temp_content, $fn)
+{
+$to = <<<TXT
+MIME-Version: 1.0
+Content-Disposition: attachment; filename="smime.p7m"
+Content-Type: application/x-pkcs7-mime; smime-type=signed-data; name="smime.p7m"
+Content-Transfer-Encoding: base64
+\n
+TXT;
+    $restorefile=false;
+    $count=1;
+    while($count > 0) {
+        $last_temp_content=$temp_content;
+        $removed_header = str_replace($to,'',$temp_content,$count);
+        if ($count==1){ $restorefile = true; }   
+        $temp_content = base64_decode($removed_header,true);
+    }
+    if ($restorefile) { // ripristino il file in formato binario
+        file_put_contents($fn,$last_temp_content); 
+    }
+    return $last_temp_content;
+}
+
 function extractDER($file)
 {
 	$tmp = tempnam(DATA_DIR . 'files/tmp/', 'ricder');
@@ -150,6 +173,7 @@ if (isset($_GET['id_tes'])){
 	//file_put_contents($fattxml,$p7mContent);
     $fattxml = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$id.'.inv';
     $p7mContent = file_get_contents($fattxml);
+    $p7mContent = recursiveDecodeContent($p7mContent,$fattxml);
 	if (FALSE !== der2smime($fattxml)) {
 	$cert = @tempnam(DATA_DIR . 'files/tmp/', 'pem');
 	$retn = openssl_pkcs7_verify($fattxml, PKCS7_NOVERIFY, $cert);
