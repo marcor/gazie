@@ -28,6 +28,17 @@ if ($exists) {
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION['user_name']);
 	
 if (isset($_POST['conferma'])) { // se confermato
+	// ricavo il progressivo in base al tipo di documento
+	$where = "numdoc desc";
+	$sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOW'";
+	$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $where, 0, 1);
+	$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+	// se e' il primo documento dell'anno, resetto il contatore
+	if ($ultimo_documento) {
+		$numdoc = $ultimo_documento['numdoc'] + 1;
+	} else {
+		$numdoc = 1;
+	}
     // scrittura ordini su database di GAzie
 	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e scrivo i database
 	
@@ -122,12 +133,12 @@ if (isset($_POST['conferma'])) { // se confermato
 			if ($includevat=="true"){ // se l'e-commerce include l'iva la scorporo alle spese banca e trasporto
 				$vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $expense_vat);
 				$div="1.".intval($vat['aliquo']);
-				$_POST['speban'.$ord]=$_POST['speban'.$ord] / $div;
-				$_POST['traspo'.$ord]=$_POST['traspo'.$ord] / $div;
+				$_POST['speban'.$ord]=floatval($_POST['speban'.$ord]) / $div;
+				$_POST['traspo'.$ord]=floatval($_POST['traspo'.$ord]) / $div;
 			}		
 		
 			// registro testata ordine
-			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '" . $_POST['seziva'.$ord] . "', '1', '" . $_POST['datemi'.$ord] . "', '" .$_POST['numdoc'.$ord] . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '".$_POST['spediz'.$ord]."', '". $_POST['traspo'.$ord] ."', '". $_POST['speban'.$ord] ."', '1', '". $expense_vat ."', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
+			gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(ref_ecommerce_id_order,tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('".$_POST['ref_ecommerce_id_order'.$ord]."', 'VOW', '" . $_POST['seziva'.$ord] . "', '1', '" . $_POST['datemi'.$ord] . "', '" . $numdoc . "', '0000-00-00', '". $clfoco . "', '" .$_POST['pagame'.$ord]."', '". $listin . "', '".$_POST['spediz'.$ord]."', '". $_POST['traspo'.$ord] ."', '". $_POST['speban'.$ord] ."', '1', '". $expense_vat ."', '" . $_POST['datemi'.$ord]. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
 		
 			// Gestione righi ordine					
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
@@ -193,11 +204,13 @@ if (isset($_POST['conferma'])) { // se confermato
 						
 					}
 					
-					// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste					
+					// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste	
+					$category="";
 					if (intval($_POST['catmer'.$ord.$row])>0){
-						$category = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($_POST['catmer'.$ord.$row],0,15)))['codice'];// controllo se esiste in GAzie
-					} else {
-						$category="";
+						$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($_POST['catmer'.$ord.$row],0,15)));// controllo se esiste in GAzie
+						if ($cat){
+							$category=$cat['codice'];
+						}
 					}
 					
 					// prima di inserire il nuovo controllo se il codice articolo è stato già usato				
@@ -233,7 +246,8 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 						
 			$id_tesbro++;
-		}  
+		}
+		$numdoc++; //incremento il numero d'ordine GAzie
 	}
 	header("Location: " . "../../modules/vendit/report_broven.php?auxil=VOW");
     exit;
@@ -300,6 +314,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 						echo '<input type="hidden" name="order_full_price'. $n .'" value="'. $order->Total .'">';
 						echo '<input type="hidden" name="order_discount_price'. $n .'" value="'. $order->TotalDiscount .'">';
 						echo '</td><td>';
+						echo '<input type="hidden" name="ref_ecommerce_id_order'. $n .'" value="'. $order->Numbering .'">';
 						echo '<input type="hidden" name="prospe'. $n .'" value="'. $order->CustomerProvince .'">';
 						echo '<input type="hidden" name="capspe'. $n .'" value="'. $order->CustomerPostCode .'">';
 						echo '<input type="hidden" name="indspe'. $n .'" value="'. $order->CustomerAddress .'">';
