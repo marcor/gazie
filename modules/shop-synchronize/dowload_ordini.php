@@ -86,18 +86,21 @@ if (isset($_POST['conferma'])) { // se confermato
 				}
 			}
 			 // controllo esistenza cliente per cognome, nome e città
-			if ($esiste==0){
-				$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE ragso1 ='" . addslashes($_POST['ragso1'.$ord]) . "' AND ragso2 ='". addslashes($_POST['ragso2'.$ord]) . "'";
+			if ($esiste==0){	
+				$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE ragso1 ='" . addslashes($_POST['ragso1'.$ord]) . "' AND ragso2 ='". addslashes($_POST['ragso2'.$ord]) . "' LIMIT 1";
 				$check = gaz_dbi_query($query);
 				while ($row = $check->fetch_assoc()) {
-					if (($check->num_rows > 0) && ($row['citspe']=$_POST['citspe'.$ord]) && ($row['indspe']=$_POST['indspe'.$ord])){
-						$esiste=1;
-						$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
+					if (($check->num_rows > 0) && ($row['citspe']=$_POST['citspe'.$ord]) && ($row['indspe']=$_POST['indspe'.$ord])){						
+						$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);print_r($cl);
+						if ($cl){
 						$clfoco=$cl['codice'];
+						$esiste=1;
+						}
 					}
 				}
-			}		
-			If ($esiste==0) { //registro cliente se non esiste
+			}
+	
+			if ($esiste==0) { //registro cliente se non esiste
 					if ($_POST['country'.$ord]=="IT"){ // se la nazione è IT
 						$lang="1";
 					} else {
@@ -114,7 +117,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					}
 					gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($_POST['ragso1'.$ord]) . "', '" . addslashes($_POST['ragso2'.$ord]) . "', '". $sexper. "', '". addslashes($_POST['indspe'.$ord]) ."', '".$_POST['capspe'.$ord]."', '". addslashes($_POST['citspe'.$ord]) ."', '". $_POST['prospe'.$ord] ."', '" . $_POST['country'.$ord]. "', '1', '".$lang."', '". $_POST['telefo'.$ord] ."', '". $_POST['codfis'.$ord] ."', '" . $_POST['pariva'.$ord] . "', '" . $_POST['fe_cod_univoco'.$ord] . "', '". $_POST['email'.$ord] . "', '". $_POST['pec_email'.$ord] . "')");
 					
-					gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('". $clfoco . "', '" . $id_anagra . "', '". $listin ."' , '" .addslashes($_POST['ragso1'.$ord])." ".addslashes($_POST['ragso2'.$ord]) . "', '". $_POST['destin'.$ord] ."', 'S', '". $stapre ."', '". $_POST['pagame'.$ord] ."')");
+					gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('".$_POST['ref_ecommerce_id_customer'.$ord]."', '". $clfoco . "', '" . $id_anagra . "', '". $listin ."' , '" .addslashes($_POST['ragso1'.$ord])." ".addslashes($_POST['ragso2'.$ord]) . "', '". $_POST['destin'.$ord] ."', 'S', '". $stapre ."', '". $_POST['pagame'.$ord] ."')");
 			}
 			
 			if ($_POST['order_discount_price'.$ord]>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
@@ -315,6 +318,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 						echo '<input type="hidden" name="order_discount_price'. $n .'" value="'. $order->TotalDiscount .'">';
 						echo '</td><td>';
 						echo '<input type="hidden" name="ref_ecommerce_id_order'. $n .'" value="'. $order->Numbering .'">';
+						echo '<input type="hidden" name="ref_ecommerce_id_customer'. $n .'" value="'. $order->CustomerCode .'">';
 						echo '<input type="hidden" name="prospe'. $n .'" value="'. $order->CustomerProvince .'">';
 						echo '<input type="hidden" name="capspe'. $n .'" value="'. $order->CustomerPostCode .'">';
 						echo '<input type="hidden" name="indspe'. $n .'" value="'. $order->CustomerAddress .'">';
