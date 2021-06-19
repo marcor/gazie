@@ -91,7 +91,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				$check = gaz_dbi_query($query);
 				while ($row = $check->fetch_assoc()) {
 					if (($check->num_rows > 0) && ($row['citspe']=$_POST['citspe'.$ord]) && ($row['indspe']=$_POST['indspe'.$ord])){						
-						$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);print_r($cl);
+						$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
 						if ($cl){
 						$clfoco=$cl['codice'];
 						$esiste=1;
@@ -184,7 +184,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					
 					$id_artico_group="";
 					$arrayvar="";
-					if ($_POST['product_parent_id'.$ord.$row] > 0){ // se è una variante
+					if ($_POST['product_parent_id'.$ord.$row] > 0 OR $_POST['type'.$ord.$row] == "variant" ){ // se è una variante
 					
 						// controllo se esiste il suo artico_group/padre in GAzie
 						unset($parent);
@@ -216,7 +216,7 @@ if (isset($_POST['conferma'])) { // se confermato
 						}
 					}
 					
-					// prima di inserire il nuovo controllo se il codice articolo è stato già usato				
+					// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato				
 					unset($usato);
 					$usato = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);// controllo se il codice è già stato usato in GAzie	
 					if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
@@ -343,6 +343,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 						echo '<input type="hidden" name="fe_cod_univoco'. $n .'" value="'. $order->CustomerCodeFattEl .'">';
 						foreach($xml->Documents->Document[$n]->Rows->children() as $orderrow) { // carico le righe degli articoli ordinati
 							echo '<input type="hidden" name="codice'. $n . $nr.'" value="'. $orderrow->Code . '">';
+							echo '<input type="hidden" name="type'. $n . $nr.'" value="'. $orderrow->Type . '">';
 							echo '<input type="hidden" name="descri'. $n . $nr.'" value="'. $orderrow->Description . '">';
 							echo '<input type="hidden" name="adddescri'. $n . $nr.'" value="'. $orderrow->AddDescription . '">';
 							echo '<input type="hidden" name="stock'. $n . $nr.'" value="'. $orderrow->Stock . '">';
