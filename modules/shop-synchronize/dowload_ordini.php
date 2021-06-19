@@ -363,7 +363,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 							$nr++;
 						}
 						
-						if(gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)){
+						if(gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number, " OR  	ref_ecommerce_id_order  = '".$order->Numbering."'")){
 						?>
 						<span class="glyphicon glyphicon-ban-circle text-danger" title="Già scaricato"></span>
 						<?php
