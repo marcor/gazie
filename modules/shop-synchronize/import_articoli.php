@@ -344,8 +344,12 @@ if (!isset($_GET['success'])){
 					$n=0;
 					foreach($xml->Documents->children() as $product) { 
 						$nr=0;
+						$rowclass="bg-success";
+						if ($product->Type == "parent"){
+							$rowclass="bg-warning";
+						}
 						?>
-						<div class="row bg-success" style="border-bottom: 1px solid;">
+						<div class="row <?php echo $rowclass ?>" style="border-bottom: 1px solid;">
 							<div class="col-sm-2">
 								<?php echo $n;?>
 							</div>
