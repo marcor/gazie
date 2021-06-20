@@ -171,6 +171,15 @@ class shopsynchronizegazSynchro {
 			$xml_output .= "\n<Products>\n";						
 				$xml_output .= "\t<Product>\n";
 				$xml_output .= "\t<Id>".$d['ref_ecommerce_id_product']."</Id>\n";
+				if ($id['id_artico_group']>0){
+					$xml_output .= "\t<Type>variant</Type>\n";
+					$parid = gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $id['id_artico_group'])['ref_ecommerce_id_main_product'];
+
+					$xml_output .= "\t<ParentId>".$parid."</ParentId>\n";
+				} else {
+					$xml_output .= "\t<Type>product</Type>\n";
+					$xml_output .= "\t<ParentId></ParentId>\n";
+				}
 				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
 				$xml_output .= "\t<BarCode>".$d['barcode']."</BarCode>\n";				
 				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
@@ -326,6 +335,15 @@ class shopsynchronizegazSynchro {
 				$xml_output .= "\t<Code>".$id['codice']."</Code>\n";
 				$xml_output .= "\t<BarCode>".$id['barcode']."</BarCode>\n";
 				$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
+				if ($id['id_artico_group']>0){
+					$xml_output .= "\t<Type>variant</Type>\n";
+					$parid = gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $id['id_artico_group'])['ref_ecommerce_id_main_product'];
+
+					$xml_output .= "\t<ParentId>".$parid."</ParentId>\n";
+				} else {
+					$xml_output .= "\t<Type>product</Type>\n";
+					$xml_output .= "\t<ParentId></ParentId>\n";
+				}
 				$xml_output .= "\t</Product>\n";			
 			$xml_output .="</Products>\n</GAzieDocuments>";
 			$xmlFile = "prodotti.xml";
