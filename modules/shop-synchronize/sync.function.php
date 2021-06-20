@@ -432,9 +432,20 @@ class shopsynchronizegazSynchro {
                     $rawres['style'] = 'danger';
     			}
     			$count=0;$countDocument=0;
+				// ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
+				$where = "numdoc desc";
+				$sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOW'";
+				$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, $where, 0, 1);
+				$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+				// se e' il primo documento dell'anno, resetto il contatore
+				if ($ultimo_documento) {
+					$numdoc = $ultimo_documento['numdoc'] + 1;
+				} else {
+					$numdoc = 1;
+				}
     			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
 			
-				if(!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)){ // se il numero d'ordine non esiste carico l'ordine in GAzie
+				if((!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)) AND (!gaz_dbi_get_row($gTables['tesbro'], "ref_ecommerce_id_order", $order->Numbering))){ // se il numero d'ordine non esiste carico l'ordine in GAzie
 					$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
 					$result = gaz_dbi_query($query);
 					$row = $result->fetch_assoc();
@@ -517,7 +528,7 @@ class shopsynchronizegazSynchro {
 					}
 											
 					// registro testata ordine
-					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('VOW', '". $order->SezIva ."', '1', '" . $order->DateOrder . "', '" .$order->Number . "', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
+					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(ref_ecommerce_id_order,tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('".$order->Numbering."','VOW', '". $order->SezIva ."', '1', '" . $order->DateOrder . "', '". $numdoc ."', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
 					
 					// Gestione righi ordine					
 					foreach($xml->Documents->Document[$countDocument]->Rows->children() as $orderrow) { // carico le righe dell'ordine
@@ -577,7 +588,8 @@ class shopsynchronizegazSynchro {
 					$id_tesbro++;				
 				} else {
 					$countDocument++;//aggiorno contatore Document	
-				}					
+				}
+				$numdoc++; //incremento il numero d'ordine GAzie
 			}						
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
 			
