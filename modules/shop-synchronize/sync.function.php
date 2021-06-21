@@ -109,7 +109,7 @@ class shopsynchronizegazSynchro {
 			if ($avqty<0 or $avqty==""){ // per l'e-commerce la disponibilità non può essere nulla o negativa
 				$avqty="0";
 			}
-			
+			$ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",$d['catmer'])['ref_ecommerce_id_category'];
 			if (intval($d['barcode'])==0) {// se non c'è barcode allora è nullo
 				$d['barcode']="NULL";
 			}
@@ -188,7 +188,7 @@ class shopsynchronizegazSynchro {
 				$xml_output .= "\t<PriceVATincl>".$web_price_vat_incl."</PriceVATincl>\n";
 				$xml_output .= "\t<VAT>".$aliquo."</VAT>\n";
 				$xml_output .= "\t<Unimis>".$d['unimis']."</Unimis>\n";
-				$xml_output .= "\t<ProductCategory>".$d['catmer']."</ProductCategory>\n";
+				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 				$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
 				$xml_output .= "\t</Product>\n";			
 			$xml_output .="</Products>\n</GAzieDocuments>";
