@@ -394,7 +394,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 
                 // inserisco la testata
                 $newValue = array('caucon' => $v['tes']['tipdoc'],
-                    'descri' => $script_transl['doc_type_value'][$v['tes']['tipdoc']],
+                    'descri' => $script_transl['doc_type_value'][$v['tes']['tipdoc']].' n.'.$v['tes']['numfat'],
                     'id_doc' => $v['tes']['id_tes'],
                     'datreg' => $v['tes']['datreg'],
                     'seziva' => $v['tes']['seziva'],
