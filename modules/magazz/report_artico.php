@@ -150,6 +150,56 @@ function getorders(artico) {
 	});
 	});
 };
+function getgroup(artico) {	
+	$("#idgroup").append("Gruppo");	
+  $("#dialog_group").attr("title","Gruppo articoli per varianti ID "+artico);  
+	$.get("ajax_request.php?opt=group",
+		{term: artico},
+		function (data) {
+			var j=0;			
+				$.each(data, function(i, value) {
+				j++;
+				if (j==1){	
+				$(".list_group").append("<tr><td>"+value.descri+"&nbsp;&nbsp;<button>Modifica gruppo</button></td></tr><tr><td>&nbsp;</td></tr>");
+				$(".list_group").click(function () {
+					window.open('../magazz/admin_group.php?Update&id_artico_group='+ value.id_artico_group);
+				});	
+				$("#idvar").append("composto dalle seguenti varianti:");
+				$(".list_variants").append("<tr><td>Codice&nbsp;</td><td>Descrizione</td></tr>");
+				} else {
+					$(".list_variants").append("<tr><td>"+value.codice+"&nbsp;</td><td>"+value.descri+"</td></tr>");
+					
+				}				
+				});
+
+				if (j==0){
+					$(".list_orders").append('<tr><td class="bg-danger">********* Non ci sono varianti in questo gruppo articoli*********</td></tr>');
+				}					
+		}, "json"  
+	);		  
+	$( function() {		
+    var dialog
+	,	
+	dialog = $("#dialog_group").dialog({		
+		modal: true,
+		show: "blind",
+		hide: "explode",
+		width: "auto",
+		buttons: {
+			Chiudi: function() {
+				$(this).dialog('close');
+			}			
+		},		 
+		close: function(){
+				$("p#idgroup").empty();
+				$("p#idvar").empty();
+				$("div.list_group tr").remove();
+				$("div.list_variants tr").remove();
+				$(this).dialog('destroy');
+		}
+	});
+	});
+};
 function getlastbuys(artico) {	
 	$("#idartico").append("articolo: "+artico);
   $("#dialog_orders").attr("title","Ultimi acquisti da fornitori");
@@ -211,6 +261,14 @@ $ts->output_navbar();
 	<div style="display:none; min-width:150px; " id="dialog_orders" title="">		
 		<p class="ui-state-highlight" id="idartico"></p>        
 		<div class="list_orders">
+		</div>
+	</div>
+	<div style="display:none; min-width:350px; " id="dialog_group" title="">		
+		<p class="ui-state-highlight" id="idgroup"></p>        
+		<div class="list_group">
+		</div>
+		<p class="ui-state-highlight" id="idvar"></p>
+		<div class="list_variants">
 		</div>
 	</div>
 	<div class="table-responsive">
@@ -295,8 +353,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo '</td>';
     echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.$r['descri'].'</span>';
     echo "</td>\n";
-    echo '<td class="text-center">'.$des_bom;
-    echo "</td>\n";
+    echo '<td class="text-center">'.$des_bom. ' ';
+	if ($r['id_artico_group']>0){
+		echo '<a class="btn btn-xs btn-default" title="Gruppo varianti"  onclick="getgroup(\''.$r['id_artico_group'].'\');"> <i class="glyphicon glyphicon-level-up"></i> </a> ';
+    }
+	echo "</td>\n";
     echo '<td class="text-center">'.$r['catmer'].'-'.$r['descat'];
     echo "</td>\n";
     echo '<td class="text-center">'.$r['unimis'];
