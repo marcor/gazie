@@ -474,6 +474,40 @@ $strScript = array("browse_document.php" =>
             'Cambia fornitore'
         )
     ),
+	"admin_group.php" =>
+    array('title' => 'Gestione dei gruppi delle varianti',
+        'ins_this' => 'Inserimento gruppo delle varianti',
+        'upd_this' => 'Modifica il gruppo delle varianti',
+        'err' => array(
+            'codice' => 'Il codice articolo &egrave; gi&agrave; esistente',
+            'movmag' => 'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
+            'filmim' => 'Il file dev\'essere nel formato PNG, JPG, GIF',
+            'filsiz' => 'L\'immagine non dev\'essere pi&ugrave; grande di 64Kb',
+            'valcod' => 'Inserire un codice valido',
+            'descri' => 'Inserire una descrizione',           
+            'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
+            'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
+            'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda '
+        ),
+        'war' => array(
+            'ok_ins' => 'Articolo inserito con successo'
+		),
+		'codice' => "ID gruppo",
+        'descri' => "Descrizione",        
+		'image' => 'immagine',        
+        'web_public' => 'Pubblica sul sito web',
+        'web_public_value' => array(0 => 'No', 1 => 'Si'),
+		'body_text' => 'Descrizione estesa',
+        'depli_public' => 'Pubblica sul catalogo',
+        'depli_public_value' => array(0 => 'No', 1 => 'Si'),
+        'web_url' => 'Web url<br />(es: http://site.com/item.html)',
+        'modal_ok_insert' => 'Articolo inserito con successo clicca sulla X in alto a destra per uscire oppure...',
+       
+		'last_buys' => 'Ultimi acquisti da fornitori',
+		'ordinabile' => 'Articolo ordinabile',
+        'mesg' => array(
+        )
+    ),
 	"mostra_lotti.php" =>
 	array('title' => 'Mostra lotti articolo'
 	),

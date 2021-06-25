@@ -51,7 +51,7 @@ if (isset($_GET['term'])) {
       break;
 	  case 'group':
         $codice= intval($_GET['term']);
-		$query = "SELECT * FROM " . $gTables['artico_group'] . " WHERE id_artico_group ='". $codice ."' LIMIT 1";
+		$query = "SELECT descri, id_artico_group FROM " . $gTables['artico_group'] . " WHERE id_artico_group ='". $codice ."' LIMIT 1";
 		$result = gaz_dbi_query($query);
 		$n=0;
 		while ($res = $result->fetch_assoc()){       
