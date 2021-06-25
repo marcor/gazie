@@ -349,11 +349,7 @@ return $lastInstallSqlFile;
 
 function compareSqlFiles($struct1, $struct2)
 {
-// Luigi Rambaldi 13 Ottobre 2005
-if ($struct2[2] < $struct1[1])
-    return True;
-else
-    return False;
+    return ($struct2[2] < $struct1[1]) ? 1 : -1;
 }
 
 
