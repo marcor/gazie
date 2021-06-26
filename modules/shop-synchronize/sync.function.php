@@ -448,152 +448,193 @@ class shopsynchronizegazSynchro {
 				}
     			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
 			
-				if((!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)) AND (!gaz_dbi_get_row($gTables['tesbro'], "ref_ecommerce_id_order", $order->Numbering))){ // se il numero d'ordine non esiste carico l'ordine in GAzie
-					$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
-					$result = gaz_dbi_query($query);
-					$row = $result->fetch_assoc();
-					$id_tesbro = $row['Auto_increment']; // questo è l'ID che avrà TESBRO: testata documento/ordine
-					$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
-					$result = gaz_dbi_query($query);
-					$row = $result->fetch_assoc();
-					$id_anagra = $row['Auto_increment']; // questo è l'ID che avrà ANAGRA: Anagrafica cliente				
-					$anagrafica = new Anagrafica(); 
-					$last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
-					$codice = substr($last[0]['codice'], 3) + 1;
-					$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// questo è il codice di CLFOCO da connettere all'anagrafica cliente se il cliente non esiste
-	    			$esiste=0;
-					if (strlen($order->CustomerFiscalCode)>0){ // controllo esistenza cliente per codice fiscale
-						$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE codfis ='" . $order->CustomerFiscalCode . "'";
-						$check = gaz_dbi_query($query);
-						if ($check->num_rows > 0){
-							$esiste=1;
-							$row = $check->fetch_assoc();
-							$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
-							$clfoco=$cl['codice'];
-						}
-					}
-					if ($esiste==0 AND intval($order->CustomerVatCode)>0){ // controllo esistenza cliente per partita iva
-						$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE pariva ='" . $order->CustomerVatCode . "'";
-						$check = gaz_dbi_query($query);
-						if ($check->num_rows > 0){
-							$esiste=1;
-							$row = $check->fetch_assoc();
-							$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
-							$clfoco=$cl['codice'];
-						}
-					}
-					 // controllo esistenza cliente per cognome, nome e città
-					if ($esiste==0){
-						$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE ragso1 ='" . addslashes($order->CustomerName) . "' AND ragso2 ='". addslashes($order->CustomerSurname) . "'";
-						$check = gaz_dbi_query($query);
-						while ($row = $check->fetch_assoc()) {
-							if (($check->num_rows > 0) && ($row['citspe']=$order->CustomerCity) && ($row['indspe']=$order->CustomerAddress)){
+					if((!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)) AND (!gaz_dbi_get_row($gTables['tesbro'], "ref_ecommerce_id_order", $order->Numbering))){ // se il numero d'ordine non esiste carico l'ordine in GAzie
+						$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
+						$result = gaz_dbi_query($query);
+						$row = $result->fetch_assoc();
+						$id_tesbro = $row['Auto_increment']; // questo è l'ID che avrà TESBRO: testata documento/ordine
+						$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
+						$result = gaz_dbi_query($query);
+						$row = $result->fetch_assoc();
+						$id_anagra = $row['Auto_increment']; // questo è l'ID che avrà ANAGRA: Anagrafica cliente				
+						$anagrafica = new Anagrafica(); 
+						$last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
+						$codice = substr($last[0]['codice'], 3) + 1;
+						$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// questo è il codice di CLFOCO da connettere all'anagrafica cliente se il cliente non esiste
+						$esiste=0;
+						if (strlen($order->CustomerFiscalCode)>0){ // controllo esistenza cliente per codice fiscale
+							$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE codfis ='" . $order->CustomerFiscalCode . "'";
+							$check = gaz_dbi_query($query);
+							if ($check->num_rows > 0){
 								$esiste=1;
+								$row = $check->fetch_assoc();
 								$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
 								$clfoco=$cl['codice'];
 							}
 						}
-					}			
-					If ($esiste==0) { //registro cliente se non esiste
-						if ($order->CustomerCountry=="IT"){ // se la nazione è IT
-							$lang="1";
-						} else {
-							$lang="0";
-						}
-						if (strlen ($order->CustomerFiscalCode)>1 AND intval ($order->CustomerFiscalCode)==0){ // se il codice fiscale non è numerico 
-							if (substr($order->CustomerFiscalCode,9,2)>40){ // deduco il sesso 
-								$sexper="F";
-							} else {
-								$sexper="M";
+						if ($esiste==0 AND intval($order->CustomerVatCode)>0){ // controllo esistenza cliente per partita iva
+							$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE pariva ='" . $order->CustomerVatCode . "'";
+							$check = gaz_dbi_query($query);
+							if ($check->num_rows > 0){
+								$esiste=1;
+								$row = $check->fetch_assoc();
+								$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
+								$clfoco=$cl['codice'];
 							}
-						} else {
-							$sexper="G";
 						}
-						gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($order->CustomerSurname)." ". addslashes($order->CustomerName) . "', '" . addslashes($order->BusinessName) . "', '". $sexper. "', '".addslashes($order->CustomerAddress) ."', '".$order->CustomerPostCode."', '". addslashes($order->CustomerCity) ."', '". $order->CustomerProvince ."', '" . $order->CustomerCountry. "', '1', '".$lang."', '". $order->CustomerTel ."', '". $order->CustomerFiscalCode ."', '" . $order->CustomerVatCode . "', '" . $order->CustomerCodeFattEl . "', '". $order->CustomerEmail . "', '". $order->CustomerPecEmail . "')");
+						 // controllo esistenza cliente per cognome, nome e città
+						if ($esiste==0){
+							$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE ragso1 ='" . addslashes($order->CustomerName) . "' AND ragso2 ='". addslashes($order->CustomerSurname) . "'";
+							$check = gaz_dbi_query($query);
+							while ($row = $check->fetch_assoc()) {
+								if (($check->num_rows > 0) && ($row['citspe']=$order->CustomerCity) && ($row['indspe']=$order->CustomerAddress)){
+									$esiste=1;
+									$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
+									$clfoco=$cl['codice'];
+								}
+							}
+						}			
+						If ($esiste==0) { //registro cliente se non esiste
+							if ($order->CustomerCountry=="IT"){ // se la nazione è IT
+								$lang="1";
+							} else {
+								$lang="0";
+							}
+							if (strlen ($order->CustomerFiscalCode)>1 AND intval ($order->CustomerFiscalCode)==0){ // se il codice fiscale non è numerico 
+								if (substr($order->CustomerFiscalCode,9,2)>40){ // deduco il sesso 
+									$sexper="F";
+								} else {
+									$sexper="M";
+								}
+							} else {
+								$sexper="G";
+							}
+							gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($order->CustomerSurname)." ". addslashes($order->CustomerName) . "', '" . addslashes($order->BusinessName) . "', '". $sexper. "', '".addslashes($order->CustomerAddress) ."', '".$order->CustomerPostCode."', '". addslashes($order->CustomerCity) ."', '". $order->CustomerProvince ."', '" . $order->CustomerCountry. "', '1', '".$lang."', '". $order->CustomerTel ."', '". $order->CustomerFiscalCode ."', '" . $order->CustomerVatCode . "', '" . $order->CustomerCodeFattEl . "', '". $order->CustomerEmail . "', '". $order->CustomerPecEmail . "')");
+							
+							gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('". $clfoco . "', '" . $id_anagra . "', '". intval($order->PriceListNum) ."' ,'" .addslashes($order->CustomerName)." ".addslashes($order->CustomerSurname) . "', '". $order->CustomerShippingDestin ."', 'S', 'T', '".$order->PaymentName."')");
+						}
 						
-						gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('". $clfoco . "', '" . $id_anagra . "', '". intval($order->PriceListNum) ."' ,'" .addslashes($order->CustomerName)." ".addslashes($order->CustomerSurname) . "', '". $order->CustomerShippingDestin ."', 'S', 'T', '".$order->PaymentName."')");
-					}
-					
-					if ($order->TotalDiscount>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
-						$lordo=$order->Total+$order->TotalDiscount-$order->CostPaymentAmount-$order->CostShippingAmount;
-						$netto=$lordo-$order->TotalDiscount;
-						$percdisc= 100-(($netto/$lordo)*100);
-					} else {
-						$percdisc="";
-					}
-					
-					if ($order->PricesIncludeVat=="true"){ // se il sito include l'iva la scorporo dalle spese banca e trasporto
-						$CostPaymentAmount=floatval($order->CostPaymentAmount)/ 1.22; // floatval traforma da alfabetico a numerico
-						$CostShippingAmount=floatval($order->CostShippingAmount) / 1.22;
-					} else {
-						$CostPaymentAmount=floatval($order->CostPaymentAmount);
-						$CostShippingAmount=floatval($order->CostShippingAmount);
-					}
-											
-					// registro testata ordine
-					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(ref_ecommerce_id_order,tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('".$order->Numbering."','VOW', '". $order->SezIva ."', '1', '" . $order->DateOrder . "', '". $numdoc ."', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
-					
-					// Gestione righi ordine					
-					foreach($xml->Documents->Document[$countDocument]->Rows->children() as $orderrow) { // carico le righe dell'ordine
-					
-						// controllo se esiste l'articolo in GAzie 
-						$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $orderrow->Id);
-						if ($ckart){
-							$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
-							$descri=$ckart['descri'].$orderrow->AddDescription;// se esiste ne prendo descri e ci aggiungo una eventuale descrizione aggiuntiva						
+						if ($order->TotalDiscount>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
+							$lordo=$order->Total+$order->TotalDiscount-$order->CostPaymentAmount-$order->CostShippingAmount;
+							$netto=$lordo-$order->TotalDiscount;
+							$percdisc= 100-(($netto/$lordo)*100);
+						} else {
+							$percdisc="";
 						}
-						if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio in quanto non si sa se deve movimentare il magazzino					
-							if ($orderrow->Stock>0){
-								$good_or_service=0;
-							} else {
-								$good_or_service=1;
+						
+						if ($order->PricesIncludeVat=="true"){ // se il sito include l'iva la scorporo dalle spese banca e trasporto
+							$CostPaymentAmount=floatval($order->CostPaymentAmount)/ 1.22; // floatval traforma da alfabetico a numerico
+							$CostShippingAmount=floatval($order->CostShippingAmount) / 1.22;
+						} else {
+							$CostPaymentAmount=floatval($order->CostPaymentAmount);
+							$CostShippingAmount=floatval($order->CostShippingAmount);
+						}
+												
+						// registro testata ordine
+						gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(ref_ecommerce_id_order,tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('".$order->Numbering."','VOW', '". $order->SezIva ."', '1', '" . $order->DateOrder . "', '". $numdoc ."', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
+						
+						// Gestione righi ordine					
+						foreach($xml->Documents->Document[$countDocument]->Rows->children() as $orderrow) { // carico le righe dell'ordine
+						
+							// controllo se esiste l'articolo in GAzie 
+							$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $orderrow->Id);
+							if ($ckart){
+								$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
+								$descri=$ckart['descri'].$orderrow->AddDescription;// se esiste ne prendo descri e ci aggiungo una eventuale descrizione aggiuntiva						
 							}
-							if ($orderrow->VatAli==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo di GAzie ci metto quella che deve mandare come base aziendale per le spese
-								$orderrow->VatCode=$order->CostVatCode;
-								$orderrow->VatAli=$order->CostVatAli;
-							}
+							if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio in quanto non si sa se deve movimentare il magazzino					
+								if ($orderrow->Stock>0){
+									$good_or_service=0;
+								} else {
+									$good_or_service=1;
+								}
+								if ($orderrow->VatAli==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo di GAzie ci metto quella che deve mandare come base aziendale per le spese
+									$orderrow->VatCode=$order->CostVatCode;
+									$orderrow->VatAli=$order->CostVatAli;
+								}
 
-							if ($orderrow->VatCode<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
-								$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $orderrow->VatAli, " AND tipiva = 'I'");
-								$codvat=$vat['codice'];
-								$aliiva=$vat['aliquo'];
-							} else {
-								$codvat=$orderrow->VatCode;
+								if ($orderrow->VatCode<1){ // se il sito non ha mandato il codice iva di GAzie cerco di ricavarlo dalla tabella aliiva
+									$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $orderrow->VatAli, " AND tipiva = 'I'");
+									$codvat=$vat['codice'];
+									$aliiva=$vat['aliquo'];
+								} else {
+									$codvat=$orderrow->VatCode;
+									$aliiva=$orderrow->VatAli;
+								}
+								if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
+									$div=floatval("1.".$aliiva);
+									$Price=floatval($orderrow->PriceVATincl) / $div;				
+								} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
+									$Price=floatval($orderrow->Price);
+								}								
+								
+								$id_artico_group="";
+								$arrayvar="";
+								if ($orderrow->ParentId > 0 OR $orderrow->Type == "variant" ){ // se è una variante
+								
+									// controllo se esiste il suo artico_group/padre in GAzie
+									unset($parent);
+									$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $orderrow->ParentId);// trovo il padre in GAzie
+									if ($parent){ // se esiste il padre
+										$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
+									} else {// se non esiste lo devo creare con i pochi dati che ho
+										$parent['descri']=$orderrow->Description;
+										gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode (addslashes($parent['descri'])). "', '', '', '". $orderrow->ParentId . "', '1', '1', '". $admin_aziend['adminid'] ."')");
+										$id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
+									}
+									
+									if (strlen($orderrow->Description)<2){ // se non c'è la descrizione della variante 
+										$orderrow->Description=$parent['descri']."-".$orderrow->Characteristic;// ci metto quella del padre accodandoci la variante
+									}
+									
+									// creo un json array per la variante
+									$arrayvar= array("var_id" => floatval($orderrow->CharacteristicId), "var_name" => $orderrow->Characteristic);
+									$arrayvar = json_encode ($arrayvar);
+									
+								}
+								
+								// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste	
+								$category="";
+								if (intval($orderrow->Category)>0){
+									$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($orderrow->Category,0,15)));// controllo se esiste in GAzie
+									if ($cat){
+										$category=$cat['codice'];
+									}
+								}
+								
+								// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato				
+								unset($usato);
+								$usato = gaz_dbi_get_row($gTables['artico'], "codice", $orderrow->Code);// controllo se il codice è già stato usato in GAzie	
+								if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
+									$orderrow->Code=substr($orderrow->Code,0,10)."-".substr($orderrow->Id,0,4);
+								}					
+								
+								gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". $orderrow->ProductWeight ."', '". $orderrow->MeasureUnit ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+								$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
+								$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva	
+															
+							} else { // se esiste l'articolo in GAzie uso comunque il prezzo dell'e-commerce
+								$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
 								$aliiva=$orderrow->VatAli;
-							}
-							if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
-								$div=floatval("1.".$aliiva);
-								$Price=floatval($orderrow->PriceVATincl) / $div;				
-							} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
-								$Price=floatval($orderrow->Price);
+								if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
+									$div=floatval("1.".$aliiva);
+									$Price=floatval($orderrow->PriceVATincl) / $div;				
+								} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
+									$Price=floatval($orderrow->Price);
+								}							
 							}
 							
-							gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
-							$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
-							$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva	
-														
-						} else { // se esiste l'articolo in GAzie uso comunque il prezzo dell'e-commerce
-							$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
-							$aliiva=$orderrow->VatAli;
-							if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
-								$div=floatval("1.".$aliiva);
-								$Price=floatval($orderrow->PriceVATincl) / $div;				
-							} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
-								$Price=floatval($orderrow->Price);
-							}							
+							// salvo rigo su database tabella rigbro 
+							gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $orderrow->MeasureUnit . "','" . $orderrow->Qty . "','" . $Price . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
 						}
-						
-						// salvo rigo su database tabella rigbro 
-						gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $orderrow->MeasureUnit . "','" . $orderrow->Qty . "','" . $Price . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
+						$count++;//aggiorno contatore nuovi ordini
+						$countDocument++;//aggiorno contatore Document
+						$id_tesbro++;				
+					} else {
+						$countDocument++;//aggiorno contatore Document	
 					}
-					$count++;//aggiorno contatore nuovi ordini
-					$countDocument++;//aggiorno contatore Document
-					$id_tesbro++;				
-				} else {
-					$countDocument++;//aggiorno contatore Document	
-				}
-				$numdoc++; //incremento il numero d'ordine GAzie
-			}						
+					$numdoc++; //incremento il numero d'ordine GAzie
+				}						
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
 			
             $rawres['title'] = "L'interfaccia non esiste: impossibile scaricare gli ordini";
