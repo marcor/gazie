@@ -480,10 +480,8 @@ $strScript = array("browse_document.php" =>
         'upd_this' => 'Modifica il gruppo delle varianti',
         'err' => array(
             'codice' => 'Il codice articolo &egrave; gi&agrave; esistente',
-            'movmag' => 'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
-            'filmim' => 'Il file dev\'essere nel formato PNG, JPG, GIF',
-            'filsiz' => 'L\'immagine non dev\'essere pi&ugrave; grande di 64Kb',
-            'valcod' => 'Inserire un codice valido',
+            'empty_var' => 'Deve esserci per forza almeno una variante',			
+            'grcod' => 'Questo articolo appartiene già ad un altro gruppo',
             'descri' => 'Inserire una descrizione',           
             'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
             'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
@@ -503,8 +501,6 @@ $strScript = array("browse_document.php" =>
         'web_url' => 'Web url<br />(es: http://site.com/item.html)',
         'modal_ok_insert' => 'Articolo inserito con successo clicca sulla X in alto a destra per uscire oppure...',
        
-		'last_buys' => 'Ultimi acquisti da fornitori',
-		'ordinabile' => 'Articolo ordinabile',
         'mesg' => array(
         )
     ),

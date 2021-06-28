@@ -30,6 +30,7 @@ $modal_ok_insert = false;
 $today=	strtotime(date("Y-m-d H:i:s",time()));
 $presente="";
 $largeimg="";
+
 /** ENRICO FEDELE */
 /* Inizializzo per aprire in finestra modale */
 $modal = false;
@@ -46,124 +47,182 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'insert';
 }
 
-if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
-  $form = gaz_dbi_parse_post('artico_group');
-  $form['id_artico_group'] = trim($form['id_artico_group']);
-  $form['ritorno'] = $_POST['ritorno'];
-  $form['ref_ecommerce_id_main_product'] = substr($_POST['ref_ecommerce_id_main_product'], 0, 9);  
-  $form['large_descri'] = filter_input(INPUT_POST, 'large_descri');
-  /** ENRICO FEDELE */
-  /* Controllo se il submit viene da una modale */
-  if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // conferma tutto
-    /** ENRICO FEDELE */
-    if ($toDo == 'update') {  // controlli in caso di modifica
-        
-    } else {
-        // controllo che l'articolo ci sia gia'
-        $rs_articolo = gaz_dbi_dyn_query('id_artico_group', $gTables['artico_group'], "id_artico_group = '" . $form['id_artico_group'] . "'", "id_artico_group DESC", 0, 1);
-        $rs = gaz_dbi_fetch_array($rs_articolo);
-        if ($rs) {
-            $msg['err'][] = 'codice';
-        }
-    }
-    if (!empty($_FILES['userfile']['name'])) {
-      if (!( $_FILES['userfile']['type'] == "image/png" ||
-              $_FILES['userfile']['type'] == "image/x-png" ||
-              $_FILES['userfile']['type'] == "image/jpeg" ||
-              $_FILES['userfile']['type'] == "image/jpg" ||
-              $_FILES['userfile']['type'] == "image/gif" ||
-              $_FILES['userfile']['type'] == "image/x-gif")) $msg['err'][] = 'filmim';
-				// controllo che il file non sia piu' grande di circa 64kb
-      if ($_FILES['userfile']['size'] > 65530){
-				//Antonio Germani anziche segnalare errore ridimensiono l'immagine
-				$maxDim = 190;
-				$file_name = $_FILES['userfile']['tmp_name'];
-				list($width, $height, $type, $attr) = getimagesize( $file_name );
-				if ( $width > $maxDim || $height > $maxDim ) {
-					$target_filename = $file_name;
-					$ratio = $width/$height;
-					if( $ratio > 1) {
-						$new_width = $maxDim;
-						$new_height = $maxDim/$ratio;
-					} else {
-						$new_width = $maxDim*$ratio;
-						$new_height = $maxDim;
-					}
-					$src = imagecreatefromstring( file_get_contents( $file_name ) );
-					$dst = imagecreatetruecolor( $new_width, $new_height );
-					imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
-					imagedestroy( $src );
-					imagepng( $dst, $target_filename); // adjust format as needed
-					imagedestroy( $dst );
-				}
-			// fine ridimensionamento immagine
-			$largeimg=1;
-			}
-    }
-    if (empty($form["id_artico_group"]) AND $toDo == 'update') {
-        $msg['err'][] = 'valcod';
-    }
-    if (empty($form["descri"])) {
-        $msg['err'][] = 'descri';
-    }
+if(isset($_GET['delete'])) {		
+	gaz_dbi_table_update ("artico", $_GET['delete'], array("id_artico_group"=>"") );		
+	header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$_GET['group']);		
+}
 
-  if (count($msg['err']) == 0) { // nessun errore
-    if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
-			if ($largeimg==0){
-				$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
-			} else {
-				$form['image'] = file_get_contents($target_filename);
+if(isset($_GET['group_delete'])) {
+	
+	$query = "SELECT codice, descri FROM " . $gTables['artico'] . " WHERE id_artico_group = '".$_GET['group_delete']."'";
+	$arts = gaz_dbi_query($query);
+	while ($art = $arts->fetch_assoc()) {// scollego tutti gli articolo		
+	gaz_dbi_table_update ("artico", $art['codice'], array("id_artico_group"=>"") );
+	}
+	gaz_dbi_del_row($gTables['artico_group'], "id_artico_group", $_GET['group_delete']);// cancello il gruppo
+	header("Location: ../magazz/report_artico.php");	
+	exit;	
+}
+
+if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
+
+	$form = gaz_dbi_parse_post('artico_group');
+	$form['id_artico_group'] = trim($form['id_artico_group']);
+	$form['ritorno'] = $_POST['ritorno'];
+	$form['ref_ecommerce_id_main_product'] = substr($_POST['ref_ecommerce_id_main_product'], 0, 9);  
+	$form['large_descri'] = filter_input(INPUT_POST, 'large_descri');
+	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_STRING);
+	$form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_STRING);
+   
+	if(isset($_POST['codart']) AND isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){	// se si salva la selezione degli articoli facenti parte del gruppo
+		if ($toDo == 'insert'){// se è un nuovo inserimento gruppo
+			 if (empty($form["descri"])) { // controllo che sia stata inserita almeno la descrizione
+				$msg['err'][] = 'descri';
 			}
-    } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
-      $oldimage = gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', $form['ref_ecommerce_id_main_product']);
-      $form['image'] = $oldimage['image'];
-    } else {
-      $form['image'] = '';
-    }
-    
-    $form['large_descri'] = htmlspecialchars_decode (addslashes($form['large_descri']));
-    // aggiorno il db
-    if ($toDo == 'insert') {
-      gaz_dbi_table_insert('artico_group', $form);     
-    } elseif ($toDo == 'update') {
-      gaz_dbi_table_update('artico_group', array( 0 => "id_artico_group", 1 => $form['id_artico_group']), $form);
-     
-      
-    }
-    if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-        // Aggiornamento parent su e-commerce
-		
-        $gs=$admin_aziend['synccommerce_classname'];
-        $gSync = new $gs();
-		if($gSync->api_token){
-			
-			$gSync->UpsertParent($form);
-			
-			//exit;
+			if (strlen($_POST['codart'])==0){
+				$msg['err'][] = 'empty_var';
+			} 
+		}
+		// devo controllare se l'articolo che si sta inserendo appartiene già ad un altro gruppo		
+		if (gaz_dbi_get_row($gTables['artico'], 'codice', $_POST['codart'])['id_artico_group']){
+			$msg['err'][] = 'grcod';
 		}
 		
-	}
-    /** ENRICO FEDELE */
-    /* Niente redirect se sono in finestra modale */
-    if ($modal === false) {
-		
-		header("Location: ../../modules/magazz/report_artico.php");
-        exit;
-			
-    } else {
-		header("Location: ../../modules/magazz/admin_artico.php?mode=modal&ok_insert=1");
-      exit;
-    }
-  }
-  /** ENRICO FEDELE */
-} elseif (isset($_POST['Return']) && $modal === false) { // torno indietro
-	/* Solo se non sono in finestra modale */
+		if (count($msg['err']) == 0) {// nessun errore
+			if (isset($_POST['codart']) AND $toDo == 'insert'){ 
+				gaz_dbi_table_insert('artico_group', $form);
+				$form['id_artico_group']=gaz_dbi_last_id();
+				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']) );					
+								
+				// il redirect deve modificare il form in update perché è stato già inserito
+				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']);			
+			} elseif (isset($_POST['codart'])){
+				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']));	
+				// il redirect deve modificare il form in update perché è stato già inserito
+				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']);	
+			}
+		}		
+	}	
+	
 	/** ENRICO FEDELE */
-	header("Location: " . $form['ritorno']);
-	exit;
-}
+	/* Controllo se il submit viene da una modale */
+	if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // conferma tutto
+    /** ENRICO FEDELE */
+		if ($toDo == 'update') {  // controlli in caso di modifica
+        
+		} else {
+			// controllo che l'articolo ci sia gia'
+			$rs_articolo = gaz_dbi_dyn_query('id_artico_group', $gTables['artico_group'], "id_artico_group = '" . $form['id_artico_group'] . "'", "id_artico_group DESC", 0, 1);
+			$rs = gaz_dbi_fetch_array($rs_articolo);
+			if ($rs) {
+				$msg['err'][] = 'codice';
+			}
+		}
+		if (!empty($_FILES['userfile']['name'])) {
+			if (!( $_FILES['userfile']['type'] == "image/png" ||
+				  $_FILES['userfile']['type'] == "image/x-png" ||
+				  $_FILES['userfile']['type'] == "image/jpeg" ||
+				  $_FILES['userfile']['type'] == "image/jpg" ||
+				  $_FILES['userfile']['type'] == "image/gif" ||
+				  $_FILES['userfile']['type'] == "image/x-gif")) $msg['err'][] = 'filmim';
+					// controllo che il file non sia piu' grande di circa 64kb
+			if ($_FILES['userfile']['size'] > 65530){
+					//Antonio Germani anziche segnalare errore ridimensiono l'immagine
+					$maxDim = 190;
+					$file_name = $_FILES['userfile']['tmp_name'];
+					list($width, $height, $type, $attr) = getimagesize( $file_name );
+					if ( $width > $maxDim || $height > $maxDim ) {
+						$target_filename = $file_name;
+						$ratio = $width/$height;
+						if( $ratio > 1) {
+							$new_width = $maxDim;
+							$new_height = $maxDim/$ratio;
+						} else {
+							$new_width = $maxDim*$ratio;
+							$new_height = $maxDim;
+						}
+						$src = imagecreatefromstring( file_get_contents( $file_name ) );
+						$dst = imagecreatetruecolor( $new_width, $new_height );
+						imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
+						imagedestroy( $src );
+						imagepng( $dst, $target_filename); // adjust format as needed
+						imagedestroy( $dst );
+					}
+				// fine ridimensionamento immagine
+				$largeimg=1;
+				}
+		}
+		if (empty($form["id_artico_group"]) AND $toDo == 'update') {
+			$msg['err'][] = 'valcod';
+		}
+		if (empty($form["descri"])) {
+			$msg['err'][] = 'descri';
+		}
+		if ($toDo == 'insert') {
+			if (!isset($_POST['variant'])){
+				$msg['err'][] = 'empty_var';
+			}
+		}
+
+		if (count($msg['err']) == 0) { // nessun errore
+			if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
+					if ($largeimg==0){
+						$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
+					} else {
+						$form['image'] = file_get_contents($target_filename);
+					}
+			} elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
+			  $oldimage = gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', $form['ref_ecommerce_id_main_product']);
+			  $form['image'] = $oldimage['image'];
+			} else {
+			  $form['image'] = '';
+			}    
+		
+			$form['large_descri'] = htmlspecialchars_decode (addslashes($form['large_descri']));
+			// aggiorno il db
+			if ($toDo == 'insert') {
+			  gaz_dbi_table_insert('artico_group', $form);     
+			} elseif ($toDo == 'update') {
+			  gaz_dbi_table_update('artico_group', array( 0 => "id_artico_group", 1 => $form['id_artico_group']), $form);
+			 
+			  
+			}
+			if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+				// Aggiornamento parent su e-commerce
+				
+				$gs=$admin_aziend['synccommerce_classname'];
+				$gSync = new $gs();
+				if($gSync->api_token){
+					
+					$gSync->UpsertParent($form);
+					
+					//exit;
+				}
+				
+			}
+			/** ENRICO FEDELE */
+			/* Niente redirect se sono in finestra modale */
+			if ($modal === false) {
+				
+				header("Location: ../../modules/magazz/report_artico.php");
+				exit;
+					
+			} else {
+				header("Location: ../../modules/magazz/admin_artico.php?mode=modal&ok_insert=1");
+			  exit;
+			}
+		}
+		/** ENRICO FEDELE */
+	} elseif (isset($_POST['Return']) && $modal === false) { // torno indietro
+		/* Solo se non sono in finestra modale */
+		/** ENRICO FEDELE */
+		header("Location: " . $form['ritorno']);
+		exit;
+	}
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', substr($_GET['id_artico_group'], 0, 9));
+	$form['cosear'] = "";
+	$form['codart'] = "";
     /** ENRICO FEDELE */
     if ($modal === false) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -173,6 +232,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   
 } else { //se e' il primo accesso per INSERT
     $form = gaz_dbi_fields('artico');
+	$form['cosear'] = "";
+	$form['codart'] = "";
     /** ENRICO FEDELE */
     if ($modal === false) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -205,11 +266,59 @@ if ($modal === false) {
 
     $script_transl = $strCommon + $script_transl;
 }
-/** ENRICO FEDELE */
-/* Assegno un id al form, quindi distinguo tra modale e non
- * in caso di finestra modale, aggiungo un campo nascosto che mi serve per salvare nel database
- */
+if (intval($form['id_artico_group'])>0){
+$query = "SELECT codice, descri FROM " . $gTables['artico'] . " WHERE id_artico_group = '".$form['id_artico_group']."'";
+$arts = gaz_dbi_query($query);
+}
+
 ?>
+
+<script>
+function itemErase(id,descri,group){
+	$(".compost_name").append(descri);
+	
+	$("#confirm_erase").dialog({
+		modal: true,
+		show: "blind",
+		hide: "explode",
+		buttons: {
+			No: function() {
+				$(".compost_name").empty();
+				$( this ).dialog( "close" );
+			},
+			Togli: function() {
+				window.location.href = 'admin_group.php?delete='+id+'&group='+group;
+			}
+
+		  },
+		  close: function(){	
+			$(".compost_name").empty();
+		  }
+		});
+}
+function groupErase(group,descri){
+	$(".group_name").append(group+' '+descri);
+	
+	$("#confirm_destroy").dialog({
+		modal: true,
+		show: "blind",
+		hide: "explode",
+		buttons: {
+			No: function() {
+				$(".group_name").empty();
+				$( this ).dialog( "close" );
+			},
+			Togli: function() {
+				window.location.href = 'admin_group.php?group_delete='+group;
+			}
+
+		  },
+		  close: function(){	
+			$(".group_name").empty();
+		  }
+		});
+}		
+</script>
 
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
 	<?php 
@@ -257,171 +366,196 @@ if ($modal === false) {
 			echo '<div class="text-center"><h3>' . $script_transl['upd_this'] . ' ' . $form['id_artico_group'] . '</h3></div>';
 		}
 		?>
-		<div class="text-center"><p>Solitamente, gli e-commerce usano creare degli articoli, le varianti, molto simili fra loro ponendoli sotto un articolo principale, il genitore. <br>Per GAzie, il genitore è il gruppo e le varianti sono i singoli articoli che fanno riferimento allo stesso gruppo. </p></div>';
-		<div class="panel panel-default gaz-table-form div-bordered">
-			<div class="container-fluid">
-				<ul class="nav nav-pills">
-					<li class="active"><a data-toggle="pill" href="#home">Dati principali</a></li>
-					<li><a data-toggle="pill" href="#magazz">Magazzino</a></li>
-					<li><a data-toggle="pill" href="#contab">Contabilità</a></li>
-					<li><a data-toggle="pill" href="#chifis">Chimico-fisiche</a></li>
-					<li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
-				</ul>  
-				<div class="tab-content">
-					<div id="home" class="tab-pane fade in active">
-						<?php if ($toDo !== 'insert'){?>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-									<input class="col-sm-4" type="text" value="<?php echo $form["id_artico_group"]; ?>" name="id_artico_group" id="id_artico_group" maxlength="9" tabindex="1" readonly="readonly"/>
-									</td>
-								</div>
-							</div>
-						</div><!-- chiude row  -->
-						<?php } else {
-							echo '<input type="hidden" name="id_artico_group" value="" />';
-						}?>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
-									<input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="255" id="suggest_descri_artico" />
-								</div>
-							</div>
-						</div><!-- chiude row  -->
-						<!--+ DC - 06/02/2019 -->
-						<!--
-						Come rendere una videata personalizzabile:
-						Su tutte le div con class="row" (tranne quelle che contengono campi obbligatori)
-						sostituirle nel seguente modo:
-						PRIMA:
-						<div class="row">
-						DOPO:
-						<div id="catMer" class="row IERincludeExcludeRow">
-						In pratica inserite un id (unico per ogni riga) ed aggiungere la classe "IERincludeExcludeRow"
-						-->
-											  
-						<!--+ DC - 06/02/2019 div class="row" --->
-						<div id="bodyText" class="row IERincludeExcludeRow">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="large_descri" class="col-sm-4 control-label"><?php echo $script_transl['body_text']; ?></label>
-									<div class="col-sm-8">
-										<textarea id="large_descri" name="large_descri" class="mceClass"><?php echo $form['large_descri']; ?></textarea>
+		<div class="text-center"><p>Solitamente, gli e-commerce usano creare degli articoli, le varianti, molto simili fra loro ponendoli sotto un articolo principale, il genitore. <br>Per GAzie, il genitore è il gruppo e le varianti sono i singoli articoli che fanno riferimento allo stesso gruppo. </p></div>
+			<div class="panel panel-default gaz-table-form div-bordered">
+				<div class="container-fluid">
+					<ul class="nav nav-pills">
+						<li class="active"><a data-toggle="pill" href="#home">Dati principali</a></li>
+						<li><a data-toggle="pill" href="#magazz">Magazzino</a></li>
+						<li><a data-toggle="pill" href="#variant">Varianti</a></li>
+						<li><a data-toggle="pill" href="#chifis">Altro</a></li>
+						<li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
+					</ul>  
+					<div class="tab-content">
+						<div id="home" class="tab-pane fade in active">
+							<?php if ($toDo !== 'insert'){?>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
+										<input class="col-sm-4" type="text" value="<?php echo $form['id_artico_group']; ?>" name="id_artico_group" id="id_artico_group" maxlength="9" tabindex="1" readonly="readonly"/>
 									</div>
 								</div>
-							</div>
-						</div><!-- chiude row  -->					   
-					   
-						<!--+ DC - 06/02/2019 div class="row" --->
-						<div id="image" class="row IERincludeExcludeRow">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico_group&value=<?php echo $form['id_artico_group']; ?>&field=id_artico_group" width="100" >*</label>
-									<div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
+							</div><!-- chiude row  -->
+							<?php } else {
+								echo '<input type="hidden" name="id_artico_group" value="" />';
+							}?>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
+										<input class="col-sm-8" type="text" value="<?php echo $form['descri']; ?>" name="descri" maxlength="255" id="suggest_descri_artico" />
+									</div>
 								</div>
-							</div>
-						</div><!-- chiude row  -->				   
-					</div><!-- chiude tab-pane  -->	
-					
-					<div id="magazz" class="tab-pane fade">									
-						<!--+ DC - 06/02/2019 div class="row" --->
-						<div id="refEcommercIdProduct" class="row IERincludeExcludeRow">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="ref_ecommerce_id_product" class="col-sm-4 control-label">ID riferimento e-commerce</label>
-									<input class="col-sm-4" type="text" value="<?php echo $form['ref_ecommerce_id_main_product']; ?>" name="ref_ecommerce_id_main_product" maxlength="15" />
-								</div>
-							</div>
-						</div><!-- chiude row  -->
-						<!--+ DC - 06/02/2019 div class="row" --->
-						<div id="webUrl" class="row IERincludeExcludeRow">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
-								<input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="255" />
-							</div>
-						</div>
-						</div><!-- chiude row  -->
-						<!--+ DC - 06/02/2019 div class="row" --->
-						<div id="depliPublic" class="row IERincludeExcludeRow">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
-			<?php
-			$gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-			?>
-								</div>
-							</div>
-						</div><!-- chiude row  -->
-						<!--+ DC - 06/02/2019 div class="row" --->
-						<div id="webPublic" class="row IERincludeExcludeRow">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>
-			<?php
-			$gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-			?>
-								</div>
-							</div>
-						</div><!-- chiude row  -->				
-					</div><!-- chiude tab-pane  -->
-					
-					<div id="contab" class="tab-pane fade">
-					
-					</div><!-- chiude tab-pane  -->
-					
-					<div id="chifis" class="tab-pane fade">					
-					
-			<?php if ($toDo == 'update') { ?>
-					   
-						<!-- DA FARE IN SEGUITO, SE SERVIRà -- Antonio Germani inserimento/modifica immagini di qualità per e-commerce 
-						
-						<div id="qualityImgs" class="row IERincludeExcludeRow">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="annotaUpdate" class="col-sm-4 control-label"><?php echo $script_transl['imageweb']; ?></label>
-			<?php if ($nimg > 0) { // se ho dei documenti  ?>
-										<div>
-										<?php foreach ($form['imgrows'] as $k => $val) { ?>
-												<input type="hidden" value="<?php echo $val['id_doc']; ?>" name="imgrows[<?php echo $k; ?>][id_doc]">
-												<input type="hidden" value="<?php echo $val['extension']; ?>" name="imgrows[<?php echo $k; ?>][extension]">
-												<input type="hidden" value="<?php echo $val['title']; ?>" name="imgrows[<?php echo $k; ?>][title]">
-					<?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/images/' . $val['id_doc'] . '.' . $val['extension']; ?>
-												<a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
-													<i class="glyphicon glyphicon-file"></i>
-												</a><?php echo $val['title']; ?>
-												<input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_image.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
-
-				<?php } ?>
-											<input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['id_artico_group']; ?>&Insert'" />
+							</div><!-- chiude row  -->
+							<!--+ DC - 06/02/2019 -->
+							<!--
+							Come rendere una videata personalizzabile:
+							Su tutte le div con class="row" (tranne quelle che contengono campi obbligatori)
+							sostituirle nel seguente modo:
+							PRIMA:
+							<div class="row">
+							DOPO:
+							<div id="catMer" class="row IERincludeExcludeRow">
+							In pratica inserite un id (unico per ogni riga) ed aggiungere la classe "IERincludeExcludeRow"
+							-->
+												  
+							<!--+ DC - 06/02/2019 div class="row" --->
+							<div id="bodyText" class="row IERincludeExcludeRow">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="large_descri" class="col-sm-4 control-label"><?php echo $script_transl['body_text']; ?></label>
+										<div class="col-sm-8">
+											<textarea id="large_descri" name="large_descri" class="mceClass"><?php echo $form['large_descri']; ?></textarea>
 										</div>
-										<?php } else { // non ho documenti  ?>
-										<input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_image.php?item_ref=<?php echo $form['id_artico_group']; ?>&Insert'">
-									<?php } ?>
+									</div>
+								</div>
+							</div><!-- chiude row  -->					   
+						   
+							<!--+ DC - 06/02/2019 div class="row" --->
+							<div id="image" class="row IERincludeExcludeRow">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico_group&value=<?php echo $form['id_artico_group']; ?>&field=id_artico_group" width="100" >*</label>
+										<div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
+									</div>
+								</div>
+							</div><!-- chiude row  -->				   
+						</div><!-- chiude tab-pane  -->	
+						
+						<div id="magazz" class="tab-pane fade">									
+							<!--+ DC - 06/02/2019 div class="row" --->
+							<div id="refEcommercIdProduct" class="row IERincludeExcludeRow">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="ref_ecommerce_id_product" class="col-sm-4 control-label">ID riferimento e-commerce</label>
+										<input class="col-sm-4" type="text" value="<?php echo $form['ref_ecommerce_id_main_product']; ?>" name="ref_ecommerce_id_main_product" maxlength="15" />
+									</div>
+								</div>
+							</div><!-- chiude row  -->
+							<!--+ DC - 06/02/2019 div class="row" --->
+							<div id="webUrl" class="row IERincludeExcludeRow">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
+									<input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="255" />
 								</div>
 							</div>
-						</div>
-						-->
-		<?php } ?>
-				</div><!-- chiude tab-pane  -->
-				</div><!-- chiude tab content -->
+							</div><!-- chiude row  -->
+							<!--+ DC - 06/02/2019 div class="row" --->
+							<div id="depliPublic" class="row IERincludeExcludeRow">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
+				<?php
+				$gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+				?>
+									</div>
+								</div>
+							</div><!-- chiude row  -->
+							<!--+ DC - 06/02/2019 div class="row" --->
+							<div id="webPublic" class="row IERincludeExcludeRow">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>
+				<?php
+				$gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+				?>
+									</div>
+								</div>
+							</div><!-- chiude row  -->				
+							</div><!-- chiude tab-pane  -->
+							
+							<div id="variant" class="tab-pane fade">
+								<div class="container-fluid">
+								<?php $color='eeeeee';
+								
+								echo '<ul class="col-xs-12 col-sm-12 col-md-11 col-lg-10">';
+								$v=0;
+								if (isset($arts)){
+								while ($art = $arts->fetch_assoc()) {															
+									
+									$icona=(is_array($art['codice']))?'<a class="btn btn-xs btn-warning collapsible" id="'.$art['codice'].'" data-toggle="collapse" data-target=".' . $art['codice'] . '"><i class="glyphicon glyphicon-list"></i></a>':'';
+									echo '<div style="background-color: #'.$color.'">
+									<a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $art['codice'] . '">'.$art['codice'].'</a> - '.$art['descri'].' '.$icona.' _ _ _ _ ';
+									if (intval($arts->num_rows)>1){
+										echo '<a class="btn btn-xs btn-danger" onclick="itemErase(\''.addslashes($art['codice']).'\', \''.addslashes($art['descri']).'\', \''.addslashes($form['id_artico_group']).'\');">  togli X </a>';
+									}
+									echo '</div>';
+									$color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
+									echo '<input type="hidden" name="variant['.$v.']" value="' . $art['codice'] . '" />';
+									$v++;
+								}
+								}
+								?>
+								</ul>
+								<div class="col-xs-12 col-md-6">Nuovo componente:
+									<?php
+									$select_artico = new selectartico("codart");
+									$select_artico->addSelected($form['codart']);
+									$select_artico->output(substr($form['cosear'], 0, 20),'C',"");
+									?>
+								</div>
+								<div class="col-xs-12 col-md-2">
+									<input type="submit" class="btn btn-warning" name="OKsub" value="Salva">
+								</div>
+							</div>
+						</div>					
+						
+					</div><!-- chiude tab-pane  -->
+						
+					<div id="chifis" class="tab-pane fade">					
+						
+					</div><!-- chiude tab-pane  -->
+				</div><!-- chiude tab conten -->
 				<div class="col-sm-12">
-		<?php
-		/** ENRICO FEDELE */
-		/* SOlo se non sono in finestra modale */
-		if ($modal === false) {
-			echo '<div class="col-sm-4 text-left"><input name="none" type="submit" value="" disabled></div>';
-		}
-		/** ENRICO FEDELE */
-		echo '<div class="col-sm-8 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" /></div>';
-	}
-	?>
+					<?php
+					/** ENRICO FEDELE */
+					/* SOlo se non sono in finestra modale */
+					if ($modal === false) {
+						echo '<div class="col-sm-4 text-left"><input name="none" type="submit" value="" disabled></div>';
+					}
+					?>
+					<div class="col-md-12">
+						<div class="col-sm-6 text-center">				
+							
+							<a class="btn btn-xs btn-danger" onclick="groupErase('<?php echo addslashes($form['id_artico_group']); ?>','<?php echo addslashes($form['descri']); ?>')">  Elimina </a>
+							
+						</div>
+						<div class="col-sm-6 text-center">
+							<input name="Submit" type="submit" class="btn btn-warning" value="<?php echo ucfirst($script_transl[$toDo]);?>" />
+						</div>
+					</div>
+					<?php
+				}
+				?>
 				</div>
 			</div> <!-- chiude container -->
 		</div><!-- chiude panel -->
 </form>
+
+<div class="modal" id="confirm_erase" title="Togli questo articolo dal gruppo">
+    <fieldset>
+       <div class="compost_name"></div>
+    </fieldset>
+</div>
+<div class="modal" id="confirm_destroy" title="Distruggi questo gruppo">
+
+    <fieldset>
+       <div class="group_name"></div>
+    </fieldset>
+<p>NB: Eliminerai anche i collegamenti alle varianti</p>	
+</div>
 <script type="text/javascript">
     // Basato su: http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
     $(document).on('change', '.btn-file :file', function () {
@@ -444,7 +578,6 @@ if ($modal === false) {
 
         });
     });</script>
-
 
 <?php
 /** ENRICO FEDELE */

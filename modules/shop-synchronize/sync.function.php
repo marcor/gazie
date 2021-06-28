@@ -148,7 +148,7 @@ class shopsynchronizegazSynchro {
 			} else {
 			 
 				// imposto la connessione al server
-				$conn_id = ftp_connect($ftp_host);
+				$conn_id = ftp_connect($ftp_host)or die("Could not connect to $ftp_server");;
 
 				// effettuo login con user e pass
 				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);

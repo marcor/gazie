@@ -58,7 +58,7 @@ if (isset($_GET['term'])) {
 			$return[$n]=$res;
 			$n++;
 		}
-		$query = "SELECT * FROM " . $gTables['artico'] . " WHERE id_artico_group ='". $codice ."'";
+		$query = "SELECT codice, descri FROM " . $gTables['artico'] . " WHERE id_artico_group ='". $codice ."'";
 		$result = gaz_dbi_query($query);
 		while ($res = $result->fetch_assoc()){       
 			$return[$n]=$res;
