@@ -49,7 +49,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 
 if(isset($_GET['delete'])) {		
 	gaz_dbi_table_update ("artico", $_GET['delete'], array("id_artico_group"=>"") );		
-	header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$_GET['group']);		
+	header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$_GET['group']."&tab=variant");		
 }
 
 if(isset($_GET['group_delete'])) {
@@ -73,6 +73,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['large_descri'] = filter_input(INPUT_POST, 'large_descri');
 	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_STRING);
 	$form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_STRING);
+	
+	if ((isset($_GET['tab']) AND $_GET['tab']=="variant") or ($_POST['cosear'] <> $_POST['codart']) ){
+		$cl_home="";
+		$cl_home_tab="";
+		$cl_variant="active";
+		$cl_variant_tab="in active";
+	} else {
+		$cl_home="active";
+		$cl_home_tab="in active";
+		$cl_variant="";
+		$cl_variant_tab="";
+	}
    
 	if(isset($_POST['codart']) AND isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){	// se si salva la selezione degli articoli facenti parte del gruppo
 		if ($toDo == 'insert'){// se è un nuovo inserimento gruppo
@@ -81,11 +93,21 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			}
 			if (strlen($_POST['codart'])==0){
 				$msg['err'][] = 'empty_var';
+				$cl_home="";
+				$cl_home_tab="";
+				$cl_variant="active";
+				$cl_variant_tab="in active";
 			} 
 		}
-		// devo controllare se l'articolo che si sta inserendo appartiene già ad un altro gruppo		
-		if (gaz_dbi_get_row($gTables['artico'], 'codice', $_POST['codart'])['id_artico_group']){
+		// devo controllare se l'articolo che si sta inserendo appartiene già ad un altro gruppo
+		$ckart=gaz_dbi_get_row($gTables['artico'], 'codice', $_POST['codart']);
+		
+		if (!isset($ckart['id_artico_group']) AND strlen($_POST['codart'])>0){
 			$msg['err'][] = 'grcod';
+			$cl_home="";
+			$cl_home_tab="";
+			$cl_variant="active";
+			$cl_variant_tab="in active";
 		}
 		
 		if (count($msg['err']) == 0) {// nessun errore
@@ -95,11 +117,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']) );					
 								
 				// il redirect deve modificare il form in update perché è stato già inserito
-				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']);			
+				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']."&tab=variant");			
 			} elseif (isset($_POST['codart'])){
 				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']));	
 				// il redirect deve modificare il form in update perché è stato già inserito
-				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']);	
+				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']."&tab=variant");	
 			}
 		}		
 	}	
@@ -223,6 +245,19 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form = gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', substr($_GET['id_artico_group'], 0, 9));
 	$form['cosear'] = "";
 	$form['codart'] = "";
+	
+	if (isset($_GET['tab']) AND $_GET['tab']=="variant"){
+		$cl_home="";
+		$cl_home_tab="";
+		$cl_variant="active";
+		$cl_variant_tab="in active";
+	} else {
+		$cl_home="active";
+		$cl_home_tab="in active";
+		$cl_variant="";
+		$cl_variant_tab="";
+	}
+	
     /** ENRICO FEDELE */
     if ($modal === false) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -248,7 +283,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['large_descri'] = '';	
 	$form['ref_ecommerce_id_main_product']="";
 	$form['id_artico_group'] = "";
-   
+	
+	$cl_home="active";
+	$cl_home_tab="in active";
+	$cl_variant="";
+	$cl_variant_tab="";
 }
 
 /** ENRICO FEDELE */
@@ -366,18 +405,19 @@ function groupErase(group,descri){
 			echo '<div class="text-center"><h3>' . $script_transl['upd_this'] . ' ' . $form['id_artico_group'] . '</h3></div>';
 		}
 		?>
+	
 		<div class="text-center"><p>Solitamente, gli e-commerce usano creare degli articoli, le varianti, molto simili fra loro ponendoli sotto un articolo principale, il genitore. <br>Per GAzie, il genitore è il gruppo e le varianti sono i singoli articoli che fanno riferimento allo stesso gruppo. </p></div>
 			<div class="panel panel-default gaz-table-form div-bordered">
 				<div class="container-fluid">
 					<ul class="nav nav-pills">
-						<li class="active"><a data-toggle="pill" href="#home">Dati principali</a></li>
-						<li><a data-toggle="pill" href="#magazz">Magazzino</a></li>
-						<li><a data-toggle="pill" href="#variant">Varianti</a></li>
-						<li><a data-toggle="pill" href="#chifis">Altro</a></li>
+						<li class="<?php echo $cl_home;?>"><a data-toggle="pill" href="#home">Dati principali</a></li>
+						
+						<li class="<?php echo $cl_variant;?>"><a data-toggle="pill" href="#variant">Varianti</a></li>
+						
 						<li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
 					</ul>  
 					<div class="tab-content">
-						<div id="home" class="tab-pane fade in active">
+						<div id="home" class="tab-pane fade <?php echo $cl_home_tab;?>">
 							<?php if ($toDo !== 'insert'){?>
 							<div class="row">
 								<div class="col-md-12">
@@ -431,9 +471,7 @@ function groupErase(group,descri){
 									</div>
 								</div>
 							</div><!-- chiude row  -->				   
-						</div><!-- chiude tab-pane  -->	
-						
-						<div id="magazz" class="tab-pane fade">									
+															
 							<!--+ DC - 06/02/2019 div class="row" --->
 							<div id="refEcommercIdProduct" class="row IERincludeExcludeRow">
 								<div class="col-md-12">
@@ -476,7 +514,7 @@ function groupErase(group,descri){
 							</div><!-- chiude row  -->				
 							</div><!-- chiude tab-pane  -->
 							
-							<div id="variant" class="tab-pane fade">
+							<div id="variant" class="tab-pane fade <?php echo $cl_variant_tab;?>">
 								<div class="container-fluid">
 								<?php $color='eeeeee';
 								
@@ -513,10 +551,7 @@ function groupErase(group,descri){
 						</div>					
 						
 					</div><!-- chiude tab-pane  -->
-						
-					<div id="chifis" class="tab-pane fade">					
-						
-					</div><!-- chiude tab-pane  -->
+										
 				</div><!-- chiude tab conten -->
 				<div class="col-sm-12">
 					<?php
