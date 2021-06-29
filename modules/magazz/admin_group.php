@@ -74,7 +74,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_STRING);
 	$form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_STRING);
 	
-	if ((isset($_GET['tab']) AND $_GET['tab']=="variant") or ($_POST['cosear'] <> $_POST['codart']) ){
+	if ((isset($_GET['tab']) && $_GET['tab']=="variant") || ($_POST['cosear'] <> $_POST['codart']) ){
 		$cl_home="";
 		$cl_home_tab="";
 		$cl_variant="active";
@@ -102,7 +102,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		// devo controllare se l'articolo che si sta inserendo appartiene già ad un altro gruppo
 		$ckart=gaz_dbi_get_row($gTables['artico'], 'codice', $_POST['codart']);
 		
-		if (!isset($ckart['id_artico_group']) AND strlen($_POST['codart'])>0){
+		if (!isset($ckart['id_artico_group']) && strlen($_POST['codart'])>0){
 			$msg['err'][] = 'grcod';
 			$cl_home="";
 			$cl_home_tab="";
@@ -111,7 +111,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		}
 		
 		if (count($msg['err']) == 0) {// nessun errore
-			if (isset($_POST['codart']) AND $toDo == 'insert'){ 
+			if (isset($_POST['codart']) && $toDo == 'insert'){ 
 				gaz_dbi_table_insert('artico_group', $form);
 				$form['id_artico_group']=gaz_dbi_last_id();
 				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']) );					
@@ -242,11 +242,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		exit;
 	}
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
-    $form = gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', substr($_GET['id_artico_group'], 0, 9));
+    $form = gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', intval($_GET['id_artico_group']));
 	$form['cosear'] = "";
 	$form['codart'] = "";
 	
-	if (isset($_GET['tab']) AND $_GET['tab']=="variant"){
+	if (isset($_GET['tab']) && $_GET['tab']=="variant"){
 		$cl_home="";
 		$cl_home_tab="";
 		$cl_variant="active";
@@ -406,13 +406,13 @@ function groupErase(group,descri){
 		}
 		?>
 	
-		<div class="text-center"><p>Solitamente, gli e-commerce usano creare degli articoli, le varianti, molto simili fra loro ponendoli sotto un articolo principale, il genitore. <br>Per GAzie, il genitore è il gruppo e le varianti sono i singoli articoli che fanno riferimento allo stesso gruppo. </p></div>
+		<div class="panel panel-warning gaz-table-form"><p><?php echo $script_transl['info']; ?> </p></div>
 			<div class="panel panel-default gaz-table-form div-bordered">
 				<div class="container-fluid">
 					<ul class="nav nav-pills">
-						<li class="<?php echo $cl_home;?>"><a data-toggle="pill" href="#home">Dati principali</a></li>
+						<li class="<?php echo $cl_home;?>"><a data-toggle="pill" href="#home"><?php echo $script_transl['home']; ?></a></li>
 						
-						<li class="<?php echo $cl_variant;?>"><a data-toggle="pill" href="#variant">Varianti</a></li>
+						<li class="<?php echo $cl_variant;?>"><a data-toggle="pill" href="#variant"><?php echo $script_transl['variant']; ?></a></li>
 						
 						<li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
 					</ul>  
@@ -552,7 +552,6 @@ function groupErase(group,descri){
 						
 					</div><!-- chiude tab-pane  -->
 										
-				</div><!-- chiude tab conten -->
 				<div class="col-sm-12">
 					<?php
 					/** ENRICO FEDELE */

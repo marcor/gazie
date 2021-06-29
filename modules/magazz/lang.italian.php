@@ -490,6 +490,10 @@ $strScript = array("browse_document.php" =>
         'war' => array(
             'ok_ins' => 'Articolo inserito con successo'
 		),
+		'info' => 'Solitamente gli e-commerce usano creare degli articoli con caratteristiche molto simili tra loro ponendoli sotto un articolo principale, il genitore. <br/>Per permettere la sincronizzazione 
+        dei databases in GAzie un genitore è definito "gruppo" e le varianti, opzioni, attributi sono i singoli articoli che fanno riferimento allo stesso gruppo-genitore.',
+		'home' => "ID gruppo",
+		'variant' => "Varianti, opzioni, attributi",
 		'codice' => "ID gruppo",
         'descri' => "Descrizione",        
 		'image' => 'immagine',        
@@ -500,7 +504,6 @@ $strScript = array("browse_document.php" =>
         'depli_public_value' => array(0 => 'No', 1 => 'Si'),
         'web_url' => 'Web url<br />(es: http://site.com/item.html)',
         'modal_ok_insert' => 'Articolo inserito con successo clicca sulla X in alto a destra per uscire oppure...',
-       
         'mesg' => array(
         )
     ),

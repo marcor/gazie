@@ -152,52 +152,53 @@ function getorders(artico) {
 };
 function getgroup(artico) {	
 	$("#idgroup").append("Gruppo");	
-  $("#dialog_group").attr("title","Gruppo articoli per varianti ID "+artico);  
+    $("#dialog_group").attr("title","Gruppo articoli per varianti ID "+artico);  
 	$.get("ajax_request.php?opt=group",
 		{term: artico},
 		function (data) {
-			var j=0;			
-				$.each(data, function(i, value) {
-				j++;
-				if (j==1){	
-				$(".list_group").append("<tr><td>"+value.descri+"&nbsp;&nbsp;<button>Modifica gruppo</button></td></tr><tr><td>&nbsp;</td></tr>");
-				$(".list_group").click(function () {
-					window.open('../magazz/admin_group.php?Update&id_artico_group='+ value.id_artico_group);
-				});	
-				$("#idvar").append("composto dalle seguenti varianti:");
-				$(".list_variants").append("<tr><td>Codice&nbsp;</td><td>Descrizione</td></tr>");
-				} else {
-					$(".list_variants").append("<tr><td>"+value.codice+"&nbsp;</td><td>"+value.descri+"</td></tr>");
-					
-				}				
-				});
-
-				if (j==0){
-					$(".list_orders").append('<tr><td class="bg-danger">********* Non ci sono varianti in questo gruppo articoli*********</td></tr>');
-				}					
+            var j=0;			
+			$.each(data, function(i, value) {
+                j++;
+                if (j==1) {	
+                    $(".list_group").append("<tr><td>"+value.descri+"&nbsp;&nbsp;</td></tr><tr><td>&nbsp;</td></tr>");
+                    $("#idvar").append("composto dalle seguenti varianti:");
+                    $(".list_variants").append("<tr><td>Codice&nbsp;</td><td>Descrizione</td></tr>");
+                } else {
+                    $(".list_variants").append("<tr><td> "+(j-1)+") "+value.codice+"&nbsp;</td><td>"+value.descri+"</td></tr>");
+                }				
+			});
+			if (j==0){
+				$(".list_orders").append('<tr><td class="bg-danger">********* Non ci sono varianti in questo gruppo articoli*********</td></tr>');
+			}					
 		}, "json"  
 	);		  
 	$( function() {		
-    var dialog
-	,	
-	dialog = $("#dialog_group").dialog({		
-		modal: true,
-		show: "blind",
-		hide: "explode",
-		width: "auto",
-		buttons: {
-			Chiudi: function() {
-				$(this).dialog('close');
-			}			
-		},		 
-		close: function(){
+        var dialog,	
+        dialog = $("#dialog_group").dialog({		
+            modal: true,
+            show: "blind",
+            hide: "explode",
+            width: "auto",
+            buttons: {
+                Modifica:{
+                    text:'Modifica il gruppo', 
+					'class':'btn btn-warning',
+					click:function (event, ui) {
+                        window.open('../magazz/admin_group.php?Update&id_artico_group='+ artico);
+                    }
+                },
+                Chiudi: function() {
+                    $(this).dialog('close');
+                }			
+            },		 
+            close: function(){
 				$("p#idgroup").empty();
 				$("p#idvar").empty();
 				$("div.list_group tr").remove();
 				$("div.list_variants tr").remove();
 				$(this).dialog('destroy');
-		}
-	});
+            }
+        });
 	});
 };
 function getlastbuys(artico) {	
