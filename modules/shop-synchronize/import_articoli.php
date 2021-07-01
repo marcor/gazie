@@ -189,6 +189,8 @@ if (isset($_POST['conferma'])) { // se confermato
 						}
 					} elseif ($_GET['updpre']=="updpre" AND $_GET['updname']!=="updnam" AND $_POST['product_type'.$ord]!=="parent") { // altrimenti aggiorno il prezzo ma non aggiorno il nome
 						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET catmer = '". $category ."', peso_specifico = '".$_POST['weight'.$ord]."', web_price = '".addslashes($_POST['web_price'.$ord])."', id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+					} else {// oppure aggiorno i dati default ma no nome e no prezzo
+						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET catmer = '". $category ."', peso_specifico = '".$_POST['weight'.$ord]."', id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 					}
 				
 			} elseif (!$esiste AND $_GET['imp']=="impval"){ // altrimenti, se è attivo l'inserimento, inserisco un nuovo articolo
