@@ -328,12 +328,13 @@ class DocContabVars {
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
 			// Antonio Germani - se c'è un codice a barre valorizzo barcode
-			$barcode = gaz_dbi_get_row( $this->gTables['artico'], 'codice', $rigo['codart']);
-			if ($barcode && intval($barcode['barcode'])>0){
-				$rigo['barcode']=$barcode['barcode'];
+			$art = gaz_dbi_get_row( $this->gTables['artico'], 'codice', $rigo['codart']);
+			if ($art && intval($art['barcode'])>0){
+				$rigo['barcode']=$art['barcode'];
 			} else {
 				$rigo['barcode']="";
 			}
+			
 			// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione
 			$checklot=gaz_dbi_get_row($this->gTables['movmag'],'id_mov',$rigo['id_mag']);
 			if ($checklot && strlen ($checklot['id_lotmag'])>0){
@@ -346,6 +347,12 @@ class DocContabVars {
 					}
 				}
 			}
+			
+			//Antonio Germani
+			if ($art AND ($art['durability_mu']==">" OR $art['durability_mu']=="<")){ // se impostato accodo la durabilità alla descrizione serve per gli agroalimentari
+				$rigo['descri'] = $rigo['descri']." - Durabilità ".$art['durability_mu']." ".$art['durability']."gg";
+			}
+			
 			// fine se c'è lotto
 			$from = $this->gTables['orderman'] . ' AS om
                  LEFT JOIN ' . $this->gTables['tesbro'] . ' AS tb
