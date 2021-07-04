@@ -105,7 +105,7 @@ class shopsynchronizegazSynchro {
 			$magval = array_pop($mv);
 			// trovo l'ID di riferimento e calcolo la disponibilità
 			$id = gaz_dbi_get_row($gTables['artico'],"codice",$d['codice']);
-			$fields = array ('product_id' => intval($id),'quantity'=>intval($magval['q_g']));
+			$fields = array ('product_id' => $id['ref_ecommerce_id_product'],'quantity'=>intval($magval['q_g']));
 			$ordinati = $gForm->get_magazz_ordinati($d['codice'], "VOR");
 			$ordinati = $ordinati + $gForm->get_magazz_ordinati($d['codice'], "VOW");
 			$avqty=$fields['quantity']-$ordinati;
@@ -271,7 +271,7 @@ class shopsynchronizegazSynchro {
 			$mv = $gForm->getStockValue(false, $d);
 			$magval = array_pop($mv);
 			// creo array fields con ID di riferimento e  disponibilità			
-			$fields = array ('product_id' => intval($id),'quantity'=>intval($magval['q_g']));
+			$fields = array ('product_id' => $id['ref_ecommerce_id_product'],'quantity'=>intval($magval['q_g']));
 			$ordinati = $gForm->get_magazz_ordinati($d, "VOR");
 			$ordinati = $ordinati + $gForm->get_magazz_ordinati($d, "VOW");
 			$avqty=$fields['quantity']-$ordinati;

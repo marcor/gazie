@@ -469,6 +469,10 @@ $strScript = array("browse_document.php" =>
         'id_anagra' => 'Fornitore',
 		'last_buys' => 'Ultimi acquisti da fornitori',
 		'ordinabile' => 'Articolo ordinabile',
+		'durability_mu' => 'Unità di misura durabilità',
+		'durability' => 'Valore durabilità',
+		'warranty_days' => 'Giorni di garanzia',
+		'unita_durability' => array('' => '', '>' => '>', '<' => '<', 'H' => 'H', 'D' => 'D', 'M' => 'M'),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'

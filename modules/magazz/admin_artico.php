@@ -91,8 +91,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
    * fornitore
    */
   $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
-  foreach ($_POST['search'] as $k => $v) {
-      $form['search'][$k] = $v;
+  if (isset ($_POST['search'])){
+	  foreach ($_POST['search'] as $k => $v) {
+		  $form['search'][$k] = $v;
+	  }
   }
   /** fine modifica FP */
   // inizio documenti/certificati
@@ -108,7 +110,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   // fine documenti/certificati
 	// Antonio Germani - inizio immagini e-commerce
   $nimg = 0;
-  if (isset($_POST['imgrows'])) {
+  if (isset($_POST['imgrows']) & isset($_POST['rows'])) {
     foreach ($_POST['rows'] as $nimg => $value) {
       $form['imgrows'][$nimg]['id_doc'] = intval($value['id_doc']);
       $form['imgrows'][$nimg]['extension'] = substr($value['extension'], 0, 5);
@@ -811,6 +813,34 @@ if ($modal_ok_insert === true) {
     $gForm->variousSelect('movimentabile', $script_transl['movimentabile_value'], $form['movimentabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
     ?>
                          </div>
+                    </div>
+                </div><!-- chiude row  -->
+				<div id="depliPublic" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="durability_mu" class="col-sm-4 control-label"><?php echo $script_transl['durability_mu']; ?></label>
+    <?php
+    $gForm->variousSelect('durability_mu', $script_transl['unita_durability'], $form['durability_mu'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+    ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+				
+                <div id="webUrl" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="durability" class="col-sm-4 control-label"><?php echo $script_transl['durability']; ?></label>
+                            <input class="col-sm-4" type="text" value="<?php echo $form['durability']; ?>" name="durability" maxlength="4" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+				
+                <div id="webUrl" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="warranty_days" class="col-sm-4 control-label"><?php echo $script_transl['warranty_days']; ?></label>
+                            <input class="col-sm-4" type="text" value="<?php echo $form['warranty_days']; ?>" name="warranty_days" maxlength="4" />
+                        </div>
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
