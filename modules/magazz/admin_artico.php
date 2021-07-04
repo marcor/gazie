@@ -110,7 +110,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   // fine documenti/certificati
 	// Antonio Germani - inizio immagini e-commerce
   $nimg = 0;
-  if (isset($_POST['imgrows']) & isset($_POST['rows'])) {
+  if (isset($_POST['imgrows']) && isset($_POST['rows'])) {
     foreach ($_POST['rows'] as $nimg => $value) {
       $form['imgrows'][$nimg]['id_doc'] = intval($value['id_doc']);
       $form['imgrows'][$nimg]['extension'] = substr($value['extension'], 0, 5);
