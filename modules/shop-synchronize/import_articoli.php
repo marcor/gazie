@@ -143,11 +143,11 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 			
 			$id_artico_group="";
-			if ($_POST['product_parent_id'.$ord] > 0){ // se è una variante
+			if ($esiste AND $_POST['product_parent_id'.$ord] > 0){ // se è una variante
 			
 				$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_parent_id'.$ord]);// trovo il padre in GAzie
 				if (!isset($parent)){
-					header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=2");
+					header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=2&parent=".$_POST['product_parent_id'.$ord]."&code=".$_POST['codice'.$ord]);
 					exit;
 				}
 				$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
@@ -157,7 +157,8 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 			
 			if ($esiste AND $_GET['upd']=="updval"){ // se esiste l'articolo ed è attivo l'update, aggiorno l'articolo
-	
+					
+					// Body text
 					if (strlen($_POST['body_text'.$ord])>0 AND $_GET['upddes']=="upddes"){ // se c'è una descrizione estesa body_text ed è selezionata
 						if ($_POST['product_type'.$ord]=="parent"){ // se è un parent					
 							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET large_descri = '". htmlspecialchars_decode (addslashes($_POST['body_text'.$ord])) ."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
@@ -174,23 +175,29 @@ if (isset($_POST['conferma'])) { // se confermato
 							}
 						}
 					}
-					if ($_GET['updpre']=="updpre" AND $_GET['updname']=="updnam") { // se devo aggiornare prezzo e nome
 					
+					if (intval($category)>0){
+						$updcat="catmer = '". $category ."',";
+					} else {
+						$updcat="";
+					}
+					if ($_GET['updpre']=="updpre" AND $_GET['updname']=="updnam") { // se devo aggiornare prezzo e nome
+						
 						if ($_POST['product_type'.$ord]=="parent"){ // se è un parent					
 							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($_POST['descri'.$ord])) ."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {
-							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET catmer = '". $category ."', peso_specifico = '".$_POST['weight'.$ord]."', descri = '".addslashes($_POST['descri'.$ord])."', web_price = '".addslashes($_POST['web_price'.$ord])."' , id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', descri = '".addslashes($_POST['descri'.$ord])."', web_price = '".addslashes($_POST['web_price'.$ord])."' , id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 						}
 					} elseif ($_GET['updpre']!=="updpre" AND $_GET['updname']=="updnam") { // altrimenti non aggiorno il prezzo ma aggiorno il nome
 						if ($_POST['product_type'.$ord]=="parent"){ // se è un parent					
 							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($_POST['descri'.$ord])) ."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {
-							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET catmer = '". $category ."', peso_specifico = '".$_POST['weight'.$ord]."', descri = '".addslashes($_POST['descri'.$ord])."', id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', descri = '".addslashes($_POST['descri'.$ord])."', id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 						}
 					} elseif ($_GET['updpre']=="updpre" AND $_GET['updname']!=="updnam" AND $_POST['product_type'.$ord]!=="parent") { // altrimenti aggiorno il prezzo ma non aggiorno il nome
-						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET catmer = '". $category ."', peso_specifico = '".$_POST['weight'.$ord]."', web_price = '".addslashes($_POST['web_price'.$ord])."', id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', web_price = '".addslashes($_POST['web_price'.$ord])."', id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 					} else {// oppure aggiorno i dati default ma no nome e no prezzo
-						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET catmer = '". $category ."', peso_specifico = '".$_POST['weight'.$ord]."', id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', id_artico_group ='". $id_artico_group ."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 					}
 				
 			} elseif (!$esiste AND $_GET['imp']=="impval"){ // altrimenti, se è attivo l'inserimento, inserisco un nuovo articolo
@@ -433,6 +440,7 @@ if (!isset($_GET['success'])){
 	<div class="alert alert-danger alert-dismissible">
 		<a href="../../modules/shop-synchronize/synchronize.php" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 		<strong>Errore, importazione interrotta!</strong> Si è tentato di importare una variante senza aver prima importato/creato un articolo padre in artico_group.
+		<p>ParentID mancante: <?php echo $_GET['parent']; ?> Codice variante: <?php echo $_GET['code']; ?></p>
 	</div>
 	<?php
 	}
