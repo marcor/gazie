@@ -225,7 +225,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				$form['expiry'][$m] = "";
 				$form['filename'][$m] = "";
 			}
+			
 			$form['quanti'][$m] = gaz_format_quantity($_POST['quanti' . $m], 0, $admin_aziend['decimal_quantity']);
+			
 			$form['scorig'][$m] = $_POST['scorig' . $m];
 			$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
 			if (isset($_POST['quanti2' . $m])){
@@ -328,6 +330,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
         $form['filename'][$form['mov']] = "";
     }
     $form['quanti'][$form['mov']] = gaz_format_quantity($_POST['quanti' . $form['mov']], 0, $admin_aziend['decimal_quantity']);
+	
     if ((isset($_POST['prezzo' . $form['mov']]) > 0) && (strlen($_POST['prezzo' . $form['mov']]) > 0)) {
         $form['prezzo'][$form['mov']] = $_POST['prezzo' . $form['mov']];
         $form['prezzo'][$form['mov']] = str_replace('.', '', $form['prezzo'][$form['mov']]);
@@ -570,8 +573,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			$nn=0;$quanti=0;
 			if (isset ($form['dim_campo1'])) { // se c'è almeno un campo
 				for ($n = 1;$n <= $form['ncamp'];++$n) { // ciclo i campi inseriti
-					$quanti=((($form['dim_campo'.$n]/$tot_sup)*100)*$form['quanti'][$m])/100; // questa è la dose suddivisa in percentuale per il campo 
+					if ($form['ncamp']>1){// se c'è più di un campo
+						$quanti=((($form['dim_campo'.$n]/$tot_sup)*100)*$form['quanti'][$m])/100; // questa è la dose suddivisa in percentuale per il campo 
 					
+					} else {
+						$quanti=$form['quanti'][$m];
+					}
 					if ($dose_usofito > 0) { //Controllo se la quantità o dose è giusta rapportata al campo di coltivazione
 						If ($dose_usofito > 0 && $quanti > $dose_usofito * $form['dim_campo'.$n] && $form['operat'] == - 1 && $form['dim_campo'.$n] > 0) {
 							$msg.= "34+"; // errore dose uso fito superata
@@ -651,7 +658,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 					
 					$nn=0;
 					for ($n = 1;$n <= $form['ncamp'];++$n) { // ciclo i campi inseriti
-						if (isset ($form['dim_campo'.$n])) {
+						if (isset ($form['dim_campo'.$n]) AND $form['ncamp']>1) {
 							$quanti=((($form['dim_campo'.$n]/$tot_sup)*100)*$form['quanti'][$form['mov']])/100; // questa è la dose suddivisa in percentuale per il campo 
 						} else {
 							$quanti=$form['quanti'][$form['mov']];
