@@ -150,7 +150,7 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		If ($row['classif_amb']==4){$pdf->Cell(6,6,"T+",1);}
 		If ($row['classif_amb']==5){$pdf->Cell(6,6,"Pa",1);}
 		$pdf->Cell(8,6,$row['unimis'],1,0,'C');
-		$pdf->Cell(13,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
+		$pdf->Cell(13,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1, 0, 'l', 0, '', 1);
 		
 		if ($row['id_rif']>$row['id_mov']){
 			
