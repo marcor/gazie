@@ -305,7 +305,7 @@ if (isset($_POST['preview']) and $msg=='') {
 			}
             echo "<td class=\"FacetDataTD\" >".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
 			if (intval($mv['id_lotmag'])>0){
-				echo " lotto: ",$mv['identifier'];
+				echo " lotto: ",$mv['id_lotmag'],"-",$mv['identifier'];
 			}
 			echo "</td>";
             echo "<td align=\"right\" class=\"FacetDataTD\" >".number_format($mv['prezzo'],$admin_aziend['decimal_price'],',','.')."</td>";
