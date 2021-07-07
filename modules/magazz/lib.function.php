@@ -718,7 +718,7 @@ class magazzForm extends GAzieForm {
         if ($tipdoc == 'FAD') {  // per il magazzino una fattura differita è come dire DDT
             $tipdoc = 'DDT';
         }
-        if (substr($tipdoc, 0, 1) == 'A' or $tipdoc == 'DDR' or $tipdoc == 'DDL') { //documento di acquisto
+        if (substr($tipdoc, 0, 1) == 'A' or $tipdoc == 'DDR' or $tipdoc == 'DDL' or $tipdoc == 'RDL') { //documento di acquisto
             require("../../modules/acquis/lang." . $admin_aziend['lang'] . ".php");
             $desdoc = $strScript['admin_docacq.php'][0][$tipdoc];
         } elseif ($tipdoc == 'INV') {
