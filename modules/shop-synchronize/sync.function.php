@@ -86,7 +86,7 @@ class shopsynchronizegazSynchro {
 		// aggiorno i dati del genitore delle varianti
 	}
 	function UpsertProduct($d) {
-		if ($d['web_public'] == 1){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
+		if ($d['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
 			@session_start();		
 			global $gTables,$admin_aziend;
 			$rawres=[];
@@ -193,6 +193,7 @@ class shopsynchronizegazSynchro {
 				$xml_output .= "\t<Unimis>".$d['unimis']."</Unimis>\n";
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 				$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
+				$xml_output .= "\t<WebPublish>".$d['web_public']."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
 				$xml_output .= "\t</Product>\n";			
 			$xml_output .="</Products>\n</GAzieDocuments>";
 			$xmlFile = "prodotti.xml";
@@ -258,7 +259,7 @@ class shopsynchronizegazSynchro {
 		global $gTables,$admin_aziend;
 		$rawres=[];
 		$id = gaz_dbi_get_row($gTables['artico'],"codice",$d);
-		if ($id['web_public'] == 1){
+		if ($id['web_public'] > 0){
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			

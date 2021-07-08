@@ -175,6 +175,8 @@ if (isset($_POST['conferma'])) { // se confermato
 			if ($_GET['descri']=="upddes" AND strlen($_POST['body_text'.$ord])>0){
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($_POST['body_text'.$ord]))."</Description>\n";
 			}
+			$xml_output .= "\t<WebPublish>".$_POST['web_public'.$ord]."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
+
 			if ($_GET['img']=="updimg" AND strlen($_POST['imgurl'.$ord])>0){
 				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){					
 					// scrivo l'immagine web HQ nella cartella e-commerce
@@ -346,7 +348,7 @@ if (!isset($_GET['success'])){
 				</div>
 				<?php
 				// carico in $artico gli articoli che sono presenti in GAzie
-				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
+				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
 					$ref_ecommerce_id_main_product="";
@@ -388,6 +390,7 @@ if (!isset($_GET['success'])){
 									$body = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_". $item['codice']);
 									echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($body['body_text'])) . '">';
 								}
+								echo '<input type="hidden" name="web_public'. $n .'" value="'. $item['web_public'] . '">';
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $avqty .'">';
 								echo '<input type="hidden" name="aliiva'. $n .'" value="'. $item['aliiva'] .'">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $item['web_price'] .'">';
