@@ -155,6 +155,11 @@ if (isset($_POST['conferma'])) { // se confermato
 			$xml_output .= "\t<Product>\n";
 			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
 			$xml_output .= "\t<IdMain>".$_POST['ref_ecommerce_id_main_product'.$ord]."</IdMain>\n";
+			if (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0){
+				$xml_output .= "\t<Type>variant</Type>\n";
+			} else {
+				$xml_output .= "\t<Type>product</Type>\n";
+			}
 			$xml_output .= "\t<Code>".$_POST['codice'.$ord]."</Code>\n";
 			$xml_output .= "\t<BarCode>".$_POST['barcode'.$ord]."</BarCode>\n";
 			if ($_GET['qta']=="updqty"){
