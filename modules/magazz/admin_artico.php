@@ -78,6 +78,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form = gaz_dbi_parse_post('artico');
   $form['codice'] = trim($form['codice']);
   $form['ritorno'] = $_POST['ritorno'];
+  $form['web_public_init'] = $_POST['web_public_init'];
   $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
   // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
   $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
@@ -122,7 +123,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['body_text'] = filter_input(INPUT_POST, 'body_text');
   /** ENRICO FEDELE */
   /* Controllo se il submit viene da una modale */
-  if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // conferma tutto
+  if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // ***  CONFERMA TUTTO ***
     /** ENRICO FEDELE */
     if ($toDo == 'update') {  // controlli in caso di modifica
         if ($form['codice'] != $form['ref_code']) { // se sto modificando il codice originario
@@ -213,7 +214,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       $msg['err'][] = 'codart_len';
   }
 	
-  if (count($msg['err']) == 0) { // nessun errore
+  if (count($msg['err']) == 0) { // ***  NESSUN ERRORE  ***
     if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
 			if ($largeimg==0){
 				$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
@@ -233,11 +234,21 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** fine modifica FP */
     $tbt = trim($form['body_text']);
     // aggiorno il db
-    if ($toDo == 'insert') {
-      gaz_dbi_table_insert('artico', $form);
-      if (!empty($tbt)) {
-        bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-      }
+	
+	// Una sola variante può essere prestabilita
+	if ($form['web_public_init']<>$form['web_public'] AND $form['id_artico_group']>0){ // se è una variante ed è stata modificata la pubblicazione su e-commerce o è un insert
+		// prendo tutte le varianti esistenti di questo gruppo
+		$var_row = gaz_dbi_dyn_query("*", $gTables['artico'], "id_artico_group = '" . $form['id_artico_group'] . "'");
+		while ($row = gaz_dbi_fetch_array($var_row)) { // le ciclo
+			// se questa del form è prestabilita devo togliere l'eventuale prestabilito delle altre varianti
+		}
+	}
+	
+    if ($toDo == 'insert') {		
+		gaz_dbi_table_insert('artico', $form);
+		if (!empty($tbt)) {
+		bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+		}
     } elseif ($toDo == 'update') {
       gaz_dbi_table_update('artico', $form['ref_code'], $form);
       $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
@@ -309,6 +320,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['ritorno'] = 'admin_artico.php';
     }
+	$form['web_public_init']=$form['web_public'];
     /** ENRICO FEDELE */
     $form['ref_code'] = $form['codice'];
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
@@ -351,6 +363,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['ritorno'] = 'admin_artico.php';
     }
+	$form['web_public_init'] = 0;
     /** ENRICO FEDELE */
     $form['ref_code'] = '';
     $form['aliiva'] = $admin_aziend['preeminent_vat'];
@@ -361,7 +374,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
     $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
-    $form['web_public'] = 1;
+    $form['web_public'] = 0;
     $form['depli_public'] = 1;
     /** inizio modifica FP 03/12/2015
      * filtro per fornitore ed ordinamento
@@ -467,6 +480,8 @@ if ($modal_ok_insert === true) {
     		<?php
     }
     echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
+	echo '<input type="hidden" name="web_public_init" value="'.$form['web_public_init'].'" />';
+	echo '<input type="hidden" name="id_artico_group" value="'.$form['id_artico_group'].'" />';
     if (count($msg['err']) > 0) { // ho un errore
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     }
