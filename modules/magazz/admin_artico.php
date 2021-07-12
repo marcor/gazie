@@ -843,6 +843,17 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+                <div id="id_anagra" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="id_anagra" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>
+    <?php
+    $select_id_anagra = new selectPartner("id_anagra");
+    $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
+    ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="last_buys" class="row IERincludeExcludeRow">
                     <div class="col-xs-12">
