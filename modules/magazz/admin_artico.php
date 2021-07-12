@@ -236,11 +236,17 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     // aggiorno il db
 	
 	// Una sola variante può essere prestabilita
-	if ($form['web_public_init']<>$form['web_public'] AND $form['id_artico_group']>0){ // se è una variante ed è stata modificata la pubblicazione su e-commerce o è un insert
+	// legenda web_public: 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
+	if ($form['web_public_init']<>$form['web_public'] AND $form['id_artico_group']>0 AND $form['web_public']>1){ // se è una variante, ed è stata modificata la pubblicazione su e-commerce, e gli si vuole dare una priorità
 		// prendo tutte le varianti esistenti di questo gruppo
 		$var_row = gaz_dbi_dyn_query("*", $gTables['artico'], "id_artico_group = '" . $form['id_artico_group'] . "'");
 		while ($row = gaz_dbi_fetch_array($var_row)) { // le ciclo
-			// se questa del form è prestabilita devo togliere l'eventuale prestabilito delle altre varianti
+			// devo togliere l'eventuale prestabilito delle altre varianti
+			if ($row['codice'] <> $form['codice'] AND $row['web_public']>0 AND $row['web_public']<5){ // se non è la variante in questione, cioè quella oggetto del form e non è disattivata
+				$where = array("0" => "codice", "1" => $row['codice']);
+				$what = array("web_public" => "1");
+				gaz_dbi_table_update("artico",$where, $what); // riporto web_public a 1
+			}
 		}
 	}
 	
