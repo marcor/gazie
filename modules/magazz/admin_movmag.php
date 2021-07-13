@@ -28,6 +28,7 @@ require ("../../modules/camp/lib.function.php");
 
 $admin_aziend = checkAdmin();
 $msg = "";
+$warnmsg = "";
 $lm = new lotmag;
 $gForm = new magazzForm;
 $sil= new silos();
@@ -313,15 +314,16 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		}		
 	}
 	if ($form['lot_or_serial']==1){ // se articolo con lotti ...
-		$form['datreg'] = $form['annreg'] . "-" . substr("0".$form['mesreg'],-2) . "-" . substr("0".$form['gioreg'],-2);
-		
-		$lm -> getAvailableLots($form['artico'],0,$form['datreg']);							
-		$tot=0;
-		foreach ($lm->available as $v_lm) {// ciclo tutti i lotti disponibili
-			$tot+=$v_lm['rest']; // sommo le quantità
-		}							
-		if ($tot <> $form['quanti']){ // se la quantità richiesta non corrisponde a quella reale segnalo!
-			$msg .= "35+";echo "Giacenza lotti: ",$tot," data reg.: ",$form['datreg'];		
+		$form['datreg'] = $form['annreg'] . "-" . substr("0".$form['mesreg'],-2) . "-" . substr("0".$form['gioreg'],-2);		
+		if ($form['operat'] == -1){
+			$lm -> getAvailableLots($form['artico'],$form['id_mov']);// prendo i lotti disponibili per l'articolo escludendo, se siamo in update, il movimento di magazzino in questione
+			$tot=0;
+			foreach ($lm->available as $v_lm) {// ciclo tutti i lotti disponibili
+				$tot+=$v_lm['rest']; // sommo le quantità
+			}							
+			if ($tot <> $form['quanti']){ // se la quantità richiesta non corrisponde a quella reale segnalo!
+				$msg .= "35+";echo "Giacenza lotti: ",$tot," data reg.: ",$form['datreg'];		
+			}
 		}
 	}
 	
@@ -779,7 +781,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 		echo '<label>' . 'Scadenza: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="expiry"  value="' . $form['expiry'] . '"></div></div></div>';
 	} else { 
 		if (($form['operat']==-1 or $form['operat']==0) && $form['quanti']>0){  // se è scarico e è stata impostata la quantità
-		 	$lm->getAvailableLots($form['artico']); // Antonio Germani - 
+		 	$lm -> getAvailableLots($form['artico'],$form['id_mov']); // Antonio Germani - 
 			$ld = $lm->divideLots($form['quanti']);
 			$l = 0;
 			// calcolo delle giacenze per ogni singolo lotto
@@ -794,8 +796,8 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 					$count[$key] += $v_lm['rest'];
 				}
 			}
-					
-			if ($ld > 0 and $toDo!="update") { // segnalo preventivamente l'errore
+			
+			if ($ld > 0 AND $toDo <> "update") { // segnalo preventivamente l'errore
 				?>
 				<div class="alert alert-warning alert-dismissible">
 				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -819,7 +821,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 					</div></button>
 					<?php
 				} else {
-                echo ' - disponibili: ' . gaz_format_quantity($count[$selected_lot['identifier']]+$prev_qta['quanti']) . ' <i class="glyphicon glyphicon-tag"></i></button>';
+                echo ' - disponibili: ' . gaz_format_quantity($count[$selected_lot['identifier']]) . ' <i class="glyphicon glyphicon-tag"></i></button>';
 				}
 				?>
 				<input type="hidden" name="id_lotmag" value="<?php echo $selected_lot['id_lotmag']; ?>">
