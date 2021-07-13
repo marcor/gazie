@@ -986,7 +986,7 @@ function movmagUpdate($codice, $newValue) {
 		//print $gSync->rawres;
 		//exit;
 	}
-	return $last_id;
+	return;
 }
 
 //===============================================================
