@@ -177,8 +177,10 @@ class shopsynchronizegazSynchro {
 				if ($id['id_artico_group']>0){
 					$xml_output .= "\t<Type>variant</Type>\n";
 					$parid = gaz_dbi_get_row($gTables['artico_group'], "id_artico_group", $id['id_artico_group'])['ref_ecommerce_id_main_product'];
-
 					$xml_output .= "\t<ParentId>".$parid."</ParentId>\n";
+					$var = json_decode($id['ecomm_option_attribute']);
+					$xml_output .= "\t<Characteristic>".$var->var_name."</Characteristic>\n";
+					$xml_output .= "\t<CharacteristicId>".$var->var_id."</CharacteristicId>\n";
 				} else {
 					$xml_output .= "\t<Type>product</Type>\n";
 					$xml_output .= "\t<ParentId></ParentId>\n";
