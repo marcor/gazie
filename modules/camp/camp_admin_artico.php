@@ -415,8 +415,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
     $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
-    $form['web_public'] = 1;
-    $form['depli_public'] = 1;
+    $form['web_public'] = 0;
+    $form['depli_public'] = 0;
 	$form['SIAN']=0;
 	$form['id_reg']=0;
 	$form['categoria']="";
