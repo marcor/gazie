@@ -1348,7 +1348,7 @@ maniglia.form.submit();
                             <td colspan="7">
                                 <input class="bg-danger center-block" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
                                 if ($toDo == 'insert'){
-                                    echo $script_transl['send_ecr'] . ' ' . $ecr['descri'];
+                                    echo $script_transl['send_ecr'] . ' ' . (($ecr)?$ecr['descri']:' su file XML');
                                 } else {
                                     echo $script_transl['update'];
                                 } ?> (F8)" />
