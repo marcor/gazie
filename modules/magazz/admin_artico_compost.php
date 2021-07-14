@@ -84,9 +84,9 @@ if(isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){
 	if ($ctrl_exist_new_codart==$codcomp){
 			$msg['err'][] = 'artpar';
 	}
-	if(floatval($form['quanti'])>=0.00001&&strlen($form['codart'])<=2){
+	if(floatval($form['quanti'])>=0.00001&&strlen($form['codart']) < 1){
 			$msg['err'][] = 'codart';
-	} elseif(floatval($form['quanti'])<0.00001&&strlen($form['codart'])>2){
+	} elseif(floatval($form['quanti'])<0.00001&&strlen($form['codart']) > 0){
 			$msg['err'][] = 'quanti';
 	}
 
@@ -96,7 +96,7 @@ if(isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){
 				gaz_dbi_table_update ("distinta_base", array ("0"=>"id","1"=>$val), array("quantita_artico_base"=>$v) );
 			}
 		}
-		if($form['quanti']>=0.00001&&strlen($form['codart'])>2){
+		if($form['quanti']>=0.00001&&strlen($form['codart']) > 0){
 			$rx=gaz_dbi_get_row($gTables['distinta_base'], 'codice_composizione', $codcomp, "AND codice_artico_base ='". $form['codart'] . "'");
 			if(!$rx){
 				gaz_dbi_query("INSERT INTO " . $gTables['distinta_base'] . "(codice_composizione,codice_artico_base,quantita_artico_base) VALUES ('".$codcomp. "','".$form['codart']."','". $form['quanti'] . "')");
