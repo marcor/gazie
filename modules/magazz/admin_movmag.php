@@ -320,8 +320,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$tot=0;
 			foreach ($lm->available as $v_lm) {// ciclo tutti i lotti disponibili
 				$tot+=$v_lm['rest']; // sommo le quantità
-			}							
-			if ($tot <> $form['quanti']){ // se la quantità richiesta non corrisponde a quella reale segnalo!
+			}
+			
+			if ($tot < $form['quanti']){ // se la quantità richiesta è maggiore alla giacenza totale dei lotti!
 				$msg .= "35+";echo "Giacenza lotti: ",$tot," data reg.: ",$form['datreg'];		
 			}
 		}
