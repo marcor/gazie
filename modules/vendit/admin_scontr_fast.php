@@ -140,8 +140,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['rows'] = array();
     $next_row = 0;
     if (isset($_POST['rows'])) {
-
         foreach ($_POST['rows'] as $next_row => $v) {
+
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
             $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
             $form['rows'][$next_row]['status'] = substr($v['status'], 0, 30);
@@ -988,23 +988,25 @@ maniglia.form.submit();
         foreach ($form['rows'] as $k => $v) {
             // addizione ai totali peso,pezzi,volume
             $artico = gaz_dbi_get_row($gTables['artico'], 'codice', $v['codart']);
-            $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
-            if ($artico['pack_units'] > 0) {
-                $form['units'] += intval(round($v['quanti'] / $artico['pack_units']));
+            if ($artico){
+                $form['net_weight'] += $v['quanti'] * $artico['peso_specifico'];
+                if ($artico['pack_units'] > 0) {
+                    $form['units'] += intval(round($v['quanti'] / $artico['pack_units']));
+                }
+                $form['volume'] += $v['quanti'] * $artico['volume_specifico'];
             }
-            $form['volume'] += $v['quanti'] * $artico['volume_specifico'];
             // fine addizione peso,pezzi,volume
             $btn_class = 'btn-success';
             $btn_title = '';
             $peso = 0;
             if ($v['tiprig'] == 0) {
-                if ($artico['good_or_service']>0){ 
+                if ($artico['good_or_service']==1){ 
 					$btn_class = 'btn-info';
 					$btn_title = ' Servizio';
-				} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilitÃ  di magazzino controllo presenza articolo
+				} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
                     $btn_class = 'btn-danger';
 					$btn_title = ' ARTICOLO NON DISPONIBILE';
-				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilitÃ  di magazzino controllo il sottoscorta
+				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
                     $btn_class = 'btn-warning';
 					$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
                 } else {
@@ -1014,6 +1016,13 @@ maniglia.form.submit();
                 if ($v['pesosp'] <> 0) {
                     $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
                 }
+            } elseif ($v['tiprig'] == 1) {
+                $v['codart'] ='Forfait';
+            } elseif ($v['tiprig'] == 2) {
+                $v['codart'] ='Descrittivo';
+            } elseif ($v['tiprig'] == 5) {
+                $v['codart'] ='Lotteria';
+                $v['descri'] = strtoupper($v['descri']);
             }
 
             // calcolo importo totale (iva inclusa) del rigo e creazione castelletto IVA
@@ -1133,8 +1142,8 @@ maniglia.form.submit();
                     // in caso di rigo forfait non stampo alcune colonne
                     $resprow[$k][3]['value'] = ''; //unimis
                     $resprow[$k][4]['value'] = ''; //quanti
-                    // scambio l'input con la colonna dell'importo... 
-                    $resprow[$k][7]['value'] = $resprow[$k][5]['value'];
+                    // scambio l'input con la colonna dell'importo e non controllo gli omaggi con l'alert 
+                    $resprow[$k][7]['value'] = '<input type="number" ID="prezzo_'.$k.'" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" onchange="this.form.submit()" />';
                     // ... e poi non la visualizzo piÃ¹
                     $resprow[$k][5]['value'] = ''; //prelis
                     $resprow[$k][6]['value'] = ''; //sconto

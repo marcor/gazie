@@ -709,7 +709,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['unimis'] = "";
-                $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['quanti'] = 1;
                 $form['rows'][$next_row]['prelis'] = 0;
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['sconto'] = 0;
