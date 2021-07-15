@@ -59,7 +59,7 @@ $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['az
 if (isset($_POST['conferma'])) { // se confermato
     // scrittura articoli su database di GAzie
 	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){ // ciclo gli articoli e scrivo i database
-	
+		unset($form);
 		if (isset($_POST['download'.$ord])){ // se selezionato
 		
 			unset($esiste);
@@ -82,14 +82,18 @@ if (isset($_POST['conferma'])) { // se confermato
 			
 			if ($_POST['product_type'.$ord]=="parent"){ // se è un parent
 				$esiste = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_id'.$ord]);// controllo se esiste in GAzie
+				$tablefile="artico_group";
+				$itemref=($esiste)?$esiste['id_artico_group']:'';
 			} else {
 				$esiste = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $_POST['product_id'.$ord]);// controllo se esiste in GAzie come id e-commerce
-				$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord], " AND tipiva = 'I'"); // prendo il codice IVA								
+				$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord], " AND tipiva = 'I'"); // prendo il codice IVA
+				$tablefile="artico";
+				$itemref=$_POST['codice'.$ord];
 			}
 			
 			if ($esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval"){ // se è aggiornamento, se c'è un'immagine, se selezionato e se è attivo l'aggiornamento
 				// cancello l'immagine presente nella cartella 
-				$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $_POST['codice'.$ord]."'");
+				$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", $tablefile, "AND id_ref ='1' AND item_ref = '". $_POST['codice'.$ord]."'");
 				if (isset($imgres)){
 					gaz_dbi_del_row($gTables['files'], 'id_doc',$imgres['id_doc']);
 					unlink (DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension']);
@@ -100,12 +104,13 @@ if (isset($_POST['conferma'])) { // se confermato
 			if ((!$esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg" AND $_GET['imp']=="impval") OR ($esiste AND strlen( $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval")){
 				$url = $_POST['imgurl'.$ord];
 				$expl= explode ("/", $_POST['imgurl'.$ord]);
-				$form['table_name_ref']= 'artico';
+				$form['table_name_ref']= $tablefile;
 				$form['id_ref']= '1';
-				$form['item_ref']= $_POST['codice'.$ord];
+				$form['item_ref']= $itemref;
 				$ext= explode (".",$expl[count($expl)-1]);
 				$form['extension']= $ext[count($ext)-1];
 				$form['title']= "Immagine web articolo: ".$_POST['codice'.$ord];
+				
 				gaz_dbi_table_insert('files',$form);// inserisco i dati dell'immagine nella tabella files
 				$form['id_doc']= gaz_dbi_last_id();//recupero l'id assegnato dall'inserimento
 				$imgweb=DATA_DIR.'files/'.$admin_aziend['company_id'].'/images/'.$form['id_doc'].'.'.$form['extension'];
@@ -212,8 +217,11 @@ if (isset($_POST['conferma'])) { // se confermato
 					} elseif ($_GET['updpre']=="updpre" AND $_GET['updname']!=="updnam" AND $_POST['product_type'.$ord]!=="parent") { // altrimenti aggiorno il prezzo ma non aggiorno il nome
 						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', web_price = '".addslashes($_POST['web_price'.$ord])."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 					} else {// oppure aggiorno i dati default ma no nome e no prezzo
-					
-						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+						if ($_POST['product_type'.$ord]=="parent"){ // se è un parent					
+							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($_POST['descri'.$ord])) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
+						} else {
+							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+						}
 					}
 				
 			} elseif (!$esiste AND $_GET['imp']=="impval"){ // altrimenti, se è attivo l'inserimento, inserisco un nuovo articolo
