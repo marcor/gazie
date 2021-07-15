@@ -221,10 +221,12 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$paymov_status = false;
 	if ($row['id_con'] > 0) {
 		$tesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $row['id_con']);
-		$paymov->getStatus(substr($tesmov['datreg'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
-		$paymov_status = $paymov->Status;
-		// riprendo il rigo  della contabilità con il cliente per avere l'importo 
-		$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
+        if ($tesmov) {
+            $paymov->getStatus(substr($tesmov['datreg'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
+            $paymov_status = $paymov->Status;
+            // riprendo il rigo  della contabilità con il cliente per avere l'importo 
+            $importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $row['id_con'], "AND codcon = ".$row['clfoco']);
+        }
 	}
   $template=""; 
     $y = substr($row['datfat'], 0, 4);
@@ -273,7 +275,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
       if ($existtesmov){
         echo " <a class=\"btn btn-xs btn-".$paymov_status['style']."\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile " . $row["id_con"] . " generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\"> <i class=\"glyphicon glyphicon-euro\"></i> " .((isset($importo["import"]))?$importo["import"]:'0.00'). "</a> ";
       } else {
-        gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET id_con = 0 WHERE id_tes = ".$row['id_tes']);
+        if ( $row['id_con'] >=1 ) { 
+            // ripristino la possibilità di contabilizzare il documento che ho trovato orfano ma ATTENZIONE!!!
+            // NON RIESCO A TROVARE IN QUALE CIRCOSTANZA E DA QUALE SCRIPT A VOLTE VIENE CANCELLATO IL MOVIMENTO CONTABILE DI ALCUNE FATTURE DI ACQUISTO!!!
+            // mi tengo l'id_con inesistente sulla colonna status per tentare di capire quando questo avviene 
+            gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET id_con = 0 WHERE id_tes = ".$row['id_tes']);
+            gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET status = 'LOSTIDCON=".$row["id_con"]."' WHERE id_tes = ".$row['id_tes']);
+        }
         echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
       }
     } else {
