@@ -48,13 +48,13 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 		case "docacq":
 			
 			$i=intval($_POST['id_tes']);
-			$form = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $i);
-			if ($form['tipdoc']!="AFT"){ // se non è una fattura AFT con DDT a riferimento posso cancellare
+			$data = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $i);
+			if ($data['tipdoc']!="AFT"){ // se non è una fattura AFT con DDT a riferimento posso cancellare
 				gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $i);
-				gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
+				gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $data['id_con']);
 
                 // qui controllo se il documento ha generato reverse charge ed eventualmente elimino anche quello
-                $id_rc=gaz_dbi_get_row($gTables['rigmoi'], 'reverse_charge_idtes', $form['id_con']); // in $id_rc['id_tes'] ho il riferimento a tesmov figlio 
+                $id_rc=gaz_dbi_get_row($gTables['rigmoi'], 'reverse_charge_idtes', $data['id_con']); // in $id_rc['id_tes'] ho il riferimento a tesmov figlio 
                 // cancello l'eventuale figlio (fattura su reg.vendite del reverse charge)
                 if ($id_rc){
                   gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $id_rc['id_tes']);
@@ -64,14 +64,14 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
                 }
 
                 // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
-				$rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$form['id_con'],"id_tes");
+				$rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$data['id_con'],"id_tes");
    				while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
                     gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
                 }
 
                 // ... quindi elimino il rigo contabile 
-                gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
-				gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $form['id_con']);
+                gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $data['id_con']);
+				gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $data['id_con']);
 				$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$i."'","id_tes desc");
 				
 				while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
@@ -84,20 +84,22 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 					}				
 				}
 			} else { // se è AFT (fattura con ddt a riferimento)
-				
-					if ( $form['ddt_type']=="T") {
-							$tipdoc="AD".$form["ddt_type"]; 
-						} elseif ($form['ddt_type']=="L"){
-							$tipdoc="RD".$form["ddt_type"];
-						} else {
-							$tipdoc="AM".$form["ddt_type"]; // Contratto di traporto in entrata
-						}
+                    if (empty($data['ddt_type'])){
+                        $tipdoc="ADT";
+                        $data['ddt_type']="T";
+                    } elseif ( $data['ddt_type']=="T") {
+						$tipdoc="AD".$data["ddt_type"]; 
+					} elseif ($data['ddt_type']=="L"){
+						$tipdoc="RD".$data["ddt_type"];
+					} else {
+						$tipdoc="AM".$data["ddt_type"]; // Contratto di traporto in entrata
+					}
 						
-					$groups=gaz_dbi_dyn_query("*", $gTables['tesdoc'], "protoc = '".$form['protoc']."' AND datfat = '".$form['datfat']."' AND seziva = '".$form['seziva']."' AND clfoco = '".$form['clfoco']."'");
+					$groups=gaz_dbi_dyn_query("*", $gTables['tesdoc'], "protoc = '".$data['protoc']."' AND datfat = '".$data['datfat']."' AND seziva = '".$data['seziva']."' AND clfoco = '".$data['clfoco']."'");
 					
-					while ($form = gaz_dbi_fetch_array($groups)){
-                      if ($form['status']=='DdtAnomalo'){
-						gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
+					while ($data = gaz_dbi_fetch_array($groups)){
+                      if ($data['status']=='DdtAnomalo'){
+						gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $data['id_tes']);
 						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$i."'","id_tes desc");
 						while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
 							gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
@@ -108,12 +110,13 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 							}				
 						}
                       } else {
-						$form['protoc']="";$form['numfat']="";$form['datfat']="";$form['ddt_type']="";$form['tipdoc']=$tipdoc;
-						$form['fattura_elettronica_original_name']="";$form['fattura_elettronica_original_content']="";
-						tesdocUpdate(array('id_tes', $form['id_tes']), $form);						
+                        $newval=$data;
+						$newval['protoc']="";$newval['numfat']="";$newval['datfat']="";$newval['id_con']=0;$newval['tipdoc']=$tipdoc;
+						$newval['fattura_elettronica_original_name']="";$newval['fattura_elettronica_original_content']="";
+						tesdocUpdate(array('id_tes', $newval['id_tes']), $newval);						
                       }
                       // qui controllo se il documento ha generato reverse charge ed eventualmente elimino anche quello
-                      $id_rc=gaz_dbi_get_row($gTables['rigmoi'], 'reverse_charge_idtes', $form['id_con']); // in $id_rc['id_tes'] ho il riferimento a tesmov figlio 
+                      $id_rc=gaz_dbi_get_row($gTables['rigmoi'], 'reverse_charge_idtes', $data['id_con']); // in $id_rc['id_tes'] ho il riferimento a tesmov figlio 
                       // cancello l'eventuale figlio (fattura su reg.vendite del reverse charge)
                       if ($id_rc){
                         gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $id_rc['id_tes']);
@@ -121,17 +124,17 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
                         gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $id_rc['id_tes']);
                         // manca la cancellazione del futuro tesdoc-rigdoc (entro 2023)
                       }
-                      gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
+                      gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $data['id_con']);
 
                       // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
-                      $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$form['id_con'],"id_tes");
+                      $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$data['id_con'],"id_tes");
                       while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
                         gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
                       }
                       
                       // ... quindi elimino il rigo contabile 
-					  gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
-					  gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $form['id_con']);
+					  gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $data['id_con']);
+					  gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $data['id_con']);
                       
 					}
 										 			

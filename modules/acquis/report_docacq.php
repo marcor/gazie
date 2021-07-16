@@ -276,11 +276,9 @@ while ($row = gaz_dbi_fetch_array($result)) {
         echo " <a class=\"btn btn-xs btn-".$paymov_status['style']."\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile " . $row["id_con"] . " generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\"> <i class=\"glyphicon glyphicon-euro\"></i> " .((isset($importo["import"]))?$importo["import"]:'0.00'). "</a> ";
       } else {
         if ( $row['id_con'] >=1 ) { 
-            // ripristino la possibilità di contabilizzare il documento che ho trovato orfano ma ATTENZIONE!!!
-            // NON RIESCO A TROVARE IN QUALE CIRCOSTANZA E DA QUALE SCRIPT A VOLTE VIENE CANCELLATO IL MOVIMENTO CONTABILE DI ALCUNE FATTURE DI ACQUISTO!!!
-            // mi tengo l'id_con inesistente sulla colonna status per tentare di capire quando questo avviene 
-            // gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET id_con = 0 WHERE id_tes = ".$row['id_tes']);
-            // gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET status = 'IDCON".$row["id_con"]."' WHERE id_tes = ".$row['id_tes']);
+            // ripristino la possibilità di contabilizzare il documento se trovato orfano, lo lascio anche se il bug sembra risolto
+            gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET id_con = 0 WHERE id_tes = ".$row['id_tes']);
+            gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET status = 'IDCON".$row["id_con"]."' WHERE id_tes = ".$row['id_tes']);
         }
         echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
       }
