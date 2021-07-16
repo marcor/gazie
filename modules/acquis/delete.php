@@ -29,7 +29,7 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
-if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&isset($_POST['id_tes']))) { 
+if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && isset($_POST['id_tes']) && is_numeric($_POST['id_tes']))) { 
 	require("../../library/include/datlib.inc.php");
 	require("../../modules/magazz/lib.function.php");
 	$upd_mm = new magazzForm;
