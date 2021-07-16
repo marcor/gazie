@@ -111,7 +111,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && i
 						}
                       } else {
                         $newval=$data;
-						$newval['protoc']="";$newval['numfat']="";$newval['datfat']="";$newval['id_con']=0;$newval['tipdoc']=$tipdoc;
+						$newval['protoc']="";$newval['ddt_type']="";$newval['numfat']="";$newval['datfat']="";$newval['id_con']=0;$newval['tipdoc']=$tipdoc;
 						$newval['fattura_elettronica_original_name']="";$newval['fattura_elettronica_original_content']="";
 						tesdocUpdate(array('id_tes', $newval['id_tes']), $newval);						
                       }
