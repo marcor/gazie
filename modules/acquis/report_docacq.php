@@ -279,8 +279,8 @@ while ($row = gaz_dbi_fetch_array($result)) {
             // ripristino la possibilità di contabilizzare il documento che ho trovato orfano ma ATTENZIONE!!!
             // NON RIESCO A TROVARE IN QUALE CIRCOSTANZA E DA QUALE SCRIPT A VOLTE VIENE CANCELLATO IL MOVIMENTO CONTABILE DI ALCUNE FATTURE DI ACQUISTO!!!
             // mi tengo l'id_con inesistente sulla colonna status per tentare di capire quando questo avviene 
-            gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET id_con = 0 WHERE id_tes = ".$row['id_tes']);
-            gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET status = 'IDCON".$row["id_con"]."' WHERE id_tes = ".$row['id_tes']);
+            // gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET id_con = 0 WHERE id_tes = ".$row['id_tes']);
+            // gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET status = 'IDCON".$row["id_con"]."' WHERE id_tes = ".$row['id_tes']);
         }
         echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
       }
