@@ -194,16 +194,6 @@ $(function() {
             </tr>
 
         <?php
-// creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
-$rs_last_docs = gaz_dbi_query("SELECT id_tes 
-            FROM ".$gTables['tesdoc']." AS t1
-            JOIN ( SELECT MAX(numdoc) AS max_numdoc FROM ".$gTables['tesdoc']." WHERE tipdoc LIKE 'AD_' AND seziva = ".$sezione." GROUP BY YEAR(datemi)) AS t2 
-            ON t1.numdoc = t2.max_numdoc WHERE t1.tipdoc LIKE 'AD_' AND t1.seziva = ".$sezione);
-$year_last_protoc_id_tes=[];
-while ($ld = gaz_dbi_fetch_array($rs_last_docs)){
-    $year_last_protoc_id_tes[$ld['id_tes']]=true;
-}
-// fine creazione array con i documenti eliminabili
 
         $result = gaz_dbi_dyn_query(cols_from($gTables['tesdoc'],
 						  "id_tes","tipdoc","ddt_type","seziva","datemi","numdoc","numfat","datfat","status") . ", " .
@@ -267,21 +257,16 @@ while ($ld = gaz_dbi_fetch_array($rs_last_docs)){
 			</a>
 			</td>';            
             echo '<td class="text-center">';	
-			if (isset($year_last_protoc_id_tes[$r['id_tes']])) {
-			?>			
-			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo D.d.T." ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $r['ragso1']; ?>">
-				<i class="glyphicon glyphicon-remove"></i>
-			</a>
-			<?php
-
-			} elseif ($r['ddt_type']=="T" OR $r['ddt_type']=="L"){
+			if (substr($r['tipdoc'], 0, 2)=="AF" ){
 				?>
 				<button title="Questo Ddt &egrave; stato fatturato. Per eliminarlo devi prima eliminare la relativa fattura" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 				<?php
 			} else {
-					?>
-				<button title="Non puoi eliminare un D.d.T diverso dall'ultimo emesso" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
-				<?php
+					?>			
+			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo D.d.T." ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $r['ragso1']; ?>">
+				<i class="glyphicon glyphicon-remove"></i>
+			</a>
+			<?php
 			}
 			echo "</td></tr>";            
         }
