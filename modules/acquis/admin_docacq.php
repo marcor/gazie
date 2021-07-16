@@ -106,7 +106,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $ddtchecked=0;
 	if (isset($_POST['Insert'])){// se insert carico in $ddt i ddt che non sono ancora fatturati
 		$ddt_rs = gaz_dbi_query ('SELECT * FROM '.$gTables['tesdoc'].' WHERE clfoco = \''.$form['clfoco'].'\' AND tipdoc = \'ADT\' AND ddt_type = \'\' ORDER BY id_tes');
-    if ($ddt_rs) $ddt = $ddt_rs;
+   print_r($ddt_rs);
+	if ($ddt_rs) $ddt = $ddt_rs;
 		if (isset($_POST['ddt'])){ // se cliccato ddt azzero i righi nel caso fossero cambiati
 			unset ($_POST['rows']); 
 		}
