@@ -197,8 +197,8 @@ $(function() {
 // creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
 $rs_last_docs = gaz_dbi_query("SELECT id_tes 
             FROM ".$gTables['tesdoc']." AS t1
-            JOIN ( SELECT MAX(numdoc) AS max_numdoc FROM ".$gTables['tesdoc']." WHERE tipdoc LIKE 'DD_' AND seziva = ".$sezione." GROUP BY YEAR(datemi)) AS t2 
-            ON t1.numdoc = t2.max_numdoc WHERE t1.tipdoc LIKE 'DD_' AND t1.seziva = ".$sezione);
+            JOIN ( SELECT MAX(numdoc) AS max_numdoc FROM ".$gTables['tesdoc']." WHERE tipdoc LIKE 'AD_' AND seziva = ".$sezione." GROUP BY YEAR(datemi)) AS t2 
+            ON t1.numdoc = t2.max_numdoc WHERE t1.tipdoc LIKE 'AD_' AND t1.seziva = ".$sezione);
 $year_last_protoc_id_tes=[];
 while ($ld = gaz_dbi_fetch_array($rs_last_docs)){
     $year_last_protoc_id_tes[$ld['id_tes']]=true;

@@ -204,8 +204,8 @@ $paymov = new Schedule();
 // creo un array con gli ultimi documenti dei vari anni (gli unici eliminabili senza far saltare il protocollo del registro IVA)
 $rs_last_docs = gaz_dbi_query("SELECT id_tes 
             FROM ".$gTables['tesdoc']." AS t1
-            JOIN ( SELECT MAX(protoc) AS max_protoc FROM ".$gTables['tesdoc']." WHERE tipdoc LIKE 'A%' AND seziva = ".$sezione." GROUP BY YEAR(datreg)) AS t2 
-            ON t1.protoc = t2.max_protoc WHERE t1.tipdoc LIKE 'A%' AND t1.seziva = ".$sezione);
+            JOIN ( SELECT MAX(protoc) AS max_protoc FROM ".$gTables['tesdoc']." WHERE tipdoc LIKE 'AF_' AND seziva = ".$sezione." GROUP BY YEAR(datreg)) AS t2 
+            ON t1.protoc = t2.max_protoc WHERE t1.tipdoc LIKE 'AF_' AND t1.seziva = ".$sezione);
 $year_last_protoc_id_tes=[];
 while ($ld = gaz_dbi_fetch_array($rs_last_docs)){
     $year_last_protoc_id_tes[$ld['id_tes']]=true;
