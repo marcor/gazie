@@ -486,7 +486,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				if ($ultimo_tipo){
 					$utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datreg'], 5, 2), substr($ultimo_tipo['datreg'], 8, 2), substr($ultimo_tipo['datreg'], 0, 4));
 					if ($utsUltimoProtocollo > $utsreg) {
-						$msg['err'][] = "docpre";echo "pippo ultimo protoc:",$utsUltimoProtocollo," utsreg:",$utsreg;
+						$msg['err'][] = "docpre";
 					}
                 }
 				if (!empty($form["clfoco"])) {
