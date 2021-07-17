@@ -581,8 +581,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
         }
         if (count($msg['err']) == 0) {// nessun errore
-        
-		   if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
+       
+			if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor'],$form['pagame']);
             }
@@ -611,7 +611,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['destin'] = addslashes($form['destin']);
 			$form['datreg'] = gaz_format_date($form['datreg'],true);
 			$form['datfat'] = gaz_format_date($form['datfat'],true);
-			$form['datemi'] = gaz_format_date($form['datfat'],true);
+			$form['datemi'] = gaz_format_date($form['datemi'],true);
             if ($toDo == 'update') { // e' una modifica
                 $old_rows = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $form['id_tes'], "id_rig asc");
 				
@@ -791,15 +791,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                header('Location: ' . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
-				if ($ddtchecked>0){ // se ci sono DDT a riferimento fattura
-					
-					$updtesdoc['protoc'] = getProtocol($form['tipdoc'], substr($form['datreg'],0,4), $sezione);
-					
+				if ($ddtchecked>0){ // se ci sono DDT a riferimento fattura							
+					$updtesdoc['protoc'] = getProtocol($form['tipdoc'], substr($form['datreg'],0,4), $sezione);					
 					for ($ddtrow=0 ; $ddtrow<=$_POST['num_ddt']; $ddtrow++){ // ciclo i ddt
 						
 						if ($_POST['check_ddt'.$ddtrow]=="checked"){ // se è stato selezionato il ddt lo trasformo in fattura
 							$codice = array('id_tes', $form['id_tes'.$ddtrow]);
-							$updtesdoc['ddt_type']="T";$updtesdoc['tipdoc']="AFT";$updtesdoc['numfat']=$form['numfat'];$updtesdoc['datfat']=$form['datfat'];
+							$updtesdoc['datreg']=$form['datreg'];$updtesdoc['ddt_type']="T";$updtesdoc['tipdoc']="AFT";$updtesdoc['numfat']=$form['numfat'];$updtesdoc['datfat']=$form['datfat'];
 							
 							tesdocUpdate($codice, $updtesdoc);
 							
