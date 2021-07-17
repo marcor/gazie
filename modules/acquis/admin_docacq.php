@@ -481,12 +481,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					}
 				}
 			} else { //se sono altri documenti AFA AFC
-                $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 1) . "%' and seziva = ".$sezione, "protoc desc, datreg desc, datfat desc", 0, 1);
+                $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 2) . "%' and seziva = ".$sezione, "protoc desc, datreg desc, datfat desc", 0, 1);
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
 				if ($ultimo_tipo){
 					$utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datreg'], 5, 2), substr($ultimo_tipo['datreg'], 8, 2), substr($ultimo_tipo['datreg'], 0, 4));
 					if ($utsUltimoProtocollo > $utsreg) {
-						$msg['err'][] = "docpre";
+						$msg['err'][] = "docpre";echo "pippo ultimo protoc:",$utsUltimoProtocollo," utsreg:",$utsreg;
 					}
                 }
 				if (!empty($form["clfoco"])) {
@@ -705,7 +705,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	
 						if ($form['rows'][$i]['tiprig'] <> 2) { // Antonio Germani - se NON è un rigo descrittivo
 						// reinserisco il movimento magazzino associato e lo aggiorno
-							$id_movmag=$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag);
+							$id_movmag=$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg']), $form['protoc'],$id_lotmag);
 							
 							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_mag', $id_movmag);// metto il nuovo id_mag nel rigo documento
 

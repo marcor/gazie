@@ -94,7 +94,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && i
 					} else {
 						$tipdoc="AM".$data["ddt_type"]; // Contratto di traporto in entrata
 					}
-						
+										
 					$groups=gaz_dbi_dyn_query("*", $gTables['tesdoc'], "protoc = '".$data['protoc']."' AND datfat = '".$data['datfat']."' AND seziva = '".$data['seziva']."' AND clfoco = '".$data['clfoco']."'");
 					
 					while ($data = gaz_dbi_fetch_array($groups)){
@@ -110,8 +110,9 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && i
 							}				
 						}
                       } else {
+						$datreg = gaz_dbi_get_row($gTables['movmag'], 'id_rif', $data['id_tes']); // riprendo la data di registrazione da movmag		
                         $newval=$data;
-						$newval['datreg']=$data['datemi'];$newval['protoc']="";$newval['ddt_type']="";$newval['numfat']="";$newval['datfat']="";$newval['id_con']=0;$newval['tipdoc']=$tipdoc;
+						$newval['datreg']=$datreg['datreg'];$newval['protoc']="";$newval['ddt_type']="";$newval['numfat']="";$newval['datfat']="";$newval['id_con']=0;$newval['tipdoc']=$tipdoc;
 						$newval['fattura_elettronica_original_name']="";$newval['fattura_elettronica_original_content']="";
 						tesdocUpdate(array('id_tes', $newval['id_tes']), $newval);						
                       }
