@@ -541,7 +541,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                         $docs = array_combine(explode(",", $r['refs_id']),
                                               explode(",", $r['refs_num']));
                         echo '<td align="center">';
-                        list($doc_templa, $doc) = ($r['ddt_type'] == 'R') ? ['doccmr', 'CMR'] : ['doctra', 'DdT'];
+                        list($doc_templ, $doc) = ($r['ddt_type'] == 'R') ? ['doccmr', 'CMR'] : ['doctra', 'DdT'];
                         $desc = $doc;
                         if (count($docs) > 5) {
                             echo "<a href='report_$doc_templ.php' style='font-size:10px;' class='btn btn-xs btn-default'><i class='glyphicon glyphicon-plane'></i>$doc</a>";
