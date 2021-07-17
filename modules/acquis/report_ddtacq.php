@@ -211,6 +211,7 @@ $(function() {
 
         while ($r = gaz_dbi_fetch_array($result)) {
 			// controllo ogni rigo se è ultimo movimento per quel tipdoc
+            $ddtanomalo=($r['status']=='DdtAnomalo')?'<small class="text-warning" title="Il DdT è stato generato da una fattura elettronica con riferimenti ai righi errati o mancanti"> &nbsp; (<sup>*</sup>) &nbsp; </small>':'';
 			$order='id_tes DESC';
 			if  (substr($r['tipdoc'],0,2) == 'DD') {
 				$where = "tipdoc LIKE 'DD_' AND seziva = ".$r['seziva']." AND numfat = 0" ;
@@ -243,7 +244,7 @@ $(function() {
             echo "<tr>";
             echo '<td class="text-center"><a class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $r["id_tes"] . '&Update&DDT" title="'. $title .'" >  <i class="glyphicon glyphicon-edit"></i>&nbsp;' . $r["id_tes"] . '</a></td>';
             echo '<td class="text-center">' . $addtip.$r["tipdoc"] . " &nbsp;</td>";
-            echo '<td class="text-center">'. $r["numdoc"] . '<span class="text-warning"><b>&nbsp;'.$r["status"] ."</b></span> &nbsp;</td>";
+            echo '<td class="text-center">'. $r["numdoc"] . ' '.$ddtanomalo.'</td>';
             echo '<td class="text-center">'. gaz_format_date($r["datemi"]). " &nbsp;</td>";
             echo "<td>" . $r["ragso1"] . "&nbsp;</td>";
 			if (intval(preg_replace("/[^0-9]/","",$r['numfat']))>=1){
