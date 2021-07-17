@@ -32,23 +32,23 @@ function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
     $type = substr($type, 0, 2);
     $docs = array();
     if ($date) {
-        $date = ' AND datfat <= ' . $date;
+        $date = ' AND datreg <= ' . $date;
     } else {
         $date = '';
     }
     $from = $gTables['tesdoc'];
     $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type" . "_' $date";
-    $orderby = "datfat ASC, protoc ASC";
+    $orderby = "datreg ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
-    if (!$row) $row=['protoc'=>'1','datfat'=>date("Y-m-d")]; 
-    $docs['ini'] = array('proini' => $row['protoc'], 'date' => $row['datfat']);
+    if (!$row) $row=['protoc'=>'1','datreg'=>date("Y-m-d")]; 
+    $docs['ini'] = array('proini' => $row['protoc'], 'date' => $row['datreg']);
     $row=false;
-    $orderby = "datfat DESC, protoc DESC";
+    $orderby = "datreg DESC, protoc DESC";
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
-    if (!$row) $row=['protoc'=>$docs['ini']['proini'],'datfat'=>$docs['ini']['date']]; 
-    $docs['fin'] = array('profin' => $row['protoc'], 'date' => $row['datfat']);
+    if (!$row) $row=['protoc'=>$docs['ini']['proini'],'datreg'=>$docs['ini']['date']]; 
+    $docs['fin'] = array('profin' => $row['protoc'], 'date' => $row['datreg']);
     return $docs;
 }
 
@@ -57,9 +57,8 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
     $calc = new Compute;
     $type = substr($type, 0, 2);
     if ($date) {
-        //$p = ' AND (YEAR(datfat)*1000000+protoc) <= ' . (substr($date, 0, 4) * 1000000 + $protoc);
         $p = ' AND protoc <= ' . $protoc . ' AND YEAR(datreg) = ' . substr($date, 0, 4);
-        $d = ' AND datfat <= ' . $date;
+        $d = ' AND datreg <= ' . $date;
     } else {
         $d = '';
         $p = '';
@@ -72,7 +71,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
              ON customer.id_anagra=anagraf.id';
     $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type" . "_' $d $p";
-    $orderby = "datfat ASC, protoc ASC";
+    $orderby = "datreg ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
                         customer.codice,
