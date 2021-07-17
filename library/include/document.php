@@ -259,6 +259,7 @@ class DocContabVars {
 			$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $tesdoc['clfoco']);
 			$this->iban = $clfoco['iban'];
 		}
+        $this->artico_doc = array(); // accumulatore referenze ai documenti degli articoli eventualemente da allegare
     }
 
     function initializeTotals() {
@@ -352,8 +353,16 @@ class DocContabVars {
 			if ($art AND ($art['durability_mu']==">" OR $art['durability_mu']=="<")){ // se impostato accodo la durabilità alla descrizione serve per gli agroalimentari
 				$rigo['descri'] = $rigo['descri']." - Durabilità ".$art['durability_mu']." ".$art['durability']."gg";
 			}
-			
-			// fine se c'è lotto
+
+			// Antonio de Vincentiis - se l'articolo ha un documento passo la referenza files_id_doc
+            $checkdoc=false;
+            if ($rigo['tiprig']==0) {
+                $checkdoc = gaz_dbi_get_row($this->gTables['files'], 'table_name_ref', 'artico', "AND item_ref = '".$rigo['codart']."'");
+                if ( $checkdoc ){
+                    $this->artico_doc[$rigo['codart']]='doc/'.$checkdoc['id_doc'].'.'.$checkdoc['extension'];
+                }
+            }
+            
 			$from = $this->gTables['orderman'] . ' AS om
                  LEFT JOIN ' . $this->gTables['tesbro'] . ' AS tb
                  ON om.id_tesbro=tb.id_tes';
