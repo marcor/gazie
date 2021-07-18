@@ -1,17 +1,17 @@
 /** ENRICO FEDELE */
 /*
  Se scegliamo bootstrap come framewors css (e credo che sia la cosa più opportuna dal momento che,
- pur con tutti i suoi difetti tra i quali una certa pesantezza/lentezza, ci consente di procedere spediti 
+ pur con tutti i suoi difetti tra i quali una certa pesantezza/lentezza, ci consente di procedere spediti
  potendo contare sul lavoro della community) allora tanto vale cercare di sfruttarlo quanto più possibile,
  per evitare di sovraccaricare il sistema, tenerlo snello e soprattutto facilitarci il compito.
- Allora per i tooltip possiamo pensare di utilizzare il plugin nativo di Bootstrap, per cui la versione di 
+ Allora per i tooltip possiamo pensare di utilizzare il plugin nativo di Bootstrap, per cui la versione di
  Jquery-ui che utilizziamo attualmente, l'ultima disponibile al 09/11/2015, è compilata senza il plugin tooltip,
  che altrimenti genererebbe conflitti con quello di Bootstrap, dal momento che hanno lo stesso nome.
- 
+
  Questa funzione è un tentativo di portare in un unico posto i tooltip di gazie, differenziandoli per contesto:
  product-thumb: tooltip per l'immagine di un prodotto
  weight: tooltip per il peso
- 
+
  la magia si fa con:
  class="gazie-tooltip" (classe da assegnare all'elemento da dotare di tooltip)
  data-type="product-thumb/weight" (tipologia di tooltip, al momento solo immagine prodotto e peso)
@@ -29,9 +29,9 @@ $(document).ready(function () {
         if (ml>=6){ $(this).attr('size', ml) } else { $(this).attr('size', ml/2) }
 		if (ml>=22){ $(this).attr('style', 'width: 100%;')}
     });
-	
+
     gzTooltip();
-    
+
     $(".Tlarge").addClass('table table-striped table-bordered table-condensed');
     $("#alert-discount").fadeTo(2500, 1500).slideUp(750, function () {
         $("#alert-discount").alert('close');
@@ -89,7 +89,7 @@ this.gzTooltip = function () {
                 title: function () {
                     var codeDtls = this.getAttribute('data-type');
                     if (codeDtls == "product-thumb") {
-                        codeDtls = '<span class="label">' + this.getAttribute('data-title') + '</span><img src="../root/view.php?table=artico&value=' + this.getAttribute('data-id') + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" />';
+                        codeDtls = '<span class="label">' + this.getAttribute('data-title') + '</span><img src="../root/view.php?table=artico&value=' + this.getAttribute('data-id') + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-title') + '" style="object-fit: cover; max-width: 384px; max-height: 384px;"/>';
                         return codeDtls;
                     } else if (codeDtls == "weight") {
                         codeDtls = this.getAttribute('data-title') + '&nbsp;' + this.getAttribute('data-id') + 'kg';
