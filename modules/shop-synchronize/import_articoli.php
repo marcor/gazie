@@ -102,6 +102,8 @@ if (isset($_POST['conferma'])) { // se confermato
 			
 			// se è inserimento o se è update e c'è un'immagine e se è selezionato
 			if ((!$esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg" AND $_GET['imp']=="impval") OR ($esiste AND strlen( $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval")){
+				
+				// salvo l'immagine HQ
 				$url = $_POST['imgurl'.$ord];
 				$expl= explode ("/", $_POST['imgurl'.$ord]);
 				$form['table_name_ref']= $tablefile;
@@ -117,6 +119,8 @@ if (isset($_POST['conferma'])) { // se confermato
 				if (intval(file_put_contents($imgweb, file_get_contents($url))) == 0){ // scrivo l'immagine web HQ nella cartella files
 					echo "ERRORE nella scrittura in GAzie dell'immagine: ",$url, " <br>Riprovare in quanto potrebbe trattarsi di un Errore momentaneo. Se persiste, controllare che le immagine dell'e-commerce abbiano il permesso per essere lette oppure che sia presente in GAzie la cartella images in data/files/nrAzienda/";die;
 				}
+				
+				// salvo l'immagine blob
 				$img = DATA_DIR.'files/tmp/'.$expl[count($expl)-1]; 
 				// scrivo l'immagine nella cartella tmp temporanea
 				file_put_contents($img, file_get_contents($url));

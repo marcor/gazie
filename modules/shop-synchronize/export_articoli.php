@@ -137,7 +137,12 @@ if (isset($_POST['conferma'])) { // se confermato
 			// get contents of the current directory	
 			$files = ftp_nlist($conn_id, $ftp_path_upload."images");
 			foreach ($files as $file){ // se c'era, cancello i files del precedente aggiornamento
-				ftp_delete($conn_id, $ftp_path_upload."images/".$file);
+				if (@ftp_delete($conn_id, $ftp_path_upload."images/".$file)){
+					
+				} else {
+					header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=6");
+					exit;
+				}
 			}
 		}
 	}	
@@ -156,7 +161,11 @@ if (isset($_POST['conferma'])) { // se confermato
 			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
 			$xml_output .= "\t<IdMain>".$_POST['ref_ecommerce_id_main_product'.$ord]."</IdMain>\n";
 			if (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0){
-				$xml_output .= "\t<Type>variant</Type>\n";
+				if ($_POST['ref_ecommerce_id_main_product'.$ord]==$_POST['ref_ecommerce_id_product'.$ord]){
+					$xml_output .= "\t<Type>parent</Type>\n";
+				} else {
+					$xml_output .= "\t<Type>variant</Type>\n";
+				}
 			} else {
 				$xml_output .= "\t<Type>product</Type>\n";
 			}
@@ -182,7 +191,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 			$xml_output .= "\t<WebPublish>".$_POST['web_public'.$ord]."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
 
-			if ($_GET['img']=="updimg" AND strlen($_POST['imgurl'.$ord])>0){
+			if ($_GET['img']=="updimg" AND strlen($_POST['imgurl'.$ord])>0){ // se è da aggiornare e c'è un'immagine HQ
 				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['imgname'.$ord], $_POST['imgurl'.$ord],  FTP_BINARY)){					
 					// scrivo l'immagine web HQ nella cartella e-commerce
 					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".$_POST['imgname'.$ord]."</ImgUrl>\n"; // ne scrivo l'url nel file xml
@@ -193,6 +202,19 @@ if (isset($_POST['conferma'])) { // se confermato
 					exit;
 				}				
 			}
+			if ($_GET['img']=="updimg" AND strlen($_POST['imgblob'.$ord])>0){// se è da aggiornare e c'è un'immagine blob			  
+				file_put_contents("../../data/files/tmp/img.jpg", base64_decode($_POST['imgblob'.$ord])); // salvo immagine nella cartella temporanea
+				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['codice'.$ord].".jpg", "../../data/files/tmp/img.jpg",  FTP_BINARY)){					
+					// scrivo l'immagine web blob nella cartella images dell'e-commerce
+					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".$_POST['codice'.$ord].".jpg</ImgUrl>\n"; // ne scrivo l'url nel file xml
+				} else {
+					// ERRORE chiudo la connessione FTP 
+					ftp_quit($conn_id);
+					header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=5");
+					exit;
+				}
+			}
+			
 			$xml_output .= "\t</Product>\n";
 		}
 	}
@@ -353,7 +375,7 @@ if (!isset($_GET['success'])){
 				</div>
 				<?php
 				// carico in $artico gli articoli che sono presenti in GAzie
-				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
+				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
 					$ref_ecommerce_id_main_product="";
@@ -405,13 +427,16 @@ if (!isset($_GET['success'])){
 									$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $item['codice']."'");
 									if (isset($imgres['id_doc']) AND $imgres['id_doc']>0){ // se c'è un'immagine
 										$imgurl=DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension'];
+										$imgblob="";
 									} else {
 										$imgurl="";
 										$imgres['id_doc']="";
 										$imgres['extension']="";
+										$imgblob=$item['image'];
 									}
 									echo '<input type="hidden" name="imgurl'. $n .'" value="'. $imgurl .'">';
 									echo '<input type="hidden" name="imgname'. $n .'" value="'. $imgres['id_doc'] . "." . $imgres['extension'] .'">';
+									echo '<input type="hidden" name="imgblob'. $n .'" value="'. base64_encode($imgblob) .'">';
 								}
 								?>
 							</div>
@@ -424,6 +449,69 @@ if (!isset($_GET['success'])){
 				<?php
 				$n++;
 				}
+				
+				
+				// carico in $parent i gruppi che sono presenti in GAzie
+				$parent = gaz_dbi_query ('SELECT * FROM '.$gTables['artico_group'].' WHERE web_public = \'1\' ORDER BY id_artico_group');
+				
+				while ($item = gaz_dbi_fetch_array($parent)){ // li ciclo					
+					
+					?>
+					<div class="row bg-warning" style="border-bottom: 1px solid;">
+							<div class="col-sm-2">
+								<?php echo $n;?>
+							</div>
+							<div class="col-sm-2">
+								<?php echo $item['id_artico_group'];
+								echo '<input type="hidden" name="codice'. $n .'" value="'. $item['id_artico_group'] . '">';
+								?>
+							</div>
+							<div class="col-sm-6">
+								<?php echo $item['descri'];
+								echo '<input type="hidden" name="descri'. $n .'" value="'. $item['descri'] . '">';
+								?>
+							</div>
+							<div class="col-sm-1">
+								<?php 
+								
+								echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($item['large_descri'])) . '">';
+								
+								echo '<input type="hidden" name="web_public'. $n .'" value="'. $item['web_public'] . '">';
+								echo '<input type="hidden" name="quanti'. $n .'" value="">';
+								echo '<input type="hidden" name="aliiva'. $n .'" value="">';
+								echo '<input type="hidden" name="web_price'. $n .'" value="">';
+								echo '<input type="hidden" name="ref_ecommerce_id_main_product'. $n .'" value="'. $item['ref_ecommerce_id_main_product'] .'">';
+								echo '<input type="hidden" name="ref_ecommerce_id_product'. $n .'" value="'. $item['ref_ecommerce_id_main_product'] .'">';
+								
+								if ($_GET['img']=="updimg"){ // se devo aggiornare l'immagine cerco l'url di quella HQ High Quality in GAzie
+									$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico_group", "AND id_ref ='1' AND item_ref = '". $item['id_artico_group']."'");
+									// Si preferisce l'immagine HQ, in mancanza si invia la blob
+									if (isset($imgres['id_doc']) AND $imgres['id_doc']>0){ // se c'è un'immagine High Quality
+										$imgurl=DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension'];
+										$imgblob="";
+									} else {
+										$imgurl="";
+										$imgres['id_doc']="";
+										$imgres['extension']="";
+										$imgblob=$item['image'];
+										
+									}
+									echo '<input type="hidden" name="imgurl'. $n .'" value="'. $imgurl .'">';
+									echo '<input type="hidden" name="imgname'. $n .'" value="'. $imgres['id_doc'] . "." . $imgres['extension'] .'">';
+									echo '<input type="hidden" name="imgblob'. $n .'" value="'. $imgblob .'">';
+								}
+								?>
+							</div>
+							<div class="col-sm-1" align="right">
+								<input type="checkbox" name="download<?php echo $n; ?>" value="download">
+								<input type="hidden" name="num_products" value="<?php echo $n; ?>">
+							</div>
+			
+					</div>
+				<?php
+				$n++;
+				}				
+				
 				?>
 				<div class="row bg-info">
 					<div class="col-sm-4">
@@ -476,6 +564,13 @@ if (!isset($_GET['success'])){
 	<div class="alert alert-danger alert-dismissible">
 		<a href="../../modules/shop-synchronize/synchronize.php" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 		<strong>ERRORE!</strong> L'upload dell'immagine dell'articolo non è riuscito!.
+	</div>
+<?php
+} elseif ($_GET['success']==6){
+	?>
+	<div class="alert alert-danger alert-dismissible">
+		<a href="../../modules/shop-synchronize/synchronize.php" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<strong>ERRORE!</strong> Non è riuscita la cancellazione delle vecchie immagini temporanee della cartella images remota!.
 	</div>
 <?php
 }
