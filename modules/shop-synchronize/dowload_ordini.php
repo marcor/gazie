@@ -249,8 +249,8 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 						
 			$id_tesbro++;
-		}
-		$numdoc++; //incremento il numero d'ordine GAzie
+			$numdoc++; //incremento il numero d'ordine GAzie
+		}		
 	}
 	header("Location: " . "../../modules/vendit/report_broven.php?auxil=VOW");
     exit;
