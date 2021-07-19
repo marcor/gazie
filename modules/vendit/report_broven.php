@@ -308,7 +308,7 @@ $ts->output_navbar();
             </td>
             <td class=FacetFieldCaptionTD style="text-align: center;">
 				<?php
-				if (!isset ($form['swStatus']) OR $form['swStatus']=="Tutti"){
+				if ($form['swStatus']=="" OR $form['swStatus']=="Tutti"){
 					?>					
 					<input type="submit" class="btn btn-sm btn-default" name="inevasi" onClick="chkSubmit();" value="Inevasi">
 					<?php					
