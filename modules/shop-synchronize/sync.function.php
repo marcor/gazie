@@ -429,7 +429,7 @@ class shopsynchronizegazSynchro {
 		// avvio il file di interfaccia presente nel sito web remoto
 		$headers = @get_headers($urlinterf.'?access='.$access);
 		if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
-			$xml=simplexml_load_file($urlinterf.'?access='.$access) ;
+			$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.mktime()) ;
 			if (!$xml){
                     $rawres['title'] = "L'interfaccia non si apre: impossibile scaricare gli ordini dall'e-commerce";
                     $rawres['button'] = 'Avviso eCommerce';
