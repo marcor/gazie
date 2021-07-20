@@ -82,8 +82,156 @@ class shopsynchronizegazSynchro {
 		// usando il token precedentemente avuto si dovranno eseguire tutte le operazioni necessarie ad aggiornare la categorie merceologica quindi:
 		// in base alle API messe a disposizione dallo specifico store (Opencart,Prestashop,Magento,ecc) si passeranno i dati in maniera opportuna...
 	}
-	function UpsertParent($p) {
+	function UpsertParent($p) { 
 		// aggiorno i dati del genitore delle varianti
+		if ($p['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
+			@session_start();		
+			global $gTables,$admin_aziend;
+			$gForm = new magazzForm();
+			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
+			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
+			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
+			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
+			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
+			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."group-gazie.php";
+			// "group-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
+			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
+			
+			// calcolo la disponibilità in magazzino
+			$rig_vars = gaz_dbi_dyn_query('*', $gTables['artico'], "id_artico_group = " . $p['id_artico_group']);
+			$totav=0;
+            while ( $rig_var = gaz_dbi_fetch_array($rig_vars) ) {// ciclo tutte le varianti di questo gruppo
+				$ordinati=0;$avqty=0;
+				$mv = $gForm->getStockValue(false, $rig_var['codice']);
+				$magval = array_pop($mv);
+				if (!isset($magval['q_g']))	{ 
+					$qg=0;
+				} else {
+					$qg=floatval($magval['q_g']);
+				}					
+				$ordinati = $gForm->get_magazz_ordinati($rig_var['codice'], "VOR");
+				$ordinati = $ordinati + $gForm->get_magazz_ordinati($rig_var['codice'], "VOW");
+				$avqty=$qg-$ordinati;
+				if ($avqty<0 or $avqty==""){ // per l'e-commerce la disponibilità non può essere nulla o negativa
+					$avqty="0";
+				}
+				$totav=$totav+$avqty;
+			}
+			
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password	
+							
+				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
+				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
+
+				if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
+					$key = PublicKeyLoader::load(file_get_contents('../../data/files/'.$admin_aziend['codice'].'/secret_key/'. $ftp_key .''),$ftp_pass);
+					$sftp = new SFTP($ftp_host, $ftp_port);
+					if (!$sftp->login($ftp_user, $key)) {
+						// non si connette: key LOG-IN FALSE
+						$rawres['title'] = "Problemi con la connessione Sftp usando il file chiave. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+						$rawres['button'] = 'Avviso eCommerce';
+						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
+						$rawres['link'] = '../shop-synchronize/synchronize.php';
+						$rawres['style'] = 'danger';										
+					} 
+				} else { // SFTP log-in con password
+				
+					$sftp = new SFTP($ftp_host, $ftp_port);
+					if (!$sftp->login($ftp_user, $ftp_pass)) {
+						// non si connette: password LOG-IN FALSE						
+						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+						$rawres['button'] = 'Avviso eCommerce';
+						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
+						$rawres['link'] = '../shop-synchronize/synchronize.php';
+						$rawres['style'] = 'danger';									
+					} 
+				}				
+			} else {
+			 
+				// imposto la connessione al server
+				$conn_id = ftp_connect($ftp_host)or die("Could not connect to $ftp_server");;
+
+				// effettuo login con user e pass
+				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+
+				// controllo se la connessione è OK...
+				if ((!$conn_id) or (!$mylogin)){ 
+					// non si connette FALSE
+					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
+				} 
+			}
+			// creo il file xml			
+			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
+			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2021" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
+			$xml_output .= "\n<Products>\n";						
+				$xml_output .= "\t<Product>\n";
+				$xml_output .= "\t<Id>".$p['ref_ecommerce_id_main_product']."</Id>\n";
+				$xml_output .= "\t<Type>parent</Type>\n";
+				$xml_output .= "\t<ParentId>".$p['id_artico_group']."</ParentId>\n";
+				$xml_output .= "\t<Name>".$p['descri']."</Name>\n";
+				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($p['large_descri'], ENT_QUOTES, 'UTF-8'))."</Description>\n";
+				$xml_output .= "\t<AvailableQty>".$totav."</AvailableQty>\n";
+				$xml_output .= "\t<WebPublish>".$p['web_public']."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
+				$xml_output .= "\t</Product>\n";
+			$xml_output .="</Products>\n</GAzieDocuments>";
+			$xmlFile = "prodotti.xml";
+			$xmlHandle = fopen($xmlFile, "w");
+			fwrite($xmlHandle, $xml_output);
+			fclose($xmlHandle);
+			
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
+				// invio file xml tramite Sftp
+				if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
+					$sftp->disconnect();					
+				}else {
+					// chiudo la connessione SFTP 
+					$sftp->disconnect();
+					$rawres['title'] = "Upload tramite Sftp del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';			
+				}	
+			} else {
+				//turn passive mode on
+				ftp_pasv($conn_id, true);
+				// upload file xml
+				if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
+				} else{
+					$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
+				}
+				// chiudo la connessione FTP 
+				ftp_quit($conn_id);
+			}
+			$access=base64_encode($accpass);
+			// avvio il file di interfaccia presente nel sito web remoto
+			$headers = @get_headers($urlinterf.'?access='.$access);
+			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
+				$file = fopen ($urlinterf.'?access='.$access, "r");
+				if (!$file) {
+					$rawres['title'] = "L'interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
+				}
+			} else { // Riporto il codice di errore
+				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
+				$rawres['link'] = '../shop-synchronize/synchronize.php';
+				$rawres['style'] = 'danger';
+			}
+		}		
+		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;		
 	}
 	function UpsertProduct($d) {
 		if ($d['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
