@@ -93,7 +93,7 @@ class shopsynchronizegazSynchro {
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
 			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
-			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."group-gazie.php";
+			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
 			// "group-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 			
@@ -170,6 +170,7 @@ class shopsynchronizegazSynchro {
 			$xml_output .= "\n<Products>\n";						
 				$xml_output .= "\t<Product>\n";
 				$xml_output .= "\t<Id>".$p['ref_ecommerce_id_main_product']."</Id>\n";
+				$xml_output .= "\t<Code>".$p['id_artico_group']."</Code>\n";
 				$xml_output .= "\t<Type>parent</Type>\n";
 				$xml_output .= "\t<ParentId>".$p['id_artico_group']."</ParentId>\n";
 				$xml_output .= "\t<Name>".$p['descri']."</Name>\n";
