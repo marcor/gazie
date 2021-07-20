@@ -6,5 +6,7 @@ ALTER TABLE `gaz_XXXartico`	ADD COLUMN `durability` INT(4) NOT NULL DEFAULT '0' 
 	ADD COLUMN `warranty_days` INT(4) NOT NULL DEFAULT '0' COMMENT 'Durata della garanzia in giorni' AFTER `durability_mu`;
 ALTER TABLE `gaz_XXXrigbro`
 	ADD COLUMN `id_rigmoc` INT(9) NULL DEFAULT NULL COMMENT 'Riferimento ad id_rig della tabella gaz_NNNrigmoc' AFTER `id_orderman`,
-	ADD INDEX `id_rigmoc` (`id_rigmoc`);    
+	ADD INDEX `id_rigmoc` (`id_rigmoc`);  
+ALTER TABLE `gaz_XXXaliiva`
+	CHANGE COLUMN `annota` `annota` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Descrizione estesa e/o annotazioni' AFTER `status`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

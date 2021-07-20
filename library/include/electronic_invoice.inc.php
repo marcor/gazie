@@ -353,7 +353,7 @@ class invoiceXMLvars {
 					break;
 				}
             } elseif ($rigo['tiprig'] == 21) {  // Causale
-               	$this->Causale=$rigo['descri'];
+               	$this->Causale[]=$rigo['descri'];
             } elseif ($rigo['tiprig'] == 25) {  // DatiSAL
                	$this->DatiSAL[]=$rigo['descri']; //faccio il push sull'array
             } elseif ($rigo['tiprig'] == 31) {  // DatiVeicoli 2.3
@@ -466,8 +466,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 	$XMLvars->IdRig_NumeroLinea=array();
 	// inizializzo l'accumulatore per DatiSAL 2.1.7
 	$XMLvars->DatiSAL=array();
-	// inizializzo la variabile per Causale 2.1.1.11
-	$XMLvars->Causale=false;
 	// inizializzo la variabile per DatiVeicoli 2.3
 	$XMLvars->DatiVeicoli=false;
 	// inizializzo l'accumulatore per DatiDDT
@@ -491,6 +489,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 				$domDoc->load("../../library/include/template_fae_FPA12.xml");
 				$XMLvars->FormatoTrasmissione='FPA';
 			}
+            // inizializzo la variabile per Causale 2.1.1.11 e se il regime fiscale è RF02 (contribuenti minimi) o RF19 (regime forfettario) allora indico le relative diciture
+            $XMLvars->Causale=array();
+            if ($XMLvars->regime_fiscale=='RF02') {
+                $XMLvars->Causale[]= "Operazione senza applicazione dell’Iva ai sensi dell’art. 1 comma 100 della L. 244/2007. Regime fiscale di vantaggio per l’imprenditoria giovanile e per i lavoratori in mobilità ex art. 27 commi 1 e 2 del D.l. 98/2011. Si richiede la non applicazione della ritenuta alla fonte a titolo d’acconto come previsto dal Provvedimento dell’Agenzia delle Entrate 22.12.2011 prot. 185820.";
+            } elseif ($XMLvars->regime_fiscale=='RF19') {
+                $XMLvars->Causale[]= "Operazione effettuata ai sensi dell’articolo 1, commi da 54 a 89, della Legge n. 190/2014 così come modificato dalla Legge numero 208/2015. Si richiede la non applicazione della ritenuta d’acconto come previsto dall’art.1, comma 67, Legge n.190/2014";
+            }
 			$xpath = new DOMXPath($domDoc);
 		}
         // controllo se ho un ufficio diverso da quello di base
@@ -1206,10 +1211,12 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $el = $domDoc->createElement("ImportoTotaleDocumento", number_format($totpar, 2, '.', ''));  // totale fatura al lordo di RDA
     $results->appendChild($el);
 
-    if ($XMLvars->Causale) {
+    if (count($XMLvars->Causale)>0) {
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);
-        $el = $domDoc->createElement("Causale", $XMLvars->Causale);
-        $results->appendChild($el);
+		foreach ($XMLvars->Causale as $k=>$v) {
+			$el = $domDoc->createElement("Causale",$v);
+			$results->appendChild($el);
+		}
     }
 
     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
