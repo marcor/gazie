@@ -77,6 +77,15 @@ class FatturaImmediata extends Template_con_scheda
     }
     function body()
     {
+        if ($this->docVars->regime_fiscale=='RF02') {
+            $this->SetFont('helvetica', 'B', 10);
+            $this->MultiCell(186, 10, "Operazione effettuata ai sensi dell'art.1 comma 100 Legge 244/2007.\nCompenso non assoggettato a ritenuta d'acconto ai sensi dell'art.27 del DL 98 del 06.07.2011",1,'L', 0,1);
+            $this->SetFont('helvetica', '', 9);
+        } elseif ($this->docVars->regime_fiscale=='RF19') {
+            $this->SetFont('helvetica', 'B', 10);
+            $this->MultiCell(186, 10, "Operazione effettuata ai sensi dell'art.1 commi da 54 a 89 Legge 190/2014 e successive modifiche.\nCompenso non assoggettato a ritenuta d'acconto ai sensi dall'art.1 comma 67 Legge n.190/2014",1,'L', 0,1);
+            $this->SetFont('helvetica', '', 9);
+        }
         $lines = $this->docVars->getRigo();
 		foreach ($lines AS $key => $rigo) {
             if (($this->GetY() >= 157 && $this->taxstamp >= 0.01) || $this->GetY() >= 186 ) { // mi serve per poter stampare la casella del bollo

@@ -260,6 +260,10 @@ class DocContabVars {
 			$this->iban = $clfoco['iban'];
 		}
         $this->artico_doc = array(); // accumulatore referenze ai documenti degli articoli eventualemente da allegare
+		// ATTRIBUISCO UN EVENTUALE REGIME FISCALE DIVERSO DALLA CONFIGURAZIONE AZIENDA SE LA SEZIONE IVA E' LEGATO AD ESSO TRAMITE IL RIGO var='sezione_regime_fiscale' IN gaz_XXXcompany_config
+		$this->regime_fiscale=$this->azienda['fiscal_reg'];
+		if ($fr=getRegimeFiscale($this->tesdoc["seziva"])) $this->regime_fiscale=$fr;
+        
     }
 
     function initializeTotals() {

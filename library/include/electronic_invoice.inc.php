@@ -492,11 +492,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             // inizializzo la variabile per Causale 2.1.1.11 e se il regime fiscale è RF02 (contribuenti minimi) o RF19 (regime forfettario) allora indico le relative diciture
             $XMLvars->Causale=array();
             if ($XMLvars->regime_fiscale=='RF02') {
-                $XMLvars->Causale[]= "Operazione senza applicazione dell’Iva ai sensi dell’art. 1 comma 100 della L. 244/2007.
-                Compenso non assoggettato a ritenuta d’acconto ai sensi dell’art. 27 del D.L. n. 98 del 06.07.2011.";
+                $XMLvars->Causale[]= "Operazione effettuata ai sensi dell'art.1 comma 100 Legge 244/2007. Compenso non assoggettato a ritenuta d'acconto ai sensi dell'art.27 del DL 98 del 06.07.2011";
             } elseif ($XMLvars->regime_fiscale=='RF19') {
-                $XMLvars->Causale[]= "Operazione effettuata ai sensi dell’articolo 1, commi da 54 a 89, della Legge n. 190/2014 così come modificato dalla Legge numero 208/2015. 
-                Compenso non assoggettato a ritenuta d’acconto ai sensi dall’art.1 comma 67 Legge n.190/2014";
+                $XMLvars->Causale[]= "Operazione effettuata ai sensi dell'art.1 commi da 54 a 89 Legge 190/2014 e successive modifiche. Compenso non assoggettato a ritenuta d'acconto ai sensi dall'art.1 comma 67 Legge n.190/2014";
             }
 			$xpath = new DOMXPath($domDoc);
 		}
