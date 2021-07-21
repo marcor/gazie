@@ -301,7 +301,8 @@ $strScript = array(
         'fae_natura' => "Natura fatt.elettronica PA",
         'taxstamp' => 'Soggetto a bollo',
         'operation_type' => "Tipo di operazione",
-        'yn_value' => array(1 => 'Si', 0 => 'No')
+        'yn_value' => array(1 => 'Si', 0 => 'No'),
+        'annota' => 'Descrizione estesa'
     ),
     "admin_banapp.php" =>
     array('title' => 'Gestione delle banche di appoggio',

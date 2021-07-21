@@ -299,7 +299,8 @@ $strScript = array("admin_aziend.php" =>
         'taxstamp' => 'Subject to stamp duty',
         'fae_natura' => "Nature - PA electronic invoice",
         'operation_type'=>"Operation type",
-        'yn_value' => array(1 => 'Si', 0 => 'No')
+        'yn_value' => array(1 => 'Si', 0 => 'No'),
+        'annota' => 'Descrizione estesa'
 
     ),
     "admin_banapp.php" =>

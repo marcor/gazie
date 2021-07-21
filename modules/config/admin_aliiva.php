@@ -160,9 +160,9 @@ echo "\t<td class=\"FacetDataTD\" colspan=\"2\">";
 $gForm->selectFromXML('../../library/include/fae_natura_iva.xml', 'fae_natura', 'fae_natura', $form['fae_natura'], true);
 echo "</td>\n";
 echo "</tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[4] . "</td>
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td>
      <td class=\"FacetDataTD\">\n";
-echo "\t<input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" maxlength=\"50\"  class=\"FacetInput\">\n";
+echo '<textarea name="sedleg" rows="2" cols="60" maxlength="254" >'. $form['annota'].'</textarea>';
 echo "</td></tr>";
 echo "<tr>\n
       <td class=\"FacetFieldCaptionTD\">

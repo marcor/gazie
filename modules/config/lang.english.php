@@ -277,7 +277,7 @@ $strScript = array("admin_aziend.php" =>
         'taxstamp' => 'Subject to stamp duty',
         'yn_value' => array(1 => 'Yes', 0 => 'No'),
         'fae_natura' => "Nature - PA electronic invoice",
-        'operation_type'=>"Operation type",
+        'operation_type'=>"Operation type"
     ),
     "admin_aliiva.php" =>
     array("VAT rate",
@@ -294,7 +294,8 @@ $strScript = array("admin_aziend.php" =>
         'fae_natura' => "Nature - PA electronic invoice",
         'taxstamp' => 'Subject to stamp duty',
         'operation_type'=>"Operation type",
-        'yn_value' => array(1 => 'Si', 0 => 'No')
+        'yn_value' => array(1 => 'Si', 0 => 'No'),
+        'annota' => 'Descrizione estesa'
     ),
     "admin_banapp.php" =>
     array('title' => 'Bank support management',
