@@ -492,9 +492,11 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             // inizializzo la variabile per Causale 2.1.1.11 e se il regime fiscale è RF02 (contribuenti minimi) o RF19 (regime forfettario) allora indico le relative diciture
             $XMLvars->Causale=array();
             if ($XMLvars->regime_fiscale=='RF02') {
-                $XMLvars->Causale[]= "Operazione senza applicazione dell’Iva ai sensi dell’art. 1 comma 100 della L. 244/2007. Regime fiscale di vantaggio per l’imprenditoria giovanile e per i lavoratori in mobilità ex art. 27 commi 1 e 2 del D.l. 98/2011. Si richiede la non applicazione della ritenuta alla fonte a titolo d’acconto come previsto dal Provvedimento dell’Agenzia delle Entrate 22.12.2011 prot. 185820.";
+                $XMLvars->Causale[]= "Operazione senza applicazione dell’Iva ai sensi dell’art. 1 comma 100 della L. 244/2007.
+                Compenso non assoggettato a ritenuta d’acconto ai sensi dell’art. 27 del D.L. n. 98 del 06.07.2011.";
             } elseif ($XMLvars->regime_fiscale=='RF19') {
-                $XMLvars->Causale[]= "Operazione effettuata ai sensi dell’articolo 1, commi da 54 a 89, della Legge n. 190/2014 così come modificato dalla Legge numero 208/2015. Si richiede la non applicazione della ritenuta d’acconto come previsto dall’art.1, comma 67, Legge n.190/2014";
+                $XMLvars->Causale[]= "Operazione effettuata ai sensi dell’articolo 1, commi da 54 a 89, della Legge n. 190/2014 così come modificato dalla Legge numero 208/2015. 
+                Compenso non assoggettato a ritenuta d’acconto ai sensi dall’art.1 comma 67 Legge n.190/2014";
             }
 			$xpath = new DOMXPath($domDoc);
 		}
