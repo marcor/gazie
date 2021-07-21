@@ -333,6 +333,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $form['rows'][$next_row]['quanti'] = 1;
             }
+			if ($v['lot_or_serial'] == 1 && intval($v['id_lotmag']) == 0) {
+            // se è prevista la gestione per lotti segnalo quando non è stato inserito il lotto            
+                $msg['emptylot'][] = "siandate"; 
+            }
             $form['rows'][$next_row]['status'] = substr($v['status'], 0, 10);
             if (isset($_POST['upd_row'])) {
                 $k_row = key($_POST['upd_row']);
@@ -406,6 +410,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								$i++;
 							}
 						}
+					} else {
+						$msg['err'][] = "65";
 					}
                 }
                 $form['net_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
@@ -651,10 +657,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
 
 		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
-		if (substr($datemi,0,4)>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 && $form['tipdoc']!='VRI' ){
+		if (isset ($cliente) AND substr($datemi,0,4)>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 && $form['tipdoc']!='VRI' ){
 				//$msg['err'][] = "62";
 		}
-		if ($rit_ctrl && $admin_aziend['causale_pagam_770']==''){
+		if (isset ($admin_aziend) AND $rit_ctrl && $admin_aziend['causale_pagam_770']==''){
 				$msg['err'][] = "63";
         }
         if (count($msg['err']) < 1) {// *** nessun errore ***
@@ -1165,7 +1171,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$old_key]['SIAN'] = $artico['SIAN'];
                 /* devo ricaricare un nuovo id lotmag
                  */
-                if ($artico['lot_or_serial'] > 0) {
+                if ($artico['lot_or_serial'] = 1) {
                     $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
                     $ld = $lm->divideLots($form['in_quanti']);
                     foreach ($lm->divided as $k => $v) {
@@ -1246,7 +1252,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             ksort($form['rows']);
         } else { //se è un rigo da inserire
-            if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale che lo precede
+            
+			if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale che lo precede
 				$article_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'article_text');
 				if ($article_text['val'] < 2){
 					$bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['in_codart']);
@@ -1902,6 +1909,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $next_row = 0;
 	$form['RiferimentoNumeroLinea'] = array();
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+		$plck="";
 		if ($rigo['tiprig']<=1 || $rigo['tiprig']==90){
 			$form['RiferimentoNumeroLinea'][$next_row+1] = substr($rigo['descri'],0,20);
 		}
@@ -1938,6 +1946,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['SIAN'] = $articolo['SIAN'];
         $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $rigo['id_mag']);
         $form['rows'][$next_row]['id_lotmag'] =($movmag)?$movmag['id_lotmag']:0;
+		
+		if ($form['rows'][$next_row]['lot_or_serial'] == 1 AND $form['rows'][$next_row]['id_lotmag']== 0) { // qualora si tratti di una precedente forzatura senza id_lotmag
+			// provo a rimettercelo
+			$lm->getAvailableLots($rigo['codart'], $rigo['id_mag']);
+			$ld = $lm->divideLots($form['rows'][$next_row]['quanti']);
+			foreach ($lm->divided as $k => $v) {
+				if ($v['qua'] >= 0.00001) {                            
+					$form['rows'][$next_row]['id_lotmag'] = $k; // setto il lotto
+					$plck=1;					
+				}
+			}
+		}
         $getlot = $lm->getLot($form['rows'][$next_row]['id_lotmag']);
         $form['rows'][$next_row]['identifier'] =($getlot)?$getlot['identifier']:'';
         $movsian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $rigo['id_mag']);
@@ -2452,9 +2472,8 @@ foreach ($form['rows'] as $k => $v) {
 			 		</td>
 					<td>
 						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
-					';
-            if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0) { // se l'articolo prevede lotti
-				
+					';					
+            if ($v['lot_or_serial'] == 1 && $v['id_lotmag'] > 0) { // se l'articolo prevede lotti				
                 $lm->getAvailableLots($v['codart'], $v['id_mag']);
 				// Antonio Germani - calcolo delle giacenze per ogni singolo lotto
 				$count=array();
@@ -2518,7 +2537,12 @@ foreach ($form['rows'] as $k => $v) {
                 }
                 echo '</div>'
                 . "</div>\n";
-            }
+            } elseif ($v['lot_or_serial'] == 1){ // se prevede lotti ma non ci sono proprio
+				echo '<div><button class="btn btn-xs btn-danger">Impossibile selezionare i lotti! <br>NB: se si conferma si creeranno errori che dovranno essere corretti manualmente.</button></div>';
+			}
+			if (isset($plck) AND $plck == 1){
+				echo '<div><button class="btn btn-xs btn-danger">ATTENZIONE questo articolo era senza un lotto associato. Quello mostrato è stato messo automaticamente. <br>NB: Si prega di controllare se è corretto.</button></div>';
+			}
 
 			// Antonio Germani - Se l'articolo movimenta il SIAN apro il div SIAN
 			if ($form['rows'][$k]['SIAN']>0) {
