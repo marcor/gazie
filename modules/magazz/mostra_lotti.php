@@ -281,7 +281,7 @@ if (isset($_POST['close'])){
 								echo "<b>Descr.: </b><a class=\"btn btn-xs btn-default\" href=\"../acquis/admin_docacq.php?Update&id_tes=".$orf['id_tes']."\">".$orf['desdoc']."</a>";
 								echo "<b> Mov.mag.: </b><a class=\"btn btn-xs btn-default\" href=\"../magazz/admin_movmag.php?id_mov=".$orf['id_mov']."&Update\">".$orf['id_mov']."</a>";
 
-							} else if ($orf['tipdoc']=="VRI" or $orf['tipdoc']=="DDT" or $orf['tipdoc']=="DDT"){
+							} else if ($orf['tipdoc']=="VRI" or $orf['tipdoc']=="DDT" or $orf['tipdoc']=="FAI" or $orf['tipdoc']=="FAD"){
 									echo "<b>Descr.: </b><a class=\"btn btn-xs btn-default\" href=\"../vendit/admin_docven.php?Update&id_tes=".$orf['id_tes']."\">".$orf['desdoc']."</a>";
 									echo "<b> Mov.mag.: </b><a class=\"btn btn-xs btn-default\" href=\"../magazz/admin_movmag.php?id_mov=".$orf['id_mov']."&Update\">".$orf['id_mov']."</a>";
 								} else {

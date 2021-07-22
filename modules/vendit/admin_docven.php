@@ -2489,6 +2489,7 @@ foreach ($form['rows'] as $k => $v) {
 				}
                 $selected_lot = $lm->getLot($v['id_lotmag']);
 				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $v['id_mag']);
+				if (is_array($selected_lot)){
 				if (!isset($count[$selected_lot['identifier']])){
 					$count[$selected_lot['identifier']]="";
 				}
@@ -2507,6 +2508,7 @@ foreach ($form['rows'] as $k => $v) {
 				. ' rif:' . $selected_lot['desdoc']
                 . ' - ' . gaz_format_date($selected_lot['datdoc']) .
 				'</button>';
+				}
                 if ($v['id_mag'] > 0) {
                     echo ' <a class="btn btn-xs btn-default" href="lotmag_print_cert.php?id_movmag=' . $v['id_mag'] . '" target="_blank"><i class="glyphicon glyphicon-print"></i></a>';
                 }
@@ -2540,8 +2542,11 @@ foreach ($form['rows'] as $k => $v) {
             } elseif ($v['lot_or_serial'] == 1){ // se prevede lotti ma non ci sono proprio
 				echo '<div><button class="btn btn-xs btn-danger">Impossibile selezionare i lotti! <br>NB: se si conferma si creeranno errori che dovranno essere corretti manualmente.</button></div>';
 			}
-			if (isset($plck) AND $plck == 1){
+			if (isset($plck) AND $plck == 1 AND is_array($selected_lot)){
 				echo '<div><button class="btn btn-xs btn-danger">ATTENZIONE questo articolo era senza un lotto associato. Quello mostrato è stato messo automaticamente. <br>NB: Si prega di controllare se è corretto.</button></div>';
+			}
+			if ($v['lot_or_serial'] == 1 AND !is_array($selected_lot)){
+				echo '<div><button class="btn btn-xs btn-danger">ATTENZIONE articolo con lotti ma non ci sono lotti selezionabili.</button></div>';
 			}
 
 			// Antonio Germani - Se l'articolo movimenta il SIAN apro il div SIAN
