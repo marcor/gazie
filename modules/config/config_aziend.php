@@ -25,9 +25,18 @@
 
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
-if (isset($_POST["mode"])&& $_POST["mode"]=='modal') {   //  sono al primo accesso, non faccio nulla
-} else { // ho modificato i valori
-    if (count($_POST) > 0) {
+$modal_ok_insert = false;
+$modal = false;
+if (isset($_POST['mode']) || isset($_GET['mode'])) {
+    $pdb=gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
+    $period=($pdb==0)?60:$pdb;
+    $modal = true;
+    if (isset($_GET['ok_insert'])) {
+        $modal_ok_insert = true;
+    }
+}
+
+   if (count($_POST) > 10) {
         $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         foreach ($_POST as $k => $v) {
             $value=filter_var($v, FILTER_SANITIZE_STRING);
@@ -35,17 +44,22 @@ if (isset($_POST["mode"])&& $_POST["mode"]=='modal') {   //  sono al primo acces
             print 'sasasa:'. $key. ' asda>'.$value.'<br>';
             gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
         }
-        header("Location: config_aziend.php?ok");
+        header("Location: config_aziend.php?mode=modal&ok_insert");
         exit;
     }
+
+if ($modal === false) {
+    require("../../library/include/header.php");
+    $script_transl = HeadMain(0, array('custom/autocomplete'));
+} else {
+    $script = basename($_SERVER['PHP_SELF']);
+    require("../../language/" . $admin_aziend['lang'] . "/menu.inc.php");
+    require("./lang." . $admin_aziend['lang'] . ".php");
+    if (isset($script)) { // se è stato tradotto lo script lo ritorno al chiamante
+        $script_transl = $strScript[$script];
+    }
+    $script_transl = $strCommon + $script_transl;
 }
-$script = basename($_SERVER['PHP_SELF']);
-require("../../language/" . $admin_aziend['lang'] . "/menu.inc.php");
-require("./lang." . $admin_aziend['lang'] . ".php");
-if (isset($script)) { // se è stato tradotto lo script lo ritorno al chiamante
-    $script_transl = $strScript[$script];
-}
-$script_transl = $strCommon + $script_transl;
 $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0, 1000);
 ?>
 <div align="center" class="FacetFormHeaderFont">
@@ -62,11 +76,17 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
     <div class="tab-content">
         <div id="generale" class="tab-pane fade in active">
         <form method="post" id="sbmt-form"> 
-        <?php if (isset($_GET["ok"])) { ?>
+        <?php 
+        if ($modal) { ?>
+        	<input type="hidden" name="mode" value="modal" />
+        <?php 
+        }
+        if (isset($_GET["ok_insert"])) { ?>
             <div class="alert alert-danger text-center" role="alert">
                 <?php echo "Le modifiche sono state salvate correttamente<br/>"; ?>
             </div>
-        <?php }      
+        <?php }
+        $mail_sender='';        
         if (gaz_dbi_num_rows($result) > 0) {
             while ($r = gaz_dbi_fetch_array($result)) {
                 ?>
@@ -140,10 +160,19 @@ $("#btn_send").click( function() {
 		},
 	})
 });
+<?php
+if ($modal === false) {
+?>    
+$( "#upsave" ).click(function() {
+    $( "#sbmt-form" ).submit();
+});
+<?php
+} else {
+?>
 $("#sbmt-form").submit(function (e) {
     $.ajax({
         type: "POST",
-        url: "config_aziend.php",
+        url: "config_aziend.php?mode=modal",
         data: $("#sbmt-form").serialize(), // serializes the form's elements.
         success: function (data) {
             $("#edit-modal .modal-sm").css('width', '100%');
@@ -158,7 +187,7 @@ $("#sbmt-form").submit(function (e) {
 $( "#upsave" ).click(function() {
     $.ajax({
         type: "POST",
-        url: "config_aziend.php",
+        url: "config_aziend.php?mode=modal",
         data: $("#sbmt-form").serialize(), // serializes the form's elements.
         success: function (data) {
             $("#edit-modal .modal-sm").css('width', '100%');
@@ -170,6 +199,9 @@ $( "#upsave" ).click(function() {
     });
     e.preventDefault(); // avoid to execute the actual submit of the form.
 });
+<?php
+}
+?>
 </script>
 <?php
 require("../../library/include/footer.php");
