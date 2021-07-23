@@ -1355,7 +1355,20 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
     $id_tes = $XMLvars->tesdoc['id_tes'];
     $data_ora_ricezione = $XMLvars->docRelDate;
-
+    
+    // se è un reinvio allora faccio l'upload del genitore indicando indicando in filename_son il nome di questo nuovo file 
+    if ( $XMLvars->fae_reinvii >=1 ){
+        // faccio l'encode in base 36 per ricavare il progressivo unico di invio
+        $parent = array('azienda' => $XMLvars->azienda['codice'],
+            'anno' => $XMLvars->docRelDate,
+            'sezione' => $XMLvars->seziva,
+            'fae_reinvii'=> $XMLvars->fae_reinvii-1,
+            'protocollo' => $XMLvars->protoc);
+        $parent_progressivo_unico_invio = encodeSendingNumber($parent, 36);
+        $parent_nome_file = "IT" . $codice_trasmittente . "_" . $parent_progressivo_unico_invio;
+        gaz_dbi_query ("UPDATE ".$gTables['fae_flux']." SET `filename_son`='".$nome_file.".xml' WHERE `filename_ori`='".$parent_nome_file . ".xml'");
+    }
+    
 	if ($name_ziparchive){
 		if ($name_ziparchive != 'from_string.xml') {
 			$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file . ".xml");
