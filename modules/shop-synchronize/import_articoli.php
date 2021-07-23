@@ -151,7 +151,12 @@ if (isset($_POST['conferma'])) { // se confermato
 					gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET image = '".$immagine."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");	
 
 				}else {
-					gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET image = '".$immagine."' WHERE codice = '".$_POST['codice'.$ord]."'");	
+					if ($esiste){
+						$codice=$esiste['codice'];
+					} else{
+						$codice=$_POST['codice'.$ord];
+					}
+					gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET image = '".$immagine."' WHERE codice = '".$codice."'");	
 				}
 			} else {
 				$immagine="";
@@ -186,12 +191,16 @@ if (isset($_POST['conferma'])) { // se confermato
 						if ($_POST['product_type'.$ord]=="parent"){ // se è un parent					
 							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET large_descri = '". htmlspecialchars_decode (addslashes($_POST['body_text'.$ord])) ."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {					
-							$esist = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_".$_POST['codice'.$ord]);
+							$esist = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_".$esiste['codice']);
 							$form['body_text'] = htmlspecialchars_decode ($_POST['body_text'.$ord]);
-							$form['table_name_ref']="artico_".$_POST['codice'.$ord];
+							if($esiste){
+								$form['table_name_ref']="artico_".$esiste['codice'];
+							} else {
+								$form['table_name_ref']="artico_".$_POST['codice'.$ord];
+							}
 							$form['lang_id']=1;
 							if ($esist) { // se c'è già	
-								$where = array("0" => "table_name_ref", "1" => "artico_".$_POST['codice'.$ord]); 
+								$where = array("0" => "table_name_ref", "1" => "artico_".$esiste['codice']); 
 								gaz_dbi_table_update("body_text",$where, $form); // la aggiorno nel DB
 							} else { // altrimenti 
 								gaz_dbi_table_insert('body_text', $form); // la scrivo nel DB
