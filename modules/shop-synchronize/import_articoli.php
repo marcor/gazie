@@ -176,7 +176,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					$_POST['descri'.$ord]=$parent['descri']."-".$_POST['characteristic'.$ord];// ci metto quella del padre accodandoci la variante
 				}
 			}
-			if ($_POST['product_type'.$ord]=="variant"){ // se una variante
+			if ($_POST['product_type'.$ord]=="variant" AND strlen($_POST['characteristic'.$ord])>0 ){ // se una variante
 				// creo un json array per la variante
 				$arrayvar= array("var_id" => floatval($_POST['characteristic_id'.$ord]), "var_name" => $_POST['characteristic'.$ord]);
 				$arrayvar = json_encode ($arrayvar);
