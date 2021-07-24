@@ -127,12 +127,13 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 $xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
 <GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
 $xml_output .= "\n<Products>\n";
-$artico = gaz_dbi_query ('SELECT codice, barcode, ref_ecommerce_id_product FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
- while ($item = gaz_dbi_fetch_array($artico)){
-		$avqty = 0;$ordinatic=0;
-		
+// carico gli articoli e creo il file xml con quelli che hanno un ID e-commerce
+$artico = gaz_dbi_query ('SELECT codice, barcode, ref_ecommerce_id_product, id_artico_group FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
+while ($item = gaz_dbi_fetch_array($artico)){
+	$avqty = 0;$ordinatic=0;
+	if ($item['ref_ecommerce_id_product']>0){
 		$mv = $gForm->getStockValue(false, $item['codice']);
-        $magval = array_pop($mv);
+		$magval = array_pop($mv);
 		if ($magval){
 		$avqty = $magval['q_g'];
 		}
@@ -150,10 +151,45 @@ $artico = gaz_dbi_query ('SELECT codice, barcode, ref_ecommerce_id_product FROM 
 		$xml_output .= "\t<Product>\n";
 		$xml_output .= "\t<Id>".$item['ref_ecommerce_id_product']."</Id>\n";
 		$xml_output .= "\t<Code>".$item['codice']."</Code>\n";
+		if ($item['id_artico_group'] > 0){
+			$xml_output .= "\t<Type>variant</Type>\n";
+		} else {
+			$xml_output .= "\t<Type>product</Type>\n";
+		}
 		$xml_output .= "\t<BarCode>".$item['barcode']."</BarCode>\n";
 		$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
-		$xml_output .= "\t</Product>\n";	 
+		$xml_output .= "\t</Product>\n";
+	}		
  }
+ // carico in $parent i gruppi che sono presenti in GAzie e li aggiungo al file xml
+$parent = gaz_dbi_query ("SELECT * FROM ".$gTables['artico_group']." WHERE web_public > 0 ORDER BY id_artico_group");
+while ($item = gaz_dbi_fetch_array($parent)){ // li ciclo	
+	$variant = gaz_dbi_query ("SELECT codice FROM ".$gTables['artico']." WHERE id_artico_group = '". $item['id_artico_group'] ."' ORDER BY codice");
+	$totqty=0;
+	while ($itemvar = gaz_dbi_fetch_array($variant)){// ciclo le sue varianti
+		$mv = $gForm->getStockValue(false, $itemvar['codice']);
+		$magval = array_pop($mv);
+		if ($magval){
+		$avqty = $magval['q_g'];
+		}		
+		$ordinatic = $gForm->get_magazz_ordinati($itemvar['codice'], "VOR");
+		$ordinatic = $ordinatic + $gForm->get_magazz_ordinati($itemvar['codice'], "VOW");
+		$avqty -= $ordinatic;		
+		if ($avqty<0 or $avqty==""){
+			$avqty="0";
+		}
+		$totqty=$totqty+$avqty; // conteggio il totale disponibile in magazzino del gruppo
+	}
+	$xml_output .= "\t<Product>\n";
+		$xml_output .= "\t<Id>".$item['ref_ecommerce_id_main_product']."</Id>\n";
+		$xml_output .= "\t<Code>".$item['id_artico_group']."</Code>\n";
+		$xml_output .= "\t<Type>parent</Type>\n";
+		$xml_output .= "\t<BarCode></BarCode>\n";
+		$xml_output .= "\t<AvailableQty>".$totqty."</AvailableQty>\n";
+		$xml_output .= "\t</Product>\n";
+
+}				
+					
 $xml_output .="\n</Products>\n</GAzieDocuments>";
 $xmlFile = "prodotti.xml";
 $xmlHandle = fopen($xmlFile, "w");
