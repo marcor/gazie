@@ -287,7 +287,7 @@ if (!isset($_GET['success'])){
 	$headers = @get_headers($urlinterf.'?access='.$access);	
 	
 	if ( intval(substr($headers[0], 9, 3))==200){ // controllo se ho avuto accesso al file interfaccia
-		$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.mktime()) ; // carico il file xml appena creato
+		$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.time()) ; // carico il file xml appena creato
 		if (!$xml){ // se non è stato creato o non ho accesso
 			?>
 			<script>
