@@ -79,6 +79,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['codice'] = trim($form['codice']);
   $form['ritorno'] = $_POST['ritorno'];
   $form['web_public_init'] = $_POST['web_public_init'];
+  $form['var_id'] = $_POST['var_id'];
+  $form['var_name'] = $_POST['var_name'];
   $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
   // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
   $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
@@ -250,6 +252,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		}
 	}
 	
+	// se esiste un json per l'attributo della variante dell'e-commerce creo il json					
+	if (isset ($form['var_id']) OR isset ($form['var_name'])){
+		$arrayvar= array("var_id" => intval($_POST['var_id']), "var_name" => $_POST['var_name']);
+		$form['ecomm_option_attribute'] = json_encode ($arrayvar);
+	}
+		
     if ($toDo == 'insert') {		
 		gaz_dbi_table_insert('artico', $form);
 		if (!empty($tbt)) {
@@ -327,6 +335,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $form['ritorno'] = 'admin_artico.php';
     }
 	$form['web_public_init']=$form['web_public'];
+	if (json_decode($form['ecomm_option_attribute']) != null){ // se esiste un json per attributo della variante dell'e-commerce
+		$opt_att=json_decode($form['ecomm_option_attribute']);
+		if (isset ($opt_att -> var_id) OR isset ($opt_att -> var_name)){
+		$form['var_id'] = $opt_att -> var_id;
+		$form['var_name'] = $opt_att -> var_name;
+		} else {
+			$form['var_id'] = 0;
+			$form['var_name'] = "";
+		}
+	}
     /** ENRICO FEDELE */
     $form['ref_code'] = $form['codice'];
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
@@ -792,6 +810,32 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+				<?php
+				 // se esiste un json per l'attributo della variante dell'e-commerce					
+				if (isset ($form['var_id']) OR isset ($form['var_name'])){		
+					?>
+					<!--+ DC - 06/02/2019 div class="row" --->
+					<div id="webUrl" class="row IERincludeExcludeRow">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="var_id" class="col-sm-4 control-label">ID attributo variante</label>
+								<input class="col-sm-8" type="text" value="<?php echo $form['var_id']; ?>" name="var_id" maxlength="255" />
+							</div>
+						</div>
+					</div><!-- chiude row  -->
+					<!--+ DC - 06/02/2019 div class="row" --->
+					<div id="webUrl" class="row IERincludeExcludeRow">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="var_name" class="col-sm-4 control-label">Nome attributo variante</label>
+								<input class="col-sm-8" type="text" value="<?php echo $form['var_name']; ?>" name="var_name" maxlength="255" />
+							</div>
+						</div>
+					</div><!-- chiude row  -->
+					<?php
+				}
+				
+				?>
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="depliPublic" class="row IERincludeExcludeRow">
                     <div class="col-md-12">

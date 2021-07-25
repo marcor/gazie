@@ -161,10 +161,15 @@ if (isset($_POST['conferma'])) { // se confermato
 			$xml_output .= "\t<Id>".$_POST['ref_ecommerce_id_product'.$ord]."</Id>\n";
 			$xml_output .= "\t<IdMain>".$_POST['ref_ecommerce_id_main_product'.$ord]."</IdMain>\n";
 			if (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0){
-				if ($_POST['ref_ecommerce_id_main_product'.$ord]==$_POST['ref_ecommerce_id_product'.$ord]){
+				if ($_POST['ref_ecommerce_id_product'.$ord]<1){
 					$xml_output .= "\t<Type>parent</Type>\n";
 				} else {
 					$xml_output .= "\t<Type>variant</Type>\n";
+					if (json_decode($_POST['ecomm_option_attribute'.$ord]) != null){ // se esiste un json per attributo della variante dell'e-commerce
+						$var = json_decode($_POST['ecomm_option_attribute'.$ord]);
+						$xml_output .= "\t<Characteristic>".$var->var_name."</Characteristic>\n";
+						$xml_output .= "\t<CharacteristicId>".$var->var_id."</CharacteristicId>\n";
+					}
 				}
 			} else {
 				$xml_output .= "\t<Type>product</Type>\n";
@@ -375,7 +380,7 @@ if (!isset($_GET['success'])){
 				</div>
 				<?php
 				// carico in $artico gli articoli che sono presenti in GAzie
-				$artico = gaz_dbi_query ('SELECT codice, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
+				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
 					$ref_ecommerce_id_main_product="";
@@ -423,6 +428,7 @@ if (!isset($_GET['success'])){
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $item['web_price'] .'">';
 								echo '<input type="hidden" name="ref_ecommerce_id_main_product'. $n .'" value="'. $ref_ecommerce_id_main_product .'">';
 								echo '<input type="hidden" name="ref_ecommerce_id_product'. $n .'" value="'. $item['ref_ecommerce_id_product'] .'">';
+								echo '<input type="hidden" name="ecomm_option_attribute'. $n .'" value="'. htmlspecialchars($item['ecomm_option_attribute']) .'">';
 								if ($_GET['img']=="updimg"){ // se devo aggiornare l'immagine ne trovo l'url di GAzie
 									$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico", "AND id_ref ='1' AND item_ref = '". $item['codice']."'");
 									if (isset($imgres['id_doc']) AND $imgres['id_doc']>0){ // se c'è un'immagine
@@ -481,7 +487,7 @@ if (!isset($_GET['success'])){
 								echo '<input type="hidden" name="aliiva'. $n .'" value="">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="">';
 								echo '<input type="hidden" name="ref_ecommerce_id_main_product'. $n .'" value="'. $item['ref_ecommerce_id_main_product'] .'">';
-								echo '<input type="hidden" name="ref_ecommerce_id_product'. $n .'" value="'. $item['ref_ecommerce_id_main_product'] .'">';
+								echo '<input type="hidden" name="ref_ecommerce_id_product'. $n .'" value="">';
 								
 								if ($_GET['img']=="updimg"){ // se devo aggiornare l'immagine cerco l'url di quella HQ High Quality in GAzie
 									$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", "artico_group", "AND id_ref ='1' AND item_ref = '". $item['id_artico_group']."'");
