@@ -419,7 +419,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$form['id_movmag']=$prev_id_movmag;// reimposto l'id_movmag del movimento di entrata
 						$id_movmag=$form['id_movmag'];
 					}
-          if ($itemart && $itemart['good_or_service'] == 2) { // se è un articolo composto
+                    if ($itemart && $itemart['good_or_service'] == 2) { // se è un articolo composto
 						for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
 							if ($form['q_lot_comp'][$nc] > 0) { // se il componente ha lotti
 							    for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente

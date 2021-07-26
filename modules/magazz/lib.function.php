@@ -724,6 +724,8 @@ class magazzForm extends GAzieForm {
         } elseif ($tipdoc == 'INV') {
             require("../../modules/magazz/lang." . $admin_aziend['lang'] . ".php");
             $desdoc = $strScript['admin_artico.php']['esiste'];
+        }  elseif ($tipdoc == 'MAG') {
+            $desdoc = 'Scarico per Produzione senza lotto';
         } else {//documento di vendita
             require("../../modules/vendit/lang." . $admin_aziend['lang'] . ".php");
             $desdoc = $strScript['admin_docven.php']['doc_name'][$tipdoc];
