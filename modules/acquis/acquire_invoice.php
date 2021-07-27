@@ -1030,7 +1030,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 				}
 				// Antonio Germani - inizio scrittura DB
-					
+				
 				if ($doc->getElementsByTagName('DatiDDT')->length<1 OR $anomalia == "AnomaliaDDT=FAT" OR $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA 
 					//oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA 
 					//oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
@@ -1060,7 +1060,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$new_codart=$prefisso_codici_articoli_fornitore.'_'.substr($v['codice_fornitore'],-11);
 					}				
 									
-					if (isset($v['exist_ddt']) AND $anomalia!="AnomaliaExistDdt" AND $anomalia != "AnomaliaDDT=FAT" AND $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC	
+					if (isset($v['exist_ddt']) AND $anomalia != "AnomaliaDDT=FAT" AND $form['tipdoc']!=="AFC") { // se ci sono DDT collegabili alla FAE e non è una nota credito AFC	
 						if ($ctrl_ddt!=$v['NumeroDDT']) { 
 							// Antonio Germani - controllo se esiste tesdoc di questo ddt usando la funzione existDdT
 							$exist_artico_tesdoc=existDdT($v['NumeroDDT'],$v['DataDDT'],$form['clfoco'],$v['codart']);
@@ -1262,7 +1262,7 @@ function setDate(name) {
     if (count($msg['war']) > 0) { // ho un alert
         $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
     }
-
+//echo "<pre>",print_r($form);
 if ($toDo=='insert' || $toDo=='update' ) {
 	if ($f_ex){
 	if (empty($form['curr_doc']) && count($docs) > 1) {
@@ -1369,7 +1369,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 						if ($anomalia == "AnomaliaDDT=FAT"){
 							$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura fa riferimento ad un DDT che ha il suo numero e stessa data. E\' da considerarsi come accompagnatoria. <</b></p><p>GAzie acquisirà questo documento come fattura semplice AFA.</p></td>';
 						} else if ($anomalia=="AnomaliaExistDdt"){
-						$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT senza però collegare gli articoli ai rispettivi DDT <</b></p><p>GAzie è in grado di rimediare a patto che i DDT già inseriti non differiscano dalla FAE.</p></td>';
+						$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT con i collegamenti ai righi degli articoli anomali o mancanti <</b></p><p>GAzie è in grado di rimediare a patto che i DDT già inseriti non differiscano dalla FAE.</p></td>';
 						} else {
 							$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT senza però collegare gli articoli ai rispettivi DDT <</b></p><p>Se è presente più di un DDT, prima di inserire la FAE, si consiglia di inserire manualmente i DDT altrimenti verrà creato automaticamente un unico ddt di raggruppamento anomalo.</p></td>';
 						}						
@@ -1548,6 +1548,18 @@ if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_S
 			</div>
 		</div><!-- chiude row  -->
 <?php
+	}
+	print_r($form['rows']);
+	if (isset($form['rows'])){ print "pippo";die;
+		?>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+				<p>Questa fattura è stata connessa ad uno o più DDT già registrati in GAzie</p>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 }
 ?>
