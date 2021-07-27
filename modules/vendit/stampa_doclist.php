@@ -62,7 +62,7 @@ function getDocuments($td = 0, $si = 1, $where_data) {
     $calc = new Compute;
     $type=[0=>'F__',1=>'FAD', 2=>'FAI', 3=> 'FNC', 4=> 'FND',5 => 'FAP',6=> 'DD_'];
     $customer =($where_data['cl']>100000000)?' AND clfoco = '.$where_data['cl']:'';
-    $agente =($where_data['ag']>=1)?' AND id_agente = '.$where_data['ag']:'';
+    $agente =($where_data['ag']>=1)?' AND tesdoc.id_agente = '.$where_data['ag']:'';
     $datfat=($td==6)?'datemi':'datfat';
     $numfat=($td==6)?'numdoc':'numfat';
     $where_data['pi']=($td==6)?'0':$where_data['pi'];        
@@ -235,6 +235,10 @@ require("lang." . $admin_aziend['lang'] . ".php");
 
 $titolo = $_GET['ti'];
 $tipdoc = $_GET['td'];
+if (isset($_GET['ag'])&&is_numeric($_GET['ag'])){
+    $agente = gaz_dbi_get_row($gTables['agenti'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['agenti'] . ".id_fornitore = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $gTables['agenti'] . '.id_agente', intval($_GET['ag']));
+    $titolo .= ($agente)? ' - '.$agente['ragso1']:'';
+}
 $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
 $title = array('luogo_data' => $luogo_data,
 'title' => 'Vendite: '.$titolo.' dal '.gaz_format_date(substr($_GET['di'],0,4).'-'.substr($_GET['di'],4,2).'-'.substr($_GET['di'],6,2)).' al '.gaz_format_date(substr($_GET['df'],0,4).'-'.substr($_GET['df'],4,2).'-'.substr($_GET['df'],6,2)),
