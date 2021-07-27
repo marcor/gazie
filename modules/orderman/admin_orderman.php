@@ -178,6 +178,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				$form['artcomp'][$m] = $_POST['artcomp' . $m];
 				$form['SIAN_comp'][$m] = $_POST['SIAN_comp' . $m];
                 $form['quanti_comp'][$m] = $_POST['quanti_comp' . $m];
+                $form['prezzo_comp'][$m] = $_POST['prezzo_comp' . $m];
                 $form['q_lot_comp'][$m] = $_POST['q_lot_comp' . $m];
 				$form['recip_stocc_comp'][$m] = $_POST['recip_stocc_comp' . $m];
 				if (isset($_POST['subtLot'. $m]) AND $form['q_lot_comp'][$m]>1){
@@ -389,7 +390,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
                     // inserisco il movimento di magazzino dell'articolo prodotto
 					$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], '', '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
-
+					$prod_id_movmag=$id_movmag; // mi tengo l'id_movmag del movimento di magazzino di entrata da produzione, mi servirà successivamente per valorizzare il prezzo in base alla composizione ed anche in caso di SIAN 
 					if ($form['SIAN']>0){ // imposto l'id movmag e salvo il movimento SIAN dell'articolo prodotto
 						$form['id_movmag']=$id_movmag;
 						if ($form['cod_operazione']==5){ // scambio i recipienti
@@ -405,7 +406,6 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					}
 					if ($form['cod_operazione']==5){ // se è una movimentazione interna SIAN creo un movimento di magazzino in uscita per far riportare la giacenza
 						// inserisco il movimento di magazzino dell'articolo in uscita
-						$prev_id_movmag=$id_movmag; // tengo a mente l'id_movmag del movimento di entrata
 						$id_movmag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['codart'], $form['quantip'], '', '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Movimentazione interna'), 0, $idlotrecip[0], $id_orderman, $form['campo_impianto']);
 
 						// e creo anche il relativo movimento SIAN
@@ -416,11 +416,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$form['recip_stocc_destin']=$change;
 						$form['id_mov_sian_rif']=$id_mov_sian_rif;
 						gaz_dbi_table_insert('camp_mov_sian', $form);
-						$form['id_movmag']=$prev_id_movmag;// reimposto l'id_movmag del movimento di entrata
+						$form['id_movmag']=$prod_id_movmag;// reimposto l'id_movmag del movimento di entrata
 						$id_movmag=$form['id_movmag'];
 					}
                     if ($itemart && $itemart['good_or_service'] == 2) { // se è un articolo composto
+                        $comp_total_val=0.00;
 						for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
+                            // accumulo il valore dei singoli componenti, mi servirà a fine ciclo per valorizzare il movimento 'PRO' precedentemente inserito
+                            $comp_total_val += $form['quanti_comp'][$nc]*$form['prezzo_comp'][$nc];
 							if ($form['q_lot_comp'][$nc] > 0) { // se il componente ha lotti
 							    for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
 									if ($form['lot_quanti'][$nc][$n]>0){ // questo evita che, se è stato forzato un lotto a quantità zero, venga generato un  movimento di magazzino
@@ -457,6 +460,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 								}
                             }
                         }
+                        gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET prezzo = " . round($comp_total_val,5) . " WHERE id_mov = " . $prod_id_movmag); // aggiorno id_lotmag sul movmag
 						$form['id_movmag']=$id_movmag;
                     }
                 }
@@ -1174,7 +1178,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 						}
 ?>						<input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
 						<input type="hidden" name="artcomp<?php echo $nc; ?>" value="<?php echo $row['codice_artico_base']; ?>">
-								
+						<input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $magval['v']; ?>">
 						<div class="row" style="margin-left: 0px;">
 							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
 							</div>
