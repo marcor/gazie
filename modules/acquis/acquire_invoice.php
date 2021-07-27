@@ -1548,19 +1548,7 @@ if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_S
 			</div>
 		</div><!-- chiude row  -->
 <?php
-	}
-	print_r($form['rows']);
-	if (isset($form['rows'])){ print "pippo";die;
-		?>
-		<div class="row">
-			<div class="col-md-12">
-				<div class="form-group">
-				<p>Questa fattura è stata connessa ad uno o più DDT già registrati in GAzie</p>
-				</div>
-			</div>
-		</div>
-		<?php
-	}
+	}	
 }
 ?>
 		<div class="col-sm-12 text-right"><input name="Submit_file" type="submit" class="btn btn-warning" value="<?php echo $script_transl['btn_acquire']; ?>" />
