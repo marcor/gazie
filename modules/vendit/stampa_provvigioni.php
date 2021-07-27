@@ -111,7 +111,9 @@ $pdf->SetFont('helvetica', '', 7);
 $ctrlAgente = 0;
 $ctrlDoc = 0;
 $tot_prov = 0.00;
+$totprov = 0.00;
 $totfat = 0;
+$tot_impo = 0;
 while ($row = gaz_dbi_fetch_array($result)) {
    $pdf->setRiporti($aRiportare);
    if ($ctrlAgente != $row['id_agente']) {
@@ -165,7 +167,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
       $pdf->Cell(187, 4, $desdoc, 1, 1);
    }
    $pdf->Cell(25, 4, $row['codart'], 1);
-   $pdf->Cell(74, 4, $row['descri'], 1);
+   $pdf->Cell(74, 4, $row['descri'], 1,0,'L',0,'',1);
    $pdf->Cell(6, 4, $row['unimis'], 1);
    $pdf->Cell(13, 4, gaz_format_number($row['quanti']), 1, 0, 'R');
    $pdf->Cell(14, 4, number_format($row['prelis'], $admin_aziend['decimal_price'], ',', '.'), 1, 0, 'R');
