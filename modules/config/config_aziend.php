@@ -105,7 +105,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 							}
                             ?>
                             <input type="<?php
-                            if (strpos($r["var"], "pass") === false) {
+                            if (strpos($r["var"], "pass") === false && strpos($r["var"], "psw") === false) {
                                 echo "text";
                             } else {
                                 echo "password";
