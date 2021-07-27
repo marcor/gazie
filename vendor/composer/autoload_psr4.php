@@ -24,5 +24,6 @@ return array(
     'Matrix\\' => array($vendorDir . '/markbaker/matrix/classes/src'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
+    'Ddeboer\\Imap\\' => array($vendorDir . '/ddeboer/imap/src'),
     'Complex\\' => array($vendorDir . '/markbaker/complex/classes/src'),
 );
