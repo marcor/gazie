@@ -95,7 +95,7 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && i
 						$tipdoc="AM".$data["ddt_type"]; // Contratto di traporto in entrata
 					}
 										
-					$groups=gaz_dbi_dyn_query("*", $gTables['tesdoc'], "protoc = '".$data['protoc']."' AND datfat = '".$data['datfat']."' AND seziva = '".$data['seziva']."' AND clfoco = '".$data['clfoco']."'");
+					$groups=gaz_dbi_dyn_query("*", $gTables['tesdoc'], "protoc = ".$data['protoc']." AND datfat = '".$data['datfat']."' AND seziva = ".$data['seziva']." AND clfoco = ".$data['clfoco']." AND tipdoc='".$data['tipdoc']."'");
 					
 					while ($data = gaz_dbi_fetch_array($groups)){
                       if ($data['status']=='DdtAnomalo'){
@@ -117,26 +117,27 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && i
 						tesdocUpdate(array('id_tes', $newval['id_tes']), $newval);						
                       }
                       // qui controllo se il documento ha generato reverse charge ed eventualmente elimino anche quello
-                      $id_rc=gaz_dbi_get_row($gTables['rigmoi'], 'reverse_charge_idtes', $data['id_con']); // in $id_rc['id_tes'] ho il riferimento a tesmov figlio 
-                      // cancello l'eventuale figlio (fattura su reg.vendite del reverse charge)
-                      if ($id_rc){
-                        gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $id_rc['id_tes']);
-                        gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $id_rc['id_tes']);
-                        gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $id_rc['id_tes']);
-                        // manca la cancellazione del futuro tesdoc-rigdoc (entro 2023)
-                      }
-                      gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $data['id_con']);
+                      if ( $data['id_con'] >= 1) {
+                          $id_rc=gaz_dbi_get_row($gTables['rigmoi'], 'reverse_charge_idtes', $data['id_con']); // in $id_rc['id_tes'] ho il riferimento a tesmov figlio 
+                          // cancello l'eventuale figlio (fattura su reg.vendite del reverse charge)
+                          if ($id_rc){
+                            gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $id_rc['id_tes']);
+                            gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $id_rc['id_tes']);
+                            gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $id_rc['id_tes']);
+                            // manca la cancellazione del futuro tesdoc-rigdoc (entro 2023)
+                          }
+                          gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $data['id_con']);
 
-                      // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
-                      $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$data['id_con'],"id_tes");
-                      while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
-                        gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
-                      }
-                      
-                      // ... quindi elimino il rigo contabile 
-					  gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $data['id_con']);
-					  gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $data['id_con']);
-                      
+                          // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
+                          $rs_rmocdel = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = ".$data['id_con'],"id_tes");
+                          while ($rd = gaz_dbi_fetch_array($rs_rmocdel)) {
+                            gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $rd['id_rig']);
+                          }
+                          
+                          // ... quindi elimino il rigo contabile 
+                          gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $data['id_con']);
+                          gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $data['id_con']);
+                      }                      
 					}
 										 			
 			}
