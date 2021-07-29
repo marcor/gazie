@@ -78,7 +78,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['codice'] = trim($form['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
-	
+	$form['conferma'] = $_POST['conferma'];
 	if (isset ($_POST['fornitore'])) {
 		$form['fornitore'] = $_POST['fornitore'];
 		$form['id_anagra'] = intval ($form['fornitore']);
@@ -348,6 +348,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['or_spec']=$camp['or_spec'];
 	$form['or_macro']=$camp['or_macro'];
 	$form['confezione']=$camp['confezione'];
+	$form['conferma'] = "";
 	if(!isset($form['or_spec'])){$form['or_spec']=0;} 
 	if($form['or_spec']=="Spagna"){$form['or_spec']=1;}
 	if($form['or_spec']=="Grecia"){$form['or_spec']=2;}
@@ -376,7 +377,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
    
     $form['id_anagra'] = $form['clfoco'];
 	$anagra = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['id_anagra']);
-    $form['fornitore']=$form['id_anagra']." - ".$anagra['descri'];
+    if (isset($anagra)){
+	$form['fornitore']=$form['id_anagra']." - ".$anagra['descri'];
+	} else {
+		$form['fornitore']="";
+	}
     /** fine modifica FP */
     // inizio documenti/certificati
     $ndoc = 0;
@@ -426,12 +431,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['or_spec']="";
 	$form['or_macro']="";
 	$form['confezione']=0;
-    /** inizio modifica FP 03/12/2015
-     * filtro per fornitore ed ordinamento
-     */
+    $form['nomefito']="";
     $form['id_anagra'] = "";
 	$form['fornitore'] = "";
-    
+    $form['conferma'] = "";
     /** fine modifica FP */
     // eventuale descrizione amplia
     $form['body_text'] = '';
@@ -459,13 +462,13 @@ if (isset($_POST['nomefito']) && strlen($form['nomefito'])>3){
 			$form['descri']=$row['SOSTANZE_ATTIVE']." ".$row['DESCRIZIONE_FORMULAZIONE'];
 			$form['body_text']=$row['SOSTANZE_ATTIVE']." ".$row['IMPRESA']." ".$row['SEDE_LEGALE_IMPRESA'];
 			$indper=$row['INDICAZIONI_DI_PERICOLO'];
-			$scadaut=$row['SCADENZA_AUTORIZZAZIONE']; 
+			$scadaut=strtotime(str_replace('/', '-', $row['SCADENZA_AUTORIZZAZIONE']));
+			
 			}
 		if ($presente==1) { // se trovato nel database fitofarmaci	
-		// controllo se è scaduta l'autorizzazione
-			if (strtotime(str_replace('/', '-', $scadaut))>0 && $today>strtotime(str_replace('/', '-', $scadaut))) {$msg['err'][] ='scaduto';}
-			if (strtotime(str_replace('/', '-', $scadaut))<1) {$msg['err'][] ='revocato';}
-		// estraggo il simbolo della classe tossicologica
+		
+			if ($scadaut<1) {$msg['err'][] ='revocato';}
+			// estraggo il simbolo della classe tossicologica
 			
 			$cltoss=$indper;
 			if ($cltoss<>"") { $form['classif_amb']=0;
@@ -496,6 +499,17 @@ if ($modal === false) {
 
     $script_transl = $strCommon + $script_transl;
 }
+
+// controllo se è scaduta l'autorizzazione fitofarmaco e avviso 
+if ($form['conferma']<>"Confermo deroga ".$form['nomefito'] AND $presente==1 AND ($scadaut>0 && $today>$scadaut)) {
+	// 1 giorno è 24*60*60=86400
+	if ($today-$scadaut> 31536000 OR $form['conferma']=="Non voglio usare ".$form['nomefito']){ // se è scaduto da più di un anno segnalo e blocco	
+		$msg['err'][] ='scaduto';
+	} else { // altrimenti segnalo e faccio scegliere
+		echo "<script type='text/javascript'> $(window).load(function(){ $('#scadaut').modal('show'); }); </script>";
+	}
+}
+
 /** ENRICO FEDELE */
 /* Assegno un id al form, quindi distinguo tra modale e non
  * in caso di finestra modale, aggiungo un campo nascosto che mi serve per salvare nel database
@@ -582,7 +596,7 @@ select: function(event, ui) {
 
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
 
-	<?php
+	<?php 
 	if (!empty($form['descri'])) $form['descri'] = htmlentities($form['descri'], ENT_QUOTES);
 	if ($modal === true) {
 		echo '<input type="hidden" name="mode" value="modal" />
@@ -592,6 +606,7 @@ select: function(event, ui) {
 	echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />';
 	echo '<input type="hidden" name="id_reg" value="' . $form['id_reg'] . '" />';
 	echo '<input type="hidden" name="oldnomefito" value="' . $form['nomefito'] . '" />';
+	echo '<input type="hidden" name="conferma" value="' . $form['conferma'] . '" />';
 
 	if ($modal_ok_insert === true) {
 		echo '<div class="alert alert-success" role="alert">' . $script_transl['modal_ok_insert'] . '</div>';
@@ -600,7 +615,12 @@ select: function(event, ui) {
 		
 		if ($form['good_or_service']==0) {
 			$mv = $gForm->getStockValue(false, $form['codice']);
-			$magval = array_pop($mv);
+			if (isset($mv)){
+				$magval = array_pop($mv);
+			} else {
+				$magval['q_g']=0;
+				$magval['v_g']=0;
+			}
 		} else {
 			$magval['q_g']=0;
 			$magval['v_g']=0;
@@ -657,6 +677,24 @@ select: function(event, ui) {
 					}
 				}
 				?>
+				
+				<!-- Modal content scadenza autorizzazione  -->
+				<div id="scadaut" class="modal fade" role="dialog">    
+					<div class="modal-dialog modal-content">
+						<div class="modal-header" align="left">
+							
+							<h4 class="modal-title">ATTENZIONE !</h4>
+						</div>
+						<div class="modal-body">
+							<p>Hai scelto un fitofarmaco con autorizzazione scaduta. <br>Puoi usarlo solo se sei a conoscenza che c'è una deroga. <br>Sei sicuro di volerlo fare?</p>
+						</div>
+						<div class="modal-footer">
+							<input type="submit" class="btn btn-default pull-left" name="conferma"  value="Non voglio usare <?php echo $form['nomefito']; ?>">
+							<input type="submit" class="btn btn-danger pull-right" name="conferma"  value="Confermo deroga <?php echo $form['nomefito']; ?>">
+						</div>
+					</div>
+				</div>		
+				
 				<div class="row">
 					<div class="col-md-12">
 						<div class="col-sm-12 control-label">
@@ -879,12 +917,12 @@ select: function(event, ui) {
 						</div>
 					</div>
 				</div><!-- chiude row  -->
-				<?php if ($form['good_or_service']==0){ ?>
+				<?php if ($form['good_or_service']==0){?>
 				<div class="row">
 					<div class="col-md-12">
 						<div class="form-group">
 							<label for="esiste" class="col-sm-4 control-label"><?php echo $script_transl['esiste']; ?></label>
-							<div class="col-sm-2"><?php echo gaz_format_quantity($magval['q_g'],1,$admin_aziend['decimal_quantity']); ?></div>
+							<div class="col-sm-2"><?php echo gaz_format_quantity(($magval)?$magval['q_g']:0,1,$admin_aziend['decimal_quantity']); ?></div>
 						</div>
 					</div>
 				</div><!-- chiude row  -->

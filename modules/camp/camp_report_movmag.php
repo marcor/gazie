@@ -223,18 +223,18 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n";
 		}
 		$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avversita']);
-		echo "<td class=\"FacetDataTD\" align=\"left\">".$a_row['id_avversita']." - ".$res["nome_avv"]." </td>\n";
+		echo "<td class=\"FacetDataTD\" align=\"left\">", ($a_row)?$a_row['id_avversita']:0 ," - ", ($res)?$res["nome_avv"]:'' ," </td>\n";
 	
 		if ($a_row['id_rif'] == 0 OR $a_row['tipdoc'] == "CAM") {
-			echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\">".$a_row['desdoc']."</td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"center\" title=\"\">", $a_row['desdoc'] ,"</td>\n";
 		} else {
 			if ($a_row['tipdoc'] == "ADT"
 			|| $a_row['tipdoc'] == "AFA"
 			|| $a_row['tipdoc'] == "AFT"
 			|| $a_row['tipdoc'] == "AFC") {
-            echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
+            echo "<td class=\"FacetDataTD\" align=\"center\" title=\"\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
 			} else {
-				echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
+				echo "<td class=\"FacetDataTD\" align=\"center\" title=\"\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
 			}
 		}
 	

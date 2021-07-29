@@ -71,7 +71,11 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		if ($row['good_or_service']!=1){
 			$mv = $gForm->getStockValue(false, $row['codice']);
 			$magval = array_pop($mv);
+			
 			if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){
+				$magval['q_g'] = 0;
+			} elseif ($magval==0){
+				$magval=array();
 				$magval['q_g'] = 0;
 			}
 		} 	else {
