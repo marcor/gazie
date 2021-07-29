@@ -261,7 +261,7 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders=new linkHeaders($script_transl['header']);
         $linkHeaders->output();
         echo "</tr>";
-        while (list($key, $mv) = each($m)) {
+       foreach ($m AS $key => $mv) {
             if ($ctr_mv != $mv['artico']) {
                gaz_set_time_limit (30);
                if (!empty($ctr_mv)) {

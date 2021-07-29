@@ -73,9 +73,9 @@ $pdf->SetFont('dejavusans', 'BI', 40);
 $pdf->SetFillColor(220, 255, 220);
 
 // MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0)
-$pdf->MultiCell(0, 0, $title , TLR, 'C', 1, 0, '', 120, true, 0, false, true, 40);
+$pdf->MultiCell(0, 0, $title , 'TLR', 'C', 1, 0, '', 120, true, 0, false, true, 40);
 $pdf->SetFont('dejavusans', 'BI', 10);
-$pdf->MultiCell(0, 0, $subtitle , LRB, 'C', 1, 0, '', 138, true, 0, false, true, 40);
+$pdf->MultiCell(0, 0, $subtitle , 'LRB', 'C', 1, 0, '', 138, true, 0, false, true, 40);
 $pdf->SetFont('dejavusans', 'BI', 40);
 $pdf->MultiCell(100, 0,  date("Y"), 1, 'C', 0, 0, 100, 150, true);
 

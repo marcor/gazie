@@ -189,10 +189,9 @@ if (isset($_POST['preview']) and $msg=='') {
 			$linkHeaders=new linkHeaders($script_transl['header_fert']);
 		}
         $linkHeaders->output();
-        echo "</tr>";
-        		
-        while (list($key, $mv) = each($m)) {
-							
+        echo "</tr>";        		
+      
+		foreach($m as $key => $mv) {					
 			If ($mv['campo_coltivazione']>0 && $mv['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
 				if ($mv['rame_metallico']>0 OR ($mv['perc_N']>0 AND $form['sta_fert']==true)){ // se l'articolo contiene rame metallo o azoto con stampa fertilizzazioni
 					$camp = gaz_dbi_get_row($gTables['campi'], 'codice', $mv['campo_coltivazione']); //carico i dati del campo di coltivazione			

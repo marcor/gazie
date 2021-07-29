@@ -55,6 +55,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['this_date_Y']=date("Y");
     $form['this_date_M']=date("m");
     $form['this_date_D']=date("d");
+	$form['type']="";
     if (!isset($_GET['di'])) {
        $form['date_ini_D']=1;
        $form['date_ini_M']=1;
@@ -217,9 +218,9 @@ if (isset($_POST['preview']) and $msg=='') {
 			echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." &nbsp;</td>";
 			$colonna="0";
 			$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $mv['campo_coltivazione'] );				 
-			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($res["ricarico"],1,$admin_aziend['decimal_quantity'])." &nbsp;</td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"center\">", gaz_format_quantity(($res)?$res['ricarico']:0,1,$admin_aziend['decimal_quantity']), " &nbsp;</td>\n";
 			$res2 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $mv['id_colture']);
-			echo "<td class=\"FacetDataTD\" align=\"center\">".$res2["nome_colt"]." &nbsp;</td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"center\">", ($res2)?$res2['nome_colt']:'' ," &nbsp;</td>\n";
 			$colonna="1";				
 			
 			if ($colonna<1) {
@@ -237,7 +238,7 @@ if (isset($_POST['preview']) and $msg=='') {
 			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
 			echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
 			$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $mv['id_avversita']);
-			echo "<td class=\"FacetDataTD\" align=\"right\">".$res['nome_avv']." </td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"right\">", ($res)?$res['nome_avv']:'', " </td>\n";
 			if ($mv['clfoco']>0){
 				echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['ragsoc']." </td>\n";
 			} else {

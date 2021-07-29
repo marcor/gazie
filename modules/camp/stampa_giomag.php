@@ -131,15 +131,15 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		$pdf->Cell(17,6,$datadoc,1,0,'C');
 		$pdf->Cell(35,6,$row['descri'],1, 0, 'l', 0, '', 1);
 		
-		if ($res['zona_vulnerabile']==0){
+		if (isset($res['zona_vulnerabile']) AND $res['zona_vulnerabile']==0){
 			$pdf->Cell(12,6,substr($row['campo_coltivazione'],0,5),1);
 		} else {
 			$pdf->Cell(12,6,substr($row['campo_coltivazione']." ZVN",0,5),1);
 		}
 		// Antonio Germani Inserisco superficie e coltura		
-		$pdf->Cell(10,6,str_replace('.', ',',$res['ricarico']),1);
-		$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $res['id_colture']);
-		$pdf->Cell(38,6,substr($res4["nome_colt"],0,40),1);
+		$pdf->Cell(10,6,str_replace('.', ',',($res)?$res['ricarico']:0),1);
+		$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', ($res)?$res['id_colture']:0);
+		$pdf->Cell(38,6,substr(($res4)?$res4['nome_colt']:'',0,40),1);
 		// fine inserisco superficie, coltura	  
 	  
 		$pdf->Cell(58,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
@@ -163,7 +163,7 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		}
 		
 		$res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
-		$pdf->Cell(28,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
+		$pdf->Cell(28,6,($res3)?$res3['nome_avv']:'',1, 0, 'l', 0, '', 1);
 		
 		if ($row['clfoco']>0){
 			$pdf->Cell(18,6,$row['ragsoc'],1, 0, 'l', 0, '', 1);

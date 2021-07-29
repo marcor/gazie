@@ -100,11 +100,11 @@ echo "</select>&nbsp;";
 // prendo la produzione
 $item = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_produzione']);
 // prendo il campo di coltivazione
-$item2 = gaz_dbi_get_row($gTables['campi'], "codice", $item['campo_impianto']);
+$item2 = gaz_dbi_get_row($gTables['campi'], "codice", ($item)?$item['campo_impianto']:0);
 ?>
 <!-- fine selezione produzione  -->
 <?php if (isset($_POST['id_produzione'])){
-	echo "<tr><td colspan=\"2\" class=\"FacetFieldCaptionTD\">" . $script_transl[1] . $item['description'] . " " . $script_transl[2] . gaz_format_date ($result2['datemi']) . " " . $script_transl[3] . $item['campo_impianto']. " " . $item2['descri'] . "</td></tr>";
+	echo "<tr><td colspan=\"2\" class=\"FacetFieldCaptionTD\">", $script_transl[1], ($item)?$item['description']:'' . " " . $script_transl[2], gaz_format_date ($result2['datemi']), " " . $script_transl[3], ($item)?$item['campo_impianto']:0, " ", ($item2)?$item2['descri']:'' , "</td></tr>";
 $costo_produzione=0;
 $query="SELECT * FROM ".$gTables['movmag']." WHERE ".'id_orderman' . " = " . "'".$form['id_produzione']."'" ;
 	$res = gaz_dbi_query($query);

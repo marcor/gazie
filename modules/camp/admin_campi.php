@@ -97,6 +97,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $campi = gaz_dbi_get_row($gTables['campi'],"codice",$_GET['codice']);
     $form['ritorno'] = $_POST['ritorno'];
+	$form['userfile'] = "";
     $form['codice'] = $campi['codice'];
     $form['descri'] = $campi['descri'];
     $form['web_url'] = $campi['web_url'];
@@ -105,7 +106,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['limite_azoto_zona_vulnerabile']=$campi['limite_azoto_zona_vulnerabile'];
 	$form['limite_azoto_zona_non_vulnerabile']=$campi['limite_azoto_zona_non_vulnerabile'];
 	$colt = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$form['id_colture']);
-	$form['nome_colt'] = $form['id_colture']." - ".$colt['nome_colt'];
+	if (isset($colt)){
+	$form['nome_colt'] = $form['id_colture']." - ". $colt['nome_colt'];
+	} else {
+		$form['nome_colt']="";
+	}
     $form['annota'] = $campi['annota'];
     $form['ricarico'] = str_replace('.', ',',$campi["ricarico"]);
 	$form['giorno_decadimento'] =$campi['giorno_decadimento'];
@@ -128,6 +133,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['giorno_decadimento'] ='0000-00-00 00:00:00';
 	$form['codice_prodotto_usato'] ='';
 	$form['id_mov'] ='';
+	$form['userfile'] = "";
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
