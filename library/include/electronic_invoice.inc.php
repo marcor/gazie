@@ -1354,7 +1354,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $nome_file = "IT" . $codice_trasmittente . "_" . $progressivo_unico_invio;
 
     $id_tes = $XMLvars->tesdoc['id_tes'];
-    $data_ora_ricezione = $XMLvars->docRelDate;
+    $data_ora_exec = date("Y-m-d H:i:s");
     
     // se è un reinvio allora faccio l'upload del genitore indicando indicando in filename_son il nome di questo nuovo file 
     if ( $XMLvars->fae_reinvii >=1 ){
@@ -1376,9 +1376,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 				$valori = array('filename_ori' => $nome_file . ".xml",
 					'filename_zip_package'=>$name_ziparchive,
 					'id_tes_ref' => $id_tes,
-					'exec_date' => $data_ora_ricezione,
-					'received_date' => $data_ora_ricezione,
-					'delivery_date' => $data_ora_ricezione,
+					'exec_date' => $data_ora_exec,
+					'received_date' => '',
+					'delivery_date' => '',
 					'filename_son' => '',
 					'id_SDI' => 0,
 					'filename_ret' => '',
@@ -1397,9 +1397,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			$valori = array('filename_ori' => $nome_file . ".xml",
 			'filename_zip_package'=>'',
             'id_tes_ref' => $id_tes,
-            'exec_date' => $data_ora_ricezione,
-            'received_date' => $data_ora_ricezione,
-            'delivery_date' => $data_ora_ricezione,
+            'exec_date' => $data_ora_exec,
+            'received_date' => '',
+            'delivery_date' => '',
             'filename_son' => '',
             'id_SDI' => 0,
             'filename_ret' => '',
