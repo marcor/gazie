@@ -134,9 +134,6 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 				from { opacity:1; } to { opacity:0; }
 			}
             .ui-dialog-buttonset>button.btn.btn-confirm:first-child {
-                right: 30%;
-                position: absolute;
-                top: 40%;
                 background-color: #f9b54d;
             }                   
         </style>  

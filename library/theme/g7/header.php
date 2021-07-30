@@ -87,9 +87,6 @@
 				from { opacity:1; } to { opacity:0; }
 			}   
             .ui-dialog-buttonset>button.btn.btn-confirm:first-child {
-                right: 40%;
-                position: absolute;
-                top: 40%;
                 background-color: #f9b54d;
             }       
         </style>  
