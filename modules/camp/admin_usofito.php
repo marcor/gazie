@@ -45,7 +45,7 @@ if ((isset($_GET['Update']) and  !isset($_GET['id'])) or isset($_POST['Return'])
 }
 
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
-
+	$warning="";
 	if (isset($_POST['Cancel'])){
 		$_POST['cod_art'] = "";
 		$_POST['codart'] = "";
@@ -179,6 +179,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
 	// controllo se la tabella DB fitofarmaci è popolata
+	$warning="";
 	$query="SELECT * FROM ".$gTables['camp_fitofarmaci']. " LIMIT 1";
 	$checkdbfito = gaz_dbi_query($query);
 	if ($checkdbfito -> num_rows ==0) {
@@ -187,7 +188,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $rs_ultimo_id = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], 1 ,'id desc',0,1);
     $ultimo_id = gaz_dbi_fetch_array($rs_ultimo_id);
-    $form['id'] = $ultimo_id['id']+1;
+    $form['id'] = ($ultimo_id)?$ultimo_id['id']:0 +1;
     $form['cod_art'] = "";
     $form['id_colt'] = 0;
 	$form['nome_colt'] = "";
@@ -195,6 +196,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['nome_avv'] = "";
 	$form['dose'] = 0;
 	$form['tempo_sosp'] = 0;
+	$form['nome_fito'] = "";
 }
 
 require("../../library/include/header.php");
@@ -439,7 +441,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[4]."</td><td clas
 
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"dose\" value=\"".number_format ($form['dose'],$admin_aziend['decimal_price'], ',', '')."\" maxlength=\"8\"  />";
 $res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $form['cod_art']);
-echo $res2['uniacq']."/ha</td></tr>\n";
+echo ($res2)?$res2['uniacq']:'' . "/ha</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[10]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"tempo_sosp\" value=\"".$form['tempo_sosp']."\" maxlength=\"2\"  /> gg </td></tr>\n";
 print "<tr>";
 if ($toDo !== 'update') {
