@@ -346,7 +346,7 @@ if ($numrow>=1){
         $pdf->Cell(62,4,$mv['desart'],1, 0, 'L', 0, '', 1);
         $pdf->Cell(17,4,floatval($mv['quanti']),1, 0, 'R', 0, '', 1);
         $pdf->Cell(7,4,$mv['unimis'],1, 0, 'C', 0, '', 1);
-        $pdf->Cell(17,4,gaz_format_number($mv['prezzo']),1, 1, 'C', 0, '', 1);
+        $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',''),1, 1, 'C', 0, '', 1);
     }
     $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
     $pdf->SetFont('helvetica','B',9);
