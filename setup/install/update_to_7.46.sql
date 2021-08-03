@@ -9,4 +9,7 @@ ALTER TABLE `gaz_XXXrigbro`
 	ADD INDEX `id_rigmoc` (`id_rigmoc`);  
 ALTER TABLE `gaz_XXXaliiva`
 	CHANGE COLUMN `annota` `annota` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Descrizione estesa e/o annotazioni' AFTER `status`;
+ALTER TABLE `gaz_XXXfae_flux`
+	CHANGE COLUMN `flux_completed` `n_invio` INT(1) NOT NULL DEFAULT '1' AFTER `flux_status`;
+UPDATE `gaz_XXXfae_flux` SET `n_invio`= 1 WHERE `n_invio` < 1;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

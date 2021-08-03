@@ -1356,7 +1356,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $id_tes = $XMLvars->tesdoc['id_tes'];
     $data_ora_exec = date("Y-m-d H:i:s");
     
-    // se è un reinvio allora faccio l'upload del genitore indicando indicando in filename_son il nome di questo nuovo file 
+    // se è un reinvio allora faccio l'upload del genitore indicando in filename_son il nome di questo nuovo file 
     if ( $XMLvars->fae_reinvii >=1 ){
         // faccio l'encode in base 36 per ricavare il progressivo unico di invio
         $parent = array('azienda' => $XMLvars->azienda['codice'],
@@ -1406,6 +1406,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             'mail_id' => 0,
             'data' => '',
             'flux_status' => (strlen($cod_destinatario)==6) ? '##' : '#',
+            'n_invio' => $XMLvars->fae_reinvii+1,
             'progr_ret' => '000',
             'flux_descri' => '');
 			fae_fluxInsert($valori);
