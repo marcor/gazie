@@ -34,8 +34,10 @@ if (!isset($_SESSION['menu_alerts_lastcheck'])||((round(time()/60)-$_SESSION['me
 		echo '<script>menu_check_from_modules();</script>';
 } elseif(isset($_SESSION['menu_alerts']) && count($_SESSION['menu_alerts'])>=1) {
         foreach($_SESSION['menu_alerts'] as $k=>$v) {
-            // faccio il load per creae un bottone per ogni modulo che lo ha generato (mod,title,button,label,link,style)
-            echo "<script>menu_alerts_check('".$k."','".addslashes($v['title'])."','".addslashes($v['button'])."','".addslashes($v['label'])."','".addslashes($v['link'])."','".$v['style']."');</script>";
+            // se ho i dati per visualizzare il bottone relativo al modulo sincronizzato faccio il load per crearlo (mod,title,button,label,link,style)
+            if ( is_array($v) && count($v) > 4 ) { // se ho i dati sufficienti creo l'elemento bottone tramite js    
+                echo "<script>menu_alerts_check('".$k."','".addslashes($v['title'])."','".addslashes($v['button'])."','".addslashes($v['label'])."','".addslashes($v['link'])."','".$v['style']."');</script>";
+            }
         }
 }
 // solo quando verrà aggiornato KINT potremo utilizzarlo, tolto sulla 7.43
