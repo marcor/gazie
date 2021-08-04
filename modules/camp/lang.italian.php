@@ -523,8 +523,8 @@ $strScript = array("camp_browse_document.php" =>
         )),
     "camp_admin_artico.php" =>
     array('title' => 'Gestione degli articoli',
-        'ins_this' => 'Inserimento articolo',
-        'upd_this' => 'Modifica l\'articolo ',
+        'ins_this' => 'Inserimento prodotto agricolo o lavorazione',
+        'upd_this' => 'Modifica ',
         'err' => array(
             'codice' => 'Il codice articolo &egrave; gi&agrave; esistente',
             'movmag' => 'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
@@ -552,7 +552,7 @@ $strScript = array("camp_browse_document.php" =>
 		'perc_K' => "Titolo di potassio",
         'descri' => "Descrizione",
         'good_or_service' => "Tipologia di articolo",
-        'good_or_service_value' => array(0 => 'Merce', 1 => 'Servizio', 2=> 'Composizione'),
+        'good_or_service_value' => array(0 => 'Prodotto', 1 => 'Lavorazione o Servizio'),
         'body_text' => "Testo descrittivo (precede il rigo)",
         'lot_or_serial' => 'Lotti o numeri seriali',
         'lot_or_serial_value' => array(0 => 'No', 1 => 'Lotti', 2 => 'Seriale/Matricola'),
@@ -561,7 +561,7 @@ $strScript = array("camp_browse_document.php" =>
         'unimis' => "Unit&agrave; di misura",
         'catmer' => "Categoria merceologica",
         'ragstat' => "Raggruppamento statistico",
-        'preacq' => 'Prezzo d\'acquisto (imponibile)',
+        'preacq' => 'Prezzo (imponibile)',
         'preve1' => 'Prezzo di vendita listino 1',
         'preve2' => 'Prezzo di vendita listino 2',
         'preve3' => 'Prezzo di vendita listino 3',
