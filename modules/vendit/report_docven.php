@@ -29,7 +29,7 @@ $message = "";
 $lot = new lotmag();
 
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
-$tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
+$tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id LEFT JOIN ' . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['fae_flux'] . '.id_tes_ref';
 
 function print_querytime($prev) {
     list($usec, $sec) = explode(" ", microtime());
@@ -342,6 +342,9 @@ $(function() {
             <?php
             $rs_ultimo_documento = gaz_dbi_dyn_query("id_tes,tipdoc,protoc", $gTables['tesdoc'], "tipdoc LIKE 'F%' AND seziva = '$sezione'", "datfat DESC, protoc DESC, id_tes DESC", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+            // controllo se ho configurato un servizio di gestione flussi verso SdI
+            $sdi_flux = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
+            
 	    //recupero le testate in base alle scelte impostate
 	    $result = gaz_dbi_dyn_query(cols_from($gTables['tesdoc'],
 						  "*") . ", " .
@@ -351,9 +354,12 @@ $(function() {
 						  "ragso1",
 						  "ragso2",
 						  "e_mail") . ", " .
-					"MAX(id_tes) as reftes, " .
-					"GROUP_CONCAT(id_tes ORDER BY datemi DESC) as refs_id, " . 
-					"GROUP_CONCAT(numdoc ORDER BY datemi DESC) as refs_num",
+					cols_from($gTables['fae_flux'],
+						  "flux_status") . ", " .
+					"MAX(id_tes) AS reftes, " .
+					"GROUP_CONCAT(id_tes ORDER BY datemi DESC) AS refs_id, " . 
+					"GROUP_CONCAT(flux_status ORDER BY id_tes DESC) AS refs_flux_status, " . 
+					"GROUP_CONCAT(numdoc ORDER BY datemi DESC) AS refs_num",
 					$tesdoc_e_partners,
 					$ts->where . " " . $ts->group_by,
 					$ts->orderby,
@@ -517,10 +523,12 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                             } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
                                 echo '<td align="center">';
                             }
-                            echo '<a class="btn btn-xs btn-default btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" fae_reinvio="'.$r['fae_reinvio'].'" fae_attuale="'.$r['fae_attuale'].'" fae_n_reinvii="'.$r['fattura_elettronica_reinvii'].'" n_fatt="'. $r['numfat'].'/'. $r['seziva'].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile www.fatturapa.gov.it" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+                          if ($sdi_flux) {
+                            echo '<a class="btn btn-xs btn-'.$script_transl['flux_status_val'][$r['refs_flux_status']][1].' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" fae_reinvio="'.$r['fae_reinvio'].'" fae_attuale="'.$r['fae_attuale'].'" fae_n_reinvii="'.$r['fattura_elettronica_reinvii'].'" n_fatt="'. $r['numfat'].'/'. $r['seziva'].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
                             if ($r['fattura_elettronica_reinvii'] > 0) {
                                 echo '<br/><small>' . $r['fattura_elettronica_reinvii'] . ($r['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
                             }
+                          }
                             echo '</td>';
                         }
 					} else {
