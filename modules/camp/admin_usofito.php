@@ -28,6 +28,7 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
 $msg = "";
+$warning="";
 
 if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
     $toDo = 'update';
@@ -45,7 +46,7 @@ if ((isset($_GET['Update']) and  !isset($_GET['id'])) or isset($_POST['Return'])
 }
 
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
-	$warning="";
+	
 	if (isset($_POST['Cancel'])){
 		$_POST['cod_art'] = "";
 		$_POST['codart'] = "";
@@ -71,7 +72,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	if ($form['nome_fito']){
 		$form['id_reg'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "PRODOTTO", $form['nome_fito'])['NUMERO_REGISTRAZIONE'];
 		if (intval($form['id_reg'])>0){
-			$form['cod_art'] = gaz_dbi_get_row($gTables['artico'], "id_reg", $form['id_reg'])['codice'];
+			 $row = gaz_dbi_get_row($gTables['artico'], "id_reg", $form['id_reg']);
+			$form['cod_art'] = ($row)?$row['codice']:'';
 		} else {
 			$form['nome_fito']="";
 		}
