@@ -355,10 +355,10 @@ $(function() {
 						  "ragso2",
 						  "e_mail") . ", " .
 					cols_from($gTables['fae_flux'],
-						  "flux_status") . ", " .
+						  "flux_status, received_date") . ", " .
 					"MAX(id_tes) AS reftes, " .
 					"GROUP_CONCAT(id_tes ORDER BY datemi DESC) AS refs_id, " . 
-					"GROUP_CONCAT(flux_status ORDER BY id_tes DESC) AS refs_flux_status, " . 
+					"GROUP_CONCAT(flux_status ORDER BY received_date DESC) AS last_flux_status, " . 
 					"GROUP_CONCAT(numdoc ORDER BY datemi DESC) AS refs_num",
 					$tesdoc_e_partners,
 					$ts->where . " " . $ts->group_by,
@@ -524,12 +524,12 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 echo '<td align="center">';
                             }
                           if ($sdi_flux) {
-                            echo '<a class="btn btn-xs btn-'.$script_transl['flux_status_val'][$r['refs_flux_status']][1].' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" fae_reinvio="'.$r['fae_reinvio'].'" fae_attuale="'.$r['fae_attuale'].'" fae_n_reinvii="'.$r['fattura_elettronica_reinvii'].'" n_fatt="'. $r['numfat'].'/'. $r['seziva'].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+                            echo '<a class="btn btn-xs btn-'.$script_transl['flux_status_val'][explode(',',$r['last_flux_status'],1)[0]][1].' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" fae_reinvio="'.$r['fae_reinvio'].'" fae_attuale="'.$r['fae_attuale'].'" fae_n_reinvii="'.$r['fattura_elettronica_reinvii'].'" n_fatt="'. $r['numfat'].'/'. $r['seziva'].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
                             if ($r['fattura_elettronica_reinvii'] > 0) {
                                 echo '<br/><small>' . $r['fattura_elettronica_reinvii'] . ($r['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
                             }
                           }
-                            echo '</td>';
+                            echo explode(',',$r['last_flux_status'],1)[0].'</td>';
                         }
 					} else {
                         echo '<td></td>';

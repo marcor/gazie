@@ -414,7 +414,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if (!checkdate($form['mestra'], $form['giotra'], $form['anntra'])) {
                $msg['err'][] = "dttrno";
             }
-        } elseif ($form['tipdoc'] == 'ADT' OR $form['tipdoc'] == 'RDL') { // è un ddt ricevuto da fornitore non effettuo controlli su date e numeri
+        } elseif ($form['tipdoc'] == 'ADT'  || $form['tipdoc'] == 'AFT' || $form['tipdoc'] == 'RDL') { // è un ddt ricevuto da fornitore non effettuo controlli su date e numeri
 			if (empty($form['numdoc'])) {
                $msg['err'][] = "nonudo";
             }
@@ -432,7 +432,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
 // --- inizio controllo coerenza date-numerazione
         if ($toDo == 'update') {  // controlli in caso di modifica
-            if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDL o DDR
+            if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL') {  //se è un DDL o DDR
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and datemi < '$datemi' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
                 if ($result and ( $form['numdoc'] < $result['numdoc'])) {
@@ -443,7 +443,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($result and ( $form['numdoc'] > $result['numdoc'])) {
                     $msg['err'][]= "dtnusc";
                 }
-            } elseif ($form['tipdoc'] == 'ADT' OR $form['tipdoc'] == 'RDL') { //se è un DDT acquisto non faccio controlli
+            } elseif ($form['tipdoc'] == 'ADT' || $form['tipdoc'] == 'AFT' || $form['tipdoc'] == 'RDL') { //se è un DDT acquisto non faccio controlli
 				// ma effettuo il controllo se è stato già inserito con lo stesso numero e anno			
 				$checkdouble = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND numdoc = " . $form['numdoc'] . " AND seziva = $sezione AND clfoco = ". intval($form['clfoco']) ." AND id_tes <> ". $form['id_tes'], 2,0,1);
 				$check = gaz_dbi_fetch_array($checkdouble);
@@ -464,14 +464,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
             }
         } else {    //controlli in caso di inserimento
-            if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDT
+            if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL') {  //se è un DDT
                 $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and tipdoc like 'DD_' and seziva = $sezione", "numdoc desc, datemi desc", 0, 1);
                 $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
                 $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
                 if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
                     $msg['err'][] = "ddtpre";
                 }
-            } elseif ($form['tipdoc'] == 'ADT' OR $form['tipdoc'] == 'RDL') {  //se è un DDT d'acquisto non effettuo controlli sulle date
+            } elseif ($form['tipdoc'] == 'ADT'  || $form['tipdoc'] == 'AFT' || $form['tipdoc'] == 'RDL') {  //se è un DDT d'acquisto non effettuo controlli sulle date
 				// ma effettuo il controllo se è stato già inserito con lo stesso numero e data
 				if ($form['numdoc']>0){
 					$checkdouble = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND numdoc = " . $form['numdoc'] . " AND seziva = $sezione AND clfoco = ". intval($form['clfoco']), 2,0,1);
@@ -705,7 +705,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	
 						if ($form['rows'][$i]['tiprig'] <> 2) { // Antonio Germani - se NON è un rigo descrittivo
 						// reinserisco il movimento magazzino associato e lo aggiorno
-							$id_movmag=$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg']), $form['protoc'],$id_lotmag);
+							$id_movmag=$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag);
 							
 							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_mag', $id_movmag);// metto il nuovo id_mag nel rigo documento
 
