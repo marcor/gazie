@@ -523,13 +523,12 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                             } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
                                 echo '<td align="center">';
                             }
-                          if ($sdi_flux) {
-                            echo '<a class="btn btn-xs btn-'.$script_transl['flux_status_val'][explode(',',$r['last_flux_status'],1)[0]][1].' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" fae_reinvio="'.$r['fae_reinvio'].'" fae_attuale="'.$r['fae_attuale'].'" fae_n_reinvii="'.$r['fattura_elettronica_reinvii'].'" n_fatt="'. $r['numfat'].'/'. $r['seziva'].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+                            $sdihilight=($sdi_flux)?$script_transl['flux_status_val'][explode(',',$r['last_flux_status'],1)[0]][1]:'default';    
+                            echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" fae_reinvio="'.$r['fae_reinvio'].'" fae_attuale="'.$r['fae_attuale'].'" fae_n_reinvii="'.$r['fattura_elettronica_reinvii'].'" n_fatt="'. $r['numfat'].'/'. $r['seziva'].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ">xml</a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
                             if ($r['fattura_elettronica_reinvii'] > 0) {
                                 echo '<br/><small>' . $r['fattura_elettronica_reinvii'] . ($r['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
                             }
-                          }
-                            echo explode(',',$r['last_flux_status'],1)[0].'</td>';
+                            echo '</td>';
                         }
 					} else {
                         echo '<td></td>';
