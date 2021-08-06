@@ -161,6 +161,7 @@ function confirFae(link){
 	$.fx.speeds._default = 500;
 	var new_title = "Genera file XML per fattura n." + $("#doc1_"+tes_id).attr("n_fatt");
 	var n_reinvii = parseInt($("#doc1_"+tes_id).attr("fae_n_reinvii"))+1;
+    var last_flux_status = $("#doc1_"+tes_id).attr("last_flux_status");
 	$("p#fae1").html("nome file: " + $("#doc1_"+tes_id).attr("fae_attuale"));
 	$("span#fae2").html("<a href=\'"+link.href+"&reinvia\'> " + $("#doc1_"+tes_id).attr("fae_reinvio")+ " (" + n_reinvii.toString() + "° reinvio) </a>");
 	$("#dialog1").dialog({
@@ -358,7 +359,7 @@ $(function() {
 						  "flux_status, received_date") . ", " .
 					"MAX(id_tes) AS reftes, " .
 					"GROUP_CONCAT(id_tes ORDER BY datemi DESC) AS refs_id, " . 
-					"GROUP_CONCAT(flux_status ORDER BY received_date DESC) AS last_flux_status, " . 
+					"GROUP_CONCAT(flux_status ORDER BY received_date DESC) AS refs_flux_status, " . 
 					"GROUP_CONCAT(numdoc ORDER BY datemi DESC) AS refs_num",
 					$tesdoc_e_partners,
 					$ts->where . " " . $ts->group_by,
@@ -523,14 +524,36 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                             } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
                                 echo '<td align="center">';
                             }
-                            if ( $sdi_flux ) {
-                                $sdihilight = ( !empty($r['last_flux_status']) ) ? $script_transl['flux_status_val'][explode(',',$r['last_flux_status'])[0]][1] : 'default';    
-                                $sdilabel = ( !empty($r['last_flux_status']) ) ? $script_transl['flux_status_val'][explode(',',$r['last_flux_status'])[0]][0] : 'da inviare';   
-                            } else {
+                            if ( $sdi_flux ) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
+                                $last_flux_status = explode(',',$r['refs_flux_status'])[0];
+                                $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';    
+                                $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
+                            } else { //// installazione senza gestore dei flussi con il SdI
+                                $last_flux_status = '#'; // si darà sempre la possibilità di inviare
                                 $sdihilight = 'default';
                                 $sdilabel = 'xml';
                             }                           
-                            echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" fae_reinvio="'.$r['fae_reinvio'].'" fae_attuale="'.$r['fae_attuale'].'" fae_n_reinvii="'.$r['fattura_elettronica_reinvii'].'" n_fatt="'. $r['numfat'].'/'. $r['seziva'].'" target="_blank" href="'.$modulo_fae.'" title="genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio "> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+                            switch ($last_flux_status){
+                                case "#":
+                                $sdititle = 'Invia il file '.$r['fae_attuale'].' al Sistema di Interscambio ';
+                                break;
+                                case "@":
+                                $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';
+                                break;
+                                case "RC":
+                                $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato e consegnato al cliente ';
+                                break;
+                                case "MC":
+                                $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato e ma non consegnato al cliente ';
+                                break;
+                                case "NS":
+                                $sdititle = 'Il file '.$r['fae_attuale'].' è stato Scartato, correggi prima di fare il reinviio ';
+                                break;
+                                default:
+                                $sdititle = 'genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ';
+                                break;
+                            }
+                            echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" fae_reinvio="'.$r['fae_reinvio'].'" fae_attuale="'.$r['fae_attuale'].'" fae_n_reinvii="'.$r['fattura_elettronica_reinvii'].'" n_fatt="'. $r['numfat'].'/'. $r['seziva'].'" last_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
                             if ($r['fattura_elettronica_reinvii'] > 0) {
                                 echo '<br/><small>' . $r['fattura_elettronica_reinvii'] . ($r['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
                             }
