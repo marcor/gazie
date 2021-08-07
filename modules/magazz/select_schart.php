@@ -312,9 +312,9 @@ if (isset($_POST['preview']) and $msg=='') {
             echo "<td align=\"right\" class=\"FacetDataTD\" >".$mv['unimis']."</td>\n";
             echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mv['quanti']*$mv['operat'],1,$admin_aziend['decimal_quantity'])."</td>";
             if ($mv['operat']==1) {
-              echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td><td></td>";
+              echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',','')."</td><td></td>";
             } else {
-              echo "<td></td><td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td>";
+              echo "<td></td><td align=\"right\" class=\"FacetDataTD\">".number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',','')."</td>";
             }
             echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mval['q_g'],$admin_aziend['decimal_price'],',','.')."</td>";
             echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mval['v_g'])."</td>";

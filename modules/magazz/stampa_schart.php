@@ -186,11 +186,11 @@ while ($mv = gaz_dbi_fetch_array($result)) {
       $pdf->Cell(8,4,$mv['unimis'],'TR',0,'C');
       $pdf->Cell(17,4,gaz_format_quantity($mv['quanti']*$mv['operat'],1,$admin_aziend['decimal_quantity']),1,0,'R');
       if ($mv['operat']==1) {
-          $pdf->Cell(17,4,number_format($mval['v'],$admin_aziend['decimal_price'],',',''),1,0,'R');
+          $pdf->Cell(17,4,number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',',''),1,0,'R');
           $pdf->Cell(17,4,'',1);
       } else {
           $pdf->Cell(17,4,'',1);
-          $pdf->Cell(17,4,number_format($mval['v'],$admin_aziend['decimal_price'],',',''),1,0,'R');
+          $pdf->Cell(17,4,number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',',''),1,0,'R');
       }
       $pdf->Cell(20,4,gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']),1,0,'R');
       $pdf->Cell(20,4,gaz_format_number($mval['v_g']),1,1,'R');
