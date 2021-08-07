@@ -97,7 +97,7 @@ $(function() {
       autoOpen: false
    });
    
-   $( "#dialog1" ).dialog({
+   $( "#dialog_fae" ).dialog({
       autoOpen: false
    });
 
@@ -159,27 +159,47 @@ function confirPecSdi(link){
 function confirFae(link){
 	tes_id = link.id.replace("doc1_", "");
 	$.fx.speeds._default = 500;
-	var new_title = "Genera file XML per fattura n." + $("#doc1_"+tes_id).attr("n_fatt");
-	var n_reinvii = parseInt($("#doc1_"+tes_id).attr("fae_n_reinvii"))+1;
-    var last_flux_status = $("#doc1_"+tes_id).attr("last_flux_status");
-	$("p#fae1").html("nome file: " + $("#doc1_"+tes_id).attr("fae_attuale"));
-	$("span#fae2").html("<a href=\'"+link.href+"&reinvia\'> " + $("#doc1_"+tes_id).attr("fae_reinvio")+ " (" + n_reinvii.toString() + "° reinvio) </a>");
-	$("#dialog1").dialog({
-	  title: new_title,
+	var dialog_fae_title = $("#dialog_fae_title").attr("title") + $("#doc1_"+tes_id).attr("dialog_fae_numfat");
+    $("#dialog_fae_filename span").html("<a href=\'"+link.href+"\' >"+$("#doc1_"+tes_id).attr("dialog_fae_filename")+"</a>");
+	var numrei = parseInt($("#doc1_"+tes_id).attr("dialog_fae_numrei"))+1;
+    var flux_status = $("#doc1_"+tes_id).attr("dialog_flux_status");
+    switch (flux_status) {
+        case "RE":
+            $("#dialog_fae_content_RE").addClass("bg-info text-center");
+            $("#dialog_fae_content_RE span").html("<a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a>");
+            $("#dialog_fae_content_RE").show();
+        break;
+        case "RC":
+            $("#dialog_fae_content_RC").addClass("bg-success text-center");
+            $("#dialog_fae_content_RC").show();
+        break;
+        case "MC":
+            $("#dialog_fae_content_MC").addClass("bg-warning text-center");
+            $("#dialog_fae_content_MC").show();
+        break;
+        case "NS":
+            $("#dialog_fae_content_NS").addClass("bg-danger text-center");
+            $("#dialog_fae_content_NS").show();
+        break;
+        case "#":
+        case "@":
+            console.log(flux_status);
+        break;
+        default:
+            console.log("errore: stato "+flux_status+" non identificato");
+    }
+	$("#dialog_fae").dialog({
+	  title: dialog_fae_title,
       modal: "true",
       show: "blind",
       hide: "explode",
-      buttons: {
-                      " ' . $script_transl['submit'] . ' ": function() {
-                         window.location.href = link.href;
-                          $(this).dialog("close");
-                      },
-                      " ' . $script_transl['cancel'] . ' ": function() {
+      buttons: {" X ": function() {
+                        $(".dialog_fae_content").hide();
                         $(this).dialog("close");
-                      }
+                 }
                }
          });
-	$("#dialog1").dialog( "open" );
+	$("#dialog_fae").dialog( "open" );
 }
 
 </script>';
@@ -238,10 +258,15 @@ $(function() {
         <p class="ui-state-highlight" id="mail_attc"></p>
     </div>
 
-    <div style="display:none" id="dialog1" title="<?php echo $script_transl['fae_alert0']; ?>">
-        <p id="fae_alert1"><?php echo $script_transl['fae_alert1']; ?></p>
-        <p class="ui-state-highlight" id="fae1"></p>
-        <p id="fae_alert2"><?php echo $script_transl['fae_alert2']; ?><span id="fae2" class="bg-warning"></span></p>
+    <div style="display:none" id="dialog_fae">
+        <div style="display:none;" id="dialog_fae_title" title="<?php echo $script_transl['dialog_fae_title']; ?>"></div>
+        <p class="ui-state-highlight" id="dialog_fae_filename"><?php echo $script_transl['dialog_fae_filename']; ?><span></span></p>
+        <?php
+        $statuskeys=array('RE','IN','RC','MC','NS');
+        foreach ( $statuskeys as $v ) {
+            echo '<p style="display:none;" class="dialog_fae_content" id="dialog_fae_content_'.$v.'">'.$script_transl['dialog_fae_content_'.$v]."<span></span></p>";    
+        }
+        ?>
     </div>
 
     <div style="display:none" id="dialog2" title="<?php echo $script_transl['report_alert0']; ?>">
@@ -529,12 +554,13 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';    
                                 $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
                             } else { //// installazione senza gestore dei flussi con il SdI
-                                $last_flux_status = '#'; // si darà sempre la possibilità di inviare
+                                $last_flux_status = 'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
                                 $sdihilight = 'default';
                                 $sdilabel = 'xml';
                             }                           
                             switch ($last_flux_status){
                                 case "#":
+                                case "RE":
                                 $sdititle = 'Invia il file '.$r['fae_attuale'].' al Sistema di Interscambio ';
                                 break;
                                 case "@":
@@ -553,7 +579,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 $sdititle = 'genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ';
                                 break;
                             }
-                            echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" fae_reinvio="'.$r['fae_reinvio'].'" fae_attuale="'.$r['fae_attuale'].'" fae_n_reinvii="'.$r['fattura_elettronica_reinvii'].'" n_fatt="'. $r['numfat'].'/'. $r['seziva'].'" last_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+                            echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" dialog_fae_reinvio="'.$r['fae_reinvio'].'" dialog_fae_filename="'.$r['fae_attuale'].'" dialog_fae_numrei="'.$r['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $r['tipdoc'].' '. $r['numfat'].'/'. $r['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
                             if ($r['fattura_elettronica_reinvii'] > 0) {
                                 echo '<br/><small>' . $r['fattura_elettronica_reinvii'] . ($r['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
                             }
