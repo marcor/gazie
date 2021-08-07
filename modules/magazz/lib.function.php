@@ -748,7 +748,7 @@ class magazzForm extends GAzieForm {
                 $desdoc .= "/" . $seziva;
         }
         $new_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $caumag);
-        $operat = $new_caumag['operat'];
+        $operat = ($new_caumag)?$new_caumag['operat']:0;
         if (!$data_from_admin_mov) {         // se viene da un documento
             $datreg = $datdoc;               // la data di registrazione coincide con quella del documento
             $operat = $docOperat[$tipdoc];    // e la descrizione la ricavo dal tipo documento
