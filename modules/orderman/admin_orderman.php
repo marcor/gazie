@@ -186,7 +186,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				}
 				if (isset($_POST['addLot'. $m])){
 					$form['q_lot_comp'][$m]++;
-				}
+				}				
 				if (isset($_POST['manLot'. $m])) {
 					$form['amLot'. $m] = $_POST['manLot'. $m];
 				} elseif (isset($_POST['autoLot'. $m])) {
@@ -199,8 +199,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     $form['lot_quanti'][$m][$n] = $_POST['lot_quanti' . $m . $n];					
                 }
             } 
-        } 
-    }
+        } else {
+			$form['amLot0']="";
+		}
+    } 
     // Antonio Germani > questo serve per aggiungere o togliere un operaio
     if (isset($_POST['add_staff'])) {
         $form['nmov'] = $_POST['nmov'];
@@ -240,7 +242,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					If ($tot != $form['quanti_comp'][$nc]){
 						$msg.="25+";//La quantità inserita di un lotto, di un componente, è errata
 					}
-					if (intval($form['SIAN']) > 0 AND $form['SIAN_comp'][$nc] > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] ){
+					if (intval($form['SIAN']) > 0 AND $form['SIAN_comp'][$nc] > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] AND intval($form['cod_operazione'])!==3){
 						$msg.= "41+"; // il silos non ha sufficiente quantità olio
 					}
 				}
@@ -1423,7 +1425,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 ?>
 				<input type="text" name="quantip" onchange="this.form.submit()" value="<?php echo $form['quantip']; ?>" />
 				<?php
-				echo $resartico['unimis'];
+				echo ($resartico)?$resartico['unimis']:'';
         // Antonio Germani - Visualizzo quantità prodotte e rimanenti
         if (($form['order']) > 0 && strlen($form['codart']) > 0) { // se c'è un ordine e c'è un articolo selezionato, controllo se è già stato prodotto
             
