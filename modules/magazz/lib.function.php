@@ -879,7 +879,8 @@ class magazzForm extends GAzieForm {
     
 }
  function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ultimo movimento SIAN creato
-	$admin_aziend = checkAdmin();	
+	$admin_aziend = checkAdmin();
+	$uldtfile="";
 	if ($handle = opendir(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sian/')){
 			$i=0;
 			while (false !== ($file = readdir($handle))){
