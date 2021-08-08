@@ -46,6 +46,19 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
 }
 if (isset($_GET['reinvia'])) {   //se viene richiesto un reinvio con altro nome faccio avanzare il relativo contatore sulle testate delle fatture
    gaz_dbi_query ("UPDATE ".$gTables['tesdoc']." SET `fattura_elettronica_reinvii`=`fattura_elettronica_reinvii`+1 WHERE ".$where);
+   if (isset($_GET['sdiflux'])) {  // qualora sia richiesto il reinvio ed è presente una libreria o un modulo per la gestione dei flussi SdI  
+        $namelib = preg_replace("/[^a-zA-Z]+/", "", $_GET['sdiflux']);
+        // distinguo se libreria "modalità catsrl" oppure modulo "modalità gazSynchro"
+		if ( file_exists('../'.$namelib.'/sync.function.php') ) { // modalità gazSynchro
+            $classnamesdiflux = $namelib.'gazSynchro';
+            $sdifluxSync = new $classnamesdiflux();
+            // invio tramite i metodi della classe per la sincronizzazione con SdI 
+        } elseif(file_exists('../../library/'.$namelib.'/SendFaE.php'))  { // modalità catsrl
+            require('../../library/'.$namelib.'/SendFaE.php');
+            // invio tramite le funzioni  della classe per la sincronizzazione con SdI 
+        }
+      
+   }
 }
 //recupero i dati
 $testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],$where,'datemi ASC, numdoc ASC, id_tes ASC');
