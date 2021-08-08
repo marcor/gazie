@@ -19,5 +19,7 @@ UPDATE `gaz_XXXfae_flux` SET `n_invio`= 1 WHERE `n_invio` < 1;
 ALTER TABLE `gaz_XXXcampi`
 	CHANGE COLUMN `codice` `codice` INT(3) NOT NULL AUTO_INCREMENT FIRST;
 ALTER TABLE `gaz_XXXfae_flux`
-	CHANGE COLUMN `flux_status` `flux_status` VARCHAR(10) NOT NULL COMMENT 'Stato del flusso verso SdI #=da inviare, @=inviata, RC=consegnata, NS=scartata, MC=mancata consegna, NE1=accettata(PA), NE2=rifiutata(PA), AT=recapito impossibile, DT=decorrenza termini(PA)' AFTER `data`;
+	CHANGE COLUMN `flux_status` `flux_status` VARCHAR(10) NOT NULL COMMENT 'Stato del flusso verso SdI DI=da inviare, IV=inviata, PC=presa in carico, RC=consegnata, NS=scartata, MC=mancata consegna, NA=accettata(PA), NR=rifiutata(PA), AT=recapito impossibile, DT=decorrenza termini(PA)' AFTER `data`;
+UPDATE `gaz_XXXfae_flux` SET `flux_status`='DI' WHERE `flux_status` LIKE '#%';    
+UPDATE `gaz_XXXfae_flux` SET `flux_status`='IN' WHERE `flux_status` LIKE '@%';    
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

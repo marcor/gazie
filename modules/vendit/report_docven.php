@@ -164,28 +164,34 @@ function confirFae(link){
 	var numrei = parseInt($("#doc1_"+tes_id).attr("dialog_fae_numrei"))+1;
     var flux_status = $("#doc1_"+tes_id).attr("dialog_flux_status");
     var sdiflux = $("#doc1_"+tes_id).attr("dialog_fae_sdiflux");
-    sdiflux = (sdiflux)?"&sdiflu="+sdiflux:"";
+    sdiflux = (sdiflux)?"&sdiflux="+sdiflux:"";
     switch (flux_status) {
-        case "RE":
-            $("#dialog_fae_content_RE").addClass("bg-info text-center");
-            $("#dialog_fae_content_RE span").html("<a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a>");
-            $("#dialog_fae_content_RE").show();
+        case "DI":
+            $("#dialog_fae_content_DI").addClass("bg-default");
+            $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+link.href+"&packet"+sdiflux+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
+            $("#dialog_fae_content_DI").show();
+            console.log(flux_status);
         break;
         case "RC":
             $("#dialog_fae_content_RC").addClass("bg-success text-center");
             $("#dialog_fae_content_RC").show();
+            console.log(flux_status);
         break;
         case "MC":
             $("#dialog_fae_content_MC").addClass("bg-warning text-center");
             $("#dialog_fae_content_MC").show();
+            console.log(flux_status);
         break;
         case "NS":
             $("#dialog_fae_content_NS").addClass("bg-danger");
-            $("#dialog_fae_content_NS").show();
             $("#dialog_fae_content_NS span").html("<p class=\'text-center\'> re: <a href=\'"+link.href+"&reinvia"+sdiflux+"\' class=\'btn btn-danger\'><b> " + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ "</b> <br/>" + numrei.toString() + "° reinvio </a></p>");
+            $("#dialog_fae_content_NS").show();
+            console.log(flux_status);
         break;
-        case "#":
-        case "@":
+        case "RE":
+            $("#dialog_fae_content_RE").addClass("bg-info text-center");
+            $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p><p>Oppure <a href=\'"+link.href+"&packet\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i></b> Impacchetta con eventuali altri precedenti</a></p>");
+            $("#dialog_fae_content_RE").show();
             console.log(flux_status);
         break;
         default:
@@ -265,7 +271,7 @@ $(function() {
         <div style="display:none;" id="dialog_fae_title" title="<?php echo $script_transl['dialog_fae_title']; ?>"></div>
         <p class="ui-state-highlight" id="dialog_fae_filename"><?php echo $script_transl['dialog_fae_filename']; ?><span></span></p>
         <?php
-        $statuskeys=array('RE','IN','RC','MC','NS');
+        $statuskeys=array('DI','RE','IN','RC','MC','NS');
         foreach ( $statuskeys as $v ) {
             echo '<p style="display:none;" class="dialog_fae_content" id="dialog_fae_content_'.$v.'">'.$script_transl['dialog_fae_content_'.$v]."<span></span></p>";    
         }
@@ -556,18 +562,24 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 $last_flux_status = explode(',',$r['refs_flux_status'])[0];
                                 $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';    
                                 $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
+                                if ( $last_flux_status == '' ) { $last_flux_status = 'DI'; } 
                             } else { //// installazione senza gestore dei flussi con il SdI
                                 $last_flux_status = 'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
                                 $sdihilight = 'default';
                                 $sdilabel = 'xml';
                             }                           
-                            switch ($last_flux_status){
-                                case "#":
+                            switch ($last_flux_status) {
+                                case "DI":
+                                $sdititle = 'genera il file '.$r['fae_attuale'].' o impacchettalo assieme ai precedenti ed invialo/i';
+                                break;
+                                case "PC":
+                                $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';
+                                break;
                                 case "RE":
                                 $sdititle = 'Invia il file '.$r['fae_attuale'].' al Sistema di Interscambio ';
                                 break;
-                                case "@":
-                                $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';
+                                case "IN":
+                                $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere la risposta di presa in carico ';
                                 break;
                                 case "RC":
                                 $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato e consegnato al cliente ';
