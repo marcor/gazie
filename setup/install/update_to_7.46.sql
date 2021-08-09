@@ -21,5 +21,7 @@ ALTER TABLE `gaz_XXXcampi`
 ALTER TABLE `gaz_XXXfae_flux`
 	CHANGE COLUMN `flux_status` `flux_status` VARCHAR(10) NOT NULL COMMENT 'Stato del flusso verso SdI DI=da inviare, IV=inviata, PC=presa in carico, RC=consegnata, NS=scartata, MC=mancata consegna, NA=accettata(PA), NR=rifiutata(PA), AT=recapito impossibile, DT=decorrenza termini(PA)' AFTER `data`;
 UPDATE `gaz_XXXfae_flux` SET `flux_status`='DI' WHERE `flux_status` LIKE '#%';    
-UPDATE `gaz_XXXfae_flux` SET `flux_status`='IN' WHERE `flux_status` LIKE '@%';    
+UPDATE `gaz_XXXfae_flux` SET `flux_status`='IN' WHERE `flux_status` LIKE '@%'; 
+ALTER TABLE `gaz_XXXfae_flux`
+	CHANGE COLUMN `flux_descri` `flux_descri` TEXT NULL COMMENT 'Descrizione della notifica, ad esempio l\'errore causa dello scarto o del rifiuto' AFTER `progr_ret`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
