@@ -48,28 +48,18 @@ if ((isset($_GET['Update']) and  !isset($_GET['id'])) or isset($_POST['Return'])
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
 	
 	if (isset($_POST['Cancel'])){
-		$_POST['cod_art'] = "";
-		$_POST['codart'] = "";
-		$_POST['nomefito'] = "";
-		$_POST['nome_fito'] = "";
-		$_POST['id_colt'] = 0;
-		$_POST['nome_colt'] = "";
-		$_POST['id_avv'] = 0;
-		$_POST['nome_avv'] = "";
-		$_POST['dose'] = 0;
-		$_POST['tempo_sosp'] = 0;
+		unset($_POST);
 	}
 	$_POST['id_colt'] = intval ($_POST['nome_colt']);
 	$_POST['id_avv'] = intval ($_POST['nome_avv']);
 	$_POST['cod_art'] = $_POST['codart'];
-    $form=gaz_dbi_parse_post('camp_uso_fitofarmaci');
-	
-	//ricarico i registri per il form	
+    $form=gaz_dbi_parse_post('camp_uso_fitofarmaci');//ricarico i registri per il form	
+	$form['id_reg'] = $_POST['id_reg'];	
 	$form['nome_colt'] = $_POST['nome_colt'];	
 	$form['nome_avv'] = $_POST['nome_avv'];
 	$form['nome_fito'] = $_POST['nomefito'];
 	
-	if ($form['nome_fito']){
+	if ($form['nome_fito'] AND $form['id_reg']==0){
 		$form['id_reg'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "PRODOTTO", $form['nome_fito'])['NUMERO_REGISTRAZIONE'];
 		if (intval($form['id_reg'])>0){
 			 $row = gaz_dbi_get_row($gTables['artico'], "id_reg", $form['id_reg']);
@@ -77,7 +67,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 		} else {
 			$form['nome_fito']="";
 		}
-	} elseif ($form['cod_art']){
+	} elseif ($form['cod_art'] AND $form['id_reg']==0){
 		$form['id_reg'] = gaz_dbi_get_row($gTables['artico'], "codice", $form['cod_art'])['id_reg'];
 		if (intval($form['id_reg'])>0){
 			$form['nome_fito'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "NUMERO_REGISTRAZIONE", $form['id_reg'])['PRODOTTO'];
@@ -95,9 +85,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     if (isset($_POST['ins'])) {
       
 		if ($toDo == 'insert') { // controllo se il codice esiste se e' un inserimento 
-          $rs_ctrl = gaz_dbi_get_row($gTables['camp_uso_fitofarmaci'],'id',$form['id']); 
-			if ($rs_ctrl){
-             $msg .= "6+";
+			$rscheck = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], "NUMERO_REGISTRAZIONE = '".$_POST['id_reg']."' AND id_colt = '".intval($_POST['nome_colt'])."' AND id_avv ='".intval($_POST['nome_avv'])."'" ,2,0,1);
+			if ($rscheck->num_rows > 0){ // controllo se è stata giè inserita questa dose specifica 
+			    $msg .= "6+";
 			}
 		}
 		if (isset ($form['id_colt'])){ // controllo coltivazione vuota
@@ -140,45 +130,36 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           
 			if ($toDo == 'update') { // e' una modifica
 
-			$query="UPDATE " . $gTables['camp_uso_fitofarmaci'] . " SET cod_art ='"  .$form['cod_art']. "', id_colt ='" . $form['id_colt'] . "', id_avv =' ".$form['id_avv']. "', dose = '".$form['dose']. "', tempo_sosp = '".$form['tempo_sosp']."' WHERE id ='". $form['id'] ."'";
+			$query="UPDATE " . $gTables['camp_uso_fitofarmaci'] . " SET cod_art ='"  .$form['cod_art']. "', id_colt ='" . $form['id_colt'] . "', id_avv = '".$form['id_avv']. "', dose = '".$form['dose']. "', tempo_sosp = '".$form['tempo_sosp']."', NUMERO_REGISTRAZIONE = '".$form['id_reg']."' WHERE id ='". $form['id'] ."'";
 			gaz_dbi_query ($query) ;
 			header("Location: ".$_POST['ritorno']);
 			exit;
 
 			} else { // e' un'inserimento
+				$form['NUMERO_REGISTRAZIONE'] = $_POST['id_reg'];	
 				gaz_dbi_table_insert('camp_uso_fitofarmaci',$form);
 				$form['id_colt'] = 0;
 				$form['nome_colt'] = "";
 				$form['id_avv'] = 0;
 				$form['nome_avv'] = "";
 				$form['dose'] = 0;
-				$form['tempo_sosp'] = 0;
-				$form['id']++;
+				$form['tempo_sosp'] = 0;			
 				$warning="inserito";
 			}
 			//header("Location: ".$_POST['ritorno']);
-			//exit;
-			
+			//exit;			
 		}
 	}
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per update
-    $camp_uso_fitofarmaci = gaz_dbi_get_row($gTables['camp_uso_fitofarmaci'],"id",$_GET['id']);
-    $form['ritorno'] = $_POST['ritorno'];
-    $form['id'] = $camp_uso_fitofarmaci['id'];
-    $form['cod_art'] = $camp_uso_fitofarmaci['cod_art'];
-	$form['id_colt'] = $camp_uso_fitofarmaci['id_colt'];
-	$form['id_avv'] = $camp_uso_fitofarmaci['id_avv'];
-	$form['dose'] = $camp_uso_fitofarmaci['dose'];
-	$form['tempo_sosp'] = $camp_uso_fitofarmaci['tempo_sosp'];
+    $form = gaz_dbi_get_row($gTables['camp_uso_fitofarmaci'],"id",$_GET['id']);
+    $form['ritorno'] = $_POST['ritorno'];    
 	$colt = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$form['id_colt']);
 	$form['nome_colt'] = $form['id_colt']." - ".$colt['nome_colt'];
 	$avv = gaz_dbi_get_row($gTables['camp_avversita'],"id_avv",$form['id_avv']);
 	$form['nome_avv'] = $form['id_avv']." - ".$avv['nome_avv'];
-	$form['id_reg'] = gaz_dbi_get_row($gTables['artico'], "codice", $form['cod_art'])['id_reg'];
-	
+	$form['id_reg'] = gaz_dbi_get_row($gTables['artico'], "codice", $form['cod_art'])['id_reg'];	
 	$form['nome_fito'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "NUMERO_REGISTRAZIONE", $form['id_reg'])['PRODOTTO'];
-	
-    
+	   
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
 	// controllo se la tabella DB fitofarmaci è popolata
 	$warning="";
@@ -188,9 +169,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 		$warning="NoFito";
 	}
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $rs_ultimo_id = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], 1 ,'id desc',0,1);
-    $ultimo_id = gaz_dbi_fetch_array($rs_ultimo_id);
-    $form['id'] = (($ultimo_id)?$ultimo_id['id']:0) +1;
+    
+    $form['id'] = 0;
     $form['cod_art'] = "";
     $form['id_colt'] = 0;
 	$form['nome_colt'] = "";
@@ -199,6 +179,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['dose'] = 0;
 	$form['tempo_sosp'] = 0;
 	$form['nome_fito'] = "";
+	$form['id_reg'] = 0;
 }
 
 require("../../library/include/header.php");
@@ -235,6 +216,7 @@ if ($warning == "inserito"){ // Dose fitofarmaco correttamente inserita
 }
 print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
+print "<input type=\"hidden\" value=\"".$form['id_reg']."\" name=\"id_reg\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
@@ -251,11 +233,8 @@ if (!empty($msg)) {
     echo '<tr><td colspan="5" class="FacetDataTDred">'.$message."</td></tr>\n";
 }
  
-if ($toDo == 'update') {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id\" value=\"".$form['id']."\" />".$form['id']."</td></tr>\n";
-} else {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"id\" value=\"".$form['id']."\" maxlength=\"3\"  /></td></tr>\n";
-}
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id\" value=\"".$form['id']."\" />".$form['id']."</td></tr>\n";
+
 ?>
 <!-- inizio inserisci articolo   -->
 	
