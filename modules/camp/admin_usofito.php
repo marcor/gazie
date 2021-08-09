@@ -190,7 +190,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $rs_ultimo_id = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], 1 ,'id desc',0,1);
     $ultimo_id = gaz_dbi_fetch_array($rs_ultimo_id);
-    $form['id'] = ($ultimo_id)?$ultimo_id['id']:0 +1;
+    $form['id'] = (($ultimo_id)?$ultimo_id['id']:0) +1;
     $form['cod_art'] = "";
     $form['id_colt'] = 0;
 	$form['nome_colt'] = "";

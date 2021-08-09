@@ -53,18 +53,18 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     $so = filter_input(INPUT_POST, 'sort');
     $ca = filter_input(INPUT_POST, 'codart');
 	$mt = filter_input(INPUT_POST, 'mostra'); 
-	
-    if (empty($ca)) {
-        $where = '1';
-    } else {
+	$where = "";
+	$addwhere = "";
+    if (!empty($ca)) {   
         $where = "codice = '" . $ca . "'";
         $no = '0';
+		$addwhere=" AND ";
     }
 	if ($mt==0){
-		$where=$where." AND mostra_qdc = '1' "; // Antonio Germani seleziona quali prodotti mostrare nell'elenco
+		$where=$where.$addwhere."mostra_qdc = 1"; // Antonio Germani seleziona quali prodotti mostrare nell'elenco
 	}
     $gForm = new magazzForm();
-    $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, $ob . ' ' . $so, $no, PER_PAGE);
+    $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, $ob . ' ' . $so, $no);
     while ($row = gaz_dbi_fetch_array($result)) {
 		unset ($magval);unset($mv);
 		$lastdoc = getLastDoc($row["codice"]);

@@ -33,6 +33,13 @@ $today=	strtotime(date("Y-m-d H:i:s",time()));
 $presente=""; 
 $largeimg=0;
 $gForm = new magazzForm();
+$openmore=false;
+
+if(isset($_POST['delete']) AND $_POST['delete']>0) {	
+	gaz_dbi_del_row($gTables['camp_uso_fitofarmaci'], 'id', intval($_POST['delete']));	
+	$openmore=true;	
+	$_POST['delete']=0;
+}
 
 if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'update';
@@ -46,29 +53,59 @@ if (isset($_POST['fornitore'])){
 		$form['id_anagra'] = intval ($form['fornitore']);
 }
 
+// se è stata inviata una dose specifica
+if (isset($_POST['OKsub']) AND $_POST['id_reg']>0 AND $_POST['dose']>0 AND intval($_POST['nome_colt'])>0 AND intval($_POST['nome_avv']>0)){// se inviata una dose specifica, la aggiungo al DB
+	$btn_uso="&#9650 Chiudi";
+	$rscheck = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], "NUMERO_REGISTRAZIONE = '".$_POST['id_reg']."' AND id_colt = '".intval($_POST['nome_colt'])."' AND id_avv ='".intval($_POST['nome_avv'])."'" ,2,0,1);
+    if ($rscheck->num_rows == 0){ // controllo se è stata giè inserita questa dose specifica		
+		$formuso['id_colt'] = intval($_POST['nome_colt']);		
+		$formuso['id_avv'] = intval($_POST['nome_avv']);
+		$formuso['cod_art'] = ($_POST)?$_POST['codice']:'';
+		$formuso['dose'] = $_POST['dose'];
+		$formuso['tempo_sosp'] = $_POST['tempo_sosp'];
+		$formuso['NUMERO_REGISTRAZIONE'] = $_POST['id_reg'];
+		gaz_dbi_table_insert('camp_uso_fitofarmaci',$formuso);
+	}	
+} elseif  (isset($_POST['OKsub'])){
+	?><!-- apro il pannello dosi specifiche  -->
+	<style>#more { display:block; }</style>
+	<?php
+	$btn_uso="&#9650 Chiudi";
+} else {
+	?><!-- il pannello dosi specifiche deve essere spento -->
+	<style>#more { display:none; }</style>
+	<?php
+	$btn_uso="&#9660 Apri dosi e usi"; 
+}
+
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
-    if ($_POST['oldnomefito']<>$_POST['nomefito']){ // se è stato cambiato il nome del fitofarmaco prendo id_reg e propongo il codice
-		$_POST['id_reg']=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'PRODOTTO', $_POST['nomefito'])['NUMERO_REGISTRAZIONE'];
-		if (intval($_POST['id_reg'])>0){ // se è stato trovato nel DB del ministero propongo il codice
-			$_POST['codice']=substr($_POST['nomefito'],0,15);
-		} else { // altrimenti tolgo il nome del fitofarmaco che non esiste
-			$_POST['nomefito']=""; 
-		}
-	}
-	
+
 	$form = gaz_dbi_parse_post('artico');
-	$form['nomefito']=$_POST['nomefito'];
+	$form['nomefito']=$_POST['nomefito'];		
 	$form['categoria']=$_POST['categoria'];
 	$form['etichetta']=$_POST['etichetta'];
 	$form['biologico']=$_POST['biologico'];
 	$form['estrazione']=$_POST['estrazione'];
 	$form['or_spec']=$_POST['or_spec'];
 	$form['or_macro']=$_POST['or_macro'];
-	$form['confezione']=$_POST['confezione'];
-    $form['codice'] = trim($form['codice']);
+	$form['confezione']=$_POST['confezione'];    
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
 	$form['conferma'] = $_POST['conferma'];
+
+	if ($_POST['oldnomefito']<>$_POST['nomefito']){ // se è stato cambiato il nome del fitofarmaco prendo id_reg e propongo il codice
+		$_POST['id_reg']=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'PRODOTTO', $_POST['nomefito'])['NUMERO_REGISTRAZIONE'];
+		if (intval($_POST['id_reg'])>0){ // se è stato trovato nel DB del ministero propongo il codice
+			$_POST['codice']=substr($_POST['nomefito'],0,15);
+		} else { // altrimenti tolgo il nome del fitofarmaco che non esiste
+			$_POST['nomefito']=""; 
+			$_POST['id_reg']=0;
+		}
+	} 
+	$form['id_reg']=$_POST['id_reg'];
+	$form['codice'] = trim($_POST['codice']);
+	$query="SELECT * FROM ".$gTables['camp_uso_fitofarmaci']." LEFT JOIN ".$gTables['camp_avversita']." on (".$gTables['camp_avversita'].".id_avv = ".$gTables['camp_uso_fitofarmaci'].".id_avv) LEFT JOIN ".$gTables['camp_colture']." on (".$gTables['camp_colture'].".id_colt = ".$gTables['camp_uso_fitofarmaci'].".id_colt) WHERE NUMERO_REGISTRAZIONE = ". $form['id_reg'] ." OR cod_art = '". $form['codice'] ."' ORDER BY nome_colt";
+	$res_usofito = gaz_dbi_query($query);
 	if (isset ($_POST['fornitore'])) {
 		$form['fornitore'] = $_POST['fornitore'];
 		$form['id_anagra'] = intval ($form['fornitore']);
@@ -318,10 +355,19 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         header("Location: " . $form['ritorno']);
         exit;
     }
+	if ($openmore==true){
+		?><!-- riapro il pannello dosi specifiche  -->
+		<style>#more { display: unset; }</style>
+		<?php
+		$btn_uso="&#9650 Chiudi";
+	}
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15));
 	$camp = gaz_dbi_get_row($gTables['camp_artico'], 'codice', substr($_GET['codice'], 0, 15));
-	$form['nomefito']=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'NUMERO_REGISTRAZIONE', $form['id_reg'])['PRODOTTO'];
+	$query="SELECT * FROM ".$gTables['camp_uso_fitofarmaci']." LEFT JOIN ".$gTables['camp_avversita']." on (".$gTables['camp_avversita'].".id_avv = ".$gTables['camp_uso_fitofarmaci'].".id_avv) LEFT JOIN ".$gTables['camp_colture']." on (".$gTables['camp_colture'].".id_colt = ".$gTables['camp_uso_fitofarmaci'].".id_colt) WHERE NUMERO_REGISTRAZIONE = ". $form['id_reg'] ." OR cod_art = '". $form['codice'] ."' ORDER BY nome_colt";
+	$res_usofito = gaz_dbi_query($query);
+	$res_fito=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'NUMERO_REGISTRAZIONE', $form['id_reg']);
+	$form['nomefito']=($res_fito)?$res_fito['PRODOTTO']:'';
 	$form['categoria']=$camp['categoria'];
 	$form['etichetta']=$camp['etichetta'];
 	$form['biologico']=$camp['biologico'];
@@ -369,8 +415,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
     // fine documenti/certificati
     $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
-    $form['body_text'] = $bodytext['body_text'];
-	
+    $form['body_text'] = ($bodytext)?$bodytext['body_text']:'';
+	if ($openmore==true){
+		?><!-- riapro il pannello dosi specifiche  -->
+		<style>#more { display: unset; }</style>
+		<?php
+		$btn_uso="&#9650 Chiudi";
+	} else {
+		?><!-- al primo accesso il pannello dosi specifiche deve essere spento -->
+		<style>#more { display:none; }</style>
+		<?php
+		$btn_uso="&#9660 Apri dosi e usi"; // valore di default del pulsante apri dosi specifiche
+	}
 } else { //se e' il primo accesso per INSERT
 	
 	// controllo se la tabella DB fitofarmaci è popolata
@@ -378,13 +434,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$checkdbfito = gaz_dbi_query($query);
 	if ($checkdbfito -> num_rows ==0) {
 		$checkdbfito="WARNING";
-	}
-	
+	}	
     $form = gaz_dbi_fields('artico');
     
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     
-    /** ENRICO FEDELE */
     $form['ref_code'] = '';
     $form['aliiva'] = $admin_aziend['preeminent_vat'];
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
@@ -409,6 +463,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['id_anagra'] = "";
 	$form['fornitore'] = "";
     $form['conferma'] = "";
+	 $form['oldnomefito'] = "";
     /** fine modifica FP */
     // eventuale descrizione amplia
     $form['body_text'] = '';
@@ -457,10 +512,8 @@ if (isset($_POST['nomefito']) && strlen($form['nomefito'])>3){
 		}	
 }
 
-
-    require("../../library/include/header.php");
-    $script_transl = HeadMain(0,array('custom/autocomplete',));
-
+require("../../library/include/header.php");
+$script_transl = HeadMain(0,array('custom/autocomplete',));
 
 // controllo se è scaduta l'autorizzazione fitofarmaco e avviso 
 if ($form['conferma']<>"Confermo deroga ".$form['nomefito'] AND $presente==1 AND ($scadaut>0 && $today>$scadaut)) {
@@ -472,10 +525,6 @@ if ($form['conferma']<>"Confermo deroga ".$form['nomefito'] AND $presente==1 AND
 	}
 }
 
-/** ENRICO FEDELE */
-/* Assegno un id al form, quindi distinguo tra modale e non
- * in caso di finestra modale, aggiungo un campo nascosto che mi serve per salvare nel database
- */
 ?>
 <script type="text/javascript">
     function calcDiscount() {
@@ -488,6 +537,30 @@ if ($form['conferma']<>"Confermo deroga ".$form['nomefito'] AND $presente==1 AND
         var p4 = ($("#preve4").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
         $("#preve4_sc").val(p4);
     }
+	
+	function itemErase(id,avver,colt,cod,upd){
+		$(".dose_specifica").append('ID:'+id+' - '+colt+' - '+avver);
+		//alert(id);
+		$("#confirm_erase").dialog({
+			modal: true,
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				No: function() {
+					$(".dose_specifica").empty();
+					$( this ).dialog( "close" );
+				},
+				Togli: function() {					
+					document.getElementById('nomefito').value=cod;
+					document.getElementById('delete').value=id;
+					$('#add-product').submit();					
+				}
+			  },
+			  close: function(){	
+				$(".dose_specifica").empty();
+			  }
+			});
+	}
 
     $(function () {
         $("#preve1,#preve2,#preve3,#preve4,#sconto").change(function () {
@@ -529,6 +602,7 @@ if ($form['conferma']<>"Confermo deroga ".$form['nomefito'] AND $presente==1 AND
 		});
 	});
 <!-- fine autocompletamento -->	
+
 <!-- inizio autocompletamento fornitore-->
 $(document).ready(function() {
 $("input#autocomplete2").autocomplete({
@@ -560,13 +634,13 @@ select: function(event, ui) {
 
 	<?php 
 	if (!empty($form['descri'])) $form['descri'] = htmlentities($form['descri'], ENT_QUOTES);
-	
 	echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
 	echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />';
 	echo '<input type="hidden" name="id_reg" value="' . $form['id_reg'] . '" />';
 	echo '<input type="hidden" name="oldnomefito" value="' . $form['nomefito'] . '" />';
 	echo '<input type="hidden" name="conferma" value="' . $form['conferma'] . '" />';
-		
+	echo '<input type="hidden" id="delete" name="delete" value="" />';
+	echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';	
 		if ($form['good_or_service']==0) {
 			$mv = $gForm->getStockValue(false, $form['codice']);
 			if (isset($mv)){
@@ -579,12 +653,8 @@ select: function(event, ui) {
 			$magval['q_g']=0;
 			$magval['v_g']=0;
 		}
-		
-		/** ENRICO FEDELE */
-		/* Se sono in finestra modale, non visualizzo questo titolo */
-		$changesubmit = '';
 	  
-		echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
+		
 		if (count($msg['err']) > 0) { // ho un errore
 			$gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
 		}
@@ -644,7 +714,7 @@ select: function(event, ui) {
 							</div>
 						</div>		
 						
-						<div class="row">
+						<div class="row bg-info">
 							<div class="col-md-12">
 								<div class="col-sm-12 control-label">
 									<p> Per connettere un fitofarmaco al database del Ministero della salute, inserire il nome commerciale del prodotto e confermarlo nella tendina che appare. Altrimenti lasciare vuoto il campo fitofarmaco e scrivere solo il codice. </P>
@@ -652,10 +722,142 @@ select: function(event, ui) {
 								
 								<div class="form-group">
 									<label for="nomefito" class="col-sm-4 control-label"><?php echo "Fitofarmaco"; ?></label>
-									<input class="col-sm-8" type="text" id="nomefito" name="nomefito" value="<?php echo $form['nomefito']; ?>" placeholder="Ricerca nome fitofarmaco" autocomplete="off" tabindex="1">
+									<input class="col-sm-6" type="text" id="nomefito" name="nomefito" value="<?php echo $form['nomefito']; ?>" placeholder="Ricerca nome fitofarmaco" autocomplete="off" tabindex="1">
+									<?php
+									if ($form['nomefito']){
+										?>
+										<input class="col-sm-2" title="Aggiungi dosi per colture specifiche" type="button" name="button1" id="nextbt" rel="more" value="<?php echo $btn_uso;?>" onclick="buttonToggle(this,'&#9660 Apri dosi e usi','&#9650 Chiudi');" style="float: right;">
+										<?php
+									}
+									?>
 								</div>
 								<ul class="dropdown-menu" style="left: 35%; padding: 0px;" id="product_search"></ul>									
+							</div>	
+		<!-- INSERIMENTO DOSI PER COLTURE SPECIFICHE -->
+							<?php if ($form['nomefito']){ ?>
+							<div id="more" class="col-sm-12 bg-info">							
+								<div  align="center" >
+									<h3>Inserimento dosi per colture specifiche</h3>
+								</div>
+								
+								<?php $color='eeeeee';
+								echo '<ul class="col-sm-12">';
+								$v=0;
+								if ($toDo == 'insert') {
+									$upd="insert";
+								} else {
+									$upd="update";
+								}
+								if (isset($res_usofito)){
+									if (isset($form['unimis'])){
+										$unimis = $form['unimis']."/ha";
+									} else {
+										$unimis = "un. mis./ha";
+									}
+								while ($usofito = $res_usofito->fetch_assoc()) {															
+									
+									echo '<div style="background-color: #'.$color.'">
+									<a class="btn btn-xs btn-success" >'.$usofito['id'].'</a> - '.$usofito['NUMERO_REGISTRAZIONE'].' - '.$usofito['id_colt'].$usofito['nome_colt'].' - '.$usofito['id_avv'].$usofito['nome_avv'].' - Dose:'.$usofito['dose'].$unimis.' - Sospensione:'.$usofito['tempo_sosp'].'gg_ _ _ _ ';
+									if (intval($res_usofito->num_rows)>0){
+										?>
+										<a style="float:right;" class="btn btn-xs btn-danger" onclick="itemErase('<?php echo addslashes($usofito['id']); ?>', '<?php echo addslashes($usofito['nome_avv']);?>', '<?php echo addslashes($usofito['nome_colt']);?>', '<?php echo $form['nomefito'];?>', '<?php echo $upd; ?>');">  togli X </a>
+										<?php
+									}
+									echo '</div>';
+									$color=($color=='fcfcfc')?'eeeeee':'fcfcfc';
+									echo '<input type="hidden" name="usofito['.$v.']" value="' . $usofito['cod_art'] . '" />';
+									$v++;
+								}
+								}
+								?>
+								</ul>
+								<div class="col-sm-12 bg-warning">
+									<div class="row">
+										<h4>Aggiungi una nuova dose massima specifica:</h4>
+									</div>
+									<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_coltura	-->	
+									  <script>
+										$(document).ready(function() {
+										$("input#autocomplete2").autocomplete({
+											source: [<?php
+										$stringa="";
+										$query="SELECT * FROM ".$gTables['camp_colture'];
+										$result = gaz_dbi_query($query);
+										while($row = $result->fetch_assoc()){
+											$stringa.="\"".$row['id_colt']." - ".$row['nome_colt']."\", ";			
+										}
+										$stringa=substr($stringa,0,-2);
+										echo $stringa;
+										?>],
+											minLength:2,
+										select: function(event, ui) {
+											//assign value back to the form element
+											if(ui.item){
+												$(event.target).val(ui.item.value);
+											}
+											//submit the form
+											//$(event.target.form).submit();
+										}
+										});
+										});
+									  </script>
+									 <!-- fine autocompletamento -->
+									<div class="row">
+										<b>Coltura:</b>
+										<input id="autocomplete2" type="text" value="" name="nome_colt" maxlength="50"/>
+										<!-- per funzionare autocomplete, id dell'input deve essere autocomplete2 -->									
+
+										<!-- inizio inserisci avversita  -->
+										<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_avversita	-->	
+										  <script>
+											$(document).ready(function() {
+											$("input#autocomplete3").autocomplete({
+												source: [<?php
+											$stringa="";
+											$query="SELECT * FROM ".$gTables['camp_avversita'];
+											$result = gaz_dbi_query($query);
+											while($row = $result->fetch_assoc()){
+												$stringa.="\"".$row['id_avv']." - ".$row['nome_avv']."\", ";			
+											}
+											$stringa=substr($stringa,0,-2);
+											echo $stringa;
+											?>],
+												minLength:2,
+											select: function(event, ui) {
+												//assign value back to the form element
+												if(ui.item){
+													$(event.target).val(ui.item.value);
+												}
+												//submit the form
+												//$(event.target.form).submit();
+											}
+											});
+											});
+										  </script>
+										 <!-- fine autocompletamento -->
+										<b> Avversità:</b>
+										<input id="autocomplete3" type="text" value="" name="nome_avv" maxlength="50"/>
+										<!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->
+									</div>
+									<div class="row">
+										<b>Dose:</b>
+										<input type="text" name="dose" value="" maxlength="8"  />
+										<?php										
+										echo $unimis;										
+										?>
+										<b> Tempo sospensione:</b>
+										<input type="text" name="tempo_sosp" value="" maxlength="2"  /> gg 									
+									</div>
+									<div class="row">
+										<input type="submit" class="btn btn-warning" name="OKsub" value="Salva dose">
+									</div>
+								</div>
+																
+								
 							</div>
+							<?php } ?>
+		<!-- FINE INSERIMENTO DOSI PER COLTURE SPECIFICHE -->
+			
 						</div><!-- chiude row  -->
 						<div class="row">
 							<div class="col-md-12">
@@ -762,7 +964,7 @@ select: function(event, ui) {
 					
 <!-- CARATTERISTICHE TAB  -->					
 					<div id="car" class="tab-pane fade">
-						<?php if ($form['good_or_service']==0){ ?>
+						<?php if ($form['good_or_service']==0 OR $form['good_or_service']==2){ ?>
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
@@ -881,7 +1083,7 @@ select: function(event, ui) {
 					
 <!-- SIAN TAB  -->						
 					<div id="sian" class="tab-pane fade">
-					<?php if ($form['good_or_service']==0){?>
+					<?php if ($form['good_or_service']==0 OR $form['good_or_service']==2){?>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
@@ -897,7 +1099,7 @@ select: function(event, ui) {
 								<div class="form-group">
 									<label for = "or_macro" class = "col-sm-4 control-label"><?php echo $script_transl['or_macro']; ?></label>
 									<?php
-									$gForm->variousSelect('or_macro', $script_transl['or_macro_value'], $form['or_macro'], "col-sm-8", true, '', false, 'tabindex="11" onchange = "this.form.submit();" style = "max-width: 200px;"');
+									$gForm->variousSelect('or_macro', $script_transl['or_macro_value'], $form['or_macro'], "col-sm-8", true, '', false, 'tabindex="11" style = "max-width: 200px;"');
 									?>
 								</div>
 							</div>
@@ -907,7 +1109,7 @@ select: function(event, ui) {
 								<div class="form-group">
 									<label for = "or_spec" class = "col-sm-4 control-label"><?php echo $script_transl['or_spec']; ?></label>
 									<?php
-									$gForm->variousSelect('or_spec', $script_transl['or_spec_value'], $form['or_spec'], "col-sm-8", true, '', false, 'tabindex="12" onchange = "this.form.submit();" style = "max-width: 200px;"');
+									$gForm->variousSelect('or_spec', $script_transl['or_spec_value'], $form['or_spec'], "col-sm-8", true, '', false, 'tabindex="12" style = "max-width: 200px;"');
 									?>
 								</div>
 							</div>
@@ -946,7 +1148,7 @@ select: function(event, ui) {
 								<div class="form-group">
 									<label for = "categoria" class = "col-sm-4 control-label"><?php echo $script_transl['categoria']; ?></label>
 									<?php
-									$gForm->variousSelect('categoria', $script_transl['categoria_value'], $form['categoria'], "col-sm-8", true, '', false, 'tabindex="16" onchange = "this.form.submit();" style = "max-width: 200px;"');
+									$gForm->variousSelect('categoria', $script_transl['categoria_value'], $form['categoria'], "col-sm-8", true, '', false, 'tabindex="16" style = "max-width: 200px;"');
 									?>
 								</div>
 							</div>
@@ -983,12 +1185,12 @@ select: function(event, ui) {
 						<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?></label>
+								<label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?> di acquisto</label>
 								<input tabindex="20" class="col-sm-4" type="number" step="any" min="0" value="<?php echo $form['preacq']; ?>" name="preacq" maxlength="15" />
 							</div>
 						</div>
 						</div><!-- chiude row  -->
-					<?php if ($form['good_or_service']==0){?>
+					<?php if ($form['good_or_service']==0 OR $form['good_or_service']==2){?>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
@@ -1057,16 +1259,42 @@ select: function(event, ui) {
 			</div><!-- chiude container -->
 		</div>	<!-- chiude panel -->
 </form>
-
-<script type="text/javascript">	
-	<!-- script per popup -->	
-	var stile = "top=10, left=10, width=600, height=800 status=no, menubar=no, toolbar=no scrollbar=no";
-	   function Popup(apri) {
-	      window.open(apri, "", stile);
-	   }
-</script>
-
+<div class="modal" id="confirm_erase" title="Togli dose specifica">
+    <fieldset>
+       <div class="dose_specifica"></div>
+    </fieldset>
+</div>
 <?php
-
+if (isset($formuso) OR $openmore==true){	
+	echo "<script type='text/javascript'>\n" . "window.location.hash = '#more';" . //◄■■■ JUMP TO LOCAL ANCHOR.
+	"</script>\n";	
+} 
+?>
+<script type="text/javascript">	
+	function buttonToggle(where, pval, nval) {
+		var table = document.getElementById(where.attributes.rel.value);
+		if (where.value == pval){
+			where.value = nval;
+			table.style.display = 'unset';
+		} else if (where.value == nval) {
+			where.value = pval;
+			table.style.display = 'none';
+		}		
+	}
+	<!-- script per popup -->	
+	//var stile = "top=10, left=10, width=600, height=800 status=no, menubar=no, toolbar=no scrollbar=no";
+	function Popup(apri) {
+	  window.open(apri, "", stile);
+	}
+</script>
+<!---->
+<style>
+.ui-dialog{
+	position:fixed;
+	top: 30% !important;
+	
+}
+</style>
+<?php
 require("../../library/include/footer.php");
 ?>
