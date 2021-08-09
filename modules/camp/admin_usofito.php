@@ -48,7 +48,16 @@ if ((isset($_GET['Update']) and  !isset($_GET['id'])) or isset($_POST['Return'])
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
 	
 	if (isset($_POST['Cancel'])){
-		unset($_POST);
+		$_POST['cod_art'] = "";
+		$_POST['codart'] = "";
+		$_POST['nomefito'] = "";
+		$_POST['nome_fito'] = "";
+		$_POST['id_colt'] = 0;
+		$_POST['nome_colt'] = "";
+		$_POST['id_avv'] = 0;
+		$_POST['nome_avv'] = "";
+		$_POST['dose'] = 0;
+		$_POST['tempo_sosp'] = 0;
 	}
 	$_POST['id_colt'] = intval ($_POST['nome_colt']);
 	$_POST['id_avv'] = intval ($_POST['nome_avv']);
