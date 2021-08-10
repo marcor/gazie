@@ -4,7 +4,10 @@ ALTER TABLE `gaz_camp_uso_fitofarmaci` ADD `numero_registrazione` INT(6) NOT NUL
 ALTER TABLE `gaz_camp_avversita` CHANGE COLUMN `id_avv` `id_avv` INT(3) NOT NULL AUTO_INCREMENT FIRST;
 ALTER TABLE `gaz_camp_colture` CHANGE COLUMN `id_colt` `id_colt` INT(3) NOT NULL AUTO_INCREMENT FIRST;
 ALTER TABLE `gaz_camp_uso_fitofarmaci` CHANGE COLUMN `id` `id` INT(4) NOT NULL AUTO_INCREMENT FIRST;
-ALTER TABLE `gaz_anagra` ADD `rif_abilitazione` VARCHAR(30) NOT NULL COMMENT 'Riferimento al possesso di una abilitazione o autorizzazione' AFTER `id_SIAN`, ADD `scad_abilitazione` DATE NULL DEFAULT NULL COMMENT 'Scadenza dell\'abilitazione o autorizzazione' AFTER `rif_abilitazione`;
+ALTER TABLE `gaz_anagra` ADD `rif_abilitazione` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_SIAN`;
+ALTER TABLE `gaz_admin`
+	ADD COLUMN `id_anagra` INT(9) NULL DEFAULT NULL COMMENT 'Riferimento alla tabella anagrafiche comuni (gaz_anagra)' AFTER `user_id`,
+	ADD INDEX `id_anagra` (`id_anagra`);
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `durability` INT(4) NOT NULL DEFAULT '0' COMMENT 'Durabilità anche se solo presunta espressa in unità di misura specificata nel campo successivo' AFTER `maintenance_period`,
 	ADD COLUMN `durability_mu` VARCHAR(1) NULL DEFAULT NULL COMMENT 'Unità di misura della durabilità di cui al campo precedente (H=ore,D=giorni,M=mesi) nel caso di durabilità alimenti (<=minore di,>=maggiore di)' AFTER `durability`,
