@@ -173,6 +173,12 @@ function confirFae(link){
             $("#dialog_fae_content_DI").show();
             console.log(flux_status);
         break;
+        case "ZI":
+            $("#dialog_fae_content_ ZI").addClass("bg-default");
+            $("#dialog_fae_content_ZI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia il pacchetto " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p></p>");
+            $("#dialog_fae_content_ZI").show();
+            console.log(flux_status);
+        break;
         case "RC":
             $("#dialog_fae_content_RC").addClass("bg-success text-center");
             $("#dialog_fae_content_RC").show();
@@ -271,7 +277,7 @@ $(function() {
         <div style="display:none;" id="dialog_fae_title" title="<?php echo $script_transl['dialog_fae_title']; ?>"></div>
         <p class="ui-state-highlight" id="dialog_fae_filename"><?php echo $script_transl['dialog_fae_filename']; ?><span></span></p>
         <?php
-        $statuskeys=array('DI','RE','IN','RC','MC','NS');
+        $statuskeys=array('DI','RE','IN','RC','MC','NS','ZI');
         foreach ( $statuskeys as $v ) {
             echo '<p style="display:none;" class="dialog_fae_content" id="dialog_fae_content_'.$v.'">'.$script_transl['dialog_fae_content_'.$v]."<span></span></p>";    
         }
@@ -563,6 +569,12 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';    
                                 $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
                                 if ( $last_flux_status == '' ) { $last_flux_status = 'DI'; } 
+                                if ( strlen($r['fattura_elettronica_zip_package'])>10 && $last_flux_status = 'DI') { // il documento è impacchettato e da inviare
+                                    $r['fae_attuale']=$r['fattura_elettronica_zip_package'];
+                                    $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';    
+                                    $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'ZIP da inviare';
+                                    $last_flux_status = 'ZI';  
+                                }
                             } else { //// installazione senza gestore dei flussi con il SdI
                                 $last_flux_status = 'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
                                 $sdihilight = 'default';
@@ -570,7 +582,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                             }                           
                             switch ($last_flux_status) {
                                 case "DI":
-                                $sdititle = 'genera il file '.$r['fae_attuale'].' o impacchettalo assieme ai precedenti ed invialo/i';
+                                $sdititle = 'Invia il file '.$r['fae_attuale'].' o pacchetto';
                                 break;
                                 case "PC":
                                 $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';

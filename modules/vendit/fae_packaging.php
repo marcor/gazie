@@ -35,7 +35,7 @@ function getExtremeDocs($vat_register = '_', $vat_section = 1) {
     global $gTables;
     $vat_register = substr($vat_register, 0, 1);
     $docs = array();
-    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND (flux_status = '' OR flux_status = 'DI') AND seziva = $vat_section AND ";
+    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND (flux_status = '' OR flux_status = 'DI' OR flux_status IS NULL ) AND seziva = $vat_section AND ";
     $orderby = "datfat ASC, protoc ASC";
     if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
         $where .= "tipdoc = 'VCO' AND numfat > 0 AND clfoco > 100000000 AND datfat > '2018-01-01'";
@@ -111,7 +111,7 @@ function getFAEunpacked($vat_register = '___', $vat_section = 1, $date = false, 
              ON customer.id_anagra=anagraf.id
              LEFT JOIN ' . $gTables['fae_flux'] . ' AS flux 
              ON tesdoc.id_tes = flux.id_tes_ref ';
-    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section  AND (flux_status = '' OR flux_status = 'DI') AND tipdoc LIKE '$vat_register" . "__' $d $p";
+    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section  AND (flux_status = '' OR flux_status = 'DI' OR flux_status IS NULL) AND tipdoc LIKE '$vat_register" . "__' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
