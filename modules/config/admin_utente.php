@@ -99,7 +99,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form['theme'] = $admin_config['var_value'];
 	// attingo il testo delle email dalla tabella configurazione utente
 	$bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'body_send_doc_email', "AND adminid = '{$form['user_name']}'");
-	$form['body_text'] = $bodytext['var_value'];
+	$form['body_text'] = ($bodytext)?$bodytext['var_value']:'';
     $form['hidden_req'] = '';
     $form['search']['company_id'] = '';
 } else {
@@ -171,7 +171,7 @@ if (isset($_POST['Submit'])) {
 	if ($form["Abilit"] < 9) {
 		$ricerca = trim($form["user_name"]);
 		// impedisco agli utenti non amministratori di cambiarsi l'azienda di lavoro
-		$form["company_id"] = $old_data["company_id"];
+		$form["company_id"] = ($old_data)?$old_data["company_id"]:0;
 		$rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "user_name <> '$ricerca' AND Abilit ='9'", "user_name", 0, 1);
 		$risultato = gaz_dbi_fetch_array($rs_utente);
 		$student = false;
@@ -256,6 +256,15 @@ if (isset($_POST['Submit'])) {
 			require_once('../../modules/root/config_login.php');
 			$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
 			$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
+			
+			// Antonio Germani - Creo anche una nuova anagrafica nelle anagrafiche comuni
+			$form['ragso1']=$form['user_lastname'];
+			$form['ragso2']=$form['user_firstname'];
+			$form['legrap_pf_nome']="";
+			$form['legrap_pf_cognome']="";
+			$form['email']=$form['user_email'];			
+			$form['id_anagra']=gaz_dbi_table_insert('anagra', $form);
+			
 			gaz_dbi_table_insert('admin', $form);
 			$form['adminid'] = $form["user_name"];
 			$form['var_descri'] = 'Menu/header/footer personalizzabile';
@@ -273,8 +282,7 @@ if (isset($_POST['Submit'])) {
 			while($row=gaz_dbi_fetch_array($get_widgets)){
 				$row['adminid']=$form["user_name"];
 				gaz_dbi_table_insert('breadcrumb',$row);
-			}
-			
+			}			
 			
 		} elseif ($toDo == 'update') {
 			if (!empty($form["user_password_old"])) {
