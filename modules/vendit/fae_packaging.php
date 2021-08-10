@@ -35,7 +35,7 @@ function getExtremeDocs($vat_register = '_', $vat_section = 1) {
     global $gTables;
     $vat_register = substr($vat_register, 0, 1);
     $docs = array();
-    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND ";
+    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND (flux_status = '' OR flux_status = 'DI') AND seziva = $vat_section AND ";
     $orderby = "datfat ASC, protoc ASC";
     if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
         $where .= "tipdoc = 'VCO' AND numfat > 0 AND clfoco > 100000000 AND datfat > '2018-01-01'";
@@ -47,24 +47,30 @@ function getExtremeDocs($vat_register = '_', $vat_section = 1) {
              LEFT JOIN ' . $gTables['clfoco'] . ' AS customer
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
-             ON customer.id_anagra=anagraf.id';
+             ON customer.id_anagra=anagraf.id
+             LEFT JOIN ' . $gTables['fae_flux'] . ' AS flux 
+             ON tesdoc.id_tes = flux.id_tes_ref ';
     $result = gaz_dbi_dyn_query('tesdoc.*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
-    if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
-		$docs['ini'] = array('proini' => $row['numfat'], 'date' => $row['datfat']);
-		$orderby = "datfat DESC, numfat DESC";
-    } else {
-		$docs['ini'] = array('proini' => $row['protoc'], 'date' => $row['datfat']);
-		$orderby = "datfat DESC, protoc DESC";
-	}
-    $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
-    $row = gaz_dbi_fetch_array($result);
-    $docs['fin'] = array('profin' => $row['protoc'], 'date' => $row['datfat']);
-    if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
-		$docs['fin'] = array('profin' => $row['numfat'], 'date' => $row['datfat']);
+    if ($row){
+        if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
+            $docs['ini'] = array('proini' => $row['numfat'], 'date' => $row['datfat']);
+            $orderby = "datfat DESC, numfat DESC";
+        } else {
+            $docs['ini'] = array('proini' => $row['protoc'], 'date' => $row['datfat']);
+            $orderby = "datfat DESC, protoc DESC";
+        }
+        $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
+        $row = gaz_dbi_fetch_array($result);
+        $docs['fin'] = array('profin' => $row['protoc'], 'date' => $row['datfat']);
+        if ($vat_register=='V') { // in caso di fattura allegata allo scontrino mi baso sul numero e non sul protocollo
+            $docs['fin'] = array('profin' => $row['numfat'], 'date' => $row['datfat']);
 
+        }
+        return $docs;
+    } else {
+        return array('ini' => array('proini' => 0, 'date' =>date("Y-m-d")), 'fin' => array('profin' => 0, 'date' => date("Y-m-d"))) ;
     }
-    return $docs;
 }
 
 // AGGIUNTA FUNZIONE PER RECUPERARE ULTIMO PROGRESSIVO PACCHETTO IN fae_flux
@@ -102,14 +108,17 @@ function getFAEunpacked($vat_register = '___', $vat_section = 1, $date = false, 
              LEFT JOIN ' . $gTables['clfoco'] . ' AS customer
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
-             ON customer.id_anagra=anagraf.id';
-    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section AND tipdoc LIKE '$vat_register" . "__' $d $p";
+             ON customer.id_anagra=anagraf.id
+             LEFT JOIN ' . $gTables['fae_flux'] . ' AS flux 
+             ON tesdoc.id_tes = flux.id_tes_ref ';
+    $where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') AND seziva = $vat_section  AND (flux_status = '' OR flux_status = 'DI') AND tipdoc LIKE '$vat_register" . "__' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
                         customer.codice,
                         customer.speban AS addebitospese,
-                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc, anagraf.citspe, anagraf.prospe, anagraf.capspe, anagraf.country, anagraf.fe_cod_univoco, anagraf.pec_email, anagraf.e_mail', $from, $where, $orderby);
+                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc, anagraf.citspe, anagraf.prospe, anagraf.capspe, anagraf.country, anagraf.fe_cod_univoco, anagraf.pec_email, anagraf.e_mail,
+                        flux.flux_status', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
 
@@ -349,8 +358,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 						$enc_data['protocollo']=$v['tes']['protoc'];
 						$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
 					}
+					// aggiorno anche il flusso SdI
+                    $fn_ori = 'IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml';
+					gaz_dbi_query("UPDATE " . $gTables['fae_flux'] . " SET filename_zip_package = '".$form['filename']."' WHERE filename_ori = '".$fn_ori."'");
 					$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,$form['filename']);
-					$zip->addFromString('IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml', $file_content);
+					$zip->addFromString($fn_ori, $file_content);
 				}
 				$zip->close();
 
@@ -514,7 +526,7 @@ if (isset($_POST['preview'])) {
  		$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
         echo '<tr class="FacetDataTD">
                <td>' . $v['tes']['protoc'] .'</td>
-               <td>' . $script_transl['doc_type_value'][$v['tes']['tipdoc']] . '</td>
+               <td>' . $script_transl['doc_type_value'][$v['tes']['tipdoc']] .' '.$v['tes']['flux_status']. '</td>
                <td>' . $v['tes']['numfat'] .'/'. $v['tes']['seziva'] .'</td>
                <td align="center">' . gaz_format_date($v['tes']['datfat']) . '</td>
                <td><a href="report_client.php?nome=' . $v['tes']['ragsoc'] . '" target="_blank">' . $v['tes']['ragsoc'] . '</a></td>
