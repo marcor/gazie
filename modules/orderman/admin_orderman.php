@@ -468,7 +468,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                             }
                         }
 						if ($comp_total_val>0){
-							gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET prezzo = " . round($comp_total_val,5) . " WHERE id_mov = " . $prod_id_movmag); // aggiorno id_lotmag sul movmag
+							gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET prezzo = " . round($comp_total_val,5) . " WHERE id_mov = " . $prod_id_movmag); // aggiorno il prezzo del movimento di produzione sulla base del prezzo dei componenti su movmag
 						}
 						$form['id_movmag']=$id_movmag;
                     }
