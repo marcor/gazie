@@ -33,10 +33,10 @@ function getMovements($where){
 	$where = "mostra_qdc = '1' AND ".$gTables['movmag'] .".id_rif >= ". $gTables['movmag'] .".id_mov AND ".$where;
 	$what=$gTables['movmag'].".*, ".
 		  $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
-		  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
+		  $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
 		  $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
-	$table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-		   LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
+	$table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)	
+		   LEFT JOIN ".$gTables['anagra']." ON (".$gTables['anagra'].".id = ".$gTables['movmag'].".clfoco)
 		   LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
 	$rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, clfoco ASC, operat DESC, id_mov ASC');
 	while ($r = gaz_dbi_fetch_array($rs)) {
@@ -240,7 +240,7 @@ if (isset($_POST['preview']) and $msg=='') {
 			$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $mv['id_avversita']);
 			echo "<td class=\"FacetDataTD\" align=\"right\">", ($res)?$res['nome_avv']:'', " </td>\n";
 			if ($mv['clfoco']>0){
-				echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['ragsoc']." </td>\n";
+				echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['ragso1']." </td>\n";
 			} else {
 				echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['adminid']." </td>\n";
 			}

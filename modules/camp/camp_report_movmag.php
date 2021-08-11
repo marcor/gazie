@@ -181,7 +181,6 @@ $linkHeaders = new linkHeaders($headers_mov);
 $linkHeaders -> output();
 $recordnav = new recordnav($gTables['movmag'], $where, $limit, $passo);
 $recordnav -> output();
-$anagrafica = new Anagrafica();
 
 /** ENRICO FEDELE */
 /* Inizializzo la variabile */
@@ -189,8 +188,9 @@ $tot_movimenti = 0;
 /** ENRICO FEDELE */
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-		if ($partner = $anagrafica->getPartner($a_row['clfoco'])){ 
-		$operatore =  $partner['ragso1']." ".$partner['ragso2'];
+	
+		if ($rowanagra = gaz_dbi_get_row($gTables['anagra'], "id", $a_row['clfoco'])){ 
+		$operatore =  $rowanagra['ragso1']." ".$rowanagra['ragso2'];
 		} else {
 			$operatore=$a_row["adminid"];
 		}

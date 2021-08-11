@@ -41,10 +41,10 @@ function getMovements($date_ini,$date_fin,$type){
 	}  
 	$what=$gTables['movmag'].".*, ".
 		  $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
-		  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
+		  $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
 		  $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".perc_N, ".$gTables['artico'].".perc_P, ".$gTables['artico'].".perc_K, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
 	$table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-			LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
+			LEFT JOIN ".$gTables['anagra']." ON (".$gTables['anagra'].".id = ".$gTables['movmag'].".clfoco)
 		   LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
 	$rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, campo_coltivazione ASC, operat DESC, id_mov ASC');
 	while ($r = gaz_dbi_fetch_array($rs)) {
@@ -166,7 +166,7 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		$pdf->Cell(28,6,($res3)?$res3['nome_avv']:'',1, 0, 'l', 0, '', 1);
 		
 		if ($row['clfoco']>0){
-			$pdf->Cell(18,6,$row['ragsoc'],1, 0, 'l', 0, '', 1);
+			$pdf->Cell(18,6,$row['ragso1'].' '.$row['ragso2'],1, 0, 'l', 0, '', 1);
 		} else {
 		/* Antonio Germani - trasformo admin in cognome e nome e lo stampo */	  
 		$res2 = gaz_dbi_get_row ($gTables['admin'], 'user_name', $row['adminid'] );	
@@ -191,7 +191,7 @@ if (sizeof($result) > 0 AND $type=="di carico") {
 		$pdf->Cell(83,3,$row['artico'].' - '.substr($row['desart'],0,70),1, 0, 'l', 0, '', 1);
 		$pdf->Cell(22,3,substr($row['id_lotmag'],-20),1, 0, 'l', 0, '', 1); // L'identificatore lotto, se troppo lungo, viene accorciato agli ultimi 15 caratteri
 		$pdf->Cell(56,3,$row['desdoc'].' del '.$datadoc,1, 0, 'l', 0, '', 1);
-		$pdf->Cell(20,3,substr($row['ragsoc'],0,30),1, 0, 'l', 0, '', 1);
+		$pdf->Cell(20,3,substr($row['ragso1'].' '.$row['ragso2'],0,30),1, 0, 'l', 0, '', 1);
 		$pdf->Cell(10,3,$row['unimis'],1,0,'C');
 		$pdf->Cell(15,3,gaz_format_quantity($movQuanti,1,$admin_aziend['decimal_quantity']),1,1,'R');
 	}

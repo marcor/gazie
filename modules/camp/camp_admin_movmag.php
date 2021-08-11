@@ -35,6 +35,7 @@ $lm = new lotmag;
 $g2Form = new campForm();
 $gForm = new magazzForm;
 $admin_aziend = checkAdmin();
+
 $msg = "";
 $print_magval = "";
 $dose = "";
@@ -122,6 +123,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$form['prezzo2'][$form['mov']] = number_format($result2['prezzo'], $admin_aziend['decimal_price'], '.', '');
 		$form['scorig2'][$form['mov']] = $result2['scorig'];
 		$form['id_mov2'] = $result2['id_mov'];
+	} else {		
+		$form['artico2'][$form['mov']] = "";		
+		$form['quanti2'][$form['mov']] = 0;
+		$form['quantiin2'] = 0;    
+		$form['prezzo2'][$form['mov']] = 0;
+		$form['scorig2'][$form['mov']] = 0;
+		$form['id_mov2'] = '';
 	}
     $form['type_mov'] = $result['type_mov'];
     $form['id_rif'] = $result['id_rif'];
@@ -135,16 +143,15 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$form['ncamp']=1;
 	$n=1;
     $form['clfoco'][$form['mov']] = $result['clfoco'];
-    $form['clfocoin'] = $result['clfoco'];
-    $result2 = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $result['clfoco']);
-    $form['staff'][$form['mov']] = $result2['id_staff'];
-    
+    $form['clfocoin'] = $result['clfoco'];    
+    $form['staff'][$form['mov']] = $result['clfoco'];
+    $form['adminid'] = $result['clfoco'];
+	
 	if (intval($result['clfoco'])>0){
-		$form['adminname'] = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['adminid'])['descri'];
-		$form['adminid'] = $result['clfoco'];
+		$rowanagra = gaz_dbi_get_row($gTables['anagra'], "id", $result['clfoco']);
+		$form['adminname'] = $rowanagra['ragso1']." ".$rowanagra['ragso2'];		
 	} else {
-		$form['adminname'] = $admin_aziend['user_lastname'];
-		$form['adminid'] = $result['adminid'];
+		$form['adminname'] = "";		
 	}
     $form['id_orderman'] = intval($result['id_orderman']);
     $resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
@@ -162,9 +169,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['id_avversita'][$form['mov']] = $result['id_avversita'];
     $form['id_colture'] = $result['id_colture'];
     $colt = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $form['id_colt']);
-    $form['nome_colt'] = $form['id_colt'] . " - " . $colt['nome_colt'];
+    $form['nome_colt'] = ($colt)?$form['id_colt'] . " - " . $colt['nome_colt']:'';
     $avv = gaz_dbi_get_row($gTables['camp_avversita'], "id_avv", $form['id_avv']);
-    $form['nome_avv'][$form['mov']] = $form['id_avv'] . " - " . $avv['nome_avv'];
+    $form['nome_avv'][$form['mov']] = ($avv)?$form['id_avv'] . " - " . $avv['nome_avv']:'';
     $form['scochi'] = $result['scochi'];
     $form['giodoc'] = substr($result['datdoc'], 8, 2);
     $form['mesdoc'] = substr($result['datdoc'], 5, 2);
@@ -175,8 +182,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$form['id_reg'][$form['mov']] = $itemart['id_reg'];
     $form['id_lotmag'][$form['mov']] = $result['id_lotmag'];
     $reslotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
-    $form['identifier'][$form['mov']] = $reslotmag['identifier'];
-    $form['expiry'][$form['mov']] = $reslotmag['expiry'];
+    $form['identifier'][$form['mov']] = ($reslotmag)?$reslotmag['identifier']:'';
+    $form['expiry'][$form['mov']] = ($reslotmag)?$reslotmag['expiry']:'';
     // Antonio Germani - se è presente, recupero il file documento lotto
     $form['filename'][$form['mov']] = "";
     If (file_exists(DATA_DIR.'files/' . $admin_aziend['company_id']) > 0) {
@@ -340,9 +347,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	}
     $form['adminid'] = $_POST['adminid'];
 	if (intval($form['adminid'])>0){
-		$form['adminname'] = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['adminid'])['descri'];
+		$row_adminname = gaz_dbi_get_row($gTables['anagra'], "id", $form['adminid']);
+		$form['adminname'] = $row_adminname['ragso1']." ".$row_adminname['ragso2'];
 	} else {
-		$form['adminname'] = gaz_dbi_get_row($gTables['admin'], "user_name", $form['adminid'])['user_lastname'];
+		$form['adminname'] = "";
 	}
     $form['tipdoc'] = intval($_POST['tipdoc']);
     $form['desdoc'] = substr($_POST['desdoc'], 0, 50);
@@ -1027,8 +1035,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['clfocoin'] = 0;
     $form['quantiin'] = 0;
     $form['datdocin'] = "";
-    $form['adminid'] = $admin_aziend['user_name'];
-	$form['adminname']=$admin_aziend['user_lastname'];
+    $form['adminid'] = $admin_aziend['id_anagra'];
+	$form['adminname']=$admin_aziend['user_firstname']." ".$admin_aziend['user_lastname'];
     $form['tipdoc'] = "";
     $form['desdoc'] = "";
     $form['giodoc'] = date("d");
@@ -1415,6 +1423,7 @@ if ($form['id_mov'] > 0) {
 if (intval($form['nome_colt']) == 0) {
     $form['nome_colt'] = "";
 } 
+
 ?>
 
 <!--   >>>>>>>>>>>    inizio FORM            >>>>>>>>>>  -->
@@ -2081,19 +2090,30 @@ if (intval($form['nome_colt']) == 0) {
 			<td class="FacetDataTD" colspan="1"><!-- visualizzo l'operatore -->
 			<?php echo $form['adminid']," - ",$form['adminname']; ?>
 				<select name="adminid" onchange="this.form.submit()">
-					<?php 				
-					 $sql = gaz_dbi_dyn_query ($gTables['staff'].".*, ".$gTables['clfoco'].".descri ", 
-					 $gTables['staff']." LEFT JOIN ".$gTables['clfoco']." on (".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice)");
+					<?php 
+/*					
+					 $sql = gaz_dbi_dyn_query ($gTables['staff'].".*, ".$gTables['clfoco'].".descri , ".$gTables['anagra'].".rif_abilitazione ",
+					 $gTables['staff']." LEFT JOIN ".$gTables['clfoco']." on (".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice)
+					 LEFT JOIN ".$gTables['anagra']." on (".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra OR ".$gTables['anagra'].".id = ".$gTables['admin'].".id_anagra)" );
+*/
+					$sql = gaz_dbi_dyn_query ($gTables['anagra'].".* ",
+					 $gTables['anagra']."
+					 LEFT JOIN ".$gTables['clfoco']." on (".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id)
+					 LEFT JOIN ".$gTables['staff']." on (".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice)
+					 LEFT JOIN ".$gTables['admin']." on (".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id)",
+					 $gTables['staff'].".id_clfoco > 0 OR ". $gTables['admin'] .".id_anagra > 0
+					 " );
 					$sel=0;
 					while ($row = $sql->fetch_assoc()){ 
 						$selected = "";
-						if ($row['id_clfoco'] == $form['adminid']) {
+						if ($row['id'] == $form['adminid']) {
 							$selected = "selected";
 							$sel=1;
 							
 						}
-						echo "<option ".$selected." value=\"".$row['id_clfoco']."\">" . $row['descri'] . "</option>";
+						echo "<option ".$selected." value=\"".$row['id']."\">" . $row['ragso1'] ." ".$row['ragso2']. "</option>";
 					}
+					/*
 						// la selezione fra gli admin è stata limitata al solo admin loggato; se la si vuole ampliare a tutti basta togliere il where, cioè user_name= ... bisognerà però modificare la scrittura del DB: todo
 						$sql = gaz_dbi_dyn_query ($gTables['admin'].".* ", $gTables['admin'], "user_name = '".$admin_aziend['user_name']."'");
 						while ($row = $sql->fetch_assoc()){ 
@@ -2104,6 +2124,7 @@ if (intval($form['nome_colt']) == 0) {
 							}
 							echo "<option ".$selected." value=\"".$row['user_name']."\">" . $row['user_lastname'] . "</option>";
 						}
+					*/
 					
 					if ($sel==0){						
 						echo "<option selected value=\"".$admin_aziend['user_name']."\">amministratore</option>";
@@ -2146,4 +2167,3 @@ if (isset($anchor["num"])){
 }
 require ("../../library/include/footer.php");
 ?>
-
