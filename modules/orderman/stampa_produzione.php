@@ -325,7 +325,7 @@ if ($numrow>=1){
           );
     $pdf->setVars($admin_aziend,$title);
     $pdf->SetFooterMargin(20);
-    $pdf->AddPage();
+    //$pdf->AddPage();
     $pdf->SetFillColor(255,199,199);
 	$pdf->Cell(277,4,'MOVIMENTI DI MAGAZZINO RELATIVI ALLA PRODUZIONE',1, 1, 'C', 1, '', 1);
 	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));

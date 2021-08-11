@@ -414,6 +414,19 @@ class lotmag {
       $this->available = $acc;
       return $rs;
    }
+      
+   function getLotQty($id) {
+// Antonio Germani - restituisce la quantità disponibile di uno specifico lotto
+      global $gTables;
+      $sqlquery = "SELECT operat, quanti FROM " . $gTables['movmag'] . " WHERE id_lotmag = '" . $id . "'";
+      $result = gaz_dbi_query($sqlquery);
+	  $lotqty=0;
+      while ($row = gaz_dbi_fetch_array($result)) {
+		  if ($row['operat']>0){$lotqty=$lotqty+$row['quanti'];}
+		  if ($row['operat']<0){$lotqty=$lotqty-$row['quanti'];}
+	  }
+      return $lotqty;
+   }
 
    function divideLots($quantity) {
 // riparto la quantità tra i vari lotti presenti se questi non sono sufficienti

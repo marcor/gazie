@@ -24,6 +24,7 @@
 */
 require ("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
+require ("../../modules/vendit/lib.function.php");
 require ("../../modules/camp/lib.function.php");
 $admin_aziend = checkAdmin();
 $msg = "";
@@ -1179,7 +1180,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
 					if ($form['quantip'] > 0) { 
 						$row['quantita_artico_base'] = number_format ($row['quantita_artico_base'] * $form['quantip'],6);
-						$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
+						$mv = $magazz->getStockValue(false, $row['codice_artico_base']);
 						$magval = array_pop($mv); // controllo disponibilità in magazzino
             $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 						if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
