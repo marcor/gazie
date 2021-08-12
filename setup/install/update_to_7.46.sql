@@ -28,4 +28,6 @@ UPDATE `gaz_XXXfae_flux` SET `flux_status`='DI' WHERE `flux_status` LIKE '#%';
 UPDATE `gaz_XXXfae_flux` SET `flux_status`='IN' WHERE `flux_status` LIKE '@%'; 
 ALTER TABLE `gaz_XXXfae_flux`
 	CHANGE COLUMN `flux_descri` `flux_descri` TEXT NULL COMMENT 'Descrizione della notifica, ad esempio l\'errore causa dello scarto o del rifiuto' AFTER `progr_ret`;
+ALTER TABLE `gaz_XXXartico`
+	CHANGE COLUMN `preacq` `preacq` DECIMAL(14,5) NULL DEFAULT '0.00000' COMMENT 'Colonna utilizzata dal modulo ProduzionI (orderman) per indicare il costo di produzione in mancanza di movimenti di magazzino per acquisti. Sul modulo Acquisti (acquis) indica il prezzo di acquisto di un bene strumentale o servizio, e comunque di qualsiasi merce/servizio/strumento che non è presente in contabilità di magazzino (gaz_NNNmovmag).' AFTER `ragstat`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
