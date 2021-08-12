@@ -718,7 +718,7 @@ if ($modal_ok_insert === true) {
                 <div id="preAcq" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?></label>
+                            <label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq'][$form['good_or_service']]; ?></label>
                             <input class="col-sm-4" type="number" step="any" min="0" value="<?php echo $form['preacq']; ?>" name="preacq" maxlength="15" />
                         </div>
                     </div>

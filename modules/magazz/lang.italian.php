@@ -418,7 +418,7 @@ $strScript = array("browse_document.php" =>
 		'bending_moment'=>"Resistenza es.Wx cm³",
         'catmer' => "Categoria merceologica",
         'ragstat' => "Raggruppamento statistico",
-        'preacq' => 'Prezzo d\'acquisto',
+        'preacq' => array( 0=>'Costo di produzione', 1=>'Prezzo d\'acquisto', 2=>'Costo di produzione' ),
         'preve1' => 'Prezzo di vendita listino 1',
         'preve2' => 'Prezzo di vendita listino 2',
         'preve3' => 'Prezzo di vendita listino 3',
