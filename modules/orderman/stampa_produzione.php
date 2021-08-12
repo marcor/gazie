@@ -293,7 +293,7 @@ if ($tot>=0.01){
 $pdf->setRiporti('');
 
 // INIZIO REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
-$where = $gTables['movmag'].". id_orderman = ".intval($_GET['id_orderman'])." AND quanti > 0";
+$where = $gTables['movmag'].". id_orderman = ".intval($_GET['id_orderman'])." AND quanti > 0 AND ".$gTables['movmag'].".operat = -1 ";
 $what = $gTables['movmag'].".*, ".
         $gTables['caumag'].".codice, ".$gTables['caumag'].".descri AS descau, ".
         $gTables['assets'].".descri AS desass, ".
