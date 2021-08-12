@@ -487,6 +487,26 @@ class magazzForm extends GAzieForm {
 	
     function print_trunk_BOM($codcomp) {  // Stampo i padri nei quali è contenuto l'articolo
 	}
+    
+    function getStockTreeValues($codice_articolo, $lev=0, $acc=[]) {
+        global $gTables;
+        $mv = $this->getStockValue(false, $codice_articolo);
+        if (!isset($mv[0])|| $mv[0]['q_g'] < 0.00001 ) { // non ho quantità sufficiente, controllo se ho un successivo livello 
+            $lev++;
+            print 'Non ho i componenti di '.$codice_articolo.' di livello '.$lev.'<br>';
+            $where="codice_composizione = '" . $codice_articolo . "'";
+            $table = $gTables['distinta_base']." LEFT JOIN ".$gTables['artico']." ON ".$gTables['distinta_base'].".codice_artico_base = ".$gTables['artico'].".codice";
+            $rescompo = gaz_dbi_dyn_query ($gTables['distinta_base'].".*, ".$gTables['artico'].".*", $table, $where );
+            while ($row = $rescompo->fetch_assoc()) { 
+                $acc = $this->getStockTreeValues($row['codice_artico_base'],$lev,$acc);
+            }
+        } else {
+            // OK!!! è disponibile lo ritorno
+            $acc[$codice_articolo]=$mv[0];
+            print 'Componente '.$codice_articolo.' di livello '.$lev.':<br>'; print_r($acc); print '<br>';
+            return $acc;
+        }
+    }
 	
     function getStockValue($id_mov = false, $item_code = null, $date = null, $stock_eval_method = null, $decimal_price = 2)
     /* Questa funzione serve per restituire la valorizzazione dello scarico
@@ -494,7 +514,8 @@ class magazzForm extends GAzieForm {
       Puo' essere sufficiente valorizzare il solo $id_mov, ma questo costringe
       la funzione ad una query per ottenere gli altri valori; oppure il solo
       codice dell'articolo, in questo caso si prende in considerazione l'ultimo
-      movimento riferito all'articolo
+      movimento riferito all'articolo.
+      ATTENZIONE!!! NON RESTITUISCE VALORI se non ci sono movimenti di carico!
      */ {
         global $gTables;
         if (!$id_mov && empty($item_code)) { // non ho nulla!
