@@ -177,11 +177,11 @@ if ($result->num_rows >0 && $admin_aziend['Abilit']>=8) { // permetto la stampa 
 			$reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $row['id_lotmag']);	
 			$pdf->MultiCell(25, 4, $row['artico'] , 1, 'L', 0, 1, '150', $sp, false,0,true,true);
 			$pdf->MultiCell(25, 4, $row['quanti'] , 1, 'L', 0, 1, '175', $sp, false,0,true,true);
-			$pdf->MultiCell(25, 4, $reslot['identifier'] , 1, 'L', 0, 1, '200', $sp, false,0,true,true);
-			if ($reslot['expiry']==0) {
+			$pdf->MultiCell(25, 4, ($reslot)?$reslot['identifier']:'' , 1, 'L', 0, 1, '200', $sp, false,0,true,true);
+			if (isset($reslot) AND $reslot['expiry']==0) {
 				$pdf->MultiCell(25, 4, "" , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
 			} else {
-				$pdf->MultiCell(25, 4, gaz_format_date($reslot['expiry']) , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
+				$pdf->MultiCell(25, 4, ($reslot)?gaz_format_date($reslot['expiry']):'' , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
 			}
 			$sp=$sp+6;
 			

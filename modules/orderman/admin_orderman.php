@@ -195,11 +195,11 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				} elseif (isset($_POST['autoLot'. $m])) {
 					$form['amLot'. $m] = $_POST['autoLot'. $m];
 				} else {
-					$form['amLot'. $m] = $_POST['amLot'. $m];
+					$form['amLot'. $m] = (isset ($_POST['amLot'. $m]))?$_POST['amLot'. $m]:'';
 				}
 				for ($n = 0;$n < $form['q_lot_comp'][$m];++$n) { // se q lot comp è zero vuol dire che non ci sono lotti
-				    $form['id_lot_comp'][$m][$n] = $_POST['id_lot_comp' . $m . $n];
-                    $form['lot_quanti'][$m][$n] = $_POST['lot_quanti' . $m . $n];					
+				    $form['id_lot_comp'][$m][$n] = (isset($_POST['id_lot_comp' . $m . $n]))?$_POST['id_lot_comp' . $m . $n]:0;
+                    $form['lot_quanti'][$m][$n] = (isset($_POST['lot_quanti' . $m . $n]))?$_POST['lot_quanti' . $m . $n]:0;					
                 }
             } 
         } else {
@@ -232,13 +232,15 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 		//controllo se le quantità inserite per ogni singolo lotto, di ogni componente, corrispondono alla richiesta della produzione e alla reale disponbilità 
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
 				if ($form['quanti_comp'][$nc] == "ERRORE"){
-					$msg.= "21+";//Non c'è sufficiente disponibilità di un ID lotto selezionato
+					$msg.= "43+";//Non c'è sufficiente disponibilità di un ID lotto selezionato
+				
 				}
 				if (intval($form['q_lot_comp'][$nc])>0) {					
 					$tot=0;
 					for ($l=0; $l<$form['q_lot_comp'][$nc]; ++$l) { 
 						if (number_format ($lm -> getLotQty($form['id_lot_comp'][$nc][$l]),4) < number_format($form['lot_quanti'][$nc][$l],4)){
 							$msg.= "21+";//Non c'è sufficiente disponibilità di un ID lotto selezionato
+							
 						}
 						$tot=$tot + $form['lot_quanti'][$nc][$l];
 					}
@@ -315,18 +317,20 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			if (intval($form['SIAN']) > 0 AND $form['numcomp']>0) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
 			    for ($m = 0;$m < $form['numcomp'];++$m) {					
 					$rescamparticocomp = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['artcomp'][$m]);
-					if (intval($form['cod_operazione'])==3 AND $rescamparticocomp['confezione']==0 ) { // se L2 etichettatura e c'è olio sfuso
-						$msg.= "29+"; 
+					if (isset($rescamparticocomp)){
+						if (intval($form['cod_operazione'])==3 AND $rescamparticocomp['confezione']==0 ) { // se L2 etichettatura e c'è olio sfuso
+							$msg.= "29+"; 
+						}
+						if (intval($form['cod_operazione'])==3 AND $rescamparticocomp['etichetta']==1 ) { // se L2 etichettatura e c'è olio etichettato
+							$msg.= "32+"; 
+						}
+						if (intval($form['cod_operazione'])==3 AND ($rescamparticocomp['categoria']!== $rescampartico['categoria'] OR $rescamparticocomp['or_macro']!== $rescampartico['or_macro'] OR $rescamparticocomp['estrazione']!== $rescampartico['estrazione'] OR $rescamparticocomp['biologico']!== $rescampartico['biologico'] OR $rescamparticocomp['confezione']!== $rescampartico['confezione'] )) { // se L2 etichettatura e c'è olio non etichettato
+							$msg.= "31+"; 
+						}
+						if ($rescamparticocomp['id_campartico']>0 AND strlen($form['recip_stocc_comp'][$m])==0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)){
+						$msg.= "38+";
+						}
 					}
-					if (intval($form['cod_operazione'])==3 AND $rescamparticocomp['etichetta']==1 ) { // se L2 etichettatura e c'è olio etichettato
-						$msg.= "32+"; 
-					}
-					if (intval($form['cod_operazione'])==3 AND ($rescamparticocomp['categoria']!== $rescampartico['categoria'] OR $rescamparticocomp['or_macro']!== $rescampartico['or_macro'] OR $rescamparticocomp['estrazione']!== $rescampartico['estrazione'] OR $rescamparticocomp['biologico']!== $rescampartico['biologico'] OR $rescamparticocomp['confezione']!== $rescampartico['confezione'] )) { // se L2 etichettatura e c'è olio non etichettato
-						$msg.= "31+"; 
-					}
-					if ($rescamparticocomp['id_campartico']>0 AND strlen($form['recip_stocc_comp'][$m])==0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)){
-					$msg.= "38+";
-				}
 				}
 			}
         }
@@ -394,8 +398,12 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 }				
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
                     // inserisco il movimento di magazzino dell'articolo prodotto
-					echo"<br>prezzo prodotto:",$form['preacq'];
-					$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], $form['preacq'], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
+					$mv = $magazz->getStockValue(false, $form['codart']);
+					$price_comp=$mv['v'];
+					if ($mv['v']==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
+						$price_comp=$row['preacq'];
+					}
+					$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], $price, '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
 					$prod_id_movmag=$id_movmag; // mi tengo l'id_movmag del movimento di magazzino di entrata da produzione, mi servirà successivamente per valorizzare il prezzo in base alla composizione ed anche in caso di SIAN 
 					if ($form['SIAN']>0){ // imposto l'id movmag e salvo il movimento SIAN dell'articolo prodotto
 						$form['id_movmag']=$id_movmag;
@@ -435,7 +443,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 							    for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
 									if ($form['lot_quanti'][$nc][$n]>0){ // questo evita che, se è stato forzato un lotto a quantità zero, venga generato un  movimento di magazzino
 										// Scarico dal magazzino il componente usato e i suoi lotti
-										 echo"<br>prezzo componente:",$form['prezzo_comp'][$nc];
+										 //echo"<br>prezzo componente:",$form['prezzo_comp'][$nc];
 										$id_mag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['artcomp'][$nc], $form['lot_quanti'][$nc][$n], $form['prezzo_comp'][$nc], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Scarico per Produzione con lotto'), 0, $form['id_lot_comp'][$nc][$n], $id_orderman, $form['campo_impianto']);
 
 										if ($form['SIAN_comp'][$nc]>0){ // imposto l'id movmag e salvo il movimento SIAN del componente usato, se previsto
@@ -468,8 +476,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 								}
                             }
                         }
-						if ($comp_total_val>0){
-							gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET prezzo = " . round($comp_total_val,5) . " WHERE id_mov = " . $prod_id_movmag); // aggiorno il prezzo del movimento di produzione sulla base del prezzo dei componenti su movmag
+						if ($comp_total_val>0){// se è valorizzato, aggiorno il prezzo del movimento di produzione sulla base del prezzo dei componenti su movmag altrimenti lascio il valore di getStockValue or di preacq precedentemente inserito
+							gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET prezzo = " . round($comp_total_val,5) . " WHERE id_mov = " . $prod_id_movmag); 
 						}
 						$form['id_movmag']=$id_movmag;
                     }
@@ -1180,15 +1188,22 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 				while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
 					if ($form['quantip'] > 0) { 
 						$row['quantita_artico_base'] = number_format ($row['quantita_artico_base'] * $form['quantip'],6);
-						$mv = $magazz->getStockValue(false, $row['codice_artico_base']);
-						$magval = array_pop($mv); // controllo disponibilità in magazzino
-            $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+						$mv = $magazz->getStockValue(false, $row['codice_artico_base']);			
+						$magval = array_pop($mv);
+						
+						$price_comp=($magval)?$magval['v']:0;
+						if ($price_comp==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
+							$price_comp=$row['preacq'];
+						}
+						
+						// controllo disponibilità in magazzino						
+						$magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 						if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
 							$magval['q_g'] = $magval['q_g'] + $row['quantita_artico_base'];
 						}
 ?>						<input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
 						<input type="hidden" name="artcomp<?php echo $nc; ?>" value="<?php echo $row['codice_artico_base']; ?>">
-						<input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $row['preacq']; ?>">
+						<input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
 						<div class="row" style="margin-left: 0px;">
 							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
 							</div>

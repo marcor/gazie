@@ -75,7 +75,8 @@ $strScript = array("admin_orderman.php" =>
 		"La data di registrazione è prcedente all'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.",
 		"Il recipiente di stoccaggio selezionato non ha sufficiente olio",
 		"La movimentazione interna di olio si può fare solo per singolo ID lotto. <br>La quantità produzione richiesta è superiore a quella disponibile, pertanto è stata diminuita.<br>
-		Per la parte mancante si deve fare un'ulteriore operazione."
+		Per la parte mancante si deve fare un'ulteriore operazione.",
+		"Non c'è sufficiente disponibilità di un componente"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Gestione delle produzioni',
