@@ -305,7 +305,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					$msg.= "30+";
 				}
             }
-			if (intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<3 AND $form['numcomp']==0)){ // se confezioniamo
+			if ($toDo == 'insert' AND intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<3 AND $form['numcomp']==0)){ // se confezioniamo
 				$msg.= "39+"; // manca l'olio sfuso
 			}
 			if (intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
@@ -314,7 +314,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					$msg.= "37+"; 
 				}				
             }
-			if (intval($form['SIAN']) > 0 AND $form['numcomp']>0) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
+			if ($toDo == 'insert' AND intval($form['SIAN']) > 0 AND $form['numcomp']>0) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
 			    for ($m = 0;$m < $form['numcomp'];++$m) {					
 					$rescamparticocomp = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['artcomp'][$m]);
 					if (isset($rescamparticocomp)){

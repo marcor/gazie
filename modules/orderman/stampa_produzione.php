@@ -148,47 +148,19 @@ if ($result->num_rows >0 && $admin_aziend['Abilit']>=8) { // permetto la stampa 
   $pdf->Cell(27,5,gaz_format_number($vtot),'LBR',1,'R',1);
   
 } else {
-  // Antonio Germani - Stampa operai
-  $query="SELECT * FROM ".$gTables['staff_worked_hours']. " WHERE id_orderman =". intval($_GET['id_orderman']);
-  $resoper = gaz_dbi_query($query);
-  if ($resoper->num_rows >0) {
-	$pdf->SetFillColor(255, 255, 127);
-	$pdf->MultiCell(50, 4, 'ELENCO ADDETTI', 1, 'C', 1, 0, '', 50, false);
-	$sp=55;
-	while($row = $resoper->fetch_assoc()){
-		$resstaff = gaz_dbi_get_row($gTables['staff'], "id_staff", $row['id_staff']);
-		$resnome = gaz_dbi_get_row($gTables['clfoco'], "codice", $resstaff['id_clfoco']);
-		$pdf->MultiCell(50, 4, $resnome['descri'], 1, 'L', 0, 0, '', $sp, false);
-		$sp=$sp+5;
-	}
-  }
-  if ($resart && $resart['good_or_service']==2){ // se l'articolo prodotto prevede componenti
-	$query="SELECT artico, quanti, id_lotmag FROM ".$gTables['movmag']. " WHERE id_orderman =". intval($_GET['id_orderman'])." AND operat = '-1'";
-	$rescomp = gaz_dbi_query($query);
-	if ($rescomp->num_rows >0) {
-		$pdf->SetFillColor(255, 255, 127);
-		$pdf->MultiCell(25, 4, 'Componenti', 1, 'C', 1, 0, '150', 50, false,0,false,true,100);
-		$pdf->MultiCell(25, 4, 'Quantità', 1, 'C', 1, 0, '175', 50, false,0,false,true,100);
-		$pdf->MultiCell(25, 4, 'Lotto', 1, 'C', 1, 0, '200', 50, false,0,false,true,100);
-		$pdf->MultiCell(25, 4, 'Scadenza', 1, 'C', 1, 0, '225', 50, false,0,false,true,100);
-		$sp=55;
-		while($row = $rescomp->fetch_assoc()){
-			
-			$reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $row['id_lotmag']);	
-			$pdf->MultiCell(25, 4, $row['artico'] , 1, 'L', 0, 1, '150', $sp, false,0,true,true);
-			$pdf->MultiCell(25, 4, $row['quanti'] , 1, 'L', 0, 1, '175', $sp, false,0,true,true);
-			$pdf->MultiCell(25, 4, ($reslot)?$reslot['identifier']:'' , 1, 'L', 0, 1, '200', $sp, false,0,true,true);
-			if (isset($reslot) AND $reslot['expiry']==0) {
-				$pdf->MultiCell(25, 4, "" , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
-			} else {
-				$pdf->MultiCell(25, 4, ($reslot)?gaz_format_date($reslot['expiry']):'' , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
-			}
-			$sp=$sp+6;
-			
-		}
+	// Antonio Germani - Stampa operai	
+	$query="SELECT * FROM ".$gTables['staff_worked_hours']. " WHERE id_orderman =". intval($_GET['id_orderman']);
+	$resoper = gaz_dbi_query($query);
+	if ($resoper->num_rows >0) {
 		
+		$pdf->Cell(30, 4, 'ELENCO ADDETTI:',1, 0, 'C', 0, '', 0);	
+		while($row = $resoper->fetch_assoc()){
+			$resstaff = gaz_dbi_get_row($gTables['staff'], "id_staff", $row['id_staff']);
+			$resnome = gaz_dbi_get_row($gTables['clfoco'], "codice", $resstaff['id_clfoco']);
+			$pdf->Cell(50, 4, $resnome['descri'],1, 0, 'C', 0, '', 0);		
+		}
 	}
-  }
+	$pdf->Cell(0,0,'',0,1);$pdf->Cell(0,0,'',0,1);
 }
 // FINE STAMPA LAVORI
 
@@ -330,6 +302,15 @@ if ($numrow>=1){
 	$pdf->Cell(277,4,'MOVIMENTI DI MAGAZZINO RELATIVI ALLA PRODUZIONE',1, 1, 'C', 1, '', 1);
 	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
 
+		$pdf->Cell(20,4,'Data',1, 0, 'C', 0, '', 1);
+        $pdf->Cell(99,4,'Descrizione scarico',1, 0, 'C', 0, '', 1);        
+        $pdf->Cell(30,4,'Codice',1, 0, 'C', 0, '', 1);
+        $pdf->Cell(37,4,'Descrizione articolo',1, 0, 'L', 0, '', 1);
+        $pdf->Cell(17,4,'Quantità',1, 0, 'R', 0, '', 1);
+        $pdf->Cell(7,4,'U.m.',1, 0, 'C', 0, '', 1);
+		$pdf->Cell(25, 4,'Lotto',1, 0, 'L', 0, '', 1);
+		$pdf->Cell(25, 4, 'Scadenza' ,1, 0, 'L', 0, '', 1);		
+        $pdf->Cell(17,4,'Prezzo',1, 1, 'C', 0, '', 1);
     $totq=0;
 
     require("../../modules/magazz/lib.function.php");
@@ -341,18 +322,25 @@ if ($numrow>=1){
         $desop=(strlen($mv['desass'])>2)?$mv['desdoc'].' con '.$mv['desass']:$mv['desdoc'];
         $pdf->Cell(20,4,gaz_format_date($mv['datreg']),1, 0, 'C', 0, '', 1);
         $pdf->Cell(37,4,$mv['descau'],1, 0, 'C', 0, '', 1);
-        $pdf->Cell(87,4,$desop,1, 0, 'L', 0, '', 1);
+        $pdf->Cell(62,4,$desop,1, 0, 'L', 0, '', 1);
         $pdf->Cell(30,4,$mv['codice'],1, 0, 'C', 0, '', 1);
-        $pdf->Cell(62,4,$mv['desart'],1, 0, 'L', 0, '', 1);
+        $pdf->Cell(37,4,$mv['desart'],1, 0, 'L', 0, '', 1);
         $pdf->Cell(17,4,floatval($mv['quanti']),1, 0, 'R', 0, '', 1);
         $pdf->Cell(7,4,$mv['unimis'],1, 0, 'C', 0, '', 1);
+		$reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $mv['id_lotmag']);			
+		$pdf->Cell(25, 4, ($reslot)?$reslot['identifier']:'',1, 0, 'L', 0, '', 1);
+		if (isset($reslot) AND $reslot['expiry']==0) {
+			$pdf->Cell(25, 4, "" ,1, 0, 'L', 0, '', 1);
+		} else {
+			$pdf->Cell(25, 4, ($reslot)?gaz_format_date($reslot['expiry']):'' ,1, 0, 'L', 0, '', 1);
+		}
         $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',''),1, 1, 'C', 0, '', 1);
     }
     $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
     $pdf->SetFont('helvetica','B',9);
-    $pdf->Cell(236,5,'TOTALE MATERIALE LAVORATO: ','LBT', 0, 'R', 1, '', 1);
+    $pdf->Cell(186,5,'TOTALE MATERIALE LAVORATO: ','LBT', 0, 'R', 1, '', 1);
     $pdf->Cell(17,5,abs($totq),'BT', 0, 'R', 1, '', 1);
-    $pdf->Cell(7,5,'','BT', 0, 'C', 0, '', 1);
+    $pdf->Cell(57,5,'','BT', 0, 'R', 1, '', 1);
     $pdf->Cell(17,5,'€ '.gaz_format_number($totv),'RBT', 1, 'R', 1, '', 1);
 }
 // FINE REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
