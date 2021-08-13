@@ -310,7 +310,7 @@ if ($numrow>=1){
         $pdf->Cell(7,4,'U.m.',1, 0, 'C', 0, '', 1);
 		$pdf->Cell(25, 4,'Lotto',1, 0, 'L', 0, '', 1);
 		$pdf->Cell(25, 4, 'Scadenza' ,1, 0, 'L', 0, '', 1);		
-        $pdf->Cell(17,4,'Prezzo',1, 1, 'C', 0, '', 1);
+        $pdf->Cell(17,4,'Prezzo unit.',1, 1, 'C', 0, '', 1);
     $totq=0;
 
     require("../../modules/magazz/lib.function.php");
