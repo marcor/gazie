@@ -48,7 +48,6 @@ $scorta = "";
 $service = "";
 $instantwarning="";
 $avv_conf=0;
-
 $today = strtotime(date("Y-m-d H:i:s", time()));
 
 if (!isset($_POST['ritorno'])) {
@@ -72,6 +71,29 @@ if (isset($_POST['erase'])) {
     $_POST['nome_colt'] = "";
     $form['id_colture'] = 0;
     $form['nome_colt'] = "";
+}
+
+// se è stato premuto il pulsante di submit patent anagra
+if (isset($_POST['patent'])) {
+	// json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}
+	if (strlen($_POST['patent_number'])>0 AND strlen($_POST['patent_expiry'])>0){		
+		if ($data=json_decode($_POST['rif_abilitazione'],true)){// se c'è un json				
+			if (is_array($data['camp'])){ // se c'è il modulo "camp" lo aggiorno
+				$data['camp']['numero']=$_POST['patent_number'];
+				$data['camp']['scadenza']=$_POST['patent_expiry'];
+				$patent = json_encode($data);
+				gaz_dbi_query("UPDATE " . $gTables['anagra'] . " SET rif_abilitazione = '" . $patent . "' WHERE id = " . addslashes($_POST['adminid']));
+			} else { //se non c'è il modulo "camp" lo aggiungo
+				$data['camp']= array('numero' => $_POST['patent_number'], 'scadenza' => $_POST['patent_expiry']);
+				$patent = json_encode($data);
+				gaz_dbi_query("UPDATE " . $gTables['anagra'] . " SET rif_abilitazione = '" . $patent . "' WHERE id = " . addslashes($_POST['adminid']));
+			}			
+		} else { // se non c'è un json lo creo		
+			$array= array('camp'=>array('numero' => $_POST['patent_number'], 'scadenza' => $_POST['patent_expiry']));
+			$patent = json_encode($array);			
+			gaz_dbi_query("UPDATE " . $gTables['anagra'] . " SET rif_abilitazione = '" . $patent . "' WHERE id = " . addslashes($_POST['adminid'])); 
+		}
+	}    
 }
 
 // se è stato premuto il pulsante di reset produzione
@@ -146,13 +168,29 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['clfocoin'] = $result['clfoco'];    
     $form['staff'][$form['mov']] = $result['clfoco'];
     $form['adminid'] = $result['clfoco'];
-	
+	$form['confermapat'][$form['adminid']] = "";
 	if (intval($result['clfoco'])>0){
 		$rowanagra = gaz_dbi_get_row($gTables['anagra'], "id", $result['clfoco']);
-		$form['adminname'] = $rowanagra['ragso1']." ".$rowanagra['ragso2'];		
+		$form['adminname'] = $rowanagra['ragso1']." ".$rowanagra['ragso2'];
+		$form['rif_abilitazione'] = $rowanagra['rif_abilitazione'];
+		if ($data = json_decode($rowanagra['rif_abilitazione'], TRUE)){			
+			if (is_array($data['camp'])){
+				$form['patent_number'] = $data['camp']['numero'];
+				$form['patent_expiry'] = $data['camp']['scadenza'];
+			} else {
+				$form['patent_number'] = "";
+				$form['patent_expiry'] = "";
+			}
+		} else {
+			$form['patent_number'] = "";
+			$form['patent_expiry'] = "";
+		}
+		
 	} else {
-		$form['adminname'] = "";		
+		$form['adminname'] = "";
+		$form['rif_abilitazione'] = "";
 	}
+	
     $form['id_orderman'] = intval($result['id_orderman']);
     $resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
     If ($form['id_orderman'] > 0) {
@@ -240,7 +278,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			
 			$query = "SELECT " . 'SCADENZA_AUTORIZZAZIONE' . " FROM " . $gTables['camp_fitofarmaci'] . " WHERE NUMERO_REGISTRAZIONE ='" . $form['id_reg'][$m] . "'";
             $result = gaz_dbi_query($query);			
-            while ($row = $result->fetch_assoc()) {
+            while ($row = $result->fetch_assoc()) { // controllo scadenza autorizzazione fitofarmaco
                 $scadaut = $row['SCADENZA_AUTORIZZAZIONE'];
                 $scadaut = strtotime(str_replace('/', '-', $scadaut)); 
 				if ($scadaut<1) {$msg.= "45+";}
@@ -349,9 +387,37 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	if (intval($form['adminid'])>0){
 		$row_adminname = gaz_dbi_get_row($gTables['anagra'], "id", $form['adminid']);
 		$form['adminname'] = $row_adminname['ragso1']." ".$row_adminname['ragso2'];
+		$form['rif_abilitazione'] = $row_adminname['rif_abilitazione'];
+		if ($data = json_decode($row_adminname['rif_abilitazione'], TRUE)){			
+			if (is_array($data['camp'])){ // se c'è un patentino
+				$form['patent_number'] = $data['camp']['numero'];
+				$form['patent_expiry'] = $data['camp']['scadenza'];
+				// controllo validità patentino
+				$exp=strtotime($form['patent_expiry']);
+				$today=strtotime(date("Y/m/d"));				
+				if ($today>$exp){ //se è scaduto					
+					$avv_conf=2;
+				} elseif (($exp-7776000)<$today ){// se sta per scadere -> 1 Day: 86400 Seconds 3 mesi: 7776000					
+					$instantwarning="L'autorizzazione per l'acquisto e l'uso di prodotti fitosanotari scadrà il ".$form['patent_expiry'];
+				}				
+			} else { // se non c'è un patentino segnalo la mancanza
+				$form['patent_number'] = "";
+				$form['patent_expiry'] = "";
+				$avv_conf=3;
+			}
+		} else {
+			$form['patent_number'] = "";
+			$form['patent_expiry'] = "";
+			$form['rif_abilitazione'] = "";
+			$avv_conf=3;
+		}
 	} else {
 		$form['adminname'] = "";
+		$form['patent_number'] = "";
+		$form['patent_expiry'] = "";
 	}
+
+	$form['confermapat'][$form['adminid']] = (isset($_POST['confermapat'.$_POST['adminid']]))?$_POST['confermapat'.$_POST['adminid']]:'';
     $form['tipdoc'] = intval($_POST['tipdoc']);
     $form['desdoc'] = substr($_POST['desdoc'], 0, 50);
     $form['giodoc'] = intval($_POST['giodoc']);
@@ -1037,6 +1103,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['datdocin'] = "";
     $form['adminid'] = $admin_aziend['id_anagra'];
 	$form['adminname']=$admin_aziend['user_firstname']." ".$admin_aziend['user_lastname'];
+	$form['confermapat'][$form['adminid']] = "";
+	$form['rif_abilitazione'] = "";
+	$form['patent_number'] = "";
+	$form['patent_expiry'] = "";
     $form['tipdoc'] = "";
     $form['desdoc'] = "";
     $form['giodoc'] = date("d");
@@ -1207,6 +1277,7 @@ If (isset($_POST['cancel'])) {// se è stato premuto annulla
     $form['caumag'] = "";
     $form['campo_coltivazione'] = ""; //campo di coltivazione
     $form['adminid'] = "Utente connesso";
+	$form['confermapat'][$form['adminid']] = "";
     $form['tipdoc'] = "";
     $form['desdoc'] = "";
     $form['giodoc'] = date("d");
@@ -1278,9 +1349,16 @@ if (strlen($instantwarning)>0) {
 	</div>
 	<?php
 }
-if ($avv_conf==1) { // segnalo autorizzazione scaduta con scelta
+if ($avv_conf==1) { // segnalo autorizzazione fitofarmaco scaduta con scelta
 	echo "<script type='text/javascript'> $(window).load(function(){ $('#scadaut').modal('show'); }); </script>";	
 }
+if ($avv_conf==2 AND $form['confermapat'][$form['adminid']]!=="Confermo deroga" ) { // segnalo autorizzazione scaduta con scelta
+	echo "<script type='text/javascript'> $(window).load(function(){ $('#patexp').modal('show'); }); </script>";	
+}
+if ($avv_conf==3 AND $form['confermapat'][$form['adminid']]!=="Confermo deroga" ) { // segnalo mancanza autorizzazione con scelta
+	echo "<script type='text/javascript'> $(window).load(function(){ $('#patempty').modal('show'); }); </script>";	
+}
+
 ?>
 
 <script>
@@ -1442,6 +1520,7 @@ if (intval($form['nome_colt']) == 0) {
 	<input type="hidden" name="clfocoin" value="<?php echo $form['clfocoin']; ?> ">
 	<input type="hidden" name="quantiin" value="<?php echo $form['quantiin']; ?> ">
 	<input type="hidden" name="datdocin" value="<?php echo $form['datdocin']; ?> ">
+	<input type="hidden" name="confermapat<?php echo $form['adminid']; ?>" value="<?php echo $form['confermapat'][$form['adminid']]; ?>">
 	<div align="center" class="FacetFormHeaderFont"><?php echo $title; ?>
 	</div>
 	
@@ -1457,7 +1536,7 @@ if (intval($form['nome_colt']) == 0) {
 				$message = "";
 				$rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
 				foreach ($rsmsg as $value) {
-					$message.= $script_transl['error'] . "! -> ";
+					$message.= $script_transl['error'] . "! &#8658; ";
 					$rsval = explode('-', chop($value));
 					foreach ($rsval as $valmsg) {
 						$message.= $script_transl[$valmsg] . " ";
@@ -1465,7 +1544,12 @@ if (intval($form['nome_colt']) == 0) {
 					$message.= "<br />";
 				}
 				?>
-				<div class="row bg-info"><td colspan="3" class="FacetDataTDred">' . $message . "
+				<div class="row bg-info"><td colspan="3" class="FacetDataTDred">
+					<div class="row bg-danger"><!-- CAMPO coltivazione -->
+						<p>
+						<?php echo $message; ?>
+						</p>
+					</div>
 				</div>				
 				<?php
 			}
@@ -1629,6 +1713,38 @@ if (intval($form['nome_colt']) == 0) {
 					Movimenti:				
 				</label>
 			</div><!-- chiude row  -->	
+			<!-- Modal content patentino scaduto  -->
+			<div id="patexp" class="modal fade" role="dialog">    
+				<div class="modal-dialog modal-content bg-warning" style="background-color: #f35454;">
+					<div class="modal-header" align="left">
+						
+						<h4 class="modal-title">ATTENZIONE patentino scaduto!</h4>
+					</div>
+					<div class="modal-body">
+						<p>L'autorizzazione all'acquisto e all'uso di prodotti fitosanitari è scaduta. <br>Puoi continuare solo se sei a conoscenza che c'è una deroga. <br>Sei sicuro di volerlo fare?</p>
+					</div>
+					<div class="modal-footer">
+						<input type="submit" class="btn btn-default pull-left" name="confermapat<?php echo $form['adminid']; ?>"  value="Non voglio continuare">
+						<input type="submit" class="btn btn-danger pull-right" name="confermapat<?php echo $form['adminid']; ?>"  value="Confermo deroga">
+					</div>
+				</div>
+			</div>
+			<!-- Modal content patentino mancante  -->
+			<div id="patempty" class="modal fade" role="dialog">    
+				<div class="modal-dialog modal-content bg-warning" style="background-color: #f35454;">
+					<div class="modal-header" align="left">
+						
+						<h4 class="modal-title">ATTENZIONE patentino mancante!</h4>
+					</div>
+					<div class="modal-body">
+						<p>E' necessario fornire i dati dell'autorizzazione all'acquisto e all'uso di prodotti fitosanitari. <br>Puoi continuare solo se sei sicuro. <br>Sei sicuro di volerlo fare?</p>
+					</div>
+					<div class="modal-footer">
+						<input type="submit" class="btn btn-default pull-left" name="confermapat<?php echo $form['adminid']; ?>"  value="Non voglio continuare">
+						<input type="submit" class="btn btn-danger pull-right" name="confermapat<?php echo $form['adminid']; ?>"  value="Confermo deroga">
+					</div>
+				</div>
+			</div>
 			<?php
 			// >>>>>>>>>> Inizio ciclo righi mov   <<<<<<<<<<<<<<<<<
 			for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
@@ -1709,7 +1825,7 @@ if (intval($form['nome_colt']) == 0) {
 											<input type="submit" class="btn btn-danger pull-right" name="conferma<?php echo $form['mov']; ?>"  value="Confermo deroga <?php echo $form['artico'][$form['mov']]; ?>">
 										</div>
 									</div>
-								</div>
+								</div>	
 								
 								<?php						
 							} else {		
@@ -2141,11 +2257,7 @@ if (intval($form['nome_colt']) == 0) {
 						<?php echo $form['adminid']," - ",$form['adminname']; ?>
 						<select name="adminid" onchange="this.form.submit()">
 							<?php 
-		/*					
-							 $sql = gaz_dbi_dyn_query ($gTables['staff'].".*, ".$gTables['clfoco'].".descri , ".$gTables['anagra'].".rif_abilitazione ",
-							 $gTables['staff']." LEFT JOIN ".$gTables['clfoco']." on (".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice)
-							 LEFT JOIN ".$gTables['anagra']." on (".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra OR ".$gTables['anagra'].".id = ".$gTables['admin'].".id_anagra)" );
-		*/
+		
 							$sql = gaz_dbi_dyn_query ($gTables['anagra'].".* ",
 							 $gTables['anagra']."
 							 LEFT JOIN ".$gTables['clfoco']." on (".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id)
@@ -2171,16 +2283,29 @@ if (intval($form['nome_colt']) == 0) {
 						</select>					
 						<input class="col-sm-1" title="Gestione autorizzazione acquisto e uso fitosanitari" type="button" name="button1" id="patent" rel="gestpatent" value="&#9776" onclick="buttonToggle(this,'&#9776','&#9746');" style="float: right;">
 						<input type="hidden" value="<?php echo $form['adminname']; ?>" name="adminname"/>
+						
 					</div>
 				</div>
 			
 			</div><!-- chiude row  -->
+			
 			<div id="gestpatent" class="col-sm-12 bg-info">							
 				<div  align="center" >
 					<h3>Gestione Abilitazione acquisto e uso fitosanitari (Patentino)</h3>
 				</div>
-			</div>					
-			<div class="row bg-info">
+				<div>
+					<label>Numero: </label>
+					<input type="text" name="patent_number" value="<?php echo $form['patent_number']; ?>" >
+					<input type="hidden" name="rif_abilitazione" value="<?php echo htmlspecialchars($form['rif_abilitazione']); ?>" >
+					<label>Scadenza: </label>
+					<input class="datepicker" type="text" name="patent_expiry"  value="<?php echo $form['patent_expiry']; ?>">					
+				</div>
+				<div class="row">
+					<input type="submit" class="btn btn-warning" name="patent" value="Save patent">
+				</div>
+			</div>
+			
+			<div class="row">
 				<div class="col-md-12">
 				<label colspan="1">
 					<input type="submit" name="cancel" value="<?php echo $script_transl['cancel']; ?>">
@@ -2189,15 +2314,15 @@ if (intval($form['nome_colt']) == 0) {
 				
 					<?php
 					if ($toDo !== 'update') {
-						If ($form['artico'][$form['mov']] <> "") {
+						if ($form['artico'][$form['mov']] <> "") {
 							echo "<input type=\"submit\" name=\"Add_mov\" value=\"" . $script_transl['add'] . "\">\n";
 						}
-						If ($form['nmov'] > 0) {
+						if ($form['nmov'] > 0) {
 							echo "<input type=\"submit\" title=\"Togli ultimo movimento\" name=\"Del_mov\" value=\"X\">\n";
 						}
-						echo '<input type="submit" accesskey="i" name="Insert" value="' . ucfirst($script_transl['insert']) . '!">';
+						echo '<input class="pull-right" type="submit" accesskey="i" name="Insert" value="' . ucfirst($script_transl['insert']) . '!">';
 					} else {				
-						echo '<input type="submit" accesskey="m" name="Insert" value="' . ucfirst($script_transl['update']) . '!">';
+						echo '<input class="pull-right" type="submit" accesskey="m" name="Insert" value="' . ucfirst($script_transl['update']) . '!">';
 					}				
 					?>
 				</div>
@@ -2220,7 +2345,7 @@ if (intval($form['nome_colt']) == 0) {
 </script>
 <?php
 // Antonio Germani questo serve per fare lo scroll all'ultimo movimento inserito
-if (isset($anchor["num"])){ 
+if (isset($anchor["num"]) AND $anchor["num"]>0){ 
 	echo "<script type='text/javascript'>\n" . "window.location.hash = '#{$anchor["num"]}';" . //◄■■■ JUMP TO LOCAL ANCHOR.
 	"</script>\n";
 }
