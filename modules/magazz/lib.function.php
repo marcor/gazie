@@ -488,26 +488,38 @@ class magazzForm extends GAzieForm {
     function print_trunk_BOM($codcomp) {  // Stampo i padri nei quali è contenuto l'articolo
 	}
     
-    function getStockTreeValues($codice_articolo, $lev=0, $acc=[]) {
+    function getStockTreeValues($codice_articolo, $quant=1, $acc=[]) {
         global $gTables;
         $mv = $this->getStockValue(false, $codice_articolo);
-        if (!isset($mv[0])|| $mv[0]['q_g'] < 0.00001 ) { // non ho quantità sufficiente, controllo se ho un successivo livello 
-            $lev++;
-            print 'Non ho i componenti di '.$codice_articolo.' di livello '.$lev.'<br>';
-            $where="codice_composizione = '" . $codice_articolo . "'";
-            $table = $gTables['distinta_base']." LEFT JOIN ".$gTables['artico']." ON ".$gTables['distinta_base'].".codice_artico_base = ".$gTables['artico'].".codice";
-            $rescompo = gaz_dbi_dyn_query ($gTables['distinta_base'].".*, ".$gTables['artico'].".*", $table, $where );
-            while ($row = $rescompo->fetch_assoc()) { 
-                $acc = $this->getStockTreeValues($row['codice_artico_base'],$lev,$acc);
-            }
+        if (isset($mv[0])){
+            $acc['q_g'] = $mv[0]['q_g']; 
+            $acc['val'] = $mv[0]['v']; 
         } else {
-            // OK!!! è disponibile lo ritorno
-            $acc[$codice_articolo]=$mv[0];
-            print 'Componente '.$codice_articolo.' di livello '.$lev.':<br>'; print_r($acc); print '<br>';
-            return $acc;
+            $acc['q_g'] = 0; 
+            $acc['val'] = 0; 
         }
+        $acc['cod'] = $codice_articolo;
+        $acc['qua'] = $quant;
+        $where="codice_composizione = '" . $codice_articolo . "'";
+        $table = $gTables['distinta_base']." LEFT JOIN ".$gTables['artico']." ON ".$gTables['distinta_base'].".codice_artico_base = ".$gTables['artico'].".codice";
+        $rescompo = gaz_dbi_dyn_query ($gTables['distinta_base'].".*, ".$gTables['artico'].".*", $table, $where );
+        $temp=$acc;
+        while ($row = gaz_dbi_fetch_array($rescompo)) {
+            $mv = $this->getStockValue(false, $row['codice_artico_base']);
+            if (isset($mv[0])){
+                $temp['q_g'] = $mv[0]['q_g']; 
+                $temp['val'] = $mv[0]['v']; 
+            } else {
+                $temp['q_g'] = 0; 
+                $temp['val'] = 0; 
+            }
+            $temp['qua'] = $row['quantita_artico_base']*$quant;
+            $temp['cod'] = $row['codice_artico_base'];
+            $acc[$row['codice_artico_base']]=$this->getStockTreeValues($row['codice_artico_base'], $temp['qua'],$temp);
+        }
+        return $acc;
     }
-	
+
     function getStockValue($id_mov = false, $item_code = null, $date = null, $stock_eval_method = null, $decimal_price = 2)
     /* Questa funzione serve per restituire la valorizzazione dello scarico
       a seconda del metodo (WMA,LIFO,FIFO) scelto per ottenerla.
