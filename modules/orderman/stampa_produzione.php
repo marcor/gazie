@@ -334,14 +334,14 @@ if ($numrow>=1){
 		} else {
 			$pdf->Cell(25, 4, ($reslot)?gaz_format_date($reslot['expiry']):'' ,1, 0, 'L', 0, '', 1);
 		}
-        $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',''),1, 1, 'C', 0, '', 1);
+        $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],$admin_aziend['decimal_symbol'], $admin_aziend['thousands_symbol']),1, 1, 'C', 0, '', 1);
     }
     $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
     $pdf->SetFont('helvetica','B',9);
     $pdf->Cell(186,5,'TOTALE MATERIALE LAVORATO: ','LBT', 0, 'R', 1, '', 1);
     $pdf->Cell(17,5,abs($totq),'BT', 0, 'R', 1, '', 1);
     $pdf->Cell(57,5,'','BT', 0, 'R', 1, '', 1);
-    $pdf->Cell(17,5,'€ '.gaz_format_number($totv),'RBT', 1, 'R', 1, '', 1);
+    $pdf->Cell(17,5,'€ '.number_format($totv, $admin_aziend['decimal_price'], $admin_aziend['decimal_symbol'], $admin_aziend['thousands_symbol']),'RBT', 1, 'R', 1, '', 1);
 }
 // FINE REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
 
@@ -355,14 +355,14 @@ if ($totgen>=0.01){
     $pdf->Cell(126,5,' R I E P I L O G O    T O T A L I',1, 1, 'C', 1, '', 1);
     $pdf->Cell(70);
     $pdf->Cell(100,5,'MATERIALE ORDINATO: ','LBT', 0, 'L', 0, '', 1);
-    $pdf->Cell(26,5,gaz_format_number($tot),'RBT', 1, 'R', 0, '', 1);
+    $pdf->Cell(26,5,number_format($tot, $admin_aziend['decimal_price'], $admin_aziend['decimal_symbol'], $admin_aziend['thousands_symbol']),'RBT', 1, 'R', 0, '', 1);
     $pdf->Cell(70);
     $pdf->Cell(100,5,'MATERIALE LAVORATO: ','LBT', 0, 'L', 0, '', 1);
-    $pdf->Cell(26,5,gaz_format_number($totv),'RBT', 1, 'R', 0, '', 1);
+    $pdf->Cell(26,5,number_format($totv, $admin_aziend['decimal_price'], $admin_aziend['decimal_symbol'], $admin_aziend['thousands_symbol']),'RBT', 1, 'R', 0, '', 1);
     $pdf->SetFont('helvetica','B',10);
     $pdf->Cell(70);
     $pdf->Cell(100,8,'TOTALE GENERALE PER PRODUZIONE: ','LBT', 0, 'R', 1, '', 1);
-    $pdf->Cell(26,8,'€ '.gaz_format_number($totgen),'RBT', 1, 'R', 1, '', 1);
+    $pdf->Cell(26,8,'€ '.number_format($totgen, $admin_aziend['decimal_price'], $admin_aziend['decimal_symbol'], $admin_aziend['thousands_symbol']),'RBT', 1, 'R', 1, '', 1);
 }
 
 $pdf->Output();

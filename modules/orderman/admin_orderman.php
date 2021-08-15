@@ -399,9 +399,9 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
                     // inserisco il movimento di magazzino dell'articolo prodotto
 					$mv = $magazz->getStockValue(false, $form['codart']);
-					$price_comp=$mv['v'];
+					$price=$mv['v'];
 					if ($mv['v']==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
-						$price_comp=$row['preacq'];
+						$price=$row['preacq'];
 					}
 					$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], $price, '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
 					$prod_id_movmag=$id_movmag; // mi tengo l'id_movmag del movimento di magazzino di entrata da produzione, mi servirà successivamente per valorizzare il prezzo in base alla composizione ed anche in caso di SIAN 
