@@ -2231,10 +2231,19 @@ if (intval($form['nome_colt']) == 0) {
 				$form['nmov'] = $form['nmov'] + $rig_ripart_lot;
 			}
 			?>
-			<div class="row bg-info">
+			<div class="row">
 				
 					<input type="hidden" name="nmov" onchange="this.form.submit();" value="<?php echo $form['nmov']; ?>">
-				
+					<?php
+					if ($toDo == 'insert') {
+						if ($form['artico'][$form['mov']] <> "") {
+							echo "<input type=\"submit\" name=\"Add_mov\" value=\"+ " . $script_transl['add'] . "\">\n";
+						}
+						if ($form['nmov'] > 0) {
+							echo "<input type=\"submit\" title=\"Togli ultimo movimento\" name=\"Del_mov\" value=\"X Togli ultimo movimento inserito\">\n";
+						}
+					}
+					?>
 			</div><!-- chiude row  -->
 			<?php
 			if (isset($l) && $l - 1 > $form['mov']) { // se la suddivisione dei lotti ha creato nuovi righi ricarico il form
@@ -2283,10 +2292,8 @@ if (intval($form['nome_colt']) == 0) {
 						</select>					
 						<input class="col-sm-1" title="Gestione autorizzazione acquisto e uso fitosanitari" type="button" name="button1" id="patent" rel="gestpatent" value="&#9776" onclick="buttonToggle(this,'&#9776','&#9746');" style="float: right;">
 						<input type="hidden" value="<?php echo $form['adminname']; ?>" name="adminname"/>
-						
 					</div>
-				</div>
-			
+				</div>			
 			</div><!-- chiude row  -->
 			
 			<div id="gestpatent" class="col-sm-12 bg-info">							
@@ -2313,13 +2320,7 @@ if (intval($form['nome_colt']) == 0) {
 				</label>
 				
 					<?php
-					if ($toDo !== 'update') {
-						if ($form['artico'][$form['mov']] <> "") {
-							echo "<input type=\"submit\" name=\"Add_mov\" value=\"" . $script_transl['add'] . "\">\n";
-						}
-						if ($form['nmov'] > 0) {
-							echo "<input type=\"submit\" title=\"Togli ultimo movimento\" name=\"Del_mov\" value=\"X\">\n";
-						}
+					if ($toDo !== 'update') {						
 						echo '<input class="pull-right" type="submit" accesskey="i" name="Insert" value="' . ucfirst($script_transl['insert']) . '!">';
 					} else {				
 						echo '<input class="pull-right" type="submit" accesskey="m" name="Insert" value="' . ucfirst($script_transl['update']) . '!">';
