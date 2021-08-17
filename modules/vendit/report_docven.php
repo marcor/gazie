@@ -169,7 +169,7 @@ function confirFae(link){
     switch (flux_status) {
         case "DI":
             $("#dialog_fae_content_DI").addClass("bg-default");
-            $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+link.href+"&packet"+sdiflux+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
+            $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+link.href+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
             $("#dialog_fae_content_DI").show();
             console.log(flux_status);
         break;
@@ -430,6 +430,7 @@ $(function() {
 				$pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $r['pagame']);
                 $modulo_fae = "electronic_invoice.php?id_tes=" . $r['id_tes'];
                 $modulo_fae_report = "report_fae_sdi.php?id_tes=" . $r['id_tes'];
+                $zipped = (preg_match("/^[A-Z0-9]{13,18}_([a-zA-Z0-9]{5}).zip$/",$r['fattura_elettronica_zip_package'],$match))?$match[1]:false;
                 $classe_btn = "btn-default";
                 if ($r["tipdoc"] == 'FAI'||$r["tipdoc"] == 'FAA') {
                     $tipodoc = "Fattura Immediata";
@@ -547,11 +548,11 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                         if(strlen($r['fattura_elettronica_original_name'])>10){ // ho un file importato dall'esterno
                             echo '<td><a class="btn btn-xs btn-warning" target="_blank" href="../acquis/view_fae.php?id_tes=' . $r["id_tes"] . '">File importato<i class="glyphicon glyphicon-eye-open"></i></a>'.'<a class="btn btn-xs btn-edit" title="Scarica il file XML originale" href="download_zip_package.php?fn='.$r['fattura_elettronica_original_name'].'">xml <i class="glyphicon glyphicon-download"></i> </a></td>';
                         } else { // il file è generato al volo dal database
-                            if(strlen($r['fattura_elettronica_zip_package'])>10){ // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
-                                echo '<td align="center" style="white-space:unset;">';
-                                if ($r['fattura_elettronica_reinvii']==0 && $last_fae_packet!=$r['fattura_elettronica_zip_package']) {
-                                    $last_fae_packet = $r['fattura_elettronica_zip_package'];
-                                    echo '<a class="btn btn-xs btn-success" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>';
+                            echo '<td align="center"';
+                            if($zipped){ // se è contenuto in un pacchetto di file permetterà sia il download del singolo XML che del pacchetto in cui è contenuto
+                                echo ' style="white-space:unset;">';
+                                if ($r['fattura_elettronica_reinvii']==0) {
+                                    echo '<a class="btn btn-xs btn-success" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">'.$zipped.'.zip<i class="glyphicon glyphicon-compressed"></i> </a>';
                                 }
                             } elseif (strlen($r['pec_email'])<5 && strlen(trim($r['fe_cod_univoco']))<6) { //se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
                                 $d_title = 'Invia richiesta PEC e/o codice SdI all\'indirizzo: '.$r['e_mail'];
@@ -560,9 +561,10 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                     $dest = '';
                                     $d_title = 'Stampa richiesta cartacea (cliente senza mail)';
                                 }
-                                echo '<td align=\"center\"><button onclick="confirPecSdi(this);return false;" id="doc3_' . $r['clfoco'] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $r['e_mail'] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
+                                echo '><button onclick="confirPecSdi(this);return false;" id="doc3_' . $r['clfoco'] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $r['e_mail'] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
                             } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
-                                echo '<td align="center">';
+                                echo ">\n";
+                               
                             }
                             if ( $sdi_flux ) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
                                 $last_flux_status = explode(',',$r['refs_flux_status'])[0];
@@ -583,6 +585,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                             switch ($last_flux_status) {
                                 case "DI":
                                 $sdititle = 'Invia il file '.$r['fae_attuale'].' o pacchetto';
+                                $modulo_fae = 'fae_packaging.php';
                                 break;
                                 case "PC":
                                 $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';
