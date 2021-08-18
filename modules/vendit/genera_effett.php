@@ -37,11 +37,11 @@ function getDocumentsBill($upd = false) {
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
              ON anagraf.id=customer.id_anagra';
-    $where = "(tippag = 'B' OR tippag = 'T' OR tippag = 'V') AND geneff = '' AND tipdoc LIKE 'FA_'";
+    $where = "(tippag = 'B' OR tippag = 'T' OR tippag = 'V' OR tippag = 'I') AND geneff = '' AND tipdoc LIKE 'FA_'";
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
-                        customer.codice, customer.speban AS addebitospese,
+                        customer.codice, customer.speban AS addebitospese, customer.iban,
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
@@ -128,7 +128,7 @@ function getDocumentsBill($upd = false) {
             gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET geneff = 'S' WHERE id_tes = " . $tes['id_tes'] . ";");
         }
     }
-    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+    if (count($doc)>0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
         $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
         $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
@@ -144,21 +144,23 @@ function getDocumentsBill($upd = false) {
 
 function getReceiptNumber($date) {
     global $gTables;
+    $orderby = "datemi DESC, progre DESC";
     $where = "tipeff = 'B' AND YEAR(datemi) = " . substr($date, 0, 4);
-    $orderby = "datemi DESC, progre DESC";
     $result = gaz_dbi_dyn_query('*', $gTables['effett'], $where, $orderby, 0, 1);
-    $last = gaz_dbi_fetch_array($result);
-    $first['R'] = 1 + $last['progre'];
+    $lastB = gaz_dbi_fetch_array($result);
+    $first['R'] = ($lastB)? (1 + $lastB['progre']):1;
     $where = "tipeff = 'T' AND YEAR(datemi) = " . substr($date, 0, 4);
-    $orderby = "datemi DESC, progre DESC";
     $result = gaz_dbi_dyn_query('*', $gTables['effett'], $where, $orderby, 0, 1);
-    $last = gaz_dbi_fetch_array($result);
-    $first['T'] = 1 + $last['progre'];
+    $lastT = gaz_dbi_fetch_array($result);
+    $first['T'] = ($lastT)? (1 + $lastT['progre']):1;
     $where = "tipeff = 'V' AND YEAR(datemi) = " . substr($date, 0, 4);
-    $orderby = "datemi DESC, progre DESC";
     $result = gaz_dbi_dyn_query('*', $gTables['effett'], $where, $orderby, 0, 1);
-    $last = gaz_dbi_fetch_array($result);
-    $first['V'] = 1 + $last['progre'];
+    $lastV = gaz_dbi_fetch_array($result);
+    $first['V'] = ($lastV)? (1 + $lastV['progre']):1;
+    $where = "tipeff = 'I' AND YEAR(datemi) = " . substr($date, 0, 4);
+    $result = gaz_dbi_dyn_query('*', $gTables['effett'], $where, $orderby, 0, 1);
+    $lastI = gaz_dbi_fetch_array($result);
+    $first['I'] = ($lastI)? (1 + $lastI['progre']):1;
     return $first;
 }
 
@@ -257,7 +259,7 @@ echo "</table>\n";
 //mostro l'anteprima
 if (isset($_POST['preview'])) {
     $rs = getDocumentsBill();
-    echo "<BR /><div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
+    echo "<br /><div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
@@ -266,7 +268,7 @@ if (isset($_POST['preview'])) {
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['customer'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['tot'] . "</th>\n";
     $ctrl_date = '';
-    $tot_type = array('B' => 0, 'T' => 0, 'V' => 0);
+    $tot_type = array('B' => 0, 'I' => 0, 'T' => 0, 'V' => 0);
 
     foreach ($rs as $k => $v) {
         if ($ctrl_date <> substr($v['tes']['datfat'], 0, 4)) {

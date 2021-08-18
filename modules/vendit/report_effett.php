@@ -152,50 +152,39 @@ $recordnav->output();
             echo "<td title=\"" . $script_transl['date_doc'] . ": " . gaz_format_date($r["datfat"]) . " n." . $r["numfat"] . "/" . $r["seziva"] . ' ' . $admin_aziend['html_symbol'] . " " . gaz_format_number($r["totfat"]) . "\">" . $cliente["ragso1"] . " &nbsp;</td>";
             echo "<td align=\"right\">" . gaz_format_number($r["impeff"]) . " &nbsp;</td>";
             echo "<td align=\"center\">" . $script_transl['salacc_value'][$r["salacc"]] . " &nbsp;</td>";
-            echo "<td>" . $banapp["descri"] . " &nbsp;</td>";
+            echo "<td>" . (($banapp)?$banapp["descri"]:'') . " &nbsp;</td>";
             if ($r["status"] == "DISTINTATO") {
                 if ($r["id_con"] > 0) {
-                    //
                     // Interroga la tabella gaz_XXXtesmov per trovare
                     // il numero della registrazione (id_tes) con cui
                     // risulta contabilizzato l'effetto (id_con).
-                    //
-            $tesmov_result = gaz_dbi_dyn_query('*', $gTables['tesmov'], "id_tes = " . $r["id_con"], 'id_tes');
-                    //
+                    $tesmov_result = gaz_dbi_dyn_query('*', $gTables['tesmov'], "id_tes = " . $r["id_con"], 'id_tes');
                     $tesmov_r = gaz_dbi_fetch_array($tesmov_result);
-                    //
                     // Se il numero di registrazione non esiste nella
                     // tabella gaz_XXXtesmov, questo viene azzerato
                     // nella tabella dell'effetto, diventando così
                     // contabilizzabile nuovamente.
-                    //
-            if ($tesmov_r["id_tes"] == $r["id_con"]) {
-                        //
+                    if ($tesmov_r["id_tes"] == $r["id_con"]) {
                         // L'effetto risulta contabilizzato regolarmente.
-                        //
-                echo "<td align=\"center\"><a href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont. n." . $r["id_con"] . "</a></td>";
+                        echo "<td align=\"center\"><a href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont. n." . $r["id_con"] . "</a></td>";
                     } else {
-                        //
                         // vado a modificare l'effetto azzerando il
                         // riferimento alla registrazione contabile
-                        //
-                gaz_dbi_put_row($gTables['effett'], "id_tes", $r["id_tes"], "id_con", 0);
-                        //
+                        gaz_dbi_put_row($gTables['effett'], "id_tes", $r["id_tes"], "id_con", 0);
                         // Mostro che l'effetto è da contabilizzare nuovamente.
-                        //
-                echo "<td align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
+                        echo "<td align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
                     }
                 } else {
-                    //
                     // L'effetto e' da contabilizzare.
-                    //
-            echo "<td align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
+                    echo "<td align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
                 }
             } else {
                 if ($r["tipeff"] == "T") {
                     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a></td>";
                 } elseif ($r["tipeff"] == "B") {
                     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filerb.php\">file RiBa</a></td>";
+                } elseif ($r["tipeff"] == "I") {
+                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filerid.php\">file RID</a></td>";
                 } elseif ($r["tipeff"] == "V") {
                     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filemav.php\">file MAV</a></td>";
                 } else {
@@ -206,10 +195,8 @@ $recordnav->output();
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"stampa_effett.php?id_tes=" . $r["id_tes"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
             // Colonna "Origine"
             echo "<td align=\"center\">";
-            //
             // Se id_doc ha un valore diverso da zero, cerca la fattura nella tabella gazXXX_tesdoc.
-            //
-    if ($r["id_doc"] != 0) {
+            if ($r["id_doc"] != 0) {
                 //
                 $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $r["id_doc"], 'id_tes', 0, 1);
                 //

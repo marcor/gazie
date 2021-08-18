@@ -200,25 +200,25 @@ if ($toDo == 'insert') {
 }
 $select_customer->selectDocPartner('clfoco',$form['clfoco'],$form['search']['clfoco'],'clfoco',$script_transl['mesg'],$admin_aziend['mascli']);
 echo "</div>\n" ;
-echo "<table class=\"Tmiddle\">\n";
+echo '<div align="center"><table class="table-striped table-bordered table-condensed">';
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
 if ($toDo == 'update') {
    echo "<tr>\n";
-   echo "\t<td class=\"FacetFieldCaptionTD\"> ID </td>\n";
-   echo "\t<td colspan=\"2\" class=\"FacetDataTD\"> ".$form['id_tes']." </td>\n";
+   echo "\t<td > ID </td>\n";
+   echo "\t<td colspan=\"2\" > ".$form['id_tes']." </td>\n";
    echo "</tr>\n";
    echo "<tr>\n";
-   echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['progre']."* </td>\n";
-   echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+   echo "\t<td >".$script_transl['progre']."* </td>\n";
+   echo "\t<td colspan=\"2\" >
         <input type=\"text\" name=\"progre\" value=\"".$form['progre']."\" align=\"right\" maxlength=\"9\"  /></td>\n";
    echo "</tr>\n";
 }
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['type'].' - '.$script_transl['pagame']." * </td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "\t<td >".$script_transl['type'].' - '.$script_transl['pagame']." * </td><td colspan=\"2\" >\n";
 echo "<select name=\"pagame\" class=\"FacetSelect\"  onchange=\"this.form.submit()\">\n";
-      $rs_pagame = gaz_dbi_dyn_query ('*', $gTables['pagame'], "tippag = 'B' OR tippag = 'T' OR tippag = 'V'",'tippag');
+      $rs_pagame = gaz_dbi_dyn_query ('*', $gTables['pagame'], "tippag = 'B' OR tippag = 'I' OR tippag = 'T' OR tippag = 'V'",'tippag');
       echo "\t\t <option value=\"0\"></option>\n";
       while ($r = gaz_dbi_fetch_array($rs_pagame)) {
             $selected = "";
@@ -230,51 +230,58 @@ echo "</select>\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_emi']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td >".$script_transl['date_emi']."</td><td colspan=\"2\" >\n";
 $gForm->CalendarPopup('date_emi',$form['date_emi_D'],$form['date_emi_M'],$form['date_emi_Y'],'FacetSelect',1);
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['numfat']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td >".$script_transl['numfat']." </td>\n";
+echo "\t<td colspan=\"2\" >
       <input type=\"text\" name=\"numfat\" value=\"".$form['numfat']."\" style=\"text-align:right;\" maxlength=\"9\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['vat_section']."</td><td class=\"FacetDataTD\">\n";
+echo "<td >".$script_transl['vat_section']."</td><td >\n";
 $gForm->selectNumber('seziva',$form['seziva'],0,1,9);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_doc']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td >".$script_transl['date_doc']."</td><td colspan=\"2\" >\n";
 $gForm->CalendarPopup('date_doc',$form['date_doc_D'],$form['date_doc_M'],$form['date_doc_Y'],'FacetSelect',1);
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['totfat']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td >".$script_transl['totfat']." </td>\n";
+echo "\t<td colspan=\"2\" >
       <input type=\"text\" name=\"totfat\" value=\"".$form['totfat']."\" style=\"text-align:right;\" maxlength=\"12\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['salacc']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td >".$script_transl['salacc']."</td><td colspan=\"2\" >\n";
 $gForm->variousSelect('salacc',$script_transl['salacc_value'],$form['salacc']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['impeff']." * </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td >".$script_transl['impeff']." * </td>\n";
+echo "\t<td colspan=\"2\" >
       <input type=\"text\" name=\"impeff\" value=\"".$form['impeff']."\" style=\"text-align:right;\" maxlength=\"12\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_exp']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td >".$script_transl['date_exp']."</td><td colspan=\"2\" >\n";
 $gForm->CalendarPopup('date_exp',$form['date_exp_D'],$form['date_exp_M'],$form['date_exp_Y'],'FacetSelect',1);
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['banapp']." * </td><td colspan=\"2\" class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td >".$script_transl['banapp']." * </td><td colspan=\"2\"  colspan=\"2\">\n";
 $select_banapp = new selectbanapp("banapp");
 $select_banapp->addSelected($form["banapp"]);
 $select_banapp->output();
 echo "</td>\n";
+echo "<tr>\n";
+echo "<td >IBAN</td>";
+echo "\t<td colspan=\"2\" >
+      <input type=\"text\" name=\"iban\" value=\"".$form['iban']."\"  maxlength=\"23\"  /></td>\n";
+echo "</tr>\n";
+echo "</td>\n";
+echo "</tr>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['banacc']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td >".$script_transl['banacc']."</td><td colspan=\"2\" >\n";
 echo "<select name=\"banacc\" class=\"FacetSelect\">";
 $rs_banacc = gaz_dbi_dyn_query("codice,descri,iban", $gTables['clfoco'],"codice BETWEEN ".$admin_aziend['masban']."000001 AND ".$admin_aziend['masban']."999999 AND iban != ''","descri");
 echo "<option value=\"0\"> </option>";
@@ -289,22 +296,22 @@ echo "</select></td>\n";
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['cigcup']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td >".$script_transl['cigcup']." </td>\n";
+echo "\t<td colspan=\"2\" >
       <input type=\"text\" name=\"cigcup\" value=\"".$form['cigcup']."\"  maxlength=\"40\"   /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
+echo "\t<td >".$script_transl['sqn']."</td>";
 echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\">\n";
+echo "\t<td  >\n";
 echo '<input name="Return" type="submit" value="'.$script_transl['return'].'">';
 echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
+echo "\t<td   align=\"right\">\n";
 echo '<input name="Submit" type="submit" value="'.ucfirst($script_transl[$toDo]).'">';
 echo "\t </td>\n";
 echo "</tr>\n";
 ?>
-</table>
+</table></div>
 </form>
 <?php
 require("../../library/include/footer.php");

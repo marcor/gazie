@@ -192,9 +192,9 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "</tr>";        		
       
 		foreach($m as $key => $mv) {					
-			If ($mv['campo_coltivazione']>0 && $mv['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
+			If ($mv['luogo_produzione']>0 && $mv['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
 				if ($mv['rame_metallico']>0 OR ($mv['perc_N']>0 AND $form['sta_fert']==true)){ // se l'articolo contiene rame metallo o azoto con stampa fertilizzazioni
-					$camp = gaz_dbi_get_row($gTables['campi'], 'codice', $mv['campo_coltivazione']); //carico i dati del campo di coltivazione			
+					$camp = gaz_dbi_get_row($gTables['campi'], 'codice', $mv['luogo_produzione']); //carico i dati del campo di coltivazione			
 			
 					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
 					$datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
@@ -203,8 +203,8 @@ if (isset($_POST['preview']) and $msg=='') {
 					echo "<td  align=\"left\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
             
 					// Antonio Germani carico la tabella campi e Inserisco campo, superficie e coltura
-					$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $mv['campo_coltivazione']);			
-					echo "<td align=\"left\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." - ".$res['descri']." &nbsp;</td>";
+					$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $mv['luogo_produzione']);			
+					echo "<td align=\"left\" class=\"FacetDataTD\">".$mv['luogo_produzione']." - ".$res['descri']." &nbsp;</td>";
 					echo "<td class=\"FacetDataTD\" align=\"left\">".gaz_format_quantity($res['ricarico'],1,$admin_aziend['decimal_quantity'])." ha"." &nbsp;</td>\n"; 
 					// fine inserisco campo, superficie, coltura	
 	

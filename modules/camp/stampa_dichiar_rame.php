@@ -108,13 +108,13 @@ if ($sta_fert==false){
 $n=0; $campi=array(); 
 if (sizeof($result) > 0) { 
 	foreach ($result as $key => $row) {	
-		If ($row['campo_coltivazione']>0 && $row['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
+		If ($row['luogo_produzione']>0 && $row['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
 				
 			if ($row['rame_metallico']>0 OR ($row['perc_N']>0 AND $sta_fert==true)){ // se l'articolo contiene rame metallo o azoto con stampa fertilizzazioni
 				//carico i dati per ogni campo di coltivazione
-				$camp = gaz_dbi_get_row($gTables['campi'], "codice", $row['campo_coltivazione']); 
+				$camp = gaz_dbi_get_row($gTables['campi'], "codice", $row['luogo_produzione']); 
 				$array[$n]= array(
-							'campo_coltivazione'=>$row['campo_coltivazione'],
+							'luogo_produzione'=>$row['luogo_produzione'],
 							'descri_campo'=>$camp['descri'],
 							'img_campo'=>$camp['image'],
 							'rame_metallo_prodotto'=>$row['rame_metallico'], 
@@ -138,7 +138,7 @@ if (sizeof($result) > 0) {
 	for ($i=0; $i<$n; $i++){
 	 	if ($i==0){
 			$campi[$c]=array(
-						'campo_coltivazione'=>$array[$i]['campo_coltivazione'],
+						'luogo_produzione'=>$array[$i]['luogo_produzione'],
 						'descri_campo'=>$array[$i]['descri_campo'],
 						'img_campo'=>$array[$i]['img_campo'],
 						'superficie'=> $array[$i]['superficie'],
@@ -151,13 +151,13 @@ if (sizeof($result) > 0) {
 						'lim_N'=>$array[$i]['lim_N_ZVN']
 						); 
 		} else {
-			if ($array[$i]['campo_coltivazione']==$array[$i-1]['campo_coltivazione']){
+			if ($array[$i]['luogo_produzione']==$array[$i-1]['luogo_produzione']){
 				$campi[$c]['totale_rame']=$campi[$c]['totale_rame']+$array[$i]['rame_metallo_usato_su_campo'];
 				$campi[$c]['tot_N']=$campi[$c]['tot_N']+$array[$i]['qta_N'];
 			} else {
 			$c=$c+1; 
 			$campi[$c]=array(
-						'campo_coltivazione'=>$array[$i]['campo_coltivazione'],
+						'luogo_produzione'=>$array[$i]['luogo_produzione'],
 						'descri_campo'=>$array[$i]['descri_campo'],
 						'img_campo'=>$array[$i]['img_campo'],
 						'superficie'=> $array[$i]['superficie'],
@@ -188,9 +188,9 @@ $pdf->SetFont('helvetica','',9);
 			$N_ammesso = $campi[$i]['lim_N']*$campi[$i]['superficie'];
 		} else {
 			$N_ammesso = $campi[$i]['lim_N_ZVN']*$campi[$i]['superficie'];
-			$campi[$i]['campo_coltivazione'] = $campi[$i]['campo_coltivazione']." ZVN";
+			$campi[$i]['luogo_produzione'] = $campi[$i]['luogo_produzione']." ZVN";
 		}
-		$pdf->Cell(13,6,$campi[$i]['campo_coltivazione'],1);	  
+		$pdf->Cell(13,6,$campi[$i]['luogo_produzione'],1);	  
 		$pdf->Cell(55,6,$campi[$i]['descri_campo'],1);		
 		$pdf->Cell(17,6,"ha ".gaz_format_quantity($campi[$i]['superficie'],1,$admin_aziend['decimal_quantity']),1);	
 		$pdf->Cell(30,6,"Kg ".gaz_format_quantity($campi[$i]['totale_rame'],1,$admin_aziend['decimal_quantity']),1);

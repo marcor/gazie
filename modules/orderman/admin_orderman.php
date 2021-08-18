@@ -387,7 +387,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             } else {
                 // scrittura movimento di magazzino MOVMAG
                 if ($toDo == "update") { // se è update, aggiorno in ogni caso
-                    $query = "UPDATE " . $gTables['movmag'] . " SET quanti = '" . $form['quantip'] . "', datreg = '" . $form['datreg'] . "', datdoc = '" . $form['datemi'] . "', artico = '" . $form['codart'] . "' , campo_coltivazione = '" . $form['campo_impianto'] . "', id_orderman = " . intval($_GET['codice']) . " , id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'";
+                    $query = "UPDATE " . $gTables['movmag'] . " SET quanti = '" . $form['quantip'] . "', datreg = '" . $form['datreg'] . "', datdoc = '" . $form['datemi'] . "', artico = '" . $form['codart'] . "' , luogo_produzione = '" . $form['campo_impianto'] . "', id_orderman = " . intval($_GET['codice']) . " , id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'";
                     gaz_dbi_query($query);
 					if ($form['SIAN']>0){ // Antonio Germani - aggiorno il movimento del SIAN
 						$update = array();

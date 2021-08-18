@@ -262,7 +262,7 @@ $strScript = array(
         "Tipo di rate",
         "C/C bancario d'accredito",
         "Annotazioni",
-        array('C' => 'contanti','O' => 'bonifico', 'K' => 'carte di pagamento', 'D' => 'rimessa diretta', 'B' => 'ricevuta bancaria', 'T' => 'cambiale-tratta', 'V' => 'mediante avviso(MAV)'),
+        array('C' => 'contanti','O' => 'bonifico', 'K' => 'carte di pagamento', 'D' => 'rimessa diretta', 'I' => 'rapporto interbancario diretto (RID)', 'B' => 'Ricevuta Bancaria', 'T' => 'Cambiale-Tratta', 'V' => 'mediante avviso(MAV)'),
         array('S' => 'Si', 'N' => 'No'),
         array('D' => 'data fattura', 'G' => 'giorno fisso', 'F' => 'fine mese'),
         array('Q' => 'quindicinali', 'M' => 'mensili', 'B' => 'bimestrali', 'T' => 'trimestrali', 'U' => 'quadrimestrali', 'S' => 'semestrali', 'A' => 'annuali'),

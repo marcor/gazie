@@ -200,6 +200,12 @@ function confirFae(link){
             $("#dialog_fae_content_RE").show();
             console.log(flux_status);
         break;
+        case "RZ":
+            $("#dialog_fae_content_RE").addClass("bg-info text-center");
+            $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p>");
+            $("#dialog_fae_content_RE").show();
+            console.log(flux_status);
+        break;
         default:
             console.log("errore: stato "+flux_status+" non identificato");
     }
@@ -501,6 +507,7 @@ $(function() {
                         // La fattura ha almeno un effetto emesso
                         $n_e++;
                         $map_eff = ['B' => ["la ricevuta bancaria generata", "RiBa", "riba"],
+                                    'I' => ["il RID generato", "RID", "rid"],
                                     'T' => ["la cambiale tratta generata", "Tratta", "cambiale"],
                                     'V' => ["il pagamento mediante avviso generato", "MAV", "avviso"]];
                         list($eff_desc, $eff, $eff_class) = isset($map_eff[$r_e["tipeff"]]) ? $map_eff[$r_e["tipeff"]] :
@@ -508,7 +515,7 @@ $(function() {
                         $visualizza_effetto_ft .= " <a class='btn btn-xs btn-default btn-$eff_class' style='font-size:10px;' title='Visualizza $eff_desc per il regolamento della fattura' href='stampa_effett.php?id_tes={$r_e['id_tes']}'> $eff {$r_e['progre']} </a>\n";
                     }
                     if ($n_e == 0 && $r["geneff"]<>'S') {
-                        if ($pagame["tippag"] == 'B' || $pagame["tippag"] == 'T' || $pagame["tippag"] == 'V') {
+                        if ($pagame["tippag"] == 'B' || $pagame["tippag"] == 'I' || $pagame["tippag"] == 'T' || $pagame["tippag"] == 'V') {
                             $genera_effetti_previsti = " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
                         }
                     }
@@ -578,14 +585,14 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                     $last_flux_status = 'ZI';  
                                 }
                             } else { //// installazione senza gestore dei flussi con il SdI
-                                $last_flux_status = 'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
+                                $last_flux_status =($zipped)?'RZ':'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
+                                $modulo_fae = 'fae_packaging.php?nolib';
                                 $sdihilight = 'default';
                                 $sdilabel = 'xml';
                             }                           
                             switch ($last_flux_status) {
                                 case "DI":
                                 $sdititle = 'Invia il file '.$r['fae_attuale'].' o pacchetto';
-                                $modulo_fae = 'fae_packaging.php';
                                 break;
                                 case "PC":
                                 $sdititle = 'Il file '.$r['fae_attuale'].' è stato inviato al Sistema di Interscambio, attendere l\'esito ';

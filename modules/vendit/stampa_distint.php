@@ -99,19 +99,23 @@ $pdf->setTopMargin(43);
 $pdf->setRiporti('');
 $pdf->AddPage();
 $ctrltipo="";
+$totaletipo=0;
 $totaleff=0.00;
 $totnumeff=0;
 $pdf->SetFont('helvetica','',8);
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 while ($a_row = gaz_dbi_fetch_array($result)) {
     if ($a_row["tipeff"] <> $ctrltipo){
-        if (isset($totaletipo))
-            $pdf->Cell(190,4,$totnumtipo.' '.$descreff.' per un totale di '.gaz_format_number($totaletipo),1,1,'R',1);
+        if ($totaletipo>=0.01) $pdf->Cell(190,4,$totnumtipo.' '.$descreff.' per un totale di '.gaz_format_number($totaletipo),1,1,'R',1);
         $totaletipo = 0.00;
         $totnumtipo = 0;
         switch($a_row['tipeff'])
             {
             case "B":
             $descreff = 'RICEVUTE BANCARIE ';
+            break;
+            case "I":
+            $descreff = 'RID ';
             break;
             case "T":
             $descreff = 'CAMBIALI TRATTE ';
@@ -127,6 +131,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $totaletipo += $a_row["impeff"];
     $cliente = $anagrafica->getPartner($a_row['clfoco']);
     $banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$a_row['banapp']);
+    $banapp=($banapp)?$banapp:array('descri'=>'','codabi'=>'','codcab'=>'','codpro'=>'','locali'=>'');
     $scadenza = substr($a_row['scaden'],8,2).'-'.substr($a_row['scaden'],5,2).'-'.substr($a_row['scaden'],0,4);
     $emission = substr($a_row['datemi'],8,2).'-'.substr($a_row['datemi'],5,2).'-'.substr($a_row['datemi'],0,4);
     $datafatt = substr($a_row['datfat'],8,2).'-'.substr($a_row['datfat'],5,2).'-'.substr($a_row['datfat'],0,4);
@@ -153,14 +158,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $pdf->setRiporti($aRiportare);
     $pdf->Cell(24,4,gaz_format_number($a_row["impeff"]),'RB',1,'R');
     //aggiorno il db solo se non � una ristampa
-    if ($a_row["status"] <> 'DISTINTATO')
-        {
+    if ($a_row["status"] <> 'DISTINTATO') {
         gaz_dbi_put_row($gTables['effett'], "id_tes",$a_row["id_tes"],"status",'DISTINTATO');
         gaz_dbi_put_row($gTables['effett'], "id_tes",$a_row["id_tes"],"banacc",$_GET['ba']);
-        }
+    }
     $ctrltipo = $a_row["tipeff"];
 }
-$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $pdf->setRiporti();
 $pdf->Cell(190,4,$totnumtipo.' '.$descreff.' per un totale di € '.gaz_format_number($totaletipo),1,1,'R',1);
 $pdf->SetFont('helvetica','B',12);

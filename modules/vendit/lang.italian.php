@@ -983,13 +983,15 @@ $strScript = array("admin_client.php" =>
         'type' => 'Tipo effetto',
         'type_value' => array('B' => ' la Ricevuta Bancaria',
             'T' => ' la Tratta',
-            'V' => ' il MAV'
+            'V' => ' il MAV',
+            'I' => ' il RID'
         ),
         'customer' => 'Cliente',
         'tot' => 'Totale',
         'total_value' => array('B' => ' Totale delle Ricevute Bancarie',
             'T' => ' Totale delle Tratte',
-            'V' => ' Totale dei MAV'
+            'V' => ' Totale dei MAV',
+            'I' => ' Totale dei RID'
         ),
         'gen' => 'generer&agrave;',
         'end' => 'con scadenza '
@@ -1016,7 +1018,7 @@ $strScript = array("admin_client.php" =>
         'reprint' => 'Distintato',
         'reprint_value' => array('S' => 'Si', 'N' => 'No'),
         'type' => 'Tipo effetti: ',
-        'type_value' => array('B' => 'Ricevute Bancarie', 'T' => 'Tratte', 'V' => 'MAV'),
+        'type_value' => array('B' => 'Ricevute Bancarie','I' => 'RID', 'T' => 'Tratte', 'V' => 'MAV'),
         'tot' => 'Totale della distinta'
     ),
     "select_filerb.php" =>
@@ -1140,6 +1142,7 @@ $strScript = array("admin_client.php" =>
         'link_5' => 'Distinta per banca',
         'link_6' => 'Genera file Ri.Ba.',
         'link_7' => 'Genera file MAV',
+        'link_8' => 'Genera file RID',
         'report' => 'Lista degli effetti',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
@@ -1157,7 +1160,7 @@ $strScript = array("admin_client.php" =>
         ),
         'progre' => 'Numero',
         'type' => 'Tipo',
-        'type_pay' => array('B' => 'Ri.Ba.', 'T' => 'Tratta', 'V' => 'Mediante Avviso (MAV)'),
+        'type_pay' => array('B' => 'Ri.Ba.', 'T' => 'Tratta', 'I' => 'RID', 'V' => 'Mediante Avviso (MAV)'),
         'clfoco' => 'Cliente',
         'date_emi' => 'Data di Emissione',
         'numfat' => 'Numero della Fattura',
@@ -1178,7 +1181,7 @@ $strScript = array("admin_client.php" =>
         'date_ini' => 'Data scadenza inizio  ',
         'num_fin' => 'Numero effetto fine ',
         'date_fin' => 'Data scadenza fine ',
-        'type_value' => array('B' => 'Ricevute Bancarie', 'T' => 'Tratte', 'V' => 'MAV'),
+        'type_value' => array('B' => 'Ricevute Bancarie', 'I' => 'RID', 'T' => 'Tratte', 'V' => 'MAV'),
         'header' => array('Num' => '', 'Scadenza' => '', 'Importo' => '',
             'Cliente' => '', 'Fattura' => '', 'Appoggio' => ''
         )

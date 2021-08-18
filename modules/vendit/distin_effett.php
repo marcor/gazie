@@ -319,12 +319,12 @@ if (isset($_POST['preview']) and $msg=='') {
            echo "</tr>";
         }
         echo "<tr>";
-        echo "<td class=\"FacetDataTD\"><A HREF=\"./update_effett.php?id_tes=".$v['id_tes']."\">".$v["progre"]."</A></td>";
+        echo "<td class=\"FacetDataTD\"><a href=\"./admin_effett.php?Update&id=".$v['id_tes']."\">".$v["progre"]."</A></td>";
         echo "<td class=\"FacetDataTD\">".$v["tipeff"]." </td>";
         echo "<td class=\"FacetDataTD\">".gaz_format_date($v["scaden"])."</td>";
         echo "<td class=\"FacetDataTD\" align=\"right\">".$admin_aziend['html_symbol'].' '.gaz_format_number($v["impeff"])." </td>";
         echo "<td class=\"FacetDataTD\">".$v["customer"]." </td>";
-        echo "<td class=\"FacetDataTD\"><A HREF=\"http://localhost/gazie/modules/vendit/admin_docven.php?id_tes=".$v['id_tes']."&Update\">n.".$v["numfat"]."/".$v["seziva"]." - ".gaz_format_date($v["datfat"])."</a></td>";
+        echo "<td class=\"FacetDataTD\">n.".$v["numfat"]."/".$v["seziva"]." - ".gaz_format_date($v["datfat"])."</td>";
         echo "<td class=\"FacetDataTD\">".$v["desban"]." </td>";
         echo "</tr>\n";
         echo "<tr>";

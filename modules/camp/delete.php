@@ -59,7 +59,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 		break;
 		case "campmovmag":
 			$i=intval($_POST['ref']);
-			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);$id_mov=$i;$campo_coltivazione=$form['campo_coltivazione'];// Antonio Germani 
+			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);$id_mov=$i;$luogo_produzione=$form['luogo_produzione'];// Antonio Germani 
 			// inizio cancellazione ore operaio	
 			// controllo se clfoco è un operaio e ne prendo l'id_staff
 			$res = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $form['clfoco']);
@@ -73,12 +73,12 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 				}	
 			} 
 			// fine cancellazione ore operaio
-			if ($campo_coltivazione>0) { // se c'è un campo di coltivazione aggiorno il giorno di sospensione
-				$form2 = gaz_dbi_get_row($gTables['campi'], 'codice', intval($campo_coltivazione));
+			if ($luogo_produzione>0) { // se c'è un campo di coltivazione aggiorno il giorno di sospensione
+				$form2 = gaz_dbi_get_row($gTables['campi'], 'codice', intval($luogo_produzione));
 				if (intval($form2['id_mov'])==intval($id_mov)){		
 					// prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione
 					$n=0;$array=array();
-					$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE campo_coltivazione ='". $campo_coltivazione."' AND operat ='-1' AND id_mov <> ".$form2['id_mov'];		
+					$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE luogo_produzione ='". $luogo_produzione."' AND operat ='-1' AND id_mov <> ".$form2['id_mov'];		
 					$result = gaz_dbi_query($query);
 					while($row = $result->fetch_assoc()) {
 						// cerco i giorni di sospensione del prodotto che si trovano in ogni movimento
@@ -103,11 +103,11 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 					if (isset ($array[0]['temp_deca']) && $n>0) { // se c'è un tempo decadimento nei movimenti di magazzino e c'è almeno un movimento
 						// aggiorno la tabella del campo di coltivazione con il movimento di magazzino che ha il decadimento più elevato
 						$dt=date('Y/m/d', $array[0]['temp_deca']);
-						$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt .  "' , codice_prodotto_usato = '"  .$array[0]['artico']. "' , id_mov = '"  .$array[0]['id_mov'].  "' WHERE codice ='". intval($campo_coltivazione)."'";
+						$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt .  "' , codice_prodotto_usato = '"  .$array[0]['artico']. "' , id_mov = '"  .$array[0]['id_mov'].  "' WHERE codice ='". intval($luogo_produzione)."'";
 						gaz_dbi_query ($query) ;
 					} else { // in tutti gli altri casi
 						// aggiorno la tabella del campo di coltivazione azzerando il decadimento e l'ID movimento che lo ha creato
-						$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . "" .  "' , codice_prodotto_usato = '"  ."". "' , id_mov = '"  ."".  "' WHERE codice ='". intval($campo_coltivazione)."'";
+						$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . "" .  "' , codice_prodotto_usato = '"  ."". "' , id_mov = '"  ."".  "' WHERE codice ='". intval($luogo_produzione)."'";
 						gaz_dbi_query ($query) ;
 					}
 				}

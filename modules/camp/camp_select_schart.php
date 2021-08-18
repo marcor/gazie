@@ -44,7 +44,7 @@ function getMovements($cm_ini,$cm_fin,$art_ini,$art_fin,$date_ini,$date_fin)
               $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
               $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".image, ".$gTables['artico'].".catmer ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON ".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice
-               LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".campo_coltivazione = ".$gTables['clfoco'].".codice
+               LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".luogo_produzione = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
                LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
         $rs=gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datreg ASC, id_mov ASC");

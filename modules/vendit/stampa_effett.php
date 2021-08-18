@@ -59,6 +59,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
     {
     $client = $anagrafica->getPartner($effetto['clfoco']);
     $banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$effetto['banapp']);
+    $banapp=($banapp)?$banapp:array('descri'=>'','codabi'=>'','codcab'=>'','codpro'=>'','locali'=>'');
     $banacc = $anagrafica->getPartner($effetto['banacc']);
     $impwords = $nuw->euro2assegno($effetto['impeff']);
     if ($effetto['salacc'] == 'S')
@@ -78,6 +79,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $numefftot = 0;
         }
     //a secondo del tipo di effetto stampo il relativo modulo
+    $ridmav=($effetto['tipeff']=='V')?'mav':'rid';
     switch($effetto['tipeff'])
     {
     //questo � il modulo delle ricevute bancarie
@@ -116,7 +118,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Cell(25,3,'',0,2);
         $pdf->Cell(25,12,'versata a mezzo ',0,0,'L');
         $pdf->SetFont('helvetica','',10);
-        $pdf->Cell(50,12,$banacc['ragso1'],0,1,'L');
+        $pdf->Cell(50,12,($banacc?$banacc['ragso1']:''),0,1,'L');
         $pdf->Cell(170,8,$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di € '.$effetto['totfat'],0,1,'R');
         $pdf->SetFont('helvetica','',7);
         $pdf->Cell(50,10,'INCASSARE TRAMITE',0,0,'C');
@@ -174,9 +176,10 @@ while ($effetto = gaz_dbi_fetch_array($result))
     break;
     //questo � il modulo delle cambiali tratte
     case "V":
+    case "I":
         $calc->payment_taxstamp($effetto['impeff'],$admin_aziend['perbol']);
         $impbol = $calc->pay_taxstamp;
-        $pdf->Image('mav.jpg',0,5+$passo*$numefftot,210);
+        $pdf->Image($ridmav.'.jpg',0,5+$passo*$numefftot,210);
         $pdf->SetXY(51,13+$numefftot*$passo);
         $pdf->SetFont('helvetica','B',7);
         $pdf->Cell(57,3,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2']);

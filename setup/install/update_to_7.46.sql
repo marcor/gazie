@@ -30,4 +30,15 @@ ALTER TABLE `gaz_XXXfae_flux`
 	CHANGE COLUMN `flux_descri` `flux_descri` TEXT NULL COMMENT 'Descrizione della notifica, ad esempio l\'errore causa dello scarto o del rifiuto' AFTER `progr_ret`;
 ALTER TABLE `gaz_XXXartico`
 	CHANGE COLUMN `preacq` `preacq` DECIMAL(14,5) NULL DEFAULT '0.00000' COMMENT 'Colonna utilizzata dal modulo ProduzionI (orderman) per indicare il costo di produzione in mancanza di movimenti di magazzino per acquisti. Sul modulo Acquisti (acquis) indica il prezzo di acquisto di un bene strumentale o servizio, e comunque di qualsiasi merce/servizio/strumento che non è presente in contabilità di magazzino (gaz_NNNmovmag).' AFTER `ragstat`;
+ALTER TABLE `gaz_XXXeffett`
+	ADD COLUMN `iban` VARCHAR(32) NULL DEFAULT NULL AFTER `banapp`;
+ALTER TABLE `gaz_XXXmovmag`
+	CHANGE COLUMN `campo_coltivazione` `luogo_produzione` INT(3) NOT NULL DEFAULT '0' COMMENT 'Referenza alla colonna codice della tabella edv_001campi (è il luogo di produzione e/o il campo di coltivazione e/o il magazzino di stoccaggio a secondo del modulo che lo utilizza)' AFTER `scorig`,
+	CHANGE COLUMN `id_avversita` `id_avversita` INT(3) NULL DEFAULT NULL COMMENT 'Avversità nel quaderno di campagna ma può essere usato per altri inconvenienti verificatesi nella movimentazione ' AFTER `luogo_produzione`,
+	CHANGE COLUMN `id_colture` `id_colture` INT(3) NULL DEFAULT NULL COMMENT 'Riferito al tipo di coltura e/o altre specifiche' AFTER `id_avversita`,
+	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_colture`,
+	ADD INDEX `luogo_produzione` (`luogo_produzione`),
+	ADD INDEX `id_avversita` (`id_avversita`);
+ALTER TABLE `gaz_XXXartico`
+	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `ref_ecommerce_id_product`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
