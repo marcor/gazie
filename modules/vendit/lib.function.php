@@ -398,7 +398,7 @@ class lotmag {
 	  }
 		  
       $sqlquery = "SELECT *, SUM(CASE WHEN caumag < 98 THEN (quanti*operat) ELSE 0 END)AS rest FROM " . $gTables['movmag'] . "
-            LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_mov =" . $gTables['lotmag'] . ".id_movmag
+            LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_lotmag =" . $gTables['lotmag'] . ".id
             WHERE ". $add_where . "artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " 
 			GROUP BY " . $gTables['movmag'] . ".id_lotmag 
 			ORDER BY " . $gTables['lotmag'] .".expiry" . $ob .", ". $gTables['lotmag'] . ".identifier" . $ob;

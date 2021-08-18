@@ -206,7 +206,7 @@ class lotmag {
          $ob = ' DESC'; // LIFO
       }
       $sqlquery = "SELECT *, SUM(quanti*operat) AS rest FROM " . $gTables['movmag'] . "
-            LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_mov =" . $gTables['lotmag'] . ".id_movmag  
+            LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_lotmag =" . $gTables['lotmag'] . ".id  
             WHERE " . $gTables['movmag'] . ".artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " GROUP BY " . $gTables['movmag'] . ".id_lotmag ORDER BY " . $gTables['movmag'] . ".datreg" . $ob;
       $result = gaz_dbi_query($sqlquery);
       $acc = array();
