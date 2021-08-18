@@ -54,8 +54,15 @@ if (isset($_SESSION['table_prefix'])) {
 
 }
 
-$result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
+$result = gaz_dbi_dyn_query("*", $table_prefix.'_admin', 1);
+while ($row = gaz_dbi_fetch_array($result)) {
+	gaz_dbi_query("INSERT INTO ". $table_prefix . "_anagra SET ragso1='" . $row['user_firstname']."', ragso2='" . $row['user_lastname']."', legrap_pf_nome='" . $row['user_firstname']."', legrap_pf_cognome='" . $row['user_lastname']."', e_mail='" . $row['user_email']."', telefo='" . $row['user_telephone']."'");		
+    $id_anagra=gaz_dbi_last_id();
+    gaz_dbi_put_row($table_prefix . "_admin",'user_id',$row['user_id'],'id_anagra',$id_anagra);
+    echo "<p>Il nome e cognome dell'utente <b>".$row['user_name']."</b> adesso è presente anche sul'archivio delle anagrafiche comuni (".$table_prefix."_anagra)</p>";
+}
 
+$result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
 while ($row = gaz_dbi_fetch_array($result)) {
 	$aziend_codice = sprintf("%03s", $row["codice"]);
 	// inizio controlli presenza di indici altrimenti li creo 
@@ -77,5 +84,4 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	}
 	// fine controlli - creazioni indici mancanti
 }
-
 ?>
