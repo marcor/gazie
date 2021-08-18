@@ -4,7 +4,7 @@ ALTER TABLE `gaz_camp_uso_fitofarmaci` ADD `numero_registrazione` INT(6) NOT NUL
 ALTER TABLE `gaz_camp_avversita` CHANGE COLUMN `id_avv` `id_avv` INT(3) NOT NULL AUTO_INCREMENT FIRST;
 ALTER TABLE `gaz_camp_colture` CHANGE COLUMN `id_colt` `id_colt` INT(3) NOT NULL AUTO_INCREMENT FIRST;
 ALTER TABLE `gaz_camp_uso_fitofarmaci` CHANGE COLUMN `id` `id` INT(4) NOT NULL AUTO_INCREMENT FIRST;
-ALTER TABLE `gaz_anagra` ADD `rif_abilitazione` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_SIAN`;
+ALTER TABLE `gaz_anagra` ADD `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_SIAN`;
 ALTER TABLE `gaz_admin`
 	ADD COLUMN `id_anagra` INT(9) NULL DEFAULT NULL COMMENT 'Riferimento alla tabella anagrafiche comuni (gaz_anagra)' AFTER `user_id`,
 	ADD INDEX `id_anagra` (`id_anagra`);
