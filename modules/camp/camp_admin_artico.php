@@ -368,13 +368,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$res_usofito = gaz_dbi_query($query);
 	$res_fito=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'NUMERO_REGISTRAZIONE', $form['id_reg']);
 	$form['nomefito']=($res_fito)?$res_fito['PRODOTTO']:'';
-	$form['categoria']=$camp['categoria'];
-	$form['etichetta']=$camp['etichetta'];
-	$form['biologico']=$camp['biologico'];
-	$form['estrazione']=$camp['estrazione'];
-	$form['or_spec']=$camp['or_spec'];
-	$form['or_macro']=$camp['or_macro'];
-	$form['confezione']=$camp['confezione'];
+	$form['categoria']=($camp)?$camp['categoria']:0;
+	$form['etichetta']=($camp)?$camp['etichetta']:0;
+	$form['biologico']=($camp)?$camp['biologico']:0;
+	$form['estrazione']=($camp)?$camp['estrazione']:0;
+	$form['or_spec']=($camp)?$camp['or_spec']:'';
+	$form['or_macro']=($camp)?$camp['or_macro']:0;
+	$form['confezione']=($camp)?$camp['confezione']:0;
 	$form['conferma'] = "";
 	if(!isset($form['or_spec'])){$form['or_spec']=0;} 
 	if($form['or_spec']=="Spagna"){$form['or_spec']=1;}
