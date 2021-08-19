@@ -231,7 +231,19 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['nome_colt'] = ($colt)?$form['id_colt'] . " - " . $colt['nome_colt']:'';
     $avv = gaz_dbi_get_row($gTables['camp_avversita'], "id_avv", $form['id_avv']);
     $form['nome_avv'][$form['mov']] = ($avv)?$form['id_avv'] . " - " . $avv['nome_avv']:'';
-    $form['fase_feno']="";
+	$form['fase_feno'][$form['mov']] = "";
+
+	if ($data=json_decode($result['custom_field'],true)){// se c'è un json nel custom_field
+		if (is_array($data['camp']) AND strlen($data['camp']['fase_fenologica'])>0){ // se è riferito al modulo camp
+			$form['fase_feno'][$form['mov']] = $data['camp']['fase_fenologica'];			
+		}
+	}
+	if (!$feno = gaz_dbi_get_row($gTables['company_data'], "var", "feno_json")){
+		$feno_json="";
+	} else {		
+		$feno_json = $feno['data'];
+	}
+	
 	$form['scochi'] = $result['scochi'];
     $form['giodoc'] = substr($result['datdoc'], 8, 2);
     $form['mesdoc'] = substr($result['datdoc'], 5, 2);
@@ -268,13 +280,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['clfoco'][$form['mov']] = $result['clfoco'];
     $form['status'] = $result['status'];
     $form['search_partner'] = ""; //Antonio Germani
-    $form['search_item'] = "";
+    $form['search_item'] = "";	
 	
-	if (!$feno = gaz_dbi_get_row($gTables['company_data'], "var", "feno_json")){
-		$feno_json="";
-	} else {
-		$feno_json = $feno['data'];
-	}
 	
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {    //     ****    SE NON E' IL PRIMO ACCESSO   ****
 
@@ -769,7 +776,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			}
         }/*  fine controllo righe articoli    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */		
 	
-        //  §§§§§§§§§§§§§§§§ INIZIO salvataggio sui database §§§§§§§§§§§§§§§§§§§
+        //  §§§§§§§§§§§§§§§§ INIZIO salvataggio sul database §§§§§§§§§§§§§§§§§§§
         if (empty($msg)) { // nessun errore
 			
             if ($toDo == "update") { // se è un update cancello eventule file di certificato lotto messo sulla cartella tmp
@@ -777,7 +784,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                     unlink($fn);
                 }
             }
-            $upd_mm = new magazzForm;
+          
             //formatto le date
             $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
             $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
@@ -800,18 +807,21 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						if ($form['adminid']>0){
 							$form['clfoco'][$form['mov']]=$form['adminid'];
 						}
-						$id_movmag=$upd_mm->uploadMag($form['id_rif'], $form['tipdoc'], 0, // numdoc � in desdoc
+						$data['camp']= array('fase_fenologica' => $form['fase_feno'][$form['mov']]);
+						$custom = json_encode($data);
+						
+						$id_movmag=$gForm->uploadMag($form['id_rif'], $form['tipdoc'], 0, // numdoc � in desdoc
 						0, // seziva � in desdoc
-						$form['datdoc'], $form['clfoco'][$form['mov']], $form['scochi'], $form['caumag'], $form['artico'][$form['mov']], $quanti, $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
+						$form['datdoc'], $form['clfoco'][$form['mov']], $form['scochi'], $form['caumag'], $form['artico'][$form['mov']], $quanti, $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']),'',0,0,0,$custom);
 						$id_rif=$id_movmag;
-						If ($form['id_mov'] > 0) {
+						if ($form['id_mov'] > 0) {
 							$id_movmag = $form['id_mov'];
 						} 
-						
+				
 						// se è stata inserita ACQUA
 						if (!empty($form['artico2'][$form['mov']]) AND $form['quanti2'][$form['mov']]>0) { // divido l'acqua per i campi e creo movimenti di uscita acqua per ogni campo
 							$quanti2=((($form['dim_campo'.$n]/$tot_sup)*100)*$form['quanti2'][$form['mov']])/100; // questa è la dose suddivisa in percentuale per il campo 
-							$id_movmag_acqua=$upd_mm->uploadMag($id_movmag, $form['tipdoc'], 0, 0, $form['datdoc'], $form['clfoco'][$form['mov']], 
+							$id_movmag_acqua=$gForm->uploadMag($id_movmag, $form['tipdoc'], 0, 0, $form['datdoc'], $form['clfoco'][$form['mov']], 
 							$form['scochi'], $form['caumag'], $form['artico2'][$form['mov']], $quanti2, $form['prezzo2'][$form['mov']], 
 							$form['scorig2'][$form['mov']], $form['id_mov2'], $admin_aziend['stock_eval_method'], 
 							array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
