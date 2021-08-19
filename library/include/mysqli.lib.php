@@ -275,11 +275,11 @@ function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit =
    global $session;
    $query = "SELECT " . $select . " FROM " . $tabella;
    if ($where != '') {
-      $query .= " WHERE $where ";
+      $query .= " WHERE ". $where;
    }
 
    if ($groupby != '') {
-      $query .= " GROUP BY $groupby ";
+      $query .= " GROUP BY ". $groupby;
    }
 
    if ($orderby == '2') {
@@ -800,6 +800,7 @@ function tableUpdate($table, $columns, $codice, $newValue) {
    } else { //altrimenti uso "codice"
       $query .= " WHERE codice = '$codice'";
    }
+   echo $query;
    //msgDebug($query);
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "782", __FUNCTION__ );
@@ -955,7 +956,7 @@ function tesmovInsert($newValue) {
 
 function movmagInsert($newValue) {
   $table = 'movmag';
-  $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'id_orderman', 'id_assets', 'quanti', 'prezzo', 'scorig', 'luogo_produzione', 'status', 'adminid');
+  $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'id_orderman', 'id_assets', 'quanti', 'prezzo', 'scorig', 'luogo_produzione', 'custom_field', 'status', 'adminid');
   $newValue['adminid'] = $_SESSION["user_name"];
   $last_id=tableInsert($table, $columns, $newValue);
 	// aggiorno l'e-commerce ove presente
@@ -973,7 +974,7 @@ function movmagInsert($newValue) {
 
 function movmagUpdate($codice, $newValue) {
   $table = 'movmag';
-  $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'id_orderman', 'id_assets', 'quanti', 'prezzo', 'scorig', 'luogo_produzione', 'status', 'adminid');
+  $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'id_orderman', 'id_assets', 'quanti', 'prezzo', 'scorig', 'luogo_produzione', 'custom_field', 'status', 'adminid');
   $newValue['adminid'] = $_SESSION["user_name"];
   tableUpdate($table, $columns, $codice, $newValue);
 	// aggiorno l'e-commerce ove presente
