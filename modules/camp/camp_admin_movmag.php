@@ -1133,14 +1133,28 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['datdocin'] = "";
     $form['adminid'] = $admin_aziend['id_anagra'];
 	if (intval($form['adminid'])>0){ // se l'amministratore è presente in anagrafica lo prendo
-	$form['adminname']=$admin_aziend['user_firstname']." ".$admin_aziend['user_lastname'];
+		$form['adminname']=$admin_aziend['user_firstname']." ".$admin_aziend['user_lastname'];
+		$rowanagra = gaz_dbi_get_row($gTables['anagra'], "id", $form['adminid']);
+		$form['rif_abilitazione'] = $rowanagra['custom_field'];
+		if ($data = json_decode($rowanagra['custom_field'], TRUE)){			
+			if (is_array($data['camp'])){
+				$form['patent_number'] = $data['camp']['numero'];
+				$form['patent_expiry'] = $data['camp']['scadenza'];
+			} else {
+				$form['patent_number'] = "";
+				$form['patent_expiry'] = "";
+			}
+		} else {
+			$form['patent_number'] = "";
+			$form['patent_expiry'] = "";
+		}	
 	} else {
 		$form['adminname']="";
-	}
-	$form['confermapat'][$form['adminid']] = "";
-	$form['rif_abilitazione'] = "";
-	$form['patent_number'] = "";
-	$form['patent_expiry'] = "";
+		$form['patent_number'] = "";
+		$form['patent_expiry'] = "";
+		$form['rif_abilitazione'] = "";
+	}	
+	$form['confermapat'][$form['adminid']] = "";	
     $form['tipdoc'] = "";
     $form['desdoc'] = "";
     $form['giodoc'] = date("d");
