@@ -24,6 +24,8 @@
  */
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
+require("../../modules/vendit/lib.function.php");
+require("../../modules/camp/lib.function.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
@@ -32,6 +34,7 @@ $calc = new Compute;
 $magazz = new magazzForm;
 $docOperat = $magazz->getOperators();
 $lm = new lotmag;
+$sil = new silos;
 $value_sian=array();
 $ddt = (object)[]; 
 $ddt->num_rows = 0;
@@ -559,7 +562,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$msg['err'][] = "norecipstocc"; // manca il recipiente di stoccaggio
 				}
 				if (strlen($value['recip_stocc'])>0){
-					$content=getCont($value['recip_stocc']);
+					$content=$sil->getCont($value['recip_stocc']);
 					if ($toDo == 'update'){
 						$content=$content-$value['quanti'];
 					}
@@ -569,7 +572,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					}
 				}
 				if (strlen($value['recip_stocc_destin'])>0){
-					$content=getCont($value['recip_stocc_destin']);
+					$content=$sil->getCont($value['recip_stocc_destin']);
 					if ($toDo == 'update'){
 						$content=$content-$value['quanti'];
 					}

@@ -179,71 +179,6 @@ class acquisForm extends GAzieForm {
 
 }
 
-class lotmag {
-
-   function __construct() {
-      $this->available = array();
-   }
-
-   function getLot($id) {
-// restituisce i dati relativi ad uno specifico lotto
-      global $gTables;
-      $sqlquery = "SELECT * FROM " . $gTables['lotmag'] . "
-            LEFT JOIN " . $gTables['movmag'] . " ON " . $gTables['lotmag'] . ".id_movmag =" . $gTables['movmag'] . ".id_mov  
-            WHERE " . $gTables['lotmag'] . ".id = '" . $id . "'";
-      $result = gaz_dbi_query($sqlquery);
-      $this->lot = gaz_dbi_fetch_array($result);
-      return $this->lot;
-   }
-
-   function getAvailableLots($codart, $excluded_movmag = 0) {
-// restituisce tutti i lotti non completamente venduti ordinandoli in base alla configurazione aziendale (FIFO o LIFO)
-// e propone una ripartizione, se viene passato un movimento di magazzino questo verrà escluso perché si suppone sia lo stesso
-// che si sta modificando
-      global $gTables, $admin_aziend;
-      $ob = ' ASC'; // FIFO-PWM-STANDARD
-      if ($admin_aziend['stock_eval_method'] == 2) {
-         $ob = ' DESC'; // LIFO
-      }
-      $sqlquery = "SELECT *, SUM(quanti*operat) AS rest FROM " . $gTables['movmag'] . "
-            LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_lotmag =" . $gTables['lotmag'] . ".id  
-            WHERE " . $gTables['movmag'] . ".artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " GROUP BY " . $gTables['movmag'] . ".id_lotmag ORDER BY " . $gTables['movmag'] . ".datreg" . $ob;
-      $result = gaz_dbi_query($sqlquery);
-      $acc = array();
-      $rs = false;
-      while ($row = gaz_dbi_fetch_array($result)) {
-         if ($row['rest'] >= 0.00001) { // l'articolo ha almeno un lotto caricato 
-            $rs = true;
-            $acc[] = $row;
-         }
-      }
-      $this->available = $acc;
-      return $rs;
-   }
-
-   function divideLots($quantity) {
-// riparto la quantità tra i vari lotti presenti se questi non sono sufficienti
-// ritorno il resto non assegnato 
-      $acc = array();
-      $rest = $quantity;
-      foreach ($this->available as $v) {
-         if ($v['rest'] >= $rest) { // c'è capienza
-            $acc[$v['id_lotmag']] = $v + array('qua' => $rest);
-         } elseif ($v['rest'] < $rest) { // non c'è capienza
-            $acc[$v['id_lotmag']] = $v + array('qua' => $v['rest']);
-         }
-         $rest -= $v['rest'];
-      }
-      $this->divided = $acc;
-      if ($rest >= 0.00001) {
-// ritorno il resto, quindi non ho abbastanza lotti per contenere la quantità venduta 
-         return $rest;
-      } else {
-         return NULL;
-      }
-   }
-}
-
 function getLastOrdPrice($codart,$supplier) {
 // restituisce l'ultimo prezzo d'acquisto dell'articolo al fornitore
 	$r=false;
@@ -258,28 +193,5 @@ function getLastOrdPrice($codart,$supplier) {
 	}
     return $r;
 }
-// controllo contenitori e silos
-function getCont($codsil){
-	global $gTables,$admin_aziend;
-	$content=0;
-	$orderby=2;
-	$limit=0;
-	$passo=2000000;
-	$where="recip_stocc = '".$codsil."'";
-	$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".
-			$gTables['camp_mov_sian'].".*, ".$gTables['camp_artico'].".confezione ";
-	$groupby= "";
-	$table=$gTables['camp_mov_sian']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = ".$gTables['camp_mov_sian'].".id_movmag
-										LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['movmag'].".artico
-	";
-	$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
-	while ($r = gaz_dbi_fetch_array($ressilos)) {
-		if ($r['confezione']==0){
-			$content=$content+($r['quanti']*$r['operat']);
-		} 
-	}
-	$content=number_format ($content,3);
-	
-	return $content ;
-}
+
 ?>
