@@ -800,7 +800,7 @@ function tableUpdate($table, $columns, $codice, $newValue) {
    } else { //altrimenti uso "codice"
       $query .= " WHERE codice = '$codice'";
    }
-   echo $query;
+   //echo $query;
    //msgDebug($query);
    $result = gaz_dbi_query($query);
    if (!$result) gaz_die ( $query, "782", __FUNCTION__ );
