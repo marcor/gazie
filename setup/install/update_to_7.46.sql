@@ -33,12 +33,27 @@ ALTER TABLE `gaz_XXXartico`
 ALTER TABLE `gaz_XXXeffett`
 	ADD COLUMN `iban` VARCHAR(32) NULL DEFAULT NULL AFTER `banapp`;
 ALTER TABLE `gaz_XXXmovmag`
-	CHANGE COLUMN `campo_coltivazione` `luogo_produzione` INT(3) NOT NULL DEFAULT '0' COMMENT 'Referenza alla colonna codice della tabella edv_001campi (è il luogo di produzione e/o il campo di coltivazione e/o il magazzino di stoccaggio a secondo del modulo che lo utilizza)' AFTER `scorig`,
+	CHANGE COLUMN `campo_coltivazione` `luogo_produzione` INT(3) NOT NULL DEFAULT '0' COMMENT 'Referenza alla colonna codice della tabella edv_001campi (è il luogo di produzione e/o il campo di coltivazione)' AFTER `scorig`,
 	CHANGE COLUMN `id_avversita` `id_avversita` INT(3) NULL DEFAULT NULL COMMENT 'Avversità nel quaderno di campagna ma può essere usato per altri inconvenienti verificatesi nella movimentazione ' AFTER `luogo_produzione`,
 	CHANGE COLUMN `id_colture` `id_colture` INT(3) NULL DEFAULT NULL COMMENT 'Riferito al tipo di coltura e/o altre specifiche' AFTER `id_avversita`,
 	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_colture`,
+    ADD COLUMN `id_wharehouse` INT(9) NULL DEFAULT NULL COMMENT 'Ref. alla tabella gaz_001wharehouse' AFTER `artico`,
 	ADD INDEX `luogo_produzione` (`luogo_produzione`),
+	ADD INDEX `id_wharehouse` (`id_wharehouse`),
 	ADD INDEX `id_avversita` (`id_avversita`);
 ALTER TABLE `gaz_XXXartico`
 	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `ref_ecommerce_id_product`;
+CREATE TABLE IF NOT EXISTS `gaz_XXXwharehouse` (
+  `id` int(3) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '',
+  `image` blob NOT NULL,
+  `web_url` varchar(255) DEFAULT NULL,
+  `custom_field` text COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}',
+  `note_other` varchar(50) DEFAULT NULL,
+  `adminid` varchar(20) NOT NULL DEFAULT '',
+  `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+ALTER TABLE `gaz_admin_module`
+	ADD COLUMN `custom_field` TEXT NULL COMMENT 'Usabile per contenere le scelte dell\'utente in ambito dello specifico modulo.Normalmente in formato json: {"nome_variabile":{"valore_variabile": {}}' AFTER `moduleid`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
