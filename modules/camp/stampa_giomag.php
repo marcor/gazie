@@ -139,7 +139,13 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		// Antonio Germani Inserisco superficie e coltura		
 		$pdf->Cell(10,6,str_replace('.', ',',($res)?$res['ricarico']:0),1);
 		$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', ($res)?$res['id_colture']:0);
-		$pdf->Cell(38,6,substr(($res4)?$res4['nome_colt']:'',0,40),1);
+		$fase="";
+		if ($data=json_decode($row['custom_field'],true)){// se c'è un json nel custom_field
+			if (is_array($data['camp']) AND strlen($data['camp']['fase_fenologica'])>0){ // se è riferito al modulo camp
+				$fase = " >> ".$data['camp']['fase_fenologica'];			
+			}
+		}
+		$pdf->Cell(38,6,substr(($res4)?$res4['nome_colt'].$fase:'',0,40),1);
 		// fine inserisco superficie, coltura	  
 	  
 		$pdf->Cell(58,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);

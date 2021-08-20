@@ -112,7 +112,8 @@ if (isset($_POST['feno']) AND strlen($_POST['add_feno'])>0) {
 		} else { // altrimenti la modifico aggiungengo la nuova fase a quelle già presenti
 			$feno_array[] = $_POST['add_feno'];
 			$feno_json = json_encode ($feno_array);
-			gaz_dbi_query("UPDATE " . $gTables['company_data'] . " SET data = '" . $feno_json . "' WHERE var = 'feno_json'"); 			
+			gaz_dbi_query("UPDATE " . $gTables['company_data'] . " SET data = '" . $feno_json . "' WHERE var = 'feno_json'");
+			$_POST['feno_json'] = $feno_json;
 		}
 	}	
 }
@@ -1205,8 +1206,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['staff'][$form['mov']] = "";
 	if (!$feno = gaz_dbi_get_row($gTables['company_data'], "var", "feno_json")){
 		$feno_json="";
-	} else {
-		
+	} else {		
 		$feno_json = $feno['data'];
 	}
 }
@@ -2465,7 +2465,7 @@ if (intval($form['nome_colt']) == 0) {
 </script>
 <?php
 // Antonio Germani questo serve per fare lo scroll all'ultimo movimento inserito
-if (isset($anchor["num"]) AND $anchor["num"]>0){ 
+if (isset($anchor["num"]) ){ 
 	echo "<script type='text/javascript'>\n" . "window.location.hash = '#{$anchor["num"]}';" . //◄■■■ JUMP TO LOCAL ANCHOR.
 	"</script>\n";
 }

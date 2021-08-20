@@ -209,12 +209,17 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datdoc"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
-    	
+		
 		// Antonio Germani inserico colonna campi di coltivazione, superficie, coltura
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['luogo_produzione']." - ".$a_row['descamp']." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$a_row["superf"])." &nbsp;</td>\n";
-		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['id_colture']." - ".$a_row["nome_colt"]." &nbsp;</td>\n";
-					
+		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['id_colture']." - ".$a_row["nome_colt"]." &nbsp";
+		if ($data=json_decode($a_row['custom_field'],true)){// se c'è un json nel custom_field
+			if (is_array($data['camp']) AND strlen($data['camp']['fase_fenologica'])>0){ // se è riferito al modulo camp
+				echo "<br>Fase fenologica: ", $data['camp']['fase_fenologica'];			
+			}
+		}
+    	echo "</td>\n";			
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["artico"]." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])." ".$a_row["unimis"]."</td>\n";
 		if ($acqua['quanti']>0){
