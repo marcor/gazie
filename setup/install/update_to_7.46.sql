@@ -38,9 +38,9 @@ ALTER TABLE `gaz_XXXmovmag`
 	CHANGE COLUMN `id_colture` `id_colture` INT(3) NULL DEFAULT NULL COMMENT 'Riferito al tipo di coltura e/o altre specifiche' AFTER `id_avversita`,
 	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_colture`,
     ADD COLUMN `id_wharehouse` INT(9) NULL DEFAULT NULL COMMENT 'Ref. alla tabella gaz_001wharehouse' AFTER `artico`,
-	ADD INDEX `luogo_produzione` (`luogo_produzione`),
-	ADD INDEX `id_wharehouse` (`id_wharehouse`),
-	ADD INDEX `id_avversita` (`id_avversita`);
+	ADD INDEX (`luogo_produzione`),
+	ADD INDEX (`id_wharehouse`),
+	ADD INDEX (`id_avversita`);
 ALTER TABLE `gaz_XXXartico`
 	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `ref_ecommerce_id_product`;
 CREATE TABLE IF NOT EXISTS `gaz_XXXwharehouse` (
@@ -56,4 +56,8 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXwharehouse` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 ALTER TABLE `gaz_admin_module`
 	ADD COLUMN `custom_field` TEXT NULL COMMENT 'Usabile per contenere le scelte dell\'utente in ambito dello specifico modulo.Normalmente in formato json: {"nome_variabile":{"valore_variabile": {}}' AFTER `moduleid`;
+ALTER TABLE `gaz_001effett`
+	ADD COLUMN `id_distinta` INT(4) NULL DEFAULT NULL COMMENT 'Quando usato è il riferimento alla distinta degli effetti (normalmente contenuta in gaz_001company_data) ' AFTER `id_con`,
+	ADD INDEX (`id_distinta`),
+	ADD INDEX (`id_con`);    
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
