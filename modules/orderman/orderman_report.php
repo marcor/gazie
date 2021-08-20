@@ -216,17 +216,22 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			<td align="center"><?php echo $script_transl['order_type'][$r['order_type']];?></td>
 			<td align="center"><?php echo $r['add_info'];?></td>
 			<?php $d_row = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $r['id_rigbro']);?>
-			<td align="center"><?php echo $d_row['codart'];?></td>
+			<td align="center"><?php echo ($d_row)?$d_row['codart']:'';?></td>
 			
 			<!-- Colonna quantità prodotta -->
-			<?php $e_row = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $r['id'], "AND operat = 1");
-			$f_row = gaz_dbi_get_row($gTables['lotmag'], "id_movmag", $e_row['id_mov']);?>
-
-			<td align="center"><?php echo gaz_format_quantity($e_row['quanti'] ) ." su ". gaz_format_quantity($d_row['quanti'], true, $admin_aziend['decimal_quantity']);?></td>
-			
-
 			<?php 
-			if ($f_row && strlen($f_row['identifier'])>0) {
+			$e_row = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $r['id'], "AND operat = 1");
+			if ($e_row){
+				$f_row = gaz_dbi_get_row($gTables['lotmag'], "id_movmag", $e_row['id_mov']);
+				?>
+				<td align="center"><?php echo gaz_format_quantity($e_row['quanti'] ) ." su ". gaz_format_quantity($d_row['quanti'], true, $admin_aziend['decimal_quantity']);?></td>
+				<?php
+			} else {
+				?><td></td><?php
+			}
+
+		
+			if (isset($f_row) && strlen($f_row['identifier'])>0) {
 				echo '<td align="center">'.$f_row['identifier'].' - '.gaz_format_date($f_row['expiry']).'</td>';
 			} else {
 				echo '<td></td>';
@@ -234,8 +239,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			?>
 			<!-- Antonio Germani Vado a leggere la tabella tesbro connessa alla produzione -->
 			<?php $b_row = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $r['id_tesbro']);?>
-			<td align="center"><?php echo $b_row['numdoc'];?></td>
-			<td align="center"><?php echo gaz_format_date($b_row['datemi']);?></td>
+			<td align="center"><?php echo ($b_row)?$b_row['numdoc']:'';?></td>
+			<td align="center"><?php echo gaz_format_date(($b_row)?$b_row['datemi']:'');?></td>
 			<td align="center"><?php echo $r['duration'];?></td>
 			<!-- Antonio Germani Vado a leggere la descrizione del campo connesso alla produzione -->
 			<?php $c_row = gaz_dbi_get_row($gTables['campi'], "codice", $r['campo_impianto']);?>

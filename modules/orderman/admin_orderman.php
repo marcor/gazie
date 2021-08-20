@@ -859,27 +859,29 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['add_info'] = $result['add_info'];
     $form['day_of_validity'] = $result['duration'];
     $result4 = gaz_dbi_get_row($gTables['movmag'], "id_orderman", intval($_GET['codice']), "AND operat ='1'");
-    $form['datreg'] = $result4['datreg'];
-    $form['quantip'] = $result4['quanti'];
-    $form['id_movmag'] = $result4['id_mov'];
+    $form['datreg'] = ($result4)?$result4['datreg']:'';
+    $form['quantip'] = ($result4)?$result4['quanti']:0;
+    $form['id_movmag'] = ($result4)?$result4['id_mov']:0;
     $resmov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['id_movmag']);
     $form['cod_operazione'] =($resmov_sian)?$resmov_sian['cod_operazione']:'';
     $form['recip_stocc'] =($resmov_sian)?$resmov_sian['recip_stocc']:'';
     $form['recip_stocc_destin'] =($resmov_sian)?$resmov_sian['recip_stocc_destin']:'';
     $result2 = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $result['id_tesbro']);
-    $form['gioinp'] = substr($result2['datemi'], 8, 2);
-    $form['mesinp'] = substr($result2['datemi'], 5, 2);
-    $form['anninp'] = substr($result2['datemi'], 0, 4);
-    $form['datemi'] = $result2['datemi'];
+    $form['gioinp'] = substr(($result2)?$result2['datemi']:'', 8, 2);
+    $form['mesinp'] = substr(($result2)?$result2['datemi']:'', 5, 2);
+    $form['anninp'] = substr(($result2)?$result2['datemi']:'', 0, 4);
+    $form['datemi'] = ($result2)?$result2['datemi']:'';
     $form['campo_impianto'] = $result['campo_impianto'];
     $form['id_lotmag'] = $result['id_lotmag'];
-    $form['order'] = $result2['numdoc'];	
+    $form['order'] = ($result2)?$result2['numdoc']:0;
+	if (isset($result2['clfoco'])){
     $res3 = gaz_dbi_get_row($gTables['clfoco'], "codice", $result2['clfoco']);// importo il nome del cliente dell'ordine
-    $form['coseor'] = $result2['id_tes'];
-    $form['id_tes'] = $result2['id_tes'];
+	}
+    $form['coseor'] = ($result2)?$result2['id_tes']:0;
+    $form['id_tes'] = ($result2)?$result2['id_tes']:0;
     $result3 = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $result['id_rigbro']);
-    $form['codart'] = $result3['codart'];
-    $form['quantipord'] = $result3['quanti'];
+    $form['codart'] = ($result3)?$result3['codart']:'';
+    $form['quantipord'] = ($result3)?$result3['quanti']:'';
     $result5 = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
     $form['identifier'] =($result5)?$result5['identifier']:'';
     $form['expiry'] =($result5)?$result5['expiry']:'';
@@ -1530,7 +1532,7 @@ if ($form['order_type'] == "AGR") {
 } else {
     print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td>";
 }
-print "<td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\"  value=\"" . $form['day_of_validity'] . "\"  /></td></tr>\n";
+print "<td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\"  size=\"10\" value=\"" . $form['day_of_validity'] . "\"  /></td></tr>\n";
 /*Antonio Germani LUOGO di produzione  */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 		// SELECT luogo di produzione da campi
