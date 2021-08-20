@@ -24,7 +24,8 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-require("../../library/include/CBIPaymentRequest.inc.php");
+require("../../library/include/CbiSepa.inc.php");
+$CBIBdyPaymentRequest = new CbiSepa();
 $id_tes=intval($_GET['id_tes']);
 // riprendo sia la testata del movimento contabile che le partite contenute nel pagamento
 $result = gaz_dbi_dyn_query($gTables['tesmov'].'.*, '.$gTables['rigmoc'].'.import, '.$gTables['anagra'].'.ragso1, '.$gTables['anagra'].'.ragso2, '.$gTables['clfoco'].'.iban', $gTables['rigmoc'].' LEFT JOIN '.$gTables['tesmov'].' ON '.$gTables['rigmoc'].'.id_tes = '.$gTables['tesmov'].'.id_tes LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['rigmoc'].'.codcon = '.$gTables['clfoco'].'.codice LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $gTables['tesmov'].'.id_tes = '.$id_tes." AND codcon BETWEEN ".$admin_aziend['mas_staff']."000000 AND ".$admin_aziend['mas_staff'].'999999','id_rig');
@@ -36,5 +37,5 @@ while($r=gaz_dbi_fetch_array($result)){
 $result = gaz_dbi_dyn_query($gTables['clfoco'].'.codice', $gTables['tesmov'].' LEFT JOIN '.$gTables['rigmoc'].' ON '.$gTables['tesmov'].'.id_tes = '.$gTables['rigmoc'].'.id_tes LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['rigmoc'].'.codcon = '.$gTables['clfoco'].'.codice LEFT JOIN '.$gTables['banapp'].' ON '.$gTables['clfoco'].'.banapp = '.$gTables['banapp'].'.codice ', $gTables['tesmov'].'.id_tes = '.intval($_GET['id_tes']).' AND '.$gTables['rigmoc'].".darave = 'A'" ,$gTables['tesmov'].'.id_tes',0,1);
 $b=gaz_dbi_fetch_array($result);
 $h=array('bank'=>$b['codice'],'CtgyPurpCd'=>'SALA');
-create_XML_CBIPayment($gTables,$h,$d);
+$CBIBdyPaymentRequest->create_XML_CBIPaymentRequest($gTables,$h,$d);
 ?>
