@@ -154,14 +154,17 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     }
     $form['nmov'] = $_POST['nmov'];
     $form['nmovdb'] = $_POST['nmovdb'];
+	/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
     for ($m = 0;$m <= $form['nmov'];++$m) {
         $form['staff'][$m] = $_POST['staff' . $m];
     }
+	
     if ($toDo == "update" && $form['order_type']!="AGR") { // se update e non è produzione agricola mantengo il codice staff memorizzato inizialmente nel data base
         for ($m = 0;$m <= $form['nmovdb'];++$m) {
             $form['staffdb'][$m] = $_POST['staffdb' . $m];
         }
     }
+	*/
     $form['filename'] = $_POST['filename'];
     $form['identifier'] = $_POST['identifier'];
     $form['expiry'] = $_POST['expiry'];
@@ -206,6 +209,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			$form['amLot0']="";
 		}
     } 
+	/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
     // Antonio Germani > questo serve per aggiungere o togliere un operaio
     if (isset($_POST['add_staff'])) {
         $form['nmov'] = $_POST['nmov'];
@@ -221,6 +225,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             $form['nmov'] = $form['nmov'] - 1;
         }
     }
+	*/
     // Se viene inviata la richiesta di conferma totale ... ******   CONTROLLO ERRORI   ******
     $form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
     if (isset($_POST['ins'])) { 
@@ -284,9 +289,11 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             if ($form['quantip'] == 0) { // quantità produzione vuota
                 $msg.= "17+";
             }
+			/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
             if ($form['staff'][0] > 0 && $form['day_of_validity'] > 13) { // D. Lgs. 66/2003 > massimo ore giornaliere lavorabili = 13
                 $msg.= "18+";
             }
+			*/
             if (intval($form['datreg']) == 0) { // se manca la data di registrazione
                 $msg.= "22+";
             }
@@ -529,6 +536,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 } // altrimenti se il file non è cambiato, anche se è update, non faccio nulla
 				// <<< fine salvo lotti                
             }
+			/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
         // *** INIZIO gestione salvataggio database operai
             for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) { // per ogni operaio
                 if (intval($form['staff'][$form['mov']]) > 0) { // se il codice operaio esiste
@@ -756,6 +764,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 }
             }
             // FINE registrazione database operai
+			*/
             // Antonio Germani - Inizio Scrittura produzione ORDERMAN e, se non già creati da un ordine, creazione di ordine fittizio con scrittura di TESBRO E RIGBRO
             if ($toDo == 'update') { //  se e' una modifica, aggiorno orderman e tesbro
                 $query = "UPDATE " . $gTables['orderman'] . " SET order_type = '" . $form['order_type'] . "', description = '" . $form['description'] . "', campo_impianto = '" . $form["campo_impianto"] . "', id_lotmag = '" . $form['id_lotmag'] . "', add_info = '" . $form['add_info'] . "', duration = '" . $form['day_of_validity'] . "' WHERE id = '" . $form['id'] . "'";
@@ -914,12 +923,13 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             }
         }
     }
-    // se presenti, prendo gli operai
-    $query = "SELECT " . '*' . " FROM " . $gTables['staff_worked_hours'] . " WHERE id_orderman = " . intval($_GET['codice']);
-    $result6 = gaz_dbi_query($query);
-    $form['mov'] = 0;
+	$form['mov'] = 0;
     $form['nmov'] = 0;
     $form['nmovdb'] = 0;
+	/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
+    // se presenti, prendo gli operai
+    $query = "SELECT " . '*' . " FROM " . $gTables['staff_worked_hours'] . " WHERE id_orderman = " . intval($_GET['codice']);
+    $result6 = gaz_dbi_query($query);    
     $form['staff'][$form['mov']] = "";
     $form['staffdb'][$form['mov']] = "";
     if ($result6->num_rows > 0) {
@@ -931,6 +941,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         $form['nmov'] = $form['mov'] - 1;
         $form['nmovdb'] = $form['mov'] - 1;
     }
+	*/
     $form['cosear'] = "";
 
 } else {                 //                  **   se e' il primo accesso per INSERT    **
@@ -956,7 +967,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['mov'] = 0;
     $form['nmov'] = 0;
     $form['nmovdb'] = 0;
-    $form['staff'][$form['mov']] = "";
+    //$form['staff'][$form['mov']] = "";
     $form['filename'] = "";
     $form['identifier'] = "";
     $form['expiry'] = "";
@@ -992,7 +1003,7 @@ if (isset($_POST['Cancel'])) { // se è stato premuto ANNULLA
     $form['mov'] = 0;
     $form['nmov'] = 0;
     $form['nmovdb'] = 0;
-    $form['staff'][$form['mov']] = "";
+    //$form['staff'][$form['mov']] = "";
     $form['filename'] = "";
     $form['identifier'] = "";
     $form['expiry'] = "";
@@ -1539,6 +1550,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td cl
 		$gForm->selectFromDB('campi', 'campo_impianto','codice', $form['campo_impianto'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
 echo "</td></tr>";
 if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
+/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
     // Antonio Germani selezione operai
     if ($toDo == "update") { // mantengo il codice staff memorizzato inizialmente nel data base
         echo '<tr><td>';
@@ -1560,7 +1572,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
             echo "<input type=\"submit\" title=\"Togli ultimo operaio\" name=\"Del_mov\" value=\"X\">\n";
         }
     }
-
+*/
     $form['mov'] = $form['nmov'];
     echo "<input type=\"hidden\" name=\"nmovdb\" value=\"" . $form['nmovdb'] . "\">\n";
     echo "<input type=\"hidden\" name=\"nmov\" value=\"" . $form['nmov'] . "\">\n</td></tr>";
@@ -1672,7 +1684,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 } else { //se è produzione agricola
     print "<tr><td><input type=\"hidden\" name=\"nmov\" value=\"0\">";
     print "<input type=\"hidden\" name=\"nmovdb\" value=\"\">\n";
-    print "<input type=\"hidden\" name=\"staff0\" value=\"\">\n";
+   // print "<input type=\"hidden\" name=\"staff0\" value=\"\">\n";
     print "<input type=\"hidden\" name=\"filename\" value=\"\">\n";
     print "<input type=\"hidden\" name=\"expiry\" value=\"\">\n";
     print "<input type=\"hidden\" name=\"identifier\" value=\"\">\n";
