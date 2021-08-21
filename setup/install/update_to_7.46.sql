@@ -8,6 +8,8 @@ ALTER TABLE `gaz_anagra` ADD `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Rife
 ALTER TABLE `gaz_admin`
 	ADD COLUMN `id_anagra` INT(9) NULL DEFAULT NULL COMMENT 'Riferimento alla tabella anagrafiche comuni (gaz_anagra)' AFTER `user_id`,
 	ADD INDEX `id_anagra` (`id_anagra`);
+ALTER TABLE `gaz_admin_module`
+	ADD COLUMN `custom_field` TEXT NULL COMMENT 'Usabile per contenere le scelte dell\'utente in ambito dello specifico modulo.Normalmente in formato json: {"nome_variabile":{"valore_variabile": {}}' AFTER `moduleid`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `durability` INT(4) NOT NULL DEFAULT '0' COMMENT 'Durabilità anche se solo presunta espressa in unità di misura specificata nel campo successivo' AFTER `maintenance_period`,
 	ADD COLUMN `durability_mu` VARCHAR(1) NULL DEFAULT NULL COMMENT 'Unità di misura della durabilità di cui al campo precedente (H=ore,D=giorni,M=mesi) nel caso di durabilità alimenti (<=minore di,>=maggiore di)' AFTER `durability`,
@@ -54,13 +56,10 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXwharehouse` (
   `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-ALTER TABLE `gaz_admin_module`
-	ADD COLUMN `custom_field` TEXT NULL COMMENT 'Usabile per contenere le scelte dell\'utente in ambito dello specifico modulo.Normalmente in formato json: {"nome_variabile":{"valore_variabile": {}}' AFTER `moduleid`;
 ALTER TABLE `gaz_XXXeffett`
 	ADD COLUMN `id_distinta` INT(4) NULL DEFAULT NULL COMMENT 'Quando usato è il riferimento alla distinta degli effetti (normalmente contenuta in gaz_001company_data) ' AFTER `id_con`,
 	ADD INDEX (`id_distinta`),
 	ADD INDEX (`id_con`); 
-UPDATE gaz_XXXtesbro SET initra=datemi WHERE tipdoc='PRO' AND id_orderman > 0; 
 ALTER TABLE `gaz_XXXstaff_worked_hours`	COMMENT='Tabella contenente i dati per la generazione del "Registro delle presenze", ossia dei riepiloghi giornalieri delle ore/tipo di lavoro eseguito da ciascun lavoratore. Può essere scritta manualente dalla apposita interfaccia o, eventualemente, generata a fine mese dai movimenti registrati su gaz_001staff_work_movements a sua volta frutto di inserimento manuale o se collegato tramite un marcatempo a badge.',
 	ADD COLUMN `id` INT(9) NOT NULL AUTO_INCREMENT FIRST,
 	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_tes`,
@@ -83,5 +82,8 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXstaff_work_movements` (
   KEY `id_tes` (`id_staff_worked_hours`) USING BTREE,
   KEY `end_work` (`end_work`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Tabella contenente i singoli movimenti del lavoratore. Può essere scritta manualente dalla apposita interfaccia o, se collegato, tramite un marcatempo a badge. Offre la possibilità di indicare la produzione/commessa (id_orderman) sulla quale sta lavorando.';
-    
+ALTER TABLE `gaz_XXXorderman`
+	ADD COLUMN `start_work` DATETIME NULL AFTER `id_staff_def`,
+	ADD COLUMN `end_work` DATETIME NULL AFTER `start_work`; 
+UPDATE gaz_XXXorderman SET start_work=(SELECT datemi FROM gaz_XXXtesbro WHERE gaz_XXXorderman.id_tesbro = gaz_XXXtesbro.id_tes LIMIT 1) WHERE gaz_XXXorderman.id_tesbro > 0;     
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
