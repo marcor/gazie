@@ -33,12 +33,12 @@ ALTER TABLE `gaz_XXXartico`
 ALTER TABLE `gaz_XXXeffett`
 	ADD COLUMN `iban` VARCHAR(32) NULL DEFAULT NULL AFTER `banapp`;
 ALTER TABLE `gaz_XXXmovmag`
-	CHANGE COLUMN `campo_coltivazione` `luogo_produzione` INT(3) NOT NULL DEFAULT '0' COMMENT 'Referenza alla colonna codice della tabella edv_001campi (è il luogo di produzione e/o il campo di coltivazione)' AFTER `scorig`,
-	CHANGE COLUMN `id_avversita` `id_avversita` INT(3) NULL DEFAULT NULL COMMENT 'Avversità nel quaderno di campagna ma può essere usato per altri inconvenienti verificatesi nella movimentazione ' AFTER `luogo_produzione`,
+	CHANGE COLUMN `campo_coltivazione` `campo_impianto` INT(3) NOT NULL DEFAULT '0' COMMENT 'Referenza alla colonna codice della tabella edv_001campi, è il luogo o campo di produzione' AFTER `scorig`,
+	CHANGE COLUMN `id_avversita` `id_avversita` INT(3) NULL DEFAULT NULL COMMENT 'Avversità nel quaderno di campagna ma può essere usato per altri inconvenienti verificatesi nella movimentazione ' AFTER `campo_impianto`,
 	CHANGE COLUMN `id_colture` `id_colture` INT(3) NULL DEFAULT NULL COMMENT 'Riferito al tipo di coltura e/o altre specifiche' AFTER `id_avversita`,
 	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_colture`,
     ADD COLUMN `id_wharehouse` INT(9) NULL DEFAULT NULL COMMENT 'Ref. alla tabella gaz_001wharehouse' AFTER `artico`,
-	ADD INDEX (`luogo_produzione`),
+	ADD INDEX (`campo_impianto`),
 	ADD INDEX (`id_wharehouse`),
 	ADD INDEX (`id_avversita`);
 ALTER TABLE `gaz_XXXartico`
@@ -56,9 +56,32 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXwharehouse` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 ALTER TABLE `gaz_admin_module`
 	ADD COLUMN `custom_field` TEXT NULL COMMENT 'Usabile per contenere le scelte dell\'utente in ambito dello specifico modulo.Normalmente in formato json: {"nome_variabile":{"valore_variabile": {}}' AFTER `moduleid`;
-ALTER TABLE `gaz_001effett`
+ALTER TABLE `gaz_XXXeffett`
 	ADD COLUMN `id_distinta` INT(4) NULL DEFAULT NULL COMMENT 'Quando usato è il riferimento alla distinta degli effetti (normalmente contenuta in gaz_001company_data) ' AFTER `id_con`,
 	ADD INDEX (`id_distinta`),
 	ADD INDEX (`id_con`); 
-UPDATE gaz_XXXtesbro SET initra=datemi WHERE tipdoc='PRO' AND id_orderman > 0;    
+UPDATE gaz_XXXtesbro SET initra=datemi WHERE tipdoc='PRO' AND id_orderman > 0; 
+ALTER TABLE `gaz_XXXstaff_worked_hours`	COMMENT='Tabella contenente i dati per la generazione del "Registro delle presenze", ossia dei riepiloghi giornalieri delle ore/tipo di lavoro eseguito da ciascun lavoratore. Può essere scritta manualente dalla apposita interfaccia o, eventualemente, generata a fine mese dai movimenti registrati su gaz_001staff_work_movements a sua volta frutto di inserimento manuale o se collegato tramite un marcatempo a badge.',
+	ADD COLUMN `id` INT(9) NOT NULL AUTO_INCREMENT FIRST,
+	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_tes`,
+	ADD PRIMARY KEY (`id`);
+CREATE TABLE IF NOT EXISTS `gaz_XXXstaff_work_movements` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `id_staff` int(3) NOT NULL DEFAULT '0',
+  `start_work` datetime DEFAULT NULL,
+  `end_work` datetime DEFAULT NULL,
+  `id_work_type` int(3) NOT NULL DEFAULT '0' COMMENT 'Quando riferito forza la scelta automatica. Esempio ''nromale'', straordinario, notturno',
+  `min_delay` decimal(3,1) NOT NULL DEFAULT '0.0' COMMENT 'Minuti di ritardo',
+  `note` varchar(255) DEFAULT NULL,
+  `id_orderman` int(9) DEFAULT NULL COMMENT 'sarà legato al piano dei conti per gestire le commesse (centri di costo)',
+  `id_staff_worked_hours` int(9) DEFAULT NULL COMMENT 'Se maggiore di 0 il rigo è già stato usato per calcolare il valore del rigo a cui si riferisce su gaz_001_staff_worked_hours',
+  `custom_field` text COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `id_staff` (`id_staff`) USING BTREE,
+  KEY `id_orderman` (`id_orderman`) USING BTREE,
+  KEY `work_day` (`start_work`) USING BTREE,
+  KEY `id_tes` (`id_staff_worked_hours`) USING BTREE,
+  KEY `end_work` (`end_work`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='Tabella contenente i singoli movimenti del lavoratore. Può essere scritta manualente dalla apposita interfaccia o, se collegato, tramite un marcatempo a badge. Offre la possibilità di indicare la produzione/commessa (id_orderman) sulla quale sta lavorando.';
+    
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
