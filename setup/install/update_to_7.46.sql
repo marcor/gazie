@@ -59,5 +59,6 @@ ALTER TABLE `gaz_admin_module`
 ALTER TABLE `gaz_001effett`
 	ADD COLUMN `id_distinta` INT(4) NULL DEFAULT NULL COMMENT 'Quando usato è il riferimento alla distinta degli effetti (normalmente contenuta in gaz_001company_data) ' AFTER `id_con`,
 	ADD INDEX (`id_distinta`),
-	ADD INDEX (`id_con`);    
+	ADD INDEX (`id_con`); 
+UPDATE gaz_XXXtesbro SET initra=datemi WHERE tipdoc='PRO' AND id_orderman > 0;    
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

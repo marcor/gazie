@@ -118,7 +118,7 @@ $recordnav -> output();
             <tr>
 <?php 
 	$groupby= "codice";
-	$result = gaz_dbi_dyn_query ('*', $gTables['campi']. ' LEFT JOIN ' . $gTables['movmag'] . ' ON ' . $gTables['movmag'] . '.luogo_produzione = ' . $gTables['campi'] . '.codice', $where, $orderby, $limit, $passo, $groupby);
+	$result = gaz_dbi_dyn_query ('*', $gTables['campi']. ' LEFT JOIN ' . $gTables['movmag'] . ' ON ' . $gTables['movmag'] . '.campo_impianto = ' . $gTables['campi'] . '.codice', $where, $orderby, $limit, $passo, $groupby);
 	// creo l'array (header => campi) per l'ordinamento dei record
 	$headers_campi = array("Codice"      => "codice",
 							"Descrizione" => "descri",
@@ -162,7 +162,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			
 			<td align="center">
 			<?php 
-			if (intval ($a_row['luogo_produzione'])>0) {
+			if (intval ($a_row['campo_impianto'])>0) {
 				?>
 				<button title="Luogo non cancellabile perche' ha movimenti di magazzino" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
 				<?php

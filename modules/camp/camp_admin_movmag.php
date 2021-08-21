@@ -123,7 +123,7 @@ if (isset($_POST['erase2']) ) {
     $_POST['description'] = "";
     $_POST['id_colture'] = 0;
     $_POST['nome_colt'] = "";
-    $_POST['luogo_produzione'] = "";
+    $_POST['campo_impianto'] = "";
 	$_POST['id_orderman'] = "";
 	$_POST['coseprod']="";
 	$_form['coseprod']="";  
@@ -183,7 +183,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['gioreg'] = substr($result['datreg'], 8, 2);
     $form['mesreg'] = substr($result['datreg'], 5, 2);
     $form['annreg'] = substr($result['datreg'], 0, 4);
-    $form['luogo_produzione1'] = $result['luogo_produzione']; //campo di coltivazione
+    $form['campo_impianto1'] = $result['campo_impianto']; //campo di coltivazione
 	$form['ncamp']=1;
 	$n=1;
     $form['clfoco'][$form['mov']] = $result['clfoco'];
@@ -407,14 +407,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$nmax=$form['ncamp'];
 	$nn=0;
 	for ($n = 1;$n <= $nmax;++$n) {
-		if (!isset($_POST['luogo_produzione'.$n])){
-			$form['luogo_produzione'.$n]=""; $form['ncamp']--;
+		if (!isset($_POST['campo_impianto'.$n])){
+			$form['campo_impianto'.$n]=""; $form['ncamp']--;
 		} else {
-		if ($_POST['luogo_produzione'.$n]>0 ){
+		if ($_POST['campo_impianto'.$n]>0 ){
 			$nn++;
-			$form['luogo_produzione'.$nn] = intval($_POST['luogo_produzione'.$n]); //campo di coltivazione
+			$form['campo_impianto'.$nn] = intval($_POST['campo_impianto'.$n]); //campo di coltivazione
 		} else {
-			$form['luogo_produzione'.$n]=""; $form['ncamp']--;
+			$form['campo_impianto'.$n]=""; $form['ncamp']--;
 		}
 		}
 	} $n--;
@@ -513,14 +513,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	} else {
 		$form['id_orderman'] = 0;
 	}
-    if (isset($form['id_orderman']) AND intval($form['id_orderman']) > 0 AND intval($form['luogo_produzione1']) == 0) { //se è stata inserita una produzione e non è stato inserito il primo campo
+    if (isset($form['id_orderman']) AND intval($form['id_orderman']) > 0 AND intval($form['campo_impianto1']) == 0) { //se è stata inserita una produzione e non è stato inserito il primo campo
         $rs_orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
         // propongo il primo campo della produzione nel form
-		$form['luogo_produzione1'] = $rs_orderman['campo_impianto'];
+		$form['campo_impianto1'] = $rs_orderman['campo_impianto'];
     } 
     $form['search_partner'] = "";
-	if (isset ($form['luogo_produzione1'])){ // se inserito il primo campo ne prendo la coltura
-		$item_campi = gaz_dbi_get_row($gTables['campi'], "codice", $form['luogo_produzione1']);
+	if (isset ($form['campo_impianto1'])){ // se inserito il primo campo ne prendo la coltura
+		$item_campi = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_impianto1']);
 		if (isset($item_campi) AND $item_campi['id_colture'] > 0) { // se c'è una coltura nel campo la carico nel form
 			$form['id_colture'] = $item_campi['id_colture'];
 			$res = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $form['id_colture']);
@@ -536,7 +536,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
         $form['id_colture'] = intval($form['nome_colt']);
     }
     // Antonio Germani - controllo se c'è una coltura deve esserci un campo di coltivazione
-    if ($form['luogo_produzione1'] < 1 && $form['id_colture'] > 0) {
+    if ($form['campo_impianto1'] < 1 && $form['id_colture'] > 0) {
         $msg.= "35+";
     }
    /*  Non dovrebbe servire in quanto l'autocomplete prende solo se artico esiste 
@@ -575,16 +575,16 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
         $dt = strtotime($dt);
        
 		$nn=0;$tot_sup=0;
-		if ($form['luogo_produzione1']>0) { // se c'è almeno un campo
+		if ($form['campo_impianto1']>0) { // se c'è almeno un campo
 			for ($n = 1;$n <= $form['ncamp'];++$n) { // ciclo i campi inseriti
-				$query = "SELECT " . 'giorno_decadimento' . "," . 'ricarico' . " FROM " . $gTables['campi'] . " WHERE codice ='" . $form['luogo_produzione'.$n] . "'";
+				$query = "SELECT " . 'giorno_decadimento' . "," . 'ricarico' . " FROM " . $gTables['campi'] . " WHERE codice ='" . $form['campo_impianto'.$n] . "'";
 				$result = gaz_dbi_query($query);
 				while ($row = $result->fetch_assoc()) {				
 					$form['fine_sosp'.$n] = strtotime($row['giorno_decadimento']);// prendo la data di fine sospensione dai campi di coltivazione selezionati
 					$form['dim_campo'.$n] = $row['ricarico']; // prendo pure la dimensione del campo e la metto in $dim_campo
 				}
 				// controllo se è ammesso il raccolto sul campo di coltivazione selezionato $msg .=24+ errore tempo di sospensione
-				if (isset($form['operat']) AND $form['luogo_produzione'.$n] > 0 && $form['operat'] == 1 && intval($dt) < intval($form['fine_sosp'.$n])) {
+				if (isset($form['operat']) AND $form['campo_impianto'.$n] > 0 && $form['operat'] == 1 && intval($dt) < intval($form['fine_sosp'.$n])) {
 					$msg.= "24+";
 				}
 				$tot_sup=$tot_sup+$form['dim_campo'.$n];
@@ -733,10 +733,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						}
 					}
 					// Antonio Germani Calcolo quanto rame metallo e Azoto N è stato usato nell'anno di esecuzione di questo movimento
-					If ($form['luogo_produzione'.$n] > 0) { // se il prodotto va in un campo di coltivazione
+					If ($form['campo_impianto'.$n] > 0) { // se il prodotto va in un campo di coltivazione
 						$rame_met_annuo=0;$N_annuo=0;
 						if ($rame_metallo > 0 OR $perc_N > 0) { //se questo prodotto contiene rame metallo o azoto
-							$query = "SELECT " . 'artico' . "," . 'datdoc' . "," . 'quanti' . " FROM " . $gTables['movmag'] . " WHERE datdoc >'" . $form['anndoc'] . "' AND " . 'luogo_produzione' . " = '" . $form['luogo_produzione'.$n] . "'"; // prendo solo le righe dell'anno di esecuzione del trattamento e degli anni successivi con il campo di coltivazione selezionato nel form
+							$query = "SELECT " . 'artico' . "," . 'datdoc' . "," . 'quanti' . " FROM " . $gTables['movmag'] . " WHERE datdoc >'" . $form['anndoc'] . "' AND " . 'campo_impianto' . " = '" . $form['campo_impianto'.$n] . "'"; // prendo solo le righe dell'anno di esecuzione del trattamento e degli anni successivi con il campo di coltivazione selezionato nel form
 							$result = gaz_dbi_query($query);
 							while ($row = $result->fetch_assoc()) {
 								if (substr($row['datdoc'], 0, 4) == $form['anndoc']) { // elimino dal conteggio gli eventuali anni successivi
@@ -755,21 +755,21 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 					// e il limite di Azoto annuo impostato per ogni singolo campo
 					
 					// prendo il limite di azoto per anno per il campo da controllare
-					$res_N = gaz_dbi_get_row($gTables['campi'], "codice", $form['luogo_produzione'.$n]);
+					$res_N = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_impianto'.$n]);
 					if ($res_N['zona_vulnerabile']==0){
 						$limite_N=$res_N['limite_azoto_zona_non_vulnerabile'];
 					} else {
 						$limite_N=$res_N['limite_azoto_zona_vulnerabile'];
 					}
-					if ($toDo == "update" && $check_movmag['artico']==$form['artico'][$m] && $form['luogo_produzione'.$n] > 0) { // se è un update, e non è stato cambiato l'articolo tolgo il rame metallo e/o l'azoto memorizzato in precedenza
+					if ($toDo == "update" && $check_movmag['artico']==$form['artico'][$m] && $form['campo_impianto'.$n] > 0) { // se è un update, e non è stato cambiato l'articolo tolgo il rame metallo e/o l'azoto memorizzato in precedenza
 						$rame_met_annuo = $rame_met_annuo - $rame_metallo * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']);
 						$N_annuo = $N_annuo - ($perc_N * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']))/100;
 					}
-					if (($quanti>0 && $form['luogo_produzione'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($rame_met_annuo + ($rame_metallo * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity'])) > ($Cu_limit_anno * $form['dim_campo'.$n]))) {
+					if (($quanti>0 && $form['campo_impianto'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($rame_met_annuo + ($rame_metallo * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity'])) > ($Cu_limit_anno * $form['dim_campo'.$n]))) {
 						$msg.= "26+"; // errore superato il limite di rame metallo ad ettaro                
 						$instantwarning="ERRORE rame metallo <br> Rame metallo annuo già usato: ". gaz_format_quantity($rame_met_annuo, 1, $admin_aziend['decimal_quantity']) ." Kg  - Rame metallo che si tenta di usare: ". gaz_format_quantity($rame_metallo * $quanti, 1, $admin_aziend['decimal_quantity']) ." Kg - Limite annuo di legge per questo campo: ". gaz_format_quantity(($Cu_limit_anno * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']) ." Kg";
 					}
-					if (($quanti>0 && $form['luogo_produzione'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($N_annuo + ($perc_N * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']))/100 > ($limite_N * $form['dim_campo'.$n]))) {
+					if (($quanti>0 && $form['campo_impianto'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($N_annuo + ($perc_N * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']))/100 > ($limite_N * $form['dim_campo'.$n]))) {
 						$msg.= "43+"; // errore superato il limite di azoto ad ettaro                
 						$instantwarning="ERRORE azoto <br> Azoto annuo già usato: ". gaz_format_quantity($N_annuo, 1, $admin_aziend['decimal_quantity']). " Kg  - Azoto che si tenta di usare: ". gaz_format_quantity($perc_N * $quanti, 1, $admin_aziend['decimal_quantity'])/100 ."  Kg - Limite annuo per questo campo: ". gaz_format_quantity(($limite_N * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']) ." Kg";
 					}
@@ -827,7 +827,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							$form['scorig2'][$form['mov']], $form['id_mov2'], $admin_aziend['stock_eval_method'], 
 							array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc']));
 							// riprendo il salvataggio del movimento acqua in movmag con i dati mancanti del quaderno di campagna
-							$query = "UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 . "', id_rif = '".$id_movmag."', tipdoc = '".$form['tipdoc']."' , luogo_produzione = '" . $form['luogo_produzione'.$n] . "' , id_avversita = '" . $form['id_avversita'][$form['mov']] . "' , id_colture = '" . $form['id_colture'] . "' , id_orderman = '" . $form['id_orderman'] . "' , id_lotmag = '" . $form['id_lotmag'][$form['mov']] . "' WHERE id_mov ='" . $id_movmag_acqua . "'";
+							$query = "UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 . "', id_rif = '".$id_movmag."', tipdoc = '".$form['tipdoc']."' , campo_impianto = '" . $form['campo_impianto'.$n] . "' , id_avversita = '" . $form['id_avversita'][$form['mov']] . "' , id_colture = '" . $form['id_colture'] . "' , id_orderman = '" . $form['id_orderman'] . "' , id_lotmag = '" . $form['id_lotmag'][$form['mov']] . "' WHERE id_mov ='" . $id_movmag_acqua . "'";
 							gaz_dbi_query($query);
 							$id_rif=$id_movmag_acqua;// il movmag padre avrà il riferimento del movmag acqua						
 						}
@@ -880,7 +880,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						}
 						// <<< fine salvo lotti
 						// riprendo il salvataggio del movimento di magazzino in movmag
-						$query = "UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 . "', id_rif = '".$id_rif."', tipdoc = '".$form['tipdoc']."' , luogo_produzione = '" . $form['luogo_produzione'.$n] . "' , id_avversita = '" . $form['id_avversita'][$form['mov']] . "' , id_colture = '" . $form['id_colture'] . "' , id_orderman = '" . $form['id_orderman'] . "' , id_lotmag = '" . $form['id_lotmag'][$form['mov']] . "' WHERE id_mov ='" . $id_movmag . "'";
+						$query = "UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 . "', id_rif = '".$id_rif."', tipdoc = '".$form['tipdoc']."' , campo_impianto = '" . $form['campo_impianto'.$n] . "' , id_avversita = '" . $form['id_avversita'][$form['mov']] . "' , id_colture = '" . $form['id_colture'] . "' , id_orderman = '" . $form['id_orderman'] . "' , id_lotmag = '" . $form['id_lotmag'][$form['mov']] . "' WHERE id_mov ='" . $id_movmag . "'";
 						gaz_dbi_query($query);
 						// Antonio Germani - aggiorno la tabella campi se c'è un campo inserito (cioè >0) e se l'operazione è uno scarico (cioè operat<0) e se la data di fine sospensione già presente nel campo è inferiore alla data di sospensione del prodotto appena usato (cioè $fine_sosp<$dt)
 						//Antonio Germani per prima cosa determino il codice del movimento che eventualmente andrà nella tabella del campo di coltivazione
@@ -896,7 +896,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							$id_mov = $form['id_mov'];
 						}
 						// adesso vedo se si deve aggiornare il campo di coltivazione
-						if ($form['luogo_produzione'.$n] > 0 && $form['operat'] < 0) {
+						if ($form['campo_impianto'.$n] > 0 && $form['operat'] < 0) {
 							/* Antonio Germani creo la data del trattamento selezionato a cui poi aggiungerò i giorni di sospensione. */
 							$dt = substr("0" . $form['giodoc'], -2) . "-" . substr("0" . $form['mesdoc'], -2) . "-" . $form['anndoc'];
 							$dt = strtotime($dt);
@@ -917,14 +917,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							
 							if ($fine_sosp < $dt) {
 								$dt = date('Y/m/d', $dt);
-								$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' , id_colture = '" . $form['id_colture'] . "' WHERE codice ='" . $form['luogo_produzione'.$n] . "'";
+								$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' , id_colture = '" . $form['id_colture'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
 								gaz_dbi_query($query);
 							} else { // altrimenti
 								if ($toDo == "update") { // se è un update, devo vedere se ci sono altri movimenti con un tempo superiore
 									// prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione escludendo il movimento oggetto di update
 									$n = 0;
 									$array = array();
-									$query = "SELECT " . '*' . " FROM " . $gTables['movmag'] . " WHERE luogo_produzione ='" . $form['luogo_produzione'.$n] . "' AND operat ='-1' AND id_mov <> " . $id_movmag;
+									$query = "SELECT " . '*' . " FROM " . $gTables['movmag'] . " WHERE campo_impianto ='" . $form['campo_impianto'.$n] . "' AND operat ='-1' AND id_mov <> " . $id_movmag;
 									$result = gaz_dbi_query($query);
 									while ($row = $result->fetch_assoc()) {
 										// cerco i giorni di sospensione del prodotto interessato ad ogni movimento
@@ -950,19 +950,19 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 									$dt_db_movmag = date('Y/m/d', $array[0]['temp_deca']);
 									if ($n > 0 && $fine_sosp < $array[0]['temp_deca'] && $array[0]['temp_deca'] > $dt) { //se la data nel campo è minore della data trovata nei movimenti di magazzino che è maggiore di quella di questo movimento
 										// memorizzo nel campo la data trovata nei movimenti
-										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt_db_movmag . "' , codice_prodotto_usato = '" . $array[0]['artico'] . "' , id_mov = '" . $array[0]['id_mov'] . "' WHERE codice ='" . $form['luogo_produzione'.$n] . "'";
+										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt_db_movmag . "' , codice_prodotto_usato = '" . $array[0]['artico'] . "' , id_mov = '" . $array[0]['id_mov'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
 										gaz_dbi_query($query);
 									} elseif ($n > 0 && $fine_sosp > $array[0]['temp_deca'] && $array[0]['temp_deca'] > $dt) { // se la data nel campo è maggiore della data trovata nei movimenti di magazzino e la data trovata nei movimenti di magazzino è maggiore di quella di questo movimento
 										// memorizzo nel campo la data trovata nei movimenti di magazzino
-										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $array[0]['temp_deca']) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $array[0]['id_mov'] . "' WHERE codice ='" . $form['luogo_produzione'.$n] . "'";
+										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $array[0]['temp_deca']) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $array[0]['id_mov'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
 										gaz_dbi_query($query);
 									} elseif ($n == 1 && $dt > $array[0]['temp_deca']) { // se c'è un solo movimento di magazzino, oltre a questo in update, e la data di questo movimento è maggiore di quella del movimento di magazzino
 										// memorizzo nel campo la data di questo movimento
-										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' WHERE codice ='" . $form['luogo_produzione'.$n] . "'";
+										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
 										gaz_dbi_query($query);
 									} elseif ($n == 0) { // se non ci altri movimenti di magazzino, cioè questo è unico
 										// memorizzo nel campo la data di questo movimento
-										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' WHERE codice ='" . $form['luogo_produzione'.$n] . "'";
+										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
 										gaz_dbi_query($query);
 									} else { // altrimenti non faccio nulla perché va bene la data memorizzata in precedenza nel campo
                                     
@@ -972,10 +972,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						}
 						// fine gestione giorno di sospensione tabella campi
 						// aggiornare tabella campi se è stata cambiata la coltura
-						if ($form['luogo_produzione'.$n] > 0) { // se c'è un campo di coltivazione
-							$result = gaz_dbi_get_row($gTables['campi'], "codice", $form['luogo_produzione'.$n]);
+						if ($form['campo_impianto'.$n] > 0) { // se c'è un campo di coltivazione
+							$result = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_impianto'.$n]);
 							if ($result['id_colture'] <> $form['id_colture']) { // se è stato cambiato lo aggiorno
-								$query = "UPDATE " . $gTables['campi'] . " SET id_colture = '" . $form['id_colture'] . "' WHERE codice ='" . $form['luogo_produzione'.$n] . "'";
+								$query = "UPDATE " . $gTables['campi'] . " SET id_colture = '" . $form['id_colture'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
 								gaz_dbi_query($query);
 							}
 						}
@@ -1138,7 +1138,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['caumag'] = "";
 	$res_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
 	$form['ncamp']=1;
-    $form['luogo_produzione1']= ""; //campo di coltivazione
+    $form['campo_impianto1']= ""; //campo di coltivazione
     $form['clfocoin'] = 0;
     $form['quantiin'] = 0;
     $form['datdocin'] = "";
@@ -1342,7 +1342,7 @@ if (isset($_POST['cancel'])) {// se è stato premuto annulla
     $form['mesreg'] = date("m");
     $form['annreg'] = date("Y");
     $form['caumag'] = "";
-    $form['luogo_produzione'] = ""; //campo di coltivazione
+    $form['campo_impianto'] = ""; //campo di coltivazione
     $form['adminid'] = "Utente connesso";
 	$form['confermapat'][$form['adminid']] = "";
     $form['tipdoc'] = "";
@@ -1389,8 +1389,8 @@ if (isset($_POST['cancel'])) {// se è stato premuto annulla
 }
 // Antonio Germani controllo e avviso se è stata cambiata la coltura nel campo di coltivazione
 if (isset($_POST['nome_colt'])) {
-	if ($form['luogo_produzione1'] > 0) { // se c'è un campo di coltivazione
-		$result = gaz_dbi_get_row($gTables['campi'], "codice", $form['luogo_produzione1']);
+	if ($form['campo_impianto1'] > 0) { // se c'è un campo di coltivazione
+		$result = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_impianto1']);
 		if (isset($result) AND $result['id_colture'] <> $form['id_colture']) { // se è stata cambiata la coltura avviso
 			$err = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $result['id_colture']);
 			if (!isset($err)){
@@ -1679,11 +1679,11 @@ if (intval($form['nome_colt']) == 0) {
 						<?php
 						
 						for ($n = 1;$n <= $form['ncamp'];++$n){ // ciclo i campi inseriti
-							$gForm->selectFromDB('campi', 'luogo_produzione'.$n ,'codice', $form['luogo_produzione'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
+							$gForm->selectFromDB('campi', 'campo_impianto'.$n ,'codice', $form['campo_impianto'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
 						}
-						$form['luogo_produzione'.$n]="";
-						if ($n>1 AND $form['luogo_produzione'.($n-1)]>0){ // permetto di inserire un nuovo campo
-							$gForm->selectFromDB('campi', 'luogo_produzione'.$n,'codice', $form['luogo_produzione'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
+						$form['campo_impianto'.$n]="";
+						if ($n>1 AND $form['campo_impianto'.($n-1)]>0){ // permetto di inserire un nuovo campo
+							$gForm->selectFromDB('campi', 'campo_impianto'.$n,'codice', $form['campo_impianto'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
 						}
 						$form['ncamp']=$n;
 						?>

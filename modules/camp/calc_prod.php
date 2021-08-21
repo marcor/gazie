@@ -25,7 +25,7 @@
 //requisito di gazie
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$msg = "";$form['luogo_produzione']="";
+$msg = "";$form['campo_impianto']="";
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -47,7 +47,7 @@ if (isset($_POST['id_produzione'])){
 	$form['id_produzione']=$_POST['id_produzione'];
 } else {
 	$form['id_produzione']="";
-	$form['luogo_produzione']="";
+	$form['campo_impianto']="";
 }
 
 

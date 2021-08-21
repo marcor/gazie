@@ -46,7 +46,7 @@ function getMovements($date_ini,$date_fin,$type){
 	$table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
 			LEFT JOIN ".$gTables['anagra']." ON (".$gTables['anagra'].".id = ".$gTables['movmag'].".clfoco)
 		   LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
-	$rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, luogo_produzione ASC, operat DESC, id_mov ASC');
+	$rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, campo_impianto ASC, operat DESC, id_mov ASC');
 	while ($r = gaz_dbi_fetch_array($rs)) {
 		$m[] = $r;
 	}
@@ -121,9 +121,9 @@ $pdf->SetFont('helvetica','',9);
 if (sizeof($result) > 0 AND $type=="di campagna") {
 	foreach($result as $key => $row)	{
 		
-		$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $row['luogo_produzione']);// Antonio Germani carico il campo
+		$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $row['campo_impianto']);// Antonio Germani carico il campo
 		if (!isset($res)){
-			$row['luogo_produzione']="-";
+			$row['campo_impianto']="-";
 		}
 		$datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
 		$datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
@@ -132,9 +132,9 @@ if (sizeof($result) > 0 AND $type=="di campagna") {
 		$pdf->Cell(35,6,$row['descri'],1, 0, 'l', 0, '', 1);
 		
 		if (isset($res['zona_vulnerabile']) AND $res['zona_vulnerabile']==0){
-			$pdf->Cell(12,6,substr($row['luogo_produzione'],0,5),1);
+			$pdf->Cell(12,6,substr($row['campo_impianto'],0,5),1);
 		} else {
-			$pdf->Cell(12,6,substr($row['luogo_produzione']." ZVN",0,5),1);
+			$pdf->Cell(12,6,substr($row['campo_impianto']." ZVN",0,5),1);
 		}
 		// Antonio Germani Inserisco superficie e coltura		
 		$pdf->Cell(10,6,str_replace('.', ',',($res)?$res['ricarico']:0),1);

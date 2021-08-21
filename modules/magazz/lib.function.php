@@ -744,7 +744,7 @@ class magazzForm extends GAzieForm {
         return $return_val;
     }
 
-    function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$luogo_produzione=0,$custom_field='') {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
+    function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='') {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
         // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, datreg)
         global $gTables, $admin_aziend;
         $docOperat = $this->getOperators();
@@ -805,7 +805,7 @@ class magazzForm extends GAzieForm {
             'scorig' => $sconto_rigo,
             'id_lotmag'=>$id_lotmag,
 			'id_orderman'=>$id_orderman,
-			'luogo_produzione'=>$luogo_produzione,
+			'campo_impianto'=>$campo_impianto,
 			'custom_field'=>$custom_field,
 			'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
         if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento

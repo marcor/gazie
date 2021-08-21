@@ -215,9 +215,9 @@ if (isset($_POST['preview']) and $msg=='') {
 			echo "<td  align=\"center\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
 						
 			// Antonio Germani Inserisco campo, superficie e coltura		
-			echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['luogo_produzione']." &nbsp;</td>";
+			echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['campo_impianto']." &nbsp;</td>";
 			$colonna="0";
-			$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $mv['luogo_produzione'] );				 
+			$res = gaz_dbi_get_row ($gTables['campi'], 'codice', $mv['campo_impianto'] );				 
 			echo "<td class=\"FacetDataTD\" align=\"center\">", gaz_format_quantity(($res)?$res['ricarico']:0,1,$admin_aziend['decimal_quantity']), " &nbsp;</td>\n";
 			$res2 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $mv['id_colture']);
 			echo "<td class=\"FacetDataTD\" align=\"center\">", ($res2)?$res2['nome_colt']:'' ," &nbsp;</td>\n";

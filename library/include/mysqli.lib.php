@@ -956,7 +956,7 @@ function tesmovInsert($newValue) {
 
 function movmagInsert($newValue) {
   $table = 'movmag';
-  $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'id_orderman', 'id_assets', 'quanti', 'prezzo', 'scorig', 'luogo_produzione', 'custom_field', 'status', 'adminid');
+  $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'id_orderman', 'id_assets', 'quanti', 'prezzo', 'scorig', 'campo_impianto', 'custom_field', 'status', 'adminid');
   $newValue['adminid'] = $_SESSION["user_name"];
   $last_id=tableInsert($table, $columns, $newValue);
 	// aggiorno l'e-commerce ove presente
@@ -974,7 +974,7 @@ function movmagInsert($newValue) {
 
 function movmagUpdate($codice, $newValue) {
   $table = 'movmag';
-  $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'id_orderman', 'id_assets', 'quanti', 'prezzo', 'scorig', 'luogo_produzione', 'custom_field', 'status', 'adminid');
+  $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'id_orderman', 'id_assets', 'quanti', 'prezzo', 'scorig', 'campo_impianto', 'custom_field', 'status', 'adminid');
   $newValue['adminid'] = $_SESSION["user_name"];
   tableUpdate($table, $columns, $codice, $newValue);
 	// aggiorno l'e-commerce ove presente

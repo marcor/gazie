@@ -46,7 +46,7 @@ if (isset($_GET['all'])) {
 	
 	if (isset($_GET['campo']) && !empty($_GET['campo'])) {
 		$campo = $_GET['campo'];
-		$implode[] = "luogo_produzione LIKE '%".$_GET['campo']."%'";
+		$implode[] = "campo_impianto LIKE '%".$_GET['campo']."%'";
 	}
 		
 	if (isset($_GET['articolo']) && !empty($_GET['articolo'])) {
@@ -154,7 +154,7 @@ $(function() {
 			</tr>
 <?php
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-         LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".luogo_produzione = ".$gTables['campi'].".codice)
+         LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".campo_impianto = ".$gTables['campi'].".codice)
 		 LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)
 		 LEFT JOIN ".$gTables['camp_colture']." ON (".$gTables['movmag'].".id_colture = ".$gTables['camp_colture'].".id_colt)
          LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";  
@@ -211,7 +211,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
 		
 		// Antonio Germani inserico colonna campi di coltivazione, superficie, coltura
-		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['luogo_produzione']." - ".$a_row['descamp']." &nbsp;</td>\n";
+		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['campo_impianto']." - ".$a_row['descamp']." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$a_row["superf"])." &nbsp;</td>\n";
 		echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['id_colture']." - ".$a_row["nome_colt"]." &nbsp";
 		if ($data=json_decode($a_row['custom_field'],true)){// se c'è un json nel custom_field
