@@ -539,13 +539,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     if ($form['campo_impianto1'] < 1 && $form['id_colture'] > 0) {
         $msg.= "35+";
     }
-   /*  Non dovrebbe servire in quanto l'autocomplete prende solo se artico esiste 
-	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]); // acquisisco i dati dell'articolo del rigo in questione
-	
-	if ($form['artico'][$form['mov']] <> "" && !isset($itemart)) {// controllo se il codice articolo inserito esiste nella tabella artico
-		$msg.= "18+";
-	}     
-	*/
+	if (intval($form['staff'][$form['mov']])==0){// se non è un operaio
+		// impongo che sia inserito un articolo presente nel data base "artico" di GAzie
+		$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]); // acquisisco i dati dell'articolo del rigo in questione
+		if ($form['artico'][$form['mov']] <> "" && !isset($itemart)) {// controllo se il codice articolo inserito esiste nella tabella artico
+			$msg.= "18+";
+		}     
+	}
     if (isset($_POST['newpartner'])) {
         $anagrafica = new Anagrafica();
         $partner = $anagrafica->getPartner($_POST['clfoco']);
@@ -616,8 +616,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
             }
         		
 			// controllo mancanza articolo
-            if (empty($form['artico'][$m])) { //manca l'articolo
-                $msg.= "18+";
+            if (empty($form['artico'][$m]) AND intval($form['staff'][$m])==0) { //manca l'articolo e non c'è un operaio
+                $msg.= "18+";echo "pippo rigo:",$m," staff:",intval($form['staff'][$m]);
             }
             // controllo quantità uguale a zero
             if (gaz_format_quantity($form['quanti'][$m], 0, $admin_aziend['decimal_quantity']) == 0) { //la quantità è zero
@@ -779,7 +779,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	
         //  §§§§§§§§§§§§§§§§ INIZIO salvataggio sul database §§§§§§§§§§§§§§§§§§§
         if (empty($msg)) { // nessun errore
-			
+		
             if ($toDo == "update") { // se è un update cancello eventule file di certificato lotto messo sulla cartella tmp
                 foreach (glob("../../modules/camp/tmp/*") as $fn) { // prima cancello eventuali precedenti file temporanei
                     unlink($fn);
@@ -796,8 +796,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			}
             $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
             for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) { // per ogni movimento inserito
-                if (!empty($form['artico'][$form['mov']])) { // se è stato inserito un articolo
-					
+			
+                if (!empty($form['artico'][$form['mov']])) { // se è stato inserito un articolo					
 					$nn=0;
 					for ($n = 1;$n <= $form['ncamp'];++$n) { // ciclo i campi inseriti
 						if (isset ($form['dim_campo'.$n]) AND $form['ncamp']>1) {
@@ -981,10 +981,15 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						}
 						// fine aggiorna campi coltura
 					
-					} // fine ciclo i campi inseriti
+					} // fine ciclo i campi inseriti					
+                    
+                   // fine se c'è un articolo impostato nel movimento 
+				   
+                } elseif (intval($form['staff'][$form['mov']]) > 0) {// se è un operaio
 					
-                    // INIZIO gestione registrazione database operai
-                    If (intval($form['staff'][$form['mov']]) > 0) {
+					
+					// INIZIO gestione registrazione database operai
+                    
                         $id_worker = $form['staff'][$form['mov']]; //identificativo operaio
                         $form['datdocin']; // questa è la data documento iniziale
                         $work_day = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc']; // giorno lavorato
@@ -992,11 +997,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                         $id_orderman = $form['id_orderman'];
                         // controllo se è una variazione movimento e se è stato cambiato l'operaio
                         $res2 = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $form['clfocoin']);
-                        If ($toDo == "update" && $res2['id_staff'] <> $id_worker) { // se è stato cambiato l'operaio
-                            If (strtotime($work_day) == strtotime($form['datdocin'])) { // se non è stata cambiata la data documento
+                        if ($toDo == "update" && $res2['id_staff'] <> $id_worker) { // se è stato cambiato l'operaio
+                            if (strtotime($work_day) == strtotime($form['datdocin'])) { // se non è stata cambiata la data documento
                                 // all'operaio iniziale, cioè quello che è stato sostituito, devo togliere le ore
                                 $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $res2['id_staff'], "AND work_day = '$work_day'");
-                                If (isset($rin)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate e tolgo quelle odierne
+                                if (isset($rin)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate e tolgo quelle odierne
                                     $hours_normal = $rin['hours_normal'] - $form['quantiin']; // e faccio l'UPDATE - NON tocco id_orderman ma ATTENZIONE
                                     // la gestione della tabella "staff_worked_hours" sarebbe da rivedere perché non contempla che un operaio possa lavorare a più produzioni (id_orderman) nello stesso giorno !!!
                                     $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff =' . $res2['id_staff'] . ", work_day = '" . $work_day . "', hours_normal = '" . $hours_normal . "' WHERE id_staff = '" . $res2['id_staff'] . "' AND work_day = '" . $work_day . "'";
@@ -1004,7 +1009,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                                 }
                                 // al nuovo operaio devo aggiungere le ore lavorate
                                 $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day = '$work_day'");
-                                If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate
+                                if (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate
                                     $ore_lavorate = $r['hours_normal'];
                                 } else {
                                     $ore_lavorate = 0;
@@ -1026,14 +1031,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                             } else { // se è stata cambiata la data documento (giorno lavorato)
                                 // all'operaio iniziale, cioè quello che è stato sostituito, devo togliere le ore nel giorno iniziale
                                 $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $res2['id_staff'], "AND work_day = '{$form['datdocin']}'");
-                                If (isset($rin)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate e tolgo quelle odierne
+                                if (isset($rin)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate e tolgo quelle odierne
                                     $hours_normal = $rin['hours_normal'] - $form['quantiin']; // e faccio l'UPDATE - NON tocco id_orderman
                                     $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff =' . $res2['id_staff'] . ", work_day = '" . $form['datdocin'] . "', hours_normal = '" . $hours_normal . "' WHERE id_staff = '" . $res2['id_staff'] . "' AND work_day = '" . $form['datdocin'] . "'";
                                     gaz_dbi_query($query);
                                 }
                                 // al nuovo operaio devo aggiungere le ore lavorate nel giorno del documento
                                 $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day = '$work_day'");
-                                If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate
+                                if (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate
                                     $ore_lavorate = $r['hours_normal'];
                                 } else {
                                     $ore_lavorate = 0;
@@ -1054,19 +1059,19 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                                 }
                             }
                         } else {
-                            If ($toDo == "update" && $res2['id_staff'] == $id_worker) { // se è update e NON è stato cambiato l'operaio
-                                If (strtotime($work_day) <> strtotime($form['datdocin'])) { // se è stata cambiata la data
+                            if ($toDo == "update" && $res2['id_staff'] == $id_worker) { // se è update e NON è stato cambiato l'operaio
+                                if (strtotime($work_day) <> strtotime($form['datdocin'])) { // se è stata cambiata la data
                                     // devo togliere le ore al giorno iniziale e metterle nel giorno del documento
                                     // tolgo le ore al giorno iniziale
                                     $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day = '{$form['datdocin']}'");
-                                    If (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
+                                    if (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
                                         $hours_normal = $rin['hours_normal'] - $form['quantiin'];
                                         $query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '" . $hours_normal . "' WHERE id_staff = '" . $id_worker . "' AND work_day = '" . $form['datdocin'] . "'";
                                         gaz_dbi_query($query);
                                     }
                                     // metto le ore del form nel giorno del documento
                                     $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day ='$work_day'");
-                                    If (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
+                                    if (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
                                         $hours_normal = $rin['hours_normal'] + $hours_form;
                                         $query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '" . $hours_normal . "' WHERE id_staff = '" . $id_worker . "' AND work_day = '" . $work_day . "'";
                                         gaz_dbi_query($query);
@@ -1081,7 +1086,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                                 } else { //se NON è stata cambiata la data
                                     // modifico le ore nello stesso giorno del documento
                                     $rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day ='$work_day'");
-                                    If (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
+                                    if (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
                                         $hours_normal = $rin['hours_normal'] - $form['quantiin'] + $hours_form;
                                         $query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '" . $hours_normal . "' WHERE id_staff = '" . $id_worker . "' AND work_day = '" . $work_day . "'";
                                         gaz_dbi_query($query);
@@ -1089,14 +1094,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                                 }
                             }
                         }
-                        If ($toDo <> "update") { // se non è un update
+                        if ($toDo <> "update") { // se non è un update
                             $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_worker, "AND work_day ='$work_day'");
-                            If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate
+                            if (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate
                                 $ore_lavorate = $r['hours_normal'];
                             } else {
                                 $ore_lavorate = 0;
                             }
-                            If ($toDo == "update") {
+                            if ($toDo == "update") {
                                 $hours_normal = $ore_lavorate - $form['quantiin'] + $hours_form;
                             } else {
                                 $hours_normal = $ore_lavorate + $hours_form;
@@ -1115,10 +1120,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                                 gaz_dbi_table_insert('staff_worked_hours', $v);
                             }
                         }
-                    }
-                    // FINE gestione registrazione database operai
                     
-                } // fine se c'è un articolo impostato nel movimento
+                    // FINE gestione registrazione database operai					
+					
+				}		
+								
             } //fine ciclo for mov
             header("Location:camp_report_movmag.php");
             exit;
@@ -1288,6 +1294,7 @@ if (isset($_POST['Del_mov'])) {
     $form['clfoco'][$form['nmov']] = 0;
     $form['nome_avv'][$form['nmov']] = "";
     $form['id_avversita'][$form['nmov']] = 0;
+	$form['fase_feno'][$form['nmov']] = "";
     If ($_POST['nmov'] > 0) {
         $form['nmov'] = $form['nmov'] - 1;
         $form['mov'] = $form['mov'] - 1;
@@ -1804,10 +1811,10 @@ if (intval($form['nome_colt']) == 0) {
 					</div>
 				</div>
 			</div><!-- chiude row  -->
-			<div class="row">
-				<label style="font-size:5pt;" colspan="4">
-					Movimenti:				
-				</label>
+			<div class="row bg-success">				
+				<div class="col-md-4" style="font-size:8pt;" >
+					Movimento: 1			
+				</div>
 			</div><!-- chiude row  -->	
 			<!-- Modal content patentino scaduto  -->
 			<div id="patexp" class="modal fade" role="dialog">    
@@ -1871,39 +1878,90 @@ if (intval($form['nome_colt']) == 0) {
 								?>
 								<div class="row">
 									<div class="col-md-12">														
-										<div class="form-group">									
-											<input class="col-sm-7 FacetSelect" type="text" id="codart" name="codart" value="<?php echo $form['artico'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
-											<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
-											<input type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" />
-											<?php 
-											if (isset($res_caumag['operat']) AND $res_caumag['operat'] == - 1) {
+										<div class="form-group">
+											<?php
+											$checked="";
+											if (!isset($_POST['ins_op'.$form['mov']])){ // se non è operaio
+												
 												?>
-												<input class="col-sm-2" type="text" id="codart2" name="codart2" value="<?php echo $form['artico2'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
+												<input class="col-sm-7 FacetSelect" type="text" id="codart" name="codart" value="<?php echo $form['artico'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
+												<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
 												<input type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" />
-												<?php
-																					
-												if ($form['artico2'][$form['mov']]!==""){ // se è stata inserita l'acqua carico unità di misura e visualizzo input q.tà
-													$itemart2 = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico2'][$form['mov']]);
-													$print_unimis2="";
-													if (isset($itemart2)){
-														$print_unimis2 = $itemart2['unimis'];
-													}
+												<?php										
+												
+												if (isset($res_caumag['operat']) AND $res_caumag['operat'] == - 1 ) {
 													?>
-													<span class="col-sm-1"><?php echo $print_unimis2;?></span>
-													<input class="col-sm-2" type="text" value="<?php echo gaz_format_quantity($form['quanti2'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti2<?php echo $form['mov']; ?>" >
-													<?php 
+													<input class="col-sm-2" type="text" id="codart2" name="codart2" value="<?php echo $form['artico2'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
+													<input type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" />
+													<?php
+																						
+													if ($form['artico2'][$form['mov']]!==""){ // se è stata inserita l'acqua carico unità di misura e visualizzo input q.tà
+														$itemart2 = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico2'][$form['mov']]);
+														$print_unimis2="";
+														if (isset($itemart2)){
+															$print_unimis2 = $itemart2['unimis'];
+														}
+														?>
+														<span class="col-sm-1"><?php echo $print_unimis2;?></span>
+														<input class="col-sm-2" type="text" value="<?php echo gaz_format_quantity($form['quanti2'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti2<?php echo $form['mov']; ?>" >
+														<?php 
+													}
+												} else { 
+													?>
+													<input type="hidden" id="codart2" name="codart2" value="<?php echo $form['artico2'][$form['mov']]; ?>">										
+													<input type="hidden" value="" name="quanti2<?php echo $form['mov']; ?>" >
+													<?php
 												}
-											} else { 
-												?>
-												<input type="hidden" id="codart2" name="codart2" value="<?php echo $form['artico2'][$form['mov']]; ?>">										
+												echo "&nbsp;";
+											} else { // se è operaio
+												$checked="checked";
+												$print_unimis="h";
+												?>												
+												<input type="hidden" name="codart" value="" />
+												<input type="hidden" name="fase_feno<?php echo $form['mov']; ?>" value="" />
+												<input type="hidden" id="codart2" name="codart2" value="">										
 												<input type="hidden" value="" name="quanti2<?php echo $form['mov']; ?>" >
 												<?php
-											}	
-											?>					
+											}
+											
+											?>	
+											<input type="checkbox" id="ins_op" name="<?php echo "ins_op",$form['mov'];?>" value="ins_op" onclick="this.form.submit();" <?php echo $checked; ?>>
+											<label for="ins_op"> Movimento ore operaio</label><br>									
 										</div>
 										<ul class="dropdown-menu" style="left: 10%; padding: 0px;" id="codart_search"></ul>	
 										<ul class="dropdown-menu" style="left: 10%; padding: 0px;" id="codart_search2"></ul>									
-									</div>
+									</div>									
+									
+<!-- TEST TOOLTIP on CLICK  
+<input id="input_box2" />
+<div id="trigger2" class="trigger" data-tooltip-id="2"  title="bla bla 2">
+?</div>
+</p>
+<script>
+$(document).ready(function(){ 
+$(function () {
+		//show
+		$(document).on('click', '.trigger', function () {
+			$(this).addClass("on");
+			$(this).tooltip({
+				items: '.trigger.on',
+				
+			});
+			$(this).trigger('mouseover');
+		});
+		//hide
+		$(document).on('click', '.trigger.on', function () {
+			$(this).tooltip('hide');
+			$(this).removeClass("on")
+		});
+		//prevent mouseout and other related events from firing their handlers
+		$(".trigger").on('mousemove', function (e) {
+			e.stopImmediatePropagation();
+		});
+	})
+})
+</script>
+-->								
 								</div><!-- chiude row  -->
 						
 								<!-- Modal content scadenza autorizzazione fitofarmaco -->
@@ -2218,9 +2276,9 @@ if (intval($form['nome_colt']) == 0) {
 					<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="">						
 									
 					<?php
-				} else { // se è articolo senza magazzino
+				//} else { // se è articolo senza magazzino
 					?>
-					<div class="row bg-info">
+					<div class="row ">
 						
 						<?php
 						/*Antonio Germani se l'unità di misura è oraria attiva Operaio */
@@ -2239,11 +2297,9 @@ if (intval($form['nome_colt']) == 0) {
 							</div>
 							<?php
 						} else {		
-						?>	
-						
-							<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php echo $itm['id_clfoco']; ?>">
+						?>						
+							<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php echo (isset($itm))?$itm['id_clfoco']:0; ?>">
 							<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="<?php echo $form['staff'][$form['mov']]; ?>">
-						
 						<?php
 						}
 						?>
@@ -2321,11 +2377,11 @@ if (intval($form['nome_colt']) == 0) {
 							</div>
 					</div>
 				</div><!-- chiude row  -->
-				<div class="row bg-info">
-					<div class="col-md-4" style="font-size:5pt;" >
+				<div class="row bg-success">
+					<div class="col-md-4" style="font-size:8pt;" >
 						<?php
 						if (($form['mov'] + 1) <= $form['nmov']){
-							echo $form['mov'] + 2; 
+							echo "Movimento: ",$form['mov'] + 2; 
 						}
 						?>
 						<a name="<?php echo $form['mov']; ?>"></a> <!-- Antonio Germani Questa è l'ancora dello scroll -->
@@ -2344,8 +2400,8 @@ if (intval($form['nome_colt']) == 0) {
 					<input type="hidden" name="nmov" onchange="this.form.submit();" value="<?php echo $form['nmov']; ?>">
 					<?php
 					if ($toDo == 'insert') {
-						if ($form['artico'][$form['mov']] <> "") {
-							echo "<input type=\"submit\" name=\"Add_mov\" value=\"+ " . $script_transl['add'] . "\">\n";
+						if ($form['artico'][$form['mov']] <> "" OR intval($form['staff'][$form['mov']])>0) {
+							echo "<input style=\"float: right;\" type=\"submit\" name=\"Add_mov\" value=\"+ " . $script_transl['add'] . "\">\n";
 						}
 						if ($form['nmov'] > 0) {
 							echo "<input type=\"submit\" title=\"Togli ultimo movimento\" name=\"Del_mov\" value=\"X Togli ultimo movimento inserito\">\n";
@@ -2353,18 +2409,13 @@ if (intval($form['nome_colt']) == 0) {
 					}
 					?>
 			</div><!-- chiude row  -->
-			<div class="row bg-info">			
-			</div><!-- chiude row  -->
-			<div id="gestfeno" class="row">							
-				<div  align="center" >
-					<h3>Gestione fasi fenologiche</h3>
-				</div>
+			
+			<div id="gestfeno" class="row" >			
+				<h4 align="center">Gestione fasi fenologiche</h4>				
 				<div>
 					<label>Nome fase fenologica: </label>
 					<input type="text" name="add_feno" value="" placeholder="scrivi il nome della fase fenologica" onfocus="if (this.placeholder == 'scrivi il nome della fase fenologica') {this.placeholder = '';}">										
-				</div>
-				<div class="row">
-					<input type="submit" class="btn btn-warning" name="feno" value="Aggiungi fase">
+					<input type="submit" class="btn btn-warning" name="feno" value="Aggiungi fase all'elenco prestabilito">
 				</div>
 			</div>
 			<?php

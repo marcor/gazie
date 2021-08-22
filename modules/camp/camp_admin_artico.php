@@ -1282,7 +1282,7 @@ if (isset($formuso) OR $openmore==true){
 		}		
 	}
 	<!-- script per popup -->	
-	//var stile = "top=10, left=10, width=600, height=800 status=no, menubar=no, toolbar=no scrollbar=no";
+	var stile = "top=10, left=10, width=600, height=800, status=no, menubar=no, toolbar=no, scrollbar=no";
 	function Popup(apri) {
 	  window.open(apri, "", stile);
 	}
