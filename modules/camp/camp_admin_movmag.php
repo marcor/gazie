@@ -2045,7 +2045,7 @@ $(function () {
 							
 							<?php echo "&nbsp;" . $print_unimis;
 							
-							if ($service == 0 or $service == 2) { // se è un articolo con magazzino
+							if (($service == 0 or $service == 2) AND $print_unimis!=="h") { // se è un articolo con magazzino e non è operaio o lavorazione agricola
 								
 								echo " - " . $script_transl[22] . " " . gaz_format_quantity($print_magval, 1, $admin_aziend['decimal_quantity']) . " " . $print_unimis . "&nbsp;&nbsp;";
 								// Antonio Germani se sottoscorta si attiva il pulsante di allerta e riordino. Al click si apre il popup con l'ordine compilato. >>> NB: al ritorno dall'ordine e dopo un submit, c'è un problema DA RISOLVERE: si apre una nuova finestra. <<< preferisco questo problema a quello che c'era prima, cioè si apriva la pagina dell'ordine annullando quanto già inserito nei movimenti.
@@ -2276,7 +2276,7 @@ $(function () {
 					<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="">						
 									
 					<?php
-				//} else { // se è articolo senza magazzino
+				
 					?>
 					<div class="row ">
 						
@@ -2307,7 +2307,7 @@ $(function () {
 					<?php
 				}
 			
-				if ($print_unimis <> "h") { // se è una lavorazione agricola disattivare avversità
+				if ($print_unimis <> "h") { // se è una lavorazione agricola disattivare avversità e fase fenologica
 					if (intval($form['nome_avv'][$form['mov']]) == 0) {
 						$form['nome_avv'][$form['mov']] = "";
 					}
