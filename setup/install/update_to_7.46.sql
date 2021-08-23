@@ -35,11 +35,11 @@ ALTER TABLE `gaz_XXXartico`
 ALTER TABLE `gaz_XXXeffett`
 	ADD COLUMN `iban` VARCHAR(32) NULL DEFAULT NULL AFTER `banapp`;
 ALTER TABLE `gaz_XXXmovmag`
-	CHANGE COLUMN `campo_coltivazione` `campo_impianto` INT(3) NOT NULL DEFAULT '0' COMMENT 'Referenza alla colonna codice della tabella edv_001campi, è il luogo o campo di produzione' AFTER `scorig`,
+	CHANGE COLUMN `campo_coltivazione` `campo_impianto` INT(3) NOT NULL DEFAULT '0' COMMENT 'Referenza alla colonna codice della tabella edv_NNNcampi, è il luogo o campo di produzione' AFTER `scorig`,
 	CHANGE COLUMN `id_avversita` `id_avversita` INT(3) NULL DEFAULT NULL COMMENT 'Avversità nel quaderno di campagna ma può essere usato per altri inconvenienti verificatesi nella movimentazione ' AFTER `campo_impianto`,
 	CHANGE COLUMN `id_colture` `id_colture` INT(3) NULL DEFAULT NULL COMMENT 'Riferito al tipo di coltura e/o altre specifiche' AFTER `id_avversita`,
 	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_colture`,
-    ADD COLUMN `id_wharehouse` INT(9) NULL DEFAULT NULL COMMENT 'Ref. alla tabella gaz_001wharehouse' AFTER `artico`,
+    ADD COLUMN `id_wharehouse` INT(9) NULL DEFAULT NULL COMMENT 'Ref. alla tabella gaz_NNNwharehouse' AFTER `artico`,
 	ADD INDEX (`campo_impianto`),
 	ADD INDEX (`id_wharehouse`),
 	ADD INDEX (`id_avversita`);
@@ -57,10 +57,10 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXwharehouse` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 ALTER TABLE `gaz_XXXeffett`
-	ADD COLUMN `id_distinta` INT(4) NULL DEFAULT NULL COMMENT 'Quando usato è il riferimento alla distinta degli effetti (normalmente contenuta in gaz_001company_data) ' AFTER `id_con`,
+	ADD COLUMN `id_distinta` INT(4) NULL DEFAULT NULL COMMENT 'Quando usato è il riferimento alla distinta degli effetti (normalmente contenuta in gaz_NNNcompany_data) ' AFTER `id_con`,
 	ADD INDEX (`id_distinta`),
 	ADD INDEX (`id_con`); 
-ALTER TABLE `gaz_XXXstaff_worked_hours`	COMMENT='Tabella contenente i dati per la generazione del "Registro delle presenze", ossia dei riepiloghi giornalieri delle ore/tipo di lavoro eseguito da ciascun lavoratore. Può essere scritta manualente dalla apposita interfaccia o, eventualemente, generata a fine mese dai movimenti registrati su gaz_001staff_work_movements a sua volta frutto di inserimento manuale o se collegato tramite un marcatempo a badge.',
+ALTER TABLE `gaz_XXXstaff_worked_hours`	COMMENT='Tabella contenente i dati per la generazione del "Registro delle presenze", ossia dei riepiloghi giornalieri delle ore/tipo di lavoro eseguito da ciascun lavoratore. Può essere scritta manualente dalla apposita interfaccia o, eventualemente, generata a fine mese dai movimenti registrati su gaz_NNNstaff_work_movements a sua volta frutto di inserimento manuale o se collegato tramite un marcatempo a badge.',
 	ADD COLUMN `id` INT(9) NOT NULL AUTO_INCREMENT FIRST,
 	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `id_tes`,
 	ADD PRIMARY KEY (`id`);
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXstaff_work_movements` (
   `min_delay` decimal(3,1) NOT NULL DEFAULT '0.0' COMMENT 'Minuti di ritardo',
   `note` varchar(255) DEFAULT NULL,
   `id_orderman` int(9) DEFAULT NULL COMMENT 'sarà legato al piano dei conti per gestire le commesse (centri di costo)',
-  `id_staff_worked_hours` int(9) DEFAULT NULL COMMENT 'Se maggiore di 0 il rigo è già stato usato per calcolare il valore del rigo a cui si riferisce su gaz_001_staff_worked_hours',
+  `id_staff_worked_hours` int(9) DEFAULT NULL COMMENT 'Se maggiore di 0 il rigo è già stato usato per calcolare il valore del rigo a cui si riferisce su gaz_NNN_staff_worked_hours',
   `custom_field` text COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `id_staff` (`id_staff`) USING BTREE,
@@ -89,5 +89,7 @@ UPDATE gaz_XXXorderman SET start_work=(SELECT datemi FROM gaz_XXXtesbro WHERE ga
 ALTER TABLE `gaz_XXXfiles`
 	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `title`;
 ALTER TABLE `gaz_XXXclfoco`
-    ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `annota`;    
+    ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `annota`;  
+ALTER TABLE `gaz_XXXeffett`
+	ADD COLUMN `mndtritdinf` INT(9) NULL DEFAULT NULL COMMENT 'Riferimento ad id_doc della tabella gaz_NNNfiles in cui sono contenuti i dati del mandato che ha autorizzato l\'emissione del RID' AFTER `id_distinta`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
