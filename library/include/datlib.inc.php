@@ -51,14 +51,12 @@ if (isset($_SESSION['table_prefix'])) {
 	}
 }
 
-$month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>"Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre");
-
 // tabelle comuni alle aziende della stessa gestione
-$tn = array('admin', 'admin_config', 'admin_module', 'anagra', 'aziend', 'bank', 'classroom', 'config',
-    'country', 'currencies', 'currency_history', 'destina', 'camp_avversita', 'camp_colture', 
-	'camp_fitofarmaci', 'camp_uso_fitofarmaci',	'languages', 'menu_module', 'menu_script', 'menu_usage', 
-    'module', 'municipalities', 'provinces', 'regions', 'staff_absence_type', 'staff_work_type', 'students',
-    'breadcrumb' );
+$tn = array('admin','admin_config','admin_module','anagra','aziend','bank','breadcrumb',
+    'camp_avversita','camp_colture','camp_fitofarmaci','camp_uso_fitofarmaci','classroom',
+    'config','country','currencies','currency_history','destina','languages', 'menu_module',
+    'menu_script','menu_usage','module','municipalities','provinces','regions','staff_absence_type',
+    'staff_work_type','students');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $v;
 }
@@ -89,14 +87,13 @@ if (@file_exists('./lib.data.php')) {
 }
 
 //tabelle aziendali
-$tn = array('aliiva', 'agenti', 'artico', 'artico_group', 'assets', 'banapp', 'body_text', 'campi', 'cash_register', 'cash_register_reparto', 'cash_register_tender',
-    'catmer', 'caucon', 'caucon_rows', 'caumag', 'clfoco', 'company_config', 'company_data','contract', 'contract_row', 
-	'comunicazioni_dati_fatture', 'contract', 'effett', 'expdoc', 'extcon', 'files', 'imball', 'letter', 
-	'liquidazioni_iva', 'lotmag', 'movmag', 'pagame', 'paymov', 'portos', 'provvigioni', 'rigbro', 
-	'rigdoc', 'rigmoc', 'rigmoi', 'spediz', 'staff', 'staff_skills', 'staff_worked_hours', 'staff_work_movements', 'tesbro',
-	'tesdoc', 'tesmov', 'vettor', 'fae_flux', 'assist',	'ragstat', 'agenti_forn',	'movimenti', 
-    'sconti_articoli', 'sconti_raggruppamenti', 'instal', 'instal_component', 'instal_type', 'orderman', 'registro_trattamento_dati', 
-    'distinta_base', 'disbas', 'disbas_componente', 'tescmr', 'rigcmr', 'syncronize_oc','camp_mov_sian','camp_recip_stocc','camp_artico','camp_anagra');
+$tn = array('agenti','agenti_forn','aliiva','artico','artico_group','assets','assist','banapp','body_text',
+'campi','camp_artico','camp_mov_sian','camp_recip_stocc','cash_register','cash_register_reparto','cash_register_tender',
+'catmer','caucon','caucon_rows','caumag','clfoco','company_config','company_data','comunicazioni_dati_fatture',
+'contract', 'contract_row','distinta_base','effett','expdoc','extcon','fae_flux','files','imball','instal','letter',
+'liquidazioni_iva', 'lotmag', 'movmag','orderman','pagame','paymov','portos','provvigioni','ragstat',
+'registro_trattamento_dati','rigbro','rigdoc','rigmoc','rigmoi','sconti_articoli','sconti_raggruppamenti','spediz',
+'staff','staff_skills','staff_worked_hours','staff_work_movements','tesbro','tesdoc','tesmov','vettor','wharehouse');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $id . $v;
 }
