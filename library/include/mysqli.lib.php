@@ -358,10 +358,9 @@ function gaz_dbi_get_anagra($table, $fnm, $fval) {
    $fields_anagra = gaz_dbi_fields_anagra();
    $fields = '';
    foreach ($fields_anagra as $field_anagra) {
-      if ($field_anagra == 'fatt_email') {
-         /* devo gestire un'ambiguità nella query indicando 
-          * da quale tabella prendere il campo fatt_email
-          */
+      if ($field_anagra == 'fatt_email') { // gestione ambiguità fatt_email
+         $fields .= (empty($fields) ? '' : ', ') . $gTables['anagra'] . "." . gaz_aes_field_anagra($field_anagra) . " AS $field_anagra";
+      } elseif ($field_anagra == 'custom_field') { // gestione ambiguità custom_field 
          $fields .= (empty($fields) ? '' : ', ') . $gTables['anagra'] . "." . gaz_aes_field_anagra($field_anagra) . " AS $field_anagra";
       } else {
          $fields .= (empty($fields) ? '' : ', ') . gaz_aes_field_anagra($field_anagra) . " AS $field_anagra";

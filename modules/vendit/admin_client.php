@@ -39,6 +39,17 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
+    // inizio mandati rid
+    $nd = 0;
+    if (isset($_POST['MndtRltdInf'])) {
+      foreach ($_POST['MndtRltdInf'] as $nd => $v) {
+        $form['MndtRltdInf'][$nd]['id_doc'] = intval($v['id_doc']);
+        $form['MndtRltdInf'][$nd]['extension'] = substr($v['extension'], 0, 5);
+        $form['MndtRltdInf'][$nd]['title'] = substr($v['title'], 0, 80);
+        $nd++;
+      }
+    }
+    // fine mandati rid
 
     $toDo = 'update';
     if (isset($_POST['Insert'])) {
@@ -224,6 +235,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = substr($form['datnas'], 0, 4);
     $form['datnas_M'] = substr($form['datnas'], 5, 2);
     $form['datnas_D'] = substr($form['datnas'], 8, 2);
+    // inizio mandati rid
+    $nd = 0;
+    $rs_r = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '" . $form['codice'] . "' AND table_name_ref = 'clfoco'", "id_doc DESC");
+    while ($r = gaz_dbi_fetch_array($rs_r)) {
+        $form['MndtRltdInf'][$nd] = $r;
+        $nd++;
+    }
+    // fine mandati rid
+
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $anagrafica = new Anagrafica();
     $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
@@ -580,6 +600,31 @@ $gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'], 'tippag`, `g
                 </div>
             </div>
         </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="MndtRltdInf" class="col-sm-4 control-label"><?php echo $script_transl['MndtRltdInf']; ?></label>
+<?php if ($nd > 0) { // se ho dei documenti  ?>
+                        <div>
+                        <?php foreach ($form['MndtRltdInf'] as $k => $val) { ?>
+                                <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="MndtRltdInf[<?php echo $k; ?>][id_doc]">
+                                <input type="hidden" value="<?php echo $val['extension']; ?>" name="MndtRltdInf[<?php echo $k; ?>][extension]">
+                                <input type="hidden" value="<?php echo $val['title']; ?>" name="MndtRltdInf[<?php echo $k; ?>][title]">
+    <?php echo DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/doc/' . $val['id_doc'] . '.' . $val['extension']; ?>
+                                <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
+                                    <i class="glyphicon glyphicon-file"></i>
+                                </a><?php echo $val['title']; ?>
+                                <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
+
+<?php } ?>
+                            <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
+                        </div>
+                        <?php } else { // non ho documenti  ?>
+                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">

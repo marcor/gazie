@@ -85,5 +85,9 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXstaff_work_movements` (
 ALTER TABLE `gaz_XXXorderman`
 	ADD COLUMN `start_work` DATETIME NULL AFTER `id_staff_def`,
 	ADD COLUMN `end_work` DATETIME NULL AFTER `start_work`; 
-UPDATE gaz_XXXorderman SET start_work=(SELECT datemi FROM gaz_XXXtesbro WHERE gaz_XXXorderman.id_tesbro = gaz_XXXtesbro.id_tes LIMIT 1) WHERE gaz_XXXorderman.id_tesbro > 0;     
+UPDATE gaz_XXXorderman SET start_work=(SELECT datemi FROM gaz_XXXtesbro WHERE gaz_XXXorderman.id_tesbro = gaz_XXXtesbro.id_tes LIMIT 1) WHERE gaz_XXXorderman.id_tesbro > 0;
+ALTER TABLE `gaz_XXXfiles`
+	ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `title`;
+ALTER TABLE `gaz_XXXclfoco`
+    ADD COLUMN `custom_field` TEXT NULL DEFAULT NULL COMMENT 'Riferimenti generici utilizzabili sui moduli. Normalmente in formato json: {"nome_modulo":{"nome_variabile":{"valore_variabile": {}}}}' AFTER `annota`;    
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

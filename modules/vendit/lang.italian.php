@@ -89,6 +89,7 @@ $strScript = array("admin_client.php" =>
         'id_agente' => 'Agente',
         'cosric' => 'Conto di ricavo predefinito',
         'codpag' => 'Modalit&agrave; di pagamento *',
+        'MndtRltdInf' => 'Mandati RID',
         'sconto' => '% Sconto chiusura',
         'sconto_rigo' => 'Sconto sui righi documenti',
         'banapp' => 'Banca d\'appoggio',
