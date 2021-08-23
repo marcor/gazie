@@ -614,13 +614,13 @@ $gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'], 'tippag`, `g
                                 <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
                                     <i class="glyphicon glyphicon-file"></i>
                                 </a><?php echo $val['title']; ?>
-                                <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
+                                <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_mndtritdinf.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
 
 <?php } ?>
-                            <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
+                            <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_mndtritdinf.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
                         </div>
                         <?php } else { // non ho documenti  ?>
-                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
+                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_mndtritdinf.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
                     <?php } ?>
                 </div>
             </div>

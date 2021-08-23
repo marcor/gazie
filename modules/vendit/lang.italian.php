@@ -1869,6 +1869,20 @@ $strScript = array("admin_client.php" =>
         'driver' => "File driver (in /library/cash_register/)",
         'path_data' => "Percoso e/o altri dati",
         'lotteria_scontrini' => "Stringa tipo rigo '5 = Lotteria Scontrini'" 
-        )   
-	);
+        ),
+    "browse_document.php" =>
+    array('title' => "Lista dei Mandati RID",
+        'errors' => array('Il formato del file non è stato accettato!',
+            'Il file è troppo grande!',
+            'Il file è vuoto!',
+            'Nessun file selezionato'),
+        'ins_this' => "Inserisci un Documento e/o Certificato",
+        'upd_this' => "Modifica Documento e/o Certificato",
+        'item' => "Cliente",
+        'table_name_ref' => "Tabella di riferimento",
+        'note' => "Didascalia/Appunti/Note",
+        'ext' => "Estensione",
+        'select' => "Sel.",
+        'code' => "Codice")        
+);
 ?>
