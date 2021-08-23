@@ -93,7 +93,7 @@ $tn = array('aliiva', 'agenti', 'artico', 'artico_group', 'assets', 'banapp', 'b
     'catmer', 'caucon', 'caucon_rows', 'caumag', 'clfoco', 'company_config', 'company_data','contract', 'contract_row', 
 	'comunicazioni_dati_fatture', 'contract', 'effett', 'expdoc', 'extcon', 'files', 'imball', 'letter', 
 	'liquidazioni_iva', 'lotmag', 'movmag', 'pagame', 'paymov', 'portos', 'provvigioni', 'rigbro', 
-	'rigdoc', 'rigmoc', 'rigmoi', 'spediz', 'staff', 'staff_skills', 'staff_worked_hours', 'tesbro',
+	'rigdoc', 'rigmoc', 'rigmoi', 'spediz', 'staff', 'staff_skills', 'staff_worked_hours', 'staff_work_movements', 'tesbro',
 	'tesdoc', 'tesmov', 'vettor', 'fae_flux', 'assist',	'ragstat', 'agenti_forn',	'movimenti', 
     'sconti_articoli', 'sconti_raggruppamenti', 'instal', 'instal_component', 'instal_type', 'orderman', 'registro_trattamento_dati', 
     'distinta_base', 'disbas', 'disbas_componente', 'tescmr', 'rigcmr', 'syncronize_oc','camp_mov_sian','camp_recip_stocc','camp_artico','camp_anagra');
