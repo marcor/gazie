@@ -26,13 +26,10 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
 
-function getLimit($reprint = false) {
+function getLimit() {
     global $gTables;
     $acc = array();
-    $where = "status <> 'DISTINTATO'";
-    if ($reprint) {
-        $where = ' 1 ';
-    }
+    $where = "(id_distinta = 0  OR id_distinta IS NULL)  AND tipeff = 'B' ";
     $rs_d = gaz_dbi_dyn_query("scaden", $gTables['effett'], $where, "scaden ASC", 0, 1);
     $rs = gaz_dbi_fetch_array($rs_d);
     if ($rs) {

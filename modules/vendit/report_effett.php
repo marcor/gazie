@@ -173,18 +173,20 @@ $recordnav->output();
                     // L'effetto e' da contabilizzare.
                     echo '<a href="contab_effett.php">Contabilizza</a> ';
                 }
-                echo '<a class="btn btn-xs btn-success" href="stampa_distinta.php?id_distinta='.$r["id_distinta"].'">Distinta PDF</a> ';
-                
+                echo '<a class="btn btn-xs btn-success" href="stampa_distinta.php?id_distinta='.$r["id_distinta"].'">Distinta '.$r["id_distinta"].' (pdf)</a> ';
+                ?>
+                <a href="../root/retrieve.php?id_doc=<?php echo $r["id_distinta"]; ?>"  class="btn btn-default btn-sm">download <i class="glyphicon glyphicon-download"></i> </a>
+                <?php
             } else {
-                echo ' <a class="btn btn-xs btn-default btn-cont" href="';
+                echo ' <a class="btn btn-xs btn-info" href="';
                 if ($r["tipeff"] == "T") {
-                    echo 'distin_effett.php">file PDF Cambiali Tratte';
+                    echo 'distin_effett.php">Distinta su file PDF Cambiali Tratte';
                 } elseif ($r["tipeff"] == "B") {
-                    echo 'select_filerb.php">file CBI RiBa';
+                    echo 'select_filerb.php">Distinta su file CBI RiBa';
                 } elseif ($r["tipeff"] == "I") {
-                    echo 'select_filerid.php">file XML RID';
+                    echo 'select_filerid.php">Distinta su file XML RID';
                 } elseif ($r["tipeff"] == "V") {
-                    echo 'select_filemav.php">file MAV';
+                    echo 'select_filemav.php">Distinta su file MAV';
                 } else {
                     echo '">';
                 }
