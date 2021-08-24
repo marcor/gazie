@@ -100,7 +100,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $row['prospe'],
         $row['cigcup']);
         // aggiorno l'effetto sul db indicando in id_distinta l'id_doc di gaz_NNNfiles  
-        gaz_dbi_query("UPDATE ". $gTables['effett']." SET id_distinta=".$id_doc." WHERE id_tes=".$row['id_tes']);		
+        gaz_dbi_query("UPDATE ". $gTables['effett']." SET id_distinta=".$id_doc.", banacc=".intval($_GET['banacc'])." WHERE id_tes=".$row['id_tes']);		
 }
 $RB = new RibaAbiCbi();
 // Impostazione degli header per l'opozione "save as" dello standard input che verr� generato

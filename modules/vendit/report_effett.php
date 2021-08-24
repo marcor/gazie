@@ -147,50 +147,50 @@ $recordnav->output();
             echo "<td align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_effett.php?Update&id=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["id_tes"] . "</a> &nbsp</td>";
             echo "<td align=\"right\"><a href=\"admin_effett.php?Update&id=" . $r["id_tes"] . "\">" . $r["progre"] . "</a> &nbsp</td>";
             echo "<td align=\"right\">" . gaz_format_date($r["datemi"]) . "</td>";
-            echo "<td align=\"center\">" . $r["tipeff"] . " &nbsp;</td>";
+            echo "<td align=\"center\">" .  $script_transl['type_value'][$r["tipeff"]] . " &nbsp;</td>";
             echo "<td align=\"center\">" . gaz_format_date($r["scaden"]) . " &nbsp;</td>";
             echo "<td title=\"" . $script_transl['date_doc'] . ": " . gaz_format_date($r["datfat"]) . " n." . $r["numfat"] . "/" . $r["seziva"] . ' ' . $admin_aziend['html_symbol'] . " " . gaz_format_number($r["totfat"]) . "\">" . $cliente["ragso1"] . " &nbsp;</td>";
             echo "<td align=\"right\">" . gaz_format_number($r["impeff"]) . " &nbsp;</td>";
             echo "<td align=\"center\">" . $script_transl['salacc_value'][$r["salacc"]] . " &nbsp;</td>";
             echo "<td>" . (($banapp)?$banapp["descri"]:'') . " &nbsp;</td>";
-            if ($r["status"] == "DISTINTATO") {
+            // Colonna "Stato"
+            echo '<td align="center">';
+            if ($r["id_distinta"] > 0) {
                 if ($r["id_con"] > 0) {
-                    // Interroga la tabella gaz_XXXtesmov per trovare
-                    // il numero della registrazione (id_tes) con cui
-                    // risulta contabilizzato l'effetto (id_con).
                     $tesmov_result = gaz_dbi_dyn_query('*', $gTables['tesmov'], "id_tes = " . $r["id_con"], 'id_tes');
                     $tesmov_r = gaz_dbi_fetch_array($tesmov_result);
-                    // Se il numero di registrazione non esiste nella
-                    // tabella gaz_XXXtesmov, questo viene azzerato
-                    // nella tabella dell'effetto, diventando così
-                    // contabilizzabile nuovamente.
                     if ($tesmov_r["id_tes"] == $r["id_con"]) {
                         // L'effetto risulta contabilizzato regolarmente.
-                        echo "<td align=\"center\"><a href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont. n." . $r["id_con"] . "</a></td>";
+                        echo ' <a  class="btn btn-xs btn-default" href="../contab/admin_movcon.php?id_tes=' . $r["id_con"] . '&Update">Cont. n.' . $r["id_con"] . "</a>\n ";
                     } else {
                         // vado a modificare l'effetto azzerando il
                         // riferimento alla registrazione contabile
                         gaz_dbi_put_row($gTables['effett'], "id_tes", $r["id_tes"], "id_con", 0);
                         // Mostro che l'effetto è da contabilizzare nuovamente.
-                        echo "<td align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
+                        echo ' <a href="contab_effett.php">Contabilizza</a>';
                     }
                 } else {
                     // L'effetto e' da contabilizzare.
-                    echo "<td align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
+                    echo '<a href="contab_effett.php">Contabilizza</a> ';
                 }
+                echo '<a class="btn btn-xs btn-success" href="stampa_distinta.php?id_distinta='.$r["id_distinta"].'">Distinta PDF</a> ';
+                
             } else {
+                echo ' <a class="btn btn-xs btn-default btn-cont" href="';
                 if ($r["tipeff"] == "T") {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a></td>";
+                    echo 'distin_effett.php">file PDF Cambiali Tratte';
                 } elseif ($r["tipeff"] == "B") {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filerb.php\">file RiBa</a></td>";
+                    echo 'select_filerb.php">file CBI RiBa';
                 } elseif ($r["tipeff"] == "I") {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filerid.php\">file RID</a></td>";
+                    echo 'select_filerid.php">file XML RID';
                 } elseif ($r["tipeff"] == "V") {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filemav.php\">file MAV</a></td>";
+                    echo 'select_filemav.php">file MAV';
                 } else {
-                    echo "<td align=\"center\">" . $r["status"] . "</td>";
+                    echo '">';
                 }
+                echo '</a> ';
             }
+            echo '</td>';
             // Colonna "Stampa"
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"stampa_effett.php?id_tes=" . $r["id_tes"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
             // Colonna "Origine"

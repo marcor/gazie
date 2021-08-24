@@ -70,6 +70,8 @@ if ($_POST['cktipo'] == 0) {
     $querytip = " and tipeff = \"T\" ";
 } elseif ($_POST['cktipo'] == 3) {
     $querytip = " and tipeff = \"V\" ";
+} elseif ($_POST['cktipo'] == 4) {
+    $querytip = " and tipeff = \"I\" ";
 }
 
 $result = gaz_dbi_dyn_query("*", $gTables['effett'], "YEAR(datemi) = " . intval($_POST['annexe']) . " AND id_con = 0 AND banacc > 0 $querytip", 'id_tes asc', 0, 1);
@@ -151,6 +153,27 @@ if (isset($_POST['genera'])and $message == "") {
             //inserisco la testata
             $newValue = array('caucon' => 'MAV',
                 'descri' => 'EMESSO MAV',
+                'datreg' => $effett['datemi'],
+                'seziva' => $effett['seziva'],
+                'id_doc' => $effett['id_tes'],
+                'protoc' => $effett['id_tes'],
+                'numdoc' => $effett['progre'],
+                'datdoc' => $effett['datemi'],
+                'clfoco' => $effett['clfoco']
+            );
+            $ultimo_id = tesmovInsert($newValue);
+            //recupero l'id assegnato dall'inserimento
+
+            // inserisco i due righi partendo dal conto dare.
+            rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $effett['banacc'], 'import' => $effett['impeff']));
+            // continuo con il cliente.
+            $paymov_id = rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
+            // memorizzo l'id del cliente  
+        }
+        if ($effett['tipeff'] == 'I') {
+            //inserisco la testata
+            $newValue = array('caucon' => 'RID',
+                'descri' => 'EMESSO RID',
                 'datreg' => $effett['datemi'],
                 'seziva' => $effett['seziva'],
                 'id_doc' => $effett['id_tes'],
@@ -250,6 +273,7 @@ $script_transl = HeadMain();
             <td class="FacetDataTD">
                 <?php
                 if ($_POST['cktipo'] == 0) {
+                    $checked4 = "";
                     $checked3 = "";
                     $checked2 = "";
                     $checked1 = "";
@@ -257,6 +281,7 @@ $script_transl = HeadMain();
                     $querytip = "";
                 }
                 if ($_POST['cktipo'] == 1) {
+                    $checked4 = "";
                     $checked3 = "";
                     $checked2 = "";
                     $checked1 = "checked";
@@ -264,6 +289,7 @@ $script_transl = HeadMain();
                     $querytip = " and tipeff = \"B\" ";
                 }
                 if ($_POST['cktipo'] == 2) {
+                    $checked4 = "";
                     $checked3 = "";
                     $checked2 = "checked";
                     $checked1 = "";
@@ -271,16 +297,26 @@ $script_transl = HeadMain();
                     $querytip = " and tipeff = \"T\" ";
                 }
                 if ($_POST['cktipo'] == 3) {
+                    $checked4 = "";
                     $checked3 = "checked";
                     $checked2 = "";
                     $checked1 = "";
                     $checked0 = "";
                     $querytip = " and tipeff = \"V\" ";
                 }
+                if ($_POST['cktipo'] == 4) {
+                    $checked4 = "checked";
+                    $checked3 = "";
+                    $checked2 = "";
+                    $checked1 = "";
+                    $checked0 = "";
+                    $querytip = " and tipeff = \"I\" ";
+                }
                 echo "\t\t <input type=\"radio\" name=\"cktipo\" value=0 $checked0 onclick=\"this.form.submit()\"> TUTTE \n";
                 echo "\t\t <input type=\"radio\" name=\"cktipo\" value=1 $checked1 onclick=\"this.form.submit()\"> R.B. \n";
                 echo "\t\t <input type=\"radio\" name=\"cktipo\" value=2 $checked2 onclick=\"this.form.submit()\"> TRATTE \n";
                 echo "\t\t <input type=\"radio\" name=\"cktipo\" value=3 $checked3 onclick=\"this.form.submit()\"> MAV \n";
+                echo "\t\t <input type=\"radio\" name=\"cktipo\" value=4 $checked4 onclick=\"this.form.submit()\"> RID \n";
                 ?>
         </tr>
         <tr>
