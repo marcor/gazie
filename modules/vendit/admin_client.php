@@ -237,7 +237,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_D'] = substr($form['datnas'], 8, 2);
     // inizio mandati rid
     $nd = 0;
-    $rs_r = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '" . $form['codice'] . "' AND table_name_ref = 'clfoco'", "id_doc DESC");
+    $rs_r = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '" . intval($admin_aziend['mascli'] * 1000000 + $_GET['codice']) . "' AND table_name_ref = 'clfoco'", "id_doc DESC");
     while ($r = gaz_dbi_fetch_array($rs_r)) {
         $form['MndtRltdInf'][$nd] = $r;
         $nd++;
@@ -270,8 +270,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autocomplete'));
-
-echo "<SCRIPT type=\"text/javascript\">\n";
+?>
+<script>
+<?php
 echo "function toggleContent(currentContent) {
         var thisContent = document.getElementById(currentContent);
         if ( thisContent.style.display == 'none') {
@@ -300,10 +301,54 @@ function setDate(name) {
   var mdy = month+'/'+day+'/'+year;
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
-}
+}";
+?>
+$(function() {
+	$("#dialog_delete").dialog({ autoOpen: false });
+	$('.dialog_delete').click(function() {
+		$("p#idcodice").html($(this).attr("mndtid"));
+		$("p#iddescri").html($(this).attr("dtofsgntr"));
+		var id_con = $(this).attr('ref');
+		$( "#dialog_delete" ).dialog({
+			minHeight: 1,
+			width: "auto",
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{ 
+					text:'Elimina', 
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+					$.ajax({
+						data: {'type':'mndtritdinf',ref:id_con},
+						type: 'POST',
+						url: '../vendit/delete.php',
+						success: function(output){
+		                    //alert(output);
+							window.location.replace("./report_client.php");
+						}
+					});
+				}},
+				"Non eliminare": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+		$("#dialog_delete" ).dialog( "open" );  
+	});
+});    
 </script>
-";
-echo "<form method=\"POST\" name=\"form\">\n";
+<form method="POST" name="form">
+	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
+        <p><b>Mandato RID</b></p>
+        <p>Numero:</p>
+        <p class="ui-state-highlight" id="idcodice"></p>
+        <p>Data firma:</p>
+        <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+<?php
+
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['id_anagra'] . "\" name=\"id_anagra\" />\n";
@@ -615,6 +660,17 @@ $gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'], 'tippag`, `g
                                     <i class="glyphicon glyphicon-file"></i>
                                 </a><?php echo $val['title']; ?>
                                 <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_mndtritdinf.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
+							<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il mandato" ref="<?php echo $val['id_doc'];?>"
+                            <?php
+                           	if ($data=json_decode($val['custom_field'],true)){// se c'è un json nel custom_field
+                                if (is_array($data['vendit']) && strlen($data['vendit']['dtofsgntr'])>0) { // se è riferito al modulo vendit e contiene la data di firma del RID
+                                    echo ' dtofsgntr="'.$data['vendit']['dtofsgntr'].'" mndtid="'.$data['vendit']['mndtid'].'"';
+                                }
+                            }
+                            ?>
+                            >
+								<i class="glyphicon glyphicon-remove"></i>
+							</a>
 
 <?php } ?>
                             <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_mndtritdinf.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />

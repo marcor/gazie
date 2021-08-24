@@ -251,6 +251,12 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['paymov'], 'id_tesdoc_ref', $i);
 		break;
+		case "mndtritdinf":
+			$i=intval($_POST['ref']);
+			$f=gaz_dbi_get_row($gTables['files'], "id_doc", $i);
+            unlink(DATA_DIR . "files/" .$admin_aziend['codice']."/doc/". $i. ".".$f['extension']);
+			gaz_dbi_del_row($gTables['files'], 'id_doc', $i);
+		break;
 	}
 }
 ?>

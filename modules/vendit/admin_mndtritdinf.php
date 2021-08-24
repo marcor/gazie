@@ -34,13 +34,14 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form=gaz_dbi_parse_post('files');
+    $form['mndtid']=intval($_POST['mndtid']);
+    $form['dtofsgntr']=preg_replace("([^0-9/])", "", $_POST['dtofsgntr']);
+    $form['cliente']=$_POST['cliente'];
     $form['ritorno'] = $_POST['ritorno'];
     if (isset($_POST['Submit'])) { // conferma tutto
 		if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
 			preg_match("/\.([^\.]+)$/", $_FILES['userfile']['name'], $matches);
-			
 			$form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
-			
 			$form['extension']=$matches[1];
 			//print $_FILES['userfile']['type'];
 			if ( $_FILES['userfile']['type'] == "image/png" ||
@@ -76,9 +77,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			// controllo che ci sia la cartella doc
 			$docfolder = DATA_DIR.'files/' . $admin_aziend['codice'] . '/doc/';
 			if (!file_exists($docfolder)) {// se non c'è la creo
-				mkdir($docfolder, 0777);
+				mkdir($docfolder, 0666);
 			}
           // aggiorno il solo db
+          $dtofsgntr = gaz_format_date($form['dtofsgntr'], true);
+          $form['custom_field']=json_encode(['vendit'=>array('dtofsgntr'=>$form['dtofsgntr'],'mndtid'=>$form['mndtid'])]);
           if ($toDo == 'insert') {
             $form['table_name_ref']= 'clfoco';
             $form['id_doc']=gaz_dbi_table_insert('files',$form);
@@ -102,15 +105,28 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	}
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['files'], 'id_doc',intval($_GET['id_doc']));
+    $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',$form['item_ref']);
+    $form['cliente']=$clfoco['descri'];
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
+    $form['dtofsgntr']='';
+    $form['mndtid']='';
+	if ($data=json_decode($form['custom_field'],true)){// se c'è un json nel custom_field
+		if (is_array($data['vendit']) && strlen($data['vendit']['dtofsgntr'])>0){ // se è riferito al modulo vendit e contiene la data di firma del RID
+            $form['dtofsgntr']=$data['vendit']['dtofsgntr'];
+            $form['mndtid']=$data['vendit']['mndtid'];
+        }
+	}
     if (empty($form)) { // scappo!
        header("Location: ".$form['ritorno']);
        exit;
     }
 } else { //se e' il primo accesso per INSERT
     $form=gaz_dbi_fields('files');
+    $form['dtofsgntr']='';
+    $form['mndtid']='';
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',intval($admin_aziend['mascli'] * 1000000 + $_GET['item_ref']));
+    $form['cliente']=$clfoco['descri'];
     if (!empty($clfoco)) { //l'articolo è stato trovato
        $form['item_ref']= $clfoco['codice'];    
     } else { // scappo!
@@ -124,6 +140,25 @@ $script_transl = HeadMain();
 require("./lang.".$admin_aziend['lang'].".php");
 $script_transl += $strScript["browse_document.php"];
 $gForm = new venditForm();
+?>
+<script type="text/javascript">
+    $(function () {
+        //$("#dtofsgntr").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+        $("#dtofsgntr").datepicker({
+            showButtonPanel: true,
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            beforeShow: function (input, inst) {
+                var rect = input.getBoundingClientRect();
+                setTimeout(function () {
+                    inst.dpDiv.css({ top: rect.top + 40, left: rect.left + 0 });
+                }, 0);
+            }
+        });
+    });
+</script>
+
+<?php
 echo "<form method=\"POST\" name=\"form\" enctype=\"multipart/form-data\">\n";
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
@@ -134,8 +169,10 @@ if ($toDo == 'insert') {
    echo "<input type=\"hidden\" name=\"id_doc\" value=\"".$form['id_doc']."\">\n";
 }
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
+echo "<input type=\"hidden\" name=\"cliente\" value=\"".$form['cliente']."\">\n";
 echo "<input type=\"hidden\" name=\"extension\" value=\"".$form['extension']."\">\n";
 echo "<input type=\"hidden\" name=\"item_ref\" value=\"".$form['item_ref']."\">\n";
+echo "<input type=\"hidden\" name=\"title\" value=\"".$form['title']."\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
 echo '<div align="center"><table class="table-striped table-bordered table-condensed">';
 if (!empty($msg)) {
@@ -156,12 +193,22 @@ echo "\t<td align=\"right\">".$script_transl['update']." :  <input name=\"userfi
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td>".$script_transl['item']."</td>\n";
-echo "\t<td colspan=\"2\">".$clfoco['descri']."</td>\n";
+echo "\t<td colspan=\"2\"><b>".$form['cliente']."</b></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td>".$script_transl['note']."</td>\n";
+echo "\t<td>".$script_transl['title']."</td>\n";
+echo "\t<td colspan=\"2\">".$form['title']."</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td>".$script_transl['dtofsgntr']."</td>\n";
 echo "\t<td colspan=\"2\">
-      <input type=\"text\" name=\"title\" value=\"".$form['title']."\" maxlength=\"50\"  /></td>\n";
+      <input type=\"text\" id=\"dtofsgntr\" name=\"dtofsgntr\" value=\"".$form['dtofsgntr']."\" maxlength=\"10\"  /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<tr>\n";
+echo "\t<td>".$script_transl['mndtid']."</td>\n";
+echo "\t<td colspan=\"2\">
+      <input type=\"number\" name=\"mndtid\" min=\"1\" step=\"1\"value=\"".$form['mndtid']."\" maxlength=\"20\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td>".$script_transl['sqn']."</td>";
