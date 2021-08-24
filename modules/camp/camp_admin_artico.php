@@ -92,7 +92,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
 	$form['conferma'] = $_POST['conferma'];
-
+	$form['aliiva'] = $_POST['aliiva'];
 	if ($_POST['oldnomefito']<>$_POST['nomefito']){ // se è stato cambiato il nome del fitofarmaco prendo id_reg e propongo il codice
 		$_POST['id_reg']=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'PRODOTTO', $_POST['nomefito'])['NUMERO_REGISTRAZIONE'];
 		if (intval($_POST['id_reg'])>0){ // se è stato trovato nel DB del ministero propongo il codice
@@ -263,11 +263,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			$msg['err'][]= 'unimis5';			
 		}
 		 //Antonio Germani controllo che sia stata inserita una categoria merceologica
-	   if (empty($form["catmer"])) {
+		if (empty($form["catmer"])) {
             $msg['err'][] = 'catmer';
         }
      
-	   if (empty($form["aliiva"])) {
+		if (empty($form["aliiva"])) {
             $msg['err'][] = 'aliiva';
         }
         // per poter avere la tracciabilità è necessario attivare la contabità di magazzino in configurazione azienda
@@ -680,7 +680,7 @@ select: function(event, ui) {
 					<li class="active"><a data-toggle="pill" href="#home">DATI GENERICI</a></li>
 					<li><a data-toggle="pill" href="#car">CARATTERISTICHE</a></li>
 					<li><a data-toggle="pill" href="#sian">SIAN</a></li>
-					<li><a data-toggle="pill" href="#mag">MAGAZZINO</a></li>
+					<li><a data-toggle="pill" href="#mag">MAGAZZINO/CONTABILITà</a></li>
 					
 					<li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
 				</ul> 
@@ -1190,6 +1190,16 @@ select: function(event, ui) {
 							</div>
 						</div>
 						</div><!-- chiude row  -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="aliiva" class="col-sm-4 control-label"><?php echo $script_transl['aliiva']; ?></label>
+									<?php
+									$gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'tabindex="21" style="max-width: 350px;"');
+									?>
+								</div>
+							</div>
+						</div><!-- chiude row  -->
 					<?php if ($form['good_or_service']==0 OR $form['good_or_service']==2){?>
 						<div class="row">
 							<div class="col-md-12">
@@ -1223,17 +1233,8 @@ select: function(event, ui) {
 									<input tabindex="32" class="col-sm-4" id="autocomplete2" type="text" value="<?php echo $form['fornitore']; ?>" name="fornitore" maxlength="15" /> <!-- per funzionare autocomplete2, id dell'input deve essere autocomplete -->
 								</div>
 							</div>
-						</div><!-- chiude row  --> 						
-							<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="aliiva" class="col-sm-4 control-label"><?php echo $script_transl['aliiva']; ?></label>
-									<?php
-									$gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'tabindex="21" style="max-width: 350px;"');
-									?>
-								</div>
-							</div>
-						</div><!-- chiude row  -->
+						</div><!-- chiude row  --> 		
+							
 					<?php } else { ?>
 						<div class="row">
 							<div class="col-md-12">
@@ -1242,7 +1243,7 @@ select: function(event, ui) {
 								<input type="hidden" name="scorta" value="" />
 								<input type="hidden" name="riordino" value="" />
 								<input type="hidden" name="fornitore" value="" />
-								<input type="hidden" name="aliiva" value="" />								
+															
 								</div>
 							</div>
 						</div>

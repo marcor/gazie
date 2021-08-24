@@ -27,14 +27,14 @@
 class campForm extends GAzieForm {
 	
 	// Antonio Germani - Come select selectFromDB ma con in più preleva $key4 da $table2, dove $key3 è uguale a $key2, e lo visualizza nella scelta del select. Cioè nelle scelte del select ci sarà $key e $key4
-	function selectFrom2DB($table,$table2,$key3,$key4, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false) {
+	function selectFrom2DB($table,$table2,$key3,$key4, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false, $disabled="") {
         global $gTables;
 		$acc='';
         $refresh = '';
 		
         if (!$order) {
             $order = $key;
-        }
+        }		
 		
         $query = 'SELECT * FROM `' . $gTables[$table] . '` ';
         if ($where) {
@@ -44,7 +44,7 @@ class campForm extends GAzieForm {
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
-        $acc .= "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style>\n";
+        $acc .= "\t <select $disabled id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style>\n";
         if ($empty) {
             $acc .= "\t\t <option value=\"\"></option>\n";
         }
