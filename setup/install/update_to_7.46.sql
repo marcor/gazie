@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXwharehouse` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 ALTER TABLE `gaz_XXXeffett`
-	ADD COLUMN `id_distinta` INT(4) NULL DEFAULT NULL COMMENT 'Quando usato è il riferimento alla distinta degli effetti (normalmente contenuta in gaz_NNNcompany_data) ' AFTER `id_con`,
+	ADD COLUMN `id_distinta` INT(9) NULL DEFAULT NULL COMMENT 'Riferimento alla distinta degli effetti che a partire dalla versione 7.46 è contenuta in gaz_NNNfiles) ' AFTER `id_con`,
 	ADD INDEX (`id_distinta`),
 	ADD INDEX (`id_con`); 
 ALTER TABLE `gaz_XXXstaff_worked_hours`	COMMENT='Tabella contenente i dati per la generazione del "Registro delle presenze", ossia dei riepiloghi giornalieri delle ore/tipo di lavoro eseguito da ciascun lavoratore. Può essere scritta manualente dalla apposita interfaccia o, eventualemente, generata a fine mese dai movimenti registrati su gaz_NNNstaff_work_movements a sua volta frutto di inserimento manuale o se collegato tramite un marcatempo a badge.',

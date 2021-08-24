@@ -26,14 +26,9 @@
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
-if (!isset($_GET['ristam']) or ! isset($_GET['banacc']) or ! isset($_GET['scaini']) or ! isset($_GET['scafin']) or ! isset($_GET['proini']) or ! isset($_GET['profin'])) {
+if (! isset($_GET['banacc']) or ! isset($_GET['scaini']) or ! isset($_GET['scafin']) or ! isset($_GET['proini']) or ! isset($_GET['profin'])) {
     header("Location: report_effett.php");
     exit;
-}
-if ($_GET['ristam'] <> 'S') {
-    $ristampa = $gTables['effett'] . ".status <> 'DISTINTATO' AND ";
-} else {
-    $ristampa = "(banacc = '" . $_GET['banacc'] . "' OR banacc = 0) AND ";
 }
 require("../../library/include/riba_cbi.inc.php");
 
@@ -46,9 +41,9 @@ if (isset($_GET['datemi'])) {
 } else {
     $dataemissione = date("dmy");
 }
-// creo il file di back up con il nome ottenuto in precedenza.
+// creo il file con il nome ottenuto in precedenza.
 $filename = "RIBAdel$dataemissione.cbi";
-$where = $ristampa . " tipeff = 'B' AND scaden BETWEEN '" . $_GET['scaini'] . "' AND '" . $_GET['scafin'] . "' AND progre BETWEEN '" . $_GET['proini'] . "' AND '" . $_GET['profin'] . "' ";
+$where = "(".$gTables['effett'] . ".id_distinta = 0 OR id_distinta IS NULL) AND tipeff = 'B' AND scaden BETWEEN '" . $_GET['scaini'] . "' AND '" . $_GET['scafin'] . "' AND progre BETWEEN '" . $_GET['proini'] . "' AND '" . $_GET['profin'] . "' ";
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query("*", $gTables['effett'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['effett'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra LEFT JOIN " . $gTables['banapp'] . " ON " . $gTables['effett'] . ".banapp = " . $gTables['banapp'] . ".codice", $where, "tipeff ASC,scaden ASC, id_tes ASC");
 //C.F. o P.I. creditore
@@ -72,6 +67,9 @@ $arrayTestata = array($bancaAccredito['codabi'],
 if (isset($_GET['eof'])) {
     $arrayTestata[12] = 1;
 }
+// inserisco il riferimento al file della distinta
+$id_doc=gaz_dbi_table_insert('files', array('table_name_ref'=>'effett','id_ref'=>intval($_GET['banacc']),'item_ref'=>'distinta','extension'=>'cbi', 'title'=>$filename, 'custom_field'=>'{"vendit":{"credttm":"'.$dataemissione.'"}}'));
+
 $arrayRiba = array();
 while ($row = gaz_dbi_fetch_array($result)) {
     //C.F. o P.I. debitore
@@ -101,11 +99,8 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $descrizione_debito,
         $row['prospe'],
         $row['cigcup']);
-    //aggiorno il db solo se non &egrave; una ristampa
-    if ($row["status"] <> 'DISTINTATO') {
-        gaz_dbi_put_row($gTables['effett'], "id_tes", $row["id_tes"], "status", 'DISTINTATO');
-        gaz_dbi_put_row($gTables['effett'], "id_tes", $row["id_tes"], "banacc", intval($_GET['banacc']));
-    }
+        // aggiorno l'effetto sul db indicando in id_distinta l'id_doc di gaz_NNNfiles  
+        gaz_dbi_query("UPDATE ". $gTables['effett']." SET id_distinta=".$id_doc." WHERE id_tes=".$row['id_tes']);		
 }
 $RB = new RibaAbiCbi();
 // Impostazione degli header per l'opozione "save as" dello standard input che verr� generato
@@ -118,6 +113,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
 } else {
     header('Pragma: no-cache');
 }
-print $RB->creaFile($arrayTestata, $arrayRiba);
+$cont = $RB->creaFile($arrayTestata, $arrayRiba);
+$h=fopen(DATA_DIR . "files/" .$admin_aziend['company_id']."/doc/". $id_doc . ".cbi", 'x+');
+fwrite($h,$cont);
+fclose($h);
+print $cont;
 exit;
 ?>

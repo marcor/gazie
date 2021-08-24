@@ -64,15 +64,10 @@ function getLimit($reprint = false) {
     return $acc;
 }
 
-function getData($date_ini, $date_fin, $num_ini, $num_fin, $reprint = 'N', $bank) {
+function getData($date_ini, $date_fin, $num_ini, $num_fin,$bank) {
     global $gTables, $admin_aziend;
     $m = array();
-    if ($reprint == 'S') {
-        $where = '';
-    } else {
-        $where = $gTables['effett'] . ".status <> 'DISTINTATO' AND ";
-    }
-    $where.="banacc = $bank AND tipeff = 'B' AND scaden BETWEEN $date_ini AND $date_fin AND progre BETWEEN $num_ini AND $num_fin";
+    $where = " (".$gTables['effett'] . ".id_distinta = 0 OR id_distinta IS NULL) AND tipeff = 'B' AND scaden BETWEEN $date_ini AND $date_fin AND progre BETWEEN $num_ini AND $num_fin";
     $orderby = "tipeff, scaden, progre";
     $rs = gaz_dbi_dyn_query($gTables['effett'] . ".*," .
             $gTables['anagra'] . ".pariva,
@@ -104,7 +99,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_emi_M'] = date("m");
     $form['date_emi_Y'] = date("Y");
     $form['bank'] = '';
-    $form['reprint'] = 'N';
     $form['date_ini_D'] = substr($iniData['si'], 8, 2);
     $form['date_ini_M'] = substr($iniData['si'], 5, 2);
     $form['date_ini_Y'] = substr($iniData['si'], 0, 4);
@@ -121,7 +115,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_emi_M'] = intval($_POST['date_emi_M']);
     $form['date_emi_Y'] = intval($_POST['date_emi_Y']);
     $form['bank'] = intval($_POST['bank']);
-    $form['reprint'] = substr($_POST['reprint'], 0, 1);
     $form['date_ini_D'] = intval($_POST['date_ini_D']);
     $form['date_ini_M'] = intval($_POST['date_ini_M']);
     $form['date_ini_Y'] = intval($_POST['date_ini_Y']);
@@ -156,7 +149,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         $form['date_fin_Y'] = strftime("%Y", $new_date_fin);
         $form['num_ini'] = 1;
         $form['num_fin'] = 999999999;
-        $form['reprint'] = 'S';
     }
     if (isset($_POST['eof'])) {
         $form['eof'] = substr($_POST['eof'], 0, 8);
@@ -190,7 +182,7 @@ if (isset($_POST['print']) && $msg == '') {
     $datemi = strftime("%Y-%m-%d", $utsemi);
     $datini = strftime("%Y-%m-%d", $utsini);
     $datfin = strftime("%Y-%m-%d", $utsfin);
-    $locazione = "Location: genera_rb_cbi.php?ristam=" . $form['reprint'] . "&datemi=" . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin;
+    $locazione = "Location: genera_rb_cbi.php?datemi=" . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin;
     if (!empty($form['eof'])) {
         $locazione .= '&eof=1';
     }
@@ -253,17 +245,12 @@ $gForm->selCheckbox('eof', $form['eof'], $script_transl['eof_title']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['reprint'] . "</td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('reprint', $script_transl['reprint_value'], $form['reprint'], 'FacetSelect', 0, 'reprint');
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['num_ini'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_ini\" value=\"" . $form['num_ini'] . "\" maxlength=\"5\"  /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_ini\" value=\"" . $form['num_ini'] . "\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['num_fin'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_fin\" value=\"" . $form['num_fin'] . "\" maxlength=\"5\"  /></td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_fin\" value=\"" . $form['num_fin'] . "\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_ini'] . "</td><td class=\"FacetDataTD\">\n";
@@ -291,7 +278,7 @@ echo "</table>\n";
 if (isset($_POST['preview']) and $msg == '') {
     $date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
     $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
-    $r = getData($date_ini, $date_fin, $form['num_ini'], $form['num_fin'], $form['reprint'], $form['bank']);
+    $r = getData($date_ini, $date_fin, $form['num_ini'], $form['num_fin'],$form['bank']);
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     if (sizeof($r['data']) > 0) {
         echo "<tr>";
@@ -303,21 +290,15 @@ if (isset($_POST['preview']) and $msg == '') {
         echo "</tr>\n";
         foreach ($r['data'] as $v) {
             echo "<tr>";
-            echo "<td class=\"FacetDataTD\"><A HREF=\"http://localhost/gazie/modules/vendit/update_effett.php?id_tes=" . $v['id_tes'] . "\">" . $v["progre"] . "</A></td>";
+            echo "<td class=\"FacetDataTD\"><a href=\"./admin_effett.php?Update&id_tes=" . $v['id_tes'] . "\">" . $v["progre"] . "</A></td>";
             echo "<td class=\"FacetDataTD\">" . $v["tipeff"] . " </td>";
             echo "<td class=\"FacetDataTD\">" . gaz_format_date($v["scaden"]) . "</td>";
             echo "<td class=\"FacetDataTD\" align=\"right\">" . $admin_aziend['html_symbol'] . ' ' . gaz_format_number($v["impeff"]) . " </td>";
             echo "<td class=\"FacetDataTD\">" . $v["customer"] . " </td>";
-            echo "<td class=\"FacetDataTD\"><A HREF=\"http://localhost/gazie/modules/vendit/admin_docven.php?id_tes=" . $v['id_tes'] . "&Update\">n." . $v["numfat"] . "/" . $v["seziva"] . " - " . gaz_format_date($v["datfat"]) . "</a></td>";
+            echo "<td class=\"FacetDataTD\">n." . $v["numfat"] . "/" . $v["seziva"] . " - " . gaz_format_date($v["datfat"]) . "</td>";
             echo "<td class=\"FacetDataTD\">" . $v["desban"] . " </td>";
             echo "</tr>\n";
             echo "<tr>";
-            if ($v["status"] == 'DISTINTATO') {
-                echo "<td class=\"FacetDataTDred\" align=\"center\" colspan=\"4\">" . strtoupper($script_transl['reprint']) . "!";
-            } else {
-                echo "<td colspan=\"4\">";
-            }
-            echo "</td>";
             echo "<td>" . $v["pariva"] . "</td>";
             echo "<td align=\"right\">" . gaz_format_number($v["totfat"]) . "</td>";
             echo "<td align=\"center\">" . $v["coordi"] . " </td>";

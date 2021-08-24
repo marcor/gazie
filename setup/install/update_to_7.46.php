@@ -83,5 +83,9 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		}
 	}
 	// fine controlli - creazioni indici mancanti
+	gaz_dbi_query("INSERT INTO ". $table_prefix . "_". $aziend_codice."files SET table_name_ref='effett', item_ref='distinta', title='Distinta fittizia per retrocompatibilità 7.46'");		
+    $id_doc=gaz_dbi_last_id();
+	gaz_dbi_query("UPDATE ". $table_prefix . "_" . $aziend_codice."effett SET id_distinta=".$id_doc." WHERE status='DISTINTATO'");		
+    echo "<p>Azienda n. ".$row["codice"]." creata una distinta fittizia per gli effetti con status=DISTINTATO</p>";
 }
 ?>
