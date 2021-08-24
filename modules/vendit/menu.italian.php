@@ -51,8 +51,8 @@ $transl['vendit'] = array('name' => " Vendite",
         12 => array("Emetti nuovo effetto", "Emetti effetto"),
         13 => array("Genera effetti da fatture di vendita", "Genera effetti da fatture"),
         14 => array("Stampa effetti generati", "Stampa effetti"),
-        15 => array("Distinta effetti per banca", "Distinta effetti"),
-        16 => array("Genera file RiBa standard CBI", "Genera file RiBa"),
+        15 => array("Distinta effetti cartacei", "Distinta Cambiali-Tratte (pdf)"),
+        16 => array("Genera file RiBa standard CBI", "Distinta RiBa (cbi)"),
         17 => array("Contabilizzazione effetti", "Contabilizza effetti"),
         18 => array("Inserisci un nuovo cliente", "Nuovo cliente"),
         19 => array("Lista dei crediti verso clienti", "Lista dei crediti"),
@@ -93,7 +93,8 @@ $transl['vendit'] = array('name' => " Vendite",
         54 => array("Importa XML fattura di vendita", "Importa XML fattura di vendita"),
         55 => array("Lista Clienti per zone", "Lista Clienti per zone"),
         56 => array("Lista dei Registratori Telematici", "Lista Registratori Telematici"),
-        57 => array("Nuovo Registratore Telematico", "Nuovo Registratore Telematico")
+        57 => array("Nuovo Registratore Telematico", "Nuovo Registratore Telematico"),
+        58 => array("Genera file RID CBI-SEPA", "Distinta RID (xml)")
     )
 );
 ?>

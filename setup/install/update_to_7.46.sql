@@ -10,7 +10,9 @@ ALTER TABLE `gaz_admin`
 	ADD INDEX `id_anagra` (`id_anagra`);
 ALTER TABLE `gaz_admin_module`
 	ADD COLUMN `custom_field` TEXT NULL COMMENT 'Usabile per contenere le scelte dell\'utente in ambito dello specifico modulo.Normalmente in formato json: {"nome_variabile":{"valore_variabile": {}}' AFTER `moduleid`;
-ALTER TABLE `gaz_camp_uso_fitofarmaci` ADD `max_tratt` INT(2) NOT NULL COMMENT 'Numero massimo di trattamenti per coltura' AFTER `tempo_sosp`;   
+ALTER TABLE `gaz_camp_uso_fitofarmaci` ADD `max_tratt` INT(2) NOT NULL COMMENT 'Numero massimo di trattamenti per coltura' AFTER `tempo_sosp`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_effett.php'), 'select_filerid.php', '', '', 58, '', 8  FROM `gaz_menu_script`;
+UPDATE `gaz_menu_script` SET `weight` = '20' WHERE `link` = 'contab_effett.php';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `durability` INT(4) NOT NULL DEFAULT '0' COMMENT 'Durabilità anche se solo presunta espressa in unità di misura specificata nel campo successivo' AFTER `maintenance_period`,
 	ADD COLUMN `durability_mu` VARCHAR(1) NULL DEFAULT NULL COMMENT 'Unità di misura della durabilità di cui al campo precedente (H=ore,D=giorni,M=mesi) nel caso di durabilità alimenti (<=minore di,>=maggiore di)' AFTER `durability`,
