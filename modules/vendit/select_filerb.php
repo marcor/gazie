@@ -174,11 +174,11 @@ if ($utsemi > $utsini) {
     $msg .='3+';
 }
 // fine controlli
+$datemi = strftime("%Y-%m-%d", $utsemi);
+$datini = strftime("%Y-%m-%d", $utsini);
+$datfin = strftime("%Y-%m-%d", $utsfin);
 
 if (isset($_POST['print']) && $msg == '') {
-    $datemi = strftime("%Y-%m-%d", $utsemi);
-    $datini = strftime("%Y-%m-%d", $utsini);
-    $datfin = strftime("%Y-%m-%d", $utsfin);
     $locazione = "Location: genera_rb_cbi.php?datemi=" . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin;
     if (!empty($form['eof'])) {
         $locazione .= '&eof=1';
@@ -190,7 +190,8 @@ $anagrafica = new Anagrafica();
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
-echo "<script type=\"text/javascript\">
+?>
+<script>
 var cal = new CalendarPopup();
 var calName = '';
 function setMultipleValues(y,m,d) {
@@ -207,8 +208,16 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
+$(function() {
+    $("#godistintaBtn").click(function() {
+  		var ref = $(this).attr('ref');		
+        $(".godistintaBtn").attr("disabled", true);
+        window.location.replace(ref);
+        return true;
+    });
+});   
 </script>
-";
+<?php
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
@@ -309,9 +318,7 @@ if (isset($_POST['preview']) and $msg == '') {
         '<td colspan="3" class="FacetDataTD"></td>';
         echo "</tr>";
         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-        echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
-        echo $script_transl['submit'];
-        echo '">';
+        echo '<td colspan="7" align="right"><a class="btn btn-xs btn-warning godistintaBtn" ref="genera_rb_cbi.php?datemi=' . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin.((empty($form['eof']))?'':'&eof=1').'" id="godistintaBtn">'.$script_transl['submit'].'</a>';
         echo "\t </td>\n";
         echo "\t </tr>\n";
     } else {

@@ -158,16 +158,11 @@ if ($utsemi > $utsini) {
 }
 // fine controlli
 
-if (isset($_POST['print']) && $msg == '') {
-    $locazione = "Location: genera_rid_cbi.php?datemi=" . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin;
-    header($locazione);
-    exit;
-}
 $anagrafica = new Anagrafica();
-
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'),'select_filerb');
-echo "<script type=\"text/javascript\">
+?>
+<script>
 var cal = new CalendarPopup();
 var calName = '';
 function setMultipleValues(y,m,d) {
@@ -184,8 +179,16 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
+$(function() {
+    $("#godistintaBtn").click(function() {
+  		var ref = $(this).attr('ref');		
+        $(".godistintaBtn").attr("disabled", true);
+        window.location.replace(ref);
+        return true;
+    });
+});   
 </script>
-";
+<?php
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
@@ -282,9 +285,7 @@ if (isset($_POST['preview']) and $msg == '') {
         '<td colspan="3" ></td>';
         echo "</tr>";
         echo "\t<tr >\n";
-        echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
-        echo $script_transl['submit'];
-        echo '">';
+        echo '<td colspan="7" align="right"><a class="btn btn-xs btn-warning godistintaBtn" ref="genera_rid_cbi.php?datemi=' . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin.'" id="godistintaBtn">'.$script_transl['submit'].'</a>';
         echo "\t </td>\n";
         echo "\t </tr>\n";
     } else {
