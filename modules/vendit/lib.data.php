@@ -29,7 +29,7 @@ function effettInsert ($newValue)
     $table = 'effett';
     $columns = array('tipeff','datemi','progre','numfat','seziva','protoc','datfat',
                      'totfat','salacc','impeff','scaden','clfoco','pagame','banapp',
-                     'iban','banacc','id_doc','id_con','cigcup','status','adminid');
+                     'iban','banacc','id_doc','id_con','mndtritdinf','cigcup','status','adminid');
     $newValue['adminid'] = $_SESSION["user_name"];
     return tableInsert($table, $columns, $newValue);
 }

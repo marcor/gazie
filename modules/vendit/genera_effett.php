@@ -36,12 +36,14 @@ function getDocumentsBill($upd = false) {
              LEFT JOIN ' . $gTables['clfoco'] . ' AS customer
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
-             ON anagraf.id=customer.id_anagra';
+             ON anagraf.id=customer.id_anagra
+             LEFT JOIN ' . $gTables['files'] . " AS files
+             ON tesdoc.clfoco=( SELECT files.item_ref WHERE files.table_name_ref='clfoco' ORDER BY id_tes DESC LIMIT 1 )";
     $where = "(tippag = 'B' OR tippag = 'T' OR tippag = 'V' OR tippag = 'I') AND geneff = '' AND tipdoc LIKE 'FA_'";
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
-                        customer.codice, customer.speban AS addebitospese, customer.iban,
+                        customer.codice, customer.speban AS addebitospese, customer.iban, files.id_doc AS mndtritdinf,
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
@@ -122,8 +124,7 @@ function getDocumentsBill($upd = false) {
         $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
         $calc->add_value_to_VAT_castle($cast_vat, $somma_spese, $tes['expense_vat']);
         $doc[$ctrlp]['vat'] = $calc->castle;
-
-        // segno l'effetto come generato
+        // quando confermo segno l'effetto come generato e se un RID valorizzo con l'ultimo mandato del cliente
         if ($upd) {
             gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET geneff = 'S' WHERE id_tes = " . $tes['id_tes'] . ";");
         }
