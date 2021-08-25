@@ -157,6 +157,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['nmov'] = 0;
     //recupero il movimento
     $result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $result['artico']);
     $form['id_mov'] = $result['id_mov'];
 	if ($result['id_rif']>$result['id_mov'] ){ // il movimento è connesso ad un movimento acqua, recupero anche il movimento acqua		
 		$result2 = gaz_dbi_get_row($gTables['movmag'], "id_mov", $result['id_rif']);
@@ -232,8 +233,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['nome_colt'] = ($colt)?$form['id_colt'] . " - " . $colt['nome_colt']:'';
     $avv = gaz_dbi_get_row($gTables['camp_avversita'], "id_avv", $form['id_avv']);
     $form['nome_avv'][$form['mov']] = ($avv)?$form['id_avv'] . " - " . $avv['nome_avv']:'';
+	$form['ins_op'][$form['mov']] = "";
+	
 	$form['fase_feno'][$form['mov']] = "";
-
 	if ($data=json_decode($result['custom_field'],true)){// se c'è un json nel custom_field
 		if (is_array($data['camp']) AND strlen($data['camp']['fase_fenologica'])>0){ // se è riferito al modulo camp
 			$form['fase_feno'][$form['mov']] = $data['camp']['fase_fenologica'];			
@@ -257,6 +259,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $reslotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
     $form['identifier'][$form['mov']] = ($reslotmag)?$reslotmag['identifier']:'';
     $form['expiry'][$form['mov']] = ($reslotmag)?$reslotmag['expiry']:'';
+	
     // Antonio Germani - se è presente, recupero il file documento lotto
     $form['filename'][$form['mov']] = "";
     if (file_exists(DATA_DIR.'files/' . $admin_aziend['company_id']) > 0) {
@@ -272,8 +275,18 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
         }
     }
     // fine recupero file documento lotto
+	
 	$form['datdocin'] = $result['datdoc'];
-    $form['quanti'][$form['mov']] = gaz_format_quantity($result['quanti'], 0, $admin_aziend['decimal_quantity']);
+	if ($itemart['unimis']=="h"){ // se quantità in ore
+		//devo traformare da ore decimali a time hh:mm
+		$result['quanti'] = convertTime($result['quanti']);
+		$form['quanti_time'][$form['mov']] = $result['quanti'];
+		$form['quanti'][$form['mov']]=floatval($result['quanti']);
+	} else {
+		$form['quanti'][$form['mov']] = gaz_format_quantity($result['quanti'], 0, $admin_aziend['decimal_quantity']);
+		$form['quanti_time'][$form['mov']]="";
+	}    
+	
     $form['quantiin'] = $result['quanti'];    
     $form['prezzo'][$form['mov']] = number_format($result['prezzo'], $admin_aziend['decimal_price'], '.', '');
     $form['scorig'][$form['mov']] = $result['scorig'];
@@ -339,7 +352,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			}
 			
 			$form['quanti'][$m] = gaz_format_quantity($_POST['quanti' . $m], 0, $admin_aziend['decimal_quantity']);
-			
+			$form['quanti_time'][$form['mov']] = $_POST['quanti_time' . $m];
 			$form['scorig'][$m] = $_POST['scorig' . $m];
 			$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
 			if (isset($_POST['quanti2' . $m])){
@@ -621,9 +634,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                 $msg.= "18+";
             }
             // controllo quantità uguale a zero
-            if (gaz_format_quantity($form['quanti'][$m], 0, $admin_aziend['decimal_quantity']) == 0) { //la quantità è zero
+            if (((isset ($itemart) AND $itemart['unimis']!=="h") OR $form['ins_op'][$m]=="") AND gaz_format_quantity($form['quanti'][$m], 0, $admin_aziend['decimal_quantity']) == 0) { //la quantità è zero
                 $msg.= "19+";
-            }
+            } elseif($form['quanti_time'][$m]=="" OR intval($form['quanti_time'][$m])=="0") { // se unità misura oraria non può essere zero
+				$msg.= "46+";
+			}
+			
 			if (isset($_POST['Update'])) { // se è un update carico il movimento di magazzino presente nel database per fare i confronti
                  $check_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 			}					
@@ -667,7 +683,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                     $msg.= "38+";
                 }
             }
-            If ((isset($itemart) AND $itemart['good_or_service'] == 2) && ($itemart['lot_or_serial'] == 1) && ($form['operat'] == - 1)) { // se è articolo composto e ha lotti
+            if ((isset($itemart) AND $itemart['good_or_service'] == 2) && ($itemart['lot_or_serial'] == 1) && ($form['operat'] == - 1)) { // se è articolo composto e ha lotti
                 $lotqty = $lm->getLotQty($form['id_lotmag'][$m]);				
 				if ($toDo=="update" && intval ($check_movmag['id_lotmag']) == intval($form['id_lotmag'][$m])){
 					$lotqty=$lotqty+$check_movmag['quanti'];
@@ -683,14 +699,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				$result = gaz_dbi_query($query);
 			}
             // se è presente nel db fitofarmaci CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO del db fitofarmaci
-            If (($result->num_rows) > 0) {
+            if (($result->num_rows) > 0) {
                 $query = "SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '" . $Database . "' AND TABLE_NAME = '" . $gTables['camp_fitofarmaci'] . "'";
                 $result = gaz_dbi_query($query);
                 while ($row = $result->fetch_assoc()) {
                     $update = strtotime($row['UPDATE_TIME']);
                 }
                 // 1 giorno è 24*60*60=86400 - 30 giorni 30*86400=2592000
-                If (intval($update) + 2592000 < $today) {
+                if (intval($update) + 2592000 < $today) {
                     $msg.= "28+";;
                 }
             }
@@ -806,6 +822,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						} else {
 							$quanti=$form['quanti'][$form['mov']];
 						}
+						if (intval($form['quanti_time'][$form['mov']])>0){
+							$quanti = convertHours($form['quanti_time'][$form['mov']],TRUE);
+						}						
 						if ($form['adminid']>0){
 							$form['clfoco'][$form['mov']]=$form['adminid'];
 						}
@@ -986,7 +1005,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                     
                    // fine se c'è un articolo impostato nel movimento 
 				   
-                } elseif (intval($form['staff'][$form['mov']]) > 0) {// se è un operaio
+                } elseif (intval($form['staff'][$form['mov']]) > 0) { // se è un operaio
 					
 					
 					// INIZIO gestione registrazione database operai
@@ -994,7 +1013,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                         $id_worker = $form['staff'][$form['mov']]; //identificativo operaio
                         $form['datdocin']; // questa è la data documento iniziale
                         $work_day = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc']; // giorno lavorato
-                        $hours_form = $form['quanti'][$form['mov']]; //ore lavorate normali del form
+                        $hours_form = convertHours($form['quanti_time'][$form['mov']],TRUE); //ore lavorate in ore decimali						
                         $id_orderman = $form['id_orderman'];
                         // controllo se è una variazione movimento e se è stato cambiato l'operaio
                         $res2 = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $form['clfocoin']);
@@ -1129,8 +1148,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							// scrivo il movimento orario su staff_work_movements
 							$w = array();
 							$w['id_staff'] = $id_worker;
-							$w['start_work'] = $work_day;
-							$w['end_work'] = $work_day;
+							$w['start_work'] = $work_day." 00:00:00";
+							$end_day = strtotime ($w['start_work'])+ ($hours_form * (60 * 60));//
+							$w['end_work'] = date('Y-m-d H:i:s',$end_day);							
 							$w['note'] = $hours_form." ore";
 							$w['id_orderman'] = $id_orderman;
 							$w['id_staff_worked_hours'] = $id_staff_worked_hours;
@@ -1212,6 +1232,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['filename'][$form['mov']] = "";
     $form['lot_or_serial'][$form['mov']] = "";
     $form['quanti'][$form['mov']] = 0;
+	$form['quanti_time'][$form['mov']] = "";
     $form['prezzo'][$form['mov']] = 0;
     $form['scorig'][$form['mov']] = 0;
 	$form['quanti2'][$form['mov']] = 0;
@@ -2058,11 +2079,16 @@ function myFunction() {
 						<div class="form-group">
 							<label class="FacetFieldCaptionTD">
 								<?php echo $script_transl[12]; ?>
-							</label>						
-												
-							<input class="FacetSelect" type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()">
-							
-							<?php echo "&nbsp;" . $print_unimis;
+							</label>
+							<?php if ($print_unimis == "h"){?>
+								<input type="time" name="quanti_time<?php echo $form['mov']; ?>" value="<?php echo $form['quanti_time'][$form['mov']]; ?>" required>
+								<input type="hidden" name="quanti<?php echo $form['mov']; ?>" value="" />
+							<?php } else {?>
+								<input class="FacetSelect" type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()">
+								<input type="hidden" name="quanti_time<?php echo $form['mov']; ?>" value="" />
+								<?php 
+							}
+							echo "&nbsp;" . $print_unimis;
 							
 							if (($service == 0 or $service == 2) AND !isset($_POST['ins_op'.$form['mov']])) { // se è un articolo con magazzino e non è operaio o lavorazione agricola
 								

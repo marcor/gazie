@@ -211,6 +211,7 @@ $strScript = array("camp_browse_document.php" =>
 		"Stai superando il limite di azoto per anno previsto!",
 		"Non è stato creato il codice articolo ACQUA. Per proseguire creare in Merci/servizi un articolo con codice ACQUA",
 		"Non puoi più utilizzare questo fitifarmaco perché ne è stata revocata l'autorizzazione",
+		"Mancano le ore",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',

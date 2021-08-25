@@ -186,4 +186,42 @@ class silos {
     }
 	
 }
+
+// converte da ore decimali a hh:mm:ss - Es. da 5.75 a 05:45:00
+function convertTime($h_dec){
+    // start by converting to seconds
+    $seconds = ($h_dec * 3600);
+    // we're given hours, so let's get those the easy way
+    $hours = floor($h_dec);
+    // since we've "calculated" hours, let's remove them from the seconds variable
+    $seconds -= $hours * 3600;
+    // calculate minutes left
+    $minutes = floor($seconds / 60);
+    // remove those from seconds as well
+    $seconds -= $minutes * 60;
+	if (ceil($seconds) == 60){
+		$minutes++;
+		$seconds=0;
+	}
+    // return the time formatted HH:MM:SS
+    //return lz($hours).":".lz($minutes).":".lz($seconds);
+	// return the time formatted HH:MM
+    return lz($hours).":".lz($minutes);
+}
+// lz = leading zero
+function lz($num)
+{
+    return (strlen($num) < 2) ? "0{$num}" : $num;
+}
+// FALSE converte da hh:mm:ss a secondi - Es. da 05:45:00 a 20700. Oppure TRUE da hh:mm:ss in ore decimali - Es. da 05:45:00 a 5.75
+function convertHours($time,$dec = FALSE){
+	if ($dec == 0){
+		$dec=1;
+	} else {
+		$dec=3600;
+	}
+	$parsed = date_parse($time);
+	$seconds = $parsed['hour'] * 3600 + $parsed['minute'] * 60 + $parsed['second'];
+	return $seconds/$dec;
+}
 ?>
