@@ -173,7 +173,7 @@ $recordnav->output();
                     // L'effetto e' da contabilizzare.
                     echo '<a href="contab_effett.php">Contabilizza</a> ';
                 }
-                echo '<a class="btn btn-xs btn-success" href="stampa_distinta.php?id_distinta='.$r["id_distinta"].'">Distinta '.$r["id_distinta"].' (pdf)</a> ';
+                echo '<a class="btn btn-xs btn-success" href="stampa_distint.php?id_distinta='.$r["id_distinta"].'">Distinta '.$r["id_distinta"].' (pdf)</a> ';
                 ?>
                 <a href="../root/retrieve.php?id_doc=<?php echo $r["id_distinta"]; ?>"  class="btn btn-default btn-sm">download <i class="glyphicon glyphicon-download"></i> </a>
                 <?php

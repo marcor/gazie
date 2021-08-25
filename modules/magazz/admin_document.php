@@ -39,7 +39,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
 			preg_match("/\.([^\.]+)$/", $_FILES['userfile']['name'], $matches);
 			
-			$form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
+			$form['title']=$_FILES["userfile"]["name"]; // modifico pure il titolo
 			
 			$form['extension']=$matches[1];
 			//print $_FILES['userfile']['type'];

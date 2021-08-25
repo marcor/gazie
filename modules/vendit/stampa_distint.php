@@ -25,56 +25,35 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$date = new DateTime();
+
+$luogo_data = $admin_aziend['citspe'].", lì ".date_format($date, 'd/m/Y');
 
 
-if (!isset($_GET['de']) ||
-    !isset($_GET['rp']) ||
-    !isset($_GET['ba']) ||
-    !isset($_GET['ni']) ||
-    !isset($_GET['nf']) ||
-    !isset($_GET['ri']) ||
-    !isset($_GET['rf'])) {
-    header("Location: ".$_SERVER['HTTP_REFERER']);
-    exit;
-}
-
-$gioemi = substr($_GET['de'],0,2);
-$mesemi = substr($_GET['de'],2,2);
-$annemi = substr($_GET['de'],4,4);
-$utsemi= mktime(0,0,0,$mesemi,$gioemi,$annemi);
-$gioini = substr($_GET['ri'],0,2);
-$mesini = substr($_GET['ri'],2,2);
-$annini = substr($_GET['ri'],4,4);
-$utsini= mktime(0,0,0,$mesini,$gioini,$annini);
-$datainizio = date("Ymd",$utsini);
-$giofin = substr($_GET['rf'],0,2);
-$mesfin = substr($_GET['rf'],2,2);
-$annfin = substr($_GET['rf'],4,4);
-$utsfin= mktime(0,0,0,$mesfin,$giofin,$annfin);
-$datafine = date("Ymd",$utsfin);
-
-if ($_GET['rp'] <> 'S') {
-    $ristampa = "status <> 'DISTINTATO' and ";
-} else {
-    $ristampa = "(banacc = '".intval($_GET['ba'])."' or banacc = 0) and ";
-}
-
-$luogo_data=$admin_aziend['citspe'].", lì ";
-
-
-$where = $ristampa." scaden BETWEEN '".$datainizio."' AND '".$datafine."' AND progre BETWEEN '".intval($_GET['ni'])."' AND '".intval($_GET['nf'])."'";
-$result = gaz_dbi_dyn_query("*", $gTables['effett'],$where,"tipeff, scaden, id_tes");
 $anagrafica = new Anagrafica();
-$banacc = $anagrafica->getPartner(intval($_GET['ba']));
-$descbanacc = $banacc['ragso1'];
-if (isset($_GET['de'])) {
-   $luogo_data .= ucwords(strftime("%d %B %Y",$utsemi));
+
+$id_distinta=(isset($_GET['id_distinta']))?intval($_GET['id_distinta']):false; // se è stata passata la referenza id_doc ad una distinta già generata è una semplice ristampa
+
+if ($id_distinta){ // chiedo una distinta già prodotta
+    $where = "id_distinta = ".$id_distinta;
+	$effdata=gaz_dbi_get_row($gTables['effett'], 'id_distinta',$id_distinta);
+	$efffile=gaz_dbi_get_row($gTables['files'], 'id_doc',$id_distinta);
+    $title = 'Stampa distinta contenuta nel file "'.$efffile['title'].'"';    
+    $filename = $efffile['title'];
+    $banacc = $anagrafica->getPartner($effdata['banacc']);
 } else {
-   $luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+    $filename = 'TRATTEdel_'.date_format($date, 'Y-m-d').'.pdf';
+    $banacc = $anagrafica->getPartner(intval($_GET['banacc']));
+    $where = "(".$gTables['effett'] . ".id_distinta = 0 OR id_distinta IS NULL) AND tipeff = 'T' AND scaden BETWEEN '".substr($_GET['scaini'],0,10)."' AND '".substr($_GET['scafin'],0,10)."' AND progre BETWEEN '".intval($_GET['proini'])."' AND '".intval($_GET['profin'])."'";
+    gaz_dbi_query("INSERT INTO ". $gTables['files'] . " SET table_name_ref='effett', id_ref=".intval($_GET['banacc']).", item_ref='distinta', extension='pdf', title='".$filename."', custom_field='{\"vendit\":{\"credttm\":\"".date_format($date, 'Y-m-d')."\"}}'");
+    $first_id_distinta=gaz_dbi_last_id();
+    $title = 'Distinta effetti dal '.gaz_format_date($_GET['scaini']).' al '.gaz_format_date($_GET['scafin']);    
 }
+
+$descbanacc = $banacc['ragso1'];
 
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>'Distinta effetti dal '.strftime("%d %B %Y",$utsini).' al '.strftime("%d %B %Y",$utsfin),
+               'title'=>$title,
                'hile'=>array(array('lun' => 18,'nam'=>'Scadenza'),
                              array('lun' => 18,'nam'=>'Effetto'),
                              array('lun' => 100,'nam'=>'Cliente / Indirizzo,P.IVA / Fattura'),
@@ -104,12 +83,14 @@ $totaleff=0.00;
 $totnumeff=0;
 $pdf->SetFont('helvetica','',8);
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
-while ($a_row = gaz_dbi_fetch_array($result)) {
-    if ($a_row["tipeff"] <> $ctrltipo){
+
+$result = gaz_dbi_dyn_query("*", $gTables['effett'],$where,"tipeff, scaden, id_tes");
+while ($r = gaz_dbi_fetch_array($result)) {
+    if ($r["tipeff"] <> $ctrltipo){
         if ($totaletipo>=0.01) $pdf->Cell(190,4,$totnumtipo.' '.$descreff.' per un totale di '.gaz_format_number($totaletipo),1,1,'R',1);
         $totaletipo = 0.00;
         $totnumtipo = 0;
-        switch($a_row['tipeff'])
+        switch($r['tipeff'])
             {
             case "B":
             $descreff = 'RICEVUTE BANCARIE ';
@@ -127,19 +108,19 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     }
     $totnumeff++;
     $totnumtipo++;
-    $totaleff += $a_row["impeff"];
-    $totaletipo += $a_row["impeff"];
-    $cliente = $anagrafica->getPartner($a_row['clfoco']);
-    $banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$a_row['banapp']);
+    $totaleff += $r["impeff"];
+    $totaletipo += $r["impeff"];
+    $cliente = $anagrafica->getPartner($r['clfoco']);
+    $banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$r['banapp']);
     $banapp=($banapp)?$banapp:array('descri'=>'','codabi'=>'','codcab'=>'','codpro'=>'','locali'=>'');
-    $scadenza = substr($a_row['scaden'],8,2).'-'.substr($a_row['scaden'],5,2).'-'.substr($a_row['scaden'],0,4);
-    $emission = substr($a_row['datemi'],8,2).'-'.substr($a_row['datemi'],5,2).'-'.substr($a_row['datemi'],0,4);
-    $datafatt = substr($a_row['datfat'],8,2).'-'.substr($a_row['datfat'],5,2).'-'.substr($a_row['datfat'],0,4);
-    if ($a_row["salacc"] == 'S')
+    $scadenza = substr($r['scaden'],8,2).'-'.substr($r['scaden'],5,2).'-'.substr($r['scaden'],0,4);
+    $emission = substr($r['datemi'],8,2).'-'.substr($r['datemi'],5,2).'-'.substr($r['datemi'],0,4);
+    $datafatt = substr($r['datfat'],8,2).'-'.substr($r['datfat'],5,2).'-'.substr($r['datfat'],0,4);
+    if ($r["salacc"] == 'S')
         $saldoacco = "a saldo";
     else    $saldoacco = "in conto";
     $pdf->Cell(18,4,'','LTR',0,'L');
-    $pdf->Cell(18,4,'n.'.$a_row["progre"].' del','LTR',0,'L');
+    $pdf->Cell(18,4,'n.'.$r["progre"].' del','LTR',0,'L');
     $pdf->Cell(100,4,$cliente["ragso1"].' '.$cliente["ragso2"],'LTR',0,'L');
     $pdf->Cell(30,4,'ABI '.$banapp["codabi"],'LTR',0,'R');
     $pdf->Cell(24,4,'','LTR',1,'R');
@@ -150,19 +131,23 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $pdf->Cell(24,4,'','R',1,'R');
     $pdf->Cell(18,4,'','LRB',0,'L');
     $pdf->Cell(18,4,$saldoacco,'RB',0,'R');
-    $pdf->Cell(80,4,'Fatt.n.'.$a_row["numfat"].' del '.$datafatt,'B',0,'L');
+    $pdf->Cell(80,4,'Fatt.n.'.$r["numfat"].' del '.$datafatt,'B',0,'L');
     $pdf->Cell(20,4,'','B');
     $pdf->Cell(30,4,$banapp["descri"],'RB',0,'R');
     $aRiportare['top'][1]['nam'] = gaz_format_number($totaletipo);
     $aRiportare['bot'][1]['nam'] = gaz_format_number($totaletipo);
     $pdf->setRiporti($aRiportare);
-    $pdf->Cell(24,4,gaz_format_number($a_row["impeff"]),'RB',1,'R');
-    //aggiorno il db solo se non � una ristampa
-    if ($a_row["status"] <> 'DISTINTATO') {
-        gaz_dbi_put_row($gTables['effett'], "id_tes",$a_row["id_tes"],"status",'DISTINTATO');
-        gaz_dbi_put_row($gTables['effett'], "id_tes",$a_row["id_tes"],"banacc",$_GET['ba']);
+    $pdf->Cell(24,4,gaz_format_number($r["impeff"]),'RB',1,'R');
+    //aggiorno il db solo se di tipo "T" tratte
+    if ($r["tipeff"] == 'T') {
+        if ( $r['banacc'] < 100000000 && intval($_GET['banacc']) > 100000000 ) {
+            gaz_dbi_put_row($gTables['effett'], "id_tes",$r["id_tes"],"banacc",intval($_GET['banacc']));
+        }
+        if (!$id_distinta) { // se non viene passato il riferimento alla distinta vuol dire che l'ho generata e quindi metto il riferimento sull'effeto
+            gaz_dbi_query("UPDATE ". $gTables['effett']." SET id_distinta=".$first_id_distinta.", banacc=".intval($_GET['banacc'])." WHERE id_tes=".$r['id_tes']);
+        }		
     }
-    $ctrltipo = $a_row["tipeff"];
+    $ctrltipo = $r["tipeff"];
 }
 $pdf->setRiporti();
 $pdf->Cell(190,4,$totnumtipo.' '.$descreff.' per un totale di € '.gaz_format_number($totaletipo),1,1,'R',1);
@@ -170,5 +155,15 @@ $pdf->SetFont('helvetica','B',12);
 $pdf->Cell(80);
 $pdf->Cell(80,10,'TOTALE DEGLI EFFETTI VERSATI    € ',1,0,'L');
 $pdf->Cell(30,10,gaz_format_number($totaleff),1,1,'R',1);
-$pdf->Output();
+if ($id_distinta) { // è una ristampa quindi faccio solo l'output a video 
+    $pdf->Output($filename);
+} else {
+    $cont = $pdf->Output($filename, 'S');
+    $h=fopen(DATA_DIR . "files/" .$admin_aziend['company_id']."/doc/". $first_id_distinta . ".pdf", 'x+');
+    fwrite($h,$cont);
+    fclose($h);
+    header("Content-type: application/pdf");
+    header("Content-Disposition: inline; filename=".$filename);
+    @readfile(DATA_DIR . "files/" .$admin_aziend['company_id']."/doc/". $first_id_distinta . ".pdf");
+}
 ?>

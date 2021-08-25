@@ -38,11 +38,13 @@ $countryData = gaz_dbi_get_row($gTables['country'], "iso", $contoAccredito['coun
 $bancaAccredito = gaz_dbi_get_row($gTables['banapp'], "codice", $contoAccredito['banapp']);
 if (isset($_GET['datemi'])) {
     $dataemissione = substr($_GET['datemi'], 8, 2) . substr($_GET['datemi'], 5, 2) . substr($_GET['datemi'], 2, 2);
+    $defiles=substr($_GET['datemi'],0,10);
 } else {
     $dataemissione = date("dmy");
+    $defiles = date("Y-m-d");
 }
 // creo il file con il nome ottenuto in precedenza.
-$filename = "RIBAdel$dataemissione.cbi";
+$filename = "RIBAdel_$defiles.cbi";
 $where = "(".$gTables['effett'] . ".id_distinta = 0 OR id_distinta IS NULL) AND tipeff = 'B' AND scaden BETWEEN '" . $_GET['scaini'] . "' AND '" . $_GET['scafin'] . "' AND progre BETWEEN '" . $_GET['proini'] . "' AND '" . $_GET['profin'] . "' ";
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query("*", $gTables['effett'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['effett'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra LEFT JOIN " . $gTables['banapp'] . " ON " . $gTables['effett'] . ".banapp = " . $gTables['banapp'] . ".codice", $where, "tipeff ASC,scaden ASC, id_tes ASC");
@@ -68,7 +70,7 @@ if (isset($_GET['eof'])) {
     $arrayTestata[12] = 1;
 }
 // inserisco il riferimento al file della distinta
-$id_doc=gaz_dbi_table_insert('files', array('table_name_ref'=>'effett','id_ref'=>intval($_GET['banacc']),'item_ref'=>'distinta','extension'=>'cbi', 'title'=>$filename, 'custom_field'=>'{"vendit":{"credttm":"'.$dataemissione.'"}}'));
+$id_doc=gaz_dbi_table_insert('files', array('table_name_ref'=>'effett','id_ref'=>intval($_GET['banacc']),'item_ref'=>'distinta','extension'=>'cbi', 'title'=>$filename, 'custom_field'=>'{"vendit":{"credttm":"'.$defiles.'"}}'));
 
 $arrayRiba = array();
 while ($row = gaz_dbi_fetch_array($result)) {

@@ -178,14 +178,6 @@ $datemi = strftime("%Y-%m-%d", $utsemi);
 $datini = strftime("%Y-%m-%d", $utsini);
 $datfin = strftime("%Y-%m-%d", $utsfin);
 
-if (isset($_POST['print']) && $msg == '') {
-    $locazione = "Location: genera_rb_cbi.php?datemi=" . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin;
-    if (!empty($form['eof'])) {
-        $locazione .= '&eof=1';
-    }
-    header($locazione);
-    exit;
-}
 $anagrafica = new Anagrafica();
 
 require("../../library/include/header.php");
