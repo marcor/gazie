@@ -971,7 +971,10 @@ $strScript = array("admin_client.php" =>
     ),
     "genera_effett.php" =>
     array('title' => 'Genera gli effetti a partire dai documenti fiscali',
-        'errors' => array('Non ci sono documenti che possono generare effetti nell\'intervallo selezionato'
+        'errors' => array('noeff'=>'Non ci sono documenti che possono generare effetti nell\'intervallo selezionato',
+        'nomandato'=>'ERRORE! Modifica il cliente senza un mandato, altrimenti <b>NON</b> si',
+        'noiban'=>'ERRORE! Modifica il cliente senza IBAN, altrimenti <b>NON</b> si ',
+        'nobanapp'=>'ERRORE! Modifica la fattura ed il cliente che sono senza banca d\'appoggio, altrimenti <b>NON</b> si'
         ),
         'preview' => 'Anteprima della generazione degli effetti',
         'date_reg' => 'Data',

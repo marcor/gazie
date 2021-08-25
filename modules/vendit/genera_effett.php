@@ -42,9 +42,9 @@ function getDocumentsBill($upd = false) {
     $where = "(tippag = 'B' OR tippag = 'T' OR tippag = 'V' OR tippag = 'I') AND geneff = '' AND tipdoc LIKE 'FA_'";
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
-                        pay.tippag,pay.numrat,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
-                        customer.codice, customer.speban AS addebitospese, customer.iban, files.id_doc AS mndtritdinf,
-                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
+                        pay.tippag,pay.numrat,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,customer.codice, customer.speban AS addebitospese, customer.iban,
+                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta, 
+                        files.id_doc AS mndtritdinf, files.custom_field AS files_data ', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
     while ($tes = gaz_dbi_fetch_array($result)) {
@@ -247,7 +247,7 @@ echo "<table class=\"Tsmall\" align=\"center\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
-echo "\t<tr class=\"FacetDataTD\">\n";
+echo "\t<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"" .
  $script_transl['return'] . "\"></td>\n";
 echo '<td align="right"><input type="submit" name="preview" value="';
@@ -259,6 +259,7 @@ echo "</table>\n";
 
 //mostro l'anteprima
 if (isset($_POST['preview'])) {
+    $errors=false;
     $rs = getDocumentsBill();
     echo "<br /><div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
@@ -272,8 +273,21 @@ if (isset($_POST['preview'])) {
     $tot_type = array('B' => 0, 'I' => 0, 'T' => 0, 'V' => 0);
 
     foreach ($rs as $k => $v) {
+        $e='';
         if ($ctrl_date <> substr($v['tes']['datfat'], 0, 4)) {
             $n = getReceiptNumber($v['tes']['datfat']);
+        }
+        if ($v['tes']['mndtritdinf']<1&&$v['tes']['tippag']=='I') { // non c'è il mandato
+            $errors=true;
+            $e=$script_transl['errors']['nomandato'];
+        }
+        if (strlen($v['tes']['iban'])<20&&$v['tes']['tippag']=='I') { // non c'è l'iban 
+            $errors=true;
+            $e=$script_transl['errors']['noiban'];
+        }
+        if ($v['tes']['banapp']<1&&($v['tes']['tippag']=='B'||$v['tes']['tippag']=='T')) { // non c'è la banca d'appoggio
+            $errors=true;
+            $e=$script_transl['errors']['nobanapp'];
         }
         // calcolo i totali
         $stamp = false;
@@ -281,12 +295,12 @@ if (isset($_POST['preview'])) {
         $tot = computeTot($v['vat'], $v['car'] - $v['rit']);
         //fine calcolo totali
         echo "<tr>
-               <td class=\"FacetDataTD\" align=\"center\">" . gaz_format_date($v['tes']['datfat']) . "</td>
-               <td class=\"FacetDataTD\" title=\"".$v['tes']['cigcup']."\" align=\"center\">" . $v['tes']['protoc'] . '/' . $v['tes']['seziva'] . "</td>
-               <td class=\"FacetDataTD\">" . $script_transl['doc_type_value'][$v['tes']['tipdoc']] . "</td>
-               <td class=\"FacetDataTD\">" . $v['tes']['numfat'] . "</td>
-               <td class=\"FacetDataTD\">" . $v['tes']['ragsoc'] . "</td>
-               <td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($tot['tot']) . "</td>
+               <td align=\"center\">" . gaz_format_date($v['tes']['datfat']) . "</td>
+               <td title=\"".$v['tes']['cigcup']."\" align=\"center\">" . $v['tes']['protoc'] . '/' . $v['tes']['seziva'] . "</td>
+               <td>" . $script_transl['doc_type_value'][$v['tes']['tipdoc']] . "</td>
+               <td>" . $v['tes']['numfat'] . '</td>
+               <td><a class="btn btn-sm btn-'.((strlen($e)>10)?"danger":"default").'" href="./admin_client.php?codice='.substr($v['tes']['clfoco'],-6).'&Update">'.$v['tes']['ragsoc']. "</a></td>
+               <td align=\"right\">" . $admin_aziend['symbol'].' '.gaz_format_number($tot['tot']) . "</td>
                </tr>\n";
         $rate = CalcolaScadenze($tot['tot'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
         foreach ($rate['import'] as $k_r => $v_r) {
@@ -296,14 +310,12 @@ if (isset($_POST['preview'])) {
                 $n_type = 'R';
             }
             echo "<tr>";
+            echo '<td align="right" colspan="6"><span class="text-danger">'.$e.'</span> ';
+            echo $script_transl['gen'] .'<b>' .$script_transl['type_value'][$v['tes']['tippag']] .
+            '</b> n.' . $n[$n_type] . ' ' . $script_transl['end'] . $rate['giorno'][$k_r] . '-' . $rate['mese'][$k_r] . '-' . $rate['anno'][$k_r];
             echo "</td>
-                       <td class=\"FacetDataTD\" align=\"right\" colspan=\"6\">";
-            echo $script_transl['gen'] . $script_transl['type_value'][$v['tes']['tippag']] .
-            ' n.' . $n[$n_type] . ' ' . $script_transl['end'] . $rate['giorno'][$k_r] . '-' . $rate['mese'][$k_r] . '-' . $rate['anno'][$k_r] .
-            ' ' . $admin_aziend['symbol'];
-            echo "</td>
-                       <td class=\"FacetDataTD\" align=\"right\">";
-            echo gaz_format_number($v_r);
+                       <td align=\"right\">";
+            echo  $admin_aziend['symbol'].' '.gaz_format_number($v_r);
             echo "</td>
                        </tr>\n";
             $n[$n_type] ++;
@@ -314,25 +326,28 @@ if (isset($_POST['preview'])) {
         foreach ($tot_type as $k_t => $v_t) {
             if ($v_t > 0) {
                 echo "\t<tr>\n";
-                echo '<td class=\"FacetFieldCaptionTD\" colspan="6" align="right">';
+                echo '<td class=\"FacetFieldCaptionTD\" colspan="6" align="right"><b>';
                 echo $script_transl['total_value'][$k_t];
-                echo "</td>
-                       <td class=\"FacetFieldCaptionTD\" align=\"right\">";
+                echo "</b></td>
+                       <td class=\"FacetFieldCaptionTD\" align=\"right\"><b>";
                 echo $admin_aziend['symbol'] . ' ' . gaz_format_number($v_t);
-                echo "\t </td>\n";
+                echo "</b> </td>\n";
                 echo "\t </tr>\n";
             }
         }
         echo "\t<tr>\n";
-        echo '<td class=\"FacetFieldCaptionTD\" colspan="7" align="right"><input type="submit" name="submit" value="';
-        echo $script_transl['submit'];
-        echo '">';
+        echo '<td class=\"FacetFieldCaptionTD\" colspan="7" align="right">';
+        if ($errors) {
+            echo '<span class="text-danger"><b>Correggi gli errori incontrati</b></a>';
+        } else {
+            echo '<input type="submit" name="submit" value="'.$script_transl['submit'].'">';
+        }
         echo "\t </td>\n";
         echo "\t </tr>\n";
     } else {
         echo "\t<tr>\n";
         echo '<td colspan="7" align="center" class="FacetDataTDred">';
-        echo $script_transl['errors'][0];
+        echo $script_transl['errors']['noeff'];
         echo "\t </td>\n";
         echo "\t </tr>\n";
     }
