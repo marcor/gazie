@@ -352,7 +352,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			}
 			
 			$form['quanti'][$m] = gaz_format_quantity($_POST['quanti' . $m], 0, $admin_aziend['decimal_quantity']);
-			$form['quanti_time'][$form['mov']] = $_POST['quanti_time' . $m];
+			$form['quanti_time'][$m] = $_POST['quanti_time' . $m];
 			$form['scorig'][$m] = $_POST['scorig' . $m];
 			$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
 			if (isset($_POST['quanti2' . $m])){
@@ -488,6 +488,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
         $form['filename'][$form['mov']] = "";
     }
     $form['quanti'][$form['mov']] = gaz_format_quantity($_POST['quanti' . $form['mov']], 0, $admin_aziend['decimal_quantity']);
+	$form['quanti_time'][$form['mov']] = $_POST['quanti_time' . $form['mov']];
 	
     if ((isset($_POST['prezzo' . $form['mov']]) > 0) && (strlen($_POST['prezzo' . $form['mov']]) > 0)) {
         $form['prezzo'][$form['mov']] = $_POST['prezzo' . $form['mov']];
@@ -634,7 +635,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                 $msg.= "18+";
             }
             // controllo quantità uguale a zero
-            if (((isset ($itemart) AND $itemart['unimis']!=="h") OR $form['ins_op'][$m]=="") AND gaz_format_quantity($form['quanti'][$m], 0, $admin_aziend['decimal_quantity']) == 0) { //la quantità è zero
+			if ($form['ins_op'][$m]==""){
+				$unimis=$itemart['unimis'];
+			} else {
+				$unimis="h";
+			}
+            if ($unimis!=="h" AND gaz_format_quantity($form['quanti'][$m], 0, $admin_aziend['decimal_quantity']) == 0) { //la quantità è zero
                 $msg.= "19+";
             } elseif($form['quanti_time'][$m]=="" OR intval($form['quanti_time'][$m])=="0") { // se unità misura oraria non può essere zero
 				$msg.= "46+";
@@ -1232,7 +1238,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['filename'][$form['mov']] = "";
     $form['lot_or_serial'][$form['mov']] = "";
     $form['quanti'][$form['mov']] = 0;
-	$form['quanti_time'][$form['mov']] = "";
+	$form['quanti_time'][$form['mov']] = "00:00";
     $form['prezzo'][$form['mov']] = 0;
     $form['scorig'][$form['mov']] = 0;
 	$form['quanti2'][$form['mov']] = 0;
@@ -1276,7 +1282,8 @@ if (isset($_POST['Add_mov'])) {
             $form['filename'][$m] = "";
         }
         $form['quanti'][$m] = gaz_format_quantity($_POST['quanti' . $m], 0, $admin_aziend['decimal_quantity']);
-        $form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
+        $form['quanti_time'][$m] = $_POST['quanti_time' . $m];
+		$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo' . $m], 0, $admin_aziend['decimal_quantity']);
         $form['scorig'][$m] = $_POST['scorig' . $m];
 		if (isset($_POST['quanti2' . $m])){
 			$form['quanti2'][$m] = gaz_format_quantity($_POST['quanti2' . $m], 0, $admin_aziend['decimal_quantity']);
@@ -1302,7 +1309,8 @@ if (isset($_POST['Add_mov'])) {
     $form['expiry'][$form['nmov']] = "";
     $form['filename'][$form['nmov']] = "";
     $form['lot_or_serial'][$form['nmov']] = "";
-    $form['quanti'][$form['nmov']] = 0;    
+    $form['quanti'][$form['nmov']] = 0;
+	$form['quanti_time'][$form['nmov']] = "00:00"; 
     $form['prezzo'][$form['nmov']] = 0;
     $form['scorig'][$form['nmov']] = 0;
 	$form['quanti2'][$form['nmov']] = 0;    
@@ -1326,7 +1334,8 @@ if (isset($_POST['Del_mov'])) {
     $form['expiry'][$form['nmov']] = "";
     $form['filename'][$form['nmov']] = "";
     $form['lot_or_serial'][$form['nmov']] = "";
-    $form['quanti'][$form['nmov']] = 0;    
+    $form['quanti'][$form['nmov']] = 0;
+	$form['quanti_time'][$form['nmov']] = "00:00"; 
     $form['prezzo'][$form['nmov']] = 0;
     $form['scorig'][$form['nmov']] = 0;
 	$form['quanti2'][$form['nmov']] = 0;    
@@ -2045,7 +2054,7 @@ function myFunction() {
 								if (isset($itemart['descri']) AND $form['mov']!=$form['nmov']){ // se non è il movimento attivo visualizzo la descrizione
 										echo " ", substr($itemart['descri'], 0, 25), " ";
 									}
-								If ($service == 0 or $service == 2) { //Antonio Germani se è un articolo con magazzino
+								if ($service == 0 or $service == 2) { //Antonio Germani se è un articolo con magazzino
 									// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 									if (isset($itemart['codice'])){
 										$mv = $gForm->getStockValue(false, $itemart['codice']);
@@ -2067,6 +2076,8 @@ function myFunction() {
 									echo $script_transl[42];
 									echo '</button></div>';
 								}
+							} elseif ($form['ins_op'][$form['mov']] !== ""){ // se invece è un operaio
+								$print_unimis="h";
 							}
 							?>
 							<input type="hidden" name="id_lotmag<?php echo $form['mov']; ?>" value="<?php echo $form['id_lotmag'][$form['mov']]; ?>" />
@@ -2081,7 +2092,7 @@ function myFunction() {
 								<?php echo $script_transl[12]; ?>
 							</label>
 							<?php if ($print_unimis == "h"){?>
-								<input type="time" name="quanti_time<?php echo $form['mov']; ?>" value="<?php echo $form['quanti_time'][$form['mov']]; ?>" required>
+								<input type="time" name="quanti_time<?php echo $form['mov']; ?>" value="<?php echo $form['quanti_time'][$form['mov']]; ?>">
 								<input type="hidden" name="quanti<?php echo $form['mov']; ?>" value="" />
 							<?php } else {?>
 								<input class="FacetSelect" type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()">
