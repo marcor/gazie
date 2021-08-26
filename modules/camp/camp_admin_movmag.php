@@ -1734,6 +1734,12 @@ if (intval($form['nome_colt']) == 0) {
 				<div class="col-md-12">
 					<div class="form-group">
 					<label class="FacetFieldCaptionTD">
+						<span data-toggle="popover" title="Inserimento campo di coltivazione" 
+						data-content="Inserire il campo su cui è stato effettuato il movimento.<br>
+						Dopo l'inserimento di un campo si aprirà una ulteriore richiesta di campo. In questa maniera è possibile inserire più campi di coltivazione in una unica registrazione.<br>
+						Le quantità dei prodotti utilizzati verranno suddivise in proporzione alla superficie di ciascun campo." 
+						class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
+						</span>
 						<?php echo $script_transl[3];?> 
 					</label>
 					
@@ -1915,10 +1921,15 @@ if (intval($form['nome_colt']) == 0) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label class="FacetFieldCaptionTD">
+								<span data-toggle="popover" title="Inserimento movimento" 
+								data-content="Nella voce 'Ricerca nome o descrizione' si può scrivere un prodotto usato (ad esempio fitofarmaco, concime, corroborante etc) che deve essere presente fra gli articoli di GAzie da mostrare nel quaderno di campagna.<br>
+								Inoltre, si può inserire un movimento agricolo (ad esempio: aratura, fresatura etc) che dovrà sempre essere presente negli articoli di GAzie da mostrare nel quaderno di campagna ma di tipo servizio.<br>
+								Infine il movimento può anche essere orario per un operaio; in questo caso spuntare la voce 'Movimento ore operaio'. Il movimento orario operaio non verrà riportato nel quaderno di campagna ma nel registro presenze del personale.<br> 
+								Dopo la compilazione di ciascun movimento sarà possibile inserirne altri, con un unico invio, cliccando di volta in volta su '+ Aggiungi movimento'." 
+								class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
+								</span>
 								<?php echo $script_transl[7]; ?>
-							</label>
-												
-
+							</label>					
 							<input type="hidden" name="mov" value="<?php echo $form['mov']; ?>">
 							<input type="hidden" name="scochi" value="<?php echo $form['scochi']; ?>">
 							<input type="hidden" name="conferma<?php echo $form['mov']; ?>" value="<?php echo $form['conferma'][$form['mov']]; ?>">
@@ -1991,23 +2002,7 @@ if (intval($form['nome_colt']) == 0) {
 										</div>
 										<ul class="dropdown-menu" style="left: 10%; padding: 0px;" id="codart_search"></ul>	
 										<ul class="dropdown-menu" style="left: 10%; padding: 0px;" id="codart_search2"></ul>									
-									</div>									
-									
-<!-- TEST TOOLTIP on CLICK  	
-<h2>Popup</h2>
-
-<div class="popup" onclick="myFunction()">Click me to toggle the popup!
-  <span class="popuptext" id="myPopup">A Simple Popup!</span>
-</div>
-
-<script>
-// When the user clicks on div, open the popup
-function myFunction() {
-  var popup = document.getElementById("myPopup");
-  popup.classList.toggle("show");
-}
-</script>
--->
+									</div>	
 							
 								</div><!-- chiude row  -->
 						
@@ -2569,7 +2564,13 @@ function myFunction() {
 			where.value = pval;
 			table.style.display = 'none';
 		}		
-	}
+	}	
+
+	$(document).ready(function(){		
+		$('[data-toggle="popover"]').popover({
+			html: true
+		});   
+	});
 </script>
 <?php
 // Antonio Germani questo serve per fare lo scroll all'ultimo movimento inserito
