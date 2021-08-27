@@ -372,6 +372,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				$form['staff'][$m] = "";
 			}
 			$form['ins_op'][$m] = (isset($_POST['ins_op'.$m]))?$_POST['ins_op'.$m]:'';
+			
 		}
 		
 		// carico i dati operaio
@@ -379,13 +380,21 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		
 		// se è il caso carica tabella camp_uso_fitofarmaci
 		$dose_usofito = "";
-		if ($form['artico'][$form['mov']] <> "" && $form['nome_avv'][$form['mov']] <> "") {
-			$query = "SELECT " . 'dose' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$form['mov']] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$form['mov']] . "'";
-			$result_uso_fito = gaz_dbi_query($query);
-			while ($row = $result_uso_fito->fetch_assoc()) {
-				$dose_usofito = $row['dose'];
-			}
-		}  
+		if (gaz_dbi_get_row($gTables['camp_uso_fitofarmaci'], "numero_registrazione", $form['id_reg'][$form['mov']])){ // se è stata inserito almeno una dose specifica
+			
+			if ($form['artico'][$form['mov']] <> "" && $form['nome_avv'][$form['mov']] <> "") {
+				
+				$query = "SELECT " . 'dose' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$form['mov']] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$form['mov']] . "' LIMIT 1";
+				$result_uso_fito = gaz_dbi_query($query);
+				while ($row = $result_uso_fito->fetch_assoc()) {
+					$dose_usofito = $row['dose']; // prendo la dose specifica
+				}
+				if ($dose_usofito==""){// se non c'è una dose specifica ,a ho inserito altre dosi
+					// segnalo che bisogna controllare se il prodotto è utilizzabile per quella coltura
+					$instantwarning="Si prega di controllare se il prodotto è utilizzabile per la coltura e l'avversità selezionate";
+				}
+			} 
+		}		
 	}
 
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
@@ -728,7 +737,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 					$perc_P = $item['perc_P'];
 					$perc_K = $item['perc_K'];
 				}
-				$query = "SELECT " . 'dose' . ", " . 'tempo_sosp' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$m] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$m] . "'";
+				$query = "SELECT " . 'dose' . ", " . 'tempo_sosp' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$m] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$m] . "' LIMIT 1";
 				$result = gaz_dbi_query($query);
 				while ($row = $result->fetch_assoc()) {
 					$dose_usofito = $row['dose'];
@@ -745,7 +754,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 						$quanti=$form['quanti'][$m];
 					}
 					if ($dose_usofito > 0) { //Controllo se la quantità o dose è giusta rapportata al campo di coltivazione
-						If ($dose_usofito > 0 && $quanti > $dose_usofito * $form['dim_campo'.$n] && $form['operat'] == - 1 && $form['dim_campo'.$n] > 0) {
+						if ($dose_usofito > 0 && $quanti > $dose_usofito * $form['dim_campo'.$n] && $form['operat'] == - 1 && $form['dim_campo'.$n] > 0) {
 							$msg.= "34+"; // errore dose uso fito superata
 							$instantwarning="Dose superata nel prodotto ". $form['artico'][$m] ." con la coltura ". $form['nome_colt'] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_usofito * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
 						}
