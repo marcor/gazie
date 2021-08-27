@@ -60,6 +60,12 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['gioinp'] = $_POST['gioinp'];
     $form['mesinp'] = $_POST['mesinp'];
     $form['anninp'] = $_POST['anninp'];
+	
+	$form['iniprod'] = $_POST['iniprod'];
+	$form['iniprodtime'] = $_POST['iniprodtime_ora'].":".$_POST['iniprodtime_minuti'];
+	
+	$form['fineprod'] = $_POST['fineprod'];
+	$form['fineprodtime'] = $_POST['fineprodtime_ora'].":".$_POST['fineprodtime_minuti'];
     $form['day_of_validity'] = $_POST['day_of_validity'];
     $form["campo_impianto"] = $_POST["campo_impianto"];    
     $form['quantip'] = $_POST['quantip'];
@@ -132,7 +138,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             while ($row = $resor->fetch_assoc()) { // scorro tutte le produzioni/orderman trovate
                 // per ogni orderman consulto movmag e conteggio le quantità per articolo già prodotte
                 $row = gaz_dbi_get_row($gTables['movmag'], "artico", $form['codart'], "AND operat = '1' AND id_orderman ='{$row['id']}'");
-                $quantiprod = $quantiprod + $row['quanti'];
+                $quantiprod = ($row)?($quantiprod + $row['quanti']):0;
             }
         } else { // se l'ordine non esiste ed è stato inserito un numero anomalo
             $form['codart'] = "";
@@ -342,7 +348,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			}
         }
         if ($msg == "") { // nessun errore
+			//echo"<pre>",print_r($form);die;
             // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+			$start_work = date_format(date_create_from_format('d-m-Y', $form['iniprod']), 'Y-m-d')." ".$form['iniprodtime'];
+			$end_work = date_format(date_create_from_format('d-m-Y', $form['fineprod']), 'Y-m-d')." ".$form['fineprodtime'];			
             // i dati dell'articolo che non sono nel form li avrò nell' array $resartico
 			$form['quantip']=gaz_format_quantity($form['quantip']);// trasformo la quantità per salvarla nel database
             
@@ -767,7 +776,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			*/
             // Antonio Germani - Inizio Scrittura produzione ORDERMAN e, se non già creati da un ordine, creazione di ordine fittizio con scrittura di TESBRO E RIGBRO
             if ($toDo == 'update') { //  se e' una modifica, aggiorno orderman e tesbro
-                $query = "UPDATE " . $gTables['orderman'] . " SET order_type = '" . $form['order_type'] . "', description = '" . $form['description'] . "', campo_impianto = '" . $form["campo_impianto"] . "', id_lotmag = '" . $form['id_lotmag'] . "', add_info = '" . $form['add_info'] . "', duration = '" . $form['day_of_validity'] . "' WHERE id = '" . $form['id'] . "'";
+                $query = "UPDATE " . $gTables['orderman'] . " SET start_work = '". $start_work ."', end_work = '". $end_work ."', order_type = '" . $form['order_type'] . "', description = '" . $form['description'] . "', campo_impianto = '" . $form["campo_impianto"] . "', id_lotmag = '" . $form['id_lotmag'] . "', add_info = '" . $form['add_info'] . "', duration = '" . $form['day_of_validity'] . "' WHERE id = '" . $form['id'] . "'";
                 gaz_dbi_query($query);
                 $resin = gaz_dbi_get_row($gTables['tesbro'], "id_orderman", $id_orderman);
                 if ($resin['id_tes'] <> $form['id_tesbro']) { // se l'ordine iniziale è diverso da quello del form
@@ -840,7 +849,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     }
                 }
                 // inserisco in orderman
-				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,duration,stato_lavorazione,adminid) VALUES ('" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" .$status. "', '" . $admin_aziend['adminid'] . "')");
+				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(start_work,end_work,order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,duration,stato_lavorazione,adminid) VALUES ('". $start_work ."', '". $end_work ."', '" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" .$status. "', '" . $admin_aziend['adminid'] . "')");
 
             }
             // fine orderman, tesbro e rigbro
@@ -867,6 +876,12 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['id_rigbro'] = $result['id_rigbro'];
     $form['add_info'] = $result['add_info'];
     $form['day_of_validity'] = $result['duration'];
+	$s = strtotime($result['start_work']);
+	$form['iniprod'] = date('d-m-Y', $s);
+	$form['iniprodtime'] = date('H:i', $s);
+	$s = strtotime($result['end_work']);
+	$form['fineprod'] = date('d-m-Y', $s);
+	$form['fineprodtime'] = date('H:i', $s);
     $result4 = gaz_dbi_get_row($gTables['movmag'], "id_orderman", intval($_GET['codice']), "AND operat ='1'");
     $form['datreg'] = ($result4)?$result4['datreg']:'';
     $form['quantip'] = ($result4)?$result4['quanti']:0;
@@ -958,6 +973,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['gioinp'] = date("d");
     $form['mesinp'] = date("m");
     $form['anninp'] = date("Y");
+	$form['iniprod'] = date ("d-m-Y");
+	$form['iniprodtime'] = date ("H:i");
+	$form['fineprod'] = date ("d-m-Y");
+	$form['fineprodtime'] = date ("H:i");
     $form['day_of_validity'] = "";
     $form["campo_impianto"] = "";
     $form['order'] = 0;
@@ -1582,7 +1601,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
         $result_input = '<input size="8" type="text" id="'.$nomecontrollo.'" name="'.$nomecontrollo.'" value="'.$valore.'">';
         $result_input .= '<script>
         $(function () {
-            $("#'.$nomecontrollo.'").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})  
+            $("#'.$nomecontrollo.'").datepicker({dateFormat: "dd-mm-yy", showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})  
         });</script>';
         return $result_input;
     }
@@ -1619,8 +1638,8 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
         echo "<tr>
                 <td class=\"FacetFieldCaptionTD\">" . $script_transl[33] . "</td>
                 <td class=\"FacetDataTD\">
-                ". gaz_select_data ( "iniprod", "10/11/2020" ) ."&nbsp;Ora inizio
-                ". gaz_select_ora ( "iniprod", "11:00" ) ."
+                ". gaz_select_data ( "iniprod", $form['iniprod'] ) ."&nbsp;Ora inizio
+                ". gaz_select_ora ( "iniprodtime", $form['iniprodtime'] ) ."
                 </td>
             </tr>";
 
@@ -1628,8 +1647,8 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
         echo "<tr>
                 <td class=\"FacetFieldCaptionTD\">" . $script_transl[34] . "</td>
                 <td class=\"FacetDataTD\">
-                ". gaz_select_data ( "fineprod", "10/11/2020" ) ."&nbsp;Ora fine
-                ". gaz_select_ora ( "fineprod", "11:00" ) ."
+                ". gaz_select_data ( "fineprod", $form['fineprod'] ) ."&nbsp;Ora fine
+                ". gaz_select_ora ( "fineprodtime", $form['fineprodtime'] ) ."
                 </td>
             </tr>";
     }
