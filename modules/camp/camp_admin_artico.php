@@ -54,16 +54,19 @@ if (isset($_POST['fornitore'])){
 }
 
 // se è stata inviata una dose specifica
+
 if (isset($_POST['OKsub']) AND $_POST['id_reg']>0 AND $_POST['dose']>0 AND intval($_POST['nome_colt'])>0 AND intval($_POST['nome_avv']>0)){// se inviata una dose specifica, la aggiungo al DB
 	$btn_uso="&#9650 Chiudi";
-	$rscheck = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], "NUMERO_REGISTRAZIONE = '".$_POST['id_reg']."' AND id_colt = '".intval($_POST['nome_colt'])."' AND id_avv ='".intval($_POST['nome_avv'])."'" ,2,0,1);
-    if ($rscheck->num_rows == 0){ // controllo se è stata giè inserita questa dose specifica		
+	$rscheck = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], "numero_registrazione = '".$_POST['id_reg']."' AND id_colt = '".intval($_POST['nome_colt'])."' AND id_avv ='".intval($_POST['nome_avv'])."'" ,2,0,1);
+   
+	if ($rscheck->num_rows == 0){ // controllo se è stata già inserita questa dose specifica		
 		$formuso['id_colt'] = intval($_POST['nome_colt']);		
 		$formuso['id_avv'] = intval($_POST['nome_avv']);
 		$formuso['cod_art'] = ($_POST)?$_POST['codice']:'';
 		$formuso['dose'] = $_POST['dose'];
 		$formuso['tempo_sosp'] = $_POST['tempo_sosp'];
-		$formuso['NUMERO_REGISTRAZIONE'] = $_POST['id_reg'];
+		$formuso['numero_registrazione'] = $_POST['id_reg'];
+		$formuso['max_tratt'] = $_POST['max_tratt'];
 		gaz_dbi_table_insert('camp_uso_fitofarmaci',$formuso);
 	}	
 } elseif  (isset($_POST['OKsub'])){
@@ -104,7 +107,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	} 
 	$form['id_reg']=$_POST['id_reg'];
 	$form['codice'] = trim($_POST['codice']);
-	$query="SELECT * FROM ".$gTables['camp_uso_fitofarmaci']." LEFT JOIN ".$gTables['camp_avversita']." on (".$gTables['camp_avversita'].".id_avv = ".$gTables['camp_uso_fitofarmaci'].".id_avv) LEFT JOIN ".$gTables['camp_colture']." on (".$gTables['camp_colture'].".id_colt = ".$gTables['camp_uso_fitofarmaci'].".id_colt) WHERE NUMERO_REGISTRAZIONE = ". $form['id_reg'] ." OR cod_art = '". $form['codice'] ."' ORDER BY nome_colt";
+	$query="SELECT * FROM ".$gTables['camp_uso_fitofarmaci']." LEFT JOIN ".$gTables['camp_avversita']." on (".$gTables['camp_avversita'].".id_avv = ".$gTables['camp_uso_fitofarmaci'].".id_avv) LEFT JOIN ".$gTables['camp_colture']." on (".$gTables['camp_colture'].".id_colt = ".$gTables['camp_uso_fitofarmaci'].".id_colt) WHERE numero_registrazione = ". $form['id_reg'] ." OR cod_art = '". $form['codice'] ."' ORDER BY nome_colt";
 	$res_usofito = gaz_dbi_query($query);
 	if (isset ($_POST['fornitore'])) {
 		$form['fornitore'] = $_POST['fornitore'];
@@ -364,7 +367,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15));
 	$camp = gaz_dbi_get_row($gTables['camp_artico'], 'codice', substr($_GET['codice'], 0, 15));
-	$query="SELECT * FROM ".$gTables['camp_uso_fitofarmaci']." LEFT JOIN ".$gTables['camp_avversita']." on (".$gTables['camp_avversita'].".id_avv = ".$gTables['camp_uso_fitofarmaci'].".id_avv) LEFT JOIN ".$gTables['camp_colture']." on (".$gTables['camp_colture'].".id_colt = ".$gTables['camp_uso_fitofarmaci'].".id_colt) WHERE NUMERO_REGISTRAZIONE = ". $form['id_reg'] ." OR cod_art = '". $form['codice'] ."' ORDER BY nome_colt";
+	$query="SELECT * FROM ".$gTables['camp_uso_fitofarmaci']." LEFT JOIN ".$gTables['camp_avversita']." on (".$gTables['camp_avversita'].".id_avv = ".$gTables['camp_uso_fitofarmaci'].".id_avv) LEFT JOIN ".$gTables['camp_colture']." on (".$gTables['camp_colture'].".id_colt = ".$gTables['camp_uso_fitofarmaci'].".id_colt) WHERE numero_registrazione = ". $form['id_reg'] ." OR cod_art = '". $form['codice'] ."' ORDER BY nome_colt";
 	$res_usofito = gaz_dbi_query($query);
 	$res_fito=gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'NUMERO_REGISTRAZIONE', $form['id_reg']);
 	$form['nomefito']=($res_fito)?$res_fito['PRODOTTO']:'';
@@ -427,6 +430,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		<?php
 		$btn_uso="&#9660 Apri dosi e usi"; // valore di default del pulsante apri dosi specifiche
 	}
+	
 } else { //se e' il primo accesso per INSERT
 	
 	// controllo se la tabella DB fitofarmaci è popolata
@@ -487,7 +491,7 @@ if (isset($_POST['nomefito']) && strlen($form['nomefito'])>3){
 		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'.",".'IMPRESA'.",".'SEDE_LEGALE_IMPRESA'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['nomefito']."'";
 		$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
-				If (isset($row)) {$presente=1;}
+				if (isset($row)) {$presente=1;}
 			$form['descri']=$row['SOSTANZE_ATTIVE']." ".$row['DESCRIZIONE_FORMULAZIONE'];
 			$form['body_text']=$row['SOSTANZE_ATTIVE']." ".$row['IMPRESA']." ".$row['SEDE_LEGALE_IMPRESA'];
 			$indper=$row['INDICAZIONI_DI_PERICOLO'];
@@ -715,13 +719,15 @@ select: function(event, ui) {
 						</div>		
 						
 						<div class="row bg-info">
-							<div class="col-md-12">
-								<div class="col-sm-12 control-label">
-									<p> Per connettere un fitofarmaco al database del Ministero della salute, inserire il nome commerciale del prodotto e confermarlo nella tendina che appare. Altrimenti lasciare vuoto il campo fitofarmaco e scrivere solo il codice. </P>
-								</div>
+							<div class="col-md-12">								
 								
 								<div class="form-group">
-									<label for="nomefito" class="col-sm-4 control-label"><?php echo "Fitofarmaco"; ?></label>
+									<label for="nomefito" class="col-sm-4 control-label">
+									<span data-toggle="popover" title="Inserimento fitofarmaco" 
+									data-content="Per connettere un fitofarmaco al database del Ministero della salute, inserire il nome commerciale del prodotto e confermarlo nella tendina che appare. <br>Altrimenti lasciare vuoto il campo fitofarmaco e scrivere solo il codice." 
+									class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
+									</span>
+									<?php echo "Fitofarmaco"; ?></label>
 									<input class="col-sm-6" type="text" id="nomefito" name="nomefito" value="<?php echo $form['nomefito']; ?>" placeholder="Ricerca nome fitofarmaco" autocomplete="off" tabindex="1">
 									<?php
 									if ($form['nomefito']){
@@ -757,7 +763,7 @@ select: function(event, ui) {
 								while ($usofito = $res_usofito->fetch_assoc()) {															
 									
 									echo '<div style="background-color: #'.$color.'">
-									<a class="btn btn-xs btn-success" >'.$usofito['id'].'</a> - '.$usofito['NUMERO_REGISTRAZIONE'].' - '.$usofito['id_colt'].$usofito['nome_colt'].' - '.$usofito['id_avv'].$usofito['nome_avv'].' - Dose:'.$usofito['dose'].$unimis.' - Sospensione:'.$usofito['tempo_sosp'].'gg_ _ _ _ ';
+									<a class="btn btn-xs btn-success" >'.$usofito['id'].'</a> - '.$usofito['numero_registrazione'].' - '.$usofito['id_colt'].$usofito['nome_colt'].' - '.$usofito['id_avv'].$usofito['nome_avv'].' - Dose:'.$usofito['dose'].$unimis.' - Sospensione:'.$usofito['tempo_sosp'].'gg - Trattamenti per coltura:'.$usofito['max_tratt'].' ';
 									if (intval($res_usofito->num_rows)>0){
 										?>
 										<a style="float:right;" class="btn btn-xs btn-danger" onclick="itemErase('<?php echo addslashes($usofito['id']); ?>', '<?php echo addslashes($usofito['nome_avv']);?>', '<?php echo addslashes($usofito['nome_colt']);?>', '<?php echo $form['nomefito'];?>', '<?php echo $upd; ?>');">  togli X </a>
@@ -838,6 +844,7 @@ select: function(event, ui) {
 										<b> Avversità:</b>
 										<input id="autocomplete3" type="text" value="" name="nome_avv" maxlength="50"/>
 										<!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->
+										
 									</div>
 									<div class="row">
 										<b>Dose:</b>
@@ -847,6 +854,10 @@ select: function(event, ui) {
 										?>
 										<b> Tempo sospensione:</b>
 										<input type="text" name="tempo_sosp" value="" maxlength="2"  /> gg 									
+									</div>
+									<div class="row">
+										<b>Numero massimo di trattamenti per coltivazione:</b>
+										<input type="number" name="max_tratt" value="" maxlength="8" />
 									</div>
 									<div class="row">
 										<input type="submit" class="btn btn-warning" name="OKsub" value="Salva dose">
@@ -1287,6 +1298,12 @@ if (isset($formuso) OR $openmore==true){
 	function Popup(apri) {
 	  window.open(apri, "", stile);
 	}
+	<!-- script per popover -->
+	$(document).ready(function(){		
+		$('[data-toggle="popover"]').popover({
+			html: true
+		});   
+	});
 </script>
 <!---->
 <style>
