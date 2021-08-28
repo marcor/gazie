@@ -38,7 +38,7 @@ function getDocumentsBill($upd = false) {
              LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf
              ON anagraf.id=customer.id_anagra
              LEFT JOIN ' . $gTables['files'] . " AS files
-             ON tesdoc.clfoco=( SELECT files.item_ref WHERE files.table_name_ref='clfoco' ORDER BY id_tes DESC LIMIT 1 )";
+             ON tesdoc.clfoco=( SELECT files.id_ref WHERE files.table_name_ref='clfoco' AND files.item_ref='mndtritdinf' ORDER BY id_tes DESC LIMIT 1 )";
     $where = "(tippag = 'B' OR tippag = 'T' OR tippag = 'V' OR tippag = 'I') AND geneff = '' AND tipdoc LIKE 'FA_'";
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,

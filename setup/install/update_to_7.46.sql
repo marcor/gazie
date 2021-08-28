@@ -97,4 +97,6 @@ ALTER TABLE `gaz_XXXclfoco`
 ALTER TABLE `gaz_XXXeffett`
 	ADD COLUMN `mndtritdinf` INT(9) NULL DEFAULT NULL COMMENT 'Riferimento ad id_doc della tabella gaz_NNNfiles in cui sono contenuti i dati del mandato che ha autorizzato l\'emissione del RID' AFTER `id_distinta`;
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Codice univoco assegnato al Creditore per SEPA', 'sepa_creditor_identifier', 'IT55ZZZ00000000000000001');
+ALTER TABLE `gaz_XXXcontract`
+	ADD COLUMN `mndtritdinf` INT(9) NOT NULL DEFAULT '0' COMMENT 'Riferimento ad id_doc della tabella gaz_NNNfiles in cui sono contenuti i dati dell\'eventuale mandato che autorizza l\'emissione dei RID' AFTER `payment_method`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

@@ -237,7 +237,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_D'] = substr($form['datnas'], 8, 2);
     // inizio mandati rid
     $nd = 0;
-    $rs_r = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '" . intval($admin_aziend['mascli'] * 1000000 + $_GET['codice']) . "' AND table_name_ref = 'clfoco'", "id_doc DESC");
+    $rs_r = gaz_dbi_dyn_query("*", $gTables['files'], "id_ref = '" . intval($admin_aziend['mascli'] * 1000000 + $_GET['codice']) . "' AND table_name_ref = 'clfoco'", "id_doc DESC");
     while ($r = gaz_dbi_fetch_array($rs_r)) {
         $form['MndtRltdInf'][$nd] = $r;
         $nd++;
@@ -673,10 +673,10 @@ $gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'], 'tippag`, `g
 							</a>
 
 <?php } ?>
-                            <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_mndtritdinf.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
+                            <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_mndtritdinf.php?id_ref=<?php echo $form['codice']; ?>&Insert'" />
                         </div>
                         <?php } else { // non ho documenti  ?>
-                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_mndtritdinf.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
+                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_mndtritdinf.php?id_ref=<?php echo $form['codice']; ?>&Insert'">
                     <?php } ?>
                 </div>
             </div>

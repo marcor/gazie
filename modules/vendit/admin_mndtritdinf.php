@@ -35,7 +35,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form=gaz_dbi_parse_post('files');
     $form['mndtid']=intval($_POST['mndtid']);
-    $form['dtofsgntr']=preg_replace("([^0-9/])", "", $_POST['dtofsgntr']);
+    $form['dtofsgntr']=preg_replace("([^0-9/-])", "", $_POST['dtofsgntr']);
     $form['cliente']=$_POST['cliente'];
     $form['ritorno'] = $_POST['ritorno'];
     if (isset($_POST['Submit'])) { // conferma tutto
@@ -70,12 +70,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			} elseif($_FILES['userfile']['size'] == 0)  {
 				$msg['err'][]='empty';
 			}
-		} else {
+		} elseif($toDo=='insert') {
             $msg['err'][]='sel';
 		}
         $dtofsgntr = gaz_format_date($form['dtofsgntr'], true);
         if (!gaz_format_date($dtofsgntr,'chk')||(strtotime($dtofsgntr) > strtotime('now'))){
             $msg['err'][]='date';
+        }
+        if (intval($form['mndtid'])<1){
+            $msg['err'][]='num';
         }
 		if (count($msg['err'])<1) { // nessun errore
 			// controllo che ci sia la cartella doc
@@ -87,6 +90,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           $form['custom_field']=json_encode(['vendit'=>array('dtofsgntr'=>$dtofsgntr,'mndtid'=>$form['mndtid'])]);
           if ($toDo == 'insert') {
             $form['table_name_ref']= 'clfoco';
+            $form['item_ref']= 'mndtritdinf';
             $form['id_doc']=gaz_dbi_table_insert('files',$form);
           } elseif ($toDo == 'update') { 
             gaz_dbi_table_update('files',array('id_doc',$form['id_doc']),$form);
@@ -108,7 +112,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	}
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['files'], 'id_doc',intval($_GET['id_doc']));
-    $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',$form['item_ref']);
+    $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',$form['id_ref']);
     $form['cliente']=$clfoco['descri'];
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $form['dtofsgntr']='';
@@ -128,10 +132,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['dtofsgntr']='';
     $form['mndtid']='';
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
-    $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',intval($admin_aziend['mascli'] * 1000000 + $_GET['item_ref']));
+    $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',intval($admin_aziend['mascli'] * 1000000 + $_GET['id_ref']));
     $form['cliente']=$clfoco['descri'];
     if (!empty($clfoco)) { //l'articolo è stato trovato
-       $form['item_ref']= $clfoco['codice'];    
+       $form['id_ref']= $clfoco['codice'];    
     } else { // scappo!
        header("Location: ".$form['ritorno']);
        exit;
@@ -169,7 +173,7 @@ echo "<form method=\"POST\" name=\"form\" enctype=\"multipart/form-data\">\n";
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
    $form['id_doc']='';
-   echo "<input type=\"hidden\" name=\"item_ref\" value=\"".$form['item_ref']."\">\n";
+   echo "<input type=\"hidden\" name=\"id_ref\" value=\"".$form['id_ref']."\">\n";
 } else {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']."</div>\n";
    echo "<input type=\"hidden\" name=\"id_doc\" value=\"".$form['id_doc']."\">\n";
@@ -177,7 +181,7 @@ if ($toDo == 'insert') {
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 echo "<input type=\"hidden\" name=\"cliente\" value=\"".$form['cliente']."\">\n";
 echo "<input type=\"hidden\" name=\"extension\" value=\"".$form['extension']."\">\n";
-echo "<input type=\"hidden\" name=\"item_ref\" value=\"".$form['item_ref']."\">\n";
+echo "<input type=\"hidden\" name=\"id_ref\" value=\"".$form['id_ref']."\">\n";
 echo "<input type=\"hidden\" name=\"title\" value=\"".$form['title']."\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
 echo '<div align="center"><table class="table-striped table-bordered table-condensed">';

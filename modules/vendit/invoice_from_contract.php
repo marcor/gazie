@@ -30,11 +30,12 @@ function lastDocNumber($year, $type = 'FAI', $vat_section = 1) {
                          AND tipdoc LIKE '" . substr($type, 0, 1) . "__'
                          AND seziva = $vat_section", "protoc DESC", 0, 1);
     $last = gaz_dbi_fetch_array($last_pro);
-    $rtn['uts'] = $last['uts'];
     if ($last) {
+        $rtn['uts'] = $last['uts'];
         $rtn['protoc'] = $last['protoc'] + 1;
     } else {
         $rtn['protoc'] = 1;
+        $rtn['uts'] = false;
     }
     $last_doc = gaz_dbi_dyn_query("numfat*1 AS n_fatt,numdoc", $gTables['tesdoc'], "YEAR(datfat) = $year
                          AND tipdoc LIKE '" . substr($type, 0, 2) . "_'

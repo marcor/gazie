@@ -357,7 +357,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // trovo l'ultimo numero di contratto
     $rs_last = gaz_dbi_dyn_query("*", $gTables['contract'], "YEAR(conclusion_date)=".date("Y"),"doc_number DESC",0,1);
     $last = gaz_dbi_fetch_array($rs_last);
-    $form['doc_number'] = $last['doc_number']+1;
+    $form['doc_number'] = ($last)?($last['doc_number']+1):1;
     $form['conclusion_date_Y'] = date("Y");
     $form['conclusion_date_M'] = date("m");
     $form['conclusion_date_D'] = date("d");
@@ -470,7 +470,7 @@ echo "\t </td>\n";
 if (!empty($msg)) {
     echo '<td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td>\n";
 } else {
-    echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['address']."</td><td>".$cliente['indspe']."<br />";
+    echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['address']."</td><td>".(($cliente)?$cliente['indspe']:'')."<br />";
     echo "</td>\n";
 }
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['conclusion_date']."</td><td class=\"FacetDataTD\">\n";
