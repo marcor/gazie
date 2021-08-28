@@ -47,7 +47,7 @@ $rame_met_annuo = "";
 $scadaut = "";
 $scorta = "";
 $service = "";
-$instantwarning="";
+$instantwarning=array();
 $avv_conf=0;
 $today = strtotime(date("Y-m-d H:i:s", time()));
 
@@ -101,7 +101,7 @@ if (isset($_POST['feno']) AND strlen($_POST['add_feno'])>0) {
 	$feno_array = ($_POST['feno_json'])?json_decode ($_POST['feno_json'],true):'';	
 	if (is_array($feno_array) AND in_array($_POST['add_feno'], $feno_array)){// prima di salvare controllo che non ci sia già 
 		// segnalo che è già inserito
-		$instantwarning = "La fase fenologica '". $_POST['add_feno'] ."' è già presente!";
+		$instantwarning[] = "La fase fenologica '". $_POST['add_feno'] ."' è già presente!";
 	} else {		
 		if (!is_array($feno_array)){ // inserisco per la prima volta la riga in company data 			
 			$feno_json = '["'.$_POST['add_feno'].'"]';			
@@ -392,7 +392,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				}
 				if ($dose_usofito==""){// se non c'è una dose specifica ,a ho inserito altre dosi
 					// segnalo che bisogna controllare se il prodotto è utilizzabile per quella coltura
-					$instantwarning="Si prega di controllare se il prodotto è utilizzabile per la coltura e l'avversità selezionate";
+					$instantwarning[]="Si prega di controllare se il prodotto è utilizzabile per la coltura e l'avversità selezionate";
 				}
 			} 
 		}		
@@ -460,7 +460,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				if ($today>$exp){ //se è scaduto					
 					$avv_conf=2;
 				} elseif (($exp-7776000)<$today ){// se sta per scadere -> 1 Day: 86400 Seconds 3 mesi: 7776000					
-					$instantwarning="L'autorizzazione per l'acquisto e l'uso di prodotti fitosanotari scadrà il ".$form['patent_expiry'];
+					$instantwarning[]="L'autorizzazione per l'acquisto e l'uso di prodotti fitosanotari scadrà il ".$form['patent_expiry'];
 				}				
 			} else { // se non c'è un patentino segnalo la mancanza
 				$form['patent_number'] = "";
@@ -646,7 +646,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
             }
             // controllo quantità uguale a zero
 			if ($form['ins_op'][$m]==""){
-				$unimis=$itemart['unimis'];
+				$unimis=($itemart)?$itemart['unimis']:'';
 			} else {
 				$unimis="h";
 			}
@@ -757,12 +757,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 					if ($dose_usofito > 0) { //Controllo se la quantità o dose è giusta rapportata al campo di coltivazione
 						if ($dose_usofito > 0 && $quanti > $dose_usofito * $form['dim_campo'.$n] && $form['operat'] == - 1 && $form['dim_campo'.$n] > 0) {
 							$msg.= "34+"; // errore dose uso fito superata
-							$instantwarning="Dose superata nel prodotto ". $form['artico'][$m] ." con la coltura ". $form['nome_colt'] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_usofito * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
+							$instantwarning[]="Dose superata nel prodotto ". $form['artico'][$m] ." con la coltura ". $form['nome_colt'] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_usofito * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
 						}
 					} else {
 						if ($dose_artico > 0 && $quanti > $dose_artico * $form['dim_campo'.$n] && $form['operat'] == - 1 && $form['dim_campo'.$n] > 0) {
 							$msg.= "25+"; // errore dose artico superata
-							$instantwarning="Dose superata nel prodotto ". $form['artico'][$m] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_artico * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
+							$instantwarning[]="Dose superata nel prodotto ". $form['artico'][$m] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_artico * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
 						}
 					}
 					// Antonio Germani Calcolo quanto rame metallo e Azoto N è stato usato nell'anno di esecuzione di questo movimento
@@ -800,11 +800,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 					}
 					if (($quanti>0 && $form['campo_impianto'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($rame_met_annuo + ($rame_metallo * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity'])) > ($Cu_limit_anno * $form['dim_campo'.$n]))) {
 						$msg.= "26+"; // errore superato il limite di rame metallo ad ettaro                
-						$instantwarning="ERRORE rame metallo <br> Rame metallo annuo già usato: ". gaz_format_quantity($rame_met_annuo, 1, $admin_aziend['decimal_quantity']) ." Kg  - Rame metallo che si tenta di usare: ". gaz_format_quantity($rame_metallo * $quanti, 1, $admin_aziend['decimal_quantity']) ." Kg - Limite annuo di legge per questo campo: ". gaz_format_quantity(($Cu_limit_anno * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']) ." Kg";
+						$instantwarning[]="ERRORE rame metallo <br> Rame metallo annuo già usato: ". gaz_format_quantity($rame_met_annuo, 1, $admin_aziend['decimal_quantity']) ." Kg  - Rame metallo che si tenta di usare: ". gaz_format_quantity($rame_metallo * $quanti, 1, $admin_aziend['decimal_quantity']) ." Kg - Limite annuo di legge per questo campo: ". gaz_format_quantity(($Cu_limit_anno * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']) ." Kg";
 					}
 					if (($quanti>0 && $form['campo_impianto'.$n] > 0) && ($form['dim_campo'.$n] > 0) && ($N_annuo + ($perc_N * gaz_format_quantity($quanti, 0, $admin_aziend['decimal_quantity']))/100 > ($limite_N * $form['dim_campo'.$n]))) {
 						$msg.= "43+"; // errore superato il limite di azoto ad ettaro                
-						$instantwarning="ERRORE azoto <br> Azoto annuo già usato: ". gaz_format_quantity($N_annuo, 1, $admin_aziend['decimal_quantity']). " Kg  - Azoto che si tenta di usare: ". gaz_format_quantity($perc_N * $quanti, 1, $admin_aziend['decimal_quantity'])/100 ."  Kg - Limite annuo per questo campo: ". gaz_format_quantity(($limite_N * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']) ." Kg";
+						$instantwarning[]="ERRORE azoto <br> Azoto annuo già usato: ". gaz_format_quantity($N_annuo, 1, $admin_aziend['decimal_quantity']). " Kg  - Azoto che si tenta di usare: ". gaz_format_quantity($perc_N * $quanti, 1, $admin_aziend['decimal_quantity'])/100 ."  Kg - Limite annuo per questo campo: ". gaz_format_quantity(($limite_N * $form['dim_campo'.$n]), 1, $admin_aziend['decimal_quantity']) ." Kg";
 					}
 				} // fine ciclo campi di coltivazione  
 			}
@@ -1466,7 +1466,7 @@ if (isset($_POST['nome_colt'])) {
 			if (!isset($err)){
 				$err['nome_colt']="Nessuna coltura";
 			}
-			$instantwarning="Nel campo di coltivazione è presente la coltura ". $result['id_colture'] ." - ". $err['nome_colt']. " che è diversa da quella inserita. Se si conferma, verrà modificata la coltura nel campo di coltivazione!";
+			$instantwarning[]="Nel campo di coltivazione è presente la coltura ". $result['id_colture'] ." - ". $err['nome_colt']. " che è diversa da quella inserita. Se si conferma, verrà modificata la coltura nel campo di coltivazione!";
 		}
 	}
 }
@@ -1483,13 +1483,15 @@ require ("./lang." . $admin_aziend['lang'] . ".php");
 <?php
 
 // Antonio Germani segnalo i warning immediati
-if (strlen($instantwarning)>0) {
+if (count($instantwarning)>0) {
+	foreach ($instantwarning as $warn){
 	?>
 	<div class="alert alert-warning alert-dismissible" id="warning"><!-- Antonio Germani Questa è l'ancora dello scroll per i warning-->
 		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		<strong>Warning!</strong> <?php echo $instantwarning; ?>		
+		<strong>Warning!</strong> <?php echo $warn; ?>		
 	</div>
 	<?php
+	}
 }
 if ($avv_conf==1) { // segnalo autorizzazione fitofarmaco scaduta con scelta
 	echo "<script type='text/javascript'> $(window).load(function(){ $('#scadaut').modal('show'); }); </script>";	
@@ -2493,7 +2495,7 @@ if (intval($form['nome_colt']) == 0) {
 			?>		
 			<!-- <<<<<<<<<<<<<<<<<<<<<<       Fine ciclo righi mov     <<<<<<<<<<<<<<<<<<<  -->
 			
-			<div class="row bg-info" id="op" >
+			<div class="row bg-info">
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="FacetFieldCaptionTD">
@@ -2586,7 +2588,7 @@ if (intval($form['nome_colt']) == 0) {
 </script>
 <?php
 // Antonio Germani questo serve per fare lo scroll all'ultimo movimento inserito o alla segnalazione errore
-if (strlen($instantwarning)>0){
+if (count($instantwarning)>0){
 	$anchor="warning";
 } elseif (strlen($message)>0){
 	$anchor="error";
