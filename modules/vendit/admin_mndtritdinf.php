@@ -24,7 +24,7 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$msg = '';
+$msg=['err'=>[],'war'=>[]];
 
 if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'update';
@@ -62,25 +62,28 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                                                                            $form['extension']=='pdf'))) {
            // vado avanti...
 			} else {
-				$msg .= "0+";
+				$msg['err'][]='ext';
 			}
 			// controllo che il file non sia piu' grande di 10Mb
 			if ( $_FILES['userfile']['size'] > 10485760 ){
-				$msg .= "1+";
+				$msg['err'][]='big';
 			} elseif($_FILES['userfile']['size'] == 0)  {
-				$msg .= "2+";
+				$msg['err'][]='empty';
 			}
 		} else {
-           $msg .= "3+";
+            $msg['err'][]='sel';
 		}
-		if (empty($msg)) { // nessun errore
+        $dtofsgntr = gaz_format_date($form['dtofsgntr'], true);
+        if (!gaz_format_date($dtofsgntr,'chk')||(strtotime($dtofsgntr) > strtotime('now'))){
+            $msg['err'][]='date';
+        }
+		if (count($msg['err'])<1) { // nessun errore
 			// controllo che ci sia la cartella doc
 			$docfolder = DATA_DIR.'files/' . $admin_aziend['codice'] . '/doc/';
 			if (!file_exists($docfolder)) {// se non c'è la creo
 				mkdir($docfolder, 0666);
 			}
           // aggiorno il solo db
-          $dtofsgntr = gaz_format_date($form['dtofsgntr'], true);
           $form['custom_field']=json_encode(['vendit'=>array('dtofsgntr'=>$dtofsgntr,'mndtid'=>$form['mndtid'])]);
           if ($toDo == 'insert') {
             $form['table_name_ref']= 'clfoco';
@@ -112,7 +115,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['mndtid']='';
 	if ($data=json_decode($form['custom_field'],true)){// se c'è un json nel custom_field
 		if (is_array($data['vendit']) && strlen($data['vendit']['dtofsgntr'])>0){ // se è riferito al modulo vendit e contiene la data di firma del RID
-            $form['dtofsgntr']=$data['vendit']['dtofsgntr'];
+            $form['dtofsgntr']=gaz_format_date($data['vendit']['dtofsgntr']);
             $form['mndtid']=$data['vendit']['mndtid'];
         }
 	}
@@ -136,14 +139,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain();
-require("./lang.".$admin_aziend['lang'].".php");
-$script_transl += $strScript["browse_document.php"];
+$script_transl = HeadMain('','','browse_document');
 $gForm = new venditForm();
 ?>
 <script type="text/javascript">
     $(function () {
-        //$("#dtofsgntr").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#dtofsgntr").datepicker({
             showButtonPanel: true,
             showOtherMonths: true,
@@ -159,6 +159,12 @@ $gForm = new venditForm();
 </script>
 
 <?php
+if (count($msg['err']) > 0) { // ho un errore
+    echo '<div class="text-center"><div><b>';
+    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+    echo "</b></div></div>\n";
+}
+
 echo "<form method=\"POST\" name=\"form\" enctype=\"multipart/form-data\">\n";
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
@@ -175,9 +181,6 @@ echo "<input type=\"hidden\" name=\"item_ref\" value=\"".$form['item_ref']."\">\
 echo "<input type=\"hidden\" name=\"title\" value=\"".$form['title']."\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
 echo '<div align="center"><table class="table-striped table-bordered table-condensed">';
-if (!empty($msg)) {
-    echo '<tr><td colspan="3" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
-}
 echo "<tr>\n";
 echo "\t<td>ID</td>\n";
 echo "\t<td colspan=\"2\">".$form['id_doc']."</td>\n";
@@ -208,7 +211,7 @@ echo "<tr>\n";
 echo "<tr>\n";
 echo "\t<td>".$script_transl['mndtid']."</td>\n";
 echo "\t<td colspan=\"2\">
-      <input type=\"number\" name=\"mndtid\" min=\"1\" step=\"1\"value=\"".$form['mndtid']."\" maxlength=\"20\"  /></td>\n";
+      <input type=\"number\" name=\"mndtid\" min=\"0\" step=\"1\"value=\"".$form['mndtid']."\" maxlength=\"20\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td>".$script_transl['sqn']."</td>";

@@ -45,7 +45,7 @@ if ($id_distinta){ // chiedo una distinta già prodotta
     $filename = 'TRATTEdel_'.date_format($date, 'Y-m-d').'.pdf';
     $banacc = $anagrafica->getPartner(intval($_GET['banacc']));
     $where = "(".$gTables['effett'] . ".id_distinta = 0 OR id_distinta IS NULL) AND tipeff = 'T' AND scaden BETWEEN '".substr($_GET['scaini'],0,10)."' AND '".substr($_GET['scafin'],0,10)."' AND progre BETWEEN '".intval($_GET['proini'])."' AND '".intval($_GET['profin'])."'";
-    gaz_dbi_query("INSERT INTO ". $gTables['files'] . " SET table_name_ref='effett', id_ref=".intval($_GET['banacc']).", item_ref='distinta', extension='pdf', title='".$filename."', custom_field='{\"vendit\":{\"credttm\":\"".date_format($date, 'Y-m-d')."\"}}'");
+    gaz_dbi_query("INSERT INTO ". $gTables['files'] . " SET table_name_ref='effett', id_ref=".intval($_GET['banacc']).", item_ref='distinta', extension='pdf', title='".$filename."', custom_field='{\"vendit\":{\"credttm\":\"".date_format($date, 'Y-m-d')."\",\"tipeff\":\"T\",\"scaini\":\"".substr($_GET['scaini'],0,10)."\",\"scafin\":\"".substr($_GET['scafin'],0,10)."\",\"proini\":\"".intval($_GET['proini'])."\",\"profin\":\"".intval($_GET['profin'])."\"}}'");
     $first_id_distinta=gaz_dbi_last_id();
     $title = 'Distinta effetti dal '.gaz_format_date($_GET['scaini']).' al '.gaz_format_date($_GET['scafin']);    
 }

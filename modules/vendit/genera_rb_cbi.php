@@ -70,7 +70,7 @@ if (isset($_GET['eof'])) {
     $arrayTestata[12] = 1;
 }
 // inserisco il riferimento al file della distinta
-$id_doc=gaz_dbi_table_insert('files', array('table_name_ref'=>'effett','id_ref'=>intval($_GET['banacc']),'item_ref'=>'distinta','extension'=>'cbi', 'title'=>$filename, 'custom_field'=>'{"vendit":{"credttm":"'.$defiles.'"}}'));
+$id_doc=gaz_dbi_table_insert('files', array('table_name_ref'=>'effett','id_ref'=>intval($_GET['banacc']),'item_ref'=>'distinta','extension'=>'cbi', 'title'=>$filename, 'custom_field'=>'{"vendit":{"credttm":"'.$defiles.'","tipeff":"B","scaini":"'.substr($_GET['scaini'],0,10).'","scafin":"'.substr($_GET['scafin'], 0, 10).'","proini":"'.intval($_GET['proini']).'","profin":"'.intval($_GET['profin']).'"}}'));
 
 $arrayRiba = array();
 while ($row = gaz_dbi_fetch_array($result)) {
