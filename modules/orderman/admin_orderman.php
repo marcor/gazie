@@ -1601,41 +1601,33 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td>";
 print "<td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\"  size=\"10\" value=\"" . $form['day_of_validity'] . "\"  /></td></tr>\n";
 /*Antonio Germani LUOGO di produzione  */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
-		// SELECT luogo di produzione da campi
-		$gForm->selectFromDB('campi', 'campo_impianto','codice', $form['campo_impianto'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
+// SELECT luogo di produzione da campi
+$gForm->selectFromDB('campi', 'campo_impianto','codice', $form['campo_impianto'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
 echo "</td></tr>";
 
-/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate*/
-    // Antonio Germani selezione operai
-    
-		// SELECT Operaio da staff con acquisizione nome da clfoco
-	echo "<tr><td class=\"FacetFieldCaptionTD\">Responsabile/addetto produzione</td><td class=\"FacetDataTD\">\n";
-	$gForm->selectFrom2DB('staff','clfoco','codice','descri','id_staff_def','id_staff', $form['id_staff_def'],'', 1, ' - ','id_clfoco','TRUE','FacetSelect' , null, '');
-		
-       
+// Antonio Germani selezione responsabile o addetto alla produzione fra l'elenco staff
+// SELECT da staff con acquisizione nome da clfoco
+echo "<tr><td class=\"FacetFieldCaptionTD\">Responsabile/addetto produzione</td><td class=\"FacetDataTD\">\n";
+$gForm->selectFrom2DB('staff','clfoco','codice','descri','id_staff_def','id_staff', $form['id_staff_def'],'', 1, ' - ','id_clfoco','TRUE','FacetSelect' , null, '');
 
-    $form['mov'] = $form['nmov'];
-    echo "<input type=\"hidden\" name=\"nmovdb\" value=\"" . $form['nmovdb'] . "\">\n";
-    echo "<input type=\"hidden\" name=\"nmov\" value=\"" . $form['nmov'] . "\">\n</td></tr>";
-    // se è una produzione industriale visualizzo data e ora di inizio e fine
-   
-        // Inserimento data inizio lavori
-        echo "<tr>
-                <td class=\"FacetFieldCaptionTD\">" . $script_transl[33] . "</td>
-                <td class=\"FacetDataTD\">
-                ". gaz_select_data ( "iniprod", $form['iniprod'] ) ."&nbsp;Ora inizio
-                ". gaz_select_ora ( "iniprodtime", $form['iniprodtime'] ) ."
-                </td>
-            </tr>";
+// se è una produzione industriale visualizzo data e ora di inizio e fine
+// Inserimento data inizio lavori
+echo "<tr>
+		<td class=\"FacetFieldCaptionTD\">" . $script_transl[33] . "</td>
+		<td class=\"FacetDataTD\">
+		". gaz_select_data ( "iniprod", $form['iniprod'] ) ."&nbsp;Ora inizio
+		". gaz_select_ora ( "iniprodtime", $form['iniprodtime'] ) ."
+		</td>
+	</tr>";
 
-        // Inserimento data fine lavori
-        echo "<tr>
-                <td class=\"FacetFieldCaptionTD\">" . $script_transl[34] . "</td>
-                <td class=\"FacetDataTD\">
-                ". gaz_select_data ( "fineprod", $form['fineprod'] ) ."&nbsp;Ora fine
-                ". gaz_select_ora ( "fineprodtime", $form['fineprodtime'] ) ."
-                </td>
-            </tr>";
+// Inserimento data fine lavori
+echo "<tr>
+		<td class=\"FacetFieldCaptionTD\">" . $script_transl[34] . "</td>
+		<td class=\"FacetDataTD\">
+		". gaz_select_data ( "fineprod", $form['fineprod'] ) ."&nbsp;Ora fine
+		". gaz_select_ora ( "fineprodtime", $form['fineprodtime'] ) ."
+		</td>
+	</tr>";
    
 if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
     // Antonio Germani > Inizio LOTTO in entrata o creazione nuovo
