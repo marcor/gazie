@@ -193,8 +193,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         $form['order'] = 0;
         $form['quantipord'] = 0;
     }
-    $form['nmov'] = $_POST['nmov'];
-    $form['nmovdb'] = $_POST['nmovdb'];
+   
 	/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
     for ($m = 0;$m <= $form['nmov'];++$m) {
         $form['staff'][$m] = $_POST['staff' . $m];
