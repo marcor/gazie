@@ -99,10 +99,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['table_name_ref']= 'clfoco';
             $form['item_ref']= 'mndtritdinf';
             $form['id_doc']=gaz_dbi_table_insert('files',$form);
-            $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',$form['id_ref']);      
           } elseif ($toDo == 'update') { 
             gaz_dbi_table_update('files',array('id_doc',$form['id_doc']),$form);
           }
+          $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',$form['id_ref']);      
           if (strlen($clfoco['iban'])<10) { // se il cliente non ha un IBAN lo inserisco
            	gaz_dbi_put_row($gTables['clfoco'],'codice',$form['id_ref'],'iban',$form['iban']);
           }    
