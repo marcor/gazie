@@ -37,6 +37,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['mndtid']=intval($_POST['mndtid']);
     $form['dtofsgntr']=preg_replace("([^0-9/-])", "", $_POST['dtofsgntr']);
     $form['cliente']=$_POST['cliente'];
+    $form['iban']=preg_replace("([^0-9A-Z])", "", $_POST['iban']);
     $form['ritorno'] = $_POST['ritorno'];
     if (isset($_POST['Submit'])) { // conferma tutto
 		if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
@@ -80,6 +81,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (intval($form['mndtid'])<1){
             $msg['err'][]='num';
         }
+        require("../../library/include/check.inc.php");
+        $iban = new IBAN;
+        if (!$iban->checkIBAN($form['iban'])) {
+            $msg['err'][]='iban';
+        }
+        
 		if (count($msg['err'])<1) { // nessun errore
 			// controllo che ci sia la cartella doc
 			$docfolder = DATA_DIR.'files/' . $admin_aziend['codice'] . '/doc/';
@@ -87,14 +94,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				mkdir($docfolder, 0666);
 			}
           // aggiorno il solo db
-          $form['custom_field']=json_encode(['vendit'=>array('dtofsgntr'=>$dtofsgntr,'mndtid'=>$form['mndtid'])]);
+          $form['custom_field']=json_encode(['vendit'=>array('dtofsgntr'=>$dtofsgntr,'mndtid'=>$form['mndtid'],'iban'=>$form['iban'])]);
           if ($toDo == 'insert') {
             $form['table_name_ref']= 'clfoco';
             $form['item_ref']= 'mndtritdinf';
             $form['id_doc']=gaz_dbi_table_insert('files',$form);
+            $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',$form['id_ref']);      
           } elseif ($toDo == 'update') { 
             gaz_dbi_table_update('files',array('id_doc',$form['id_doc']),$form);
           }
+          if (strlen($clfoco['iban'])<10) { // se il cliente non ha un IBAN lo inserisco
+           	gaz_dbi_put_row($gTables['clfoco'],'codice',$form['id_ref'],'iban',$form['iban']);
+          }    
           // aggiorno il filesystem solo se è stato selezionato un nuovo file
           if ($_FILES['userfile']['error']==0) {
             move_uploaded_file($_FILES["userfile"]["tmp_name"], DATA_DIR . "files/" .$admin_aziend['company_id']."/doc/". $form['id_doc'] . "." . $form['extension']);
@@ -117,10 +128,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $form['dtofsgntr']='';
     $form['mndtid']='';
+    $form['iban']='';
 	if ($data=json_decode($form['custom_field'],true)){// se c'è un json nel custom_field
 		if (is_array($data['vendit']) && strlen($data['vendit']['dtofsgntr'])>0){ // se è riferito al modulo vendit e contiene la data di firma del RID
             $form['dtofsgntr']=gaz_format_date($data['vendit']['dtofsgntr']);
             $form['mndtid']=$data['vendit']['mndtid'];
+            $form['iban']=$data['vendit']['iban'];
         }
 	}
     if (empty($form)) { // scappo!
@@ -134,6 +147,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice',intval($admin_aziend['mascli'] * 1000000 + $_GET['id_ref']));
     $form['cliente']=$clfoco['descri'];
+    $form['iban']=$clfoco['iban'];
     if (!empty($clfoco)) { //l'articolo è stato trovato
        $form['id_ref']= $clfoco['codice'];    
     } else { // scappo!
@@ -147,19 +161,22 @@ $script_transl = HeadMain('','','browse_document');
 $gForm = new venditForm();
 ?>
 <script type="text/javascript">
-    $(function () {
-        $("#dtofsgntr").datepicker({
-            showButtonPanel: true,
-            showOtherMonths: true,
-            selectOtherMonths: true,
-            beforeShow: function (input, inst) {
-                var rect = input.getBoundingClientRect();
-                setTimeout(function () {
-                    inst.dpDiv.css({ top: rect.top + 40, left: rect.left + 0 });
-                }, 0);
-            }
-        });
+$(function () {
+    $("#dtofsgntr").datepicker({
+        showButtonPanel: true,
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        beforeShow: function (input, inst) {
+            var rect = input.getBoundingClientRect();
+            setTimeout(function () {
+                inst.dpDiv.css({ top: rect.top + 40, left: rect.left + 0 });
+            }, 0);
+        }
     });
+    $('#iban').keyup(function(){
+        this.value = this.value.toUpperCase();
+    });
+});
 </script>
 
 <?php
@@ -216,6 +233,11 @@ echo "<tr>\n";
 echo "\t<td>".$script_transl['mndtid']."</td>\n";
 echo "\t<td colspan=\"2\">
       <input type=\"number\" name=\"mndtid\" min=\"0\" step=\"1\"value=\"".$form['mndtid']."\" maxlength=\"20\"  /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td>IBAN</td>\n";
+echo "\t<td colspan=\"2\">
+      <input type=\"text\" name=\"iban\" id=\"iban\" value=\"".$form['iban']."\" maxlength=\"27\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td>".$script_transl['sqn']."</td>";

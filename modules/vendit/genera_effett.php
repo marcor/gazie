@@ -277,13 +277,13 @@ if (isset($_POST['preview'])) {
         if ($ctrl_date <> substr($v['tes']['datfat'], 0, 4)) {
             $n = getReceiptNumber($v['tes']['datfat']);
         }
-        if ($v['tes']['mndtritdinf']<1&&$v['tes']['tippag']=='I') { // non c'è il mandato
-            $errors=true;
-            $e=$script_transl['errors']['nomandato'];
-        }
         if (strlen($v['tes']['iban'])<20&&$v['tes']['tippag']=='I') { // non c'è l'iban 
             $errors=true;
             $e=$script_transl['errors']['noiban'];
+        }
+        if ($v['tes']['mndtritdinf']<1&&$v['tes']['tippag']=='I') { // non c'è il mandato
+            $errors=true;
+            $e=$script_transl['errors']['nomandato'];
         }
         if ($v['tes']['banapp']<1&&($v['tes']['tippag']=='B'||$v['tes']['tippag']=='T')) { // non c'è la banca d'appoggio
             $errors=true;

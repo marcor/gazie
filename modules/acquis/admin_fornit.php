@@ -255,7 +255,9 @@ $script_transl = HeadMain(0, array('custom/autocomplete',
           'jquery/ui/jquery.ui.position',
           'jquery/ui/jquery.ui.autocomplete', */
         /** ENRICO FEDELE */        ));
-echo "<SCRIPT type=\"text/javascript\">\n";
+?>
+<script>
+<?php
 echo "function toggleContent(currentContent) {
         var thisContent = document.getElementById(currentContent);
         if ( thisContent.style.display == 'none') {
@@ -286,7 +288,15 @@ function setDate(name) {
   cal.showCalendar('anchor', mdy);
 }
 ";
-echo "</script>\n";
+?>
+$(function() {
+    $('#iban,#codfis').keyup(function(){
+        this.value = this.value.toUpperCase();
+    });
+    
+});    
+</script>
+<?php
 echo "<form method=\"POST\" name=\"form\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
@@ -450,7 +460,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://telematici.agenziaentrate.gov.it/VerificaCF/Scegli.do?parameter=verificaCf\" target=\"blank\">" . $script_transl['codfis'] . "</a> *</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"codfis\" value=\"" . $form['codfis'] . "\" align=\"right\" maxlength=\"16\" /></td>\n";
+      <input type=\"text\" name=\"codfis\" id=\"codfis\" value=\"" . $form['codfis'] . "\" align=\"right\" maxlength=\"16\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva\" target=\"blank\">" . $script_transl['pariva'] . "</a> </td>\n";
@@ -531,7 +541,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['iban'] . " </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"iban\" value=\"" . $form['iban'] . "\" align=\"right\" maxlength=\"27\" /></td>\n";
+      <input type=\"text\" name=\"iban\" id=\"iban\" value=\"" . $form['iban'] . "\" align=\"right\" maxlength=\"27\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['maxrat'] . "</td>\n";

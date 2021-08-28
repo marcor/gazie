@@ -337,6 +337,10 @@ $(function() {
 		});
 		$("#dialog_delete" ).dialog( "open" );  
 	});
+    $('#iban,#codfis').keyup(function(){
+        this.value = this.value.toUpperCase();
+    });
+    
 });    
 </script>
 <form method="POST" name="form">
@@ -571,7 +575,7 @@ $gForm->selectFromDB('country', 'counas', 'iso', $form['counas'], 'iso', 1, ' - 
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="codfis" class="col-sm-4 control-label"><a href="https://telematici.agenziaentrate.gov.it/VerificaCF/Scegli.do?parameter=verificaCf" target="blank"><?php echo $script_transl['codfis']; ?></a></label>
-                    <input class="col-sm-4" type="text" value="<?php echo $form['codfis']; ?>" name="codfis" maxlength="16"/>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['codfis']; ?>" name="codfis" id="codfis" maxlength="16"/>
                 </div>
             </div>
         </div><!-- chiude row  -->
