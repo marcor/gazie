@@ -32,6 +32,41 @@ $lm = new lotmag;
 $magazz = new magazzForm();
 $gForm = new ordermanForm();
 $campsilos = new silos();
+
+function gaz_select_data ( $nomecontrollo, $valore ) {
+        $result_input = '<input size="8" type="text" id="'.$nomecontrollo.'" name="'.$nomecontrollo.'" value="'.$valore.'">';
+        $result_input .= '<script>
+        $(function () {
+            $("#'.$nomecontrollo.'").datepicker({dateFormat: "dd-mm-yy", showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})  
+        });</script>';
+        return $result_input;
+    }
+
+function gaz_select_ora ( $nomecontrollo, $valore ) {
+	$nomeora = $nomecontrollo."_ora";
+	$nomeminuti = $nomecontrollo."_minuti";
+	$valoreora = explode ( ":", $valore );
+	
+	$result_input = "<select name=\"".$nomeora."\" >\n";
+	for ($counter = 0; $counter <= 23; $counter++) {
+		$selected = "";
+		if ($counter == $valoreora[0])
+			$selected = ' selected=""';
+		$result_input .=  "<option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
+	}
+	$result_input .= "</select>\n ";
+	// select dell'ora
+	$result_input .= "<select name=\"".$nomeminuti."\" >\n";
+	for ($counter = 0; $counter <= 59; $counter++) {
+		$selected = "";
+		if ($counter == $valoreora[1])
+			$selected = ' selected=""';
+		$result_input .= "<option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
+	}
+	$result_input .= "</select>";
+	return $result_input;
+}
+
 if (isset($_GET['popup'])) { //controllo se proviene da una richiesta apertura popup
     $popup = $_GET['popup'];
 } else {
@@ -776,7 +811,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			*/
             // Antonio Germani - Inizio Scrittura produzione ORDERMAN e, se non già creati da un ordine, creazione di ordine fittizio con scrittura di TESBRO E RIGBRO
             if ($toDo == 'update') { //  se e' una modifica, aggiorno orderman e tesbro
-                $query = "UPDATE " . $gTables['orderman'] . " SET start_work = '". $start_work ."', end_work = '". $end_work ."', order_type = '" . $form['order_type'] . "', description = '" . $form['description'] . "', campo_impianto = '" . $form["campo_impianto"] . "', id_lotmag = '" . $form['id_lotmag'] . "', add_info = '" . $form['add_info'] . "', duration = '" . $form['day_of_validity'] . "' WHERE id = '" . $form['id'] . "'";
+                $query = "UPDATE " . $gTables['orderman'] . " SET id_staff_def = '".$form['id_staff_def']."', start_work = '". $start_work ."', end_work = '". $end_work ."', order_type = '" . $form['order_type'] . "', description = '" . $form['description'] . "', campo_impianto = '" . $form["campo_impianto"] . "', id_lotmag = '" . $form['id_lotmag'] . "', add_info = '" . $form['add_info'] . "', duration = '" . $form['day_of_validity'] . "' WHERE id = '" . $form['id'] . "'";
                 gaz_dbi_query($query);
                 $resin = gaz_dbi_get_row($gTables['tesbro'], "id_orderman", $id_orderman);
                 if ($resin['id_tes'] <> $form['id_tesbro']) { // se l'ordine iniziale è diverso da quello del form
@@ -849,7 +884,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     }
                 }
                 // inserisco in orderman
-				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(start_work,end_work,order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,duration,stato_lavorazione,adminid) VALUES ('". $start_work ."', '". $end_work ."', '" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" .$status. "', '" . $admin_aziend['adminid'] . "')");
+				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(id_staff_def,start_work,end_work,order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,duration,stato_lavorazione,adminid) VALUES ('". $form['id_staff_def'] ."', '". $start_work ."', '". $end_work ."', '" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" .$status. "', '" . $admin_aziend['adminid'] . "')");
 
             }
             // fine orderman, tesbro e rigbro
@@ -941,6 +976,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 	$form['mov'] = 0;
     $form['nmov'] = 0;
     $form['nmovdb'] = 0;
+	$form['id_staff_def'] = $result['id_staff_def'];
 	/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
     // se presenti, prendo gli operai
     $query = "SELECT " . '*' . " FROM " . $gTables['staff_worked_hours'] . " WHERE id_orderman = " . intval($_GET['codice']);
@@ -1005,6 +1041,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 	$resartico['good_or_service']="";
 	$resartico['unimis']="";
 	$form['id_tes']="";
+	$form['id_staff_def']=0;
 }
 if (isset($_POST['Cancel'])) { // se è stato premuto ANNULLA
     $form['hidden_req'] = '';
@@ -1023,6 +1060,7 @@ if (isset($_POST['Cancel'])) { // se è stato premuto ANNULLA
     $form['nmov'] = 0;
     $form['nmovdb'] = 0;
     //$form['staff'][$form['mov']] = "";
+	$form['id_staff_def']=0;
     $form['filename'] = "";
     $form['identifier'] = "";
     $form['expiry'] = "";
@@ -1123,7 +1161,7 @@ if ($form['order_type'] == "IND") {
 ?>
 </td></tr>
 <?php
-if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
+if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 
     // Antonio Germani > inserimento ordine    
 ?>
@@ -1458,8 +1496,8 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 	}
 
 ?>
-<!--- Antonio Germani - inserimento quantità  -->
-<tr>
+	<!--- Antonio Germani - inserimento quantità  -->
+	<tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['15']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
 	<?php
@@ -1557,83 +1595,30 @@ for ($counter = date("Y") - 10;$counter <= date("Y") + 10;$counter++) {
 echo "\t </select></td>\n";
 // end data inizio produzione
 // Antonio Germani > DURATA produzione
-if ($form['order_type'] == "AGR") {
-    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[6]</td>";
-} else {
-    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td>";
-}
+
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td>";
+
 print "<td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\"  size=\"10\" value=\"" . $form['day_of_validity'] . "\"  /></td></tr>\n";
 /*Antonio Germani LUOGO di produzione  */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 		// SELECT luogo di produzione da campi
 		$gForm->selectFromDB('campi', 'campo_impianto','codice', $form['campo_impianto'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
 echo "</td></tr>";
-if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
-/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
+
+/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate*/
     // Antonio Germani selezione operai
-    if ($toDo == "update") { // mantengo il codice staff memorizzato inizialmente nel data base
-        echo '<tr><td>';
-        for ($form['mov'] = 0;$form['mov'] <= $form['nmovdb'];++$form['mov']) {
-            echo '<input type="hidden" name="staffdb' . $form['mov'] . '" value="' . $form['staffdb'][$form['mov']] . '">';
-        }
-        echo '</td></tr>';
-    }
-    for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
-        echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[10] . "</td><td class=\"FacetDataTD\">\n";
-		
+    
 		// SELECT Operaio da staff con acquisizione nome da clfoco
-		$gForm->selectFrom2DB('staff','clfoco','codice','descri','staff'. $form['mov'],'id_staff', $form['staff'][$form['mov']],'', 1, ' - ','id_clfoco','TRUE','FacetSelect' , null, '');
+	echo "<tr><td class=\"FacetFieldCaptionTD\">Responsabile/addetto produzione</td><td class=\"FacetDataTD\">\n";
+	$gForm->selectFrom2DB('staff','clfoco','codice','descri','id_staff_def','id_staff', $form['id_staff_def'],'', 1, ' - ','id_clfoco','TRUE','FacetSelect' , null, '');
 		
-        if ($form['staff'][$form['mov']] > 0) {
-            echo "<input type=\"submit\" name=\"add_staff\" value=\"" . $script_transl[19] . "\">\n";
-        }
-        if ($form['mov'] > 0 && $form['mov'] > $form['nmovdb']) { // se è update non si possono togliere gli operai già memorizzati nel database
-            echo "<input type=\"submit\" title=\"Togli ultimo operaio\" name=\"Del_mov\" value=\"X\">\n";
-        }
-    }
-*/
+       
+
     $form['mov'] = $form['nmov'];
     echo "<input type=\"hidden\" name=\"nmovdb\" value=\"" . $form['nmovdb'] . "\">\n";
     echo "<input type=\"hidden\" name=\"nmov\" value=\"" . $form['nmov'] . "\">\n</td></tr>";
-
-    
-    function gaz_select_data ( $nomecontrollo, $valore ) {
-        $result_input = '<input size="8" type="text" id="'.$nomecontrollo.'" name="'.$nomecontrollo.'" value="'.$valore.'">';
-        $result_input .= '<script>
-        $(function () {
-            $("#'.$nomecontrollo.'").datepicker({dateFormat: "dd-mm-yy", showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})  
-        });</script>';
-        return $result_input;
-    }
-
-    function gaz_select_ora ( $nomecontrollo, $valore ) {
-        $nomeora = $nomecontrollo."_ora";
-        $nomeminuti = $nomecontrollo."_minuti";
-        $valoreora = explode ( ":", $valore );
-        
-        $result_input = "<select name=\"".$nomeora."\" >\n";
-        for ($counter = 0; $counter <= 23; $counter++) {
-            $selected = "";
-            if ($counter == $valoreora[0])
-                $selected = ' selected=""';
-            $result_input .=  "<option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
-        }
-        $result_input .= "</select>\n ";
-        // select dell'ora
-        $result_input .= "<select name=\"".$nomeminuti."\" >\n";
-        for ($counter = 0; $counter <= 59; $counter++) {
-            $selected = "";
-            if ($counter == $valoreora[1])
-                $selected = ' selected=""';
-            $result_input .= "<option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
-        }
-        $result_input .= "</select>";
-        return $result_input;
-    }
-
-
     // se è una produzione industriale visualizzo data e ora di inizio e fine
-    if ( $form['order_type'] <> "AGR" ) {
+   
         // Inserimento data inizio lavori
         echo "<tr>
                 <td class=\"FacetFieldCaptionTD\">" . $script_transl[33] . "</td>
@@ -1651,8 +1636,8 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
                 ". gaz_select_ora ( "fineprodtime", $form['fineprodtime'] ) ."
                 </td>
             </tr>";
-    }
-
+   
+if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
     // Antonio Germani > Inizio LOTTO in entrata o creazione nuovo
 	
     if (intval($form['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form       
