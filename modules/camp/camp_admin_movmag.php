@@ -37,6 +37,7 @@ $gForm = new magazzForm;
 $admin_aziend = checkAdmin();
 
 $msg = "";
+$message = "";
 $print_magval = "";
 $dose = "";
 $dose_usofito = "";
@@ -651,7 +652,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			}
             if ($unimis!=="h" AND gaz_format_quantity($form['quanti'][$m], 0, $admin_aziend['decimal_quantity']) == 0) { //la quantità è zero
                 $msg.= "19+";
-            } elseif($form['quanti_time'][$m]=="" OR intval($form['quanti_time'][$m])=="0") { // se unità misura oraria non può essere zero
+            } elseif($unimis == "h" AND ($form['quanti_time'][$m]=="" OR intval($form['quanti_time'][$m])=="0")) { // se unità misura oraria non può essere zero
 				$msg.= "46+";
 			}
 			
@@ -1478,15 +1479,15 @@ require ("./lang." . $admin_aziend['lang'] . ".php");
 <style>#gestpatent { display:none; }</style>
 <!-- spengo pannello gestione fasi fenologiche -->
 <style>#gestfeno { display:none; }</style>
-<?php
 
+<?php
 
 // Antonio Germani segnalo i warning immediati
 if (strlen($instantwarning)>0) {
 	?>
-	<div class="alert alert-warning alert-dismissible">
+	<div class="alert alert-warning alert-dismissible" id="warning"><!-- Antonio Germani Questa è l'ancora dello scroll per i warning-->
 		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		<strong>Warning!</strong> <?php echo $instantwarning; ?>
+		<strong>Warning!</strong> <?php echo $instantwarning; ?>		
 	</div>
 	<?php
 }
@@ -1710,16 +1711,16 @@ if (intval($form['nome_colt']) == 0) {
 					$message.= "<br />";
 				}
 				?>
-				<div class="row bg-info"><td colspan="3" class="FacetDataTDred">
-					<div class="row bg-danger"><!-- CAMPO coltivazione -->
+				<div class="row bg-info" id="error"><td colspan="3" class="FacetDataTDred">
+					 <!-- Antonio Germani Questa è l'ancora dello scroll per gli error-->
+					<div class="row bg-danger">
 						<p>
 						<?php echo $message; ?>
-						</p>
+						</p>						
 					</div>
 				</div>				
 				<?php
-			}
-			
+			}			
 			?>
 			<div class="row"><!-- Inserimento produzione -->
 				<div class="col-md-12">
@@ -1920,7 +1921,9 @@ if (intval($form['nome_colt']) == 0) {
 			<?php
 			// >>>>>>>>>> Inizio ciclo righi mov   <<<<<<<<<<<<<<<<<
 			for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
-				$anchor["num"] = $form['mov']; // Antonio Germani imposto la riga che dovrà essere ancorata allo scroll
+				if (strlen($form['artico'][$form['mov']])>0){
+					$anchor = $form['mov']; // Antonio Germani - prendo la riga per dare l'id all'anchor dello scroll
+				}
 				$importo_rigo = CalcolaImportoRigo($form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']]);
 				$importo_rigo = $importo_rigo+CalcolaImportoRigo($form['quanti2'][$form['mov']], $form['prezzo2'][$form['mov']], $form['scorig2'][$form['mov']]);
 				$importo_totale = CalcolaImportoRigo(1, $importo_rigo, $form['scochi']);
@@ -2422,7 +2425,7 @@ if (intval($form['nome_colt']) == 0) {
 				/* Antonio Germani  prezzo e sconto del rigo movimento */
 				$importo_totale = ($form['prezzo'][$form['mov']] * floatval(preg_replace("/\,/", '.', $form['quanti'][$form['mov']]))) - ((($form['prezzo'][$form['mov']] * floatval(preg_replace("/\,/", '.', $form['quanti'][$form['mov']]))) * $form['scorig'][$form['mov']]) / 100);
 				?>			
-				<div class="row"><!-- COSTO MOVIMENTO  -->
+				<div class="row" ><!-- COSTO MOVIMENTO  -->
 					<div class="col-md-12">
 						<div class="form-group">
 							<label class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?>
@@ -2439,13 +2442,13 @@ if (intval($form['nome_colt']) == 0) {
 					</div>
 				</div><!-- chiude row  -->
 				<div class="row bg-success">
-					<div class="col-md-4" style="font-size:8pt;" >
+					<div class="col-md-4" style="font-size:8pt;" id="<?php echo $form['mov'] ?>">
 						<?php
 						if (($form['mov'] + 1) <= $form['nmov']){
 							echo "Movimento: ",$form['mov'] + 2; 
 						}
 						?>
-						<a name="<?php echo $form['mov']; ?>"></a> <!-- Antonio Germani Questa è l'ancora dello scroll -->
+						<!--<a name="<?php echo $form['mov']; ?>"></a>  Antonio Germani Questa è l'ancora dello scroll per l'ultimo movimento -->
 					</div>
 				</div><!-- chiude row  -->	
 				<?php
@@ -2490,7 +2493,7 @@ if (intval($form['nome_colt']) == 0) {
 			?>		
 			<!-- <<<<<<<<<<<<<<<<<<<<<<       Fine ciclo righi mov     <<<<<<<<<<<<<<<<<<<  -->
 			
-			<div class="row bg-info">
+			<div class="row bg-info" id="op" >
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="FacetFieldCaptionTD">
@@ -2582,10 +2585,16 @@ if (intval($form['nome_colt']) == 0) {
 	});
 </script>
 <?php
-// Antonio Germani questo serve per fare lo scroll all'ultimo movimento inserito
-if (isset($anchor["num"]) ){ 
-	echo "<script type='text/javascript'>\n" . "window.location.hash = '#{$anchor["num"]}';" . //◄■■■ JUMP TO LOCAL ANCHOR.
-	"</script>\n";
+// Antonio Germani questo serve per fare lo scroll all'ultimo movimento inserito o alla segnalazione errore
+if (strlen($instantwarning)>0){
+	$anchor="warning";
+} elseif (strlen($message)>0){
+	$anchor="error";
 }
+?>
+<script>
+document.getElementById("<?php echo $anchor; ?>").scrollIntoView({behavior: 'smooth'});//◄■■■ JUMP TO LOCAL ANCHOR.
+</script>
+<?php
 require ("../../library/include/footer.php");
 ?>
