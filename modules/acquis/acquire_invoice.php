@@ -606,7 +606,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
 					}
 					$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']); // analizzo le possibilità 
-					// analizzo le possibilità 
 					// controllo se ho uno split payment
 					$yes_split = false;
 					if ($xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiBeniServizi/DatiRiepilogo/EsigibilitaIVA")->length >= 1) {
@@ -616,6 +615,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$rs_split_vat = gaz_dbi_dyn_query("*", $gTables['aliiva'], "aliquo=" . $form['rows'][$nl]['pervat'] . " AND tipiva='T'", "codice ASC", 0, 1);
 						$split_vat = gaz_dbi_fetch_array($rs_split_vat);
 						$form['codvat_'.$post_nl] = $split_vat['codice'];
+					} elseif ( $partner_with_same_pi &&  $partner_with_same_pi[0]['aliiva'] >=1) { // di defautl utilizzo l'eventuale aliquota della anagrafica del fornitore
+						$form['codvat_'.$post_nl] = $partner_with_same_pi[0]['aliiva'];
 					} elseif ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
 						$form['codvat_'.$post_nl] = $expect_vat['codice'];
 					} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota

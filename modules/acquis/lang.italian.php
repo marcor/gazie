@@ -112,7 +112,7 @@ $strScript = array("admin_fornit.php" =>
         'allegato' => 'Spesometro - Elenco fornitori',
         'allegato_value' => array(1 => 'Si', 0 => 'No', 2 => 'Riepilogativo'),
         'yn_value' => array('S' => 'Si', 'N' => 'No'),
-        'aliiva' => 'Riduzione I.V.A.',
+        'aliiva' => 'Aliquota IVA di default',
         'ritenuta' => '% Ritenuta',
         'status' => 'Visibilit&agrave; alla ricerca',
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
