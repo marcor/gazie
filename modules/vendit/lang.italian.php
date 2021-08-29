@@ -1891,6 +1891,14 @@ $strScript = array("admin_client.php" =>
         'title' => "Nome originale file",
         'ext' => "Estensione",
         'select' => "Sel.",
-        'code' => "Codice")        
+        'code' => "Codice") ,
+    "report_distinte.php" =>
+    array('title' => "Lista delle distinte Effetti",
+        'desbanacc' => "Banca di accredito",
+        'date' => "Data",
+        'iban' => "IBAN",
+        'tipeff' => "Tipo effetti",
+        'tipeff_value' => array('B' => 'Ricevute Bancarie', 'I' => 'RID', 'T' => 'Tratte', 'V' => 'MAV'),
+)       
 );
 ?>
