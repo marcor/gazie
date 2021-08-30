@@ -30,14 +30,19 @@ $script_transl = HeadMain();
 // campi ammissibili per la ricerca
 $search_fields = [
     'id_doc' => $gTables['files'].".id_doc = %d",
-    'anno' => "YEAR(".$gTables['files'].".last_modified) = %d"
+    'tipeff'=> "tipeff LIKE '%s'",
+    'anno' => "YEAR(".$gTables['files'].".last_modified) = %d",
+    'codbanacc' => $gTables['clfoco'].".codice = %d",
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
 $sortable_headers = array  (
             "ID" => 'id_doc',
-            $script_transl['date'] => 'title',
+            $script_transl['date'] => 'last_modified',
             $script_transl['desbanacc'] => 'banacc',
+            'File'=>'title',
+            'Info'=>'neff',
+            $script_transl['print'] => "",
             $script_transl['delete'] => ""
 );
 
@@ -54,14 +59,20 @@ $t = new TableSorter(
     " table_name_ref='effett'");
 $t->output_navbar();
 
+$rs=gaz_dbi_dyn_query ($gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." GROUP BY codbanacc","codbanacc", $t->getOffset(), $t->getLimit());
+$optval='';
+while($r= gaz_dbi_fetch_array($rs)) {
+    $optval=($optval=='')?[]:$optval;
+    $optval[$r['codbanacc']] = $r['desbanacc'];
+}
 ?>
 <script>
 $(function() {
     $("#datareg").datepicker({ dateFormat: 'yy-mm-dd',showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
-		$("p#idcodice").html($(this).attr("ref"));
-		$("p#iddescri").html($(this).attr("movdes"));
+		$("p#idcodice").html('ID '+$(this).attr("ref")+' tipo effetti: '+$(this).attr("tipeff"));
+		$("p#iddescri").html($(this).attr("filename"));
 		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
@@ -75,12 +86,12 @@ $(function() {
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
-						data: {'type':'files',ref:id},
+						data: {'type':'distinte',ref:id},
 						type: 'POST',
 						url: './delete.php',
 						success: function(output){
 		                    //alert(output);
-							window.location.replace("./report_files.php");
+							window.location.replace("./report_distinte.php");
 						}
 					});
 				}},
@@ -96,9 +107,8 @@ $(function() {
 <form method="GET">
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
 		<p><b>Distinta effetti</b></p>
-		<p>Codice</p>
         <p class="ui-state-highlight" id="idcodice"></p>
-        <p>Descrizione</p>
+        <p>File</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
 	<div class="table-responsive">
@@ -108,23 +118,47 @@ $(function() {
             <?php gaz_flt_disp_int("id_doc", "ID"); ?>
         </td>
         <td class="FacetFieldCaptionTD">
+            <?php gaz_flt_disp_select("tipeff", $gTables['effett'].".tipeff", $table, $t->where, "tipeff DESC",$script_transl['tipeff_value']); ?>
+        </td>
+        <td class="FacetFieldCaptionTD">
             <?php gaz_flt_disp_select("anno", "YEAR(".$gTables['files'].".last_modified) AS anno", $table, $t->where, "anno DESC"); ?>
         </td>
-		<td class="FacetFieldCaptionTD" colspan="3">
+        <td class="FacetFieldCaptionTD">
+            <?php gaz_flt_disp_select("codbanacc", $gTables['clfoco'].".descri AS desbanacc,".$gTables['clfoco'].".codice AS codbanacc ", $table, $t->where, "codice DESC",$optval); ?>
+        </td>
+		<td class="FacetFieldCaptionTD" colspan="2">
 			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
 			<a class="btn btn-xs btn-default" href="?">Reset</a>
 			<?php  $t->output_order_form(); ?>
 		</td>
+        <td class="FacetFieldCaptionTD" colspan="2">
+        </td>
 	</tr>
 
 <?php
-$rs=gaz_dbi_dyn_query ($gTables['files'].".*, ".$gTables['clfoco'].".descri AS desbanacc", $table, $t->where." ".$t->group_by, $t->orderby, $t->getOffset(), $t->getLimit());
+$today = strtotime(date("Y-m-d"));
+$rs=gaz_dbi_dyn_query ("COUNT(".$gTables['effett'].".id_tes) AS neff, MAX(".$gTables['effett'].".scaden) AS maxsca, MIN(".$gTables['effett'].".scaden) AS minsca, ".$gTables['effett'].".tipeff, ".$gTables['files'].".*, ".$gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." ".$t->group_by, $t->orderby, $t->getOffset(), $t->getLimit());
 
 echo '<tr>';
 $t->output_headers();
 echo '</tr>';
 while ($r = gaz_dbi_fetch_array($rs)) {
-    print_r($r);
+    // controllo possibile cancellazione distinta solo se la prima scadenza è maggiore di oggi
+    $expire = strtotime($r['minsca']);
+    $disabled=($expire < $today)?'disabled':'';
+?>
+<tr>
+    <td class="text-center"><?php echo $r["id_doc"]; ?></td>
+    <td class="text-center"><?php echo gaz_format_date(substr($r["last_modified"],0,10)); ?></td>
+    <td> <?php echo $r["desbanacc"]; ?></td>
+    <td><a href="../root/retrieve.php?id_doc=<?php echo $r["id_doc"]; ?>" class="btn btn-default btn-sm" title="download"><?php echo $r["title"]; ?> <i class="glyphicon glyphicon-download"></i> </a></td>
+    <td class="text-center small"> <?php echo $r["neff"].' disposizioni<br/>prima scadenza: '.gaz_format_date($r["minsca"]).'<br/>ultima scadenza: '.gaz_format_date($r["maxsca"]); ?></td>
+    <td class="text-center"><?php echo '<a class="btn btn-xs btn-default" href="stampa_distint.php?id_distinta='.$r["id_doc"].'">Distinta '.$r["id_doc"].' (pdf) <i class="glyphicon glyphicon-print"></i></a> '; ?></td>
+    <td class="text-center">
+    <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella la distinta <?php echo $script_transl['tipeff_value'][$r['tipeff']]; ?>" ref="<?php echo $r['id_doc'];?>" filename="<?php echo $r['title']; ?>" tipeff="<?php echo $script_transl['tipeff_value'][$r['tipeff']]; ?>" <?php echo $disabled; ?> ><i class="glyphicon glyphicon-remove"></i></a>
+    </td>
+</tr>
+<?php    
 }
 ?>
      </table>

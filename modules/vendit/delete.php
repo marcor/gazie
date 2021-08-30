@@ -257,6 +257,13 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
             unlink(DATA_DIR . "files/" .$admin_aziend['codice']."/doc/". $i. ".".$f['extension']);
 			gaz_dbi_del_row($gTables['files'], 'id_doc', $i);
 		break;
+		case "distinte":
+			$i=intval($_POST['ref']);
+			$f=gaz_dbi_get_row($gTables['files'], "id_doc", $i);
+            unlink(DATA_DIR . "files/" .$admin_aziend['codice']."/doc/". $i. ".".$f['extension']);
+			gaz_dbi_del_row($gTables['files'], 'id_doc', $i);
+            gaz_dbi_query("UPDATE $gTables[effett] SET id_distinta = 0, banacc = 0 WHERE id_distinta=$i");
+		break;
 	}
 }
 ?>
