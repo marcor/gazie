@@ -73,6 +73,15 @@ if (isset($_POST['erase'])) {
     $form['id_colture'] = 0;
     $form['nome_colt'] = "";
 }
+// se è stato premuto il pulsante di cambio coltura
+if (isset($_POST['cambiocolt'])) { 
+	gaz_dbi_query("UPDATE " . $gTables['campi'] . " SET id_colture = '" . $_POST['id_colture'] . "' WHERE codice = " . $_POST['campo_impianto1']);
+
+    $_POST['id_colture'] = 0;
+    $_POST['nome_colt'] = "";
+    $form['id_colture'] = 0;
+    $form['nome_colt'] = "";
+}
 
 // se è stato premuto il pulsante di submit patent anagra
 if (isset($_POST['patent'])) {
@@ -385,7 +394,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 				}
 				if ($dose_usofito==""){// se non c'è una dose specifica ,a ho inserito altre dosi
 					// segnalo che bisogna controllare se il prodotto è utilizzabile per quella coltura
-					$instantwarning[]="Si prega di controllare se il prodotto è utilizzabile per la coltura e l'avversità selezionate";
+					$instantwarning[]="Si prega di controllare se il prodotto '".$form['artico'][$form['mov']]."' è utilizzabile per la coltura e l'avversità selezionate";
 				}
 			} 
 		}		
@@ -1449,6 +1458,7 @@ if (isset($_POST['cancel'])) {// se è stato premuto annulla
     $fornitore = "";
 }
 // Antonio Germani controllo e avviso se è stata cambiata la coltura nel campo di coltivazione
+$conf_cambio_colt="";
 if (isset($_POST['nome_colt'])) {
 	if ($form['campo_impianto1'] > 0) { // se c'è un campo di coltivazione
 		$result = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_impianto1']);
@@ -1458,6 +1468,7 @@ if (isset($_POST['nome_colt'])) {
 				$err['nome_colt']="Nessuna coltura";
 			}
 			$instantwarning[]="Nel campo di coltivazione è presente la coltura ". $result['id_colture'] ." - ". $err['nome_colt']. " che è diversa da quella inserita. Se si conferma, verrà modificata la coltura nel campo di coltivazione!";
+			$conf_cambio_colt="Conferma cambio coltura del campo";
 		}
 	}
 }
@@ -1756,7 +1767,14 @@ if (intval($form['nome_colt']) == 0) {
 						<!-- per funzionare autocomplete, id dell'input deve essere autocomplete4 -->
 						<input class="FacetSelect" id="autocomplete4" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" size="30">
 						<input type="hidden" value="<?php echo intval($form['nome_colt']); ?>" name="id_colture">
-						<button type="submit" name="erase" title="Reset coltura" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle"></i></button>
+						<button type="submit" name="erase" title="Reset coltura" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle">Annulla/Reset</i></button>
+						<?php
+						if (strlen($conf_cambio_colt)>0){ // attivo pulsante di conferma cambio
+							?>
+							<button type="submit" name="cambiocolt" title="Cambia coltura nel campo" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-refresh"> Cambia coltura</i></button>
+							<?php
+						}
+						?>					
 					</div>
 				</div>
 			</div><!-- chiude row  -->
