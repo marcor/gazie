@@ -365,6 +365,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
 	if (empty($form['curr_doc'])) {
 		$docs = $xml->getElementsByTagName('FatturaElettronicaBody');
+		if ($docs->length < 1) { // se non esiste il nodo <FatturaElettronicaBody>
+			$msg['err'][] = 'invalid_fae';
+			$f_ex=false; // non è visualizzabile
+		}        
 		if (count($docs) == 1) {
 			$form['curr_doc'] = 1;
 		}
