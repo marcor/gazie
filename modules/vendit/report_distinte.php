@@ -56,7 +56,7 @@ $t = new TableSorter(
     ['id_doc' => 'desc'],
     ['item_ref'=>'distinta'],
     ['id_distinta'],
-    " table_name_ref='effett'");
+    " table_name_ref='effett' AND id_ref > 0");
 $t->output_navbar();
 
 $rs=gaz_dbi_dyn_query ($gTables['clfoco'].".descri AS desbanacc, ".$gTables['clfoco'].".codice AS codbanacc", $table, $t->where." GROUP BY codbanacc","codbanacc", $t->getOffset(), $t->getLimit());
