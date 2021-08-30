@@ -25,15 +25,9 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-
-if (!isset($_GET['ristam']) or ! isset($_GET['banacc']) or ! isset($_GET['scaini']) or ! isset($_GET['scafin']) or ! isset($_GET['proini']) or ! isset($_GET['profin'])) {
+if (! isset($_GET['banacc']) or ! isset($_GET['scaini']) or ! isset($_GET['scafin']) or ! isset($_GET['proini']) or ! isset($_GET['profin'])) {
     header("Location: report_effett.php");
     exit;
-}
-if ($_GET['ristam'] <> 'S') {
-    $ristampa = $gTables['effett'] . ".status <> 'DISTINTATO' AND ";
-} else {
-    $ristampa = "(banacc = '" . $_GET['banacc'] . "' OR banacc = 0) AND ";
 }
 require("../../library/include/mav_cbi.inc.php");
 
@@ -43,12 +37,14 @@ $countryData = gaz_dbi_get_row($gTables['country'], "iso", $contoAccredito['coun
 $bancaAccredito = gaz_dbi_get_row($gTables['banapp'], "codice", $contoAccredito['banapp']);
 if (isset($_GET['datemi'])) {
     $dataemissione = substr($_GET['datemi'], 8, 2) . substr($_GET['datemi'], 5, 2) . substr($_GET['datemi'], 2, 2);
+    $defiles=substr($_GET['datemi'],0,10);
 } else {
     $dataemissione = date("dmy");
+    $defiles = date("Y-m-d");
 }
-// creo il file di back up con il nome ottenuto in precedenza.
-$filename = "MAVdel$dataemissione.cbi";
-$where = $ristampa . " tipeff = 'V' AND scaden BETWEEN '" . $_GET['scaini'] . "' AND '" . $_GET['scafin'] . "' AND progre BETWEEN '" . $_GET['proini'] . "' AND '" . $_GET['profin'] . "' ";
+// creo il file con il nome ottenuto in precedenza.
+$filename = "MAVdel_$defiles.cbi";
+$where = "(".$gTables['effett'] . ".id_distinta = 0 OR id_distinta IS NULL) AND tipeff = 'V' AND scaden BETWEEN '" . $_GET['scaini'] . "' AND '" . $_GET['scafin'] . "' AND progre BETWEEN '" . $_GET['proini'] . "' AND '" . $_GET['profin'] . "' ";
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query("*", $gTables['effett'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['effett'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra LEFT JOIN " . $gTables['banapp'] . " ON " . $gTables['effett'] . ".banapp = " . $gTables['banapp'] . ".codice", $where, "tipeff ASC,scaden ASC, id_tes ASC");
 //C.F. o P.I. creditore
@@ -69,6 +65,9 @@ $arrayTestata = array('sia_mittente' => '',
     'indirizzo_creditore' => $admin_aziend['indspe'],
     'cap_citta_prov_creditore' => $admin_aziend['capspe'] . " " . $admin_aziend['citspe'] . " " . $admin_aziend['prospe'],
 );
+// inserisco il riferimento al file della distinta
+$id_doc=gaz_dbi_table_insert('files', array('table_name_ref'=>'effett','id_ref'=>intval($_GET['banacc']),'item_ref'=>'distinta','extension'=>'cbi', 'title'=>$filename, 'custom_field'=>'{"vendit":{"credttm":"'.$defiles.'","tipeff":"V","scaini":"'.substr($_GET['scaini'],0,10).'","scafin":"'.substr($_GET['scafin'], 0, 10).'","proini":"'.intval($_GET['proini']).'","profin":"'.intval($_GET['profin']).'"}}'));
+
 $arrayMAV = array();
 while ($row = gaz_dbi_fetch_array($result)) {
     //C.F. o P.I. debitore
@@ -97,11 +96,8 @@ while ($row = gaz_dbi_fetch_array($result)) {
         'tipo_codice' => '1',
         'codice_cliente' => $row['clfoco'],
     );
-    //aggiorno il db solo se non &egrave; una ristampa
-    if ($row["status"] <> 'DISTINTATO') {
-        gaz_dbi_put_row($gTables['effett'], "id_tes", $row["id_tes"], "status", 'DISTINTATO');
-        gaz_dbi_put_row($gTables['effett'], "id_tes", $row["id_tes"], "banacc", $_GET['banacc']);
-    }
+    // aggiorno l'effetto sul db indicando in id_distinta l'id_doc di gaz_NNNfiles  
+    gaz_dbi_query("UPDATE ". $gTables['effett']." SET id_distinta=".$id_doc.", banacc=".intval($_GET['banacc'])." WHERE id_tes=".$row['id_tes']);		
 }
 $MAV = new MavAbiCbi();
 // Impostazione degli header per l'opozione "save as" dello standard input che verr� generato
@@ -114,6 +110,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
 } else {
     header('Pragma: no-cache');
 }
-print $MAV->creaFile($arrayTestata, $arrayMAV);
+$cont = $MAV->creaFile($arrayTestata, $arrayMAV);
+$h=fopen(DATA_DIR . "files/" .$admin_aziend['company_id']."/doc/". $id_doc . ".cbi", 'x+');
+fwrite($h,$cont);
+fclose($h);
+print $cont;
 exit;
 ?>

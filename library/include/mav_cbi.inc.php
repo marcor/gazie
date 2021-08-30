@@ -367,7 +367,7 @@ class MavAbiCbi {
                     $progressivo = $this->_estrai_spezzone($r, 4, 10 );
                     // Salta promemoria contabile
                     if(isset($records["$progressivo"]['tipo_bollettino'])){
-                        continue;
+                        break;
                     }
                     $records["$progressivo"]['tipo_bollettino'] = $this->_estrai_spezzone($r, 94, 94);
                 break;

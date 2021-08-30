@@ -123,21 +123,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_fin_Y'] = intval($_POST['date_fin_Y']);
     $form['num_ini'] = intval($_POST['num_ini']);
     $form['num_fin'] = intval($_POST['num_fin']);
-    if ($form['hidden_req'] == 'reprint') {
-        if ($form['reprint'] == 'S') {
-            $iniData = getLimit(1);
-        } else {
-            $iniData = getLimit();
-        }
-        $form['date_ini_D'] = substr($iniData['si'], 8, 2);
-        $form['date_ini_M'] = substr($iniData['si'], 5, 2);
-        $form['date_ini_Y'] = substr($iniData['si'], 0, 4);
-        $form['date_fin_D'] = substr($iniData['sf'], 8, 2);
-        $form['date_fin_M'] = substr($iniData['sf'], 5, 2);
-        $form['date_fin_Y'] = substr($iniData['sf'], 0, 4);
-        $form['num_ini'] = $iniData['ni'];
-        $form['num_fin'] = $iniData['nf'];
-    }
     if (isset($_POST['period'])) {
         $new_date_ini = mktime(0, 0, 0, date("m") + 1, 16, date("Y"));
         $new_date_fin = mktime(0, 0, 0, date("m") + 2, 15, date("Y"));

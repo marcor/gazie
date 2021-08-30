@@ -227,7 +227,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 }
                 $ctrl_date = substr($v['tes']['datfat'], 0, 4);
             }
-            header("Location: " . $form['ritorno']);
+            header("Location: report_effett.php");
             exit;
         } else {
             $msg .= "1+";

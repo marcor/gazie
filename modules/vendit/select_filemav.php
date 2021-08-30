@@ -27,78 +27,65 @@ $admin_aziend=checkAdmin();
 $msg='';
 
 
-function getLimit($reprint=false)
-{
+function getLimit() {
     global $gTables;
-    $acc=array();
-    $where="status <> 'DISTINTATO'";
-    if ($reprint){
-       $where=' 1 ';
-    }
-    $rs_d = gaz_dbi_dyn_query("scaden", $gTables['effett'],$where,"scaden ASC",0,1);
-    $rs=gaz_dbi_fetch_array($rs_d);
-    if ($rs){
-       $acc['si']=$rs['scaden'];
+    $acc = array();
+    $where = "(id_distinta = 0  OR id_distinta IS NULL)  AND tipeff = 'V' ";
+    $rs_d = gaz_dbi_dyn_query("scaden", $gTables['effett'], $where, "scaden ASC", 0, 1);
+    $rs = gaz_dbi_fetch_array($rs_d);
+    if ($rs) {
+        $acc['si'] = $rs['scaden'];
     } else {
-       $acc['si']=date("Y-m-d");
+        $acc['si'] = date("Y-m-d");
     }
-    $rs_d = gaz_dbi_dyn_query("scaden", $gTables['effett'],$where,"scaden DESC",0,1);
-    $rs=gaz_dbi_fetch_array($rs_d);
-    if ($rs){
-       $acc['sf']=$rs['scaden'];
+    $rs_d = gaz_dbi_dyn_query("scaden", $gTables['effett'], $where, "scaden DESC", 0, 1);
+    $rs = gaz_dbi_fetch_array($rs_d);
+    if ($rs) {
+        $acc['sf'] = $rs['scaden'];
     } else {
-       $acc['sf']=date("Y-m-d");
+        $acc['sf'] = date("Y-m-d");
     }
-    $rs_d = gaz_dbi_dyn_query("MIN(progre) AS progre", $gTables['effett'],$where.' GROUP BY YEAR(datemi) ');
-    $rs=gaz_dbi_fetch_array($rs_d);
-    if ($rs){
-       $acc['ni']=$rs['progre'];
+    $rs_d = gaz_dbi_dyn_query("MIN(progre) AS progre", $gTables['effett'], $where . ' GROUP BY YEAR(datemi) ');
+    $rs = gaz_dbi_fetch_array($rs_d);
+    if ($rs) {
+        $acc['ni'] = $rs['progre'];
     } else {
-       $acc['ni']=1;
+        $acc['ni'] = 1;
     }
-    $rs_d = gaz_dbi_dyn_query("MAX(progre) AS progre", $gTables['effett'],$where.' GROUP BY YEAR(datemi) ');
-    $rs=gaz_dbi_fetch_array($rs_d);
-    if ($rs){
-       $acc['nf']=$rs['progre'];
+    $rs_d = gaz_dbi_dyn_query("MAX(progre) AS progre", $gTables['effett'], $where . ' GROUP BY YEAR(datemi) ');
+    $rs = gaz_dbi_fetch_array($rs_d);
+    if ($rs) {
+        $acc['nf'] = $rs['progre'];
     } else {
-       $acc['nf']=999999999;
+        $acc['nf'] = 999999999;
     }
     return $acc;
 }
 
-function getData($date_ini,$date_fin,$num_ini,$num_fin,$reprint='N')
-{
-        global $gTables,$admin_aziend;
-        $m=array();
-        if ($reprint=='S'){
-           $where='';
+function getData($date_ini, $date_fin, $num_ini, $num_fin,$bank) {
+    global $gTables, $admin_aziend;
+    $m = array();
+    $where = " (".$gTables['effett'] . ".id_distinta = 0 OR id_distinta IS NULL) AND tipeff = 'V' AND scaden BETWEEN $date_ini AND $date_fin AND progre BETWEEN $num_ini AND $num_fin";
+    $orderby = "tipeff, scaden, progre";
+    $rs = gaz_dbi_dyn_query($gTables['effett'] . ".*," .
+            $gTables['anagra'] . ".pariva,
+                     CONCAT(" . $gTables['anagra'] . ".ragso1,' '," . $gTables['anagra'] . ".ragso2) AS customer,
+                     CONCAT(" . $gTables['banapp'] . ".codabi,' - '," . $gTables['banapp'] . ".codcab) AS coordi,
+                     " . $gTables['banapp'] . ".descri AS desban ", $gTables['effett'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['effett'] . ".clfoco = " . $gTables['clfoco'] . ".codice
+                     LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra
+                     LEFT JOIN " . $gTables['banapp'] . " ON " . $gTables['effett'] . ".banapp = " . $gTables['banapp'] . ".codice", $where, $orderby);
+    $total=array();
+    while ($r=gaz_dbi_fetch_array($rs)) {
+        if (isset($total['value'])) {
+            $total['value']+=$r['impeff'];
+            $total['num']++;
         } else {
-           $where=$gTables['effett'].".status <> 'DISTINTATO' AND ";
+            $total['value']=$r['impeff'];
+            $total['num']=1;
         }
-        $where.="tipeff = 'V' AND scaden BETWEEN $date_ini AND $date_fin AND progre BETWEEN $num_ini AND $num_fin";
-        $orderby="tipeff, scaden, progre";
-        $rs=gaz_dbi_dyn_query($gTables['effett'].".*,".
-                     $gTables['anagra'].".pariva,
-                     CONCAT(".$gTables['anagra'].".ragso1,' ',".$gTables['anagra'].".ragso2) AS customer,
-                     CONCAT(".$gTables['banapp'].".codabi,' - ',".$gTables['banapp'].".codcab) AS coordi,
-                     ".$gTables['banapp'].".descri AS desban ",
-                     $gTables['effett']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['effett'].".clfoco = ".$gTables['clfoco'].".codice
-                     LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
-                     LEFT JOIN ".$gTables['banapp']." ON ".$gTables['effett'].".banapp = ".$gTables['banapp'].".codice",
-                     $where,
-                     $orderby);
-        $total=array();
-        while ($r=gaz_dbi_fetch_array($rs)) {
-            if (isset($total['value'])) {
-                $total['value']+=$r['impeff'];
-                $total['num']++;
-            } else {
-                $total['value']=$r['impeff'];
-                $total['num']=1;
-            }
-            $m[] = $r;
-        }
-        return array('data'=>$m,'tot'=>$total);
+        $m[] = $r;
+    }
+    return array('data'=>$m,'tot'=>$total);
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
@@ -109,8 +96,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_emi_D']=date("d");
     $form['date_emi_M']=date("m");
     $form['date_emi_Y']=date("Y");
-    $form['bank']='';
-    $form['reprint']='N';
+    // propongo l'ultima banca utilizzata
+	$rs_last_bank = gaz_dbi_query("SELECT banacc FROM ".$gTables['effett']." WHERE tipeff='B' AND banacc > 0 ORDER BY id_tes DESC LIMIT 1");
+    $last_bank=gaz_dbi_fetch_array($rs_last_bank);
+    $form['bank']=($last_bank)?$last_bank['banacc']:0; 
     $form['date_ini_D']=substr($iniData['si'],8,2);
     $form['date_ini_M']=substr($iniData['si'],5,2);
     $form['date_ini_Y']=substr($iniData['si'],0,4);
@@ -126,7 +115,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_emi_M']=intval($_POST['date_emi_M']);
     $form['date_emi_Y']=intval($_POST['date_emi_Y']);
     $form['bank']=intval($_POST['bank']);
-    $form['reprint']=substr($_POST['reprint'],0,1);
     $form['date_ini_D']=intval($_POST['date_ini_D']);
     $form['date_ini_M']=intval($_POST['date_ini_M']);
     $form['date_ini_Y']=intval($_POST['date_ini_Y']);
@@ -135,21 +123,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_fin_Y']=intval($_POST['date_fin_Y']);
     $form['num_ini']=intval($_POST['num_ini']);
     $form['num_fin']=intval($_POST['num_fin']);
-    if ($form['hidden_req']=='reprint'){
-       if ($form['reprint']=='S') {
-          $iniData=getLimit(1);
-      } else {
-          $iniData=getLimit();
-      }
-      $form['date_ini_D']=substr($iniData['si'],8,2);
-      $form['date_ini_M']=substr($iniData['si'],5,2);
-      $form['date_ini_Y']=substr($iniData['si'],0,4);
-      $form['date_fin_D']=substr($iniData['sf'],8,2);
-      $form['date_fin_M']=substr($iniData['sf'],5,2);
-      $form['date_fin_Y']=substr($iniData['sf'],0,4);
-      $form['num_ini']=$iniData['ni'];
-      $form['num_fin']=$iniData['nf'];
-    }
     if (isset($_POST['period'])) {
       $new_date_ini=mktime(0,0,0,date("m")+1,16,date("Y"));
       $new_date_fin=mktime(0,0,0,date("m")+2,15,date("Y"));
@@ -161,7 +134,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
       $form['date_fin_Y']=strftime ("%Y",$new_date_fin);
       $form['num_ini']=1;
       $form['num_fin']=999999999;
-      $form['reprint']='S';
     }
     if (isset($_POST['return'])) {
         header("Location: ".$form['ritorno']);
@@ -170,14 +142,14 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 }
 
 //controllo i campi
-if (!checkdate( $form['date_emi_M'], $form['date_emi_D'], $form['date_emi_Y']) ||
-    !checkdate( $form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y']) ||
-    !checkdate( $form['date_fin_M'], $form['date_fin_D'], $form['date_fin_Y'])) {
+if (!checkdate($form['date_emi_M'], $form['date_emi_D'], $form['date_emi_Y']) ||
+        !checkdate($form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y']) ||
+        !checkdate($form['date_fin_M'], $form['date_fin_D'], $form['date_fin_Y'])) {
     $msg .='1+';
 }
-$utsemi= mktime(0,0,0,$form['date_emi_M'],$form['date_emi_D'],$form['date_emi_Y']);
-$utsini= mktime(0,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y']);
-$utsfin= mktime(0,0,0,$form['date_fin_M'],$form['date_fin_D'],$form['date_fin_Y']);
+$utsemi = mktime(0, 0, 0, $form['date_emi_M'], $form['date_emi_D'], $form['date_emi_Y']);
+$utsini = mktime(0, 0, 0, $form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y']);
+$utsfin = mktime(0, 0, 0, $form['date_fin_M'], $form['date_fin_D'], $form['date_fin_Y']);
 if ($utsini > $utsfin) {
     $msg .='2+';
 }
@@ -185,19 +157,15 @@ if ($utsemi > $utsini) {
     $msg .='3+';
 }
 // fine controlli
-
-if (isset($_POST['print']) && $msg=='') {
-    $datemi=strftime("%Y-%m-%d",$utsemi);
-    $datini=strftime("%Y-%m-%d",$utsini);
-    $datfin=strftime("%Y-%m-%d",$utsfin);
-    $locazione = "Location: genera_mav_cbi.php?ristam=".$form['reprint']."&datemi=".$datemi."&banacc=".$form['bank']."&proini=".$form['num_ini']."&profin=".$form['num_fin']."&scaini=".$datini."&scafin=".$datfin;
-    header($locazione);
-    exit;
-}
+$datemi = strftime("%Y-%m-%d", $utsemi);
+$datini = strftime("%Y-%m-%d", $utsini);
+$datfin = strftime("%Y-%m-%d", $utsfin);
+$anagrafica = new Anagrafica();
 
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
-echo "<script type=\"text/javascript\">
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
+?>
+<script>
 var cal = new CalendarPopup();
 var calName = '';
 function setMultipleValues(y,m,d) {
@@ -214,8 +182,16 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
+$(function() {
+    $("#godistintaBtn").click(function() {
+  		var ref = $(this).attr('ref');		
+        $(".godistintaBtn").attr("disabled", true);
+        window.location.replace(ref);
+        return true;
+    });
+});   
 </script>
-";
+<?php
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
@@ -224,50 +200,46 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['titl
 echo "</div>\n";
 echo "<table class=\"Tmiddle\">\n";
 if (!empty($msg)) {
-    echo '<tr><td class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
+    echo '<tr><td class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_emi']."</td><td class=\"FacetDataTD\">\n";
-$gForm->CalendarPopup('date_emi',$form['date_emi_D'],$form['date_emi_M'],$form['date_emi_Y'],'FacetSelect',1);
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_emi'] . "</td><td class=\"FacetDataTD\">\n";
+$gForm->CalendarPopup('date_emi', $form['date_emi_D'], $form['date_emi_M'], $form['date_emi_Y'], 'FacetSelect', 1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['bank']."</td><td  class=\"FacetDataTD\">\n";
-$select_bank = new selectconven("bank");
-$select_bank -> addSelected($form['bank']);
-$select_bank -> output($admin_aziend['masban']);
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['bank'] . "</td><td  class=\"FacetDataTD\">\n";
+$rsbanacc=$gForm->selectBanacc($form['bank']);
+if ($form['bank'] > 0) {
+    $form['eof']=($rsbanacc)?'eof':'';
+}
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['reprint']."</td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('reprint',$script_transl['reprint_value'],$form['reprint'],'FacetSelect',0,'reprint');
-echo "\t </td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['num_ini'] . "</td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_ini\" value=\"" . $form['num_ini'] . "\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['num_ini']."</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_ini\" value=\"".$form['num_ini']."\" maxlength=\"5\"  /></td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['num_fin'] . "</td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_fin\" value=\"" . $form['num_fin'] . "\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['num_fin']."</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_fin\" value=\"".$form['num_fin']."\" maxlength=\"5\"  /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td class=\"FacetDataTD\">\n";
-$gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1);
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_ini'] . "</td><td class=\"FacetDataTD\">\n";
+$gForm->CalendarPopup('date_ini', $form['date_ini_D'], $form['date_ini_M'], $form['date_ini_Y'], 'FacetSelect', 1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td class=\"FacetDataTD\">\n";
-$gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1);
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_fin'] . "</td><td class=\"FacetDataTD\">\n";
+$gForm->CalendarPopup('date_fin', $form['date_fin_D'], $form['date_fin_M'], $form['date_fin_Y'], 'FacetSelect', 1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['period']."</td>
-      <td class=\"FacetDataTD\"><input type=\"submit\" name=\"period\" value=\"".$script_transl['period_value']."\">";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['period'] . "</td>
+      <td class=\"FacetDataTD\"><input type=\"submit\" name=\"period\" value=\"" . $script_transl['period_value'] . "\">";
 echo "</td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
+echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"" . $script_transl['return'] . "\">\n";
 echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
@@ -275,59 +247,51 @@ echo "\t </td>\n";
 echo "\t </tr>\n";
 echo "</table>\n";
 if (isset($_POST['preview']) and $msg=='') {
-  $date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$form['date_ini_D']);
-  $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);
-  $r=getData($date_ini,$date_fin,$form['num_ini'],$form['num_fin'],$form['reprint']);
-  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
-  if (sizeof($r['data'])>0) {
+    $date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
+    $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
+    $r = getData($date_ini, $date_fin, $form['num_ini'], $form['num_fin'],$form['bank']);
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+    if (sizeof($r['data']) > 0) {
         echo "<tr>";
-        echo '<td colspan="7" align="center" class="FacetDataTD">'.$script_transl['preview']."</td>\n";
+        echo '<td colspan="7" align="center" class="FacetDataTD">' . $script_transl['preview'] . "</td>\n";
         echo "</tr>";
         echo "<tr>";
-        $linkHeaders=new linkHeaders($script_transl['header']);
+        $linkHeaders = new linkHeaders($script_transl['header']);
         $linkHeaders->output();
         echo "</tr>\n";
-    foreach($r['data'] as $v) {
-        echo "<tr>";
-        echo "<td class=\"FacetDataTD\"><A HREF=\"http://localhost/gazie/modules/vendit/update_effett.php?id_tes=".$v['id_tes']."\">".$v["progre"]."</A></td>";
-        echo "<td class=\"FacetDataTD\">".$v["tipeff"]." </td>";
-        echo "<td class=\"FacetDataTD\">".gaz_format_date($v["scaden"])."</td>";
-        echo "<td class=\"FacetDataTD\" align=\"right\">".$admin_aziend['html_symbol'].' '.gaz_format_number($v["impeff"])." </td>";
-        echo "<td class=\"FacetDataTD\">".$v["customer"]." </td>";
-        echo "<td class=\"FacetDataTD\"><A HREF=\"http://localhost/gazie/modules/vendit/admin_docven.php?id_tes=".$v['id_tes']."&Update\">n.".$v["numfat"]."/".$v["seziva"]." - ".gaz_format_date($v["datfat"])."</a></td>";
-        echo "<td class=\"FacetDataTD\">".$v["desban"]." </td>";
-        echo "</tr>\n";
-        echo "<tr>";
-        if ($v["status"]=='DISTINTATO') {
-           echo "<td class=\"FacetDataTDred\" align=\"center\" colspan=\"4\">".strtoupper($script_transl['reprint'])."!";
-        } else {
-           echo "<td colspan=\"4\">";
+        foreach ($r['data'] as $v) {
+            echo "<tr>";
+            echo "<td class=\"FacetDataTD\"><a href=\"./admin_effett.php?Update&id_tes=" . $v['id_tes'] . "\">" . $v["progre"] . "</A></td>";
+            echo "<td class=\"FacetDataTD\">" . $v["tipeff"] . " </td>";
+            echo "<td class=\"FacetDataTD\">" . gaz_format_date($v["scaden"]) . "</td>";
+            echo "<td class=\"FacetDataTD\" align=\"right\">" . $admin_aziend['html_symbol'] . ' ' . gaz_format_number($v["impeff"]) . " </td>";
+            echo "<td class=\"FacetDataTD\">" . $v["customer"] . " </td>";
+            echo "<td class=\"FacetDataTD\">n." . $v["numfat"] . "/" . $v["seziva"] . " - " . gaz_format_date($v["datfat"]) . "</td>";
+            echo "<td class=\"FacetDataTD\">" . $v["desban"] . " </td>";
+            echo "</tr>\n";
+            echo "<tr>";
+            echo "<td>" . $v["pariva"] . "</td>";
+            echo "<td align=\"right\">" . gaz_format_number($v["totfat"]) . "</td>";
+            echo "<td align=\"center\">" . $v["coordi"] . " </td>";
+            echo "</tr>\n";
         }
-        echo "</td>";
-        echo "<td>".$v["pariva"]."</td>";
-        echo "<td align=\"right\">".gaz_format_number($v["totfat"])."</td>";
-        echo "<td align=\"center\">".$v["coordi"]." </td>";
-        echo "</tr>\n";
-    }
-    echo '<td colspan="4" class="FacetDataTD">'.
-                 $script_transl['tot']." n.".
-                 $r['tot']['num'].' '.
-                 $admin_aziend['html_symbol'].' '.
-                 gaz_format_number($r['tot']['value'])."</td>\n".
-                 '<td colspan="3" class="FacetDataTD"></td>';
-    echo "</tr>";
-    echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-    echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
-    echo $script_transl['submit'];
-    echo '">';
-    echo "\t </td>\n";
-    echo "\t </tr>\n";
-  } else {
-        echo "<tr>";
-        echo '<td colspan="7" align="center" class="FacetDataTDred">'.$script_transl['errors'][0]."</td>\n";
+        echo '<td colspan="4" class="FacetDataTD">' .
+        $script_transl['tot'] . " n." .
+        $r['tot']['num'] . ' ' .
+        $admin_aziend['html_symbol'] . ' ' .
+        gaz_format_number($r['tot']['value']) . "</td>\n" .
+        '<td colspan="3" class="FacetDataTD"></td>';
         echo "</tr>";
-  }
-  echo "</table>\n";
+        echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
+        echo '<td colspan="7" align="right"><a class="btn btn-xs btn-warning godistintaBtn" ref="genera_mav_cbi.php?datemi=' . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin.((empty($form['eof']))?'':'&eof=1').'" id="godistintaBtn">'.$script_transl['submit'].'</a>';
+        echo "\t </td>\n";
+        echo "\t </tr>\n";
+    } else {
+        echo "<tr>";
+        echo '<td colspan="7" align="center" class="FacetDataTDred">' . $script_transl['errors'][0] . "</td>\n";
+        echo "</tr>";
+    }
+    echo "</table>\n";
 }
 ?>
 </form>

@@ -146,6 +146,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
     // controllo possibile cancellazione distinta solo se la prima scadenza è maggiore di oggi
     $expire = strtotime($r['minsca']);
     $disabled=($expire < $today)?'disabled':'';
+    $dialogdel=($expire < $today)?'':'dialog_delete';   
 ?>
 <tr>
     <td class="text-center"><?php echo $r["id_doc"]; ?></td>
@@ -155,7 +156,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
     <td class="text-center small"> <?php echo $r["neff"].' disposizioni<br/>prima scadenza: '.gaz_format_date($r["minsca"]).'<br/>ultima scadenza: '.gaz_format_date($r["maxsca"]); ?></td>
     <td class="text-center"><?php echo '<a class="btn btn-xs btn-default" href="stampa_distint.php?id_distinta='.$r["id_doc"].'">Distinta '.$r["id_doc"].' (pdf) <i class="glyphicon glyphicon-print"></i></a> '; ?></td>
     <td class="text-center">
-    <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella la distinta <?php echo $script_transl['tipeff_value'][$r['tipeff']]; ?>" ref="<?php echo $r['id_doc'];?>" filename="<?php echo $r['title']; ?>" tipeff="<?php echo $script_transl['tipeff_value'][$r['tipeff']]; ?>" <?php echo $disabled; ?> ><i class="glyphicon glyphicon-remove"></i></a>
+    <a class="btn btn-xs btn-default btn-elimina <?php echo $dialogdel; ?>" title="Cancella la distinta <?php echo $script_transl['tipeff_value'][$r['tipeff']]; ?>" ref="<?php echo $r['id_doc'];?>" filename="<?php echo $r['title']; ?>" tipeff="<?php echo $script_transl['tipeff_value'][$r['tipeff']]; ?>" <?php echo $disabled; ?> ><i class="glyphicon glyphicon-remove"></i></a>
     </td>
 </tr>
 <?php    
