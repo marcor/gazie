@@ -42,7 +42,6 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXcamp_artico` (
   PRIMARY KEY (`id_campartico`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 INSERT INTO `gaz_XXXcompany_config` SELECT MAX(id)+1, 'Identificativo dello stabilimento o deposito del SIAN', 'id_sian', '0' FROM `gaz_XXXcompany_config`;
-ALTER TABLE `gaz_XXXsyncronize_oc`	CHANGE COLUMN `date_update` `date_update` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `date_created`;
 INSERT INTO `gaz_XXXcompany_config` SELECT MAX(id)+1, 'Allerta se la lunghezza del codice articolo è diverso da', 'codart_len', '0' FROM `gaz_XXXcompany_config`;
 ALTER TABLE `gaz_XXXpaymov`	DROP INDEX `id_rigmoc_pay`,	ADD INDEX `id_rigmoc_pay` (`id_rigmoc_pay`) USING HASH;
 ALTER TABLE `gaz_XXXtesdoc`	CHANGE COLUMN `id_contract` `id_contract` INT(9) NOT NULL DEFAULT '0' COMMENT 'In caso di corrispettivo, scontrino con causale VCO, viene usato per contenere l\'id del registratore ovvero id_cash della tabella gaz_NNNcash_register, se "0" verrà generato un file XML, altrimenti verranno inviati i dati al RT in base a quanto indicato sul rigo della tabella citata' AFTER `geneff`;
