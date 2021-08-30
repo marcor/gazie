@@ -387,6 +387,7 @@ $(function() {
                 ?>
             </tr>
             <?php
+
             $rs_ultimo_documento = gaz_dbi_dyn_query("id_tes,tipdoc,protoc", $gTables['tesdoc'], "tipdoc LIKE 'F%' AND seziva = '$sezione'", "datfat DESC, protoc DESC, id_tes DESC", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             // controllo se ho configurato un servizio di gestione flussi verso SdI
@@ -394,7 +395,7 @@ $(function() {
             
 	    //recupero le testate in base alle scelte impostate
 	    $result = gaz_dbi_dyn_query(cols_from($gTables['tesdoc'],
-						  "*") . ", " .
+						  "id_tes","id_con","ddt_type","clfoco","pagame","fattura_elettronica_zip_package","tipdoc","seziva","protoc","datfat","fattura_elettronica_reinvii","geneff","numfat","id_contract","fattura_elettronica_original_name") . ", " .
 					cols_from($gTables['anagra'],
 						  "fe_cod_univoco",
 						  "pec_email",
