@@ -183,6 +183,24 @@ class venditForm extends GAzieForm {
         $exist = gaz_dbi_get_row($gTables['cash_register_reparto'],"aliiva_codice",$codvat, "AND cash_register_id_cash = ".$id_cash);
         return ($exist)?$exist['reparto']:false;
    }
+   
+   function selectBanacc($val,$name='bank') { // per selezionare la banca d'accredito degli effetti  
+        $eof=false;
+        global $gTables,$admin_aziend;
+        echo '<select id="'.$name.'" name="'.$name.'">';
+        $rs=gaz_dbi_dyn_query( $gTables['clfoco'].".*,".$gTables['banapp'].".codabi,".$gTables['banapp'].".codcab", $gTables['clfoco']. " LEFT JOIN ". $gTables['banapp']." ON ".$gTables['clfoco'].".banapp = ".$gTables['banapp'].".codice",$gTables['clfoco']. ".codice BETWEEN ".$admin_aziend['masban']."000001 AND ".$admin_aziend['masban']."999999 AND  banapp > 0");
+        while ($r = gaz_dbi_fetch_array($rs)) {
+            $selected = '';
+            if ($val == $r["codice"]) {
+                $selected .= " selected ";
+                $eof=($r["addbol"]=='N')?false:true;
+            }
+            echo '<option value="' . $r["codice"] . '"' . $selected . '>' . $r['descri'] ." ABI:".$r['codabi']." CAB:".$r['codcab']. "</option>\n";
+        }
+        echo "</select>\n";
+        return $eof;
+   }
+
 }
 
 class Agenti {

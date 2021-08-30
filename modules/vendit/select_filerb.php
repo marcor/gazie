@@ -95,7 +95,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_emi_D'] = date("d");
     $form['date_emi_M'] = date("m");
     $form['date_emi_Y'] = date("Y");
-    $form['bank'] = '';
+    // propongo l'ultima banca utilizzata
+	$rs_last_bank = gaz_dbi_query("SELECT banacc FROM ".$gTables['effett']." WHERE tipeff='B' AND banacc > 0 ORDER BY id_tes DESC LIMIT 1");
+    $form['bank']=gaz_dbi_fetch_array($rs_last_bank)['banacc']; 
     $form['date_ini_D'] = substr($iniData['si'], 8, 2);
     $form['date_ini_M'] = substr($iniData['si'], 5, 2);
     $form['date_ini_Y'] = substr($iniData['si'], 0, 4);
@@ -227,16 +229,9 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['bank'] . "</td><td  class=\"FacetDataTD\">\n";
-$select_bank = new selectconven("bank");
-$select_bank->addSelected($form['bank']);
-$select_bank->output($admin_aziend['masban']);
+$rsbanacc=$gForm->selectBanacc($form['bank']);
 if ($form['bank'] > 0) {
-    $bank_data = $anagrafica->getPartner($form['bank']);
-    if ($bank_data['addbol'] == 'N') {
-        $form['eof'] = '';
-    } else {
-        $form['eof'] = 'eof';
-    }
+    $form['eof']=($rsbanacc)?'eof':'';
 }
 echo " " . $script_transl['eof'];
 $gForm->selCheckbox('eof', $form['eof'], $script_transl['eof_title']);
