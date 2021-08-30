@@ -125,9 +125,7 @@ if (isset($_POST['erase2']) ) {
     $_POST['id_colture'] = 0;
     $_POST['nome_colt'] = "";
     $_POST['campo_impianto'] = "";
-	$_POST['id_orderman'] = "";
-	$_POST['coseprod']="";
-	$_form['coseprod']="";  
+	$_POST['id_orderman'] = ""; 
 }
 // Antonio Germani questo serve per la ricerca colture
 if (isset($_POST['nome_colt'])) {
@@ -216,14 +214,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	}
 	
     $form['id_orderman'] = intval($result['id_orderman']);
-    $resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
-    If ($form['id_orderman'] > 0) {
-        $form['description'] = $resultorderman['description'];
-		$form['coseprod']=$form['description'];
-    } else {
-        $form['description'] = "";
-		$form['coseprod']="";
-    }
+    $resord = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
+    
+    $form['description'] = ($resord)?$resord['description']:'';		
+    
     $form['tipdoc'] = $result['tipdoc'];
     $form['desdoc'] = $result['desdoc'];
     $form['id_colt'] = $result['id_colture'];
@@ -308,9 +302,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$form['artico'][$form['mov']] = $_POST['codart'];
 		$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);		
 		$form['id_reg'][$form['mov']] = ($itemart)?$itemart['id_reg']:0;
-		$_POST['id_reg'.$form['mov']] = $form['id_reg'][$form['mov']];
-		$_POST['artico2'.$form['mov']] = $_POST['codart2'];
-		$form['artico2'][$form['mov']] = $_POST['codart2'];
+		$_POST['id_reg'.$form['mov']] = $form['id_reg'][$form['mov']];		
+		$form['artico2'][$form['mov']] = $_POST['artico2'.$form['mov']];
 	}
 	
 	if (isset($_POST['mov']) ) { // Antonio Germani - se è stato inserito un rigo faccio il parsing di tutti i righi presenti
@@ -530,13 +523,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
         $form['scorig2'][$form['mov']] = 0;
     }
     $form['status'] = substr($_POST['status'], 0, 10);
-	$form['coseprod']= $_POST['coseprod'];
-	$form['description']= $_POST['coseprod'];
-	$res = gaz_dbi_get_row($gTables['orderman'], "description", $form['coseprod']);
-	if (isset($res)){
-		$form['id_orderman'] = $res['id'];
+	$form['id_orderman'] = $_POST['id_orderman'];
+	
+	$resord = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
+	if (isset($resord)){
+		$form['description'] = $resord['description'];
 	} else {
-		$form['id_orderman'] = 0;
+		$form['description'] = "";
 	}
     if (isset($form['id_orderman']) AND intval($form['id_orderman']) > 0 AND intval($form['campo_impianto1']) == 0) { //se è stata inserita una produzione e non è stato inserito il primo campo
         $rs_orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
@@ -591,7 +584,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
             $msg.= "17+";
         }     		
 		// Antonio Germani controllo se in ricerca produzione è stato impostata la voce selezionandola dal menù a tendina
-		if (strlen($_POST['coseprod'])>0 && intval($form['id_orderman'])==0) {
+		if (strlen($_POST['id_orderman'])>0 && intval($form['id_orderman'])==0) {
 			$msg.= "30+"; // non esiste fra quelle create
       	}
 		
@@ -1149,7 +1142,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                             // salvo ore su operaio attuale
                             //$exist = gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = " . $id_worker);
                             if (isset($r)) { // se ho già un record del lavoratore per quella data faccio UPDATE
-                                $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff =' . $id_worker . ", id_orderman = '" . $id_orderman . "', work_day = '" . $work_day . "', hours_normal = '" . $hours_normal . "' WHERE id = '" . $r['id'] . "'";
+                                $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff =' . $id_worker . ", work_day = '" . $work_day . "', hours_normal = '" . $hours_normal . "' WHERE id = '" . $r['id'] . "'";
                                 gaz_dbi_query($query);
 								$id_staff_worked_hours=$r['id'];
                             } else { // altrimenti faccio l'INSERT
@@ -1157,7 +1150,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                                 $v['id_staff'] = $id_worker;
                                 $v['work_day'] = $work_day;
                                 $v['hours_normal'] = $hours_normal;
-                                $v['id_orderman'] = $id_orderman;
+                                // Non si usa più perché va su staff_work_movements // $v['id_orderman'] = $id_orderman;
                                 $id_staff_worked_hours=gaz_dbi_table_insert('staff_worked_hours', $v);
 								
                             }
@@ -1241,7 +1234,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['artico'][$form['mov']] = "";
 	$form['id_reg'][$form['mov']] = 0;
 	$form['conferma'][$form['mov']] = "";
-	$form['artico2'][$form['mov']] = "ACQUA";// pre imposto l'articolo acqua
+	$form['artico2'][$form['mov']] = ($acqua=gaz_dbi_get_row($gTables['artico'], "codice", "ACQUA"))?$acqua['codice']:'';// se esiste l'articolo acqua lo pre-imposto
     $form['id_lotmag'][$form['mov']] = 0;
     $form['identifier'][$form['mov']] = "";
     $form['expiry'][$form['mov']] = "";
@@ -1261,8 +1254,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['search_item'] = "";
     $form['id_rif'] = 0;
     $form['description'] = "";
-    $form['id_orderman'] = 0;
-	$form['coseprod']="";
+    $form['id_orderman'] = 0;	
     $form['nmov'] = 0;
     $form['staff'][$form['mov']] = "";
 	if (!$feno = gaz_dbi_get_row($gTables['company_data'], "var", "feno_json")){
@@ -1313,7 +1305,7 @@ if (isset($_POST['Add_mov'])) {
     $form['artico'][$form['nmov']] = "";
 	$form['id_reg'][$form['nmov']] = 0;
 	$form['conferma'][$form['nmov']] = "";
-	$form['artico2'][$form['nmov']] = "";
+	$form['artico2'][$form['nmov']] = $form['artico2'][$form['nmov']-1];
     $form['id_lotmag'][$form['nmov']] = 0;
     $form['identifier'][$form['nmov']] = "";
     $form['expiry'][$form['nmov']] = "";
@@ -1453,8 +1445,7 @@ if (isset($_POST['cancel'])) {// se è stato premuto annulla
     $form['search_item'] = "";
     $form['id_rif'] = 0;
     $form['description'] = "";
-    $form['id_orderman'] = 0;
-	$form['coseprod']="";
+    $form['id_orderman'] = 0;	
     $fornitore = "";
 }
 // Antonio Germani controllo e avviso se è stata cambiata la coltura nel campo di coltivazione
@@ -1627,38 +1618,6 @@ echo $stringa;
 		});
 	});
 <!-- fine autocompletamento -->	
-<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql artico PER ACQUA	-->
-	$(document).ready(function(){
-	//Autocomplete search using PHP, MySQLi, Ajax and jQuery
-	//generate suggestion on keyup
-		$('#codart2').keyup(function(e){
-			e.preventDefault();
-			var form = $('#mov-camp').serialize();
-			$.ajax({
-				type: 'POST',
-				url: 'do_search2.php',
-				data: form,
-				dataType: 'json',
-				success: function(response){
-					if(response.error){
-						$('#codart_search2').hide();
-					}
-					else{
-						$('#codart_search2').show().html(response.data);
-					}
-				}
-			});
-		});
-		//fill the input
-		$(document).on('click', '.dropdown-item3', function(e){
-			e.preventDefault();
-			$('#codart_search2').hide();
-			var fullname = $(this).data('fullname');
-			$('#codart2').val(fullname);
-			$('#mov-camp').submit();
-		});
-	});
-<!-- fine autocompletamento -->
 
 </script>
 
@@ -1722,7 +1681,8 @@ if (intval($form['nome_colt']) == 0) {
 					</div>
 				</div>				
 				<?php
-			}			
+			}
+			
 			?>
 			<div class="row"><!-- Inserimento produzione -->
 				<div class="col-md-12">
@@ -1730,16 +1690,33 @@ if (intval($form['nome_colt']) == 0) {
 					<label class="FacetFieldCaptionTD">
 						<?php echo $script_transl[29]; ?>
 					</label>
-				
+					<select name="id_orderman" class="FacetSelect" onchange="this.form.submit()">
+					<option value="">-------------</option>
 					<?php
-					$select_production = new selectproduction("description");
-					$select_production->addSelected($form['description']);			
-					$select_production->output($form['coseprod']);
-					?>				  
+					$result = gaz_dbi_dyn_query("*", $gTables['orderman'],"order_type = 'AGR' AND stato_lavorazione < 9");
+					while ($row = gaz_dbi_fetch_array($result)) {
+						$selected = "";
+						if ($form['id_orderman'] == $row['id']) {
+							$selected = " selected ";
+						}	
+						echo "<option value=\"" . $row['id'] . "\"" . $selected . ">" . $row['id'] . " - " . $row['description'] . " - Periodo di coltivazione ". gaz_format_date ($row['start_work']) ." - ". gaz_format_date ($row['end_work']) ."</option>\n";
+					} 
+					?>
+					</select>			
 					<button type="submit" name="erase2" title="Reset produzione" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle"></i></button>
 					<br>
 					<a href="javascript:Popup('../../modules/orderman/admin_orderman.php?Insert&popup=1&type=AGR')"> Crea nuova produzione <i class="glyphicon glyphicon-plus-sign" style="color:green" ></i></a>
 					</div>
+				</div>
+				<div class="col-md-12">
+					<p>
+					<?php
+						if (isset($resord)){
+							$resbro = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $resord['id_rigbro']);
+							echo "Periodo di coltivazione: dal ",$resord['start_work']," al ",$resord['end_work'], " Prodotto da raccogliere: ",($resbro)?$resbro['codart']:''," ",($resbro)?$resbro['descri']:'';
+						}
+					?>
+					</p>
 				</div>
 			</div><!-- chiude row  -->
 			<div class="row bg-info"><!-- CAMPO coltivazione -->
@@ -1749,7 +1726,8 @@ if (intval($form['nome_colt']) == 0) {
 						<span data-toggle="popover" title="Inserimento campo di coltivazione" 
 						data-content="Inserire il campo su cui è stato effettuato il movimento.<br>
 						Dopo l'inserimento di un campo si aprirà una ulteriore richiesta di campo. In questa maniera è possibile inserire più campi di coltivazione in una unica registrazione.<br>
-						Le quantità dei prodotti utilizzati verranno suddivise in proporzione alla superficie di ciascun campo." 
+						Le quantità dei prodotti utilizzati verranno suddivise in proporzione alla superficie di ciascun campo.<br>
+						In presenza di una produzione sarà possibile inserire un solo campo che deve corrispondere a quello di produzione." 
 						class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
 						</span>
 						<?php echo $script_transl[3];?> 
@@ -1761,7 +1739,7 @@ if (intval($form['nome_colt']) == 0) {
 							$gForm->selectFromDB('campi', 'campo_impianto'.$n ,'codice', $form['campo_impianto'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
 						}
 						$form['campo_impianto'.$n]="";
-						if ($n>1 AND $form['campo_impianto'.($n-1)]>0){ // permetto di inserire un nuovo campo
+						if ($n>1 AND $form['campo_impianto'.($n-1)]>0 AND $form['id_orderman']==0){ // permetto di inserire un nuovo campo solo se non c'è una produzione
 							$gForm->selectFromDB('campi', 'campo_impianto'.$n,'codice', $form['campo_impianto'.$n], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '');
 						}
 						$form['ncamp']=$n;
@@ -1923,8 +1901,8 @@ if (intval($form['nome_colt']) == 0) {
 			<?php
 			// >>>>>>>>>> Inizio ciclo righi mov   <<<<<<<<<<<<<<<<<
 			for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) {
-				if (strlen($form['artico'][$form['mov']])>0){
-					$anchor = $form['mov']; // Antonio Germani - prendo la riga per dare l'id all'anchor dello scroll
+				if (strlen($form['artico'][$form['mov']])>0 OR strlen($form['ins_op'][$form['mov']])>0){ // se c'è un codice articolo o è selezionato operaio
+					$anchor = $form['mov']; // Antonio Germani - prendo la riga per dare l'id all'anchor ancora dello scroll
 				}
 				$importo_rigo = CalcolaImportoRigo($form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']]);
 				$importo_rigo = $importo_rigo+CalcolaImportoRigo($form['quanti2'][$form['mov']], $form['prezzo2'][$form['mov']], $form['scorig2'][$form['mov']]);
@@ -1957,63 +1935,78 @@ if (intval($form['nome_colt']) == 0) {
 								$disabled=""; // abilito anche la select
 								?>
 								<div class="row">
-									<div class="col-md-12">														
-										<div class="form-group">
-											<?php
-											
-											if ($form['ins_op'][$form['mov']] == ""){ // se non è operaio
-												$checked="";
-												?>
-												<input class="col-sm-7 FacetSelect" type="text" id="codart" name="codart" value="<?php echo $form['artico'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
+									<div class="col-md-12">										
+										<?php										
+										if ($form['ins_op'][$form['mov']] == ""){ // se non è operaio
+											$checked="";
+											?>
+											<div class="form-group col-md-7">	
+												<input class="col-sm-11 FacetSelect" type="text" id="codart" name="codart" value="<?php echo $form['artico'][$form['mov']]; ?>" placeholder="Ricerca nome o descrizione" autocomplete="off">
 												<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
 												<input type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" />
 												<input type="hidden" name="ins_op<?php echo $form['mov']; ?>" value="" />
 												<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="" />
-
-												<?php										
-												
+											<div class="col-sm-1">
+														<span data-toggle="popover" title="Inserimento acqua utilizzata" 
+														data-content="Se si desidera utilizzare anche il parametro riferito al volume d'acqua usato per la diluizione del prodotto deve esistere un articolo con codice 'ACQUA'.<br>
+														Può essere creato come un semplice altro articolo in Merci/servizi, ma il codice deve essere 'ACQUA' (tutto in maiuscolo).<br>
+														N.B.: l'input per la relativa quantità apparirà solo se la causale del movimento opera uno scarico." 
+														class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
+														</span>
+													</div>
+											</div>
+											<div class="form-group col-md-5">
+												<?php												
 												if (isset($res_caumag['operat']) AND $res_caumag['operat'] == - 1 ) {
-													?>
-													<input class="col-sm-2" type="text" id="codart2" name="codart2" value="<?php echo $form['artico2'][$form['mov']]; ?>" placeholder="Scrivere ACQUA" autocomplete="off">
-													<input type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" />
-													<?php
-																						
-													if ($form['artico2'][$form['mov']]!==""){ // se è stata inserita l'acqua carico unità di misura e visualizzo input q.tà
-														$itemart2 = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico2'][$form['mov']]);
-														$print_unimis2="";
-														if (isset($itemart2)){
-															$print_unimis2 = $itemart2['unimis'];
+													?><!-- Acqua -->
+													
+																
+														<input class="col-sm-6" type="text" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" disabled="disabled"/>
+														<?php
+																							
+														if ($form['artico2'][$form['mov']]!==""){ // se è stata inserita l'acqua carico unità di misura e visualizzo input q.tà
+															$itemart2 = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico2'][$form['mov']]);
+															$print_unimis2="";
+															if (isset($itemart2)){
+																$print_unimis2 = $itemart2['unimis'];
+															}
+															?>
+															<span class="col-sm-1"><?php echo $print_unimis2;?></span>
+															<input class="col-sm-5" type="text" value="<?php echo gaz_format_quantity($form['quanti2'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti2<?php echo $form['mov']; ?>" >
+															<?php 
 														}
 														?>
-														<span class="col-sm-1"><?php echo $print_unimis2;?></span>
-														<input class="col-sm-2" type="text" value="<?php echo gaz_format_quantity($form['quanti2'][$form['mov']], 1, $admin_aziend['decimal_quantity']); ?>" maxlength="10" name="quanti2<?php echo $form['mov']; ?>" >
-														<?php 
-													}
+													
+												
+													<?php
 												} else { 
 													?>
-													<input type="hidden" id="codart2" name="codart2" value="<?php echo $form['artico2'][$form['mov']]; ?>">										
+													<input type="hidden" id="artico2" name="artico2" value="<?php echo $form['artico2'][$form['mov']]; ?>">										
 													<input type="hidden" value="" name="quanti2<?php echo $form['mov']; ?>" >
 													<?php
 												}
-												echo "&nbsp;";
-											} else { // se è operaio
-												$checked="checked";
-												$print_unimis="h";
-												?>												
-												<input type="hidden" name="codart" value="" />
-												<input type="hidden" name="fase_feno<?php echo $form['mov']; ?>" value="" />
-												<input type="hidden" id="codart2" name="codart2" value="">										
-												<input type="hidden" value="" name="quanti2<?php echo $form['mov']; ?>" >
-												<input type="hidden" value="" name="artico<?php echo $form['mov']; ?>" >
-												
-												<?php
-											}
+												?>
+											</div>
+											<?php
+										} else { // se è operaio
+											$checked="checked";
+											$print_unimis="h";
+											?>												
+											<input type="hidden" name="codart" value="" />
+											<input type="hidden" name="fase_feno<?php echo $form['mov']; ?>" value="" />
+											<input type="hidden" id="artico2" name="artico2" value="">										
+											<input type="hidden" value="" name="quanti2<?php echo $form['mov']; ?>" >
+											<input type="hidden" value="" name="artico<?php echo $form['mov']; ?>" >
 											
-											?>	
-											<input type="checkbox" id="ins_op" name="<?php echo "ins_op",$form['mov'];?>" value="ins_op" onclick="this.form.submit();" <?php echo $checked; ?>>
-											<label for="ins_op"> Movimento ore operaio</label><br>	
-											
-										</div>
+											<?php
+										}
+										
+										?>
+										
+										<div class="col-md-12">
+										<input type="checkbox" id="ins_op" name="<?php echo "ins_op",$form['mov'];?>" value="ins_op" onclick="this.form.submit();" <?php echo $checked; ?>>
+										<label for="ins_op"> Movimento ore operaio</label><br>
+										</div>								
 										<ul class="dropdown-menu" style="left: 10%; padding: 0px;" id="codart_search"></ul>	
 										<ul class="dropdown-menu" style="left: 10%; padding: 0px;" id="codart_search2"></ul>									
 									</div>	
@@ -2044,6 +2037,8 @@ if (intval($form['nome_colt']) == 0) {
 								<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="<?php echo $form['staff'][$form['mov']]; ?>" />
 								<input type="hidden" name="artico<?php echo $form['mov']; ?>" value="<?php echo $form['artico'][$form['mov']]; ?>" />
 								<input type="hidden" name="artico2<?php echo $form['mov']; ?>" value="<?php echo $form['artico2'][$form['mov']]; ?>" />
+								<input type="hidden" name="quanti2<?php echo $form['mov']; ?>" value="<?php echo $form['quanti2'][$form['mov']]; ?>" />
+
 								<?php
 								echo $form['artico'][$form['mov']]," - ";
 							}
@@ -2062,6 +2057,11 @@ if (intval($form['nome_colt']) == 0) {
 								}
 								if (isset($itemart['descri']) AND $form['mov']!=$form['nmov']){ // se non è il movimento attivo visualizzo la descrizione
 										echo " ", substr($itemart['descri'], 0, 25), " ";
+										
+										if ($form['quanti2'][$form['mov']]>0){ // se non è il movimento attivo e la quantità acqua è maggiore di zero visualizzo la riga acqua
+											echo "<br>", substr($form['artico2'][$form['mov']], 0, 25), ": ", $form['quanti2'][$form['mov']];
+										}
+						
 									}
 								if ($service == 0 or $service == 2) { //Antonio Germani se è un articolo con magazzino
 									// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
@@ -2408,6 +2408,16 @@ if (intval($form['nome_colt']) == 0) {
 							</div>
 						</div>
 					</div><!-- chiude row  --> 
+					
+					<div id="gestfeno" class="col-md-12" style="border:1px solid black;">
+						<h4 align="center">Gestione fasi fenologiche</h4>				
+						<div>
+							<label>Nome fase fenologica: </label>
+							<input type="text" name="add_feno" value="" placeholder="scrivi il nome della fase fenologica" onfocus="if (this.placeholder == 'scrivi il nome della fase fenologica') {this.placeholder = '';}">										
+							<input type="submit" class="btn btn-warning" name="feno" value="Aggiungi fase all'elenco prestabilito">
+						</div>
+					</div>
+					
 					<?php
 				} else {
 					?>
@@ -2474,16 +2484,8 @@ if (intval($form['nome_colt']) == 0) {
 						}
 					}
 					?>
-			</div><!-- chiude row  -->
+			</div><!-- chiude row  -->			
 			
-			<div id="gestfeno" class="row" >			
-				<h4 align="center">Gestione fasi fenologiche</h4>				
-				<div>
-					<label>Nome fase fenologica: </label>
-					<input type="text" name="add_feno" value="" placeholder="scrivi il nome della fase fenologica" onfocus="if (this.placeholder == 'scrivi il nome della fase fenologica') {this.placeholder = '';}">										
-					<input type="submit" class="btn btn-warning" name="feno" value="Aggiungi fase all'elenco prestabilito">
-				</div>
-			</div>
 			<?php
 			if (isset($l) && $l - 1 > $form['mov']) { // se la suddivisione dei lotti ha creato nuovi righi ricarico il form
 				?>
@@ -2532,7 +2534,7 @@ if (intval($form['nome_colt']) == 0) {
 				</div>			
 			</div><!-- chiude row  -->
 			
-			<div id="gestpatent" class="col-sm-12 bg-info">							
+			<div id="gestpatent" class="col-sm-12 bg-info" style="border:1px solid black;">							
 				<div  align="center" >
 					<h3>Gestione Abilitazione acquisto e uso fitosanitari (Patentino)</h3>
 				</div>
@@ -2586,6 +2588,11 @@ if (intval($form['nome_colt']) == 0) {
 		});   
 	});
 </script>
+<style>
+.popover{
+	min-width: 200px;
+}
+</style>
 <?php
 // Antonio Germani questo serve per fare lo scroll all'ultimo movimento inserito o alla segnalazione errore
 if (count($instantwarning)>0){
@@ -2595,7 +2602,7 @@ if (count($instantwarning)>0){
 }
 ?>
 <script>
-document.getElementById("<?php echo $anchor; ?>").scrollIntoView({behavior: 'smooth'});//◄■■■ JUMP TO LOCAL ANCHOR.
+document.getElementById("<?php echo $anchor; ?>").scrollIntoView({behavior:'smooth'});//◄■■■ JUMP TO LOCAL ANCHOR.
 </script>
 <?php
 require ("../../library/include/footer.php");

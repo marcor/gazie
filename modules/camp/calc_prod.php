@@ -85,15 +85,14 @@ if (!empty($msg)) {
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[0] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"id_produzione\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 echo "<option value=\"\">-------------</option>\n";
-$result = gaz_dbi_dyn_query("*", $gTables['orderman']);
+$result = gaz_dbi_dyn_query("*", $gTables['orderman'],"order_type = 'AGR' AND stato_lavorazione < 9");
 
 while ($row = gaz_dbi_fetch_array($result)) {
     $selected = "";
     if ($form['id_produzione'] == $row['id']) {
         $selected = " selected ";
-    }
-	$result2 = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $row['id_tesbro']);
-    echo "<option value=\"" . $row['id'] . "\"" . $selected . ">" . $row['id'] . " - " . $row['description'] . " - inizio " . gaz_format_date ($result2['datemi']) . "</option>\n";
+    }	
+    echo "<option value=\"" . $row['id'] . "\"" . $selected . ">" . $row['id'] . " - " . $row['description'] . " - Periodo di coltivazione ". gaz_format_date ($row['start_work']) ." - ". gaz_format_date ($row['end_work']) ."</option>\n";
 	
 } 
 echo "</select>&nbsp;";
@@ -104,7 +103,7 @@ $item2 = gaz_dbi_get_row($gTables['campi'], "codice", ($item)?$item['campo_impia
 ?>
 <!-- fine selezione produzione  -->
 <?php if (isset($_POST['id_produzione'])){
-	echo "<tr><td colspan=\"2\" class=\"FacetFieldCaptionTD\">", $script_transl[1], ($item)?$item['description']:'' . " " . $script_transl[2], gaz_format_date ($result2['datemi']), " " . $script_transl[3], ($item)?$item['campo_impianto']:0, " ", ($item2)?$item2['descri']:'' , "</td></tr>";
+	echo "<tr><td colspan=\"2\" class=\"FacetFieldCaptionTD\">", $script_transl[1], ($item)?$item['description']:'' . " " . $script_transl[2] ."-". gaz_format_date ($item['start_work']), " " . $script_transl[3], ($item)?$item['campo_impianto']:0, " ", ($item2)?$item2['descri']:'' , "</td></tr>";
 $costo_produzione=0;
 $query="SELECT * FROM ".$gTables['movmag']." WHERE ".'id_orderman' . " = " . "'".$form['id_produzione']."'" ;
 	$res = gaz_dbi_query($query);
