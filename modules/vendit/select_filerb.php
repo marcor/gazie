@@ -97,7 +97,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_emi_Y'] = date("Y");
     // propongo l'ultima banca utilizzata
 	$rs_last_bank = gaz_dbi_query("SELECT banacc FROM ".$gTables['effett']." WHERE tipeff='B' AND banacc > 0 ORDER BY id_tes DESC LIMIT 1");
-    $form['bank']=gaz_dbi_fetch_array($rs_last_bank)['banacc']; 
+    $last_bank=gaz_dbi_fetch_array($rs_last_bank);
+    $form['bank']=($last_bank)?$last_bank['banacc']:0; 
     $form['date_ini_D'] = substr($iniData['si'], 8, 2);
     $form['date_ini_M'] = substr($iniData['si'], 5, 2);
     $form['date_ini_Y'] = substr($iniData['si'], 0, 4);
