@@ -72,7 +72,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $rs_pc = gaz_dbi_get_row($gTables['country'], 'iso', $form["country"]);
         if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'check_cust_address')['val']==1 ) {
           $cap = new postal_code;
-          if ($cap->check_postal_code($form["capspe"], $form["country"], $rs_pc['postal_code_length'])) {
+          if ($cap->check_postal_code($form["capspe"], $form["country"], $rs_pc['postal_code_length']) && $rs_pc['postal_code_length']>0) {
               $msg .= '2+';
           }
           if (empty($form["citspe"])) {
@@ -309,7 +309,8 @@ if ($toDo == 'insert') {
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form['codice'] . "'</div>\n";
     echo "<input type=\"hidden\" value=\"" . $form['codice'] . "\" name=\"codice\" />\n";
 }
-echo "<table class=\"Tmiddle\">\n";
+echo "<div align=\"center\">\n";
+echo '<table class="table-striped table-bordered table-condensed">';
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
     if (isset($anagra)) {
@@ -337,291 +338,291 @@ if (!empty($msg)) {
 }
 if ($toDo == 'insert') {
     echo "<tr>\n";
-    echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['codice'] . "* </td>\n";
-    echo "\t<td colspan=\"2\" class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"6\" /></td>\n";
+    echo "\t<td>" . $script_transl['codice'] . "* </td>\n";
+    echo "\t<td colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" align=\"right\" maxlength=\"6\" /></td>\n";
     echo "</tr>\n";
 }
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso1'] . "* </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['ragso1'] . "* </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"ragso1\" placeholder=\"" . $script_transl['ragso1_placeholder'] . "\" value=\"" . $form['ragso1'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso2'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['ragso2'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"ragso2\" value=\"" . $form['ragso2'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['legrap_pf_nome'] . " </td>\n";
-echo "\t<td class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['legrap_pf_nome'] . " </td>\n";
+echo "\t<td>
       <input type=\"text\" name=\"legrap_pf_nome\" title=\"" . $script_transl['legrap_pf_title'] . "\"  value=\"" . $form['legrap_pf_nome'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
-echo "\t<td class=\"FacetDataTD\">
+echo "\t<td>
       <input type=\"text\" name=\"legrap_pf_cognome\" title=\"" . $script_transl['legrap_pf_title'] . "\"  value=\"" . $form['legrap_pf_cognome'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['sexper'] . "*</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td>" . $script_transl['sexper'] . "*</td><td colspan=\"2\">\n";
 $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['external_resp'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['external_resp'] . "</td><td colspan=\"2\">\n";
 $gForm->variousSelect('external_resp', $script_transl['external_resp_value'], $form['external_resp'], 'FacetSelect', false);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['external_service_descri'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['external_service_descri'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <textarea name=\"external_service_descri\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["external_service_descri"] . "</textarea></td>\n";
 echo "</tr>\n";
 
 /** ENRICO FEDELE */
 /* Cambiato l'ordine dei campi per renderlo pi� coerente con l'autocompletamento (prima il campo comune che ha la funzione attiva) */
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['citspe'] . " *  </td>\n";
-echo "\t<td class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['citspe'] . " *  </td>\n";
+echo "\t<td>
       <input type=\"text\" name=\"citspe\" id=\"search_location\" value=\"" . $form['citspe'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
-echo "\t<td class=\"FacetDataTD\">
+echo "\t<td>
       <input type=\"text\" name=\"prospe\" id=\"search_location-prospe\" value=\"" . $form['prospe'] . "\" align=\"right\" maxlength=\"2\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['indspe'] . " * </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['indspe'] . " * </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"indspe\" value=\"" . $form['indspe'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['capspe'] . " * </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['capspe'] . " * </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"capspe\" id=\"search_location-capspe\" value=\"" . $form['capspe'] . "\" align=\"right\" maxlength=\"10\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['country'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td>" . $script_transl['country'] . "</td><td colspan=\"2\">\n";
 $gForm->selectFromDB('country', 'country', 'iso', $form['country'], 'iso', 0, ' - ', 'name');
 echo "</td>\n";
 echo "</tr>\n";
 /** ENRICO FEDELE */
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_language'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td>" . $script_transl['id_language'] . "</td><td colspan=\"2\">\n";
 $gForm->selectFromDB('languages', 'id_language', 'lang_id', $form['id_language'], 'lang_id', 1, ' - ', 'title_native');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_currency'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td>" . $script_transl['id_currency'] . "</td><td colspan=\"2\">\n";
 $gForm->selectFromDB('currencies', 'id_currency', 'id', $form['id_currency'], 'id', 1, ' - ', 'curr_name');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['fiscal_rapresentative_id'] . " </td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "\t<td>" . $script_transl['fiscal_rapresentative_id'] . " </td><td colspan=\"2\">\n";
 $select_fiscal_rapresentative_id = new selectPartner("fiscal_rapresentative_id");
 $select_fiscal_rapresentative_id->selectAnagra('fiscal_rapresentative_id', $form['fiscal_rapresentative_id'], $form['search']['fiscal_rapresentative_id'], 'fiscal_rapresentative_id', $script_transl['mesg']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sedleg'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['sedleg'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <textarea name=\"sedleg\" rows=\"2\" cols=\"30\" maxlength=\"100\" >" . $form['sedleg'] . "</textarea></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['datnas'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td>" . $script_transl['datnas'] . "</td><td colspan=\"2\">\n";
 $gForm->CalendarPopup('datnas', $form['datnas_D'], $form['datnas_M'], $form['datnas_Y']);
 echo "\t</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 /** ENRICO FEDELE */
 /* Aggiunto id per autocompletamento */
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['luonas'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['luonas'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" id=\"search_luonas\" name=\"luonas\" value=\"" . $form['luonas'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['pronas'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['pronas'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" id=\"search_pronas\" name=\"pronas\" value=\"" . $form['pronas'] . "\" align=\"right\" maxlength=\"2\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['counas'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td>" . $script_transl['counas'] . "</td><td colspan=\"2\">\n";
 $gForm->selectFromDB('country', 'counas', 'iso', $form['counas'], 'iso', 1, ' - ', 'name');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['telefo'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['telefo'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"telefo\" value=\"" . $form['telefo'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['fax'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['fax'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"fax\" value=\"" . $form['fax'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['cell'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['cell'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"cell\" value=\"" . $form['cell'] . "\" align=\"right\" maxlength=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://telematici.agenziaentrate.gov.it/VerificaCF/Scegli.do?parameter=verificaCf\" target=\"blank\">" . $script_transl['codfis'] . "</a> *</td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
+echo "\t<td><a href=\"https://telematici.agenziaentrate.gov.it/VerificaCF/Scegli.do?parameter=verificaCf\" target=\"blank\">" . $script_transl['codfis'] . "</a> *</td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"codfis\" id=\"codfis\" value=\"" . $form['codfis'] . "\" align=\"right\" maxlength=\"16\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva\" target=\"blank\">" . $script_transl['pariva'] . "</a> </td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
+echo "\t<td><a href=\"https://telematici.agenziaentrate.gov.it/VerificaPIVA/Scegli.do?parameter=verificaPiva\" target=\"blank\">" . $script_transl['pariva'] . "</a> </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"pariva\" value=\"" . $form['pariva'] . "\" align=\"right\" maxlength=\"11\"  title=\"11 volte 9 per bolletta doganale\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"https://www.inipec.gov.it/cerca-pec\" target=\"blank\">" . $script_transl['pec_email'] . "</a></td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
+echo "\t<td><a href=\"https://www.inipec.gov.it/cerca-pec\" target=\"blank\">" . $script_transl['pec_email'] . "</a></td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"pec_email\" value=\"" . $form['pec_email'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['e_mail'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
+echo "\t<td>" . $script_transl['e_mail'] . "</td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"e_mail\" value=\"" . $form['e_mail'] . "\" align=\"right\" maxlength=\"60\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['codpag'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['codpag'] . "</td><td colspan=\"2\">\n";
 $gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'],  'tippag`, `giodec`, `numrat', 1, ' ', 'descri');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sconto'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['sconto'] . "</td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"sconto\" value=\"" . $form['sconto'] . "\" align=\"right\" maxlength=\"5\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['banapp'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['banapp'] . "</td><td colspan=\"2\">\n";
 $select_banapp = new selectbanapp("banapp");
 $select_banapp->addSelected($form["banapp"]);
 $select_banapp->output();
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['portos'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['portos'] . "</td><td colspan=\"2\">\n";
 $gForm->selectFromDB('portos', 'portos', 'codice', $form['portos'], 'codice', 1, ' ', 'descri');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['spediz'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['spediz'] . "</td><td colspan=\"2\">\n";
 $gForm->selectFromDB('spediz', 'spediz', 'codice', $form['spediz'], 'codice', 1, ' ', 'descri');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['imball'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['imball'] . "</td><td colspan=\"2\">\n";
 $gForm->selectFromDB('imball', 'imball', 'codice', $form['imball'], 'codice', 1, ' ', 'descri');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['listin'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['listin'] . "</td><td colspan=\"2\">\n";
 $gForm->selectNumber('listin', $form['listin'], 0, 1, 3);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['cosric'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['cosric'] . "</td><td colspan=\"2\">\n";
 $gForm->selectAccount('cosric', $form['cosric'], 3);
 echo "</td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['id_agente'] . "</td><td colspan=\"2\">\n";
 $select_agente = new selectAgente("id_agente", "F");
 $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['destin'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['destin'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <textarea name=\"destin\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["destin"] . "</TEXTAREA></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_des'] . " </td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "\t<td>" . $script_transl['id_des'] . " </td><td colspan=\"2\">\n";
 $select_id_des = new selectPartner("id_des");
 $select_id_des->selectAnagra('id_des', $form['id_des'], $form['search']['id_des'], 'id_des', $script_transl['mesg']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['iban'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['iban'] . " </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"iban\" id=\"iban\" value=\"" . $form['iban'] . "\" align=\"right\" maxlength=\"27\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['maxrat'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['maxrat'] . "</td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"maxrat\" value=\"" . $form['maxrat'] . "\" align=\"right\" maxlength=\"16\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragdoc'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['ragdoc'] . "</td><td colspan=\"2\">\n";
 $gForm->variousSelect('ragdoc', $script_transl['yn_value'], $form['ragdoc']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['speban'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['speban'] . "</td><td colspan=\"2\">\n";
 $gForm->variousSelect('speban', $script_transl['yn_value'], $form['speban']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['addbol'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['addbol'] . "</td><td colspan=\"2\">\n";
 $gForm->variousSelect('addbol', $script_transl['yn_value'], $form['addbol']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['spefat'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['spefat'] . "</td><td colspan=\"2\">\n";
 $gForm->variousSelect('spefat', $script_transl['yn_value'], $form['spefat']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['stapre'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['stapre'] . "</td><td colspan=\"2\">\n";
 $gForm->variousSelect('stapre', $script_transl['yn_value'], $form['stapre']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['aliiva'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td>" . $script_transl['aliiva'] . "</td><td colspan=\"2\">\n";
 $gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 1, ' - ', 'descri');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ritenuta'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['ritenuta'] . "</td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" name=\"ritenuta\" value=\"" . $form['ritenuta'] . "\" align=\"right\" maxlength=\"4\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['operation_type'] . "</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">";
+echo "\t<td>" . $script_transl['operation_type'] . "</td>\n";
+echo "\t<td colspan=\"2\">";
 $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type', 'operation_type', $form['operation_type'], true, '', 'col-sm-6');
 echo "</td></tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['allegato'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['allegato'] . "</td><td colspan=\"2\">\n";
 $gForm->variousSelect('allegato', $script_transl['allegato_value'], $form['allegato'], 'FacetSelect', false);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['status'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "<td>" . $script_transl['status'] . "</td><td colspan=\"2\">\n";
 $gForm->variousSelect('status', $script_transl['status_value'], $form['status'], 'FacetSelect', false);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td>\n";
-//echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td>" . $script_transl['annota'] . "</td>\n";
+//echo "\t<td colspan=\"2\">
 //      <input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" align=\"right\" maxlength=\"100\" /></td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td colspan=\"2\">
       <textarea name=\"annota\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["annota"] . "</TEXTAREA></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"> Codice identificativo SIAN </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "\t<td> Codice identificativo SIAN </td>\n";
+echo "\t<td colspan=\"2\">
       <input type=\"text\" onkeyup=\"this.value=this.value.replace(/[^\d]/,'')\" name=\"id_SIAN\" value=\"" . $form['id_SIAN'] . "\" align=\"right\" maxlength=\"10\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sqn'] . "</td>";
+echo "\t<td>" . $script_transl['sqn'] . "</td>";
 echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\">\n";
+echo "\t<td >\n";
 echo '<input name="Return" type="submit" value="' . $script_transl['return'] . '">';
 echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
+echo "\t<td  align=\"right\">\n";
 echo '<input name="Submit" type="submit" value="' . ucfirst($script_transl[$toDo]) . '">';
 echo "\t </td>\n";
 echo "</tr>\n";
 ?>
-</table>
+</table></div>
 </form>
 <?php
 require("../../library/include/footer.php");
