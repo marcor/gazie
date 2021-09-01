@@ -172,7 +172,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
       $pdf->Cell(30,4,$mv['caumag'].'-'.substr($mv['descau'],0,17),'TR',0,'',0,'',1);
       $accdescr=$mv['desdoc'];
 	  if ($mv['id_orderman']>0){
-		$accdescr.=' Produzione '.$mv['desorderman'];
+		$accdescr.=' '.$mv['desorderman'];
 	  }
       $accdescr.= ' del '.gaz_format_date($mv['datdoc']);
       if (strlen($mv['ragso1'])>3) {

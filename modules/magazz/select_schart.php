@@ -301,7 +301,7 @@ if (isset($_POST['preview']) and $msg=='') {
             echo "<tr><td class=\"FacetDataTD\" >".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
             echo "<td align=\"center\" class=\"FacetDataTD\" >".$mv['caumag'].'-'.substr($mv['descau'],0,20)."</td>";
 			if ($mv['id_orderman']>0){
-				$mv['desdoc'].=' Produzione '.$mv['desorderman'];
+				$mv['desdoc'].= ' '.$mv['desorderman'];
 			}
             echo "<td class=\"FacetDataTD\" >".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
 			if (intval($mv['id_lotmag'])>0){
