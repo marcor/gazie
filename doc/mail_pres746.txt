@@ -1,0 +1,22 @@
+Titolo:
+
+Vigilandum est semper.
+
+Presentazione:
+
+Elencherò brevemente solo le più importanti novità presenti su questo rilascio e visibili agli utilizzatori, tralasciando completamente la descrizione delle correzioni degli errori e delle migliorie a livello di logica del codice e/o struttura del database:
+
+- Abbiamo creato i "Gruppi articoli", una nuova utilità che consente a GAzie di sincronizzare il suo database in modo efficace e bidirezionale con gli e-commerce che utilizzano le opzioni, le varianti e gli attributi degli articoli in vendita. Per far comprendere il loro significato vi dico che il nostro software chiama "gruppi articoli" ciò che sugli e-commerce vengono normalmente definiti "genitori". (A.de Vincentiis, A.Germani)
+- Aggiunta la tipologia di fattura elettronica TD27-autofattura per autoconsumo. (A.Romano)
+- In Distinta Base è consentito l'utilizzo di codici articoli lunghi solo 2 caratteri. (G.Vallesi)
+- Personalizzando i templates dei documenti di vendita è possibile accodare i certificati dei prodotti in essi contenuti. (A.de Vincentiis)
+- Implementata la gestione delle priorità di pubblicazione "web_public". (A.Germani)
+- Tooltips con immagini contenute alle dimensioni massime. (G.Vallesi)
+- Le ditte a regime dei minimi o forfettari aggiungono sulle fatture di vendita le diciture standard proprie di questi regimi, sia sui pdf che sulle elettroniche xml. (A.de Vincentiis)
+- Quaderno di Campagna: implementata gestione del patentino/autorizzazione per l'uso e l'acquisto di fitosanitari; aggiunto controllo superamento numero trattamenti massimo per coltura, nelle produzioni inserita data di inizio e fine coltivazione e prodotto da raccogliere, aggiunto controllo se il fitofarmaco può essere usato per una determinata coltura e avversità, inserite le fasi fenologiche. (A.Germani)
+- Gestione dei mandati RID, rapporti interbancari diretti. (A.de Vincentiis)
+- Nella distinta di produzione la tabella lotti è stata inglobata alla tabella movimenti di magazzino. (A.Germani)
+- Riscritta modalità di creazione e modifica delle distinte effetti, sia pdf che elettroniche, secondo standard CBI. (A.de Vincentiis)
+- Vendite: inserita gestione durabilità ai sensi dell'Art. 62 legge 24 marzo 2012, n. 27 Decreto-Ministeriale-15570-19-ottobre. (A.Germani)
+
+Antonio de Vincentiis, Montesilvano, 01 settembre 2021
