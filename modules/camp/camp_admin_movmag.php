@@ -76,7 +76,6 @@ if (isset($_POST['erase'])) {
 // se è stato premuto il pulsante di cambio coltura
 if (isset($_POST['cambiocolt'])) { 
 	gaz_dbi_query("UPDATE " . $gTables['campi'] . " SET id_colture = '" . $_POST['id_colture'] . "' WHERE codice = " . $_POST['campo_impianto1']);
-
     $_POST['id_colture'] = 0;
     $_POST['nome_colt'] = "";
     $form['id_colture'] = 0;
@@ -157,7 +156,6 @@ if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
 } else {
     $toDo = 'insert';
 }
-
 
 if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo accesso per UPDATE
     $form['hidden_req'] = '';
@@ -312,7 +310,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);		
 		$form['id_reg'][$form['mov']] = ($itemart)?$itemart['id_reg']:0;
 		$_POST['id_reg'.$form['mov']] = $form['id_reg'][$form['mov']];		
-		$form['artico2'][$form['mov']] = $_POST['artico2'.$form['mov']];
+		$form['artico2'][$form['mov']] = (isset($_POST['artico2'.$form['mov']]))?$_POST['artico2'.$form['mov']]:'';
 	}
 	
 	if (isset($_POST['mov']) ) { // Antonio Germani - se è stato inserito un rigo faccio il parsing di tutti i righi presenti
@@ -325,7 +323,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			} else {
 				$form['conferma'][$m] = "";
 			}
-			$form['artico2'][$m] = $_POST['artico2' . $m];
+			$form['artico2'][$m] = (isset($_POST['artico2' . $m]))?$_POST['artico2' . $m]:'';
 			$form['id_lotmag'][$m] = $_POST['id_lotmag' . $m];
 			$form['lot_or_serial'][$m] = $_POST['lot_or_serial' . $m];
 			
@@ -387,17 +385,28 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			
 			if ($form['artico'][$form['mov']] <> "" && $form['nome_avv'][$form['mov']] <> "") {
 				
-				$query = "SELECT " . 'dose' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$form['mov']] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$form['mov']] . "' LIMIT 1";
+				$query = "SELECT " . 'dose, max_tratt' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$form['mov']] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$form['mov']] . "' LIMIT 1";
 				$result_uso_fito = gaz_dbi_query($query);
-				while ($row = $result_uso_fito->fetch_assoc()) {
-					$dose_usofito = $row['dose']; // prendo la dose specifica
-				}
-				if ($dose_usofito==""){// se non c'è una dose specifica ,a ho inserito altre dosi
+				$row = $result_uso_fito->fetch_assoc();
+				$dose_usofito = ($row)?$row['dose']:0; // prendo la dose specifica				
+				if ($dose_usofito==""){// se non c'è una dose specifica, ma ho inserito altre dosi
 					// segnalo che bisogna controllare se il prodotto è utilizzabile per quella coltura
 					$instantwarning[]="Si prega di controllare se il prodotto '".$form['artico'][$form['mov']]."' è utilizzabile per la coltura e l'avversità selezionate";
 				}
 			} 
-		}		
+		}
+		// controllo il superamento del numero dei trattamenti
+		if (isset($row['max_tratt']) AND $row['max_tratt']>0){
+			$ContTratt=ContTratt($form['artico'][$form['mov']],$_POST['id_orderman']);			
+			if ($ContTratt > $row['max_tratt']){
+				// errore superato il numero di trattamenti annuali ammessi
+				if ($_POST['id_orderman']>0){
+					$instantwarning[]="E stato superato il numero di trattamenti massimo per questa produzione: effettuati ".$ContTratt." ammessi ".$row['max_tratt'];
+				} else {
+					$instantwarning[]="E stato superato il numero di trattamenti massimo per anno solare: effettuati ".$ContTratt." ammessi ".$row['max_tratt'];
+				}
+			}
+		}
 	}
 
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
@@ -740,11 +749,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 					$perc_P = $item['perc_P'];
 					$perc_K = $item['perc_K'];
 				}
-				$query = "SELECT " . 'dose' . ", " . 'tempo_sosp' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$m] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$m] . "' LIMIT 1";
+				$query = "SELECT 'dose', 'tempo_sosp', 'max_tratt' FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$m] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$m] . "' LIMIT 1";
 				$result = gaz_dbi_query($query);
 				while ($row = $result->fetch_assoc()) {
 					$dose_usofito = $row['dose'];
 				}
+				
 			// per ogni rigo articolo devo ciclare i campi di coltivazione per i seguenti controlli  |||||||||||||||||||||||||||
 			
 			$nn=0;$quanti=0;
@@ -785,7 +795,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 								}
 							}
 						}
-					} 
+					}
+					
 					// Antonio Germani controllo se con questo movimento non si supera la doce massima annua di 6Kg ad ha di rame metallo 
 					// e il limite di Azoto annuo impostato per ogni singolo campo
 					
@@ -1699,7 +1710,7 @@ if (intval($form['nome_colt']) == 0) {
 				<div class="col-md-12">
 					<div class="form-group">
 					<label class="FacetFieldCaptionTD">
-						<?php echo $script_transl[29]; ?>
+						<?php echo $script_transl[29],"/Coltivazione"; ?>
 					</label>
 					<select name="id_orderman" class="FacetSelect" onchange="this.form.submit()">
 					<option value="">-------------</option>
@@ -1771,7 +1782,7 @@ if (intval($form['nome_colt']) == 0) {
 						<?php
 						if (strlen($conf_cambio_colt)>0){ // attivo pulsante di conferma cambio
 							?>
-							<button type="submit" name="cambiocolt" title="Cambia coltura nel campo" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-refresh"> Cambia coltura</i></button>
+							<button type="submit" name="cambiocolt" title="<?php echo $conf_cambio_colt; ?>" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-refresh"> Cambia coltura</i></button>
 							<?php
 						}
 						?>					
@@ -1782,7 +1793,16 @@ if (intval($form['nome_colt']) == 0) {
 			<div class="row bg-info"><!--   CAUSALE    -->
 				<div class="col-md-12">
 					<div class="form-group">
-					<label class="FacetFieldCaptionTD"><?php echo $script_transl[2]; ?></label>
+					<label class="FacetFieldCaptionTD">
+						<span data-toggle="popover" title="Inserimento causale o tipo di operazione" 
+						data-content="Inserire il tipo di operazione o causale per indicare cosa si sta facendo, ad esempio, 'Trattamento', 'Concimazione', 'Aratura' etc.<br>
+						La causale fornirà anche l'indicazione di movimentazione magazzino (carico, scarico, non movimenta magazzino).<br>
+						I movimenti con un campo selezionato dovranno obbligatoriamente movimentare il magazzino.<br>
+						Si consiglia di creare o modificare le causali dal modulo Registro di campagna; in questo modo sarà possibile selezionare quali causali mostrare all'inserimento di un movimento del Registro di campagna. Si attiverà, in questo modo, un vero e proprio filtro che escluderà dalla selezione le causali utilizzate dagli altri moduli di GAzie e inutili per il Registro di campagna." 
+						class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
+						</span>
+						<?php echo $script_transl[2]; ?>						
+					</label>
 					<?php 
 					$gForm->selectFromDB('caumag', 'caumag','codice', $form['caumag'], 'codice', 1, ' - ','descri','TRUE','FacetSelect' , null, '', '(type_cau = 1 OR type_cau = 9) AND codice < 80');
 					if (isset($res_caumag['operat']) AND $res_caumag['operat'] == 0) {
@@ -2353,16 +2373,10 @@ if (intval($form['nome_colt']) == 0) {
 							<?php
 					}// fine LOTTI in entrata
 										
-					?>					
-							
-					<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php $form['clfoco'][$form['mov']]; ?>">
-										
-									
-					<?php
-				
-					?>
-					<div class="row ">
-						
+					?>							
+					<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php $form['clfoco'][$form['mov']]; ?>">								
+					
+					<div class="row ">						
 						<?php
 						/*Antonio Germani se è Operaio */
 						if ($form['ins_op'][$form['mov']]!=="") {
@@ -2399,7 +2413,15 @@ if (intval($form['nome_colt']) == 0) {
 					<div class="row"><!-- AVVERSITà -->
 						<div class="col-md-12">
 							<div class="form-group">
-								<label class="FacetFieldCaptionTD"><?php echo $script_transl[20]; ?>
+								<label class="FacetFieldCaptionTD">
+									<span data-toggle="popover" title="Inserimento Avversità" 
+									data-content="Inserire l'avversità che deve essere presente nell'elenco avversita (menù 'Fitofarmaci'->'Avversità').<br>
+									Inserendo l'avversità si attivano una serie di controlli, con relativo avviso, come:<br>
+									- superamento della dose specifica coltura-avversità<br>
+									- superamento del numero massimo di trattamenti coltura-avversità (se c'è una produzione il numero è riferito al periodo della produzione, altrimenti è riferito all'anno solare)<br>"
+									class="glyphicon glyphicon-info-sign" style="cursor: pointer;">
+									</span>
+									<?php echo $script_transl[20]; ?>
 								</label>
 								
 								<!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->

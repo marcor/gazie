@@ -224,4 +224,18 @@ function convertHours($time,$dec = FALSE){
 	$seconds = $parsed['hour'] * 3600 + $parsed['minute'] * 60 + $parsed['second'];
 	return $seconds/$dec;
 }
+function ContTratt($artico,$idProd=""){// restituisce il numero di trattamenti
+		global $gTables,$admin_aziend;
+		$year = date("Y"); 
+		$where=" WHERE artico = '".$artico."' AND tipdoc ='CAM' AND operat = '-1'";
+		if ($idProd>0){
+			$where .=" AND id_orderman = ". $idProd;
+		} else {
+			$where .=" AND SUBSTRING_INDEX(datdoc, '-', 1) = ". $year;
+		}		
+		$query = 'SELECT * FROM `' . $gTables['movmag'] . '` '. $where;
+		//echo $query;
+		$res=gaz_dbi_query ($query);
+		return $res->num_rows;
+}
 ?>
