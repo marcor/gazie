@@ -384,11 +384,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		if (gaz_dbi_get_row($gTables['camp_uso_fitofarmaci'], "numero_registrazione", $form['id_reg'][$form['mov']])){ // se è stata inserito almeno una dose specifica
 			
 			if ($form['artico'][$form['mov']] <> "" && $form['nome_avv'][$form['mov']] <> "") {
-				
-				$query = "SELECT " . 'dose, max_tratt' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$form['mov']] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$form['mov']] . "' LIMIT 1";
-				$result_uso_fito = gaz_dbi_query($query);
-				$row = $result_uso_fito->fetch_assoc();
-				$dose_usofito = ($row)?$row['dose']:0; // prendo la dose specifica				
+				$uso_spec = gaz_dbi_get_row($gTables['camp_uso_fitofarmaci'], "numero_registrazione", $form['id_reg'][$form['mov']],"AND id_colt = '". $form['id_colture']. "' AND id_avv = '". $form['id_avversita'][$form['mov']] ."'");
+
+				$dose_usofito = (isset($uso_spec))?$uso_spec['dose']:''; // prendo la dose specifica				
 				if ($dose_usofito==""){// se non c'è una dose specifica, ma ho inserito altre dosi
 					// segnalo che bisogna controllare se il prodotto è utilizzabile per quella coltura
 					$instantwarning[]="Si prega di controllare se il prodotto '".$form['artico'][$form['mov']]."' è utilizzabile per la coltura e l'avversità selezionate";
@@ -738,25 +736,20 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
                 }
             }
 			// Antonio Germani dall'articolo prendo la dose massima, il rame metallo, e NPK
-				$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]);
-				$dose_artico = 0;
-				$rame_metallo = 0;
-				$perc_N = 0;
-				if (isset($item)){
-					$dose_artico = $item['dose_massima']; // prendo la dose
-					$rame_metallo = $item['rame_metallico']; // prendo anche il rame metallo del prodotto oggetto del movimento
-					$perc_N = $item['perc_N'];
-					$perc_P = $item['perc_P'];
-					$perc_K = $item['perc_K'];
-				}
-				$query = "SELECT 'dose', 'tempo_sosp', 'max_tratt' FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$m] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$m] . "' LIMIT 1";
-				$result = gaz_dbi_query($query);
-				while ($row = $result->fetch_assoc()) {
-					$dose_usofito = $row['dose'];
-				}
-				
+			$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]);
+			$dose_artico = 0;
+			$rame_metallo = 0;
+			$perc_N = 0;
+			if (isset($item)){
+				$dose_artico = $item['dose_massima']; // prendo la dose
+				$rame_metallo = $item['rame_metallico']; // prendo anche il rame metallo del prodotto oggetto del movimento
+				$perc_N = $item['perc_N'];
+				$perc_P = $item['perc_P'];
+				$perc_K = $item['perc_K'];
+			}
+			$uso_spec = gaz_dbi_get_row($gTables['camp_uso_fitofarmaci'], "numero_registrazione", $form['id_reg'][$m],"AND id_colt = '". $form['id_colture']. "' AND id_avv = '". $form['id_avversita'][$m] ."'");
+			$dose_usofito = (isset($uso_spec))?$uso_spec['dose']:''; // prendo la dose specifica			
 			// per ogni rigo articolo devo ciclare i campi di coltivazione per i seguenti controlli  |||||||||||||||||||||||||||
-			
 			$nn=0;$quanti=0;
 			if (isset ($form['dim_campo1'])) { // se c'è almeno un campo
 				for ($n = 1;$n <= $form['ncamp'];++$n) { // ciclo i campi inseriti
@@ -766,15 +759,16 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 					} else {
 						$quanti=$form['quanti'][$m];
 					}
+					
 					if ($dose_usofito > 0) { //Controllo se la quantità o dose è giusta rapportata al campo di coltivazione
 						if ($dose_usofito > 0 && $quanti > $dose_usofito * $form['dim_campo'.$n] && $form['operat'] == - 1 && $form['dim_campo'.$n] > 0) {
 							$msg.= "34+"; // errore dose uso fito superata
-							$instantwarning[]="Dose superata nel prodotto ". $form['artico'][$m] ." con la coltura ". $form['nome_colt'] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_usofito * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
+							$instantwarning[]="Dose specifica superata nel prodotto ". $form['artico'][$m] ." con la coltura ". $form['nome_colt'] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_usofito * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
 						}
 					} else {
 						if ($dose_artico > 0 && $quanti > $dose_artico * $form['dim_campo'.$n] && $form['operat'] == - 1 && $form['dim_campo'.$n] > 0) {
 							$msg.= "25+"; // errore dose artico superata
-							$instantwarning[]="Dose superata nel prodotto ". $form['artico'][$m] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_artico * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
+							$instantwarning[]="Dose generica superata nel prodotto ". $form['artico'][$m] .". La quantità massima utilizzabile è ". gaz_format_quantity($dose_artico * $form['dim_campo'.$n], 1, $admin_aziend['decimal_quantity']) .".";
 						}
 					}
 					// Antonio Germani Calcolo quanto rame metallo e Azoto N è stato usato nell'anno di esecuzione di questo movimento
@@ -2084,9 +2078,10 @@ if (intval($form['nome_colt']) == 0) {
 							if ($form['artico'][$form['mov']] != "" ) { // SE C'è UN ARTICOLO
 								// carico l'articolo dell'attuale mov in itemart
 								$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
+							$uso_spec = gaz_dbi_get_row($gTables['camp_uso_fitofarmaci'], "numero_registrazione", $itemart['id_reg'],"AND id_colt = '". $form['nome_colt']. "' AND id_avv = '". $form['id_avversita'][$form['mov']] ."'");
 								if (isset($itemart)){
 									$print_unimis = $itemart['unimis'];						
-									$dose = $itemart['dose_massima']; // prendo anche la dose
+									$dose = ($uso_spec)?$uso_spec['dose']:$itemart['dose_massima']; // prendo anche la dose; possibilmente la specifica altrimenti la generica
 									$scorta = $itemart['scorta']; // prendo la scorta minima
 									$descri = $itemart['descri']; //prendo descrizione articolo
 									$form['lot_or_serial'][$form['mov']] = $itemart['lot_or_serial']; // prendo il lotto
@@ -2115,7 +2110,7 @@ if (intval($form['nome_colt']) == 0) {
 										}
 									}
 									if ($dose > 0) {
-										echo "<br>Dose generica: ", gaz_format_quantity($dose, 1, $admin_aziend['decimal_quantity']), " ", $print_unimis, "/ha";
+										echo "<br>Dose: ", gaz_format_quantity($dose, 1, $admin_aziend['decimal_quantity']), " ", $print_unimis, "/ha";
 									}
 								}
 								if ($service == 2 && $form['operat'] == 1) { // se è articolo composito avviso che non è possibile il carico
@@ -2328,7 +2323,7 @@ if (intval($form['nome_colt']) == 0) {
 												echo "<option value=\"" . $rowlot['id'] . "\"" . $selected . ">" . $rowlot['id'] . " - " . $rowlot['identifier'] . " - " . gaz_format_date($rowlot['expiry']) . "</option>\n";
 											}
 											echo "</select>&nbsp;";
-											If ((intval($form['id_lotmag'][$form['mov']]) > 0) && (intval($sel) == 1)) { // se è stato selezionato un lotto
+											if ((intval($form['id_lotmag'][$form['mov']]) > 0) && (intval($sel) == 1)) { // se è stato selezionato un lotto
 												$rowlot = gaz_dbi_get_row($gTables['lotmag'], "id", $form['id_lotmag'][$form['mov']]);
 												$form['identifier'][$form['mov']] = $rowlot['identifier'];
 												$form['expiry'][$form['mov']] = $rowlot['expiry'];
