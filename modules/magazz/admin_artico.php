@@ -79,8 +79,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form['codice'] = trim($form['codice']);
   $form['ritorno'] = $_POST['ritorno'];
   $form['web_public_init'] = $_POST['web_public_init'];
-  $form['var_id'] = $_POST['var_id'];
-  $form['var_name'] = $_POST['var_name'];
+  $form['var_id'] = (isset($_POST['var_id']))?$_POST['var_id']:'';
+  $form['var_name'] = (isset($_POST['var_name']))?$_POST['var_name']:'';
   $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
   // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
   $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
