@@ -415,7 +415,7 @@ class shopsynchronizegazSynchro {
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
 			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
-			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
+			$accpass = (gaz_dbi_get_row($gTables['company_config'], "var", "accpass"))?gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val']:'';
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
 			// "articoli-gazie.php" è il nome del file interfaccia presente nella root del sito e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
@@ -432,9 +432,9 @@ class shopsynchronizegazSynchro {
 			}
 			if (intval($id['barcode'])==0) {// se non c'è barcode allora è nullo
 				$id['barcode']="NULL";
-			}			
+			}
 		
-			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
+			if ((gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')) AND gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
 
 				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
 				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
@@ -462,22 +462,36 @@ class shopsynchronizegazSynchro {
 						$rawres['style'] = 'danger';									
 					} 
 				}				
-			} else {
+			} else {				
 			 
 				// imposto la connessione al server
 				$conn_id = ftp_connect($ftp_host);
-
-				// effettuo login con user e pass
-				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-
+				
 				// controllo se la connessione è OK...
-				if ((!$conn_id) or (!$mylogin)){ 
+				if ((!$conn_id)){ 
 					// non si connette FALSE
 					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
 					$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
+					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					return;
+				}
+
+				// effettuo login con user e pass
+				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+
+				// controllo se il log-in è OK...
+				if ((!$mylogin)){ 
+					// non si connette FALSE
+					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['button'] = 'Avviso eCommerce';
+					$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
+					$rawres['link'] = '../shop-synchronize/synchronize.php';
+					$rawres['style'] = 'danger';
+					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					return;
 				} 
 			}			
 				 
