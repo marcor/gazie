@@ -1479,7 +1479,7 @@ if (isset($_POST['nome_colt'])) {
 }
 require ("../../library/include/header.php");
 $script_transl = HeadMain(0,array('custom/autocomplete',));
-require ("../../modules/camp/custom_css.php");
+
 require ("./lang." . $admin_aziend['lang'] . ".php");
 ?>
 <!-- spengo pannello gestione patentino -->
@@ -1923,6 +1923,7 @@ if (intval($form['nome_colt']) == 0) {
 					</div>
 					<div class="modal-body">
 						<p>E' necessario fornire i dati dell'autorizzazione all'acquisto e all'uso di prodotti fitosanitari. <br>Puoi continuare solo se sei sicuro. <br>Sei sicuro di volerlo fare?</p>
+						<p> Per inserire i dati del patentino cliccare sul pulsante a destra, nella sezione operatore, in fondo a questo modulo.
 					</div>
 					<div class="modal-footer">
 						<input type="submit" class="btn btn-default pull-left" name="confermapat<?php echo $form['adminid']; ?>"  value="Non voglio continuare">
