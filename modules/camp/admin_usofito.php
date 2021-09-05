@@ -50,7 +50,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	if (isset($_POST['Cancel'])){
 		$_POST['cod_art'] = "";
 		$_POST['codart'] = "";
-		$_POST['nomefito'] = "";
+		$_POST['nome_fito'] = "";
 		$_POST['nome_fito'] = "";
 		$_POST['id_colt'] = 0;
 		$_POST['nome_colt'] = "";
@@ -58,28 +58,29 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 		$_POST['nome_avv'] = "";
 		$_POST['dose'] = 0;
 		$_POST['tempo_sosp'] = 0;
+		$_POST['max_tratt'] = 0;
 	}
 	$_POST['id_colt'] = intval ($_POST['nome_colt']);
 	$_POST['id_avv'] = intval ($_POST['nome_avv']);
 	$_POST['cod_art'] = $_POST['codart'];
-    $form=gaz_dbi_parse_post('camp_uso_fitofarmaci');//ricarico i registri per il form	
-	$form['id_reg'] = $_POST['id_reg'];	
+    $form=gaz_dbi_parse_post('camp_uso_fitofarmaci');//ricarico i registri per il form		
 	$form['nome_colt'] = $_POST['nome_colt'];	
 	$form['nome_avv'] = $_POST['nome_avv'];
-	$form['nome_fito'] = $_POST['nomefito'];
+	$form['nome_fito'] = $_POST['nome_fito'];
+	$form['max_tratt'] = $_POST['max_tratt'];
 	
-	if ($form['nome_fito'] AND $form['id_reg']==0){
-		$form['id_reg'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "PRODOTTO", $form['nome_fito'])['NUMERO_REGISTRAZIONE'];
-		if (intval($form['id_reg'])>0){
-			 $row = gaz_dbi_get_row($gTables['artico'], "id_reg", $form['id_reg']);
+	if ($form['nome_fito']){
+		$form['numero_registrazione'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "PRODOTTO", $form['nome_fito'])['NUMERO_REGISTRAZIONE'];
+		if (intval($form['numero_registrazione'])>0){
+			 $row = gaz_dbi_get_row($gTables['artico'], "id_reg", $form['numero_registrazione']);
 			$form['cod_art'] = ($row)?$row['codice']:'';
 		} else {
 			$form['nome_fito']="";
 		}
-	} elseif ($form['cod_art'] AND $form['id_reg']==0){
-		$form['id_reg'] = gaz_dbi_get_row($gTables['artico'], "codice", $form['cod_art'])['id_reg'];
-		if (intval($form['id_reg'])>0){
-			$form['nome_fito'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "NUMERO_REGISTRAZIONE", $form['id_reg'])['PRODOTTO'];
+	} elseif ($form['cod_art']){
+		$form['numero_registrazione'] = gaz_dbi_get_row($gTables['artico'], "codice", $form['cod_art'])['id_reg'];
+		if (intval($form['numero_registrazione'])>0){
+			$form['nome_fito'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "NUMERO_REGISTRAZIONE", $form['numero_registrazione'])['PRODOTTO'];
 		} else {
 			$form['cod_art']=$_POST['codart'];
 		}
@@ -94,7 +95,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     if (isset($_POST['ins'])) {
       
 		if ($toDo == 'insert') { // controllo se il codice esiste se e' un inserimento 
-			$rscheck = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], "NUMERO_REGISTRAZIONE = '".$_POST['id_reg']."' AND id_colt = '".intval($_POST['nome_colt'])."' AND id_avv ='".intval($_POST['nome_avv'])."'" ,2,0,1);
+			$rscheck = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], "NUMERO_REGISTRAZIONE = '".$_POST['numero_registrazione']."' AND id_colt = '".intval($_POST['nome_colt'])."' AND id_avv ='".intval($_POST['nome_avv'])."'" ,2,0,1);
 			if ($rscheck->num_rows > 0){ // controllo se è stata giè inserita questa dose specifica 
 			    $msg .= "6+";
 			}
@@ -111,7 +112,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 		} else {
 			$msg .= "7+";
 		}
-       if (empty($form['cod_art'])){  // controllo nome articolo vuoto
+       if (empty($form['cod_art'])){  // controllo codice articolo vuoto
              $msg .= "8+";
        } else {
 			$rs_ctrl = gaz_dbi_get_row($gTables['artico'],'codice',$form['cod_art']);
@@ -139,20 +140,20 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           
 			if ($toDo == 'update') { // e' una modifica
 
-			$query="UPDATE " . $gTables['camp_uso_fitofarmaci'] . " SET cod_art ='"  .$form['cod_art']. "', id_colt ='" . $form['id_colt'] . "', id_avv = '".$form['id_avv']. "', dose = '".$form['dose']. "', tempo_sosp = '".$form['tempo_sosp']."', NUMERO_REGISTRAZIONE = '".$form['id_reg']."' WHERE id ='". $form['id'] ."'";
+			$query="UPDATE " . $gTables['camp_uso_fitofarmaci'] . " SET max_tratt='". $form['max_tratt'] ."', cod_art ='"  .$form['cod_art']. "', id_colt ='" . $form['id_colt'] . "', id_avv = '".$form['id_avv']. "', dose = '".$form['dose']. "', tempo_sosp = '".$form['tempo_sosp']."', NUMERO_REGISTRAZIONE = '".$form['numero_registrazione']."' WHERE id ='". $form['id'] ."'";
 			gaz_dbi_query ($query) ;
 			header("Location: ".$_POST['ritorno']);
 			exit;
 
-			} else { // e' un'inserimento
-				$form['NUMERO_REGISTRAZIONE'] = $_POST['id_reg'];	
+			} else { // e' un'inserimento					
 				gaz_dbi_table_insert('camp_uso_fitofarmaci',$form);
 				$form['id_colt'] = 0;
 				$form['nome_colt'] = "";
 				$form['id_avv'] = 0;
 				$form['nome_avv'] = "";
 				$form['dose'] = 0;
-				$form['tempo_sosp'] = 0;			
+				$form['tempo_sosp'] = 0;
+				$form['max_tratt'] = 0;
 				$warning="inserito";
 			}
 			//header("Location: ".$_POST['ritorno']);
@@ -165,10 +166,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$colt = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$form['id_colt']);
 	$form['nome_colt'] = $form['id_colt']." - ".$colt['nome_colt'];
 	$avv = gaz_dbi_get_row($gTables['camp_avversita'],"id_avv",$form['id_avv']);
-	$form['nome_avv'] = $form['id_avv']." - ".$avv['nome_avv'];
-	$form['id_reg'] = gaz_dbi_get_row($gTables['artico'], "codice", $form['cod_art'])['id_reg'];	
-	$form['nome_fito'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "NUMERO_REGISTRAZIONE", $form['id_reg'])['PRODOTTO'];
-	   
+	$form['nome_avv'] = $form['id_avv']." - ".$avv['nome_avv'];	
+	$form['nome_fito'] = gaz_dbi_get_row($gTables['camp_fitofarmaci'], "NUMERO_REGISTRAZIONE", $form['numero_registrazione'])['PRODOTTO'];
+	  
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
 	// controllo se la tabella DB fitofarmaci è popolata
 	$warning="";
@@ -188,7 +188,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['dose'] = 0;
 	$form['tempo_sosp'] = 0;
 	$form['nome_fito'] = "";
-	$form['id_reg'] = 0;
+	$form['numero_registrazione'] = 0;
+	$form['max_tratt'] = 0;
 }
 
 require("../../library/include/header.php");
@@ -198,56 +199,8 @@ if ($toDo == "update") {
 } else {
    $title = ucwords($script_transl[$toDo].$script_transl[0]);
 }
-print "<form method=\"POST\" enctype=\"multipart/form-data\" id=\"add-product\">\n";
-if ($warning == "NoFito"){ // se non c'è, bisogna creare il data base fitofarmaci
-	?>
-	<div class="alert alert-warning alert-dismissible" style="max-width: 70%; margin-left: 15%;">
-		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		<strong>Warning!</strong> Il database Fitofarmaci non esiste. E' necessario crearlo <a  href="javascript:Popup('../../modules/camp/update_fitofarmaci.php')"> Crea database Fitofarmaci <i class="glyphicon glyphicon-import" style="color:green" ></i></a>
-	</div>
-	<?php
-}
-if ($warning == "NoGazie"){ // Articolo non presente in GAzie
-	?>
-	<div class="alert alert-warning alert-dismissible" style="max-width: 70%; margin-left: 15%;">
-		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		<strong>Warning!</strong> Questo fitofarmaco non esiste in GAzie. Per utilizzarlo è necessario inserirlo <a  href="javascript:Popup('../../modules/camp/camp_admin_artico.php?Insert')"> Inserisci Fitofarmaco <i class="glyphicon glyphicon-import" style="color:green" ></i></a>
-	</div>
-	<?php
-}
-if ($warning == "inserito"){ // Dose fitofarmaco correttamente inserita
-	?>
-	<div class="autodism alert alert-success alert-dismissible" style="max-width: 70%; margin-left: 15%;">
-		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		<strong>OK!</strong> Inserimento avvenuto correttamente 
-	</div>
-	<?php
-}
-print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
-print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
-print "<input type=\"hidden\" value=\"".$form['id_reg']."\" name=\"id_reg\">\n";
-print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
-print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
-if (!empty($msg)) {
-    $message = "";
-    $rsmsg = array_slice( explode('+',chop($msg)),0,-1);
-    foreach ($rsmsg as $value){
-            $message .= $script_transl['error']."! -> ";
-            $rsval = explode('-',chop($value));
-            foreach ($rsval as $valmsg){
-                    $message .= $script_transl[$valmsg]." ";
-            }
-            $message .= "<br />";
-    }
-    echo '<tr><td colspan="5" class="FacetDataTDred">'.$message."</td></tr>\n";
-}
- 
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id\" value=\"".$form['id']."\" />".$form['id']."</td></tr>\n";
-
 ?>
-<!-- inizio inserisci articolo   -->
-	
-  <script>
+<script>
 <!-- Antonio Germani - chiude automaticamente tutti gli alert autodism -->
 $(document).ready(function () { 
 	window.setTimeout(function() {
@@ -326,39 +279,8 @@ $(document).ready(function () {
 	   function Popup(apri) {
 	      window.open(apri, "", stile);
 	   }
-  </script>
-
-<tr>
-	<td class="FacetFieldCaptionTD"> 
-		<?php 
-		echo $script_transl[2];
-		?>
-	</td>
-	<td class="FacetDataTD">	 
-		<div class="col-md-12">				
-			<input class="col-md-12" type="text" id="nomefito" name="nomefito" value="<?php echo $form['nome_fito']; ?>" placeholder="Ricerca nome fitofarmaco" autocomplete="off" tabindex="1">
-			<ul class="dropdown-menu" style="left: 20%; padding: 0px;" id="product_search"></ul>									
-		</div>	
-	</td>
-</tr>
-<tr>
-	<td class="FacetFieldCaptionTD"> 
-		<?php 
-		echo "Codice articolo";
-		?>
-	</td>
-	<td class="FacetDataTD">	 
-		<div class="col-md-12">				
-			<input class="col-md-12" type="text" id="codart" name="codart" value="<?php echo $form['cod_art']; ?>" placeholder="Ricerca codice articolo" autocomplete="off" tabindex="1">
-			<ul class="dropdown-menu" style="left: 20%; padding: 0px;" id="codart_search"></ul>									
-		</div>	
-	</td>
-</tr>
-
-
-<!-- inizio inserisci coltura  -->
+	   
 <!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_coltura	-->	
-  <script>
 	$(document).ready(function() {
 	$("input#autocomplete2").autocomplete({
 		source: [<?php
@@ -382,19 +304,9 @@ $(document).ready(function () {
     }
 	});
 	});
-  </script>
- <!-- fine autocompletamento -->
-<?php
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3]."</td><td class=\"FacetDataTD\"\n>";
-?>
-     <input id="autocomplete2" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50"/>
-	 <input type="hidden" value="<?php echo intval ($form['nome_colt']); ?>" name="id_colt"/>
-	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete2 -->
+ <!-- fine autocompletamento -->	   
 
-
-<!-- inizio inserisci avversita  -->
 <!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_avversita	-->	
-  <script>
 	$(document).ready(function() {
 	$("input#autocomplete3").autocomplete({
 		source: [<?php
@@ -418,34 +330,195 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3]."</td><td clas
     }
 	});
 	});
-  </script>
+ 
  <!-- fine autocompletamento -->
- <?php
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[4]."</td><td class=\"FacetDataTD\"\n>";
-?>
-     <input id="autocomplete3" type="text" value="<?php echo $form['nome_avv']; ?>" name="nome_avv" maxlength="50"/>
-	 <input type="hidden" value="<?php echo intval ($form['nome_avv']); ?>" name="id_avv"/>
-	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->
-	 
-<?php
+</script>
 
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"dose\" value=\"".number_format ($form['dose'],$admin_aziend['decimal_price'], ',', '')."\" maxlength=\"8\"  />";
-$res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $form['cod_art']);
-echo ($res2)?$res2['uniacq']:'' . "/ha</td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[10]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"tempo_sosp\" value=\"".$form['tempo_sosp']."\" maxlength=\"2\"  /> gg </td></tr>\n";
-print "<tr>";
-if ($toDo !== 'update') {
-	print "<td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n</td>";
-}
-print "<td class=\"FacetDataTD\" align=\"right\">\n";
-print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
-if ($toDo == 'update') {
-   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['update']).'!"></td></tr><tr></tr>';
-} else {
-   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.ucfirst($script_transl['insert']).'!"></td></tr><tr></tr>';
-}
-print "</table>\n";
-?>
+<!--   >>>>>>>>>>>    inizio FORM            >>>>>>>>>>  -->
+<form method="POST" enctype="multipart/form-data" id="add-product">
+<div align="center" class="FacetFormHeaderFont">
+	<?php echo $title; ?>
+</div>
+<div class="panel panel-default gaz-table-form div-bordered">
+	<div class="container-fluid">
+		<?php
+		if ($warning == "NoFito"){ // se non c'è, bisogna creare il data base fitofarmaci
+			?>
+			<div class="alert alert-warning alert-dismissible" style="max-width: 70%; margin-left: 15%;">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+				<strong>Warning!</strong> Il database Fitofarmaci non esiste. E' necessario crearlo <a  href="javascript:Popup('../../modules/camp/update_fitofarmaci.php')"> Crea database Fitofarmaci <i class="glyphicon glyphicon-import" style="color:green" ></i></a>
+			</div>
+			<?php
+		}
+		if ($warning == "NoGazie"){ // Articolo non presente in GAzie
+			?>
+			<div class="alert alert-warning alert-dismissible" style="max-width: 70%; margin-left: 15%;">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+				<strong>Warning!</strong> Questo fitofarmaco non esiste in GAzie. Per utilizzarlo è necessario inserirlo <a  href="javascript:Popup('../../modules/camp/camp_admin_artico.php?Insert')"> Inserisci Fitofarmaco <i class="glyphicon glyphicon-import" style="color:green" ></i></a>
+			</div>
+			<?php
+		}
+		if ($warning == "inserito"){ // Dose fitofarmaco correttamente inserita
+			?>
+			<div class="autodism alert alert-success alert-dismissible" style="max-width: 70%; margin-left: 15%;">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+				<strong>OK!</strong> Inserimento avvenuto correttamente 
+			</div>
+			<?php
+		}
+		?>
+		<input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
+		<input type="hidden" value="<?php echo $_POST['ritorno']; ?>" name="ritorno">
+		<input type="hidden" value="<?php echo $form['numero_registrazione']; ?>" name="numero_registrazione">
+		
+		
+		<?php
+		if (!empty($msg)) {
+			$message = "";
+			$rsmsg = array_slice( explode('+',chop($msg)),0,-1);
+			foreach ($rsmsg as $value){
+					$message .= $script_transl['error']."! -> ";
+					$rsval = explode('-',chop($value));
+					foreach ($rsval as $valmsg){
+							$message .= $script_transl[$valmsg]." ";
+					}
+					$message .= "<br />";
+			}
+		?>
+		<div class="row bg-info">
+			<div colspan="5" class="FacetDataTDred">
+				<?php echo $message; ?>
+			</div>
+		</div> <!-- row -->
+		<?php 
+		}
+		?>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="FacetFieldCaptionTD"><?php echo $script_transl[1]; ?>
+					</label>				
+					<input type="hidden" name="id" value="<?php echo $form['id']; ?>" /><?php echo $form['id']; ?>			
+				</div>
+			</div>
+		</div> <!-- row -->
+
+		<!-- inizio inserisci articolo   -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="col-sm-4 FacetFieldCaptionTD"> 
+						<?php 
+						echo $script_transl[2];
+						?>
+					</label>							
+					<input class="col-sm-8 FacetSelect" type="text" id="nomefito" name="nome_fito" value="<?php echo $form['nome_fito']; ?>" placeholder="Ricerca nome fitofarmaco" autocomplete="off" tabindex="1">
+					<ul class="dropdown-menu" style="left: 20%; padding: 0px;" id="product_search"></ul>		
+				</div>
+			</div>
+		</div> <!-- row -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="col-sm-4 FacetFieldCaptionTD"> 
+						<?php 
+						echo "Codice articolo";
+						?>
+					</label>
+					<input class="col-sm-8 FacetSelect" type="text" id="codart" name="codart" value="<?php echo $form['cod_art']; ?>" placeholder="Ricerca codice articolo" autocomplete="off" tabindex="2">
+					<ul class="dropdown-menu" style="left: 20%; padding: 0px;" id="codart_search"></ul>			
+				</div>
+			</div>
+		</div> <!-- row -->
+
+		<!-- inizio inserisci coltura  -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="col-sm-4 FacetFieldCaptionTD">
+						<?php echo $script_transl[3]; ?>
+					</label>
+					<input class="col-sm-8 FacetSelect" id="autocomplete2" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50" tabindex="3">
+					<input type="hidden" value="<?php echo intval ($form['nome_colt']); ?>" name="id_colt"/>					
+				</div>
+			</div>
+		</div> <!-- row --> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete2 -->
+
+		<!-- inizio inserisci avversita  -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="col-sm-4 FacetFieldCaptionTD">
+						<?php echo $script_transl[4]; ?>
+					</label>
+					 <input class="col-sm-8 FacetSelect" id="autocomplete3" type="text" value="<?php echo $form['nome_avv']; ?>" name="nome_avv" maxlength="50" tabindex="4">
+					 <input type="hidden" value="<?php echo intval ($form['nome_avv']); ?>" name="id_avv"/>					 
+				</div>
+			</div>
+		</div> <!-- row --> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="col-sm-4 FacetFieldCaptionTD">
+						<?php echo $script_transl[5]; ?>
+					</label>
+					<input class="col-sm-3" type="text" name="dose" value="<?php echo number_format ($form['dose'],$admin_aziend['decimal_price'], ',', ''); ?>" maxlength="8"  tabindex="5"/>
+					<?php 
+					$res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $form['cod_art']);
+					echo ($res2)?$res2['uniacq']:'';
+					?>
+					/ha
+				</div>
+			</div>
+		</div> <!-- row -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="col-sm-4 FacetFieldCaptionTD">
+						<?php echo $script_transl[10]; ?>
+					</label>
+					<input class="col-sm-3" type="text" name="tempo_sosp" value="<?php echo $form['tempo_sosp']; ?>" maxlength="2"  tabindex="6"/> 
+					gg	
+				</div>
+			</div>
+		</div> <!-- row -->
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">			
+					<label class="col-sm-4 FacetFieldCaptionTD">
+						Numero massimo di trattamenti per coltura:
+					</label>					
+					<input class="col-sm-3" type="number" name="max_tratt" value="<?php echo $form['max_tratt'];?>" maxlength="8" tabindex="7"/>					
+				</div>
+			</div>
+		</div> <!-- row -->
+		<div class="row">
+		<?php
+		if ($toDo !== 'update') {
+			?>
+			<input type="submit" class="pull-left" name="Cancel" value="<?php echo $script_transl['cancel']; ?>">
+			<?php
+		}
+		?>
+		
+		<input type="submit" name="Return" value="<?php echo $script_transl['return']; ?>">
+		<?php
+		if ($toDo == 'update') {
+			?>
+		   <input type="submit" class="pull-right" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="<?php echo ucfirst($script_transl['update'])?>" tabindex="8">
+		  
+		   
+			<?php
+		} else {
+			?>
+			<input type="submit" class="pull-right" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="<?php echo ucfirst($script_transl['insert'])?>" tabindex="8">
+			<?php
+		}
+		?>
+		</div> <!-- row -->
+	</div> <!-- container  -->
+</div> <!-- panel  -->
 </form>
 
 <?php    

@@ -106,7 +106,7 @@ $strScript = array("camp_browse_document.php" =>
 		"Dose",
 		"Codice già utilizzato",
 		"Coltura inesistente",
-		"Campo fitofarmaco vuoto",
+		"Codice articolo vuoto o inesistente",
 		"Avversità inesistente",
 		"Tempo sospensione",
 		"Fitofarmaco non presente in GAzie",

@@ -1049,10 +1049,10 @@ select: function(event, ui) {
 														<input type="hidden" value="<?php echo $val['id_doc']; ?>" name="rows[<?php echo $k; ?>][id_doc]">
 														<input type="hidden" value="<?php echo $val['extension']; ?>" name="rows[<?php echo $k; ?>][extension]">
 														<input type="hidden" value="<?php echo $val['title']; ?>" name="rows[<?php echo $k; ?>][title]">
-														<?php echo DATA_DIR . 'files/' . $val['id_doc'] . '.' . $val['extension']; ?>
-														<a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>" class="btn btn-default btn-sm">
+														
+														<a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']," o Scarica: ", DATA_DIR . 'files/' . $val['id_doc'] . '.' . $val['extension']; ?>" class="btn btn-default btn-sm">
 															<i class="glyphicon glyphicon-file"></i>
-														</a><?php echo $val['title']; ?>
+														</a><?php echo " ",$val['title']; ?>
 														<input tabindex="30" type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
 												</div>
 												<?php } ?>
@@ -1068,7 +1068,7 @@ select: function(event, ui) {
 								<div class="row">
 									<div class="col-md-12">
 										<div class="form-group">
-										Dopo l'inserimento sarà possibile iniziare a caricare i documenti
+										Dopo l'inserimento sarà possibile iniziare a caricare la scheda di sicurezza e i documenti da allegare
 										</div>
 									</div>
 								</div>

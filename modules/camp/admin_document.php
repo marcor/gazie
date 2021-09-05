@@ -39,9 +39,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if (isset($_POST['Submit'])) { // conferma tutto
 		if ($_FILES['userfile']['error']==0) { // se è stato selezionato un nuovo file
 			preg_match("/\.([^\.]+)$/", $_FILES['userfile']['name'], $matches);
-			
-			$form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
-			
+			if (strlen($form['title'])==0){// se non è stata inserita una descrizione inserisco quella di default
+				$form['title']='Original name: '.$_FILES["userfile"]["name"]; 
+			}
 			$form['extension']=$matches[1];
 			//print $_FILES['userfile']['type'];
 			if ( $_FILES['userfile']['type'] == "image/png" ||
@@ -71,7 +71,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$msg .= "2+";
 			}
 		} else {
-           $msg .= "3+";
+			if (isset($_POST['Insert'])){ // se insert e non è stato selezionato nessun file segnalo errore
+				$msg .= "3+";
+			}
 		}
 		if (empty($msg)) { // nessun errore
 			// controllo che ci sia la cartella doc
@@ -163,7 +165,7 @@ echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['item']."</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">".$form['item_ref']."</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['note']."</td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">Descrizione </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"title\" value=\"".$form['title']."\" maxlength=\"50\"  /></td>\n";
 echo "</tr>\n";
