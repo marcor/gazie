@@ -165,11 +165,12 @@ function confirFae(link){
     var flux_status = $("#doc1_"+tes_id).attr("dialog_flux_status");
     var flux_descri = $("#doc1_"+tes_id).attr("dialog_flux_descri");
     var sdiflux = $("#doc1_"+tes_id).attr("dialog_fae_sdiflux");
+    var zipref = $("#doc1_"+tes_id).attr("zip_ref");
     sdiflux = (sdiflux)?"&sdiflux="+sdiflux:"";
     switch (flux_status) {
         case "DI":
             $("#dialog_fae_content_DI").addClass("bg-default");
-            $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+link.href+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
+            $("#dialog_fae_content_DI span").html("<p class=\'text-center\'><a href=\'"+link.href+"&invia"+sdiflux+"\' class=\'btn btn-default\'><b><i class=\'glyphicon glyphicon-send\'></i> Invia solo " + $("#doc1_"+tes_id).attr("dialog_fae_filename")+ "</i> </b></a></p><p><a href=\'"+zipref+"\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i> Impacchetta con eventuali altri precedenti</b></a></p>");
             $("#dialog_fae_content_DI").show();
             console.log(flux_status);
         break;
@@ -196,7 +197,7 @@ function confirFae(link){
         break;
         case "RE":
             $("#dialog_fae_content_RE").addClass("bg-info text-center");
-            $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p><p>Oppure <a href=\'"+link.href+"&packet\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i></b> Impacchetta con eventuali altri precedenti</a></p>");
+            $("#dialog_fae_content_RE span").html("<p><a href=\'"+link.href+"&reinvia\' class=\'btn btn-danger\'>" + $("#doc1_"+tes_id).attr("dialog_fae_reinvio")+ " <br/>" + numrei.toString() + "° reinvio </a></p><p>Oppure <a href=\'"+zipref+"&packet\' class=\'btn btn-warning\'><b><i class=\'glyphicon glyphicon-compressed\'> </i></b> Impacchetta con eventuali altri precedenti</a></p>");
             $("#dialog_fae_content_RE").show();
             console.log(flux_status);
         break;
@@ -575,6 +576,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                
                             }
                             if ( $sdi_flux ) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
+                                $zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
                                 $last_flux_status = explode(',',$r['refs_flux_status'])[0];
                                 $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';    
                                 $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
@@ -587,7 +589,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 }
                             } else { //// installazione senza gestore dei flussi con il SdI
                                 $last_flux_status =($zipped)?'RZ':'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
-                                $modulo_fae = 'fae_packaging.php?nolib';
+                                $zip_ref = 'fae_packaging.php?nolib';
                                 $sdihilight = 'default';
                                 $sdilabel = 'xml';
                             }                           
@@ -617,7 +619,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 $sdititle = 'genera il file '.$r['fae_attuale'].' o fai il '.intval($r['fattura_elettronica_reinvii']+1).'° reinvio ';
                                 break;
                             }
-                            echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" dialog_fae_reinvio="'.$r['fae_reinvio'].'" dialog_flux_descri="'.$r['flux_descri'].'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$r['fae_attuale'].'" dialog_fae_numrei="'.$r['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $r['tipdoc'].' '. $r['numfat'].'/'. $r['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
+                            echo '<a class="btn btn-xs btn-'.$sdihilight.' btn-xml" onclick="confirFae(this);return false;" id="doc1_'.$r['id_tes'].'" dialog_fae_reinvio="'.$r['fae_reinvio'].'" dialog_flux_descri="'.$r['flux_descri'].'" dialog_fae_sdiflux="'.$sdi_flux.'" dialog_fae_filename="'.$r['fae_attuale'].'" dialog_fae_numrei="'.$r['fattura_elettronica_reinvii'].'" dialog_fae_numfat="'. $r['tipdoc'].' '. $r['numfat'].'/'. $r['seziva'].'" dialog_flux_status="'. $last_flux_status.'" target="_blank" href="'.$modulo_fae.'" zip_ref="'.$zip_ref.'" title="'.$sdititle.'"> '.strtoupper($sdilabel).' </a><a class="btn btn-xs btn-default" title="Visualizza in stile" href="electronic_invoice.php?id_tes='.$r['id_tes'].'&viewxml" target="_blank"><i class="glyphicon glyphicon-eye-open"></i> </a>';
                             if ($r['fattura_elettronica_reinvii'] > 0) {
                                 echo '<br/><small>' . $r['fattura_elettronica_reinvii'] . ($r['fattura_elettronica_reinvii']==1 ? ' reinvio' : ' reinvii') . '</small><br/>';
                             }
