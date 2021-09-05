@@ -103,8 +103,12 @@ if (isset($_POST['conferma'])) { // se confermato
 			if ($esiste==0) { //registro cliente se non esiste
 					if ($_POST['country'.$ord]=="IT"){ // se la nazione è IT
 						$lang="1";
-					} else {
+					} else {// se non è italiano imposto il codice univoco con x e se non c'è imposto il codice fiscale con il codice cliente
 						$lang="0";
+						$_POST['fe_cod_univoco'.$ord]="xxxxxxx";
+						if (strlen($_POST['codfis'.$ord])==0){
+							$_POST['codfis'.$ord] = $_POST['ref_ecommerce_id_customer'.$ord];
+						}
 					}
 					if (strlen ($_POST['codfis'.$ord])>1 AND intval ($_POST['codfis'.$ord])==0){ // se il codice fiscale non è numerico 
 							if (substr($_POST['codfis'.$ord],9,2)>40){ // deduco il sesso 

@@ -663,8 +663,12 @@ class shopsynchronizegazSynchro {
 						If ($esiste==0) { //registro cliente se non esiste
 							if ($order->CustomerCountry=="IT"){ // se la nazione è IT
 								$lang="1";
-							} else {
+							} else { // se non è italiano imposto il codice univoco con x e il codice fiscale con il codice cliente e-commerce
 								$lang="0";
+								$order->CustomerCodeFattEl = "xxxxxxx";
+								if (strlen($order->CustomerFiscalCode)==0){
+									$order->CustomerFiscalCode = $order->CustomerCode;
+								}
 							}
 							if (strlen ($order->CustomerFiscalCode)>1 AND intval ($order->CustomerFiscalCode)==0){ // se il codice fiscale non è numerico 
 								if (substr($order->CustomerFiscalCode,9,2)>40){ // deduco il sesso 
@@ -677,7 +681,7 @@ class shopsynchronizegazSynchro {
 							}
 							gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($order->CustomerSurname)." ". addslashes($order->CustomerName) . "', '" . addslashes($order->BusinessName) . "', '". $sexper. "', '".addslashes($order->CustomerAddress) ."', '".$order->CustomerPostCode."', '". addslashes($order->CustomerCity) ."', '". $order->CustomerProvince ."', '" . $order->CustomerCountry. "', '1', '".$lang."', '". $order->CustomerTel ."', '". $order->CustomerFiscalCode ."', '" . $order->CustomerVatCode . "', '" . $order->CustomerCodeFattEl . "', '". $order->CustomerEmail . "', '". $order->CustomerPecEmail . "')");
 							
-							gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('". $clfoco . "', '" . $id_anagra . "', '". intval($order->PriceListNum) ."' ,'" .addslashes($order->CustomerName)." ".addslashes($order->CustomerSurname) . "', '". $order->CustomerShippingDestin ."', 'S', 'T', '".$order->PaymentName."')");
+							gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('". $order->CustomerCode ."', '". $clfoco . "', '" . $id_anagra . "', '". intval($order->PriceListNum) ."' ,'" .addslashes($order->CustomerName)." ".addslashes($order->CustomerSurname) . "', '". $order->CustomerShippingDestin ."', 'S', 'T', '".$order->PaymentName."')");
 						}
 						
 						if ($order->TotalDiscount>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
