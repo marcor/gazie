@@ -81,6 +81,17 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (empty($form["indspe"])) {
             $msg .= '1+';
         }
+        // se il cliente è straniero formatto i campi pariva e codis per poter generare una fattura elettronica corretta 
+        if ($form['country']!='IT') {
+            if (strlen($form['pariva']) < 5 && strlen($form['codfis']) < 5) { // non ho scelto nulla, uso il codice cliente del piano dei conti per entrambi
+                $form['pariva']=$real_code;
+                $form['codfis']=$real_code;    
+            } elseif (strlen($form['pariva']) < 5) { // ho scelto solo il codice fiscale, imposto la partita iva allo stesso valore
+                $form['pariva']=$form['codfis'];    
+            } else if (strlen($form['codfis']) < 5) { // ho scelto solo la partita iva, imposto il codice fiscale allo stesso valore
+                $form['codfis']=$form['pariva']; 
+            } 
+        }
         // faccio i controlli sul codice postale
         $rs_pc = gaz_dbi_get_row($gTables['country'], 'iso', $form["country"]);
         $cap = new postal_code;
