@@ -924,9 +924,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $cliente = $anagrafica->getPartner($form['clfoco']);
         }
         $result = gaz_dbi_get_row($gTables['imball'], "codice", $cliente['imball']);
-        $form['imball'] = $result['descri'];
+        $form['imball'] = ($result)?$result['descri']:'';
         if (($form['net_weight'] - $form['gross_weight']) >= 0) {
-            $form['gross_weight'] += $result['weight'];
+            $form['gross_weight'] += ($result)?$result['weight']:0;
         }
         $result = gaz_dbi_get_row($gTables['portos'], "codice", $cliente['portos']);
         $form['portos'] = $result['descri'];
