@@ -107,7 +107,10 @@ if (isset($_POST['conferma'])) { // se confermato
 						$lang="0";
 						$_POST['fe_cod_univoco'.$ord]="xxxxxxx";
 						if (strlen($_POST['codfis'.$ord])==0){
-							$_POST['codfis'.$ord] = $_POST['ref_ecommerce_id_customer'.$ord];
+							$_POST['codfis'.$ord] = sprintf("%07d", $_POST['ref_ecommerce_id_customer'.$ord]);// riempio il campo codice fiscale con un numero di almeno 7 cifre
+						}
+						if (strlen($_POST['pariva'.$ord])==0){
+							$_POST['pariva'.$ord]= sprintf("%07d", $_POST['ref_ecommerce_id_customer'.$ord]);// riempio il campo partita iva con un numero di almeno 7 cifre
 						}
 					}
 					if (strlen ($_POST['codfis'.$ord])>1 AND intval ($_POST['codfis'.$ord])==0){ // se il codice fiscale non è numerico 

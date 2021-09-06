@@ -667,7 +667,10 @@ class shopsynchronizegazSynchro {
 								$lang="0";
 								$order->CustomerCodeFattEl = "xxxxxxx";
 								if (strlen($order->CustomerFiscalCode)==0){
-									$order->CustomerFiscalCode = $order->CustomerCode;
+									$order->CustomerFiscalCode = sprintf("%07d", $order->CustomerCode);// riempio il campo codice fiscale con un numero di almeno 7 cifre
+								}
+								if (strlen($order->CustomerVatCode)==0){
+									$order->CustomerVatCode= sprintf("%07d", $order->CustomerCode);// riempio il campo piva con un numero di almeno 7 cifre
 								}
 							}
 							if (strlen ($order->CustomerFiscalCode)>1 AND intval ($order->CustomerFiscalCode)==0){ // se il codice fiscale non è numerico 
