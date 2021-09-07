@@ -41,7 +41,6 @@ if (isset($_POST['mode']) || isset($_GET['mode'])) {
         foreach ($_POST as $k => $v) {
             $value=filter_var($v, FILTER_SANITIZE_STRING);
             $key=filter_var($k, FILTER_SANITIZE_STRING);
-            print 'sasasa:'. $key. ' asda>'.$value.'<br>';
             gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
         }
         header("Location: config_aziend.php?mode=modal&ok_insert");
