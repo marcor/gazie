@@ -281,7 +281,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$toDo = 'update';
 		$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
 		$form['seziva'] = $tesdoc['seziva'];
-		$msg['err'][] = 'file_exists';
+		$msg['war'][] = 'file_exists'; //potrebbe non essere un errore, per esempio quando si importa lo stesso file contenente più fatture
 	} elseif (!empty($form['fattura_elettronica_original_name'])) { // non c'è sul database è un inserimento
 		$toDo = 'insert';
 		// INIZIO acquisizione e pulizia file xml o p7m
@@ -483,7 +483,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			al fine contabilizzare direttamente qui senza passare per la contabilizzazione di GAzie e tentare di creare dei
 			righi documenti la cui somma coincida con il totale imponibile riportato sul tracciato 
 			*/
-			$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
+            // prendo i valori dal documento corrente
+            $curr_doc_cont = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]");
+            $cudo=$curr_doc_cont->item(0);
+			$DettaglioLinee = $cudo->getElementsByTagName('DettaglioLinee');
 			$nl=0;
 			$nl_NumeroLinea = []; // matrice che conterrà i riferimenti tra $nl e il NumeroLinea, da utilizzare per assegnare Numero/DataDDT se presenti
 			foreach ($DettaglioLinee as $item) {
