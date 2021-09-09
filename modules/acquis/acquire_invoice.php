@@ -643,8 +643,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							$form['codvat_'.$post_nl] = 'non trovata';
 						}
 					}
-                    print_r($form['codvat_'.$post_nl]); print '<br>';
-
 				}
 
 			}
@@ -1223,7 +1221,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					//$imp_scad = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/ImportoPagamento")->item(0)->nodeValue;
 					$fae_mode = $xpath->query("//FatturaElettronicaBody[".$form['curr_doc']."]/DatiPagamento/DettaglioPagamento/ModalitaPagamento")->item(0)->nodeValue;
 					$pagame = gaz_dbi_get_row($gTables['pagame'], "fae_mode", $fae_mode);
-					$form['pagame'] = $pagame['codice'];
+					$form['pagame'] = ($pagame)?$pagame['codice']:0;
 					$form['new_acconcile']=0;
 				}
 			}
