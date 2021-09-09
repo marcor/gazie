@@ -587,7 +587,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					}
 				}
 				$post_nl = $nl-1;
-				if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+				if (empty($_POST['Submit_file']) && !isset($_POST['Select_doc'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',(isset($_POST['codart_'.$post_nl]))?substr($_POST['codart_'.$post_nl],0,15):'');
 					$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
 					$form['codric_'.$post_nl] = (isset($_POST['codric_'.$post_nl]))?intval($_POST['codric_'.$post_nl]):'';
@@ -643,13 +643,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							$form['codvat_'.$post_nl] = 'non trovata';
 						}
 					}
+                    print_r($form['codvat_'.$post_nl]); print '<br>';
+
 				}
+
 			}
 
-			/* 
-			Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
-			*/
-			//print_r($nl_NumeroLinea);
+			//Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
 			$anomalia="";$numddt="";
 			if ($doc->getElementsByTagName('DatiDDT')->length>=1) { 
 				// quando ci sono dei DdT capita che il rigo che precede sia la descrizione del seguente allora faccio un primo attraversamento dei riferimenti ai righi perchè capita che alcuni righi descrittivi che precedono siano comunque riferiti a ddt
@@ -924,11 +924,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$bin = base64_decode($base64);
 				file_put_contents( DATA_DIR . 'files/tmp/' . $name_file, $bin);
 			}
-			if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+			if (isset($_POST['Select_doc'])) { // vengo da una selezione di fattura corrente  contenuta in un xml multiplo 
+                // non modifico i valori derivanti da $form
+			} else if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 				//$form['datreg'] = substr($_POST['datreg'],0,10);
-				$form['pagame'] = (isset($_POST['pagame']))?intval($_POST['pagame']):0;
-				$form['new_acconcile'] = (isset($_POST['new_acconcile']))?intval($_POST['new_acconcile']):'';
-				$form['seziva'] = (isset($_POST['seziva']))?intval($_POST['seziva']):0;
+				$form['pagame'] = intval($_POST['pagame']);
+				$form['new_acconcile'] = intval($_POST['new_acconcile']);
+				$form['seziva'] = intval($_POST['seziva']);
 			}
 
 			if (isset($_POST['Submit_form']) && count($msg['err'])==0) { // confermo le scelte sul form, inserisco i dati sul db ma solo se non ho errori
@@ -1054,7 +1056,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				$ctrl_ddt='';
 				foreach ($form['rows'] as $i => $v) { // inserisco i righi
-				 //print_r($v); print '<br>';
+
 				 $form['rows'][$i]['status']="INSERT";
 					$post_nl=$i-1;
 					
@@ -1273,7 +1275,7 @@ function setDate(name) {
     if (count($msg['war']) > 0) { // ho un alert
         $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
     }
-//echo "<pre>",print_r($form);
+
 if ($toDo=='insert' || $toDo=='update' ) {
 	if ($f_ex){
 	if (empty($form['curr_doc']) && count($docs) > 1) {
