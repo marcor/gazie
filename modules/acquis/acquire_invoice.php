@@ -585,10 +585,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				$post_nl = $nl-1;
 				if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
-					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
+					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',(isset($_POST['codart_'.$post_nl]))?substr($_POST['codart_'.$post_nl],0,15):'');
 					$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
-					$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
-					$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
+					$form['codric_'.$post_nl] = (isset($_POST['codric_'.$post_nl]))?intval($_POST['codric_'.$post_nl]):'';
+					$form['codvat_'.$post_nl] = (isset($_POST['codvat_'.$post_nl]))?intval($_POST['codvat_'.$post_nl]):'';
 				} else { 
 					if (isset( $form['rows'][$nl]['codart'])){
 						$form['codart_'.$post_nl] = $form['rows'][$nl]['codart'];
@@ -647,7 +647,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			Se la fattura è derivante da un DdT aggiungo i relativi  elementi  all'array dei righi  
 			*/
 			//print_r($nl_NumeroLinea);
-			$anomalia="";
+			$anomalia="";$numddt="";
 			if ($doc->getElementsByTagName('DatiDDT')->length>=1) { 
 				// quando ci sono dei DdT capita che il rigo che precede sia la descrizione del seguente allora faccio un primo attraversamento dei riferimenti ai righi perchè capita che alcuni righi descrittivi che precedono siano comunque riferiti a ddt
 				$ddt=$doc->getElementsByTagName('DatiDDT');
@@ -923,9 +923,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 				//$form['datreg'] = substr($_POST['datreg'],0,10);
-				$form['pagame'] = intval($_POST['pagame']);
-				$form['new_acconcile'] = intval($_POST['new_acconcile']);
-				$form['seziva'] = intval($_POST['seziva']);
+				$form['pagame'] = (isset($_POST['pagame']))?intval($_POST['pagame']):0;
+				$form['new_acconcile'] = (isset($_POST['new_acconcile']))?intval($_POST['new_acconcile']):'';
+				$form['seziva'] = (isset($_POST['seziva']))?intval($_POST['seziva']):0;
 			}
 
 			if (isset($_POST['Submit_form']) && count($msg['err'])==0) { // confermo le scelte sul form, inserisco i dati sul db ma solo se non ho errori
