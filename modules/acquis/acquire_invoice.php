@@ -276,18 +276,20 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$AltreFattF = ReceiveFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('fattf' => $FattF, 'ini_date' => $form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D'], 'fin_date' => $form['date_fin_Y'] . '-' . $form['date_fin_M'] . '-' . $form['date_fin_D'])));
 	}
 
-	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'BINARY fattura_elettronica_original_name', substr($form['fattura_elettronica_original_name'],0,-4).'.'.$form['curr_doc'].substr($form['fattura_elettronica_original_name'],-4)
-);
-	if ($tesdoc && !empty($form['fattura_elettronica_original_name'])) { // c'è anche sul database, è una modifica
+	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'BINARY fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
+	if (!empty($form['fattura_elettronica_original_name'])) { // c'è anche sul database, è una modifica
+      if ($tesdoc){
 		$toDo = 'update';
 		$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
 		$form['seziva'] = $tesdoc['seziva'];
-		$msg['err'][] = 'file_exists'; //potrebbe non essere un errore, per esempio quando si importa lo stesso file contenente più fatture
-	} elseif (!empty($form['fattura_elettronica_original_name'])) { // non c'è sul database è un inserimento
+		$msg['war'][] = 'file_exists'; //potrebbe non essere un errore, per esempio quando si importa lo stesso file contenente più fatture
+      }else{
 		$toDo = 'insert';
+          
+      }
 		// INIZIO acquisizione e pulizia file xml o p7m
 		$file_name = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
-		if (!isset($_POST['datreg'])){
+		if (!isset($_POST['datreg'])&& !$tesdoc){
 			$form['datreg'] = date("d/m/Y",filemtime($file_name));
 		}
 		$p7mContent = @file_get_contents($file_name);
@@ -1043,7 +1045,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				if ($doc->getElementsByTagName('DatiDDT')->length<1 OR $anomalia == "AnomaliaDDT=FAT" OR $form['tipdoc']=="AFC"){ // se non ci sono ddt vuol dire che è una fattura immediata AFA 
 					//oppure se c'è anomalia è accompagnatoria e la trattiamo sempre come AFA 
 					//oppure se è una nota credito AFC non devo considerare eventuali DDT a riferimento
-                    $form['fattura_elettronica_original_name']= substr($form['fattura_elettronica_original_name'],0,-4).'.'.$form['curr_doc'].substr($form['fattura_elettronica_original_name'],-4);
 					$ultimo_id=tesdocInsert($form); // Antonio Germani - creo fattura immediata senza ddt
                     $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
                     file_put_contents($fn,$form['fattura_elettronica_original_content']); 
@@ -1094,7 +1095,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							if ($anomalia=="Anomalia"){
 								$form['status']="DdtAnomalo";
 							}
-                            $form['fattura_elettronica_original_name']= substr($form['fattura_elettronica_original_name'],0,-4).'.'.$form['curr_doc'].substr($form['fattura_elettronica_original_name'],-4);
 							$ultimo_id =tesdocInsert($form); // Antonio Germani - creo fattura differita
                             $fn = DATA_DIR . 'files/' . $admin_aziend["codice"] . '/'.$ultimo_id.'.inv';
                             file_put_contents($fn,$form['fattura_elettronica_original_content']); 
