@@ -75,7 +75,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $msg['err'][]='sel';
 		}
         $dtofsgntr = gaz_format_date($form['dtofsgntr'], true);
-        if (!gaz_format_date($dtofsgntr,'chk')||(strtotime($dtofsgntr) > strtotime('now'))){
+        if (!gaz_format_date($form['dtofsgntr'],'chk')||(strtotime($dtofsgntr) > strtotime('now'))){
             $msg['err'][]='date';
         }
         if (intval($form['mndtid'])<1){
