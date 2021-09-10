@@ -93,7 +93,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	$form['datfat'] = substr($_POST['datfat'],0,10);
     $form['datemi'] = substr($_POST['datemi'],0,10);
     $form['protoc'] = intval($_POST['protoc']);
-    $form['numdoc'] = $_POST['numdoc'];
+    $form['numdoc'] = intval($_POST['numdoc']);
     $form['numfat'] = $_POST['numfat'];
 	if ($form['tipdoc']=='AFA' || $form['tipdoc']=='AFC'){ // sulle fatture-n.c. forzo datemi e numdoc agli stessi valori di datfat e numfat
 	    $form['datemi'] = $form['datfat'];
@@ -1839,20 +1839,23 @@ $script_transl = HeadMain(0, array(
         ));
 ?>
 <script language="JavaScript">
-    $(function () {
-        $(".datepicker").datepicker({dateFormat: 'dd-mm-yy'});
-        $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
-        $("#datreg").change(function () {
-            this.form.submit();
-        });
-        $("#datfat").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
-        $("#datfat").change(function () {
-            this.form.submit();
-        });
-        $("#datemi").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
-        $("#datemi").change(function () {
-            this.form.submit();
-        });
+$(function () {
+    $(".datepicker").datepicker({dateFormat: 'dd-mm-yy'});
+    $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+    $("#datreg").change(function () {
+      this.form.submit();
+    });
+    $("#datfat").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+    $("#datfat").change(function () {
+      this.form.submit();
+    });
+    $("#datemi").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+    $("#datemi").change(function () {
+      this.form.submit();
+    });
+    $('#numdoc').keyup(function(){
+        this.value = this.value.replace(/[^\d]/g, '');
+    });
 <?php
 if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
     ?>
@@ -1999,7 +2002,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
                     <div class="form-group col-sm-12 col-md-6">
                         <label for="numdoc" class="col-form-label"><?php echo $script_transl['numdoc']; ?></label>
                         <div>
-                            <input type="text" class="form-control"  id="numdoc" name="numdoc" value="<?php echo $form['numdoc']; ?>">
+                            <input type="text" class="form-control" min="1" id="numdoc" name="numdoc" value="<?php echo $form['numdoc']; ?>">
                             <input type="hidden" id="numfat" name="numfat" value="<?php echo $form['numfat']; ?>">
                         </div>
                     </div>
