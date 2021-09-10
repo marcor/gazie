@@ -586,7 +586,22 @@ $strScript = array("browse_document.php" =>
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'
+        )
+    ),
+	"admin_wharehouse.php" =>
+    array('title' => 'Lista dei magazzini',
+        'ins_this' => 'Inserimento nuovo magazzino',
+        'upd_this' => 'Modifica il magazzino',
+        'err' => array(
+            'name' => 'Il nome del magazzino deve essere lungo almeno 4 caratteri'			
         ),
+        'war' => array(
+            'ok_ins' => 'Magazzino inserito con successo'
+		),
+        'name' => 'Nome',
+        'web_url' => 'Indirizzo web',
+        'image' => 'Immagine',
+        'note_other' => 'Descrizione',
     )
 );
 ?>
