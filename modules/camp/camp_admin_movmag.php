@@ -50,6 +50,7 @@ $service = "";
 $instantwarning=array();
 $avv_conf=0;
 $today = strtotime(date("Y-m-d H:i:s", time()));
+$todaystr = date("Y-m-d", time());
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -2384,7 +2385,7 @@ if (intval($form['nome_colt']) == 0) {
 									</label>
 								
 									<?php
-									$g2Form->selectFrom2DB('staff','clfoco','codice','descri', 'staff'.$form['mov'],'id_staff', $form['staff'][$form['mov']], 'id_staff', 1, ' - ','id_clfoco','TRUE','FacetSelect' , null, '', '','', $disabled);
+									$g2Form->selectFrom2DB('staff','clfoco','codice','descri', 'staff'.$form['mov'],'id_staff', $form['staff'][$form['mov']], 'id_staff', 1, ' - ','id_clfoco','TRUE','FacetSelect' , null, '', "(end_date >= '$todaystr') OR (end_date IS NULL)",'', $disabled);
 									?>
 								</div>
 							</div>
@@ -2548,8 +2549,7 @@ if (intval($form['nome_colt']) == 0) {
 							 LEFT JOIN ".$gTables['clfoco']." on (".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id)
 							 LEFT JOIN ".$gTables['staff']." on (".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice)
 							 LEFT JOIN ".$gTables['admin']." on (".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id)",
-							 $gTables['staff'].".id_clfoco > 0 OR ". $gTables['admin'] .".id_anagra > 0
-							 " );
+							 "(".$gTables['staff'].".id_clfoco > 0 OR ". $gTables['admin'] .".id_anagra > 0) AND (". $gTables['staff'] .".end_date >= '". $todaystr ."' OR ". $gTables['staff'] .".end_date IS NULL)");
 							$sel=0;
 							while ($row = $sql->fetch_assoc()){ 
 								$selected = "";
