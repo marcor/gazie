@@ -224,15 +224,17 @@ if ($k>0){
                     </tr>      
                 </thead>    
                 <tbody>
-                    <tr>              
+                    <tr>
+						<!-- Antonio Germani - tolta la produzione perché non funzionava e non può più essere associata al giorno ma alle ore lavorate nella nuova tabella 'staff_work_movements'
                         <td align="right">
 							<?php echo 'PRODUZIONE'; ?> 
                         </td>
                         <td>
+						-->
 						<?php
-							$select_prod = new selectproduction("rows[".$k."][".$week_days['mon']."][id_orderman]");
-							$select_prod->addSelected($form['rows'][$k][$week_days['mon']]['id_orderman']);
-							$select_prod->output($form['rows'][$k][$week_days['mon']]['coseprod']);
+						//	$select_prod = new selectproduction("rows[".$k."][".$week_days['mon']."][id_orderman]");
+						//	$select_prod->addSelected($form['rows'][$k][$week_days['mon']]['id_orderman']);
+						//	$select_prod->output($form['rows'][$k][$week_days['mon']]['coseprod']);
 						?>
 						</td>
                         <td>						

@@ -140,41 +140,41 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 				// richiamo dal database i dati del giorno
 				$work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $mv['id_staff'], "AND work_day = '{$aDates[$i]['strdate']}'");
 				
-				if ($work_h['hours_normal']>=0.01){
+				if (isset($work_h) AND $work_h['hours_normal']>=0.01){
 					$hn=number_format($work_h['hours_normal'],1,',','');
 				} else {
 					$hn='-';	
 				}
-				if ($work_h['hours_extra']>=0.01){
+				if (isset($work_h) AND $work_h['hours_extra']>=0.01){
 					$he=number_format($work_h['hours_extra'],1,',','');
 				} else {
 					$he='';	
 				}
-				if ($work_h['id_absence_type']>=1){
+				if (isset($work_h) AND $work_h['id_absence_type']>=1){
 					$r_at = gaz_dbi_get_row($gTables['staff_absence_type'], "id_absence", $work_h['id_absence_type']);
 					$at=$r_at['causal'];
 					$leg_absence[$at]=$r_at['descri_ext'];
 				} else {
 					$at='';	
 				}
-				if ($work_h['hours_absence']>=0.01){
+				if (isset($work_h) AND $work_h['hours_absence']>=0.01){
 					$ha=number_format($work_h['hours_absence'],1,',','');
 				} else {
 					$ha='';	
 				}
-				if ($work_h['id_other_type']>=1){
+				if (isset($work_h) AND $work_h['id_other_type']>=1){
 					$r_ot = gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $work_h['id_other_type']);
 					$ot=$script_transl['work_type'][$r_ot['id_work_type']][0];
 					$leg_other[$ot]= $script_transl['work_type'][$r_ot['id_work_type']][1].'=>'.$r_ot['descri'];
 				} else {
 					$ot='';	
 				}
-				if ($work_h['hours_other']>=0.01){
+				if (isset($work_h) AND $work_h['hours_other']>=0.01){
 					$ho=number_format($work_h['hours_other'],1,',','');
 				} else {
 					$ho='';	
 				}
-				if (!empty(trim($work_h['note']))){
+				if (isset($work_h) AND !empty(trim($work_h['note']))){
 					$note=$work_h['note'];
 					$dn=gaz_format_date($aDates[$i]['strdate'],false,true);
 					$leg_note[$dn]= $note;
