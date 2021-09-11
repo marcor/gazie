@@ -1008,6 +1008,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['gioinp'] = date("d");
     $form['mesinp'] = date("m");
     $form['anninp'] = date("Y");
+	$form['datemi'] = date("Y-m-d", time());
 	$form['iniprod'] = date ("d-m-Y");
 	$form['iniprodtime'] = date ("H:i");
 	$form['fineprod'] = date ("d-m-Y");
@@ -1506,7 +1507,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 				?>
 				<input type="hidden" name="quantip" Value="<?php echo $form['quantip']; ?>"/>
 				<?php 
-				echo $resartico['unimis'];
+				echo ($resartico)?$resartico['unimis']:'';
 				
 				if ($form['quantipord'] - $form['quantip'] > 0) {
 					echo " Sono ancora da produrre: ", gaz_format_quantity($form['quantipord'] - $form['quantip'], 0, $admin_aziend['decimal_quantity']);
@@ -1637,8 +1638,27 @@ echo "</td></tr>";
 // Antonio Germani selezione responsabile o addetto alla produzione fra l'elenco staff
 // SELECT da staff con acquisizione nome da clfoco
 echo "<tr><td class=\"FacetFieldCaptionTD\">Responsabile/addetto produzione</td><td class=\"FacetDataTD\">\n";
-$gForm->selectFrom2DB('staff','clfoco','codice','descri','id_staff_def','id_staff', $form['id_staff_def'],'', 1, ' - ','id_clfoco','TRUE','FacetSelect' , null, '');
-
+?>
+<select name="id_staff_def" onchange="this.form.submit()">
+<?php 		
+$sql = gaz_dbi_dyn_query ($gTables['anagra'].".* ",
+ $gTables['anagra']."
+ LEFT JOIN ".$gTables['clfoco']." on (".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id)
+ LEFT JOIN ".$gTables['staff']." on (".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice)
+ LEFT JOIN ".$gTables['admin']." on (".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id)",
+ "(".$gTables['staff'].".id_clfoco > 0 OR ". $gTables['admin'] .".id_anagra > 0) AND (". $gTables['staff'] .".end_date >= '". $form['datemi'] ."' OR ". $gTables['staff'] .".end_date IS NULL)");
+$sel=0;
+while ($row = $sql->fetch_assoc()){ 
+	$selected = "";
+	if ($row['id'] == $form['id_staff_def']) {
+		$selected = "selected";
+		$sel=1;									
+	}
+	echo "<option ".$selected." value=\"".$row['id']."\">" . $row['ragso1'] ." ".$row['ragso2']. "</option>";
+}				
+?>				
+</select>
+<?php
 // se è una produzione industriale visualizzo data e ora di inizio e fine
 // Inserimento data inizio lavori
 echo "<tr>
