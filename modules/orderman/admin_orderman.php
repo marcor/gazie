@@ -1655,7 +1655,10 @@ while ($row = $sql->fetch_assoc()){
 		$sel=1;									
 	}
 	echo "<option ".$selected." value=\"".$row['id']."\">" . $row['ragso1'] ." ".$row['ragso2']. "</option>";
-}				
+}
+if ($sel==0){						
+	echo "<option selected value=\"\"></option>";
+} 				
 ?>				
 </select>
 <?php
