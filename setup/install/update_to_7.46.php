@@ -56,7 +56,7 @@ if (isset($_SESSION['table_prefix'])) {
 
 $result = gaz_dbi_dyn_query("*", $table_prefix.'_admin', 1);
 while ($row = gaz_dbi_fetch_array($result)) {
-	gaz_dbi_query("INSERT INTO ". $table_prefix . "_anagra SET ragso1='" . $row['user_firstname']."', ragso2='" . $row['user_lastname']."', legrap_pf_nome='" . $row['user_firstname']."', legrap_pf_cognome='" . $row['user_lastname']."', e_mail='" . $row['user_email']."', telefo='" . $row['user_telephone']."'");		
+	gaz_dbi_query("INSERT INTO ". $table_prefix . "_anagra SET ragso1='" . addslashes($row['user_firstname'])."', ragso2='" . addslashes($row['user_lastname'])."', legrap_pf_nome='" . addslashes($row['user_firstname'])."', legrap_pf_cognome='" . addslashes($row['user_lastname'])."', e_mail='" . addslashes($row['user_email'])."', telefo='" . addslashes($row['user_telephone'])."'");		
     $id_anagra=gaz_dbi_last_id();
     gaz_dbi_put_row($table_prefix . "_admin",'user_id',$row['user_id'],'id_anagra',$id_anagra);
     echo "<p>Il nome e cognome dell'utente <b>".$row['user_name']."</b> adesso è presente anche sul'archivio delle anagrafiche comuni (".$table_prefix."_anagra)</p>";
