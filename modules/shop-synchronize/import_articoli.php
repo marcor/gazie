@@ -99,7 +99,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					unlink (DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension']);
 				}
 			}
-			
+		
 			// se è inserimento o se è update e c'è un'immagine e se è selezionato
 			if ((!$esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg" AND $_GET['imp']=="impval") OR ($esiste AND strlen( $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval")){
 				
@@ -180,9 +180,9 @@ if (isset($_POST['conferma'])) { // se confermato
 				// creo un json array per la variante
 				$arrayvar= array("var_id" => floatval($_POST['characteristic_id'.$ord]), "var_name" => $_POST['characteristic'.$ord]);
 				$arrayvar = json_encode ($arrayvar);
+			} else {
+				$arrayvar = "";
 			}
-			
-			
 			
 			if ($esiste AND $_GET['upd']=="updval"){ // se esiste l'articolo ed è attivo l'update, aggiorno l'articolo
 				
@@ -238,11 +238,24 @@ if (isset($_POST['conferma'])) { // se confermato
 					}
 				
 			} elseif (!$esiste AND $_GET['imp']=="impval"){ // altrimenti, se è attivo l'inserimento, inserisco un nuovo articolo
-			
+		
 				// prima di inserire il nuovo controllo se l'e-commerce ha mandato il codice articolo e se è già in uso in GAzie	
 				
 				if (strlen($_POST['codice'.$ord])<1){// se l'e-commerce non ha inviato un codice me lo creo
 					$_POST['codice'.$ord] = substr($_POST['descri'.$ord],0,10)."-".substr($_POST['product_id'.$ord],-4);
+				}
+				
+				// se non esiste la categoria in GAzie, la creo				
+				if ($category == 0 OR $category == ""){
+					$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
+					$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
+					$cat['codice'] = $ultimo_codice['codice']+1;
+					$cat['ref_ecommerce_id_category'] = $_POST['category_id'.$ord];
+					$cat['descri'] = $_POST['category'.$ord];					
+					$code_confirm=gaz_dbi_table_insert('catmer',$cat);
+					if ($code_confirm==$category){ // se l'insert è andato bene, assegno l'id categoria al prossimo insert artico
+						$category=$cat['codice'];
+					}
 				}
 				
 				unset($usato);
@@ -273,7 +286,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			}			
 		}		
 	}
-	
+		
 	header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=1");
     exit;
 } else {

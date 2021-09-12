@@ -269,7 +269,7 @@ $access=base64_encode($accpass);
 $headers = @get_headers($urlinterf.'?access='.$access);
 if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 
-	$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.mktime()) ;
+	$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.time()) ;
 	if (!$xml){
 		?>
 		<script>
