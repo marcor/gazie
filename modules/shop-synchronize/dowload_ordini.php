@@ -223,6 +223,19 @@ if (isset($_POST['conferma'])) { // se confermato
 						}
 					}
 					
+					// se non esiste la categoria in GAzie, la creo				
+					if ($category == 0 OR $category == ""){
+						$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
+						$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
+						$cat['codice'] = $ultimo_codice['codice']+1;
+						$cat['ref_ecommerce_id_category'] = $_POST['catmer'.$ord.$row];
+						$cat['descri'] = $_POST['catmer_descri'.$ord.$row];					
+						$code_confirm=gaz_dbi_table_insert('catmer',$cat);
+						if ($code_confirm==$category){ // se l'insert è andato bene, assegno l'id categoria al prossimo insert artico
+							$category=$cat['codice'];
+						}
+					}
+					
 					// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato				
 					unset($usato);
 					$usato = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);// controllo se il codice è già stato usato in GAzie	
@@ -355,6 +368,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 							echo '<input type="hidden" name="adddescri'. $n . $nr.'" value="'. $orderrow->AddDescription . '">';
 							echo '<input type="hidden" name="stock'. $n . $nr.'" value="'. $orderrow->Stock . '">';
 							echo '<input type="hidden" name="catmer'. $n . $nr.'" value="'. $orderrow->Category . '">';
+							echo '<input type="hidden" name="catmer_descri'. $n . $nr.'" value="'. $orderrow->ProductCategory . '">';
 							echo '<input type="hidden" name="quanti'. $n . $nr.'" value="'. $orderrow->Qty . '">';
 							echo '<input type="hidden" name="prelis_imp'. $n . $nr.'" value="'. $orderrow->Price . '">';
 							echo '<input type="hidden" name="prelis_vatinc'. $n . $nr.'" value="'. $orderrow->PriceVATincl . '">';
