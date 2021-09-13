@@ -230,10 +230,9 @@ if (isset($_POST['conferma'])) { // se confermato
 						$cat['codice'] = $ultimo_codice['codice']+1;
 						$cat['ref_ecommerce_id_category'] = $_POST['catmer'.$ord.$row];
 						$cat['descri'] = $_POST['catmer_descri'.$ord.$row];					
-						$code_confirm=gaz_dbi_table_insert('catmer',$cat);
-						if ($code_confirm==$category){ // se l'insert è andato bene, assegno l'id categoria al prossimo insert artico
-							$category=$cat['codice'];
-						}
+						gaz_dbi_table_insert('catmer',$cat);
+						// assegno l'id categoria al prossimo insert artico
+						$category=$cat['codice'];
 					}
 					
 					// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato				

@@ -715,11 +715,11 @@ class shopsynchronizegazSynchro {
 								$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
 								$descri=$ckart['descri'].$orderrow->AddDescription;// se esiste ne prendo descri e ci aggiungo una eventuale descrizione aggiuntiva						
 							}
-							if (!$ckart){ // se non esiste creo un nuovo articolo su gazie come servizio in quanto non si sa se deve movimentare il magazzino					
+							if (!$ckart){ // se non esiste creo un nuovo articolo su gazie 
 								if ($orderrow->Stock>0){
-									$good_or_service=0;
+									$good_or_service=0;//come servizio, non deve movimentare il magazzino
 								} else {
-									$good_or_service=1;
+									$good_or_service=1; //come merce, movimenta il magazzino				
 								}
 								if ($orderrow->VatAli==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo di GAzie ci metto quella che deve mandare come base aziendale per le spese
 									$orderrow->VatCode=$order->CostVatCode;
@@ -766,6 +766,11 @@ class shopsynchronizegazSynchro {
 									
 								}
 								
+								// se l'e-commerce non ha inviato un codice me lo creo
+								if (strlen($orderrow->Code)<1){
+									$orderrow->Code = substr($orderrow->Description,0,10)."-".substr($orderrow->Id,-4);
+								}
+								
 								// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste	
 								$category="";
 								if (intval($orderrow->Category)>0){
@@ -773,6 +778,18 @@ class shopsynchronizegazSynchro {
 									if ($cat){
 										$category=$cat['codice'];
 									}
+								}
+								// se non esiste la categoria in GAzie, la creo				
+								if ($category == 0 OR $category == ""){
+									$ultimo_codice=array();
+									$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
+									$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
+									$cat['codice'] = $ultimo_codice['codice']+1;
+									$cat['ref_ecommerce_id_category'] = $orderrow->Category;
+									$cat['descri'] = $orderrow->ProductCategory;					
+									gaz_dbi_table_insert('catmer',$cat);
+									// assegno l'id categoria al prossimo insert artico
+									$category=$cat['codice'];
 								}
 								
 								// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato				
@@ -782,7 +799,7 @@ class shopsynchronizegazSynchro {
 									$orderrow->Code=substr($orderrow->Code,0,10)."-".substr($orderrow->Id,0,4);
 								}					
 								
-								gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". $orderrow->ProductWeight ."', '". $orderrow->MeasureUnit ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$orderrow->Category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+								gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". $orderrow->ProductWeight ."', '". $orderrow->MeasureUnit ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 								$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
 								$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva	
 															
