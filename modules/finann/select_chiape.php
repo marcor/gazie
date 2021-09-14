@@ -36,7 +36,7 @@ function accountValue($last_closing,$date_closing) //funzione per la creazione d
     $where = "datreg BETWEEN $last_closing AND $date_closing GROUP BY codcon";
     $orderby = " codcon ASC ";
     $select = $gTables['clfoco'].".descri AS name,codcon,(SUM(import*(darave='D')) - SUM(import*(darave='A'))) AS val";
-    $table = $gTables['clfoco']." LEFT JOIN ".$gTables['rigmoc']." ON ".$gTables['clfoco'].".codice = ".$gTables['rigmoc'].".codcon "
+    $table = $gTables['rigmoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice "
             ."LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes ";
     $rs=gaz_dbi_dyn_query($select, $table, $where, $orderby);
     $result=array();

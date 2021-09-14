@@ -229,7 +229,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $tot = 0.00;
     while ($rr = gaz_dbi_fetch_array($res_rig)) {
         $account = $anagrafica->getPartner($rr["codcon"], true);
-        $tt .= '<tr><td>' . htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
+        $tt .= '<tr><td>' . (empty($account['descri']))?'':htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
         if ($rr['darave'] == 'D') {
             $tot += $rr['import'];
         }
