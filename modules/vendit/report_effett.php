@@ -147,7 +147,7 @@ $recordnav->output();
             echo "<td align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_effett.php?Update&id=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["id_tes"] . "</a> &nbsp</td>";
             echo "<td align=\"right\"><a href=\"admin_effett.php?Update&id=" . $r["id_tes"] . "\">" . $r["progre"] . "</a> &nbsp</td>";
             echo "<td align=\"right\">" . gaz_format_date($r["datemi"]) . "</td>";
-            echo "<td align=\"center\">" .  $script_transl['type_value'][$r["tipeff"]] . " &nbsp;</td>";
+            echo "<td align=\"center\">" .  $script_transl['type_value'][$r["tipeff"]] . (($r['status']=='RAGGRUPPA')?' <span class="text-danger">[raggruppato] </span>':'')."</td>";
             echo "<td align=\"center\">" . gaz_format_date($r["scaden"]) . " &nbsp;</td>";
             echo "<td title=\"" . $script_transl['date_doc'] . ": " . gaz_format_date($r["datfat"]) . " n." . $r["numfat"] . "/" . $r["seziva"] . ' ' . $admin_aziend['html_symbol'] . " " . gaz_format_number($r["totfat"]) . "\">" . $cliente["ragso1"] . " &nbsp;</td>";
             echo "<td align=\"right\">" . gaz_format_number($r["impeff"]) . " &nbsp;</td>";

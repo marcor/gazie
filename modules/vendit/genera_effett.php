@@ -181,10 +181,12 @@ function getDocumentsBill($upd = false,$group_rid=false) {
                 // valorizzo l'indice con una chiave clfoco-scaden (cliente-scadenza che eventualemente mi servirà sotto per accumulare in un unico RID le scadenze dello stesso cliente
                 // per fare l'accumulo in fase di emissione della distinta RID darò lo stesso progressivo a righi diversi della tabella gaz_NNNeffett 
                 // controllo se il cliente ha già generato un rid con la stessa scadenza
-                if (isset($cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]) && $v['tes']['tipeff']='I' && $group_rid) { // se ho chiesto il raggruppamento dei RID il progressivo sarà lo stesso a parità di scadenza
+                if (isset($cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]) && $v['tes']['tipeff']=='I' && $group_rid) { // se ho chiesto il raggruppamento dei RID il progressivo sarà lo stesso a parità di scadenza
                     $v['tes']['progre'] = $cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]['progre'];
                     $effetti[$cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]['key']]['raggru'] = 1; //segno come accumulato anche l'effetto precedente con lo stesso cliente-scadenza
+                    $effetti[$cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]['key']]['status'] = 'RAGGRUPPA'; // per visualizzare sui report, nonincide sulla logica 
                     $v['tes']['raggru'] = 1;
+                    $v['tes']['status'] = 'RAGGRUPPA';
                 } else { // altrimenti il progressivo NON sarà rivisto per l'accumulo
                     $cliscad[$v['tes']['clfoco'].$v['tes']['scaden']] = ['progre'=>$n[$n_type],'key'=>$ke];
                     $v['tes']['raggru'] = 0;
@@ -341,7 +343,7 @@ if (isset($_POST['preview'])) {
         echo "<tr>";
         echo '<td align="right" colspan="6"><span class="text-danger">'.$e.'</span> ';
         echo $script_transl['gen'] .'<b>' .$script_transl['type_value'][$v['tippag']] .
-        '</b> n.' . $v['progre'] . ' ' . $script_transl['end'] . gaz_format_date($v['scaden']);
+        ' n.' . $v['progre'] .(($v['raggru']==1)?' <span class="text-danger">[raggruppato] </span>':'').'</b> ' . $script_transl['end'] . gaz_format_date($v['scaden']);
         echo "</td>
                    <td align=\"right\">";
         echo  $admin_aziend['symbol'].' '.gaz_format_number($v['impeff']);

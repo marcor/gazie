@@ -67,7 +67,7 @@ function getData($date_ini, $date_fin, $num_ini, $num_fin, $bank) {
     $where = " (".$gTables['effett'] . ".id_distinta = 0 OR id_distinta IS NULL) AND tipeff = 'I' AND scaden BETWEEN $date_ini AND $date_fin AND progre BETWEEN $num_ini AND $num_fin";
     $orderby = "tipeff, scaden, progre";
     $rs = gaz_dbi_dyn_query($gTables['effett'] . ".*," .
-            $gTables['anagra'] . ".pariva,
+            $gTables['anagra'] . ".pariva," . $gTables['anagra'] . ".codfis,
                      CONCAT(" . $gTables['anagra'] . ".ragso1,' '," . $gTables['anagra'] . ".ragso2) AS customer,
                      CONCAT(" . $gTables['banapp'] . ".codabi,' - '," . $gTables['banapp'] . ".codcab) AS coordi,
                      " . $gTables['banapp'] . ".descri AS desban ", $gTables['effett'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['effett'] . ".clfoco = " . $gTables['clfoco'] . ".codice
@@ -260,8 +260,8 @@ if (isset($_POST['preview']) and $msg == '') {
         echo "</tr>\n";
         foreach ($r['data'] as $v) {
             echo "<tr>";
-            echo "<td><a href=\"./admin_effett.php?Update&id_tes=" . $v['id_tes'] . "\">" . $v["progre"] . "</A></td>";
-            echo "<td> RID </td>";
+            echo "<td><a href=\"./admin_effett.php?Update&id_tes=" . $v['id_tes'] . "\">" . $v["progre"] . "</a>". (($v['status']=='RAGGRUPPA')?' <span class="text-danger">[raggruppato] </span>':'')."</td>";
+            echo "<td> RID</td>";
             echo "<td>" . gaz_format_date($v["scaden"]) . "</td>";
             echo "<td  align=\"right\">" . $admin_aziend['html_symbol'] . ' ' . gaz_format_number($v["impeff"]) . " </td>";
             echo "<td>" . $v["customer"] . " </td>";
@@ -270,7 +270,7 @@ if (isset($_POST['preview']) and $msg == '') {
             echo "</tr>\n";
             echo "<tr>";
             echo "</td>";
-            echo "<td>" . $v["pariva"] . "</td>";
+            echo "<td>" .((strlen($v["pariva"])>4)?$v["pariva"]:$v["codfis"]). "</td>";
             echo "<td align=\"right\">" . gaz_format_number($v["totfat"]) . "</td>";
             echo "<td align=\"center\">" . $v["coordi"] . " </td>";
             echo "</tr>\n";

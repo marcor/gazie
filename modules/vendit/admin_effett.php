@@ -129,7 +129,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
 
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
-    $form=gaz_dbi_get_row($gTables['effett'],'id_tes',intval($_GET['id']));
+    $form=gaz_dbi_get_row($gTables['effett'],'id_tes',intval($_GET['id_tes']));
     $form['date_emi_D'] = substr($form['datemi'],8,2);
     $form['date_emi_M'] = substr($form['datemi'],5,2);
     $form['date_emi_Y'] = substr($form['datemi'],0,4);
