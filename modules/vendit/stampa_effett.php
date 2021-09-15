@@ -82,7 +82,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
     $ridmav=($effetto['tipeff']=='V')?'mav':'rid';
     switch($effetto['tipeff'])
     {
-    //questo � il modulo delle ricevute bancarie
+    // modulo delle ricevute bancarie
     case "B":
         $pdf->SetFont('helvetica','',7);
         $pdf->Rect(5,5+$passo*$numefftot,200,50);
@@ -141,7 +141,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Cell(62,5);
         $pdf->Cell(80,5,$cfpiva,0,1,'L');
     break;
-    //questo � il modulo delle cambiali tratte
+    // modulo delle cambiali tratte
     case "T":
         $calc->payment_taxstamp($effetto['impeff'],$admin_aziend['perbol']);
         $impbol = $calc->pay_taxstamp;
@@ -174,7 +174,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Cell(165,4,'Cambiale-tratta n.'.$effetto['progre'].' emessa '.$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di € '.$effetto['totfat'],'LTB');
         $pdf->Cell(37,4,'bolli a tergo €  '.gaz_format_number($impbol),'RTB',1,'R');
     break;
-    //questo � il modulo delle cambiali tratte
+    // modulo delle cambiali tratte
     case "V":
     case "I":
         $calc->payment_taxstamp($effetto['impeff'],$admin_aziend['perbol']);
@@ -182,9 +182,11 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Image($ridmav.'.jpg',0,5+$passo*$numefftot,210);
         $pdf->SetXY(51,13+$numefftot*$passo);
         $pdf->SetFont('helvetica','B',7);
-        $pdf->Cell(57,3,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2']);
+        $pdf->Cell(48,3,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2'],'', 0, 'L', 0, '', 1);
+        $pdf->Cell(9);
         $pdf->Cell(24,3,gaz_format_number($effetto['impeff']));
-        $pdf->Cell(57,3,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2']);
+        $pdf->Cell(48,3,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2'],'', 0, 'L', 0, '', 1);
+        $pdf->Cell(9);
         $pdf->Cell(24,3,gaz_format_number($effetto['impeff']),0,1);
         $pdf->Cell(41,3);
         $pdf->Cell(81,3,$admin_aziend['indspe']);
@@ -223,7 +225,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Cell(78,3,$banapp['locali'].' ('.$banapp['codpro'].')');
         $pdf->Cell(78,3,$banapp['locali'].' ('.$banapp['codpro'].')',0,1);
         $pdf->SetXY(10,20+$numefftot*$passo);
-        $pdf->Cell(38,4,'MAV n.'.$effetto['progre'].' emesso ','LTR',1);
+        $pdf->Cell(38,4,(($effetto['tipeff']=='I')?'RID':'MAV').' n.'.$effetto['progre'].' emesso ','LTR',1);
         $pdf->Cell(38,4,$salcon,'LR',1);
         $pdf->Cell(38,4,$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt,'LR',1);
         $pdf->Cell(38,4,'di € '.$effetto['totfat'],'LBR',1);

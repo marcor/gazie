@@ -26,8 +26,15 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/calsca.inc.php");
 $msg = '';
+if (isset($_POST['group_rid']) && $_POST['group_rid']=='no'){
+  $group_rid_n='checked';
+  $group_rid_y='';  
+} else {
+  $group_rid_y='checked';  
+  $group_rid_n='';
+};
 
-function getDocumentsBill($upd = false) {
+function getDocumentsBill($upd = false,$group_rid=false) {
     global $gTables, $admin_aziend;
     $calc = new Compute;
     $from = $gTables['tesdoc'] . ' AS tesdoc
@@ -140,7 +147,74 @@ function getDocumentsBill($upd = false) {
         }
         $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $doc[$ctrlp]['tes']['taxstamp'] + $calc->pay_taxstamp;
     }
-    return $doc;
+    
+    // INIZIO ciclo delle fatture che dovranno generare effetti con le singole scadenze
+    $ctrl_date = '';
+    $effetti=[];
+    $cliscad=[];
+    $ke=0;
+    foreach ($doc as $k => $v) {
+        if ($ctrl_date <> substr($v['tes']['datemi'], 0, 4)) {
+            $n = getReceiptNumber($v['tes']['datemi']);
+        }
+        // calcolo i totali
+        $stamp = false;
+        $round = 0;
+        if ($v['tes']['tippag'] == 'T') {
+            $stamp = $v['tes']['stamp'];
+            $round = $v['tes']['numrat'] * $v['tes']['round_stamp'];
+        }
+
+        $tot = computeTot($v['vat'], $v['car'] - $v['rit']);
+        //fine calcolo totali
+        $rate = CalcolaScadenze($tot['tot'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
+        $tot_doc = $tot['tot'];
+        if ($tot['tot'] > 0) {
+            foreach ($rate['import'] as $k_r => $v_r) {
+                $ke++;
+                $v['tes']['tipeff'] = $v['tes']['tippag'];
+                $v['tes']['scaden'] = $rate['anno'][$k_r] . '-' . $rate['mese'][$k_r] . '-' . $rate['giorno'][$k_r];
+                $n_type = $v['tes']['tippag'];
+                if ($n_type == 'B') {
+                    $n_type = 'R';
+                }
+                // valorizzo l'indice con una chiave clfoco-scaden (cliente-scadenza che eventualemente mi servirà sotto per accumulare in un unico RID le scadenze dello stesso cliente
+                // per fare l'accumulo in fase di emissione della distinta RID darò lo stesso progressivo a righi diversi della tabella gaz_NNNeffett 
+                // controllo se il cliente ha già generato un rid con la stessa scadenza
+                if (isset($cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]) && $v['tes']['tipeff']='I' && $group_rid) { // se ho chiesto il raggruppamento dei RID il progressivo sarà lo stesso a parità di scadenza
+                    $v['tes']['progre'] = $cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]['progre'];
+                    $effetti[$cliscad[$v['tes']['clfoco'].$v['tes']['scaden']]['key']]['raggru'] = 1; //segno come accumulato anche l'effetto precedente con lo stesso cliente-scadenza
+                    $v['tes']['raggru'] = 1;
+                } else { // altrimenti il progressivo NON sarà rivisto per l'accumulo
+                    $cliscad[$v['tes']['clfoco'].$v['tes']['scaden']] = ['progre'=>$n[$n_type],'key'=>$ke];
+                    $v['tes']['raggru'] = 0;
+                    $v['tes']['progre'] = $n[$n_type]; 
+                    $n[$n_type] ++;
+                }
+                $v['tes']['datemi'] = $v['tes']['datfat'];
+                $tot_doc = round($tot_doc - $v_r, 2);
+                $v['tes']['totfat'] = $tot['tot'];
+                $v['tes']['salacc'] = 'C';
+                if ($tot_doc == 0) {
+                    $v['tes']['salacc'] = 'S';
+                }
+                $v['tes']['impeff'] = $v_r;
+                $v['tes']['id_doc'] = $v['tes']['id_tes'];
+                $v['tes']['id_con'] = 0;
+                $effetti[$ke]=$v['tes'];
+            }
+        }
+        $ctrl_date = substr($v['tes']['datfat'], 0, 4);
+    }
+    // FINE ciclo fatture con effetti con o senza progressivi raggruppati, pronti per essere visualizzati o inseriti sul db in base alla scelta
+    
+    if ($upd) { // ho scelto di generarle
+        foreach ($effetti as $k=>$v) {
+            effettInsert($v);
+        }
+    } else {
+        return $effetti;
+    }
 }
 
 function getReceiptNumber($date) {
@@ -183,56 +257,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     $form['ritorno'] = $_POST['ritorno'];
     if (isset($_POST['submit']) && empty($msg)) {   //confermo la generazione
-        $rs = getDocumentsBill(1);
-        if (count($rs > 0)) {
-            $ctrl_date = '';
-            foreach ($rs as $k => $v) {
-                if ($ctrl_date <> substr($v['tes']['datemi'], 0, 4)) {
-                    $n = getReceiptNumber($v['tes']['datemi']);
-                }
-                // calcolo i totali
-                $stamp = false;
-                $round = 0;
-                if ($v['tes']['tippag'] == 'T') {
-                    $stamp = $v['tes']['stamp'];
-                    $round = $v['tes']['numrat'] * $v['tes']['round_stamp'];
-                }
-
-                $tot = computeTot($v['vat'], $v['car'] - $v['rit']);
-                //fine calcolo totali
-                $rate = CalcolaScadenze($tot['tot'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
-                $tot_doc = $tot['tot'];
-                if ($tot['tot'] > 0) {
-                    foreach ($rate['import'] as $k_r => $v_r) {
-                        $v['tes']['tipeff'] = $v['tes']['tippag'];
-                        $n_type = $v['tes']['tippag'];
-                        if ($n_type == 'B') {
-                            $n_type = 'R';
-                        }
-                        $v['tes']['datemi'] = $v['tes']['datfat'];
-                        $v['tes']['progre'] = $n[$n_type];
-                        $tot_doc = round($tot_doc - $v_r, 2);
-                        $v['tes']['totfat'] = $tot['tot'];
-                        $v['tes']['salacc'] = 'C';
-                        if ($tot_doc == 0) {
-                            $v['tes']['salacc'] = 'S';
-                        }
-                        $v['tes']['impeff'] = $v_r;
-                        $v['tes']['scaden'] = $rate['anno'][$k_r] . '-' . $rate['mese'][$k_r] . '-' . $rate['giorno'][$k_r];
-                        $v['tes']['id_doc'] = $v['tes']['id_tes'];
-                        $v['tes']['id_con'] = 0;
-                        effettInsert($v['tes']);
-                        $n[$n_type] ++;
-                    }
-                }
-                $ctrl_date = substr($v['tes']['datfat'], 0, 4);
-            }
-            header("Location: report_effett.php");
-            exit;
-        } else {
-            $msg .= "1+";
-        }
-    }
+        $rs = getDocumentsBill(true,($group_rid_y=='checked'?true:false));
+        header("Location: report_effett.php");
+        exit;
+    } 
 }
 
 require("../../library/include/header.php");
@@ -241,116 +269,107 @@ echo "<form method=\"POST\" name=\"create\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
 $gForm = new GAzieForm();
-echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'];
-echo "</div>\n";
-echo "<table class=\"Tsmall\" align=\"center\">\n";
+?>
+<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title'];?></div>
+<div class="panel panel-info div-bordered">
+ <div class="panel-body"> 
+  <div class="container-fluid">  
+   <div class="row">
+    <div class="form-group col-xs-12 col-sm-6 col-md-4 bg-info text-center">Genera un solo RID per lo stesso cliente con le stesse scadenze</div>
+    <div class="form-group col-xs-12 col-sm-6 col-md-4 text-center">
+      <input name="group_rid" type="radio" value="yes" id="group_rid_y" <?php echo $group_rid_y; ?> >
+      <label for="group_rid_y">SI</label>
+      <input name="group_rid" type="radio" value="no" id="group_rid_n" <?php echo $group_rid_n; ?>>
+      <label for="group_rid_n">NO</label>
+    </div>
+    <div class="form-group col-xs-12 col-sm-6 col-md-4 text-center"><input type="submit" class="bg-success" name="preview" value="<?php echo $script_transl['view'];?>">
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<?php
 if (!empty($msg)) {
-    echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
+    echo '<div>' . $gForm->outputErrors($msg, $script_transl['errors']) . "</div>";
 }
-echo "\t<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"" .
- $script_transl['return'] . "\"></td>\n";
-echo '<td align="right"><input type="submit" name="preview" value="';
-echo $script_transl['view'];
-echo '">';
-echo "\t </td>\n";
-echo "\t </tr>\n";
-echo "</table>\n";
 
 //mostro l'anteprima
 if (isset($_POST['preview'])) {
     $errors=false;
-    $rs = getDocumentsBill();
+    $rs = getDocumentsBill(false,($group_rid_y=='checked'?true:false));
     echo "<br /><div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
-    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+    echo "<table class=\"table table-bordered table-responsive\">";
     echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['doc_type'] . "</th>
          <th class=\"FacetFieldCaptionTD\">N.</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['customer'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['tot'] . "</th>\n";
+         <th class=\"FacetFieldCaptionTD\">" . $script_transl['tot'] . "fattura</th>\n
+         <th class=\"FacetFieldCaptionTD\"> Importo effetto</th>\n";
     $ctrl_date = '';
-    $tot_type = array('B' => 0, 'I' => 0, 'T' => 0, 'V' => 0);
-
+    $tot_type = ['B'=>0,'I'=>0,'T'=>0,'V'=>0];
+    $class_type = ['B'=>'bg-success','I'=>'bg-info','T'=>'bg-warning','V'=>'bg-default'];
+    $ctrldoc=0;
     foreach ($rs as $k => $v) {
+        $tot_type[$v['tippag']]+=$v['impeff'];
         $e='';
-        if ($ctrl_date <> substr($v['tes']['datfat'], 0, 4)) {
-            $n = getReceiptNumber($v['tes']['datfat']);
+        if ($ctrl_date <> substr($v['datfat'], 0, 4)) {
+            $n = getReceiptNumber($v['datfat']);
         }
-        if (strlen($v['tes']['iban'])<20&&$v['tes']['tippag']=='I') { // non c'è l'iban 
+        if (strlen($v['iban'])<20&&$v['tippag']=='I') { // non c'è l'iban 
             $errors=true;
             $e=$script_transl['errors']['noiban'];
         }
-        if ($v['tes']['mndtritdinf']<1&&$v['tes']['tippag']=='I') { // non c'è il mandato
+        if ($v['mndtritdinf']<1&&$v['tippag']=='I') { // non c'è il mandato
             $errors=true;
             $e=$script_transl['errors']['nomandato'];
         }
-        if ($v['tes']['banapp']<1&&($v['tes']['tippag']=='B'||$v['tes']['tippag']=='T')) { // non c'è la banca d'appoggio
+        if ($v['banapp']<1&&($v['tippag']=='B'||$v['tippag']=='T')) { // non c'è la banca d'appoggio
             $errors=true;
             $e=$script_transl['errors']['nobanapp'];
         }
-        // calcolo i totali
-        $stamp = false;
-        $round = 0;
-        $tot = computeTot($v['vat'], $v['car'] - $v['rit']);
-        //fine calcolo totali
-        echo "<tr>
-               <td align=\"center\">" . gaz_format_date($v['tes']['datfat']) . "</td>
-               <td title=\"".$v['tes']['cigcup']."\" align=\"center\">" . $v['tes']['protoc'] . '/' . $v['tes']['seziva'] . "</td>
-               <td>" . $script_transl['doc_type_value'][$v['tes']['tipdoc']] . "</td>
-               <td>" . $v['tes']['numfat'] . '</td>
-               <td><a class="btn btn-sm btn-'.((strlen($e)>10)?"danger":"default").'" href="./admin_client.php?codice='.substr($v['tes']['clfoco'],-6).'&Update">'.$v['tes']['ragsoc']. "</a></td>
-               <td align=\"right\">" . $admin_aziend['symbol'].' '.gaz_format_number($tot['tot']) . "</td>
+        if ($ctrldoc<>$v['protoc']){
+            echo "<tr class=\"".$class_type[$v['tippag']]."\">
+               <td align=\"center\">" . gaz_format_date($v['datfat']) . "</td>
+               <td title=\"".$v['cigcup']."\" align=\"center\">" . $v['protoc'] . '/' . $v['seziva'] . "</td>
+               <td>" . $script_transl['doc_type_value'][$v['tipdoc']] . "</td>
+               <td>" . $v['numfat'] . '</td>
+               <td><a class="btn btn-sm btn-'.((strlen($e)>10)?"danger":"default").'" href="./admin_client.php?codice='.substr($v['clfoco'],-6).'&Update">'.$v['ragsoc']. "</a></td>
+               <td align=\"right\">" . $admin_aziend['symbol'].' '.gaz_format_number($v['totfat']) . "</td>
                </tr>\n";
-        $rate = CalcolaScadenze($tot['tot'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
-        foreach ($rate['import'] as $k_r => $v_r) {
-            $n_type = $v['tes']['tippag'];
-            $tot_type[$v['tes']['tippag']]+=$v_r;
-            if ($n_type == 'B') {
-                $n_type = 'R';
-            }
-            echo "<tr>";
-            echo '<td align="right" colspan="6"><span class="text-danger">'.$e.'</span> ';
-            echo $script_transl['gen'] .'<b>' .$script_transl['type_value'][$v['tes']['tippag']] .
-            '</b> n.' . $n[$n_type] . ' ' . $script_transl['end'] . $rate['giorno'][$k_r] . '-' . $rate['mese'][$k_r] . '-' . $rate['anno'][$k_r];
-            echo "</td>
-                       <td align=\"right\">";
-            echo  $admin_aziend['symbol'].' '.gaz_format_number($v_r);
-            echo "</td>
-                       </tr>\n";
-            $n[$n_type] ++;
         }
-        $ctrl_date = substr($v['tes']['datfat'], 0, 4);
+        echo "<tr>";
+        echo '<td align="right" colspan="6"><span class="text-danger">'.$e.'</span> ';
+        echo $script_transl['gen'] .'<b>' .$script_transl['type_value'][$v['tippag']] .
+        '</b> n.' . $v['progre'] . ' ' . $script_transl['end'] . gaz_format_date($v['scaden']);
+        echo "</td>
+                   <td align=\"right\">";
+        echo  $admin_aziend['symbol'].' '.gaz_format_number($v['impeff']);
+        echo "</td></tr>\n";
+        $ctrldoc=$v['protoc'];
     }
-    if (count($rs) > 0) {
-        foreach ($tot_type as $k_t => $v_t) {
-            if ($v_t > 0) {
-                echo "\t<tr>\n";
-                echo '<td class=\"FacetFieldCaptionTD\" colspan="6" align="right"><b>';
-                echo $script_transl['total_value'][$k_t];
-                echo "</b></td>
-                       <td class=\"FacetFieldCaptionTD\" align=\"right\"><b>";
-                echo $admin_aziend['symbol'] . ' ' . gaz_format_number($v_t);
-                echo "</b> </td>\n";
-                echo "\t </tr>\n";
-            }
+    
+    foreach ($tot_type as $k_t => $v_t) {
+        if ($v_t > 0) {
+            echo "\t<tr>\n";
+            echo '<td class=\"FacetFieldCaptionTD\" colspan="6" align="right"><b>';
+            echo $script_transl['total_value'][$k_t];
+            echo "</b></td>
+                   <td class=\"FacetFieldCaptionTD\" align=\"right\"><b>";
+            echo $admin_aziend['symbol'] . ' ' . gaz_format_number($v_t);
+            echo "</b> </td>\n";
+            echo "\t </tr>\n";
         }
-        echo "\t<tr>\n";
-        echo '<td class=\"FacetFieldCaptionTD\" colspan="7" align="right">';
-        if ($errors) {
-            echo '<span class="text-danger"><b>Correggi gli errori incontrati</b></a>';
-        } else {
-            echo '<input type="submit" name="submit" value="'.$script_transl['submit'].'">';
-        }
-        echo "\t </td>\n";
-        echo "\t </tr>\n";
+    }
+    echo "\t<tr>\n";
+    echo '<td class=\"FacetFieldCaptionTD\" colspan="7" align="right">';
+    if ($errors) {
+        echo '<span class="text-danger"><b>Correggi gli errori incontrati</b></a>';
     } else {
-        echo "\t<tr>\n";
-        echo '<td colspan="7" align="center" class="FacetDataTDred">';
-        echo $script_transl['errors']['noeff'];
-        echo "\t </td>\n";
-        echo "\t </tr>\n";
+        echo '<input type="submit" name="submit" value="'.$script_transl['submit'].'">';
     }
+    echo "\t </td>\n";
+    echo "\t </tr>\n";
 }
 ?>
 </table>

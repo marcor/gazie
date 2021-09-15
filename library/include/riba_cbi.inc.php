@@ -91,7 +91,7 @@ class RibaAbiCbi {
         return " 30" . str_pad($this->progressivo, 7, '0', STR_PAD_LEFT) . substr(str_pad($nome_debitore, 60), 0, 60) . str_pad($codice_fiscale_debitore, 16, ' ') . str_repeat(" ", 34);
     }
 
-    function Record40($indirizzo_debitore, $cap_debitore, $comune_debitore, $descrizione_domiciliataria = "", $provincia_debitore) {
+    function Record40($indirizzo_debitore, $cap_debitore, $comune_debitore, $descrizione_domiciliataria = "", $provincia_debitore='') {
         return " 40" . str_pad($this->progressivo, 7, '0', STR_PAD_LEFT) . substr(str_pad($indirizzo_debitore, 30), 0, 30) . str_pad(intval($cap_debitore), 5, '0', STR_PAD_LEFT) . substr(str_pad($comune_debitore, 22), 0, 22) . " " . substr(str_pad($provincia_debitore, 2), 0, 2) . substr(str_pad($descrizione_domiciliataria, 50), 0, 50);
     }
 
