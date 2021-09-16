@@ -77,14 +77,23 @@ $sortable_headers = array(
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
 
-// seziva ultima fattura emessa
-$last_seziva = gaz_dbi_get_single_value($gTables['tesdoc'], 'seziva',  "id_tes=(SELECT MAX(id_tes) FROM {$gTables['tesdoc']} WHERE tipdoc LIKE 'F%')") || 1;
+// ultima fattura emessa
+$rs_last = gaz_dbi_dyn_query('seziva, YEAR(datemi) AS yearde', $gTables['tesdoc'], "tipdoc LIKE 'F%'", 'datemi DESC, id_tes DESC', 0, 1);
+$last = gaz_dbi_fetch_array($rs_last);
+if ($last) {
+    $last_seziva = $last['seziva'];
+    $last_yearde = $last['yearde'];
+} else {
+    $last_seziva = 1;
+    $last_yearde = date('Y');
+}
+//$last_seziva = gaz_dbi_get_single_value($gTables['tesdoc'], 'seziva',  "id_tes=(SELECT MAX(id_tes) FROM {$gTables['tesdoc']} WHERE tipdoc LIKE 'F%')") || 1;
 
 $ts = new TableSorter(
     !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
     $passo, 
     ['datfat' => 'desc', 'protoc' => 'desc'], 
-    ['sezione' => $last_seziva, 'tipo' => 'F%'],
+    ['sezione' => $last_seziva, 'tipo' => 'F%', 'anno'=>$last_yearde],
     ['protoc', 'datfat']
 );
 
