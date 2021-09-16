@@ -57,11 +57,10 @@ $t->output_navbar();
 ?>
 <script>
 $(function() {
-    $("#datareg").datepicker({ dateFormat: 'yy-mm-dd',showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
-		$("p#idcodice").html('ID '+$(this).attr("ref")+' tipo effetti: '+$(this).attr("name"));
-		$("p#iddescri").html($(this).attr("filename"));
+		$("p#idcodice").html($(this).attr("ref"));
+		$("p#iddescri").html($(this).attr("wharehouse"));
 		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
@@ -75,12 +74,12 @@ $(function() {
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
-						data: {'type':'distinte',ref:id},
+						data: {'type':'wharehouse',ref:id},
 						type: 'POST',
-						url: './delete.php',
+						url: '../magazz/delete.php',
 						success: function(output){
 		                    //alert(output);
-							window.location.replace("./report_distinte.php");
+							window.location.replace("./report_wharehouse.php");
 						}
 					});
 				}},
@@ -90,14 +89,14 @@ $(function() {
 			}
 		});
 		$("#dialog_delete" ).dialog( "open" );  
-	});
+	});	
 });
 </script>
 <form method="GET">
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
-		<p><b>Magazzino</b></p>
+		<p><b>ID</b></p>
         <p class="ui-state-highlight" id="idcodice"></p>
-        <p>File</p>
+        <p>Nome</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
 	<div class="table-responsive">
@@ -133,19 +132,13 @@ echo '</tr>';
 while ($r = gaz_dbi_fetch_array($rs)) {
 ?>
 <tr>
-    <td class="text-center"><a class="btn btn-xs btn-success btn-block" href="admin_wharehouse.php?Update&id=<?php echo $r["id"]; ?>">
-					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r["id"];?>
-				</a></td>
-    <td><?php echo $r["name"]; ?></td>
-	<td align="center"> <img width="100" style="cursor: zoom-in;" 
-	<?php echo 'src="data:image/jpeg;base64,'.base64_encode( $r['image'] ).'"';?>
-	onclick="this.width=500;" ondblclick="this.width=100;" title="click=zoom doubleclick=thumb" alt="no image" /></td>
-    <td><?php echo $r["web_url"]; ?></td>
-    <td><?php echo $r["note_other"]; ?></td>
-    <td></td>
-    <td class="text-center">
-    <a class="btn btn-xs btn-default btn-elimina" ref="<?php echo $r['id'];?>"><i class="glyphicon glyphicon-remove"></i></a>
-    </td>
+ <td class="text-center"><a class="btn btn-xs btn-success btn-block" href="admin_wharehouse.php?Update&id=<?php echo $r["id"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r["id"];?></a></td>
+ <td><?php echo $r["name"]; ?></td>
+ <td align="center"> <img width="100" style="cursor: zoom-in;" <?php echo 'src="data:image/jpeg;base64,'.base64_encode( $r['image'] ).'"';?> onclick="this.width=500;" ondblclick="this.width=100;" title="click=zoom doubleclick=thumb" alt="no image" /></td>
+ <td><?php echo $r["web_url"]; ?></td>
+ <td><?php echo $r["note_other"]; ?></td>
+ <td></td>
+ <td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" wharehouse="<?php echo $r['name'];?>"><i class="glyphicon glyphicon-remove"></i></a></td>
 </tr>
 <?php    
 }

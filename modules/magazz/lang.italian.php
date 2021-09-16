@@ -593,7 +593,8 @@ $strScript = array("browse_document.php" =>
         'ins_this' => 'Inserimento nuovo magazzino',
         'upd_this' => 'Modifica il magazzino',
         'err' => array(
-            'name' => 'Il nome del magazzino deve essere lungo almeno 4 caratteri'			
+            'name' => 'Il nome del magazzino deve essere lungo almeno 4 caratteri',
+            'filmim' => 'Il file dev\'essere nel formato PNG, JPG, GIF'			
         ),
         'war' => array(
             'ok_ins' => 'Magazzino inserito con successo'

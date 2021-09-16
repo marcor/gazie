@@ -32,7 +32,8 @@ $transl['magazz'] = array('name' => "Magazzino",
                                          6 =>array("Modifica i prezzi degli articoli","Modifica prezzi"),
                                          7 =>array("Selezione articoli per la creazione del depliant","Catalogo"),
                                          8 =>array("Statistiche del magazzino","Statistiche"),
-                                         9 =>array("Gestione Raggruppamenti Statistici","Raggr.Statistici")
+                                         9 =>array("Gestione Raggruppamenti Statistici","Raggr.Statistici"),
+                                         10 =>array("Gestione Magazzini","Magazzini")
                                          ),
                           'm3' => array( 1 =>array("Inserisci un nuovo articolo","Nuova merce/servizio"),
                                          2 =>array("Inserisci un nuova categoria merceologica","Nuova categoria merceologica"),
@@ -47,7 +48,8 @@ $transl['magazz'] = array('name' => "Magazzino",
                                          11 =>array("Modifica aliquota IVA degli articoli","Cambio IVA articoli"),
                                          12 =>array("Inserisci un nuovo raggruppamento statistico","Nuovo Raggruppamento statistico"),
                                          13 =>array("Situazione di Magazzino","Visualizza situazione di magazzino"),
-                                         14 =>array("Inserisci un nuovo gruppo","Inserisci nuovo gruppo")
+                                         14 =>array("Inserisci un nuovo gruppo","Inserisci nuovo gruppo"),
+                                         15 =>array("Inserisci un nuovo magazzino","Inserisci nuovo magazzino")
                                       )
                           );
 ?>
