@@ -41,6 +41,7 @@ function getStartToEndDate($week, $year) {
   $ret['sun'] = $dto->format('Y-m-d');
   return $ret;
 }
+
 /*
 function getWorkers($date) {
 	global $gTables;
@@ -91,7 +92,6 @@ function getStaffTimesheet($worker,$dates) {
 	return $ret;
 }
 
-
 if (isset($_POST['week'])) { // accessi successivi
     $form['hidden_req'] = intval($_POST['hidden_req']);
     $form['week'] = filter_input(INPUT_POST, 'week');
@@ -138,6 +138,18 @@ if (isset($_POST['week'])) { // accessi successivi
 			header("Location: print_timesheet.php?year=".$form['year']."&week=".$form['week']."&employee=".$form['id_employee']);
 		}
 	}
+	// carico i dati per la select work type del jquery
+	$query = 'SELECT id_work,descri FROM `' . $gTables['staff_work_type'] . '` WHERE id_work_type = 1 ORDER BY `id_work`';
+	$result = gaz_dbi_query($query);
+	$work_types="";$comma="";
+	$invalid_characters = array("'", ",", ":");
+	while ($r = gaz_dbi_fetch_array($result)) {		
+		$work_types .= $comma.$r['id_work'].":'".str_replace($invalid_characters, " ", $r['descri'])."'";
+		$comma=", ";		
+	}
+	
+	
+	
 } else { // al primo accesso
 	$dto = new DateTime();
     $form['week'] = $dto->format("W");
@@ -151,6 +163,8 @@ $week_days = getStartToEndDate($form['week'], $form['year']);
 
 require("../../library/include/header.php");
 ?>
+<!--Antonio Germani - carico AppendGrid library-->
+<script src="AppendGrid.js"></script>
 <script type="text/javascript">
     $(function () {
 		$('.dropdownmenustyle').selectmenu();        
@@ -162,14 +176,122 @@ require("../../library/include/header.php");
 			$("#goto").val('next');
             this.form.submit();
         });
-	});
-	
+		
+		$("#dialog_worker_card").dialog({ autoOpen: false });
+		$('.dialog_worker_card').click(function() {			
+			$("p#iddescri").html($(this).attr("staff_name"));
+			var id = $(this).attr('id_staff');
+			var id2 = $(this).attr('date');
+			var jsondatastr = null;
+			
+			$.ajax({ // chiedo tutte le registrazioni fatte nel cartellino presenze per quel giorno
+				'async': false,
+				url:"../humres/get_pres.php",   
+				type: "POST",    
+				dataType: 'text',
+				data: {id_staff: id, date: id2},
+				success:function(jsonstr) {				
+					jsondatastr = jsonstr;			
+				}
+			});			
+			var jsondata = $.parseJSON(jsondatastr);
+			
+			
+			
+			
+			
+			var myAppendGrid = new AppendGrid({ // creo la tabella vuota
+			  element: "tblAppendGrid",
+			  uiFramework: "bootstrap4",
+			  iconFramework: "default",
+			  columns: [
+				{
+				  name: "id",
+				  display: "ID",
+				  type: "hidden"
+				},
+				{
+				  name: "start_work",
+				  display: "Ora di inizio",
+				  type: "time"
+				},
+				{
+				  name: "end_work",
+				  display: "ora di fine",
+				  type: "time"
+				},
+				{
+				  name: "id_work_type",
+				  display: "Tipo lavoro",
+				  type: "select",
+					ctrlOptions: {					
+					<?php echo $work_types;?>
+					} 
+				},
+				{
+				  name: "min_delay",
+				  display: "Ritardo in minuti",
+				  type: "number",
+				  ctrlAttr: {
+					  min: 0,
+					  max: 60
+				  }
+				},
+				{
+				  name: "id_orderman",
+				  display: "ID lavorazione"
+				}
+			  ]
+			});
+			
+			// popolo la tabella
+			myAppendGrid.load( jsondata );
+			
+			$( "#dialog_worker_card" ).dialog({
+				minHeight: 1,
+				width: "auto",
+				modal: "true",
+				show: "blind",
+				hide: "explode",
+				buttons: {
+					delete:{ 
+						text:'Annulla', 
+						'class':'btn btn-danger delete-button',
+						click:function (event, ui) {
+						$(this).dialog("close");
+					}},
+					"Conferma": function() {						
+						$.ajax({ // registro con i nuovi dati il cartellino presenze
+							data: {rec_pre: myAppendGrid.getAllValue()},
+							type: 'POST',
+							url: '../humres/rec_pres.php',
+							success: function(output){
+								alert(output);								
+							}
+						});
+						$(this).dialog("close");
+					}
+				}
+			});
+			$("#dialog_worker_card" ).dialog( "open" );  
+		});		
+	});	
 </script>
 <?php
 $script_transl = HeadMain(0,array('custom/autocomplete'));
 $gForm = new humresForm();
-?>
+?> 
+
 <form method="POST" id="form">
+<div class="container-fluid">
+  
+</div>
+	<div style="display:none" id="dialog_worker_card" title="Cartellino presenze">
+        <p><b>Dipendente:</b></p>		
+		<p class="ui-state-highlight" id="iddescri"></p>
+		<table id="tblAppendGrid"></table>        
+	</div>
+	
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
 	<div class="panel panel-info">
 		<div class="container-fluid">
@@ -188,12 +310,13 @@ if ($k>0){
 	$htopt=false;
 	$acopt=false;
 	$otopt=false;
+	
 ?>
 		<div class="row">
 		<div class="col-lg-12 text-center"><button type="button" class="btn btn-xs btn-default" id="prev"><i class="glyphicon glyphicon-chevron-left"></i><?php echo ucfirst($script_transl['prev']); ?></button> <b><?php echo intval($form["week"]).'^'; ?> SETTIMANA <?php echo ' -> dal '.gaz_format_date($week_days['mon']).' al '.gaz_format_date($week_days['sun']); ?> </b> <button type="button"  class="btn btn-xs btn-default" id="next"><i class="glyphicon glyphicon-chevron-right"></i><?php echo ucfirst($script_transl['next']); ?></button></div>
 		</div>
 		<div class="row center-block">
-			<div class="panel panel-default">
+			<div class="panel panel-default">			
 			<table  class="Tlarge table table-striped table-bordered table-condensed">
                 <thead>
                     <tr class="bg-success">              
@@ -201,24 +324,45 @@ if ($k>0){
 							<?php echo $form['cosemployee']; ?>                       
 						</th>
                         <th class="col-xs-1">
+							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['mon']; ?>" >
+								<i class="glyphicon glyphicon-dashboard"></i>
+							</a>
                             <?php echo utf8_encode(substr(strftime("%A", strtotime("01/01/2018")),0,3)). ' ' . intval(substr($week_days['mon'],8,2));  ?>
                         </th>
                         <th class="col-xs-1">
+							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['tue']; ?>" >
+								<i class="glyphicon glyphicon-dashboard"></i>
+							</a>
                             <?php echo utf8_encode(substr(strftime("%A", strtotime("01/02/2018")),0,3)). ' ' . intval(substr($week_days['tue'],8,2)); ?>
                         </th>
                         <th class="col-xs-1">
+							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['wed']; ?>" >
+								<i class="glyphicon glyphicon-dashboard"></i>
+							</a>
                             <?php echo utf8_encode(substr(strftime("%A", strtotime("01/03/2018")),0,3)). ' ' . intval(substr($week_days['wed'],8,2)); ?>
                         </th>
                         <th class="col-xs-1">
+							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['thu']; ?>" >
+								<i class="glyphicon glyphicon-dashboard"></i>
+							</a>
                             <?php echo utf8_encode(substr(strftime("%A", strtotime("01/04/2018")),0,3)). ' ' . intval(substr($week_days['thu'],8,2)); ?>
                         </th>
                         <th class="col-xs-1">
+							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['fri']; ?>" >
+								<i class="glyphicon glyphicon-dashboard"></i>
+							</a>
                             <?php echo utf8_encode(substr(strftime("%A", strtotime("01/05/2018")),0,3)). ' ' . intval(substr($week_days['fri'],8,2)); ?>
                         </th>
                         <th class="col-xs-1">
+							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['sat']; ?>" >
+								<i class="glyphicon glyphicon-dashboard"></i>
+							</a>
                             <?php echo utf8_encode(substr(strftime("%A", strtotime("01/06/2018")),0,3)). ' ' . intval(substr($week_days['sat'],8,2)); ?>
                         </th>
                         <th class="col-xs-1 bg-warning">
+							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['sun']; ?>" >
+								<i class="glyphicon glyphicon-dashboard"></i>
+							</a>
                             <?php echo utf8_encode(substr(strftime("%A", strtotime("01/07/2018")),0,3)). ' ' . intval(substr($week_days['sun'],8,2)); ?>
                         </th>
                     </tr>      
