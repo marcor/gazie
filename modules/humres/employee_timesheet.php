@@ -141,14 +141,19 @@ if (isset($_POST['week'])) { // accessi successivi
 	// carico i dati per la select work type del jquery
 	$query = 'SELECT id_work,descri FROM `' . $gTables['staff_work_type'] . '` WHERE id_work_type = 1 ORDER BY `id_work`';
 	$result = gaz_dbi_query($query);
-	$work_types="";$comma="";
+	$work_types="0:'Lavoro normale'";	
 	$invalid_characters = array("'", ",", ":");
 	while ($r = gaz_dbi_fetch_array($result)) {		
-		$work_types .= $comma.$r['id_work'].":'".str_replace($invalid_characters, " ", $r['descri'])."'";
-		$comma=", ";		
+		$work_types .= ", ".$r['id_work'].":'". substr(str_replace($invalid_characters, " ", $r['descri']), 0, 80)."'";				
 	}
-	
-	
+	// carico i dati per la select orderman del jquery
+	$query = 'SELECT id,description FROM `' . $gTables['orderman'] . '` WHERE stato_lavorazione = 0 ORDER BY `id`';
+	$result = gaz_dbi_query($query);
+	$orderman="0:'Nessuna lavorazione associata'";	
+	$invalid_characters = array("'", ",", ":");
+	while ($r = gaz_dbi_fetch_array($result)) {		
+		$orderman .= ", ".$r['id'].":'".substr(str_replace($invalid_characters, " ", $r['description']), 0, 40)."'";		
+	}
 	
 } else { // al primo accesso
 	$dto = new DateTime();
@@ -157,6 +162,8 @@ if (isset($_POST['week'])) { // accessi successivi
     $form['id_employee'] = 0;
     $form['cosemployee'] = "";
     $form['hidden_req'] = 0;
+	$work_types="";
+	$orderman="";
 }
 
 $week_days = getStartToEndDate($form['week'], $form['year']);
@@ -190,12 +197,11 @@ require("../../library/include/header.php");
 				type: "POST",    
 				dataType: 'text',
 				data: {id_staff: id, date: id2},
-				success:function(jsonstr) {				
+				success:function(jsonstr) {	
+					//alert(jsonstr);
 					jsondatastr = jsonstr;			
 				}
 			});			
-			var jsondata = $.parseJSON(jsondatastr);
-			
 			
 			
 			
@@ -204,6 +210,7 @@ require("../../library/include/header.php");
 			  element: "tblAppendGrid",
 			  uiFramework: "bootstrap4",
 			  iconFramework: "default",
+			  initRows: 1,
 			  columns: [
 				{
 				  name: "id",
@@ -226,7 +233,8 @@ require("../../library/include/header.php");
 				  type: "select",
 					ctrlOptions: {					
 					<?php echo $work_types;?>
-					} 
+					},
+					
 				},
 				{
 				  name: "min_delay",
@@ -239,13 +247,20 @@ require("../../library/include/header.php");
 				},
 				{
 				  name: "id_orderman",
-				  display: "ID lavorazione"
+				  display: "Lavorazione",
+					type: "select",
+					ctrlOptions: {					
+					<?php echo $orderman;?>
+					}
 				}
 			  ]
 			});
 			
+			if (jsondatastr){
 			// popolo la tabella
+			var jsondata = $.parseJSON(jsondatastr);
 			myAppendGrid.load( jsondata );
+			}
 			
 			$( "#dialog_worker_card" ).dialog({
 				minHeight: 1,

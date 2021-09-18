@@ -22,7 +22,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-
+print_r ($_POST['rec_pre']);
 $rec_pre =$_POST['rec_pre'];
-echo "ok rec pres ",$rec_pre[0]['uid'];
+
 
