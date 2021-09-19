@@ -87,7 +87,7 @@ if (!isset($_GET['sezione'])) {
 		$default_where=['sezione' => 1, 'tipo' => 'F%', 'anno'=> date('Y')];
 	}
 } else {
-	$default_where=['sezione' => $last['seziva'], 'tipo' => 'F%'];
+	$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'F%'];
 }
 $ts = new TableSorter(
     !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
