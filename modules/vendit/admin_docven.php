@@ -259,6 +259,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	$fae_other_el_exist=array();
     if (isset($_POST['rows'])) {
         foreach ($_POST['rows'] as $next_row => $v) {
+            $v['ritenuta']=floatval($v['ritenuta']);
 			switch($v['tiprig']){
 				case'0':
 				case'1':
