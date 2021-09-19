@@ -83,6 +83,7 @@ if (!isset($_GET['sezione'])) {
 	$last = gaz_dbi_fetch_array($rs_last);
 	if ($last) {
 		$default_where=['sezione' => $last['seziva'], 'tipo' => 'F%', 'anno'=>$last['yearde']];
+        $_GET['anno']=$last['yearde'];
 	} else {
 		$default_where=['sezione' => 1, 'tipo' => 'F%', 'anno'=> date('Y')];
 	}
