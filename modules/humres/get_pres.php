@@ -26,14 +26,14 @@ $admin_aziend = checkAdmin();
 //$_POST['id_staff']="1";
 $id_staff= intval ($_POST['id_staff']);
 $date = substr($_POST['date'], 0, 20);
-$card_res = gaz_dbi_dyn_query('id, start_work, end_work, id_work_type, min_delay, id_orderman', $gTables['staff_work_movements'], "id_staff = " . $id_staff. " AND start_work LIKE '" . $date ."%'");
+$card_res = gaz_dbi_dyn_query('id, start_work, end_work, id_work_type, min_delay, id_orderman, id_staff_worked_hours,note ', $gTables['staff_work_movements'], "id_staff = " . $id_staff. " AND start_work LIKE '" . $date ."%'");
 
 if ($card_res->num_rows > 0){	
 
 while ( $row = gaz_dbi_fetch_array($card_res) ) {// ciclo tutte le registrazioni
 	$start = date('H:i', strtotime($row['start_work']));
 	$end = date('H:i', strtotime($row['end_work']));
-	$data[]=array("id"=>$row['id'], "start_work"=>$start, "end_work"=>$end, "id_work_type"=>$row['id_work_type'], "min_delay"=>$row['min_delay'], "id_orderman"=>$row['id_orderman']); 
+	$data[]=array("id"=>$row['id'], "id-worked"=>$row['id_staff_worked_hours'], "start_work"=>$start, "end_work"=>$end, "id_work_type"=>$row['id_work_type'], "min_delay"=>$row['min_delay'], "id_orderman"=>$row['id_orderman'], "note"=>$row['note']); 
 }
 $json= json_encode(array($data));
 

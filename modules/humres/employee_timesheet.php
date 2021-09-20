@@ -138,14 +138,16 @@ if (isset($_POST['week'])) { // accessi successivi
 			header("Location: print_timesheet.php?year=".$form['year']."&week=".$form['week']."&employee=".$form['id_employee']);
 		}
 	}
+	
 	// carico i dati per la select work type del jquery
-	$query = 'SELECT id_work,descri FROM `' . $gTables['staff_work_type'] . '` WHERE id_work_type = 1 ORDER BY `id_work`';
+	$query = 'SELECT id_work, descri FROM `' . $gTables['staff_work_type'] . '` ORDER BY `id_work_type` ASC';
 	$result = gaz_dbi_query($query);
 	$work_types="0:'Lavoro normale'";	
 	$invalid_characters = array("'", ",", ":");
-	while ($r = gaz_dbi_fetch_array($result)) {		
-		$work_types .= ", ".$r['id_work'].":'". substr(str_replace($invalid_characters, " ", $r['descri']), 0, 80)."'";				
+	while ($r = gaz_dbi_fetch_array($result)) {// carico i dati di staff_work_type	
+		$work_types .= ", ".$r['id_work'].":'". substr(str_replace($invalid_characters, " ", $r['descri']), 0, 75)."'";				
 	}
+	
 	// carico i dati per la select orderman del jquery
 	$query = 'SELECT id,description FROM `' . $gTables['orderman'] . '` WHERE stato_lavorazione = 0 ORDER BY `id`';
 	$result = gaz_dbi_query($query);
@@ -190,6 +192,7 @@ require("../../library/include/header.php");
 			var id = $(this).attr('id_staff');
 			var id2 = $(this).attr('date');
 			var jsondatastr = null;
+			var deleted_rows = [];
 			
 			$.ajax({ // chiedo tutte le registrazioni fatte nel cartellino presenze per quel giorno
 				'async': false,
@@ -201,11 +204,8 @@ require("../../library/include/header.php");
 					//alert(jsonstr);
 					jsondatastr = jsonstr;			
 				}
-			});			
-			
-			
-			
-			
+			});				
+						
 			var myAppendGrid = new AppendGrid({ // creo la tabella vuota
 			  element: "tblAppendGrid",
 			  uiFramework: "bootstrap4",
@@ -215,6 +215,11 @@ require("../../library/include/header.php");
 				{
 				  name: "id",
 				  display: "ID",
+				  type: "hidden"
+				},
+				{
+				  name: "id-worked",
+				  display: "ID-Worked",
 				  type: "hidden"
 				},
 				{
@@ -252,8 +257,22 @@ require("../../library/include/header.php");
 					ctrlOptions: {					
 					<?php echo $orderman;?>
 					}
+				},
+				{
+				  name: "note",
+				  display: "Annotazione",
+				  type: "textarea",
+				  ctrlAttr: {
+						"cols": 1
+					}
+				},
+			  ],
+			  beforeRowRemove: function(caller, rowIndex) {
+				 var rowValues = myAppendGrid.getRowValue(rowIndex);
+				 deleted_rows.push(rowValues.id); 
+				//alert("row index:" + rowIndex + " values:" + JSON.stringify(deleted_rows));
+				return confirm("Sei sicuro di voler rimuovere la riga?");
 				}
-			  ]
 			});
 			
 			if (jsondatastr){
@@ -261,6 +280,7 @@ require("../../library/include/header.php");
 			var jsondata = $.parseJSON(jsondatastr);
 			myAppendGrid.load( jsondata );
 			}
+			
 			
 			$( "#dialog_worker_card" ).dialog({
 				minHeight: 1,
@@ -275,16 +295,28 @@ require("../../library/include/header.php");
 						click:function (event, ui) {
 						$(this).dialog("close");
 					}},
-					"Conferma": function() {						
+					"Conferma": function() {
+						var msg = null;
 						$.ajax({ // registro con i nuovi dati il cartellino presenze
-							data: {rec_pre: myAppendGrid.getAllValue()},
+							'async': false,
+							data: {rec_pres: myAppendGrid.getAllValue(), date: id2, id_staff: id, deleted_rows: deleted_rows},
 							type: 'POST',
 							url: '../humres/rec_pres.php',
 							success: function(output){
-								alert(output);								
+								msg = output;
+								console.log(msg);
 							}
 						});
-						$(this).dialog("close");
+						
+						if (msg) {
+							alert(msg);
+						} else {
+							//window.location.replace("./employee_timesheet.php");
+							//window.location.reload(true);
+							// qui bisogna ricaricare la pagina!!!
+							$(this).dialog("close"); 
+							
+						}
 					}
 				}
 			});
@@ -296,7 +328,11 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0,array('custom/autocomplete'));
 $gForm = new humresForm();
 ?> 
-
+<style>
+	#tblAppendGrid .form-control{
+		height: 28px;
+	}
+</style>
 <form method="POST" id="form">
 <div class="container-fluid">
   
