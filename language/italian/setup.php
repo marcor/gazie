@@ -25,8 +25,8 @@
 $errors                  = Array();
 $errors['is_align']      = "Il database &egrave; allineato con il software";
 $errors['no_conn']       = "La connessione al database non &egrave; andata a buon fine.<br/>Impostare correttamente username, password <br/>e nome del database nel file config/config/gconfig.php";
-$errors['no_data_files_writable']  = "Il server non ha i permessi (min. 666) per memorizzare i documenti nella directory " . DATA_DIR . "files";
-$errors['no_tcpdf_cache_writable'] = "TCPDF non potrà generare i file pdf senza i permessi (min. 666) richiesti sulla directory " . K_PATH_CACHE;
+$errors['no_data_files_writable']  = "Il server web non ha i permessi (visibili in alto a sinistra) di scrittura per la directory " . DATA_DIR . "files, sono necessari per la caricare e memorizzazione documenti e immagini";
+$errors['no_tcpdf_cache_writable'] = "Il server web non ha i permessi (visibili in alto a sinistra) di scrittura per la directory " . K_PATH_CACHE.", essi consentono a TCPDF di generare i file pdf";
 
 $msg                     = Array();
 $msg['title']            = "Installa o Aggiorna la Base Dati di GAzie ";
