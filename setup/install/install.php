@@ -31,7 +31,7 @@ if ( $debug_active ) {
 	error_reporting($error_reporting_level);
 }
 
-$err=array();
+$err=[];
 //
 // Ottiene in qualche modo il prefisso delle tabelle.
 //
@@ -58,11 +58,14 @@ if (isset($_SESSION['table_prefix'])) {
 }
 //
 // Alcune directory devono essere scrivibili dal servente HTTP/PHP (www-data).
-//
-if (!dir_writable(DATA_DIR.'files/')) { //questa per archiviare i documenti
+$usrid=posix_getuid();
+$usrwww=posix_getpwuid($usrid);
+if (!is_writable(DATA_DIR.'files/')) { //questa per archiviare i documenti
+    echo DATA_DIR.'files/ --> '.$usrwww['name'].' permission = '.substr(sprintf('%o', fileperms(DATA_DIR.'files/')),-3).'<br/>';
     $err[] = 'no_data_files_writable';
 }
-if (!dir_writable(K_PATH_CACHE)) { //questa per permettere a TCPDF di inserire le immagini
+if (!is_writable(K_PATH_CACHE)) { //questa per permettere a TCPDF di inserire le immagini
+    echo K_PATH_CACHE.' --> '.$usrwww['name'].' permission = '.substr(sprintf('%o', fileperms(K_PATH_CACHE)),-3).'<br/>';
     $err[] = 'no_tcpdf_cache_writable'; 
 }
 //
@@ -401,17 +404,6 @@ if ($handle = opendir($relativePath)) {
     closedir($handle);
     }
 return $structArray;
-}
-
-function dir_writable($folder)
-{
-    $isw=false;
-    $perm=substr(sprintf('%o', fileperms($folder)),-2);
-    //echo $folder . "  -->> ".$perm . " <br>" ;
-    if ($perm>=66) {
-        $isw = true;
-    }
-    return $isw;
 }
 
 function executeScriptFileUpgrade($name_sql) // se ho un file php da eseguire dopo la query sql
