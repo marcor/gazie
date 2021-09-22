@@ -169,4 +169,7 @@ define('modifica_fatture_ddt', FALSE);
 
 // personalizzazione link al fornitore del servizio
 define('contact_link','devincentiis.it', FALSE);
+
+// abilita o meno la richiesta di scelta template per carta intestata
+define('enable_lh_print_dialog', TRUE);
 ?>
