@@ -338,6 +338,7 @@ $ts->output_navbar();
             <?php $ts->output_headers(); ?>
         </tr>
         <?php
+        $enable_lh_print_dialog=gaz_dbi_get_row($gTables['company_config'], 'var', 'enable_lh_print_dialog')['val'];
         //recupero le testate in base alle scelte impostate
         $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'], "*") . ", " .
 				    cols_from($gTables['anagra'],
@@ -434,7 +435,7 @@ $ts->output_navbar();
 			//onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);" title="Invia mail di conferma"
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\"";
 			// vedo se è presente un file di template adatto alla stampa su carta già intestata
-			if($enable_lh_print_dialog && withoutLetterHeadTemplate($r['tipdoc'])){
+			if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
 				echo ' onclick="choice_template(\''.$modulo.'\');" title="Scegli modulo per stampa"';
 			}else{
 				echo ' href="'.$modulo.'" target="_blank"';

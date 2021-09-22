@@ -182,7 +182,4 @@ define('SET_DYNAMIC_IP', (defined('MY_SET_DYNAMIC_IP')) ? MY_SET_DYNAMIC_IP : ''
 $modifica_fatture_ddt = (defined('modifica_fatture_ddt')) ? modifica_fatture_ddt : FALSE;
 
 $contact_link = (defined('contact_link')) ? contact_link : 'devincentiis.it';
-
-// abilita o meno la richiesta di scelta template per carta intestata
-$enable_lh_print_dialog = (defined('enable_lh_print_dialog')) ? enable_lh_print_dialog : true;
 ?>
