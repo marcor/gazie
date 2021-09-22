@@ -57,9 +57,13 @@ if (isset($_SESSION['table_prefix'])) {
 	}
 }
 //
-// Alcune directory devono essere scrivibili dal servente HTTP/PHP (www-data).
-$usrid=posix_getuid();
-$usrwww=posix_getpwuid($usrid);
+// Alcune directory devono essere scrivibili dal servente HTTPs/PHP (www-data).
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    $usrwww = ['name' => 'web server'];
+} else {
+	$usrid=posix_getuid();
+	$usrwww=posix_getpwuid($usrid);
+}
 if (!is_writable(DATA_DIR.'files/')) { //questa per archiviare i documenti
     echo DATA_DIR.'files/ --> '.$usrwww['name'].' permission = '.substr(sprintf('%o', fileperms(DATA_DIR.'files/')),-3).'<br/>';
     $err[] = 'no_data_files_writable';
