@@ -95,7 +95,8 @@ $transl['vendit'] = array('name' => " Vendite",
         56 => array("Lista dei Registratori Telematici", "Lista Registratori Telematici"),
         57 => array("Nuovo Registratore Telematico", "Nuovo Registratore Telematico"),
         58 => array("Genera file RID CBI-SEPA", "Distinta RID (xml)"),
-        59 => array("Lista delle distinte generate", "Distinte generate")
+        59 => array("Lista delle distinte generate", "Distinte generate"),
+        60 => array("Stampa libera lista effetti", "Stampa lista effetti")
     )
 );
 ?>
