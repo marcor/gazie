@@ -63,45 +63,47 @@ function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per
 	return $cols;
 }
 
+	
+// carico i dati per la select work type del jquery
+$query = 'SELECT id_work, descri FROM `' . $gTables['staff_work_type'] . '` ORDER BY `id_work_type` ASC';
+$result = gaz_dbi_query($query);
+$work_types="0:'Lavoro normale'";	
+$invalid_characters = array("'", ",", ":");
+while ($r = gaz_dbi_fetch_array($result)) {// carico i dati di staff_work_type	
+	$work_types .= ", ".$r['id_work'].":'". substr(str_replace($invalid_characters, " ", $r['descri']), 0, 75)."'";				
+}
+
+// carico i dati per la select orderman del jquery
+$query = 'SELECT id,description FROM `' . $gTables['orderman'] . '` WHERE stato_lavorazione = 0 ORDER BY `id`';
+$result = gaz_dbi_query($query);
+$orderman="0:'Nessuna lavorazione associata'";	
+$invalid_characters = array("'", ",", ":");
+while ($r = gaz_dbi_fetch_array($result)) {		
+	$orderman .= ", ".$r['id'].":'".substr(str_replace($invalid_characters, " ", $r['description']), 0, 40)."'";		
+}
+
+
 if ($_POST) { // accessi successivi
-	//print_r($_POST);
 	$form['mese']=intval($_POST['mese']);
 	$form['anno']=intval($_POST['anno']);
-	// carico staff worked hours per il dato mese e anno	
 	$month_res = getWorkedHours($form['mese'],$form['anno']);
-	//echo "<pre>",print_r($month_res);die;
-	// carico i collaboratori ancora in forza per il dato mese e anno
 	$cols=getWorkers($form['mese'],$form['anno']);
-	//echo "<pre>",print_r($cols);die;       
-	
 	if (isset($_POST['go_print'])){	
 		
-			header("Location: print_timesheet.php?year=".$form['year']."&week=".$form['week']."&employee=".$form['id_employee']);
+			header("Location: print_timesheet.php?year=".$form['anno']."&month=".$form['mese']);
 		
-	}
-	
-	// carico i dati per la select work type del jquery
-	$query = 'SELECT id_work, descri FROM `' . $gTables['staff_work_type'] . '` ORDER BY `id_work_type` ASC';
-	$result = gaz_dbi_query($query);
-	$work_types="0:'Lavoro normale'";	
-	$invalid_characters = array("'", ",", ":");
-	while ($r = gaz_dbi_fetch_array($result)) {// carico i dati di staff_work_type	
-		$work_types .= ", ".$r['id_work'].":'". substr(str_replace($invalid_characters, " ", $r['descri']), 0, 75)."'";				
-	}
-	
-	// carico i dati per la select orderman del jquery
-	$query = 'SELECT id,description FROM `' . $gTables['orderman'] . '` WHERE stato_lavorazione = 0 ORDER BY `id`';
-	$result = gaz_dbi_query($query);
-	$orderman="0:'Nessuna lavorazione associata'";	
-	$invalid_characters = array("'", ",", ":");
-	while ($r = gaz_dbi_fetch_array($result)) {		
-		$orderman .= ", ".$r['id'].":'".substr(str_replace($invalid_characters, " ", $r['description']), 0, 40)."'";		
 	}
 	
 } else { // al primo accesso
-	$dto = new DateTime();
-	$form['anno'] = $dto->format("Y");
-	$form['mese'] = $dto->format("m");
+	if (isset($_GET['yearmonth'])){ // se mi è stato passato il mese come referenza lo uso
+		$refyearmonth=explode("-",$_GET['yearmonth']);
+		$form['anno'] = intval($refyearmonth[0]);
+		$form['mese'] = intval($refyearmonth[1]);
+	} else { // altrimenti prendo il mese corrente
+		$dto = new DateTime();
+		$form['anno'] = $dto->format("Y");
+		$form['mese'] = $dto->format("m");
+	}
 	$month_res = getWorkedHours($form['mese'],$form['anno']);	
 	$cols = getWorkers($form['mese'],$form['anno']);	
 }
@@ -121,7 +123,6 @@ require("../../library/include/header.php");
 			var id2 = $(this).attr('date');
 			var jsondatastr = null;
 			var deleted_rows = [];
-			//alert ("id staff:"+id+"date:"+id2);
 			$.ajax({ // chiedo tutte le registrazioni fatte nel cartellino presenze per quel giorno
 				'async': false,
 				url:"../humres/get_pres.php",   
@@ -229,21 +230,17 @@ require("../../library/include/header.php");
 							'async': false,
 							data: {rec_pres: myAppendGrid.getAllValue(), date: id2, id_staff: id, deleted_rows: deleted_rows},
 							type: 'POST',
-							url: '../humres/rec_pres.php',
+							url: './rec_pres.php',
 							success: function(output){
 								msg = output;
 								console.log(msg);
 							}
 						});
-						
+				
 						if (msg) {
 							alert(msg);
 						} else {
-							//window.location.replace("./employee_timesheet.php");
-							//window.location.reload(true);
-							// qui bisogna ricaricare la pagina!!!
-							$(this).dialog("close"); 
-							
+							window.location.replace("./employee_timesheet.php?yearmonth="+id2);
 						}
 					}
 				}
@@ -316,7 +313,7 @@ $gForm = new humresForm();
 					?>
 					<th <?php echo $td[$c]; ?> style="width: 3%;">
 						<?php 					
-						echo $c+1,"<br>",$week_day; 
+						echo $c+1,"<br/>",$week_day; 
 						?>
 						</th>
 					<?php
@@ -420,7 +417,7 @@ $gForm = new humresForm();
                 <button name="go_print" class="btn btn-sm btn-default">
                     <i class="glyphicon glyphicon-print">				
 					<?php
-					echo ucwords($script_transl['print'].$script_transl['title'].' '.$form['mese'].' '.$form['anno']);
+					echo ucwords($script_transl['print'].$script_transl['title'].' '.ucwords(strftime("%B %Y", mktime (0,0,0,$form['mese'],1,$form['anno']))));
 					?>
 					</i>
                 </button>

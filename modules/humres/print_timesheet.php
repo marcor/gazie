@@ -31,13 +31,13 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
 }
 
-if (!isset($_GET['year']) || !isset($_GET['week'])) {
+if (!isset($_GET['year']) || !isset($_GET['month'])) {
     header("Location: docume_humres.php");
     exit;
 }
 
 $dto = new DateTime();
-$dto->setISODate(intval($_GET['year']), intval($_GET['week']));
+$dto->setDate(intval($_GET['year']), intval($_GET['month']),1);
 $dto->modify('first day of this month');
 $first_day = $dto->format('Y-m-d');
 $dto->modify('last day of this month');
@@ -59,9 +59,6 @@ require("../../config/templates/report_template.php");
 require("lang.".$admin_aziend['lang'].".php");
 $script_transl=$strScript['employee_timesheet.php'];
 $where=" (start_date <= '".$last_day."' OR end_date IS NULL ) AND (end_date < '2000-01-01' OR end_date IS NULL OR end_date > '".$first_day."')";
-if (!empty($_GET['employee']) && is_numeric($_GET['employee'])) {
-    $where.=" AND id_staff=".$_GET['employee'];
-}
 $what="*";
 $tables=$gTables['staff'] . ' AS st LEFT JOIN ' . $gTables['clfoco'] . ' AS wo ON st.id_clfoco=wo.codice ';
 $result = gaz_dbi_dyn_query($what, $tables, $where, 'id_staff');
