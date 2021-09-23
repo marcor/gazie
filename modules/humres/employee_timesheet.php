@@ -281,7 +281,7 @@ $gForm = new humresForm();
 	}
 </style>
 <form method="POST" id="form">
-<div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
+<div class="text-center FacetFormHeaderFont"><b><?php echo $script_transl['title']; ?></b></div>
 <div class="panel panel-info">
 	<div class="row">
 		<div class="col-lg-12 text-center">	
