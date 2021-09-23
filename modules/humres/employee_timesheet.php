@@ -225,9 +225,13 @@ require("../../library/include/header.php");
 						text:'Annulla', 
 						'class':'btn btn-danger delete-button',
 						click:function (event, ui) {
-						$(this).dialog("close");
-					}},
-					"Conferma": function() {
+							$(this).dialog("close");
+						}
+					},
+					confirm :{ 
+					  text:'CONFERMA', 
+					  'class':'btn btn-success pull-right btn-conferma',
+					  click:function() {
 						var msg = null;
 						$.ajax({ // registro con i nuovi dati il cartellino presenze
 							'async': false,
@@ -239,12 +243,12 @@ require("../../library/include/header.php");
 								console.log(msg);
 							}
 						});
-				
 						if (msg) {
 							alert(msg);
 						} else {
 							window.location.replace("./employee_timesheet.php?yearmonth="+id2);
 						}
+					  }
 					}
 				}
 			});
@@ -266,6 +270,14 @@ $gForm = new humresForm();
 <style>
 	#tblAppendGrid .form-control{
 		height: 28px;
+	}
+	.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+	  float: unset !important;
+	}
+	.btn-conferma {
+		color: #fff !important;
+		background-color: #f0ad4e !important;
+		border-color: #eea236 !important;
 	}
 </style>
 <form method="POST" id="form">

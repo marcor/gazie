@@ -1,5 +1,5 @@
 UPDATE `gaz_config` SET `cvalue` = '142' WHERE `id` =2;
-INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '5', 'report_wharehouse.php', '', '', '10', '', '1'  FROM `gaz_menu_module`;
+INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '5', 'report_wharehouse.php', '', '', '10', '', '8'  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_wharehouse.php'), 'admin_wharehouse.php?Insert', '', '', 15, '', 10  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_effett.php'), 'select_effett_report.php', '', '', 60, '', 11  FROM `gaz_menu_script`;
 ALTER TABLE `gaz_staff_work_type` ADD COLUMN `descri_ext` VARCHAR(255) NULL DEFAULT NULL AFTER `descri`, ADD COLUMN `inps_ref` VARCHAR(3) NULL DEFAULT NULL AFTER `descri_ext`,	ADD COLUMN `causal` VARCHAR(3) NULL DEFAULT NULL AFTER `inps_ref`;
