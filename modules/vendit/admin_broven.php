@@ -507,13 +507,24 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
         }
 
-				 $_SESSION['print_queue'] = array();
-				 $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
-				 $_SESSION['print_queue']['idDoc'] = $ultimo_id;
-				 header("Location: report_broven.php?auxil={$form['tipdoc']}");
-				 exit;
+                if (defined('after_newdoc_back_to_doclist')) {
+	                $_SESSION['print_queue'] = array();
+	                $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
+	                $_SESSION['print_queue']['idDoc'] = $ultimo_id;
+	                $auxil = $form['tipdoc'];
+	                if ($auxil == 'VOR') {
+	                  $auxil = 'VO_';
+	                }
+
+	                header("Location: report_broven.php?auxil=$auxil");
+	                exit;
+                }
+
+                $_SESSION['print_request'] = $ultimo_id;
+                header("Location: invsta_broven.php");
+                exit;
+            }
         }
-			}
     } elseif (isset($_POST['ord']) and $toDo == 'update') {  // si vuole generare un'ordine
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
@@ -581,12 +592,23 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
             }
 
-	      $_SESSION['print_queue'] = array();
-	      $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
-	      $_SESSION['print_queue']['idDoc'] = $ultimo_id;
-	      header("Location: report_broven.php?auxil={$form['tipdoc']}");
-	      exit;
-      }
+            if (defined('after_newdoc_back_to_doclist')) {
+              $_SESSION['print_queue'] = array();
+              $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
+              $_SESSION['print_queue']['idDoc'] = $ultimo_id;
+              $auxil = $form['tipdoc'];
+              if ($auxil == 'VOR') {
+                $auxil = 'VO_';
+              }
+
+	            header("Location: report_broven.php?auxil=$auxil");
+	            exit;
+            }
+
+            $_SESSION['print_request'] = $ultimo_id;
+            header("Location: invsta_broven.php");
+            exit;
+        }
     }
     // Se viene inviata la richiesta di conferma cliente
     if ($_POST['hidden_req'] == 'clfoco') {
