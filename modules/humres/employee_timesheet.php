@@ -306,14 +306,14 @@ $gForm = new humresForm();
 				for($c=0;$c<$col ; $c++){
 					$week_day=strftime("%a", strtotime($c ."-". $form['mese'] ."-". $form['anno']));
 					if ($week_day=="sab"){
-						$td[$c]='bgcolor="#fffacd"';
+						$td[$c]='bg-warning';
 					}elseif ($week_day=="dom"){
-						$td[$c]='bgcolor="#fff0f5"';
+						$td[$c]='bg-danger';
 					}else {
 						$td[$c]='';
 					}
 					?>
-					<th <?php echo $td[$c]; ?> style="width: 3%;">
+					<th class="<?php echo $td[$c]; ?>" style="width: 3%;">
 						<?php 					
 						echo $c+1,"<br/>",$week_day; 
 						?>
@@ -332,14 +332,14 @@ $gForm = new humresForm();
 						</td>
 					</tr>
 					<tr>
-					<td>
+					<td class="bg-success">
 					<?php echo $oper['ragso1']," ",$oper['ragso2']; ?>
 					</td>
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<td <?php echo $td[$c-1]; ?> align="center">
-							<a class="btn btn-xs btn-default dialog_worker_card" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c); ?>" >
+						<td class="<?php echo $td[$c-1]; ?>" align="center">
+							<a class="btn btn-xs btn-default dialog_worker_card" title="Modifica il cartellino" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c); ?>" >
 								<i class="glyphicon glyphicon-edit"></i>
 							</a>
 						</td>
@@ -347,7 +347,7 @@ $gForm = new humresForm();
 					}
 					?>
 					</tr>
-					<tr>
+					<tr class="bg-info">
 					 
 					<td style="width: 7%;">
 						<?php echo "Ore normali"; ?>
