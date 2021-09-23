@@ -580,10 +580,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                 }
             }
-            $_SESSION['print_request'] = $ultimo_id;
-            header("Location: invsta_broven.php");
-            exit;
-        }
+
+	      $_SESSION['print_queue'] = array();
+	      $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
+	      $_SESSION['print_queue']['idDoc'] = $ultimo_id;
+	      header("Location: report_broven.php?auxil={$form['tipdoc']}");
+	      exit;
+      }
     }
     // Se viene inviata la richiesta di conferma cliente
     if ($_POST['hidden_req'] == 'clfoco') {
