@@ -114,18 +114,21 @@ require("../../library/include/header.php");
 <script src="AppendGrid.js"></script>
 <script type="text/javascript">
     $(function () {		
-		
 		$("#dialog_worker_card").dialog({ autoOpen: false });
 		$('.dialog_worker_card').click(function() {			
-			$("p#iddescri").html($(this).attr("staff_name"));
 			$(window).width()*0.5;
 			var id = $(this).attr('id_staff');
 			var id2 = $(this).attr('date');
+			const d2 = new Date(id2);
+			const ye = new Intl.DateTimeFormat('it', { year: 'numeric' }).format(d2);
+			const mo = new Intl.DateTimeFormat('it', { month: 'short' }).format(d2);
+			const da = new Intl.DateTimeFormat('it', { day: '2-digit' }).format(d2);
 			var jsondatastr = null;
 			var deleted_rows = [];
+			$("p#iddescri").html($(this).attr("staff_name")+' giorno <b>'+da+' '+mo+' '+ye+'</b>');
 			$.ajax({ // chiedo tutte le registrazioni fatte nel cartellino presenze per quel giorno
 				'async': false,
-				url:"../humres/get_pres.php",   
+				url:"./get_pres.php",   
 				type: "POST",    
 				dataType: 'text',
 				data: {id_staff: id, date: id2},
@@ -268,31 +271,30 @@ $gForm = new humresForm();
 <form method="POST" id="form">
 <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
 <div class="panel panel-info">
-<div class="container-fluid">
-	<div class="table-responsive">
-		<div class="row">
-			<div class="col-lg-12 text-center">	
-				<?php			
-				echo "\t <select name=\"mese\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
-				for ($counter = 1;$counter <= 12;$counter++) {
-					$selected = "";
-					if ($counter == $form['mese']) $selected = "selected";
-					$nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-					echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
-				}
-				echo "\t </select>\n";
-				echo "\t <select name=\"anno\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
-				for ($counter = date("Y") - 10;$counter <= date("Y") + 10;$counter++) {
-					$selected = "";
-					if ($counter == $form['anno']) $selected = "selected";
-					echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
-				}
-				echo "\t </select>\n";
-				$col = cal_days_in_month(CAL_GREGORIAN, $form['mese'], $form['anno']); //giorni nel mese e anno selezionato
-				
-				?>
-			</div>
+	<div class="row">
+		<div class="col-lg-12 text-center">	
+			<?php			
+			echo "\t <select name=\"mese\" onchange=\"this.form.submit()\">\n";
+			for ($counter = 1;$counter <= 12;$counter++) {
+				$selected = "";
+				if ($counter == $form['mese']) $selected = "selected";
+				$nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+				echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+			}
+			echo "\t </select>\n";
+			echo "\t <select name=\"anno\" onchange=\"this.form.submit()\">\n";
+			for ($counter = date("Y") - 10;$counter <= date("Y") + 10;$counter++) {
+				$selected = "";
+				if ($counter == $form['anno']) $selected = "selected";
+				echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
+			}
+			echo "\t </select>\n";
+			$col = cal_days_in_month(CAL_GREGORIAN, $form['mese'], $form['anno']); //giorni nel mese e anno selezionato
+			
+			?>
 		</div>
+	</div>
+	<div class="table-responsive">
 	
 		<table class="table table-hover" style="width: 100%;" border="1" cellpadding="1">
 			 <thead>
@@ -330,14 +332,14 @@ $gForm = new humresForm();
 						</td>
 					</tr>
 					<tr>
-					<th>
+					<td>
 					<?php echo $oper['ragso1']," ",$oper['ragso2']; ?>
-					</th>
+					</td>
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
 						<td <?php echo $td[$c-1]; ?> align="center">
-							<a class="btn btn-xs btn-default dialog_worker_card" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",$c; ?>" >
+							<a class="btn btn-xs btn-default dialog_worker_card" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c); ?>" >
 								<i class="glyphicon glyphicon-edit"></i>
 							</a>
 						</td>
@@ -347,57 +349,57 @@ $gForm = new humresForm();
 					</tr>
 					<tr>
 					 
-					<th style="width: 7%;">
+					<td style="width: 7%;">
 						<?php echo "Ore normali"; ?>
-					</th>
+					</td>
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<th <?php echo $td[$c-1]; ?> style="width: 3%;">
+						<td <?php echo $td[$c-1]; ?> style="width: 3%;">
 						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_normal']))?$month_res[$c][$oper['id_staff']]['hours_normal']:'0.00'; ?>
-						</th>
+						</td>
 						<?php
 					}
 					?> </tr><tr> 
-					<th style="width: 7%;">
+					<td style="width: 7%;">
 						<?php echo "Straordinario"; ?>
-					</th>
+					</td>
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<th <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
+						<td <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
 						<a data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di straordinario" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['extra_des']))?$month_res[$c][$oper['id_staff']]['extra_des']:''; ?>">
 						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_extra']))?$month_res[$c][$oper['id_staff']]['hours_extra']:'0.00'; ?>						
 						</a>
-						</th>
+						</td>
 						<?php
 					}
 					?> </tr><tr> 
-					<th style="width: 7%;">
+					<td style="width: 7%;">
 						<?php echo "Festivo e notturno"; ?>
-					</th>
+					</td>
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<th <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
+						<td <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
 						<a data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore festive e notturne" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['other_des']))?$month_res[$c][$oper['id_staff']]['other_des']:''; ?>">
 						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_other']))?$month_res[$c][$oper['id_staff']]['hours_other']:'0.00'; ?>
 						</a>
-						</th>
+						</td>
 						<?php
 					}
 					?> </tr><tr> 
-					<th style="width: 7%;">
+					<td style="width: 7%;">
 						<?php echo "Assenza"; ?>
-					</th>
+					</td>
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<th <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
+						<td <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
 						<a data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di assenza" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['absence_des']))?$month_res[$c][$oper['id_staff']]['absence_des']:''; ?>">
 						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_absence']))?$month_res[$c][$oper['id_staff']]['hours_absence']:'0.00'; ?>
 						</a>
-						</th>
+						</td>
 						<?php
 					}
 					?>				
@@ -425,7 +427,6 @@ $gForm = new humresForm();
 		</div>		
 	</div>
 </div>
-</div>
 	<div style="display:none" id="dialog_worker_card" title="Cartellino presenze">
         <p><b>Dipendente:</b></p>		
 		<p class="ui-state-highlight" id="iddescri"></p>
@@ -438,7 +439,6 @@ $gForm = new humresForm();
    
    
 </form>
-<div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
 </div>  
 <?php
 require("../../library/include/footer.php");
