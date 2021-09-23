@@ -113,7 +113,7 @@ $terzo = (isset($_GET['auxil']) && $_GET['auxil'] == 'VOG') ? ['weekday_repeat' 
 $sortable_headers = array(
     "ID" => "id_tes",
     $script_transl['number'] => "numdoc",
-    $script_transl[key($terzo)] => current($terzo), 
+    $script_transl[key($terzo)] => current($terzo),
     "Cliente" => "clfoco",
     "Destinazione" => "unita_locale1",
     $script_transl['status'] => "status",
@@ -128,9 +128,9 @@ if (isset($form['swStatus']) AND $form['swStatus']=="Inevasi"){
 }
 $ts = new TableSorter(
     isset($_GET["destinaz"]) ? $tesbro_e_destina :
-	(!$partner_select && isset($_GET["cliente"]) ? $tesbro_e_partners : $gTables['tesbro']), 
-    $passo, 
-    ['datemi' => 'desc', 'numdoc' => 'desc'], 
+	(!$partner_select && isset($_GET["cliente"]) ? $tesbro_e_partners : $gTables['tesbro']),
+    $passo,
+    ['datemi' => 'desc', 'numdoc' => 'desc'],
     ['auxil' => 'VOR']
 );
 $tipo = $auxil;
@@ -173,7 +173,7 @@ function confirMail(link){
 function choice_template(modulo) {
 	$( function() {
     var dialog
-	,	 
+	,
 	dialog = $("#confirm_print").dialog({
 		modal: true,
 		show: "blind",
@@ -185,7 +185,7 @@ function choice_template(modulo) {
 			click: function () {
 				window.location.href = modulo;
 			},
-		}, 
+		},
 		{
 			text: "Su carta intestata ",
 			"class": 'btn',
@@ -206,7 +206,7 @@ $(function() {
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
 		$("p#iddescri").html($(this).attr("nome"));
-		var id = $(this).attr('ref');		
+		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -214,8 +214,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -233,7 +233,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 </script>
@@ -266,7 +266,7 @@ $ts->output_navbar();
                 <?php gaz_flt_disp_int("numero", "Numero Doc."); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <?php 
+                <?php
                     if ( $tipo=="VOG" ) {
                         ?>
                             <select class="form-control input-sm" onchange="this.form.submit()" name="giorno">
@@ -284,12 +284,12 @@ $ts->output_navbar();
 			                </select>
                         <?php
                     } else {
-                        gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $gTables["tesbro"], $where_select, "anno DESC"); 
+                        gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $gTables["tesbro"], $where_select, "anno DESC");
                     }
                 ?>
             </td>
             <td class="FacetFieldCaptionTD">
-		
+
                 <?php
 		if ($partner_select) {
 		    gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 AS nome",
@@ -302,20 +302,20 @@ $ts->output_navbar();
                 }?>
             </td>
             <td class=FacetFieldCaptionTD>
-                <?php 
-								gaz_flt_disp_select("destinaz","unita_locale1 AS destinaz",$tesbro_e_destina, $where_select . " AND unita_locale1 IS NOT NULL", "destinaz DESC",  "destinaz"); 
+                <?php
+								gaz_flt_disp_select("destinaz","unita_locale1 AS destinaz",$tesbro_e_destina, $where_select . " AND unita_locale1 IS NOT NULL", "destinaz DESC",  "destinaz");
 								?>
             </td>
             <td class=FacetFieldCaptionTD style="text-align: center;">
 				<?php
 				if ($form['swStatus']=="" OR $form['swStatus']=="Tutti"){
-					?>					
+					?>
 					<input type="submit" class="btn btn-sm btn-default" name="inevasi" onClick="chkSubmit();" value="Inevasi">
-					<?php					
+					<?php
 				} else {
-					?>					
+					?>
 					<input type="submit" class="btn btn-sm btn-default" name="tutti" onClick="chkSubmit();" value="Tutti" style="text-align: center;">
-					<?php 
+					<?php
 				}
 				?>
 				<input type="hidden" name="swStatus" id="preventDuplicate" value="<?php echo $form['swStatus']; ?>">
@@ -351,7 +351,7 @@ $ts->output_navbar();
         $ctrlprotoc = "";
         while ($r = gaz_dbi_fetch_array($result)) {
 			$remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
-            $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
+            $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
             $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r['id_tes'] . " AND tiprig <=1 ", 'id_tes DESC');
             while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
                 if ( $rigbro_r['tiprig']==1 ) $totale_da_evadere = 1;
@@ -361,15 +361,15 @@ $ts->output_navbar();
                 while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
                     $totale_evaso += $rigdoc_r['quanti'];
                     $processed_atleastone = true;
-                }    
+                }
 
                 if ( $totale_evaso < $totale_da_evadere ) {
                     $remains_atleastone = true;
                 }
             }
 			if ( ($form['swStatus']=="Tutti" OR $form['swStatus']=="") OR ($form['swStatus']=="Inevasi" AND  $remains_atleastone == true) ){
-			
-			
+
+
             if ($r['tipdoc'] == 'VPR') {
                 $modulo = "stampa_precli.php?id_tes=" . $r['id_tes'];
                 $modifi = "admin_broven.php?Update&id_tes=" . $r['id_tes'];
@@ -395,9 +395,9 @@ $ts->output_navbar();
             echo "<td><a href=\"admin_destinazioni.php?codice=".$r['clfoco']."&Update\">".$r['unita_locale1']."</a>";
 						if(strlen($r['destin'])>5){ echo '<small>'.nl2br($r['destin']).'</small>';}
 						echo "</td>";
-            
+
             // colonna stato ordine
-            
+
             //
             // Se l'ordine e' da evadere completamente, verifica lo status ed
             // eventualmente lo aggiorna.
@@ -430,7 +430,7 @@ $ts->output_navbar();
                 mostra_documenti_associati( $r['id_tes'] );
             }
             echo "</td>";
-            
+
             // stampa
 			//onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);" title="Invia mail di conferma"
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\"";
@@ -439,7 +439,7 @@ $ts->output_navbar();
 				echo ' onclick="choice_template(\''.$modulo.'\');" title="Scegli modulo per stampa"';
 			}else{
 				echo ' href="'.$modulo.'" target="_blank"';
-			}			
+			}
 			echo "><i class=\"glyphicon glyphicon-print\"></i></a>";
             echo "</td>";
 			/*
@@ -467,7 +467,7 @@ $ts->output_navbar();
 				?>
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" nome="<?php echo $r['ragso1']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
-				</a>				
+				</a>
 				<?php
 			}
             echo "</td>";
@@ -482,26 +482,41 @@ $ts->output_navbar();
 </form>
 
 <script>
- $(document).ready(function(){
+$(document).ready(function(){
+<?php
+if (isset($_SESSION['print_queue']['idDoc']) && !empty($_SESSION['print_queue']['idDoc'])) {
+	$printIdDoc =  (int) $_SESSION['print_queue']['idDoc'];
+	if (isset($_SESSION['print_queue']['tpDoc'])) {
+		$target = "stampa_precli.php?id_tes=$printIdDoc";
+		if ($_SESSION['print_queue']['tpDoc'] == 'VOR') {
+			$target = "stampa_ordcli.php?id_tes=$printIdDoc";
+		}
+
+		echo "fileLoad('$target', false);\n";
+	}
+
+	unset($_SESSION['print_queue']);
+}
+?>
      var selects = $("select");
      // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
-     // (in questo modo i campi non usati possono essere esclusi)        
+     // (in questo modo i campi non usati possono essere esclusi)
      $("option", selects).filter(function(){ return this.value == "All"; }).val("");
-     
-     // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
+
+     // la stessa funzione imposta onchange="this.form.submit()" sulle select:
      // l'azione non lancia un evento "submit" e non può essere intercettata.
      // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
      selects.attr('onchange', null).change(function() { $(this.form).submit(); });
-     
+
      // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
      $("form").submit(function() {
          $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
          return true; // ensure form still submits
      });
-     
+
      // Un-disable form fields when page loads, in case they click back after submission
      $( "form" ).find( ":input" ).prop( "disabled", false );
- });
+});
 </script>
 
 <?php
@@ -517,7 +532,7 @@ function withoutLetterHeadTemplate($tipdoc='VPR')
 	while ($file = readdir($handle)) {
 		if(($file == ".")||($file == "..")) continue;
 		if(!preg_match("/^".$nf."_lh.php$/",$file)) continue; // se è presente un template adatto per stampa su carta intestata (suffisso "_lh" )
-		$withoutLetterHeadTemplate = true; //  
+		$withoutLetterHeadTemplate = true; //
 	}
 	return $withoutLetterHeadTemplate;
 }

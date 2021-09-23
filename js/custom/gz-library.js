@@ -115,3 +115,22 @@ this.gzTooltip = function () {
                 }
             });
 };
+
+/*
+  Crea un link ad un file nel DOM e lo richiama in una nuova scheda
+  o forzandone il download.
+  Dovrebbe essere usato solo se il target è nello stesso dominio
+  ed abilitando le pop-up per il medesimo
+  !! non funziona in condizione contenuto misto/cross-origin) !!
+*/
+function fileLoad(filePath, forceDL) {
+	var link = document.createElement('a');
+	link.href = filePath;
+	link.setAttribute('target', '_blank');
+	if (forceDL) {
+		link.download = filePath.substr(filePath.lastIndexOf('/') + 1);
+	}
+
+	link.click();
+}
+
