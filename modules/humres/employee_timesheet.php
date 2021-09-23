@@ -316,7 +316,7 @@ $gForm = new humresForm();
 					?>
 					<th <?php echo $td[$c]; ?> style="width: 3%;">
 						<?php 					
-						echo $c+1," ",$week_day; 
+						echo $c+1,"<br>",$week_day; 
 						?>
 						</th>
 					<?php
