@@ -23,120 +23,61 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
-function getStartToEndDate($week, $year) {
-  $dto = new DateTime();
-  $dto->setISODate($year, $week);
-  $ret['mon'] = $dto->format('Y-m-d');
-  $dto->modify('+1 days');
-  $ret['tue'] = $dto->format('Y-m-d');
-  $dto->modify('+1 days');
-  $ret['wed'] = $dto->format('Y-m-d');
-  $dto->modify('+1 days');
-  $ret['thu'] = $dto->format('Y-m-d');
-  $dto->modify('+1 days');
-  $ret['fri'] = $dto->format('Y-m-d');
-  $dto->modify('+1 days');
-  $ret['sat'] = $dto->format('Y-m-d');
-  $dto->modify('+1 days');
-  $ret['sun'] = $dto->format('Y-m-d');
-  return $ret;
+
+// Antonio Germani -  sett. 2021
+
+function getWorkedHours($mese,$anno) { // Carico staff worked hours per il dato mese e anno
+	global $gTables;
+	$month_res=array();
+	$query="SELECT DAY(work_day),hours_normal,hours_extra,hours_absence,hours_other,".$gTables['staff'] .".id_staff,id_work_type_extra,id_absence_type,id_other_type FROM ".$gTables['staff_worked_hours']." 
+	LEFT JOIN ". $gTables['staff'] . " ON ". $gTables['staff_worked_hours'] .".id_staff = ". $gTables['staff'] .".id_staff 
+	WHERE MONTH(work_day) = '". $mese ."' AND YEAR(work_day) = '". $anno ."' ORDER BY id_staff ASC";
+	$resc = gaz_dbi_query($query);
+	while($r = mysqli_fetch_array($resc)){
+		$month_res[$r['DAY(work_day)']][$r['id_staff']] = $r;
+		
+		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_work_type_extra']);
+		$month_res[$r['DAY(work_day)']][$r['id_staff']]['extra_des']=($des)?$des['descri_ext']:'';
+		
+		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_absence_type']);
+		$month_res[$r['DAY(work_day)']][$r['id_staff']]['absence_des']=($des)?$des['descri_ext']:'';
+		
+		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_other_type']);
+		$month_res[$r['DAY(work_day)']][$r['id_staff']]['other_des']=($des)?$des['descri_ext']:'';
+	}	
+	return $month_res;
+}
+	
+function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per il dato mese e anno
+	global $gTables;
+	$cols=array();
+	$query="SELECT ragso1,ragso2,id_staff FROM ".$gTables['staff']."
+	LEFT JOIN ". $gTables['clfoco'] . " ON ". $gTables['staff'] .".id_clfoco = ". $gTables['clfoco'] .".codice 
+	LEFT JOIN ". $gTables['anagra'] . " ON ". $gTables['anagra'] .".id = ". $gTables['clfoco'] .".id_anagra
+	WHERE YEAR(end_date) > '".$anno."' OR (YEAR(end_date) = '".$anno."' AND MONTH(end_date) >= '".$mese."') OR end_date IS NULL";
+	$coll = gaz_dbi_query($query);
+	while($col = $coll->fetch_assoc()){
+		$cols[]=$col;
+	}
+	//echo "<pre>",print_r($cols);die;
+	return $cols;
 }
 
-/*
-function getWorkers($date) {
-	global $gTables;
-    $orderby = "id_staff ASC";
-    $where = "end_date <= '2000-01-01' OR end_date IS NULL OR end_date >= '" . $date."'";
-    $field = 'staff.id_staff, CONCAT(ana.ragso1,\' \',ana.ragso2) AS worker_descri ';
-    $from = $gTables['staff'] . ' AS staff ' .
-            'LEFT JOIN ' . $gTables['clfoco'] . ' AS worker ON staff.id_clfoco=worker.codice ' .
-            'LEFT JOIN ' . $gTables['anagra'] . ' AS ana ON worker.id_anagra=ana.id ';
-    $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
-	$ret= array();
-    while ($row = gaz_dbi_fetch_array($result)) {
-		$ret[$row['id_staff']]=$row;
-	}
-	return $ret;
-}
-*/
-// Antonio Germani -  nuova funzione che conteggia le ore di più righi nello stesso giorno
-function getStaffTimesheet($worker,$dates) {
-	global $gTables;
-	foreach ($dates as $k=>$v) {
-        $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $worker, "AND work_day = '$v'");
-		if (!empty($r)){
-			$hnormal=0;$hextra=0;$habsence=0;$hother=0;
-			$query="SELECT * FROM ".$gTables['staff_worked_hours']." WHERE id_staff = '".$worker."' and work_day = '".$v."'";
-			$rc = gaz_dbi_query($query);
-			while($rowrc = $rc->fetch_assoc()){ 
-				 $hnormal=$hnormal+$rowrc['hours_normal'];
-				 $hextra=$hextra+$rowrc['hours_extra'];
-				 $habsence=$habsence+$rowrc['hours_absence'];
-				 $hother=$hother+$rowrc['hours_other'];
-				 $id_work_type_extra=$rowrc['id_work_type_extra'];
-				 $id_absence_type=$rowrc['id_absence_type'];
-				 $id_other_type=$rowrc['id_other_type'];
-				 $note=$rowrc['note'];				 
-			 }
-			 $ret[$worker][$v] = array( 'hours_normal'=>$hnormal, 'id_work_type_extra'=>$id_work_type_extra,
-			'hours_extra'=>$hextra, 'id_absence_type'=> $id_absence_type, 'hours_absence'=>$habsence,
-			'id_other_type'=>$id_other_type, 'hours_other'=>$hother, 'note'=>$note
-			);
-		} else {
-			$ret[$worker][$v] = array( 'hours_normal'=>'', 'id_work_type_extra'=>0,
-			'hours_extra'=>'', 'id_absence_type'=>0, 'hours_absence'=>'',
-			'id_other_type'=>0, 'hours_other'=>'', 'note'=>'', 'id_orderman'=>0, 'coseprod'=>''
-			);
-		}
-	}
-	return $ret;
-}
-
-if (isset($_POST['week'])) { // accessi successivi
-    $form['hidden_req'] = intval($_POST['hidden_req']);
-    $form['week'] = filter_input(INPUT_POST, 'week');
-    $form['year'] = filter_input(INPUT_POST, 'year');
-    $form['id_employee'] = filter_input(INPUT_POST, 'id_employee');
-	if ($form['hidden_req']>0 && $form['hidden_req'] <> $form['id_employee']){
-		$form['id_employee']=$form['hidden_req'];
-	}
-    $form['cosemployee'] = filter_input(INPUT_POST, 'cosemployee');
-	if ($_POST['goto']=='next'){
-		if ($form['week']<53) { // settimana successiva
-			$form['week'] ++;
-		} else {
-			$form['year'] ++;
-			$form['week'] =1;
-		}
-	}
-	if ($_POST['goto']=='prev'){
-		if ($form['week']>1) { // settimana precedente
-			$form['week'] --;
-		} else {
-			$form['year'] --;
-			$form['week'] =53;
-		}
-	}
-	if (isset($_POST['go_insert']) || isset($_POST['go_print'])){
-		$week_days = getStartToEndDate($form['week'], $form['year']);
-		// inserisco o modifico i dati sul database
-		$id_worker=$form['id_employee']; 
-		foreach ($_POST['rows'][$id_worker] as $k_date=>$v){
-			$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $k_date . "' AND id_staff = ".$id_worker );
-			if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
-			    $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET `id_staff`='.$id_worker.",`work_day`='".$k_date."',`hours_normal`=".$v['hours_normal'].',`id_work_type_extra`='.$v['id_work_type_extra'].',`hours_extra`='.$v['hours_extra'].',`id_absence_type`='.$v['id_absence_type'].',`hours_absence`='.$v['hours_absence'].',`id_other_type`='.$v['id_other_type'].',`hours_other`='.$v['hours_other'].",`note`='".$v['note']."' WHERE `id_staff`=".$id_worker." AND `work_day`='".$k_date."'";
-				gaz_dbi_query($query);
-			} else { // faccio l'INSERT
-				$v['id_staff']=$id_worker;
-				$v['work_day']=$k_date;
-				gaz_dbi_table_insert('staff_worked_hours', $v);
-			}
-		}
-		if (isset($_POST['go_insert'])) {
-			header("Location: docume_humres.php"); 
-		} else {
+if ($_POST) { // accessi successivi
+	//print_r($_POST);
+	$form['mese']=intval($_POST['mese']);
+	$form['anno']=intval($_POST['anno']);
+	// carico staff worked hours per il dato mese e anno	
+	$month_res = getWorkedHours($form['mese'],$form['anno']);
+	//echo "<pre>",print_r($month_res);die;
+	// carico i collaboratori ancora in forza per il dato mese e anno
+	$cols=getWorkers($form['mese'],$form['anno']);
+	//echo "<pre>",print_r($cols);die;       
+	
+	if (isset($_POST['go_print'])){	
+		
 			header("Location: print_timesheet.php?year=".$form['year']."&week=".$form['week']."&employee=".$form['id_employee']);
-		}
+		
 	}
 	
 	// carico i dati per la select work type del jquery
@@ -159,41 +100,28 @@ if (isset($_POST['week'])) { // accessi successivi
 	
 } else { // al primo accesso
 	$dto = new DateTime();
-    $form['week'] = $dto->format("W");
-    $form['year'] = $dto->format("Y");
-    $form['id_employee'] = 0;
-    $form['cosemployee'] = "";
-    $form['hidden_req'] = 0;
-	$work_types="";
-	$orderman="";
+	$form['anno'] = $dto->format("Y");
+	$form['mese'] = $dto->format("m");
+	$month_res = getWorkedHours($form['mese'],$form['anno']);	
+	$cols = getWorkers($form['mese'],$form['anno']);	
 }
-
-$week_days = getStartToEndDate($form['week'], $form['year']);
 
 require("../../library/include/header.php");
 ?>
 <!--Antonio Germani - carico AppendGrid library-->
 <script src="AppendGrid.js"></script>
 <script type="text/javascript">
-    $(function () {
-		$('.dropdownmenustyle').selectmenu();        
-		$("#prev").click(function () {
-			$("#goto").val('prev');
-            this.form.submit();
-        });
-        $("#next").click(function () {
-			$("#goto").val('next');
-            this.form.submit();
-        });
+    $(function () {		
 		
 		$("#dialog_worker_card").dialog({ autoOpen: false });
 		$('.dialog_worker_card').click(function() {			
 			$("p#iddescri").html($(this).attr("staff_name"));
+			$(window).width()*0.5;
 			var id = $(this).attr('id_staff');
 			var id2 = $(this).attr('date');
 			var jsondatastr = null;
 			var deleted_rows = [];
-			
+			//alert ("id staff:"+id+"date:"+id2);
 			$.ajax({ // chiedo tutte le registrazioni fatte nel cartellino presenze per quel giorno
 				'async': false,
 				url:"../humres/get_pres.php",   
@@ -322,11 +250,18 @@ require("../../library/include/header.php");
 			});
 			$("#dialog_worker_card" ).dialog( "open" );  
 		});		
-	});	
+	});
+	
+$(document).ready(function(){		
+	$('[data-toggle="popover"]').popover({
+		html: true
+	});   
+});
 </script>
 <?php
 $script_transl = HeadMain(0,array('custom/autocomplete'));
 $gForm = new humresForm();
+
 ?> 
 <style>
 	#tblAppendGrid .form-control{
@@ -334,8 +269,165 @@ $gForm = new humresForm();
 	}
 </style>
 <form method="POST" id="form">
+<div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
+<div class="panel panel-info">
 <div class="container-fluid">
-  
+	<div class="table-responsive">
+		<div class="row">
+			<div class="col-lg-12 text-center">	
+				<?php			
+				echo "\t <select name=\"mese\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+				for ($counter = 1;$counter <= 12;$counter++) {
+					$selected = "";
+					if ($counter == $form['mese']) $selected = "selected";
+					$nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+					echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+				}
+				echo "\t </select>\n";
+				echo "\t <select name=\"anno\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+				for ($counter = date("Y") - 10;$counter <= date("Y") + 10;$counter++) {
+					$selected = "";
+					if ($counter == $form['anno']) $selected = "selected";
+					echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
+				}
+				echo "\t </select>\n";
+				$col = cal_days_in_month(CAL_GREGORIAN, $form['mese'], $form['anno']); //giorni nel mese e anno selezionato
+				
+				?>
+			</div>
+		</div>
+	
+		<table class="table table-hover" style="width: 100%;" border="1" cellpadding="1">
+			 <thead>
+				<th style="width: 7%;">
+					<?php echo "Giorno"; ?>
+				</th>
+				<?php 
+				
+				for($c=0;$c<$col ; $c++){
+					$week_day=strftime("%a", strtotime($c ."-". $form['mese'] ."-". $form['anno']));
+					if ($week_day=="sab"){
+						$td[$c]='bgcolor="#fffacd"';
+					}elseif ($week_day=="dom"){
+						$td[$c]='bgcolor="#fff0f5"';
+					}else {
+						$td[$c]='';
+					}
+					?>
+					<th <?php echo $td[$c]; ?> style="width: 3%;">
+						<?php 					
+						echo $c+1," ",$week_day; 
+						?>
+						</th>
+					<?php
+				}	
+				?>
+			 </thead>
+			 <tbody>
+			 
+				<?php 
+				foreach ($cols as $oper){
+					?>
+					<tr>
+						<td style="line-height:10px;" >&nbsp;
+						</td>
+					</tr>
+					<tr>
+					<th>
+					<?php echo $oper['ragso1']," ",$oper['ragso2']; ?>
+					</th>
+					<?php
+					for($c=1;$c<$col+1 ; $c++){
+						?>
+						<td <?php echo $td[$c-1]; ?> align="center">
+							<a class="btn btn-xs btn-default dialog_worker_card" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",$c; ?>" >
+								<i class="glyphicon glyphicon-edit"></i>
+							</a>
+						</td>
+						<?php
+					}
+					?>
+					</tr>
+					<tr>
+					 
+					<th style="width: 7%;">
+						<?php echo "Ore normali"; ?>
+					</th>
+					<?php
+					for($c=1;$c<$col+1 ; $c++){
+						?>
+						<th <?php echo $td[$c-1]; ?> style="width: 3%;">
+						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_normal']))?$month_res[$c][$oper['id_staff']]['hours_normal']:'0.00'; ?>
+						</th>
+						<?php
+					}
+					?> </tr><tr> 
+					<th style="width: 7%;">
+						<?php echo "Straordinario"; ?>
+					</th>
+					<?php
+					for($c=1;$c<$col+1 ; $c++){
+						?>
+						<th <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
+						<a data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di straordinario" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['extra_des']))?$month_res[$c][$oper['id_staff']]['extra_des']:''; ?>">
+						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_extra']))?$month_res[$c][$oper['id_staff']]['hours_extra']:'0.00'; ?>						
+						</a>
+						</th>
+						<?php
+					}
+					?> </tr><tr> 
+					<th style="width: 7%;">
+						<?php echo "Festivo e notturno"; ?>
+					</th>
+					<?php
+					for($c=1;$c<$col+1 ; $c++){
+						?>
+						<th <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
+						<a data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore festive e notturne" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['other_des']))?$month_res[$c][$oper['id_staff']]['other_des']:''; ?>">
+						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_other']))?$month_res[$c][$oper['id_staff']]['hours_other']:'0.00'; ?>
+						</a>
+						</th>
+						<?php
+					}
+					?> </tr><tr> 
+					<th style="width: 7%;">
+						<?php echo "Assenza"; ?>
+					</th>
+					<?php
+					for($c=1;$c<$col+1 ; $c++){
+						?>
+						<th <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
+						<a data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di assenza" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['absence_des']))?$month_res[$c][$oper['id_staff']]['absence_des']:''; ?>">
+						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_absence']))?$month_res[$c][$oper['id_staff']]['hours_absence']:'0.00'; ?>
+						</a>
+						</th>
+						<?php
+					}
+					?>				
+					</tr>
+					
+					<?php
+				}
+				?>
+				<tr>
+					<td style="line-height:10px;" >&nbsp;
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="row">
+				<div class="col-xs-6">
+                <button name="go_print" class="btn btn-sm btn-default">
+                    <i class="glyphicon glyphicon-print">				
+					<?php
+					echo ucwords($script_transl['print'].$script_transl['title'].' '.$form['mese'].' '.$form['anno']);
+					?>
+					</i>
+                </button>
+				</div>
+		</div>		
+	</div>
+</div>
 </div>
 	<div style="display:none" id="dialog_worker_card" title="Cartellino presenze">
         <p><b>Dipendente:</b></p>		
@@ -343,370 +435,11 @@ $gForm = new humresForm();
 		<table id="tblAppendGrid"></table>        
 	</div>
 	
-    <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
-	<div class="panel panel-info">
-		<div class="container-fluid">
-			<div class="row"><div class="col-lg-12 text-center"><b> COLLABORATORE: </b> 
-			<?php 
-			$select_employee = new selectEmployee("id_employee");
-			$select_employee->addSelected($form['id_employee']);
-			$select_employee->output($form['cosemployee']);
-			?>
-			</div></div>
-<?php
-
-$k=$form['id_employee'];
-if ($k>0){
-	$form['rows'] = getStaffTimesheet($k,$week_days);
-	$htopt=false;
-	$acopt=false;
-	$otopt=false;
+  
 	
-?>
-		<div class="row">
-		<div class="col-lg-12 text-center"><button type="button" class="btn btn-xs btn-default" id="prev"><i class="glyphicon glyphicon-chevron-left"></i><?php echo ucfirst($script_transl['prev']); ?></button> <b><?php echo intval($form["week"]).'^'; ?> SETTIMANA <?php echo ' -> dal '.gaz_format_date($week_days['mon']).' al '.gaz_format_date($week_days['sun']); ?> </b> <button type="button"  class="btn btn-xs btn-default" id="next"><i class="glyphicon glyphicon-chevron-right"></i><?php echo ucfirst($script_transl['next']); ?></button></div>
-		</div>
-		<div class="row center-block">
-			<div class="panel panel-default">			
-			<table  class="Tlarge table table-striped table-bordered table-condensed">
-                <thead>
-                    <tr class="bg-success">              
-                        <th class="col-xs-2">
-							<?php echo $form['cosemployee']; ?>                       
-						</th>
-                        <th class="col-xs-1">
-							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['mon']; ?>" >
-								<i class="glyphicon glyphicon-dashboard"></i>
-							</a>
-                            <?php echo utf8_encode(substr(strftime("%A", strtotime("01/01/2018")),0,3)). ' ' . intval(substr($week_days['mon'],8,2));  ?>
-                        </th>
-                        <th class="col-xs-1">
-							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['tue']; ?>" >
-								<i class="glyphicon glyphicon-dashboard"></i>
-							</a>
-                            <?php echo utf8_encode(substr(strftime("%A", strtotime("01/02/2018")),0,3)). ' ' . intval(substr($week_days['tue'],8,2)); ?>
-                        </th>
-                        <th class="col-xs-1">
-							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['wed']; ?>" >
-								<i class="glyphicon glyphicon-dashboard"></i>
-							</a>
-                            <?php echo utf8_encode(substr(strftime("%A", strtotime("01/03/2018")),0,3)). ' ' . intval(substr($week_days['wed'],8,2)); ?>
-                        </th>
-                        <th class="col-xs-1">
-							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['thu']; ?>" >
-								<i class="glyphicon glyphicon-dashboard"></i>
-							</a>
-                            <?php echo utf8_encode(substr(strftime("%A", strtotime("01/04/2018")),0,3)). ' ' . intval(substr($week_days['thu'],8,2)); ?>
-                        </th>
-                        <th class="col-xs-1">
-							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['fri']; ?>" >
-								<i class="glyphicon glyphicon-dashboard"></i>
-							</a>
-                            <?php echo utf8_encode(substr(strftime("%A", strtotime("01/05/2018")),0,3)). ' ' . intval(substr($week_days['fri'],8,2)); ?>
-                        </th>
-                        <th class="col-xs-1">
-							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['sat']; ?>" >
-								<i class="glyphicon glyphicon-dashboard"></i>
-							</a>
-                            <?php echo utf8_encode(substr(strftime("%A", strtotime("01/06/2018")),0,3)). ' ' . intval(substr($week_days['sat'],8,2)); ?>
-                        </th>
-                        <th class="col-xs-1 bg-warning">
-							<a class="btn btn-xs btn-default btn-elimina dialog_worker_card" staff_name="<?php echo $form['cosemployee']; ?>" id_staff="<?php echo $form['id_employee']; ?>" date="<?php echo $week_days['sun']; ?>" >
-								<i class="glyphicon glyphicon-dashboard"></i>
-							</a>
-                            <?php echo utf8_encode(substr(strftime("%A", strtotime("01/07/2018")),0,3)). ' ' . intval(substr($week_days['sun'],8,2)); ?>
-                        </th>
-                    </tr>      
-                </thead>    
-                <tbody>
-                    <tr>
-						<!-- Antonio Germani - tolta la produzione perché non funzionava e non può più essere associata al giorno ma alle ore lavorate nella nuova tabella 'staff_work_movements'
-                        <td align="right">
-							<?php echo 'PRODUZIONE'; ?> 
-                        </td>
-                        <td>
-						-->
-						<?php
-						//	$select_prod = new selectproduction("rows[".$k."][".$week_days['mon']."][id_orderman]");
-						//	$select_prod->addSelected($form['rows'][$k][$week_days['mon']]['id_orderman']);
-						//	$select_prod->output($form['rows'][$k][$week_days['mon']]['coseprod']);
-						?>
-						</td>
-                        <td>						
-						<?php
-						?>
-                        </td>
-                        <td>						
-						<?php
-						?>
-                        </td>
-                        <td>						
-						<?php
-						?>
-                        </td>
-                        <td>						
-						<?php
-						?>
-                        </td>
-                        <td>						
-						<?php
-						?>
-                        </td>
-                        <td class="bg-warning">						
-						<?php
-						?>
-                        </td>
-                    </tr>      
-                    <tr>              
-                        <td>
-							<?php echo $script_transl['work_hou']; ?>  
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['mon']."][hours_normal]"; ?>"  maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['mon']]['hours_normal']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['tue']."][hours_normal]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['tue']]['hours_normal']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['wed']."][hours_normal]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['wed']]['hours_normal']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['thu']."][hours_normal]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['thu']]['hours_normal']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['fri']."][hours_normal]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['fri']]['hours_normal']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sat']."][hours_normal]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sat']]['hours_normal']; ?>">
-                        </td>
-                        <td class="bg-warning"><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sun']."][hours_normal]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sun']]['hours_normal']; ?>">
-                        </td>
-                    </tr>      
-                    <tr>              
-                        <td>
-							<?php echo $script_transl['cau_hextra']; ?> 
-                        </td>
-                        <td>
-						<?php
-							$htopt=$gForm->selectHextraType("rows[".$k."][".$week_days['mon']."][id_work_type_extra]",$form['rows'][$k][$week_days['mon']]['id_work_type_extra'],$htopt);
-						?>
-						</td>
-                        <td>						
-						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['tue']."][id_work_type_extra]",$form['rows'][$k][$week_days['tue']]['id_work_type_extra'],$htopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['wed']."][id_work_type_extra]",$form['rows'][$k][$week_days['wed']]['id_work_type_extra'],$htopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['thu']."][id_work_type_extra]",$form['rows'][$k][$week_days['thu']]['id_work_type_extra'],$htopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['fri']."][id_work_type_extra]",$form['rows'][$k][$week_days['fri']]['id_work_type_extra'],$htopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['sat']."][id_work_type_extra]",$form['rows'][$k][$week_days['sat']]['id_work_type_extra'],$htopt);
-						?>
-                        </td>
-                        <td class="bg-warning">						
-						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['sun']."][id_work_type_extra]",$form['rows'][$k][$week_days['sun']]['id_work_type_extra'],$htopt);
-						?>
-                        </td>
-                    </tr>      
-                    <tr>              
-                        <td>
-							<?php echo $script_transl['work_hextra']; ?>  
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['mon']."][hours_extra]"; ?>"  maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['mon']]['hours_extra']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['tue']."][hours_extra]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['tue']]['hours_extra']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['wed']."][hours_extra]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['wed']]['hours_extra']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['thu']."][hours_extra]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['thu']]['hours_extra']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['fri']."][hours_extra]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['fri']]['hours_extra']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sat']."][hours_extra]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sat']]['hours_extra']; ?>">
-                        </td>
-                        <td class="bg-warning"><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sun']."][hours_extra]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sun']]['hours_extra']; ?>">
-                        </td>
-                    </tr>      
-                    <tr>              
-                        <td>
-							<?php echo $script_transl['absence_cau']; ?> 
-                        </td>
-                        <td>
-						<?php
-							$acopt=$gForm->selectAbsenceCau("rows[".$k."][".$week_days['mon']."][id_absence_type]",$form['rows'][$k][$week_days['mon']]['id_absence_type'],$acopt);
-						?>
-						</td>
-                        <td>						
-						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['tue']."][id_absence_type]",$form['rows'][$k][$week_days['tue']]['id_absence_type'],$acopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['wed']."][id_absence_type]",$form['rows'][$k][$week_days['wed']]['id_absence_type'],$acopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['thu']."][id_absence_type]",$form['rows'][$k][$week_days['thu']]['id_absence_type'],$acopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['fri']."][id_absence_type]",$form['rows'][$k][$week_days['fri']]['id_absence_type'],$acopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['sat']."][id_absence_type]",$form['rows'][$k][$week_days['sat']]['id_absence_type'],$acopt);
-						?>
-                        </td>
-                        <td class="bg-warning">						
-						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['sun']."][id_absence_type]",$form['rows'][$k][$week_days['sun']]['id_absence_type'],$acopt);
-						?>
-                        </td>
-                    </tr>      
-                    <tr>              
-                        <td>
-							<?php echo $script_transl['absence_hou']; ?> 
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['mon']."][hours_absence]"; ?>"  maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['mon']]['hours_absence']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['tue']."][hours_absence]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['tue']]['hours_absence']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['wed']."][hours_absence]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['wed']]['hours_absence']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['thu']."][hours_absence]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['thu']]['hours_absence']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['fri']."][hours_absence]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['fri']]['hours_absence']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sat']."][hours_absence]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sat']]['hours_absence']; ?>">
-                        </td>
-                        <td class="bg-warning"><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sun']."][hours_absence]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sun']]['hours_absence']; ?>">
-                        </td>
-                    </tr>      
-                    <tr>              
-                        <td>
-							<?php echo $script_transl['other_cau']; ?> 
-                        </td>
-                        <td>
-						<?php
-							$otopt=$gForm->selectOtherType("rows[".$k."][".$week_days['mon']."][id_other_type]",$form['rows'][$k][$week_days['mon']]['id_other_type'],$otopt);
-						?>
-						</td>
-                        <td>						
-						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['tue']."][id_other_type]",$form['rows'][$k][$week_days['tue']]['id_other_type'],$otopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['wed']."][id_other_type]",$form['rows'][$k][$week_days['wed']]['id_other_type'],$otopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['thu']."][id_other_type]",$form['rows'][$k][$week_days['thu']]['id_other_type'],$otopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['fri']."][id_other_type]",$form['rows'][$k][$week_days['fri']]['id_other_type'],$otopt);
-						?>
-                        </td>
-                        <td>						
-						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['sat']."][id_other_type]",$form['rows'][$k][$week_days['sat']]['id_other_type'],$otopt);
-						?>
-                        </td>
-                        <td class="bg-warning">						
-						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['sun']."][id_other_type]",$form['rows'][$k][$week_days['sun']]['id_other_type'],$otopt);
-						?>
-                        </td>
-                    </tr>      
-                    <tr>              
-                        <td>
-							<?php echo $script_transl['other_qua']; ?> 
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['mon']."][hours_other]"; ?>"  maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['mon']]['hours_other']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['tue']."][hours_other]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['tue']]['hours_other']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['wed']."][hours_other]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['wed']]['hours_other']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['thu']."][hours_other]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['thu']]['hours_other']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['fri']."][hours_other]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['fri']]['hours_other']; ?>">
-                        </td>
-                        <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sat']."][hours_other]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sat']]['hours_other']; ?>">
-                        </td>
-                        <td class="bg-warning"><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sun']."][hours_other]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sun']]['hours_other']; ?>">
-                        </td>
-                    </tr>      
-                    <tr>              
-                        <td>
-							<?php echo $script_transl['note']; ?> 
-                        </td>
-                        <td><textarea class="form-control" name="<?php echo "rows[".$k."][".$week_days['mon']."][note]"; ?>"><?php echo $form['rows'][$k][$week_days['mon']]['note']; ?></textarea>
-                        </td>
-                        <td><textarea class="form-control" name="<?php echo "rows[".$k."][".$week_days['tue']."][note]"; ?>"><?php echo $form['rows'][$k][$week_days['tue']]['note']; ?></textarea>
-                        </td>
-                        <td><textarea class="form-control" name="<?php echo "rows[".$k."][".$week_days['wed']."][note]"; ?>"><?php echo $form['rows'][$k][$week_days['wed']]['note']; ?></textarea>
-                        </td>
-                        <td><textarea class="form-control" name="<?php echo "rows[".$k."][".$week_days['thu']."][note]"; ?>"><?php echo $form['rows'][$k][$week_days['thu']]['note']; ?></textarea>
-                        </td>
-                        <td><textarea class="form-control" name="<?php echo "rows[".$k."][".$week_days['fri']."][note]"; ?>"><?php echo $form['rows'][$k][$week_days['fri']]['note']; ?></textarea>
-                        </td>
-                        <td><textarea class="form-control" name="<?php echo "rows[".$k."][".$week_days['sat']."][note]"; ?>"><?php echo $form['rows'][$k][$week_days['sat']]['note']; ?></textarea>
-                        </td>
-                        <td class="bg-warning"><textarea class="form-control" name="<?php echo "rows[".$k."][".$week_days['sun']."][note]"; ?>"><?php echo $form['rows'][$k][$week_days['sun']]['note']; ?></textarea>
-                        </td>
-                    </tr>      
-				</tbody>     
-            </table>
-			</div><!-- chiude panel  -->
-		</div>
-	<?php
-    }
-	?>
-			<div class="row">
-				<div class="col-xs-6">
-                <button name="go_print" class="btn btn-sm btn-default">
-                    <i class="glyphicon glyphicon-print">				
-					<?php
-					echo ucwords($script_transl['print'].$script_transl['title'].' '.strftime( '%B', strtotime($week_days['mon'])));
-					?>
-					</i>
-                </button>
-				</div>
-				<div class="col-xs-2">
-				</div>
-				<div class="col-xs-4">
-                <button name="go_insert" class="btn btn-sm btn-edit">
-                    <i class="glyphicon glyphicon-edit">				
-					<?php
-					echo $script_transl['submit'];
-					?>
-					</i>
-                </button>
-				</div>
-			</div>
-        </div><!-- chiude container  -->
-    </div><!-- chiude panel  -->
-    <input type="hidden" name="year" id="year" value="<?php echo $form["year"]; ?>">
-    <input type="hidden" name="week" id="week" value="<?php echo $form["week"]; ?>">
-    <input type="hidden" name="hidden_req" id="hidden_req" value="<?php echo $form["hidden_req"]; ?>">
-    <input type="hidden" name="goto" id="goto">
+    
+   
+   
 </form>
 <div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
 </div>  
