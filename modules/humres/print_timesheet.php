@@ -148,7 +148,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 					$he='';	
 				}
 				if (isset($work_h) AND $work_h['id_absence_type']>=1){
-					$r_at = gaz_dbi_get_row($gTables['staff_absence_type'], "id_absence", $work_h['id_absence_type']);
+					$r_at = gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $work_h['id_absence_type']);
 					$at=$r_at['causal'];
 					$leg_absence[$at]=$r_at['descri_ext'];
 				} else {
