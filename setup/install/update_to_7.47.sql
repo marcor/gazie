@@ -9,4 +9,5 @@ DROP TABLE `gaz_staff_absence_type`;
 ALTER TABLE `gaz_staff_work_type` CHANGE COLUMN `id_work_type` `id_work_type` INT(3) NOT NULL COMMENT '1=straordinario;  2,8=altri; 9=assenze;' AFTER `id_work`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Abilita la richiesta di scelta template per carta intestata 0=No 1=Si', 'enable_lh_print_dialog', '1');
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Ritorno dopo inserimento documento 0=Nuovo inserimento 1=Report', 'after_newdoc_back_to_doclist', '0');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

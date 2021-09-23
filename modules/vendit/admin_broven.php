@@ -309,8 +309,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $next_row++;
         }
     }
-		// Se viene inviata la richiesta di conferma totale ...
+	// Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
+		$after_newdoc_back_to_doclist=gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
@@ -504,10 +505,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 							$gSync->SetProductQuantity($form['rows'][$i]['codart']);
 						}
 					}
+				}
 
-        }
-
-                if (defined('after_newdoc_back_to_doclist')) {
+                if ($after_newdoc_back_to_doclist==1) {
 	                $_SESSION['print_queue'] = array();
 	                $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
 	                $_SESSION['print_queue']['idDoc'] = $ultimo_id;
@@ -515,17 +515,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	                if ($auxil == 'VOR') {
 	                  $auxil = 'VO_';
 	                }
-
 	                header("Location: report_broven.php?auxil=$auxil");
 	                exit;
                 }
-
                 $_SESSION['print_request'] = $ultimo_id;
                 header("Location: invsta_broven.php");
                 exit;
             }
         }
     } elseif (isset($_POST['ord']) and $toDo == 'update') {  // si vuole generare un'ordine
+		$after_newdoc_back_to_doclist=gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
@@ -592,7 +591,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
             }
 
-            if (defined('after_newdoc_back_to_doclist')) {
+            if ($after_newdoc_back_to_doclist==1) {
               $_SESSION['print_queue'] = array();
               $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
               $_SESSION['print_queue']['idDoc'] = $ultimo_id;
@@ -600,11 +599,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               if ($auxil == 'VOR') {
                 $auxil = 'VO_';
               }
-
-	            header("Location: report_broven.php?auxil=$auxil");
-	            exit;
+              header("Location: report_broven.php?auxil=$auxil");
+	          exit;
             }
-
             $_SESSION['print_request'] = $ultimo_id;
             header("Location: invsta_broven.php");
             exit;
