@@ -89,14 +89,14 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     if ($form['change_pag'] != $form['pagame']) {  //se è stato cambiato il pagamento
         $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         $old_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['change_pag']);
-        if (($new_pag['tippag'] == 'B' or $new_pag['tippag'] == 'T' or $new_pag['tippag'] == 'V')
-                and ( $old_pag['tippag'] == 'C' or $old_pag['tippag'] == 'D' or $old_pag['tippag'] == 'O')) { // se adesso devo mettere le spese e prima no
+        if ($new_pag && ($new_pag['tippag'] == 'B' || $new_pag['tippag'] == 'T' || $new_pag['tippag'] == 'V')
+                && ( $old_pag['tippag'] == 'C' || $old_pag['tippag'] == 'D' || $old_pag['tippag'] == 'O')) { // se adesso devo mettere le spese e prima no
             $form['numrat'] = $new_pag['numrat'];
             if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
                 $old_header = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_movcon']);
-                if ($old_header['speban'] > 0 and $fornitore['speban'] == "S") {
+                if ($old_header['speban'] > 0 && $fornitore['speban'] == "S") {
                     $form['speban'] = 0;
-                } elseif ($old_header['speban'] == 0 and $fornitore['speban'] == "S") {
+                } elseif ($old_header['speban'] == 0 && $fornitore['speban'] == "S") {
                     $form['speban'] = 0;
                 } else {
                     $form['speban'] = 0.00;
@@ -104,8 +104,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             } else { //altrimenti mi avvalgo delle nuove dell'azienda
                 $form['speban'] = 0;
             }
-        } elseif (($new_pag['tippag'] == 'C' or $new_pag['tippag'] == 'D' or $new_pag['tippag'] == 'O')
-                and ( $old_pag['tippag'] == 'B' or $old_pag['tippag'] == 'T' or $old_pag['tippag'] == 'V')) { // se devo togliere le spese
+        } elseif ($new_pag && ($new_pag['tippag'] == 'C' || $new_pag['tippag'] == 'D' || $new_pag['tippag'] == 'O')
+                && ( $old_pag['tippag'] == 'B' || $old_pag['tippag'] == 'T' || $old_pag['tippag'] == 'V')) { // se devo togliere le spese
             $form['speban'] = 0.00;
             $form['numrat'] = 1;
         }
