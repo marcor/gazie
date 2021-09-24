@@ -380,8 +380,14 @@ $gForm = new humresForm();
 					for($c=1;$c<$col+1 ; $c++){
 						?>
 						<td class="<?php echo $td[$c-1]; ?> text-warning" style="width: 3%;">
-						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_extra']))?floatval($month_res[$c][$oper['id_staff']]['hours_extra']):'0'; ?>						
-						</td>
+						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_extra']) AND $month_res[$c][$oper['id_staff']]['hours_extra']>0 ){
+							?>
+							<a style="cursor: help;" data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di straordinario" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['extra_des']))?$month_res[$c][$oper['id_staff']]['extra_des']:''; ?>">
+							<?php 
+						}
+						echo (isset($month_res[$c][$oper['id_staff']]['hours_extra']))?floatval($month_res[$c][$oper['id_staff']]['hours_extra']):'0'; ?>						
+						</a>
+						</td>						
 						<?php
 					}
 					?> </tr><tr> 
@@ -392,8 +398,14 @@ $gForm = new humresForm();
 					for($c=1;$c<$col+1 ; $c++){
 						?>
 						<td class="<?php echo $td[$c-1]; ?>" style="width: 3%;">
-						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_other']))?floatval($month_res[$c][$oper['id_staff']]['hours_other']):'0'; ?>
-						</td>
+						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_other']) AND $month_res[$c][$oper['id_staff']]['hours_other']>0 ){
+							?>
+							<a style="cursor: help;" data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore festive e notturne" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['other_des']))?$month_res[$c][$oper['id_staff']]['other_des']:''; ?>">
+							<?php 
+						}
+						echo (isset($month_res[$c][$oper['id_staff']]['hours_other']))?floatval($month_res[$c][$oper['id_staff']]['hours_other']):'0'; ?>
+						</a>
+						</td>					
 						<?php
 					}
 					?> </tr><tr> 
@@ -403,9 +415,15 @@ $gForm = new humresForm();
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<td class="<?php echo $td[$c-1]; ?>" style="width: 3%;">
-						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_absence']))?floatval($month_res[$c][$oper['id_staff']]['hours_absence']):'0'; ?>
-						</td>
+						<td class="<?php echo $td[$c-1]; ?>" style="width: 3%; ">
+						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_absence']) AND $month_res[$c][$oper['id_staff']]['hours_absence']>0 ){
+							?>
+							<a style="cursor: help;" data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di assenza" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['absence_des']))?$month_res[$c][$oper['id_staff']]['absence_des']:''; ?>">
+							<?php 
+						}
+							echo (isset($month_res[$c][$oper['id_staff']]['hours_absence']))?floatval($month_res[$c][$oper['id_staff']]['hours_absence']):'0'; ?>
+						</a>
+						</td>						
 						<?php
 					}
 					?>				
