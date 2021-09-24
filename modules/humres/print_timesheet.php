@@ -138,12 +138,12 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 				$work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $mv['id_staff'], "AND work_day = '{$aDates[$i]['strdate']}'");
 				
 				if (isset($work_h) AND $work_h['hours_normal']>=0.01){
-					$hn=number_format($work_h['hours_normal'],1,',','');
+					$hn=floatval($work_h['hours_normal']);
 				} else {
 					$hn='-';	
 				}
 				if (isset($work_h) AND $work_h['hours_extra']>=0.01){
-					$he=number_format($work_h['hours_extra'],1,',','');
+					$he=floatval($work_h['hours_extra']);
 				} else {
 					$he='';	
 				}
@@ -167,7 +167,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 					$ot='';	
 				}
 				if (isset($work_h) AND $work_h['hours_other']>=0.01){
-					$ho=number_format($work_h['hours_other'],1,',','');
+					$ho=floatval($work_h['hours_other']);
 				} else {
 					$ho='';	
 				}
