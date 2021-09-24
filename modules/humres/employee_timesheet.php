@@ -318,11 +318,11 @@ $gForm = new humresForm();
 				for($c=0;$c<$col ; $c++){
 					$week_day=strftime("%a", strtotime($c ."-". $form['mese'] ."-". $form['anno']));
 					if ($week_day=="sab"){
-						$td[$c]='bg-warning';
+						$td[$c]='bg-warning text-center';
 					}elseif ($week_day=="dom"){
-						$td[$c]='bg-danger';
+						$td[$c]='bg-danger text-center';
 					}else {
-						$td[$c]='';
+						$td[$c]='text-center';
 					}
 					?>
 					<th class="<?php echo $td[$c]; ?>" style="width: 3%;">
@@ -350,7 +350,7 @@ $gForm = new humresForm();
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<td class="<?php echo $td[$c-1]; ?>" align="center">
+						<td class="<?php echo $td[$c-1]; ?> text-center">
 							<a class="btn btn-xs btn-default dialog_worker_card" title="Modifica il cartellino" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c); ?>" >
 								<i class="glyphicon glyphicon-edit"></i>
 							</a>
@@ -367,22 +367,20 @@ $gForm = new humresForm();
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<td <?php echo $td[$c-1]; ?> style="width: 3%;"><b>
+						<td class="<?php echo $td[$c-1]; ?>" style="width: 3%;"><b>
 						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_normal']))?floatval($month_res[$c][$oper['id_staff']]['hours_normal']):'0'; ?></b>
 						</td>
 						<?php
 					}
 					?> </tr><tr> 
-					<td style="width: 7%;">
+					<td class="text-warning" style="width: 7%;">
 						<?php echo "Straordinario"; ?>
 					</td>
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<td <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
-						<a data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di straordinario" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['extra_des']))?$month_res[$c][$oper['id_staff']]['extra_des']:''; ?>">
+						<td class="<?php echo $td[$c-1]; ?> text-warning" style="width: 3%;">
 						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_extra']))?floatval($month_res[$c][$oper['id_staff']]['hours_extra']):'0'; ?>						
-						</a>
 						</td>
 						<?php
 					}
@@ -393,10 +391,8 @@ $gForm = new humresForm();
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<td <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
-						<a data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore festive e notturne" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['other_des']))?$month_res[$c][$oper['id_staff']]['other_des']:''; ?>">
+						<td class="<?php echo $td[$c-1]; ?>" style="width: 3%;">
 						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_other']))?floatval($month_res[$c][$oper['id_staff']]['hours_other']):'0'; ?>
-						</a>
 						</td>
 						<?php
 					}
@@ -407,10 +403,8 @@ $gForm = new humresForm();
 					<?php
 					for($c=1;$c<$col+1 ; $c++){
 						?>
-						<td <?php echo $td[$c-1]; ?> style="width: 3%; cursor: help;">
-						<a data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di assenza" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['absence_des']))?$month_res[$c][$oper['id_staff']]['absence_des']:''; ?>">
+						<td class="<?php echo $td[$c-1]; ?>" style="width: 3%;">
 						<?php echo (isset($month_res[$c][$oper['id_staff']]['hours_absence']))?floatval($month_res[$c][$oper['id_staff']]['hours_absence']):'0'; ?>
-						</a>
 						</td>
 						<?php
 					}
