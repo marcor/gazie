@@ -167,9 +167,6 @@ define('MY_SET_DYNAMIC_IP','');
 // permetti la modifica dei ddt fatturati, utile se bisogna modificare i prezzi degli articoli
 define('modifica_fatture_ddt', FALSE);
 
-// se definito, indipendentemente dal valore, stampa il documento in una nuova scheda e torna alla lista documenti
-// define('after_newdoc_back_to_doclist', true);
-
 // personalizzazione link al fornitore del servizio
 define('contact_link','devincentiis.it', FALSE);
 ?>
