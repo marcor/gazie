@@ -317,7 +317,7 @@ $gForm = new humresForm();
 				foreach ($cols as $oper){
 					?>
 					<tr>
-						<td style="line-height:10px;" >&nbsp;
+						<td style="line-height:6px;" >&nbsp;
 						</td>
 					</tr>
 					<tr>
@@ -340,7 +340,7 @@ $gForm = new humresForm();
 						?>
 						<td class="<?php echo $td[$c]; ?> text-center">
 							<a class="btn btn-xs <?php echo $bt[$c]; ?> dialog_worker_card" title="Modifica il cartellino" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c+1); ?>" >
-								<i class="glyphicon glyphicon-edit"> <?php echo ($c+1).'<br/>'.$week_day; ?>  </i>
+								<i class="glyphicon glyphicon-edit"><br/><?php echo ($c+1).'<br/>'.$week_day; ?></i>
 							</a>
 						</td>
 						<?php
@@ -420,22 +420,16 @@ $gForm = new humresForm();
 					<?php
 				}
 				?>
-				<tr>
-					<td style="line-height:10px;" >&nbsp;
-					</td>
-				</tr>
 			</tbody>
 		</table>
-		<div class="row">
-				<div class="col-xs-6">
-                <button name="go_print" class="btn btn-sm btn-default">
-                    <i class="glyphicon glyphicon-print">				
-					<?php
-					echo ucwords($script_transl['print'].$script_transl['title'].' '.ucwords(strftime("%B %Y", mktime (0,0,0,$form['mese'],1,$form['anno']))));
-					?>
-					</i>
-                </button>
-				</div>
+		<div class="row text-center" style="padding-top:12px;">
+            <button name="go_print" class="btn btn-warning">
+                <i class="glyphicon glyphicon-print">				
+				<?php
+				echo ucwords($script_transl['print'].$script_transl['title'].' '.ucwords(strftime("%B %Y", mktime (0,0,0,$form['mese'],1,$form['anno']))));
+				?>
+				</i>
+            </button>
 		</div>		
 	</div>
 </div>
