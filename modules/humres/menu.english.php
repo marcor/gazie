@@ -25,12 +25,12 @@
  */
 $transl['humres'] = array('name' => "Human resources",
     'title' => "Human resources",
-    'm2' => array(1 => array("Staff report", "Staff report")
-    ),
-    'm3' => array(1 => array("Insert new employee", "Insert new employee"),
+    'm2' => array(1 => array("Staff report", "Staff report"),
 				  2 => array("Employee timesheet", "Employee timesheet"),
 				  3 => array("Pay salary", "Pay salary"),
 				  4 => array("Salary payments report", "Salary payments report")
+    ),
+    'm3' => array(1 => array("Insert new employee", "Insert new employee")
     )
 );
 ?>
