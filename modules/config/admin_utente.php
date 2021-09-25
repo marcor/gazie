@@ -207,16 +207,18 @@ if (isset($_POST['Submit'])) {
 						updateAccessRights($form["user_name"], $mod_data['id'], $value, $id[1]);
 					}
 				} elseif (preg_match("/^([0-9]{3})new_/", $key, $id) && $value == 3) { // il nuovo modulo non è presente in gaz_module
-					$name = preg_replace("/^[0-9]{3}new_/", '', $key);
-					// includo il file dei dati per creazione del menÂ—
+				  $name = preg_replace("/^[0-9]{3}new_/", '', $key);
+				  // controllo se il modulo è già stato attivato allora aggiungo solo l'utente
+				  $mod_data = gaz_dbi_get_row($gTables['module'], 'name', $name);
+				  // trovo l'ultimo peso assegnato ai moduli esistenti e lo accodo
+				  $rs_last = gaz_dbi_dyn_query("MAX(weight)+1 AS max_we", $gTables['module'], 'id > 1');
+				  $r = gaz_dbi_fetch_array($rs_last);
+				  $modclass=(isset($module_class))?$module_class:'';
+				  if($mod_data){ // il modulo è presente aggiungo solo l'utente in admin_module
+					updateAccessRights($form["user_name"], $mod_data['id'], 3, $id[1]);
+				  } else { // non c'è nulla aggiungo tutto e creo il menù
 					require("../../modules/" . $name . "/menu.creation_data.php");
-					// trovo l'ultimo peso assegnato ai moduli esistenti e lo accodo
-					$rs_last = gaz_dbi_dyn_query("MAX(weight)+1 AS max_we", $gTables['module'], 'id > 1');
-					$r = gaz_dbi_fetch_array($rs_last);
-					$modclass=(isset($module_class))?$module_class:'';
-					gaz_dbi_table_insert('module', array('name' => $name, 'link' => $menu_data['m1']['link'], 'icon' => $name . '.png', 'class'=>$modclass, 'weight' => $r['max_we']));
-					//recupero l'id assegnato dall'inserimento
-					$mod_id = gaz_dbi_last_id();
+					$mod_id = gaz_dbi_table_insert('module', array('name' => $name, 'link' => $menu_data['m1']['link'], 'icon' => $name . '.png', 'class'=>$modclass, 'weight' => $r['max_we']));
 					updateAccessRights($form["user_name"], $mod_id, 3, $id[1]);
 					// trovo l'ultimo id del sub menu
 					$rs_last = gaz_dbi_dyn_query("MAX(id)+1 AS max_id", $gTables['menu_module'], 1);
@@ -245,6 +247,7 @@ if (isset($_POST['Submit'])) {
 							gaz_dbi_query($vq);
 						}						
 					}
+				  }
 				}
 			}
 		}
