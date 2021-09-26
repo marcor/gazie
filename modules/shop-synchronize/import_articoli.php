@@ -56,9 +56,38 @@ if ($exists) {
 }
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 	
-if (isset($_POST['conferma'])) { // se confermato
+
+$access=base64_encode($accpass);
+if (!isset($_GET['success'])){
+	// avvio il file di interfaccia presente nel sito web remoto
+	$headers = @get_headers($urlinterf.'?access='.$access);	
+	
+	if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controllo se ho avuto accesso al file interfaccia
+		$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.time()) ; // carico il file xml appena creato
+		if (!$xml){ // se non è stato creato o non ho accesso
+			?>
+			<script>
+			alert("<?php echo "Errore! Il file xml non è stato creato oppure non è possibile accedervi"; ?>");
+			location.replace("<?php echo $_POST['ritorno']; ?>");
+			</script>
+			<?php
+		}
+	} else { // ERRORE FILE INTERFACCIA > ESCO
+		echo "Errore di connessione al file di interfaccia web";	
+			?>
+			<script>
+			alert("<?php echo " Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)),"<br> Controllare codice errore o riprovare fra qualche minuto!"; ?>");
+			location.replace("<?php echo $_POST['ritorno']; ?>");
+			</script>
+			<?php
+			exit;
+		}
+}
+
+if (isset($_POST['conferma'])) { // se confermato				
     // scrittura articoli su database di GAzie
-	for ($ord=0 ; $ord<=$_POST['num_products']; $ord++){ // ciclo gli articoli e scrivo i database
+	$ord=0;
+	foreach($xml->Documents->children() as $product) { // ciclo gli articoli e scrivo i database
 		unset($form);
 		if (isset($_POST['download'.$ord])){ // se selezionato
 		
@@ -67,8 +96,8 @@ if (isset($_POST['conferma'])) { // se confermato
 			
 			// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
 			$category="";
-			if (intval($_POST['category_id'.$ord])>0){
-				$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", $_POST['category_id'.$ord]);
+			if (intval($product->ProductCategoryId)>0){
+				$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", $product->ProductCategoryId);
 				if ($cat){// controllo se esiste in GAzie
 					$category=$cat['codice'];
 				}
@@ -76,22 +105,22 @@ if (isset($_POST['conferma'])) { // se confermato
 			
 			$web_public=1;
 			// se l'e-commerce ha mandato la priorità di pubblicazione la imposto
-			if (intval($_POST['web_public'.$ord])>0){
-				$web_public=intval($_POST['web_public'.$ord]);					
+			if (intval($product->WebPublish)>0){
+				$web_public=intval($product->WebPublish);					
 			}
 			
-			if ($_POST['product_type'.$ord]=="parent"){ // se è un parent
+			if ($product->Type=="parent"){ // se è un parent
 				$esiste = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_id'.$ord]);// controllo se esiste in GAzie
 				$tablefile="artico_group";
 				$itemref=($esiste)?$esiste['id_artico_group']:'';
 			} else {
 				$esiste = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $_POST['product_id'.$ord]);// controllo se esiste in GAzie come id e-commerce
-				$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $_POST['aliquo'.$ord], " AND tipiva = 'I'"); // prendo il codice IVA
+				$vat = gaz_dbi_get_row($gTables['aliiva'], "aliquo", $product->VAT, " AND tipiva = 'I'"); // prendo il codice IVA
 				$tablefile="artico";
 				$itemref=$_POST['codice'.$ord];
 			}
 			
-			if ($esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval"){ // se è aggiornamento, se c'è un'immagine, se selezionato e se è attivo l'aggiornamento
+			if ($esiste AND strlen($product->ProductImgUrl)>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval"){ // se è aggiornamento, se c'è un'immagine, se selezionato e se è attivo l'aggiornamento
 				// cancello l'immagine presente nella cartella 
 				$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", $tablefile, "AND id_ref ='1' AND item_ref = '". $_POST['codice'.$ord]."'");
 				if (isset($imgres)){
@@ -101,11 +130,11 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 		
 			// se è inserimento o se è update e c'è un'immagine e se è selezionato
-			if ((!$esiste AND strlen($_POST['imgurl'.$ord])>0 AND $_GET['impimm']=="dwlimg" AND $_GET['imp']=="impval") OR ($esiste AND strlen( $_POST['imgurl'.$ord])>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval")){
+			if ((!$esiste AND strlen($product->ProductImgUrl)>0 AND $_GET['impimm']=="dwlimg" AND $_GET['imp']=="impval") OR ($esiste AND strlen( $product->ProductImgUrl)>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval")){
 				
 				// salvo l'immagine HQ
-				$url = $_POST['imgurl'.$ord];
-				$expl= explode ("/", $_POST['imgurl'.$ord]);
+				$url = $product->ProductImgUrl;
+				$expl= explode ("/", $product->ProductImgUrl);
 				$form['table_name_ref']= $tablefile;
 				$form['id_ref']= '1';
 				$form['item_ref']= $itemref;
@@ -147,7 +176,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				//Carico l'immagine ridimensionata
 				$immagine= addslashes (file_get_contents($target_filename));
 				unlink ($img);// cancello l'immagine temporanea
-				if ($_POST['product_type'.$ord]=="parent"){ // se è un parent
+				if ($product->Type=="parent"){ // se è un parent
 					gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET image = '".$immagine."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");	
 
 				}else {
@@ -163,22 +192,22 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 			
 			$id_artico_group="";
-			if ($_POST['product_parent_id'.$ord] > 0){ // se è una variante
+			if ($product->ParentId > 0){ // se è una variante
 			
-				$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_parent_id'.$ord]);// trovo il padre in GAzie
+				$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $product->ParentId);// trovo il padre in GAzie
 				
 				if (!isset($parent)){
-					header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=2&parent=".$_POST['product_parent_id'.$ord]."&code=".$_POST['codice'.$ord]);
+					header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=2&parent=".$product->ParentId."&code=".$_POST['codice'.$ord]);
 					exit;
 				}
 				$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
-				if (strlen($_POST['descri'.$ord])<2){ // se non c'è la descrizione della variante 
-					$_POST['descri'.$ord]=$parent['descri']."-".$_POST['characteristic'.$ord];// ci metto quella del padre accodandoci la variante
+				if (strlen($product->Name)<2){ // se non c'è la descrizione della variante 
+					$product->Name=$parent['descri']."-".$product->Characteristic;// ci metto quella del padre accodandoci la variante
 				}
 			}
-			if ($_POST['product_type'.$ord]=="variant" AND strlen($_POST['characteristic'.$ord])>0 ){ // se una variante
+			if ($product->Type=="variant" AND strlen($product->Characteristic)>0 ){ // se una variante
 				// creo un json array per la variante
-				$arrayvar= array("var_id" => floatval($_POST['characteristic_id'.$ord]), "var_name" => $_POST['characteristic'.$ord]);
+				$arrayvar= array("var_id" => floatval($product->CharacteristicId), "var_name" => $product->Characteristic);
 				$arrayvar = json_encode ($arrayvar);
 			} else {
 				$arrayvar = "";
@@ -187,12 +216,12 @@ if (isset($_POST['conferma'])) { // se confermato
 			if ($esiste AND $_GET['upd']=="updval"){ // se esiste l'articolo ed è attivo l'update, aggiorno l'articolo
 				
 					// Body text
-					if (strlen($_POST['body_text'.$ord])>0 AND $_GET['upddes']=="upddes"){ // se c'è una descrizione estesa body_text ed è selezionata
-						if ($_POST['product_type'.$ord]=="parent"){ // se è un parent					
-							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET large_descri = '". htmlspecialchars_decode (addslashes($_POST['body_text'.$ord])) ."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
+					if (strlen(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))>0 AND $_GET['upddes']=="upddes"){ // se c'è una descrizione estesa body_text ed è selezionata
+						if ($product->Type=="parent"){ // se è un parent					
+							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET large_descri = '". htmlspecialchars_decode (addslashes(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))) ."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {					
 							$esist = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", "artico_".$esiste['codice']);
-							$form['body_text'] = htmlspecialchars_decode ($_POST['body_text'.$ord]);
+							$form['body_text'] = htmlspecialchars_decode (preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)));
 							if($esiste){
 								$form['table_name_ref']="artico_".$esiste['codice'];
 							} else {
@@ -216,24 +245,24 @@ if (isset($_POST['conferma'])) { // se confermato
 					
 					if ($_GET['updpre']=="updpre" AND $_GET['updname']=="updnam") { // se devo aggiornare prezzo e nome
 						
-						if ($_POST['product_type'.$ord]=="parent"){ // se è un parent					
-							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($_POST['descri'.$ord])) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
+						if ($product->Type=="parent"){ // se è un parent					
+							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($product->Name)) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {
-							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', descri = '".addslashes($_POST['descri'.$ord])."', web_price = '".addslashes($_POST['web_price'.$ord])."' , id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', descri = '".addslashes($product->Name)."', web_price = '".addslashes($product->Price)."' , id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 						}
 					} elseif ($_GET['updpre']!=="updpre" AND $_GET['updname']=="updnam") { // altrimenti non aggiorno il prezzo ma aggiorno il nome
-						if ($_POST['product_type'.$ord]=="parent"){ // se è un parent					
-							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($_POST['descri'.$ord])) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
+						if ($product->Type=="parent"){ // se è un parent					
+							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($product->Name)) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {
-							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', descri = '".addslashes($_POST['descri'.$ord])."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', descri = '".addslashes($product->Name)."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 						}
-					} elseif ($_GET['updpre']=="updpre" AND $_GET['updname']!=="updnam" AND $_POST['product_type'.$ord]!=="parent") { // altrimenti aggiorno il prezzo ma non aggiorno il nome
-						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', web_price = '".addslashes($_POST['web_price'.$ord])."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+					} elseif ($_GET['updpre']=="updpre" AND $_GET['updname']!=="updnam" AND $product->Type!=="parent") { // altrimenti aggiorno il prezzo ma non aggiorno il nome
+						gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', web_price = '".addslashes($product->Price)."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 					} else {// oppure aggiorno i dati default ma no nome e no prezzo
-						if ($_POST['product_type'.$ord]=="parent"){ // se è un parent					
-							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($_POST['descri'.$ord])) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
+						if ($product->Type=="parent"){ // se è un parent					
+							gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET descri = '". htmlspecialchars_decode (addslashes($product->Name)) ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");
 						} else {
-							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$_POST['weight'.$ord]."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
+							gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET ecomm_option_attribute = '".$arrayvar."', ". $updcat ." peso_specifico = '".$product->Weight."', id_artico_group ='". $id_artico_group ."', web_public = '".$web_public."' WHERE ref_ecommerce_id_product = '". $_POST['product_id'.$ord] ."'");
 						}
 					}
 				
@@ -242,7 +271,7 @@ if (isset($_POST['conferma'])) { // se confermato
 				// prima di inserire il nuovo controllo se l'e-commerce ha mandato il codice articolo e se è già in uso in GAzie	
 				
 				if (strlen($_POST['codice'.$ord])<1){// se l'e-commerce non ha inviato un codice me lo creo
-					$_POST['codice'.$ord] = substr($_POST['descri'.$ord],0,10)."-".substr($_POST['product_id'.$ord],-4);
+					$_POST['codice'.$ord] = substr($product->Name,0,10)."-".substr($_POST['product_id'.$ord],-4);
 				}
 				
 				// se non esiste la categoria in GAzie, la creo				
@@ -250,8 +279,8 @@ if (isset($_POST['conferma'])) { // se confermato
 					$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
 					$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
 					$cat['codice'] = $ultimo_codice['codice']+1;
-					$cat['ref_ecommerce_id_category'] = $_POST['category_id'.$ord];
-					$cat['descri'] = $_POST['category'.$ord];					
+					$cat['ref_ecommerce_id_category'] = $product->ProductCategoryId;
+					$cat['descri'] = $product->ProductCategory;					
 					gaz_dbi_table_insert('catmer',$cat);
 					// assegno l'id categoria al prossimo insert artico
 					$category=$cat['codice'];
@@ -264,27 +293,28 @@ if (isset($_POST['conferma'])) { // se confermato
 					$_POST['codice'.$ord]=substr($_POST['codice'.$ord],0,10)."-".substr($_POST['product_id'.$ord],-4);
 				}								
 				
-				if ($_POST['product_type'.$ord]=="parent"){// se è un parent ***<<<<<
-					if (strlen($_POST['body_text'.$ord])>0 AND $_GET['impdes']!=="dwldes"){ // se non è stata selezionata la descrizione estesa
-						$_POST['body_text'.$ord]=""; // la annullo
+				if ($product->Type=="parent"){// se è un parent ***<<<<<
+					if (strlen(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))>0 AND $_GET['impdes']!=="dwldes"){ // se non è stata selezionata la descrizione estesa
+						$product->Description = ""; // la annullo
 					}
-					gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($_POST['descri'.$ord]) . "', '" . htmlspecialchars_decode (addslashes($_POST['body_text'.$ord])). "', '" . $immagine . "', '". $_POST['web_url'.$ord] . "', '". $_POST['product_id'.$ord] . "', '".$web_public."', '1', '". $admin_aziend['adminid'] ."')");
+					gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($product->Name) . "', '" . htmlspecialchars_decode (addslashes(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))). "', '" . $immagine . "', '". $product->WebUrl . "', '". $_POST['product_id'.$ord] . "', '".$web_public."', '1', '". $admin_aziend['adminid'] ."')");
 				} else {
 					
 					if ($_GET['imppre']=="dwlprice") { // se devo inserire anche il prezzo web
-						gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(web_url,web_multiplier,ecomm_option_attribute,catmer,barcode,peso_specifico,codice,ref_ecommerce_id_product,descri,web_mu,web_price,unimis,image,web_public,depli_public,aliiva,id_artico_group) VALUES ('". $_POST['web_url'.$ord] ."', '1', '". $arrayvar ."', '" . $category . "', '" . $_POST['barcode'.$ord] . "', '" . $_POST['weight'.$ord] . "', '" . $_POST['codice'.$ord] . "', '" . $_POST['product_id'.$ord]. "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '". addslashes($_POST['web_price'.$ord]). "', '".$_POST['unimis'.$ord]."', '".$immagine."', '".$web_public."', '1', '".$vat['codice']."', '". $id_artico_group ."')");
+						gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(web_url,web_multiplier,ecomm_option_attribute,catmer,barcode,peso_specifico,codice,ref_ecommerce_id_product,descri,web_mu,web_price,unimis,image,web_public,depli_public,aliiva,id_artico_group) VALUES ('". $product->WebUrl ."', '1', '". $arrayvar ."', '" . $category . "', '" . $product->BarCode . "', '" . $product->Weight . "', '" . $_POST['codice'.$ord] . "', '" . $_POST['product_id'.$ord]. "', '" . addslashes($product->Name). "', '".$product->Unimis . "', '". addslashes($product->Price). "', '".$product->Unimis."', '".$immagine."', '".$web_public."', '1', '".$vat['codice']."', '". $id_artico_group ."')");
 					} else { // altrimenti lo inserisco senza prezzo web
-						gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(web_url,web_multiplier,ecomm_option_attribute,catmer,barcode,peso_specifico,codice,ref_ecommerce_id_product,descri,web_mu,unimis,image,web_public,depli_public,aliiva,id_artico_group) VALUES ('". $_POST['web_url'.$ord] ."', '1', '". $arrayvar ."', '" . $category . "', '" . $_POST['barcode'.$ord] . "', '" . $_POST['weight'.$ord] . "', '" . $_POST['codice'.$ord] . "', '" . $_POST['product_id'.$ord]. "', '" . addslashes($_POST['descri'.$ord]). "', '".$_POST['unimis'.$ord] . "', '".$_POST['unimis'.$ord]."', '".$immagine."', '".$web_public."', '1', '".$vat['codice']."', '". $id_artico_group ."')");
+						gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(web_url,web_multiplier,ecomm_option_attribute,catmer,barcode,peso_specifico,codice,ref_ecommerce_id_product,descri,web_mu,unimis,image,web_public,depli_public,aliiva,id_artico_group) VALUES ('". $product->WebUrl ."', '1', '". $arrayvar ."', '" . $category . "', '" . $product->BarCode . "', '" . $product->Weight . "', '" . $_POST['codice'.$ord] . "', '" . $_POST['product_id'.$ord]. "', '" . addslashes($product->Name). "', '".$product->Unimis . "', '".$product->Unimis."', '".$immagine."', '".$web_public."', '1', '".$vat['codice']."', '". $id_artico_group ."')");
 					}
-					if (strlen($_POST['body_text'.$ord])>0 AND $_GET['impdes']=="dwldes"){ // se c'è una descrizione estesa - body_text ed è selezionata
-						$form['body_text'] = htmlspecialchars_decode ($_POST['body_text'.$ord]);
+					if (strlen(preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)))>0 AND $_GET['impdes']=="dwldes"){ // se c'è una descrizione estesa - body_text ed è selezionata
+						$form['body_text'] = htmlspecialchars_decode (preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)));
 						$form['table_name_ref']="artico_".$_POST['codice'.$ord];
 						$form['lang_id']=1;
 						gaz_dbi_table_insert('body_text', $form); // la scrivo nel DB
 					}
 				}
 			}			
-		}		
+		}
+		$ord++;
 	}
 		
 	header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=1");
@@ -294,21 +324,9 @@ if (isset($_POST['conferma'])) { // se confermato
 	$script_transl = HeadMain();
 }
 
-$access=base64_encode($accpass);
+
 if (!isset($_GET['success'])){
-	// avvio il file di interfaccia presente nel sito web remoto
-	$headers = @get_headers($urlinterf.'?access='.$access);	
-	
-	if ( intval(substr($headers[0], 9, 3))==200){ // controllo se ho avuto accesso al file interfaccia
-		$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.time()) ; // carico il file xml appena creato
-		if (!$xml){ // se non è stato creato o non ho accesso
-			?>
-			<script>
-			alert("<?php echo "Errore! Il file xml non è stato creato oppure non è possibile accedervi"; ?>");
-			location.replace("<?php echo $_POST['ritorno']; ?>");
-			</script>
-			<?php
-		}		
+			
 		// Apro il form per la selezione degli articoli
 		?>
 		<script>
@@ -414,33 +432,18 @@ if (!isset($_GET['success'])){
 								?>
 							</div>
 							<div class="col-sm-5">
-								<?php echo $product->Name;
-								echo '<input type="hidden" name="descri'. $n .'" value="'. $product->Name . '">';
+								<?php echo $product->Name;								
 								?>
 							</div>
 							<div class="col-sm-1">
-								<?php echo '<input type="hidden" name="body_text'. $n .'" value="'. preg_replace('/[\x00-\x1f]/','',htmlspecialchars($product->Description)) . '">';
-								echo '<input type="hidden" name="quanti'. $n .'" value="'. $product->AvailableQty .'">';
-								echo '<input type="hidden" name="web_price'. $n .'" value="'. $product->Price .'">';
-								echo '<input type="hidden" name="unimis'. $n .'" value="'. $product->Unimis .'">';
-								echo '<input type="hidden" name="aliquo'. $n .'" value="'. $product->VAT .'">';
-								echo '<input type="hidden" name="barcode'. $n .'" value="'. $product->BarCode .'">';
-								echo '<input type="hidden" name="imgurl'. $n .'" value="'. $product->ProductImgUrl .'">';
+								<?php 
 								echo '<input type="hidden" name="product_id'. $n .'" value="'. $product->Id .'">';
-								echo '<input type="hidden" name="web_url'. $n .'" value="'. $product->WebUrl .'">';
-								echo '<input type="hidden" name="product_parent_id'. $n .'" value="'. $product->ParentId .'">';// se ci sono varianti questo è l'id del padre
-								echo '<input type="hidden" name="product_type'. $n .'" value="'. $product->Type .'">';// se è padre questo è 'parent' altrimenti  null
-								echo '<input type="hidden" name="weight'. $n .'" value="'. $product->Weight .'">';
-								echo '<input type="hidden" name="category_id'. $n .'" value="'. $product->ProductCategoryId .'">';
-								echo '<input type="hidden" name="category'. $n .'" value="'. $product->ProductCategory .'">';
-								echo '<input type="hidden" name="characteristic_id'. $n .'" value="'. $product->CharacteristicId .'">';
-								echo '<input type="hidden" name="characteristic'. $n .'" value="'. $product->Characteristic .'">';
-								echo '<input type="hidden" name="web_public'. $n .'" value="'. $product->WebPublish .'">';
+								
 								?>
 							</div>
 							<div class="col-sm-1" align="right">
 								<input type="checkbox" name="download<?php echo $n; ?>" value="download">
-								<input type="hidden" name="num_products" value="<?php echo $n; ?>">
+								
 							</div>
 						</div>
 						<?php					
@@ -462,18 +465,7 @@ if (!isset($_GET['success'])){
 					</div>				
 			</div>
 		</form>
-		<?php
-	
-	} else { // ERRORE FILE INTERFACCIA > ESCO
-		
-		?>
-		<script>
-		alert("<?php echo " Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)),"<br> Controllare codice errore o riprovare fra qualche minuto!"; ?>");
-		location.replace("<?php echo $_POST['ritorno']; ?>");
-		</script>
-		<?php
-		exit;
-	}
+		<?php	
 } else {
 	if ($_GET['success']==1){
 	?>
