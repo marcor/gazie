@@ -114,9 +114,9 @@ require("../../library/include/header.php");
 <script src="AppendGrid.js"></script>
 <script type="text/javascript">
     $(function () {		
+		var wpx = $(window).width()*0.97;
 		$("#dialog_worker_card").dialog({ autoOpen: false });
 		$('.dialog_worker_card').click(function() {			
-			$(window).width()*0.5;
 			var id = $(this).attr('id_staff');
 			var id2 = $(this).attr('date');
 			const d2 = new Date(id2);
@@ -216,7 +216,7 @@ require("../../library/include/header.php");
 			
 			$( "#dialog_worker_card" ).dialog({
 				minHeight: 1,
-				width: "auto",
+				width: wpx,
 				modal: "true",
 				show: "blind",
 				hide: "explode",
@@ -268,17 +268,10 @@ $gForm = new humresForm();
 
 ?> 
 <style>
-	#tblAppendGrid .form-control{
-		height: 28px;
-	}
-	.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
-	  float: unset !important;
-	}
-	.btn-conferma {
-		color: #fff !important;
-		background-color: #f0ad4e !important;
-		border-color: #eea236 !important;
-	}
+#tblAppendGrid .form-control { height: 28px; }
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: unset !important; }
+.ui-dialog { z-index: 1000 !important; font-size: 12px;}
+.btn-conferma {	color: #fff !important; background-color: #f0ad4e !important; border-color: #eea236 !important; }
 </style>
 <form method="POST" id="form">
 <div class="text-center FacetFormHeaderFont"><b><?php echo $script_transl['title']; ?></b></div>
@@ -426,7 +419,7 @@ $gForm = new humresForm();
             <button name="go_print" class="btn btn-warning">
                 <i class="glyphicon glyphicon-print">				
 				<?php
-				echo ucwords($script_transl['print'].$script_transl['title'].' '.ucwords(strftime("%B %Y", mktime (0,0,0,$form['mese'],1,$form['anno']))));
+				echo $script_transl['print'].$script_transl['title'].' '.ucfirst(strftime("%B %Y", mktime (0,0,0,$form['mese'],1,$form['anno'])));
 				?>
 				</i>
             </button>
