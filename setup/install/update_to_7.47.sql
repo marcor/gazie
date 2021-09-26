@@ -14,6 +14,8 @@ INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_module
 DELETE FROM `gaz_menu_script` WHERE `link`= 'employee_timesheet.php';
 DELETE FROM `gaz_menu_script` WHERE `link`= 'pay_salary.php';
 DELETE FROM `gaz_menu_script` WHERE `link`= 'report_pay_salary.php';
+DELETE FROM `gaz_menu_module` WHERE `link`= 'report_agenti_forn.php';
+DELETE FROM `gaz_menu_script` WHERE `link` LIKE 'admin_agenti_forn.php%';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Abilita la richiesta di scelta template per carta intestata 0=No 1=Si', 'enable_lh_print_dialog', '1');
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Ritorno dopo inserimento documento 0=Nuovo inserimento 1=Report', 'after_newdoc_back_to_doclist', '0');
