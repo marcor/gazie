@@ -110,8 +110,6 @@ if ($_POST) { // accessi successivi
 
 require("../../library/include/header.php");
 ?>
-<!--Antonio Germani - carico AppendGrid library-->
-<script src="AppendGrid.js"></script>
 <script type="text/javascript">
     $(function () {		
 		var wpx = $(window).width()*0.97;
@@ -263,7 +261,7 @@ $(document).ready(function(){
 });
 </script>
 <?php
-$script_transl = HeadMain(0,array('custom/autocomplete'));
+$script_transl = HeadMain(0,array('custom/autocomplete','appendgrid/AppendGrid'));
 $gForm = new humresForm();
 
 ?> 
