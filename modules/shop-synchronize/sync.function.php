@@ -733,10 +733,7 @@ class shopsynchronizegazSynchro {
     			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
 			
 					if((!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)) AND (!gaz_dbi_get_row($gTables['tesbro'], "ref_ecommerce_id_order", $order->Numbering))){ // se il numero d'ordine non esiste carico l'ordine in GAzie
-						$query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
-						$result = gaz_dbi_query($query);
-						$row = $result->fetch_assoc();
-						$id_tesbro = $row['Auto_increment']; // questo è l'ID che avrà TESBRO: testata documento/ordine
+						
 						$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
 						$result = gaz_dbi_query($query);
 						$row = $result->fetch_assoc();
@@ -746,39 +743,15 @@ class shopsynchronizegazSynchro {
 						$codice = substr($last[0]['codice'], 3) + 1;
 						$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// questo è il codice di CLFOCO da connettere all'anagrafica cliente se il cliente non esiste
 						$esiste=0;
-						if (strlen($order->CustomerFiscalCode)>0){ // controllo esistenza cliente per codice fiscale
-							$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE codfis ='" . $order->CustomerFiscalCode . "'";
-							$check = gaz_dbi_query($query);
-							if ($check->num_rows > 0){
-								$esiste=1;
-								$row = $check->fetch_assoc();
-								$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
+						if (strlen($order->CustomerCode)>0){ // controllo esistenza cliente per codice e-commerce
+							unset($cl);
+							$cl = gaz_dbi_get_row($gTables['clfoco'], "ref_ecommerce_id_customer", intval($order->CustomerCode));
+							if (isset($cl)){
 								$clfoco=$cl['codice'];
-							}
-						}
-						if ($esiste==0 AND intval($order->CustomerVatCode)>0){ // controllo esistenza cliente per partita iva
-							$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE pariva ='" . $order->CustomerVatCode . "'";
-							$check = gaz_dbi_query($query);
-							if ($check->num_rows > 0){
 								$esiste=1;
-								$row = $check->fetch_assoc();
-								$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
-								$clfoco=$cl['codice'];
-							}
-						}
-						 // controllo esistenza cliente per cognome, nome e città
-						if ($esiste==0){
-							$query = "SELECT * FROM " . $gTables['anagra'] . " WHERE ragso1 ='" . addslashes($order->CustomerName) . "' AND ragso2 ='". addslashes($order->CustomerSurname) . "'";
-							$check = gaz_dbi_query($query);
-							while ($row = $check->fetch_assoc()) {
-								if (($check->num_rows > 0) && ($row['citspe']=$order->CustomerCity) && ($row['indspe']=$order->CustomerAddress)){
-									$esiste=1;
-									$cl = gaz_dbi_get_row($gTables['clfoco'], "id_anagra", $row['id']);
-									$clfoco=$cl['codice'];
-								}
-							}
-						}			
-						If ($esiste==0) { //registro cliente se non esiste
+							}							
+						}								
+						if ($esiste==0) { //registro cliente se non esiste
 							if ($order->CustomerCountry=="IT"){ // se la nazione è IT
 								$lang="1";
 							} else { // se non è italiano imposto il codice univoco con x e il codice fiscale con il codice cliente e-commerce
@@ -822,7 +795,8 @@ class shopsynchronizegazSynchro {
 						}
 												
 						// registro testata ordine
-						gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(ref_ecommerce_id_order,tipdoc,seziva,print_total,datemi,numdoc,datfat,clfoco,pagame,listin,spediz,traspo,speban,caumag,expense_vat,initra,status,adminid) VALUES ('".$order->Numbering."','VOW', '". $order->SezIva ."', '1', '" . $order->DateOrder . "', '". $numdoc ."', '0000-00-00', '". $clfoco . "', '" .$order->PaymentName."', '". $order->PriceListNum . "', '".$order->Carrier."', '". $CostShippingAmount ."', '". $CostPaymentAmount ."', '1', '". $admin_aziend['preeminent_vat']."', '" . $order->DateOrder. "', 'ONLINE-SHOP', '" . $admin_aziend['adminid'] . "')");
+						$tesbro['ref_ecommerce_id_order']=$order->Numbering;$tesbro['tipdoc']='VOW';$tesbro['seziva']=$order->SezIva;$tesbro['print_total']='1';$tesbro['datemi']=$order->DateOrder;$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$order->PaymentName;$tesbro['listin']=$order->PriceListNum;$tesbro['spediz']=$order->Carrier;$tesbro['traspo']=$CostShippingAmount;$tesbro['speban']=$CostPaymentAmount;$tesbro['caumag']='1';$tesbro['expense_vat']=$admin_aziend['preeminent_vat'];$tesbro['initra']=$order->DateOrder;$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
+						$id_tesbro=tesbroInsert($tesbro);
 						
 						// Gestione righi ordine					
 						foreach($xml->Documents->Document[$countDocument]->Rows->children() as $orderrow) { // carico le righe dell'ordine
@@ -933,11 +907,12 @@ class shopsynchronizegazSynchro {
 							}
 							
 							// salvo rigo su database tabella rigbro 
-							gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,prelis,sconto,codvat,codric,pervat,status) VALUES ('" . intval($id_tesbro) . "','" . $codart . "','" . addslashes($descri) . "','". $orderrow->MeasureUnit . "','" . $orderrow->Qty . "','" . $Price . "', '".$percdisc."', '". $codvat. "', '420000006', '". $aliiva. "', 'ONLINE-SHOP')");
+							$rigbro['id_tes']=intval($id_tesbro);$rigbro['codart']=$codart;$rigbro['descri']=addslashes($descri);$rigbro['unimis']=$orderrow->MeasureUnit;$rigbro['quanti']=$orderrow->Qty;$rigbro['prelis']=$Price;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
+							rigbroInsert($rigbro);
 						}
 						$count++;//aggiorno contatore nuovi ordini
 						$countDocument++;//aggiorno contatore Document
-						$id_tesbro++;				
+										
 					} else {
 						$countDocument++;//aggiorno contatore Document	
 					}
