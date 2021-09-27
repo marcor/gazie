@@ -60,7 +60,7 @@ if (isset($_POST['conferma'])) { // se confermato
 		
 		if (isset($_POST['download'.$ord]) ) {
 			$esiste=0;
-			if (strlen($_POST['ref_ecommerce_id_customer'.$ord])>0){ // controllo esistenza cliente per codice fiscale
+			if (strlen($_POST['ref_ecommerce_id_customer'.$ord])>0){ // controllo esistenza cliente per codice e-commerce
 				unset($cl);
 				$cl = gaz_dbi_get_row($gTables['clfoco'], "ref_ecommerce_id_customer", intval($_POST['ref_ecommerce_id_customer'.$ord]));
 				if (isset($cl)){
