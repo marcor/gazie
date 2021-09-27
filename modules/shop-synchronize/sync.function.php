@@ -795,7 +795,7 @@ class shopsynchronizegazSynchro {
 						}
 												
 						// registro testata ordine
-						$tesbro['ref_ecommerce_id_order']=$order->Numbering;$tesbro['tipdoc']='VOW';$tesbro['seziva']=$order->SezIva;$tesbro['print_total']='1';$tesbro['datemi']=$order->DateOrder;$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$order->PaymentName;$tesbro['listin']=$order->PriceListNum;$tesbro['spediz']=$order->Carrier;$tesbro['traspo']=$CostShippingAmount;$tesbro['speban']=$CostPaymentAmount;$tesbro['caumag']='1';$tesbro['expense_vat']=$admin_aziend['preeminent_vat'];$tesbro['initra']=$order->DateOrder;$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
+						$tesbro['destin']=$order->CustomerShippingDestin;$tesbro['ref_ecommerce_id_order']=$order->Numbering;$tesbro['tipdoc']='VOW';$tesbro['seziva']=$order->SezIva;$tesbro['print_total']='1';$tesbro['datemi']=$order->DateOrder;$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$order->PaymentName;$tesbro['listin']=$order->PriceListNum;$tesbro['spediz']=$order->Carrier;$tesbro['traspo']=$CostShippingAmount;$tesbro['speban']=$CostPaymentAmount;$tesbro['caumag']='1';$tesbro['expense_vat']=$admin_aziend['preeminent_vat'];$tesbro['initra']=$order->DateOrder;$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
 						$id_tesbro=tesbroInsert($tesbro);
 						
 						// Gestione righi ordine					

@@ -116,7 +116,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			}		
 		
 			// registro testata ordine
-			$tesbro['ref_ecommerce_id_order']=$_POST['ref_ecommerce_id_order'.$ord];$tesbro['tipdoc']='VOW';$tesbro['seziva']=$_POST['seziva'.$ord];$tesbro['print_total']='1';$tesbro['datemi']=$_POST['datemi'.$ord];$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$_POST['pagame'.$ord];$tesbro['listin']=$listin;$tesbro['spediz']=$_POST['spediz'.$ord];$tesbro['traspo']=$_POST['traspo'.$ord];$tesbro['speban']=$_POST['speban'.$ord];$tesbro['caumag']='1';$tesbro['expense_vat']=$expense_vat;$tesbro['initra']=$_POST['datemi'.$ord];$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
+			$tesbro['destin']=$_POST['destin'.$ord];$tesbro['ref_ecommerce_id_order']=$_POST['ref_ecommerce_id_order'.$ord];$tesbro['tipdoc']='VOW';$tesbro['seziva']=$_POST['seziva'.$ord];$tesbro['print_total']='1';$tesbro['datemi']=$_POST['datemi'.$ord];$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$_POST['pagame'.$ord];$tesbro['listin']=$listin;$tesbro['spediz']=$_POST['spediz'.$ord];$tesbro['traspo']=$_POST['traspo'.$ord];$tesbro['speban']=$_POST['speban'.$ord];$tesbro['caumag']='1';$tesbro['expense_vat']=$expense_vat;$tesbro['initra']=$_POST['datemi'.$ord];$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
 			$id_tesbro=tesbroInsert($tesbro);
 		
 			// Gestione righi ordine					
