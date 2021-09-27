@@ -69,7 +69,7 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 			?>
 			<script>
 			alert("<?php echo "Mancata connessione Sftp con file chiave segreta: impossibile scaricare gli ordini dall\'e-commerce"; ?>");
-			location.replace("<?php echo $_POST['ritorno']; ?>");
+			location.replace("./synchronize.php");
 			</script>
 			<?php										
 		} else {
@@ -87,7 +87,7 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 			?>
 			<script>
 			alert("<?php echo "Mancata connessione Sftp con password: impossibile scaricare gli ordini dall\'e-commerce"; ?>");
-			location.replace("<?php echo $_POST['ritorno']; ?>");
+			location.replace("./synchronize.php");
 			</script>
 			<?php			
 		} else {
@@ -104,14 +104,15 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 	$conn_id = ftp_connect($ftp_host);
 
 	// effettuo login con user e pass
-	$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
-
+	if ($conn_id){
+		$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
+	}
 	// controllo se la connessione è OK...
 	if ((!$conn_id) or (!$mylogin)){ 
 		?>
 		<script>
 		alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
-		location.replace("<?php echo $_POST['ritorno']; ?>");
+		location.replace("./synchronize.php");
 		</script>
 		<?php
 	} else {
@@ -211,7 +212,7 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 			?>
 			<script>
 			alert("<?php echo "Errore di upload del file xml tramite SFTP"; ?>");
-			location.replace("<?php echo $_POST['ritorno']; ?>");
+			location.replace("./synchronize.php");
 			</script>
 			<?php			
 		}	
@@ -233,7 +234,7 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 		?>
 		<script>
 		alert("<?php echo "Errore di upload del file xml"; ?>");
-		location.replace("<?php echo $_POST['ritorno']; ?>");
+		location.replace("./synchronize.php");
 		</script>
 		<?php
 	}
@@ -249,7 +250,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 		?>
 		<script>
 		alert("<?php echo "Errore: il file di interfaccia web non si apre!"; ?>");
-		location.replace("<?php echo $_POST['ritorno']; ?>");
+		location.replace("./synchronize.php");
 		</script>
 		<?php
 		
@@ -261,7 +262,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 		</div>
 		<script>
 		alert("<?php echo "Aggiornamento prodotti riuscito!"; ?>");
-		location.replace("<?php echo $_POST['ritorno']; ?>");
+		location.replace("./synchronize.php");
 		</script>
 		<?php
 		exit;
@@ -271,7 +272,7 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 	?>
 	<script>
 		alert("<?php echo "Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)); ?>");
-		 location.replace("<?php echo $_POST['ritorno']; ?>");
+		 location.replace("./synchronize.php");
     </script>
 	<?php
 		

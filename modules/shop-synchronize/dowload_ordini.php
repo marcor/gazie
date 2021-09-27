@@ -7,7 +7,8 @@
   @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
   versione 3.0
   ------------------------------------------------------------------------ */
-global $gTables,$admin_aziend;
+require("../../library/include/datlib.inc.php");
+global $gTables,$admin_aziend;$period="";
 $resserver = gaz_dbi_get_row($gTables['company_config'], "var", "server");
 $ftp_host= $resserver['val'];
 $resuser = gaz_dbi_get_row($gTables['company_config'], "var", "user");
@@ -25,6 +26,11 @@ if ($exists) {
 } else {
     $c_e = 'company_id';
 }
+if (isset($_POST['Return'])) { 
+        header("Location: " . "./synchronize.php");
+        exit;
+    }
+
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION['user_name']);
 	
 if (isset($_POST['conferma'])) { // se confermato
@@ -243,25 +249,28 @@ if (isset($_POST['conferma'])) { // se confermato
 }
 
 $access=base64_encode($accpass);
-
+require('../../library/include/header.php');
+$script_transl = HeadMain();
+?>
+<form method="POST" name="download" id="ordini" enctype="multipart/form-data">
+<?php
 // avvio il file di interfaccia presente nel sito web remoto
 $headers = @get_headers($urlinterf.'?access='.$access);
-if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
+if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 
 	$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.time()) ;
 	if (!$xml){
 		?>
 		<script>
 		alert("<?php echo "Errore nella creazione del file xml"; ?>");
-		location.replace("<?php echo $_POST['ritorno']; ?>");
+		location.replace("./synchronize.php");
 		</script>
 		<?php
 	}
-	require('../../library/include/header.php');
-	$script_transl = HeadMain();
+	
 	?>
-	<form method="POST" name="download" enctype="multipart/form-data">
-	<input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno'];?>" >
+	
+	
 	<input type="hidden" name="download" value="download" >
 			
 			<table class="table table-striped" style="margin: 0 auto; max-width: 80%; margin-top:10px;">
@@ -388,15 +397,18 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 					</tr>
 				</tbody>	
 			</table>	
-	</form>
-	<?php
-	require("../../library/include/footer.php");
+	
+	<?php	
 } else { // IL FILE INTERFACCIA NON ESISTE > ESCO
-	?>
+	$msg=($headers)?substr($headers[0], 9, 3):'non riesco ad accedere';
+	?>	
 	<script>
-	alert("<?php echo "Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)); ?>");
-	location.replace("<?php echo $_POST['ritorno']; ?>");
+	var msg = '<?php echo $msg; ?>';
+	alert("Errore di connessione al file di interfaccia web = " + msg );
+	location.replace("./synchronize.php");
     </script>
 	<?php
 } 
+require("../../library/include/footer.php");
 ?>
+</form>
