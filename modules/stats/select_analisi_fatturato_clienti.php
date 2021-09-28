@@ -289,7 +289,6 @@ window.onload = function() {
 <style>
 .chart {
   width: 100%;
-  min-height: 600px;
   border: 0px solid #d7d7d7;
   padding: 3px;
 }
