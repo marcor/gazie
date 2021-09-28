@@ -69,6 +69,12 @@ $totali['max_valcode'] = "";
 $totali['max_quacode'] = "";
 $castelletto_articoli = array();
 while ($rigo_documenti = gaz_dbi_fetch_array($rs_documenti)) {
+      // se stat. vendite aggrego i righi forfait nel loro contesto
+      if ($form['acqven'] == 0 && $rigo_documenti['tiprig'] == 1) {
+        $rigo_documenti['codart'] = '(nessun codice: forfait)';
+        $rigo_documenti['descri'] = '--- Aggregato righi Forfait ---';
+        $rigo_documenti['quanti'] = 1;
+      }
       if ($rigo_documenti['scotes'] > 0){
          if ($rigo_documenti['tiprig'] == 0){
              $valore = CalcolaImportoRigo(1, CalcolaImportoRigo($rigo_documenti['quanti'], $rigo_documenti['prelis'], $rigo_documenti['scorig']), $rigo_documenti['scotes']);
@@ -159,7 +165,7 @@ echo "</form>";
 echo "<table border=\"0\" align=\"center\" bgcolor=\"white\">";
 $i=0;
 foreach ($castelletto_articoli as $key=>$value) {
-        if ($key == ""){
+        if ($key === ''){
               $value['descri'] = "--- $script_transl[13] ---";
               $value['unimis'] = "";
         }
