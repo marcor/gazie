@@ -89,7 +89,7 @@ if (isset($_POST['rec_pres'])){
 			gaz_dbi_table_update("staff_worked_hours", array('id', $gen['id']), $updValue);
 			
 			// aggiorno il cartellino 
-			$newValue =array("start_work"=>$_POST['date']." ".$rec_pre['start_work'], "end_work"=>$_POST['date']." ".$rec_pre['end_work'], "id_work_type"=>$rec_pre['id_work_type'], "min_delay"=>$rec_pre['min_delay'], "id_orderman"=>$rec_pre['id_orderman'], "note"=>$rec_pre['note']); 
+			$newValue =array("start_work"=>substr($_POST['date'], 0, 19)." ".$rec_pre['start_work'], "end_work"=>substr($_POST['date'], 0, 19)." ".$rec_pre['end_work'], "id_work_type"=>$rec_pre['id_work_type'], "min_delay"=>$rec_pre['min_delay'], "id_orderman"=>$rec_pre['id_orderman'], "note"=>$rec_pre['note']); 
 			gaz_dbi_table_update("staff_work_movements", array('id', $rec_pre['id']), $newValue);
 			
 			// Aggiorno il generale con il nuovo movimento del cartellino 
@@ -142,7 +142,7 @@ if (isset($_POST['rec_pres'])){
 				$id_staff_worked_hours = $gen['id'];
 				
 			} else {// altrimenti lo creo
-				$insValue= array("id_staff"=>$_POST['id_staff'], "work_day"=>$_POST['date']);
+				$insValue= array("id_staff"=>intval($_POST['id_staff']), "work_day"=>substr($_POST['date'], 0, 19));
 				if ($rec_pre['id_work_type']==0){// lavoro ordinario					
 					$insValue['hours_normal'] = (strtotime($rec_pre['end_work'])-strtotime($rec_pre['start_work']))/3600;			
 				} elseif ($rec_type['id_work_type']==1){// lavoro straordinario					
@@ -159,7 +159,7 @@ if (isset($_POST['rec_pres'])){
 				$id_staff_worked_hours = gaz_dbi_table_insert("staff_worked_hours", $insValue);
 			}
 			
-			$value =array("id"=>$rec_pre['id'], "id_staff"=>$_POST['id_staff'], "start_work"=>$_POST['date']." ".$rec_pre['start_work'], "end_work"=>$_POST['date']." ".$rec_pre['end_work'], "id_work_type"=>$rec_pre['id_work_type'], "min_delay"=>$rec_pre['min_delay'], "id_orderman"=>$rec_pre['id_orderman'], "note"=>$rec_pre['note'], "id_staff_worked_hours"=>$id_staff_worked_hours);
+			$value =array("id"=>$rec_pre['id'], "id_staff"=>intval($_POST['id_staff']), "start_work"=>substr($_POST['date'], 0, 19)." ".$rec_pre['start_work'], "end_work"=>substr($_POST['date'], 0, 19)." ".$rec_pre['end_work'], "id_work_type"=>$rec_pre['id_work_type'], "min_delay"=>$rec_pre['min_delay'], "id_orderman"=>$rec_pre['id_orderman'], "note"=>$rec_pre['note'], "id_staff_worked_hours"=>$id_staff_worked_hours);
 			gaz_dbi_table_insert("staff_work_movements", $value);
 					
 		}		
