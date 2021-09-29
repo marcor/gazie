@@ -19,4 +19,5 @@ DELETE FROM `gaz_menu_script` WHERE `link` LIKE 'admin_agenti_forn.php%';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Abilita la richiesta di scelta template per carta intestata 0=No 1=Si', 'enable_lh_print_dialog', '1');
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Ritorno dopo inserimento documento 0=Nuovo inserimento 1=Report', 'after_newdoc_back_to_doclist', '0');
+ALTER TABLE `gaz_XXXstaff_work_movements` ADD COLUMN `hourly_cost` DECIMAL(6,2) NOT NULL DEFAULT '0.00' COMMENT 'Costo orario' AFTER `min_delay`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
