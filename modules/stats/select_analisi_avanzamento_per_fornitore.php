@@ -365,6 +365,11 @@ window.onload = function() {
   border: 0px solid #d7d7d7;
   padding: 3px;
 }
+
+.pieChart {
+	min-height: 600px;
+}
+
 .row {
   margin:0 !important;
 }
@@ -600,7 +605,7 @@ window.addEventListener('resize', function () {
   <div class="clearfix"></div>
   <div id="chartsArea" style="display:none">
 	<div id="chart_pie_div" class="col-md-4">
-		<canvas id="myChartPie" class="chart"></canvas>
+		<canvas id="myChartPie" class="chart pieChart"></canvas>
 	</div>
 	<!--div id="chart_hor_bar_div" style="position: relative;" class="col-md-8"-->
 	<div id="chart_horizontal_bar_div" class="col-md-8">
