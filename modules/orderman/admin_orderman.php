@@ -947,7 +947,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['id_tes'] = ($result2)?$result2['id_tes']:0;
     $result3 = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $result['id_rigbro']);
     $form['codart'] = ($result3)?$result3['codart']:'';
-    $form['quantipord'] = ($result3)?$result3['quanti']:'';
+    $form['quantipord'] = ($result3)?$result3['quanti']:0;
     $result5 = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
     $form['identifier'] =($result5)?$result5['identifier']:'';
     $form['expiry'] =($result5)?$result5['expiry']:'';
