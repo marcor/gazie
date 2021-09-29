@@ -1782,6 +1782,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		
 
 } elseif (((!isset($_POST['Update'])) and ( isset($_GET['Update']))) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
+	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+		// allineo l'e-commerce con eventuali ordini non ancora caricati
+		$gs=$admin_aziend['synccommerce_classname'];
+		$gSync = new $gs();
+		if($gSync->api_token){
+			$gSync->get_sync_status(0);
+		}
+	}
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
     $form['id_tes'] = intval($_GET['id_tes']);
@@ -1977,6 +1985,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['mintra'] = date("i");
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
+	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+		// allineo l'e-commerce con eventuali ordini non ancora caricati
+		$gs=$admin_aziend['synccommerce_classname'];
+		$gSync = new $gs();
+		if($gSync->api_token){
+			$gSync->get_sync_status(0);
+		}
+	}
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
     $form['tipdoc'] = '';

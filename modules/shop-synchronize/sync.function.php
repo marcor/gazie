@@ -693,23 +693,17 @@ class shopsynchronizegazSynchro {
 		// in $last_id si deve passare l'ultimo ordine già importato al fine di non importare tutto ma solo i nuovi
 		//Antonio Germani - $last_id non viene usato perché si controlla con una query se l'ordine è già stato importato
 		@session_start();
+		
 		global $gTables,$admin_aziend;	
         $rawres=[];		
 		$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."ordini-gazie.php";
 		$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
-		$test = gaz_dbi_query("SHOW COLUMNS FROM `" . $gTables['admin'] . "` LIKE 'enterprise_id'");
-		$exists = (gaz_dbi_num_rows($test)) ? TRUE : FALSE;
-		if ($exists) {
-			$c_e = 'enterprise_id';
-		} else {
-			$c_e = 'company_id';
-		}
-		$admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
 		
 		$access=base64_encode($accpass);
 		// avvio il file di interfaccia presente nel sito web remoto
 		$headers = @get_headers($urlinterf.'?access='.$access);
-		if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
+		$count=0;
+		if ( is_array($headers) AND intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 			$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.mktime()) ;
 			if (!$xml){
                     $rawres['title'] = "L'interfaccia non si apre: impossibile scaricare gli ordini dall'e-commerce";
@@ -718,7 +712,7 @@ class shopsynchronizegazSynchro {
                     $rawres['link'] = '';
                     $rawres['style'] = 'danger';
     			}
-    			$count=0;$countDocument=0;
+    			$countDocument=0;
 				// ricavo il progressivo numero d'ordine di GAzie in base al tipo di documento
 				$where = "numdoc desc";
 				$sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOW'";
@@ -919,13 +913,13 @@ class shopsynchronizegazSynchro {
 					$numdoc++; //incremento il numero d'ordine GAzie
 				}						
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
-			
-            $rawres['title'] = "L'interfaccia non esiste: impossibile scaricare gli ordini";
+			if (!is_array($headers)){
+            $rawres['title'] = "Impossibile scaricare gli ordini. Controllare le impostazioni nel modulo shop-synchronize.";
             $rawres['button'] = 'Avviso eCommerce';
-            $rawres['label'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
+            $rawres['label'] = "Codice errore = Impostazioni mancanti o errate";
             $rawres['link'] = '';
             $rawres['style'] = 'danger';
-			if (intval(substr($headers[0], 9, 3))==0) {
+			}elseif (intval(substr($headers[0], 9, 3))==0) {
 				$rawres['title'] = "Controllare la connessione internet, la presenza dei file di intefaccia e le impostazioni ftp: impossibile scaricare gli ordini";
 				$rawres['button'] = 'Avviso eCommerce';
 				$rawres['label'] = "Codice errore = ".intval(substr($headers[0], 9, 3));
@@ -942,6 +936,6 @@ class shopsynchronizegazSynchro {
             $rawres['link'] = '../vendit/report_broven.php?auxil=VOW';
             $rawres['style'] = 'warning';
 		}
-        $this->rawres=$rawres;
+       $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 	}
 }

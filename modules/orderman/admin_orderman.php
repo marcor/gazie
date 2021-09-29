@@ -901,6 +901,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     //  fine scrittura database §§§§§§§§§§§§§§§§§§§§§§§§§§§§
     
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) {//  **  se e' il primo accesso per UPDATE  **
+	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+		// allineo l'e-commerce con eventuali ordini non ancora caricati
+		$gs=$admin_aziend['synccommerce_classname'];
+		$gSync = new $gs();
+		if($gSync->api_token){
+			$gSync->get_sync_status(0);
+		}
+	}
     $result = gaz_dbi_get_row($gTables['orderman'], "id", intval($_GET['codice']));
     $form['ritorno'] = $_POST['ritorno'];
     $form['id'] = intval($_GET['codice']);
@@ -995,6 +1003,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['cosear'] = "";
 
 } else {                 //                  **   se e' il primo accesso per INSERT    **
+	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+		// allineo l'e-commerce con eventuali ordini non ancora caricati
+		$gs=$admin_aziend['synccommerce_classname'];
+		$gSync = new $gs();
+		if($gSync->api_token){
+			$gSync->get_sync_status(0);
+		}
+	}
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 	$form['numdoc']="";
     if (isset($_GET['type'])) { // controllo se proviene anche da una richiesta del modulo camp

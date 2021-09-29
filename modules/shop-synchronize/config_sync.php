@@ -245,7 +245,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 			</div><!-- chiude row  -->
 			<div class="row">
 				<div class="form-group" >
-				<label for="input<?php echo $user["id"]; ?>" class="col-sm-5 control-label">Attiva la sincronizzazione automatica</label>
+				<label for="input<?php echo $user["id"]; ?>" class="col-sm-5 control-label">Attiva la sincronizzazione automatica <p style='font-size:8px;'> Per un corretto allineamento di GAzie con l'e-commerce, si consiglia di mantere sempre attivato.</p></label>
 				<div class="col-sm-7">
 				<?php				
 				if (strlen($enable_sync)>1){

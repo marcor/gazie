@@ -1401,7 +1401,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $i--;
     }
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update'])) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
-    $tesdoc = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", intval($_GET['id_tes']));
+    if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+		// allineo l'e-commerce con eventuali ordini non ancora caricati
+		$gs=$admin_aziend['synccommerce_classname'];
+		$gSync = new $gs();
+		if($gSync->api_token){
+			$gSync->get_sync_status(0);
+		}
+	}
+	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", intval($_GET['id_tes']));
     $anagrafica = new Anagrafica();
     $fornitore = $anagrafica->getPartner($tesdoc['clfoco']);
     $id_des = $anagrafica->getPartner($tesdoc['id_des']);
@@ -1710,6 +1718,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
     $ddtchecked=0;    
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
+	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+		// allineo l'e-commerce con eventuali ordini non ancora caricati
+		$gs=$admin_aziend['synccommerce_classname'];
+		$gSync = new $gs();
+		if($gSync->api_token){
+			$gSync->get_sync_status(0);
+		}
+	}
     $form['tipdoc'] = $_GET['tipdoc'];
     $form['address'] = '';
     $form['hidden_req'] = '';
