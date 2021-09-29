@@ -64,6 +64,7 @@ $aRiportare = array('top' => array(array('lun' => 166, 'nam' => 'da riporto : ')
 
 $restes = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $resord['id_tesbro']);
 $resrig = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $resord['id_rigbro']);
+$resrig = ($resrig)?$resrig:array('codart'=>'','quanti'=>0);
 $resclfo = gaz_dbi_get_row($gTables['clfoco'], "codice", $restes['clfoco']);
 $resclfo = ($resclfo)?$resclfo:array('descri'=>'');
 $reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $resord['id_lotmag']);

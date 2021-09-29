@@ -221,7 +221,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			<!-- Colonna quantità prodotta -->
 			<?php 
 			$e_row = gaz_dbi_get_row($gTables['movmag'], "id_orderman", $r['id'], "AND operat = 1");
-			if ($e_row){
+			if ($e_row && $d_row ){
 				$f_row = gaz_dbi_get_row($gTables['lotmag'], "id_movmag", $e_row['id_mov']);
 				?>
 				<td align="center"><?php echo gaz_format_quantity($e_row['quanti'] ) ." su ". gaz_format_quantity($d_row['quanti'], true, $admin_aziend['decimal_quantity']);?></td>
