@@ -413,16 +413,16 @@ $gForm = new humresForm();
 				?>
 			</tbody>
 		</table>
-		<div class="row text-center" style="padding-top:12px;">
-            <button name="go_print" class="btn btn-warning">
-                <i class="glyphicon glyphicon-print">				
-				<?php
-				echo $script_transl['print'].$script_transl['title'].' '.ucfirst(strftime("%B %Y", mktime (0,0,0,$form['mese'],1,$form['anno'])));
-				?>
-				</i>
-            </button>
-		</div>		
 	</div>
+	<div class="row text-center" style="padding-top:12px;">
+        <button name="go_print" class="btn btn-warning">
+            <i class="glyphicon glyphicon-print">				
+			<?php
+			echo $script_transl['print'].$script_transl['title'].' '.ucfirst(strftime("%B %Y", mktime (0,0,0,$form['mese'],1,$form['anno'])));
+			?>
+			</i>
+        </button>
+	</div>		
 </div>
 	<div style="display:none" id="dialog_worker_card" title="Cartellino presenze">
         <p><b>Dipendente:</b></p>		
