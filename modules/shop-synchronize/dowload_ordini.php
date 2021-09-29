@@ -95,9 +95,9 @@ if (isset($_POST['conferma'])) { // se confermato
 				} else {
 					$sexper="G";
 				}
-				gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($_POST['ragso1'.$ord]) . "', '" . addslashes($_POST['ragso2'.$ord]) . "', '". $sexper. "', '". addslashes($_POST['indspe'.$ord]) ."', '".$_POST['capspe'.$ord]."', '". addslashes($_POST['citspe'.$ord]) ."', '". $_POST['prospe'.$ord] ."', '" . $_POST['country'.$ord]. "', '1', '".$lang."', '". $_POST['telefo'.$ord] ."', '". $_POST['codfis'.$ord] ."', '" . $_POST['pariva'.$ord] . "', '" . $_POST['fe_cod_univoco'.$ord] . "', '". $_POST['email'.$ord] . "', '". $_POST['pec_email'.$ord] . "')");
+				gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes(substr($_POST['ragso1'.$ord], 0, 50)) . "', '" . addslashes(substr($_POST['ragso2'.$ord], 0, 50)) . "', '". $sexper. "', '". addslashes(substr($_POST['indspe'.$ord], 0, 60)) ."', '".substr($_POST['capspe'.$ord], 0, 10)."', '". addslashes(substr($_POST['citspe'.$ord], 0, 60)) ."', '". substr($_POST['prospe'.$ord], 0, 2) ."', '" . substr($_POST['country'.$ord], 0, 3). "', '1', '".$lang."', '". substr($_POST['telefo'.$ord], 0, 50) ."', '". substr($_POST['codfis'.$ord], 0, 16) ."', '" . substr($_POST['pariva'.$ord], 0, 12) . "', '" . substr($_POST['fe_cod_univoco'.$ord], 0, 7) . "', '". substr($_POST['email'.$ord], 0, 60) . "', '". substr($_POST['pec_email'.$ord], 0, 60) . "')");
 				
-				gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('".$_POST['ref_ecommerce_id_customer'.$ord]."', '". $clfoco . "', '" . $id_anagra . "', '". $listin ."' , '" .addslashes($_POST['ragso1'.$ord])." ".addslashes($_POST['ragso2'.$ord]) . "', '". addslashes($_POST['destin'.$ord]) ."', 'S', '". $stapre ."', '". $_POST['pagame'.$ord] ."')");
+				gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('".$_POST['ref_ecommerce_id_customer'.$ord]."', '". $clfoco . "', '" . $id_anagra . "', '". $listin ."' , '" .addslashes(substr($_POST['ragso1'.$ord], 0, 50))." ".addslashes(substr($_POST['ragso2'.$ord], 0, 49)) . "', '". addslashes(substr($_POST['destin'.$ord], 0, 100)) ."', 'S', '". $stapre ."', '". intval($_POST['pagame'.$ord]) ."')");
 			}
 			
 			if ($_POST['order_discount_price'.$ord]>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
@@ -121,7 +121,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			}		
 		
 			// registro testata ordine
-			$tesbro['destin']=$_POST['destin'.$ord];$tesbro['ref_ecommerce_id_order']=$_POST['ref_ecommerce_id_order'.$ord];$tesbro['tipdoc']='VOW';$tesbro['seziva']=$_POST['seziva'.$ord];$tesbro['print_total']='1';$tesbro['datemi']=$_POST['datemi'.$ord];$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$_POST['pagame'.$ord];$tesbro['listin']=$listin;$tesbro['spediz']=$_POST['spediz'.$ord];$tesbro['traspo']=$_POST['traspo'.$ord];$tesbro['speban']=$_POST['speban'.$ord];$tesbro['caumag']='1';$tesbro['expense_vat']=$expense_vat;$tesbro['initra']=$_POST['datemi'.$ord];$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
+			$tesbro['destin']=substr($_POST['destin'.$ord], 0, 100);$tesbro['ref_ecommerce_id_order']=$_POST['ref_ecommerce_id_order'.$ord];$tesbro['tipdoc']='VOW';$tesbro['seziva']=intval($_POST['seziva'.$ord]);$tesbro['print_total']='1';$tesbro['datemi']=$_POST['datemi'.$ord];$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=intval($_POST['pagame'.$ord]);$tesbro['listin']=$listin;$tesbro['spediz']=substr($_POST['spediz'.$ord], 0, 50);$tesbro['traspo']=$_POST['traspo'.$ord];$tesbro['speban']=$_POST['speban'.$ord];$tesbro['caumag']='1';$tesbro['expense_vat']=$expense_vat;$tesbro['initra']=substr($_POST['datemi'.$ord], 0, 19);$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
 			$id_tesbro=tesbroInsert($tesbro);
 		
 			// Gestione righi ordine					
@@ -174,7 +174,7 @@ if (isset($_POST['conferma'])) { // se confermato
 							$id_artico_group=$parent['id_artico_group']; // imposto il riferimento al padre
 						} else {// se non esiste lo devo creare con i pochi dati che ho
 							$parent['descri']=$_POST['descri'.$ord.$row];
-							gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode (addslashes($parent['descri'])). "', '', '', '". $_POST['product_parent_id'.$ord.$row] . "', '1', '1', '". $admin_aziend['adminid'] ."')");
+							gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode (addslashes($parent['descri'])). "', '', '', '". substr($_POST['product_parent_id'.$ord.$row], 0, 50) . "', '1', '1', '". $admin_aziend['adminid'] ."')");
 							$id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
 						}
 						
@@ -202,8 +202,8 @@ if (isset($_POST['conferma'])) { // se confermato
 						$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
 						$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
 						$cat['codice'] = $ultimo_codice['codice']+1;
-						$cat['ref_ecommerce_id_category'] = $_POST['catmer'.$ord.$row];
-						$cat['descri'] = $_POST['catmer_descri'.$ord.$row];					
+						$cat['ref_ecommerce_id_category'] = substr($_POST['catmer'.$ord.$row], 0, 50);
+						$cat['descri'] = substr($_POST['catmer_descri'.$ord.$row], 0, 50);					
 						gaz_dbi_table_insert('catmer',$cat);
 						// assegno l'id categoria al prossimo insert artico
 						$category=$cat['codice'];
@@ -217,7 +217,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					}
 					
 					// inserisco il nuovo articolo
-					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,web_public,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". $_POST['peso_specifico'.$ord.$row] ."', '". $_POST['unimis'.$ord.$row] ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '1', '". addslashes (substr($_POST['codice'.$ord.$row],0,15)) ."', '". addslashes($_POST['descri'.$ord.$row]) ."', '".$_POST['refid'.$ord.$row]."', '".$good_or_service."', '" . $_POST['unimis'.$ord.$row] . "', '". $category ."', '". $prelis ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
+					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,web_public,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". $_POST['peso_specifico'.$ord.$row] ."', '". substr($_POST['unimis'.$ord.$row], 0, 3) ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '1', '". addslashes (substr($_POST['codice'.$ord.$row],0,15)) ."', '". addslashes(substr($_POST['descri'.$ord.$row], 0, 50)) ."', '".substr($_POST['refid'.$ord.$row], 0, 50)."', '".$good_or_service."', '" . substr($_POST['unimis'.$ord.$row], 0, 3) . "', '". $category ."', '". $prelis ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 					$codart= substr($_POST['codice'.$ord.$row],0,15);// dopo averlo creato ne prendo il codice come $codart
 					$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione					
 					
@@ -236,7 +236,7 @@ if (isset($_POST['conferma'])) { // se confermato
 					}
 				}										
 				// salvo rigo su database tabella rigbro 
-				$rigbro['id_tes']=intval($id_tesbro);$rigbro['codart']=$codart;$rigbro['descri']=addslashes($descri);$rigbro['unimis']=$_POST['unimis'.$ord.$row];$rigbro['quanti']=$_POST['quanti'.$ord.$row];$rigbro['prelis']=$prelis;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
+				$rigbro['id_tes']=intval($id_tesbro);$rigbro['codart']=$codart;$rigbro['descri']=addslashes(substr($descri, 0, 50));$rigbro['unimis']=substr($_POST['unimis'.$ord.$row], 0, 3);$rigbro['quanti']=floatval($_POST['quanti'.$ord.$row]);$rigbro['prelis']=$prelis;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
 				rigbroInsert($rigbro);
 			}					
 			

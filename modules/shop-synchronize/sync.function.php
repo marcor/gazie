@@ -936,6 +936,7 @@ class shopsynchronizegazSynchro {
             $rawres['link'] = '../vendit/report_broven.php?auxil=VOW';
             $rawres['style'] = 'warning';
 		}
-       $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+		//$this->rawres=$rawres;
 	}
 }
