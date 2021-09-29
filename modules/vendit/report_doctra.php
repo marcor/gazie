@@ -350,18 +350,18 @@ $(function() {
                         case "DDL":
                             echo "<tr class=\"FacetDataTD\">";
                             // Colonna id
-                            echo "<td class=\"alert alert-danger\" align=\"left\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["id_tes"] . "</a></td>";
-                            echo "<td class=\"alert alert-danger\"  align=\"left\"><a class=\"btn btn-xs btn-success\" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
+                            echo "<td><a  class=\"btn btn-xs btn-warning\" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $r["tipdoc"] . "" . $r["id_tes"] . "</a></td>";
+                            echo "<td align=\"left\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
                             // Colonna type
-                            echo "<td class=\"alert alert-danger\"  align=\"center\"><a class=\"btn btn-xs btn-warning \" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["tipdoc"]] . "</a> &nbsp;</td>";
-                            echo "<td class=\"alert alert-danger\"  align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-warning \" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["tipdoc"]] . "</a> &nbsp;</td>";
+                            echo "<td align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                             ?>
-                            <td  class="alert alert-danger" >
+                            <td>
                                 <a href="../acquis/report_fornit.php?nome=<?php echo htmlspecialchars($anagra["ragso1"]); ?>">
                                     <?php echo $anagra["ragso1"]; ?>
                                 </a>
                             </td>
-                            <td class="alert alert-danger">
+                            <td>
                                 <?php echo "<a href=\"admin_destinazioni.php?codice=".$destina["codice"]."&Update\">".$destina["unita_locale1"]."</a>"; ?>
                             </td>
                             <?php
@@ -369,13 +369,13 @@ $(function() {
 
                             $urlPrintDoc = "../acquis/stampa_docacq.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
-                            echo "<td class=\"alert alert-danger\" align=\"center\">";
+                            echo "<td align=\"center\">";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento\"></i></a>";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintEtichette\" target=\"_blank\"><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
                             echo "</td>\n";
 
                             // Colonna "Mail"
-                            echo "<td class=\"alert alert-danger\"  align=\"center\">";
+                            echo "<td align=\"center\">";
                             if (!empty($anagra["e_mail"])) {
                                 echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $anagra["e_mail"] . '"
 								mail="' . $anagra["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
@@ -383,16 +383,16 @@ $(function() {
                                 echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="../acquis/admin_fornit.php?codice=' . substr($clfoco["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }
                             echo "</td>\n";
-                            echo "<td  class=\"alert alert-danger\"></td>";
+                            echo "<td></td>";
 							if ($r['tipdoc']=='DDL'){ // i ddt per lavorazioni ricorrenti possono essere duplicati
-								echo "<td align=\"center\" class=\"alert alert-danger\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"../acquis/admin_docacq.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
+								echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"../acquis/admin_docacq.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
 								echo "</td>";
 							} else {
-								echo "<td class=\"alert alert-danger\"></td>";
+								echo "<td ></td>";
 							}
                             if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0){
                             // Colonna Elimina
-                                echo "<td class=\"alert alert-danger\" align=\"center\">";
+                                echo "<td align=\"center\">";
 								?>
 								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
 									<i class="glyphicon glyphicon-remove"></i>
@@ -400,7 +400,7 @@ $(function() {
 								</td>
 								<?php
 							} else {
-                                echo "<td class=\"alert alert-danger\"></td>";
+                                echo "<td></td>";
                             echo "</tr>\n";
 							}
                             break;
