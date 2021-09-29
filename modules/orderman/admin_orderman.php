@@ -1519,7 +1519,8 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 		<td colspan="2" class="FacetDataTD">
 			<?php
 			if ($toDo == "update") {
-				echo gaz_format_quantity($form['quantip'], true, $admin_aziend['decimal_quantity']);
+				
+				echo ($form['order_type'] != "ART")?gaz_format_quantity($form['quantip'], true, $admin_aziend['decimal_quantity']):'';
 				?>
 				<input type="hidden" name="quantip" Value="<?php echo $form['quantip']; ?>"/>
 				<?php 
@@ -1528,7 +1529,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 				if ($form['quantipord'] - $form['quantip'] > 0) {
 					echo " Sono ancora da produrre: ", gaz_format_quantity($form['quantipord'] - $form['quantip'], 0, $admin_aziend['decimal_quantity']);
 				}
-				if ($form['quantipord'] - $form['quantip'] <= 0) {
+				if ($form['quantipord'] - $form['quantip'] <= 0 && $form['order_type'] != "ART") {
 					echo " La produzione per questo ordine è completata";
 				}
 			} else {
