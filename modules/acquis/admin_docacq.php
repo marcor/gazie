@@ -79,7 +79,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
-    $form['cosear'] = $_POST['cosear'];
+    $form['cosear'] = (isset($_POST['cosear']))?$_POST['cosear']:'';
     $form['coseprod'] = $_POST['coseprod'];
     $form['seziva'] = $_POST['seziva'];
     $form['id_con'] = intval($_POST['id_con']);
@@ -117,8 +117,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     if (!isset($_POST['num_ddt'])) $_POST['num_ddt']=-1;
 		for ($ddtrow=0 ; $ddtrow<=$_POST['num_ddt']; $ddtrow++){
 			$form['id_tes'.$ddtrow] = $_POST['id_tes'.$ddtrow];
-			if ($_POST['check_ddt'.$ddtrow]=="checked"){
+			if (isset($_POST['check_ddt'.$ddtrow]) AND $_POST['check_ddt'.$ddtrow]=="checked"){
 				$form['check_ddt'.$ddtrow] = "checked";
+				
 				if (isset($_POST['ddt'])){ // se cliccato ddt carico pure tutti i righi dei DDT checked					
 					$rigdoc = gaz_dbi_dyn_query('*', $gTables['rigdoc'], 'id_tes = '.$_POST['id_tes'.$ddtrow],"id_rig ASC");
 					while ($row = gaz_dbi_fetch_array($rigdoc)) {		
@@ -138,13 +139,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						$_POST['rows'][$i]['id_mag'] = intval($row['id_mag']);
 						$_POST['rows'][$i]['id_order'] = intval($row['id_order']);
 						$_POST['rows'][$i]['id_orderman'] = intval($row['id_orderman']);
-						$_POST['rows'][$i]['annota'] = substr($row['annota'], 0, 50);
-						$_POST['rows'][$i]['pesosp'] = floatval($value['pesosp']);
-						$_POST['rows'][$i]['gooser'] = intval($value['gooser']);
-						$_POST['rows'][$i]['quamag'] = floatval($value['quamag']);
+						$_POST['rows'][$i]['id_rig'] = intval($row['id_rig']);
+						$value = gaz_dbi_get_row($gTables['artico'], "codice", substr($row['codart'], 0, 15));
+						$_POST['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
+						$_POST['rows'][$i]['pesosp'] = floatval($value['peso_specifico']);
+						$_POST['rows'][$i]['gooser'] = intval($value['good_or_service']);
+						$_POST['rows'][$i]['quamag'] = floatval($value['quality']);
 						$_POST['rows'][$i]['scorta'] = floatval($value['scorta']);
 						$_POST['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);			
 						$_POST['rows'][$i]['SIAN'] = intval($value['SIAN']);
+						$_POST['rows'][$i]['id_lotmag'] = '';
+						$_POST['rows'][$i]['filename'] ='';
+						$_POST['rows'][$i]['status']='';
 						$i++;
 					}
 				}
@@ -152,7 +158,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			} else {
 				$form['check_ddt'.$ddtrow]="";
 			}
-			$form['num_ddt'.$ddtrow] = $_POST['num_ddt'.$ddtrow];
+			$form['num_ddt'.$ddtrow] = (isset($_POST['num_ddt'.$ddtrow]))?$_POST['num_ddt'.$ddtrow]:'';
 		}
 		
 		
@@ -270,6 +276,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['scorta'] = floatval($value['scorta']);
             $form['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);			
 			$form['rows'][$i]['SIAN'] = intval($value['SIAN']);
+			$form['rows'][$i]['id_rig'] = intval($value['id_rig']);
             if ($value['lot_or_serial'] == 2) {
 // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
                 if ($form['rows'][$i]['quanti'] <> 1) {
@@ -2154,7 +2161,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 									?>
 								</div>								
 								<div class="col-sm-3 col-xs-3" align="left">
-									<?php if ($form['check_ddt'.$n]=="checked"){?>
+									<?php if (isset($form['check_ddt'.$n]) AND $form['check_ddt'.$n]=="checked"){?>
 									<input type="checkbox" name="check_ddt<?php echo $n; ?>" value="checked" checked >
 									<?php } else {?>
 									<input type="checkbox" name="check_ddt<?php echo $n; ?>" value="checked" >
@@ -2198,6 +2205,11 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 		<input type="hidden" value="<?php echo $form['in_lot_or_serial']; ?>" name="in_lot_or_serial" />
 		<input type="hidden" value="<?php echo $form['in_SIAN']; ?>" name="in_SIAN" />
 		<input type="hidden" value="<?php echo $form['in_status']; ?>" name="in_status" />
+		<input type="hidden" value="<?php echo $form['in_tiprig']; ?>" name="in_tiprig" />
+		<input type="hidden" value="<?php echo $form['in_codart']; ?>" name="in_codart" />
+		<input type="hidden" value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
+		<input type="hidden" value="<?php echo $form['in_codvat']; ?>" name="in_codvat" />
+		<input type="hidden" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
 		<input type="hidden" value="<?php echo $form['hidden_req']; ?>" name="hidden_req" />
 		<?php
 		$nr=1;
