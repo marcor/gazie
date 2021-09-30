@@ -148,7 +148,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						$_POST['rows'][$i]['scorta'] = floatval($value['scorta']);
 						$_POST['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);			
 						$_POST['rows'][$i]['SIAN'] = intval($value['SIAN']);
-						$_POST['rows'][$i]['id_lotmag'] = '';
+						if (intval($value['lot_or_serial'])>0 AND intval($row['id_rig'])>0){
+							$lotres = gaz_dbi_get_row($gTables['lotmag'], "id_rigdoc", intval($row['id_rig']));
+							$_POST['rows'][$i]['id_lotmag'] = $lotres['id'];
+							$_POST['rows'][$i]['identifier'] = $lotres['identifier'];
+							$_POST['rows'][$i]['expiry'] = $lotres['expiry'];
+						} else{
+							$_POST['rows'][$i]['id_lotmag'] = '';
+						}
 						$_POST['rows'][$i]['filename'] ='';
 						$_POST['rows'][$i]['status']='';
 						$i++;
@@ -591,7 +598,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
         }
         if (count($msg['err']) == 0) {// nessun errore
-       
+       //echo "<pre>";print_r($form);die;
 			if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor'],$form['pagame']);
@@ -674,15 +681,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 										$rowc = $check_lot->fetch_assoc();
 										if ($rowc['id']>0) {  // se il lotto c'era lo aggiorno
 											$id_lotmag=$rowc['id']; // ne prendo l'id che andrò a memorizzare nel movimento di magazzino
-											gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , identifier = '" . $form['rows'][$i]['identifier'] . "', id_movmag = '" . $id_mag . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
+											gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['rows'][$i]['codart'] . "' , id_rigdoc = '". $form['rows'][$i]['id_rig'] ."', identifier = '" . $form['rows'][$i]['identifier'] . "', id_movmag = '" . $id_mag . "' , expiry = '". $form['rows'][$i]['expiry'] ."' WHERE id = '" . $id_lotmag . "'");
 										} else { // se non c'era creo il rigo lotto nella tabella lotmag
 											
-											gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
+											gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(id_rigdoc,codart,identifier,expiry) VALUES ('" . $form['rows'][$i]['id_rig'] . "','" . $form['rows'][$i]['codart'] . "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
 											$id_lotmag=gaz_dbi_last_id();
 										}
 									} else { // se è INSERT creo il rigo lotto nella tabella lotmag
 										
-										gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,identifier,expiry) VALUES ('" . $form['rows'][$i]['codart'] . "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
+										gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(id_rigdoc,codart,identifier,expiry) VALUES ('" . $form['rows'][$i]['id_rig'] . "','" . $form['rows'][$i]['codart'] . "','" . $form['rows'][$i]['identifier'] . "','" . $form['rows'][$i]['expiry'] . "')");
 										$id_lotmag=gaz_dbi_last_id();
 									}														
 								
@@ -1535,7 +1542,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['sconto'] = $tesdoc['sconto'];
     $form['lotmag'] = array();
     $i = 0;
-	if ($rs_tes){ // se ci sono ddt devo caricare tutti i rihi per ogni tesdoc
+	if ($rs_tes){ // se ci sono ddt devo caricare tutti i righi per ogni tesdoc
 	
 		while ($tesdoc = gaz_dbi_fetch_array($rs_tes)){// per ogni tesdoc
 			$rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $tesdoc['id_tes'], "id_rig asc");
@@ -1561,6 +1568,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['codric'] = $row['codric'];
 				$form['rows'][$i]['id_mag'] = $row['id_mag'];
 				$form['rows'][$i]['id_order'] = $row['id_order'];
+				$form['rows'][$i]['id_rig'] = $row['id_rig'];
 				$form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa         $form['rows'][$i]['id_mag'] = $row['id_mag'];
 				$form['in_id_orderman'] = $row['id_orderman'];
 				$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $row['id_orderman']);
@@ -1569,7 +1577,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['annota'] = $articolo['annota'];
 				$mv = $magazz->getStockValue(false, $row['codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
 				$magval = array_pop($mv);
-        $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+				$magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 				$form['rows'][$i]['scorta'] = $articolo['scorta'];
 				$form['rows'][$i]['quamag'] = $magval['q_g'];
 				$form['rows'][$i]['pesosp'] = $articolo['peso_specifico'];
@@ -1641,6 +1649,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['codvat'] = $row['codvat'];
         $form['rows'][$i]['codric'] = $row['codric'];
         $form['rows'][$i]['id_mag'] = $row['id_mag'];
+		$form['rows'][$i]['id_rig'] = $row['id_rig'];
         $form['rows'][$i]['id_order'] = $row['id_order'];
         $form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa         $form['rows'][$i]['id_mag'] = $row['id_mag'];
         $form['in_id_orderman'] = $row['id_orderman'];
@@ -2294,6 +2303,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				// fine calcolo importo rigo, totale e castelletto IVA
 				// colonne non editabili
 				echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
+				echo "<input type=\"hidden\" value=\"" . $v['id_rig'] . "\" name=\"rows[$k][id_rig]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['SIAN'] . "\" name=\"rows[$k][SIAN]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
@@ -2314,7 +2324,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				echo "<input type=\"hidden\" value=\"" . $v['quanti'] . "\" name=\"rows[$k][quanti]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['prelis'] . "\" name=\"rows[$k][prelis]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['sconto'] . "\" name=\"rows[$k][sconto]\">\n";
-
+			
 				echo "<input type=\"hidden\" value=\"" . $v['codice_fornitore'] . "\" name=\"rows[$k][codice_fornitore]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['ritenuta'] . "\" name=\"rows[$k][ritenuta]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['provvigione'] . "\" name=\"rows[$k][provvigione]\">\n";
