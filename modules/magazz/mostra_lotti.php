@@ -37,8 +37,11 @@ $artico = gaz_dbi_get_row($gTables['artico'], "codice", $codice);
 //$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$codice' AND caumag = 99 AND (datreg <= '" . $date . "')", "datreg DESC, id_mov DESC");
 // Antonio Germani -gli inventari, adesso, vengono tolti direttamente nella function getAvailableLots
 
+// Antonio Germani - la data di creazione del primo lotto per il dato articolo
+$first_lot_date=gaz_dbi_get_row($gTables['movmag'], "artico", $codice, " AND id_lotmag > '1' AND caumag <> '99' AND operat = '1'", "MIN(datdoc)");
+
 // Antonio Germani - controllo se ci sono articoli con movimenti di magazzino orfani del lotto
-$where= $gTables['movmag'] . ".artico = '" . $codice. "' AND ". $gTables['movmag'] . ".id_lotmag < '1' AND ". $gTables['movmag'] . ".caumag <> '99'"; 
+$where= $gTables['movmag'] . ".artico = '" . $codice. "' AND ". $gTables['movmag'] . ".id_lotmag < '1' AND ". $gTables['movmag'] . ".caumag <> '99' AND datdoc >= '". $first_lot_date ."'"; 
 $resorf = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
  $gTables['movmag'] . ".quanti,".
  $gTables['movmag'] . ".tipdoc,".
@@ -49,7 +52,7 @@ $resorf = gaz_dbi_dyn_query($gTables['movmag'] . ".artico,".
  $gTables['tesdoc'] . ".numdoc,".
  $gTables['tesdoc'] . ".numfat,".
  $gTables['tesdoc'] . ".protoc ",
- $gTables['movmag'] . " LEFT JOIN " . $gTables['rigdoc'] . " ON ". $gTables['movmag'] . ".id_rif = " . $gTables['rigdoc'] . ".id_rig ". " LEFT JOIN " . $gTables['tesdoc'] . " ON ". $gTables['rigdoc'] . ".id_tes = " . $gTables['tesdoc'] . ".id_tes ",$where);
+ $gTables['movmag'] . " LEFT JOIN " . $gTables['rigdoc'] . " ON ". $gTables['movmag'] . ".id_rif = " . $gTables['rigdoc'] . ".id_rig ". " LEFT JOIN " . $gTables['tesdoc'] . " ON ". $gTables['rigdoc'] . ".id_tes = " . $gTables['tesdoc'] . ".id_tes ",$where, "datdoc ASC");
 
 require("../../library/include/header.php"); 
 $script_transl = HeadMain();

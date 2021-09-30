@@ -414,10 +414,12 @@ class lotmag {
 	  if (intval($date)>0){
 		$add_where=$gTables['movmag'] . ".datreg < '". $date ."' AND "; 
 	  }
-		  
+	// Antonio Germani - la data di creazione del primo lotto per il dato articolo
+	$first_lot_date=gaz_dbi_get_row($gTables['movmag'], "artico", $codart, " AND id_lotmag > '1' AND caumag <> '99' AND operat = '1'", "MIN(datdoc)");  
+	
       $sqlquery = "SELECT *, SUM(CASE WHEN caumag < 98 THEN (quanti*operat) ELSE 0 END)AS rest FROM " . $gTables['movmag'] . "
             LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_lotmag =" . $gTables['lotmag'] . ".id
-            WHERE ". $add_where . "artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " 
+            WHERE ". $add_where . "artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " AND datdoc >= '". $first_lot_date ."'
 			GROUP BY " . $gTables['movmag'] . ".id_lotmag 
 			ORDER BY " . $gTables['lotmag'] .".expiry" . $ob .", ". $gTables['lotmag'] . ".identifier" . $ob;
       $result = gaz_dbi_query($sqlquery);

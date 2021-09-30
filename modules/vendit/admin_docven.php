@@ -259,7 +259,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	$fae_other_el_exist=array();
     if (isset($_POST['rows'])) {
         foreach ($_POST['rows'] as $next_row => $v) {
-            $v['ritenuta']=floatval($v['ritenuta']);
 			switch($v['tiprig']){
 				case'0':
 				case'1':
@@ -411,7 +410,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								$i++;
 							}
 						}
-					} else {
+					} elseif ($form['rows'][$next_row]['quanti'] > $disp) {
 						$msg['err'][] = "65";
 					}
                 }
@@ -1730,7 +1729,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	foreach ($form['rows'] as $i => $v) { // raggruppo e conteggio q.tà richieste per i lotti
 		if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0 AND $form['tipdoc']<>"FNC"){
 								
-			$key=$v['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
+			$key=$v['identifier'].$v['codart']; // chiave per il conteggio dei totali raggruppati per lotto 
 			if( !array_key_exists($key, $countric) ){ // se la chiave ancora non c'è nell'array
 				// Aggiungo la chiave con il rispettivo valore iniziale
 				$countric[$key] = $v['quanti'];
@@ -1740,6 +1739,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
 		}
 	} 
+	
 	foreach ($form['rows'] as $i => $v) { // Antonio Germani - controllo delle giacenze per l'articolo con lotti e data di registrazione per SIAN
 		if ($v['SIAN']>0){ 
 			$uldtfile=getLastSianDay();
@@ -1769,11 +1769,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$count[$key] += $v_lm['rest'];
 				}
 			}
-			if ($countric[$v['identifier']] > $count[$v['identifier']] AND $form['tipdoc']<>"FNC"){ // confronto con la quantità richiesta
+			if ($countric[$v['identifier'].$v['codart']] > $count[$v['identifier']] AND $form['tipdoc']<>"FNC"){ // confronto con la quantità richiesta
 				$msgrigo = $i + 1;
 				$msg['war'][] = "1";
 			}
-			$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag); // controllo disponibilità per ID lotto		
+			$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], (isset($idmag))?$idmag:''); // controllo disponibilità per ID lotto		
 			if ($v['quanti']>$disp AND $form['tipdoc']<>"FNC"){
 				$msg['war'][] = "lotinsuf";
 			}
@@ -1782,14 +1782,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		
 
 } elseif (((!isset($_POST['Update'])) and ( isset($_GET['Update']))) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
-	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-		// allineo l'e-commerce con eventuali ordini non ancora caricati
-		$gs=$admin_aziend['synccommerce_classname'];
-		$gSync = new $gs();
-		if($gSync->api_token){
-			$gSync->get_sync_status(0);
-		}
-	}
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
     $form['id_tes'] = intval($_GET['id_tes']);
@@ -1985,14 +1977,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['mintra'] = date("i");
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
-	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-		// allineo l'e-commerce con eventuali ordini non ancora caricati
-		$gs=$admin_aziend['synccommerce_classname'];
-		$gSync = new $gs();
-		if($gSync->api_token){
-			$gSync->get_sync_status(0);
-		}
-	}
 	$form['in_barcode']="";
 	$form['ok_barcode']="";
     $form['tipdoc'] = '';
