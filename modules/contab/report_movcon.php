@@ -31,6 +31,20 @@ $tesmov_e_partners = $gTables['tesmov'] . " LEFT JOIN " . $gTables['clfoco'] . "
 
 $script_transl = HeadMain('', '', 'admin_movcon');
 
+if (count($_GET)==0) { // al primo accesso allo script
+	// ultima registrazione
+	$rs_last = gaz_dbi_dyn_query('YEAR(datreg) AS yearde', $gTables['tesmov'], "1", 'datreg DESC, id_tes DESC', 0, 1);
+	$last = gaz_dbi_fetch_array($rs_last);
+	if ($last) {
+		$default_where=['anno'=>$last['yearde']];
+        $_GET['anno']=$last['yearde'];
+	} else {
+		$default_where=['anno'=> date('Y')];
+	}
+} else {
+	$default_where=[];
+}
+
 // campi ammissibili per la ricerca
 $search_fields = [
     'movimento'
@@ -119,7 +133,10 @@ function getDocRef($data) {
 <?php 
 $t = new TableSorter(
     !$partner_select && isset($_GET["descri"]) ? $tesmov_e_partners : $gTables['tesmov'],
-    $passo, ['id_tes' => 'desc']);
+    $passo, 
+	['id_tes' => 'desc'],
+	$default_where
+	);
 $t -> output_navbar();
 ?>
 <script>
@@ -160,13 +177,14 @@ $(function() {
 });
 </script>
 <form method="GET">
+  <input type="hidden" name="info" value="none" />
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
 	<p><b>movimento contabile:</b></p>
 	<p>ID:</p>
 	<p class="ui-state-highlight" id="idcodice"></p>
 	<p>Descrizione:</p>
 	<p class="ui-state-highlight" id="iddescri"></p>
-</div>
+	</div>
 	<div class="table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
