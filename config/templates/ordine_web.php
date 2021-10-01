@@ -178,7 +178,7 @@ class OrdineWeb extends Template
         $this->Cell(62, 6,'Spedizione',1,1,'C',1);
         $this->Cell(62, 6,$this->tesdoc['spediz'],1,1,'C');
         $this->Cell(62, 6,'Vettore',1,1,'C',1);
-        $this->Cell(186,6,$vettor['descri'],1,1,'L');
+        $this->Cell(186,6,((isset($vettor['descri']))?$vettor['descri']:''),1,1,'L');
     }
 
     function Footer()
