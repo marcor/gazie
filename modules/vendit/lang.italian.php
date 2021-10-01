@@ -805,7 +805,8 @@ $strScript = array("admin_client.php" =>
     ),
     "select_evaord_gio.php" =>
     array('doc_name' => array("VOG" => "Ordine",
-            "VPR" => "Preventivo"
+            "VPR" => "Preventivo",
+			"VOW" => "Ordine web"
         ),
         'title' => 'Evasione ordine/preventivo cliente',
         'errors' => array('Non &egrave; stato selezionato un cliente',
@@ -1368,7 +1369,8 @@ $strScript = array("admin_client.php" =>
     ),
     "select_evaord.php" =>
     array('doc_name' => array("VOR" => "Ordine",
-            "VPR" => "Preventivo"
+            "VPR" => "Preventivo",
+			"VOW" => "Ordine web"
         ),
         'title' => 'Evasione ordine/preventivo cliente',
         'errors' => array('Non &egrave; stato selezionato un cliente',
