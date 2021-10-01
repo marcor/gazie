@@ -126,7 +126,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $pdf->Cell(24,4,'','LTR',1,'R');
     $pdf->Cell(18,4,$scadenza,'LR',0,'L');
     $pdf->Cell(18,4,$emission,'R',0,'L');
-    $pdf->Cell(100,4,$cliente["indspe"].' '.sprintf("%05d",$cliente["capspe"]).' '.$cliente["citspe"].' ('.$cliente["prospe"].') P.IVA '.$cliente["pariva"],0,0,'L');
+    $pdf->Cell(100,4,$cliente["indspe"].' '.sprintf("%05d",$cliente["capspe"]).' '.$cliente["citspe"].' ('.$cliente["prospe"].') P.IVA '.$cliente["pariva"],0,0,'L',0,'',1);
     $pdf->Cell(30,4,'CAB '.$banapp["codcab"],'R',0,'R');
     $pdf->Cell(24,4,'','R',1,'R');
     $pdf->Cell(18,4,'','LRB',0,'L');
