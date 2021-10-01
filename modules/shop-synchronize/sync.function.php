@@ -84,6 +84,7 @@ class shopsynchronizegazSynchro {
 		if ($d['ref_ecommerce_id_category']>0){ // se la categoria è connessa all'e-commerce	
 			@session_start();		
 			global $gTables,$admin_aziend;
+			$rawres=[];
 			$gForm = new magazzForm();
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
@@ -104,7 +105,10 @@ class shopsynchronizegazSynchro {
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
-						$rawres['style'] = 'danger';										
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;
 					} 
 				} else { // SFTP log-in con password				
 					$sftp = new SFTP($ftp_host, $ftp_port);
@@ -114,7 +118,10 @@ class shopsynchronizegazSynchro {
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
-						$rawres['style'] = 'danger';									
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;
 					} 
 				}				
 			} else {			 
@@ -130,6 +137,9 @@ class shopsynchronizegazSynchro {
 					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
+					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					$this->rawres=$rawres;
+					return;
 				} 
 			}
 			// creo il file xml			
@@ -197,14 +207,15 @@ class shopsynchronizegazSynchro {
 				$rawres['style'] = 'danger';
 			}
 		}		
-		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;			
-			
+		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+		$this->rawres=$rawres;	
 	}
 	function UpsertParent($p) { 
 		// aggiorno i dati del genitore delle varianti
 		if ($p['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
 			@session_start();		
 			global $gTables,$admin_aziend;
+			$rawres=[];
 			$gForm = new magazzForm();
 			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
 			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
@@ -250,7 +261,10 @@ class shopsynchronizegazSynchro {
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
-						$rawres['style'] = 'danger';										
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;
 					} 
 				} else { // SFTP log-in con password
 				
@@ -261,7 +275,10 @@ class shopsynchronizegazSynchro {
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
-						$rawres['style'] = 'danger';									
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;	
 					} 
 				}				
 			} else {
@@ -280,6 +297,9 @@ class shopsynchronizegazSynchro {
 					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
+					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					$this->rawres=$rawres;
+					return;
 				} 
 			}
 			// creo il file xml			
@@ -350,7 +370,8 @@ class shopsynchronizegazSynchro {
 				$rawres['style'] = 'danger';
 			}
 		}		
-		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;		
+		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+		$this->rawres=$rawres;		
 	}
 	function UpsertProduct($d) {
 		if ($d['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
@@ -372,7 +393,17 @@ class shopsynchronizegazSynchro {
 			$magval = array_pop($mv);
 			// trovo l'ID di riferimento e calcolo la disponibilità
 			$id = gaz_dbi_get_row($gTables['artico'],"codice",$d['codice']);
-			$fields = array ('product_id' => $id['ref_ecommerce_id_product'],'quantity'=>intval($magval['q_g']));
+			if (!isset($id)){
+				$rawres['title'] = "Prodotto non correttamente sincronizzato. Controllare le sue impostazioni e ID di riferimento all e-commerce!";
+				$rawres['button'] = 'Avviso eCommerce';
+				$rawres['label'] = "Aggiornare i dati di: ". $d['codice'];
+				$rawres['link'] = '../shop-synchronize/synchronize.php';
+				$rawres['style'] = 'danger';
+				$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+				$this->rawres=$rawres;
+				return;
+			}
+			$fields = array ('product_id' => $id['ref_ecommerce_id_product'],'quantity'=>intval((isset($magval['q_g']))?$magval['q_g']:0));
 			$ordinati = $gForm->get_magazz_ordinati($d['codice'], "VOR");
 			$ordinati = $ordinati + $gForm->get_magazz_ordinati($d['codice'], "VOW");
 			$avqty=$fields['quantity']-$ordinati;
@@ -398,7 +429,10 @@ class shopsynchronizegazSynchro {
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
-						$rawres['style'] = 'danger';										
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;	
 					} 
 				} else { // SFTP log-in con password
 				
@@ -409,7 +443,10 @@ class shopsynchronizegazSynchro {
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
-						$rawres['style'] = 'danger';									
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;	
 					} 
 				}				
 			} else {
@@ -428,6 +465,9 @@ class shopsynchronizegazSynchro {
 					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
+					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					$this->rawres=$rawres;
+					return;
 				} 
 			}		
 			
@@ -517,9 +557,10 @@ class shopsynchronizegazSynchro {
 				$rawres['link'] = '../shop-synchronize/synchronize.php';
 				$rawres['style'] = 'danger';
 			}
-		}
-		
+		}		
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+		$this->rawres=$rawres;
+						
 	}
 	function SetProductQuantity($d) {
 		// aggiornamento quantità disponibile di un articolo
@@ -566,7 +607,10 @@ class shopsynchronizegazSynchro {
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
-						$rawres['style'] = 'danger';										
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;
 					} 
 				} else { // SFTP log-in con password
 				
@@ -577,7 +621,10 @@ class shopsynchronizegazSynchro {
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
 						$rawres['link'] = '../shop-synchronize/synchronize.php';
-						$rawres['style'] = 'danger';									
+						$rawres['style'] = 'danger';
+						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+						$this->rawres=$rawres;
+						return;
 					} 
 				}				
 			} else {				
@@ -594,6 +641,7 @@ class shopsynchronizegazSynchro {
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
 					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					$this->rawres=$rawres;
 					return;
 				}
 
@@ -609,6 +657,7 @@ class shopsynchronizegazSynchro {
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
 					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+					$this->rawres=$rawres;
 					return;
 				} 
 			}			
@@ -687,6 +736,7 @@ class shopsynchronizegazSynchro {
 			}
 		}
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+		$this->rawres=$rawres;
 	}
 	function get_sync_status($last_id) { 
 		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer), 
@@ -937,6 +987,6 @@ class shopsynchronizegazSynchro {
             $rawres['style'] = 'warning';
 		}
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-		//$this->rawres=$rawres;
+		$this->rawres=$rawres;
 	}
 }

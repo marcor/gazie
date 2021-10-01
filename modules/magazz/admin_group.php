@@ -195,7 +195,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 					}
 			} elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
 			  $oldimage = gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', $form['ref_ecommerce_id_main_product']);
-			  $form['image'] = $oldimage['image'];
+			  $form['image'] = ($oldimage)?$oldimage['image']:'';
 			} else {
 			  $form['image'] = '';
 			}    

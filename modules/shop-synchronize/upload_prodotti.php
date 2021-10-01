@@ -46,7 +46,7 @@ $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['az
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
 $urlinterf = $path['val']."articoli-gazie.php";// nome del file interfaccia presente nella root del sito e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 // il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory
-ob_flush();
+@ob_flush();
 flush();
 ob_start();
 
