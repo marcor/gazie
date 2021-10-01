@@ -84,14 +84,18 @@ if (!checkdate($_POST['mesexe'], $_POST['gioexe'], $_POST['annexe']))
     $message .= "La data " . $_POST['gioexe'] . "-" . $_POST['mesexe'] . "-" . $_POST['annexe'] . " non &egrave; corretta! <br />";
 
 if ($_POST['ckdata'] == 1) {
+    $utsexe = mktime(0, 0, 0, $_POST['mesexe'], $_POST['gioexe'], $_POST['annexe']);
     //recupero l'ultimo protocollo da contabilizzare
     $rs_ultimdoc = gaz_dbi_dyn_query("*", $gTables['effett'], "YEAR(datemi) = " . $_POST['annexe'] . " and id_con = 0 and progre between '" . intval($_POST['proini']) . "' and '" . intval($_POST['profin']) . "' ", 'progre desc', 0, 1);
     $dataultimdoc = gaz_dbi_fetch_array($rs_ultimdoc);
-    $giofin = substr($dataultimdoc['datfat'], 8, 2);
-    $mesfin = substr($dataultimdoc['datfat'], 5, 2);
-    $annfin = substr($dataultimdoc['datfat'], 0, 4);
-    $utsexe = mktime(0, 0, 0, $_POST['mesexe'], $_POST['gioexe'], $_POST['annexe']);
-    $utsfin = mktime(0, 0, 0, $mesfin, $giofin, $annfin);
+	if ($dataultimdoc) {
+		$giofin = substr($dataultimdoc['datfat'], 8, 2);
+		$mesfin = substr($dataultimdoc['datfat'], 5, 2);
+		$annfin = substr($dataultimdoc['datfat'], 0, 4);
+		$utsfin = mktime(0, 0, 0, $mesfin, $giofin, $annfin);
+	} else {
+		$utsfin = $utsexe;
+	}
     if ($utsexe < $utsfin) {
         $message .="Almeno un effetto tra quelli selezionati ha la data di emissione successiva a quella di registrazione !<br />";
     }

@@ -364,17 +364,12 @@ if (isset($_POST['preview'])) {
         }
     }
     echo "\t<tr>\n";
-    echo '<td class=\"FacetFieldCaptionTD\" colspan="7" align="right">';
-    if ($errors) {
-        echo '<span class="text-danger"><b>Correggi gli errori incontrati</b></a>';
-    } else {
-        echo '<input type="submit" name="submit" value="'.$script_transl['submit'].'">';
-    }
+    echo "\t </tr></table>\n";
+    echo '<div class="text-center">'.($errors?'<span class="bg-danger text-danger">Attenzione!!! Puoi generare gli effetti ma devi essere consapevole degli errori sopra riportati</span><br/>':'').'<button type="submit" class="btn btn-warning" name="submit">'.$script_transl['submit'].'</button>';
     echo "\t </td>\n";
-    echo "\t </tr>\n";
+
 }
 ?>
-</table>
 </form>
 <?php
 require("../../library/include/footer.php");
