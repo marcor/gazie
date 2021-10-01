@@ -4,7 +4,7 @@ function camp_prepare_ref_doc($tipdoc,$id_rif){
     $acc=[];
     switch ($tipdoc){
         default:
-        $acc['link']=($r)?"../camp/camp_admin_movmag.php?Update&id_mov=".$id_rif:'';
+        $acc['link']=(isset($r))?"../camp/camp_admin_movmag.php?Update&id_mov=".$id_rif:'';
         break;
     }
     return $acc;

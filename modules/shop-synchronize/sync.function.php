@@ -754,7 +754,7 @@ class shopsynchronizegazSynchro {
 		$headers = @get_headers($urlinterf.'?access='.$access);
 		$count=0;
 		if ( is_array($headers) AND intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
-			$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.mktime()) ;
+			$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.time()) ;
 			if (!$xml){
                     $rawres['title'] = "L'interfaccia non si apre: impossibile scaricare gli ordini dall'e-commerce";
                     $rawres['button'] = 'Avviso eCommerce';

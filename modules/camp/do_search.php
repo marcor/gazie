@@ -33,9 +33,9 @@ if (!$isAjax) {
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
-if(isset($_GET['nome_fito'])){
+if(isset($_GET['nomefito'])){
 	$results = array('error' => false, 'data' => '');
-	$codice = $_GET['nome_fito'];
+	$codice = $_GET['nomefito'];
 	if(empty($codice)){
 		$results['error'] = true;
 	}else{				
