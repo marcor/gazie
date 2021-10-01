@@ -1519,10 +1519,12 @@ if ($avv_conf==3 AND $form['confermapat'][$form['adminid']]!=="Confermo deroga" 
 		source: [<?php
 $stringa = "";
 $result = json_decode ($feno_json);
+if ($result){
 foreach ($result as $row) {
     $stringa.= "\"" . $row . "\", ";
 }
 $stringa = substr($stringa, 0, -1);
+}
 echo $stringa;
 ?>],
 		minLength:1,
