@@ -49,7 +49,7 @@ $sortable_headers = array("Codice ID"      => "id",
 							"Durata" => "",
 							"Luogo di produzione" => "campo_impianto",
 							"Stato" => "stato_lavorazione",
-							"Distinta" => "",
+							"Riepilogo" => "",
 							"Cancella"    => ""
 							);
 
@@ -257,7 +257,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			<?php
 			if ($r['order_type']=="IND" or $r['order_type']=="ART"){
 			?>
-			<td align="center">
+			<td align="center" title="Stampa riepilogo della produzione">
 				<a class="btn btn-xs btn-info" href="stampa_produzione.php?id_orderman=<?php echo $r['id']; ?>">
 					<i class="glyphicon glyphicon-list-alt"></i>
 				</a>

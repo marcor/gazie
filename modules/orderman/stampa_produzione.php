@@ -33,13 +33,15 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
 	gaz_set_time_limit (0);
 }
 
-$resord = gaz_dbi_get_row($gTables['orderman'], "id", intval($_GET['id_orderman']));	
+$resord = gaz_dbi_get_row($gTables['orderman'], "id", intval($_GET['id_orderman']));
+$what_print = gaz_dbi_get_row($gTables['company_config'], 'var', 'orderman_report_choice')['val']; // scelgo cosa stampare sul report: ordini d'acquisto (0) , fatture d'acquisto(2) o entrambi (1) 
+	
 $now = new DateTime();
 $luogo_data=$admin_aziend['citspe'].", lì ".$now->format('d-m-Y');
 
 require("../../config/templates/report_template.php");
 $title = array('luogo_data'=>$luogo_data,
-           'title'=>"Distinta della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
+           'title'=>"RIEPILOGO della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
            'hile'=>array(array('lun' => 16,'nam'=>'Numero'),
 						array('lun' => 18,'nam'=>'Data'),
 						array('lun' => 45,'nam'=>'Cliente'),
@@ -104,9 +106,8 @@ $pdf->Cell(25,4,substr($rescamp['descri'],0,25),1, 0, 'L', 0, '', 1);
 $pdf->Cell(10,4,(($resord['duration']>=0.01)?$resord['duration']:''),1, 1, 'C', 0, '', 1);
 $pdf->Ln(2);
 
+
 // INIZIO STAMPA LAVORI
-
-
 // Antonio de Vincentiis - Stampo le eventuali lavorazioni documentate tramite il contenuto di tesbro con tipdoc "PRW" e relativi rigbro, dalla 7.35 staff_worked_hours conterrà il riferimento a detto documento con la nuova colonna id_tes
 $tablejoin = $gTables['rigbro']." LEFT JOIN ".$gTables['tesbro']." ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes
     LEFT JOIN ".$gTables['staff']." ON ".$gTables['rigbro'].".id_body_text=".$gTables['staff'].".id_staff
@@ -118,8 +119,9 @@ $result = gaz_dbi_dyn_query ($gTables['tesbro'].".datemi,
 	".$gTables['staff'].".id_staff,
 	".$gTables['clfoco'].".descri AS des_staff", 
     $tablejoin, $gTables['rigbro'].".id_orderman = ".intval($_GET['id_orderman'])." AND ".$gTables['tesbro'].".tipdoc ='PRW'" , $gTables['tesbro'].".datemi ASC, ".$gTables['tesbro'].".id_tes ASC");
-  $tot_prw=0;
 
+$tot_prw_v=0;
+$tot_prw_h=0;
 if ($result->num_rows >0) { 
   $pdf->SetFillColor(255,208,208);
   $pdf->Cell(277,5,'LAVORI ESEGUITI','LTR', 1, 'L', 1, '', 1);
@@ -129,7 +131,6 @@ if ($result->num_rows >0) {
   $pdf->Cell(20,5,'Ore','LBR',0,'C',1);
   $pdf->Cell(25,5,'Costo','LBR',0,'R',1); 
   $pdf->Cell(27,5,'Importo','LBR',1,'R',1);
-  $htot=0;
   while($r = $result->fetch_assoc()){
     $pdf->Cell(20,5,gaz_format_date($r['datemi']),'LBR',0,'C');
     $pdf->Cell(80,5,$r['des_staff'],'LBR',0,'L');
@@ -137,19 +138,17 @@ if ($result->num_rows >0) {
     $pdf->Cell(20,5,floatval($r['quanti']),'LBR',0,'C');
     $pdf->Cell(25,5,gaz_format_number($r['prelis']),'LBR',0,'R'); 
     $pdf->Cell(27,5,gaz_format_number($r['quanti']*$r['prelis']),'LBR',1,'R');
-    $tot_prw+=($r['quanti']*$r['prelis']);
-    $htot+=$r['quanti'];
+    $tot_prw_v+=($r['quanti']*$r['prelis']);
+    $tot_prw_h+=$r['quanti'];
   }
   $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
   $pdf->SetFont('helvetica','B',9);
   $pdf->Cell(205,5,' TOTALI DEI LAVORI ','LBT',0,'R',1);
-  $pdf->Cell(20,5,round($htot),'LBR',0,'C',1);
-  $pdf->Cell(25,5,'medio: '.gaz_format_number(round($tot_prw/$htot,2)),'LBR',0,'R',1); 
-  $pdf->Cell(27,5,gaz_format_number($tot_prw),'LBR',1,'R',1);
+  $pdf->Cell(20,5,round($tot_prw_h),'LBR',0,'C',1);
+  $pdf->Cell(25,5,'medio: '.gaz_format_number(round($tot_prw_v/$tot_prw_h,2)),'LBR',0,'R',1); 
+  $pdf->Cell(27,5,gaz_format_number($tot_prw_v),'LBR',1,'R',1);
   $pdf->SetFont('helvetica','',8);
   $pdf->Ln(5);
-
-  
 } else {
 	// Antonio Germani - Stampa operai	
 	$query="SELECT * FROM ".$gTables['staff_worked_hours']. " WHERE id_orderman =". intval($_GET['id_orderman']);
@@ -169,8 +168,10 @@ if ($result->num_rows >0) {
 
 
 // STAMPA LISTA ORDINI
+$tot_aor=0.00;
+if ($what_print<=1){
 $title = array('luogo_data'=>$luogo_data,
-           'title'=>"Distinta della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
+           'title'=>"RIEPILOGO della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
            'hile'=>array()
           );
 
@@ -178,7 +179,6 @@ $pdf->setVars($admin_aziend,$title);
 $pdf->SetFooterMargin(20);
 
 $ctrlAOR=0;
-$tot=0.00;
 $ctrlAORtot=0.00;
 $query="SELECT *,".$gTables['rigbro'].".descri AS rigdes, ".$gTables['rigbro'].".sconto AS scorig FROM ".$gTables['rigbro']. " 
 LEFT JOIN ".$gTables['tesbro']. " ON ".$gTables['rigbro'].".id_tes = ".$gTables['tesbro'].".id_tes 
@@ -200,7 +200,7 @@ while($row=$res->fetch_assoc()){
 		default:
 		$amount=0;
 	}
-	$tot+=$amount;
+	$tot_aor+=$amount;
     $fillcell=($amount>=0.00001)?false:'1';
 	$ctrlAORtot+=$amount;
 	if ($ctrlAOR==0){
@@ -249,7 +249,7 @@ while($row=$res->fetch_assoc()){
 	$ctrlAOR=$row['id_tes'];
     $d=$row;
 }
-if ($tot>=0.01){
+if ($tot_aor>=0.01){
 	$pdf->Cell(85,5);
     $pdf->SetFillColor(230,230,230);
     $pdf->Cell(162,4,'Totale ordine n.'.$d['numdoc'].' del '.gaz_format_date($d['datemi']).' a '.$d['descri'].' € ','LBT', 0, 'R', 1, '', 1);
@@ -259,11 +259,104 @@ if ($tot>=0.01){
     $pdf->SetFont('helvetica','B',9);
 	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
 	$pdf->Cell(247,4,'TOTALE DELL\'ORDINATO: ','LBT', 0, 'R', 1, '', 1);
-	$pdf->Cell(30,4,'€ '.gaz_format_number($tot),'RBT', 1, 'R', 1, '', 1);
+	$pdf->Cell(30,4,'€ '.gaz_format_number($tot_aor),'RBT', 1, 'R', 1, '', 1);
     $pdf->SetFont('helvetica','',8);
 	
 }
+}
 // FINE STAMPA LISTA ORDINI
+
+// STAMPA LISTA DOCUMENTI D'ACQUISTO
+$tot_acq=0.00;
+if ($what_print>=1){
+$ctrlACQ=0;
+$ctrlACQtot=0.00;
+$query="SELECT *,".$gTables['rigdoc'].".descri AS rigdes, ".$gTables['rigdoc'].".sconto AS scorig FROM ".$gTables['rigdoc']. " 
+LEFT JOIN ".$gTables['tesdoc']. " ON ".$gTables['rigdoc'].".id_tes = ".$gTables['tesdoc'].".id_tes 
+LEFT JOIN ".$gTables['clfoco']. " ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice 
+LEFT JOIN ".$gTables['anagra']. " ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id 
+WHERE (tipdoc LIKE 'AF_' OR (tipdoc LIKE 'AD_' AND numfat < 1)) AND ".$gTables['rigdoc'].".id_orderman =".intval($_GET['id_orderman'])." ORDER BY datemi ASC, ".$gTables['tesdoc'].".id_tes ASC";
+$res=gaz_dbi_query($query);
+$pdf->SetFillColor(255,199,199);
+$tipdoc_descri=['AFA'=>'Fattura','AFT'=>'DdT (fatturato)','ADT'=>'D.d.T.','AFC'=>'Nota Credito'];
+while($row=$res->fetch_assoc()){
+	if ($row['tipdoc']=='AFC') { $row['prelis']=-$row['prelis']; }
+	switch ($row['tiprig']){ 
+	    case "0": // normale
+	    case "50": // normale c/allegato
+			$amount=CalcolaImportoRigo($row['quanti'],$row['prelis'],$row['scorig']);
+        break;
+		case "1": //forfait
+			$amount=CalcolaImportoRigo(1,$row['prelis'],$row['scorig']);
+        break;
+		default:
+		$amount=0;
+	}
+	$tot_acq+=$amount;
+    $fillcell=($amount>=0.00001)?false:'1';
+	$ctrlACQtot+=$amount;
+	if ($ctrlACQ==0){
+		$pdf->Cell(277,5,'LISTA DEGLI ACQUISTI A FORNITORI','LTR', 1, 'L', 1, '', 1);
+		$pdf->Cell(105,5,'Fornitore','LBR',0,'L',1);
+		$pdf->Cell(82,5,'descrizione acquisto','LBR',0,'L',1);
+		$pdf->Cell(10,5,'U.M.','LBR',0,'C',1);
+		$pdf->Cell(20,5,'quantità','LBR',0,'R',1); 
+		$pdf->Cell(20,5,'prezzo','LBR',0,'R',1);
+		$pdf->Cell(10,5,'sconto','LBR',0,'C',1);
+		$pdf->Cell(30,5,'importo','LBR',1,'R',1);
+		$tot_acq=0.00;
+	} elseif ($ctrlACQ<>$row['id_tes']) {
+		$pdf->Cell(85,5);
+        $pdf->SetFillColor(230,230,230);
+        $pdf->Cell(162,4,'Totale '.$tipdoc_descri[$row['tipdoc']].' n.'.$d['numdoc'].' del '.gaz_format_date($d['datemi']).' a '.$d['descri'].' € ','LBT', 0, 'R', 1, '', 1);
+        $pdf->SetFont('helvetica','B',8);
+        $pdf->Cell(30,4,gaz_format_number($tot_acq),'RBT', 1, 'R', 1, '', 1);
+        $pdf->SetFont('helvetica','',8);
+        $pdf->Ln(2);
+        $pdf->SetFillColor(255,199,199);
+		$tot_acq=0.00;
+    }
+    
+	if ($ctrlACQ<>$row['id_tes']){
+		$pdf->Cell(277,5,$row['descri'].' '.$tipdoc_descri[$row['tipdoc']].' n.'.$row['numdoc'].' del '.gaz_format_date($row['datemi']),1, 1, 'L', 0, '', 1);
+		if ($amount>=0.01&&$ctrlACQtot==0.00){ // è cambiato l'ordine ma il precedente ha un totale a zero...
+			$pdf->SetTextColor(255,0,0);
+			$pdf->Cell(105,4);
+			$pdf->Cell(172,5,' A C Q U I S T O  D I   V A L O R E    N U L L O   ! ?',1,1,'C');
+			$pdf->SetTextColor(0);
+		}
+       
+	}	
+	if ($row['quanti']>=0.00001){
+		$pdf->Cell(85,5);
+		$pdf->Cell(20,5,$row['codart'],1,0,'C',0,'',1);
+		$pdf->Cell(82,5,$row['rigdes'],1,0,'L',0,'',1);
+		$pdf->Cell(10,5,$row['unimis'],1,0,'C');
+		$pdf->Cell(20,5,floatval($row['quanti']),1,0,'R'); 
+		$pdf->Cell(20,5,floatval($row['prelis']),1,0,'R');
+		$pdf->Cell(10,5,floatval($row['scorig']),1,0,'C');
+		$pdf->Cell(30,5,gaz_format_number($amount),1, 1,'C',$fillcell,'',1);
+	}
+    $tot_acq+=$amount;
+	$ctrlACQ=$row['id_tes'];
+    $d=$row;
+}
+if ($tot_acq>=0.01){
+	$pdf->Cell(85,5);
+    $pdf->SetFillColor(230,230,230);
+    $pdf->Cell(162,4,'Totale  n.'.$d['numdoc'].' del '.gaz_format_date($d['datemi']).' a '.$d['descri'].' € ','LBT', 0, 'R', 1, '', 1);
+    $pdf->SetFont('helvetica','B',8);
+    $pdf->Cell(30,4,gaz_format_number($tot_acq),'RBT', 1, 'R', 1, '', 1);
+    $pdf->Ln(2);
+    $pdf->SetFont('helvetica','B',9);
+	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
+	$pdf->Cell(247,4,'TOTALE DELL\'ORDINATO: ','LBT', 0, 'R', 1, '', 1);
+	$pdf->Cell(30,4,'€ '.gaz_format_number($tot_acq),'RBT', 1, 'R', 1, '', 1);
+    $pdf->SetFont('helvetica','',8);
+	
+}
+}
+// FINE STAMPA LISTA DOCUMENTI D'ACQUISTO
 
 $pdf->setRiporti('');
 
@@ -284,10 +377,10 @@ $what = $gTables['movmag'].".*, ".
                LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
 $result = gaz_dbi_dyn_query ($what, $table,$where,"datreg ASC, id_mov ASC");
 $numrow = gaz_dbi_num_rows($result);
-$totv=0;
+$tot_mom_v=0;
 if ($numrow>=1){
     $title = array('luogo_data'=>$luogo_data,
-           'title'=>"Distinta della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
+           'title'=>"RIEPILOGO della produzione n.".intval($_GET['id_orderman']).' - '.$resord['description'],
            'hile'=>array(array('lun' => 20,'nam'=>'Data'),
                          array('lun' => 37,'nam'=>'Causale'),
 						array('lun' => 87,'nam'=>'Operazione'),
@@ -322,7 +415,7 @@ if ($numrow>=1){
 
     while ($mv = gaz_dbi_fetch_array($result)) {
         $totq+=floatval($mv['quanti']*$mv['operat']);
-        $totv+=floatval($mv['quanti']*$mv['prezzo']);
+        $tot_mom_v+=floatval($mv['quanti']*$mv['prezzo']);
         $desop=(strlen($mv['desass'])>2)?$mv['desdoc'].' con '.$mv['desass']:$mv['desdoc'];
         $pdf->Cell(20,4,gaz_format_date($mv['datreg']),1, 0, 'C', 0, '', 1);
         $pdf->Cell(37,4,$mv['descau'],1, 0, 'C', 0, '', 1);
@@ -345,35 +438,45 @@ if ($numrow>=1){
     $pdf->Cell(186,5,'TOTALE MATERIALE LAVORATO: ','LBT', 0, 'R', 1, '', 1);
     $pdf->Cell(17,5,abs($totq),'BT', 0, 'R', 1, '', 1);
     $pdf->Cell(57,5,'','BT', 0, 'R', 1, '', 1);
-    $pdf->Cell(17,5,'€ '.number_format($totv, $admin_aziend['decimal_price'], $admin_aziend['decimal_symbol'], $admin_aziend['thousands_symbol']),'RBT', 1, 'R', 1, '', 1);
+    $pdf->Cell(17,5,'€ '.number_format($tot_mom_v, $admin_aziend['decimal_price'], $admin_aziend['decimal_symbol'], $admin_aziend['thousands_symbol']),'RBT', 1, 'R', 1, '', 1);
 }
 // FINE REPORT MOVIMENTI DI MAGAZZINO GENERATI DALLA PRODUZIONE 
 
 // RIEPILOGO
 if( $pdf->GetY() > 150 ){ $pdf->AddPage(); }
-$totgen=$tot+$totv+$tot_prw;
+if($what_print==1){ $tot_acq=0; } // se ho scelto di stampare sul report sia l'ordinato che l'acquistato tramite dtt-fatture non stampo quest'ultimo sul totale generale
+$totgen=$tot_aor+$tot_acq+$tot_mom_v+$tot_prw_v;
 if ($totgen>=0.01){
   $pdf->SetFont('helvetica','',9);
   $pdf->Ln(8);
   $pdf->Cell(70);
   $pdf->Cell(126,5,' R I E P I L O G O    T O T A L I',1, 1, 'C', 1, '', 1);
-  if($tot_prw>=0.01){	
+  if($tot_prw_v>=0.01){
 	$pdf->Cell(70);
 	$pdf->Cell(100,5,'COSTO DEL LAVORO: ','LBT', 0, 'L', 0, '', 1);
-	$pdf->Cell(26,5,gaz_format_number($tot_prw),'RBT', 1, 'R', 0, '', 1);
+	$pdf->Cell(26,5,gaz_format_number($tot_prw_v),'RBT', 1, 'R', 0, '', 1);
+  }
+  if($tot_aor>=0.01){
+	$pdf->Cell(70);
+	$pdf->Cell(100,5,'MATERIALE ORDINATO: ','LBT', 0, 'L', 0, '', 1);
+	$pdf->Cell(26,5,gaz_format_number($tot_aor),'RBT', 1, 'R', 0, '', 1);
+  }
+  if($tot_acq>=0.01){
+	$pdf->Cell(70);
+	$pdf->Cell(100,5,'MATERIALE ACQUISTATO: ','LBT', 0, 'L', 0, '', 1);
+	$pdf->Cell(26,5,gaz_format_number($tot_acq),'RBT', 1, 'R', 0, '', 1);
+  }
+  if($tot_mom_v>=0.01){
+	$pdf->Cell(70);
+	$pdf->Cell(100,5,'MATERIALE LAVORATO: ','LBT', 0, 'L', 0, '', 1);
+	$pdf->Cell(26,5,gaz_format_number($tot_mom_v),'RBT', 1, 'R', 0, '', 1);
+	$pdf->SetFont('helvetica','B',10);
   }
   $pdf->Cell(70);
-  $pdf->Cell(100,5,'MATERIALE ORDINATO: ','LBT', 0, 'L', 0, '', 1);
-  $pdf->Cell(26,5,gaz_format_number($tot),'RBT', 1, 'R', 0, '', 1);
-
-  $pdf->Cell(70);
-  $pdf->Cell(100,5,'MATERIALE LAVORATO: ','LBT', 0, 'L', 0, '', 1);
-  $pdf->Cell(26,5,gaz_format_number($totv),'RBT', 1, 'R', 0, '', 1);
-  $pdf->SetFont('helvetica','B',10);
-  $pdf->Cell(70);
-  $pdf->Cell(100,8,'TOTALE GENERALE PER PRODUZIONE: ','LBT', 0, 'R', 1, '', 1);
+  $pdf->Cell(100,8,'TOTALE GENERALE: ','LBT', 0, 'R', 1, '', 1);
   $pdf->Cell(26,8,'€ '.gaz_format_number($totgen),'RBT', 1, 'R', 1, '', 1);
 }
+// FINE RIEPILOGO
 
 $pdf->Output();
 ?>
