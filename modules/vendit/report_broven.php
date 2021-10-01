@@ -338,7 +338,8 @@ $ts->output_navbar();
             <?php $ts->output_headers(); ?>
         </tr>
         <?php
-        $enable_lh_print_dialog=gaz_dbi_get_row($gTables['company_config'], 'var', 'enable_lh_print_dialog')['val'];
+		$res1hp=gaz_dbi_get_row($gTables['company_config'], 'var', 'enable_lh_print_dialog');
+        $enable_lh_print_dialog=(isset($res1hp))?$res1hp['val']:0;
         //recupero le testate in base alle scelte impostate
         $result = gaz_dbi_dyn_query(cols_from($gTables['tesbro'], "*") . ", " .
 				    cols_from($gTables['anagra'],
