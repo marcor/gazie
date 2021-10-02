@@ -262,12 +262,12 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
             $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
-			$form['righi'][$_POST['num_rigo']]['lot_or_serial'] = $articolo['lot_or_serial'];
+			$form['righi'][$_POST['num_rigo']]['lot_or_serial'] = (isset($articolo['lot_or_serial']))?$articolo['lot_or_serial']:0;
 			$form['righi'][$_POST['num_rigo']]['id_lotmag'] = "";
 			$form['righi'][$_POST['num_rigo']]['cod_operazione'] = 11;
-			$form['righi'][$_POST['num_rigo']]['SIAN'] = $articolo['SIAN'];
+			$form['righi'][$_POST['num_rigo']]['SIAN'] = (isset($articolo['SIAN']))?$articolo['SIAN']:0;
 			$form['righi'][$_POST['num_rigo']]['recip_stocc'] = "";
-			if ($articolo['SIAN']>0){
+			if (isset($articolo['SIAN']) AND $articolo['SIAN']>0){
 				$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $rigo['codart']);
 				$form['righi'][$_POST['num_rigo']]['confezione'] = $camp_artico['confezione'];
 			} else {
@@ -1606,7 +1606,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                 echo " &sup1;";
 			if (!isset($cliente) || (intval($cliente['pariva'])==0 && strlen($cliente['codfis'])<11)){ // Antonio Germani - se non c'è partita iva e non c'è codice fiscale
 				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vcoA\" value=\"" . $script_transl['issue_cor'] . " anonimo\" accesskey=\"c\" />\n";
-			} elseif ((intval($cliente['pariva'])==0 AND strlen($cliente['codfis'])>10) OR ($cliente['pariva'] == $cliente['codfis'] AND $cliente['country'] !== "IT")) {
+			} elseif ((intval($cliente['pariva'])==0 AND strlen($cliente['codfis'])>10) OR ($cliente['country'] !== "IT")) {
 				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vco\" value=\"" . $script_transl['issue_cor'] . "\" accesskey=\"c\" />\n";
 				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vcoA\" value=\"" . $script_transl['issue_cor'] . " anonimo\" accesskey=\"c\" />\n";
 			} else {
