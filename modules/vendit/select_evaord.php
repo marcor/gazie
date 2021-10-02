@@ -1606,7 +1606,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                 echo " &sup1;";
 			if (!isset($cliente) || (intval($cliente['pariva'])==0 && strlen($cliente['codfis'])<11)){ // Antonio Germani - se non c'è partita iva e non c'è codice fiscale
 				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vcoA\" value=\"" . $script_transl['issue_cor'] . " anonimo\" accesskey=\"c\" />\n";
-			} elseif (intval($cliente['pariva'])==0 AND strlen($cliente['codfis'])>10) {
+			} elseif ((intval($cliente['pariva'])==0 AND strlen($cliente['codfis'])>10) OR ($cliente['pariva'] == $cliente['codfis'] AND $cliente['country'] !== "IT")) {
 				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vco\" value=\"" . $script_transl['issue_cor'] . "\" accesskey=\"c\" />\n";
 				echo "<input type=\"submit\" class=\"btn btn-success\" name=\"vcoA\" value=\"" . $script_transl['issue_cor'] . " anonimo\" accesskey=\"c\" />\n";
 			} else {
