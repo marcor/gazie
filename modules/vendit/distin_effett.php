@@ -121,6 +121,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['num_ini']=$iniData['ni'];
     $form['num_fin']=$iniData['nf'];
 } else { // accessi successivi
+	if (!isset($_POST['bank'])){
+		$_POST['bank']=0;
+		$msg .='4+';
+	}
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
     $form['date_emi_D']=intval($_POST['date_emi_D']);
@@ -172,6 +176,7 @@ if ($utsini > $utsfin) {
 if ($utsemi > $utsini) {
     $msg .='3+';
 }
+
 // fine controlli
 
 require("../../library/include/header.php");
@@ -210,51 +215,51 @@ echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\
 $gForm = new venditForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
+echo '<div class="table-responsive text-center"><table class="Tsmall table-bordered table-striped  text-left">';
 if (!empty($msg)) {
-    echo '<tr><td class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
+    echo '<tr><td class="FacetDataTDred" colspan=2>'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_emi']."</td><td class=\"FacetDataTD\">\n";
+echo '<td class="text-right">'.$script_transl['date_emi']." : </td><td>\n";
 $gForm->CalendarPopup('date_emi',$form['date_emi_D'],$form['date_emi_M'],$form['date_emi_Y'],'FacetSelect',1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['bank']."</td><td  class=\"FacetDataTD\">\n";
+echo '<td class="text-right">'.$script_transl['bank']." : </td><td>\n ";
 $rsbanacc=$gForm->selectBanacc($form['bank']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['num_ini']."</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_ini\" value=\"".$form['num_ini']."\" maxlength=\"5\"  /></td>\n";
+echo '<td class="text-right">'.$script_transl['num_ini']." : </td>\n";
+echo '<td>'."<input type=\"text\" name=\"num_ini\" value=\"".$form['num_ini']."\" maxlength=\"5\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['num_fin']."</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_fin\" value=\"".$form['num_fin']."\" maxlength=\"5\"  /></td>\n";
+echo '<td class="text-right">'.$script_transl['num_fin']." : </td>\n";
+echo "\t<td> <input type=\"text\" name=\"num_fin\" value=\"".$form['num_fin']."\" maxlength=\"5\"  /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td class=\"FacetDataTD\">\n";
+echo '<td class="text-right">'.$script_transl['date_ini']." : </td><td>\n";
 $gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td class=\"FacetDataTD\">\n";
+echo '<td class="text-right">'.$script_transl['date_fin']." : </td><td>\n";
 $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['period']."</td>
-      <td class=\"FacetDataTD\"><input type=\"submit\" name=\"period\" value=\"".$script_transl['period_value']."\">";
+echo '<td class="text-right">'.$script_transl['period']." : </td>
+      <td><input type=\"submit\" name=\"period\" value=\"".$script_transl['period_value']."\">";
 echo "</td>\n";
 echo "</tr>\n";
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
+echo "\t<tr>\n";
+echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\"></td>";
 echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
 echo "\t </tr>\n";
-echo "</table>\n";
+echo "</table></div>\n";
 if (isset($_POST['preview']) and $msg=='') {
   $date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$form['date_ini_D']);
   $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);

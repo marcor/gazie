@@ -145,16 +145,15 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         if (!$id_distinta) { // se non viene passato il riferimento alla distinta vuol dire che l'ho generata e quindi metto il riferimento sull'effeto
             gaz_dbi_query("UPDATE ". $gTables['effett']." SET id_distinta=".$first_id_distinta.", banacc=".intval($_GET['banacc'])." WHERE id_tes=".$r['id_tes']);
-        }		
+        }
     }
     $ctrltipo = $r["tipeff"];
 }
 $pdf->setRiporti();
 $pdf->Cell(190,4,$totnumtipo.' '.$descreff.' per un totale di € '.gaz_format_number($totaletipo),1,1,'R',1);
 $pdf->SetFont('helvetica','B',12);
-$pdf->Cell(80);
-$pdf->Cell(80,10,'TOTALE DEGLI EFFETTI VERSATI    € ',1,0,'L');
-$pdf->Cell(30,10,gaz_format_number($totaleff),1,1,'R',1);
+$pdf->Cell(160,10,'TOTALE DEGLI EFFETTI VERSATI PRESSO '.strtoupper($descbanacc).': ',1,0,'R',0,'',1);
+$pdf->Cell(30,10,'€ '.gaz_format_number($totaleff),1,1,'R',1);
 if ($id_distinta) { // è una ristampa quindi faccio solo l'output a video 
     $pdf->Output($filename);
 } else {

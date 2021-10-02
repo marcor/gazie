@@ -1006,7 +1006,8 @@ $strScript = array("admin_client.php" =>
         'errors' => array('Non ci sono effetti da distintare nell\'intervallo selezionato',
             'Data non corretta',
             'La data di inizio &egrave; successiva a quella finale',
-            'La data di emissione &egrave; successiva a quella iniziale'
+            'La data di emissione &egrave; successiva a quella iniziale',
+			'Non ci sono banche d\'accredito da selezionare'
         ),
         'preview' => 'Anteprima della distinta cartacea degli effetti',
         'header' => array('Num' => '', 'Tipo' => '', 'Scadenza' => '', 'Importo' => '',
@@ -1057,12 +1058,12 @@ $strScript = array("admin_client.php" =>
         'errors' => array('Non ci sono effetti da distintare nell\'intervallo selezionato',
             'Data non corretta',
             'La data di inizio &egrave; successiva a quella finale',
-            'La data di emissione &egrave; successiva a quella iniziale'
+            'La data di emissione &egrave; successiva a quella iniziale',
+			'Non ci sono banche d\'accredito da selezionare'
         ),
         'preview' => 'Anteprima del contenuto del file RiBa in formato CBI',
-        'header' => array('Num' => '', 'Tipo' => '', 'Scadenza' => '', 'Importo' => '',
-            'Cliente/P.I.' => '', 'Fattura/Importo' => '', 'Appoggio/ABI-CAB' => ''
-        ),
+        'header' => array('Num' => '', 'Cliente-P.I./Fattura-importo' => '', 'Appoggio/ABI-CAB' => '', 'Scadenza/acconto-saldo' => '', 'Importo' => '','Sel.'=>''),
+        'salacc_value' => array('C' => 'Acconto', 'S' => 'Saldo'),
         'date_emi' => 'Data della distinta',
         'bank' => 'Banca d\'accredito',
         'date_ini' => 'Data di scadenza inizio',

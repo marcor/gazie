@@ -109,7 +109,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['num_fin'] = $iniData['nf'];
     $form['eof'] = false;
 } else { // accessi successivi
-    $form['hidden_req'] = htmlentities($_POST['hidden_req']);
+	if (!isset($_POST['bank'])){
+		$_POST['bank']=0;
+		$msg .='4+';
+	}
+	$form['hidden_req'] = htmlentities($_POST['hidden_req']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['date_emi_D'] = intval($_POST['date_emi_D']);
     $form['date_emi_M'] = intval($_POST['date_emi_M']);
@@ -144,6 +148,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         header("Location: " . $form['ritorno']);
         exit;
     }
+	if (isset($_POST['submit']) && empty($msg) ) {
+		// prima di passare allo script per la generazione del file distinta segno le riba scelte sul db portando il loro status a "CHK" 
+		foreach($_POST['chk'] as $k=>$v){
+			gaz_dbi_put_row($gTables['effett'],'id_tes',intval($k),'status','CHK');
+		}
+	}
 }
 
 //controllo i campi
@@ -168,6 +178,9 @@ $datfin = strftime("%Y-%m-%d", $utsfin);
 
 $anagrafica = new Anagrafica();
 
+
+
+
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
 ?>
@@ -188,33 +201,44 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
+
 $(function() {
-    $("#godistintaBtn").click(function() {
-  		var ref = $(this).attr('ref');		
-        $(".godistintaBtn").attr("disabled", true);
-        window.location.replace(ref);
-        return true;
-    });
+	$('input.checkeffett').change(function () {
+		  var total = 0;
+		  $('input.checkeffett:checked').each(function(){ // iterate through each checked element.
+			total += isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+		  }); 
+		  $("span#totval").text(total.toLocaleString("it-IT",{ maximumFractionDigits: 2, minimumFractionDigits: 2 }));
+		  if (total<=0.01){
+			$('input#submitform').prop('disabled', true);			  
+		  } else {
+			$('input#submitform').prop('disabled', false);			  
+		  }
+	});
+	$('input#selall').click (function () {
+	  $('input.checkeffett').prop('checked', this.checked);
+	  $('input.checkeffett').trigger('change');
+	});	
 });   
 </script>
 <?php
-echo "<form method=\"POST\" name=\"select\">\n";
+echo '<form method="POST">';
 echo "<input type=\"hidden\" value=\"\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
 $gForm = new venditForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'];
 echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
+echo '<div class="table-responsive text-center"><table class="Tsmall table-bordered table-striped  text-left">';
 if (!empty($msg)) {
-    echo '<tr><td class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
+    echo '<tr><td class="FacetDataTDred" colspan=2>' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_emi'] . "</td><td class=\"FacetDataTD\">\n";
+echo "<td class=\"text-right\">" . $script_transl['date_emi'] . " : </td><td class=\"text-left\">\n";
 $gForm->CalendarPopup('date_emi', $form['date_emi_D'], $form['date_emi_M'], $form['date_emi_Y'], 'FacetSelect', 1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['bank'] . "</td><td  class=\"FacetDataTD\">\n";
+echo "<td class=\"text-right\">" . $script_transl['bank'] . " : </td><td  class=\"FacetDataTD\">\n";
 $rsbanacc=$gForm->selectBanacc($form['bank']);
 if ($form['bank'] > 0) {
     $form['eof']=($rsbanacc)?'eof':'';
@@ -224,26 +248,26 @@ $gForm->selCheckbox('eof', $form['eof'], $script_transl['eof_title']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['num_ini'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_ini\" value=\"" . $form['num_ini'] . "\" /></td>\n";
+echo "\t<td class=\"text-right\">" . $script_transl['num_ini'] . " : </td>\n";
+echo "\t<td class=\"text-left\"><input type=\"text\" name=\"num_ini\" value=\"" . $form['num_ini'] . "\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['num_fin'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"num_fin\" value=\"" . $form['num_fin'] . "\" /></td>\n";
+echo "\t<td class=\"text-right\">" . $script_transl['num_fin'] . " : </td>\n";
+echo "\t<td class=\"text-left\"><input type=\"text\" name=\"num_fin\" value=\"" . $form['num_fin'] . "\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_ini'] . "</td><td class=\"FacetDataTD\">\n";
+echo "<td class=\"text-right\">" . $script_transl['date_ini'] . " : </td><td class=\"text-left\">\n";
 $gForm->CalendarPopup('date_ini', $form['date_ini_D'], $form['date_ini_M'], $form['date_ini_Y'], 'FacetSelect', 1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_fin'] . "</td><td class=\"FacetDataTD\">\n";
+echo "<td class=\"text-right\">" . $script_transl['date_fin'] . " : </td><td class=\"text-left\">\n";
 $gForm->CalendarPopup('date_fin', $form['date_fin_D'], $form['date_fin_M'], $form['date_fin_Y'], 'FacetSelect', 1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['period'] . "</td>
-      <td class=\"FacetDataTD\"><input type=\"submit\" name=\"period\" value=\"" . $script_transl['period_value'] . "\">";
+echo "<td class=\"text-right\">" . $script_transl['period'] . " : </td>
+      <td class=\"text-left\"><input type=\"submit\" name=\"period\" value=\"" . $script_transl['period_value'] . "\">";
 echo "</td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
@@ -253,14 +277,14 @@ echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
 echo "\t </tr>\n";
-echo "</table>\n";
-if (isset($_POST['preview']) and $msg == '') {
+echo "</table></div><br/>";
+if (isset($_POST['preview']) && $msg == '') {
     $date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
     $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
     $r = getData($date_ini, $date_fin, $form['num_ini'], $form['num_fin'],$form['bank']);
-    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+    echo '<div class="table-responsive text-center">'."<table class=\"Tlarge\">";
     if (sizeof($r['data']) > 0) {
-        echo "<tr>";
+        echo '<tr>';
         echo '<td colspan="7" align="center" class="FacetDataTD">' . $script_transl['preview'] . "</td>\n";
         echo "</tr>";
         echo "<tr>";
@@ -269,40 +293,54 @@ if (isset($_POST['preview']) and $msg == '') {
         echo "</tr>\n";
         foreach ($r['data'] as $v) {
             echo "<tr>";
-            echo "<td class=\"FacetDataTD\"><a href=\"./admin_effett.php?Update&id_tes=" . $v['id_tes'] . "\">" . $v["progre"] . "</A></td>";
-            echo "<td class=\"FacetDataTD\">" . $v["tipeff"] . " </td>";
-            echo "<td class=\"FacetDataTD\">" . gaz_format_date($v["scaden"]) . "</td>";
-            echo "<td class=\"FacetDataTD\" align=\"right\">" . $admin_aziend['html_symbol'] . ' ' . gaz_format_number($v["impeff"]) . " </td>";
-            echo "<td class=\"FacetDataTD\">" . $v["customer"] . " </td>";
-            echo "<td class=\"FacetDataTD\">n." . $v["numfat"] . "/" . $v["seziva"] . " - " . gaz_format_date($v["datfat"]) . "</td>";
-            echo "<td class=\"FacetDataTD\">" . $v["desban"] . " </td>";
+            echo '<td>' . $v["progre"] . "</td>";
+            echo "<td>" . $v["customer"] . " - " . $v["pariva"] . " </td>";
+            echo '<td>' . $v["desban"] . " </td>";
+            echo '<td>' . gaz_format_date($v["scaden"]) . "</td>";
+            echo '<td class="text-right"></td>';
+            echo '<td></td>';
             echo "</tr>\n";
             echo "<tr>";
-            echo "<td>" . $v["pariva"] . "</td>";
-            echo "<td align=\"right\">" . gaz_format_number($v["totfat"]) . "</td>";
-            echo "<td align=\"center\">" . $v["coordi"] . " </td>";
+            echo "<td></td>";
+            echo '<td class="text-right">Fattura n.' . $v["numfat"] . "/" . $v["seziva"] . " - " . gaz_format_date($v["datfat"]) . " - € " . gaz_format_number($v["totfat"]) . "</td>";
+            echo '<td>' . $v["coordi"] . " </td>";
+            echo '<td>' . $script_transl['salacc_value'][$v['salacc']] ." </td>";
+            echo '<td class="text-right"><b>' . $admin_aziend['html_symbol'] . ' ' . gaz_format_number($v["impeff"]) . "</b> </td>";
+            echo '<td><input type="checkbox" name="chk['.$v['id_tes'].']" class="checkeffett"  title"seleziona" checked value="'.$v["impeff"].'" ></td>';
             echo "</tr>\n";
         }
-        echo '<td colspan="4" class="FacetDataTD">' .
-        $script_transl['tot'] . " n." .
-        $r['tot']['num'] . ' ' .
-        $admin_aziend['html_symbol'] . ' ' .
-        gaz_format_number($r['tot']['value']) . "</td>\n" .
-        '<td colspan="3" class="FacetDataTD"></td>';
-        echo "</tr>";
+        echo '<tr><td colspan="5" class="text-right">Tutti</td><td><input type="checkbox" id="selall" checked ></td></tr><tr><td colspan="5" class="FacetDataTD text-right"><b>'.$script_transl['tot'] . " n." . $r['tot']['num'] . ' ' . $admin_aziend['html_symbol'] . ' <span id="totval">' . gaz_format_number($r['tot']['value']) . '</span></b></td>';
+        echo "</tr><tr><td></td></tr>";
         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-        echo '<td colspan="7" align="right"><a class="btn btn-xs btn-warning godistintaBtn" ref="genera_rb_cbi.php?datemi=' . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin.((empty($form['eof']))?'':'&eof=1').'" id="godistintaBtn">'.$script_transl['submit'].'</a>';
+		echo '<td  class="text-right" colspan="5"><input type="submit" class="btn btn-warning" name="submit"  id="submitform" value="' . $script_transl['submit'] . '" accesskey="c" />';
+		
         echo "\t </td>\n";
         echo "\t </tr>\n";
     } else {
         echo "<tr>";
-        echo '<td colspan="7" align="center" class="FacetDataTDred">' . $script_transl['errors'][0] . "</td>\n";
+        echo '<td colspan="5" class="FacetDataTDred">' . $script_transl['errors'][0] . "</td>\n";
         echo "</tr>";
     }
-    echo "</table>\n";
+    echo '</table></div>';
+} elseif (isset($_POST['submit']) && empty($msg) ) {
+    echo '<div class="text-center"><a class="btn btn-xs btn-warning godistintaBtn" ref="genera_rb_cbi.php?datemi=' . $datemi . "&banacc=" . $form['bank'] . "&proini=" . $form['num_ini'] . "&profin=" . $form['num_fin'] . "&scaini=" . $datini . "&scafin=" . $datfin.((empty($form['eof']))?'':'&eof=1').'" id="godistintaBtn">'.$script_transl['submit'].'</a></div>';
+		
 }
 ?>
 </form>
 <?php
 require("../../library/include/footer.php");
+if (isset($_POST['submit']) && empty($msg) ) {
+echo '
+<script>
+$(function() {
+    var ref = $("a#godistintaBtn").attr("ref");		
+    $("a.godistintaBtn").attr("disabled", true);
+    window.location.replace(ref);
+});
+</script>
+';
+
+}
+
 ?>
