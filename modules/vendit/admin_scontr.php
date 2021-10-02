@@ -303,8 +303,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$msg['err'][] = "nocod_operaz";
 				}
 				$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $form["clfoco"]);
-				$anagra = gaz_dbi_get_row($gTables['anagra'], "id", $clfoco["id_anagra"]);
-				if ($anagra['id_SIAN']<=0 AND ($v['cod_operazione']==1 OR $v['cod_operazione']==2 OR $v['cod_operazione']==3 OR $v['cod_operazione']==5 OR $v['cod_operazione']==10)){
+				$anagra = gaz_dbi_get_row($gTables['anagra'], "id", (isset($clfoco["id_anagra"]))?$clfoco["id_anagra"]:0);
+				if (isset($anagra) AND $anagra['id_SIAN']<=0 AND ($v['cod_operazione']==1 OR $v['cod_operazione']==2 OR $v['cod_operazione']==3 OR $v['cod_operazione']==5 OR $v['cod_operazione']==10)){
 					$msgrigo = $i + 1;
 					$msg['err'][] = "nofor_sian";
 				}
@@ -1176,10 +1176,10 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 					$btn_title = ' ARTICOLO NON DISPONIBILE';
 				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
                     $btn_class = 'btn-warning';
-					$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
+					$btn_title = ' Articolo sottoscorta: disponibili '.gaz_format_quantity($v['quamag'], 1, $admin_aziend['decimal_quantity']).'/'.floatval($v['scorta']);
                 } else {
                     $btn_class = 'btn-success';
-					$btn_title = $v['quamag'].' '.$v['unimis'].' disponibili';
+					$btn_title = gaz_format_quantity($v['quamag'], 1, $admin_aziend['decimal_quantity']).' '.$v['unimis'].' disponibili';
                 }
                 if ($v['pesosp'] <> 0) {
                     $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
