@@ -91,7 +91,7 @@ if (sizeof($scdl->Entries) > 0) {
     $ctrl_partner = 0;
     $ctrl_id_tes = 0;
     $ctrl_paymov = 0;
-
+	$saldo = 0;
     /* ENRICO FEDELE */
     /* Inizializzo la variabili per il totale */
     $tot_dare = 0;
@@ -188,12 +188,12 @@ if (sizeof($scdl->Entries) > 0) {
 	/* Le successive righe saranno in grassetto italico "BI" */
     $pdf->SetFont('helvetica', 'BI', 6);
 	$pdf->Cell(45, 4, '', 0, 0, 'C',false);
-    $pdf->Cell(128, 4, '', T, 0, 'C',false);
+    $pdf->Cell(128, 4, '', 'T', 0, 'C',false);
 	$pdf->Cell(13, 4, 'SALDO', 1, 1, 'C',true);
 	
     // Aggiunta la percentuale dell'avere rispetto al totale dare+avere
     // Antonio Germani, non so a cosa possa servire ma ce la lascio spostandola ad inizio riga. Al suo posto mi sembra più corretto mettere il saldo che non c'era proprio.
-	$pdf->Cell(10, 4, gaz_format_number(100 * $tot_avere / ($tot_dare + $tot_avere)) . " %", LBT, 0, 'L', false);
+	$pdf->Cell(10, 4, gaz_format_number(100 * $tot_avere / ($tot_dare + $tot_avere)) . " %", 'LBT', 0, 'L', false);
 	
     $pdf->Cell(133, 4, 'TOTALI', 1, 0, 'R', false);	
     $pdf->Cell(15, 4, gaz_format_number($tot_dare), 1, 0, 'R', false);
