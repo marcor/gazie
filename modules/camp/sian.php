@@ -108,20 +108,17 @@ if (isset($_POST['create'])){
 	$groupby= "";
 	$table=$gTables['camp_recip_stocc'];
 	$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
-	while ($r = gaz_dbi_fetch_array($ressilos)) {
-		$silos[] = $r;
-	}
-	foreach ($silos as $sil){
-		$totalcont = $sil->getCont($sil);
+	while ($r = gaz_dbi_fetch_array($ressilos)) {		
+		$totalcont = $sil->getCont($r['cod_silos']);
 		if ($totalcont<0){
-			$message = "Giacenza negativa nel silos ".$sil['cod_silos']." !";
+			$message = "Giacenza negativa nel silos ".$r['cod_silos']." !";
 			$msg .='5+';
 		}
-		if ($totalcont>$sil['capacita']){
-			$message = "Il contenuto del silos ".$sil['cod_silos']." supera la sua capacità dichiarata !";
+		if ($totalcont>$r['capacita']){
+			$message = "Il contenuto del silos è ".$r['cod_silos']." e supera la sua capacità dichiarata !";
 			$msg .='5+';
 		}
-	}
+	}	
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
@@ -179,7 +176,7 @@ if ($utsfin>strtotime('-1 day', strtotime(date("Y-m-d")))) {
 // fine controlli
 
 if (isset($_POST['create']) && $msg=='') {
-    
+ 
     $utsini=date("dmY",$utsini);
     $utsfin=date("dmY",$utsfin);
     $utsexe=date("dmY",$utsexe);

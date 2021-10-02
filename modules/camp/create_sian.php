@@ -120,8 +120,8 @@ $result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
 
 if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti e la pagina non è stata ricaricata creo il file
 	$myfile = fopen(DATA_DIR."files/".$admin_aziend['codice']."/sian/".$namefile, "w") or die("Unable to open file!");
-	$nprog=1;$lastdatdoc="";
-	while (list($key, $row) = each($result)) {
+	$nprog=1;$lastdatdoc="";$nprog_preced_file=0;	
+	foreach ($result as $key => $row) {		
 		$type_array= explode (";", $type_zero); // azzero il type array per ogni movimento da creare
 		if ($row['SIAN']>0) {
 			if ( $_GET['ud']==str_replace("-", "", $row['datdoc']) AND strlen ($row['status']) > 1) {
@@ -439,6 +439,16 @@ $namefile=substr($namefile,0,-4)
 					<p><a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"https://www.sian.it/SSLicqrfportaleolio/start.do";?>', 'titolo', 'menubar=no, toolbar=no, width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
 					<img src="../../modules/camp/media/logo_sian.jpg" alt="Logo portale SIAN" title="Vai al portale dell'olio del SIAN" style="max-width:100%">
 					</a></p>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+						<label for="cod_silos" class="col-sm-4 control-label"><?php echo "PROMEMORIA: "; ?></label>
+			
+					<p>AGEA considera come "campagna di coommercializzazione" il periodo che va dal <b>1 luglio</b> al <b>30 giugno</b> dell'anno successivo. Quindi, dal primo di luglio, per poter continuare a inserire normalmente le operazioni di registro è necessario aver eseguito l'operazione di chiusura della campagna di commercializzazione. Questa operazione, non avviene in automatico, deve essere fatta manualmente in qualsiasi momento a partire dal 1 luglio di ogni anno, senza scadenza alcuna; se non eseguita, non sarà permesso registrare movimenti successivi al 30 giugno, se invece viene attivata correttamente non consente più di effettuare inserimenti, modifiche o eliminazioni alle operazioni di registro precedenti al 1 luglio.
+					</p>
 				</div>
 			</div>
 		</div>

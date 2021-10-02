@@ -88,7 +88,7 @@ class silos {
 		global $gTables,$admin_aziend;
 		$content=0;
 		$orderby=2;
-		$limit=0;
+		$limit=0;echo "pippo",$codsil;die;
 		$passo=2000000;
 		$where="recip_stocc = '".$codsil."'";
 		$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".
