@@ -1281,9 +1281,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];
         $form['rows'][$next_row]['id_mag'] = $rigo['id_mag'];
         $form['rows'][$next_row]['annota'] = $articolo['annota'];
-        $mv = $upd_mm->getStockValue(false, $rigo['codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
+        $mv = $upd_mm->getStockValue(false, $rigo['codart'], "", $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+		
         $form['rows'][$next_row]['scorta'] = $articolo['scorta'];
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
@@ -1742,10 +1743,10 @@ foreach ($form['rows'] as $k => $v) {
 					$btn_title = ' ARTICOLO NON DISPONIBILE';
 				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
 					$btn_class = 'btn-warning';
-					$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
+					$btn_title = ' Articolo sottoscorta: disponibili '.gaz_format_quantity($v['quamag'], 1, $admin_aziend['decimal_quantity']).'/'.floatval($v['scorta']);
 				} else {
 					$btn_class = 'btn-success';
-					$btn_title = " ".$v['quamag'].' '.$v['unimis'].' disponibili';
+					$btn_title = " ".gaz_format_quantity($v['quamag'], 1, $admin_aziend['decimal_quantity']).' '.$v['unimis'].' disponibili';
 				}
 			} else {
 				$btn_class = 'btn-info';

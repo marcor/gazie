@@ -680,7 +680,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 				if ($form['righi'][$k]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
 					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
 					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
-					$value_sian['recip_stocc_destin']= $form['righi'][$k]['recip_stocc_destin'];
+					$value_sian['recip_stocc_destin']= (isset($form['righi'][$k]['recip_stocc_destin']))?$form['righi'][$k]['recip_stocc_destin']:'';
 					$value_sian['id_movmag']=$id_movmag;
 					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
 				}
