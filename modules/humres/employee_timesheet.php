@@ -88,9 +88,10 @@ if ($_POST) { // accessi successivi
 	$form['anno']=intval($_POST['anno']);
 	$month_res = getWorkedHours($form['mese'],$form['anno']);
 	$cols=getWorkers($form['mese'],$form['anno']);
-	if (isset($_POST['go_print'])){	
-		
-			header("Location: print_timesheet.php?year=".$form['anno']."&month=".$form['mese']);
+	if (isset($_POST['go_print'])){
+		$_SESSION['print_request']=['script_name'=>'print_timesheet','year'=>$form['anno'],'month'=>$form['mese']];
+        header("Location: sent_print.php");
+		//header("Location: print_timesheet.php?year=".$form['anno']."&month=".$form['mese']);
 		
 	}
 	
