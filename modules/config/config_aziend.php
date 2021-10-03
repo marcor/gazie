@@ -94,23 +94,21 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                     <label for="input<?php echo $r["id"]; ?>" class="col-sm-5 control-label"><?php echo $r["description"]; ?></label>
                     <div class="col-sm-7">
                         <?php
-                        if ($r['var'] == 'company_email_text') {
-                            ?>
-                            <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" style="width:100%;"><?php echo $r['val']; ?></textarea>
-                            <?php
-                        } else {
-							if ($r['var'] == 'reply_to') {
-								$mail_sender = $r['val'];
+                        if($r['var']=='company_email_text'){
+                        ?>
+                        <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" style="width:100%;"><?php echo $r['val']; ?></textarea>
+                        <?php
+                        }elseif(substr($r['var'],0,4)=='json'){ // i json non li modifico ma li visualizzo
+							echo $r['val'];
+                        }else{
+							if($r['var']=='reply_to'){
+							 $mail_sender = $r['val'];
 							}
-                            ?>
-                            <input type="<?php
-                            if (strpos($r["var"], "pass") === false && strpos($r["var"], "psw") === false) {
-                                echo "text";
-                            } else {
-                                echo "password";
-                            }
-                            ?>" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $r["var"]; ?>" value="<?php echo $r["val"]; ?>">
-                               <?php } ?>
+                        ?>
+                        <input type="<?php echo ((strpos($r["var"],"pass")===false&&strpos($r["var"],"psw")===false)?'text':'password'); ?>" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $r["var"]; ?>" value="<?php echo $r["val"]; ?>">
+						<?php
+						}
+						?>
                     </div>
                   </div>
                 </div><!-- chiude row  -->
