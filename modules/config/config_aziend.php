@@ -25,6 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
+
 $modal_ok_insert = false;
 $modal = false;
 if (isset($_POST['mode']) || isset($_GET['mode'])) {
@@ -36,16 +37,27 @@ if (isset($_POST['mode']) || isset($_GET['mode'])) {
     }
 }
 
-   if (count($_POST) > 10) {
-        $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-        foreach ($_POST as $k => $v) {
+if (count($_POST) > 10) {
+	$error='&ok_insert';
+    $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+    foreach ($_POST as $k => $v) {
+        $key=filter_var($k, FILTER_SANITIZE_STRING);
+		if(substr($key,0,4)=='json'){
+			$v=html_entity_decode($v, ENT_QUOTES, 'UTF-8');
+			if (isJson($v)){
+				$value=$v;
+			} else {
+				$value='ERRORE!!! JSON NON VALIDO!: '.filter_var($v, FILTER_SANITIZE_STRING);
+				$error='&json_error';
+			}
+		} else {
             $value=filter_var($v, FILTER_SANITIZE_STRING);
-            $key=filter_var($k, FILTER_SANITIZE_STRING);
-            gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
-        }
-        header("Location: config_aziend.php?mode=modal&ok_insert");
-        exit;
+		}
+        gaz_dbi_put_row($gTables['company_config'], 'var', $key, 'val', $value);
     }
+    header("Location: config_aziend.php?mode=modal".$error);
+    exit;
+}
 
 if ($modal === false) {
     require("../../library/include/header.php");
@@ -81,9 +93,14 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
         <?php 
         }
         if (isset($_GET["ok_insert"])) { ?>
-            <div class="alert alert-danger text-center" role="alert">
+            <div class="alert alert-success text-center head-msg" role="alert"><b>
                 <?php echo "Le modifiche sono state salvate correttamente<br/>"; ?>
-            </div>
+            </b></div>
+        <?php }
+        if (isset($_GET["json_error"])) { ?>
+            <div class="alert alert-danger text-center head-msg" role="alert"><b>
+                <?php echo "Il valore immesso non è un JSON valido!<br/>"; ?>
+            </b></div>
         <?php }
         $mail_sender='';        
         if (gaz_dbi_num_rows($result) > 0) {
@@ -94,12 +111,10 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                     <label for="input<?php echo $r["id"]; ?>" class="col-sm-5 control-label"><?php echo $r["description"]; ?></label>
                     <div class="col-sm-7">
                         <?php
-                        if($r['var']=='company_email_text'){
+                        if($r['var']=='company_email_text'||substr($r['var'],0,4)=='json'){
                         ?>
                         <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" style="width:100%;"><?php echo $r['val']; ?></textarea>
-                        <?php
-                        }elseif(substr($r['var'],0,4)=='json'){ // i json non li modifico ma li visualizzo
-							echo $r['val'];
+						<?php
                         }else{
 							if($r['var']=='reply_to'){
 							 $mail_sender = $r['val'];
@@ -138,6 +153,9 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
  </div><!-- chiude container-fluid  -->
 </div><!-- chiude panel  -->
 <script>
+if ($(".head-msg").length) {
+} 
+
 $("#btn_send").click( function() {
 	$.ajax({
 		url: "?e-test=true",
@@ -174,7 +192,7 @@ $("#sbmt-form").submit(function (e) {
         success: function (data) {
             $("#edit-modal .modal-sm").css('width', '100%');
             $("#edit-modal .modal-body").html(data);
-        },
+		},
         error: function(data){
             alert(data);
         }
@@ -202,4 +220,8 @@ $( "#upsave" ).click(function() {
 </script>
 <?php
 require("../../library/include/footer.php");
+
+function isJson($str) {
+	return !preg_match('/[^,:{}\\[\\]0-9.\\-+Eaeflnr-u \\n\\r\\t]/', preg_replace('/"(\\.|[^"\\\\])*"/', '', $str));	
+}
 ?>
