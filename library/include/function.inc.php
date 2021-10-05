@@ -943,7 +943,7 @@ class selectPartner extends SelectBox {
                 } else {                                     //ricerca per ragione sociale
                     $partner = $this->queryAnagra(array("a.ragso1" => " LIKE '" . addslashes($strSearch) . "%'"));
                 }
-                if (count($partner) > 0) {
+                if (count($partner) > 1 || $_POST['hidden_req']=='change' ) {
                     echo "\t<select name=\"$name\" $tab1 class=\"FacetSelect\" onchange=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
                     echo "<option value=\"0\"> ---------- </option>";
                     if ($anonimo > 100) {
@@ -985,7 +985,13 @@ class selectPartner extends SelectBox {
                         echo "\t\t <option $style value=\"" . $r['codice'] . "\" $selected $disabled>" . $r["ragsoc"] . " " . $r["citta"] . "</option>\n";
                     }
                     echo "\t </select>\n";
-                } else {
+                } elseif(count($partner) == 1){
+					//print_r($partner);
+					echo "\t<input type=\"submit\" value=\"→ \" name=\"fantoccio\" disabled>\n";
+					echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
+					echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner[0]['ragsoc'], 0, 8) . "\">\n";
+					echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner[0]['ragsoc'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
+				} else {
                     $msg = $mesg[0];
                     echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
                 }
