@@ -986,12 +986,23 @@ class selectPartner extends SelectBox {
                     }
                     echo "\t </select>\n";
                 } elseif(count($partner) == 1){
-					//print_r($partner);
+					$style='';
+					// print_r($partner);print '<br>'.$m.'<br><br>';
+                    if ($m < 0) { // vado cercando tutti i partner del piano dei conti
+                        if ($partner[0]["codice"] < 1) {  // disabilito le anagrafiche presenti solo in altre aziende
+                        }
+                    } elseif ($partner[0]["codice"] < 1) {
+                        $partner[0]['codice'] = 'id_' . $partner[0]['id'];
+                        $style = 'style="background:#FF6666";';
+                    } elseif (substr($partner[0]["codice"], 0, 3) != $m) {// non appartiene al mastro passato in $m
+                        $partner[0]['codice'] = 'id_' . $partner[0]['id'];
+                        $style = 'style="background:#FF6666";';
+                    }
 					$val=$partner[0]['codice'];
 					echo "\t<input type=\"submit\" value=\"→ \" name=\"fantoccio\" disabled>\n";
 					echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
 					echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner[0]['ragsoc'], 0, 8) . "\">\n";
-					echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner[0]['ragsoc'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
+					echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner[0]['ragsoc'] . "\" name=\"change\" ".$style." onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
 				} else {
                     $msg = $mesg[0];
                     echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
@@ -1000,13 +1011,13 @@ class selectPartner extends SelectBox {
                 $msg = $mesg[1];
                 echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
             }
-			if($val <= 100000000){
+			if( !strstr($val,'id') && $val<=100000000){
 				echo "\t<input type=\"text\" $tab2 id=\"search_$name\" name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"16\" size=\"10\" class=\"FacetInput\">\n";
 			}
             if (isset($msg)) {
                 echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">\n";
             }
-			if($val <= 100000000){
+			if( !strstr($val,'id') && $val<=100000000){
 				echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" ' . $tab3 . '><i class="glyphicon glyphicon-search"> </i></button>';
 			}
         }
