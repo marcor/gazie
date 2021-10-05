@@ -71,7 +71,7 @@ function mostra_documenti_associati($ordine) {
             echo "ricevuta " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
             echo "</a> ";
         } else {
-            echo $tesdoc_r["tipdoc"] . $rigbro_r["id_doc"] . " ";
+            echo $tesdoc_r["tipdoc"];
         }
     }
 }
