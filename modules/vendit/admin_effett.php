@@ -32,6 +32,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req'] = $_POST['hidden_req'];
     $form['clfoco']=substr($_POST['clfoco'],0,15);
+    $form['banacc']=intval($_POST['banacc']);
     $form['date_emi_D']=intval($_POST['date_emi_D']);
     $form['date_emi_M']=intval($_POST['date_emi_M']);
     $form['date_emi_Y']=intval($_POST['date_emi_Y']);
@@ -185,6 +186,7 @@ function setDate(name) {
 ";
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
+echo "<input type=\"hidden\" name=\"banacc\" value=\"".$form['banacc']."\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
 $gForm = new venditForm();
@@ -282,17 +284,9 @@ echo "</tr>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td >".$script_transl['banacc']."</td><td colspan=\"2\" >\n";
-echo "<select name=\"banacc\" class=\"FacetSelect\">";
-$rs_banacc = gaz_dbi_dyn_query("codice,descri,iban", $gTables['clfoco'],"codice BETWEEN ".$admin_aziend['masban']."000001 AND ".$admin_aziend['masban']."999999 AND iban != ''","descri");
-echo "<option value=\"0\"> </option>";
-while ($r = gaz_dbi_fetch_array($rs_banacc)) {
-       $selected="";
-       if($form['banacc'] == $r['codice']) {
-            $selected = " selected ";
-       }
-       echo "<option value=\"".$r['codice']."\"".$selected.">".$r['descri']."</option>";
-}
-echo "</select></td>\n";
+$banacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['banacc']);
+echo $banacc?$banacc['descri']:'da distintare';
+echo "</td>\n";
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

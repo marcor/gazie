@@ -144,7 +144,7 @@ $recordnav->output();
             $cliente = $anagrafica->getPartner($r['clfoco']);
             $banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $r['banapp']);
             echo "<tr class=\"FacetDataTD\">";
-            echo "<td align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_effett.php?Update&id=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["id_tes"] . "</a> &nbsp</td>";
+            echo "<td align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_effett.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["id_tes"] . "</a> &nbsp</td>";
             echo "<td align=\"right\"><a href=\"admin_effett.php?Update&id=" . $r["id_tes"] . "\">" . $r["progre"] . "</a> &nbsp</td>";
             echo "<td align=\"right\">" . gaz_format_date($r["datemi"]) . "</td>";
             echo "<td align=\"center\">" .  $script_transl['type_value'][$r["tipeff"]] . (($r['status']=='RAGGRUPPA')?' <span class="text-danger">[raggruppato] </span>':'')."</td>";
