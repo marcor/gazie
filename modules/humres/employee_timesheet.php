@@ -318,7 +318,7 @@ $gForm = new humresForm();
 					</td>
 					<?php
 					for($c=0;$c<$col ; $c++){
-						$week_day=strftime("%a", strtotime($c ."-". $form['mese'] ."-". $form['anno']));
+						$week_day=strftime("%a", strtotime(($c+1) ."-". $form['mese'] ."-". $form['anno']));
 						if ($week_day=="sab"){
 							$td[$c]='bg-warning text-center';
 							$bt[$c]='btn-warning';
