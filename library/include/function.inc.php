@@ -987,6 +987,7 @@ class selectPartner extends SelectBox {
                     echo "\t </select>\n";
                 } elseif(count($partner) == 1){
 					//print_r($partner);
+					$val=$partner[0]['codice'];
 					echo "\t<input type=\"submit\" value=\"→ \" name=\"fantoccio\" disabled>\n";
 					echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
 					echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner[0]['ragsoc'], 0, 8) . "\">\n";
@@ -999,15 +1000,15 @@ class selectPartner extends SelectBox {
                 $msg = $mesg[1];
                 echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
             }
-            echo "\t<input type=\"text\" $tab2 id=\"search_$name\" name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"16\" size=\"10\" class=\"FacetInput\">\n";
+			if($val <= 100000000){
+				echo "\t<input type=\"text\" $tab2 id=\"search_$name\" name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"16\" size=\"10\" class=\"FacetInput\">\n";
+			}
             if (isset($msg)) {
                 echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">\n";
             }
-            //echo "\t<input type=\"image\" $tab3 align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
-            /** ENRICO FEDELE */
-            /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-            echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" ' . $tab3 . '><i class="glyphicon glyphicon-search"></i></button>';
-            /** ENRICO FEDELE */
+			if($val <= 100000000){
+				echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" ' . $tab3 . '><i class="glyphicon glyphicon-search"> '.$val.'</i></button>';
+			}
         }
     }
 

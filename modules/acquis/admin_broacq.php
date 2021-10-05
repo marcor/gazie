@@ -439,9 +439,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $fornitore = $anagrafica->getPartner($form['clfoco']);
         }
         $result = gaz_dbi_get_row($gTables['portos'], "codice", $fornitore['portos']);
-        $form['portos'] = $result['descri'];
+        $form['portos'] = ($result)?$result['descri']:'';
         $result = gaz_dbi_get_row($gTables['spediz'], "codice", $fornitore['spediz']);
-        $form['spediz'] = $result['descri'];
+        $form['spediz'] = ($result)?$result['descri']:'';
         $form['destin'] = $fornitore['destin'];
         $form['id_des'] = $fornitore['id_des'];
         $id_des = $anagrafica->getPartner($form['id_des']);
