@@ -244,7 +244,7 @@ if (isset($resultFatturato)) {
    while ($mv = gaz_dbi_fetch_array($resultFatturato)) {
       $nFatturato = $mv['imp_ven'];
       if ($nFatturato > 0) {
-				// userò l'array associativo per l'output hatml e quello numerico per JS e la modalità di escape più appropriata per ognuno
+				// userò l'array associativo per l'output html e quello numerico per JS e la modalità di escape più appropriata per ognuno
 				$mv['nome_cliente'] = htmlspecialchars($mv['nome_cliente'], ENT_QUOTES|ENT_SUBSTITUTE|ENT_HTML5);
 				$mv[1] = json_encode($mv[1]);
 				//*+ DC - 23/05/2018
@@ -334,7 +334,7 @@ if( $CJSarray ) {
 		$margine = ($mvf[2] > 0 ? ($mvf[2] - $mvf[3]) * 100 / $mvf[2] : 0);
 ?>
 	numOfValuesInDataset++;
-	chartLabels.push('<?php echo $mvf[1]?>');
+	chartLabels.push(<?php echo $mvf[1]?>);
 	pieChartData.push(parseFloat(<?php echo $margine?>).toFixed(2));
 <?php
 	}

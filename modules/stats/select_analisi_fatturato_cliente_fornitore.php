@@ -242,18 +242,20 @@ if (isset($resultFatturato)) {
    while ($mv = gaz_dbi_fetch_array($resultFatturato)) {
       $nFatturato = $mv['imp_ven'];
       if ($nFatturato > 0) {
+				// utilizzo l'array associativo per l'output html e quello numerico per JS e la modalità di escape più appropriata per ognuno
+				$mv['nome_cliente'] = htmlspecialchars($mv['nome_fornitore'], ENT_QUOTES|ENT_SUBSTITUTE|ENT_HTML5);
+				$mv[1] = json_encode($mv[1]);
+				//*+ DC - 23/05/2018
+				$CJSarray[] = $mv;
+				//*- DC - 23/05/2018
 
-		 //*+ DC - 23/05/2018
-		 $CJSarray[] = $mv;
-		 //*- DC - 23/05/2018
-		
          $nCosti = $mv['imp_acq'];
          $margine = ($nFatturato - $nCosti) * 100 / $nFatturato;
          $totFatturato+=$nFatturato;
          $totCosti+=$nCosti;
          echo "<tr>";
          echo "<td class=\"FacetFieldCaptionTD\">" . substr($mv[0], 3) . " &nbsp;</td>";
-         echo "<td align=\"left\" class=\"FacetDataTD\">" . $mv[1] . " &nbsp;</td>";
+         echo "<td align=\"left\" class=\"FacetDataTD\">" . $mv['nome_fornitore'] . " &nbsp;</td>";
          echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($nFatturato) . " &nbsp;</td>";
          echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($nCosti) . " &nbsp;</td>";
          echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($margine) . " &nbsp;</td>";
@@ -330,7 +332,7 @@ if( !empty($CJSarray) && count($CJSarray)>0 ) {
 		$margine = ($mvf[2] > 0 ? ($mvf[2] - $mvf[3]) * 100 / $mvf[2] : 0);
 ?>
 	numOfValuesInDataset++;
-	chartLabels.push('<?php echo $mvf[1]?>');
+	chartLabels.push(<?php echo $mvf[1]?>);
 	pieChartData.push(parseFloat(<?php echo $margine?>).toFixed(2));
 <?php
 	}
