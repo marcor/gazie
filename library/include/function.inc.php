@@ -1007,7 +1007,7 @@ class selectPartner extends SelectBox {
                 echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">\n";
             }
 			if($val <= 100000000){
-				echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" ' . $tab3 . '><i class="glyphicon glyphicon-search"> '.$val.'</i></button>';
+				echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" ' . $tab3 . '><i class="glyphicon glyphicon-search"> </i></button>';
 			}
         }
     }
