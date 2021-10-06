@@ -999,8 +999,9 @@ class selectPartner extends SelectBox {
                         $style = 'style="background:#FF6666";';
                     }
 					$val=$partner[0]['codice'];
-					echo "\t<input type=\"submit\" id=\"onlyone_submit\" value=\"→ \">\n";
+					echo "\t<input type=\"submit\" id=\"onlyone_submit\" value=\"→ \" onclick=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
 					echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
+					
 					echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner[0]['ragsoc'], 0, 8) . "\">\n";
 					echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner[0]['ragsoc'] . "\" name=\"change\" ".$style." onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
 				} else {
