@@ -128,7 +128,7 @@ if (isset($form['swStatus']) AND $form['swStatus']=="Inevasi"){
 }
 if (count($_GET)<=1){
 	// ultimo documento
-	$rs_last = gaz_dbi_dyn_query('seziva, YEAR(datemi) AS yearde', $gTables['tesbro'], "tipdoc = '".substr($auxil,0,3)."'", 'datemi DESC, id_tes DESC', 0, 1);
+	$rs_last = gaz_dbi_dyn_query('seziva, YEAR(datemi) AS yearde', $gTables['tesbro'], "tipdoc LIKE '".substr($auxil,0,3)."'", 'datemi DESC, id_tes DESC', 0, 1);
 	$last = gaz_dbi_fetch_array($rs_last);
 	if ($last) {
 		$default_where=['sezione' => $last['seziva'], 'tipo' => 'F%', 'anno'=>$last['yearde']];
