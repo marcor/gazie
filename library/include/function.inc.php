@@ -927,8 +927,8 @@ class selectPartner extends SelectBox {
                 if ($m > 100) { //ho da ricercare nell'ambito di un mastro
                     $this->setWhat($m);
                 }
-                if (is_numeric($strSearch)) {                //ricerca per partita iva
-                    $partner = $this->queryAnagra(array("pariva" => "=" . intval($strSearch)));
+                if (is_numeric(trim($strSearch,'%'))) {     //ricerca per partita iva
+                    $partner = $this->queryAnagra(array("pariva" => " LIKE '" . $strSearch ."'"));
                 } elseif (substr($strSearch, 0, 1) == '@') { //ricerca conoscendo il codice cliente
                     $temp_agrafica = new Anagrafica();
                     $codicetemp = intval($m * 1000000 + substr($strSearch, 1));
