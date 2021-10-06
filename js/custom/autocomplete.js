@@ -1,4 +1,7 @@
 $(function() {
+	// utilizzata dalla funzione selectDocPartner, quando incontra un solo risultato nella select lo conferma in automatico
+	$( "#onlyone_submit" ).trigger( "click" );
+	
 	$( "#search_clfoco" ).autocomplete({
 		source: "../../modules/root/search.php",
 		minLength: 2,

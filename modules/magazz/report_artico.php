@@ -349,7 +349,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-plus"></i></a>';
         $des_bom ='<a target="_blank" title="Stampa l\'albero della distinta base" class="btn btn-xs btn-info" href="stampa_bom.php?ri=' . $r["codice"] . '"><i class="glyphicon glyphicon-tasks"> <b>'.$script_transl['good_or_service_value'][$r['good_or_service']].'</b></i></a>';
     } else {
-        $des_bom = $script_transl['good_or_service_value'][$r['good_or_service']];
+        $des_bom = $script_transl['good_or_service_value'][intval($r['good_or_service'])];
     }
     echo '</td>';
     echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.$r['descri'].'</span>';
