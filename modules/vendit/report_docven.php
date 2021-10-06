@@ -26,7 +26,6 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
 $message = "";
-$lot = new lotmag();
 
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id LEFT JOIN ' . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['fae_flux'] . '.id_tes_ref';

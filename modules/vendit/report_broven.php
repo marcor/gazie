@@ -126,12 +126,27 @@ unset($terzo);
 if (isset($form['swStatus']) AND $form['swStatus']=="Inevasi"){
 	$passo=1000;
 }
+if (count($_GET)<=1){
+	// ultimo documento
+	$rs_last = gaz_dbi_dyn_query('seziva, YEAR(datemi) AS yearde', $gTables['tesbro'], "tipdoc = '".substr($auxil,0,3)."'", 'datemi DESC, id_tes DESC', 0, 1);
+	$last = gaz_dbi_fetch_array($rs_last);
+	if ($last) {
+		$default_where=['sezione' => $last['seziva'], 'tipo' => 'F%', 'anno'=>$last['yearde']];
+        $_GET['anno']=$last['yearde'];
+	} else {
+		$default_where= ['auxil' => 'VOR', 'anno'=>date("Y")];	
+        $_GET['anno']=$date("Y");
+	}
+	
+} else {
+   $default_where= ['auxil' => 'VOR'];	
+}
 $ts = new TableSorter(
     isset($_GET["destinaz"]) ? $tesbro_e_destina :
 	(!$partner_select && isset($_GET["cliente"]) ? $tesbro_e_partners : $gTables['tesbro']),
     $passo,
     ['datemi' => 'desc', 'numdoc' => 'desc'],
-    ['auxil' => 'VOR']
+    $default_where
 );
 $tipo = $auxil;
 
@@ -242,6 +257,7 @@ $(function() {
 $ts->output_navbar();
 ?>
 <form method="GET" >
+  <input type="hidden" name="info" value="none" />
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>preventivo:</b></p>
         <p>Numero ID:</p>
