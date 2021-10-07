@@ -124,7 +124,7 @@ require("../../library/include/header.php");
 			const da = new Intl.DateTimeFormat('it', { day: '2-digit' }).format(d2);
 			var jsondatastr = null;
 			var deleted_rows = [];
-			$("p#iddescri").html($(this).attr("staff_name")+' giorno <b>'+da+' '+mo+' '+ye+'</b>');
+			$("p#iddescri").html(id+' '+$(this).attr("staff_name")+' giorno <b>'+da+' '+mo+' '+ye+'</b>');
 			$.ajax({ // chiedo tutte le registrazioni fatte nel cartellino presenze per quel giorno
 				'async': false,
 				url:"./get_pres.php",   
@@ -146,11 +146,6 @@ require("../../library/include/header.php");
 				{
 				  name: "id",
 				  display: "ID",
-				  type: "hidden"
-				},
-				{
-				  name: "id-worked",
-				  display: "ID-Worked",
 				  type: "hidden"
 				},
 				{
