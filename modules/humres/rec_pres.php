@@ -40,7 +40,7 @@ if (isset($_POST['rec_pres'])) {
 // INIZIO CONTROLLO ERRORI E ACCUMULO DATI PER AGGIORNAMENTO staff_worked_hours
 	$noerr=true; // non ho errori
 	$n=0;
-	$acc_staff_worked_hours=['hours_normal'=>0,'id_work_type_extra'=>0,'hours_extra'=>0,'id_other_type'=>0,'hours_other'=>0,'id_absence_type'=>0,'hours_absence'=>0];
+	$acc_staff_worked_hours=['id_staff'=>$id_staff,'work_day'=>$date,'hours_normal'=>0,'id_work_type_extra'=>0,'hours_extra'=>0,'id_other_type'=>0,'hours_other'=>0,'id_absence_type'=>0,'hours_absence'=>0];
 	foreach ($work_movements as $k=>$work_mov){ // faccio un primo ciclo per controllare se ci sono errori, per eliminare i righi eliminati e per accumulare i nuovi valori per staff_worked_hours
 	  if (array_key_exists($work_mov['id'], $deleted_rows)) { // è un rigo da eliminare, non lo accumulo ma anzi lo elimino sia dal db che da questo array 
   		gaz_dbi_del_row($gTables['staff_work_movements'], "id",$work_mov['id']);
@@ -92,7 +92,7 @@ if (isset($_POST['rec_pres'])) {
 
 	if ($noerr) { // non ho errori posso aggiornare 
 	  if (!$work_h) {// se non ne ho uno staff_worked_hours lo inserisco senza valori per poi aggiornarlo comunque alla fine
-		$work_h['id']=$gaz_dbi_table_insert("staff_worked_hours", []);
+		$work_h['id']=gaz_dbi_table_insert("staff_worked_hours", []);
 	  }
 	  $n=0;
 	  reset($work_movements);
