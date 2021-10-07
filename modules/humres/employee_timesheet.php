@@ -51,10 +51,10 @@ function getWorkedHours($mese,$anno) { // Carico staff worked hours per il dato 
 function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per il dato mese e anno
 	global $gTables;
 	$cols=array();
-	$query="SELECT ragso1,ragso2,id_staff FROM ".$gTables['staff']."
+	$query="SELECT ragso1,ragso2,id_staff,id_clfoco FROM ".$gTables['staff']."
 	LEFT JOIN ". $gTables['clfoco'] . " ON ". $gTables['staff'] .".id_clfoco = ". $gTables['clfoco'] .".codice 
 	LEFT JOIN ". $gTables['anagra'] . " ON ". $gTables['anagra'] .".id = ". $gTables['clfoco'] .".id_anagra
-	WHERE YEAR(end_date) > '".$anno."' OR (YEAR(end_date) = '".$anno."' AND MONTH(end_date) >= '".$mese."') OR end_date IS NULL";
+	WHERE DATE_FORMAT(end_date, '%Y-%m') >= '".$anno."-".$mese."' OR end_date IS NULL OR end_date <= '2004-01-27'";
 	$coll = gaz_dbi_query($query);
 	while($col = $coll->fetch_assoc()){
 		$cols[]=$col;
@@ -314,7 +314,7 @@ $gForm = new humresForm();
 					</tr>
 					<tr>
 					<td class="bg-success">
-					<a class="btn btn-success row btn-sm" href="./admin_staff.php?Update&codice=<?php echo $oper['id_staff']; ?>"><i class="glyphicon glyphicon-edit"> </i><?php echo "<br/>".$oper['ragso1']," ",$oper['ragso2']; ?></a>
+					<a class="btn btn-success row btn-sm" href="./admin_staff.php?Update&codice=<?php echo substr($oper['id_clfoco'],-6); ?>"><i class="glyphicon glyphicon-edit"> </i><?php echo "<br/>".$oper['ragso1']," ",$oper['ragso2']; ?></a>
 					</td>
 					<?php
 					for($c=0;$c<$col ; $c++){
