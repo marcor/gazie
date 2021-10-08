@@ -2302,8 +2302,9 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				}
 				// fine calcolo importo rigo, totale e castelletto IVA
 				// colonne non editabili
+				$vidrig=(isset($v['id_rig']))?$v['id_rig']:0;
 				echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
-				echo "<input type=\"hidden\" value=\"" . $v['id_rig'] . "\" name=\"rows[$k][id_rig]\">\n";
+				echo "<input type=\"hidden\" value=\"" . $vidrig . "\" name=\"rows[$k][id_rig]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['SIAN'] . "\" name=\"rows[$k][SIAN]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
