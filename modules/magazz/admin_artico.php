@@ -904,7 +904,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="warranty_days" class="col-sm-4 control-label"><?php echo $script_transl['warranty_days']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo $form['warranty_days']; ?>" name="warranty_days" maxlength="4" />
+                            <input class="col-sm-4" type="text" value="<?php echo (isset($form['warranty_days']))?$form['warranty_days']:''; ?>" name="warranty_days" maxlength="4" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
