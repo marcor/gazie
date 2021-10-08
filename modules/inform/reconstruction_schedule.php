@@ -36,8 +36,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script per update
     if (isset($_GET['id_partner'])){
         $form['id_partner'] = intval($_GET['id_partner']);
         $partner = gaz_dbi_get_row($gTables['clfoco'], 'codice',  $form['id_partner']);
-        $form['search_partner'] = $partner['ragso1'];
-        $form['descri_partner'] = $partner['ragso1'];
+        $form['search_partner'] = $partner['descri'];
+        $form['descri_partner'] = $partner['descri'];
     }
 } else { // accessi successivi
     $form['ritorno'] = $_POST['ritorno'];
