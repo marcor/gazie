@@ -59,8 +59,10 @@ if (isset($_POST['rec_pres'])) {
 	  } else {
 		if ( $work_mov['id_work_type'] > 0 ) {
 			$type = gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $work_mov['id_work_type']); // carico il tipo di movimento del vecchio cartellino
+			$work_movements[$k]['type']=$type['id_work_type'];
 		} else {
 			$type['id_work_type'] = 0;
+			$work_movements[$k]['type']=0;
 		}
 		if ($work_mov['start_work'] == "" AND $work_mov['end_work'] == ""){ 
 			echo "ERRORE riga ",$n,": l'orario di inizio e di fine deve essere sempre impostato\n";
@@ -113,14 +115,16 @@ if (isset($_POST['rec_pres'])) {
 		$n++;
 		if ($work_mov['id']>0){ // è un update
 			// AGGIORNO IL CARTELLINO ovvero staff_work_movements
-			$newValue =array("start_work"=>$date." ".$work_mov['start_work'], "end_work"=>$date." ".$work_mov['end_work'], "id_work_type"=>$work_mov['id_work_type'], "min_delay"=>$work_mov['min_delay'], "id_orderman"=>$work_mov['id_orderman'], "note"=>$work_mov['note']); 
+			$newValue =array("start_work"=>$date." ".$work_mov['start_work'], "end_work"=>$date." ".$work_mov['end_work'], "id_work_type"=>$work_mov['id_work_type'], "min_delay"=>$work_mov['min_delay'], "id_orderman"=>$work_mov['id_orderman'], "note"=>$work_mov['note'], "id_staff_worked_hours"=>$work_h['id'], "hourly_cost"=>$work_mov['hourly_cost']); 
 			gaz_dbi_table_update("staff_work_movements", array('id', $work_mov['id']), $newValue);
 		} else { // è un insert
-			$value =array("id"=>$work_mov['id'], "id_staff"=>$id_staff, "start_work"=>$date." ".$work_mov['start_work'], "end_work"=>$date." ".$work_mov['end_work'], "id_work_type"=>$work_mov['id_work_type'], "min_delay"=>$work_mov['min_delay'], "id_orderman"=>$work_mov['id_orderman'], "note"=>$work_mov['note'], "id_staff_worked_hours"=>$work_h['id']);
-			gaz_dbi_table_insert("staff_work_movements", $value);
+			$value =array("id_staff"=>$id_staff, "start_work"=>$date." ".$work_mov['start_work'], "end_work"=>$date." ".$work_mov['end_work'], "id_work_type"=>$work_mov['id_work_type'], "min_delay"=>$work_mov['min_delay'], "id_orderman"=>$work_mov['id_orderman'], "note"=>$work_mov['note'], "id_staff_worked_hours"=>$work_h['id'], "hourly_cost"=>$work_mov['hourly_cost']);
+			$work_mov['id']=gaz_dbi_table_insert("staff_work_movements", $value);
 		}
 		// GESTIONE RIGHI DOCUMENTO TIPO "PRW" in tesbro, verrà generato in automatico un documento di report giornaliero in tesbro-rigbro
-		gaz_dbi_table_insert("rigbro", ['id_tes'=>$id_tes,'descri'=>$work_mov['note'],'id_body_text'=>$id_staff,'quanti'=>$work_mov['quanti'],'prelis'=>$work_mov['hourly_cost'],'id_orderman'=>$work_mov['id_orderman']]);
+		if ($work_mov['type']<9) { // inserisco un rigo solo se non è una assenza
+			gaz_dbi_table_insert("rigbro", ['id_tes'=>$id_tes,'descri'=>$work_mov['note'],'id_body_text'=>$id_staff,'quanti'=>$work_mov['quanti'],'prelis'=>$work_mov['hourly_cost'],'id_orderman'=>$work_mov['id_orderman'],'id_doc'=>$work_mov['id']]);
+		}
 	  }	
 	  // aggiorno staff_worked_hours
 	  gaz_dbi_table_update("staff_worked_hours", array('id', $work_h['id']), $acc_staff_worked_hours);

@@ -51,7 +51,7 @@ function getWorkedHours($mese,$anno) { // Carico staff worked hours per il dato 
 function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per il dato mese e anno
 	global $gTables;
 	$cols=array();
-	$query="SELECT ragso1,ragso2,id_staff,id_clfoco FROM ".$gTables['staff']."
+	$query="SELECT ragso1,ragso2,id_staff,id_clfoco,last_hourly_cost FROM ".$gTables['staff']."
 	LEFT JOIN ". $gTables['clfoco'] . " ON ". $gTables['staff'] .".id_clfoco = ". $gTables['clfoco'] .".codice 
 	LEFT JOIN ". $gTables['anagra'] . " ON ". $gTables['anagra'] .".id = ". $gTables['clfoco'] .".id_anagra
 	WHERE DATE_FORMAT(end_date, '%Y-%m') >= '".$anno."-".$mese."' OR end_date IS NULL OR end_date <= '2004-01-27'";
@@ -117,6 +117,7 @@ require("../../library/include/header.php");
 		$("#dialog_worker_card").dialog({ autoOpen: false });
 		$('.dialog_worker_card').click(function() {			
 			var id = $(this).attr('id_staff');
+			var hourly_cost = $(this).attr('hourly_cost');
 			var id2 = $(this).attr('date');
 			const d2 = new Date(id2);
 			const ye = new Intl.DateTimeFormat('it', { year: 'numeric' }).format(d2);
@@ -195,7 +196,8 @@ require("../../library/include/header.php");
 				{
 				  name: "hourly_cost",
 				  display: "Costo orario",
-				  type: "hidden"
+				  type: "text",
+				    value : hourly_cost
 				},
 			  ],
 			  beforeRowRemove: function(caller, rowIndex) {
@@ -318,6 +320,7 @@ $gForm = new humresForm();
 					</td>
 					<?php
 					for($c=0;$c<$col ; $c++){
+						//print_r($oper);
 						$week_day=strftime("%a", strtotime(($c+1) ."-". $form['mese'] ."-". $form['anno']));
 						if ($week_day=="sab"){
 							$td[$c]='bg-warning text-center';
@@ -331,7 +334,7 @@ $gForm = new humresForm();
 						}
 						?>
 						<td class="<?php echo $td[$c]; ?> text-center">
-							<a class="btn btn-xs <?php echo $bt[$c]; ?> dialog_worker_card" title="Modifica il cartellino" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c+1); ?>" >
+							<a class="btn btn-xs <?php echo $bt[$c]; ?> dialog_worker_card" title="Modifica il cartellino" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" hourly_cost="<?php echo (isset($oper['last_hourly_cost']))?$oper['last_hourly_cost']:0; ?>"  date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c+1); ?>" >
 								<i class="glyphicon glyphicon-edit"><br/><?php echo ($c+1).'<br/>'.$week_day; ?></i>
 							</a>
 						</td>
