@@ -32,14 +32,14 @@ $admin_aziend = checkAdmin();
 
 $id_staff= intval($_POST['id_staff']);
 $date = substr($_POST['date'], 0, 10);
-//$id_staff=1; $date=date("Y-m-d");
-$card_res = gaz_dbi_dyn_query('id, start_work, end_work, id_work_type, min_delay, id_orderman, note ', $gTables['staff_work_movements'], "id_staff = " . $id_staff. " AND start_work BETWEEN '" . $date ." 00:00:00' AND '" . $date ." 23:59:59'");
+
+$card_res = gaz_dbi_dyn_query('id, start_work, end_work, id_work_type, min_delay, id_orderman, note, hourly_cost ', $gTables['staff_work_movements'], "id_staff = " . $id_staff. " AND start_work BETWEEN '" . $date ." 00:00:00' AND '" . $date ." 23:59:59'");
 
 if ($card_res->num_rows > 0){
  while ( $row = gaz_dbi_fetch_array($card_res) ) {// ciclo tutte le registrazioni
   $start = date('H:i', strtotime($row['start_work']));
   $end = date('H:i', strtotime($row['end_work']));
-  $data[]=array("id"=>$row['id'], "start_work"=>$start, "end_work"=>$end, "id_work_type"=>$row['id_work_type'], "min_delay"=>$row['min_delay'], "id_orderman"=>$row['id_orderman'], "note"=>$row['note']); 
+  $data[]=array("id"=>$row['id'], "start_work"=>$start, "end_work"=>$end, "id_work_type"=>$row['id_work_type'], "min_delay"=>$row['min_delay'], "id_orderman"=>$row['id_orderman'], "note"=>$row['note'], "hourly_cost"=>$row['hourly_cost']); 
  }
  $json= json_encode(array($data));
  echo substr($json, 1, -1); // tolgo la prima e l ultima parentesi quadra

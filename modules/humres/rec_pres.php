@@ -35,12 +35,23 @@ $id_staff=intval($_POST['id_staff']);
 $date=substr($_POST['date'],0,10);
 // provo a recuperare sempre e comunque staff_worked_hours 
 $work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_staff, "AND work_day = '$date'"); // mi carico il relativo rigo di staff_worked_hours
+
+if ($work_h){
+	$id_tes = $work_h['id_tes'];
+} else {
+	// non avendolo inserisco un rigo in tesbro	con tipdoc=PWR
+	$id_tes = gaz_dbi_table_insert("tesbro", ['tipdoc'=>'PWR','datemi'=>$date]);
+}
+
+// elimino TUTTI i vecchi righi (rigbro) del documento di tipo "PWR" per poi reinserirli tutti sotto partendo dai dati in $acc_staff_worked_hours
+gaz_dbi_query("DELETE FROM " . $gTables['rigbro'] . " WHERE id_tes =".$id_tes." AND id_body_text = " . $id_staff); // ricordo che in questo caso id_body_text lo uso per indicare il riferimento all'addetto
+
 if (isset($_POST['rec_pres'])) {
 	$work_movements = $_POST['rec_pres'];
 // INIZIO CONTROLLO ERRORI E ACCUMULO DATI PER AGGIORNAMENTO staff_worked_hours
 	$noerr=true; // non ho errori
 	$n=0;
-	$acc_staff_worked_hours=['id_staff'=>$id_staff,'work_day'=>$date,'hours_normal'=>0,'id_work_type_extra'=>0,'hours_extra'=>0,'id_other_type'=>0,'hours_other'=>0,'id_absence_type'=>0,'hours_absence'=>0];
+	$acc_staff_worked_hours=['id_staff'=>$id_staff,'work_day'=>$date,'hours_normal'=>0,'id_work_type_extra'=>0,'hours_extra'=>0,'id_other_type'=>0,'hours_other'=>0,'id_absence_type'=>0,'hours_absence'=>0,'id_tes'=>$id_tes];
 	foreach ($work_movements as $k=>$work_mov){ // faccio un primo ciclo per controllare se ci sono errori, per eliminare i righi eliminati e per accumulare i nuovi valori per staff_worked_hours
 	  if (array_key_exists($work_mov['id'], $deleted_rows)) { // è un rigo da eliminare, non lo accumulo ma anzi lo elimino sia dal db che da questo array 
   		gaz_dbi_del_row($gTables['staff_work_movements'], "id",$work_mov['id']);
@@ -61,6 +72,8 @@ if (isset($_POST['rec_pres'])) {
 			$minend=$et[0]*60+$et[1];
 			$minwork=$minend-$minstart;
 			$decimalwork=round($minwork/60,2);
+			// aggiungo il valore all'array $work_movements per ritrovarmelo sotto quando valorizzerò quanti di rigbro per PRW
+			$work_movements[$k]['quanti']=$decimalwork;
 			if ($type['id_work_type']==0){// lavoro ordinario			
 				$acc_staff_worked_hours['hours_normal']+=$decimalwork;		
 			} elseif ($type['id_work_type']==1){// lavoro straordinario
@@ -105,7 +118,9 @@ if (isset($_POST['rec_pres'])) {
 		} else { // è un insert
 			$value =array("id"=>$work_mov['id'], "id_staff"=>$id_staff, "start_work"=>$date." ".$work_mov['start_work'], "end_work"=>$date." ".$work_mov['end_work'], "id_work_type"=>$work_mov['id_work_type'], "min_delay"=>$work_mov['min_delay'], "id_orderman"=>$work_mov['id_orderman'], "note"=>$work_mov['note'], "id_staff_worked_hours"=>$work_h['id']);
 			gaz_dbi_table_insert("staff_work_movements", $value);
-		}		
+		}
+		// GESTIONE RIGHI DOCUMENTO TIPO "PRW" in tesbro, verrà generato in automatico un documento di report giornaliero in tesbro-rigbro
+		gaz_dbi_table_insert("rigbro", ['id_tes'=>$id_tes,'descri'=>$work_mov['note'],'id_body_text'=>$id_staff,'quanti'=>$work_mov['quanti'],'prelis'=>$work_mov['hourly_cost'],'id_orderman'=>$work_mov['id_orderman']]);
 	  }	
 	  // aggiorno staff_worked_hours
 	  gaz_dbi_table_update("staff_worked_hours", array('id', $work_h['id']), $acc_staff_worked_hours);

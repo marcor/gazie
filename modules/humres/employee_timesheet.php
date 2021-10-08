@@ -192,6 +192,11 @@ require("../../library/include/header.php");
 						"cols": 1
 					}
 				},
+				{
+				  name: "hourly_cost",
+				  display: "Costo orario",
+				  type: "hidden"
+				},
 			  ],
 			  beforeRowRemove: function(caller, rowIndex) {
 				 var rowValues = myAppendGrid.getRowValue(rowIndex);
