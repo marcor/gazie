@@ -897,7 +897,7 @@ class shopsynchronizegazSynchro {
 									}
 									
 									// creo un json array per la variante
-									$arrayvar= array("var_id" => floatval($orderrow->CharacteristicId), "var_name" => $orderrow->Characteristic);
+									$arrayvar= array("var_id" => floatval($orderrow->CharacteristicId), "var_name" => strval($orderrow->Characteristic));
 									$arrayvar = json_encode ($arrayvar);
 									
 								}

@@ -207,7 +207,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 			if ($product->Type=="variant" AND strlen($product->Characteristic)>0 ){ // se una variante
 				// creo un json array per la variante
-				$arrayvar= array("var_id" => floatval($product->CharacteristicId), "var_name" => $product->Characteristic);
+				$arrayvar= array("var_id" => floatval($product->CharacteristicId), "var_name" => strval($product->Characteristic));
 				$arrayvar = json_encode ($arrayvar);
 			} else {
 				$arrayvar = "";
