@@ -173,7 +173,7 @@ if (count($msg['war']) > 0) { // ho un alert
             </div>
         </div><!-- chiude row  -->
 <?php
-$date=date('Y-m-d');
+$date='2060-12-31'; // praticamente ricostruisco sempre tutto
 // prendo l'array con i righi  ed il saldo contabile per confrontarlo con quello dello scedenziario
 $allrows = $paymov->getPartnerAccountingBalance($form['id_partner'], $date, true);
 $paymov->getPartnerStatus($form['id_partner'], $date,'DESC');
