@@ -327,14 +327,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if ($v['tiprig'] == 0 && $v['quanti'] < 0.00001 && $v['quanti'] > -0.00001) {
 				$msg['err'][] = "64";
 			}
-            if ($v['lot_or_serial'] == 2 && $v['id_lotmag'] > 0) {
+            if ($v['lot_or_serial'] == 2) {
             // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1
                 if ($form['rows'][$next_row]['quanti'] <> 1) {
                     $msg['err'][] = "60";
                 }
                 $form['rows'][$next_row]['quanti'] = 1;
             }
-			if ($v['lot_or_serial'] == 1 && intval($v['id_lotmag']) == 0) {
+			if ($v['lot_or_serial'] >= 1 && intval($v['id_lotmag']) == 0) {
             // se è prevista la gestione per lotti segnalo quando non è stato inserito il lotto            
                 $msg['emptylot'][] = "siandate"; 
             }
@@ -1169,10 +1169,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$old_key]['gooser'] = $artico['good_or_service'];
                 $form['rows'][$old_key]['lot_or_serial'] = $artico['lot_or_serial'];
+                if ($artico['lot_or_serial'] == 2) {
+// se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
+                    if ($form['rows'][$old_key]['quanti'] <> 1) {
+                        $msg['err'][] = "forceone";
+                    }
+                    $form['rows'][$old_key]['quanti'] = 1;
+                    $msg['err'][] = "forceone";
+                }
+
 				$form['rows'][$old_key]['SIAN'] = $artico['SIAN'];
                 /* devo ricaricare un nuovo id lotmag
                  */
-                if ($artico['lot_or_serial'] = 1) {
+                if ($artico['lot_or_serial'] >= 1) {
                     $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
                     $ld = $lm->divideLots($form['in_quanti']);
                     foreach ($lm->divided as $k => $v) {
@@ -1315,13 +1324,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$next_row]['gooser'] = $artico['good_or_service'];
                 $form['rows'][$next_row]['lot_or_serial'] = $artico['lot_or_serial'];
-				$form['rows'][$next_row]['SIAN'] = $artico['SIAN'];
+ 				$form['rows'][$next_row]['SIAN'] = $artico['SIAN'];
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
                 $form['rows'][$next_row]['unimis'] = $artico['unimis'];
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
+               if ($artico['lot_or_serial'] == 2) {
+// se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
+                    if ($form['rows'][$next_row]['quanti'] <> 1) {
+                        $msg['err'][] = "forceone";
+                    }
+                    $form['rows'][$next_row]['quanti'] = 1;
+                }
 
                 /** inizio modifica FP 09/10/2015
                  * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo
@@ -2491,7 +2507,7 @@ foreach ($form['rows'] as $k => $v) {
 					<td>
 						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					';					
-            if ($v['lot_or_serial'] == 1 && $v['id_lotmag'] > 0) { // se l'articolo prevede lotti				
+            if ($v['lot_or_serial'] >= 1) { // se l'articolo prevede lotti				
                 $lm->getAvailableLots($v['codart'], $v['id_mag']);
 				// Antonio Germani - calcolo delle giacenze per ogni singolo lotto
 				$count=array();

@@ -337,7 +337,8 @@ $strScript = array("admin_client.php" =>
 			'id_documento'=>'Non è stato inserito il tipo rigo 13 - Id.Documento (FaE 2.1.X.2) obbligatorio in presenza di almeno uno dei tipi da 11 a 16',
 			'soloconf' => 'Questa operazione SIAN ammette solo olio confezionato',
 			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto',
-			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta'
+			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
+			'forceone' => 'Un articolo prevede la matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1'
 		)		
     ),
     "select_docforprint.php" =>

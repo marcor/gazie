@@ -206,7 +206,7 @@ $strScript = array("admin_fornit.php" =>
             'nofold' => 'Non esiste la cartella ID azienda nel percorso DATA_DIR/files!',
             'sampri' => 'Nulla da variare, il prezzo dell\'articolo &egrave lo stesso',
             'noartupd'=>'Articolo non inserito: impossibile modificare!',
-            'forceone'=>'L\'articolo di magazzino ha una matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1',
+            'forceone'=>'Un articolo prevede la matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1',
             'norwum' => 'Un rigo &egrave; senza l\'unit&agrave; di misura!',
             'norwde' => 'Un rigo &egrave; senza la descrizione!',
             'nopaga' => 'Non hai selezionato la modalit&agrave; di pagamento!',
