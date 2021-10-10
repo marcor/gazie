@@ -248,8 +248,8 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			gaz_dbi_del_row($gTables['cash_register_tender'], 'cash_register_id_cash', $i);
 		break;
 		case "customer_schedule":
-			$i=intval($_POST['ref']);
-			gaz_dbi_del_row($gTables['paymov'], 'id_tesdoc_ref', $i);
+			$paymov= new Schedule;
+			$paymov->deleteClosedPaymov(intval($_POST['ref']));
 		break;
 		case "mndtritdinf":
 			$i=intval($_POST['ref']);

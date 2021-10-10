@@ -2620,16 +2620,12 @@ class Schedule {
     }
 
     function setPartnerTarget($account) {
-        /*
-         * setta il valore del conto (piano dei conti) del partner (cliente o fornitore)
-         */
+    // setta il valore del conto (piano dei conti) del partner (cliente o fornitore)
         $this->target = $account;
     }
 
     function setIdTesdocRef($id_tesdoc_ref) {
-        /*
-         * setta sia l'identificativo di partita che il valore del conto (piano dei conti) del partner (cliente o fornitore)
-         */
+    // setta sia l'identificativo di partita che il valore del conto (piano dei conti) del partner (cliente o fornitore)
         global $gTables;
         $rs = gaz_dbi_dyn_query($gTables['paymov'] . ".id_tesdoc_ref," . $gTables['tesmov'] . ".clfoco ", $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['tesmov'] . ".id_tes = " . $gTables['rigmoc'] . ".id_tes", $gTables['paymov'] . ".id_tesdoc_ref = '" . $id_tesdoc_ref . "'");
         while($r = gaz_dbi_fetch_array($rs)){
@@ -2639,11 +2635,10 @@ class Schedule {
     }
 
     function setScheduledPartner($partner_type = false,$datref=false) {
-		/* false=TUTTI altrimenti passare le prime tre cifre del mastro clienti o fornitori, oppure un partner specifico
-         * in $datref si può passare una data di rifermiento nel formato leggibile GG-MM-AAAA,
-		 * in questo caso vengono presi in considerazione solo i movimenti di un anno (sei mesi prima e sei dopo)
-         * restituisce in $this->Partners i codici dei clienti o dei fornitori che hanno almeno un movimento nell'archivio dello scadenzario
-         */
+	// false=TUTTI altrimenti passare le prime tre cifre del mastro clienti o fornitori, oppure un partner specifico
+    // in $datref si può passare una data di rifermiento nel formato leggibile GG-MM-AAAA,
+	// in questo caso vengono presi in considerazione solo i movimenti di un anno (sei mesi prima e sei dopo)
+    // restituisce in $this->Partners i codici dei clienti o dei fornitori che hanno almeno un movimento nell'archivio dello scadenzario
         global $gTables;
         if (!$partner_type) { // se NON mi è stato passato il mastro dei clienti o dei fornitori
             $partner_where = '';
@@ -2676,10 +2671,8 @@ class Schedule {
     }
 
     function getScheduleEntries($ob = 0, $masclifor=0, $date = false) {
-        /*
-         * genera un array con tutti i movimenti di partite aperte con quattro tipi di ordinamento
-         * se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso
-         */
+    // genera un array con tutti i movimenti di partite aperte con quattro tipi di ordinamento
+    // se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso
         global $gTables;
         if ($this->target == 0) {
             $where = $gTables['rigmoc'] . ".codcon LIKE '" . $masclifor . "%'";
@@ -2726,7 +2719,7 @@ class Schedule {
     }
 
     function getPartnerAccountingBalance($clfoco, $date = false, $allrows=false) {
-        // restituisce il valore del saldo contabile di un cliente ad una data, se passata, oppure alla data di sistema
+    // restituisce il valore del saldo contabile di un cliente ad una data, se passata, oppure alla data di sistema
         global $gTables;
         if ($this->target > 0 && $clfoco == 0) {
             $clfoco = $this->target;
@@ -2772,29 +2765,78 @@ class Schedule {
     }
 
     function getAmount($id_tesdoc_ref, $date = false) {
-        /*
-         * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
-         */
-        global $gTables;
-		$date_ctrl='1';
-		if ($date){
-			$date_ctrl=" (expiry <= '".$date."')";
+    //restituisce la differenza (stato) tra apertura e chiusura di una partita nel suo complesso, se passo una data viene restituito il valore del saldo della scadenza ultima più prossima ad essa 
+		global $gTables;
+		$i=intval($id_tesdoc_ref);
+		$rs = gaz_dbi_query("SELECT * FROM ".$gTables['paymov']." WHERE id_tesdoc_ref=".$id_tesdoc_ref." ORDER BY id_rigmoc_doc DESC, expiry ASC");
+		$acc=[];
+		$carry=[];
+		$ret=[];
+		while($r=gaz_dbi_fetch_array($rs)){	// attraverso e chiudo solo le "chiudibili" in ordine di scadenza
+			if($r['id_rigmoc_doc']>0.01){ // le aperture le incontro prima
+				$acc[$r['expiry']]=['id'=>$r['id'],'am'=>$r['amount']]; //accumulo gli id dei documenti ed il loro valore, compreso il progressivo
+			}elseif($r['id_rigmoc_pay']>0.01){ // le chiusure le incontro dopo
+			  if (count($carry)>0){ // se ho un riporto attraverso le aperture rimaste per usarlo	
+				  reset($acc);
+				  foreach($acc as $expiry=>$vap){
+					if ($carry['amount']>0){
+						if ($carry['amount']==$vap['am']) { // posso chiudere tutta l'apertura gli importi coincidono
+							unset($acc[$expiry]); // tolgo lapertura per non ciclarlo più
+							$carry['amount']=0; // azzero il valore di chiusura 
+							$ret[$expiry]=0.00; // ritorno valore scadenza
+						} elseif ($carry['amount']>$vap['am']) { // la chiusura ecced
+							unset($acc[$expiry]); // lo tolgo per non ciclarlo più
+							$carry['amount']-=$vap['am']; // e riduco il valore di chiusura 
+							$ret[$expiry]=round($carry['amount'],2); // ritorno valore scadenza
+						} else { // la chiusura è insufficiente
+							$acc[$expiry]['am'] -= $carry['amount'];
+							$carry['amount']=0; // azzero il valore di chiusura 
+							$ret[$expiry]=0.00; // ritorno valore scadenza
+						}
+					}
+				  }
+			  }
+			  reset($acc);
+			  foreach($acc as $expiry=>$vap){ // attraverso le aperture per chiuderle con il valore corrente di chiusura: $r['amount']
+				if ($r['amount']>0){
+					if ($r['amount']==$vap['am']) { // posso chiudere tutta l'apertura gli importi coincidono
+						unset($acc[$expiry]); // tolgo lapertura per non ciclarlo più
+						$r['amount']=0; // azzero il valore di chiusura 
+					} elseif ($r['amount']>$vap['am']) { // la chiusura ecced
+						unset($acc[$expiry]); // lo tolgo per non ciclarlo più
+						$r['amount']-=$vap['am']; // e riduco il valore di chiusura 
+					} else { // la chiusura è insufficiente
+						$acc[$expiry]['am'] -= $r['amount'];
+						$r['amount']=0; // azzero il valore di chiusura 
+					}
+				}
+			  }
+			  if ($r['amount']>=0.01) { // se ho un residuo di chiusura lo accumulo sul riporto
+				$carry=['id'=>$r['id'],'am'=>$r['amount']];
+			  }
+			}
 		}
-        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0)) AS diff_paydoc,
-        SUM(amount*(id_rigmoc_pay>0)) AS pay,
-        SUM(amount*(id_rigmoc_doc>0))AS doc,
-        MAX(expiry) AS exp
-        FROM " . $gTables['paymov'] . "
-        WHERE id_tesdoc_ref = '" . $id_tesdoc_ref . "' GROUP BY id_tesdoc_ref";
-        $rs = gaz_dbi_query($sqlquery);
-        $r = gaz_dbi_fetch_array($rs);
-        return $r['diff_paydoc'];
+		$retval=0.00;
+		foreach($acc as $ex=>$v) {
+		  if ($date) { // dovrò restituire solo il valore dell'ultima più prossima alla referenza 
+			$ex_time = strtotime($ex);
+			$da_time = strtotime($date);
+			$retval=$v['am'];
+			if ($ex_time>$da_time){ // ho superato la data di referenza non considero questa ma mi fermo e restituisco l'ultimo 
+				$retval=$last_v;	
+				break;
+			}
+		  } else { // dovrò restituire il valore del saldo complessivo
+			if ($v['am'] < 0.01) continue;
+			$retval += $v['am'];
+		  }
+		  $last_v=$v['am'];
+		}
+		return round($retval,2);
     }
 
     function getStatus($id_tesdoc_ref, $date = false) {
-        /*
-         * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
-         */
+    // restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
         global $gTables;
 		$date_ref = new DateTime($date);
 		$date_ref->modify('+ 1 hour');
@@ -2840,9 +2882,7 @@ class Schedule {
     }
 
     function getExpiryStatus($expiry_ref) {
-        /*
-         * creo un array con le scadenze della stessa partita per controllare se sono aperte o chiuse
-         */
+    // creo un array con le scadenze della stessa partita per controllare se sono aperte o chiuse
         global $gTables;
         $sqlquery = "SELECT * FROM " . $gTables['paymov'] . " WHERE id_tesdoc_ref = '" . $this->id_target. "' ORDER BY id_rigmoc_pay, expiry";
         $rs = gaz_dbi_query($sqlquery);
@@ -2916,11 +2956,8 @@ class Schedule {
         $this->ExpiryStatus = $ret;
     }
 
-
     function getDocumentData($id_tesdoc_ref, $clfoco = null) {
-        /*
-          restituisce i dati relativi al documento che ha aperto la partita
-         */
+    //restituisce i dati relativi al documento che ha aperto la partita
         global $gTables;
 
         if (!is_numeric($id_tesdoc_ref)) {
@@ -2949,12 +2986,10 @@ class Schedule {
         return gaz_dbi_fetch_array($rs);
     }
 
-    function getPartnerStatus($clfoco, $date = false, $order='')
-    /*
-     * genera un array ($this->PartnerStatus)con i valori dell'esposizione verso un partner commerciale
-     * riferito ad una data, se passata, oppure alla data di sistema
-     * $this->docData verr� valorizzato con i dati relativi al documento di riferimento
-     * */ {
+    function getPartnerStatus($clfoco, $date = false, $order='') {
+    // genera un array ($this->PartnerStatus)con i valori dell'esposizione verso un partner commerciale
+    // riferito ad una data, se passata, oppure alla data di sistema
+    // $this->docData verrà valorizzato con i dati relativi al documento di riferimento
         global $gTables;
         $this->PartnerStatus = array();
         if ($clfoco <= 999 && $clfoco >= 100) { // ho un mastro clienti o foritori
@@ -3066,7 +3101,7 @@ class Schedule {
         }
     }
 
-    function setRigmocEntries($id_rig) { //
+    function setRigmocEntries($id_rig) { 
         global $gTables;
         $sqlquery = "SELECT * FROM " . $gTables['paymov'] . " WHERE id_rigmoc_pay=$id_rig OR id_rigmoc_doc=$id_rig";
         $this->RigmocEntries = array();
@@ -3076,12 +3111,69 @@ class Schedule {
         }
     }
 
+    function deleteClosedPaymov($id_tesdoc_ref){
+	// passando semplicemente il numero di partita cancella in ordine di scadenza tutte le eventuali scadenze chiuse lasciando aperte  quelle (anche parzialmente)  aperte 
+        global $gTables;
+		$i=intval($id_tesdoc_ref);
+		$rs = gaz_dbi_query("SELECT * FROM ".$gTables['paymov']." WHERE id_tesdoc_ref=".$i." ORDER BY id_rigmoc_doc DESC, expiry ASC");
+		$acc=[];
+		$carry=[];
+		while($r=gaz_dbi_fetch_array($rs)){	// potrebbero non essere chiuse tutte le scadenze della partita allora la attraverso e chiudo solo le "chiudibili" in ordine di scadenza
+			if($r['id_rigmoc_doc']>0.01){ // le aperture le incontro prima
+				$acc[]=['id'=>$r['id'],'am'=>$r['amount']]; //accumulo gli id dei documenti ed il loro valore, compreso il progressivo
+			}elseif($r['id_rigmoc_pay']>0.01){ // le chiusure le incontro dopo
+			  if (count($carry)>0){ // se ho un riporto attraverso le aperture rimaste per usarlo	
+				  reset($acc);
+				  foreach($acc as $k=>$vap){
+					if ($carry['amount']>0){
+						if ($carry['amount']==$vap['am']) { // posso chiudere tutta l'apertura gli importi coincidono
+							gaz_dbi_del_row($gTables['paymov'],'id',$vap['id']); // rimovo apertura
+							gaz_dbi_del_row($gTables['paymov'],'id',$carry['id']); // rimovo chiusura
+							unset($acc[$k]); // tolgo lapertura per non ciclarlo più
+							$carry['amount']=0; // azzero il valore di chiusura 
+						} elseif ($carry['amount']>$vap['am']) { // la chiusura ecced
+							gaz_dbi_del_row($gTables['paymov'],'id',$vap['id']); // rimovo apertura
+							gaz_dbi_put_row($gTables['paymov'],'id',$carry['id'], 'amount', round($carry['amount']-$vap['am'],2)); // riduco la chiusura
+							unset($acc[$k]); // lo tolgo per non ciclarlo più
+							$carry['amount']-=$vap['am']; // e riduco il valore di chiusura 
+						} else { // la chiusura è insufficiente
+							gaz_dbi_put_row($gTables['paymov'],'id',$vap['id'], 'amount', round($vap['am']-$carry['amount'],2)); // riduco l'apertura
+							gaz_dbi_del_row($gTables['paymov'],'id',$carry['id']); // rimuovo chiusura insufficiente
+							$acc[$k]['am'] -= $carry['amount'];
+							$carry['amount']=0; // azzero il valore di chiusura 
+						}
+					}
+				  }
+			  }
+			  reset($acc);
+			  foreach($acc as $k=>$vap){ // attraverso le aperture per chiuderle con il valore corrente di chiusura: $r['amount']
+				if ($r['amount']>0){
+					if ($r['amount']==$vap['am']) { // posso chiudere tutta l'apertura gli importi coincidono
+						gaz_dbi_del_row($gTables['paymov'],'id',$vap['id']); // rimovo apertura
+						gaz_dbi_del_row($gTables['paymov'],'id',$r['id']); // rimovo chiusura
+						unset($acc[$k]); // tolgo lapertura per non ciclarlo più
+						$r['amount']=0; // azzero il valore di chiusura 
+					} elseif ($r['amount']>$vap['am']) { // la chiusura ecced
+						gaz_dbi_del_row($gTables['paymov'],'id',$vap['id']); // rimovo apertura
+						gaz_dbi_put_row($gTables['paymov'],'id',$r['id'], 'amount', round($r['amount']-$vap['am'],2)); // riduco la chiusura
+						unset($acc[$k]); // lo tolgo per non ciclarlo più
+						$r['amount']-=$vap['am']; // e riduco il valore di chiusura 
+					} else { // la chiusura è insufficiente
+						gaz_dbi_put_row($gTables['paymov'],'id',$vap['id'], 'amount', round($vap['am']-$r['amount'],2)); // riduco l'apertura
+						gaz_dbi_del_row($gTables['paymov'],'id',$r['id']); // rimuovo chiusura insufficiente
+						$acc[$k]['am'] -= $r['amount'];
+						$r['amount']=0; // azzero il valore di chiusura 
+					}
+				}
+			  }
+			  if ($r['amount']>=0.01) { // se ho un residuo di chiusura lo accumulo sul riporto
+				$carry=['id'=>$r['id'],'am'=>$r['amount']];
+			  }
+			}
+		}
+	}
 }
-
-/* controllo se ho delle funzioni specifiche per il modulo corrente
-  residente nella directory del module stesso, con queste caratteristiche:
-  modules/nome_modulo/lib.function.php
- */
+// controllo se ho delle funzioni specifiche per il modulo corrente residente nella directory del module stesso, con queste caratteristiche: modules/nome_modulo/lib.function.php
 if (@file_exists('./lib.function.php')) {
     require('./lib.function.php');
 }
