@@ -168,6 +168,7 @@ function dialogSchedule(paymov) {
                 function (data) {
                     var j = 0;
                     $.each(data, function (i, value) {
+						var desnumdoc=value.numdoc?' n.'+value.numdoc+'/'+value.seziva+' del '+value.datdoc:'';
                         if (j == 0) {
                             if (link) {
                                 link_ref = '<button id="linking_same_' + j + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button>';
@@ -177,7 +178,7 @@ function dialogSchedule(paymov) {
                         }
                         $("#db-contain" + nrow + " tbody").append("<tr>" +
                                 "<td" + ' class="ui-widget ui-widget-content " ></td>' +
-                                "<td" + ' class="ui-widget ui-widget-content " > ' + value.descri + " n." + value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
+                                "<td" + ' class="ui-widget ui-widget-content " > ' + value.descri + desnumdoc + "</td>" +
                                 "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                                 "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
                                 '<td class="ui-widget-right ui-widget-content " >' + value.darave + '</td>' +
@@ -205,19 +206,16 @@ function dialogSchedule(paymov) {
                 function (data) {
                     var j = 0;
                     $.each(data, function (i, value) {
-                    	var doc_des = "";
+						var desnumdoc=value.numdoc?' n.'+value.numdoc+'/'+value.seziva+' del '+value.datdoc:'';
                         var ri = parseInt(value.regiva) || 0;
                         var pr = parseInt(value.protoc) || 0;
                         if (j == 0) {
                             $("#db-contain" + nrow + " tbody").append("<tr>" +
                                     "<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti di: ' + value.ragso1 + ' ' + value.ragso2 + '</td></tr>');
                         }
-                        if (pr >= 1) {
-                            doc_des = " n." + value.numdoc + "/" + value.seziva + " del " + value.datdoc;
-                        }
                         $("#db-contain" + nrow + " tbody").append("<tr>" +
                                 '<td class="ui-widget-right ui-widget-content "><button id="linking_' + j + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button></td>' +
-                                "<td" + ' class="ui-widget ui-widget-content " > ' + value.descri + doc_des + "</td>" +
+                                "<td" + ' class="ui-widget ui-widget-content " > ' + value.descri + desnumdoc + "</td>" +
                                 "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                                 "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
                                 '<td class="ui-widget-right ui-widget-content " >' + value.darave + '</td>' +
