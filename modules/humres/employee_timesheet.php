@@ -29,7 +29,7 @@ $admin_aziend = checkAdmin();
 function getWorkedHours($mese,$anno) { // Carico staff worked hours per il dato mese e anno
 	global $gTables;
 	$month_res=array();
-	$query="SELECT DAY(work_day),hours_normal,hours_extra,hours_absence,hours_other,".$gTables['staff'] .".id_staff,id_work_type_extra,id_absence_type,id_other_type FROM ".$gTables['staff_worked_hours']." 
+	$query="SELECT DAY(work_day),hours_normal,hours_extra,hours_absence,hours_other,".$gTables['staff'] .".id_staff,id_work_type_extra,id_absence_type,id_other_type,note FROM ".$gTables['staff_worked_hours']." 
 	LEFT JOIN ". $gTables['staff'] . " ON ". $gTables['staff_worked_hours'] .".id_staff = ". $gTables['staff'] .".id_staff 
 	WHERE MONTH(work_day) = '". $mese ."' AND YEAR(work_day) = '". $anno ."' ORDER BY id_staff ASC";
 	$resc = gaz_dbi_query($query);
@@ -333,8 +333,8 @@ $gForm = new humresForm();
 							$bt[$c]='btn-default';
 						}
 						?>
-						<td class="<?php echo $td[$c]; ?> text-center">
-							<a class="btn btn-xs <?php echo $bt[$c]; ?> dialog_worker_card" title="Modifica il cartellino" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" hourly_cost="<?php echo (isset($oper['last_hourly_cost']))?$oper['last_hourly_cost']:0; ?>"  date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c+1); ?>" >
+						<td class="<?php echo $td[$c]; ?> text-center" title="<?php echo (isset($month_res[$c+1][$oper['id_staff']]['note'])&&!empty($month_res[$c+1][$oper['id_staff']]['note']))?$month_res[$c+1][$oper['id_staff']]['note']:'nessuna nota'; ?>">
+							<a class="btn btn-xs <?php echo $bt[$c]; ?> dialog_worker_card" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" hourly_cost="<?php echo (isset($oper['last_hourly_cost']))?$oper['last_hourly_cost']:0; ?>"  date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c+1); ?>" >
 								<i class="glyphicon glyphicon-edit"><br/><?php echo ($c+1).'<br/>'.$week_day; ?></i>
 							</a>
 						</td>
@@ -363,7 +363,7 @@ $gForm = new humresForm();
 					for($c=1;$c<$col+1 ; $c++){
 						?>
 						<td class="<?php echo $td[$c-1]; ?> text-warning" >
-						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_extra']) AND $month_res[$c][$oper['id_staff']]['hours_extra']>0 ){
+						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_extra']) && $month_res[$c][$oper['id_staff']]['hours_extra']>0 ){
 							?>
 							<a style="cursor: help;" data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di straordinario" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['extra_des']))?$month_res[$c][$oper['id_staff']]['extra_des']:''; ?>">
 							<?php 
@@ -381,7 +381,7 @@ $gForm = new humresForm();
 					for($c=1;$c<$col+1 ; $c++){
 						?>
 						<td class="<?php echo $td[$c-1]; ?>" >
-						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_other']) AND $month_res[$c][$oper['id_staff']]['hours_other']>0 ){
+						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_other']) && $month_res[$c][$oper['id_staff']]['hours_other']>0 ){
 							?>
 							<a style="cursor: help;" data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore festive e notturne" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['other_des']))?$month_res[$c][$oper['id_staff']]['other_des']:''; ?>">
 							<?php 
@@ -399,7 +399,7 @@ $gForm = new humresForm();
 					for($c=1;$c<$col+1 ; $c++){
 						?>
 						<td class="<?php echo $td[$c-1]; ?>" >
-						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_absence']) AND $month_res[$c][$oper['id_staff']]['hours_absence']>0 ){
+						<?php if (isset($month_res[$c][$oper['id_staff']]['hours_absence']) && $month_res[$c][$oper['id_staff']]['hours_absence']>0 ){
 							?>
 							<a style="cursor: help;" data-toggle="popover" tabindex="<?php echo $c-1; ?>" data-placement="auto" data-trigger="focus" title="Ore di assenza" data-content="<?php echo (isset($month_res[$c][$oper['id_staff']]['absence_des']))?$month_res[$c][$oper['id_staff']]['absence_des']:''; ?>">
 							<?php 
