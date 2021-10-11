@@ -45,7 +45,7 @@ function getWorkedHours($mese,$anno) { // Carico staff worked hours per il dato 
 		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_other_type']);
 		$month_res[$r['daynum']][$r['id_staff']]['other_des']=($des)?$des['descri_ext']:'';
 		// riprendo pure tutte le note da staff_work_movements (cartellino)
-		$card_res = gaz_dbi_dyn_query('note', $gTables['staff_work_movements'], "id_staff = " . $r['id_staff']. " AND start_work BETWEEN '" . $r['work_day'] ." 00:00:00' AND '" . $r['work_day'] ." 23:59:59'");
+		$card_res = gaz_dbi_dyn_query('note', $gTables['staff_work_movements'], "id_staff = " . intval($r['id_staff']). " AND start_work BETWEEN '" . $r['work_day'] ." 00:00:00' AND '" . $r['work_day'] ." 23:59:59'");
 		$accnote=(empty($r['note']))?'':$r['note'].', ';
 		while($cr=gaz_dbi_fetch_array($card_res) ) {
 
@@ -67,7 +67,6 @@ function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per
 	while($col = $coll->fetch_assoc()){
 		$cols[]=$col;
 	}
-	//echo "<pre>",print_r($cols);die;
 	return $cols;
 }
 
@@ -99,8 +98,6 @@ if ($_POST) { // accessi successivi
 	if (isset($_POST['go_print'])){
 		$_SESSION['print_request']=['script_name'=>'print_timesheet','year'=>$form['anno'],'month'=>$form['mese']];
         header("Location: sent_print.php");
-		//header("Location: print_timesheet.php?year=".$form['anno']."&month=".$form['mese']);
-		
 	}
 	
 } else { // al primo accesso

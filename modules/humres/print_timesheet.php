@@ -87,7 +87,8 @@ for ($i=0; $i<=30; $i++){
  
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
-$pdf->SetTopMargin(51);
+$pdf->SetTopMargin(45);
+$pdf->SetFooterMargin(10);
 $config = new Config;
 $pdf->SetFont('helvetica','',7);
 $pdf->AddPage('L',$config->getValue('page_format'));
@@ -137,8 +138,8 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 				// richiamo dal database i dati del giorno
 				$work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $mv['id_staff'], "AND work_day = '{$aDates[$i]['strdate']}'");
 				// riprendo pure tutte le note da staff_work_movements (cartellino)
-				$card_res = gaz_dbi_dyn_query('note', $gTables['staff_work_movements'], "id_staff = " .$mv['id_staff']. " AND start_work BETWEEN '" . $aDates[$i]['strdate'] ." 00:00:00' AND '" . $aDates[$i]['strdate'] ." 23:59:59'");
-				$accnote=(empty($mv['note']))?'':$mv['note'].', ';
+				$card_res = gaz_dbi_dyn_query('note', $gTables['staff_work_movements'], "id_staff = " .intval($mv['id_staff']). " AND start_work BETWEEN '" . $aDates[$i]['strdate'] ." 00:00:00' AND '" . $aDates[$i]['strdate'] ." 23:59:59'");
+				$accnote=(empty($work_h['note']))?'':$work_h['note'].', ';
 				while($cr=gaz_dbi_fetch_array($card_res) ) {
 					$accnote.=(empty($cr['note']))?'':$cr['note'].', ';
 				}
