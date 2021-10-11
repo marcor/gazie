@@ -29,21 +29,29 @@ $admin_aziend = checkAdmin();
 function getWorkedHours($mese,$anno) { // Carico staff worked hours per il dato mese e anno
 	global $gTables;
 	$month_res=array();
-	$query="SELECT DAY(work_day),hours_normal,hours_extra,hours_absence,hours_other,".$gTables['staff'] .".id_staff,id_work_type_extra,id_absence_type,id_other_type,note FROM ".$gTables['staff_worked_hours']." 
+	$query="SELECT DAY(work_day) AS daynum,work_day,hours_normal,hours_extra,hours_absence,hours_other,".$gTables['staff'] .".id_staff,id_work_type_extra,id_absence_type,id_other_type,note FROM ".$gTables['staff_worked_hours']." 
 	LEFT JOIN ". $gTables['staff'] . " ON ". $gTables['staff_worked_hours'] .".id_staff = ". $gTables['staff'] .".id_staff 
 	WHERE MONTH(work_day) = '". $mese ."' AND YEAR(work_day) = '". $anno ."' ORDER BY id_staff ASC";
 	$resc = gaz_dbi_query($query);
 	while($r = mysqli_fetch_array($resc)){
-		$month_res[$r['DAY(work_day)']][$r['id_staff']] = $r;
+		$month_res[$r['daynum']][$r['id_staff']] = $r;
 		
 		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_work_type_extra']);
-		$month_res[$r['DAY(work_day)']][$r['id_staff']]['extra_des']=($des)?$des['descri_ext']:'';
+		$month_res[$r['daynum']][$r['id_staff']]['extra_des']=($des)?$des['descri_ext']:'';
 		
 		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_absence_type']);
-		$month_res[$r['DAY(work_day)']][$r['id_staff']]['absence_des']=($des)?$des['descri_ext']:'';
+		$month_res[$r['daynum']][$r['id_staff']]['absence_des']=($des)?$des['descri_ext']:'';
 		
 		$des=gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $r['id_other_type']);
-		$month_res[$r['DAY(work_day)']][$r['id_staff']]['other_des']=($des)?$des['descri_ext']:'';
+		$month_res[$r['daynum']][$r['id_staff']]['other_des']=($des)?$des['descri_ext']:'';
+		// riprendo pure tutte le note da staff_work_movements (cartellino)
+		$card_res = gaz_dbi_dyn_query('note', $gTables['staff_work_movements'], "id_staff = " . $r['id_staff']. " AND start_work BETWEEN '" . $r['work_day'] ." 00:00:00' AND '" . $r['work_day'] ." 23:59:59'");
+		$accnote=(empty($r['note']))?'':$r['note'].', ';
+		while($cr=gaz_dbi_fetch_array($card_res) ) {
+
+			$accnote.=(empty($cr['note']))?'':$cr['note'].', ';
+		}
+		$month_res[$r['daynum']][$r['id_staff']]['mov_note'] = substr($accnote,0,-2);
 	}	
 	return $month_res;
 }
@@ -54,7 +62,7 @@ function getWorkers($mese,$anno) { // carico i collaboratori ancora in forza per
 	$query="SELECT ragso1,ragso2,id_staff,id_clfoco,last_hourly_cost FROM ".$gTables['staff']."
 	LEFT JOIN ". $gTables['clfoco'] . " ON ". $gTables['staff'] .".id_clfoco = ". $gTables['clfoco'] .".codice 
 	LEFT JOIN ". $gTables['anagra'] . " ON ". $gTables['anagra'] .".id = ". $gTables['clfoco'] .".id_anagra
-	WHERE DATE_FORMAT(end_date, '%Y-%m') >= '".$anno."-".$mese."' OR end_date IS NULL OR end_date <= '2004-01-27'";
+	WHERE DATE_FORMAT(start_date, '%Y%m') <=  ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." AND (DATE_FORMAT(end_date, '%Y%m') >= ".$anno.str_pad($mese,2,"0",STR_PAD_LEFT)." OR end_date IS NULL OR end_date <= '2004-01-27')";
 	$coll = gaz_dbi_query($query);
 	while($col = $coll->fetch_assoc()){
 		$cols[]=$col;
@@ -333,7 +341,7 @@ $gForm = new humresForm();
 							$bt[$c]='btn-default';
 						}
 						?>
-						<td class="<?php echo $td[$c]; ?> text-center" title="<?php echo (isset($month_res[$c+1][$oper['id_staff']]['note'])&&!empty($month_res[$c+1][$oper['id_staff']]['note']))?$month_res[$c+1][$oper['id_staff']]['note']:'nessuna nota'; ?>">
+						<td class="<?php echo $td[$c]; ?> text-center" title="<?php echo (isset($month_res[$c+1][$oper['id_staff']]['mov_note'])&&!empty($month_res[$c+1][$oper['id_staff']]['mov_note']))?$month_res[$c+1][$oper['id_staff']]['mov_note']:'nessuna nota'; ?>">
 							<a class="btn btn-xs <?php echo $bt[$c]; ?> dialog_worker_card" staff_name="<?php echo (isset($oper['ragso1']))?$oper['ragso1']:''," ",(isset($oper['ragso2']))?$oper['ragso2']:''; ?>" id_staff="<?php echo (isset($oper['id_staff']))?$oper['id_staff']:''; ?>" hourly_cost="<?php echo (isset($oper['last_hourly_cost']))?$oper['last_hourly_cost']:0; ?>"  date="<?php echo $form['anno'],"-",sprintf("%02d", $form['mese']),"-",sprintf("%02d", $c+1); ?>" >
 								<i class="glyphicon glyphicon-edit"><br/><?php echo ($c+1).'<br/>'.$week_day; ?></i>
 							</a>

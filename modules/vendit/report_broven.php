@@ -135,7 +135,7 @@ if (count($_GET)<=1){
         $_GET['anno']=$last['yearde'];
 	} else {
 		$default_where= ['auxil' => 'VOR', 'anno'=>date("Y")];	
-        $_GET['anno']=$date("Y");
+        $_GET['anno']=date("Y");
 	}
 	
 } else {

@@ -58,7 +58,7 @@ $luogo_data=$admin_aziend['citspe'].", lì " . ucwords(strftime("%d %B %Y", mkti
 require("../../config/templates/report_template.php");
 require("lang.".$admin_aziend['lang'].".php");
 $script_transl=$strScript['employee_timesheet.php'];
-$where=" (start_date <= '".$last_day."' OR end_date IS NULL ) AND (end_date < '2000-01-01' OR end_date IS NULL OR end_date > '".$first_day."')";
+$where=" (start_date <= '".$last_day."' ) AND (end_date < '2000-01-01' OR end_date IS NULL OR end_date > '".$first_day."')";
 $what="*";
 $tables=$gTables['staff'] . ' AS st LEFT JOIN ' . $gTables['clfoco'] . ' AS wo ON st.id_clfoco=wo.codice ';
 $result = gaz_dbi_dyn_query($what, $tables, $where, 'id_staff');
@@ -136,7 +136,13 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 				$k=$i+1;
 				// richiamo dal database i dati del giorno
 				$work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $mv['id_staff'], "AND work_day = '{$aDates[$i]['strdate']}'");
-				
+				// riprendo pure tutte le note da staff_work_movements (cartellino)
+				$card_res = gaz_dbi_dyn_query('note', $gTables['staff_work_movements'], "id_staff = " .$mv['id_staff']. " AND start_work BETWEEN '" . $aDates[$i]['strdate'] ." 00:00:00' AND '" . $aDates[$i]['strdate'] ." 23:59:59'");
+				$accnote=(empty($mv['note']))?'':$mv['note'].', ';
+				while($cr=gaz_dbi_fetch_array($card_res) ) {
+					$accnote.=(empty($cr['note']))?'':$cr['note'].', ';
+				}
+				$accnote=substr($accnote,0,-2);
 				if (isset($work_h) AND $work_h['hours_normal']>=0.01){
 					$hn=floatval($work_h['hours_normal']);
 				} else {
@@ -171,10 +177,9 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 				} else {
 					$ho='';	
 				}
-				if (isset($work_h) AND !empty(trim($work_h['note']))){
-					$note=$work_h['note'];
+				if (!empty($accnote)){
 					$dn=gaz_format_date($aDates[$i]['strdate'],false,true);
-					$leg_note[$dn]= $note;
+					$leg_note[$dn]= $accnote;
 				}
 				if ($aDates[$i]['daydate']==0){
 					$pdf->SetFillColor(255,150,150);
