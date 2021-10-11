@@ -274,8 +274,8 @@ class contabForm extends GAzieForm {
                     } else {                                      //ricerca per ragione sociale
                         $partner = $this->queryAnagra(" a.ragso1 LIKE '" . addslashes($strSearch) . "%'");
                     }
-                    if (count($partner) > 0) {
-                        echo "\t<select name=\"$name\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
+                    if (count($partner) > 1 || $_POST['hidden_req']=='change') {
+                        echo "\t<select name=\"$name\" class=\"FacetSelect\"  onchange=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
                         echo "<option value=\"0\"> ---------- </option>";
                         preg_match("/^id_([0-9]+)$/", $val, $match);
                         foreach ($partner as $r) {
@@ -308,6 +308,23 @@ class contabForm extends GAzieForm {
                             echo "\t\t <option $style value=\"" . $r['codice'] . "\" $selected $disabled>" . substr($r["codice"], 3, 6) . '-' . $r["ragsoc"] . " " . $r["citta"] . "</option>\n";
                         }
                         echo "\t </select>\n";
+					} elseif(count($partner) == 1){
+						$style='';
+						if ($this->master_value < 0) { // vado cercando tutti i partner del piano dei conti
+							if ($partner[0]["codice"] < 1) {  // disabilito le anagrafiche presenti solo in altre aziende
+							}
+						} elseif ($partner[0]["codice"] < 1) {
+							$partner[0]['codice'] = 'id_' . $partner[0]['id'];
+							$style = 'style="background:#FF6666";';
+						} elseif (substr($partner[0]["codice"], 0, 3) != substr($this->master_value,0,3)) {// non appartiene al mastro passato in $m
+							$partner[0]['codice'] = 'id_' . $partner[0]['id'];
+							$style = 'style="background:#FF6666";';
+						}
+						$val=$partner[0]['codice'];
+						echo "\t<input type=\"submit\" id=\"onlyone_submit\" value=\"→ \" onclick=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
+						echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";						
+						echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner[0]['ragsoc'], 0, 8) . "\">\n";
+						echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner[0]['ragsoc'] . "\" name=\"change\" ".$style." onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
                     } else {
                         $msg = $mesg[0];
                         echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
@@ -316,15 +333,15 @@ class contabForm extends GAzieForm {
                     $msg = $mesg[1];
                     echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
                 }
-                echo "\t<input type=\"text\" id=\"search_$name\" name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"15\"  class=\"FacetInput\">\n";
-                if (isset($msg)) {
-                    echo "<input type=\"text\" style=\"color: red; font-weight: bold;\"  disabled value=\"$msg\">\n";
-                }
-                //echo "\t<input type=\"image\" align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
-                /** ENRICO FEDELE */
-                /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-                echo '<button type="submit" class="btn btn-default btn-sm" name="search_str"><i class="glyphicon glyphicon-search"></i></button>';
-                /** ENRICO FEDELE */
+				if( !strstr($val,'id') && $val<=100000000){
+					echo "\t<input type=\"text\" id=\"search_$name\" name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"16\" size=\"10\" class=\"FacetInput\">\n";
+				}
+				if (isset($msg)) {
+					echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">\n";
+				}
+				if( !strstr($val,'id') && $val<=100000000){
+				   echo '<button type="submit" class="btn btn-default btn-sm" name="search_str"><i class="glyphicon glyphicon-search"></i></button>';
+				}
             }
         } else {   // altri sottoconti
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"\">\n";

@@ -1116,16 +1116,30 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/modal_
 echo '<script type="text/javascript">
       $(function() {
            $( "#search_insert_conto" ).autocomplete({
-           source: "../../modules/root/search.php",
-           minLength: 2,
-        html: true, // optional (jquery.ui.autocomplete.html.js required)
+			source: "../../modules/root/search.php",
+			minLength: 2,
+			html: true, 
+			open: function(event, ui) {
+				$(".ui-autocomplete").css("z-index", 1000);
+			},
+			select: function(event, ui) {
+				$("#search_insert_conto").val(ui.item.value);
+				$(this).closest("form").submit();
+			}
            });';
 for ($i = 0; $i < $_POST['rigcon']; $i++) {
     echo '   $( "#search_conto_rc' . $i . '" ).autocomplete({
-           source: "../../modules/root/search.php",
-           minLength: 2,
-        html: true, // optional (jquery.ui.autocomplete.html.js required)
-           });
+				source: "../../modules/root/search.php",
+				minLength: 2,
+				html: true,
+				open: function(event, ui) {
+					$(".ui-autocomplete").css("z-index", 1000);
+				},
+				select: function(event, ui) {
+					$("#search_conto_rc'.$i.'").val(ui.item.value);
+					$(this).closest("form").submit();
+				}
+			 });
         ';
     if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
         echo '   $( "#dialog_open' . $i . '").dialog({
