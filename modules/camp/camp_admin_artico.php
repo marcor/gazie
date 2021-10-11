@@ -92,7 +92,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['or_spec']=$_POST['or_spec'];
 	$form['or_macro']=$_POST['or_macro'];
 	$form['confezione']=$_POST['confezione'];
-	$form['varieta']=$_POST['varieta']; 
+	 
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
 	$form['conferma'] = $_POST['conferma'];
@@ -379,7 +379,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['or_spec']=($camp)?$camp['or_spec']:'';
 	$form['or_macro']=($camp)?$camp['or_macro']:0;
 	$form['confezione']=($camp)?$camp['confezione']:0;
-	$form['varieta']=($camp)?$camp['varieta']:'';
+	
 	$form['conferma'] = "";
 	if(!isset($form['or_spec'])){$form['or_spec']=0;} 
 	if($form['or_spec']=="Spagna"){$form['or_spec']=1;}
@@ -465,7 +465,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['or_spec']="";
 	$form['or_macro']="";
 	$form['confezione']=0;
-	$form['varieta']="";
+	$form['quality']="";
     $form['nomefito']="";
     $form['id_anagra'] = "";
 	$form['fornitore'] = "";
@@ -1179,7 +1179,7 @@ select: function(event, ui) {
 							<div class="col-md-12">
 								<div class="form-group">
 									<label for="varieta" class="col-sm-4 control-label">Varietà (da utilizzare per i monovarietali)</label>
-									<input tabindex="18" class="col-sm-2" type="text" value="<?php echo $form['varieta']; ?>" name="varieta" maxlength="15" /> 
+									<input tabindex="18" class="col-sm-2" type="text" value="<?php echo $form['quality']; ?>" name="quality" maxlength="15" /> 
 								</div>
 							</div>
 						</div><!-- chiude row  -->
@@ -1196,7 +1196,7 @@ select: function(event, ui) {
 								<input type="hidden" name="etichetta" value="" />
 								<input type="hidden" name="categoria" value="" />
 								<input type="hidden" name="confezione" value="" />
-								<input type="hidden" name="varieta" value="" />
+								<input type="hidden" name="quality" value="" />
 								</div>
 							</div>
 						</div>
