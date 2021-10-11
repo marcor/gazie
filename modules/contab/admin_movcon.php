@@ -1001,9 +1001,13 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                 $last_open_id_tesdoc_ref = $new_paymov[$j]['id_tesdoc_ref'];
                             } else {  // chiusura partita
                                 if ($new_paymov[$j]['id_tesdoc_ref'] == 'new' && $last_open_id_tesdoc_ref > 1) {
-                                    // ho una chiusura partita senza riferimenti (new): se ce l'ho utilizzo quello d'apertura 
+                                    // ho una chiusura partita senza riferimenti (new): se ce l'ho utilizzo quello d'apertura 202161000000001
                                     $new_paymov[$j]['id_tesdoc_ref'] = $last_open_id_tesdoc_ref;
-                                }
+                                } elseif (is_numeric($new_paymov[$j]['id_tesdoc_ref'])&&$new_paymov[$j]['id_tesdoc_ref']>200400000000000) {
+									// lascio il riferimento alla partita scelta dall'utente
+                                } else {
+                                    $new_paymov[$j]['id_tesdoc_ref'] = $form['date_reg_Y'] . str_pad($last_id_rig,11,'0',STR_PAD_LEFT);								
+								}
                                 $new_paymov[$j]['id_rigmoc_pay'] = $last_id_rig;
                                 if (!isset($new_paymov[$j]['amount']) || $new_paymov[$j]['amount'] < 0.01) { // se no ho una partita impostata manualmente uso i dati del rigo 
                                     $new_paymov[$j]['expiry'] = $newValue['datreg'];
@@ -1830,7 +1834,9 @@ echo "</script>\n";
         <div id="paymov_last_id' . $i . '" value="' . $i_j . '"></div>
         ';
             $partner_paymov = $anagrafica->getPartner($form['conto_rc' . $i]);
-            if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
+			if (!$partner_paymov) { // non selezionato
+                echo '<div id="dialog_open' . $i . '" >';
+            } elseif ($form['paymov_op_cl'][$i] == 1) { // apertura partita
                 echo '<div id="dialog_open' . $i . '" partner="' . $partner_paymov['ragso1'] . '" title="Apertura: ' . $form['descrizion'] . ' - ' . $partner_paymov['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
             } else {  // chiusura partita
                 echo '<div id="dialog_close' . $i . '" partner="' . $partner_paymov['ragso1'] . '" title="Chiusura: ' . $form['descrizion'] . ' - ' . $partner_paymov['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
