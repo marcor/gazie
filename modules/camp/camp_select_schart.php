@@ -41,11 +41,15 @@ function getMovements($cm_ini,$cm_fin,$art_ini,$art_fin,$date_ini,$date_fin)
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
               $gTables['clfoco'].".codice, ".
+			  $gTables['camp_mov_sian'].".recip_stocc, ".
+			  $gTables['lotmag'].".identifier, ".
               $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
-              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".image, ".$gTables['artico'].".catmer ";
+              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".image, ".$gTables['artico'].".catmer, ".$gTables['artico'].".quality ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON ".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".campo_impianto = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
+			   LEFT JOIN ".$gTables['lotmag']." ON ".$gTables['lotmag'].".id_movmag = ".$gTables['movmag'].".id_mov
+			   LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
                LEFT JOIN ".$gTables['artico']." ON ".$gTables['movmag'].".artico = ".$gTables['artico'].".codice";
         $rs=gaz_dbi_dyn_query ($what, $table,$where,"catmer ASC, artico ASC, datreg ASC, id_mov ASC");
         while ($r = gaz_dbi_fetch_array($rs)) {
@@ -279,10 +283,19 @@ if (isset($_POST['preview']) and $msg=='') {
             $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
             $r_span=count($magval);
             foreach ($magval as $mval) {
+				$addes="";
               if ($ctrl_id <> $mv['id_mov']) {
+				if (strlen($mv['recip_stocc'])>0){
+					$addes .="-Silos:".$mv['recip_stocc'];
+				}
+				if (strlen($mv['recip_stocc'])>0){
+					$addes .="-Silos:".$mv['identifier'];
+					$addes .="-Var.:".$mv['quality'];
+				}
+				
                 echo "<tr><td class=\"FacetDataTD\" rowspan=\"$r_span\">".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
                 echo "<td align=\"center\" class=\"FacetDataTD\" rowspan=\"$r_span\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)."</td>";
-                echo "<td class=\"FacetDataTD\" rowspan=\"$r_span\">".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85)."</td>";
+                echo "<td class=\"FacetDataTD\" rowspan=\"$r_span\">".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85).$addes."</td>";
                 /*echo "<td align=\"right\" class=\"FacetDataTD\" rowspan=\"$r_span\">".number_format($mv['prezzo'],$admin_aziend['decimal_price'],',','.')."</td>";*/
                 echo "<td align=\"right\" class=\"FacetDataTD\" rowspan=\"$r_span\">".$mv['unimis']."</td>\n";
               } else {
