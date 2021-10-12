@@ -98,7 +98,7 @@ class FatturaAllegata extends Template
                     $this->Cell(14, 5, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(15, 5, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
                     if ($rigo['sconto']>0) {
-                       $this->Cell(7, 5,  number_format($rigo['sconto'],1,',',''),1,0,'C');
+                       $this->Cell(7, 5,  number_format($rigo['sconto'],1,',',''),1,0,'C', 0, '', 1);
                     } else {
                        $this->Cell(7, 5, '',1,0,'C');
                     }
