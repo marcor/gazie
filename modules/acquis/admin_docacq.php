@@ -142,6 +142,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						$_POST['rows'][$i]['id_orderman'] = intval($row['id_orderman']);
 						$_POST['rows'][$i]['id_rig'] = intval($row['id_rig']);
 						$value = gaz_dbi_get_row($gTables['artico'], "codice", substr($row['codart'], 0, 15));
+						$_POST['rows'][$i]['quality'] = strval($value['quality']);
 						$_POST['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
 						$_POST['rows'][$i]['pesosp'] = floatval($value['peso_specifico']);
 						$_POST['rows'][$i]['gooser'] = intval($value['good_or_service']);
@@ -241,6 +242,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	$form['in_SIAN'] = $_POST['in_SIAN'];
     $form['in_unimis'] = $_POST['in_unimis'];
     $form['in_quanti'] = floatval($_POST['in_quanti']);
+	$form['in_quality'] = strval($_POST['in_quality']);
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
@@ -286,6 +288,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['pesosp'] = floatval($value['pesosp']);
             $form['rows'][$i]['gooser'] = intval($value['gooser']);
             $form['rows'][$i]['quamag'] = floatval($value['quamag']);
+			$form['rows'][$i]['quality'] = strval($value['quality']);
             $form['rows'][$i]['scorta'] = floatval($value['scorta']);
             $form['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);			
 			$form['rows'][$i]['SIAN'] = intval($value['SIAN']);
@@ -375,6 +378,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_gooser'] = $form['rows'][$key_row]['gooser'];
                     $form['in_scorta'] = $form['rows'][$key_row]['scorta'];
                     $form['in_quamag'] = $form['rows'][$key_row]['quamag'];
+					$form['in_quality'] = $form['rows'][$key_row]['quality'];
                     $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
 					$form['in_SIAN'] = $form['rows'][$key_row]['SIAN'];
 					$form['in_cod_operazione'] = $form['rows'][$key_row]['cod_operazione'];
@@ -741,6 +745,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
 								$value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
 								$value_sian['id_movmag']=$id_movmag;
+								$value_sian['varieta']=$form['rows'][$i]['quality'];
 								gaz_dbi_table_insert('camp_mov_sian', $value_sian);
 							}
 						}
@@ -769,6 +774,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 							$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
 							$value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
 							$value_sian['id_movmag']=$last_movmag_id;
+							$value_sian['varieta']=$form['rows'][$i]['quality'];
 							gaz_dbi_table_insert('camp_mov_sian', $value_sian);
 						}
                     }
@@ -940,6 +946,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 							$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
 							$value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
 							$value_sian['id_movmag']=$last_movmag_id;
+							$value_sian['varieta']=$form['rows'][$i]['quality'];
 							gaz_dbi_table_insert('camp_mov_sian', $value_sian);
 						}
 					}
@@ -1074,6 +1081,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['quamag'] = 0;
             $form['rows'][$old_key]['lot_or_serial'] = $form['in_lot_or_serial'];
 			$form['rows'][$old_key]['SIAN'] = $form['in_SIAN'];
+			$form['rows'][$old_key]['quality'] = $form['in_quality'];
 			$form['rows'][$old_key]['cod_operazione'] = 11;
 			$form['rows'][$old_key]['recip_stocc'] = "";
 			$form['rows'][$old_key]['recip_stocc_destin'] = "";
@@ -1153,6 +1161,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['gooser'] = $artico['good_or_service'];
                 $form['rows'][$i]['descri'] = $artico['descri'];
                 $form['rows'][$i]['unimis'] = $artico['uniacq'];
+				$form['rows'][$i]['quality'] = $artico['quality'];
                 $form['rows'][$i]['lot_or_serial'] = $artico['lot_or_serial'];
 				$form['rows'][$i]['SIAN'] = $artico['SIAN'];
                 $form['rows'][$i]['codric'] = $form['in_codric'];
@@ -1332,6 +1341,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $array_destinazioni = gaz_dbi_fetch_all($rs_query_destinazioni);
         /* fine modifica FP */
         $form['in_quanti'] = 0;
+		$form['in_quality'] = 0;
         $form['in_id_mag'] = 0;
         $form['in_id_wharehouse'] = 1;
         $form['in_id_order'] = 0;
@@ -1450,6 +1460,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_tiprig'] = 0;
     /*    $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
+	$form['in_quality'] = "";
 	$form['SIAN']= 0;
 	$form['cod_operazione']=11;
 	$form['recip_stocc']="";
@@ -1568,6 +1579,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['descri'] = $row['descri'];
 				$form['rows'][$i]['tiprig'] = $row['tiprig'];
 				$form['rows'][$i]['codart'] = $row['codart'];
+				$form['rows'][$i]['quality'] = $articolo['quality'];
 				$form['rows'][$i]['codice_fornitore'] = $row['codice_fornitore'];//M1 aggiunto a mano
 				$form['rows'][$i]['pervat'] = $row['pervat'];
 				$form['rows'][$i]['ritenuta'] = $row['ritenuta'];
@@ -1654,6 +1666,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['descri'] = $row['descri'];
         $form['rows'][$i]['tiprig'] = $row['tiprig'];
         $form['rows'][$i]['codart'] = $row['codart'];
+		$form['rows'][$i]['quality'] = $articolo['quality'];
 		$form['rows'][$i]['codice_fornitore'] = $row['codice_fornitore'];//M1 aggiunto a mano
         $form['rows'][$i]['pervat'] = $row['pervat'];
         $form['rows'][$i]['ritenuta'] = $row['ritenuta'];
@@ -1686,8 +1699,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['gooser'] = $articolo['good_or_service'];
         $form['rows'][$i]['lot_or_serial'] = $articolo['lot_or_serial'];
         $form['rows'][$i]['SIAN'] = $articolo['SIAN'];
+		$form['rows'][$i]['quality'] = $articolo['quality'];
       } else {
         $form['rows'][$i]['codart']='';
+		$form['rows'][$i]['quality']='';
         $form['rows'][$i]['scorta']=0;
         $form['rows'][$i]['quamag']=0;
         $form['rows'][$i]['pesosp']=0;
@@ -1788,6 +1803,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_tiprig'] = 0;
     /*    $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
+	$form['in_quality'] = "";
 	$form['in_SIAN'] = 0;
     $form['in_codice_fornitore'] = '';
     $form['in_pervat'] = "";
@@ -2237,6 +2253,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 		<input type="hidden" value="<?php echo $form['in_status']; ?>" name="in_status" />
 		<input type="hidden" value="<?php echo $form['in_tiprig']; ?>" name="in_tiprig" />
 		<input type="hidden" value="<?php echo $form['in_codart']; ?>" name="in_codart" />
+		<input type="hidden" value="<?php echo $form['in_quality']; ?>" name="in_quality" />
 		<input type="hidden" value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
 		<input type="hidden" value="<?php echo $form['in_codvat']; ?>" name="in_codvat" />
 		<input type="hidden" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
@@ -2327,6 +2344,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $vidrig . "\" name=\"rows[$k][id_rig]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
+				echo "<input type=\"hidden\" value=\"" . $v['quality'] . "\" name=\"rows[$k][quality]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['SIAN'] . "\" name=\"rows[$k][SIAN]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['codvat'] . "\" name=\"rows[$k][codvat]\">\n";
@@ -2533,7 +2551,16 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 									?>
 								</div>
 							</div>
-							<?php if ($campart['confezione']==0){?>
+							<?php 
+							if (!isset($campart)){
+								?>
+								<div class="col-md-4">
+									<div class="form-group">
+									<p>ERRORE l'articolo non è impostato correttamente</p>
+									</div>
+								</div>
+								<?php								
+							}elseif ($campart['confezione']==0){?>
 							<div class="col-md-4">
 								<div class="form-group">
 									<label for="good_or_service" class="col-sm-5 control-label"><?php echo "recipiente stoccaggio rigo ",$k+1; ?></label>
