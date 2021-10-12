@@ -137,6 +137,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						$_POST['rows'][$i]['codric'] = intval($row['codric']);
 						$_POST['rows'][$i]['provvigione'] = floatval($row['provvigione']);
 						$_POST['rows'][$i]['id_mag'] = intval($row['id_mag']);
+						$_POST['rows'][$i]['id_wharehouse'] = intval($row['id_wharehouse']);
 						$_POST['rows'][$i]['id_order'] = intval($row['id_order']);
 						$_POST['rows'][$i]['id_orderman'] = intval($row['id_orderman']);
 						$_POST['rows'][$i]['id_rig'] = intval($row['id_rig']);
@@ -243,6 +244,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
+    $form['in_id_wharehouse'] = $_POST['in_id_wharehouse'];
     $form['in_id_order'] = intval($_POST['in_id_order']);
     $form['in_id_orderman'] = $_POST['in_id_orderman'];
     $form['in_annota'] = $_POST['in_annota'];
@@ -274,6 +276,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['codric'] = intval($value['codric']);
             $form['rows'][$i]['provvigione'] = floatval($value['provvigione']);
             $form['rows'][$i]['id_mag'] = intval($value['id_mag']);
+            $form['rows'][$i]['id_wharehouse'] = 1;
+			if ($value['id_mag']>0){ // se ho un movimento di magazzino associato riprendo l'id del magazzino
+				
+			}
             $form['rows'][$i]['id_order'] = intval($value['id_order']);
             $form['rows'][$i]['id_orderman'] = intval($value['id_orderman']);
             $form['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
@@ -359,6 +365,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_codric'] = $form['rows'][$key_row]['codric'];
                     $form['in_provvigione'] = $form['rows'][$key_row]['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
                     $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
+                    $form['in_id_wharehouse'] = $form['rows'][$key_row]['id_wharehouse'];
                     $form['in_id_order'] = $form['rows'][$key_row]['id_order'];
 					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$key_row]['id_orderman']);
                     $form['coseprod'] = $orderman['description'];
@@ -641,7 +648,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $magazz->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
 						// se c'è stato, azzero pure il movimento sian 
 						gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
-                    } 
+                    }
                     if ($form['tipdoc'] == 'AFA' || $form['tipdoc'] == 'AFC') { // su fatture immediate e note credito metto il numero documento ugale al numero fatture
                         $form['numdoc'] = $form['numfat'];
                     }
@@ -1044,6 +1051,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$old_key]['descri'] = $form['in_descri'];
             $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
+            $form['rows'][$old_key]['id_wharehouse'] = $form['in_id_wharehouse'];
             $form['rows'][$old_key]['id_order'] = $form['in_id_order'];
             $form['rows'][$old_key]['id_orderman'] = $form['in_id_orderman'];
             $form['rows'][$old_key]['status'] = "UPDATE";
@@ -1122,6 +1130,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$i]['descri'] = $form['in_descri'];
             $form['rows'][$i]['id_mag'] = $form['in_id_mag'];
+            $form['rows'][$i]['id_wharehouse'] = $form['in_id_wharehouse'];
             $form['rows'][$i]['id_order'] = $form['in_id_order'];
             $form['rows'][$i]['id_orderman'] = $form['in_id_orderman'];
             $form['rows'][$i]['provvigione'] = $form['in_provvigione'];
@@ -1324,6 +1333,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         /* fine modifica FP */
         $form['in_quanti'] = 0;
         $form['in_id_mag'] = 0;
+        $form['in_id_wharehouse'] = 1;
         $form['in_id_order'] = 0;
         $form['in_annota'] = "";
         $form['in_pesosp'] = 0;
@@ -1465,6 +1475,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
     }
     $form['in_id_mag'] = 0;
+    $form['in_id_wharehouse'] = 1; // adesso metto uno ma dovrò proporre il magazzino di rifermiento dell'utente
     $form['in_id_order'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
@@ -1567,9 +1578,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['codvat'] = $row['codvat'];
 				$form['rows'][$i]['codric'] = $row['codric'];
 				$form['rows'][$i]['id_mag'] = $row['id_mag'];
+				$form['rows'][$i]['id_wharehouse'] = 1; 
+				if ($row['id_mag']>0){// dovrò riprendere l'id del magazzino del relativo movmag
+					
+				}
 				$form['rows'][$i]['id_order'] = $row['id_order'];
 				$form['rows'][$i]['id_rig'] = $row['id_rig'];
-				$form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa         $form['rows'][$i]['id_mag'] = $row['id_mag'];
+				$form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa        
 				$form['in_id_orderman'] = $row['id_orderman'];
 				$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $row['id_orderman']);
 				$form['coseprod'] = $orderman['description'];
@@ -1649,9 +1664,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['codvat'] = $row['codvat'];
         $form['rows'][$i]['codric'] = $row['codric'];
         $form['rows'][$i]['id_mag'] = $row['id_mag'];
+        $form['rows'][$i]['id_wharehouse'] = 1;
+		if($row['id_mag']>0) { // qui dovrò riprendere il valore da movmag
+			//$form['rows'][$i]['id_wharehouse'] = $mm['id_wharehouse'];
+		}
 		$form['rows'][$i]['id_rig'] = $row['id_rig'];
         $form['rows'][$i]['id_order'] = $row['id_order'];
-        $form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa         $form['rows'][$i]['id_mag'] = $row['id_mag'];
+        $form['rows'][$i]['provvigione'] = $row['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa        
         $form['in_id_orderman'] = $row['id_orderman'];
         $orderman = gaz_dbi_get_row($gTables['orderman'], "id", $row['id_orderman']);
         $form['coseprod'] =($orderman)?$orderman['description']:'';
@@ -1784,6 +1803,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_codric'] = $admin_aziend['purchases_return'];
     }
     $form['in_id_mag'] = 0;
+    $form['in_id_wharehouse'] = 1; // adesso metto uno ma dovrò proporre il magazzino di rifermiento dell'utente
     $form['in_id_order'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
@@ -2202,6 +2222,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 		<input type="hidden" value="<?php echo $form['in_unimis']; ?>" name="in_unimis" />
 		<input type="hidden" value="<?php echo $form['in_prelis']; ?>" name="in_prelis" />
 		<input type="hidden" value="<?php echo $form['in_id_mag']; ?>" name="in_id_mag" />
+		<input type="hidden" value="<?php echo $form['in_id_wharehouse']; ?>" name="in_id_wharehouse" />
 		<input type="hidden" value="<?php echo $form['in_id_order']; ?>" name="in_id_order" />
 		<input type="hidden" value="<?php echo $form['in_annota']; ?>" name="in_annota" />
 		<input type="hidden" value="<?php echo $form['in_pesosp']; ?>" name="in_pesosp" />
@@ -2312,6 +2333,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				echo "<input type=\"hidden\" value=\"" . $v['pervat'] . "\" name=\"rows[$k][pervat]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['codric'] . "\" name=\"rows[$k][codric]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
+				echo "<input type=\"hidden\" value=\"" . $v['id_wharehouse'] . "\" name=\"rows[$k][id_wharehouse]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['id_order'] . "\" name=\"rows[$k][id_order]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
 				echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
