@@ -288,11 +288,11 @@ if (isset($_POST['preview']) and $msg=='') {
 				if (strlen($mv['recip_stocc'])>0){
 					$addes .="-Silos:".$mv['recip_stocc'];
 				}
-				if (strlen($mv['recip_stocc'])>0){
-					$addes .="-Silos:".$mv['identifier'];
+				if (strlen($mv['quality'])>0){					
 					$addes .="-Var.:".$mv['quality'];
-				}
-				
+				}if (strlen($mv['identifier'])>0){
+					$addes .="-Lotto:".$mv['identifier'];					
+				}				
                 echo "<tr><td class=\"FacetDataTD\" rowspan=\"$r_span\">".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
                 echo "<td align=\"center\" class=\"FacetDataTD\" rowspan=\"$r_span\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)."</td>";
                 echo "<td class=\"FacetDataTD\" rowspan=\"$r_span\">".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85).$addes."</td>";
