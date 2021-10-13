@@ -686,7 +686,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     if ($j <= ($count_newpaymov - 1)) { //  se non è un rigo eccedente lo modifico mantenendo il vecchio indice
                                         if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
                                             $new_paymov[$j]['id_rigmoc_doc'] = $row_con['id_rig'];
+                                            $new_paymov[$j]['id_rigmoc_pay'] = 0;
                                         } else {  // chiusura partita
+                                            $new_paymov[$j]['id_rigmoc_doc'] = 0;
                                             $new_paymov[$j]['id_rigmoc_pay'] = $row_con['id_rig'];
                                         }
                                         $new_paymov[$j]['expiry'] = gaz_format_date($new_paymov[$j]['expiry'], true);
