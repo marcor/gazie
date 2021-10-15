@@ -1107,9 +1107,11 @@ $strScript = array("admin_client.php" =>
     ),
     "accounting_documents.php" =>
     array('title' => 'Genera i movimenti contabili a partire dai documenti fiscali',
-        'errors' => array('Data non corretta',
-            'Non ci sono documenti da contabilizzare nell\'intervallo selezionato'
-        ),
+        'err' => 
+			['date'=>'Data non corretta',
+			 'nodoc'=>'Non ci sono documenti da contabilizzare nell\'intervallo selezionato',
+			 'nopaymov'=>'Non è stata selezionata la partita di scadenzario che dovrà essere chiusa dalla Nota di Credito'
+        ],
         'vat_section' => ' della sezione IVA n.',
         'date' => 'Fino al :',
         'type' => 'Registro IVA ',

@@ -25,12 +25,12 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/calsca.inc.php");
-$msg = '';
+$msg=['err'=>[],'war'=>[]];
 
 function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
     global $gTables;
     $type = substr($type, 0, 1);
-    $docs = array();
+    $docs = [];
     if ($date) {
         $date = ' AND datfat <= ' . $date;
     } else {
@@ -41,10 +41,13 @@ function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
+    if (!$row) $row=['protoc'=>'1','datfat'=>date("Y-m-d")]; 
     $docs['ini'] = array('proini' => $row['protoc'], 'date' => $row['datfat']);
+    $row=false;
     $orderby = "datfat DESC, protoc DESC";
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
+    if (!$row) $row=['protoc'=>$docs['ini']['proini'],'datfat'=>$docs['ini']['date']]; 
     $docs['fin'] = array('profin' => $row['protoc'], 'date' => $row['datfat']);
     return $docs;
 }
@@ -54,7 +57,6 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
     $calc = new Compute;
     $type = substr($type, 0, 1);
     if ($date) {
-        //$p = ' AND (YEAR(datfat)*1000000+protoc) <= ' . (substr($date, 0, 4) * 1000000 + $protoc);
         $p = ' AND protoc <= ' . $protoc . ' AND YEAR(datfat) = ' . substr($date, 0, 4);
         $d = ' AND datfat <= ' . $date;
     } else {
@@ -75,24 +77,55 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                         customer.codice,
                         customer.speban AS addebitospese,
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
-    $doc = array();
+    $doc = [];
     $ctrlp = 0;
-
     $carry = 0;
     $ivasplitpay = 0;
     $somma_spese = 0;
     $totimpdoc = 0;
     $rit = 0;
+	$classv='default';
     while ($tes = gaz_dbi_fetch_array($result)) {
         if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
+            $tes['contanti']=false;
+			$title='Modifica';
+			$accpaymov=[];
+			$accpaymov['no']='Partita riferita a questa Nota Credito';
             switch ($tes['tipdoc']) {
-				case "AFA":case "AFC":case "AFD":
+                case "FAI":case "FAP":case "FAA":case "FAF":
 				$bol=$admin_aziend['taxstamp_account'];
+				$classv='success';
+				break;
+				case "FAD":
+				$bol=$admin_aziend['taxstamp_account'];
+				$classv='success disabled';
+				$title='Puoi editare solo i DdT relativi';
+				break;
+				case "FNC":
+				$bol=$admin_aziend['taxstamp_account'];
+				$classv='danger';
+				// per le note credito è necessario l'intervento dell'utente per scegliere quale partita(fattura) verrà chiusa da essa quindi riprendo tutte le eventuali partite ancora aperte/scadute del fornitore
+				$paymov = new Schedule();
+				$paymov->getPartnerStatus($tes['clfoco']);
+				foreach($paymov->PartnerStatus as $k0=>$v0){
+					$vpm=0;
+					$totf=0;
+					foreach($v0 as $k1=>$v1){
+						$totf+=$v1['op_val'];
+						// accumulo solo se è aperta 0 o scaduta 3
+						if($v1['status']==0||$v1['status']==3){$vpm+=($v1['op_val']-$v1['cl_val']);}
+					}
+					if($vpm>0){$accpaymov[$k0]=$v1['descri'].' € '.gaz_format_number($vpm).' residuo='.gaz_format_number($vpm);}
+				}
+				break;
+				case "FND":
+				$bol=$admin_aziend['taxstamp_account'];
+				$classv='info';
 				break;
                 default:
 				$bol=$admin_aziend['boleff'];
+				$classv='default';
 				break;
-
 			}
             if ($ctrlp > 0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
                 $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
@@ -106,8 +139,8 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
             }
             $carry = 0;
             $ivasplitpay = 0;
-            $cast_vat = array();
-            $cast_acc = array();
+            $cast_vat = [];
+            $cast_acc = [];
             $somma_spese = 0;
             $totimpdoc = 0;
             $totimp_decalc = 0.00;
@@ -187,6 +220,9 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                 $carry += $r['prelis'];
             }
         }
+        $doc[$tes['protoc']]['accpaymov'] = $accpaymov;
+        $doc[$tes['protoc']]['title'] = $title;
+        $doc[$tes['protoc']]['classv'] = $classv;
         $doc[$tes['protoc']]['tes'] = $tes;
         $doc[$tes['protoc']]['acc'] = $cast_acc;
         $doc[$tes['protoc']]['car'] = $carry;
@@ -197,7 +233,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         $doc[$tes['protoc']]['vat'] = $calc->castle;
         $ctrlp = $tes['protoc'];
     }
-    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+    if (($doc && $doc[$ctrlp]['tes']['stamp'] >= 0.01) || (isset($taxstamp)&&$taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
         $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
         $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
@@ -251,6 +287,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
     $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
     $form['hidden_req'] = '';
+	$uts_this_date =time();
+	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
 } else {    // accessi successivi
     $form['type'] = substr($_POST['type'], 0, 1);
     $form['vat_section'] = intval($_POST['vat_section']);
@@ -261,9 +299,20 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['profin'] = intval($_POST['profin']);
     $form['year_ini'] = intval($_POST['year_ini']);
     $form['year_fin'] = intval($_POST['this_date_Y']);
+    if (isset($_POST['accpaymov'])) { 
+		$paymoverr=false;
+        foreach($_POST['accpaymov']as$prot=>$v){
+			// in $v ho il id_tesdoc_ref selezionato;
+			$form["accpaymov_$prot"] = $v;
+            $form['accpaymov'][$prot]= $v;
+			// controllo se le partite di scadenzario delle note credito sono state tutte selezionate
+			if($v<2&&$v!='no'){$paymoverr=true;}
+        }
+		if($paymoverr){$msg['err'][]="nopaymov";}
+	}
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     if (!checkdate($form['this_date_M'], $form['this_date_D'], $form['this_date_Y']))
-        $msg .= "0+";
+       $msg['err'][]="date";
     if ($form['hidden_req'] == 'type' || $form['hidden_req'] == 'vat_section') {   //se cambio il registro
         $extreme = getExtremeDocs($form['type'], $form['vat_section']);
         if ($extreme['ini']['proini'] > 0) {
@@ -282,9 +331,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     $form['hidden_req'] = '';
     $uts_this_date = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
-    if (isset($_POST['submit']) && empty($msg)) {   //confermo la contabilizzazione
-        $rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
-        if (count($rs) > 0) {
+	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
+	
+    if (isset($_POST['gosubmit']) && count($msg['err'])==0) {   //confermo la contabilizzazione
+        if (!empty($rs) && count($rs)>0) {
             require("lang." . $admin_aziend['lang'] . ".php");
             $script_transl = $strScript['accounting_documents.php'];
             foreach ($rs as $k => $v) {
@@ -318,7 +368,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         $kac = $admin_aziend['ivacor'];
 						$krit = $admin_aziend['c_ritenute'];
                         break;
-                    case "AFA":$reg = 6;
+                    case "AFA":case "AFT":$reg = 6;
                         $op = 1;
                         $da_c = 'D';
                         $da_p = 'A';
@@ -459,6 +509,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                           pertanto modifico l'array prima di passarlo */
                             unset($paymov_value['id_rigmoc_doc']);
                             $paymov_value['id_rigmoc_pay'] = $paymov_id;
+							if (count($v['accpaymov'])>1 && isset($form["accpaymov_".$v['tes']['protoc']]) && $form["accpaymov_".$v['tes']['protoc']]!='no') { $paymov_value['id_tesdoc_ref'] = $form["accpaymov_".$v['tes']['protoc']];}	   
                         }
                         paymovInsert($paymov_value);
                     }
@@ -495,14 +546,17 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                             'id_rigmoc_pay' => $paymov_id,
                             'amount' => $v_rate,
                             'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
+							if (count($v['accpaymov'])>1 && isset($form["accpaymov_".$v['tes']['protoc']]) && $form["accpaymov_".$v['tes']['protoc']]!='no') { $paymov_value['id_tesdoc_ref'] = $form["accpaymov_".$v['tes']['protoc']];}	   
                         paymovInsert($paymov_value);
                     }
                 }
             }
 		    if ($form['type'] == 'A') {
 				header("Location: ../../modules/acquis/report_docacq.php");
+				exit;
  			} else {
 				header("Location: ../../modules/vendit/report_docven.php");
+				exit;
  			}
         } else {
             $msg .= "1+";
@@ -533,92 +587,91 @@ function setDate(name) {
 </script>
 ";
 
-echo "<form method=\"POST\" name=\"accounting\">\n";
+echo "<form method=\"POST\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['proini'] . "\" name=\"proini\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['year_ini'] . "\" name=\"year_ini\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['year_fin'] . "\" name=\"year_fin\" />\n";
 $gForm = new GAzieForm();
+
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'] . $script_transl['vat_section'];
 $gForm->selectNumber('vat_section', $form['vat_section'], 0, 1, 9, 'FacetSelect', 'vat_section');
 echo "</div>\n";
-echo "<table class=\"Tsmall\" align=\"center\">\n";
-if (!empty($msg)) {
-    echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
+if (count($msg['err']) > 0) { // ho un errore
+    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
 }
+echo "<table class=\"Tsmall\">\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date'] . "</td><td  class=\"FacetDataTD\">\n";
-$gForm->CalendarPopup('this_date', $form['this_date_D'], $form['this_date_M'], $form['this_date_Y'], 'FacetSelect', 1);
+echo '<td class="text-right">'. $script_transl['date'] . " </td><td>\n";
+$gForm->CalendarPopup('this_date', $form['this_date_D'], $form['this_date_M'], $form['this_date_Y'], 't', 1);
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl['type'] . " </td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('type', $script_transl['type_value'], $form['type'], 'FacetSelect', 0, 'type');
+echo '<td class="text-right">' . $script_transl['type'] . ": </td><td>\n";
+$gForm->variousSelect('type', $script_transl['type_value'], $form['type'], '', 0, 'type');
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">Anno contabile</td>\n";
-echo "\t<td class=\"FacetDataTD\">" . $form['year_fin'] . "</td>\n";
+echo '<td class="text-right">Anno contabile: </td>';
+echo '<td> ' . $form['year_fin'] . "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['proini'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\">" . $form['proini'] . " / " . $form['year_ini'] . "</td>\n";
+echo '<td class="text-right">' . $script_transl['proini'] . ": </td>\n";
+echo '<td> '. $form['proini'] . " / " . $form['year_ini'] . "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['profin'] . "</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"profin\" value=\"" . $form['profin'] . "\" align=\"right\" maxlength=\"9\"  /> / " . $form['year_fin'] . "</td>\n";
+echo '<td class="text-right">'. $script_transl['profin'] . ": </td>\n";
+echo '<td><input type="text" name="profin" value="' . $form['profin'] . '" maxlength="9" onchange="this.form.hidden_req.value=\'profin\'; this.form.submit();"/> / ' . $form['year_fin'] . "</td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetDataTD\">\n";
-echo "\t<td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"" .
+echo "\t<td><input type=\"submit\" name=\"return\" value=\"" .
  $script_transl['return'] . "\"></td>\n";
-echo '<td align="right"><input type="submit" name="preview" value="';
-echo $script_transl['view'];
-echo '">';
-echo "\t </td>\n";
+echo "<td></td>\n";
 echo "\t </tr>\n";
 echo "</table>\n";
 
-//mostro l'anteprima
-if (isset($_POST['preview'])) {
-    $rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
-    echo "<div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
-    echo "<div class=\"box-primary table-responsive\">";
-    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
-    echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['doc_type'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">N.</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['customer'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['taxable'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['vat'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['tot'] . "</th>\n";
-    foreach ($rs as $k => $v) {
-        $tot = computeTot($v['vat']);
-        //fine calcolo totali
-        echo "<tr class=\"FacetDataTD\">
-               <td align=\"center\">" . gaz_format_date($v['tes']['datfat']) . "</td>
-               <td>" . $v['tes']['protoc'] . "</td>
-               <td>" . $v['tes']['tipdoc'] . "</td>
-               <td>" . $v['tes']['numfat'] . "</td>
-               <td>" . $v['tes']['ragsoc'] . "</td>
-               <td align=\"right\">" . gaz_format_number($tot['taxable']) . "</td>
-               <td align=\"right\">" . gaz_format_number($tot['vat']) . "</td>
-               <td align=\"right\">" . gaz_format_number($tot['tot']) . "</td>
-               </tr>\n";
-    }
-    if (count($rs) > 0) {
-        echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-        echo '<td colspan="9" align="right"><input type="submit" name="submit" value="';
-        echo $script_transl['submit'];
-        echo '">';
-        echo "\t </td>\n";
-        echo "\t </tr>\n";
-    } else {
-        echo "\t<tr>\n";
-        echo '<td colspan="9" align="center" class="FacetDataTDred">';
-        echo $script_transl['errors'][1];
-        echo "\t </td>\n";
-        echo "\t </tr>\n";
-    }
+echo "<div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
+echo "<div class=\"box-primary table-responsive\">";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
+echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
+     <th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
+     <th class=\"FacetFieldCaptionTD\">" . $script_transl['doc_type'] . "</th>
+     <th class=\"FacetFieldCaptionTD\">N.</th>
+     <th class=\"FacetFieldCaptionTD\">" . $script_transl['customer'] . "</th>
+     <th class=\"FacetFieldCaptionTD\">" . $script_transl['taxable'] . "</th>
+     <th class=\"FacetFieldCaptionTD\">" . $script_transl['vat'] . "</th>
+     <th class=\"FacetFieldCaptionTD\">" . $script_transl['tot'] . "</th>\n";
+foreach ($rs as $k => $v) {
+    $tot = computeTot($v['vat']);
+    //fine calcolo totali
+    echo "<tr class=\"text-center\">
+           <td align=\"center\">" . gaz_format_date($v['tes']['datfat']) . '</td>
+           <td title="'.$v['title'].'"><a class="btn btn-small btn-'.$v['classv'].'" href="./admin_docacq.php?Update&id_tes='.$v['tes']['id_tes'].'">' . $v['tes']['protoc'] . '</a></td>
+           <td class="">' . $script_transl['doc_type_value'][$v['tes']['tipdoc']];
+			if (count($v['accpaymov'])>1) { // devo selezionare una partita dello scadenzario
+				$form["accpaymov_$k"]=isset($form["accpaymov_$k"])?$form["accpaymov_$k"]:'';
+				echo ' <span class="text-'.$v['classv'].'">: partita da chiudere sullo scadenzario:</span><br/>';
+				$gForm->variousSelect("accpaymov[{$k}]", $v['accpaymov'], $form["accpaymov_$k"], '', 1, 'changepaymov',false,'',true);
+			}	   
+    echo '</td><td>' . $v['tes']['numfat'] . "</td>
+           <td>" . $v['tes']['ragsoc'] . "</td>
+           <td align=\"right\">" . gaz_format_number($tot['taxable']) . "</td>
+           <td align=\"right\">" . gaz_format_number($tot['vat']) . "</td>
+           <td align=\"right\">" . gaz_format_number($tot['tot']) . "</td>
+           </tr>\n";
+}
+if (count($rs) > 0) {
+    echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
+    echo '<td colspan="9" class="text-center"><input type="submit" class="btn btn-warning" name="gosubmit" value="';
+    echo $script_transl['submit'];
+    echo '">';
+    echo "\t </td>\n";
+    echo "\t </tr>\n";
+} else {
+    echo "\t<tr>\n";
+    echo '<td colspan="9" align="center" class="FacetDataTDred">';
+    echo $script_transl['err']['nodoc'];
+    echo "\t </td>\n";
+    echo "\t </tr>\n";
 }
 ?>
 </table>

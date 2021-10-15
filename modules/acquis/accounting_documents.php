@@ -30,7 +30,7 @@ $msg=['err'=>[],'war'=>[]];
 function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
     global $gTables;
     $type = substr($type, 0, 2);
-    $docs = array();
+    $docs = [];
     if ($date) {
         $date = ' AND datreg <= ' . $date;
     } else {
@@ -764,7 +764,7 @@ echo "</div>\n";
 if (count($msg['err']) > 0) { // ho un errore
     $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
 }
-echo "<table class=\"Tmiddle\">\n";
+echo "<table class=\"Tsmall\">\n";
 echo "<tr>\n";
 echo '<td class="text-right">'. $script_transl['date'] . " </td><td>\n";
 $gForm->CalendarPopup('this_date', $form['this_date_D'], $form['this_date_M'], $form['this_date_Y'], 't', 1);
@@ -833,7 +833,7 @@ if (count($rs) > 0) {
 } else {
     echo "\t<tr>\n";
     echo '<td colspan="9" align="center" class="FacetDataTDred">';
-    echo $script_transl['errors'][1];
+    echo $script_transl['err']['nodoc'];
     echo "\t </td>\n";
     echo "\t </tr>\n";
 }
