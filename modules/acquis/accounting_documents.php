@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/calsca.inc.php");
-$msg = '';
+$msg=['err'=>[],'war'=>[]];
 
 function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
     global $gTables;
@@ -90,7 +90,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
             $tes['contanti']=false;
 			$title='Modifica';
 			$accpaymov=[];
-			$accpaymov['no']='nessuna';
+			$accpaymov['no']='Partita riferita a questa Nota Credito';
             switch ($tes['tipdoc']) {
 				case "AFA":
 				$bol=$admin_aziend['taxstamp_account'];
@@ -342,16 +342,20 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['profin'] = intval($_POST['profin']);
     $form['year_ini'] = intval($_POST['year_ini']);
     $form['year_fin'] = intval($_POST['this_date_Y']);
-    if (isset($_POST['accpaymov'])) {
-        foreach ($_POST['accpaymov'] as $prot => $v) {
+    if (isset($_POST['accpaymov'])) { 
+		$paymoverr=false;
+        foreach($_POST['accpaymov']as$prot=>$v){
 			// in $v ho il id_tesdoc_ref selezionato;
 			$form["accpaymov_$prot"] = $v;
             $form['accpaymov'][$prot]= $v;
+			// controllo se le partite di scadenzario delle note credito sono state tutte selezionate
+			if($v<2&&$v!='no'){$paymoverr=true;}
         }
+		if($paymoverr){$msg['err'][]="nopaymov";}
 	}
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     if (!checkdate($form['this_date_M'], $form['this_date_D'], $form['this_date_Y']))
-        $msg .= "0+";
+       $msg['err'][]="date";
     if ($form['hidden_req'] == 'type' || $form['hidden_req'] == 'vat_section') {   //se cambio il registro
         $extreme = getExtremeDocs($form['type'], $form['vat_section']);
         if ($extreme['ini']['proini'] > 0) {
@@ -372,9 +376,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $uts_this_date = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
 	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
 
-
-
-    if (isset($_POST['gosubmit']) && empty($msg)) {   //confermo la contabilizzazione
+    if (isset($_POST['gosubmit']) && count($msg['err'])==0) {   //confermo la contabilizzazione
         if (!empty($rs) && count($rs)>0) {
             require("lang." . $admin_aziend['lang'] . ".php");
             $script_transl = $strScript['accounting_documents.php'];
@@ -571,11 +573,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                             'id_rigmoc_doc' => $paymov_id,
                             'amount' => round($v_pay['ImportoPagamento'],2),
                             'expiry' => $v_pay['DataScadenzaPagamento']);
-                        if ($op == 2) { /* le note credito sono assimilabili ad un pagamento, 
-                          ovvero ad una chiusura di partita
-                          pertanto modifico l'array prima di passarlo */
+                        if ($op == 2) { // le note credito sono assimilabili ad un pagamento, ovvero ad una chiusura di partita pertanto modifico l'array prima di passarlo 
                             unset($paymov_value['id_rigmoc_doc']);
                             $paymov_value['id_rigmoc_pay'] = $paymov_id;
+							if (count($v['accpaymov'])>1 && isset($form["accpaymov_".$v['tes']['protoc']]) && $form["accpaymov_".$v['tes']['protoc']]!='no') { $paymov_value['id_tesdoc_ref'] = $form["accpaymov_".$v['tes']['protoc']];}	   
                         }
                         paymovInsert($paymov_value);
                     }
@@ -586,11 +587,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                             'id_rigmoc_doc' => $paymov_id,
                             'amount' => $v_rate,
                             'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
-                        if ($op == 2) { /* le note credito sono assimilabili ad un pagamento, 
-                          ovvero ad una chiusura di partita
-                          pertanto modifico l'array prima di passarlo */
+                        if ($op == 2) { // le note credito sono assimilabili ad un pagamento, ovvero ad una chiusura di partita pertanto modifico l'array prima di passarlo
                             unset($paymov_value['id_rigmoc_doc']);
                             $paymov_value['id_rigmoc_pay'] = $paymov_id;
+							if (count($v['accpaymov'])>1 && isset($form["accpaymov_".$v['tes']['protoc']]) && $form["accpaymov_".$v['tes']['protoc']]!='no') { $paymov_value['id_tesdoc_ref'] = $form["accpaymov_".$v['tes']['protoc']];}	   
                         }
                         paymovInsert($paymov_value);
                     }
@@ -619,12 +619,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['split_payment'], 'import' => $v['isp']));
                     $paymov_id =rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => $v['isp']));
                     // chiudo le partite aperte dell'iva split payment
-                    foreach ($rateisp['import'] as $k_rate => $v_rate) {
-                        // preparo l'array da inserire sui movimenti delle partite aperte
+                    foreach ($rateisp['import'] as $k_rate => $v_rate) { // preparo l'array da inserire sui movimenti delle partite aperte
                         $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datreg'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
                             'id_rigmoc_pay' => $paymov_id,
                             'amount' => $v_rate,
                             'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
+							if (count($v['accpaymov'])>1 && isset($form["accpaymov_".$v['tes']['protoc']]) && $form["accpaymov_".$v['tes']['protoc']]!='no') { $paymov_value['id_tesdoc_ref'] = $form["accpaymov_".$v['tes']['protoc']];}	   
                         paymovInsert($paymov_value);
                     }
                 }
@@ -723,7 +723,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
  			}
             exit;
         } else {
-            $msg .= "1+";
+            $msg['err'][]="nodoc";
         }
     }
 }
@@ -757,13 +757,14 @@ echo "<input type=\"hidden\" value=\"" . $form['proini'] . "\" name=\"proini\" /
 echo "<input type=\"hidden\" value=\"" . $form['year_ini'] . "\" name=\"year_ini\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['year_fin'] . "\" name=\"year_fin\" />\n";
 $gForm = new GAzieForm();
+
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'] . $script_transl['vat_section'];
 $gForm->selectNumber('vat_section', $form['vat_section'], 0, 1, 9, 'FacetSelect', 'vat_section');
 echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
-if (!empty($msg)) {
-    echo '<tr><td colspan="2">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
+if (count($msg['err']) > 0) { // ho un errore
+    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
 }
+echo "<table class=\"Tmiddle\">\n";
 echo "<tr>\n";
 echo '<td class="text-right">'. $script_transl['date'] . " </td><td>\n";
 $gForm->CalendarPopup('this_date', $form['this_date_D'], $form['this_date_M'], $form['this_date_Y'], 't', 1);
@@ -783,7 +784,7 @@ echo '<td> '. $form['proini'] . " / " . $form['year_ini'] . "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo '<td class="text-right">'. $script_transl['profin'] . ": </td>\n";
-echo "\t<td><input type=\"text\" name=\"profin\" value=\"" . $form['profin'] . "\" maxlength=\"9\" /> / " . $form['year_fin'] . "</td>\n";
+echo '<td><input type="text" name="profin" value="' . $form['profin'] . '" maxlength="9" onchange="this.form.hidden_req.value=\'profin\'; this.form.submit();"/> / ' . $form['year_fin'] . "</td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetDataTD\">\n";
 echo "\t<td><input type=\"submit\" name=\"return\" value=\"" .
@@ -812,7 +813,7 @@ foreach ($rs as $k => $v) {
            <td class="">' . $script_transl['doc_type_value'][$v['tes']['tipdoc']];
 			if (count($v['accpaymov'])>1) { // devo selezionare una partita dello scadenzario
 				$form["accpaymov_$k"]=isset($form["accpaymov_$k"])?$form["accpaymov_$k"]:'';
-				echo ' <span class="text-'.$v['classv'].'">: scegliere la partita da chiudere:</span><br/>';
+				echo ' <span class="text-'.$v['classv'].'">: partita da chiudere sullo scadenzario:</span><br/>';
 				$gForm->variousSelect("accpaymov[{$k}]", $v['accpaymov'], $form["accpaymov_$k"], '', 1, 'changepaymov',false,'',true);
 			}	   
     echo '</td><td>' . $v['tes']['numfat'] . "</td>

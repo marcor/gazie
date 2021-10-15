@@ -66,6 +66,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['sezioneiva'] = $testata['seziva'];
     $form['protocollo'] = $testata['protoc'];
     $form['numdocumen'] = $testata['numdoc'];
+    $form['id_doc'] = $testata['id_doc'];
     $form['datdoc'] = gaz_format_date($testata['datdoc'], false, true);
     $form['datliq'] = gaz_format_date($testata['datliq'], false, true);
     $form['cod_partner'] = $testata['clfoco'];
@@ -159,6 +160,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['sezioneiva'] = $_POST['sezioneiva'];
     $form['protocollo'] = $_POST['protocollo'];
     $form['numdocumen'] = $_POST['numdocumen'];
+    $form['id_doc'] = $_POST['id_doc'];
     $form['datdoc'] = substr($_POST['datdoc'], 0, 10);
     $form['datliq'] = substr($_POST['datliq'], 0, 10);
     $form['cod_partner'] = $_POST['cod_partner'];
@@ -1078,6 +1080,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     }
     $form['sezioneiva'] = 1;
     $form['protocollo'] = "";
+    $form['id_doc'] =0;
     $form['numdocumen'] = "";
     $form['datdoc'] = date("d/m/Y");
     $form['datliq'] = $form['datdoc'];
@@ -1391,6 +1394,7 @@ echo "</script>\n";
     echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">";
     echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" id=\"hidden_req\"/>\n";
     echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
+    echo "<input type=\"hidden\" name=\"id_doc\" value=\"" . $form['id_doc'] . "\">";
     if ($toDo == 'insert') {
         echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
     } else {
@@ -1478,9 +1482,9 @@ echo "</script>\n";
 					if (isset($_POST['Insert'])) {
 						$urldoc = '';
 					} else if ($form['registroiva'] == 2 || $form['registroiva'] == 4) {
-						$urldoc = '../vendit/admin_docven.php?Update&id_tes='.$testata['id_doc'];
+						$urldoc = '../vendit/admin_docven.php?Update&id_tes='.$form['id_doc'];
 					} else if ($form['registroiva'] == 6) {
-						$urldoc = '../acquis/admin_docacq.php?Update&id_tes='.$testata['id_doc'];
+						$urldoc = '../acquis/admin_docacq.php?Update&id_tes='.$form['id_doc'];
 					}
 					if (!empty($urldoc)) {
 					?>

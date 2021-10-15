@@ -211,10 +211,10 @@ function dialogSchedule(paymov) {
                         var pr = parseInt(value.protoc) || 0;
                         if (j == 0) {
                             $("#db-contain" + nrow + " tbody").append("<tr>" +
-                                    "<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti di: ' + value.ragso1 + ' ' + value.ragso2 + '</td></tr>');
+                                    "<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti ' + ((value.ragso1!==null)?(' di: '+value.ragso1 + ' ' + value.ragso2):'') + '</td></tr>');
                         }
                         $("#db-contain" + nrow + " tbody").append("<tr>" +
-                                '<td class="ui-widget-right ui-widget-content "><button id="linking_' + j + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button></td>' +
+                                '<td class="ui-widget-right ui-widget-content "><button id="linking_' + j + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button>'+value.id_tesdoc_ref+'</td>'+value.id_tesdoc_ref +
                                 "<td" + ' class="ui-widget ui-widget-content " > ' + value.descri + desnumdoc + "</td>" +
                                 "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                                 "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
