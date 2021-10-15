@@ -7,7 +7,7 @@ Ho apportato altri miglioramenti, in particolare la selezione rapida di clienti 
 La correzione di alcuni bug riguardanti l'utilissimo scadenzario spero abbia risolto definitivamente i problemi legati alla complessità dello strumento stesso.
 Di seguito e brevemente il frutto delle altre collaborazioni:
 - modulo produzioni: risolto problema di errata segnalazione lotti non sufficienti e tolto il codice riferito agli operai. (A.Germani)
-- module statistiche: corretti alcuni problemi di escape dei caratteri trascurati nelle precedenti modifiche. (G.Vallesi)
+- modulo statistiche: corretti alcuni problemi di escape dei caratteri trascurati nelle precedenti modifiche. (G.Vallesi)
 - ricerche anagrafiche clienti/fornitori per partita iva: adesso è possibile anche con numero di partita iva parziale usando % (A.Germani)
 - modulo registro di campagna: iniziati i lavori per la gestione delle varietà. (A.Germani)
 

@@ -1666,7 +1666,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['descri'] = $row['descri'];
         $form['rows'][$i]['tiprig'] = $row['tiprig'];
         $form['rows'][$i]['codart'] = $row['codart'];
-		$form['rows'][$i]['quality'] = $articolo['quality'];
+		$form['rows'][$i]['quality'] = ($articolo)?$articolo['quality']:'';
 		$form['rows'][$i]['codice_fornitore'] = $row['codice_fornitore'];//M1 aggiunto a mano
         $form['rows'][$i]['pervat'] = $row['pervat'];
         $form['rows'][$i]['ritenuta'] = $row['ritenuta'];

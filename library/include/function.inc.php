@@ -1658,11 +1658,15 @@ class GAzieForm {
 			</a>';
     }
 
-    function variousSelect($name, $transl, $sel, $class = 'FacetSelect', $bridge = true, $refresh = '', $maxlenght = false, $style = '') {
+    function variousSelect($name, $transl, $sel, $class = 'FacetSelect', $bridge = true, $refresh = '', $maxlenght = false, $style = '',$empty=false) {
         if (!empty($refresh)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
         }
         echo "<select name=\"$name\" id=\"$name\" class=\"$class\" $refresh $style>\n";
+        if ($empty) {
+            echo "\t\t <option value=\"$empty\"></option>\n";
+        }
+		
         foreach ($transl as $i => $val) {
             if ($maxlenght) {
                 $val = substr($val, 0, $maxlenght);
@@ -3030,7 +3034,7 @@ class Schedule {
                     $s = 3; // SCADUTA
 					$style='danger';
                 }
-                $acc[$k][] = array('id' => $r['id'], 'op_val' => $r['amount'], 'expiry' => $r['expiry'], 'cl_val' => 0, 'cl_exp' => '', 'expo_day' => 0, 'status' => $s,'style'=>$style, 'op_id_rig' => $r['id_rig'], 'cl_rig_data' => array());
+                $acc[$k][] = array('id' => $r['id'],'descri' => 'n.'.$r['numdoc'].' del '.gaz_format_date($r['datdoc']), 'op_val' => $r['amount'], 'expiry' => $r['expiry'], 'cl_val' => 0, 'cl_exp' => '', 'expo_day' => 0, 'status' => $s,'style'=>$style, 'op_id_rig' => $r['id_rig'], 'cl_rig_data' => array());
                 // aggiungo l'apertura al totale
                 $acc_amount += $r['amount'];
             } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTURE (in ordine di scadenza)
