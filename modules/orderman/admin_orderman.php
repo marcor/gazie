@@ -32,6 +32,7 @@ $lm = new lotmag;
 $magazz = new magazzForm();
 $gForm = new ordermanForm();
 $campsilos = new silos();
+$warnmsg="";
 
 function gaz_select_data ( $nomecontrollo, $valore ) {
         $result_input = '<input size="8" type="text" id="'.$nomecontrollo.'" name="'.$nomecontrollo.'" value="'.$valore.'">';
@@ -345,7 +346,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					$msg.= "37+"; 
 				}				
             }
-			if ($toDo == 'insert' AND intval($form['SIAN']) > 0 AND $form['numcomp']>0) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
+			if ($toDo == 'insert' AND intval($form['SIAN']) > 0 AND (isset($form['numcomp']) AND $form['numcomp']>0)) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
 			    for ($m = 0;$m < $form['numcomp'];++$m) {					
 					$rescamparticocomp = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['artcomp'][$m]);
 					if (isset($rescamparticocomp)){
@@ -433,18 +434,28 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
                     // inserisco il movimento di magazzino dell'articolo prodotto
 					$mv = $magazz->getStockValue(false, $form['codart']);
-					$price=$mv['v'];
-					if ($mv['v']==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
-						$price=$row['preacq'];
+					$price=(isset($mv['v']))?$mv['v']:0;
+					if (!isset($mv['v']) OR $mv['v']==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
+						$price=(isset($row['preacq']))?$row['preacq']:0;
 					}
 					$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], $price, '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
 					$prod_id_movmag=$id_movmag; // mi tengo l'id_movmag del movimento di magazzino di entrata da produzione, mi servirà successivamente per valorizzare il prezzo in base alla composizione ed anche in caso di SIAN 
 					if ($form['SIAN']>0){ // imposto l'id movmag e salvo il movimento SIAN dell'articolo prodotto
 						$form['id_movmag']=$id_movmag;
-						if ($form['cod_operazione']==5){ // scambio i recipienti
-							$change=$form['recip_stocc'];
+						if ($form['cod_operazione']==5){ // Movimentazione interna senza cambio di origine
+							$change=$form['recip_stocc'];// scambio i recipienti
 							$form['recip_stocc']=$form['recip_stocc_destin'];
+							$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
+							unset($var_orig['varieta']['total']);//tolgo il total
 							$form['recip_stocc_destin']=$change;
+							$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
+							unset($var_dest['varieta']['total']);//tolgo il total
+							if (isset($var_orig)){
+								$form['varieta'] = "Traferimento olio varietà ". implode(", ",array_keys($var_orig['varieta']));
+								if (isset($var_dest)){
+									$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_dest['varieta']));
+								}
+							}							
 						}
 						$id_mov_sian_rif=gaz_dbi_table_insert('camp_mov_sian', $form);
 						$s7=""; // Si sta producendo olio
