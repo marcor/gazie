@@ -645,7 +645,7 @@ foreach ($rs as $k => $v) {
     //fine calcolo totali
     echo "<tr class=\"text-center\">
            <td align=\"center\">" . gaz_format_date($v['tes']['datfat']) . '</td>
-           <td title="'.$v['title'].'"><a class="btn btn-small btn-'.$v['classv'].'" href="./admin_docacq.php?Update&id_tes='.$v['tes']['id_tes'].'">' . $v['tes']['protoc'] . '</a></td>
+           <td title="'.$v['title'].'"><a class="btn btn-small btn-'.$v['classv'].'" href="./admin_docven.php?Update&id_tes='.$v['tes']['id_tes'].'">' . $v['tes']['protoc'] . '</a></td>
            <td class="">' . $script_transl['doc_type_value'][$v['tes']['tipdoc']];
 			if (count($v['accpaymov'])>1) { // devo selezionare una partita dello scadenzario
 				$form["accpaymov_$k"]=isset($form["accpaymov_$k"])?$form["accpaymov_$k"]:'';
