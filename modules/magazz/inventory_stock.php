@@ -148,7 +148,6 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     $form['chk_on' . $r['codice']] = '';
                     $form['a'][$r['codice']]['class'] = 'danger';
                 }
-				$tot_val_giac+=$magval['v_g'];
 
             }
         }
@@ -220,7 +219,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         if (isset($_POST['insert']) && empty($msg)) { // se devo inserire e non ho errori rifaccio il ciclo dei righi per inserire i movimenti
             foreach ($form['a'] as $k => $v) { // ciclo delle singole righe (a)
 				if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
-                    if (count($v['lotRestPost'])>=1) { // ci sono lotti stornati
+                    if (isset($v['lotRestPost'])&&count($v['lotRestPost'])>=1) { // ci sono lotti stornati
                         foreach( $v['lotRestPost'] as $kl => $vl ) {
                             if ($vl['g_a'] > $vl['g_r']) { // senza lotti giacenza reale minore -scarico
                                 // devo fare prima uno storno per scaricare
