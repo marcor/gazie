@@ -1687,9 +1687,9 @@ echo "</script>\n";
         $gForm->toast("ATTENZIONE!!! Il pagamento <span style='background-color: yellow;'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span style='background-color: yellow;'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
     }
     echo "<div class=\"table-responsive\"><table class=\"Tlarge table table-striped table-condensed\">\n";
-    echo "<tr><td class=\"bg-info\">" . $script_transl['mas'] . "</td><td class=\"bg-info\">" . $script_transl['sub'] . "</td><td class=\"bg-info\">" . $script_transl['amount'] . "</td><td class=\"bg-info\">" . $script_transl['daav'] . "</td><td class=\"bg-info\">" . $script_transl['addrow'] . "!</td></tr>\n";
+    echo "<tr><td class=\"bg-info\"></td><td class=\"bg-info\">" . $script_transl['mas'] . "</td><td class=\"bg-info\">" . $script_transl['sub'] . "</td><td class=\"bg-info\">" . $script_transl['amount'] . "</td><td class=\"bg-info\">" . $script_transl['daav'] . "</td><td class=\"bg-info\">" . $script_transl['addrow'] . "!</td></tr>\n";
     echo "<tr>\n";
-    echo "<td class=\"bg-info\">\n#";
+    echo "<td class=\"bg-info\">#</td><td class=\"bg-info\">";
     $gForm->selMasterAcc('insert_mastro', $form['insert_mastro'], 'insert_mastro');
     echo "</td>\n";
     echo "<td class=\"bg-info\">\n";
@@ -1700,19 +1700,14 @@ echo "</script>\n";
     echo "<input style=\"text-align:right;\" type=\"text\" value=\"\" maxlength=\"13\" id=\"insert_import\" name=\"insert_import\"> &crarr;</div>\n";
     $gForm->settleAccount('insert', $form['insert_conto'], sprintf("%04d%02d%02d", $form['date_reg_Y'], $form['date_reg_M'], $form['date_reg_D']));
     echo "</td>";
-    echo "\t<td  class=\"bg-info\">\n";
+    echo "\t<td class=\"bg-info\">\n";
     $gForm->variousSelect('insert_darave', $script_transl['daav_value'], $form['insert_darave'], 'FacetSelect', false);
     echo "\t </td>\n";
-//echo "<td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"add\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['addrow']."\"></td></tr>\n";
-
-    /** ENRICO FEDELE */
-    /* glyph-icon */
     echo '  <td class="bg-info" align="right"> 
 			<button type="submit" class="btn btn-default btn-sm" name="add" title="' . $script_transl['addrow'] . '"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
-    /** ENRICO FEDELE */
-    echo "<tr><td class=\"FacetColumnTD\" colspan=\"5\"></td></tr>";
+    echo "<tr><td class=\"FacetColumnTD text-center\" colspan=\"6\"><b>Righi inseriti:</b></td></tr>";
 //fine rigo inserimento
 // inizio righi già inseriti
 // faccio un primo ciclo del form per sommare e analizzare gli sbilanciamenti
@@ -1759,10 +1754,10 @@ echo "</script>\n";
             $form['insert_partner'] = $form['conto_rc' . $i];
         }
         echo "<tr>";
-        echo "<td class=\"FacetDataTD\">" . ($i + 1);
+        echo "<td>".($i+1).'</td><td>';
         $gForm->selMasterAcc("mastro_rc[$i]", $form["mastro_rc"][$i], "mastro_rc[$i]");
         echo "</td>\n";
-        echo "<td class=\"FacetDataTD\">";
+        echo "<td>";
         $gForm->lockSubtoMaster($form["mastro_rc"][$i], 'conto_rc' . $i);
         $gForm->sub_Account('conto_rc' . $i, $form['conto_rc' . $i], $form['search']['conto_rc' . $i], $form['hidden_req'], $script_transl['mesg']);
         if (!preg_match("/^id_([0-9]+)$/", $form['conto_rc' . $i], $match)) { // non è un partner da inserire sul piano dei conti
@@ -1777,7 +1772,7 @@ echo "</script>\n";
         if ($val < 0.01) {
             $valsty = ' style="text-align:right; background-color:#FFAAAA;" ';
         }
-        echo "<td class=\"FacetDataTD\">
+        echo "<td>
           <input type=\"text\" name=\"importorc[$i]\" ID=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" tabindex=\"" . (30 + $i * 2) . "\" >\n";
         echo "<input type=\"hidden\" ID=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"" . $form['id_rig_rc'][$i] . "\">\n";
         echo "<input type=\"hidden\" ID=\"paymov_op_cl$i\" name=\"paymov_op_cl[$i]\" value=\"" . $form['paymov_op_cl'][$i] . "\">\n";
@@ -1799,7 +1794,7 @@ echo "</script>\n";
         echo "<input type=\"button\" ID=\"balbRC$i\" name=\"balb[$i]\" $r_but  onclick=\"balance($i);\"/>\n";
         echo "</td>";
         //fine inpunt degli sbilanci
-        echo "<td class=\"FacetDataTD\"><select class=\"FacetSelect\" ID=\"daavRC$i\" name=\"darave_rc[$i]\" onchange=\"this.form.submit()\" tabindex=\"" . (31 + $i * 2) . "\">";
+        echo "<td><select class=\"FacetSelect\" ID=\"daavRC$i\" name=\"darave_rc[$i]\" onchange=\"this.form.submit()\" tabindex=\"" . (31 + $i * 2) . "\">";
         foreach ($script_transl['daav_value'] as $key => $value) {
             $selected = "";
             if ($form["darave_rc"][$i] == $key) {
@@ -1807,29 +1802,25 @@ echo "</script>\n";
             }
             echo "<option value=\"" . $key . "\"" . $selected . ">" . $value . "</option>\n";
         }
-        echo "</select></td>\n";
-
-        //echo "<td class=\"FacetDataTD\" align=\"right\"><input type=\"image\" name=\"del[$i]\"  src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delrow']."!\" ></td></tr>\n";
-        /** ENRICO FEDELE */
-        /* glyph icon */
-        echo '  <td class="FacetDataTD" align="right">
+        echo '  <td class="text-right">
 			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $i . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
 		  </tr>';
-        /** ENRICO FEDELE */
     }
 
 //faccio il post del numero di righi
     echo "<input type=\"hidden\" value=\"" . $_POST['rigcon'] . "\" name=\"rigcon\">";
     echo "<input type=\"hidden\" value=\"" . $form['id_testata'] . "\" name=\"id_testata\">";
-    echo '<tr><td></td>';
-    echo '<td align="center">';
-    echo '<input name="ins" id="preventDuplicate" class="btn '.$class_btn_confirm.'" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . '">';
-    echo "\n</td>";
-    echo '<td colspan="3">' . $script_transl['tot_d'] . ' :';
-    echo "<input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" ID=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
-    echo $diffV . ' ' . $script_transl['tot_a'] . ' :';
+    echo "<tr><td class=\"FacetColumnTD text-center\" colspan=\"6\"><b>Totali:</b></td></tr>";
+    echo '<tr><td colspan="2" class="text-right">';
+    echo  $script_transl['tot_d'] . ": <input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" ID=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
+
+    echo '</td><td class="text-right">'. $script_transl['tot_a'] . ' :';
     echo "<input type=\"button\" $a_but value=\"" . number_format($form['tot_A'], 2, '.', '') . "\" ID=\"tot_A\" name=\"tot_A\" onclick=\"tot_bal('A');\" />\n";
+    echo "\n</td>";
+	echo '<td>'.$diffV.'</td>';
+    echo '<td colspan=2 class="text-center">';
+    echo '<input name="ins" id="preventDuplicate" class="btn '.$class_btn_confirm.'" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . ucfirst($script_transl[$toDo]) . '">';
     echo "</td></tr></table></div>";
 
 // INIZIO creazione dialog-schedule dei partner
