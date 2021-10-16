@@ -233,8 +233,7 @@ class silos {
 		$key2="varieta"; // chiave per il raggruppamento per varietà
 		$count[$key]['total']=0;$count[$key2]['total']=0; // azzero i totali
 		foreach ($resmovs as $res) { // procedo al raggruppamento e conteggio
-			echo"<br>pp",print_r($res);
-			
+						
 			if( !isset($count[$key][$res['id_lotmag']]) ){ // se la chiave lotto ancora non c'è nell'array
 				// Aggiungo la chiave con il rispettivo valore iniziale
 				$count[$key][$res['id_lotmag']] = $res['quanti']*$res['operat'];
