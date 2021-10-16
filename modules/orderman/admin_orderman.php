@@ -118,10 +118,12 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['lot_or_serial'] = $resartico['lot_or_serial'];
     $form['SIAN'] = $resartico['SIAN'];
 	$form['preacq'] = $resartico['preacq'];
+	$form['quality'] = $resartico['quality'];
   } else {
     $form['lot_or_serial'] = '';
     $form['SIAN'] = '';
 	$form['preacq'] = "";
+	$form['quality'] = "";
   }
 	$form['cod_operazione'] = $_POST['cod_operazione'];
     $form['recip_stocc'] = $_POST['recip_stocc'];
@@ -224,6 +226,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			for ($m = 0;$m < $form['numcomp'];++$m) {
 				$form['artcomp'][$m] = $_POST['artcomp' . $m];
 				$form['SIAN_comp'][$m] = $_POST['SIAN_comp' . $m];
+				$form['quality_comp'][$m] = $_POST['quality_comp' . $m];
                 $form['quanti_comp'][$m] = $_POST['quanti_comp' . $m];
                 $form['prezzo_comp'][$m] = $_POST['prezzo_comp' . $m];
                 $form['q_lot_comp'][$m] = $_POST['q_lot_comp' . $m];
@@ -366,6 +369,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				}
 			}
         }
+		
         if ($msg == "") { // nessun errore
 			//echo"<pre>",print_r($form);die;
             // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
@@ -432,7 +436,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					}
                 }				
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
-                    // inserisco il movimento di magazzino dell'articolo prodotto
+                    // inserisco il movimento carico di magazzino dell'articolo prodotto
 					$mv = $magazz->getStockValue(false, $form['codart']);
 					$price=(isset($mv['v']))?$mv['v']:0;
 					if (!isset($mv['v']) OR $mv['v']==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
@@ -456,7 +460,9 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 									$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_dest['varieta']));
 								}
 							}							
-						}
+						}else {
+							$form['varieta']=$form['quality'];
+						}						
 						$id_mov_sian_rif=gaz_dbi_table_insert('camp_mov_sian', $form);
 						$s7=""; // Si sta producendo olio
 					} else {
@@ -472,7 +478,17 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$form['cod_operazione']="";
 						$change=$form['recip_stocc']; // scambio di nuovo i recipienti
 						$form['recip_stocc']=$form['recip_stocc_destin'];
+						$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
+						unset($var_orig['varieta']['total']);//tolgo il total
 						$form['recip_stocc_destin']=$change;
+						$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
+						unset($var_dest['varieta']['total']);//tolgo il total
+						if (isset($var_orig)){
+							$form['varieta'] = "Traferimento olio varietà ". implode(", ",array_keys($var_orig['varieta']));
+							if (isset($var_dest)){
+								$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_dest['varieta']));
+							}
+						}
 						$form['id_mov_sian_rif']=$id_mov_sian_rif;
 						gaz_dbi_table_insert('camp_mov_sian', $form);
 						$form['id_movmag']=$prod_id_movmag;// reimposto l'id_movmag del movimento di entrata
@@ -497,6 +513,11 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 											$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
 											gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
 											$form['cod_operazione']="";
+											$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
+											unset($var_orig['varieta']['total']);//tolgo il total
+											if (isset($var_orig)){
+												$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
+											}											
 											if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
 												$form['cod_operazione']="S7";
 											}
@@ -514,9 +535,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 									$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
 									gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
 									$form['cod_operazione']="";
+									$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
+									unset($var_orig['varieta']['total']);//tolgo il total
+									if (isset($var_orig)){
+										$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
+									}
 									if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
 										$form['cod_operazione']="S7";
-									}
+									} 
 									gaz_dbi_table_insert('camp_mov_sian', $form);
 								}
                             }
@@ -653,6 +679,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(id_staff_def,start_work,end_work,order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,duration,stato_lavorazione,adminid) VALUES ('". $form['id_staff_def'] ."', '". $start_work ."', '". $end_work ."', '" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" .$status. "', '" . $admin_aziend['adminid'] . "')");
 
             }
+		
             // fine orderman, tesbro e rigbro
             // se sono in un popup lo chiudo dopo aver salvato tutto
             if ($popup == 1) {
@@ -796,6 +823,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['expiry'] = "";
     $form['lot_or_serial'] = "";
 	$form['SIAN'] = "";
+	$form['quality'] = "";
 	$form['cod_operazione']="";
 	$form['recip_stocc']="";
 	$form['recip_stocc_destin']="";
@@ -1045,6 +1073,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 						<input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
 						<input type="hidden" name="artcomp<?php echo $nc; ?>" value="<?php echo $row['codice_artico_base']; ?>">
 						<input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
+						<input type="hidden" name="quality_comp<?php echo $nc; ?>" value="<?php echo $row['quality']; ?>">
 						<div class="row" style="margin-left: 0px;">
 							<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
 							</div>
@@ -1512,6 +1541,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
     print "<input type=\"hidden\" name=\"identifier\" value=\"\">\n";
     print "<input type=\"hidden\" name=\"id_lotmag\" value=\"\">\n";
 	print "<input type=\"hidden\" name=\"SIAN\" value=\"\">\n";
+	print "<input type=\"hidden\" name=\"quality\" value=\"\">\n";
     print "<input type=\"hidden\" name=\"lot_or_serial\" value=\"\"></td></tr>";
 }
 if ($popup <> 1) {
