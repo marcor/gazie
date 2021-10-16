@@ -254,12 +254,12 @@ class silos {
 		$count[$key]['total']= array_sum($count[$key]); // il totale dei lotti
 		$count[$key2]['total']= array_sum($count[$key2]); // il totale delle varietà
 	
-		// i valori zero o, peggio, negativi sono da escludere in quanto
+		// i valori zero o, peggio, negativi sono da escludere
 		$count[$key] = array_filter($count[$key],function($var){return($var > 0);});
 		$count[$key2] = array_filter($count[$key2],function($var){return($var > 0);});
 		
 		arsort($count[$key2]);
-		print_r($count);
+		//print_r($count);
 		//restituisce array['lotti](total=>qta, idlotto=>qta, id lotto=>qta, etc) e array['varieta'](total=>qta, varieta=>qta, varieta=>qta, etc) Le varietà sono elencate in ordine descrescente in base al valore della quantità.
 		return $count;
 	}	
