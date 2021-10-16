@@ -627,7 +627,7 @@ if (isset($form['a'])) {
                     }
                 } elseif ($v['g_a'] > $v['g_r']) { // senza lotti giacenza reale minore -scarico
                     // devo fare prima uno storno per scaricare
-                    $mq = $v['g_a'] - $v['g_r'];
+                    $mq = floatval($v['g_a']) - floatval($v['g_r']);
                     echo '		<tr>
 			 				<td>98-' . $cau98['descri'] . '</td>
 							<td align="left">' . $k . '</td>
@@ -640,7 +640,7 @@ if (isset($form['a'])) {
 						</tr>';
                 } elseif ($v['g_a'] < $v['g_r']) { // senza lotti giacenza reale maggiore carico
                     // devo fare prima uno storno per caricare
-                    $mq = $v['g_r'] - $v['g_a'];
+                    $mq = floatval($v['g_r']) - floatval($v['g_a']);
                     echo '		<tr>
 			 				<td>98-' . $cau98['descri'] . '</td>
 							<td align="left">' . $k . '</td>
@@ -660,7 +660,7 @@ if (isset($form['a'])) {
 							<td align="right">' . $v['g_r'] . '</td>
 							<td></td>
 							<td align="right">' . $v['v_r'] . '</td>
-							<td align="right">' . gaz_format_number($v['v_r'] * $v['g_r']) . '</td>
+							<td align="right">' . gaz_format_number(floatval($v['v_r']) * floatval($v['g_r'])) . '</td>
 						</tr>';
             }
         }
