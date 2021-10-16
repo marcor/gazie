@@ -36,11 +36,11 @@ class informForm extends GAzieForm {
 	function shortcode($testo){
 		//Recupero i dati della lettera
 		foreach ($this->TestataLettera as $key => $value) {
-			if ($key == datemi){
+			if ($key == 'datemi'){
 				$testo = str_replace('[' . $key .' dFY]', date('d F Y',strtotime($value)), $testo);
 				$testo = str_replace('[' . $key .' dmT]', date('d/m/Y',strtotime($value)), $testo);			
 			}else{
-				$testo = str_replace('[' . $key .']', $value , $testo);	
+				$testo = (is_string($value))?str_replace('[' . $key .']', $value , $testo):$testo;	
 			}
 		}
 		

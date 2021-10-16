@@ -25,13 +25,13 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/document.php");
-$testata= array('id_tes'=> 0,'seziva'=>0,'pagame'=>0,'banapp'=>0,'vettor'=>0,
+$pay=gaz_dbi_get_row($gTables['pagame'], 'numrat', 1)['codice']; // mi serve solo per evitare la variabile indefinita in document.php
+$testata= array('id_tes'=> 0,'seziva'=>0,'pagame'=>$pay,'banapp'=>0,'vettor'=>0,
                 'listin'=>0,'spediz'=>'','portos'=>0,'imball'=>0,'traspo'=>0,
                 'speban'=>0,'spevar'=>0,'ivaspe'=>0,'sconto'=>0,'id_agente'=>0,
                 'initra'=>0,'geneff'=>0,'id_contract'=>0,'id_con'=>0,'status'=>'',
                 'template'=>'Lettera');
-
-$lettera = gaz_dbi_get_row($gTables['letter'], "id_let", $_GET['id_let']);
+$lettera = gaz_dbi_get_row($gTables['letter'], "id_let", intval($_GET['id_let']));
 $testata['numdoc'] = $lettera['numero'];
 $testata['numfat'] = $lettera['numero'];
 $testata['protoc'] = $lettera['numero'];
