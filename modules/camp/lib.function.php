@@ -185,6 +185,84 @@ class silos {
 		}
     }
 	
+	function getLatestEmptySil($codsil){// funzione per trovare la data più recente dell'ultimo svuotamento totale del silos/recipiente di stoccaggio
+	// se trovato il punto zero, restituisce un array: datdoc (la data dello zero) id_mov (id magazzino del movimento zero) RunningTotal (valore numerico zero)
+		global $gTables,$admin_aziend;
+		$query ="
+			SELECT
+			  O.datdoc,
+			  O.id_mov,
+			  (SELECT
+				 SUM(quanti * operat) FROM ".$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = id_mov
+			   WHERE datdoc <= O.datdoc AND id_mov <= O.id_mov AND ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' ) 'RunningTotal'
+			FROM ".$gTables['movmag']." O 			
+			HAVING RunningTotal = 0 ORDER BY datdoc ASC LIMIT 1
+			";		
+		$res = gaz_dbi_query($query);
+		$result=gaz_dbi_fetch_array($res);
+		return $result;			
+	}
+	
+	function getContentSil($codsil,$date="",$id_mov=0){// funzione per trovare il contenuto in lotti e varietà dalla data dell'ultimo svuotamento totale di un silos (id_mov è l'ultimo id da escludere nella stessa data)
+		$id_lotma=false;
+	
+		if ($date==""){
+			$latestEmpty= $this -> getLatestEmptySil($codsil);
+			$date=(is_array($latestEmpty))?$latestEmpty['datdoc']:'';
+			$id_mov=(is_array($latestEmpty))?$latestEmpty['id_mov']:'';
+		}
+		
+		global $gTables,$admin_aziend;
+		$sil = new lotmag();
+		$select=$gTables['movmag'].".id_lotmag, ".$gTables['artico'].".quality, ".$gTables['movmag'].".artico, ".$gTables['movmag'].".id_mov, ".$gTables['movmag'].".datdoc, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".operat";
+		$table=$gTables['movmag']." 
+		LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov 
+		LEFT JOIN ".$gTables['artico']." ON ".$gTables['artico'].".codice = ".$gTables['movmag'].".artico
+		";
+		$where= $gTables['camp_mov_sian'].".recip_stocc = '".$codsil."'";
+		if (strlen($date)>0){
+			$where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))"; 
+		}
+		$orderby="datdoc DESC, id_mov DESC";
+		$groupby= "";
+		$passo=2000000;
+		$limit=0;
+		$resmovs=gaz_dbi_dyn_query ($select,$table,$where,$orderby,$limit,$passo,$groupby);// ho trovato tutti i movimenti interessati
+		$count=array();		
+		$key="id_lotti"; // chiave per il raggruppamento per lotto
+		$key2="varieta"; // chiave per il raggruppamento per varietà
+		$count[$key]['total']=0;$count[$key2]['total']=0; // azzero i totali
+		foreach ($resmovs as $res) { // procedo al raggruppamento e conteggio
+			echo"<br>pp",print_r($res);
+			
+			if( !isset($count[$key][$res['id_lotmag']]) ){ // se la chiave lotto ancora non c'è nell'array
+				// Aggiungo la chiave con il rispettivo valore iniziale
+				$count[$key][$res['id_lotmag']] = $res['quanti']*$res['operat'];
+			} else {
+				// Altrimenti, aggiorno il valore della chiave
+				$count[$key][$res['id_lotmag']] += $res['quanti']*$res['operat'];
+			}
+			
+			if( !isset($count[$key2][$res['quality']]) ){ // se la chiave varietà ancora non c'è nell'array
+				// Aggiungo la chiave con il rispettivo valore iniziale
+				$count[$key2][$res['quality']] = $res['quanti']*$res['operat'];
+			} else {
+				// Altrimenti, aggiorno il valore della chiave
+				$count[$key2][$res['quality']]+= $res['quanti']*$res['operat'];
+			}			
+		}
+		$count[$key]['total']= array_sum($count[$key]); // il totale dei lotti
+		$count[$key2]['total']= array_sum($count[$key2]); // il totale delle varietà
+	
+		// i valori zero o, peggio, negativi sono da escludere in quanto
+		$count[$key] = array_filter($count[$key],function($var){return($var > 0);});
+		$count[$key2] = array_filter($count[$key2],function($var){return($var > 0);});
+		
+		arsort($count[$key2]);
+		print_r($count);
+		//restituisce array['lotti](total=>qta, idlotto=>qta, id lotto=>qta, etc) e array['varieta'](total=>qta, varieta=>qta, varieta=>qta, etc) Le varietà sono elencate in ordine descrescente in base al valore della quantità.
+		return $count;
+	}	
 }
 
 // converte da ore decimali a hh:mm:ss - Es. da 5.75 a 05:45:00
