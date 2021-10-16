@@ -28,6 +28,7 @@ $lm = new lotmag;
 $admin_aziend = checkAdmin();
 $gForm = new magazzForm;
 $msg = '';
+$tot_val_giac = 0;
 if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['date_Y'] = date("Y");
@@ -43,7 +44,6 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     } else {
         $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', "1=1", 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
     }
-    $tot_val_giac = 0;
     if ($result) {
         // Imposto totale valore giacenza by DF
 
@@ -117,10 +117,10 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                 }
                 $mv = $gForm->getStockValue(false, $r['codice'], $date, null, $admin_aziend['decimal_price']);
                 $magval = array_pop($mv);
-                $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+                $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0,'v'=>0]:$magval;
 				if (isset($magval['q_g']) && round($magval['q_g'],6) == "-0"){ // Antonio Germani - se si crea erroneamente un numero esponenziale negativo forzo la quantità a zero
 					$magval['q_g']=0;
-					}
+				}
                 $form['a'][$r['codice']]['i_d'] = $r['descri'];
 				$form['a'][$r['codice']]['i_l'] = $r['lot_or_serial'];	
                 $form['a'][$r['codice']]['i_u'] = $r['unimis'];
@@ -148,6 +148,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     $form['chk_on' . $r['codice']] = '';
                     $form['a'][$r['codice']]['class'] = 'danger';
                 }
+				$tot_val_giac+=$magval['v_g'];
+
             }
         }
     } elseif (isset($_POST['preview']) || isset($_POST['insert'])|| $_POST['hidden_req'] == 'refr') {  //in caso di conferma
@@ -206,7 +208,6 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                                 $form['a'][$ka]['lotRestPost'][$v['id_lotmag']]['g_r']=$lotquanti;
                                 $form['a'][$ka]['lotRestPost'][$v['id_lotmag']]['g_a']=$v['rest'];
                                 $form['a'][$ka]['lotRestPost'][$v['id_lotmag']]['ide']=$v['identifier'];
-// print 'id:'.$v['id_lotmag'].' rest:'.$_POST['lotRestPost' .$v['id_lotmag']].'<br>';
                             }    
                         }
                     }
@@ -404,7 +405,7 @@ $(function () {
                         });
                         $("[id='totReal"+codart+"']").html(totReal);
                         $("[id='lotContent"+codart+"']").append(lotsRests);
-						if ($('#ispreview').length === 0) { // non c'è una anteprima
+						if ($('#is_preview').length === 0) { // non c'è una anteprima
                             $('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
                             $(this).dialog("destroy");
                         } else {
@@ -414,7 +415,7 @@ $(function () {
                 }
             },
             close:function(event, ui){
-				if ($('#ispreview').length === 0) { // non c'è una anteprima
+				if ($('#is_preview').length === 0) { // non c'è una anteprima
                     $('#content_lots').html(''); //svuoto il contenuto del form provvisorio sul dialog
                     $(this).dialog("destroy");
                 } else {
@@ -425,9 +426,10 @@ $(function () {
         $("#inputLotmagRest" ).dialog( "open" );  
     });
 	$('.artnormal').change(function(){ // cambio il valore ad 
-		if ($('#ispreview').length === 0) { // non c'è una anteprima
-			$("[name='hidden_req']").val('refr');			
-			$("form").submit();
+		//		var ffd = $("#is_preview").val(); alert(ffd);
+		if ($('#is_preview').length === 0) { // non c'è una anteprima
+			$("[name='hidden_req']").val('refr');
+			$("form[name='maschera']").submit();
 		} else {
             $('#btnpreview').click();
         }
@@ -489,11 +491,9 @@ if (isset($form['a'])) {
     $elem_n = 0;
     foreach ($form['a'] as $k => $v) {
         //ini default value
-        //$title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['i_a']."] body=[<center><img src='../root/view.php?table=artico&value=".$k."'>] fade=[on] fadespeed=[0.03] \"";
         $tooltip = ' class="gazie-tooltip" data-type="product-thumb" data-id="' . $k . '" data-title="' . $v['i_a'] . '"';
         // end default value
         if ($ctrl_cm <> $v['i_g']) {
-            //$cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_d']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
             $cm_tooltip = ' class="gazie-tooltip" data-type="catmer-thumb" data-id="' . $v['i_g'] . '" data-title="' . $v['g_d'] . '"';
             echo '<tr><td><input type="hidden" value="' . $v['g_d'] . '" name="a[' . $k . '][g_d]" />';
             if ($ctrl_cm == 0) {
@@ -582,7 +582,7 @@ if (isset($form['a'])) {
 	   					<td colspan="8" class="FacetFormHeaderFont">' . $script_transl['preview_title'] . '</td>
 					</tr>
 					<tr>
-	   					<td class="FacetFieldCaptionTD"></td>
+	   					<td class="FacetFieldCaptionTD">Causale</td>
 						<td class="FacetFieldCaptionTD">' . $script_transl['code'] . '</td>
 						<td class="FacetFieldCaptionTD">' . $script_transl['descri'] . '</td>
 						<td class="FacetFieldCaptionTD">' . $script_transl['mu'] . '</td>
@@ -595,33 +595,33 @@ if (isset($form['a'])) {
             if ($form['chk_on' . $k] == ' checked ') {   // e' un rigo da movimentare
                 $load = '';
                 $unload = '';
-                if (count($v['lotRestPost'])>=1) { // ci sono lotti stornati
+                if (isset($v['lotRestPost'])&&count($v['lotRestPost'])>=1) { // ci sono lotti stornati
                     foreach( $v['lotRestPost'] as $kl => $vl ) {
                         if ($vl['g_a'] > $vl['g_r']) { // senza lotti giacenza reale minore -scarico
                             // devo fare prima uno storno per scaricare
                             $mq = $vl['g_a'] - $vl['g_r'];
                             echo '		<tr>
-			 				<td class="FacetDataTD">98-' . $cau98['descri'] . ' lotto: '.$vl['ide'].'</td>
-							<td class="FacetDataTD" align="left">' . $k . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_d'] . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
-							<td class="FacetDataTD"></td>
-							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
-							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
+			 				<td>98-' . $cau98['descri'] . ' lotto: '.$vl['ide'].'</td>
+							<td align="left">' . $k . '</td>
+							<td align="left">' . $v['i_d'] . '</td>
+							<td align="left">' . $v['i_u'] . '</td>
+							<td></td>
+							<td align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
+							<td align="right">' . $v['v_r'] . '</td>
+							<td align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
                             </tr>';
                         } elseif ($vl['g_a'] < $vl['g_r']) { // senza lotti giacenza reale maggiore carico
                             // devo fare prima uno storno per caricare
                             $mq = $vl['g_r'] - $vl['g_a'];
                             echo '		<tr>
-			 				<td class="FacetDataTD">98-' . $cau98['descri'] . ' lotto: '.$vl['ide'].'</td>
-							<td class="FacetDataTD" align="left">' . $k . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_d'] . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
-							<td class="FacetDataTD"></td>
-							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
+			 				<td>98-' . $cau98['descri'] . ' lotto: '.$vl['ide'].'</td>
+							<td align="left">' . $k . '</td>
+							<td align="left">' . $v['i_d'] . '</td>
+							<td align="left">' . $v['i_u'] . '</td>
+							<td align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
+							<td></td>
+							<td align="right">' . $v['v_r'] . '</td>
+							<td align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
                             </tr>';
                         }
                     }
@@ -629,44 +629,44 @@ if (isset($form['a'])) {
                     // devo fare prima uno storno per scaricare
                     $mq = $v['g_a'] - $v['g_r'];
                     echo '		<tr>
-			 				<td class="FacetDataTD">98-' . $cau98['descri'] . '</td>
-							<td class="FacetDataTD" align="left">' . $k . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_d'] . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
-							<td class="FacetDataTD"></td>
-							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
-							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
+			 				<td>98-' . $cau98['descri'] . '</td>
+							<td align="left">' . $k . '</td>
+							<td align="left">' . $v['i_d'] . '</td>
+							<td align="left">' . $v['i_u'] . '</td>
+							<td></td>
+							<td align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
+							<td align="right">' . $v['v_r'] . '</td>
+							<td align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
 						</tr>';
                 } elseif ($v['g_a'] < $v['g_r']) { // senza lotti giacenza reale maggiore carico
                     // devo fare prima uno storno per caricare
                     $mq = $v['g_r'] - $v['g_a'];
                     echo '		<tr>
-			 				<td class="FacetDataTD">98-' . $cau98['descri'] . '</td>
-							<td class="FacetDataTD" align="left">' . $k . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_d'] . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
-							<td class="FacetDataTD"></td>
-							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
+			 				<td>98-' . $cau98['descri'] . '</td>
+							<td align="left">' . $k . '</td>
+							<td align="left">' . $v['i_d'] . '</td>
+							<td align="left">' . $v['i_u'] . '</td>
+							<td align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
+							<td></td>
+							<td align="right">' . $v['v_r'] . '</td>
+							<td align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
 						</tr>';
                 }
                 echo '		<tr>
-							<td class="FacetDataTD">99-' . $cau99['descri'] . '</td>
-							<td class="FacetDataTD" align="left">' . $k . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_d'] . '</td>
-							<td class="FacetDataTD" align="left">' . $v['i_u'] . '</td>
-							<td class="FacetDataTD" align="right">' . $v['g_r'] . '</td>
-							<td class="FacetDataTD"></td>
-							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $v['g_r']) . '</td>
+							<td>99-' . $cau99['descri'] . '</td>
+							<td align="left">' . $k . '</td>
+							<td align="left">' . $v['i_d'] . '</td>
+							<td align="left">' . $v['i_u'] . '</td>
+							<td align="right">' . $v['g_r'] . '</td>
+							<td></td>
+							<td align="right">' . $v['v_r'] . '</td>
+							<td align="right">' . gaz_format_number($v['v_r'] * $v['g_r']) . '</td>
 						</tr>';
             }
         }
         echo '		<tr>
-	   					<td align="right" colspan="8" class="FacetFooterTD">
-							<input type="submit" name="insert" id="ispreview" value="' . $script_transl['submit'] . '">
+	   					<td align="right" colspan="8" class="text-center">
+							<input class="btn btn-warning" type="submit" name="insert" id="is_preview" value="' . $script_transl['submit'] . '">
 						</td>
 					</tr>';
     }
