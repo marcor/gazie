@@ -863,16 +863,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['initra'] = $initra;
                 $form['datemi'] = $datemi;
                 /** inizio modifica FP 19/10/2015 */
-                $form['data_ordine'] = $datemi = $form['annord'] . "-" . $form['mesord'] . "-" . $form['gioord'];
+                $form['data_ordine'] = $form['annord'] . "-" . $form['mesord'] . "-" . $form['gioord'];
                 /** fine modifica FP */
-                tesdocInsert($form);
-                //recupero l'id assegnato dall'inserimento
-                $ultimo_id = gaz_dbi_last_id();
+				$ultimo_id = tesdocInsert($form);
+                
                 //inserisco i righi
                 foreach ($form['rows'] as $i => $v) {
                     $form['rows'][$i]['id_tes'] = $ultimo_id;
-                    rigdocInsert($form['rows'][$i]);
-                    $last_rigdoc_id = gaz_dbi_last_id();
+                    $last_rigdoc_id = rigdocInsert($form['rows'][$i]);
+                    
                     if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
                         bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                         gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
