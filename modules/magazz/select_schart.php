@@ -216,52 +216,46 @@ echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\
 $gForm = new magazzForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
-echo "<table class=\"Tsmall\" align=\"center\">\n";
+echo '<table class="Tsmall table table-striped text-right">';
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  class=\"FacetDataTD\">\n";
+echo "<td>".$script_transl['date']."</td><td class=\"text-center\">\n";
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cm_ini']."</td><td  class=\"FacetDataTD\">\n";
+echo "<td>".$script_transl['cm_ini']."</td><td class=\"text-center\">\n";
 $gForm->selectFromDB('catmer','cm_ini','codice',$form['cm_ini'],false,false,'-','descri','cm_ini');
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cm_fin']."</td><td  class=\"FacetDataTD\">\n";
+echo "<td>".$script_transl['cm_fin']."</td><td class=\"text-center\">\n";
 $gForm->selectFromDB('catmer','cm_fin','codice',$form['cm_fin'],false,false,'-','descri','cm_fin');
 echo "</tr>\n";
-//if ( !isset($form['ric']) ) {
-	echo "<tr>\n";
-	echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['art_ini']."</td><td  class=\"FacetDataTD\">\n";
-	$gForm->selItem('art_ini',$form['art_ini'],$form['search']['art_ini'],$script_transl['mesg'],$form['hidden_req']);
-	echo "</tr>\n";
-	echo "<tr>\n";
-	echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['art_fin']."</td><td  class=\"FacetDataTD\">\n";
-	$gForm->selItem('art_fin',$form['art_fin'],$form['search']['art_fin'],$script_transl['mesg'],$form['hidden_req']);
-	echo "</tr>\n";
-//} else {
-	/*echo "<input type=\"hidden\" name=\"art_ini\">";
-	echo "<input type=\"hidden\" name=\"art_fin\">";*/
-	//echo "<input type=\"hidden\" name=\"search\">";
-	echo "<tr>\n";
-	echo "<td class=\"FacetFieldCaptionTD\">Articolo pers.(% jolly)</td><td  class=\"FacetDataTD\">\n";
-	echo "<input name=\"ric\" value=\"".$form['ric']."\"/>";
-	echo "</tr>\n";
-//}
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td  class=\"FacetDataTD\">\n";
+echo "<td>".$script_transl['art_ini']."</td><td class=\"text-center\">\n";
+$gForm->selItem('art_ini',$form['art_ini'],$form['search']['art_ini'],$script_transl['mesg'],$form['hidden_req']);
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td>".$script_transl['art_fin']."</td><td class=\"text-center\">\n";
+$gForm->selItem('art_fin',$form['art_fin'],$form['search']['art_fin'],$script_transl['mesg'],$form['hidden_req']);
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td>Articolo pers.(% jolly)</td><td class=\"text-center\">\n";
+echo "<input name=\"ric\" value=\"".$form['ric']."\"/>";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td>".$script_transl['date_ini']."</td><td class=\"text-center\">\n";
 $gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1);
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td  class=\"FacetDataTD\">\n";
+echo "<td>".$script_transl['date_fin']."</td><td class=\"text-center\">\n";
 $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1);
 echo "</tr>\n";
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
+echo "\t<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\" align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
 //echo "<input type=\"submit\" name=\"ric\" value=\"Personalizzata\"></td>";
-echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
+echo '<td class="FacetFieldCaptionTD" align="right"> <input type="submit" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
@@ -273,7 +267,7 @@ $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$for
 
 if (isset($_POST['preview']) and $msg=='') {
   $m=getMovements($form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin'],$date_ini,$date_fin);
-  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+  echo '<div class="table-responsive"><table class="table table-striped table-bordered table-condensed">';
   if (sizeof($m) > 0) {
         $ctr_mv='';
         $ctrl_id=0;
@@ -285,48 +279,48 @@ if (isset($_POST['preview']) and $msg=='') {
             if ($ctr_mv != $mv['artico']) {
                gaz_set_time_limit (30);
                if (!empty($ctr_mv)) {
-                  echo "\t<tr>\n";
+                  echo '<tr>';
                   echo "\t<td colspan=\"10\" align=\"right\"></td>\n";
                   echo "\t </tr>\n";
                   $sum=0.00;
                }
-               echo "\t<tr>\n";
-               echo "\t<td colspan=\"10\">".$mv['artico']." - ".$mv['desart']."</td>\n";
+               echo '<tr>';
+               echo '<td class="FacetDataTD text-center" colspan="10"><b>'.$mv['artico']." - ".$mv['desart']."</b></td>\n";
                echo "\t </tr>\n";
             }
 
             // passo tutte le variabili al metodo in modo da non costringere lo stesso a fare le query per ricavarsele
             $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
             $mval=end($magval);
-            echo "<tr><td class=\"FacetDataTD\" >".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
-            echo "<td align=\"center\" class=\"FacetDataTD\" >".$mv['caumag'].'-'.substr($mv['descau'],0,20)."</td>";
+            echo "<tr><td>".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
+            echo "<td align=\"center\">".$mv['caumag'].'-'.substr($mv['descau'],0,20)."</td>";
 			if ($mv['id_orderman']>0){
 				$mv['desdoc'].= ' '.$mv['desorderman'];
 			}
-            echo "<td class=\"FacetDataTD\" >".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
+            echo "<td>".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
 			if (intval($mv['id_lotmag'])>0){
 				echo " lotto: ",$mv['id_lotmag'],"-",$mv['identifier'];
 			}
 			echo "</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\" >".number_format($mv['prezzo'],$admin_aziend['decimal_price'],',','.')."</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\" >".$mv['unimis']."</td>\n";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mv['quanti']*$mv['operat'],1,$admin_aziend['decimal_quantity'])."</td>";
+            echo "<td align=\"right\">".number_format($mv['prezzo'],$admin_aziend['decimal_price'],',','.')."</td>";
+            echo "<td align=\"right\">".$mv['unimis']."</td>\n";
+            echo "<td align=\"right\">".gaz_format_quantity($mv['quanti']*$mv['operat'],1,$admin_aziend['decimal_quantity'])."</td>";
             if ($mv['operat']==1) {
-              echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',','')."</td><td></td>";
+              echo "<td align=\"right\">".number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',','')."</td><td></td>";
             } else {
-              echo "<td></td><td align=\"right\" class=\"FacetDataTD\">".number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',','')."</td>";
+              echo "<td></td><td align=\"right\">".number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',','')."</td>";
             }
-            echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mval['q_g'],$admin_aziend['decimal_price'],',','.')."</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mval['v_g'])."</td>";
+            echo "<td align=\"right\">".number_format($mval['q_g'],$admin_aziend['decimal_price'],',','.')."</td>";
+            echo "<td align=\"right\">".gaz_format_number($mval['v_g'])."</td>";
             echo "</tr>";
             $ctr_mv = $mv['artico'];
          }
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-         echo '<td colspan="10" align="right"><input type="submit" name="print" value="'.$script_transl['print'].'">';
+         echo '<td colspan="10" class="text-center"><input class="btn btn-warning" type="submit" name="print" value="'.$script_transl['print'].'">';
          echo "\t </td>\n";
          echo "\t </tr>\n";
   }
-  echo "</table></form>";
+  echo "</table></div></form>";
 }
 ?>
 <?php
