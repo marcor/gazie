@@ -87,7 +87,6 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
 	$classv='default';
     while ($tes = gaz_dbi_fetch_array($result)) {
         if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
-            $tes['contanti']=false;
 			$title='Modifica';
 			$accpaymov=[];
 			$accpaymov['no']='Partita riferita a questa Nota Credito';
@@ -239,10 +238,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
             // se ho una ModalitaPagamento contanti (MP01) non apro la partita
             if ($r['ModalitaPagamento'] == 'MP01') {
                 $contanti = gaz_dbi_get_row($gTables['pagame'], 'fae_mode', 'MP01','AND incaut > 100000000');
-                if ($contanti){
-                    $tes['contanti']=true;
-                    $tes['incaut']=$contanti['incaut'];                    
-                }
+                $tes['incaut']=($contanti)?$contanti['incaut']:0;                    
             }
         }
         $doc[$tes['protoc']]['accpaymov'] = $accpaymov;
@@ -562,11 +558,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 if ($v['rit'] > 0) {  // se ho una ritenuta d'acconto
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $krit, 'import' => $v['rit']));
                 }
-                if ($v['tes']['incaut'] > 100000000 || $v['tes']['contanti'] ) {  // se il pagamento prevede l'incasso automatico o sul tracciato XML avevo ModalitaPagamento=MP01 
+                if ($v['tes']['incaut'] > 100000000 ) {  // se il pagamento prevede l'incasso automatico o sul tracciato XML avevo ModalitaPagamento=MP01 
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['incaut'], 'import' => ($tot['tot'] - $v['rit'])));
                 } else { // altrimenti inserisco le partite aperte
-                  if (count($v['pay'])>0){ // se ho i dati provenienti dal XML li uso
+                  if (isset($v['pay'])&&count($v['pay'])>0){ // se ho i dati provenienti dal XML li uso
                     foreach ($v['pay'] as $v_pay) {
                         // preparo l'array da inserire sui movimenti delle partite aperte
                         $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datreg'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
