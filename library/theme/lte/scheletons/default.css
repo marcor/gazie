@@ -109,13 +109,20 @@
 }
 
 .table {
-    border-collapse: initial;
-    margin-bottom: 0px;
+    margin-bottom: 5px;
 }
-.Tmiddle {
-	width: 70%;
-    margin: 0px auto;
-    float: none;
+table.Tmiddle,table.Tsmall {
+	border : solid 1px;
+	margin-left: auto;
+	margin-right: auto;
+}
+@media only screen and (min-width: 990px) {
+	table.Tmiddle {
+		max-width : 70%;
+	}
+	table.Tsmall {
+		max-width : 50%;
+	}
 }
 #products-list
 {

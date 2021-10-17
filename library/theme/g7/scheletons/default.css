@@ -54,21 +54,19 @@ table.Tlarge {
 .table {
     margin-bottom: 5px;
 }
-
-table.Tmiddle {
-    width : 70%;
-    border : solid 1px;
-    margin-left: auto;
-    margin-right: auto;
+table.Tmiddle,table.Tsmall {
+	border : solid 1px;
+	margin-left: auto;
+	margin-right: auto;
 }
-
-table.Tsmall {
-    width : 50%;
-    border : solid 1px;
-    margin-left: auto;
-    margin-right: auto;
+@media only screen and (min-width: 990px) {
+	table.Tmiddle {
+		max-width : 70%;
+	}
+	table.Tsmall {
+		max-width : 50%;
+	}
 }
-
 table.selectTable tr.even {
 }
 
