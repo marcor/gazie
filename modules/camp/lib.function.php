@@ -131,7 +131,8 @@ class silos {
 				break;
 			}
 		}
-		$identifier=gaz_dbi_get_row($gTables['lotmag'], "id", $id_lotma)['identifier'];
+		$identif=gaz_dbi_get_row($gTables['lotmag'], "id", $id_lotma);
+		$identifier=(isset($identif))?$identif['identifier']:'';
 		return array($id_lotma,$identifier) ;
 	}
 	
@@ -188,16 +189,31 @@ class silos {
 	function getLatestEmptySil($codsil){// funzione per trovare la data più recente dell'ultimo svuotamento totale del silos/recipiente di stoccaggio
 	// se trovato il punto zero, restituisce un array: datdoc (la data dello zero) id_mov (id magazzino del movimento zero) RunningTotal (valore numerico zero)
 		global $gTables,$admin_aziend;
+		
+		$query ="
+		SELECT datdoc, id_mov 
+		FROM ".$gTables['movmag']." m1
+		WHERE (SELECT SUM(m2.quanti * m2.operat) 
+			   FROM ".$gTables['movmag']." m2 LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = id_mov
+						 LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico  
+			   WHERE m2.datdoc <= m1.datdoc AND m2.id_mov <= m1.id_mov AND ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0) = 0
+			   ORDER BY datdoc ASC LIMIT 1
+		";
+		
+		
+		/*
 		$query ="
 			SELECT
 			  O.datdoc,
 			  O.id_mov,
 			  (SELECT
 				 SUM(quanti * operat) FROM ".$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = id_mov
-			   WHERE datdoc <= O.datdoc AND id_mov <= O.id_mov AND ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' ) 'RunningTotal'
+				 LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['movmag'].".artico
+			   WHERE datdoc <= O.datdoc AND id_mov <= O.id_mov AND ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0) 'RunningTotal'
 			FROM ".$gTables['movmag']." O 			
 			HAVING RunningTotal = 0 ORDER BY datdoc ASC LIMIT 1
-			";		
+			";	
+*/			
 		$res = gaz_dbi_query($query);
 		$result=gaz_dbi_fetch_array($res);
 		return $result;			
@@ -218,8 +234,9 @@ class silos {
 		$table=$gTables['movmag']." 
 		LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov 
 		LEFT JOIN ".$gTables['artico']." ON ".$gTables['artico'].".codice = ".$gTables['movmag'].".artico
+		LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['artico'].".codice
 		";
-		$where= $gTables['camp_mov_sian'].".recip_stocc = '".$codsil."'";
+		$where= $gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0";
 		if (strlen($date)>0){
 			$where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))"; 
 		}
@@ -228,12 +245,14 @@ class silos {
 		$passo=2000000;
 		$limit=0;
 		$resmovs=gaz_dbi_dyn_query ($select,$table,$where,$orderby,$limit,$passo,$groupby);// ho trovato tutti i movimenti interessati
-		$count=array();		
+		
+		$count=array();
+		$var_dichiarabili="";
 		$key="id_lotti"; // chiave per il raggruppamento per lotto
 		$key2="varieta"; // chiave per il raggruppamento per varietà
 		$count[$key]['total']=0;$count[$key2]['total']=0; // azzero i totali
 		foreach ($resmovs as $res) { // procedo al raggruppamento e conteggio
-						
+			//echo "<pre>",print_r($res);
 			if( !isset($count[$key][$res['id_lotmag']]) ){ // se la chiave lotto ancora non c'è nell'array
 				// Aggiungo la chiave con il rispettivo valore iniziale
 				$count[$key][$res['id_lotmag']] = $res['quanti']*$res['operat'];
@@ -244,6 +263,9 @@ class silos {
 			
 			if( !isset($count[$key2][$res['quality']]) ){ // se la chiave varietà ancora non c'è nell'array
 				// Aggiungo la chiave con il rispettivo valore iniziale
+				if (strlen($res['quality'])<3){// basta una sola partita senza varietà per bloccare la classificazione varietale del silos
+					$var_dichiarabili="NO";// varietà non dichiarabili in quanto è presente una partita anonima
+				}
 				$count[$key2][$res['quality']] = $res['quanti']*$res['operat'];
 			} else {
 				// Altrimenti, aggiorno il valore della chiave
@@ -251,14 +273,20 @@ class silos {
 			}			
 		}
 		$count[$key]['total']= array_sum($count[$key]); // il totale dei lotti
+		
 		$count[$key2]['total']= array_sum($count[$key2]); // il totale delle varietà
-	
+		
 		// i valori zero o, peggio, negativi sono da escludere
 		$count[$key] = array_filter($count[$key],function($var){return($var > 0);});
 		$count[$key2] = array_filter($count[$key2],function($var){return($var > 0);});
+		if ($var_dichiarabili=="NO"){// se le varietà non sono dichiarabili per contaminazione con partita anonima
+			$total= $count[$key2]['total']; // memorizzo il totale delle varietà
+			$count[$key2]=array();//azzero l'array delle varietà
+			$count[$key2]['total']=$total;// reimposto solo la quantità totale nell'array
+		}
 		
 		arsort($count[$key2]);
-		//print_r($count);
+		
 		//restituisce array['lotti](total=>qta, idlotto=>qta, id lotto=>qta, etc) e array['varieta'](total=>qta, varieta=>qta, varieta=>qta, etc) Le varietà sono elencate in ordine descrescente in base al valore della quantità.
 		return $count;
 	}	

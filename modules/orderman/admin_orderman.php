@@ -114,17 +114,17 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 	}  else {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
 	}
-  if ($resartico) {
-    $form['lot_or_serial'] = $resartico['lot_or_serial'];
-    $form['SIAN'] = $resartico['SIAN'];
-	$form['preacq'] = $resartico['preacq'];
-	$form['quality'] = $resartico['quality'];
-  } else {
-    $form['lot_or_serial'] = '';
-    $form['SIAN'] = '';
-	$form['preacq'] = "";
-	$form['quality'] = "";
-  }
+	if ($resartico) {
+		$form['lot_or_serial'] = $resartico['lot_or_serial'];
+		$form['SIAN'] = $resartico['SIAN'];
+		$form['preacq'] = $resartico['preacq'];
+		$form['quality'] = $resartico['quality'];
+	} else {
+		$form['lot_or_serial'] = '';
+		$form['SIAN'] = '';
+		$form['preacq'] = "";
+		$form['quality'] = "";
+	}
 	$form['cod_operazione'] = $_POST['cod_operazione'];
     $form['recip_stocc'] = $_POST['recip_stocc'];
 	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
@@ -135,6 +135,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			if ($form['quantip']>$qtaLotId){
 				$form['quantip']=$qtaLotId; $warnmsg.="42+";
 			}
+		}
+		if (intval($form['cod_operazione'] >0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
+		   $var_orig = $campsilos->getContentSil($form['recip_stocc']);
+			unset($var_orig['varieta']['total']);//tolgo il total
+			$var=implode(", ",array_keys($var_orig['varieta']));// creo l'elenco varietà
+			if ($form['quality'] !== $var){ // se le varietà del silos non coincidono con quelle della confezione
+				$warnmsg.= "44+"; 
+			}				
 		}
 	}
 	if ($resartico && $resartico['good_or_service'] == 2) { // se è un articolo composto
@@ -195,19 +203,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         $form['id_rigbro'] = 0;
         $form['order'] = 0;
         $form['quantipord'] = 0;
-    }
-   
-	/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
-    for ($m = 0;$m <= $form['nmov'];++$m) {
-        $form['staff'][$m] = $_POST['staff' . $m];
-    }
+    }   
 	
-    if ($toDo == "update" && $form['order_type']!="AGR") { // se update e non è produzione agricola mantengo il codice staff memorizzato inizialmente nel data base
-        for ($m = 0;$m <= $form['nmovdb'];++$m) {
-            $form['staffdb'][$m] = $_POST['staffdb' . $m];
-        }
-    }
-	*/
     $form['filename'] = $_POST['filename'];
     $form['identifier'] = $_POST['identifier'];
     $form['expiry'] = $_POST['expiry'];
@@ -231,6 +228,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 $form['prezzo_comp'][$m] = $_POST['prezzo_comp' . $m];
                 $form['q_lot_comp'][$m] = $_POST['q_lot_comp' . $m];
 				$form['recip_stocc_comp'][$m] = $_POST['recip_stocc_comp' . $m];
+				if (strlen($form['recip_stocc_comp'][$m])>0 AND intval($form['cod_operazione'] >0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
+				   $var_orig = $campsilos->getContentSil($form['recip_stocc_comp'][$m]);
+					unset($var_orig['varieta']['total']);//tolgo il total
+					$var=implode(", ",array_keys($var_orig['varieta']));// creo l'elenco varietà					
+					if ($form['quality_comp'][$m] !== $var){ // se le varietà del silos non coincidono con quelle della confezione
+						$warnmsg.= "44+"; 
+					}				
+				}
 				if (isset($_POST['subtLot'. $m]) AND $form['q_lot_comp'][$m]>1){
 					$form['q_lot_comp'][$m]--;
 				}
@@ -317,11 +322,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             if ($form['quantip'] == 0) { // quantità produzione vuota
                 $msg.= "17+";
             }
-			/* COMMENTATO il codice per gestione operai perché dovrà essere trasferito in uno script appositamente dedicato alle ore lavorate
-            if ($form['staff'][0] > 0 && $form['day_of_validity'] > 13) { // D. Lgs. 66/2003 > massimo ore giornaliere lavorabili = 13
-                $msg.= "18+";
-            }
-			*/
+			
             if (intval($form['datreg']) == 0) { // se manca la data di registrazione
                 $msg.= "22+";
             }
