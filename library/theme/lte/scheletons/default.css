@@ -116,6 +116,10 @@ table.Tmiddle,table.Tsmall {
 	margin-left: auto;
 	margin-right: auto;
 }
+table.Tmiddle tr>td, table.Tsmall tr>td {
+	padding : 5px;
+}
+
 @media only screen and (min-width: 990px) {
 	table.Tmiddle {
 		max-width : 70%;
