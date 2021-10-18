@@ -139,6 +139,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_annota'] = $_POST['in_annota'];
     $form['in_scorta'] = $_POST['in_scorta'];
     $form['in_quamag'] = $_POST['in_quamag'];
+	$form['in_quality'] = $_POST['in_quality'];
     $form['in_pesosp'] = $_POST['in_pesosp'];
 	$form['in_good_or_service'] = $_POST['in_good_or_service'];
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
@@ -189,6 +190,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['annota'] = substr($v['annota'], 0, 50);
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
             $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
+			$form['rows'][$next_row]['quality'] = $v['quality'];
             $form['rows'][$next_row]['pesosp'] = floatval($v['pesosp']);
 			$form['rows'][$next_row]['SIAN'] = intval($v['SIAN']);
 			$form['rows'][$next_row]['cod_operazione'] = $v['cod_operazione'];
@@ -212,6 +214,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_annota'] = $form['rows'][$key_row]['annota'];
                     $form['in_scorta'] = $form['rows'][$key_row]['scorta'];
                     $form['in_quamag'] = $form['rows'][$key_row]['quamag'];
+					$form['in_quality'] = $form['rows'][$key_row]['quality'];
                     $form['in_pesosp'] = $form['rows'][$key_row]['pesosp'];
 					$form['in_good_or_service'] = $form['rows'][$key_row]['good_or_service'];
                     $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
@@ -397,6 +400,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						if ($v['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
 							$value_sian['cod_operazione']= $v['cod_operazione'];
 							$value_sian['recip_stocc']= $v['recip_stocc'];
+							$value_sian['varieta']= $v['quality'];
 							$value_sian['recip_stocc_destin']= $v['recip_stocc_destin'];
 							$value_sian['id_movmag']=$id_mag;
 							gaz_dbi_table_insert('camp_mov_sian', $value_sian);
@@ -444,6 +448,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						if ($v['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
 							$value_sian['cod_operazione']= $v['cod_operazione'];
 							$value_sian['recip_stocc']= $v['recip_stocc'];
+							$value_sian['varieta']= $v['quality'];
 							$value_sian['recip_stocc_destin']= $v['recip_stocc_destin'];
 							$value_sian['id_movmag']=$id_mag;
 							gaz_dbi_table_insert('camp_mov_sian', $value_sian);
@@ -537,6 +542,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['lot_or_serial'] = $form['in_lot_or_serial'];
             $form['rows'][$old_key]['id_lotmag'] = $form['in_id_lotmag'];
 			$form['rows'][$old_key]['identifier'] = $form['in_identifier'];
+			$form['rows'][$old_key]['quality'] = $artico['quality'];
 			$form['rows'][$old_key]['SIAN'] = $form['in_SIAN'];
 			$form['rows'][$old_key]['cod_operazione'] = $form['in_cod_operazione'];
 			$form['rows'][$old_key]['recip_stocc'] = $form['in_recip_stocc'];
@@ -627,6 +633,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['lot_or_serial'] = 0;
             $form['rows'][$next_row]['id_lotmag'] = 0;
 			$form['rows'][$next_row]['identifier'] = "";
+			$form['rows'][$next_row]['quality'] = "";
 			$form['rows'][$next_row]['SIAN'] = 0;
 			$form['rows'][$next_row]['cod_operazione'] = 11;
 			$form['rows'][$next_row]['recip_stocc'] = '';
@@ -640,7 +647,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['annota'] = $artico['annota'];
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$next_row]['lot_or_serial'] = $artico['lot_or_serial'];
-				$form['rows'][$next_row]['SIAN'] = $artico['SIAN'];				
+				$form['rows'][$next_row]['SIAN'] = $artico['SIAN'];	
+				$form['rows'][$next_row]['quality'] = $artico['quality'];
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
                 $form['rows'][$next_row]['unimis'] = $artico['unimis'];
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prezzo'], $admin_aziend['decimal_price'], '.', '');
@@ -849,6 +857,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
     $form['in_pesosp'] = 0;
+	$form['in_quality'] = "";
     $form['in_lot_or_serial'] = 0;
     $form['in_id_lotmag'] = 0;
 	$form['in_identifier'] = "";
@@ -880,6 +889,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['scorta'] = ($articolo)?$articolo['scorta']:'';
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
         $form['rows'][$next_row]['pesosp'] = ($articolo)?$articolo['peso_specifico']:'';
+		$form['rows'][$next_row]['quality'] = ($articolo)?$articolo['quality']:'';
         $form['rows'][$next_row]['lot_or_serial'] = ($articolo)?$articolo['lot_or_serial']:'';
 		$form['rows'][$next_row]['SIAN'] = ($articolo)?$articolo['SIAN']:'';
 		$form['rows'][$next_row]['cod_operazione'] = (isset($r['cod_operazione']))?$r['cod_operazione']:'';
@@ -956,6 +966,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_annota'] = "";
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
+	$form['in_quality'] = "";
     $form['in_pesosp'] = 0;
     $form['in_lot_or_serial'] = 0;
     $form['in_id_lotmag'] = 0;
@@ -1129,6 +1140,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <input type=\"hidden\" value=\"" . $form['in_annota'] . "\" name=\"in_annota\" />
         <input type=\"hidden\" value=\"" . $form['in_scorta'] . "\" name=\"in_scorta\" />
         <input type=\"hidden\" value=\"" . $form['in_quamag'] . "\" name=\"in_quamag\" />
+		<input type=\"hidden\" value=\"" . $form['in_quality'] . "\" name=\"in_quality\" />
         <input type=\"hidden\" value=\"" . $form['in_pesosp'] . "\" name=\"in_pesosp\" />
         <input type=\"hidden\" value=\"" . $form['in_good_or_service'] . "\" name=\"in_good_or_service\" />
         <input type=\"hidden\" value=\"" . $form['in_SIAN'] . "\" name=\"in_SIAN\" />
@@ -1220,6 +1232,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
 			echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
+			echo "<input type=\"hidden\" value=\"" . $v['quality'] . "\" name=\"rows[$k][quality]\">\n";
 			echo "<input type=\"hidden\" value=\"" . $artico['good_or_service'] . "\" name=\"rows[$k][good_or_service]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['provvigione'] . "\" name=\"rows[$k][provvigione]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
