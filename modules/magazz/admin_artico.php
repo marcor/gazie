@@ -253,8 +253,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	}
 	
 	// se esiste un json per l'attributo della variante dell'e-commerce creo il json					
-	if (isset ($form['var_id']) AND isset ($form['var_name'])){
-		$arrayvar= array("var_id" => intval($_POST['var_id']), "var_name" => strval($_POST['var_name']));
+	if (isset ($form['var_id']) && isset ($form['var_name'])){
+		$arrayvar= array("var_id" => intval($form['var_id']), "var_name" => strval($form['var_name']));
 		$form['ecomm_option_attribute'] = json_encode ($arrayvar);
 	}
 		
