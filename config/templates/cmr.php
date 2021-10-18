@@ -829,7 +829,7 @@ class Cmr extends Template {
       $this->SetPos($ox,$oy+5);
       $this->Cell(86,0,$this->docVars->vettor['indirizzo'].' '.$this->docVars->vettor['citta'].' ('.$this->docVars->vettor['provincia'].')',0,1,'L',0,'',1);
       $this->SetPos($ox,$oy+10);
-      $this->Cell(86,0,"tel : ".$this->docVars->vettor['telefo'],0,1,'L',0,'',1);
+      $this->Cell(86,0,isset($this->docVars->vettor['telefo'])?"tel : ".$this->docVars->vettor['telefo']:'',0,1,'L',0,'',1);
 
       $ox = 144;
       $oy = 24;
@@ -896,7 +896,7 @@ class Cmr extends Template {
         // set background image
         //$img_file = '../../config/templates/cmr.png';
         //$img_file = '../../config/templates.felis/cmr.png';
-        $this->Image($img_file, 0, 0, 210, 297, '', '', '', false, 300, '', false, false, 0);
+		if(isset($img_file)){$this->Image($img_file,0, 0,210, 297,'','','',false,300,'',false,false,0);}
         // restore auto-page-break status
         $this->SetAutoPageBreak($auto_page_break, $bMargin);
         // set the starting point for the page content
