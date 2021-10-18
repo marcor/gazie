@@ -453,13 +453,15 @@ $(function() {
                     $tipodoc = "Fattura Immediata";
                     $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];
                     $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
+                    $classe_btn = "btn-success";
                 } elseif($r["tipdoc"] == 'FAF'){
                     $tipodoc = "Autofattura (TD26)";
                     $modulo = "stampa_docven.php?id_tes=" . $r['id_tes'];
                     $modifi = "admin_docven.php?Update&id_tes=" . $r['id_tes'];
+                    $classe_btn = "btn-success";
                 } elseif ($r["tipdoc"] == 'FAD') {
                     $tipodoc = "Fattura Differita";
-                    $classe_btn = "btn-inverse";
+                    $classe_btn = "btn-success";
                     $modulo = "stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'];
                     $modulo_fae = "electronic_invoice.php?seziva=" . $r["seziva"] . "&protoc=" . $r['protoc'] . "&year=" . substr($r['datfat'], 0, 4);
                     if ( !$modifica_fatture_ddt ) {
@@ -537,9 +539,9 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                     echo "<tr class=\"FacetDataTD\">";
 // Colonna protocollo
                     if (!empty($modifi)) {
-                        echo "<td><a href=\"" . $modifi . "\" class=\"btn btn-100 btn-xs " . $classe_btn . " btn-success\" title=\"Modifica " . $tipodoc . " \">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . "&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
+                        echo "<td class=\"text-center\"><a href=\"" . $modifi . "\" class=\"btn btn-100 btn-xs " . $classe_btn . "\" title=\"Modifica " . $tipodoc . " \">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . "&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
                     } else {
-                        echo "<td><button class=\"btn btn-100 btn-xs " . $classe_btn . " btn-defaul disabled\" title=\"Per poter modificare questa " . $tipodoc . " devi modificare i DdT in essa contenuti!\">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . " &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
+                        echo "<td class=\"text-center\"><button class=\"btn btn-100 btn-xs " . $classe_btn . " disabled\" title=\"Per poter modificare questa " . $tipodoc . " devi modificare i DdT in essa contenuti!\">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . " &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
                     }
 // Colonna numero documento
                     echo "<td align=\"center\">" . $r["numfat"] . " &nbsp;</td>";
