@@ -94,6 +94,7 @@ function caricaCliente(&$form) {
 			$form['righi'][$_POST['num_rigo']]['lot_or_serial'] = $articolo['lot_or_serial'];
 			$form['righi'][$_POST['num_rigo']]['cod_operazione'] = 11;
 			$form['righi'][$_POST['num_rigo']]['SIAN'] = $articolo['SIAN'];
+			$form['righi'][$_POST['num_rigo']]['quality'] = $articolo['quality'];
 			$form['righi'][$_POST['num_rigo']]['recip_stocc'] = "";
 			if ($articolo['SIAN']>0){
 				$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $rigo['codart']);
@@ -266,6 +267,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
 			$form['righi'][$_POST['num_rigo']]['id_lotmag'] = "";
 			$form['righi'][$_POST['num_rigo']]['cod_operazione'] = 11;
 			$form['righi'][$_POST['num_rigo']]['SIAN'] = (isset($articolo['SIAN']))?$articolo['SIAN']:0;
+			$form['righi'][$_POST['num_rigo']]['quality'] = (isset($articolo['quality']))?$articolo['quality']:'';
 			$form['righi'][$_POST['num_rigo']]['recip_stocc'] = "";
 			if (isset($articolo['SIAN']) AND $articolo['SIAN']>0){
 				$camp_artico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $rigo['codart']);
@@ -421,7 +423,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
         }
     }
 
-    if ($msg == "") {//procedo all'inserimento
+    if ($msg == "") {//procedo all'inserimento, nessun errore
         $iniziotrasporto .= " " . $_POST['initra_H'] . ":" . $_POST['initra_I'] . ":00";
         require("lang." . $admin_aziend['lang'] . ".php");
         $script_transl = $strScript['select_evaord.php'];
@@ -500,6 +502,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 				if ($form['righi'][$k]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
 					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
 					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
+					$value_sian['varieta']= $form['righi'][$k]['quality'];
 					$value_sian['recip_stocc_destin']= $form['righi'][$k]['recip_stocc_destin'];
 					$value_sian['id_movmag']=$id_movmag;
 					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
@@ -589,7 +592,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
             $msg .= "9+";
         }
     }
-    if ($msg == "") {//procedo all'inserimento
+    if ($msg == "") {//procedo all'inserimento, nessun errore
         require("lang." . $admin_aziend['lang'] . ".php");
         $script_transl = $strScript['select_evaord.php'];                
         $iniziotrasporto .= " " . $_POST['initra_H'] . ":" . $_POST['initra_I'] . ":00";
@@ -680,6 +683,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 				if ($form['righi'][$k]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
 					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
 					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
+					$value_sian['varieta']= $form['righi'][$k]['quality'];
 					$value_sian['recip_stocc_destin']= (isset($form['righi'][$k]['recip_stocc_destin']))?$form['righi'][$k]['recip_stocc_destin']:'';
 					$value_sian['id_movmag']=$id_movmag;
 					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
@@ -884,6 +888,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 				if ($form['righi'][$k]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
 					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
 					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
+					$value_sian['varieta']= $form['righi'][$k]['quality'];
 					$value_sian['recip_stocc_destin']= $form['righi'][$k]['recip_stocc_destin'];
 					$value_sian['id_movmag']=$id_movmag;
 					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
@@ -1050,6 +1055,7 @@ if (isset($_POST['ddt']) || isset($_POST['cmr']))
 				if ($form['righi'][$k]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
 					$value_sian['cod_operazione']= $form['righi'][$k]['cod_operazione'];
 					$value_sian['recip_stocc']= $form['righi'][$k]['recip_stocc'];
+					$value_sian['varieta']= $form['righi'][$k]['quality'];
 					$value_sian['recip_stocc_destin']= $form['righi'][$k]['recip_stocc_destin'];
 					$value_sian['id_movmag']=$id_movmag;
 					gaz_dbi_table_insert('camp_mov_sian', $value_sian);
@@ -1402,6 +1408,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 				if ($v['SIAN']>0) {
  					echo '<input type="hidden" value="' . $v['SIAN'] . '" name="righi[' . $k . '][SIAN]" />
 							<input type="hidden" value="' . $v['confezione'] . '" name="righi[' . $k . '][confezione]" />
+							<input type="hidden" value="' . $v['quality'] . '" name="righi[' . $k . '][quality]" />
 					';
 					?>
 					<div class="container-fluid">					
@@ -1427,6 +1434,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 					echo '<input type="hidden" value="" name="righi[' . $k . '][cod_operazione]" />
 					<input type="hidden" value="" name="righi[' . $k . '][recip_stocc]" />
 					<input type="hidden" value="0" name="righi[' . $k . '][SIAN]" />
+					<input type="hidden" value="" name="righi[' . $k . '][quality]" />
 					<input type="hidden" value="0" name="righi[' . $k . '][confezione]" />
 					';
 				}
