@@ -24,58 +24,74 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$partner_select_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode');
-$message = "";
-$anno = date("Y");
-if (isset($_GET['auxil'])) {
-    $auxil = filter_input(INPUT_GET, 'auxil');
-} else {
-    $auxil = 1;
-}
-$where = " ((tipdoc = 'FAD' && ddt_type != 'R') or tipdoc like 'DD_') and seziva = '$auxil'";
-$all = $where;
 
-$documento = '';
-$cliente = '';
-gaz_flt_var_assign('id_tes', 'i');
-gaz_flt_var_assign('numdoc', 'i');
-gaz_flt_var_assign('tipdoc', 'v');
-gaz_flt_var_assign('datemi', 'd');
-gaz_flt_var_assign('clfoco', 'v');
+$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
+$tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
 
-$lot = new lotmag();
 
-if (isset($_GET['datemi'])) {
-    $datemi = $_GET['datemi'];
+// funzione di utilità generale, adatta a mysqli.inc.php
+function cols_from($table_name, ...$col_names) {
+    $full_names = array_map(function ($col_name) use ($table_name) { return "$table_name.$col_name"; }, $col_names);
+    return implode(", ", $full_names);
 }
 
-if (isset($_GET['cliente'])) {
-    if ($_GET['cliente'] <> '') {
-        $cliente = $_GET['cliente'];
-        $where = " ((tipdoc = 'FAD' && ddt_type != 'R') or tipdoc like 'DD_') and seziva = '$auxil' ";
-        $limit = 0;
-        $passo = 2000000;
-        $auxil = $_GET['auxil'] . "&cliente=" . $cliente;
-        unset($documento);
-    }
-}
+// campi ammissibili per la ricerca
+$search_fields = [
+    'sezione'
+    => "seziva = %d",
+    'id_tes'
+    => "id_tes = %d",
+    'tipo'
+    => " ( tipdoc LIKE '%s' OR tipdoc = 'FAD') ",
+    'numero'
+    => "numdoc LIKE '%%%s%%'",
+    'anno'
+    => "YEAR(datemi) = %d",
+    'cliente'
+    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%%%s%%'"
+];
 
-if (isset($_GET['all'])) {
-    $_GET['id_tes'] = "";
-    $_GET['numdoc'] = "";
-    $_GET['tipdoc'] = "";
-    $_GET['datemi'] = "";
-    $_GET['clfoco'] = "";
-    gaz_set_time_limit(0);
-    $auxil = filter_input(INPUT_GET, 'auxil') . "&all=yes";
-    $passo = 100000;
-    $where = " ((tipdoc = 'FAD' && ddt_type != 'R') or tipdoc like 'DD_') and seziva = '$auxil'";
-    unset($documento);
-    $cliente = '';
-}
+// creo l'array (header => campi) per l'ordinamento dei record
+$sortable_headers = array(
+    "ID" => "id_tes",
+    "Numero" => "numdoc",
+    "Data" => "datemi",
+    "Cliente" => "",
+    "Destinazione" => "",
+    "Status" => "",
+    "Stampa" => "",
+    "Mail" => "",
+    "Origine" => "",
+    "Duplica" => "",
+    "Cancella" => ""
+);
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
+
+if (!isset($_GET['sezione'])) {
+	// ultima fattura emessa
+	$rs_last = gaz_dbi_dyn_query('seziva, YEAR(datemi) AS yearde', $gTables['tesdoc'], " (tipdoc = 'FAD' OR tipdoc LIKE 'DD_')", 'datemi DESC, id_tes DESC', 0, 1);
+	$last = gaz_dbi_fetch_array($rs_last);
+	if ($last) {
+		$default_where=['sezione' => $last['seziva'], 'tipo' => 'DD_', 'anno'=>$last['yearde']];
+        $_GET['anno']=$last['yearde'];
+	} else {
+		$default_where=['sezione' => 1, 'tipo' => 'DD_', 'anno'=> date('Y')];
+	}
+} else {
+	$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'DD_'];
+}
+$ts = new TableSorter(
+    !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
+    $passo, 
+    ['datemi' => 'desc', 'numdoc' => 'desc'], 
+    $default_where,
+);
+
+# le <select> spaziano solo tra i documenti di vendita del sezionale corrente
+$where_select = sprintf(" (tipdoc = 'FAD' OR tipdoc LIKE 'DD_') AND seziva = %d", $sezione);
+
 echo '<script>
 $(function() {
    $( "#dialog" ).dialog({
@@ -157,73 +173,58 @@ $(function() {
         <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
         <p class="ui-state-highlight" id="mail_attc"></p>
     </div>
-    <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
-        <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
-            <?php
-            for ($sez = 1; $sez <= 9; $sez++) {
-                $selected = "";
-                if (substr($auxil, 0, 1) == $sez)
-                    $selected = " selected ";
-                echo "<option value=\"" . $sez . "\"" . $selected . ">" . $sez . "</option>";
+    <div class="FacetFormHeaderFont text-center"> <?php echo $script_transl['title']; ?>
+       <select name="sezione" class="FacetSelect" onchange="this.form.submit()">
+	    <?php
+            for ($i = 1; $i <= 9; $i++) {
+                $selected = ($sezione == $i) ? "selected" : "";
+                echo "<option value='$i' $selected > $i </option>\n";
             }
-            ?>
+	    ?>
         </select>
-    </div>
-    <?php
-    if (!isset($_GET['field']) or ( $_GET['field'] == 2) or ( empty($_GET['field'])))
-        $orderby = "datemi desc, numdoc desc";
-    $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
-    $recordnav->output();
-    ?>
+     </div>
+                <?php
+        $ts->output_navbar();
+                ?>
+
     <div class="box-primary table-responsive">
         <table class="Tlarge table table-striped table-bordered table-condensed">
             <tr>
                 <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_int("id_tes", "Numero Prot."); ?>
-                    <!--<input placeholder="Cerca Numero" class="input-xs form-control" type="text" name="numdoc" value="<?php if (isset($documento) && $documento > 0) print $documento; ?>" maxlength="6" tabindex="1" class="FacetInput">-->
+                    <?php gaz_flt_disp_int("id_tes", "ID"); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_int("numdoc", "Numero Doc."); ?>
+                    <?php gaz_flt_disp_int("numero", "Numero DdT"); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_select("tipdoc", "tipdoc", $gTables["tesdoc"], $all, $orderby); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <?php gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>
+                    <?php gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $gTables["tesdoc"], $where_select, "anno DESC"); ?>
                 </td>
-                <td class="FacetFieldCaptionTD">
-
-                    <?php
-                    if ($partner_select_mode['val'] == null or $partner_select_mode['val'] == "0") {
-                        gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesdoc"] . ".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1");
+                <td class="FacetFieldCaptionTD" colspan=2>
+		    <?php 
+                    if ($partner_select) {
+                        gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 as nome", 
+					    $tesdoc_e_partners,
+					    $where_select, "nome ASC", "nome");
                     } else {
                         gaz_flt_disp_int("cliente", "Cliente");
                     }
-                    ?>
+		    ?>
+
+                </td>
+                <td class="FacetFieldCaptionTD text-center">
+                    <input type="submit" class="btn btn-sm btn-default btn-50" name="search" value="Cerca" tabindex="1">
+                    <?php $ts->output_order_form(); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    &nbsp;
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    &nbsp;
+                    <a class="btn btn-sm btn-default btn-50" href="?">Reset</a>
                 </td>
-                <td class="FacetFieldCaptionTD">
-                    &nbsp;
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    &nbsp;
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    &nbsp;
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    <input class="btn btn-sm btn-default" type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
-                </td>
-                <td class="FacetFieldCaptionTD">
-                    <input class="btn btn-sm btn-default" type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
+                <td class="FacetFieldCaptionTD" colspan=3>
                 </td>
             </tr>
-
             <tr>
                 <?php
                 $linkHeaders = new linkHeaders($script_transl['header']);
@@ -239,16 +240,14 @@ $(function() {
             else
                 $ultimoddt = 1;
 //recupero le testate in base alle scelte impostate
-            $result = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where, $orderby, $limit, $passo);
+            $result = gaz_dbi_dyn_query("*", $tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
             while ($r = gaz_dbi_fetch_array($result)) {
                 // customer data
                 $match_cust = true;
-                $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $r['clfoco']);
-                $anagra = gaz_dbi_get_row($gTables['anagra'], 'id', $clfoco['id_anagra']);
                 $destina = gaz_dbi_get_row($gTables['destina'], 'codice', $r['id_des_same_company']);
                 if(!$destina) $destina=['codice'=>'','unita_locale1'=>''];
   
-                if (!empty($cliente) && stripos($anagra['ragso1'], $_GET['cliente']) === false ) {
+                if (!empty($cliente) && stripos($r['ragso1'], $_GET['cliente']) === false ) {
                     $match_cust=false;
                 }
                 if ($match_cust) {
@@ -257,20 +256,20 @@ $(function() {
                         case "DDV":
                         case "DDY":
                         case "DDS":
-                            echo "<tr class=\"FacetDataTD\">";
+                            echo "<tr class=\"text-center\">";
                             // Colonna id
-                            echo "<td align=\"left\"><a class=\"btn btn-xs btn-success\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r['tipdoc'].' '. $r["id_tes"] . "</a></td>";
+                            echo "<td><a class=\"btn btn-xs btn-success\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r['tipdoc'].' '. $r["id_tes"] . "</a></td>";
                             // Colonna protocollo
-                            echo "<td align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a> &nbsp;</td>";
+                            echo "<td class=\"text-center\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a> &nbsp;</td>";
                             // Colonna type
-                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
+                            echo "<td><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
                             // Colonna data emissione
-                            echo "<td align=\"center\">" . gaz_format_date($r["datemi"]). " &nbsp;</td>";
+                            echo "<td>" . gaz_format_date($r["datemi"]). " &nbsp;</td>";
                             // Colonna Cliente
                             ?>
-                            <td>
-                                <a href="report_client.php?nome=<?php echo htmlspecialchars($anagra["ragso1"]); ?>">
-                                    <?php echo $anagra["ragso1"]; ?>
+                            <td class="text-left">
+                                <a href="report_client.php?nome=<?php echo htmlspecialchars($r["ragso1"]); ?>">
+                                    <?php echo $r["ragso1"]; ?>
                                 </a>
                             </td>
                             <td>
@@ -279,22 +278,22 @@ $(function() {
                             <?php
                             // Colonna status
                             if ($r['numfat'] > 0) {
-                                echo "<td align=\"center\" style=\"white-space:unset;\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
+                                echo "<td style=\"white-space:unset;\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
                                 if ($r["id_con"] > 0) {
                                     echo "<a title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">cont. n." . $r["id_con"] . "</a>";
                                 }
                             } else {
                                 if ($r['tipdoc'] == 'DDV' && $r['id_doc_ritorno'] > 0) {
-                                    echo "<td align=\"center\">"
+                                    echo "<td>"
                                     . "<a class=\"btn btn-xs btn-warning\" href=\"admin_docven.php?Update&id_tes=" . $r['id_doc_ritorno'] . "\">" . $script_transl['doc_returned'] . "</a>";
                                     ?>
-									<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
+									<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
 										<i class="glyphicon glyphicon-remove"></i>
 									</a>
 									<?php
 									echo "</td>";
                                 } else {
-                                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-success\" href=\"emissi_fatdif.php\">" . $script_transl['to_invoice'] . "</a></td>";
+                                    echo "<td><a class=\"btn btn-xs btn-success\" href=\"emissi_fatdif.php\">" . $script_transl['to_invoice'] . "</a></td>";
                                 }
                             }
                             // Colonna stampa
@@ -302,18 +301,18 @@ $(function() {
                             $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
                             $urlPrintCmr = "stampa_docven.php?id_tes=" . $r["id_tes"]."&template=Cmr";
-                            echo "<td align=\"center\">";
+                            echo "<td>";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento\"></i></a>";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintEtichette\" target=\"_blank\"><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
                             echo "</td>\n";
 
                             // Colonna "Mail"
-                            echo "<td align=\"center\">";
-                            if (!empty($anagra["e_mail"])) {
-                                echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $anagra["e_mail"] . '"
-                mail="' . $anagra["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope" title="Invia documento per email"></i></a>';
+                            echo "<td>";
+                            if (!empty($r["e_mail"])) {
+                                echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
+                mail="' . $r["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope" title="Invia documento per email"></i></a>';
                             } else {
-                                echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="admin_client.php?codice=' . substr($clfoco["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+                                echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="admin_client.php?codice=' . substr($r["clfoco"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }
                             echo "</td>\n";
 
@@ -330,72 +329,73 @@ $(function() {
                                     }
                                 }
                             }
-                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"admin_docven.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
+                            echo "<td><a class=\"btn btn-xs btn-default btn-duplica\" href=\"admin_docven.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
                             echo "</td>";
 
                             if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0){
-                                echo "<td align=\"center\">";
+                                echo "<td>";
 								?>
-								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
+								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
 									<i class="glyphicon glyphicon-remove"></i>
 								</a>
 								<?php
 								echo "</td>";
                             } else{
-                                echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
+                                echo "<td><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
 								echo "</tr>\n";
 							}
                             break;
                         case "DDR":
                         case "DDL":
-                            echo "<tr class=\"FacetDataTD\">";
+							$btnclass=($r['tipdoc']=='DDR')?'danger':'warning';
+                            echo "<tr class=\"text-center\">";
                             // Colonna id
-                            echo "<td><a  class=\"btn btn-xs btn-warning\" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $r["tipdoc"] . "" . $r["id_tes"] . "</a></td>";
-                            echo "<td align=\"left\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
+                            echo "<td><a class=\"btn btn-xs btn-".$btnclass."\" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" . $r["tipdoc"] . "" . $r["id_tes"] . "</a></td>";
+                            echo "<td><a href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
                             // Colonna type
-                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-warning \" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["tipdoc"]] . "</a> &nbsp;</td>";
-                            echo "<td align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+                            echo "<td><a class=\"btn btn-xs btn-".$btnclass." \" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["tipdoc"]] . "</a> &nbsp;</td>";
+                            echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                             ?>
-                            <td>
-                                <a href="../acquis/report_fornit.php?nome=<?php echo htmlspecialchars($anagra["ragso1"]); ?>">
-                                    <?php echo $anagra["ragso1"]; ?>
+                            <td class="text-left">
+                                <a href="../acquis/report_fornit.php?nome=<?php echo htmlspecialchars($r["ragso1"]); ?>">
+                                    <?php echo $r["ragso1"]; ?>
                                 </a>
                             </td>
                             <td>
                                 <?php echo "<a href=\"admin_destinazioni.php?codice=".$destina["codice"]."&Update\">".$destina["unita_locale1"]."</a>"; ?>
                             </td>
                             <?php
-                            echo "<td class=\"alert alert-danger\"  align=\"center\"><div class=\"btn btn-xs btn-warning\">" . $script_transl['from_suppl'] . "</div></td>";
+                            echo "<td class=\"alert alert-danger\" ><div class=\"btn btn-xs btn-".$btnclass."\">" . $script_transl['from_suppl'] . "</div></td>";
 
                             $urlPrintDoc = "../acquis/stampa_docacq.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
-                            echo "<td align=\"center\">";
+                            echo "<td>";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento\"></i></a>";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintEtichette\" target=\"_blank\"><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
                             echo "</td>\n";
 
                             // Colonna "Mail"
-                            echo "<td align=\"center\">";
-                            if (!empty($anagra["e_mail"])) {
-                                echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $anagra["e_mail"] . '"
-								mail="' . $anagra["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                            echo "<td>";
+                            if (!empty($r["e_mail"])) {
+                                echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
+								mail="' . $r["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                             } else {
-                                echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="../acquis/admin_fornit.php?codice=' . substr($clfoco["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+                                echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="../acquis/admin_fornit.php?codice=' . substr($r["clfoco"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }
                             echo "</td>\n";
                             echo "<td></td>";
 							if ($r['tipdoc']=='DDL'){ // i ddt per lavorazioni ricorrenti possono essere duplicati
-								echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"../acquis/admin_docacq.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
+								echo "<td><a class=\"btn btn-xs btn-default btn-duplica\" href=\"../acquis/admin_docacq.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
 								echo "</td>";
 							} else {
 								echo "<td ></td>";
 							}
                             if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0){
                             // Colonna Elimina
-                                echo "<td align=\"center\">";
+                                echo "<td>";
 								?>
-								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $anagra['ragso1'];?>">
-									<i class="glyphicon glyphicon-remove"></i>
+								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
+									<i class="glyphicon glyphicon-remove"></ir
 								</a>
 								</td>
 								<?php
@@ -406,20 +406,20 @@ $(function() {
                             break;
                         case "FAD":
                             if ( $r['ddt_type'] != 'R') {
-                            echo "<tr class=\"FacetDataTD\">";
+                            echo "<tr class=\"text-center\">";
                             // Colonna id
-                            echo "<td align=\"left\"><a class=\"btn btn-xs btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>".$r['tipdoc']."&nbsp;" . $r["id_tes"] . "</a></td>";
+                            echo "<td><a class=\"btn btn-xs btn-success\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>".$r['tipdoc']."&nbsp;" . $r["id_tes"] . "</a></td>";
                             // Colonna protocollo
-                            echo "<td align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a></td>";
+                            echo "<td><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a></td>";
                             // Colonna type
-                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
+                            echo "<td><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
                             // Colonna Data emissione
-                            echo "<td align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+                            echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                             // Colonna Cliente
                             ?>
-                            <td class="">
-                                <a href="report_client.php?nome=<?php echo htmlspecialchars($anagra["ragso1"]); ?>">
-                                    <?php echo $anagra["ragso1"]; ?>
+                            <td class="text-left">
+                                <a href="report_client.php?nome=<?php echo htmlspecialchars($r["ragso1"]); ?>">
+                                    <?php echo $r["ragso1"]; ?>
                                 </a>
                             </td>
                             <td>
@@ -427,7 +427,7 @@ $(function() {
                             </td>
                             <?php
                             // Colonna Stato
-                            echo "<td align=\"center\" style=\"white-space:unset;\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\">Fat " . $r["numfat"] . "</a>";
+                            echo "<td style=\"white-space:unset;\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\">Fat " . $r["numfat"] . "</a>";
                             if ($r["id_con"] > 0) {
                                 echo "&nbsp;<a class=\"btn btn-xs btn-default btn-registrazione\" title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont " . $r["id_con"] . "</a>";
                             }
@@ -435,21 +435,21 @@ $(function() {
 
                             $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             // Colonna stampa
-                            echo "<td align=\"center\">
+                            echo "<td>
             <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_ddt'] . " n. " . $r["numdoc"] . "\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
                             echo "</td>";
 
                             // Colonna "Mail"
-                            echo "<td align=\"center\">";
-                            if (!empty($anagra["e_mail"])) {
-                                echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $anagra["e_mail"] . '"
-                mail="' . $anagra["e_mail"] . '" namedoc="DDT n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                            echo "<td>";
+                            if (!empty($r["e_mail"])) {
+                                echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
+                mail="' . $r["e_mail"] . '" namedoc="DDT n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
                             } else {
-                                echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="admin_client.php?codice=' . substr($clfoco["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+                                echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="admin_client.php?codice=' . substr($r["clfoco"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }
                             echo "</td>";
                             // Colonna origine
-                            echo '<td align="center" style="white-space:unset;">';
+                            echo '<td style="white-space:unset;">';
                             $resorigine = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes', 1,1);
                             if ( gaz_dbi_num_rows( $resorigine )>0 ) {
                                 $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_order', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes');
@@ -477,7 +477,7 @@ $(function() {
 </form>
 <script>
 $(document).ready(function(){
-  var _sezi = $("select[name='auxil'] option:selected").text();
+  var _sezi = $("select[name='sezione'] option:selected").text();
   $.each(['DDT','CMR'], function( i, v ) {
     var _href = $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href');
     $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href', _href + '&seziva=' + _sezi);  

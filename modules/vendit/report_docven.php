@@ -23,19 +23,17 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend = checkAdmin();
-$message = "";
 
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id LEFT JOIN ' . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['fae_flux'] . '.id_tes_ref';
 
-function print_querytime($prev) {
-    list($usec, $sec) = explode(" ", microtime());
-    $this_time = ((float) $usec + (float) $sec);
-    echo round($this_time - $prev,3);
-    return $this_time;
-}
+//function print_querytime($prev) {
+//    list($usec, $sec) = explode(" ", microtime());
+//    $this_time = ((float) $usec + (float) $sec);
+//    echo round($this_time - $prev,3);
+//    return $this_time;
+//}
 
 // funzione di utilità generale, adatta a mysqli.inc.php
 function cols_from($table_name, ...$col_names) {
@@ -324,9 +322,9 @@ $(function() {
 
     <div align="center">
 	<?php
-        list ($usec, $sec) = explode(' ', microtime());
-        $querytime = ((float) $usec + (float) $sec);
-        $querytime_before = $querytime;
+//        list ($usec, $sec) = explode(' ', microtime());
+//        $querytime = ((float) $usec + (float) $sec);
+//        $querytime_before = $querytime;
         $ts->output_navbar();
 	?>
     </div>
@@ -709,9 +707,9 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                 }
                 $ctrl_doc = sprintf('%09d', $r['protoc']) . $r['datfat'];
             }
-            echo '<tr><td class="FacetFieldCaptionTD" colspan="10" align="right">Querytime: ';
-            print_querytime($querytime);
-            echo ' sec.</td></tr>';
+//            echo '<tr><td class="FacetFieldCaptionTD" colspan="10" align="right">Querytime: ';
+//            print_querytime($querytime);
+//            echo ' sec.</td></tr>';
             ?>
         </table>
     </div>
