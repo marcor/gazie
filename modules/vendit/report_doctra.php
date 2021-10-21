@@ -233,7 +233,7 @@ $(function() {
                 ?>
             </tr>
             <?php
-            $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where, "datemi desc, numdoc desc", 0, 1);
+            $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "(tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND seziva = '$sezione'".((isset($_GET['anno']) && $_GET['anno'] >= 2000)?' AND YEAR(datemi)='.intval($_GET['anno']):''), "datemi desc, numdoc desc", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             if ($ultimo_documento)
                 $ultimoddt = $ultimo_documento['numdoc'];
@@ -332,7 +332,7 @@ $(function() {
                             echo "<td><a class=\"btn btn-xs btn-default btn-duplica\" href=\"admin_docven.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
                             echo "</td>";
 
-                            if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0){
+                            if ($ultimoddt == $r["numdoc"] && $r['numfat'] < 1 ){
                                 echo "<td>";
 								?>
 								<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Cancella il documento" ref="<?php echo $r['id_tes'];?>" ragso1="<?php echo $r['ragso1'];?>">
@@ -390,7 +390,7 @@ $(function() {
 							} else {
 								echo "<td ></td>";
 							}
-                            if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0){
+                            if ($ultimoddt == $r["numdoc"] && $r['numfat'] < 1){
                             // Colonna Elimina
                                 echo "<td>";
 								?>
