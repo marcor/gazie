@@ -72,6 +72,9 @@ function getLastDocument($tipo, $sezione, $anno) {
       case 9: //cmr
          $where = "tipdoc = 'CMR' OR (tipdoc = 'FAD' AND ddt_type = 'R')) AND YEAR(datfat) = $anno";
          break;
+      case 10: //corrispettivo
+         $where = "tipdoc = 'VCO' AND YEAR(datfat) = $anno";
+         break;
    }
    $rs_lastdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where . " AND seziva = $sezione", "datfat DESC, numfat DESC", 0, 1);
    $last = gaz_dbi_fetch_array($rs_lastdoc);
@@ -130,6 +133,14 @@ function checkDocumentExist($tipo, $sezione, $data_inizio, $data_fine, $protocol
          break;
       case 9: //cmr
          $where = "(tipdoc = 'CMR' OR (tipdoc = 'FAD' AND ddt_type='R')) ";
+         break;
+      case 10: //corrispettivi
+         $where = "tipdoc = 'VCO'";
+		 // considero solo le date
+         $date_name = 'datemi';
+         $num_name = 'numdoc';
+		 $protocollo_inizio=0;
+		 $protocollo_fine=999999999;
          break;
    }
    $where .= " AND seziva = $sezione
@@ -300,7 +311,7 @@ if (!empty($msg)) {
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td>
      <td class=\"FacetDataTD\">\n";
 echo "<select name=\"tipdoc\" class=\"FacetSelect\">\n";
-for ($counter = 1; $counter <= 9; $counter++) {
+for ($counter = 1; $counter <= 10; $counter++) {
    $selected = '';
    if ($form['tipdoc'] == $counter) {
       $selected = "selected";

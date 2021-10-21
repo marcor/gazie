@@ -81,6 +81,9 @@ class DocContabVars {
         $this->perbollo = 0;
         $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['taxstamp_vat']);
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
+		if(!$this->client){
+			$this->client=['ragso1'=>'Anonimo','ragso2'=>'','pec_email'=>'','fe_cod_univoco'=>'','fe_cod_univoco'=>'','indspe'=>'','citspe'=>'','country'=>'IT','capspe'=>'','prospe'=>'','pariva'=>'','pariva'=>'','codfis'=>'','sedleg'=>'','fiscal_rapresentative_id'=>''];
+		}
         if ( $this->client['country']!=="IT" ) {
             $this->descri_partner = 'Customer';
         } else {
@@ -176,7 +179,7 @@ class DocContabVars {
         } else {
             $this->c_Attenzione = '';
         }
-        $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
+        //$this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $this->tesdoc = $tesdoc;
         $this->min = substr($tesdoc['initra'], 14, 2);
         $this->ora = substr($tesdoc['initra'], 11, 2);
@@ -230,6 +233,7 @@ class DocContabVars {
 					$this->efattura = "IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber($data, 36).'.xml';
 				}
                 $ecr = gaz_dbi_get_row($gTables['cash_register'], "id_cash", $tesdoc['id_contract']);
+				$this->destinazione = '-';
 
                 $this->ecr=($ecr)?$ecr['descri']:'';
                 break;

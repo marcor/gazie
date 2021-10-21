@@ -37,7 +37,7 @@ class FatturaAllegata extends Template
         $this->anno = substr($this->tesdoc['datfat'],0,4);
         $this->data = strftime("%d-%m-%Y", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),substr($this->tesdoc['datemi'],8,2),substr($this->tesdoc['datemi'],0,4)));
         $this->sconto = $this->tesdoc['sconto'];
-        $this->tipdoc = 'Fattura n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' Allegata allo scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
+        $this->tipdoc =$this->tesdoc['numfat']>0?'Fattura n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' Allegata allo scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data:'Scontrino n.'.$this->tesdoc['numdoc'].' del '.$this->data;
         $this->descriptive_last_row = $this->docVars->descriptive_last_row;
     }
 
@@ -49,7 +49,7 @@ class FatturaAllegata extends Template
         $this->Cell(4);
         $this->Cell(20,5,'Sconto base','LTR',1,'C',1);
         $this->Cell(100);
-        $this->Cell(62,5,$this->docVars->rs_agente['ragso1'],'LBR');
+        $this->Cell(62,5,$this->agente,'LBR');
         $this->Cell(4);
         $this->Cell(20,5,gaz_format_number($this->sconto).'%','LBR',1,'C');
         $this->Ln(2);
@@ -258,7 +258,7 @@ class FatturaAllegata extends Template
         $this->SetFont('helvetica','',10);
         $this->MultiCell(56,30,"\nallegata allo scontrino n.".$this->tesdoc['numdoc'].
                                " emesso in pari data con misuratore fiscale:\n\n".
-                               $this->docVars->ecr['descri'],'LBR',1,'J');
+                               (isset($this->docVars->ecr['descri'])?$this->docVars->ecr['descri']:''),'LBR',1,'J');
     }
 
     function Footer()

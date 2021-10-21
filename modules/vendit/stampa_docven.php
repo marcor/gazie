@@ -219,6 +219,14 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
             $where = "tipdoc = 'CMR'";
             $template = "CMR";
             break;
+        case 10: //corrispettivi
+            $date_name = 'datemi';
+            $num_name = 'numdoc';
+            $_GET['pi'] = 0;
+            $_GET['pf'] = 999999999;
+            $where = "tipdoc = 'VCO'";
+            $template = 'FatturaAllegata';
+            break;
     }
     if (!isset($_GET['ni'])) {
         $_GET['ni'] = 1;
