@@ -225,7 +225,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
             $_GET['pi'] = 0;
             $_GET['pf'] = 999999999;
             $where = "tipdoc = 'VCO'";
-            $template = 'FatturaAllegata';
+            $template = 'Scontrino';
             break;
     }
     if (!isset($_GET['ni'])) {

@@ -620,6 +620,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         'OrdineWeb' => 'ordine_web',
         'FatturaSemplice' => 'fattura_semplice',
         'FatturaAllegata' => 'fattura_allegata',
+		'Scontrino' => 'scontrino',
         'OrdineFornitore' => 'ordine_fornitore',
         'PreventivoFornitore' => 'preventivo_fornitore',
         'InformativaPrivacy' => 'informativa_privacy',
@@ -643,7 +644,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
     while ($tesdoc = gaz_dbi_fetch_array($results)) {
         //se il cliente non e' lo stesso di prima
         $ref = $tesdoc['protoc'];
-        if ($templateName == 'DDT'|| $templateName == 'FatturaAllegata') {
+        if ($templateName == 'DDT'|| $templateName == 'Scontrino') {
             $ref = $tesdoc['numdoc'];
         }
 				$robj='rigdoc';
@@ -668,7 +669,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         //aggiungo una pagina
         $pdf->pageHeader();
         $ctrlprotoc = $tesdoc['protoc'];
-        if ($templateName == 'DDT' || $templateName == 'FatturaAllegata') {
+        if ($templateName == 'DDT' || $templateName == 'Scontrino') {
             $ctrlprotoc = $tesdoc['numdoc'];
         }
         $testat = $tesdoc['id_tes'];
