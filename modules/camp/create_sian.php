@@ -195,6 +195,9 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
 							$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 							$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
+							if (strlen($row['varieta'])>3){
+								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+							}
 						}
 						If ($row['cod_operazione']==2){// Confezionamento senza etichettatura
 							$type_array[6]=str_pad("L1", 10); // codice operazione
@@ -205,6 +208,9 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$type_array[39]="X"; // Flag NON etichettato a fine operazione
 							$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 							$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
+							if (strlen($row['varieta'])>3){
+								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+							}
 						}
 						If ($row['cod_operazione']==3){// Etichettatura
 							$type_array[6]=str_pad("L2", 10); // codice operazione
@@ -215,8 +221,11 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
 							$type_array[16]=sprintf ("%02d",$row['or_macro']); // Codice Origine olio per macro area
 							$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
+							if (strlen($row['varieta'])>3){
+								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+							}
 						}
-						If ($row['cod_operazione']==4){// Svuotamento di olio confezionato
+						if ($row['cod_operazione']==4){// Svuotamento di olio confezionato
 							$type_array[6]=str_pad("X", 10); // codice operazione
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
 							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
@@ -224,8 +233,11 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							if ($row['etichetta']==0){// Flag NON etichettato
 								$type_array[38]="X"; 
 							}
+							if (strlen($row['varieta'])>3){
+								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+							}
 						}
-						If ($row['cod_operazione']==5){// Movimentazione interna senza cambio di origine
+						if ($row['cod_operazione']==5){// Movimentazione interna senza cambio di origine
 							$type_array[6]=str_pad("M1", 10); // codice operazione
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
 							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
@@ -235,6 +247,9 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$change=$row['recip_stocc']; // devo scambiare i contenitori
 							$row['recip_stocc']=$row['recip_stocc_destin'];
 							$row['recip_stocc_destin']=$change;
+							if (strlen($row['varieta'])>3){
+								$type_array[28]=str_pad(substr($row['varieta'], 0, 300 ), 300); // Note (varietà)
+							}
 						}
 					}					 
 					if (intval($row['id_orderman'])>0 AND $row['operat']==-1 AND $row['cod_operazione']=="S7") {// è un'uscita di olio per produrre altro
@@ -301,6 +316,9 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							}
 						}
 						$type_array[6]=str_pad("C".$row['cod_operazione'], 10); // codice operazione
+						if (strlen($row['varieta'])>3){
+							$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+						}
 					}
 					
 				// >> Antonio Germani - Caso Scarico da vendite e magazzino
@@ -322,23 +340,31 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						 
 						$row['confezione']="";// Tutte le operazioni di Vendita non vogliono la confezione indicata							
 						
-						if ($row['cod_operazione']==1 OR $row['cod_operazione']==2 OR $row['cod_operazione']==3 OR $row['cod_operazione']==5 OR $row['cod_operazione']==10){
+						if ($row['cod_operazione']==1 OR $row['cod_operazione']==2 OR $row['cod_operazione']==3 OR $row['cod_operazione']==5 OR $row['cod_operazione']==10){ 
 							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/
+							if (strlen($row['varieta'])>3){
+								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+							}
 						}
-						if ($row['cod_operazione']==6) { 
+						if ($row['cod_operazione']==6) { // cessione omaggio
 							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista//facoltativo
-							$row['confezione']="";
+							if (strlen($row['varieta'])>3){
+								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+							}
 						}
-						if ($row['cod_operazione']==4) {
+						if ($row['cod_operazione']==4) {// scarico trasferimento ad altro deposito stessa impresa
 							$type_array[13]=sprintf ("%010d",$row['id_SIAN']); // identificativo stabilimento di provenienza/destinazione olio
+							if (strlen($row['varieta'])>3){
+								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+							}
 						}
-						if ($row['cod_operazione']==7) {
+						if ($row['cod_operazione']==7) { // scarico altri usi
 							$row['numdoc']="";
 							$datdoc="";
 							$row['confezione']="";
 							$type_array[28]=str_pad("altro uso generico", 300); // note, obbligatorie con S7
 						}
-						if ($row['cod_operazione']==8) {
+						if ($row['cod_operazione']==8) { //scarico autoconsumo
 							$row['numdoc']="";
 							$datdoc="";
 							$row['confezione']="";
