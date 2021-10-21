@@ -643,7 +643,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
     while ($tesdoc = gaz_dbi_fetch_array($results)) {
         //se il cliente non e' lo stesso di prima
         $ref = $tesdoc['protoc'];
-        if ($templateName == 'DDT') {
+        if ($templateName == 'DDT'|| $templateName == 'FatturaAllegata') {
             $ref = $tesdoc['numdoc'];
         }
 				$robj='rigdoc';
@@ -668,7 +668,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false, $
         //aggiungo una pagina
         $pdf->pageHeader();
         $ctrlprotoc = $tesdoc['protoc'];
-        if ($templateName == 'DDT') {
+        if ($templateName == 'DDT' || $templateName == 'FatturaAllegata') {
             $ctrlprotoc = $tesdoc['numdoc'];
         }
         $testat = $tesdoc['id_tes'];
