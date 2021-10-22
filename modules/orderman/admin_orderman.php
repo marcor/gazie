@@ -138,7 +138,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 		}
 		if (intval($form['cod_operazione'] >0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
 		   $var_orig = $campsilos->getContentSil($form['recip_stocc']);
-			unset($var_orig['varieta']['total']);//tolgo il total
+			unset($var_orig['varieta']['totale']);//tolgo il totale
 			$var=implode(", ",array_keys($var_orig['varieta']));// creo l'elenco varietà
 			if ($form['quality'] !== $var){ // se le varietà del silos non coincidono con quelle della confezione
 				$warnmsg.= "44+"; 
@@ -230,7 +230,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				$form['recip_stocc_comp'][$m] = $_POST['recip_stocc_comp' . $m];
 				if (strlen($form['recip_stocc_comp'][$m])>0 AND intval($form['cod_operazione'] >0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
 				   $var_orig = $campsilos->getContentSil($form['recip_stocc_comp'][$m]);
-					unset($var_orig['varieta']['total']);//tolgo il total
+					unset($var_orig['varieta']['totale']);//tolgo il totale
 					$var=implode(", ",array_keys($var_orig['varieta']));// creo l'elenco varietà					
 					if ($form['quality_comp'][$m] !== $var){ // se le varietà del silos non coincidono con quelle della confezione
 						$warnmsg.= "44+";$block_var="SI";
@@ -319,7 +319,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 $msg.= "16+";
             }
 
-            if ($form['quantip'] == 0) { // quantità produzione vuota
+            if ($form['quantip'] == 0 || $form['quantip']=="" ) { // quantità produzione vuota
                 $msg.= "17+";
             }
 			
@@ -378,7 +378,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			$end_work = date_format(date_create_from_format('d-m-Y', $form['fineprod']), 'Y-m-d')." ".$form['fineprodtime'];			
             // i dati dell'articolo che non sono nel form li avrò nell' array $resartico
 			$form['quantip']=gaz_format_quantity($form['quantip']);// trasformo la quantità per salvarla nel database
-            
+   
 			if ($toDo == "update") { // se è un update cancello eventuali precedenti file temporanei nella cartella tmp
                 foreach (glob("../../modules/orderman/tmp/*") as $fn) {
                     unlink($fn);
@@ -451,10 +451,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 							$change=$form['recip_stocc'];// scambio i recipienti
 							$form['recip_stocc']=$form['recip_stocc_destin'];
 							$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
-							unset($var_orig['varieta']['total']);//tolgo il total
+							unset($var_orig['varieta']['totale']);//tolgo il totale
 							$form['recip_stocc_destin']=$change;
 							$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
-							unset($var_dest['varieta']['total']);//tolgo il total
+							unset($var_dest['varieta']['totale']);//tolgo il totale
 							if (isset($var_orig) && $block_var!=="SI"){
 								$form['varieta'] = "Traferimento olio ";								
 								if (isset($var_dest)){
@@ -483,10 +483,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$change=$form['recip_stocc']; // scambio di nuovo i recipienti
 						$form['recip_stocc']=$form['recip_stocc_destin'];
 						$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
-						unset($var_orig['varieta']['total']);//tolgo il total
+						unset($var_orig['varieta']['totale']);//tolgo il totale
 						$form['recip_stocc_destin']=$change;
 						$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
-						unset($var_dest['varieta']['total']);//tolgo il total
+						unset($var_dest['varieta']['totale']);//tolgo il totale
 						if (isset($var_orig) && $block_var!=="SI"){
 							$form['varieta'] = "Traferimento olio ";
 							if (isset($var_orig)){
@@ -521,7 +521,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 											gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
 											$form['cod_operazione']="";
 											$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
-											unset($var_orig['varieta']['total']);//tolgo il total
+											unset($var_orig['varieta']['totale']);//tolgo il totale
 											if (isset($var_orig) && $block_var!=="SI"){
 												$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
 											}											
@@ -543,7 +543,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 									gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
 									$form['cod_operazione']="";
 									$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
-									unset($var_orig['varieta']['total']);//tolgo il total
+									unset($var_orig['varieta']['totale']);//tolgo il totale
 									if (isset($var_orig) && $block_var!=="SI"){
 										$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
 									}

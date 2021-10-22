@@ -250,7 +250,7 @@ class silos {
 		$var_dichiarabili="";
 		$key="id_lotti"; // chiave per il raggruppamento per lotto
 		$key2="varieta"; // chiave per il raggruppamento per varietà
-		$count[$key]['total']=0;$count[$key2]['total']=0; // azzero i totali
+		$count[$key]['totale']=0;$count[$key2]['totale']=0; // azzero i totali
 		foreach ($resmovs as $res) { // procedo al raggruppamento e conteggio
 			//echo "<pre>",print_r($res);
 			if( !isset($count[$key][$res['id_lotmag']]) ){ // se la chiave lotto ancora non c'è nell'array
@@ -272,22 +272,22 @@ class silos {
 				$count[$key2][$res['quality']]+= $res['quanti']*$res['operat'];
 			}			
 		}
-		$count[$key]['total']= array_sum($count[$key]); // il totale dei lotti
+		$count[$key]['totale']= array_sum($count[$key]); // il totale dei lotti
 		
-		$count[$key2]['total']= array_sum($count[$key2]); // il totale delle varietà
+		$count[$key2]['totale']= array_sum($count[$key2]); // il totale delle varietà
 		
 		// i valori zero o, peggio, negativi sono da escludere
 		$count[$key] = array_filter($count[$key],function($var){return($var > 0);});
 		$count[$key2] = array_filter($count[$key2],function($var){return($var > 0);});
 		if ($var_dichiarabili=="NO"){// se le varietà non sono dichiarabili per contaminazione con partita anonima
-			$total= $count[$key2]['total']; // memorizzo il totale delle varietà
+			$totale= $count[$key2]['totale']; // memorizzo il totale delle varietà
 			$count[$key2]=array();//azzero l'array delle varietà
-			$count[$key2]['total']=$total;// reimposto solo la quantità totale nell'array
+			$count[$key2]['totale']=$totale;// reimposto solo la quantità totale nell'array
 		}
 		
 		arsort($count[$key2]);
 		
-		//restituisce array['lotti](total=>qta, idlotto=>qta, id lotto=>qta, etc) e array['varieta'](total=>qta, varieta=>qta, varieta=>qta, etc) Le varietà sono elencate in ordine descrescente in base al valore della quantità.
+		//restituisce array['lotti](totale=>qta, idlotto=>qta, id lotto=>qta, etc) e array['varieta'](totale=>qta, varieta=>qta, varieta=>qta, etc) Le varietà sono elencate in ordine descrescente in base al valore della quantità.
 		return $count;
 	}	
 }

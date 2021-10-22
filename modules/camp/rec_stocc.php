@@ -98,6 +98,65 @@ $(function() {
 		$("#dialog_delete" ).dialog( "open" );  
 	});
 });
+function ContentSil(silos) {	
+	$("#idlotti").append("ID Lotti");	
+	$("#idvar").append("Varietà");
+    $("#dialog_silos").attr("title","Contenuto attuale: "+silos);  
+	var jsondatastr = null;
+	var n=0;
+		$.ajax({ // chiedo il contenuto
+				'async': false,
+				url:"./ajax_request.php",   
+				type: "POST",    
+				dataType: 'text',
+				data: {term: silos, opt: 'ContentSil' },
+				success:function(jsonstr) {					
+					var jsondata = $.parseJSON(jsonstr);
+					var type1 = JSON.stringify(jsondata['id_lotti']);
+					var type2 = JSON.stringify(jsondata['varieta']);	
+					
+					var obj = $.parseJSON(type2);					
+					$.each(obj, function(i, value) {						
+						$(".list_variants").append("<tr><td> "+i+":  Kg."+value+"&nbsp;</td></tr>");
+					n++;	
+					});
+					if (n==1){
+						$(".list_variants").append('<tr><td class="bg-danger">********* Non ci sono varietà o non sono identificabili *********</td></tr>');
+					}
+					n=0;
+					var obj = $.parseJSON(type1);					
+					$.each(obj, function(i, value) {						
+						$(".list_var").append("<tr><td> "+i+":  Kg."+value+"&nbsp;</td></tr>");
+						n++;		
+					});
+					
+					if (n==1){
+						$(".list_var").append('<tr><td class="bg-danger">********* Non ci sono lotti *********</td></tr>');
+					}
+				}
+			});		  
+	$( function() {		
+        var dialog,	
+        dialog = $("#dialog_silos").dialog({		
+            modal: true,
+            show: "blind",
+            hide: "explode",
+            width: "auto",
+            buttons: {               
+                Chiudi: function() {
+                    $(this).dialog('close');
+                }			
+            },		 
+            close: function(){
+				$("p#idlotti").empty();
+				$("p#idvar").empty();
+				$("div.list_var tr").remove();
+				$("div.list_variants tr").remove();
+				$(this).dialog('destroy');
+            }
+        });
+	});
+};
 </script>
 <div align="center" class="FacetFormHeaderFont">Recipienti di stoccaggio</div>
 <?php
@@ -109,8 +168,16 @@ $recordnav -> output();
 		<p><b>recipiente di stoccaggio:</b></p>
 		<p>Codice</p>
         <p class="ui-state-highlight" id="idcodice"></p>
-        <p>Descrizione</p>
+        <p>Capacità</p>
         <p class="ui-state-highlight" id="iddescri"></p>
+	</div>
+	<div style="display:none; min-width:350px; " id="dialog_silos" title="">		
+		<p class="ui-state-highlight" id="idlotti"></p>        
+		<div class="list_var">
+		</div>
+		<p class="ui-state-highlight" id="idvar"></p>
+		<div class="list_variants">
+		</div>
 	</div>
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
@@ -133,6 +200,7 @@ $recordnav -> output();
 	$headers_silos = array("Codice SIAN del recipiente o silos"      => "cod_silos",
 							"Capacità in Kg" => "capacita",
 							"Stato" => "riempimento",
+							"" => "",
 							"Titolo di possesso" => "affitto",
 							"Destinato a DOP o IGP" => "dop_igp",
 							"Cancella"    => ""
@@ -147,7 +215,8 @@ $recordnav -> output();
 
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
-	$content= $gSil -> getCont($a_row['cod_silos']);
+	$content= $gSil -> getCont($a_row['cod_silos']);	
+	
 	unset ($lot);	
 	?>		
 	<tr class="FacetDataTD">
@@ -170,6 +239,11 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		<div class="bar">
 			<img src="../../modules/camp/media/white_bar.jpg" alt="Barra silos" title="Contenuto silos" style="padding-left:<?php echo ((($content/$a_row['capacita'])*100)* 280 )/100;?>px;">
 		</div>
+		</td>
+		<td>
+		<a class="btn btn-xs btn-default dialog_content" title="Contenuto in lotti e varietà" onclick="ContentSil('<?php echo $a_row['cod_silos'];?>')" >
+			<i class="glyphicon glyphicon-oil"></i>	
+		</a>
 		</td>
 		<td align="center">
 		<?php
