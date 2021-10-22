@@ -233,7 +233,7 @@ $(function() {
                 ?>
             </tr>
             <?php
-            $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "(tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND seziva = '$sezione'".((isset($_GET['anno']) && $_GET['anno'] >= 2000)?' AND YEAR(datemi)='.intval($_GET['anno']):''), "datemi desc, numdoc desc", 0, 1);
+            $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where_select.((isset($_GET['anno']) && intval($_GET['anno']) >= 2000)?' AND YEAR(datemi)='.intval($_GET['anno']):''), "datemi desc, numdoc desc", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             if ($ultimo_documento)
                 $ultimoddt = $ultimo_documento['numdoc'];
