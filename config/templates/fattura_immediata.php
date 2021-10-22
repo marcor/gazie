@@ -50,6 +50,8 @@ class FatturaImmediata extends Template_con_scheda
 		}
         if ($this->tesdoc['tipdoc'] == 'FAF') {
             $descri = 'Autofattura (TD26) n.';
+        } elseif ($this->tesdoc['tipdoc'] == 'FAA') {
+            $descri = 'Fattura di acconto n.';
         } else {
             $descri = 'Fattura immediata n.';
         }

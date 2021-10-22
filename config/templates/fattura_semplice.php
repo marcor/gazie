@@ -50,7 +50,7 @@ class FatturaSemplice extends Template {
         } elseif ($this->tesdoc['tipdoc'] == 'FND') {
             $descri = 'Nota di debito n.';
         } elseif ($this->tesdoc['tipdoc'] == 'FAA') {
-            $descri = 'Nota di debito n.';
+            $descri = 'Fattura di acconto n.';
         } elseif ($this->tesdoc['tipdoc'] == 'FAF') {
             $descri = 'Autofattura (TD26) n.';
         } elseif ($this->tesdoc['tipdoc'] == 'FAQ') {
