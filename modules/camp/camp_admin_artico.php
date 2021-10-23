@@ -330,12 +330,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         header("Location: " . $form['ritorno']);
         exit;
     }
-	if ($openmore==true){
-		?><!-- riapro il pannello dosi specifiche  -->
-		<style>#more { display: unset; }</style>
-		<?php
-		$btn_uso="&#9650 Chiudi";
-	}
+	
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15));
 	$camp = gaz_dbi_get_row($gTables['camp_artico'], 'codice', substr($_GET['codice'], 0, 15));
@@ -391,18 +386,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
     // fine documenti/certificati
     $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
-    $form['body_text'] = ($bodytext)?$bodytext['body_text']:'';
-	if ($openmore==true){
-		?><!-- riapro il pannello dosi specifiche  -->
-		<style>#more { display: unset; }</style>
-		<?php
-		$btn_uso="&#9650 Chiudi";
-	} else {
-		?><!-- al primo accesso il pannello dosi specifiche deve essere spento -->
-		<style>#more { display:none; }</style>
-		<?php
-		$btn_uso="&#9660 Apri dosi e usi"; // valore di default del pulsante apri dosi specifiche
-	}
+    $form['body_text'] = ($bodytext)?$bodytext['body_text']:'';	
 	
 } else { //se e' il primo accesso per INSERT
 	
@@ -450,6 +434,17 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,array('custom/autocomplete',));
 
+if ($openmore==true){
+	?><!-- riapro il pannello dosi specifiche  -->
+	<style>#more { display: unset; }</style>
+	<?php
+	$btn_uso="&#9650 Chiudi";
+} else {
+	?><!-- al primo accesso il pannello dosi specifiche deve essere spento -->
+	<style>#more { display:none; }</style>
+	<?php
+	$btn_uso="&#9660 Apri dosi e usi"; // valore di default del pulsante apri dosi specifiche
+}
 // se è stata inviata una dose specifica
 if (isset($_POST['OKsub']) AND $_POST['id_reg']>0 AND $_POST['dose']>0 AND intval($_POST['nome_colt'])>0 AND intval($_POST['nome_avv']>0)){// se inviata una dose specifica, la aggiungo al DB
 	$btn_uso="&#9650 Chiudi";
