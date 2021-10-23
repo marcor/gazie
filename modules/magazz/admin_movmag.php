@@ -464,6 +464,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
                 );
 				if ($form['SIAN']>0 AND $toDo=="insert"){ 
 					$form['id_movmag']=$id_movmag;// imposto l'id mov mag e salvo il movimento del SIAN
+					$form['varieta']=$item_artico['quality'];
 					gaz_dbi_table_insert('camp_mov_sian', $form);
 				}
 				if ($form['SIAN']>0 AND $toDo=="update"){
@@ -471,6 +472,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 					$update = array();
 					$update[]="id_movmag";
 					$update[]=$form['id_mov'];
+					$form['varieta']=$item_artico['quality'];
 					gaz_dbi_table_update('camp_mov_sian',$update,$form);
 				}
 	
