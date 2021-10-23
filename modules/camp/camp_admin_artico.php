@@ -53,36 +53,7 @@ if (isset($_POST['fornitore'])){
 		$form['id_anagra'] = intval ($form['fornitore']);
 }
 
-// se è stata inviata una dose specifica
-
-if (isset($_POST['OKsub']) AND $_POST['id_reg']>0 AND $_POST['dose']>0 AND intval($_POST['nome_colt'])>0 AND intval($_POST['nome_avv']>0)){// se inviata una dose specifica, la aggiungo al DB
-	$btn_uso="&#9650 Chiudi";
-	$rscheck = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], "numero_registrazione = '".$_POST['id_reg']."' AND id_colt = '".intval($_POST['nome_colt'])."' AND id_avv ='".intval($_POST['nome_avv'])."'" ,2,0,1);
-   
-	if ($rscheck->num_rows == 0){ // controllo se è stata già inserita questa dose specifica		
-		$formuso['id_colt'] = intval($_POST['nome_colt']);		
-		$formuso['id_avv'] = intval($_POST['nome_avv']);
-		$formuso['cod_art'] = ($_POST)?$_POST['codice']:'';
-		$formuso['dose'] = $_POST['dose'];
-		$formuso['tempo_sosp'] = $_POST['tempo_sosp'];
-		$formuso['numero_registrazione'] = $_POST['id_reg'];
-		$formuso['max_tratt'] = $_POST['max_tratt'];
-		gaz_dbi_table_insert('camp_uso_fitofarmaci',$formuso);
-	}	
-} elseif  (isset($_POST['OKsub'])){
-	?><!-- apro il pannello dosi specifiche  -->
-	<style>#more { display:block; }</style>
-	<?php
-	$btn_uso="&#9650 Chiudi";
-} else {
-	?><!-- il pannello dosi specifiche deve essere spento -->
-	<style>#more { display:none; }</style>
-	<?php
-	$btn_uso="&#9660 Apri dosi e usi"; 
-}
-
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
-
 	$form = gaz_dbi_parse_post('artico');
 	$form['nomefito']=$_POST['nomefito'];		
 	$form['categoria']=$_POST['categoria'];
@@ -476,6 +447,35 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['body_text'] = '';
 	$form['unimis']= '';
 }
+require("../../library/include/header.php");
+$script_transl = HeadMain(0,array('custom/autocomplete',));
+
+// se è stata inviata una dose specifica
+if (isset($_POST['OKsub']) AND $_POST['id_reg']>0 AND $_POST['dose']>0 AND intval($_POST['nome_colt'])>0 AND intval($_POST['nome_avv']>0)){// se inviata una dose specifica, la aggiungo al DB
+	$btn_uso="&#9650 Chiudi";
+	$rscheck = gaz_dbi_dyn_query("*", $gTables['camp_uso_fitofarmaci'], "numero_registrazione = '".$_POST['id_reg']."' AND id_colt = '".intval($_POST['nome_colt'])."' AND id_avv ='".intval($_POST['nome_avv'])."'" ,2,0,1);
+   
+	if ($rscheck->num_rows == 0){ // controllo se è stata già inserita questa dose specifica		
+		$formuso['id_colt'] = intval($_POST['nome_colt']);		
+		$formuso['id_avv'] = intval($_POST['nome_avv']);
+		$formuso['cod_art'] = ($_POST)?$_POST['codice']:'';
+		$formuso['dose'] = $_POST['dose'];
+		$formuso['tempo_sosp'] = $_POST['tempo_sosp'];
+		$formuso['numero_registrazione'] = $_POST['id_reg'];
+		$formuso['max_tratt'] = $_POST['max_tratt'];
+		gaz_dbi_table_insert('camp_uso_fitofarmaci',$formuso);
+	}	
+} elseif  (isset($_POST['OKsub'])){
+	?><!-- apro il pannello dosi specifiche  -->
+	<style>#more { display:block; }</style>
+	<?php
+	$btn_uso="&#9650 Chiudi";
+} else {
+	?><!-- il pannello dosi specifiche deve essere spento -->
+	<style>#more { display:none; }</style>
+	<?php
+	$btn_uso="&#9660 Apri dosi e usi"; 
+}
 
 // CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO del db fitofarmaci
 if (isset($_POST['nomefito'])){
@@ -484,13 +484,11 @@ if (isset($_POST['nomefito'])){
 		while ($row = $result->fetch_assoc()) {
 			 $update=strtotime($row['UPDATE_TIME']);
 			}
-	// 1 giorno è 24*60*60=86400 - 30 giorni 30*86400=2592000
-		
-		If (intval($update)+2592000<$today){$msg['err'][]= 'updatedb';}
+	// 1 giorno è 24*60*60=86400 - 30 giorni 30*86400=2592000		
+		if (intval($update)+2592000<$today){$msg['err'][]= 'updatedb';}
 }
 
-if (isset($_POST['nomefito']) && strlen($form['nomefito'])>3){
-	 
+if (isset($_POST['nomefito']) && strlen($form['nomefito'])>3){	 
 		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'.",".'IMPRESA'.",".'SEDE_LEGALE_IMPRESA'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['nomefito']."'";
 		$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
@@ -518,10 +516,6 @@ if (isset($_POST['nomefito']) && strlen($form['nomefito'])>3){
 			} 
 		}	
 }
-
-require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('custom/autocomplete',));
-
 // controllo se è scaduta l'autorizzazione fitofarmaco e avviso 
 if ($form['conferma']<>"Confermo deroga ".$form['nomefito'] AND $presente==1 AND ($scadaut>0 && $today>$scadaut)) {
 	// 1 giorno è 24*60*60=86400
