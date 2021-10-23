@@ -120,7 +120,7 @@ function ContentSil(silos) {
 						$(".list_variants").append("<tr><td> "+i+":  Kg."+value+"&nbsp;</td></tr>");
 					n++;	
 					});
-					if (n==1){
+					if (n<=1){
 						$(".list_variants").append('<tr><td class="bg-danger">********* Non ci sono varietà o non sono identificabili *********</td></tr>');
 					}
 					n=0;
@@ -130,7 +130,7 @@ function ContentSil(silos) {
 						n++;		
 					});
 					
-					if (n==1){
+					if (n<=1){
 						$(".list_var").append('<tr><td class="bg-danger">********* Non ci sono lotti *********</td></tr>');
 					}
 				}
