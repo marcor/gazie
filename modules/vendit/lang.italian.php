@@ -338,7 +338,8 @@ $strScript = array("admin_client.php" =>
 			'soloconf' => 'Questa operazione SIAN ammette solo olio confezionato',
 			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto',
 			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
-			'forceone' => 'Un articolo prevede la matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1'
+			'forceone' => 'Un articolo prevede la matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1',
+			'lottoNonVendibile' => 'Non si può vendere un lotto in data precedente a quella della sua creazione'
 		)		
     ),
     "select_docforprint.php" =>
@@ -912,7 +913,8 @@ $strScript = array("admin_client.php" =>
 			'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
             'no_reparto'=>'Un rigo non ha il reparto del Registratore Telematico associato all\'aliquota IVA',
             'lotteria'=>'Codice lotteria errato',
-            'tender'=>'Pagamento senza tender su Registratore Telematico'
+            'tender'=>'Pagamento senza tender su Registratore Telematico',
+			'lottoNonVendibile' => 'Non si può vendere un lotto in data precedente a quella della sua creazione'
         ),
 		'war' => array('serial' => 'La quantità è stata forzata ad 1 perché l\'articolo prevede il numero di serie',
 		'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',

@@ -340,6 +340,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				if ($toDo == 'update') { // se è update faccio togliere dal conteggio l'eventuale suo stesso movimento
 					$idmag=$v['id_mag'];
 				}
+				
+				$checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $v['id_lotmag']);
+				if (strtotime(gaz_format_date($form['datemi'], true)) < strtotime($checklot['datdoc'])){// non si può vendere un lotto prima della data della sua creazione					
+					$msg['err'][] = "lottoNonVendibile";				
+				}
+			
 				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag);		
 				if ($v['quanti']>$disp){
 					$msg['err'][] = "lotinsuf";

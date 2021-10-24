@@ -575,7 +575,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $iva_split_payment = false;
         $iva_altri_tipi = false;
 
-        foreach ($form['rows'] as $i => $v) {
+        foreach ($form['rows'] as $i => $v) { 
             // controllo se presente iva split e iva normale
             if ( $v['tipiva']=="T" ) {
                 $iva_split_payment = true;
@@ -649,13 +649,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				if ($toDo == 'update') { // se è update faccio togliere dal conteggio l'eventuale suo stesso movimento
 					$idmag=$v['id_mag'];
 				}
+				
+				$checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $v['id_lotmag']);
+				if (strtotime($datemi) < strtotime($checklot['datdoc'])){// non si può vendere un lotto prima della data della sua creazione					
+					$msg['err'][] = "lottoNonVendibile";				
+				}
+				
 				/* commentato per permettere di forzare in quanto l'errore viene comunque segnalato con un warning
 				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag);		
 				if ($v['quanti']>$disp AND $form['tipdoc']<>"FNC"){
 					$msg['err'][] = "lotinsuf";
 				}
 				*/
-			}
+			} 
         }
         // faccio visualizzare l'errore in caso di iva diversa
         if ( $iva_altri_tipi && $iva_split_payment ) {
