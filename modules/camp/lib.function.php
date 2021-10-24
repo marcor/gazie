@@ -191,39 +191,32 @@ class silos {
 		global $gTables,$admin_aziend;
 		
 		$query ="
-		SELECT datdoc, id_mov 
-		FROM ".$gTables['movmag']." m1
-		WHERE (SELECT SUM(m2.quanti * m2.operat) 
-			   FROM ".$gTables['movmag']." m2 LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = id_mov
-						 LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico  
-			   WHERE m2.datdoc <= m1.datdoc AND m2.id_mov <= m1.id_mov AND ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0) = 0
-			   ORDER BY datdoc ASC LIMIT 1
+		SELECT datdoc, id_mov, quanti, operat
+		FROM ".$gTables['movmag']."
+		LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = id_mov
+		LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico  
+		WHERE ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0
+		ORDER BY datdoc ASC, id_mov ASC
 		";
 		
-		
-		/*
-		$query ="
-			SELECT
-			  O.datdoc,
-			  O.id_mov,
-			  (SELECT
-				 SUM(quanti * operat) FROM ".$gTables['movmag']." LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = id_mov
-				 LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['movmag'].".artico
-			   WHERE datdoc <= O.datdoc AND id_mov <= O.id_mov AND ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0) 'RunningTotal'
-			FROM ".$gTables['movmag']." O 			
-			HAVING RunningTotal = 0 ORDER BY datdoc ASC LIMIT 1
-			";	
-*/			
 		$res = gaz_dbi_query($query);
-		$result=gaz_dbi_fetch_array($res);
-		return $result;			
+		
+		$sum=0;$zeroday=array();
+		foreach ($res as $r){			
+			$sum = number_format($sum,8) + ($r['quanti']*$r['operat']);			
+			if ($sum == 0){
+				$zeroday['id_mov']=$r['id_mov'];
+				$zeroday['datdoc']=$r['datdoc'];				
+			}
+		}		
+		return $zeroday;			
 	}
 	
 	function getContentSil($codsil,$date="",$id_mov=0){// funzione per trovare il contenuto in lotti e varietà dalla data dell'ultimo svuotamento totale di un silos (id_mov è l'ultimo id da escludere nella stessa data)
-		$id_lotma=false;
-	
+			
 		if ($date==""){
 			$latestEmpty= $this -> getLatestEmptySil($codsil);
+			//echo "<pre>",print_r($latestEmpty);
 			$date=(is_array($latestEmpty))?$latestEmpty['datdoc']:'';
 			$id_mov=(is_array($latestEmpty))?$latestEmpty['id_mov']:'';
 		}
@@ -255,10 +248,10 @@ class silos {
 			//echo "<pre>",print_r($res);
 			if( !isset($count[$key][$res['id_lotmag']]) ){ // se la chiave lotto ancora non c'è nell'array
 				// Aggiungo la chiave con il rispettivo valore iniziale
-				$count[$key][$res['id_lotmag']] = $res['quanti']*$res['operat'];
+				$count[$key][$res['id_lotmag']] = number_format(($res['quanti']*$res['operat']),8);
 			} else {
 				// Altrimenti, aggiorno il valore della chiave
-				$count[$key][$res['id_lotmag']] += $res['quanti']*$res['operat'];
+				$count[$key][$res['id_lotmag']] += number_format(($res['quanti']*$res['operat']),8);
 			}
 			
 			if( !isset($count[$key2][$res['quality']]) ){ // se la chiave varietà ancora non c'è nell'array
@@ -266,15 +259,15 @@ class silos {
 				if (strlen($res['quality'])<3){// basta una sola partita senza varietà per bloccare la classificazione varietale del silos
 					$var_dichiarabili="NO";// varietà non dichiarabili in quanto è presente una partita anonima
 				}
-				$count[$key2][$res['quality']] = $res['quanti']*$res['operat'];
+				$count[$key2][$res['quality']] = number_format(($res['quanti']*$res['operat']),8);
 			} else {
 				// Altrimenti, aggiorno il valore della chiave
-				$count[$key2][$res['quality']]+= $res['quanti']*$res['operat'];
+				$count[$key2][$res['quality']]+= number_format(($res['quanti']*$res['operat']),8);
 			}			
 		}
-		$count[$key]['totale']= array_sum($count[$key]); // il totale dei lotti
+		$count[$key]['totale']= number_format (array_sum($count[$key]),8); // il totale dei lotti
 		
-		$count[$key2]['totale']= array_sum($count[$key2]); // il totale delle varietà
+		$count[$key2]['totale']= number_format (array_sum($count[$key2]),8); // il totale delle varietà
 		
 		// i valori zero o, peggio, negativi sono da escludere
 		$count[$key] = array_filter($count[$key],function($var){return($var > 0);});

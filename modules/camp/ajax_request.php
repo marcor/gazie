@@ -31,9 +31,7 @@ if (!$isAjax) {
 }
 
 require("../../library/include/datlib.inc.php");
-
 require ("../../modules/vendit/lib.function.php");
-
 
 if (isset($_POST['term']) && isset($_POST['opt'])) {
    

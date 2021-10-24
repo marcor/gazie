@@ -194,101 +194,94 @@ $recordnav -> output();
                 </td>
             </tr>
             <tr>
-<?php
-	$result = gaz_dbi_dyn_query ('*', $gTables['camp_recip_stocc'], $where, $orderby, $limit, $passo);
-	// creo l'array (header => campi) per l'ordinamento dei record
-	$headers_silos = array("Codice SIAN del recipiente o silos"      => "cod_silos",
-							"Capacità in Kg" => "capacita",
-							"Stato" => "riempimento",
-							"" => "",
-							"Titolo di possesso" => "affitto",
-							"Destinato a DOP o IGP" => "dop_igp",
-							"Cancella"    => ""
-							);
-	$linkHeaders = new linkHeaders($headers_silos);
-	$linkHeaders -> output();
-?>
+				<?php
+					$result = gaz_dbi_dyn_query ('*', $gTables['camp_recip_stocc'], $where, $orderby, $limit, $passo);
+					// creo l'array (header => campi) per l'ordinamento dei record
+					$headers_silos = array("Codice SIAN del recipiente o silos"      => "cod_silos",
+											"Capacità in Kg" => "capacita",
+											"Stato" => "riempimento",
+											"" => "",
+											"Titolo di possesso" => "affitto",
+											"Destinato a DOP o IGP" => "dop_igp",
+											"Cancella"    => ""
+											);
+					$linkHeaders = new linkHeaders($headers_silos);
+					$linkHeaders -> output();
+				?>
         	</tr>
-        </thead></form>
-        <tbody>
-<?php
+        </thead>
+
+		<?php
+		while ($a_row = gaz_dbi_fetch_array($result)) {
+			$content= $gSil -> getCont($a_row['cod_silos']);
+			unset ($lot);	
+			?>		
+			<tr class="FacetDataTD">
+				<td>
+					<a class="btn btn-xs btn-success btn-block" href="admin_rec_stocc.php?Update&codice=<?php echo $a_row["cod_silos"]; ?>">
+					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['cod_silos'];?>
+					</a>
+				</td>
+				<td align="center"><?php echo gaz_format_quantity($a_row['capacita'], 1, 3);?></td>
+				<td>
+					<?php 
+					if ($content>0){
+						$lot=	$gSil -> getLotRecip($a_row['cod_silos']);						
+						echo "Kg.",gaz_format_quantity($content,true)," l.",gaz_format_quantity($content/0.915,true)," Ultimo lotto: ",$lot[1]; 
+						if ($content > $a_row['capacita']){
+							echo " ERRORE!";
+						}
+					}
+					?>
+					<div class="bar">
+						<img src="../../modules/camp/media/white_bar.jpg" alt="Barra silos" title="Contenuto silos" style="padding-left:<?php echo ((($content/$a_row['capacita'])*100)* 280 )/100;?>px;">
+					</div>
+				</td>
+				<td>
+					<a class="btn btn-xs btn-default dialog_content" title="Contenuto in lotti e varietà" onclick="ContentSil('<?php echo $a_row['cod_silos'];?>')" >
+					<i class="glyphicon glyphicon-oil"></i>	
+					</a>
+				</td>
+				<td align="center">
+					<?php
+					if (intval($a_row['affitto'])==0){
+						echo "Proprietà";
+					} else{
+						echo "Affitto";
+					}
+					?>
+				</td>
+				<td align="center">
+				<?php
+					if (intval($a_row['dop_igp'])==0){
+						echo "NO";
+					} else{
+						echo "DOP IGP";
+					}
+					?>
+				</td>
+				<td align="center">
+					<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['cod_silos'];?>" capacity="<?php echo $a_row['capacita']; ?>">
+						<i class="glyphicon glyphicon-remove"></i>
+					</a>
+				</td>
+			</tr>
+			<?php
+		}
+		?>
 
 
-while ($a_row = gaz_dbi_fetch_array($result)) {
-	$content= $gSil -> getCont($a_row['cod_silos']);	
-	
-	unset ($lot);	
-	?>		
-	<tr class="FacetDataTD">
-		<td>
-			<a class="btn btn-xs btn-success btn-block" href="admin_rec_stocc.php?Update&codice=<?php echo $a_row["cod_silos"]; ?>">
-				<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['cod_silos'];?>
-			</a>
-		</td>
-		<td align="center"><?php echo gaz_format_quantity($a_row['capacita'], 1, 3);?></td>
-		<td>
-		<?php 
-		if ($content>0){
-			$lot=	$gSil -> getLotRecip($a_row['cod_silos']);						
-			echo "Kg.",gaz_format_quantity($content,true)," l.",gaz_format_quantity($content/0.915,true)," Lotto: ",$lot[1]; 
-			if ($content > $a_row['capacita']){
-				echo " ERRORE!";
-			}
-		}
-		?>
-		<div class="bar">
-			<img src="../../modules/camp/media/white_bar.jpg" alt="Barra silos" title="Contenuto silos" style="padding-left:<?php echo ((($content/$a_row['capacita'])*100)* 280 )/100;?>px;">
-		</div>
-		</td>
-		<td>
-		<a class="btn btn-xs btn-default dialog_content" title="Contenuto in lotti e varietà" onclick="ContentSil('<?php echo $a_row['cod_silos'];?>')" >
-			<i class="glyphicon glyphicon-oil"></i>	
-		</a>
-		</td>
-		<td align="center">
-		<?php
-		if (intval($a_row['affitto'])==0){
-			echo "Proprietà";
-		} else{
-			echo "Affitto";
-		}
-		?>
-		</td>
-		<td align="center">
-		<?php
-		if (intval($a_row['dop_igp'])==0){
-			echo "NO";
-		} else{
-			echo "DOP IGP";
-		}
-		?>
-		</td>
-		<td align="center">
-			<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $a_row['cod_silos'];?>" capacity="<?php echo $a_row['capacita']; ?>">
-				<i class="glyphicon glyphicon-remove"></i>
-			</a>
-		</td>
-	</tr>
-<?php
-}
-?>
-		<tr class=\"FacetFieldCaptionTD\">
-			<form method="post" action="admin_rec_stocc.php">
+    </table>
+</form>
+<form method="post" action="admin_rec_stocc.php">
+	<table>
+		<tr class="FacetFieldCaptionTD">		
 			<td colspan="7" align="right">
 				<input class="btn btn-info" type="submit" name="aggiungi" value="<?php echo "Inserisci nuovo contenitore o silos";?>">
 			</td>
 		</tr>
-
-<!-- Se servirà la STAMPA riattivare con le dovute modifiche		
-<tr class=\"FacetFieldCaptionTD\">
-	<form method="post" action="stampa_campi.php">
-    <td colspan="7" align="right"><input type="submit" name="print" value="<?php echo $script_transl['print'];?>">
-    </td>
-</tr>
--->
-    		</tbody>
-    </table>
-	</form>
-    <?php
+	</table>
+</form>
+<?php
 require("../../library/include/footer.php");
 ?>
