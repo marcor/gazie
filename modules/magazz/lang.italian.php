@@ -116,6 +116,7 @@ $strScript = array("browse_document.php" =>
 		"La data di registrazione è precedente all'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN",
 		"Quantità articolo non sufficiente! Se si conferma si creerà una quantità negativa",
 		"La somma dei singoli lotti disponibili non corrisponde alla quantità inserita. Se la giacenza è corretta, allora, prima di inventariare, bisognerà aggiustare manualmente i lotti",
+		"Non può uscire un lotto in data precedente alla sua creazione",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
 		'cod_operaz_value' => array(11=>'',0=>'S0-Vendita olio a consumatore finale',6=>'S6-Cessione omaggio olio confezionato',7=>'S7-Scarico olio destinato ad altri usi',8=>'S8-Scarico olio autoconsumo',12=>'SP-Perdite o cali di olio',13=>'Q-Separazione morchie'),

@@ -341,11 +341,18 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if ($utsdoc > $utsreg) {
             $msg .= "17+";
         }
+		
 		if ($form['lot_or_serial']==1 AND $form['caumag']<>99){ // se è un articolo con lotti e non è un movimento inventario
 			if (strlen ($form['identifier'])<= 0){
 				$msg .= "21+"; // manca il lotto
 			}
+			
+			$checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $form['id_lotmag']);
+			if (strtotime($form['datdoc']) < strtotime($checklot['datdoc']) && $form['operat']=="-1"){// non può uscire un lotto prima della data della sua creazione					
+				$msg .= "36+";// Il lotto non può uscire in tale data in quanto ancora inesistente			
+			}
 		} 
+		
 		if (intval($form['caumag'])==98 AND intval($form['operat'])==0){ // su storno inventario bisogna indicare se entrata o uscita
 			$msg .= "29+";
 		}
