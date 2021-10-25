@@ -216,9 +216,9 @@ class silos {
 			
 		if ($date==""){
 			$latestEmpty= $this -> getLatestEmptySil($codsil);
-			//echo "<pre>",print_r($latestEmpty);
-			$date=(is_array($latestEmpty))?$latestEmpty['datdoc']:'';
-			$id_mov=(is_array($latestEmpty))?$latestEmpty['id_mov']:'';
+			//echo "<pre>latest:",print_r($latestEmpty);
+			$date=(isset($latestEmpty['datdoc']))?$latestEmpty['datdoc']:'';
+			$id_mov=(isset($latestEmpty['id_mov']))?$latestEmpty['id_mov']:'';
 		}
 		
 		global $gTables,$admin_aziend;
