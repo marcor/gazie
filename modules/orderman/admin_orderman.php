@@ -270,19 +270,23 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 		//controllo se le quantità inserite per ogni singolo lotto, di ogni componente, corrispondono alla richiesta della produzione e alla reale disponbilità 
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
 				if ($form['quanti_comp'][$nc] == "ERRORE"){
-					$msg.= "43+";//Non c'è sufficiente disponibilità di un ID lotto selezionato
+					$msg.= "43+";//Non c'è sufficiente disponibilità di un ID lotto selezionato				
+				}				
 				
-				}
 				if (intval($form['q_lot_comp'][$nc])>0) {					
 					$tot=0;
 					for ($l=0; $l<$form['q_lot_comp'][$nc]; ++$l) {
 						if ($lm -> getLotQty($form['id_lot_comp'][$nc][$l]) < $form['lot_quanti'][$nc][$l]){
-							$msg.= "21+";//Non c'è sufficiente disponibilità di un ID lotto selezionato	
-							
+							$msg.= "21+";//Non c'è sufficiente disponibilità di un ID lotto selezionato								
 						}
 						$tot=$tot + $form['lot_quanti'][$nc][$l];
+						
+						$checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $form['id_lot_comp'][$nc][$l]);
+						if (strtotime($form['datreg']) < strtotime($checklot['datdoc']) ){// non può uscire un lotto prima della data della sua creazione					
+							$msg .= "45+";// Il lotto non può uscire in tale data in quanto ancora inesistente			
+						}						
 					}
-					If ($tot != $form['quanti_comp'][$nc]){
+					if ($tot != $form['quanti_comp'][$nc]){
 						$msg.="25+";//La quantità inserita di un lotto, di un componente, è errata
 					}
 					if (intval($form['SIAN']) > 0 AND $form['SIAN_comp'][$nc] > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] AND intval($form['cod_operazione'])!==3){
@@ -371,8 +375,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			}
         }
 		
-        if ($msg == "") { // nessun errore
-			//echo"<pre>",print_r($form);die;
+        if ($msg == "") { // nessun errore			
             // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
 			$start_work = date_format(date_create_from_format('d-m-Y', $form['iniprod']), 'Y-m-d')." ".$form['iniprodtime'];
 			$end_work = date_format(date_create_from_format('d-m-Y', $form['fineprod']), 'Y-m-d')." ".$form['fineprodtime'];			

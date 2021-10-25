@@ -77,7 +77,8 @@ $strScript = array("admin_orderman.php" =>
 		"La movimentazione interna di olio si può fare solo per singolo ID lotto. <br>La quantità produzione richiesta è superiore a quella disponibile, pertanto è stata diminuita.<br>
 		Per la parte mancante si deve fare un'ulteriore operazione.",
 		"Non c'è sufficiente disponibilità di un componente",
-		"La/e varietà del silos non coincide/ono con quella/e del prodotto confezionato. Se si procede senza correggere, la registrazione al SIAN sarà senza varietà"
+		"La/e varietà del silos non coincide/ono con quella/e del prodotto confezionato. Se si procede senza correggere, la registrazione al SIAN sarà senza varietà",
+		"Non può uscire un lotto in data precedente alla sua creazione"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Gestione delle produzioni',
