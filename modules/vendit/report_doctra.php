@@ -41,6 +41,8 @@ $search_fields = [
     => "seziva = %d",
     'id_tes'
     => "id_tes = %d",
+    'tipoddt'
+    => " tipdoc = '%s' ",
     'tipo'
     => " ( tipdoc LIKE '%s' OR tipdoc = 'FAD') ",
     'numero'
@@ -48,7 +50,7 @@ $search_fields = [
     'anno'
     => "YEAR(datemi) = %d",
     'cliente'
-    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%%%s%%'"
+    => $partner_select ? "clfoco = %s" : "ragso1 LIKE '%%%s%%'"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -83,7 +85,7 @@ if (!isset($_GET['sezione'])) {
 	$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'DD_'];
 }
 $ts = new TableSorter(
-    !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
+    $tesdoc_e_partners, 
     $passo, 
     ['datemi' => 'desc', 'numdoc' => 'desc'], 
     $default_where,
@@ -197,6 +199,7 @@ $(function() {
                     <?php gaz_flt_disp_int("numero", "Numero DdT"); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
+					<?php gaz_flt_disp_select("tipoddt", "tipdoc AS tipoddt", $tesdoc_e_partners,  $where_select.((isset($_GET['anno']) && intval($_GET['anno']) >= 2000)?' AND YEAR(datemi)='.intval($_GET['anno']):''),'tipoddt'); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
                     <?php gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $gTables["tesdoc"], $where_select, "anno DESC"); ?>
@@ -204,14 +207,11 @@ $(function() {
                 <td class="FacetFieldCaptionTD" colspan=2>
 		    <?php 
                     if ($partner_select) {
-                        gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 as nome", 
-					    $tesdoc_e_partners,
-					    $where_select, "nome ASC", "nome");
+                        gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 as nome",$tesdoc_e_partners, $where_select.((isset($_GET['anno']) && intval($_GET['anno']) >= 2000)?' AND YEAR(datemi)='.intval($_GET['anno']):''), "nome ASC", "nome");
                     } else {
                         gaz_flt_disp_int("cliente", "Cliente");
                     }
 		    ?>
-
                 </td>
                 <td class="FacetFieldCaptionTD text-center">
                     <input type="submit" class="btn btn-sm btn-default btn-50" name="search" value="Cerca" tabindex="1">
@@ -242,15 +242,8 @@ $(function() {
 //recupero le testate in base alle scelte impostate
             $result = gaz_dbi_dyn_query("*", $tesdoc_e_partners, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
             while ($r = gaz_dbi_fetch_array($result)) {
-                // customer data
-                $match_cust = true;
                 $destina = gaz_dbi_get_row($gTables['destina'], 'codice', $r['id_des_same_company']);
                 if(!$destina) $destina=['codice'=>'','unita_locale1'=>''];
-  
-                if (!empty($cliente) && stripos($r['ragso1'], $_GET['cliente']) === false ) {
-                    $match_cust=false;
-                }
-                if ($match_cust) {
                     switch ($r['tipdoc']) {
                         case "DDT":
                         case "DDV":
@@ -456,8 +449,10 @@ $(function() {
                                 while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
                                     if($rigdoc['id_order']>0){
                                         $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $rigdoc['id_order'], 'id_tes');
-                                        $t_r = gaz_dbi_fetch_array($tesbro_result);                           
-                                        echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
+                                        $t_r = gaz_dbi_fetch_array($tesbro_result);  
+										if ($t_r) {	
+										 echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
+										}
                                     }									
                                 }
                             }
@@ -468,7 +463,6 @@ $(function() {
                             }
                             break;
                     }
-                }
             }
             ?>
             <tr><th class="FacetFieldCaptionTD" colspan="12"></th></tr>

@@ -54,7 +54,7 @@ $search_fields = [
     'anno'
     => "YEAR(datfat) = %d",
     'cliente'
-    => $partner_select ? "clfoco = '%s'" : "ragso1 LIKE '%%%s%%'"
+    => $partner_select ? "clfoco = %s" : "ragso1 LIKE '%%%s%%'"
 ];
 
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -344,9 +344,7 @@ $(function() {
                 <td class="FacetFieldCaptionTD">
 		    <?php 
                     if ($partner_select) {
-                        gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 as nome", 
-					    $tesdoc_e_partners,
-					    $where_select, "nome ASC", "nome");
+                        gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 as nome", $tesdoc_e_partners, $where_select.((isset($_GET['anno']) && intval($_GET['anno']) >= 2000)?' AND YEAR(datemi)='.intval($_GET['anno']):''), "nome ASC", "nome");
                     } else {
                         gaz_flt_disp_int("cliente", "Cliente");
                     }
