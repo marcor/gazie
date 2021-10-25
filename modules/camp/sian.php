@@ -212,10 +212,12 @@ function setDate(name) {
     <div class="container-fluid">
 		<div align="center"><b>Disposizione per la tenuta del registro SIAN</b>
 		<p align="justify">
+		Tutti coloro che producono e/o detengono olio sfuso a fini commerciali, sono obbligati a comunicare all’AGEA le quantità di produzione e vendita olio attraverso l’inserimento dei dati nel registro telematico SIAN.
+		Sono esentati coloro che producono olio destinato all’autoconsumo, ossia consumato dal titolare e/o familiari del medesimo, sino al 3° grado, e fino ad un massimo 3,5 quintali di olio.
 		Le annotazioni nei registri e quindi l'invio del file di upload, si effettuano entro e non oltre il sesto giorno successivo a quello dell’operazione, giorni festivi compresi.
 		Gli olivicoltori che detengono e commercializzano esclusivamente olio, allo stato sfuso e/o confezionato, ottenuto da olive provenienti dalla propria azienda, molite
 		presso il frantoio proprio o di terzi, possono effettuare entro il 10 di ogni mese le annotazioni dei dati relativi alle operazioni del mese precedente, a condizione
-		che l’olio ottenuto dalla molitura non sia superiore ai 700 chilogrammi per campagna di commercializzazione (dal 1 luglio al 30 giugno dell'anno successivo).
+		che l’olio ottenuto dalla molitura non sia superiore ai 700 chilogrammi per campagna di commercializzazione (dal 1 luglio al 30 giugno dell'anno successivo). Decreti MiPAAF n° 8077/2009 e n° 16059/2013.
 		</p></div>
 	</div>
 </div>	
