@@ -140,14 +140,14 @@ if (isset($_POST['conferma'])) { // se confermato
 			if ($esiste){			
 				if ($product->Type=="parent"){// se è un parent ***<<<<<
 					// non faccio nulla perché il parent è un gruppo, non ha magazzino
-				} else {
-					
+				} else {					
 					
 					$form=gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $product->Id);
+					$qta=floatval($product->AvailableQty);
+					$value=array('datreg'=>$today, 'caumag'=>99, 'tipdoc'=>"INV", 'desdoc'=>"Inventario da e-commerce", 'datdoc'=>$today, 'artico'=>$form['codice'], 'quanti'=>$qta, 'prezzo'=>$form['web_price'], 'adminid'=>$admin_aziend['user_name']);
+					//echo "<pre>",print_r($value);
 					
-					$upd_mm = new magazzForm;
-					$upd_mm->uploadMag(0, "INV",0,0, 
-                    $today, 0, 0, 99, $form['codice'], $product->AvailableQty, $form['web_price']);
+					gaz_dbi_table_insert("movmag", $value);	// scrivo il rigo magazzino in questa maniera perché è un inventario di importazione da e-commerce e non deve aggiornare nuovamente le Q.tà dell'e-commerce				
 				}
 			}		
 		}
@@ -280,8 +280,12 @@ if (!isset($_GET['success'])){
 								?>
 							</div>
 							<div class="col-sm-1" align="right">
+								<?php 
+								if ($product->Type != "parent"){
+									?>
 								<input type="checkbox" name="download<?php echo $n; ?>" value="download">
-								
+								<?php }
+								?>
 							</div>
 						</div>
 						<?php					
