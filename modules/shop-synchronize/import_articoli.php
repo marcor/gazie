@@ -131,7 +131,7 @@ if (isset($_POST['conferma'])) { // se confermato
 		
 			// se è inserimento o se è update e c'è un'immagine e se è selezionato
 			if ((!$esiste AND strlen($product->ProductImgUrl)>0 AND $_GET['impimm']=="dwlimg" AND $_GET['imp']=="impval") OR ($esiste AND strlen( $product->ProductImgUrl)>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval")){
-				
+				$target_filename="";
 				// salvo l'immagine HQ
 				$url = $product->ProductImgUrl;
 				$expl= explode ("/", $product->ProductImgUrl);
@@ -174,7 +174,9 @@ if (isset($_POST['conferma'])) { // se confermato
 					imagedestroy( $dst );
 				} 
 				//Carico l'immagine ridimensionata
-				$immagine= addslashes (file_get_contents($target_filename));
+				if (strlen($target_filename)>0){
+					$immagine= addslashes (file_get_contents($target_filename));
+				}
 				unlink ($img);// cancello l'immagine temporanea
 				if ($product->Type=="parent"){ // se è un parent
 					gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET image = '".$immagine."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");	

@@ -48,6 +48,7 @@ $file_download2 = "dowload_ordini2.php";
 $file_upload = "upload_prodotti.php";
 $file_downloader = "import_articoli.php";
 $file_uploader = "export_articoli.php";
+$file_INVdownloader = "import_inv_articoli.php";
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -104,7 +105,17 @@ if (isset ($_POST['download'])) {
 		header("Location: " . $_POST['ritorno']);
         exit;
 		}
-} else {
+} elseif (isset ($_POST['INVdownloader'])) { 
+	
+	if (file_exists($file_INVdownloader)){ // importazione 
+		
+		header("Location: " . $file_INVdownloader);
+		exit;
+	} else {
+		header("Location: " . $_POST['ritorno']);
+        exit;
+		}
+}else {
 	require('../../library/include/header.php');
 	$script_transl = HeadMain();
 	?>
@@ -178,12 +189,16 @@ if (isset ($_POST['download'])) {
 							<input type="checkbox" name="imppre" value="dwlprice"> Prezzo web &nbsp
 							<input type="checkbox" name="impdes" value="dwldes" > Descrizione estesa &nbsp 
 							<input type="checkbox" name="impimm" value="dwlimg" > Immagine &nbsp
-						</div>
-				
-				
+						</div>				
 						<div class="col-sm-12  bg-success">
 							<input type="submit" class="btn btn-danger btn-sm pull-right" name="downloader"  value="Seleziona i prodotti da importare o aggiornare">
 						</div>
+						
+				</div>
+				<div class="row bg-success" style="border-top: 1px solid;">
+					<div class="col-sm-12  bg-success">
+						<input type="submit" class="btn btn-secondary btn-sm pull-left" name="INVdownloader" title="Importa inventario iniziale" value="Inventario iniziale">
+					</div>
 				</div>
 					
 				
