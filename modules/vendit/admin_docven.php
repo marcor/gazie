@@ -1961,7 +1961,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$form['RiferimentoNumeroLinea'][$next_row+1] = substr($rigo['descri'],0,20);
 		}
         $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
-        if (!$articolo) $articolo = array('peso_specifico'=>false,'scorta'=>false,'good_or_service'=>0,'annota'=>'','lot_or_serial'=>'','SIAN'=>'');
+        if (!$articolo) $articolo = array('peso_specifico'=>false,'scorta'=>false,'good_or_service'=>0,'quality'=>'','annota'=>'','lot_or_serial'=>'','SIAN'=>'');
         if ($rigo['id_body_text'] > 0) { //se ho un rigo testo
             $text = gaz_dbi_get_row($gTables['body_text'], "id_body", $rigo['id_body_text']);
             $form["row_$next_row"] = $text['body_text'];
