@@ -529,7 +529,7 @@ if (isset($invoices['data'])) {
 } else {
     echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"right\">Non ci sono DdT  da fatturare</td></tr>";
 }
-if (@count($invoices['excluded'])) {
+if (is_array($invoices) && isset($invoices['excluded']) && count($invoices['excluded'])) {
     echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\">I seguenti ddt non verranno mai fatturati a meno di richiesta esplicita</td></tr>";
     foreach ($invoices['excluded'] as $i => $testate) {
 	foreach ($testate as $id_tes => $v) {
