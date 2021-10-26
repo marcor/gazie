@@ -187,7 +187,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						}
 						$datdoc=""; // i tipi operazione L non vogliono la data del documento giustificativo
 						$row['confezione']=""; // il campo capacità confezione, pur essendo previsto fra i campi facoltativi, viene rifiutato nei tipi operazione L
-						If ($row['cod_operazione']==1){// Confezionamento con etichettatura
+						if ($row['cod_operazione']==1){// Confezionamento con etichettatura
 							$type_array[6]=str_pad("L", 10); // codice operazione
 							$type_array[23]=sprintf ("%013d",$row4['quanti']); // quantità scarico olio sfuso
 							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
@@ -199,7 +199,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
 							}
 						}
-						If ($row['cod_operazione']==2){// Confezionamento senza etichettatura
+						if ($row['cod_operazione']==2){// Confezionamento senza etichettatura
 							$type_array[6]=str_pad("L1", 10); // codice operazione
 							$type_array[23]=sprintf ("%013d",$row4['quanti']); // quantità scarico olio sfuso
 							$type_array[24]=sprintf ("%013d",$quantilitri); // quantità carico olio confezionato in litri
@@ -212,7 +212,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
 							}
 						}
-						If ($row['cod_operazione']==3){// Etichettatura
+						if ($row['cod_operazione']==3){// Etichettatura
 							$type_array[6]=str_pad("L2", 10); // codice operazione
 							$type_array[38]="X"; // Flag NON etichettato
 							$type_array[15]=sprintf ("%02d",$row5['categoria']);// categoria olio fine operazione
@@ -242,8 +242,8 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							$type_array[18]=sprintf ("%02d",$row5['or_macro']); // Codice Origine olio per macro area a fine operazione
 							$type_array[19]=str_pad($row5['or_spec'], 80); // Descrizione Origine olio specifica a fine operazione
 							$type_array[15]=sprintf ("%02d",$row5['categoria']);// categoria olio fine operazione
-							$type_array[23]=sprintf ("%013d",str_replace(".", "", $row['quanti'])); // quantità scarico olio sfuso
-							$type_array[22]=sprintf ("%013d",str_replace(".", "", $row['quanti'])); // quantità scarico olio sfuso
+							$type_array[23]=sprintf ("%013d",str_replace(".", "", number_format($row['quanti'],3))); // quantità scarico olio sfuso
+							$type_array[22]=sprintf ("%013d",str_replace(".", "", number_format($row['quanti'],3))); // quantità scarico olio sfuso
 							$change=$row['recip_stocc']; // devo scambiare i contenitori
 							$row['recip_stocc']=$row['recip_stocc_destin'];
 							$row['recip_stocc_destin']=$change;
@@ -256,7 +256,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$type_array[6]=str_pad("S7", 10); // codice operazione > S7 scarico di olio destinato ad altri usi
 						if ($row['SIAN']==1){ // se è olio
 							if ($row['confezione']==0) { // se è sfuso
-								$type_array[23]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
+								$type_array[23]=sprintf ("%013d", str_replace(".", "", number_format($row['quanti'],3)));
 							} else { // se è confezionato
 								$row['recip_stocc']="";
 								$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
@@ -269,7 +269,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 							}
 							$type_array[28]=str_pad($row['desdoc'], 300); // note, obbligatorio con S7
 						} else { //se sono olive
-							$type_array[10]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
+							$type_array[10]=sprintf ("%013d", str_replace(".", "", number_format($row['quanti'],3)));
 						}
 						$row['confezione']=""; // annullo capacità confezione perché con S7 non è ammessa
 						$datdoc=""; // annullo data documento giustificativo perché con S7 non è ammessa
@@ -279,7 +279,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 					
 					if ($row['operat']==1 AND intval($row['id_orderman'])==0){ //se è un carico NON connesso a produzione
 						if ($row['cod_operazione']==10){// carico olio lampante da recupero
-							$type_array[22]=sprintf ("%013d", str_replace(".", "", $row['quanti'])); // carico olio sfuso
+							$type_array[22]=sprintf ("%013d", str_replace(".", "", number_format($row['quanti'],3))); // carico olio sfuso
 							$row['categoria']="4"; // categoria olio lampante
 							$row['or_spec']="";
 							$row['or_macro']="";
@@ -290,7 +290,9 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						} else {
 							if ($row['SIAN']==1){ // se è olio
 								if ($row['confezione']==0) { // se è sfuso
-									$type_array[22]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
+								
+									$type_array[22]=sprintf ("%013d", str_replace(".", "", number_format($row['quanti'],3)));
+									
 								} else { // se è confezionato
 									$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
 									$quantilitri = str_replace(".", "", $quantilitri);
@@ -301,7 +303,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 									}
 								}
 							} else { //se sono olive
-								$type_array[9]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
+								$type_array[9]=sprintf ("%013d", str_replace(".", "", number_format($row['quanti'],3)));
 							}
 							if ($row['cod_operazione']==3 OR $row['cod_operazione']==8 ){
 								$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista
@@ -327,7 +329,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						$type_array[6]=str_pad("S".$row['cod_operazione'], 10); // codice operazione
 						if ($row['SIAN']==1){ // se è olio
 							if ($row['confezione']==0) { // se è sfuso
-								$type_array[23]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
+								$type_array[23]=sprintf ("%013d", str_replace(".", "", number_format($row['quanti'],3)));
 							} else { // se è confezionato
 								$quantilitri=number_format($row['quanti']*$row['confezione'],3);// trasformo le confezioni in litri
 								$quantilitri = str_replace(".", "", $quantilitri);
@@ -335,7 +337,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 								$type_array[27]=str_pad(substr($row['identifier'], 0, 20 ), 20); // Lotto di appartenenza
 							}
 						} else { //se sono olive
-							$type_array[10]=sprintf ("%013d", str_replace(".", "", $row['quanti']));
+							$type_array[10]=sprintf ("%013d", str_replace(".", "", number_format($row['quanti'],3)));
 						}
 						 
 						$row['confezione']="";// Tutte le operazioni di Vendita non vogliono la confezione indicata							
