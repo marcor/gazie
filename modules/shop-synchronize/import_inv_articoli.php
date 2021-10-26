@@ -153,7 +153,6 @@ if (isset($_POST['conferma'])) { // se confermato
 		}
 		$ord++;
 	}
-		die;
 	header("Location: " . "../../modules/shop-synchronize/import_inv_articoli.php?success=1");
     exit;
 } else {
