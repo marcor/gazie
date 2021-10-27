@@ -806,7 +806,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                             $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
                             $sc1 = $domDoc->createElement("Tipo", $sc_su_imp['tipo']);
                             $el1->appendChild($sc1);
-                            $sc1 = $domDoc->createElement("Percentuale", number_format(round($sc_su_imp['scorig'],3), 3, '.', ''));
+                            $sc1 = $domDoc->createElement("Percentuale", number_format(round($sc_su_imp['scorig'],2), 2, '.', ''));
                             $el1->appendChild($sc1);
 							$el->appendChild($el1);
 						}
@@ -814,7 +814,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                             $el1 = $domDoc->createElement("ScontoMaggiorazione", "");
                             $sc1 = $domDoc->createElement("Tipo", $sc_su_imp['tipo']);
                             $el1->appendChild($sc1);
-                            $sc1 = $domDoc->createElement("Percentuale", number_format(round($sc_su_imp['scotes'],3), 3, '.', ''));
+                            $sc1 = $domDoc->createElement("Percentuale", number_format(round($sc_su_imp['scotes'],2), 2, '.', ''));
                             $el1->appendChild($sc1);
 							$el->appendChild($el1);
 						}

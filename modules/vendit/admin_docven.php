@@ -220,7 +220,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['mesord'] = $_POST['mesord'];
     $form['annord'] = $_POST['annord'];
     $form['caucon'] = $_POST['caucon'];
-    $form['sconto'] = floatval(preg_replace("/\,/", '.', $_POST['sconto']));
+    $form['sconto'] = round(preg_replace("/\,/", '.', $_POST['sconto']),2);
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_tiprig'] = $_POST['in_tiprig'];
@@ -305,7 +305,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['ritenuta'] = preg_replace("/\,/", '.', $v['ritenuta']);
             $form['rows'][$next_row]['unimis'] = substr($v['unimis'], 0, 3);
             $form['rows'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/", '.', $v['prelis'])), $admin_aziend['decimal_price'], '.', '');
-            $form['rows'][$next_row]['sconto'] = floatval(preg_replace("/\,/", ".", $v['sconto']));
+            $form['rows'][$next_row]['sconto'] = round(preg_replace("/\,/", ".", $v['sconto']),2);
             $form['rows'][$next_row]['quanti'] = gaz_format_quantity($v['quanti'], 0, $admin_aziend['decimal_quantity']);
             $form['rows'][$next_row]['codvat'] = intval($v['codvat']);
             $form['rows'][$next_row]['codric'] = intval($v['codric']);
@@ -1120,7 +1120,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     } else if (isset($_POST['in_submit'])) {
 
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
-        if (!$artico) $artico=array('codart'=>'','sconto'=>'','annota'=>'','peso_specifico'=>0,'SIAN'=>0,'volume_specifico'=>0,'preve1'=>0,'pack_units'=>0,'retention_tax'=>0,'good_or_service'=>'','lot_or_serial'=>'','descri'=>'','unimis'=>'','codcon'=>'','aliiva'=>0,'scorta'=>0,'payroll_tax'=>0);
+        if (!$artico) $artico=array('codart'=>'','sconto'=>0,'annota'=>'','peso_specifico'=>0,'SIAN'=>0,'volume_specifico'=>0,'preve1'=>0,'pack_units'=>0,'retention_tax'=>0,'good_or_service'=>'','lot_or_serial'=>'','descri'=>'','unimis'=>'','codcon'=>'','aliiva'=>0,'scorta'=>0,'payroll_tax'=>0);
         // addizione ai totali peso,pezzi,volume, ma se l'unità di misura è uguale a KG forzo il peso specifico ad 1, ed in futuro qui dovrei utilizzare il nuovo metodo di calcolo utilizzato anche in acquis/admin_broven.php
 		if (isset($artico) && strtoupper(substr($artico['unimis'],0,2))=='KG'){
 			$artico['peso_specifico']=1;	
@@ -1156,7 +1156,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['ritenuta'] = $form['in_ritenuta'];
             $form['rows'][$old_key]['provvigione'] = $form['in_provvigione']; // in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
             $form['rows'][$old_key]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
-            $form['rows'][$old_key]['sconto'] = $form['in_sconto'];
+            $form['rows'][$old_key]['sconto'] = round($form['in_sconto'],2);
             if ($artico['aliiva'] > 0) {
                 $form['rows'][$old_key]['codvat'] = $artico['aliiva'];
                 $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $artico['aliiva']);
@@ -1347,7 +1347,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
-                $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
+                $form['rows'][$next_row]['sconto'] = round($form['in_sconto'],2);
                if ($artico['lot_or_serial'] == 2) {
 // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
                     if ($form['rows'][$next_row]['quanti'] <> 1) {
@@ -1975,7 +1975,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['ritenuta'] = $rigo['ritenuta'];
         $form['rows'][$next_row]['unimis'] = $rigo['unimis'];
         $form['rows'][$next_row]['prelis'] = number_format($rigo['prelis'], $admin_aziend['decimal_price'], '.', '');
-        $form['rows'][$next_row]['sconto'] = $rigo['sconto'];
+        $form['rows'][$next_row]['sconto'] = round($rigo['sconto'],2);
         $form['rows'][$next_row]['quanti'] = gaz_format_quantity($rigo['quanti'], 0, $admin_aziend['decimal_quantity']);
         $form['rows'][$next_row]['codvat'] = $rigo['codvat'];
         $form['rows'][$next_row]['codric'] = $rigo['codric'];
