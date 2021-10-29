@@ -290,7 +290,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$msg.="25+";//La quantità inserita di un lotto, di un componente, è errata
 					}
 					if (intval($form['SIAN']) > 0 AND $form['SIAN_comp'][$nc] > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] AND intval($form['cod_operazione'])!==3){
-						$msg.= "41+"; // il silos non ha sufficiente quantità olio
+						$msg.= "41+"; // il silos di origine non ha sufficiente quantità olio
 					}
 				}
             }
@@ -330,30 +330,39 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             if (intval($form['datreg']) == 0) { // se manca la data di registrazione
                 $msg.= "22+";
             }
-			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])<1) { // se manca il codice operazione SIAN
-                $msg.= "26+"; 
-            } 
-			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])==5 AND strlen ($form['recip_stocc_destin']) == 0 ) { // se M1 e manca il recipiente di destinazione
-                $msg.= "27+"; 
-            }
-			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])==5 AND $form['recip_stocc_destin']==$form['recip_stocc'] ) { // se M1 e i recipienti sono uguali
-                $msg.= "28+"; 
-            }
-			if (intval($form['SIAN']) > 0 AND intval($form['cod_operazione'])==3) { // se L2 l'olio prodotto può essere solo etichettato
-                $rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
-				if ($rescampartico['etichetta']==0){
-					$msg.= "30+";
+			if (intval($form['SIAN']) > 0 ){ // controlli SIAN
+				if (intval($form['cod_operazione'])<1) { // se manca il codice operazione SIAN
+					$msg.= "26+"; 
 				}
-            }
-			if ($toDo == 'insert' AND intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<3 AND $form['numcomp']==0)){ // se confezioniamo
-				$msg.= "39+"; // manca l'olio sfuso
+				if (intval($form['cod_operazione'])==5){ // se M1 , movimentazione interna olio sfuso
+					if (strlen ($form['recip_stocc_destin']) == 0 ) { // se M1 e manca il recipiente di destinazione
+						$msg.= "27+"; 
+					}
+					if ($form['recip_stocc_destin']==$form['recip_stocc']) { // se M1 e i recipienti sono uguali
+						$msg.= "28+"; 
+					}
+					$get_sil=gaz_dbi_get_row($gTables['camp_recip_stocc'],cod_silos,$form['recip_stocc_destin']);
+					if ($campsilos -> getCont($form['recip_stocc_destin'])+$form['quantip'] > $get_sil['capacita']){// se non c'è spazio sufficiente nel recipiente di destinazione
+						$msg.= "46+";
+					}
+				}
+				if (intval($form['cod_operazione'])==3) { // se L2 l'olio prodotto può essere solo etichettato
+					$rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
+					if ($rescampartico['etichetta']==0){
+						$msg.= "30+";
+					}
+				}
+				if ($toDo == 'insert' AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<3 AND $form['numcomp']==0)){ // se confezioniamo
+					$msg.= "39+"; // manca l'olio sfuso
+				}
+				if (intval($form['cod_operazione']>0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
+					$rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
+					if ($rescampartico['confezione']==0){ // se l'olio è sfuso segnalo l'errore
+						$msg.= "37+"; 
+					}				
+				}
 			}
-			if (intval($form['SIAN']) > 0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
-                $rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
-				if ($rescampartico['confezione']==0){ // se l'olio è sfuso segnalo l'errore
-					$msg.= "37+"; 
-				}				
-            }
+			
 			if ($toDo == 'insert' AND intval($form['SIAN']) > 0 AND (isset($form['numcomp']) AND $form['numcomp']>0)) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
 			    for ($m = 0;$m < $form['numcomp'];++$m) {					
 					$rescamparticocomp = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['artcomp'][$m]);
