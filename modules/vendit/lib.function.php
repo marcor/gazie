@@ -163,11 +163,12 @@ class venditForm extends GAzieForm {
         return ($exist)?$exist['id_cash']:false;
    }
 
-   function selectRepartoIVA($val,$id_cash) { // per selezionare l'aliquota IVA, tutte se viene prodotto un XML (id_cash=0) ed in base ai reparti del Registatore Telematico se viene utilizzato questo (id_cash > 0)  
+   function selectRepartoIVA($val,$id_cash=0) { // per selezionare l'aliquota IVA, tutte se viene prodotto un XML (id_cash=0) ed in base ai reparti del Registatore Telematico se viene utilizzato questo (id_cash > 0)  
         global $gTables;
+		$table_where=($id_cash>=1)?$gTables['cash_register_reparto']. " LEFT JOIN ". $gTables['aliiva']." ON ".$gTables['cash_register_reparto'].".aliiva_codice = ".$gTables['aliiva'].".codice":$gTables['aliiva'];
         echo '<select id="in_codvat" name="in_codvat">';
         echo '<option value="0">-------------</option>';
-        $result = gaz_dbi_dyn_query($gTables['aliiva'].".codice, ".$gTables['aliiva'].".descri", $gTables['cash_register_reparto']. " LEFT JOIN ". $gTables['aliiva']." ON ".$gTables['cash_register_reparto'].".aliiva_codice = ".$gTables['aliiva'].".codice");
+        $result = gaz_dbi_dyn_query($gTables['aliiva'].".codice, ".$gTables['aliiva'].".descri",$table_where);
         while ($r = gaz_dbi_fetch_array($result)) {
             $selected = '';
             if ($val == $r["codice"]) {

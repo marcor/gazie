@@ -276,7 +276,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if (empty($v['descri']) && $v['quanti'] > 0) {
                 $msg['err'][] = "rowdes";
             }
-            if (empty($v['unimis']) && $v['quanti'] > 0) {
+            if (empty($v['unimis']) && $v['quanti']>0 && $v['tiprig']==0) {
                 $msg['err'][] = "unimis";
             }
             if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
