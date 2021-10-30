@@ -450,7 +450,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 }				
                 if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
                     // inserisco il movimento carico di magazzino dell'articolo prodotto
-					$mv = $magazz->getStockValue(false, $form['codart']);
+					$mv = $magazz->getStockValue(false, $form['codart'], null, null, $admin_aziend['decimal_price']);
 					$price=(isset($mv['v']))?$mv['v']:0;
 					if (!isset($mv['v']) OR $mv['v']==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
 						$price=(isset($row['preacq']))?$row['preacq']:0;
@@ -1075,7 +1075,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 					if ($form['quantip'] > 0) {
 						
 						$row['quantita_artico_base'] = number_format ($row['quantita_artico_base'] * $form['quantip'],6);
-						$mv = $magazz->getStockValue(false, $row['codice_artico_base']);			
+						$mv = $magazz->getStockValue(false, $row['codice_artico_base'], null, null, $admin_aziend['decimal_price']);			
 						$magval = array_pop($mv);
 						
 						$price_comp=($magval)?$magval['v']:0;
