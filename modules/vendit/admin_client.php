@@ -279,6 +279,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
 	$form['id_SIAN']="";
+	$nd=0;
 }
 
 require("../../library/include/header.php");
