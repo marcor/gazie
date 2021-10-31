@@ -106,7 +106,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form["campo_impianto"] = $_POST["campo_impianto"];    
     $form['quantip'] = $_POST['quantip'];
     $form['cosear'] = $_POST['cosear'];
-    $form['codart'] = $_POST['codart'];	
+    $form['codart'] = (isset($_POST['codart']))?$_POST['codart']:'';	
 	
     if (strlen ($_POST['cosear'])>0) {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
@@ -173,19 +173,23 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         $res = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['coseor']);
 		$form['order'] = $res['numdoc'];
 		$form['id_tes'] = $res['id_tes'];
-        if (isset($res)) { // se esiste veramente l'ordine ne prendo il rigo per l'articolo selezionato
-            $res2 = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $res['id_tes'], "AND codart = '{$form['codart']}'");
+        if (isset($res)) { // se esiste veramente l'ordine ne prendo il rigo per l'articolo selezionato 
+            if (strlen($form['codart'])>0){//(se selezionato)
+			$res2 = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $res['id_tes'], "AND codart = '{$form['codart']}'");
             $form['quantipord'] = $res2['quanti'];
             $form['id_tesbro'] = $res['id_tes'];
             $form['id_rigbro'] = $res2['id_rig'];
 			// prendo tutte le produzioni/orderman in cui c'è questo rigbro per conteggiare la quantità eventualmente già prodotta
             $query = "SELECT id FROM " . $gTables['orderman'] . " WHERE id_rigbro = '" . $res2['id_rig'] . "'";
             $resor = gaz_dbi_query($query);
+			
             while ($row = $resor->fetch_assoc()) { // scorro tutte le produzioni/orderman trovate
                 // per ogni orderman consulto movmag e conteggio le quantità per articolo già prodotte
-                $row = gaz_dbi_get_row($gTables['movmag'], "artico", $form['codart'], "AND operat = '1' AND id_orderman ='{$row['id']}'");
-                $quantiprod = ($row)?($quantiprod + $row['quanti']):0;
+                $rowmag = gaz_dbi_get_row($gTables['movmag'], "artico", $form['codart'], "AND operat = '1' AND id_orderman ='{$row['id']}'");
+                $quantiprod = ($rowmag)?($quantiprod + $rowmag['quanti']):0;
             }
+			
+			}
         } else { // se l'ordine non esiste ed è stato inserito un numero anomalo
             $form['codart'] = "";
             $form['quantip'] = 0;
@@ -396,39 +400,18 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     unlink($fn);
                 }
                 $id_orderman = intval($_GET['codice']);
-            } else { // se è insert
-                if ($form['order_type'] == "IND" or $form['order_type'] == "ART") { // se produzione industriale
-                    $query = "SHOW TABLE STATUS LIKE '" . $gTables['movmag'] . "'";
-                    unset($row);
-                    $result = gaz_dbi_query($query);
-                    $row = $result->fetch_assoc();
-                    $id_movmag = $row['Auto_increment']; // trovo l'ID che avrà il nuovo movimento di magazzino MOVMAG                    
-                }
-                $query = "SHOW TABLE STATUS LIKE '" . $gTables['orderman'] . "'";
-                unset($row);
-                $result = gaz_dbi_query($query);
-                $row = $result->fetch_assoc();
-                $id_orderman = $row['Auto_increment']; // trovo l'ID che avrà il movimento di produzione ORDERMAN
-                if ($form['lot_or_serial'] == 1) {
-                    $query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
-                    unset($row);
-                    $result = gaz_dbi_query($query);
-                    $row = $result->fetch_assoc();
-                    $id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto                    
-                } else {
-					$id_lotmag="";
-				}					
-                $query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
-                unset($row); 
-                $result = gaz_dbi_query($query);
-                $row = $result->fetch_assoc();
-                $id_tesbro = $row['Auto_increment']; // trovo l'ID che avrà TESBRO testata documento
-                $query = "SHOW TABLE STATUS LIKE '" . $gTables['rigbro'] . "'";
-                unset($row);
-                $result = gaz_dbi_query($query);
-                $row = $result->fetch_assoc();
-                $id_rigbro = $row['Auto_increment']; // trovo l'ID che avrà RIGBRO rigo documento
-                if (intval($form['order']) > 0) { // se c'è un ordine cliente esistente devo sovrascrivere gli id tesbro e rigbro
+				
+				//aggiorno il movimento magazzino
+				$query = "UPDATE " . $gTables['movmag'] . " SET quanti = '" . $form['quantip'] . "', datreg = '" . $form['datreg'] . "', datdoc = '" . $form['datemi'] . "', artico = '" . $form['codart'] . "' , campo_impianto = '" . $form['campo_impianto'] . "', id_orderman = " . intval($_GET['codice']) . " , id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'";
+				gaz_dbi_query($query);
+				if ($form['SIAN']>0){ // Antonio Germani - aggiorno il movimento del SIAN
+					$update = array();
+					$update[]="id_movmag";
+					$update[]=$form['id_movmag'];
+					gaz_dbi_table_update('camp_mov_sian',$update,$form);
+				}
+            } else { // se è insert			
+                if (intval($form['order']) > 0) { // se c'è un ordine prendo gli id tesbro e rigbro esistenti nel form
                     $id_tesbro = $form['id_tesbro'];
                     $id_rigbro = $form['id_rigbro'];
                 }
@@ -436,63 +419,51 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             if ($form['order_type'] == "AGR" or $form['order_type'] == "RIC" or $form['order_type'] == "PRF") {
                 // escludo AGR RIC e PRF dal creare movimento di magazzino e lotti
                 $id_movmag="";
-            } else {
-                // scrittura movimento di magazzino MOVMAG
-                if ($toDo == "update") { // se è update, aggiorno in ogni caso
-                    $query = "UPDATE " . $gTables['movmag'] . " SET quanti = '" . $form['quantip'] . "', datreg = '" . $form['datreg'] . "', datdoc = '" . $form['datemi'] . "', artico = '" . $form['codart'] . "' , campo_impianto = '" . $form['campo_impianto'] . "', id_orderman = " . intval($_GET['codice']) . " , id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'";
-                    gaz_dbi_query($query);
-					if ($form['SIAN']>0){ // Antonio Germani - aggiorno il movimento del SIAN
-						$update = array();
-						$update[]="id_movmag";
-						$update[]=$form['id_movmag'];
-						gaz_dbi_table_update('camp_mov_sian',$update,$form);
+            } elseif ($toDo == "insert") {
+				// e' un nuovo inserimento
+                // creo e salvo ORDERMAN, tesbro e rigbro
+                $status=0;				
+                if (intval($form['order']) <= 0) { // se non c'è un numero ordine ne creo uno fittizio in TESBRO e RIGBRO
+					if (($form['order_type'] != "AGR") OR ($form['order_type'] == "AGR" AND strlen($form['codart'])>0)) { // le produzioni agricole creano un ordine fittizio solo se c'è un articolo
+						$id_tesbro=tesbroInsert(array('tipdoc'=>'PRO','datemi'=>$form['datemi'],'numdoc'=>time(),'status'=>'AUTOGENERA','adminid'=>$admin_aziend['adminid']));
 					}
-                }				
-                if ($toDo == "insert") { // se è insert, creo il movimento di magazzino
-                    // inserisco il movimento carico di magazzino dell'articolo prodotto
-					$mv = $magazz->getStockValue(false, $form['codart'], null, null, $admin_aziend['decimal_price']);
-					$price=(isset($mv['v']))?$mv['v']:0;
-					if (!isset($mv['v']) OR $mv['v']==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
-						$price=(isset($row['preacq']))?$row['preacq']:0;
-					}
-					$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], $price, '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
-					$prod_id_movmag=$id_movmag; // mi tengo l'id_movmag del movimento di magazzino di entrata da produzione, mi servirà successivamente per valorizzare il prezzo in base alla composizione ed anche in caso di SIAN 
-					if ($form['SIAN']>0){ // imposto l'id movmag e salvo il movimento SIAN dell'articolo prodotto
-						$form['id_movmag']=$id_movmag;
-						if ($form['cod_operazione']==5){ // Movimentazione interna senza cambio di origine
-							$change=$form['recip_stocc'];// scambio i recipienti
-							$form['recip_stocc']=$form['recip_stocc_destin'];
-							$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
-							unset($var_orig['varieta']['totale']);//tolgo il totale
-							$form['recip_stocc_destin']=$change;
-							$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
-							unset($var_dest['varieta']['totale']);//tolgo il totale
-							if (isset($var_orig) && $block_var!=="SI"){
-								$form['varieta'] = "Traferimento olio ";								
-								if (isset($var_dest)){
-									$form['varieta'] .= "varietà ". implode(", ",array_keys($var_dest['varieta']));
-								}
-								if (isset($var_orig)){
-									$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_orig['varieta']));
-								}
-							}							
-						}elseif ($block_var!=="SI") {
-							$form['varieta']=$form['quality'];
-						}						
-						$id_mov_sian_rif=gaz_dbi_table_insert('camp_mov_sian', $form);
-						$s7=""; // Si sta producendo olio
-					} else {
-						$s7=1; // Non si produce olio cioè l'articolo finito non è olio
-						$id_mov_sian_rif="";
-					}
-					if ($form['cod_operazione']==5){ // se è una movimentazione interna SIAN creo un movimento di magazzino in uscita per far riportare la giacenza
-						// inserisco il movimento di magazzino dell'articolo in uscita
-						$id_movmag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['codart'], $form['quantip'], $form['preacq'], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Movimentazione interna'), 0, $idlotrecip[0], $id_orderman, $form['campo_impianto']);
-
-						// e creo anche il relativo movimento SIAN
-						$form['id_movmag']=$id_movmag;
-						$form['cod_operazione']="";
-						$change=$form['recip_stocc']; // scambio di nuovo i recipienti
+					if ($form['order_type'] == "IND") { $status=9; } // una produzione industriale senza ordine a riferimento la chiudo perché prodotto per stoccaggio in magazzino
+                } else { // se c'è l'ordine lo collego ad orderman
+					tesbroUpdate(array('id_tes',$form['id_tesbro']), array('id_orderman'=>$id_orderman));
+                    
+                    // usando i registri valorizzati per il form determino se devo mettere la produzione nello stato "9-chiuso" o lasciarla aperta 
+                    if (($quantiprod+$form['quantip'])>=$form['quantipord']) {  // ho prodotto di più o uguale a quanto richiesto dall'ordine specificato
+                        $res = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['coseor']);
+                        $res2 = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $res['id_tes'], "AND codart = '".$form['codart']."'");
+                        // prendo tutte le produzioni/orderman in cui c'è questo rigbro per conteggiare la quantità eventualmente già prodotta
+                        $query = "SELECT id FROM " . $gTables['orderman'] . " WHERE id_rigbro = " . $res2['id_rig'];
+                        $resor = gaz_dbi_query($query);
+                        while ($row = $resor->fetch_assoc()) { // scorro tutte le produzioni/orderman trovate
+                            // su ogni orderman precedente cambio lo stato
+                            gaz_dbi_query("UPDATE " . $gTables['orderman'] . " SET stato_lavorazione = 9 WHERE id = " . $row['id']);
+                        }
+                        $status=9; 
+                    }
+                }
+                // inserisco orderman: l'attuale produzione
+				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(id_staff_def,start_work,end_work,order_type,description,add_info,id_tesbro,campo_impianto,id_lotmag,duration,stato_lavorazione,adminid) VALUES ('". $form['id_staff_def'] ."', '". $start_work ."', '". $end_work ."', '" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" .$status. "', '" . $admin_aziend['adminid'] . "')");
+				$id_orderman = gaz_dbi_last_id();
+				// connetto tesbro a orderman
+				tesbroUpdate(array('id_tes',$id_tesbro), array('id_orderman'=>$id_orderman));
+				
+                // scrittura movimento di magazzino MOVMAG               	
+				// inserisco il movimento carico di magazzino dell'articolo prodotto
+				$mv = $magazz->getStockValue(false, $form['codart'], null, null, $admin_aziend['decimal_price']);
+				$price=(isset($mv['v']))?$mv['v']:0;
+				if (!isset($mv['v']) OR $mv['v']==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
+					$price=(isset($row['preacq']))?$row['preacq']:0;
+				}
+				$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], $price, '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
+				$prod_id_movmag=$id_movmag; // mi tengo l'id_movmag del movimento di magazzino di entrata da produzione, mi servirà successivamente per valorizzare il prezzo in base alla composizione ed anche in caso di SIAN 
+				if ($form['SIAN']>0){ // imposto l'id movmag e salvo il movimento SIAN dell'articolo prodotto
+					$form['id_movmag']=$id_movmag;
+					if ($form['cod_operazione']==5){ // Movimentazione interna senza cambio di origine
+						$change=$form['recip_stocc'];// scambio i recipienti
 						$form['recip_stocc']=$form['recip_stocc_destin'];
 						$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
 						unset($var_orig['varieta']['totale']);//tolgo il totale
@@ -500,129 +471,169 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
 						unset($var_dest['varieta']['totale']);//tolgo il totale
 						if (isset($var_orig) && $block_var!=="SI"){
-							$form['varieta'] = "Traferimento olio ";
-							if (isset($var_orig)){
-									$form['varieta'] .= "varietà ". implode(", ",array_keys($var_orig['varieta']));
-								}
+							$form['varieta'] = "Traferimento olio ";								
 							if (isset($var_dest)){
-								$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_dest['varieta']));
+								$form['varieta'] .= "varietà ". implode(", ",array_keys($var_dest['varieta']));
+							}
+							if (isset($var_orig)){
+								$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_orig['varieta']));
+							}
+						}							
+					}elseif ($block_var!=="SI") {
+						$form['varieta']=$form['quality'];
+					}						
+					$id_mov_sian_rif=gaz_dbi_table_insert('camp_mov_sian', $form);
+					$s7=""; // Si sta producendo olio
+				} else {
+					$s7=1; // Non si produce olio cioè l'articolo finito non è olio
+					$id_mov_sian_rif="";
+				}
+				if ($form['cod_operazione']==5){ // se è una movimentazione interna SIAN creo un movimento di magazzino in uscita per far riportare la giacenza
+					// inserisco il movimento di magazzino dell'articolo in uscita
+					$id_movmag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['codart'], $form['quantip'], $form['preacq'], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Movimentazione interna'), 0, $idlotrecip[0], $id_orderman, $form['campo_impianto']);
+
+					// e creo anche il relativo movimento SIAN
+					$form['id_movmag']=$id_movmag;
+					$form['cod_operazione']="";
+					$change=$form['recip_stocc']; // scambio di nuovo i recipienti
+					$form['recip_stocc']=$form['recip_stocc_destin'];
+					$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
+					unset($var_orig['varieta']['totale']);//tolgo il totale
+					$form['recip_stocc_destin']=$change;
+					$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
+					unset($var_dest['varieta']['totale']);//tolgo il totale
+					if (isset($var_orig) && $block_var!=="SI"){
+						$form['varieta'] = "Traferimento olio ";
+						if (isset($var_orig)){
+								$form['varieta'] .= "varietà ". implode(", ",array_keys($var_orig['varieta']));
+							}
+						if (isset($var_dest)){
+							$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_dest['varieta']));
+						}
+					}
+					$form['id_mov_sian_rif']=$id_mov_sian_rif;
+					gaz_dbi_table_insert('camp_mov_sian', $form);
+					$form['id_movmag']=$prod_id_movmag;// reimposto l'id_movmag del movimento di entrata
+					$id_movmag=$form['id_movmag'];
+				}
+				if ($itemart && $itemart['good_or_service'] == 2) { // se è un articolo composto
+					$comp_total_val=0.00;
+					for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
+						// accumulo il valore dei singoli componenti, mi servirà a fine ciclo per valorizzare il movimento 'PRO' precedentemente inserito
+						
+						$comp_total_val += $form['quanti_comp'][$nc]*$form['prezzo_comp'][$nc]/$form['quantip'];
+						if ($form['q_lot_comp'][$nc] > 0) { // se il componente ha lotti
+							for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
+								if ($form['lot_quanti'][$nc][$n]>0){ // questo evita che, se è stato forzato un lotto a quantità zero, venga generato un  movimento di magazzino
+									// Scarico dal magazzino il componente usato e i suoi lotti
+									$id_mag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['artcomp'][$nc], $form['lot_quanti'][$nc][$n], $form['prezzo_comp'][$nc], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Scarico per Produzione con lotto'), 0, $form['id_lot_comp'][$nc][$n], $id_orderman, $form['campo_impianto']);
+
+									if ($form['SIAN_comp'][$nc]>0){ // imposto l'id movmag e creo il movimento SIAN del componente usato, se previsto
+										$form['id_movmag']=$id_mag;
+										$form['id_mov_sian_rif']=$id_mov_sian_rif; // connetto il mov sian del componente a quello del prodotto
+										$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
+										gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
+										$form['cod_operazione']="";
+										$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
+										unset($var_orig['varieta']['totale']);//tolgo il totale
+										if (isset($var_orig) && $block_var!=="SI"){
+											$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
+										}											
+										if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
+											$form['cod_operazione']="S7";
+										}
+										gaz_dbi_table_insert('camp_mov_sian', $form);
+									}
+								}
+							}
+						} else { // se il componente non ha lotti scarico semplicemente il componente dal magazzino
+							// Scarico il magazzino con l'articolo usato
+							$id_mag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['artcomp'][$nc], $form['quanti_comp'][$nc], $form['prezzo_comp'][$nc], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Scarico per Produzione senza lotto'), 0, '', $id_orderman, $form['campo_impianto']);
+
+							if ($form['SIAN_comp'][$nc]>0){ // imposto l'id movmag e salvo il movimento SIAN del componente usato, se previsto
+								$form['id_movmag']=$id_mag;
+								$form['id_mov_sian_rif']=$id_mov_sian_rif;// connetto il mov sian del componente a quello del prodotto
+								$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
+								gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
+								$form['cod_operazione']="";
+								$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
+								unset($var_orig['varieta']['totale']);//tolgo il totale
+								if (isset($var_orig) && $block_var!=="SI"){
+									$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
+								}
+								if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
+									$form['cod_operazione']="S7";
+								} 
+								gaz_dbi_table_insert('camp_mov_sian', $form);
 							}
 						}
-						$form['id_mov_sian_rif']=$id_mov_sian_rif;
-						gaz_dbi_table_insert('camp_mov_sian', $form);
-						$form['id_movmag']=$prod_id_movmag;// reimposto l'id_movmag del movimento di entrata
-						$id_movmag=$form['id_movmag'];
 					}
-                    if ($itemart && $itemart['good_or_service'] == 2) { // se è un articolo composto
-                        $comp_total_val=0.00;
-						for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
-                            // accumulo il valore dei singoli componenti, mi servirà a fine ciclo per valorizzare il movimento 'PRO' precedentemente inserito
-                            
-							$comp_total_val += $form['quanti_comp'][$nc]*$form['prezzo_comp'][$nc]/$form['quantip'];
-							if ($form['q_lot_comp'][$nc] > 0) { // se il componente ha lotti
-							    for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
-									if ($form['lot_quanti'][$nc][$n]>0){ // questo evita che, se è stato forzato un lotto a quantità zero, venga generato un  movimento di magazzino
-										// Scarico dal magazzino il componente usato e i suoi lotti
-										 //echo"<br>prezzo componente:",$form['prezzo_comp'][$nc];
-										$id_mag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['artcomp'][$nc], $form['lot_quanti'][$nc][$n], $form['prezzo_comp'][$nc], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Scarico per Produzione con lotto'), 0, $form['id_lot_comp'][$nc][$n], $id_orderman, $form['campo_impianto']);
-
-										if ($form['SIAN_comp'][$nc]>0){ // imposto l'id movmag e salvo il movimento SIAN del componente usato, se previsto
-											$form['id_movmag']=$id_mag;
-											$form['id_mov_sian_rif']=$id_mov_sian_rif; // connetto il mov sian del componente a quello del prodotto
-											$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
-											gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
-											$form['cod_operazione']="";
-											$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
-											unset($var_orig['varieta']['totale']);//tolgo il totale
-											if (isset($var_orig) && $block_var!=="SI"){
-												$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
-											}											
-											if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
-												$form['cod_operazione']="S7";
-											}
-											gaz_dbi_table_insert('camp_mov_sian', $form);
-										}
-                                    }
-                                }
-                            } else { // se il componente non ha lotti scarico semplicemente il componente dal magazzino
-                                // Scarico il magazzino con l'articolo usato
-								$id_mag=$magazz->uploadMag('0', 'MAG', '', '', $form['datemi'], '', '', '81', $form['artcomp'][$nc], $form['quanti_comp'][$nc], $form['prezzo_comp'][$nc], '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '-1', 'desdoc' => 'Scarico per Produzione senza lotto'), 0, '', $id_orderman, $form['campo_impianto']);
-
-								if ($form['SIAN_comp'][$nc]>0){ // imposto l'id movmag e salvo il movimento SIAN del componente usato, se previsto
-									$form['id_movmag']=$id_mag;
-									$form['id_mov_sian_rif']=$id_mov_sian_rif;// connetto il mov sian del componente a quello del prodotto
-									$form['recip_stocc']=$form['recip_stocc_comp'][$nc];
-									gaz_dbi_query("UPDATE " . $gTables['camp_mov_sian'] . " SET recip_stocc = '" . $form['recip_stocc'] . "' WHERE id_mov_sian ='" . $id_mov_sian_rif . "'"); // aggiorno id_lotmag sul movmag
-									$form['cod_operazione']="";
-									$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
-									unset($var_orig['varieta']['totale']);//tolgo il totale
-									if (isset($var_orig) && $block_var!=="SI"){
-										$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
-									}
-									if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
-										$form['cod_operazione']="S7";
-									} 
-									gaz_dbi_table_insert('camp_mov_sian', $form);
-								}
-                            }
-                        }
-						if ($comp_total_val>0){// se è valorizzato, aggiorno il prezzo del movimento di produzione sulla base del prezzo dei componenti su movmag altrimenti lascio il valore di getStockValue or di preacq precedentemente inserito
-							gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET prezzo = " . round($comp_total_val,5) . " WHERE id_mov = " . $prod_id_movmag); 
-						}
-						$form['id_movmag']=$id_movmag;
-                    }
-                }
-                //Antonio Germani - > inizio salvo LOTTO, se c'è lotto e se il prodotto lo richiede
-                if ($form['lot_or_serial'] > 0) { // se l'articolo prevede un lotto
-                    // ripulisco il numero lotto inserito da caratteri dannosi
-                    $form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING);
-                    if (strlen($form['identifier']) == 0) { // se non c'è il lotto lo inserisco con data e ora in automatico
-                        $form['identifier'] = date("Ymd Hms");
-                    }
-                    if (strlen($form['expiry']) == 0) { // se non c'è la scadenza la inserisco a zero in automatico
-                        $form['expiry'] = "0000-00-00 00:00:00";
-                    }
-                    // è un nuovo INSERT
-                    if (strlen($form['identifier']) > 0 && $toDo == "insert") {
-                        $form['id_lotmag'] = $id_lotmag; //inserisco il nuovo id lotto in lotmag e movmag. Ogni produzione di Orderman deve avere un lotto diverso
-                        gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['codart'] . "','" . $id_movmag . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
-                        gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'"); // aggiorno id_lotmag sul movmag
-                    }
-                    //  è un UPDATE
-                    if (strlen($form['identifier']) > 0 && $toDo == "update") {
-                        $resin = gaz_dbi_get_row($gTables['orderman'], "id", intval($_GET['codice']));
-                        $resin2 = gaz_dbi_get_row($gTables['lotmag'], "id", $resin['id_lotmag']);
-                        if ($resin2['identifier'] == $form['identifier']) { // se ha lo stesso numero di lotto di quello precedentemente salvato faccio update di lotmag
-                            gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['codart'] . "' , id_movmag = '" . $form['id_movmag'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
-                        } else { // se non è lo stesso numero, cancello il lotto iniziale e ne creo uno nuovo
-                            gaz_dbi_query("DELETE FROM " . $gTables['lotmag'] . " WHERE id = " . $resin['id_lotmag']);
-                            gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['codart'] . "','" . $form['id_movmag'] . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
-                            
-                            $form['id_lotmag'] = gaz_dbi_last_id(); // vedo dove è stato salvato lotmag
-                            gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'"); // aggiorno id_lotmag sul movmag
-                        }
-                    }
-                }
-                // Antonio Germani - inizio salvo documento/CERTIFICATO lotto
-                if ($toDo == "update") { // se è update lascio $form id_lotmag del form
-                    $form['id_lotmag']; //                    
-                } else { // se è insert nuovo metto il nuovo id cercat ad inizio salvataggio
-                    $form['id_lotmag'] = $id_lotmag;
-                }
-                if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
-                    if (!empty($form['filename'])) { // e se ha un nome impostato nel form
-                        $tmp_file = DATA_DIR."files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['filename'];
-                        // sposto il file nella cartella definitiva, rinominandolo e cancellandolo dalla temporanea
-                        $fd = pathinfo($form['filename']);
-                        rename($tmp_file, DATA_DIR."files/" . $admin_aziend['company_id'] . "/lotmag_" . $form['id_lotmag'] . '.' . $fd['extension']);
-                    }
-                } // altrimenti se il file non è cambiato, anche se è update, non faccio nulla
-				// <<< fine salvo lotti                
-            }
+					if ($comp_total_val>0){// se è valorizzato, aggiorno il prezzo del movimento di produzione sulla base del prezzo dei componenti su movmag altrimenti lascio il valore di getStockValue or di preacq precedentemente inserito
+						gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET prezzo = " . round($comp_total_val,5) . " WHERE id_mov = " . $prod_id_movmag); 
+					}
+					$form['id_movmag']=$id_movmag;
+				}
+				if (intval($form['order']) <= 0) {// se non c'è l'ordine vero e devo creare quello fittizio
+					//inserisco il rigo ordine rigbro
+					$id_rigbro = rigbroInsert(array('id_tes'=>$id_tesbro,'codart'=>$form['codart'],'descri'=>addslashes ($resartico['descri']),'unimis'=>$resartico['unimis'],'quanti'=>$form['quantip'],'id_mag'=>$id_movmag,'status'=>'AUTOGENERA','id_orderman'=>$id_orderman));
+				}
+				// connetto movmag a rigbro
+				movmagUpdate(array('id_mov',$id_movmag), array('id_rif'=>$id_rigbro));
+			}	
+				
+			$id_lotmag="";
+			//Antonio Germani - > inizio LOTTO, se c'è lotto e se il prodotto lo richiede
+			if ($form['lot_or_serial'] > 0) { // se l'articolo prevede un lotto
+				
+				// ripulisco il numero lotto inserito da caratteri dannosi
+				$form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING);
+				if (strlen($form['identifier']) == 0) { // se non c'è il lotto lo inserisco con data e ora in automatico
+					$form['identifier'] = date("Ymd Hms");
+				}
+				if (strlen($form['expiry']) == 0) { // se non c'è la scadenza la inserisco a zero in automatico
+					$form['expiry'] = "0000-00-00 00:00:00";
+				}
+				// è un nuovo INSERT
+				if (strlen($form['identifier']) > 0 && $toDo == "insert") {
+					//inserisco il nuovo id lotto in lotmag e movmag. Ogni produzione di Orderman deve avere un lotto diverso
+					gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['codart'] . "','" . $id_movmag . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
+					$id_lotmag = gaz_dbi_last_id();
+					gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $id_lotmag . "' WHERE id_mov ='" . $form['id_movmag'] . "'"); // aggiorno id_lotmag sul movmag
+				}
+				//  è un UPDATE
+				if (strlen($form['identifier']) > 0 && $toDo == "update") {
+					$resin = gaz_dbi_get_row($gTables['orderman'], "id", intval($_GET['codice']));
+					$resin2 = gaz_dbi_get_row($gTables['lotmag'], "id", $resin['id_lotmag']);
+					if ($resin2['identifier'] == $form['identifier']) { // se ha lo stesso numero di lotto di quello precedentemente salvato faccio update di lotmag
+						gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['codart'] . "' , id_movmag = '" . $form['id_movmag'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
+						$id_lotmag = $form['id_lotmag'];
+					} else { // se non è lo stesso numero, cancello il lotto iniziale e ne creo uno nuovo
+						gaz_dbi_query("DELETE FROM " . $gTables['lotmag'] . " WHERE id = " . $resin['id_lotmag']);
+						gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['codart'] . "','" . $form['id_movmag'] . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
+						
+						$id_lotmag = gaz_dbi_last_id(); // vedo dove è stato salvato lotmag
+						gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $id_lotmag . "' WHERE id_mov ='" . $form['id_movmag'] . "'"); // aggiorno id_lotmag sul movmag
+					}
+				}
+			}           
+			// Antonio Germani - inizio salvo documento/CERTIFICATO lotto 
+			if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
+				if (!empty($form['filename'])) { // e se ha un nome impostato nel form
+					$tmp_file = DATA_DIR."files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['filename'];
+					// sposto il file nella cartella definitiva, rinominandolo e cancellandolo dalla temporanea
+					$fd = pathinfo($form['filename']);
+					rename($tmp_file, DATA_DIR."files/" . $admin_aziend['company_id'] . "/lotmag_" . $id_lotmag . '.' . $fd['extension']);
+				}
+			} // altrimenti se il file non è cambiato, anche se è update, non faccio nulla
+			// <<< fine salvo lotti 
 			
-            // Antonio Germani - Inizio Scrittura produzione ORDERMAN e, se non già creati da un ordine, creazione di ordine fittizio con scrittura di TESBRO E RIGBRO
+			if ($toDo == "insert") {
+				// connetto orderman a rigbro e al lotto
+				gaz_dbi_query("UPDATE " . $gTables['orderman'] . " SET id_rigbro = '".$id_rigbro."', id_lotmag = '".$id_lotmag."' WHERE id = " . $id_orderman);
+			}	
+			
             if ($toDo == 'update') { //  se e' una modifica, aggiorno orderman e tesbro
-                $query = "UPDATE " . $gTables['orderman'] . " SET id_staff_def = '".$form['id_staff_def']."', start_work = '". $start_work ."', end_work = '". $end_work ."', order_type = '" . $form['order_type'] . "', description = '" . $form['description'] . "', campo_impianto = '" . $form["campo_impianto"] . "', id_lotmag = '" . $form['id_lotmag'] . "', add_info = '" . $form['add_info'] . "', duration = '" . $form['day_of_validity'] . "' WHERE id = '" . $form['id'] . "'";
+                $query = "UPDATE " . $gTables['orderman'] . " SET id_staff_def = '".$form['id_staff_def']."', start_work = '". $start_work ."', end_work = '". $end_work ."', order_type = '" . $form['order_type'] . "', description = '" . $form['description'] . "', campo_impianto = '" . $form["campo_impianto"] . "', id_lotmag = '" . $id_lotmag . "', add_info = '" . $form['add_info'] . "', duration = '" . $form['day_of_validity'] . "' WHERE id = '" . $form['id'] . "'";
                 gaz_dbi_query($query);
                 $resin = gaz_dbi_get_row($gTables['tesbro'], "id_orderman", $id_orderman);
                 if ($resin['id_tes'] <> $form['id_tesbro']) { // se l'ordine iniziale è diverso da quello del form
@@ -640,27 +651,20 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                         $query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . $form['id_tesbro'] . "', " . 'id_rigbro' . " = '" . $form['id_rigbro'] . "' WHERE id = '" . $form['id'] . "'";
                         gaz_dbi_query($query); // aggiorno i riferimenti su orderman
                         
-                    } else { // se non c'è un nuovo ordine lo creo in automatico in tesbro, rigbro e metto i riferimenti su orderman
-                        $query = "SHOW TABLE STATUS LIKE '" . $gTables['tesbro'] . "'";
-                        unset($row);
-                        $result = gaz_dbi_query($query);
-                        $row = $result->fetch_assoc();
-                        $id_tesbro = $row['auto_increment']; // trovo l'ID che avrà TESBRO testata documento
-                        $query = "SHOW TABLE STATUS LIKE '" . $gTables['rigbro'] . "'";
-                        unset($row);
-                        $result = gaz_dbi_query($query);
-                        $row = $result->fetch_assoc();
-                        $id_rigbro = $row['auto_increment']; // trovo l'ID che avrà RIGBRO rigo documento
-                        gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,datemi,numdoc,id_orderman,status,adminid) VALUES ('PRO','" . $form['datemi'] . "', '" . time() . "', '" . $id_orderman . "', 'AUTOGENERA', '" . $admin_aziend['adminid'] . "')"); // creo tesbro
-                        gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,id_mag,status) VALUES ('" . $id_tesbro . "','" . $form['codart'] . "','" . addslashes ($resartico['descri']) . "','" . $resartico['unimis'] . "', '" . $form['quantip'] . "', '".$id_movmag.", 'AUTOGENERA')"); // creo rigbro
-                        $query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . $id_tesbro . "', " . 'id_rigbro' . " = '" . $id_rigbro . "' WHERE id = '" . $form['id'] . "'";
+                    } else { // se non c'è un nuovo ordine lo creo in automatico in tesbro, rigbro e metto i riferimenti su orderman                       
+					 
+						$id_tesbro=tesbroInsert(array('tipdoc'=>'PRO','datemi'=>$form['datemi'],'numdoc'=>time(),'status'=>'AUTOGENERA','adminid'=>$admin_aziend['adminid'],'id_orderman'=>$id_orderman));// creo tesbro
+                        
+						$id_rigbro = rigbroInsert(array('id_tes'=>$id_tesbro,'codart'=>$form['codart'],'descri'=>addslashes ($resartico['descri']),'unimis'=>$resartico['unimis'],'quanti'=>$form['quantip'],'id_mag'=>$id_movmag,'status'=>'AUTOGENERA','id_orderman'=>$id_orderman));// creo rigbro
+                        
+						$query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . $id_tesbro . "', " . 'id_rigbro' . " = '" . $id_rigbro . "' WHERE id = '" . $form['id'] . "'";
                         gaz_dbi_query($query); // aggiorno i riferimenti su orderman
                         
                     }
                 } else { // se il numero d'ordine NON è stato cambiato posso fare update solo se è PRO, cioè autogenerato
                     if ($resin['tipdoc'] == "PRO") {
                         $res = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $form['id_tesbro']);
-                        if (isset($res)) { // se esiste il rigo lo aggiorno tesbro e rigbro
+                        if (isset($res)) { // se esiste il rigo aggiorno tesbro e rigbro
                             $query = "UPDATE " . $gTables['tesbro'] . " SET " . 'datemi' . " = '" . $form['datemi'] . "', id_orderman = '" . $id_orderman . "' WHERE id_tes = '" . $form['id_tesbro'] . "'";
                             $res = gaz_dbi_query($query);
                             $query = "UPDATE " . $gTables['rigbro'] . " SET " . 'codart' . " = '" . $form['codart'] . "', " . 'descri' . " = '" . addslashes ($resartico['descri']) . "', " . 'unimis' . " = '" . $resartico['unimis'] . "', " . 'quanti' . " = '" . $form['quantip'] . "' WHERE id_tes = '" . $form['id_tesbro'] . "'";
@@ -668,38 +672,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                         }
                     }
                 }
-            } else { // e' un nuovo inserimento
-                // creo e salvo ORDERMAN
-                $status=0;				
-                if (intval($form['order']) <= 0) { // se non c'è un numero ordine ne creo uno fittizio in TESBRO e RIGBRO
-                  if (($form['order_type'] != "AGR") OR ($form['order_type'] == "AGR" AND strlen($form['codart'])>0)) { // le produzioni agricole creano un ordine fittizio solo se c'è un articolo
-                    gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,datemi,numdoc,id_orderman,status,adminid) VALUES ('PRO','" . $form['datemi'] . "', '" . time() . "', '" . $id_orderman . "', 'AUTOGENERA', '" . $admin_aziend['adminid'] . "')");
-                    gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,id_mag,status) VALUES ('" . $id_tesbro . "','" . $form['codart'] . "','" . addslashes ($resartico['descri']) . "','" . $resartico['unimis'] . "', '" . $form['quantip'] . "', '".$id_movmag."', 'AUTOGENERA')");
-                  }
-                  if ($form['order_type'] == "IND") { $status=9; } // una produzione industriale senza ordine a riferimento la chiudo perché prodotto per stoccaggio in magazzino
-                } else { // se c'è l'ordine lo collego ad orderman
-                    $query = "UPDATE " . $gTables['tesbro'] . " SET id_orderman = " . $id_orderman . " WHERE id_tes = " . $form['id_tesbro'] ;
-                    $res = gaz_dbi_query($query);
-                    // usando i registri valorizzati per il form determino se devo mettere la produzione nello stato "9-chiuso" o lasciarla aperta 
-                    if (($quantiprod+$form['quantip'])>=$form['quantipord']) {  // ho prodotto di più o uguale a quanto richiesto dall'ordine specificato
-                        $res = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['coseor']);
-                        $res2 = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $res['id_tes'], "AND codart = '".$form['codart']."'");
-                        // prendo tutte le produzioni/orderman in cui c'è questo rigbro per conteggiare la quantità eventualmente già prodotta
-                        $query = "SELECT id FROM " . $gTables['orderman'] . " WHERE id_rigbro = " . $res2['id_rig'];
-                        $resor = gaz_dbi_query($query);
-                        while ($row = $resor->fetch_assoc()) { // scorro tutte le produzioni/orderman trovate
-                            // su ogni orderman precedente cambio lo stato
-                            gaz_dbi_query("UPDATE " . $gTables['orderman'] . " SET stato_lavorazione = 9 WHERE id = " . $row['id']);
-                        }
-                        $status=9; 
-                    }
-                }
-                // inserisco in orderman
-				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(id_staff_def,start_work,end_work,order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,duration,stato_lavorazione,adminid) VALUES ('". $form['id_staff_def'] ."', '". $start_work ."', '". $end_work ."', '" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" .$status. "', '" . $admin_aziend['adminid'] . "')");
-
-            }
-		
-            // fine orderman, tesbro e rigbro
+            } 	            
+			
             // se sono in un popup lo chiudo dopo aver salvato tutto
             if ($popup == 1) {
                 echo "<script> 
