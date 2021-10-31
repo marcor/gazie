@@ -290,7 +290,7 @@ if (isset($_POST['preview']) and $msg=='') {
             }
 
             // passo tutte le variabili al metodo in modo da non costringere lo stesso a fare le query per ricavarsele
-            $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
+            $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method'],$admin_aziend['decimal_price']);
             $mval=end($magval);
             echo "<tr><td>".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
             echo "<td align=\"center\">".$mv['caumag'].'-'.substr($mv['descau'],0,20)."</td>";
@@ -311,7 +311,7 @@ if (isset($_POST['preview']) and $msg=='') {
               echo "<td></td><td align=\"right\">".number_format($mv['prezzo']*$mv['quanti'],$admin_aziend['decimal_price'],',','')."</td>";
             }
             echo "<td align=\"right\">".number_format($mval['q_g'],$admin_aziend['decimal_price'],',','.')."</td>";
-            echo "<td align=\"right\">".gaz_format_number($mval['v_g'])."</td>";
+            echo "<td align=\"right\">".number_format($mval['v_g'],$admin_aziend['decimal_price'],',','.')."</td>";
             echo "</tr>";
             $ctr_mv = $mv['artico'];
          }
