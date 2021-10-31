@@ -114,6 +114,7 @@ $strScript = array("admin_client.php" =>
         'status' => 'Visibilit&agrave; alla ricerca',
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',
+        'visannota' => 'Mostra le annotazioni in fattura',
         'fe_cod_univoco' => 'Cod.Univoco Ufficio (fatt.elettronica)',
         'fatt_email' => 'Inviare fattura:',
         'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2=>'In formato XML su PEC',3=>'In formato PDF su email + XML su PEC'),
@@ -139,6 +140,7 @@ $strScript = array("admin_client.php" =>
         'faesdi_alert1' => 'All\'indirizzo:',
         'print_lot' => 'Stampa certificati',
         'view_ord' => 'visualizza l\'ordine',
+        'consentivisua' => '<center>ATTENZIONE MANCANO I DATI FISCALI</center>'
     ),
     "admin_agenti.php" =>
     array("Agenti di vendita ",
@@ -340,7 +342,8 @@ $strScript = array("admin_client.php" =>
 			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
 			'forceone' => 'Un articolo prevede la matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1',
 			'lottoNonVendibile' => 'Non si può vendere un lotto in data precedente a quella della sua creazione'
-		)		
+		),
+        'consentivisua' => '<center>ATTENZIONE MANCANO I DATI FISCALI</center>'
     ),
     "select_docforprint.php" =>
     array('title' => 'Ristampa documenti',

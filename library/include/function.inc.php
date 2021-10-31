@@ -339,7 +339,7 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
 //
 // La funzione table_prefix_ok() serve a determinare se il prefisso
 // delle tabelle e' valido, secondo lo schema di Gazie, oppure no.
-// In pratica, si verifica che inizi con la stringa `gaz' e può
+// In pratica, si verifica che inizi con la stringa `gaz' e puï¿½
 // continuare con lettere minuscole e cifre numeriche, fino
 // a un massimo di ulteriori nove caratteri
 //
@@ -3177,6 +3177,24 @@ class Schedule {
 		}
 	}
 }
+
+//funzioni utili per debug
+if (!function_exists('dd') && !function_exists('d')) {
+    function dd()
+     {
+         echo '<pre>';
+         array_map(function($x) { var_dump($x); }, func_get_args());
+         die;
+    }
+    function d()
+     {
+         echo '<pre>';
+         array_map(function($x) { var_dump($x); }, func_get_args());
+         echo '</pre>';
+    }
+}
+   
+
 // controllo se ho delle funzioni specifiche per il modulo corrente residente nella directory del module stesso, con queste caratteristiche: modules/nome_modulo/lib.function.php
 if (@file_exists('./lib.function.php')) {
     require('./lib.function.php');

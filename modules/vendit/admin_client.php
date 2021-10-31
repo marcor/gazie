@@ -136,56 +136,58 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $msg .= "17+";
         }
         $anagrafica = new Anagrafica();
-        if (!empty($form['pariva']) && !($form['pariva'] == '00000000000')) {
-            $partner_with_same_pi = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND pariva = '" . $form['pariva'] . "'", "pariva DESC", 0, 1);
-            if ($partner_with_same_pi) {
-                if ($partner_with_same_pi[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
-                    $msg .= "10+";
-                }
-            } elseif ($form['id_anagra'] == 0) { // � un nuovo cliente senza anagrafica
-                $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
-                $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
-                if ($anagra_with_same_pi) { // c'� gi� un'anagrafica con la stessa PI non serve reinserirlo ma avverto
-                    // devo attivare tutte le interfacce per la scelta!
-                    $anagra = $anagra_with_same_pi;
-                    $msg .= '15+';
-                }
-            }
-        }
-        if (!empty($r_cf)) {
-            $msg .= "11+";
-        }
-        if (!empty($form['codfis']) && !($form['codfis'] == '00000000000')) {
-            $partner_with_same_cf = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND codfis = '" . $form['codfis'] . "'", "codfis DESC", 0, 1);
-            if ($partner_with_same_cf) { // c'� gi� un cliente sul piano dei conti
-                if ($partner_with_same_cf[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
-                    $msg .= "12+";
-                }
-            } elseif ($form['id_anagra'] == 0) { // � un nuovo cliente senza anagrafica
-                $rs_anagra_with_same_cf = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("codfis" => "='" . $form['codfis'] . "'"), array("codfis" => "DESC"), 0, 1);
-                $anagra_with_same_cf = gaz_dbi_fetch_array($rs_anagra_with_same_cf);
-                if ($anagra_with_same_cf) { // c'� gi� un'anagrafica con lo stesso CF non serve reinserirlo ma avverto
-                    // devo attivare tutte le interfacce per la scelta!
-                    $anagra = $anagra_with_same_cf;
-                    $msg .= '16+';
+        if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'consenti_nofisc')['val']==0 ) {
+            if (!empty($form['pariva']) && !($form['pariva'] == '00000000000')) {
+                $partner_with_same_pi = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND pariva = '" . $form['pariva'] . "'", "pariva DESC", 0, 1);
+                if ($partner_with_same_pi) {
+                    if ($partner_with_same_pi[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
+                        $msg .= "10+";
+                    }
+                } elseif ($form['id_anagra'] == 0) { // � un nuovo cliente senza anagrafica
+                    $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
+                    $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
+                    if ($anagra_with_same_pi) { // c'� gi� un'anagrafica con la stessa PI non serve reinserirlo ma avverto
+                        // devo attivare tutte le interfacce per la scelta!
+                        $anagra = $anagra_with_same_pi;
+                        $msg .= '15+';
+                    }
                 }
             }
-        }
+        
+            if (!empty($r_cf)) {
+                $msg .= "11+";
+            }
+            if (!empty($form['codfis']) && !($form['codfis'] == '00000000000')) {
+                $partner_with_same_cf = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND codfis = '" . $form['codfis'] . "'", "codfis DESC", 0, 1);
+                if ($partner_with_same_cf) { // c'� gi� un cliente sul piano dei conti
+                    if ($partner_with_same_cf[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
+                        $msg .= "12+";
+                    }
+                } elseif ($form['id_anagra'] == 0) { // � un nuovo cliente senza anagrafica
+                    $rs_anagra_with_same_cf = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("codfis" => "='" . $form['codfis'] . "'"), array("codfis" => "DESC"), 0, 1);
+                    $anagra_with_same_cf = gaz_dbi_fetch_array($rs_anagra_with_same_cf);
+                    if ($anagra_with_same_cf) { // c'� gi� un'anagrafica con lo stesso CF non serve reinserirlo ma avverto
+                        // devo attivare tutte le interfacce per la scelta!
+                        $anagra = $anagra_with_same_cf;
+                        $msg .= '16+';
+                    }
+                }
+            }
 
-        if (empty($form['codfis'])) {
-            if ($form['sexper'] == 'G') {
-                $msg .= "13+";
-                $form['codfis'] = $form['pariva'];
-            } else {
-                $msg .= "14+";
+            if (empty($form['codfis'])) {
+                if ($form['sexper'] == 'G') {
+                    $msg .= "13+";
+                    $form['codfis'] = $form['pariva'];
+                } else {
+                    $msg .= "14+";
+                }
+            }
+
+            $uts_datnas = mktime(0, 0, 0, $form['datnas_M'], $form['datnas_D'], $form['datnas_Y']);
+            if (!checkdate($form['datnas_M'], $form['datnas_D'], $form['datnas_Y']) && ($admin_aziend['country'] != $form['country'] )) {
+                $msg .= "19+";
             }
         }
-
-        $uts_datnas = mktime(0, 0, 0, $form['datnas_M'], $form['datnas_D'], $form['datnas_Y']);
-        if (!checkdate($form['datnas_M'], $form['datnas_D'], $form['datnas_Y']) && ($admin_aziend['country'] != $form['country'] )) {
-            $msg .= "19+";
-        }
-
         if (!filter_var($form['pec_email'], FILTER_VALIDATE_EMAIL) && !empty($form['pec_email'])) {
             $msg .= "20+";
         }
@@ -904,6 +906,16 @@ $gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 1,
                 <div class="form-group">
                     <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['annota']; ?> </label>
                     <textarea name="annota" rows="2" cols="50" maxlength="3000"><?php echo $form['annota']; ?></textarea>
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="visannota" class="col-sm-4 control-label"><?php echo $script_transl['visannota']; ?> </label>
+    <?php
+$gForm->variousSelect('visannota', $script_transl['yn_value'], $form['visannota']);
+    ?>
                 </div>
             </div>
         </div><!-- chiude row  -->

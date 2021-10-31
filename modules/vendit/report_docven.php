@@ -551,9 +551,15 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
 					echo "</td>";
 // Colonna movimenti contabili
                     echo "<td align=\"left\">";
-                    echo $idcon_maggiore_0;
-                    echo $visualizza_effetto_ft;
-                    echo $genera_effetti_previsti;
+                    $res_consenti_nofisc = gaz_dbi_dyn_query("codfis,pariva","{$gTables['clfoco']} LEFT JOIN {$gTables['anagra']} ON {$gTables['clfoco']}.id_anagra = {$gTables['anagra']}.id","codice=".$r['clfoco'] );
+                    $r_consenti_nofisc = gaz_dbi_fetch_array($res_consenti_nofisc);
+                    if ( $r_consenti_nofisc['pariva']!="" || $r_consenti_nofisc['codfis']!="" ) {
+                        echo $idcon_maggiore_0;
+                        echo $visualizza_effetto_ft;
+                        echo $genera_effetti_previsti;
+                    } else {
+                        echo "<a href=\"admin_client.php?codice=".substr($r['clfoco'],3,6)."&Update\" target=\"_blank\" class=\"btn btn-100 btn-xs btn-danger\" title=\"Per poter contabilizzare questa " . $tipodoc . " devi modificare i dati del cliente!\">".$script_transl['consentivisua']."</a>";
+                    }
                     echo "</td>";
 // Colonna "Stampa"
                     echo "<td align=\"center\"><a accesskey=\"p\" class=\"btn btn-xs btn-50 btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i>&nbsp;pdf</a>";

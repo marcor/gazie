@@ -956,6 +956,37 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
         }
 
+        if ( $cliente['visannota']=="S") {
+            $form['rows'][$next_row]['codart'] = '';
+            $form['rows'][$next_row]['annota'] = '';
+            $form['rows'][$next_row]['pesosp'] = '';
+            $form['rows'][$next_row]['gooser'] = 0;
+            $form['rows'][$next_row]['unimis'] = '';
+            $form['rows'][$next_row]['quanti'] = 0;
+            $form['rows'][$next_row]['prelis'] = 0;
+            $form['rows'][$next_row]['codric'] = 0;
+            $form['rows'][$next_row]['sconto'] = 0;
+            $form['rows'][$next_row]['pervat'] = 0;
+            $form['rows'][$next_row]['tipiva'] = 0;
+            $form['rows'][$next_row]['ritenuta'] = 0;
+            $form['rows'][$next_row]['codvat'] = 0;
+            $form['rows'][$next_row]['lot_or_serial'] = 0;
+            $form['rows'][$next_row]['quality'] = '';
+            $form['rows'][$next_row]['SIAN'] = 0;
+            $form['rows'][$next_row]['id_lotmag'] = 0;
+            $form['rows'][$next_row]['identifier'] = '';
+            $form['rows'][$next_row]['cod_operazione'] = 11;
+            $form['rows'][$next_row]['recip_stocc'] = '';
+            $form['rows'][$next_row]['recip_stocc_destin'] = '';
+            $form['rows'][$next_row]['descri'] = $cliente['annota'];
+            $form['rows'][$next_row]['id_mag'] = 0;
+            $form['rows'][$next_row]['status'] = 'INSERT';
+            $form['rows'][$next_row]['scorta'] = 0;
+            $form['rows'][$next_row]['quamag'] = 0;
+            $form['rows'][$next_row]['tiprig'] = 2;
+            $next_row++;
+        }
+
         $form['id_des'] = $cliente['id_des'];
         $id_des = $anagrafica->getPartner($form['id_des']);
         $form['search']['id_des'] = ($id_des) ? substr($id_des['ragso1'], 0, 10):'';
@@ -2276,12 +2307,16 @@ echo "</select></td>\n";
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['indspe'] . "<br />";
     echo "</td>\n";
 
-    if (@$cliente['pariva'] > 0) {
-        echo "<td class=\"FacetFieldCaptionTD\">P.IVA</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['pariva'] . "<br />";
-        echo "</td>\n";
+    if ( @$cliente['pariva']=="" && @$cliente['codfis']=="" && $form['clfoco']) {
+        echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\"><span class=\"blink\">".$script_transl['consentivisua']."</span></td>";
     } else {
-        echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['codfis'] . "<br />";
-        echo "</td>\n";
+        if (@$cliente['pariva'] > 0) {
+            echo "<td class=\"FacetFieldCaptionTD\">P.IVA</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['pariva'] . "<br />";
+            echo "</td>\n";
+        } else {
+            echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['codfis'] . "<br />";
+            echo "</td>\n";
+        }
     }
 ?>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl[6];?></td>

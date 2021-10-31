@@ -142,3 +142,8 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
 	color: #034802;
 	background: #ccccff;
 }
+.blink {
+    color: #f00;
+    font-weight: bold;
+    animation: blink 0.5s infinite;
+}

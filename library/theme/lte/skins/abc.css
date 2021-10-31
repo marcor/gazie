@@ -197,3 +197,10 @@ td.ui-datepicker-other-month>a.ui-state-default.ui-priority-secondary{
     border: 1px solid #5f7a56;
     border-radius: 4px;
 }
+
+.blink {
+    color: #f00;
+    font-weight: bold;
+    animation: blink 0.5s infinite;
+}
+  

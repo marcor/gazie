@@ -4,4 +4,6 @@ ALTER TABLE `gaz_XXXcamp_mov_sian` CHANGE `varieta` `varieta` VARCHAR(250) NOT N
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT
 'Usa art. composti per seconda unità di misura (0=No, 1=Si)', 'show_artico_composit', '0' FROM DUAL
 WHERE NOT EXISTS (SELECT `var` FROM `gaz_XXXcompany_config` WHERE `var` = 'show_artico_composit' LIMIT 1);
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Permetti inserimento di clienti senza dati fiscali', 'consenti_nofisc', '0');
+ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `visannota` CHAR(1) NOT NULL DEFAULT 'N' AFTER `annota`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
