@@ -3178,23 +3178,6 @@ class Schedule {
 	}
 }
 
-//funzioni utili per debug
-if (!function_exists('dd') && !function_exists('d')) {
-    function dd()
-     {
-         echo '<pre>';
-         array_map(function($x) { var_dump($x); }, func_get_args());
-         die;
-    }
-    function d()
-     {
-         echo '<pre>';
-         array_map(function($x) { var_dump($x); }, func_get_args());
-         echo '</pre>';
-    }
-}
-   
-
 // controllo se ho delle funzioni specifiche per il modulo corrente residente nella directory del module stesso, con queste caratteristiche: modules/nome_modulo/lib.function.php
 if (@file_exists('./lib.function.php')) {
     require('./lib.function.php');
