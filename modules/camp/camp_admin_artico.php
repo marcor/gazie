@@ -755,7 +755,7 @@ select: function(event, ui) {
 								while ($usofito = $res_usofito->fetch_assoc()) {															
 									
 									echo '<div style="background-color: #'.$color.'">
-									<a class="btn btn-xs btn-success" >'.$usofito['id'].'</a> - '.$usofito['numero_registrazione'].' - '.$usofito['id_colt'].$usofito['nome_colt'].' - '.$usofito['id_avv'].$usofito['nome_avv'].' - Dose:'.$usofito['dose'].$unimis.' - Sospensione:'.$usofito['tempo_sosp'].'gg - Trattamenti per coltura:'.$usofito['max_tratt'].' ';
+									<a class="btn btn-xs btn-success" onclick="window.open(\'admin_usofito.php?Update&id='. $usofito['id']. '\', \'newwindow\',\'width=1000,height=700\'); return false;" target="_blank">'.$usofito['id'].'</a> - '.$usofito['numero_registrazione'].' - '.$usofito['id_colt'].$usofito['nome_colt'].' - '.$usofito['id_avv'].$usofito['nome_avv'].' - Dose:'.$usofito['dose'].$unimis.' - Sospensione:'.$usofito['tempo_sosp'].'gg - Trattamenti per coltura:'.$usofito['max_tratt'].' ';
 									if (intval($res_usofito->num_rows)>0){
 										?>
 										<a style="float:right;" class="btn btn-xs btn-danger" onclick="itemErase('<?php echo addslashes($usofito['id']); ?>', '<?php echo addslashes($usofito['nome_avv']);?>', '<?php echo addslashes($usofito['nome_colt']);?>', '<?php echo $form['nomefito'];?>', '<?php echo $upd; ?>');">  togli X </a>
