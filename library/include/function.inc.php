@@ -989,16 +989,16 @@ class selectPartner extends SelectBox {
 					$style='';
 					// print_r($partner);print '<br>'.$m.'<br><br>';
                     if ($m < 0) { // vado cercando tutti i partner del piano dei conti
-                        if ($partner[0]["codice"] < 1) {  // disabilito le anagrafiche presenti solo in altre aziende
+                        if ($partner[0]["codpart"] < 1) {  // disabilito le anagrafiche presenti solo in altre aziende
                         }
-                    } elseif ($partner[0]["codice"] < 1) {
-                        $partner[0]['codice'] = 'id_' . $partner[0]['id'];
+                    } elseif ($partner[0]["codpart"] < 1) {
+                        $partner[0]['codpart'] = 'id_' . $partner[0]['id'];
                         $style = 'style="background:#FF6666";';
-                    } elseif (substr($partner[0]["codice"], 0, 3) != $m) {// non appartiene al mastro passato in $m
-                        $partner[0]['codice'] = 'id_' . $partner[0]['id'];
+                    } elseif (substr($partner[0]["codpart"], 0, 3) != $m) {// non appartiene al mastro passato in $m
+                        $partner[0]['codpart'] = 'id_' . $partner[0]['id'];
                         $style = 'style="background:#FF6666";';
                     }
-					$val=$partner[0]['codice'];
+					$val=$partner[0]['codpart'];
 					echo "\t<input type=\"submit\" id=\"onlyone_submit\" value=\"→ \" onclick=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
 					echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
 					
