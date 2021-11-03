@@ -470,12 +470,12 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$form['recip_stocc_destin']=$change;
 						$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
 						unset($var_dest['varieta']['totale']);//tolgo il totale
-						if (isset($var_orig) && $block_var!=="SI"){
+						if (count($var_dest['varieta'])>0 && count($var_orig['varieta'])>0 && $block_var!=="SI"){
 							$form['varieta'] = "Traferimento olio ";								
-							if (isset($var_dest)){
+							if (count($var_dest['varieta'])>0){
 								$form['varieta'] .= "varietà ". implode(", ",array_keys($var_dest['varieta']));
 							}
-							if (isset($var_orig)){
+							if (count($var_orig['varieta'])>0){
 								$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_orig['varieta']));
 							}
 						}							
@@ -502,12 +502,12 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					$form['recip_stocc_destin']=$change;
 					$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
 					unset($var_dest['varieta']['totale']);//tolgo il totale
-					if (isset($var_orig) && $block_var!=="SI"){
+					if (count($var_dest['varieta'])>0 && count($var_orig['varieta'])>0 && $block_var!=="SI"){
 						$form['varieta'] = "Traferimento olio ";
-						if (isset($var_orig)){
+						if (count($var_orig['varieta'])>0){
 								$form['varieta'] .= "varietà ". implode(", ",array_keys($var_orig['varieta']));
 							}
-						if (isset($var_dest)){
+						if (count($var_dest['varieta'])>0){
 							$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_dest['varieta']));
 						}
 					}
