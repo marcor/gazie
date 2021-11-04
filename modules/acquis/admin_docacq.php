@@ -495,8 +495,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if ($form['tipdoc'] == 'DDR' || $form['tipdoc'] == 'DDL') {  //se è un DDT
                 $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and tipdoc like 'DD_' and seziva = $sezione", "numdoc desc, datemi desc", 0, 1);
                 $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
-                $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
-                if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
+				if ($ultimo_ddt){
+					$utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
+                }
+				if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
                     $msg['err'][] = "ddtpre";
                 }
             } elseif ($form['tipdoc'] == 'ADT'  || $form['tipdoc'] == 'AFT' || $form['tipdoc'] == 'RDL') {  //se è un DDT d'acquisto non effettuo controlli sulle date
@@ -609,7 +611,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
         }
         if (count($msg['err']) == 0) {// nessun errore
-       //echo "<pre>";print_r($form);die;
+            //echo "<pre>";print_r($form);die;
 			if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                 $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor'],$form['pagame']);
@@ -741,6 +743,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								gaz_dbi_put_row($gTables['lotmag'], 'id', $id_lotmag, 'id_movmag', $id_movmag);
 							}
 							if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+								if ($form['tipdoc']=="DDL" && intval($form['rows'][$i]['cod_operazione'])==12) {// se è scarico per conto lavorazione e campionamento
+									$form['rows'][$i]['cod_operazione']="P";
+								}
 								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
 								$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
 								$value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
@@ -770,6 +775,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $last_movmag_id = $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],0,$form['rows'][$i]['id_orderman']);
 						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $last_movmag_id);
 						if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
+							if ($form['tipdoc']=="DDL" && intval($form['rows'][$i]['cod_operazione'])==12) {// se è scarico per conto lavorazione e campionamento
+								$form['rows'][$i]['cod_operazione']="P";
+							}
 							$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
 							$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
 							$value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
@@ -942,6 +950,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 							}
 						}
 						if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo il movimento
+							if ($form['tipdoc']=="DDL" && intval($form['rows'][$i]['cod_operazione'])==12) {// se è scarico per conto lavorazione e campionamento
+								$form['rows'][$i]['cod_operazione']="P";
+							}
 							$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
 							$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
 							$value_sian['recip_stocc_destin']= $form['rows'][$i]['recip_stocc_destin'];
@@ -1049,7 +1060,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         /** inizio modifica FP 27/10/2015
          * carico gli indirizzi di destinazione dalla tabella gaz_destina
          */
-        $idAnagrafe = $fornitore['id_anagra'];
+        $idAnagrafe = (isset($fornitore['id_anagra']))?$fornitore['id_anagra']:0;
         $rs_query_destinazioni = gaz_dbi_dyn_query("*", $gTables['destina'], "id_anagra='$idAnagrafe'");
         $array_destinazioni = gaz_dbi_fetch_all($rs_query_destinazioni);
         /** fine modifica FP */
@@ -1336,7 +1347,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
          * inizializzo il campo con '#' per indicare che voglio lo sconto standard dell'articolo
          */
         /* carico gli indirizzi di destinazione dalla tabella gaz_destina */
-        $idAnagrafe = $fornitore['id_anagra'];
+         $idAnagrafe = (isset($fornitore['id_anagra']))?$fornitore['id_anagra']:0;
         $rs_query_destinazioni = gaz_dbi_dyn_query("*", $gTables['destina'], "id_anagra='$idAnagrafe'");
         $array_destinazioni = gaz_dbi_fetch_all($rs_query_destinazioni);
         /* fine modifica FP */
@@ -1700,6 +1711,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['lot_or_serial'] = $articolo['lot_or_serial'];
         $form['rows'][$i]['SIAN'] = $articolo['SIAN'];
 		$form['rows'][$i]['quality'] = $articolo['quality'];
+		if ($form['rows'][$i]['SIAN']>0){
+			$camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);			
+			$form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];			
+			$form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
+			$form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
+		}
       } else {
         $form['rows'][$i]['codart']='';
 		$form['rows'][$i]['quality']='';
@@ -1711,13 +1728,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['SIAN']='';
         $form['rows'][$i]['annota']='';
       }
-    $form['rows'][$i]['filename'] = '';
+		$form['rows'][$i]['filename'] = '';
 		$form['rows'][$i]['identifier'] = '';
 		$form['rows'][$i]['expiry'] = '';
 		$form['rows'][$i]['status'] = "UPDATE";
 		if ($form['rows'][$i]['SIAN']>0){
 			$camp_mov_sian = gaz_dbi_get_row($gTables['camp_mov_sian'], "id_movmag", $form['rows'][$i]['id_mag']);
-			$form['rows'][$i]['cod_operazione'] = $camp_mov_sian['cod_operazione'];
+			$form['rows'][$i]['cod_operazione'] = ($camp_mov_sian['cod_operazione']=="P")?"12":$camp_mov_sian['cod_operazione'];
 			$form['rows'][$i]['recip_stocc'] = $camp_mov_sian['recip_stocc'];
 			$form['rows'][$i]['recip_stocc_destin'] = $camp_mov_sian['recip_stocc_destin'];
 		}

@@ -123,6 +123,7 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 	$nprog=1;$lastdatdoc="";$nprog_preced_file=0;	
 	foreach ($result as $key => $row) {		
 		$type_array= explode (";", $type_zero); // azzero il type array per ogni movimento da creare
+		$note="";
 		if ($row['SIAN']>0) {
 			if ( $_GET['ud']==str_replace("-", "", $row['datdoc']) AND strlen ($row['status']) > 1) {
 				// escludo i movimenti già inseriti null'ultimo file con stessa data
@@ -323,9 +324,13 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						}
 					}
 					
-				// >> Antonio Germani - Caso Scarico da vendite e magazzino
+				// >> Antonio Germani - Caso Scarico da vendite, magazzino e da DDL (ddt acquisto in conto la vorazione)
 				
 					if ($row['operat']==-1 AND intval($row['id_orderman'])==0){ // se è uno scarico NON connesso a produzione
+						if ($row['tipdoc'] == "DDL" && $row['cod_operazione']="P"){
+							$note="Campionamento/analisi "; 
+							$type_array[28]=$note;
+						}
 						$type_array[6]=str_pad("S".$row['cod_operazione'], 10); // codice operazione
 						if ($row['SIAN']==1){ // se è olio
 							if ($row['confezione']==0) { // se è sfuso
@@ -345,19 +350,19 @@ if (sizeof($result) > 0 AND !isset($_POST['ritorno'])) { // se ci sono movimenti
 						if ($row['cod_operazione']==1 OR $row['cod_operazione']==2 OR $row['cod_operazione']==3 OR $row['cod_operazione']==5 OR $row['cod_operazione']==10){ 
 							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista/
 							if (strlen($row['varieta'])>3){
-								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+								$type_array[28]=str_pad(substr(($note."Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
 							}
 						}
 						if ($row['cod_operazione']==6) { // cessione omaggio
 							$type_array[7]=sprintf ("%010d",$row['id_SIAN']); // identificatore fornitore/cliente/terzista//facoltativo
 							if (strlen($row['varieta'])>3){
-								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+								$type_array[28]=str_pad(substr(($note."Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
 							}
 						}
 						if ($row['cod_operazione']==4) {// scarico trasferimento ad altro deposito stessa impresa
 							$type_array[13]=sprintf ("%010d",$row['id_SIAN']); // identificativo stabilimento di provenienza/destinazione olio
 							if (strlen($row['varieta'])>3){
-								$type_array[28]=str_pad(substr(("Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
+								$type_array[28]=str_pad(substr(($note."Varietà ".$row['varieta']), 0, 300 ), 300); // Note (varietà)
 							}
 						}
 						if ($row['cod_operazione']==7) { // scarico altri usi
