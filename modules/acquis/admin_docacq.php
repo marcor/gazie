@@ -2307,7 +2307,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 				$btn_title = '';
 				$peso = 0;
 				if ($v['tiprig'] == 0) {
-					if ($artico['good_or_service']>0){ 
+					if ($artico['good_or_service']==1){ 
 						$btn_class = 'btn-info';
 						$btn_title = ' Servizio';
 					} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
