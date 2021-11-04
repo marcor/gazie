@@ -567,7 +567,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				}
 				$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['clfoco']);
 				$anagra = gaz_dbi_get_row($gTables['anagra'], "id", $clfoco['id_anagra']);
-				if ($anagra['id_SIAN']<=0){
+				if ($anagra['id_SIAN']<=0 && $value['cod_operazione']<>12){ // controllo se il fornitore ha il codice SIAN solo se non è Campionamento/analisi
 					$msgrigo = $i + 1;
 					$msg['err'][] = "nofor_sian";
 				}
