@@ -294,7 +294,6 @@ while($row=$res->fetch_assoc()){
 	}
 	$tot_acq+=$amount;
     $fillcell=($amount>=0.00001)?false:'1';
-	$ctrlACQtot+=$amount;
 	if ($ctrlACQ==0){
 		$pdf->Cell(277,5,'LISTA DEGLI ACQUISTI A FORNITORI','LTR', 1, 'L', 1, '', 1);
 		$pdf->Cell(105,5,'Fornitore','LBR',0,'L',1);
@@ -304,20 +303,18 @@ while($row=$res->fetch_assoc()){
 		$pdf->Cell(20,5,'prezzo','LBR',0,'R',1);
 		$pdf->Cell(10,5,'sconto','LBR',0,'C',1);
 		$pdf->Cell(30,5,'importo','LBR',1,'R',1);
-		$tot_acq=0.00;
 	} elseif ($ctrlACQ<>$row['id_tes']) {
 		$pdf->Cell(85,5);
         $pdf->SetFillColor(230,230,230);
         $pdf->Cell(162,4,'Totale '.$tipdoc_descri[$row['tipdoc']].' n.'.$d['numdoc'].' del '.gaz_format_date($d['datemi']).' a '.$d['descri'].' € ','LBT', 0, 'R', 1, '', 1);
         $pdf->SetFont('helvetica','B',8);
-        $pdf->Cell(30,4,gaz_format_number($tot_acq),'RBT', 1, 'R', 1, '', 1);
+        $pdf->Cell(30,4,gaz_format_number($ctrlACQtot),'RBT', 1, 'R', 1, '', 1);
         $pdf->SetFont('helvetica','',8);
         $pdf->Ln(2);
         $pdf->SetFillColor(255,199,199);
-		$tot_acq=0.00;
     }
     
-	if ($ctrlACQ<>$row['id_tes']){
+	if ($ctrlACQ<>$row['id_tes'] && $ctrlACQ>0){
 		$pdf->Cell(277,5,$row['descri'].' '.$tipdoc_descri[$row['tipdoc']].' n.'.$row['numdoc'].' del '.gaz_format_date($row['datemi']),1, 1, 'L', 0, '', 1);
 		if ($amount>=0.01&&$ctrlACQtot==0.00){ // è cambiato l'ordine ma il precedente ha un totale a zero...
 			$pdf->SetTextColor(255,0,0);
@@ -325,8 +322,9 @@ while($row=$res->fetch_assoc()){
 			$pdf->Cell(172,5,' A C Q U I S T O  D I   V A L O R E    N U L L O   ! ?',1,1,'C');
 			$pdf->SetTextColor(0);
 		}
-       
+		$ctrlACQtot=0.00;
 	}	
+	$ctrlACQtot+=$amount;
 	if ($row['quanti']>=0.00001){
 		$pdf->Cell(85,5);
 		$pdf->Cell(20,5,$row['codart'],1,0,'C',0,'',1);
@@ -337,7 +335,6 @@ while($row=$res->fetch_assoc()){
 		$pdf->Cell(10,5,floatval($row['scorig']),1,0,'C');
 		$pdf->Cell(30,5,gaz_format_number($amount),1, 1,'C',$fillcell,'',1);
 	}
-    $tot_acq+=$amount;
 	$ctrlACQ=$row['id_tes'];
     $d=$row;
 }
@@ -346,7 +343,7 @@ if ($tot_acq>=0.01){
     $pdf->SetFillColor(230,230,230);
     $pdf->Cell(162,4,'Totale  n.'.$d['numdoc'].' del '.gaz_format_date($d['datemi']).' a '.$d['descri'].' € ','LBT', 0, 'R', 1, '', 1);
     $pdf->SetFont('helvetica','B',8);
-    $pdf->Cell(30,4,gaz_format_number($tot_acq),'RBT', 1, 'R', 1, '', 1);
+    $pdf->Cell(30,4,gaz_format_number($ctrlACQtot),'RBT', 1, 'R', 1, '', 1);
     $pdf->Ln(2);
     $pdf->SetFont('helvetica','B',9);
 	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
