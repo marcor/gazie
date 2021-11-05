@@ -292,7 +292,8 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
                             $row_access_mod = gaz_dbi_fetch_array($res_access_mod);
                             if ($row_access_mod && $row_access_mod['access'] == 3 ) {
                                 //visualizzo la documentazione standard
-                                echo "<li><a target=\"_new\" href=\"../../modules/" . $module . "/docume_" . $module . ".php\"><i class=\"fa fa-question\"></i></a></li>";
+								require '../' . $module . '/menu.' . $admin_aziend['lang'] . '.php';								
+                                echo "<li><a target=\"_new\" href=\"../../modules/" . $module . "/docume_" . $module . ".php\" title=\"Documentazione\"><i class=\"fa fa-info-circle\"  ></i> ".$transl[$module]['name']."</a></li>";
                             }
                             ?>
                             <!-- Messages: style can be found in dropdown.less-->
