@@ -347,7 +347,7 @@ if ($tot_acq>=0.01){
     $pdf->Ln(2);
     $pdf->SetFont('helvetica','B',9);
 	$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
-	$pdf->Cell(247,4,'TOTALE DELL\'ORDINATO: ','LBT', 0, 'R', 1, '', 1);
+	$pdf->Cell(247,4,'TOTALE DEGLI ACQUISTI A FORNITORI: ','LBT', 0, 'R', 1, '', 1);
 	$pdf->Cell(30,4,'€ '.gaz_format_number($tot_acq),'RBT', 1, 'R', 1, '', 1);
     $pdf->SetFont('helvetica','',8);
 	

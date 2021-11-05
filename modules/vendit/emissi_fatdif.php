@@ -362,7 +362,7 @@ if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['cliente'] . " </td><td class=\"FacetDataTD\">\n";
-$select_customer->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);
+$select_customer->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli'],-1,1,true);
 echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_exe'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
