@@ -68,12 +68,24 @@ $sortable_headers = array(
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-
+if (!isset($_GET['sezione'])) {
+	// ultima fattura emessa
+	$rs_last = gaz_dbi_dyn_query('seziva, YEAR(datemi) AS yearde', $gTables['tesdoc'], "tipdoc LIKE 'AF%'", 'datreg DESC, id_tes DESC', 0, 1);
+	$last = gaz_dbi_fetch_array($rs_last);
+	if ($last) {
+		$default_where=['sezione' => $last['seziva'], 'tipo' => 'AF_', 'anno'=>$last['yearde']];
+        $_GET['anno']=$last['yearde'];
+	} else {
+		$default_where=['sezione' => 1, 'tipo' => 'AF_', 'anno'=> date('Y')];
+	}
+} else {
+	$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'AF_'];
+}
 $ts = new TableSorter(
     !$partner_select && isset($_GET["fornitore"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
     $passo, 
     ['datreg' => 'desc', 'protoc' => 'desc'], 
-    ['sezione' => 1, 'tipo' => 'AF_']
+    $default_where
 );
 
 # le select spaziano solo tra i documenti d'acquisto del sezionale corrente
@@ -280,10 +292,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
             gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET id_con = 0 WHERE id_tes = ".$row['id_tes']);
             gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET status = 'IDCON".$row["id_con"]."' WHERE id_tes = ".$row['id_tes']);
         }
-        echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
+        echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=AF&last=" . $row["protoc"] . "\">Contabilizza</a>";					
       }
     } else {
-        echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a>";					
+        echo "<a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=AF&last=" . $row["protoc"] . "\">Contabilizza</a>";					
     }
     if ($check) { // ho qualche rigo da traferire
         echo " <a class=\"btn btn-xs btn-default btn-warning\" href=\"../magazz/genera_movmag.php\">Movimenta magazzino</a> ";
