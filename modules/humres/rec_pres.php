@@ -39,11 +39,11 @@ $work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_staff,
 if ($work_h){
 	$id_tes = $work_h['id_tes'];
 } else {
-	// non avendolo inserisco un rigo in tesbro	con tipdoc=PWR
-	$id_tes = gaz_dbi_table_insert("tesbro", ['tipdoc'=>'PWR','datemi'=>$date]);
+	// non avendolo inserisco un rigo in tesbro	con tipdoc=PRW
+	$id_tes = gaz_dbi_table_insert("tesbro", ['tipdoc'=>'PRW','datemi'=>$date]);
 }
 
-// elimino TUTTI i vecchi righi (rigbro) del documento di tipo "PWR" per poi reinserirli tutti sotto partendo dai dati in $acc_staff_worked_hours
+// elimino TUTTI i vecchi righi (rigbro) del documento di tipo "PRW" per poi reinserirli tutti sotto partendo dai dati in $acc_staff_worked_hours
 gaz_dbi_query("DELETE FROM " . $gTables['rigbro'] . " WHERE id_tes =".$id_tes." AND id_body_text = " . $id_staff); // ricordo che in questo caso id_body_text lo uso per indicare il riferimento all'addetto
 
 if (isset($_POST['rec_pres'])) {
