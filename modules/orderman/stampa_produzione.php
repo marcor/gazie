@@ -26,7 +26,7 @@
 
 require("../../library/include/datlib.inc.php");
 
-$admin_aziend=checkAdmin(8); // permetto la stampa solo agli utenti con abilitazione di livello amministrativo
+$admin_aziend=checkAdmin();
 
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
 	ini_set('memory_limit','128M');
