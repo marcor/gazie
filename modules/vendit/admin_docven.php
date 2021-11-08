@@ -305,7 +305,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['ritenuta'] = preg_replace("/\,/", '.', $v['ritenuta']);
             $form['rows'][$next_row]['unimis'] = substr($v['unimis'], 0, 3);
             $form['rows'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/", '.', $v['prelis'])), $admin_aziend['decimal_price'], '.', '');
-            $form['rows'][$next_row]['sconto'] = round(preg_replace("/\,/", ".", $v['sconto']),2);
+            $form['rows'][$next_row]['sconto'] = round((float)preg_replace("/\,/", ".", $v['sconto']),2);
             $form['rows'][$next_row]['quanti'] = gaz_format_quantity($v['quanti'], 0, $admin_aziend['decimal_quantity']);
             $form['rows'][$next_row]['codvat'] = intval($v['codvat']);
             $form['rows'][$next_row]['codric'] = intval($v['codric']);
@@ -2307,7 +2307,7 @@ echo "</select></td>\n";
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\" colspan=\"1\">" . @$cliente['indspe'] . "<br />";
     echo "</td>\n";
 
-    if ( @$cliente['pariva']=="" && @$cliente['codfis']=="" && $form['clfoco']) {
+    if ( @$cliente['pariva']=="" && @$cliente['codfis']=="" && $form['clfoco']  && (substr($form['clfoco'],0,3)!='id_')) {
         echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\"><span class=\"blink\">".$script_transl['consentivisua']."</span></td>";
     } else {
         if (@$cliente['pariva'] > 0) {
