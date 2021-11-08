@@ -33,7 +33,7 @@ class CbiSepa {
         $this->OthrId = (intval($this->azienda['pariva'])>=100)?$this->azienda['pariva']:$this->azienda['codfis'];
 		$this->CreDtTm = date('Y-m-d\TH:i:s');
         $this->MsgId = dechex(rand(100,999).date('siHdmY')).'-';
-		$this->CtgyPurpCd = (isset($head['CtgyPurpCd']) && strlen($head['CtgyPurpCd']) == 4) ? $head['CtgyPurpCd'] : 'OTHR';
+		$this->CtgyPurpCd = (isset($head['CtgyPurpCd']) && strlen($head['CtgyPurpCd']) == 4) ? $head['CtgyPurpCd'] : false;
 		// INTC  IntraCompanyPayment  Intra-company payment
 		// INTE  Interest  Payment of interest. 
 		// PENS  PensionPayment  Payment of pension. 
@@ -46,9 +46,10 @@ class CbiSepa {
 		$this->FileName = (isset($head['FileName']) && strlen($head['FileName']) >= 16) ? $head['FileName'] : 'XMLCBIpay'.date('Ymdhis');
     }
     
-    function create_XML_CBIPaymentRequest($gTables,$head,$data) {
+    function create_XML_CBIPaymentRequest($gTables,$head,$data,$save_id_doc=false) {
         // in $data dovrò passare tutti i dati necessari per la creazione degli elementi <CdtTrfTxInf>
         // le chiavi sono: EndToEndId (id univoco) ,InstdAmt (importo), Nm (descrizione creditore), IBAN (iban accredito), Ustrd (descrizione debito pagato) ognuno creerà il relativo elemento dentro <CdtTrfTxInf>
+		// in $save_id_doc potrà essere indicato il nome del file da salvare in "data/files/{company_id}/doc/{$save_id_doc}.xml"
         $CtrlSum = 0.00;
         $NbOfTxs = 1;
         $domDoc = new DOMDocument;
@@ -99,7 +100,7 @@ class CbiSepa {
                 $el->appendChild($el1);
                 $el1 = $domDoc->createElement("PmtTpInf", "");
                     $el2 = $domDoc->createElement("CtgyPurp", "");
-                        $el3 = $domDoc->createElement("Cd", $this->CtgyPurpCd);
+                        $el3 = $domDoc->createElement("Cd", $this->CtgyPurpCd?$this->CtgyPurpCd:$v["CtgyPurpCd"]);
                         $el2->appendChild($el3);
                     $el1->appendChild($el2);
                 $el->appendChild($el1);
@@ -132,10 +133,11 @@ class CbiSepa {
         $results = $xpath->query("//GrpHdr/CtrlSum")->item(0);
         $attrVal = $domDoc->createTextNode(number_format(round($CtrlSum,2),2,'.',''));
         $results->appendChild($attrVal);
-
+        $cont=$domDoc->saveXML();
+		if ($save_id_doc) $domDoc->save(DATA_DIR . "files/".$_SESSION['company_id']."/doc/". $save_id_doc . ".xml" );
         header("Content-type: text/plain");
         header("Content-Disposition: attachment; filename=".$this->FileName.".xml");
-        print $domDoc->saveXML();
+        print $cont;
     }
     
 }

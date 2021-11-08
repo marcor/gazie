@@ -38,6 +38,18 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			gaz_dbi_del_row($gTables['clfoco'], "codice", $i);
 			gaz_dbi_del_row($gTables['staff'], "id_clfoco", $i);
 		break;
+        case "paysalary":
+			$i=intval($_POST['ref']);
+			// riprendo gli id_tes precedenti per cancellarli
+			$files=gaz_dbi_get_row($gTables['files'], 'id_doc', $i);
+			$custom_field=json_decode($files['custom_field']);
+			foreach($custom_field->salary->id_tes as $id_tes){
+				gaz_dbi_del_row($gTables['tesmov'],'id_tes',$id_tes);
+				gaz_dbi_del_row($gTables['rigmoc'],'id_tes',$id_tes);
+			}
+			gaz_dbi_del_row($gTables['files'], 'id_doc', $i);
+			unlink(DATA_DIR."files/".$_SESSION['company_id']."/doc/". $i . ".xml");
+		break;
 	}
 }
 ?>
