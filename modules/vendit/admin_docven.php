@@ -1378,7 +1378,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
-                $form['rows'][$next_row]['sconto'] = round($form['in_sconto'],2);
+                $form['rows'][$next_row]['sconto'] = round((float)$form['in_sconto'],2);
                if ($artico['lot_or_serial'] == 2) {
 // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
                     if ($form['rows'][$next_row]['quanti'] <> 1) {

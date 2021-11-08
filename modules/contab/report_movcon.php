@@ -232,7 +232,7 @@ $anagrafica = new Anagrafica();
 while ($a_row = gaz_dbi_fetch_array($result)) {
     
     $paymov = false;
-    if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli'] or substr($a_row["clfoco"], 0, 3) == $admin_aziend['masfor']) {
+    if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli'] || substr($a_row["clfoco"], 0, 3) == $admin_aziend['masfor']) {
         if (substr($a_row["clfoco"], 0, 3) == $admin_aziend['mascli']) {
             $paymov = getPaymov($a_row["id_tes"], $a_row["clfoco"]);
         }
@@ -240,7 +240,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         if ((!empty($account['descri']) || !empty($a_row['numdoc'])) && $a_row['caucon'] != 'APE' && $a_row['caucon'] != 'CHI'){
             $a_row['descri'].=' ('.$account['descri'].')';
         }
-    }
+    } elseif(substr($a_row["clfoco"], 0, 3) == $admin_aziend['mas_staff']){
+        $account = $anagrafica->getPartner($a_row["clfoco"], true);
+        if ((!empty($account['descri']) || !empty($a_row['numdoc'])) && $a_row['caucon'] != 'APE' && $a_row['caucon'] != 'CHI'){
+            $a_row['descri'].=' ('.$account['descri'].')';
+        }
+	}
     // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento 
     $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $a_row["id_tes"], 'id_rig');
     $tt = '<table><th colspan=3 >' . $a_row['descri'] . '</th>';

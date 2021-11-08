@@ -159,7 +159,7 @@ $strScript = array("admin_staff.php" =>
         'transfer_fees_acc' => 'Conto addebito spese bancarie',
         'transfer_fees' => 'Eventuali spese bancarie',
         'description' => 'Descrizione del movimento contabile',
-        'description_value' => 'BONIFICO SALARI & STIPENDI',
+        'description_value' => 'BONIFICO CEDOLINO PAGA',
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
         'total' => ' N.',
         'confirm_entry' => 'Genera XML-CBI e contabilizza i bonifici',
