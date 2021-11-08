@@ -941,9 +941,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['gross_weight'] += ($result)?$result['weight']:0;
         }
         $result = gaz_dbi_get_row($gTables['portos'], "codice", $cliente['portos']);
-        $form['portos'] = $result['descri'];
+        $form['portos'] =($result)?$result['descri']:'';
         $result = gaz_dbi_get_row($gTables['spediz'], "codice", $cliente['spediz']);
-        $form['spediz'] = $result['descri'];
+        $form['spediz'] = ($result)?$result['descri']:'';
         $form['destin'] = $cliente['destin'];
         $form['id_agente'] = $cliente['id_agente'];
         if ($form['id_agente'] > 0) { // carico la provvigione standard
@@ -956,7 +956,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
         }
 
-        if ( $cliente['visannota']=="S") {
+        if ($cliente['visannota']=="S") {
             $form['rows'][$next_row]['codart'] = '';
             $form['rows'][$next_row]['annota'] = '';
             $form['rows'][$next_row]['pesosp'] = '';
