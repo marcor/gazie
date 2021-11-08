@@ -167,6 +167,9 @@ function getDocuments($td = 0, $si = 1, $where_data) {
                 } elseif($r['tiprig']==4){ // cassa previdenziale sul database  trovo la percentuale sulla colonna provvigione
                     $importo = round($r['prelis']*$r['provvigione']/100,2);
 				}
+				if ($tes['tipdoc'] == 'FNC') {
+					$importo*= -1;
+				}
                 //creo il castelletto IVA
                 if (!isset($cast_vat[$r['codvat']]['impcast'])) {
                     $cast_vat[$r['codvat']]['impcast'] = 0;
