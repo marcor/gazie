@@ -151,11 +151,37 @@ function menu_check_from_modules() {
         }
 	});
 }
+function opendoc(module) {
+	//twitter bootstrap script		
+	$.ajax({
+		type: "POST",
+		url: module,
+		data: 'mode=modal', // da lasciare perché alcuni moduli usano mode
+		success: function (msg) {                    
+			$("#doc_modal .modal-sm").css('width', '80%');
+			$("#doc_modal .modal-body").html(msg);
+		},
+		error: function () {
+			alert("Errore apertura documentazione");
+		}
+	});	
+};
 
 </script>
 <!-- Navbar static top per menu multilivello responsive -->
 		<div style="display:none" id="dialog_menu_alerts" title="">        
 			<p class="ui-state-highlight" id="diatitle"></p>
+		</div>
+		<div id="doc_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header active">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel"><?php echo "Documentazione"; ?></h4>
+					</div>
+					<div class="modal-body edit-content small"></div>					
+				</div>
+			</div>
 		</div>
 <div class="navbar navbar-default" role="navigation">
     <div id="l-wrapper" class="navbar-header company-color">
@@ -183,7 +209,7 @@ function menu_check_from_modules() {
                     echo "\n\t\t\t\t\t" . '<ul class="dropdown-menu">' . "\n";
                 } else {
                     echo "\t\t\t\t\t";
-                    echo '<li><a href="' . $menu_modules_val['link'] . '"><img src="' . $menu_modules_val["icon"] . '" width="32"/>&nbsp;' . $menu_modules_val['name'] . "<span class=\"caret\"></span></a>\n";
+                    echo '<li><a id="docmodal" style="cursor:pointer;" onclick="opendoc(\''.$menu_modules_val['link'].'\')" data-toggle="modal" data-target="#doc_modal" title="Documentazione" ><img src="' . $menu_modules_val["icon"] . '" width="32"/>&nbsp;' . $menu_modules_val['name'] . "<span class=\"caret\"></span></a>\n";
                     submenu($menu_modules_val);
                     echo "\t\t\t\t\t</li>\n";
                 }

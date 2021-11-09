@@ -23,14 +23,20 @@
 --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-$admin_aziend=checkAdmin(9);
-require("../../library/include/header.php");
-$script_transl=HeadMain();
+$admin_aziend=checkAdmin();
+if (isset($_POST['mode']) && $_POST['mode']=="modal"){
+}else {
+	require("../../library/include/header.php");
+	$script_transl=HeadMain();
+}
 echo '<div class="help">';
 $txt=file_get_contents("Read-me.txt");
 echo nl2br(htmlspecialchars($txt));
 ?>
 </div>
 <?php
+if (isset($_POST['mode']) && $_POST['mode']=="modal"){
+}else {
 require("../../library/include/footer.php");
+}
 ?>

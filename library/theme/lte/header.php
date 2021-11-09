@@ -232,6 +232,26 @@ function menu_check_from_modules() {
 }
 // setto comunque dei check intervallati dei minuti inseriti in configurazione avanzata azienda 15*60*1000ms perché non è detto che si facciano i refresh, ad es. se il browser rimane fermo sulla stessa pagina per un lungo periodo > $period
 setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
+
+    $(function () {
+        //twitter bootstrap script		
+        $("#docmodal").click(function () {
+		var module = $(this).attr('module');			
+            $.ajax({
+                type: "POST",
+                url: "../../modules/"+module+"/docume_"+module+".php",
+                data: 'mode=modal',// da lasciare perché alcuni moduli usano mode
+                success: function (msg) {                    
+					$("#doc_modal .modal-sm").css('width', '80%');
+                    $("#doc_modal .modal-body").html(msg);
+                },
+                error: function () {
+                    alert("Errore apertura documentazione");
+                }
+            });
+        });
+    });
+
 </script>				
     </head>
     <?php
@@ -258,9 +278,21 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
 
     echo "<body class=\"hold-transition skin-blue sidebar-mini " . $val . "\">";
     ?>
+	
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
 		<div style="display:none" id="dialog_menu_alerts" title="">        
 			<p class="ui-state-highlight" id="diatitle"></p>
+		</div>
+		<div id="doc_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header active">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel"><?php echo "Documentazione"; ?></h4>
+					</div>
+					<div class="modal-body edit-content small"></div>					
+				</div>
+			</div>
 		</div>
         <div class="wrapper">
             <header class="main-header">
@@ -291,9 +323,9 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
 							$res_access_mod = gaz_dbi_dyn_query($gTables['admin_module'].'.access', $gTables['module'].' LEFT JOIN '. $gTables['admin_module'].' ON '. $gTables['module'].'.id='. $gTables['admin_module'].'.moduleid',"adminid='".$admin_aziend["user_name"]."' AND company_id=".$admin_aziend['company_id'],'adminid' ,0,1);
                             $row_access_mod = gaz_dbi_fetch_array($res_access_mod);
                             if ($row_access_mod && $row_access_mod['access'] == 3 ) {
-                                //visualizzo la documentazione standard
+                                //visualizzo la documentazione standard  
 								require '../' . $module . '/menu.' . $admin_aziend['lang'] . '.php';								
-                                echo "<li><a target=\"_new\" href=\"../../modules/" . $module . "/docume_" . $module . ".php\" title=\"Documentazione\"><i class=\"fa fa-info-circle\"  ></i> ".$transl[$module]['name']."</a></li>";
+                                echo "<li><a id=\"docmodal\" href=\"#myModal\" data-toggle=\"modal\" data-target=\"#doc_modal\" title=\"Documentazione\" module=\"". $module ."\"><i class=\"fa fa-info-circle\"  ></i> ".$transl[$module]['name']."</a></li>";
                             }
                             ?>
                             <!-- Messages: style can be found in dropdown.less-->
