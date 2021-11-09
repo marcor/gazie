@@ -574,21 +574,35 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			}
 
 
+            // nodo 1.4.1.2 codice fiscale del committente
             $el = $domDoc->createElement("CodiceFiscale", trim($XMLvars->client['codfis']));
             $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
             $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-			if ($XMLvars->client['country']=='IT' && $XMLvars->client['codfis']!='00000000000') {
-				$results->insertBefore($el, $results1);
-			} else {  // STRANIERI
-				// agli stranieri se non ho il codice fiscale metto quello che trovo in partita IVA, se non ho nulla metto un valore fittizio
-				if (strlen($XMLvars->client['codfis'])>5 && $XMLvars->client['codfis']!='00000000000') {
-					$XMLvars->client['pariva'] = $XMLvars->client['pariva'];
-				} elseif (strlen($XMLvars->client['pariva'])<6) {
-					$XMLvars->client['pariva'] = 'INDISPONIBILE';
+			if ($XMLvars->client['codfis'] != '00000000000') {
+				if ($XMLvars->client['country'] == 'IT') {
+					$results->insertBefore($el, $results1);
+				} else {
+					// agli stranieri se non ho partita IVA metto quello che trovo nel codice fiscale, se non ho nulla metto un valore fittizio
+					if (strlen(str_replace('0', '', $XMLvars->client['pariva'])) == 0) {
+						if (strlen($XMLvars->client['codfis']) != 0) {
+							$XMLvars->client['pariva'] = $XMLvars->client['codfis'];
+						} else {
+							$XMLvars->client['pariva'] = '00000000000';
+						}
+					}
+				}
+			} else if ($XMLvars->client['country'] != 'IT') {
+				// agli stranieri se non ho il codice fiscale metto un valore fittizio in partita IVA
+				if (strlen(str_replace('0', '', $XMLvars->client['pariva'])) == 0) {
+					$XMLvars->client['pariva'] = '00000000000';
 				}
 			}
+
             // nodo 1.4.1.1 partita IVA del committente, se disponibile
-            if (!empty($XMLvars->client['pariva']) && $XMLvars->client['pariva']!='00000000000') {
+            if (!empty($XMLvars->client['pariva']) && ($XMLvars->client['pariva']!='00000000000' || $XMLvars->client['country']!='IT')) {
+				if ($XMLvars->client['country']!='IT' && $XMLvars->client['pariva']=='00000000000') {
+					$XMLvars->client['pariva'] = '0000000';
+				}
                 $el = $domDoc->createElement("IdFiscaleIVA", '');
                 $results = $el->appendChild($domDoc->createElement('IdPaese', $XMLvars->client['country']));
                 $results = $el->appendChild($domDoc->createElement('IdCodice', $XMLvars->client['pariva']));
