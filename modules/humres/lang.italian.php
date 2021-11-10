@@ -52,6 +52,7 @@ $strScript = array("admin_staff.php" =>
             'La data di nascita &egrave; sbagliata',
             'Indirizzo email formalmente sbagliato',
             '&Egrave; necessario indicare il conto Mastro collaboratori in configurazione Azienda',
+            'Matricola esistente'
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
         'codice' => "Codice ",
@@ -92,7 +93,7 @@ $strScript = array("admin_staff.php" =>
     array('title' => 'Lista dei lavoratori',
         'errors' => '&Egrave; necessario indicare il conto Mastro collaboratori in configurazione Azienda',
         'header' => array(
-            "Codice" => "codice",
+            "Matricola" => "id_contract",
             "Cognome" => "ragso1",
             "Nome" => "ragso2",
             "Sesso" => "sexper",

@@ -48,13 +48,13 @@ if (isset($_GET['all'])) {
     if (isset($_GET['auxil']) and $auxil1 == "") {
         $where .= " AND ragso1 LIKE '" . addslashes($auxil) . "%'";
     } elseif (isset($_GET['auxil1'])) {
-        $codicetemp = intval($mas_staff) + intval($auxil1);
-        $where .= " AND codice LIKE '" . $codicetemp . "%'";
+        $codicetemp = intval($auxil1);
+        $where .= " AND id_contract = " . $codicetemp ;
     }
 }
 
-if (!isset($_GET['field'])) {
-    $orderby = "codice DESC";
+if (!isset($_GET['field'])||strlen($_GET['field'])<2) {
+    $orderby = "id_contract ASC";
 }
 
 if (isset($_GET['ricerca_completa'])) {
@@ -143,7 +143,7 @@ $(function() {
                 $result = gaz_dbi_dyn_query('*', $gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id'
 						. ' LEFT JOIN ' . $gTables['rigmoc'] . ' ON ' . $gTables['rigmoc'] . '.codcon = ' . $gTables['clfoco'] . '.codice'
                         . ' LEFT JOIN ' . $gTables['staff'] . ' ON ' . $gTables['staff'] . '.id_clfoco = ' . $gTables['clfoco'] . '.codice', $where. ' AND SUBSTRING(' . $gTables['staff'] . '.id_clfoco,4,6) > 0', $orderby, $limit, $passo, $groupby);
-                $recordnav = new recordnav($gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $limit, $passo);
+                $recordnav = new recordnav($gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id LEFT JOIN ' . $gTables['staff'] . ' ON ' . $gTables['clfoco'] . '.codice = ' . $gTables['staff'] . '.id_clfoco', $where, $limit, $passo);
                 $recordnav->output();
                 ?>
             </tr>
@@ -158,7 +158,7 @@ $(function() {
             while ($r = gaz_dbi_fetch_array($result)) {
                 echo "<tr>";
                 // Colonna codice staffe
-                echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_staff.php?codice=" . substr($r["id_clfoco"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . intval(substr($r["id_clfoco"], 3)) . "</a> &nbsp</td>";
+                echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_staff.php?codice=" . substr($r["id_clfoco"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . intval($r["id_contract"]) . "</a> &nbsp</td>";
                 // Colonna cognome
                 echo "<td>" . $r["ragso1"] . " &nbsp;</td>";
                 // Colonna nome
