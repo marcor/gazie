@@ -56,11 +56,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $real_code = $admin_aziend['mas_staff'] * 1000000 + $form['codice'];
         $rs_same_code = gaz_dbi_dyn_query('*', $gTables['clfoco'], " codice = " . $real_code, "codice", 0, 1);
         $same_code = gaz_dbi_fetch_array($rs_same_code);
-        if ($same_code && ($toDo == 'insert')) { // c'� gi� uno stesso codice ed e' un inserimento
+        if ($same_code && $toDo == 'insert') { // c'� gi� uno stesso codice ed e' un inserimento
             $form['codice'] ++; // lo aumento di 1
             $msg .= "18+";
         }
-        $rs_same_id_contract = gaz_dbi_dyn_query('*', $gTables['staff'], " id_contract = " . $form['id_contract'], "id_staff", 0, 1);
+		print $real_code.'adflkasdhgkòsdfhgsdhghsdfhgiufdsgdsufg<br><br><hr><br><br>';
+        $rs_same_id_contract = gaz_dbi_dyn_query('*', $gTables['staff'], " id_contract = " . $form['id_contract']." AND id_clfoco <> ".$real_code , "id_staff", 0, 1);
         $same_id_contract = gaz_dbi_fetch_array($rs_same_id_contract);
         if ($same_id_contract) { // matricola esistente
             $msg .= "22+";
