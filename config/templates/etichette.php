@@ -88,15 +88,15 @@ $this->Cell($largEtichetta, 0, $this->intesta2 . " " . $this->intesta3/* ." ".$t
 //Document footer
       $this->SetY(-35);
         $this->SetFont('helvetica', '', 16);
-        $this->Cell($largEtichetta, 0, "---------------------------------------------------------------------------", 0, 1, 'L', 0, '', 1);
-         $this->Cell($largEtichetta, 0, 'DESTINATARIO', 0, 10, 'L', 0, '', 1);
+        $this->Cell((isset($largEtichetta))?$largEtichetta:'', 0, "---------------------------------------------------------------------------", 0, 1, 'L', 0, '', 1);
+         $this->Cell((isset($largEtichetta))?$largEtichetta:'', 0, 'DESTINATARIO', 0, 10, 'L', 0, '', 1);
          $this->SetFont('helvetica', '', 14);
-         $this->Cell($largEtichetta, 0, $this->cliente1 . " " . $this->cliente2, 0, 1, 'L', 0, '', 1);
+         $this->Cell((isset($largEtichetta))?$largEtichetta:'', 0, $this->cliente1 . " " . $this->cliente2, 0, 1, 'L', 0, '', 1);
          if ($this->tesdoc['destin'] != "")
          	{
-         	 $this->Cell($largEtichetta, 0, $this->tesdoc['destin'], 0, 1, 'L', 0, '', 1);
+         	 $this->Cell((isset($largEtichetta))?$largEtichetta:'', 0, $this->tesdoc['destin'], 0, 1, 'L', 0, '', 1);
          	}else{
-		     $this->Cell($largEtichetta, 0, $this->cliente3 . " " . $this->cliente4, 0, 1, 'L', 0, '', 1);
+		     $this->Cell((isset($largEtichetta))?$largEtichetta:'', 0, $this->cliente3 . " " . $this->cliente4, 0, 1, 'L', 0, '', 1);
         	}
    }
 
