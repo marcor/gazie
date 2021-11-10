@@ -60,7 +60,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['codice'] ++; // lo aumento di 1
             $msg .= "18+";
         }
-		print $real_code.'adflkasdhgkòsdfhgsdhghsdfhgiufdsgdsufg<br><br><hr><br><br>';
         $rs_same_id_contract = gaz_dbi_dyn_query('*', $gTables['staff'], " id_contract = " . $form['id_contract']." AND id_clfoco <> ".$real_code , "id_staff", 0, 1);
         $same_id_contract = gaz_dbi_fetch_array($rs_same_id_contract);
         if ($same_id_contract) { // matricola esistente
