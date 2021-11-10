@@ -283,6 +283,11 @@ echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso2'] . "* </td
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"ragso2\" value=\"" . $form['ragso2'] . "\" align=\"right\" maxlength=\"50\"  /></td>\n";
 echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_contract'] . " </td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"id_contract\" value=\"" . $form['id_contract'] . "\" align=\"right\" maxlength=\4\"  /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['job_title'] . " </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"job_title\" value=\"" . $form['job_title'] . "\" align=\"right\" maxlength=\"50\"  /></td>\n";

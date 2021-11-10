@@ -68,7 +68,7 @@ if ( !isset($_POST['hidden_req']) && isset($_GET['id_tes']) && intval($_GET['id_
     $script_transl = $strScript['pay_salary.php'];
     $form['description'] = $script_transl['description_value'];
 	$rs = gaz_dbi_dyn_query("*", $gTables['staff']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['staff'].".id_clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", 
-	" (start_date <= '".gaz_format_date($form['entry_date'],true)."' OR start_date IS NULL) AND (end_date IS NULL OR end_date > '".gaz_format_date($form['entry_date'],true)."' - INTERVAL 3 MONTH OR end_date <= '2010-01-01')", 'ragso1');
+	" (start_date <= '".gaz_format_date($form['entry_date'],true)."' OR start_date IS NULL) AND (end_date IS NULL OR end_date > '".gaz_format_date($form['entry_date'],true)."' - INTERVAL 3 MONTH OR end_date <= '2010-01-01')", 'id_contract');
 	$form['rows']=[];
     while ($r = gaz_dbi_fetch_array($rs)) { // propongo il form degli stipendi in base ai dati presnti sul db
 		$lsr = gaz_dbi_dyn_query("*", $gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes","codcon = ".$r['codice'], 'datreg DESC',0,1);

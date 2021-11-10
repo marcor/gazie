@@ -57,6 +57,7 @@ $strScript = array("admin_staff.php" =>
         'codice' => "Codice ",
         'ragso1' => "Cognome",
         'ragso2' => "Nome",
+        'id_contract' => 'Numero di matricola',
         'luonas' => 'Luogo di nascita',
         'datnas' => 'Data di Nascita',
         'pronas' => 'Provincia di nascita',
