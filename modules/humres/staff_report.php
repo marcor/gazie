@@ -150,7 +150,7 @@ $(function() {
             <tr>
                 <?php
                 $linkHeaders = new linkHeaders($script_transl['header']);
-                $linkHeaders->setAlign(array('left', 'left', 'left', 'center', 'left', 'center', 'center', 'center', 'center', 'center'));
+                $linkHeaders->setAlign(array('left', 'left', 'left', 'center', 'left', 'center', 'center', 'center', 'center', 'center','center'));
                 $linkHeaders->output();
                 ?>
             </tr>
@@ -192,6 +192,8 @@ $(function() {
                     $telefono = "_";
                     $title = " nessun contatto telefonico memorizzato ";
                 }
+                // colonna iban
+                echo "<td align=\"center\">" . $r["iban"] . " &nbsp;</td>";
                 // colonna telefono
                 echo "<td title=\"$title\" align=\"center\">" . gaz_html_call_tel($telefono) . " &nbsp;</td>";
                 // colonna fiscali
@@ -200,7 +202,6 @@ $(function() {
                 echo '<td align="center"><a class="btn btn-xs btn-default" href="../contab/select_partit.php?id=' . $r["id_clfoco"] . '" target="_blank">
                     <i class="glyphicon glyphicon-check"></i>&nbsp;<i class="glyphicon glyphicon-print"></i>
                     </a></td>';
-
                 // colonna stampa privacy
                 echo "<td align=\"center\">";
 				if (intval($r['codcon']) > 0){					

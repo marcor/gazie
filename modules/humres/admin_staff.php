@@ -47,6 +47,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if ($form['hidden_req'] == 'toggle') { // e' stato accettato il link ad una anagrafica esistente
         $rs_a = gaz_dbi_get_row($gTables['anagra'], 'id', $form['id_anagra']);
         $form = array_merge($form, $rs_a);
+		$form['ragso1']=$rs_a['legrap_pf_cognome'];
+		$form['ragso2']=$rs_a['legrap_pf_nome'];
     }
 
     if (isset($_POST['Submit'])) { // conferma tutto
@@ -251,10 +253,10 @@ echo "<table class=\"Tmiddle\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
     if (isset($anagra)) {
-        echo "<tr>\n";
+        echo "<tr style=\"cursor:pointer;\">\n";
         echo "\t <td>\n";
         echo "\t </td>\n";
-        echo "<td colspan=\"2\"><div onmousedown=\"toggleContent('id_anagra')\" class=\"FacetDataTDred\" style=\"cursor:pointer;\">";
+        echo "<td colspan=\"2\"><div onmousedown=\"toggleContent('id_anagra')\" class=\"FacetDataTDred\">";
         echo ' &dArr; ' . $script_transl['link_anagra'] . " &dArr;</div>\n";
         echo "<div style=\"display: ;\" class=\"selectContainer\" id=\"id_anagra\" onclick=\"selectValue('" . $anagra['id'] . "');\" >\n";
         echo "<div class=\"selectHeader\"> ID = " . $anagra['id'] . "</div>\n";

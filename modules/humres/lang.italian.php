@@ -99,7 +99,8 @@ $strScript = array("admin_staff.php" =>
             "Sesso" => "sexper",
             "Mansione" => "job_title",
             "Città" => "citspe",
-            "Telefono" => "telefo",
+			"IBAN" => "",
+            "Telefono" => "",
             "C.F." => "",
             "Visualizza <br /> e/o stampa"=>"",
             "Cancella" => "")
