@@ -122,8 +122,25 @@ $(function() {
 		$("#dialog_delete" ).dialog( "open" );  
 	});
 });
+function printPdf(urlPrintDoc){
+	$(function(){			
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+		$('#closePdf').on( "click", function() {
+			$('.framePdf').css({'display': 'none'});
+		});	
+	});	
+};
 </script>
 <form method="GET" >
+	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+		<div class="col-lg-12">
+			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+		</div>
+		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+	</div>
   <input type="hidden" name="info" value="none" />
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>documento di acquisto:</b></p>
@@ -293,21 +310,21 @@ while ($row = gaz_dbi_fetch_array($result)) {
         echo " <a class=\"btn btn-xs btn-default btn-warning\" href=\"../magazz/genera_movmag.php\">Movimenta magazzino</a> ";
     }
     echo "</td>";
-    echo "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-        echo "<td>";
-		// faccio il controllo di eliminazione dell'ultima fattura ricevuta 
-		if (isset($year_last_protoc_id_tes[$row['id_tes']])) {
-			?>			
-			<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $row['id_tes'];?>" fornitore="<?php echo $anagra['ragso1']; ?>">
-				<i class="glyphicon glyphicon-remove"></i>
-			</a>
-			<?php
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a></td>";
+   	echo "<td>";
+	// faccio il controllo di eliminazione dell'ultima fattura ricevuta 
+	if (isset($year_last_protoc_id_tes[$row['id_tes']])) {
+		?>			
+		<a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Elimina questo documento" ref="<?php echo $row['id_tes'];?>" fornitore="<?php echo $anagra['ragso1']; ?>">
+			<i class="glyphicon glyphicon-remove"></i>
+		</a>
+		<?php
 
-		} else {
-			?>   
-			<button title="Non puoi eliminare un documento diverso dall'ultimo emesso" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
-			<?php
-		}
+	} else {
+		?>   
+		<button title="Non puoi eliminare un documento diverso dall'ultimo emesso" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>
+		<?php
+	}
     echo "</td></tr>";
 }
 ?>

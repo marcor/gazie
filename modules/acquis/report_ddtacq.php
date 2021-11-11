@@ -110,8 +110,25 @@ $(function() {
 		$("#dialog_delete" ).dialog( "open" );  
 	});
 });
+function printPdf(urlPrintDoc){
+	$(function(){			
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+		$('#closePdf').on( "click", function() {
+			$('.framePdf').css({'display': 'none'});
+		});	
+	});	
+};
 </script>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>"  name="auxil">
+	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+		<div class="col-lg-12">
+			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+		</div>
+		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+	</div>
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>documento di trasporto:</b></p>
         <p>ID:</p>
@@ -248,15 +265,13 @@ $(function() {
             echo '<td class="text-center">'. gaz_format_date($r["datemi"]). " &nbsp;</td>";
             echo "<td>" . $r["ragso1"] . "&nbsp;</td>";
 			if (intval(preg_replace("/[^0-9]/","",$r['numfat']))>=1){
-				echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa fattura n. " . $r["numfat"] . "\" href=\"stampa_docacq.php?id_tes=" . $r["id_tes"] ."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
+				echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('stampa_docacq.php?id_tes=" . $r["id_tes"] ."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa fattura n. " . $r["numfat"] . " PDF\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
 			} else {
 				echo "<td>" . $r["status"] . " &nbsp;</td>";
 			}			
-            echo '<td class="text-center">
-			<a class="btn btn-xs btn-default" href="stampa_docacq.php?id_tes=' . $r["id_tes"] . '&template=DDT" title="Stampa">
-					<i class="glyphicon glyphicon-print"></i>
-			</a>
-			</td>';            
+           
+			echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('stampa_docacq.php?id_tes=" . $r["id_tes"] . "&template=DDT')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a></td>";
+
             echo '<td class="text-center">';	
 			if (substr($r['tipdoc'], 0, 2)=="AF" ){
 				?>
