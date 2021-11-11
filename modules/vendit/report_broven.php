@@ -251,12 +251,29 @@ $(function() {
 		$("#dialog_delete" ).dialog( "open" );
 	});
 });
+function printPdf(urlPrintDoc){
+	$(function(){			
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+		$('#closePdf').on( "click", function() {
+			$('.framePdf').css({'display': 'none'});
+		});	
+	});	
+};
 </script>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][substr($tipo,0,2).'R']; ?></div>
 <?php
 $ts->output_navbar();
 ?>
 <form method="GET" >
+	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+		<div class="col-lg-12">
+			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+		</div>
+		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+	</div>
   <input type="hidden" name="info" value="none" />
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>preventivo:</b></p>
@@ -456,10 +473,10 @@ $ts->output_navbar();
 			// vedo se è presente un file di template adatto alla stampa su carta già intestata
 			if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
 				echo ' onclick="choice_template(\''.$modulo.'\');" title="Scegli modulo per stampa"';
-			}else{
-				echo ' href="'.$modulo.'" target="_blank"';
+			}else{				
+				echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"";
 			}
-			echo "><i class=\"glyphicon glyphicon-print\"></i></a>";
+			echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
             echo "</td>";
 			/*
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
