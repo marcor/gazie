@@ -2371,7 +2371,7 @@ if (intval($form['nome_colt']) == 0) {
 						</div><!-- chiude row  -->
 							<?php
 					}// fine LOTTI in entrata
-										
+				}						
 					?>							
 					<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php $form['clfoco'][$form['mov']]; ?>">								
 					
@@ -2401,7 +2401,7 @@ if (intval($form['nome_colt']) == 0) {
 						?>
 					</div><!-- chiude row  -->
 					<?php
-				}
+				
 			
 				if ($form['ins_op'][$form['mov']] == "") { // se non è un operaio attivo avversità e fase fenologica
 					if (intval($form['nome_avv'][$form['mov']]) == 0) {
