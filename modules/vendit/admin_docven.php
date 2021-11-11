@@ -956,7 +956,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
         }
 
-        if ($cliente['visannota']=="S") {
+        if (isset($cliente['visannota']) && $cliente['visannota']=="S") {
             $form['rows'][$next_row]['codart'] = '';
             $form['rows'][$next_row]['annota'] = '';
             $form['rows'][$next_row]['pesosp'] = '';
