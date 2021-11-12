@@ -57,10 +57,13 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && i
                 $id_rc=gaz_dbi_get_row($gTables['rigmoi'], 'reverse_charge_idtes', $data['id_con']); // in $id_rc['id_tes'] ho il riferimento a tesmov figlio 
                 // cancello l'eventuale figlio (fattura su reg.vendite del reverse charge)
                 if ($id_rc){
-                  gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $id_rc['id_tes']);
-                  gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $id_rc['id_tes']);
-                  gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $id_rc['id_tes']);
-                  // manca la cancellazione del futuro tesdoc-rigdoc (entro 2023)
+					gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $id_rc['id_tes']);
+					gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $id_rc['id_tes']);
+					gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $id_rc['id_tes']);
+                    // cancello da tesdoc e rigdoc i documenti fittizi con tipdoc XFA o XNC che sono riferito a questo reverse
+					$id_tes_rc = gaz_dbi_get_row($gTables['tesdoc'], 'id_con', $id_rc['id_tes'])['id_tes']; // riprendo l'id_tes del tesdoc che vado ad eliminare per eliminare assieme a rigdoc		
+					gaz_dbi_del_row($gTables['tesdoc'], 'id_tes', $id_tes_rc);
+					gaz_dbi_del_row($gTables['rigdoc'], 'id_tes', $id_tes_rc);
                 }
 
                 // prima di eliminare i righi contabili devo eliminare le eventuali partite aperte ad essi collegati
