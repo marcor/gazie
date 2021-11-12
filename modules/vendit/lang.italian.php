@@ -1785,7 +1785,7 @@ $strScript = array("admin_client.php" =>
     "fae_packaging.php" =>
     array('title' => 'Genera un file zip contenente una o più fatture elettroniche di vendita',
         'errors' => array('Data non corretta',
-            'Non ci sono fatture nell\'intervallo selezionato'
+            'Non sono state trovate fatture da impacchettare'
         ),
         'vat_section' => ' della sezione IVA n.',
         'date' => 'Fino al :',
@@ -1807,10 +1807,8 @@ $strScript = array("admin_client.php" =>
             'FND' => 'NOTA DEBITO',
             'VCO' => 'FATTURA ALLEGATA A SCONTRINO',
             'VRI' => 'RICEVUTA',
-            'AFA' => 'FATTURA DI ACQUISTO DA ESTERO',
-            'AFD' => 'FATTURA DI ACQUISTO DA ESTERO',
-            'AFC' => 'NOTA DI CREDITO DA ESTERO',
-            'AFT' => 'FATTURA DI ACQUISTO ESTERA',
+            'XFA' => 'FATTURA DI ACQUISTO (REVERSE)',
+            'XNC' => 'NOTA DI CREDITO SU ACQUISTO (REVERSE)'
 		),
         'customer' => 'Cliente',
         'pec' => "all'indirizzo PEC: ",

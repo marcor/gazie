@@ -49,7 +49,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 	$form['filename']='IT'.$admin_aziend['codfis'].'_'.$progressivo_attuale.'.zip';
 	$form['hidden_req'] = '';
 	// imposto i limiti su tutti i documenti impacchettabili
-	$form['packable']=$invoices['head'];
+	$form['packable']=(count($invoices)>1)?$invoices['head']:[];
 } else {    // accessi successivi
 	$form['filename'] = substr($_POST['filename'],0,37);
 	$form['hidden_req'] = htmlentities($_POST['hidden_req']);
@@ -114,7 +114,7 @@ if (!empty($msg)) {
 }
 ?>
 </table>
-<div align="center"><b><?php echo $script_transl['preview'] . $form['filename']; ?> </b></div>
+<div align="center"><b><?php echo count($invoices['data'])>0?$script_transl['preview'].$form['filename']:'<span class="text-danger">'.$script_transl['errors'][1].'</span>'; ?> </b></div>
 <div class="panel panel-success table-responsive">
 <table class="table table-striped">
 	<th class="FacetFieldCaptionTD"><?php echo $script_transl['protoc']; ?> </th>
@@ -129,9 +129,9 @@ if (!empty($msg)) {
 foreach ($invoices['data'] as $k => $v) {
 	// se ho il codice univoco non utilizzo la pec
 	$cl_sdi='bg-success';
-	if ($v['tes']['ctrlreg']=='A'){
+	if ($v['tes']['ctrlreg']=='X'){
 		$cl_sdi='bg-warning';
-		$v['tes']['pec_email']= 'su Cassetto Fiscale aziendale (Acquisto estero)';
+		$v['tes']['pec_email']= 'su Cassetto Fiscale aziendale (Reverse Charge '.$v['tes']['status'].')';
 	} elseif (strlen($v['tes']['fe_cod_univoco'])>5){
 		$v['tes']['pec_email']=$script_transl['sdi'].$v['tes']['fe_cod_univoco'];
 	} else {
@@ -154,7 +154,7 @@ foreach ($invoices['data'] as $k => $v) {
 		// ATTENZIONE QUI!!!!se scelgo di generare l'xml di una fattura allegata allo scontrino per evitare di far coincidere il progressivo unico di invio file aggiungerò il valore 4 al numero di reinvio
 		$v['tes']['fattura_elettronica_reinvii']=$v['tes']['fattura_elettronica_reinvii']+4;
 		$v['tes']['protoc']=$v['tes']['numfat'];
-	} elseif (substr($k,0,1)=='A'){
+	} elseif (substr($k,0,1)=='X'){
 		$v['tes']['fattura_elettronica_reinvii']=$v['tes']['fattura_elettronica_reinvii']+5;
 	}
 	$enc_data['protocollo']=$v['tes']['protoc'];
@@ -166,7 +166,7 @@ foreach ($invoices['data'] as $k => $v) {
            <td>' . $script_transl['doc_type_value'][$v['tes']['tipdoc']] .' '.$v['tes']['flux_status']. '</td>
            <td>' . $v['tes']['numfat'] .'/'. $v['tes']['seziva'] .'</td>
            <td align="center">' . gaz_format_date($v['tes']['datfat']) . '</td>
-           <td><a href="'.(($v['tes']['ctrlreg']=='A')?'../acquis/report_fornit':'report_client').'.php?nome=' . $v['tes']['ragsoc'] . '" target="_blank">' . $v['tes']['ragsoc'] . '</a></td>
+           <td><a href="'.(($v['tes']['ctrlreg']=='X')?'../acquis/report_fornit':'report_client').'.php?nome=' . $v['tes']['ragsoc'] . '" target="_blank">' . $v['tes']['ragsoc'] . '</a></td>
            <td align="right">' . gaz_format_number($tot['taxable']) . '</td>
            <td align="right">' . gaz_format_number($tot['vat']) . '</td>
            <td align="right">' . gaz_format_number($tot['tot']) . "</td>
@@ -199,10 +199,6 @@ foreach ($invoices['data'] as $k => $v) {
 if (count($invoices['data']) > 0) {
 ?>
 <tr><td colspan="9" align="center"><input class="btn btn-warning" type="submit" name="submit" value="<?php echo $script_transl['submit']; ?>"></td></tr>
-<?php
-} else {
-?>
-<tr><td colspan="9" align="center" class="FacetDataTDred"><?php echo $script_transl['errors'][1];?></td></tr>
 <?php
 }
 ?>

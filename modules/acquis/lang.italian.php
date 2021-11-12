@@ -378,7 +378,7 @@ $strScript = array("admin_fornit.php" =>
             'AFC' => 'NOTA CREDITO DA FORNITORE',
             'AFD' => 'NOTA DEBITO DA FORNITORE'
         ),
-        'customer' => 'Fornitore',
+        'supplier' => 'Fornitore',
         'taxable' => 'Imponibile',
         'vat' => 'I.V.A.',
         'stamp' => 'Bolli su tratte',

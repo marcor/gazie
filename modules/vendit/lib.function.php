@@ -238,7 +238,7 @@ class venditForm extends GAzieForm {
 				 LEFT JOIN ' . $gTables['fae_flux'] . ' AS flux ON tesdoc.id_tes = flux.id_tes_ref ';
 		$where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') 
 				  AND (flux_status = '' OR flux_status = 'DI' OR flux_status IS NULL) 
-				  AND (tipdoc LIKE 'F__'  OR (tipdoc = 'VCO' AND numfat > 0) OR (tipdoc LIKE 'AF_' AND country <> 'IT') )";
+				  AND (tipdoc LIKE 'F__'  OR (tipdoc = 'VCO' AND numfat > 0) OR (tipdoc LIKE 'X__') )";
 		$orderby = "seziva ASC,tipdoc ASC, protoc ASC";
 		$result = gaz_dbi_dyn_query('tesdoc.*, CONCAT(SUBSTRING(tesdoc.tipdoc,1,1),tesdoc.protoc) AS ctrlp, SUBSTRING(tesdoc.tipdoc,1,1) AS ctrlreg , 
 							pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
@@ -313,7 +313,7 @@ class venditForm extends GAzieForm {
 						ON rs.codvat=vat.codice';
 			$rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $tes['id_tes'], "id_tes DESC");
 			while ($r = gaz_dbi_fetch_array($rs_rig)) {
-				if ($tes['tipdoc']=='AFC'){ // è una nota di credito dall'estero lo SdI non prevede un documento specifico per indicarlo allora negativizzo comunque gli importi 
+				if ($tes['tipdoc']=='XNC'){ // è una nota di credito lo SdI vuole che siano negativi gli importi in quanto non prevista una tipologia specifica 
 					$r['prelis']=-abs($r['prelis']);
 				}
 				if ($r['tiprig'] <= 1 || $r['tiprig'] == 90) { //ma solo se del tipo normale, forfait, vendita cespite
