@@ -18,6 +18,7 @@ if (gaz_dbi_num_rows($exist_ac) >= 1){
 
 // CONTROLLO QUANTE AZIENDE HA L'INSTALLAZIONE
 $rs_az = gaz_dbi_dyn_query('*', $gTables['aziend'], '1', 'codice DESC');
+$az = gaz_dbi_fetch_array($rs_az);
 if (gaz_dbi_num_rows($rs_az) > 1) { // ho più aziende gestite devo usare una icona generica derivante dal tema dell'ultimo utente amministratore che è entrato  
 ?>
 		<meta name="apple-mobile-web-app-title" content="GAzie - Gestione AZIEndale">
@@ -27,8 +28,7 @@ if (gaz_dbi_num_rows($rs_az) > 1) { // ho più aziende gestite devo usare una ic
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../..<?php echo $u['var_value'];?>/images/apple-icon-114x114-precomposed.png" />
         <title>Login</title>
 <?php	
-} else { //ho una sola azienda, utilizzo le sue icone
-	$az = gaz_dbi_fetch_array($rs_az);
+} elseif (file_exists(DATA_DIR.'files/'.$az['codice'].'/favicon.ico')){ // ho una icona creata per l'azienda 
 ?>
 		<meta name="apple-mobile-web-app-title" content="<?php echo $az['ragso1'];?>">
 		<?php
@@ -42,6 +42,15 @@ if (gaz_dbi_num_rows($rs_az) > 1) { // ho più aziende gestite devo usare una ic
 		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="data:image/x-icon;base64,<?php echo $ico114?>"  type="image/x-icon" />
 
 <?php	
+} else { //ho una sola azienda e non ho una icona personalizzata perché non ho mai fatto l'upload del logo (ad es. appena si installa GAzie)
+?>
+		<meta name="apple-mobile-web-app-title" content="<?php echo $az['ragso1'];?>">
+        <link rel="shortcut icon" href="../..<?php echo $u['var_value'];?>/images/favicon.ico">
+		<link rel="apple-touch-icon"  href="../..<?php echo $u['var_value'];?>/images/apple-icon-114x114-precomposed.png">
+		<link rel="apple-touch-startup-image"  href="../..<?php echo $u['var_value'];?>/images/apple-icon-114x114-precomposed.png">		
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../..<?php echo $u['var_value'];?>/images/apple-icon-114x114-precomposed.png" />
+        <title><?php echo $az['ragso1'];?> : Login</title>
+<?php
 }
 ?>
         <link rel="stylesheet" href="../../library/bootstrap/css/bootstrap.min.css" >
