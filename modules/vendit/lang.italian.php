@@ -1835,6 +1835,8 @@ $strScript = array("admin_client.php" =>
             'FND' => 'NOTA DEBITO',
             'VCO' => 'CORRISPETTIVO',
             'VRI' => 'RICEVUTA',
+            'XNC' => 'NOTA CREDITO (REVERSE)',
+            'XFA' => 'FATTURA ACQUISTO (REVERSE)'
         ),
 		'danger_confirm'=>'Sono consapevole. Eliminalo comunque!'
     ),

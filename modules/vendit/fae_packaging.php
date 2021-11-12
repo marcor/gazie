@@ -54,13 +54,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 	$form['filename'] = substr($_POST['filename'],0,37);
 	$form['hidden_req'] = htmlentities($_POST['hidden_req']);
 	if (isset($_POST['submit']) && empty($msg)) {   //confermo la contabilizzazione
-		$rs = getFAEunpacked();
-		if (count($rs) > 0) {
+		if (count($invoices['data']) > 0) {
 			$zip = new ZipArchive;
 			$res = $zip->open(DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
 			if ($res === TRUE) {
 				// ho creato l'archivio e adesso lo riempio con i file xml delle singole fatture
-				foreach ($rs as $k => $v) {
+				foreach ($invoices['data'] as $k => $v) {
 					if ($v['tes']['tipdoc']=='VCO'){ // in caso di fattura allegata allo scontrino
 						//vado a modificare le testate valorizzando con il nome del file zip (pacchetto) in cui desidero siano contenuti i file xml delle fatture selezionate
 						gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$form['filename']."' WHERE seziva = " .$v['tes']['seziva']. " AND numfat = " .$v['tes']['numfat']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND tipdoc = 'VCO'");
@@ -101,9 +100,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 
 $script_transl = HeadMain('','','fae_packaging');
 ?>
-<form method="POST" name="pack">
-<input type="hidden" value="<?php $form['hidden_req']; ?>" name="hidden_req" />
-<input type="hidden" value="<?php $form['filename']; ?>" name="filename" />
+<form method="post" name="pack">
+<input type="hidden" value="<?php echo $form['hidden_req']; ?>" name="hidden_req" />
+<input type="hidden" value="<?php echo $form['filename']; ?>" name="filename" />
 
 <?php
 ?>

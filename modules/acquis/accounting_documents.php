@@ -685,17 +685,18 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 						} 
 					}
 					$tesdocVal = ['tipdoc' => 'XFA',
-						'template' => 'FatturaSemplice',
+						'template' => 'FatturaAcquisto',
 						'id_con' => $rctes_id,
 						'datreg' => $v['tes']['datreg'],
 						'seziva' => $admin_aziend['reverse_charge_sez'],
 						'protoc' => $protoc,
-						'numdoc' => $v['tes']['numfat'],
+						'numdoc' => $protoc, // nelle autofatture utilizzo il numero di protocollo del sezionale al fine di avere sequezialità, il numero reale dato dal fornitore è scritto sulla descrizione del rigo
 						'numfat' => $v['tes']['numfat'],
 						'datemi' => $v['tes']['datfat'],
 						'datfat' => $v['tes']['datfat'],
 						'initra' => $v['tes']['datfat'],
 						'clfoco' => $v['tes']['clfoco'],
+						'pagame' => $v['tes']['pagame'],
 						'regiva' => 2,
 						'operat' => 1,
 						'status' => $status
@@ -727,7 +728,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                         rigmoiInsert($vrc);
 						
 						// sul documento inserisco un rigo per ogni aliquota riportante il totale imponibile del Reverse Charge
-						$rigdocVal['descri'] .= $vrc['descri_vat'];
+						$rigdocVal['descri'] .= ' '.$vrc['descri_vat'];
 						$rigdocVal['codvat'] = $vrc['codiva'];
 						$rigdocVal['prelis'] = $vrc['impcast'];
 						$rigdocVal['periva'] = $vrc['periva'];
@@ -759,7 +760,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 }
                 
             }
-			exit;
 		    if ($form['type'] == 'AF') {
 				header("Location: ../../modules/acquis/report_docacq.php");
  			} else {
