@@ -711,9 +711,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 
 					$rigdocVal = ['id_tes'=> $last_id_tes_tesdoc,
 						'tiprig' => 1,
-						'descri' => ($v['tes']['tipdoc']=='AFC')?'NOTA CREDITO PER ':'FATTURA DI ACQUISTO '
+						'descri' => ($v['tes']['tipdoc']=='AFC')?'NOTA CREDITO PER ':'FATTURA DI '
 					];
-					$rigdocVal['descri'] .= 'n.'.$v['tes']['numfat'].' del '.gaz_format_date($v['tes']['datfat']);
+					$rigdocVal['descri'] .= 'ACQUISTO n.'.$v['tes']['numfat'].' del '.gaz_format_date($v['tes']['datfat']);
 					
                     // inserisco i righi IVA
                     $acc_iva=0.00;    

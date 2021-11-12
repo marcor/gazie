@@ -313,7 +313,7 @@ class venditForm extends GAzieForm {
 						ON rs.codvat=vat.codice';
 			$rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $tes['id_tes'], "id_tes DESC");
 			while ($r = gaz_dbi_fetch_array($rs_rig)) {
-				if ($tes['tipdoc']=='XNC'){ // è una nota di credito lo SdI vuole che siano negativi gli importi in quanto non prevista una tipologia specifica 
+				if ($tes['tipdoc']=='XNC'){ // è una nota di credito del reverse charge lo SdI vuole che siano negativi gli importi in quanto non prevista una tipologia specifica 
 					$r['prelis']=-abs($r['prelis']);
 				}
 				if ($r['tiprig'] <= 1 || $r['tiprig'] == 90) { //ma solo se del tipo normale, forfait, vendita cespite

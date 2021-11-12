@@ -124,7 +124,10 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && i
                             gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $id_rc['id_tes']);
                             gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $id_rc['id_tes']);
                             gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $id_rc['id_tes']);
-                            // manca la cancellazione del futuro tesdoc-rigdoc (entro 2023)
+                            // cancello da tesdoc e rigdoc i documenti fittizi con tipdoc XFA o XNC che sono riferito a questo reverse
+							$id_tes_rc = gaz_dbi_get_row($gTables['tesdoc'], 'id_con', $id_rc['id_tes'])['id_tes']; // riprendo l'id_tes del tesdoc che vado ad eliminare per eliminare assieme a rigdoc		
+							gaz_dbi_del_row($gTables['tesdoc'], 'id_tes', $id_tes_rc);
+							gaz_dbi_del_row($gTables['rigdoc'], 'id_tes', $id_tes_rc);
                           }
                           gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $data['id_con']);
 
