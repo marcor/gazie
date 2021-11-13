@@ -34,7 +34,7 @@ $XMLdata = new invoiceXMLvars();
 require("../../library/include/header.php");
 $gForm = new venditForm();
 $invoices = $gForm->getFAEunpacked();
-
+$inipackable=(count($invoices)>1)?$invoices['head']:[];
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 	$ultimo_progressivo_invio = $gForm->getLastPack();
@@ -49,17 +49,21 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 	$form['filename']='IT'.$admin_aziend['codfis'].'_'.$progressivo_attuale.'.zip';
 	$form['hidden_req'] = '';
 	// imposto i limiti su tutti i documenti impacchettabili
-	$form['packable']=(count($invoices)>1)?$invoices['head']:[];
+	$form['packable']=$inipackable;
 } else {    // accessi successivi
 	$form['filename'] = substr($_POST['filename'],0,37);
 	$form['hidden_req'] = htmlentities($_POST['hidden_req']);
-	if (isset($_POST['submit']) && empty($msg)) {   //confermo la contabilizzazione
+	$form['packable']=$_POST['packable'];
+	if (isset($_POST['packet']) && empty($msg)) {   //confermo la contabilizzazione
 		if (count($invoices['data']) > 0) {
 			$zip = new ZipArchive;
 			$res = $zip->open(DATA_DIR.'files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
 			if ($res === TRUE) {
 				// ho creato l'archivio e adesso lo riempio con i file xml delle singole fatture
 				foreach ($invoices['data'] as $k => $v) {
+					if ($v['tes']['protoc']>$form['packable'][$v['tes']['seziva']][$v['tes']['ctrlreg']]['max']) { // non impacchetto i protocolli che superano i limiti scelti dall'utente
+						continue;
+					}
 					if ($v['tes']['tipdoc']=='VCO'){ // in caso di fattura allegata allo scontrino
 						//vado a modificare le testate valorizzando con il nome del file zip (pacchetto) in cui desidero siano contenuti i file xml delle fatture selezionate
 						gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$form['filename']."' WHERE seziva = " .$v['tes']['seziva']. " AND numfat = " .$v['tes']['numfat']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND tipdoc = 'VCO'");
@@ -84,9 +88,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 					gaz_dbi_query("UPDATE " . $gTables['fae_flux'] . " SET filename_zip_package = '".$form['filename']."' WHERE filename_ori = '".$fn_ori."'");
 					$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,$form['filename']);
 					$zip->addFromString($fn_ori, $file_content);
+					
 				}
 				$zip->close();
-
 				header("Location: report_fae_sdi.php");
 			} else {
 				echo 'La creazione del pacchetto è fallita!';
@@ -100,19 +104,35 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 
 $script_transl = HeadMain('','','fae_packaging');
 ?>
-<form method="post" name="pack">
+<style>
+.nopack {
+	background-color: #ffc689;
+	color: #0c30f2;
+}
+</style>
+<form method="POST">
 <input type="hidden" value="<?php echo $form['hidden_req']; ?>" name="hidden_req" />
 <input type="hidden" value="<?php echo $form['filename']; ?>" name="filename" />
 
 <?php
 ?>
-<table class="Tsmall" align="center">
+<div class="panel panel-info table-responsive">
+<table class="Tmiddle table-striped" align="center">
 <?php 
 if (!empty($msg)) {
-    echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
+    echo '<tr><td colspan="3" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
+}
+foreach($form['packable'] as $k1=>$v1){
+  foreach($v1 as $k2=>$v2){
+	$packdiff=intval($inipackable[$k1][$k2]['max']-$v2['max']);
+	$alert_nopack=($packdiff>=1)?$packdiff.' Fattura/e NON impacchettata/e':'';
+	$label=($k2=='X')?'Fatture di acquisto (reverse charge)':'Fatture di vendita';
+	echo '<tr><td>Impacchetta le '.$label.' della sezione IVA '.$k1.' fino al protocollo: </td><td><input class="text-right" type="number" max="'.$inipackable[$k1][$k2]['max'].'" min="'.($inipackable[$k1][$k2]['min']-1).'" value="'.$v2['max'].'" name="packable['.$k1.']['.$k2.'][max]"  onchange="this.form.submit();"/></td><td class="bg-warning text-danger">'.$alert_nopack.'</td</tr>';
+  }
 }
 ?>
 </table>
+</div>
 <div align="center"><b><?php echo count($invoices['data'])>0?$script_transl['preview'].$form['filename']:'<span class="text-danger">'.$script_transl['errors'][1].'</span>'; ?> </b></div>
 <div class="panel panel-success table-responsive">
 <table class="table table-striped">
@@ -125,7 +145,19 @@ if (!empty($msg)) {
     <th class="FacetFieldCaptionTD"><?php echo $script_transl['vat']; ?> </th>
     <th class="FacetFieldCaptionTD"><?php echo $script_transl['tot']; ?> </th>
 <?php
+$ctrlimit='';
 foreach ($invoices['data'] as $k => $v) {
+	$numpacket=$form['packable'][$v['tes']['seziva']][$v['tes']['ctrlreg']]['max']-$inipackable[$v['tes']['seziva']][$v['tes']['ctrlreg']]['min']+1;
+	$label=($v['tes']['ctrlreg']=='X')?'Fatture di acquisto (reverse charge)':'Fatture di vendita';
+	// se ho cambiato la sezione e/o il registro propongo il limite di protocollo
+	if ($ctrlimit<>$v['tes']['seziva'].$v['tes']['ctrlreg']){
+		echo '<tr><td colspan=8 class="text-center bg-info"><h4>Anteprima di impacchettamento della sezione IVA '.$v['tes']['seziva'].'</h4</td></tr><tr><td colspan=8 class="text-center bg-success"><h4> saranno impacchettate '.$numpacket. ' '.$label.'</h4></td></tr>';
+		
+	}
+	$nopackclass='';
+	if ($v['tes']['protoc']>$form['packable'][$v['tes']['seziva']][$v['tes']['ctrlreg']]['max']) { // non impacchetto i protocolli che superano i limiti scelti dall'utente
+		$nopackclass='nopack';
+	}
 	// se ho il codice univoco non utilizzo la pec
 	$cl_sdi='bg-success';
 	if ($v['tes']['ctrlreg']=='X'){
@@ -159,8 +191,9 @@ foreach ($invoices['data'] as $k => $v) {
 	$enc_data['protocollo']=$v['tes']['protoc'];
 	$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
 	
+	
 // INIZIO VIEW RIGHI
-    echo '<tr class="FacetDataTD">
+    echo '<tr class="'.$nopackclass.'">
            <td>' . $v['tes']['protoc'] .'</td>
            <td>' . $script_transl['doc_type_value'][$v['tes']['tipdoc']] .' '.$v['tes']['flux_status']. '</td>
            <td>' . $v['tes']['numfat'] .'/'. $v['tes']['seziva'] .'</td>
@@ -183,21 +216,28 @@ foreach ($invoices['data'] as $k => $v) {
 		}
 	}
 	if (!empty($check_failed_message)) {
-    echo '<tr class="FacetDataTD">
+    echo '<tr>
            <td colspan="5" class="bg-danger" align="right">' . $check_failed_message . '</td>
            <td colspan="3"></td>
            </tr>';
 	}
-    echo '<tr class="FacetDataTD">
-           <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml che dovrà essere inviato tramite SdI </td>
-           <td colspan="3" class="'.$cl_sdi.'">'.$v['tes']['pec_email'] . '</td>
-           </tr>';
+	if (empty($nopackclass)){
+		echo '<tr>
+			   <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml che dovrà essere inviato tramite SdI </td>
+			   <td colspan="3" class="'.$cl_sdi.'">'.$v['tes']['pec_email'] . '</td>
+			   </tr>';
+	} else {
+		echo '<tr>
+			   <td colspan="8" class="text-center '.$nopackclass.'">Hai scelto di non impacchettare questa fattura</td>
+			   </tr>';
+		
+	}
 // FINE VIEW RIGHI
-
+	$ctrlimit=$v['tes']['seziva'].$v['tes']['ctrlreg'];
 }
 if (count($invoices['data']) > 0) {
 ?>
-<tr><td colspan="9" align="center"><input class="btn btn-warning" type="submit" name="submit" value="<?php echo $script_transl['submit']; ?>"></td></tr>
+<tr><td colspan="9" align="center"><input class="btn btn-warning" type="submit" name="packet" value="<?php echo $script_transl['submit']; ?>"></td></tr>
 <?php
 }
 ?>
