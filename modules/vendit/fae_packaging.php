@@ -80,8 +80,29 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 						$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc']," tipdoc LIKE '" .$v['tes']['tipdoc']. "' AND seziva = " .$v['tes']['seziva']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND protoc = " .$v['tes']['protoc'],'datemi ASC, numdoc ASC, id_tes ASC');
 						$enc_data['sezione']=$v['tes']['seziva'];
 						$enc_data['anno']=substr($v['tes']['datfat'],0,4);
-						$enc_data['protocollo']=$v['tes']['protoc'];
 						$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
+						$enc_data['protocollo']=$v['tes']['protoc'];
+						if($v['tes']['ctrlreg']=='X'){ // è una autofattura reverse charge 
+							/* considerando che la funzione si attiene al seguente specchietto normalmente usato per le fatture di vendita
+							  ------------------------- SCHEMA DEI DATI PER FATTURE NORMALI  ---------------
+							  |   SEZIONE IVA   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
+							  |     INT (1)     |      INT(1)      |   INT(1)  |        INT(5)            |
+							  |        3        |        9         |     9     |        99999             |
+							  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
+							  ------------------------------------------------------------------------------
+							  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000  
+							  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
+							  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
+							  |    INT (2 )     |      INT(1)      |   INT(1)  |        INT(4)            |
+							  |       "59       |        9         |     9     |         9999             |
+							  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
+							  -------------------------------------------------------------------------------------------------------------------
+							 */
+							$enc_data['sezione']=5;
+							$enc_data['anno']=2009; // la funzione considererà solo "9"
+							$enc_data['fae_reinvii']=substr($v['tes']['datfat'],3,1);
+							$enc_data['protocollo']= intval($v['tes']['fattura_elettronica_reinvii']*10000+$v['tes']['protoc']);
+						}
 					}
 					// aggiorno anche il flusso SdI
 					$fn_ori = 'IT'.$admin_aziend['codfis'].'_'.encodeSendingNumber($enc_data,36).'.xml';
@@ -181,15 +202,34 @@ foreach ($invoices['data'] as $k => $v) {
     //fine calcolo totali
 	$enc_data['sezione']=$v['tes']['seziva'];
 	$enc_data['anno']=substr($v['tes']['datfat'],0,4);
-	if (substr($k,0,1)=='V'){
+	if ($v['tes']['ctrlreg']=='V'){
 		// ATTENZIONE QUI!!!!se scelgo di generare l'xml di una fattura allegata allo scontrino per evitare di far coincidere il progressivo unico di invio file aggiungerò il valore 4 al numero di reinvio
 		$v['tes']['fattura_elettronica_reinvii']=$v['tes']['fattura_elettronica_reinvii']+4;
 		$v['tes']['protoc']=$v['tes']['numfat'];
-	} elseif (substr($k,0,1)=='X'){
-		$v['tes']['fattura_elettronica_reinvii']=$v['tes']['fattura_elettronica_reinvii']+5;
 	}
-	$enc_data['protocollo']=$v['tes']['protoc'];
 	$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
+	$enc_data['protocollo']=$v['tes']['protoc'];
+	if($v['tes']['ctrlreg']=='X'){ // è una autofattura reverse charge 
+		/* considerando che la funzione si attiene al seguente specchietto normalmente usato per le fatture di vendita
+		  ------------------------- SCHEMA DEI DATI PER FATTURE NORMALI  ---------------
+		  |   SEZIONE IVA   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
+		  |     INT (1)     |      INT(1)      |   INT(1)  |        INT(5)            |
+		  |        3        |        9         |     9     |        99999             |
+		  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
+		  ------------------------------------------------------------------------------
+		  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000  
+		  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
+		  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
+		  |    INT (2 )     |      INT(1)      |   INT(1)  |        INT(4)            |
+		  |       "59       |        9         |     9     |         9999             |
+		  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
+		  -------------------------------------------------------------------------------------------------------------------
+		 */
+		$enc_data['sezione']=5;
+		$enc_data['anno']=2009; // la funzione considererà solo "9"
+		$enc_data['fae_reinvii']=substr($v['tes']['datfat'],3,1);
+		$enc_data['protocollo']= intval($v['tes']['fattura_elettronica_reinvii']*10000+$v['tes']['protoc']);
+	}
 	
 	
 // INIZIO VIEW RIGHI
