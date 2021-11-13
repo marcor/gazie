@@ -609,6 +609,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$msgrigo = $i + 1;
 					$msg['err'][] = "nocod_operaz";
 				}
+				if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
+					$new_clfoco = $anagrafica->getPartnerData($match[1], 1);
+					$form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['mascli'], $form['pagame']);
+				}
 				$clfoco = gaz_dbi_get_row($gTables['clfoco'], "codice", $form["clfoco"]);
 				$anagra = gaz_dbi_get_row($gTables['anagra'], "id", $clfoco["id_anagra"]);
 				if ($anagra['id_SIAN']<=0 AND ($v['cod_operazione']==1 OR $v['cod_operazione']==2 OR $v['cod_operazione']==3 OR $v['cod_operazione']==5 OR $v['cod_operazione']==10)){
