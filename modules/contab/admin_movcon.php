@@ -1099,7 +1099,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 }
             }
             if ($toDo == 'insert') {
-               // header("Location: admin_movcon.php?Insert&new=".$ultimo_id); // ritorno su questo script per inserirne un altro
+                header("Location: admin_movcon.php?Insert&new=".$ultimo_id); // ritorno su questo script per inserirne un altro
             } else {
                 header("Location: " . $form['ritorno']);
             }
