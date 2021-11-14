@@ -48,6 +48,11 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 			$rs_rev_ch=gaz_dbi_dyn_query("*",$gTables['rigmoi'],"reverse_charge_idtes = ". $i." OR id_tes = ".$i,'reverse_charge_idtes DESC');
             while ($rev_ch = gaz_dbi_fetch_array($rs_rev_ch)) {
 				gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $rev_ch['reverse_charge_idtes']);
+				$rs_rev_rm=gaz_dbi_dyn_query("*",$gTables['rigmoc'],"id_tes = ".$rev_ch['reverse_charge_idtes'],'id_rig'); // riprendo i righi per poter eliminare anche lo scadenzario
+				while ($rev_rm = gaz_dbi_fetch_array($rs_rev_rm)) {
+					// elimino le eventuali partite aperte
+					$calc->updatePaymov($rev_rm['id_rig']);
+				}
 				gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $rev_ch['reverse_charge_idtes']);
 				gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $rev_ch['reverse_charge_idtes']);
 				// il documento lo elimino solo se è di tipo X
