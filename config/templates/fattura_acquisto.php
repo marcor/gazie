@@ -33,15 +33,27 @@ class FatturaAcquisto extends Template
         $this->sconto = $this->tesdoc['sconto'];
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->trasporto = $this->tesdoc['traspo'];
-        if ($this->tesdoc['tipdoc'] == 'ADT') {
+        switch($this->tesdoc['tipdoc']) {
+			case "ADT":
             $descri='Ricev.DdT d\'acquisto n.'.$this->tesdoc['numdoc'].' del '.gaz_format_date($this->tesdoc['datemi']);
-        } elseif ($this->tesdoc['tipdoc'] == 'AFA' || $this->tesdoc['tipdoc'] == 'AFT' ) {
+			break;
+			case "AFA":
+			case "AFT":
             $descri='Ricev.Fatt. d\'acquisto n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
-        } elseif ($this->tesdoc['tipdoc'] == 'AFC') {
+			break;
+			case "AFC":
             $descri='Ricev.Nota di credito n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
-        } elseif ($this->tesdoc['tipdoc'] == 'AFD') {
+			break;
+			case "AFD":
             $descri='Ricev.Nota di debito n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
-        } else {
+			break;
+			case "XFA":
+            $descri='Reverse charge Fatt.Acquisto n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
+			break;
+			case "XNC":
+            $descri='Reverse charge Nota Credito n.'.$this->tesdoc['numfat'].' del '.gaz_format_date($this->tesdoc['datfat']).' prot.'.$this->tesdoc['protoc'].'/'.$this->tesdoc['seziva'];
+			break;
+			default:
             $descri='** documento sconosciuto **';
         }
         $this->giorno = substr($this->tesdoc['datfat'],8,2);
@@ -121,7 +133,7 @@ class FatturaAcquisto extends Template
                     break;
                 case "1":
 					$this->Cell(25, 5, $rigo['codart'], 1, 0, 'L', 0, '', 1);
-                    $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L');
+                    $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L',0,'',1);
                     $this->Cell(49, 5, '', 1);
                     $this->Cell(20, 5, gaz_format_number($rigo['importo']), 1, 0, 'R');
                     $this->Cell(12, 5, gaz_format_number($rigo['pervat']), 1, 1, 'R');
