@@ -189,10 +189,10 @@ class invoiceXMLvars {
                 break;
             case "XFA":
             case "XNC":
-                $this->TipoDocumento = 'TD16';
+                $this->TipoDocumento = $this->tesdoc["status"];
 				$this->reverse = true;
-                $this->docRelNum = $this->tesdoc["numfat"].'/'.$this->tesdoc["seziva"];
-                $this->docRelDate = $this->tesdoc["datfat"];
+                $this->docRelNum = $this->tesdoc["protoc"].'/'.$this->tesdoc["seziva"]; // sulle autofatture utilizzo il protocollo per avere sequenzialità
+                $this->docRelDate = $this->tesdoc["datreg"];
                 break;
             case "DDT":
             case "DDL":
@@ -535,33 +535,50 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
            // $attrVal = $domDoc->createTextNode("SDI11");
            // $results->appendChild($attrVal);
 
-            $codice_trasmittente = $XMLvars->IdCodice;
             $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);
-            $attrVal = $domDoc->createTextNode($codice_trasmittente);
+            $attrVal = $domDoc->createTextNode($XMLvars->IdCodice);
             $results->appendChild($attrVal);
 
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese")->item(0);
-            $attrVal = $domDoc->createTextNode("IT");
+            $attrVal = $domDoc->createTextNode($XMLvars->reverse?$XMLvars->client['country']:$XMLvars->azienda['country']);
             $results->appendChild($attrVal);
 
             //il IdCodice iva e' la partita iva?
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['pariva']));
+			if ($XMLvars->reverse&&($XMLvars->TipoDocumento=='TD17'||$XMLvars->TipoDocumento=='TD18')) { // gli stranieri metto il codice fiscale in mancanza la partita IVA se non ho nessuno dei due uso XXXXXXX
+				if (strlen($XMLvars->client['codfis'])>3){
+					$vidc=trim($XMLvars->client['codfis']);
+				} elseif (strlen($XMLvars->client['pariva'])>3){
+					$vidc=trim($XMLvars->client['pariva']);
+				} else {
+					$vidc='XXXXXXX';
+				}
+				$attrVal = $domDoc->createTextNode($vidc);
+			} else {
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['pariva']));
+			}
             $results->appendChild($attrVal);
 
-            //nodo 1.2.1.2 Codice Fiscale richiesto da alcune amministrazioni come obbligatorio
-            $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['codfis']));
-            $results->appendChild($attrVal);
-
+            //nodo 1.2.1.2 Codice Fiscale richiesto da alcune amministrazioni come obbligatorio ma da non indicare sulle autofatture a stanieri
+			if ($XMLvars->reverse&&$XMLvars->TipoDocumento<>'TD16') { 
+				$results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);
+				$results->parentNode->removeChild($results);
+			} else {
+				$results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->IdCodice));
+				$results->appendChild($attrVal);
+			}
 			if ($XMLvars->FormatoTrasmissione == "FPA") {
 				//nodo 1.1.4
 				$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
 				$attrVal = $domDoc->createTextNode(trim($XMLvars->client['fe_cod_univoco']));
 				$results->appendChild($attrVal);
 			} else {
-				if (strlen($cod_destinatario) < 6 ) {
-					$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
+				$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
+				if ($XMLvars->reverse) {
+					$attrVal = $domDoc->createTextNode("0000000");
+					$results->appendChild($attrVal);
+				} elseif (strlen($cod_destinatario) < 6 ) {
 					if ($XMLvars->client['country']=='IT'){
 						$attrVal = $domDoc->createTextNode("0000000");
 					} else {
@@ -575,123 +592,175 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 						$results1->appendChild($el);
 					}
 				} else {
-					$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
 					$attrVal = $domDoc->createTextNode(trim($XMLvars->client['fe_cod_univoco']));
 					$results->appendChild($attrVal);
                 }
 			}
 
+			if ($XMLvars->reverse) {// sulle autofatture (da TD16 a TD20) utilizzo i dati azienda per popolare il CessionarioCommittente e aggiungo l'elemento <SoggettoEmittente> per indicarlo
+// INIZIO REVERSE
+				$rsDatiAnagrafici = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
+				$rsAnagrafica = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+				$el = $domDoc->createElement("IdFiscaleIVA", '');
+				$el->appendChild($domDoc->createElement('IdPaese', $XMLvars->azienda['country']));
+				$el->appendChild($domDoc->createElement('IdCodice', $XMLvars->azienda['pariva']));
+				$rsDatiAnagrafici->insertBefore($el, $rsAnagrafica);
+				$el = $domDoc->createElement("CodiceFiscale", trim($XMLvars->azienda['codfis']));
+				$rsDatiAnagrafici->insertBefore($el, $rsAnagrafica);
 
-            // nodo 1.4.1.2 codice fiscale del committente
-            $el = $domDoc->createElement("CodiceFiscale", trim($XMLvars->client['codfis']));
-            $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
-            $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-			if ($XMLvars->client['codfis'] != '00000000000') {
-				if ($XMLvars->client['country'] == 'IT') {
-					$results->insertBefore($el, $results1);
+				if (($XMLvars->azienda['sexper']!='G') && (trim($XMLvars->azienda['legrap_pf_nome'])!='') && (trim($XMLvars->azienda['legrap_pf_nome'])!='')) {
+					// se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
+					$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+					$el = $domDoc->createElement("Nome", substr(trim($XMLvars->azienda['legrap_pf_nome']), 0, 80));
+					$results->appendChild($el);
+					$el = $domDoc->createElement("Cognome", substr(trim($XMLvars->azienda['legrap_pf_cognome']), 0, 80));
+					$results->appendChild($el);
 				} else {
-					// agli stranieri se non ho partita IVA metto quello che trovo nel codice fiscale, se non ho nulla metto un valore fittizio
-					if (strlen(str_replace('0', '', $XMLvars->client['pariva'])) == 0) {
-						if (strlen($XMLvars->client['codfis']) != 0) {
-							$XMLvars->client['pariva'] = $XMLvars->client['codfis'];
-						} else {
-							$XMLvars->client['pariva'] = '00000000000';
+					 // Se è una ditta inserisco la denominazione
+					$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+					$el = $domDoc->createElement("Denominazione", substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->azienda['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->azienda['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
+					$results->appendChild($el);
+				}
+
+				$results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['indspe']));
+				$results->appendChild($attrVal);
+
+				$el = $domDoc->createElement("Provincia", strtoupper(trim($XMLvars->azienda['prospe'])));
+				$results = $xpath->query("//CessionarioCommittente/Sede")->item(0);
+				$results1 = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
+				if ($XMLvars->azienda['country']=='IT'){
+					$results->insertBefore($el, $results1);
+				}
+
+				$results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['citspe']));
+				$results->appendChild($attrVal);
+
+				$results = $xpath->query("//CessionarioCommittente/Sede/CAP")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['capspe']));
+				$results->appendChild($attrVal);
+
+				$results = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['country']));
+				$results->appendChild($attrVal);
+
+				$rsFatturaElettronicaHeader = $xpath->query("//FatturaElettronicaHeader")->item(0);
+				$el = $domDoc->createElement("SoggettoEmittente","CC");
+				$rsFatturaElettronicaHeader->appendChild($el);
+				
+// FINE REVERSE 
+			} else {	
+				// nodo 1.4.1.2 codice fiscale del committente
+				$el = $domDoc->createElement("CodiceFiscale", trim($XMLvars->client['codfis']));
+				$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
+				$results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+				if ($XMLvars->client['codfis'] != '00000000000') {
+					if ($XMLvars->client['country'] == 'IT') {
+						$results->insertBefore($el, $results1);
+					} else {
+						// agli stranieri se non ho partita IVA metto quello che trovo nel codice fiscale, se non ho nulla metto un valore fittizio
+						if (strlen(str_replace('0', '', $XMLvars->client['pariva'])) == 0) {
+							if (strlen($XMLvars->client['codfis']) != 0) {
+								$XMLvars->client['pariva'] = $XMLvars->client['codfis'];
+							} else {
+								$XMLvars->client['pariva'] = '00000000000';
+							}
 						}
 					}
+				} else if ($XMLvars->client['country'] != 'IT') {
+					// agli stranieri se non ho il codice fiscale metto un valore fittizio in partita IVA
+					if (strlen(str_replace('0', '', $XMLvars->client['pariva'])) == 0) {
+						$XMLvars->client['pariva'] = '00000000000';
+					}
 				}
-			} else if ($XMLvars->client['country'] != 'IT') {
-				// agli stranieri se non ho il codice fiscale metto un valore fittizio in partita IVA
-				if (strlen(str_replace('0', '', $XMLvars->client['pariva'])) == 0) {
-					$XMLvars->client['pariva'] = '00000000000';
-				}
-			}
 
-            // nodo 1.4.1.1 partita IVA del committente, se disponibile
-            if (!empty($XMLvars->client['pariva']) && ($XMLvars->client['pariva']!='00000000000' || $XMLvars->client['country']!='IT')) {
-				if ($XMLvars->client['country']!='IT' && $XMLvars->client['pariva']=='00000000000') {
-					$XMLvars->client['pariva'] = '0000000';
+				// nodo 1.4.1.1 partita IVA del committente, se disponibile
+				if (!empty($XMLvars->client['pariva']) && ($XMLvars->client['pariva']!='00000000000' || $XMLvars->client['country']!='IT')) {
+					if ($XMLvars->client['country']!='IT' && $XMLvars->client['pariva']=='00000000000') {
+						$XMLvars->client['pariva'] = '0000000';
+					}
+					$el = $domDoc->createElement("IdFiscaleIVA", '');
+					$results = $el->appendChild($domDoc->createElement('IdPaese', $XMLvars->client['country']));
+					$results = $el->appendChild($domDoc->createElement('IdCodice', $XMLvars->client['pariva']));
+					$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
+					if ($XMLvars->client['country']=='IT' && $XMLvars->client['codfis']!='00000000000') {
+						$results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0);
+					} else {
+						$results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+					}
+					$results->insertBefore($el, $results1);
 				}
-                $el = $domDoc->createElement("IdFiscaleIVA", '');
-                $results = $el->appendChild($domDoc->createElement('IdPaese', $XMLvars->client['country']));
-                $results = $el->appendChild($domDoc->createElement('IdCodice', $XMLvars->client['pariva']));
-                $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
-				if ($XMLvars->client['country']=='IT' && $XMLvars->client['codfis']!='00000000000') {
-					$results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0);
+
+
+				if (($XMLvars->client['sexper']!='G') && (trim($XMLvars->client['legrap_pf_nome'])!='') && (trim($XMLvars->client['legrap_pf_nome'])!='')) {
+					// se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
+					$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+					$el = $domDoc->createElement("Nome", substr(trim($XMLvars->client['legrap_pf_nome']), 0, 80));
+					$results->appendChild($el);
+					$el = $domDoc->createElement("Cognome", substr(trim($XMLvars->client['legrap_pf_cognome']), 0, 80));
+					$results->appendChild($el);
 				} else {
-					$results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+					 // Se è una ditta inserisco la denominazione
+					$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+					$el = $domDoc->createElement("Denominazione", substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
+					$results->appendChild($el);
 				}
-				$results->insertBefore($el, $results1);
+
+
+				$results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->client['indspe']));
+				$results->appendChild($attrVal);
+
+
+				$el = $domDoc->createElement("Provincia", strtoupper(trim($XMLvars->client['prospe'])));
+				$results = $xpath->query("//CessionarioCommittente/Sede")->item(0);
+				$results1 = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
+				if ($XMLvars->client['country']=='IT'){
+					$results->insertBefore($el, $results1);
+				}
+
+
+				$results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->client['citspe']));
+				$results->appendChild($attrVal);
+
+				if (strlen($XMLvars->client['capspe']) < 2 && $XMLvars->client['country']!='IT'){
+					$XMLvars->client['capspe']='99999';
+				}
+				$results = $xpath->query("//CessionarioCommittente/Sede/CAP")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->client['capspe']));
+				$results->appendChild($attrVal);
+
+				$results = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->client['country']));
+				$results->appendChild($attrVal);
+
+				// creo il nodo 1.4.4 <RappresentanteFiscale> se il cliente ne ha uno con partita IVA
+				if ($XMLvars->fiscal_rapresentative && $XMLvars->fiscal_rapresentative['pariva'] > 100000) {
+					$resfr = $xpath->query("//CessionarioCommittente")->item(0);
+					$el = $domDoc->createElement("RappresentanteFiscale","");
+					$el1 = $domDoc->createElement("IdFiscaleIVA", $XMLvars->fiscal_rapresentative['country'].$XMLvars->fiscal_rapresentative['pariva']);
+					$el->appendChild($el1);
+					$el2 = $domDoc->createElement("IdPaese", $XMLvars->fiscal_rapresentative['country']);
+					$el1->appendChild($el2);
+					$el2 = $domDoc->createElement("IdCodice", $XMLvars->fiscal_rapresentative['pariva']);
+					$el1->appendChild($el2);
+					if (($XMLvars->fiscal_rapresentative['sexper']!='G') && (trim($XMLvars->fiscal_rapresentative['legrap_pf_nome'])!='') && (trim($XMLvars->fiscal_rapresentative['legrap_pf_nome'])!='')) {
+						// se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
+						$el1 = $domDoc->createElement("Nome", substr(trim($XMLvars->fiscal_rapresentative['legrap_pf_nome']), 0, 80));
+						$el->appendChild($el1);
+						$el1 = $domDoc->createElement("Cognome", substr(trim($XMLvars->fiscal_rapresentative['legrap_pf_cognome']), 0, 80));
+						$el->appendChild($el1);
+					} else {
+						 // Se è una ditta inserisco la denominazione
+						$el1 = $domDoc->createElement("Denominazione", substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->fiscal_rapresentative['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->fiscal_rapresentative['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
+						$el->appendChild($el1);
+					}
+					$resfr->appendChild($el);
+				}
 			}
-
-
-            if (($XMLvars->client['sexper']!='G') && (trim($XMLvars->client['legrap_pf_nome'])!='') && (trim($XMLvars->client['legrap_pf_nome'])!='')) {
-				// se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
-				$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-				$el = $domDoc->createElement("Nome", substr(trim($XMLvars->client['legrap_pf_nome']), 0, 80));
-				$results->appendChild($el);
-				$el = $domDoc->createElement("Cognome", substr(trim($XMLvars->client['legrap_pf_cognome']), 0, 80));
-				$results->appendChild($el);
-            } else {
-				 // Se è una ditta inserisco la denominazione
-				$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-				$el = $domDoc->createElement("Denominazione", substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
-				$results->appendChild($el);
-			}
-
-
-            $results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->client['indspe']));
-            $results->appendChild($attrVal);
-
-
-            $el = $domDoc->createElement("Provincia", strtoupper(trim($XMLvars->client['prospe'])));
-            $results = $xpath->query("//CessionarioCommittente/Sede")->item(0);
-            $results1 = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
-			if ($XMLvars->client['country']=='IT'){
-				$results->insertBefore($el, $results1);
-			}
-
-
-            $results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->client['citspe']));
-            $results->appendChild($attrVal);
-
-			if ($XMLvars->client['country']!='IT'){
-				$XMLvars->client['capspe']='99999';
-			}
-            $results = $xpath->query("//CessionarioCommittente/Sede/CAP")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->client['capspe']));
-            $results->appendChild($attrVal);
-
-            $results = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->client['country']));
-            $results->appendChild($attrVal);
-
-            // creo il nodo 1.4.4 <RappresentanteFiscale> se il cliente ne ha uno con partita IVA
-            if ($XMLvars->fiscal_rapresentative && $XMLvars->fiscal_rapresentative['pariva'] > 100000) {
-                $resfr = $xpath->query("//CessionarioCommittente")->item(0);
-				$el = $domDoc->createElement("RappresentanteFiscale","");
-				$el1 = $domDoc->createElement("IdFiscaleIVA", $XMLvars->fiscal_rapresentative['country'].$XMLvars->fiscal_rapresentative['pariva']);
-				$el->appendChild($el1);
-				$el2 = $domDoc->createElement("IdPaese", $XMLvars->fiscal_rapresentative['country']);
-				$el1->appendChild($el2);
-				$el2 = $domDoc->createElement("IdCodice", $XMLvars->fiscal_rapresentative['pariva']);
-				$el1->appendChild($el2);
-                if (($XMLvars->fiscal_rapresentative['sexper']!='G') && (trim($XMLvars->fiscal_rapresentative['legrap_pf_nome'])!='') && (trim($XMLvars->fiscal_rapresentative['legrap_pf_nome'])!='')) {
-                    // se è una persona fisica e ha valorizzato nome e cognome inserisco questi dati
-                    $el1 = $domDoc->createElement("Nome", substr(trim($XMLvars->fiscal_rapresentative['legrap_pf_nome']), 0, 80));
-                    $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("Cognome", substr(trim($XMLvars->fiscal_rapresentative['legrap_pf_cognome']), 0, 80));
-                    $el->appendChild($el1);
-                } else {
-                     // Se è una ditta inserisco la denominazione
-                    $el1 = $domDoc->createElement("Denominazione", substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->fiscal_rapresentative['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->fiscal_rapresentative['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80));
-                    $el->appendChild($el1);
-                }
-				$resfr->appendChild($el);
-			}
-
-
+			
             $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);
             $attrVal = $domDoc->createTextNode($XMLvars->TipoDocumento);
             $results->appendChild($attrVal);
@@ -711,36 +780,36 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
 
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis));
+            $attrVal = $domDoc->createTextNode($XMLvars->reverse?substr(htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso1'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true) . " " . htmlspecialchars(str_replace(chr(0xE2).chr(0x82).chr(0xAC),"",trim($XMLvars->client['ragso2'])), ENT_XML1 | ENT_QUOTES, 'UTF-8', true), 0, 80):trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis));
             $results->appendChild($attrVal);
 
             //regime fiscale RF01 valido per il regime fiscale ordinario
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/RegimeFiscale")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->regime_fiscale));
+            $attrVal = $domDoc->createTextNode($XMLvars->reverse?'RF01':trim($XMLvars->regime_fiscale));
             $results->appendChild($attrVal);
 
 
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['indspe']));
+            $attrVal = $domDoc->createTextNode($XMLvars->reverse?trim($XMLvars->client['indspe']):trim($XMLvars->azienda['indspe']));
             $results->appendChild($attrVal);
 
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/CAP")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['capspe']));
+            $attrVal = $domDoc->createTextNode($XMLvars->reverse?$XMLvars->client['capspe']:trim($XMLvars->azienda['capspe']));
             $results->appendChild($attrVal);
 
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['citspe']));
+            $attrVal = $domDoc->createTextNode($XMLvars->reverse?trim($XMLvars->client['citspe']):trim($XMLvars->azienda['citspe']));
             $results->appendChild($attrVal);
 
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['prospe']));
+            $attrVal = $domDoc->createTextNode($XMLvars->reverse?$XMLvars->client['prospe']:$XMLvars->azienda['prospe']);
             $results->appendChild($attrVal);
 
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['country']));
+            $attrVal = $domDoc->createTextNode($XMLvars->reverse?$XMLvars->client['country']:$XMLvars->azienda['country']);
             $results->appendChild($attrVal);
 			//IscrizioneREA
-            if ($XMLvars->REA_ufficio != "" && $XMLvars->REA_numero != "") { // ho i dati minimi indispensabili per valorizzare il REA
+            if ($XMLvars->REA_ufficio != "" && $XMLvars->REA_numero != "" && !$XMLvars->reverse) { // ho i dati minimi indispensabili per valorizzare il REA
                 $results = $xpath->query("//CedentePrestatore")->item(0);
                 $el = $domDoc->createElement("IscrizioneREA","");
                 $el1 = $domDoc->createElement("Ufficio", $XMLvars->REA_ufficio);
@@ -779,7 +848,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
                     $el->appendChild($el1);
-					if ($rigo['quanti']*$rigo['prelis']<0) {
+					if ($rigo['quanti']*$rigo['prelis']<0 && !$XMLvars->reverse) {
 						// se quantità o prezzo negativo si tratta di rigo sconto = SC
 						$el1 = $domDoc->createElement("TipoCessionePrestazione", "SC");
 						$el->appendChild($el1);
@@ -1389,7 +1458,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 	}
     $progressivo_unico_invio = encodeSendingNumber($data, 36);
 
-    $nome_file = "IT" . $codice_trasmittente . "_" . $progressivo_unico_invio;
+    $nome_file = "IT" . $XMLvars->IdCodice . "_" . $progressivo_unico_invio;
 
     $id_tes = $XMLvars->tesdoc['id_tes'];
     $data_ora_exec = date("Y-m-d H:i:s");
@@ -1419,7 +1488,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 				'protocollo' => $XMLvars->protoc);
 		}
         $parent_progressivo_unico_invio = encodeSendingNumber($parent, 36);
-        $parent_nome_file = "IT" . $codice_trasmittente . "_" . $parent_progressivo_unico_invio;
+        $parent_nome_file = "IT" . $XMLvars->IdCodice . "_" . $parent_progressivo_unico_invio;
         gaz_dbi_query ("UPDATE ".$gTables['fae_flux']." SET `filename_son`='".$nome_file.".xml' WHERE `filename_ori`='".$parent_nome_file . ".xml'");
     }
     

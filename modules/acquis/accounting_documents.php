@@ -730,7 +730,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 						// sul documento inserisco un rigo per ogni aliquota riportante il totale imponibile del Reverse Charge
 						$rigdocVal['descri'] .= ' '.$vrc['descri_vat'];
 						$rigdocVal['codvat'] = $vrc['codiva'];
-						$rigdocVal['prelis'] = $vrc['impcast'];
+						$rigdocVal['prelis'] = $v['tes']['tipdoc']=='AFC'?-$vrc['impcast']:$vrc['impcast'];
 						$rigdocVal['periva'] = $vrc['periva'];
 						rigdocInsert($rigdocVal);
                     }
