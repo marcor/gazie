@@ -480,7 +480,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 $impost += $form['impost_ri'][$i];
             } //fine calcolo
 			
-            for ($rc = 0; $rc < $_POST['rigcon']; $rc++) { //mi ripasso le contropartite inserite e ci indroduco l'eventuale giusto valore
+            for ($rc = 0; $rc < $_POST['rigcon']; $rc++) { //mi ripasso le contropartite inserite e ci introduco l'eventuale giusto valore
 				$rs_caucon_rows = gaz_dbi_dyn_query("*", $gTables['caucon_rows'], "caucon_cod = '" . $form['codcausale']."'", "n_order");
 				while ($caucon_rows = gaz_dbi_fetch_array($rs_caucon_rows)) { //contropartite in causale
                     if ($caucon_rows["clfoco_ref"] == $form['conto_rc' . $rc] || ( substr($caucon_rows["clfoco_ref"], 3, 6) == 0 and substr($form['mastro_rc'][$rc], 0, 3) == substr($caucon_rows["clfoco_ref"], 0, 3))) {
@@ -941,6 +941,53 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         // infine creo un movimento di storno dell'IVA    
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'D', 'codcon' => $newValue['clfoco'], 'import' => $rcv['impost']));
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $rcv['impost']));
+
+						if ($i==0) { // sul primo rigo IVA inserisco un documento fittizio in tesdoc al fine di generare un XML dal registro con il sezionale (normalmente 9) del Reverse Charge
+							// stabilisco il tipo di documento per lo SdI (TD16,TD17,TD18,TD19,TD20) e lo insterisco sulla colonna status di tesdoc
+							$status='TD16'; // operazioni interne (italiani)
+							if ($partner['country']<>'IT') {
+								$istat_area = gaz_dbi_get_row($gTables['country'], "iso", $partner['country'])['istat_area'];
+								$status='TD17'; // acquisto servizi dall'estero
+								if ($istat_area==11&&$rcv['operation_type']<>'SERVIZ') { // è un intra  ma devo vedere se sono beni altrimenti lascio TD17 
+									$status='TD18';
+								} 
+							}
+							$tesdocVal = ['tipdoc' => 'XFA',
+								'template' => 'FatturaAcquisto',
+								'id_con' => $rc_lastid,
+								'datreg' => $datareg,
+								'seziva' => $admin_aziend['reverse_charge_sez'],
+								'protoc' => $rc_val['protoc'],
+								'numdoc' => $rc_val['protoc'], // nelle autofatture utilizzo il numero di protocollo del sezionale al fine di avere sequezialità, il numero reale dato dal fornitore è scritto sulla descrizione del rigo
+								'numfat' => substr($_POST['numdocumen'], 0, 20),
+								'datemi' => $datadoc,
+								'datfat' => $datadoc,
+								'initra' => $datadoc,
+								'clfoco' => intval($_POST['cod_partner']),
+								'pagame' => $form['pagame'],
+								'regiva' => 2,
+								'operat' => 1,
+								'status' => $status
+							];
+							if (substr($_POST['codcausale'], 0, 3) == 'AFC') {
+								$tesdocVal['tipdoc'] = 'XNC';
+								$tesdocVal['operat'] = 2;
+							}
+							$last_id_tes_tesdoc=tesdocInsert($tesdocVal); 
+							$rigdocVal = ['id_tes'=> $last_id_tes_tesdoc,
+								'tiprig' => 1,
+								'descri' => (substr($_POST['codcausale'], 0, 3)=='AFC')?'NOTA CREDITO PER ':'FATTURA DI '
+							];
+							$rigdocVal['descri'] .= 'ACQUISTO n.'.substr($_POST['numdocumen'], 0, 20).' del '.gaz_format_date($datadoc);
+						}
+						// per ogni rigo IVA inserisco un rgo sul documento fittizio del reverse
+						// sul documento inserisco un rigo per ogni aliquota riportante il totale imponibile del Reverse Charge
+						$rigdocVal['descri'] .= ' '.$rcv['descri'];
+						$rigdocVal['codvat'] = $rcv['codiva'];
+						$rigdocVal['prelis'] = substr($_POST['codcausale'], 0, 3)=='AFC'?-abs($rcv['imponi']):$rcv['imponi'];
+						$rigdocVal['periva'] = $rcv['periva'];
+						rigdocInsert($rigdocVal);
+						
                     }
                     // infine inserisco il relativo rigo iva
                     rigmoiInsert($vv);
@@ -1052,7 +1099,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 }
             }
             if ($toDo == 'insert') {
-                header("Location: admin_movcon.php?Insert&new=".$ultimo_id); // ritorno su questo script per inserirne un altro
+               // header("Location: admin_movcon.php?Insert&new=".$ultimo_id); // ritorno su questo script per inserirne un altro
             } else {
                 header("Location: " . $form['ritorno']);
             }
