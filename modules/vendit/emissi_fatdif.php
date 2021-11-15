@@ -258,10 +258,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     // controllo se la data di emissione non precede quella dell'ultima fattura emessa
     $rs_ultima_fattura = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['date_exe_Y'] . " AND tipdoc LIKE 'F__' AND seziva = " . $form['seziva'], "protoc DESC, datfat DESC, datemi DESC", 0, 1);
     $ultima_fattura = gaz_dbi_fetch_array($rs_ultima_fattura);
-    $utsUltimoProtocollo = mktime(0, 0, 0, substr($ultima_fattura['datfat'], 5, 2), substr($ultima_fattura['datfat'], 8, 2), intval(substr($ultima_fattura['datfat'], 0, 4)));
-    if ($utsexe && ( $utsUltimoProtocollo > $utsexe)) {
-        $msg .= "4+";
-    }
+	if ($ultima_fattura){
+		$utsUltimoProtocollo = mktime(0, 0, 0, substr($ultima_fattura['datfat'], 5, 2), substr($ultima_fattura['datfat'], 8, 2), intval(substr($ultima_fattura['datfat'], 0, 4)));
+		if ($utsexe && ( $utsUltimoProtocollo > $utsexe)) {
+			$msg .= "4+";
+		}
+	}
 }
 
 if (isset($_POST['genera']) && $msg == "") {
