@@ -557,9 +557,11 @@ class shopsynchronizegazSynchro {
 				$rawres['link'] = '../shop-synchronize/synchronize.php';
 				$rawres['style'] = 'danger';
 			}
-		}		
+		}
+		if (isset($rawres)){
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 		$this->rawres=$rawres;
+		}
 						
 	}
 	function SetProductQuantity($d) {
