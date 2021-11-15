@@ -985,7 +985,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 						$rigdocVal['descri'] .= ' '.$rcv['descri'];
 						$rigdocVal['codvat'] = $rcv['codiva'];
 						$rigdocVal['prelis'] = substr($_POST['codcausale'], 0, 3)=='AFC'?-abs($rcv['imponi']):$rcv['imponi'];
-						$rigdocVal['periva'] = $rcv['periva'];
+						$rigdocVal['pervat'] = $rcv['periva'];
 						rigdocInsert($rigdocVal);
 						
                     }

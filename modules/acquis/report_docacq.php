@@ -312,17 +312,6 @@ while ($row = gaz_dbi_fetch_array($result)) {
             if ($revch['fattura_elettronica_reinvii']==0) {
                 echo '<a class="btn btn-xs btn-success" title="Pacchetto di fatture elettroniche in cui &egrave; contenuta questa fattura" href="../vendit/download_zip_package.php?fn='.$revch['fattura_elettronica_zip_package'].'">'.$zipped.'.zip<i class="glyphicon glyphicon-compressed"></i> </a>';
             }
-        } elseif (strlen($revch['pec_email'])<5 && strlen(trim($revch['fe_cod_univoco']))<6) { //se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
-            $d_title = 'Invia richiesta PEC e/o codice SdI all\'indirizzo: '.$revch['e_mail'];
-            $dest = '&dest=E';
-            if (strlen($revch['e_mail'])<5) {
-                $dest = '';
-                $d_title = 'Stampa richiesta cartacea (cliente senza mail)';
-            }
-            echo '><button onclick="confirPecSdi(this);return false;" id="doc3_' . $revch['clfoco'] . '" url="stampa_richiesta_pecsdi.php?codice='.$revch['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $revch['e_mail'] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
-        } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
-            echo ">\n";
-           
         }
         if ( $sdi_flux ) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
             $zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;

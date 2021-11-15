@@ -554,6 +554,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 					$vidc='XXXXXXX';
 				}
 				$attrVal = $domDoc->createTextNode($vidc);
+			} elseif ($XMLvars->TipoDocumento=='TD16') { 
+				if (strlen($XMLvars->client['pariva'])>3){
+					$vidc=trim($XMLvars->client['pariva']);
+				} else {
+					$vidc='00000000000';
+				}
+				$attrVal = $domDoc->createTextNode($vidc);
 			} else {
 				$attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['pariva']));
 			}
@@ -563,6 +570,15 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 			if ($XMLvars->reverse&&$XMLvars->TipoDocumento<>'TD16') { 
 				$results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);
 				$results->parentNode->removeChild($results);
+			} elseif ($XMLvars->TipoDocumento=='TD16') { 
+				if (strlen($XMLvars->client['codfis'])>3){
+					$vidc=trim($XMLvars->client['codfis']);
+				} else {
+					$vidc='XXXXXXX';
+				}
+				$results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);
+				$attrVal = $domDoc->createTextNode($vidc);
+				$results->appendChild($attrVal);
 			} else {
 				$results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);
 				$attrVal = $domDoc->createTextNode(trim($XMLvars->IdCodice));

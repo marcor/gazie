@@ -731,7 +731,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 						$rigdocVal['descri'] .= ' '.$vrc['descri_vat'];
 						$rigdocVal['codvat'] = $vrc['codiva'];
 						$rigdocVal['prelis'] = $v['tes']['tipdoc']=='AFC'?-abs($vrc['impcast']):$vrc['impcast'];
-						$rigdocVal['periva'] = $vrc['periva'];
+						$rigdocVal['pervat'] = $vrc['periva'];
 						rigdocInsert($rigdocVal);
                     }
 
