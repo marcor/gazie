@@ -61,7 +61,7 @@ $access=base64_encode($accpass);
 if (!isset($_GET['success'])){
 	// avvio il file di interfaccia presente nel sito web remoto
 	$headers = @get_headers($urlinterf.'?access='.$access);	
-	print_r($headers);
+	
 	if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controllo se ho avuto accesso al file interfaccia
 		$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.time()) ; // carico il file xml appena creato
 		if (!$xml){ // se non è stato creato o non ho accesso
