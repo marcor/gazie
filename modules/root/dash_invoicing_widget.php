@@ -22,7 +22,7 @@
                 <tr>
                     <td><b class="text-info">Fatture d'acquisto da contabilizzare</b></td>
                     <td><b><?php echo $fatacq['cnt']; ?></b></td>
-                    <td><a class="btn btn-info">Contabilizza fatture di acquisto<i class="glyphicon glyphicon-export"></i></a></td>
+                    <td><a class="btn btn-info" href="../acquis/accounting_documents.php?type=AF">Contabilizza fatture di acquisto<i class="glyphicon glyphicon-export"></i></a></td>
                 </tr>
 <?php
     }
@@ -33,7 +33,7 @@
                 <tr>
                     <td><b class="text-success">Fatture di vendita da contabilizzare</b></td>
                     <td><b><?php echo $fatven['cnt']; ?></b></td>
-                    <td><a class="btn btn-success">Contabilizza fatture di vendita<i class="glyphicon glyphicon-export"></i></a></td>
+                    <td><a class="btn btn-success" href="../vendit/accounting_documents.php?type=F">Contabilizza fatture di vendita<i class="glyphicon glyphicon-export"></i></a></td>
                 </tr>
 <?php
     }
@@ -55,7 +55,7 @@
                 <tr>
                     <td><b class="text-danger">Fatture che devono generare effetti</b></td>
                     <td><b><?php echo $geneff['cnt']; ?></b></td>
-                    <td><a class="btn btn-danger">Genera effetti da fatture<i class="glyphicon glyphicon-export"></i></a></td>
+                    <td><a class="btn btn-danger" href="../vendit/genera_effett.php">Genera effetti da fatture<i class="glyphicon glyphicon-export"></i></a></td>
                 </tr>
 <?php
     }
