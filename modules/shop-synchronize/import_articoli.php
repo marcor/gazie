@@ -61,13 +61,13 @@ $access=base64_encode($accpass);
 if (!isset($_GET['success'])){
 	// avvio il file di interfaccia presente nel sito web remoto
 	$headers = @get_headers($urlinterf.'?access='.$access);	
-	
+	print_r($headers);
 	if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controllo se ho avuto accesso al file interfaccia
 		$xml=simplexml_load_file($urlinterf.'?access='.$access.'&rnd='.time()) ; // carico il file xml appena creato
 		if (!$xml){ // se non è stato creato o non ho accesso
 			?>
 			<script>
-			alert("<?php echo "Errore! Il file xml non è stato creato oppure non è possibile accedervi"; ?>");
+			alert("<?php echo "Errore! Il file xml non è stato creato oppure c'è un errore nella sua formattazione"; ?>");
 			location.replace("<?php echo $_POST['ritorno']; ?>");
 			</script>
 			<?php
