@@ -26,12 +26,14 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 
 $admin_aziend = checkAdmin();
+$backDocList = gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
 $msgtoast = "";
 $msg = array('err' => array(), 'war' => array());
 $calc = new Compute;
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 $lm = new lotmag;
+
 function getFAIseziva($tipdoc) {
     global $admin_aziend, $gTables, $auxil;
     if ($tipdoc == 'FAI'||$tipdoc == 'FAA'||$tipdoc == 'FAF'||$tipdoc == 'FAP') { // se è una fattura immediata
@@ -918,9 +920,31 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     header("Location: report_doctra.php");
                     exit;
                 } else {
-                    $_SESSION['print_request'] = $ultimo_id;
-                    header("Location: invsta_docven.php");
-                    exit;
+					$_SESSION['print_request'] = $ultimo_id;
+					if (substr($form['tipdoc'], 0, 2) == 'DD') {
+						$_SESSION['template'] = '&template=DDT';
+					} else if ($form['tipdoc'] == 'VRI') {
+						$_SESSION['template'] = '&template=Received';
+					} else if ($form['tipdoc'] == 'CMR') {
+						$_SESSION['template'] = '&template=CMR';						
+					} else {
+						$_SESSION['template'] = '';
+					}
+					if (intval($backDocList)==0){ // tornare a nuovo inserimento
+						header("Location: admin_docven.php?Insert&tipdoc=". $form['tipdoc'] .".php");
+						exit;
+					} else {// tornare a report
+						if (substr($form['tipdoc'], 0, 1)=="D"){ // documento di trasporto						
+							header("Location: report_doctra.php");
+							exit;
+						} elseif (substr($form['tipdoc'], 0, 1)=="F") { // fattura
+							header("Location: report_docven.php");
+							exit;
+						} else {// ricevuta
+							header("Location: report_received.php");
+							exit;
+						}							
+					} 
                 }
             }
         }
@@ -2234,6 +2258,16 @@ if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=10000000
         document.docven.mestra.value = LZ(m);
         document.docven.giotra.value = LZ(d);
     }
+	function printPdf(urlPrintDoc){		
+		$(function(){			
+			$('#framePdf').attr('src',urlPrintDoc);
+			$('#framePdf').css({'height': '100%'});
+			$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+			$('#closePdf').on( "click", function() {
+				$('.framePdf').css({'display': 'none'});
+			});	
+		});	
+	};
 </script>
 <?php
 $gForm = new venditForm();
@@ -2248,6 +2282,15 @@ if (count($msg['war']) > 0) { // ho un alert-danger
 	echo "</b></div></div>\n";
 }
 echo '<form method="POST" name="docven">';
+?>
+<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+	<div class="col-lg-12">
+		<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
+		<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+	</div>
+	<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+</div>
+<?php
 echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
 	<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
 	<input type="hidden" value="' . $form['seziva'] . '" name="seziva" />
@@ -2261,7 +2304,13 @@ echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
 	<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />
 	<input type="hidden" value="' . $form['split_payment'] . '" name="split_payment" />
 	<input type="hidden" value="' . $form['data_ordine'] . '" name="data_ordine" />';
-
+if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){	
+	?>
+	<script> printPdf('stampa_docven.php?id_tes=<?php echo $_SESSION['print_request'].$_SESSION['template']; ?>'); </script>	
+	<?php
+	$_SESSION['print_request']="";
+	$_SESSION['template']="";
+}
 if ($form['id_tes'] > 0) { // è una modifica
     $title = ucfirst($script_transl[$toDo] . $script_transl['doc_name'][$form['tipdoc']]) . " n." . $form['numdoc'];
     echo "<input type=\"hidden\" value=\"" . $form['tipdoc'] . "\" name=\"tipdoc\">\n";

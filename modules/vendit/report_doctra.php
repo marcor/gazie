@@ -180,6 +180,15 @@ function printPdf(urlPrintDoc){
 			</div>
 			<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
+	<?php
+	if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){	
+		?>
+		<script> printPdf('stampa_docven.php?id_tes=<?php echo $_SESSION['print_request'].$_SESSION['template']; ?>'); </script>	
+		<?php
+		$_SESSION['print_request']="";
+		$_SESSION['template']="";
+	}
+	?>
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>documento di trasporto:</b></p>
         <p>Numero:</p>
@@ -251,6 +260,7 @@ function printPdf(urlPrintDoc){
                 ?>
             </tr>
             <?php
+			
             $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where_select.((isset($_GET['anno']) && intval($_GET['anno']) >= 2000)?' AND YEAR(datemi)='.intval($_GET['anno']):''), "datemi desc, numdoc desc", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             if ($ultimo_documento)
