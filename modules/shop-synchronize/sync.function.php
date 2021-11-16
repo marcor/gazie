@@ -223,6 +223,7 @@ class shopsynchronizegazSynchro {
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
 			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
+			$idHome = gaz_dbi_get_row($gTables['company_config'], "var", "home")['val'];
 			// "group-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 			
@@ -315,6 +316,7 @@ class shopsynchronizegazSynchro {
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($p['large_descri'], ENT_QUOTES, 'UTF-8'))."</Description>\n";
 				$xml_output .= "\t<AvailableQty>".$totav."</AvailableQty>\n";
 				$xml_output .= "\t<WebPublish>".$p['web_public']."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
+				$xml_output .= "\t<IdHome>".$idHome."</IdHome>\n";// id per pubblicazione home su web
 				$xml_output .= "\t</Product>\n";
 			$xml_output .="</Products>\n</GAzieDocuments>";
 			$xmlFile = "prodotti.xml";
@@ -384,6 +386,7 @@ class shopsynchronizegazSynchro {
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
 			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
+			$idHome = gaz_dbi_get_row($gTables['company_config'], "var", "home")['val'];
 			// "articoli-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
 			
@@ -503,6 +506,7 @@ class shopsynchronizegazSynchro {
 				$xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
 				$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
 				$xml_output .= "\t<WebPublish>".$d['web_public']."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
+				$xml_output .= "\t<IdHome>".$idHome."</IdHome>\n";// id per pubblicazione home su web
 				$xml_output .= "\t</Product>\n";			
 			$xml_output .="</Products>\n</GAzieDocuments>";
 			$xmlFile = "prodotti.xml";
