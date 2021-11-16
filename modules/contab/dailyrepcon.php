@@ -136,7 +136,7 @@ $totimp=0;
 			foreach ($cat as $catrow){				
 				if (isset($catrow['descri_cat']) AND $catrow['catmer']<9999){ // se categoria esistente stampo il rigo
 					$rigo_stampa['datemi'][$n]=$catrow['datemi'];$rigo_stampa['count'][$n]=$cat['count'];$rigo_stampa['descri_cat'][$n]=$catrow['descri_cat'];$rigo_stampa['pr_un'][$n]=number_format($cat['sum']/$cat['count'],4,",",".");$rigo_stampa['pr_un_ivato'][$n]=number_format(($cat['sum']+$cat['sumvat'])/$cat['count'],2);$rigo_stampa['pervat'][$n]=$catrow['pervat'];$rigo_stampa['iva_unit'][$n]=gaz_format_number($cat['sumvat']/$cat['count']);$rigo_stampa['impon'][$n]=gaz_format_number($cat['sum']);$rigo_stampa['iva'][$n]=gaz_format_number($cat['sumvat']);
-					$n++;$tot_qta += gaz_format_number($cat['count']);
+					$n++;$tot_qta += $cat['count'];
 					break;					
 				} elseif (isset($catrow['descri'])){// se è una categoria fittizia
 					if(isset($key[$catrow['descri']])){// e se c'è descri Creo una chiave per le spese
@@ -191,7 +191,7 @@ $totimp=0;
 		foreach ($retcat as $cat){ 
 			foreach ($cat as $catrow){// per ogni rigo categoria
 				if (isset($catrow['descri_cat']) AND $catrow['catmer']<9999){ // se categoria esistente conteggio il rigo
-					$totAdE_row = (number_format(($cat['sum']+$cat['sumvat'])/$cat['count'],2) * gaz_format_number($cat['count']));
+					$totAdE_row = (number_format(($cat['sum']+$cat['sumvat'])/$cat['count'],2) * $cat['count']);
 					$totAdE += $totAdE_row;
 					$catrow['pervat'] = str_replace (".","",substr("0".$catrow['pervat'],-4,4));
 					$strvat ="1.".$catrow['pervat'];
