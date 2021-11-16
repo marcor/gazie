@@ -163,6 +163,13 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 					$port["val"]=$r["val"];		
 				}
 				
+				if ($r['var']=="home"){
+					$home["id"]=$r["id"];
+					$home["description"]=$r["description"];
+					$home["var"]=$r["var"];
+					$home["val"]=$r["val"];		
+				}
+				
 				if ($r['var']=="chiave"){
 					$chiave["id"]=$r["id"];
 					$chiave["description"]=$r["description"];
@@ -237,7 +244,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 			</div><!-- chiude row  -->
 			<div class="row">
 				<div class="form-group" >
-				<label for="input<?php echo $path["id"]; ?>" class="col-sm-5 control-label"><?php echo $path["description"],". <p style='font-size:8px;'> Percorso per raggiungere la cartella dei file di interfaccia a partire dal dominio del sito e compreso http(s) </p>"; ?></label>
+				<label for="input<?php echo $path["id"]; ?>" class="col-sm-5 control-label"><?php echo $path["description"],". <p style='font-size:8px;'> Percorso per raggiungere la cartella dei file di interfaccia a partire dal dominio del sito e compreso http(s). Ad esempio: https://shoptest.it/GAzie_sync/</p>"; ?></label>
 				<div class="col-sm-7">
 					<input type="text" class="form-control input-sm" id="input<?php echo $path["id"]; ?>" name="<?php echo $path["var"]; ?>" placeholder="<?php echo $path["var"]; ?>" value="<?php echo $path["val"]; ?>">
 				</div>
@@ -407,6 +414,32 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 					<input type="text" class="form-control input-sm" name="addval[]" >
 					<input type="hidden" name="addvar[]" value="port">
 					<input type="hidden" name="adddes[]" value="Porta Sftp">
+				</div>
+				</div>
+				</div><!-- chiude row  -->
+				<?php				
+			}
+			
+			if (isset($home['id']) AND $home['id']>0){
+				?>
+				<div class="row">
+				<div class="form-group" >
+				<label for="input<?php echo $home["id"]; ?>" class="col-sm-5 control-label"><?php echo $home["description"],". <p style='font-size:8px;'> Se non si usa lasciare vuoto. </p>"; ?></label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control input-sm" id="input<?php echo $home["id"]; ?>" name="<?php echo $home["var"]; ?>" placeholder="<?php echo $home["var"]; ?>" value="<?php echo $home["val"]; ?>">
+				</div>
+				</div>
+				</div><!-- chiude row  -->
+				<?php
+			} else {				
+				?>
+				<div class="row">
+				<div class="form-group" >
+				<label for="inputport" class="col-sm-5 control-label">ID per pubblicazione in home page.  Se non si usa lasciare vuoto.</label>
+				<div class="col-sm-7">
+					<input type="text" class="form-control input-sm" name="addval[]" >
+					<input type="hidden" name="addvar[]" value="home">
+					<input type="hidden" name="adddes[]" value="Id per pubblicazione in home page">
 				</div>
 				</div>
 				</div><!-- chiude row  -->
