@@ -401,9 +401,13 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                 }
                 $id_orderman = intval($_GET['codice']);
 				
-				//aggiorno il movimento magazzino
-				$query = "UPDATE " . $gTables['movmag'] . " SET quanti = '" . $form['quantip'] . "', datreg = '" . $form['datreg'] . "', datdoc = '" . $form['datemi'] . "', artico = '" . $form['codart'] . "' , campo_impianto = '" . $form['campo_impianto'] . "', id_orderman = " . intval($_GET['codice']) . " , id_lotmag = '" . $form['id_lotmag'] . "' WHERE id_mov ='" . $form['id_movmag'] . "'";
-				gaz_dbi_query($query);
+				//aggiorno il movimento magazzino				
+				$form['id_orderman'] = $id_orderman; $form['quanti'] = $form['quantip']; $form['datdoc'] = $form['datemi']; $form['artico'] = $form['codart'];
+				$update = array();
+				$update[]="id_mov";
+				$update[]=$form['id_movmag'];
+				gaz_dbi_table_update('movmag', $update, $form);				
+				
 				if ($form['SIAN']>0){ // Antonio Germani - aggiorno il movimento del SIAN
 					$update = array();
 					$update[]="id_movmag";
@@ -446,8 +450,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     }
                 }
                 // inserisco orderman: l'attuale produzione
-				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(id_staff_def,start_work,end_work,order_type,description,add_info,id_tesbro,campo_impianto,id_lotmag,duration,stato_lavorazione,adminid) VALUES ('". $form['id_staff_def'] ."', '". $start_work ."', '". $end_work ."', '" . $form['order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '" . $form['day_of_validity'] . "', '" .$status. "', '" . $admin_aziend['adminid'] . "')");
-				$id_orderman = gaz_dbi_last_id();
+				$form['start_work']=$start_work; $form['end_work']=$end_work; $form['id_tesbro']=$id_tesbro; $form['stato_lavorazione']=$status; $form['adminid']=$admin_aziend['adminid']; $form['duration']=$form['day_of_validity'];
+				$id_orderman = gaz_dbi_table_insert('orderman', $form);
 				// connetto tesbro a orderman
 				tesbroUpdate(array('id_tes',$id_tesbro), array('id_orderman'=>$id_orderman));
 				
@@ -633,8 +637,13 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			}	
 			
             if ($toDo == 'update') { //  se e' una modifica, aggiorno orderman e tesbro
-                $query = "UPDATE " . $gTables['orderman'] . " SET id_staff_def = '".$form['id_staff_def']."', start_work = '". $start_work ."', end_work = '". $end_work ."', order_type = '" . $form['order_type'] . "', description = '" . $form['description'] . "', campo_impianto = '" . $form["campo_impianto"] . "', id_lotmag = '" . $id_lotmag . "', add_info = '" . $form['add_info'] . "', duration = '" . $form['day_of_validity'] . "' WHERE id = '" . $form['id'] . "'";
-                gaz_dbi_query($query);
+               				
+				$form['start_work']=$start_work; $form['end_work']=$end_work; $form['id_tesbro']=$id_tesbro; $form['stato_lavorazione']=$status; $form['adminid']=$admin_aziend['adminid']; $form['duration']=$form['day_of_validity'];
+				$update = array();
+				$update[]="id";
+				$update[]=$form['id'];
+				gaz_dbi_table_update('orderman', $update, $form);	
+				
                 $resin = gaz_dbi_get_row($gTables['tesbro'], "id_orderman", $id_orderman);
                 if ($resin['id_tes'] <> $form['id_tesbro']) { // se l'ordine iniziale è diverso da quello del form
                     if ($resin['tipdoc'] == "PRO") { // se era autogenerato, cioè era PRO, lo cancello e basta perché vuol dire che è stato tolto completamente dal form o sostituito con un vero ordine VOR
@@ -646,9 +655,11 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     }
                     $query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '', " . 'id_rigbro' . " = '' WHERE id = '" . $form['id'] . "'"; // azzero anche i riferimenti su orderman
                     gaz_dbi_query($query);
+					
+					
                     if ($form['id_tesbro'] > 0) { // poi, se c'è un nuovo ordine VOR nel form, lo collego a id orderman
-                        gaz_dbi_query("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '" . $id_orderman . "' WHERE id_tes = '" . $form['id_tesbro'] . "'");
-                        $query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . $form['id_tesbro'] . "', " . 'id_rigbro' . " = '" . $form['id_rigbro'] . "' WHERE id = '" . $form['id'] . "'";
+                        gaz_dbi_query("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '" . intval($id_orderman) . "' WHERE id_tes = '" . $form['id_tesbro'] . "'");
+                        $query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . intval($form['id_tesbro']) . "', " . 'id_rigbro' . " = '" . intval($form['id_rigbro']) . "' WHERE id = '" . $form['id'] . "'";
                         gaz_dbi_query($query); // aggiorno i riferimenti su orderman
                         
                     } else { // se non c'è un nuovo ordine lo creo in automatico in tesbro, rigbro e metto i riferimenti su orderman                       
@@ -657,7 +668,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                         
 						$id_rigbro = rigbroInsert(array('id_tes'=>$id_tesbro,'codart'=>$form['codart'],'descri'=>addslashes ($resartico['descri']),'unimis'=>$resartico['unimis'],'quanti'=>$form['quantip'],'id_mag'=>$id_movmag,'status'=>'AUTOGENERA','id_orderman'=>$id_orderman));// creo rigbro
                         
-						$query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . $id_tesbro . "', " . 'id_rigbro' . " = '" . $id_rigbro . "' WHERE id = '" . $form['id'] . "'";
+						$query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . intval($id_tesbro) . "', " . 'id_rigbro' . " = '" . intval($id_rigbro) . "' WHERE id = '" . $form['id'] . "'";
                         gaz_dbi_query($query); // aggiorno i riferimenti su orderman
                         
                     }
@@ -1376,7 +1387,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['2']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-	<input type="text" name="description" value="<?php echo $form['description']; ?>" maxlength="80" />
+	<input type="text" name="description" value="<?php echo htmlspecialchars($form['description']); ?>" maxlength="80" />
 	</td>
 </tr>
 <?php
