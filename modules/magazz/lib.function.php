@@ -744,7 +744,7 @@ class magazzForm extends GAzieForm {
         return $return_val;
     }
 
-    function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='') {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
+    function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='',$id_wharehouse=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
         // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, datreg)
         global $gTables, $admin_aziend;
 		$synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];		
@@ -803,6 +803,7 @@ class magazzForm extends GAzieForm {
             'scochi' => $sconto_chiusura,
             'id_rif' => $id_rigo_doc,
             'artico' => $codart,
+            'id_wharehouse' => $id_wharehouse,
             'quanti' => $quantita,
             'prezzo' => $prezzo,
             'scorig' => $sconto_rigo,

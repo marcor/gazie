@@ -246,7 +246,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
     $form['in_id_mag'] = $_POST['in_id_mag'];
-    $form['in_id_wharehouse'] = $_POST['in_id_wharehouse'];
+    $form['in_id_wharehouse'] = intval($_POST['in_id_wharehouse']);
     $form['in_id_order'] = intval($_POST['in_id_order']);
     $form['in_id_orderman'] = $_POST['in_id_orderman'];
     $form['in_annota'] = $_POST['in_annota'];
@@ -278,7 +278,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['codric'] = intval($value['codric']);
             $form['rows'][$i]['provvigione'] = floatval($value['provvigione']);
             $form['rows'][$i]['id_mag'] = intval($value['id_mag']);
-            $form['rows'][$i]['id_wharehouse'] = 1;
+            $form['rows'][$i]['id_wharehouse'] = 0;
 			if ($value['id_mag']>0){ // se ho un movimento di magazzino associato riprendo l'id del magazzino
 				
 			}
@@ -735,7 +735,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	
 						if ($form['rows'][$i]['tiprig'] <> 2) { // Antonio Germani - se NON è un rigo descrittivo
 						// reinserisco il movimento magazzino associato e lo aggiorno
-							$id_movmag=$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag);
+							$id_movmag=$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],$id_lotmag,0,0,'',$form['rows'][$i]['id_wharehouse']);
 							
 							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_mag', $id_movmag);// metto il nuovo id_mag nel rigo documento
 
@@ -1497,7 +1497,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
     }
     $form['in_id_mag'] = 0;
-    $form['in_id_wharehouse'] = 1; // adesso metto uno ma dovrò proporre il magazzino di rifermiento dell'utente
+    $form['in_id_wharehouse'] = 0; 
+	// adesso metto uno ma dovrò proporre il magazzino di riferimento dell'utente
+	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+	$magcustom_field=json_decode($magadmin_module['custom_field']);
+	$form["in_id_wharehouse"] = (isset($magcustom_field->user_id_wharehouse))?$magcustom_field->user_id_wharehouse:0;
     $form['in_id_order'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";
@@ -1601,9 +1606,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['codvat'] = $row['codvat'];
 				$form['rows'][$i]['codric'] = $row['codric'];
 				$form['rows'][$i]['id_mag'] = $row['id_mag'];
-				$form['rows'][$i]['id_wharehouse'] = 1; 
-				if ($row['id_mag']>0){// dovrò riprendere l'id del magazzino del relativo movmag
-					
+				$form['rows'][$i]['id_wharehouse'] = 0;
+				if ($row['id_mag']>0){ // dovrò riprendere l'id del magazzino dal relativo movmag
+					$movmag = gaz_dbi_get_row($gTables['movmag'], "id", $row['id_mag']);
+					if ($movmag&&$movmag['id_wharehouse']>0){
+						$form['rows'][$i]['id_wharehouse'] = $movmag['id_wharehouse'];
+					}	
 				}
 				$form['rows'][$i]['id_order'] = $row['id_order'];
 				$form['rows'][$i]['id_rig'] = $row['id_rig'];
@@ -1688,9 +1696,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['codvat'] = $row['codvat'];
         $form['rows'][$i]['codric'] = $row['codric'];
         $form['rows'][$i]['id_mag'] = $row['id_mag'];
-        $form['rows'][$i]['id_wharehouse'] = 1;
-		if($row['id_mag']>0) { // qui dovrò riprendere il valore da movmag
-			//$form['rows'][$i]['id_wharehouse'] = $mm['id_wharehouse'];
+		$form['rows'][$i]['id_wharehouse'] = 0;
+		if ($row['id_mag']>0){ // dovrò riprendere l'id del magazzino dal relativo movmag
+			$movmag = gaz_dbi_get_row($gTables['movmag'], "id", $row['id_mag']);
+			if ($movmag&&$movmag['id_wharehouse']>0){
+				$form['rows'][$i]['id_wharehouse'] = $movmag['id_wharehouse'];
+			}	
 		}
 		$form['rows'][$i]['id_rig'] = $row['id_rig'];
         $form['rows'][$i]['id_order'] = $row['id_order'];
@@ -1836,7 +1847,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_codric'] = $admin_aziend['purchases_return'];
     }
     $form['in_id_mag'] = 0;
-    $form['in_id_wharehouse'] = 1; // adesso metto uno ma dovrò proporre il magazzino di rifermiento dell'utente
+	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
+	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+	$magcustom_field=json_decode($magadmin_module['custom_field']);
+	$form["in_id_wharehouse"] = (isset($magcustom_field->user_id_wharehouse))?$magcustom_field->user_id_wharehouse:0;
     $form['in_id_order'] = 0;
     $form['in_id_orderman'] = 0;
     $form['in_annota'] = "";

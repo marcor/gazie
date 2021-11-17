@@ -61,6 +61,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["user_firstname"] = substr($_POST['user_firstname'], 0, 30);
 	$form['user_email'] = trim($_POST['user_email']);
 	$form["lang"] = substr($_POST['lang'], 0, 15);
+	$form["id_wharehouse"] = intval($_POST['id_wharehouse']);
 	$form["theme"] = filter_input(INPUT_POST,'theme');
 	$form["style"] = substr($_POST['style'], 0, 30);
 	$form["skin"] = substr($_POST['skin'], 0, 30);
@@ -83,9 +84,6 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 		}
 	}
 } elseif ((!isset($_POST['Update'])) && (isset($_GET['Update']))) {
-	/*
-	* La prima entrata per update
-	*/
 	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 15)));
 	if (!$form){
 		header("Location: " . $_POST['ritorno']);
@@ -93,6 +91,12 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	}
 	// attingo il valore del motore di template dalla tabella configurazione utente
 	$admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', 'theme', "AND adminid = '{$form['user_name']}'");
+	$form = gaz_dbi_get_row($gTables['admin'], "user_name", preg_replace("/[^A-Za-z0-9]/", '',substr($_GET["user_name"], 0, 15)));
+	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
+	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+	$magcustom_field=json_decode($magadmin_module['custom_field']);
+	$form["id_wharehouse"] = (isset($magcustom_field->user_id_wharehouse))?$magcustom_field->user_id_wharehouse:0;
 	$form['user_password_old'] = '';
 	$form['user_password_new'] = '';
 	$form['user_password_ver'] = '';
@@ -103,9 +107,6 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form['hidden_req'] = '';
     $form['search']['company_id'] = '';
 } else {
-	/*
-	* La prima entrata per insert
-	*/
 	$form["user_lastname"] = "";
 	$form["user_firstname"] = "";
 	$form['user_email'] = '';
@@ -114,6 +115,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["style"] = $admin_aziend['style'];
 	$form["skin"] = $admin_aziend['skin'];
 	$form["lang"] = $admin_aziend['lang'];
+	$form["id_wharehouse"]=0;
 	$form["Abilit"] = 5;
 	// propongo la stessa azienda attiva sull'utente amministratore
     $form['hidden_req'] = '';
@@ -192,7 +194,15 @@ if (isset($_POST['Submit'])) {
 		} else {   // altrimenti riprendo la vecchia
 			$form['image'] = $old_data['image'];
 		}
+		// preparo l'update di custom_field che potrebbe contenere altri dati
+		$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+		$thisadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+		$thiscustom_field=(array)json_decode($thisadmin_module['custom_field']);
+		$thiscustom_field['user_id_wharehouse']=$form['id_wharehouse'];
+		$form['custom_field']=json_encode($thiscustom_field);
 		// aggiorno il db
+		$query="UPDATE ".$gTables['admin_module']." SET custom_field='".$form['custom_field']."' WHERE moduleid=".$magmodule['id']." AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id'];
+		gaz_dbi_query($query);
 		$form["datacc"] = date("YmdHis");
 		$form["datpas"] = date("YmdHis");
 		$tbt = trim($form['body_text']);
@@ -497,6 +507,13 @@ if ($user_data['Abilit'] == 9) {
 }
 ?>
 </td>
+</tr>
+<tr>
+<td class="FacetFieldCaptionTD">Magazzino predefinito</td>
+<td class="FacetDataTD" colspan="2">
+<?php 
+	$gForm->selectFromDB('wharehouse', 'id_wharehouse' ,'id', $form["id_wharehouse"], 'id', 1, ' - ','name','0','col-sm-6' , null, '');
+?>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['Access']; ?></td>
