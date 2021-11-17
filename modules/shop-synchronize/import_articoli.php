@@ -120,12 +120,14 @@ if (isset($_POST['conferma'])) { // se confermato
 				$itemref=$_POST['codice'.$ord];
 			}
 			
-			if ($esiste AND strlen($product->ProductImgUrl)>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval"){ // se è aggiornamento, se c'è un'immagine, se selezionato e se è attivo l'aggiornamento
+			if (isset($esiste) AND strlen($product->ProductImgUrl)>0 AND $_GET['updimm']=="updimg" AND $_GET['upd']=="updval"){ // se è aggiornamento, se c'è un'immagine, se selezionato e se è attivo l'aggiornamento
 				// cancello l'immagine presente nella cartella 
-				$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", $tablefile, "AND id_ref ='1' AND item_ref = '". $_POST['codice'.$ord]."'");
+				
+				$imgres = gaz_dbi_get_row($gTables['files'], "table_name_ref", $tablefile, "AND id_ref ='1' AND item_ref = '". $itemref ."'");
 				if (isset($imgres)){
 					gaz_dbi_del_row($gTables['files'], 'id_doc',$imgres['id_doc']);
-					unlink (DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension']);
+					@unlink (DATA_DIR."files/".$admin_aziend['company_id']."/images/". $imgres['id_doc'] . "." . $imgres['extension']);
+					
 				}
 			}
 		
