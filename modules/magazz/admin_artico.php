@@ -57,7 +57,7 @@ $msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
 $today=	strtotime(date("Y-m-d H:i:s",time()));
 $presente="";
-$largeimg="";
+$largeimg=0;
 /** ENRICO FEDELE */
 /* Inizializzo per aprire in finestra modale */
 $modal = false;
