@@ -150,9 +150,9 @@ if (isset($_POST['conferma'])) { // se confermato
 				if (intval(file_put_contents($imgweb, file_get_contents($url))) == 0){ // scrivo l'immagine web HQ nella cartella files
 					echo "ERRORE nella scrittura in GAzie dell'immagine: ",$url, " <br>Riprovare in quanto potrebbe trattarsi di un Errore momentaneo. Se persiste, controllare che le immagine dell'e-commerce abbiano il permesso per essere lette oppure che sia presente in GAzie la cartella images in data/files/nrAzienda/";die;
 				}
-				
-				// salvo l'immagine blob
-				$img = DATA_DIR.'files/tmp/'.$expl[count($expl)-1]; 
+								
+				// inizio gestione salvataggio immagine blob
+				$img = DATA_DIR.'files/tmp/'.$expl[count($expl)-1];
 				// scrivo l'immagine nella cartella tmp temporanea
 				file_put_contents($img, file_get_contents($url));
 				// ridimensiono l'immagine per rientrare nei 64k
@@ -178,19 +178,23 @@ if (isset($_POST['conferma'])) { // se confermato
 				//Carico l'immagine ridimensionata
 				if (strlen($target_filename)>0){
 					$immagine= addslashes (file_get_contents($target_filename));
+				} else {
+					$immagine= addslashes (file_get_contents($url));
 				}
 				unlink ($img);// cancello l'immagine temporanea
 				if ($product->Type=="parent"){ // se è un parent
 					gaz_dbi_query("UPDATE ". $gTables['artico_group'] . " SET image = '".$immagine."' WHERE ref_ecommerce_id_main_product = '".$_POST['product_id'.$ord]."'");	
-
+					
 				}else {
 					if ($esiste){
 						$codice=$esiste['codice'];
 					} else{
 						$codice=$_POST['codice'.$ord];
-					}
-					gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET image = '".$immagine."' WHERE codice = '".$codice."'");	
+					}				
+					$test=gaz_dbi_query("UPDATE ". $gTables['artico'] . " SET image = '".$immagine."' WHERE codice = '".$codice."'");	
 				}
+				// fine salvataggio immagine
+				
 			} else {
 				$immagine="";
 			}
@@ -320,7 +324,6 @@ if (isset($_POST['conferma'])) { // se confermato
 		}
 		$ord++;
 	}
-		
 	header("Location: " . "../../modules/shop-synchronize/import_articoli.php?success=1");
     exit;
 } else {
