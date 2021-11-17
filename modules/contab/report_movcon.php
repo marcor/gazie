@@ -175,8 +175,25 @@ $(function() {
 		$("#dialog_delete" ).dialog( "open" );  
 	});
 });
+function printPdf(urlPrintDoc){
+	$(function(){			
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+	});
+	$('#closePdf').on( "click", function() {
+		$('.framePdf').css({'display': 'none'});
+	});
+};
 </script>
 <form method="GET">
+	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+		<div class="col-lg-12">
+			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
+			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+		</div>
+		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+	</div>
   <input type="hidden" name="info" value="none" />
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
 	<p><b>movimento contabile:</b></p>
@@ -281,9 +298,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			$icon=$docref['icon'];
 			$lnk=$docref['lnk'];
 		}
-        echo '<a class="btn btn-xs btn-default btn-default" title="' . $script_transl['sourcedoc'] . '" href="'.$lnk.'" target="_blank"><i class="'.$icon.'"></i></a>';
+		echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$lnk."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"".$icon."\" title=\"Stampa ".$script_transl['sourcedoc']."\"></i></a>";
     } elseif ($paymov) {
-        echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"" . $script_transl['customer_receipt'] . "\" href=\"../vendit/print_customer_payment_receipt.php?id_rig=" . $paymov . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
+		echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('../vendit/print_customer_payment_receipt.php?id_rig=" . $paymov . "')\" data-toggle=\"modal\" data-target=\"#print_doc\" title=\"".$script_transl['customer_receipt']."\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
     } elseif ($a_row['caucon']=="VCO"){
 		echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"Visualizza riepilogo chiusura corrispettivi raggruppati per categoria\" href=\"../contab/dailyrepcon.php?id_con=" . $a_row['id_tes']. "\" target=\"_blank\"><i class=\"glyphicon glyphicon-th-list\"></a>";
 	}
