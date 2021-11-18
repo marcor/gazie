@@ -307,10 +307,10 @@ echo '<tr>';
 $ts->output_headers();
 echo '</tr>';
 while ($r = gaz_dbi_fetch_array($result)) {
-  // da configurazione azienda
+	// da configurazione azienda
 	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
-  // acquisti
+	// acquisti
     // giacenza
     $mv = $gForm->getStockValue(false, $r['codice']);
     $magval = array_pop($mv);
@@ -342,6 +342,26 @@ while ($r = gaz_dbi_fetch_array($result)) {
     // IVA
     $iva = gaz_dbi_get_row($gTables['aliiva'], 'codice', $r['aliiva']);
     if (!$iva) $iva=array('aliquo'=>0);
+	switch ($r['web_public']) {// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web
+		case "0":
+			$ecomGlobe="";			
+			break;
+		case "1":
+			$ecomGlobe="class='glyphicon glyphicon-globe' style='color:rgba(26, 209, 44);' title='Attivato su e-commerce'";		
+			break;
+		case "2":
+			$ecomGlobe="class='glyphicon glyphicon-globe' style='color:rgba(255, 203, 71);' title='Attivato e prestabilito su e-commerce'";
+			break;
+		case "3":
+			$ecomGlobe="class='glyphicon glyphicon-globe' style='color:rgba(255, 99, 71);' title='Attivato e in home su e-commerce'";
+			break;
+		case "4":
+			$ecomGlobe="class='glyphicon glyphicon-globe' style='color:red;' title='Attivato, prestabilito e in home su e-commerce'";
+			break;
+		case "5":
+			$ecomGlobe="class='glyphicon glyphicon-globe' title='Disattivato su e-commerce'";
+			break;	
+	}
     echo "<tr>\n";
     echo '<td>
     <a class="btn btn-xs btn-'.$class.'" href="../magazz/admin_artico.php?Update&codice='.$r['codice'].'" ><i class="glyphicon glyphicon-edit"></i> '.$r['codice'].'</a>';
@@ -351,6 +371,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } else {
         $des_bom = $script_transl['good_or_service_value'][intval($r['good_or_service'])];
     }
+	echo "<i ".$ecomGlobe." ></i>";// globo per e-commerce
     echo '</td>';
     echo '<td><span class="gazie-tooltip" data-type="product-thumb" data-id="'. $r['codice'] .'" data-title="'. $r['annota'].'" >'.$r['descri'].'</span>';
     echo "</td>\n";
