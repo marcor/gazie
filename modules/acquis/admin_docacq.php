@@ -278,10 +278,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['codric'] = intval($value['codric']);
             $form['rows'][$i]['provvigione'] = floatval($value['provvigione']);
             $form['rows'][$i]['id_mag'] = intval($value['id_mag']);
-            $form['rows'][$i]['id_wharehouse'] = 0;
-			if ($value['id_mag']>0){ // se ho un movimento di magazzino associato riprendo l'id del magazzino
-				
-			}
+            $form['rows'][$i]['id_wharehouse'] = intval($value['id_wharehouse']);
             $form['rows'][$i]['id_order'] = intval($value['id_order']);
             $form['rows'][$i]['id_orderman'] = intval($value['id_orderman']);
             $form['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
@@ -371,7 +368,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_id_wharehouse'] = $form['rows'][$key_row]['id_wharehouse'];
                     $form['in_id_order'] = $form['rows'][$key_row]['id_order'];
 					$orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['rows'][$key_row]['id_orderman']);
-                    $form['coseprod'] = $orderman['description'];
+                    $form['coseprod'] =($orderman)?$orderman['description']:'';
                     $form['in_id_orderman'] = $form['rows'][$key_row]['id_orderman'];
                     $form['in_annota'] = $form['rows'][$key_row]['annota'];
                     $form['in_pesosp'] = $form['rows'][$key_row]['pesosp'];
@@ -772,7 +769,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] == 0 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $last_movmag_id = $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],0,$form['rows'][$i]['id_orderman']);
+                        $last_movmag_id = $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],0,0,0,$form['rows'][$i]['id_orderman']);
 						gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $last_movmag_id);
 						if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
 							if ($form['tipdoc']=="DDL" && intval($form['rows'][$i]['cod_operazione'])==12) {// se è scarico per conto lavorazione e campionamento
@@ -917,7 +914,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 								$form['rows'][$i]['tiprig'] == 0 &&
 								$form['rows'][$i]['gooser'] != 1 &&
 								!empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-							$last_movmag_id = $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],0,$form['rows'][$i]['id_orderman']);
+							$last_movmag_id = $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'],0,$form['rows'][$i]['id_orderman'],0,'', $form['rows'][$i]['id_wharehouse']);
 							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag',$last_movmag_id);
 						}
 	// se l'articolo prevede la gestione dei  lotti o della matricola/numero seriale creo un rigo in lotmag 
@@ -1007,8 +1004,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['listin'] = $fornitore['listin'];
         $form['address'] = $fornitore['indspe'] . ' ' . $fornitore['citspe'];
         $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
-        if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V')
-                and $fornitore['speban'] == 'S') {
+        if ($pagame && ($pagame['tippag'] == 'B' || $pagame['tippag'] == 'T' || $pagame['tippag'] == 'V') && $fornitore['speban'] == 'S') {
             $form['speban'] = 0;
             $form['numrat'] = $pagame['numrat'];
         } else {
@@ -1037,6 +1033,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $artico['pack_units']=0;
         $artico['annota']='';
         $artico['peso_specifico']=0;
+        $artico['quality']='';
         $artico['good_or_service']='';
         $artico['uniacq']='';
         $artico['scorta']=0;
@@ -1354,7 +1351,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_quanti'] = 0;
 		$form['in_quality'] = 0;
         $form['in_id_mag'] = 0;
-        $form['in_id_wharehouse'] = 1;
         $form['in_id_order'] = 0;
         $form['in_annota'] = "";
         $form['in_pesosp'] = 0;
@@ -1497,10 +1493,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
     }
     $form['in_id_mag'] = 0;
-    $form['in_id_wharehouse'] = 0; 
 	// adesso metto uno ma dovrò proporre il magazzino di riferimento dell'utente
 	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
-	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$form['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
 	$magcustom_field=json_decode($magadmin_module['custom_field']);
 	$form["in_id_wharehouse"] = (isset($magcustom_field->user_id_wharehouse))?$magcustom_field->user_id_wharehouse:0;
     $form['in_id_order'] = 0;
@@ -1608,7 +1603,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$form['rows'][$i]['id_mag'] = $row['id_mag'];
 				$form['rows'][$i]['id_wharehouse'] = 0;
 				if ($row['id_mag']>0){ // dovrò riprendere l'id del magazzino dal relativo movmag
-					$movmag = gaz_dbi_get_row($gTables['movmag'], "id", $row['id_mag']);
+					$movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
 					if ($movmag&&$movmag['id_wharehouse']>0){
 						$form['rows'][$i]['id_wharehouse'] = $movmag['id_wharehouse'];
 					}	
@@ -1698,7 +1693,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['id_mag'] = $row['id_mag'];
 		$form['rows'][$i]['id_wharehouse'] = 0;
 		if ($row['id_mag']>0){ // dovrò riprendere l'id del magazzino dal relativo movmag
-			$movmag = gaz_dbi_get_row($gTables['movmag'], "id", $row['id_mag']);
+			$movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $row['id_mag']);
 			if ($movmag&&$movmag['id_wharehouse']>0){
 				$form['rows'][$i]['id_wharehouse'] = $movmag['id_wharehouse'];
 			}	
@@ -2270,7 +2265,6 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 		<input type="hidden" value="<?php echo $form['in_unimis']; ?>" name="in_unimis" />
 		<input type="hidden" value="<?php echo $form['in_prelis']; ?>" name="in_prelis" />
 		<input type="hidden" value="<?php echo $form['in_id_mag']; ?>" name="in_id_mag" />
-		<input type="hidden" value="<?php echo $form['in_id_wharehouse']; ?>" name="in_id_wharehouse" />
 		<input type="hidden" value="<?php echo $form['in_id_order']; ?>" name="in_id_order" />
 		<input type="hidden" value="<?php echo $form['in_annota']; ?>" name="in_annota" />
 		<input type="hidden" value="<?php echo $form['in_pesosp']; ?>" name="in_pesosp" />
@@ -2423,8 +2417,11 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 									</button>',
 						'td_content' => ' title="' . $script_transl['update'] . $script_transl['thisrow'] . ' Sottoscorta =' . $v['scorta'] . '" '
 					),
+					array('head' => 'Magazzino', 'class' => '',
+						'value' => 	'<small>'.$magazz->selectIdWharehouse('rows[' . $k . '][id_wharehouse]',$v["id_wharehouse"],true,'col-xs-12',$v['codart'],gaz_format_date($form['datreg']),$v['quanti']).'</small>'
+					),
 					array('head' => $script_transl["codice_fornitore"], 'class' => '',
-						'value' => '<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][codice_fornitore]" value="' . $v['codice_fornitore'] . '" maxlength="50" />'
+						'value' => '<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][codice_fornitore]" value="' . $v['codice_fornitore'] . '"/>'
 					),
 					array('head' => $script_transl["descri"], 'class' => 'col-lg-4',
 						'value' => '<input class="gazie-tooltip col-lg-12" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $v['descri'] . '" maxlength="100" />'
@@ -2685,10 +2682,10 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 		$class_conf_row='btn-success';
 		if (substr($form['in_status'],0,6)=='UPDROW'){
 			$nr=substr($form['in_status'],6)+1;
-			$script_transl['conf_row'] = $script_transl['update'].$script_transl['conf_row'].$nr;
+			$script_transl['conf_row'] = $script_transl['update'];
 			$class_conf_row='btn-warning';
 		} else {
-			$script_transl['conf_row'] = $script_transl['insert'].$script_transl['conf_row'].$nr;
+			$script_transl['conf_row'] = $script_transl['insert'];
 		}
 
 		if ($ddtchecked < 1 ){ // se non ci sono DDT selezionati apro input manuale righi doc
@@ -2763,9 +2760,13 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 									<input type="number" step="any" value="<?php echo $form['in_ritenuta']; ?>" name="in_ritenuta" />
 									</div>
 						</div>
-						<div class="form-group col-sm-12 col-md-6 text-right">
-									<label for="submit" class="col-form-label"><?php echo $script_transl['insert']; ?></label>
-									<div>
+						<div class="form-group col-sm-12 col-md-6">
+									<div class="col-xs-12 col-sm-6"><small>Magazzino</small><br/>
+<?php 
+$magazz->selectIdWharehouse('in_id_wharehouse',$form["in_id_wharehouse"],false,'col-xs-12');
+?>
+									</div>
+									<div class="col-xs-12 col-sm-6 text-right">
 									<button type="submit" tabindex="7" class="btn <?php echo $class_conf_row; ?> btn-xs" name="in_submit">
 										<?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
 									</button>

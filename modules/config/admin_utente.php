@@ -512,7 +512,7 @@ if ($user_data['Abilit'] == 9) {
 <td class="FacetFieldCaptionTD">Magazzino predefinito</td>
 <td class="FacetDataTD" colspan="2">
 <?php 
-	$gForm->selectFromDB('wharehouse', 'id_wharehouse' ,'id', $form["id_wharehouse"], 'id', 1, ' - ','name','0','col-sm-6' , null, '');
+	$gForm->selectFromDB('wharehouse','id_wharehouse','id',$form["id_wharehouse"],'id',false,' - ','name','0','col-sm-6',['value'=>0,'descri'=>'Magazzino Sede'],'');
 ?>
 </tr>
 <tr>

@@ -914,9 +914,85 @@ class magazzForm extends GAzieForm {
       }	
       return $return;	
     }
-    
+	
+    function getStockAvailability ($item_code,$id_wharehouse=false,$date_ref=false) {
+		$date_ref=($date_ref)?$date_ref:date("Y-m-d");
+		// questa funzione restituisce la quantità disponibile dell'articolo passato come referenza, se non si passa la data si considera quella odierna
+		// restituisce un array con tre indici 'tot' il totale su tutti i magazzini,'val' il valore del magazzino se passato come referenza, altrimenti sarà false, e un array con i valori degli altri magazzini e indice gli id degli altri magazzini, se non passato di tutti  
+        global $gTables;
+        $where = "artico = '".$item_code."' AND caumag <= 99 AND datreg <= '".$date_ref."'";
+        $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date 
+		$acc=['tot'=>0,'val'=>false,'oth'=>[]];
+        $rs_movmag = gaz_dbi_dyn_query("operat,id_wharehouse,quanti", $gTables['movmag'],$where,$orderby);
+        while ($r = gaz_dbi_fetch_array($rs_movmag)){
+			$qua=$r['operat']*$r['quanti'];
+			$acc['tot']+=$qua;
+            if ($id_wharehouse) { // ho passato il magazzino
+				if ($r['id_wharehouse']==$id_wharehouse){
+					$acc['val']+=$qua;
+				}else{
+					if (isset($acc['oth'][$id_wharehouse])){
+						$acc['oth'][$id_wharehouse]+=$qua;
+					} else {
+						$acc['oth'][$id_wharehouse]=$qua;
+					}
+				}
+            } else { // non ho passato magazzini
+				if (isset($acc['oth'][$id_wharehouse])){
+					$acc['oth'][$id_wharehouse]+=$qua;
+				} else {
+					$acc['oth'][$id_wharehouse]=$qua;
+				}
+            }
+        }
+        return $acc;
+    }
+
+    function selectIdWharehouse($name,$val,$ret_type=false,$class='',$codart=false,$dat_ref=false,$quanti=false) {
+		$available['oth']=[];
+		if ($codart) { // se è riferito ad un articolo sulle option visualizzo anche la disponibilità
+			$available=$this->getStockAvailability($codart,false,$dat_ref);
+		}
+		$opt_style='';
+		if($quanti){
+			$opt_style=(!isset($available['oth'][$val])||$quanti>$available['oth'][$val])?'style="color:red;"':'style="color:green;"';	
+		}
+        global $gTables;
+        $query = 'SELECT id,name FROM ' . $gTables['wharehouse'] . ' WHERE 1 ORDER BY id';
+        $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" onchange="this.form.submit();" '.$opt_style.' >';
+        $acc .= '<option value="0"';
+        $acc .= intval($val)==0?' selected ':' ';
+		$opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';	
+		$acc .= ' '.$opt_style.'>Magazzino sede';
+		$acc .= isset($available['oth'][0])?' disp:'.$available['oth'][0]:' disp:0';
+		$acc .= '</option>';
+        $rs = gaz_dbi_query($query);
+        while ($r = gaz_dbi_fetch_array($rs)) {
+            $selected = '';
+            if ($r['id'] == intval($val)) {
+                $selected = "selected";
+            }
+			$opt_style='';
+			if($quanti){
+				$opt_style=(!isset($available['oth'][$r['id']])||$quanti>$available['oth'][$r['id']])?'style="color:red;"':'style="color:green;"';	
+			}
+
+            $acc .= '<option value="'.$r['id'] . '" '.$selected.' '.$opt_style.'>'.$r['name'];
+			$acc .= isset($available['oth'][$r['id']])?' disp:'.$available['oth'][$r['id']]:' disp:0';
+			$acc .= '</option>';
+        }
+		
+		$acc .='</select>';
+		if ($ret_type){
+			return $acc;
+		} else {
+			echo $acc;
+		}
+    }
+  
 }
- function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ultimo movimento SIAN creato
+
+function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ultimo movimento SIAN creato
 	$admin_aziend = checkAdmin();
 	$uldtfile="";
 	if ($handle = opendir(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sian/')){
@@ -949,4 +1025,5 @@ class magazzForm extends GAzieForm {
 		}		
 	return $uldtfile ;
 }
+
 ?>
