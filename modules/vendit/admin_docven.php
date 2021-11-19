@@ -28,10 +28,10 @@ require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $backDocList = gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
 $msgtoast = "";
-$msg = array('err' => array(), 'war' => array());
+$msg = ['err'=>[],'war'=>[]];
 $calc = new Compute;
-$upd_mm = new magazzForm;
-$docOperat = $upd_mm->getOperators();
+$magazz = new magazzForm;
+$docOperat = $magazz->getOperators();
 $lm = new lotmag;
 
 function getFAIseziva($tipdoc) {
@@ -239,6 +239,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codric'] = $_POST['in_codric'];
     $form['in_provvigione'] = $_POST['in_provvigione']; // in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
     $form['in_id_mag'] = $_POST['in_id_mag'];
+    $form['in_id_wharehouse'] = intval($_POST['in_id_wharehouse']);
     $form['in_annota'] = $_POST['in_annota'];
     $form['in_scorta'] = $_POST['in_scorta'];
     $form['in_quamag'] = $_POST['in_quamag'];
@@ -315,6 +316,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['provvigione'] = floatval($v['provvigione']);
             }
             $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
+			$form['rows'][$next_row]['id_wharehouse'] = intval($v['id_wharehouse']);
             $form['rows'][$next_row]['annota'] = substr($v['annota'], 0, 50);
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
             $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
@@ -369,6 +371,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_codric'] = $form['rows'][$k_row]['codric'];
                     $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
                     $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
+                    $form['in_id_wharehouse'] = $form['rows'][$k_row]['id_wharehouse'];
                     $form['in_annota'] = $form['rows'][$k_row]['annota'];
                     $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
                     $form['in_quamag'] = $form['rows'][$k_row]['quamag'];
@@ -694,7 +697,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
 					// per evitare problemi qualora siano stati modificati i righi o comunque cambiati di ordine elimino sempre il vecchio movimento di magazzino e sotto ne inserisco un altro attenendomi a questo
                     if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
-                        $upd_mm->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
+                        $magazz->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag'], $admin_aziend['stock_eval_method']);
 						// se c'è stato, cancello pure il movimento sian 
 						gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
                     }
@@ -713,7 +716,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         }
 						// riscrivo mov mag	
 						if ( ($tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210) && intval($val_old_row['id_mag'])>0) {
-							$id_mag=$upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							$id_mag=$magazz->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_wharehouse']);
 							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_mag', $id_mag); // inserisco il riferimento movmag nel rigo doc
 							if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
 								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
@@ -742,7 +745,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['gooser'] != 1 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         if ( $tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210 ) {                                                    
-                            $id_mag=$upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+                            $id_mag=$magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_wharehouse']);
 							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
 							if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
 								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
@@ -755,7 +758,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						}
                     }
                     if ($admin_aziend['conmag'] == 2 && $form['rows'][$i]['tiprig'] == 210 && !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+                        $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_wharehouse']);
 						if ($form['rows'][$i]['SIAN'] > 0) { // se l'articolo deve movimentare il SIAN creo anche il movimento
 							$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
 							$value_sian['recip_stocc']= $form['rows'][$i]['recip_stocc'];
@@ -896,7 +899,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['gooser'] != 1 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                         if ( $tipo_composti['val']=="STD" || $form['rows'][$i+1]['tiprig']!=210 ) {
-							$id_mag=$upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+							$id_mag=$magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_wharehouse']);
 							gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_mag', $id_mag); // inserisco il riferimento mov mag nel rigo doc
 							if ($form['rows'][$i]['SIAN']>0){// se l'articolo movimenta il SIAN creo il movimento SIAN
 								$value_sian['cod_operazione']= $form['rows'][$i]['cod_operazione'];
@@ -912,7 +915,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     if ($admin_aziend['conmag'] == 2 &&
                         $form['rows'][$i]['tiprig'] == 210 &&
                         !empty($form['rows'][$i]['codart'])) {
-                            $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
+                            $magazz->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag'],0,0,'',$form['rows'][$i]['id_wharehouse']);
                     }
                 }
                 if ($form['id_doc_ritorno'] > 0) { // è un RDV pertanto non lo stampo e inserisco il riferimento sulla testata relativa
@@ -1207,6 +1210,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			$form['rows'][$old_key]['recip_stocc'] = $form['in_recip_stocc'];
 			$form['rows'][$old_key]['recip_stocc_destin'] = $form['in_recip_stocc_destin'];
             $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
+			$form['rows'][$old_key]['id_wharehouse'] = $form['in_id_wharehouse'];
             $form['rows'][$old_key]['status'] = "UPDATE";
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
             $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
@@ -1278,7 +1282,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 } else {
                     $form['rows'][$old_key]['prelis'] = number_format($artico['preve1'], $admin_aziend['decimal_price'], '.', '');
                 }
-                $mv = $upd_mm->getStockValue(false, $form['in_codart'], $datemi, $admin_aziend['stock_eval_method']);
+                $mv = $magazz->getStockValue(false, $form['in_codart'], $datemi, $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
                 $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
                 $form['rows'][$old_key]['scorta'] = $artico['scorta'];
@@ -1390,6 +1394,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
             $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
+            $form['rows'][$next_row]['id_wharehouse'] = $form['in_id_wharehouse'];
             $form['rows'][$next_row]['status'] = "INSERT";
             $form['rows'][$next_row]['scorta'] = 0;
             $form['rows'][$next_row]['quamag'] = 0;
@@ -1497,7 +1502,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['codric'] = $admin_aziend['sales_return'];
                     $form['in_codric'] = $admin_aziend['sales_return'];
                 }
-                $mv = $upd_mm->getStockValue(false, $form['in_codart'], $datemi, $admin_aziend['stock_eval_method']);
+                $mv = $magazz->getStockValue(false, $form['in_codart'], $datemi, $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
                 $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
                 $form['rows'][$next_row]['scorta'] = $artico['scorta'];
@@ -1919,6 +1924,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codvat'] = 0;
     $form['in_codric'] = $admin_aziend['impven'];
     $form['in_id_mag'] = 0;
+	// adesso metto uno ma dovrò proporre il magazzino di riferimento dell'utente
+	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+	$magcustom_field=json_decode($magadmin_module['custom_field']);
+	$form["in_id_wharehouse"] = (isset($magcustom_field->user_id_wharehouse))?$magcustom_field->user_id_wharehouse:0;
     $form['in_annota'] = "";
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
@@ -2040,8 +2050,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['codric'] = $rigo['codric'];
         $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
         $form['rows'][$next_row]['id_mag'] = (isset($_GET['Duplicate']) ? 0 : $rigo['id_mag']);
+		$form['rows'][$next_row]['id_wharehouse'] = 0;
+		if ($rigo['id_mag']>0){ // dovrò riprendere l'id del magazzino dal relativo movmag
+			$movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $rigo['id_mag']);
+			if ($movmag&&$movmag['id_wharehouse']>0){
+				$form['rows'][$next_row]['id_wharehouse'] = $movmag['id_wharehouse'];
+			}	
+		}
         $form['rows'][$next_row]['annota'] = $articolo['annota'];
-        $mv = $upd_mm->getStockValue(false, $rigo['codart'], $tesdoc['datemi'], $admin_aziend['stock_eval_method']);
+        $mv = $magazz->getStockValue(false, $rigo['codart'], $tesdoc['datemi'], $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
         $form['rows'][$next_row]['scorta'] = $articolo['scorta'];
@@ -2110,17 +2127,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    /*    $form['in_artsea'] = $admin_aziend['artsea']; */
     $form['in_codart'] = "";
     $form['in_pervat'] = "";
     $form['in_tipiva'] = "";
     $form['in_ritenuta'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0;
-    /** inizio modifica FP 09/10/2015
-     * inizializzo il campo con '#' per indicare che voglio lo sconto standard dell'articolo
-     */
-//rimossa    $form['in_sconto'] = 0;
+    // inizio modifica FP 09/10/2015
+    // inizializzo il campo con '#' per indicare che voglio lo sconto standard dell'articolo
+	//rimossa    $form['in_sconto'] = 0;
     $form['in_sconto'] = '#';
     $form['gioord'] = date("d");
     $form['mesord'] = date("m");
@@ -2137,6 +2152,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['in_provvigione'] = 0;// in caso tiprig=4 questo campo è utilizzato per indicare l'aliquota della cassa previdenziale
     $form['in_id_mag'] = 0;
+	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
+	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+	$magcustom_field=json_decode($magadmin_module['custom_field']);
+	$form["in_id_wharehouse"] = (isset($magcustom_field->user_id_wharehouse))?$magcustom_field->user_id_wharehouse:0;
     $form['in_annota'] = "";
     $form['in_scorta'] = 0;
     $form['in_quamag'] = 0;
@@ -2501,6 +2521,7 @@ echo '<div class="box-primary table-responsive"><table id="products-list" class=
 			<tr>
 				<th></th>
 				<th>' . $script_transl[20] . '</th>
+				<th>magazzino</th>
 				<th>' . $script_transl[21] . '</th>
 				<th>' . $script_transl[22] . '</th>
                 <th>' . $script_transl[16] . '</th>
@@ -2563,6 +2584,7 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['ritenuta'] . "\" name=\"rows[$k][ritenuta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['codric'] . "\" name=\"rows[$k][codric]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['id_wharehouse'] . "\" name=\"rows[$k][id_wharehouse]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
@@ -2615,9 +2637,9 @@ foreach ($form['rows'] as $k => $v) {
 						<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
 							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
 						</button>
-			 		</td>
-					<td>
-						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
+			 		</td>';
+echo '<td><small>'.$magazz->selectIdWharehouse('rows[' . $k . '][id_wharehouse]',$v["id_wharehouse"],true,'col-xs-12',$v['codart'],gaz_format_date($form['datemi']),($docOperat[$form['tipdoc']]*$v['quanti']*-1)).'</small></td>';
+echo '<td><input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" />
 					';					
             if ($v['lot_or_serial'] >= 1) { // se l'articolo prevede lotti				
                 $lm->getAvailableLots($v['codart'], $v['id_mag']);
@@ -2729,8 +2751,9 @@ foreach ($form['rows'] as $k => $v) {
 			}
 			// fine apro SIAN
 
-            echo '</td>
-					<td>
+            echo '</td>';
+		
+echo '<td>
 						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" />
 					</td>
 					<td>
@@ -3177,7 +3200,7 @@ foreach ($form['rows'] as $k => $v) {
 /** ENRICO FEDELE */
 /* Nuovo alert per scontistica, da visualizzare rigorosamente dopo l'ultima riga inserita */
 if (count($form['rows']) > 0) {
-    $msgtoast = $upd_mm->toast($msgtoast);  //lo mostriamo
+    $msgtoast = $magazz->toast($msgtoast);  //lo mostriamo
 
 } else {
     echo '<tr id="alert-zerorows">
@@ -3313,10 +3336,10 @@ if ($toDo == "insert"){
         </div>
         <div class="row">
             
-            <?php
-            if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
-            ?>
-            <div class="col-xs-6 col-sm-6 col-md-9 text-right"> 
+<?php
+if (substr($form['in_status'], 0, 6) != "UPDROW") { //se non è un rigo da modificare
+?>
+            <div class="col-sm-6 col-md-3 col-lg-7"> 
             <!--<div class="form-group col-xs-12 col-sm-6 col-md-3">-->
                 <a id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-export"></i><?php //echo $script_transl['add_article']; ?></a>
             <!--</div>-->
@@ -3329,11 +3352,16 @@ if ($toDo == "insert"){
 <?php
 }else{
 ?>
-            <div class="col-xs-6 col-sm-6 col-md-3"></div>
+            <div class="col-sm-6 col-md-3 col-lg-7"></div>
 <?php    
 }
 ?>
-            <div class="form-group col-xs-6 col-sm-6 col-md-3 text-right"> 
+			<div class="col-xs-12 col-sm-6 col-lg-3"><small>Magazzino</small><br/>
+<?php 
+$magazz->selectIdWharehouse('in_id_wharehouse',$form["in_id_wharehouse"],false,'col-xs-12');
+?>
+			</div>
+            <div class="form-group col-sm-6 col-md-3 col-lg-2 text-right"> 
                 <button type="submit" class="btn btn-success btn-sm" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow'] ?>" tabindex="6"><i class="glyphicon glyphicon-ok"> Conferma </i></button>
             </div>
 		</div>
