@@ -2418,7 +2418,7 @@ $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['
 						'td_content' => ' title="' . $script_transl['update'] . $script_transl['thisrow'] . ' Sottoscorta =' . $v['scorta'] . '" '
 					),
 					array('head' => 'Magazzino', 'class' => '',
-						'value' => 	'<small>'.$magazz->selectIdWharehouse('rows[' . $k . '][id_wharehouse]',$v["id_wharehouse"],true,'col-xs-12',$v['codart'],gaz_format_date($form['datreg']),$v['quanti']).'</small>'
+						'value' => 	'<small>'.$magazz->selectIdWharehouse('rows[' . $k . '][id_wharehouse]',$v["id_wharehouse"],true,'col-xs-12',$v['codart'],gaz_format_date($form['datreg']),($docOperat[$form['tipdoc']]*$v['quanti']*-1)).'</small>'
 					),
 					array('head' => $script_transl["codice_fornitore"], 'class' => '',
 						'value' => '<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][codice_fornitore]" value="' . $v['codice_fornitore'] . '"/>'

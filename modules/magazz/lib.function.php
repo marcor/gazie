@@ -962,9 +962,13 @@ class magazzForm extends GAzieForm {
         $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" onchange="this.form.submit();" '.$opt_style.' >';
         $acc .= '<option value="0"';
         $acc .= intval($val)==0?' selected ':' ';
-		$opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';	
+		if($quanti){
+			$opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';	
+		}
 		$acc .= ' '.$opt_style.'>Magazzino sede';
-		$acc .= isset($available['oth'][0])?' disp:'.$available['oth'][0]:' disp:0';
+		if($quanti){
+			$acc .= isset($available['oth'][0])?' disp:'.$available['oth'][0]:' disp:0';
+		}
 		$acc .= '</option>';
         $rs = gaz_dbi_query($query);
         while ($r = gaz_dbi_fetch_array($rs)) {
@@ -976,12 +980,12 @@ class magazzForm extends GAzieForm {
 			if($quanti){
 				$opt_style=(!isset($available['oth'][$r['id']])||$quanti>$available['oth'][$r['id']])?'style="color:red;"':'style="color:green;"';	
 			}
-
             $acc .= '<option value="'.$r['id'] . '" '.$selected.' '.$opt_style.'>'.$r['name'];
-			$acc .= isset($available['oth'][$r['id']])?' disp:'.$available['oth'][$r['id']]:' disp:0';
+			if($quanti){
+				$acc .= isset($available['oth'][$r['id']])?' disp:'.$available['oth'][$r['id']]:' disp:0';
+			}
 			$acc .= '</option>';
-        }
-		
+        }		
 		$acc .='</select>';
 		if ($ret_type){
 			return $acc;

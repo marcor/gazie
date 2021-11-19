@@ -590,7 +590,7 @@ $strScript = array("browse_document.php" =>
         )
     ),
 	"admin_wharehouse.php" =>
-    array('title' => 'Lista dei magazzini',
+    array('title' => 'Lista dei magazzini ( oltre la sede )',
         'ins_this' => 'Inserimento nuovo magazzino',
         'upd_this' => 'Modifica il magazzino',
         'err' => array(
