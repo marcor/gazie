@@ -62,7 +62,7 @@ class Template extends TCPDI {
         $this->cliente4b = $docVars->cliente4b; // Nazione
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
         $this->agente = $docVars->name_agente;
-        if ( $docVars->destinazione == "" ) {
+        if ( $docVars->destinazione == "" && isset($docVars->client['destin'])) {
             $this->destinazione = $docVars->client['destin'];
         } else {
             $this->destinazione = $docVars->destinazione;

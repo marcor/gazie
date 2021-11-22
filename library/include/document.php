@@ -49,7 +49,7 @@ class DocContabVars {
         $banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
         $this->banapp =($banapp)?$banapp:array('descri'=>'');
         $anagrafica = new Anagrafica();
-        $this->banacc = $anagrafica->getPartner($this->pagame['id_bank']);
+        $this->banacc =($this->pagame)?$anagrafica->getPartner($this->pagame['id_bank']):'';
         $vettor = gaz_dbi_get_row($gTables['vettor'], "codice", $tesdoc['vettor']);
         $this->vettor =($vettor)?$vettor:array('ragione_sociale'=>'','indirizzo'=>'','citta'=>'','provincia'=>'');
         $this->tableName = $tableName;
