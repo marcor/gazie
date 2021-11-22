@@ -282,13 +282,23 @@ class DDT extends Template_con_scheda
             $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C',0,'',1);
         }
         $this->Cell(51,5,'Spedizione','LTR',0,'C',1);
-        $this->Cell(114,5,'Vettore','LTR',0,'C',1);
+		if (empty($this->docVars->vettor['ragione_sociale'])) {
+			$this->Cell(114,5,'Vettore','LTR',0,'C',1);
+		} else {
+			$this->Cell(57,5,'Imballo','LTR',0,'C',1);
+			$this->Cell(57,5,'Porto','LTR',0,'C',1);
+		}
         $this->Cell(22,5,'Trasporto','LTR',1,'C',1);
         $this->Cell(51,5,$this->tesdoc['spediz'],'LBR',0,'C');
-        $this->Cell(114,5,$this->docVars->vettor['ragione_sociale'].' '.
-                          $this->docVars->vettor['indirizzo'].' '.
-                          $this->docVars->vettor['citta'].' '.
-                          $this->docVars->vettor['provincia'],'LBR',0,'C',0,'',1);
+		if (empty($this->docVars->vettor['ragione_sociale'])) {
+			$this->Cell(114,5,$this->docVars->vettor['ragione_sociale'].' '.
+							  $this->docVars->vettor['indirizzo'].' '.
+							  $this->docVars->vettor['citta'].' '.
+							  $this->docVars->vettor['provincia'],'LBR',0,'C',0,'',1);
+        } else {
+			$this->Cell(57,5,$this->tesdoc['imball'],'LBR',0,'C');
+			$this->Cell(57,5,$this->tesdoc['portos'],'LBR',0,'C',0,'',1);
+        }
         if ($this->docVars->tesdoc['traspo'] == 0) {
             $ImportoTrasporto = "";
         } else {
@@ -296,10 +306,10 @@ class DDT extends Template_con_scheda
         }
         $this->Cell(22,5,$ImportoTrasporto,'LBR',1,'C');
         $this->Cell(51,5,'Inizio trasporto','LTR',0,'C',1);
-        if (empty($this->docVars->vettor['ragione_sociale'])){
-            $signature=' Firma del conducente ';
+        if (empty($this->docVars->vettor['ragione_sociale'])) {
+            $signature = ' Firma del conducente ';
         } else {
-            $signature=' Firma del vettore ';
+            $signature = ' Firma del vettore ';
         }
         $this->Cell(68,5,$signature,'LTR',0,'C',1);
         $this->Cell(68,5,'Firma destinatario','LTR',1,'C',1);
