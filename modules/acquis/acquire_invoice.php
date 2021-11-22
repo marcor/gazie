@@ -1324,7 +1324,6 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	if (empty($form['curr_doc']) && count($docs) > 1) {
 ?>
 		<div class="row">
-			<div class="col-md-12">
 				<div class="form-group">
 					<label for="image" class="col-sm-4 control-label">Scegli la fattura da acquisire</label>
 					<div class="col-sm-12">
@@ -1392,7 +1391,7 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
                 <div>
                 <?php
 				// new_acconcile lo riporto sempre a 0 dopo ogni post e solo quando viene cambiato cambieranno tutti i valori dei conti di costo di tutti i righi
-				$gForm->selectAccount('new_acconcile', 0, array('sub',3),'', false, "col-sm-12 small",'style="max-width: 300px;"', false);
+				$gForm->selectAccount('new_acconcile', 0, array('sub',3),'', false, "col-xs-12 small",'style="max-width: 300px;"', false);
 				?>
                 </div>
             </div>

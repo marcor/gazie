@@ -115,7 +115,7 @@ class acquisForm extends GAzieForm {
 			}
 			$acc .= '</select>';
 		}
-		echo '</div>';
+		$acc .= '</div>';
 		return $acc;
 	}
    
