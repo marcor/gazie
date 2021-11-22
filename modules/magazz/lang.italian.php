@@ -460,7 +460,7 @@ $strScript = array("browse_document.php" =>
 		'ordinabile_value' => array( '' => '----','S' => 'Ordinare','N'=> 'Non ordinare'),
 		'movimentabile' => 'Articolo Movimentabile',
 		'movimentabile_value' => array ( '' => '----','S' => 'Si','N'=>'No','E' => 'Esaurito'),
-		'codice_fornitore' => 'Fornitore di riferimento',
+		'codice_fornitore' => 'Codice usato dal fornitore',
 		'utilizzato' => 'Utilizzato',
         'depli_public' => 'Pubblica sul catalogo',
         'depli_public_value' => array(0 => 'No', 1 => 'Si'),

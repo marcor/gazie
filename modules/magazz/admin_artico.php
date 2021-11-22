@@ -706,6 +706,15 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+                <div id="codFor" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="codice_fornitore" class="col-sm-4 control-label"><?php echo $script_transl['codice_fornitore']; ?></label>
+                            <input class="col-sm-8" type="text" value="<?php echo $form['codice_fornitore']; ?>" name="codice_fornitore" maxlength="50" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="uniAcq" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
