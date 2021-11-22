@@ -30,7 +30,7 @@ $admin_aziend = checkAdmin();
 $msg = "";
 $warnmsg = "";
 $lm = new lotmag;
-$gForm = new magazzForm;
+$magazz= new magazzForm;
 $sil= new silos();
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
@@ -147,6 +147,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$prev_qta['quanti']=0;
 	}
     $form['id_orderman'] = $result['id_orderman'];
+    $form['id_warehouse'] = $result['id_warehouse'];
     $resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
     if ($form['id_orderman'] > 0) {
 		$form['coseprod']=$resultorderman['description'];
@@ -186,6 +187,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	$form['recip_stocc_destin'] = $_POST['recip_stocc_destin'];
 	$form['coseprod']= $_POST['coseprod'];
     $form['id_orderman'] = intval($_POST['id_orderman']);
+    $form['id_warehouse'] = intval($_POST['id_warehouse']);
 	if (isset($_POST['caumag']) && intval($_POST['caumag'])>0 and intval($form['caumag'])<80) {
 		$causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $_POST['operat']= $causa['operat'];
@@ -527,6 +529,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['cosear'] = "";
     $form['id_rif'] = 0;
     $form['id_orderman'] = 0;
+	// dal custom field di admin_module relativo al magazzino trovo il magazzino di default
+	$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+	$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+	$magcustom_field=json_decode($magadmin_module['custom_field']);
+	$form["id_warehouse"] = (isset($magcustom_field->user_id_warehouse))?$magcustom_field->user_id_warehouse:0;
 	$form['coseprod']="";
 }
 
@@ -582,7 +589,10 @@ echo "<input type=\"hidden\" name=\"status\" value=\"" . $form['status'] . "\">\
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
 $importo_rigo = CalcolaImportoRigo($form['quanti'], $form['prezzo'], $form['scorig']);
 $importo_totale = CalcolaImportoRigo(1, $importo_rigo, $form['scochi']);
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+?>
+<div class="table-responsive">
+<table class="Tmiddle table table-striped table-bordered table-condensed">
+<?php
 
 if (!empty($msg)) {
     $message = "";
@@ -610,7 +620,7 @@ if (!empty($warnmsg)) {
     }
     echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
 }
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td><td class=\"FacetDataTD\">\n";
+echo "<tr><td>" . $script_transl[1] . "</td><td>\n";
 echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
     $selected = "";
@@ -636,7 +646,7 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
     echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 echo "\t </select></td>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">\n";
+echo "<td>" . $script_transl[2] . "</td><td>\n";
 echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.submit()\" >\n";
 echo "<option value=\"\">-------------</option>\n";
 $result = gaz_dbi_dyn_query("*", $gTables['caumag'], " type_cau <> 1 ", "codice desc, descri asc"); // Carico le causali escludendo quelle del modulo CAMP
@@ -655,7 +665,7 @@ echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name
 		</td>
 	   </tr>';*/
 /** ENRICO FEDELE */
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "&hArr;" . $script_transl[4] . "</td><td class=\"FacetDataTD\">\n";
+echo "<tr><td>" . $script_transl[3] . "&hArr;" . $script_transl[4] . "</td><td>\n";
 $messaggio = "";
 $ric_mastro = substr($form['clfoco'], 0, 3);
 echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"" . $form['clfoco'] . "\">\n";
@@ -711,7 +721,7 @@ if (substr($form["clfoco"], 0, 3) == $admin_aziend['masfor']) {
 } else {
     $unimis = "unimis";
 }
-echo "</td><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">\n";
+echo "</td><td>" . $script_transl[8] . "</td><td>\n";
 echo "\t <select name=\"giodoc\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
     $selected = "";
@@ -738,9 +748,9 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
     echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 echo "\t </select></td></tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\"  name=\"desdoc\"></td>";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[10] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['scochi'] . "\" maxlength=\"5\"  name=\"scochi\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>";
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
+echo "<tr><td>" . $script_transl[9] . "</td><td ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\"  name=\"desdoc\"></td>";
+echo "<td>" . $script_transl[10] . "</td><td ><input type=\"text\" value=\"" . $form['scochi'] . "\" maxlength=\"5\"  name=\"scochi\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>";
+echo "<tr><td>" . $script_transl[7] . "</td><td>\n";
 $messaggio = "";
 
 $ric_mastro = substr($form['artico'], 0, 3);
@@ -989,11 +999,11 @@ if ($form['SIAN']>0 AND $form['operat']<>0){
 
 
 	
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\"  name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();this.form.submit();\">".${'print_'.$unimis}."</td></tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\"  name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[14] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['scorig'] . "\" maxlength=\"4\"  name=\"scorig\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $strScript["report_movmag.php"][7] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $importo_totale . "\" name=\"total\"  readonly />\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $strScript["admin_caumag.php"][4] . "</td><td class=\"FacetDataTD\">\n";
+echo "<td>" . $script_transl[12] . "</td><td ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\"  name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();this.form.submit();\">".${'print_'.$unimis}."</td></tr>\n";
+echo "<tr><td>" . $script_transl[13] . "</td><td ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\"  name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";
+echo "<td>" . $script_transl[14] . "</td><td ><input type=\"text\" value=\"" . $form['scorig'] . "\" maxlength=\"4\"  name=\"scorig\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>\n";
+echo "<tr><td>" . $strScript["report_movmag.php"][7] . "</td><td ><input type=\"text\" value=\"" . $importo_totale . "\" name=\"total\"  readonly />\n";
+echo "<td>" . $strScript["admin_caumag.php"][4] . "</td><td>\n";
 echo "<select name=\"operat\" class=\"FacetSelect\">\n";
 for ($counter = -1; $counter <= 1; $counter++) {
     $selected = "";
@@ -1002,10 +1012,12 @@ for ($counter = -1; $counter <= 1; $counter++) {
     }
     echo "<option value=\"$counter\" $selected > " . $strScript["admin_caumag.php"][$counter + 9] . "</option>\n";
 }
-echo "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\">Produzione</td><td class=\"FacetDataTD\" colspan=3 >";
+echo "</select></td></tr><tr><td>Produzione</td><td>";
 $select_production = new selectproduction("id_orderman");
 $select_production->addSelected($form['id_orderman']);			
 $select_production->output($form['coseprod']);
+echo '</td><td>Magazzino</td><td>';
+$magazz->selectIdWarehouse('id_warehouse',$form["id_warehouse"],false,'col-xs-12');
 echo "</td>\n";
 echo "</tr><tr><td colspan=\"3\"><input type=\"reset\" name=\"Cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
 echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
