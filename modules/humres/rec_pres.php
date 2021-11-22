@@ -36,10 +36,11 @@ $date=substr($_POST['date'],0,10);
 // provo a recuperare sempre e comunque staff_worked_hours 
 $work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $id_staff, "AND work_day = '$date'"); // mi carico il relativo rigo di staff_worked_hours
 
-if ($work_h){
-	$id_tes = $work_h['id_tes'];
-} else {
-	// non avendolo inserisco un rigo in tesbro	con tipdoc=PRW
+$tesbro_prw = gaz_dbi_get_row($gTables['tesbro'],'datemi', $date, "AND tipdoc = 'PRW'"); // controllo se in quel giorno è stato registrato almeno un lavoro
+
+if ($tesbro_prw){
+	$id_tes = $tesbro_prw['id_tes'];
+} else { // non avendolo inserisco un rigo in tesbro con tipdoc=PRW
 	$id_tes = gaz_dbi_table_insert("tesbro", ['tipdoc'=>'PRW','datemi'=>$date]);
 }
 
@@ -136,3 +137,6 @@ if (isset($_POST['rec_pres'])) {
 foreach ($deleted_rows as $del_row) { // gli eventuali righi rimanenti
 	gaz_dbi_del_row($gTables['staff_work_movements'], "id", $del_row);
 }
+
+// elimino il rigo tipdoc "PRW" in tesbro quando questo non ha righi 
+gaz_dbi_query("DELETE FROM " . $gTables['tesbro'] . " WHERE tipdoc='PRW' AND datemi = '".$date."' AND NOT EXISTS (SELECT NULL FROM ".$gTables['rigbro']." WHERE id_tes = ".$id_tes.")"); 
