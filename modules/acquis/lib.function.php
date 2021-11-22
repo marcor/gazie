@@ -95,28 +95,30 @@ class acquisForm extends GAzieForm {
         echo "\t </select>\n";
     }
 
-   function concileArtico($name,$key,$val,$class='small') {
-      global $gTables;
-	  $acc='';
-	  $query = 'SELECT * FROM `' . $gTables['artico'] . '`  ORDER BY `catmer`,`codice`';
-      $acc .= '<select id="'.$name.'" name="'.$name.'" class="'.$class.'">';
-      $acc .= '<option value="" style="background-color:#5bc0de;">NON IN MAGAZZINO</option>';
-      $acc .= '<option value="Insert_New" style="background-color:#f0ad4e;">INSERISCI COME NUOVO</option>';
-      $acc .= '<option value="Insert_W-lot" style="background-color:#adf04e;">INSERISCI NUOVO C/LOTTO</option>';
-      $acc .= '<option value="Insert_W-matr" style="background-color:#f04ead;">INSERISCI NUOVO C/MATRICOLA</option>';
-      $result = gaz_dbi_query($query);
-      while ($r = gaz_dbi_fetch_array($result)) {
-          $selected = '';
-          $setstyle = '';
-          if ($r[$key] == $val) {
-              $selected = " selected ";
-              $setstyle = ' style="background-color:#5cb85c;" ';
-          }
-          $acc .= '<option class="small" value="'.$r[$key].'"'.$selected.''.$setstyle.'>'.$r['codice'].'-'.substr($r['descri'],0,30).'</option>';
-      }
-      $acc .= '</select>';
+	function concileArtico($name,$search,$val) {
+		global $gTables;
+		$selopt=[''=>['bgc'=>'ffffff','des'=>'NON IN MAGAZZINO'],'Insert_from_db'=>['bgc'=>'adf04e','des'=>'CERCA ARTICOLO MAGAZZINO'],'Insert_New'=>['bgc'=>'f0ad4e','des'=>'INSERISCI COME NUOVO'],'Insert_W_lot'=>['bgc'=>'5bc0de','des'=>'INSERISCI NUOVO C/LOTTO'],'Insert_W_matr'=>['bgc'=>'f04ead','des'=>'INSERISCI NUOVO C/MATRICOLA']];
+		$art = gaz_dbi_get_row($gTables['artico'], 'codice', $val);
+		$acc = '<div class="col-xs-12">';
+		if ($art) {
+			$acc .= '<input type="submit" class="bg-info" tabindex="999" value="'.$art['descri'].'" name="change" onclick="this.form.hidden_req.value=\'change_'.$name.'\';" title="Cambia articolo">';
+			$acc .= '<input type="hidden" name="search_'.$name.'" value="'.$art['descri'].'" />';
+			$acc .= '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.$val.'">';
+		} elseif($val=='Insert_from_db'){
+			$acc .= '<input type="text" name="search_'.$name.'" artref="'.$name.'" class="search_artico" placeholder="Cerca articolo" value="' . $search . '"  maxlength="16" />';
+			$acc .= '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.$val.'">';
+		} else {
+			$acc .= '<select id="'.$name.'" name="'.$name.'" onchange="this.form.submit();">';
+			foreach($selopt as $k=>$v){
+				$s=($k==$val)?' selected':'';
+				$acc .= '<option value="'.$k.'" style="background-color:#'.$v['bgc'].';" '.$s.'>'.$v['des'].'</option>';
+			}
+			$acc .= '</select>';
+		}
+		echo '</div>';
 		return $acc;
-   }
+	}
+   
 
    function concile_id_order_row($varname,$val_codart,$val_selected,$class='small') {
       global $gTables;

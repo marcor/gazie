@@ -207,9 +207,15 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	if (!isset($_POST['datreg'])){
 		$form['datreg'] = date("d/m/Y");
 		$form['seziva'] = 1;
+		// adesso metto uno ma dovrò proporre il magazzino di riferimento dell'utente
+		$magmodule = gaz_dbi_get_row($gTables['module'], "name",'magazz');
+		$magadmin_module = gaz_dbi_get_row($gTables['admin_module'], "moduleid",$magmodule['id']," AND adminid='{$admin_aziend['user_name']}' AND company_id=" . $admin_aziend['company_id']);
+		$magcustom_field=json_decode($magadmin_module['custom_field']);
+		$form["in_id_wharehouse"] = (isset($magcustom_field->user_id_wharehouse))?$magcustom_field->user_id_wharehouse:0;
 	} else {
 		$form['datreg'] = substr($_POST['datreg'],0,10);
 		$form['seziva'] = intval($_POST['seziva']);
+		$form['in_id_wharehouse'] = intval($_POST['in_id_wharehouse']);
 	}
 	if (isset($_POST['Submit_file'])) { // conferma invio upload file
         if (!empty($_FILES['userfile']['name'])) {
@@ -515,6 +521,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				// vedo se ho un codice_fornitore in gaz_artico
 				$artico = gaz_dbi_get_row($gTables['artico'], 'codice_fornitore', $form['rows'][$nl]['codice_fornitore']);
 				$form['rows'][$nl]['codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['codice']:'';
+				$form['rows'][$nl]['search_codart'] = ($artico && !empty($form['rows'][$nl]['codice_fornitore']))?$artico['descri']:'';
 				$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
 				if ($item->getElementsByTagName("Quantita")->length >= 1) {
 					$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
@@ -588,8 +595,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				}
 				$post_nl = $nl-1;
 				if (empty($_POST['Submit_file']) && !isset($_POST['Select_doc'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+				
 					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',(isset($_POST['codart_'.$post_nl]))?substr($_POST['codart_'.$post_nl],0,15):'');
+					if ($_POST['hidden_req']=='change_codart_'.$post_nl){
+						$form['codart_'.$post_nl] ='';
+					}
 					$form['rows'][$nl]['codart']=$form['codart_'.$post_nl];
+					$form['search_codart_'.$post_nl] = isset($_POST['search_codart_'.$post_nl])?substr($_POST['search_codart_'.$post_nl],0,35):'';
+					$form['rows'][$nl]['search_codart']=$form['search_codart_'.$post_nl];
 					$form['codric_'.$post_nl] = (isset($_POST['codric_'.$post_nl]))?intval($_POST['codric_'.$post_nl]):'';
 					$form['codvat_'.$post_nl] = (isset($_POST['codvat_'.$post_nl]))?intval($_POST['codvat_'.$post_nl]):'';
 				} else { 
@@ -598,6 +611,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					} else {
 						$form['rows'][$nl]['codart'] = '';
 						$form['codart_'.$post_nl] ='';
+					}			
+					if (isset( $form['rows'][$nl]['search_codart'])){
+						$form['search_codart_'.$post_nl] = $form['rows'][$nl]['search_codart'];
+					} else {
+						$form['rows'][$nl]['search_codart'] = '';
+						$form['search_codart_'.$post_nl] ='';
 					}			
 					/* al primo accesso dopo l'upload del file propongo:
 					   - la prima data di registrazione utile considerando quella di questa fattura e l'ultima registrazione
@@ -746,6 +765,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$post_nl = $nl-1;
 				if (empty($_POST['Submit_file'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
+					$form['search_codart_'.$post_nl] = substr($_POST['search_codart_'.$post_nl],0,35);
 					$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
 					$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
 				} else {
@@ -754,6 +774,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					} else {
 						$form['rows'][$nl]['codart'] = '';
 						$form['codart_'.$post_nl] ='';
+					}			
+					if (isset( $form['rows'][$nl]['search_codart'])){
+						$form['search_codart_'.$post_nl] = $form['rows'][$nl]['search_codart'];
+					} else {
+						$form['rows'][$nl]['search_codart'] = '';
+						$form['search_codart_'.$post_nl] ='';
 					}			
 					/* al primo accesso dopo l'upload del file propongo:
 				   - i costi sulle linee (righe) in base al fornitore
@@ -1137,12 +1163,12 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 							gaz_dbi_table_insert('artico', $artico);
 							$form['rows'][$i]['codart'] = $new_codart;
 							break;
-							case 'Insert_W-lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
+							case 'Insert_W_lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
 							$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
 							gaz_dbi_table_insert('artico', $artico);
 							$form['rows'][$i]['codart'] = $new_codart;
 							break;
-							case 'Insert_W-matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
+							case 'Insert_W_matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
 							$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
 							gaz_dbi_table_insert('artico', $artico);
 							$form['rows'][$i]['codart'] = $new_codart;
@@ -1254,25 +1280,40 @@ function setDate(name) {
 ";
 ?>
 <script type="text/javascript">
-    $(function () {
-        $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
-        $("#datreg,#new_acconcile").change(function () {
-            this.form.submit();
-        });
+$(function(){
+    $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+    $("#datreg,#new_acconcile").change(function () {
+        this.form.submit();
     });
+    $( ".search_artico" ).autocomplete({
+        source: "search.php?opt=invoiceart",
+        minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+        // optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+        select: function(event, ui) {
+			var vn = $(this).attr('artref');
+			$('#'+vn).val(ui.item.value);
+            this.form.submit();
+        }
+    });
+});
 </script>
 <div align="center" ><b><?php echo $script_transl['title'];?></b></div>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
     <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>">
     <input type="hidden" name="curr_doc" value="<?php echo $form['curr_doc']; ?>">
+    <input type="hidden" name="hidden_req" id="hidden_req" value="">
 <?php
-	// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
-    if (count($msg['err']) > 0) { // ho un errore
-        $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
-    }
-    if (count($msg['war']) > 0) { // ho un alert
-        $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
-    }
+// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
+if (count($msg['err']) > 0) { // ho un errore
+    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+}
+if (count($msg['war']) > 0) { // ho un alert
+    $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
+}
 
 if ($toDo=='insert' || $toDo=='update' ) {
 	if ($f_ex){
@@ -1320,15 +1361,23 @@ if ($toDo=='insert' || $toDo=='update' ) {
     </div>
     <div class="panel-body">
         <div class="form-group">
-            <div class="form-group col-md-6 col-lg-3 nopadding">
+            <div class="form-group col-md-4 col-lg-2 nopadding">
                  <label for="seziva" class="col-form-label"><?php echo $script_transl['seziva']; ?></label>
                  <div>
                         <?php
-                        $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-lg-12", '', 'style="max-width: 100px;"');
+                        $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-xs-12", '', 'style="max-width: 100px;"');
                         ?>
                 </div>
             </div>
-            <div class="form-group col-md-6 col-lg-3 nopadding">
+            <div class="form-group col-md-4 col-lg-2 nopadding">
+				<label for="in_id_wharehouse" class="col-form-label">Magazzino</label>
+                 <div>
+<?php 
+$magazz->selectIdWharehouse('in_id_wharehouse',$form["in_id_wharehouse"],false,'col-xs-12 col-sm-6');
+?>
+				</div>
+            </div>
+            <div class="form-group col-md-4 col-lg-2 nopadding">
                  <label for="datreg" class="col-form-label"><?php echo $script_transl['datreg']; ?></label>
                  <div>
                      <input type="text" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
@@ -1396,7 +1445,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 			}
             $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
-			$codart_dropdown = $gForm->concileArtico('codart_'.$k,'codice',$form['codart_'.$k]);
+			$codart_select = $gForm->concileArtico('codart_'.$k,$form['search_codart_'.$k],$form['codart_'.$k]);
 			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
 			if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo 
 				$v['codice_fornitore'] = '';
@@ -1410,7 +1459,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 				$v['pervat'] = '';
 				$codric_dropdown = '<input type="hidden" name="codric_'.$k.'" value="000000000" />';
 				$codvat_dropdown = '<input type="hidden" name="codvat_'.$k.'" value="000000000" />';
-				$codart_dropdown = '<input type="hidden" name="codart_'.$k.'" />';
+				$codart_select = '<input type="hidden" name="codart_'.$k.'" /><input type="hidden" name="search_codart_'.$k.'" />';
 			} else {
 				//$v['prelis']=gaz_format_number($v['prelis']);
 				$v['amount']=gaz_format_number($v['amount']);
@@ -1424,7 +1473,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
                 array('head' => $script_transl["codart"], 'class' => '',
                     'value' => $v['codice_fornitore']),
                 array('head' => $script_transl["codart"], 'class' => '',
-                    'value' => $codart_dropdown),
+                    'value' => $codart_select),
                 array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
                     'value' => $v['descri']),
                 array('head' => $script_transl["unimis"], 'class' => '',
