@@ -744,7 +744,7 @@ class magazzForm extends GAzieForm {
         return $return_val;
     }
 
-    function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='',$id_wharehouse=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
+    function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='',$id_warehouse=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
         // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, datreg)
         global $gTables, $admin_aziend;
 		$synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];		
@@ -803,7 +803,7 @@ class magazzForm extends GAzieForm {
             'scochi' => $sconto_chiusura,
             'id_rif' => $id_rigo_doc,
             'artico' => $codart,
-            'id_wharehouse' => $id_wharehouse,
+            'id_warehouse' => $id_warehouse,
             'quanti' => $quantita,
             'prezzo' => $prezzo,
             'scorig' => $sconto_rigo,
@@ -915,7 +915,7 @@ class magazzForm extends GAzieForm {
       return $return;	
     }
 	
-    function getStockAvailability ($item_code,$id_wharehouse=false,$date_ref=false) {
+    function getStockAvailability ($item_code,$id_warehouse=false,$date_ref=false) {
 		$date_ref=($date_ref)?$date_ref:date("Y-m-d");
 		// questa funzione restituisce la quantità disponibile dell'articolo passato come referenza, se non si passa la data si considera quella odierna
 		// restituisce un array con tre indici 'tot' il totale su tutti i magazzini,'val' il valore del magazzino se passato come referenza, altrimenti sarà false, e un array con i valori degli altri magazzini e indice gli id degli altri magazzini, se non passato di tutti  
@@ -923,32 +923,32 @@ class magazzForm extends GAzieForm {
         $where = "artico = '".$item_code."' AND caumag <= 99 AND datreg <= '".$date_ref."'";
         $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date 
 		$acc=['tot'=>0,'val'=>false,'oth'=>[]];
-        $rs_movmag = gaz_dbi_dyn_query("operat,id_wharehouse,quanti", $gTables['movmag'],$where,$orderby);
+        $rs_movmag = gaz_dbi_dyn_query("operat,id_warehouse,quanti", $gTables['movmag'],$where,$orderby);
         while ($r = gaz_dbi_fetch_array($rs_movmag)){
 			$qua=$r['operat']*$r['quanti'];
 			$acc['tot']+=$qua;
-            if ($id_wharehouse) { // ho passato il magazzino
-				if ($r['id_wharehouse']==$id_wharehouse){
+            if ($id_warehouse) { // ho passato il magazzino
+				if ($r['id_warehouse']==$id_warehouse){
 					$acc['val']+=$qua;
 				}else{
-					if (isset($acc['oth'][$id_wharehouse])){
-						$acc['oth'][$id_wharehouse]+=$qua;
+					if (isset($acc['oth'][$id_warehouse])){
+						$acc['oth'][$id_warehouse]+=$qua;
 					} else {
-						$acc['oth'][$id_wharehouse]=$qua;
+						$acc['oth'][$id_warehouse]=$qua;
 					}
 				}
             } else { // non ho passato magazzini
-				if (isset($acc['oth'][$id_wharehouse])){
-					$acc['oth'][$id_wharehouse]+=$qua;
+				if (isset($acc['oth'][$id_warehouse])){
+					$acc['oth'][$id_warehouse]+=$qua;
 				} else {
-					$acc['oth'][$id_wharehouse]=$qua;
+					$acc['oth'][$id_warehouse]=$qua;
 				}
             }
         }
         return $acc;
     }
 
-    function selectIdWharehouse($name,$val,$ret_type=false,$class='',$codart=false,$dat_ref=false,$quanti=false) {
+    function selectIdWarehouse($name,$val,$ret_type=false,$class='',$codart=false,$dat_ref=false,$quanti=false) {
 		$available['oth']=[];
 		if ($codart) { // se è riferito ad un articolo sulle option visualizzo anche la disponibilità
 			$available=$this->getStockAvailability($codart,false,$dat_ref);
@@ -958,7 +958,7 @@ class magazzForm extends GAzieForm {
 			$opt_style=(!isset($available['oth'][$val])||$quanti>$available['oth'][$val])?'style="color:red;"':'style="color:green;"';	
 		}
         global $gTables;
-        $query = 'SELECT id,name FROM ' . $gTables['wharehouse'] . ' WHERE 1 ORDER BY id';
+        $query = 'SELECT id,name FROM ' . $gTables['warehouse'] . ' WHERE 1 ORDER BY id';
         $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" onchange="this.form.submit();" '.$opt_style.' >';
         $acc .= '<option value="0"';
         $acc .= intval($val)==0?' selected ':' ';

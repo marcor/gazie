@@ -589,7 +589,7 @@ $strScript = array("browse_document.php" =>
             'Cambia fornitore'
         )
     ),
-	"admin_wharehouse.php" =>
+	"admin_warehouse.php" =>
     array('title' => 'Lista dei magazzini ( oltre la sede )',
         'ins_this' => 'Inserimento nuovo magazzino',
         'upd_this' => 'Modifica il magazzino',

@@ -33,7 +33,7 @@ $transl['magazz'] = array('name' => "Warehouse",
                                          7 =>array("Articles selection for deply creation","Catalogue"),
                                          8 =>array("Stock statistics","Statistics"),
                                          9 =>array("Statistic groups manage","Statistic groups"),
-                                         10 =>array("Wharehouse manage","Wharehouse")
+                                         10 =>array("Warehouse manage","Warehouse")
                                          ),
                           'm3' => array( 1 =>array("Insert new item","New good/service"),
                                          2 =>array("Insert new item group","New item group"),
@@ -49,7 +49,7 @@ $transl['magazz'] = array('name' => "Warehouse",
                                          12 =>array("Insert new statistic group","New statistic group"),
                                          13 =>array("Situazione di Magazzino","Visualizza situazione di magazzino"),
                                          14 =>array("Insert new group","Insert new group"),
-                                         14 =>array("Insert new wharehouse","Insert new wharehouse")
+                                         14 =>array("Insert new warehouse","Insert new warehouse")
                                       )
                           );
 ?>

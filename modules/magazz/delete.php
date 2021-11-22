@@ -73,9 +73,9 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			//Cancello l'articolo
 			$result = gaz_dbi_del_row($gTables['artico'], "codice", $i);
 		break;
-		case "wharehouse":
+		case "warehouse":
 			$i=intval($_POST['ref']);
-			gaz_dbi_del_row($gTables['wharehouse'],"id",$i);
+			gaz_dbi_del_row($gTables['warehouse'],"id",$i);
 		break;
 	}
 }

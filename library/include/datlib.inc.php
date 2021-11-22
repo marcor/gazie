@@ -93,7 +93,7 @@ $tn = array('agenti','agenti_forn','aliiva','artico','artico_group','assets','as
 'contract', 'contract_row','distinta_base','effett','expdoc','extcon','fae_flux','files','imball','instal','letter',
 'liquidazioni_iva', 'lotmag', 'movmag','orderman','pagame','paymov','portos','provvigioni','ragstat',
 'registro_trattamento_dati','rigbro','rigdoc','rigmoc','rigmoi','sconti_articoli','sconti_raggruppamenti','spediz',
-'staff','staff_skills','staff_worked_hours','staff_work_movements','tesbro','tesdoc','tesmov','vettor','wharehouse');
+'staff','staff_skills','staff_worked_hours','staff_work_movements','tesbro','tesdoc','tesmov','vettor','warehouse');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $id . $v;
 }

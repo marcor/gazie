@@ -27,15 +27,15 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
 if (!isset($_POST['hidden_req']) && isset($_GET['id']) && intval($_GET['id']) >= 1 ) { //al primo accesso allo script per update
-    $form = gaz_dbi_get_row($gTables['wharehouse'], 'id', intval($_GET['id']));
+    $form = gaz_dbi_get_row($gTables['warehouse'], 'id', intval($_GET['id']));
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
 } elseif (!isset($_POST['hidden_req']) && !isset($_GET['id'])) { //al primo accesso allo script per insert
-    $form = gaz_dbi_fields('wharehouse');
+    $form = gaz_dbi_fields('warehouse');
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
 } elseif (isset($_POST['id'])) { // accessi successivi
-    $form = gaz_dbi_parse_post('wharehouse');
+    $form = gaz_dbi_parse_post('warehouse');
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req'] = $_POST['hidden_req'];
     if (isset($_POST['ins'])) { // conferma tutto
@@ -88,7 +88,7 @@ if (!isset($_POST['hidden_req']) && isset($_GET['id']) && intval($_GET['id']) >=
                         $form['image'] = file_get_contents($target_filename);
                     }
             } elseif ($form['id']>0) { // altrimenti riprendo la vecchia ma solo se è una modifica
-              $oldimage = gaz_dbi_get_row($gTables['wharehouse'], 'id', $form['id']);
+              $oldimage = gaz_dbi_get_row($gTables['warehouse'], 'id', $form['id']);
               $form['image'] = $oldimage['image'];
             } else {
               $form['image'] = '';
@@ -96,11 +96,11 @@ if (!isset($_POST['hidden_req']) && isset($_GET['id']) && intval($_GET['id']) >=
 
             if ($form['id']==0) { // ho un inserimento
                 unset($form['id']);
-                gaz_dbi_table_insert('wharehouse', $form);
+                gaz_dbi_table_insert('warehouse', $form);
             } else { // modifica
-                gaz_dbi_table_update('wharehouse', ['id',$form['id']], $form);
+                gaz_dbi_table_update('warehouse', ['id',$form['id']], $form);
             }
-            header("Location: report_wharehouse.php");
+            header("Location: report_warehouse.php");
             exit;
         }
     } elseif (isset($_POST['Return'])) { // torno indietro
@@ -157,7 +157,7 @@ if ($form['id'] == 0 ) { // inserimento
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=wharehouse&field=id&value=<?php echo $form['id']; ?>" width="100" >*</label>
+                    <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=warehouse&field=id&value=<?php echo $form['id']; ?>" width="100" >*</label>
                     <div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
                 </div>
             </div>

@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
-$script_transl = HeadMain('', '', 'admin_wharehouse');
+$script_transl = HeadMain('', '', 'admin_warehouse');
 
 // campi ammissibili per la ricerca
 $search_fields = [
@@ -46,7 +46,7 @@ $sortable_headers = array  (
 );
 
 echo "<div align='center' class='FacetFormHeaderFont '>{$script_transl['title']}</div>\n";
-$table = $gTables['wharehouse'];
+$table = $gTables['warehouse'];
  
 $t = new TableSorter(
     $table, 
@@ -60,7 +60,7 @@ $(function() {
 	$("#dialog_delete").dialog({ autoOpen: false });
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
-		$("p#iddescri").html($(this).attr("wharehouse"));
+		$("p#iddescri").html($(this).attr("warehouse"));
 		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
@@ -74,12 +74,12 @@ $(function() {
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
-						data: {'type':'wharehouse',ref:id},
+						data: {'type':'warehouse',ref:id},
 						type: 'POST',
 						url: '../magazz/delete.php',
 						success: function(output){
 		                    //alert(output);
-							window.location.replace("./report_wharehouse.php");
+							window.location.replace("./report_warehouse.php");
 						}
 					});
 				}},
@@ -132,13 +132,13 @@ echo '</tr>';
 while ($r = gaz_dbi_fetch_array($rs)) {
 ?>
 <tr>
- <td class="text-center"><a class="btn btn-xs btn-success btn-block" href="admin_wharehouse.php?Update&id=<?php echo $r["id"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r["id"];?></a></td>
+ <td class="text-center"><a class="btn btn-xs btn-success btn-block" href="admin_warehouse.php?Update&id=<?php echo $r["id"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r["id"];?></a></td>
  <td><?php echo $r["name"]; ?></td>
  <td align="center"> <img width="100" style="cursor: zoom-in;" <?php echo 'src="data:image/jpeg;base64,'.base64_encode( $r['image'] ).'"';?> onclick="this.width=500;" ondblclick="this.width=100;" title="click=zoom doubleclick=thumb" alt="no image" /></td>
  <td><?php echo $r["web_url"]; ?></td>
  <td><?php echo $r["note_other"]; ?></td>
  <td></td>
- <td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" wharehouse="<?php echo $r['name'];?>"><i class="glyphicon glyphicon-remove"></i></a></td>
+ <td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" warehouse="<?php echo $r['name'];?>"><i class="glyphicon glyphicon-remove"></i></a></td>
 </tr>
 <?php    
 }
