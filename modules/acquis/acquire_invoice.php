@@ -604,6 +604,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['search_codart_'.$post_nl] = isset($_POST['search_codart_'.$post_nl])?substr($_POST['search_codart_'.$post_nl],0,35):'';
 					$form['rows'][$nl]['search_codart']=$form['search_codart_'.$post_nl];
 					$form['codric_'.$post_nl] = (isset($_POST['codric_'.$post_nl]))?intval($_POST['codric_'.$post_nl]):'';
+					$form['wharehouse_'.$post_nl] = (isset($_POST['wharehouse_'.$post_nl]))?intval($_POST['wharehouse_'.$post_nl]):0;
+					$form['rows'][$nl]['wharehouse']=$form['wharehouse_'.$post_nl];
 					$form['codvat_'.$post_nl] = (isset($_POST['codvat_'.$post_nl]))?intval($_POST['codvat_'.$post_nl]):'';
 				} else { 
 					if (isset( $form['rows'][$nl]['codart'])){
@@ -631,6 +633,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['datreg'] = gaz_format_date($lr, false, true);
 					}
 					$form['codric_'.$post_nl] = $form['partner_cost'];
+					$form['wharehouse_'.$post_nl] = $form['in_id_wharehouse'];
 					if (preg_match('/TRASP/i',strtoupper($form['rows'][$nl]['descri']))) { // se sulla descrizione ho un trasporto lo propongo come costo d'acquisto
 						$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
 					}
@@ -767,6 +770,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$form['codart_'.$post_nl] = preg_replace("/[^A-Za-z0-9_]i/", '',substr($_POST['codart_'.$post_nl],0,15));
 					$form['search_codart_'.$post_nl] = substr($_POST['search_codart_'.$post_nl],0,35);
 					$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
+					$form['wharehouse_'.$post_nl] = intval($_POST['wharehouse_'.$post_nl]);
 					$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
 				} else {
 					if (isset( $form['rows'][$nl]['codart'])){
@@ -1138,6 +1142,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					// i righi postati hanno un indice diverso
 					$form['rows'][$i]['codart'] = preg_replace("/[^A-Za-z0-9_]i/",'',$_POST['codart_'.$post_nl]);
 					$form['rows'][$i]['codric'] = intval($_POST['codric_'.$post_nl]);
+					$form['rows'][$i]['wharehouse'] = intval($_POST['wharehouse_'.$post_nl]);
 					$form['rows'][$i]['codvat'] = intval($_POST['codvat_'.$post_nl]);
 					$aliiva=$form['rows'][$i]['codvat'];
 					$exist_new_codart=gaz_dbi_get_row($gTables['artico'], "codice", $new_codart);
@@ -1183,18 +1188,17 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					
 					// inserisco il rigo rigdoc
 					$id_rif=rigdocInsert($form['rows'][$i]);	
-									
-					if ($form['rows'][$i]['good_or_service']==0 AND strlen($form['rows'][$i]['codart'])>0 AND $form['tipdoc']!=="AFC"){ // se l'articolo prevede di movimentare il magazzino e non è una nota credito
+					if ($form['rows'][$i]['good_or_service']==0 && strlen($form['rows'][$i]['codart'])>0 && $form['tipdoc']!=="AFC"){ // se l'articolo prevede di movimentare il magazzino e non è una nota credito
 						// Antonio Germani - creo movimento di magazzino sempre perché, se c'erano, sono stati cancellati
-						if ($v['NumeroDDT']>0){ // se c'è un ddt
+						if (isset($v['NumeroDDT']) && $v['NumeroDDT']>0){ // se c'è un ddt
 							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
 							"desdoc"=>"D.d.t. di acquisto n.".$v['NumeroDDT']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
-							"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
+							"datdoc"=>$form['datemi'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"id_wharehouse"=>$form['rows'][$i]['wharehouse'],"quanti"=>$form['rows'][$i]['quanti'],
 							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
 						} else { // se non c'è DDT
 							$rowmag=array("caumag"=>$form['caumag'],"type_mov"=>"0","operat"=>"1","datreg"=>$form['datreg'],"tipdoc"=>"ADT",
 							"desdoc"=>"Fattura di acquisto n.".$form['numfat']."/".$form['seziva']." prot. ".$form['protoc']."/".$form['seziva'],
-							"datdoc"=>$form['datfat'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"quanti"=>$form['rows'][$i]['quanti'],
+							"datdoc"=>$form['datfat'],"clfoco"=>$form['clfoco'],"id_rif"=>$id_rif,"artico"=>$form['rows'][$i]['codart'],"id_wharehouse"=>$form['rows'][$i]['wharehouse'],"quanti"=>$form['rows'][$i]['quanti'],
 							"prezzo"=>$form['rows'][$i]['prelis'],"scorig"=>$form['rows'][$i]['sconto'],'synccommerce_classname'=>$admin_aziend['synccommerce_classname']);
 						}
 					
@@ -1444,6 +1448,7 @@ $magazz->selectIdWharehouse('in_id_wharehouse',$form["in_id_wharehouse"],false,'
 				$form['codric_'.$k]=$new_acconcile;
 			}
             $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
+			$whareh_dropdown = $magazz->selectIdWharehouse('wharehouse_'.$k,$form['wharehouse_'.$k],true,'col-xs-12',$form['codart_'.$k],$datdoc,($docOperat[$tipdoc]*$v['quanti']*-1));
 			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
 			$codart_select = $gForm->concileArtico('codart_'.$k,$form['search_codart_'.$k],$form['codart_'.$k]);
 			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
@@ -1458,7 +1463,8 @@ $magazz->selectIdWharehouse('in_id_wharehouse',$form["in_id_wharehouse"],false,'
 				$v['ritenuta'] = '';
 				$v['pervat'] = '';
 				$codric_dropdown = '<input type="hidden" name="codric_'.$k.'" value="000000000" />';
-				$codvat_dropdown = '<input type="hidden" name="codvat_'.$k.'" value="000000000" />';
+				$whareh_dropdown = '<input type="hidden" name="wharehouse_'.$k.'" value="0" />';
+				$codvat_dropdown = '<input type="hidden" name="codvat_'.$k.'" value="0" />';
 				$codart_select = '<input type="hidden" name="codart_'.$k.'" /><input type="hidden" name="search_codart_'.$k.'" />';
 			} else {
 				//$v['prelis']=gaz_format_number($v['prelis']);
@@ -1472,8 +1478,10 @@ $magazz->selectIdWharehouse('in_id_wharehouse',$form["in_id_wharehouse"],false,'
                     'value' => $k+1),
                 array('head' => $script_transl["codart"], 'class' => '',
                     'value' => $v['codice_fornitore']),
-                array('head' => $script_transl["codart"], 'class' => '',
+                array('head' => 'Articolo', 'class' => '',
                     'value' => $codart_select),
+                array('head' => 'Magazzino', 'class' => '',
+                    'value' => $whareh_dropdown),
                 array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
                     'value' => $v['descri']),
                 array('head' => $script_transl["unimis"], 'class' => '',
