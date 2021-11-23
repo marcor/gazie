@@ -266,9 +266,11 @@ $date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$for
 $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);
 
 if (isset($_POST['preview']) and $msg=='') {
-  $m=getMovements($form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin'],$date_ini,$date_fin);
-  echo '<div class="table-responsive"><table class="table table-striped table-bordered table-condensed">';
-  if (sizeof($m) > 0) {
+	$hrefdoc = json_decode(gaz_dbi_get_row($gTables['config'], 'variable', 'report_movmag_ref_doc')['cvalue']);
+	$rshref=get_object_vars($hrefdoc);
+	$m=getMovements($form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin'],$date_ini,$date_fin);
+	echo '<div class="table-responsive"><table class="table table-striped table-bordered table-condensed">';
+	if (sizeof($m) > 0) {
         $ctr_mv='';
         $ctrl_id=0;
         echo "<tr>";
@@ -276,6 +278,13 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders->output();
         echo "</tr>";
 		foreach ($m AS $key => $mv) {
+			// richiamo il file del modulo che ha generato il movimento di magazzino per avere le informazioni sul documento genitore
+			require_once("../".$rshref[$mv['tipdoc']]."/prepare_ref_doc_movmag.php");
+			$funcn=preg_replace('/[0-9]+/', '', $rshref[$mv['tipdoc']]);
+			$funcn=$funcn.'_prepare_ref_doc';
+			$mv['id_rif']=($mv['id_rif']==0 && $mv['id_orderman']>0 && $mv['tipdoc']=="PRO")?$mv['id_orderman']:$mv['id_rif'];
+			$mv['id_rif']=($mv['id_rif']==0 && $mv['tipdoc']=="MAG")?$mv['id_mov']:$mv['id_rif'];
+			$docdata=$funcn($mv['tipdoc'],$mv['id_rif']);			
             if ($ctr_mv != $mv['artico']) {
                gaz_set_time_limit (30);
                if (!empty($ctr_mv)) {
@@ -292,12 +301,17 @@ if (isset($_POST['preview']) and $msg=='') {
             // passo tutte le variabili al metodo in modo da non costringere lo stesso a fare le query per ricavarsele
             $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method'],$admin_aziend['decimal_price']);
             $mval=end($magval);
-            echo "<tr><td>".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
+            echo '<tr><td class="text-center">'.gaz_format_date($mv['datreg'])."</td>";
             echo "<td align=\"center\">".$mv['caumag'].'-'.substr($mv['descau'],0,20)."</td>";
 			if ($mv['id_orderman']>0){
 				$mv['desdoc'].= ' '.$mv['desorderman'];
 			}
-            echo "<td>".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
+			if (isset($hrefdoc->{$mv['tipdoc']}) && $mv['id_rif'] > 0){ // vedi sopra quando si vuole riferire ad un documento genitore di un modulo specifo
+				echo '<td><a href="'.$docdata['link'].'">'.substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85)."</a></td>\n";
+			} else {
+				echo '<td><a href="admin_movmag.php?id_mov="'.$mv["id_mov"].'&Update">'.substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85)."</a></td>\n";
+			}
+            //echo "<td>".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85);
 			if (intval($mv['id_lotmag'])>0){
 				echo " lotto: ",$mv['id_lotmag'],"-",$mv['identifier'];
 			}
@@ -319,8 +333,8 @@ if (isset($_POST['preview']) and $msg=='') {
          echo '<td colspan="10" class="text-center"><input class="btn btn-warning" type="submit" name="print" value="'.$script_transl['print'].'">';
          echo "\t </td>\n";
          echo "\t </tr>\n";
-  }
-  echo "</table></div></form>";
+	}
+	echo "</table></div></form>";
 }
 ?>
 <?php
