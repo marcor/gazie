@@ -41,12 +41,14 @@ function getMovements($cm_ini,$cm_fin,$art_ini,$art_fin,$date_ini,$date_fin)
                $gTables['artico'].".codice like '".$_POST['ric']."')";
 		$what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri AS descau, ".
+              $gTables['warehouse'].".name AS desmag, ".
               $gTables['clfoco'].".codice, ".
 			  $gTables['lotmag'].".identifier, ".
               $gTables['orderman'].".id AS id_orderman, ".$gTables['orderman'].".description AS desorderman, ".
               $gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".
               $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".image, ".$gTables['artico'].".catmer ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON ".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice
+               LEFT JOIN ".$gTables['warehouse']." ON ".$gTables['movmag'].".id_warehouse = ".$gTables['warehouse'].".id
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
                LEFT JOIN ".$gTables['orderman']." ON ".$gTables['movmag'].".id_orderman = ".$gTables['orderman'].".id
@@ -294,7 +296,7 @@ if (isset($_POST['preview']) and $msg=='') {
                   $sum=0.00;
                }
                echo '<tr>';
-               echo '<td class="FacetDataTD text-center" colspan="10"><b>'.$mv['artico']." - ".$mv['desart']."</b></td>\n";
+               echo '<td class="FacetDataTD text-center" colspan="11"><b>'.$mv['artico']." - ".$mv['desart']."</b></td>\n";
                echo "\t </tr>\n";
             }
 
@@ -303,6 +305,7 @@ if (isset($_POST['preview']) and $msg=='') {
             $mval=end($magval);
             echo '<tr><td class="text-center">'.gaz_format_date($mv['datreg'])."</td>";
             echo "<td align=\"center\">".$mv['caumag'].'-'.substr($mv['descau'],0,20)."</td>";
+            echo '<td align="center">'.($mv['desmag']==''?'Sede':substr($mv['desmag'],0,25))."</td>";
 			if ($mv['id_orderman']>0){
 				$mv['desdoc'].= ' '.$mv['desorderman'];
 			}
@@ -330,7 +333,7 @@ if (isset($_POST['preview']) and $msg=='') {
             $ctr_mv = $mv['artico'];
          }
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-         echo '<td colspan="10" class="text-center"><input class="btn btn-warning" type="submit" name="print" value="'.$script_transl['print'].'">';
+         echo '<td colspan="11" class="text-center"><input class="btn btn-warning" type="submit" name="print" value="'.$script_transl['print'].'">';
          echo "\t </td>\n";
          echo "\t </tr>\n";
 	}

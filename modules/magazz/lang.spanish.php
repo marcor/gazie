@@ -259,7 +259,7 @@ $strScript = array("browse_document.php" =>
         'bot' => 'a riportare : ',
         'top' => 'da riporto :  ',
         'item_head' => array('Codigo', 'Cat.Merc', 'Descripcion', 'UM', 'Min.Exist.'),
-        'header' => array('Fecha', 'Causal', 'Documento descripcion',
+        'header' => array('Fecha', 'Causal', 'Warehouse' => '', 'Documento descripcion',
             'Precio', 'UM', 'Cantidad',
             ' carga', ' descarga',
             'Cantid. exist.', 'Val. exist.'

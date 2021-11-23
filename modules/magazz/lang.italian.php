@@ -267,7 +267,7 @@ $strScript = array("browse_document.php" =>
         'cm_fin' => 'Categoria merceologica fine ',
         'art_fin' => 'Articolo fine ',
         'date_fin' => 'Data registrazione fine ',
-        'header' => array('Data' => '', 'Causale' => '', 'Descrizione<br \>documento' => '',
+        'header' => array('Data' => '', 'Causale' => '', 'Magazzino' => '', 'Descrizione<br \>documento' => '',
             'Prezzo' => '', 'UM' => '', 'Quantit&agrave;' => '',
             'Valore<br \>carico' => '', 'Valore<br \> scarico' => '',
             'Quantit&agrave;<br \>giacenza' => '', 'Valore<br \>giacenza' => ''
