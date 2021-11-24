@@ -58,7 +58,7 @@ $intesta3 = 'Tel.' . $admin_aziend['telefo'] .' E-mail '.$admin_aziend['e_mail']
 
 $intesta=$intesta1."\n".$intesta2."\n".$intesta3."\n".$intesta4;
 // The '@' character is used to indicate that follows an image data stream and not an image file name
-$pdf->Image('@'.$imgdata, 20, 40, '', 39, '', '', 'T', false, 300, '', false, false, 0, false, false, false);
+$pdf->Image('@'.$imgdata, 20, 40, 70, '', '', '', 'T', false, 300, '', false, false, 0, false, false, false);
 // set font
 $pdf->SetFont('dejavusans', 'BI', 40);
 // set color for background

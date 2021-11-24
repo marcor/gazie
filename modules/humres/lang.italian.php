@@ -56,7 +56,7 @@ $strScript = array("admin_staff.php" =>
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
         'codice' => "Codice ",
-        'ragso1' => "Cognome",
+        'ragso1' => "Cognome / Ragione sociale",
         'ragso2' => "Nome",
         'id_contract' => 'Numero di matricola',
         'luonas' => 'Luogo di nascita',
