@@ -50,6 +50,7 @@ $sortable_headers = array  (
             "n.ID" => 'id_mov',
             $script_transl[4] => 'datreg',
             $strScript["admin_movmag.php"][2] => 'caumag',
+            'Magazzino' => 'id_warehouse',
             $script_transl[8] => "",
             $script_transl[5] => 'artico',
             $script_transl[11] => 'identifier',
@@ -123,6 +124,8 @@ $(function() {
 			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" tabindex="1">
 		</td>
 		<td class="FacetFieldCaptionTD">
+		</td>
+		<td class="FacetFieldCaptionTD">
 			<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-sm form-control" value="<?php echo (isset($documento))? $documento : ""; ?>" maxlength="15" tabindex="1">
 		</td>
 		<td class="FacetFieldCaptionTD">
@@ -140,13 +143,14 @@ $(function() {
 
 <?php
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
+         LEFT JOIN ".$gTables['warehouse']." ON ".$gTables['movmag'].".id_warehouse = ".$gTables['warehouse'].".id
          LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)
 		 LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
 		 LEFT JOIN ".$gTables['lotmag']." ON (".$gTables['movmag'].".id_lotmag = ".$gTables['lotmag'].".id)";
 		/* Antonio Germani - momentaneamente commentato, di comune accordo con Antonio de Vincentiis, perché causa un ambiguous column names con id_lotmag quando si utilizza l'ID lotto come filtro
 		LEFT JOIN ".$gTables['orderman']." ON (".$gTables['movmag'].".id_orderman = ".$gTables['orderman'].".id)
 		*/
-$result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".descri AS descart, ".$gTables['caumag'].".descri AS descau, ".$gTables['lotmag'].".*", $table, $t->where, $t->orderby, $t->getOffset(), $t->getLimit());
+$result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['warehouse'].".name AS desmag, ".$gTables['artico'].".descri AS descart, ".$gTables['caumag'].".descri AS descau, ".$gTables['lotmag'].".*", $table, $t->where, $t->orderby, $t->getOffset(), $t->getLimit());
 
 echo '<tr>';
 $t->output_headers();
@@ -224,6 +228,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	}
 	echo "<td align=\"center\">".gaz_format_date($r["datreg"])." &nbsp;</td>\n";
     echo "<td align=\"center\">".$r["caumag"]." - ".$r["descau"]."</td>\n";
+    echo '<td align="center">'.($r['desmag']==''?'Sede':substr($r['desmag'],0,25))."</td>";
     if (isset($hrefdoc->{$r['tipdoc']}) && $r['id_rif'] > 0){ // vedi sopra quando si vuole riferire ad un documento genitore di un modulo specifo
         echo '<td title="'.$title.'"><a href="'.$docdata['link'].'">'.$r['desdoc']." ".$script_transl[9]." ".gaz_format_date($r["datdoc"])."</a></td>\n";
     } else {
