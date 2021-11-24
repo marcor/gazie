@@ -64,7 +64,7 @@ $strScript = array("admin_staff.php" =>
         'pronas' => 'Provincia di nascita',
         'counas' => 'Nazione di Nascita',
         'sexper' => "Sesso/pers.giuridica ",
-        'sexper_value' => array('' => '-', 'M' => 'Maschio', 'F' => 'Femmina'),
+        'sexper_value' => array('' => '-', 'M' => 'Maschio', 'F' => 'Femmina', 'G' => 'Giuridica'),
         'indspe' => 'Indirizzo',
         'capspe' => 'Codice Postale',
         'citspe' => 'Citt&agrave; - Provincia',
