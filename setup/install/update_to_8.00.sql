@@ -10,5 +10,5 @@ INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Perme
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `visannota` CHAR(1) NOT NULL DEFAULT 'N' AFTER `annota`;
 UPDATE `gaz_XXXmovmag` SET `id_wharehouse` = 0 WHERE `id_wharehouse` IS NULL;
 RENAME TABLE `gaz_XXXwharehouse` TO `gaz_XXXwarehouse`;
-ALTER TABLE `gaz_XXXmovmag`	CHANGE COLUMN `id_wharehouse` `id_warehouse` INT(9) NULL DEFAULT NULL COMMENT 'Ref. alla tabella gaz_NNNwharehouse' AFTER `artico`,	DROP INDEX `id_wharehouse`,	ADD INDEX `id_wharehouse` (`id_warehouse`) USING BTREE;
+ALTER TABLE `gaz_XXXmovmag`	CHANGE COLUMN `id_wharehouse` `id_warehouse` INT(9) NULL DEFAULT NULL COMMENT 'Ref. alla tabella gaz_NNNwarehouse' AFTER `artico`,	DROP INDEX `id_wharehouse`,	ADD INDEX (`id_warehouse`) USING BTREE;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
