@@ -1858,7 +1858,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					}
 				}
 			}
-			$lm->getAvailableLots($v['codart']);					
+			$lm->getAvailableLots($v['codart'],$v['id_mag']);				
 			$count=array();
 			foreach ($lm->available as $v_lm) {
 				$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
@@ -1874,7 +1874,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$msgrigo = $i + 1;
 				$msg['war'][] = "1";
 			}
-			$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], (isset($idmag))?$idmag:''); // controllo disponibilità per ID lotto		
+			$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], (isset($v['id_mag']))?$v['id_mag']:''); // controllo disponibilità per ID lotto		
 			if ($v['quanti']>$disp AND $form['tipdoc']<>"FNC"){
 				$msg['war'][] = "lotinsuf";
 			}
