@@ -79,7 +79,7 @@ $ts = new TableSorter(
     !$partner_select && isset($_GET["fornitore"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
     $passo, 
     ['datreg' => 'desc', 'protoc' => 'desc'], 
-    $default_where,
+    $default_where
 );
 
 # le select spaziano solo tra i documenti d'acquisto del sezionale corrente
