@@ -2521,7 +2521,7 @@ echo '<div class="box-primary table-responsive"><table id="products-list" class=
 			<tr>
 				<th></th>
 				<th>' . $script_transl[20] . '</th>
-				<th>magazzino</th>
+				<th>Magazzino</th>
 				<th>' . $script_transl[21] . '</th>
 				<th>' . $script_transl[22] . '</th>
                 <th>' . $script_transl[16] . '</th>

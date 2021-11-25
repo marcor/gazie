@@ -965,7 +965,7 @@ class magazzForm extends GAzieForm {
 		if($quanti){
 			$opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';	
 		}
-		$acc .= ' '.$opt_style.'>Magazzino sede';
+		$acc .= ' '.$opt_style.'>Sede';
 		if($quanti){
 			$acc .= isset($available['oth'][0])?' disp:'.$available['oth'][0]:' disp:0';
 		}
