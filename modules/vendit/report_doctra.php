@@ -88,7 +88,7 @@ $ts = new TableSorter(
     $tesdoc_e_partners, 
     $passo, 
     ['datemi' => 'desc', 'numdoc' => 'desc'], 
-    $default_where,
+    $default_where
 );
 
 # le <select> spaziano solo tra i documenti di vendita del sezionale corrente
