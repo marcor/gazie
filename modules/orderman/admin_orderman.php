@@ -290,11 +290,13 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 							$msg .= "45+";// Il lotto non può uscire in tale data in quanto ancora inesistente			
 						}
 						//controllo se l'ID lotto è presente nel silos selezionato
-						$var_idlot = $campsilos->getContentSil($form['recip_stocc_comp'][$nc]);
-						unset($var_idlot['id_lotti']['totale']);//tolgo il totale
-						$var=array_keys($var_idlot['id_lotti']);// creo array idlotti presenti nel silos							
-						if (!in_array($form['id_lot_comp'][$nc][$l], $var)){ // se l'id del lotto non è nel silos
-							$msg.= "47+";
+						if (strlen($form['recip_stocc_comp'][$nc])>0){
+							$var_idlot = $campsilos->getContentSil($form['recip_stocc_comp'][$nc]);
+							unset($var_idlot['id_lotti']['totale']);//tolgo il totale
+							$var=array_keys($var_idlot['id_lotti']);// creo array idlotti presenti nel silos							
+							if (!in_array($form['id_lot_comp'][$nc][$l], $var)){ // se l'id del lotto non è nel silos
+								$msg.= "47+";
+							}
 						}
 					}
 					if ($tot != $form['quanti_comp'][$nc]){
