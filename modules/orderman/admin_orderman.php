@@ -288,7 +288,14 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $form['id_lot_comp'][$nc][$l]);
 						if (strtotime($form['datreg']) < strtotime($checklot['datdoc']) ){// non può uscire un lotto prima della data della sua creazione					
 							$msg .= "45+";// Il lotto non può uscire in tale data in quanto ancora inesistente			
-						}						
+						}
+						//controllo se l'ID lotto è presente nel silos selezionato
+						$var_idlot = $campsilos->getContentSil($form['recip_stocc_comp'][$nc]);
+						unset($var_idlot['id_lotti']['totale']);//tolgo il totale
+						$var=array_keys($var_idlot['id_lotti']);// creo array idlotti presenti nel silos							
+						if (!in_array($form['id_lot_comp'][$nc][$l], $var)){ // se l'id del lotto non è nel silos
+							$msg.= "47+";
+						}
 					}
 					if ($tot != $form['quanti_comp'][$nc]){
 						$msg.="25+";//La quantità inserita di un lotto, di un componente, è errata
@@ -296,6 +303,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					if (intval($form['SIAN']) > 0 AND $form['SIAN_comp'][$nc] > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] AND intval($form['cod_operazione'])!==3){
 						$msg.= "41+"; // il silos di origine non ha sufficiente quantità olio
 					}
+					
 				}
             }
         }
@@ -383,11 +391,11 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						if ($rescamparticocomp['id_campartico']>0 AND strlen($form['recip_stocc_comp'][$m])==0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)){
 						$msg.= "38+";
 						}
-					}
+					}					
 				}
 			}
         }
-		
+	
         if ($msg == "") { // nessun errore			
             // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
 			$start_work = date_format(date_create_from_format('d-m-Y', $form['iniprod']), 'Y-m-d')." ".$form['iniprodtime'];

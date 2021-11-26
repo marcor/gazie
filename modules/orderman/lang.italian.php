@@ -79,7 +79,8 @@ $strScript = array("admin_orderman.php" =>
 		"Non c'è sufficiente disponibilità di un componente",
 		"La/e varietà del silos non coincide/ono con quella/e del prodotto confezionato. Se si procede senza correggere, la registrazione al SIAN sarà senza varietà",
 		"Non può uscire un lotto in data precedente alla sua creazione",
-		"Il recipiente di destinazione non ha spazio sufficiente per contenere la quantità impostata"
+		"Il recipiente di destinazione non ha spazio sufficiente per contenere la quantità impostata",
+		"id lotto inesistente nel silos selezionato"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Gestione delle produzioni',
