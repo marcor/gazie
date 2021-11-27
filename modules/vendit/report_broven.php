@@ -254,17 +254,12 @@ $(function() {
 });
 function printPdf(urlPrintDoc){
 	$(function(){
-        var ctrlmodal = urlPrintDoc.match(/modal=0$/);
-        if (ctrlmodal){
-            window.open(urlPrintDoc, "_blank");
-        } else {
-            $('#framePdf').attr('src',urlPrintDoc);
-            $('#framePdf').css({'height': '100%'});
-            $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-       		$('#closePdf').on( "click", function() {
-                $('.framePdf').css({'display': 'none'});
-            });
-        }
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+		$('#closePdf').on( "click", function() {
+			$('.framePdf').css({'display': 'none'});
+		});
 	});
 };
 </script>
@@ -480,7 +475,7 @@ $ts->output_navbar();
 			if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
 				echo ' onclick="choice_template(\''.$modulo.'\');" title="Scegli modulo per stampa"';
 			}else{
-				echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."&modal=".$pdf_to_modal."')\"";
+				echo ($pdf_to_modal==0)?'href="'.$modulo.'" target="_blank" ':"onclick=\"printPdf('".$modulo."')\"";
 			}
 			echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
             echo "</td>";

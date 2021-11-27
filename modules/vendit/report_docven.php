@@ -24,9 +24,8 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-
-$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
+$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id LEFT JOIN ' . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['fae_flux'] . '.id_tes_ref';
 
 //function print_querytime($prev) {
@@ -274,17 +273,12 @@ $(function() {
 });
 function printPdf(urlPrintDoc){
 	$(function(){
-        var ctrlmodal = urlPrintDoc.match(/modal=0$/);
-        if (ctrlmodal){
-            window.open(urlPrintDoc, "_blank");
-        } else {
-            $('#framePdf').attr('src',urlPrintDoc);
-            $('#framePdf').css({'height': '100%'});
-            $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-       		$('#closePdf').on( "click", function() {
-                $('.framePdf').css({'display': 'none'});
-            });
-        }
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+		$('#closePdf').on( "click", function() {
+			$('.framePdf').css({'display': 'none'});
+		});
 	});
 };
 </script>
@@ -594,7 +588,8 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                     }
                     echo "</td>";
 // Colonna "Stampa"
-					echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."&modal=".$pdf_to_modal."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
+                    $targetPrintDoc = ($pdf_to_modal==0)?'href="'.$modulo.'" target="_blank" ':"onclick=\"printPdf('".$modulo."')\"";
+					echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" ".$targetPrintDoc." \"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
 					echo "</td>";
 // Colonna "Fattura elettronica"
                     if (substr($r['tipdoc'], 0, 1) == 'F') {

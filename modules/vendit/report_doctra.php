@@ -24,9 +24,8 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-
-$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
+$partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
 
 
@@ -167,17 +166,9 @@ $(function() {
 });
 function printPdf(urlPrintDoc){
 	$(function(){
-        var ctrlmodal = urlPrintDoc.match(/modal=0$/);
-        if (ctrlmodal){
-            window.open(urlPrintDoc, "_blank");
-        } else {
-            $('#framePdf').attr('src',urlPrintDoc);
-            $('#framePdf').css({'height': '100%'});
-            $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-       		$('#closePdf').on( "click", function() {
-                $('.framePdf').css({'display': 'none'});
-            });
-        }
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
 	});
 };
 </script>
@@ -331,9 +322,10 @@ function printPdf(urlPrintDoc){
                             $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
                             $urlPrintCmr = "stampa_docven.php?id_tes=" . $r["id_tes"]."&template=Cmr";
+                            $targetPrintDoc = ($pdf_to_modal==0)?'href="stampa_docven.php?id_tes=' . $r["id_tes"] .'&template=DDT" target="_blank" ':"onclick=\"printPdf('stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT')\"";
                             echo "<td>";
-							echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintDoc."&modal=".$pdf_to_modal."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento\"></i></a>";
-                            echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintEtichette."&modal=".$pdf_to_modal."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
+							echo '<a class="btn btn-xs btn-default" style="cursor:pointer;" '.$targetPrintDoc.' ><i class="glyphicon glyphicon-print" title="Stampa documento"></i></a>';
+                            echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintEtichette."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
 							echo "</td>\n";
 
                             // Colonna "Mail"
@@ -399,9 +391,10 @@ function printPdf(urlPrintDoc){
 
                             $urlPrintDoc = "../acquis/stampa_docacq.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
+                            $targetPrintDoc = ($pdf_to_modal==0)?'href="stampa_docven.php?id_tes=' . $r["id_tes"] .'&template=DDT" target="_blank" ':"onclick=\"printPdf('stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT')\"";
                             echo "<td>";
-                            echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintDoc."&modal=".$pdf_to_modal."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento\"></i></a>";
-                            echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintEtichette."&modal=".$pdf_to_modal."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
+							echo '<a class="btn btn-xs btn-default" style="cursor:pointer;" '.$targetPrintDoc.' ><i class="glyphicon glyphicon-print" title="Stampa documento"></i></a>';
+                            echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintEtichette."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
 							echo "</td>\n";
 
                             // Colonna "Mail"
@@ -466,7 +459,7 @@ function printPdf(urlPrintDoc){
                             $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             // Colonna stampa
                             echo "<td>";
-							echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintDoc."&modal=".$pdf_to_modal."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-print\" title=\"" . $script_transl['print_ddt'] . " n. " . $r["numdoc"] . "\"></i></a>";
+							echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintDoc."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-print\" title=\"" . $script_transl['print_ddt'] . " n. " . $r["numdoc"] . "\"></i></a>";
 							echo "</td>";
 
                             // Colonna "Mail"
