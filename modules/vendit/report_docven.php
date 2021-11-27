@@ -26,6 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
+$pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 $tesdoc_e_partners = $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id LEFT JOIN ' . $gTables['fae_flux'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['fae_flux'] . '.id_tes_ref';
 
 //function print_querytime($prev) {
@@ -88,9 +89,9 @@ if (!isset($_GET['sezione'])) {
 	$default_where=['sezione' => intval($_GET['sezione']), 'tipo' => 'F%'];
 }
 $ts = new TableSorter(
-    !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'], 
-    $passo, 
-    ['datfat' => 'desc', 'protoc' => 'desc'], 
+    !$partner_select && isset($_GET["cliente"]) ? $tesdoc_e_partners : $gTables['tesdoc'],
+    $passo,
+    ['datfat' => 'desc', 'protoc' => 'desc'],
     $default_where,
     ['protoc', 'datfat']
 );
@@ -103,7 +104,7 @@ $(function() {
    $( "#dialog" ).dialog({
       autoOpen: false
    });
-   
+
    $( "#dialog_fae" ).dialog({
       autoOpen: false
    });
@@ -114,7 +115,7 @@ $(function() {
    $( "#dialog3" ).dialog({
       autoOpen: false
    });
-   
+
 });
 function confirMail(link){
    tes_id = link.id.replace("doc_", "");
@@ -249,8 +250,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -268,18 +269,23 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 function printPdf(urlPrintDoc){
-	$(function(){			
-		$('#framePdf').attr('src',urlPrintDoc);
-		$('#framePdf').css({'height': '100%'});
-		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-		$('#closePdf').on( "click", function() {
-			$('.framePdf').css({'display': 'none'});
-		});	
-	});	
+	$(function(){
+        var ctrlmodal = urlPrintDoc.match(/modal=0$/);
+        if (ctrlmodal){
+            window.open(urlPrintDoc, "_blank");
+        } else {
+            $('#framePdf').attr('src',urlPrintDoc);
+            $('#framePdf').css({'height': '100%'});
+            $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+       		$('#closePdf').on( "click", function() {
+                $('.framePdf').css({'display': 'none'});
+            });
+        }
+	});
 };
 </script>
 <form method="GET" >
@@ -291,9 +297,9 @@ function printPdf(urlPrintDoc){
 		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
 	<?php
-	if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){	
+	if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
 		?>
-		<script> printPdf('stampa_docven.php?id_tes=<?php echo $_SESSION['print_request'].$_SESSION['template']; ?>'); </script>	
+		<script> printPdf('stampa_docven.php?id_tes=<?php echo $_SESSION['print_request'].$_SESSION['template']; ?>'); </script>
 		<?php
 		$_SESSION['print_request']="";
 		$_SESSION['template']="";
@@ -319,7 +325,7 @@ function printPdf(urlPrintDoc){
         <?php
         $statuskeys=array('DI','RE','IN','RC','MC','NS','ZI');
         foreach ( $statuskeys as $v ) {
-            echo '<p style="display:none;" class="dialog_fae_content" id="dialog_fae_content_'.$v.'">'.$script_transl['dialog_fae_content_'.$v]."<span></span></p>";    
+            echo '<p style="display:none;" class="dialog_fae_content" id="dialog_fae_content_'.$v.'">'.$script_transl['dialog_fae_content_'.$v]."<span></span></p>";
         }
         ?>
     </div>
@@ -328,12 +334,12 @@ function printPdf(urlPrintDoc){
         <p id="report_alert1"><?php echo $script_transl['report_alert1']; ?></p>
         <p class="ui-state-highlight" id="report1"></p>
     </div>
-    
+
     <div style="display:none" id="dialog3" title="<?php echo $script_transl['faesdi_alert0']; ?>">
         <p id="faesdi_alert1"><?php echo $script_transl['faesdi_alert1']; ?></p>
         <p class="ui-state-highlight" id="mailpecsdi"></p>
     </div>
-    
+
     <div align="center" class="FacetFormHeaderFont">Documenti di vendita della sezione
         <select name="sezione" class="FacetSelect" onchange="this.form.submit()">
 	    <?php
@@ -368,7 +374,7 @@ function printPdf(urlPrintDoc){
                     <?php gaz_flt_disp_select("anno", "YEAR(datfat) as anno", $gTables["tesdoc"], $where_select, "anno DESC"); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-		    <?php 
+		    <?php
                     if ($partner_select) {
                         gaz_flt_disp_select("cliente", "clfoco AS cliente, ragso1 as nome", $tesdoc_e_partners, $where_select.((isset($_GET['anno']) && intval($_GET['anno']) >= 2000)?' AND YEAR(datemi)='.intval($_GET['anno']):''), "nome ASC", "nome");
                     } else {
@@ -385,7 +391,7 @@ function printPdf(urlPrintDoc){
             if ( isset($_GET['info']) && $_GET['info']!="" ) {
                 $flt_info = $_GET['info'];
             }
-            
+
         ?>
         <select class="form-control input-sm" name="info" onchange="this.form.submit()">
             <option value="none" <?php if ($flt_info=="none" || $flt_info=="none") echo "selected";?>>Tutti</option>
@@ -424,7 +430,7 @@ function printPdf(urlPrintDoc){
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             // controllo se ho configurato un servizio di gestione flussi verso SdI
             $sdi_flux = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
-            
+
 	    //recupero le testate in base alle scelte impostate
 	    $result = gaz_dbi_dyn_query(cols_from($gTables['tesdoc'],
 						  "id_tes","id_con","ddt_type","clfoco","pagame","fattura_elettronica_zip_package","tipdoc","seziva","protoc","datfat","fattura_elettronica_reinvii","geneff","numfat","id_contract","fattura_elettronica_original_name") . ", " .
@@ -437,8 +443,8 @@ function printPdf(urlPrintDoc){
 					cols_from($gTables['fae_flux'],
 						  "flux_status, received_date, flux_descri") . ", " .
 					"MAX(id_tes) AS reftes, " .
-					"GROUP_CONCAT(id_tes ORDER BY datemi DESC) AS refs_id, " . 
-					"GROUP_CONCAT(flux_status ORDER BY received_date DESC) AS refs_flux_status, " . 
+					"GROUP_CONCAT(id_tes ORDER BY datemi DESC) AS refs_id, " .
+					"GROUP_CONCAT(flux_status ORDER BY received_date DESC) AS refs_flux_status, " .
 					"GROUP_CONCAT(numdoc ORDER BY datemi DESC) AS refs_num",
 					$tesdoc_e_partners,
 					$ts->where . " " . $ts->group_by,
@@ -449,22 +455,22 @@ function printPdf(urlPrintDoc){
             $ctrl_doc = "";
             $ctrl_eff = 999999;
 			$last_fae_packet = '';
-			$paymov = new Schedule(); 
+			$paymov = new Schedule();
             while ($r = gaz_dbi_fetch_array($result)) {
-				// se contabilizzato trovo l'eventuale stato dei pagamenti e se qualcosa non è andato a buon fine riporto la contabilizzazione nello stato ancora da eseguire 
+				// se contabilizzato trovo l'eventuale stato dei pagamenti e se qualcosa non è andato a buon fine riporto la contabilizzazione nello stato ancora da eseguire
 				$paymov_status = false;
 				if ($r['id_con'] > 0) {
 					$tesmov = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $r['id_con']);
-                    // controllo effettiva presenza movimento completo      
+                    // controllo effettiva presenza movimento completo
                     if ($tesmov) {
                         $paymov->getStatus(substr($tesmov['datdoc'],0,4).$tesmov['regiva'].$tesmov['seziva']. str_pad($tesmov['protoc'], 9, 0, STR_PAD_LEFT)); // passo il valore formattato di id_tesdoc_ref
                         $paymov_status = $paymov->Status;
                     } else {
                         gaz_dbi_query("UPDATE ".$gTables['tesdoc']." SET id_con = 0 WHERE id_tes = ".$r['id_tes']);
-                        $r['id_con']=0;                        
+                        $r['id_con']=0;
                     }
 				}
-				// riprendo il rigo  della contabilità con il cliente per avere l'importo 
+				// riprendo il rigo  della contabilità con il cliente per avere l'importo
 				$importo = gaz_dbi_get_row($gTables['rigmoc'], 'id_tes', $r['id_con'], "AND codcon = ".$r['clfoco']);
 				$pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $r['pagame']);
                 $modulo_fae = "electronic_invoice.php?id_tes=" . $r['id_tes'];
@@ -515,7 +521,7 @@ function printPdf(urlPrintDoc){
                 }
                 if (sprintf('%09d', $r['protoc']) . $r['datfat'] <> $ctrl_doc) {
                     $n_e = 0;
-		    /* trovo il nome dei file xml delle fatture elettroniche, sia quello attuale sia quello frutto di un eventuale reinviio 
+		    /* trovo il nome dei file xml delle fatture elettroniche, sia quello attuale sia quello frutto di un eventuale reinviio
 		     */
 		    $r['fae_attuale']="IT" . $admin_aziend['codfis'] . "_".encodeSendingNumber(array('azienda' => $admin_aziend['codice'],
 												     'anno' => $r["datfat"],
@@ -527,7 +533,7 @@ function printPdf(urlPrintDoc){
 												     'sezione' => $r["seziva"],
 												     'fae_reinvii'=> intval($r["fattura_elettronica_reinvii"]+1),
                                                      'protocollo' => $r["protoc"]), 36).".xml";
-                                                     
+
 // Calcolo i valori prima di visualizzare la colonna info per poter far funzionare il filtro
                     $idcon_maggiore_0 = "";
                     $visualizza_effetto_ft = "";
@@ -588,7 +594,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                     }
                     echo "</td>";
 // Colonna "Stampa"
-					echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
+					echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."&modal=".$pdf_to_modal."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
 					echo "</td>";
 // Colonna "Fattura elettronica"
                     if (substr($r['tipdoc'], 0, 1) == 'F') {
@@ -611,26 +617,26 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 echo '><button onclick="confirPecSdi(this);return false;" id="doc3_' . $r['clfoco'] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $r['e_mail'] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
                             } else { // quando ho pec e/o codice univoco ma non ho creato pacchetti zip
                                 echo ">\n";
-                               
+
                             }
                             if ( $sdi_flux ) { // ho un modulo per la gestione dei flussi con il SdI: posso visualizzare lo stato
                                 $zip_ref = 'fae_packaging.php?sdiflux='.$sdi_flux;
                                 $last_flux_status = explode(',',$r['refs_flux_status'])[0];
-                                $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';    
+                                $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
                                 $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'da inviare';
-                                if ( $last_flux_status == '' ) { $last_flux_status = 'DI'; } 
+                                if ( $last_flux_status == '' ) { $last_flux_status = 'DI'; }
                                 if ( strlen($r['fattura_elettronica_zip_package'])>10 && $last_flux_status = 'DI') { // il documento è impacchettato e da inviare
                                     $r['fae_attuale']=$r['fattura_elettronica_zip_package'];
-                                    $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';    
+                                    $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
                                     $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : 'ZIP da inviare';
-                                    $last_flux_status = 'ZI';  
+                                    $last_flux_status = 'ZI';
                                 }
                             } else { //// installazione senza gestore dei flussi con il SdI
                                 $last_flux_status =($zipped)?'RZ':'RE'; // gestendo il flusso manualmente darò sempre la possibilità di scegliere se reinviare o scaricare l'xml
                                 $zip_ref = 'fae_packaging.php?nolib';
                                 $sdihilight = 'default';
                                 $sdilabel = 'xml';
-                            }                           
+                            }
                             switch ($last_flux_status) {
                                 case "DI":
                                 $sdititle = 'Invia il file '.$r['fae_attuale'].' o pacchetto';
@@ -748,26 +754,26 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
 $(document).ready(function(){
   var selects = $("select");
   // la funzione gaz_flt_dsp_select usa "All", qui usiamo invece valori vuoti
-  // (in questo modo i campi non usati possono essere esclusi)        
+  // (in questo modo i campi non usati possono essere esclusi)
   $("option", selects).filter(function(){ return this.value == "All"; }).val("");
-  
-  // la stessa funzione imposta onchange="this.form.submit()" sulle select: 
+
+  // la stessa funzione imposta onchange="this.form.submit()" sulle select:
   // l'azione non lancia un evento "submit" e non può essere intercettata.
   // per non andare a modificare la funzione rimpiazziamo l'attributo onchange:
   selects.attr('onchange', null).change(function() { $(this.form).submit(); });
-  
+
   // così ora possiamo intercettare tutti i submit e pulire la GET dal superfluo
   $("form").submit(function() {
       $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
       return true; // ensure form still submits
   });
-  
+
   // Un-disable form fields when page loads, in case they click back after submission
   $( "form" ).find( ":input" ).prop( "disabled", false );
   var _sezi = $("select[name='sezione'] option:selected").text();
   $.each(['FAI','FNC','FND','FAP'], function( i, v ) {
     var _href = $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href');
-    $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href', _href + '&seziva=' + _sezi);  
+    $("a[href*='admin_docven.php?Insert&tipdoc=" + v + "']").attr('href', _href + '&seziva=' + _sezi);
   });
 });
 </script>

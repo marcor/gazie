@@ -24,6 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 
 function getDayNameFromDayNumber($day_number) {
     return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
@@ -134,12 +135,12 @@ if (count($_GET)<=1){
 		$default_where=['sezione' => $last['seziva'], 'tipo' => 'F%', 'anno'=>$last['yearde']];
         $_GET['anno']=$last['yearde'];
 	} else {
-		$default_where= ['auxil' => 'VOR', 'anno'=>date("Y")];	
+		$default_where= ['auxil' => 'VOR', 'anno'=>date("Y")];
         $_GET['anno']=date("Y");
 	}
-	
+
 } else {
-   $default_where= ['auxil' => 'VOR'];	
+   $default_where= ['auxil' => 'VOR'];
 }
 $ts = new TableSorter(
     isset($_GET["destinaz"]) ? $tesbro_e_destina :
@@ -252,14 +253,19 @@ $(function() {
 	});
 });
 function printPdf(urlPrintDoc){
-	$(function(){			
-		$('#framePdf').attr('src',urlPrintDoc);
-		$('#framePdf').css({'height': '100%'});
-		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-		$('#closePdf').on( "click", function() {
-			$('.framePdf').css({'display': 'none'});
-		});	
-	});	
+	$(function(){
+        var ctrlmodal = urlPrintDoc.match(/modal=0$/);
+        if (ctrlmodal){
+            window.open(urlPrintDoc, "_blank");
+        } else {
+            $('#framePdf').attr('src',urlPrintDoc);
+            $('#framePdf').css({'height': '100%'});
+            $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+       		$('#closePdf').on( "click", function() {
+                $('.framePdf').css({'display': 'none'});
+            });
+        }
+	});
 };
 </script>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][substr($tipo,0,2).'R']; ?></div>
@@ -473,8 +479,8 @@ $ts->output_navbar();
 			// vedo se è presente un file di template adatto alla stampa su carta già intestata
 			if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
 				echo ' onclick="choice_template(\''.$modulo.'\');" title="Scegli modulo per stampa"';
-			}else{				
-				echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"";
+			}else{
+				echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."&modal=".$pdf_to_modal."')\"";
 			}
 			echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
             echo "</td>";

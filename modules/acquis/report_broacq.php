@@ -26,6 +26,8 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
 $partner_select = !gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
+$pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
+
 $tesbro_e_partners = $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
 
 if (isset($_GET['flt_tipo'])) {
@@ -72,11 +74,11 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
 
 $ts = new TableSorter(
-    !$partner_select && isset($_GET["fornitore"]) ? $tesbro_e_partners : $gTables['tesbro'], 
-    $passo, 
-    ['id_tes' => 'desc'], 
+    !$partner_select && isset($_GET["fornitore"]) ? $tesbro_e_partners : $gTables['tesbro'],
+    $passo,
+    ['id_tes' => 'desc'],
     ['sezione'=>1, 'flt_tipo'=>$flt_tipo],
-    [] 
+    []
 );
 
 $gForm = new acquisForm();
@@ -123,10 +125,10 @@ function confirmemail(cod_partner,id_tes,genorder=false) {
 			});
 		  }, "json"
          );
-		 
+
 	$( function() {
     var dialog
-	,	 
+	,
     emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
 	dialog = $("#confirm_email").dialog({
 		modal: true,
@@ -145,7 +147,7 @@ function confirmemail(cod_partner,id_tes,genorder=false) {
 					var dest=$("#mailaddress").val();
 					if (tipdoc=='AOR') { // è già un ordine lo reinvio
 						window.location.href = 'stampa_ordfor.php?id_tes='+id_tes+'&dest='+dest;
-					} else if (tipdoc=='APR' && genorder ) { // in caso di generazione ordine vado sull'apposito script php per la generazione ma non lo invio tramite email 
+					} else if (tipdoc=='APR' && genorder ) { // in caso di generazione ordine vado sull'apposito script php per la generazione ma non lo invio tramite email
 						window.location.href = 'duplicate_broacq.php?id_tes='+id_tes+'&dest='+dest;
 					} else { // il preventivo lo invio solamente
 						window.location.href = 'stampa_prefor.php?id_tes='+id_tes+'&dest='+dest;
@@ -188,7 +190,7 @@ function choicePartner(row)
 					},
 				close: function(){}
 				});
-			}		
+			}
 	});
 }
 
@@ -205,8 +207,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -224,18 +226,23 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 function printPdf(urlPrintDoc){
-	$(function(){			
-		$('#framePdf').attr('src',urlPrintDoc);
-		$('#framePdf').css({'height': '100%'});
-		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
-		$('#closePdf').on( "click", function() {
-			$('.framePdf').css({'display': 'none'});
-		});	
-	});	
+	$(function(){
+        var ctrlmodal = urlPrintDoc.match(/modal=0$/);
+        if (ctrlmodal){
+            window.open(urlPrintDoc, "_blank");
+        } else {
+            $('#framePdf').attr('src',urlPrintDoc);
+            $('#framePdf').css({'height': '100%'});
+            $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+       		$('#closePdf').on( "click", function() {
+                $('.framePdf').css({'display': 'none'});
+            });
+        }
+	});
 };
 </script>
 <form method="GET">
@@ -282,7 +289,7 @@ function printPdf(urlPrintDoc){
                 <?php  gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $tesbro_e_partners, $ts->where, "anno DESC"); ?>
             </td>
             <td  class="FacetFieldCaptionTD">
-		    <?php 
+		    <?php
                     if ($partner_select) {
                         gaz_flt_disp_select("fornitore", "clfoco AS fornitore, ragso1 as nome", $tesbro_e_partners, $ts->where, "nome ASC", "nome");
                     } else {
@@ -325,43 +332,43 @@ function printPdf(urlPrintDoc){
                     $ts->getOffset(),
 					$ts->getLimit());
             while ($r = gaz_dbi_fetch_array($result)) {
-				$linkstatus=false;	
+				$linkstatus=false;
 				if ($r["tipdoc"] == 'APR') { // preventivo
 					$rs_parent = gaz_dbi_get_row($gTables["tesbro"],'id_parent_doc',$r['id_tes']);
-					$clastatus='info';	
-					$status='Ordina';	
+					$clastatus='info';
+					$status='Ordina';
 					if (strlen($r['email'])<8){
-						$clastatus='warning';	
-						$status='da inviare';	
+						$clastatus='warning';
+						$status='da inviare';
 					}
 					if ($rs_parent && $rs_parent["tipdoc"] == 'APR') { // il genitore è pure un preventivo
-					} elseif ($rs_parent && $rs_parent["tipdoc"] == 'AOR') { // è stato generato un ordine  
-						$clastatus='success';	
+					} elseif ($rs_parent && $rs_parent["tipdoc"] == 'AOR') { // è stato generato un ordine
+						$clastatus='success';
 						$status='Ordinato con n.'.$rs_parent["numdoc"];
-						$linkstatus='stampa_ordfor.php?id_tes='.$rs_parent["id_tes"];	
-					}				
+						$linkstatus='stampa_ordfor.php?id_tes='.$rs_parent["id_tes"];
+					}
                     $tipodoc="Preventivo";
                     $modulo="stampa_prefor.php?id_tes=".$r['id_tes'];
                     $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
                 } elseif ($r["tipdoc"] == 'AOR') {
-					$linkstatus='stampa_ordfor.php?id_tes='.$r['id_tes'];	
+					$linkstatus='stampa_ordfor.php?id_tes='.$r['id_tes'];
 					$rs_parent = gaz_dbi_get_row($gTables["tesbro"],'id_tes',$r['id_parent_doc']);
 					if (strlen($r['email'])>8){
-						$clastatus='success';	
-						$status='Inviato';	
+						$clastatus='success';
+						$status='Inviato';
 					} else {
-						$clastatus='warning';	
-						$status='Inserito';	
+						$clastatus='warning';
+						$status='Inserito';
 					}
 					if ($rs_parent && $rs_parent["tipdoc"] == 'APR') { // il genitore è un preventivo
 						$status .= '( da prev.n.'.$rs_parent["numdoc"].')';
-					}				
+					}
                     $tipodoc="Ordine";
                     $modulo="stampa_ordfor.php?id_tes=".$r['id_tes'];
                     $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
                 }
-				
-				
+
+
                 echo '<tr class="FacetDataTD text-center">';
 
 				// colonna numero documento
@@ -372,7 +379,7 @@ function printPdf(urlPrintDoc){
 				$orderman_descr='';
                 $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro']." LEFT JOIN ".$gTables['orderman']." ON ".$gTables['rigbro'].".id_orderman = ".$gTables['orderman'].".id", "id_tes = " . $r["id_tes"] , 'id_tes DESC');
 
-				// INIZIO crezione tabella per la visualizzazione sul tootip di tutto il documento 
+				// INIZIO crezione tabella per la visualizzazione sul tootip di tutto il documento
 				$tt = '<table><th colspan=4 >' . $tipodoc." n.".$r["numdoc"].' del '. gaz_format_date($r["datemi"]).'</th>';
                 while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
 					if ($rigbro_r['id_orderman']>0){
@@ -385,36 +392,36 @@ function printPdf(urlPrintDoc){
 
                 echo '<td>'.$orderman_descr." &nbsp;</td>\n";
 
-				
+
 				// colonna data documento
 				echo "<td>".gaz_format_date($r["datemi"])." &nbsp;</td>\n";
 
 				// colonna fornitore
 				echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $r["id_tes"] . '" data-title="' . str_replace("\"", "'", $tt) . '" >'."<a title=\"Dettagli fornitore\" id=\"fornitore_".$r['id_tes']."\"  value=\"".$r["ragso1"]."\" href=\"report_fornit.php?nome=" . htmlspecialchars($r["ragso1"]) . "\">".$r["ragso1"]."&nbsp;</a></div></td>";
 
-				// colonna bottone cambia stato	
+				// colonna bottone cambia stato
 				echo '<td><a class="btn btn-xs btn-'.$clastatus.'"';
 				if ($clastatus=='warning'){ // Ordine non confermato
 					echo ' onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);" title="Invia mail di conferma"';
-				}elseif($clastatus=='info'){ // Preventivo: chiedo generazione ordine 
+				}elseif($clastatus=='info'){ // Preventivo: chiedo generazione ordine
 					echo ' onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',true);" title="Genera un ordine da questo preventivo"';
 				}else{ // Ordine confermato o preventivo che ha già generato ordine, visualizzo il pdf
-					echo ' href="'.$linkstatus.'" title="Visualizza PDF"'; 
+					echo ' href="'.$linkstatus.'" title="Visualizza PDF"';
 				}
                 echo '>'.$status.'</a>';
 				if ($r['tipdoc']=='AOR'){
-					echo '<br><a class="btn btn-xs btn-default" title="Data consegna">'; 
+					echo '<br><a class="btn btn-xs btn-default" title="Data consegna">';
 					echo '<small> cons: '.gaz_format_date($r["initra"]).'</small></a>';
 				}
 				echo '</td>';
 
                 // colonna stampa
-				echo "<td align=\"center\">";				
-				echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
+				echo "<td align=\"center\">";
+				echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."&modal=".$pdf_to_modal."')\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
 
-				if($r["tipdoc"] == 'AOR') {					
-					echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('stampa_ordfor.php?id_tes=".$r['id_tes']."&production')\"><i class=\"glyphicon glyphicon-fire\" title=\"Stampa per reparto produzioni PDF\"></i></a>";
-				}			
+				if($r["tipdoc"] == 'AOR') {
+					echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('stampa_ordfor.php?id_tes=".$r['id_tes']."&production&modal=".$pdf_to_modal."')\"><i class=\"glyphicon glyphicon-fire\" title=\"Stampa per reparto produzioni PDF\"></i></a>";
+				}
 				echo "</td>";
 
 				// colonna operazioni
@@ -452,16 +459,16 @@ function printPdf(urlPrintDoc){
                     echo ' <a class="btn btn-xs btn-default btn-email" onclick="confirmemail(\''.$r["clfoco"].'\',\''.$r['id_tes'].'\',false);" id="doc'.$r["id_tes"].'"><i class="glyphicon glyphicon-envelope"></i></a>';
                 } else {
 					echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="admin_fornit.php?codice='.substr($r["clfoco"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
-				 }		  
+				 }
                 echo "	</td>\n";
-				
+
 				// colonna elimina
 				echo "<td align=\"center\">";
-				?>			
+				?>
 				<a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id_tes'];?>" catdes="<?php echo $r['ragso1']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
-				<?php				
+				<?php
 				echo "</td></tr>";
             }
             ?>
