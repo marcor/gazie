@@ -6,7 +6,7 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP 
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
 	  https://www.lacasettabio.it 
 	  https://www.programmisitiweb.lacasettabio.it
