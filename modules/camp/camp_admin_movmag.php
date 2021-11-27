@@ -6,6 +6,11 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
+	  https://www.lacasettabio.it 
+	  https://www.programmisitiweb.lacasettabio.it
+	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
@@ -20,11 +25,9 @@
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------
-	  
-	  Registro di Campagna è un modulo creato da Antonio Germani Massignano AP 
-	  https://www.lacasettabio.it https://www.programmisitiweb.lacasettabio.it
-	  --------------------------------------------------------------------------
+	  --------------------------------------------------------------------------	 
+	  # free to use, Author name and references must be left untouched  #
+	  --------------------------------------------------------------------------	  
 */
 require ("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");

@@ -100,7 +100,7 @@
 </div>
 <div> 
 	<br>
-	<p align="center"> Questo Registro di campagna è stato ideato e creato da Antonio Germani: 
+	<p align="center"> Registro di campagna è un modulo di GAzie creato da Antonio Germani Massignano (AP) - Copyright(C): 
 	<a href = https://programmisitiweb.lacasettabio.it/ title = "https://programmisitiweb.lacasettabio.it/" > Link al sito e blog dell'autore
 	</a>
 	</p>
