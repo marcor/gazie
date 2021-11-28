@@ -128,7 +128,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form['user_password_ver'] = '';
 	$form["user_active"] = 1;
 	$form['body_text'] = "";
-	
+
 	if (preg_match("/school/", $_SERVER['HTTP_REFERER'])) {
 		// nel caso voglio inserire un nuovo insegnante propongo abilitazione a 9
 		$form["Abilit"] = 9;
@@ -146,7 +146,7 @@ if (isset($_POST['Submit'])) {
 		$msg['err'][] = 'email'; // non coincide, segnalo l'errore
 	}
 	if ($toDo == 'update' && !empty($form["user_password_old"])) {
-		if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) { 
+		if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) {
 			// voglio reimpostare la password ed è giusta
 		} else {
 			$msg['err'][] = 'passold'; // non coincide, segnalo l'errore
@@ -154,7 +154,7 @@ if (isset($_POST['Submit'])) {
 	} else if ($toDo == 'insert'){
 		if (strlen($form["user_password_new"]) < $global_config->getValue('psw_min_length'))
 		$msg['err'][] = 'passlen';
-		
+
 	}
 	if ($form["user_password_new"] != $form["user_password_ver"])
 	$msg['err'][] = 'confpass';
@@ -246,16 +246,16 @@ if (isset($_POST['Submit'])) {
 						}
 						$m2_id ++;
 					}
-					if (isset($update_db)&&is_array($update_db)){ 
-						/* 
-						Se il nuovo modulo prevede un update della base dati allora eseguo (unatantum) le query in essa contenute; 
-						pertanto se si vuole modificare il database si deve valorizzare una variabile di nome "$update_db" del file 
+					if (isset($update_db)&&is_array($update_db)){
+						/*
+						Se il nuovo modulo prevede un update della base dati allora eseguo (unatantum) le query in essa contenute;
+						pertanto se si vuole modificare il database si deve valorizzare una variabile di nome "$update_db" del file
 						menu.creatione_data.php  e mettere in essa tutte le query al database necessarie per il funzionamento del nuovo
-						modulo 
+						modulo
 						*/
-						foreach ($update_db as $vq) { 
+						foreach ($update_db as $vq) {
 							gaz_dbi_query($vq);
-						}						
+						}
 					}
 				  }
 				}
@@ -269,15 +269,15 @@ if (isset($_POST['Submit'])) {
 			require_once('../../modules/root/config_login.php');
 			$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
 			$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
-			
+
 			// Antonio Germani - Creo anche una nuova anagrafica nelle anagrafiche comuni
 			$form['ragso1']=$form['user_lastname'];
 			$form['ragso2']=$form['user_firstname'];
 			$form['legrap_pf_nome']="";
 			$form['legrap_pf_cognome']="";
-			$form['email']=$form['user_email'];			
+			$form['email']=$form['user_email'];
 			$form['id_anagra']=gaz_dbi_table_insert('anagra', $form);
-			
+
 			gaz_dbi_table_insert('admin', $form);
 			$form['adminid'] = $form["user_name"];
 			$form['var_descri'] = 'Menu/header/footer personalizzabile';
@@ -295,17 +295,17 @@ if (isset($_POST['Submit'])) {
 			while($row=gaz_dbi_fetch_array($get_widgets)){
 				$row['adminid']=$form["user_name"];
 				gaz_dbi_table_insert('breadcrumb',$row);
-			}			
-			
+			}
+
 		} elseif ($toDo == 'update') {
 			if (!empty($form["user_password_old"])) {
-				if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) { 
+				if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) {
 					$form["datpas"] = date("YmdHis"); //cambio la data di modifica password
 					// faccio l'hash della password prima di scrivere sul db
 					require_once('../../modules/root/config_login.php');
 					$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
 					$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
-				} 
+				}
 			}
 			gaz_dbi_table_update('admin', array("user_name", $form["user_name"]), $form);
 			// se esiste aggiorno anche il tema
@@ -330,7 +330,7 @@ if (isset($_POST['Submit'])) {
 				$form['var_value'] = $tbt;
 				gaz_dbi_table_insert('admin_config', $form);
 			}
-			// vado ad aggiornare anche la tabella studenti dell'installazione di base qualora ce ne fosse uno 
+			// vado ad aggiornare anche la tabella studenti dell'installazione di base qualora ce ne fosse uno
 			if (@$student) {
 				gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form["user_name"], 'student_firstname', $form['user_firstname']);
 				gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form["user_name"], 'student_lastname', $form['user_lastname']);
@@ -338,7 +338,7 @@ if (isset($_POST['Submit'])) {
 			if ($admin_config_theme['var_value']<>$form['theme']) {
 				session_destroy();
 				header("Location: ../root/login_user.php?tp=".$table_prefix);
-				exit;			
+				exit;
 			}
 		}
 		header("Location: " . $_POST['ritorno']);
@@ -369,7 +369,7 @@ $(document).ready(function () {
 		}
 	});
 	*/
-	/* 
+	/*
 	 * Initialize the capslockstate plugin.
 	 * Monitoring is happening at the window level.
 	 */
@@ -497,7 +497,7 @@ echo "</td></tr>\n";
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['mesg_co'][2]; ?></td>
 <td class="FacetDataTD" colspan="2">
-<?php 
+<?php
 if ($user_data['Abilit'] == 9) {
 	$gForm->selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
 } else {
@@ -511,8 +511,8 @@ if ($user_data['Abilit'] == 9) {
 <tr>
 <td class="FacetFieldCaptionTD">Magazzino predefinito</td>
 <td class="FacetDataTD" colspan="2">
-<?php 
-	$gForm->selectFromDB('warehouse','id_warehouse','id',$form["id_warehouse"],'id',false,' - ','name','0','col-sm-6',['value'=>0,'descri'=>'Magazzino Sede'],'');
+<?php
+	$gForm->selectFromDB('warehouse','id_warehouse','id',$form["id_warehouse"],'id',false,' - ','name','0','col-sm-6',['value'=>0,'descri'=>'Sede'],'');
 ?>
 </tr>
 <tr>
@@ -545,7 +545,7 @@ if ($toDo == 'insert') {
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_active']; ?></td>
-<td colspan="2" class="FacetDataTD">                        
+<td colspan="2" class="FacetDataTD">
 <?php
     $gForm->variousSelect('user_active', $script_transl['user_active_value'], $form['user_active'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
 ?>
@@ -612,9 +612,9 @@ if ($user_data["Abilit"] == 9) {
                     } else { // modulo non attivo sull'amministratore
                         echo '  <td>Non attivato</td>';
                         echo '  <td><input type="hidden"  name="' . $co_id . "nusr_" . $mod['name'] . '" value="0"></td>';
-                        
-                    }    
-				} elseif ($co['set_co'] == 0) { // il modulo mai attivato 
+
+                    }
+				} elseif ($co['set_co'] == 0) { // il modulo mai attivato
 					echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
 					echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
 				} else { // se l'amministratore che sta operando sul proprio profilo può attivare un nuovo modulo e creare il relativo menù
