@@ -45,17 +45,10 @@ Se vuoi contribuire allo sviluppo di GAzie, ti chiediamo lavorare con SVN (devi 
 A Digiuno di SVN? leggi questa guida: [https://www.html.it/guide/guida-subversion/](https://www.html.it/guide/guida-subversion/)
 
 Se invece vuoi semplicemente fare un fork e apportare in privato le tue modifiche
-puoi clonare il repository direttamente da svn in sola lettura oppure da GitHUB [1]:
+puoi clonare il repository direttamente da SVN:
 
 `svn checkout svn://svn.code.sf.net/p/gazie/code/ gazie-code`
 
-`git clone https://github.com/lab51org/gazie.git gazie-code`
-
-Oppure, se ti serve una release specifica senza portarti dietro tutte le modifiche dalla prima versione:
-
-`git clone --depth 1 --branch [tag_name] https://github.com/lab51org/gazie.git gazie-code`
- 
-[1]: Il repository su GitHUB è solo in lettura, è sempre aggiornato ma non è ufficiale e non accetta pull request.
 
 ### Requisiti di Sistema
 
@@ -63,18 +56,6 @@ Oppure, se ti serve una release specifica senza portarti dietro tutte le modific
 * Versione PHP >= 7.4 compilata DSO, non c'è ancora il supporto per PHP-FPM
 * Estensioni PHP richieste: MySQLi
 * Database MariaDB o MySQL (consigliato MariaDB 10.x.x o sup.)
-
-
-### Installazione Veloce
-Versione attuale: Versione 8.00, Note di Release a questo [link](https://github.com/lab51org/gazie/releases/tag/8.00)
-
-1) `unzip gazie8.00.zip`
-2) `cd gazie/setup`
-3) `mysqladmin create gazie`
-4) `mysql -u[user] -p [nome DB] < install_x.x.x.sql`
-
-- Per fare aggiornamento della versione:
-1) `mysql -u[user] -p [nome DB] < update_to_x.x.x.sql`
 
 
 
