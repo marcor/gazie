@@ -300,7 +300,7 @@ $strScript = array("admin_client.php" =>
         'fae_dati_value' => array(2 => 'DatiOrdineAcquisto', 3 => 'DatiContratto', 4 => 'DatiConvenzione', 5 => 'DatiRicezione', 6 => 'DatiFattureCollegate'),
 		'war' => array (
 			'1' =>'Le quantità richieste per lotto non sono disponibili. NB: se si conferma si creeranno errori che dovranno essere corretti manualmente!',
-			'2' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
+			'2' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Controllare che ci sia realmente la disponibilità prima di confermare',
 			'aliiva_nosplit' => 'Il rigo appena inserito ha un articolo con una percentuale IVA senza corrispondente aliquota con tipo IVA in split payment (T) ',
 			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
 			'siandate' => 'La data di registrazione è precedente all\'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.',
@@ -913,14 +913,14 @@ $strScript = array("admin_client.php" =>
 			'soloconf' => 'Questa operazione SIAN ammette solo olio confezionato',
 			'sololotto' => 'Questa operazione SIAN necessita di avere un lotto',
 			'lotinsuf' => 'Per questo ID lotto non c\'è la quantità richiesta',
-			'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
+			'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Controllare che ci sia realmente la disponibilità prima di confermare',
             'no_reparto'=>'Un rigo non ha il reparto del Registratore Telematico associato all\'aliquota IVA',
             'lotteria'=>'Codice lotteria errato',
             'tender'=>'Pagamento senza tender su Registratore Telematico',
 			'lottoNonVendibile' => 'Non si può vendere un lotto in data precedente a quella della sua creazione'
         ),
 		'war' => array('serial' => 'La quantità è stata forzata ad 1 perché l\'articolo prevede il numero di serie',
-		'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Per ogni ID lotto si può inserire un solo rigo',
+		'doppioIDlot' =>'Fra le righe ci sono lotti con lo stesso ID lotto. Controllare che ci sia realmente la disponibilità prima di confermare',
 		'siandate' => 'La data di registrazione è precedente all\'ultimo movimento inviato al SIAN. Se si conferma, questo movimento non sarà inviato al SIAN.'
 		),
         'customer' => 'Cliente',

@@ -349,17 +349,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], $idmag);		
 				if ($v['quanti']>$disp){
 					$msg['err'][] = "lotinsuf";
-				}
-				// Antonio Germani - controllo se un ID lotto è presente in più righi
-				$n=0;
-				foreach ($form['rows'] as $ii => $vv){
-					if ($v['id_lotmag']==$vv['id_lotmag']){
-						$n++;
-						if ($n>1){
-							$msg['err'][] = "doppioIDlot";
-						}
-					}
-				}				
+				}							
 			}
         }
         if ($tot == 0) {  //il totale e' zero
@@ -795,18 +785,35 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         array_splice($form['rows'], $delri, 1);
         $next_row--;
     }
-	foreach ($form['rows'] as $i => $v) { // nel caso di righi SIAN, controllo se la data di emissione dello scontrino è precedente a quella del file inviato al SIAN
-		if (intval($v['SIAN'])>0){ 
+	$war="";
+	foreach ($form['rows'] as $i => $v) { // controllo WARNING
+		if (intval($v['SIAN'])>0){ // nel caso di righi SIAN, controllo se la data di emissione dello scontrino è precedente a quella del file inviato al SIAN
 			$uldtfile=getLastSianDay();
 			$datem=substr($form['datemi'],6,4) . "-" . substr($form['datemi'],3,2) . "-" . substr($form['datemi'],0,2);
-			if (strtotime($datem) < strtotime($uldtfile)){
+			if (strtotime($datem) < strtotime($uldtfile) && $war<>"warning"){
 				$msg['war'][] = "siandate";
 				$class="btn-danger";
 				$addvalue=" nonostante l'avviso";
-			}
-			break; // esco dal ciclo per evitare di avvisare più volte nel caso di più righi con lo stesso problema
+				$war="warning";//per evitare di avvisare più volte nel caso di più righi con lo stesso problema
+			} 
+		}		
+		// Antonio Germani - controllo input su lotti rigo
+		if ($v['lot_or_serial']>0){				
+			// Antonio Germani - controllo se un ID lotto è presente in più righi
+			$n=0;
+			foreach ($form['rows'] as $ii => $vv){
+				if ($v['id_lotmag']==$vv['id_lotmag']){
+					$n++;
+					if ($n>1){
+						$msg['war'][] = "doppioIDlot";
+						$class="btn-danger";
+						$addvalue=" nonostante l'avviso";						
+					}
+				}
+			}				
 		}
 	}
+
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
 	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 		// allineo l'e-commerce con eventuali ordini non ancora caricati
