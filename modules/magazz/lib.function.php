@@ -767,6 +767,8 @@ class magazzForm extends GAzieForm {
             $desdoc = 'Scarico per Produzione senza lotto';
         } elseif ($tipdoc == 'CAM') {
             $desdoc = 'Registro di campagna';
+        } elseif ($tipdoc == 'WTR') {
+            $desdoc = 'Trasferimento tra magazzini';
         } else {//documento di vendita
             require("../../modules/vendit/lang." . $admin_aziend['lang'] . ".php");
             $desdoc = $strScript['admin_docven.php']['doc_name'][$tipdoc];
