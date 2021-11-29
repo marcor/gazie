@@ -390,7 +390,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						if (intval($form['cod_operazione'])==3 AND ($rescamparticocomp['categoria']!== $rescampartico['categoria'] OR $rescamparticocomp['or_macro']!== $rescampartico['or_macro'] OR $rescamparticocomp['estrazione']!== $rescampartico['estrazione'] OR $rescamparticocomp['biologico']!== $rescampartico['biologico'] OR $rescamparticocomp['confezione']!== $rescampartico['confezione'] )) { // se L2 etichettatura e c'è olio non etichettato
 							$msg.= "31+"; 
 						}
-						if ($rescamparticocomp['id_campartico']>0 AND strlen($form['recip_stocc_comp'][$m])==0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<4)){
+						if ($rescamparticocomp['id_campartico']>0 AND strlen($form['recip_stocc_comp'][$m])==0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<3)){
 						$msg.= "38+";
 						}
 					}					
@@ -1127,10 +1127,10 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 									</div>	
 									<?php
 								} else {
-									echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value=0>';
+									echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value="">';
 								}
 							} else {
-								echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value=0>';
+								echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value="">';
 							}
 							// Antonio Germani - inserimento lotti in uscita
 							
