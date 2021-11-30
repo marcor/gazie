@@ -76,13 +76,13 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
 						//cancello i righi
 						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '" . $row['id_tes'] . "'");
 						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
+							gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
+							gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
 							if (intval($val_old_row['id_mag']) > 0) {  //se c'è stato un movimento di magazzino lo azzero
 								$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
 								// se c'è stato, cancello pure il movimento sian 
 								gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
-							}
-							gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
-							gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
+							}							
 						}
 						// in caso di eliminazione di un reso da c/visione che quindi ha un link su un DDV
 						if ($ultimo_documento['id_doc_ritorno'] > 0 ) {
@@ -115,15 +115,15 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type'])&&iss
                         }
 						//cancello i righi
 						$rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $row['id_tes'] );
-						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
+						while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {							
+							gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
+							gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
 							if (intval($val_old_row['id_mag']) > 0) {  //se c'� stato un movimento di magazzino lo azzero
 								$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $val_old_row['id_mag']);
 
 								// se c'è stato, cancello pure il movimento sian 
 								gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $val_old_row['id_mag']);
 							}
-							gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
-							gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
 						}
 						break;
 					} elseif ($ultimo_documento['protoc'] == intval($i) and $ultimo_documento['tipdoc'] == 'FAD') {
