@@ -887,9 +887,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$naturaN6 = false;
 				foreach($DatiRiepilogo as $dr) {
 					if ($dr->getElementsByTagName('Imposta')->length >= 1) {
-						$ImpostaDocumento += $dr->getElementsByTagName('Imposta')->item(0)->nodeValue;
+						$ImpostaDocumento +=  (float)$dr->getElementsByTagName('Imposta')->item(0)->nodeValue;
 					}
-					$ImponibileImporto+=$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
+					$ImponibileImporto+= (float)$dr->getElementsByTagName('ImponibileImporto')->item(0)->nodeValue;
 					if ($dr->getElementsByTagName('Natura')->length >= 1) { // se ho l'elemento Natura = 6.x dovrò ricercare l'aliquota per il reverse charge a tutto il documento ed attribuirla a tutti i righi del documento
 						$Natura = $dr->getElementsByTagName('Natura')->item(0)->nodeValue;
 						if ( substr($Natura,0,2) == 'N6' ) { // dovrò fare il reverse charge sostituisco con il codice iva relativo
