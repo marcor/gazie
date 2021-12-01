@@ -47,10 +47,10 @@ $sortable_headers = array  (
 
 echo "<div align='center' class='FacetFormHeaderFont '>{$script_transl['title']}</div>\n";
 $table = $gTables['warehouse'];
- 
+
 $t = new TableSorter(
-    $table, 
-    $passo, 
+    $table,
+    $passo,
     ['id' => 'desc']);
 $t->output_navbar();
 
@@ -69,8 +69,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -88,8 +88,8 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
-	});	
+		$("#dialog_delete" ).dialog( "open" );
+	});
 });
 </script>
 <form method="GET">
@@ -130,6 +130,8 @@ echo '<tr>';
 $t->output_headers();
 echo '</tr>';
 while ($r = gaz_dbi_fetch_array($rs)) {
+  $rs_numw=gaz_dbi_dyn_query ("COUNT(*) AS moved", $gTables['movmag'], 'id_warehouse='.$r['id'],'id_mov',0,1);
+  $moved=gaz_dbi_fetch_array($rs_numw)['moved'];
 ?>
 <tr>
  <td class="text-center"><a class="btn btn-xs btn-success btn-block" href="admin_warehouse.php?Update&id=<?php echo $r["id"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $r["id"];?></a></td>
@@ -138,9 +140,20 @@ while ($r = gaz_dbi_fetch_array($rs)) {
  <td><?php echo $r["web_url"]; ?></td>
  <td><?php echo $r["note_other"]; ?></td>
  <td></td>
- <td class="text-center"><a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" warehouse="<?php echo $r['name'];?>"><i class="glyphicon glyphicon-remove"></i></a></td>
-</tr>
-<?php    
+ <td class="text-center">
+<?php
+  if ($moved<=0){
+?>
+ <a class="btn btn-xs btn-default btn-elimina dialog_delete" ref="<?php echo $r['id'];?>" warehouse="<?php echo $r['name'];?>"><i class="glyphicon glyphicon-remove"></i></a>
+<?php
+  } else{
+?>
+ <a class="btn btn-xs btn-default btn-elimina dialog_delete" title="Magazzino non eliminabile perché movimentato" disabled ><i class="glyphicon glyphicon-remove"></i></a>
+<?php
+  }
+?>
+</td></tr>
+<?php
 }
 ?>
      </table>

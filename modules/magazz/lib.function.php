@@ -947,51 +947,55 @@ class magazzForm extends GAzieForm {
     }
 
     function selectIdWarehouse($name,$val,$ret_type=false,$class='',$codart=false,$dat_ref=false,$quanti=false) {
-		$available['oth']=[];
-		if ($codart) { // se è riferito ad un articolo sulle option visualizzo anche la disponibilità
-			$available=$this->getStockAvailability($codart,false,$dat_ref);
-		}
-		$opt_style='';
-		if($quanti){
-			$opt_style=(!isset($available['oth'][$val])||$quanti>$available['oth'][$val])?'style="color:red;"':'style="color:green;"';
-		}
-        global $gTables;
-        $query = 'SELECT id,name FROM ' . $gTables['warehouse'] . ' WHERE 1 ORDER BY id';
-        $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" onchange="this.form.submit();" '.$opt_style.' >';
-        $acc .= '<option value="0"';
-        $acc .= intval($val)==0?' selected ':' ';
-		if($quanti){
-			$opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';
-		}
-		$acc .= ' '.$opt_style.'>Sede';
-		if($quanti){
-			$acc .= isset($available['oth'][0])?' disp:'.$available['oth'][0]:' disp:0';
-		}
-		$acc .= '</option>';
-        $rs = gaz_dbi_query($query);
-        while ($r = gaz_dbi_fetch_array($rs)) {
-            $selected = '';
-            if ($r['id'] == intval($val)) {
-                $selected = "selected";
-            }
-			$opt_style='';
-			if($quanti){
-				$opt_style=(!isset($available['oth'][$r['id']])||$quanti>$available['oth'][$r['id']])?'style="color:red;"':'style="color:green;"';
-			}
-            $acc .= '<option value="'.$r['id'] . '" '.$selected.' '.$opt_style.'>'.$r['name'];
-			if($quanti){
-				$acc .= isset($available['oth'][$r['id']])?' disp:'.$available['oth'][$r['id']]:' disp:0';
-			}
-			$acc .= '</option>';
+      $available['oth']=[];
+      if ($codart) { // se è riferito ad un articolo sulle option visualizzo anche la disponibilità
+        $available=$this->getStockAvailability($codart,false,$dat_ref);
+      }
+      $opt_style='';
+      if($quanti){
+        $opt_style=(!isset($available['oth'][$val])||$quanti>$available['oth'][$val])?'style="color:red;"':'style="color:green;"';
+      }
+          global $gTables;
+          $query = 'SELECT id,name FROM ' . $gTables['warehouse'] . ' WHERE 1 ORDER BY id';
+          $acc = '<select id="'.$name.'" name="'.$name.'" class="'.$class.'" onchange="this.form.submit();" '.$opt_style.' >';
+          $acc .= '<option value="0"';
+          $acc .= intval($val)==0?' selected ':' ';
+      if($quanti){
+        $opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';
+      }
+      $acc .= ' '.$opt_style.'>Sede';
+      if($quanti){
+        $acc .= isset($available['oth'][0])?' disp:'.$available['oth'][0]:' disp:0';
+      }
+      $acc .= '</option>';
+      $rs = gaz_dbi_query($query);
+      $otherwarehouse=false;
+      while ($r = gaz_dbi_fetch_array($rs)) {
+        $otherwarehouse=true;
+        $selected = '';
+        if ($r['id'] == intval($val)) {
+          $selected = "selected";
         }
-		$acc .='</select>';
-		if ($ret_type){
-			return $acc;
-		} else {
-			echo $acc;
-		}
+        $opt_style='';
+        if($quanti){
+          $opt_style=(!isset($available['oth'][$r['id']])||$quanti>$available['oth'][$r['id']])?'style="color:red;"':'style="color:green;"';
+        }
+              $acc .= '<option value="'.$r['id'] . '" '.$selected.' '.$opt_style.'>'.$r['name'];
+        if($quanti){
+          $acc .= isset($available['oth'][$r['id']])?' disp:'.$available['oth'][$r['id']]:' disp:0';
+        }
+        $acc .= '</option>';
+      }
+      $acc .='</select>';
+      if ($otherwarehouse===false){
+        $acc ='Sede'.(isset($available['oth'][0])?' disp:'.$available['oth'][0]:' disp:0').'<input type="hidden" id="'.$name.'" name="'.$name.'" >';;
+      }
+      if ($ret_type){
+        return $acc;
+      } else {
+        echo $acc;
+      }
     }
-
 }
 
 function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ultimo movimento SIAN creato

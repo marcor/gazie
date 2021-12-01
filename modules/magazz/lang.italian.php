@@ -245,7 +245,7 @@ $strScript = array("browse_document.php" =>
             " Si st&agrave; tentando di fare l'inventario con giacenza attuale e reale entrambe a zero",
 			" Per questo articolo è già stato fatto l'inventario nello stesso giorno"),
         'preview_title' => 'Confermando le scelte fatte si registreranno i seguenti movimenti di magazzino:'
-		
+
     ),
     "select_schart.php" =>
     array(0 => 'Stampa schedari di magazzino',
@@ -486,9 +486,9 @@ $strScript = array("browse_document.php" =>
         'upd_this' => 'Modifica il gruppo delle varianti',
         'err' => array(
             'codice' => 'Il codice articolo &egrave; gi&agrave; esistente',
-            'empty_var' => 'Deve esserci per forza almeno una variante',			
+            'empty_var' => 'Deve esserci per forza almeno una variante',
             'grcod' => 'Questo articolo appartiene già ad un altro gruppo',
-            'descri' => 'Inserire una descrizione',           
+            'descri' => 'Inserire una descrizione',
             'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
             'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
             'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda '
@@ -496,13 +496,13 @@ $strScript = array("browse_document.php" =>
         'war' => array(
             'ok_ins' => 'Articolo inserito con successo'
 		),
-		'info' => 'Solitamente gli e-commerce usano creare degli articoli con caratteristiche molto simili tra loro ponendoli sotto un articolo principale, il genitore. <br/>Per permettere la sincronizzazione 
+		'info' => 'Solitamente gli e-commerce usano creare degli articoli con caratteristiche molto simili tra loro ponendoli sotto un articolo principale, il genitore. <br/>Per permettere la sincronizzazione
         dei databases in GAzie un genitore è definito "gruppo" e le varianti, opzioni, attributi sono i singoli articoli che fanno riferimento allo stesso gruppo-genitore.',
 		'home' => "ID gruppo",
 		'variant' => "Varianti, opzioni, attributi",
 		'codice' => "ID gruppo",
-        'descri' => "Descrizione",        
-		'image' => 'immagine',        
+        'descri' => "Descrizione",
+		'image' => 'immagine',
         'web_public' => 'Sincronizza sul sito web',
         'web_public_value' => array(0 => 'No', 1 => 'Si', 2 => 'Attivo e prestabilito', 3 => 'Attivo e pubblicato in home', 4 => 'Attivo, in home e prestabilito', 5 => 'Disattivato su web'),
 		'body_text' => 'Descrizione estesa',
@@ -595,7 +595,7 @@ $strScript = array("browse_document.php" =>
         'upd_this' => 'Modifica il magazzino',
         'err' => array(
             'name' => 'Il nome del magazzino deve essere lungo almeno 4 caratteri',
-            'filmim' => 'Il file dev\'essere nel formato PNG, JPG, GIF'			
+            'filmim' => 'Il file dev\'essere nel formato PNG, JPG, GIF'
         ),
         'war' => array(
             'ok_ins' => 'Magazzino inserito con successo'
@@ -603,7 +603,7 @@ $strScript = array("browse_document.php" =>
         'name' => 'Nome',
         'web_url' => 'Indirizzo web',
         'image' => 'Immagine',
-        'note_other' => 'Descrizione',
+        'note_other' => 'Descrizione/Indirizzo',
     )
 );
 ?>
