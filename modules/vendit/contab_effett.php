@@ -130,7 +130,7 @@ if (isset($_POST['genera'])and $message == "") {
             rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $admin_aziend['coriba'], 'import' => $effett['impeff']));
             // continuo con il conto clienti.
             $paymov_id = rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
-            // memorizzo l'id del cliente  
+            // memorizzo l'id del cliente
         }
         if ($effett['tipeff'] == 'T') {
             //inserisco la testata
@@ -151,7 +151,7 @@ if (isset($_POST['genera'])and $message == "") {
             rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $admin_aziend['cotrat'], 'import' => $effett['impeff']));
             // continuo con il conto clienti.
             $paymov_id = rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
-            // memorizzo l'id del cliente  
+            // memorizzo l'id del cliente
         }
         if ($effett['tipeff'] == 'V') {
             //inserisco la testata
@@ -172,7 +172,7 @@ if (isset($_POST['genera'])and $message == "") {
             rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $effett['banacc'], 'import' => $effett['impeff']));
             // continuo con il cliente.
             $paymov_id = rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
-            // memorizzo l'id del cliente  
+            // memorizzo l'id del cliente
         }
         if ($effett['tipeff'] == 'I') {
             //inserisco la testata
@@ -193,7 +193,7 @@ if (isset($_POST['genera'])and $message == "") {
             rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $effett['banacc'], 'import' => $effett['impeff']));
             // continuo con il cliente.
             $paymov_id = rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $effett['clfoco'], 'import' => $effett['impeff']));
-            // memorizzo l'id del cliente  
+            // memorizzo l'id del cliente
         }
         // aggiungo un movimento alle partite aperte
         paymovInsert(array('id_tesdoc_ref' => substr($newValue['datreg'], 0, 4) . '2' . $effett['seziva'] . str_pad($effett['protoc'], 9, 0, STR_PAD_LEFT), 'id_rigmoc_pay' => $paymov_id, 'amount' => $effett['impeff'], 'expiry' => $effett['scaden']));
