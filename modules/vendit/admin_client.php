@@ -278,6 +278,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['allegato'] = 1;
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
+    $form['visannota'] = 'N';
 	$form['id_SIAN']="";
 	$nd=0;
 }
