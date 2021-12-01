@@ -28,10 +28,10 @@ class magazzForm extends GAzieForm {
 
     function get_magazz_ordinati ( $codice, $tip='AOR' ) {
     global $gTables;
-	
+
 	$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 	$tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
-	
+
     $column = $gTables['artico'].".codice,
         ".$gTables['artico'].".good_or_service,
         ".$gTables['rigbro'].".id_tes,
@@ -72,7 +72,7 @@ class magazzForm extends GAzieForm {
     while ($row = gaz_dbi_fetch_array($restemp)) {
         $totord += $row['quanti'];
     }
-	
+
 	// Antonio Germani - calcolo evasi
 	$toteva = 0;
 	if ($tip!="AOR" AND $totord>0){
@@ -87,16 +87,16 @@ class magazzForm extends GAzieForm {
 				// qui devo evitare che, se nello stesso ordine ci sono più righi con lo stesso articolo, vengano conteggiati più volte
 				if ($preord==$row['id_tes']){ // se l'ordine è lo stesso del precedente
 				// non faccio nulla perché già conteggiato nel ciclo precedente
-					} else {		
+					} else {
 				$toteva=$toteva+$row2['quanti']; // incremento il totale evaso
 					}
 				$n++;
 			}
 			$preord=$row['id_tes'];
-		}		
+		}
 	}
 	// fine calcolo evasi
-	
+
     return $totord-$toteva;
     }
 
@@ -171,14 +171,14 @@ class magazzForm extends GAzieForm {
 
     function getOperators() {  // Creo l'array associativo degli operatori dei documenti
         return array("VCO" => -1, "VRI" => -1, "DDT" => -1, "FAD" => -1, "FAI" => -1, "FAA" => -1, "FAF" => -1, "FAQ" => -1, "FAP" => -1, "FNC" => 1, "FND" => -1,
-            "DDR" => -1, "DDL" => -1, "DDV" => -1, "RDV" => 1, "DDY" => -1, "DDS" => -1, "AFA" => 1, "AFT" => 1, "ADT" => 1, "AFC" => -1, "AFD" => 1, "VPR" => -1, 
+            "DDR" => -1, "DDL" => -1, "DDV" => -1, "RDV" => 1, "DDY" => -1, "DDS" => -1, "AFA" => 1, "AFT" => 1, "ADT" => 1, "AFC" => -1, "AFD" => 1, "VPR" => -1,
             "VOR" => -1, "VOW" => -1, "VOG" => -1, "CMR" => -1, "RDL" => 1, "INV" => 1);
     }
 
     function get_codice_caumag($clifor,$insdoc,$operat) {  // trovo il codice della causale in base al tipo di partner e di documento
         global $gTables;
 		$query = 'SELECT * FROM `' . $gTables['caumag'] . '` WHERE `clifor`='.$clifor.' AND `insdoc`='.$insdoc.' AND `operat`='.$operat.' ORDER BY `codice` ASC';
-		$result = gaz_dbi_query($query);	
+		$result = gaz_dbi_query($query);
         return gaz_dbi_fetch_row($result)[0]; // restituisco il codice (index 0)
     }
 
@@ -220,7 +220,7 @@ class magazzForm extends GAzieForm {
 		}
 		return $ret;
 	}
-	
+
 	private function getlevel($codbase){
         global $gTables;
 		$ret=[];
@@ -230,9 +230,9 @@ class magazzForm extends GAzieForm {
 		}
 		return $ret;
 	}
-	
 
-	function buildTrunk($cod,$exist=false){ 
+
+	function buildTrunk($cod,$exist=false){
 		/* funzione che permette di eseguire due operazioni:
 		1- se non si passa $exixt crea un array mutlidimensionale (profondità 5) con tutti i "genitori" in cui è presente l'articolo passato come referenza in $cod
 		2- qualora si passi $exit esso si limita a controlla la presenza dello stesso tra tutti i genitori di quello passato su $cod, in caso positivo ritorna $cod
@@ -242,7 +242,7 @@ class magazzForm extends GAzieForm {
 		$acc=$this->getlevel($cod);
 		if (count($acc)>=1){
 			foreach ($acc as $k0=>$v0){
-				if ($exist==$k0) return $cod; // questi righi li utilizzo per ritornare il codice dell'articolo di base per controllare l'esistenza 
+				if ($exist==$k0) return $cod; // questi righi li utilizzo per ritornare il codice dell'articolo di base per controllare l'esistenza
 				$acc[$k0]['up']=$this->getlevel($v0['codice_composizione']);
 				if (count($acc[$k0]['up'])>0){
 					foreach ($acc[$k0]['up'] as $k1=>$v1){
@@ -276,8 +276,8 @@ class magazzForm extends GAzieForm {
 			return $acc;
 		}
 	}
-		
-	
+
+
     function getBOM($codcomp) {  // Creo l'array multidimensionale della distita base (BOM)
 		$depth=0;
 		$data0=$this->getBOMfromDB($codcomp,0);
@@ -289,31 +289,31 @@ class magazzForm extends GAzieForm {
 				$n1=count($data1);
 				if ($n1>=1){
 					$data0[$k]['codice_artico_base']=$data1;
-					foreach ($data1 as $k2=>$v2){	
+					foreach ($data1 as $k2=>$v2){
 						$data0[$k]['codice_artico_base'][$k2]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base'];
 						$data2=$this->getBOMfromDB($v2['codice_artico_base'],2);
 						$n2=count($data2);
 						if ($n2>=1){
 							$data0[$k]['codice_artico_base'][$k2]['codice_artico_base']=$data2;
-							foreach ($data2 as $k3=>$v3){	
+							foreach ($data2 as $k3=>$v3){
 								$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base']*$v3['quantita_artico_base'];
 								$data3=$this->getBOMfromDB($v3['codice_artico_base'],3);
 								$n3=count($data3);
 								if ($n3>=1){
 									$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base']=$data3;
-									foreach ($data3 as $k4=>$v4){	
+									foreach ($data3 as $k4=>$v4){
 										$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base']*$v3['quantita_artico_base']*$v4['quantita_artico_base'];
 										$data4=$this->getBOMfromDB($v4['codice_artico_base'],4);
 										$n4=count($data4);
 										if ($n4>=1){
 											$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base']=$data4;
-											foreach ($data4 as $k5=>$v5){	
+											foreach ($data4 as $k5=>$v5){
 												$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base'][$k5]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base']*$v3['quantita_artico_base']*$v4['quantita_artico_base']*$v5['quantita_artico_base'];
 												$data5=$this->getBOMfromDB($v5['codice_artico_base'],5);
 												$n5=count($data5);
 												if ($n5>=1){
 													$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base'][$k5]['codice_artico_base']=$data5;
-													foreach ($data5 as $k6=>$v6){	
+													foreach ($data5 as $k6=>$v6){
 														$data0[$k]['codice_artico_base'][$k2]['codice_artico_base'][$k3]['codice_artico_base'][$k4]['codice_artico_base'][$k5]['codice_artico_base'][$k6]['totq']=$v['quantita_artico_base']*$v2['quantita_artico_base']*$v3['quantita_artico_base']*$v4['quantita_artico_base']*$v5['quantita_artico_base']*$v6['quantita_artico_base'];
 														$data6=$this->getBOMfromDB($v6['codice_artico_base'],6);
 														$n6=count($data6);
@@ -334,7 +334,7 @@ class magazzForm extends GAzieForm {
 		}
 		return $data0;
 	}
-	
+
     function print_tree_BOM($codcomp) {  // Stampo la distinta base
 		$color='eeeeee';
 		global $gTables;
@@ -399,7 +399,7 @@ class magazzForm extends GAzieForm {
 			  }
   			  echo "</ul>\n";
 			} else{
-				
+
 			}
 			echo "</li>\n";
 		}
@@ -469,7 +469,7 @@ class magazzForm extends GAzieForm {
 			echo '</li>';
 		  }
 		  echo "</ul></div></div>\n";
-		} 
+		}
 	}
 
 	function getLevelfromDB($codcomp){
@@ -484,19 +484,19 @@ class magazzForm extends GAzieForm {
 		}
 		return $acc;
 	}
-	
+
     function print_trunk_BOM($codcomp) {  // Stampo i padri nei quali è contenuto l'articolo
 	}
-    
+
     function getStockTreeValues($codice_articolo, $quant=1, $acc=[]) {
         global $gTables;
         $mv = $this->getStockValue(false, $codice_articolo);
         if (isset($mv[0])){
-            $acc['q_g'] = $mv[0]['q_g']; 
-            $acc['val'] = $mv[0]['v']; 
+            $acc['q_g'] = $mv[0]['q_g'];
+            $acc['val'] = $mv[0]['v'];
         } else {
-            $acc['q_g'] = 0; 
-            $acc['val'] = 0; 
+            $acc['q_g'] = 0;
+            $acc['val'] = 0;
         }
         $acc['cod'] = $codice_articolo;
         $acc['qua'] = $quant;
@@ -507,11 +507,11 @@ class magazzForm extends GAzieForm {
         while ($row = gaz_dbi_fetch_array($rescompo)) {
             $mv = $this->getStockValue(false, $row['codice_artico_base']);
             if (isset($mv[0])){
-                $temp['q_g'] = $mv[0]['q_g']; 
-                $temp['val'] = $mv[0]['v']; 
+                $temp['q_g'] = $mv[0]['q_g'];
+                $temp['val'] = $mv[0]['v'];
             } else {
-                $temp['q_g'] = 0; 
-                $temp['val'] = 0; 
+                $temp['q_g'] = 0;
+                $temp['val'] = 0;
             }
             $temp['qua'] = $row['quantita_artico_base']*$quant;
             $temp['cod'] = $row['codice_artico_base'];
@@ -553,7 +553,7 @@ class magazzForm extends GAzieForm {
         if (!$stock_eval_method) {
             $stock_eval_method = $this->getStockEvalMethod();
         }
-				
+
 			$rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$item_code' AND caumag = 99 AND (datreg < '" . $date . "' OR (datreg = '" . $date . "' AND id_mov <= $id_mov ))", "datreg DESC, id_mov DESC", 0, 1);
 			 $last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
 			if ($last_inventory) {
@@ -565,13 +565,13 @@ class magazzForm extends GAzieForm {
 				$last_invPrice = 0;
 				$last_invQuanti = 0;
 			}
-		
+
 		// fine ricerca inventario
-		 
+
         $utsdatePrev = mktime(0, 0, 0, intval(substr($date, 5, 2)), intval(substr($date, 8, 2)) - 1, intval(substr($date, 0, 4)));
         $datePrev = date("Y-m-d", $utsdatePrev);
         $where = "artico = '$item_code' AND (datreg BETWEEN '$last_invDate' AND '$datePrev' OR (datreg = '$date' AND id_mov <= $id_mov))";
-        $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date 
+        $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date
         $return_val = array();
         $accumulatore = array();
         switch ($stock_eval_method) { //calcolo il nuovo valore in base al metodo scelto in configurazione azienda
@@ -747,9 +747,9 @@ class magazzForm extends GAzieForm {
     function uploadMag($id_rigo_doc = '0', $tipdoc='', $numdoc=0, $seziva='', $datdoc='', $clfoco=0, $sconto_chiusura=0, $caumag='', $codart='', $quantita=0, $prezzo=0, $sconto_rigo=0, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0,$id_orderman=0,$campo_impianto=0,$custom_field='',$id_warehouse=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
         // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, datreg)
         global $gTables, $admin_aziend;
-		$synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];		
+		$synccommerce=explode(',',$admin_aziend['gazSynchro'])[0];
         $admin_aziend['synccommerce_classname'] = preg_replace("/[^a-zA-Z]/", "",$synccommerce)."gazSynchro";
-		
+
         $docOperat = $this->getOperators();
         if ($tipdoc == 'FAD') {  // per il magazzino una fattura differita è come dire DDT
             $tipdoc = 'DDT';
@@ -794,7 +794,7 @@ class magazzForm extends GAzieForm {
             $datreg = $data_from_admin_mov['datreg']; // prendo la descrizione e l'operatore da questo
             $operat = $data_from_admin_mov['operat'];
             $desdoc = $data_from_admin_mov['desdoc'];
-		}	
+		}
         $row_movmag = array('caumag' => $caumag,
             'operat' => $operat,
             'datreg' => $datreg,
@@ -829,7 +829,7 @@ class magazzForm extends GAzieForm {
                 $gSync = new $gs();
 				if($gSync->api_token && isset($codart)){
 					$gSync->SetProductQuantity($codart);
-				}				
+				}
 			}
         } else {   // si deve modificare un movimento esistente
             $old_movmag = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $id_movmag);
@@ -867,43 +867,39 @@ class magazzForm extends GAzieForm {
     function getLastBuys($codart, $rettable=false) {
       global $gTables, $admin_aziend;
       // ritorna un array con gli acquisti aggregati per fornitore
-      // trovo i fornitori 
-      $rs=gaz_dbi_query("SELECT mm1.clfoco, mm1.desdoc,mm1.quanti,mm1.scorig,mm1.prezzo, ".$gTables['rigdoc'] .".id_tes AS docref, ".$gTables['rigdoc'] .".codice_fornitore, CONCAT(".$gTables['anagra'] .".ragso1,".$gTables['anagra'] .".ragso2) AS supplier, SUM(ROUND(mm1.quanti*prezzo*(100-scorig)/100,2)) AS amount FROM " . $gTables['movmag'] . " mm1 LEFT JOIN ".$gTables['clfoco'] ." ON mm1.clfoco = ".$gTables['clfoco'] .".codice LEFT JOIN ".$gTables['anagra'] ." ON ".$gTables['clfoco'] .".id_anagra = ".$gTables['anagra'] .".id LEFT JOIN ".$gTables['rigdoc'] ." ON mm1.id_rif = ".$gTables['rigdoc'] .".id_rig 
-      INNER JOIN (
-        SELECT max(datdoc) MaxDateDoc, clfoco
-        FROM ".$gTables['movmag'] ."
-        WHERE artico='".$codart."' AND clfoco LIKE '". $admin_aziend['masfor'] ."%'
-        GROUP BY clfoco
-      ) mm2
-        ON mm1.clfoco = mm2.clfoco
-        AND mm1.datdoc = mm2.MaxDateDoc
-      WHERE mm1.artico = '".$codart."' AND mm1.clfoco LIKE '". $admin_aziend['masfor'] ."%' 
+      // trovo i fornitori
+      $rs=gaz_dbi_query("SELECT mm1.clfoco, mm1.desdoc, unimis,mm1.quanti,mm1.scorig,mm1.prezzo, ".$gTables['rigdoc'] .".id_tes AS docref, ".$gTables['rigdoc'] .".codice_fornitore, CONCAT(".$gTables['anagra'] .".ragso1,".$gTables['anagra'] .".ragso2) AS supplier FROM " . $gTables['movmag'] . " mm1 LEFT JOIN ".$gTables['clfoco'] ." ON mm1.clfoco = ".$gTables['clfoco'] .".codice LEFT JOIN ".$gTables['anagra'] ." ON ".$gTables['clfoco'] .".id_anagra = ".$gTables['anagra'] .".id LEFT JOIN ".$gTables['rigdoc'] ." ON mm1.id_rif = ".$gTables['rigdoc'] .".id_rig
+      WHERE mm1.artico = '".$codart."' AND mm1.clfoco LIKE '". $admin_aziend['masfor'] ."%'
       ORDER BY mm1.datdoc DESC");
-      $acc=($rettable)?false:[];
+      $table='';
+      $acc=[];
       while ($r = gaz_dbi_fetch_array($rs)) {
-        $r['desvalue']=floatval($r['quanti']).' x € '.floatval($r['prezzo']).(($r['scorig']>0.01)?(' sconto:'.floatval($r['scorig']).'% '):('')).' = '.floatval($r['amount']);
-        if ($rettable){
+        if(!isset($acc[$r['clfoco']])){
+          $acc[$r['clfoco']]=$r;
+          $r['desvalue']=$r['unimis'].' '.floatval($r['quanti']).' x € '.floatval($r['prezzo']).(($r['scorig']>0.01)?(' sconto:'.floatval($r['scorig']).'% '):('')).' = '.round($r['quanti']*$r['prezzo']*(100-$r['scorig'])/100,2);
           // creo una tabella direttamente stampabile
-          $acc .= '<div class="col-xs-1"></div><div class="col-xs-11 row"><div class="col-sm-4">'.$r['supplier'].'</div><div class="col-sm-4"><a class="btn btn-default btn-xs" href="../acquis/admin_docacq.php?Update&id_tes='.$r['docref'].'">'.$r['desdoc'].'</a></div><div class="col-sm-4"><b>'.$r['codice_fornitore'].'</b> '.$r['desvalue'].'</div></div>'; 
-        } else {
-          // creo un array con chiave il codice fornitore
-          $acc[$r['clfoco']]=$r;  
+          $table .= '<div class="col-xs-1"></div><div class="col-xs-11 row"><div class="col-sm-4">'.$r['supplier'].'</div><div class="col-sm-4"><a class="btn btn-default btn-xs" href="../acquis/admin_docacq.php?Update&id_tes='.$r['docref'].'">'.$r['desdoc'].'</a></div><div class="col-sm-4"><b>'.$r['codice_fornitore'].'</b> '.$r['desvalue'].'</div></div>';
         }
       }
-      return $acc;
+      if ($rettable){
+        return $table;
+      } else {
+        return $acc;
+      }
     }
-    function getorders($codice){ // Antonio Germani - restituisce gli ordini (riferito agli id tesbro) ancora aperti per un dato articolo fornito con $codice 
+
+    function getorders($codice){ // Antonio Germani - restituisce gli ordini (riferito agli id tesbro) ancora aperti per un dato articolo fornito con $codice
       global $gTables;
       $query ="
-      SELECT ". $gTables['rigbro'] .".quanti AS quantiord, ". $gTables['rigdoc'] .".quanti as quantivend, ". $gTables['rigbro'] .".id_rig AS id_rig_bro, ". 
+      SELECT ". $gTables['rigbro'] .".quanti AS quantiord, ". $gTables['rigdoc'] .".quanti as quantivend, ". $gTables['rigbro'] .".id_rig AS id_rig_bro, ".
       $gTables['tesbro'] .".datemi, ".$gTables['tesbro'] .".numdoc, ".
       $gTables['clfoco'] .".descri,".
       $gTables['tesbro'] .".id_tes, ". $gTables['rigdoc'] .".id_rig as id_rig_doc
       , SUM(". $gTables['rigdoc'] .".quanti) AS sum
       FROM " . $gTables['rigbro'] . "
-      LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['tesbro'].".id_tes=".$gTables['rigbro'].".id_tes 
+      LEFT JOIN ". $gTables['tesbro'] ." ON ".$gTables['tesbro'].".id_tes=".$gTables['rigbro'].".id_tes
       LEFT JOIN ". $gTables['rigdoc'] ." ON ".$gTables['rigdoc'].".id_order = ".$gTables['rigbro'].".id_tes AND ". $gTables['rigdoc'].".codart = '". $codice. "'
-      LEFT JOIN ". $gTables['clfoco'] ." ON ".$gTables['clfoco'].".codice=".$gTables['tesbro'].".clfoco 
+      LEFT JOIN ". $gTables['clfoco'] ." ON ".$gTables['clfoco'].".codice=".$gTables['tesbro'].".clfoco
       WHERE ". $gTables['rigbro'] .".codart ='" . $codice. "'  AND ". $gTables['rigbro'] .".tiprig = 0 AND ".$gTables['tesbro'].".tipdoc = 'VOR' AND ".$gTables['tesbro'].".status != 'EVASO'
       GROUP BY id_rig_bro ASC
       ";
@@ -913,17 +909,17 @@ class magazzForm extends GAzieForm {
         if ($res['quantiord'] > $res['sum']){
           $return[$res['id_tes']]=$res;
         }
-      }	
-      return $return;	
+      }
+      return $return;
     }
-	
+
     function getStockAvailability ($item_code,$id_warehouse=false,$date_ref=false) {
 		$date_ref=($date_ref)?$date_ref:date("Y-m-d");
 		// questa funzione restituisce la quantità disponibile dell'articolo passato come referenza, se non si passa la data si considera quella odierna
-		// restituisce un array con tre indici 'tot' il totale su tutti i magazzini,'val' il valore del magazzino se passato come referenza, altrimenti sarà false, e un array con i valori degli altri magazzini e indice gli id degli altri magazzini, se non passato di tutti  
+		// restituisce un array con tre indici 'tot' il totale su tutti i magazzini,'val' il valore del magazzino se passato come referenza, altrimenti sarà false, e un array con i valori degli altri magazzini e indice gli id degli altri magazzini, se non passato di tutti
         global $gTables;
         $where = "artico = '".$item_code."' AND caumag <= 99 AND datreg <= '".$date_ref."'";
-        $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date 
+        $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date
 		$acc=['tot'=>0,'val'=>false,'oth'=>[]];
         $rs_movmag = gaz_dbi_dyn_query("operat,id_warehouse,quanti", $gTables['movmag'],$where,$orderby);
         while ($r = gaz_dbi_fetch_array($rs_movmag)){
@@ -957,7 +953,7 @@ class magazzForm extends GAzieForm {
 		}
 		$opt_style='';
 		if($quanti){
-			$opt_style=(!isset($available['oth'][$val])||$quanti>$available['oth'][$val])?'style="color:red;"':'style="color:green;"';	
+			$opt_style=(!isset($available['oth'][$val])||$quanti>$available['oth'][$val])?'style="color:red;"':'style="color:green;"';
 		}
         global $gTables;
         $query = 'SELECT id,name FROM ' . $gTables['warehouse'] . ' WHERE 1 ORDER BY id';
@@ -965,7 +961,7 @@ class magazzForm extends GAzieForm {
         $acc .= '<option value="0"';
         $acc .= intval($val)==0?' selected ':' ';
 		if($quanti){
-			$opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';	
+			$opt_style=(!isset($available['oth'][0])||$quanti>$available['oth'][0])?'style="color:red;"':'style="color:green;"';
 		}
 		$acc .= ' '.$opt_style.'>Sede';
 		if($quanti){
@@ -980,14 +976,14 @@ class magazzForm extends GAzieForm {
             }
 			$opt_style='';
 			if($quanti){
-				$opt_style=(!isset($available['oth'][$r['id']])||$quanti>$available['oth'][$r['id']])?'style="color:red;"':'style="color:green;"';	
+				$opt_style=(!isset($available['oth'][$r['id']])||$quanti>$available['oth'][$r['id']])?'style="color:red;"':'style="color:green;"';
 			}
             $acc .= '<option value="'.$r['id'] . '" '.$selected.' '.$opt_style.'>'.$r['name'];
 			if($quanti){
 				$acc .= isset($available['oth'][$r['id']])?' disp:'.$available['oth'][$r['id']]:' disp:0';
 			}
 			$acc .= '</option>';
-        }		
+        }
 		$acc .='</select>';
 		if ($ret_type){
 			return $acc;
@@ -995,7 +991,7 @@ class magazzForm extends GAzieForm {
 			echo $acc;
 		}
     }
-  
+
 }
 
 function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ultimo movimento SIAN creato
@@ -1008,8 +1004,8 @@ function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ul
 					if ($file=="." OR $file==".."){ continue;}
 						$prevfiles[$i]['nome']=$file; // prendo nome file
 						$prevfiles[$i]['content']=@file_get_contents(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/sian/'.$file);// prendo contenuto file
-						$i++;	
-				}			
+						$i++;
+				}
 			}
 			closedir($handle);
 			if (isset($prevfiles)){ // se ci sono file
@@ -1028,7 +1024,7 @@ function getLastSianDay(){ // restituisce la data nel formato aaaa-mm-gg dell'ul
 					$n++;
 				}
 			}
-		}		
+		}
 	return $uldtfile ;
 }
 
