@@ -682,27 +682,29 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$numddt=preg_replace('/\D/', '',$vd->getElementsByTagName('NumeroDDT')->item(0)->nodeValue);
 					$dataddt=$vd->getElementsByTagName('DataDDT')->item(0)->nodeValue;
 					foreach ($vr as $vdd) { // attraverso RiferimentoNumeroLinea
-						$nl = $nl_NumeroLinea[$vdd->nodeValue];
-						if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt lo assegno a questo
-							if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){
-								$form['rows'][$nl-1]['NumeroDDT']=$numddt;
-								$form['rows'][$nl-1]['DataDDT']=$dataddt;
-								$form['rows'][$nl-1]['exist_ddt']=false;
-								// è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
-								unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
-							}
-						}
-						if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
-							$form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
+            if (isset($nl_NumeroLinea[$vdd->nodeValue])){//se esiste la linea indicata dal 'RiferimentoNumeroLinea'
+              $nl = $nl_NumeroLinea[$vdd->nodeValue];
+              if ($numddt!=$ctrl_NumeroDDT){ // è cambiato controllo, se il rigo che precede questo è un descritto e non ha un riferimento a ddt lo assegno a questo
+                if (isset($form['rows'][$nl-1]['is_descri'])&&$form['rows'][$nl-1]['is_descri']){
+                  $form['rows'][$nl-1]['NumeroDDT']=$numddt;
+                  $form['rows'][$nl-1]['DataDDT']=$dataddt;
+                  $form['rows'][$nl-1]['exist_ddt']=false;
+                  // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea
+                  unset($nl_NumeroLinea[$form['rows'][$nl-1]['numrig']]);
+                }
+              }
+              if (isset($form['clfoco'])&&existDdT($numddt,$dataddt,$form['clfoco'])){
+                $form['rows'][$nl]['exist_ddt']=existDdT($numddt,$dataddt,$form['clfoco']);
 
-						} else {
-							$form['rows'][$nl]['exist_ddt']=false;
-						}
-						$form['rows'][$nl]['NumeroDDT']=$numddt;
-						$form['rows'][$nl]['DataDDT']=$dataddt;
-						// è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
-						unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]);
-						$ctrl_NumeroDDT=$numddt;
+              } else {
+                $form['rows'][$nl]['exist_ddt']=false;
+              }
+              $form['rows'][$nl]['NumeroDDT']=$numddt;
+              $form['rows'][$nl]['DataDDT']=$dataddt;
+              // è stato assegnato ad un DdT lo rimuovo dall'array $nl_NumeroLinea in modo da poter, eventualmente trattare questi successivamente
+              unset($nl_NumeroLinea[$form['rows'][$nl]['numrig']]);
+              $ctrl_NumeroDDT=$numddt;
+            }
 					}
 					$ctrl_NumeroDDT=$numddt;
 					$ctrl_DataDDT=$dataddt;
