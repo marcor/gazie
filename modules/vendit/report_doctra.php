@@ -172,6 +172,16 @@ function printPdf(urlPrintDoc){
 	});
 };
 </script>
+<?php
+if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
+?>
+<script> printPdf('stampa_docven.php?id_tes=<?php echo $_SESSION['print_request'].$_SESSION['template']; ?>'); </script>
+		<?php
+		$_SESSION['print_request']="";
+		$_SESSION['template']="";
+}
+?>
+
 <form method="GET">
 	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
 			<div class="col-lg-12">
@@ -180,15 +190,6 @@ function printPdf(urlPrintDoc){
 			</div>
 			<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
-	<?php
-	if (isset($_SESSION['print_request']) && intval($_SESSION['print_request'])>0){
-		?>
-		<script> printPdf('stampa_docven.php?id_tes=<?php echo $_SESSION['print_request'].$_SESSION['template']; ?>'); </script>
-		<?php
-		$_SESSION['print_request']="";
-		$_SESSION['template']="";
-	}
-	?>
 	<div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>documento di trasporto:</b></p>
         <p>Numero:</p>
@@ -393,7 +394,7 @@ function printPdf(urlPrintDoc){
                             $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
                             $targetPrintDoc = ($pdf_to_modal==0)?'href="stampa_docven.php?id_tes=' . $r["id_tes"] .'&template=DDT" target="_blank" ':"onclick=\"printPdf('stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT')\"";
                             echo "<td>";
-							echo '<a class="btn btn-xs btn-default" style="cursor:pointer;" '.$targetPrintDoc.' ><i class="glyphicon glyphicon-print" title="Stampa documento"></i></a>';
+                            echo '<a class="btn btn-xs btn-default" style="cursor:pointer;" '.$targetPrintDoc.' ><i class="glyphicon glyphicon-print" title="Stampa documento"></i></a>';
                             echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintEtichette."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
 							echo "</td>\n";
 
@@ -456,11 +457,12 @@ function printPdf(urlPrintDoc){
                             }
                             echo "</td>";
 
-                            $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             // Colonna stampa
+                            $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
+                            $targetPrintDoc = ($pdf_to_modal==0)?'href="stampa_docven.php?id_tes=' . $r["id_tes"] .'&template=DDT" target="_blank" ':"onclick=\"printPdf('stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT')\"";
                             echo "<td>";
-							echo "<a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" onclick=\"printPdf('".$urlPrintDoc."')\" data-toggle=\"modal\" data-target=\"#print_doc\" ><i class=\"glyphicon glyphicon-print\" title=\"" . $script_transl['print_ddt'] . " n. " . $r["numdoc"] . "\"></i></a>";
-							echo "</td>";
+                            echo '<a class="btn btn-xs btn-default" style="cursor:pointer;" '.$targetPrintDoc.' ><i class="glyphicon glyphicon-print" title="'. $script_transl['print_ddt'] . " n. " . $r["numdoc"] .'"></i></a>';
+                            echo "</td>";
 
                             // Colonna "Mail"
                             echo "<td>";
