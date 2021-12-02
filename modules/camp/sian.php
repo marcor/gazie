@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // >> Selezione date per la generazione del file di upload per il SIAN <<
 
@@ -51,8 +51,8 @@ if ($handle = opendir(DATA_DIR.'files/' . $admin_aziend['codice'] . '/sian/')){
 			if ($file=="." OR $file==".."){ continue;}
 				$prevfiles[$i]['nome']=$file; // prendo nome file
 				$prevfiles[$i]['content']=@file_get_contents(DATA_DIR.'files/' . $admin_aziend['codice'] . '/sian/'.$file);// prendo contenuto file
-				$i++;	
-		}			
+				$i++;
+		}
 	}
 	closedir($handle);
 	if (isset($prevfiles)){ // se ci sono file
@@ -72,7 +72,7 @@ if (isset($prevfiles)){ // se ci sono files
 			$n++;
 		}
 	}
-} 
+}
 if (!isset($uldtfile)) { // se non c'è la data, la imposto al primo gennaio dell'anno corrente
 	$uldtfile="01"."01".date("Y");
 }
@@ -101,7 +101,7 @@ function getMovements($date_ini,$date_fin)
         }
         return $m;
     }
-	
+
 // controllo contenitori e silos
 if (isset($_POST['create'])){
 	$orderby=2;
@@ -113,7 +113,7 @@ if (isset($_POST['create'])){
 	$groupby= "";
 	$table=$gTables['camp_recip_stocc'];
 	$ressilos=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
-	while ($r = gaz_dbi_fetch_array($ressilos)) {		
+	while ($r = gaz_dbi_fetch_array($ressilos)) {
 		$totalcont = $sil->getCont($r['cod_silos']);
 		if ($totalcont<0){
 			$message = "Giacenza negativa nel silos ".$r['cod_silos']." !";
@@ -123,7 +123,7 @@ if (isset($_POST['create'])){
 			$message = "Il contenuto del silos è ".$r['cod_silos']." e supera la sua capacità dichiarata !";
 			$msg .='5+';
 		}
-	}	
+	}
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
@@ -181,11 +181,11 @@ if ($utsfin>strtotime('-1 day', strtotime(date("Y-m-d")))) {
 // fine controlli
 
 if (isset($_POST['create']) && $msg=='') {
- 
+
     $utsini=date("dmY",$utsini);
     $utsfin=date("dmY",$utsfin);
     $utsexe=date("dmY",$utsexe);
-	$uldtfile=$form['date_ini_Y'].$form['date_ini_M'].$form['date_ini_D'];                                  
+	$uldtfile=$form['date_ini_Y'].$form['date_ini_M'].$form['date_ini_D'];
     header("Location: create_sian.php?ri=$utsini&rf=$utsfin&ds=$utsexe&ud=$uldtfile");
     exit;
 }
@@ -225,7 +225,7 @@ function setDate(name) {
 		che l’olio ottenuto dalla molitura non sia superiore ai 700 chilogrammi per campagna di commercializzazione (dal 1 luglio al 30 giugno dell'anno successivo). Decreti MiPAAF n° 8077/2009 e n° 16059/2013.
 		</p></div>
 	</div>
-</div>	
+</div>
 <?php
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
@@ -269,15 +269,15 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "<tr>";
         $linkHeaders=new linkHeaders($script_transl['header']);
         $linkHeaders->output();
-        echo "</tr>";		
+        echo "</tr>";
 		$genera="";
-        foreach($m as $key => $mv){			
+        foreach($m as $key => $mv){
 			if ($mv['id_movmag']>0){ // se è un movimento del SIAN connesso al movimento di magazzino
 				if ($form['date_ini_Y'].$form['date_ini_M'].$form['date_ini_D']==str_replace("-", "", $mv['datdoc']) AND strlen($mv['status'])>1) {
 				// escludo i movimenti già inseriti null'ultimo file con stessa data
 				} else if ($mv['id_orderman']>0 AND $mv['operat']==-1 AND $mv['cod_operazione']<>"S7"){
 					// escludo i movimenti di produzione in uscita
-				} else {		
+				} else {
 					$genera="ok";
 					$datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
            			$movQuanti = $mv['quanti']*$mv['operat'];
@@ -306,6 +306,7 @@ if (isset($_POST['preview']) and $msg=='') {
   echo "</table></form>";
 }
 ?>
+<span class="navbar-fixed-bottom" style="left:20%; z-index:2000;"> Registro di campagna è un modulo di Antonio Germani</span>
 <?php
 require("../../library/include/footer.php");
 ?>

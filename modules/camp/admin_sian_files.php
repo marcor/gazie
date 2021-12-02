@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // >> gestione dei file .txt di upload per il SIAN <<
 
@@ -50,7 +50,7 @@ if ( isset($_POST['confirm'])){ // cancello il file dalla cartella di GAzie
 	if (isset($_POST['confirm']) AND substr($_POST['confirm'],-12) == "ANAGFCTO.txt"){
 		$fileContent=@file_get_contents($filetodelete); // prendo il contenuto del file
 		$filerecord=str_split ($fileContent,363);
-		foreach ($filerecord as $record) { // prendo l'ID anagrafica corrispondente 
+		foreach ($filerecord as $record) { // prendo l'ID anagrafica corrispondente
 			$ana = gaz_dbi_get_row($gTables['anagra'],"codfis",substr($record,20,16));
 			$id=$ana['id'];// rimetto a zero lo status_SIAN
 			gaz_dbi_put_query($gTables['clfoco'],"id_anagra=$id","status_SIAN","0");
@@ -126,7 +126,7 @@ if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
 	</tr>
 	</thead>
 	<tbody>
-	<?php 
+	<?php
 	if (strlen($form['delete'])>0){
 			?>
 			<tr>
@@ -162,7 +162,7 @@ if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
 				} else {
 					$filetype="Canc. mov.";
 				}
-			} 
+			}
 			if (substr($filetoread,-12) == "ANAGFCTO.txt"){
 				$filetype="Anagr.";
 			}
@@ -186,22 +186,22 @@ if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
 					<button type="submit" onclick = "this.form.submit();" title="Elimina da GAzie" name="del" value="del" class="btn btn-xs btn-default btn-elimina" >
 					<span class="glyphicon glyphicon-trash"></span>
 					</button>
+          <input type="hidden" name="first" value="<?php echo $file;?>">
 					</td>
-					<input type="hidden" name="first" value="<?php echo $file;?>">
 					<?php if (substr($filetoread,-12) == "OPERREGI.txt"){ ?>
 					<td align="center">
 					<button type="submit" onclick = "this.form.submit();" title="crea file di cancellazione" name="del" value="delsian" class="btn btn-xs btn-default" >
 					<span class="glyphicon glyphicon-remove"></span>
 					</button>
+          <input type="hidden" name="first" value="<?php echo $file;?>">
 					</td>
-					<input type="hidden" name="first" value="<?php echo $file;?>">
 					<?php }?>
 				<?php
 					$first=1;
-				} 
+				}
 				?>
 			</tr>
-			<?php	
+			<?php
 		}
 	}
 	?>
@@ -210,6 +210,7 @@ if ($handle = opendir(DATA_DIR.'files/'.$admin_aziend['codice'].'/sian/')){
 	</div>
 </div>
 </form>
+<span class="navbar-fixed-bottom" style="left:20%; z-index:2000;"> Registro di campagna è un modulo di Antonio Germani</span>
 <?php
 require("../../library/include/footer.php");
 ?>

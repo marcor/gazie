@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
@@ -56,7 +56,7 @@ if (isset($_POST['order_by'])&& !isset($_POST['button_mostra_tutto'])&& !isset($
 if (isset ($_POST['button_no_mostra_tutto'])) {unset($_POST['order_by']);$mt=1;$_POST['mostra']=$mt;}
 
 if (isset ($_POST['button_mostra_tutto'])) {unset($_POST['order_by']);$mt=0;}
- 
+
 
 require("../../library/include/header.php");
 ?>
@@ -77,7 +77,7 @@ require("../../library/include/header.php");
         var so = $("#sort").val();
         var ca = '<?php echo $cs ?>';
 		var mt = '<?php echo $mt ?>';
-		
+
         $.ajax({
             type: 'post',
             url: 'report_artico_scroll.php',
@@ -87,7 +87,7 @@ require("../../library/include/header.php");
                 sort: so,
                 codart: ca,
 				mostra: mt
-				
+
             },
             beforeSend: function () {
                 $('#loader-icon').show();
@@ -121,7 +121,7 @@ require("../../library/include/header.php");
                 } else {
                     $("#sort").val('ASC');
                 }
-            } else { // una colonna diversa la cambio 
+            } else { // una colonna diversa la cambio
                 $("#order_by").val(v);
             }
             $("#row_no").val(0); // quando richiedo un nuovo ordinamento devo necessariamente ricominciare da zero
@@ -142,31 +142,31 @@ $gForm = new magazzForm();
 	<p class="ui-state-highlight" id="idcodice"></p>
 	<p>Descrizione</p>
 	<p class="ui-state-highlight" id="iddescri"></p>
-</div>	
-<div class="panel panel-info col-lg-6">	 
+</div>
+<div class="panel panel-info col-lg-6">
 <?php if ($mt==1) {	?>
 	<label for="codice" ><?php echo "Elenco di tutti gli articoli"; ?></label>
-			 
-			<button type="submit" name="button_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
+
+			<button type="submit" name="button_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  >
 <i class="glyphicon glyphicon-refresh" style="color:green">
 
 <?php } else {?>
 <label for="codice" ><?php echo "Elenco degli articoli da mostrare nel Q.d.c."; ?></label>
-			 
+
 			<button type="submit" name="button_no_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  >
 <i class="glyphicon glyphicon-refresh" style="color:red">
 
-<?php } ?>	
+<?php } ?>
 		</i></button>
 
 	<input type="hidden" name="mostra"  value="<?php echo $mt; ?>">
 </div>
-<!-- </form>	
+<!-- </form>
 
 <form method="POST" id="form"> -->
-	    
+
     <div class="panel panel-info col-lg-6">
-	
+
         <div class="container-fluid">
             <label for="codice" class="col-lg-3 control-label"><?php echo $script_transl['codice'].'-'.$script_transl['descri']; ?></label>
             <?php
@@ -177,24 +177,24 @@ $gForm = new magazzForm();
         </div>
     </div>
 
-    
+
 	<div class="panel panel-default">
         <div id="gaz-responsive-table"  class="container-fluid">
             <table class="table table-responsive table-striped table-condensed cf">
                 <thead>
-                    <tr class="bg-success">              
-                        <th>						
+                    <tr class="bg-success">
+                        <th>
                             <a href="#" class="orby" data-order="codice">
                                 <?php echo $script_transl["codice"]; ?>
-                            </a>		
+                            </a>
                         </th>
                         <th>
                             <a href="#" class="orby" data-order="descri">
                                 <?php echo $script_transl["descri"]; ?>
                             </a>
                         </th>
-						<th class="text-center">                            
-                                <?php echo $script_transl["class"]; ?>                           
+						<th class="text-center">
+                                <?php echo $script_transl["class"]; ?>
                         </th>
                         <th>
                             <a href="#" class="orby" data-order="good_or_service">
@@ -209,27 +209,27 @@ $gForm = new magazzForm();
                         <th class="text-right">
                             <?php echo $script_transl["unimis"]; ?>
                         </th>
-                        
+
                         <th class="text-center">
                             <?php echo $script_transl["stock"]; ?>
                         </th>
-						
+
 						 <th class="text-center">
                             <?php echo $script_transl["lot"]; ?>
                         </th>
-                        
+
                         <th class="text-center">
                             <?php echo $script_transl["clone"]; ?>
                         </th>
                         <th class="text-center">
                             <?php echo $script_transl["delete"]; ?>
                         </th>
-                    </tr>      
-                </thead>    
+                    </tr>
+                </thead>
                 <tbody id="all_rows">
-                </tbody>     
+                </tbody>
             </table>
-        </div>  
+        </div>
     </div>
     <input type="hidden" name="row_no" id="row_no" value="<?php echo $rn; ?>">
     <input type="hidden" name="order_by" id="order_by" value="<?php echo $ob; ?>">
@@ -237,7 +237,8 @@ $gForm = new magazzForm();
 
 </form>
 <div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
-</div>  
+</div>
+<span class="navbar-fixed-bottom" style="left:20%; z-index:2000;"> Registro di campagna è un modulo di Antonio Germani</span>
 <?php
 require("../../library/include/footer.php");
 ?>
