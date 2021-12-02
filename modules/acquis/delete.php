@@ -73,9 +73,9 @@ if ((isset($_POST['type'])&&isset($_POST['ref'])) OR (isset($_POST['type']) && i
           // ... quindi elimino il rigo contabile
           gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $data['id_con']);
           gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $data['id_con']);
-          $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$i."'","id_tes desc");
         }
-        while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
+        $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$i."'","id_tes desc");
+        while ($a_row = gaz_dbi_fetch_array($rs_righidel)){
           gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
           if (intval($a_row['id_mag']) > 0){  //se c'� stato un movimento di magazzino lo azzero
             $upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $a_row['id_mag']);
