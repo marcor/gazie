@@ -144,7 +144,6 @@ function printPdf(urlPrintDoc){
                 echo "<option value='$i' $selected > $i </option>\n";
             }
 	    ?>
-
         </select>
     </div>
 	<?php
@@ -167,7 +166,7 @@ function printPdf(urlPrintDoc){
             <td  class="FacetFieldCaptionTD">
                 <?php  gaz_flt_disp_select("anno", "YEAR(datemi) as anno", $tesdoc_e_partners, $ts->where, "anno DESC"); ?>
             </td>
-            <td  class="FacetFieldCaptionTD">
+            <td class="FacetFieldCaptionTD">
 		    <?php
                     if ($partner_select) {
                         gaz_flt_disp_select("fornitore", "clfoco AS fornitore, ragso1 as nome",
@@ -177,11 +176,10 @@ function printPdf(urlPrintDoc){
                         gaz_flt_disp_int("fornitore", "Fornitore");
                     }
 		    ?>
-
             </td>
-            <td  class="FacetFieldCaptionTD">
+            <td class="FacetFieldCaptionTD">
             </td>
-            <td  class="FacetFieldCaptionTD">
+            <td class="FacetFieldCaptionTD">
             </td>
             <td  class="FacetFieldCaptionTD">
 			<input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search'];?>" onClick="javascript:document.report.all.value=1;">
@@ -250,7 +248,18 @@ function printPdf(urlPrintDoc){
 				$order='id_tes DESC';
 				$title="Modifica documento";
 			}
-
+      $addtipdoc="DDT";
+      switch ($r['tipdoc']) {
+        case "RDL":
+          $addtipdoc="RDL";
+          break;
+        case "DDL":
+          $addtipdoc="DDL";
+          break;
+        case "DDR":
+          $addtipdoc="DDR";
+          break;
+      }
 			if ($r['tipdoc']=="AFT" AND $r['ddt_type']=="T"){
 				$addtip="ADT &#8594; ";
 			} elseif ($r['tipdoc']=="AFT" AND $r['ddt_type']=="L"){
@@ -258,12 +267,12 @@ function printPdf(urlPrintDoc){
 			} else {
 				$addtip="";
 			}
-            echo "<tr>";
-            echo '<td class="text-center"><a class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $r["id_tes"] . '&Update&DDT" title="'. $title .'" >  <i class="glyphicon glyphicon-edit"></i>&nbsp;' . $r["id_tes"] . '</a></td>';
-            echo '<td class="text-center">' . $addtip.$r["tipdoc"] . " &nbsp;</td>";
-            echo '<td class="text-center">'. $r["numdoc"] . ' '.$ddtanomalo.'</td>';
-            echo '<td class="text-center">'. gaz_format_date($r["datemi"]). " &nbsp;</td>";
-            echo "<td>" . $r["ragso1"] . "&nbsp;</td>";
+      echo "<tr>";
+      echo '<td class="text-center"><a class="btn btn-xs btn-default" href="admin_docacq.php?id_tes=' . $r["id_tes"] . '&Update&'.$addtipdoc.'" title="'. $title .'" >  <i class="glyphicon glyphicon-edit"></i>&nbsp;' . $r["id_tes"] . '</a></td>';
+      echo '<td class="text-center">' . $addtip.$r["tipdoc"] . " &nbsp;</td>";
+      echo '<td class="text-center">'. $r["numdoc"] . ' '.$ddtanomalo.'</td>';
+      echo '<td class="text-center">'. gaz_format_date($r["datemi"]). " &nbsp;</td>";
+      echo "<td>" . $r["ragso1"] . "&nbsp;</td>";
 			if (intval(preg_replace("/[^0-9]/","",$r['numfat']))>=1){
 				echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" style=\"cursor:pointer;\" ".($pdf_to_modal==0?'href="stampa_docacq.php?id_tes=' . $r["id_tes"] .'" target="_blank"':"onclick=\"printPdf('stampa_docacq.php?id_tes=" . $r["id_tes"] ."')\"")."><i class=\"glyphicon glyphicon-print\" title=\"Stampa fattura n. " . $r["numfat"] . " PDF\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
 			} else {
