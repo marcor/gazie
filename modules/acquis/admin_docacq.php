@@ -27,6 +27,7 @@ require("../../modules/magazz/lib.function.php");
 require("../../modules/vendit/lib.function.php");
 require("../../modules/camp/lib.function.php");
 $admin_aziend = checkAdmin();
+$pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
 $gForm = new acquisForm();
@@ -965,8 +966,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                   unlink($fn);
                 }
                 $_SESSION['print_request'] = $ultimo_id;
-                header('Location: invsta_docacq.php');
-                exit;
+                if ($pdf_to_modal==0){
+                  header('Location: invsta_docacq.php');
+                  exit;
+                }
               }
             }
         }
@@ -1964,22 +1967,32 @@ $(function () {
     $('#numdoc').keyup(function(){
         this.value = this.value.replace(/[^\d]/g, '');
     });
-<?php
-if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
-    ?>
-    $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
     <?php
-}
-?>
-
-	});
-    function pulldown_menu(selectName, destField)
-    {
-        // Create a variable url to contain the value of the
-        // selected option from the the form named broven and variable selectName
-        var url = document.tesdoc[selectName].options[document.tesdoc[selectName].selectedIndex].value;
-        document.tesdoc[destField].value = url;
+    if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 && !isset($_POST['ins']) ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
+        ?>
+        $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
+        <?php
     }
+    ?>
+});
+function pulldown_menu(selectName, destField)
+{
+    // Create a variable url to contain the value of the
+    // selected option from the the form named broven and variable selectName
+    var url = document.tesdoc[selectName].options[document.tesdoc[selectName].selectedIndex].value;
+    document.tesdoc[destField].value = url;
+}
+function printPdf(urlPrintDoc){
+	$(function(){
+		$('#framePdf').attr('src',urlPrintDoc);
+		$('#framePdf').css({'height': '100%'});
+		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+		$('#closePdf').on( "click", function() {
+			$('.framePdf').css({'display': 'none'});
+      window.location.href = "<?php echo $form['ritorno']; ?>";
+		});
+	});
+};
 </script>
 <form class="form-horizontal" role="form" method="post" name="tesdoc" enctype="multipart/form-data" >
     <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
@@ -2020,44 +2033,51 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
     <input type="hidden" value="<?php echo $form['cauven']; ?>" name="cauven">
     <input type="hidden" value="<?php echo $form['caucon']; ?>" name="caucon">
     <input type="hidden" value="<?php echo $form['banapp']; ?>" name="banapp">
+    <div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+		<div class="col-lg-12">
+			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
+        <div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+      </div>
+      <iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+    </div>
     <div class="text-center">
         <div>
             <b>
-<?php
-if (isset($tesdoc) && ($tesdoc['ddt_type']=="T"||$tesdoc['ddt_type']=="L")){
-	 echo '<div class="container">
-			<div class="row alert alert-warning fade in" role="alert">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
-			<span aria-hidden="true">&times;</span>
-			</button>';
-    echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> ATTENZIONE!=> Si sta tentando di modificare un DDT per il quale è stata già registrata la fattura.';
-    echo "</div></div>\n";
-}
-if (count($msg['err']) > 0) { // ho un errore
-    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
-}
-if (count($msg['war']) > 0) { // ho un alert
-    $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
-}
-if (isset ($_GET['DDT'])){
-	$doctransl="ADT";
-} else {
-	$doctransl=$form['tipdoc'];
-}
-if ($form['id_tes'] > 0 && substr($form['tipdoc'], 0, 2) == 'AF') {
-   //$title = $script_transl[0][$form['tipdoc']] . ' prot.<input type="text" class="text-right" style="width:5em;" id="protoc" name="protoc" value="'.$form['protoc'].'">';
-    $title = $script_transl[0][$doctransl] . ' prot.'.$form['protoc'];
-} else {
-    $title = $script_transl[0][$doctransl];
-}
-if ($form['id_tes'] > 0) { // è una modifica
-	echo $script_transl['upd_this'].$title;
-} else {
-    echo $script_transl['ins_this'].$title;
-}
-$select_fornitore = new selectPartner('clfoco');
-$select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['search_partner'], $admin_aziend['masfor']);
-?>
+            <?php
+            if (isset($tesdoc) && ($tesdoc['ddt_type']=="T"||$tesdoc['ddt_type']=="L")){
+               echo '<div class="container">
+                  <div class="row alert alert-warning fade in" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
+                  <span aria-hidden="true">&times;</span>
+                  </button>';
+                echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> ATTENZIONE!=> Si sta tentando di modificare un DDT per il quale è stata già registrata la fattura.';
+                echo "</div></div>\n";
+            }
+            if (count($msg['err']) > 0) { // ho un errore
+                $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+            }
+            if (count($msg['war']) > 0) { // ho un alert
+                $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
+            }
+            if (isset ($_GET['DDT'])){
+              $doctransl="ADT";
+            } else {
+              $doctransl=$form['tipdoc'];
+            }
+            if ($form['id_tes'] > 0 && substr($form['tipdoc'], 0, 2) == 'AF') {
+               //$title = $script_transl[0][$form['tipdoc']] . ' prot.<input type="text" class="text-right" style="width:5em;" id="protoc" name="protoc" value="'.$form['protoc'].'">';
+                $title = $script_transl[0][$doctransl] . ' prot.'.$form['protoc'];
+            } else {
+                $title = $script_transl[0][$doctransl];
+            }
+            if ($form['id_tes'] > 0) { // è una modifica
+              echo $script_transl['upd_this'].$title;
+            } else {
+                echo $script_transl['ins_this'].$title;
+            }
+            $select_fornitore = new selectPartner('clfoco');
+            $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['search_partner'], $admin_aziend['masfor']);
+            ?>
             </b>
         </div>
     </div>
@@ -3046,5 +3066,14 @@ if (count($form['rows']) > 0) {
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 <?php
+if (isset($_POST['ins']) && count($msg['err']) == 0) {// stampa pdf in popup iframe
+  if ($pdf_to_modal!==0){
+    ?>
+    <script>
+      printPdf('invsta_docacq.php');
+    </script>
+    <?php
+  }
+}
 require("../../library/include/footer.php");
 ?>
