@@ -1122,7 +1122,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 									if (!isset($form['recip_stocc_comp'][$nc])){
 										$form['recip_stocc_comp'][$nc]="";
 									}
-									$campsilos->selectSilos('recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1,'capacita','TRUE','col-sm-7' , null, '');
+									$campsilos->selectSilos('recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1,'capacita','TRUE','col-sm-7' , null, '','','',$row['codice_artico_base']);
 									?>
 									</div>
 									<?php

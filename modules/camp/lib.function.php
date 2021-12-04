@@ -6,47 +6,47 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
- 
+
 class campForm extends GAzieForm {
-	
+
 	// Antonio Germani - Come select selectFromDB ma con in più preleva $key4 da $table2, dove $key3 è uguale a $key2, e lo visualizza nella scelta del select. Cioè nelle scelte del select ci sarà $key e $key4
 	function selectFrom2DB($table,$table2,$key3,$key4, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false, $disabled="") {
         global $gTables;
 		$acc='';
         $refresh = '';
-		
+
         if (!$order) {
             $order = $key;
-        }		
-		
+        }
+
         $query = 'SELECT * FROM `' . $gTables[$table] . '` ';
         if ($where) {
             $query .= ' WHERE ' . $where;
         }
-        $query .= ' ORDER BY `' . $order . '`'; 
+        $query .= ' ORDER BY `' . $order . '`';
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
@@ -54,16 +54,16 @@ class campForm extends GAzieForm {
         if ($empty) {
             $acc .= "\t\t <option value=\"\"></option>\n";
         }
-		
+
         $result = gaz_dbi_query($query);
         while ($r = gaz_dbi_fetch_array($result)) {
             $selected = '';
             if ($r[$key] == $val) {
                 $selected = "selected";
             }
-						
+
 			$r2 = gaz_dbi_get_row($gTables[$table2], $key3, $r[$key2]);
-			
+
             $acc .= "\t\t <option value=\"" . $r[$key] . "\" $selected >";
             if (empty($key2)) {
                 $acc .= substr($r[$key], 0, 43) . "</option>\n";
@@ -85,11 +85,11 @@ class campForm extends GAzieForm {
 			echo $acc;
 		}
     }
-	
+
 }
 
-class silos {	
-		
+class silos {
+
 	function getCont($codsil){// restituisce la quantità di olio di un recipiente
 		global $gTables,$admin_aziend;
 		$content=0;
@@ -107,13 +107,13 @@ class silos {
 		while ($r = gaz_dbi_fetch_array($ressilos)) {
 			if ($r['confezione']==0){
 				$content=$content+($r['quanti']*$r['operat']);
-			} 
+			}
 		}
 		$content=number_format ($content,3);
-		
+
 		return $content ;
 	}
-	
+
 	function getLotRecip($codsil,$codart=""){// funzione per trovare l'ID dell'ultimo lotto inserito nel recipiente di stoccaggio
 		$id_lotma=false;
 		global $gTables,$admin_aziend;
@@ -129,10 +129,10 @@ class silos {
 		$passo=2000000;
 		$limit=0;
 		$lastmovmag=gaz_dbi_dyn_query ($what,$table,$where,$orderby,$limit,$passo,$groupby);
-		
+
 		while ($r = gaz_dbi_fetch_array($lastmovmag)) {
 			$id_lotma = $r['id_lotmag'];
-			$cont= $sil -> dispLotID ($r['artico'], $r['id_lotmag']); 
+			$cont= $sil -> dispLotID ($r['artico'], $r['id_lotmag']);
 			if ($cont>0){
 				break;
 			}
@@ -141,8 +141,8 @@ class silos {
 		$identifier=(isset($identif))?$identif['identifier']:'';
 		return array($id_lotma,$identifier) ;
 	}
-	
-	function selectSilos($name, $key, $val, $order = false, $empty = false, $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false) {
+
+	function selectSilos($name, $key, $val, $order = false, $empty = false, $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false, $codart="") {
         global $gTables;
 		$campsilos = new silos();
 		$acc='';
@@ -162,19 +162,48 @@ class silos {
         if ($empty) {
             $acc .= "\t\t <option value=\"\"></option>\n";
         }
+
+
+
         $result = gaz_dbi_query($query);
         while ($r = gaz_dbi_fetch_array($result)) {
-			$lot = $campsilos->getLotRecip($r[$key]);
-			$cont = $campsilos->getCont($r[$key]);
-            $selected = '';
-            if ($r[$key] == $val) {
-                $selected = "selected";
+            if (strlen($codart)>0){// se è stato inviato un codice articolo, controllo che sia presente nel silos
+              // vedo la data dell'ultimo svuotamento totale e il relativo idmovmag
+              $ok="";
+              $latestEmpty= $this -> getLatestEmptySil($r['cod_silos']);
+              //echo "<pre>latest:",print_r($latestEmpty);
+              $date=(isset($latestEmpty['datdoc']))?$latestEmpty['datdoc']:'';
+              $id_mov=(isset($latestEmpty['id_mov']))?$latestEmpty['id_mov']:'';
+
+              $select=$gTables['movmag'].".artico";
+              $table=$gTables['movmag']."
+              LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
+              LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico
+              ";
+              $where= $gTables['camp_mov_sian'].".recip_stocc = '".$r['cod_silos']."' AND ".$gTables['camp_artico'].".confezione = 0";
+              if (strlen($date)>0){
+                $where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))";
+              }
+              $resmovs=gaz_dbi_dyn_query ($select,$table,$where);
+              foreach ($resmovs as $res) {
+                if ($res['artico']==$codart){ // se è presente l'articolo nel silos do l'ok
+                  $ok="ok";
+                }
+              }
             }
-            $acc .= "\t\t <option value=\"" . $r[$key] . "\" $selected >";
-            if (empty($key2)) {
-                $acc .= substr($r[$key], 0, 43) . "</option>\n";
-            } else {
-                $acc .= substr($r[$key], 0, 28) . " - Kg: " . substr($r[$key2], 0, 35) . " - Lotto: " . $lot[1] . " - Cont.Kg: ". $cont ."</option>\n";
+            if ($ok=="ok"){// se è presente lo visualizzo nella select
+              $lot = $campsilos->getLotRecip($r[$key]);
+              $cont = $campsilos->getCont($r[$key]);
+              $selected = '';
+              if ($r[$key] == $val) {
+                  $selected = "selected";
+              }
+              $acc .= "\t\t <option value=\"" . $r[$key] . "\" $selected >";
+              if (empty($key2)) {
+                  $acc .= substr($r[$key], 0, 43) . "</option>\n";
+              } else {
+                  $acc .= substr($r[$key], 0, 28) . " - Kg: " . substr($r[$key2], 0, 35) . " - Lotto: " . $lot[1] . " - Cont.Kg: ". $cont ."</option>\n";
+              }
             }
         }
         if ($addOption) {
@@ -191,60 +220,60 @@ class silos {
 			echo $acc;
 		}
     }
-	
+
 	function getLatestEmptySil($codsil){// funzione per trovare la data più recente dell'ultimo svuotamento totale del silos/recipiente di stoccaggio
 	// se trovato il punto zero, restituisce un array: datdoc (la data dello zero) id_mov (id magazzino del movimento zero) RunningTotal (valore numerico zero)
 		global $gTables,$admin_aziend;
-		
+
 		$query ="
 		SELECT datdoc, id_mov, quanti, operat
 		FROM ".$gTables['movmag']."
 		LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = id_mov
-		LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico  
+		LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico
 		WHERE ".$gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0
 		ORDER BY datdoc ASC, id_mov ASC
 		";
-		
+
 		$res = gaz_dbi_query($query);
-		
+
 		$sum=0;$zeroday=array();
-		foreach ($res as $r){			
-			$sum = number_format($sum,8) + ($r['quanti']*$r['operat']);			
+		foreach ($res as $r){
+			$sum = number_format($sum,8) + ($r['quanti']*$r['operat']);
 			if ($sum == 0){
 				$zeroday['id_mov']=$r['id_mov'];
-				$zeroday['datdoc']=$r['datdoc'];				
+				$zeroday['datdoc']=$r['datdoc'];
 			}
-		}		
-		return $zeroday;			
+		}
+		return $zeroday;
 	}
-	
+
 	function getContentSil($codsil,$date="",$id_mov=0){// funzione per trovare il contenuto in lotti e varietà dalla data dell'ultimo svuotamento totale di un silos (id_mov è l'ultimo id da escludere nella stessa data)
-			
+
 		if ($date==""){
 			$latestEmpty= $this -> getLatestEmptySil($codsil);
 			//echo "<pre>latest:",print_r($latestEmpty);
 			$date=(isset($latestEmpty['datdoc']))?$latestEmpty['datdoc']:'';
 			$id_mov=(isset($latestEmpty['id_mov']))?$latestEmpty['id_mov']:'';
 		}
-		
+
 		global $gTables,$admin_aziend;
 		$sil = new lotmag();
 		$select=$gTables['movmag'].".id_lotmag, ".$gTables['artico'].".quality, ".$gTables['movmag'].".artico, ".$gTables['movmag'].".id_mov, ".$gTables['movmag'].".datdoc, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".operat";
-		$table=$gTables['movmag']." 
-		LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov 
+		$table=$gTables['movmag']."
+		LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
 		LEFT JOIN ".$gTables['artico']." ON ".$gTables['artico'].".codice = ".$gTables['movmag'].".artico
 		LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = ".$gTables['artico'].".codice
 		";
 		$where= $gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0";
 		if (strlen($date)>0){
-			$where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))"; 
+			$where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))";
 		}
 		$orderby="datdoc DESC, id_mov DESC";
 		$groupby= "";
 		$passo=2000000;
 		$limit=0;
 		$resmovs=gaz_dbi_dyn_query ($select,$table,$where,$orderby,$limit,$passo,$groupby);// ho trovato tutti i movimenti interessati
-		
+
 		$count=array();
 		$var_dichiarabili="";
 		$key="id_lotti"; // chiave per il raggruppamento per lotto
@@ -259,7 +288,7 @@ class silos {
 				// Altrimenti, aggiorno il valore della chiave
 				$count[$key][$res['id_lotmag']] += number_format(($res['quanti']*$res['operat']),8);
 			}
-			
+
 			if( !isset($count[$key2][$res['quality']]) ){ // se la chiave varietà ancora non c'è nell'array
 				// Aggiungo la chiave con il rispettivo valore iniziale
 				if (strlen($res['quality'])<3){// basta una sola partita senza varietà per bloccare la classificazione varietale del silos
@@ -269,12 +298,12 @@ class silos {
 			} else {
 				// Altrimenti, aggiorno il valore della chiave
 				$count[$key2][$res['quality']]+= number_format(($res['quanti']*$res['operat']),8);
-			}			
+			}
 		}
 		$count[$key]['totale']= number_format (array_sum($count[$key]),8); // il totale dei lotti
-		
+
 		$count[$key2]['totale']= number_format (array_sum($count[$key2]),8); // il totale delle varietà
-		
+
 		// i valori zero o, peggio, negativi sono da escludere
 		$count[$key] = array_filter($count[$key],function($var){return($var > 0);});
 		$count[$key2] = array_filter($count[$key2],function($var){return($var > 0);});
@@ -283,12 +312,12 @@ class silos {
 			$count[$key2]=array();//azzero l'array delle varietà
 			$count[$key2]['totale']=$totale;// reimposto solo la quantità totale nell'array
 		}
-		
+
 		arsort($count[$key2]);
-		
+
 		//restituisce array['lotti](totale=>qta, idlotto=>qta, id lotto=>qta, etc) e array['varieta'](totale=>qta, varieta=>qta, varieta=>qta, etc) Le varietà sono elencate in ordine descrescente in base al valore della quantità.
 		return $count;
-	}	
+	}
 }
 
 // converte da ore decimali a hh:mm:ss - Es. da 5.75 a 05:45:00
@@ -330,13 +359,13 @@ function convertHours($time,$dec = FALSE){
 }
 function ContTratt($artico,$idProd=""){// restituisce il numero di trattamenti
 		global $gTables,$admin_aziend;
-		$year = date("Y"); 
+		$year = date("Y");
 		$where=" WHERE artico = '".$artico."' AND tipdoc ='CAM' AND operat = '-1'";
 		if ($idProd>0){
 			$where .=" AND id_orderman = ". $idProd;
 		} else {
 			$where .=" AND SUBSTRING_INDEX(datdoc, '-', 1) = ". $year;
-		}		
+		}
 		$query = 'SELECT * FROM `' . $gTables['movmag'] . '` '. $where;
 		//echo $query;
 		$res=gaz_dbi_query ($query);
