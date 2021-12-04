@@ -28,6 +28,7 @@ require("../../modules/vendit/lib.function.php");
 require("../../modules/camp/lib.function.php");
 $admin_aziend = checkAdmin();
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
+$after_newdoc_back = gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
 $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
 $gForm = new acquisForm();
@@ -52,7 +53,19 @@ if (isset($_POST['newdestin'])) {
 }
 
 if (!isset($_POST['ritorno'])) {
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+    if (isset($after_newdoc_back)){
+      if ($after_newdoc_back==0){
+        $form['ritorno']="admin_docacq.php?tipdoc=".$_GET['tipdoc']."&Insert";
+      }else{
+        if (substr($_GET['tipdoc'],1,1)=="D"){
+          $form['ritorno']="report_ddtacq.php";
+        }else{
+          $form['ritorno']="report_docacq.php";
+        }
+      }
+    } else{
+      $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+    }
 } else {
     $form['ritorno'] = $_POST['ritorno'];
 }
@@ -3066,14 +3079,12 @@ if (count($form['rows']) > 0) {
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 <?php
-if (isset($_POST['ins']) && count($msg['err']) == 0) {// stampa pdf in popup iframe
-  if ($pdf_to_modal!==0){
-    ?>
-    <script>
-      printPdf('invsta_docacq.php');
-    </script>
-    <?php
-  }
+if (isset($_POST['ins']) && count($msg['err']) == 0 && $pdf_to_modal!==0) {// stampa pdf in popup iframe
+  ?>
+  <script>
+    printPdf('invsta_docacq.php');
+  </script>
+  <?php
 }
 require("../../library/include/footer.php");
 ?>
