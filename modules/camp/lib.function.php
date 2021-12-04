@@ -142,10 +142,29 @@ class silos {
 		return array($id_lotma,$identifier) ;
 	}
 
+  function getSilosArtico($codsil){
+    global $gTables;
+    $latestEmpty= $this -> getLatestEmptySil($codsil);
+    //echo "<pre>latest:",print_r($latestEmpty);
+    $date=(isset($latestEmpty['datdoc']))?$latestEmpty['datdoc']:'';
+    $id_mov=(isset($latestEmpty['id_mov']))?$latestEmpty['id_mov']:'';
+    $select=$gTables['movmag'].".artico";
+    $table=$gTables['movmag']."
+    LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
+    LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico
+    ";
+    $where= $gTables['camp_mov_sian'].".recip_stocc = '".$codsil."' AND ".$gTables['camp_artico'].".confezione = 0";
+    if (strlen($date)>0){
+      $where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))";
+    }
+    $resmovs=gaz_dbi_dyn_query ($select,$table,$where);
+    return $resmovs;
+  }
+
 	function selectSilos($name, $key, $val, $order = false, $empty = false, $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false, $codart="") {
         global $gTables;
-		$campsilos = new silos();
-		$acc='';
+        $campsilos = new silos();
+        $acc='';
         $refresh = '';
         if (!$order) {
             $order = $key;
@@ -162,29 +181,12 @@ class silos {
         if ($empty) {
             $acc .= "\t\t <option value=\"\"></option>\n";
         }
-
-
-
         $result = gaz_dbi_query($query);
         while ($r = gaz_dbi_fetch_array($result)) {
             if (strlen($codart)>0){// se è stato inviato un codice articolo, controllo che sia presente nel silos
               // vedo la data dell'ultimo svuotamento totale e il relativo idmovmag
               $ok="";
-              $latestEmpty= $this -> getLatestEmptySil($r['cod_silos']);
-              //echo "<pre>latest:",print_r($latestEmpty);
-              $date=(isset($latestEmpty['datdoc']))?$latestEmpty['datdoc']:'';
-              $id_mov=(isset($latestEmpty['id_mov']))?$latestEmpty['id_mov']:'';
-
-              $select=$gTables['movmag'].".artico";
-              $table=$gTables['movmag']."
-              LEFT JOIN ".$gTables['camp_mov_sian']." ON ".$gTables['camp_mov_sian'].".id_movmag = ".$gTables['movmag'].".id_mov
-              LEFT JOIN ".$gTables['camp_artico']." ON ".$gTables['camp_artico'].".codice = artico
-              ";
-              $where= $gTables['camp_mov_sian'].".recip_stocc = '".$r['cod_silos']."' AND ".$gTables['camp_artico'].".confezione = 0";
-              if (strlen($date)>0){
-                $where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))";
-              }
-              $resmovs=gaz_dbi_dyn_query ($select,$table,$where);
+              $resmovs=$this -> getSilosArtico($r['cod_silos']);
               foreach ($resmovs as $res) {
                 if ($res['artico']==$codart){ // se è presente l'articolo nel silos do l'ok
                   $ok="ok";
