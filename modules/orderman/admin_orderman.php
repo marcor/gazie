@@ -38,7 +38,7 @@ function gaz_select_data ( $nomecontrollo, $valore ) {
         $result_input = '<input size="8" type="text" id="'.$nomecontrollo.'" name="'.$nomecontrollo.'" value="'.$valore.'">';
         $result_input .= '<script>
         $(function () {
-            $("#'.$nomecontrollo.'").datepicker({dateFormat: "dd-mm-yy", showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})  
+            $("#'.$nomecontrollo.'").datepicker({dateFormat: "dd-mm-yy", showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true})
         });</script>';
         return $result_input;
     }
@@ -47,7 +47,7 @@ function gaz_select_ora ( $nomecontrollo, $valore ) {
 	$nomeora = $nomecontrollo."_ora";
 	$nomeminuti = $nomecontrollo."_minuti";
 	$valoreora = explode ( ":", $valore );
-	
+
 	$result_input = "<select name=\"".$nomeora."\" >\n";
 	for ($counter = 0; $counter <= 23; $counter++) {
 		$selected = "";
@@ -96,18 +96,18 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['gioinp'] = $_POST['gioinp'];
     $form['mesinp'] = $_POST['mesinp'];
     $form['anninp'] = $_POST['anninp'];
-	
+
 	$form['iniprod'] = $_POST['iniprod'];
 	$form['iniprodtime'] = $_POST['iniprodtime_ora'].":".$_POST['iniprodtime_minuti'];
-	
+
 	$form['fineprod'] = $_POST['fineprod'];
 	$form['fineprodtime'] = $_POST['fineprodtime_ora'].":".$_POST['fineprodtime_minuti'];
     $form['day_of_validity'] = $_POST['day_of_validity'];
-    $form["campo_impianto"] = $_POST["campo_impianto"];    
+    $form["campo_impianto"] = $_POST["campo_impianto"];
     $form['quantip'] = $_POST['quantip'];
     $form['cosear'] = $_POST['cosear'];
-    $form['codart'] = (isset($_POST['codart']))?$_POST['codart']:'';	
-	
+    $form['codart'] = (isset($_POST['codart']))?$_POST['codart']:'';
+
     if (strlen ($_POST['cosear'])>0) {
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['cosear']);
 		$form['codart'] =($resartico)?$resartico['codice']:'';
@@ -141,39 +141,39 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			unset($var_orig['varieta']['totale']);//tolgo il totale
 			$var=implode(", ",array_keys($var_orig['varieta']));// creo l'elenco varietà
 			if ($form['quality'] !== $var){ // se le varietà del silos non coincidono con quelle della confezione
-				$warnmsg.= "44+"; 
-			}				
+				$warnmsg.= "44+";
+			}
 		}
 	}
 	if ($resartico && $resartico['good_or_service'] == 2) { // se è un articolo composto
 		if ($toDo == "update") { //se UPDATE
-			 // prendo i movimenti di magazzino dei componenti e l'unità di misura 
+			 // prendo i movimenti di magazzino dei componenti e l'unità di misura
 			$where="operat = '-1' AND id_orderman = ". intval($_GET['codice']);
 			$table = $gTables['movmag']." LEFT JOIN ".$gTables['artico']." on (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
 			$result7 = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['artico'].".unimis", $table, $where );
 		} else { // se INSERT
 			// prendo i componenti che formerano l'articolo e l'unità di misura
 			$where="codice_composizione = '" . $form['codart'] . "'";
-			$table = $gTables['distinta_base']." 
+			$table = $gTables['distinta_base']."
 			LEFT JOIN ".$gTables['artico']." on (".$gTables['distinta_base'].".codice_artico_base = ".$gTables['artico'].".codice)";
             $rescompo = gaz_dbi_dyn_query ($gTables['distinta_base'].".*, ".$gTables['artico'].".*", $table, $where );
 		}
 	}
-	
+
 	if (intval($form['SIAN'])>0){ // se è una produzione SIAN se la data di questa produzione è antecedente a quella dell'ultimo file SIAN
 		$uldtfile=getLastSianDay();
 		if (strtotime($_POST['datreg']) < strtotime($uldtfile)){
 			$warnmsg.="40+";
 		}
 	}
-	
-    $form['coseor'] = $_POST['coseor'];	
+
+    $form['coseor'] = $_POST['coseor'];
     $quantiprod = 0;
     if (intval($form['coseor']) > 0) { // se c'è un numero ordine lo importo tramite l'id
         $res = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['coseor']);
 		$form['order'] = $res['numdoc'];
 		$form['id_tes'] = $res['id_tes'];
-        if (isset($res)) { // se esiste veramente l'ordine ne prendo il rigo per l'articolo selezionato 
+        if (isset($res)) { // se esiste veramente l'ordine ne prendo il rigo per l'articolo selezionato
             if (strlen($form['codart'])>0){//(se selezionato)
 			$res2 = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $res['id_tes'], "AND codart = '{$form['codart']}'");
             $form['quantipord'] = $res2['quanti'];
@@ -182,13 +182,13 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			// prendo tutte le produzioni/orderman in cui c'è questo rigbro per conteggiare la quantità eventualmente già prodotta
             $query = "SELECT id FROM " . $gTables['orderman'] . " WHERE id_rigbro = '" . $res2['id_rig'] . "'";
             $resor = gaz_dbi_query($query);
-			
+
             while ($row = $resor->fetch_assoc()) { // scorro tutte le produzioni/orderman trovate
                 // per ogni orderman consulto movmag e conteggio le quantità per articolo già prodotte
                 $rowmag = gaz_dbi_get_row($gTables['movmag'], "artico", $form['codart'], "AND operat = '1' AND id_orderman ='{$row['id']}'");
                 $quantiprod = ($rowmag)?($quantiprod + $rowmag['quanti']):0;
             }
-			
+
 			}
         } else { // se l'ordine non esiste ed è stato inserito un numero anomalo
             $form['codart'] = "";
@@ -202,13 +202,13 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 			$res3 = gaz_dbi_get_row($gTables['clfoco'], "codice", $res['clfoco']);
 		}
     } else {
-		$form['id_tes'] ="";        
+		$form['id_tes'] ="";
         $form['id_tesbro'] = 0;
         $form['id_rigbro'] = 0;
         $form['order'] = 0;
         $form['quantipord'] = 0;
-    }   
-	
+    }
+
     $form['filename'] = $_POST['filename'];
     $form['identifier'] = $_POST['identifier'];
     $form['expiry'] = $_POST['expiry'];
@@ -220,7 +220,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     }
     $form['id_movmag'] = $_POST['id_movmag'];
     $form['id_lotmag'] = $_POST['id_lotmag'];
-	
+
     if (isset($_POST['numcomp'])) {
 		$form['numcomp'] = $_POST['numcomp'];
         if ($form['numcomp'] > 0) {
@@ -235,17 +235,17 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				if (strlen($form['recip_stocc_comp'][$m])>0 AND intval($form['cod_operazione'] >0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
 				   $var_orig = $campsilos->getContentSil($form['recip_stocc_comp'][$m]);
 					unset($var_orig['varieta']['totale']);//tolgo il totale
-					$var=implode(", ",array_keys($var_orig['varieta']));// creo l'elenco varietà					
+					$var=implode(", ",array_keys($var_orig['varieta']));// creo l'elenco varietà
 					if ($form['quality_comp'][$m] !== $var){ // se le varietà del silos non coincidono con quelle della confezione
 						$warnmsg.= "44+";$block_var="SI";
-					}				
+					}
 				}
 				if (isset($_POST['subtLot'. $m]) AND $form['q_lot_comp'][$m]>1){
 					$form['q_lot_comp'][$m]--;
 				}
 				if (isset($_POST['addLot'. $m])){
 					$form['q_lot_comp'][$m]++;
-				}				
+				}
 				if (isset($_POST['manLot'. $m])) {
 					$form['amLot'. $m] = $_POST['manLot'. $m];
 				} elseif (isset($_POST['autoLot'. $m])) {
@@ -255,45 +255,45 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				}
 				for ($n = 0;$n < $form['q_lot_comp'][$m];++$n) { // se q lot comp è zero vuol dire che non ci sono lotti
 				    $form['id_lot_comp'][$m][$n] = (isset($_POST['id_lot_comp' . $m . $n]))?$_POST['id_lot_comp' . $m . $n]:0;
-                    $form['lot_quanti'][$m][$n] = (isset($_POST['lot_quanti' . $m . $n]))?$_POST['lot_quanti' . $m . $n]:0;					
+                    $form['lot_quanti'][$m][$n] = (isset($_POST['lot_quanti' . $m . $n]))?$_POST['lot_quanti' . $m . $n]:0;
                 }
-            } 
+            }
         } else {
 			$form['amLot0']="";
 		}
-    } 
+    }
 
     // Se viene inviata la richiesta di conferma totale ... ******   CONTROLLO ERRORI   ******
     $form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
-    if (isset($_POST['ins'])) { 
+    if (isset($_POST['ins'])) {
         $itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['codart']);
         if ($form['codart'] <> "" && !isset($itemart)) { // controllo se codice articolo non esiste o se è nullo
             $msg.= "20+";
-        }        	
-		if ($itemart && $itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto, 
-		//controllo se le quantità inserite per ogni singolo lotto, di ogni componente, corrispondono alla richiesta della produzione e alla reale disponbilità 
+        }
+		if ($itemart && $itemart['good_or_service'] == 2 && isset($form['numcomp'])) { // se articolo composto,
+		//controllo se le quantità inserite per ogni singolo lotto, di ogni componente, corrispondono alla richiesta della produzione e alla reale disponbilità
             for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) {
 				if ($form['quanti_comp'][$nc] == "ERRORE"){
-					$msg.= "43+";//Non c'è sufficiente disponibilità di un ID lotto selezionato				
-				}				
-				
-				if (intval($form['q_lot_comp'][$nc])>0) {					
+					$msg.= "43+";//Non c'è sufficiente disponibilità di un ID lotto selezionato
+				}
+
+				if (intval($form['q_lot_comp'][$nc])>0) {
 					$tot=0;
 					for ($l=0; $l<$form['q_lot_comp'][$nc]; ++$l) {
 						if ($lm -> getLotQty($form['id_lot_comp'][$nc][$l]) < $form['lot_quanti'][$nc][$l]){
-							$msg.= "21+";//Non c'è sufficiente disponibilità di un ID lotto selezionato								
+							$msg.= "21+";//Non c'è sufficiente disponibilità di un ID lotto selezionato
 						}
 						$tot=$tot + $form['lot_quanti'][$nc][$l];
-						
+
 						$checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $form['id_lot_comp'][$nc][$l]);
-						if (strtotime($form['datreg']) < strtotime($checklot['datdoc']) ){// non può uscire un lotto prima della data della sua creazione					
-							$msg .= "45+";// Il lotto non può uscire in tale data in quanto ancora inesistente			
+						if (strtotime($form['datreg']) < strtotime($checklot['datdoc']) ){// non può uscire un lotto prima della data della sua creazione
+							$msg .= "45+";// Il lotto non può uscire in tale data in quanto ancora inesistente
 						}
 						//controllo se l'ID lotto è presente nel silos selezionato
 						if (strlen($form['recip_stocc_comp'][$nc])>0){
 							$var_idlot = $campsilos->getContentSil($form['recip_stocc_comp'][$nc]);
 							unset($var_idlot['id_lotti']['totale']);//tolgo il totale
-							$var=array_keys($var_idlot['id_lotti']);// creo array idlotti presenti nel silos							
+							$var=array_keys($var_idlot['id_lotti']);// creo array idlotti presenti nel silos
 							if (!in_array($form['id_lot_comp'][$nc][$l], $var)){ // se l'id del lotto non è nel silos
 								$msg.= "47+";
 							}
@@ -305,7 +305,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					if (intval($form['SIAN']) > 0 AND $form['SIAN_comp'][$nc] > 0 AND $campsilos -> getCont($form['recip_stocc_comp'][$nc]) < $form['quanti_comp'][$nc] AND intval($form['cod_operazione'])!==3){
 						$msg.= "41+"; // il silos di origine non ha sufficiente quantità olio
 					}
-					
+
 				}
             }
         }
@@ -331,7 +331,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         if (strlen($form['order_type']) < 3) { //tipo produzione vuota
             $msg.= "12+";
         }
-		
+
         if ($form['order_type'] == "IND") { // in produzione industriale
             if (strlen($form['codart']) == 0) { // articolo vuoto
                 $msg.= "16+";
@@ -340,20 +340,20 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             if ($form['quantip'] == 0 || $form['quantip']=="" ) { // quantità produzione vuota
                 $msg.= "17+";
             }
-			
+
             if (intval($form['datreg']) == 0) { // se manca la data di registrazione
                 $msg.= "22+";
             }
 			if (intval($form['SIAN']) > 0 ){ // controlli SIAN
 				if (intval($form['cod_operazione'])<1) { // se manca il codice operazione SIAN
-					$msg.= "26+"; 
+					$msg.= "26+";
 				}
 				if (intval($form['cod_operazione'])==5){ // se M1 , movimentazione interna olio sfuso
 					if (strlen ($form['recip_stocc_destin']) == 0 ) { // se M1 e manca il recipiente di destinazione
-						$msg.= "27+"; 
+						$msg.= "27+";
 					}
 					if ($form['recip_stocc_destin']==$form['recip_stocc']) { // se M1 e i recipienti sono uguali
-						$msg.= "28+"; 
+						$msg.= "28+";
 					}
 					$get_sil=gaz_dbi_get_row($gTables['camp_recip_stocc'],cod_silos,$form['recip_stocc_destin']);
 					if ($campsilos -> getCont($form['recip_stocc_destin'])+$form['quantip'] > $get_sil['capacita']){// se non c'è spazio sufficiente nel recipiente di destinazione
@@ -372,59 +372,59 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				if (intval($form['cod_operazione']>0 AND intval($form['cod_operazione'])<4)) { // se sono operazioni che producono olio confezionato
 					$rescampartico = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['codart']);
 					if ($rescampartico['confezione']==0){ // se l'olio è sfuso segnalo l'errore
-						$msg.= "37+"; 
-					}				
+						$msg.= "37+";
+					}
 				}
 			}
-			
+
 			if ($toDo == 'insert' AND intval($form['SIAN']) > 0 AND (isset($form['numcomp']) AND $form['numcomp']>0)) { // se ci sono componenti faccio il controllo errori SIAN sui componenti
-			    for ($m = 0;$m < $form['numcomp'];++$m) {					
+			    for ($m = 0;$m < $form['numcomp'];++$m) {
 					$rescamparticocomp = gaz_dbi_get_row($gTables['camp_artico'], "codice", $form['artcomp'][$m]);
 					if (isset($rescamparticocomp)){
 						if (intval($form['cod_operazione'])==3 AND $rescamparticocomp['confezione']==0 ) { // se L2 etichettatura e c'è olio sfuso
-							$msg.= "29+"; 
+							$msg.= "29+";
 						}
 						if (intval($form['cod_operazione'])==3 AND $rescamparticocomp['etichetta']==1 ) { // se L2 etichettatura e c'è olio etichettato
-							$msg.= "32+"; 
+							$msg.= "32+";
 						}
 						if (intval($form['cod_operazione'])==3 AND ($rescamparticocomp['categoria']!== $rescampartico['categoria'] OR $rescamparticocomp['or_macro']!== $rescampartico['or_macro'] OR $rescamparticocomp['estrazione']!== $rescampartico['estrazione'] OR $rescamparticocomp['biologico']!== $rescampartico['biologico'] OR $rescamparticocomp['confezione']!== $rescampartico['confezione'] )) { // se L2 etichettatura e c'è olio non etichettato
-							$msg.= "31+"; 
+							$msg.= "31+";
 						}
 						if ($rescamparticocomp['id_campartico']>0 AND strlen($form['recip_stocc_comp'][$m])==0 AND (intval($form['cod_operazione'])>0 AND intval($form['cod_operazione'])<3)){
 						$msg.= "38+";
 						}
-					}					
+					}
 				}
 			}
         }
-	
-        if ($msg == "") { // nessun errore			
+
+        if ($msg == "") { // nessun errore
             // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
 			$start_work = date_format(date_create_from_format('d-m-Y', $form['iniprod']), 'Y-m-d')." ".$form['iniprodtime'];
-			$end_work = date_format(date_create_from_format('d-m-Y', $form['fineprod']), 'Y-m-d')." ".$form['fineprodtime'];			
+			$end_work = date_format(date_create_from_format('d-m-Y', $form['fineprod']), 'Y-m-d')." ".$form['fineprodtime'];
             // i dati dell'articolo che non sono nel form li avrò nell' array $resartico
 			$form['quantip']=gaz_format_quantity($form['quantip']);// trasformo la quantità per salvarla nel database
-   
+
 			if ($toDo == "update") { // se è un update cancello eventuali precedenti file temporanei nella cartella tmp
                 foreach (glob("../../modules/orderman/tmp/*") as $fn) {
                     unlink($fn);
                 }
                 $id_orderman = intval($_GET['codice']);
-				
-				//aggiorno il movimento magazzino				
+
+				//aggiorno il movimento magazzino
 				$form['id_orderman'] = $id_orderman; $form['quanti'] = $form['quantip']; $form['datdoc'] = $form['datemi']; $form['artico'] = $form['codart'];
 				$update = array();
 				$update[]="id_mov";
 				$update[]=$form['id_movmag'];
-				gaz_dbi_table_update('movmag', $update, $form);				
-				
+				gaz_dbi_table_update('movmag', $update, $form);
+
 				if ($form['SIAN']>0){ // Antonio Germani - aggiorno il movimento del SIAN
 					$update = array();
 					$update[]="id_movmag";
 					$update[]=$form['id_movmag'];
 					gaz_dbi_table_update('camp_mov_sian',$update,$form);
 				}
-            } else { // se è insert			
+            } else { // se è insert
                 if (intval($form['order']) > 0) { // se c'è un ordine prendo gli id tesbro e rigbro esistenti nel form
                     $id_tesbro = $form['id_tesbro'];
                     $id_rigbro = $form['id_rigbro'];
@@ -436,7 +436,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             } elseif ($toDo == "insert") {
 				// e' un nuovo inserimento
                 // creo e salvo ORDERMAN, tesbro e rigbro
-                $status=0;				
+                $status=0;
                 if (intval($form['order']) <= 0) { // se non c'è un numero ordine ne creo uno fittizio in TESBRO e RIGBRO
 					if (($form['order_type'] != "AGR") OR ($form['order_type'] == "AGR" AND strlen($form['codart'])>0)) { // le produzioni agricole creano un ordine fittizio solo se c'è un articolo
 						$id_tesbro=tesbroInsert(array('tipdoc'=>'PRO','datemi'=>$form['datemi'],'numdoc'=>time(),'status'=>'AUTOGENERA','adminid'=>$admin_aziend['adminid']));
@@ -444,8 +444,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					if ($form['order_type'] == "IND") { $status=9; } // una produzione industriale senza ordine a riferimento la chiudo perché prodotto per stoccaggio in magazzino
                 } else { // se c'è l'ordine lo collego ad orderman
 					tesbroUpdate(array('id_tes',$form['id_tesbro']), array('id_orderman'=>$id_orderman));
-                    
-                    // usando i registri valorizzati per il form determino se devo mettere la produzione nello stato "9-chiuso" o lasciarla aperta 
+
+                    // usando i registri valorizzati per il form determino se devo mettere la produzione nello stato "9-chiuso" o lasciarla aperta
                     if (($quantiprod+$form['quantip'])>=$form['quantipord']) {  // ho prodotto di più o uguale a quanto richiesto dall'ordine specificato
                         $res = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['coseor']);
                         $res2 = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $res['id_tes'], "AND codart = '".$form['codart']."'");
@@ -456,7 +456,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                             // su ogni orderman precedente cambio lo stato
                             gaz_dbi_query("UPDATE " . $gTables['orderman'] . " SET stato_lavorazione = 9 WHERE id = " . $row['id']);
                         }
-                        $status=9; 
+                        $status=9;
                     }
                 }
                 // inserisco orderman: l'attuale produzione
@@ -464,8 +464,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				$id_orderman = gaz_dbi_table_insert('orderman', $form);
 				// connetto tesbro a orderman
 				tesbroUpdate(array('id_tes',$id_tesbro), array('id_orderman'=>$id_orderman));
-				
-                // scrittura movimento di magazzino MOVMAG               	
+
+                // scrittura movimento di magazzino MOVMAG
 				// inserisco il movimento carico di magazzino dell'articolo prodotto
 				$mv = $magazz->getStockValue(false, $form['codart'], null, null, $admin_aziend['decimal_price']);
 				$price=(isset($mv['v']))?$mv['v']:0;
@@ -473,7 +473,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					$price=(isset($row['preacq']))?$row['preacq']:0;
 				}
 				$id_movmag=$magazz->uploadMag('0', 'PRO', '', '', $form['datemi'], '', '', '82', $form['codart'], $form['quantip'], $price, '', 0, $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => '1', 'desdoc' => 'Produzione'), 0, $id_lotmag, $id_orderman, $form['campo_impianto']);
-				$prod_id_movmag=$id_movmag; // mi tengo l'id_movmag del movimento di magazzino di entrata da produzione, mi servirà successivamente per valorizzare il prezzo in base alla composizione ed anche in caso di SIAN 
+				$prod_id_movmag=$id_movmag; // mi tengo l'id_movmag del movimento di magazzino di entrata da produzione, mi servirà successivamente per valorizzare il prezzo in base alla composizione ed anche in caso di SIAN
 				if ($form['SIAN']>0){ // imposto l'id movmag e salvo il movimento SIAN dell'articolo prodotto
 					$form['id_movmag']=$id_movmag;
 					if ($form['cod_operazione']==5){ // Movimentazione interna senza cambio di origine
@@ -485,17 +485,17 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 						$var_dest=$campsilos->getContentSil($form['recip_stocc_destin'],$date="",$id_mov=0);
 						unset($var_dest['varieta']['totale']);//tolgo il totale
 						if (count($var_dest['varieta'])>0 && count($var_orig['varieta'])>0 && $block_var!=="SI"){
-							$form['varieta'] = "Traferimento olio ";								
+							$form['varieta'] = "Traferimento olio ";
 							if (count($var_dest['varieta'])>0){
 								$form['varieta'] .= "varietà ". implode(", ",array_keys($var_dest['varieta']));
 							}
 							if (count($var_orig['varieta'])>0){
 								$form['varieta'] .= " al recipiente contenente varietà ". implode(", ",array_keys($var_orig['varieta']));
 							}
-						}							
+						}
 					}elseif ($block_var!=="SI") {
 						$form['varieta']=$form['quality'];
-					}						
+					}
 					$id_mov_sian_rif=gaz_dbi_table_insert('camp_mov_sian', $form);
 					$s7=""; // Si sta producendo olio
 				} else {
@@ -534,7 +534,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					$comp_total_val=0.00;
 					for ($nc = 0;$nc <= $form['numcomp'] - 1;++$nc) { // *** faccio un ciclo con tutti i componenti  ***
 						// accumulo il valore dei singoli componenti, mi servirà a fine ciclo per valorizzare il movimento 'PRO' precedentemente inserito
-						
+
 						$comp_total_val += $form['quanti_comp'][$nc]*$form['prezzo_comp'][$nc]/$form['quantip'];
 						if ($form['q_lot_comp'][$nc] > 0) { // se il componente ha lotti
 							for ($n = 0;$n < $form['q_lot_comp'][$nc];++$n) { //faccio un ciclo con i lotti di ogni singolo componente
@@ -551,8 +551,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 										$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
 										unset($var_orig['varieta']['totale']);//tolgo il totale
 										if (isset($var_orig) && $block_var!=="SI"){
-											$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
-										}											
+											$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));
+										}
 										if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
 											$form['cod_operazione']="S7";
 										}
@@ -573,17 +573,17 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 								$var_orig=$campsilos->getContentSil($form['recip_stocc'],$date="",$id_mov=0);
 								unset($var_orig['varieta']['totale']);//tolgo il totale
 								if (isset($var_orig) && $block_var!=="SI"){
-									$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));												
+									$form['varieta'] = implode(", ",array_keys($var_orig['varieta']));
 								}
 								if ($s7==1){ // S7 è uno scarico di olio destinato ad altri consumi
 									$form['cod_operazione']="S7";
-								} 
+								}
 								gaz_dbi_table_insert('camp_mov_sian', $form);
 							}
 						}
 					}
 					if ($comp_total_val>0){// se è valorizzato, aggiorno il prezzo del movimento di produzione sulla base del prezzo dei componenti su movmag altrimenti lascio il valore di getStockValue or di preacq precedentemente inserito
-						gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET prezzo = " . round($comp_total_val,5) . " WHERE id_mov = " . $prod_id_movmag); 
+						gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET prezzo = " . round($comp_total_val,5) . " WHERE id_mov = " . $prod_id_movmag);
 					}
 					$form['id_movmag']=$id_movmag;
 				}
@@ -593,12 +593,12 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 				}
 				// connetto movmag a rigbro
 				movmagUpdate(array('id_mov',$id_movmag), array('id_rif'=>$id_rigbro));
-			}	
-				
+			}
+
 			$id_lotmag="";
 			//Antonio Germani - > inizio LOTTO, se c'è lotto e se il prodotto lo richiede
 			if ($form['lot_or_serial'] > 0) { // se l'articolo prevede un lotto
-				
+
 				// ripulisco il numero lotto inserito da caratteri dannosi
 				$form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING);
 				if (strlen($form['identifier']) == 0) { // se non c'è il lotto lo inserisco con data e ora in automatico
@@ -624,13 +624,13 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					} else { // se non è lo stesso numero, cancello il lotto iniziale e ne creo uno nuovo
 						gaz_dbi_query("DELETE FROM " . $gTables['lotmag'] . " WHERE id = " . $resin['id_lotmag']);
 						gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['codart'] . "','" . $form['id_movmag'] . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
-						
+
 						$id_lotmag = gaz_dbi_last_id(); // vedo dove è stato salvato lotmag
 						gaz_dbi_query("UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" . $id_lotmag . "' WHERE id_mov ='" . $form['id_movmag'] . "'"); // aggiorno id_lotmag sul movmag
 					}
 				}
-			}           
-			// Antonio Germani - inizio salvo documento/CERTIFICATO lotto 
+			}
+			// Antonio Germani - inizio salvo documento/CERTIFICATO lotto
 			if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
 				if (!empty($form['filename'])) { // e se ha un nome impostato nel form
 					$tmp_file = DATA_DIR."files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['filename'];
@@ -639,21 +639,21 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 					rename($tmp_file, DATA_DIR."files/" . $admin_aziend['company_id'] . "/lotmag_" . $id_lotmag . '.' . $fd['extension']);
 				}
 			} // altrimenti se il file non è cambiato, anche se è update, non faccio nulla
-			// <<< fine salvo lotti 
-			
+			// <<< fine salvo lotti
+
 			if ($toDo == "insert") {
 				// connetto orderman a rigbro e al lotto
 				gaz_dbi_query("UPDATE " . $gTables['orderman'] . " SET id_rigbro = '".$id_rigbro."', id_lotmag = '".$id_lotmag."' WHERE id = " . $id_orderman);
-			}	
-			
+			}
+
             if ($toDo == 'update') { //  se e' una modifica, aggiorno orderman e tesbro
-               				
+
 				$form['start_work']=$start_work; $form['end_work']=$end_work; $form['id_tesbro']=$id_tesbro; $form['stato_lavorazione']=$status; $form['adminid']=$admin_aziend['adminid']; $form['duration']=$form['day_of_validity'];
 				$update = array();
 				$update[]="id";
 				$update[]=$form['id'];
-				gaz_dbi_table_update('orderman', $update, $form);	
-				
+				gaz_dbi_table_update('orderman', $update, $form);
+
                 $resin = gaz_dbi_get_row($gTables['tesbro'], "id_orderman", $id_orderman);
                 if ($resin['id_tes'] <> $form['id_tesbro']) { // se l'ordine iniziale è diverso da quello del form
                     if ($resin['tipdoc'] == "PRO") { // se era autogenerato, cioè era PRO, lo cancello e basta perché vuol dire che è stato tolto completamente dal form o sostituito con un vero ordine VOR
@@ -665,22 +665,22 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                     }
                     $query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '', " . 'id_rigbro' . " = '' WHERE id = '" . $form['id'] . "'"; // azzero anche i riferimenti su orderman
                     gaz_dbi_query($query);
-					
-					
+
+
                     if ($form['id_tesbro'] > 0) { // poi, se c'è un nuovo ordine VOR nel form, lo collego a id orderman
                         gaz_dbi_query("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '" . intval($id_orderman) . "' WHERE id_tes = '" . $form['id_tesbro'] . "'");
                         $query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . intval($form['id_tesbro']) . "', " . 'id_rigbro' . " = '" . intval($form['id_rigbro']) . "' WHERE id = '" . $form['id'] . "'";
                         gaz_dbi_query($query); // aggiorno i riferimenti su orderman
-                        
-                    } else { // se non c'è un nuovo ordine lo creo in automatico in tesbro, rigbro e metto i riferimenti su orderman                       
-					 
+
+                    } else { // se non c'è un nuovo ordine lo creo in automatico in tesbro, rigbro e metto i riferimenti su orderman
+
 						$id_tesbro=tesbroInsert(array('tipdoc'=>'PRO','datemi'=>$form['datemi'],'numdoc'=>time(),'status'=>'AUTOGENERA','adminid'=>$admin_aziend['adminid'],'id_orderman'=>$id_orderman));// creo tesbro
-                        
+
 						$id_rigbro = rigbroInsert(array('id_tes'=>$id_tesbro,'codart'=>$form['codart'],'descri'=>addslashes ($resartico['descri']),'unimis'=>$resartico['unimis'],'quanti'=>$form['quantip'],'id_mag'=>$id_movmag,'status'=>'AUTOGENERA','id_orderman'=>$id_orderman));// creo rigbro
-                        
+
 						$query = "UPDATE " . $gTables['orderman'] . " SET " . 'id_tesbro' . " = '" . intval($id_tesbro) . "', " . 'id_rigbro' . " = '" . intval($id_rigbro) . "' WHERE id = '" . $form['id'] . "'";
                         gaz_dbi_query($query); // aggiorno i riferimenti su orderman
-                        
+
                     }
                 } else { // se il numero d'ordine NON è stato cambiato posso fare update solo se è PRO, cioè autogenerato
                     if ($resin['tipdoc'] == "PRO") {
@@ -693,11 +693,11 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
                         }
                     }
                 }
-            } 	            
-			
+            }
+
             // se sono in un popup lo chiudo dopo aver salvato tutto
             if ($popup == 1) {
-                echo "<script> 
+                echo "<script>
 				window.opener.location.reload(true);
 				window.close();</script>";
             } else {
@@ -707,7 +707,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
         }
     }
     //  fine scrittura database §§§§§§§§§§§§§§§§§§§§§§§§§§§§
-    
+
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) {//  **  se e' il primo accesso per UPDATE  **
 	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 		// allineo l'e-commerce con eventuali ordini non ancora caricati
@@ -722,7 +722,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['id'] = intval($_GET['codice']);
     $form['order_type'] = $result['order_type'];
     $form['description'] = $result['description'];
-    $form['id_tesbro'] = $result['id_tesbro'];	
+    $form['id_tesbro'] = $result['id_tesbro'];
     $form['id_rigbro'] = $result['id_rigbro'];
     $form['add_info'] = $result['add_info'];
     $form['day_of_validity'] = $result['duration'];
@@ -825,9 +825,9 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
     $form['day_of_validity'] = "";
     $form["campo_impianto"] = "";
     $form['order'] = 0;
-    $form['coseor'] = "";	
+    $form['coseor'] = "";
     $form['codart'] = "";
-    $form['cosear'] = "";	
+    $form['cosear'] = "";
     $form['mov'] = 0;
     $form['nmov'] = 0;
     $form['nmovdb'] = 0;
@@ -921,7 +921,7 @@ if (!empty($msg)) {
     echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
 }
 if (!empty($warnmsg)) {
-    $message = ""; 
+    $message = "";
 	$class="btn-danger"; $addvalue=" nonostante l'avviso";
     $rsmsg = array_slice(explode('+', chop($warnmsg)), 0, -1);
     foreach ($rsmsg as $value) {
@@ -943,7 +943,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 <script>
   $(function() {
     $( ".datepicker" ).datepicker({dateFormat: 'yy-mm-dd' });
-	
+
 });
 </script>
 
@@ -973,10 +973,10 @@ if ($form['order_type'] == "IND") {
 <?php
 if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 
-    // Antonio Germani > inserimento ordine    
+    // Antonio Germani > inserimento ordine
 	?>
 	<tr>
-		<td class="FacetFieldCaptionTD"><?php echo $script_transl['8']; ?> </td>	
+		<td class="FacetFieldCaptionTD"><?php echo $script_transl['8']; ?> </td>
 		<td colspan="2" class="FacetDataTD">
 			<?php
 		if (isset($res3) && $res3 && $toDo == "update") {
@@ -995,19 +995,19 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 		?>
 		<!--	<span class="glyphicon glyphicon-bell fa-2x" title="L'ordine impone l'articolo e la quantità" style="color:blue"></span>-->
 				<?php
-		}	
+		}
 		?>
 		</td>
 	</tr>
-	<?php 
-    if ($form['order'] > 0 && $toDo != "update") { // se c'è un ordine e non siamo in update seleziono l'articolo fra quelli ordinati 
+	<?php
+    if ($form['order'] > 0 && $toDo != "update") { // se c'è un ordine e non siamo in update seleziono l'articolo fra quelli ordinati
 		echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\">\n";
 		// SELECT articolo da rigbro
-		$gForm->selectFromDB('rigbro', 'cosear','codart', $form['codart'], 'id_tes', 1, ' - ','descri','TRUE','FacetSelect' , null, '','id_tes = '. $form['id_tes'].' ');		
-	} else { //se non c'è l'ordine seleziono l'articolo da artico      
+		$gForm->selectFromDB('rigbro', 'cosear','codart', $form['codart'], 'id_tes', 1, ' - ','descri','TRUE','FacetSelect' , null, '','id_tes = '. $form['id_tes'].' ');
+	} else { //se non c'è l'ordine seleziono l'articolo da artico
 		?>
 		<!-- Antonio Germani > inserimento articolo	con autocomplete dalla tabella artico-->
-		<tr> 
+		<tr>
 		<td class="FacetFieldCaptionTD"><?php echo $script_transl['9']; ?> </td>
 		<td colspan="2" class="FacetDataTD">
 		<?php
@@ -1018,12 +1018,12 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 			<?php
 		} else {
 			$select_artico = new selectartico("codart");
-			$select_artico->addSelected($form['codart']);			
+			$select_artico->addSelected($form['codart']);
 			$select_artico->output(substr($form['cosear'], 0, 20));
 		}
-	}	
+	}
 	echo '<input type="hidden" name="lot_or_serial" value="' .(($resartico)?$resartico['lot_or_serial']:''). '"/>';
-	
+
     if ($resartico && $resartico['good_or_service'] == 2) { // se è un articolo composto
 		?>
 		<div class="container-fluid">
@@ -1035,7 +1035,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 			</div>
 			<?php
 			if ($toDo == "update") { //se UPDATE
-				// se ci sono, visualizzo i componenti; NON sarà, però,  possibile modificarli in update        
+				// se ci sono, visualizzo i componenti; NON sarà, però,  possibile modificarli in update
 				if (isset($result7)) {
 					while ($row = $result7->fetch_assoc()) {
 						?>
@@ -1064,21 +1064,21 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 			} else { // se INSERT
 				$nc = 0; // numero componente
 				$l = 0; // numero lotto componente
-				
+
 				while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
-					
+
 					if ($form['quantip'] > 0) {
-						
-						$row['quantita_artico_base'] = number_format ($row['quantita_artico_base'] * $form['quantip'],6);
-						$mv = $magazz->getStockValue(false, $row['codice_artico_base'], null, null, $admin_aziend['decimal_price']);			
+
+						$row['quantita_artico_base'] = number_format ((floatval($row['quantita_artico_base']) * floatval($form['quantip'])),6);
+						$mv = $magazz->getStockValue(false, $row['codice_artico_base'], null, null, $admin_aziend['decimal_price']);
 						$magval = array_pop($mv);
-						
+
 						$price_comp=($magval)?$magval['v']:0;
 						if ($price_comp==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
 							$price_comp=$row['preacq'];
 						}
-						
-						// controllo disponibilità in magazzino						
+
+						// controllo disponibilità in magazzino
 						$magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 						if ($toDo == "update") { // se è un update riaggiungo la quantità utilizzata
 							$magval['q_g'] = $magval['q_g'] + $row['quantita_artico_base'];
@@ -1096,7 +1096,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 							</div>
 							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ", number_format($magval['q_g'],5,",","."); ?>
 							</div>
-							<?php 
+							<?php
 							if (number_format($magval['q_g'],5,".","") - floatval(preg_replace('/[^\d.]/', '', $row['quantita_artico_base'])) >= 0) { // giacenza sufficiente
 								?>
 								<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', $row['quantita_artico_base'])); ?>"> <!-- quantità utilizzata di ogni componente   -->
@@ -1108,14 +1108,14 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 								<div class="col-sm-1" style="background-color:red;"> KO</div>
 								<?php
 							}
-							
+
 							 // Antonio Germani - Inizio form SIAN
 							if ($row['SIAN']>0 AND $form['order_type'] == "IND"){ // se l'articolo prevede un movimento SIAN e siamo su prod.industriale
 								$rescampbase = gaz_dbi_get_row($gTables['camp_artico'], "codice", $row['codice_artico_base']);
 								if ($rescampbase['confezione']==0){ // se è sfuso apro la richiesta contenitore
 									?>
 						</div> <!-- chiude row del nome articolo composto -->
-									<div class="container-fluid">					
+									<div class="container-fluid">
 									<div class="row">
 									<label for="camp_recip_stocc_comp" class="col-sm-5"><?php echo "Recipiente stoccaggio del componente"; ?></label>
 									<?php
@@ -1124,7 +1124,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 									}
 									$campsilos->selectSilos('recip_stocc_comp'.$nc ,'cod_silos', $form['recip_stocc_comp'][$nc], 'cod_silos', 1,'capacita','TRUE','col-sm-7' , null, '');
 									?>
-									</div>	
+									</div>
 									<?php
 								} else {
 									echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value="">';
@@ -1133,14 +1133,14 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 								echo '<input type="hidden" name="recip_stocc_comp'.$nc.'" value="">';
 							}
 							// Antonio Germani - inserimento lotti in uscita
-							
+
 							$artico = gaz_dbi_get_row($gTables['artico'], "codice", $row['codice_artico_base']);
 							if ($artico['lot_or_serial'] == 1) { // se il componente prevede lotti
 								// PROBLEMA IN UPDATE non esclude il lotti, per questo motivo non sono modificabili
 								$lm->getAvailableLots($row['codice_artico_base']); // Antonio Germani - non è stato inserito il movimento di magazzino da escludere perché questa funzione ne accetta uno solo e, invece, potrebbero essere di più. E' questo il motivo per cui, in update, sono stati bloccati articolo, componenti, lotti e quantità.
 								$ld = $lm->divideLots($row['quantita_artico_base']);
 								$l = 0;
-								
+
 								if ($ld > 0) { // segnalo preventivamente l'errore
 									echo "ERRORE ne mancano:", gaz_format_quantity($ld,","), "<br>"; // >>>>> quantità insufficiente - metto come valore ERRORE così potrò ritrovarlo facilmente e annullo quanti lotti sono interessati per questo componente
 									?>
@@ -1173,18 +1173,18 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 												<input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
 												Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.submit();">
 												<?php
-												$l++;                                  
-											}										
+												$l++;
+											}
 										}
-																			
-										?>									
+
+										?>
 										Passa a <input type="submit" class="btn glyphicon glyphicon-remove-circle" name="manLot<?php echo $nc; ?>" id="preventDuplicate" onClick="chkSubmit();" value="manuale">&#128075;
 										<?php
-									} elseif ($form['amLot'. $nc] == "manuale"){	// se selezione manuale									
-										for ($l = 0;$l < $form['q_lot_comp'][$nc];++$l) { 											
+									} elseif ($form['amLot'. $nc] == "manuale"){	// se selezione manuale
+										for ($l = 0;$l < $form['q_lot_comp'][$nc];++$l) {
 											if (!isset($form['id_lot_comp'][$nc][$l]) or (intval($form['id_lot_comp'][$nc][$l])==0)) {
 												$form['id_lot_comp'][$nc][$l] = 0; // appena aggiunto rigo lotto ciclo setto il lotto a zero
-												$form['lot_quanti'][$nc][$l] = 0; 
+												$form['lot_quanti'][$nc][$l] = 0;
 											}
 											$selected_lot = $lm->getLot($form['id_lot_comp'][$nc][$l]);
 											$disp= $lm -> dispLotID ($artico['codice'], $selected_lot['id']);
@@ -1197,8 +1197,8 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 											?>
 											<input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $form['id_lot_comp'][$nc][$l]; ?>">
 											Quantità<input type="text" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo $form['lot_quanti'][$nc][$l]; ?>" onchange="this.form.submit();">
-											<?php																		
-										}										
+											<?php
+										}
 										?>
 										Passa a <input type="submit" class="btn glyphicon glyphicon-remove-circle" name="autoLot<?php echo $nc; ?>" id="preventDuplicate" onClick="chkSubmit();" value="autoLot">&#128187;
 										<div>
@@ -1209,17 +1209,17 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 									}
 									?>
 									<input type="hidden" name="amLot<?php echo $nc; ?>" id="preventDuplicate" value="<?php echo $form['amLot'.$nc]; ?>">
-									
+
 									<input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="<?php echo $l; ?>">
-									<?php // q lot comp ha volutamente una unità in più per distinguerlo da quando è zero cioè nullo  
-										
-									for ($cl = 0; $cl < $l; $cl++) { 
+									<?php // q lot comp ha volutamente una unità in più per distinguerlo da quando è zero cioè nullo
+
+									for ($cl = 0; $cl < $l; $cl++) {
 										?>
 										<!-- Antonio Germani - Cambio lotto -->
 										<div id="lm_dialog<?php echo $nc,$cl;?>" class="collapse" >
-											
+
 											<?php
-											if ((count($lm->available) > 1)) { 
+											if ((count($lm->available) > 1)) {
 												foreach ($lm->available as $v_lm) {
 													if ($v_lm['id'] <> $form['id_lot_comp'][$nc][$cl]) {
 														$disp= $lm -> dispLotID ($artico['codice'], $v_lm['id']);
@@ -1236,13 +1236,13 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 												echo '<div><button class="btn btn-xs btn-danger" type="image" >Non ci sono disponibili altri lotti.</button></div>';
 											}
 											?>
-											
+
 										</div>
 										<?php
-									}									
+									}
 								}
-								?>		
-								</div>	
+								?>
+								</div>
 								<?php
 							} else { // se non prevede lotto azzero id_lotmag e q_lot_mag di $nc
 								echo '<input type="hidden" name="id_lot_comp' . $nc . '0" value="">';
@@ -1251,18 +1251,18 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 							}
 							?>
 						</div> <!-- chiude articolo composto  -->
-								
+
 				<?php
                     $nc = $nc + 1;
 					}
 				}
-				echo '<input type="hidden" name="numcomp" value="' . $nc . '">'; // Antonio Germani - Nota bene: numcomp ha sempre una unità in più! Non l'ho tolta per distinguere se c'è un solo componente o nessuno.            
+				echo '<input type="hidden" name="numcomp" value="' . $nc . '">'; // Antonio Germani - Nota bene: numcomp ha sempre una unità in più! Non l'ho tolta per distinguere se c'è un solo componente o nessuno.
 			}
 		?>
 		</div>	<!-- chiude container  -->
 		<?php
 	}
-	?>	
+	?>
 	</td>
 	</tr>
 	<?php // Antonio Germani - Inizio form SIAN
@@ -1271,13 +1271,13 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 		echo "<tr><td class=\"FacetFieldCaptionTD\">Gestione SIAN</td>";
 		echo "<td>";
 		?>
-		<div class="container-fluid">					
+		<div class="container-fluid">
 			<div class="row">
 				<label for="cod_operazione" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN"; ?></label>
 				<?php
-						
+
 				$gForm->variousSelect('cod_operazione', $script_transl['cod_operaz_value'], $form['cod_operazione'], "col-sm-6", false, '', false);
-						
+
 				?>
 			</div>
 			<?php if ($rescampbase['confezione']==0){ ?>
@@ -1303,8 +1303,8 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 				echo '<tr><td><input type="hidden" name="recip_stocc" value="">';
 				echo '<input type="hidden" name="recip_stocc_destin" value="">';
 			}
-					
-		echo "</div>";	
+
+		echo "</div>";
 		echo"</td></tr>";
 	} else {
 		echo '<tr><td><input type="hidden" name="recip_stocc" value="">';
@@ -1319,13 +1319,13 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 		<td colspan="2" class="FacetDataTD">
 			<?php
 			if ($toDo == "update") {
-				
+
 				echo ($form['order_type'] != "ART")?gaz_format_quantity($form['quantip'], true, $admin_aziend['decimal_quantity']):'';
 				?>
 				<input type="hidden" name="quantip" Value="<?php echo $form['quantip']; ?>"/>
-				<?php 
+				<?php
 				echo ($resartico)?$resartico['unimis']:'';
-				
+
 				if ($form['quantipord'] - $form['quantip'] > 0) {
 					echo " Sono ancora da produrre: ", gaz_format_quantity($form['quantipord'] - $form['quantip'], 0, $admin_aziend['decimal_quantity']);
 				}
@@ -1339,7 +1339,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 				echo ($resartico)?$resartico['unimis']:'';
 				// Antonio Germani - Visualizzo quantità prodotte e rimanenti
 				if (($form['order']) > 0 && strlen($form['codart']) > 0) { // se c'è un ordine e c'è un articolo selezionato, controllo se è già stato prodotto
-					
+
 					if ($quantiprod > 0) { // se c'è stata già una produzione per questo articolo e per questo ordine
 						echo " già prodotti : <b>", $quantiprod. "</b>";
 						echo " Ne servono ancora : <b>". gaz_format_quantity($form['quantipord'] - $quantiprod, 0, $admin_aziend['decimal_quantity']), "</b>";
@@ -1369,7 +1369,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
     print "<tr><td><input type=\"hidden\" name=\"order\" value=\"\">";
 	?>
 	<!-- Antonio Germani > inserimento articolo	con autocomplete dalla tabella artico-->
-	<tr> 
+	<tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['9']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
 	<?php
@@ -1380,7 +1380,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 		<?php
 	} else {
 		$select_artico = new selectartico("codart");
-		$select_artico->addSelected($form['codart']);			
+		$select_artico->addSelected($form['codart']);
 		$select_artico->output(substr($form['cosear'], 0, 20));
 	}
 	?>
@@ -1457,7 +1457,7 @@ echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">Responsabile/addetto produzione</td><td class=\"FacetDataTD\">\n";
 ?>
 <select name="id_staff_def" onchange="this.form.submit()">
-<?php 		
+<?php
 $sql = gaz_dbi_dyn_query ($gTables['anagra'].".* ",
  $gTables['anagra']."
  LEFT JOIN ".$gTables['clfoco']." on (".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id)
@@ -1465,18 +1465,18 @@ $sql = gaz_dbi_dyn_query ($gTables['anagra'].".* ",
  LEFT JOIN ".$gTables['admin']." on (".$gTables['admin'].".id_anagra = ".$gTables['anagra'].".id)",
  "(".$gTables['staff'].".id_clfoco > 0 OR ". $gTables['admin'] .".id_anagra > 0) AND (". $gTables['staff'] .".end_date >= '". $form['datemi'] ."' OR ". $gTables['staff'] .".end_date IS NULL)");
 $sel=0;
-while ($row = $sql->fetch_assoc()){ 
+while ($row = $sql->fetch_assoc()){
 	$selected = "";
 	if ($row['id'] == $form['id_staff_def']) {
 		$selected = "selected";
-		$sel=1;									
+		$sel=1;
 	}
 	echo "<option ".$selected." value=\"".$row['id']."\">" . $row['ragso1'] ." ".$row['ragso2']. "</option>";
 }
-if ($sel==0){						
+if ($sel==0){
 	echo "<option selected value=\"\"></option>";
-} 				
-?>				
+}
+?>
 </select>
 <?php
 // se è una produzione industriale visualizzo data e ora di inizio e fine
@@ -1497,12 +1497,12 @@ echo "<tr>
 		". gaz_select_ora ( "fineprodtime", $form['fineprodtime'] ) ."
 		</td>
 	</tr>";
-   
+
 if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
     // Antonio Germani > Inizio LOTTO in entrata o creazione nuovo
-	
-    if (intval($form['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form       
-?>	  
+
+    if (intval($form['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti nel form
+?>
 		<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?></td>
 		<td class="FacetDataTD" >
 		<input type="hidden" name="filename" value="<?php echo $form['filename']; ?>">
@@ -1544,8 +1544,8 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
         echo '<input type="hidden" name="id_lotmag" value="' . $form['id_lotmag'] . '">';
         echo '<input type="hidden" name="expiry" value="' . $form['expiry'] . '"></td></tr>';
     }
-	
-    // fine LOTTI in entrata   
+
+    // fine LOTTI in entrata
 } else { //se è produzione agricola
     print "<tr><td><input type=\"hidden\" name=\"nmov\" value=\"0\">";
     print "<input type=\"hidden\" name=\"nmovdb\" value=\"\">\n";
