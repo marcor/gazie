@@ -25,6 +25,8 @@
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
+$pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
+$after_newdoc_back_to_doclist=gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
 $msgtoast = "";
 $msg = "";
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
@@ -36,7 +38,15 @@ function getDayNameFromDayNumber($day_number) {
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 if (!isset($_POST['ritorno'])) {
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+    if (isset($after_newdoc_back_to_doclist)){
+      if ($after_newdoc_back_to_doclist==0){
+        $form['ritorno']="admin_broven.php?Insert&tipdoc=VOR";
+      }else{
+         $form['ritorno']="report_broven.php";
+      }
+    } else{
+      $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+    }
 } else {
     $form['ritorno'] = $_POST['ritorno'];
 }
@@ -311,7 +321,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 	// Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
-		$after_newdoc_back_to_doclist=gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
@@ -362,7 +371,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg .= "50+";
             }
         }
-		if ($msg == "") {// nessun errore
+        if ($msg == "") {// nessun errore
+
              $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                 $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
@@ -404,7 +414,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 							// sposto e rinomino il relativo file temporaneo
                             $fn = pathinfo($form['rows'][$i]['extdoc']);
                             rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
-						}
+                        }
                     } else { //altrimenti lo elimino
                         if (intval($val_old_row['id_body_text']) > 0) {  //se c'� un testo allegato al rigo elimino anch'esso
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
@@ -415,7 +425,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 //qualora i nuovi rows fossero di pi� dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
-					array_push($syncarticols,$form['rows'][$i]['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
+                    array_push($syncarticols,$form['rows'][$i]['codart']);// Antonio Germani - aggiungo il codice articolo all'array per la sincronizzazione e-commerce
                     $form['rows'][$i]['id_tes'] = $form['id_tes'];
                     $last_rigbro_id = rigbroInsert($form['rows'][$i]);
                     if (!empty($form['rows'][$i]['extdoc'])) {
@@ -450,15 +460,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     // aggiorno l'e-commerce ove presente
                     $gs=$admin_aziend['synccommerce_classname'];
                     $gSync = new $gs();
-					if($gSync->api_token){
-						foreach ($syncarticols as $syncarticol){
-							$gSync->SetProductQuantity($syncarticol);
-						}
-					}
-				}
+                    if($gSync->api_token){
+                      foreach ($syncarticols as $syncarticol){
+                        $gSync->SetProductQuantity($syncarticol);
+                      }
+                    }
+                }
                 header("Location: " . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
+
                 // ricavo i progressivi in base al tipo di documento
                 $where = "numdoc desc";
                 $sql_documento = "YEAR(datemi) = " . $form['annemi'] . " and tipdoc = '" . $form['tipdoc'] . "'";
@@ -497,17 +508,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                     }
 
-					if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-						// aggiorno l'e-commerce ove presente
-						$gs=$admin_aziend['synccommerce_classname'];
-						$gSync = new $gs();
-						if($gSync->api_token){
-							$gSync->SetProductQuantity($form['rows'][$i]['codart']);
-						}
-					}
-				}
-
-                if ($after_newdoc_back_to_doclist==1) {
+                    if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+                      // aggiorno l'e-commerce ove presente
+                      $gs=$admin_aziend['synccommerce_classname'];
+                      $gSync = new $gs();
+                      if($gSync->api_token){
+                        $gSync->SetProductQuantity($form['rows'][$i]['codart']);
+                      }
+                    }
+                }
+                if ($after_newdoc_back_to_doclist==1 && $pdf_to_modal==0) {
 	                $_SESSION['print_queue'] = array();
 	                $_SESSION['print_queue']['tpDoc'] =  $form['tipdoc'];
 	                $_SESSION['print_queue']['idDoc'] = $ultimo_id;
@@ -519,12 +529,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 	                exit;
                 }
                 $_SESSION['print_request'] = $ultimo_id;
-                header("Location: invsta_broven.php");
-                exit;
+                if ($pdf_to_modal==0){
+                  header("Location: invsta_broven.php");
+                  exit;
+                }
             }
         }
     } elseif (isset($_POST['ord']) and $toDo == 'update') {  // si vuole generare un'ordine
-		$after_newdoc_back_to_doclist=gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
@@ -557,6 +568,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
         if ($msg == "") {// nessun errore
 			// creo la descrizione del preventivo di origine
+
             require("lang." . $admin_aziend['lang'] . ".php");
             $descripreventivo = "rif. " . $strScript['admin_broven.php'][0]['VPR'] . " n." . $form['numdoc'] . " del " . $form['gioemi'] . "." . $form['mesemi'] . "." . $form['annemi'];
 			// fine creazione descrizione preventivo di origine
@@ -1284,7 +1296,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $mv = $upd_mm->getStockValue(false, $rigo['codart'], "", $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-		
+
         $form['rows'][$next_row]['scorta'] = $articolo['scorta'];
         $form['rows'][$next_row]['quamag'] = $magval['q_g'];
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
@@ -1428,7 +1440,7 @@ if ($form['id_tes'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]);
 }
 echo '<script type="text/javascript">';
-if (empty($msg)) { // se ho un errore non scrollo
+if (empty($msg) && !isset($_POST['ins'])) { // se ho un errore non scrollo
 	if (!empty($_POST['last_focus'])){
 		$idlf='#'.$_POST['last_focus'];
 		$_POST['last_focus']='';
@@ -1473,10 +1485,22 @@ echo "
         return true;
     }
 ";
+?>
+function printPdf(urlPrintDoc){
+  $(function(){
+    $('#framePdf').attr('src',urlPrintDoc);
+    $('#framePdf').css({'height': '100%'});
+    $('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
+    $('#closePdf').on( "click", function() {
+      $('.framePdf').css({'display': 'none'});
+      window.location.href = "<?php echo $form['ritorno']; ?>";
+    });
+  });
+};
+<?php
 echo "</script>\n";
-
-echo '
-<SCRIPT LANGUAGE="JavaScript" ID="datapopup">
+?>
+<script LANGUAGE="JavaScript" ID="datapopup">
     var cal = new CalendarPopup();
     cal.setReturnFunction("setMultipleValues");
     function setMultipleValues(y, m, d) {
@@ -1484,9 +1508,9 @@ echo '
         document.broven.mestra.value = LZ(m);
         document.broven.giotra.value = LZ(d);
     }
-</SCRIPT>';
 
-echo "\n";
+</script>
+<?php
 
 /******************************************************
 
@@ -1496,6 +1520,15 @@ echo "\n";
 
 
 echo "<form method=\"POST\" name=\"broven\" enctype=\"multipart/form-data\">\n";
+?>
+<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+  <div class="col-lg-12">
+    <div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
+      <div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
+    </div>
+    <iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
+</div>
+<?php
 $gForm = new venditForm();
 echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="" />
 		<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
@@ -2399,5 +2432,12 @@ $( document ).ready(function() {
 
 </script>
 <?php
+if (isset($_POST['ins']) && empty($msg) && $pdf_to_modal!==0) {// stampa pdf in popup iframe
+  ?>
+  <script>
+    printPdf('invsta_broven.php');
+  </script>
+  <?php
+}
 require("../../library/include/footer.php");
 ?>
