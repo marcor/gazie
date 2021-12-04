@@ -31,7 +31,6 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
 $msg = '';
 require("../../library/include/electronic_invoice.inc.php");
 $XMLdata = new invoiceXMLvars();
-require("../../library/include/header.php");
 $gForm = new venditForm();
 $invoices = $gForm->getFAEunpacked();
 $inipackable=(count($invoices)>1)?$invoices['head']:[];
@@ -82,7 +81,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 						$enc_data['anno']=substr($v['tes']['datfat'],0,4);
 						$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
 						$enc_data['protocollo']=$v['tes']['protoc'];
-						if($v['tes']['ctrlreg']=='X'){ // è una autofattura reverse charge 
+						if($v['tes']['ctrlreg']=='X'){ // è una autofattura reverse charge
 							/* considerando che la funzione si attiene al seguente specchietto normalmente usato per le fatture di vendita
 							  ------------------------- SCHEMA DEI DATI PER FATTURE NORMALI  ---------------
 							  |   SEZIONE IVA   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
@@ -90,7 +89,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 							  |        3        |        9         |     9     |        99999             |
 							  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
 							  ------------------------------------------------------------------------------
-							  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000  
+							  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000
 							  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
 							  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
 							  |    INT (2 )     |      INT(1)      |   INT(1)  |        INT(4)            |
@@ -109,7 +108,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 					gaz_dbi_query("UPDATE " . $gTables['fae_flux'] . " SET filename_zip_package = '".$form['filename']."' WHERE filename_ori = '".$fn_ori."'");
 					$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,$form['filename']);
 					$zip->addFromString($fn_ori, $file_content);
-					
+
 				}
 				$zip->close();
 				header("Location: report_fae_sdi.php");
@@ -122,6 +121,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 		}
 	}
 }
+require("../../library/include/header.php");
 
 $script_transl = HeadMain('','','fae_packaging');
 ?>
@@ -139,7 +139,7 @@ $script_transl = HeadMain('','','fae_packaging');
 ?>
 <div class="panel panel-info table-responsive">
 <table class="Tmiddle table-striped" align="center">
-<?php 
+<?php
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
@@ -173,7 +173,7 @@ foreach ($invoices['data'] as $k => $v) {
 	// se ho cambiato la sezione e/o il registro propongo il limite di protocollo
 	if ($ctrlimit<>$v['tes']['seziva'].$v['tes']['ctrlreg']){
 		echo '<tr><td colspan=8 class="text-center bg-info"><h4>Anteprima di impacchettamento della sezione IVA '.$v['tes']['seziva'].'</h4</td></tr><tr><td colspan=8 class="text-center bg-success"><h4> saranno impacchettate '.$numpacket. ' '.$label.'</h4></td></tr>';
-		
+
 	}
 	$nopackclass='';
 	if ($v['tes']['protoc']>$form['packable'][$v['tes']['seziva']][$v['tes']['ctrlreg']]['max']) { // non impacchetto i protocolli che superano i limiti scelti dall'utente
@@ -209,7 +209,7 @@ foreach ($invoices['data'] as $k => $v) {
 	}
 	$enc_data['fae_reinvii']=$v['tes']['fattura_elettronica_reinvii'];
 	$enc_data['protocollo']=$v['tes']['protoc'];
-	if($v['tes']['ctrlreg']=='X'){ // è una autofattura reverse charge 
+	if($v['tes']['ctrlreg']=='X'){ // è una autofattura reverse charge
 		/* considerando che la funzione si attiene al seguente specchietto normalmente usato per le fatture di vendita
 		  ------------------------- SCHEMA DEI DATI PER FATTURE NORMALI  ---------------
 		  |   SEZIONE IVA   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
@@ -217,7 +217,7 @@ foreach ($invoices['data'] as $k => $v) {
 		  |        3        |        9         |     9     |        99999             |
 		  | $data[sezione]  |   $data[anno] $data[fae_reinvii]  $data[protocollo]     |
 		  ------------------------------------------------------------------------------
-		  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000  
+		  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000
 		  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
 		  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
 		  |    INT (2 )     |      INT(1)      |   INT(1)  |        INT(4)            |
@@ -230,8 +230,8 @@ foreach ($invoices['data'] as $k => $v) {
 		$enc_data['fae_reinvii']=substr($v['tes']['datfat'],3,1);
 		$enc_data['protocollo']= intval($v['tes']['fattura_elettronica_reinvii']*10000+$v['tes']['protoc']);
 	}
-	
-	
+
+
 // INIZIO VIEW RIGHI
     echo '<tr class="'.$nopackclass.'">
            <td>' . $v['tes']['protoc'] .'</td>
@@ -270,7 +270,7 @@ foreach ($invoices['data'] as $k => $v) {
 		echo '<tr>
 			   <td colspan="8" class="text-center '.$nopackclass.'">Hai scelto di non impacchettare questa fattura</td>
 			   </tr>';
-		
+
 	}
 // FINE VIEW RIGHI
 	$ctrlimit=$v['tes']['seziva'].$v['tes']['ctrlreg'];
