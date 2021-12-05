@@ -74,6 +74,24 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'insert';
 }
 
+// carico i dati per la select warehouse del jquery
+$query = 'SELECT id, name FROM `' . $gTables['warehouse'] . '` ORDER BY `id`';
+$result = gaz_dbi_query($query);
+$warehouses="0:'Sede'";
+$invalid_characters = array("'", ",", ":");
+while ($r = gaz_dbi_fetch_array($result)) {// carico i dati di staff_work_type
+	$warehouses .= ", ".$r['id'].":'". substr(str_replace($invalid_characters, " ", $r['name']), 0, 25)."'";
+}
+
+// carico i dati per la select shelves del jquery
+$query = 'SELECT id_shelf,descri FROM `' . $gTables['shelves'] . '` WHERE 1 ORDER BY `id_shelf`';
+$result = gaz_dbi_query($query);
+$shelf="0:'Nessun scaffale associato'";
+$invalid_characters = array("'", ",", ":");
+while ($r = gaz_dbi_fetch_array($result)) {
+	$shelf .= ", ".$r['id_shelf'].":'".substr(str_replace($invalid_characters, " ", $r['descri']), 0, 25)."'";
+}
+
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
   $form = gaz_dbi_parse_post('artico');
   $form['codice'] = trim($form['codice']);
@@ -215,7 +233,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   if ($codart_len > 0 && strlen(trim($form['codice'])) <> $codart_len) {
       $msg['err'][] = 'codart_len';
   }
-	
+
   if (count($msg['err']) == 0) { // ***  NESSUN ERRORE  ***
     if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
 			if ($largeimg==0){
@@ -236,7 +254,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** fine modifica FP */
     $tbt = trim($form['body_text']);
     // aggiorno il db
-	
+
 	// Una sola variante può essere prestabilita
 	// legenda web_public: 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
 	if ($form['web_public_init']<>$form['web_public'] AND $form['id_artico_group']>0 AND $form['web_public']>1){ // se è una variante, ed è stata modificata la pubblicazione su e-commerce, e gli si vuole dare una priorità
@@ -251,14 +269,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			}
 		}
 	}
-	
-	// se esiste un json per l'attributo della variante dell'e-commerce creo il json					
+
+	// se esiste un json per l'attributo della variante dell'e-commerce creo il json
 	if (isset ($form['var_id']) && isset ($form['var_name'])){
 		$arrayvar= array("var_id" => intval($form['var_id']), "var_name" => strval($form['var_name']));
 		$form['ecomm_option_attribute'] = json_encode ($arrayvar);
 	}
-		
-    if ($toDo == 'insert') {		
+
+    if ($toDo == 'insert') {
 		gaz_dbi_table_insert('artico', $form);
 		if (!empty($tbt)) {
 		bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
@@ -302,8 +320,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if ($modal === false) {
 			if ($toDo == 'insert') {
         // riprendo il codice e se non è stato realmente inserito sul db lo segnalo all'utente e non reindirizzo
-        $catch = gaz_dbi_get_row($gTables['artico'], 'codice', $form['codice']); 
-        if ($catch){ 
+        $catch = gaz_dbi_get_row($gTables['artico'], 'codice', $form['codice']);
+        if ($catch){
           $_SESSION['ok_ins']=$form['codice'].' - '.$form['descri'];
           header("Location: ../../modules/magazz/admin_artico.php?Update&codice=".$form['codice']);
           exit;
@@ -425,7 +443,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 /* Solo se non sono in finestra modale carico il file di lingua del modulo */
 if ($modal === false) {
     require("../../library/include/header.php");
-    $script_transl = HeadMain(0, array('custom/autocomplete'));
+    $script_transl = HeadMain(0, array('custom/autocomplete','appendgrid/AppendGrid'));
+    // trovo la posizione nel magazzino (se presente)
+    $query = 'SELECT * FROM `' . $gTables['artico_position'] . '` ap
+          LEFT JOIN `' . $gTables['warehouse'] . '` wh ON ap.id_warehouse=wh.id
+          LEFT JOIN `' . $gTables['shelves'] . "` sh ON ap.id_shelf=sh.id_shelf WHERE `codart` = '".$form['codice']."' ORDER BY `ap`.`id_warehouse`,`ap`.`id_shelf`,`position`";
+    $rs_pos = gaz_dbi_query($query);
+    $accpos='';
+    if ($rs_pos->num_rows > 0){
+      while ($r = gaz_dbi_fetch_array($rs_pos)) {
+        $accpos .= '<p>'.(empty($r['name'])?'Sede':$r['name']).' -> '.(empty($r['descri'])?'nessun scaffale':$r['descri']).' -> '.$r['position'].'</p>';
+      }
+    }
 } else {
     $script = basename($_SERVER['PHP_SELF']);
     require("../../language/" . $admin_aziend['lang'] . "/menu.inc.php");
@@ -442,30 +471,147 @@ if ($modal === false) {
  */
 ?>
 <script>
-    function calcDiscount() {
-        var p1 = ($("#preve1").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
-        $("#preve1_sc").val(p1);
-        var p2 = ($("#preve2").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
-        $("#preve2_sc").val(p2);
-        var p3 = ($("#preve3").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
-        $("#preve3_sc").val(p3);
-        var p4 = ($("#preve4").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
-        $("#preve4_sc").val(p4);
-    }
+function calcDiscount() {
+    var p1 = ($("#preve1").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
+    $("#preve1_sc").val(p1);
+    var p2 = ($("#preve2").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
+    $("#preve2_sc").val(p2);
+    var p3 = ($("#preve3").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
+    $("#preve3_sc").val(p3);
+    var p4 = ($("#preve4").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
+    $("#preve4_sc").val(p4);
+}
 
-    $(function () {
-        $("#preve1,#preve2,#preve3,#preve4,#sconto").change(function () {
-            var v = $(this).val().replace(/,/, '.');
-            $(this).val(v);
-            calcDiscount();
-        });
-    });
+$(function () {
+
+  $("#preve1,#preve2,#preve3,#preve4,#sconto").change(function () {
+      var v = $(this).val().replace(/,/, '.');
+      $(this).val(v);
+      calcDiscount();
+  });
+
+  $("[href='#"+$('#tabpill').val()+"']").click();
+
+	var wpx = $(window).width()*0.97;
+	$("#dialog_artico_position").dialog({ autoOpen: false });
+	$('.dialog_artico_position').click(function() {
+		var codart = $(this).attr('codart');
+		var jsondatastr = null;
+		var deleted_rows = [];
+		$("p#iddescri").html(codart+' '+$(this).attr("artico_name"));
+		$.ajax({ // chiedo tutte le posizioni attribuite
+			'async': false,
+			url:"./get_artico_positions.php",
+			type: "POST",
+			dataType: 'text',
+			data: {codart: codart},
+			success:function(jsonstr) {
+				//alert(jsonstr);
+				jsondatastr = jsonstr;
+			}
+		});
+
+		var myAppendGrid = new AppendGrid({ // creo la tabella vuota
+		  element: "tblAppendGrid",
+		  uiFramework: "bootstrap4",
+		  iconFramework: "default",
+		  initRows: 1,
+		  columns: [
+			{
+			  name: "codart",
+			  display: "Codice Articolo",
+			  type: "hidden"
+			},
+			{
+			  name: "id_position",
+			  display: "ID Posizione",
+			  type: "hidden"
+			},
+			{
+			  name: "id_warehouse",
+			  display: "Magazzino",
+			  type: "select",
+				ctrlOptions: {
+				<?php echo $warehouses; ?>
+				},
+
+			},
+			{
+			  name: "id_shelf",
+			  display: "Scaffale",
+				type: "select",
+				ctrlOptions: {
+				<?php echo $shelf;?>
+				}
+			},
+			{
+			  name: "position",
+			  display: "Posizione",
+			  type: "text"
+			},
+		  ],
+		  beforeRowRemove: function(caller, rowIndex) {
+			 var rowValues = myAppendGrid.getRowValue(rowIndex);
+			 deleted_rows.push(rowValues.id_position);
+			//alert("row index:" + rowIndex + " values:" + JSON.stringify(deleted_rows));
+			return confirm("Sei sicuro di voler rimuovere la riga?");
+			}
+		});
+
+		if (jsondatastr){
+		// popolo la tabella
+		var jsondata = $.parseJSON(jsondatastr);
+		myAppendGrid.load( jsondata );
+		}
+
+		$( "#dialog_artico_position" ).dialog({
+			minHeight: 1,
+			width: wpx,
+			modal: "true",
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				delete:{
+					text:'Annulla',
+					'class':'btn btn-danger delete-button',
+					click:function (event, ui) {
+						$(this).dialog("close");
+					}
+				},
+				confirm :{
+				  text:'CONFERMA',
+				  'class':'btn btn-success pull-right btn-conferma',
+				  click:function() {
+					var msg = null;
+					$.ajax({ // registro con i nuovi dati delle posizioni
+						'async': false,
+						data: {rec_artico_positions: myAppendGrid.getAllValue(), codart: codart, deleted_rows: deleted_rows},
+						type: 'POST',
+						url: './rec_artico_positions.php',
+						success: function(output){
+							msg = output;
+							console.log(msg);
+						}
+					});
+					if (msg) {
+						alert(msg);
+					} else {
+						window.location.replace("./admin_artico.php?Update&codice="+codart+"&tab=magazz");
+					}
+				  }
+				}
+			}
+		});
+		$("#dialog_artico_position" ).dialog( "open" );
+	});
+});
 </script>
 <style>
-.collapsible 
-      {
-            cursor:pointer;
-      } 
+.collapsible { cursor:pointer; }
+#tblAppendGrid .form-control { height: 28px; }
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { float: unset !important; }
+.ui-dialog { z-index: 1000 !important; font-size: 12px;}
+.btn-conferma {	color: #fff !important; background-color: #f0ad4e !important; border-color: #eea236 !important; }
 </style>
 
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
@@ -474,6 +620,8 @@ if (!empty($form['descri'])) $form['descri'] = htmlentities($form['descri'], ENT
 if ($modal === true) {
     echo '<input type="hidden" name="mode" value="modal" />
           <input type="hidden" name="mode-act" value="submit" />';
+} elseif (isset($_GET['tab'])) {
+  echo '<input type="hidden" id="tabpill" value="' . substr($_GET['tab'],0,10) . '" />';
 }
 echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
 echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />';
@@ -528,7 +676,7 @@ if ($modal_ok_insert === true) {
                 <li><a data-toggle="pill" href="#contab">Contabilità</a></li>
                 <li><a data-toggle="pill" href="#chifis">Chimico-fisiche</a></li>
                 <li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
-            </ul>  
+            </ul>
             <div class="tab-content">
               <div id="home" class="tab-pane fade in active">
                  <div class="row">
@@ -588,10 +736,10 @@ if ($modal_ok_insert === true) {
 	?>
                 <div class="row">
                     <div class="col-md-6">
-					<a href="stampa_bom.php?ri=<?php echo $form['codice']; ?>" class="btn btn-info btn-small pull-left" role="button" aria-pressed="true">Stampa la distinta base (BOM)</a>                    
+					<a href="stampa_bom.php?ri=<?php echo $form['codice']; ?>" class="btn btn-info btn-small pull-left" role="button" aria-pressed="true">Stampa la distinta base (BOM)</a>
                     </div>
                     <div class="col-md-12">
-					<a href="admin_artico_compost.php?Update&codice=<?php echo $form['codice']; ?>" class="btn btn-warning btn-small pull-right" role="button" aria-pressed="true">Modifica la composizione</a>                    
+					<a href="admin_artico_compost.php?Update&codice=<?php echo $form['codice']; ?>" class="btn btn-warning btn-small pull-right" role="button" aria-pressed="true">Modifica la composizione</a>
                     </div>
                 </div><!-- chiude row  -->
 	<?php
@@ -764,6 +912,17 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <!--+ DC - 06/02/2019 div class="row" --->
+<?php if ($modal === false && $toDo=='update') { ?>
+                <div id="position" class="row IERincludeExcludeRow">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="valore" class="col-sm-4 control-label">Magazzino, Scaffale</label>
+                						<div class="col-sm-8"><a class="btn btn-info dialog_artico_position" artico_name="<?php echo $form['descri']; ?>" codart="<?php echo $form['codice']; ?>" ><i class="glyphicon glyphicon-object-align-horizontal"></i> Posizione</a><?php echo $accpos; ?></div>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+<?php } ?>
+                <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="packUnits" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -820,8 +979,8 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
 				<?php
-				 // se esiste un json per l'attributo della variante dell'e-commerce					
-				if (isset ($form['var_id']) OR isset ($form['var_name'])){		
+				 // se esiste un json per l'attributo della variante dell'e-commerce
+				if (isset ($form['var_id']) OR isset ($form['var_name'])){
 					?>
 					<!--+ DC - 06/02/2019 div class="row" --->
 					<div id="webUrl" class="row IERincludeExcludeRow">
@@ -843,7 +1002,7 @@ if ($modal_ok_insert === true) {
 					</div><!-- chiude row  -->
 					<?php
 				}
-				
+
 				?>
                 <!--+ DC - 06/02/2019 div class="row" --->
                 <div id="depliPublic" class="row IERincludeExcludeRow">
@@ -899,7 +1058,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-				
+
                 <div id="webUrl" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -908,7 +1067,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-				
+
                 <div id="webUrl" class="row IERincludeExcludeRow">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -1174,6 +1333,11 @@ if ($modal_ok_insert === true) {
             </div>
         </div> <!-- chiude container -->
     </div><!-- chiude panel -->
+	<div style="display:none" id="dialog_artico_position" title="Posizione negli scaffali">
+        <p><b>Articolo:</b></p>
+		<p class="ui-state-highlight" id="iddescri"></p>
+		<table id="tblAppendGrid"></table>
+	</div>
 </form>
 <script type="text/javascript">
     // Basato su: http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
