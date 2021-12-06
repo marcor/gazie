@@ -57,16 +57,16 @@ if (!isset($_GET['ag'])) {   // selezione agente
    $_GET['ag'] = 0;
 }
 
-function getDocuments($td = 0, $si = 1, $where_data) {
+function getDocuments($td = 0, $si = 1, $where_data=['cl'=>0,'ag'=>0]) {
     global $gTables, $admin_aziend;
     $calc = new Compute;
-    $type=[0=>'F__',1=>'FAD', 2=>'FAI', 3=> 'FNC', 4=> 'FND',5 => 'FAP',6=> 'DD_'];
+    $type=[0=>'F__',1=>'FAD', 2=>'FAI', 3=> 'FNC', 4=> 'FND',5 => 'FAP',6=> 'DD_',7=> 'VCO'];
     $customer =($where_data['cl']>100000000)?' AND clfoco = '.$where_data['cl']:'';
     $agente =($where_data['ag']>=1)?' AND tesdoc.id_agente = '.$where_data['ag']:'';
     $datfat=($td==6)?'datemi':'datfat';
     $numfat=($td==6)?'numdoc':'numfat';
-    $where_data['pi']=($td==6)?'0':$where_data['pi'];        
-    $where_data['pf']=($td==6)?'999999999':$where_data['pf'];        
+    $where_data['pi']=($td==6||$td==7)?'0':$where_data['pi'];
+    $where_data['pf']=($td==6||$td==7)?'999999999':$where_data['pf'];
     $where = "seziva = $si AND tipdoc LIKE '".$type[$td]."' AND $datfat BETWEEN ". $where_data['di'] ." AND ". $where_data['df']." AND protoc BETWEEN ". $where_data['pi'] ." AND ". $where_data['pf']
     ." AND $numfat BETWEEN ". $where_data['ni'] ." AND ". $where_data['nf']. $customer . $agente;
     $from = $gTables['tesdoc'] . ' AS tesdoc
@@ -91,7 +91,12 @@ function getDocuments($td = 0, $si = 1, $where_data) {
     $totimpdoc = 0;
     $rit = 0;
     while ($tes = gaz_dbi_fetch_array($result)) {
-        $tes['protoc']=($td==6)?$tes['numdoc']:$tes['protoc'];        
+        if ($td==6) { // ddt
+          $tes['protoc']=$tes['numdoc'];
+        } elseif($td==7){ // corrispettivo
+          $tes['protoc']= $tes['datemi'].$tes['numdoc'];
+        }
+        $tes['protoc']=($td==6)?$tes['numdoc']:$tes['protoc'];
         if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
           switch ($tes['tipdoc']) {
             case "AFA":case "AFC":case "AFD":
@@ -162,7 +167,7 @@ function getDocuments($td = 0, $si = 1, $where_data) {
             if ($r['tiprig'] <= 1  || $r['tiprig'] == 4 || $r['tiprig'] == 90) { // se del tipo normale, forfait, cassa previdenziale, vendita cespite
                 //calcolo importo rigo
                 $importo = CalcolaImportoRigo($r['quanti'], $r['prelis'], array($r['sconto'], $tes['sconto']));
-                if ($r['tiprig']==1||$r['tiprig']== 90) { // se di tipo forfait e vendita cespite 
+                if ($r['tiprig']==1||$r['tiprig']== 90) { // se di tipo forfait e vendita cespite
                     $importo = CalcolaImportoRigo(1, $r['prelis'], $tes['sconto']);
                 } elseif($r['tiprig']==4){ // cassa previdenziale sul database  trovo la percentuale sulla colonna provvigione
                     $importo = round($r['prelis']*$r['provvigione']/100,2);
@@ -189,7 +194,7 @@ function getDocuments($td = 0, $si = 1, $where_data) {
                     $cast_acc[$r['codric']]['asset'] = 1;
                 }
                 $rit += round($importo * $r['ritenuta'] / 100, 2);
-                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment)   
+                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment)
                 if ($r['tipiva'] == 'T') {
                     $ivasplitpay += round(($importo * $r['pervat']) / 100, 2);
                 }
@@ -223,13 +228,13 @@ function getDocuments($td = 0, $si = 1, $where_data) {
 
 // preparo l'array dei limiti
 $where_data = [
-'di'=>intval($_GET['di']), 
-'df'=>intval($_GET['df']), 
-'pi'=>intval($_GET['pi']), 
-'pf'=>intval($_GET['pf']), 
-'ni'=>intval($_GET['ni']), 
-'nf'=>intval($_GET['nf']), 
-'cl'=>intval($_GET['cl']), 
+'di'=>intval($_GET['di']),
+'df'=>intval($_GET['df']),
+'pi'=>intval($_GET['pi']),
+'pf'=>intval($_GET['pf']),
+'ni'=>intval($_GET['ni']),
+'nf'=>intval($_GET['nf']),
+'cl'=>intval($_GET['cl']),
 'ag'=>intval($_GET['ag'])];
 $rs = getDocuments(intval($_GET['td']), intval($_GET['si']), $where_data);
 

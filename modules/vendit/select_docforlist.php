@@ -30,7 +30,8 @@ $tipdoc=[
 3 => "Nota Credito a Cliente",
 4 => "Nota Debito a Cliente",
 5 => "Parcella",
-6 => "D.d.T."
+6 => "D.d.T.",
+7 => "Corrispettivo"
 ];
 
 require("../../library/include/datlib.inc.php");
@@ -49,7 +50,7 @@ function getLastDocument($tipo, $sezione, $anno) {
       case 1:  //fattura differita
          $where = "tipdoc = 'FAD' AND YEAR(datfat) = $anno";
          break;
-      case 2:  //fattura immediata 
+      case 2:  //fattura immediata
          $where = "tipdoc = 'FAI' AND YEAR(datfat) = $anno";
          break;
       case 3: //nota di credito
@@ -61,8 +62,11 @@ function getLastDocument($tipo, $sezione, $anno) {
       case 5: //parcella
          $where = "tipdoc = 'FAP' AND YEAR(datfat) = $anno";
          break;
-      case 6: //parcella
+      case 6: //ddt
          $where = "tipdoc LIKE 'DD_' AND YEAR(datemi) = $anno";
+         break;
+      case 7: //corrispettivo
+         $where = "tipdoc LIKE 'VCO' AND YEAR(datemi) = $anno";
          break;
    }
    $orderby=($tipo==6)?'datemi DESC, numdoc DESC':'datfat DESC, numfat DESC';
@@ -96,7 +100,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    if (isset($_GET['tipdoc'])) {
       $form['tipdoc'] = intval($_GET['tipdoc']);
    } else {
-      $form['tipdoc'] = 0; //tutte le fatture 
+      $form['tipdoc'] = 0; //tutte le fatture
    }
    $last = getLastDocument($form['tipdoc'], $form['seziva'], date("Y"));
    if (isset($_GET['datini'])) {
@@ -258,7 +262,7 @@ if (!empty($msg)) {
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td>
      <td class=\"FacetDataTD\">\n";
 echo "<select name=\"tipdoc\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='change_tipo'; this.form.submit();\">\n";
-for ($counter = 0; $counter <= 6; $counter++) {
+for ($counter = 0; $counter <= 7; $counter++) {
    $selected = '';
    if ($form['tipdoc'] == $counter) {
       $selected = "selected";
