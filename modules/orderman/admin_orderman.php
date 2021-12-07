@@ -1266,7 +1266,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
               $nc--; // porto indietro nc
             }
 
-            if ($ko=="" && $passrecstoc<>"" && (isset($form['recip_stocc_comp'][$nc]) || strlen($form['recip_stocc_comp'][$nc])>0)){// se c'è un recipiente di stoccaggio del componente e sono gia passato per i relativi input
+            if ($ko=="" && $passrecstoc<>"" && (isset($form['recip_stocc_comp'][$nc]) || strlen($form['recip_stocc_comp'][$nmix])>0)){// se c'è un recipiente di stoccaggio del componente e sono gia passato per i relativi input
             // non faccio nulla, ho già fatto prima
             } else {
 
