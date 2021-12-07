@@ -90,13 +90,16 @@ class campForm extends GAzieForm {
 
 class silos {
 
-	function getCont($codsil){// restituisce la quantità di olio di un recipiente
+	function getCont($codsil,$codart=""){// restituisce la quantità di olio di un recipiente
 		global $gTables,$admin_aziend;
 		$content=0;
 		$orderby=2;
 		$limit=0;
 		$passo=2000000;
 		$where="recip_stocc = '".$codsil."'";
+    if (strlen($codart)>0){
+      $where=$where." AND artico = '". $codart ."'";
+    }
 		$what=	$gTables['movmag'].".operat, ".$gTables['movmag'].".quanti, ".$gTables['movmag'].".id_orderman, ".
 				$gTables['camp_mov_sian'].".*, ".$gTables['camp_artico'].".confezione ";
 		$groupby= "";
@@ -109,7 +112,7 @@ class silos {
 				$content=$content+($r['quanti']*$r['operat']);
 			}
 		}
-		$content=number_format ($content,3);
+		$content=number_format ($content,6);
 
 		return $content ;
 	}
@@ -142,7 +145,7 @@ class silos {
 		return array($id_lotma,$identifier) ;
 	}
 
-  function getSilosArtico($codsil){
+  function getSilosArtico($codsil){// restituisce i codici articoli presenti nel silos
     global $gTables;
     $latestEmpty= $this -> getLatestEmptySil($codsil);
     //echo "<pre>latest:",print_r($latestEmpty);
@@ -158,7 +161,11 @@ class silos {
       $where = $where." AND (datdoc > '".$date."' OR(datdoc = '".$date."' AND id_mov > ".$id_mov."))";
     }
     $resmovs=gaz_dbi_dyn_query ($select,$table,$where);
-    return $resmovs;
+    $result = array();
+    foreach($resmovs as $res){
+      array_push($result,$res['artico']);
+    }
+    return array_unique($result);
   }
 
 	function selectSilos($name, $key, $val, $order = false, $empty = false, $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false, $codart="") {
@@ -188,8 +195,8 @@ class silos {
               $ok="";
               $resmovs=$this -> getSilosArtico($r['cod_silos']);
               foreach ($resmovs as $res) {
-                if ($res['artico']==$codart){ // se è presente l'articolo nel silos do l'ok
-                  $ok="ok";
+                if ($res==$codart){ // se è presente l'articolo nel silos do l'ok
+                  $ok="ok";break;
                 }
               }
             }
@@ -204,7 +211,7 @@ class silos {
               if (empty($key2)) {
                   $acc .= substr($r[$key], 0, 43) . "</option>\n";
               } else {
-                  $acc .= substr($r[$key], 0, 28) . " - Kg: " . substr($r[$key2], 0, 35) . " - Lotto: " . $lot[1] . " - Cont.Kg: ". $cont ."</option>\n";
+                  $acc .= substr($r[$key], 0, 28) . "-Capac.Kg: " . substr($r[$key2], 0, 35) . "-Lotto: " . $lot[1] . "-Cont.Kg: ". $cont ."</option>\n";
               }
             }
         }

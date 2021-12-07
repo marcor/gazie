@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
@@ -295,11 +295,11 @@ if (isset($_POST['preview']) and $msg=='') {
 				if (strlen($mv['recip_stocc'])>0){
 					$addes .="-Silos:".$mv['recip_stocc'];
 				}
-				if (strlen($mv['quality'])>0){					
+				if (strlen($mv['quality'])>0){
 					$addes .="-Var.:".$mv['quality'];
 				}if (strlen($mv['identifier'])>0){
-					$addes .="-Lotto:".$mv['identifier'];					
-				}				
+					$addes .="-Lotto:".$mv['identifier'];
+				}
                 echo "<tr><td class=\"FacetDataTD\" rowspan=\"$r_span\">".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
                 echo "<td align=\"center\" class=\"FacetDataTD\" rowspan=\"$r_span\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)."</td>";
                 echo "<td class=\"FacetDataTD\" rowspan=\"$r_span\">".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85).$addes."</td>";
@@ -329,6 +329,7 @@ if (isset($_POST['preview']) and $msg=='') {
   echo "</table></form>";
 }
 ?>
+<span class="navbar-fixed-bottom" style="left:20%; z-index:2000;"> Registro di campagna è un modulo di Antonio Germani</span>
 <?php
 require("../../library/include/footer.php");
 ?>
