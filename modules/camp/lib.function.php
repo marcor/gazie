@@ -190,9 +190,9 @@ class silos {
         }
         $result = gaz_dbi_query($query);
         while ($r = gaz_dbi_fetch_array($result)) {
+            $ok="";
             if (strlen($codart)>0){// se è stato inviato un codice articolo, controllo che sia presente nel silos
               // vedo la data dell'ultimo svuotamento totale e il relativo idmovmag
-              $ok="";
               $resmovs=$this -> getSilosArtico($r['cod_silos']);
               foreach ($resmovs as $res) {
                 if ($res==$codart){ // se è presente l'articolo nel silos do l'ok
@@ -200,18 +200,21 @@ class silos {
                 }
               }
             }
-            if ($ok=="ok"){// se è presente lo visualizzo nella select
-              $lot = $campsilos->getLotRecip($r[$key]);
+            if (($ok=="ok" && strlen($codart)>0) || $codart==""){// se è presente lo visualizzo nella select
+              $lot = $campsilos->getLotRecip($r[$key],$codart);
               $cont = $campsilos->getCont($r[$key]);
-              $selected = '';
+              $selected = '';$addlot="";
               if ($r[$key] == $val) {
                   $selected = "selected";
+              }
+              if(strlen($lot[1])>0){
+                $addlot="-Lotto: " . $lot[1];
               }
               $acc .= "\t\t <option value=\"" . $r[$key] . "\" $selected >";
               if (empty($key2)) {
                   $acc .= substr($r[$key], 0, 43) . "</option>\n";
               } else {
-                  $acc .= substr($r[$key], 0, 28) . "-Capac.Kg: " . substr($r[$key2], 0, 35) . "-Lotto: " . $lot[1] . "-Cont.Kg: ". $cont ."</option>\n";
+                  $acc .= substr($r[$key], 0, 28) . "-" . substr($r['nome'], 0, 20) .  $addlot . "-Cont.Kg: ". $cont ."</option>\n";
               }
             }
         }
