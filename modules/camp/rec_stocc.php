@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 // >> Visualizza recipienti di stoccaggio <<
 
@@ -64,7 +64,7 @@ if (!isset($_GET['auxil'])) {
 		max-width:100%;
 		width:283px;
 		height: 28px;
-		overflow: hidden;		
+		overflow: hidden;
 		background: url(../../modules/camp/media/background_bar.jpg) no-repeat;
 	}
 </style>
@@ -82,8 +82,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -101,58 +101,58 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
-function ContentSil(silos) {	
-	$("#idlotti").append("ID Lotti");	
+function ContentSil(silos) {
+	$("#idlotti").append("ID Lotti");
 	$("#idvar").append("Varietà");
-    $("#dialog_silos").attr("title","Contenuto attuale: "+silos);  
+    $("#dialog_silos").attr("title","Contenuto attuale: "+silos);
 	var jsondatastr = null;
 	var n=0;
 		$.ajax({ // chiedo il contenuto
 				'async': false,
-				url:"./ajax_request.php",   
-				type: "POST",    
+				url:"./ajax_request.php",
+				type: "POST",
 				dataType: 'text',
 				data: {term: silos, opt: 'ContentSil' },
-				success:function(jsonstr) {					
+				success:function(jsonstr) {
 					var jsondata = $.parseJSON(jsonstr);
 					var type1 = JSON.stringify(jsondata['id_lotti']);
-					var type2 = JSON.stringify(jsondata['varieta']);	
-					
-					var obj = $.parseJSON(type2);					
-					$.each(obj, function(i, value) {						
+					var type2 = JSON.stringify(jsondata['varieta']);
+
+					var obj = $.parseJSON(type2);
+					$.each(obj, function(i, value) {
 						$(".list_variants").append("<tr><td> "+i+":  Kg."+value+"&nbsp;</td></tr>");
-					n++;	
+					n++;
 					});
 					if (n<=1){
 						$(".list_variants").append('<tr><td class="bg-danger">********* Non ci sono varietà o non sono identificabili *********</td></tr>');
 					}
 					n=0;
-					var obj = $.parseJSON(type1);					
-					$.each(obj, function(i, value) {						
+					var obj = $.parseJSON(type1);
+					$.each(obj, function(i, value) {
 						$(".list_var").append("<tr><td> "+i+":  Kg."+value+"&nbsp;</td></tr>");
-						n++;		
+						n++;
 					});
-					
+
 					if (n<=1){
 						$(".list_var").append('<tr><td class="bg-danger">********* Non ci sono lotti *********</td></tr>');
 					}
 				}
-			});		  
-	$( function() {		
-        var dialog,	
-        dialog = $("#dialog_silos").dialog({		
+			});
+	$( function() {
+        var dialog,
+        dialog = $("#dialog_silos").dialog({
             modal: true,
             show: "blind",
             hide: "explode",
             width: "auto",
-            buttons: {               
+            buttons: {
                 Chiudi: function() {
                     $(this).dialog('close');
-                }			
-            },		 
+                }
+            },
             close: function(){
 				$("p#idlotti").empty();
 				$("p#idvar").empty();
@@ -177,8 +177,8 @@ $recordnav -> output();
         <p>Capacità</p>
         <p class="ui-state-highlight" id="iddescri"></p>
 	</div>
-	<div style="display:none; min-width:350px; " id="dialog_silos" title="">		
-		<p class="ui-state-highlight" id="idlotti"></p>        
+	<div style="display:none; min-width:350px; " id="dialog_silos" title="">
+		<p class="ui-state-highlight" id="idlotti"></p>
 		<div class="list_var">
 		</div>
 		<p class="ui-state-highlight" id="idvar"></p>
@@ -220,20 +220,20 @@ $recordnav -> output();
 		<?php
 		while ($a_row = gaz_dbi_fetch_array($result)) {
 			$content= $gSil -> getCont($a_row['cod_silos']);
-			unset ($lot);	
-			?>		
+			unset ($lot);
+			?>
 			<tr class="FacetDataTD">
 				<td>
 					<a class="btn btn-xs btn-success btn-block" href="admin_rec_stocc.php?Update&codice=<?php echo $a_row["cod_silos"]; ?>">
-					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['cod_silos'];?>
+					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['cod_silos']," - ",$a_row['nome'];?>
 					</a>
 				</td>
 				<td align="center"><?php echo gaz_format_quantity($a_row['capacita'], 1, 3);?></td>
 				<td>
-					<?php 
+					<?php
 					if ($content>0){
-						$lot=	$gSil -> getLotRecip($a_row['cod_silos']);						
-						echo "Kg.",gaz_format_quantity($content,true)," l.",gaz_format_quantity($content/0.915,true)," Ultimo lotto: ",$lot[1]; 
+						$lot=	$gSil -> getLotRecip($a_row['cod_silos']);
+						echo "Kg.",gaz_format_quantity($content,true)," l.",gaz_format_quantity($content/0.915,true)," Ultimo lotto: ",$lot[1];
 						if ($content > $a_row['capacita']){
 							echo " ERRORE!";
 						}
@@ -245,7 +245,7 @@ $recordnav -> output();
 				</td>
 				<td>
 					<a class="btn btn-xs btn-default dialog_content" title="Contenuto in lotti e varietà" onclick="ContentSil('<?php echo $a_row['cod_silos'];?>')" >
-					<i class="glyphicon glyphicon-oil"></i>	
+					<i class="glyphicon glyphicon-oil"></i>
 					</a>
 				</td>
 				<td align="center">
@@ -281,13 +281,14 @@ $recordnav -> output();
 </form>
 <form method="post" action="admin_rec_stocc.php">
 	<table>
-		<tr class="FacetFieldCaptionTD">		
+		<tr class="FacetFieldCaptionTD">
 			<td colspan="7" align="right">
 				<input class="btn btn-info" type="submit" name="aggiungi" value="<?php echo "Inserisci nuovo contenitore o silos";?>">
 			</td>
 		</tr>
 	</table>
 </form>
+<a href="https://programmisitiweb.lacasettabio.it/quaderno-di-campagna/" target="_blank" class="navbar-fixed-bottom" style="max-width:350px; left:20%; z-index:2000;"> Registro di campagna è un modulo di Antonio Germani</a>
 <?php
 require("../../library/include/footer.php");
 ?>
