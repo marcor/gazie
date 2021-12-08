@@ -31,4 +31,5 @@ CREATE TABLE IF NOT EXISTS `gaz_XXXshelves` (
   UNIQUE KEY `id_shelf_id_warehouse` (`id_shelf`,`id_warehouse`),
   KEY `id_warehouse` (`id_warehouse`)
 ) AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+ALTER TABLE `gaz_XXXcamp_recip_stocc`	ADD COLUMN `nome` VARCHAR(20) NOT NULL AFTER `cod_silos`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
