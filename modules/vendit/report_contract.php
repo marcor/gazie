@@ -59,8 +59,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -78,7 +78,7 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
    $( "#dialog" ).dialog({
       autoOpen: false
@@ -106,20 +106,20 @@ function confirMail(link){
    $("#dialog" ).dialog( "open" );
 }
 function printPdf(urlPrintDoc){
-	$(function(){			
+	$(function(){
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
 		$('#closePdf').on( "click", function() {
 			$('.framePdf').css({'display': 'none'});
-		});	
-	});	
+		});
+	});
 };
 </script>
 <?php
 echo "<form method=\"GET\" name=\"report\">\n";
 ?>
-<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 	<div class="col-lg-12">
 		<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
 		<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>

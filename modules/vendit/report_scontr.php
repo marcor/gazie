@@ -33,7 +33,7 @@ $rs1 = gaz_dbi_query("SELECT id_contract, datemi FROM ".$gTables['tesdoc']." WHE
 while ($r1 = gaz_dbi_fetch_array($rs1)) {
   $rs2 = gaz_dbi_query("SELECT id_tes FROM ".$gTables['tesdoc']." WHERE tipdoc='VCO' AND datemi='".$r1['datemi']."' AND id_contract='".$r1['id_contract']."' ORDER BY numdoc DESC LIMIT 0,1");
   while ($r2 = gaz_dbi_fetch_array($rs2)) {
-    $last_tickets[] = $r2['id_tes'];// accumulo gli id_tes relativi agli ultimi scontrini del giorno che quindi potranno essere eliminati se sbagliati 
+    $last_tickets[] = $r2['id_tes'];// accumulo gli id_tes relativi agli ultimi scontrini del giorno che quindi potranno essere eliminati se sbagliati
   }
 }
 
@@ -67,8 +67,8 @@ $tablejoin = $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables
                                   LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice";
 
 $ts = new TableSorter(
-    $tablejoin, 
-    $passo, 
+    $tablejoin,
+    $passo,
     ['datemi'=>'desc','id_contract'=>'desc','seziva'=>'desc','numdoc'=>'desc'],
     ['tipo' => 'VCO']);
 ?>
@@ -110,7 +110,7 @@ $(function() {
 	$('.dialog_delete').click(function() {
 		$("p#idcodice").html($(this).attr("ref"));
 		$("p#iddescri").html($(this).attr("datemi"));
-		var id = $(this).attr('ref');		
+		var id = $(this).attr('ref');
 		$( "#dialog_delete" ).dialog({
 			minHeight: 1,
 			width: "auto",
@@ -118,8 +118,8 @@ $(function() {
 			show: "blind",
 			hide: "explode",
 			buttons: {
-				delete:{ 
-					text:'Elimina', 
+				delete:{
+					text:'Elimina',
 					'class':'btn btn-danger delete-button',
 					click:function (event, ui) {
 					$.ajax({
@@ -137,29 +137,29 @@ $(function() {
 				}
 			}
 		});
-		$("#dialog_delete" ).dialog( "open" );  
+		$("#dialog_delete" ).dialog( "open" );
 	});
 });
 function printPdf(urlPrintDoc){
-	$(function(){			
+	$(function(){
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
 		$('#closePdf').on( "click", function() {
 			$('.framePdf').css({'display': 'none'});
-		});	
-	});	
+		});
+	});
 };
 </script>
 <form method="GET">
-	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
 			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
 		</div>
 		<iframe id="framePdf"  style="height: 100%; width: 100%" src=""></iframe>
 	</div>
-    <input type="hidden" name="hidden_req">	
+    <input type="hidden" name="hidden_req">
     <div style="display:none" id="dialog_delete" title="Conferma eliminazione">
         <p><b>scontrino:</b></p>
         <p>Numero ID:</p>
@@ -187,7 +187,7 @@ function printPdf(urlPrintDoc){
 		<td class="FacetFieldCaptionTD">
             <?php gaz_flt_disp_select("sezione", $gTables['tesdoc'].".seziva AS sezione ", $gTables["tesdoc"]," tipdoc = 'VCO'" , $gTables['tesdoc'].".seziva"); ?>
         </td>
-		<td class="FacetFieldCaptionTD">			
+		<td class="FacetFieldCaptionTD">
             <input type="text" name="cliente" placeholder="Cliente" class="input-sm form-control" value="<?php echo (isset($cliente))? $cliente : ""; ?>" maxlength="15">
         </td>
 		<td class="FacetFieldCaptionTD"></td>
@@ -201,10 +201,10 @@ function printPdf(urlPrintDoc){
 echo '<tr>';
 $ts->output_headers();
 echo '</tr>';
-        $result = gaz_dbi_dyn_query ($gTables['tesdoc'].".*, ".$gTables['cash_register'].".descri AS des_rt, ".$gTables['anagra'].".ragso1 AS cliente, ".$gTables['pagame'].".descri AS despag ", 
+        $result = gaz_dbi_dyn_query ($gTables['tesdoc'].".*, ".$gTables['cash_register'].".descri AS des_rt, ".$gTables['anagra'].".ragso1 AS cliente, ".$gTables['pagame'].".descri AS despag ",
         $tablejoin, $ts->where, $ts->orderby, $ts->getOffset(), $ts->getLimit());
         $tot = 0;
-        
+
         while ($row = gaz_dbi_fetch_array($result)) {
             $cast_vat = array();
             $cast_acc = array();

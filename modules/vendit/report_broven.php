@@ -24,7 +24,6 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
 
 function getDayNameFromDayNumber($day_number) {
     return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
@@ -135,12 +134,12 @@ if (count($_GET)<=1){
 		$default_where=['sezione' => $last['seziva'], 'tipo' => 'F%', 'anno'=>$last['yearde']];
         $_GET['anno']=$last['yearde'];
 	} else {
-		$default_where= ['auxil' => 'VOR', 'anno'=>date("Y")];
+		$default_where= ['auxil' => 'VOR', 'anno'=>date("Y")];	
         $_GET['anno']=date("Y");
 	}
-
+	
 } else {
-   $default_where= ['auxil' => 'VOR'];
+   $default_where= ['auxil' => 'VOR'];	
 }
 $ts = new TableSorter(
     isset($_GET["destinaz"]) ? $tesbro_e_destina :
@@ -253,14 +252,14 @@ $(function() {
 	});
 });
 function printPdf(urlPrintDoc){
-	$(function(){
+	$(function(){			
 		$('#framePdf').attr('src',urlPrintDoc);
 		$('#framePdf').css({'height': '100%'});
 		$('.framePdf').css({'display': 'block','width': '90%', 'height': '80%', 'z-index':'2000'});
 		$('#closePdf').on( "click", function() {
 			$('.framePdf').css({'display': 'none'});
-		});
-	});
+		});	
+	});	
 };
 </script>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][substr($tipo,0,2).'R']; ?></div>
@@ -268,7 +267,7 @@ function printPdf(urlPrintDoc){
 $ts->output_navbar();
 ?>
 <form method="GET" >
-	<div class="framePdf panel panel-success" style="display: none; position: absolute; left: 5%; top: 100px">
+	<div class="framePdf panel panel-success" style="display: none; position: fixed; left: 5%; top: 10px">
 		<div class="col-lg-12">
 			<div class="col-xs-11"><h4><?php echo $script_transl['print'];; ?></h4></div>
 			<div class="col-xs-1"><h4><button type="button" id="closePdf"><i class="glyphicon glyphicon-remove"></i></button></h4></div>
@@ -474,8 +473,8 @@ $ts->output_navbar();
 			// vedo se è presente un file di template adatto alla stampa su carta già intestata
 			if($enable_lh_print_dialog>0 && withoutLetterHeadTemplate($r['tipdoc'])){
 				echo ' onclick="choice_template(\''.$modulo.'\');" title="Scegli modulo per stampa"';
-			}else{
-				echo ($pdf_to_modal==0)?'href="'.$modulo.'" target="_blank" ':"onclick=\"printPdf('".$modulo."')\"";
+			}else{				
+				echo " style=\"cursor:pointer;\" onclick=\"printPdf('".$modulo."')\"";
 			}
 			echo "><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento PDF\"></i></a>";
             echo "</td>";
