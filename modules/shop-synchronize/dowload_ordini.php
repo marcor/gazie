@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
 $period="";
@@ -41,7 +41,7 @@ $accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 $path = gaz_dbi_get_row($gTables['company_config'], 'var', 'path');
 $urlinterf = $path['val']."ordini-gazie.php";//nome del file interfaccia presente nella root del sito Joomla. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 // il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
-if (isset($_POST['Return'])) { 
+if (isset($_POST['Return'])) {
         header("Location: " . "./synchronize.php");
         exit;
     }
@@ -53,7 +53,7 @@ if ($exists) {
     $c_e = 'company_id';
 }
 $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION['user_name']);
-	
+
 if (isset($_POST['conferma'])) { // se confermato
 	// ricavo il progressivo in base al tipo di documento
 	$where = "numdoc desc";
@@ -68,23 +68,23 @@ if (isset($_POST['conferma'])) { // se confermato
 	}
     // scrittura ordini su database di GAzie
 	for ($ord=0 ; $ord<=$_POST['num_orders']; $ord++){// ciclo gli ordini e scrivo i database
-	
+
 		$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
 		$result = gaz_dbi_query($query);
 		$row = $result->fetch_assoc();
 		$id_anagra = $row['Auto_increment']; // trovo l'ID che avrà ANAGRA: Anagrafica cliente
-	
-		$anagrafica = new Anagrafica(); 
+
+		$anagrafica = new Anagrafica();
 		$last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
 		$codice = substr($last[0]['codice'], 3) + 1;
 		$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// trovo il codice di CLFOCO da connettere all'anagrafica cliente	se cliente inesistente
-	    	
+
 		$listin=intval($_POST['numlist'.$ord]);
 		$listinome=$_POST['numlistnome'.$ord];
 		$includevat=$_POST['includevat'.$ord];
-		
+
 		$stapre="T"; // stampa prezzi con totale
-		
+
 		if (isset($_POST['download'.$ord]) ) {
 			$esiste=0;
 			if (strlen($_POST['ref_ecommerce_id_customer'.$ord])>0){ // controllo esistenza cliente per codice e-commerce
@@ -93,11 +93,14 @@ if (isset($_POST['conferma'])) { // se confermato
 				if (isset($cl)){
 					$clfoco=$cl['codice'];
 					$esiste=1;
-				}				
-			}					
+				}
+			}
 			if ($esiste==0) { //registro cliente se non esiste
 				if ($_POST['country'.$ord]=="IT"){ // se la nazione è IT
 					$lang="1";
+            if (substr_compare($_POST['pariva'.$ord], "IT", 0, 2, true)==0){// se c'è IT davanti alla partita iva
+              $_POST['pariva'.$ord]=substr($_POST['pariva'.$ord],2);// tolgo IT
+            }
 				} else {// se non è italiano imposto il codice univoco con x e se non c'è imposto il codice fiscale con il codice cliente
 					$lang="0";
 					$_POST['fe_cod_univoco'.$ord]="xxxxxxx";
@@ -108,8 +111,8 @@ if (isset($_POST['conferma'])) { // se confermato
 						$_POST['pariva'.$ord]= sprintf("%07d", $_POST['ref_ecommerce_id_customer'.$ord]);// riempio il campo partita iva con un numero di almeno 7 cifre
 					}
 				}
-				if (strlen ($_POST['codfis'.$ord])>1 AND intval ($_POST['codfis'.$ord])==0){ // se il codice fiscale non è numerico 
-						if (substr($_POST['codfis'.$ord],9,2)>40){ // deduco il sesso 
+				if (strlen ($_POST['codfis'.$ord])>1 AND intval ($_POST['codfis'.$ord])==0){ // se il codice fiscale non è numerico
+						if (substr($_POST['codfis'.$ord],9,2)>40){ // deduco il sesso
 							$sexper="F";
 						} else {
 							$sexper="M";
@@ -118,10 +121,10 @@ if (isset($_POST['conferma'])) { // se confermato
 					$sexper="G";
 				}
 				gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes(substr($_POST['ragso1'.$ord], 0, 50)) . "', '" . addslashes(substr($_POST['ragso2'.$ord], 0, 50)) . "', '". $sexper. "', '". addslashes(substr($_POST['indspe'.$ord], 0, 60)) ."', '".substr($_POST['capspe'.$ord], 0, 10)."', '". addslashes(substr($_POST['citspe'.$ord], 0, 60)) ."', '". substr($_POST['prospe'.$ord], 0, 2) ."', '" . substr($_POST['country'.$ord], 0, 3). "', '1', '".$lang."', '". substr($_POST['telefo'.$ord], 0, 50) ."', '". substr($_POST['codfis'.$ord], 0, 16) ."', '" . substr($_POST['pariva'.$ord], 0, 12) . "', '" . substr($_POST['fe_cod_univoco'.$ord], 0, 7) . "', '". substr($_POST['email'.$ord], 0, 60) . "', '". substr($_POST['pec_email'.$ord], 0, 60) . "')");
-				
+
 				gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('".$_POST['ref_ecommerce_id_customer'.$ord]."', '". $clfoco . "', '" . $id_anagra . "', '". $listin ."' , '" .addslashes(substr($_POST['ragso1'.$ord], 0, 50))." ".addslashes(substr($_POST['ragso2'.$ord], 0, 49)) . "', '". addslashes(substr($_POST['destin'.$ord], 0, 100)) ."', 'S', '". $stapre ."', '". intval($_POST['pagame'.$ord]) ."')");
 			}
-			
+
 			if ($_POST['order_discount_price'.$ord]>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
 				$lordo=$_POST['order_full_price'.$ord]+$_POST['order_discount_price'.$ord]-$_POST['speban'.$ord]-$_POST['traspo'.$ord];
 				$netto=$lordo-$_POST['order_discount_price'.$ord];
@@ -129,7 +132,7 @@ if (isset($_POST['conferma'])) { // se confermato
 			} else {
 				$percdisc="";
 			}
-			
+
 			if ($_POST['codvatcost'.$ord] == ""){ // se l'e-commerce non ha mandato il codice delle spese incasso  e trasporto
 				$expense_vat = $admin_aziend['preeminent_vat']; // ci metto quelle preminenti aziendali
 			} else {
@@ -140,23 +143,23 @@ if (isset($_POST['conferma'])) { // se confermato
 				$div="1.".intval($vat['aliquo']);
 				$_POST['speban'.$ord]=floatval($_POST['speban'.$ord]) / $div;
 				$_POST['traspo'.$ord]=floatval($_POST['traspo'.$ord]) / $div;
-			}		
-		
+			}
+
 			// registro testata ordine
 			$tesbro['destin']=chunk_split (substr($_POST['destin'.$ord], 0, 100),44);$tesbro['ref_ecommerce_id_order']=$_POST['ref_ecommerce_id_order'.$ord];$tesbro['tipdoc']='VOW';$tesbro['seziva']=intval($_POST['seziva'.$ord]);$tesbro['print_total']='1';$tesbro['datemi']=$_POST['datemi'.$ord];$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=intval($_POST['pagame'.$ord]);$tesbro['listin']=$listin;$tesbro['spediz']=substr($_POST['spediz'.$ord], 0, 50);$tesbro['traspo']=$_POST['traspo'.$ord];$tesbro['speban']=$_POST['speban'.$ord];$tesbro['caumag']='1';$tesbro['expense_vat']=$expense_vat;$tesbro['initra']=substr($_POST['datemi'.$ord], 0, 19);$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
 			$id_tesbro=tesbroInsert($tesbro);
-		
-			// Gestione righi ordine					
+
+			// Gestione righi ordine
 			for ($row=0; $row<=$_POST['num_rows'.$ord]; $row++){
-								
-				// controllo se esiste l'articolo in GAzie 
+
+				// controllo se esiste l'articolo in GAzie
 				$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $_POST['refid'.$ord.$row]);
 				if ($ckart){
 					$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
 					$descri=$ckart['descri'].$_POST['adddescri'.$ord.$row];// se esiste, lo metto in $descri e aggiungo l'eventuale adddescription
 				}
-				 
-				if (!$ckart){ // se non esiste creo un nuovo articolo su gazie 
+
+				if (!$ckart){ // se non esiste creo un nuovo articolo su gazie
 					if ($_POST['stock'.$ord.$row]>0){
 						$good_or_service=0;
 					} else {
@@ -177,18 +180,18 @@ if (isset($_POST['conferma'])) { // se confermato
 					if ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
 						$div=0;
 						$div="1.".intval($aliiva);
-						$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;					
+						$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;
 					} elseif ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]>0) {
 						$prelis=$_POST['prelis_imp'.$ord.$row];
 					}
 					if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
 						$prelis=$_POST['prelis_imp'.$ord.$row];
 					}
-					
+
 					$id_artico_group="";
 					$arrayvar="";
 					if ($_POST['product_parent_id'.$ord.$row] > 0 OR $_POST['type'.$ord.$row] == "variant" ){ // se è una variante
-					
+
 						// controllo se esiste il suo artico_group/padre in GAzie
 						unset($parent);
 						$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $_POST['product_parent_id'.$ord.$row]);// trovo il padre in GAzie
@@ -199,18 +202,18 @@ if (isset($_POST['conferma'])) { // se confermato
 							gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode (addslashes($parent['descri'])). "', '', '', '". substr($_POST['product_parent_id'.$ord.$row], 0, 50) . "', '1', '1', '". $admin_aziend['adminid'] ."')");
 							$id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
 						}
-						
-						if (strlen($_POST['descri'.$ord.$row])<2){ // se non c'è la descrizione della variante 
+
+						if (strlen($_POST['descri'.$ord.$row])<2){ // se non c'è la descrizione della variante
 							$_POST['descri'.$ord.$row]=$parent['descri']."-".$_POST['characteristic'.$ord.$row];// ci metto quella del padre accodandoci la variante
 						}
-						
+
 						// creo un json array per la variante
 						$arrayvar= array("var_id" => floatval($_POST['characteristic_id'.$ord.$row]), "var_name" => $_POST['characteristic'.$ord.$row]);
 						$arrayvar = json_encode ($arrayvar);
-						
+
 					}
-					
-					// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste	
+
+					// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
 					$category="";
 					if (intval($_POST['catmer'.$ord.$row])>0){
 						$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($_POST['catmer'.$ord.$row],0,15)));// controllo se esiste in GAzie
@@ -218,52 +221,52 @@ if (isset($_POST['conferma'])) { // se confermato
 							$category=$cat['codice'];
 						}
 					}
-					
-					// se non esiste la categoria in GAzie, la creo				
+
+					// se non esiste la categoria in GAzie, la creo
 					if ($category == 0 OR $category == ""){
 						$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
 						$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
 						$cat['codice'] = $ultimo_codice['codice']+1;
 						$cat['ref_ecommerce_id_category'] = substr($_POST['catmer'.$ord.$row], 0, 50);
-						$cat['descri'] = substr($_POST['catmer_descri'.$ord.$row], 0, 50);					
+						$cat['descri'] = substr($_POST['catmer_descri'.$ord.$row], 0, 50);
 						gaz_dbi_table_insert('catmer',$cat);
 						// assegno l'id categoria al prossimo insert artico
 						$category=$cat['codice'];
 					}
-					
-					// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato				
+
+					// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato
 					unset($usato);
-					$usato = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);// controllo se il codice è già stato usato in GAzie	
+					$usato = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['codice'.$ord.$row]);// controllo se il codice è già stato usato in GAzie
 					if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
 						$_POST['codice'.$ord.$row]=substr($_POST['codice'.$ord.$row],0,10)."-".substr($_POST['refid'.$ord.$row],0,4);
 					}
-					
+
 					// inserisco il nuovo articolo
 					gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,web_public,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,".$listinome.",aliiva,codcon,adminid) VALUES ('". $_POST['peso_specifico'.$ord.$row] ."', '". substr($_POST['unimis'.$ord.$row], 0, 3) ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '1', '". addslashes (substr($_POST['codice'.$ord.$row],0,15)) ."', '". addslashes(substr($_POST['descri'.$ord.$row], 0, 50)) ."', '".substr($_POST['refid'.$ord.$row], 0, 50)."', '".$good_or_service."', '" . substr($_POST['unimis'.$ord.$row], 0, 3) . "', '". $category ."', '". $prelis ."', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 					$codart= substr($_POST['codice'.$ord.$row],0,15);// dopo averlo creato ne prendo il codice come $codart
-					$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione					
-					
+					$descri= $_POST['descri'.$ord.$row].$_POST['adddescri'.$ord.$row]; //prendo anche la descrizione
+
 				} else {
 					$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
 					$aliiva=$_POST['aliiva'.$ord.$row];
 					if ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]==0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
 						$div=0;
 						$div="1.".intval($aliiva);
-						$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;					
+						$prelis=$_POST['prelis_vatinc'.$ord.$row] / $div;
 					} elseif ($includevat=="true" AND $_POST['prelis_imp'.$ord.$row]>0) {
 						$prelis=$_POST['prelis_imp'.$ord.$row];
 					}
 					if ($includevat!=="true"){ // se l'ecommerce non iclude l'iva uso il prezzo imponibile
 						$prelis=$_POST['prelis_imp'.$ord.$row];
 					}
-				}										
-				// salvo rigo su database tabella rigbro 
+				}
+				// salvo rigo su database tabella rigbro
 				$rigbro['id_tes']=intval($id_tesbro);$rigbro['codart']=$codart;$rigbro['descri']=addslashes(substr($descri, 0, 50));$rigbro['unimis']=substr($_POST['unimis'.$ord.$row], 0, 3);$rigbro['quanti']=floatval($_POST['quanti'.$ord.$row]);$rigbro['prelis']=$prelis;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
 				rigbroInsert($rigbro);
-			}					
-			
+			}
+
 			$numdoc++; //incremento il numero d'ordine GAzie
-		}		
+		}
 	}
 	header("Location: " . "../../modules/vendit/report_broven.php?auxil=VOW");
     exit;
@@ -288,12 +291,12 @@ if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controll
 		</script>
 		<?php
 	}
-	
+
 	?>
-	
-	
+
+
 	<input type="hidden" name="download" value="download" >
-			
+
 			<table class="table table-striped" style="margin: 0 auto; max-width: 80%; margin-top:10px;">
 				<thead>
 					<tr>
@@ -340,7 +343,7 @@ if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controll
 						echo '<input type="hidden" name="indspe'. $n .'" value="'. $order->CustomerAddress .'">';
 						echo '<input type="hidden" name="country'. $n .'" value="'. $order->CustomerCountry .'">';
 						echo '<input type="hidden" name="codfis'. $n .'" value="'. $order->CustomerFiscalCode .'">';
-						echo '<input type="hidden" name="pariva'. $n .'" value="'. $order->CustomerVatCode .'">';				
+						echo '<input type="hidden" name="pariva'. $n .'" value="'. $order->CustomerVatCode .'">';
 						echo '<input type="hidden" name="telefo'. $n .'" value="'. $order->CustomerTel .'">';
 						echo '<input type="hidden" name="datemi'. $n .'" value="'. $order->DateOrder .'">';
 						echo '<input type="hidden" name="pagame'. $n .'" value="'. $order->PaymentName .'">';
@@ -379,7 +382,7 @@ if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controll
 							echo '<input type="hidden" name="characteristic'. $n . $nr .'" value="'. $orderrow->Characteristic .'">';
 							$nr++;
 						}
-						
+
 						if(gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number, " OR  	ref_ecommerce_id_order  = '".$order->Numbering."'")){
 						?>
 						<span class="glyphicon glyphicon-ban-circle text-danger" title="Già scaricato"></span>
@@ -393,14 +396,14 @@ if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controll
 						<input type="hidden" name="num_orders" value="<?php echo $n; ?>">
 						</td></tr>
 						<?php
-						
-						
-						
+
+
+
 						$n++;
-					} 
-					
+					}
+
 					?>
-					
+
 					<tr>
 					<td style="text-align: right;">
 					<input type="submit" name="Return"  value="Indietro">
@@ -416,20 +419,20 @@ if ( isset($headers[0]) AND intval(substr($headers[0], 9, 3))==200){ // controll
 					<input type="submit" name="conferma"  onClick="chkSubmit();" value="Scarica">
 					</td>
 					</tr>
-				</tbody>	
-			</table>	
-	
-	<?php	
+				</tbody>
+			</table>
+
+	<?php
 } else { // IL FILE INTERFACCIA NON ESISTE > ESCO
 	$msg=($headers)?substr($headers[0], 9, 3):'non riesco ad accedere';
-	?>	
+	?>
 	<script>
 	var msg = '<?php echo $msg; ?>';
 	alert("Errore di connessione al file di interfaccia web = " + msg );
 	location.replace("./synchronize.php");
     </script>
 	<?php
-} 
+}
 require("../../library/include/footer.php");
 ?>
 </form>

@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
    ------------------------------------------------------------------------
   FUNZIONI di sincronizzazione via FTP e-commerce <-> GAzie
   ------------------------------------------------------------------------
@@ -35,22 +35,22 @@
   @Website   http://www.programmisitiweb.lacasettabio.it
   @Copyright Copyright (C) 2018 - 2021 Antonio Germani All Rights Reserved.
   versione 3.0
-  ------------------------------------------------------------------------   
+  ------------------------------------------------------------------------
  */
- 
-/* 
+
+/*
 QUESTA CLASSE CONTERRA' DELLE FUNZIONI DI NOME STANDARD PER INTERAGIRE CON LE API DEI VARI E-COMMERCE
-SOTTO VEDETE UNA SOLA FUNZIONE DI COSTRUTTO DI ESEMPIO PER LA PRESA DEL TOKEN. 
-GAzie userà dei nomi di funzione per eseguire le varie operazioni di sincronizzazione, con il proseguire 
-dello sviluppo vedrete delle chiamate ad esse che però al momento saranno vuote e a discrezione dei 
+SOTTO VEDETE UNA SOLA FUNZIONE DI COSTRUTTO DI ESEMPIO PER LA PRESA DEL TOKEN.
+GAzie userà dei nomi di funzione per eseguire le varie operazioni di sincronizzazione, con il proseguire
+dello sviluppo vedrete delle chiamate ad esse che però al momento saranno vuote e a discrezione dei
 singoli sviluppatori utilizzarle per passare O ricevere dati (d)allo store online, tramite le specifiche API.
-I nomi standard di funzione saranno: 
-"UpsertProduct","get_sync_status","UpsertCategory","UpsertCustomer","UpdateStore",ecc 
+I nomi standard di funzione saranno:
+"UpsertProduct","get_sync_status","UpsertCategory","UpsertCustomer","UpdateStore",ecc
 e dovranno essere gli stessi anche su eventuali "moduli cloni" per la sincronizzazione di GAzie.
-Con questo stratagemma basterà indicare in configurazione azienda  il nome del modulo che si vuole 
+Con questo stratagemma basterà indicare in configurazione azienda  il nome del modulo che si vuole
 utilizzare per il sincronismo che tutti gli altri moduli di GAzie nel momento in cui effettueranno
 un aggiornamento dei dati punteranno alle funzioni contenute nel modulo alternativo richiesto,
- pittosto che a questo. 
+ pittosto che a questo.
 */
 
 use phpseclib3\Net\SSH2;
@@ -69,7 +69,7 @@ class shopsynchronizegazSynchro {
 		$oc_api_key = gaz_dbi_get_row($gTables['company_data'], 'var','oc_api_key')['data'];
 		// prendo il token
 		$curl = curl_init($this->oc_api_url);
-		$post = array('username' => $oc_api_username,'key'=>$oc_api_key); 
+		$post = array('username' => $oc_api_username,'key'=>$oc_api_key);
 		curl_setopt_array($curl,array(CURLOPT_RETURNTRANSFER=>TRUE,CURLOPT_POSTFIELDS=>$post));
 		$raw_response = curl_exec($curl);
 		if(!$raw_response){
@@ -77,30 +77,30 @@ class shopsynchronizegazSynchro {
 		}else{
 			$res = json_decode($raw_response);
 			$this->api_token=$res->api_token;
-			curl_close($curl);		
+			curl_close($curl);
 		}*/
-		$this->api_token=TRUE; //la sincronizzazione via FTP non ha bisogno di TOKEN, quindi è TRUE	
-				
+		$this->api_token=TRUE; //la sincronizzazione via FTP non ha bisogno di TOKEN, quindi è TRUE
+
 	}
 	function SetupStore() {
-		// aggiorno i dati comuni a tutto lo store: Anagrafica Azienda, Aliquote IVA, dati richiesti ai nuovi clienti (CF,PI,indirizzo,ecc) in custom_field e tutto ciò che necessita per evitare di digitarlo a mano su ecommerce-admin 
+		// aggiorno i dati comuni a tutto lo store: Anagrafica Azienda, Aliquote IVA, dati richiesti ai nuovi clienti (CF,PI,indirizzo,ecc) in custom_field e tutto ciò che necessita per evitare di digitarlo a mano su ecommerce-admin
 	}
 	function UpsertCategory($d) {
 		// usando il token precedentemente avuto si dovranno eseguire tutte le operazioni necessarie ad aggiornare la categorie merceologica quindi:
 		// in base alle API messe a disposizione dallo specifico store (Opencart,Prestashop,Magento,ecc) si passeranno i dati in maniera opportuna...
-		if ($d['ref_ecommerce_id_category']>0){ // se la categoria è connessa all'e-commerce	
-			@session_start();		
+		if ($d['ref_ecommerce_id_category']>0){ // se la categoria è connessa all'e-commerce
+			@session_start();
 			global $gTables,$admin_aziend;
 			$rawres=[];
 			$gForm = new magazzForm();
-			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
-			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
-			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
+			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
+			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
+			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
 			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."upd-category.php";
-			
-			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password							
+
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
 				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
 				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
 				if (gaz_dbi_get_row($gTables['company_config'], "var", "keypass")['val']=="key"){ // SFTP log-in con KEY
@@ -116,11 +116,11 @@ class shopsynchronizegazSynchro {
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 						$this->rawres=$rawres;
 						return;
-					} 
-				} else { // SFTP log-in con password				
+					}
+				} else { // SFTP log-in con password
 					$sftp = new SFTP($ftp_host, $ftp_port);
 					if (!$sftp->login($ftp_user, $ftp_pass)) {
-						// non si connette: password LOG-IN FALSE						
+						// non si connette: password LOG-IN FALSE
 						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
@@ -129,15 +129,15 @@ class shopsynchronizegazSynchro {
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 						$this->rawres=$rawres;
 						return;
-					} 
-				}				
-			} else {			 
+					}
+				}
+			} else {
 				// imposto la connessione al server
 				$conn_id = ftp_connect($ftp_host)or die("Could not connect to $ftp_server");
 				// effettuo login con user e pass
 				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 				// controllo se la connessione è OK...
-				if ((!$conn_id) or (!$mylogin)){ 
+				if ((!$conn_id) or (!$mylogin)){
 					// non si connette FALSE
 					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
@@ -147,12 +147,12 @@ class shopsynchronizegazSynchro {
 					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 					$this->rawres=$rawres;
 					return;
-				} 
+				}
 			}
-			// creo il file xml			
+			// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2021" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
-			$xml_output .= "\n<Categories>\n";						
+			$xml_output .= "\n<Categories>\n";
 				$xml_output .= "\t<Category>\n";
 				$xml_output .= "\t<Id>".$d['ref_ecommerce_id_category']."</Id>\n";
 				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
@@ -165,25 +165,25 @@ class shopsynchronizegazSynchro {
 			$xmlHandle = fopen($xmlFile, "w");
 			fwrite($xmlHandle, $xml_output);
 			fclose($xmlHandle);
-			
+
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 				// invio file xml tramite Sftp
 				if ($sftp->put($ftp_path_upload."category.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
-					$sftp->disconnect();					
+					$sftp->disconnect();
 				}else {
-					// chiudo la connessione SFTP 
+					// chiudo la connessione SFTP
 					$sftp->disconnect();
 					$rawres['title'] = "Upload tramite Sftp del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
 					$rawres['label'] = "Aggiornare i dati della categoria: ". $d['ref_ecommerce_id_category'] ."-". $d['descri'];
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';			
-				}	
+					$rawres['style'] = 'danger';
+				}
 			} else {
 				//turn passive mode on
 				ftp_pasv($conn_id, true);
 				// upload file xml
-				if (ftp_put($conn_id, $ftp_path_upload."category.xml", $xmlFile, FTP_ASCII)){			
+				if (ftp_put($conn_id, $ftp_path_upload."category.xml", $xmlFile, FTP_ASCII)){
 				} else{
 					$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
@@ -191,7 +191,7 @@ class shopsynchronizegazSynchro {
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
 				}
-				// chiudo la connessione FTP 
+				// chiudo la connessione FTP
 				ftp_quit($conn_id);
 			}
 			$access=base64_encode($accpass);
@@ -213,27 +213,27 @@ class shopsynchronizegazSynchro {
 				$rawres['link'] = '../shop-synchronize/synchronize.php';
 				$rawres['style'] = 'danger';
 			}
-		}		
+		}
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-		$this->rawres=$rawres;	
+		$this->rawres=$rawres;
 	}
-	function UpsertParent($p) { 
+	function UpsertParent($p) {
 		// aggiorno i dati del genitore delle varianti
 		if ($p['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
-			@session_start();		
+			@session_start();
 			global $gTables,$admin_aziend;
 			$rawres=[];
 			$gForm = new magazzForm();
-			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
-			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
-			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
+			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
+			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
+			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
 			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
 			$idHome = gaz_dbi_get_row($gTables['company_config'], "var", "home")['val'];
 			// "group-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
-			
+
 			// calcolo la disponibilità in magazzino
 			$rig_vars = gaz_dbi_dyn_query('*', $gTables['artico'], "id_artico_group = " . $p['id_artico_group']);
 			$totav=0;
@@ -241,11 +241,11 @@ class shopsynchronizegazSynchro {
 				$ordinati=0;$avqty=0;
 				$mv = $gForm->getStockValue(false, $rig_var['codice']);
 				$magval = array_pop($mv);
-				if (!isset($magval['q_g']))	{ 
+				if (!isset($magval['q_g']))	{
 					$qg=0;
 				} else {
 					$qg=floatval($magval['q_g']);
-				}					
+				}
 				$ordinati = $gForm->get_magazz_ordinati($rig_var['codice'], "VOR");
 				$ordinati = $ordinati + $gForm->get_magazz_ordinati($rig_var['codice'], "VOW");
 				$avqty=$qg-$ordinati;
@@ -254,9 +254,9 @@ class shopsynchronizegazSynchro {
 				}
 				$totav=$totav+$avqty;
 			}
-			
-			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password	
-							
+
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
+
 				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
 				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
 
@@ -273,12 +273,12 @@ class shopsynchronizegazSynchro {
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 						$this->rawres=$rawres;
 						return;
-					} 
+					}
 				} else { // SFTP log-in con password
-				
+
 					$sftp = new SFTP($ftp_host, $ftp_port);
 					if (!$sftp->login($ftp_user, $ftp_pass)) {
-						// non si connette: password LOG-IN FALSE						
+						// non si connette: password LOG-IN FALSE
 						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
@@ -286,11 +286,11 @@ class shopsynchronizegazSynchro {
 						$rawres['style'] = 'danger';
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 						$this->rawres=$rawres;
-						return;	
-					} 
-				}				
+						return;
+					}
+				}
 			} else {
-			 
+
 				// imposto la connessione al server
 				$conn_id = ftp_connect($ftp_host)or die("Could not connect to $ftp_server");;
 
@@ -298,7 +298,7 @@ class shopsynchronizegazSynchro {
 				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 
 				// controllo se la connessione è OK...
-				if ((!$conn_id) or (!$mylogin)){ 
+				if ((!$conn_id) or (!$mylogin)){
 					// non si connette FALSE
 					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
@@ -308,12 +308,12 @@ class shopsynchronizegazSynchro {
 					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 					$this->rawres=$rawres;
 					return;
-				} 
+				}
 			}
-			// creo il file xml			
+			// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2021" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
-			$xml_output .= "\n<Products>\n";						
+			$xml_output .= "\n<Products>\n";
 				$xml_output .= "\t<Product>\n";
 				$xml_output .= "\t<Id>".$p['ref_ecommerce_id_main_product']."</Id>\n";
 				$xml_output .= "\t<Code>".$p['id_artico_group']."</Code>\n";
@@ -330,25 +330,25 @@ class shopsynchronizegazSynchro {
 			$xmlHandle = fopen($xmlFile, "w");
 			fwrite($xmlHandle, $xml_output);
 			fclose($xmlHandle);
-			
+
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 				// invio file xml tramite Sftp
 				if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
-					$sftp->disconnect();					
+					$sftp->disconnect();
 				}else {
-					// chiudo la connessione SFTP 
+					// chiudo la connessione SFTP
 					$sftp->disconnect();
 					$rawres['title'] = "Upload tramite Sftp del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
 					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';			
-				}	
+					$rawres['style'] = 'danger';
+				}
 			} else {
 				//turn passive mode on
 				ftp_pasv($conn_id, true);
 				// upload file xml
-				if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
+				if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
 				} else{
 					$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
@@ -356,7 +356,7 @@ class shopsynchronizegazSynchro {
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
 				}
-				// chiudo la connessione FTP 
+				// chiudo la connessione FTP
 				ftp_quit($conn_id);
 			}
 			$access=base64_encode($accpass);
@@ -378,25 +378,25 @@ class shopsynchronizegazSynchro {
 				$rawres['link'] = '../shop-synchronize/synchronize.php';
 				$rawres['style'] = 'danger';
 			}
-		}		
+		}
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-		$this->rawres=$rawres;		
+		$this->rawres=$rawres;
 	}
 	function UpsertProduct($d) {
 		if ($d['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
-			@session_start();		
+			@session_start();
 			global $gTables,$admin_aziend;
 			$rawres=[];
-			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
-			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
-			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
+			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
+			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
+			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
 			$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
 			$idHome = gaz_dbi_get_row($gTables['company_config'], "var", "home")['val'];
 			// "articoli-gazie.php" è il nome del file interfaccia presente nella root dell'e-commerce. Per evitare intrusioni indesiderate Il file dovrà gestire anche una password. Per comodità viene usata la stessa FTP.
 			// il percorso per raggiungere questo file va impostato in configurazione avanzata azienda alla voce "Website root directory"
-			
+
 			// calcolo la disponibilità in magazzino
 			$gForm = new magazzForm();
 			$mv = $gForm->getStockValue(false, $d['codice']);
@@ -424,9 +424,9 @@ class shopsynchronizegazSynchro {
 			if (intval($d['barcode'])==0) {// se non c'è barcode allora è nullo
 				$d['barcode']="NULL";
 			}
-			
-			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password	
-							
+
+			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
+
 				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
 				$ftp_key = gaz_dbi_get_row($gTables['company_config'], "var", "chiave")['val'];
 
@@ -442,13 +442,13 @@ class shopsynchronizegazSynchro {
 						$rawres['style'] = 'danger';
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 						$this->rawres=$rawres;
-						return;	
-					} 
+						return;
+					}
 				} else { // SFTP log-in con password
-				
+
 					$sftp = new SFTP($ftp_host, $ftp_port);
 					if (!$sftp->login($ftp_user, $ftp_pass)) {
-						// non si connette: password LOG-IN FALSE						
+						// non si connette: password LOG-IN FALSE
 						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
@@ -456,11 +456,11 @@ class shopsynchronizegazSynchro {
 						$rawres['style'] = 'danger';
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 						$this->rawres=$rawres;
-						return;	
-					} 
-				}				
+						return;
+					}
+				}
 			} else {
-			 
+
 				// imposto la connessione al server
 				$conn_id = ftp_connect($ftp_host)or die("Could not connect to $ftp_server");;
 
@@ -468,7 +468,7 @@ class shopsynchronizegazSynchro {
 				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 
 				// controllo se la connessione è OK...
-				if ((!$conn_id) or (!$mylogin)){ 
+				if ((!$conn_id) or (!$mylogin)){
 					// non si connette FALSE
 					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
@@ -478,17 +478,17 @@ class shopsynchronizegazSynchro {
 					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 					$this->rawres=$rawres;
 					return;
-				} 
-			}		
-			
+				}
+			}
+
 			// Calcolo il prezzo IVA compresa
 			$aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($d['aliiva']))['aliquo'];
 			$web_price_vat_incl=$d['web_price']+(($d['web_price']*$aliquo)/100);
 			$web_price_vat_incl=number_format($web_price_vat_incl, $admin_aziend['decimal_price'], '.', '');
-	 		// creo il file xml			
+	 		// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
-			$xml_output .= "\n<Products>\n";						
+			$xml_output .= "\n<Products>\n";
 				$xml_output .= "\t<Product>\n";
 				$xml_output .= "\t<Id>".$d['ref_ecommerce_id_product']."</Id>\n";
 				if ($id['id_artico_group']>0){
@@ -503,7 +503,7 @@ class shopsynchronizegazSynchro {
 					$xml_output .= "\t<ParentId></ParentId>\n";
 				}
 				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
-				$xml_output .= "\t<BarCode>".$d['barcode']."</BarCode>\n";				
+				$xml_output .= "\t<BarCode>".$d['barcode']."</BarCode>\n";
 				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['body_text'], ENT_QUOTES, 'UTF-8'))."</Description>\n";
 				$xml_output .= "\t<Price>".$d['web_price']."</Price>\n";
@@ -514,31 +514,31 @@ class shopsynchronizegazSynchro {
 				$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
 				$xml_output .= "\t<WebPublish>".$d['web_public']."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
 				$xml_output .= "\t<IdHome>".$idHome."</IdHome>\n";// id per pubblicazione home su web
-				$xml_output .= "\t</Product>\n";			
+				$xml_output .= "\t</Product>\n";
 			$xml_output .="</Products>\n</GAzieDocuments>";
 			$xmlFile = "prodotti.xml";
 			$xmlHandle = fopen($xmlFile, "w");
 			fwrite($xmlHandle, $xml_output);
 			fclose($xmlHandle);
-			
+
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 				// invio file xml tramite Sftp
 				if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
-					$sftp->disconnect();					
+					$sftp->disconnect();
 				}else {
-					// chiudo la connessione SFTP 
+					// chiudo la connessione SFTP
 					$sftp->disconnect();
 					$rawres['title'] = "Upload tramite Sftp del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
 					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';			
-				}	
+					$rawres['style'] = 'danger';
+				}
 			} else {
 				//turn passive mode on
 				ftp_pasv($conn_id, true);
 				// upload file xml
-				if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
+				if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
 				} else{
 					$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
@@ -546,7 +546,7 @@ class shopsynchronizegazSynchro {
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
 				}
-				// chiudo la connessione FTP 
+				// chiudo la connessione FTP
 				ftp_quit($conn_id);
 			}
 			$access=base64_encode($accpass);
@@ -573,19 +573,19 @@ class shopsynchronizegazSynchro {
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 		$this->rawres=$rawres;
 		}
-						
+
 	}
 	function SetProductQuantity($d) {
 		// aggiornamento quantità disponibile di un articolo
-		
+
 		@session_start();
 		global $gTables,$admin_aziend;
 		$rawres=[];
 		$id = gaz_dbi_get_row($gTables['artico'],"codice",$d);
 		if ($id['web_public'] > 0){
-			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];			
-			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];			
-			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];			
+			$ftp_host = gaz_dbi_get_row($gTables['company_config'], "var", "server")['val'];
+			$ftp_path_upload = gaz_dbi_get_row($gTables['company_config'], "var", "ftp_path")['val'];
+			$ftp_user = gaz_dbi_get_row($gTables['company_config'], "var", "user")['val'];
 			$ftp_pass = gaz_dbi_get_row($gTables['company_config'], "var", "pass")['val'];
 			$accpass = (gaz_dbi_get_row($gTables['company_config'], "var", "accpass"))?gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val']:'';
 			$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."articoli-gazie.php";
@@ -594,7 +594,7 @@ class shopsynchronizegazSynchro {
 			$gForm = new magazzForm();
 			$mv = $gForm->getStockValue(false, $d);
 			$magval = array_pop($mv);
-			// creo array fields con ID di riferimento e  disponibilità			
+			// creo array fields con ID di riferimento e  disponibilità
 			$fields = array ('product_id' => $id['ref_ecommerce_id_product'],'quantity'=>intval($magval['q_g']));
 			$ordinati = $gForm->get_magazz_ordinati($d, "VOR");
 			$ordinati = $ordinati + $gForm->get_magazz_ordinati($d, "VOW");
@@ -605,7 +605,7 @@ class shopsynchronizegazSynchro {
 			if (intval($id['barcode'])==0) {// se non c'è barcode allora è nullo
 				$id['barcode']="NULL";
 			}
-		
+
 			if ((gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')) AND gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){// SFTP login with private key and password
 
 				$ftp_port = gaz_dbi_get_row($gTables['company_config'], "var", "port")['val'];
@@ -624,12 +624,12 @@ class shopsynchronizegazSynchro {
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 						$this->rawres=$rawres;
 						return;
-					} 
+					}
 				} else { // SFTP log-in con password
-				
+
 					$sftp = new SFTP($ftp_host, $ftp_port);
 					if (!$sftp->login($ftp_user, $ftp_pass)) {
-						// non si connette: password LOG-IN FALSE						
+						// non si connette: password LOG-IN FALSE
 						$rawres['title'] = "Problemi con la connessione Sftp usando la password. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 						$rawres['button'] = 'Avviso eCommerce';
 						$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
@@ -638,15 +638,15 @@ class shopsynchronizegazSynchro {
 						$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 						$this->rawres=$rawres;
 						return;
-					} 
-				}				
-			} else {				
-			 
+					}
+				}
+			} else {
+
 				// imposto la connessione al server
 				$conn_id = ftp_connect($ftp_host);
-				
+
 				// controllo se la connessione è OK...
-				if ((!$conn_id)){ 
+				if ((!$conn_id)){
 					// non si connette FALSE
 					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
@@ -662,7 +662,7 @@ class shopsynchronizegazSynchro {
 				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 
 				// controllo se il log-in è OK...
-				if ((!$mylogin)){ 
+				if ((!$mylogin)){
 					// non si connette FALSE
 					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
@@ -672,13 +672,13 @@ class shopsynchronizegazSynchro {
 					$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 					$this->rawres=$rawres;
 					return;
-				} 
-			}			
-				 
-	 		// creo il file xml			
+				}
+			}
+
+	 		// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
-			$xml_output .= "\n<Products>\n";						
+			$xml_output .= "\n<Products>\n";
 				$xml_output .= "\t<Product>\n";
 				$xml_output .= "\t<Id>".$id['ref_ecommerce_id_product']."</Id>\n";
 				$xml_output .= "\t<Code>".$id['codice']."</Code>\n";
@@ -693,31 +693,31 @@ class shopsynchronizegazSynchro {
 					$xml_output .= "\t<Type>product</Type>\n";
 					$xml_output .= "\t<ParentId></ParentId>\n";
 				}
-				$xml_output .= "\t</Product>\n";			
+				$xml_output .= "\t</Product>\n";
 			$xml_output .="</Products>\n</GAzieDocuments>";
 			$xmlFile = "prodotti.xml";
 			$xmlHandle = fopen($xmlFile, "w");
 			fwrite($xmlHandle, $xml_output);
 			fclose($xmlHandle);
-			
+
 			if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 				// invio file xml tramite Sftp
 				if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
-					$sftp->disconnect();					
+					$sftp->disconnect();
 				}else {
-					// chiudo la connessione SFTP 
+					// chiudo la connessione SFTP
 					$sftp->disconnect();
 					$rawres['title'] = "Upload tramite Sftp del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
 					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d;
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';			
-				}	
-			} else { // invio tramite ftp semplice			
+					$rawres['style'] = 'danger';
+				}
+			} else { // invio tramite ftp semplice
 				//turn passive mode on
 				ftp_pasv($conn_id, true);
 				// upload file xml
-				if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){			
+				if (ftp_put($conn_id, $ftp_path_upload."prodotti.xml", $xmlFile, FTP_ASCII)){
 				} else{
 					$rawres['title'] = "Upload del file xml non riuscito. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
@@ -725,7 +725,7 @@ class shopsynchronizegazSynchro {
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
 				}
-				// chiudo la connessione FTP 
+				// chiudo la connessione FTP
 				ftp_quit($conn_id);
 			}
 			$access=base64_encode($accpass);
@@ -751,17 +751,17 @@ class shopsynchronizegazSynchro {
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 		$this->rawres=$rawres;
 	}
-	function get_sync_status($last_id) { 
-		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer), 
+	function get_sync_status($last_id) {
+		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer),
 		// in $last_id si deve passare l'ultimo ordine già importato al fine di non importare tutto ma solo i nuovi
 		//Antonio Germani - $last_id non viene usato perché si controlla con una query se l'ordine è già stato importato
 		@session_start();
-		
-		global $gTables,$admin_aziend;	
-        $rawres=[];		
+
+		global $gTables,$admin_aziend;
+        $rawres=[];
 		$urlinterf = gaz_dbi_get_row($gTables['company_config'], 'var', 'path')['val']."ordini-gazie.php";
 		$accpass = gaz_dbi_get_row($gTables['company_config'], "var", "accpass")['val'];
-		
+
 		$access=base64_encode($accpass);
 		// avvio il file di interfaccia presente nel sito web remoto
 		$headers = @get_headers($urlinterf.'?access='.$access);
@@ -788,14 +788,14 @@ class shopsynchronizegazSynchro {
 					$numdoc = 1;
 				}
     			foreach($xml->Documents->children() as $order) { // ciclo gli ordini
-			
+
 					if((!gaz_dbi_get_row($gTables['tesbro'], "numdoc", $order->Number)) AND (!gaz_dbi_get_row($gTables['tesbro'], "ref_ecommerce_id_order", $order->Numbering))){ // se il numero d'ordine non esiste carico l'ordine in GAzie
-						
+
 						$query = "SHOW TABLE STATUS LIKE '" . $gTables['anagra'] . "'";
 						$result = gaz_dbi_query($query);
 						$row = $result->fetch_assoc();
-						$id_anagra = $row['Auto_increment']; // questo è l'ID che avrà ANAGRA: Anagrafica cliente				
-						$anagrafica = new Anagrafica(); 
+						$id_anagra = $row['Auto_increment']; // questo è l'ID che avrà ANAGRA: Anagrafica cliente
+						$anagrafica = new Anagrafica();
 						$last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
 						$codice = substr($last[0]['codice'], 3) + 1;
 						$clfoco = $admin_aziend['mascli'] * 1000000 + $codice;// questo è il codice di CLFOCO da connettere all'anagrafica cliente se il cliente non esiste
@@ -806,11 +806,14 @@ class shopsynchronizegazSynchro {
 							if (isset($cl)){
 								$clfoco=$cl['codice'];
 								$esiste=1;
-							}							
-						}								
+							}
+						}
 						if ($esiste==0) { //registro cliente se non esiste
 							if ($order->CustomerCountry=="IT"){ // se la nazione è IT
 								$lang="1";
+                if (substr_compare($order->CustomerVatCode, "IT", 0, 2, true)==0){// se c'è IT davanti alla partita iva
+                  $order->CustomerVatCode=substr($order->CustomerVatCode,2);// tolgo IT
+                }
 							} else { // se non è italiano imposto il codice univoco con x e il codice fiscale con il codice cliente e-commerce
 								$lang="0";
 								$order->CustomerCodeFattEl = "xxxxxxx";
@@ -821,8 +824,8 @@ class shopsynchronizegazSynchro {
 									$order->CustomerVatCode= sprintf("%07d", $order->CustomerCode);// riempio il campo piva con un numero di almeno 7 cifre
 								}
 							}
-							if (strlen ($order->CustomerFiscalCode)>1 AND intval ($order->CustomerFiscalCode)==0){ // se il codice fiscale non è numerico 
-								if (substr($order->CustomerFiscalCode,9,2)>40){ // deduco il sesso 
+							if (strlen ($order->CustomerFiscalCode)>1 AND intval ($order->CustomerFiscalCode)==0){ // se il codice fiscale non è numerico
+								if (substr($order->CustomerFiscalCode,9,2)>40){ // deduco il sesso
 									$sexper="F";
 								} else {
 									$sexper="M";
@@ -831,10 +834,10 @@ class shopsynchronizegazSynchro {
 								$sexper="G";
 							}
 							gaz_dbi_query("INSERT INTO " . $gTables['anagra'] . "(ragso1,ragso2,sexper,indspe,capspe,citspe,prospe,country,id_currency,id_language,telefo,codfis,pariva,fe_cod_univoco,e_mail,pec_email) VALUES ('" . addslashes($order->CustomerSurname)." ". addslashes($order->CustomerName) . "', '" . addslashes($order->BusinessName) . "', '". $sexper. "', '".addslashes($order->CustomerAddress) ."', '".$order->CustomerPostCode."', '". addslashes($order->CustomerCity) ."', '". $order->CustomerProvince ."', '" . $order->CustomerCountry. "', '1', '".$lang."', '". $order->CustomerTel ."', '". $order->CustomerFiscalCode ."', '" . $order->CustomerVatCode . "', '" . $order->CustomerCodeFattEl . "', '". $order->CustomerEmail . "', '". $order->CustomerPecEmail . "')");
-							
+
 							gaz_dbi_query("INSERT INTO " . $gTables['clfoco'] . "(ref_ecommerce_id_customer,codice,id_anagra,listin,descri,destin,speban,stapre,codpag) VALUES ('". $order->CustomerCode ."', '". $clfoco . "', '" . $id_anagra . "', '". intval($order->PriceListNum) ."' ,'" .addslashes($order->CustomerName)." ".addslashes($order->CustomerSurname) . "', '". $order->CustomerShippingDestin ."', 'S', 'T', '".$order->PaymentName."')");
 						}
-						
+
 						if ($order->TotalDiscount>0){ // se il sito ha mandato uno sconto totale a valore calcolo lo sconto in percentuale da dare ad ogni rigo
 							$lordo=$order->Total+$order->TotalDiscount-$order->CostPaymentAmount-$order->CostShippingAmount;
 							$netto=$lordo-$order->TotalDiscount;
@@ -842,7 +845,7 @@ class shopsynchronizegazSynchro {
 						} else {
 							$percdisc="";
 						}
-						
+
 						if ($order->PricesIncludeVat=="true"){ // se il sito include l'iva la scorporo dalle spese banca e trasporto
 							$CostPaymentAmount=floatval($order->CostPaymentAmount)/ 1.22; // floatval traforma da alfabetico a numerico
 							$CostShippingAmount=floatval($order->CostShippingAmount) / 1.22;
@@ -850,25 +853,25 @@ class shopsynchronizegazSynchro {
 							$CostPaymentAmount=floatval($order->CostPaymentAmount);
 							$CostShippingAmount=floatval($order->CostShippingAmount);
 						}
-												
+
 						// registro testata ordine
 						$tesbro['destin']=chunk_split ($order->CustomerShippingDestin,44);$tesbro['ref_ecommerce_id_order']=$order->Numbering;$tesbro['tipdoc']='VOW';$tesbro['seziva']=$order->SezIva;$tesbro['print_total']='1';$tesbro['datemi']=$order->DateOrder;$tesbro['numdoc']=$numdoc;$tesbro['datfat']='0000-00-00';$tesbro['clfoco']=$clfoco;$tesbro['pagame']=$order->PaymentName;$tesbro['listin']=$order->PriceListNum;$tesbro['spediz']=$order->Carrier;$tesbro['traspo']=$CostShippingAmount;$tesbro['speban']=$CostPaymentAmount;$tesbro['caumag']='1';$tesbro['expense_vat']=$admin_aziend['preeminent_vat'];$tesbro['initra']=$order->DateOrder;$tesbro['status']='ONLINE-SHOP';$tesbro['adminid']=$admin_aziend['adminid'];
 						$id_tesbro=tesbroInsert($tesbro);
-						
-						// Gestione righi ordine					
+
+						// Gestione righi ordine
 						foreach($xml->Documents->Document[$countDocument]->Rows->children() as $orderrow) { // carico le righe dell'ordine
-						
-							// controllo se esiste l'articolo in GAzie 
+
+							// controllo se esiste l'articolo in GAzie
 							$ckart = gaz_dbi_get_row($gTables['artico'], "ref_ecommerce_id_product", $orderrow->Id);
 							if ($ckart){
 								$codart=$ckart['codice']; // se esiste ne prendo il codice come $codart
-								$descri=$ckart['descri'].$orderrow->AddDescription;// se esiste ne prendo descri e ci aggiungo una eventuale descrizione aggiuntiva						
+								$descri=$ckart['descri'].$orderrow->AddDescription;// se esiste ne prendo descri e ci aggiungo una eventuale descrizione aggiuntiva
 							}
-							if (!$ckart){ // se non esiste creo un nuovo articolo su gazie 
+							if (!$ckart){ // se non esiste creo un nuovo articolo su gazie
 								if ($orderrow->Stock>0){
 									$good_or_service=0;//come servizio, non deve movimentare il magazzino
 								} else {
-									$good_or_service=1; //come merce, movimenta il magazzino				
+									$good_or_service=1; //come merce, movimenta il magazzino
 								}
 								if ($orderrow->VatAli==""){ // se il sito non ha mandato l'aliquota IVA dell'articolo di GAzie ci metto quella che deve mandare come base aziendale per le spese
 									$orderrow->VatCode=$order->CostVatCode;
@@ -885,15 +888,15 @@ class shopsynchronizegazSynchro {
 								}
 								if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
 									$div=floatval("1.".$aliiva);
-									$Price=floatval($orderrow->PriceVATincl) / $div;				
+									$Price=floatval($orderrow->PriceVATincl) / $div;
 								} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
 									$Price=floatval($orderrow->Price);
-								}								
-								
+								}
+
 								$id_artico_group="";
 								$arrayvar="";
 								if ($orderrow->ParentId > 0 OR $orderrow->Type == "variant" ){ // se è una variante
-								
+
 									// controllo se esiste il suo artico_group/padre in GAzie
 									unset($parent);
 									$parent = gaz_dbi_get_row($gTables['artico_group'], "ref_ecommerce_id_main_product", $orderrow->ParentId);// trovo il padre in GAzie
@@ -904,23 +907,23 @@ class shopsynchronizegazSynchro {
 										gaz_dbi_query("INSERT INTO " . $gTables['artico_group'] . "(descri,large_descri,image,web_url,ref_ecommerce_id_main_product,web_public,depli_public,adminid) VALUES ('" . addslashes($parent['descri']) . "', '" . htmlspecialchars_decode (addslashes($parent['descri'])). "', '', '', '". $orderrow->ParentId . "', '1', '1', '". $admin_aziend['adminid'] ."')");
 										$id_artico_group=gaz_dbi_last_id(); // imposto il riferimento al padre
 									}
-									
-									if (strlen($orderrow->Description)<2){ // se non c'è la descrizione della variante 
+
+									if (strlen($orderrow->Description)<2){ // se non c'è la descrizione della variante
 										$orderrow->Description=$parent['descri']."-".$orderrow->Characteristic;// ci metto quella del padre accodandoci la variante
 									}
-									
+
 									// creo un json array per la variante
 									$arrayvar= array("var_id" => floatval($orderrow->CharacteristicId), "var_name" => strval($orderrow->Characteristic));
 									$arrayvar = json_encode ($arrayvar);
-									
+
 								}
-								
+
 								// se l'e-commerce non ha inviato un codice me lo creo
 								if (strlen($orderrow->Code)<1){
 									$orderrow->Code = substr($orderrow->Description,0,10)."-".substr($orderrow->Id,-4);
 								}
-								
-								// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste	
+
+								// ricongiungo la categoria dell'e-commerce con quella di GAzie, se esiste
 								$category="";
 								if (intval($orderrow->Category)>0){
 									$cat = gaz_dbi_get_row($gTables['catmer'], "ref_ecommerce_id_category", addslashes (substr($orderrow->Category,0,15)));// controllo se esiste in GAzie
@@ -928,53 +931,53 @@ class shopsynchronizegazSynchro {
 										$category=$cat['codice'];
 									}
 								}
-								// se non esiste la categoria in GAzie, la creo				
+								// se non esiste la categoria in GAzie, la creo
 								if ($category == 0 OR $category == ""){
 									$ultimo_codice=array();
 									$rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['catmer'], 1 ,'codice desc',0,1);
 									$ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
 									$cat['codice'] = $ultimo_codice['codice']+1;
 									$cat['ref_ecommerce_id_category'] = $orderrow->Category;
-									$cat['descri'] = $orderrow->ProductCategory;					
+									$cat['descri'] = $orderrow->ProductCategory;
 									gaz_dbi_table_insert('catmer',$cat);
 									// assegno l'id categoria al prossimo insert artico
 									$category=$cat['codice'];
 								}
-								
-								// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato				
+
+								// prima di inserire il nuovo articolo controllo se il suo codice è stato già usato
 								unset($usato);
-								$usato = gaz_dbi_get_row($gTables['artico'], "codice", $orderrow->Code);// controllo se il codice è già stato usato in GAzie	
+								$usato = gaz_dbi_get_row($gTables['artico'], "codice", $orderrow->Code);// controllo se il codice è già stato usato in GAzie
 								if ($usato){ // se il codice è già in uso lo modifico accodandoci l'ID
 									$orderrow->Code=substr($orderrow->Code,0,10)."-".substr($orderrow->Id,0,4);
-								}					
-								
+								}
+
 								gaz_dbi_query("INSERT INTO " . $gTables['artico'] . "(peso_specifico,web_mu,web_multiplier,ecomm_option_attribute,id_artico_group,codice,descri,ref_ecommerce_id_product,good_or_service,unimis,catmer,preve2,web_price,web_public,aliiva,codcon,adminid) VALUES ('". $orderrow->ProductWeight ."', '". $orderrow->MeasureUnit ."', '1', '". $arrayvar ."', '". $id_artico_group ."', '". substr($orderrow->Code,0,15) ."', '". addslashes($orderrow->Description) ."', '". $orderrow->Id ."', '". $good_or_service ."', '" . $orderrow->MeasureUnit . "', '" .$category . "', '". $Price ."', '". $orderrow->Price ."', '1', '".$codvat."', '420000006', '" . $admin_aziend['adminid'] . "')");
 								$codart= substr($orderrow->Code,0,15);// dopo averlo creato ne prendo il codice come $codart
-								$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva	
-															
+								$descri= $orderrow->Description.$orderrow->AddDescription; //prendo anche la descrizione e ci aggiungo una eventuale descrizione aggiuntiva
+
 							} else { // se esiste l'articolo in GAzie uso comunque il prezzo dell'e-commerce
 								$codvat=gaz_dbi_get_row($gTables['artico'], "codice", $codart)['aliiva'];
 								$aliiva=$orderrow->VatAli;
 								if ($order->PricesIncludeVat=="true" AND floatval($orderrow->Price) == 0){ // se l'e-commerce include l'iva e non ha mandato il prezzo imponibile, scorporo l'iva dal prezzo dell'articolo
 									$div=floatval("1.".$aliiva);
-									$Price=floatval($orderrow->PriceVATincl) / $div;				
+									$Price=floatval($orderrow->PriceVATincl) / $div;
 								} else {// se l'ecommerce non iclude l'iva uso il prezzo imponibile
 									$Price=floatval($orderrow->Price);
-								}							
+								}
 							}
-							
-							// salvo rigo su database tabella rigbro 
+
+							// salvo rigo su database tabella rigbro
 							$rigbro['id_tes']=intval($id_tesbro);$rigbro['codart']=$codart;$rigbro['descri']=addslashes($descri);$rigbro['unimis']=$orderrow->MeasureUnit;$rigbro['quanti']=$orderrow->Qty;$rigbro['prelis']=$Price;$rigbro['sconto']=$percdisc;$rigbro['codvat']=$codvat;$rigbro['codric']='420000006';$rigbro['pervat']=$aliiva;$rigbro['status']='ONLINE-SHOP';
 							rigbroInsert($rigbro);
 						}
 						$count++;//aggiorno contatore nuovi ordini
 						$countDocument++;//aggiorno contatore Document
-										
+
 					} else {
-						$countDocument++;//aggiorno contatore Document	
+						$countDocument++;//aggiorno contatore Document
 					}
 					$numdoc++; //incremento il numero d'ordine GAzie
-				}						
+				}
 		} else { // IL FILE INTERFACCIA NON ESISTE > chiudo la connessione ftp
 			if (!is_array($headers)){
             $rawres['title'] = "Impossibile scaricare gli ordini. Controllare le impostazioni nel modulo shop-synchronize.";
