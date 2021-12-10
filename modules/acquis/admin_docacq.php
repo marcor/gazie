@@ -2674,42 +2674,44 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 						$resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
 						title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 						type="submit"><i class="glyphicon glyphicon-refresh"></i> forfait </button>';
-						$resprow[$k][2]['value'] = ''; //codice_fornitore
+						$resprow[$k][2]['value'] = ''; //magazzino
+						$resprow[$k][3]['value'] = ''; //codice_fornitore
 						// in caso di rigo forfait non stampo alcune colonne
-						$resprow[$k][4]['value'] = ''; //unimis
+						$resprow[$k][5]['value'] = ''; //unimis
 						// scambio l'input con la colonna dell'importo...
-						$resprow[$k][8]['value'] = $resprow[$k][6]['value'];
-						$resprow[$k][5]['value'] = ''; //quanti
-						$resprow[$k][6]['value'] = ''; //prelis
-						$resprow[$k][7]['value'] = ''; //sconto
+						$resprow[$k][9]['value'] = $resprow[$k][7]['value'];
+						$resprow[$k][6]['value'] = ''; //quanti
+						$resprow[$k][7]['value'] = ''; //prelis
+						$resprow[$k][8]['value'] = ''; //sconto
 						break;
 					case "2":
 						$resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
 						title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 						type="submit"><i class="glyphicon glyphicon-refresh"></i> descrittivo </button>';
-						$resprow[$k][2]['value'] = ''; //codice_fornitore
-						$resprow[$k][4]['value'] = ''; //unimis
-						$resprow[$k][5]['value'] = ''; //quanti
-						$resprow[$k][6]['value'] = ''; //prelis
-						$resprow[$k][7]['value'] = ''; //sconto
-						$resprow[$k][8]['value'] = ''; //quanti
-						$resprow[$k][9]['value'] = ''; //prelis
-						$resprow[$k][10]['value'] = '';
+						$resprow[$k][2]['value'] = ''; //magazzino
+						$resprow[$k][3]['value'] = ''; //codice_fornitore
+						$resprow[$k][5]['value'] = ''; //unimis
+						$resprow[$k][6]['value'] = ''; //quanti
+						$resprow[$k][7]['value'] = ''; //prelis
+						$resprow[$k][8]['value'] = ''; //sconto
+						$resprow[$k][9]['value'] = ''; //quanti
+						$resprow[$k][10]['value'] = ''; //prelis
 						$resprow[$k][11]['value'] = '';
-						//$resprow[$k][12]['value'] = '';
+						$resprow[$k][12]['value'] = '';
 						break;
 					case "4":
 						// in caso di rigo cassa previdenziale
 						$resprow[$k][1]['value'] = '<button name="upd_row[' . $k . ']" class="btn btn-info btn-xs"
 						title="' . $script_transl['update'] . $script_transl['thisrow'] . '"
 						type="submit"><i class="glyphicon glyphicon-refresh"></i> cassa </button>';
-						$resprow[$k][2]['value'] = ''; //codice_fornitore
-						$resprow[$k][4]['value'] = ''; //unimis
+						$resprow[$k][2]['value'] = ''; //magazzino
+						$resprow[$k][3]['value'] = ''; //codice_fornitore
+						$resprow[$k][5]['value'] = ''; //unimis
 						// scambio l'input con la colonna dell'importo...
-						$resprow[$k][8]['value'] = $resprow[$k][6]['value'];
-						$resprow[$k][5]['value'] = ''; //quanti
-						$resprow[$k][6]['value'] = 'Imponibile'; //prelis
-						$resprow[$k][7]['value'] = '=>'; //sconto
+						$resprow[$k][9]['value'] = $resprow[$k][7]['value'];
+						$resprow[$k][6]['value'] = ''; //quanti
+						$resprow[$k][7]['value'] = 'Imponibile'; //prelis
+						$resprow[$k][8]['value'] = '=>'; //sconto
 						break;
 				}
 				$ctrl_orderman=$v['id_orderman'];
