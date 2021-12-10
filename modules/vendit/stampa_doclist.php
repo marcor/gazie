@@ -67,7 +67,8 @@ function getDocuments($td = 0, $si = 1, $where_data=['cl'=>0,'ag'=>0]) {
     $numfat=($td==6)?'numdoc':'numfat';
     $where_data['pi']=($td==6||$td==7)?'0':$where_data['pi'];
     $where_data['pf']=($td==6||$td==7)?'999999999':$where_data['pf'];
-    $where = "seziva = $si AND tipdoc LIKE '".$type[$td]."' AND $datfat BETWEEN ". $where_data['di'] ." AND ". $where_data['df']." AND protoc BETWEEN ". $where_data['pi'] ." AND ". $where_data['pf']
+    $where =($td==2)?"tipdoc = 'FAI' OR tipdoc = 'FAA'":"tipdoc LIKE '".$type[$td]."'";
+    $where .= " AND seziva = $si AND $datfat BETWEEN ". $where_data['di'] ." AND ". $where_data['df']." AND protoc BETWEEN ". $where_data['pi'] ." AND ". $where_data['pf']
     ." AND $numfat BETWEEN ". $where_data['ni'] ." AND ". $where_data['nf']. $customer . $agente;
     $from = $gTables['tesdoc'] . ' AS tesdoc
              LEFT JOIN ' . $gTables['pagame'] . ' AS pay

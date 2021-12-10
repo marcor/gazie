@@ -51,7 +51,7 @@ function getLastDocument($tipo, $sezione, $anno) {
          $where = "tipdoc = 'FAD' AND YEAR(datfat) = $anno";
          break;
       case 2:  //fattura immediata
-         $where = "tipdoc = 'FAI' AND YEAR(datfat) = $anno";
+         $where = "(tipdoc = 'FAI' OR tipdoc = 'FAA' ) AND YEAR(datfat) = $anno";
          break;
       case 3: //nota di credito
          $where = "tipdoc = 'FNC' AND YEAR(datfat) = $anno";
