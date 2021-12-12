@@ -999,12 +999,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 			$select_order->addSelected($form['id_tes']);
 			$select_order->output($form['coseor']);
 		}
-		if (strlen($form['order']) > 0) {
-		?>
-		<!--	<span class="glyphicon glyphicon-bell fa-2x" title="L'ordine impone l'articolo e la quantità" style="color:blue"></span>-->
-				<?php
-		}
-		?>
+    ?>
 		</td>
 	</tr>
 	<?php
@@ -1091,7 +1086,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                     $perc_util=number_format((($row['quantita_artico_base']/$content)*100),8);// percentuale di utilizzo con 8 cifre decimali max
                     ?><div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", number_format(str_replace(",","",$row['quantita_artico_base']),5,",","."); ?>
                     </div>
-                    <div class="col-sm-6" style="background-color:lightgreen;"> OK ne verrà usato il <?php echo $perc_util; ?> % come segue:</div>
+                    <div class="col-sm-6" style="background-color:lightgreen;"> OK ne verrà usato <?php echo gaz_format_number($perc_util); ?> % come segue:</div>
                     <?php
                   } else {
                     ?><div class="col-sm-1" style="background-color:red;"> KO</div>
@@ -1102,7 +1097,9 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
               ?></div> <!-- chiude row del nome articolo composto --><?php
               $mix="";
               $resmovs=$campsilos->getSilosArtico($form['recip_stocc_comp'][$nc]);// array con i codici articoli contenuti nel silos
-
+              ?>
+              <div style="background-color:lightgreen;"> <!-- elenco articoli prelevati in percentuale -->
+              <?php
               if ($artico['lot_or_serial'] == 1 && $ko==""){// se il componente prevede lotti gestisco gli articoli con i rispettivi lotti
                 $sil_idlots=$campsilos->getContentSil($form['recip_stocc_comp'][$nc]);
                 unset($sil_idlots['id_lotti']['totale']);//tolgo il totale
@@ -1111,22 +1108,26 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                 foreach ($idlots as $idlot) {// ciclo i lotti contenuti e li prendo in percentuale creando un componente per ciascuno
                   if ($idlot>0){// se c'è un id lotto
                     $qta=$sil_idlots['id_lotti'][$idlot];
-                    $codartlot = gaz_dbi_get_row($gTables['lotmag'], "id", $idlot)['codart'];
-                    $mv = $magazz->getStockValue(false, $codartlot, null, null, $admin_aziend['decimal_price']);
+                    $codartlot = gaz_dbi_get_row($gTables['lotmag'], "id", $idlot);
+                    $mv = $magazz->getStockValue(false, $codartlot['codart'], null, null, $admin_aziend['decimal_price']);
                     $magval = array_pop($mv);
                     $price_comp=($magval)?$magval['v']:0;
                     if ($price_comp==0){// se getStockValue non mi ha restituito il prezzo allora lo prendo dal prezzo di default
                       $price_comp=$row['preacq'];
                     }
+
                     ?>
-                    <input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
-                    <input type="text" class="FacetSelect" name="artcomp<?php echo $nc; ?>" value="<?php echo $codartlot; ?>" readonly="readonly">
-                    <input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
-                    <input type="hidden" name="quality_comp<?php echo $nc; ?>" value="<?php echo $row['quality']; ?>">
-                    <input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>"> <!-- quantità utilizzata di ogni componente   -->
-                    <input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $idlot; ?>">
-                    <input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value=1>
-                    <input type="text" class="FacetSelect" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>" readonly="readonly">
+                    <div class="row">
+                      <input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
+                      <input type="text" class="FacetSelect" name="artcomp<?php echo $nc; ?>" value="<?php echo $codartlot['codart']; ?>" readonly="readonly">
+                      <input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
+                      <input type="hidden" name="quality_comp<?php echo $nc; ?>" value="<?php echo $row['quality']; ?>">
+                      <input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>"> <!-- quantità utilizzata di ogni componente   -->
+                      <input type="hidden" name="id_lot_comp<?php echo $nc, $l; ?>" value="<?php echo $idlot; ?>">
+                      <input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value=1>
+                      <input type="text" class="FacetSelect" name="lot_quanti<?php echo $nc, $l; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>" readonly="readonly">
+                      <span>su <?php echo gaz_format_number($qta),$row['unimis'];?> disponibili, lotto n: <?php echo $codartlot['identifier'],(intval($codartlot['expiry'])>0)?" scadenza: ".$codartlot['expiry']:''," id: ",$idlot;?></span>
+                    </div>
                     <?php
                     if ($nc>$nmix){// se è un componente mix successivo al primo
                       ?>
@@ -1151,13 +1152,17 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                           $price_comp=$row['preacq'];
                         }
                         ?>
-                        <input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
-                        <input type="text" class="FacetSelect" name="artcomp<?php echo $nc; ?>" value="<?php echo $res; ?>" readonly="readonly">
-                        <input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
-                        <input type="hidden" name="quality_comp<?php echo $nc; ?>" value="<?php echo $row['quality']; ?>">
-                        <input type="text" class="FacetSelect" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>" readonly="readonly"> <!-- quantità utilizzata di ogni componente   -->
-                        <input type="hidden" name="id_lot_comp<?php echo $nc; ?>0" value="">
-                        <input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="">
+                        <div class="row">
+                          <input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
+                          <input type="text" class="FacetSelect" name="artcomp<?php echo $nc; ?>" value="<?php echo $res; ?>" readonly="readonly">
+                          <input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
+                          <input type="hidden" name="quality_comp<?php echo $nc; ?>" value="<?php echo $row['quality']; ?>">
+                          <input type="text" class="FacetSelect" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>" readonly="readonly"> <!-- quantità utilizzata di ogni componente   -->
+                          <input type="hidden" name="id_lot_comp<?php echo $nc; ?>0" value="">
+                          <input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="">
+                          <span>su <?php echo gaz_format_number($qta),$row['unimis'];?> disponibili, senza lotto</span>
+
+                        </div>
                         <?php
                         if ($nc>$nmix){// se è un componente mix successivo al primo
                           ?>
@@ -1179,13 +1184,17 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                     $price_comp=$row['preacq'];
                   }
                   ?>
-                  <input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
-                  <input type="text" class="FacetSelect" name="artcomp<?php echo $nc; ?>" value="<?php echo $res['artico']; ?>" readonly="readonly">
-                  <input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
-                  <input type="hidden" name="quality_comp<?php echo $nc; ?>" value="<?php echo $row['quality']; ?>">
-                  <input type="text" class="FacetSelect" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>" readonly="readonly"> <!-- quantità utilizzata di ogni componente   -->
-                  <input type="hidden" name="id_lot_comp<?php echo $nc; ?>0" value="">
-                  <input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="">
+                  <div class="row">
+                    <input type="hidden" name="SIAN_comp<?php echo $nc; ?>" value="<?php echo $row['SIAN']; ?>">
+                    <input type="text" class="FacetSelect" name="artcomp<?php echo $nc; ?>" value="<?php echo $res['artico']; ?>" readonly="readonly">
+                    <input type="hidden" name="prezzo_comp<?php echo $nc; ?>" value="<?php echo $price_comp; ?>">
+                    <input type="hidden" name="quality_comp<?php echo $nc; ?>" value="<?php echo $row['quality']; ?>">
+                    <input type="text" class="FacetSelect" name="quanti_comp<?php echo $nc; ?>" value="<?php echo floatval(preg_replace('/[^\d.]/', '', number_format((($qta*$perc_util)/100),8))); ?>" readonly="readonly"> <!-- quantità utilizzata di ogni componente   -->
+                    <input type="hidden" name="id_lot_comp<?php echo $nc; ?>0" value="">
+                    <input type="hidden" name="q_lot_comp<?php echo $nc; ?>" value="">
+                    <span>su <?php echo gaz_format_number($qta),$row['unimis'];?> disponibili, senza lotto</span>
+
+                  </div>
                   <?php
                   if ($nc>$nmix){// se è un componente mix successivo al primo
                     ?>
@@ -1195,7 +1204,9 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   $nc++;
                 }
               }
-
+              ?>
+              </div><!-- chiude elenco articoli prelevati in percentuale -->
+              <?php
             } else {// il componente NON ha recipiente di stoccaggio
               $row['quantita_artico_base'] = number_format ((floatval($row['quantita_artico_base']) * floatval($form['quantip'])),6);
               $mv = $magazz->getStockValue(false, $row['codice_artico_base'], null, null, $admin_aziend['decimal_price']);
