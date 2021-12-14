@@ -310,7 +310,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 				$form['quantity']=intval($magval['q_g']);
 			}
-			$gSync->UpsertProduct($form);
+			$gSync->UpsertProduct($form,$toDo);
 			//print $gSync->rawres;
 			//exit;
 		}
