@@ -382,7 +382,7 @@ class shopsynchronizegazSynchro {
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 		$this->rawres=$rawres;
 	}
-	function UpsertProduct($d) {
+	function UpsertProduct($d,$toDo="") { // Aggiorna o inserisce articol da GAzie a e-commerce
 		if ($d['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
 			@session_start();
 			global $gTables,$admin_aziend;
@@ -490,6 +490,7 @@ class shopsynchronizegazSynchro {
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2019" CreatorUrl="https://www.lacasettabio.it">';
 			$xml_output .= "\n<Products>\n";
 				$xml_output .= "\t<Product>\n";
+        $xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
 				$xml_output .= "\t<Id>".$d['ref_ecommerce_id_product']."</Id>\n";
 				if ($id['id_artico_group']>0){
 					$xml_output .= "\t<Type>variant</Type>\n";
