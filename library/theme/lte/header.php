@@ -26,13 +26,15 @@ $config = new UserConfig;
 
 $pdb=gaz_dbi_get_row($gTables['company_config'], 'var', 'menu_alerts_check')['val'];
 $period=($pdb==0)?60:$pdb;
-if ( $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
+if ( isset( $maintenance ) && $maintenance != FALSE ) header("Location: ../../modules/root/maintenance.php");
 
 require("../../library/theme/lte/function.php");
 
 if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
     $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
 }
+global $module;
+$prev_script = '';
 $menuclass = ' class="FacetMainMenu" ';
 $style = 'default.css';
 $skin = 'default.css';
@@ -41,7 +43,7 @@ if (isset($_POST['logout'])) {
     exit;
 }
 
-if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le statistiche solo in caso di cambio script
+if (isset( $scriptname) && $scriptname != $prev_script && $scriptname != 'admin.php' ) { // aggiorno le statistiche solo in caso di cambio script
     $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend["user_name"] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
     $value = array();
     if (gaz_dbi_num_rows($result) == 0) {
@@ -323,7 +325,7 @@ setInterval(menu_check_from_modules,<?php echo intval($period*60000);?>);
 							$res_access_mod = gaz_dbi_dyn_query($gTables['admin_module'].'.access', $gTables['module'].' LEFT JOIN '. $gTables['admin_module'].' ON '. $gTables['module'].'.id='. $gTables['admin_module'].'.moduleid',"adminid='".$admin_aziend["user_name"]."' AND company_id=".$admin_aziend['company_id'],'adminid' ,0,1);
                             $row_access_mod = gaz_dbi_fetch_array($res_access_mod);
                             if ($row_access_mod && $row_access_mod['access'] == 3 ) {
-                                //visualizzo la documentazione standard  
+                                //visualizzo la documentazione standard
 								require '../' . $module . '/menu.' . $admin_aziend['lang'] . '.php';								
                                 echo '<li><a id="docmodal" href="#myModal" data-toggle="modal" data-target="#doc_modal" title="Documentazione modulo '. $transl[$module]['name'] .'" module="'. $module .'"><i class="fa fa-info-circle"></i><span class="hidden-xs">'.$transl[$module]['name']."</span></a></li>";
                             }
