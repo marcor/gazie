@@ -196,17 +196,11 @@ class shopsynchronizegazSynchro {
 			}
 			$access=base64_encode($accpass);
 			// avvio il file di interfaccia presente nel sito web remoto
-			$headers = @get_headers($urlinterf.'?access='.$access);
-			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
-				$file = fopen ($urlinterf.'?access='.$access, "r");
-				if (!$file) {
-					$rawres['title'] = "L'interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-					$rawres['button'] = 'Avviso eCommerce';
-					$rawres['label'] = "Aggiornare i dati della categoria: ". $d['ref_ecommerce_id_category'] ."-". $d['descri'];
-					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';
-				}
-			} else { // Riporto il codice di errore
+			$file = fopen ($urlinterf.'?access='.$access, "r");
+			if ($file){ // controllo se il file mi ha dato accesso regolare
+				// se serve, qui posso controllare cosa ha restituito l'interfaccia tramite gli echo
+        fclose($file);
+      } else { // Riporto il codice di errore
 				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 				$rawres['button'] = 'Avviso eCommerce';
 				$rawres['label'] = "Aggiornare i dati della categoria: ". $d['ref_ecommerce_id_category'] ."-". $d['descri'];
@@ -361,17 +355,12 @@ class shopsynchronizegazSynchro {
 			}
 			$access=base64_encode($accpass);
 			// avvio il file di interfaccia presente nel sito web remoto
-			$headers = @get_headers($urlinterf.'?access='.$access);
-			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
-				$file = fopen ($urlinterf.'?access='.$access, "r");
-				if (!$file) {
-					$rawres['title'] = "L'interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-					$rawres['button'] = 'Avviso eCommerce';
-					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
-					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';
-				}
-			} else { // Riporto il codice di errore
+			$file = fopen ($urlinterf.'?access='.$access, "r");
+			if ($file){ // controllo se il file mi ha dato accesso regolare
+				// se serve, qui posso controllare cosa ha restituito l'interfaccia tramite gli echo
+
+        fclose($file);
+      } else { // Riporto il codice di errore
 				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 				$rawres['button'] = 'Avviso eCommerce';
 				$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
@@ -552,22 +541,22 @@ class shopsynchronizegazSynchro {
 			}
 			$access=base64_encode($accpass);
 			// avvio il file di interfaccia presente nel sito web remoto
-			$headers = @get_headers($urlinterf.'?access='.$access);
-			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
-				$file = fopen ($urlinterf.'?access='.$access, "r");
-				if (!$file) {
-					$rawres['title'] = "L'interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+			$file = fopen ($urlinterf.'?access='.$access, "r");
+			if ( $file){ // controllo se il file mi ha dato accesso regolare
+        while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
+            $line = fgets($file);
+            if (substr($line,0,7)=="INSERT-"){ // Se l'e-commerce ha restituito l'ID riferito ad un insert
+            $ins_id=intval(substr($line,7));// vado a modificare il riferimenot id e-commerce nell'articolo di GAzie
+              gaz_dbi_put_row($gTables['artico'], "codice", $d['codice'], "ref_ecommerce_id_product", $ins_id);
+            }
+        }
+        fclose($file);
+			} else { // ERRORE di connessione
+				$rawres['title'] = "L'interfaccia non si connette. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
 					$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
 					$rawres['style'] = 'danger';
-				}
-			} else { // Riporto il codice di errore
-				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-				$rawres['button'] = 'Avviso eCommerce';
-				$rawres['label'] = "Aggiornare i dati dell'articolo: ". $d['codice'];
-				$rawres['link'] = '../shop-synchronize/synchronize.php';
-				$rawres['style'] = 'danger';
 			}
 		}
 		if (isset($rawres)){
@@ -731,17 +720,11 @@ class shopsynchronizegazSynchro {
 			}
 			$access=base64_encode($accpass);
 			// avvio il file di interfaccia presente nel sito web remoto
-			$headers = @get_headers($urlinterf.'?access='.$access);
-			if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file mi ha dato accesso regolare
-				$file = fopen ($urlinterf.'?access='.$access, "r");
-				if (!$file) {
-					$rawres['title'] = "L'interfaccia non si apre. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
-					$rawres['button'] = 'Avviso eCommerce';
-					$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;
-					$rawres['link'] = '../shop-synchronize/synchronize.php';
-					$rawres['style'] = 'danger';
-				}
-			} else { // Riporto il codice di errore
+			$file = fopen ($urlinterf.'?access='.$access, "r");
+			if ($file){ // controllo se il file mi ha dato accesso regolare
+				// se serve, qui posso controllare cosa ha restituito l'interfaccia tramite gli echo
+        fclose($file);
+      } else { // Riporto il codice di errore
 				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 				$rawres['button'] = 'Avviso eCommerce';
 				$rawres['label'] = "Aggiornare la quantità dell'articolo: ". $d;

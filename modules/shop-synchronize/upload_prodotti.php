@@ -6,28 +6,28 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP 
+	  SHOP SYNCHRONIZE è un modulo creato per GAzie da Antonio Germani, Massignano AP
 	  Copyright (C) 2019-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
+	  https://www.lacasettabio.it
 	  https://www.programmisitiweb.lacasettabio.it
 	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
 	  della licenza o (a propria scelta) una versione successiva.
-	
+
 	  Questo programma  e` distribuito nella speranza  che sia utile, ma
 	  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
 	  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
 	  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-	
+
 	  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
+	  --------------------------------------------------------------------------
 	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
 */
 require ("../../modules/magazz/lib.function.php");
 $gForm = new magazzForm;
@@ -76,16 +76,16 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 			alert("<?php echo "Mancata connessione Sftp con file chiave segreta: impossibile scaricare gli ordini dall\'e-commerce"; ?>");
 			location.replace("./synchronize.php");
 			</script>
-			<?php										
+			<?php
 		} else {
 			?>
 			<div class="alert alert-success text-center" >
 			<strong>ok</strong> Connessione SFTP con chiave riuscita.
 			</div>
 			<?php
-		} 
+		}
 	} else { // SFTP log-in con password
-	
+
 		$sftp = new SFTP($ftp_host, $ftp_port);
 		if (!$sftp->login($ftp_user, $ftp_pass)) {
 			// non si connette: password LOG-IN FALSE
@@ -94,7 +94,7 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 			alert("<?php echo "Mancata connessione Sftp con password: impossibile scaricare gli ordini dall\'e-commerce"; ?>");
 			location.replace("./synchronize.php");
 			</script>
-			<?php			
+			<?php
 		} else {
 			?>
 			<div class="alert alert-success text-center" >
@@ -102,9 +102,9 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 			</div>
 			<?php
 		}
-	}				
+	}
 } else {
- 
+
 	// imposto la connessione al server
 	$conn_id = ftp_connect($ftp_host);
 
@@ -113,7 +113,7 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 		$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 	}
 	// controllo se la connessione è OK...
-	if ((!$conn_id) or (!$mylogin)){ 
+	if ((!$conn_id) or (!$mylogin)){
 		?>
 		<script>
 		alert("<?php echo "Errore: connessione FTP a " . $ftp_host . " non riuscita!"; ?>");
@@ -127,7 +127,7 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 		</div>
 		<?php
 	}
-} 
+}
 
 // creo il file xml
 $xml_output = '<?xml version="1.0" encoding="ISO-8859-1"?>
@@ -143,11 +143,11 @@ while ($item = gaz_dbi_fetch_array($artico)){
 		if ($magval){
 		$avqty = $magval['q_g'];
 		}
-		
+
 		$ordinatic = $gForm->get_magazz_ordinati($item['codice'], "VOR");
 		$ordinatic = $ordinatic + $gForm->get_magazz_ordinati($item['codice'], "VOW");
 		$avqty -= $ordinatic;
-		
+
 		if ($avqty<0 or $avqty==""){
 			$avqty="0";
 		}
@@ -165,11 +165,11 @@ while ($item = gaz_dbi_fetch_array($artico)){
 		$xml_output .= "\t<BarCode>".$item['barcode']."</BarCode>\n";
 		$xml_output .= "\t<AvailableQty>".$avqty."</AvailableQty>\n";
 		$xml_output .= "\t</Product>\n";
-	}		
+	}
  }
  // carico in $parent i gruppi che sono presenti in GAzie e li aggiungo al file xml
 $parent = gaz_dbi_query ("SELECT * FROM ".$gTables['artico_group']." WHERE web_public > 0 ORDER BY id_artico_group");
-while ($item = gaz_dbi_fetch_array($parent)){ // li ciclo	
+while ($item = gaz_dbi_fetch_array($parent)){ // li ciclo
 	$variant = gaz_dbi_query ("SELECT codice FROM ".$gTables['artico']." WHERE id_artico_group = '". $item['id_artico_group'] ."' ORDER BY codice");
 	$totqty=0;
 	while ($itemvar = gaz_dbi_fetch_array($variant)){// ciclo le sue varianti
@@ -177,10 +177,10 @@ while ($item = gaz_dbi_fetch_array($parent)){ // li ciclo
 		$magval = array_pop($mv);
 		if ($magval){
 		$avqty = $magval['q_g'];
-		}		
+		}
 		$ordinatic = $gForm->get_magazz_ordinati($itemvar['codice'], "VOR");
 		$ordinatic = $ordinatic + $gForm->get_magazz_ordinati($itemvar['codice'], "VOW");
-		$avqty -= $ordinatic;		
+		$avqty -= $ordinatic;
 		if ($avqty<0 or $avqty==""){
 			$avqty="0";
 		}
@@ -194,15 +194,15 @@ while ($item = gaz_dbi_fetch_array($parent)){ // li ciclo
 		$xml_output .= "\t<AvailableQty>".$totqty."</AvailableQty>\n";
 		$xml_output .= "\t</Product>\n";
 
-}				
-					
+}
+
 $xml_output .="\n</Products>\n</GAzieDocuments>";
 $xmlFile = "prodotti.xml";
 $xmlHandle = fopen($xmlFile, "w");
 fwrite($xmlHandle, $xml_output);
 fclose($xmlHandle);
 if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
-		
+
 		if ($sftp->put($ftp_path_upload."prodotti.xml", $xmlFile, SFTP::SOURCE_LOCAL_FILE)){
 			$sftp->disconnect();
 			?>
@@ -210,17 +210,17 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 			<strong>ok</strong> il file xml è stato trasferito al sito web tramite SFTP.
 			</div>
 			<?php
-			
+
 		}else {
-			// chiudo la connessione FTP 
+			// chiudo la connessione FTP
 			$sftp->disconnect();
 			?>
 			<script>
 			alert("<?php echo "Errore di upload del file xml tramite SFTP"; ?>");
 			location.replace("./synchronize.php");
 			</script>
-			<?php			
-		}	
+			<?php
+		}
 } else { // FTP semplice
 	//turn passive mode on
 	ftp_pasv($conn_id, true);
@@ -231,10 +231,10 @@ if (gaz_dbi_get_row($gTables['company_config'], 'var', 'Sftp')['val']=="SI"){
 		<strong>ok</strong> il file xml è stato trasferito al sito web.
 		</div>
 		<?php
-		// chiudo la connessione FTP 
+		// chiudo la connessione FTP
 		ftp_quit($conn_id);
 	} else{
-		// chiudo la connessione FTP 
+		// chiudo la connessione FTP
 		ftp_quit($conn_id);
 		?>
 		<script>
@@ -249,18 +249,7 @@ $access=base64_encode($accpass);
 // avvio il file di interfaccia presente nel sito web remoto
 $headers = @get_headers($urlinterf.'?access='.$access);
 if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
-	$file = fopen ($urlinterf.'?access='.$access, "r");
-	if (!$file) {
-		
-		?>
-		<script>
-		alert("<?php echo "Errore: il file di interfaccia web non si apre!"; ?>");
-		location.replace("./synchronize.php");
-		</script>
-		<?php
-		
-	} else {
-		
+
 		?>
 		<div class="alert alert-success text-center" >
 		<strong>ok</strong> Aggiornamento prodotti riuscito.
@@ -271,21 +260,20 @@ if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o m
 		</script>
 		<?php
 		exit;
-	}
+
 } else { // IL FILE INTERFACCIA NON ESISTE > ESCO
-	
+
 	?>
 	<script>
 		alert("<?php echo "Errore di connessione al file di interfaccia web = ",intval(substr($headers[0], 9, 3)); ?>");
 		 location.replace("./synchronize.php");
     </script>
 	<?php
-		
+
 	exit;
 }
 
-// chiudo la connessione FTP 
+// chiudo la connessione FTP
 ftp_quit($conn_id);
 
 ?>
-                            
