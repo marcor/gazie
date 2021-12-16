@@ -278,7 +278,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $form['ritorno'] = 'admin_artico.php';
     }
 
-    $form['web_public'] = 1;
+    $form['web_public'] = 5;
     $form['depli_public'] = 1;
 
     // eventuale descrizione ampliata
