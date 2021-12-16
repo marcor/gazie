@@ -211,7 +211,7 @@ class shopsynchronizegazSynchro {
 		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
 		$this->rawres=$rawres;
 	}
-	function UpsertParent($p) {
+	function UpsertParent($p,$toDo="") {
 		// aggiorno i dati del genitore delle varianti
 		if ($p['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
 			@session_start();
@@ -304,21 +304,55 @@ class shopsynchronizegazSynchro {
 					return;
 				}
 			}
+      if($toDo=="insert"){// se è insert la pubblicazione è sempre disattivata su web
+        $p['web_public']=5;
+      }
 			// creo il file xml
 			$xml_output = '<?xml version="1.0" encoding="UTF-8"?>
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2021" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
 			$xml_output .= "\n<Products>\n";
 				$xml_output .= "\t<Product>\n";
+        $xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
 				$xml_output .= "\t<Id>".$p['ref_ecommerce_id_main_product']."</Id>\n";
 				$xml_output .= "\t<Code>".$p['id_artico_group']."</Code>\n";
 				$xml_output .= "\t<Type>parent</Type>\n";
 				$xml_output .= "\t<ParentId>".$p['id_artico_group']."</ParentId>\n";
 				$xml_output .= "\t<Name>".$p['descri']."</Name>\n";
+        $xml_output .= "\t<Price>0</Price>\n";// un parent non può avere il prezzo
+				$xml_output .= "\t<PriceVATincl>0</PriceVATincl>\n";
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($p['large_descri'], ENT_QUOTES, 'UTF-8'))."</Description>\n";
 				$xml_output .= "\t<AvailableQty>".$totav."</AvailableQty>\n";
 				$xml_output .= "\t<WebPublish>".$p['web_public']."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
 				$xml_output .= "\t<IdHome>".$idHome."</IdHome>\n";// id per pubblicazione home su web
 				$xml_output .= "\t</Product>\n";
+        if($toDo=="insert"){// se è un inserimento invio anche tutte le varianti
+          $vars=gaz_dbi_dyn_query("*", $gTables['artico'], "id_artico_group =". $p['id_artico_group']);
+            foreach($vars as $var){
+              $xml_output .= "\t<Product>\n";
+              $xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
+              $xml_output .= "\t<Id>".$var['ref_ecommerce_id_product']."</Id>\n";
+              $xml_output .= "\t<Code>".$var['codice']."</Code>\n";
+              $xml_output .= "\t<Type>variant</Type>\n";
+              $xml_output .= "\t<ParentId>".$p['id_artico_group']."</ParentId>\n";
+              $xml_output .= "\t<Name>".$var['descri']."</Name>\n";
+              // Calcolo il prezzo IVA compresa
+              $aliquo=gaz_dbi_get_row($gTables['aliiva'], "codice", intval($var['aliiva']))['aliquo'];
+              $web_price_vat_incl=$var['web_price']+(($var['web_price']*$aliquo)/100);
+              $web_price_vat_incl=number_format($web_price_vat_incl, $admin_aziend['decimal_price'], '.', '');
+              $xml_output .= "\t<Price>".$var['web_price']."</Price>\n";
+
+              $xml_output .= "\t<PriceVATincl>".$web_price_vat_incl."</PriceVATincl>\n";
+              $body=gaz_dbi_get_row($gTables['body_text'], 'table_name_ref', "artico_'".$var['codice']);
+              if(!$body){
+                $body['body_text']="";
+              }
+              $xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($body['body_text'], ENT_QUOTES, 'UTF-8'))."</Description>\n";
+              $xml_output .= "\t<AvailableQty>0</AvailableQty>\n";
+              $xml_output .= "\t<WebPublish>".$p['web_public']."</WebPublish>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
+              $xml_output .= "\t<IdHome>".$idHome."</IdHome>\n";// id per pubblicazione home su web
+              $xml_output .= "\t</Product>\n";
+          }
+        }
 			$xml_output .="</Products>\n</GAzieDocuments>";
 			$xmlFile = "prodotti.xml";
 			$xmlHandle = fopen($xmlFile, "w");
@@ -358,7 +392,19 @@ class shopsynchronizegazSynchro {
 			$file = fopen ($urlinterf.'?access='.$access, "r");
 			if ($file){ // controllo se il file mi ha dato accesso regolare
 				// se serve, qui posso controllare cosa ha restituito l'interfaccia tramite gli echo
-
+        $nl=0;
+        while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
+            $line = fgets($file);
+            if (substr($line,0,7)=="INSERT-"){ // Se l'e-commerce ha restituito l'ID riferito ad un insert
+              $ins_id=intval(substr($line,7));// vado a modificare il riferimento id e-commerce nell'articolo di GAzie
+              if($nl==0){// è il parent
+                gaz_dbi_put_row($gTables['artico_group'], "id_artico_group", $p['id_artico_group'], "ref_ecommerce_id_main_product", $ins_id);
+              } else {// è una variante
+                gaz_dbi_put_row($gTables['artico'], "codice", $var['codice'], "ref_ecommerce_id_product", $ins_id);
+              }
+            }
+            $nl++;
+        }
         fclose($file);
       } else { // Riporto il codice di errore
 				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";
