@@ -21,7 +21,7 @@
   scriva   alla   Free  Software Foundation, 51 Franklin Street,
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
- */ 
+ */
 // prima stesura: Antonio Germani
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
@@ -47,21 +47,21 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'insert';
 }
 
-if(isset($_GET['delete'])) {		
-	gaz_dbi_table_update ("artico", $_GET['delete'], array("id_artico_group"=>"") );		
-	header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$_GET['group']."&tab=variant");		
+if(isset($_GET['delete'])) {
+	gaz_dbi_table_update ("artico", $_GET['delete'], array("id_artico_group"=>"") );
+	header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$_GET['group']."&tab=variant");
 }
 
 if(isset($_GET['group_delete'])) {
-	
+
 	$query = "SELECT codice, descri FROM " . $gTables['artico'] . " WHERE id_artico_group = '".$_GET['group_delete']."'";
 	$arts = gaz_dbi_query($query);
-	while ($art = $arts->fetch_assoc()) {// scollego tutti gli articolo		
+	while ($art = $arts->fetch_assoc()) {// scollego tutti gli articolo
 	gaz_dbi_table_update ("artico", $art['codice'], array("id_artico_group"=>"") );
 	}
 	gaz_dbi_del_row($gTables['artico_group'], "id_artico_group", $_GET['group_delete']);// cancello il gruppo
-	header("Location: ../magazz/report_artico.php");	
-	exit;	
+	header("Location: ../magazz/report_artico.php");
+	exit;
 }
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
@@ -69,11 +69,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form = gaz_dbi_parse_post('artico_group');
 	$form['id_artico_group'] = trim($form['id_artico_group']);
 	$form['ritorno'] = $_POST['ritorno'];
-	$form['ref_ecommerce_id_main_product'] = substr($_POST['ref_ecommerce_id_main_product'], 0, 9);  
+	$form['ref_ecommerce_id_main_product'] = substr($_POST['ref_ecommerce_id_main_product'], 0, 9);
 	$form['large_descri'] = filter_input(INPUT_POST, 'large_descri');
 	$form['cosear'] = filter_var($_POST['cosear'],FILTER_SANITIZE_STRING);
 	$form['codart'] = filter_var($_POST['codart'],FILTER_SANITIZE_STRING);
-	
+
 	if ((isset($_GET['tab']) && $_GET['tab']=="variant") || ($_POST['cosear'] <> $_POST['codart']) ){
 		$cl_home="";
 		$cl_home_tab="";
@@ -85,7 +85,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		$cl_variant="";
 		$cl_variant_tab="";
 	}
-   
+
 	if(isset($_POST['codart']) AND isset($_POST['OKsub'])&&$_POST['OKsub']=="Salva"){	// se si salva la selezione degli articoli facenti parte del gruppo
 		if ($toDo == 'insert'){// se è un nuovo inserimento gruppo
 			 if (empty($form["descri"])) { // controllo che sia stata inserita almeno la descrizione
@@ -97,11 +97,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$cl_home_tab="";
 				$cl_variant="active";
 				$cl_variant_tab="in active";
-			} 
+			}
 		}
 		// devo controllare se l'articolo che si sta inserendo appartiene già ad un altro gruppo
 		$ckart=gaz_dbi_get_row($gTables['artico'], 'codice', $_POST['codart']);
-		
+
 		if (!isset($ckart['id_artico_group']) && strlen($_POST['codart'])>0){
 			$msg['err'][] = 'grcod';
 			$cl_home="";
@@ -109,29 +109,37 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			$cl_variant="active";
 			$cl_variant_tab="in active";
 		}
-		
+
 		if (count($msg['err']) == 0) {// nessun errore
-			if (isset($_POST['codart']) && $toDo == 'insert'){ 
+			if (isset($_POST['codart']) && $toDo == 'insert'){
 				gaz_dbi_table_insert('artico_group', $form);
 				$form['id_artico_group']=gaz_dbi_last_id();
-				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']) );					
-								
+				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']) );
+        if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
+          // Aggiornamento parent su e-commerce
+          $gs=$admin_aziend['synccommerce_classname'];
+          $gSync = new $gs();
+          if($gSync->api_token){
+            $gSync->UpsertParent($form,$toDo);
+            //exit;
+          }
+        }
 				// il redirect deve modificare il form in update perché è stato già inserito
-				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']."&tab=variant");			
+				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']."&tab=variant");
 			} elseif (isset($_POST['codart'])){
-				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']));	
+				gaz_dbi_table_update ("artico", $_POST['codart'], array("id_artico_group"=>$form['id_artico_group']));
 				// il redirect deve modificare il form in update perché è stato già inserito
-				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']."&tab=variant");	
+				header("Location: ../magazz/admin_group.php?Update&id_artico_group=".$form['id_artico_group']."&tab=variant");
 			}
-		}		
-	}	
-	
+		}
+	}
+
 	/** ENRICO FEDELE */
 	/* Controllo se il submit viene da una modale */
 	if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // conferma tutto
     /** ENRICO FEDELE */
 		if ($toDo == 'update') {  // controlli in caso di modifica
-        
+
 		} else {
 			// controllo che l'articolo ci sia gia'
 			$rs_articolo = gaz_dbi_dyn_query('id_artico_group', $gTables['artico_group'], "id_artico_group = '" . $form['id_artico_group'] . "'", "id_artico_group DESC", 0, 1);
@@ -198,37 +206,31 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			  $form['image'] = ($oldimage)?$oldimage['image']:'';
 			} else {
 			  $form['image'] = '';
-			}    
-		
+			}
+
 			$form['large_descri'] = htmlspecialchars_decode (addslashes($form['large_descri']));
 			// aggiorno il db
 			if ($toDo == 'insert') {
-			  gaz_dbi_table_insert('artico_group', $form);     
+			  gaz_dbi_table_insert('artico_group', $form);
 			} elseif ($toDo == 'update') {
 			  gaz_dbi_table_update('artico_group', array( 0 => "id_artico_group", 1 => $form['id_artico_group']), $form);
-			 
-			  
 			}
 			if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 				// Aggiornamento parent su e-commerce
-				
 				$gs=$admin_aziend['synccommerce_classname'];
 				$gSync = new $gs();
 				if($gSync->api_token){
-					
-					$gSync->UpsertParent($form);
-					
+					$gSync->UpsertParent($form,$toDo);
 					//exit;
 				}
-				
 			}
 			/** ENRICO FEDELE */
 			/* Niente redirect se sono in finestra modale */
 			if ($modal === false) {
-				
+
 				header("Location: ../../modules/magazz/report_artico.php");
 				exit;
-					
+
 			} else {
 				header("Location: ../../modules/magazz/admin_artico.php?mode=modal&ok_insert=1");
 			  exit;
@@ -245,7 +247,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form = gaz_dbi_get_row($gTables['artico_group'], 'id_artico_group', intval($_GET['id_artico_group']));
 	$form['cosear'] = "";
 	$form['codart'] = "";
-	
+
 	if (isset($_GET['tab']) && $_GET['tab']=="variant"){
 		$cl_home="";
 		$cl_home_tab="";
@@ -257,14 +259,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		$cl_variant="";
 		$cl_variant_tab="";
 	}
-	
+
     /** ENRICO FEDELE */
     if ($modal === false) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     } else {
         $form['ritorno'] = 'admin_artico.php';
     }
-  
+
 } else { //se e' il primo accesso per INSERT
     $form = gaz_dbi_fields('artico');
 	$form['cosear'] = "";
@@ -275,15 +277,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['ritorno'] = 'admin_artico.php';
     }
-   
+
     $form['web_public'] = 1;
     $form['depli_public'] = 1;
-    
+
     // eventuale descrizione ampliata
-    $form['large_descri'] = '';	
+    $form['large_descri'] = '';
 	$form['ref_ecommerce_id_main_product']="";
 	$form['id_artico_group'] = "";
-	
+
 	$cl_home="active";
 	$cl_home_tab="in active";
 	$cl_variant="";
@@ -315,7 +317,7 @@ $arts = gaz_dbi_query($query);
 <script>
 function itemErase(id,descri,group){
 	$(".compost_name").append(descri);
-	
+
 	$("#confirm_erase").dialog({
 		modal: true,
 		show: "blind",
@@ -330,14 +332,14 @@ function itemErase(id,descri,group){
 			}
 
 		  },
-		  close: function(){	
+		  close: function(){
 			$(".compost_name").empty();
 		  }
 		});
 }
 function groupErase(group,descri){
 	$(".group_name").append(group+' '+descri);
-	
+
 	$("#confirm_destroy").dialog({
 		modal: true,
 		show: "blind",
@@ -352,15 +354,15 @@ function groupErase(group,descri){
 			}
 
 		  },
-		  close: function(){	
+		  close: function(){
 			$(".group_name").empty();
 		  }
 		});
-}		
+}
 </script>
 
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
-	<?php 
+	<?php
 	if (!empty($form['descri'])) $form['descri'] = htmlentities($form['descri'], ENT_QUOTES);
 	if ($modal === true) {
 		echo '<input type="hidden" name="mode" value="modal" />
@@ -405,17 +407,17 @@ function groupErase(group,descri){
 			echo '<div class="text-center"><h3>' . $script_transl['upd_this'] . ' ' . $form['id_artico_group'] . '</h3></div>';
 		}
 		?>
-	
+
 		<div class="panel panel-warning gaz-table-form"><p><?php echo $script_transl['info']; ?> </p></div>
 			<div class="panel panel-default gaz-table-form div-bordered">
 				<div class="container-fluid">
 					<ul class="nav nav-pills">
 						<li class="<?php echo $cl_home;?>"><a data-toggle="pill" href="#home"><?php echo $script_transl['home']; ?></a></li>
-						
+
 						<li class="<?php echo $cl_variant;?>"><a data-toggle="pill" href="#variant"><?php echo $script_transl['variant']; ?></a></li>
-						
+
 						<li style="float: right;"><?php echo '<input name="Submit" type="submit" class="btn btn-warning" value="' . ucfirst($script_transl[$toDo]) . '" />'; ?></li>
-					</ul>  
+					</ul>
 					<div class="tab-content">
 						<div id="home" class="tab-pane fade <?php echo $cl_home_tab;?>">
 							<?php if ($toDo !== 'insert'){?>
@@ -449,7 +451,7 @@ function groupErase(group,descri){
 							<div id="catMer" class="row IERincludeExcludeRow">
 							In pratica inserite un id (unico per ogni riga) ed aggiungere la classe "IERincludeExcludeRow"
 							-->
-												  
+
 							<!--+ DC - 06/02/2019 div class="row" --->
 							<div id="bodyText" class="row IERincludeExcludeRow">
 								<div class="col-md-12">
@@ -460,8 +462,8 @@ function groupErase(group,descri){
 										</div>
 									</div>
 								</div>
-							</div><!-- chiude row  -->					   
-						   
+							</div><!-- chiude row  -->
+
 							<!--+ DC - 06/02/2019 div class="row" --->
 							<div id="image" class="row IERincludeExcludeRow">
 								<div class="col-md-12">
@@ -470,8 +472,8 @@ function groupErase(group,descri){
 										<div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
 									</div>
 								</div>
-							</div><!-- chiude row  -->				   
-															
+							</div><!-- chiude row  -->
+
 							<!--+ DC - 06/02/2019 div class="row" --->
 							<div id="refEcommercIdProduct" class="row IERincludeExcludeRow">
 								<div class="col-md-12">
@@ -511,18 +513,18 @@ function groupErase(group,descri){
 				?>
 									</div>
 								</div>
-							</div><!-- chiude row  -->				
+							</div><!-- chiude row  -->
 							</div><!-- chiude tab-pane  -->
-							
+
 							<div id="variant" class="tab-pane fade <?php echo $cl_variant_tab;?>">
 								<div class="container-fluid">
 								<?php $color='eeeeee';
-								
+
 								echo '<ul class="col-xs-12 col-sm-12 col-md-11 col-lg-10">';
 								$v=0;
 								if (isset($arts)){
-								while ($art = $arts->fetch_assoc()) {															
-									
+								while ($art = $arts->fetch_assoc()) {
+
 									$icona=(is_array($art['codice']))?'<a class="btn btn-xs btn-warning collapsible" id="'.$art['codice'].'" data-toggle="collapse" data-target=".' . $art['codice'] . '"><i class="glyphicon glyphicon-list"></i></a>':'';
 									echo '<div style="background-color: #'.$color.'">
 									<a class="btn btn-xs btn-success" href="admin_artico.php?Update&amp;codice=' . $art['codice'] . '">'.$art['codice'].'</a> - '.$art['descri'].' '.$icona.' _ _ _ _ ';
@@ -548,10 +550,10 @@ function groupErase(group,descri){
 									<input type="submit" class="btn btn-warning" name="OKsub" value="Salva">
 								</div>
 							</div>
-						</div>					
-						
+						</div>
+
 					</div><!-- chiude tab-pane  -->
-										
+
 				<div class="col-sm-12">
 					<?php
 					/** ENRICO FEDELE */
@@ -561,10 +563,10 @@ function groupErase(group,descri){
 					}
 					?>
 					<div class="col-md-12">
-						<div class="col-sm-6 text-center">				
-							
+						<div class="col-sm-6 text-center">
+
 							<a class="btn btn-xs btn-danger" onclick="groupErase('<?php echo addslashes($form['id_artico_group']); ?>','<?php echo addslashes($form['descri']); ?>')">  Elimina </a>
-							
+
 						</div>
 						<div class="col-sm-6 text-center">
 							<input name="Submit" type="submit" class="btn btn-warning" value="<?php echo ucfirst($script_transl[$toDo]);?>" />
@@ -588,7 +590,7 @@ function groupErase(group,descri){
     <fieldset>
        <div class="group_name"></div>
     </fieldset>
-<p>NB: Eliminerai anche i collegamenti alle varianti</p>	
+<p>NB: Eliminerai anche i collegamenti alle varianti</p>
 </div>
 <script type="text/javascript">
     // Basato su: http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/

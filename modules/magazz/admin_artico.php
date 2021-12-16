@@ -233,6 +233,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   if ($codart_len > 0 && strlen(trim($form['codice'])) <> $codart_len) {
       $msg['err'][] = 'codart_len';
   }
+  if ($form['web_public']>0 && intval($form['ref_ecommerce_id_product'])==0 && $toDo=="update"){// in update, senza id riferimento all'e-commerce non si può attivare
+    $msg['err'][] = 'no_web';
+  }
 
   if (count($msg['err']) == 0) { // ***  NESSUN ERRORE  ***
     if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
@@ -255,32 +258,32 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $tbt = trim($form['body_text']);
     // aggiorno il db
 
-	// Una sola variante può essere prestabilita
-	// legenda web_public: 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
-	if ($form['web_public_init']<>$form['web_public'] AND $form['id_artico_group']>0 AND $form['web_public']>1){ // se è una variante, ed è stata modificata la pubblicazione su e-commerce, e gli si vuole dare una priorità
-		// prendo tutte le varianti esistenti di questo gruppo
-		$var_row = gaz_dbi_dyn_query("*", $gTables['artico'], "id_artico_group = '" . $form['id_artico_group'] . "'");
-		while ($row = gaz_dbi_fetch_array($var_row)) { // le ciclo
-			// devo togliere l'eventuale prestabilito delle altre varianti
-			if ($row['codice'] <> $form['codice'] AND $row['web_public']>0 AND $row['web_public']<5){ // se non è la variante in questione, cioè quella oggetto del form e non è disattivata
-				$where = array("0" => "codice", "1" => $row['codice']);
-				$what = array("web_public" => "1");
-				gaz_dbi_table_update("artico",$where, $what); // riporto web_public a 1
-			}
-		}
-	}
+    // Una sola variante può essere prestabilita
+    // legenda web_public: 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
+    if ($form['web_public_init']<>$form['web_public'] AND $form['id_artico_group']>0 AND $form['web_public']>1){ // se è una variante, ed è stata modificata la pubblicazione su e-commerce, e gli si vuole dare una priorità
+      // prendo tutte le varianti esistenti di questo gruppo
+      $var_row = gaz_dbi_dyn_query("*", $gTables['artico'], "id_artico_group = '" . $form['id_artico_group'] . "'");
+      while ($row = gaz_dbi_fetch_array($var_row)) { // le ciclo
+        // devo togliere l'eventuale prestabilito delle altre varianti
+        if ($row['codice'] <> $form['codice'] AND $row['web_public']>0 AND $row['web_public']<5){ // se non è la variante in questione, cioè quella oggetto del form e non è disattivata
+          $where = array("0" => "codice", "1" => $row['codice']);
+          $what = array("web_public" => "1");
+          gaz_dbi_table_update("artico",$where, $what); // riporto web_public a 1
+        }
+      }
+    }
 
-	// se esiste un json per l'attributo della variante dell'e-commerce creo il json
-	if (isset ($form['var_id']) && isset ($form['var_name'])){
-		$arrayvar= array("var_id" => intval($form['var_id']), "var_name" => strval($form['var_name']));
-		$form['ecomm_option_attribute'] = json_encode ($arrayvar);
-	}
+    // se esiste un json per l'attributo della variante dell'e-commerce creo il json
+    if (isset ($form['var_id']) && isset ($form['var_name'])){
+      $arrayvar= array("var_id" => intval($form['var_id']), "var_name" => strval($form['var_name']));
+      $form['ecomm_option_attribute'] = json_encode ($arrayvar);
+    }
 
     if ($toDo == 'insert') {
-		gaz_dbi_table_insert('artico', $form);
-		if (!empty($tbt)) {
-		bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-		}
+      gaz_dbi_table_insert('artico', $form);
+      if (!empty($tbt)) {
+        bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+      }
     } elseif ($toDo == 'update') {
       gaz_dbi_table_update('artico', $form['ref_code'], $form);
       $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
@@ -296,25 +299,25 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       }
     }
     if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-        // aggiorno l'e-commerce ove presente
-        $gs=$admin_aziend['synccommerce_classname'];
-        $gSync = new $gs();
-		if($gSync->api_token){
-			$form['heximage']=bin2hex($form['image']);
-			if($admin_aziend['conmag'] <= 1){ // se non gestisco la contabilità di magazzino ci indico solo la scorta e metto sempre disponibile
-				$form['quantity']=intval($form['scorta']);
-			} else {
-        $gForm = new magazzForm();
-        $mv = $gForm->getStockValue(false, $form['codice']);
-        $magval = array_pop($mv);
-        $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
-				$form['quantity']=intval($magval['q_g']);
-			}
-			$gSync->UpsertProduct($form,$toDo);
-			//print $gSync->rawres;
-			//exit;
-		}
-	}
+          // aggiorno l'e-commerce ove presente
+          $gs=$admin_aziend['synccommerce_classname'];
+          $gSync = new $gs();
+      if($gSync->api_token){
+        $form['heximage']=bin2hex($form['image']);
+        if($admin_aziend['conmag'] <= 1){ // se non gestisco la contabilità di magazzino ci indico solo la scorta e metto sempre disponibile
+          $form['quantity']=intval($form['scorta']);
+        } else {
+          $gForm = new magazzForm();
+          $mv = $gForm->getStockValue(false, $form['codice']);
+          $magval = array_pop($mv);
+          $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
+          $form['quantity']=intval($magval['q_g']);
+        }
+        $gSync->UpsertProduct($form,$toDo);
+        //print $gSync->rawres;
+        //exit;
+      }
+    }
     /** ENRICO FEDELE */
     /* Niente redirect se sono in finestra modale */
     if ($modal === false) {
