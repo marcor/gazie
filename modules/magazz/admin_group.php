@@ -148,40 +148,46 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				$msg['err'][] = 'codice';
 			}
 		}
-		if (!empty($_FILES['userfile']['name'])) {
-			if (!( $_FILES['userfile']['type'] == "image/png" ||
-				  $_FILES['userfile']['type'] == "image/x-png" ||
-				  $_FILES['userfile']['type'] == "image/jpeg" ||
-				  $_FILES['userfile']['type'] == "image/jpg" ||
-				  $_FILES['userfile']['type'] == "image/gif" ||
-				  $_FILES['userfile']['type'] == "image/x-gif")) $msg['err'][] = 'filmim';
-					// controllo che il file non sia piu' grande di circa 64kb
-			if ($_FILES['userfile']['size'] > 65530){
-					//Antonio Germani anziche segnalare errore ridimensiono l'immagine
-					$maxDim = 190;
-					$file_name = $_FILES['userfile']['tmp_name'];
-					list($width, $height, $type, $attr) = getimagesize( $file_name );
-					if ( $width > $maxDim || $height > $maxDim ) {
-						$target_filename = $file_name;
-						$ratio = $width/$height;
-						if( $ratio > 1) {
-							$new_width = $maxDim;
-							$new_height = $maxDim/$ratio;
-						} else {
-							$new_width = $maxDim*$ratio;
-							$new_height = $maxDim;
-						}
-						$src = imagecreatefromstring( file_get_contents( $file_name ) );
-						$dst = imagecreatetruecolor( $new_width, $new_height );
-						imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
-						imagedestroy( $src );
-						imagepng( $dst, $target_filename); // adjust format as needed
-						imagedestroy( $dst );
-					}
-				// fine ridimensionamento immagine
-				$largeimg=1;
-				}
-		}
+    if ($_FILES['userfile']['error']==1){
+      $msg['err'][] = 'filetoobig';
+    } else {
+      if (!empty($_FILES['userfile']['name'])) {
+        if (!( strtolower($_FILES['userfile']['type']) == "image/png" ||
+            strtolower($_FILES['userfile']['type']) == "image/x-png" ||
+            strtolower($_FILES['userfile']['type']) == "image/jpeg" ||
+            strtolower($_FILES['userfile']['type']) == "image/jpg" ||
+            strtolower($_FILES['userfile']['type']) == "image/gif" ||
+            strtolower($_FILES['userfile']['type']) == "image/x-gif")) $msg['err'][] = 'filmim';
+            // controllo che il file non sia piu' grande di circa 64kb
+        if ($_FILES['userfile']['size'] > 65530){
+            //Antonio Germani anziche segnalare errore ridimensiono l'immagine
+            $maxDim = 190;
+            $file_name = $_FILES['userfile']['tmp_name'];
+            list($width, $height, $type, $attr) = getimagesize( $file_name );
+            if ( $width > $maxDim || $height > $maxDim ) {
+              $target_filename = $file_name;
+              $ratio = $width/$height;
+              if( $ratio > 1) {
+                $new_width = $maxDim;
+                $new_height = $maxDim/$ratio;
+              } else {
+                $new_width = $maxDim*$ratio;
+                $new_height = $maxDim;
+              }
+              $src = imagecreatefromstring( file_get_contents( $file_name ) );
+              $dst = imagecreatetruecolor( $new_width, $new_height );
+              imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
+              imagedestroy( $src );
+              imagepng( $dst, $target_filename); // adjust format as needed
+              imagedestroy( $dst );
+            }
+          // fine ridimensionamento immagine
+          $largeimg=1;
+          } else {
+            $target_filename=$file_name = $_FILES['userfile']['tmp_name'];
+          }
+      }
+    }
 		if (empty($form["id_artico_group"]) AND $toDo == 'update') {
 			$msg['err'][] = 'valcod';
 		}

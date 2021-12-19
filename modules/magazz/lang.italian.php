@@ -492,7 +492,9 @@ $strScript = array(
             'descri' => 'Inserire una descrizione',
             'no_ins' => 'Non sono riuscito ad inserire l\'articolo sul database',
             'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" ',
-            'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda '
+            'codart_len' => 'Il codice articolo ha una lunghezza diversa da quella stabilita in configurazione avanzata azienda ',
+            'filmim' => 'Il file dev\'essere nel formato png, x-png, jpg, gif, x-gif, jpeg',
+            'filetoobig' => 'Controllare che il file selezionato non superi le dimensioni impostate nella configurazione php'
         ),
         'war' => array(
             'ok_ins' => 'Articolo inserito con successo'
