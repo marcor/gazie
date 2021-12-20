@@ -213,10 +213,10 @@ if (isset($_POST['conferma'])) { // se confermato
 			}
 			if ($_GET['img']=="updimg" AND strlen($_POST['imgblob'.$ord])>0){// se è da aggiornare e c'è un'immagine blob
 				file_put_contents("../../data/files/tmp/img.jpg", base64_decode($_POST['imgblob'.$ord])); // salvo immagine nella cartella temporanea
-				if (ftp_put($conn_id, $ftp_path_upload."images/".$_POST['codice'.$ord].".jpg", "../../data/files/tmp/img.jpg",  FTP_BINARY)){
+				if (ftp_put($conn_id, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg", "../../data/files/tmp/img.jpg",  FTP_BINARY)){
 					// scrivo l'immagine web blob nella cartella images dell'e-commerce
-          ftp_chmod($conn_id, 0664, $ftp_path_upload."images/".$_POST['codice'.$ord].".jpg");// fornisco i permessi necessari all'immagine
-					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".$_POST['codice'.$ord].".jpg</ImgUrl>\n"; // ne scrivo l'url nel file xml
+          ftp_chmod($conn_id, 0664, $ftp_path_upload."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg");// fornisco i permessi necessari all'immagine
+					$xml_output .= "\t<ImgUrl>".$web_site_path."images/".str_replace(' ', '_', $_POST['codice'.$ord]).".jpg</ImgUrl>\n"; // ne scrivo l'url nel file xml
 				} else {
 					// ERRORE chiudo la connessione FTP
 					ftp_quit($conn_id);
