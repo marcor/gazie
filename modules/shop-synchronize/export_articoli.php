@@ -178,6 +178,14 @@ if (isset($_POST['conferma'])) { // se confermato
 			} else {
 				$xml_output .= "\t<Type>product</Type>\n";
 			}
+      if (isset($_POST['catmer'.$ord]) && intval($_POST['catmer'.$ord])>0){// se GAzie ha una categoria
+        $ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval($_POST['catmer'.$ord]))['ref_ecommerce_id_category'];
+        $xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
+      }elseif (intval($_POST['ref_ecommerce_id_main_product'.$ord])>0 && $_POST['ref_ecommerce_id_product'.$ord]<1){// se non ce l'ha ed è un parent ci metto quella di una variante
+        $parent_catmer = gaz_dbi_get_row($gTables['artico'],"id_artico_group",intval($_POST['ref_ecommerce_id_main_product'.$ord]))['catmer'];
+        $ecomm_catmer = gaz_dbi_get_row($gTables['catmer'],"codice",intval( $parent_catmer))['ref_ecommerce_id_category'];
+        $xml_output .= "\t<ProductCategory>".$ecomm_catmer."</ProductCategory>\n";
+      }
 			$xml_output .= "\t<Code>".$_POST['codice'.$ord]."</Code>\n";
 			$xml_output .= "\t<BarCode>".$_POST['barcode'.$ord]."</BarCode>\n";
 			if ($_GET['qta']=="updqty"){
@@ -385,7 +393,7 @@ if (!isset($_GET['success'])){
 				</div>
 				<?php
 				// carico in $artico gli articoli che sono presenti in GAzie
-				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
+				$artico = gaz_dbi_query ('SELECT ecomm_option_attribute, codice, catmer, barcode, web_price, descri, aliiva, ref_ecommerce_id_product, id_artico_group, web_public, image FROM '.$gTables['artico'].' WHERE web_public = \'1\' and good_or_service <> \'1\' ORDER BY codice');
 				$n=0;
 				while ($item = gaz_dbi_fetch_array($artico)){ // li ciclo
 					$ref_ecommerce_id_main_product="";
@@ -430,6 +438,7 @@ if (!isset($_GET['success'])){
 								echo '<input type="hidden" name="web_public'. $n .'" value="'. $item['web_public'] . '">';
 								echo '<input type="hidden" name="quanti'. $n .'" value="'. $avqty .'">';
 								echo '<input type="hidden" name="aliiva'. $n .'" value="'. $item['aliiva'] .'">';
+                echo '<input type="hidden" name="catmer'. $n .'" value="'. $item['catmer'] .'">';
 								echo '<input type="hidden" name="web_price'. $n .'" value="'. $item['web_price'] .'">';
 								echo '<input type="hidden" name="ref_ecommerce_id_main_product'. $n .'" value="'. $ref_ecommerce_id_main_product .'">';
 								echo '<input type="hidden" name="ref_ecommerce_id_product'. $n .'" value="'. $item['ref_ecommerce_id_product'] .'">';
