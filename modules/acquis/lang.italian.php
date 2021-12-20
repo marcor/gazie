@@ -112,11 +112,13 @@ $strScript = array("admin_fornit.php" =>
         'allegato' => 'Spesometro - Elenco fornitori',
         'allegato_value' => array(1 => 'Si', 0 => 'No', 2 => 'Riepilogativo'),
         'yn_value' => array('S' => 'Si', 'N' => 'No'),
+        'stapre_value' => array('S' => 'Si', 'N' => 'No', 'T' => 'Si con totale'),
         'aliiva' => 'Aliquota IVA di default',
         'ritenuta' => '% Ritenuta',
         'status' => 'Visibilit&agrave; alla ricerca',
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',
+        'visannota' => 'Mostra le annotazioni in fattura',
         'id_agente' => 'Agente',
         'operation_type' => 'Tipo di operazione'
     ),
@@ -349,7 +351,7 @@ $strScript = array("admin_fornit.php" =>
     ),
     "accounting_documents.php" =>
     array('title' => 'Genera i movimenti contabili a partire dai documenti d\'acquisto',
-        'err' => 
+        'err' =>
 			['date'=>'Data non corretta',
 			 'nodoc'=>'Non ci sono documenti da contabilizzare nell\'intervallo selezionato',
 			 'nopaymov'=>'Non è stata selezionata la partita di scadenzario che dovrà essere chiusa dalla Nota di Credito'
