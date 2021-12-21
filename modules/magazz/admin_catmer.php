@@ -89,7 +89,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $gSync = new $gs();
 				if($gSync->api_token){
 					$form['heximage']=bin2hex($form['image']);
-					$gSync->UpsertCategory($form);
+					$gSync->UpsertCategory($form,$toDo);
 				}
 				//print $gSync->rawres;
 			//exit;
@@ -161,11 +161,11 @@ echo "</tr>\n";
 <tr>
 	<td class="FacetFieldCaptionTD">
         <label for="large_descri" class="col-sm-4 control-label"><?php echo $script_transl[10]; ?></label>
-	</td>	
+	</td>
     <td class="FacetFieldCaptionTD">
         <textarea id="large_descri" name="large_descri" class="mceClass"><?php echo $form['large_descri']; ?></textarea>
-    </td>                 
-</tr>             
+    </td>
+</tr>
 <?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"ricarico\" value=\"".$form['ricarico']."\" maxlength=\"4\"  /></td></tr>\n";
 echo "<tr>\n";

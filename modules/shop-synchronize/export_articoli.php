@@ -282,19 +282,13 @@ if (isset($_POST['conferma'])) { // se confermato
 
 	if ( intval(substr($headers[0], 9, 3))==200){ // controllo se il file esiste o mi dà accesso
 
-		$file = fopen ($urlinterf.'?access='.$access, "r");
-		if (!$file) {
+	} elseif(intval(substr($headers[0], 9, 3))==400)  {// IL FILE INTERFACCIA NON ESISTE > ESCO
 			// chiudo la connessione FTP
 			ftp_quit($conn_id);
 			header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=3");
 			exit;
 
-		} else {
-			// chiudo la connessione FTP
-			ftp_quit($conn_id);
-
-		}
-	} else { // IL FILE INTERFACCIA NON ESISTE > ESCO
+	} else {
 		// chiudo la connessione FTP
 		ftp_quit($conn_id);
 		header("Location: " . "../../modules/shop-synchronize/export_articoli.php?success=2");

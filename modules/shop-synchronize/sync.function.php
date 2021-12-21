@@ -85,7 +85,7 @@ class shopsynchronizegazSynchro {
 	function SetupStore() {
 		// aggiorno i dati comuni a tutto lo store: Anagrafica Azienda, Aliquote IVA, dati richiesti ai nuovi clienti (CF,PI,indirizzo,ecc) in custom_field e tutto ciò che necessita per evitare di digitarlo a mano su ecommerce-admin
 	}
-	function UpsertCategory($d) {
+	function UpsertCategory($d,$toDo="") {
 		// usando il token precedentemente avuto si dovranno eseguire tutte le operazioni necessarie ad aggiornare la categorie merceologica quindi:
 		// in base alle API messe a disposizione dallo specifico store (Opencart,Prestashop,Magento,ecc) si passeranno i dati in maniera opportuna...
 		if ($d['ref_ecommerce_id_category']>0){ // se la categoria è connessa all'e-commerce
@@ -154,6 +154,7 @@ class shopsynchronizegazSynchro {
 			<GAzieDocuments AppVersion="1" Creator="Antonio Germani 2018-2021" CreatorUrl="https://www.programmisitiweb.lacasettabio.it">';
 			$xml_output .= "\n<Categories>\n";
 				$xml_output .= "\t<Category>\n";
+        $xml_output .= "\t<ToDo>".$toDo."</ToDo>\n";
 				$xml_output .= "\t<Id>".$d['ref_ecommerce_id_category']."</Id>\n";
 				$xml_output .= "\t<Code>".$d['codice']."</Code>\n";
 				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
