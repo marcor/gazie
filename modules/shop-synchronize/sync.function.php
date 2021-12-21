@@ -160,7 +160,7 @@ class shopsynchronizegazSynchro {
 				$xml_output .= "\t<Name>".$d['descri']."</Name>\n";
 				$xml_output .= "\t<Description>".preg_replace('/[\x00-\x1f]/','',htmlspecialchars($d['large_descri'], ENT_QUOTES, 'UTF-8'))."</Description>\n";
 				$xml_output .= "\t<Top>".$d['top']."</Top>\n";// 1=attivo su web; 2=attivo e prestabilito; 3=attivo e pubblicato in home; 4=attivo, in home e prestabilito; 5=disattivato su web"
-				$xml_output .= "\t</category>\n";
+				$xml_output .= "\t</Category>\n";
 			$xml_output .="</Categories>\n</GAzieDocuments>";
 			$xmlFile = "category.xml";
 			$xmlHandle = fopen($xmlFile, "w");
