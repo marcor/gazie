@@ -478,7 +478,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 	$XMLvars->DatiVeicoli=false;
 	// inizializzo l'accumulatore per DatiDDT
 	$XMLvars->DatiDDT=array();
-	// inizializzo la somma delle SpeseAccessorie 
+	// inizializzo la somma delle SpeseAccessorie
 	$XMLvars->SpeseIncassoTrasporti=0;
 	$XMLvars->SpeseBolli=0;
 
@@ -554,7 +554,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 					$vidc='XXXXXXX';
 				}
 				$attrVal = $domDoc->createTextNode($vidc);
-			} elseif ($XMLvars->TipoDocumento=='TD16') { 
+			} elseif ($XMLvars->TipoDocumento=='TD16') {
 				if (strlen($XMLvars->client['pariva'])>3){
 					$vidc=trim($XMLvars->client['pariva']);
 				} else {
@@ -567,10 +567,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             $results->appendChild($attrVal);
 
             //nodo 1.2.1.2 Codice Fiscale richiesto da alcune amministrazioni come obbligatorio ma da non indicare sulle autofatture a stanieri
-			if ($XMLvars->reverse&&$XMLvars->TipoDocumento<>'TD16') { 
+			if ($XMLvars->reverse&&$XMLvars->TipoDocumento<>'TD16') {
 				$results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);
 				$results->parentNode->removeChild($results);
-			} elseif ($XMLvars->TipoDocumento=='TD16') { 
+			} elseif ($XMLvars->TipoDocumento=='TD16') {
 				if (strlen($XMLvars->client['codfis'])>3){
 					$vidc=trim($XMLvars->client['codfis']);
 				} else {
@@ -664,9 +664,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 				$rsFatturaElettronicaHeader = $xpath->query("//FatturaElettronicaHeader")->item(0);
 				$el = $domDoc->createElement("SoggettoEmittente","CC");
 				$rsFatturaElettronicaHeader->appendChild($el);
-				
-// FINE REVERSE 
-			} else {	
+
+// FINE REVERSE
+			} else {
 				// nodo 1.4.1.2 codice fiscale del committente
 				$el = $domDoc->createElement("CodiceFiscale", trim($XMLvars->client['codfis']));
 				$results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
@@ -741,8 +741,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 				$attrVal = $domDoc->createTextNode(trim($XMLvars->client['citspe']));
 				$results->appendChild($attrVal);
 
-				if (strlen($XMLvars->client['capspe']) < 2 && $XMLvars->client['country']!='IT'){
-					$XMLvars->client['capspe']='99999';
+				if (strlen($XMLvars->client['capspe']) <> 5 || $XMLvars->client['country']!='IT'){
+					$XMLvars->client['capspe']='00000';
 				}
 				$results = $xpath->query("//CessionarioCommittente/Sede/CAP")->item(0);
 				$attrVal = $domDoc->createTextNode(trim($XMLvars->client['capspe']));
@@ -776,7 +776,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 					$resfr->appendChild($el);
 				}
 			}
-			
+
             $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);
             $attrVal = $domDoc->createTextNode($XMLvars->TipoDocumento);
             $results->appendChild($attrVal);
@@ -1452,7 +1452,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
     // faccio l'encode in base 36 per ricavare il progressivo unico di invio
 	if($XMLvars->reverse){ // è una autofattura reverse charge encodo così:
-		/*  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000  
+		/*  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000
 		  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
 		  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
 		  |    INT (2 )     |      INT(1)      |   INT(1)  |        INT(4)            |
@@ -1478,12 +1478,12 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 
     $id_tes = $XMLvars->tesdoc['id_tes'];
     $data_ora_exec = date("Y-m-d H:i:s");
-    
-    // se è un reinvio allora faccio l'upload del genitore indicando in filename_son il nome di questo nuovo file 
+
+    // se è un reinvio allora faccio l'upload del genitore indicando in filename_son il nome di questo nuovo file
     if ( $XMLvars->fae_reinvii >=1 ){
         // faccio l'encode in base 36 per ricavare il progressivo unico di invio
 		if($XMLvars->reverse){ // è una autofattura reverse charge encodo così:
-			/*  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000  
+			/*  dovrò modificare la matrice in questo con valore fisso "59" sulle prime due cifre, ovvero parto da un numero decimale 59000000
 			  ------------------------- SCHEMA DEI DATI PER AUTOFATTURE  ------------------
 			  |  VALORE FISSO   |  ANNO DOCUMENTO  | N.REINVII |    NUMERO PROTOCOLLO     |
 			  |    INT (2 )     |      INT(1)      |   INT(1)  |        INT(4)            |
@@ -1507,7 +1507,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         $parent_nome_file = "IT" . $XMLvars->IdCodice . "_" . $parent_progressivo_unico_invio;
         gaz_dbi_query ("UPDATE ".$gTables['fae_flux']." SET `filename_son`='".$nome_file.".xml' WHERE `filename_ori`='".$parent_nome_file . ".xml'");
     }
-    
+
 	if ($name_ziparchive){
 		if ($name_ziparchive != 'from_string.xml') {
 			$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file . ".xml");
