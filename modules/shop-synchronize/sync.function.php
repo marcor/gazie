@@ -200,6 +200,13 @@ class shopsynchronizegazSynchro {
 			$file = fopen ($urlinterf.'?access='.$access, "r");
 			if ($file){ // controllo se il file mi ha dato accesso regolare
 				// se serve, qui posso controllare cosa ha restituito l'interfaccia tramite gli echo
+        while (!feof($file)) { // scorro il file generato dall'interfaccia durante la sua eleborazione
+            $line = fgets($file);
+            if (substr($line,0,7)=="INSERT-"){ // Se l'e-commerce ha restituito l'ID riferito ad un insert
+              $ins_id=intval(substr($line,7));// vado a modificare il riferimento id e-commerce nella categoria di GAzie
+              gaz_dbi_put_row($gTables['catmer'], "codice", $d['codice'], "ref_ecommerce_id_category", $ins_id);
+            }
+        }
         fclose($file);
       } else { // Riporto il codice di errore
 				$rawres['title'] = "Impossibile connettersi all'interfaccia: ".intval(substr($headers[0], 9, 3)).". AGGIORNARE L'E-COMMERCE MANUALMENTE!";

@@ -70,13 +70,13 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        if (empty($form['descri'])){  //descrizione vuota
              $msg .= "7+";
        }
-       if ($msg == "") {// nessun errore
+      if ($msg == "") { // nessun errore
           // preparo la stringa dell'immagine
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
              $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
           } else {   // altrimenti riprendo la vecchia
              $oldimage = gaz_dbi_get_row($gTables['catmer'],'codice',$form['codice']);
-             $form['image'] = $oldimage['image'];
+             $form['image'] = (isset($oldimage))?$oldimage['image']:'';
           }
           if ($toDo == 'update') { // e' una modifica
             gaz_dbi_table_update('catmer',$form["codice"],$form);
@@ -84,19 +84,17 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             gaz_dbi_table_insert('catmer',$form);
           }
         if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
-            // aggiorno l'e-commerce ove presente
-            $gs=$admin_aziend['synccommerce_classname'];
-            $gSync = new $gs();
-				if($gSync->api_token){
-					$form['heximage']=bin2hex($form['image']);
-					$gSync->UpsertCategory($form,$toDo);
-				}
-				//print $gSync->rawres;
-			//exit;
-		}
-		header("Location: ".$_POST['ritorno']);
+          // aggiorno l'e-commerce ove presente
+          $gs=$admin_aziend['synccommerce_classname'];
+          $gSync = new $gs();
+          if($gSync->api_token){
+            $form['heximage']=bin2hex($form['image']);
+            $gSync->UpsertCategory($form,$toDo);
+          }
+        }
+        header("Location: ".$_POST['ritorno']);
         exit;
-       }
+      }
   }
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $catmer = gaz_dbi_get_row($gTables['catmer'],"codice",$_GET['codice']);
