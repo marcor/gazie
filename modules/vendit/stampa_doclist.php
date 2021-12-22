@@ -292,6 +292,9 @@ foreach($rs as $row){
     $pdf->Cell(16, 4, gaz_format_number($r['ivacast']), 1, 0, 'R');
     $pdf->Cell(20, 4, gaz_format_number($r['impcast'] + $r['ivacast']), 1, 1, 'R');
   }
+  if ($first){
+    $pdf->Cell(92, 4,'', 1, 1);
+  }
 }
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
 $pdf->SetFont('helvetica', 'B', 10);
