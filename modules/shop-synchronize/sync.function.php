@@ -88,7 +88,7 @@ class shopsynchronizegazSynchro {
 	function UpsertCategory($d,$toDo="") {
 		// usando il token precedentemente avuto si dovranno eseguire tutte le operazioni necessarie ad aggiornare la categorie merceologica quindi:
 		// in base alle API messe a disposizione dallo specifico store (Opencart,Prestashop,Magento,ecc) si passeranno i dati in maniera opportuna...
-		if ($d['ref_ecommerce_id_category']>0){ // se la categoria è connessa all'e-commerce
+		if ($d['ref_ecommerce_id_category']>0 || $toDo=="insert"){ // se la categoria è connessa all'e-commerce
 			@session_start();
 			global $gTables,$admin_aziend;
 			$rawres=[];
@@ -133,7 +133,7 @@ class shopsynchronizegazSynchro {
 				}
 			} else {
 				// imposto la connessione al server
-				$conn_id = ftp_connect($ftp_host)or die("Could not connect to $ftp_server");
+				$conn_id = @ftp_connect($ftp_host)or die("Could not connect to $ftp_host");
 				// effettuo login con user e pass
 				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
 				// controllo se la connessione è OK...
@@ -209,8 +209,10 @@ class shopsynchronizegazSynchro {
 				$rawres['style'] = 'danger';
 			}
 		}
-		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-		$this->rawres=$rawres;
+		if (isset($rawres)){
+      $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+      $this->rawres=$rawres;
+    }
 	}
 	function UpsertParent($p,$toDo="") {
 		// aggiorno i dati del genitore delle varianti
@@ -287,7 +289,7 @@ class shopsynchronizegazSynchro {
 			} else {
 
 				// imposto la connessione al server
-				$conn_id = ftp_connect($ftp_host)or die("Could not connect to $ftp_server");;
+				$conn_id = @ftp_connect($ftp_host)or die("Could not connect to $ftp_host");
 
 				// effettuo login con user e pass
 				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
@@ -295,7 +297,7 @@ class shopsynchronizegazSynchro {
 				// controllo se la connessione è OK...
 				if ((!$conn_id) or (!$mylogin)){
 					// non si connette FALSE
-					$rawres['title'] = "Problemi con le impostazioni FTP in configurazione avanzata azienda. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
+					$rawres['title'] = "Problemi con le impostazioni FTP (utente e password) in impostazioni sincronizzazione. AGGIORNARE L'E-COMMERCE MANUALMENTE!";
 					$rawres['button'] = 'Avviso eCommerce';
 					$rawres['label'] = "Aggiornare i dati del gruppo: ". $p['id_artico_group'] ."-". $p['descri'];
 					$rawres['link'] = '../shop-synchronize/synchronize.php';
@@ -415,8 +417,10 @@ class shopsynchronizegazSynchro {
 				$rawres['style'] = 'danger';
 			}
 		}
-		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-		$this->rawres=$rawres;
+    if (isset($rawres)){
+      $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+      $this->rawres=$rawres;
+    }
 	}
 	function UpsertProduct($d,$toDo="") { // Aggiorna o inserisce articol da GAzie a e-commerce
 		if ($d['web_public'] > 0){ // se pubblicato su web aggiorno l'articolo di magazzino (product)
@@ -498,7 +502,7 @@ class shopsynchronizegazSynchro {
 			} else {
 
 				// imposto la connessione al server
-				$conn_id = ftp_connect($ftp_host)or die("Could not connect to $ftp_server");;
+				$conn_id = @ftp_connect($ftp_host)or die("Could not connect to $ftp_host");
 
 				// effettuo login con user e pass
 				$mylogin = ftp_login($conn_id, $ftp_user, $ftp_pass);
@@ -607,8 +611,8 @@ class shopsynchronizegazSynchro {
 			}
 		}
 		if (isset($rawres)){
-		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-		$this->rawres=$rawres;
+      $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+      $this->rawres=$rawres;
 		}
 
 	}
@@ -779,8 +783,10 @@ class shopsynchronizegazSynchro {
 				$rawres['style'] = 'danger';
 			}
 		}
-		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-		$this->rawres=$rawres;
+		if (isset($rawres)){
+      $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+      $this->rawres=$rawres;
+    }
 	}
 	function get_sync_status($last_id) {
 		// prendo gli eventuali ordini arrivati assieme ai dati del cliente, se nuovo lo importo (order+customer),
@@ -1033,7 +1039,9 @@ class shopsynchronizegazSynchro {
             $rawres['link'] = '../vendit/report_broven.php?auxil=VOW';
             $rawres['style'] = 'warning';
 		}
-		$_SESSION['menu_alerts']['shop-synchronize']=$rawres;
-		$this->rawres=$rawres;
+		if (isset($rawres)){
+      $_SESSION['menu_alerts']['shop-synchronize']=$rawres;
+      $this->rawres=$rawres;
+    }
 	}
 }
