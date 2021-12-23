@@ -965,7 +965,7 @@ class magazzForm extends GAzieForm {
       }
       $acc .= ' '.$opt_style.'>Sede';
       if($quanti){
-        $acc .= isset($available['oth'][0])?' disp:'.$available['oth'][0]:' disp:0';
+        $acc .= isset($available['oth'][0])?' disp:'.number_format($available['oth'][0],5):' disp:0';
       }
       $acc .= '</option>';
       $rs = gaz_dbi_query($query);
@@ -982,13 +982,13 @@ class magazzForm extends GAzieForm {
         }
               $acc .= '<option value="'.$r['id'] . '" '.$selected.' '.$opt_style.'>'.$r['name'];
         if($quanti){
-          $acc .= isset($available['oth'][$r['id']])?' disp:'.$available['oth'][$r['id']]:' disp:0';
+          $acc .= isset($available['oth'][$r['id']])?' disp:'.number_format($available['oth'][$r['id']],5):' disp:0';
         }
         $acc .= '</option>';
       }
       $acc .='</select>';
       if ($otherwarehouse===false){
-        $acc ='Sede'.(isset($available['oth'][0])?' disp:'.$available['oth'][0]:' disp:0').'<input type="hidden" id="'.$name.'" name="'.$name.'" >';;
+        $acc ='Sede'.(isset($available['oth'][0])?' disp:'.number_format($available['oth'][0],5):' disp:0').'<input type="hidden" id="'.$name.'" name="'.$name.'" >';;
       }
       if ($ret_type){
         return $acc;
