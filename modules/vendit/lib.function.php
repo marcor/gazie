@@ -118,7 +118,7 @@ class venditForm extends GAzieForm {
 		}
         echo "</select>\n";
    }
-   
+
    function concileArtico($name,$key,$val,$class='small') {
       global $gTables;
 	  $acc='';
@@ -163,7 +163,7 @@ class venditForm extends GAzieForm {
         return ($exist)?$exist['id_cash']:false;
    }
 
-   function selectRepartoIVA($val,$id_cash=0) { // per selezionare l'aliquota IVA, tutte se viene prodotto un XML (id_cash=0) ed in base ai reparti del Registatore Telematico se viene utilizzato questo (id_cash > 0)  
+   function selectRepartoIVA($val,$id_cash=0) { // per selezionare l'aliquota IVA, tutte se viene prodotto un XML (id_cash=0) ed in base ai reparti del Registatore Telematico se viene utilizzato questo (id_cash > 0)
         global $gTables;
 		$table_where=($id_cash>=1)?$gTables['cash_register_reparto']. " LEFT JOIN ". $gTables['aliiva']." ON ".$gTables['cash_register_reparto'].".aliiva_codice = ".$gTables['aliiva'].".codice":$gTables['aliiva'];
         echo '<select id="in_codvat" name="in_codvat">';
@@ -178,14 +178,14 @@ class venditForm extends GAzieForm {
         }
         echo "</select>\n";
    }
-   
+
    function chkReparto($codvat,$id_cash) { // controllo se il codice IVA dell'articolo ha un reparto associato, se presente restituisco il valore
         global $gTables;
         $exist = gaz_dbi_get_row($gTables['cash_register_reparto'],"aliiva_codice",$codvat, "AND cash_register_id_cash = ".$id_cash);
         return ($exist)?$exist['reparto']:false;
    }
-   
-   function selectBanacc($val,$name='bank') { // per selezionare la banca d'accredito degli effetti  
+
+   function selectBanacc($val,$name='bank') { // per selezionare la banca d'accredito degli effetti
         $eof=false;
         global $gTables,$admin_aziend;
         echo '<select id="'.$name.'" name="'.$name.'">';
@@ -204,7 +204,7 @@ class venditForm extends GAzieForm {
    function getAllPrevLots($codart,$datref) {
 // restituisce la quantità residua di tutti i lotti precedenti o uguali alla data di riferimento, serve per proporre un inventario per lotti ad una data
       global $gTables;
-// prendo tutti i movimenti dell'articolo e li raggruppo per ognuno di essi anche se non hanno lotti id_lotmag=0 
+// prendo tutti i movimenti dell'articolo e li raggruppo per ognuno di essi anche se non hanno lotti id_lotmag=0
       $sqlquery = "SELECT id_lotmag, SUM(quanti*operat) AS rest, identifier, lot_or_serial AS ls FROM " . $gTables['movmag'] . " LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_lotmag =" . $gTables['lotmag'] . ".id LEFT JOIN " . $gTables['artico'] . " ON " . $gTables['movmag'] . ".artico =" . $gTables['artico'] . ".codice WHERE " . $gTables['movmag'] . ".artico = '" . $codart . "' AND datreg <= '".$datref."' AND caumag < 99 GROUP BY " . $gTables['movmag'] . ".id_lotmag ORDER BY ". $gTables['lotmag'] . ".id";
       $result = gaz_dbi_query($sqlquery);
       $acc=[];
@@ -215,7 +215,7 @@ class venditForm extends GAzieForm {
    }
 
 	// FUNZIONE PER RECUPERARE ULTIMO PROGRESSIVO PACCHETTO IN fae_flux, RESTITUISCE IL NUMERO PROGRESSIVO DELL'ULTIMO PACCHETTO CREATO/INVIATO
-	function getLastPack()  
+	function getLastPack()
 	{
 		global $gTables;
 		$where = "(filename_zip_package != '') AND exec_date LIKE '" . date('Y') . "%' ";
@@ -236,13 +236,13 @@ class venditForm extends GAzieForm {
 				 LEFT JOIN ' . $gTables['anagra'] . ' AS anagraf ON customer.id_anagra=anagraf.id
 				 LEFT JOIN ' . $gTables['country'] . ' AS country ON anagraf.country=country.iso
 				 LEFT JOIN ' . $gTables['fae_flux'] . ' AS flux ON tesdoc.id_tes = flux.id_tes_ref ';
-		$where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '') 
-				  AND (flux_status = '' OR flux_status = 'DI' OR flux_status IS NULL) 
+		$where = "(fattura_elettronica_zip_package IS NULL OR fattura_elettronica_zip_package = '')
+				  AND (flux_status = '' OR flux_status = 'DI' OR flux_status IS NULL)
 				  AND (tipdoc LIKE 'F__'  OR (tipdoc = 'VCO' AND numfat > 0) OR (tipdoc LIKE 'X__') )";
 		$orderby = "seziva ASC,tipdoc ASC, protoc ASC";
-		$result = gaz_dbi_dyn_query('tesdoc.*, CONCAT(SUBSTRING(tesdoc.tipdoc,1,1),tesdoc.protoc) AS ctrlp, SUBSTRING(tesdoc.tipdoc,1,1) AS ctrlreg , 
+		$result = gaz_dbi_dyn_query('tesdoc.*, CONCAT(SUBSTRING(tesdoc.tipdoc,1,1),tesdoc.protoc) AS ctrlp, SUBSTRING(tesdoc.tipdoc,1,1) AS ctrlreg ,
 							pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
-							customer.codice, customer.speban AS addebitospese, 
+							customer.codice, customer.speban AS addebitospese,
 							CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc, anagraf.citspe, anagraf.prospe, anagraf.capspe, anagraf.country, anagraf.fe_cod_univoco, anagraf.pec_email, anagraf.e_mail, anagraf.country,
 							country.istat_area, flux.flux_status', $from, $where, $orderby);
 		$docs['data'] = [];
@@ -313,7 +313,7 @@ class venditForm extends GAzieForm {
 						ON rs.codvat=vat.codice';
 			$rs_rig = gaz_dbi_dyn_query('rs.*,vat.tipiva AS tipiva', $from, "rs.id_tes = " . $tes['id_tes'], "id_tes DESC");
 			while ($r = gaz_dbi_fetch_array($rs_rig)) {
-				if ($tes['tipdoc']=='XNC'){ // è una nota di credito del reverse charge lo SdI vuole che siano negativi gli importi in quanto non prevista una tipologia specifica 
+				if ($tes['tipdoc']=='XNC'){ // è una nota di credito del reverse charge lo SdI vuole che siano negativi gli importi in quanto non prevista una tipologia specifica
 					$r['prelis']=-abs($r['prelis']);
 				}
 				if ($r['tiprig'] <= 1 || $r['tiprig'] == 90) { //ma solo se del tipo normale, forfait, vendita cespite
@@ -357,7 +357,7 @@ class venditForm extends GAzieForm {
 			$somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
 			$calc->add_value_to_VAT_castle($cast_vat, $somma_spese, $tes['expense_vat']);
 			$docs['data'][$tes['ctrlp']]['vat'] = $calc->castle;
-			
+
 			// QUI ACCUMULO I VALORI MASSIMI E MINIMI DEI PROTOCOLLI PER OGNI SINGOLO REGISTRO/SEZIONE IVA
 			if (!isset($docs['head'][$tes['seziva']][$tes['ctrlreg']])){
 				$docs['head'][$tes['seziva']][$tes['ctrlreg']]['min']=999999999;
@@ -367,7 +367,7 @@ class venditForm extends GAzieForm {
 			$docs['head'][$tes['seziva']][$tes['ctrlreg']]['min']=($tes['protoc']<$docs['head'][$tes['seziva']][$tes['ctrlreg']]['min'])?$tes['protoc']:$docs['head'][$tes['seziva']][$tes['ctrlreg']]['min'];
 			$docs['head'][$tes['seziva']][$tes['ctrlreg']]['max']=($tes['protoc']>$docs['head'][$tes['seziva']][$tes['ctrlreg']]['max'])?$tes['protoc']:$docs['head'][$tes['seziva']][$tes['ctrlreg']]['max'];
 			// FINE ACCUMULO MIN-MAX PROTOCOLLI
-			
+
 			$ctrlp = $tes['ctrlp'];
 		}
 		if ($ctrlp > 0 && ($docs['data'][$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
@@ -405,7 +405,7 @@ class Agenti {
       } else { // devo ricavare la percentuale associata all'articolo(prioritaria) o categoria merceologica
          $value = gaz_dbi_get_row($gTables['artico'], 'codice', $articolo);
          if (!isset($value['catmer'])) $value['catmer']=0;
-         $rs = gaz_dbi_dyn_query($gTables['agenti'] . ".*," . $gTables['provvigioni'] . ".*", $gTables['agenti'] . " LEFT JOIN " . $gTables['provvigioni'] . " ON " . $gTables['agenti'] . ".id_agente = ". $gTables['provvigioni'] . ".id_agente", $gTables['provvigioni'] . ".id_agente = " . $id_agente . " AND ((cod_articolo = '" . $articolo . "' AND cod_articolo != '') OR (cod_catmer = " .         intval($value['catmer']) . 
+         $rs = gaz_dbi_dyn_query($gTables['agenti'] . ".*," . $gTables['provvigioni'] . ".*", $gTables['agenti'] . " LEFT JOIN " . $gTables['provvigioni'] . " ON " . $gTables['agenti'] . ".id_agente = ". $gTables['provvigioni'] . ".id_agente", $gTables['provvigioni'] . ".id_agente = " . $id_agente . " AND ((cod_articolo = '" . $articolo . "' AND cod_articolo != '') OR (cod_catmer = " .         intval($value['catmer']) .
          " AND cod_articolo = ''))", 'cod_articolo DESC', 0, 1);
          $result = gaz_dbi_fetch_array($rs);
          if ($result) {
@@ -491,7 +491,7 @@ class venditCalc extends Compute {
       }
 // controllo se ho arrotondato tutta la diffarenza iniziale
       $ctrl_diff = round(($diff - $acc_diff), 2);
-// sull'ultimo rigo che è pure quello con la quantità più bassa provo ad arrotondare perchè più facile farlo modificando il solo prezzo 
+// sull'ultimo rigo che è pure quello con la quantità più bassa provo ad arrotondare perchè più facile farlo modificando il solo prezzo
       end($acc);
       $lastkey = key($acc);
       $decpow = pow(10, $decimal);
@@ -524,8 +524,8 @@ class venditCalc extends Compute {
     * 3) sconto cliente/raggruppamento (anche per tutti i super-raggruppamenti
     * 4) sconto cliente
     * 5) sconto articolo
-    * 
-    * se trova un prezzo netto nella tabella sconti cliente/articolo restituisce il numero in negativo, 
+    *
+    * se trova un prezzo netto nella tabella sconti cliente/articolo restituisce il numero in negativo,
     * altrimenti restituisce un numero positivo
     */
    function trovaPrezzoNetto_Sconto($codcli, $codart) {
@@ -586,7 +586,7 @@ class lotmag {
 // restituisce i dati relativi ad uno specifico lotto
       global $gTables;
       $sqlquery = "SELECT * FROM " . $gTables['lotmag'] . "
-            LEFT JOIN " . $gTables['movmag'] . " ON " . $gTables['lotmag'] . ".id_movmag =" . $gTables['movmag'] . ".id_mov  
+            LEFT JOIN " . $gTables['movmag'] . " ON " . $gTables['lotmag'] . ".id_movmag =" . $gTables['movmag'] . ".id_mov
             WHERE " . $gTables['lotmag'] . ".id = '" . $id . "'";
       $result = gaz_dbi_query($sqlquery);
       $this->lot = gaz_dbi_fetch_array($result);
@@ -598,30 +598,43 @@ class lotmag {
 // e propone una ripartizione, se viene passato un movimento di magazzino questo verrà escluso perché si suppone sia lo stesso
 // che si sta modificando
 // Antonio Germani - si escludono dal conteggio tutti gli inventari: caumag 98 e 99. Gli inventari non hanno lotti, quindi bisogna analizzare sempre tutto il database.
-      global $gTables, $admin_aziend;
-      $ob = ' ASC'; // FIFO-PWM-STANDARD (First In First Out)
-      if ($admin_aziend['stock_eval_method'] == 2) {
-         $ob = ' DESC'; // LIFO (Last In First Out)
+// Antonio Germani - $excluded_movmag può essere un singolo ID oppure multipli ID in un array:  array("ID1", "ID2", "etc");
+    global $gTables, $admin_aziend;
+    $ob = ' ASC'; // FIFO-PWM-STANDARD (First In First Out)
+    if ($admin_aziend['stock_eval_method'] == 2) {
+       $ob = ' DESC'; // LIFO (Last In First Out)
+    }
+    if (is_array($excluded_movmag)){
+      $n=0;$add_excl="";
+      foreach($excluded_movmag as $each){
+        if ($n>0){
+          $add_excl.= " AND id_mov <> ".intval($each);
+        } else {
+          $add_excl.= intval($each);
+        }
+        $n++;
       }
+      $excluded_movmag=$add_excl;
+    }
 	  $add_where="";
 	  if (intval($date)>0){
-		$add_where=$gTables['movmag'] . ".datreg < '". $date ."' AND "; 
+		$add_where=$gTables['movmag'] . ".datreg < '". $date ."' AND ";
 	  }
 	// Antonio Germani - la data di creazione del primo lotto per il dato articolo
-	$first_lot_date=gaz_dbi_get_row($gTables['movmag'], "artico", $codart, " AND id_lotmag > '1' AND caumag <> '99' AND operat = '1'", "MIN(datdoc)");  
+	$first_lot_date=gaz_dbi_get_row($gTables['movmag'], "artico", $codart, " AND id_lotmag > '1' AND caumag <> '99' AND operat = '1'", "MIN(datdoc)");
 	if (!isset($first_lot_date)){
 		$first_lot_date="1970-01-01";// imposto una data fittizia se non esiste una data reale
 	}
       $sqlquery = "SELECT *, SUM(CASE WHEN caumag < 98 THEN (quanti*operat) ELSE 0 END)AS rest FROM " . $gTables['movmag'] . "
             LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_lotmag =" . $gTables['lotmag'] . ".id
             WHERE ". $add_where . "artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " AND datdoc >= '". $first_lot_date ."'
-			GROUP BY " . $gTables['movmag'] . ".id_lotmag 
+			GROUP BY " . $gTables['movmag'] . ".id_lotmag
 			ORDER BY " . $gTables['lotmag'] .".expiry" . $ob .", ". $gTables['lotmag'] . ".identifier" . $ob;
       $result = gaz_dbi_query($sqlquery);
       $acc = array();
       $rs = false;
       while ($row = gaz_dbi_fetch_array($result)) {
-         if ($row['rest'] >= 0.00001) { // l'articolo ha almeno un lotto caricato 
+         if ($row['rest'] >= 0.00001) { // l'articolo ha almeno un lotto caricato
             $rs = true;
             $acc[] = $row;
          }
@@ -629,7 +642,7 @@ class lotmag {
       $this->available = $acc;
       return $rs;
    }
-      
+
    function getLotQty($id) {
 // Antonio Germani - restituisce la quantità disponibile di uno specifico lotto
       global $gTables;
@@ -645,7 +658,7 @@ class lotmag {
 
    function divideLots($quantity) {
 // riparto la quantità tra i vari lotti presenti se questi non sono sufficienti
-// ritorno il resto non assegnato 
+// ritorno il resto non assegnato
       $acc = array();
       $rest = $quantity;
       foreach ($this->available as $v) {
@@ -658,15 +671,15 @@ class lotmag {
       }
       $this->divided = $acc;
       if ($rest >= 0.00001) {
-// ritorno il resto, quindi non ho abbastanza lotti per contenere la quantità venduta 
+// ritorno il resto, quindi non ho abbastanza lotti per contenere la quantità venduta
          return $rest;
       } else {
          return NULL;
       }
    }
-   
+
    function dispLotID ($codart, $lotMag, $excluded_movmag = 0) {
-// Antonio Germani - restituisce la disponibilità per id lotto 
+// Antonio Germani - restituisce la disponibilità per id lotto
 		global $gTables;
 		$query="SELECT SUM(quanti*operat) FROM ". $gTables['movmag'] . " WHERE artico='" .$codart. "' AND id_lotmag='" .$lotMag. "' AND id_mov <> '". $excluded_movmag ."' AND caumag < '99' ";
 		$sum_in=gaz_dbi_query($query);
@@ -674,7 +687,7 @@ class lotmag {
 		$disp = $sum['SUM(quanti*operat)'];
 		return $disp;
    }
-   
+
 }
 
 ?>
