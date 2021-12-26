@@ -643,11 +643,11 @@ class lotmag {
       return $rs;
    }
 
-   function getLotQty($id) {
+   function getLotQty($id, $excluded_movmag = 0) {
 // Antonio Germani - restituisce la quantità disponibile di uno specifico lotto
       global $gTables;
-      $sqlquery = "SELECT operat, quanti FROM " . $gTables['movmag'] . " WHERE id_lotmag = '" . $id . "'";
-      $result = gaz_dbi_query($sqlquery);
+      $sqlquery = "SELECT operat, quanti FROM " . $gTables['movmag'] . " WHERE id_lotmag = '" . $id . "' AND id_mov <> " . $excluded_movmag;
+      $result = gaz_dbi_query($sqlquery);echo $sqlquery;
 	  $lotqty=0;
       while ($row = gaz_dbi_fetch_array($result)) {
 		  if ($row['operat']>0){$lotqty=$lotqty+$row['quanti'];}
