@@ -29,7 +29,7 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
-if (isset($_POST['type'])&&isset($_POST['ref'])) { 
+if (isset($_POST['type'])&&isset($_POST['ref'])) {
 	require("../../library/include/datlib.inc.php");
 	require("../../modules/magazz/lib.function.php");
 	$upd_mm = new magazzForm;
@@ -39,19 +39,19 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			$id_tesbro=intval($_POST['ref2']);
 			$res = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$id_tesbro); // prendo il rigo di tesbro interessato
-			$query="DELETE FROM ".$gTables['staff_worked_hours']." WHERE id_orderman = '".$i."' AND work_day = '".$res['datemi']."'"; 
+			$query="DELETE FROM ".$gTables['staff_worked_hours']." WHERE id_orderman = '".$i."' AND work_day = '".$res['datemi']."'";
 			gaz_dbi_query($query); // cancello tutti i righi operai con quel giorno e quella produzione
-			
+
 			// prendo tutti i movimenti di magazzino a cui fa riferimento la produzione
 			$what=$gTables['movmag'].".id_mov ";
 			$table=$gTables['movmag'];$idord=$i;
 			$where="id_orderman = $idord";
 			$resmov=gaz_dbi_dyn_query ($what,$table,$where);
 			while ($r = gaz_dbi_fetch_array($resmov)) {
-				$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $r['id_mov']);//cancello i movimenti di magazzino corrispondenti
+				$upd_mm->uploadMag('DEL', 'PRO', '', '', '', '', '', '', '', '', '', '', $r['id_mov']);//cancello i movimenti di magazzino corrispondenti
 				gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $r['id_mov']);// cancello i relativi movimenti SIAN
-			}  
-			
+			}
+
 			if (intval($res['clfoco'])==0) { // se NON è un ordine cliente esistente e quindi fu generato automaticamente da orderman
 				$result = gaz_dbi_del_row($gTables['tesbro'], "id_tes", $id_tesbro); // cancello tesbro
 				$result = gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
@@ -61,11 +61,11 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 				$result = gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
 			}
 			// in ogni caso riporto l'auto_increment all'ultimo valore disponibile
-			$query="SELECT max(id)+1 AS li FROM ".$gTables['orderman']; 
+			$query="SELECT max(id)+1 AS li FROM ".$gTables['orderman'];
 			$last_autincr=gaz_dbi_query($query);
 			$li=gaz_dbi_fetch_array($last_autincr);
 			$li=(isset($li['id']))?($li['id']+1):1;
-			$query="ALTER TABLE ".$gTables['orderman']." AUTO_INCREMENT=".$li; 
+			$query="ALTER TABLE ".$gTables['orderman']." AUTO_INCREMENT=".$li;
 			gaz_dbi_query($query); // riporto l'auto_increment al primo disponibile per non avere vuoti di numerazione
 		break;
 		case "luoghi":
