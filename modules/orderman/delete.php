@@ -39,8 +39,6 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			$id_tesbro=intval($_POST['ref2']);
 			$res = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$id_tesbro); // prendo il rigo di tesbro interessato
-			$query="DELETE FROM ".$gTables['staff_worked_hours']." WHERE id_orderman = '".$i."'";
-			gaz_dbi_query($query); // cancello tutti i righi operai con quel giorno e quella produzione
 
 			// prendo tutti i movimenti di magazzino a cui fa riferimento la produzione
 			$what=$gTables['movmag'].".id_mov ";

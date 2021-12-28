@@ -420,9 +420,6 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
             }
             $res = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$form['id_tesbro']); // prendo il rigo di tesbro interessato
 
-            $query="DELETE FROM ".$gTables['staff_worked_hours']." WHERE id_orderman = '".intval($_GET['codice'])."'";
-            gaz_dbi_query($query); // cancello tutti i righi operai con quel giorno e quella produzione
-
             if (strlen($form['identifier']) > 0) {// prendo il riferimento al vecchio lotto dell'articolo prodotto
               $resin = gaz_dbi_get_row($gTables['orderman'], "id", intval($_GET['codice']));
               $resin2 = gaz_dbi_get_row($gTables['lotmag'], "id", $resin['id_lotmag']);
