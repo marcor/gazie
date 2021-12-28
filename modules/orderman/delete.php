@@ -39,7 +39,7 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			$id_tesbro=intval($_POST['ref2']);
 			$res = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$id_tesbro); // prendo il rigo di tesbro interessato
-			$query="DELETE FROM ".$gTables['staff_worked_hours']." WHERE id_orderman = '".$i."' AND work_day = '".$res['datemi']."'";
+			$query="DELETE FROM ".$gTables['staff_worked_hours']." WHERE id_orderman = '".$i."'";
 			gaz_dbi_query($query); // cancello tutti i righi operai con quel giorno e quella produzione
 
 			// prendo tutti i movimenti di magazzino a cui fa riferimento la produzione
@@ -51,15 +51,16 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 				$upd_mm->uploadMag('DEL', 'PRO', '', '', '', '', '', '', '', '', '', '', $r['id_mov']);//cancello i movimenti di magazzino corrispondenti
 				gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", $r['id_mov']);// cancello i relativi movimenti SIAN
 			}
-
-			if (intval($res['clfoco'])==0) { // se NON è un ordine cliente esistente e quindi fu generato automaticamente da orderman
-				$result = gaz_dbi_del_row($gTables['tesbro'], "id_tes", $id_tesbro); // cancello tesbro
-				$result = gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
-				$result = gaz_dbi_del_row($gTables['rigbro'], "id_tes", $id_tesbro); // cancello rigbro
-			} else { // se invece è un ordine cliente devo lasciarlo e solo sganciarlo da orderman
-				gaz_dbi_query ("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '' WHERE id_tes ='".$id_tesbro."'") ; // sgancio tesbro da orderman
-				$result = gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
-			}
+      if (isset($res)){// se il tipo di produzione prevede un ordine
+        if (intval($res['clfoco'])==0) { // se NON è un ordine cliente esistente e quindi fu generato automaticamente da orderman
+          $result = gaz_dbi_del_row($gTables['tesbro'], "id_tes", $id_tesbro); // cancello tesbro
+          $result = gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
+          $result = gaz_dbi_del_row($gTables['rigbro'], "id_tes", $id_tesbro); // cancello rigbro
+        } else { // se invece è un ordine cliente devo lasciarlo e solo sganciarlo da orderman
+          gaz_dbi_query ("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '' WHERE id_tes ='".$id_tesbro."'") ; // sgancio tesbro da orderman
+          $result = gaz_dbi_del_row($gTables['orderman'], "id", $i); // cancello orderman/produzione
+        }
+      }
 			// in ogni caso riporto l'auto_increment all'ultimo valore disponibile
 			$query="SELECT max(id)+1 AS li FROM ".$gTables['orderman'];
 			$last_autincr=gaz_dbi_query($query);
