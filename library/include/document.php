@@ -172,7 +172,7 @@ class DocContabVars {
 
         $this->fiscal_rapresentative = false;
         if ($this->client['fiscal_rapresentative_id'] > 0) {
-           $this->fiscal_rapresentative = gaz_dbi_get_row($gTables['anagra'], "id", $this->client['fiscal_rapresentative_id']); 
+           $this->fiscal_rapresentative = gaz_dbi_get_row($gTables['anagra'], "id", $this->client['fiscal_rapresentative_id']);
         }
         if (isset($tesdoc['c_a'])) {
             $this->c_Attenzione = $tesdoc['c_a'];
@@ -267,7 +267,7 @@ class DocContabVars {
 		// ATTRIBUISCO UN EVENTUALE REGIME FISCALE DIVERSO DALLA CONFIGURAZIONE AZIENDA SE LA SEZIONE IVA E' LEGATO AD ESSO TRAMITE IL RIGO var='sezione_regime_fiscale' IN gaz_XXXcompany_config
 		$this->regime_fiscale=$this->azienda['fiscal_reg'];
 		if ($fr=getRegimeFiscale($this->tesdoc["seziva"])) $this->regime_fiscale=$fr;
-        
+
     }
 
     function initializeTotals() {
@@ -295,6 +295,18 @@ class DocContabVars {
         $this->totale = 0;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+            // Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione
+            $checklot=gaz_dbi_get_row($this->gTables['movmag'],'id_mov',$rigo['id_mag']);
+            if ($checklot && strlen ($checklot['id_lotmag'])>0){
+              $getlot=gaz_dbi_get_row($this->gTables['lotmag'],'id',$checklot['id_lotmag']);
+              if (isset ($getlot['identifier']) && strlen ($getlot['identifier'])>0){
+                if (intval ($getlot['expiry'])>0){
+                  $rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier']." ".gaz_format_date($getlot['expiry']);
+                } else {
+                  $rigo['descri']=$rigo['descri']." - lot: ".$getlot['identifier'];
+                }
+              }
+            }
             $rigo['importo'] = 0;
             $rigo['totale'] = 0;
             //calcolo importo rigo
@@ -343,7 +355,7 @@ class DocContabVars {
 			} else {
 				$rigo['barcode']="";
 			}
-			
+
 			// Antonio Germani - se c'è un lotto ne accodo numero e scadenza alla descrizione
 			$checklot=gaz_dbi_get_row($this->gTables['movmag'],'id_mov',$rigo['id_mag']);
 			if ($checklot && strlen ($checklot['id_lotmag'])>0){
@@ -356,7 +368,7 @@ class DocContabVars {
 					}
 				}
 			}
-			
+
 			//Antonio Germani
 			if ($art AND ($art['durability_mu']==">" OR $art['durability_mu']=="<")){ // se impostato accodo la durabilità alla descrizione serve per gli agroalimentari
 				$rigo['descri'] = $rigo['descri']." - Durabilità ".$art['durability_mu']." ".$art['durability']."gg";
@@ -370,7 +382,7 @@ class DocContabVars {
                     $this->artico_doc[$rigo['codart']]='doc/'.$checkdoc['id_doc'].'.'.$checkdoc['extension'];
                 }
             }
-            
+
 			$from = $this->gTables['orderman'] . ' AS om
                  LEFT JOIN ' . $this->gTables['tesbro'] . ' AS tb
                  ON om.id_tesbro=tb.id_tes';
@@ -544,7 +556,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 			$templates['Received']="received_".$stampa_ricevute['val'];
 		}
 	}
-	// Antonio de Vincentiis - se sulla variabile "dda_A5" della configurazione avanzata azienda ho 1 allora seleziono il template con due DDT A5 affiancati su di un foglio A4 
+	// Antonio de Vincentiis - se sulla variabile "dda_A5" della configurazione avanzata azienda ho 1 allora seleziono il template con due DDT A5 affiancati su di un foglio A4
 	if ($templateName=='DDT'){
 		$ddt_A5 = gaz_dbi_get_row($gTables['company_config'], 'var', 'ddt_A5');
 		if (intval($ddt_A5['val'])>=1){
@@ -559,7 +571,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		if (empty($ts)){$configTemplate->template=substr($configTemplate->template, 1);}
     }
 	$lh=(($dest && $dest == 'H')?'_lh':''); // eventuale scelta di stampare su carta intestata, aggiungo il suffisso "lh";
-	
+
 	require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] .$lh. '.php');
     $pdf = new $templateName();
     $docVars = new DocContabVars();
@@ -577,7 +589,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $pdf->compose();
     $pdf->pageFooter();
     $doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1 . '_' . $pdf->tipdoc) . '.pdf';
-	// aggiungo all'array con indice 'azienda' altri dati 
+	// aggiungo all'array con indice 'azienda' altri dati
 	$docVars->azienda['cliente1']=$docVars->cliente1;
 	$docVars->azienda['doc_name']=$pdf->tipdoc.'.pdf';
     if ($dest && $dest == 'E') { // è stata richiesta una e-mail
@@ -599,9 +611,9 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         $content->mimeType = "PDF";
         return ($content);
     } else { // va all'interno del browser
-		if ($testata['tipdoc']=='AOR'){ 
-			/* in caso di ordine a fornitore che non viene inviato via mail al fornitore ma solo al browser 
-			cambio la descrizione del file per ricordare a chi è stato fatto*/ 
+		if ($testata['tipdoc']=='AOR'){
+			/* in caso di ordine a fornitore che non viene inviato via mail al fornitore ma solo al browser
+			cambio la descrizione del file per ricordare a chi è stato fatto*/
 			$doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->cliente1 . '_' . $pdf->tipdoc) . '.pdf';
 		}
         $pdf->Output($doc_name);
