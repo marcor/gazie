@@ -1079,9 +1079,32 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 				$nc = 0; // numero componente
 				$l = 0; // numero lotto componente
 
-				while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
-          $nmix=$nc;$mix="";$passrecstoc="";$ko="";
-					if ($form['quantip'] > 0) {
+				if ($toDo =="update"){// se update creo array di tutti i movimenti di magazzino da escludere
+					$excluded_movmag=array();
+					$exc=0;
+					foreach($form['artcomp'] as $artco){// per ogni componente	
+					
+					  foreach ($form['lot_idmov'][$exc] as $excl_lot){// ciclo i suoi lotti
+						if (!in_array($excl_lot,$excluded_movmag)){// se non c'è già aggiungo movimento magazzino riferito al lotto da escludere
+							$excluded_movmag[]=$excl_lot;
+						}
+					  }
+					  if (!in_array($form['id_mov'][$exc],$excluded_movmag)){// se non c'è già aggiungo movimento magazzino da escludere
+						$excluded_movmag[]=$form['id_mov'][$exc];
+					  }					  
+					  $exc++;
+					}
+					if(($key = array_search('0', $excluded_movmag)) !== false){
+						 unset($excluded_movmag[$key]);// tolgo eventuali id zero
+					}
+                }else{ // se non è update non escludo nulla
+					$excluded_movmag=0;
+				}
+				
+
+		while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
+			$nmix=$nc;$mix="";$passrecstoc="";$ko="";
+			if ($form['quantip'] > 0) {
 
             if ($row['SIAN']==1 & isset($form['recip_stocc_comp'][$nc]) && strlen($form['recip_stocc_comp'][$nc])>0){// se c'è un recipiente di stoccaggio del componente
               // il contenuto potrebbe essere una miscela di articoli diversi con lotti e/o senza lotti
@@ -1091,9 +1114,10 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   <div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base']; ?>
                   </div>
                   <?php
-                  $content=$campsilos->getCont($form['recip_stocc_comp'][$nc]);// la quantita totale disponibile nel silos
+                  $content=$campsilos->getCont($form['recip_stocc_comp'][$nc],'',$excluded_movmag);// la quantita totale disponibile nel silos
                   $row['quantita_artico_base'] = number_format ((floatval($row['quantita_artico_base']) * floatval($form['quantip'])),6);// la quantità necessaria per la produzione
-                  if ($content >= $row['quantita_artico_base']){//controllo disponibilità
+                
+				  if ($content >= $row['quantita_artico_base']){//controllo disponibilità
                     $perc_util=number_format((($row['quantita_artico_base']/$content)*100),8);// percentuale di utilizzo con 8 cifre decimali max
                     ?><div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", number_format(str_replace(",","",$row['quantita_artico_base']),5,",","."); ?>
                     </div>
