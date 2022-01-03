@@ -41,13 +41,13 @@ function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
-    if (!$row) $row=['protoc'=>'1','datfat'=>date("Y-m-d")]; 
+    if (!$row) $row=['protoc'=>'1','datfat'=>date("Y-m-d")];
     $docs['ini'] = array('proini' => $row['protoc'], 'date' => $row['datfat']);
     $row=false;
     $orderby = "datfat DESC, protoc DESC";
     $result = gaz_dbi_dyn_query('*', $from, $where, $orderby, 0, 1);
     $row = gaz_dbi_fetch_array($result);
-    if (!$row) $row=['protoc'=>$docs['ini']['proini'],'datfat'=>$docs['ini']['date']]; 
+    if (!$row) $row=['protoc'=>$docs['ini']['proini'],'datfat'=>$docs['ini']['date']];
     $docs['fin'] = array('profin' => $row['protoc'], 'date' => $row['datfat']);
     return $docs;
 }
@@ -188,7 +188,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
             if ($r['tiprig'] <= 1  || $r['tiprig'] == 4 || $r['tiprig'] == 90) { // se del tipo normale, forfait, cassa previdenziale, vendita cespite
                 //calcolo importo rigo
                 $importo = CalcolaImportoRigo($r['quanti'], $r['prelis'], array($r['sconto'], $tes['sconto']));
-                if ($r['tiprig']==1||$r['tiprig']== 90) { // se di tipo forfait e vendita cespite 
+                if ($r['tiprig']==1||$r['tiprig']== 90) { // se di tipo forfait e vendita cespite
                     $importo = CalcolaImportoRigo(1, $r['prelis'], $tes['sconto']);
                 } elseif($r['tiprig']==4){ // cassa previdenziale sul database  trovo la percentuale sulla colonna provvigione
                     $importo = round($r['prelis']*$r['provvigione']/100,2);
@@ -212,7 +212,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                     $cast_acc[$r['codric']]['asset'] = 1;
                 }
                 $rit += round($importo * $r['ritenuta'] / 100, 2);
-                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment)   
+                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment)
                 if ($r['tipiva'] == 'T') {
                     $ivasplitpay += round(($importo * $r['pervat']) / 100, 2);
                 }
@@ -259,36 +259,36 @@ function computeTot($data) {
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
-    if (isset($_GET['type'])) {
-        $form['type'] = substr($_GET['type'], 0, 1);
-    } else {
-        $form['type'] = 'F';
-    }
-    if (isset($_GET['vat_section'])) {
-        $form['vat_section'] = intval($_GET['vat_section']);
-    } else {
-        $form['vat_section'] = 1;
-    }
-    $extreme = getExtremeDocs($form['type'], $form['vat_section']);
-    if ($extreme['ini']['proini'] > 0) {
-        $form['this_date_Y'] = substr($extreme['fin']['date'], 0, 4);
-        $form['this_date_M'] = substr($extreme['fin']['date'], 5, 2);
-        $form['this_date_D'] = substr($extreme['fin']['date'], 8, 2);
-    } else {
-        $form['this_date_Y'] = date("Y");
-        $form['this_date_M'] = date("m");
-        $form['this_date_D'] = date("d");
-    }
-    $form['proini'] = $extreme['ini']['proini'];
-    $form['profin'] = $extreme['fin']['profin'];
-    if (isset($_GET['last'])) {
-        $form['profin'] = intval($_GET['last']);
-    }
-    $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
-    $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
-    $form['hidden_req'] = '';
-	$uts_this_date =time();
-	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
+  if (isset($_GET['type'])) {
+      $form['type'] = substr($_GET['type'], 0, 1);
+  } else {
+      $form['type'] = 'F';
+  }
+  if (isset($_GET['vat_section'])) {
+      $form['vat_section'] = intval($_GET['vat_section']);
+  } else {
+      $form['vat_section'] = 1;
+  }
+  $extreme = getExtremeDocs($form['type'], $form['vat_section']);
+  if ($extreme['ini']['proini'] > 0) {
+      $form['this_date_Y'] = substr($extreme['fin']['date'], 0, 4);
+      $form['this_date_M'] = substr($extreme['fin']['date'], 5, 2);
+      $form['this_date_D'] = substr($extreme['fin']['date'], 8, 2);
+  } else {
+      $form['this_date_Y'] = date("Y");
+      $form['this_date_M'] = date("m");
+      $form['this_date_D'] = date("d");
+  }
+  $form['proini'] = $extreme['ini']['proini'];
+  $form['profin'] = $extreme['fin']['profin'];
+  if (isset($_GET['last'])) {
+      $form['profin'] = intval($_GET['last']);
+  }
+  $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
+  $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
+  $form['hidden_req'] = '';
+  $lastdayofmonth=date("Ymt", strtotime($form['this_date_Y'].'-'.$form['this_date_M'].'-'.$form['this_date_D']));
+	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], $lastdayofmonth, $form['profin']);
 } else {    // accessi successivi
     $form['type'] = substr($_POST['type'], 0, 1);
     $form['vat_section'] = intval($_POST['vat_section']);
@@ -299,7 +299,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['profin'] = intval($_POST['profin']);
     $form['year_ini'] = intval($_POST['year_ini']);
     $form['year_fin'] = intval($_POST['this_date_Y']);
-    if (isset($_POST['accpaymov'])) { 
+    if (isset($_POST['accpaymov'])) {
 		$paymoverr=false;
         foreach($_POST['accpaymov']as$prot=>$v){
 			// in $v ho il id_tesdoc_ref selezionato;
@@ -332,7 +332,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $uts_this_date = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
 	$rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
-	
+
     if (isset($_POST['gosubmit']) && count($msg['err'])==0) {   //confermo la contabilizzazione
         if (!empty($rs) && count($rs)>0) {
             require("lang." . $admin_aziend['lang'] . ".php");
@@ -395,9 +395,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 }
                 $tot = computeTot($v['vat']);
                 // fine calcolo totali
-                // calcolo le rate al fine di inserire le partite aperte  
+                // calcolo le rate al fine di inserire le partite aperte
                 $rate = CalcolaScadenze($tot['tot'] - $v['rit'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
-                // rateizzo anche l'iva split payment  
+                // rateizzo anche l'iva split payment
                 $rateisp = CalcolaScadenze($v['isp'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
                 // inserisco la testata
                 $newValue = array('caucon' => $v['tes']['tipdoc'],
@@ -412,9 +412,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     'regiva' => $reg,
                     'operat' => $op
                 );
-				/* CONTROLLO SE IN CONFIGURAZIONE AZIENDA MI POSSO AVVALERE DELL'ART.32 IVA PER CASSA, 
+				/* CONTROLLO SE IN CONFIGURAZIONE AZIENDA MI POSSO AVVALERE DELL'ART.32 IVA PER CASSA,
 				SE SI, PROSPONGO DI 12 MESI LA LIQUIDAZIONE */
-				if ($admin_aziend['vat_susp']==1&&$v['tes']['incaut']<100000000){ /* ma si dovrà implementare un sistema di 
+				if ($admin_aziend['vat_susp']==1&&$v['tes']['incaut']<100000000){ /* ma si dovrà implementare un sistema di
 				controllo dei pagamenti della stessa ai fini di anticipare la data di liquidazione alla
 				data di pagamento della fatturae solo se non c'è un pagamento contestuale*/
 					$df = new DateTime($v['tes']['datfat']);
@@ -422,7 +422,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 					$newValue['datliq']=$df->format('Y-m-d');
 					if ($v['tes']['tippag']=='B'||$v['tes']['tippag']=='T'||$v['tes']['tippag']=='V'){ // se sono riba/tratte/MAV alla data della prima scadenza
 						$newValue['datliq']=$rate['anno'][0] . '-' . $rate['mese'][0] . '-' . $rate['giorno'][0];
-					} 
+					}
 				} else {
 					$newValue['datliq']=$v['tes']['datfat'];
 				}
@@ -443,10 +443,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     $v['tes']['clfoco'] = $admin_aziend['cassa_'];
                 }
                 $paymov_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
-                // memorizzo l'id del rigo cliente  
+                // memorizzo l'id del rigo cliente
                 foreach ($v['acc'] as $acc_k => $acc_v) {
                     if ($acc_v['import'] != 0) {
-                        if (isset($acc_v['asset'])) { // qui eseguo tutte le registrazioni relative alla vendita del cespite con relativa rilevazione della eventuale plus/minusvalenza 
+                        if (isset($acc_v['asset'])) { // qui eseguo tutte le registrazioni relative alla vendita del cespite con relativa rilevazione della eventuale plus/minusvalenza
                             $asset = gaz_dbi_get_row($gTables['assets'], 'acc_fixed_assets', $acc_k, "AND type_mov = '1'"); // riprendo l'asset
                             // calcolo il costo storico
                             $rs = gaz_dbi_dyn_query($gTables['rigmoc'] . ".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = " . $acc_k);
@@ -494,7 +494,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 if ($v['rit'] > 0) {  // se ho una ritenuta d'acconto
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $krit, 'import' => $v['rit']));
                 }
-                if ($v['tes']['incaut'] > 100000000) {  // se il pagamento prevede l'incasso automatico 
+                if ($v['tes']['incaut'] > 100000000) {  // se il pagamento prevede l'incasso automatico
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['incaut'], 'import' => ($tot['tot'] - $v['rit'])));
                 } else { // altrimenti inserisco le partite aperte
@@ -504,19 +504,19 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                             'id_rigmoc_doc' => $paymov_id,
                             'amount' => $v_rate,
                             'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
-                        if ($op == 2) { /* le note credito sono assimilabili ad un pagamento, 
+                        if ($op == 2) { /* le note credito sono assimilabili ad un pagamento,
                           ovvero ad una chiusura di partita
                           pertanto modifico l'array prima di passarlo */
                             unset($paymov_value['id_rigmoc_doc']);
                             $paymov_value['id_rigmoc_pay'] = $paymov_id;
-							if (count($v['accpaymov'])>1 && isset($form["accpaymov_".$v['tes']['protoc']]) && $form["accpaymov_".$v['tes']['protoc']]!='no') { $paymov_value['id_tesdoc_ref'] = $form["accpaymov_".$v['tes']['protoc']];}	   
+							if (count($v['accpaymov'])>1 && isset($form["accpaymov_".$v['tes']['protoc']]) && $form["accpaymov_".$v['tes']['protoc']]!='no') { $paymov_value['id_tesdoc_ref'] = $form["accpaymov_".$v['tes']['protoc']];}
                         }
                         paymovInsert($paymov_value);
                     }
                 }
                 // alla fine modifico le testate documenti introducendo il numero del movimento contabile
                 gaz_dbi_put_query($gTables['tesdoc'], "tipdoc = '" . $v['tes']['tipdoc'] . "' AND datfat = '" . $v['tes']['datfat'] . "' AND seziva = " . $v['tes']['seziva'] . " AND protoc = " . $v['tes']['protoc'], "id_con", $tes_id);
-                // movimenti di storno in caso di split payment 
+                // movimenti di storno in caso di split payment
                 if ($v['isp'] > 0) {
                     // inserisco la testata del movimento di storno Split payment
                     $newValue = array('caucon' => 'ISP',
@@ -537,7 +537,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $admin_aziend['split_payment'], 'import' => $v['isp']));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['split_payment'], 'import' => $v['isp']));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => $v['isp']));
-                    // memorizzo l'id del rigo cliente  
+                    // memorizzo l'id del rigo cliente
                     $paymov_id = gaz_dbi_last_id();
                     // chiudo le partite aperte dell'iva split payment
                     foreach ($rateisp['import'] as $k_rate => $v_rate) {
@@ -546,7 +546,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                             'id_rigmoc_pay' => $paymov_id,
                             'amount' => $v_rate,
                             'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
-							if (count($v['accpaymov'])>1 && isset($form["accpaymov_".$v['tes']['protoc']]) && $form["accpaymov_".$v['tes']['protoc']]!='no') { $paymov_value['id_tesdoc_ref'] = $form["accpaymov_".$v['tes']['protoc']];}	   
+							if (count($v['accpaymov'])>1 && isset($form["accpaymov_".$v['tes']['protoc']]) && $form["accpaymov_".$v['tes']['protoc']]!='no') { $paymov_value['id_tesdoc_ref'] = $form["accpaymov_".$v['tes']['protoc']];}
                         paymovInsert($paymov_value);
                     }
                 }
@@ -651,7 +651,7 @@ foreach ($rs as $k => $v) {
 				$form["accpaymov_$k"]=isset($form["accpaymov_$k"])?$form["accpaymov_$k"]:'';
 				echo ' <span class="text-'.$v['classv'].'">: partita da chiudere sullo scadenzario:</span><br/>';
 				$gForm->variousSelect("accpaymov[{$k}]", $v['accpaymov'], $form["accpaymov_$k"], '', 1, 'changepaymov',false,'',true);
-			}	   
+			}
     echo '</td><td>' . $v['tes']['numfat'] . "</td>
            <td>" . $v['tes']['ragsoc'] . "</td>
            <td align=\"right\">" . gaz_format_number($tot['taxable']) . "</td>
