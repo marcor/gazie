@@ -113,6 +113,9 @@ while ($row = gaz_dbi_fetch_array($result)) {
         if ($ctrl_registro != 0) {
             $pdf->Cell(109, 6, $script_transl['t_reg'], 0, 0, 'R');
             $pdf->Cell(20, 6, gaz_format_number($totale_iva_registro), 1, 1, 'R', 1);
+			if ($ctrl_registro == 6) {
+				$totale_iva_acquisti+= $totale_iva_registro;
+			}
         }
         if ($ctrl_sezione != 0) {
             $pdf->Ln(1);
