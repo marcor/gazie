@@ -1,11 +1,5 @@
 # GAzie - Gestione Aziendale
 
-![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/lab51org/gazie?include_prereleases&sort=semver)
-![SourceForge](https://img.shields.io/sourceforge/dt/gazie)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg?style=flat-square)](https://php.net/)
-![GitHub](https://img.shields.io/github/license/lab51org/gazie)
-[![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
-
 [![Download GAzie - Gestione Aziendale](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/gazie/files/latest/download)
 ## Sommario
 - [GAzie - Gestione Aziendale](#gazie---gestione-aziendale)
@@ -98,8 +92,10 @@ Per l'installazione seguire [la guida sopra](#tldr) oppure dare una letta al fil
 ### Sviluppatori
 Maggiori dettagli nella cartella `dev` e nel [wiki del progetto su SF](https://sourceforge.net/p/gazie/wiki) (di prossimo aggiornamento, vedi [to do](#to-do))
 
-### Licenza
+### Licenze
 Trovi una copia della licenza dentro la cartella `doc`, oppure nel file [LICENSE](./LICENSE.md)
+GAzie fa uso di librerie gestite tramite [Composer](https://getcomposer.org/) per ognuna di esse c'è una licenza specifica che troverai nelle rispettive sottocartelle di `vendor`.
+Altre librerie sono contenute in `library`.
 
 ### To Do
 
