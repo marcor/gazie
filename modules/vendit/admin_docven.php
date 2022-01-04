@@ -1712,7 +1712,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					|| $form['in_tiprig'] == 13 || $form['in_tiprig'] == 14
 					|| $form['in_tiprig'] == 15 || $form['in_tiprig'] == 16
 					|| $form['in_tiprig'] == 21 || $form['in_tiprig'] == 25
-					|| $form['in_tiprig'] == 31) { //per  fattura elettronica riferibili ad altri righi o a tutto il documento
+					|| $form['in_tiprig'] == 26 || $form['in_tiprig'] == 31) { //per  fattura elettronica riferibili ad altri righi o a tutto il documento
                 $form['rows'][$next_row]['codart'] = "";
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
@@ -3090,6 +3090,32 @@ echo '<td>
 					';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
+        case "26": // INTENTO dichiarazione d'intento (FaE 2.2.1.16)
+                echo "	<td>
+                        <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">
+                                    <i class=\"glyphicon glyphicon-arrow-up\">" . ($k+1) . "</i>
+                                </button>
+                </td>
+                <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+						<input class=\"btn btn-xs btn-secondary btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" /></td>
+                <td colspan=\"8\">
+                    &nbsp;Riferimento testo&nbsp;
+                    <input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" size=\"27\" />
+                    &nbsp;data emissione
+                    <input type=\"date\" name=\"rows[$k][codart]\" value=\"".$v['codart']."\" size=\"15\" />
+                </td>
+                <td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
+                <input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+                <input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+                <input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+                <input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />
+                </td>\n";
+                echo '<input type="hidden" value="" name="rows[' . $k . '][cod_operazione]" />
+                        <input type="hidden" value="" name="rows[' . $k . '][recip_stocc]" />
+                        <input type="hidden" value="" name="rows[' . $k . '][recip_stocc_destin]" />
+                        ';
+                $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+                break;
         case "31": // Dati veicolo 2.3 fattura elettronica
             echo "	<td>
                             <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-xs\" title=\"" . $script_transl['3'] . "!\">

@@ -364,6 +364,8 @@ class invoiceXMLvars {
                	$this->Causale[]=$rigo['descri'];
             } elseif ($rigo['tiprig'] == 25) {  // DatiSAL
                	$this->DatiSAL[]=$rigo['descri']; //faccio il push sull'array
+            } elseif ($rigo['tiprig'] == 26) {  // Dati Intento
+                $this->DatiIntento=array('RiferimentoTesto'=>$rigo['descri'],'RiferimentoData'=>$rigo['codart']);
             } elseif ($rigo['tiprig'] == 31) {  // DatiVeicoli 2.3
                	$this->DatiVeicoli=array('Data'=>$rigo['descri'],'TotalePercorso'=>intval($rigo['quanti']));
             } elseif ($rigo['tiprig'] == 90) {
@@ -476,6 +478,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 	$XMLvars->DatiSAL=array();
 	// inizializzo la variabile per DatiVeicoli 2.3
 	$XMLvars->DatiVeicoli=false;
+    // inizializzo la variabile per DatiIntento
+    $XMLvars->DatiIntento=false;
 	// inizializzo l'accumulatore per DatiDDT
 	$XMLvars->DatiDDT=array();
 	// inizializzo la somma delle SpeseAccessorie
@@ -1113,8 +1117,18 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 // --- FINE CALCOLO TOTALI
 
     // alla fine del ciclo sui righi faccio diverse aggiunte es. causale, bolli, descrizione aggiuntive, e spese di incasso, queste essendo cumulative per diversi eventuali DdT non hanno un riferimento
-
-
+    
+    if ( $XMLvars->DatiIntento ) {
+        $benserv = $xpath->query("//FatturaElettronicaBody")->item(0);
+        $el = $domDoc->createElement("AltriDatiGestionali", '');
+        $el1 = $domDoc->createElement("TipoDato", 'INTENTO');
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("RiferimentoTesto",  $XMLvars->DatiIntento['RiferimentoTesto']);
+        $el->appendChild($el1);
+        $el1 = $domDoc->createElement("RiferimentoData",  $XMLvars->DatiIntento['RiferimentoData']);
+        $el->appendChild($el1);
+        $benserv->appendChild($el);
+    }
 
     if ($XMLvars->DatiVeicoli) {
         $results = $xpath->query("//FatturaElettronicaBody")->item(0);
