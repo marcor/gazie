@@ -53,6 +53,7 @@ require("../../library/include/datlib.inc.php");
 // m1 fine Modificato a mano
 
 $admin_aziend = checkAdmin();
+
 $msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
 $today=	strtotime(date("Y-m-d H:i:s",time()));
@@ -96,6 +97,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
   $form = gaz_dbi_parse_post('artico');
   $form['codice'] = trim($form['codice']);
   $form['ritorno'] = $_POST['ritorno'];
+  $form['hidden_req'] = $_POST['hidden_req'];
   $form['web_public_init'] = $_POST['web_public_init'];
   $form['var_id'] = (isset($_POST['var_id']))?$_POST['var_id']:'';
   $form['var_name'] = (isset($_POST['var_name']))?$_POST['var_name']:'';
@@ -355,6 +357,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['ritorno'] = 'admin_artico.php';
     }
+  $form['hidden_req'] = '';
 	$form['web_public_init']=$form['web_public'];
 	if (json_decode($form['ecomm_option_attribute']) != null){ // se esiste un json per attributo della variante dell'e-commerce
 		$opt_att=json_decode($form['ecomm_option_attribute']);
@@ -408,6 +411,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['ritorno'] = 'admin_artico.php';
     }
+  $form['hidden_req'] = '';
 	$form['web_public_init'] = 0;
     /** ENRICO FEDELE */
     $form['ref_code'] = '';
@@ -625,8 +629,11 @@ if ($modal === true) {
           <input type="hidden" name="mode-act" value="submit" />';
 } elseif (isset($_GET['tab'])) {
   echo '<input type="hidden" id="tabpill" value="' . substr($_GET['tab'],0,10) . '" />';
+} elseif ($form['hidden_req']=='change' || $form['hidden_req']=='id_anagra'){
+  echo '<input type="hidden" id="tabpill" value="magazz" />';
 }
 echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
+echo '<input type="hidden" name="hidden_req" value="' . $form['hidden_req'] . '" />';
 echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />';
 
 if ($modal_ok_insert === true) {
