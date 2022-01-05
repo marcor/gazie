@@ -131,9 +131,9 @@ class FatturaSemplice extends Template {
             switch ($rigo['tiprig']) {
                 case "0":
                     $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L', 0, '', 1);
-                    $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);                  
+                    $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);
                     $this->Cell(7, 5, $rigo['unimis'], 1, 0, 'C');
-                    $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');                      
+                    $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');
                     $this->Cell(18, 5, number_format($rigo['prelis'], $this->decimal_price, ',', ''), 1, 0, 'R');
                     if ($rigo['sconto'] > 0) {
                         $this->Cell(8, 5, floatval($rigo['sconto']), 1, 0, 'C', 0, '', 1);
@@ -212,6 +212,11 @@ class FatturaSemplice extends Template {
                     $this->Cell(80, 5, "Stato avanzamento lavori, fase: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(81, 5, '', 'R', 1);
                     break;
+                case "26":
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Lettera intento: " . $rigo['descri']." del ".gaz_format_date($rigo['codart']), 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
+                    break;
                 case "31":
                     $this->Cell(25, 5, '', 'L');
                     $this->Cell(80, 5, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
@@ -244,7 +249,7 @@ class FatturaSemplice extends Template {
     }
 
     function pageFooter() {
-        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
+        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda
                 if (strlen($this->descriptive_last_row)>210 and strlen($this->descriptive_last_row)<400 ){ // Antonio Germani-creo più righe a seconda della lunghezza del testo descrittivo
 					$descri=explode (' ',$this->descriptive_last_row);// Antonio Germani - separo il testo in parole  dentro un array che poi divido in due
 					$paroleriga=count($descri)/2;
@@ -254,7 +259,7 @@ class FatturaSemplice extends Template {
 					$riga1=implode(' ',$descri1);
 					$riga2=implode(' ',$descri2);
 					$this->Cell(186,6,$riga1,1,1,'L',0,'',1);
-					$this->Cell(186,6,$riga2,1,1,'L',0,'',1);					
+					$this->Cell(186,6,$riga2,1,1,'L',0,'',1);
 				} else if (strlen($this->descriptive_last_row)>400) {
 					$descri=explode (' ',$this->descriptive_last_row);// Antonio Germani - separo il testo in parole  dentro un array che poi divido in tre
 					$paroleriga=count($descri)/3;

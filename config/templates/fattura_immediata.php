@@ -184,6 +184,11 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(80, 5, "Stato avanzamento lavori, fase: " . $rigo['descri'], 'LR', 0, 'L', 0, '', 1);
                     $this->Cell(81, 5, '', 'R', 1);
                     break;
+                case "26":
+                    $this->Cell(25, 5, '', 'L');
+                    $this->Cell(80, 5, "Lettera intento: " . $rigo['descri']." del ".gaz_format_date($rigo['codart']), 'LR', 0, 'L', 0, '', 1);
+                    $this->Cell(81, 5, '', 'R', 1);
+                    break;
                 case "31":
                     $this->Cell(25, 5, '', 'L');
                     $this->Cell(80, 5, "Dati Veicoli ex art.38, immatricolato il " . gaz_format_date($rigo['descri']).', km o ore:'.intval($rigo['quanti']), 'LR', 0, 'L', 0, '', 1);
@@ -223,7 +228,7 @@ class FatturaImmediata extends Template_con_scheda
 
     function pageFooter()
     {
-        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda 
+        if (!empty($this->descriptive_last_row) ) { // aggiungo alla fine un eventuale rigo descrittivo dalla configurazione avanzata azienda
                 $this->Cell(186,6,$this->descriptive_last_row,1,1,'L',0,'',1);
 		}
         if ($this->taxstamp >= 0.01 ) {
