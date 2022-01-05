@@ -350,7 +350,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       exit;
   }
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
-    $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'], 0, 15));
+    $form = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'],0,32));
     /** ENRICO FEDELE */
     if ($modal === false) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -693,7 +693,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" id="suggest_new_codart" maxlength="15" tabindex="1" /><input class="btn btn-xs" type="submit" value="" />
+                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" id="suggest_new_codart" maxlength="32" tabindex="1" /><input class="btn btn-xs" type="submit" value="" />
 							&nbsp;<input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>></td> <!-- M1 modificato a mano -->
                         </div>
                     </div>
