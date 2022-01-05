@@ -1082,8 +1082,8 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 				if ($toDo =="update"){// se update creo array di tutti i movimenti di magazzino da escludere
 					$excluded_movmag=array();
 					$exc=0;
-					foreach($form['artcomp'] as $artco){// per ogni componente	
-					
+					foreach($form['artcomp'] as $artco){// per ogni componente
+
 					  foreach ($form['lot_idmov'][$exc] as $excl_lot){// ciclo i suoi lotti
 						if (!in_array($excl_lot,$excluded_movmag)){// se non c'è già aggiungo movimento magazzino riferito al lotto da escludere
 							$excluded_movmag[]=$excl_lot;
@@ -1091,7 +1091,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 					  }
 					  if (!in_array($form['id_mov'][$exc],$excluded_movmag)){// se non c'è già aggiungo movimento magazzino da escludere
 						$excluded_movmag[]=$form['id_mov'][$exc];
-					  }					  
+					  }
 					  $exc++;
 					}
 					if(($key = array_search('0', $excluded_movmag)) !== false){
@@ -1100,7 +1100,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                 }else{ // se non è update non escludo nulla
 					$excluded_movmag=0;
 				}
-				
+
 
 		while ($row = $rescompo->fetch_assoc()) { // creo gli input dei componenti visualizzandone anche disponibilità di magazzino
 			$nmix=$nc;$mix="";$passrecstoc="";$ko="";
@@ -1116,7 +1116,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
                   <?php
                   $content=$campsilos->getCont($form['recip_stocc_comp'][$nc],'',$excluded_movmag);// la quantita totale disponibile nel silos
                   $row['quantita_artico_base'] = number_format ((floatval($row['quantita_artico_base']) * floatval($form['quantip'])),6);// la quantità necessaria per la produzione
-                
+
 				  if ($content >= $row['quantita_artico_base']){//controllo disponibilità
                     $perc_util=number_format((($row['quantita_artico_base']/$content)*100),8);// percentuale di utilizzo con 8 cifre decimali max
                     ?><div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['unimis']," ","Necessari: ", number_format(str_replace(",","",$row['quantita_artico_base']),5,",","."); ?>
@@ -1619,7 +1619,7 @@ if ($form['order_type'] <> "AGR") { // Se non è produzione agricola
 	} else {
 		$select_artico = new selectartico("codart");
 		$select_artico->addSelected($form['codart']);
-		$select_artico->output(substr($form['cosear'], 0, 20));
+		$select_artico->output(substr($form['cosear'], 0,32));
 	}
 	?>
 

@@ -549,7 +549,7 @@ function groupErase(group,descri){
 									<?php
 									$select_artico = new selectartico("codart");
 									$select_artico->addSelected($form['codart']);
-									$select_artico->output(substr($form['cosear'], 0, 20),'C',"");
+									$select_artico->output(substr($form['cosear'], 0,32),'C',"");
 									?>
 								</div>
 								<div class="col-xs-12 col-md-2">

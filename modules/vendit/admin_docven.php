@@ -292,7 +292,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 100);
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
-            $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
+            $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 32);
             if ($_POST['hidden_req']=="fae_tipo_cassa".$next_row && $v['tiprig']==4) {
 				// se provengo da un cambiamento di un rigo cassa previdenziale aggiorno la descrizione
 	            $xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
@@ -3102,7 +3102,7 @@ echo '<td>
                     &nbsp;Riferimento testo&nbsp;
                     <input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" size=\"27\" />
                     &nbsp;data emissione
-                    <input type=\"date\" name=\"rows[$k][codart]\" value=\"".$v['codart']."\" size=\"15\" />
+                    <input type=\"date\" name=\"rows[$k][codart]\" value=\"".$v['codart']."\" size=\"10\" />
                 </td>
                 <td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
                 <input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
@@ -3281,7 +3281,7 @@ $gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
 <?php
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
-$select_artico->output(substr($form['cosear'], 0, 20));
+$select_artico->output(substr($form['cosear'], 0, 32));
 // Antonio Germani - input ricerca con pistola lettore codice a barre
 if ($toDo == "insert"){
 	$class_btn_confirm='btn-success';

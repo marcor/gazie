@@ -29,7 +29,7 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
-if (isset($_POST['type'])&&isset($_POST['ref'])) { 
+if (isset($_POST['type'])&&isset($_POST['ref'])) {
 	require("../../library/include/datlib.inc.php");
 	$upd_mm = new magazzForm;
 	$admin_aziend = checkAdmin();
@@ -45,21 +45,21 @@ if (isset($_POST['type'])&&isset($_POST['ref'])) {
 			$i=intval($_POST['ref']);
 			gaz_dbi_del_row($gTables['caumag'],"codice",$i);
 		break;
-		case "movmag": 
+		case "movmag":
 			$i=intval($_POST['ref']);
 			$form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $i);
 			$upd_mm->uploadMag('DEL', '', '', '', '', '', '', '', '', '', '', '', $i);
-			// cancello il movimento di magazzino 
+			// cancello il movimento di magazzino
 			if ($form['id_rif'] > 0) {  //se il movimento di magazzino � stato generato da un rigo di documento lo azzero
 				gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $form['id_rif'], 'id_mag', 0);
 			}
 			$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 			if ($item['SIAN']>0){ // se è SIAN cancello anche il suo movimento
 				gaz_dbi_del_row($gTables['camp_mov_sian'], "id_movmag", intval($_POST['id_mov']));
-			}		
+			}
 		break;
 		case "artico":
-			$i=substr($_POST['ref'],0,15);
+			$i=substr($_POST['ref'],0,32);
 			//Cancello le eventuali immagini web e i documenti
 			$rs=gaz_dbi_dyn_query ("*",$gTables['files'],"table_name_ref = 'artico' AND item_ref = '".$i."'");
 			foreach ($rs as $delimg){

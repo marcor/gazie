@@ -159,7 +159,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
         foreach ($_POST['rows'] as $next_row => $v) {
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
-            $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
+            $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 32);
             $form['rows'][$next_row]['status'] = substr($v['status'], 0, 30);
             $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 100);
             $form['rows'][$next_row]['unimis'] = substr($v['unimis'], 0, 3);
@@ -1456,7 +1456,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                             <?php
                             $select_artico = new selectartico("in_codart");
                             $select_artico->addSelected($form['in_codart']);
-                            $select_artico->output(substr($form['cosear'], 0, 20), 'C', "col-sm-4");
+                            $select_artico->output(substr($form['cosear'], 0,32), 'C', "col-sm-4");
                             ?>
 
 						<?php

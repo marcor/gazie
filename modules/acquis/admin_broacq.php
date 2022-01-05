@@ -158,8 +158,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 100);
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
-            $form['rows'][$next_row]['codice_fornitore'] = substr($v['codice_fornitore'], 0, 50);	// Aggiunto a Mano 
-            $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
+            $form['rows'][$next_row]['codice_fornitore'] = substr($v['codice_fornitore'], 0, 50);	// Aggiunto a Mano
+            $form['rows'][$next_row]['codart'] = substr($v['codart'], 0,32);
             $form['rows'][$next_row]['pervat'] = preg_replace("/\,/", '.', $v['pervat']);
             $form['rows'][$next_row]['unimis'] = substr($v['unimis'], 0, 3);
             $form['rows'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/", '.', $v['prelis'])), $admin_aziend['decimal_price'], ".", "");
@@ -222,7 +222,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_spessore'] = $form['rows'][$k_row]['spessore'];
                     $form['in_peso_specifico'] = $form['rows'][$k_row]['peso_specifico'];
                     $form['in_pezzi'] = $form['rows'][$k_row]['pezzi'];
-                    $form['in_status'] = "UPDROW_" . $k_row.'_'.$form['in_codart']; // ricordo il vecchio codice articolo 
+                    $form['in_status'] = "UPDROW_" . $k_row.'_'.$form['in_codart']; // ricordo il vecchio codice articolo
                     $form['cosear'] = $form['rows'][$k_row]['codart'];
                     array_splice($form['rows'], $k_row, 1);
                     $next_row--;
@@ -280,7 +280,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msgrigo = $i + 1;
                 $msg .= "49+";
             }
-            if ($v['unimis'] == '' && $v['tiprig']==0 ) { // con un rigo normale 
+            if ($v['unimis'] == '' && $v['tiprig']==0 ) { // con un rigo normale
                 $msgrigo = $i + 1;
                 $msg .= "50+";
             }
@@ -325,7 +325,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                                 }
                             }
                             $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-							// sposto e rinomino il relativo file temporaneo    
+							// sposto e rinomino il relativo file temporaneo
                             $fn = pathinfo($form['rows'][$i]['extdoc']);
                             rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $val_old_row['id_rig'] . '.' . $fn['extension']);
 						}
@@ -344,7 +344,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $last_rigbro_id = rigbroInsert($form['rows'][$i]);
                     if (!empty($form['rows'][$i]['extdoc'])) {
                         $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-// sposto e rinomino il relativo file temporaneo    
+// sposto e rinomino il relativo file temporaneo
                         $fd = pathinfo($form['rows'][$i]['extdoc']);
                         rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
                     }
@@ -362,7 +362,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					$form['id_contract'] = '';
 					$form['id_con'] = '';
 				}
-				
+
                 $form['datemi'] = $datemi;
                 $form['initra'] = $initra.' 00:00:01';
                 $form['id_orderman'] = $form['in_id_orderman'];
@@ -414,7 +414,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					// INIZIO INSERIMENTO DOCUMENTI ALLEGATI
                     if (!empty($form['rows'][$i]['extdoc'])) {
                         $tmp_file = DATA_DIR . 'files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['extdoc'];
-						// sposto e rinomino il relativo file temporaneo    
+						// sposto e rinomino il relativo file temporaneo
                         $fd = pathinfo($form['rows'][$i]['extdoc']);
                         rename($tmp_file, DATA_DIR . 'files/' . $admin_aziend['company_id'] . '/rigbrodoc_' . $last_rigbro_id . '.' . $fd['extension']);
                     }
@@ -858,12 +858,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['pezzi'] = $rigo['pezzi'];
         $form['rows'][$next_row]['extdoc'] = '';
         $form['rows'][$next_row]['status'] = "UPDATE";
-		// recupero il filename dal filesystem e lo sposto sul tmp 
+		// recupero il filename dal filesystem e lo sposto sul tmp
 		$dh = opendir( DATA_DIR . 'files/' . $admin_aziend['company_id'] );
 		while (false !== ($filename = readdir($dh))) {
 				$fd = pathinfo($filename);
 				$r = explode('_', $fd['filename']);
-				if ($r[0] == 'rigbrodoc' && $r[1] == $rigo['id_rig']) { 
+				if ($r[0] == 'rigbrodoc' && $r[1] == $rigo['id_rig']) {
 					/* 	uso id_body_text per mantenere il riferimento riferimento al file del documento esterno
 					* 	e riassegno il nome file
 					*/
@@ -960,7 +960,7 @@ $( function() {
 	$('.datepick').each(function(){
 		$(this).datepicker({ dateFormat: 'dd-mm-yy' });
 	});
-	$('#prop_delivery').datepicker({ dateFormat: 'dd-mm-yy', 
+	$('#prop_delivery').datepicker({ dateFormat: 'dd-mm-yy',
 									onClose:function () {
 										var pd=$(this).val();
 										$('.datepick').each(function(){
@@ -997,7 +997,7 @@ function choicequality(row)
 		source: "../../modules/root/search.php?opt=quality",
 		minLength: 2,
         html: true, // optional (jquery.ui.autocomplete.html.js required)
- 
+
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
@@ -1119,8 +1119,8 @@ $select_prod->addSelected($form['in_id_orderman']);
 $select_prod->output($form['coseprod']);
 // fine modifiche
 if ($form['in_id_orderman']>0){
-	echo '<input type="submit" class="btn btn-info btn-xs" name="all_same_orderman" title="Tutti i righi alla produzione '.$form['coseprod'].'" value=" '.$form['coseprod'].' TUTTO! " />';	
-} 
+	echo '<input type="submit" class="btn btn-info btn-xs" name="all_same_orderman" title="Tutti i righi alla produzione '.$form['coseprod'].'" value=" '.$form['coseprod'].' TUTTO! " />';
+}
 echo '</td></tr>';
 echo "</table></div>\n";
 $quatot = 0;
@@ -1231,7 +1231,7 @@ foreach ($form['rows'] as $k => $v) {
             echo '<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
 						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '">
 							<i class="glyphicon glyphicon-arrow-up"></i>
-						</button> </td> 
+						</button> </td>
 					  <td>
 <button name="upd_row[' . $k . ']" class="btn btn-xs btn-success btn-block" type="submit">
 							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
@@ -1315,8 +1315,8 @@ foreach ($form['rows'] as $k => $v) {
 		 			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 				</td>
 				<td colspan="10">
-					<textarea id="row_' . $k . 
-                '" name="row_' . $k . 
+					<textarea id="row_' . $k .
+                '" name="row_' . $k .
                 '" class="mceClass" style="width:100%;height:100px;">'
                 . $form["row_$k"] . '</textarea>
 				</td>
@@ -1345,7 +1345,7 @@ foreach ($form['rows'] as $k => $v) {
                         <div class="form-group">
                           <div>';
 
-                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '">
                             <label>File: </label><input type="text" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
 			</div>
 		     </div>
@@ -1382,7 +1382,7 @@ foreach ($form['rows'] as $k => $v) {
                         <div class="form-group">
                           <div>';
 
-                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '"> 
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $k . '">
                             <label>File: </label><input type="text" name="rows[' . $k . '][extdoc]" value="' . $form['rows'][$k]['extdoc'] . '" >
 			</div>
 		     </div>
@@ -1479,7 +1479,7 @@ $select_in_codvat->output();
 echo "</td><td class=\"FacetColumnTD\"></td></tr></table></div>\n";
 // *** FINE RIGO DI INPUT
 
-// *** INIZIO FOOTER 
+// *** INIZIO FOOTER
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
 		<div class=\"table-responsive\">
 		<table class=\"Tlarge table table-striped table-bordered table-condensed\">
@@ -1644,11 +1644,11 @@ echo '	</table></div>';
 			modal: true
 		});
 	};
-	
+
 	function weightfromdimCalc() {
-		/* 
+		/*
 		ANTONIO DE VICENTIIS
-		Non ho guardato in giro sulla rete per vedere se qualcuno lo ha fatto prima di me, ma questo 
+		Non ho guardato in giro sulla rete per vedere se qualcuno lo ha fatto prima di me, ma questo
 		metodo - interfaccia per il calcolo delle dimensioni e del peso sarebbe meritevole di brevetto :)))))
 		*/
 		var larghezza = ($("#dialog_larghezza").val()).replace(',', '.');
@@ -1763,8 +1763,8 @@ echo '	</table></div>';
 			$("#dialog_row_focus").val('');
 			$("#weight-from-dim").dialog('close');
 		}
-	}	
-	
+	}
+
 	var last_focus_value;
 	var last_focus;
 	last_focus_value = document.docacq.last_focus.value;
@@ -1774,17 +1774,17 @@ echo '	</table></div>';
 			last_focus.focus();
 		}
 	}
-	last_focus_value = "";	
+	last_focus_value = "";
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 <div class="modal" id="weight-from-dim" TITLE='CALC'>
 <div class="col-lg-12"  style="margin-bottom: 10px; background-color: #92a8d1;">
-	<div class="col-lg-4">GRANDEZZA</div>	
+	<div class="col-lg-4">GRANDEZZA</div>
 	<div class="col-lg-3">VALORE</div>
 	<div class="col-lg-5 text-right">INSERISCI</div>
 </div>
 <div class="col-lg-12">
-	<div class="col-lg-4">Pezzi: </div>	
+	<div class="col-lg-4">Pezzi: </div>
 	<div class="col-lg-3"><input type="number" min="0" id="dialog_pezzi" tabindex="100" maxlength="11" onkeyup="weightfromdimCalc();" /></div>
 	<div class="col-lg-5 text-right"><button style="margin-bottom: 10px;"  id="btn_pz" onclick="weightfromdimSet('pz');" /> pz </button></div>
 </div>

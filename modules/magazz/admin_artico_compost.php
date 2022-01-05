@@ -34,9 +34,9 @@ if(isset($_GET['delete'])) {
 }
 
 if(!isset($form['ritorno'])){
-	$form['ritorno']=$_SERVER['HTTP_REFERER'];	
+	$form['ritorno']=$_SERVER['HTTP_REFERER'];
 }else{
-	$form['ritorno']=$_POST['ritorno'];	
+	$form['ritorno']=$_POST['ritorno'];
 }
 if (isset($_GET['codice'])){
     $codcomp = filter_var($_GET['codice'],FILTER_SANITIZE_STRING);
@@ -44,7 +44,7 @@ if (isset($_GET['codice'])){
    // header("Location: ../magazz/admin_artico_compost.php?codice=".$codcomp )
    // Antonio Germani Se viene aperto senza codice articolo esco e rimando all'elenco articoli
    header ( 'location: ../magazz/report_artico.php');
-	
+
 }
 
 if(isset($_POST['Update'])||isset($_GET['Update'])){
@@ -119,7 +119,7 @@ $script_transl = HeadMain(0,array('custom/autocomplete'));
 	.pull-gazie{
          float:right;
 	}
-} 
+}
 </style>
 <script>
 $(function(){
@@ -144,11 +144,11 @@ function itemErase(id,descri,codcomp){
 			}
 
 		  },
-		  close: function(){	
+		  close: function(){
 			$(".compost_name").empty();
 		  }
 		});
-}		
+}
 </script>
 
 <form method="POST" name="form" enctype="multipart/form-data">
@@ -223,16 +223,16 @@ function itemErase(id,descri,codcomp){
 			  }
   			  echo "</ul>\n";
 			} else{
-				
+
 			}
 			echo "</li>\n";
 		}
 		echo '</ul>';
 }
-echo '<div class="col-xs-12 col-md-6">Nuovo componente:'; 
+echo '<div class="col-xs-12 col-md-6">Nuovo componente:';
 $select_artico = new selectartico("codart");
 $select_artico->addSelected($form['codart']);
-$select_artico->output(substr($form['cosear'], 0, 20),'C',"");
+$select_artico->output(substr($form['cosear'], 0,32),'C',"");
 	echo '</div><div class="col-xs-12 col-md-4"> Quantità:<input type="number" style="height:25px;" step="any" min="0.00001" value="'.$form['quanti'].'" name="quanti" />
 </div><div class="col-xs-12 col-md-2">
 		<input type="submit" class="btn btn-warning" name="OKsub" value="Salva">

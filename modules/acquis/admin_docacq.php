@@ -139,7 +139,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 					while ($row = gaz_dbi_fetch_array($rigdoc)) {
 						$_POST['rows'][$i]['descri'] = substr($row['descri'], 0, 100);
 						$_POST['rows'][$i]['tiprig'] = intval($row['tiprig']);
-						$_POST['rows'][$i]['codart'] = substr($row['codart'], 0, 15);
+						$_POST['rows'][$i]['codart'] = substr($row['codart'], 0,32);
 						$_POST['rows'][$i]['codice_fornitore'] = substr($row['codice_fornitore'], 0, 50);	// Aggiunto a Mano
 						$_POST['rows'][$i]['pervat'] = preg_replace("/\,/", '.', $row['pervat']);
 						$_POST['rows'][$i]['ritenuta'] = floatval(preg_replace("/\,/", '.', $row['ritenuta']));
@@ -155,7 +155,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 						$_POST['rows'][$i]['id_order'] = intval($row['id_order']);
 						$_POST['rows'][$i]['id_orderman'] = intval($row['id_orderman']);
 						$_POST['rows'][$i]['id_rig'] = intval($row['id_rig']);
-						$value = gaz_dbi_get_row($gTables['artico'], "codice", substr($row['codart'], 0, 15));
+						$value = gaz_dbi_get_row($gTables['artico'], "codice", substr($row['codart'], 0,32));
 						$_POST['rows'][$i]['quality'] = strval($value['quality']);
 						$_POST['rows'][$i]['annota'] = substr($value['annota'], 0, 50);
 						$_POST['rows'][$i]['pesosp'] = floatval($value['peso_specifico']);
@@ -280,7 +280,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             $form['rows'][$i]['descri'] = substr($value['descri'], 0, 100);
             $form['rows'][$i]['tiprig'] = intval($value['tiprig']);
-            $form['rows'][$i]['codart'] = substr($value['codart'], 0, 15);
+            $form['rows'][$i]['codart'] = substr($value['codart'], 0,32);
             $form['rows'][$i]['codice_fornitore'] = substr($value['codice_fornitore'], 0, 50);	// Aggiunto a Mano
             $form['rows'][$i]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);
             $form['rows'][$i]['ritenuta'] = floatval(preg_replace("/\,/", '.', $value['ritenuta']));
@@ -2761,7 +2761,7 @@ echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">
 									<?php
 									$select_artico = new selectartico("in_codart");
 									$select_artico->addSelected($form['in_codart']);
-									$select_artico->output(substr($form['cosear'], 0, 20), 'C', "");
+									$select_artico->output(substr($form['cosear'], 0, 32), 'C', "");
 									?>
 									</div>
 							</div>

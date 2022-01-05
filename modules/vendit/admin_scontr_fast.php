@@ -143,7 +143,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         foreach ($_POST['rows'] as $next_row => $v) {
 
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
-            $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
+            $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 32);
             $form['rows'][$next_row]['status'] = substr($v['status'], 0, 30);
             $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 100);
             $form['rows'][$next_row]['unimis'] = substr($v['unimis'], 0, 3);
@@ -162,7 +162,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['lot_or_serial'] = intval($v['lot_or_serial']);
             $form['rows'][$next_row]['id_lotmag'] = intval($v['id_lotmag']);
             if ($v['lot_or_serial'] == 2 && $v['id_lotmag'] > 0) {
-// se Ã¨ prevista la gestione per numero seriale/matricola la quantitÃ  non puÃ² essere diversa da 1 
+// se Ã¨ prevista la gestione per numero seriale/matricola la quantitÃ  non puÃ² essere diversa da 1
                 if ($form['rows'][$next_row]['quanti'] <> 1) {
                     $msg['war'][] = "serial";
                 }
@@ -235,7 +235,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
           $tender = gaz_dbi_get_row($gTables['cash_register_tender'], 'cash_register_id_cash', $form['id_cash'], " AND pagame_codice = ".$form['pagame']);
           if (!$tender && $form['id_cash']>0){
             $msg['err'][] = "tender";
-          }  
+          }
         }
         //controllo dei righi e del totale
         $tot = 0;
@@ -399,7 +399,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 } else {
 					if ($ecr_user){
 						header("Location: admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=".$_GET['Prezzo_IVA']);//M1 modificato a mano
-                    } else { 
+                    } else {
 						header("Location: report_scontr.php");
 					}
                     exit;
@@ -560,13 +560,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
                     $ld = $lm->divideLots($form['in_quanti']);
                     /* ripartisco la quantitÃ  introdotta tra i vari lotti disponibili per l'articolo
-                     * e se Ã¨ il caso creo piÃ¹ righi  
+                     * e se Ã¨ il caso creo piÃ¹ righi
                      */
                     $i = $next_row;
                     foreach ($lm->divided as $k => $v) {
                         if ($v['qua'] >= 0.00001) {
                             $form['rows'][$i] = $form['rows'][$next_row]; // copio il rigo di origine
-                            $form['rows'][$i]['id_lotmag'] = $k; // setto il lotto 
+                            $form['rows'][$i]['id_lotmag'] = $k; // setto il lotto
                             $form['rows'][$i]['quanti'] = $v['qua']; // e la quantitÃ  in base al riparto
                             $i++;
                         }
@@ -820,10 +820,10 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
 <!-- Aggiunto a mano -->
 <script language="Javascript">
 function cambiaimporto(maniglia,indice,righe,iva)
-{  
+{
 
     var prezzo_ivato = document.getElementById('prezzo_iva_'+indice).value;
-   
+
     prezzo_ivato = prezzo_ivato.replace(",",".");
 
 	if (isNaN(prezzo_ivato))
@@ -833,14 +833,14 @@ function cambiaimporto(maniglia,indice,righe,iva)
 	else
 	{
 		prezzo = parseFloat(prezzo_ivato);
-	 	
+
 		if (prezzo > 0)	document.getElementById('prezzo_'+indice).value = (prezzo/(1+(iva/100))) ;
-		else 
-		 {	
+		else
+		 {
 		   document.getElementById('prezzo_'+indice).value = 0;
            alert("ATTENZIONE : Materiale dato in omaggio");
-		 } 
-	     } 
+		 }
+	     }
 
 maniglia.form.submit();
 
@@ -885,7 +885,7 @@ maniglia.form.submit();
                 $select_cliente = new selectPartner('clfoco');
                 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['search_customer'], $admin_aziend['mascli'], $admin_aziend['mascli']);
                 ?>
-            </b> 
+            </b>
         </p>
     </div>
     <div class="panel panel-default">
@@ -894,7 +894,7 @@ maniglia.form.submit();
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="address" class="col-sm-4 control-label"><?php echo $script_transl['address']; ?></label>
-                        <div class="col-sm-8"><?php echo $form['address']; ?></div>                
+                        <div class="col-sm-8"><?php echo $form['address']; ?></div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
@@ -904,7 +904,7 @@ maniglia.form.submit();
                             <input type="text" class="form-control" id="datemi" name="datemi" value="<?php echo $form['datemi']; ?>">
                         </div>
                     </div>
-                </div>                    
+                </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="id_agente" class="col-sm-4 control-label" ><?php echo $script_transl['id_agente']; ?></label>
@@ -913,7 +913,7 @@ maniglia.form.submit();
                             $select_agente = new selectAgente("id_agente");
                             $select_agente->addSelected($form["id_agente"]);
                             $select_agente->output("col-sm-8");
-                            ?>                
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -921,7 +921,7 @@ maniglia.form.submit();
                     <div class="form-group">
                         <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?></label>
                         <div>
-                            <?php $gForm->ticketPayments('pagame', $form['pagame'], "col-sm-8"); ?>                
+                            <?php $gForm->ticketPayments('pagame', $form['pagame'], "col-sm-8"); ?>
                         </div>
                     </div>
                 </div>
@@ -933,7 +933,7 @@ maniglia.form.submit();
                         <div>
                             <?php
                             $magazz->selectCaumag($form['caumag'], $operat[$form['tipdoc']], false, '', "col-sm-8");
-                            ?>                
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -943,10 +943,10 @@ maniglia.form.submit();
                         <div>
                             <?php
                             $gForm->selectNumber('listin', $form['listin'], 0, 1, 3, 'col-sm-8');
-                            ?>                
+                            ?>
                         </div>
                     </div>
-                </div>                    
+                </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="sconto" class="col-sm-8 control-label"><?php echo $script_transl['sconto']; ?></label>
@@ -1000,7 +1000,7 @@ maniglia.form.submit();
             $btn_title = '';
             $peso = 0;
             if ($v['tiprig'] == 0) {
-                if ($artico['good_or_service']==1){ 
+                if ($artico['good_or_service']==1){
 					$btn_class = 'btn-info';
 					$btn_title = ' Servizio';
 				} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
@@ -1142,7 +1142,7 @@ maniglia.form.submit();
                     // in caso di rigo forfait non stampo alcune colonne
                     $resprow[$k][3]['value'] = ''; //unimis
                     $resprow[$k][4]['value'] = ''; //quanti
-                    // scambio l'input con la colonna dell'importo e non controllo gli omaggi con l'alert 
+                    // scambio l'input con la colonna dell'importo e non controllo gli omaggi con l'alert
                     $resprow[$k][7]['value'] = '<input type="number" ID="prezzo_'.$k.'" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" onchange="this.form.submit()" />';
                     // ... e poi non la visualizzo piÃ¹
                     $resprow[$k][5]['value'] = ''; //prelis
@@ -1180,33 +1180,33 @@ maniglia.form.submit();
                             <label for="tiprig" class="col-sm-4 control-label"><?php echo $script_transl['tiprig']; ?></label>
                             <div class="col-sm-3">
                                 <?php $gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig'], false, true); ?>
-                            </div>                
+                            </div>
                         </div>
-                    </div>					
+                    </div>
                     <div class="col-sm-6 col-md-4 col-lg-4">
                         <div class="form-group">
                             <label for="item" class="col-sm-2 control-label"><?php echo $script_transl['item']; ?></label>
                             <?php
                             $select_artico = new selectartico("in_codart");
                             $select_artico->addSelected($form['in_codart']);
-                            $select_artico->output(substr($form['cosear'], 0, 20), 'C', "col-sm-4");
+                            $select_artico->output(substr($form['cosear'], 0,32), 'C', "col-sm-4");
                             ?>
                         </div>
                     </div>
-					
+
 					<!-- Antonio Germani - input ricerca con pistola lettore codice a barre -->
 					<?php
 					if ($form['ok_barcode']!="ok"){
 						?>
 						<div class="col-sm-6 col-md-1 col-lg-1">
 							<div class="form-group text-center">
-								<button type="submit"  class="btn btn-default btn-sm col-sm-6" name="button_ok_barcode" title="inserisci con pistola Barcode"> 
+								<button type="submit"  class="btn btn-default btn-sm col-sm-6" name="button_ok_barcode" title="inserisci con pistola Barcode">
                                 <span class="glyphicon glyphicon-barcode"></span>
 								</button>
 							</div>
 						</div>
 						<?php
-					} 
+					}
 					?>
 					<input type="hidden" value="<?php echo $form['ok_barcode']; ?>" name="ok_barcode" />
 					<?php
@@ -1217,7 +1217,7 @@ maniglia.form.submit();
 							<div class="form-group">
 								<label for="item" class="col-sm-3 control-label"><?php echo "Barcode"; ?></label>
 								<input  class="col-sm-8" type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
-								<button type="submit"  class="btn btn-default btn-sm col-sm-1" name="no_barcode" title="Togli con pistola Barcode"> 
+								<button type="submit"  class="btn btn-default btn-sm col-sm-1" name="no_barcode" title="Togli con pistola Barcode">
                                 <span class="glyphicon glyphicon-remove"></span>
 							</div>
 						</div>
@@ -1229,7 +1229,7 @@ maniglia.form.submit();
 								<div class="form-group">
 									<label for="item" class="col-sm-3 control-label"><?php echo "Barcode"; ?></label>
 									<input style="border: 1px solid red;" class="col-sm-8" type="text" value="<?php echo $form['in_barcode']; ?>" name="in_barcode" onkeypress="submitOnEnter(this, event);" />
-									<button type="submit"  class="btn btn-default btn-sm col-sm-1" name="no_barcode" title="Togli con pistola Barcode"> 
+									<button type="submit"  class="btn btn-default btn-sm col-sm-1" name="no_barcode" title="Togli con pistola Barcode">
 									<span class="glyphicon glyphicon-remove"></span>
 								</div>
 							</div>
@@ -1238,7 +1238,7 @@ maniglia.form.submit();
 					}
 					?>
 					<!-- Antonio Germani - fine ricerca con pistola lettore codice a barre -->
-					
+
                     <div class="col-sm-4 col-md-2 col-lg-2">
                         <div class="form-group">
                             <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
@@ -1250,7 +1250,7 @@ maniglia.form.submit();
                             <button type="submit" ID="conf_rig" tabindex=7 class="btn btn-default btn-sm col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>"> <!-- Modificato a mano -->
                                 <?php echo $script_transl['conf_row']; ?>&nbsp;(F2)&nbsp;<i class="glyphicon glyphicon-ok"></i>
                             </button>
-                        </div> 
+                        </div>
                     </div>
                 </div>
             </div><!-- chiude tab-pane  -->
@@ -1295,7 +1295,7 @@ maniglia.form.submit();
             <div class="table-responsive">
                 <table class="table">
                     <thead>
-                        <tr class="small success">              
+                        <tr class="small success">
                             <th>
                                 <?php echo $script_transl["taxable"]; ?>
                             </th>
@@ -1319,8 +1319,8 @@ maniglia.form.submit();
                             </th>
                             <th>
                             </th>
-                        </tr>      
-                    </thead>    
+                        </tr>
+                    </thead>
                     <tbody>
                         <?php
                         $last_castle_row = count($castel);
@@ -1353,9 +1353,9 @@ maniglia.form.submit();
                             echo "</tr>\n";
                         }
                         ?>
-                        <tr> 
+                        <tr>
                             <td colspan="7">
-                                <input class="bg-danger center-block" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
+                                <input class="bg-danger center-block" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php
                                 if ($toDo == 'insert'){
                                     echo $script_transl['send_ecr'] . ' ' . (($ecr)?$ecr['descri']:' su file XML');
                                 } else {
@@ -1417,62 +1417,62 @@ if ($form['ok_barcode']=="ok"){
 	<script type="text/javascript">
 	if (this.document.tesdoc.cosear.value == '') this.document.tesdoc.cosear.focus();
 	</script>
-	<?php	
+	<?php
 }
 ?>
-<!-- //M1 Modificato a mano fine --> 
+<!-- //M1 Modificato a mano fine -->
 <script type="text/javascript">
 //this.document.body.onkeypress = function (e = event,myfiled = this)
 
 
 this.document.body.onkeyup = function (event)
-{ 
+{
   var e = event;
-  
+
   var kC  = (window.event) ?    // MSIE or Firefox?
                  event.keyCode : e.keyCode;
-  var f1 = (window.event) ?   
+  var f1 = (window.event) ?
                 112 : e.DOM_VK_F1 // MSIE : Firefox
-  var f2 = (window.event) ?   
+  var f2 = (window.event) ?
                 113 : e.DOM_VK_F2 // MSIE : Firefox
-  var f4 = (window.event) ?   
-                115 : e.DOM_VK_F4 // MSIE : Firefox              
-  var f8 = (window.event) ?   
+  var f4 = (window.event) ?
+                115 : e.DOM_VK_F4 // MSIE : Firefox
+  var f8 = (window.event) ?
                 119 : e.DOM_VK_F8 // MSIE : Firefox
   var f10 = (window.event) ?
-                121 : e.DOM_VK_F10 // MSIE : Firefox  
+                121 : e.DOM_VK_F10 // MSIE : Firefox
 
-  if((kC==f1) || (kC==f2)) 
-         { 
+  if((kC==f1) || (kC==f2))
+         {
 	       e.preventDefault(); //Cancella l'evento per non farlo propagare
            document.getElementById('conf_rig').click();
-          }  
-          
+          }
+
   if(kC==f4)
-         {  
+         {
 	       codice = document.tesdoc.in_codart.value;
-           
+
            if (codice == '') opzione = '?Insert';
              else opzione = '?codice='+codice+'&Update';
-             
+
            window.open('../../modules/magazz/admin_artico.php'+opzione);
-          
+
            e.preventDefault();
           }
-         
+
   if(kC==f8)
          {
 		   e.preventDefault(); //Cancella l'evento per non farlo propagare
            document.tesdoc.ins.click();
-         }        
-		 
-  if(kC==f10) {	  
+         }
+
+  if(kC==f10) {
     window.open('../../modules/vendit/admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=<?php echo $_GET['Prezzo_IVA'] ?>'); }
 
-} 
+}
 
 </script>
-<!-- //M1 Modificato a mano fine --> 
+<!-- //M1 Modificato a mano fine -->
 
 <?php
 require("../../library/include/footer.php");
