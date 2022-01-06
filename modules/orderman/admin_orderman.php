@@ -161,7 +161,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))){ //Antonio Germani  
 		}
 	}
 
-  $form['coseor'] = $_POST['coseor'];
+  $form['coseor'] = (isset($_POST['coseor']))?$_POST['coseor']:0;
   $quantiprod = 0;
   if (intval($form['coseor']) > 0) { // se c'è un numero ordine lo importo tramite l'id
     $res = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['coseor']);
