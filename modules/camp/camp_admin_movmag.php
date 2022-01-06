@@ -6,11 +6,6 @@
 	  (http://www.devincentiis.it)
 	  <http://gazie.sourceforge.net>
 	  --------------------------------------------------------------------------
-	  REGISTRO DI CAMPAGNA è un modulo creato per GAzie da Antonio Germani, Massignano AP 
-	  Copyright (C) 2018-2021 - Antonio Germani, Massignano (AP)
-	  https://www.lacasettabio.it 
-	  https://www.programmisitiweb.lacasettabio.it
-	  --------------------------------------------------------------------------
 	  Questo programma e` free software;   e` lecito redistribuirlo  e/o
 	  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
 	  come e` pubblicata dalla Free Software Foundation; o la versione 2
@@ -25,9 +20,11 @@
 	  Generica GNU insieme a   questo programma; in caso  contrario,  si
 	  scriva   alla   Free  Software Foundation,  Inc.,   59
 	  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-	  --------------------------------------------------------------------------	 
-	  # free to use, Author name and references must be left untouched  #
-	  --------------------------------------------------------------------------	  
+	  --------------------------------------------------------------------------
+	  
+	  Registro di Campagna è un modulo creato da Antonio Germani Massignano AP 
+	  https://www.lacasettabio.it https://www.programmisitiweb.lacasettabio.it
+	  --------------------------------------------------------------------------
 */
 require ("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
@@ -2150,7 +2147,7 @@ if (intval($form['nome_colt']) == 0) {
 							}
 							echo "&nbsp;" . $print_unimis;
 							
-							if (($service == 0 or $service == 2) AND !isset($_POST['ins_op'.$form['mov']])) { // se è un articolo con magazzino e non è operaio o lavorazione agricola
+							if (($service == 0 or $service == 2) && (isset ($_POST['ins_op'.$form['mov']]) && $_POST['ins_op'.$form['mov']]!=="ins_op")) { // se è un articolo con magazzino e non è operaio o lavorazione agricola
 								
 								echo " - " . $script_transl[22] . " " . gaz_format_quantity($print_magval, 1, $admin_aziend['decimal_quantity']) . " " . $print_unimis . "&nbsp;&nbsp;";
 								// Antonio Germani se sottoscorta si attiva il pulsante di allerta e riordino. Al click si apre il popup con l'ordine compilato. >>> NB: al ritorno dall'ordine e dopo un submit, c'è un problema DA RISOLVERE: si apre una nuova finestra. <<< preferisco questo problema a quello che c'era prima, cioè si apriva la pagina dell'ordine annullando quanto già inserito nei movimenti.
