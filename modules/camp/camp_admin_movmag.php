@@ -838,7 +838,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
             $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
             for ($form['mov'] = 0;$form['mov'] <= $form['nmov'];++$form['mov']) { // per ogni movimento inserito
 			
-                if (!empty($form['artico'][$form['mov']])) { // se è stato inserito un articolo					
+                if (!empty($form['artico'][$form['mov']])) { // se è stato inserito un articolo	
+					$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);// prendo i dati articolo non presenti nel form
 					$nn=0;
 					for ($n = 1;$n <= $form['ncamp'];++$n) { // ciclo i campi inseriti
 						if (isset ($form['dim_campo'.$n]) AND $form['ncamp']>1) {
@@ -940,7 +941,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							$id_mov = $form['id_mov'];
 						}
 						// adesso vedo se si deve aggiornare il campo di coltivazione
-						if ($form['campo_impianto'.$n] > 0 && $form['operat'] < 0) {
+						if ($form['campo_impianto'.$n] > 0 && $form['operat'] < 0 && $itemart['good_or_service']!==1) {
 							/* Antonio Germani creo la data del trattamento selezionato a cui poi aggiungerò i giorni di sospensione. */
 							$dt = substr("0" . $form['giodoc'], -2) . "-" . substr("0" . $form['mesdoc'], -2) . "-" . $form['anndoc'];
 							$dt = strtotime($dt);
@@ -948,68 +949,68 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 							$query = "SELECT " . 'tempo_sosp' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $form['artico'][$form['mov']] . "' AND id_colt ='" . $form['id_colture'] . "' AND id_avv ='" . $form['id_avversita'][$form['mov']] . "'";
 							$result = gaz_dbi_query($query);
 							while ($row = $result->fetch_assoc()) {
-								$tempo_sosp = $row['tempo_sosp'];
+								$tempo_sosp = $row['tempo_sosp'];// se è presente in $temp_sosp ci metto quello specifico
 							}
 							if ($tempo_sosp == 0) { // se non è presente un tempo di sospensione specifico prendo quello generico. Lo metto in $temp_sosp
-								$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
-								$temp_sosp = $item['tempo_sospensione'];
-							} else {
-								$temp_sosp = $tempo_sosp; // se è presente in $temp_sosp ci metto quello specifico                            
-							}
-							$dt = $dt + (86400 * intval($temp_sosp)); //al giorno di attuazione i giorni di sospensione (Un giorno = 86400 timestamp)
-							// Antonio Germani controllo se il tempo di sospensione del campo di coltivazione è inferiore a quello che si crea con questo trattamento. Se lo è aggiorno il database campi nel campo di coltivazione selezionato
-							
-							if ($fine_sosp < $dt) {
-								$dt = date('Y/m/d', $dt);
-								$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' , id_colture = '" . $form['id_colture'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
-								gaz_dbi_query($query);
-							} else { // altrimenti
-								if ($toDo == "update") { // se è un update, devo vedere se ci sono altri movimenti con un tempo superiore
-									// prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione escludendo il movimento oggetto di update
-									$n = 0;
-									$array = array();
-									$query = "SELECT " . '*' . " FROM " . $gTables['movmag'] . " WHERE campo_impianto ='" . $form['campo_impianto'.$n] . "' AND operat ='-1' AND id_mov <> " . $id_movmag;
-									$result = gaz_dbi_query($query);
-									while ($row = $result->fetch_assoc()) {
-										// cerco i giorni di sospensione del prodotto interessato ad ogni movimento
-										$artico = $row['artico'];
-										$id_avversita = $row['id_avversita'];
-										$id_colture = $row['id_colture'];
-										$form3 = gaz_dbi_get_row($gTables['artico'], 'codice', $artico);
-										$temp_sosp = $form3['tempo_sospensione'];
-										// se è presente prendo il tempo di sospensione specifico altrimenti lascio quello generico
-										$query2 = "SELECT " . 'tempo_sosp' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $artico . "' AND id_colt ='" . $id_colture . "' AND id_avv ='" . $id_avversita . "'";
-										$result2 = gaz_dbi_query($query2);
-										while ($row2 = $result2->fetch_assoc()) {
-											$temp_sosp = $row2['tempo_sosp'];
+								
+								$temp_sosp = $itemart['tempo_sospensione'];
+							} 
+							if (intval($temp_sosp)>0){  // se c'è un tempo di sospensione 
+								$dt = $dt + (86400 * intval($temp_sosp)); //aggiiungo al giorno di attuazione i giorni di sospensione (Un giorno = 86400 timestamp)
+								// Antonio Germani controllo se il tempo di sospensione del campo di coltivazione è inferiore a quello che si crea con questo trattamento. Se lo è aggiorno il database campi nel campo di coltivazione selezionato
+								
+								if ($form['fine_sosp'.$n] < $dt) {
+									$dt = date('Y/m/d', $dt);
+									$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt . "' , codice_prodotto_usato = '" . $form['artico'][$form['mov']] . "' , id_mov = '" . $id_mov . "' , id_colture = '" . $form['id_colture'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
+									gaz_dbi_query($query);
+								} else { // altrimenti
+									if ($toDo == "update") { // se è un update, devo vedere se ci sono altri movimenti con un tempo superiore
+										// prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione escludendo il movimento oggetto di update
+										$n = 0;
+										$array = array();
+										$query = "SELECT " . '*' . " FROM " . $gTables['movmag'] . " WHERE campo_impianto ='" . $form['campo_impianto'.$n] . "' AND operat ='-1' AND id_mov <> " . $id_movmag;
+										$result = gaz_dbi_query($query);
+										while ($row = $result->fetch_assoc()) {
+											// cerco i giorni di sospensione del prodotto interessato ad ogni movimento
+											$artico = $row['artico'];
+											$id_avversita = $row['id_avversita'];
+											$id_colture = $row['id_colture'];
+											$form3 = gaz_dbi_get_row($gTables['artico'], 'codice', $artico);
+											$temp_sosp = $form3['tempo_sospensione'];
+											// se è presente prendo il tempo di sospensione specifico altrimenti lascio quello generico
+											$query2 = "SELECT " . 'tempo_sosp' . " FROM " . $gTables['camp_uso_fitofarmaci'] . " WHERE cod_art ='" . $artico . "' AND id_colt ='" . $id_colture . "' AND id_avv ='" . $id_avversita . "'";
+											$result2 = gaz_dbi_query($query2);
+											while ($row2 = $result2->fetch_assoc()) {
+												$temp_sosp = $row2['tempo_sosp'];
+											}
+											// creo un array con tempo di sospensione + codice articolo + movimento magazzino
+											$temp_deca = (intval($temp_sosp) * 86400) + strtotime($row["datdoc"]);
+											$array[$n] = array('temp_deca' => $temp_deca, 'datdoc' => $row["datdoc"], 'artico' => $artico, 'id_mov' => $row["id_mov"]);
+											$n = $n + 1;
+											// ordino l'array per tempo di sospensione
+										
 										}
-										// creo un array con tempo di sospensione + codice articolo + movimento magazzino
-										$temp_deca = (intval($temp_sosp) * 86400) + strtotime($row["datdoc"]);
-										$array[$n] = array('temp_deca' => $temp_deca, 'datdoc' => $row["datdoc"], 'artico' => $artico, 'id_mov' => $row["id_mov"]);
-										$n = $n + 1;
-										// ordino l'array per tempo di sospensione
-                                    
-									}
-									rsort($array);
-									$dt_db_movmag = date('Y/m/d', $array[0]['temp_deca']);
-									if ($n > 0 && $fine_sosp < $array[0]['temp_deca'] && $array[0]['temp_deca'] > $dt) { //se la data nel campo è minore della data trovata nei movimenti di magazzino che è maggiore di quella di questo movimento
-										// memorizzo nel campo la data trovata nei movimenti
-										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt_db_movmag . "' , codice_prodotto_usato = '" . $array[0]['artico'] . "' , id_mov = '" . $array[0]['id_mov'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
-										gaz_dbi_query($query);
-									} elseif ($n > 0 && $fine_sosp > $array[0]['temp_deca'] && $array[0]['temp_deca'] > $dt) { // se la data nel campo è maggiore della data trovata nei movimenti di magazzino e la data trovata nei movimenti di magazzino è maggiore di quella di questo movimento
-										// memorizzo nel campo la data trovata nei movimenti di magazzino
-										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $array[0]['temp_deca']) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $array[0]['id_mov'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
-										gaz_dbi_query($query);
-									} elseif ($n == 1 && $dt > $array[0]['temp_deca']) { // se c'è un solo movimento di magazzino, oltre a questo in update, e la data di questo movimento è maggiore di quella del movimento di magazzino
-										// memorizzo nel campo la data di questo movimento
-										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
-										gaz_dbi_query($query);
-									} elseif ($n == 0) { // se non ci altri movimenti di magazzino, cioè questo è unico
-										// memorizzo nel campo la data di questo movimento
-										$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
-										gaz_dbi_query($query);
-									} else { // altrimenti non faccio nulla perché va bene la data memorizzata in precedenza nel campo
-                                    
+										rsort($array);
+										$dt_db_movmag = date('Y/m/d', $array[0]['temp_deca']);
+										if ($n > 0 && $fine_sosp < $array[0]['temp_deca'] && $array[0]['temp_deca'] > $dt) { //se la data nel campo è minore della data trovata nei movimenti di magazzino che è maggiore di quella di questo movimento
+											// memorizzo nel campo la data trovata nei movimenti
+											$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt_db_movmag . "' , codice_prodotto_usato = '" . $array[0]['artico'] . "' , id_mov = '" . $array[0]['id_mov'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
+											gaz_dbi_query($query);
+										} elseif ($n > 0 && $fine_sosp > $array[0]['temp_deca'] && $array[0]['temp_deca'] > $dt) { // se la data nel campo è maggiore della data trovata nei movimenti di magazzino e la data trovata nei movimenti di magazzino è maggiore di quella di questo movimento
+											// memorizzo nel campo la data trovata nei movimenti di magazzino
+											$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $array[0]['temp_deca']) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $array[0]['id_mov'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
+											gaz_dbi_query($query);
+										} elseif ($n == 1 && $dt > $array[0]['temp_deca']) { // se c'è un solo movimento di magazzino, oltre a questo in update, e la data di questo movimento è maggiore di quella del movimento di magazzino
+											// memorizzo nel campo la data di questo movimento
+											$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
+											gaz_dbi_query($query);
+										} elseif ($n == 0) { // se non ci altri movimenti di magazzino, cioè questo è unico
+											// memorizzo nel campo la data di questo movimento
+											$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) . "' , codice_prodotto_usato = '" . $artico . "' , id_mov = '" . $id_mov . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
+											gaz_dbi_query($query);
+										} else { // altrimenti non faccio nulla perché va bene la data memorizzata in precedenza nel campo
+										
+										}
 									}
 								}
 							}
