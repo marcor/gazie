@@ -37,8 +37,10 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
- // ho modificato i valori
-    if (count($_POST) > 0) {
+$getenable_sync = gaz_dbi_get_row($gTables['aziend'], 'codice', $admin_aziend['codice'])['gazSynchro'];
+$enable_sync = explode(",",$getenable_sync);
+
+    if (count($_POST) > 0) { // ho modificato i valori
 
         $_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
@@ -85,11 +87,16 @@ $admin_aziend = checkAdmin(9);
 			}
 		}
 
-		if ($_POST['enable_sync']=="SI"){
-			gaz_dbi_table_update("aziend", $admin_aziend['codice'], array("gazSynchro"=>"shop-synchronize"));
+		if ($_POST['set_enable_sync']=="SI" && $enable_sync[0] !== "shop-synchronize"){
+			array_unshift($enable_sync , 'shop-synchronize');// aggiungo shopsync all'inizio dell'array			
 		} else {
-			gaz_dbi_table_update("aziend", $admin_aziend['codice'], array("gazSynchro"=>""));
+			if ($enable_sync[0] == "shop-synchronize"){
+				unset($enable_sync[0]);
+			}			
 		}
+		$set_sync=implode(",", $enable_sync);
+		gaz_dbi_table_update("aziend", $admin_aziend['codice'], array("gazSynchro"=>$set_sync));// aggiorno i nomi dei moduli
+		
         header("Location: config_sync.php?ok");
         exit;
     }
@@ -102,7 +109,7 @@ require("./lang." . $admin_aziend['lang'] . ".php");
 if (isset($script)) { // se è stato tradotto lo script lo ritorno al chiamante
     $script_transl = $strScript[$script];
 }
-$enable_sync = gaz_dbi_get_row($gTables['aziend'], 'codice', $admin_aziend['codice'])['gazSynchro'];
+
 $script_transl = $strCommon + $script_transl;
 $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0, 1000);
 ?>
@@ -263,13 +270,13 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 				<label for="input<?php echo $user["id"]; ?>" class="col-sm-5 control-label">Attiva la sincronizzazione automatica <p style='font-size:8px;'> Per un corretto allineamento di GAzie con l'e-commerce, si consiglia di mantere sempre attivato.</p></label>
 				<div class="col-sm-7">
 				<?php
-				if (strlen($enable_sync)>1){
+				if ($enable_sync[0]=="shop-synchronize"){
 					?>
-					<input type="radio" value="SI" name="enable_sync" checked="checked" >Si - No<input type="radio" value="NO" name="enable_sync">
+					<input type="radio" value="SI" name="set_enable_sync" checked="checked" >Si - No<input type="radio" value="NO" name="set_enable_sync">
 					<?php
 				} else {
 					?>
-					<input type="radio" value="SI" name="enable_sync">Si - No<input type="radio" value="NO" name="enable_sync" checked="checked">
+					<input type="radio" value="SI" name="set_enable_sync">Si - No<input type="radio" value="NO" name="set_enable_sync" checked="checked">
 					<?php
 				}
 				?>
