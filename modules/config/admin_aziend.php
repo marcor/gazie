@@ -645,8 +645,18 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="gazSynchro" class="col-sm-4 control-label"><?php echo $script_transl['gazSynchro']; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['gazSynchro']; ?>" name="gazSynchro" maxlength="50" placeholder="es: shop-synchronize" />
-                    </div>
+                        <input class="col-sm-7" type="text" value="<?php echo $form['gazSynchro']; ?>" name="gazSynchro" maxlength="50" placeholder="es: shop-synchronize" />
+						
+						<span data-toggle="popover" title="Moduli di sincronizzazione" 
+						data-content="Inserire il nome dei moduli di sincronizzazione installati.<br>
+						E' possibile inserire, e quindi sincronizzare, più di un nome/modulo ma ogni nome deve essere separato da una virgola, senza spazio ne prima e ne dopo (ad esempio: <i>shop-sync,pec,sdi</i>).<br>
+						Il primo nome/modulo deve necessariamente essere quello di un e-commerce in quanto necessita di sincronizzazioni più frequenti. A seguire vanno inseriti gli eventuali altri moduli.<br>
+						Nel caso in cui non sia presente il modulo e-commerce ma siano presenti altri moduli è necessario comunque scrivere un nome per l'e-commerce che, in questo caso, sarà di fantasia (ad esempio <i>NoEcommerce</i>).<br>
+						PS: La frequenza, ogni quanti minuti si avvia la sincronizzazione, va impostata in configurazione azienda/avanzata."
+						class="col-sm-1 glyphicon glyphicon-info-sign" data-placement="left" style="cursor: pointer;">
+						</span>
+						
+					</div>
                 </div>
             </div><!-- chiude row  -->
           </div><!-- chiude tab-pane  -->
@@ -1350,8 +1360,21 @@ if (count($msg['err']) > 0) { // ho un errore
         </div>
     </div>
 </div>
-
 </form>
+
+<script>
+	$(document).ready(function(){		
+		$('[data-toggle="popover"]').popover({
+			html: true
+		});   
+	});
+</script>
+<style>
+.popover{
+	min-width: 200px;
+}
+</style>
+
 <?php
 require("../../library/include/footer.php");
 ?>
