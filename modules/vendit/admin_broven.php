@@ -26,6 +26,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
+$scorrimento = gaz_dbi_get_row($gTables['company_config'], 'var', 'autoscroll_to_last_row')['val'];
 $after_newdoc_back_to_doclist=gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
 $msgtoast = "";
 $msg = "";
@@ -1440,7 +1441,7 @@ if ($form['id_tes'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]);
 }
 echo '<script type="text/javascript">';
-if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == TRUE ) { // se ho un errore non scrollo
+if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == '1' ) { // se ho un errore non scrollo
 	if (!empty($_POST['last_focus'])){
 		$idlf='#'.$_POST['last_focus'];
 		$_POST['last_focus']='';

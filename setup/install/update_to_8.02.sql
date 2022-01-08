@@ -46,4 +46,7 @@ ALTER TABLE `gaz_XXXrigbro`	CHANGE COLUMN `codart` `codart` VARCHAR(32) NOT NULL
 ALTER TABLE `gaz_XXXrigdoc` CHANGE COLUMN `codart` `codart` VARCHAR(32) NOT NULL DEFAULT '' AFTER `tiprig`;
 ALTER TABLE `gaz_XXXsconti_articoli` CHANGE COLUMN `codart` `codart` VARCHAR(32) NOT NULL AFTER `clfoco`;
 ALTER TABLE `gaz_XXXsconti_raggruppamenti` CHANGE COLUMN `ragstat` `ragstat` CHAR(32) NOT NULL AFTER `clfoco`;
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT
+'Attiva lo scroll automatico sull\'ultimo rigo dei documenti (0=No, 1=Si)', 'autoscroll_to_last_row', '1' FROM DUAL
+WHERE NOT EXISTS (SELECT `var` FROM `gaz_XXXcompany_config` WHERE `var` = 'autoscroll_to_last_row' LIMIT 1);
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

@@ -28,6 +28,7 @@ require("../../modules/vendit/lib.function.php");
 require("../../modules/camp/lib.function.php");
 $admin_aziend = checkAdmin();
 $pdf_to_modal = gaz_dbi_get_row($gTables['company_config'], 'var', 'pdf_reports_send_to_modal')['val'];
+$scorrimento = gaz_dbi_get_row($gTables['company_config'], 'var', 'autoscroll_to_last_row')['val'];
 $after_newdoc_back = gaz_dbi_get_row($gTables['company_config'], 'var', 'after_newdoc_back_to_doclist')['val'];
 $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
@@ -1981,7 +1982,7 @@ $(function () {
         this.value = this.value.replace(/[^\d]/g, '');
     });
     <?php
-    if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 && !isset($_POST['ins']) && $scorrimento==TRUE) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
+    if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 && !isset($_POST['ins']) && $scorrimento=='1') { // scrollo solo se voluto, ho selezionato il cliente e non ci sono errori
         ?>
         $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
         <?php

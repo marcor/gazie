@@ -24,6 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$scorrimento = gaz_dbi_get_row($gTables['company_config'], 'var', 'autoscroll_to_last_row')['val'];
 $msg = "";
 //Creo l'array associativo delle descrizioni dei documenti e dei relativi operatori
 $TipoDocumento = array("AOR" => 0, "APR" => 0, "AFA" => 1);
@@ -970,7 +971,7 @@ $( function() {
 									}
 								});
 <?php
-if (empty($msg) && $scorrimento==TRUE) { // se ho un errore non scrollo
+if (empty($msg) && $scorrimento=='1') { // se ho un errore non scrollo
 	if (!empty($_POST['last_focus'])){
 		$idlf="button[name='upper_row[".intval($_POST['last_focus'])."]']";
 		$_POST['last_focus']='';
