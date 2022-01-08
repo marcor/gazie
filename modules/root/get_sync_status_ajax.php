@@ -44,11 +44,12 @@ foreach($syncmod as $k=>$v){
 	$gSync = new $classname();
 	if($gSync->api_token){
 	  $datares=[];
-      $gSync->get_sync_status($id);
+      $gSync->get_sync_status(0);
 	}
 	$datares[$v]=$gSync->rawres;
     $_SESSION['menu_alerts'][$v]=$datares[$v];
   }
+  
 }
 echo json_encode($datares);
 ?>
