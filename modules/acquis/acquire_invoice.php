@@ -1602,7 +1602,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 								?>		
 								<p>		 
 								<?php echo $fae_pec['title']," ";?>
-								<input type="submit" name="Submit_pec" class="btn btn-default" value="<?php echo $fae_pec['id_doc'],$fae_pec['extension'];?>">
+								<input type="submit" name="Submit_pec" class="btn btn-default" value="<?php echo $fae_pec['id_doc'],".",$fae_pec['extension'];?>">
 								<input type="hidden" name="title_pec" class="btn btn-default" value="<?php echo $fae_pec['title'];?>">
 								</p>
 									
