@@ -185,7 +185,10 @@ function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
     $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "(tipdoc='ADT' OR tipdoc='RDL') AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."' AND codart LIKE '".$codart."'", "id_rig DESC", 0, 1);
     return gaz_dbi_fetch_array($result);
 }
+$sync_mods=array();
+$sync_mods=explode(",",$admin_aziend['gazSynchro']);
 
+	
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
 	$form['date_ini_D'] = '01';
@@ -195,8 +198,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_M'] = date('m');
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
+	if (in_array('sdipec',$sync_mods)){
+		$res_faepec=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='pec' AND custom_field = ''", "id_doc DESC", 0);		
+	}	
+
 } else { // accessi successivi
+	
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
+	
 	$form['curr_doc'] = intval($_POST['curr_doc']);
 	$form['date_ini_D'] = '01';
 	$form['date_ini_M'] = date('m');
@@ -204,6 +213,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_D'] = date('d');
 	$form['date_fin_M'] = date('m');
 	$form['date_fin_Y'] = date('Y');
+	
 	if (!isset($_POST['datreg'])){
 		$form['datreg'] = date("d/m/Y");
 		$form['seziva'] = 1;
@@ -217,8 +227,10 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$form['seziva'] = intval($_POST['seziva']);
 		$form['in_id_warehouse'] = intval($_POST['in_id_warehouse']);
 	}
-	if (isset($_POST['Submit_file'])) { // conferma invio upload file
+	if (isset($_POST['Submit_file']) || isset($_POST['Submit_pec'])) { // conferma invio upload file
+	
         if (!empty($_FILES['userfile']['name'])) {
+			
             if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "application/pkcs7" || $_FILES['userfile']['type'] == "text/xml")) {
 				$msg['err'][] = 'filmim';
 			} else {
@@ -231,13 +243,20 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		} else if (!empty($_POST['selected_SdI'])) {
 			require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
 			$FattF = DownloadFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('id_SdI' => $_POST['selected_SdI'])));
+			
 			if (!empty($FattF) && is_array($FattF) && file_put_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . key($FattF), base64_decode($FattF[key($FattF)])) !== FALSE) { // nessun errore
 				$form['fattura_elettronica_original_name'] = key($FattF);
 			} else { // no upload
 				$msg['err'][] = 'no_upload';
 			}
+		} else {// è un fae proveniente da PEC
+		
+			copy(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/doc/'.$_POST['Submit_pec'] , DATA_DIR . 'files/' . $admin_aziend['codice'] . '/'.$_POST['title_pec']);
+			$form['fattura_elettronica_original_name']=$_POST['title_pec'];
+			$_POST['Submit_file']="Acquisisci";
 		}
 	} else if (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
+		
 		$form['pagame'] = intval($_POST['pagame']);
 		$form['new_acconcile'] = intval($_POST['new_acconcile']);
         if ($form['pagame'] <= 0 ) {  // ma non ho selezionato il pagamento
@@ -294,6 +313,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 
       }
 		// INIZIO acquisizione e pulizia file xml o p7m
+		//echo"",print_r($form);
 		$file_name = DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
 		if (!isset($_POST['datreg'])&& !$tesdoc){
 			$form['datreg'] = date("d/m/Y",filemtime($file_name));
@@ -614,7 +634,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['rows'][$nl]['codart'] = '';
 						$form['codart_'.$post_nl] ='';
 					}
-					if (isset( $form['rows'][$nl]['search_codart'])){
+					if (isset( $form['rows'][$nl]['search_codart']) && strlen($form['rows'][$nl]['search_codart'])>0){
 						$form['search_codart_'.$post_nl] = $form['rows'][$nl]['search_codart'];
 					} else {
 						$form['rows'][$nl]['search_codart'] = '';
@@ -781,7 +801,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						$form['rows'][$nl]['codart'] = '';
 						$form['codart_'.$post_nl] ='';
 					}
-					if (isset( $form['rows'][$nl]['search_codart'])){
+					if (isset( $form['rows'][$nl]['search_codart']) && strlen($form['rows'][$nl]['search_codart'])>0){
 						$form['search_codart_'.$post_nl] = $form['rows'][$nl]['search_codart'];
 					} else {
 						$form['rows'][$nl]['search_codart'] = '';
@@ -1164,23 +1184,25 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						}
 						$v['catmer'] = 1; // di default utilizzo la prima categoria merceologica, sarebbe da farla selezionare all'operatore...
 						$form['rows'][$i]['good_or_service']=0;
-						switch ($v['codart']) {
-							case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
-							$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
-							gaz_dbi_table_insert('artico', $artico);
-							$form['rows'][$i]['codart'] = $new_codart;
-							break;
-							case 'Insert_W_lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
-							$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
-							gaz_dbi_table_insert('artico', $artico);
-							$form['rows'][$i]['codart'] = $new_codart;
-							break;
-							case 'Insert_W_matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
-							$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
-							gaz_dbi_table_insert('artico', $artico);
-							$form['rows'][$i]['codart'] = $new_codart;
-							break;
-							default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
+						if (isset($v['codart'])){
+							switch ($v['codart']) {
+								case 'Insert_New': // inserisco il nuovo articolo in gaz_XXXartico senza lotti o matricola
+								$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
+								gaz_dbi_table_insert('artico', $artico);
+								$form['rows'][$i]['codart'] = $new_codart;
+								break;
+								case 'Insert_W_lot': // inserisco il nuovo articolo in gaz_XXXartico con lotti
+								$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>1,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
+								gaz_dbi_table_insert('artico', $artico);
+								$form['rows'][$i]['codart'] = $new_codart;
+								break;
+								case 'Insert_W_matr': //  inserisco il nuovo articolo in gaz_XXXartico con matricola
+								$artico=array('codice'=>$new_codart,'descri'=>$v['descri'],'catmer'=>$v['catmer'],'codice_fornitore'=>$v['codice_fornitore'],'lot_or_serial'=>2,'unimis'=>$v['unimis'],'web_mu'=>$v['unimis'],'uniacq'=>$v['unimis'],'aliiva'=>$aliiva);
+								gaz_dbi_table_insert('artico', $artico);
+								$form['rows'][$i]['codart'] = $new_codart;
+								break;
+								default: //  negli altri casi controllo se devo inserire il riferimento ad una bolla
+							}
 						}
 					}
 					// alla fine se ho un codice articolo e il tipo rigo è normale aggiorno l'articolo con il nuovo prezzo d'acquisto e con l'ultimo fornitore
@@ -1244,6 +1266,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						}
 					}
 				}
+				// Antonio Germani se ho il modulo sdipec aggiorno il file xml acquisito con pec 
+				
+				if (in_array('sdipec',$sync_mods)){
+					$where = array();
+					$where[]="title";
+					$where[]=$form['fattura_elettronica_original_name'];
+					$set['custom_field']="acquisita";
+					gaz_dbi_table_update("files", $where, $set);
+				}
+				
 				header('Location: report_docacq.php?sezione='.$form['seziva']);
 				exit;
 			} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
@@ -1323,215 +1355,216 @@ if (count($msg['war']) > 0) { // ho un alert
 
 if ($toDo=='insert' || $toDo=='update' ) {
 	if ($f_ex){
-	if (empty($form['curr_doc']) && count($docs) > 1) {
-?>
-		<div class="row">
-				<div class="form-group">
-					<label for="image" class="col-sm-4 control-label">Scegli la fattura da acquisire</label>
-					<div class="col-sm-12">
-						<br />
+		if (empty($form['curr_doc']) && count($docs) > 1) {
+	?>
+			<div class="row">
+					<div class="form-group">
+						<label for="image" class="col-sm-4 control-label">Scegli la fattura da acquisire</label>
+						<div class="col-sm-12">
+							<br />
 
-<?php
-			$ndoc = 0;
-			echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
-			echo '<tr><th>Seleziona</th><th>Tipo Doc.</th><th>Numero</th><th>Data</th></tr>';
-			foreach ($docs as $doc) {
-				$ndoc++;
-				$tipdoc = $xpath->query("//FatturaElettronicaBody[".$ndoc."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue;
-				$datdoc = $xpath->query("//FatturaElettronicaBody[".$ndoc."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
-				$numdoc = $xpath->query("//FatturaElettronicaBody[".$ndoc."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
-				echo '<tr>';
-				echo '<td align="center">' . $ndoc . ' <input type="radio" name="curr_doc" value="' . $ndoc . '" /></td>';
-				echo '<td>' . $tipdoc . '</td>';
-				echo '<td>' . gaz_format_date($datdoc, false) . '</td>';
-				echo '<td>' . $numdoc . '</td>';
-				echo '</tr>';
-			}
-			echo '</table><br />';
-			echo '<div class="col-sm-12 text-right"><input name="Select_doc" type="submit" class="btn btn-warning" value="Seleziona documento" />';
-?>
+	<?php
+				$ndoc = 0;
+				echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
+				echo '<tr><th>Seleziona</th><th>Tipo Doc.</th><th>Numero</th><th>Data</th></tr>';
+				foreach ($docs as $doc) {
+					$ndoc++;
+					$tipdoc = $xpath->query("//FatturaElettronicaBody[".$ndoc."]/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0)->nodeValue;
+					$datdoc = $xpath->query("//FatturaElettronicaBody[".$ndoc."]/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+					$numdoc = $xpath->query("//FatturaElettronicaBody[".$ndoc."]/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
+					echo '<tr>';
+					echo '<td align="center">' . $ndoc . ' <input type="radio" name="curr_doc" value="' . $ndoc . '" /></td>';
+					echo '<td>' . $tipdoc . '</td>';
+					echo '<td>' . gaz_format_date($datdoc, false) . '</td>';
+					echo '<td>' . $numdoc . '</td>';
+					echo '</tr>';
+				}
+				echo '</table><br />';
+				echo '<div class="col-sm-12 text-right"><input name="Select_doc" type="submit" class="btn btn-warning" value="Seleziona documento" />';
+	?>
+						</div>
 					</div>
 				</div>
-			</div>
-		</div><!-- chiude row  -->
-<?php
-	} else {
-?>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['head_text1']. '<span class="label label-success">'.$form['fattura_elettronica_original_name'] .'</span>'.$script_transl['head_text2']; ?>
-            </div>
-        </div> <!-- chiude row  -->
-    </div>
-    <div class="panel-body">
-        <div class="form-group">
-            <div class="form-group col-md-4 col-lg-2 nopadding">
-                 <label for="seziva" class="col-form-label"><?php echo $script_transl['seziva']; ?></label>
-                 <div>
-                        <?php
-                        $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-xs-12", '', 'style="max-width: 100px;"');
-                        ?>
-                </div>
-            </div>
-            <div class="form-group col-md-4 col-lg-2 nopadding">
-				<label for="in_id_warehouse" class="col-form-label">Magazzino</label>
-                 <div>
-<?php
-$magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col-xs-12 col-sm-6');
-?>
+			</div><!-- chiude row  -->
+	<?php
+		} else {
+	?>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">
+				<div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['head_text1']. '<span class="label label-success">'.$form['fattura_elettronica_original_name'] .'</span>'.$script_transl['head_text2']; ?>
 				</div>
-            </div>
-            <div class="form-group col-md-4 col-lg-2 nopadding">
-                 <label for="datreg" class="col-form-label"><?php echo $script_transl['datreg']; ?></label>
-                 <div>
-                     <input type="text" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
-                 </div>
-            </div>
-            <div class="form-group col-md-6 col-lg-3 nopadding">
-                <label for="new_acconcile" class="col-form-label" ><?php echo $script_transl['new_acconcile']; ?></label>
-                <div>
-                <?php
-				// new_acconcile lo riporto sempre a 0 dopo ogni post e solo quando viene cambiato cambieranno tutti i valori dei conti di costo di tutti i righi
-				$gForm->selectAccount('new_acconcile', 0, array('sub',3),'', false, "col-xs-12 small",'style="max-width: 300px;"', false);
-				?>
-                </div>
-            </div>
-            <div class="form-group col-md-6 col-lg-3 nopadding">
-                 <label for="pagame" class="col-form-label" ><?php echo $script_transl['pagame']; ?></label>
-                 <div>
-                        <?php
-                        $select_pagame = new selectpagame("pagame");
-                        $select_pagame->addSelected($form["pagame"]);
-                        $select_pagame->output(false, "col-lg-12");
-                        ?>
-                </div>
-            </div>
-        </div> <!-- chiude row  -->
-    </div>
-</div>
-<?php
-		$rowshead=array();
-		$ctrl_ddt='';
-		$exist_movmag=false;
-		$new_acconcile=$form['new_acconcile'];
-		foreach ($form['rows'] as $k => $v) {
-			$k--;
-			if (!empty($v['NumeroDDT'])){
-				if ($ctrl_ddt!=$v['NumeroDDT']){
-					// qui valorizzo il rigo di riferimento al ddt
-					$exist_ddt='';
-					if ($v['exist_ddt']){ // ho un ddt d'acquisto già inserito
-						$exist_ddt='<span class="warning">- questo DdT &egrave; gi&agrave; stato inserito <a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='. $v['exist_ddt']['id_tes'] . '&Update"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$v['exist_ddt']['id_tes'].'</a></span>';
-						$tipddt=$v['exist_ddt']['tipdoc'];
-					} else {
-						$tipddt="Ddt";
-					}
-					$ctrl_ddt=$v['NumeroDDT'];
-					$rowshead[$k]='<td colspan=13><b> da '.$tipddt.' n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
-
-					if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
-						if ($anomalia == "AnomaliaDDT=FAT"){
-							$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura fa riferimento ad un DDT che ha il suo numero e stessa data. E\' da considerarsi come accompagnatoria. <</b></p><p>GAzie acquisirà questo documento come fattura semplice AFA.</p></td>';
-						} else if ($anomalia=="AnomaliaExistDdt"){
-						$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT con i collegamenti ai righi degli articoli anomali o mancanti <</b></p><p>GAzie è in grado di rimediare a patto che i DDT già inseriti non differiscano dalla FAE.</p></td>';
+			</div> <!-- chiude row  -->
+		</div>
+		<div class="panel-body">
+			<div class="form-group">
+				<div class="form-group col-md-4 col-lg-2 nopadding">
+					 <label for="seziva" class="col-form-label"><?php echo $script_transl['seziva']; ?></label>
+					 <div>
+							<?php
+							$gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, "col-xs-12", '', 'style="max-width: 100px;"');
+							?>
+					</div>
+				</div>
+				<div class="form-group col-md-4 col-lg-2 nopadding">
+					<label for="in_id_warehouse" class="col-form-label">Magazzino</label>
+					 <div>
+	<?php
+	$magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col-xs-12 col-sm-6');
+	?>
+					</div>
+				</div>
+				<div class="form-group col-md-4 col-lg-2 nopadding">
+					 <label for="datreg" class="col-form-label"><?php echo $script_transl['datreg']; ?></label>
+					 <div>
+						 <input type="text" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
+					 </div>
+				</div>
+				<div class="form-group col-md-6 col-lg-3 nopadding">
+					<label for="new_acconcile" class="col-form-label" ><?php echo $script_transl['new_acconcile']; ?></label>
+					<div>
+					<?php
+					// new_acconcile lo riporto sempre a 0 dopo ogni post e solo quando viene cambiato cambieranno tutti i valori dei conti di costo di tutti i righi
+					$gForm->selectAccount('new_acconcile', 0, array('sub',3),'', false, "col-xs-12 small",'style="max-width: 300px;"', false);
+					?>
+					</div>
+				</div>
+				<div class="form-group col-md-6 col-lg-3 nopadding">
+					 <label for="pagame" class="col-form-label" ><?php echo $script_transl['pagame']; ?></label>
+					 <div>
+							<?php
+							$select_pagame = new selectpagame("pagame");
+							$select_pagame->addSelected($form["pagame"]);
+							$select_pagame->output(false, "col-lg-12");
+							?>
+					</div>
+				</div>
+			</div> <!-- chiude row  -->
+		</div>
+	</div>
+	<?php
+			$rowshead=array();
+			$ctrl_ddt='';
+			$exist_movmag=false;
+			$new_acconcile=$form['new_acconcile'];
+			foreach ($form['rows'] as $k => $v) {
+				$k--;
+				if (!empty($v['NumeroDDT'])){
+					if ($ctrl_ddt!=$v['NumeroDDT']){
+						// qui valorizzo il rigo di riferimento al ddt
+						$exist_ddt='';
+						if ($v['exist_ddt']){ // ho un ddt d'acquisto già inserito
+							$exist_ddt='<span class="warning">- questo DdT &egrave; gi&agrave; stato inserito <a class="btn btn-xs btn-success" href="admin_docacq.php?id_tes='. $v['exist_ddt']['id_tes'] . '&Update"><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$v['exist_ddt']['id_tes'].'</a></span>';
+							$tipddt=$v['exist_ddt']['tipdoc'];
 						} else {
-							$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT senza però collegare gli articoli ai rispettivi DDT <</b></p><p>Se è presente più di un DDT, prima di inserire la FAE, si consiglia di inserire manualmente i DDT altrimenti verrà creato automaticamente un unico ddt di raggruppamento anomalo.</p></td>';
+							$tipddt="Ddt";
+						}
+						$ctrl_ddt=$v['NumeroDDT'];
+						$rowshead[$k]='<td colspan=13><b> da '.$tipddt.' n.'.$v['NumeroDDT'].' del '.gaz_format_date($v['DataDDT']).' '.$exist_ddt.'</b></td>';
+
+						if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
+							if ($anomalia == "AnomaliaDDT=FAT"){
+								$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura fa riferimento ad un DDT che ha il suo numero e stessa data. E\' da considerarsi come accompagnatoria. <</b></p><p>GAzie acquisirà questo documento come fattura semplice AFA.</p></td>';
+							} else if ($anomalia=="AnomaliaExistDdt"){
+							$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT con i collegamenti ai righi degli articoli anomali o mancanti <</b></p><p>GAzie è in grado di rimediare a patto che i DDT già inseriti non differiscano dalla FAE.</p></td>';
+							} else {
+								$rowshead[$k]='<td colspan=13><p class="text-warning"><b>> ANOMALIA FAE: questa fattura riporta DDT senza però collegare gli articoli ai rispettivi DDT <</b></p><p>Se è presente più di un DDT, prima di inserire la FAE, si consiglia di inserire manualmente i DDT altrimenti verrà creato automaticamente un unico ddt di raggruppamento anomalo.</p></td>';
+							}
 						}
 					}
+				} else if (!empty($ctrl_ddt)){
+					$ctrl_ddt='';
+					$rowshead[$k]='<td colspan=13> senza riferimento a DdT</td>';
 				}
-			} else if (!empty($ctrl_ddt)){
-				$ctrl_ddt='';
-				$rowshead[$k]='<td colspan=13> senza riferimento a DdT</td>';
-			}
 
-			if ($new_acconcile>100000000){
-				$form['codric_'.$k]=$new_acconcile;
-			}
-      $codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
-			$whareh_dropdown = $magazz->selectIdWarehouse('warehouse_'.$k,$form['warehouse_'.$k],true,'col-xs-12',$form['codart_'.$k],$datdoc,($docOperat[$tipdoc]*-floatval($v['quanti'])));
-			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
-			$codart_select = $gForm->concileArtico('codart_'.$k,$form['search_codart_'.$k],$form['codart_'.$k]);
-			//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
-			if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
-				$v['codice_fornitore'] = '';
-				$v['unimis'] = '';
-				$v['quanti'] = '';
-				$v['unimis'] = '';
-				$v['prelis'] = '';
-				$v['sconto'] = '';
-				$v['amount'] = '';
-				$v['ritenuta'] = '';
-				$v['pervat'] = '';
-				$codric_dropdown = '<input type="hidden" name="codric_'.$k.'" value="000000000" />';
-				$whareh_dropdown = '<input type="hidden" name="warehouse_'.$k.'" value="0" />';
-				$codvat_dropdown = '<input type="hidden" name="codvat_'.$k.'" value="0" />';
-				$codart_select = '<input type="hidden" name="codart_'.$k.'" /><input type="hidden" name="search_codart_'.$k.'" />';
-			} else {
-				//$v['prelis']=gaz_format_number($v['prelis']);
-				$v['amount']=gaz_format_number($v['amount']);
-				$v['ritenuta']=floatval($v['ritenuta']);
-				$v['pervat']=floatval($v['pervat']);
-			}
-			// creo l'array da passare alla funzione per la creazione della tabella responsive
-            $resprow[$k] = array(
-                array('head' => $script_transl["nrow"], 'class' => '',
-                    'value' => $k+1),
-                array('head' => $script_transl["codart"], 'class' => '',
-                    'value' => $v['codice_fornitore']),
-                array('head' => 'Articolo', 'class' => '',
-                    'value' => $codart_select),
-                array('head' => 'Magazzino', 'class' => '',
-                    'value' => $whareh_dropdown),
-                array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
-                    'value' => $v['descri']),
-                array('head' => $script_transl["unimis"], 'class' => '',
-                    'value' => $v['unimis']),
-                array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                    'value' => $v['quanti']),
-                array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => $v['prelis']),
-                array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
-                    'value' => $v['sconto']),
-                array('head' => $script_transl["amount"], 'class' => 'text-right numeric',
-					'value' => $v['amount'], 'type' => ''),
-                array('head' => $script_transl["conto"], 'class' => 'text-center numeric',
-					'value' => $codric_dropdown, 'type' => ''),
-                array('head' => $script_transl["tax"], 'class' => 'text-center numeric',
-					'value' => $codvat_dropdown, 'type' => ''),
-                array('head' => '%', 'class' => 'text-center numeric',
-					'value' => $v['pervat'], 'type' => ''),
-                array('head' => 'Ritenuta', 'class' => 'text-center numeric',
-					'value' => $v['ritenuta'], 'type' => '')
-            );
-
-		}
-		$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table', $rowshead);
-?>	   <div class="col-sm-6">
-<?php
-		if ($nf){
-?>
-		Allegato: <input name="Download" type="submit" class="btn btn-default" value="<?php echo $name_file; ?>" />
-<?php
-		}
-?>
-		</div>
-		<div class="col-sm-6">
-			<div class="col-sm-10 bg-warning">
-				<?php
-				if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
-					echo $rowshead[0];
+				if ($new_acconcile>100000000){
+					$form['codric_'.$k]=$new_acconcile;
+				}				
+				
+				$codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
+				$whareh_dropdown = $magazz->selectIdWarehouse('warehouse_'.$k,(isset($form['warehouse_'.$k]))?$form['warehouse_'.$k]:0,true,'col-xs-12',$form['codart_'.$k],$datdoc,($docOperat[$tipdoc]*-floatval($v['quanti'])));
+				$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
+				$codart_select = $gForm->concileArtico('codart_'.$k,(isset($form['search_codart_'.$k]))?$form['search_codart_'.$k]:'',$form['codart_'.$k]);
+				//forzo i valori diversi dalla descrizione a vuoti se è descrittivo
+				if (abs($v['prelis'])<0.00001){ // siccome il prezzo è a zero mi trovo di fronte ad un rigo di tipo descrittivo
+					$v['codice_fornitore'] = '';
+					$v['unimis'] = '';
+					$v['quanti'] = '';
+					$v['unimis'] = '';
+					$v['prelis'] = '';
+					$v['sconto'] = '';
+					$v['amount'] = '';
+					$v['ritenuta'] = '';
+					$v['pervat'] = '';
+					$codric_dropdown = '<input type="hidden" name="codric_'.$k.'" value="000000000" />';
+					$whareh_dropdown = '<input type="hidden" name="warehouse_'.$k.'" value="0" />';
+					$codvat_dropdown = '<input type="hidden" name="codvat_'.$k.'" value="0" />';
+					$codart_select = '<input type="hidden" name="codart_'.$k.'" /><input type="hidden" name="search_codart_'.$k.'" />';
+				} else {
+					//$v['prelis']=gaz_format_number($v['prelis']);
+					$v['amount']=gaz_format_number($v['amount']);
+					$v['ritenuta']=floatval($v['ritenuta']);
+					$v['pervat']=floatval($v['pervat']);
 				}
-				?>
+				// creo l'array da passare alla funzione per la creazione della tabella responsive
+				$resprow[$k] = array(
+					array('head' => $script_transl["nrow"], 'class' => '',
+						'value' => $k+1),
+					array('head' => $script_transl["codart"], 'class' => '',
+						'value' => $v['codice_fornitore']),
+					array('head' => 'Articolo', 'class' => '',
+						'value' => $codart_select),
+					array('head' => 'Magazzino', 'class' => '',
+						'value' => $whareh_dropdown),
+					array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
+						'value' => $v['descri']),
+					array('head' => $script_transl["unimis"], 'class' => '',
+						'value' => $v['unimis']),
+					array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
+						'value' => $v['quanti']),
+					array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
+						'value' => $v['prelis']),
+					array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
+						'value' => $v['sconto']),
+					array('head' => $script_transl["amount"], 'class' => 'text-right numeric',
+						'value' => $v['amount'], 'type' => ''),
+					array('head' => $script_transl["conto"], 'class' => 'text-center numeric',
+						'value' => $codric_dropdown, 'type' => ''),
+					array('head' => $script_transl["tax"], 'class' => 'text-center numeric',
+						'value' => $codvat_dropdown, 'type' => ''),
+					array('head' => '%', 'class' => 'text-center numeric',
+						'value' => $v['pervat'], 'type' => ''),
+					array('head' => 'Ritenuta', 'class' => 'text-center numeric',
+						'value' => $v['ritenuta'], 'type' => '')
+				);
+
+			}
+			$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table', $rowshead);
+	?>	   <div class="col-sm-6">
+	<?php
+			if ($nf){
+	?>
+			Allegato: <input name="Download" type="submit" class="btn btn-default" value="<?php echo $name_file; ?>" />
+	<?php
+			}
+	?>
 			</div>
-			<div class="col-sm-2 text-left">
-				<input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
+			<div class="col-sm-6">
+				<div class="col-sm-10 bg-warning">
+					<?php
+					if ($anomalia!=""){ // La FAE non ha i riferimenti linea nei ddt
+						echo $rowshead[0];
+					}
+					?>
+				</div>
+				<div class="col-sm-2 text-left">
+					<input name="Submit_form" type="submit" class="btn btn-warning" value="<?php echo $script_transl['submit']; ?>" />
+				</div>
 			</div>
-		</div>
-</form>
-<br>
-<?php
-	}
+	</form>
+	<br>
+	<?php
+		}
 	}
 	if (substr($_SESSION['theme'],-2)!='te'){
 		/* se non ho "lte" come motore di interfaccia allora richiamo subito il footer
@@ -1554,6 +1587,40 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
 ?>
 <div class="panel panel-default gaz-table-form">
 	<div class="container-fluid">
+	
+		<?php
+		if (!isset($_POST['fattura_elettronica_original_name']) && in_array('sdipec',$sync_mods)){
+			if ($res_faepec->num_rows >0){
+				?>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="image" class="col-sm-4 control-label">Queste fatture, arrivate via PEC, sono ancora da acquisire</label>
+							<div class="col-sm-8">
+							<?php
+							foreach($res_faepec as $fae_pec){
+								?>		
+								<p>		 
+								<?php echo $fae_pec['title']," ";?>
+								<input type="submit" name="Submit_pec" class="btn btn-default" value="<?php echo $fae_pec['id_doc'],$fae_pec['extension'];?>">
+								<input type="hidden" name="title_pec" class="btn btn-default" value="<?php echo $fae_pec['title'];?>">
+								</p>
+									
+								
+								<?php
+							}
+							?>
+								
+								
+							</div>
+						</div>
+					</div>
+				</div><!-- chiude row  -->
+				<?php		
+			}
+		}
+		?>
+	
        <div class="row">
            <div class="col-md-12">
                <div class="form-group">
@@ -1564,6 +1631,7 @@ $magazz->selectIdWarehouse('in_id_warehouse',$form["in_id_warehouse"],false,'col
            </div>
        </div><!-- chiude row  -->
 <?php
+
 if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_SDI') {
 ?>
 		<div class="row">
