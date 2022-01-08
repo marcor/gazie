@@ -52,6 +52,8 @@ if (file_exists($fileConfPers)) {
 	include_once($fileConfPers);
 }
 
+// consento di disabilitare lo scorrimento delle pagine durante l'inserimento dei documenti
+$scorrimento = (defined('scorrimento')) ? scorrimento : "TRUE";
 
 // abilita il debug delle variabili nel footer della pagina (impostare true/false)
 $debug_active = (defined('debug_active')) ? debug_active : FALSE;

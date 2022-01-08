@@ -1440,7 +1440,7 @@ if ($form['id_tes'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]);
 }
 echo '<script type="text/javascript">';
-if (empty($msg) && !isset($_POST['ins'])) { // se ho un errore non scrollo
+if ( empty($msg) && !isset($_POST['ins']) && $scorrimento == TRUE ) { // se ho un errore non scrollo
 	if (!empty($_POST['last_focus'])){
 		$idlf='#'.$_POST['last_focus'];
 		$_POST['last_focus']='';

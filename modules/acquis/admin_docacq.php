@@ -1981,7 +1981,7 @@ $(function () {
         this.value = this.value.replace(/[^\d]/g, '');
     });
     <?php
-    if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 && !isset($_POST['ins']) ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
+    if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 && !isset($_POST['ins']) && $scorrimento==TRUE) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
         ?>
         $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
         <?php

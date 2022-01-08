@@ -27,6 +27,9 @@
 // abilita il debug delle variabili nel footer della pagina (impostare true/false)
 define('debug_active', FALSE);
 
+// permetto la disabilitazione dello scroll nelle pagine di inserimento documenti
+define('scorrimento', TRUE);
+
 // definisco il livello di verbosità degli errori (https://www.php.net/manual/en/errorfunc.constants.php)
 define('error_reporting_level', 0); // consigliato per ambienti di produzione
 //define('error_reporting_level', E_ALL & ~E_NOTICE); // consigliato per ambienti di sviluppo

@@ -2254,7 +2254,7 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
         $("#initra").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#datemi").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
 <?php
-if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000 ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
+if ( count($msg['err'])<=0 && count($msg['war'])<=0 && $form['clfoco']>=100000000  && $scorrimento == TRUE ) { // scrollo solo e se ho selezionato il cliente e non ci sono errori
     ?>
             $("html, body").delay(100).animate({scrollTop: $('#search_cosear').offset().top-100}, 1000);
     <?php

@@ -970,7 +970,7 @@ $( function() {
 									}
 								});
 <?php
-if (empty($msg)) { // se ho un errore non scrollo
+if (empty($msg) && $scorrimento==TRUE) { // se ho un errore non scrollo
 	if (!empty($_POST['last_focus'])){
 		$idlf="button[name='upper_row[".intval($_POST['last_focus'])."]']";
 		$_POST['last_focus']='';
