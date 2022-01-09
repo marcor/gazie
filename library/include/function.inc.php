@@ -1398,9 +1398,8 @@ class GAzieMail {
         //
         // Si procede con la costruzione del messaggio.
         //
-		$sync_mods=array();
-		$sync_mods=explode(",",$admin_data['gazSynchro']);
-		if (in_array('sdipec',$sync_mods) && (isset($partner['sdipec']) && $partner['e_mail']=1)){// se c'è il modulo sdipec definisco il server smtp con la pec
+		
+		if (isset ($partner['mod_fae']) && strlen($partner['mod_fae'])>0){// se c'è il modulo per invio fae definisco il server smtp con la pec
 			$config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'sdi_pec_smtp_port');
 			$config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'sdi_pec_smtp_secure');
 			$config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'sdi_pec_smtp_usr');
@@ -1480,7 +1479,7 @@ class GAzieMail {
         } else { // utilizzo quella dell'azienda, la stessa che appare sui documenti
             $mittente = $admin_data['e_mail'];
         }
-		if (in_array('sdipec',$sync_mods) && (isset($partner['sdipec']) && $partner['e_mail']=1)){// se c'è il modulo sdipec cambio il mittente come da impostazioni sdipec
+		if (isset ($partner['mod_fae']) && strlen($partner['mod_fae'])>0){// se c'è il modulo per invio fae cambio il mittente come da impostazioni specifiche
 			$mittente=gaz_dbi_get_row($gTables['company_config'], 'var', 'sdi_pec_company_email')['val'];
 			$config_send_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val'];
 			if (strlen($config_send_fae)>0){// se c'è un indirizzo per i pacchetti zip in configurazione azienda
@@ -1501,7 +1500,7 @@ class GAzieMail {
 		if (strlen($user['user_email'])>=10) { // quando l'utente che ha inviato la mail ha un suo indirizzo il reply avviene su di lui
             $mittente = $user['user_email'];
         }
-		if (in_array('sdipec',$sync_mods) && (isset($partner['sdipec']) && $partner['e_mail']=1)){// se c'è il modulo sdipec cambio il mittente come da impostazioni sdipec
+		if (isset ($partner['mod_fae']) && strlen($partner['mod_fae'])>0){// se c'è il modulo sdipec cambio il mittente come da impostazioni sdipec
 			$mittente=gaz_dbi_get_row($gTables['company_config'], 'var', 'sdi_pec_company_email');;
 		}
         $mail->AddCC($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);
