@@ -25,6 +25,8 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$sync_mods=array();
+$sync_mods=explode(",",$admin_aziend['gazSynchro']);
 if (isset($_GET['fn'])) {
     $user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
     $fn=substr($_GET['fn'],0,37);
@@ -33,6 +35,11 @@ if (isset($_GET['fn'])) {
     $content->name = $fn;
     $content->urlfile = $file_url; // se passo l'url GAzieMail allega un file del file system e non da stringa
     $dest_fae_zip_package['e_mail'] = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val'];
+	if (in_array('sdipec',$sync_mods)){
+		$dest_fae_zip_package['sdipec']=1;//It's enabled
+	}else{
+		$dest_fae_zip_package['sdipec']=0;
+	}
     if (!empty($dest_fae_zip_package['e_mail'])) {
         $gMail = new GAzieMail();
         if ($gMail->sendMail($admin_aziend, $user, $content, $dest_fae_zip_package)){
