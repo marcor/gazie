@@ -639,7 +639,7 @@ $gForm->variousSelect('fatt_email', $script_transl['fatt_email_value'], $form['f
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="fe_cod_univoco" class="col-sm-4 control-label"><a href="https://www.indicepa.gov.it/ricerca/n-lista-uffici-figli.php" target="blank"><?php echo $script_transl['fe_cod_univoco']; ?></a></label>
+                    <label for="fe_cod_univoco" class="col-sm-4 control-label"><a href="https://www.indicepa.gov.it/ipa-portale/consultazione/domicilio-digitale/ricerca-domicili-digitali-ente" target="blank"><?php echo $script_transl['fe_cod_univoco']; ?></a></label>
                     <input class="col-sm-4" type="text" value="<?php echo $form['fe_cod_univoco']; ?>" name="fe_cod_univoco" id="fe_cod_univoco" maxlength="7" />
                 </div>
             </div>
