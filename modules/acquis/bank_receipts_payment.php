@@ -52,7 +52,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['description'] = substr($_POST['description'], 0, 100);
     $bank_data = gaz_dbi_get_row($gTables['clfoco'], 'codice', $form['target_account']);
     if (!isset($_POST['ins'])) {
-        if ($bank_data && $bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancario prevede un addebito per bonifici allora lo propongo
+        if (isset($bank_data) && $bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancario prevede un addebito per bonifici allora lo propongo
             $form['transfer_fees_acc'] = $bank_data['cosric'];
             $form['transfer_fees'] = $bank_data['maxrat'];
         } elseif (substr($form['target_account'], 0, 3) == substr($admin_aziend['cassa_'], 0, 3)) {

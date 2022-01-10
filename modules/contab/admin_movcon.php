@@ -1820,9 +1820,9 @@ echo "</script>\n";
             $valsty = ' style="text-align:right; background-color:#FFAAAA;" ';
         }
         echo "<td>
-          <input type=\"text\" name=\"importorc[$i]\" ID=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" tabindex=\"" . (30 + $i * 2) . "\" >\n";
-        echo "<input type=\"hidden\" ID=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"" . $form['id_rig_rc'][$i] . "\">\n";
-        echo "<input type=\"hidden\" ID=\"paymov_op_cl$i\" name=\"paymov_op_cl[$i]\" value=\"" . $form['paymov_op_cl'][$i] . "\">\n";
+          <input type=\"text\" name=\"importorc[$i]\" id=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" tabindex=\"" . (30 + $i * 2) . "\" >\n";
+        echo "<input type=\"hidden\" id=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"" . $form['id_rig_rc'][$i] . "\">\n";
+        echo "<input type=\"hidden\" id=\"paymov_op_cl$i\" name=\"paymov_op_cl[$i]\" value=\"" . $form['paymov_op_cl'][$i] . "\">\n";
         // inizio input degli sbilanci
         if ($form['darave_rc'][$i] == 'D' && $form['tot_D'] > $form['tot_A'] ||
                 $form['darave_rc'][$i] == 'A' && $form['tot_A'] > $form['tot_D']) {
@@ -1838,10 +1838,10 @@ echo "</script>\n";
         } else {                                     //bilanciato
             $r_but = ' value="&hArr;" disabled';
         }
-        echo "<input type=\"button\" ID=\"balbRC$i\" name=\"balb[$i]\" $r_but  onclick=\"balance($i);\"/>\n";
+        echo "<input type=\"button\" id=\"balbRC$i\" name=\"balb[$i]\" $r_but  onclick=\"balance($i);\"/>\n";
         echo "</td>";
-        //fine inpunt degli sbilanci
-        echo "<td><select class=\"FacetSelect\" ID=\"daavRC$i\" name=\"darave_rc[$i]\" onchange=\"this.form.submit()\" tabindex=\"" . (31 + $i * 2) . "\">";
+        //fine input degli sbilanci
+        echo "<td><select class=\"FacetSelect\" id=\"daavRC$i\" name=\"darave_rc[$i]\" onchange=\"this.form.submit()\" tabindex=\"" . (31 + $i * 2) . "\">";
         foreach ($script_transl['daav_value'] as $key => $value) {
             $selected = "";
             if ($form["darave_rc"][$i] == $key) {
@@ -1849,6 +1849,7 @@ echo "</script>\n";
             }
             echo "<option value=\"" . $key . "\"" . $selected . ">" . $value . "</option>\n";
         }
+        echo "</select></td>\n";
         echo '  <td class="text-right">
 			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $i . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
@@ -1860,10 +1861,10 @@ echo "</script>\n";
     echo "<input type=\"hidden\" value=\"" . $form['id_testata'] . "\" name=\"id_testata\">";
     echo "<tr><td class=\"FacetColumnTD text-center\" colspan=\"6\"><b>Totali:</b></td></tr>";
     echo '<tr><td colspan="2" class="text-right">';
-    echo  $script_transl['tot_d'] . ": <input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" ID=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
+    echo  $script_transl['tot_d'] . ": <input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" id=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
 
     echo '</td><td class="text-right">'. $script_transl['tot_a'] . ' :';
-    echo "<input type=\"button\" $a_but value=\"" . number_format($form['tot_A'], 2, '.', '') . "\" ID=\"tot_A\" name=\"tot_A\" onclick=\"tot_bal('A');\" />\n";
+    echo "<input type=\"button\" $a_but value=\"" . number_format($form['tot_A'], 2, '.', '') . "\" id=\"tot_A\" name=\"tot_A\" onclick=\"tot_bal('A');\" />\n";
     echo "\n</td>";
 	echo '<td>'.$diffV.'</td>';
     echo '<td colspan=2 class="text-center">';

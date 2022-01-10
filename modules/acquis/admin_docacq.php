@@ -623,7 +623,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 			}
         }
         if (count($msg['err']) == 0) {// nessun errore
-            //echo "<pre>";print_r($form);die;
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
                   $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
                   $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor'],$form['pagame']);
