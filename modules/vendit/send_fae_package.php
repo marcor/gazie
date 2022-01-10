@@ -35,11 +35,12 @@ if (isset($_GET['fn'])) {
     $content->urlfile = $file_url; // se passo l'url GAzieMail allega un file del file system e non da stringa
     $dest_fae_zip_package['e_mail'] = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val'];
 	$module_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package')['val'];
-	if (strlen($module_fae_zip_package)>0){// se è stato impostato un modulo per l'invio degli zip FAE
+	if (strpos($module_fae_zip_package,"pec")!==FALSE){// se è stato impostato un modulo per l'invio degli zip FAE e nel suo nome c'è 'pec'
 		$dest_fae_zip_package['mod_fae']=$module_fae_zip_package;//It's enabled
 	}else{
 		$dest_fae_zip_package['mod_fae']='';//disabled
 	}
+
     if (!empty($dest_fae_zip_package['e_mail'])) {
         $gMail = new GAzieMail();
         if ($gMail->sendMail($admin_aziend, $user, $content, $dest_fae_zip_package)){
