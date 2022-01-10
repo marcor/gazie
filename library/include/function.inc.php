@@ -1399,7 +1399,7 @@ class GAzieMail {
         // Si procede con la costruzione del messaggio.
         //
 		
-		if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'],"pec")!==FALSE){// se c'è il modulo per invio fae con 'pec' nel suo nome definisco il server smtp con la pec
+		if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' definisco il server smtp con la pec
 			$config_port = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_port');
 			$config_secure = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_secure');
 			$config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'pec_smtp_usr');
@@ -1477,7 +1477,7 @@ class GAzieMail {
         } else { // utilizzo quella dell'azienda, la stessa che appare sui documenti
             $mittente = $admin_data['e_mail'];
         }
-		if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'],"pec")!==FALSE){// se c'è il modulo per invio fae con 'pec' nel suo nome cambio il mittente come da impostazioni specifiche
+		if (isset ($receiver['mod_fae']) && strpos($receiver['mod_fae'], 'pec')===0){// se c'è il modulo per invio fae che inizia il suo nome con 'pec' cambio il mittente come da impostazioni specifiche
 			$mittente=$admin_data['pec'];
 			$config_send_fae = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val'];
 			if (strlen($config_send_fae)>0){// se c'è un indirizzo per i pacchetti zip in configurazione azienda
