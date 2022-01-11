@@ -1522,7 +1522,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
         gaz_dbi_query ("UPDATE ".$gTables['fae_flux']." SET `filename_son`='".$nome_file.".xml' WHERE `filename_ori`='".$parent_nome_file . ".xml'");
     }
 
-	if ($name_ziparchive){
+	if ($name_ziparchive) {
 		if ($name_ziparchive != 'from_string.xml') {
 			$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file . ".xml");
 			if ($verifica == false) {
@@ -1558,7 +1558,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             'filename_ret' => '',
             'mail_id' => 0,
             'data' => '',
-            'flux_status' => 'DI',
+            'flux_status' => ($XMLvars->FormatoTrasmissione == "FPA") ? '##' : 'DI',
             'n_invio' => $XMLvars->fae_reinvii+1,
             'progr_ret' => '000',
             'flux_descri' => '');

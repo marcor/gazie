@@ -292,8 +292,8 @@ $recordnav->output();
 
 <select name="status">
 	<option value=""></option>
-	<option value="##" <?php if($status =="##") echo "selected";?> >## - Non ancora firmata</option>
-	<option value="#" <?php if($status =="#") echo "selected";?> ># - Non ancora inviata</option>
+	<option value="##" <?php if($status=="##"||$status=="PA") echo "selected";?> >## - Non ancora firmata</option>
+	<option value="#" <?php if($status =="#"||$status=="DI") echo "selected";?> ># - Non ancora inviata</option>
 	<option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviata</option>
 	<option value="@@" <?php if($status =="@@") echo "selected";?> >@@- Inviata sistema esterno</option>
 	<option value="NS" <?php if($status =="NS") echo "selected";?> >NS - Notifica scarto</option>
