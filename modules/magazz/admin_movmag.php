@@ -30,7 +30,7 @@ $admin_aziend = checkAdmin();
 $msg = "";
 $warnmsg = "";
 $lm = new lotmag;
-$magazz= new magazzForm;
+$gForm = new magazzForm;
 $sil= new silos();
 $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 $tipo_composti = gaz_dbi_get_row($gTables['company_config'], 'var', 'tipo_composti');
@@ -113,11 +113,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$form['recip_stocc'] = $resultsian['recip_stocc'];
 		$form['recip_stocc_destin'] = $resultsian['recip_stocc_destin'];
 	}
-	if ($item_artico['lot_or_serial']==1){ 
+	if ($item_artico['lot_or_serial']==1){
 		$result_lotmag = gaz_dbi_get_row($gTables['lotmag'], "id", $result['id_lotmag']);
 		$form['identifier'] = $result_lotmag['identifier'];
 		$form['expiry'] = $result_lotmag['expiry'];
-		
+
 	}
 	$form['lot_or_serial']=$item_artico['lot_or_serial'];
 	 // Antonio Germani - se è presente, recupero il file documento lotto
@@ -139,10 +139,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['scorig'] = $result['scorig'];
     $form['status'] = $result['status'];
     $form['search_partner'] = "";
-    
+
 	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
 		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-		// la qtà è in questa variabile $prev_qta['quanti']; 
+		// la qtà è in questa variabile $prev_qta['quanti'];
 	} else {
 		$prev_qta['quanti']=0;
 	}
@@ -154,7 +154,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     } else {
 		$form['coseprod']="";
     }
-	
+
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {   //      se non e' il primo accesso
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     //ricarico i registri per il form facendo gli eventuali parsing
@@ -204,7 +204,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             $form['anndoc'] = date("Y");
             $form['scochi'] = 0;
             $form['id_rif'] = 0;
-        }		
+        }
 	}
 	if (intval($_POST['caumag'])== 82){
 		$form['operat'] = 1;
@@ -212,7 +212,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$form['operat'] = -1;
 	} else {
 		$form['operat'] = intval($_POST['operat']);
-	}	
+	}
 	$print_unimis = "";
 	$print_uniacq = "";
 	if (strlen($form['cosear'])>0) { // se c'è un articolo carico l'unità di misura e se ci sono anche gli identificativi del lotto
@@ -228,18 +228,18 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$form['identifier'] = $_POST['identifier'];
 			$form['expiry'] = $_POST['expiry'];
 		}
-	} 
+	}
     $form['quanti'] = gaz_format_quantity($_POST['quanti'], 0, $admin_aziend['decimal_quantity']);
     $form['prezzo'] = number_format(preg_replace("/\,/", '.', $_POST['prezzo']), $admin_aziend['decimal_price'], '.', '');
     $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
     $form['status'] = substr($_POST['status'], 0, 10);
     $form['search_partner'] = $_POST['search_partner'];
-    
+
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
     /** ENRICO FEDELE */
     /* Con button non funziona _x */
     //if (isset($_POST['inscau_x'])) {
-    /** ENRICO FEDELE 
+    /** ENRICO FEDELE
     if (isset($_POST['inscau'])) {
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $form['operat'] = $causa['operat'];
@@ -277,7 +277,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         $form['prezzo'] = getItemPrice($form['artico'], $form['clfoco']);
         $form['hidden_req'] = '';
     }
-	
+
 	if (!empty($_FILES['docfile_']['name'])) { // Antonio Germani - se c'è un nome in $_FILES
 		$prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
 		foreach (glob(DATA_DIR."files/tmp/" . $prefix . "_*.*") as $fn) { // prima cancello eventuali precedenti file temporanei
@@ -291,45 +291,45 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$msg.= "14+";
 		}
 	}
-	if (intval($form['SIAN'])>0){ 
+	if (intval($form['SIAN'])>0){
 		$uldtfile=getLastSianDay();
 		$datem=$form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
 		if (strtotime($datem) < strtotime($uldtfile)){
-			$warnmsg.="33+";			
-		}			
-	}	
-	
+			$warnmsg.="33+";
+		}
+	}
+
 	if ($toDo == "update") { // se è un update prendo la quantità scritta nel data base per le disponibilità in uscita
 		$prev_qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-		// la qtà è in questa variabile $prev_qta['quanti']; 
+		// la qtà è in questa variabile $prev_qta['quanti'];
 	} else {
 		$prev_qta['quanti']=0;
 	}
-	
+
 	// controllo e WARNING su quantità e lotti
 	if (strlen($form['artico'])>0 && $form['quanti']>0 && ($form['operat']==-1 OR $form['operat']==0)){
 		$mv = $gForm->getStockValue(false, $form['artico']);
-		$magval = array_pop($mv); // controllo disponibilità in magazzino		
+		$magval = array_pop($mv); // controllo disponibilità in magazzino
     $magval=(is_numeric($magval))?['q_g'=>0,'v_g'=>0]:$magval;
 		if ($magval['q_g']+$prev_qta['quanti']<$form['quanti']){
-			$warnmsg.="34+";			
-		}		
+			$warnmsg.="34+";
+		}
 	}
 	if ($form['lot_or_serial']==1){ // se articolo con lotti ...
-		$form['datreg'] = $form['annreg'] . "-" . substr("0".$form['mesreg'],-2) . "-" . substr("0".$form['gioreg'],-2);		
+		$form['datreg'] = $form['annreg'] . "-" . substr("0".$form['mesreg'],-2) . "-" . substr("0".$form['gioreg'],-2);
 		if ($form['operat'] == -1){
 			$lm -> getAvailableLots($form['artico'],$form['id_mov']);// prendo i lotti disponibili per l'articolo escludendo, se siamo in update, il movimento di magazzino in questione
 			$tot=0;
 			foreach ($lm->available as $v_lm) {// ciclo tutti i lotti disponibili
 				$tot+=$v_lm['rest']; // sommo le quantità
 			}
-			
+
 			if ($tot < $form['quanti']){ // se la quantità richiesta è maggiore alla giacenza totale dei lotti!
-				$msg .= "35+";echo "Giacenza lotti: ",$tot," data reg.: ",$form['datreg'];		
+				$msg .= "35+";echo "Giacenza lotti: ",$tot," data reg.: ",$form['datreg'];
 			}
 		}
 	}
-	
+
     if (!empty($_POST['Insert'])) {        //          Se viene inviata la richiesta di conferma totale ...
         //formatto le date
         $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
@@ -343,18 +343,18 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if ($utsdoc > $utsreg) {
             $msg .= "17+";
         }
-		
+
 		if ($form['lot_or_serial']==1 AND $form['caumag']<>99){ // se è un articolo con lotti e non è un movimento inventario
 			if (strlen ($form['identifier'])<= 0){
 				$msg .= "21+"; // manca il lotto
 			}
-			
+
 			$checklot = gaz_dbi_get_row($gTables['lotmag']." LEFT JOIN ".$gTables['movmag']." ON ".$gTables['movmag'].".id_mov = id_movmag", 'id', $form['id_lotmag']);
-			if (strtotime($form['datdoc']) < strtotime($checklot['datdoc']) && $form['operat']=="-1"){// non può uscire un lotto prima della data della sua creazione					
-				$msg .= "36+";// Il lotto non può uscire in tale data in quanto ancora inesistente			
+			if (strtotime($form['datdoc']) < strtotime($checklot['datdoc']) && $form['operat']=="-1"){// non può uscire un lotto prima della data della sua creazione
+				$msg .= "36+";// Il lotto non può uscire in tale data in quanto ancora inesistente
 			}
-		} 
-		
+		}
+
 		if (intval($form['caumag'])==98 AND intval($form['operat'])==0){ // su storno inventario bisogna indicare se entrata o uscita
 			$msg .= "29+";
 		}
@@ -367,8 +367,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			if ($last_inventory) {
 				$form['prezzo'] = $last_inventory['prezzo'];// imposto il valore sulla base dell'ultimo inventario 99
 			} else { // se non c'è un inventario 99 non si può fare uno storno 98
-				$msg .= "31+";				
-			}		
+				$msg .= "31+";
+			}
 		}
         if (empty($form['artico'])) {  //manca l'articolo
             $msg .= "18+";
@@ -385,7 +385,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 				$msg .="20+";
 			}
 		}
-		// inizio controllo operazioni particolari SIAN 
+		// inizio controllo operazioni particolari SIAN
 		if ($form['SIAN']>0 AND $form['operat']==1 AND $form['cod_operazione']==10 AND $camp_artico['confezione']>0){
 			$msg .="23+";
 		}
@@ -416,11 +416,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$msg .="32+";
 			}
 		}
-		
+
         if (empty($msg)) {    //        nessun errore        SALVATAGGIO database
-		
+
 			// Antonio Germani - inizio salvataggio lotto
-			if ($form['lot_or_serial']==1){ // se l'articolo prevede un lotto 
+			if ($form['lot_or_serial']==1){ // se l'articolo prevede un lotto
 				if (strlen($form['identifier']) == 0) { // se non è stato digitato un lotto lo inserisco d'ufficio come data e ora
                     $form['identifier'] = date("Ymd Hms");
                 }
@@ -436,9 +436,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
                     unset($row);
                     $result = gaz_dbi_query($query);
                     $row = $result->fetch_assoc();
-                    $id_movmag = $row['Auto_increment']; 
-				}				
-								 
+                    $id_movmag = $row['Auto_increment'];
+				}
+
 				if (($toDo=="insert" AND $form['operat']==1) or (intval($form['id_lotmag']) == 0 and $toDo=="update" AND $form['operat']==1)) { // se è insert OR se è update ma non c'era il lotto creo il rigo lotto memorizzandolo nella tabella lotmag
 						$query = "SHOW TABLE STATUS LIKE '" . $gTables['lotmag'] . "'";
 						unset($check_lot);
@@ -446,11 +446,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 						$row = $check_lot->fetch_assoc();
 						$form['id_lotmag'] = $row['Auto_increment']; // trovo l'ID che avrà il lotto e  salvo il lotto
 						gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('" . $form['artico'] . "','" . $id_movmag. "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
-				} 
-				if (intval($form['id_lotmag']) > 0 and $toDo=="update" AND $form['operat']==1 ) { // se esiste il lotto e siamo in update lo modifico
-					gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");						
 				}
-								
+				if (intval($form['id_lotmag']) > 0 and $toDo=="update" AND $form['operat']==1 ) { // se esiste il lotto e siamo in update lo modifico
+					gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
+				}
+
 				// Antonio Germani - salvo documento/CERTIFICATO del lotto
 				if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
                     if (!empty($form['filename'])) { // e se ha un nome impostato nel form
@@ -468,10 +468,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             $upd_mm = new magazzForm;
             $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
             if (!empty($form['artico'])) {
-                $upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0, 
+                $upd_mm->uploadMag($form['id_rif'], $form['tipdoc'],0,0,
                         $form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'], $form['quanti'], $form['prezzo'], $form['scorig'], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
                 );
-				if ($form['SIAN']>0 AND $toDo=="insert"){ 
+				if ($form['SIAN']>0 AND $toDo=="insert"){
 					$form['id_movmag']=$id_movmag;// imposto l'id mov mag e salvo il movimento del SIAN
 					$form['varieta']=$item_artico['quality'];
 					gaz_dbi_table_insert('camp_mov_sian', $form);
@@ -484,8 +484,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 					$form['varieta']=$item_artico['quality'];
 					gaz_dbi_table_update('camp_mov_sian',$update,$form);
 				}
-	
-				// aggiorno id_lotmag nel rigo di movmag				
+
+				// aggiorno id_lotmag nel rigo di movmag
 				$query = "UPDATE " . $gTables['movmag'] . " SET id_lotmag = " . $form['id_lotmag'] . ", id_orderman=".$form['id_orderman']." WHERE id_mov ='" . $id_movmag . "'";
                 gaz_dbi_query($query);
             }
@@ -569,15 +569,15 @@ if ($form['id_mov'] > 0) {
         var sommatotale = sommarigo - sommarigo * c / 100;
         return((Math.round(sommatotale * 100) / 100).toFixed(2));
     }
-	
+
   $(function() {
     $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
-	
+
 });
 
 </SCRIPT>
 
-<?php 
+<?php
 echo "<form method=\"POST\" name=\"myform\" enctype=\"multipart/form-data\" >";
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
@@ -660,7 +660,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 /* echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit']." !\"></td></tr>\n"; */
 
 /** ENRICO FEDELE */
-/* glyph-icon 
+/* glyph-icon
 echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['submit'] . '"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';*/
@@ -756,18 +756,18 @@ $messaggio = "";
 $ric_mastro = substr($form['artico'], 0, 3);
 
 $select_artico = new selectartico("artico");
-				$select_artico->addSelected($form['artico']);			
+				$select_artico->addSelected($form['artico']);
 				$select_artico->output(substr($form['cosear'], 0,32));
 
     // Antonio Germani > Inizio LOTTO in uscita o in entrata o creazione nuovo
-if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['caumag']<>99) == 1) { // se l'articolo prevede il lotto e non è un inventario, apro la gestione lotti nel form 
+if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['caumag']<>99) == 1) { // se l'articolo prevede il lotto e non è un inventario, apro la gestione lotti nel form
 	$form['lot_or_serial']=$item_artico['lot_or_serial'];
-	?>	  
+	?>
 		<div class="FacetFieldCaptionTD"><?php echo $script_transl[21]; ?></div>
 		<div class="FacetDataTD" >
 		<input type="hidden" name="filename" value="<?php echo $form['filename']; ?>">
 		<input type="hidden" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
-		
+
 		</div>
 	<?php
 	if ($form['operat']==1 && $form['quanti']>0){ // se è carico di magazzino ed è impostata la quantità
@@ -799,15 +799,15 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 		echo '<label>' . "Numero: " . '</label><input type="text" name="identifier" value="' . $form['identifier'] . '" >';
 		echo "<br>";
 		echo '<label>' . 'Scadenza: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="expiry"  value="' . $form['expiry'] . '"></div></div></div>';
-	} else { 
+	} else {
 		if (($form['operat']==-1 or $form['operat']==0) && $form['quanti']>0){  // se è scarico e è stata impostata la quantità
-		 	$lm -> getAvailableLots($form['artico'],$form['id_mov']); // Antonio Germani - 
+		 	$lm -> getAvailableLots($form['artico'],$form['id_mov']); // Antonio Germani -
 			$ld = $lm->divideLots($form['quanti']);
 			$l = 0;
 			// calcolo delle giacenze per ogni singolo lotto
 			$count=array();
 			foreach ($lm->available as $v_lm) {
-				$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto 
+				$key=$v_lm['identifier']; // chiave per il conteggio dei totali raggruppati per lotto
 				if( !array_key_exists($key, $count) ){ // se la chiave ancora non c'è nell'array
 					// Aggiungo la chiave con il rispettivo valore iniziale
 					$count[$key] = $v_lm['rest'];
@@ -816,19 +816,19 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 					$count[$key] += $v_lm['rest'];
 				}
 			}
-			
+
 			if ($ld > 0 AND $toDo <> "update") { // segnalo preventivamente l'errore
 				?>
 				<div class="alert alert-warning alert-dismissible">
 				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 				<strong>Warning!</strong> <b>Quantità lotto non sufficiente!</b> </br>Se si conferma si creeranno incongruenze fra quantità e lotti! </br> Si consiglia di selezionare un lotto con sufficiente disponibilità</br> oppure di diminuire la quantità in uscita.
 				</div>
-				<?php				
+				<?php
 			}
 			if (isset($form['id_lotmag']) && $form['id_lotmag'] > 0) { // Selezione manuale del lotto dopo quella iniziale
-				echo "Lotto selezionato";			
+				echo "Lotto selezionato";
                 $selected_lot = $lm->getLot($form['id_lotmag']);
-					
+
                 echo '<div><button class="btn btn-xs btn-success" title="Lotto selezionato. Cliccare per cambiare lotto" type="image"  data-toggle="collapse" href="#lm_dialog">' . $selected_lot['id'] . ' lotto n.:' . $selected_lot['identifier'];
                 if (intval($selected_lot['expiry']) > 0) {
                     echo ' scadenza: ' . gaz_format_date($selected_lot['expiry']);
@@ -848,7 +848,7 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 				<input type="hidden" name="identifier" value="<?php echo $selected_lot['identifier']; ?>">
 				<input type="hidden" name="expiry" value="<?php echo $selected_lot['expiry']; ?>">
 				<?php
-				
+
 				if (isset ($count[$selected_lot['identifier']]) AND $form['quanti']>$count[$selected_lot['identifier']]+$prev_qta['quanti']) { // Se il lotto scelto non ha disponibilità sufficienti segnalo errore
 					?>
 					<div class="alert alert-warning alert-dismissible">
@@ -856,14 +856,14 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 					<strong>Warning!</strong> <b>Quantità lotto non sufficiente!</b> </br>Se si conferma si creeranno incongruenze fra quantità e lotti! </br> Si consiglia di selezionare un lotto con sufficiente disponibilità</br> oppure di diminuire la quantità in uscita.
 					</div>
 					<?php
-				}				
-            } else { // selezione automatica INIZIALE  del lotto disponibile 								
-				if (!isset($form['id_lotmag']) or (intval($form['id_lotmag'])==0)) { 
-				
+				}
+            } else { // selezione automatica INIZIALE  del lotto disponibile
+				if (!isset($form['id_lotmag']) or (intval($form['id_lotmag'])==0)) {
+
 					foreach ($lm->divided as $k => $v) { // ciclo i lotti scelti da getAvailableLots
-						
+
 						if ($v['qua'] >= 0.00001) {
-							if ($v['quanti'] >= $form['quanti']){ 
+							if ($v['quanti'] >= $form['quanti']){
 								$form['id_lotmag']= $v['id']; // al primo ciclo, cioè id lotto è zero, setto il lotto
 								$selected_lot = $lm->getLot($form['id_lotmag']);
 								echo '<div><button class="btn btn-xs btn-success"  title="Lotto selezionato automaticamente. Cliccare per cambiare lotto" data-toggle="collapse" href="#lm_dialog">' . $selected_lot['id'] . ' Lotto n.: ' . $selected_lot['identifier'];
@@ -876,11 +876,11 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 								<input type="hidden" name="id_lotmag" value="<?php echo $selected_lot['id_lotmag']; ?>">
 								<input type="hidden" name="identifier" value="<?php echo $selected_lot['identifier']; ?>">
 								<input type="hidden" name="expiry" value="<?php echo $selected_lot['expiry']; ?>">
-								<?php 
-								$l++; 
+								<?php
+								$l++;
 							}
-						}	
-					} 
+						}
+					}
 				}
 				if ($l==0){
 					?>
@@ -893,14 +893,14 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 					<?php
 					}
 			}
-			
+
 			?>
 			<!-- Antonio Germani - Cambio lotto  -->
 			<div id="lm_dialog" class="collapse" >
-			<?php				
-			if ((count($lm->available) >= 1)) { 
+			<?php
+			if ((count($lm->available) >= 1)) {
 				foreach ($lm->available as $v_lm) {
-					if ($v_lm['id'] <> $form['id_lotmag']) { 
+					if ($v_lm['id'] <> $form['id_lotmag']) {
 						echo '<div>Cambia con:<button class="btn btn-xs btn-warning" type="text" onclick="this.form.submit();" name="id_lotmag" value="'.$v_lm['id'].'">'
 						. $v_lm['id']. ' lotto n.:' . $v_lm['identifier'];
 						if ($v_lm['expiry']>0){
@@ -915,15 +915,15 @@ if ($form['artico'] != "" && intval( $item_artico['lot_or_serial'] && $form['cau
 			}
 			?>
 			</div>
-			<?php		
-		} else { 
+			<?php
+		} else {
 			echo '<input type="hidden" name="filename" value="">';
 			echo '<input type="hidden" name="identifier" value="">';
 			echo '<input type="hidden" name="id_lotmag" value="">';
 			echo '<input type="hidden" name="expiry" value="">';
 		}
 	}
-	
+
 } else {
         echo '<input type="hidden" name="filename" value="">';
         echo '<input type="hidden" name="identifier" value="">';
@@ -938,10 +938,10 @@ if (isset($form['operat']) && strlen($form['artico'])>0 && ($form['operat']==1 a
 	</div>
 	<?php
 }
-// Se l'articolo movimenta il SIAN	
+// Se l'articolo movimenta il SIAN
 if ($form['SIAN']>0 AND $form['operat']<>0){
-	?>	
-	<div class="container-fluid">					
+	?>
+	<div class="container-fluid">
 					<div class="row">
 						<label for="cod_operazione" class="col-sm-6 control-label"><?php echo "Tipo operazione SIAN"; ?></label>
 						<?php
@@ -974,19 +974,19 @@ if ($form['SIAN']>0 AND $form['operat']<>0){
 					} else {
 						echo '<input type="hidden" value="" name="recip_stocc_destin" />';
 					}
-				echo '</div>';	
-	
-	
-	
-	
-	
+				echo '</div>';
+
+
+
+
+
 } else {
 	?>
 	<input type="hidden" name="cod_operazione" value=11>
 	<input type="hidden" name="recip_stocc" value="">
 	<input type="hidden" name="recip_stocc_destin" value="">
 	<?php
-}	
+}
 ?>
 <input type="hidden" name="lot_or_serial" value="<?php echo $form['lot_or_serial']; ?>">
 <input type="hidden" name="SIAN" value="<?php echo $form['SIAN']; ?>">
@@ -998,7 +998,7 @@ if ($form['SIAN']>0 AND $form['operat']<>0){
 // fine LOTTO e SIAN
 
 
-	
+
 echo "<td>" . $script_transl[12] . "</td><td ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\"  name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();this.form.submit();\">".${'print_'.$unimis}."</td></tr>\n";
 echo "<tr><td>" . $script_transl[13] . "</td><td ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\"  name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";
 echo "<td>" . $script_transl[14] . "</td><td ><input type=\"text\" value=\"" . $form['scorig'] . "\" maxlength=\"4\"  name=\"scorig\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>\n";
@@ -1014,10 +1014,10 @@ for ($counter = -1; $counter <= 1; $counter++) {
 }
 echo "</select></td></tr><tr><td>Produzione</td><td>";
 $select_production = new selectproduction("id_orderman");
-$select_production->addSelected($form['id_orderman']);			
+$select_production->addSelected($form['id_orderman']);
 $select_production->output($form['coseprod']);
 echo '</td><td>Magazzino</td><td>';
-$magazz->selectIdWarehouse('id_warehouse',$form["id_warehouse"],false,'col-xs-12');
+$gForm->selectIdWarehouse('id_warehouse',$form["id_warehouse"],false,'col-xs-12');
 echo "</td>\n";
 echo "</tr><tr><td colspan=\"3\"><input type=\"reset\" name=\"Cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
 echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
