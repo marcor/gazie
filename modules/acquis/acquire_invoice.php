@@ -185,10 +185,10 @@ function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
     $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "(tipdoc='ADT' OR tipdoc='RDL') AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."' AND codart LIKE '".$codart."'", "id_rig DESC", 0, 1);
     return gaz_dbi_fetch_array($result);
 }
-$sync_mods=array();
+$sync_mods=[];
 $sync_mods=explode(",",$admin_aziend['gazSynchro']);
 
-	
+
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
 	$form['date_ini_D'] = '01';
@@ -198,14 +198,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_M'] = date('m');
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
-	if (in_array('sdipec',$sync_mods)){
-		$res_faepec=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='pec' AND custom_field = ''", "id_doc DESC", 0);		
-	}	
+	if (in_array('pecsdi',$sync_mods)){
+		$res_faepec=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='pec' AND custom_field = ''", "id_doc DESC", 0);
+	}
 
 } else { // accessi successivi
-	
+
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
-	
+
 	$form['curr_doc'] = intval($_POST['curr_doc']);
 	$form['date_ini_D'] = '01';
 	$form['date_ini_M'] = date('m');
@@ -213,7 +213,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_D'] = date('d');
 	$form['date_fin_M'] = date('m');
 	$form['date_fin_Y'] = date('Y');
-	
+
 	if (!isset($_POST['datreg'])){
 		$form['datreg'] = date("d/m/Y");
 		$form['seziva'] = 1;
@@ -228,9 +228,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$form['in_id_warehouse'] = intval($_POST['in_id_warehouse']);
 	}
 	if (isset($_POST['Submit_file']) || isset($_POST['Submit_pec'])) { // conferma invio upload file
-	
+
         if (!empty($_FILES['userfile']['name'])) {
-			
+
             if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "application/pkcs7" || $_FILES['userfile']['type'] == "text/xml")) {
 				$msg['err'][] = 'filmim';
 			} else {
@@ -243,20 +243,20 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		} else if (!empty($_POST['selected_SdI'])) {
 			require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
 			$FattF = DownloadFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('id_SdI' => $_POST['selected_SdI'])));
-			
+
 			if (!empty($FattF) && is_array($FattF) && file_put_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . key($FattF), base64_decode($FattF[key($FattF)])) !== FALSE) { // nessun errore
 				$form['fattura_elettronica_original_name'] = key($FattF);
 			} else { // no upload
 				$msg['err'][] = 'no_upload';
 			}
 		} else {// è un fae proveniente da PEC
-		
+
 			copy(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/doc/'.$_POST['Submit_pec'] , DATA_DIR . 'files/' . $admin_aziend['codice'] . '/'.$_POST['title_pec']);
 			$form['fattura_elettronica_original_name']=$_POST['title_pec'];
 			$_POST['Submit_file']="Acquisisci";
 		}
 	} else if (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
-		
+
 		$form['pagame'] = intval($_POST['pagame']);
 		$form['new_acconcile'] = intval($_POST['new_acconcile']);
         if ($form['pagame'] <= 0 ) {  // ma non ho selezionato il pagamento
@@ -1266,16 +1266,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						}
 					}
 				}
-				// Antonio Germani se ho il modulo sdipec aggiorno il file xml acquisito con pec 
-				
-				if (in_array('sdipec',$sync_mods)){
+				// Antonio Germani se ho il modulo pecsdi aggiorno il file xml acquisito con pec
+
+				if (in_array('pecsdi',$sync_mods)){
 					$where = array();
 					$where[]="title";
 					$where[]=$form['fattura_elettronica_original_name'];
 					$set['custom_field']="acquisita";
 					gaz_dbi_table_update("files", $where, $set);
 				}
-				
+
 				header('Location: report_docacq.php?sezione='.$form['seziva']);
 				exit;
 			} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
@@ -1479,8 +1479,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
 
 				if ($new_acconcile>100000000){
 					$form['codric_'.$k]=$new_acconcile;
-				}				
-				
+				}
+
 				$codric_dropdown = $gForm->selectAccount('codric_'.$k, $form['codric_'.$k], array('sub',1,3), '', false, "col-sm-12 small",'style="max-width: 350px;"', false, true);
 				$whareh_dropdown = $magazz->selectIdWarehouse('warehouse_'.$k,(isset($form['warehouse_'.$k]))?$form['warehouse_'.$k]:0,true,'col-xs-12',$form['codart_'.$k],$datdoc,($docOperat[$tipdoc]*-floatval($v['quanti'])));
 				$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-12 small', null, 'style="max-width: 350px;"', false, true);
@@ -1587,9 +1587,9 @@ if ($toDo=='insert' || $toDo=='update' ) {
 ?>
 <div class="panel panel-default gaz-table-form">
 	<div class="container-fluid">
-	
+
 		<?php
-		if (!isset($_POST['fattura_elettronica_original_name']) && in_array('sdipec',$sync_mods)){
+		if (!isset($_POST['fattura_elettronica_original_name']) && in_array('pecsdi',$sync_mods)){
 			if ($res_faepec->num_rows >0){
 				?>
 				<div class="row">
@@ -1599,28 +1599,28 @@ if ($toDo=='insert' || $toDo=='update' ) {
 							<div class="col-sm-8">
 							<?php
 							foreach($res_faepec as $fae_pec){
-								?>		
-								<p>		 
+								?>
+								<p>
 								<?php echo $fae_pec['title']," ";?>
 								<input type="submit" name="Submit_pec" class="btn btn-default" value="<?php echo $fae_pec['id_doc'],".",$fae_pec['extension'];?>">
 								<input type="hidden" name="title_pec" class="btn btn-default" value="<?php echo $fae_pec['title'];?>">
 								</p>
-									
-								
+
+
 								<?php
 							}
 							?>
-								
-								
+
+
 							</div>
 						</div>
 					</div>
 				</div><!-- chiude row  -->
-				<?php		
+				<?php
 			}
 		}
 		?>
-	
+
        <div class="row">
            <div class="col-md-12">
                <div class="form-group">
