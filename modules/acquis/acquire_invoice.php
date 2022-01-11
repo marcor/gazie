@@ -201,7 +201,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
 	if (in_array($send_fae_zip_package['val'],$sync_mods)){
-		$res_faepec=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='pec' AND custom_field = ''", "id_doc DESC", 0);
+		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND custom_field = ''", "id_doc DESC", 0);
 	}
 
 } else { // accessi successivi
@@ -229,7 +229,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		$form['seziva'] = intval($_POST['seziva']);
 		$form['in_id_warehouse'] = intval($_POST['in_id_warehouse']);
 	}
-	if (isset($_POST['Submit_file']) || isset($_POST['Submit_pec'])) { // conferma invio upload file
+	if (isset($_POST['Submit_file']) || isset($_POST['fae_from_sync'])) { // conferma invio upload file
 
         if (!empty($_FILES['userfile']['name'])) {
 
@@ -245,16 +245,20 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		} else if (!empty($_POST['selected_SdI'])) {
 			require('../../library/' . $send_fae_zip_package['val'] . '/SendFaE.php');
 			$FattF = DownloadFattF(array($admin_aziend['country'].$admin_aziend['codfis'] => array('id_SdI' => $_POST['selected_SdI'])));
-
 			if (!empty($FattF) && is_array($FattF) && file_put_contents( DATA_DIR . 'files/' . $admin_aziend['codice'] . '/' . key($FattF), base64_decode($FattF[key($FattF)])) !== FALSE) { // nessun errore
 				$form['fattura_elettronica_original_name'] = key($FattF);
 			} else { // no upload
 				$msg['err'][] = 'no_upload';
 			}
-		} else {// è un fae proveniente da PEC
-
-			copy(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/doc/'.$_POST['Submit_pec'] , DATA_DIR . 'files/' . $admin_aziend['codice'] . '/'.$_POST['title_pec']);
-			$form['fattura_elettronica_original_name']=$_POST['title_pec'];
+		} else {
+      // è una fattura elettronica fae proveniente da un sistema personalizzato di sincronizzazione es: pecSdI, pecARUBA, ecc
+      // per consentire l'acquisizione di fatture di acquisto arrivate tramite un modulo scritto per questo scopo esso deve
+      // scrivere il file nella directory files/1/doc con estensione originale e nome uguale al contenuto di "id_doc"
+      // della tabella gaz_001files, tabella che dovrà contenere anche il nome originale del file in "title" e "item_ref" = 'faesync'
+      // la referenza 'faesync', infatti viene utilizzata per essere richiamate al primo accesso per proporle all'utente
+      // vedi $res_faesyn qualche rigo sopra
+			copy(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/doc/'.$_POST['fae_from_sync'] , DATA_DIR . 'files/' . $admin_aziend['codice'] . '/'.$_POST['fae_original_name']);
+			$form['fattura_elettronica_original_name']=$_POST['fae_original_name'];
 			$_POST['Submit_file']="Acquisisci";
 		}
 	} else if (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
@@ -1591,7 +1595,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 
 		<?php
 		if (!isset($_POST['fattura_elettronica_original_name']) && in_array($send_fae_zip_package['val'],$sync_mods)){
-			if ($res_faepec->num_rows >0){
+			if ($res_faesync->num_rows >0){
 				?>
 				<div class="row">
 					<div class="col-md-12">
@@ -1599,12 +1603,12 @@ if ($toDo=='insert' || $toDo=='update' ) {
 							<label for="image" class="col-sm-4 control-label">Queste fatture, arrivate via PEC, sono ancora da acquisire</label>
 							<div class="col-sm-8">
 							<?php
-							foreach($res_faepec as $fae_pec){
+							foreach($res_faesync as $faesync){
 								?>
 								<p>
-								<?php echo $fae_pec['title']," ";?>
-								<input type="submit" name="Submit_pec" class="btn btn-default" value="<?php echo $fae_pec['id_doc'],".",$fae_pec['extension'];?>">
-								<input type="hidden" name="title_pec" class="btn btn-default" value="<?php echo $fae_pec['title'];?>">
+								<?php echo $faesync['title']," ";?>
+								<input type="submit" name="fae_from_sync" class="btn btn-default" value="<?php echo $faesync['id_doc'],".",$faesync['extension'];?>">
+								<input type="hidden" name="fae_original_name" class="btn btn-default" value="<?php echo $faesync['title'];?>">
 								</p>
 
 
