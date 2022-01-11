@@ -634,7 +634,7 @@ if ( is_bool($paymov_status) || $paymov_status['style'] == $flt_info || $flt_inf
                                 if ( strlen($r['fattura_elettronica_zip_package'])>10 && ($last_flux_status=='DI' || $last_flux_status=='##' || $last_flux_status=='PA')) { // il documento è impacchettato e da inviare
                                     $r['fae_attuale']=$r['fattura_elettronica_zip_package'];
                                     $sdihilight = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][1] : 'default';
-                                    $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : ($r['fattura_elettronica_zip_package']!='FAE_ZIP_NOGENERATED') ? 'ZIP da inviare' : '';
+                                    $sdilabel = ( !empty($r['refs_flux_status']) ) ? $script_transl['flux_status_val'][$last_flux_status][0] : (($r['fattura_elettronica_zip_package']!='FAE_ZIP_NOGENERATED') ? 'ZIP da inviare' : '');
                                     $last_flux_status = 'ZI';
                                 }
                             } else { //// installazione senza gestore dei flussi con il SdI
