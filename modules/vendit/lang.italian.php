@@ -127,6 +127,7 @@ $strScript = array("admin_client.php" =>
         'mail_alert2' => 'con allegato il seguente documento di vendita:',
         'dialog_fae_title' => 'File XML della fattura: ',
         'dialog_fae_filename' => 'Scarica il file: ',
+		'dialog_fae_content_PA' => 'Il file è ..... ',
         'dialog_fae_content_DI' => 'Il file è da inviare. Puoi scegliere di farlo singolarmente oppure impacchettandolo assieme ad eventuali altri precedenti non ancora inviati ',
         'dialog_fae_content_ZI' => 'Il file è da inviare ma fa parte di un pacchetto ZIP, invialo assieme agli altri',
         'dialog_fae_content_RE' => 'Solo qualora si voglia procedere ad un reinvio <b class="bg-warning">A CAUSA DI UNO SCARTO</b>, dopo aver corretto gli errori che lo hanno causato, cliccare su questo link per generare un file con nuovo nome:' ,
