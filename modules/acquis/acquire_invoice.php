@@ -185,6 +185,8 @@ function existDdT($numddt,$dataddt,$clfoco,$codart="%%") {
     $result=gaz_dbi_dyn_query("*", $gTables['tesdoc']. " LEFT JOIN " . $gTables['rigdoc'] . " ON " . $gTables['tesdoc'] . ".id_tes = " . $gTables['rigdoc'] . ".id_tes", "(tipdoc='ADT' OR tipdoc='RDL') AND clfoco = ".$clfoco." AND datemi='".$dataddt."' AND numdoc='".$numddt."' AND codart LIKE '".$codart."'", "id_rig DESC", 0, 1);
     return gaz_dbi_fetch_array($result);
 }
+
+
 $sync_mods=[];
 $sync_mods=explode(",",$admin_aziend['gazSynchro']);
 
@@ -198,7 +200,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_M'] = date('m');
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
-	if (in_array('pecsdi',$sync_mods)){
+	if (in_array($send_fae_zip_package['val'],$sync_mods)){
 		$res_faepec=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='pec' AND custom_field = ''", "id_doc DESC", 0);
 	}
 
@@ -1266,9 +1268,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 						}
 					}
 				}
-				// Antonio Germani se ho il modulo pecsdi aggiorno il file xml acquisito con pec
 
-				if (in_array('pecsdi',$sync_mods)){
+				if (in_array($send_fae_zip_package['val'],$sync_mods)){
 					$where = array();
 					$where[]="title";
 					$where[]=$form['fattura_elettronica_original_name'];
@@ -1589,7 +1590,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	<div class="container-fluid">
 
 		<?php
-		if (!isset($_POST['fattura_elettronica_original_name']) && in_array('pecsdi',$sync_mods)){
+		if (!isset($_POST['fattura_elettronica_original_name']) && in_array($send_fae_zip_package['val'],$sync_mods)){
 			if ($res_faepec->num_rows >0){
 				?>
 				<div class="row">
@@ -1632,7 +1633,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
        </div><!-- chiude row  -->
 <?php
 
-if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_SDI' && !in_array('sdipec',$sync_mods)) {
+if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_SDI' && !in_array($send_fae_zip_package['val'],$sync_mods)) {
 ?>
 		<div class="row">
 			<div class="col-md-12">
