@@ -45,7 +45,7 @@ if (isset($_GET['fn'])) {
         $gMail = new GAzieMail();
         if ($gMail->sendMail($admin_aziend, $user, $content, $dest_fae_zip_package)){
             // se la mail è stata trasmessa con successo aggiorno lo stato sulla tabella dei flussi
-            gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $fn."'", "flux_status", "@@");
+            gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $fn."'", "flux_status", "@");
             echo "<p>INVIO FATTURE ELETTRONICHE RIUSCITO!!!</p>";
         }
     }
