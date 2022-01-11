@@ -416,7 +416,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } elseif ($r['flux_status'] == '@' || $r['flux_status'] == '@@') {
         $class = 'FacetDataTD';
         $class1 = '';
-    } elseif ($r['flux_status'] == '##' || $r['flux_status'] == '#') {
+    } elseif ($r['flux_status'] == '##' || $r['flux_status'] == '#' || $r['flux_status'] == 'DI') {
         $class = 'FacetDataTD';
         $class1 = '';
     }
@@ -458,7 +458,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	//TO-DO: COMBINARE GESTORE AUTOMATICO DELLE NOTIFICHE CON NOTIFICAZIONE MANUALE FORZATA DELLE FATTURE
     if ($r['flux_status'] == "##") {
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<form method=\"POST\"  enctype=\"multipart/form-data\"><input type=\"file\" accept=\".xml,.p7m\" name=\"p7mfile_".$r['id']."\" />" . "<input name=\"Submit_file\" type=\"submit\" class=\"btn btn-warning\" value=\"Carica fattura firmata\" /></form>" . "</td>";
-    } elseif ($r['flux_status'] == "#") {
+    } elseif ($r['flux_status'] == "#" || $r['flux_status'] == "DI") {
         $modulo_fae_report="report_fae_sdi.php?id_record=".$r['id']."&amp;id_tes_ref=".$r['id_tes_ref']."&amp;file_name=".$r['filename_ori'];
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$modulo_fae_report."\">#</a>" . "</td>";
     } elseif ($r['flux_status'] == "@") {

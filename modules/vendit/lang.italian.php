@@ -1517,6 +1517,7 @@ $strScript = array("admin_client.php" =>
             '#' => 'Non ancora inviata',
             'DI' => 'Non ancora inviata',
             '@' => 'Inviata',
+            '@@' => 'Inviata sistema esterno',
             'NS' => 'Notifica scarto',
             'MC' => 'Mancata Consegna',
             'RC' => 'Ricevuta consegna',
