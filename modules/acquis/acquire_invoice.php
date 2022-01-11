@@ -1632,7 +1632,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
        </div><!-- chiude row  -->
 <?php
 
-if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_SDI') {
+if (!empty($send_fae_zip_package['val']) && $send_fae_zip_package['val']!='pec_SDI' && !in_array('sdipec',$sync_mods)) {
 ?>
 		<div class="row">
 			<div class="col-md-12">
