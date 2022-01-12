@@ -201,7 +201,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
 	if (in_array($send_fae_zip_package['val'],$sync_mods)){
-		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND custom_field = ''", "id_doc DESC", 0);
+		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND (custom_field = '' || custom_field is NULL)", "id_doc DESC", 0);
 	}
 
 } else { // accessi successivi
