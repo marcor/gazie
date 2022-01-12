@@ -57,4 +57,5 @@ INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT 'PEC IM
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT 'PEC IMAP Secure (tls,ssl)', 'pec_imap_secure', 'tls' FROM DUAL WHERE NOT EXISTS (SELECT `var` FROM `gaz_XXXcompany_config` WHERE `var` = 'pec_imap_secure' LIMIT 1);
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT 'PEC IMAP User', 'pec_imap_usr', '' FROM DUAL WHERE NOT EXISTS (SELECT `var` FROM `gaz_XXXcompany_config` WHERE `var` = 'pec_imap_usr' LIMIT 1);
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT 'PEC IMAP Password', 'pec_imap_psw', '' FROM DUAL WHERE NOT EXISTS (SELECT `var` FROM `gaz_XXXcompany_config` WHERE `var` = 'pec_imap_psw' LIMIT 1);
+ALTER TABLE `gaz_XXXfiles` ADD COLUMN `status` INT NOT NULL DEFAULT 0 COMMENT 'se usato quando item_ref =\'faesync\' indica lo stato della fattura di acquisto (1=acquisita) ' AFTER `item_ref`, ADD INDEX `status` (`status`);
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )

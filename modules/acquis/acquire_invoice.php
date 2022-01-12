@@ -201,7 +201,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$form['date_fin_Y'] = date('Y');
 	$form['curr_doc'] = 0;
 	if (in_array($send_fae_zip_package['val'],$sync_mods)){
-		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND (custom_field = '' || custom_field is NULL)", "id_doc DESC", 0);
+		$res_faesync=gaz_dbi_dyn_query("*", $gTables['files'], "item_ref='faesync' AND status = 0", "id_doc DESC", 0);
 	}
 
 } else { // accessi successivi
@@ -256,7 +256,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
       // scrivere il file nella directory files/1/doc con estensione originale e nome uguale al contenuto di "id_doc"
       // della tabella gaz_001files, tabella che dovrà contenere anche il nome originale del file in "title" e "item_ref" = 'faesync'
       // la referenza 'faesync', infatti viene utilizzata per essere richiamate al primo accesso per proporle all'utente
-      // vedi $res_faesyn qualche rigo sopra
+      // vedi $res_faesync qualche rigo sopra
 			copy(DATA_DIR . 'files/' . $admin_aziend['codice'] . '/doc/'.$_POST['fae_from_sync'] , DATA_DIR . 'files/' . $admin_aziend['codice'] . '/'.$_POST['fae_original_name']);
 			$form['fattura_elettronica_original_name']=$_POST['fae_original_name'];
 			$_POST['Submit_file']="Acquisisci";
@@ -1277,7 +1277,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$where = array();
 					$where[]="title";
 					$where[]=$form['fattura_elettronica_original_name'];
-					$set['custom_field']="acquisita";
+					$set['status']=1;
 					gaz_dbi_table_update("files", $where, $set);
 				}
 
