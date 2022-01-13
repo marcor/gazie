@@ -36,6 +36,7 @@ $g2Form = new campForm();
 $gForm = new magazzForm;
 $admin_aziend = checkAdmin();
 
+$anchor="";
 $msg = "";
 $message = "";
 $print_magval = "";
@@ -953,7 +954,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 								$dt = $dt + (86400 * intval($temp_sosp)); //aggiiungo al giorno di attuazione i giorni di sospensione (Un giorno = 86400 timestamp)
 								// Antonio Germani controllo se il tempo di sospensione del campo di coltivazione è inferiore a quello che si crea con questo trattamento. Se lo è aggiorno il database campi nel campo di coltivazione selezionato
 								
-								if ($form['fine_sosp'.$n] < $dt) {
+								if (isset($form['fine_sosp'.$n]) && $form['fine_sosp'.$n] < $dt) {
 									$dt = date('Y/m/d', $dt);
 									$query = "UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt . "' , codice_prodotto_usato = '" . $form['artico'][$form['mov']] . "' , id_mov = '" . $id_mov . "' , id_colture = '" . $form['id_colture'] . "' WHERE codice ='" . $form['campo_impianto'.$n] . "'";
 									gaz_dbi_query($query);
