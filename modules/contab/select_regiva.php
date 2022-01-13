@@ -26,6 +26,11 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
 
+// BEGIN fromthestone: prendo il valore della configurazione per numerazione note credito/debito
+$num_nc_nd_qry = gaz_dbi_dyn_query(" val ", $gTables['company_config'], "var = 'num_note_separate'");
+$num_nc_nd = gaz_dbi_fetch_array($num_nc_nd_qry);
+// END fromthestone
+
 function getPage_ini($sez, $reg) {
     global $gTables;
     if ($reg == 6) {
@@ -39,7 +44,7 @@ function getPage_ini($sez, $reg) {
     return (!is_numeric($r['data'])) ? 1 : $r['data'] + 1;
 }
 
-function getLastMonth($sez, $reg) { // Antonio Germani - funzione per recuperare, dal DB, l'ultimo mese stampato 
+function getLastMonth($sez, $reg) { // Antonio Germani - funzione per recuperare, dal DB, l'ultimo mese stampato
     global $gTables;
     if ($reg == 6) {
         $reg = 'umeac' . $sez;
@@ -53,11 +58,11 @@ function getLastMonth($sez, $reg) { // Antonio Germani - funzione per recuperare
 }
 
 function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
-    global $gTables, $admin_aziend;
+    global $gTables, $admin_aziend, $num_nc_nd;
     $m = array();
     $where = "(datreg BETWEEN $date_ini AND $date_fin OR datliq BETWEEN $date_ini AND $date_fin) AND seziva = $vat_section AND regiva = $vat_reg";
     $orderby = "datreg, protoc";
-    $rs = gaz_dbi_dyn_query("YEAR(datreg) AS ctrl_sr,                       
+    $rs = gaz_dbi_dyn_query("YEAR(datreg) AS ctrl_sr,
 					  DATE_FORMAT(datliq,'%Y%m%d') AS dl,
                       DATE_FORMAT(datreg,'%Y%m%d') AS dr,
                       CONCAT(" . $gTables['anagra'] . ".ragso1, ' '," . $gTables['anagra'] . ".ragso2) AS ragsoc,clfoco,codiva,
@@ -96,9 +101,17 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
 			}
 		}
         if ($r['regiva'] < 4 && $vat_section <> $admin_aziend['reverse_charge_sez']) { // il controllo sul numero solo per i registri delle fatture di vendita e non reverse charge
-            if ($r['caucon'] == 'FAD') {
-                $r['caucon'] = 'FAI';
-            }
+          // fromthestone: comportamento standard, note credito e debito con diversa numerazione da fatture ->
+          // num_note_separate = 1
+          // per evitare la segnalazione di errore quando si passa da fattura immediata a differita e viceversa
+          if ($num_nc_nd['val'] == 1) {
+            $r['caucon'] = ($r['caucon']=='FAD')?'FAI':$r['caucon'];
+          }
+          else {
+            // fromthestone: note credito e debito stessa numerazione da fatture
+            $r['caucon'] = ($r['caucon'] == 'FAD' || $r['caucon'] == 'FNC' || $r['caucon'] == 'FND') ? 'FAI' : $r['caucon'];
+          }
+
             if (isset($c_ndoc[$r['caucon']])) { // controllo se il numero precedente � questo-1
                 $ex = $c_ndoc[$r['caucon']] + 1;
                 if ($r['numdoc'] <> $ex && $c_id <> $r['id_tes']) {  // errore: il numero non � consecutivo
@@ -166,7 +179,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 	$form['lastvatsection']=$_POST['lastvatsection'];
 	// Antonio Germani - se è stato cambiato registro IVA o sezione IVA prendo l'ultimo mese stampato dal DB e propongo nel form il mese successivo
 	if (intval($_POST['vat_reg']) <> intval($_POST['lastvatreg']) OR intval($_POST['vat_section']) <> intval($_POST['lastvatsection'])){
-		$last_month_print = getLastMonth($_POST['vat_section'], $_POST['vat_reg']);		
+		$last_month_print = getLastMonth($_POST['vat_section'], $_POST['vat_reg']);
 		if ($admin_aziend['ivam_t'] == 'M') {
 			$utsdatini = mktime(0, 0, 0, $last_month_print + 1, 1, date("Y"));
 			$utsdatfin = mktime(0, 0, 0, $last_month_print + 2, 0, date("Y"));
@@ -386,7 +399,7 @@ if (isset($_POST['preview']) and $msg == '') {
                 $mv['ragsoc'] = $mv['descri'];
                 $mv['descri'] = '';
             }
-			if($mv['dr']<$date_ini){ // fattura pregressa, precedente al periodo selezionato ma che concorre alla liquidazione 
+			if($mv['dr']<$date_ini){ // fattura pregressa, precedente al periodo selezionato ma che concorre alla liquidazione
 				$class_m='danger';
 			}elseif($mv['dr']>$date_fin){// fattura successiva al periodo selezionato ma che concorre alla liquidazione es. acquisto egistrato nei 15gg successivi
 				$class_m='danger';
@@ -410,10 +423,10 @@ if (isset($_POST['preview']) and $msg == '') {
 			}
 			$liq_val='';
 			if ($mv['dl']<$date_ini){
-				$liq_val='<br>IMPOSTA GIÀ LIQUIDATA'; 					
+				$liq_val='<br>IMPOSTA GIÀ LIQUIDATA';
 				$class_m='danger';
 			} elseif ($mv['dl']>$date_fin){
-				$liq_val='<br>IMPOSTA DA LIQUIDARE'; 					
+				$liq_val='<br>IMPOSTA DA LIQUIDARE';
 				$class_m='warning';
 			} else {
 				$liq_val='<br>'.gaz_format_number($impost);
@@ -460,16 +473,16 @@ if (isset($_POST['preview']) and $msg == '') {
         echo '<tr><td colspan="8"><hr/></td></tr>';
         $totale = number_format(($totimponi + $totimpost), 2, '.', '');
         foreach ($castle_imponi as $key => $value) {
-            echo "<tr><td colspan=3></td><td class=\"FacetDataTD\">" . $script_transl['tot'] . 
+            echo "<tr><td colspan=3></td><td class=\"FacetDataTD\">" . $script_transl['tot'] .
 			$castle_descri[$key] . ' '.$script_transl['reg'] .
-			"</td><td align=\"right\">" . gaz_format_number($value) . " &nbsp;</td><td align=\"right\">" . $castle_percen[$key] . 
+			"</td><td align=\"right\">" . gaz_format_number($value) . " &nbsp;</td><td align=\"right\">" . $castle_percen[$key] .
 			"% &nbsp;</td><td align=\"right\">" . gaz_format_number($castle_impost[$key]) . " &nbsp;</td><td></td></tr>";
         }
-		
+
         foreach ($castle_imponi_liq as $key => $value) {
-            echo "<tr><td colspan=3></td><td class=\"info\">" . $script_transl['tot'] . 
-			$castle_descri[$key]. ' '.$script_transl['liq']  . 
-			"</td><td align=\"right\">" . gaz_format_number($value) . " &nbsp;</td><td align=\"right\">" . $castle_percen[$key] . 
+            echo "<tr><td colspan=3></td><td class=\"info\">" . $script_transl['tot'] .
+			$castle_descri[$key]. ' '.$script_transl['liq']  .
+			"</td><td align=\"right\">" . gaz_format_number($value) . " &nbsp;</td><td align=\"right\">" . $castle_percen[$key] .
 			"% &nbsp;</td><td align=\"right\"></td><td align=\"center\" class=\"info\">" . gaz_format_number($castle_impost_liq[$key]) . " &nbsp; &nbsp;</td></tr>";
         }
         echo "<tr><td colspan=3></td><td colspan=4><HR></td></tr>";

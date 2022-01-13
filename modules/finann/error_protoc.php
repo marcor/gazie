@@ -35,30 +35,45 @@ function getErrors($year) {
     $c_sr = 0;
     $c_p = 0;
     $c_ndoc = array();
+
+    // BEGIN fromthestone: prendo il valore della configurazione per numerazione note credito/debito
+    $num_nc_nd_qry = gaz_dbi_dyn_query(" val ", $gTables['company_config'], "var = 'num_note_separate'");
+    $num_nc_nd = gaz_dbi_fetch_array($num_nc_nd_qry);
+    // END fromthestone
+
     while ($r = gaz_dbi_fetch_array($rs)) {
-        if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perch� � cambiata la sezione o il registro
+        if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perché è cambiata la sezione o il registro
             $c_sr = 0;
             $c_p = 0;
             $c_ndoc = array();
-            if ($r['protoc'] <> 1) { // errore: il protocollo non � 1
+            if ($r['protoc'] <> 1) { // errore: il protocollo non è 1
                 $e[] = array('err' => 'P', 'id' => $r['id_tes'], 'rg' => $r['regiva'], 'pr' => $r['protoc'], 'nd' => $r['numdoc'], 'dd' => $r['dd'], 'sz' => $r['seziva'], 'ty' => $r['caucon'], 'ex' => 1, 'de' => $r['descri'], 'dr' => $r['dr']);
             }
         } else {
             $ex = $c_p + 1;
-            if ($r['protoc'] <> $ex) {  // errore: il protocollo non � consecutivo
+            if ($r['protoc'] <> $ex) {  // errore: il protocollo non è consecutivo
                 $e[] = array('err' => 'P', 'id' => $r['id_tes'], 'rg' => $r['regiva'], 'pr' => $r['protoc'], 'nd' => $r['numdoc'], 'dd' => $r['dd'], 'sz' => $r['seziva'], 'ty' => $r['caucon'], 'ex' => $ex, 'de' => $r['descri'], 'dr' => $r['dr']);
             }
         }
         if ($r['regiva'] < 4) { // il controllo sul numero solo per i registri delle fatture
+            // fromthestone: comportamento standard, note credito e debito con diversa numerazione da fatture ->
+          // num_note_separate = 1
             // per evitare la segnalazione di errore quando si passa da fattura immediata a differita e viceversa
-            $r['caucon'] = ($r['caucon']=='FAD')?'FAI':$r['caucon'];
-            if (isset($c_ndoc[$r['caucon']])) { // controllo se il numero precedente � questo-1
+            if ($num_nc_nd['val'] == 1) {
+                $r['caucon'] = ($r['caucon']=='FAD')?'FAI':$r['caucon'];
+            }
+            else {
+              // fromthestone: note credito e debito stessa numerazione da fatture
+              $r['caucon'] = ($r['caucon'] == 'FAD' || $r['caucon'] == 'FNC' || $r['caucon'] == 'FND') ? 'FAI' : $r['caucon'];
+            }
+
+          if (isset($c_ndoc[$r['caucon']])) { // controllo se il numero precedente è questo-1
                 $ex = $c_ndoc[$r['caucon']] + 1;
-                if ($r['numdoc'] <> $ex) {  // errore: il numero non � consecutivo
+                if ($r['numdoc'] <> $ex) {  // errore: il numero non è consecutivo
                     $e[] = array('err' => 'N', 'id' => $r['id_tes'], 'rg' => $r['regiva'], 'pr' => $r['protoc'], 'nd' => $r['numdoc'], 'dd' => $r['dd'], 'sz' => $r['seziva'], 'ty' => $r['caucon'], 'ex' => $ex, 'de' => $r['descri'], 'dr' => $r['dr']);
                 }
             } else {  // dal primo documento di questo tipo ci si aspetta il n.1
-                if ($r['numdoc'] <> 1) { // errore: il numero non � 1
+                if ($r['numdoc'] <> 1) { // errore: il numero non è 1
                     $e[] = array('err' => 'N', 'id' => $r['id_tes'], 'rg' => $r['regiva'], 'pr' => $r['protoc'], 'nd' => $r['numdoc'], 'dd' => $r['dd'], 'sz' => $r['seziva'], 'ty' => $r['caucon'], 'ex' => 1, 'de' => $r['descri'], 'dr' => $r['dr']);
                 }
             }
