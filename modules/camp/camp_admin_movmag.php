@@ -313,7 +313,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$_POST['id_reg'.$form['mov']] = $form['id_reg'][$form['mov']];		
 		$form['artico2'][$form['mov']] = (isset($_POST['artico2'.$form['mov']]))?$_POST['artico2'.$form['mov']]:'';
 	}
-	
+	$fito=0;// per controllare se nei movimenti c'è almeno un fitofarmaco
 	if (isset($_POST['mov']) ) { // Antonio Germani - se è stato inserito un rigo faccio il parsing di tutti i righi presenti
 		for ($m = 0;$m <= $form['nmov'];++$m) {
 			
@@ -331,7 +331,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			$query = "SELECT " . 'SCADENZA_AUTORIZZAZIONE' . " FROM " . $gTables['camp_fitofarmaci'] . " WHERE NUMERO_REGISTRAZIONE ='" . $form['id_reg'][$m] . "'";
             $result = gaz_dbi_query($query);			
             while ($row = $result->fetch_assoc()) { // controllo scadenza autorizzazione fitofarmaco
-                $scadaut = $row['SCADENZA_AUTORIZZAZIONE'];
+                $fito=1;// è un fitofarmaco
+				$scadaut = $row['SCADENZA_AUTORIZZAZIONE'];
                 $scadaut = strtotime(str_replace('/', '-', $scadaut)); 
 				if ($scadaut<1) {$msg.= "45+";}
 				// 1 giorno è 24*60*60=86400
@@ -456,7 +457,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 		$form['ncamp']=1;
 	}
     $form['adminid'] = $_POST['adminid'];
-	if (intval($form['adminid'])>0){
+	if (intval($form['adminid'])>0 && $fito==1){// se c'è almeno un fitofarmaco controllo il patentino
 		$row_adminname = gaz_dbi_get_row($gTables['anagra'], "id", $form['adminid']);
 		$form['adminname'] = $row_adminname['ragso1']." ".$row_adminname['ragso2'];
 		$form['rif_abilitazione'] = $row_adminname['custom_field'];
