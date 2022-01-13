@@ -59,7 +59,7 @@ if (isset($_POST['Return'])) {
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 // Controllo se l'operazione è pericolosa
-$rs_danger = gaz_dbi_dyn_query ("MAX((flux_status ='@' OR flux_status ='@@')*1) AS danger",$gTables['fae_flux'], "filename_zip_package='".$fn."'");
+$rs_danger = gaz_dbi_dyn_query ("MAX((flux_status='@' OR flux_status='@@' OR flux_status='IN')*1) AS danger",$gTables['fae_flux'], "filename_zip_package='".$fn."'");
 $danger= gaz_dbi_fetch_row($rs_danger)[0];
 ?>
 <form method="POST">

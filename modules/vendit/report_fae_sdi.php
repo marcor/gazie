@@ -153,8 +153,18 @@ if (isset($_GET['all'])) {
 				//$senza_esito = 1;
 				$mostra_intesta = 1;
 				$mostra_intesta_riga = 0;
-			} elseif ($status == '@@') {
-				$where = " flux_status LIKE '@@' and filename_ret <> ''";
+			} elseif ($status == '@@' || $status == 'IN') {
+				$where = " (flux_status LIKE '@@' OR flux_status LIKE 'IN') AND filename_ret <> ''";
+				//$senza_esito = 1;
+				$mostra_intesta = 1;
+				$mostra_intesta_riga = 0;
+			} elseif ($status == '#' || $status == 'DI') {
+				$where = " (flux_status LIKE '#' OR flux_status LIKE 'DI')";
+				//$senza_esito = 1;
+				$mostra_intesta = 1;
+				$mostra_intesta_riga = 0;
+			} elseif ($status == '##' || $status == 'PA') {
+				$where = " (flux_status LIKE '#' OR flux_status LIKE 'PA')";
 				//$senza_esito = 1;
 				$mostra_intesta = 1;
 				$mostra_intesta_riga = 0;
@@ -294,7 +304,7 @@ $recordnav->output();
 	<option value=""></option>
 	<option value="##" <?php if($status=="##"||$status=="PA") echo "selected";?> >## - Non ancora firmata</option>
 	<option value="#" <?php if($status =="#"||$status=="DI") echo "selected";?> ># - Non ancora inviata</option>
-	<option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviata</option>
+	<option value="@" <?php if($status =="@"||$status=="IN") echo "selected";?> >@ - Inviata</option>
 	<option value="@@" <?php if($status =="@@") echo "selected";?> >@@- Inviata sistema esterno</option>
 	<option value="NS" <?php if($status =="NS") echo "selected";?> >NS - Notifica scarto</option>
 	<option value="MC" <?php if($status =="MC") echo "selected";?> >MC - Mancata consegna</option>
@@ -413,7 +423,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } elseif ($r['flux_status'] == 'MC') {
         $class = 'FacetDataTD';
         $class2 = 'FacetDataTDred';
-    } elseif ($r['flux_status'] == '@' || $r['flux_status'] == '@@') {
+    } elseif ($r['flux_status'] == '@' || $r['flux_status'] == '@@' || $r['flux_status'] == 'IN') {
         $class = 'FacetDataTD';
         $class1 = '';
     } elseif ($r['flux_status'] == '##' || $r['flux_status'] == '#' || $r['flux_status'] == 'DI') {

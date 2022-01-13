@@ -29,7 +29,7 @@ $admin_aziend = checkAdmin();
 $send_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'send_fae_zip_package');
 
 if (!empty($send_fae_zip_package['val']) ) {
-	$where1 = " id_SDI!=0 AND (flux_status = '@' OR flux_status = '@@' OR (filename_ori LIKE '%.xml.p7m' AND (flux_status = 'MC' OR flux_status = 'RC'))) ";
+	$where1 = " id_SDI!=0 AND (flux_status='@' OR flux_status='@@' OR flux_status='IN' OR (filename_ori LIKE '%.xml.p7m' AND (flux_status='MC' OR flux_status='RC'))) ";
 	$risultati = gaz_dbi_dyn_query("*", $gTables['fae_flux'], $where1);
 	if (!$risultati) {
 		die('<p align="center"><a href="./report_fae_sdi.php">Ritorna a report Fatture elettroniche</a></p>');
