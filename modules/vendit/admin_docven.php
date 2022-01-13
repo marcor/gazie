@@ -67,13 +67,13 @@ function getFAIseziva($tipdoc) {
     return $si;
 }
 
-if (!isset($_POST['ritorno']) and ! isset($_GET['ritorno'])) {
+if (!isset($_POST['ritorno']) && !isset($_GET['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 } else {
     $form['ritorno'] = $_POST['ritorno'];
 }
 
-if ((isset($_GET['Update']) and ! isset($_GET['id_tes'])) and ! isset($_GET['tipdoc'])) {
+if ((isset($_GET['Update']) && !isset($_GET['id_tes'])) && !isset($_GET['tipdoc'])) {
     header("Location: " . $form['ritorno']);
     exit;
 }
@@ -485,46 +485,46 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         // --- inizio controllo coerenza date-numerazione
         if ($toDo == 'update') {  // controlli in caso di modifica
             if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY' || $form['tipdoc'] == 'DDS' || $form['tipdoc'] == 'FAD') {  //se è un DDT vs Fattura differita
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and datemi < '$datemi' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc desc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi < '$datemi' AND ( tipdoc like 'DD_' or tipdoc = 'FAD') AND seziva = $sezione", "numdoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
-                if ($result and ( $form['numdoc'] < $result['numdoc'])) {
+                if ($result && ( $form['numdoc'] < $result['numdoc'])) {
                     if ( !$modifica_fatture_ddt ) {
                         $msg['err'][] = "40";
                     }
                 }
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and datemi > '$datemi' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc asc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi > '$datemi' AND ( tipdoc like 'DD_' or tipdoc = 'FAD') AND seziva = $sezione", "numdoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
-                if ($result and ( $form['numdoc'] > $result['numdoc'])) {
+                if ($result && ( $form['numdoc'] > $result['numdoc'])) {
                     if ( !$modifica_fatture_ddt ) {
                         $msg['err'][] = "41";
                     }
                 }
             } else if ( $form['tipdoc'] == 'CMR' || $form['tipdoc'] == 'FAC' ) {
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and datemi < '$datemi' and ( tipdoc like 'CMR' or tipdoc = 'FAC') and seziva = $sezione", "numdoc desc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi < '$datemi' AND ( tipdoc like 'CMR' or tipdoc = 'FAC') AND seziva = $sezione", "numdoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
-                if ($result and ( $form['numdoc'] < $result['numdoc'])) {
+                if ($result && ( $form['numdoc'] < $result['numdoc'])) {
                     if ( !$modifica_fatture_ddt ) {
                         $msg['err'][] = "40";
                     }
                 }
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and datemi > '$datemi' and ( tipdoc like 'CMR' or tipdoc = 'FAC') and seziva = $sezione", "numdoc asc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datemi > '$datemi' AND ( tipdoc like 'CMR' or tipdoc = 'FAC') AND seziva = $sezione", "numdoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
-                if ($result and ( $form['numdoc'] > $result['numdoc'])) {
+                if ($result && ( $form['numdoc'] > $result['numdoc'])) {
                     if ( !$modifica_fatture_ddt ) {
                         $msg['err'][] = "41";
                     }
                 }
             } else { //se sono altri documenti
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and datfat < '$datemi' and tipdoc like '" . $form['tipdoc'] . "' and seziva = $sezione", "protoc desc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datfat < '$datemi' AND tipdoc like '" . $form['tipdoc'] . "' AND seziva = $sezione", "protoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
-                if ($result and ( $form['numfat'] < $result['numfat'])) {
+                if ($result && ( $form['numfat'] < $result['numfat'])) {
                     if ( !$modifica_fatture_ddt ) {
                         $msg['err'][] = "42";
                     }
                 }
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and datfat > '$datemi' and tipdoc like '" . $form['tipdoc'] . "' and seziva = $sezione", "protoc asc", 0, 1);
+                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND datfat > '$datemi' AND tipdoc like '" . $form['tipdoc'] . "' AND seziva = $sezione", "protoc asc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
-                if ($result and ( $form['numfat'] > $result['numfat'])) {
+                if ($result && ( $form['numfat'] > $result['numfat'])) {
                     if ( !$modifica_fatture_ddt ) {
                         $msg['err'][] = "43";
                     }
@@ -557,11 +557,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['numdoc'] = 1;
                 }
             } else { //se sono altri documenti
-                $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " and tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' and seziva = $sezione", "protoc desc, datfat desc, datemi desc", 0, 1);
+                $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . substr($datemi,0,4) . " AND tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' AND seziva = $sezione", "protoc desc, datfat desc, datemi desc", 0, 1);
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
 				if ($ultimo_tipo){
 					$utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datfat'], 5, 2), substr($ultimo_tipo['datfat'], 8, 2), substr($ultimo_tipo['datfat'], 0, 4));
-					if ($ultimo_tipo and ( $utsUltimoProtocollo > $utsemi)) {
+					if ($ultimo_tipo && ( $utsUltimoProtocollo > $utsemi)) {
 						$msg['err'][] = "45";
 					}
 				}
@@ -809,45 +809,50 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 // ricavo i progressivi in base al tipo di documento
                 $where = " fattura DESC";
                 switch ($form['tipdoc']) {
-                    case "DDT":
-                    case "DDV": // conto visione
-                    case "DDY": // triangolazione
-                    case "DDS": // notula di servizio
-                        $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND ( tipdoc like 'DD_' or (tipdoc = 'FAD' && ddt_type != 'R')) and seziva = $sezione";
-                        $where = "numdoc DESC";
-                        $sql_protocollo = " 0";
-                        break;
-                    case "CMR":
-                        $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND ( tipdoc like 'CMR' or (tipdoc = 'FAD' && ddt_type = 'R')) and seziva = $sezione";
-                        $where = "numdoc DESC";
-                        $sql_protocollo = " 0";
-                        break;
-                    case "FAI":
-                    case "FAP":
-                    case "FAA":
-                    case "FAF":
-                    case "FAQ":
-                        $sql_documento = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc LIKE 'FA_' AND seziva = $sezione ";
-                        $sql_protocollo = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc LIKE 'F__' AND seziva = $sezione ";
-                        break;
-                    case "FNC":
-                        $sql_documento = "YEAR(datfat) = " . substr($datemi,0,4) . " and tipdoc = 'FNC' and seziva = $sezione";
-                        $sql_protocollo = "YEAR(datfat) = " . substr($datemi,0,4) . " and tipdoc like 'F__' and seziva = $sezione";
-                        break;
-                    case "FND":
-                        $sql_documento = "YEAR(datfat) = " . substr($datemi,0,4) . " and tipdoc = 'FND' and seziva = $sezione";
-                        $sql_protocollo = "YEAR(datfat) = " . substr($datemi,0,4) . " and tipdoc like 'F__' and seziva = $sezione";
-                        break;
-                    case "RDV": // reso da visione
-                        $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND  tipdoc = 'RDV' and seziva = $sezione";
-                        $where = "numdoc DESC";
-                        $sql_protocollo = " 0";
-			break;
-                    case "VRI": // Vendita con ricevuta
-                        $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND  tipdoc = 'VRI' and seziva = $sezione";
-                        $where = "numdoc DESC";
-                        $sql_protocollo = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc LIKE 'VRI' AND seziva = $sezione ";
-			break;
+                  case "DDT":
+                  case "DDV": // conto visione
+                  case "DDY": // triangolazione
+                  case "DDS": // notula di servizio
+                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND ( tipdoc like 'DD_' OR (tipdoc = 'FAD' && ddt_type != 'R')) AND seziva = $sezione";
+                    $where = "numdoc DESC";
+                    $sql_protocollo = " 0";
+                    break;
+                  case "CMR":
+                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND ( tipdoc like 'CMR' OR (tipdoc = 'FAD' && ddt_type = 'R')) AND seziva = $sezione";
+                    $where = "numdoc DESC";
+                    $sql_protocollo = " 0";
+                    break;
+                  case "FAI":
+                  case "FAP":
+                  case "FAA":
+                  case "FAF":
+                  case "FAQ":
+                    $sql_documento = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc LIKE 'FA_' AND seziva = $sezione ";
+                    $sql_protocollo = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc LIKE 'F__' AND seziva = $sezione ";
+                    break;
+                  case "FNC":
+                    $sql_documento = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc = 'FNC' AND seziva = $sezione";
+                    $sql_protocollo = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc like 'F__' AND seziva = $sezione";
+                    break;
+                  case "FND":
+                    $sql_documento = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc = 'FND' AND seziva = $sezione";
+                    $sql_protocollo = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc like 'F__' AND seziva = $sezione";
+                    break;
+                  case "RDV": // reso da visione
+                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND  tipdoc = 'RDV' AND seziva = $sezione";
+                    $where = "numdoc DESC";
+                    $sql_protocollo = " 0";
+                    break;
+                  case "VRI": // Vendita con ricevuta
+                    $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND  tipdoc = 'VRI' AND seziva = $sezione";
+                    $where = "numdoc DESC";
+                    $sql_protocollo = "YEAR(datfat) = " . substr($datemi,0,4) . " AND tipdoc LIKE 'VRI' AND seziva = $sezione ";
+                    break;
+                }
+                // in caso di scelta di numerazione continua Fatture-Note Credito/Debito ridefinisco la query comprendendole
+                $num_nc_nd = gaz_dbi_get_row($gTables['company_config'], 'var', 'num_note_separate')['val'];
+                if ($num_nc_nd==0 && substr($form['tipdoc'],0,1)=='F'){
+                  $sql_documento = "YEAR(datemi) = " . substr($datemi,0,4) . " AND  tipdoc LIKE 'F__' AND seziva = $sezione";
                 }
                 $rs_ultimo_documento = gaz_dbi_dyn_query("numdoc, numfat*1 AS fattura", $gTables['tesdoc'], $sql_documento, $where, 0, 1);
                 $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
@@ -1243,7 +1248,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['annota'] = '';
             $form['rows'][$old_key]['pesosp'] = '';
             $form['rows'][$old_key]['gooser'] = 0;
-            if ($form['in_tiprig'] == 0 and ! empty($form['in_codart'])) {  //rigo normale
+            if ($form['in_tiprig'] == 0 && ! empty($form['in_codart'])) {  //rigo normale
                 $form['rows'][$old_key]['annota'] = $artico['annota'];
                 $form['rows'][$old_key]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$old_key]['gooser'] = $artico['good_or_service'];
@@ -1876,14 +1881,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 				$msg['war'][] = "1";
 			}
 			$disp= $lm -> dispLotID ($v['codart'], $v['id_lotmag'], (isset($v['id_mag']))?$v['id_mag']:''); // controllo disponibilità per ID lotto
-			if ($v['quanti']>$disp AND $form['tipdoc']<>"FNC"){
+			if ($v['quanti']>$disp && $form['tipdoc']<>"FNC"){
 				$msg['war'][] = "lotinsuf";
 			}
 		}
 	}
 
 
-} elseif (((!isset($_POST['Update'])) and ( isset($_GET['Update']))) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
+} elseif (((!isset($_POST['Update'])) && ( isset($_GET['Update']))) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
 	if (!empty($admin_aziend['synccommerce_classname']) && class_exists($admin_aziend['synccommerce_classname'])){
 		// allineo l'e-commerce con eventuali ordini non ancora caricati
 		$gs=$admin_aziend['synccommerce_classname'];
@@ -2177,7 +2182,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['cosear'] = "";
     $form['seziva'] = getFAIseziva($form['tipdoc']);
     //cerco l'ultimo template
-    $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' and ddt_type!='R' and seziva = " .$form['seziva'], 'datfat desc, protoc desc', 0, 1);
+    $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' AND ddt_type!='R' AND seziva = " .$form['seziva'], 'datfat desc, protoc desc', 0, 1);
     $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);
     if (isset($ultimo_template['template']) && $ultimo_template['template'] == 'FatturaImmediata') {
         $form['template'] = "FatturaImmediata";

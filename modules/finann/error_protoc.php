@@ -37,8 +37,7 @@ function getErrors($year) {
     $c_ndoc = array();
 
     // BEGIN fromthestone: prendo il valore della configurazione per numerazione note credito/debito
-    $num_nc_nd_qry = gaz_dbi_dyn_query(" val ", $gTables['company_config'], "var = 'num_note_separate'");
-    $num_nc_nd = gaz_dbi_fetch_array($num_nc_nd_qry);
+    $num_nc_nd = gaz_dbi_get_row($gTables['company_config'], 'var', 'num_note_separate')['val'];
     // END fromthestone
 
     while ($r = gaz_dbi_fetch_array($rs)) {
@@ -59,7 +58,7 @@ function getErrors($year) {
             // fromthestone: comportamento standard, note credito e debito con diversa numerazione da fatture ->
           // num_note_separate = 1
             // per evitare la segnalazione di errore quando si passa da fattura immediata a differita e viceversa
-            if ($num_nc_nd['val'] == 1) {
+            if ($num_nc_nd == 1) {
                 $r['caucon'] = ($r['caucon']=='FAD')?'FAI':$r['caucon'];
             }
             else {

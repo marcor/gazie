@@ -61,8 +61,8 @@ function getDateLimits($sez = 1) {
                 }
                 break;
             case 'DDV':
-                // per quelli in c/visione non apporto modifiche ai limiti di date, mi baso sulla 
-                // data di emissione e quindi sull'obbligo di fatturazione  dopo 1 anno 
+                // per quelli in c/visione non apporto modifiche ai limiti di date, mi baso sulla
+                // data di emissione e quindi sull'obbligo di fatturazione  dopo 1 anno
                 $nd = new DateTime($acc['date_exe']);
                 $nd->modify('-1 year');
                 break;
@@ -105,7 +105,10 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
         $acc['last_protoc'] = 0;
     }
     // ricavo il progressivo annuo del numero fattura
-    $rs_last_invoice_numfat = gaz_dbi_dyn_query("numdoc, numfat*1 AS fattura", $gTables['tesdoc'], "YEAR(datemi) = $Y AND tipdoc LIKE 'FA%' AND seziva = $sez", "fattura DESC", 0, 1);
+    // definisco la query in base alla scelta di numerazione continua Fatture-Note Credito/Debito
+    $num_nc_nd = gaz_dbi_get_row($gTables['company_config'], 'var', 'num_note_separate')['val'];
+    $tdsep=($num_nc_nd==1)?'FA_':'F__';
+    $rs_last_invoice_numfat = gaz_dbi_dyn_query("numdoc, numfat*1 AS fattura", $gTables['tesdoc'], "YEAR(datemi) = $Y AND tipdoc LIKE '$tdsep' AND seziva = $sez", "fattura DESC", 0, 1);
     $last_invoice_numfat = gaz_dbi_fetch_array($rs_last_invoice_numfat);
     if ($last_invoice_numfat) {
         $acc['last_numfat'] = $last_invoice_numfat['fattura'];
@@ -294,7 +297,7 @@ if (isset($_POST['genera']) && $msg == "") {
                 $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $kr);
                 $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $tes['pagame']);
                 if (($vr == 'yes' && $tes['tipdoc'] == $tipodocumento && !in_array($kr, $form['changeStatus'])) || (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != $tipodocumento)) { //||
-                    // se Ã¨ un s da fatturare non escluso o  Ã¨ un DDV-Y normalmente escluso ma richiesto alla fatturazione 
+                    // se Ã¨ un s da fatturare non escluso o  Ã¨ un DDV-Y normalmente escluso ma richiesto alla fatturazione
                     if ($ctrl_first) {
                         $protoc++;
                         $numfat++;
@@ -387,7 +390,7 @@ $date = array('exe' => $date_exe->format('Y-m-d'), 'ini' => $date_ini->format('Y
 $invoices = getInvoiceableBills($date, $form['seziva'], $form['clfoco'], $form['changeStatus']);
 echo '<div align="center"><b>' . $script_transl['preview_inv'] . '</b></div>';
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
-// qui faccio il push all'array dei fatturabili se richiesti esplicitamente  
+// qui faccio il push all'array dei fatturabili se richiesti esplicitamente
 if (isset($invoices['excluded'])) {
     foreach ($invoices['excluded'] as $i => $testate) {
 	foreach ($testate as $id_tes => $v) {
@@ -413,14 +416,14 @@ if (isset($invoices['data'])) {
             } else {
                 $c = 'FacetDataTD';
             }
-			
+
             $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $kr);
             $anagrafica = new Anagrafica();
             $cliente = $anagrafica->getPartner($tes['clfoco']);
             $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $tes['pagame']);
-            if (($vr == 'yes' && $tes['tipdoc']==$tipodocumento && !in_array($kr, $form['changeStatus'])) || 
+            if (($vr == 'yes' && $tes['tipdoc']==$tipodocumento && !in_array($kr, $form['changeStatus'])) ||
                 (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != $tipodocumento)) {
-                // se c'è un DDT da fatturare non escluso o  un DDV-Y-S normalmente escluso ma richiesto alla fatturazione 
+                // se c'è un DDT da fatturare non escluso o  un DDV-Y-S normalmente escluso ma richiesto alla fatturazione
                 if ($ctrl_first) {
                     $protoc++;
                     $numfat++;
@@ -433,7 +436,7 @@ if (isset($invoices['data'])) {
 					}
                     echo "<tr>";
                     if ( $tes['tipdoc'] == 'CMR') $transl_movimento = $script_transl['add_invoice_cmr'];
-                    else $transl_movimento = $script_transl['add_invoice']; 
+                    else $transl_movimento = $script_transl['add_invoice'];
                     echo '<td  class="FacetDataTDevidenziaOK" colspan="8"><b>' .$cliente['ragso1'] . ' ' . $cliente['ragso2'] .'</b> '. $transl_movimento . $numfat . '/' . $tes['seziva'] . ' pr.' . $protoc . " &nbsp;</td>";
                     echo "</tr>\n";
                     $ctrl_first = false;
@@ -501,7 +504,7 @@ if (isset($invoices['data'])) {
                     $tot += $tes['traspo'];
                 }
             } elseif ($vr == 'maybe') {
-                // Ã¨ un ddt  
+                // Ã¨ un ddt
                 $tes['speban'] = 0;
                 $tot = 0.00;
                 echo "<tr class=\"alert alert-danger\">";

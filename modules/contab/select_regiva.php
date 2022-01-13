@@ -26,10 +26,6 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
 
-// BEGIN fromthestone: prendo il valore della configurazione per numerazione note credito/debito
-$num_nc_nd_qry = gaz_dbi_dyn_query(" val ", $gTables['company_config'], "var = 'num_note_separate'");
-$num_nc_nd = gaz_dbi_fetch_array($num_nc_nd_qry);
-// END fromthestone
 
 function getPage_ini($sez, $reg) {
     global $gTables;
@@ -58,7 +54,12 @@ function getLastMonth($sez, $reg) { // Antonio Germani - funzione per recuperare
 }
 
 function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
-    global $gTables, $admin_aziend, $num_nc_nd;
+    global $gTables, $admin_aziend;
+
+    // BEGIN fromthestone: prendo il valore della configurazione per numerazione note credito/debito
+    $num_nc_nd = gaz_dbi_get_row($gTables['company_config'], 'var', 'num_note_separate')['val'];
+    // END fromthestone
+
     $m = array();
     $where = "(datreg BETWEEN $date_ini AND $date_fin OR datliq BETWEEN $date_ini AND $date_fin) AND seziva = $vat_section AND regiva = $vat_reg";
     $orderby = "datreg, protoc";
@@ -104,10 +105,9 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
           // fromthestone: comportamento standard, note credito e debito con diversa numerazione da fatture ->
           // num_note_separate = 1
           // per evitare la segnalazione di errore quando si passa da fattura immediata a differita e viceversa
-          if ($num_nc_nd['val'] == 1) {
+          if ($num_nc_nd == 1) {
             $r['caucon'] = ($r['caucon']=='FAD')?'FAI':$r['caucon'];
-          }
-          else {
+          } else {
             // fromthestone: note credito e debito stessa numerazione da fatture
             $r['caucon'] = ($r['caucon'] == 'FAD' || $r['caucon'] == 'FNC' || $r['caucon'] == 'FND') ? 'FAI' : $r['caucon'];
           }

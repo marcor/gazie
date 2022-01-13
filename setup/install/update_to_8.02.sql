@@ -58,6 +58,5 @@ INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT 'PEC IM
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT 'PEC IMAP User', 'pec_imap_usr', '' FROM DUAL WHERE NOT EXISTS (SELECT `var` FROM `gaz_XXXcompany_config` WHERE `var` = 'pec_imap_usr' LIMIT 1);
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT 'PEC IMAP Password', 'pec_imap_psw', '' FROM DUAL WHERE NOT EXISTS (SELECT `var` FROM `gaz_XXXcompany_config` WHERE `var` = 'pec_imap_psw' LIMIT 1);
 ALTER TABLE `gaz_XXXfiles` ADD COLUMN `status` INT NOT NULL DEFAULT 0 COMMENT 'se usato quando item_ref =\'faesync\' indica lo stato della fattura di acquisto (1=acquisita) ' AFTER `item_ref`, ADD INDEX `status` (`status`);
-INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT 'Numerazione Note credito/debito separate da numerazione Fatture (default di GAzie = 1)', 'num_note_separate', '1' FROM DUAL WHERE NOT EXISTS (SELECT `var` FROM `gaz_XXXcompany_config` WHERE `var` = 'num_note_separate' LIMIT 1);
-
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) SELECT 'Numerazione delle Fatture separate da quella di Note Credito/Debito (0=No 1=Si-default)', 'num_note_separate', '1' FROM DUAL WHERE NOT EXISTS (SELECT `var` FROM `gaz_XXXcompany_config` WHERE `var` = 'num_note_separate' LIMIT 1);
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione )
